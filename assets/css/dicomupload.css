@@ -1,0 +1,398 @@
+/**
+ Copyright (C) 2018 KANOUN Salim
+ This program is free software; you can redistribute it and/or modify
+ it under the terms of the Affero GNU General Public v.3 License as published by
+ the Free Software Foundation;
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ Affero GNU General Public Public for more details.
+ You should have received a copy of the Affero GNU General Public Public along
+ with this program; if not, write to the Free Software Foundation, Inc.,
+ 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+ */
+ 
+ /* # DROPZONE */
+
+#du-drop-zone {
+	margin: 16px 0;
+	height: 100px;
+	width: 100%;
+	color: rgb(241, 30, 76);
+	line-height: 85px;
+	text-align: center;
+	background-color: rgb(255, 241, 244);
+	border-radius: 16px;
+	border: 5px dashed rgb(209, 19, 63);
+	cursor: pointer;
+}
+
+#du-drop-zone.du-deactivated {
+	animation: drop-zone-deactivate 1s ease-out forwards;
+	pointer-events: none;
+	cursor: no-drop;
+}
+@keyframes drop-zone-deactivate {
+	0% {
+		border-color: rgba(209, 19, 63, 0.7);
+	}
+
+	50% {
+		margin: 16px 0;
+		border: 5px dashed;
+		border-color: rgba(221, 118, 142, 0.2);
+		opacity: 1;
+	}
+
+	100% {
+		margin: 0;
+		height: 0;
+		border: 0px solid;
+		border-color: rgba(245, 238, 240, 0);
+		opacity: 0;
+	}
+}
+
+#du-drop-zone.dz-drag-hover {
+	transition: 0.1s ease-in-out;
+	box-shadow: inset 0 0 35px rgba(255, 10, 67, 0.2);
+	border: 5px solid rgba(175, 54, 82, 0.8);
+}
+
+#du-drop-zone.dz-parsing {
+	transition: 0.1s ease-in-out;
+	box-shadow: inset 0 0 35px rgba(255, 10, 67, 0.2);
+	border: 5px solid rgba(175, 54, 82, 0.8);
+}
+
+/* # STATUS INFO */
+
+#du-status-info>* {
+	padding: 5px 10px;
+	font-size: 14px;
+	font-weight: 400;
+}
+
+#du-status-info>.info {
+	color: #0262b0;
+	font-weight: bold;
+}
+#du-status-info>.warn {
+	color: #f46a0e;
+	font-weight: bold;
+}
+#du-status-info>.error {
+	color: #d11818;
+	font-weight: bold;
+}
+#du-status-info>.success {
+	color: #22ac10;
+	font-weight: bold;
+}
+
+#du-status-info #du-loaded-badge {
+	color: #10212b;
+	background-color: #bec2ca;
+}
+
+#du-status-info #du-parsed-badge {
+	color: #0a4d10;
+	background-color: #a6e38d;
+}
+
+#du-status-info #du-ignored-badge {
+	cursor: pointer;
+	color: #212529;
+	background-color: #ffc107;
+}
+#du-status-info #du-ignored-badge:hover {
+	background-color: #ffd146;
+}
+
+/* # IGNORED PANEL */
+#du-ignored-files-modal td,
+#du-ignored-files-modal th {
+	padding-top: 2px;
+	padding-bottom: 2px;
+	border-left: none;
+	border-right: none;
+	text-align: inherit;
+}
+
+
+/* # ALERTS */
+
+#du-alerts {
+	margin-bottom: 16px;
+}
+
+#du-alerts .card-body {
+	padding:0;
+}
+
+#du-alerts td,
+#du-alerts th {
+	padding-left: 20px;
+	padding-top: 2px;
+	padding-bottom: 2px;
+	border-left: none;
+	border-right: none;
+	border-block-end: none;
+	text-align: inherit;
+}
+
+#du-alerts #du-warnings .card-link {
+	font-weight: bold;
+	color: #F04100;
+}
+#du-alerts #du-warnings .card-link:hover {
+	font-weight: bold;
+	color: #c73500;
+}
+
+#du-alerts #du-warnings {
+	color: #735245;
+	background-color: #ffffff;
+}
+
+
+#du-alerts #du-ignored .card-link {
+	font-weight: bold;
+	color: #F29E14;
+}
+#du-alerts #du-ignored .card-link:hover {
+	font-weight: bold;
+	color: #d38810;
+}
+
+#du-alerts #du-ignored {
+	color: #735245;
+	background-color: #ffffff;
+}
+
+/* STUDIES & SERIES LIST */
+
+#du-studies td,
+#du-studies th,
+#du-series td,
+#du-series th {
+	padding: 2px 10px;
+	border-left: none;
+	border-right: none;
+	border-block-end: none;
+	text-align: inherit;
+}
+
+#du-studies th,
+#du-series th {
+	color: #956a6a;
+}
+
+#du-studies table,
+#du-series table {
+	font-size: 13px;
+	background-color: #fff;
+}
+
+#du-studies td,
+#du-series td {
+	padding: 2px 6px;
+}
+
+#du-studies :not(.row-clicked).row-clickable:hover,
+#du-series :not(.row-clicked).row-clickable:hover {
+	cursor: pointer;
+	color: #08121b;
+	background-color: #e7f0f8;
+}
+
+#du-studies .row-clicked,
+#du-series .row-clicked {
+	font-weight: bold;
+}
+
+#du-studies .row-success,
+#du-series .row-success {
+	color: #09810f;
+	background-color: #e2ffe1;
+}
+
+#du-studies .row-danger,
+#du-series .row-danger {
+	color: #c40404;
+	background-color: #fff3f3;
+}
+
+#du-studies :not(.ignored).row-warning,
+#du-series :not(.ignored).row-warning {
+	color: #8f510a;
+	background-color: #ffeacb;
+}
+
+#du-studies .ignored,
+#du-series .ignored {
+	font-style: italic;
+	color: #a4a4a4;
+	background-color: #f7f7f7;
+}
+
+#du-studies-warnings,
+#du-series-warnings {
+	background-color: #fef5e7;
+	color: #810909;
+}
+
+#du-studies-warnings td button,
+#du-series-warnings td button {
+	color: white;
+	background-color: #4a4848;
+	border-radius: 4px;
+	border: 0;
+}
+
+#du-studies-warnings td button:hover,
+#du-series-warnings td button:hover {
+	background-color: #686666;
+}
+
+#du-studies .du-pat-remove-btn {
+	padding: 0px 6px;
+}
+
+
+/* STUDY CHECK */
+#du-pv-check table {
+	font-size: 13px;
+	background-color: #fff;
+}
+
+#du-pv-check th,
+#du-pv-check td {
+	padding: 2px 10px;
+	border-left: none;
+	border-right: none;
+	border-block-end: none;
+	text-align: inherit;
+}
+
+/* content */
+
+.title {
+	font-weight: 700;
+	font-size: 20px;
+	color: rgb(165, 23, 56);
+}
+.unknown {
+	color: #888;
+	font-style: italic;
+	font-size: 12px;
+}
+
+button:disabled,
+input:disabled {
+	cursor: not-allowed;
+}
+
+.du-deactivated {
+	animation: deactivate 1s ease-out forwards;
+	pointer-events: none;
+}
+@keyframes deactivate {
+	0% {
+		opacity: 1;
+	}
+	50% {
+		opacity: 0;
+	}
+	100% {
+		margin: 0;
+		height: 0;
+		opacity: 0;
+	}
+}
+
+
+
+/* # CONTROLS */
+
+#du-controls {
+	display: flex;
+	margin: 12px auto;
+}
+
+#du-controls>button {
+	max-width: 100px;
+	margin-right: 12px;
+}
+
+#du-controls>div {
+	flex: 1;
+}
+
+#du-controls #du-prog-bar-zipping {
+	margin-bottom: 6px;
+}
+
+
+/* # SELECT VISIT ID */
+#du-patient .modal-content p {
+	font-size: 14px;
+	line-height: 15px;
+	margin-bottom: 4px;
+}
+
+#du-patient .modal-body > div {
+	margin-bottom: 12px;
+}
+
+#du-patient td,
+#du-patient th {
+	padding: 2px 10px;
+	border-left: none;
+	border-right: none;
+	border-block-end: none;
+	text-align: inherit;
+}
+
+#du-patient .row-success {
+	color: #1a8a1f;
+	background-color: #f7fff6;
+}
+
+#du-patient .row-danger {
+	color: #a31e1e;
+	background-color: #fff2f2;
+}
+
+#du-patient :not(.row-clicked).row-clickable:hover {
+	cursor: pointer;
+	color: #08121b;
+	background-color: #e7f0f8;
+}
+
+#du-patient .row-clicked{
+	font-weight: bold;
+}
+
+#du-patient .row-disabled {
+	background-color: #f0f0f0;
+	color: #aaa;
+	font-style: italic;
+}
+
+#du-patient .du-patp-label {
+	font-weight: bold;
+	color: rgb(165, 23, 56);
+}
+
+#du-patient #du-patp-comparison tbody td button {
+	padding-bottom: 1px;
+	color: white;
+	background-color: #4a4848;
+	border-radius: 4px;
+	border: 0;
+}
+
+#du-patient #du-patp-comparison tbody td button:hover {
+	background-color: #686666;
+}
