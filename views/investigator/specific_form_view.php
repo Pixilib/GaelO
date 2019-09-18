@@ -1,0 +1,128 @@
+<?php
+/**
+ Copyright (C) 2018 KANOUN Salim
+ This program is free software; you can redistribute it and/or modify
+ it under the terms of the Affero GNU General Public v.3 License as published by
+ the Free Software Foundation;
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ Affero GNU General Public Public for more details.
+ You should have received a copy of the Affero GNU General Public Public along
+ with this program; if not, write to the Free Software Foundation, Inc.,
+ 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+ */
+?>
+
+<script type="text/javascript">
+
+    $(document).ready(function() {
+        
+		$("#sendAskUnlock").dialog({
+      		autoOpen: false,
+      		width : 'auto',
+      		height : 'auto',
+      		title: "Unlock request"
+      	});
+        
+    	$("#ask_unlock").on('click', function(){
+    		$( "#sendAskUnlock" ).load('/ask_unlock', {
+    			id_visit : <?=$id_visit?>,
+    	        type_visit : '<?=$type_visit?>',
+    	        patient_num : <?=$patient_num?>
+    		},function(){
+    			$( "#sendAskUnlock" ).dialog('open');
+    		});
+    		
+    	});
+    	
+		//Form Unactivation if already validated or non investigator Reviewer Role
+	   <?php
+        if ($validatedForm || $roleDisable) { ?>
+			$('#specificForm').find('input, textarea, button, select').attr('disabled','disabled');
+			//Add Ask Unlock Button if investigator or reviewer
+	   <?php
+        }
+    
+        ?>
+    
+		//Validation of the form, send the form with Ajax
+		$( "#validate, #draft" ).on( "click", function(event) {
+		  idButton=id=event.target.id;
+		  var confirmResult=false;
+		  var formCheck=false;
+		  if(idButton=="validate"){
+			  formCheck=validateForm();
+			  if (formCheck) {
+				  alertify.confirm('Validate?','Are you sure you want to validate this form ? \n\nIt will no longer be possible to modify the data entered by you.', function(){ sendForm(); }, function(){});
+			  }else {
+				  alertifyError("Fill mandatory fields")
+			  }
+		  }
+		  else{
+			  sendForm();
+		  }
+		  
+
+		});
+
+		
+    });
+
+	function sendForm(){
+		$.ajax({
+			type: "POST",
+			url: '/specific_form',
+			data: $("#<?=$study.'_'.$type_visit?>").serialize()+"&"+idButton+"=1", // serializes the form's elements.
+			success: function(data) {
+				//Refresh the tree
+				$('#containerTree').jstree(true).refresh();
+            	<?php
+                if (($_SESSION['role']) == User::INVESTIGATOR) {
+                ?>
+            		refreshDivContenu();
+            	<?php
+                } else if (($_SESSION['role']) == User::REVIEWER) {
+                ?>
+                     $('#contenu').empty();
+	           <?php
+                }
+                ?>
+			}
+     	});	
+    };
+    
+</script>
+
+<div id="specificForm">
+
+	<h1 class='form-control bloc_bordures'>Investigation form</h1>
+	<?php  
+	//Add specific view in form folder
+	require("form/scripts/$study"."_"."$type_visit.php");
+	?>
+</div>
+
+<div id="div_bouttons" class="col text-center">
+	<div id="sendAskUnlock"></div>
+    <?php
+    //If not disable by role add action button
+    if (!$roleDisable) {
+        
+        if(!$validatedForm){
+            // If investigator Role and form not validated, add Draft and Validate button
+            ?>
+            	<input class="btn btn-dark" type="button" id="draft" name="draft" value="draft" /> 
+        		<input class="btn btn-dark" type="button" id="validate" name="validate" value="validate" />
+    		<?php 
+        }else{
+            //Add Ask Unlock Button
+            if (!$local || ($local && $visitObject->qcStatus != Visit::QC_ACCEPTED && $visitObject->qcStatus != Visit::QC_REFUSED)) {
+            ?>
+				<input class="btn btn-dark" id="ask_unlock" type="button" value="Ask Unlock">
+    		<?php
+            }
+        }
+    }
+    ?>
+</div>

@@ -1,0 +1,11 @@
+Options -Indexes
+RewriteEngine On
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ index.php?page=$1 [NC,L]
+
+
+<IfModule mod_deflate.c>
+ SetOutputFilter DEFLATE
+</IfModule>

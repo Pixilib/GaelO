@@ -1,0 +1,12 @@
+{
+        "AuthenticationEnabled": true,
+        "DicomServerEnabled" : false,
+        "RegisteredUsers": {"GaelO": "GaelO", "dicomWeb":"dicomWeb"},
+		"DicomWeb": {
+            "Enable": true,
+            "Root": "/dicom-web/",
+            "EnableWado": true,
+            "WadoRoot": "/wado",
+            "Ssl": true
+		}
+}

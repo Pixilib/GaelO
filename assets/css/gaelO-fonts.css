@@ -1,0 +1,84 @@
+/**
+ Copyright (C) 2018 KANOUN Salim
+ This program is free software; you can redistribute it and/or modify
+ it under the terms of the Affero GNU General Public v.3 License as published by
+ the Free Software Foundation;
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ Affero GNU General Public Public for more details.
+ You should have received a copy of the Affero GNU General Public Public along
+ with this program; if not, write to the Free Software Foundation, Inc.,
+ 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+ */
+ 
+@font-face {
+	font-family: SourceSansProBlack;
+	font-display: optional;
+	src: url('../fonts/SourceSansPro-Black.ttf');
+}
+@font-face {
+	font-family: SourceSansProBlackItalic;
+	font-display: optional;
+	src: url('../fonts/SourceSansPro-BlackItalic.ttf');
+}
+@font-face {
+	font-family: SourceSansProBold;
+	font-display: optional;
+	src: url('../fonts/SourceSansPro-Bold.ttf');
+}
+@font-face {
+	font-family: SourceSansProBoldItalic;
+	font-display: optional;
+	src: url('../fonts/SourceSansPro-BoldItalic.ttf');
+}
+@font-face {
+	font-family: SourceSansProXLight;
+	font-display: optional;
+	src: url('../fonts/SourceSansPro-ExtraLight.ttf');
+}
+@font-face {
+	font-family: SourceSansProXLightItalic;
+	font-display: optional;
+	src: url('../fonts/SourceSansPro-ExtraLightItalic.ttf');
+}
+@font-face {
+	font-family: SourceSansProItalic;
+	font-display: optional;
+	src: url('../fonts/SourceSansPro-Italic.ttf');
+}
+@font-face {
+	font-family: SourceSansProLight;
+	font-display: optional;
+	src: url('../fonts/SourceSansPro-Light.ttf');
+}
+@font-face {
+	font-family: SourceSansProLightItalic;
+	font-display: optional;
+	src: url('../fonts/SourceSansPro-LightItalic.ttf');
+}
+@font-face {
+	font-family: SourceSansProMediumItalic;
+	font-display: optional;
+	src: url('../fonts/SourceSansPro-MediumItalic.ttf');
+}
+@font-face {
+	font-family: SourceSansProRegular;
+	font-display: optional;
+	src: url('../fonts/SourceSansPro-Regular.ttf');
+}
+@font-face {
+	font-family: SourceSansProSemiBold;
+	font-display: optional;
+	src: url('../fonts/SourceSansPro-SemiBold.ttf');
+}
+@font-face {
+	font-family: SourceSansProSemiBoldItalic;
+	font-display: optional;
+	src: url('../fonts/SourceSansPro-SemiBoldItalic.ttf');
+}
+@font-face {
+	font-family: SlaboRegular;
+	font-display: optional;
+	src: url('../fonts/Slabo-Regular.ttf');
+}
