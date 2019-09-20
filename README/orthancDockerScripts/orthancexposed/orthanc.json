@@ -1,5 +1,4 @@
 {
-        "AuthenticationEnabled": true,
         "DicomServerEnabled" : false,
         "RegisteredUsers": {"internal": "GaelO", "external":"GaelO"},
         "LuaScripts" : [
