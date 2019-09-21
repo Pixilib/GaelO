@@ -36,11 +36,23 @@ if ($_SESSION['admin']) {
             //Create visit Type entry with specific table
             Visit_Type::createVisit($_POST['studyName'], $visitData[0], $visitData2[0], $visitData2[1], $linkpdo);
             
+            $rootSpecificModelsFolder=$_SERVER["DOCUMENT_ROOT"].'/form/Poo';
+            $rootSpecificScriptFolder=$_SERVER["DOCUMENT_ROOT"].'/form/scripts';
+            
+            //Create root folder if not existing
+            if (!is_dir($rootSpecificModelsFolder)) {
+                mkdir($rootSpecificModelsFolder, 0777, true);
+            }
+            
+            if (!is_dir($rootSpecificScriptFolder)) {
+                mkdir($rootSpecificScriptFolder, 0777, true);
+            }
+            
             //Create specific file that will need to be edited by user to fill specific data of the forms
             $modelPooFile=$_SERVER["DOCUMENT_ROOT"].'/form/models/study_visit_poo.php';
             $modelScriptFile=$_SERVER["DOCUMENT_ROOT"].'/form/models/study_visit_script.php';
-            $destinationPoo=$_SERVER["DOCUMENT_ROOT"].'/form/Poo/'.$_POST['studyName']."_".$visitData[0].'.php';
-            $destinationScript=$_SERVER["DOCUMENT_ROOT"].'/form/scripts/'.$_POST['studyName']."_".$visitData[0].'.php';
+            $destinationPoo=$rootSpecificModelsFolder.DIRECTORY_SEPARATOR.$_POST['studyName']."_".$visitData[0].'.php';
+            $destinationScript=$rootSpecificScriptFolder.DIRECTORY_SEPARATOR.$_POST['studyName']."_".$visitData[0].'.php';
             copy($modelPooFile, $destinationPoo);
             copy($modelScriptFile, $destinationScript);
             

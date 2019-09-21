@@ -185,7 +185,7 @@ Class Send_Email {
                 <header class="main-header" id ="header">
                     <img src="'.$logoLink.'" alt="Banner Image"/>
                 </header>
-                <h1><a href=http://"'.$this->webAddress.'">'.$this->platformName.'</a></h1>
+                <h1><a href="http://'.$this->webAddress.'">'.$this->platformName.'</a></h1>
                 <div id="message">Dear '.$nameString.',<br>'.$this->message.'</div>
                 <div class="footer">
                     <p id ="footer-contact">Please contact the Imaging Department of '.$this->corporation.' for any questions (<a HREF="mailto:'.$this->adminEmail.'">'.$this->adminEmail.'</a>) <br>
