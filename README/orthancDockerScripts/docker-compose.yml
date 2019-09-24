@@ -10,6 +10,7 @@ services:
         environment:
             TRANSFERS_BUNDLE_DEFAULTS: "true"
             NAME: OrthancExposed
+            AC_AUTHENTICATION_ENABLED : "true"
             PEERS: |
                 {
                     "OrthancPacs": ["http://orthancpacs:8042/", "GaelO", "GaelO"]
@@ -23,6 +24,7 @@ services:
         environment:
             DW_ENABLED: "true"
             TRANSFERS_BUNDLE_DEFAULTS: "true"
+            AC_AUTHENTICATION_ENABLED : "true"
             NAME: OrthancPacs 
             MYSQL_HOST: index
             MYSQL_USER: orthancPacs

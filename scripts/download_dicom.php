@@ -73,7 +73,7 @@ if ($permissionCheck && count($ids)>0) {
 	    header('Content-Disposition: attachment; filename="Dicom-'.$_SESSION['study'].'_'.$date.'.zip"');
     //For reviewer file name is identified by study_visit
 	}else{
-	    $name=$_SESSION['study'].$_POST['visitType'];
+	    $name=$_SESSION['study'].$visitObject->visitType;
 	    header('Content-Disposition: attachment; filename="Dicom'.$name.'.zip"');
 	}
 	
