@@ -108,8 +108,8 @@
 		'vd_support'   => array(false, lang_key('virtual_directory_support'), (isset($phpinfo['phpinfo']['Virtual Directory Support']) && $phpinfo['phpinfo']['Virtual Directory Support'] == 'enabled'), lang_key('enabled'), lang_key('disabled'), lang_key('error_vd_support')),
 		'asp_tags'     => array(false, lang_key('asp_tags'), (isset($phpinfo[$php_core_index]) && $phpinfo[$php_core_index]['asp_tags'][0] == 'On'), lang_key('on'), lang_key('off'), lang_key('error_asp_tags')),
 		'short_open_tag'  => array(false, lang_key('short_open_tag'), (isset($phpinfo[$php_core_index]) && $phpinfo[$php_core_index]['short_open_tag'][0] == 'On'), lang_key('on'), lang_key('off')),
-	    'session_support' => array(false, lang_key('session_support'), (isset($phpinfo['session']['Session Support']) && $phpinfo['session']['Session Support'] == 'enabled'), lang_key('enabled'), lang_key('disabled')),
-	    'Upload Max Size'  => array(false, lang_key('Upload Max Size'), true , lang_key($phpinfo[$php_core_index]['upload_max_filesize'][0]), lang_key($phpinfo[$php_core_index]['upload_max_filesize'][0])),
+        'session_support' => array(false, lang_key('session_support'), (isset($phpinfo['session']['Session Support']) && $phpinfo['session']['Session Support'] == 'enabled'), lang_key('enabled'), lang_key('disabled')),
+        'Upload Max Size'  => array(false, lang_key('Upload Max Size'), true , lang_key($phpinfo[$php_core_index]['upload_max_filesize'][0]), lang_key($phpinfo[$php_core_index]['upload_max_filesize'][0])),
 	    
 	);
 	/// $database_system_version = isset($phpinfo['mysql']) ? $phpinfo['mysql']['Client API version'] : "unknown";
@@ -151,10 +151,7 @@
 	    $validations['mod_rewrite'] = array(true, lang_key('mode').' Rewrite', in_array('mod_rewrite', $loaded_extensions), lang_key('installed'), lang_key('not_installed'));
 	    $validations['mod_deflate'] = array(true, lang_key('mode').' Deflate', in_array('mod_deflate', $loaded_extensions), lang_key('installed'), lang_key('not_installed'));
 	    $validations['mod_headers'] = array(true, lang_key('mode').' Headers', in_array('mod_headers', $loaded_extensions), lang_key('installed'), lang_key('not_installed'));
-	    $validations['upload_limt'] = array(false, 'Upload Limit', $phpinfo[$php_core_index]['upload_max_filesize']>=5, $phpinfo[$php_core_index]['upload_max_filesize'], $phpinfo[$php_core_index]['upload_max_filesize']);
-	    
-		//$validations['mod_ldap'] = array(false, lang_key('mode').' LDAP', in_array('ldap', $loaded_extensions), lang_key('installed'), lang_key('not_installed'));
-	}
+    }
 	
 	if(EI_CHECK_DIRECTORIES_AND_FILES){
 		$validations['divider_dirs_and_files'] = array('title'=>lang_key('directories_and_files'), 'description'=>'');
