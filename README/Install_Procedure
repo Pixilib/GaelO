@@ -72,8 +72,10 @@ docker-compose up --build -d => In production  (deamon)
 *****************
 
 -1- Tune PHP Settings
-Php upload max size limit is 2Mb, if you need to upload documentation over 2Mb you have to increase this settin :
-In Virtual Min => Select http domain => Services => Php => Ressource limit and increase post and upload max size (post value needs to be > upload value)
+Php upload max size limit is 2Mb and overrided to 5M by htaccess root file
+If you need to upload documentation over 5Mb you have to increase this settings :
+- In the htaccess file if applicable
+- otherwise In WebMin=>Other=>Php Configuration=>Manage=>Ressource limit and increase post and upload max size (post value needs to be > upload value)
 
 -2- Orthanc Peer Import (Not in use in GaelO 1.0)
 To use Orthanc Peer import create another subdomain (ex orthanc.domain.com +- with SSL) 

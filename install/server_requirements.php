@@ -86,7 +86,7 @@
 	    }
 	}
 	
-	$php_core_index = ((version_compare(phpversion(), '5.3.0', '<'))) ? 'PHP Core' : 'Core';
+	$php_core_index = 'HTTP Headers Information';
 	// [0] requred
 	// [1] title
 	// [2] condition
@@ -107,12 +107,12 @@
 		'database_extension' => array(false, lang_key('database_extension').' (pdo_'.EI_DATABASE_TYPE.')', extension_loaded('pdo_'.EI_DATABASE_TYPE), lang_key('enabled'), lang_key('disabled')),
 		'vd_support'   => array(false, lang_key('virtual_directory_support'), (isset($phpinfo['phpinfo']['Virtual Directory Support']) && $phpinfo['phpinfo']['Virtual Directory Support'] == 'enabled'), lang_key('enabled'), lang_key('disabled'), lang_key('error_vd_support')),
 		'asp_tags'     => array(false, lang_key('asp_tags'), (isset($phpinfo[$php_core_index]) && $phpinfo[$php_core_index]['asp_tags'][0] == 'On'), lang_key('on'), lang_key('off'), lang_key('error_asp_tags')),
-		'safe_mode'    => array(false, lang_key('safe_mode'), (isset($phpinfo[$php_core_index]) && $phpinfo[$php_core_index]['safe_mode'][0] == 'On'), lang_key('on'), lang_key('off')),
 		'short_open_tag'  => array(false, lang_key('short_open_tag'), (isset($phpinfo[$php_core_index]) && $phpinfo[$php_core_index]['short_open_tag'][0] == 'On'), lang_key('on'), lang_key('off')),
-		'session_support' => array(false, lang_key('session_support'), (isset($phpinfo['session']['Session Support']) && $phpinfo['session']['Session Support'] == 'enabled'), lang_key('enabled'), lang_key('disabled')),
+	    'session_support' => array(false, lang_key('session_support'), (isset($phpinfo['session']['Session Support']) && $phpinfo['session']['Session Support'] == 'enabled'), lang_key('enabled'), lang_key('disabled')),
+	    'Upload Max Size'  => array(false, lang_key('Upload Max Size'), true , lang_key($phpinfo[$php_core_index]['upload_max_filesize'][0]), lang_key($phpinfo[$php_core_index]['upload_max_filesize'][0])),
+	    
 	);
 	/// $database_system_version = isset($phpinfo['mysql']) ? $phpinfo['mysql']['Client API version'] : "unknown";
-
 	if(EI_CHECK_MBSTRING_SUPPORT){
 		$validations['mbstring_support'] = array(false, lang_key('mbstring_support'), function_exists('mb_detect_encoding'), lang_key('enabled'), lang_key('disabled'));
 	}
@@ -138,19 +138,21 @@
 		//$validations['php_curl'] = array(false, 'PHP Curl', in_array('curl', $loaded_extensions), lang_key('installed'), lang_key('not_installed'));
 		//$validations['php_xmlrpc'] = array(false, 'PHP XmlRrpc', in_array('xmlrpc', $loaded_extensions), lang_key('installed'), lang_key('not_installed'));
 		//$validations['php_gd2'] = array(false, 'PHP Gd2', in_array('gd2', $loaded_extensions), lang_key('installed'), lang_key('not_installed'));
-		$validations['php_zip'] = array(false, 'PHP Zip Archive', in_array('zip', $loaded_extensions), lang_key('installed'), lang_key('not_installed'));
-		$validations['php_mbstring'] = array(false, 'mbstring', in_array('mbstring', $loaded_extensions), lang_key('installed'), lang_key('not_installed'));
-		$validations['php_json'] = array(false, 'json', in_array('json', $loaded_extensions), lang_key('installed'), lang_key('not_installed'));
-		$validations['php_pdo'] = array(false, 'pdo', in_array('PDO', $loaded_extensions), lang_key('installed'), lang_key('not_installed'));
-		$validations['php_xml'] = array(false, 'xml', in_array('xml', $loaded_extensions), lang_key('installed'), lang_key('not_installed'));
-		$validations['php_openssl'] = array(false, 'openssl', in_array('openssl', $loaded_extensions), lang_key('installed'), lang_key('not_installed'));
+		$validations['php_zip'] = array(true, 'PHP Zip Archive', in_array('zip', $loaded_extensions), lang_key('installed'), lang_key('not_installed'));
+		$validations['php_mbstring'] = array(true, 'mbstring', in_array('mbstring', $loaded_extensions), lang_key('installed'), lang_key('not_installed'));
+		$validations['php_json'] = array(true, 'json', in_array('json', $loaded_extensions), lang_key('installed'), lang_key('not_installed'));
+		$validations['php_pdo'] = array(true, 'pdo', in_array('PDO', $loaded_extensions), lang_key('installed'), lang_key('not_installed'));
+		$validations['php_xml'] = array(true, 'xml', in_array('xml', $loaded_extensions), lang_key('installed'), lang_key('not_installed'));
+		$validations['php_openssl'] = array(true, 'openssl', in_array('openssl', $loaded_extensions), lang_key('installed'), lang_key('not_installed'));
 	}
 	
 	if(EI_CHECK_MODES){
 	    $loaded_extensions = apache_get_modules();
-		$validations['mod_rewrite'] = array(false, lang_key('mode').' Rewrite', in_array('mod_rewrite', $loaded_extensions), lang_key('installed'), lang_key('not_installed'));
-		$validations['mod_deflate'] = array(false, lang_key('mode').' Deflate', in_array('mod_deflate', $loaded_extensions), lang_key('installed'), lang_key('not_installed'));
-		$validations['mod_headers'] = array(false, lang_key('mode').' Headers', in_array('mod_headers', $loaded_extensions), lang_key('installed'), lang_key('not_installed'));
+	    $validations['mod_rewrite'] = array(true, lang_key('mode').' Rewrite', in_array('mod_rewrite', $loaded_extensions), lang_key('installed'), lang_key('not_installed'));
+	    $validations['mod_deflate'] = array(true, lang_key('mode').' Deflate', in_array('mod_deflate', $loaded_extensions), lang_key('installed'), lang_key('not_installed'));
+	    $validations['mod_headers'] = array(true, lang_key('mode').' Headers', in_array('mod_headers', $loaded_extensions), lang_key('installed'), lang_key('not_installed'));
+	    $validations['upload_limt'] = array(false, 'Upload Limit', $phpinfo[$php_core_index]['upload_max_filesize']>=5, $phpinfo[$php_core_index]['upload_max_filesize'], $phpinfo[$php_core_index]['upload_max_filesize']);
+	    
 		//$validations['mod_ldap'] = array(false, lang_key('mode').' LDAP', in_array('ldap', $loaded_extensions), lang_key('installed'), lang_key('not_installed'));
 	}
 	
