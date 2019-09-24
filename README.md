@@ -1,5 +1,5 @@
 # GaelO
 
-Developpers : 
-Leader & Maintainer  : Salim Kanoun
+Developpers : <br>
+Leader & Maintainer  : Salim Kanoun <br>
 Contributors : Bastien Proudhom, Ludwig Chieng
