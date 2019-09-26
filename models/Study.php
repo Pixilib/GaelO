@@ -270,7 +270,6 @@ Class Study {
         $roles_query->execute(array('study'=>$this->study));
         $definedRoles=$roles_query->fetchall(PDO::FETCH_ASSOC);
         
-        $rolesList;
         foreach ($definedRoles as $role){
             $rolesList[$role['username']][]=$role['name'];
         }
