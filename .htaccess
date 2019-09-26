@@ -9,3 +9,6 @@ RewriteRule ^(.*)$ index.php?page=$1 [NC,L]
 <IfModule mod_deflate.c>
  SetOutputFilter DEFLATE
 </IfModule>
+
+php_value post_max_size 6M
+php_value upload_max_filesize 5M

@@ -51,10 +51,7 @@ if ($accessCheck && $_SESSION['role'] == User::SUPERVISOR ) {
         'Type', 'Status', 'Reason For Not Done','Acquisition Date', 'Upload Status', 'Uploader', 
         'Upload Date', 'State Investigator Form', 'State QC', 'QC done by', 'QC date', 'Review Status', 'Review Date','Review Conclusion', 'visit deleted');
     
-    $activeVisit=$studyObject->getCreatedVisits(true);
-    $deletedVisit=$studyObject->getCreatedVisits(false);
-    $allcreatedVisits=array_merge($activeVisit, $deletedVisit);
-    
+    $allcreatedVisits=$studyObject->getCreatedVisits();
     
     foreach ($allcreatedVisits as $visit) {
     	$codeStatus=dertermineVisitStatusCode($visit);
@@ -72,10 +69,8 @@ if ($accessCheck && $_SESSION['role'] == User::SUPERVISOR ) {
         'Serie Orthanc ID', 'Serie UID', 'Instance Number', 'Manufacturer', 'Disk Size', 'Serie Number', 'Patient Weight', 'Injected_Activity', 'Injected_Dose', 'Radiopharmaceutical', 'Half Life', 'Injected Time', 'Deleted');
     
     foreach ($allcreatedVisits as $visit) {
-        $activeSeries=$visit->getSeriesDetails();
-        $deletedSeries=$visit->getSeriesDetails(true);
-        
-        $allSeries=array_merge($activeSeries,$deletedSeries);
+
+        $allSeries=$visit->getSeriesDetails();
         
         foreach ($allSeries as $serieObject){
             $studyDetailsObject=$serieObject->studyDetailsObject;
@@ -146,7 +141,7 @@ if ($accessCheck && $_SESSION['role'] == User::SUPERVISOR ) {
     //Output everything for download
     $date =Date('Ymd_his');
     header('Content-type: application/zip');
-    header('Content-Disposition: attachment; filename="export_patient_'.$_SESSION['study'].'_'.$date.'.zip"');
+    header('Content-Disposition: attachment; filename="export_study_'.$_SESSION['study'].'_'.$date.'.zip"');
     
     //Final ZIP creation
     $zip = new ZipArchive;
