@@ -398,12 +398,13 @@ Class Study {
                 
                 $timeLimitAddition=0;
                 //Determine the cummulative allowed time from the last available visit
-                for($lastAvailable+1 ; $lastAvailable==$missingVisitNumber ; $lastAvailable++){
+                //SK A VERIFIER
+                for($lastAvailable+1 ; $lastAvailable<=$missingVisitNumber ; $lastAvailable++){
                     $timeLimitAddition+=$allVisits[$lastAvailable]->limitNumberDays;
                     
                 }
                 
-                $dateUpLimit=$lastCreatedVisit->modify('+'.$timeLimitAddition.' day');
+                $dateUpLimit=$lastCreatedVisit->modify($timeLimitAddition.' day');
                 //if patient withdraws visit might be not needed
                 if($patient->patientWithdraw){
                     if($lastCreatedVisit<=$withdrawDate && $dateUpLimit>$withdrawDate){
