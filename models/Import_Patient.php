@@ -210,7 +210,7 @@ class Import_Patient{
 			$insert_bdd->execute(array('code' => $patientNumber,
 													'first_name' => $patientFirstName,
 													'last_name' => $patientLastName,
-                                                    'gender' => strtoupper($patientGender[0]),
+                                                    'gender' => @strtoupper($patientGender[0]),
 													'birth_day' => $patientBirthDay,
 													'birth_month' => $patientBirthMonth,
 													'birth_year' => $patientBirthYear,
