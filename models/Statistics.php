@@ -158,9 +158,9 @@ class Statistics {
 	            
 	            if($patientDetails['status']==Visit_Manager::DONE && $patientDetails['state_investigator_form']==Visit_Manager::DONE){
 	                
-	                $creationDate=new DateTimeImmutable($patientDetails['creation_date']);
+	                $acquisitionDate=new DateTimeImmutable($patientDetails['acquisition_date']);
 	                $uploadDate=new DateTimeImmutable($patientDetails['upload_date']);
-	                $uploadDelay=($uploadDate->getTimestamp()-$creationDate->getTimestamp()) / (3600*24);
+	                $uploadDelay=($uploadDate->getTimestamp()-$acquisitionDate->getTimestamp()) / (3600*24);
 	                $visit['uploadDelay']=$uploadDelay;
 	                $visit['acquisitionCompliancy']=$patientDetails['compliancy'];
 	                $visit['visitType']=$visitType;

@@ -374,7 +374,7 @@ Class Study {
                 $results[$dataPatientVisit->visitType][$patient->patientCode]['shouldBeDoneBefore']=$dateUpLimit->format('Y-m-d');
                 $results[$dataPatientVisit->visitType][$patient->patientCode]['shouldBeDoneAfter']=$dateDownLimit->format('Y-m-d');
                 $results[$dataPatientVisit->visitType][$patient->patientCode]['upload_status']=$dataPatientVisit->uploadStatus;
-                $results[$dataPatientVisit->visitType][$patient->patientCode]['creation_date']=$dataPatientVisit->creationDate;
+                $results[$dataPatientVisit->visitType][$patient->patientCode]['acquisition_date']=$dataPatientVisit->acquisitionDate;
                 $results[$dataPatientVisit->visitType][$patient->patientCode]['upload_date']=$dataPatientVisit->uploadDate;
                 $results[$dataPatientVisit->visitType][$patient->patientCode]['id_visit']=$dataPatientVisit->id_visit;
                 $results[$dataPatientVisit->visitType][$patient->patientCode]['state_investigator_form']=$dataPatientVisit->stateInvestigatorForm;
@@ -428,7 +428,7 @@ Class Study {
                 $results[$allVisits[$missingVisitNumber]->name][$patient->patientCode]['shouldBeDoneBefore']=$dateUpLimit->format('Y-m-d');
                 $results[$allVisits[$missingVisitNumber]->name][$patient->patientCode]['shouldBeDoneAfter']=$lastCreatedVisit->format('Y-m-d');
                 $results[$allVisits[$missingVisitNumber]->name][$patient->patientCode]['upload_status']="";
-                $results[$allVisits[$missingVisitNumber]->name][$patient->patientCode]['creation_date']="";
+                $results[$allVisits[$missingVisitNumber]->name][$patient->patientCode]['acquisition_date']="";
                 $results[$allVisits[$missingVisitNumber]->name][$patient->patientCode]['state_investigator_form']="";
                 $results[$allVisits[$missingVisitNumber]->name][$patient->patientCode]['state_quality_control']="";
             }
