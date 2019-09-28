@@ -283,19 +283,23 @@ Class Study {
      */
     public function getAllPatientsVisitsStatus(){
         
-        //On recupere la liste des visites possibles dans l'ordre
+        //Get ordered list of possible visits in this study
         $allVisits=$this->getAllPossibleVisits($this->study);
-        //On recupere la liste des patient inclus dans l'etude
+        //Get patients list in this study
         $allPatients=$this->getAllPatientsInStudy($this->study);
-        
+        //Store actual time for comparison
         $todayDate = new DateTime ( date ( "Y-m-d" ) );
         
         $results=[];
         
-        // Pour chaque visite possible boucler chaque patient et determiner le statut de la visite
+        // For each patient determine it's visist status
         foreach($allPatients as $patient){
+            
             $patientCenter=$patient->getPatientCenter();
-            //Add common informations
+            $createdVisits=$patient->getPatientsVisits();
+            $patientRegistrationImmutableDate=new DateTimeImmutable($patient->patientRegistrationDate);
+            
+            //Add patient's common informations
             foreach($allVisits as $possibleVisit){
                 $results[$possibleVisit->name][$patient->patientCode]['center']=$patientCenter->name;
                 $results[$possibleVisit->name][$patient->patientCode]['country']=$patientCenter->countryName;
@@ -303,44 +307,32 @@ Class Study {
                 $results[$possibleVisit->name][$patient->patientCode]['lastname']=$patient->patientLastName;
                 $results[$possibleVisit->name][$patient->patientCode]['birthdate']=$patient->patientBirthDate;
                 $results[$possibleVisit->name][$patient->patientCode]['registration_date']=$patient->patientRegistrationDate;
-                
-                
-            }
-
-            $createdVisits=$patient->getPatientsVisits();
-            
-            //If withdraw store the withdrawal date
-            if($patient->patientWithdraw ){
-                $withdrawDate=$patient->patientWithdrawDate;
-                
             }
             
             //Make a map of all created visit
-            $visitEffectiveAcquisitionDateArray=null;
+            $createdVisitMap=null;
             foreach ($createdVisits as $dataPatientVisit){
                 //Acquisition date of created visit
             	$visitCharacteristics=$dataPatientVisit->getVisitCharacteristics();
-            	$visitEffectiveAcquisitionDate= new DateTimeImmutable($dataPatientVisit->acquisitionDate);
-            	$visitEffectiveAcquisitionDateArray[$visitCharacteristics->visitOrder]=$visitEffectiveAcquisitionDate;
+            	$createdVisitMap[$visitCharacteristics->visitOrder]=$dataPatientVisit;
             }
             
             //Determine Visit Order missing
             $missingOrder=[];
             foreach ($allVisits as $possibleVisit){
-                //error_log($possibleVisit['visit_order']);
-                if(empty($visitEffectiveAcquisitionDateArray[$possibleVisit->visitOrder]) ){
+                if(empty($createdVisitMap[$possibleVisit->visitOrder])){
                     $missingOrder[]=$possibleVisit->visitOrder;
                 }
             }
             
             //Determine compliancy / status of created visits
-            foreach($createdVisits as $dataPatientVisit ){
-            	$visitCharacteristics=$dataPatientVisit->getVisitCharacteristics();
-            	$visitOrder=$visitCharacteristics->visitOrder;
+            foreach($createdVisitMap as $visitOrder=>$dataPatientVisit ){
+
+                $visitAcquisitionDate=$dataPatientVisit->getImmutableAcquisitionDate();
                 
                 //Search for the last created Visit
                 $previousCreated=$visitOrder-1;
-                while( empty($visitEffectiveAcquisitionDateArray[$previousCreated]) && $previousCreated>-1 ){
+                while( empty($createdVisitMap[$previousCreated]) && $previousCreated>-1 ){
                     $previousCreated--;
                 }
                 
@@ -349,22 +341,20 @@ Class Study {
                     $timeLimitAddition+=$allVisits[$i]->limitNumberDays;
                     
                 }
-                
-                
+
                 //If first visit registration date is referece
                 if($previousCreated=(-1)){
                     $daysincrease=$allVisits[0]->limitNumberDays;
-                    $dateUpLimit=new DateTimeImmutable($patient->patientRegistrationDate.$daysincrease.'day' );
-                    $dateDownLimit=new DateTimeImmutable( '' . $patient->patientRegistrationDate.$this->daysLimitFromInclusion.'day' );
+                    $dateUpLimit=$patientRegistrationImmutableDate->modify($daysincrease.'day');
+                    $dateDownLimit=$patientRegistrationImmutableDate->modify($this->daysLimitFromInclusion.'day');
                 //Else calculate time from the last created and the current
                 }else{   
-                    $dateUpLimit=new DateTimeImmutable($visitEffectiveAcquisitionDateArray[$previousCreated].$timeLimitAddition.'day' );
-                    $dateDownLimit=new DateTimeImmutable($visitEffectiveAcquisitionDateArray[$previousCreated]);
+                    $dateUpLimit=$createdVisitMap[$previousCreated]->getImmutableAcquisitionDate()->modify($timeLimitAddition.'day');
+                    $dateDownLimit=$createdVisitMap[$previousCreated]->getImmutableAcquisitionDate();
                 }
                 
-                
                 //Status determination
-                if($visitEffectiveAcquisitionDateArray[$visitOrder]>=$dateDownLimit && $visitEffectiveAcquisitionDateArray[$visitOrder]<=$dateUpLimit){
+                if($visitAcquisitionDate>=$dateDownLimit && $visitAcquisitionDate<=$dateUpLimit){
                     $results[$dataPatientVisit->visitType][$patient->patientCode]['compliancy']="Yes"; 
                 }else{
                     $results[$dataPatientVisit->visitType][$patient->patientCode]['compliancy']="No";
@@ -374,7 +364,7 @@ Class Study {
                 $results[$dataPatientVisit->visitType][$patient->patientCode]['shouldBeDoneBefore']=$dateUpLimit->format('Y-m-d');
                 $results[$dataPatientVisit->visitType][$patient->patientCode]['shouldBeDoneAfter']=$dateDownLimit->format('Y-m-d');
                 $results[$dataPatientVisit->visitType][$patient->patientCode]['upload_status']=$dataPatientVisit->uploadStatus;
-                $results[$dataPatientVisit->visitType][$patient->patientCode]['acquisition_date']=$dataPatientVisit->acquisitionDate;
+                $results[$dataPatientVisit->visitType][$patient->patientCode]['acquisition_date']=$visitAcquisitionDate->format('Y-m-d');
                 $results[$dataPatientVisit->visitType][$patient->patientCode]['upload_date']=$dataPatientVisit->uploadDate;
                 $results[$dataPatientVisit->visitType][$patient->patientCode]['id_visit']=$dataPatientVisit->id_visit;
                 $results[$dataPatientVisit->visitType][$patient->patientCode]['state_investigator_form']=$dataPatientVisit->stateInvestigatorForm;
@@ -388,24 +378,23 @@ Class Study {
                 
                 //Determine visit number of the last created visit
                 $lastAvailable=$missingVisitNumber;
-                while( empty($visitEffectiveAcquisitionDateArray[$lastAvailable]) && $lastAvailable>=0){
+                while( empty($createdVisitMap[$lastAvailable]) && $lastAvailable>=0){
                     $lastAvailable--;
                 }
 
                 //If 1st Visit missing reference date is the inclusion date
                 if ($lastAvailable== -1) {
-                    $lastCreatedVisit=new DateTimeImmutable($patient->patientRegistrationDate);
+                    $lastCreatedVisit=$patientRegistrationImmutableDate;
                     $lastAvailable=0;
                     $shouldBeDoneAfter=$lastCreatedVisit->modify($this->daysLimitFromInclusion.' day');
                 }
                 else {
-                    $lastCreatedVisit=$visitEffectiveAcquisitionDateArray[$lastAvailable];
+                    $lastCreatedVisit=$createdVisitMap[$lastAvailable]->getImmutableAcquisitionDate();
                     $shouldBeDoneAfter=$lastCreatedVisit;
                 }
                 
                 $timeLimitAddition=0;
                 //Determine the cummulative allowed time from the last available visit
-                //SK A VERIFIER
                 for($i=$lastAvailable ; $i<=$missingVisitNumber ; $i++){
                     $timeLimitAddition+=$allVisits[$i]->limitNumberDays;
                     
@@ -414,6 +403,7 @@ Class Study {
                 $dateUpLimit=$lastCreatedVisit->modify($timeLimitAddition.' day');
                 //if patient withdraws visit might be not needed
                 if($patient->patientWithdraw){
+                    $withdrawDate=$patient->patientWithdrawDate;
                     if($lastCreatedVisit<=$withdrawDate && $dateUpLimit>$withdrawDate){
                         $results[$allVisits[$missingVisitNumber]->name][$patient->patientCode]['status']="Possibly Withdrawn";
                         
