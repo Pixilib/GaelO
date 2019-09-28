@@ -134,6 +134,10 @@ class Visit{
         
     }
 
+    public function getImmutableAcquisitionDate(){
+        return new DateTimeImmutable($this->acquisitionDate);
+    }
+
     /**
      * return Patient Object of this visit
      * @return Patient
