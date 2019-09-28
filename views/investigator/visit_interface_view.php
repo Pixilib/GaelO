@@ -126,7 +126,9 @@ if ($visitObject->statusDone == Visit::NOT_DONE) {
 	        $.ajax({
 	            type: "POST",
 	            url: '/scripts/get_upload_status.php',
-	            dataType: 'json',
+				dataType: 'json',
+				//Do not trigger event to avoid conflit with dicomupload listener in parallel
+				global: false,
 	            data: {id_visit:<?=$id_visit?>},
 				success: function(data) {
 		           //Update the span of the upload status
