@@ -310,7 +310,7 @@ Class Study {
             }
             
             //Make a map of all created visit
-            $createdVisitMap=null;
+            $createdVisitMap=[];
             foreach ($createdVisits as $dataPatientVisit){
                 //Acquisition date of created visit
             	$visitCharacteristics=$dataPatientVisit->getVisitCharacteristics();
