@@ -28,23 +28,37 @@
 		if ($_SESSION['role'] == User::INVESTIGATOR) {
 			?>
 		$("#uploadApp").on("click", function() {
-			$("#tree").html('<div id="uploadDicom" style="width:100%"></div>');
-			checkBrowserSupportDicomUpload('#uploadDicom');
-			var dicomUpload = new DicomUpload('#uploadDicom', {
-				multiImportMode: true,
-				expectedVisitsURL: '../../scripts/get_possible_import.php',
-				validationScriptURL: '../../scripts/validate_dicom_upload.php',
-				dicomsReceiptsScriptURL: '../../scripts/dicoms_receipts.php',
-				callbackOnAbort: function() {
+
+			if($("#uploadApp").text()=="Multi Uploader"){
+
+				$("#tree").html('<div id="uploadDicom" style="width:100%"></div>');
+				checkBrowserSupportDicomUpload('#uploadDicom');
+				var dicomUpload = new DicomUpload('#uploadDicom', {
+					multiImportMode: true,
+					expectedVisitsURL: '../../scripts/get_possible_import.php',
+					validationScriptURL: '../../scripts/validate_dicom_upload.php',
+					dicomsReceiptsScriptURL: '../../scripts/dicoms_receipts.php',
+					callbackOnAbort: function() {
+						$('#role').val('Investigator');
+						$('#confirmStudyRole').click();
+					},
+					alertMessageWhenNoVisitAwatingUpload: 'No visit is awaiting series upload. Please create a new visit by clicking on the patient in the <a id="redirect-to-investigator" href="#">patient tree</a>.'
+				});
+				$('#redirect-to-investigator').on('click', function() {
 					$('#role').val('Investigator');
 					$('#confirmStudyRole').click();
-				},
-				alertMessageWhenNoVisitAwatingUpload: 'No visit is awaiting series upload. Please create a new visit by clicking on the patient in the <a id="redirect-to-investigator" href="#">patient tree</a>.'
-			});
-			$('#redirect-to-investigator').on('click', function() {
+				});
+
+				$("#uploadApp").html("Exit Uploader");
+				$("#uploadApp").removeClass("btn-dark").addClass("btn-warning");
+
+			}else{
+				$("#uploadApp").html("Multi Uploader");
+				$("#uploadApp").removeClass("btn-warning").addClass("btn-dark");
 				$('#role').val('Investigator');
 				$('#confirmStudyRole').click();
-			});
+			}
+			
 		});
 		<?php
 		}
@@ -61,7 +75,7 @@
 				'dblclick_toggle': false,
 				'check_callback': true
 			},
-			"plugins": ["search", "contextmenu", "state"],
+			"plugins": ["search", /*"contextmenu",*/ "state"],
 			"search": {
 				"case_sensitive": false,
 				"show_only_matches": true,
