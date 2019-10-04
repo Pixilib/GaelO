@@ -33,8 +33,7 @@
     <script crossorigin src="https://unpkg.com/@ohif/extension-vtk@0.52.1/dist/index.umd.js"></script>
     <script crossorigin src="https://unpkg.com/@ohif/extension-cornerstone@1.2.5/dist/index.umd.js"></script>
     <script crossorigin src="https://unpkg.com/@ohif/extension-dicom-html@1.0.0/dist/index.umd.js"></script>
-
-    @ohif/extension-cornerstone
+    
     <script>
       var containerId = "root";
       var componentRenderedOrUpdatedCallback = function() {
