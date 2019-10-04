@@ -61,12 +61,13 @@
 				'dblclick_toggle': false,
 				'check_callback': true
 			},
-			"plugins": ["search", "contextmenu"],
+			"plugins": ["search", "contextmenu", "state"],
 			"search": {
 				"case_sensitive": false,
 				"show_only_matches": true,
 				"show_only_matches_children" : true
-			},
+			}/*,
+			//SK To Evaluate in the Future
 			"contextmenu": {
 				"items": function($node) {
 					return {
@@ -100,7 +101,7 @@
 						}
 					};
 				}
-			}
+			}*/
 		});
 
 		$('#containerTree').on('select_node.jstree', function(e, data) {

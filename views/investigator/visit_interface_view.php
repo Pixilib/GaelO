@@ -117,6 +117,7 @@ if ($visitObject->statusDone == Visit::NOT_DONE) {
 				type_visit : '<?=$type_visit?>',
 				patient_num : <?=$patient_num?>
 		});
+		$('#containerTree').jstree(true).refresh();
 	};
 
 	<?php if($visitObject->uploadStatus==Visit::UPLOAD_PROCESSING){

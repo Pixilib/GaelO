@@ -24,57 +24,50 @@
 	<title>OHIF Standalone Viewer</title>
 </head>
 
-<body>
-	<noscript> You need to enable JavaScript to run this app. </noscript>
+  <body>
+    <noscript> You need to enable JavaScript to run this app. </noscript>
 
-	<div id="root"></div>
+    <div id="root"></div>
+    <script crossorigin src="https://unpkg.com/@ohif/viewer@1.4.3/dist/index.umd.js"></script>
+    <script crossorigin src="https://unpkg.com/@ohif/extension-dicom-microscopy@0.50.5/dist/index.umd.js"></script>
+    <script crossorigin src="https://unpkg.com/@ohif/extension-vtk@0.52.1/dist/index.umd.js"></script>
+    <script crossorigin src="https://unpkg.com/@ohif/extension-cornerstone@1.2.5/dist/index.umd.js"></script>
+    <script crossorigin src="https://unpkg.com/@ohif/extension-dicom-html@1.0.0/dist/index.umd.js"></script>
 
-	<!-- Load React. -->
-	<script crossorigin src="https://unpkg.com/react@16/umd/react.production.min.js"></script>
-	<script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.production.min.js"></script>
-	<script>
-		// Workaround to deal with react-router-dom complaining
-    // if process.env is not defined. Must be run before
-    // ohif-viewer package is included.
-    "use strict";
-
-    var process = {
-      env: {
-        NODE_ENV: "production"
-      }
-    };
-
-    window.process = process;
-    window.config = {
-      routerBasename: '/ohif',
-      showStudyList: false,
-      servers: {
-        dicomWeb: [
-          {
-            name: 'Orthanc',
-            wadoUriRoot: '/orthanc/wado',
-            qidoRoot: '/orthanc/dicom-web',
-            wadoRoot: '/orthanc/dicom-web',
-            //new true by default
-            qidoSupportsIncludeField: true,
-            imageRendering: 'wadors',
-            thumbnailRendering: 'wadors',
-            requestOptions: {
-                requestFromBrowser: true,
-			},
+    @ohif/extension-cornerstone
+    <script>
+      var containerId = "root";
+      var componentRenderedOrUpdatedCallback = function() {
+          console.log("OHIF Viewer rendered/updated");
+        };
+      window.OHIFViewer.installViewer(
+        {
+          routerBasename: '/ohif',
+          showStudyList: false,
+          servers: {
+            dicomWeb: [
+              {
+                name: "Orthanc",
+                wadoUriRoot:
+                  "/orthanc/wado",
+                qidoRoot:
+                  "/orthanc/dicom-web",
+                wadoRoot:
+                  "/orthanc/dicom-web",
+                qidoSupportsIncludeField: true,
+                imageRendering: "wadors",
+                thumbnailRendering: "wadors"
+              }
+            ]
           },
-        ],
-      },
-    }
-	</script>
+          extensions: [OHIFExtDicomMicroscopy, OHIFExtVtk, OHIFExtCornerstone, OHIFExtDicomHtml]
+        },
+        containerId,
+        componentRenderedOrUpdatedCallback
+      );
 
-	<script src="https://unpkg.com/ohif-viewer@0.19.6/dist/index.umd.js" crossorigin></script>
-	<script>
-	var Viewer = window.OHIFStandaloneViewer.App;
-    var app = React.createElement(Viewer, window.config, null);
+    </script>
 
-    ReactDOM.render(app, document.getElementById("root"));
-	</script>
-</body>
+  </body>
 
 </html>
