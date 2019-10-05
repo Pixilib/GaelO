@@ -17,6 +17,11 @@
 <script type="text/javascript">
 	$(document).ready(function() {
 
+		window.refreshInvestigatorDiv = function(){
+			$('#role').val('Investigator');
+			$('#confirmStudyRole').click();
+		}
+
 		$("#documentationButton").on("click", function() {
 			$("#investigatorDialog").load('/documentation', function() {
 				$("#investigatorDialog").dialog("open");
@@ -27,24 +32,30 @@
 		<?php
 		if ($_SESSION['role'] == User::INVESTIGATOR) {
 			?>
+
 		$("#uploadApp").on("click", function() {
-			$("#tree").html('<div id="uploadDicom" style="width:100%"></div>');
-			checkBrowserSupportDicomUpload('#uploadDicom');
-			var dicomUpload = new DicomUpload('#uploadDicom', {
-				multiImportMode: true,
-				expectedVisitsURL: '../../scripts/get_possible_import.php',
-				validationScriptURL: '../../scripts/validate_dicom_upload.php',
-				dicomsReceiptsScriptURL: '../../scripts/dicoms_receipts.php',
-				callbackOnAbort: function() {
-					$('#role').val('Investigator');
-					$('#confirmStudyRole').click();
-				},
-				alertMessageWhenNoVisitAwatingUpload: 'No visit is awaiting series upload. Please create a new visit by clicking on the patient in the <a id="redirect-to-investigator" href="#">patient tree</a>.'
-			});
-			$('#redirect-to-investigator').on('click', function() {
-				$('#role').val('Investigator');
-				$('#confirmStudyRole').click();
-			});
+
+			if($("#uploadApp").text()=="Multi Uploader"){
+
+				$("#tree").html('<div id="uploadDicom" style="width:100%"></div>');
+				checkBrowserSupportDicomUpload('#uploadDicom');
+				new DicomUpload('#uploadDicom', {
+					multiImportMode: true,
+					expectedVisitsURL: '../../scripts/get_possible_import.php',
+					validationScriptURL: '../../scripts/validate_dicom_upload.php',
+					dicomsReceiptsScriptURL: '../../scripts/dicoms_receipts.php'
+				});
+
+				$("#uploadApp").html("Exit Uploader");
+				$("#uploadApp").removeClass("btn-dark").addClass("btn-warning");
+
+			}else{
+
+				$("#uploadApp").html("Multi Uploader");
+				$("#uploadApp").removeClass("btn-warning").addClass("btn-dark");
+				refreshInvestigatorDiv();
+			}
+			
 		});
 		<?php
 		}
@@ -54,6 +65,7 @@
 		$('#containerTree').jstree({
 			"core": {
 				'data': {
+					'global' : false,
 					'url': 'scripts/getTree.php',
 					'dataType': 'json',
 					"type": "GET"
@@ -61,12 +73,13 @@
 				'dblclick_toggle': false,
 				'check_callback': true
 			},
-			"plugins": ["search", "contextmenu"],
+			"plugins": ["search", /*"contextmenu",*/ "state"],
 			"search": {
 				"case_sensitive": false,
 				"show_only_matches": true,
 				"show_only_matches_children" : true
-			},
+			}/*,
+			//SK To Evaluate in the Future
 			"contextmenu": {
 				"items": function($node) {
 					return {
@@ -100,7 +113,7 @@
 						}
 					};
 				}
-			}
+			}*/
 		});
 
 		$('#containerTree').on('select_node.jstree', function(e, data) {

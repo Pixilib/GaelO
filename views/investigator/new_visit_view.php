@@ -74,7 +74,6 @@
 						$("#addVisit").dialog('close');
 						alertifySuccess('Visit Created');
 						$('#containerTree').jstree(true).refresh();
-						$('#containerTree').jstree(true).open_node(<?=$patientCode?>);
 					} else if (data == "Missing Data"){
 						alertifyError('Missing Data');
 					}

@@ -282,7 +282,7 @@
 				}
 				?>
 
-				<button id="messengerButton" class="btn btn-dark float-right">Messenger</button>
+				<button id="messengerButton" class="btn btn-info float-right">Messenger</button>
 			</div>
 			<div>
 				<div id="messengerDialog"></div>

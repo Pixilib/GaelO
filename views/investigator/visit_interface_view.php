@@ -33,16 +33,12 @@ if ($visitObject->statusDone == Visit::NOT_DONE) {
             if ($visitObject->uploadStatus == Visit::NOT_DONE && $role === User::INVESTIGATOR) {
             ?>
                 checkBrowserSupportDicomUpload('#uploadDicom');
-                var dicomUpload = new DicomUpload('#uploadDicom', {
+               	new DicomUpload('#uploadDicom', {
                     expectedVisitsURL: '../../scripts/get_possible_import.php',
                     validationScriptURL: '../../scripts/validate_dicom_upload.php',
                     dicomsReceiptsScriptURL: '../../scripts/dicoms_receipts.php',
                     isNewStudyURL: '../../scripts/is_new_study.php',
                     callbackOnComplete: refreshDivContenu,
-                    callbackOnAbort: function () {
-                        $('#role').val('Investigator');
-					    $('#confirmStudyRole').click();
-                    },
                     idVisit: <?= $id_visit ?? 'null' ?>
                 }); 
            <?php
@@ -117,6 +113,7 @@ if ($visitObject->statusDone == Visit::NOT_DONE) {
 				type_visit : '<?=$type_visit?>',
 				patient_num : <?=$patient_num?>
 		});
+		$('#containerTree').jstree(true).refresh();
 	};
 
 	<?php if($visitObject->uploadStatus==Visit::UPLOAD_PROCESSING){
@@ -132,7 +129,6 @@ if ($visitObject->statusDone == Visit::NOT_DONE) {
 	            data: {id_visit:<?=$id_visit?>},
 				success: function(data) {
 		           //Update the span of the upload status
-		           console.log(data);
 					var spinner=$('#spinnerUploadDiv<?=$visitObject->id_visit?>');
 					var uploadStatusLabel=$('#uploadStatusLabel<?=$visitObject->id_visit?>');
 					var checkIcon=$('#checkIconDiv<?=$visitObject->id_visit?>');

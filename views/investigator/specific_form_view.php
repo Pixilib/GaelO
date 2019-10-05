@@ -40,7 +40,6 @@
 	   <?php
         if ($validatedForm || $roleDisable) { ?>
 			$('#specificForm').find('input, textarea, button, select').attr('disabled','disabled');
-			//Add Ask Unlock Button if investigator or reviewer
 	   <?php
         }
     
@@ -62,29 +61,47 @@
 		  else{
 			  sendForm();
 		  }
-		  
-
 		});
 
 		
-    });
+	});
+
 
 	function sendForm(){
 		$.ajax({
 			type: "POST",
+			//Not global to allow form send during dicom upload
+			global:false,
 			url: '/specific_form',
+			dataType: 'json',
 			data: $("#<?=$study.'_'.$type_visit?>").serialize()+"&"+idButton+"=1", // serializes the form's elements.
-			success: function(data) {
-				//Refresh the tree
-				$('#containerTree').jstree(true).refresh();
+			success: function(answer) {
+
+				if(!answer){
+					alertifyError('Send Failed');
+					return;
+				}
+
             	<?php
                 if (($_SESSION['role']) == User::INVESTIGATOR) {
-                ?>
-            		refreshDivContenu();
+				?>
+					if(window.dicomUploadInUse){
+						//Upload is pending, confirm sent form and unactivate form
+						alertifySuccess("Form Sent, you can finish your upload");
+						$("#specificForm *").prop('disabled',true);
+						$("#div_bouttons *").prop('disabled',true);
+						
+					}else{
+						// Refresh tree and content
+						refreshDivContenu();
+					}
+            		
             	<?php
                 } else if (($_SESSION['role']) == User::REVIEWER) {
                 ?>
-                     $('#contenu').empty();
+					$('#contenu').empty();
+					//Refresh the tree
+					$('#containerTree').jstree(true).refresh();
 	           <?php
                 }
                 ?>

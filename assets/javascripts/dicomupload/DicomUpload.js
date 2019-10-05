@@ -30,7 +30,7 @@ class DicomUpload {
 			validationScriptURL: '../../scripts/validate_dicom_upload.php',
 			dicomsReceiptsScriptURL: '../../scripts/dicoms_receipts.php',
 			isNewStudyURL: '../../scripts/is_new_study.php',
-			alertMessageWhenNoVisitAwatingUpload: 'No visit is awaiting series upload. Please create a new visit by clicking on the patient in the patient tree.',
+			alertMessageWhenNoVisitAwatingUpload: 'No visit is awaiting series upload. Please create a new visit by clicking on the patient in the <a id="redirect-to-investigator" href="#">patient tree</a>.',
 			minNbOfInstances: 30,
 			idVisit: null,
 			refreshRateProgBar: 200,
@@ -39,7 +39,10 @@ class DicomUpload {
 				event.preventDefault();
 				event.returnValue = ''; // Needed for Chrome
 			},
-			callbackOnAbort: null
+			callbackOnAbort: function(){
+				refreshInvestigatorDiv()
+			}
+			
 		}
 
 		// Override custom config if set
@@ -58,6 +61,7 @@ class DicomUpload {
 
 		this.isUploading = false;
 		this.isInUse = false; // The user has entered data
+		window.dicomUploadInUse=false;
 
 		// Javascript intervals references need to be global variable
 		// in order to clear them if upload is aborted prematurely
@@ -75,6 +79,9 @@ class DicomUpload {
 			if (visits.length === 0) {
 				this.m.dz.dom.attr('hidden', '');
 				this.v.alert.add('info', this.config.alertMessageWhenNoVisitAwatingUpload);
+				$('#redirect-to-investigator').on('click', function() {
+					refreshInvestigatorDiv();
+				});
 			}
 			this.m.expectedVisits = visits;
 		});
@@ -86,6 +93,7 @@ class DicomUpload {
 
 	callbackOnComplete() {
 		this.isInUse = false;
+		window.dicomUploadInUse=false;
 		this.clearMemory();
 		// Allow page changing
 		window.removeEventListener('beforeunload', this.config.callbackOnBeforeUnload);
@@ -204,6 +212,7 @@ class DicomUpload {
 			this.v.studiesPanel.update(this.m.studies);
 			if (!this.isInUse) {
 				this.isInUse = true;
+				window.dicomUploadInUse=true;
 				this.preventAjaxDivLoading();
 			}
 		});
@@ -420,6 +429,8 @@ class DicomUpload {
 				console.warn(e);
 			}
 		});
+
+		
 
 	}
 

@@ -45,7 +45,6 @@
         			patient_num : <?=$patient?>
         	});
         	$('#containerTree').jstree(true).refresh();
-            $('#containerTree').jstree(true).open_node(<?=$patient?>);
         };
     
     </script>

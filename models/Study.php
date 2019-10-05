@@ -95,10 +95,10 @@ Class Study {
     public function getAwaitingReviewVisit(string $username=null){
         
         //Query visit to analyze visit awaiting a review
-        $idVisitsQuery = $this->linkpdo->prepare('SELECT id_visit FROM visits
-                                      WHERE (study = :study
+        $idVisitsQuery = $this->linkpdo->prepare('SELECT id_visit FROM visits INNER JOIN visit_type ON (visits.visit_type=visit_type.name AND visits.study=visit_type.study)
+                                      WHERE (visits.study = :study
                                       AND deleted=0
-                                      AND review_available=1) ');
+                                      AND review_available=1) ORDER BY visit_order ');
         
         $idVisitsQuery->execute(array('study' => $this->study));
         $visitList = $idVisitsQuery->fetchAll(PDO::FETCH_COLUMN);
