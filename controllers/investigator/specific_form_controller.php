@@ -44,9 +44,13 @@ if($permissionResults){
         }else {
             $validate=false;
         }
-        
-        $formProcessorObject->saveForm($_POST, $validate, $linkpdo);
-        
+        try{
+            $formProcessorObject->saveForm($_POST, $validate, $linkpdo);
+            echo(json_encode(true));
+        }catch(Exception $e){
+            echo(json_encode(false));
+        }
+
     }else{
         //Load Specific form
         

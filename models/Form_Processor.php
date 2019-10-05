@@ -158,7 +158,7 @@ abstract class Form_Processor {
 	        if(!$update){
 	            $this->deleteReviewId($idReview);
 	        }
-	        return;
+	        throw new Exception("Error during save");
 	    }
 	    
 		//update the visit status if we are processing a local form

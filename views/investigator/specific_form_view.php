@@ -76,8 +76,14 @@
 			//Not global to allow form send during dicom upload
 			global:false,
 			url: '/specific_form',
+			dataType: 'json',
 			data: $("#<?=$study.'_'.$type_visit?>").serialize()+"&"+idButton+"=1", // serializes the form's elements.
-			success: function(data) {
+			success: function(answer) {
+
+				if(!answer){
+					alertifyError('Send Failed');
+					return;
+				}
 				
             	<?php
                 if (($_SESSION['role']) == User::INVESTIGATOR) {
