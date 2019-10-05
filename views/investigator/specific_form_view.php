@@ -40,7 +40,6 @@
 	   <?php
         if ($validatedForm || $roleDisable) { ?>
 			$('#specificForm').find('input, textarea, button, select').attr('disabled','disabled');
-			//Add Ask Unlock Button if investigator or reviewer
 	   <?php
         }
     
@@ -62,8 +61,6 @@
 		  else{
 			  sendForm();
 		  }
-		  
-
 		});
 
 		
@@ -84,7 +81,7 @@
 					alertifyError('Send Failed');
 					return;
 				}
-				
+
             	<?php
                 if (($_SESSION['role']) == User::INVESTIGATOR) {
 				?>
@@ -95,9 +92,8 @@
 						$("#div_bouttons *").prop('disabled',true);
 						
 					}else{
+						// Refresh tree and content
 						refreshDivContenu();
-						//Refresh the tree
-						$('#containerTree').jstree(true).refresh();
 					}
             		
             	<?php
