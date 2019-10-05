@@ -39,10 +39,6 @@ if ($visitObject->statusDone == Visit::NOT_DONE) {
                     dicomsReceiptsScriptURL: '../../scripts/dicoms_receipts.php',
                     isNewStudyURL: '../../scripts/is_new_study.php',
                     callbackOnComplete: refreshDivContenu,
-                    callbackOnAbort: function () {
-                        $('#role').val('Investigator');
-					    $('#confirmStudyRole').click();
-                    },
                     idVisit: <?= $id_visit ?? 'null' ?>
                 }); 
            <?php

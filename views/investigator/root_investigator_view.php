@@ -17,6 +17,11 @@
 <script type="text/javascript">
 	$(document).ready(function() {
 
+		window.refreshInvestigatorDiv = function(){
+			$('#role').val('Investigator');
+			$('#confirmStudyRole').click();
+		}
+
 		$("#documentationButton").on("click", function() {
 			$("#investigatorDialog").load('/documentation', function() {
 				$("#investigatorDialog").dialog("open");
@@ -37,26 +42,17 @@
 					multiImportMode: true,
 					expectedVisitsURL: '../../scripts/get_possible_import.php',
 					validationScriptURL: '../../scripts/validate_dicom_upload.php',
-					dicomsReceiptsScriptURL: '../../scripts/dicoms_receipts.php',
-					callbackOnAbort: function() {
-						$('#role').val('Investigator');
-						$('#confirmStudyRole').click();
-					},
-					alertMessageWhenNoVisitAwatingUpload: 'No visit is awaiting series upload. Please create a new visit by clicking on the patient in the <a id="redirect-to-investigator" href="#">patient tree</a>.'
-				});
-				$('#redirect-to-investigator').on('click', function() {
-					$('#role').val('Investigator');
-					$('#confirmStudyRole').click();
+					dicomsReceiptsScriptURL: '../../scripts/dicoms_receipts.php'
 				});
 
 				$("#uploadApp").html("Exit Uploader");
 				$("#uploadApp").removeClass("btn-dark").addClass("btn-warning");
 
 			}else{
+
 				$("#uploadApp").html("Multi Uploader");
 				$("#uploadApp").removeClass("btn-warning").addClass("btn-dark");
-				$('#role').val('Investigator');
-				$('#confirmStudyRole').click();
+				refreshInvestigatorDiv();
 			}
 			
 		});

@@ -30,7 +30,7 @@ class DicomUpload {
 			validationScriptURL: '../../scripts/validate_dicom_upload.php',
 			dicomsReceiptsScriptURL: '../../scripts/dicoms_receipts.php',
 			isNewStudyURL: '../../scripts/is_new_study.php',
-			alertMessageWhenNoVisitAwatingUpload: 'No visit is awaiting series upload. Please create a new visit by clicking on the patient in the patient tree.',
+			alertMessageWhenNoVisitAwatingUpload: 'No visit is awaiting series upload. Please create a new visit by clicking on the patient in the <a id="redirect-to-investigator" href="#">patient tree</a>.',
 			minNbOfInstances: 30,
 			idVisit: null,
 			refreshRateProgBar: 200,
@@ -39,7 +39,10 @@ class DicomUpload {
 				event.preventDefault();
 				event.returnValue = ''; // Needed for Chrome
 			},
-			callbackOnAbort: null
+			callbackOnAbort: function(){
+				refreshInvestigatorDiv()
+			}
+			
 		}
 
 		// Override custom config if set
@@ -75,6 +78,9 @@ class DicomUpload {
 			if (visits.length === 0) {
 				this.m.dz.dom.attr('hidden', '');
 				this.v.alert.add('info', this.config.alertMessageWhenNoVisitAwatingUpload);
+				$('#redirect-to-investigator').on('click', function() {
+					refreshInvestigatorDiv();
+				});
 			}
 			this.m.expectedVisits = visits;
 		});
@@ -420,6 +426,8 @@ class DicomUpload {
 				console.warn(e);
 			}
 		});
+
+		
 
 	}
 
