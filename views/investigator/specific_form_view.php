@@ -67,24 +67,39 @@
 		});
 
 		
-    });
+	});
+
 
 	function sendForm(){
 		$.ajax({
 			type: "POST",
+			//Not global to allow form send during dicom upload
+			global:false,
 			url: '/specific_form',
 			data: $("#<?=$study.'_'.$type_visit?>").serialize()+"&"+idButton+"=1", // serializes the form's elements.
 			success: function(data) {
-				//Refresh the tree
-				$('#containerTree').jstree(true).refresh();
+				
             	<?php
                 if (($_SESSION['role']) == User::INVESTIGATOR) {
-                ?>
-            		refreshDivContenu();
+				?>
+					if(window.dicomUploadInUse){
+						//Upload is pending, confirm sent form and unactivate form
+						alertifySuccess("Form Sent, you can finish your upload");
+						$("#specificForm *").prop('disabled',true);
+						$("#div_bouttons *").prop('disabled',true);
+						
+					}else{
+						refreshDivContenu();
+						//Refresh the tree
+						$('#containerTree').jstree(true).refresh();
+					}
+            		
             	<?php
                 } else if (($_SESSION['role']) == User::REVIEWER) {
                 ?>
-                     $('#contenu').empty();
+					$('#contenu').empty();
+					//Refresh the tree
+					$('#containerTree').jstree(true).refresh();
 	           <?php
                 }
                 ?>

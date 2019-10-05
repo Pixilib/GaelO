@@ -32,13 +32,14 @@
 		<?php
 		if ($_SESSION['role'] == User::INVESTIGATOR) {
 			?>
+
 		$("#uploadApp").on("click", function() {
 
 			if($("#uploadApp").text()=="Multi Uploader"){
 
 				$("#tree").html('<div id="uploadDicom" style="width:100%"></div>');
 				checkBrowserSupportDicomUpload('#uploadDicom');
-				var dicomUpload = new DicomUpload('#uploadDicom', {
+				new DicomUpload('#uploadDicom', {
 					multiImportMode: true,
 					expectedVisitsURL: '../../scripts/get_possible_import.php',
 					validationScriptURL: '../../scripts/validate_dicom_upload.php',
@@ -64,6 +65,7 @@
 		$('#containerTree').jstree({
 			"core": {
 				'data': {
+					'global' : false,
 					'url': 'scripts/getTree.php',
 					'dataType': 'json',
 					"type": "GET"

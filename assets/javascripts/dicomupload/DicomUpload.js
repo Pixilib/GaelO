@@ -61,6 +61,7 @@ class DicomUpload {
 
 		this.isUploading = false;
 		this.isInUse = false; // The user has entered data
+		window.dicomUploadInUse=false;
 
 		// Javascript intervals references need to be global variable
 		// in order to clear them if upload is aborted prematurely
@@ -92,6 +93,7 @@ class DicomUpload {
 
 	callbackOnComplete() {
 		this.isInUse = false;
+		window.dicomUploadInUse=false;
 		this.clearMemory();
 		// Allow page changing
 		window.removeEventListener('beforeunload', this.config.callbackOnBeforeUnload);
@@ -210,6 +212,7 @@ class DicomUpload {
 			this.v.studiesPanel.update(this.m.studies);
 			if (!this.isInUse) {
 				this.isInUse = true;
+				window.dicomUploadInUse=true;
 				this.preventAjaxDivLoading();
 			}
 		});
