@@ -67,6 +67,7 @@ class Tree {
 
         $jsonObject['id'] = $patientCode;
         $jsonObject['parent'] = '#';
+        $jsonObject['icon'] = '/assets/images/person-icon.png';
         $jsonObject['text'] = $patientCode;
     
         $this->json[] =$jsonObject;
@@ -93,6 +94,7 @@ class Tree {
         //create a patient entry
         $jsonObject['id'] = $patientCode;
         $jsonObject['parent'] = '#';
+        $jsonObject['icon'] = '/assets/images/person-icon.png';
         $jsonObject['text'] = $patientCode;
         $this->json[] =$jsonObject;
         //Add all visits of this patient
@@ -110,6 +112,7 @@ class Tree {
         foreach ($dataPatients as $patient) {
           $jsonObject['id'] = $patient;
           $jsonObject['parent'] = '#';
+          $jsonObject['icon'] = '/assets/images/person-icon.png';
           $jsonObject['text'] = $patient;
 
           $this->json[] =$jsonObject;
@@ -129,6 +132,7 @@ class Tree {
                 //create a patient entry
                 $jsonObject['id'] = $visitObject->patientCode;
                 $jsonObject['parent'] = '#';
+                $jsonObject['icon'] = '/assets/images/person-icon.png';
                 $jsonObject['text'] = $visitObject->patientCode;
                 $this->json[] =$jsonObject;
                 //Add the add patient in the array list
@@ -138,6 +142,7 @@ class Tree {
             //Add the visit entry
             $jsonObjectVisit['id'] = $visitObject->id_visit;
             $jsonObjectVisit['parent'] = $visitObject->patientCode;
+            $jsonObjectVisit['icon'] = '/assets/images/report-icon.png';
             $jsonObjectVisit['text'] = $visitObject->visitType;
             //Add review conclusion status in custom attribut (for reviewer filtering)
             $attr['review']=$visitObject->reviewStatus;
@@ -186,6 +191,7 @@ class Tree {
         
         $jsonObject['id'] = $data_visite['id_visit'];
         $jsonObject['parent'] = $numero_patient;
+        $jsonObject['icon'] = '/assets/images/report-icon.png';
         $jsonObject['text'] = $data_visite['visit_type'];
         $jsonObject['li_attr'] =$attr;
         
@@ -226,6 +232,7 @@ class Tree {
           $attr['class']=$class;
           $jsonObject['id'] = $data_visite['id_visit'];
           $jsonObject['parent'] = $numero_patient;
+          $jsonObject['icon'] = '/assets/images/report-icon.png';
           $jsonObject['text'] = $data_visite['visit_type'];
           $jsonObject['li_attr'] =$attr;
           
