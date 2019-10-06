@@ -1,6 +1,7 @@
 # GaelO
-
 Licence AGPL v.3
+
+GaelO is a free and open source web platform for medical imaging processing in clinical trials.
 
 Website : http://www.GaelO.fr
 
