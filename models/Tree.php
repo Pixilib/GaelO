@@ -138,6 +138,7 @@ class Tree {
             //Add the visit entry
             $jsonObjectVisit['id'] = $visitObject->id_visit;
             $jsonObjectVisit['parent'] = $visitObject->patientCode;
+            $jsonObject['icon'] = false;
             $jsonObjectVisit['text'] = $visitObject->visitType;
             //Add review conclusion status in custom attribut (for reviewer filtering)
             $attr['review']=$visitObject->reviewStatus;
@@ -186,6 +187,7 @@ class Tree {
         
         $jsonObject['id'] = $data_visite['id_visit'];
         $jsonObject['parent'] = $numero_patient;
+        $jsonObject['icon'] = false;
         $jsonObject['text'] = $data_visite['visit_type'];
         $jsonObject['li_attr'] =$attr;
         
@@ -226,6 +228,7 @@ class Tree {
           $attr['class']=$class;
           $jsonObject['id'] = $data_visite['id_visit'];
           $jsonObject['parent'] = $numero_patient;
+          $jsonObject['icon'] = false;
           $jsonObject['text'] = $data_visite['visit_type'];
           $jsonObject['li_attr'] =$attr;
           
