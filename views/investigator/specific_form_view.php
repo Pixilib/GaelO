@@ -47,19 +47,19 @@
     
 		//Validation of the form, send the form with Ajax
 		$( "#validate, #draft" ).on( "click", function(event) {
-		  idButton=id=event.target.id;
+		  var idButton=id=event.target.id;
 		  var confirmResult=false;
 		  var formCheck=false;
 		  if(idButton=="validate"){
 			  formCheck=validateForm();
 			  if (formCheck) {
-				  alertify.confirm('Validate?','Are you sure you want to validate this form ? \n\nIt will no longer be possible to modify the data entered by you.', function(){ sendForm(); }, function(){});
+				  alertify.confirm('Validate?','Are you sure you want to validate this form ? \n\nIt will no longer be possible to modify the data entered by you.', function(){ sendForm(idButton); }, function(){});
 			  }else {
 				  alertifyError("Fill mandatory fields")
 			  }
 		  }
 		  else{
-			  sendForm();
+			  sendForm(idButton);
 		  }
 		});
 
@@ -67,7 +67,7 @@
 	});
 
 
-	function sendForm(){
+	function sendForm(idButton){
 		$.ajax({
 			type: "POST",
 			//Not global to allow form send during dicom upload
@@ -88,8 +88,11 @@
 					if(window.dicomUploadInUse){
 						//Upload is pending, confirm sent form and unactivate form
 						alertifySuccess("Form Sent, you can finish your upload");
-						$("#specificForm *").prop('disabled',true);
-						$("#div_bouttons *").prop('disabled',true);
+						if(idButton=="validate"){
+							$("#specificForm *").prop('disabled',true);
+							$("#div_bouttons *").prop('disabled',true);
+						}
+
 						
 					}else{
 						// Refresh tree and content
