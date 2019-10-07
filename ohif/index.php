@@ -55,7 +55,8 @@
                   "/orthanc/dicom-web",
                 qidoSupportsIncludeField: true,
                 imageRendering: "wadors",
-                thumbnailRendering: "wadors"
+                thumbnailRendering: "wadors",
+                enableStudyLazyLoad: true
               }
             ]
           },
