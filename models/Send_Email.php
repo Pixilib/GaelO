@@ -154,7 +154,7 @@ Class Send_Email {
             $nameString=$firstName.' '.$lastName;
         }
         
-        $logoLink = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]/assets/images/gaelo-logo.png";
+        $logoLink = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]/assets/images/gaelo-logo-square.png";
                     
         $messageToSend =
         '<!doctype html> <html lang="en">
@@ -175,6 +175,11 @@ Class Send_Email {
                     #automatic {
                         font-style: italic;
                     }
+
+                    #logo-gaelo {
+                        max-height: 180px;
+                        width: auto;
+                    }
                     
                     #footer-contact{ color: black ; background: white ; text-align: left}
                     
@@ -183,7 +188,7 @@ Class Send_Email {
             </head>
             <body>
                 <header class="main-header" id ="header">
-                    <img src="'.$logoLink.'" alt="Banner Image"/>
+                    <img id="logo-gaelo" src="'.$logoLink.'" alt="Banner Image"/>
                 </header>
                 <h1><a href="http://'.$this->webAddress.'">'.$this->platformName.'</a></h1>
                 <div id="message">Dear '.$nameString.',<br>'.$this->message.'</div>
