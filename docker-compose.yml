@@ -6,6 +6,7 @@ services:
         build: gaelo
         restart: unless-stopped
         ports: ["8080:80"]
+        volumes: ["gaelo:/gaelo:Z"]
     orthancexposed:
         build: orthancexposed
         restart: unless-stopped
@@ -50,3 +51,4 @@ volumes:
         storageexposed:
         storagepacs:
         index:
+        gaelo:
