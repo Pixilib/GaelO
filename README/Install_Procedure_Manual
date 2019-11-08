@@ -27,7 +27,7 @@ Create virtual server in virtual min for the GaelO plateform
 Run Apache mod for the main site :
 	- In vistualmin : Server Configuration -> Website Options -> PHP Execution Mode
 
-Upload all GaelO files in the server's root apache folder
+Upload all GaelO files (gaelo/src) in the server's root apache folder
 
 Start the GaelO Install : 
 	- Go To http://domain/install/start.php

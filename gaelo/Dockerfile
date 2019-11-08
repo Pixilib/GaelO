@@ -17,16 +17,13 @@ RUN apt-get update -qy && \
     apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 RUN docker-php-ext-install -j$(nproc) opcache pdo_mysql
-ADD conf/php.ini /usr/local/etc/php/conf.d/app.ini
+ADD php.ini /usr/local/etc/php/conf.d/app.ini
 
-ADD conf/vhost.conf /etc/apache2/sites-available/000-default.conf
-ADD conf/apache.conf /etc/apache2/conf-available/z-app.conf
+ADD vhost.conf /etc/apache2/sites-available/000-default.conf
+ADD apache.conf /etc/apache2/conf-available/z-app.conf
 RUN a2enconf z-app
 RUN a2enmod rewrite
 RUN a2enmod headers
 
-COPY --chown=root:www-data gaelo .
+COPY --chown=root:www-data src .
 RUN composer install --no-dev
-
-#sudo docker build -t gaelo .
-#sudo docker run --name gaelo -it -p 8080:80 gaelo

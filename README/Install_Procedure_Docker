@@ -1,0 +1,3 @@
+
+sudo docker build -t gaelo .
+sudo docker run --name gaelo -it -p 8080:80 gaelo

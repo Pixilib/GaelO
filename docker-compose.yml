@@ -2,6 +2,10 @@ version: "2"
 #if needed to map the orthancPACS to a different hard disk device (after mounting it in path)
 # volumes: ["/home/petctviewer/orthanc:/var/lib/orthanc/db:Z"]
 services:
+    gaelo:
+        build: gaelo
+        restart: unless-stopped
+        ports: ["8080:80"]
     orthancexposed:
         build: orthancexposed
         restart: unless-stopped
