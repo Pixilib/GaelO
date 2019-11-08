@@ -1,5 +1,4 @@
-/vendor
-/_config
-/logs
-/form/Poo
-/form/scripts
+/logs/*
+!/logs/.htaccess
+/form/Poo/*
+/form/scripts/*
