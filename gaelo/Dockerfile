@@ -21,9 +21,14 @@ ADD php.ini /usr/local/etc/php/conf.d/app.ini
 
 ADD vhost.conf /etc/apache2/sites-available/000-default.conf
 ADD apache.conf /etc/apache2/conf-available/z-app.conf
-RUN a2enconf z-app
 RUN a2enmod rewrite
 RUN a2enmod headers
+RUN a2enconf z-app
+
 
 COPY --chown=root:www-data src .
 RUN composer install --no-dev
+
+RUN service apache2 restart
+
+

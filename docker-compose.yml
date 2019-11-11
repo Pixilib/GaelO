@@ -6,13 +6,14 @@ services:
         build: gaelo
         restart: unless-stopped
         ports: ["8080:80"]
-        volumes: ["gaelo:/gaelo:Z"]
+        #volumes: ["gaelo:/gaelo:Z"]
     orthancexposed:
         build: orthancexposed
         restart: unless-stopped
-        ports: ["8043:8042"]
+        ports: ["127.0.0.1:8043:8042"]
         volumes: ["storageexposed:/var/lib/orthanc/db:Z"]
         environment:
+            AC_REGISTERED_USERS: "{\"internal\":\"GaelO\",\"external\":\"GaelO\"}"
             TRANSFERS_BUNDLE_DEFAULTS: "true"
             NAME: OrthancExposed
             AC_AUTHENTICATION_ENABLED : "true"
@@ -27,6 +28,7 @@ services:
         ports: ["127.0.0.1:8042:8042"]
         volumes: ["storagepacs:/var/lib/orthanc/db:Z"]
         environment:
+            AC_REGISTERED_USERS: "{\"GaelO\":\"GaelO\",\"dicomWeb\":\"dicomWeb\"}"
             DW_ENABLED: "true"
             TRANSFERS_BUNDLE_DEFAULTS: "true"
             AC_AUTHENTICATION_ENABLED : "true"
@@ -46,9 +48,31 @@ services:
                     MYSQL_DATABASE: orthancPacs
                     MYSQL_ROOT_PASSWORD: foo-root
             restart: unless-stopped
+    indexgaelo:
+        image: mysql:8.0
+        command: [mysqld, --default-authentication-plugin=mysql_native_password, --log-bin-trust-function-creators=1]
+        volumes: ["indexgaelo:/var/lib/mysql:Z"]
+        environment:
+                MYSQL_ENABLED: "true" 
+                MYSQL_PASSWORD: gaelo
+                MYSQL_USER: gaelo
+                MYSQL_DATABASE: gaelo
+                MYSQL_ROOT_PASSWORD: gaelo
+        restart: unless-stopped
+    phpmyadmin:
+        depends_on:
+        - indexgaelo
+        image: phpmyadmin/phpmyadmin
+        restart: always
+        ports:
+        - '8081:80'
+        environment:
+            PMA_HOST: indexgaelo
+            MYSQL_ROOT_PASSWORD: gaelo   
 
 volumes:
         storageexposed:
         storagepacs:
         index:
-        gaelo:
+        #gaelo:
+        indexgaelo:

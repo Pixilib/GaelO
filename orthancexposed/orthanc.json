@@ -1,6 +1,5 @@
 {
         "DicomServerEnabled" : false,
-        "RegisteredUsers": {"internal": "GaelO", "external":"GaelO"},
         "LuaScripts" : [
             "/etc/share/orthanc/scripts/access.lua"
         ]

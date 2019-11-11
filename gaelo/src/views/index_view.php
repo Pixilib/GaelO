@@ -50,15 +50,15 @@
 									}, 2000);
 
 								} else if (data['result'] == "Blocked") {
-									$("#error").html("Your account has been blocked. Please contact <?= GAELO_CORPORATION ?> by clicking on “A request? Any questions? “, below this page");
+									$("#error").html("Your account has been blocked. Please contact <?php if(defined('GAELO_CORPORATION')) echo(GAELO_CORPORATION); else echo('GaelO')?> by clicking on “A request? Any questions? “, below this page");
 
 
 								} else if (data['result'] == "Deactivated") {
-									$("#error").html("Your account has been deactivated. Please contact <?= GAELO_CORPORATION ?> by clicking on “A request? Any questions? “, below this page");
+									$("#error").html("Your account has been deactivated. Please contact <?php if(defined('GAELO_CORPORATION')) echo(GAELO_CORPORATION); else echo('GaelO')?> by clicking on “A request? Any questions? “, below this page");
 
 
 								} else if (data['result'] == "unknown") {
-									$("#error").html("The username you entered is not recognized by the platform. Please enter your correct username or contact <?= GAELO_CORPORATION ?> by clicking on \"A request? Any questions?\", below this page.");
+									$("#error").html("The username you entered is not recognized by the platform. Please enter your correct username or contact <?php if(defined('GAELO_CORPORATION')) echo(GAELO_CORPORATION); else echo('GaelO')?> by clicking on \"A request? Any questions?\", below this page.");
 
 
 								} else if (data['result'] == "NowBlocked") {
