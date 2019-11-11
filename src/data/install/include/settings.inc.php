@@ -101,7 +101,7 @@
     define('EI_CONFIG_FILE_NAME', 'config.inc.php');
     // *** according to directory hierarchy (you may add/remove '../' before EI_CONFIG_FILE_DIRECTORY)
     define('EI_CONFIG_FILE_PATH', EI_CONFIG_FILE_DIRECTORY.EI_CONFIG_FILE_NAME);
-    define('WRITABLE_PATH_ARRAY', array('../data/_config', '../data/form', '../data/logs', '../data/upload'));
+    define('WRITABLE_PATH_ARRAY', array('../_config', '../form', '../logs', '../upload'));
 
     // *** specifies whether to allow new installation
     define('EI_ALLOW_NEW_INSTALLATION', true);        
