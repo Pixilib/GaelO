@@ -78,7 +78,7 @@ Class Session{
         
         //Load the config file defining constants
         if(!defined('DATABASE_HOST')){
-            require_once($_SERVER["DOCUMENT_ROOT"].'/_config/config.inc.php');
+            require_once($_SERVER["DOCUMENT_ROOT"].'/data/_config/config.inc.php');
         }
         
         //Instanciate PDO connexion with SSL or not
@@ -115,10 +115,10 @@ Class Session{
      */
     public static function logInfo(string $stringInfo){
         
-        if(is_writable($_SERVER["DOCUMENT_ROOT"].'/logs/')){
+        if(is_writable($_SERVER["DOCUMENT_ROOT"].'/data/logs/')){
             // create a log channel
             $log = new Logger('OpenTrialProcessor');
-            $log->pushHandler(new RotatingFileHandler($_SERVER["DOCUMENT_ROOT"].'/logs/gaelO.log', Logger::INFO));
+            $log->pushHandler(new RotatingFileHandler($_SERVER["DOCUMENT_ROOT"].'/data/logs/gaelO.log', Logger::INFO));
             $log->pushProcessor(new WebProcessor());
             $log->info($stringInfo);
         }else{

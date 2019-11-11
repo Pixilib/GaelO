@@ -78,9 +78,9 @@ Class Send_Email {
             $mail->SMTPSecure = $this->smtp_config['SMTPSecure'];
         }else{
             //Add DKIM private key if exist
-            if(file_exists($_SERVER['DOCUMENT_ROOT'].'/_config/dkim.private')){
+            if(file_exists($_SERVER['DOCUMENT_ROOT'].'/data/_config/dkim.private')){
                 $mail->DKIM_domain = GAELO_WEB_ADDRESS;
-                $mail->DKIM_private = $_SERVER['DOCUMENT_ROOT'].'/_config/dkim.private';
+                $mail->DKIM_private = $_SERVER['DOCUMENT_ROOT'].'/data/_config/dkim.private';
                 $mail->DKIM_selector = 'mail';
                 $mail->DKIM_passphrase = '';
                 $mail->DKIM_identity = $mail->From;

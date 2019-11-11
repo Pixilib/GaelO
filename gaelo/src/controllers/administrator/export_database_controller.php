@@ -63,7 +63,7 @@ if ($_SESSION['admin']) {
     
     
     //Export the log files
-    $logPhpPath = realpath($_SERVER['DOCUMENT_ROOT'].DIRECTORY_SEPARATOR.'logs');
+    $logPhpPath = realpath($_SERVER['DOCUMENT_ROOT'].DIRECTORY_SEPARATOR.'data'.DIRECTORY_SEPARATOR.'logs');
     // Create recursive directory iterator
     $files = new RecursiveIteratorIterator(
         new RecursiveDirectoryIterator($logPhpPath),

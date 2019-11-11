@@ -96,12 +96,12 @@
     // -------------------------------------------------------------------------
     // *** config file directory - directory, where config file must be created
     //     for ex.: '../common/' or 'common/' - according to directory hierarchy and relatively to start.php file
-    define('EI_CONFIG_FILE_DIRECTORY', '../_config/');
+    define('EI_CONFIG_FILE_DIRECTORY', '../data/_config/');
     // *** config file name - output file with config parameters (database, username etc.)
     define('EI_CONFIG_FILE_NAME', 'config.inc.php');
     // *** according to directory hierarchy (you may add/remove '../' before EI_CONFIG_FILE_DIRECTORY)
     define('EI_CONFIG_FILE_PATH', EI_CONFIG_FILE_DIRECTORY.EI_CONFIG_FILE_NAME);
-    define('WRITABLE_PATH_ARRAY', array('../_config', '../form', '../logs', '../upload'));
+    define('WRITABLE_PATH_ARRAY', array('../data/_config', '../form', '../data/logs', '../upload'));
 
     // *** specifies whether to allow new installation
     define('EI_ALLOW_NEW_INSTALLATION', true);        

@@ -1,0 +1,4 @@
+/gaelo/src/data/logs/*
+!/gaelo/src/data/.htaccess
+/gaelo/src/form/Poo/*
+/gaelo/src/form/scripts/*

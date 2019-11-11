@@ -112,7 +112,7 @@ Block SSH 22 port (or reserve to your own IP)
 -7-Email outbound
 For email sending you can use : 
 - External SMTP such as SendGrid or any other => Just go to Gaelo's admin Panel => preferences and define your SMTP server
-- Direct server mail outbound => used if SMTP is not selected, you may add an dkim key in the _config folder, the file needs to be named dkim.private (remove "_sample")
+- Direct server mail outbound => used if SMTP is not selected, you may add an dkim key in the data/_config folder, the file needs to be named dkim.private (remove "_sample")
 
 -8-Upgrade Orthanc in Docker
 Stop containers
