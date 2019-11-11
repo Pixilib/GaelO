@@ -25,7 +25,7 @@ RUN a2enmod rewrite
 RUN a2enmod headers
 RUN a2enconf z-app
 
-COPY --chown=root:www-data src .
+COPY --chown=www-data:www-data src .
 RUN composer install --no-dev
 
 RUN service apache2 restart
