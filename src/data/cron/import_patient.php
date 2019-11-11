@@ -30,7 +30,7 @@ $ftpSource=false;
  * $files : files from soures, use getFilesFromFolders if local path or getFilesFromFTP is remote FTP Server
  */
 $administratorUsername="administrator";
-//$files=getFilesFromFolder($_SERVER['DOCUMENT_ROOT'].'/cron/test');
+//$files=getFilesFromFolder($_SERVER['DOCUMENT_ROOT'].'/data/cron/test');
 //$files=getFilesFromFTP(false, 'localhost', 'user', 'pass', 'path');
 
 $linkpdo=Session::getLinkpdo();
