@@ -96,7 +96,7 @@
     // -------------------------------------------------------------------------
     // *** config file directory - directory, where config file must be created
     //     for ex.: '../common/' or 'common/' - according to directory hierarchy and relatively to start.php file
-    define('EI_CONFIG_FILE_DIRECTORY', '../data/_config/');
+    define('EI_CONFIG_FILE_DIRECTORY', '../_config/');
     // *** config file name - output file with config parameters (database, username etc.)
     define('EI_CONFIG_FILE_NAME', 'config.inc.php');
     // *** according to directory hierarchy (you may add/remove '../' before EI_CONFIG_FILE_DIRECTORY)
