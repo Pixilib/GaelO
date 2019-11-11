@@ -15,7 +15,6 @@
 
 /**
  * Upload a file documentation in the upload folder and write it's adress in the database
- * Upload folder need to be allowed by www-data :  sudo chown -R www-data upload (from supervisor path)
  */
 
 Session::checkSession();
@@ -27,7 +26,7 @@ $accessCheck=$userObject->isRoleAllowed($_SESSION['study'], $_SESSION['role']);
 if ($accessCheck && $_SESSION['role'] == User::SUPERVISOR) {
     $version=$_POST['version'];
 
-    $uploadDirectoryDestination = ($_SERVER['DOCUMENT_ROOT']."/upload/documentation/".$_SESSION['study']."/");
+    $uploadDirectoryDestination = ($_SERVER['DOCUMENT_ROOT']."/data/upload/documentation/".$_SESSION['study']."/");
     if (!is_dir($uploadDirectoryDestination)) {
         mkdir( $uploadDirectoryDestination , 0755, true );
     }

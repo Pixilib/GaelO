@@ -50,7 +50,7 @@ class Documentation {
         $this->accessReviewer=$documentation['reviewer'];
         $this->deleted=$documentation['deleted'];
         
-        $this->documentFileLocation = ($_SERVER['DOCUMENT_ROOT']."/upload/documentation/".$this->study."/".$this->documentName);
+        $this->documentFileLocation = ($_SERVER['DOCUMENT_ROOT']."/data/upload/documentation/".$this->study."/".$this->documentName);
     }
     
     /**

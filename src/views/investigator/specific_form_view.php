@@ -119,7 +119,7 @@
 	<h1 class='form-control bloc_bordures'>Investigation form</h1>
 	<?php  
 	//Add specific view in form folder
-	require("form/scripts/$study"."_"."$type_visit.php");
+	require("/data/form/scripts/$study"."_"."$type_visit.php");
 	?>
 </div>
 

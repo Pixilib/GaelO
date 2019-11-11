@@ -541,7 +541,7 @@ class Visit{
      */
     public function getFromProcessor(bool $local, string $username){
         //Destination of the specific post processing POO
-        $specificObjectFile=$_SERVER["DOCUMENT_ROOT"]."/form/Poo/$this->study"."_"."$this->visitType.php";
+        $specificObjectFile=$_SERVER["DOCUMENT_ROOT"]."/data/form/Poo/$this->study"."_"."$this->visitType.php";
         
         $formProcessor=null;
         

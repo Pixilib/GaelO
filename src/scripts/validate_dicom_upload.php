@@ -35,9 +35,9 @@ require_once($_SERVER['DOCUMENT_ROOT'].'/vendor/autoload.php');
 Session::checkSession();
 $linkpdo=Session::getLinkpdo();
 
-$zipPath=$_SERVER['DOCUMENT_ROOT'].'/upload/'.$_POST['file_name'];
+$zipPath=$_SERVER['DOCUMENT_ROOT'].'/data/upload/'.$_POST['file_name'];
 
-$destination=$_SERVER['DOCUMENT_ROOT'].DIRECTORY_SEPARATOR.'upload'.DIRECTORY_SEPARATOR.uniqid("upload");
+$destination=$_SERVER['DOCUMENT_ROOT'].'/data/upload/'.uniqid("upload");
 if (!is_dir($destination)) {
 		mkdir( $destination , 0755 );
 }

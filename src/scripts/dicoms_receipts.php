@@ -16,8 +16,8 @@
 /**
  * Recive Chunks of upload an reconstruct final uploaded ZIP
  */
-define('UPLOADS_DIR', $_SERVER['DOCUMENT_ROOT'] . DIRECTORY_SEPARATOR . 'upload');
-define('UPLOADS_TEMP_DIR', UPLOADS_DIR . DIRECTORY_SEPARATOR . 'temp');
+define('UPLOADS_DIR', $_SERVER['DOCUMENT_ROOT'] . '/data/upload');
+define('UPLOADS_TEMP_DIR', UPLOADS_DIR . '/temp');
 
 require_once($_SERVER['DOCUMENT_ROOT'].'/vendor/autoload.php');
 

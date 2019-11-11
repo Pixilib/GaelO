@@ -42,7 +42,7 @@ if ($_SESSION['admin']) {
     $zip->addFile($fileSql, "export_database_$date.sql");
     
     //Export the specific Php form/Object study Visit Files from Server
-    $specificPhpPath = realpath($_SERVER['DOCUMENT_ROOT'].DIRECTORY_SEPARATOR.'form');
+    $specificPhpPath = realpath($_SERVER['DOCUMENT_ROOT'].'/data/form');
     // Create recursive directory iterator
     $files = new RecursiveIteratorIterator(
         new RecursiveDirectoryIterator($specificPhpPath),
@@ -63,7 +63,7 @@ if ($_SESSION['admin']) {
     
     
     //Export the log files
-    $logPhpPath = realpath($_SERVER['DOCUMENT_ROOT'].DIRECTORY_SEPARATOR.'data'.DIRECTORY_SEPARATOR.'logs');
+    $logPhpPath = realpath($_SERVER['DOCUMENT_ROOT'].'/data/logs');
     // Create recursive directory iterator
     $files = new RecursiveIteratorIterator(
         new RecursiveDirectoryIterator($logPhpPath),
@@ -84,7 +84,7 @@ if ($_SESSION['admin']) {
     
     
     //Export the documentation files
-    $documentationPath = realpath($_SERVER['DOCUMENT_ROOT'].DIRECTORY_SEPARATOR.'upload'.DIRECTORY_SEPARATOR.'documentation');
+    $documentationPath = realpath($_SERVER['DOCUMENT_ROOT'].'/data/upload/documentation');
     if(is_dir($documentationPath)){
         // Create recursive directory iterator
         $files = new RecursiveIteratorIterator(
