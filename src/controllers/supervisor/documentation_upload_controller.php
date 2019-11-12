@@ -58,9 +58,8 @@ if ($accessCheck && $_SESSION['role'] == User::SUPERVISOR) {
 			//Log Activity
 			$actionDetails['filename']=$uploadedFilename;
 			$actionDetails['vesion']=$version;
-			Tracker::logActivity($_SESSION['username'], User::SUPERVISOR, $_SESSION['study'], null, "Add Documentation", $actionDetails);
-			
-            echo 'Success !!';
+            Tracker::logActivity($_SESSION['username'], User::SUPERVISOR, $_SESSION['study'], null, "Add Documentation", $actionDetails);
+            
             header('Location : ../index.php');
             exit;
 		//if error when moving file.
