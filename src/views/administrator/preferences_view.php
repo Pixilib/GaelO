@@ -43,7 +43,7 @@
        
 </script>
 <div class="jumbotron">
-	<form id="prefrenceForm" class="align-self-center" >
+	<form id="prefrenceForm" class="align-self-center" autocomplete="off" >
 		<div>
 			<label for="plateformName">Plateform Name</label><input name="plateformName" type="text" maxlength="32" value="<?=GAELO_PLATEFORM_NAME?>"><br>
 		    <label for="adminEmail">Administrator Email</label><input name="adminEmail" type="text" maxlength="255" value="<?=GAELO_ADMIN_EMAIL?>"><br>
