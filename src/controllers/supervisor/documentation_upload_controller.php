@@ -60,8 +60,9 @@ if ($accessCheck && $_SESSION['role'] == User::SUPERVISOR) {
 			$actionDetails['vesion']=$version;
 			Tracker::logActivity($_SESSION['username'], User::SUPERVISOR, $_SESSION['study'], null, "Add Documentation", $actionDetails);
 			
-			echo 'Success !';
-			header("Refresh:1;url=../index.php");
+            echo 'Success !!';
+            header('Location : ../index.php');
+            exit;
 		//if error when moving file.
 		} else {
 		    echo 'Failed ! Err'.$_FILES['documentationfile']["error"];
