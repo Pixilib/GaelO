@@ -486,7 +486,7 @@ CREATE TABLE `preferences` (
 --
 
 INSERT INTO `preferences` (`patient_code_length`, `name`, `admin_email`, `email_reply_to`, `corporation`, `address`, `parse_date_import`, `parse_country_name`, `orthanc_exposed_internal_address`, `orthanc_exposed_internal_port`, `orthanc_exposed_external_address`, `orthanc_exposed_external_port`, `orthanc_exposed_internal_login`, `orthanc_exposed_internal_password`, `orthanc_exposed_external_login`, `orthanc_exposed_external_password`, `orthanc_pacs_address`, `orthanc_pacs_port`, `orthanc_pacs_login`, `orthanc_pacs_password`, `use_smtp`, `smtp_host`, `smtp_port`, `smtp_user`, `smtp_password`, `smtp_secure`) VALUES
-(14, 'GaelO', 'administrator@gaelo.fr', '', 'GaelO', 'GaelO.fr', 'm.d.Y', 'US', 'http://localhost', 8043, '', 0, 'internal', 'GaelO', 'external', 'GaelO', 'http://localhost', 8042, 'GaelO', 'GaelO', 0, '', 0, '', '', 'ssl');
+(14, 'GaelO', 'administrator@gaelo.fr', '', 'GaelO', 'GaelO.fr', 'm.d.Y', 'US', 'http://orthancexposed', 8042, '', 0, 'internal', 'GaelO', 'external', 'GaelO', 'http://orthancpacs', 8042, 'GaelO', 'GaelO', 0, '', 0, '', '', 'ssl');
 
 -- --------------------------------------------------------
 

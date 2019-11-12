@@ -50,7 +50,7 @@ if ($_SESSION['admin']) {
             
             //Create specific file that will need to be edited by user to fill specific data of the forms
             $modelPooFile=$_SERVER["DOCUMENT_ROOT"].'/form_models/study_visit_poo.php';
-            $modelScriptFile=$_SERVER["DOCUMENT_ROOT"].'/form_models/models/study_visit_script.php';
+            $modelScriptFile=$_SERVER["DOCUMENT_ROOT"].'/form_models/study_visit_script.php';
             $destinationPoo=$rootSpecificModelsFolder.DIRECTORY_SEPARATOR.$_POST['studyName']."_".$visitData[0].'.php';
             $destinationScript=$rootSpecificScriptFolder.DIRECTORY_SEPARATOR.$_POST['studyName']."_".$visitData[0].'.php';
             copy($modelPooFile, $destinationPoo);
