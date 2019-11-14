@@ -34,77 +34,27 @@ if ($_SESSION['admin']) {
         echo 'mysqldump-php error: ' . $e->getMessage();
     }
     
-    $date =Date('Ymd_his');
+    $date = Date('Ymd_his');
     
     $zip = new ZipArchive;
     $tempZip = tempnam(ini_get('upload_tmp_dir'), 'TMPZIPDB_');
     $zip->open($tempZip, ZipArchive::CREATE);
     $zip->addFile($fileSql, "export_database_$date.sql");
+
+    //Export the config files
+    exportPath('/data/_config', '_config/');
+
+    //Export the cron files
+    exportPath('/data/cron', 'cron/');
+
+    //Export the form files
+    exportPath('/data/form', 'form/');
     
-    //Export the specific Php form/Object study Visit Files from Server
-    $specificPhpPath = realpath($_SERVER['DOCUMENT_ROOT'].'/data/form');
-    // Create recursive directory iterator
-    $files = new RecursiveIteratorIterator(
-        new RecursiveDirectoryIterator($specificPhpPath),
-        RecursiveIteratorIterator::LEAVES_ONLY
-        );
-    
-    foreach ($files as $name => $file) {
-        // Skip directories (they would be added automatically)
-        if (!$file->isDir()) {
-            // Get real and relative path for current file
-            $filePath = $file->getRealPath();
-            $relativePath = substr($filePath, strlen($specificPhpPath) + 1);
-            
-            // Add current file to archive
-            $zip->addFile($filePath, 'form/'.$relativePath);
-        }
-    }
-    
-    
-    //Export the log files
-    $logPhpPath = realpath($_SERVER['DOCUMENT_ROOT'].'/data/logs');
-    // Create recursive directory iterator
-    $files = new RecursiveIteratorIterator(
-        new RecursiveDirectoryIterator($logPhpPath),
-        RecursiveIteratorIterator::LEAVES_ONLY
-        );
-    
-    foreach ($files as $name => $file) {
-        // Skip directories (they would be added automatically)
-        if (!$file->isDir()) {
-            // Get real and relative path for current file
-            $filePath = $file->getRealPath();
-            $relativePath = substr($filePath, strlen($logPhpPath) + 1);
-            
-            // Add current file to archive
-            $zip->addFile($filePath, 'logs/'.$relativePath);
-        }
-    }
-    
+    //Export the logs files
+    exportPath('/data/logs', 'logs/');
     
     //Export the documentation files
-    $documentationPath = realpath($_SERVER['DOCUMENT_ROOT'].'/data/upload/documentation');
-    if(is_dir($documentationPath)){
-        // Create recursive directory iterator
-        $files = new RecursiveIteratorIterator(
-            new RecursiveDirectoryIterator($documentationPath),
-            RecursiveIteratorIterator::LEAVES_ONLY
-            );
-        
-        foreach ($files as $name => $file) {
-            // Skip directories (they would be added automatically)
-            if (!$file->isDir()) {
-                // Get real and relative path for current file
-                $filePath = $file->getRealPath();
-                $relativePath = substr($filePath, strlen($documentationPath) + 1);
-                
-                // Add current file to archive
-                $zip->addFile($filePath, 'upload/documentation/'.$relativePath);
-            }
-        }
-    }
-    
+    exportPath('/data/upload/documentation', 'upload/documentation');
     
     //Export the full list of series in JSON
     $seriesFullJson=json_encode(Global_Data::getAllSeriesOrthancID($linkpdo), JSON_PRETTY_PRINT);
@@ -124,4 +74,34 @@ if ($_SESSION['admin']) {
     
 }else{
     require 'includes/no_access.php';
+}
+
+/**
+ * Export a source folder to the current zip object
+ * ex : source = /data/_config
+ * destination = _config
+ */
+function exportPath(String $sourcePath, String $destinationPath){
+    global $zip;
+
+    $path = realpath($_SERVER['DOCUMENT_ROOT'].$sourcePath);
+    if(is_dir($path)){
+        // Create recursive directory iterator
+        $files = new RecursiveIteratorIterator(
+            new RecursiveDirectoryIterator($path),
+            RecursiveIteratorIterator::LEAVES_ONLY
+            );
+        
+        foreach ($files as $name => $file) {
+            // Skip directories (they would be added automatically)
+            if (!$file->isDir()) {
+                // Get real and relative path for current file
+                $filePath = $file->getRealPath();
+                $relativePath = substr($filePath, strlen($path) + 1);
+                
+                // Add current file to archive
+                $zip->addFile($filePath, $destinationPath.$relativePath);
+            }
+        }
+    }
 }
