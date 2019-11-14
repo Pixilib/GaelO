@@ -153,8 +153,6 @@ Class Send_Email {
         }else{
             $nameString=$firstName.' '.$lastName;
         }
-        
-        $logoLink = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]/assets/images/gaelo-logo-square.png";
                     
         $messageToSend =
         '<!doctype html> <html lang="en">
@@ -188,7 +186,7 @@ Class Send_Email {
             </head>
             <body>
                 <header class="main-header" id ="header">
-                    <img id="logo-gaelo" src="'.$logoLink.'" alt="Banner Image"/>
+                    <img id="logo-gaelo" src=logo_gaelo alt="Banner Image"/>
                 </header>
                 <h1><a href="http://'.$this->webAddress.'">'.$this->platformName.'</a></h1>
                 <div id="message">Dear '.$nameString.',<br>'.$this->message.'</div>
@@ -210,6 +208,7 @@ Class Send_Email {
         $htmlMessageObject = new \Html2Text\Html2Text($messageToSend);
         $mail->Body    = $messageToSend;
         $mail->AltBody = $htmlMessageObject->getText();
+        $mail->AddEmbeddedImage('assets/images/gaelo-logo-square.png', 'logo_gaelo');
         
         
     }
