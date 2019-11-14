@@ -42,10 +42,10 @@ if ($_SESSION['admin']) {
     $zip->addFile($fileSql, "export_database_$date.sql");
 
     //Export the config files
-    exportPath('/data/_config', '_config');
+    exportPath('/data/_config', '_config/');
 
     //Export the cron files
-    exportPath('/data/cron', 'cron');
+    exportPath('/data/cron', 'cron/');
 
     //Export the form files
     exportPath('/data/form', 'form/');

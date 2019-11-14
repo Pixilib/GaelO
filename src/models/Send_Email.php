@@ -186,7 +186,7 @@ Class Send_Email {
             </head>
             <body>
                 <header class="main-header" id ="header">
-                    <img id="logo-gaelo" src=logo_gaelo alt="Banner Image"/>
+                    <img id="logo-gaelo" src=cid:logo_gaelo alt="Banner Image"/>
                 </header>
                 <h1><a href="http://'.$this->webAddress.'">'.$this->platformName.'</a></h1>
                 <div id="message">Dear '.$nameString.',<br>'.$this->message.'</div>
