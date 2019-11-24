@@ -20,10 +20,11 @@ RUN docker-php-ext-install -j$(nproc) opcache pdo_mysql
 COPY php.ini /usr/local/etc/php/conf.d/app.ini
 
 COPY vhost.conf /etc/apache2/sites-available/000-default.conf
-COPY apache.conf /etc/apache2/conf-available/z-app.conf
+COPY apache.conf /etc/apache2/conf-available/gaelo-app.conf
 RUN a2enmod rewrite
 RUN a2enmod headers
-RUN a2enconf z-app
+RUN a2enmod remoteip
+RUN a2enconf gaelo-app
 
 COPY --chown=www-data:www-data src .
 RUN composer install --no-dev
