@@ -13,6 +13,10 @@
  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
 ?>
+
+<link rel="shortcut icon" href="assets/images/favicon.ico" type="image/x-icon">
+<link rel="icon" href="assets/images/favicon.ico" type="image/x-icon">
+
 <!-- JavaScript  JQuery-->
 <script
 	src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
