@@ -113,9 +113,11 @@ if (isset($_SESSION['username']) && $patientAllowed) {
         $email->setMessage($message);
         //List all supervisors of the study
         $supervisorsEmail=$email->getRolesEmails(User::SUPERVISOR, $visitObject->study);
+        $monitorEmail=$email->getRolesEmails(User::MONITOR, $visitObject->study);
+        $emailList=array_merge($supervisorsEmail,$monitorEmail);
         //Get users email
         $userEmail=$email->getUserEmails($_SESSION['username']);
-        array_push($supervisorsEmail, $userEmail);
+        array_push($emailList, $userEmail);
         //Get users affiliated to a same center than patient
         $patientObject=$visitObject->getPatient();
         $patientCenter=$patientObject->getPatientCenter();
@@ -124,7 +126,7 @@ if (isset($_SESSION['username']) && $patientAllowed) {
         foreach ($usersAffiliatedSameCenters as $user){
         	$userRoles=$userObject->getRolesInStudy($_SESSION['study']);
             if(in_array(User::INVESTIGATOR, $userRoles)){
-            	if(! in_array($user->userEmail, $supervisorsEmail)) array_push($supervisorsEmail, $user->userEmail);
+            	if(! in_array($user->userEmail, $emailList)) array_push($emailList, $user->userEmail);
             }
         }
         

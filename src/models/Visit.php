@@ -575,7 +575,10 @@ class Visit{
             && $this->stateInvestigatorForm==Visit::DONE 
             && $this->stateQualityControl==Visit::NOT_DONE){
 			//Inform Controllers that Visit is uploaded and awaiting QC
-            $email=$emailObject->getRolesEmails(User::CONTROLLER, $this->study);
+            $emailsController=$emailObject->getRolesEmails(User::CONTROLLER, $this->study);
+            $emailsMonitor=$emailObject->getRolesEmails(User::MONITOR, $this->study);
+            $emailsSupervisor=$emailObject->getRolesEmails(User::SUPERVISOR, $this->study);
+            $email=array_merge($emailsController, $emailsMonitor, $emailsSupervisor);
             if($username!=null) {
                 $email[]=$emailObject->getUserEmails($username);
             }
