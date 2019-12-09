@@ -32,7 +32,6 @@
     	           data: $("#forgotForm").serialize()+"&send=1", // serializes the form's elements.
     	           success: function(data) {
         	          if(data=="Success"){
-            	          console.log('ici');
         	        	  $("#forgotConfirm").html("New password successfully sent by email, redirecting to main page");
         	        	  $("#forgotConfirm").removeClass( "alert-danger" ).addClass( "alert-success" );
         	        	  $("#forgotConfirm").show();
