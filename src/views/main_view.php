@@ -40,6 +40,14 @@
 				});
 			});
 
+			$("#myAccountButton").on("click", function() {
+				$("#messengerDialog").load('/my_account', function() {
+					$("#messengerDialog").dialog("open");
+				});
+			});
+
+			
+
 			$("#etude").on('change', function(e) {
 				//flush Role selector
 				$('#role').empty();
@@ -281,8 +289,11 @@
 				<?php
 				}
 				?>
+				<div class="float-right">
+					<button id="messengerButton" class="btn btn-info">Messenger</button>
+					<button id="myAccountButton" class="btn btn-info mr-5">My Account</button>
+				</div>
 
-				<button id="messengerButton" class="btn btn-info float-right">Messenger</button>
 			</div>
 			<div>
 				<div id="messengerDialog"></div>

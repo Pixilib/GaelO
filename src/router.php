@@ -68,6 +68,9 @@ if ( !isset($_GET['page']) ) {
 }else if ($_GET['page'] == 'modify_user'){
     require 'controllers/administrator/modify_user_controller.php';
     
+}else if ($_GET['page'] == 'my_account'){
+    require 'controllers/my_account_controller.php';
+    
 }else if ($_GET['page'] == 'export_database'){
     require 'controllers/administrator/export_database_controller.php';
     

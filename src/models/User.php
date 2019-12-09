@@ -547,7 +547,7 @@ class User {
             'prenom' => $first_name,
             'email' => $email,
             'date_Utilisateur' => date('Y-m-d'),
-            'telephone' => empty($phone) ? $phone : null,
+            'telephone' => empty($phone) ? null : $phone,
             'job' => $job,
             'statut' => $status,
             'admin'=>intval($administrator),
