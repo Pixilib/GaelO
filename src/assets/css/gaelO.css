@@ -131,6 +131,10 @@ font-size: 14px;
 	border-radius: .2rem;
 }
 
+.visitLink {
+	text-decoration: underline;
+}
+
 #tree {
 	margin-top: 16px;
 }

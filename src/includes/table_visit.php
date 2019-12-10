@@ -93,7 +93,7 @@ function build_visit_details_table(array $visitObjects, string $role) { ?>
                 if ($numberOfSeries == 0) $numberOfSeries = "Not Uploaded";
                 ?>    
                 <tr>
-        	         <td><?=htmlspecialchars($visitObject->visitType)?></td>
+        	         <td class="visitLink" data-visitid=<?=$visitObject->id_visit?> ><?=htmlspecialchars($visitObject->visitType)?></td>
         	         <td><?=$visitObject->statusDone?></td>
         	         <td><?=$visitObject->uploadStatus?></td>
         	         <td><?=$visitObject->stateInvestigatorForm?></td>
