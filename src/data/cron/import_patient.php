@@ -22,17 +22,13 @@
 
 require_once($_SERVER['DOCUMENT_ROOT'].'/vendor/autoload.php');
 
-$ftpSource=false;
+$ftpReader=new FTP_Reader();
 
-/**
- * Define paramaters :
- * $administratorUsername : username (should exist) used for the import
- * $files : files from soures, use getFilesFromFolders if local path or getFilesFromFTP is remote FTP Server
- */
-$administratorUsername="administrator";
-//$files=getFilesFromFolder($_SERVER['DOCUMENT_ROOT'].'/data/cron/test');
-//$files=getFilesFromFTP(false, 'localhost', 'user', 'pass', 'path');
+$files=$ftpReader->setFTPCredential();
 
+print_r($files);
+
+/*
 $linkpdo=Session::getLinkpdo();
 
 foreach ($files as $file){
@@ -60,81 +56,12 @@ foreach ($files as $file){
         $destinators=$email->getRolesEmails(User::SUPERVISOR, $studyName);
         $email->sendEmail($destinators, 'Import Report');
 
+    }else if(!is_dir($file)  && $path_parts['extension']=='txt'){
+
     }
     
     //erase downloaded source file if from FTP
-    if($ftpSource) unlink($file);
+    //if($ftpSource) unlink($file);
 }
-
-/**
- * Return temporary files copied from FTP Server
- * @param bool $ssl
- * @param string $host
- * @param string $username
- * @param string $password
- * @param string $path
- * @param int $port
- * @return string[]
- */
-function getFilesFromFTP(bool $ssl, string $host, string $username, string $password, string $path='/', int $port=21){
-    global $ftpSource;
-    $ftpSource=true;
-    
-    if($ssl){
-        $ftpConnect=ftp_ssl_connect ($host, $port) or die("Can't Connect to Server $host");
-        
-    }else{
-        $ftpConnect = ftp_connect($host, $port) or die("Can't Connect to Server $host"); 
-    }
-    
-    if(ftp_login($ftpConnect, $username, $password)){
-        
-        //Move to the target folder
-        if(!ftp_chdir($ftpConnect, $path)){
-            die("Can't reach FTP Path Target");
-        }
-        // Get files in the ftp folder
-        $fileContents = ftp_nlist($ftpConnect, ".");
-        
-        $resultFileArray=[];
-        
-        foreach ($fileContents as $fileInFtp){
-            $temp = fopen(sys_get_temp_dir().DIRECTORY_SEPARATOR.$fileInFtp, 'w');
-            ftp_fget($ftpConnect, $temp, $fileInFtp);
-            fclose($temp);
-            //Store resulting file in array
-            $resultFileArray[]=sys_get_temp_dir().DIRECTORY_SEPARATOR.$fileInFtp;
-        }
-        
-        
-        ftp_close($ftpConnect);
-        return $resultFileArray;
-        
-    }else{
-
-        ftp_close($ftpConnect);
-        die( 'Bad FTP credentials');
-    }
-}
-
-/**
- * Return files from a local folder
- * @param string $folder
- * @return string[]
- */
-function getFilesFromFolder(string $folder){
-    
-    $scanned_directory = array_diff(scandir($folder), array('..', '.'));
-    
-    $resultFileArray=[];
-    
-    foreach ($scanned_directory as $file){
-        
-        $resultFileArray[]=$importJsonFolderPath.DIRECTORY_SEPARATOR.$file;
-        
-    }
-    
-    return $resultFileArray;
-    
-}
+*/
 
