@@ -16,6 +16,9 @@
 /**
  * Access Data from FTP Source
  */
+
+use phpseclib\Net\SFTP;
+
 Class FTP_Reader {
 
     public $ftpUsername;
@@ -23,23 +26,19 @@ Class FTP_Reader {
     public $ftpHost;
     public $ftpFolder;
     public $ftpPort;
-    public $ftpIsSecure;
-
-	public function __construct () {
-	    
-    }
+    public $ftpIsSftp;
 
     /**
      * 
      */
-    public function setFTPCredential (String $host, String $username, String $password, String $folder='/', int $port=21, bool $isSecure=false) {
+    public function setFTPCredential (String $host, String $username, String $password, String $folder='/', int $port=21, bool $ftpIsSftp=false) {
 
         $this->ftpHost=$host;
         $this->ftpUsername=$username;
         $this->ftpPassword=$password;
         $this->ftpFolder=$folder;
         $this->ftpPort=$port;
-        $this->ftpIsSecure=$isSecure;
+        $this->ftpIsSftp=$ftpIsSftp;
 
     }
 
@@ -47,50 +46,101 @@ Class FTP_Reader {
      * Download the FTP folder taget and return an array of temporary dowloaded files
      */
     function getFilesFromFTP () {
-        global $ftpSource;
-        $ftpSource=true;
+
+        error_log('starting FTP connexion');
         
-        if($this->ftpIsSecure){
-            $ftpConnect=ftp_ssl_connect ($this->ftpHost, $this->ftpPort) or die("Can't Connect to Server "+$this->ftpHost);
+        if($this->ftpIsSftp){
+
+            $filesArray=$this->getSftp();
+            //$ftpConnect = ftp_ssl_connect ($this->ftpHost, $this->ftpPort) or die("Can't Connect to Server ".$this->ftpHost);
             
         }else{
-            $ftpConnect = ftp_connect($this->ftpHost, $this->ftpPort) or die("Can't Connect to Server "+$this->ftpHost); 
+            $filesArray=$this->getFtp();
+        }
+
+        return $filesArray;
+
+        
+    }
+
+    public function getSftp(){
+
+        $sftp = new SFTP($this->ftpHost);
+
+        if (!$sftp->login($this->ftpUsername, $this->ftpPassword)) {
+            throw new Exception('Login SFTP failed');
+        }
+
+        if(! $sftp->chdir($this->ftpFolder)){
+            throw new Exception("Can't reach SFTP Path Target");
+        };
+
+        //$sftp->get('remote_file', 'local_file');
+        //$sftp->put('remote_file', 'contents for remote file');
+        
+        $fileContents = $sftp->nlist();
+
+        //Remove . and ..
+        unset($fileContents[0]);
+        unset($fileContents[1]);
+
+        $resultFileArray=[];
+        
+        foreach ($fileContents as $fileInFtp){
+            $fileState=$sftp->stat($fileInFtp);
+            print_r($fileState);
+            $temp = fopen(sys_get_temp_dir().DIRECTORY_SEPARATOR.$fileInFtp, 'w');
+            //Retrieve File from SFTP
+            $sftp->get($fileInFtp, $temp);
+            fclose($temp);
+            //Store resulting file in array
+            $resultFileArray[]=sys_get_temp_dir().DIRECTORY_SEPARATOR.$fileInFtp;
+        }
+
+        return $resultFileArray;
+
+    }
+
+    public function getFtp(){
+
+        if( ! $ftpConnect = ftp_connect($this->ftpHost, $this->ftpPort)){
+            throw new Exception('Cant Connect to Server'.$this->ftpHost);
+        }
+
+        if(!ftp_login($ftpConnect, $this->ftpUsername, $this->ftpPassword)){
+            ftp_close($ftpConnect);
+            throw new Exception('Login failed');
+        };
+
+        //Move to the target folder
+        if(!ftp_chdir($ftpConnect, $this->ftpFolder)){
+            ftp_close($ftpConnect);
+            throw new Exception("Can't reach FTP Path Target");
+        }
+
+        // Get files in the ftp folder
+        $fileContents = ftp_nlist($ftpConnect, ".");
+        
+        $resultFileArray=[];
+        
+        foreach ($fileContents as $fileInFtp){
+            $temp = fopen(sys_get_temp_dir().DIRECTORY_SEPARATOR.$fileInFtp, 'w');
+            ftp_fget($ftpConnect, $temp, $fileInFtp);
+            fclose($temp);
+            //Store resulting file in array
+            $resultFileArray[]=sys_get_temp_dir().DIRECTORY_SEPARATOR.$fileInFtp;
         }
         
-        if(ftp_login($ftpConnect, $this->ftpUsername, $this->ftpPassword)){
-            
-            //Move to the target folder
-            if(!ftp_chdir($ftpConnect, $this->ftpFolder)){
-                die("Can't reach FTP Path Target");
-            }
-            // Get files in the ftp folder
-            $fileContents = ftp_nlist($ftpConnect, ".");
-            
-            $resultFileArray=[];
-            
-            foreach ($fileContents as $fileInFtp){
-                $temp = fopen(sys_get_temp_dir().DIRECTORY_SEPARATOR.$fileInFtp, 'w');
-                ftp_fget($ftpConnect, $temp, $fileInFtp);
-                fclose($temp);
-                //Store resulting file in array
-                $resultFileArray[]=sys_get_temp_dir().DIRECTORY_SEPARATOR.$fileInFtp;
-            }
-            
-            
-            ftp_close($ftpConnect);
-            return $resultFileArray;
-            
-        }else{
-    
-            ftp_close($ftpConnect);
-            die( 'Bad FTP credentials');
-        }
+        ftp_close($ftpConnect);
+
+        return $resultFileArray;
+
     }
 
     /**
      * Transform Text file with # separator to an associative array
      */
-    public function parseLysarcTxt(String $txt){
+    public static function parseLysarcTxt(String $txt){
 
         //Divided text in row by splitting new line
         $lines = explode("\n", $txt);
@@ -103,14 +153,15 @@ Class FTP_Reader {
             if($i==0){
                 $titles=$columns;
             }else{
+                $patient=[];
                 for ($j=0 ; $j< sizeof($columns); $j++){
-                    $results[][$titles[$j]]=$columns[$j];
+                    $patient[ $titles[$j] ]=$columns[$j];
                 }
+                $results[]=$patient;
             }
 
         }
 
-        error_log($results);
         return $results;
 
     }

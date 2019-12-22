@@ -24,9 +24,15 @@ require_once($_SERVER['DOCUMENT_ROOT'].'/vendor/autoload.php');
 
 $ftpReader=new FTP_Reader();
 
-$files=$ftpReader->setFTPCredential();
+$ftpReader->setFTPCredential("", "", "", "", 22, true );
 
+$files=$ftpReader->getFilesFromFTP();
 print_r($files);
+$fileAsString=file_get_contents ( $files[1] );
+$arrayLysarc = $ftpReader::parseLysarcTxt($fileAsString);
+
+print_r($arrayLysarc);
+print(json_encode($arrayLysarc));
 
 /*
 $linkpdo=Session::getLinkpdo();
