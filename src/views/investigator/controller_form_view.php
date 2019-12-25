@@ -43,11 +43,11 @@
             }
         
         // If form Not needed unactivate the form option
-        if (! $studyObject->formNeeded) {
+        if (! $visitType->localFormNeeded) {
             ?>$('input:radio[name="formDecision"]').prop("disabled", true);<?php
         }
         // if image Qc not Need unactivate the form option
-        if (! $studyObject->qcNeeded) {
+        if (! $visitType->qcNeeded) {
             ?>$('input:radio[name="imageDecision"]').prop("disabled", true); <?php
         }
         ?>

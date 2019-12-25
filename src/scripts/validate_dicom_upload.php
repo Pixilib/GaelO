@@ -91,7 +91,7 @@ if( $accessCheck && $role== User::INVESTIGATOR && $visitObject->uploadStatus==Vi
 		//Read imported map, it only have only one study
 		foreach ($importedMap as $studyID=>$seriesIDs){
 			//Anonymize and store new anonymized study Orthanc ID
-			$anonymizedIDArray[]=$orthancExposedObject->Anonymize($studyID, "Default", $visitObject->patientCode, $visitObject->visitType, $visitObject->study);
+			$anonymizedIDArray[]=$orthancExposedObject->Anonymize($studyID, $visitObject->getVisitCharacteristics()->anonProfile, $visitObject->patientCode, $visitObject->visitType, $visitObject->study);
 			error_log("Anonymization done at ".(microtime(true)-$start_time));
 			//Delete original import
 			$orthancExposedObject->deleteFromOrthanc("studies", $studyID);

@@ -154,7 +154,7 @@ if (isset($_SESSION['username']) && $patientAllowed) {
            
       }else{
         //if No form submitted, display the html form +- results
-        $studyObject=new Study($_SESSION ['study'], $linkpdo);
+        $visitType=$visitObject->getVisitCharacteristics();
         require 'views/investigator/controller_form_view.php';
 	}
 }else {

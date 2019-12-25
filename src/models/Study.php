@@ -21,27 +21,30 @@ Class Study {
     
     private $linkpdo;
     private $study;
+
+    //SK AJOUTER ETUDE ANCILLAIRE DE
     
-    public $formNeeded;
-    public $qcNeeded;
-    public $reviewNeeded;
-    public $daysLimitFromInclusion;
+    //public $formNeeded;
+    //public $qcNeeded;
+    //public $reviewNeeded;
+    //public $daysLimitFromInclusion;
     
     
     public function __construct($study, $linkpdo){
         $this->linkpdo=$linkpdo;
-        $this->study=$study;
         
         $connecter = $this->linkpdo->prepare('SELECT * FROM studies WHERE name=:study');
         $connecter->execute(array(
-        		"study" => $this->study,
+        		"study" => $study,
         ));
         $result = $connecter->fetch(PDO::FETCH_ASSOC);
+
+        $this->study=$result['name'];
         
-        $this->qcNeeded=$result['qc'];
-        $this->formNeeded=$result['form'];
-        $this->reviewNeeded=$result['review'];
-        $this->daysLimitFromInclusion=$result['limit_days_visit_from_inclusion'];
+        //$this->qcNeeded=$result['qc'];
+        //$this->formNeeded=$result['form'];
+        //$this->reviewNeeded=$result['review'];
+        //$this->daysLimitFromInclusion=$result['limit_days_visit_from_inclusion'];
         
         
     }
@@ -281,6 +284,9 @@ Class Study {
      * @param string $study
      * @return string JSON
      */
+
+    //SK A REVOIR A SPLITTER PAR VISITE ET PAR RAPPORT A LA DATE D INCLUSION
+    //SK CETTE METHODE EST A REVOIR COMPLETEMENT
     public function getAllPatientsVisitsStatus(){
         
         //Get ordered list of possible visits in this study
@@ -462,17 +468,14 @@ Class Study {
         
     }
     
-    public static function createStudy(string $studyName, $formNeeded, $qcNeeded, $reviewNeeded, $daysLimitBefore, PDO $linkpdo){
+    public static function createStudy(string $studyName, PDO $linkpdo){
         
+        //SK A AJOUTER IS ANCILLARY ET ANCILLARY OF
         
-        $req = $linkpdo->prepare('INSERT INTO studies (name, active, form, qc, review, limit_days_visit_from_inclusion) VALUES(:studyName, "1", :formNeeded, :qcNeeded, :reviewNeeded, :daysLimitBefore) ');
+        $req = $linkpdo->prepare('INSERT INTO studies (name) VALUES(:studyName) ');
         
         $req->execute(array(
-            'studyName' => $studyName,
-            'formNeeded'=> intval($formNeeded),
-            'qcNeeded' => intval($qcNeeded) ,
-            'reviewNeeded' => intval($reviewNeeded),
-            'daysLimitBefore' => intval($daysLimitBefore)
+            'studyName' => $studyName
         ));
         
     }

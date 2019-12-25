@@ -174,17 +174,17 @@ class Visit{
      */
     private function skipQcIfNeeded(){
         
-        $parentStudyObject=$this->getParentStudyObject();
+        $visitType=$this->getVisitCharacteristics();
         
-        if(! $parentStudyObject->formNeeded || $parentStudyObject->qcNeeded) {
+        if(! $visitType->localFormNeeded || $visitType->qcNeeded) {
 
             //If QC Not needed validate it
-            if( !$parentStudyObject->qcNeeded ){
+            if( !$visitType->qcNeeded ){
                 $this->editQc(true, true, null, null, Visit::QC_ACCEPTED, null);
                 
             }
             //If form Not Needed put investigator form to Done
-            if(!$parentStudyObject->formNeeded){
+            if(!$visitType->localFormNeeded){
                 $this->changeVisitStateInvestigatorForm(Visit::DONE);
             }
             
@@ -401,7 +401,7 @@ class Visit{
         $this->refreshVisitData();
         
         if($controlDecision==Visit::QC_ACCEPTED){
-            if( $this->getParentStudyObject()->reviewNeeded){
+            if( $this->getVisitCharacteristics()->reviewNeeded){
                 //If review needed make it available for reviewers
                 $this->changeReviewAvailability(true);
             }else{

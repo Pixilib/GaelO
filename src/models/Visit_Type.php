@@ -24,7 +24,18 @@ Class Visit_Type{
     public $name;
     public $tableReviewSpecificName;
     public $visitOrder;
-    public $limitNumberDays;
+
+    public $localFormNeeded;
+    public $qcNeeded;
+    public $reviewNeeded;
+    public $optionalVisit;
+    public $limitLowDays;
+    public $limitUpDay;
+    public $anonProfile;
+
+    //SK REFERENCE A CHECKER
+    //public $limitNumberDays;
+
     public $linkpdo;
     
     public function __construct(PDO $linkpdo, String $study, String $name){
@@ -38,7 +49,16 @@ Class Visit_Type{
         $this->name=$visitType['name'];
         $this->tableReviewSpecificName=$visitType['table_review_specific'];
         $this->visitOrder=$visitType['visit_order'];
-        $this->limitNumberDays=$visitType['limit_number_days'];
+
+        $this->localFormNeeded=$visitType['local_form_needed'];
+        $this->qcNeeded=$visitType['qc_needed'];
+        $this->reviewNeeded=$visitType['review_needed'];
+        $this->optionalVisit=$visitType['optional'];
+        $this->limitLowDays=$visitType['limit_low_days'];
+        $this->limitUpDays=$visitType['limit_up_days'];
+        $this->anonProfile=$visitType['anon_profile'];
+
+        //$this->limitNumberDays=$visitType['limit_number_days'];
         
     }
     
@@ -69,16 +89,22 @@ Class Visit_Type{
         
     }
     
-    public static function createVisit(String $studyName, String $visitName, $order, $limitNbDays, PDO $linkpdo){
+    public static function createVisit(String $studyName, String $visitName, int $order, int $limitLowDays, int $limitUpDays, bool $localFormNeed, bool $qcNeeded, bool $reviewNeeded, bool $optional, String $anonProfile, PDO $linkpdo){
         
-        $req = $linkpdo->prepare('INSERT INTO visit_type (study, name, table_review_specific, visit_order, limit_number_days)
-                                      VALUES(:studyName, :visitName, :tableSpecific, :order, :limitNumberDays)');
+        $req = $linkpdo->prepare('INSERT INTO visit_type (study, name, table_review_specific, visit_order, local_form_needed, qc_needed, review_needed, optional, limit_low_days, limit_up_days, anon_profile)
+                                      VALUES(:studyName, :visitName, :tableSpecific, :order, :localFormNeeded, :qcNeeded, :reviewNeeded, :optional, :limitLowDays, :limitUpDays, :anonProfile)');
         
         $req->execute(array('studyName' => $studyName,
             'visitName'=>$visitName,
             'tableSpecific'=>$studyName."_".$visitName,
             'order'=>intval($order),
-            'limitNumberDays'=>intval($limitNbDays)
+            'localFormNeeded'=>$localFormNeed,
+            'qcNeeded'=>$qcNeeded,
+            'reviewNeeded'=>$reviewNeeded,
+            'optional'=>$optional,
+            'limitLowDays'=>intval($limitLowDays),
+            'limitUpDays'=>intval($limitUpDays),
+            'anonProfile'=>$anonProfile
         ));
         
         //Create specific table of the visit for form with relation with the review table
