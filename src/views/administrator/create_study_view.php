@@ -16,28 +16,39 @@
 
  
     //SK A FAIRE
-    //CHECK UNICITE STUDY
-    //CHECK UNICITE VISITE NAME
-	//CHECK UNICITE VISIT ORDER
-	//REDUIRE NOTRE COLONNES DES NOMBRES
+    //CHECK UNICITE STUDY => A Tester
+    //CHECK UNICITE VISITE NAME => A Tester
+	//CHECK UNICITE VISIT ORDER => A tester
+	//REDUIRE nombre COLONNES DES NOMBRES => A tester
 	//TESTER CREATION DE VISITE
 	
 ?>
 
 <script type="text/javascript">
 	$(document).ready(function() {
+		
+		async function getExistingStudies(){
+
+			let existingStudies = await fetch('scripts/study.php').then((answer)=>{
+				return answer.json()
+			})
+
+			console.log(existingStudies)
+			
+			return existingStudies;
+		}
 
 		$("#newVisitBtn").on('click', function(){
 
 			let row="<tr> \
 						<td contenteditable=true>Name</td> \
-						<td contenteditable=true><input type=\"number\" min=0 class=\"\"/></td> \
+						<td contenteditable=true><input type=\"number\" min=0 max=100 value=0 class=\"\"/></td> \
 						<td><input type=\"checkbox\" class=\"\"/ checked ></td> \
 						<td><input type=\"checkbox\" class=\"\"/ checked></td> \
 						<td><input type=\"checkbox\" class=\"\"/ checked></td> \
-						<td><input type=\"checkbox\" class=\"\"/ checked></td> \
-						<td contenteditable=true><input type=\"number\" min=0 class=\"\"/></td> \
-						<td contenteditable=true><input type=\"number\" min=0 class=\"\"/></td> \
+						<td><input type=\"checkbox\" class=\"\"/ ></td> \
+						<td contenteditable=true><input type=\"number\" min=-10000 max=10000 value=0 class=\"\"/></td> \
+						<td contenteditable=true><input type=\"number\" min=-10000 max=10000 value=0 class=\"\"/></td> \
 						<td>\
 							<select class=\"\">\
 								<option value=\"Default\">Default</option> \
@@ -51,7 +62,7 @@
 
 		})
 
-		$('#createStudyBtn').on('click', function() {
+		$('#createStudyBtn').on('click', async function() {
 
 			let studyName = $("#studyName").val();
 
@@ -86,17 +97,47 @@
 				dataArray.visits.push(visitObject)
 			})
 
-			$.ajax({
-				type: "POST",
-        		url: 'scripts/create_study.php',
-        		dataType: 'json',
-				data  : dataArray,
-				success : function(data){
-					console.log(data)
-				}
+			function checkDuplicateName(){
+				var valueArr = dataArray.visits.map(function(item){ return item.name });
+				var isDuplicate = valueArr.some(function(item, idx){ 
+					return valueArr.indexOf(item) != idx 
+				});
+				return isDuplicate;
+			}
 
-			})
+			function checkDuplicateOrder(){
+				var valueArr = dataArray.visits.map(function(item){ return item.order });
+				var isDuplicate = valueArr.some(function(item, idx){ 
+					return valueArr.indexOf(item) != idx 
+				});
+				return isDuplicate;
+			}
+
+			async function checkDuplicateStudy(){
+				let existingStudies= await getExistingStudies();
+				return existingStudies.includes(studyName);
+			}
+
+			let isDuplicateStudyName = await checkDuplicateStudy();
 			
+
+			if(checkDuplicateName() || checkDuplicateOrder() || isDuplicateStudyName ){
+				alertifyError('Duplicate study / visit Name or Order, should be unique')
+				return;
+			}
+
+			$.ajax({
+					type: "POST",
+					dataType: 'json',
+					url: 'scripts/study.php',
+					data: dataArray, // serializes the form's elements.
+					success: function(data) {
+						if(data){
+							alertifySuccess("Done")
+							$("#adminDialog").dialog('close');
+						}					
+					}
+			});	
 		})
 
 	});
@@ -153,9 +194,6 @@
 		</div>
 
 		<button type="button" id="createStudyBtn" class="btn btn-primary">Create
-			Study</button>
-
-		<button type="button" id="createSubmit" class="btn btn-primary">Create
 			Study</button>
 
 </div>

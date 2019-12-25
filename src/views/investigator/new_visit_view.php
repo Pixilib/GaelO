@@ -66,8 +66,8 @@
 			$.ajax({
 				type: "POST",
 				dataType: 'json',
-				url: '/new_visit',
-				data: $("#addVisitForm").serialize()+'&validate=1', // serializes the form's elements.
+				url: 'scripts/visit.php',
+				data: $("#addVisitForm").serialize(), // serializes the form's elements.
 				success: function(data) {
 					if (data == "Success"){
 						//Close dialog and update JsTree

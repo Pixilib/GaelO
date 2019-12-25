@@ -28,6 +28,12 @@ class Visit_Manager {
     const DONE="Done";
     const NOT_DONE="Not Done";
     const SHOULD_BE_DONE="Should be done";
+    const PENDING="Pending";
+    const COMPLIANCY_YES="Yes";
+    const COMPLIANCY_NO="No";
+    const VISIT_WITHDRAWN="Visit Withdrawn";
+    const VISIT_POSSIBLY_WITHDRAWN="Possibly Withdrawn";
+    const OPTIONAL_VISIT="OPTIONAL_VISIT";
 
     public function __construct(string $patientNum, PDO $linkpdo){
         $this->linkpdo=$linkpdo;
@@ -144,6 +150,80 @@ class Visit_Manager {
         
     	if(!empty($missingVisits)) return true;
         else return false;
+    }
+
+    /**
+     * Determine Visit Status of a patient
+     * Theorical date are calculated from registration date and compared to
+     * acquisition date if visit created or actual date for non created visit
+     */
+    public static function determineVisitStatus(Patient $patientObject, String $visitName, PDO $linkpdo){
+
+        $registrationDate=$patientObject->getImmutableRegistrationDate();
+
+        $visitType=new Visit_Type($linkpdo, $patientObject->patientStudy, $visitName);
+
+        $dateDownLimit=$registrationDate->modify($visitType->limitLowDays.'day');
+        $dateUpLimit=$registrationDate->modify($visitType->limitUpDay.'day');
+
+        $visitAnswer['status']=null;
+        $visitAnswer['compliancy']=null;
+        $visitAnswer['shouldBeDoneBefore']=$dateUpLimit->format('Y-m-d');
+        $visitAnswer['shouldBeDoneAfter']=$dateDownLimit->format('Y-m-d');
+        $visitAnswer['state_investigator_form']=null;
+        $visitAnswer['state_quality_control']=null;
+        $visitAnswer['acquisition_date']=null;
+        $visitAnswer['upload_date']=null;
+        $visitAnswer['upload_status']=null;
+        $visitAnswer['id_visit']=null;
+
+        try{
+            //Visit Created check compliancy
+            $visitObject = Visit::getVisitbyPatientAndVisitName($patientObject->patientCode, $visitName, $linkpdo );
+            $visitAnswer['state_investigator_form']=$visitObject->stateInvestigatorForm;
+            $visitAnswer['state_quality_control']=$visitObject->stateQualityControl;
+            $visitAnswer['acquisition_date']=$visitObject->acquisitionDate;
+            $visitAnswer['upload_date']=$visitObject->uploadDate;
+            $visitAnswer['upload_status']=$visitObject->uploadStatus;
+            $visitAnswer['id_visit']=$visitObject->id_visit;
+            $testedDate=$visitObject->acquisitionDate;
+            $visitAnswer['status']=Visit_Manager::DONE;
+
+            if($testedDate>=$dateDownLimit && $testedDate<=$dateDownLimit){
+                $visitAnswer['compliancy']=Visit_Manager::COMPLIANCY_YES;
+            }else{
+                $visitAnswer['compliancy']=Visit_Manager::COMPLIANCY_NO;
+            }
+
+        }catch (Exception $e){
+             //Visit Not Created
+             //If optional visit no status determination
+            if($visitType->optionalVisit){
+                $visitAnswer['status']=Visit_Manager::OPTIONAL_VISIT;
+            }else{
+                //Compare actual time with theorical date to determine status
+                $testedDate = new DateTime ( date ( "Y-m-d" ) );
+                if($testedDate<=$dateUpLimit){
+                    $visitAnswer['status']=Visit_Manager::PENDING;
+                }else {
+                    $visitAnswer['status']=Visit_Manager::SHOULD_BE_DONE;
+                }
+
+            }
+
+        }
+
+        //Take account of possible withdrawal if not created
+        if($patientObject->patientWithdraw &&  $visitAnswer['acquisition_date']==null){
+            if( $patientObject->patientWithdrawDate < $dateDownLimit ){
+                $visitAnswer['status']=Visit_Manager::VISIT_WITHDRAWN;
+            }else if( $patientObject->patientWithdrawDate > $dateDownLimit ){
+                $visitAnswer['status']=Visit_Manager::VISIT_POSSIBLY_WITHDRAWN;
+            }
+        }
+
+        return $visitAnswer;
+
     }
     
    

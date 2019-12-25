@@ -452,7 +452,7 @@ Class Orthanc {
     	$tagsObjects[]=new TagAnon("0010,1030", $body); // Patient's weight
     
     	//Others
-    	$tagsObjects[]=new TagAnon("0008,0050", TagAnon::REPLACE, $clinicalStudy);  // Accession Number hardcoded to our system name
+    	$tagsObjects[]=new TagAnon("0008,0050", TagAnon::REPLACE, $clinicalStudy);  // Accession Number contains study name
     	$tagsObjects[]=new TagAnon("0010,0020", TagAnon::REPLACE, $newPatientID); //new Patient Name
     	$tagsObjects[]=new TagAnon("0010,0010", TagAnon::REPLACE, $newPatientName); //new Patient Name
     	

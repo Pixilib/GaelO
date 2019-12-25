@@ -279,15 +279,49 @@ Class Study {
         return $rolesList;
     }
 
+    public function getAllPatientsVisitsStatus(){
+
+        //Get ordered list of possible visits in this study
+        $allVisits=$this->getAllPossibleVisits($this->study);
+        //Get patients list in this study
+        $allPatients=$this->getAllPatientsInStudy($this->study);
+
+        $results=[];
+
+        foreach($allPatients as $patient) {
+
+            $patientCenter=$patient->getPatientCenter();
+
+            foreach($allVisits as $possibleVisit) {
+
+                $patientData=[];
+                $patientData['center']=$patientCenter->name;
+                $patientData['country']=$patientCenter->countryName;
+                $patientData['firstname']=$patient->patientFirstName;
+                $patientData['lastname']=$patient->patientLastName;
+                $patientData['birthdate']=$patient->patientBirthDate;
+                $patientData['registration_date']=$patient->patientRegistrationDate;
+
+                $visitStatus=Visit_Manager::determineVisitStatus($patient, $possibleVisit->name, $this->linkpdo);
+
+                $results[$possibleVisit->name][$patient->patientCode]= array_merge($patientData,$visitStatus);
+
+            }
+
+        }
+
+        return(json_encode($results));
+    }
+
     /**
      * Return patient status for all patient in a study with date and status calculation for expected visit
      * @param string $study
      * @return string JSON
      */
-
     //SK A REVOIR A SPLITTER PAR VISITE ET PAR RAPPORT A LA DATE D INCLUSION
     //SK CETTE METHODE EST A REVOIR COMPLETEMENT
-    public function getAllPatientsVisitsStatus(){
+    /*
+    public function getAllPatientsVisitsStatusOld(){
         
         //Get ordered list of possible visits in this study
         $allVisits=$this->getAllPossibleVisits($this->study);
@@ -443,7 +477,7 @@ Class Study {
         return(json_encode($results));
         
     }
-
+    */
     public function getStatistics() {
         return new Statistics($this, $this->linkpdo);
     }

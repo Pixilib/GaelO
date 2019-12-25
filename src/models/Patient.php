@@ -64,6 +64,10 @@ class Patient{
         $this->patientWithdrawDateString=$dataPatient['withdraw_date'];
         
     }
+
+    public function getImmutableRegistrationDate(){
+        return new DateTimeImmutable($this->patientRegistrationDate);
+    }
     
     /**
      * get Patient's Center Object
