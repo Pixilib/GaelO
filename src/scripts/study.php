@@ -49,6 +49,7 @@ if($_SERVER['REQUEST_METHOD']==='GET'){
         foreach($visitsArray as $visit){
             
             //Create visit Type entry with specific table
+            //SK BUG OPTIONAL EST TOUJOURS ACTIVE....
             Visit_Type::createVisit($studyName, $visit['name'], $visit['order'], $visit['dayMin'] , $visit['dayMax'], $visit['localForm'],
             $visit['qc'], $visit['review'], $visit['optional'], $visit['anonProfile'], $linkpdo);
             

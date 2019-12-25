@@ -30,7 +30,7 @@ Class Visit_Type{
     public $reviewNeeded;
     public $optionalVisit;
     public $limitLowDays;
-    public $limitUpDay;
+    public $limitUpDays;
     public $anonProfile;
 
     //SK REFERENCE A CHECKER
@@ -101,7 +101,7 @@ Class Visit_Type{
             'localFormNeeded'=>$localFormNeed,
             'qcNeeded'=>$qcNeeded,
             'reviewNeeded'=>$reviewNeeded,
-            'optional'=>$optional,
+            'optional'=>intval($optional),
             'limitLowDays'=>intval($limitLowDays),
             'limitUpDays'=>intval($limitUpDays),
             'anonProfile'=>$anonProfile

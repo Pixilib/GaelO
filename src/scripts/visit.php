@@ -20,6 +20,8 @@
  * PUT : Delete or Reactivate Visit
  */
 
+require_once($_SERVER['DOCUMENT_ROOT'].'/vendor/autoload.php');
+
 Session::checkSession();
 $linkpdo = Session::getLinkpdo();
 
@@ -67,9 +69,9 @@ if($_SERVER['REQUEST_METHOD']==='GET'){
                 Visit Type : ".$visitType."<br>
                 Creating Username : ".$userObject->lastName." ".$userObject->firstName."<br>";
 
-                $supervisorsEmails=$email->getRolesEmails(User::SUPERVISOR, $visitObject->study);
-                $email->setMessage($message);
-                $email->sendEmail($reviewersEmails, "Visit Not Done");
+                $supervisorsEmails=$emailObject->getRolesEmails(User::SUPERVISOR, $study);
+                $emailObject->setMessage($message);
+                $emailObject->sendEmail($supervisorsEmails, "Visit Not Done");
 
             }
 

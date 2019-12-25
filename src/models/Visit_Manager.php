@@ -164,7 +164,7 @@ class Visit_Manager {
         $visitType=new Visit_Type($linkpdo, $patientObject->patientStudy, $visitName);
 
         $dateDownLimit=$registrationDate->modify($visitType->limitLowDays.'day');
-        $dateUpLimit=$registrationDate->modify($visitType->limitUpDay.'day');
+        $dateUpLimit=$registrationDate->modify($visitType->limitUpDays.'day');
 
         $visitAnswer['status']=null;
         $visitAnswer['compliancy']=null;
