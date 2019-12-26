@@ -31,9 +31,8 @@ $patientAllowed=$userObject->isPatientAllowed($patient, $role);
 if( isset($_SESSION['username']) && $patientAllowed ){
 	
     //Instanciate Visit manager to check if visit creation is still possible
-    $visitManager=new Visit_Manager($patient, $linkpdo);
-    $visitPossible=$visitManager->isMissingVisit();
     $patientObject=new Patient($patient, $linkpdo);
+    $visitPossible=$patientObject->getVisitManager()->isMissingVisit();
     
     $visitArray=$patientObject->getPatientsVisits();
     

@@ -33,8 +33,9 @@ if (isset($_SESSION['username']) && $_SESSION['role'] == User::INVESTIGATOR && $
     // Get available Visit for creation from the study manager object
     // Usually only one visit to create to respect visit order but could be multipled
     // if an intermediate study has been deleted
-    $visitManager = new Visit_Manager($patientCode, $linkpdo);
-    $typeVisiteDispo = $visitManager->getNextVisitToCreate();
+    $patientObject= new Patient($patientCode, $linkpdo);
+    $typeVisiteDispo=$patientObject->getVisitManager()->getNextVisitToCreate();
+    
     
     require 'views/investigator/new_visit_view.php';
     

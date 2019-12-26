@@ -19,10 +19,10 @@
 
 class Visit_Manager {
     
-    private $patientNum;
-    private $withdraw;
+    private $patientCode;
     private $linkpdo;
     private $study;
+    private $patientObject;
     
     //Constants visit status available
     const DONE="Done";
@@ -35,19 +35,29 @@ class Visit_Manager {
     const VISIT_POSSIBLY_WITHDRAWN="Possibly Withdrawn";
     const OPTIONAL_VISIT="OPTIONAL_VISIT";
 
-    public function __construct(string $patientNum, PDO $linkpdo){
-        $this->linkpdo=$linkpdo;
-        $this->patientNum=$patientNum;
-        
-        $patientQuery = $this->linkpdo->prepare ( 'SELECT study, withdraw  FROM patients
-										      WHERE patients.code = :patient' );
-        
-        $patientQuery->execute ( array('patient' => $this->patientNum) );
-        $patientResults = $patientQuery->fetch(PDO::FETCH_ASSOC);
-        $this->study=$patientResults['study'];
-        $this->withdraw=$patientResults['withdraw'];
-        
-        
+    public function __construct(Patient $patientObject){
+        $this->linkpdo=$patientObject->linkpdo;
+        $this->patientCode=$patientObject->patientCode;
+        $this->patientObject=$patientObject;
+        $this->study=$this->patientObject->patientStudy;
+    }
+    
+
+    /**
+     * Return array of non created visit name for current patient
+     */
+    public function getNotCreatedVisitName(){
+
+        $allPossibleVisits=$this->patientObject->getPatientStudy()->getAllPossibleVisitTypes();
+        $createdVisits=$this->patientObject->getPatientsVisits();
+
+        $createdVisitName=array_map(function (Visit_Type $visitType){return $visitType->name;},  $createdVisits);
+        $possibleVisitName=array_map(function (Visit_Type $visitType){return $visitType->name;},  $allPossibleVisits);
+
+        $missingVisitName= array_diff($possibleVisitName, $createdVisitName);
+
+        return $missingVisitName;
+
     }
     
     /**
@@ -55,6 +65,8 @@ class Visit_Manager {
      * This methods find a deleted visit when the next visit is already created
      */
     private function getNotCreatedVisitBefore($visitOrderMax){
+
+
     	
     	$existingVisits = $this->linkpdo->prepare ( 'SELECT name
 														FROM visit_type 
@@ -62,7 +74,7 @@ class Visit_Manager {
 															AND name NOT IN (SELECT visits.visit_type FROM visits WHERE visits.patient_code=:patient 
 															AND visits.deleted=0) AND visit_order < :visitOrder' );
     	
-    	$existingVisits->execute ( array('patient' => $this->patientNum,
+    	$existingVisits->execute ( array('patient' => $this->patientCode,
     									'visitOrder'=>$visitOrderMax
     	) );
     	$missingVisits=$existingVisits->fetchAll(PDO::FETCH_COLUMN);
@@ -70,11 +82,58 @@ class Visit_Manager {
     	return $missingVisits;
     	
     }
+
+    //Retourne : la visite en attente de creation en 1er => celle apres la derniere crée et n+1 si visite optionnelle
+    //et les visites suprimées
+    //SK A Tester
+    public function getAvailableVisitToCreate(){
+
+        // if withdraw disallow visit creation
+        if ($this->patientObject->patientWithdraw) {
+            $availableVisitName[] = Patient::PATIENT_WITHDRAW;
+            return $availableVisitName;
+        }
+
+        $allPossibleVisits=$this->patientObject->getPatientStudy()->getAllPossibleVisitTypes();
+        $createdVisits=$this->patientObject->getPatientsVisits();
+
+        $createdVisitOrder=array_map(function (Visit_Type $visitType){return $visitType->visitOrder;},  $createdVisits);
+
+        $lastCreatedVisitOrder=max($createdVisitOrder);
+
+        $availableVisitName=[];
+
+        foreach($allPossibleVisits as $possibleVisit){
+
+            if($possibleVisit->visitOrder < $lastCreatedVisitOrder){
+                $availableVisitName[]=$possibleVisit->name;
+            }else{
+                if($possibleVisit->optionalVisit){
+                    //If optional add optional visit and look for the next order
+                    $availableVisitName[]=$possibleVisit->name;
+                    $lastCreatedVisitOrder++;
+                } else if($possibleVisit->visitOrder == ($lastCreatedVisitOrder+1) ){
+                    $availableVisitName[]=$possibleVisit->name;
+                    break;
+                }
+            }
+
+        }
+
+        if(empty($availableVisitName)) {
+            $availableVisitName[] = "Error - Please check that the study contains possible visits";
+        }
+
+        return $availableVisitName;
+
+    }
     
     /**
      * Return the visit able to be created, the n+1 visits + eventual previously deleted visits
      * @return string[]
      */
+    //SK CETTE METHODE EST A REVOIR
+    //PROBABLEMENT A SPLITER
     public function getNextVisitToCreate(){
         
         //  List already existing visits for this patient
@@ -85,13 +144,13 @@ class Visit_Manager {
 											  AND visit_type.study =patients.study 
                                               AND visits.deleted=0' );
         
-        $existingVisits->execute ( array('patient' => $this->patientNum) );
+        $existingVisits->execute ( array('patient' => $this->patientCode) );
         
         $existingResults = $existingVisits->fetch(PDO::FETCH_ASSOC);
        
         //List all visits possible in the study
         $studyObject=new Study($this->study,$this->linkpdo);
-        $dataAllVisits=$studyObject->getAllPossibleVisits();
+        $dataAllVisits=$studyObject->getAllPossibleVisitTypes();
         
         foreach ( $dataAllVisits as $value ) {
             $orderAllVisits [] = $value->visitOrder;
@@ -125,7 +184,7 @@ class Visit_Manager {
         }
         
         // if withdraw disallow visit creation
-        if ($this->withdraw) {
+        if ($this->patientObject->patientWithdraw) {
             $typeVisiteDispo[] = "withdraw";
         }
         
@@ -138,17 +197,7 @@ class Visit_Manager {
      * @return boolean
      */
     public function isMissingVisit(){
-    	
-    	$queryVisits = $this->linkpdo->prepare ( 'SELECT name
-														FROM visit_type
-														WHERE visit_type.study=(SELECT patients.study FROM patients WHERE patients.code= :patient)
-															AND name NOT IN (SELECT visits.visit_type FROM visits WHERE visits.patient_code=:patient
-															AND visits.deleted=0)');
-    	
-    	$queryVisits->execute ( array('patient' => $this->patientNum) );
-    	$missingVisits=$queryVisits->fetchAll(PDO::FETCH_COLUMN);
-        
-    	if(!empty($missingVisits)) return true;
+        if(sizeof($this->getNotCreatedVisitName()) >0) return true;
         else return false;
     }
 
@@ -157,11 +206,11 @@ class Visit_Manager {
      * Theorical date are calculated from registration date and compared to
      * acquisition date if visit created or actual date for non created visit
      */
-    public static function determineVisitStatus(Patient $patientObject, String $visitName, PDO $linkpdo){
+    public function determineVisitStatus(String $visitName){
 
-        $registrationDate=$patientObject->getImmutableRegistrationDate();
+        $registrationDate=$this->patientObject->getImmutableRegistrationDate();
 
-        $visitType=new Visit_Type($linkpdo, $patientObject->patientStudy, $visitName);
+        $visitType=new Visit_Type($this->linkpdo, $this->study, $visitName);
 
         $dateDownLimit=$registrationDate->modify($visitType->limitLowDays.'day');
         $dateUpLimit=$registrationDate->modify($visitType->limitUpDays.'day');
@@ -179,7 +228,7 @@ class Visit_Manager {
 
         try{
             //Visit Created check compliancy
-            $visitObject = Visit::getVisitbyPatientAndVisitName($patientObject->patientCode, $visitName, $linkpdo );
+            $visitObject = Visit::getVisitbyPatientAndVisitName($this->patientCode, $visitName, $this->linkpdo );
             $visitAnswer['state_investigator_form']=$visitObject->stateInvestigatorForm;
             $visitAnswer['state_quality_control']=$visitObject->stateQualityControl;
             $visitAnswer['acquisition_date']=$visitObject->acquisitionDate;
@@ -214,10 +263,10 @@ class Visit_Manager {
         }
 
         //Take account of possible withdrawal if not created
-        if($patientObject->patientWithdraw &&  $visitAnswer['acquisition_date']==null){
-            if( $patientObject->patientWithdrawDate < $dateDownLimit ){
+        if($this->patientObject->patientWithdraw &&  $visitAnswer['acquisition_date']==null){
+            if( $this->patientObject->patientWithdrawDate < $dateDownLimit ){
                 $visitAnswer['status']=Visit_Manager::VISIT_WITHDRAWN;
-            }else if( $patientObject->patientWithdrawDate > $dateDownLimit ){
+            }else if( $this->patientObject->patientWithdrawDate > $dateDownLimit ){
                 $visitAnswer['status']=Visit_Manager::VISIT_POSSIBLY_WITHDRAWN;
             }
         }

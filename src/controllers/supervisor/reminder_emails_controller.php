@@ -23,7 +23,7 @@ $linkpdo=Session::getLinkpdo();
 $userObject=new User($_SESSION['username'], $linkpdo);
 $accessCheck=$userObject->isRoleAllowed($_SESSION['study'], $_SESSION['role']);
 
-if ($accessCheck && $_SESSION['role'] == "Supervisor" ) {
+if ($accessCheck && $_SESSION['role'] == User::SUPERVISOR ) {
 	$username = $_SESSION['username'];
 
     //If form sent process it

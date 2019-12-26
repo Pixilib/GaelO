@@ -184,7 +184,7 @@ Class Study {
     }
     
     
-    public function getAllPossibleVisits(){
+    public function getAllPossibleVisitTypes(){
         $allVisitsType = $this->linkpdo->prepare('SELECT study, name FROM visit_type WHERE study = :study ORDER BY visit_order');
         $allVisitsType->execute(array('study' => $this->study));
         $allVisits=$allVisitsType->fetchall(PDO::FETCH_ASSOC);
@@ -282,7 +282,7 @@ Class Study {
     public function getAllPatientsVisitsStatus(){
 
         //Get ordered list of possible visits in this study
-        $allVisits=$this->getAllPossibleVisits($this->study);
+        $allVisits=$this->getAllPossibleVisitTypes($this->study);
         //Get patients list in this study
         $allPatients=$this->getAllPatientsInStudy($this->study);
 
@@ -291,6 +291,7 @@ Class Study {
         foreach($allPatients as $patient) {
 
             $patientCenter=$patient->getPatientCenter();
+            $visitManager=$patient->getVisitManager();
 
             foreach($allVisits as $possibleVisit) {
 
@@ -302,7 +303,7 @@ Class Study {
                 $patientData['birthdate']=$patient->patientBirthDate;
                 $patientData['registration_date']=$patient->patientRegistrationDate;
 
-                $visitStatus=Visit_Manager::determineVisitStatus($patient, $possibleVisit->name, $this->linkpdo);
+                $visitStatus=$visitManager->determineVisitStatus($possibleVisit->name);
 
                 $results[$possibleVisit->name][$patient->patientCode]= array_merge($patientData,$visitStatus);
 
@@ -324,7 +325,7 @@ Class Study {
     public function getAllPatientsVisitsStatusOld(){
         
         //Get ordered list of possible visits in this study
-        $allVisits=$this->getAllPossibleVisits($this->study);
+        $allVisits=$this->getAllPossibleVisitTypes($this->study);
         //Get patients list in this study
         $allPatients=$this->getAllPatientsInStudy($this->study);
         //Store actual time for comparison

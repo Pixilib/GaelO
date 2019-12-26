@@ -35,6 +35,8 @@ class Patient{
     public $patientWithdrawReason;
     public $patientWithdrawDate;
     public $patientWithdrawDateString;
+
+    const PATIENT_WITHDRAW="withdraw";
     
     function __construct($patientCode, PDO $linkpdo) {
         $this->patient=$patientCode;
@@ -160,6 +162,20 @@ class Patient{
     	
     	return $visitsObjectArray;
     	
+    }
+
+    /**
+     * Return visit Manage to manage patient's visit status
+     */
+    //SK ICI SURCHARGE DU VISIT MANAGER ?
+    public function getVisitManager(){
+
+        return new Visit_Manager($this);
+    }
+
+    public function getPatientStudy(){
+
+        return new Study($this->patientStudy, $this->linkpdo);
     }
       
 }

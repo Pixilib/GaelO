@@ -84,7 +84,7 @@
     
     	<?php
         // If patient withdrawn disable all the form
-        if ($typeVisiteDispo[0] == "withdraw") {
+        if ($typeVisiteDispo[0] == Patient::PATIENT_WITHDRAW) {
             ?> $("#addVisitForm :input").prop("disabled", true); <?php
         }
         ?>
