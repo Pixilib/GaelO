@@ -280,6 +280,29 @@ class Visit_Manager {
         return $visitAnswer;
 
     }
+
+    /**
+     * Return visits of this patient available for review
+     */
+    public function getAwaitingReviewVisits(){
+
+        $createdVisits=$this->patientObject->getPatientsVisits();
+
+        $availableVisitsForReview=[];
+
+        foreach($createdVisits as $visit){
+            if($visit->reviewAvailable){
+                $availableVisitsForReview[]=$visit;
+            }
+        }
+
+        return $availableVisitsForReview;
+    }
+
+    public function isHavingAwaitingReviewVisit(){
+        $awaitingReviews = $this->getAwaitingReviewVisits();
+        return ( ! empty($awaitingReviews) );
+    }
     
    
   

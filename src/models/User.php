@@ -374,7 +374,10 @@ class User {
             if($role==$this::INVESTIGATOR){ 
                 if ( $this->isPatientAllowed($visitData->patientCode, $role) ) return true;
             }else if($role==$this::REVIEWER){
-                if($visitData->reviewAvailable) return true;
+                //For reviewer the visit access is allowed if one of the created visits is still awaiting review
+                //This is made to allow access to references scans
+                $isAwaitingReview=$visitData->getPatient()->getVisitManager()->isHavingAwaitingReviewVisit();
+                return $isAwaitingReview;
             }else{
                 //Controller, Supervisor, Admin, Monitor simply accept when role is available in patient's study (no specific rules)
                 return true;

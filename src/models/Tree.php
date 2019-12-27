@@ -137,24 +137,12 @@ class Tree {
                 $this->json[] =$jsonObject;
                 //Add the add patient in the array list
                 $patientsArray[]=$visitObject->patientCode;
+                $this->make_Visit_Tree_Reviewer($visitObject->patientCode);
             }
-            
-            //Add the visit entry
-            $jsonObjectVisit['id'] = $visitObject->id_visit;
-            $jsonObjectVisit['parent'] = $visitObject->patientCode;
-            $jsonObjectVisit['icon'] = '/assets/images/report-icon.png';
-            $jsonObjectVisit['text'] = $visitObject->visitType;
-            //Add review conclusion status in custom attribut (for reviewer filtering)
-            $attr['review']=$visitObject->reviewStatus;
-            $jsonObjectVisit['li_attr']=$attr;
-            
-            $this->json[] =$jsonObjectVisit;
-            
             
         }
         
     }
-    
     
     return  $this->json;
   }
@@ -239,6 +227,29 @@ class Tree {
           $this->json[] = $jsonObject;
           
       }
+  }
+
+  private function make_Visit_Tree_Reviewer($patientCode){
+
+    $patientObject=new Patient($patientCode, $this->linkpdo);
+    $createdVisitsOject=$patientObject->getPatientsVisits();
+
+    foreach($createdVisitsOject as $visitObject){
+
+      //Add the visit entry
+      $jsonObjectVisit['id'] = $visitObject->id_visit;
+      $jsonObjectVisit['parent'] = $visitObject->patientCode;
+      $jsonObjectVisit['icon'] = '/assets/images/report-icon.png';
+      $jsonObjectVisit['text'] = $visitObject->visitType;
+      //Add review conclusion status in custom attribut (for reviewer filtering)
+      $attr['review']=$visitObject->reviewStatus;
+      $jsonObjectVisit['li_attr']=$attr;
+
+      $this->json[] = $jsonObjectVisit;
+
+    }
+
+
   }
   
 }

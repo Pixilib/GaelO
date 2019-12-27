@@ -59,7 +59,7 @@ if($permissionResults){
             exit();
         }
         
-        if($_SESSION['role']==User::INVESTIGATOR || $_SESSION['role']==User::REVIEWER){
+        if($_SESSION['role']==User::INVESTIGATOR || ($_SESSION['role']==User::REVIEWER && $visitObject->reviewAvailable) ){
             $roleDisable=false;
         }else{
             $roleDisable=true;

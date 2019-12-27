@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Dec 27, 2019 at 04:56 PM
+-- Generation Time: Dec 27, 2019 at 11:36 PM
 -- Server version: 5.7.28-0ubuntu0.16.04.2
 -- PHP Version: 7.3.11-1+ubuntu16.04.1+deb.sury.org+1
 
@@ -819,6 +819,7 @@ ALTER TABLE `visits`
 --
 ALTER TABLE `visit_type`
   ADD PRIMARY KEY (`study`,`name`),
+  ADD UNIQUE KEY `study_2` (`study`,`visit_order`),
   ADD KEY `type_visite_ibfk_2` (`name`),
   ADD KEY `study` (`study`);
 
