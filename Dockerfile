@@ -22,7 +22,7 @@ RUN docker-php-ext-install -j$(nproc) opcache pdo_mysql
 COPY php.ini /usr/local/etc/php/conf.d/app.ini
 
 COPY msmtprc /etc/msmtprc
-RUN chmod 644 /etc/msmtprc
+RUN chmod 600 /etc/msmtprc
 
 COPY vhost.conf /etc/apache2/sites-available/000-default.conf
 COPY apache.conf /etc/apache2/conf-available/gaelo-app.conf
@@ -33,8 +33,6 @@ RUN a2enconf gaelo-app
 
 COPY --chown=www-data:www-data src .
 RUN composer install --no-dev
-
-RUN ls -la /usr/sbin/sendmail
 
 RUN service apache2 restart
 
