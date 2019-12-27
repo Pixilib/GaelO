@@ -34,6 +34,8 @@ RUN a2enconf gaelo-app
 COPY --chown=www-data:www-data src .
 RUN composer install --no-dev
 
+RUN ls -la /usr/sbin/sendmail
+
 RUN service apache2 restart
 
 
