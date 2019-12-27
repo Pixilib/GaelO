@@ -13,11 +13,15 @@ RUN apt-get update -qy && \
     libzip-dev \
     zip && \
     docker-php-ext-install zip &&\
+    msmtp && \
     curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer && \
     apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 RUN docker-php-ext-install -j$(nproc) opcache pdo_mysql
 COPY php.ini /usr/local/etc/php/conf.d/app.ini
+
+COPY msmtprc /etc/msmtprc
+RUN chmod 600 /etc/msmtprc
 
 COPY vhost.conf /etc/apache2/sites-available/000-default.conf
 COPY apache.conf /etc/apache2/conf-available/gaelo-app.conf
