@@ -15,8 +15,6 @@
 
 /**
  * Acces data of Visit Type table
- * @author salim
- *
  */
 Class Visit_Type{
     
@@ -89,7 +87,7 @@ Class Visit_Type{
         
     }
     
-    public static function createVisit(String $studyName, String $visitName, int $order, int $limitLowDays, int $limitUpDays, bool $localFormNeed, bool $qcNeeded, bool $reviewNeeded, bool $optional, String $anonProfile, PDO $linkpdo){
+    public static function createVisitType(String $studyName, String $visitName, int $order, int $limitLowDays, int $limitUpDays, bool $localFormNeed, bool $qcNeeded, bool $reviewNeeded, bool $optional, String $anonProfile, PDO $linkpdo){
         
         $req = $linkpdo->prepare('INSERT INTO visit_type (study, name, table_review_specific, visit_order, local_form_needed, qc_needed, review_needed, optional, limit_low_days, limit_up_days, anon_profile)
                                       VALUES(:studyName, :visitName, :tableSpecific, :order, :localFormNeeded, :qcNeeded, :reviewNeeded, :optional, :limitLowDays, :limitUpDays, :anonProfile)');
@@ -98,9 +96,9 @@ Class Visit_Type{
             'visitName'=>$visitName,
             'tableSpecific'=>$studyName."_".$visitName,
             'order'=>intval($order),
-            'localFormNeeded'=>$localFormNeed,
-            'qcNeeded'=>$qcNeeded,
-            'reviewNeeded'=>$reviewNeeded,
+            'localFormNeeded'=>intval($localFormNeed),
+            'qcNeeded'=>intval($qcNeeded),
+            'reviewNeeded'=>intval($reviewNeeded),
             'optional'=>intval($optional),
             'limitLowDays'=>intval($limitLowDays),
             'limitUpDays'=>intval($limitUpDays),

@@ -64,6 +64,7 @@ class Visit_Manager {
      * Retrun non created visits array for the current patient before a current visit order
      * This methods find a deleted visit when the next visit is already created
      */
+    /*
     private function getNotCreatedVisitBefore($visitOrderMax){
 
 
@@ -82,11 +83,12 @@ class Visit_Manager {
     	return $missingVisits;
     	
     }
-
+    */
+    
     //Retourne : la visite en attente de creation en 1er => celle apres la derniere crée et n+1 si visite optionnelle
     //et les visites suprimées
     //SK A Tester
-    public function getAvailableVisitToCreate(){
+    public function getAvailableVisitsToCreate(){
 
         // if withdraw disallow visit creation
         if ($this->patientObject->patientWithdraw) {
@@ -120,6 +122,9 @@ class Visit_Manager {
 
         }
 
+        //Reverse to sort for the more advanced visit to create
+        $availableVisitName=array_reverse($availableVisitName);
+
         if(empty($availableVisitName)) {
             $availableVisitName[] = "Error - Please check that the study contains possible visits";
         }
@@ -134,6 +139,7 @@ class Visit_Manager {
      */
     //SK CETTE METHODE EST A REVOIR
     //PROBABLEMENT A SPLITER
+    /*
     public function getNextVisitToCreate(){
         
         //  List already existing visits for this patient
@@ -191,7 +197,7 @@ class Visit_Manager {
         return $typeVisiteDispo;
         
     }
-    
+    */
     /**
      * Return if there are still visits that are awaiting to be created for this patient
      * @return boolean

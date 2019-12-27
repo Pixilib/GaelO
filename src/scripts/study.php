@@ -49,11 +49,14 @@ if($_SERVER['REQUEST_METHOD']==='GET'){
         foreach($visitsArray as $visit){
             
             //Create visit Type entry with specific table
-            //SK BUG OPTIONAL EST TOUJOURS ACTIVE....
-            // SK A FAIRE PARSING DES BOOLEAN JAVASCRIPT
-            //$isClass = filter_var ($_POST['isClass'], FILTER_NULL_ON_FAILURE);
-            Visit_Type::createVisit($studyName, $visit['name'], $visit['order'], $visit['dayMin'] , $visit['dayMax'], $visit['localForm'],
-            $visit['qc'], $visit['review'], $visit['optional'], $visit['anonProfile'], $linkpdo);
+            //Parse text boolean to boolean var
+            $localForm = $visit['localForm']==='true';
+            $qc = $visit['qc']==='true';
+            $review = $visit['review']==='true';
+            $optional = $visit['optional']==='true';
+            //Create Visit Type
+            Visit_Type::createVisitType($studyName, $visit['name'], $visit['order'], $visit['dayMin'] , $visit['dayMax'], $localForm,
+            $qc, $review, $optional, $visit['anonProfile'], $linkpdo);
             
             $rootSpecificModelsFolder=$_SERVER["DOCUMENT_ROOT"].'/data/form/Poo';
             $rootSpecificScriptFolder=$_SERVER["DOCUMENT_ROOT"].'/data/form/scripts';

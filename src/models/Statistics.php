@@ -383,7 +383,7 @@ class Statistics {
 	        }
         }
         
-        $visitTypePossible=$this->studyObject->getAllPossibleVisits();
+        $visitTypePossible=$this->studyObject->getAllPossibleVisitTypes();
         foreach ($visitTypePossible as $visitType){
             $inputType=$visitType->getSpecificTableInputType();
             $dataDetails[$visitType->name]=$inputType;

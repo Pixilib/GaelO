@@ -272,6 +272,7 @@ class User {
     /**
      * Return affiliated center of the user
      */
+    //SK A REMPLACER PAR RETOUR D OBJETS ?
     public function getAffiliatedCenters(){
     	$result_center = $this->linkpdo->prepare('SELECT center FROM affiliated_centers WHERE affiliated_centers.username = :username ORDER BY center');
     	$result_center->execute(array('username' => $this->username));
@@ -465,14 +466,12 @@ class User {
     
     /**
      * Update password and account status of an user
-     * @param $username
      * @param $password
-     * @param $linkpdo
      * @param $status
      */
-    public static function updateUserPassword(string $username, string $password, PDO $linkpdo, string $status){
+    public function updateUserPassword(string $password, string $status){
         //Update the database with new password and switch old passwords
-        $req = $linkpdo->prepare('UPDATE users
+        $req = $this->linkpdo->prepare('UPDATE users
                                     SET previous_password_2=users.previous_password_1,
                                         previous_password_1=users.password,
                                         password = :mdp,
@@ -481,7 +480,7 @@ class User {
                                         status = :status
                                     WHERE username = :username');
         
-        $req->execute(array('username' => $username,
+        $req->execute(array('username' => $this->username,
             'mdp' => password_hash($password, PASSWORD_DEFAULT),
             'status'=>$status,
             'datePassword' => date('Y-m-d')));
@@ -490,20 +489,18 @@ class User {
     
     /**
      * Generate a temp password and set account to unconfirmed
-     * @param $username
      * @param $password
-     * @param $linkpdo
      */
-    public static function setUnconfirmedAccount(string $username, string $password, PDO $linkpdo){
+    public function setUnconfirmedAccount(string $password){
         
-        $req = $linkpdo->prepare('UPDATE users
+        $req = $this->linkpdo->prepare('UPDATE users
                                     SET temp_password = :mdp,
                                         number_attempts = 0,
                                         creation_date_password = :datePassword,
                                         status = :status
                                     WHERE username = :username');
         
-        $req->execute(array('username' => $username,
+        $req->execute(array('username' => $this->username,
             'mdp' => password_hash($password, PASSWORD_DEFAULT),
             'status'=>self::UNCONFIRMED,
             'datePassword' => date('Y-m-d')));

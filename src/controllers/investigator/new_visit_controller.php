@@ -34,7 +34,7 @@ if (isset($_SESSION['username']) && $_SESSION['role'] == User::INVESTIGATOR && $
     // Usually only one visit to create to respect visit order but could be multipled
     // if an intermediate study has been deleted
     $patientObject= new Patient($patientCode, $linkpdo);
-    $typeVisiteDispo=$patientObject->getVisitManager()->getNextVisitToCreate();
+    $typeVisiteDispo=$patientObject->getVisitManager()->getAvailableVisitsToCreate();
     
     
     require 'views/investigator/new_visit_view.php';

@@ -150,9 +150,9 @@ if (isset($_SESSION['admin'])) {
             Tracker::logActivity($_SESSION['username'], "Administrator", null, null, "Edit User", $actionDetails);
             
             //If new account status is unconfirmed (passord reset) , send the new password by email
-            if($status == "Unconfirmed"){
+            if($status == USER::UNCONFIRMED){
                 $new_mdp = substr(uniqid(), 1,10);
-                User::setUnconfirmedAccount($username, $new_mdp, $linkpdo);
+                $userObject->setUnconfirmedAccount($new_mdp);
                 
                 $mail=new Send_Email($linkpdo);
                 

@@ -103,7 +103,7 @@ if ($accessCheck && $_SESSION['role'] == User::SUPERVISOR ) {
                     $message = $message.'</table>';
                     
                     //Get emails account linked with the current center and respecting the role filter
-                    $emails=selectDesinatorEmailsfromCenters($_SESSION['study'], $center, $jobs, $linkpdo);
+                    $emails=$emailSender->selectDesinatorEmailsfromCenters($_SESSION['study'], $center, $jobs, $linkpdo);
 
                     //Send the email
                     $emailSender->setMessage($message);
@@ -144,7 +144,7 @@ if ($accessCheck && $_SESSION['role'] == User::SUPERVISOR ) {
                     
                 	$message=$message.'</table>';
                 	//List the destinators matching center and jobs requirement
-                	$emails=selectDesinatorEmailsfromCenters($_SESSION['study'],$center, $jobs, $linkpdo);
+                	$emails=$emailSender->selectDesinatorEmailsfromCenters($_SESSION['study'],$center, $jobs, $linkpdo);
                 	//Send the email
                 	$emailSender->setMessage($message);
                 	$emailSender->sendEmail($emails, "Reminder : Missing Investigator Form", $emailSender->getUserEmails($username));
@@ -182,7 +182,7 @@ if ($accessCheck && $_SESSION['role'] == User::SUPERVISOR ) {
                   	
                   	$message=$message.'</table>';
                   	//List the destinators matching center and jobs requirement
-                  	$emails=selectDesinatorEmailsfromCenters($_SESSION['study'], $center, $jobs, $linkpdo);
+                  	$emails=$emailSender->selectDesinatorEmailsfromCenters($_SESSION['study'], $center, $jobs, $linkpdo);
                   	//Send the email
                   	$emailSender->setMessage($message);
                   	$emailSender->sendEmail($emails, "Reminder : Missing Investigator Form", $emailSender->getUserEmails($username));
@@ -208,22 +208,3 @@ if ($accessCheck && $_SESSION['role'] == User::SUPERVISOR ) {
     require 'includes/no_access.php';
 }
 
-function selectDesinatorEmailsfromCenters($study, $center, $job, $linkpdo){
-	//Select All users that has a matching center
-	$users =Center::getUsersAffiliatedToCenter($linkpdo, $center);
-	$finalEmailList=[];
-	//For each user check that we match role requirement (array if investigator), string if monitor or supervisor
-	foreach ($users as $user){
-	    
-	    if( is_array($job) && !in_array($user->userJob, $job)){
-            continue;
-        }
-	
-        if($user->isRoleAllowed($study, User::INVESTIGATOR)){
-            $finalEmailList[]=$user->userEmail;;
-        }
-		
-	}
-	
-	return $finalEmailList;
-}

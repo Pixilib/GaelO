@@ -254,5 +254,58 @@ Class Send_Email {
     	$results=$connecter->fetchAll(PDO::FETCH_COLUMN);
     	return $results;
     }
+
+    /**
+	 * Return all users having a specific center in main of affiliated centers
+	 * @param PDO $linkpdo
+	 * @param $center
+	 * @return User[]
+	 */
+	private function getUsersAffiliatedToCenter(int $center){
+		
+		//Select All users that has a matching center
+		$queryUsersEmail=$this->linkpdo->prepare('
+								    SELECT users.username
+									FROM users
+									WHERE (center=:center)
+									UNION
+									SELECT affiliated_centers.username
+									FROM affiliated_centers,
+									     users
+									WHERE (affiliated_centers.center=:center
+									       AND affiliated_centers.username=users.username)');
+		
+		$queryUsersEmail->execute(array('center'=>$center));
+		$users=$queryUsersEmail->fetchAll(PDO::FETCH_COLUMN);
+		
+		$usersObjects=[];
+		foreach ($users as $user){
+			$usersObjects[]=new User($user, $$this->linkpdo);	
+		}
+		
+		return $usersObjects;
+
+    }
+    
+    public function selectDesinatorEmailsfromCenters(String $study, int $center, array $job){
+        //Select All users that has a matching center
+        $users =$this->getUsersAffiliatedToCenter($center);
+        $finalEmailList=[];
+        //For each user check that we match role requirement (array if investigator), string if monitor or supervisor
+        foreach ($users as $user){
+            
+            if( is_array($job) && !in_array($user->userJob, $job)){
+                continue;
+            }
+        
+            if($user->isRoleAllowed($study, User::INVESTIGATOR)){
+                $finalEmailList[]=$user->userEmail;;
+            }
+            
+        }
+        
+        return $finalEmailList;
+    }
+
     
 }

@@ -15,7 +15,6 @@
 
 /**
  * Center management in the plateform
- * @author salim
  */
 
 Class Center{
@@ -62,39 +61,6 @@ Class Center{
 	        'countryCode'=>$countryCode,
 	        'code'=>$this->code));
 	    
-	}
-	
-	/**
-	 * Return all users having a specific center in main of affiliated centers
-	 * @param PDO $linkpdo
-	 * @param $center
-	 * @return User[]
-	 */
-	public static function getUsersAffiliatedToCenter(PDO $linkpdo, $center){
-		
-		//Select All users that has a matching center
-		$queryUsersEmail=$linkpdo->prepare('
-								    SELECT users.username
-									FROM users
-									WHERE (center=:center)
-									UNION
-									SELECT affiliated_centers.username
-									FROM affiliated_centers,
-									     users
-									WHERE (affiliated_centers.center=:center
-									       AND affiliated_centers.username=users.username)');
-		
-		$queryUsersEmail->execute(array('center'=>$center));
-		$users=$queryUsersEmail->fetchAll(PDO::FETCH_COLUMN);
-		
-		$usersObjects=[];
-		foreach ($users as $user){
-			$usersObjects[]=new User($user, $linkpdo);
-			
-		}
-		
-		return $usersObjects;
-
 	}
 
 	/**

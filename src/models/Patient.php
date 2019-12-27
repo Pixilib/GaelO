@@ -169,12 +169,10 @@ class Patient{
      */
     //SK ICI SURCHARGE DU VISIT MANAGER ?
     public function getVisitManager(){
-
         return new Visit_Manager($this);
     }
 
     public function getPatientStudy(){
-
         return new Study($this->patientStudy, $this->linkpdo);
     }
       

@@ -118,17 +118,6 @@ if (isset($_SESSION['username']) && $patientAllowed) {
         //Get users email
         $userEmail=$email->getUserEmails($_SESSION['username']);
         array_push($emailList, $userEmail);
-        //Get users affiliated to a same center than patient
-        $patientObject=$visitObject->getPatient();
-        $patientCenter=$patientObject->getPatientCenter();
-        $usersAffiliatedSameCenters=$patientCenter->getUsersAffiliatedToCenter($linkpdo, $patientCenter->code);
-        //Select thoose who are investigators in the current study
-        foreach ($usersAffiliatedSameCenters as $user){
-        	$userRoles=$userObject->getRolesInStudy($_SESSION['study']);
-            if(in_array(User::INVESTIGATOR, $userRoles)){
-            	if(! in_array($user->userEmail, $emailList)) array_push($emailList, $user->userEmail);
-            }
-        }
         
         $email->sendEmail($emailList, "Quality Control");
         

@@ -31,8 +31,8 @@ Class Study {
     
     
     public function __construct($study, $linkpdo){
+
         $this->linkpdo=$linkpdo;
-        
         $connecter = $this->linkpdo->prepare('SELECT * FROM studies WHERE name=:study');
         $connecter->execute(array(
         		"study" => $study,
@@ -253,7 +253,6 @@ Class Study {
         
     }
     
-
     public function getUsersByRoleInStudy(String $role){
         $req = $this->linkpdo->prepare('SELECT username FROM roles
 									   WHERE study=:study AND name=:role ');
@@ -314,180 +313,15 @@ Class Study {
         return(json_encode($results));
     }
 
-    /**
-     * Return patient status for all patient in a study with date and status calculation for expected visit
-     * @param string $study
-     * @return string JSON
-     */
-    //SK A REVOIR A SPLITTER PAR VISITE ET PAR RAPPORT A LA DATE D INCLUSION
-    //SK CETTE METHODE EST A REVOIR COMPLETEMENT
-    /*
-    public function getAllPatientsVisitsStatusOld(){
-        
-        //Get ordered list of possible visits in this study
-        $allVisits=$this->getAllPossibleVisitTypes($this->study);
-        //Get patients list in this study
-        $allPatients=$this->getAllPatientsInStudy($this->study);
-        //Store actual time for comparison
-        $todayDate = new DateTime ( date ( "Y-m-d" ) );
-        
-        $results=[];
-        
-        // For each patient determine it's visist status
-        foreach($allPatients as $patient){
-            
-            $patientCenter=$patient->getPatientCenter();
-            $createdVisits=$patient->getPatientsVisits();
-            $patientRegistrationImmutableDate=new DateTimeImmutable($patient->patientRegistrationDate);
-            
-            //Add patient's common informations
-            foreach($allVisits as $possibleVisit){
-                $results[$possibleVisit->name][$patient->patientCode]['center']=$patientCenter->name;
-                $results[$possibleVisit->name][$patient->patientCode]['country']=$patientCenter->countryName;
-                $results[$possibleVisit->name][$patient->patientCode]['firstname']=$patient->patientFirstName;
-                $results[$possibleVisit->name][$patient->patientCode]['lastname']=$patient->patientLastName;
-                $results[$possibleVisit->name][$patient->patientCode]['birthdate']=$patient->patientBirthDate;
-                $results[$possibleVisit->name][$patient->patientCode]['registration_date']=$patient->patientRegistrationDate;
-            }
-            
-            //Make a map of all created visit
-            $createdVisitMap=[];
-            foreach ($createdVisits as $dataPatientVisit){
-                //Acquisition date of created visit
-            	$visitCharacteristics=$dataPatientVisit->getVisitCharacteristics();
-            	$createdVisitMap[$visitCharacteristics->visitOrder]=$dataPatientVisit;
-            }
-            
-            //Determine Visit Order missing
-            $missingOrder=[];
-            foreach ($allVisits as $possibleVisit){
-                if(empty($createdVisitMap[$possibleVisit->visitOrder])){
-                    $missingOrder[]=$possibleVisit->visitOrder;
-                }
-            }
-            
-            //Determine compliancy / status of created visits
-            foreach($createdVisitMap as $visitOrder=>$dataPatientVisit ){
-
-                $visitAcquisitionDate=$dataPatientVisit->getImmutableAcquisitionDate();
-                
-                //Search for the last created Visit
-                $previousCreated=$visitOrder-1;
-                while( empty($createdVisitMap[$previousCreated]) && $previousCreated>-1 ){
-                    $previousCreated--;
-                }
-                
-                $timeLimitAddition=0;
-                for($i=$previousCreated+1 ; $i==$visitOrder ;$i++){
-                    $timeLimitAddition+=$allVisits[$i]->limitNumberDays;
-                    
-                }
-
-                //If first visit registration date is referece
-                if($previousCreated=(-1)){
-                    $daysincrease=$allVisits[0]->limitNumberDays;
-                    $dateUpLimit=$patientRegistrationImmutableDate->modify($daysincrease.'day');
-                    $dateDownLimit=$patientRegistrationImmutableDate->modify($this->daysLimitFromInclusion.'day');
-                //Else calculate time from the last created and the current
-                }else{   
-                    $dateUpLimit=$createdVisitMap[$previousCreated]->getImmutableAcquisitionDate()->modify($timeLimitAddition.'day');
-                    $dateDownLimit=$createdVisitMap[$previousCreated]->getImmutableAcquisitionDate();
-                }
-                
-                //Status determination
-                if($visitAcquisitionDate>=$dateDownLimit && $visitAcquisitionDate<=$dateUpLimit){
-                    $results[$dataPatientVisit->visitType][$patient->patientCode]['compliancy']="Yes"; 
-                }else{
-                    $results[$dataPatientVisit->visitType][$patient->patientCode]['compliancy']="No";
-                }
-                
-                $results[$dataPatientVisit->visitType][$patient->patientCode]['status']=Visit_Manager::DONE;
-                $results[$dataPatientVisit->visitType][$patient->patientCode]['shouldBeDoneBefore']=$dateUpLimit->format('Y-m-d');
-                $results[$dataPatientVisit->visitType][$patient->patientCode]['shouldBeDoneAfter']=$dateDownLimit->format('Y-m-d');
-                $results[$dataPatientVisit->visitType][$patient->patientCode]['upload_status']=$dataPatientVisit->uploadStatus;
-                $results[$dataPatientVisit->visitType][$patient->patientCode]['acquisition_date']=$visitAcquisitionDate->format('Y-m-d');
-                $results[$dataPatientVisit->visitType][$patient->patientCode]['upload_date']=$dataPatientVisit->uploadDate;
-                $results[$dataPatientVisit->visitType][$patient->patientCode]['id_visit']=$dataPatientVisit->id_visit;
-                $results[$dataPatientVisit->visitType][$patient->patientCode]['state_investigator_form']=$dataPatientVisit->stateInvestigatorForm;
-                $results[$dataPatientVisit->visitType][$patient->patientCode]['state_quality_control']=$dataPatientVisit->stateQualityControl;
-                
-                
-            }
-            
-            //Determine the status of the missing visits
-            foreach($missingOrder as $missingVisitNumber){
-                
-                //Determine visit number of the last created visit
-                $lastAvailable=$missingVisitNumber;
-                while( empty($createdVisitMap[$lastAvailable]) && $lastAvailable>=0){
-                    $lastAvailable--;
-                }
-
-                //If 1st Visit missing reference date is the inclusion date
-                if ($lastAvailable== -1) {
-                    $lastCreatedVisit=$patientRegistrationImmutableDate;
-                    $lastAvailable=0;
-                    $shouldBeDoneAfter=$lastCreatedVisit->modify($this->daysLimitFromInclusion.' day');
-                }
-                else {
-                    $lastCreatedVisit=$createdVisitMap[$lastAvailable]->getImmutableAcquisitionDate();
-                    $shouldBeDoneAfter=$lastCreatedVisit;
-                }
-                
-                $timeLimitAddition=0;
-                //Determine the cummulative allowed time from the last available visit
-                for($i=$lastAvailable ; $i<=$missingVisitNumber ; $i++){
-                    $timeLimitAddition+=$allVisits[$i]->limitNumberDays;
-                    
-                }
-                
-                $dateUpLimit=$lastCreatedVisit->modify($timeLimitAddition.' day');
-                //if patient withdraws visit might be not needed
-                if($patient->patientWithdraw){
-                    $withdrawDate=$patient->patientWithdrawDate;
-                    if($lastCreatedVisit<=$withdrawDate && $dateUpLimit>$withdrawDate){
-                        $results[$allVisits[$missingVisitNumber]->name][$patient->patientCode]['status']="Possibly Withdrawn";
-                        
-                    }else if($lastCreatedVisit>$withdrawDate){
-                        $results[$allVisits[$missingVisitNumber]->name][$patient->patientCode]['status']="Visit Withdrawn";
-                    }else{
-                        $results[$allVisits[$missingVisitNumber]->name][$patient->patientCode]['status']=Visit_Manager::SHOULD_BE_DONE;    
-                    }
-                    
-                }else{
-                    if($todayDate>$dateUpLimit){
-                        $results[$allVisits[$missingVisitNumber]->name][$patient->patientCode]['status']=Visit_Manager::SHOULD_BE_DONE;  
-                    }else if($todayDate<=$dateUpLimit){
-                        $results[$allVisits[$missingVisitNumber]->name][$patient->patientCode]['status']="Pending";
-                        
-                    }
-                }
-                
-                $results[$allVisits[$missingVisitNumber]->name][$patient->patientCode]['compliancy']="";
-                $results[$allVisits[$missingVisitNumber]->name][$patient->patientCode]['shouldBeDoneBefore']=$dateUpLimit->format('Y-m-d');
-                $results[$allVisits[$missingVisitNumber]->name][$patient->patientCode]['shouldBeDoneAfter']=$shouldBeDoneAfter->format('Y-m-d');
-                $results[$allVisits[$missingVisitNumber]->name][$patient->patientCode]['upload_status']="";
-                $results[$allVisits[$missingVisitNumber]->name][$patient->patientCode]['acquisition_date']="";
-                $results[$allVisits[$missingVisitNumber]->name][$patient->patientCode]['state_investigator_form']="";
-                $results[$allVisits[$missingVisitNumber]->name][$patient->patientCode]['state_quality_control']="";
-            }
-            
-            
-        }
-        
-        return(json_encode($results));
-        
-    }
-    */
     public function getStatistics() {
         return new Statistics($this, $this->linkpdo);
     }
     
-    public static function changeStudyActivation(String $study, bool $activated, PDO $linkpdo){
-        $req = $linkpdo->prepare('UPDATE studies SET
+    public function changeStudyActivation(bool $activated){
+        $req = $this->linkpdo->prepare('UPDATE studies SET
     								active = :active
 						        WHERE name = :study');
-        $req->execute(array( 'study'=> $study, 'active'=>intval($activated)));
+        $req->execute(array( 'study'=> $this->study, 'active'=>intval($activated)));
     }
     
     public function isOriginalOrthancNeverKnown($anonFromOrthancStudyId){
