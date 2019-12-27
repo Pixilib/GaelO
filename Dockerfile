@@ -13,7 +13,7 @@ RUN apt-get update -qy && \
     libzip-dev \
     zip && \
     docker-php-ext-install zip &&\
-    msmtp && \
+    ssmtp && \
     curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer && \
     apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 

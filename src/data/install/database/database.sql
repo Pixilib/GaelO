@@ -3,9 +3,9 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Aug 18, 2019 at 12:41 PM
--- Server version: 5.7.27-0ubuntu0.16.04.1
--- PHP Version: 7.3.8-1+ubuntu16.04.1+deb.sury.org+1
+-- Generation Time: Dec 27, 2019 at 04:56 PM
+-- Server version: 5.7.28-0ubuntu0.16.04.2
+-- PHP Version: 7.3.11-1+ubuntu16.04.1+deb.sury.org+1
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
@@ -17,7 +17,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `GaelO`
+-- Database: `lysarc2`
 --
 
 -- --------------------------------------------------------
@@ -438,7 +438,7 @@ CREATE TABLE `patients` (
   `birth_month` int(11) DEFAULT NULL,
   `birth_year` int(11) DEFAULT NULL,
   `registration_date` date NOT NULL,
-  `investigator_name` tinytext DEFAULT NULL,
+  `investigator_name` tinytext,
   `center` int(11) DEFAULT NULL,
   `study` varchar(32) DEFAULT NULL,
   `withdraw_reason` tinytext,
@@ -567,11 +567,7 @@ INSERT INTO `states` (`quality_state`) VALUES
 
 CREATE TABLE `studies` (
   `name` varchar(32) NOT NULL,
-  `active` tinyint(1) NOT NULL DEFAULT '1',
-  `form` tinyint(1) NOT NULL DEFAULT '1',
-  `qc` tinyint(1) NOT NULL DEFAULT '1',
-  `review` tinyint(1) NOT NULL DEFAULT '1',
-  `limit_days_visit_from_inclusion` int(11) NOT NULL
+  `active` tinyint(1) NOT NULL DEFAULT '1'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -623,8 +619,8 @@ CREATE TABLE `users` (
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`username`, `last_name`, `first_name`, `email`, `password`, `previous_password_1`, `previous_password_2`, `temp_password`, `phone`, `creation_date_password`, `connexion_date`, `creation_date`, `status`, `center`, `job`, `number_attempts`, `is_administrator`) VALUES
-('administrator', 'administrator', 'administrator', 'administrator@administrator.fr', '$2y$10$vUWuSwuL7dFkR4/AvjpS/eDkSuPlTGKwCu8BerSa8Acv.G3T7vnBa', NULL, NULL, NULL, '', '2019-01-01', '2019-01-01 00:00:00', '2019-01-01 00:00:00', 'Activated', 0, 'Monitor', 0, 1);
+INSERT INTO `users` (`username`, `last_name`, `first_name`, `email`, `password`, `previous_password_1`, `previous_password_2`, `temp_password`, `phone`, `creation_date_password`, `connexion_date`, `creation_date`, `status`, `center`, `job`, `number_attempts`, `is_administrator`, `orthanc_address`, `orthanc_login`, `orthanc_password`) VALUES
+('administrator', 'administrator', 'administrator', 'administrator@administrator.fr', '$2y$10$vUWuSwuL7dFkR4/AvjpS/eDkSuPlTGKwCu8BerSa8Acv.G3T7vnBa', NULL, NULL, NULL, '', '2019-01-01', '2019-01-01 00:00:00', '2019-01-01 00:00:00', 'Activated', 0, 'Monitor', 0, 1, NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -675,7 +671,13 @@ CREATE TABLE `visit_type` (
   `name` varchar(32) NOT NULL,
   `table_review_specific` varchar(70) NOT NULL,
   `visit_order` int(11) NOT NULL,
-  `limit_number_days` int(11) DEFAULT NULL
+  `anon_profile` set('Default','Full') NOT NULL,
+  `limit_low_days` int(11) DEFAULT NULL,
+  `limit_up_days` int(11) NOT NULL,
+  `local_form_needed` tinyint(1) NOT NULL,
+  `optional` tinyint(1) NOT NULL,
+  `qc_needed` tinyint(1) NOT NULL,
+  `review_needed` tinyint(1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
