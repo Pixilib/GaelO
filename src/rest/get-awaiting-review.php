@@ -38,7 +38,7 @@ foreach ($possibleStudyList as $study =>$roles){
             //Check if visit comes from a new patient
             if(  ! in_array($visitObject->patientCode, $patientsArray) ){
 
-                $patientCreatedVisits=$visitObject->getPatient()->getPatientsVisits();
+                $patientCreatedVisits=$visitObject->getPatient()->getVisitManager()->getCreatedPatientsVisits();
 
                 foreach($patientCreatedVisits as $createdVisit){
 

@@ -129,7 +129,7 @@ class Statistics {
 		foreach ($allPatientStatus as $visitType => $patients){
 			foreach ($patients as $patientCode=>$patientDetails){
 				
-				if($patientDetails['status']==Visit_Manager::DONE || $patientDetails['status']==Visit_Manager::SHOULD_BE_DONE){
+				if($patientDetails['status']==Patient_Visit_Manager::DONE || $patientDetails['status']==Patient_Visit_Manager::SHOULD_BE_DONE){
 					$visit['status']=$patientDetails['status'];
 					$visit['uploadStatus']=$patientDetails['upload_status'];
 					$visit['visitType']=$visitType;
@@ -156,7 +156,7 @@ class Statistics {
 	    foreach ($allPatientStatus as $visitType => $patients){
 	        foreach ($patients as $patientCode=>$patientDetails){
 	            
-	            if($patientDetails['status']==Visit_Manager::DONE && $patientDetails['state_investigator_form']==Visit_Manager::DONE){
+	            if($patientDetails['status']==Patient_Visit_Manager::DONE && $patientDetails['state_investigator_form']==Patient_Visit_Manager::DONE){
 	                
 	                $acquisitionDate=new DateTimeImmutable($patientDetails['acquisition_date']);
 	                $uploadDate=new DateTimeImmutable($patientDetails['upload_date']);

@@ -52,9 +52,9 @@ if ($accessCheck && $_SESSION['role'] == User::SUPERVISOR ) {
         echo(json_encode($answer));
         
     }else{ 
-       
-        $visitsObjects=$patientObject->getPatientsVisits(false);
-        $visitsObjectDeleted=$patientObject->getPatientsVisits(true);
+        $patientVisitManager=$patientObject->getVisitManager();
+        $visitsObjects=$patientVisitManager->getCreatedPatientsVisits(false);
+        $visitsObjectDeleted=$patientVisitManager->getCreatedPatientsVisits(true);
         foreach ($visitsObjectDeleted as $visitDeleted){
             $visitsObjects[]=$visitDeleted;
         } 

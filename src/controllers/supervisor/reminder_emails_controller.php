@@ -62,7 +62,7 @@ if ($accessCheck && $_SESSION['role'] == User::SUPERVISOR ) {
                     
                     foreach ( $patients as $patientCode=>$patientDetails ) {
     
-                        if($patientDetails['status']==Visit_Manager::SHOULD_BE_DONE){
+                        if($patientDetails['status']==Patient_Visit_Manager::SHOULD_BE_DONE){
                             $resultsMapToSend [$patientDetails['center']] [$patientCode] ["birthdate"]=$patientDetails['birthdate'];
                             $resultsMapToSend [$patientDetails['center']] [$patientCode] ["lastname"]=$patientDetails['lastname'];
                             $resultsMapToSend [$patientDetails['center']] [$patientCode] ["firstname"]=$patientDetails['firstname'];

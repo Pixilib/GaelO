@@ -17,7 +17,7 @@
  * Determine Visit permissions for creation and status for upload manager
  */
 
-class Visit_Manager {
+class Patient_Visit_Manager {
     
     private $patientCode;
     private $linkpdo;
@@ -44,12 +44,40 @@ class Visit_Manager {
     
 
     /**
+     * Return created visits of a given patient
+     * @param bool $deletedVisits
+     * @return Visit[]
+     */
+    //SK ICI IL FAUDRA AJOUTER LE VISIT GROUPE OU VIA LE CONSTRUCTEUR
+    public function getCreatedPatientsVisits(bool $deletedVisits=false){
+    	
+    	$visitQuery = $this->linkpdo->prepare('SELECT id_visit FROM visits
+													INNER JOIN visit_type ON (visit_type.name=visits.visit_type AND visit_type.study=visits.study)
+                                          			WHERE patient_code = :patientCode
+													AND visits.deleted=:deleted
+													ORDER BY visit_type.visit_order');
+    	
+    	
+    	$visitQuery->execute(array('patientCode' => $this->patientCode, 'deleted'=>$deletedVisits));
+    	
+    	$visitsResults = $visitQuery->fetchAll(PDO::FETCH_COLUMN);
+    	
+    	$visitsObjectArray=[];
+    	foreach ($visitsResults as $idVisit){
+    		$visitsObjectArray[]=new Visit($idVisit, $this->linkpdo);
+    	}
+    	
+    	return $visitsObjectArray;
+    	
+    }
+
+    /**
      * Return array of non created visit name for current patient
      */
     public function getNotCreatedVisitName(){
 
         $allPossibleVisits=$this->patientObject->getPatientStudy()->getAllPossibleVisitTypes();
-        $createdVisits=$this->patientObject->getPatientsVisits();
+        $createdVisits=$this->getCreatedPatientsVisits();
 
         $createdVisitName=array_map(function (Visit_Type $visitType){return $visitType->name;},  $createdVisits);
         $possibleVisitName=array_map(function (Visit_Type $visitType){return $visitType->name;},  $allPossibleVisits);
@@ -97,7 +125,7 @@ class Visit_Manager {
         }
 
         $allPossibleVisits=$this->patientObject->getPatientStudy()->getAllPossibleVisitTypes();
-        $createdVisits=$this->patientObject->getPatientsVisits();
+        $createdVisits=$this->getCreatedPatientsVisits();
 
         $createdVisitOrder=array_map(function (Visit_Type $visitType){return $visitType->visitOrder;},  $createdVisits);
 
@@ -242,26 +270,26 @@ class Visit_Manager {
             $visitAnswer['upload_status']=$visitObject->uploadStatus;
             $visitAnswer['id_visit']=$visitObject->id_visit;
             $testedDate=$visitObject->acquisitionDate;
-            $visitAnswer['status']=Visit_Manager::DONE;
+            $visitAnswer['status']=Patient_Visit_Manager::DONE;
 
             if($testedDate>=$dateDownLimit && $testedDate<=$dateDownLimit){
-                $visitAnswer['compliancy']=Visit_Manager::COMPLIANCY_YES;
+                $visitAnswer['compliancy']=Patient_Visit_Manager::COMPLIANCY_YES;
             }else{
-                $visitAnswer['compliancy']=Visit_Manager::COMPLIANCY_NO;
+                $visitAnswer['compliancy']=Patient_Visit_Manager::COMPLIANCY_NO;
             }
 
         }catch (Exception $e){
              //Visit Not Created
              //If optional visit no status determination
             if($visitType->optionalVisit){
-                $visitAnswer['status']=Visit_Manager::OPTIONAL_VISIT;
+                $visitAnswer['status']=Patient_Visit_Manager::OPTIONAL_VISIT;
             }else{
                 //Compare actual time with theorical date to determine status
                 $testedDate = new DateTime ( date ( "Y-m-d" ) );
                 if($testedDate<=$dateUpLimit){
-                    $visitAnswer['status']=Visit_Manager::PENDING;
+                    $visitAnswer['status']=Patient_Visit_Manager::PENDING;
                 }else {
-                    $visitAnswer['status']=Visit_Manager::SHOULD_BE_DONE;
+                    $visitAnswer['status']=Patient_Visit_Manager::SHOULD_BE_DONE;
                 }
 
             }
@@ -271,9 +299,9 @@ class Visit_Manager {
         //Take account of possible withdrawal if not created
         if($this->patientObject->patientWithdraw &&  $visitAnswer['acquisition_date']==null){
             if( $this->patientObject->patientWithdrawDate < $dateDownLimit ){
-                $visitAnswer['status']=Visit_Manager::VISIT_WITHDRAWN;
+                $visitAnswer['status']=Patient_Visit_Manager::VISIT_WITHDRAWN;
             }else if( $this->patientObject->patientWithdrawDate > $dateDownLimit ){
-                $visitAnswer['status']=Visit_Manager::VISIT_POSSIBLY_WITHDRAWN;
+                $visitAnswer['status']=Patient_Visit_Manager::VISIT_POSSIBLY_WITHDRAWN;
             }
         }
 
@@ -286,7 +314,7 @@ class Visit_Manager {
      */
     public function getAwaitingReviewVisits(){
 
-        $createdVisits=$this->patientObject->getPatientsVisits();
+        $createdVisits=$this->getCreatedPatientsVisits();
 
         $availableVisitsForReview=[];
 

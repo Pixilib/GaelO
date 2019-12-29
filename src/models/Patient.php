@@ -136,40 +136,13 @@ class Patient{
        
         
     }
-    
-    /**
-     * Return visits of a given patient
-     * @param bool $deletedVisits
-     * @return Visit[]
-     */
-    public function getPatientsVisits(bool $deletedVisits=false){
-    	
-    	$visite = $this->linkpdo->prepare('SELECT id_visit FROM visits
-													INNER JOIN visit_type ON (visit_type.name=visits.visit_type AND visit_type.study=visits.study)
-                                          			WHERE patient_code = :patientCode
-													AND visits.deleted=:deleted
-													ORDER BY visit_type.visit_order');
-    	
-    	
-    	$visite->execute(array('patientCode' => $this->patientCode, 'deleted'=>$deletedVisits));
-    	
-    	$visitsResults = $visite->fetchAll(PDO::FETCH_COLUMN);
-    	
-    	$visitsObjectArray=[];
-    	foreach ($visitsResults as $idVisit){
-    		$visitsObjectArray[]=new Visit($idVisit, $this->linkpdo);
-    	}
-    	
-    	return $visitsObjectArray;
-    	
-    }
 
     /**
      * Return visit Manage to manage patient's visit status
      */
     //SK ICI SURCHARGE DU VISIT MANAGER ?
     public function getVisitManager(){
-        return new Visit_Manager($this);
+        return new Patient_Visit_Manager($this);
     }
 
     public function getPatientStudy(){

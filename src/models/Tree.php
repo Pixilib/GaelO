@@ -232,7 +232,7 @@ class Tree {
   private function make_Visit_Tree_Reviewer($patientCode){
 
     $patientObject=new Patient($patientCode, $this->linkpdo);
-    $createdVisitsOject=$patientObject->getPatientsVisits();
+    $createdVisitsOject=$patientObject->getVisitManager()->getCreatedPatientsVisits();
 
     foreach($createdVisitsOject as $visitObject){
 
