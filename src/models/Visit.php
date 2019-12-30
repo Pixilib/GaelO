@@ -45,6 +45,7 @@ class Visit{
     public $controlDate;
     public $correctiveActionUsername;
     public $correctiveActionDate;
+    public $visitGroupId;
     public $study;
     public $patientCode;
     public $visitType;
@@ -54,6 +55,7 @@ class Visit{
     public $deleted;
     
     public $studyDicomObject;
+    public $visitGroupObject;
     
     const QC_NOT_DONE="Not Done";
     const QC_ACCEPTED="Accepted";
@@ -117,7 +119,7 @@ class Visit{
         
         $this->statusDone=$visitDbData['status_done'];
         $this->reasonForNotDone=$visitDbData['reason_for_not_done'];
-        $this->study=$visitDbData['study'];
+        $this->visitGroupId=$visitDbData['visit_group_id'];
         $this->patientCode=$visitDbData['patient_code'];
         $this->visitType=$visitDbData['visit_type'];
         
@@ -140,6 +142,10 @@ class Visit{
         $this->correctiveActionUsername=$visitDbData['corrective_action_username'];
         $this->correctiveActionDate=$visitDbData['corrective_action_date'];
         $this->deleted=$visitDbData['deleted'];
+
+        //Get group detail
+        $this->visitGroupObject=new Visit_Group($this->linkpdo, $this->visitGroupId);
+        $this->study=$this->visitGroupObject->studyName;
         
         if( $this->uploadStatus == Visit::DONE){
             $studyDicomObject=$this->getStudyDicomDetails();
@@ -238,7 +244,7 @@ class Visit{
      * @return Visit_Type
      */
     public function getVisitCharacteristics(){
-        $visitTypeObject=new Visit_Type($this->linkpdo, $this->study, $this->visitType);
+        $visitTypeObject=new Visit_Type($this->linkpdo, $this->visitGroupId, $this->visitType);
         return $visitTypeObject;  
     }
     
@@ -365,9 +371,9 @@ class Visit{
      */
     private function isNoOtherActivatedVisit(){
     	$visitQuery = $this->linkpdo->prepare('SELECT id_visit FROM visits
-                                        WHERE visits.study=:study AND visits.visit_type=:visitType AND visits.patient_code=:patientCode AND visits.deleted=0;
+                                        WHERE visits.visit_group_id=:visitGroupID AND visits.visit_type=:visitType AND visits.patient_code=:patientCode AND visits.deleted=0;
                                     ');
-    	$visitQuery->execute(array('study' => $this->study,
+    	$visitQuery->execute(array('visitGroupID' => $this->visitGroupId,
     			'visitType'=> $this->visitType,
     			'patientCode'=>$this->patientCode ));
     	
@@ -681,15 +687,15 @@ class Visit{
      * @param $linkpdo
      * @return string
      */
-    public static function createVisit($visitType, $study, $patientCode, $statusDone, $reasonNotDone, $acquisitionDate, $username, PDO $linkpdo){
+    public static function createVisit($visitType, $visitGroupId, $patientCode, $statusDone, $reasonNotDone, $acquisitionDate, $username, PDO $linkpdo){
         
         //Add visit verifying that this visit doesn't already have an active visite registered
-        $insertion = $linkpdo->prepare ( 'INSERT INTO visits(study, visit_type, status_done, patient_code, reason_for_not_done, acquisition_date, creator_name, creation_date)
-      										SELECT :study, :type_visite, :status_done, :patient_code, :reason, :acquisition_date, :creator_name, :creation_date FROM DUAL
+        $insertion = $linkpdo->prepare ( 'INSERT INTO visits(visit_group_id, visit_type, status_done, patient_code, reason_for_not_done, acquisition_date, creator_name, creation_date)
+      										SELECT :visitGroupID, :type_visite, :status_done, :patient_code, :reason, :acquisition_date, :creator_name, :creation_date FROM DUAL
 											WHERE NOT EXISTS (SELECT id_visit FROM visits WHERE patient_code=:patient_code AND study=:study AND visit_type=:type_visite AND deleted=0) ' );
         
         $insertion->execute ( array (
-            'study'=>$study,
+            'study'=>$visitGroupId,
             'type_visite' => $visitType,
             'status_done' => $statusDone,
             'patient_code' => $patientCode,

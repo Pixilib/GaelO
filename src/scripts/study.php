@@ -44,6 +44,7 @@ if($_SERVER['REQUEST_METHOD']==='GET'){
     
         //Add the new study as an active study
         Study::createStudy($studyName, $linkpdo);
+        $visitGroup=Visit_Group::createVisitGroup($studyName,Visit_Group::GROUP_TYPE_IMAGING, Visit_Group::GROUP_MODALITY_PET, "PET", $linkpdo);
         
         //Add the visit in study with order
         foreach($visitsArray as $visit){
@@ -55,7 +56,7 @@ if($_SERVER['REQUEST_METHOD']==='GET'){
             $review = $visit['review']==='true';
             $optional = $visit['optional']==='true';
             //Create Visit Type
-            Visit_Type::createVisitType($studyName, $visit['name'], $visit['order'], $visit['dayMin'] , $visit['dayMax'], $localForm,
+            Visit_Type::createVisitType($studyName, $visitGroup->groupId , $visit['name'], $visit['order'], $visit['dayMin'] , $visit['dayMax'], $localForm,
             $qc, $review, $optional, $visit['anonProfile'], $linkpdo);
             
             $rootSpecificModelsFolder=$_SERVER["DOCUMENT_ROOT"].'/data/form/Poo';

@@ -30,7 +30,7 @@ Class Study {
     //public $daysLimitFromInclusion;
     
     
-    public function __construct($study, $linkpdo){
+    public function __construct(String $study, PDO $linkpdo){
 
         $this->linkpdo=$linkpdo;
         $connecter = $this->linkpdo->prepare('SELECT * FROM studies WHERE name=:study');
@@ -182,8 +182,33 @@ Class Study {
         return $visitObjectArray;
         
     }
+
+    public function getAllPossibleVisitGroupes(){
+
+        $allGroupsType = $this->linkpdo->prepare('SELECT id, name FROM visit_group WHERE study = :study');
+        $allGroupsType->execute(array('study' => $this->study));
+        $allGroupsIds=$allGroupsType->fetchall(PDO::FETCH_COLUMN);
+        
+        $visitGroupArray=[];
+        foreach ($allGroupsIds as $groupId){
+            $visitGroupArray[]=new Visit_Group($this->linkpdo, $groupId);
+        }
+        
+        return $visitGroupArray;
+
+    }
+
+    public function getSpecificGroup(String $groupName){
+
+        $groupQuery = $this->linkpdo->prepare('SELECT id, name FROM visit_group WHERE study = :study AND group_name=:groupName');
+        $groupQuery->execute(array('study' => $this->study, 'groupName'=> $groupName));
+        $groupId=$groupQuery->fetch(PDO::FETCH_COLUMN);
+        
+        return new Visit_Group($this->linkpdo, $groupId);
+
+    }
     
-    
+    //SK PROBLEME ICI VOIR COMMENT ON QUERY UN GROUPE
     public function getAllPossibleVisitTypes(){
         $allVisitsType = $this->linkpdo->prepare('SELECT study, name FROM visit_type WHERE study = :study ORDER BY visit_order');
         $allVisitsType->execute(array('study' => $this->study));

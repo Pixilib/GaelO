@@ -35,6 +35,8 @@ if (isset($_SESSION['username']) && $_SESSION['role'] == User::INVESTIGATOR && $
     // if an intermediate study has been deleted
     $patientObject= new Patient($patientCode, $linkpdo);
     $typeVisiteDispo=$patientObject->getVisitManager()->getAvailableVisitsToCreate();
+    //SK A GENERALISER
+    $visitGroupImaging=$patientObject->getPatientStudy()->getSpecificGroup("PET");
     
     
     require 'views/investigator/new_visit_view.php';

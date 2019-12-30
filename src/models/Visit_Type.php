@@ -18,7 +18,7 @@
  */
 Class Visit_Type{
     
-    public $study;
+    public $groupId;
     public $name;
     public $tableReviewSpecificName;
     public $visitOrder;
@@ -31,19 +31,16 @@ Class Visit_Type{
     public $limitUpDays;
     public $anonProfile;
 
-    //SK REFERENCE A CHECKER
-    //public $limitNumberDays;
-
     public $linkpdo;
     
-    public function __construct(PDO $linkpdo, String $study, String $name){
+    public function __construct(PDO $linkpdo, String $groupId, String $name){
         
         $this->linkpdo=$linkpdo;
-        $visitTypeQuery = $this->linkpdo->prepare('SELECT * FROM visit_type WHERE study = :study AND name= :name');
-        $visitTypeQuery->execute(array('study' => $study, 'name'=>$name));
+        $visitTypeQuery = $this->linkpdo->prepare('SELECT * FROM visit_type WHERE group_id = :groupId AND name= :name');
+        $visitTypeQuery->execute(array('groupId' => $groupId, 'name'=>$name));
         $visitType=$visitTypeQuery->fetch(PDO::FETCH_ASSOC);
 
-        $this->study=$visitType['study'];
+        $this->groupId=$visitType['group_id'];
         $this->name=$visitType['name'];
         $this->tableReviewSpecificName=$visitType['table_review_specific'];
         $this->visitOrder=$visitType['visit_order'];
@@ -55,8 +52,6 @@ Class Visit_Type{
         $this->limitLowDays=$visitType['limit_low_days'];
         $this->limitUpDays=$visitType['limit_up_days'];
         $this->anonProfile=$visitType['anon_profile'];
-
-        //$this->limitNumberDays=$visitType['limit_number_days'];
         
     }
     
@@ -86,13 +81,17 @@ Class Visit_Type{
         return $datas;
         
     }
+
+    public function getVisitGroup(){
+        return new Visit_Group($this->linkpdo, $this->groupId);
+    }
     
-    public static function createVisitType(String $studyName, String $visitName, int $order, int $limitLowDays, int $limitUpDays, bool $localFormNeed, bool $qcNeeded, bool $reviewNeeded, bool $optional, String $anonProfile, PDO $linkpdo){
+    public static function createVisitType(string $studyName, int $groupId, String $visitName, int $order, int $limitLowDays, int $limitUpDays, bool $localFormNeed, bool $qcNeeded, bool $reviewNeeded, bool $optional, String $anonProfile, PDO $linkpdo){
         
-        $req = $linkpdo->prepare('INSERT INTO visit_type (study, name, table_review_specific, visit_order, local_form_needed, qc_needed, review_needed, optional, limit_low_days, limit_up_days, anon_profile)
-                                      VALUES(:studyName, :visitName, :tableSpecific, :order, :localFormNeeded, :qcNeeded, :reviewNeeded, :optional, :limitLowDays, :limitUpDays, :anonProfile)');
+        $req = $linkpdo->prepare('INSERT INTO visit_type (group_id, name, table_review_specific, visit_order, local_form_needed, qc_needed, review_needed, optional, limit_low_days, limit_up_days, anon_profile)
+                                      VALUES(:groupId, :visitName, :tableSpecific, :order, :localFormNeeded, :qcNeeded, :reviewNeeded, :optional, :limitLowDays, :limitUpDays, :anonProfile)');
         
-        $req->execute(array('studyName' => $studyName,
+        $req->execute(array('groupId' => $groupId,
             'visitName'=>$visitName,
             'tableSpecific'=>$studyName."_".$visitName,
             'order'=>intval($order),

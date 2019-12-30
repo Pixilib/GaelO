@@ -43,13 +43,15 @@ if($_SERVER['REQUEST_METHOD']==='GET'){
             $statusDone = $_POST['done_not_done'];
             $reasonNotDone = $_POST['reason'];
             $acquisitionDate = $_POST['acquisition_date'];
+            $groupId=$_POST['groupId'];
+            
             if (empty($acquisitionDate)) {
                 $acquisitionDate = null;
             }
             
             if (! empty($visitType) && ! empty($statusDone)) {
-                
-                $createdId = Visit::createVisit($visitType, $_POST['study'], $patientCode, $statusDone, $reasonNotDone, $acquisitionDate, $username, $linkpdo);
+
+                $createdId = Visit::createVisit($visitType, $groupId, $patientCode, $statusDone, $reasonNotDone, $acquisitionDate, $username, $linkpdo);
                 // Log action
                 $actionDetails['patient_code'] = $patientCode;
                 $actionDetails['type_visit'] = $visitType;

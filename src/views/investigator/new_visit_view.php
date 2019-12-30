@@ -12,6 +12,9 @@
  with this program; if not, write to the Free Software Foundation, Inc.,
  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
+
+ //SK ICI CHANGER L INTERFACE ON DOIT LISTER LES ID DES GROUPES DE VISITES DISPO POUR CE PATIENT
+ //ET LAISSER L UTILISATEUR CHOISIR SON GROUPE
  ?>
  
  <script type="text/javascript">
@@ -96,6 +99,7 @@
 <h1 class='form-control'>Create new visit</h1>
 
 <form class="col align-self-center" id="addVisitForm">
+	
 	<label class="control-label">Please make a choice in the list:</label>
 	<div class="text-center">
 		<SELECT class="custom-select" name="visite" id="visite">
@@ -125,6 +129,7 @@
     	<input type="hidden" name="patient_num" id="patient_num"
     		value="<?=$patientCode?>" /> <input type="hidden" name="study"
     		id="nometude" value="<?=htmlspecialchars($study)?>" />
+			<input type="hidden" name="groupId" value="<?=$visitGroupImaging?>" />
     	<br>
 		<button class="text-center btn btn-dark" type="button" id="send">Validate</button>
 
