@@ -33,8 +33,39 @@ class Study_Visit_Manager
         $this->visitGroupObject = $visitGroupObject;
     }
 
-    public function getVisitGroupObject(){
+    public function getVisitGroupObject()
+    {
         return $this->visitGroupObject;
+    }
+
+    public function getPatientLinkedToUserCenters($username)
+    {
+        $patients = $this->linkpdo->prepare(' SELECT patients.code
+            FROM   patients
+            WHERE  patients.center IN (SELECT affiliated_centers.center
+                FROM   affiliated_centers
+                WHERE  affiliated_centers.username = :username
+                UNION
+                SELECT users.center
+                FROM   users
+                WHERE  users.username = :username)
+                AND visit_group_id = :visitGroupId
+                GROUP  BY patients.code');
+
+        $patients->execute(array(
+            'username' => $username,
+            'visitGroupId' => $this->visitGroupObject->groupId
+        ));
+
+        $patientsCodes = $patients->fetchAll(PDO::FETCH_COLUMN);
+
+        $patientObjectsArray=[];
+
+        foreach($patientsCodes as $patientCode){
+            $patientObjectsArray[]=new Patient($patientCode, $this->linkpdo);
+        }
+
+        return $patientObjectsArray;
     }
 
 
@@ -188,11 +219,11 @@ class Study_Visit_Manager
                                                     ORDER BY patient_code, visit_type.visit_order');
 
         $uploadedVisitQuery->execute(array(
-            'study' => $this->study, 
+            'study' => $this->study,
             'deleted' => intval($deleted),
             'visitGroupId' => $this->visitGroupObject->groupId
         ));
-        
+
         $uploadedVisitIds = $uploadedVisitQuery->fetchAll(PDO::FETCH_COLUMN);
 
         $visitObjectArray = [];
@@ -204,38 +235,37 @@ class Study_Visit_Manager
     }
 
 
-    public function getAllPatientsVisitsStatus(){
+    public function getAllPatientsVisitsStatus()
+    {
 
         //Get ordered list of possible visits in this study
-        $allVisits=$this->visitGroupObject->getAllVisitTypesOfGroup();
+        $allVisits = $this->visitGroupObject->getAllVisitTypesOfGroup();
         //Get patients list in this study
-        $allPatients=$this->studyObject->getAllPatientsInStudy();
+        $allPatients = $this->studyObject->getAllPatientsInStudy();
 
-        $results=[];
+        $results = [];
 
-        foreach($allPatients as $patient) {
+        foreach ($allPatients as $patient) {
 
-            $patientCenter=$patient->getPatientCenter();
-            $visitManager=$patient->getVisitManager();
+            $patientCenter = $patient->getPatientCenter();
+            $visitManager = $patient->getVisitManager();
 
-            foreach($allVisits as $possibleVisit) {
+            foreach ($allVisits as $possibleVisit) {
 
-                $patientData=[];
-                $patientData['center']=$patientCenter->name;
-                $patientData['country']=$patientCenter->countryName;
-                $patientData['firstname']=$patient->patientFirstName;
-                $patientData['lastname']=$patient->patientLastName;
-                $patientData['birthdate']=$patient->patientBirthDate;
-                $patientData['registration_date']=$patient->patientRegistrationDate;
+                $patientData = [];
+                $patientData['center'] = $patientCenter->name;
+                $patientData['country'] = $patientCenter->countryName;
+                $patientData['firstname'] = $patient->patientFirstName;
+                $patientData['lastname'] = $patient->patientLastName;
+                $patientData['birthdate'] = $patient->patientBirthDate;
+                $patientData['registration_date'] = $patient->patientRegistrationDate;
 
-                $visitStatus=$visitManager->determineVisitStatus($possibleVisit->name);
+                $visitStatus = $visitManager->determineVisitStatus($possibleVisit->name);
 
-                $results[$possibleVisit->name][$patient->patientCode]= array_merge($patientData,$visitStatus);
-
+                $results[$possibleVisit->name][$patient->patientCode] = array_merge($patientData, $visitStatus);
             }
-
         }
 
-        return(json_encode($results));
+        return (json_encode($results));
     }
 }
