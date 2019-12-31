@@ -29,7 +29,7 @@ foreach ($possibleStudyList as $study =>$roles){
         
         //Get all awayting review visit for this user in this study and add details in the global list
         $studyObject=new Study($study, $linkpdo);
-        $visitObjectArray=$studyObject->getAwaitingReviewVisit($username);
+        $visitObjectArray=$studyObject->getStudySpecificGroupManager(Visit_Group::GROUP_MODALITY_PET)->getAwaitingReviewVisit($username);
 
         $patientsArray=[];
 

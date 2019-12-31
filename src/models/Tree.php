@@ -121,7 +121,7 @@ class Tree {
 
     } else if($this->role == User::REVIEWER){
         
-        $visitObjectList = $this->studyObject->getAwaitingReviewVisit($this->username);
+        $visitObjectList = $this->studyObject->getStudySpecificGroupManager(Visit_Group::GROUP_MODALITY_PET)->getAwaitingReviewVisit($this->username);
         
         $patientsArray=[];
         

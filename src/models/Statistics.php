@@ -46,7 +46,7 @@ class Statistics {
 		}
 		
 		//Retrieve created Visit from the study Object
-		$createdVisitObjects=$this->studyObject->getCreatedVisits();
+		$createdVisitObjects=$this->studyObject->getStudySpecificGroupManager(Visit_Group::GROUP_MODALITY_PET)->getCreatedVisits();
 		
 		//GlobalMap
 		$reviewdetailsMap=[];

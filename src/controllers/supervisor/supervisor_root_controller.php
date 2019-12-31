@@ -44,7 +44,7 @@ if ($permissionCheck && $_POST['role'] == User::SUPERVISOR) {
 function make_Json(Study $studyObject)
 {
 	$json = [];
-	$activeVisitsArray = $studyObject->getCreatedVisits();
+	$activeVisitsArray = $studyObject->getStudySpecificGroupManager(Visit_Group::GROUP_MODALITY_PET)->getCreatedVisits();
 
 	foreach ($activeVisitsArray as $visitObject) {
 		$patientObject = $visitObject->getPatient();

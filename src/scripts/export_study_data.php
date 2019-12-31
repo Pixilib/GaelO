@@ -51,7 +51,7 @@ if ($accessCheck && $_SESSION['role'] == User::SUPERVISOR ) {
         'Type', 'Status', 'Reason For Not Done','Acquisition Date', 'Upload Status', 'Uploader', 
         'Upload Date', 'State Investigator Form', 'State QC', 'QC done by', 'QC date', 'Review Status', 'Review Date','Review Conclusion', 'visit deleted');
     
-    $allcreatedVisits=$studyObject->getCreatedVisits();
+    $allcreatedVisits=$studyObject->getStudySpecificGroupManager(Visit_Group::GROUP_MODALITY_PET)->getCreatedVisits();
     
     foreach ($allcreatedVisits as $visit) {
     	$codeStatus=dertermineVisitStatusCode($visit);

@@ -37,66 +37,8 @@ Class Study {
         
         
     }
-    
-    /**
-     * Get Visits awaiting review
-     * Optionally visit awaiting review can be specific to an username
-     * @param string $username
-     * @return Visit[]
-     */
-    //SK LE TREE EST A REVOIR ++++
-    public function getAwaitingReviewVisit(string $username=null){
-        
-        //Query visit to analyze visit awaiting a review
-        $idVisitsQuery = $this->linkpdo->prepare('SELECT id_visit FROM visits INNER JOIN visit_type ON (visits.visit_type=visit_type.name AND visits.study=visit_type.study)
-                                      WHERE (visits.study = :study
-                                      AND deleted=0
-                                      AND review_available=1) ORDER BY visit_order ');
-        
-        $idVisitsQuery->execute(array('study' => $this->study));
-        $visitList = $idVisitsQuery->fetchAll(PDO::FETCH_COLUMN);
-        
-        $visitObjectArray=[];
-        
-        foreach ($visitList as $visitId) {
-            $visitObject= new Visit($visitId, $this->linkpdo);
-            
-            if(!empty($username)){
-                if($visitObject->isAwaitingReviewForReviewerUser($username)) $visitObjectArray[]=$visitObject;
-            }else{
-                $visitObjectArray[]=$visitObject;
-            }
-           
-        }
-        
-        return $visitObjectArray;
-        
-    }
-    
-    /**
-     * Return studie's visit object
-     */
-    public function getCreatedVisits(bool $deleted=false){
-        
-        $uploadedVisitQuery = $this->linkpdo->prepare('SELECT id_visit FROM visits, visit_type WHERE visits.study = :study
-                                                    AND visits.deleted=:deleted 
-                                                    AND visit_type.name=visits.visit_type
-                                                    AND visit_type.study=visits.study
-                                                    ORDER BY patient_code, visit_type.visit_order');
-        
-        $uploadedVisitQuery->execute(array('study' => $this->study, 'deleted'=>intval($deleted)));
-        $uploadedVisitIds=$uploadedVisitQuery->fetchAll(PDO::FETCH_COLUMN);
-        
-        $visitObjectArray=[];
-        foreach ($uploadedVisitIds as $id_visit){
-            $visitObjectArray[]=new Visit($id_visit, $this->linkpdo);
-        }
-        
-        return $visitObjectArray;
-        
-    }
 
-    public function getAllPossibleVisitGroupes(){
+    public function getAllPossibleVisitGroups(){
 
         $allGroupsType = $this->linkpdo->prepare('SELECT id, name FROM visit_group WHERE study = :study');
         $allGroupsType->execute(array('study' => $this->study));
@@ -112,6 +54,7 @@ Class Study {
     }
 
     public function getSpecificGroup(String $groupModality){
+
         $groupQuery = $this->linkpdo->prepare('SELECT id, name FROM visit_group WHERE study = :study AND group_modality=:groupModality');
         $groupQuery->execute(array('study' => $this->study, 'groupModality'=> $groupModality));
         $groupId=$groupQuery->fetch(PDO::FETCH_COLUMN);
@@ -121,25 +64,11 @@ Class Study {
     }
 
     public function getStudySpecificGroupManager(String $groupModality){
+
         $visitGroup=$this->getSpecificGroup($groupModality);
         
         return new Study_Visit_Manager($this, $visitGroup, $this->linkpdo);
 
-    }
-    
-    //SK PROBLEME ICI VOIR COMMENT ON QUERY UN GROUPE
-    public function getAllPossibleVisitTypes(){
-        $allVisitsType = $this->linkpdo->prepare('SELECT study, name FROM visit_type WHERE study = :study ORDER BY visit_order');
-        $allVisitsType->execute(array('study' => $this->study));
-        $allVisits=$allVisitsType->fetchall(PDO::FETCH_ASSOC);
-        
-        $visitTypeArray=[];
-        foreach ($allVisits as $visit){
-            $visitTypeArray[]=new Visit_Type($this->linkpdo, $visit['study'], $visit['name']);
-        }
-        
-        return $visitTypeArray;
-        
     }
     
     public function getAllPatientsInStudy(){
