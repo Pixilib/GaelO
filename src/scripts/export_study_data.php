@@ -87,7 +87,8 @@ if ($accessCheck && $_SESSION['role'] == User::SUPERVISOR ) {
     //Export Reviews
     $genericHeader=array('ID Visit', 'ID review', 'Reviewer','Review Date','Validated','Local Form','Adjudcation_form', 'Review Deleted');
     //Add specific header for each visit Type
-    $visitsTypeAnswer= $studyObject->getAllPossibleVisitTypes();
+    $visitGroup=$studyObject->getSpecificGroup(Visit_Group::GROUP_MODALITY_PET);
+    $visitsTypeAnswer= $visitGroup->getAllVisitTypesOfGroup();
     $specificColumn=[];
     //Prepare Review CSV
     $reviewCSV=[];

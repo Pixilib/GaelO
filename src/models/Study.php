@@ -22,13 +22,7 @@ Class Study {
     private $linkpdo;
     private $study;
 
-    //SK AJOUTER ETUDE ANCILLAIRE DE
-    
-    //public $formNeeded;
-    //public $qcNeeded;
-    //public $reviewNeeded;
-    //public $daysLimitFromInclusion;
-    
+    //SK AJOUTER "ETUDE ANCILLAIRE DE" OU VIA HERITAGE ?!?
     
     public function __construct(String $study, PDO $linkpdo){
 
@@ -41,52 +35,7 @@ Class Study {
 
         $this->study=$result['name'];
         
-        //$this->qcNeeded=$result['qc'];
-        //$this->formNeeded=$result['form'];
-        //$this->reviewNeeded=$result['review'];
-        //$this->daysLimitFromInclusion=$result['limit_days_visit_from_inclusion'];
         
-        
-    }
-    
-    /**
-     * Return uploaded and non deleted visit Objects
-     */
-    public function getUploadedVisits(){
-        
-        $uploadedVisitQuery = $this->linkpdo->prepare('SELECT id_visit FROM visits WHERE study = :study
-                                                    AND deleted=0
-                                                    AND visits.upload_status="Done" ');
-        
-        $uploadedVisitQuery->execute(array('study' => $this->study));
-        $uploadedVisitIds=$uploadedVisitQuery->fetchall(PDO::FETCH_COLUMN);
-        
-        $visitObjectArray=[];
-        foreach ($uploadedVisitIds as $id_visit){
-            $visitObjectArray[]=new Visit($id_visit, $this->linkpdo);
-        }
-        
-        return $visitObjectArray;
-        
-    }
-    
-    public function getAwaitingUploadVisit(){
-    	
-    	$uploadedVisitQuery = $this->linkpdo->prepare("SELECT id_visit FROM visits WHERE study = :study
-														AND deleted=0
-														AND visits.upload_status ='Not Done'
-														AND visits.status_done='Done' ");
-    	
-    	$uploadedVisitQuery->execute(array('study' => $this->study));
-    	$uploadedVisitIds=$uploadedVisitQuery->fetchall(PDO::FETCH_COLUMN);
-    	
-    	$visitObjectArray=[];
-    	foreach ($uploadedVisitIds as $id_visit){
-    		$visitObjectArray[]=new Visit($id_visit, $this->linkpdo);
-    	}
-    	
-    	return $visitObjectArray;
-    	
     }
     
     /**
@@ -95,6 +44,7 @@ Class Study {
      * @param string $username
      * @return Visit[]
      */
+    //SK LE TREE EST A REVOIR ++++
     public function getAwaitingReviewVisit(string $username=null){
         
         //Query visit to analyze visit awaiting a review
@@ -117,43 +67,6 @@ Class Study {
                 $visitObjectArray[]=$visitObject;
             }
            
-        }
-        
-        return $visitObjectArray;
-        
-    }
-    
-    public function getVisitWithQCStatus($qcStatus){
-        
-        $visitQuery = $this->linkpdo->prepare("SELECT id_visit FROM visits WHERE study = :study
-														AND deleted=0
-                                                        AND state_quality_control=:qcStatus");
-        
-        $visitQuery->execute(array('study'=>$this->study, 'qcStatus' => $qcStatus));
-        $visitIds=$visitQuery->fetchall(PDO::FETCH_COLUMN);
-        
-        $visitObjectArray=[];
-        foreach ($visitIds as $id_visit){
-            $visitObjectArray[]=new Visit($id_visit, $this->linkpdo);
-        }
-        
-        return $visitObjectArray;
-        
-    }
-    
-    public function getVisitsMissingInvestigatorForm(){
-        
-        $visitQuery = $this->linkpdo->prepare(" SELECT id_visit FROM visits WHERE study = :study
-                                                            AND deleted=0 
-                                                            AND state_investigator_form !='Done' 
-                                                            AND upload_status='Done'");
-        
-        $visitQuery->execute(array('study'=>$this->study));
-        $visitIds=$visitQuery->fetchall(PDO::FETCH_COLUMN);
-        
-        $visitObjectArray=[];
-        foreach ($visitIds as $id_visit){
-            $visitObjectArray[]=new Visit($id_visit, $this->linkpdo);
         }
         
         return $visitObjectArray;
@@ -198,13 +111,19 @@ Class Study {
 
     }
 
-    public function getSpecificGroup(String $groupName){
-
-        $groupQuery = $this->linkpdo->prepare('SELECT id, name FROM visit_group WHERE study = :study AND group_name=:groupName');
-        $groupQuery->execute(array('study' => $this->study, 'groupName'=> $groupName));
+    public function getSpecificGroup(String $groupModality){
+        $groupQuery = $this->linkpdo->prepare('SELECT id, name FROM visit_group WHERE study = :study AND group_modality=:groupModality');
+        $groupQuery->execute(array('study' => $this->study, 'groupModality'=> $groupModality));
         $groupId=$groupQuery->fetch(PDO::FETCH_COLUMN);
         
         return new Visit_Group($this->linkpdo, $groupId);
+
+    }
+
+    public function getStudySpecificGroupManager(String $groupModality){
+        $visitGroup=$this->getSpecificGroup($groupModality);
+        
+        return new Study_Visit_Manager($this, $visitGroup, $this->linkpdo);
 
     }
     
@@ -301,41 +220,6 @@ Class Study {
             $rolesList[$role['username']][]=$role['name'];
         }
         return $rolesList;
-    }
-
-    public function getAllPatientsVisitsStatus(){
-
-        //Get ordered list of possible visits in this study
-        $allVisits=$this->getAllPossibleVisitTypes($this->study);
-        //Get patients list in this study
-        $allPatients=$this->getAllPatientsInStudy($this->study);
-
-        $results=[];
-
-        foreach($allPatients as $patient) {
-
-            $patientCenter=$patient->getPatientCenter();
-            $visitManager=$patient->getVisitManager();
-
-            foreach($allVisits as $possibleVisit) {
-
-                $patientData=[];
-                $patientData['center']=$patientCenter->name;
-                $patientData['country']=$patientCenter->countryName;
-                $patientData['firstname']=$patient->patientFirstName;
-                $patientData['lastname']=$patient->patientLastName;
-                $patientData['birthdate']=$patient->patientBirthDate;
-                $patientData['registration_date']=$patient->patientRegistrationDate;
-
-                $visitStatus=$visitManager->determineVisitStatus($possibleVisit->name);
-
-                $results[$possibleVisit->name][$patient->patientCode]= array_merge($patientData,$visitStatus);
-
-            }
-
-        }
-
-        return(json_encode($results));
     }
 
     public function getStatistics() {

@@ -53,7 +53,7 @@ if ($accessCheck && $_SESSION['role'] == User::SUPERVISOR ) {
 		$sentEmails=0;
         if($_POST['radioForm'] == 'upload'){
                 
-                $visitMap=json_decode($studyObject->getAllPatientsVisitsStatus(),true);
+                $visitMap=json_decode( $studyObject->getStudySpecificGroupManager(Visit_Group::GROUP_MODALITY_PET)->getAllPatientsVisitsStatus(), true );
                 
                 $resultsMapToSend=[];
     
@@ -114,8 +114,7 @@ if ($accessCheck && $_SESSION['role'] == User::SUPERVISOR ) {
           	
             //Email for missing investigator form
             }else if ($_POST['radioForm'] == 'investigation') {
-                
-                $missingFormVisits=$studyObject->getVisitsMissingInvestigatorForm();
+                $missingFormVisits=$studyObject->getStudySpecificGroupManager($Visit_Group::GROUP_MODALITY_PET)->getVisitsMissingInvestigatorForm();
                 
                 $mailsByCenter=[];
                 foreach ($missingFormVisits as $visit){
@@ -153,8 +152,7 @@ if ($accessCheck && $_SESSION['role'] == User::SUPERVISOR ) {
                 
               //Email for missing corrective Action 
               } else if ($_POST['radioForm'] == 'corrective') {
-                  
-                  $visitsCorrectiveActionAsked=$studyObject->getVisitWithQCStatus(Visit::QC_CORRECTIVE_ACTION_ASKED);
+                  $visitsCorrectiveActionAsked=$studyObject->getStudySpecificGroupManager(Visit_Group::GROUP_MODALITY_PET)->getVisitWithQCStatus(Visit::QC_CORRECTIVE_ACTION_ASKED);
                   
                   $mailsByCenter=[];
                   foreach ($visitsCorrectiveActionAsked as $visitCorrective){
@@ -200,7 +198,6 @@ if ($accessCheck && $_SESSION['role'] == User::SUPERVISOR ) {
     } else{
         //Display the send email form
         $studyObject=new Study($_SESSION['study'], $linkpdo);
-        $visitMap=json_decode($studyObject->getAllPatientsVisitsStatus(),true);
         require 'views/supervisor/reminder_emails_view.php';
   }
 

@@ -28,7 +28,7 @@ if ($accessCheck && $_SESSION['role'] == User::SUPERVISOR ) {
 	
 	//Get All visit / patient status from the visit Manager
 	$studyObject=new Study($_SESSION['study'], $linkpdo);
-	$allVisits=json_decode($studyObject->getAllPatientsVisitsStatus(), true);
+	$allVisits=json_decode($studyObject->getStudySpecificGroupManager(Visit_Group::GROUP_MODALITY_PET)->getAllPatientsVisitsStatus(), true);
 
     require 'views/supervisor/upload_manager_view.php';
     

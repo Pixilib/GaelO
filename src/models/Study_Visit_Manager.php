@@ -33,6 +33,10 @@ class Study_Visit_Manager
         $this->visitGroupObject = $visitGroupObject;
     }
 
+    public function getVisitGroupObject(){
+        return $this->visitGroupObject;
+    }
+
 
     /**
      * Return uploaded and non deleted visit Objects
@@ -197,5 +201,41 @@ class Study_Visit_Manager
         }
 
         return $visitObjectArray;
+    }
+
+
+    public function getAllPatientsVisitsStatus(){
+
+        //Get ordered list of possible visits in this study
+        $allVisits=$this->visitGroupObject->getAllVisitTypesOfGroup();
+        //Get patients list in this study
+        $allPatients=$this->studyObject->getAllPatientsInStudy();
+
+        $results=[];
+
+        foreach($allPatients as $patient) {
+
+            $patientCenter=$patient->getPatientCenter();
+            $visitManager=$patient->getVisitManager();
+
+            foreach($allVisits as $possibleVisit) {
+
+                $patientData=[];
+                $patientData['center']=$patientCenter->name;
+                $patientData['country']=$patientCenter->countryName;
+                $patientData['firstname']=$patient->patientFirstName;
+                $patientData['lastname']=$patient->patientLastName;
+                $patientData['birthdate']=$patient->patientBirthDate;
+                $patientData['registration_date']=$patient->patientRegistrationDate;
+
+                $visitStatus=$visitManager->determineVisitStatus($possibleVisit->name);
+
+                $results[$possibleVisit->name][$patient->patientCode]= array_merge($patientData,$visitStatus);
+
+            }
+
+        }
+
+        return(json_encode($results));
     }
 }

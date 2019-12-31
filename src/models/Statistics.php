@@ -20,10 +20,14 @@ class Statistics {
 	
 	private $linkpdo;
 	public $studyObject;
+	private $studyVisitManager;
 
 	public function __construct(Study $study, PDO $linkpdo){
 		$this->linkpdo=$linkpdo;
 		$this->studyObject=$study;
+		//Cette ligne doit venir du constructeur
+		$visitGroup=$study->getSpecificGroup(Visit_Group::GROUP_MODALITY_PET);
+		$this->studyVisitManager=new Study_Visit_Manager($this->studyObject, $visitGroup, $this->linkpdo);
 		
 	}
 	
@@ -108,7 +112,7 @@ class Statistics {
 	 */
 	public function getUploadFractionAndDelay(){
 
-		$dataJson=$this->studyObject->getAllPatientsVisitsStatus();
+		$dataJson=$this->studyVisitManager->getAllPatientsVisitsStatus();
 		$allPatientStatus=json_decode($dataJson, true);
 		$results[0]=$this->getUploadedFraction($allPatientStatus);
 		$results[1]=$this->getUploadDelay($allPatientStatus);
@@ -183,7 +187,7 @@ class Statistics {
 	 */
 	public function getQCTime(){
 		
-		$uploadedVisitArray=$this->studyObject->getUploadedVisits();
+		$uploadedVisitArray=$this->studyVisitManager->getUploadedVisits();
 		
 		$responseDelayArray=[];
 		
@@ -217,7 +221,7 @@ class Statistics {
 	 */
 	public function getConclusionTime(){
 		
-		$uploadedVisitArray=$this->studyObject->getUploadedVisits();
+		$uploadedVisitArray=$this->studyVisitManager->getUploadedVisits();
 		
 		$responseDelayArray=[];
 		
@@ -244,7 +248,7 @@ class Statistics {
 	 */
 	public function getReviewStatus(){
 		
-		$uploadedVisitArray=$this->studyObject->getUploadedVisits();
+		$uploadedVisitArray=$this->studyVisitManager->getUploadedVisits();
 		
 		$responseReviewArray=[];
 		
@@ -270,7 +274,7 @@ class Statistics {
 	 */
 	public function getQcStatus(){
 		
-		$uploadedVisitArray=$this->studyObject->getUploadedVisits();
+		$uploadedVisitArray=$this->studyVisitManager->getUploadedVisits();
 		
 		$responseQcArray=[];
 		
@@ -304,7 +308,7 @@ class Statistics {
 	 */
 	public function getAcquisitionPetDelay(){
 		
-		$uploadedVisitArray=$this->studyObject->getUploadedVisits();
+		$uploadedVisitArray=$this->studyVisitManager->getUploadedVisits();
 		
 		$delayArray=array();
 		foreach ($uploadedVisitArray as $visit){
@@ -344,7 +348,7 @@ class Statistics {
 	 */
 	public function getReviewData(){
 	    
-        $createdVisits=$this->studyObject->getCreatedVisits();
+        $createdVisits=$this->studyVisitManager->getUploadedVisits();
         
         $reviewsJson=[];
         foreach ($createdVisits as $visit){
@@ -381,9 +385,9 @@ class Statistics {
 						}
 
 	        }
-        }
-        
-        $visitTypePossible=$this->studyObject->getAllPossibleVisitTypes();
+		}
+		
+        $visitTypePossible=$this->studyVisitManager->getVisitGroupObject()->getAllVisitTypesOfGroup();
         foreach ($visitTypePossible as $visitType){
             $inputType=$visitType->getSpecificTableInputType();
             $dataDetails[$visitType->name]=$inputType;

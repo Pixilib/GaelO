@@ -33,7 +33,7 @@ $permissionsCheck=$userObject->isRoleAllowed($_SESSION['study'], User::SUPERVISO
 if ($_SESSION['role']==User::SUPERVISOR && $permissionsCheck) {
 
     $studyObject=new Study($_SESSION['study'], $linkpdo);
-    $uplodadedVisits=$studyObject->getUploadedVisits();
+    $uplodadedVisits=$studyObject->getStudySpecificGroupManager(Visit_Group::GROUP_MODALITY_PET)->getUploadedVisits();
     
     $json=[];
     
