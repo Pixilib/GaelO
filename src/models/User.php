@@ -376,7 +376,10 @@ class User {
             }else if($role==$this::REVIEWER){
                 //For reviewer the visit access is allowed if one of the created visits is still awaiting review
                 //This is made to allow access to references scans
-                $isAwaitingReview=$visitData->getPatient()->getVisitManager()->isHavingAwaitingReviewVisit();
+                $patientObject=$visitData->getPatient();
+                $groupObject=$patientObject->getPatientStudy()->getSpecificGroup(Visit_Group::GROUP_MODALITY_PET); 
+                $patientVisitManager=$patientObject->getVisitManager($groupObject);
+                $isAwaitingReview=$patientVisitManager->isHavingAwaitingReviewVisit();
                 return $isAwaitingReview;
             }else{
                 //Controller, Supervisor, Admin, Monitor simply accept when role is available in patient's study (no specific rules)

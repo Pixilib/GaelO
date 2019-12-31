@@ -34,7 +34,8 @@ if (isset($_SESSION['username']) && $_SESSION['role'] == User::INVESTIGATOR && $
     // Usually only one visit to create to respect visit order but could be multipled
     // if an intermediate study has been deleted
     $patientObject= new Patient($patientCode, $linkpdo);
-    $typeVisiteDispo=$patientObject->getVisitManager()->getAvailableVisitsToCreate();
+    $groupObject=$patientObject->getPatientStudy()->getSpecificGroup(Visit_Group::GROUP_MODALITY_PET);
+    $typeVisiteDispo=$patientObject->getVisitManager($groupObject)->getAvailableVisitsToCreate();
     //SK A GENERALISER
     $visitGroupImaging=$patientObject->getPatientStudy()->getSpecificGroup("PET");
     

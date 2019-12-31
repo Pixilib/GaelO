@@ -37,7 +37,8 @@ if (empty($_POST)) {
                 // Get visit types of the study
                 try {
                     $study = new Study($_POST['study'], $linkpdo);
-                    $possibleVisits = $study->getAllPossibleVisitTypes();
+                    $visitGroup=$study->getSpecificGroup(Visit_Group::GROUP_MODALITY_PET);
+                    $possibleVisits = $visitGroup->getAllVisitTypesOfGroup();
                     $visitTypes = [];
                     foreach ($possibleVisits as $v) {
                         $visitTypes[$v->name] = $v->getSpecificTableInputType();

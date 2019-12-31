@@ -232,7 +232,8 @@ class Tree {
   private function make_Visit_Tree_Reviewer($patientCode){
 
     $patientObject=new Patient($patientCode, $this->linkpdo);
-    $createdVisitsOject=$patientObject->getVisitManager()->getCreatedPatientsVisits();
+    $visitGroupObject=$patientObject->getPatientStudy()->getSpecificGroup(Visit_Group::GROUP_MODALITY_PET);
+    $createdVisitsOject=$patientObject->getVisitManager($visitGroupObject)->getCreatedPatientsVisits();
 
     foreach($createdVisitsOject as $visitObject){
 

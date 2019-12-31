@@ -94,7 +94,8 @@ if ($accessCheck && $_SESSION['role'] == User::SUPERVISOR ) {
         
         //Get all possible visits in the current study
         $studyObject=new Study($study, $linkpdo);
-        $visits=$studyObject->getAllPossibleVisitTypes();
+        $visitGroup=$studyObject->getSpecificGroup(Visit_Group::GROUP_MODALITY_PET);
+        $visits = $visitGroup->getAllVisitTypesOfGroup();
         
         //Select all unique centers in which at least one patient is included in the current study
         $patientObjects=$studyObject->getAllPatientsInStudy();

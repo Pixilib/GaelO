@@ -17,10 +17,10 @@
  * This per-study custom class is made to override some methods of the patient visit manager
  * to make more customizable visit creation and management workflow
  */
-class Study_Visit_Manager extends Patient_Visit_Manager {
+class StudyName_Patient_Visit_Manager extends Patient_Visit_Manager {
 	
-    public function __construct(Patient $patientObject){
-        parent::__construct($patientObject);
+    public function __construct(Patient $patientObject, Visit_Group $visitGroupObject){
+        parent::__construct($patientObject, $visitGroupObject);
     }
 	
 }

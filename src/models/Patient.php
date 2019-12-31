@@ -140,7 +140,7 @@ class Patient{
     /**
      * Return visit Manage to manage patient's visit status
      */
-    public function getVisitManager(){
+    public function getVisitManager(Visit_Group $visitGroupObject){
         //Look if specific patient visit manager exists for this study
         $specificObjectFile=$_SERVER["DOCUMENT_ROOT"]."/data/form/Poo/$this->study"."_Patient_Visit_Manager.php";
             
@@ -149,7 +149,7 @@ class Patient{
             $objectName=$this->study."_Patient_Visit_Manager.php";
             return new $objectName($this);
         }else{
-            return new Patient_Visit_Manager($this);
+            return new Patient_Visit_Manager($this, $visitGroupObject);
         }
 
     }
