@@ -243,7 +243,7 @@ class Visit{
      * Return visit type details of this visit
      * @return Visit_Type
      */
-    public function getVisitCharacteristics(){
+    public function getVisitCharacteristics() : Visit_Type {
         $visitTypeObject=new Visit_Type($this->linkpdo, $this->visitGroupId, $this->visitType);
         return $visitTypeObject;  
     }
@@ -570,6 +570,8 @@ class Visit{
             require($specificObjectFile);
             $objectName=$this->study."_".$this->visitType;
             $formProcessor = new $objectName($this, $local, $username, $this->linkpdo);
+        }else{
+            throw new Exception('Missing From Processor for this visit');
         }
     	
     	return $formProcessor;
@@ -692,10 +694,10 @@ class Visit{
         //Add visit verifying that this visit doesn't already have an active visite registered
         $insertion = $linkpdo->prepare ( 'INSERT INTO visits(visit_group_id, visit_type, status_done, patient_code, reason_for_not_done, acquisition_date, creator_name, creation_date)
       										SELECT :visitGroupID, :type_visite, :status_done, :patient_code, :reason, :acquisition_date, :creator_name, :creation_date FROM DUAL
-											WHERE NOT EXISTS (SELECT id_visit FROM visits WHERE patient_code=:patient_code AND study=:study AND visit_type=:type_visite AND deleted=0) ' );
+											WHERE NOT EXISTS (SELECT id_visit FROM visits WHERE patient_code=:patient_code AND visit_group_id=:visitGroupID AND visit_type=:type_visite AND deleted=0) ' );
         
         $insertion->execute ( array (
-            'study'=>$visitGroupId,
+            'visitGroupID'=>$visitGroupId,
             'type_visite' => $visitType,
             'status_done' => $statusDone,
             'patient_code' => $patientCode,

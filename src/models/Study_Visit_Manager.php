@@ -96,15 +96,13 @@ class Study_Visit_Manager
     public function getAwaitingUploadVisit()
     {
 
-        $uploadedVisitQuery = $this->linkpdo->prepare("SELECT id_visit FROM visits WHERE study = :study
-                                                        AND visit_group_id = :visitGroupId
+        $uploadedVisitQuery = $this->linkpdo->prepare("SELECT id_visit FROM visits WHERE visit_group_id = :visitGroupId
 														AND deleted=0
 														AND visits.upload_status ='Not Done'
 														AND visits.status_done='Done' ");
 
         $uploadedVisitQuery->execute(
             array(
-                'study' => $this->study,
                 'visitGroupId' => $this->visitGroupObject->groupId
             )
         );

@@ -14,6 +14,8 @@
  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
+use phpDocumentor\Reflection\Types\Array_;
+
 /**
  * Determine Visit permissions for creation and status for upload manager
  */
@@ -53,7 +55,7 @@ class Patient_Visit_Manager
      * @param bool $deletedVisits
      * @return Visit[]
      */
-    public function getCreatedPatientsVisits(bool $deletedVisits = false)
+    public function getCreatedPatientsVisits(bool $deletedVisits = false) : Array
     {
 
         $visitQuery = $this->linkpdo->prepare('SELECT id_visit FROM visits
@@ -88,9 +90,10 @@ class Patient_Visit_Manager
         $allPossibleVisits=$this->visitGroup->getAllVisitTypesOfGroup();
         $createdVisits = $this->getCreatedPatientsVisits();
 
-        $createdVisitName = array_map(function (Visit_Type $visitType) {
-            return $visitType->name;
+        $createdVisitName = array_map(function (Visit $visit) {
+            return $visit->visitType;
         },  $createdVisits);
+
         $possibleVisitName = array_map(function (Visit_Type $visitType) {
             return $visitType->name;
         },  $allPossibleVisits);
@@ -105,6 +108,7 @@ class Patient_Visit_Manager
     //SK A Tester
     public function getAvailableVisitsToCreate()
     {
+        $availableVisitName = [];
 
         // if withdraw disallow visit creation
         if ($this->patientObject->patientWithdraw) {
@@ -115,24 +119,27 @@ class Patient_Visit_Manager
         $allPossibleVisits=$this->visitGroup->getAllVisitTypesOfGroup();
         $createdVisits = $this->getCreatedPatientsVisits();
 
-        $createdVisitOrder = array_map(function (Visit_Type $visitType) {
-            return $visitType->visitOrder;
+        $createdVisitOrder = array_map(function (Visit $visit) {
+            return $visit->getVisitCharacteristics()->visitOrder;
         },  $createdVisits);
 
-        $lastCreatedVisitOrder = max($createdVisitOrder);
+        if(empty($createdVisitOrder)){
+            $lastCreatedVisitOrder= -1;
+        }else{
+            $lastCreatedVisitOrder = max($createdVisitOrder);
+        }
 
-        $availableVisitName = [];
 
         foreach ($allPossibleVisits as $possibleVisit) {
 
             if ($possibleVisit->visitOrder < $lastCreatedVisitOrder) {
                 $availableVisitName[] = $possibleVisit->name;
-            } else {
+            } else if($possibleVisit->visitOrder > $lastCreatedVisitOrder) {
                 if ($possibleVisit->optionalVisit) {
                     //If optional add optional visit and look for the next order
                     $availableVisitName[] = $possibleVisit->name;
                     $lastCreatedVisitOrder++;
-                } else if ($possibleVisit->visitOrder == ($lastCreatedVisitOrder + 1)) {
+                } else if ($possibleVisit->visitOrder > $lastCreatedVisitOrder) {
                     $availableVisitName[] = $possibleVisit->name;
                     break;
                 }
