@@ -61,8 +61,8 @@ class Visit_Group
     public function getAllVisitTypesOfGroup()
     {
 
-        $allVisitsType = $this->linkpdo->prepare('SELECT name FROM visit_type WHERE study = :study AND group_id= :groupId ORDER BY visit_order');
-        $allVisitsType->execute(array('study' => $this->study, 'groupId' => $this->groupId));
+        $allVisitsType = $this->linkpdo->prepare('SELECT name FROM visit_type WHERE group_id= :groupId ORDER BY visit_order');
+        $allVisitsType->execute(array('groupId' => $this->groupId));
         $allVisits = $allVisitsType->fetchall(PDO::FETCH_COLUMN);
 
         $visitTypeArray = [];

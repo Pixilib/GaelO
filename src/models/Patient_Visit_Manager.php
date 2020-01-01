@@ -38,9 +38,9 @@ class Patient_Visit_Manager
     const VISIT_POSSIBLY_WITHDRAWN = "Possibly Withdrawn";
     const OPTIONAL_VISIT = "OPTIONAL_VISIT";
 
-    public function __construct(Patient $patientObject, Visit_Group $visitGroup)
+    public function __construct(Patient $patientObject, Visit_Group $visitGroup, $linkpdo)
     {
-        $this->linkpdo = $patientObject->linkpdo;
+        $this->linkpdo = $linkpdo;
         $this->patientCode = $patientObject->patientCode;
         $this->patientObject = $patientObject;
         $this->study = $this->patientObject->patientStudy;
@@ -57,16 +57,16 @@ class Patient_Visit_Manager
     {
 
         $visitQuery = $this->linkpdo->prepare('SELECT id_visit FROM visits
-													INNER JOIN visit_type ON (visit_type.name=visits.visit_type AND visit_type.group_id=visits.group_id)
+													INNER JOIN visit_type ON (visit_type.name=visits.visit_type AND visit_type.group_id=visits.visit_group_id)
                                           			WHERE patient_code = :patientCode
-                                                    AND visits.group_id = :groupId
+                                                    AND visits.visit_group_id = :groupId
 													AND visits.deleted=:deleted
 													ORDER BY visit_type.visit_order');
 
 
         $visitQuery->execute(array(
             'patientCode' => $this->patientCode,
-            'groupID' => $this->visitGroup->groupId,
+            'groupId' => $this->visitGroup->groupId,
             'deleted' => $deletedVisits
         ));
 

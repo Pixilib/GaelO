@@ -49,12 +49,12 @@ class Study_Visit_Manager
                 SELECT users.center
                 FROM   users
                 WHERE  users.username = :username)
-                AND visit_group_id = :visitGroupId
+                AND study = :study
                 GROUP  BY patients.code');
 
         $patients->execute(array(
             'username' => $username,
-            'visitGroupId' => $this->visitGroupObject->groupId
+            'study' => $this->studyObject->study
         ));
 
         $patientsCodes = $patients->fetchAll(PDO::FETCH_COLUMN);
@@ -75,13 +75,11 @@ class Study_Visit_Manager
     public function getUploadedVisits()
     {
 
-        $uploadedVisitQuery = $this->linkpdo->prepare('SELECT id_visit FROM visits WHERE study = :study
-                                                    AND visit_group_id = :visitGroupId
+        $uploadedVisitQuery = $this->linkpdo->prepare('SELECT id_visit FROM visits WHERE visit_group_id = :visitGroupId
                                                     AND deleted=0
                                                     AND visits.upload_status="Done" ');
 
         $uploadedVisitQuery->execute(array(
-            'study' => $this->study,
             'visitGroupId' => $this->visitGroupObject->groupId
         ));
 
@@ -174,15 +172,15 @@ class Study_Visit_Manager
                                             AND state_quality_control != :qcCorrectiveAction 
 											ORDER BY visit_type.visit_order');
         $visitsQuery->execute(array(
-            'visitGroupId' => $this->visitGroupObject->groupId, 
+            'visitGroupId' => $this->visitGroupObject->groupId,
             'qcCorrectiveAction' => Visit::QC_CORRECTIVE_ACTION_ASKED
         ));
 
-        $visits=$visitsQuery->fetchAll(PDO::FETCH_COLUMN);
+        $visits = $visitsQuery->fetchAll(PDO::FETCH_COLUMN);
 
-        $visitObjectArray=[];
-        foreach($visits as $visit){
-            $visitObjectArray[]=new Visit($visit, $this->linkpdo);
+        $visitObjectArray = [];
+        foreach ($visits as $visit) {
+            $visitObjectArray[] = new Visit($visit, $this->linkpdo);
         }
 
         return $visitObjectArray;
@@ -214,8 +212,7 @@ class Study_Visit_Manager
     public function getVisitsMissingInvestigatorForm()
     {
 
-        $visitQuery = $this->linkpdo->prepare("SELECT id_visit FROM visits WHERE study = :study
-                                                            AND visit_group_id = :visitGroupId
+        $visitQuery = $this->linkpdo->prepare("SELECT id_visit FROM visits WHERE visit_group_id = :visitGroupId
                                                             AND deleted=0 
                                                             AND state_investigator_form !='Done' 
                                                             AND upload_status='Done'");
@@ -241,15 +238,15 @@ class Study_Visit_Manager
     public function getCreatedVisits(bool $deleted = false)
     {
 
-        $uploadedVisitQuery = $this->linkpdo->prepare('SELECT id_visit FROM visits, visit_type WHERE visits.study = :study
-                                                    AND visits.deleted=:deleted
-                                                    AND visits.visit_group_id = :visitGroupId 
-                                                    AND visit_type.name=visits.visit_type
-                                                    AND visit_type.study=visits.study
+        $uploadedVisitQuery = $this->linkpdo->prepare('SELECT id_visit FROM visits 
+                                                    INNER JOIN visit_type ON 
+                                                        (visit_type.name=visits.visit_type 
+                                                        AND visit_type.group_id = visits.visit_group_id)
+                                                    WHERE visit_group_id = :visitGroupId
+                                                    AND deleted = :deleted 
                                                     ORDER BY patient_code, visit_type.visit_order');
 
         $uploadedVisitQuery->execute(array(
-            'study' => $this->study,
             'deleted' => intval($deleted),
             'visitGroupId' => $this->visitGroupObject->groupId
         ));

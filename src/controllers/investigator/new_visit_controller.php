@@ -37,7 +37,7 @@ if (isset($_SESSION['username']) && $_SESSION['role'] == User::INVESTIGATOR && $
     $groupObject=$patientObject->getPatientStudy()->getSpecificGroup(Visit_Group::GROUP_MODALITY_PET);
     $typeVisiteDispo=$patientObject->getVisitManager($groupObject)->getAvailableVisitsToCreate();
     //SK A GENERALISER
-    $visitGroupImaging=$patientObject->getPatientStudy()->getSpecificGroup("PET");
+    $visitGroupImaging=$patientObject->getPatientStudy()->getSpecificGroup("PET")->groupId;
     
     
     require 'views/investigator/new_visit_view.php';

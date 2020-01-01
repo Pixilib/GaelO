@@ -20,7 +20,7 @@
 Class Study {
     
     private $linkpdo;
-    private $study;
+    public $study;
 
     //SK AJOUTER "ETUDE ANCILLAIRE DE" OU VIA HERITAGE ?!?
     
@@ -55,7 +55,7 @@ Class Study {
 
     public function getSpecificGroup(String $groupModality){
 
-        $groupQuery = $this->linkpdo->prepare('SELECT id, name FROM visit_group WHERE study = :study AND group_modality=:groupModality');
+        $groupQuery = $this->linkpdo->prepare('SELECT id FROM visit_group WHERE study = :study AND group_modality=:groupModality');
         $groupQuery->execute(array('study' => $this->study, 'groupModality'=> $groupModality));
         $groupId=$groupQuery->fetch(PDO::FETCH_COLUMN);
         
