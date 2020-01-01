@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Client :  localhost
--- Généré le :  Lun 30 Décembre 2019 à 01:59
+-- Généré le :  Mer 01 Janvier 2020 à 15:03
 -- Version du serveur :  5.7.28-0ubuntu0.16.04.2
 -- Version de PHP :  7.3.11-1+ubuntu16.04.1+deb.sury.org+1
 
@@ -669,7 +669,6 @@ CREATE TABLE `visits` (
 CREATE TABLE `visit_group` (
   `id` int(11) NOT NULL,
   `study` varchar(32) NOT NULL,
-  `group_name` varchar(32) NOT NULL,
   `group_type` set('Imaging','Pathology','Radiotherapy') NOT NULL,
   `group_modality` set('PET','MR','CT') NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -831,7 +830,7 @@ ALTER TABLE `visits`
 --
 ALTER TABLE `visit_group`
   ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `study` (`study`,`group_name`);
+  ADD UNIQUE KEY `study` (`study`,`group_type`);
 
 --
 -- Index pour la table `visit_type`
@@ -846,6 +845,12 @@ ALTER TABLE `visit_type`
 --
 -- AUTO_INCREMENT pour les tables exportées
 --
+
+ALTER TABLE `visits`
+  MODIFY `id_visit` int(11) NOT NULL AUTO_INCREMENT;
+
+ALTER TABLE `visit_group`
+MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT pour la table `documentation`

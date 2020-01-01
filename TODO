@@ -1,3 +1,4 @@
 Update du Tree avec un sous niveau group et propriete dans tous les enfants
 Faire New Visit dependant du GROUPE => Ajout d'un selecteur de groupe
-Passer les methode du supervisor par groupe
+Creer les groupes au moement de la creation de l'etude
+Passer les methode du supervisor par groupe avec interface par groupe de visite

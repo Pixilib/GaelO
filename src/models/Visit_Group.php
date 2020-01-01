@@ -81,8 +81,8 @@ class Visit_Group
     public static function createVisitGroup(String $studyName, String $groupType, String $groupModality, PDO $linkpdo)
     {
 
-        $req = $linkpdo->prepare('INSERT INTO visit_type (study, group_type, group_modality, group_name)
-                                      VALUES(:studyName, :groupType, :groupModality, :groupName');
+        $req = $linkpdo->prepare('INSERT INTO visit_group (study, group_type, group_modality)
+                                      VALUES(:studyName, :groupType, :groupModality)');
 
         $req->execute(array(
             'studyName' => $studyName,
