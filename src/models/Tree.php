@@ -122,6 +122,30 @@ class Tree {
 
   }
 
+  private function extractUniquePatientsFromVisitArray(array $visitsArray) : array {
+
+    $patient=[];
+
+    foreach($visitsArray as $visit){
+      $patient[$visit->patientCode]=true;
+    }
+
+    return array_keys($patient);
+
+  }
+
+  private function buildPatientLevel(array $visitsArray){
+
+    $patientArray=$this->extractUniquePatientsFromVisitArray($visitsArray);
+
+    $patientLevelData=[];
+    foreach($patientArray as $patientCode){
+      $patientLevelData[]=$this->patientObjectToTreeObject($patientCode);
+    }
+    
+    return $patientLevelData;
+  }
+
   /**
    * Return JSON for JSTree according to role  (patient + Visit)
    * @return array
@@ -149,65 +173,51 @@ class Tree {
       }
 
     } else if($this->role == User::CONTROLLER){
+
       $controllerVisitsArray = $studyVisitManager->getVisitForControllerAction();
 
-      $patientsArray=[];
+      $patientLevelObjects=$this->buildPatientLevel($controllerVisitsArray);
 
-      foreach ($controllerVisitsArray as $visitObject) {
-          
-          //Check if visit comes from a new patient
-          if(  ! in_array($visitObject->patientCode, $patientsArray) ){
-              //create a patient entry
-              $resultTreeArray[] =$this->patientObjectToTreeObject($visitObject->patientCode);
-          }
-          
+      array_push($resultTreeArray, ...$patientLevelObjects);
+
+      foreach ($controllerVisitsArray as $visitObject) {  
           $resultTreeArray[] = $this->visitObjectToTreeObject($visitObject);
       }
 
     } else if($this->role == User::MONITOR){
 
-        $createdVisitArray=$patient->getVisitManager($studyVisitManager->getVisitGroupObject())->getCreatedVisits();
+        $createdVisitArray=$studyVisitManager->getCreatedVisits();
 
-        $patientsArray=[];
+        $patientLevelObjects=$this->buildPatientLevel($createdVisitArray);
 
+        array_push($resultTreeArray, ...$patientLevelObjects);
+        
         foreach ($createdVisitArray as $visitObject) {
-            
-            //Check if visit comes from a new patient
-            if(  ! in_array($visitObject->patientCode, $patientsArray) ){
-                //create a patient entry
-                $resultTreeArray[] =$this->patientObjectToTreeObject($visitObject->patientCode);
-                
-            }
             
             $resultTreeArray[] = $this->visitObjectToTreeObject($visitObject);
         }
 
     } else if($this->role == User::REVIEWER){
-
-
+        //List patient having at least one visit awaiting review for the current user.
         $visitObjectList = $this->studyObject->getStudySpecificGroupManager(Visit_Group::GROUP_MODALITY_PET)->getAwaitingReviewVisit($this->username);
+        //Make the patient level
+        $patientLevelData=$this->buildPatientLevel($visitObjectList);
+        array_push($resultTreeArray, ...$patientLevelData);
+
+        $patientList=$this->extractUniquePatientsFromVisitArray($visitObjectList);
         
-        $patientsArray=[];
-        
-        foreach ($visitObjectList as $visitObject) {
-            
-            //Check if visit comes from a new patient
-            if(  ! in_array($visitObject->patientCode, $patientsArray) ){
+        //For each patien add created visit
+        foreach($patientList as $patientCode){
 
-                //create a patient entry
-                $resultTreeArray[] =$this->patientObjectToTreeObject($visitObject->patientCode);
+          //Add all created visits of this patient to allow access to patient history
+          $patientObject=new Patient($patientCode, $this->linkpdo);
+          $visitGroupObject=$patientObject->getPatientStudy()->getSpecificGroup(Visit_Group::GROUP_MODALITY_PET);
+          $createdVisitsObject=$patientObject->getVisitManager($visitGroupObject)->getCreatedPatientsVisits();
 
-                //Add all created visits of this patient to allow access to patient history
-                $patientObject=new Patient($visitObject->patientCode, $this->linkpdo);
-                $visitGroupObject=$patientObject->getPatientStudy()->getSpecificGroup(Visit_Group::GROUP_MODALITY_PET);
-                $createdVisitsOject=$patientObject->getVisitManager($visitGroupObject)->getCreatedPatientsVisits();
+          foreach($createdVisitsObject as $visitObject){
+            $resultTreeArray[] = $this->visitObjectToTreeObject($visitObject);
+          }
 
-                foreach($createdVisitsOject as $visitObject){
-                  $resultTreeArray[] =$this->visitObjectToTreeObject;
-                }
-                
-            }
-            
         }
         
     }

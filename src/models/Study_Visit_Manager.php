@@ -127,13 +127,11 @@ class Study_Visit_Manager
 
         //Query visit to analyze visit awaiting a review
         $idVisitsQuery = $this->linkpdo->prepare('SELECT id_visit FROM visits INNER JOIN visit_type ON (visits.visit_type=visit_type.name AND visit_type.group_id=visits.visit_group_id)
-                                      WHERE (visits.study = :study
-                                      AND visit_group_id = :visitGroupId
+                                      WHERE visit_group_id = :visitGroupId
                                       AND deleted=0
-                                      AND review_available=1) ORDER BY visit_order ');
+                                      AND review_available=1 ORDER BY visit_type.visit_order ');
 
         $idVisitsQuery->execute(array(
-            'study' => $this->study,
             'visitGroupId' => $this->visitGroupObject->groupId
         ));
 
