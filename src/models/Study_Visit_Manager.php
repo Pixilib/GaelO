@@ -59,10 +59,10 @@ class Study_Visit_Manager
 
         $patientsCodes = $patients->fetchAll(PDO::FETCH_COLUMN);
 
-        $patientObjectsArray=[];
+        $patientObjectsArray = [];
 
-        foreach($patientsCodes as $patientCode){
-            $patientObjectsArray[]=new Patient($patientCode, $this->linkpdo);
+        foreach ($patientsCodes as $patientCode) {
+            $patientObjectsArray[] = new Patient($patientCode, $this->linkpdo);
         }
 
         return $patientObjectsArray;
@@ -130,7 +130,7 @@ class Study_Visit_Manager
     {
 
         //Query visit to analyze visit awaiting a review
-        $idVisitsQuery = $this->linkpdo->prepare('SELECT id_visit FROM visits INNER JOIN visit_type ON (visits.visit_type=visit_type.name AND visits.study=visit_type.study)
+        $idVisitsQuery = $this->linkpdo->prepare('SELECT id_visit FROM visits INNER JOIN visit_type ON (visits.visit_type=visit_type.name AND visit_type.group_id=visits.visit_group_id)
                                       WHERE (visits.study = :study
                                       AND visit_group_id = :visitGroupId
                                       AND deleted=0
@@ -153,6 +153,36 @@ class Study_Visit_Manager
             } else {
                 $visitObjectArray[] = $visitObject;
             }
+        }
+
+        return $visitObjectArray;
+    }
+
+    /**
+     * For controller tree
+     * List all visits that are QC or waiting QC
+     */
+    public function getVisitForControllerAction()
+    {
+
+        $visitsQuery = $this->linkpdo->prepare('SELECT id_visit FROM visits INNER JOIN visit_type ON (visit_type.name=visits.visit_type AND visit_type.group_id=visits.visit_group_id) 
+											WHERE visit_group_id = :visitGroupId
+                                            AND deleted=0
+											AND status_done ="Done"
+											AND upload_status= "Done"
+											AND state_investigator_form="Done"
+                                            AND state_quality_control != :qcCorrectiveAction 
+											ORDER BY visit_type.visit_order');
+        $visitsQuery->execute(array(
+            'visitGroupId' => $this->visitGroupObject->groupId, 
+            'qcCorrectiveAction' => Visit::QC_CORRECTIVE_ACTION_ASKED
+        ));
+
+        $visits=$visitsQuery->fetchAll(PDO::FETCH_COLUMN);
+
+        $visitObjectArray=[];
+        foreach($visits as $visit){
+            $visitObjectArray[]=new Visit($visit, $this->linkpdo);
         }
 
         return $visitObjectArray;
