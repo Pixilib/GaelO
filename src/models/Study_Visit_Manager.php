@@ -273,7 +273,7 @@ class Study_Visit_Manager
         foreach ($allPatients as $patient) {
 
             $patientCenter = $patient->getPatientCenter();
-            $visitManager = $patient->getVisitManager();
+            $visitManager = $patient->getVisitManager($this->visitGroupObject);
 
             foreach ($allVisits as $possibleVisit) {
 
