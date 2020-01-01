@@ -14,8 +14,6 @@
  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-use phpDocumentor\Reflection\Types\Array_;
-
 /**
  * Determine Visit permissions for creation and status for upload manager
  */
