@@ -28,7 +28,7 @@ RUN touch /var/log/gaelo_cron.log
 RUN chmod 0777 /var/log/gaelo_cron.log
 
 ADD crontab /etc/cron.d/gaelo
-RUN chmod 0644 /etc/cron.d/gaelo
+RUN chmod 0600 /etc/cron.d/gaelo
 CMD ["cron", "-f"]
 
 COPY msmtprc /etc/msmtprc
