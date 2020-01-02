@@ -29,7 +29,7 @@ use GO\Scheduler;
 $scheduler = new Scheduler();
 
 //Define action and timing
-$scheduler->php('import_patient.php')->sunday(23, 50);
+$scheduler->php(__DIR__.'import_patient.php')->sunday(23, 50);
 
 // Let the scheduler execute jobs which are due.
 $scheduler->run();
