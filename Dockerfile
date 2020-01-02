@@ -8,6 +8,8 @@ WORKDIR /gaelo
 RUN apt-get update -qy && \
     apt-get install -y \
     git \
+    cron \
+    nano \
     libicu-dev \
     unzip \
     libzip-dev \
@@ -20,6 +22,10 @@ RUN apt-get update -qy && \
 
 RUN docker-php-ext-install -j$(nproc) opcache pdo_mysql
 COPY php.ini /usr/local/etc/php/conf.d/app.ini
+
+ADD crontab /etc/cron.d/gaelo
+RUN chmod 0644 /etc/cron.d/gaelo
+RUN /usr/bin/crontab /etc/cron.d/gaelo
 
 COPY msmtprc /etc/msmtprc
 RUN chmod 600 /etc/msmtprc
