@@ -149,11 +149,16 @@ Class FTP_Reader {
         $results=[];
 
         for ($i=0 ; $i<sizeOf($lines); $i++) {
+            //remove the last # to avoid creating and empty column
+            $lines[$i]=rtrim($lines[$i], '#');
+            //split string in columns
             $columns = explode("#", $lines[$i]);
             if($i==0){
+                //First line is column definition
                 $titles=$columns;
             }else{
                 $patient=[];
+                //For each column associate data into an associative array
                 for ($j=0 ; $j< sizeof($columns); $j++){
                     $patient[ $titles[$j] ]=$columns[$j];
                 }

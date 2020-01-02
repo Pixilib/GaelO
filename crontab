@@ -11,4 +11,4 @@
 # For more information see the manual pages of crontab(5) and cron(8)
 # 
 # m h  dom mon dow   command
-* * * * * /usr/local/bin/php /gaelo/data/cron/cron.php > /dev/stdout
+* * * * * /usr/local/bin/php /gaelo/data/cron/cron.php >> /var/log/cronGaelo.log
