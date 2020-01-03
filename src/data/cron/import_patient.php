@@ -20,11 +20,9 @@
  * This script has to be triggered by a crontab
  */
 
-require_once($_SERVER['DOCUMENT_ROOT'].'/vendor/autoload.php');
-
 $ftpReader=new FTP_Reader();
 
-$ftpReader->setFTPCredential("", "", "", "", 22, true );
+$ftpReader->setFTPCredential( );
 
 $files=$ftpReader->getFilesFromFTP();
 print_r($files);
