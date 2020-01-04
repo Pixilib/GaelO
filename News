@@ -8,5 +8,6 @@ Patient Visit Manager can be redifined through inheritance for custom visit crea
 Anon profile, optional visit, local form needed, Qc needed, Review needed are now defined per visit type
 Monitors now recieve QC decision emails
 Supervisors are notified in case of a not done visit creation
+Export button on table now export only visible (filtered) data
 
 
