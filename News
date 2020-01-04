@@ -1,0 +1,12 @@
+GaelO
+
+--Next Release --
+Visit group to manage multiple modalities (in which each modality will have it's visit type)
+User's data edition panel
+Docker : SMTP service and Cron services
+Patient Visit Manager can be redifined through inheritance for custom visit creation workflow and status determination
+Anon profile, optional visit, local form needed, Qc needed, Review needed are now defined per visit type
+Monitors now recieve QC decision emails
+Supervisors are notified in case of a not done visit creation
+
+
