@@ -1,4 +1,5 @@
 <?php
+
 /**
  Copyright (C) 2018 KANOUN Salim
  This program is free software; you can redistribute it and/or modify
@@ -19,51 +20,108 @@
 
 use phpseclib\Net\SFTP;
 
-Class FTP_Reader {
+class FTP_Reader
+{
 
     public $ftpUsername;
     public $ftpPassword;
     public $ftpHost;
-    public $ftpFolder;
     public $ftpPort;
     public $ftpIsSftp;
+    public $ftpFolder;
+    public $ftpFileName;
+    public $lastUpdateLimit;
 
     /**
      * 
      */
-    public function setFTPCredential (String $host, String $username, String $password, String $folder='/', int $port=21, bool $ftpIsSftp=false) {
+    public function setFTPCredential(String $host, String $username, String $password, int $port = 21, bool $ftpIsSftp = false)
+    {
+        $this->ftpHost = $host;
+        $this->ftpUsername = $username;
+        $this->ftpPassword = $password;
+        $this->ftpPort = $port;
+        $this->ftpIsSftp = $ftpIsSftp;
+        $this->ftpFolder = '/';
+        $this->ftpFileName = null;
+        $this->lastUpdateLimit = null;
+    }
 
-        $this->ftpHost=$host;
-        $this->ftpUsername=$username;
-        $this->ftpPassword=$password;
-        $this->ftpFolder=$folder;
-        $this->ftpPort=$port;
-        $this->ftpIsSftp=$ftpIsSftp;
+    public function setFolder(String $folder)
+    {
+        $this->ftpFolder = $folder;
+    }
 
+    public function setSearchedFile(String $fileName)
+    {
+        $this->ftpFileName = $fileName;
+    }
+
+    /**
+     * Number of minutes the last update of files should be inferior
+     */
+    public function setLastUpdateTimingLimit(int $lastUpdateLimit)
+    {
+        $this->lastUpdateLimit = $lastUpdateLimit;
+    }
+
+    private function selectWantedFiles(array $fileArray)
+    {
+        if ($this->ftpFileName != null) {
+            $isAvailable = $this->isSearchedFileAvailable($fileArray);
+            if ($isAvailable) {
+                return array($this->ftpFileName);
+            } else {
+                throw new Exception('Target File Not Found');
+            }
+        } else {
+            return $fileArray;
+        }
+    }
+
+    private function isSearchedFileAvailable(array $fileArray)
+    {
+        return in_array($this->ftpFileName, $fileArray) ? true : false;
+    }
+
+    private function isLastUpdateInTimingLimit(int $mtimStamp)
+    {
+        //$lastUpdateTime=DateTime::createFromFormat('U', $mtim);
+        $dateNow = new DateTime();
+
+        print($dateNow->getTimestamp());
+        print($mtimStamp);
+
+        if (($this->lastUpdateLimit != null) &&
+            ($dateNow->getTimestamp() - $mtimStamp) > ($this->lastUpdateLimit * 60)
+        ) {
+            throw new Exception('File last update too old');
+        }
+        return true;
     }
 
     /**
      * Download the FTP folder taget and return an array of temporary dowloaded files
      */
-    function getFilesFromFTP () {
+    public function getFilesFromFTP()
+    {
 
         error_log('starting FTP connexion');
-        
-        if($this->ftpIsSftp){
 
-            $filesArray=$this->getSftp();
+        if ($this->ftpIsSftp) {
+
+            $filesArray = $this->getSftp();
+        } else {
+            $filesArray = $this->getFtp();
             //$ftpConnect = ftp_ssl_connect ($this->ftpHost, $this->ftpPort) or die("Can't Connect to Server ".$this->ftpHost);
-            
-        }else{
-            $filesArray=$this->getFtp();
+
         }
 
         return $filesArray;
-
-        
     }
 
-    public function getSftp(){
+    private function getSftp()
+    {
 
         $sftp = new SFTP($this->ftpHost);
 
@@ -71,104 +129,107 @@ Class FTP_Reader {
             throw new Exception('Login SFTP failed');
         }
 
-        if(! $sftp->chdir($this->ftpFolder)){
+        if (!$sftp->chdir($this->ftpFolder)) {
             throw new Exception("Can't reach SFTP Path Target");
         };
 
         //$sftp->get('remote_file', 'local_file');
         //$sftp->put('remote_file', 'contents for remote file');
-        
-        $fileContents = $sftp->nlist();
+
+        $fileArray = $sftp->nlist();
 
         //Remove . and ..
-        unset($fileContents[0]);
-        unset($fileContents[1]);
+        unset($fileArray[0]);
+        unset($fileArray[1]);
 
-        $resultFileArray=[];
-        
-        foreach ($fileContents as $fileInFtp){
-            $fileState=$sftp->stat($fileInFtp);
+        $selectedFiles = $this->selectWantedFiles($fileArray);
+
+        $resultFileArray = [];
+
+        foreach ($selectedFiles as $fileInFtp) {
+            $fileState = $sftp->stat($fileInFtp);
+            $this->isLastUpdateInTimingLimit($fileState['mtime']);
             print_r($fileState);
-            $temp = fopen(sys_get_temp_dir().DIRECTORY_SEPARATOR.$fileInFtp, 'w');
+            $temp = fopen(sys_get_temp_dir() . DIRECTORY_SEPARATOR . $fileInFtp, 'w');
             //Retrieve File from SFTP
             $sftp->get($fileInFtp, $temp);
             fclose($temp);
             //Store resulting file in array
-            $resultFileArray[]=sys_get_temp_dir().DIRECTORY_SEPARATOR.$fileInFtp;
+            $resultFileArray[] = sys_get_temp_dir() . DIRECTORY_SEPARATOR . $fileInFtp;
         }
 
         return $resultFileArray;
-
     }
 
-    public function getFtp(){
+    private function getFtp()
+    {
 
-        if( ! $ftpConnect = ftp_connect($this->ftpHost, $this->ftpPort)){
-            throw new Exception('Cant Connect to Server'.$this->ftpHost);
+        if (!$ftpConnect = ftp_connect($this->ftpHost, $this->ftpPort)) {
+            throw new Exception('Cant Connect to Server' . $this->ftpHost);
         }
 
-        if(!ftp_login($ftpConnect, $this->ftpUsername, $this->ftpPassword)){
+        if (!ftp_login($ftpConnect, $this->ftpUsername, $this->ftpPassword)) {
             ftp_close($ftpConnect);
             throw new Exception('Login failed');
         };
 
         //Move to the target folder
-        if(!ftp_chdir($ftpConnect, $this->ftpFolder)){
+        if (!ftp_chdir($ftpConnect, $this->ftpFolder)) {
             ftp_close($ftpConnect);
             throw new Exception("Can't reach FTP Path Target");
         }
 
         // Get files in the ftp folder
-        $fileContents = ftp_nlist($ftpConnect, ".");
-        
-        $resultFileArray=[];
-        
-        foreach ($fileContents as $fileInFtp){
-            $temp = fopen(sys_get_temp_dir().DIRECTORY_SEPARATOR.$fileInFtp, 'w');
+        $fileArray = ftp_nlist($ftpConnect, ".");
+
+        $selectedFiles = $this->selectWantedFiles($fileArray);
+
+        $resultFileArray = [];
+
+        foreach ($selectedFiles as $fileInFtp) {
+            $temp = fopen(sys_get_temp_dir() . DIRECTORY_SEPARATOR . $fileInFtp, 'w');
             ftp_fget($ftpConnect, $temp, $fileInFtp);
             fclose($temp);
             //Store resulting file in array
-            $resultFileArray[]=sys_get_temp_dir().DIRECTORY_SEPARATOR.$fileInFtp;
+            $resultFileArray[] = sys_get_temp_dir() . DIRECTORY_SEPARATOR . $fileInFtp;
         }
-        
+
         ftp_close($ftpConnect);
 
         return $resultFileArray;
-
     }
 
     /**
      * Transform Text file with # separator to an associative array
      */
-    public static function parseLysarcTxt(String $txt){
+    public static function parseLysarcTxt(String $txt)
+    {
 
         //Divided text in row by splitting new line
         $lines = explode("\n", $txt);
 
-        $titles=[];
-        $results=[];
+        $titles = [];
+        $results = [];
 
-        for ($i=0 ; $i<sizeOf($lines); $i++) {
+        for ($i = 0; $i < sizeOf($lines); $i++) {
             //remove the last # to avoid creating and empty column
-            $lines[$i]=rtrim($lines[$i], '#');
+            $lines[$i] = rtrim($lines[$i], '#');
             //split string in columns
             $columns = explode("#", $lines[$i]);
-            if($i==0){
+            if ($i == 0) {
                 //First line is column definition
-                $titles=$columns;
-            }else{
-                $patient=[];
+                $titles = $columns;
+            } else {
+                $patient = [];
                 //For each column associate data into an associative array
-                for ($j=0 ; $j< sizeof($columns); $j++){
-                    $patient[ $titles[$j] ]=$columns[$j];
+                for ($j = 0; $j < sizeof($columns); $j++) {
+                    $patient[$titles[$j]] = $columns[$j];
                 }
-                $results[]=$patient;
+                $results[] = $patient;
             }
-
         }
 
         return $results;
-
     }
 
 
@@ -177,20 +238,19 @@ Class FTP_Reader {
      * @param string $folder
      * @return string[]
      */
-    public static function getFilesFromFolder(string $folder){
-    
-    $scanned_directory = array_diff(scandir($folder), array('..', '.'));
-    
-    $resultFileArray=[];
-    
-    foreach ($scanned_directory as $file){
-        
-        $resultFileArray[]=$folder.DIRECTORY_SEPARATOR.$file;
-        
-    }
-    
-    return $resultFileArray;
-    
-}
+    /*
+    public static function getFilesFromFolder(string $folder)
+    {
 
+        $scanned_directory = array_diff(scandir($folder), array('..', '.'));
+
+        $resultFileArray = [];
+        foreach ($scanned_directory as $file) {
+
+            $resultFileArray[] = $folder . DIRECTORY_SEPARATOR . $file;
+        }
+
+        return $resultFileArray;
+    }
+    */
 }

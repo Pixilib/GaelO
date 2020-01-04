@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  Copyright (C) 2018 KANOUN Salim
  This program is free software; you can redistribute it and/or modify
@@ -16,60 +16,59 @@
 /**
  * Automatically import patients defined in JSON for a set of study
  * Define the local or FTP path as source
- * In this path each JSON made for each study should respect '{study}_import.json' name
- * This script has to be triggered by a crontab
+ * This is called by cron.php script
  */
 
-require_once(__DIR__.'/../../vendor/autoload.php');
+require_once(__DIR__ . '/../../vendor/autoload.php');
 
-$ftpReader=new FTP_Reader();
+echo ('ScriptStarted');
 
-echo('ScriptStarted');
+$studyName = "ITSELF";
 
-$ftpReader->setFTPCredential( );
+$ftpReader = new FTP_Reader();
+try {
+    $ftpReader->setFTPCredential();
+    $ftpReader->setFolder("/GAELO/ITSELF/ExportCS");
+    $ftpReader->setSearchedFile($studyName . '_PATIENTS.txt');
+    $ftpReader->setLastUpdateTimingLimit(24 * 60);
+    $files = $ftpReader->getFilesFromFTP();
+} catch (Exception $e) {
+    print($e->getMessage());
+    sendFailedReadFTP();
+}
 
-$files=$ftpReader->getFilesFromFTP();
-print_r($files);
-$fileAsString=file_get_contents ( $files[1] );
+$fileAsString = file_get_contents($files[0]);
 $arrayLysarc = $ftpReader::parseLysarcTxt($fileAsString);
 
 print_r($arrayLysarc);
-print(json_encode($arrayLysarc));
+$jsonImport = json_encode($arrayLysarc);
+print($jsonImport);
 
 /*
+
 $linkpdo=Session::getLinkpdo();
 
-foreach ($files as $file){
-    
-    $path_parts = pathinfo($file);
-    
-    if( !is_dir($file)  && $path_parts['extension']=='json'){
-        
-        $studyName=strstr($file, "_", true);
-        
-        $json = file_get_contents($file);
-        
-        $importPatient = new Import_Patient($json, $studyName, $linkpdo);
-        $importPatient -> readJson();
-    
-        //log activity
-        $actionDetails['Success']=$importPatient->sucessList;
-        $actionDetails['Fail']=$importPatient->failList;
-        $actionDetails['email']=$importPatient->getTextImportAnswer();
-        Tracker::logActivity($administratorUsername, User::SUPERVISOR, $studyName , null , "Import Patients", $actionDetails);
-        
-        //Send the email to administrators of the plateforme
-        $email = new Send_Email($linkpdo);
-        $email->setMessage($importPatient->getHTMLImportAnswer());
-        $destinators=$email->getRolesEmails(User::SUPERVISOR, $studyName);
-        $email->sendEmail($destinators, 'Import Report');
+$importPatient = new Import_Patient($jsonImport, $studyName, $linkpdo);
+$importPatient -> readJson();
 
-    }else if(!is_dir($file)  && $path_parts['extension']=='txt'){
+//log activity
+$actionDetails['Success']=$importPatient->sucessList;
+$actionDetails['Fail']=$importPatient->failList;
+$actionDetails['email']=$importPatient->getTextImportAnswer();
+Tracker::logActivity($administratorUsername, User::SUPERVISOR, $studyName , null , "Import Patients", $actionDetails);
 
-    }
-    
-    //erase downloaded source file if from FTP
-    //if($ftpSource) unlink($file);
-}
+//Send the email to administrators of the plateforme
+$email = new Send_Email($linkpdo);
+$email->setMessage($importPatient->getHTMLImportAnswer());
+$destinators=$email->getRolesEmails(User::SUPERVISOR, $studyName);
+$email->sendEmail($destinators, 'Import Report');
 */
 
+function sendFailedReadFTP(){
+    global $linkpdo;
+    $email = new Send_Email($linkpdo);
+    $email->setMessage("FTP Import Has failed");
+    $destinators=$email->getAdminsEmails();
+    $email->sendEmail($destinators, 'FTP Import Failed');
+
+}

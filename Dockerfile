@@ -24,10 +24,10 @@ RUN docker-php-ext-install -j$(nproc) opcache pdo_mysql
 COPY php.ini /usr/local/etc/php/conf.d/app.ini
 
 # Create the cronjob (job has to be set in /data/cron/cron.php)
-ADD crontab /etc/cron.d/gaelo
+COPY crontab /etc/cron.d/gaelo
 RUN chmod 0600 /etc/cron.d/gaelo
-CMD ["cron", "-f"]
 RUN crontab /etc/cron.d/gaelo
+RUN cron -f
 
 COPY msmtprc /etc/msmtprc
 RUN chmod 600 /etc/msmtprc
