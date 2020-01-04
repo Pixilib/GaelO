@@ -20,7 +20,11 @@
  * This script has to be triggered by a crontab
  */
 
+error_log('ScriptStarted');
+
 $ftpReader=new FTP_Reader();
+
+error_log('ScriptStarted');
 
 $ftpReader->setFTPCredential( );
 
