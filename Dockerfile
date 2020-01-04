@@ -27,7 +27,7 @@ COPY php.ini /usr/local/etc/php/conf.d/app.ini
 COPY crontab /etc/cron.d/gaelo
 RUN chmod 0600 /etc/cron.d/gaelo
 RUN crontab /etc/cron.d/gaelo
-RUN cron -f
+RUN cron
 
 COPY msmtprc /etc/msmtprc
 RUN chmod 600 /etc/msmtprc

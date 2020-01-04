@@ -21,16 +21,47 @@
 				extend: 'collection',
 				text: 'Export',
 				buttons: [
-					'copy',
-					'excel',
-					'csv',
-					'pdf',
-					'print'
-				] }
+					{
+						extend: 'copyHtml5',
+						exportOptions: {
+							columns: ':visible',
+							rows: ':visible'
+						}
+					},
+					{
+						extend: 'excelHtml5',
+						exportOptions: {
+							columns: ':visible',
+							rows: ':visible'
+						}
+					},
+					{
+						extend: 'csvHtml5',
+						exportOptions: {
+							columns: ':visible',
+							rows: ':visible'
+						}
+					},
+					{
+						extend: 'pdfHtml5',
+						exportOptions: {
+							columns: ':visible',
+							rows: ':visible'
+						}
+					},
+					{
+						extend: 'printHtml5',
+						exportOptions: {
+							columns: ':visible',
+							rows: ':visible'
+						}
+					}
+					]
+				}
 			],
-			"bSortCellsTop": true,
-			"scrollX": true,
-			"order": [[ 0, "desc" ]]
+		"bSortCellsTop": true,
+		"scrollX": true,
+		"order": [[ 0, "desc" ]]
 		});
 	
 	
