@@ -22,12 +22,42 @@
 				extend: 'collection',
 				text: 'Export',
 				buttons: [
-					'copy',
-					'excel',
-					'csv',
-					'pdf',
-					'print'
-				] }
+					{
+						extend: 'copy',
+						exportOptions: {
+							columns: ':visible',
+							rows: ':visible'
+						}
+					},
+					{
+						extend: 'excel',
+						exportOptions: {
+							columns: ':visible',
+							rows: ':visible'
+						}
+					},
+					{
+						extend: 'csv',
+						exportOptions: {
+							columns: ':visible',
+							rows: ':visible'
+						}
+					},
+					{
+						extend: 'pdf',
+						exportOptions: {
+							columns: ':visible',
+							rows: ':visible'
+						}
+					},
+					{
+						extend: 'print',
+						exportOptions: {
+							columns: ':visible',
+							rows: ':visible'
+						}
+					}
+					] }
 			],
 			"bSortCellsTop": true,
 			"scrollX": true

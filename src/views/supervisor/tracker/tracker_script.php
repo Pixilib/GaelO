@@ -22,35 +22,35 @@
 				text: 'Export',
 				buttons: [
 					{
-						extend: 'copyHtml5',
+						extend: 'copy',
 						exportOptions: {
 							columns: ':visible',
 							rows: ':visible'
 						}
 					},
 					{
-						extend: 'excelHtml5',
+						extend: 'excel',
 						exportOptions: {
 							columns: ':visible',
 							rows: ':visible'
 						}
 					},
 					{
-						extend: 'csvHtml5',
+						extend: 'csv',
 						exportOptions: {
 							columns: ':visible',
 							rows: ':visible'
 						}
 					},
 					{
-						extend: 'pdfHtml5',
+						extend: 'pdf',
 						exportOptions: {
 							columns: ':visible',
 							rows: ':visible'
 						}
 					},
 					{
-						extend: 'printHtml5',
+						extend: 'print',
 						exportOptions: {
 							columns: ':visible',
 							rows: ':visible'

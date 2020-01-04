@@ -98,12 +98,42 @@
 				extend: 'collection',
 				text: 'Export',
 				buttons: [
-					'copy',
-					'excel',
-					'csv',
-					'pdf',
-					'print'
-				]
+					{
+						extend: 'copy',
+						exportOptions: {
+							columns: ':visible',
+							rows: ':visible'
+						}
+					},
+					{
+						extend: 'excel',
+						exportOptions: {
+							columns: ':visible',
+							rows: ':visible'
+						}
+					},
+					{
+						extend: 'csv',
+						exportOptions: {
+							columns: ':visible',
+							rows: ':visible'
+						}
+					},
+					{
+						extend: 'pdf',
+						exportOptions: {
+							columns: ':visible',
+							rows: ':visible'
+						}
+					},
+					{
+						extend: 'print',
+						exportOptions: {
+							columns: ':visible',
+							rows: ':visible'
+						}
+					}
+					]
 			}],
 			"bSortCellsTop": true,
 			"iDisplayLength": 5
@@ -124,12 +154,42 @@
 				extend: 'collection',
 				text: 'Export',
 				buttons: [
-					'copy',
-					'excel',
-					'csv',
-					'pdf',
-					'print'
-				]
+					{
+						extend: 'copy',
+						exportOptions: {
+							columns: ':visible',
+							rows: ':visible'
+						}
+					},
+					{
+						extend: 'excel',
+						exportOptions: {
+							columns: ':visible',
+							rows: ':visible'
+						}
+					},
+					{
+						extend: 'csv',
+						exportOptions: {
+							columns: ':visible',
+							rows: ':visible'
+						}
+					},
+					{
+						extend: 'pdf',
+						exportOptions: {
+							columns: ':visible',
+							rows: ':visible'
+						}
+					},
+					{
+						extend: 'print',
+						exportOptions: {
+							columns: ':visible',
+							rows: ':visible'
+						}
+					}
+					]
 			}],
 			//Retrive data from internal method
 			data: <?=make_Json($studyObject)?>,
@@ -215,12 +275,42 @@
 				extend: 'collection',
 				text: 'Export',
 				buttons: [
-					'copy',
-					'excel',
-					'csv',
-					'pdf',
-					'print'
-				]
+					{
+						extend: 'copy',
+						exportOptions: {
+							columns: ':visible',
+							rows: ':visible'
+						}
+					},
+					{
+						extend: 'excel',
+						exportOptions: {
+							columns: ':visible',
+							rows: ':visible'
+						}
+					},
+					{
+						extend: 'csv',
+						exportOptions: {
+							columns: ':visible',
+							rows: ':visible'
+						}
+					},
+					{
+						extend: 'pdf',
+						exportOptions: {
+							columns: ':visible',
+							rows: ':visible'
+						}
+					},
+					{
+						extend: 'print',
+						exportOptions: {
+							columns: ':visible',
+							rows: ':visible'
+						}
+					}
+					]
 			}],
 			"bSortCellsTop": true,
 			"scrollX": true
