@@ -23,10 +23,7 @@ RUN apt-get update -qy && \
 RUN docker-php-ext-install -j$(nproc) opcache pdo_mysql
 COPY php.ini /usr/local/etc/php/conf.d/app.ini
 
-# Create the log file
-RUN touch /var/log/gaelo_cron.log
-RUN chmod 0777 /var/log/gaelo_cron.log
-
+# Create the cronjob (job has to be set in /data/cron/cron.php)
 ADD crontab /etc/cron.d/gaelo
 RUN chmod 0600 /etc/cron.d/gaelo
 CMD ["cron", "-f"]

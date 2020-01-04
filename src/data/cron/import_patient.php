@@ -20,11 +20,11 @@
  * This script has to be triggered by a crontab
  */
 
-error_log('ScriptStarted');
+require_once(__DIR__.'/../../vendor/autoload.php');
 
 $ftpReader=new FTP_Reader();
 
-error_log('ScriptStarted');
+echo('ScriptStarted');
 
 $ftpReader->setFTPCredential( );
 

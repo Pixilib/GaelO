@@ -21,22 +21,14 @@
 
 require_once(__DIR__.'/../../vendor/autoload.php');
 
-echo('Cron started');
-error_log('Cron Started');
-
 use GO\Scheduler;
 
 // Create a new scheduler
 $scheduler = new Scheduler();
 
-$scheduler->call(function () {
-    echo "Hello";
-
-    return " world!";
-})->output('my_file.log');
 
 //Define action and timing
-//$scheduler->php(__DIR__.'/import_patient.php', '/usr/local/bin/php')->everyMinute()->output('my_file.log');
+$scheduler->php(__DIR__.'/import_patient.php')->everyMinute()->output('/var/log/gaelo_cron.log');
 //->sunday(23, 50);
 
 // Let the scheduler execute jobs which are due.
