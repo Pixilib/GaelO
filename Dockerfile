@@ -45,5 +45,6 @@ COPY --chown=www-data:www-data src .
 RUN composer install --no-dev
 
 RUN service apache2 restart
+CMD ["/usr/bin/supervisord"]
 
 
