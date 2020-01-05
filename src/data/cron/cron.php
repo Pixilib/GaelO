@@ -28,13 +28,10 @@ $scheduler = new Scheduler();
 
 
 //Define action and timing
-$scheduler->php(__DIR__.'/import_patient.php')->everyMinute()->output('/var/log/gaelo_cron.log');
+$scheduler->php(__DIR__.'/import_patient.php')->sunday(23, 50)->output('/var/log/gaelo_cron.log');
 //->sunday(23, 50);
 
 // Let the scheduler execute jobs which are due.
 $scheduler->run();
-
-echo('script finished');
-//print_r($scheduler);
 
 ?>

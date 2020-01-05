@@ -19,7 +19,10 @@
  * This is called by cron.php script
  */
 
-require_once(__DIR__ . '/../../vendor/autoload.php');
+$_SERVER['DOCUMENT_ROOT'] ='/gaelo';
+require_once($_SERVER['DOCUMENT_ROOT'].'/vendor/autoload.php');
+
+$linkpdo=Session::getLinkpdo();
 
 echo ('ScriptStarted');
 
@@ -30,7 +33,7 @@ try {
     $ftpReader->setFTPCredential();
     $ftpReader->setFolder("/GAELO/ITSELF/ExportCS");
     $ftpReader->setSearchedFile($studyName . '_PATIENTS.txt');
-    $ftpReader->setLastUpdateTimingLimit(24 * 60);
+    $ftpReader->setLastUpdateTimingLimit(10*24 * 60);
     $files = $ftpReader->getFilesFromFTP();
 } catch (Exception $e) {
     print($e->getMessage());
@@ -44,25 +47,29 @@ print_r($arrayLysarc);
 $jsonImport = json_encode($arrayLysarc);
 print($jsonImport);
 
-/*
-
-$linkpdo=Session::getLinkpdo();
-
-$importPatient = new Import_Patient($jsonImport, $studyName, $linkpdo);
+$importPatient = new Import_Patient($jsonImport, "GaelO", $linkpdo);
 $importPatient -> readJson();
+
+print_r($importPatient->sucessList);
+print_r($importPatient->failList);
 
 //log activity
 $actionDetails['Success']=$importPatient->sucessList;
 $actionDetails['Fail']=$importPatient->failList;
 $actionDetails['email']=$importPatient->getTextImportAnswer();
-Tracker::logActivity($administratorUsername, User::SUPERVISOR, $studyName , null , "Import Patients", $actionDetails);
+try{
+    Tracker::logActivity("administrator", User::SUPERVISOR, "GaelO" , null , "Import Patients", $actionDetails);
+
+}catch (Exception $e){
+
+    print($e->getMessage());
+}
 
 //Send the email to administrators of the plateforme
 $email = new Send_Email($linkpdo);
 $email->setMessage($importPatient->getHTMLImportAnswer());
 $destinators=$email->getRolesEmails(User::SUPERVISOR, $studyName);
 $email->sendEmail($destinators, 'Import Report');
-*/
 
 function sendFailedReadFTP(){
     global $linkpdo;

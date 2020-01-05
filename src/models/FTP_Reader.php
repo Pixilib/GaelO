@@ -204,7 +204,8 @@ class FTP_Reader
      */
     public static function parseLysarcTxt(String $txt)
     {
-
+        //Erase last empty new line
+        $txt=rtrim($txt);
         //Divided text in row by splitting new line
         $lines = explode("\n", $txt);
 
@@ -212,8 +213,9 @@ class FTP_Reader
         $results = [];
 
         for ($i = 0; $i < sizeOf($lines); $i++) {
-            //remove the last # to avoid creating and empty column
-            $lines[$i] = rtrim($lines[$i], '#');
+            //remove return new line and last #
+            $lines[$i]=rtrim($lines[$i]);
+            $lines[$i]=rtrim($lines[$i], '#');
             //split string in columns
             $columns = explode("#", $lines[$i]);
             if ($i == 0) {
