@@ -40,7 +40,7 @@ Class Study {
 
     public function getAllPossibleVisitGroups(){
 
-        $allGroupsType = $this->linkpdo->prepare('SELECT id, name FROM visit_group WHERE study = :study');
+        $allGroupsType = $this->linkpdo->prepare('SELECT id FROM visit_group WHERE study = :study');
         $allGroupsType->execute(array('study' => $this->study));
         $allGroupsIds=$allGroupsType->fetchall(PDO::FETCH_COLUMN);
         
