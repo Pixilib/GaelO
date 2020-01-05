@@ -117,10 +117,10 @@
 		});
 
 		$('#containerTree').on('select_node.jstree', function(e, data) {
-			var selectedNode = data.node;
+			let selectedNode = data.node;
 			//if Patient node (parent is root tree), load the study interface
-			if (data.instance.get_parent(selectedNode) == '#') {
-				var selectedPatientNumber = selectedNode.id;
+			if (selectedNode.parent == '#') {
+				let selectedPatientNumber = selectedNode.id;
 				$("#contenu").load('/patient_interface', {
 					patient_num: selectedPatientNumber
 				});
@@ -128,9 +128,9 @@
 				//Open the selected node
 				$('#containerTree').jstree(true).open_node(selectedPatientNumber);
 
-			} else {
-				var selectedPatientNumber = data.instance.get_node(selectedNode.parent).id;
-				var selectedIdVisit = data.instance.get_node(selectedNode).id;
+			} else if ( selectedNode.children.length==0 ) {
+				let selectedPatientNumber = selectedNode.parents[1];
+				let selectedIdVisit = selectedNode.id;
 				//Load visit interface
 				$("#contenu").load('/visit_interface', {
 					id_visit: selectedIdVisit,

@@ -38,6 +38,37 @@ Class Study {
         
     }
 
+    public function getPatientsLinkedToUserCenters($username)
+    {
+        $patients = $this->linkpdo->prepare(' SELECT patients.code
+            FROM   patients
+            WHERE  patients.center IN (SELECT affiliated_centers.center
+                FROM   affiliated_centers
+                WHERE  affiliated_centers.username = :username
+                UNION
+                SELECT users.center
+                FROM   users
+                WHERE  users.username = :username)
+                AND study = :study
+                GROUP  BY patients.code');
+
+        $patients->execute(array(
+            'username' => $username,
+            'study' => $this->study
+        ));
+
+        $patientsCodes = $patients->fetchAll(PDO::FETCH_COLUMN);
+
+        $patientObjectsArray = [];
+
+        foreach ($patientsCodes as $patientCode) {
+            $patientObjectsArray[] = new Patient($patientCode, $this->linkpdo);
+        }
+
+        return $patientObjectsArray;
+    }
+
+
     public function getAllPossibleVisitGroups(){
 
         $allGroupsType = $this->linkpdo->prepare('SELECT id FROM visit_group WHERE study = :study');

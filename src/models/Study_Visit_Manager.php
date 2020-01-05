@@ -38,37 +38,6 @@ class Study_Visit_Manager
         return $this->visitGroupObject;
     }
 
-    public function getPatientLinkedToUserCenters($username)
-    {
-        $patients = $this->linkpdo->prepare(' SELECT patients.code
-            FROM   patients
-            WHERE  patients.center IN (SELECT affiliated_centers.center
-                FROM   affiliated_centers
-                WHERE  affiliated_centers.username = :username
-                UNION
-                SELECT users.center
-                FROM   users
-                WHERE  users.username = :username)
-                AND study = :study
-                GROUP  BY patients.code');
-
-        $patients->execute(array(
-            'username' => $username,
-            'study' => $this->studyObject->study
-        ));
-
-        $patientsCodes = $patients->fetchAll(PDO::FETCH_COLUMN);
-
-        $patientObjectsArray = [];
-
-        foreach ($patientsCodes as $patientCode) {
-            $patientObjectsArray[] = new Patient($patientCode, $this->linkpdo);
-        }
-
-        return $patientObjectsArray;
-    }
-
-
     /**
      * Return uploaded and non deleted visit Objects
      */

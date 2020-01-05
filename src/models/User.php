@@ -325,26 +325,22 @@ class User {
      * @param string $role
      * @return boolean
      */
-    public function isPatientAllowed($patientNumber, string $role){
+    public function isPatientAllowed($patientCode, string $role){
         
         if(empty($role)) return false;
-        
-        $connecter = $this->linkpdo->prepare('SELECT center, study FROM patients WHERE code = :patientNumber');
-        $connecter->execute(array(
-            "patientNumber" => $patientNumber,
-        ));
-        $patient = $connecter->fetch(PDO::FETCH_ASSOC);
+
+        $patientObject=new Patient($patientCode, $this->linkpdo);
         
         //If Investigator check the current patient is from one of the centers of the user
         if ($role==$this::INVESTIGATOR){
             $userCenters=$this->getInvestigatorsCenters();
-            if (in_array($patient['center'], $userCenters) && $this->isRoleAllowed($patient['study'], $role)){
+            if (in_array($patientObject->patientCenter, $userCenters) && $this->isRoleAllowed($patientObject->patientStudy, $role)){
                 return true;
             }
         
         //For other patient's permission is defined by patient's study availabilty
         }else {
-            if ($this->isRoleAllowed($patient['study'], $role)){
+            if ($this->isRoleAllowed($patientObject->patientStudy, $role)){
                 return true;
             }
         }
