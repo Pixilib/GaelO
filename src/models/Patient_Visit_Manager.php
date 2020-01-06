@@ -36,7 +36,9 @@ class Patient_Visit_Manager
     const COMPLIANCY_NO = "No";
     const VISIT_WITHDRAWN = "Visit Withdrawn";
     const VISIT_POSSIBLY_WITHDRAWN = "Possibly Withdrawn";
-    const OPTIONAL_VISIT = "OPTIONAL_VISIT";
+    const OPTIONAL_VISIT = "Optional";
+    //Not needed status is no make custom choice to deactivate upload reminder
+    const VISIT_NOT_NEEDED="Not Nedded";
 
     public function __construct(Patient $patientObject, Visit_Group $visitGroup, $linkpdo)
     {

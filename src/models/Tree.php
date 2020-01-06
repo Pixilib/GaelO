@@ -181,7 +181,7 @@ class Tree
       $controllerVisitsArray = [];
 
       foreach ($possibleVisitGroups as $visitGroup) {
-        $studyVisitManager = $this->studyObject->getStudySpecificGroupManager($visitGroup->groupModality);
+        $studyVisitManager = $visitGroup->getVisitManager();
         $visitsArray = $studyVisitManager->getVisitForControllerAction();
         array_push($controllerVisitsArray, ...$visitsArray);
       }
@@ -192,20 +192,22 @@ class Tree
       $monitorVisitsArray = [];
 
       foreach ($possibleVisitGroups as $visitGroup) {
-        $studyVisitManager = $this->studyObject->getStudySpecificGroupManager($visitGroup->groupModality);
+        $studyVisitManager = $visitGroup->getVisitManager();
         $visitsArray = $studyVisitManager->getCreatedVisits();
         array_push($monitorVisitsArray, ...$visitsArray);
       }
 
       $treeStructure = $this->makeTreeFromVisits($monitorVisitsArray);
     } else if ($this->role == User::REVIEWER) {
-      //SK A REVOIR !
+      //SK attention une review pending fait reafficher toutes les reviews du patient
+      //que soit la modalite
+      //peut etre jouer avec le job des users pour filtrer le group de visite
 
       $patientsList = [];
       //For each visit group list patient having a least on visit awaiting review
       foreach ($possibleVisitGroups as $visitGroup) {
-
-        $visits = $this->studyObject->getStudySpecificGroupManager($visitGroup->groupModality)->getAwaitingReviewVisit($this->username);
+        $studyVisitManager = $visitGroup->getVisitManager();
+        $visits = $studyVisitManager->getAwaitingReviewVisit($this->username);
         if (!empty($visits)) {
           foreach ($visits as $visitObject) {
             $patientsList[$visitObject->patientCode] = $visitObject->patientCode;
@@ -219,8 +221,8 @@ class Tree
         $patientObjectArray[] = new Patient($patientCode, $this->linkpdo);
       }
 
-
       $treeStructure = $this->makeTreeFromPatients($patientObjectArray);
+
     }
 
     $jsonTree = $this->treeStructuretoJsonTree($treeStructure);

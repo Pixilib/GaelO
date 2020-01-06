@@ -23,14 +23,9 @@ class Visit_Group
 
     public $groupId;
     public $studyName;
-    public $groupType;
     public $groupModality;
 
     public $linkpdo;
-
-    const GROUP_TYPE_IMAGING = "Imaging";
-    const GROUP_TYPE_PATHOLOGY = "Pathology";
-    const GROUP_TYPE_RADIOTHERAPY = "Radiotherapy";
 
     const GROUP_MODALITY_PET = "PET";
     const GROUP_MODALITY_CT = "CT";
@@ -51,7 +46,6 @@ class Visit_Group
 
         $this->groupId = $visitGroupData['id'];
         $this->studyName = $visitGroupData['study'];
-        $this->groupType = $visitGroupData['group_type'];
         $this->groupModality = $visitGroupData['group_modality'];
     }
 
@@ -73,20 +67,24 @@ class Visit_Group
         return $visitTypeArray;
     }
 
+    public function getVisitManager(){
+        $studyObject=new Study($this->studyName, $this->linkpdo);
+        return new Study_Visit_Manager($studyObject, $this, $this->linkpdo);
+    }
+
     public function getStudy()
     {
         return new Study($this->studyName, $this->linkpdo);
     }
 
-    public static function createVisitGroup(String $studyName, String $groupType, String $groupModality, PDO $linkpdo)
+    public static function createVisitGroup(String $studyName, String $groupModality, PDO $linkpdo)
     {
 
-        $req = $linkpdo->prepare('INSERT INTO visit_group (study, group_type, group_modality)
+        $req = $linkpdo->prepare('INSERT INTO visit_group (study,  group_modality)
                                       VALUES(:studyName, :groupType, :groupModality)');
 
         $req->execute(array(
             'studyName' => $studyName,
-            'groupType' => $groupType,
             'groupModality' => $groupModality
         ));
 

@@ -44,7 +44,7 @@ if($_SERVER['REQUEST_METHOD']==='GET'){
     
         //Add the new study as an active study
         Study::createStudy($studyName, $linkpdo);
-        $visitGroup=Visit_Group::createVisitGroup($studyName,Visit_Group::GROUP_TYPE_IMAGING, Visit_Group::GROUP_MODALITY_PET, $linkpdo);
+        $visitGroup=Visit_Group::createVisitGroup($studyName, Visit_Group::GROUP_MODALITY_PET, $linkpdo);
         
         //Add the visit in study with order
         foreach($visitsArray as $visit){

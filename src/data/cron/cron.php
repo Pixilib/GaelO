@@ -26,10 +26,12 @@ use GO\Scheduler;
 // Create a new scheduler
 $scheduler = new Scheduler();
 
-
 //Define action and timing
-$scheduler->php(__DIR__.'/import_patient.php')->sunday(23, 50)->output('/var/log/gaelo_cron.log');
-//->sunday(23, 50);
+$scheduler->php(__DIR__.'/import_patient.php')->monday(6, 00)->output('/var/log/gaelo_cron.log');
+$scheduler->php(__DIR__.'/import_patient.php')->tuesday(6, 00)->output('/var/log/gaelo_cron.log');
+$scheduler->php(__DIR__.'/import_patient.php')->wednesday(6, 00)->output('/var/log/gaelo_cron.log');
+$scheduler->php(__DIR__.'/import_patient.php')->thursday(6, 00)->output('/var/log/gaelo_cron.log');
+$scheduler->php(__DIR__.'/import_patient.php')->friday(6, 00)->output('/var/log/gaelo_cron.log');
 
 // Let the scheduler execute jobs which are due.
 $scheduler->run();

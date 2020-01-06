@@ -1,4 +1,17 @@
-Update du Tree avec un sous niveau group et propriete dans tous les enfants
 Faire New Visit dependant du GROUPE => Ajout d'un selecteur de groupe
 Creer les groupes au moement de la creation de l'etude
-Passer les methode du supervisor par groupe avec interface par groupe de visite
+Interface supervisor passer le visit group en colonne
+
+technique : 
+passe tout acces aux visites via visit group manager
+Le niveau patient et study iterent sur le group level
+=> Study  public function getSpecificGroup(String $groupModality) => Devrait surement disparaitre
+=> study getStudySpecificGroupManager => devrait aussi surement disparaitre
+Se repencher sur la logique du modele => quid des mails
+
+Fusionner le tree et l'API get review
+Nb tree : si une visite review ajoute toute les autre groups visits en lecture
+A voir securité access review => dissocier niveau de reviewer ou jouer sur les job ?
+
+
+update schemas bdd salim

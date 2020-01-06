@@ -21,8 +21,6 @@ Class Study {
     
     private $linkpdo;
     public $study;
-
-    //SK AJOUTER "ETUDE ANCILLAIRE DE" OU VIA HERITAGE ?!?
     
     public function __construct(String $study, PDO $linkpdo){
 
@@ -207,8 +205,6 @@ Class Study {
     }
     
     public static function createStudy(string $studyName, PDO $linkpdo){
-        
-        //SK A AJOUTER IS ANCILLARY ET ANCILLARY OF
         
         $req = $linkpdo->prepare('INSERT INTO studies (name) VALUES(:studyName) ');
         

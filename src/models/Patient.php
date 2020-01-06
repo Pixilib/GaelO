@@ -159,24 +159,14 @@ class Patient{
      */
     public function getAllCreatedPatientsVisits(bool $deletedVisits = false) : Array
     {
-
-        $visitQuery = $this->linkpdo->prepare('SELECT id_visit FROM visits
-													INNER JOIN visit_type ON (visit_type.name=visits.visit_type AND visit_type.group_id=visits.visit_group_id)
-                                          			WHERE patient_code = :patientCode
-													AND visits.deleted=:deleted
-													ORDER BY visit_type.group_id, visit_type.visit_order');
-
-
-        $visitQuery->execute(array(
-            'patientCode' => $this->patientCode,
-            'deleted' => $deletedVisits
-        ));
-
-        $visitsResults = $visitQuery->fetchAll(PDO::FETCH_COLUMN);
+        $patientStudy=$this->getPatientStudy();
+        $possibleStudyGroups=$patientStudy->getAllPossibleVisitGroups();
 
         $visitsObjectArray = [];
-        foreach ($visitsResults as $idVisit) {
-            $visitsObjectArray[] = new Visit($idVisit, $this->linkpdo);
+
+        foreach($possibleStudyGroups as $studyGroup){
+            $createdVisits=$studyGroup->getVisitManager()->getCreatedVisits($deletedVisits);
+            array_push($visitsObjectArray, ...$createdVisits);
         }
 
         return $visitsObjectArray;

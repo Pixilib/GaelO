@@ -3,9 +3,9 @@
 -- http://www.phpmyadmin.net
 --
 -- Client :  localhost
--- Généré le :  Mer 01 Janvier 2020 à 15:03
+-- Généré le :  Lun 06 Janvier 2020 à 23:35
 -- Version du serveur :  5.7.28-0ubuntu0.16.04.2
--- Version de PHP :  7.3.11-1+ubuntu16.04.1+deb.sury.org+1
+-- Version de PHP :  7.3.13-1+ubuntu16.04.1+deb.sury.org+1
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
@@ -669,7 +669,6 @@ CREATE TABLE `visits` (
 CREATE TABLE `visit_group` (
   `id` int(11) NOT NULL,
   `study` varchar(32) NOT NULL,
-  `group_type` set('Imaging','Pathology','Radiotherapy') NOT NULL,
   `group_modality` set('PET','MR','CT') NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -830,7 +829,7 @@ ALTER TABLE `visits`
 --
 ALTER TABLE `visit_group`
   ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `study` (`study`,`group_type`);
+  ADD UNIQUE KEY `study` (`study`,`group_modality`);
 
 --
 -- Index pour la table `visit_type`
@@ -846,12 +845,6 @@ ALTER TABLE `visit_type`
 -- AUTO_INCREMENT pour les tables exportées
 --
 
-ALTER TABLE `visits`
-  MODIFY `id_visit` int(11) NOT NULL AUTO_INCREMENT;
-
-ALTER TABLE `visit_group`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
 --
 -- AUTO_INCREMENT pour la table `documentation`
 --
@@ -862,6 +855,16 @@ ALTER TABLE `documentation`
 --
 ALTER TABLE `reviews`
   MODIFY `id_review` int(11) NOT NULL AUTO_INCREMENT;
+--
+-- AUTO_INCREMENT pour la table `visits`
+--
+ALTER TABLE `visits`
+  MODIFY `id_visit` int(11) NOT NULL AUTO_INCREMENT;
+--
+-- AUTO_INCREMENT pour la table `visit_group`
+--
+ALTER TABLE `visit_group`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 --
 -- Contraintes pour les tables exportées
 --
