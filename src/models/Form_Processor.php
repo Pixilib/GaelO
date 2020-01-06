@@ -195,6 +195,38 @@ abstract class Form_Processor {
 	protected function changeVisitValidationStatus(string $reviewStatus, $conclusionValue=null){
 	    $this->visitObject->changeVisitValidationStatus($reviewStatus, $conclusionValue);
 		$this->reviewAvailabilityDecision($reviewStatus);
+
+		//Send Notification emails
+		if($reviewStatus == Form_Processor::WAIT_ADJUDICATION){
+
+			$email=new Send_Email($this->linkpdo);
+			$message="Review of the following visit is awaiting adjudication <br>
+                Patient Number:".$this->visitObject->patientCode."<br>
+                Visit : ".$this->visitObject->visitType."<br>
+                The visit is awaiting for your adjudication review";
+			$destinatorsEmails=$email->getRolesEmails(User::REVIEWER, $this->visitObject->study);
+			$supervisorEmails=$email->getRolesEmails(User::SUPERVISOR, $this->visitObject->study);
+			array_push($destinatorsEmails, ...$supervisorEmails);
+			$email->setMessage($message);
+			$email->sendEmail($destinatorsEmails, "Awaiting Adjudication");
+
+		}else if($reviewStatus == Form_Processor::DONE){
+
+			$email=new Send_Email($this->linkpdo);
+			$message="Review of the following visit is concluded <br>
+                Patient Number:".$this->visitObject->patientCode."<br>
+				Visit : ".$this->visitObject->visitType."<br>
+				Conclusion Value : ".$conclusionValue ;
+			$destinatorsEmails=$email->getRolesEmails(User::MONITOR, $this->visitObject->study);
+			$supervisorEmails=$email->getRolesEmails(User::SUPERVISOR, $this->visitObject->study);
+			$uploaderUserObject=new User($this->visitObject->uploaderUsername, $this->linkpdo);
+			$uploaderEmails=$uploaderUserObject->userEmail;
+			array_push($destinatorsEmails, ...$supervisorEmails);
+			array_push($destinatorsEmails, $uploaderEmails);
+			$email->setMessage($message);
+			$email->sendEmail($destinatorsEmails, "Visit Concluded");
+
+		}
 	}
 	
 	/**

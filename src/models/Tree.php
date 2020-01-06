@@ -22,7 +22,6 @@ class Tree
 {
   private $role;
   private $username;
-  private $study;
   private $studyObject;
   private $linkpdo;
 
@@ -31,7 +30,6 @@ class Tree
     $this->linkpdo = $linkpdo;
     $this->role = $role;
     $this->username = $username;
-    $this->study = $study;
     $this->studyObject = new Study($study, $linkpdo);
   }
 

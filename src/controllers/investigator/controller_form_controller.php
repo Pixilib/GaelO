@@ -118,11 +118,15 @@ if (isset($_SESSION['username']) && $patientAllowed) {
         //Get users email
         $userEmail=$email->getUserEmails($_SESSION['username']);
         array_push($emailList, $userEmail);
+        //Get Uploader Email
+        $uploaderUsername=$visitObject->uploaderUsername;
+        $uploaderEmail=$email->getUserEmails($uploaderUsername);
+        array_push($emailList, $uploaderEmail);
         
         $email->sendEmail($emailList, "Quality Control");
         
         //If QC Accepted and review needed for this visit inform the reviewers of the study by email
-        if($controlDecision=="Accepted" && $visitObject->getVisitCharacteristics->reviewNeeded){
+        if($controlDecision==Visit::QC_ACCEPTED && $visitObject->getVisitCharacteristics->reviewNeeded){
           $email=new Send_Email($linkpdo);
           $message="Quality Control of the following visit has been ".$controlDecision."<br>
                 Patient Number:".$visitObject->patientCode."<br>

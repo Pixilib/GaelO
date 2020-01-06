@@ -272,7 +272,6 @@ class User {
     /**
      * Return affiliated center of the user
      */
-    //SK A REMPLACER PAR RETOUR D OBJETS ?
     public function getAffiliatedCenters(){
     	$result_center = $this->linkpdo->prepare('SELECT center FROM affiliated_centers WHERE affiliated_centers.username = :username ORDER BY center');
     	$result_center->execute(array('username' => $this->username));
