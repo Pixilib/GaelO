@@ -10,6 +10,7 @@ Patient Visit Manager can be redifined through inheritance for custom visit crea
 Anon profile, optional visit, local form needed, Qc needed, Review needed are now defined per visit type
 Monitors now recieve QC decision emails
 Supervisors are notified in case of a not done visit creation
+Email notification when visit review is awaiting adjudication or concluded
 Export button on DataTables now export only visible (filtered) data
 
 
