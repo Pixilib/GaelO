@@ -112,7 +112,7 @@ class Statistics {
 	 */
 	public function getUploadFractionAndDelay(){
 
-		$dataJson=$this->studyVisitManager->getAllPatientsVisitsStatus();
+		$dataJson=$this->studyVisitManager->getPatientsVisitsStatus();
 		$allPatientStatus=json_decode($dataJson, true);
 		$results[0]=$this->getUploadedFraction($allPatientStatus);
 		$results[1]=$this->getUploadDelay($allPatientStatus);

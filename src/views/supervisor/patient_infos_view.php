@@ -183,12 +183,14 @@
 			<th colspan=7>Visit information</th>
 			</tr>
 			<tr>
+			<td rowspan=2>Modality</td>
 			<td rowspan=2>Visit</td>
 			<td colspan=4>Visit status</td>
 			<td rowspan=2>Review Status</td>
 			<td rowspan=2>Visit Deleted</td>
 			</tr>
 			<tr>
+			<td>Modality</td>
 			<td>Visit</td>
 			<td>Series upload</td>
 			<td>Investigator form</td>
@@ -197,6 +199,7 @@
 		<?php foreach ( $visitsObjects as $visit){ ?>
 			<tr>
 				<td><?=$visit->visitType?></td>
+				<td><?=$visit->visitGroupObject->groupModality?></td>
 				<td class="visitDetails" title="visit" ><?=$visit->statusDone?></td>
 				<td class="visitDetails" title="serie" ><?=$visit->uploadStatus?></td>
 				<td class="visitDetails" title="form" ><?=$visit->stateInvestigatorForm?></td>

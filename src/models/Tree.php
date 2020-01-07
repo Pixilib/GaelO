@@ -181,7 +181,7 @@ class Tree
       $controllerVisitsArray = [];
 
       foreach ($possibleVisitGroups as $visitGroup) {
-        $studyVisitManager = $visitGroup->getVisitManager();
+        $studyVisitManager = $visitGroup->getStudyVisitManager();
         $visitsArray = $studyVisitManager->getVisitForControllerAction();
         array_push($controllerVisitsArray, ...$visitsArray);
       }
@@ -192,7 +192,7 @@ class Tree
       $monitorVisitsArray = [];
 
       foreach ($possibleVisitGroups as $visitGroup) {
-        $studyVisitManager = $visitGroup->getVisitManager();
+        $studyVisitManager = $visitGroup->getStudyVisitManager();
         $visitsArray = $studyVisitManager->getCreatedVisits();
         array_push($monitorVisitsArray, ...$visitsArray);
       }
@@ -206,7 +206,7 @@ class Tree
       $patientsList = [];
       //For each visit group list patient having a least on visit awaiting review
       foreach ($possibleVisitGroups as $visitGroup) {
-        $studyVisitManager = $visitGroup->getVisitManager();
+        $studyVisitManager = $visitGroup->getStudyVisitManager();
         $visits = $studyVisitManager->getAwaitingReviewVisit($this->username);
         if (!empty($visits)) {
           foreach ($visits as $visitObject) {

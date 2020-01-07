@@ -67,7 +67,7 @@ class Visit_Group
         return $visitTypeArray;
     }
 
-    public function getVisitManager(){
+    public function getStudyVisitManager(){
         $studyObject=new Study($this->studyName, $this->linkpdo);
         return new Study_Visit_Manager($studyObject, $this, $this->linkpdo);
     }

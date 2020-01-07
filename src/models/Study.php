@@ -66,6 +66,21 @@ Class Study {
         return $patientObjectsArray;
     }
 
+    public function getAllCreatedVisits(bool $deleted=false){
+
+        $possibleStudyGroups=$this->getAllPossibleVisitGroups();
+
+        $visitsObjectArray = [];
+
+        foreach($possibleStudyGroups as $studyGroup){
+            $createdVisits=$studyGroup->getStudyVisitManager()->getCreatedVisits($deleted);
+            array_push($visitsObjectArray, ...$createdVisits);
+        }
+
+        return $visitsObjectArray;
+
+    }
+
 
     public function getAllPossibleVisitGroups(){
 

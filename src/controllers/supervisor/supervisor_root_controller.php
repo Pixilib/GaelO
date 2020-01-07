@@ -44,7 +44,7 @@ if ($permissionCheck && $_POST['role'] == User::SUPERVISOR) {
 function make_Json(Study $studyObject)
 {
 	$json = [];
-	$activeVisitsArray = $studyObject->getStudySpecificGroupManager(Visit_Group::GROUP_MODALITY_PET)->getCreatedVisits();
+	$activeVisitsArray = $studyObject->getAllCreatedVisits(false);
 
 	foreach ($activeVisitsArray as $visitObject) {
 		$patientObject = $visitObject->getPatient();
@@ -55,6 +55,7 @@ function make_Json(Study $studyObject)
 		} else {
 			$jsonObject['withdraw'] = "Withdrawn";
 		}
+		$jsonObject['visit_modality'] = $visitObject->visitGroupObject->groupModality;
 		$jsonObject['visit_type'] = "<a onclick='linkVisitInfos(" . $visitObject->id_visit . ")' href='javascript:void(0);'>" . $visitObject->visitType . "</a>";
 		$jsonObject['status_done'] = $visitObject->statusDone;
 		$jsonObject['upload_status'] = $visitObject->uploadStatus;

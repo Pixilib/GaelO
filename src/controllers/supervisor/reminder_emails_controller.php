@@ -53,7 +53,7 @@ if ($accessCheck && $_SESSION['role'] == User::SUPERVISOR ) {
 		$sentEmails=0;
         if($_POST['radioForm'] == 'upload'){
                 
-                $visitMap=json_decode( $studyObject->getStudySpecificGroupManager(Visit_Group::GROUP_MODALITY_PET)->getAllPatientsVisitsStatus(), true );
+                $visitMap=json_decode( $studyObject->getStudySpecificGroupManager(Visit_Group::GROUP_MODALITY_PET)->getPatientsVisitsStatus(), true );
                 
                 $resultsMapToSend=[];
     

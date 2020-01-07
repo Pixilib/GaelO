@@ -227,7 +227,7 @@ class Study_Visit_Manager
     }
 
 
-    public function getAllPatientsVisitsStatus()
+    public function getPatientsVisitsStatus()
     {
 
         //Get ordered list of possible visits in this study
@@ -240,7 +240,7 @@ class Study_Visit_Manager
         foreach ($allPatients as $patient) {
 
             $patientCenter = $patient->getPatientCenter();
-            $visitManager = $patient->getVisitManager($this->visitGroupObject);
+            $visitManager = $patient->getPatientVisitManager($this->visitGroupObject);
 
             foreach ($allVisits as $possibleVisit) {
 

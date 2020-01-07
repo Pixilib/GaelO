@@ -52,10 +52,8 @@ if ($accessCheck && $_SESSION['role'] == User::SUPERVISOR ) {
         echo(json_encode($answer));
         
     }else{
-        $groupObject=$patientObject->getPatientStudy()->getSpecificGroup(Visit_Group::GROUP_MODALITY_PET); 
-        $patientVisitManager=$patientObject->getVisitManager($groupObject);
-        $visitsObjects=$patientVisitManager->getCreatedPatientsVisits(false);
-        $visitsObjectDeleted=$patientVisitManager->getCreatedPatientsVisits(true);
+        $visitsObjects=$patientObject->getAllCreatedPatientsVisits(false);
+        $visitsObjectDeleted=$patientObject->getAllCreatedPatientsVisits(true);
         foreach ($visitsObjectDeleted as $visitDeleted){
             $visitsObjects[]=$visitDeleted;
         } 

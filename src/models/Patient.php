@@ -67,7 +67,7 @@ class Patient{
         
     }
 
-    public function getImmutableRegistrationDate(){
+    public function getImmutableRegistrationDate() : DateTimeImmutable {
         return new DateTimeImmutable($this->patientRegistrationDate);
     }
     
@@ -75,7 +75,7 @@ class Patient{
      * get Patient's Center Object
      * @return Center
      */
-    public function getPatientCenter(){
+    public function getPatientCenter() : Center {
         $centerObject=new Center($this->linkpdo, $this->patientCenter);
         return $centerObject;
     }
@@ -140,7 +140,7 @@ class Patient{
     /**
      * Return visit Manage to manage patient's visit status
      */
-    public function getVisitManager(Visit_Group $visitGroupObject) {
+    public function getPatientVisitManager(Visit_Group $visitGroupObject) {
         //Look if specific patient visit manager exists for this study
         $specificObjectFile=$_SERVER["DOCUMENT_ROOT"]."/data/form/Poo/".$this->patientStudy."_Patient_Visit_Manager.php";
             
@@ -154,25 +154,75 @@ class Patient{
 
     }
 
+    private function getAllPossibleVisitGroup() : Array { 
+
+        $patientStudy=$this->getPatientStudy();
+        $possibleStudyGroups=$patientStudy->getAllPossibleVisitGroups();
+
+        return $possibleStudyGroups;
+
+    }
+
     /**
      * Return visits created for this patient without group filter
      */
     public function getAllCreatedPatientsVisits(bool $deletedVisits = false) : Array
     {
-        $patientStudy=$this->getPatientStudy();
-        $possibleStudyGroups=$patientStudy->getAllPossibleVisitGroups();
+        $possibleStudyGroups=$this->getAllPossibleVisitGroup();
 
         $visitsObjectArray = [];
 
         foreach($possibleStudyGroups as $studyGroup){
-            $createdVisits=$studyGroup->getVisitManager()->getCreatedVisits($deletedVisits);
+            $createdVisits=$this->getPatientVisitManager($studyGroup)->getCreatedPatientsVisits($deletedVisits);
             array_push($visitsObjectArray, ...$createdVisits);
         }
 
         return $visitsObjectArray;
     }
 
-    public function getPatientStudy(){
+    public function getAllVisitToCreate() : array {
+
+        $possiblevisitsGroups=$this->getAllPossibleVisitGroup();
+
+        $visitsObjectArray = [];
+
+        foreach($possiblevisitsGroups as $visitGroup){
+            $availableVisits=$this->getPatientVisitManager($visitGroup)->getAvailableVisitsToCreate();
+            $visitsObjectArray [$visitGroup->groupModality] = $availableVisits;
+        }
+
+        return $visitsObjectArray;
+
+    }
+
+    public function isMissingVisit(){
+
+        $modalitiesMissingVisits=$this->getMissingVisitModalities();
+
+        $isMissingSomeVisits= ( sizeof($modalitiesMissingVisits) > 0 ) ;
+
+        return $isMissingSomeVisits ; 
+
+    }
+
+    public function getMissingVisitModalities(){
+
+        $possiblevisitsGroups=$this->getAllPossibleVisitGroup();
+
+        $visitsMissingGroupsArray = [];
+
+        foreach($possiblevisitsGroups as $visitGroup){
+            $missingVisit=$this->getPatientVisitManager($visitGroup)->isMissingVisit();
+            if($missingVisit){
+                $visitsMissingGroupsArray[]=$visitGroup->groupModality;
+            }
+        }
+
+        return $visitsMissingGroupsArray;
+
+    }
+
+    public function getPatientStudy() : Study {
         return new Study($this->patientStudy, $this->linkpdo);
     }
       

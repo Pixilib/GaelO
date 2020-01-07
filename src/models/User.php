@@ -373,7 +373,7 @@ class User {
                 //This is made to allow access to references scans
                 $patientObject=$visitData->getPatient();
                 $groupObject=$patientObject->getPatientStudy()->getSpecificGroup(Visit_Group::GROUP_MODALITY_PET); 
-                $patientVisitManager=$patientObject->getVisitManager($groupObject);
+                $patientVisitManager=$patientObject->getPatientVisitManager($groupObject);
                 $isAwaitingReview=$patientVisitManager->isHavingAwaitingReviewVisit();
                 return $isAwaitingReview;
             }else{

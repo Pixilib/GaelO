@@ -30,14 +30,12 @@ $patientAllowed = $userObject->isPatientAllowed($patientCode, $_SESSION['role'])
 // Check user allowance (only available for an investigator)
 if (isset($_SESSION['username']) && $_SESSION['role'] == User::INVESTIGATOR && $patientAllowed) {
 
-    // Get available Visit for creation from the study manager object
-    // Usually only one visit to create to respect visit order but could be multipled
-    // if an intermediate study has been deleted
-    $patientObject= new Patient($patientCode, $linkpdo);
-    $groupObject=$patientObject->getPatientStudy()->getSpecificGroup(Visit_Group::GROUP_MODALITY_PET);
-    $typeVisiteDispo=$patientObject->getVisitManager($groupObject)->getAvailableVisitsToCreate();
+    // Get available Visit in each visit group (in key) for creation
+    // Usually only one visit to create to respect visit order but could be multipled (if erased or custom creation workflow)
+    $typeVisiteDispo=$patientObject->getAllVisitToCreate();
     //SK A GENERALISER
-    $visitGroupImaging=$patientObject->getPatientStudy()->getSpecificGroup("PET")->groupId;
+    $typeVisiteDispo=$typeVisiteDispo[Visit_Group::GROUP_MODALITY_PET];
+    $visitGroupImaging=$patientObject->getPatientStudy()->getSpecificGroup(Visit_Group::GROUP_MODALITY_PET)->groupId;
     
     
     require 'views/investigator/new_visit_view.php';
