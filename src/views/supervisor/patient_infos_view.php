@@ -183,14 +183,13 @@
 			<th colspan=7>Visit information</th>
 			</tr>
 			<tr>
-			<td rowspan=2>Modality</td>
 			<td rowspan=2>Visit</td>
+			<td rowspan=2>Modality</td>
 			<td colspan=4>Visit status</td>
 			<td rowspan=2>Review Status</td>
 			<td rowspan=2>Visit Deleted</td>
 			</tr>
 			<tr>
-			<td>Modality</td>
 			<td>Visit</td>
 			<td>Series upload</td>
 			<td>Investigator form</td>

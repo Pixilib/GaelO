@@ -99,6 +99,31 @@ Class Study {
 
     }
 
+    public function getAllAwaitingReviewImagingVisit($username = null){
+
+        $possibleStudyGroups=$this->getAllPossibleVisitGroups();
+        $visitsObjectArray = [];
+
+        foreach($possibleStudyGroups as $studyGroup){
+            if(in_array($studyGroup->groupModality, array(Visit_Group::GROUP_MODALITY_CT, Visit_Group::GROUP_MODALITY_MR, Visit_Group::GROUP_MODALITY_PET)) ){
+                $awaitingReviewVisits=$studyGroup->getStudyVisitManager()->getAwaitingReviewVisit($username);
+                array_push($visitsObjectArray, ...$awaitingReviewVisits);
+            }
+            
+            
+        }
+        
+        return $visitsObjectArray;
+
+    }
+
+    public function isHavingAwaitingReviewImagingVisit($username=null){
+        $awaitingVisits=$this->getAllAwaitingReviewImagingVisit($username);
+        $havingAwaitingReview= (sizeof($awaitingVisits) > 0);
+        return $havingAwaitingReview;
+    }
+
+
 
     public function getAllPossibleVisitGroups(){
 

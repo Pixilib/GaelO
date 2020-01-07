@@ -32,11 +32,8 @@ if (isset($_SESSION['username']) && $_SESSION['role'] == User::INVESTIGATOR && $
 
     // Get available Visit in each visit group (in key) for creation
     // Usually only one visit to create to respect visit order but could be multipled (if erased or custom creation workflow)
+    $patientObject=new Patient($patientCode, $linkpdo);
     $typeVisiteDispo=$patientObject->getAllVisitToCreate();
-    //SK A GENERALISER
-    $typeVisiteDispo=$typeVisiteDispo[Visit_Group::GROUP_MODALITY_PET];
-    $visitGroupImaging=$patientObject->getPatientStudy()->getSpecificGroup(Visit_Group::GROUP_MODALITY_PET)->groupId;
-    
     
     require 'views/investigator/new_visit_view.php';
     

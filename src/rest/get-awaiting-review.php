@@ -29,7 +29,7 @@ foreach ($possibleStudyList as $study =>$roles){
         
         //Get all awayting review visit for this user in this study and add details in the global list
         $studyObject=new Study($study, $linkpdo);
-        $visitObjectArray=$studyObject->getStudySpecificGroupManager(Visit_Group::GROUP_MODALITY_PET)->getAwaitingReviewVisit($username);
+        $visitObjectArray=$studyObject->getAllAwaitingReviewImagingVisit($username);
 
         $patientsArray=[];
 
@@ -39,10 +39,7 @@ foreach ($possibleStudyList as $study =>$roles){
             if(  ! in_array($visitObject->patientCode, $patientsArray) ){
 
                 $patientObject=$visitObject->getPatient();
-                $groupObject=$patientObject->getPatientStudy()->getSpecificGroup(Visit_Group::GROUP_MODALITY_PET); 
-                $patientVisitManager=$patientObject->getPatientVisitManager($groupObject);
-
-                $patientCreatedVisits=$patientVisitManager->getCreatedPatientsVisits();
+                $patientCreatedVisits=$patientObject->getAllCreatedPatientsVisits(); 
 
                 foreach($patientCreatedVisits as $createdVisit){
 
@@ -51,6 +48,7 @@ foreach ($possibleStudyList as $study =>$roles){
                     $visitDetails['idVisit']=$createdVisit->id_visit;
                     $visitDetails['visitType']=$createdVisit->visitType;
                     $visitDetails['visitStatus']=$createdVisit->reviewStatus;
+                    $visitDetails['visitModality']=$createdVisit->visitGroupObject->groupModality;
                     
                     $dicomDetailsObject=$createdVisit->getStudyDicomDetails();
                     $visitDetails['studyDate']=$dicomDetailsObject->studyAcquisitionDate;

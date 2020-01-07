@@ -1,4 +1,3 @@
-Faire New Visit dependant du GROUPE => Ajout d'un selecteur de groupe
 Creer les groupes au moement de la creation de l'etude
 Interface supervisor passer le visit group en colonne
 
@@ -13,6 +12,7 @@ Fusionner le tree et l'API get review
 Nb tree : si une visite review ajoute toute les autre groups visits en lecture
 A voir securité access review => dissocier niveau de reviewer ou jouer sur les job ?
 
-Tester Patient Info
-Test Visit table root supervisor
-update schemas bdd salim
+Delete du download manager form
+
+Tester Patient Info=>ok
+Test Visit table root supervisor =>ok

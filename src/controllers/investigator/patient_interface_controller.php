@@ -34,8 +34,6 @@ if( isset($_SESSION['username']) && $patientAllowed ){
     $patientObject=new Patient($patient, $linkpdo);
     $visitPossible=$patientObject->isMissingVisit();
     $visitArray=$patientObject->getAllCreatedPatientsVisits();
-    //SK A GENERALISER
-    $visitArray=$visitArray[Visit_Group::GROUP_MODALITY_PET];
     
     require 'includes/table_visit.php';
     require 'views/investigator/patient_interface_view.php';
