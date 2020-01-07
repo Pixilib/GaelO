@@ -81,6 +81,24 @@ Class Study {
 
     }
 
+    public function getAllAwaitingUploadImagingVisit(){
+
+        $possibleStudyGroups=$this->getAllPossibleVisitGroups();
+        $visitsObjectArray = [];
+
+        foreach($possibleStudyGroups as $studyGroup){
+            if(in_array($studyGroup->groupModality, array(Visit_Group::GROUP_MODALITY_CT, Visit_Group::GROUP_MODALITY_MR, Visit_Group::GROUP_MODALITY_PET)) ){
+                $awaitingUploadVisits=$studyGroup->getStudyVisitManager()->getAwaitingUploadVisit();
+                array_push($visitsObjectArray, ...$awaitingUploadVisits);
+            }
+            
+            
+        }
+        
+        return $visitsObjectArray;
+
+    }
+
 
     public function getAllPossibleVisitGroups(){
 

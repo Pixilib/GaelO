@@ -27,7 +27,7 @@ if ($studyInvestigatorAllowed){
 
     //Get Visits awaiting import from specified study/Visit Type
 	$studyObject=new Study($_SESSION['study'], $linkpdo);
-	$VisitArrayWaintingUpload=$studyObject->getStudySpecificGroupManager(Visit_Group::GROUP_MODALITY_PET)->getAwaitingUploadVisit();
+	$VisitArrayWaintingUpload=$studyObject->getAllAwaitingUploadImagingVisit();
     
     $AvailablePatients=[];
     //Add the studies name in an array

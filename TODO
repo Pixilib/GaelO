@@ -14,4 +14,5 @@ Nb tree : si une visite review ajoute toute les autre groups visits en lecture
 A voir securité access review => dissocier niveau de reviewer ou jouer sur les job ?
 
 Tester Patient Info
+Test Visit table root supervisor
 update schemas bdd salim

@@ -203,6 +203,9 @@
 					data: 'withdraw'
 				},
 				{
+					data: 'visit_modality'
+				},
+				{
 					data: 'visit_type'
 				},
 				{
@@ -234,28 +237,32 @@
 					"targets": 2
 				},
 				{
-					"title": "Visit Name",
+					"title": "Visit Modality",
 					"targets": 3
 				},
 				{
-					"title": "Visit Status",
+					"title": "Visit Name",
 					"targets": 4
 				},
 				{
-					"title": "Series upload",
+					"title": "Visit Status",
 					"targets": 5
 				},
 				{
-					"title": "Investigation Form",
+					"title": "Series upload",
 					"targets": 6
 				},
 				{
-					"title": "Quality Control",
+					"title": "Investigation Form",
 					"targets": 7
 				},
 				{
-					"title": "Review",
+					"title": "Quality Control",
 					"targets": 8
+				},
+				{
+					"title": "Review",
+					"targets": 9
 				}
 			],
 			"bSortCellsTop": true
@@ -441,7 +448,8 @@
     			<!-- Header for column name (filled by datatable) -->
     			<tr>
     				<th></th>
-    				<th></th>
+					<th></th>
+					<th></th>
     				<th></th>
     				<th></th>
     				<th></th>
@@ -452,6 +460,7 @@
     			</tr>
     			<!-- search inputs -->
     			<tr>
+    				<th><input type="text" placeholder="Search" class="column_search" style="max-width:75px" /></th>
     				<th><input type="text" placeholder="Search" class="column_search" style="max-width:75px" /></th>
     				<th><input type="text" placeholder="Search" class="column_search" style="max-width:75px" /></th>
     				<th><input type="text" placeholder="Search" class="column_search" style="max-width:75px" /></th>
