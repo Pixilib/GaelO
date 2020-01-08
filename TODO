@@ -1,6 +1,8 @@
 Creer les groupes au moement de la creation de l'etude
 Interface supervisor passer le visit group en colonne
 
+Sortir le Jquery Calendar pour le bootstrap calendar (patient withdraw)
+
 technique : 
 passe tout acces aux visites via visit group manager
 Le niveau patient et study iterent sur le group level
