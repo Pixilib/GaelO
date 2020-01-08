@@ -377,7 +377,7 @@
 		</div>
 	</div>
 	
-	<input id="btndownloadmanager" class="btn btn-primary" type="button" value="Download Manager">
+	<input id="btndownloadmanager" class="btn btn-primary" type="button" value="Download Dicoms">
 	<input id="btn_import_patients" class="btn btn-primary" type="button" value="Import Patients">
 	<input id="btn_users_details" class="btn btn-primary" type="button" value="Users Details">
 	<input id="btnexport" class="btn btn-primary" type="button" value="Export">

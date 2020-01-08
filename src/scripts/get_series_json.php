@@ -56,6 +56,7 @@ if ($_SESSION['role']==User::SUPERVISOR && $permissionsCheck) {
             $jsonObject['code'] = $patientObject->patientCode;
             $jsonObject['withdraw'] = boolval($patientObject->patientWithdraw);
             $jsonObject['visit_type'] = $visitObject->visitType;
+            $jsonObject['visit_modality'] = $visitObject->visitGroupObject->groupModality;
             $jsonObject['state_investigator_form'] =$visitObject->stateInvestigatorForm;
             $jsonObject['state_quality_control'] = $visitObject->stateQualityControl;
             $jsonObject['nb_series'] = count($seriesObject);

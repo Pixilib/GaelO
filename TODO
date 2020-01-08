@@ -1,7 +1,6 @@
 Creer les groupes au moement de la creation de l'etude
 Interface supervisor passer le visit group en colonne
 
-Sortir le Jquery Calendar pour le bootstrap calendar (patient withdraw)
 
 technique : 
 passe tout acces aux visites via visit group manager
@@ -15,6 +14,9 @@ Nb tree : si une visite review ajoute toute les autre groups visits en lecture
 A voir securité access review => dissocier niveau de reviewer ou jouer sur les job ?
 
 Delete du download manager form
+
+Tester nouveau date picker dans patient withdraw
+Test Download manager only manual
 
 Tester Patient Info=>ok
 Test Visit table root supervisor =>ok
