@@ -33,12 +33,10 @@ if ($_SESSION['role']==User::SUPERVISOR && $permissionsCheck) {
     $visitName=$_POST['visit_type'];
 
     $studyObject=new Study($_SESSION['study'], $linkpdo);
-    $visitGroupObject=$studyObject->getSpecificGroup($modality);
-    $visitTypeObject=$visitGroupObject->getVisitType($visitName);
+    $visitTypeObject=$studyObject->getSpecificGroup($modality)->getVisitType($visitName);
 
     $studyVisitManager=$studyObject->getStudySpecificGroupManager($modality);
     $patientStatus = $studyVisitManager->getPatientVisitStatusForVisitType($visitTypeObject);
-    
     
     echo(json_encode($patientStatus));
     

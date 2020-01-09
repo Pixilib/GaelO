@@ -1,12 +1,13 @@
 Creer les groupes au moement de la creation de l'etude
 Interface supervisor passer le visit group en colonne
 Source du review manager a revoir !
+Reimplementer un send mail rapide pour visit upload manager ? appeler eme?
 
 technique : 
 passe tout acces aux visites via visit group manager
 Le niveau patient et study iterent sur le group level
-=> Study  public function getSpecificGroup(String $groupModality) => Reste le visit builder ...
-=> study getStudySpecificGroupManager => devrait aussi surement disparaitre
+=> Study  public function getSpecificGroup(String $groupModality) => Reste que le visit builder ...
+=> study getStudySpecificGroupManager => devrait aussi surement disparaitre => Reste statistics et reminder email controller
 Se repencher sur la logique du modele => quid des mails
 
 Fusionner le tree et l'API get review

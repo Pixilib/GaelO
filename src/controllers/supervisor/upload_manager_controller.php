@@ -34,8 +34,7 @@ if ($accessCheck && $_SESSION['role'] == User::SUPERVISOR ) {
 		$visitTypes=$groupObject->getAllVisitTypesOfGroup();
 		$allVisits[$groupObject->groupModality]=array_map(function($visitType){return $visitType->name;},$visitTypes);
 	}
-	//$allVisits=$studyObject->getStudySpecificGroupManager(Visit_Group::GROUP_MODALITY_PET)->getPatientsAllVisitsStatus();
-
+	
     require 'views/supervisor/upload_manager_view2.php';
     
 } else {
