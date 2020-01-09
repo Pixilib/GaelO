@@ -7,8 +7,9 @@ Features :
   - User's data edition panel
   - Docker : 
     - SMTP service for (mail() function)
-    - Cron services to define automatique retrieve of data in FTP/SFTP server (created class to manage FTP/SFTP access)
+    - Cron services to automatize recurrent tasks
   - Patient Visit Manager can be redifined through inheritance for custom visit creation workflow and status determination
+  - FTP/SFTP class to retrieve data from remote server (ex : automatic import of included patient list)
   
 Enhancements : 
   - Anon profile, optional visit, local form needed, Qc needed, Review needed are now defined per visit type
