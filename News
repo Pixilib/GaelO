@@ -1,16 +1,23 @@
 GaelO
 
 --Next Release --
-Visit group to manage multiple modalities (in which each modality will have it's visit type)
-User's data edition panel
-Docker : 
-  - SMTP service for (mail() function)
-  - Cron services to define automatique retrieve of data in FTP/SFTP server (created class to manage FTP/SFTP access)
-Patient Visit Manager can be redifined through inheritance for custom visit creation workflow and status determination
-Anon profile, optional visit, local form needed, Qc needed, Review needed are now defined per visit type
-Monitors now recieve QC decision emails
-Supervisors are notified in case of a not done visit creation
-Email notification when visit review is awaiting adjudication or concluded
-Export button on DataTables now export only visible (filtered) data
+
+Features : 
+  - Visit group to manage multiple modalities (in which each modality will have it's visit type)
+  - User's data edition panel
+  - Docker : 
+    - SMTP service for (mail() function)
+    - Cron services to define automatique retrieve of data in FTP/SFTP server (created class to manage FTP/SFTP access)
+  - Patient Visit Manager can be redifined through inheritance for custom visit creation workflow and status determination
+  
+Enhancements : 
+  - Anon profile, optional visit, local form needed, Qc needed, Review needed are now defined per visit type
+  - Monitors now recieve QC decision emails
+  - Supervisors are notified in case of a not done visit creation
+  - Email notification when visit review is awaiting adjudication or concluded
+  - Export button on DataTables now export only visible (filtered) data
+  - Replaced Jquery datepicker by Bootrastrp datepicker
+  - Simplified download interface for DICOM (supervisor)
+  - faster visit status determination in upload manager (supervisor)
 
 
