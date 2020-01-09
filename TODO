@@ -2,6 +2,7 @@ Creer les groupes au moement de la creation de l'etude
 Interface supervisor passer le visit group en colonne
 Source du review manager a revoir !
 Reimplementer un send mail rapide pour visit upload manager ? appeler eme?
+Table spécifique review necessite d'ajouter modalite pour eviter collusion de nom, idem nom fichiers scpeficique
 
 technique : 
 passe tout acces aux visites via visit group manager
