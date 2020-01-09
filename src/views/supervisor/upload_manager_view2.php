@@ -61,15 +61,37 @@
  
         })
     	
-    	$( "#send_emailsButton" ).on( "click", function() {
-    		$( "#send_emails" ).load('/reminder_emails', function(){
-    			$( "#send_emails" ).dialog( "open" );
-    		});
+    	$( ".reminderBtn" ).on( "click", function() {
+            let reminderType=$(this).val()
+            var count = tableStatus.rows('.selected').count();
+            var rows=tableStatus.rows('.selected').data();
+            console.log(rows)
+            console.log(reminderType)
+
+            $.ajax({
+				type: "POST",
+				dataType: "json",
+				url: "scripts/send_emails_upload_reminder.php",
+				data: { dataArray : rows, reminderType : reminderType }, // serializes the form's elements.
+				success: function(data) {
+                    
+				},
+				error: function(error){
+					console.log("can't fetch patient's status");
+				}
+				
+			});
+
+
     		
     	});
     	
         let tableStatus= $('#tableStatus').DataTable({
                 "sDom": 'Blrtip',
+                scrollX: true,
+                select: {
+                style: 'os'
+                }, 
                 buttons: [ {
                     extend: 'collection',
                     text: 'Export',
@@ -142,38 +164,43 @@
     ?>
 </div>
 <br>
-<div class="tab-content">
-    
-    <div class="upManagerDiv">
-		<table id="tableStatus" class="table table-striped" style="text-align:center; width:100%">
-    		<thead>
-        		<tr>
-        		<th>Centre</th>
-        		<th>Patient Number</th>
-        		<th>Visit Status</th>
-        		<th>Visit should be done after</th>
-        		<th>Visit should be done before</th>
-        		<th>upload Status</th>
-        		<th>Acquisition date</th>
-        		<th>Compliancy</th>
-        		<th>Investigation form</th>
-        		<th>Quality control</th>
-        		</tr>
-        		<tr>
-        		<th><input type="text" placeholder="Search" class="column_search" style="max-width:75px" /></th>
-        		<th><input type="text" placeholder="Search" class="column_search" style="max-width:75px" /></th>
-        		<th><input type="text" placeholder="Search" class="column_search" style="max-width:75px" /></th>
-        		<th><input type="text" placeholder="Search" class="column_search" style="max-width:75px"/> </th>
-        		<th><input type="text" placeholder="Search" class="column_search" style="max-width:75px"/> </th>
-        		<th><input type="text" placeholder="Search" class="column_search" style="max-width:75px"/> </th>
-        		<th><input type="text" placeholder="Search" class="column_search" style="max-width:75px"/> </th>
-        		<th><input type="text" placeholder="Search" class="column_search" style="max-width:75px"/> </th>
-        		<th><input type="text" placeholder="Search" class="column_search" style="max-width:75px"/> </th>
-        		<th><input type="text" placeholder="Search" class="column_search" style="max-width:75px"/> </th>
-        		</tr>
-    		</thead>
-    		<tbody>
-    		</tbody>
-		</table>
-	</div>
+
+<div class="upManagerDiv">
+    <table id="tableStatus" class="table table-striped" style="text-align:center; width:100%">
+        <thead>
+            <tr>
+            <th>Center</th>
+            <th>Patient Number</th>
+            <th>Visit Status</th>
+            <th>Visit should be done after</th>
+            <th>Visit should be done before</th>
+            <th>upload Status</th>
+            <th>Acquisition date</th>
+            <th>Compliancy</th>
+            <th>Investigation form</th>
+            <th>Quality control</th>
+            </tr>
+            <tr>
+            <th><input type="text" placeholder="Search" class="column_search" style="max-width:75px" /></th>
+            <th><input type="text" placeholder="Search" class="column_search" style="max-width:75px" /></th>
+            <th><input type="text" placeholder="Search" class="column_search" style="max-width:75px" /></th>
+            <th><input type="text" placeholder="Search" class="column_search" style="max-width:75px"/> </th>
+            <th><input type="text" placeholder="Search" class="column_search" style="max-width:75px"/> </th>
+            <th><input type="text" placeholder="Search" class="column_search" style="max-width:75px"/> </th>
+            <th><input type="text" placeholder="Search" class="column_search" style="max-width:75px"/> </th>
+            <th><input type="text" placeholder="Search" class="column_search" style="max-width:75px"/> </th>
+            <th><input type="text" placeholder="Search" class="column_search" style="max-width:75px"/> </th>
+            <th><input type="text" placeholder="Search" class="column_search" style="max-width:75px"/> </th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</div>
+
+<div class="row">
+    <span class="badge badge-info">Send Reminders</span>
+    <input type="button" class="btn btn-primary reminderBtn" value="Upload" />
+    <input type="button" class="btn btn-primary" value="Investigator Form" />
+    <input type="button" class="btn btn-primary" value="Corrective Action" />
 </div>
