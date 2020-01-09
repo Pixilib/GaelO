@@ -86,7 +86,7 @@ class Patient{
      * @param string $withdrawDate
      * @param string $withdrawReason
      */
-    public function changeWithdrawStatus(bool $withdraw, string $withdrawDate, string $withdrawReason){
+    public function changeWithdrawStatus(bool $withdraw, ?string $withdrawDate, ?string $withdrawReason){
         
         $insertion = $this->linkpdo->prepare('UPDATE patients
                                             SET withdraw = :withdraw,

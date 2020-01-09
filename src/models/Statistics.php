@@ -17,17 +17,15 @@
  * Build Json data for statistics pages
  */
 class Statistics {
-	
-	private $linkpdo;
+
 	public $studyObject;
 	private $studyVisitManager;
 
-	public function __construct(Study $study, PDO $linkpdo){
-		$this->linkpdo=$linkpdo;
+	public function __construct(Study $study){
 		$this->studyObject=$study;
 		//Cette ligne doit venir du constructeur
-		$visitGroup=$study->getSpecificGroup(Visit_Group::GROUP_MODALITY_PET);
-		$this->studyVisitManager=new Study_Visit_Manager($this->studyObject, $visitGroup, $this->linkpdo);
+		//SK A GENERALISER
+		$this->studyVisitManager=$this->studyObject->getStudySpecificGroupManager(Visit_Group::GROUP_MODALITY_PET);
 		
 	}
 	
@@ -46,7 +44,7 @@ class Statistics {
 		}
 		
 		//Retrieve created Visit from the study Object
-		$createdVisitObjects=$this->studyObject->getStudySpecificGroupManager(Visit_Group::GROUP_MODALITY_PET)->getCreatedVisits();
+		$createdVisitObjects=$this->studyVisitManager->getCreatedVisits();
 		
 		//GlobalMap
 		$reviewdetailsMap=[];
@@ -112,8 +110,7 @@ class Statistics {
 	 */
 	public function getUploadFractionAndDelay(){
 
-		$dataJson=$this->studyVisitManager->getPatientsVisitsStatus();
-		$allPatientStatus=json_decode($dataJson, true);
+		$allPatientStatus=$this->studyVisitManager->getPatientsAllVisitsStatus();
 		$results[0]=$this->getUploadedFraction($allPatientStatus);
 		$results[1]=$this->getUploadDelay($allPatientStatus);
 

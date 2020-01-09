@@ -78,9 +78,9 @@
 	
 </script>
 
-<div class="container" style="background-color: lightgrey;">
+<div class="jumbotron">
 
-	<div class="text-center container">
+	<div class="text-center">
     		<table class="table table-striped" id="centersTable">
     			<thead>
         			<tr>
@@ -104,36 +104,39 @@
                     ?>
     			</tbody>
     		</table>
-    	</div>
-	<form name="formulaire" id="changeCenterForm" class="text-center">
-		<div class="row">
-			<label class="col col-form-label">Number:</label> 
-			<input type="number"
-				class="col form-control" id="centerNumber" maxlength="11"> 
 		</div>
-		<div class="row">
-			<label class="col col-form-label">Description:</label> 
-			<input type="text"
-				class="col form-control" id="centerDescription" maxlength="32">
-		</div>
-		<div class="row">
-			<label class="col col-form-label">Country:</label> 
-			<select
-				class="col form-control" id="countrySelect">
-				<?php foreach ($countries as $country){
-                ?>
-				    <option value="<?= $country['country_code']?>"> <?=$country['country_us']?></option>
-			    <?php 
-				}?>
-			</select> 
-		</div>
-		<div class="text-center">
-			<input class="btn btn-dark" type="button" id="addCenter" value="+">
-		</div>
-		<div class="mt-2 text-center">
-			<button name="confirmer" type="button" class="btn btn-dark text-center" id="sendModifyCenter">Apply
-				modifications</button>
-		</div>
+	<div class="container mt-5">
+		<form name="formulaire" id="changeCenterForm" class="text-center">
+			<div class="row">
+				<label class="col col-form-label">Number:</label> 
+				<input type="number"
+					class="col form-control" id="centerNumber" maxlength="11"> 
+			</div>
+			<div class="row">
+				<label class="col col-form-label">Description:</label> 
+				<input type="text"
+					class="col form-control" id="centerDescription" maxlength="32">
+			</div>
+			<div class="row">
+				<label class="col col-form-label">Country:</label> 
+				<select
+					class="col form-control" id="countrySelect">
+					<?php foreach ($countries as $country){
+					?>
+						<option value="<?= $country['country_code']?>"> <?=$country['country_us']?></option>
+					<?php 
+					}?>
+				</select> 
+			</div>
+			<div class="text-center">
+				<input class="btn btn-dark" type="button" id="addCenter" value="+">
+			</div>
+		</form>
+	</div>
+	<div class="mt-5 text-center">
+		<button name="confirmer" type="button" class="btn btn-dark text-center" id="sendModifyCenter">Apply
+			modifications</button>
+	</div>
 
-	</form>
+
 </div>

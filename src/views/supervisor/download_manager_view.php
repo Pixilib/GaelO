@@ -67,7 +67,7 @@
     			url: "scripts/get_series_json.php",
     			data: {'deleted' : deleted}, 
     			// serializes the form's elements.
-    			success: function(){
+    			success: function(data){
 					let downloadTable = $('#tableau').DataTable();
 					downloadTable.clear().draw();
 					downloadTable.rows.add(data).draw();
@@ -140,7 +140,7 @@
     			{ data: 'center' },
     			{ data: 'code' },
     			{ data: 'withdraw' },
-				{ data : 'visit_modality'},
+				{ data: 'visit_modality'},
     			{ data: 'visit_type' },
     			{ data: 'state_investigator_form' },
     			{ data: 'state_quality_control' },
@@ -199,7 +199,7 @@
 </script>
 
 
-<div id="manual" style="display: none;">
+<div id="manual">
 
 	<input id="includeDeleted" class="form-check-input" type="checkbox">
 	<label for="includeDeleted" class="form-check-label">View Deleted Series</label>

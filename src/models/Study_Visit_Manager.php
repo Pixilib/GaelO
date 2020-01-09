@@ -226,12 +226,9 @@ class Study_Visit_Manager
         return $visitObjectArray;
     }
 
-
-    public function getPatientsVisitsStatus()
+    public function getPatientVisitStatusForVisitType(Visit_Type $visitType)
     {
 
-        //Get ordered list of possible visits in this study
-        $allVisits = $this->visitGroupObject->getAllVisitTypesOfGroup();
         //Get patients list in this study
         $allPatients = $this->studyObject->getAllPatientsInStudy();
 
@@ -242,22 +239,39 @@ class Study_Visit_Manager
             $patientCenter = $patient->getPatientCenter();
             $visitManager = $patient->getPatientVisitManager($this->visitGroupObject);
 
-            foreach ($allVisits as $possibleVisit) {
+            $patientData = [];
+            $patientData['center'] = $patientCenter->name;
+            $patientData['country'] = $patientCenter->countryName;
+            $patientData['firstname'] = $patient->patientFirstName;
+            $patientData['lastname'] = $patient->patientLastName;
+            $patientData['birthdate'] = $patient->patientBirthDate;
+            $patientData['registration_date'] = $patient->patientRegistrationDate;
 
-                $patientData = [];
-                $patientData['center'] = $patientCenter->name;
-                $patientData['country'] = $patientCenter->countryName;
-                $patientData['firstname'] = $patient->patientFirstName;
-                $patientData['lastname'] = $patient->patientLastName;
-                $patientData['birthdate'] = $patient->patientBirthDate;
-                $patientData['registration_date'] = $patient->patientRegistrationDate;
+            $visitStatus = $visitManager->determineVisitStatus($visitType->name);
 
-                $visitStatus = $visitManager->determineVisitStatus($possibleVisit->name);
-
-                $results[$possibleVisit->name][$patient->patientCode] = array_merge($patientData, $visitStatus);
-            }
+            $results[$patient->patientCode] = array_merge($patientData, $visitStatus);
         }
 
-        return (json_encode($results));
+        return $results;
+    }
+
+
+    public function getPatientsAllVisitsStatus()
+    {
+
+        //Get ordered list of possible visits in this study
+        $allVisitsType = $this->visitGroupObject->getAllVisitTypesOfGroup();
+
+        $results = [];
+
+        foreach ($allVisitsType as $visitType) {
+
+            $allPatientStatus = $this->getPatientVisitStatusForVisitType($visitType);
+
+            $results[$visitType->name] = [];
+            array_push($results, ...$allPatientStatus);
+        }
+
+        return $results;
     }
 }

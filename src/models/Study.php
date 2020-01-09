@@ -117,6 +117,24 @@ Class Study {
 
     }
 
+    public function getAllUploadedImagingVisits(){
+
+        $possibleStudyGroups=$this->getAllPossibleVisitGroups();
+        $visitsObjectArray = [];
+
+        foreach($possibleStudyGroups as $studyGroup){
+            if(in_array($studyGroup->groupModality, array(Visit_Group::GROUP_MODALITY_CT, Visit_Group::GROUP_MODALITY_MR, Visit_Group::GROUP_MODALITY_PET)) ){
+                $uploadedVisits=$studyGroup->getStudyVisitManager()->getUploadedVisits();
+                array_push($visitsObjectArray, ...$uploadedVisits);
+            }
+            
+            
+        }
+        
+        return $visitsObjectArray;
+
+    }
+
     public function isHavingAwaitingReviewImagingVisit($username=null){
         $awaitingVisits=$this->getAllAwaitingReviewImagingVisit($username);
         $havingAwaitingReview= (sizeof($awaitingVisits) > 0);
@@ -239,7 +257,7 @@ Class Study {
     }
 
     public function getStatistics() {
-        return new Statistics($this, $this->linkpdo);
+        return new Statistics($this);
     }
     
     public function changeStudyActivation(bool $activated){

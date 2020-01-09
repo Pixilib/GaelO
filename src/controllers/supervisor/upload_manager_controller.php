@@ -28,9 +28,15 @@ if ($accessCheck && $_SESSION['role'] == User::SUPERVISOR ) {
 	
 	//Get All visit / patient status from the visit Manager
 	$studyObject=new Study($_SESSION['study'], $linkpdo);
-	$allVisits=json_decode($studyObject->getStudySpecificGroupManager(Visit_Group::GROUP_MODALITY_PET)->getPatientsVisitsStatus(), true);
+	$possibleGroups=$studyObject->getAllPossibleVisitGroups();
+	$allVisits=[];
+	foreach($possibleGroups as $groupObject){
+		$visitTypes=$groupObject->getAllVisitTypesOfGroup();
+		$allVisits[$groupObject->groupModality]=array_map(function($visitType){return $visitType->name;},$visitTypes);
+	}
+	//$allVisits=$studyObject->getStudySpecificGroupManager(Visit_Group::GROUP_MODALITY_PET)->getPatientsAllVisitsStatus();
 
-    require 'views/supervisor/upload_manager_view.php';
+    require 'views/supervisor/upload_manager_view2.php';
     
 } else {
     require 'includes/no_access.php';

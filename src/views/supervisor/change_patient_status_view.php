@@ -89,7 +89,7 @@
         <br>
         <div id="dateWithdraw">
         	<label class="control-label">Date:</label>
-        	<div id="datepicker"></div>
+        	<div id="datePicker"></div>
         	<br>
             <input class="form-control" name="withdraw_date" id="withdraw_date" type="hidden" >
         </div>

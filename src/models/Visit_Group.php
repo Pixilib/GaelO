@@ -49,6 +49,11 @@ class Visit_Group
         $this->groupModality = $visitGroupData['group_modality'];
     }
 
+
+    public function getVisitType(String $visitName){
+        return new Visit_Type($this->linkpdo, $this->groupId, $visitName);
+    }
+
     /**
      * Return all visit type of the current visit group
      */
