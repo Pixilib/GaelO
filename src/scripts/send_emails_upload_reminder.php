@@ -26,9 +26,9 @@ $accessCheck=$userObject->isRoleAllowed($_SESSION['study'], $_SESSION['role']);
 if ($accessCheck && $_SESSION['role'] == User::SUPERVISOR ) {
     $username = $_SESSION['username'];
     
-    $reminderType="uploadMissing";
-    $reminderType="localFormMissing";
-    $reminderType="correctiveActionMissing";
+    $reminderType="Upload";
+    $reminderType="Investigator Form";
+    $reminderType="Corrective Action";
 
     $dataVisitsArray=[];
     //SK Array de visits comme le tableau sources
@@ -59,173 +59,75 @@ if ($accessCheck && $_SESSION['role'] == User::SUPERVISOR ) {
      * Faire de la selection multiple de visites dans la datatable ?
      */
 
+
+    $message = '<table><tr>
+    <th>Patient Number</th>
+    <th>Initials</th>
+    <th>Birthdate</th>
+    <th>Visit Name</th>
+    <th>Theorical Date</th>
+    </tr>';
+
+            $message = $message.'<tr>
+            <td>'.$patientCode.'</td>
+            <td>'.$patientDetails['firstname'].$patientDetails['lastname'].'</td>
+            <td>'.$patientDetails['birthdate'].'</td>
+            <td>'.$visitName.'</td>
+            <td>'.'From '.$details['shouldBeDoneAfter'].' To '.$details['shouldBeDoneBefore'].'</td>
+            </tr>';
+
     
-
-    //If form sent process it
-	if ( isset($_POST['validate']) && !empty($_POST['radioForm'])){
-		
-	    $emailSender=new Send_Email($linkpdo);
-	    
-		//Prepare list of Selected Jobs
-		$jobs=null;
-		if($_POST['radioFormRoles']=='investigator'){
-			
-			if(!empty($_POST['cra'])) $jobs[]="CRA";
-			if(!empty($_POST['nurse'])) $jobs[]="Study nurse";
-			if(!empty($_POST['nuclearist'])) $jobs[]="Nuclearist";
-			if(!empty($_POST['radiologist'])) $jobs[]="Radiologist";
-			if(!empty($_POST['pi'])) $jobs[]="PI";
-			
-		}else if($_POST['radioFormRoles']=='monitor'){
-			$jobs=User::MONITOR;
-		}else if($_POST['radioFormRoles']=='supervisor'){
-			$jobs=User::SUPERVISOR;
-		}
-		
-		$userText=$_POST['userText'];
-		//Email for missing upload
-		$studyObject=new Study($_SESSION['study'], $linkpdo);
-		$sentEmails=0;
-        if($_POST['radioForm'] == 'upload'){
-                
-                $visitMap=$studyObject->getStudySpecificGroupManager(Visit_Group::GROUP_MODALITY_PET)->getPatientsAllVisitsStatus();
-                
-                $resultsMapToSend=[];
+    $message = $message.'</table>';
     
-                //Sort map by for missing visits by Center / patient / missing visit with calculated date range
-                foreach ($visitMap as $visitName=>$patients){
-                    
-                    foreach ( $patients as $patientCode=>$patientDetails ) {
+    //Get emails account linked with the current center and respecting the role filter
+    $emails=$emailSender->selectDesinatorEmailsfromCenters($_SESSION['study'], $center, $jobs, $linkpdo);
+
+    //Send the email
+    $emailSender->setMessage($message);
+    $emailSender->sendEmail($emails, "Reminder : Missing Investigator Form", $emailSender->getUserEmails($username));
+    $sentEmails++;
+
+
+    $message = $userText."<br> The investigation form has not been completed or validated for these visits.<br>
+    <table>
+    <tr>
+    <td>Patient Code</td>
+    <td>Visit Name</td>
+    </tr>";
     
-                        if($patientDetails['status']==Patient_Visit_Manager::SHOULD_BE_DONE){
-                            $resultsMapToSend [$patientDetails['center']] [$patientCode] ["birthdate"]=$patientDetails['birthdate'];
-                            $resultsMapToSend [$patientDetails['center']] [$patientCode] ["lastname"]=$patientDetails['lastname'];
-                            $resultsMapToSend [$patientDetails['center']] [$patientCode] ["firstname"]=$patientDetails['firstname'];
-                            $resultsMapToSend [$patientDetails['center']] [$patientCode] ["missing"] [$visitName] ['shouldBeDoneBefore']=$patientDetails['shouldBeDoneBefore'];
-                            $resultsMapToSend [$patientDetails['center']] [$patientCode] ["missing"] [$visitName] ['shouldBeDoneAfter']=$patientDetails['shouldBeDoneAfter'];
-                            
-                        }
-                        
-                    }
-                }
-    
-                foreach($resultsMapToSend as $center=>$patients){
-                    //Create Table for each center in which we add all missing visits
-                    $message = '<table><tr>
-                    <th>Patient Number</th>
-                    <th>Initials</th>
-                    <th>Birthdate</th>
-                    <th>Visit Name</th>
-                    <th>Theorical Date</th>
-                    </tr>';
-
-                    foreach ( $patients as $patientCode=>$patientDetails ) {
-                        
-                        foreach ($patientDetails['missing'] as $visitName=>$details){
-
-                            $message = $message.'<tr>
-                            <td>'.$patientCode.'</td>
-                            <td>'.$patientDetails['firstname'].$patientDetails['lastname'].'</td>
-                            <td>'.$patientDetails['birthdate'].'</td>
-                            <td>'.$visitName.'</td>
-                            <td>'.'From '.$details['shouldBeDoneAfter'].' To '.$details['shouldBeDoneBefore'].'</td>
-                            </tr>';
-
-                        }
-
-                    }
-                    
-                    $message = $message.'</table>';
-                    
-                    //Get emails account linked with the current center and respecting the role filter
-                    $emails=$emailSender->selectDesinatorEmailsfromCenters($_SESSION['study'], $center, $jobs, $linkpdo);
-
-                    //Send the email
-                    $emailSender->setMessage($message);
-                    $emailSender->sendEmail($emails, "Reminder : Missing Investigator Form", $emailSender->getUserEmails($username));
-                    $sentEmails++;
-                }
-             
-          	
-            //Email for missing investigator form
-            }else if ($_POST['radioForm'] == 'investigation') {
-                $missingFormVisits=$studyObject->getStudySpecificGroupManager($Visit_Group::GROUP_MODALITY_PET)->getVisitsMissingInvestigatorForm();
-                
-                $mailsByCenter=[];
-                foreach ($missingFormVisits as $visit){
-                    $relatedPatient=$visit->getPatient();
-                    $center=$relatedPatient->getPatientCenter()->code;
-                    $mailsByCenter[$center][$relatedPatient->patientCode][]=$visit->visitType;
-                }
-               
-                //For each center build the message and send the email
-                foreach ($mailsByCenter as $center=>$details){
-                    
-                    //Prepare message including all missing visits forms for this center
-                    $message = $userText."<br> The investigation form has not been completed or validated for these visits.<br>
-					<table>
-					<tr>
-					<td>Patient Code</td>
-                    <td>Visit Name</td>
-                    </tr>";
-                    
-                    foreach ($details as $patientCode=>$visitsType){
-                        $message=$message.'<tr>
-	                    <td>'.$patientCode.'</td>
-	                    <td>'.implode(",", $visitsType).'</td>
-	                    </tr>';
-                    }
-                    
-                	$message=$message.'</table>';
-                	//List the destinators matching center and jobs requirement
-                	$emails=$emailSender->selectDesinatorEmailsfromCenters($_SESSION['study'],$center, $jobs, $linkpdo);
-                	//Send the email
-                	$emailSender->setMessage($message);
-                	$emailSender->sendEmail($emails, "Reminder : Missing Investigator Form", $emailSender->getUserEmails($username));
-                	$sentEmails++;
-                }
-                
-              //Email for missing corrective Action 
-              } else if ($_POST['radioForm'] == 'corrective') {
-                  $visitsCorrectiveActionAsked=$studyObject->getStudySpecificGroupManager(Visit_Group::GROUP_MODALITY_PET)->getVisitWithQCStatus(Visit::QC_CORRECTIVE_ACTION_ASKED);
-                  
-                  $mailsByCenter=[];
-                  foreach ($visitsCorrectiveActionAsked as $visitCorrective){
-                      $relatedPatient=$visitCorrective->getPatient();
-                      $centerCode=$relatedPatient->getPatientCenter()->code;
-                      $mailsByCenter[$centerCode][$relatedPatient->patientCode][]=$visitCorrective->visitType;
-                  }
-
-                  //For each center build the message and send the email
-                  foreach ($mailsByCenter as $center=>$details) {
-                      
-                    $message = $userText."<br> A corrective action was asked, thanks for doing the corrective action.<br>
-					<table>
-					<tr>
-					<td>Patient Code</td>
-                    <td>Visit Name</td>
-                    </tr>";
-                      
-                    foreach ($details as $patientCode=>$visitsType){
-                        $message=$message.'<tr>
-	                    <td>'.$patientCode.'</td>
-	                    <td>'.implode(",", $visitsType).'</td>
-	                    </tr>';    
-                    }
-                  	
-                  	$message=$message.'</table>';
-                  	//List the destinators matching center and jobs requirement
-                  	$emails=$emailSender->selectDesinatorEmailsfromCenters($_SESSION['study'], $center, $jobs, $linkpdo);
-                  	//Send the email
-                  	$emailSender->setMessage($message);
-                  	$emailSender->sendEmail($emails, "Reminder : Missing Investigator Form", $emailSender->getUserEmails($username));
-                  	$sentEmails++;
-                  }
-                
-              }
-              
-              $answer['status']="Success";
-              $answer['centerNb']=$sentEmails;
-              echo(json_encode($answer));
+    foreach ($details as $patientCode=>$visitsType){
+        $message=$message.'<tr>
+        <td>'.$patientCode.'</td>
+        <td>'.implode(",", $visitsType).'</td>
+        </tr>';
     }
-} 
+    
+    $message=$message.'</table>';
+    //List the destinators matching center and jobs requirement
+    $emails=$emailSender->selectDesinatorEmailsfromCenters($_SESSION['study'],$center, $jobs, $linkpdo);
+    //Send the email
+    $emailSender->setMessage($message);
+    $emailSender->sendEmail($emails, "Reminder : Missing Investigator Form", $emailSender->getUserEmails($username));
+    $sentEmails++;
+
+
+    $message = $userText."<br> A corrective action was asked, thanks for doing the corrective action.<br>
+    <table>
+    <tr>
+    <td>Patient Code</td>
+    <td>Visit Name</td>
+    </tr>";
+      
+        $message=$message.'<tr>
+        <td>'.$patientCode.'</td>
+        <td>'.implode(",", $visitsType).'</td>
+        </tr>';    
+
+      
+      $message=$message.'</table>';
+      //List the destinators matching center and jobs requirement
+      $emails=$emailSender->selectDesinatorEmailsfromCenters($_SESSION['study'], $center, $jobs, $linkpdo);
+      //Send the email
+      $emailSender->setMessage($message);
+      $emailSender->sendEmail($emails, "Reminder : Missing Investigator Form", $emailSender->getUserEmails($username));
+      $sentEmails++;

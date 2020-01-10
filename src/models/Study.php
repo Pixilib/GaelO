@@ -175,6 +175,10 @@ Class Study {
         return new Study_Visit_Manager($this, $visitGroup, $this->linkpdo);
 
     }
+
+    public function getReviewManager(){
+        return new Study_Review_Manager($this);
+    }
     
     public function getAllPatientsInStudy(){
         $allPatientQuery = $this->linkpdo->prepare('SELECT code FROM patients WHERE study = :study');

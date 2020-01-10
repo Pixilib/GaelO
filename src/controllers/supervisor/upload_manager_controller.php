@@ -35,7 +35,7 @@ if ($accessCheck && $_SESSION['role'] == User::SUPERVISOR ) {
 		$allVisits[$groupObject->groupModality]=array_map(function($visitType){return $visitType->name;},$visitTypes);
 	}
 	
-    require 'views/supervisor/upload_manager_view2.php';
+    require 'views/supervisor/upload_manager_view.php';
     
 } else {
     require 'includes/no_access.php';

@@ -28,67 +28,13 @@ class Statistics {
 		$this->studyVisitManager=$this->studyObject->getStudySpecificGroupManager(Visit_Group::GROUP_MODALITY_PET);
 		
 	}
-	
-	/**
-	 * List users who have done reviews (and other reviewers missing) for each visit
-	 * with date of review, status of review, 
-	 * @return array[]
-	 */
-	public function getReviewsDetailsByVisit(){
-		
-		//List the Reviewers declared in the study
-		$reviewerUsersObjects=$this->studyObject->getUsersByRoleInStudy(User::REVIEWER);
-		$availableReviewers=[];
-		foreach ($reviewerUsersObjects as $reviewerObject){
-			$availableReviewers[]=$reviewerObject->lastName." ".$reviewerObject->firstName;
-		}
-		
-		//Retrieve created Visit from the study Object
-		$createdVisitObjects=$this->studyVisitManager->getCreatedVisits();
-		
-		//GlobalMap
-		$reviewdetailsMap=[];
-		
-		foreach ($createdVisitObjects as $createdVisit){
-			if($createdVisit->stateQualityControl==Visit::QC_ACCEPTED){
-				//If QC Accepted, visit is suitable for review so analyze it
-				$newVisit['visitId']=$createdVisit->id_visit;
-				$newVisit['patientNumber']=$createdVisit->patientCode;
-				$newVisit['visit']=$createdVisit->visitType;
-				$newVisit['acquisitionDate']=$createdVisit->acquisitionDate;
-				$newVisit['reviewStatus']=$createdVisit->reviewStatus;
-				//Retrieve review
-				$reviewObjects=$createdVisit->getReviewsObject(false);
-				$newVisit['numberOfReview']=count($reviewObjects);
-				$newVisit['reviewDoneBy']=[];
-				$newVisit['reviewDetailsArray']=[];
-				foreach ($reviewObjects as $review){
-					$reviewerObject=$review->getUserObject();
-					$details['user']=$reviewerObject->lastName." ".$reviewerObject->firstName;
-					$details['date']=$review->reviewDate;
-					$newVisit['reviewDetailsArray'][]=$details;
-					$newVisit['reviewDoneBy'][]=$reviewerObject->lastName." ".$reviewerObject->firstName;
-				}
-				
-				//Determine missing reviewer for this visit
-				$newVisit['reviewNotDoneBy']=array_diff($availableReviewers, $newVisit['reviewDoneBy']);
-				
-				//Add all data to the global map
-				$reviewdetailsMap[ $createdVisit->id_visit ]=$newVisit;
-				
-			}
-		}
-		return $reviewdetailsMap;
-		
-		
-	}
 
 	/**
 	 * List review one by one with user and date
 	 * @return array
 	 */
 	public function getReviewsDate(){
-		$reviewdetailsMap=$this->getReviewsDetailsByVisit();
+		$reviewdetailsMap=$this->studyObject->getReviewManager()->getReviewsDetailsByVisit();
 
 		$result=[];
 		
