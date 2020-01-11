@@ -86,14 +86,16 @@ Class Visit_Type{
         return new Visit_Group($this->linkpdo, $this->groupId);
     }
     
-    public static function createVisitType(string $studyName, int $groupId, String $visitName, int $order, int $limitLowDays, int $limitUpDays, bool $localFormNeed, bool $qcNeeded, bool $reviewNeeded, bool $optional, String $anonProfile, PDO $linkpdo){
+    public static function createVisitType(string $studyName, Visit_Group $visitGroup, String $visitName, int $order, int $limitLowDays, int $limitUpDays, bool $localFormNeed, bool $qcNeeded, bool $reviewNeeded, bool $optional, String $anonProfile, PDO $linkpdo){
         
         $req = $linkpdo->prepare('INSERT INTO visit_type (group_id, name, table_review_specific, visit_order, local_form_needed, qc_needed, review_needed, optional, limit_low_days, limit_up_days, anon_profile)
                                       VALUES(:groupId, :visitName, :tableSpecific, :order, :localFormNeeded, :qcNeeded, :reviewNeeded, :optional, :limitLowDays, :limitUpDays, :anonProfile)');
         
-        $req->execute(array('groupId' => $groupId,
+        $tableSpecificName=$visitGroup->groupModality."_".$studyName."_".$visitName;
+
+        $req->execute(array('groupId' => $visitGroup->groupId,
             'visitName'=>$visitName,
-            'tableSpecific'=>$studyName."_".$visitName,
+            'tableSpecific'=>$tableSpecificName,
             'order'=>intval($order),
             'localFormNeeded'=>intval($localFormNeed),
             'qcNeeded'=>intval($qcNeeded),
@@ -105,9 +107,9 @@ Class Visit_Type{
         ));
         
         //Create specific table of the visit for form with relation with the review table
-        $req = $linkpdo->prepare(' CREATE TABLE '.$studyName."_".$visitName.' (id_review integer(11) NOT NULL, PRIMARY KEY (id_review));
-            ALTER TABLE '.$studyName."_".$visitName.' ADD FOREIGN KEY fk_idReview (id_review) REFERENCES reviews(id_review);
-            ALTER TABLE '.$studyName."_".$visitName.' ADD PRIMARY KEY (`id_review`); ');
+        $req = $linkpdo->prepare(' CREATE TABLE '.$tableSpecificName.' (id_review integer(11) NOT NULL, PRIMARY KEY (id_review));
+            ALTER TABLE '.$tableSpecificName.' ADD FOREIGN KEY fk_idReview (id_review) REFERENCES reviews(id_review);
+            ALTER TABLE '.$tableSpecificName.' ADD PRIMARY KEY (`id_review`); ');
         
         $req->execute();
     }

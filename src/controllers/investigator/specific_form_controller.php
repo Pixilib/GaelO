@@ -81,7 +81,7 @@ if($permissionResults){
         if($roleDisable && empty($results)){
             exit();
         }
-        
+        $visitGroupModality=$visitObject->visitGroupObject->groupModality;
         require 'views/investigator/specific_form_view.php';
         
     }

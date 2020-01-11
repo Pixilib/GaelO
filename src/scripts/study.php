@@ -40,44 +40,49 @@ if($_SERVER['REQUEST_METHOD']==='GET'){
     if ($_SESSION['admin']) {
 
         $studyName=$_POST['studyName'];
-        $visitsArray=$_POST['visits'];
+        $visitsGroupArray=$_POST['visitsData'];
     
         //Add the new study as an active study
         Study::createStudy($studyName, $linkpdo);
-        $visitGroup=Visit_Group::createVisitGroup($studyName, Visit_Group::GROUP_MODALITY_PET, $linkpdo);
-        
+         
         //Add the visit in study with order
-        foreach($visitsArray as $visit){
-            
-            //Create visit Type entry with specific table
-            //Parse text boolean to boolean var
-            $localForm = $visit['localForm']==='true';
-            $qc = $visit['qc']==='true';
-            $review = $visit['review']==='true';
-            $optional = $visit['optional']==='true';
-            //Create Visit Type
-            Visit_Type::createVisitType($studyName, $visitGroup->groupId , $visit['name'], $visit['order'], $visit['dayMin'] , $visit['dayMax'], $localForm,
-            $qc, $review, $optional, $visit['anonProfile'], $linkpdo);
-            
-            $rootSpecificModelsFolder=$_SERVER["DOCUMENT_ROOT"].'/data/form/Poo';
-            $rootSpecificScriptFolder=$_SERVER["DOCUMENT_ROOT"].'/data/form/scripts';
-            
-            //Create root folder if not existing
-            if (!is_dir($rootSpecificModelsFolder)) {
-                mkdir($rootSpecificModelsFolder, 0777, true);
+        foreach($visitsGroupArray as $modality=>$visitsArray){
+
+            $visitGroup=Visit_Group::createVisitGroup($studyName, $modality, $linkpdo);
+
+            foreach($visitsArray as $visit){
+                //Create visit Type entry with specific table
+                //Parse text boolean to boolean var
+                $localForm = $visit['localForm']==='true';
+                $qc = $visit['qc']==='true';
+                $review = $visit['review']==='true';
+                $optional = $visit['optional']==='true';
+                //Create Visit Type
+                Visit_Type::createVisitType($studyName, $visitGroup , $visit['name'], $visit['order'], $visit['dayMin'] , $visit['dayMax'], $localForm,
+                $qc, $review, $optional, $visit['anonProfile'], $linkpdo);
+                
+                $rootSpecificModelsFolder=$_SERVER["DOCUMENT_ROOT"].'/data/form/Poo';
+                $rootSpecificScriptFolder=$_SERVER["DOCUMENT_ROOT"].'/data/form/scripts';
+                
+                //Create root folder if not existing
+                if (!is_dir($rootSpecificModelsFolder)) {
+                    mkdir($rootSpecificModelsFolder, 0777, true);
+                }
+                
+                if (!is_dir($rootSpecificScriptFolder)) {
+                    mkdir($rootSpecificScriptFolder, 0777, true);
+                }
+                
+                //Create specific file that will need to be edited by user to fill specific data of the forms
+                $modelPooFile=$_SERVER["DOCUMENT_ROOT"].'/form_models/study_visit_poo.php';
+                $modelScriptFile=$_SERVER["DOCUMENT_ROOT"].'/form_models/study_visit_script.php';
+                $destinationPoo=$rootSpecificModelsFolder.DIRECTORY_SEPARATOR.$modality."_".$studyName."_".$visit['name'].'.php';
+                $destinationScript=$rootSpecificScriptFolder.DIRECTORY_SEPARATOR.$modality."_".$studyName."_".$visit['name'].'.php';
+                copy($modelPooFile, $destinationPoo);
+                copy($modelScriptFile, $destinationScript);
+
             }
-            
-            if (!is_dir($rootSpecificScriptFolder)) {
-                mkdir($rootSpecificScriptFolder, 0777, true);
-            }
-            
-            //Create specific file that will need to be edited by user to fill specific data of the forms
-            $modelPooFile=$_SERVER["DOCUMENT_ROOT"].'/form_models/study_visit_poo.php';
-            $modelScriptFile=$_SERVER["DOCUMENT_ROOT"].'/form_models/study_visit_script.php';
-            $destinationPoo=$rootSpecificModelsFolder.DIRECTORY_SEPARATOR.$_POST['studyName']."_".$visit['name'].'.php';
-            $destinationScript=$rootSpecificScriptFolder.DIRECTORY_SEPARATOR.$_POST['studyName']."_".$visit['name'].'.php';
-            copy($modelPooFile, $destinationPoo);
-            copy($modelScriptFile, $destinationScript);
+
             
         }
         

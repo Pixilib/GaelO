@@ -1,9 +1,9 @@
-Creer les groupes au moement de la creation de l'etude
-
 Passage Visit Group : 
-=> Study  public function getSpecificGroup(String $groupModality) => Reste que le visit builder ...
+=> Study  public function getSpecificGroup(String $groupModality) => Reste que le visit builder
 => study getStudySpecificGroupManager => devrait aussi surement disparaitre => Reste statistics
-=> Table spécifique review necessite d'ajouter modalite pour eviter collusion de nom, idem nom fichiers scpeficique
+
+Table spécifique review necessite d'ajouter modalite pour eviter collusion de nom, idem nom fichiers scpeficique=> A tester
+Creer les groupes au moement de la creation de l'etude => A tester
 
 Refactoring : 
 Se repencher sur la logique du modele => quid des mails

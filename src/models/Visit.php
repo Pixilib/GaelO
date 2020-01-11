@@ -562,13 +562,14 @@ class Visit{
      */
     public function getFromProcessor(bool $local, string $username){
         //Destination of the specific post processing POO
-        $specificObjectFile=$_SERVER["DOCUMENT_ROOT"]."/data/form/Poo/$this->study"."_"."$this->visitType.php";
+        $modality=$this->visitGroupObject->groupModality;
+        $specificObjectFile=$_SERVER["DOCUMENT_ROOT"]."/data/form/Poo/".$modality."_".$this->study."_".$this->visitType.".php";
         
         $formProcessor=null;
         
         if(is_file($specificObjectFile)){
             require($specificObjectFile);
-            $objectName=$this->study."_".$this->visitType;
+            $objectName=$modality."_".$this->study."_".$this->visitType;
             $formProcessor = new $objectName($this, $local, $username, $this->linkpdo);
         }else{
             throw new Exception('Missing From Processor for this visit');

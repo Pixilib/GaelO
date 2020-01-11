@@ -30,7 +30,7 @@ $studyName = "ITSELF";
 
 $ftpReader = new FTP_Reader();
 try {
-    $ftpReader->setFTPCredential();
+    $ftpReader->setFTPCredential("transfert.lysarc.info", "dr.kanoun.s", "!OVxGH13X!", 22, true);
     $ftpReader->setFolder("/GAELO/ITSELF/ExportCS");
     $ftpReader->setSearchedFile($studyName . '_PATIENTS.txt');
     $ftpReader->setLastUpdateTimingLimit(10*24 * 60);

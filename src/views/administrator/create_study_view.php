@@ -12,15 +12,6 @@
  with this program; if not, write to the Free Software Foundation, Inc.,
  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
-
-
- 
-    //SK A FAIRE
-    //CHECK UNICITE STUDY => A Tester
-    //CHECK UNICITE VISITE NAME => A Tester
-	//CHECK UNICITE VISIT ORDER => A tester
-	//REDUIRE nombre COLONNES DES NOMBRES => A tester
-	//TESTER CREATION DE VISITE
 	
 ?>
 
@@ -41,6 +32,13 @@
 		$("#newVisitBtn").on('click', function(){
 
 			let row="<tr> \
+						<td>\
+							<select class=\"\">\
+								<option value=\"PT\">PT</option> \
+								<option value=\"CT\">CT</option> \
+								<option value=\"MR\">MR</option> \
+							</select> \
+						</td> \
 						<td contenteditable=true>Name</td> \
 						<td contenteditable=true><input type=\"number\" min=0 max=100 value=0 class=\"\"/></td> \
 						<td><input type=\"checkbox\" class=\"\"/ checked ></td> \
@@ -64,24 +62,21 @@
 
 		$('#createStudyBtn').on('click', async function() {
 
-			let studyName = $("#studyName").val();
+			let studyNameString = $("#studyName").val();
 
-			let dataArray={
-				studyName : studyName,
-				visits : []
-			}
+			let dataArray=[]
 
 			$('#visitTable > tbody  > tr').each(function(index, tr) {
-
-				let visitName=$(this).find("td:eq(0)").text();
-				let visitOrder=$(this).find("td:eq(1) > input[type='number']").val();
-				let localForm=$(this).find("td:eq(2) > input[type='checkbox']").is(':checked');
-				let qc=$(this).find("td:eq(3) > input[type='checkbox']").is(':checked');
-				let review=$(this).find("td:eq(4) > input[type='checkbox']").is(':checked');
-				let optional=$(this).find("td:eq(5) > input[type='checkbox']").is(':checked');
-				let dayMin=$(this).find("td:eq(6)  > input[type='number']").val();
-				let dayMax=$(this).find("td:eq(7)  > input[type='number']").val();
-				let anonProfile=$(this).find("td:eq(8)  > select").find(":selected").val();
+				let visitModality=$(this).find("td:eq(0)  > select").find(":selected").val();
+				let visitName=$(this).find("td:eq(1)").text();
+				let visitOrder=$(this).find("td:eq(2) > input[type='number']").val();
+				let localForm=$(this).find("td:eq(3) > input[type='checkbox']").is(':checked');
+				let qc=$(this).find("td:eq(4) > input[type='checkbox']").is(':checked');
+				let review=$(this).find("td:eq(5) > input[type='checkbox']").is(':checked');
+				let optional=$(this).find("td:eq(6) > input[type='checkbox']").is(':checked');
+				let dayMin=$(this).find("td:eq(7)  > input[type='number']").val();
+				let dayMax=$(this).find("td:eq(8)  > input[type='number']").val();
+				let anonProfile=$(this).find("td:eq(9)  > select").find(":selected").val();
 
 				let visitObject = {
 					name : visitName,
@@ -94,20 +89,27 @@
 					dayMax : dayMax,
 					anonProfile : anonProfile
 				}
-				dataArray.visits.push(visitObject)
+				//add visit in a modality property
+				//if modality not found intialize and array to recieve visit objects
+				if(! (visitModality in dataArray) ){
+					console.log('ici')
+					dataArray[visitModality]=[]
+				}
+
+				dataArray[visitModality].push(visitObject)
 			})
 
-			function checkDuplicateName(){
-				var valueArr = dataArray.visits.map(function(item){ return item.name });
-				var isDuplicate = valueArr.some(function(item, idx){ 
+			function checkDuplicateName(visitArray){
+				let valueArr = visitArray.map(function(item){ return item.name });
+				let isDuplicate = valueArr.some(function(item, idx){ 
 					return valueArr.indexOf(item) != idx 
 				});
 				return isDuplicate;
 			}
 
-			function checkDuplicateOrder(){
-				var valueArr = dataArray.visits.map(function(item){ return item.order });
-				var isDuplicate = valueArr.some(function(item, idx){ 
+			function checkDuplicateOrder(visitArray){
+				let valueArr = visitArray.map(function(item){ return item.order });
+				let isDuplicate = valueArr.some(function(item, idx){ 
 					return valueArr.indexOf(item) != idx 
 				});
 				return isDuplicate;
@@ -119,10 +121,18 @@
 			}
 
 			let isDuplicateStudyName = await checkDuplicateStudy();
-			
 
-			if(checkDuplicateName() || checkDuplicateOrder() || isDuplicateStudyName ){
-				alertifyError('Duplicate study / visit Name or Order, should be unique')
+			let checkOrderNameContainsDuplicate=false;
+			
+			for (let modality in dataArray) {
+				let isDuplicateName=checkDuplicateName(dataArray[modality])
+				let isDuplicateOrder=checkDuplicateOrder(dataArray[modality])
+				if(isDuplicateName || isDuplicateOrder) checkOrderNameContainsDuplicate=true;
+
+			}
+
+			if( checkOrderNameContainsDuplicate || isDuplicateStudyName ){
+				alertifyError('Duplicate study / visit Name or Order by modality, should be unique')
 				return;
 			}
 
@@ -130,7 +140,7 @@
 					type: "POST",
 					dataType: 'json',
 					url: 'scripts/study.php',
-					data: dataArray, // serializes the form's elements.
+					data: { studyName : studyNameString, visitsData : dataArray }, // serializes the form's elements.
 					success: function(data) {
 						if(data){
 							alertifySuccess("Done")
@@ -157,6 +167,9 @@
 			<table id="visitTable" class="table table-striped">
 				<thead>
 					<tr>
+						<td>
+							Visit Group
+						</td>
 						<td>
 							Visit Name
 						</td>
