@@ -64,7 +64,7 @@
 
 			let studyNameString = $("#studyName").val();
 
-			let dataArray=[]
+			let dataArray={};
 
 			$('#visitTable > tbody  > tr').each(function(index, tr) {
 				let visitModality=$(this).find("td:eq(0)  > select").find(":selected").val();
@@ -91,8 +91,7 @@
 				}
 				//add visit in a modality property
 				//if modality not found intialize and array to recieve visit objects
-				if(! (visitModality in dataArray) ){
-					console.log('ici')
+				if( "undefined" === typeof(dataArray[visitModality]) ){
 					dataArray[visitModality]=[]
 				}
 
@@ -135,7 +134,7 @@
 				alertifyError('Duplicate study / visit Name or Order by modality, should be unique')
 				return;
 			}
-
+			console.log( JSON.stringify(dataArray));
 			$.ajax({
 					type: "POST",
 					dataType: 'json',

@@ -2,11 +2,8 @@ Passage Visit Group :
 => Study  public function getSpecificGroup(String $groupModality) => Reste que le visit builder
 => study getStudySpecificGroupManager => devrait aussi surement disparaitre => Reste statistics
 
-Table spécifique review necessite d'ajouter modalite pour eviter collusion de nom, idem nom fichiers scpeficique=> A tester
-Creer les groupes au moement de la creation de l'etude => A tester
-
 Refactoring : 
-Se repencher sur la logique du modele => quid des mails
+Se repencher sur la logique du modele
 passe tout acces aux visites via visit group manager
 Le niveau patient et study iterent sur le group level
 Fusionner le tree et l'API get review
@@ -19,3 +16,7 @@ A voir securité access review => dissocier niveau de reviewer ou jouer sur les 
 
 Tests:
 Source du review manager a revoir => A tester + verif que statistics ne casse pas trop
+Emails a tester
+Table spécifique review necessite d'ajouter modalite pour eviter collusion de nom, idem nom fichiers scpeficique=> A tester
+Creer les groupes au moement de la creation de l'etude => A tester
+Visit Builder a tester

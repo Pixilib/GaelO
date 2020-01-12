@@ -27,7 +27,7 @@ class Visit_Group
 
     public $linkpdo;
 
-    const GROUP_MODALITY_PET = "PET";
+    const GROUP_MODALITY_PET = "PT";
     const GROUP_MODALITY_CT = "CT";
     const GROUP_MODALITY_MR = "MR";
 
@@ -86,7 +86,7 @@ class Visit_Group
     {
 
         $req = $linkpdo->prepare('INSERT INTO visit_group (study,  group_modality)
-                                      VALUES(:studyName, :groupType, :groupModality)');
+                                      VALUES(:studyName, :groupModality)');
 
         $req->execute(array(
             'studyName' => $studyName,

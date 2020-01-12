@@ -41,6 +41,8 @@ if($_SERVER['REQUEST_METHOD']==='GET'){
 
         $studyName=$_POST['studyName'];
         $visitsGroupArray=$_POST['visitsData'];
+        error_log($studyName);
+        error_log($visitsGroupArray);
     
         //Add the new study as an active study
         Study::createStudy($studyName, $linkpdo);
