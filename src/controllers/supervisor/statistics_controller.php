@@ -49,7 +49,7 @@ if ($accessCheck && $_SESSION['role'] == User::SUPERVISOR) {
 			break;
 
 		case 'reviewData':
-			$chartData = json_encode($studyObj->getStatistics()->getReviewData(false), JSON_NUMERIC_CHECK);
+			$chartData = json_encode($studyObj->getStatistics()->getReviewData(), JSON_NUMERIC_CHECK);
 			require 'views/supervisor/statistics/statistics_review_data.php';
 			break;
 

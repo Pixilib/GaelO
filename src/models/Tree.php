@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  Copyright (C) 2018 KANOUN Salim
  This program is free software; you can redistribute it and/or modify
@@ -18,227 +18,215 @@
  *
  */
 
-class Tree {
-    
-  private $json;
+class Tree
+{
   private $role;
   private $username;
-  private $study;
   private $studyObject;
   private $linkpdo;
- 
-  public function __construct(string $role, string $username, string $study, PDO $linkpdo){
-      $this->linkpdo=$linkpdo;
-      $this->role=$role;
-      $this->username=$username;
-      $this->study=$study;
-      $this->studyObject=new Study($study, $linkpdo);
-      
-      
+
+  public function __construct(string $role, string $username, string $study, PDO $linkpdo)
+  {
+    $this->linkpdo = $linkpdo;
+    $this->role = $role;
+    $this->username = $username;
+    $this->studyObject = new Study($study, $linkpdo);
+  }
+
+  /**
+   * Determine class value of Investigator and Controller visit item
+   * to make specific color decoration depending on status of visit
+   */
+  private function determineClassOfVisit(Visit $visitObject): String
+  {
+
+    if ($this->role == User::INVESTIGATOR) {
+
+      //Add upload status / user form in class 
+      if ($visitObject->statusDone == Visit::DONE && $visitObject->uploadStatus == Visit::NOT_DONE && $visitObject->stateInvestigatorForm != Visit::DONE) {
+        $class = "NotBoth";
+      } else if ($visitObject->statusDone == Visit::DONE && $visitObject->stateInvestigatorForm !=  Visit::DONE) {
+        $class = "NotForm";
+      } else if ($visitObject->statusDone == Visit::DONE && $visitObject->uploadStatus ==  Visit::NOT_DONE) {
+        $class = "NotUpload";
+      } else {
+        $class = "OK";
+      }
+    } else if ($this->role == User::CONTROLLER) {
+      if ($visitObject->stateQualityControl == Visit::QC_ACCEPTED || $visitObject->stateQualityControl == Visit::QC_REFUSED) {
+        $class = "OK";
+      } else if ($visitObject->stateQualityControl == Visit::QC_NOT_DONE || $$visitObject->stateQualityControl == Visit::QC_WAIT_DEFINITVE_CONCLUSION) {
+        $class = "NotBoth";
+      }
+    }
+
+    return $class;
+  }
+
+  private function visitObjectToTreeObject(Visit $visitObject)
+  {
+
+    $jsonVisitLevel['id'] = $visitObject->id_visit;
+    $jsonVisitLevel['parent'] = $visitObject->patientCode . '_' . $visitObject->visitGroupObject->groupModality;
+    $jsonVisitLevel['icon'] = '/assets/images/report-icon.png';
+    $jsonVisitLevel['text'] = $visitObject->visitType;
+    $jsonVisitLevel['state']['opened'] = false;
+
+    if ($this->role == User::INVESTIGATOR ||  $this->role == User::CONTROLLER) {
+      //NB SI BESOIN ON PEUT AJOUTER UN CUSTOM ATRRIBUT A LA PLACE DE class
+      $attr['class'] = $this->determineClassOfVisit($visitObject);
+      $jsonVisitLevel['li_attr'] = $attr;
+    }
+
+    return $jsonVisitLevel;
+  }
+
+  private function patientObjectToTreeObject(String $patientCode)
+  {
+
+    $jsonPatientLevel['id'] = $patientCode;
+    $jsonPatientLevel['parent'] = '#';
+    $jsonPatientLevel['icon'] = '/assets/images/person-icon.png';
+    $jsonPatientLevel['text'] = $patientCode;
+    $jsonPatientLevel['state']['opened'] = false;
+
+    return $jsonPatientLevel;
+  }
+
+  private function visitGroupToTreeObject($patientCode, $groupModality)
+  {
+
+    $jsonGroupLevel['id'] = $patientCode . '_' . $groupModality;
+    $jsonGroupLevel['parent'] = $patientCode;
+    $jsonGroupLevel['icon'] = '/assets/images/person-icon.png';
+    $jsonGroupLevel['text'] = $groupModality;
+    $jsonGroupLevel['state']['opened'] = true;
+
+
+    return $jsonGroupLevel;
+  }
+
+  private function processVisitsArray($visitsArray)
+  {
+
+    $sortedModalities = [];
+
+    foreach ($visitsArray as $visitObject) {
+      $sortedModalities[$visitObject->visitGroupObject->groupModality][] = $visitObject;
+    }
+
+    return $sortedModalities;
+  }
+
+  private function makeTreeFromPatients($patientsArray)
+  {
+
+    $resultTree = [];
+    foreach ($patientsArray as $patientObject) {
+      $visitsArray = $patientObject->getAllCreatedPatientsVisits();
+      $stortedVisits = $this->processVisitsArray($visitsArray);
+      $resultTree[$patientObject->patientCode]['patientObject'] = $patientObject;
+      $resultTree[$patientObject->patientCode]['modalities'] = $stortedVisits;
+    }
+
+    return $resultTree;
+  }
+
+  private function makeTreeFromVisits($visitsArray)
+  {
+
+    $resultTree = [];
+
+    foreach ($visitsArray as $visitObject) {
+      $resultTree[$visitObject->patientCode]['patientObject'] = $visitObject->getPatient();
+      $resultTree[$visitObject->patientCode]['modalities'][$visitObject->visitGroupObject->groupModality][] = $visitObject;
+    }
+
+    return $resultTree;
+  }
+
+  private function treeStructuretoJsonTree($treeStructure)
+  {
+    $jsonTree = [];
+    foreach ($treeStructure as $patientCode => $patientData) {
+      $jsonTree[] = $this->patientObjectToTreeObject($patientCode);
+      foreach ($patientData['modalities'] as $modality => $visitObjects) {
+        $jsonTree[] = $this->visitGroupToTreeObject($patientCode, $modality);
+        foreach ($visitObjects as $visitObject) {
+          $jsonTree[] = $this->visitObjectToTreeObject($visitObject);
+        }
+      }
+    }
+
+    return $jsonTree;
   }
 
   /**
    * Return JSON for JSTree according to role  (patient + Visit)
    * @return array
    */
-  public function make_Tree(){
-    
-    if($this->role == User::INVESTIGATOR){
+  public function buildTree()
+  {
+
+    $possibleVisitGroups = $this->studyObject->getAllPossibleVisitGroups();
+
+    if ($this->role == User::INVESTIGATOR) {
       //retrieve from DB the patient's list of the requested study and included in user's center or affiliated centers
-                
-      $patients = $this->linkpdo->prepare(' SELECT patients.code
-                                            FROM   patients
-                                            WHERE  patients.center IN (SELECT affiliated_centers.center
-                                                FROM   affiliated_centers
-                                                WHERE  affiliated_centers.username = :username
-                                                UNION
-                                                SELECT users.center
-                                                FROM   users
-                                                WHERE  users.username = :username)
-                                                AND patients.study = :study
-                                                GROUP  BY patients.code');
-      
-      $patients->execute(array('study' => $this->study,
-                               'username' => $this->username));
-      
-      $patientsCodes = $patients->fetchAll(PDO::FETCH_COLUMN);
-      
-      foreach ($patientsCodes as $patientCode) {
 
-        $jsonObject['id'] = $patientCode;
-        $jsonObject['parent'] = '#';
-        $jsonObject['icon'] = '/assets/images/person-icon.png';
-        $jsonObject['text'] = $patientCode;
-    
-        $this->json[] =$jsonObject;
-        $this->make_Visit_Tree($patientCode);
-     }
-     
-    } else if($this->role == User::CONTROLLER){
-      //Select distinct patient having a study with QC status not done or wait conclusion
-      $patients = $this->linkpdo->prepare('SELECT DISTINCT patient_code FROM visits
-                                            WHERE (study = :study
-                                            AND deleted=0
-                                            AND status_done = :done
-                                            AND upload_status= :done
-                                            AND state_investigator_form= :done
-                                            AND (state_quality_control = "Not Done"
-                                            OR state_quality_control = "Wait Definitive Conclusion") ) ');
-      
-      $patients->execute(array('study' => $this->study,
-                                'done'=> "Done"));
-      
-      $dataPatients = $patients->fetchAll(PDO::FETCH_COLUMN);
-      
-      foreach ($dataPatients as $patientCode) {
-        //create a patient entry
-        $jsonObject['id'] = $patientCode;
-        $jsonObject['parent'] = '#';
-        $jsonObject['icon'] = '/assets/images/person-icon.png';
-        $jsonObject['text'] = $patientCode;
-        $this->json[] =$jsonObject;
-        //Add all visits of this patient
-        $this->make_Visit_Tree_Controller($patientCode);
+      $patientObjectArray = $this->studyObject->getPatientsLinkedToUserCenters($this->username);
+
+      $treeStructure = $this->makeTreeFromPatients($patientObjectArray);
+    } else if ($this->role == User::CONTROLLER) {
+
+      $controllerVisitsArray = [];
+
+      foreach ($possibleVisitGroups as $visitGroup) {
+        $studyVisitManager = $visitGroup->getStudyVisitManager();
+        $visitsArray = $studyVisitManager->getVisitForControllerAction();
+        array_push($controllerVisitsArray, ...$visitsArray);
       }
 
-    } else if($this->role == User::MONITOR){
-        $patients = $this->linkpdo->prepare('SELECT patient_code FROM visits
-                                      WHERE (study = :study AND deleted=0)
-                                      GROUP BY patient_code');
+      $treeStructure = $this->makeTreeFromVisits($controllerVisitsArray);
+    } else if ($this->role == User::MONITOR) {
 
-        $patients->execute(array('study' => $this->study));
-        $dataPatients = $patients->fetchAll(PDO::FETCH_COLUMN);
-        
-        foreach ($dataPatients as $patient) {
-          $jsonObject['id'] = $patient;
-          $jsonObject['parent'] = '#';
-          $jsonObject['icon'] = '/assets/images/person-icon.png';
-          $jsonObject['text'] = $patient;
+      $monitorVisitsArray = [];
 
-          $this->json[] =$jsonObject;
-          $this->make_Visit_Tree($patient);
-        }
+      foreach ($possibleVisitGroups as $visitGroup) {
+        $studyVisitManager = $visitGroup->getStudyVisitManager();
+        $visitsArray = $studyVisitManager->getCreatedVisits();
+        array_push($monitorVisitsArray, ...$visitsArray);
+      }
 
-    } else if($this->role == User::REVIEWER){
-        
-        $visitObjectList = $this->studyObject->getAwaitingReviewVisit($this->username);
-        
-        $patientsArray=[];
-        
-        foreach ($visitObjectList as $visitObject) {
-            
-            //Check if visit comes from a new patient
-            if(  ! in_array($visitObject->patientCode, $patientsArray) ){
-                //create a patient entry
-                $jsonObject['id'] = $visitObject->patientCode;
-                $jsonObject['parent'] = '#';
-                $jsonObject['icon'] = '/assets/images/person-icon.png';
-                $jsonObject['text'] = $visitObject->patientCode;
-                $this->json[] =$jsonObject;
-                //Add the add patient in the array list
-                $patientsArray[]=$visitObject->patientCode;
-            }
-            
-            //Add the visit entry
-            $jsonObjectVisit['id'] = $visitObject->id_visit;
-            $jsonObjectVisit['parent'] = $visitObject->patientCode;
-            $jsonObjectVisit['icon'] = '/assets/images/report-icon.png';
-            $jsonObjectVisit['text'] = $visitObject->visitType;
-            //Add review conclusion status in custom attribut (for reviewer filtering)
-            $attr['review']=$visitObject->reviewStatus;
-            $jsonObjectVisit['li_attr']=$attr;
-            
-            $this->json[] =$jsonObjectVisit;
-            
-            
-        }
-        
-    }
-    
-    
-    return  $this->json;
-  }
+      $treeStructure = $this->makeTreeFromVisits($monitorVisitsArray);
+    } else if ($this->role == User::REVIEWER) {
+      //SK attention une review pending fait reafficher toutes les reviews du patient
+      //que soit la modalite
+      //peut etre jouer avec le job des users pour filtrer le group de visite
 
-  /**
-   * Process the study level for investigator
-   * @param $numero_patient
-   */
-  private function make_Visit_Tree($numero_patient){
-  	
-    $visites = $this->linkpdo->prepare('SELECT visits.* 
-											FROM visits 
-											INNER JOIN visit_type ON (visit_type.name=visits.visit_type AND visit_type.study=visits.study) 
-										WHERE patient_code=:num_patient AND deleted=0 ORDER BY visit_type.visit_order ');
-    $visites->execute(array('num_patient' => $numero_patient));
-
-    //For each visit creates it's node data
-     while ($data_visite = $visites->fetch(PDO::FETCH_ASSOC)) {
-        //Add upload status / user form in class 
-         if( $data_visite['status_done']==Visit::DONE && $data_visite['upload_status'] == Visit::NOT_DONE && $data_visite['state_investigator_form'] != Visit::DONE ){
-         $class="NotBoth";
-        }
-        else if( $data_visite['status_done']==Visit::DONE && $data_visite['state_investigator_form'] !=  Visit::DONE ){
-         $class="NotForm";
-        }
-        else if( $data_visite['status_done']==Visit::DONE && $data_visite['upload_status'] ==  Visit::NOT_DONE ){
-         $class="NotUpload";
-        }
-        else{
-         $class="OK";
-        }
-        
-        $attr['class']=$class;
-        
-        $jsonObject['id'] = $data_visite['id_visit'];
-        $jsonObject['parent'] = $numero_patient;
-        $jsonObject['icon'] = '/assets/images/report-icon.png';
-        $jsonObject['text'] = $data_visite['visit_type'];
-        $jsonObject['li_attr'] =$attr;
-        
-        $this->json[] = $jsonObject;
-
-     }
-  }
-  
- 
-  /**
-   * For controller display all visits that have been QC or ready for QC
-   * @param $numero_patient
-   */
-  private function make_Visit_Tree_Controller($numero_patient){
-      
-      $visites = $this->linkpdo->prepare('SELECT * FROM visits INNER JOIN visit_type ON (visit_type.name=visits.visit_type AND visit_type.study=visits.study) 
-											WHERE patient_code = :num_patient
-											AND deleted=0
-											AND status_done ="Done"
-											AND upload_status= "Done"
-											AND state_investigator_form="Done" 
-											ORDER BY visit_type.visit_order');
-      $visites->execute(array('num_patient' => $numero_patient));
-      
-      //For each visit creates it's node data
-      while ($data_visite = $visites->fetch(PDO::FETCH_ASSOC)) {
-          
-
-          if($data_visite['state_quality_control']==Visit::QC_ACCEPTED || $data_visite['state_quality_control']==Visit::QC_REFUSED){
-              $class="OK";  
-          }else if($data_visite['state_quality_control']==Visit::QC_NOT_DONE || $data_visite['state_quality_control']==Visit::QC_WAIT_DEFINITVE_CONCLUSION){
-              $class="NotBoth";  
-          //if corrective action pending, nothing to do for controller do not display this visit
-          }else{
-              continue;
+      $patientsList = [];
+      //For each visit group list patient having a least on visit awaiting review
+      foreach ($possibleVisitGroups as $visitGroup) {
+        $studyVisitManager = $visitGroup->getStudyVisitManager();
+        $visits = $studyVisitManager->getAwaitingReviewVisit($this->username);
+        if (!empty($visits)) {
+          foreach ($visits as $visitObject) {
+            $patientsList[$visitObject->patientCode] = $visitObject->patientCode;
           }
-
-          $attr['class']=$class;
-          $jsonObject['id'] = $data_visite['id_visit'];
-          $jsonObject['parent'] = $numero_patient;
-          $jsonObject['icon'] = '/assets/images/report-icon.png';
-          $jsonObject['text'] = $data_visite['visit_type'];
-          $jsonObject['li_attr'] =$attr;
-          
-          $this->json[] = $jsonObject;
-          
+        }
       }
+      //extract unique patient array
+      $patientCodeArray = array_keys($patientsList);
+      $patientObjectArray = [];
+      foreach ($patientCodeArray as $patientCode) {
+        $patientObjectArray[] = new Patient($patientCode, $this->linkpdo);
+      }
+
+      $treeStructure = $this->makeTreeFromPatients($patientObjectArray);
+
+    }
+
+    $jsonTree = $this->treeStructuretoJsonTree($treeStructure);
+
+    return  $jsonTree;
   }
-  
 }

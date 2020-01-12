@@ -98,12 +98,42 @@
 				extend: 'collection',
 				text: 'Export',
 				buttons: [
-					'copy',
-					'excel',
-					'csv',
-					'pdf',
-					'print'
-				]
+					{
+						extend: 'copy',
+						exportOptions: {
+							columns: ':visible',
+							rows: ':visible'
+						}
+					},
+					{
+						extend: 'excel',
+						exportOptions: {
+							columns: ':visible',
+							rows: ':visible'
+						}
+					},
+					{
+						extend: 'csv',
+						exportOptions: {
+							columns: ':visible',
+							rows: ':visible'
+						}
+					},
+					{
+						extend: 'pdf',
+						exportOptions: {
+							columns: ':visible',
+							rows: ':visible'
+						}
+					},
+					{
+						extend: 'print',
+						exportOptions: {
+							columns: ':visible',
+							rows: ':visible'
+						}
+					}
+					]
 			}],
 			"bSortCellsTop": true,
 			"iDisplayLength": 5
@@ -124,12 +154,42 @@
 				extend: 'collection',
 				text: 'Export',
 				buttons: [
-					'copy',
-					'excel',
-					'csv',
-					'pdf',
-					'print'
-				]
+					{
+						extend: 'copy',
+						exportOptions: {
+							columns: ':visible',
+							rows: ':visible'
+						}
+					},
+					{
+						extend: 'excel',
+						exportOptions: {
+							columns: ':visible',
+							rows: ':visible'
+						}
+					},
+					{
+						extend: 'csv',
+						exportOptions: {
+							columns: ':visible',
+							rows: ':visible'
+						}
+					},
+					{
+						extend: 'pdf',
+						exportOptions: {
+							columns: ':visible',
+							rows: ':visible'
+						}
+					},
+					{
+						extend: 'print',
+						exportOptions: {
+							columns: ':visible',
+							rows: ':visible'
+						}
+					}
+					]
 			}],
 			//Retrive data from internal method
 			data: <?=make_Json($studyObject)?>,
@@ -141,6 +201,9 @@
 				},
 				{
 					data: 'withdraw'
+				},
+				{
+					data: 'visit_modality'
 				},
 				{
 					data: 'visit_type'
@@ -174,28 +237,32 @@
 					"targets": 2
 				},
 				{
-					"title": "Visit Name",
+					"title": "Visit Modality",
 					"targets": 3
 				},
 				{
-					"title": "Visit Status",
+					"title": "Visit Name",
 					"targets": 4
 				},
 				{
-					"title": "Series upload",
+					"title": "Visit Status",
 					"targets": 5
 				},
 				{
-					"title": "Investigation Form",
+					"title": "Series upload",
 					"targets": 6
 				},
 				{
-					"title": "Quality Control",
+					"title": "Investigation Form",
 					"targets": 7
 				},
 				{
-					"title": "Review",
+					"title": "Quality Control",
 					"targets": 8
+				},
+				{
+					"title": "Review",
+					"targets": 9
 				}
 			],
 			"bSortCellsTop": true
@@ -215,12 +282,42 @@
 				extend: 'collection',
 				text: 'Export',
 				buttons: [
-					'copy',
-					'excel',
-					'csv',
-					'pdf',
-					'print'
-				]
+					{
+						extend: 'copy',
+						exportOptions: {
+							columns: ':visible',
+							rows: ':visible'
+						}
+					},
+					{
+						extend: 'excel',
+						exportOptions: {
+							columns: ':visible',
+							rows: ':visible'
+						}
+					},
+					{
+						extend: 'csv',
+						exportOptions: {
+							columns: ':visible',
+							rows: ':visible'
+						}
+					},
+					{
+						extend: 'pdf',
+						exportOptions: {
+							columns: ':visible',
+							rows: ':visible'
+						}
+					},
+					{
+						extend: 'print',
+						exportOptions: {
+							columns: ':visible',
+							rows: ':visible'
+						}
+					}
+					]
 			}],
 			"bSortCellsTop": true,
 			"scrollX": true
@@ -280,7 +377,7 @@
 		</div>
 	</div>
 	
-	<input id="btndownloadmanager" class="btn btn-primary" type="button" value="Download Manager">
+	<input id="btndownloadmanager" class="btn btn-primary" type="button" value="Download Dicoms">
 	<input id="btn_import_patients" class="btn btn-primary" type="button" value="Import Patients">
 	<input id="btn_users_details" class="btn btn-primary" type="button" value="Users Details">
 	<input id="btnexport" class="btn btn-primary" type="button" value="Export">
@@ -351,7 +448,8 @@
     			<!-- Header for column name (filled by datatable) -->
     			<tr>
     				<th></th>
-    				<th></th>
+					<th></th>
+					<th></th>
     				<th></th>
     				<th></th>
     				<th></th>
@@ -362,6 +460,7 @@
     			</tr>
     			<!-- search inputs -->
     			<tr>
+    				<th><input type="text" placeholder="Search" class="column_search" style="max-width:75px" /></th>
     				<th><input type="text" placeholder="Search" class="column_search" style="max-width:75px" /></th>
     				<th><input type="text" placeholder="Search" class="column_search" style="max-width:75px" /></th>
     				<th><input type="text" placeholder="Search" class="column_search" style="max-width:75px" /></th>

@@ -26,8 +26,7 @@ $accessCheck=$userObject->isRoleAllowed($_SESSION['study'], $_SESSION['role']);
 if ($accessCheck && $_SESSION['role'] == User::SUPERVISOR ) {
     
     $studyObject=new Study($_SESSION['study'], $linkpdo);
-	$statisticsObject=$studyObject->getStatistics();
-	$reviewdetailsMap=$statisticsObject->getReviewsDetailsByVisit();
+	$$reviewdetailsMap=$studyObject->getReviewManager()->getReviewsDetailsByVisit();
 	
 	$usernameCounter=[];
 	foreach ($reviewdetailsMap as $visitID=>$details){

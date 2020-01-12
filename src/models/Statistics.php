@@ -17,67 +17,15 @@
  * Build Json data for statistics pages
  */
 class Statistics {
-	
-	private $linkpdo;
-	public $studyObject;
 
-	public function __construct(Study $study, PDO $linkpdo){
-		$this->linkpdo=$linkpdo;
+	public $studyObject;
+	private $studyVisitManager;
+
+	public function __construct(Study $study){
 		$this->studyObject=$study;
-		
-	}
-	
-	/**
-	 * List users who have done reviews (and other reviewers missing) for each visit
-	 * with date of review, status of review, 
-	 * @return array[]
-	 */
-	public function getReviewsDetailsByVisit(){
-		
-		//List the Reviewers declared in the study
-		$reviewerUsersObjects=$this->studyObject->getUsersByRoleInStudy(User::REVIEWER);
-		$availableReviewers=[];
-		foreach ($reviewerUsersObjects as $reviewerObject){
-			$availableReviewers[]=$reviewerObject->lastName." ".$reviewerObject->firstName;
-		}
-		
-		//Retrieve created Visit from the study Object
-		$createdVisitObjects=$this->studyObject->getCreatedVisits();
-		
-		//GlobalMap
-		$reviewdetailsMap=[];
-		
-		foreach ($createdVisitObjects as $createdVisit){
-			if($createdVisit->stateQualityControl==Visit::QC_ACCEPTED){
-				//If QC Accepted, visit is suitable for review so analyze it
-				$newVisit['visitId']=$createdVisit->id_visit;
-				$newVisit['patientNumber']=$createdVisit->patientCode;
-				$newVisit['visit']=$createdVisit->visitType;
-				$newVisit['acquisitionDate']=$createdVisit->acquisitionDate;
-				$newVisit['reviewStatus']=$createdVisit->reviewStatus;
-				//Retrieve review
-				$reviewObjects=$createdVisit->getReviewsObject(false);
-				$newVisit['numberOfReview']=count($reviewObjects);
-				$newVisit['reviewDoneBy']=[];
-				$newVisit['reviewDetailsArray']=[];
-				foreach ($reviewObjects as $review){
-					$reviewerObject=$review->getUserObject();
-					$details['user']=$reviewerObject->lastName." ".$reviewerObject->firstName;
-					$details['date']=$review->reviewDate;
-					$newVisit['reviewDetailsArray'][]=$details;
-					$newVisit['reviewDoneBy'][]=$reviewerObject->lastName." ".$reviewerObject->firstName;
-				}
-				
-				//Determine missing reviewer for this visit
-				$newVisit['reviewNotDoneBy']=array_diff($availableReviewers, $newVisit['reviewDoneBy']);
-				
-				//Add all data to the global map
-				$reviewdetailsMap[ $createdVisit->id_visit ]=$newVisit;
-				
-			}
-		}
-		return $reviewdetailsMap;
-		
+		//Cette ligne doit venir du constructeur
+		//SK A GENERALISER
+		$this->studyVisitManager=$this->studyObject->getStudySpecificGroupManager(Visit_Group::GROUP_MODALITY_PET);
 		
 	}
 
@@ -86,7 +34,7 @@ class Statistics {
 	 * @return array
 	 */
 	public function getReviewsDate(){
-		$reviewdetailsMap=$this->getReviewsDetailsByVisit();
+		$reviewdetailsMap=$this->studyObject->getReviewManager()->getReviewsDetailsByVisit();
 
 		$result=[];
 		
@@ -108,8 +56,7 @@ class Statistics {
 	 */
 	public function getUploadFractionAndDelay(){
 
-		$dataJson=$this->studyObject->getAllPatientsVisitsStatus();
-		$allPatientStatus=json_decode($dataJson, true);
+		$allPatientStatus=$this->studyVisitManager->getPatientsAllVisitsStatus();
 		$results[0]=$this->getUploadedFraction($allPatientStatus);
 		$results[1]=$this->getUploadDelay($allPatientStatus);
 
@@ -129,7 +76,7 @@ class Statistics {
 		foreach ($allPatientStatus as $visitType => $patients){
 			foreach ($patients as $patientCode=>$patientDetails){
 				
-				if($patientDetails['status']==Visit_Manager::DONE || $patientDetails['status']==Visit_Manager::SHOULD_BE_DONE){
+				if($patientDetails['status']==Patient_Visit_Manager::DONE || $patientDetails['status']==Patient_Visit_Manager::SHOULD_BE_DONE){
 					$visit['status']=$patientDetails['status'];
 					$visit['uploadStatus']=$patientDetails['upload_status'];
 					$visit['visitType']=$visitType;
@@ -156,7 +103,7 @@ class Statistics {
 	    foreach ($allPatientStatus as $visitType => $patients){
 	        foreach ($patients as $patientCode=>$patientDetails){
 	            
-	            if($patientDetails['status']==Visit_Manager::DONE && $patientDetails['state_investigator_form']==Visit_Manager::DONE){
+	            if($patientDetails['status']==Patient_Visit_Manager::DONE && $patientDetails['state_investigator_form']==Patient_Visit_Manager::DONE){
 	                
 	                $acquisitionDate=new DateTimeImmutable($patientDetails['acquisition_date']);
 	                $uploadDate=new DateTimeImmutable($patientDetails['upload_date']);
@@ -183,7 +130,7 @@ class Statistics {
 	 */
 	public function getQCTime(){
 		
-		$uploadedVisitArray=$this->studyObject->getUploadedVisits();
+		$uploadedVisitArray=$this->studyVisitManager->getUploadedVisits();
 		
 		$responseDelayArray=[];
 		
@@ -217,7 +164,7 @@ class Statistics {
 	 */
 	public function getConclusionTime(){
 		
-		$uploadedVisitArray=$this->studyObject->getUploadedVisits();
+		$uploadedVisitArray=$this->studyVisitManager->getUploadedVisits();
 		
 		$responseDelayArray=[];
 		
@@ -244,7 +191,7 @@ class Statistics {
 	 */
 	public function getReviewStatus(){
 		
-		$uploadedVisitArray=$this->studyObject->getUploadedVisits();
+		$uploadedVisitArray=$this->studyVisitManager->getUploadedVisits();
 		
 		$responseReviewArray=[];
 		
@@ -270,7 +217,7 @@ class Statistics {
 	 */
 	public function getQcStatus(){
 		
-		$uploadedVisitArray=$this->studyObject->getUploadedVisits();
+		$uploadedVisitArray=$this->studyVisitManager->getUploadedVisits();
 		
 		$responseQcArray=[];
 		
@@ -304,7 +251,7 @@ class Statistics {
 	 */
 	public function getAcquisitionPetDelay(){
 		
-		$uploadedVisitArray=$this->studyObject->getUploadedVisits();
+		$uploadedVisitArray=$this->studyVisitManager->getUploadedVisits();
 		
 		$delayArray=array();
 		foreach ($uploadedVisitArray as $visit){
@@ -344,7 +291,7 @@ class Statistics {
 	 */
 	public function getReviewData(){
 	    
-        $createdVisits=$this->studyObject->getCreatedVisits();
+        $createdVisits=$this->studyVisitManager->getUploadedVisits();
         
         $reviewsJson=[];
         foreach ($createdVisits as $visit){
@@ -381,9 +328,9 @@ class Statistics {
 						}
 
 	        }
-        }
-        
-        $visitTypePossible=$this->studyObject->getAllPossibleVisits();
+		}
+		
+        $visitTypePossible=$this->studyVisitManager->getVisitGroupObject()->getAllVisitTypesOfGroup();
         foreach ($visitTypePossible as $visitType){
             $inputType=$visitType->getSpecificTableInputType();
             $dataDetails[$visitType->name]=$inputType;

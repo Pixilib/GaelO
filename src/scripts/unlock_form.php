@@ -41,6 +41,12 @@ if ($_SESSION['role']==User::SUPERVISOR && $permissionsCheck) {
 			//Unvalidate the form for unlock
 			$reviewObject->unlockForm();
 			$visitObject=$reviewObject->getParentVisitObject();
+
+			//Notify the user that his form has been unlocked
+			$email=new Send_Email($linkpdo);
+			$email->addEmail($email->getUserEmails($reviewObject->username));
+			$email->sendUnlockedFormMessage($visitObject->study, $visitObject->patientCode, $visitObject->visitType);
+			
 			//Log activity
 			$actionDetails['type_visit']=$visitObject->visitType;
 			$actionDetails['patient_code']=$visitObject->patientCode;
@@ -52,15 +58,6 @@ if ($_SESSION['role']==User::SUPERVISOR && $permissionsCheck) {
 		}catch (Exception $e){
 			$answer=false;			
 		}
-		
-		//Notify the user that his form has been unlocked
-		$email=new Send_Email($linkpdo);
-		$message="Your form sent for study ".$visitObject->study." ,patient ".$visitObject->patientCode." ,visit ".$visitObject->visitType." have been unlocked. <br>
-                    You can now edit and resend a new version of this form <br>";
-		$userEmail=$email->getUserEmails($reviewObject->username);
-		$email->setMessage($message);
-		$email->sendEmail($userEmail, "Form Unlocked");
-		
 		echo(json_encode($answer));
 
 } else {

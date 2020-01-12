@@ -12,20 +12,44 @@
  with this program; if not, write to the Free Software Foundation, Inc.,
  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
+
+ //SK ICI CHANGER L INTERFACE ON DOIT LISTER LES ID DES GROUPES DE VISITES DISPO POUR CE PATIENT
+ //ET LAISSER L UTILISATEUR CHOISIR SON GROUPE
  ?>
  
  <script type="text/javascript">
 	
     $(document).ready(function () {
-        
-    	$( "#datepicker" ).datepicker({
-    		yearRange: "-10:+1",
-    		changeYear: true,
-    		dateFormat: "yy-mm-dd",
-    		onSelect: function(dateText){
-    			  $('#visitDate').val(dateText);
-    		}
-    	});
+
+		const visitsToCreate= <?=json_encode($typeVisiteDispo)?>
+		
+		if(Object.keys(visitsToCreate).length ==1 ){
+			let firstKey=Object.keys(visitsToCreate)[0];
+			visitsToCreate[firstKey]['visitsName'].forEach(visit=>{
+				$("#visite").append(new Option(visit, visit))
+			})
+			$("#modalityDiv").hide()
+
+		}
+
+		$('#datePicker').datepicker({
+			toggleActive: true,
+			format: "yyyy-mm-dd"
+		});
+		
+		$('#datePicker').datepicker().on('changeDate', function(e) {
+			$('#visitDate').val($('#datePicker').datepicker("getFormattedDate"));
+		});
+
+		$("#modalityGroup").on('change', function() {
+			$('#visite').empty()
+			let possibleVisits=visitsToCreate[$(this).val()]['visitsName']
+			possibleVisits.forEach(visit=>{
+				$("#visite").append(new Option(visit, visit))
+			})
+			
+
+		});
 
     	$(".visitStatusSelect").on('change', function (){
         	if($("#Done").is(':checked')){
@@ -66,8 +90,8 @@
 			$.ajax({
 				type: "POST",
 				dataType: 'json',
-				url: '/new_visit',
-				data: $("#addVisitForm").serialize()+'&validate=1', // serializes the form's elements.
+				url: 'scripts/visit.php',
+				data: $("#addVisitForm").serialize(), // serializes the form's elements.
 				success: function(data) {
 					if (data == "Success"){
 						//Close dialog and update JsTree
@@ -84,7 +108,7 @@
     
     	<?php
         // If patient withdrawn disable all the form
-        if ($typeVisiteDispo[0] == "withdraw") {
+        if ($typeVisiteDispo[0] == Patient::PATIENT_WITHDRAW) {
             ?> $("#addVisitForm :input").prop("disabled", true); <?php
         }
         ?>
@@ -96,14 +120,21 @@
 <h1 class='form-control'>Create new visit</h1>
 
 <form class="col align-self-center" id="addVisitForm">
-	<label class="control-label">Please make a choice in the list:</label>
+	<div id="modalityDiv">
+		<label class="control-label">Modality:</label>
+		<SELECT class="custom-select" id="modalityGroup" name="groupId" >
+			<?php
+			foreach ($typeVisiteDispo as $modality=>$details) {
+				?>
+				<option value="<?=$details['groupId']?>"> <?=$modality?> </option>
+				<?php
+			}
+			?>
+		</SELECT>
+	</div>
+	<label class="control-label">Visit :</label>
 	<div class="text-center">
 		<SELECT class="custom-select" name="visite" id="visite">
-        	<?php     
-            foreach ($typeVisiteDispo as $visitDispo) {
-                echo '<option value="' . htmlspecialchars($visitDispo) . '">' . htmlspecialchars($visitDispo) . '</option>';
-            }
-            ?>
         </SELECT>
 	</div>
 	<div class="text-center" >
@@ -112,8 +143,8 @@
 		<input type="radio" class="visitStatusSelect" id="Not_Done" name="done_not_done"
 			value="Not Done"> <label for="Not_Done">Not Done</label>
     	<div id="dateDiv" class="text-center" style="display:none">
-    		<label class="control-label">Acquisition date:</label> <br>
-    		<div id="datepicker"></div>
+			<label class="control-label">Acquisition date:</label> <br>
+			<div id="datePicker"></div>
     		<input class="form-control" name="acquisition_date" id="visitDate"
     			type="hidden">
     	</div>

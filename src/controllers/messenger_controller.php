@@ -38,28 +38,27 @@ if (isset($_SESSION['username'])) {
         $message=$_POST['messageText'];
         
         $sendEmail = new Send_Email($linkpdo);
-        $emails=[];
+        
         foreach ($rolesGroups as $role){
             
             if($role!=User::ADMINISTRATOR){
-                $emails=array_merge($emails,$sendEmail->getRolesEmails($role, $_SESSION['study']));
-
+                $sendEmail->addGroupEmails( $_SESSION['study'], $role);
             }else{
-                $emails=array_merge($emails,$sendEmail->getAdminsEmails());
-                
+                $sendEmail->addAminEmails();            
             }
             
         }
         
         foreach ($individualUsers as $user){
-            array_push($emails, $sendEmail->getUserEmails($user));   
+            $sendEmail->addEmail($sendEmail->getUserEmails($user)); 
         }
 
         $userObject=new User($_SESSION['username'], $linkpdo);
         $sendEmail->setMessage ( $message );
-        $sendEmail->sendEmail ( $emails, 'Message From '.$userObject->firstName.' '.$userObject->lastName );
+        $sendEmail->setSubject('Message From '.$userObject->firstName.' '.$userObject->lastName);
+        $sendEmail->sendEmail ();
         
-        $actionDetails['destinators']=$emails;
+        $actionDetails['destinators']=json_encode($sendEmail->emailsDestinators);
         $htmlMessageObject = new \Html2Text\Html2Text($message);
         $actionDetails['message']=$htmlMessageObject->getText();
         

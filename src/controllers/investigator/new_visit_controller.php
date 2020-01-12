@@ -29,41 +29,14 @@ $patientAllowed = $userObject->isPatientAllowed($patientCode, $_SESSION['role'])
 
 // Check user allowance (only available for an investigator)
 if (isset($_SESSION['username']) && $_SESSION['role'] == User::INVESTIGATOR && $patientAllowed) {
+
+    // Get available Visit in each visit group (in key) for creation
+    // Usually only one visit to create to respect visit order but could be multipled (if erased or custom creation workflow)
+    $patientObject=new Patient($patientCode, $linkpdo);
+    $typeVisiteDispo=$patientObject->getAllVisitToCreate();
     
-    // If form validated, processing data
-    if (isset($_POST['validate'])) {
-        
-        $visitType = $_POST['visite'];
-        $statusDone = $_POST['done_not_done'];
-        $reasonNotDone = $_POST['reason'];
-        $acquisitionDate = $_POST['acquisition_date'];
-        if (empty($acquisitionDate)) {
-            $acquisitionDate = null;
-        }
-        
-        if (! empty($visitType) && ! empty($statusDone)) {
-            
-            $createdId = Visit::createVisit($visitType, $_POST['study'], $patientCode, $statusDone, $reasonNotDone, $acquisitionDate, $username, $linkpdo);
-            // Log action
-            $actionDetails['patient_code'] = $patientCode;
-            $actionDetails['type_visit'] = $visitType;
-            Tracker::logActivity($username, $_SESSION['role'], $study, $createdId, "Create Visit", $actionDetails);
-            $answer="Success";
-        }else{
-            $answer="Missing Data";
-        }
-        
-        echo(json_encode($answer));
-        
-    } else {
-        // Get available Visit for creation from the study manager object
-        // Usually only one visit to create to respect visit order but could be multipled
-        // if an intermediate study has been deleted
-        $visitManager = new Visit_Manager($patientCode, $linkpdo);
-        $typeVisiteDispo = $visitManager->getNextVisitToCreate();
-        
-        require 'views/investigator/new_visit_view.php';
-    }
+    require 'views/investigator/new_visit_view.php';
+    
 } else {
     require 'includes/no_access.php';
 }

@@ -2,10 +2,10 @@
 -- version 4.5.4.1deb2ubuntu2.1
 -- http://www.phpmyadmin.net
 --
--- Host: localhost
--- Generation Time: Aug 18, 2019 at 12:41 PM
--- Server version: 5.7.27-0ubuntu0.16.04.1
--- PHP Version: 7.3.8-1+ubuntu16.04.1+deb.sury.org+1
+-- Client :  localhost
+-- Généré le :  Lun 06 Janvier 2020 à 23:35
+-- Version du serveur :  5.7.28-0ubuntu0.16.04.2
+-- Version de PHP :  7.3.13-1+ubuntu16.04.1+deb.sury.org+1
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
@@ -17,13 +17,13 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `GaelO`
+-- Base de données :  `lysarc3`
 --
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `affiliated_centers`
+-- Structure de la table `affiliated_centers`
 --
 
 CREATE TABLE `affiliated_centers` (
@@ -34,7 +34,7 @@ CREATE TABLE `affiliated_centers` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `centers`
+-- Structure de la table `centers`
 --
 
 CREATE TABLE `centers` (
@@ -44,7 +44,7 @@ CREATE TABLE `centers` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
--- Dumping data for table `centers`
+-- Contenu de la table `centers`
 --
 
 INSERT INTO `centers` (`code`, `name`, `country_code`) VALUES
@@ -53,7 +53,7 @@ INSERT INTO `centers` (`code`, `name`, `country_code`) VALUES
 -- --------------------------------------------------------
 
 --
--- Table structure for table `country`
+-- Structure de la table `country`
 --
 
 CREATE TABLE `country` (
@@ -63,7 +63,7 @@ CREATE TABLE `country` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
--- Dumping data for table `country`
+-- Contenu de la table `country`
 --
 
 INSERT INTO `country` (`country_code`, `country_us`, `country_fr`) VALUES
@@ -326,7 +326,7 @@ INSERT INTO `country` (`country_code`, `country_us`, `country_fr`) VALUES
 -- --------------------------------------------------------
 
 --
--- Table structure for table `documentation`
+-- Structure de la table `documentation`
 --
 
 CREATE TABLE `documentation` (
@@ -345,7 +345,7 @@ CREATE TABLE `documentation` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `job`
+-- Structure de la table `job`
 --
 
 CREATE TABLE `job` (
@@ -353,7 +353,7 @@ CREATE TABLE `job` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
--- Dumping data for table `job`
+-- Contenu de la table `job`
 --
 
 INSERT INTO `job` (`name`) VALUES
@@ -368,7 +368,7 @@ INSERT INTO `job` (`name`) VALUES
 -- --------------------------------------------------------
 
 --
--- Table structure for table `orthanc_series`
+-- Structure de la table `orthanc_series`
 --
 
 CREATE TABLE `orthanc_series` (
@@ -399,7 +399,7 @@ CREATE TABLE `orthanc_series` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `orthanc_studies`
+-- Structure de la table `orthanc_studies`
 --
 
 CREATE TABLE `orthanc_studies` (
@@ -426,7 +426,7 @@ CREATE TABLE `orthanc_studies` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `patients`
+-- Structure de la table `patients`
 --
 
 CREATE TABLE `patients` (
@@ -438,7 +438,7 @@ CREATE TABLE `patients` (
   `birth_month` int(11) DEFAULT NULL,
   `birth_year` int(11) DEFAULT NULL,
   `registration_date` date NOT NULL,
-  `investigator_name` tinytext DEFAULT NULL,
+  `investigator_name` tinytext,
   `center` int(11) DEFAULT NULL,
   `study` varchar(32) DEFAULT NULL,
   `withdraw_reason` tinytext,
@@ -449,7 +449,7 @@ CREATE TABLE `patients` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `preferences`
+-- Structure de la table `preferences`
 --
 
 CREATE TABLE `preferences` (
@@ -482,7 +482,7 @@ CREATE TABLE `preferences` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
--- Dumping data for table `preferences`
+-- Contenu de la table `preferences`
 --
 
 INSERT INTO `preferences` (`patient_code_length`, `name`, `admin_email`, `email_reply_to`, `corporation`, `address`, `parse_date_import`, `parse_country_name`, `orthanc_exposed_internal_address`, `orthanc_exposed_internal_port`, `orthanc_exposed_external_address`, `orthanc_exposed_external_port`, `orthanc_exposed_internal_login`, `orthanc_exposed_internal_password`, `orthanc_exposed_external_login`, `orthanc_exposed_external_password`, `orthanc_pacs_address`, `orthanc_pacs_port`, `orthanc_pacs_login`, `orthanc_pacs_password`, `use_smtp`, `smtp_host`, `smtp_port`, `smtp_user`, `smtp_password`, `smtp_secure`) VALUES
@@ -491,7 +491,7 @@ INSERT INTO `preferences` (`patient_code_length`, `name`, `admin_email`, `email_
 -- --------------------------------------------------------
 
 --
--- Table structure for table `reviews`
+-- Structure de la table `reviews`
 --
 
 CREATE TABLE `reviews` (
@@ -508,7 +508,7 @@ CREATE TABLE `reviews` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `roles`
+-- Structure de la table `roles`
 --
 
 CREATE TABLE `roles` (
@@ -520,7 +520,7 @@ CREATE TABLE `roles` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `select_roles`
+-- Structure de la table `select_roles`
 --
 
 CREATE TABLE `select_roles` (
@@ -528,7 +528,7 @@ CREATE TABLE `select_roles` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
--- Dumping data for table `select_roles`
+-- Contenu de la table `select_roles`
 --
 
 INSERT INTO `select_roles` (`role`) VALUES
@@ -541,7 +541,7 @@ INSERT INTO `select_roles` (`role`) VALUES
 -- --------------------------------------------------------
 
 --
--- Table structure for table `states`
+-- Structure de la table `states`
 --
 
 CREATE TABLE `states` (
@@ -549,7 +549,7 @@ CREATE TABLE `states` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
--- Dumping data for table `states`
+-- Contenu de la table `states`
 --
 
 INSERT INTO `states` (`quality_state`) VALUES
@@ -562,22 +562,18 @@ INSERT INTO `states` (`quality_state`) VALUES
 -- --------------------------------------------------------
 
 --
--- Table structure for table `studies`
+-- Structure de la table `studies`
 --
 
 CREATE TABLE `studies` (
   `name` varchar(32) NOT NULL,
-  `active` tinyint(1) NOT NULL DEFAULT '1',
-  `form` tinyint(1) NOT NULL DEFAULT '1',
-  `qc` tinyint(1) NOT NULL DEFAULT '1',
-  `review` tinyint(1) NOT NULL DEFAULT '1',
-  `limit_days_visit_from_inclusion` int(11) NOT NULL
+  `active` tinyint(1) NOT NULL DEFAULT '1'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `tracker`
+-- Structure de la table `tracker`
 --
 
 CREATE TABLE `tracker` (
@@ -593,7 +589,7 @@ CREATE TABLE `tracker` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `users`
+-- Structure de la table `users`
 --
 
 CREATE TABLE `users` (
@@ -620,16 +616,16 @@ CREATE TABLE `users` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
--- Dumping data for table `users`
+-- Contenu de la table `users`
 --
 
-INSERT INTO `users` (`username`, `last_name`, `first_name`, `email`, `password`, `previous_password_1`, `previous_password_2`, `temp_password`, `phone`, `creation_date_password`, `connexion_date`, `creation_date`, `status`, `center`, `job`, `number_attempts`, `is_administrator`) VALUES
-('administrator', 'administrator', 'administrator', 'administrator@administrator.fr', '$2y$10$vUWuSwuL7dFkR4/AvjpS/eDkSuPlTGKwCu8BerSa8Acv.G3T7vnBa', NULL, NULL, NULL, '', '2019-01-01', '2019-01-01 00:00:00', '2019-01-01 00:00:00', 'Activated', 0, 'Monitor', 0, 1);
+INSERT INTO `users` (`username`, `last_name`, `first_name`, `email`, `password`, `previous_password_1`, `previous_password_2`, `temp_password`, `phone`, `creation_date_password`, `connexion_date`, `creation_date`, `status`, `center`, `job`, `number_attempts`, `is_administrator`, `orthanc_address`, `orthanc_login`, `orthanc_password`) VALUES
+('administrator', 'administrator', 'administrator', 'administrator@administrator.fr', '$2y$10$vUWuSwuL7dFkR4/AvjpS/eDkSuPlTGKwCu8BerSa8Acv.G3T7vnBa', NULL, NULL, NULL, '', '2019-01-01', '2019-01-01 00:00:00', '2019-01-01 00:00:00', 'Activated', 0, 'Monitor', 0, 1, NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `visits`
+-- Structure de la table `visits`
 --
 
 CREATE TABLE `visits` (
@@ -638,7 +634,7 @@ CREATE TABLE `visits` (
   `creation_date` datetime DEFAULT NULL,
   `patient_code` bigint(13) NOT NULL,
   `acquisition_date` date DEFAULT NULL,
-  `study` varchar(32) NOT NULL,
+  `visit_group_id` int(11) NOT NULL,
   `visit_type` varchar(32) NOT NULL,
   `status_done` enum('Not Done','Done') NOT NULL DEFAULT 'Not Done',
   `reason_for_not_done` tinytext,
@@ -667,23 +663,41 @@ CREATE TABLE `visits` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `visit_type`
+-- Structure de la table `visit_group`
+--
+
+CREATE TABLE `visit_group` (
+  `id` int(11) NOT NULL,
+  `study` varchar(32) NOT NULL,
+  `group_modality` set('PT','MR','CT') NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `visit_type`
 --
 
 CREATE TABLE `visit_type` (
-  `study` varchar(32) NOT NULL,
+  `group_id` int(11) NOT NULL,
   `name` varchar(32) NOT NULL,
   `table_review_specific` varchar(70) NOT NULL,
   `visit_order` int(11) NOT NULL,
-  `limit_number_days` int(11) DEFAULT NULL
+  `local_form_needed` tinyint(1) NOT NULL,
+  `qc_needed` tinyint(1) NOT NULL,
+  `review_needed` tinyint(1) NOT NULL,
+  `optional` tinyint(1) NOT NULL,
+  `limit_low_days` int(11) NOT NULL,
+  `limit_up_days` int(11) NOT NULL,
+  `anon_profile` set('Default','Full') NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
--- Indexes for dumped tables
+-- Index pour les tables exportées
 --
 
 --
--- Indexes for table `affiliated_centers`
+-- Index pour la table `affiliated_centers`
 --
 ALTER TABLE `affiliated_centers`
   ADD PRIMARY KEY (`username`,`center`),
@@ -691,7 +705,7 @@ ALTER TABLE `affiliated_centers`
   ADD KEY `id_Utilisateur` (`username`);
 
 --
--- Indexes for table `centers`
+-- Index pour la table `centers`
 --
 ALTER TABLE `centers`
   ADD PRIMARY KEY (`code`),
@@ -699,7 +713,7 @@ ALTER TABLE `centers`
   ADD KEY `country_code` (`country_code`);
 
 --
--- Indexes for table `country`
+-- Index pour la table `country`
 --
 ALTER TABLE `country`
   ADD PRIMARY KEY (`country_code`),
@@ -708,7 +722,7 @@ ALTER TABLE `country`
   ADD KEY `country_fr` (`country_fr`);
 
 --
--- Indexes for table `documentation`
+-- Index pour la table `documentation`
 --
 ALTER TABLE `documentation`
   ADD PRIMARY KEY (`id_documentation`),
@@ -716,20 +730,20 @@ ALTER TABLE `documentation`
   ADD KEY `document_study` (`study`);
 
 --
--- Indexes for table `job`
+-- Index pour la table `job`
 --
 ALTER TABLE `job`
   ADD PRIMARY KEY (`name`);
 
 --
--- Indexes for table `orthanc_series`
+-- Index pour la table `orthanc_series`
 --
 ALTER TABLE `orthanc_series`
   ADD PRIMARY KEY (`series_orthanc_id`),
   ADD KEY `Study_Orthanc_Id` (`study_orthanc_id`);
 
 --
--- Indexes for table `orthanc_studies`
+-- Index pour la table `orthanc_studies`
 --
 ALTER TABLE `orthanc_studies`
   ADD PRIMARY KEY (`study_orthanc_id`) USING BTREE,
@@ -737,7 +751,7 @@ ALTER TABLE `orthanc_studies`
   ADD KEY `uploader` (`uploader`);
 
 --
--- Indexes for table `patients`
+-- Index pour la table `patients`
 --
 ALTER TABLE `patients`
   ADD PRIMARY KEY (`code`),
@@ -745,7 +759,7 @@ ALTER TABLE `patients`
   ADD KEY `numero_centre` (`center`);
 
 --
--- Indexes for table `reviews`
+-- Index pour la table `reviews`
 --
 ALTER TABLE `reviews`
   ADD PRIMARY KEY (`id_review`),
@@ -753,7 +767,7 @@ ALTER TABLE `reviews`
   ADD KEY `username` (`username`);
 
 --
--- Indexes for table `roles`
+-- Index pour la table `roles`
 --
 ALTER TABLE `roles`
   ADD PRIMARY KEY (`name`,`username`,`study`),
@@ -762,25 +776,25 @@ ALTER TABLE `roles`
   ADD KEY `role_user` (`username`);
 
 --
--- Indexes for table `select_roles`
+-- Index pour la table `select_roles`
 --
 ALTER TABLE `select_roles`
   ADD PRIMARY KEY (`role`);
 
 --
--- Indexes for table `states`
+-- Index pour la table `states`
 --
 ALTER TABLE `states`
   ADD PRIMARY KEY (`quality_state`);
 
 --
--- Indexes for table `studies`
+-- Index pour la table `studies`
 --
 ALTER TABLE `studies`
   ADD PRIMARY KEY (`name`);
 
 --
--- Indexes for table `tracker`
+-- Index pour la table `tracker`
 --
 ALTER TABLE `tracker`
   ADD PRIMARY KEY (`date`,`username`,`role`),
@@ -789,7 +803,7 @@ ALTER TABLE `tracker`
   ADD KEY `study` (`study`);
 
 --
--- Indexes for table `users`
+-- Index pour la table `users`
 --
 ALTER TABLE `users`
   ADD PRIMARY KEY (`username`),
@@ -798,99 +812,111 @@ ALTER TABLE `users`
   ADD KEY `nom_job` (`job`);
 
 --
--- Indexes for table `visits`
+-- Index pour la table `visits`
 --
 ALTER TABLE `visits`
   ADD PRIMARY KEY (`id_visit`),
-  ADD KEY `type_visite` (`visit_type`),
-  ADD KEY `state_control_reviewer` (`review_status`),
   ADD KEY `numero_patient` (`patient_code`),
-  ADD KEY `status_done_2` (`status_done`),
   ADD KEY `controller_username` (`controller_username`),
   ADD KEY `corrective_action_username` (`corrective_action_username`),
-  ADD KEY `study` (`study`),
-  ADD KEY `fk_type_Visite` (`study`,`visit_type`),
-  ADD KEY `creator_name` (`creator_name`);
+  ADD KEY `creator_name` (`creator_name`),
+  ADD KEY `visit_group_id` (`visit_group_id`),
+  ADD KEY `visit_type` (`visit_type`),
+  ADD KEY `visits_group_id` (`visit_group_id`,`visit_type`);
 
 --
--- Indexes for table `visit_type`
+-- Index pour la table `visit_group`
+--
+ALTER TABLE `visit_group`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `study` (`study`,`group_modality`);
+
+--
+-- Index pour la table `visit_type`
 --
 ALTER TABLE `visit_type`
-  ADD PRIMARY KEY (`study`,`name`),
-  ADD KEY `type_visite_ibfk_2` (`name`),
-  ADD KEY `study` (`study`);
+  ADD PRIMARY KEY (`group_id`,`name`),
+  ADD UNIQUE KEY `name` (`name`,`visit_order`),
+  ADD UNIQUE KEY `table_review_specific` (`table_review_specific`),
+  ADD KEY `group_id` (`group_id`),
+  ADD KEY `name_2` (`name`);
 
 --
--- AUTO_INCREMENT for dumped tables
+-- AUTO_INCREMENT pour les tables exportées
 --
 
 --
--- AUTO_INCREMENT for table `documentation`
+-- AUTO_INCREMENT pour la table `documentation`
 --
 ALTER TABLE `documentation`
   MODIFY `id_documentation` int(11) NOT NULL AUTO_INCREMENT;
 --
--- AUTO_INCREMENT for table `reviews`
+-- AUTO_INCREMENT pour la table `reviews`
 --
 ALTER TABLE `reviews`
   MODIFY `id_review` int(11) NOT NULL AUTO_INCREMENT;
 --
--- AUTO_INCREMENT for table `visits`
+-- AUTO_INCREMENT pour la table `visits`
 --
 ALTER TABLE `visits`
-  MODIFY `id_visit` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id_visit` int(11) NOT NULL AUTO_INCREMENT;
 --
--- Constraints for dumped tables
+-- AUTO_INCREMENT pour la table `visit_group`
+--
+ALTER TABLE `visit_group`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+--
+-- Contraintes pour les tables exportées
 --
 
 --
--- Constraints for table `affiliated_centers`
+-- Contraintes pour la table `affiliated_centers`
 --
 ALTER TABLE `affiliated_centers`
   ADD CONSTRAINT `fk_username` FOREIGN KEY (`username`) REFERENCES `users` (`username`),
   ADD CONSTRAINT `numCentre` FOREIGN KEY (`center`) REFERENCES `centers` (`code`);
 
 --
--- Constraints for table `centers`
+-- Contraintes pour la table `centers`
 --
 ALTER TABLE `centers`
   ADD CONSTRAINT `country_center` FOREIGN KEY (`country_code`) REFERENCES `country` (`country_code`);
 
 --
--- Constraints for table `documentation`
+-- Contraintes pour la table `documentation`
 --
 ALTER TABLE `documentation`
   ADD CONSTRAINT `fk_document_etudet` FOREIGN KEY (`study`) REFERENCES `studies` (`name`);
 
 --
--- Constraints for table `orthanc_series`
+-- Contraintes pour la table `orthanc_series`
 --
 ALTER TABLE `orthanc_series`
   ADD CONSTRAINT `fk_study_orthanc_id` FOREIGN KEY (`study_orthanc_id`) REFERENCES `orthanc_studies` (`study_orthanc_id`);
 
 --
--- Constraints for table `orthanc_studies`
+-- Contraintes pour la table `orthanc_studies`
 --
 ALTER TABLE `orthanc_studies`
   ADD CONSTRAINT `idvisit_from_visits` FOREIGN KEY (`id_visit`) REFERENCES `visits` (`id_visit`),
   ADD CONSTRAINT `uploader_from_user` FOREIGN KEY (`uploader`) REFERENCES `users` (`username`);
 
 --
--- Constraints for table `patients`
+-- Contraintes pour la table `patients`
 --
 ALTER TABLE `patients`
   ADD CONSTRAINT `fk_center_nb` FOREIGN KEY (`center`) REFERENCES `centers` (`code`),
   ADD CONSTRAINT `fk_study` FOREIGN KEY (`study`) REFERENCES `studies` (`name`);
 
 --
--- Constraints for table `reviews`
+-- Contraintes pour la table `reviews`
 --
 ALTER TABLE `reviews`
   ADD CONSTRAINT `fk_username_review` FOREIGN KEY (`username`) REFERENCES `users` (`username`),
   ADD CONSTRAINT `id_visit_from_visits_review` FOREIGN KEY (`id_visit`) REFERENCES `visits` (`id_visit`);
 
 --
--- Constraints for table `roles`
+-- Contraintes pour la table `roles`
 --
 ALTER TABLE `roles`
   ADD CONSTRAINT `role_name` FOREIGN KEY (`name`) REFERENCES `select_roles` (`role`),
@@ -898,34 +924,34 @@ ALTER TABLE `roles`
   ADD CONSTRAINT `role_user` FOREIGN KEY (`username`) REFERENCES `users` (`username`);
 
 --
--- Constraints for table `tracker`
+-- Contraintes pour la table `tracker`
 --
 ALTER TABLE `tracker`
   ADD CONSTRAINT `fk_study_tracker` FOREIGN KEY (`study`) REFERENCES `studies` (`name`),
   ADD CONSTRAINT `fk_username_tracker` FOREIGN KEY (`username`) REFERENCES `users` (`username`);
 
 --
--- Constraints for table `users`
+-- Contraintes pour la table `users`
 --
 ALTER TABLE `users`
   ADD CONSTRAINT `job` FOREIGN KEY (`job`) REFERENCES `job` (`name`),
   ADD CONSTRAINT `num_centre` FOREIGN KEY (`center`) REFERENCES `centers` (`code`);
 
 --
--- Constraints for table `visits`
+-- Contraintes pour la table `visits`
 --
 ALTER TABLE `visits`
   ADD CONSTRAINT `creatorUsername` FOREIGN KEY (`creator_name`) REFERENCES `users` (`username`),
   ADD CONSTRAINT `patientNumber` FOREIGN KEY (`patient_code`) REFERENCES `patients` (`code`),
   ADD CONSTRAINT `usernameController` FOREIGN KEY (`controller_username`) REFERENCES `users` (`username`),
   ADD CONSTRAINT `usernameCorrective` FOREIGN KEY (`corrective_action_username`) REFERENCES `users` (`username`),
-  ADD CONSTRAINT `visits_ibfk_1` FOREIGN KEY (`study`,`visit_type`) REFERENCES `visit_type` (`study`, `name`);
+  ADD CONSTRAINT `visits_group_id` FOREIGN KEY (`visit_group_id`,`visit_type`) REFERENCES `visit_type` (`group_id`, `name`);
 
 --
--- Constraints for table `visit_type`
+-- Contraintes pour la table `visit_type`
 --
 ALTER TABLE `visit_type`
-  ADD CONSTRAINT `visit_type_ibfk_1` FOREIGN KEY (`study`) REFERENCES `studies` (`name`);
+  ADD CONSTRAINT `group_id_fk` FOREIGN KEY (`group_id`) REFERENCES `visit_group` (`id`);
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

@@ -27,45 +27,7 @@
     		closeOnEscape: false
     
     	});
-    
-    	//Listeners for activation / deactivation of sections of the global form
-        $('#allcenters').click(function(e) {
-            if (document.getElementById('allcenters').checked){
-    			$("[name='centers[]']").prop("disabled", true);
-            }else{
-            	$("[name='centers[]']").prop("disabled", false);
-            }
-        });
-    
-        $('#allpatients').click(function(e) {
-            if (document.getElementById('allpatients').checked){
-    			$("[name='patients']").prop("disabled", true);
-            }else{
-            	$("[name='patients']").prop("disabled", false);
-            }
-        });
-    
-        $('#allvisits').click(function(e) {
-            if (document.getElementById('allvisits').checked){
-    			$("[name='visits[]']").prop("disabled", true);
-            }else{
-            	$("[name='visits[]']").prop("disabled", false);
-            }
-        });
-    
-        //Listners to display the general or the manual download section
-        $('#btn_general').click(function(e) {
-        	$( '#manual' ).hide();
-        	$( '#general' ).show();	
-        });
-    
-        $('#btn_manual_download').click(function(e) {
-        	$( '#manual' ).show();
-        	$( '#general' ).hide();
-        	//Refresh table draw to get correct size (hiden on build)
-        	$('#tableau').DataTable().draw();
-        });
-    
+
         //submission of the global form in Ajax, get the JSON answer 
         //and send it to download script via sendFromDownload javascript function
      	$('#download').on('submit', function(e) {
@@ -91,8 +53,7 @@
     			}
     
     	});
-    
-    	//SK VOIR COMMENT ENELVER LA METHODE PRIVEE
+
         //Listener to update table with deleted study
      	$('#includeDeleted').on('change', function(e) {
      		getData(this.checked);
@@ -106,19 +67,18 @@
     			url: "scripts/get_series_json.php",
     			data: {'deleted' : deleted}, 
     			// serializes the form's elements.
-    			success: handleData,
+    			success: function(data){
+					let downloadTable = $('#tableau').DataTable();
+					downloadTable.clear().draw();
+					downloadTable.rows.add(data).draw();
+
+				},
     			error: function(error){
     				console.log("Error:");
     				console.log(error);
     			}
     			
     		});
-     	}
-    
-     	function handleData(data) {
-    		var oTable = $('#tableau').DataTable();
-    		oTable.clear().draw();
-    		oTable.rows.add(data).draw();
      	}
     
         //Make datatables for manual selection
@@ -180,6 +140,7 @@
     			{ data: 'center' },
     			{ data: 'code' },
     			{ data: 'withdraw' },
+				{ data: 'visit_modality'},
     			{ data: 'visit_type' },
     			{ data: 'state_investigator_form' },
     			{ data: 'state_quality_control' },
@@ -192,13 +153,14 @@
     			{ "title": "Center", "targets": 0 },
     			{ "title": "Patient Number", "targets": 1 },
     			{ "title": "Withdraw", "targets": 2 },
-    			{ "title": "Visit Name", "targets": 3 },
-    			{ "title": "Investigation Form", "targets": 4 },
-    			{ "title": "Quality Control", "targets": 5 },
-    			{ "title": "Number of Series", "targets": 6 },
-    			{ "title": "Number of Instances", "targets": 7 },
-    			{ "title": "Disk_Size (MB)", "targets": 8 },
-    			{ "title": "OrthancID","visible": false, "targets": 9 }
+				{ "title": "Modality", "targets": 3 },
+    			{ "title": "Visit Name", "targets": 4 },
+    			{ "title": "Investigation Form", "targets": 5 },
+    			{ "title": "Quality Control", "targets": 6 },
+    			{ "title": "Number of Series", "targets": 7 },
+    			{ "title": "Number of Instances", "targets": 8 },
+    			{ "title": "Disk_Size (MB)", "targets": 9 },
+    			{ "title": "OrthancID","visible": false, "targets": 10 }
     			
     		],
     		"bSortCellsTop": true
@@ -236,110 +198,8 @@
 
 </script>
 
-<div class="text-center">
-	<input id="btn_general" class="btn btn-dark" type="button" value="General Download">
-	<input id="btn_manual_download" class="btn btn-dark" type="button" value="Manual Selection">
-</div><br>
 
-<div id="general" style="display: none;">
-				
-    <form class="form-horizontal" id="download">
-    
-    <!-- Multiple Checkboxes -->
-    <div class="form-group">
-      <label class="control-label">Select Centers</label>
-      <div class="col-md-4">
-        <div class="checkbox">
-        <label for="allcenters">
-          <input type="checkbox" name="allcenters" id="allcenters" value="1">
-          All Centers
-        </label>
-        </div>
-        <?php
-        $i=0;
-		foreach ($centers as $centerCode=>$centerObject){
-		?>
-			<div class="checkbox">
-			<label for="centers-<?=$i?>">
-			<input type="checkbox" name="centers[]" id="centers-<?=$i?>" value="<?=$centerObject->code?>">
-			<?=htmlspecialchars($centerObject->name)?>
-			</label>
-			</div>
-		<?php
-        $i++;
-        }?>
-      </div>
-    </div>
-    
-    <!-- Multiple Checkboxes -->
-    <div class="form-group">
-      <label class="control-label" for="patients">Patients</label>
-      <div class="col-md-2">
-      <div class="checkbox">
-      	<label for="allpatients">
-          <input type="checkbox" name="allpatients" id="allpatients" value="1">
-          All patients
-        </label>
-        <label for="patients-included">
-          <input type="radio" name="patients" id="patients-included" value="Included">
-          Only included
-        </label>
-        <label for="patients-withdrawn">
-          <input type="radio" name="patients" id="patients-withdrawn" value="Withdrawn">
-          Only withdrawn
-        </label>
-      </div>
-      </div>
-    </div>
-    
-    <!-- Multiple Checkboxes -->
-    <div class="form-group">
-      <label class="control-label" for="qc">Quality Control</label>
-      <div class="col-md-4">
-      <div class="checkbox">
-        <label for="qc-0">
-          <input type="radio" name="qc" id="qc-0" value="All" checked>
-          All
-        </label><br>
-        <label for="qc-1">
-          <input type="radio" name="qc" id="qc-1" value="Accepted">
-          Only QC Accepted
-        </label>
-      </div>
-      </div>
-    </div>
-    
-    <div class="form-group">
-      <label class="control-label" for="allvisits">Visits</label>
-      <div class="col-md-4">
-      <div class="checkbox">
-        <label for="allvisits">
-          <input type="checkbox" name="allvisits" id="allvisits" value="1">
-          All Visits
-        </label>
-    	</div>
-    
-     <?php foreach($visits as $visit){
-          $i++;
-          ?>
-          <div class="checkbox">
-          <label for="visits-<?php echo($i)?>">
-          <input type="checkbox" name="visits[]" id="visits-<?=$i?>" value="<?=htmlspecialchars($visit->name)?>">
-          <?=htmlspecialchars($visit->name)?>
-          </label>
-          </div>
-      <?php 
-      }?>
-      
-      </div>
-    </div>
-    
-    <button type="submit" name="confirmerDownload" class="btn btn-primary">Download</button>
-    </form>
-
-</div>
-
-<div id="manual" style="display: none;">
+<div id="manual">
 
 	<input id="includeDeleted" class="form-check-input" type="checkbox">
 	<label for="includeDeleted" class="form-check-label">View Deleted Series</label>
@@ -357,9 +217,11 @@
 				<th></th>
 				<th></th>
 				<th></th>
+				<th></th>
 			</tr>
 			<!-- Search elements -->
 			<tr>
+				<th><input type="text" placeholder="Search"  class="column_search" style="max-width:75px"/></th>
 				<th><input type="text" placeholder="Search"  class="column_search" style="max-width:75px"/></th>
 				<th><input type="text" placeholder="Search"  class="column_search" style="max-width:75px"/></th>
 				<th><input type="text" placeholder="Search"  class="column_search" style="max-width:75px"/></th>
@@ -443,7 +305,6 @@
 	});
 
 </script>
-
 	
     <form id="formSendPeer" class="text-center">
         <input type="hidden" name="json" id="json">

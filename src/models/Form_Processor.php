@@ -195,6 +195,28 @@ abstract class Form_Processor {
 	protected function changeVisitValidationStatus(string $reviewStatus, $conclusionValue=null){
 	    $this->visitObject->changeVisitValidationStatus($reviewStatus, $conclusionValue);
 		$this->reviewAvailabilityDecision($reviewStatus);
+
+		//Send Notification emails
+		if($reviewStatus == Form_Processor::WAIT_ADJUDICATION){
+
+			$email=new Send_Email($this->linkpdo);
+			//SK A AMELIORER POUR EVITER DE MAILIER LES REVIEWER QUI ONT DEJA REPONDU
+			//NECESSITE DE FILTER LA LISTE DES REVIEWERS DE L ETUDE
+			$email->addGroupEmails($this->visitObject->study, User::REVIEWER)
+					->addGroupEmails($this->visitObject->study, User::SUPERVISOR);
+			$email->sendAwaitingAdjudicationMessage($this->visitObject->patientCode, $this->visitObject->visitType);
+
+		}else if($reviewStatus == Form_Processor::DONE){
+
+			$email=new Send_Email($this->linkpdo);
+			$uploaderUserObject=new User($this->visitObject->uploaderUsername, $this->linkpdo);
+			$uploaderEmail=$uploaderUserObject->userEmail;
+			$email->addGroupEmails($this->visitObject->study, User::MONITOR)
+					->addGroupEmails($this->visitObject->study, User::SUPERVISOR)
+					->addEmail($uploaderEmail);
+			$email->sendVisitConcludedMessage($this->visitObject->patientCode, $this->visitObject->visitType, $conclusionValue);
+
+		}
 	}
 	
 	/**

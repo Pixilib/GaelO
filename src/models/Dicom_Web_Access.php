@@ -94,7 +94,7 @@ class Dicom_Web_Access {
         
         //Check Visit Availability of the calling user
         if($this->userRole == user::REVIEWER) {
-            //Check that visit is still available for review
+            //Check that visit is in patient that is still awaiting for some reviews
             $visitCheck=$this->userObject->isVisitAllowed($id_visit, $this->userRole);
         }else if($this->userRole == user::CONTROLLER){
             //Check that QC status still require an action from Controller

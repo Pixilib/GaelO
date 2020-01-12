@@ -12,143 +12,200 @@
  with this program; if not, write to the Free Software Foundation, Inc.,
  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
- ?>
- 
- <script type="text/javascript">
+	
+?>
 
-    $(document).ready(function() {
-        
-        var visitNameArray=[];
-        var visitOrderArray=[];
-    	
-        $('#deleteVisit').click(function(e) {
-        	$("#visits option").remove();
-        	$('#visitOrder').val(0);
-        	//Clear Array storage
-			visitNameArray=[];
-			visitOrderArray=[];
-        });
+<script type="text/javascript">
+	$(document).ready(function() {
+		
+		async function getExistingStudies(){
 
+			let existingStudies = await fetch('scripts/study.php').then((answer)=>{
+				return answer.json()
+			})
 
-        
-        $('#addVisit').click(function(e) {
-            var visitName=$('#visitName').val();
-            var visitOrder=$('#visitOrder').val();
-            
-            if( !visitNameArray.includes(visitName) && !visitOrderArray.includes(visitOrder) ) {
-            	visitNameArray.push($('#visitName').val());
-            	visitOrderArray.push($('#visitOrder').val());
-            	$('#visits').append( $('<option>', {
-            	    value: ''+$('#visitName').val()+'+Order='+$('#visitOrder').val()+'+NumDays='+$('#numberDay').val()+'',
-            	    text: ''+$('#visitName').val()+' Order '+$('#visitOrder').val()+' Days '+$('#numberDay').val()+''
-            	}));
-            	//reset input fields
-            	$('#visitName').val('');
-            	$('#numberDay').val(0);
-            	//increment counter
-            	$('#visitOrder').val( +$('#visitOrder').val()+1);
-        	}else{
-        		alertifyError('Visit Name or Visit Order already defined');
-        	}
-        	
-        });
-       
-        //Select all the visit select and send the form
-        $("#createSubmit").on("click",function(eve){
-            var existingStudies=<?=json_encode($allStudiesArray)?>
-            //check form completion
-        	var visitnb=$("#visits").find("option").length;
-        	var studyName=$("#studyName").val();
-        	if(studyName.length>0 && visitnb>0 && !existingStudies.includes(studyName) ){
-            	$("#visits").find("option").prop("selected", true);
-            	$("#createStudy").submit();
-        	}else{
-        		if( existingStudies.includes( $("#studyName").val() ) ){
-        			alertifyError('Study Name identical to an existing study, choose a new one');
-        		}else{
-        			alertifyError('Study Name and at least one visit must be set');
-        		}
-            	
-        	}
-        })
-        
-    });
-    
-    //Check add visit name is unique in the selector
-    function checkIsUniqueVisit(visitName) {
-        var visitList=$('#visits')[0];
-        var alreadyInList=false;
-    
-        for (i = 0; i < visitList.length; ++i ){
-          if (visitList.options[i].text == visitName ){
-        	  alertifyError("Already in list");
-            alreadyInList=true;
-          }
-        }
-        
-        if (!alreadyInList){
-    		return true;
-        }else{
-            return false;
-        }   
-    }
-    
+			console.log(existingStudies)
+			
+			return existingStudies;
+		}
+
+		$("#newVisitBtn").on('click', function(){
+
+			let row="<tr> \
+						<td>\
+							<select class=\"\">\
+								<option value=\"PT\">PT</option> \
+								<option value=\"CT\">CT</option> \
+								<option value=\"MR\">MR</option> \
+							</select> \
+						</td> \
+						<td contenteditable=true>Name</td> \
+						<td contenteditable=true><input type=\"number\" min=0 max=100 value=0 class=\"\"/></td> \
+						<td><input type=\"checkbox\" class=\"\"/ checked ></td> \
+						<td><input type=\"checkbox\" class=\"\"/ checked></td> \
+						<td><input type=\"checkbox\" class=\"\"/ checked></td> \
+						<td><input type=\"checkbox\" class=\"\"/ ></td> \
+						<td contenteditable=true><input type=\"number\" min=-10000 max=10000 value=0 class=\"\"/></td> \
+						<td contenteditable=true><input type=\"number\" min=-10000 max=10000 value=0 class=\"\"/></td> \
+						<td>\
+							<select class=\"\">\
+								<option value=\"Default\">Default</option> \
+								<option value=\"Full\">Full</option> \
+							</select> \
+						</td> \
+						<td><input type=\"button\" value=\"Remove\" class=\"btn btn-danger\" onClick=\"removeRow(this)\"/></td> \
+					</tr>"
+
+			$("#visitTable").append(row)
+
+		})
+
+		$('#createStudyBtn').on('click', async function() {
+
+			let studyNameString = $("#studyName").val();
+
+			let dataArray={};
+
+			$('#visitTable > tbody  > tr').each(function(index, tr) {
+				let visitModality=$(this).find("td:eq(0)  > select").find(":selected").val();
+				let visitName=$(this).find("td:eq(1)").text();
+				let visitOrder=$(this).find("td:eq(2) > input[type='number']").val();
+				let localForm=$(this).find("td:eq(3) > input[type='checkbox']").is(':checked');
+				let qc=$(this).find("td:eq(4) > input[type='checkbox']").is(':checked');
+				let review=$(this).find("td:eq(5) > input[type='checkbox']").is(':checked');
+				let optional=$(this).find("td:eq(6) > input[type='checkbox']").is(':checked');
+				let dayMin=$(this).find("td:eq(7)  > input[type='number']").val();
+				let dayMax=$(this).find("td:eq(8)  > input[type='number']").val();
+				let anonProfile=$(this).find("td:eq(9)  > select").find(":selected").val();
+
+				let visitObject = {
+					name : visitName,
+					order : visitOrder,
+					localForm :  localForm,
+					qc : qc,
+					review : review,
+					optional : optional,
+					dayMin : dayMin,
+					dayMax : dayMax,
+					anonProfile : anonProfile
+				}
+				//add visit in a modality property
+				//if modality not found intialize and array to recieve visit objects
+				if( "undefined" === typeof(dataArray[visitModality]) ){
+					dataArray[visitModality]=[]
+				}
+
+				dataArray[visitModality].push(visitObject)
+			})
+
+			function checkDuplicateName(visitArray){
+				let valueArr = visitArray.map(function(item){ return item.name });
+				let isDuplicate = valueArr.some(function(item, idx){ 
+					return valueArr.indexOf(item) != idx 
+				});
+				return isDuplicate;
+			}
+
+			function checkDuplicateOrder(visitArray){
+				let valueArr = visitArray.map(function(item){ return item.order });
+				let isDuplicate = valueArr.some(function(item, idx){ 
+					return valueArr.indexOf(item) != idx 
+				});
+				return isDuplicate;
+			}
+
+			async function checkDuplicateStudy(){
+				let existingStudies= await getExistingStudies();
+				return existingStudies.includes(studyName);
+			}
+
+			let isDuplicateStudyName = await checkDuplicateStudy();
+
+			let checkOrderNameContainsDuplicate=false;
+			
+			for (let modality in dataArray) {
+				let isDuplicateName=checkDuplicateName(dataArray[modality])
+				let isDuplicateOrder=checkDuplicateOrder(dataArray[modality])
+				if(isDuplicateName || isDuplicateOrder) checkOrderNameContainsDuplicate=true;
+
+			}
+
+			if( checkOrderNameContainsDuplicate || isDuplicateStudyName ){
+				alertifyError('Duplicate study / visit Name or Order by modality, should be unique')
+				return;
+			}
+			console.log( JSON.stringify(dataArray));
+			$.ajax({
+					type: "POST",
+					dataType: 'json',
+					url: 'scripts/study.php',
+					data: { studyName : studyNameString, visitsData : dataArray }, // serializes the form's elements.
+					success: function(data) {
+						if(data){
+							alertifySuccess("Done")
+							$("#adminDialog").dialog('close');
+						}					
+					}
+			});	
+		})
+
+	});
+
+	function removeRow(row){
+		$(row).closest('tr').remove();
+	}
+
 </script>
 <div class="jumbotron">
-    <form method="post" id="createStudy"
-    	action="/create_study">
-    	<div class="form-group row">
-    		<label class="col-form-label">Study Name:</label> <input type="text"
-    			class="form-control" id="studyName" name="studyName"
-    			placeholder="study Name" maxlength="32" required>
-    	</div>
-    	<div class="form-group row">
-    		<div class="form-group col">
-    			<label class="col-form-label">Visits In Study :</label>
-    			<!------------------------- Visit List ----------------------->
-    			<SELECT id="visits" class="custom-select" name="visits[]" multiple>
-    			</SELECT> <input id="deleteVisit" class="btn btn-danger" type="button"
-    				value="Clear">
-    		</div>
-    		<div class="form-group col">
-    			<label class="col-form-label">Visit Name:</label> 
-    				<input type="text"
-    				class="form-control" id="visitName" name="visitName" maxlength="32"
-    				placeholder="visit Name"> 
-    			<label class="col-form-label">Visit Order:</label> 
-    				<input type="number"
-    				class="form-control" id="visitOrder" name="visitOrder" min="0" value="0"
-    				placeholder="visit Order"> 
-				<label class="col-form-label">Number of Days Visit Limit:</label> 
-    				<input class="form-control"
-    				id="numberDay" name="numberDay" placeholder="days" type="number"
-    				step="1" value=0> <input id="addVisit" class="btn btn-primary"
-    				type="button" value="+">
-    		</div>
-    	</div>
-    
-    	<div class="form-group row">
-			<label class="col-sm" for="localFormNeeded">Local Form Needed</label>
-    		<input class="form-control col-sm" type="checkbox" name="localFormNeeded" value="1" checked>
-    	</div>
-    
-    	<div class="form-group row">
-    		<label class="col-sm" for="qcNeeded">QC Needed</label>
-    		<input class="form-control col-sm" type="checkbox" name="qcNeeded" value="1" checked>
-    	</div>
-    	
 		<div class="form-group row">
-    		<label class="col-sm" for="reviewNeeded">Review Needed</label>
-    		<input class="form-control col-sm" type="checkbox" name="reviewNeeded" value="1" checked>
-    	</div>
-    	
-		<div class="form-group row">
-    		<label class="col-sm" for="formQc">Days limit for first visit compared to inclusion</label>
-    		<input class="form-control col-sm" type="number" name="daysLimitInclusion" step="1" value=-28>
-    	</div>
-    
-    	<button type="button" id="createSubmit" class="btn btn-primary">Create
-    		Study</button>
-    
-    </form>
+			<label class="col-form-label">Study Name:</label> <input type="text" class="form-control" id="studyName" name="studyName" placeholder="study Name" maxlength="32" required>
+		</div>
+			
+		<div>
+			<label class="col-form-label">Visits In Study :</label>
+			<table id="visitTable" class="table table-striped">
+				<thead>
+					<tr>
+						<td>
+							Visit Group
+						</td>
+						<td>
+							Visit Name
+						</td>
+						<td>
+							Visit Order
+						</td>
+						<td>
+							Local Form Needed
+						</td>
+						<td>
+							QC Needed
+						</td>
+						<td>
+							Review Needed
+						</td>
+						<td>
+							Optional Visit
+						</td>
+						<td>
+							From Day From Inclusion
+						</td>
+						<td>
+							To Day From Inclusion
+						</td>
+						<td>
+							Anon Profile
+						</td>
+					</tr>
+				</thead>
+				<tbody>
+
+				</tbody>
+			</table>
+			<input type="button" id ="newVisitBtn" class="btn btn-primary" value = "New Visit"/>
+		</div>
+
+		<button type="button" id="createStudyBtn" class="btn btn-primary">Create
+			Study</button>
+
 </div>

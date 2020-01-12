@@ -75,7 +75,8 @@ function build_visit_details_table(array $visitObjects, string $role) { ?>
 				<th colspan=7>Visit information</th>
 			</tr>
 			<tr>
-    	        <td rowspan=2>Visit</td>
+				<td rowspan=2>Modality</td>	
+				<td rowspan=2>Visit</td>
     	        <td colspan=4>Visit status</td>
     	        <td rowspan=2>Number of series</td>
     	        <td rowspan=2>Acquisition date</td>
@@ -93,7 +94,8 @@ function build_visit_details_table(array $visitObjects, string $role) { ?>
                 if ($numberOfSeries == 0) $numberOfSeries = "Not Uploaded";
                 ?>    
                 <tr>
-        	         <td class="visitLink" data-visitid=<?=$visitObject->id_visit?> ><?=htmlspecialchars($visitObject->visitType)?></td>
+					 <td><?=$visitObject->visitGroupObject->groupModality?></td>
+					 <td class="visitLink" data-visitid=<?=$visitObject->id_visit?> ><?=htmlspecialchars($visitObject->visitType)?></td>
         	         <td><?=$visitObject->statusDone?></td>
         	         <td><?=$visitObject->uploadStatus?></td>
         	         <td><?=$visitObject->stateInvestigatorForm?></td>

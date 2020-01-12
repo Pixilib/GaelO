@@ -80,10 +80,11 @@ if ($accessCheck && $_SESSION['role'] == "Supervisor" ) {
             
         }
         $table=$table."</tbody></table>";
-
-        $destinator=$emailSender->getUserEmails($user);
+        
         $emailSender->setMessage($message.$table);
-        $emailSender->sendEmail($destinator, "Awaiting Review for ".$_SESSION['study']);
+        $emailSender->setSubject("Awaiting Review for ".$_SESSION['study']);
+        $emailSender->addEmail($emailSender->getUserEmails($user));
+        $emailSender->sendEmail();
         $answer['nbReviewersEmailed']++;
         
     }

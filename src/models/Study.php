@@ -20,179 +20,164 @@
 Class Study {
     
     private $linkpdo;
-    private $study;
+    public $study;
     
-    public $formNeeded;
-    public $qcNeeded;
-    public $reviewNeeded;
-    public $daysLimitFromInclusion;
-    
-    
-    public function __construct($study, $linkpdo){
+    public function __construct(String $study, PDO $linkpdo){
+
         $this->linkpdo=$linkpdo;
-        $this->study=$study;
-        
         $connecter = $this->linkpdo->prepare('SELECT * FROM studies WHERE name=:study');
         $connecter->execute(array(
-        		"study" => $this->study,
+        		"study" => $study,
         ));
         $result = $connecter->fetch(PDO::FETCH_ASSOC);
-        
-        $this->qcNeeded=$result['qc'];
-        $this->formNeeded=$result['form'];
-        $this->reviewNeeded=$result['review'];
-        $this->daysLimitFromInclusion=$result['limit_days_visit_from_inclusion'];
+
+        $this->study=$result['name'];
         
         
     }
-    
-    /**
-     * Return uploaded and non deleted visit Objects
-     */
-    public function getUploadedVisits(){
-        
-        $uploadedVisitQuery = $this->linkpdo->prepare('SELECT id_visit FROM visits WHERE study = :study
-                                                    AND deleted=0
-                                                    AND visits.upload_status="Done" ');
-        
-        $uploadedVisitQuery->execute(array('study' => $this->study));
-        $uploadedVisitIds=$uploadedVisitQuery->fetchall(PDO::FETCH_COLUMN);
-        
-        $visitObjectArray=[];
-        foreach ($uploadedVisitIds as $id_visit){
-            $visitObjectArray[]=new Visit($id_visit, $this->linkpdo);
+
+    public function getPatientsLinkedToUserCenters($username)
+    {
+        $patients = $this->linkpdo->prepare(' SELECT patients.code
+            FROM   patients
+            WHERE  patients.center IN (SELECT affiliated_centers.center
+                FROM   affiliated_centers
+                WHERE  affiliated_centers.username = :username
+                UNION
+                SELECT users.center
+                FROM   users
+                WHERE  users.username = :username)
+                AND study = :study
+                GROUP  BY patients.code');
+
+        $patients->execute(array(
+            'username' => $username,
+            'study' => $this->study
+        ));
+
+        $patientsCodes = $patients->fetchAll(PDO::FETCH_COLUMN);
+
+        $patientObjectsArray = [];
+
+        foreach ($patientsCodes as $patientCode) {
+            $patientObjectsArray[] = new Patient($patientCode, $this->linkpdo);
         }
-        
-        return $visitObjectArray;
-        
+
+        return $patientObjectsArray;
     }
-    
-    public function getAwaitingUploadVisit(){
-    	
-    	$uploadedVisitQuery = $this->linkpdo->prepare("SELECT id_visit FROM visits WHERE study = :study
-														AND deleted=0
-														AND visits.upload_status ='Not Done'
-														AND visits.status_done='Done' ");
-    	
-    	$uploadedVisitQuery->execute(array('study' => $this->study));
-    	$uploadedVisitIds=$uploadedVisitQuery->fetchall(PDO::FETCH_COLUMN);
-    	
-    	$visitObjectArray=[];
-    	foreach ($uploadedVisitIds as $id_visit){
-    		$visitObjectArray[]=new Visit($id_visit, $this->linkpdo);
-    	}
-    	
-    	return $visitObjectArray;
-    	
+
+    public function getAllCreatedVisits(bool $deleted=false){
+
+        $possibleStudyGroups=$this->getAllPossibleVisitGroups();
+
+        $visitsObjectArray = [];
+
+        foreach($possibleStudyGroups as $studyGroup){
+            $createdVisits=$studyGroup->getStudyVisitManager()->getCreatedVisits($deleted);
+            array_push($visitsObjectArray, ...$createdVisits);
+        }
+
+        return $visitsObjectArray;
+
     }
-    
-    /**
-     * Get Visits awaiting review
-     * Optionally visit awaiting review can be specific to an username
-     * @param string $username
-     * @return Visit[]
-     */
-    public function getAwaitingReviewVisit(string $username=null){
-        
-        //Query visit to analyze visit awaiting a review
-        $idVisitsQuery = $this->linkpdo->prepare('SELECT id_visit FROM visits INNER JOIN visit_type ON (visits.visit_type=visit_type.name AND visits.study=visit_type.study)
-                                      WHERE (visits.study = :study
-                                      AND deleted=0
-                                      AND review_available=1) ORDER BY visit_order ');
-        
-        $idVisitsQuery->execute(array('study' => $this->study));
-        $visitList = $idVisitsQuery->fetchAll(PDO::FETCH_COLUMN);
-        
-        $visitObjectArray=[];
-        
-        foreach ($visitList as $visitId) {
-            $visitObject= new Visit($visitId, $this->linkpdo);
-            
-            if(!empty($username)){
-                if($visitObject->isAwaitingReviewForReviewerUser($username)) $visitObjectArray[]=$visitObject;
-            }else{
-                $visitObjectArray[]=$visitObject;
+
+    public function getAllAwaitingUploadImagingVisit(){
+
+        $possibleStudyGroups=$this->getAllPossibleVisitGroups();
+        $visitsObjectArray = [];
+
+        foreach($possibleStudyGroups as $studyGroup){
+            if(in_array($studyGroup->groupModality, array(Visit_Group::GROUP_MODALITY_CT, Visit_Group::GROUP_MODALITY_MR, Visit_Group::GROUP_MODALITY_PET)) ){
+                $awaitingUploadVisits=$studyGroup->getStudyVisitManager()->getAwaitingUploadVisit();
+                array_push($visitsObjectArray, ...$awaitingUploadVisits);
             }
-           
+            
+            
         }
         
-        return $visitObjectArray;
-        
+        return $visitsObjectArray;
+
     }
-    
-    public function getVisitWithQCStatus($qcStatus){
-        
-        $visitQuery = $this->linkpdo->prepare("SELECT id_visit FROM visits WHERE study = :study
-														AND deleted=0
-                                                        AND state_quality_control=:qcStatus");
-        
-        $visitQuery->execute(array('study'=>$this->study, 'qcStatus' => $qcStatus));
-        $visitIds=$visitQuery->fetchall(PDO::FETCH_COLUMN);
-        
-        $visitObjectArray=[];
-        foreach ($visitIds as $id_visit){
-            $visitObjectArray[]=new Visit($id_visit, $this->linkpdo);
+
+    public function getAllAwaitingReviewImagingVisit($username = null){
+
+        $possibleStudyGroups=$this->getAllPossibleVisitGroups();
+        $visitsObjectArray = [];
+
+        foreach($possibleStudyGroups as $studyGroup){
+            if(in_array($studyGroup->groupModality, array(Visit_Group::GROUP_MODALITY_CT, Visit_Group::GROUP_MODALITY_MR, Visit_Group::GROUP_MODALITY_PET)) ){
+                $awaitingReviewVisits=$studyGroup->getStudyVisitManager()->getAwaitingReviewVisit($username);
+                array_push($visitsObjectArray, ...$awaitingReviewVisits);
+            }
+            
+            
         }
         
-        return $visitObjectArray;
-        
+        return $visitsObjectArray;
+
     }
-    
-    public function getVisitsMissingInvestigatorForm(){
-        
-        $visitQuery = $this->linkpdo->prepare(" SELECT id_visit FROM visits WHERE study = :study
-                                                            AND deleted=0 
-                                                            AND state_investigator_form !='Done' 
-                                                            AND upload_status='Done'");
-        
-        $visitQuery->execute(array('study'=>$this->study));
-        $visitIds=$visitQuery->fetchall(PDO::FETCH_COLUMN);
-        
-        $visitObjectArray=[];
-        foreach ($visitIds as $id_visit){
-            $visitObjectArray[]=new Visit($id_visit, $this->linkpdo);
+
+    public function getAllUploadedImagingVisits(){
+
+        $possibleStudyGroups=$this->getAllPossibleVisitGroups();
+        $visitsObjectArray = [];
+
+        foreach($possibleStudyGroups as $studyGroup){
+            if(in_array($studyGroup->groupModality, array(Visit_Group::GROUP_MODALITY_CT, Visit_Group::GROUP_MODALITY_MR, Visit_Group::GROUP_MODALITY_PET)) ){
+                $uploadedVisits=$studyGroup->getStudyVisitManager()->getUploadedVisits();
+                array_push($visitsObjectArray, ...$uploadedVisits);
+            }
+            
+            
         }
         
-        return $visitObjectArray;
-        
+        return $visitsObjectArray;
+
     }
-    
-    /**
-     * Return studie's visit object
-     */
-    public function getCreatedVisits(bool $deleted=false){
-        
-        $uploadedVisitQuery = $this->linkpdo->prepare('SELECT id_visit FROM visits, visit_type WHERE visits.study = :study
-                                                    AND visits.deleted=:deleted 
-                                                    AND visit_type.name=visits.visit_type
-                                                    AND visit_type.study=visits.study
-                                                    ORDER BY patient_code, visit_type.visit_order');
-        
-        $uploadedVisitQuery->execute(array('study' => $this->study, 'deleted'=>intval($deleted)));
-        $uploadedVisitIds=$uploadedVisitQuery->fetchAll(PDO::FETCH_COLUMN);
-        
-        $visitObjectArray=[];
-        foreach ($uploadedVisitIds as $id_visit){
-            $visitObjectArray[]=new Visit($id_visit, $this->linkpdo);
-        }
-        
-        return $visitObjectArray;
-        
+
+    public function isHavingAwaitingReviewImagingVisit($username=null){
+        $awaitingVisits=$this->getAllAwaitingReviewImagingVisit($username);
+        $havingAwaitingReview= (sizeof($awaitingVisits) > 0);
+        return $havingAwaitingReview;
     }
-    
-    
-    public function getAllPossibleVisits(){
-        $allVisitsType = $this->linkpdo->prepare('SELECT study, name FROM visit_type WHERE study = :study ORDER BY visit_order');
-        $allVisitsType->execute(array('study' => $this->study));
-        $allVisits=$allVisitsType->fetchall(PDO::FETCH_ASSOC);
+
+
+
+    public function getAllPossibleVisitGroups(){
+
+        $allGroupsType = $this->linkpdo->prepare('SELECT id FROM visit_group WHERE study = :study');
+        $allGroupsType->execute(array('study' => $this->study));
+        $allGroupsIds=$allGroupsType->fetchall(PDO::FETCH_COLUMN);
         
-        $visitTypeArray=[];
-        foreach ($allVisits as $visit){
-            $visitTypeArray[]=new Visit_Type($this->linkpdo, $visit['study'], $visit['name']);
+        $visitGroupArray=[];
+        foreach ($allGroupsIds as $groupId){
+            $visitGroupArray[]=new Visit_Group($this->linkpdo, $groupId);
         }
         
-        return $visitTypeArray;
+        return $visitGroupArray;
+
+    }
+
+    public function getSpecificGroup(String $groupModality){
+
+        $groupQuery = $this->linkpdo->prepare('SELECT id FROM visit_group WHERE study = :study AND group_modality=:groupModality');
+        $groupQuery->execute(array('study' => $this->study, 'groupModality'=> $groupModality));
+        $groupId=$groupQuery->fetch(PDO::FETCH_COLUMN);
         
+        return new Visit_Group($this->linkpdo, $groupId);
+
+    }
+
+    public function getStudySpecificGroupManager(String $groupModality){
+
+        $visitGroup=$this->getSpecificGroup($groupModality);
+        
+        return new Study_Visit_Manager($this, $visitGroup, $this->linkpdo);
+
+    }
+
+    public function getReviewManager(){
+        return new Study_Review_Manager($this);
     }
     
     public function getAllPatientsInStudy(){
@@ -250,7 +235,6 @@ Class Study {
         
     }
     
-
     public function getUsersByRoleInStudy(String $role){
         $req = $this->linkpdo->prepare('SELECT username FROM roles
 									   WHERE study=:study AND name=:role ');
@@ -276,177 +260,15 @@ Class Study {
         return $rolesList;
     }
 
-    /**
-     * Return patient status for all patient in a study with date and status calculation for expected visit
-     * @param string $study
-     * @return string JSON
-     */
-    public function getAllPatientsVisitsStatus(){
-        
-        //Get ordered list of possible visits in this study
-        $allVisits=$this->getAllPossibleVisits($this->study);
-        //Get patients list in this study
-        $allPatients=$this->getAllPatientsInStudy($this->study);
-        //Store actual time for comparison
-        $todayDate = new DateTime ( date ( "Y-m-d" ) );
-        
-        $results=[];
-        
-        // For each patient determine it's visist status
-        foreach($allPatients as $patient){
-            
-            $patientCenter=$patient->getPatientCenter();
-            $createdVisits=$patient->getPatientsVisits();
-            $patientRegistrationImmutableDate=new DateTimeImmutable($patient->patientRegistrationDate);
-            
-            //Add patient's common informations
-            foreach($allVisits as $possibleVisit){
-                $results[$possibleVisit->name][$patient->patientCode]['center']=$patientCenter->name;
-                $results[$possibleVisit->name][$patient->patientCode]['country']=$patientCenter->countryName;
-                $results[$possibleVisit->name][$patient->patientCode]['firstname']=$patient->patientFirstName;
-                $results[$possibleVisit->name][$patient->patientCode]['lastname']=$patient->patientLastName;
-                $results[$possibleVisit->name][$patient->patientCode]['birthdate']=$patient->patientBirthDate;
-                $results[$possibleVisit->name][$patient->patientCode]['registration_date']=$patient->patientRegistrationDate;
-            }
-            
-            //Make a map of all created visit
-            $createdVisitMap=[];
-            foreach ($createdVisits as $dataPatientVisit){
-                //Acquisition date of created visit
-            	$visitCharacteristics=$dataPatientVisit->getVisitCharacteristics();
-            	$createdVisitMap[$visitCharacteristics->visitOrder]=$dataPatientVisit;
-            }
-            
-            //Determine Visit Order missing
-            $missingOrder=[];
-            foreach ($allVisits as $possibleVisit){
-                if(empty($createdVisitMap[$possibleVisit->visitOrder])){
-                    $missingOrder[]=$possibleVisit->visitOrder;
-                }
-            }
-            
-            //Determine compliancy / status of created visits
-            foreach($createdVisitMap as $visitOrder=>$dataPatientVisit ){
-
-                $visitAcquisitionDate=$dataPatientVisit->getImmutableAcquisitionDate();
-                
-                //Search for the last created Visit
-                $previousCreated=$visitOrder-1;
-                while( empty($createdVisitMap[$previousCreated]) && $previousCreated>-1 ){
-                    $previousCreated--;
-                }
-                
-                $timeLimitAddition=0;
-                for($i=$previousCreated+1 ; $i==$visitOrder ;$i++){
-                    $timeLimitAddition+=$allVisits[$i]->limitNumberDays;
-                    
-                }
-
-                //If first visit registration date is referece
-                if($previousCreated=(-1)){
-                    $daysincrease=$allVisits[0]->limitNumberDays;
-                    $dateUpLimit=$patientRegistrationImmutableDate->modify($daysincrease.'day');
-                    $dateDownLimit=$patientRegistrationImmutableDate->modify($this->daysLimitFromInclusion.'day');
-                //Else calculate time from the last created and the current
-                }else{   
-                    $dateUpLimit=$createdVisitMap[$previousCreated]->getImmutableAcquisitionDate()->modify($timeLimitAddition.'day');
-                    $dateDownLimit=$createdVisitMap[$previousCreated]->getImmutableAcquisitionDate();
-                }
-                
-                //Status determination
-                if($visitAcquisitionDate>=$dateDownLimit && $visitAcquisitionDate<=$dateUpLimit){
-                    $results[$dataPatientVisit->visitType][$patient->patientCode]['compliancy']="Yes"; 
-                }else{
-                    $results[$dataPatientVisit->visitType][$patient->patientCode]['compliancy']="No";
-                }
-                
-                $results[$dataPatientVisit->visitType][$patient->patientCode]['status']=Visit_Manager::DONE;
-                $results[$dataPatientVisit->visitType][$patient->patientCode]['shouldBeDoneBefore']=$dateUpLimit->format('Y-m-d');
-                $results[$dataPatientVisit->visitType][$patient->patientCode]['shouldBeDoneAfter']=$dateDownLimit->format('Y-m-d');
-                $results[$dataPatientVisit->visitType][$patient->patientCode]['upload_status']=$dataPatientVisit->uploadStatus;
-                $results[$dataPatientVisit->visitType][$patient->patientCode]['acquisition_date']=$visitAcquisitionDate->format('Y-m-d');
-                $results[$dataPatientVisit->visitType][$patient->patientCode]['upload_date']=$dataPatientVisit->uploadDate;
-                $results[$dataPatientVisit->visitType][$patient->patientCode]['id_visit']=$dataPatientVisit->id_visit;
-                $results[$dataPatientVisit->visitType][$patient->patientCode]['state_investigator_form']=$dataPatientVisit->stateInvestigatorForm;
-                $results[$dataPatientVisit->visitType][$patient->patientCode]['state_quality_control']=$dataPatientVisit->stateQualityControl;
-                
-                
-            }
-            
-            //Determine the status of the missing visits
-            foreach($missingOrder as $missingVisitNumber){
-                
-                //Determine visit number of the last created visit
-                $lastAvailable=$missingVisitNumber;
-                while( empty($createdVisitMap[$lastAvailable]) && $lastAvailable>=0){
-                    $lastAvailable--;
-                }
-
-                //If 1st Visit missing reference date is the inclusion date
-                if ($lastAvailable== -1) {
-                    $lastCreatedVisit=$patientRegistrationImmutableDate;
-                    $lastAvailable=0;
-                    $shouldBeDoneAfter=$lastCreatedVisit->modify($this->daysLimitFromInclusion.' day');
-                }
-                else {
-                    $lastCreatedVisit=$createdVisitMap[$lastAvailable]->getImmutableAcquisitionDate();
-                    $shouldBeDoneAfter=$lastCreatedVisit;
-                }
-                
-                $timeLimitAddition=0;
-                //Determine the cummulative allowed time from the last available visit
-                for($i=$lastAvailable ; $i<=$missingVisitNumber ; $i++){
-                    $timeLimitAddition+=$allVisits[$i]->limitNumberDays;
-                    
-                }
-                
-                $dateUpLimit=$lastCreatedVisit->modify($timeLimitAddition.' day');
-                //if patient withdraws visit might be not needed
-                if($patient->patientWithdraw){
-                    $withdrawDate=$patient->patientWithdrawDate;
-                    if($lastCreatedVisit<=$withdrawDate && $dateUpLimit>$withdrawDate){
-                        $results[$allVisits[$missingVisitNumber]->name][$patient->patientCode]['status']="Possibly Withdrawn";
-                        
-                    }else if($lastCreatedVisit>$withdrawDate){
-                        $results[$allVisits[$missingVisitNumber]->name][$patient->patientCode]['status']="Visit Withdrawn";
-                    }else{
-                        $results[$allVisits[$missingVisitNumber]->name][$patient->patientCode]['status']=Visit_Manager::SHOULD_BE_DONE;    
-                    }
-                    
-                }else{
-                    if($todayDate>$dateUpLimit){
-                        $results[$allVisits[$missingVisitNumber]->name][$patient->patientCode]['status']=Visit_Manager::SHOULD_BE_DONE;  
-                    }else if($todayDate<=$dateUpLimit){
-                        $results[$allVisits[$missingVisitNumber]->name][$patient->patientCode]['status']="Pending";
-                        
-                    }
-                }
-                
-                $results[$allVisits[$missingVisitNumber]->name][$patient->patientCode]['compliancy']="";
-                $results[$allVisits[$missingVisitNumber]->name][$patient->patientCode]['shouldBeDoneBefore']=$dateUpLimit->format('Y-m-d');
-                $results[$allVisits[$missingVisitNumber]->name][$patient->patientCode]['shouldBeDoneAfter']=$shouldBeDoneAfter->format('Y-m-d');
-                $results[$allVisits[$missingVisitNumber]->name][$patient->patientCode]['upload_status']="";
-                $results[$allVisits[$missingVisitNumber]->name][$patient->patientCode]['acquisition_date']="";
-                $results[$allVisits[$missingVisitNumber]->name][$patient->patientCode]['state_investigator_form']="";
-                $results[$allVisits[$missingVisitNumber]->name][$patient->patientCode]['state_quality_control']="";
-            }
-            
-            
-        }
-        
-        return(json_encode($results));
-        
-    }
-
     public function getStatistics() {
-        return new Statistics($this, $this->linkpdo);
+        return new Statistics($this);
     }
     
-    public static function changeStudyActivation(String $study, bool $activated, PDO $linkpdo){
-        $req = $linkpdo->prepare('UPDATE studies SET
+    public function changeStudyActivation(bool $activated){
+        $req = $this->linkpdo->prepare('UPDATE studies SET
     								active = :active
 						        WHERE name = :study');
-        $req->execute(array( 'study'=> $study, 'active'=>intval($activated)));
+        $req->execute(array( 'study'=> $this->study, 'active'=>intval($activated)));
     }
     
     public function isOriginalOrthancNeverKnown($anonFromOrthancStudyId){
@@ -462,17 +284,12 @@ Class Study {
         
     }
     
-    public static function createStudy(string $studyName, $formNeeded, $qcNeeded, $reviewNeeded, $daysLimitBefore, PDO $linkpdo){
+    public static function createStudy(string $studyName, PDO $linkpdo){
         
-        
-        $req = $linkpdo->prepare('INSERT INTO studies (name, active, form, qc, review, limit_days_visit_from_inclusion) VALUES(:studyName, "1", :formNeeded, :qcNeeded, :reviewNeeded, :daysLimitBefore) ');
+        $req = $linkpdo->prepare('INSERT INTO studies (name) VALUES(:studyName) ');
         
         $req->execute(array(
-            'studyName' => $studyName,
-            'formNeeded'=> intval($formNeeded),
-            'qcNeeded' => intval($qcNeeded) ,
-            'reviewNeeded' => intval($reviewNeeded),
-            'daysLimitBefore' => intval($daysLimitBefore)
+            'studyName' => $studyName
         ));
         
     }

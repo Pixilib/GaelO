@@ -92,9 +92,6 @@ if ( !isset($_GET['page']) ) {
 }else if ($_GET['page'] == 'change_patient_status'){
     require 'controllers/supervisor/change_patient_status_controller.php';
     
-}else if ($_GET['page'] == 'reminder_emails'){
-    require 'controllers/supervisor/reminder_emails_controller.php';
-    
 }else if ($_GET['page'] == 'documentation_supervisor'){
     require 'controllers/supervisor/documentation_controller.php';
     

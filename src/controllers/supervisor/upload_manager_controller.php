@@ -28,8 +28,13 @@ if ($accessCheck && $_SESSION['role'] == User::SUPERVISOR ) {
 	
 	//Get All visit / patient status from the visit Manager
 	$studyObject=new Study($_SESSION['study'], $linkpdo);
-	$allVisits=json_decode($studyObject->getAllPatientsVisitsStatus(), true);
-
+	$possibleGroups=$studyObject->getAllPossibleVisitGroups();
+	$allVisits=[];
+	foreach($possibleGroups as $groupObject){
+		$visitTypes=$groupObject->getAllVisitTypesOfGroup();
+		$allVisits[$groupObject->groupModality]=array_map(function($visitType){return $visitType->name;},$visitTypes);
+	}
+	
     require 'views/supervisor/upload_manager_view.php';
     
 } else {

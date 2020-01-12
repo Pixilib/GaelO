@@ -39,11 +39,13 @@ if ($_SESSION['admin']) {
         }
 
         foreach ($activatedStudies as $activatedStudy){
-            Study::changeStudyActivation($activatedStudy, true, $linkpdo);
+            $studyObject=new Study($activatedStudy, $linkpdo);
+            $studyObject->changeStudyActivation(true);
         }
         
         foreach ($unvactivatedStudies as $unactivatedStudy){
-            Study::changeStudyActivation($unactivatedStudy, false, $linkpdo);   
+            $studyObject=new Study($unactivatedStudy, $linkpdo);
+            $studyObject->changeStudyActivation(false);  
         }
         
         //Log the Study Creation

@@ -15,17 +15,6 @@
 ?>
 
 <script type="text/javascript">
-    //Display and hide divs on button click
-    function ouvrirFermer(button, id){
-    	//Hide all div and remove class from all button
-    	$('.upManagerDiv').hide();
-    	$('.upManagerBtn').removeClass('btn-primary')
-    	
-    	//Show the selected div and select the calling button and force datable to draw (windows adjust)
-    	$("#"+id).show();
-    	$(button).addClass('btn-primary');
-    	$('#table'+id).DataTable().columns.adjust().draw();	
-    };
     
     $(document).ready(function() {
     
@@ -37,125 +26,203 @@
     			tinymce.remove();
     		}
     	});
+
+        function getVisitStatus(visitType, modality){
+
+            $.ajax({
+				type: "POST",
+				dataType: "json",
+				url: "scripts/get_patient_status.php",
+				data: { visit_type : visitType, modality : modality  }, // serializes the form's elements.
+				success: function(data) {
+                    for (const [patientCode, details] of Object.entries(data)) {
+                        tableStatus.row.add( [ modality,
+                                                visitType,
+                                                details.center, 
+                                                patientCode, 
+                                                details.status, 
+                                                details.shouldBeDoneAfter, 
+                                                details.shouldBeDoneAfter, 
+                                                details.upload_status, 
+                                                details.acquisition_date,
+                                                details.compliancy,
+                                                details.state_investigator_form,
+                                                details.state_quality_control ] )
+                    }
+
+                    tableStatus.draw();
+
+				},
+				error: function(error){
+					console.log("can't fetch patient's status");
+				}
+				
+			});
+
+        }
+
+        $('.uploadManagerVisitBtn').on('click', function(){
+            tableStatus.clear();
+            $( this ).toggleClass( "btn-primary" )
+            let selectedVisitButtons=$('.uploadManagerVisitBtn.btn-primary').get();
+            
+            selectedVisitButtons.forEach(button=>{
+                let modality=button.dataset.modality
+                let visitType=button.dataset.visitname
+                getVisitStatus(visitType, modality)
+            })
+
+            tableStatus.draw();
+ 
+        })
     	
-    	$( "#send_emailsButton" ).on( "click", function() {
-    		$( "#send_emails" ).load('/reminder_emails', function(){
-    			$( "#send_emails" ).dialog( "open" );
-    		});
+    	$( ".reminderBtn" ).on( "click", function() {
+            let reminderType=$(this).val()
+            let rowsData=tableStatus.rows('.selected').data();
+            console.log(rowsData)
+            console.log(reminderType)
+            
+            rowsData.forEach(row=>{
+
+            })
+            
+            $.ajax({
+				type: "POST",
+				dataType: "json",
+				url: "scripts/send_emails_upload_reminder.php",
+				data: { dataArray : rowsData, reminderType : reminderType }, // serializes the form's elements.
+				success: function(data) {
+                    console.log('ici')
+				},
+				error: function(error){
+					console.log("can't send reminders");
+				}
+				
+			});
+
     		
     	});
     	
-    	<?php
-        // For each visit create a dataTable
-        foreach ($allVisits as $visit => $details) {
-        ?>
-    		$('#table<?=$visit?>').DataTable({
-    				"sDom": 'Blrtip',
-    				buttons: [ {
-    					extend: 'collection',
-    					text: 'Export',
-    					buttons: [
-    							'copy',
-    							'excel',
-    							'csv',
-    							'pdf',
-    							'print'
-    							]
-    					} ],
-    					"orderCellsTop": true,
-    					"scrollX": true
-    				});
-    
-    		$( '#<?=$visit?>'  ).on( 'keyup', ".column_search" ,function () {
-            	$('#table<?=$visit?>').DataTable()
-                    .column( $(this).parent().index() )
-                    .search( this.value )
-                    .draw();
-            });	
-    	<?php
-        }
-        ?>
+        let tableStatus= $('#tableStatus').DataTable({
+                "sDom": 'Blrtip',
+                scrollX: true,
+                select: {
+                style: 'os'
+                }, 
+                buttons: [ {
+                    extend: 'collection',
+                    text: 'Export',
+                    buttons: [
+                            {
+                                extend: 'copy',
+                                exportOptions: {
+                                    columns: ':visible',
+                                    rows: ':visible'
+                                }
+                            },
+                            {
+                                extend: 'excel',
+                                exportOptions: {
+                                    columns: ':visible',
+                                    rows: ':visible'
+                                }
+                            },
+                            {
+                                extend: 'csv',
+                                exportOptions: {
+                                    columns: ':visible',
+                                    rows: ':visible'
+                                }
+                            },
+                            {
+                                extend: 'pdf',
+                                exportOptions: {
+                                    columns: ':visible',
+                                    rows: ':visible'
+                                }
+                            },
+                            {
+                                extend: 'print',
+                                exportOptions: {
+                                    columns: ':visible',
+                                    rows: ':visible'
+                                }
+                            }
+                            ]
+                    } ],
+                    "orderCellsTop": true,
+                    "scrollX": true
+                });
+
+        $( '.upManagerDiv'  ).on( 'keyup', ".column_search" ,function () {
+            console.log('laa')
+            tableStatus.column( $(this).parent().index() )
+                .search( this.value )
+                .draw();
+        });	
+
     
     });
 </script>
 
 <div class="text-center">
-	<!-- Send Email Button -->
-	<button id="send_emailsButton" type="button" class="btn btn-info">Send
-		Reminder e-mails</button>
-<?php
-// Add 1 button per visit
-foreach ($allVisits as $visit => $patients) {
+    <?php
+        // Add 1 button per visit
+        foreach ($allVisits as $modality => $visitsName) {
+            ?>
+            <span class="badge badge-info"><?=$modality?></span>
+            <?php
+            foreach($visitsName as $visitName){
+                ?>
+                <button type="button" data-modality=<?=$modality?> data-visitname="<?=$visitName?>" class="btn uploadManagerVisitBtn"><?=$visitName?> </button>
+                <?php
+            }
+            echo('<br>');
+        }
     ?>
-<button type="button"
-		onclick="ouvrirFermer(this, '<?=$visit?>')"
-		class="btn upManagerBtn"><?=$visit?></button>
-<?php
-}
-?>
 </div>
 <br>
-<div class="tab-content">
-<?php
-// Create Table for each visit
-foreach ($allVisits as $visit => $patients) {
-?>
-    
-    <div style="display:none" id=<?=$visit?> class="upManagerDiv">
-		<table id="table<?=$visit?>" class="table table-striped" style="text-align:center; width:100%">
-    		<thead>
-        		<tr>
-        		<th>Centre</th>
-        		<th>Patient Number</th>
-        		<th>Visit Status</th>
-        		<th>Visit should be done after</th>
-        		<th>Visit should be done before</th>
-        		<th>upload Status</th>
-        		<th>Acquisition date</th>
-        		<th>Compliancy</th>
-        		<th>Investigation form</th>
-        		<th>Quality control</th>
-        		</tr>
-        		<tr>
-        		<th><input type="text" placeholder="Search" class="column_search" style="max-width:75px" /></th>
-        		<th><input type="text" placeholder="Search" class="column_search" style="max-width:75px" /></th>
-        		<th><input type="text" placeholder="Search" class="column_search" style="max-width:75px" /></th>
-        		<th><input type="text" placeholder="Search" class="column_search" style="max-width:75px"/> </th>
-        		<th><input type="text" placeholder="Search" class="column_search" style="max-width:75px"/> </th>
-        		<th><input type="text" placeholder="Search" class="column_search" style="max-width:75px"/> </th>
-        		<th><input type="text" placeholder="Search" class="column_search" style="max-width:75px"/> </th>
-        		<th><input type="text" placeholder="Search" class="column_search" style="max-width:75px"/> </th>
-        		<th><input type="text" placeholder="Search" class="column_search" style="max-width:75px"/> </th>
-        		<th><input type="text" placeholder="Search" class="column_search" style="max-width:75px"/> </th>
-        		</tr>
-    		</thead>
-    		<tbody>
-            <?php 
-            foreach ($patients as $patientCode => $patientDetails) {
-                // Table structure with search options
-            ?>
-                <tr>
-            		<td><?=$patientDetails['center']?></td>
-            		<td><?=$patientCode?></td>
-            		<td><?=$patientDetails['status']?></td>
-            		<td><?=$patientDetails['shouldBeDoneAfter']?></td>
-            		<td><?=$patientDetails['shouldBeDoneBefore']?></td>
-            		<td><?=$patientDetails['upload_status']?></td>
-            		<td><?=$patientDetails['acquisition_date']?></td>
-            		<td><?=$patientDetails['compliancy']?></td>
-            		<td><?=$patientDetails['state_investigator_form']?></td>
-            		<td><?=$patientDetails['state_quality_control']?></td>
-        		</tr>
-        	<?php
-            }
-            ?>
-    		</tbody>
-		</table>
-	</div>
-<?php 
-}
-?>
+
+<div class="upManagerDiv">
+    <table id="tableStatus" class="table table-striped" style="text-align:center; width:100%">
+        <thead>
+            <tr>
+            <th>Modality</th>
+            <th>Visit</th>
+            <th>Center</th>
+            <th>Patient Number</th>
+            <th>Visit Status</th>
+            <th>Visit should be done after</th>
+            <th>Visit should be done before</th>
+            <th>upload Status</th>
+            <th>Acquisition date</th>
+            <th>Compliancy</th>
+            <th>Investigation form</th>
+            <th>Quality control</th>
+            </tr>
+            <tr>
+            <th><input type="text" placeholder="Search" class="column_search" style="max-width:75px" /></th>
+            <th><input type="text" placeholder="Search" class="column_search" style="max-width:75px" /></th>
+            <th><input type="text" placeholder="Search" class="column_search" style="max-width:75px" /></th>
+            <th><input type="text" placeholder="Search" class="column_search" style="max-width:75px" /></th>
+            <th><input type="text" placeholder="Search" class="column_search" style="max-width:75px" /></th>
+            <th><input type="text" placeholder="Search" class="column_search" style="max-width:75px"/> </th>
+            <th><input type="text" placeholder="Search" class="column_search" style="max-width:75px"/> </th>
+            <th><input type="text" placeholder="Search" class="column_search" style="max-width:75px"/> </th>
+            <th><input type="text" placeholder="Search" class="column_search" style="max-width:75px"/> </th>
+            <th><input type="text" placeholder="Search" class="column_search" style="max-width:75px"/> </th>
+            <th><input type="text" placeholder="Search" class="column_search" style="max-width:75px"/> </th>
+            <th><input type="text" placeholder="Search" class="column_search" style="max-width:75px"/> </th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
 </div>
 
-<!-- Div to load send email form will be displayed in dialog-->
-<div id="send_emails"></div>
+<div class="text-center">
+    <span class="">Send Reminders : </span>
+    <input type="button" class="btn btn-primary reminderBtn" value="Upload" />
+    <input type="button" class="btn btn-primary reminderBtn" value="Investigator Form" />
+    <input type="button" class="btn btn-primary reminderBtn" value="Corrective Action" />
+</div>

@@ -33,9 +33,11 @@
 				<th></th>
 				<th></th>
 				<th></th>
+				<th></th>
 			</tr>
 			<!-- Search raw -->
 			<tr>
+				<th><input type="text" placeholder="Search" class="column_search" style="max-width: 75px" /></th>
 				<th><input type="text" placeholder="Search" class="column_search" style="max-width: 75px" /></th>
 				<th><input type="text" placeholder="Search" class="column_search" style="max-width: 75px" /></th>
 				<th><input type="text" placeholder="Search" class="column_search" style="max-width: 75px" /></th>
@@ -50,23 +52,54 @@
 
 <script type="text/javascript">
 	//DataTable for visit by visit details
-	$('#reviewTable').DataTable({
+	let reviewTable=$('#reviewTable').DataTable({
 		"sDom": 'Blrtip',
 		"scrollX": true,
 		buttons: [{
 			extend: 'collection',
 			text: 'Export',
 			buttons: [
-				'copy',
-				'excel',
-				'csv',
-				'pdf',
-				'print'
-			]
+					{
+						extend: 'copy',
+						exportOptions: {
+							columns: ':visible',
+							rows: ':visible'
+						}
+					},
+					{
+						extend: 'excel',
+						exportOptions: {
+							columns: ':visible',
+							rows: ':visible'
+						}
+					},
+					{
+						extend: 'csv',
+						exportOptions: {
+							columns: ':visible',
+							rows: ':visible'
+						}
+					},
+					{
+						extend: 'pdf',
+						exportOptions: {
+							columns: ':visible',
+							rows: ':visible'
+						}
+					},
+					{
+						extend: 'print',
+						exportOptions: {
+							columns: ':visible',
+							rows: ':visible'
+						}
+					}
+					]
 		}],
 		data: <?=generateJSONforDatatable($reviewdetailsMap)?>,
 		columns: [
 			{ data: 'patientNumber' },
+			{ data: 'visitModality' },
 			{ data: 'visit' },
 			{ data: 'acquisitionDate' },
 			{ data: 'numberOfReview' },
@@ -76,25 +109,27 @@
 		],
 		"columnDefs": [
 			{ "title": "Patient Number", "targets": 0 },
-			{ "title": "Visit", "targets": 1 },
-			{ "title": "Acquisition Date", "targets": 2 },
-			{ "title": "Number Of Review", "targets": 3 },
-			{ "title": "Review Status", "targets": 4 },
-			{ "title": "Review Done By", "targets": 5 },
-			{ "title": "Review Not Done By", "targets": 6 },
+			{ "title": "Visit Modality", "targets": 1 },
+			{ "title": "Visit", "targets": 2 },
+			{ "title": "Acquisition Date", "targets": 3 },
+			{ "title": "Number Of Review", "targets": 4 },
+			{ "title": "Review Status", "targets": 5 },
+			{ "title": "Review Done By", "targets": 6 },
+			{ "title": "Review Not Done By", "targets": 7 },
 		],
 		"bSortCellsTop": true
 	});
 
 	// Search function on datatable
 	$('#reviewTableDiv').on('keyup', ".column_search", function() {
-		$('#reviewTable').DataTable()
+		reviewTable.DataTable()
 			.column($(this).parent().index())
 			.search(this.value)
 			.draw();
 	});
 
 	//Action to send reminders of missing reviews to reviewers
+	//SK A REVOIR L EMAILER
 	$('#btnReviewerReminders').on('click', function(e) {
 		var confirmation = confirm('You are about to send reviewers reminders, do you confirm your action?');
 		if (confirmation) {

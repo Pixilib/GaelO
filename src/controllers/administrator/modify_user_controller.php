@@ -150,20 +150,13 @@ if (isset($_SESSION['admin'])) {
             Tracker::logActivity($_SESSION['username'], "Administrator", null, null, "Edit User", $actionDetails);
             
             //If new account status is unconfirmed (passord reset) , send the new password by email
-            if($status == "Unconfirmed"){
+            if($status == USER::UNCONFIRMED){
                 $new_mdp = substr(uniqid(), 1,10);
-                User::setUnconfirmedAccount($username, $new_mdp, $linkpdo);
+                $userObject->setUnconfirmedAccount($new_mdp);
                 
                 $mail=new Send_Email($linkpdo);
-                
-                $message = "Your account password is reset. Please log in at: ".$mail->webAddress."<br>
-				Username : $username<br>
-				Temporary password : $new_mdp<br>
-				You will be asked to change this password at your first log in attempt<br>
-				on the platform.<br>";
-                
-                $mail->setMessage($message);
-                $mail->sendEmail($email, 'Reactivation');
+                $mail->addEmail($email);
+                $mail->sendModifyUserMessage($username, $new_mdp);
                 
             }
             
