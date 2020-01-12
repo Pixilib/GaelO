@@ -30,14 +30,14 @@ $studyName = "ITSELF";
 
 $ftpReader = new FTP_Reader();
 try {
-    $ftpReader->setFTPCredential("transfert.lysarc.info", "dr.kanoun.s", "!OVxGH13X!", 22, true);
+    $ftpReader->setFTPCredential();
     $ftpReader->setFolder("/GAELO/ITSELF/ExportCS");
     $ftpReader->setSearchedFile($studyName . '_PATIENTS.txt');
     $ftpReader->setLastUpdateTimingLimit(10*24 * 60);
     $files = $ftpReader->getFilesFromFTP();
 } catch (Exception $e) {
     print($e->getMessage());
-    sendFailedReadFTP();
+    sendFailedReadFTP($e->getMessage());
 }
 
 $fileAsString = file_get_contents($files[0]);
@@ -67,15 +67,17 @@ try{
 
 //Send the email to administrators of the plateforme
 $email = new Send_Email($linkpdo);
+$email->addGroupEmails($studyName, User::SUPERVISOR);
+$email->setSubject('Auto Import Report');
 $email->setMessage($importPatient->getHTMLImportAnswer());
-$destinators=$email->getRolesEmails(User::SUPERVISOR, $studyName);
-$email->sendEmail($destinators, 'Import Report');
+$email->sendEmail();
 
-function sendFailedReadFTP(){
+function sendFailedReadFTP($exceptionMessage){
     global $linkpdo;
     $email = new Send_Email($linkpdo);
-    $email->setMessage("FTP Import Has failed");
-    $destinators=$email->getAdminsEmails();
-    $email->sendEmail($destinators, 'FTP Import Failed');
+    $email->setMessage("FTP Import Has failed <br> Reason : ".$exceptionMessage);
+    $email->setSubject('Auto Import Failed');
+    $email->addAminEmails();
+    $email->sendEmail();
 
 }

@@ -587,27 +587,20 @@ class Visit{
      */
     private function sendUploadedVisitEmailToController(?string $username){
         
-        $emailObject=new Send_Email($this->linkpdo);
-
-        $message = "The following visit has been uploaded on the platform: <br>
-                  Patient Number : ".$this->patientCode."<br>
-                  Uploaded visit : ".$this->visitType."<br>";
-        
-        $emailObject->setMessage($message);
-        
         if($this->uploadStatus==Visit::DONE 
             && $this->stateInvestigatorForm==Visit::DONE 
             && $this->stateQualityControl==Visit::NOT_DONE){
-			//Inform Controllers that Visit is uploaded and awaiting QC
-            $emailsController=$emailObject->getRolesEmails(User::CONTROLLER, $this->study);
-            $emailsMonitor=$emailObject->getRolesEmails(User::MONITOR, $this->study);
-            $emailsSupervisor=$emailObject->getRolesEmails(User::SUPERVISOR, $this->study);
-            $email=array_merge($emailsController, $emailsMonitor, $emailsSupervisor);
+            //Inform Controllers that Visit is uploaded and awaiting QC
+            $emailObject=new Send_Email($this->linkpdo);
+            $emailObject->addGroupEmails($this->study, User::CONTROLLER)
+                        ->addGroupEmails($this->study, User::MONITOR)
+                        ->addGroupEmails($this->study, User::SUPERVISOR);
+			
             if($username!=null) {
-                $email[]=$emailObject->getUserEmails($username);
+                $emailObject->addEmail($emailObject->getUserEmails($username));
             }
-            error_log("UploadEmails".implode(';', $email));
-            $emailObject->sendEmail($email, $this->study.' - New upload');
+            $emailObject->sendUploadedVisitMessage($this->patientCode,$this->visitType);
+
             return true;
             
         } else {
@@ -619,43 +612,18 @@ class Visit{
      * Send emails to reviewers saying the visit is available for review
      */
     private function sendAvailableReviewMail(){
-        
         $emailObject=new Send_Email($this->linkpdo);
-        
-        $message = "The following visit is ready for review in the platform: <br>
-                  Patient Number : ".$this->patientCode."<br>
-                  Uploaded visit : ".$this->visitType."<br>";
-        
-        $emailObject->setMessage($message);
-        
-        $email=$emailObject->getRolesEmails(User::REVIEWER, $this->study);
-        
-        error_log("ReviewEmailNotification".implode(';', $email));
-        
-        $emailObject->sendEmail($email, $this->study.' - Visit Awaiting Review');
-
-        
+        $emailObject->addGroupEmails($this->study, User::REVIEWER);
+        $emailObject->sendReviewReadyMessage($this->patientCode, $this->visitType);    
     }
     
     /**
      * Send emails to supervisors when visit recieved and QC done and does not need review process
      */
     private function sendUploadNotificationToSupervisor(){
-        
         $emailObject=new Send_Email($this->linkpdo);
-        
-        $message = "The following visit has been uploaded to the platform: <br>
-                  Patient Number : ".$this->patientCode."<br>
-                  Uploaded visit : ".$this->visitType."<br>";
-        
-        $emailObject->setMessage($message);
-        
-        $email=$emailObject->getRolesEmails(User::SUPERVISOR, $this->study);
-        
-        error_log("SupervisorEmailNotification".implode(';', $email));
-        
-        $emailObject->sendEmail($email, $this->study.' - Visit Recieved');
-        
+        $emailObject->addGroupEmails($this->study, User::SUPERVISOR);
+        $emailObject->sendUploadedVisitMessage($this->patientCode, $this->visitType);     
     }
     
     /**
@@ -672,10 +640,8 @@ class Visit{
      * @return boolean
      */
     public function isAwaitingReviewForReviewerUser(string $username){
-        
         $reviewForReviwer=$this->queryExistingReviewForReviewer($username);
         if(empty($reviewForReviwer)) return true; else return false;
-        
     }
     
     /**

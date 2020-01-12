@@ -390,25 +390,12 @@ class User {
      */
     private function sendBlockedEmail(){
         //Get all studies assosciated with account
-        $etude = $this->linkpdo->prepare('SELECT DISTINCT study FROM roles, studies 
-                                                    WHERE username = :username AND roles.study=studies.name AND studies.active=1');
-        $etude->execute(array('username' => $this->username));
-        $results=$etude->fetchAll(PDO::FETCH_COLUMN);
+        $linkedStudies=$this->getAllStudiesWithRole();
         //Send Email notification
-        $etudesString= implode('<br>', $results);
-        
-        $message = 'The following user account is blocked after too many bad password
-                attempts.<br>
-                Username : '.$this->username.'<br>
-                The account is linked to the following studies:<br>
-                '. $etudesString.' </br>';
-                
         $sendEmail=new Send_Email($this->linkpdo);
-        //Destination list = administrators and user
-        $destinators=$sendEmail->getAdminsEmails();
-        $destinators[]=$sendEmail->getUserEmails($this->username);
-        $sendEmail->setMessage($message);
-        $sendEmail->sendEmail($destinators, 'Account Blocked');
+        $sendEmail->addAminEmails()->addEmail($this->userEmail);
+        $sendEmail->sendBlockedAccountNotification($this->username, $linkedStudies);
+
     }
     
     /**

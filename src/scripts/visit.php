@@ -64,16 +64,8 @@ if($_SERVER['REQUEST_METHOD']==='GET'){
             if($statusDone === 'Not Done'){
 
                 $emailObject = new Send_Email($linkpdo);
-
-                $message="A Not Done visit has been created <br>
-                Patient Number : ".$patientCode."<br>
-                Study : ".$study."<br> 
-                Visit Type : ".$visitType."<br>
-                Creating Username : ".$userObject->lastName." ".$userObject->firstName."<br>";
-
-                $supervisorsEmails=$emailObject->getRolesEmails(User::SUPERVISOR, $study);
-                $emailObject->setMessage($message);
-                $emailObject->sendEmail($supervisorsEmails, "Visit Not Done");
+                $emailObject->addGroupEmails($study, User::SUPERVISOR);
+                $emailObject->sendCreatedNotDoneVisitNotification($patientCode, $study, $visitType, $userObject->username);
 
             }
 

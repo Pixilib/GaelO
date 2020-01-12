@@ -200,31 +200,21 @@ abstract class Form_Processor {
 		if($reviewStatus == Form_Processor::WAIT_ADJUDICATION){
 
 			$email=new Send_Email($this->linkpdo);
-			$message="Review of the following visit is awaiting adjudication <br>
-                Patient Number:".$this->visitObject->patientCode."<br>
-                Visit : ".$this->visitObject->visitType."<br>
-                The visit is awaiting for your adjudication review";
-			$destinatorsEmails=$email->getRolesEmails(User::REVIEWER, $this->visitObject->study);
-			$supervisorEmails=$email->getRolesEmails(User::SUPERVISOR, $this->visitObject->study);
-			array_push($destinatorsEmails, ...$supervisorEmails);
-			$email->setMessage($message);
-			$email->sendEmail($destinatorsEmails, "Awaiting Adjudication");
+			//SK A AMELIORER POUR EVITER DE MAILIER LES REVIEWER QUI ONT DEJA REPONDU
+			//NECESSITE DE FILTER LA LISTE DES REVIEWERS DE L ETUDE
+			$email->addGroupEmails($this->visitObject->study, User::REVIEWER)
+					->addGroupEmails($this->visitObject->study, User::SUPERVISOR);
+			$email->sendAwaitingAdjudicationMessage($this->visitObject->patientCode, $this->visitObject->visitType);
 
 		}else if($reviewStatus == Form_Processor::DONE){
 
 			$email=new Send_Email($this->linkpdo);
-			$message="Review of the following visit is concluded <br>
-                Patient Number:".$this->visitObject->patientCode."<br>
-				Visit : ".$this->visitObject->visitType."<br>
-				Conclusion Value : ".$conclusionValue ;
-			$destinatorsEmails=$email->getRolesEmails(User::MONITOR, $this->visitObject->study);
-			$supervisorEmails=$email->getRolesEmails(User::SUPERVISOR, $this->visitObject->study);
 			$uploaderUserObject=new User($this->visitObject->uploaderUsername, $this->linkpdo);
-			$uploaderEmails=$uploaderUserObject->userEmail;
-			array_push($destinatorsEmails, ...$supervisorEmails);
-			array_push($destinatorsEmails, $uploaderEmails);
-			$email->setMessage($message);
-			$email->sendEmail($destinatorsEmails, "Visit Concluded");
+			$uploaderEmail=$uploaderUserObject->userEmail;
+			$email->addGroupEmails($this->visitObject->study, User::MONITOR)
+					->addGroupEmails($this->visitObject->study, User::SUPERVISOR)
+					->addEmail($uploaderEmail);
+			$email->sendVisitConcludedMessage($this->visitObject->patientCode, $this->visitObject->visitType, $conclusionValue);
 
 		}
 	}

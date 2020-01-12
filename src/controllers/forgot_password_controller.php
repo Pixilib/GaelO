@@ -37,16 +37,10 @@ if (isset($_POST['send'])){
 		//Log reset password event
 		Tracker::logActivity($username, "User", null, null, "Ask New Password", null);
 
-		$message = "This automatic e-mail contains your new temporary password for your
-          user account.<br>
-          Username : ".$username." <br>
-          Temporary password : ".$new_mdp." <br>
-          You will be asked to change this password at your first connection.<br>";
-
 		// Send Email
 		$sendEmail=new Send_Email($linkpdo);
-		$sendEmail->setMessage($message);
-		$sendEmail->sendEmail($email, 'New Password');
+		$sendEmail->addEmail($email);
+		$sendEmail->sendNewPasswordEmail($username,$new_mdp);
 		
 		$answer="Success";
 
@@ -56,17 +50,8 @@ if (isset($_POST['send'])){
         $linkedStudy=$userObject->getAllStudiesWithRole();
 		
 		$sendEmail=new Send_Email($linkpdo);
-		  
-		$message = "The password change request cannot be done because the account is Deactivated<br>
-          Username : ".$username."<br>
-          The account is linked to the following studies:".implode(',', $linkedStudy)."<br>
-          Please contact the ".$sendEmail->corporation." to activate your account:<br>
-          ".$sendEmail->adminEmail."<br>";
-
-		$sendEmail->setMessage($message);
-		$emails=$sendEmail->getAdminsEmails();
-		array_push($emails, $email);
-		$result=$sendEmail->sendEmail($emails, 'Blocked account');
+		$sendEmail->addAminEmails()->addEmail($email);
+		$sendEmail->sendBlockedAccountNoPasswordChangeEmail($username, $linkedStudy); 
 		
 		$answer="Blocked";
 		

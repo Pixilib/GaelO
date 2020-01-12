@@ -234,21 +234,10 @@ function warningAdminError(string $errorMessage, PDO $linkpdo){
 	global $zipPath;
 	global $study;
 	global $username;
-	
-	$message="An Import Error occured during validation of upload <br>
-	Visit ID : ".$visitObject->id_visit."<br>
-    Patient Code : ".$visitObject->patientCode."<br>
-    Visit Type : ".$visitObject->visitType."<br>
-	Study : ".$study."<br>
-	zipPath : ".$zipPath."<br>
-	username: ".$username."<br>
-	error  : ".$errorMessage."<br>" ;
-	
-	$destinators=$sendEmails->getRolesEmails(User::SUPERVISOR, $study);
-	$destinators[]=$sendEmails->getUserEmails($username);
-	
-	$sendEmails->setMessage($message);
-	$sendEmails->sendEmail($destinators, "Error During Import");
+
+	$sendEmails->addGroupEmails($study, User::SUPERVISOR)->addEmail($sendEmails->getUserEmails($username));
+	$sendEmails->sendUploadValidationFailure($visitObject->id_visit, $visitObject->patientCode, $visitObject->visitType,
+			$study, $zipPath, $username, $errorMessage);
 }
 
 /**

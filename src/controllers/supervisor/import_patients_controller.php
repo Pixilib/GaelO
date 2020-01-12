@@ -42,8 +42,9 @@ if ($accessCheck && $_SESSION['role'] == User::SUPERVISOR) {
         //Send the email to administrators of the plateforme
         $email = new Send_Email($linkpdo);
         $email->setMessage($htmlReport);
-        $destinators=$email->getRolesEmails(User::SUPERVISOR, $_SESSION['study']);
-        $email->sendEmail($destinators, 'Import Report');
+        $email->addGroupEmails($_SESSION['study'], User::SUPERVISOR);
+        $email->setSubject('Import Report');
+        $email->sendEmail();
         
         //Print the sent Report in the web page
         echo($htmlReport);

@@ -155,15 +155,8 @@ if (isset($_SESSION['admin'])) {
                 $userObject->setUnconfirmedAccount($new_mdp);
                 
                 $mail=new Send_Email($linkpdo);
-                
-                $message = "Your account password is reset. Please log in at: ".$mail->webAddress."<br>
-				Username : $username<br>
-				Temporary password : $new_mdp<br>
-				You will be asked to change this password at your first log in attempt<br>
-				on the platform.<br>";
-                
-                $mail->setMessage($message);
-                $mail->sendEmail($email, 'Reactivation');
+                $mail->addEmail($email);
+                $mail->sendModifyUserMessage($username, $new_mdp);
                 
             }
             
