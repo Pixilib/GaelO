@@ -1,6 +1,5 @@
 Passage Visit Group : 
-=> Study  public function getSpecificGroup(String $groupModality) => Reste que le visit builder
-=> study getStudySpecificGroupManager => devrait aussi surement disparaitre => Reste statistics
+=> study getStudySpecificGroupManager => Reste statistics
 
 Refactoring : 
 Se repencher sur la logique du modele
