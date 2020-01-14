@@ -1,5 +1,4 @@
 <?php
-
 /**
  Copyright (C) 2018 KANOUN Salim
  This program is free software; you can redistribute it and/or modify
@@ -21,11 +20,10 @@
 class Patient_Visit_Manager
 {
 
-    private $patientCode;
-    private $linkpdo;
-    private $study;
-    private $patientObject;
-    private $visitGroup;
+    protected $patientCode;
+    protected $linkpdo;
+    protected $patientObject;
+    protected $visitGroup;
 
     //Constants visit status available
     const DONE = "Done";
@@ -45,7 +43,6 @@ class Patient_Visit_Manager
         $this->linkpdo = $linkpdo;
         $this->patientCode = $patientObject->patientCode;
         $this->patientObject = $patientObject;
-        $this->study = $this->patientObject->patientStudy;
         $this->visitGroup = $visitGroup;
     }
 
@@ -83,37 +80,17 @@ class Patient_Visit_Manager
     }
 
     /**
-     * Return array of non created visit name for current patient
+     * Return array of available visits to create
+     * Throw exception is patient withdraw or no possible visits
+     * Can be overriden for custom visit creation workflow
      */
-    public function getNotCreatedVisitName()
-    {
-        $allPossibleVisits=$this->visitGroup->getAllVisitTypesOfGroup();
-        $createdVisits = $this->getCreatedPatientsVisits();
-
-        $createdVisitName = array_map(function (Visit $visit) {
-            return $visit->visitType;
-        },  $createdVisits);
-
-        $possibleVisitName = array_map(function (Visit_Type $visitType) {
-            return $visitType->name;
-        },  $allPossibleVisits);
-
-        $missingVisitName = array_diff($possibleVisitName, $createdVisitName);
-
-        return $missingVisitName;
-    }
-
-    //Retourne : la visite en attente de creation en 1er => celle apres la derniere crée et n+1 si visite optionnelle
-    //et les visites suprimées
-    //SK A Tester
-    public function getAvailableVisitsToCreate()
+    public function getAvailableVisitsToCreate() : Array
     {
         $availableVisitName = [];
 
         // if withdraw disallow visit creation
         if ($this->patientObject->patientWithdraw) {
-            $availableVisitName[] = Patient::PATIENT_WITHDRAW;
-            return $availableVisitName;
+            throw new Exception(Patient::PATIENT_WITHDRAW);
         }
 
         $allPossibleVisits=$this->visitGroup->getAllVisitTypesOfGroup();
@@ -157,7 +134,7 @@ class Patient_Visit_Manager
         $availableVisitName = array_reverse($availableVisitName);
 
         if (empty($availableVisitName)) {
-            $availableVisitName[] = "Error - Please check that the study contains possible visits";
+            throw new Exception('No possible visit');
         }
 
         return $availableVisitName;
@@ -167,10 +144,16 @@ class Patient_Visit_Manager
      * Return if there are still visits that are awaiting to be created for this patient
      * @return boolean
      */
-    public function isMissingVisit()
+    public function isMissingVisit() : bool
     {
-        if (sizeof($this->getNotCreatedVisitName()) > 0) return true;
-        else return false;
+        try{
+            if( ! empty( $this->getAvailableVisitsToCreate() ) ) {
+                return true;
+            }
+        }catch (Exception $e) {
+            //if exception happens no visits are missing
+            return false;
+        }
     }
 
     /**

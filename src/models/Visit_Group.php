@@ -72,6 +72,10 @@ class Visit_Group
         return $visitTypeArray;
     }
 
+    public function getAllVisitTypesOfGroupIterator(){
+        return new Visit_Type_Iterator($this->getAllVisitTypesOfGroup());
+    }
+
     public function getStudyVisitManager(){
         $studyObject=new Study($this->studyName, $this->linkpdo);
         return new Study_Visit_Manager($studyObject, $this, $this->linkpdo);

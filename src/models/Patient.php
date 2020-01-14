@@ -187,7 +187,12 @@ class Patient{
         $visitsObjectArray = [];
 
         foreach($possiblevisitsGroups as $visitGroup){
-            $availableVisits=$this->getPatientVisitManager($visitGroup)->getAvailableVisitsToCreate();
+            try{
+                $availableVisits=$this->getPatientVisitManager($visitGroup)->getAvailableVisitsToCreate();
+            }catch (Exception $e){
+                $availableVisits=array($e->getMessage());
+            }
+
             $visitsObjectArray [$visitGroup->groupModality]['visitsName'] = $availableVisits;
             $visitsObjectArray [$visitGroup->groupModality]['groupId'] = $visitGroup->groupId;
         }
