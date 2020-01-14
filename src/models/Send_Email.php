@@ -393,9 +393,10 @@ Class Send_Email {
 
     }
 
-    public function sendQCDesicionEmail(String $controlDecision, String $patientCode, String $visitType, $formDecision, $formComment, $imageDecision, $imageComment){
+    public function sendQCDesicionEmail(String $controlDecision, String $study, String $patientCode, String $visitType, $formDecision, $formComment, $imageDecision, $imageComment){
         $message="Quality Control of the following visit has been set to : ".$controlDecision."<br>
-                Patient Number:".$patientCode."<br>
+                Study : ".$study."<br>
+                Patient Number : ".$patientCode."<br>
                 Visit : ".$visitType."<br>
                 Investigation Form : ".$formDecision." Comment :".$formComment."<br>
                 Image Series : ".$imageDecision." Comment :".$imageComment." <br>";
@@ -440,24 +441,27 @@ Class Send_Email {
         
     }
 
-    public function sendReviewReadyMessage(int $patientCode, String $visitType){
+    public function sendReviewReadyMessage(String $study, int $patientCode, String $visitType){
         $message="The following visit is ready for review in the platform: <br>
-        Patient Number:".$patientCode."<br>
+        Study : ".$study."<br>
+        Patient Number : ".$patientCode."<br>
         Visit : ".$visitType."<br>";
         $this->setMessage($message);
         $this->subject= "Awaiting Review";
         $this->sendEmail();
     }
 
-    public function sendCorrectiveActionDoneMessage(bool $done, int $patientCode, String $visitType){
+    public function sendCorrectiveActionDoneMessage(bool $done, String $study, int $patientCode, String $visitType){
 
         if (! $done) {
-		    $message = "No corrective action could be applied on the following visit: <br>
+            $message = "No corrective action could be applied on the following visit: <br>
+                        Study : " . $study . "<br>
 			            Patient Number : " . $patientCode . "<br>
 			            Uploaded visit : " . $visitType . "<br>";
 		} 
 		else {
-		    $message = "A corrective action was applied on the following visit: <br>
+            $message = "A corrective action was applied on the following visit: <br>
+                        Study : " . $study . "<br>
 		          		Patient Number : " . $patientCode . "<br>
 		          		Uploaded visit : " . $visitType . "<br>";
 			
@@ -480,9 +484,10 @@ Class Send_Email {
         $this->sendEmail();
     }
 
-    public function sendAwaitingAdjudicationMessage(int $patientCode , String $visitType){
+    public function sendAwaitingAdjudicationMessage(String $study, int $patientCode , String $visitType){
         $message="Review of the following visit is awaiting adjudication <br>
-        Patient Number:".$patientCode."<br>
+        Study : ".$study."<br>
+        Patient Number : ".$patientCode."<br>
         Visit : ".$visitType."<br>
         The visit is awaiting for your adjudication review";
 
@@ -491,9 +496,10 @@ Class Send_Email {
         $this->sendEmail();
     }
 
-    public function sendVisitConcludedMessage(int $patientCode, String $visitType, $conclusionValue){
+    public function sendVisitConcludedMessage(String $study, int $patientCode, String $visitType, $conclusionValue){
         $message="Review of the following visit is concluded <br>
-                Patient Number:".$patientCode."<br>
+                Study : ".$study."<br>
+                Patient Number : ".$patientCode."<br>
 				Visit : ".$visitType."<br>
                 Conclusion Value : ".$conclusionValue ;
 
@@ -514,8 +520,9 @@ Class Send_Email {
         $this->sendEmail();
     }
 
-    public function sendUploadedVisitMessage($patientCode, $visitType){
+    public function sendUploadedVisitMessage($study, $patientCode, $visitType){
         $message = "The following visit has been uploaded on the platform: <br>
+        Study : ".$study."<br>
         Patient Number : ".$patientCode."<br>
         Uploaded visit : ".$visitType."<br>";
 

@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Client :  localhost
--- Généré le :  Lun 06 Janvier 2020 à 23:35
+-- Généré le :  Lun 13 Janvier 2020 à 01:07
 -- Version du serveur :  5.7.28-0ubuntu0.16.04.2
 -- Version de PHP :  7.3.13-1+ubuntu16.04.1+deb.sury.org+1
 
@@ -946,6 +946,12 @@ ALTER TABLE `visits`
   ADD CONSTRAINT `usernameController` FOREIGN KEY (`controller_username`) REFERENCES `users` (`username`),
   ADD CONSTRAINT `usernameCorrective` FOREIGN KEY (`corrective_action_username`) REFERENCES `users` (`username`),
   ADD CONSTRAINT `visits_group_id` FOREIGN KEY (`visit_group_id`,`visit_type`) REFERENCES `visit_type` (`group_id`, `name`);
+
+--
+-- Contraintes pour la table `visit_group`
+--
+ALTER TABLE `visit_group`
+  ADD CONSTRAINT `study_fk` FOREIGN KEY (`study`) REFERENCES `studies` (`name`);
 
 --
 -- Contraintes pour la table `visit_type`

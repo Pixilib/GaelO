@@ -145,9 +145,9 @@ class Patient{
         $specificObjectFile=$_SERVER["DOCUMENT_ROOT"]."/data/form/Poo/".$this->patientStudy."_Patient_Visit_Manager.php";
             
         if(is_file($specificObjectFile)){
-            require($specificObjectFile);
-            $objectName=$this->patientStudy."_Patient_Visit_Manager.php";
-            return new $objectName($this);
+            require_once($specificObjectFile);
+            $objectName=$this->patientStudy."_Patient_Visit_Manager";
+            return new $objectName($this, $visitGroupObject, $this->linkpdo);
         }else{
             return new Patient_Visit_Manager($this, $visitGroupObject, $this->linkpdo);
         }

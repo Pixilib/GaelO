@@ -599,7 +599,7 @@ class Visit{
             if($username!=null) {
                 $emailObject->addEmail($emailObject->getUserEmails($username));
             }
-            $emailObject->sendUploadedVisitMessage($this->patientCode,$this->visitType);
+            $emailObject->sendUploadedVisitMessage($this->study, $this->patientCode,$this->visitType);
 
             return true;
             
@@ -614,7 +614,7 @@ class Visit{
     private function sendAvailableReviewMail(){
         $emailObject=new Send_Email($this->linkpdo);
         $emailObject->addGroupEmails($this->study, User::REVIEWER);
-        $emailObject->sendReviewReadyMessage($this->patientCode, $this->visitType);    
+        $emailObject->sendReviewReadyMessage($this->study, $this->patientCode, $this->visitType);    
     }
     
     /**
@@ -623,7 +623,7 @@ class Visit{
     private function sendUploadNotificationToSupervisor(){
         $emailObject=new Send_Email($this->linkpdo);
         $emailObject->addGroupEmails($this->study, User::SUPERVISOR);
-        $emailObject->sendUploadedVisitMessage($this->patientCode, $this->visitType);     
+        $emailObject->sendUploadedVisitMessage($this->study, $this->patientCode, $this->visitType);     
     }
     
     /**

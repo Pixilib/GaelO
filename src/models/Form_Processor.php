@@ -204,7 +204,7 @@ abstract class Form_Processor {
 			//NECESSITE DE FILTER LA LISTE DES REVIEWERS DE L ETUDE
 			$email->addGroupEmails($this->visitObject->study, User::REVIEWER)
 					->addGroupEmails($this->visitObject->study, User::SUPERVISOR);
-			$email->sendAwaitingAdjudicationMessage($this->visitObject->patientCode, $this->visitObject->visitType);
+			$email->sendAwaitingAdjudicationMessage($this->visitObject->study, $this->visitObject->patientCode, $this->visitObject->visitType);
 
 		}else if($reviewStatus == Form_Processor::DONE){
 
@@ -214,7 +214,7 @@ abstract class Form_Processor {
 			$email->addGroupEmails($this->visitObject->study, User::MONITOR)
 					->addGroupEmails($this->visitObject->study, User::SUPERVISOR)
 					->addEmail($uploaderEmail);
-			$email->sendVisitConcludedMessage($this->visitObject->patientCode, $this->visitObject->visitType, $conclusionValue);
+			$email->sendVisitConcludedMessage($this->visitObject->study, $this->visitObject->patientCode, $this->visitObject->visitType, $conclusionValue);
 
 		}
 	}

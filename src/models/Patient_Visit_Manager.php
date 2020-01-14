@@ -118,6 +118,9 @@ class Patient_Visit_Manager
 
         $allPossibleVisits=$this->visitGroup->getAllVisitTypesOfGroup();
         $createdVisits = $this->getCreatedPatientsVisits();
+        $createdVisitsNameArray=array_map(function (Visit $visit) {
+            return $visit->visitType;
+        },  $createdVisits);
 
         $createdVisitOrder = array_map(function (Visit $visit) {
             return $visit->getVisitCharacteristics()->visitOrder;
@@ -129,10 +132,14 @@ class Patient_Visit_Manager
             $lastCreatedVisitOrder = max($createdVisitOrder);
         }
 
-
         foreach ($allPossibleVisits as $possibleVisit) {
 
-            if ($possibleVisit->visitOrder < $lastCreatedVisitOrder) {
+            if(in_array($possibleVisit->name, $createdVisitsNameArray) ){
+                //Already created do not display it
+                continue;
+            }
+
+            if ($possibleVisit->visitOrder < $lastCreatedVisitOrder ) {
                 $availableVisitName[] = $possibleVisit->name;
             } else if($possibleVisit->visitOrder > $lastCreatedVisitOrder) {
                 if ($possibleVisit->optionalVisit) {
