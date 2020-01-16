@@ -6,7 +6,7 @@ Se repencher sur la logique du modele
 passe tout acces aux visites via visit group manager
 Le niveau patient et study iterent sur le group level
 Fusionner le tree et l'API get review
-
+Se penche sur la GUI de creation de visistes
 + Tard : 
 Reminder Visit Upload manager a revoir
 Review reminder a revoir

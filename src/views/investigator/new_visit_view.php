@@ -22,9 +22,17 @@
     $(document).ready(function () {
 
 		const visitsToCreate= <?=json_encode($typeVisiteDispo)?>
+
+		function isPatientWithdrawn(visitNames){
+			if(visitNames[0]=="<?=Patient::PATIENT_WITHDRAW ?>"){
+				$("#addVisitForm :input").prop("disabled", true);
+			}
+
+		}
 		
 		if(Object.keys(visitsToCreate).length ==1 ){
 			let firstKey=Object.keys(visitsToCreate)[0];
+			isPatientWithdrawn(visitsToCreate[firstKey]['visitsName'])
 			visitsToCreate[firstKey]['visitsName'].forEach(visit=>{
 				$("#visite").append(new Option(visit, visit))
 			})
@@ -105,13 +113,6 @@
 			});
     			 
     	});
-    
-    	<?php
-        // If patient withdrawn disable all the form
-        if ($typeVisiteDispo[0] == Patient::PATIENT_WITHDRAW) {
-            ?> $("#addVisitForm :input").prop("disabled", true); <?php
-        }
-        ?>
     		
     });
 		 
