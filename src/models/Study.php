@@ -260,8 +260,8 @@ Class Study {
         return $rolesList;
     }
 
-    public function getStatistics() {
-        return new Statistics($this);
+    public function getStatistics(String $modality) {
+        return new Statistics($this, $modality);
     }
     
     public function changeStudyActivation(bool $activated){

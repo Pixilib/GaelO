@@ -1,5 +1,5 @@
 Passage Visit Group : 
-=> study getStudySpecificGroupManager => Reste statistics=> peut etre concatener VisitGroup et VisitName
+=> Controleur statitics a generaliser pour autres modalite
 
 Refactoring : 
 Se repencher sur la logique du modele
@@ -7,10 +7,11 @@ passe tout acces aux visites via visit group manager
 Le niveau patient et study iterent sur le group level
 Fusionner le tree et l'API get review
 Se penche sur la GUI de creation de visistes
+
 + Tard : 
 Reminder Visit Upload manager a revoir
 Review reminder a revoir
-Download manager a valier
+Download manager a valider
 Nb tree : si une visite review ajoute toute les autre groups visits en lecture
 A voir securité access review => dissocier niveau de reviewer ou jouer sur les job ?
 

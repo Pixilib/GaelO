@@ -21,12 +21,9 @@ class Statistics {
 	public $studyObject;
 	private $studyVisitManager;
 
-	public function __construct(Study $study){
+	public function __construct(Study $study, String $modalityType){
 		$this->studyObject=$study;
-		//Cette ligne doit venir du constructeur
-		//SK A GENERALISER
-		$this->studyVisitManager=$this->studyObject->getStudySpecificGroupManager(Visit_Group::GROUP_MODALITY_PET);
-		
+		$this->studyVisitManager=$this->studyObject->getStudySpecificGroupManager($modalityType);
 	}
 
 	/**

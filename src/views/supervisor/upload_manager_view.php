@@ -42,7 +42,7 @@
                                                 patientCode, 
                                                 details.status, 
                                                 details.shouldBeDoneAfter, 
-                                                details.shouldBeDoneAfter, 
+                                                details.shouldBeDoneBefore, 
                                                 details.upload_status, 
                                                 details.acquisition_date,
                                                 details.compliancy,
