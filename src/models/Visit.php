@@ -333,6 +333,10 @@ class Visit{
         
         $reviewQuery->execute ( array('idVisit' => $this->id_visit, 'isLocal'=>intval($local)) );
         $reviewResults = $reviewQuery->fetchAll(PDO::FETCH_COLUMN);
+
+        if(empty($reviewResults)){
+            throw new Exception('No Review Found');
+        }
         
         if($local && sizeof($reviewResults)==1){
             return new Review($reviewResults[0], $this->linkpdo);
@@ -350,18 +354,21 @@ class Visit{
     
     /**
      * return the existing reviewer review for this visit
-     * @return null if no review for this reviewer in this visit
+     * @throws Exception if not available review for reviewer
      */
     public function queryExistingReviewForReviewer($username){
-        $reviewsObjects=$this->getReviewsObject(false);
         
+        $reviewsObjects=$this->getReviewsObject(false);
+
         foreach ($reviewsObjects as $review){
             if($review->username==$username){
                 return $review;
             }
         }
-        //If not found return null
-        return null;
+
+        if (empty($reviewsObjects)){
+            throw new Exception('No review for reviwer');
+        }
         
     }
 
@@ -640,8 +647,23 @@ class Visit{
      * @return boolean
      */
     public function isAwaitingReviewForReviewerUser(string $username){
-        $reviewForReviwer=$this->queryExistingReviewForReviewer($username);
-        if(empty($reviewForReviwer)) return true; else return false;
+
+        try{
+            $reviewObject=$this->queryExistingReviewForReviewer($username);
+        }catch(Exception $e){
+            //User does not have any review, so visit still awaiting it's review
+            return true;
+        }
+
+        //If found look at validation status.
+        //not awaiting review if form already validated
+        if($reviewObject->validated){
+            return false;
+        }else{
+            return true;
+        }
+        
+
     }
     
     /**

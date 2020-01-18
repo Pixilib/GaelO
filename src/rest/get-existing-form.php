@@ -33,10 +33,16 @@ if($visitAccessCheck){
     $result=[];
     
     $visitObject=new Visit($id_visit, $linkpdo);
-    $reviewObject=$visitObject->queryExistingReviewForReviewer($username);
-    $result=$reviewObject->getSpecificData();
-    
-    echo(json_encode($result));
+    try{
+        $reviewObject=$visitObject->queryExistingReviewForReviewer($username);
+        $result=$reviewObject->getSpecificData();
+        echo(json_encode($result));
+
+    }catch (Exception $e){
+        error_log($e->getMessage());
+        header('HTTP/1.0 404 Not Found');
+    }
+
     
 }else{
     header('HTTP/1.0 403 Forbidden');

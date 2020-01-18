@@ -56,8 +56,13 @@ if (isset($_SESSION['username']) && $patientAllowed) {
         if (isset($_POST['ask_corrective_action'])) {
             $controlDecision=Visit::QC_CORRECTIVE_ACTION_ASKED;
             //Make Investigator Form as Draft and update form status in visit
-            $localReviewObject=$visitObject->getReviewsObject(true);
-            $localReviewObject->unlockForm();
+            try{
+                $localReviewObject=$visitObject->getReviewsObject(true);
+                $localReviewObject->unlockForm();
+            }catch(Exception $e){
+                error_log($e->getMessage());
+            }
+
             $visitObject->changeVisitStateInvestigatorForm(Visit::LOCAL_FORM_DRAFT);
             
         }

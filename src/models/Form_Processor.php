@@ -225,16 +225,17 @@ abstract class Form_Processor {
 	 * @return array of the general and specific table
 	 */
 	public function getSavedForm(){
-	    
-	    if($this->local){
-	        $formObject=$this->visitObject->getReviewsObject(true);
-	    }else{
-	        $formObject=$this->visitObject->queryExistingReviewForReviewer($this->username);
-	    }
-	    
-	    if(!empty($formObject)){
-	        return $formObject;
-	    }
+		try{
+
+			if($this->local){
+				return $this->visitObject->getReviewsObject(true);
+			}else{
+				return $this->visitObject->queryExistingReviewForReviewer($this->username);
+			}
+
+		}catch(Exception $e){
+			error_log($e->getMessage());
+		}
 	    
 	    return null;
 		
