@@ -123,7 +123,10 @@ class Tree
 
     $resultTree = [];
     foreach ($patientsArray as $patientObject) {
-      $visitsArray = $patientObject->getAllCreatedPatientsVisits();
+      //If investigator display all created visits
+      if($this->role==User::INVESTIGATOR) $visitsArray = $patientObject->getAllCreatedPatientsVisits();
+      //if Reviewer display all QC accepted visits
+      if($this->role==User::REVIEWER) $visitsArray = $patientObject->getAllQcDonePatientsVisits();
       $stortedVisits = $this->processVisitsArray($visitsArray);
       $resultTree[$patientObject->patientCode]['patientObject'] = $patientObject;
       $resultTree[$patientObject->patientCode]['modalities'] = $stortedVisits;

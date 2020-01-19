@@ -77,10 +77,7 @@ if($permissionResults){
             $validatedForm=false;
         }
         
-        //Nothing to display + Form filling not allowed = Nothing to show
-        if($roleDisable && empty($results)){
-            exit();
-        }
+
         $visitGroupModality=$visitObject->visitGroupObject->groupModality;
         require 'views/investigator/specific_form_view.php';
         

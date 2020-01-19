@@ -80,6 +80,40 @@ class Patient_Visit_Manager
     }
 
     /**
+     * Return uploaded visits of a given patient
+     * @param bool $deletedVisits
+     * @return Visit[]
+     */
+    public function getQcDonePatientsVisits(bool $deletedVisits = false) : Array
+    {
+
+        $visitQuery = $this->linkpdo->prepare('SELECT id_visit FROM visits
+													INNER JOIN visit_type ON (visit_type.name=visits.visit_type AND visit_type.group_id=visits.visit_group_id)
+                                          			WHERE patient_code = :patientCode
+                                                    AND visits.visit_group_id = :groupId
+                                                    AND visits.state_quality_control = :qcStatus
+													AND visits.deleted=:deleted
+													ORDER BY visit_type.visit_order');
+
+
+        $visitQuery->execute(array(
+            'patientCode' => $this->patientCode,
+            'qcStatus' => Visit::QC_ACCEPTED,
+            'groupId' => $this->visitGroup->groupId,
+            'deleted' => $deletedVisits
+        ));
+
+        $visitsResults = $visitQuery->fetchAll(PDO::FETCH_COLUMN);
+
+        $visitsObjectArray = [];
+        foreach ($visitsResults as $idVisit) {
+            $visitsObjectArray[] = new Visit($idVisit, $this->linkpdo);
+        }
+
+        return $visitsObjectArray;
+    }
+
+    /**
      * Return array of available visits to create
      * Throw exception is patient withdraw or no possible visits
      * Can be overriden for custom visit creation workflow

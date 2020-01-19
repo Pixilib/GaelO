@@ -273,7 +273,14 @@ Class Study {
     
     public function isOriginalOrthancNeverKnown($anonFromOrthancStudyId){
         
-        $connecter = $this->linkpdo->prepare('SELECT Study_Orthanc_ID FROM orthanc_studies, visits WHERE orthanc_studies.id_visit=visits.id_visit AND Anon_From_Orthanc_ID=:Anon_From_Orthanc_ID AND visits.study=:study AND orthanc_studies.deleted=0 AND visits.deleted=0');
+        $connecter = $this->linkpdo->prepare('SELECT Study_Orthanc_ID FROM orthanc_studies, visits, visit_group 
+                                            WHERE orthanc_studies.id_visit=visits.id_visit
+                                            AND visits.visit_group_id = visit_group.id 
+                                            AND Anon_From_Orthanc_ID=:Anon_From_Orthanc_ID 
+                                            AND visit_group.study=:study 
+                                            AND orthanc_studies.deleted=0 
+                                            AND visits.deleted=0'
+                                            );
         $connecter->execute(array(
             "study" => $this->study,
             "Anon_From_Orthanc_ID"=>$anonFromOrthancStudyId

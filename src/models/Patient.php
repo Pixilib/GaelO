@@ -180,6 +180,24 @@ class Patient{
         return $visitsObjectArray;
     }
 
+
+     /**
+     * Return visits uploaded for this patient without group filter
+     */
+    public function getAllQcDonePatientsVisits(bool $deletedVisits = false) : Array
+    {
+        $possibleStudyGroups=$this->getAllPossibleVisitGroup();
+
+        $visitsObjectArray = [];
+
+        foreach($possibleStudyGroups as $studyGroup){
+            $createdVisits=$this->getPatientVisitManager($studyGroup)->getQcDonePatientsVisits($deletedVisits);
+            array_push($visitsObjectArray, ...$createdVisits);
+        }
+
+        return $visitsObjectArray;
+    }
+
     public function getAllVisitToCreate() : array {
 
         $possiblevisitsGroups=$this->getAllPossibleVisitGroup();

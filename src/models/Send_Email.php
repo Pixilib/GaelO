@@ -212,7 +212,7 @@ Class Send_Email {
         $htmlMessageObject = new \Html2Text\Html2Text($messageToSend);
         $mail->Body    = $messageToSend;
         $mail->AltBody = $htmlMessageObject->getText();
-        $mail->AddEmbeddedImage('assets/images/gaelo-logo-square.png', 'logo_gaelo');
+        $mail->AddEmbeddedImage($_SERVER['DOCUMENT_ROOT'].'/assets/images/gaelo-logo-square.png', 'logo_gaelo');
         
         
     }
@@ -284,7 +284,7 @@ Class Send_Email {
 		
 		$usersObjects=[];
 		foreach ($users as $user){
-			$usersObjects[]=new User($user, $$this->linkpdo);	
+			$usersObjects[]=new User($user, $this->linkpdo);	
 		}
 		
 		return $usersObjects;

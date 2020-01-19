@@ -118,7 +118,7 @@ if (isset($_SESSION['username']) && $patientAllowed) {
         $email->addGroupEmails($visitObject->study, User::SUPERVISOR)
                 ->addGroupEmails($visitObject->study, User::MONITOR)
                 ->addEmail($userObject->userEmail)
-                ->addEmail( $email->getUserEmails($uploaderUsername) );
+                ->addEmail( $email->getUserEmails($visitObject->uploaderUsername) );
         $email->setMessage($message);
         $patientCenter=$visitObject->getPatient()->getPatientCenter();
         $sameCenterEmails=$email->selectDesinatorEmailsfromCenters($visitObject->study, $patientCenter->code);
