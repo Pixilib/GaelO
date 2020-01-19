@@ -31,6 +31,15 @@ class FTP_Reader
     public $ftpFolder;
     public $ftpFileName;
     public $lastUpdateLimit;
+    private $linkpdo;
+
+    public function __construct($linkpdo)
+    {
+        $this->linkpdo=$linkpdo;
+        $this->ftpFileName = null;
+        $this->lastUpdateLimit = null;
+        $this->ftpFolder = '/';
+    }
 
     /**
      * 
@@ -42,9 +51,6 @@ class FTP_Reader
         $this->ftpPassword = $password;
         $this->ftpPort = $port;
         $this->ftpIsSftp = $ftpIsSftp;
-        $this->ftpFolder = '/';
-        $this->ftpFileName = null;
-        $this->lastUpdateLimit = null;
     }
 
     public function setFolder(String $folder)
@@ -120,21 +126,69 @@ class FTP_Reader
         return $filesArray;
     }
 
-    private function getSftp()
-    {
+    private function connectAndGoToFolder() {
 
-        $sftp = new SFTP($this->ftpHost);
+        if ($this->ftpIsSftp) {
 
-        if (!$sftp->login($this->ftpUsername, $this->ftpPassword)) {
-            throw new Exception('Login SFTP failed');
+            $sftp = new SFTP($this->ftpHost);
+            if (!$sftp->login($this->ftpUsername, $this->ftpPassword)) {
+                throw new Exception('Login SFTP failed');
+            }
+    
+            if (!$sftp->chdir($this->ftpFolder)) {
+                throw new Exception("Can't reach SFTP Path Target");
+            };
+
+            return $sftp;
+
+        } else {
+
+            if (!$ftpConnect = ftp_connect($this->ftpHost, $this->ftpPort)) {
+                throw new Exception('Cant Connect to Server' . $this->ftpHost);
+            }
+    
+            if (!ftp_login($ftpConnect, $this->ftpUsername, $this->ftpPassword)) {
+                ftp_close($ftpConnect);
+                throw new Exception('Login failed');
+            };
+    
+            //Move to the target folder
+            if (!ftp_chdir($ftpConnect, $this->ftpFolder)) {
+                ftp_close($ftpConnect);
+                throw new Exception("Can't reach FTP Path Target");
+            }
+
+            return $ftpConnect;
+
         }
 
-        if (!$sftp->chdir($this->ftpFolder)) {
-            throw new Exception("Can't reach SFTP Path Target");
-        };
+    }
 
-        //$sftp->get('remote_file', 'local_file');
-        //$sftp->put('remote_file', 'contents for remote file');
+    public function writeExportDataFile($studyName, String $file){
+
+        if ($this->ftpIsSftp) {
+
+            $sftp = $this->connectAndGoToFolder();
+
+            $result = $sftp->put("Export".$studyName, $file, SFTP::SOURCE_LOCAL_FILE);
+
+            return $result;
+
+        } else {      
+
+            $ftp = $this->connectAndGoToFolder();
+
+            $result = ftp_fput($ftp,"Export".$studyName, fopen($file, 'r'));
+
+            return $result;
+        }
+
+
+    }
+
+    private function getSftp()
+    {
+        $sftp = $this->connectAndGoToFolder();
 
         $fileArray = $sftp->nlist();
 
@@ -163,21 +217,7 @@ class FTP_Reader
 
     private function getFtp()
     {
-
-        if (!$ftpConnect = ftp_connect($this->ftpHost, $this->ftpPort)) {
-            throw new Exception('Cant Connect to Server' . $this->ftpHost);
-        }
-
-        if (!ftp_login($ftpConnect, $this->ftpUsername, $this->ftpPassword)) {
-            ftp_close($ftpConnect);
-            throw new Exception('Login failed');
-        };
-
-        //Move to the target folder
-        if (!ftp_chdir($ftpConnect, $this->ftpFolder)) {
-            ftp_close($ftpConnect);
-            throw new Exception("Can't reach FTP Path Target");
-        }
+        $ftpConnect = $this->connectAndGoToFolder();
 
         // Get files in the ftp folder
         $fileArray = ftp_nlist($ftpConnect, ".");
@@ -232,6 +272,16 @@ class FTP_Reader
         }
 
         return $results;
+    }
+
+
+    function sendFailedReadFTP($exceptionMessage){
+        $email = new Send_Email($this->linkpdo);
+        $email->setMessage("FTP Import Has failed <br> Reason : ".$exceptionMessage);
+        $email->setSubject('Auto Import Failed');
+        $email->addAminEmails();
+        $email->sendEmail();
+    
     }
 
 

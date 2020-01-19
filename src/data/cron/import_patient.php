@@ -28,16 +28,17 @@ echo ('ScriptStarted');
 
 $studyName = "ITSELF";
 
-$ftpReader = new FTP_Reader();
+$ftpReader = new FTP_Reader($linkpdo);    
+$ftpReader->setFTPCredential();
+$ftpReader->setFolder("/GAELO/".$studyName."/ExportCS");
+$ftpReader->setSearchedFile($studyName . '_PATIENTS.txt');
+$ftpReader->setLastUpdateTimingLimit(10*24 * 60);
+
 try {
-    $ftpReader->setFTPCredential();
-    $ftpReader->setFolder("/GAELO/ITSELF/ExportCS");
-    $ftpReader->setSearchedFile($studyName . '_PATIENTS.txt');
-    $ftpReader->setLastUpdateTimingLimit(10*24 * 60);
     $files = $ftpReader->getFilesFromFTP();
 } catch (Exception $e) {
+    $ftpReader->sendFailedReadFTP($e->getMessage());
     print($e->getMessage());
-    sendFailedReadFTP($e->getMessage());
 }
 
 $fileAsString = file_get_contents($files[0]);
@@ -47,7 +48,7 @@ print_r($arrayLysarc);
 $jsonImport = json_encode($arrayLysarc);
 print($jsonImport);
 
-$importPatient = new Import_Patient($jsonImport, "GaelO", $linkpdo);
+$importPatient = new Import_Patient($jsonImport, $studyName, $linkpdo);
 $importPatient -> readJson();
 
 print_r($importPatient->sucessList);
@@ -57,13 +58,8 @@ print_r($importPatient->failList);
 $actionDetails['Success']=$importPatient->sucessList;
 $actionDetails['Fail']=$importPatient->failList;
 $actionDetails['email']=$importPatient->getTextImportAnswer();
-try{
-    Tracker::logActivity("administrator", User::SUPERVISOR, "GaelO" , null , "Import Patients", $actionDetails);
+Tracker::logActivity("administrator", User::SUPERVISOR, $studyName , null , "Import Patients", $actionDetails);
 
-}catch (Exception $e){
-
-    print($e->getMessage());
-}
 
 //Send the email to administrators of the plateforme
 $email = new Send_Email($linkpdo);
@@ -72,12 +68,4 @@ $email->setSubject('Auto Import Report');
 $email->setMessage($importPatient->getHTMLImportAnswer());
 $email->sendEmail();
 
-function sendFailedReadFTP($exceptionMessage){
-    global $linkpdo;
-    $email = new Send_Email($linkpdo);
-    $email->setMessage("FTP Import Has failed <br> Reason : ".$exceptionMessage);
-    $email->setSubject('Auto Import Failed');
-    $email->addAminEmails();
-    $email->sendEmail();
 
-}

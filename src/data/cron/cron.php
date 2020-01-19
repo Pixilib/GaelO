@@ -33,6 +33,8 @@ $scheduler->php(__DIR__.'/import_patient.php')->wednesday(6, 00)->output('/var/l
 $scheduler->php(__DIR__.'/import_patient.php')->thursday(6, 00)->output('/var/log/gaelo_cron.log');
 $scheduler->php(__DIR__.'/import_patient.php')->friday(6, 00)->output('/var/log/gaelo_cron.log');
 
+$scheduler->php(__DIR__.'/export_data.php', null, array("GATA"))->sunday(21, 00)->output('/var/log/gaelo_cron.log');
+
 // Let the scheduler execute jobs which are due.
 $scheduler->run();
 
