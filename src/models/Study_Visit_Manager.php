@@ -134,11 +134,11 @@ class Study_Visit_Manager
 											AND status_done ="Done"
 											AND upload_status= "Done"
 											AND state_investigator_form="Done"
-                                            AND state_quality_control != :qcCorrectiveAction 
+                                            AND (state_quality_control = "Not Done"
+                                                OR state_quality_control = "Wait Definitive Conclusion")
 											ORDER BY visit_type.visit_order');
         $visitsQuery->execute(array(
-            'visitGroupId' => $this->visitGroupObject->groupId,
-            'qcCorrectiveAction' => Visit::QC_CORRECTIVE_ACTION_ASKED
+            'visitGroupId' => $this->visitGroupObject->groupId
         ));
 
         $visits = $visitsQuery->fetchAll(PDO::FETCH_COLUMN);

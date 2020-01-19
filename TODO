@@ -28,3 +28,7 @@ Emails a tester
 Table spécifique review necessite d'ajouter modalite pour eviter collusion de nom, idem nom fichiers scpeficique=> A tester
 Creer les groupes au moement de la creation de l'etude => A tester
 Visit Builder a tester
+
+//Ajout dans requirement install
+php-xml
+php-mbstring
