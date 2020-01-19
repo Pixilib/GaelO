@@ -1,13 +1,18 @@
 Passage Visit Group : 
 => Controleur statitics a generaliser pour autres modalite
+
+Simuler ITSELF : 
 Checker le code de la creation de visite
+Se pencher sur la GUI de creation de visistes
+Creer les groupes au moement de la creation de l'etude => A tester
+Verif absence collusion entre groupes
 
 Refactoring : 
 Se repencher sur la logique du modele
 passe tout acces aux visites via visit group manager
 Le niveau patient et study iterent sur le group level
-Fusionner le tree et l'API get review
-Se pencher sur la GUI de creation de visistes
+Fusionner le tree et l'API get review=> Recreer la hirarchie a partir de l'array
+Refaire un tour sur les commentaires
 
 Gata : 
 Load des form
@@ -24,9 +29,7 @@ A voir securité access review => dissocier niveau de reviewer ou jouer sur les 
 
 Tests:
 Source du review manager a revoir => A tester + verif que statistics ne casse pas trop
-Emails a tester
 Table spécifique review necessite d'ajouter modalite pour eviter collusion de nom, idem nom fichiers scpeficique=> A tester
-Creer les groupes au moement de la creation de l'etude => A tester
 Visit Builder a tester
 
 //Ajout dans requirement install
