@@ -66,7 +66,12 @@ Class Export_Study_Data{
 
     private function extractVisitGroupVisits(String $visitGroupModality) : Array {
 
-        $allcreatedVisits=$this->studyObject->getStudySpecificGroupManager($visitGroupModality)->getCreatedVisits();
+        $allcreatedVisits=[];
+        try{
+            $allcreatedVisits=$this->studyObject->getStudySpecificGroupManager($visitGroupModality)->getCreatedVisits();
+        }catch (Exception $e){
+            error_log($e->getMessage());
+        }
 
         $visitCSV=[];
 
@@ -111,7 +116,13 @@ Class Export_Study_Data{
 
     private function extractOrthancData(Study_Visit_Manager $visitManager) : String {
 
-        $allcreatedVisits=$visitManager->getCreatedVisits;
+        $allcreatedVisits=[];
+        try{
+            $allcreatedVisits=$visitManager->getCreatedVisits();
+        }catch(Exception $e){
+            error_log($e->getMessage());
+        }
+
 
         //Prepare Orthanc Series data CSV
         $orthancCSV[]=array('ID Visit', 'Study Orthanc ID',
@@ -151,6 +162,7 @@ Class Export_Study_Data{
     }
 
     //SK ICI RISQUE SORTIE DE MEMOIRE A EVALUER...
+    //GeNerator à prevoir ?
     private function getReviewDataGroup(Study_Visit_Manager $visitStudyManager) : Array {
 
         //Export Reviews
@@ -171,12 +183,29 @@ Class Export_Study_Data{
             
         }
 
-        $allcreatedVisits=$visitStudyManager->getCreatedVisits(false);
+        $allcreatedVisits=[];
+        try{
+            $allcreatedVisits=$visitStudyManager->getCreatedVisits(false);
+        }catch(Exception $e){
+            error_log($e->getMessage());
+        }
+
 
         foreach ($allcreatedVisits as $visit) {
             
-            $localReviews=$visit->getReviewsObject(true);
-            $expertReviews=$visit->getReviewsObject(false);
+            $localReviews=[];
+            try{
+                $localReviews=$visit->getReviewsObject(true);
+            }catch(Exception $e){
+                error_log($e->getMessage());
+            }
+
+            $expertReviews=[];
+            try{
+                $expertReviews=$visit->getReviewsObject(false);
+            }catch(Exception $e){
+                error_log($e->getMessage());
+            }
             
             //Merge all reviews in an array
             $reviews=[];

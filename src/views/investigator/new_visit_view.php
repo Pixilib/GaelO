@@ -38,6 +38,9 @@
 			})
 			$("#modalityDiv").hide()
 
+		}else{
+			$("#modalityGroup").prepend(new Option("Choose", "Choose"));
+			$("#modalityGroup option").eq(0).prop('selected', true);
 		}
 
 		$('#datePicker').datepicker({
@@ -51,7 +54,11 @@
 
 		$("#modalityGroup").on('change', function() {
 			$('#visite').empty()
-			let possibleVisits=visitsToCreate[$(this).val()]['visitsName']
+			
+			let selectedModality= $( "#modalityGroup option:selected" ).text().trim();
+			console.log(selectedModality)
+			console.log(visitsToCreate)
+			let possibleVisits=visitsToCreate[selectedModality]['visitsName']
 			possibleVisits.forEach(visit=>{
 				$("#visite").append(new Option(visit, visit))
 			})

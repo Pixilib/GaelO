@@ -836,10 +836,9 @@ ALTER TABLE `visit_group`
 --
 ALTER TABLE `visit_type`
   ADD PRIMARY KEY (`group_id`,`name`),
-  ADD UNIQUE KEY `name` (`name`,`visit_order`),
   ADD UNIQUE KEY `table_review_specific` (`table_review_specific`),
-  ADD KEY `group_id` (`group_id`),
-  ADD KEY `name_2` (`name`);
+  ADD UNIQUE KEY `group_id_2` (`group_id`,`visit_order`),
+  ADD KEY `group_id` (`group_id`);
 
 --
 -- AUTO_INCREMENT pour les tables exportées
