@@ -1,4 +1,5 @@
 <?php
+
 /**
  Copyright (C) 2018 KANOUN Salim
  This program is free software; you can redistribute it and/or modify
@@ -14,152 +15,223 @@
  */
 
 
-Class Export_Study_Data{
+class Export_Study_Data
+{
 
-	public $studyObject;
-	private $linkpdo;
+    public $studyObject;
+    private $allcreatedVisits;
 
+    public function __construct(Study $studyObject)
+    {
 
-	public function __construct(Study $studyObject, PDO $linkpdo){
-	    $this->studyObject=$studyObject;
-        $this->linkpdo=$linkpdo;
+        $this->studyObject = $studyObject;
+
+        $this->allcreatedVisits = [];
+
+        $visitGroupArray = $this->studyObject->getAllPossibleVisitGroups();
+
+        foreach ($visitGroupArray as $visitGroup) {
+
+            try {
+                $modalityCreatedVisit = $this->studyObject->getStudySpecificGroupManager($visitGroup->groupModality)->getCreatedVisits();
+                array_push($this->allcreatedVisits, ...$modalityCreatedVisit);
+            } catch (Exception $e) {
+                error_log($e->getMessage());
+            }
+        }
     }
 
     /**
      * Generate and fill the patients CSV
      */
-    public function exportPatientTable() : String {
+    public function exportPatientTable(): String
+    {
 
-        $patientCsv[]=array('Patient Code','Initials', 'Gender','Birthdate','Registration Date','Investigator Name', 'Center Code', 'Center Name', 'Country', 'Withdraw', 'Withdraw Reason', 'Withdraw Date');
-        
-        $patientsInStudy=$this->studyObject->getAllPatientsInStudy();
-        foreach ($patientsInStudy as $patient){
-            $patientCenter=$patient->getPatientCenter();
-            $patientCsv[]=array ($patient->patientCode, $patient->patientLastName.$patient->patientFirstName, $patient->patientGender,
+        $patientCsv[] = array('Patient Code', 'Initials', 'Gender', 'Birthdate', 'Registration Date', 'Investigator Name', 'Center Code', 'Center Name', 'Country', 'Withdraw', 'Withdraw Reason', 'Withdraw Date');
+
+        $patientsInStudy = $this->studyObject->getAllPatientsInStudy();
+        foreach ($patientsInStudy as $patient) {
+            $patientCenter = $patient->getPatientCenter();
+            $patientCsv[] = array(
+                $patient->patientCode, $patient->patientLastName . $patient->patientFirstName, $patient->patientGender,
                 $patient->patientBirthDate, $patient->patientRegistrationDate, $patient->patientInvestigatorName, $patientCenter->code, $patientCenter->name, $patientCenter->countryName,
-                $patient->patientWithdraw,$patient->patientWithdrawReason, $patient->patientWithdrawDateString );
+                $patient->patientWithdraw, $patient->patientWithdrawReason, $patient->patientWithdrawDateString
+            );
         }
 
-        $patientCsvString=$this->writeCsv($patientCsv);
+        $patientCsvString = $this->writeCsv($patientCsv);
 
         return $patientCsvString;
     }
 
-    public function exportVisitTable() : String {
+    public function exportVisitTable(): String
+    {
+
+        $visitCSV = [];
 
         //Prepare visit CSV
-        $visitCSV[]=array('Patient Code', 'Visit Group', 'ID Visit','Code Status', 'Creator Name', 'Creator Date',
-        'Type', 'Status', 'Reason For Not Done','Acquisition Date', 'Upload Status', 'Uploader', 
-        'Upload Date', 'State Investigator Form', 'State QC', 'QC done by', 'QC date', 'Review Status', 'Review Date','Review Conclusion', 'visit deleted');
+        $visitCSV[] = array(
+            'Patient Code', 'Visit Group', 'ID Visit', 'Code Status', 'Creator Name', 'Creator Date',
+            'Type', 'Status', 'Reason For Not Done', 'Acquisition Date', 'Upload Status', 'Uploader',
+            'Upload Date', 'State Investigator Form', 'State QC', 'QC done by', 'QC date', 'Review Status', 'Review Date', 'Review Conclusion', 'visit deleted'
+        );
 
-        $visitGroupArray=$this->studyObject->getAllPossibleVisitGroups();
-
-        foreach ($visitGroupArray as $visitGroup){
-            $visitDataArray=$this->extractVisitGroupVisits($visitGroup->groupModality);
-            array_push($visitCSV, ...$visitDataArray);
+        foreach ($this->allcreatedVisits as $visit) {
+            $codeStatus = $this->dertermineVisitStatusCode($visit);
+            $visitCSV[] = array(
+                $visit->patientCode, $visit->visitGroupObject->groupModality, $visit->id_visit, $codeStatus, $visit->creatorName, $visit->creationDate,
+                $visit->visitType, $visit->statusDone, $visit->reasonForNotDone, $visit->acquisitionDate, $visit->uploadStatus, $visit->uploaderUsername,
+                $visit->uploadDate, $visit->stateInvestigatorForm, $visit->stateQualityControl, $visit->controllerUsername, $visit->controlDate,
+                $visit->reviewStatus, $visit->reviewConclusionDate, $visit->reviewConclusion, $visit->deleted
+            );
         }
 
-        $visitCsvString=$this->writeCsv($visitCSV);
+        $visitCsvString = $this->writeCsv($visitCSV);
 
         return $visitCsvString;
-    }
-
-    private function extractVisitGroupVisits(String $visitGroupModality) : Array {
-
-        $allcreatedVisits=[];
-        try{
-            $allcreatedVisits=$this->studyObject->getStudySpecificGroupManager($visitGroupModality)->getCreatedVisits();
-        }catch (Exception $e){
-            error_log($e->getMessage());
-        }
-
-        $visitCSV=[];
-
-        foreach ($allcreatedVisits as $visit) {
-            $codeStatus=$this->dertermineVisitStatusCode($visit);
-            $visitCSV[]=array ($visit->patientCode, $visitGroupModality ,$visit->id_visit, $codeStatus, $visit->creatorName, $visit->creationDate,
-                $visit->visitType, $visit->statusDone, $visit->reasonForNotDone, $visit->acquisitionDate, $visit->uploadStatus, $visit->uploaderUsername,
-                $visit->uploadDate,$visit->stateInvestigatorForm, $visit->stateQualityControl, $visit->controllerUsername, $visit->controlDate,
-                    $visit->reviewStatus,$visit->reviewConclusionDate,$visit->reviewConclusion, $visit->deleted );
-        }
-        
-        return $visitCSV;
-
     }
 
     //A GENERALISER QUAND VIENDRA CYTOMINE
-    public function getImagingData(){
-
-        $visitGroupArray=$this->studyObject->getAllPossibleVisitGroups();
-
-        $imagingArray=[];
-
-        foreach ($visitGroupArray as $visitGroup){
-            if( $visitGroup->groupModality == Visit_Group::GROUP_MODALITY_CT || 
-                $visitGroup->groupModality == Visit_Group::GROUP_MODALITY_MR || 
-                $visitGroup->groupModality == Visit_Group::GROUP_MODALITY_PET ){
-
-                    $studyVisitManager=$this->studyObject->getStudySpecificGroupManager($visitGroup->groupModality);
-                    $visitDataArray=$this->extractOrthancData($studyVisitManager);
-        
-                    array_push($imagingArray, ...$visitDataArray);
-
-                }
-
-        }
-
-        $visitCsvString=$this->writeCsv($imagingArray);
-
-        return $visitCsvString;
-
-    }
-
-    private function extractOrthancData(Study_Visit_Manager $visitManager) : String {
-
-        $allcreatedVisits=[];
-        try{
-            $allcreatedVisits=$visitManager->getCreatedVisits();
-        }catch(Exception $e){
-            error_log($e->getMessage());
-        }
-
+    public function getImagingData()
+    {
 
         //Prepare Orthanc Series data CSV
-        $orthancCSV[]=array('ID Visit', 'Study Orthanc ID',
+        $orthancCSV[] = array(
+            'ID Visit', 'Study Orthanc ID',
             'Study UID', 'Study Description', 'Dicom Patient Name', 'Dicom Patient ID', 'Serie Description', 'modality', 'Acquisition Date Time',
-            'Serie Orthanc ID', 'Serie UID', 'Instance Number', 'Manufacturer', 'Disk Size', 'Serie Number', 'Patient Weight', 'Injected_Activity', 'Injected_Dose', 'Radiopharmaceutical', 'Half Life', 'Injected Time', 'Deleted');
-        
-        foreach ($allcreatedVisits as $visit) {
+            'Serie Orthanc ID', 'Serie UID', 'Instance Number', 'Manufacturer', 'Disk Size', 'Serie Number', 'Patient Weight', 'Injected_Activity', 'Injected_Dose', 'Radiopharmaceutical', 'Half Life', 'Injected Time', 'Deleted'
+        );
 
-            $allSeries=$visit->getSeriesDetails();
-            
-            foreach ($allSeries as $serieObject){
-                $studyDetailsObject=$serieObject->studyDetailsObject;
-                $orthancCSV[]=array ($studyDetailsObject->idVisit, $studyDetailsObject->studyOrthancId, $studyDetailsObject->studyUID,
-                        $studyDetailsObject->studyDescription, $studyDetailsObject->patientName, $studyDetailsObject->patientId, $serieObject->seriesDescription, $serieObject->modality, $serieObject->acquisitionDateTime, $serieObject->seriesOrthancID,
-                    $serieObject->serieUID,$serieObject->numberInstances, $serieObject->manufacturer, $serieObject->serieUncompressedDiskSize, $serieObject->seriesNumber, $serieObject->patientWeight, $serieObject->injectedActivity, $serieObject->injectedDose, $serieObject->radiopharmaceutical, $serieObject->halfLife, $serieObject->injectedDateTime, $serieObject->deleted );
-                
+        $imagingVisit = array_filter($this->allcreatedVisits, function (Visit $visitObject) {
+            $inArrayBool = in_array(
+                $visitObject->visitGroupObject->groupModality,
+                array(Visit_Group::GROUP_MODALITY_CT, Visit_Group::GROUP_MODALITY_PET, Visit_Group::GROUP_MODALITY_MR)
+            );
+            return ($inArrayBool);
+        });
+
+        foreach ($imagingVisit as $visit) {
+
+            $allSeries = $visit->getSeriesDetails();
+
+            foreach ($allSeries as $serieObject) {
+                $studyDetailsObject = $serieObject->studyDetailsObject;
+                $orthancCSV[] = array(
+                    $studyDetailsObject->idVisit, $studyDetailsObject->studyOrthancId, $studyDetailsObject->studyUID,
+                    $studyDetailsObject->studyDescription, $studyDetailsObject->patientName, $studyDetailsObject->patientId, $serieObject->seriesDescription, $serieObject->modality, $serieObject->acquisitionDateTime, $serieObject->seriesOrthancID,
+                    $serieObject->serieUID, $serieObject->numberInstances, $serieObject->manufacturer, $serieObject->serieUncompressedDiskSize, $serieObject->seriesNumber, $serieObject->patientWeight, $serieObject->injectedActivity, $serieObject->injectedDose, $serieObject->radiopharmaceutical, $serieObject->halfLife, $serieObject->injectedDateTime, $serieObject->deleted
+                );
             }
-
         }
-            
-        $orthancCsvFile=$this->writeCsv($orthancCSV);
+
+        $orthancCsvFile = $this->writeCsv($orthancCSV);
 
         return $orthancCsvFile;
     }
 
-    public function getReviewData(){
+    public function getReviewData()
+    {
 
-        $visitGroups=$this->studyObject->getAllPossibleVisitGroups();
+        $mappedVisitByGroup = [];
 
-        foreach($visitGroups as $visitGroup) {
-            $studyVisitManager=$this->studyObject->getStudySpecificGroupManager($visitGroup->groupModality);
-            $visitsReviewsCsv=$this->getReviewDataGroup($studyVisitManager);
+        foreach ($this->allcreatedVisits as $visitObject) {
+            $modality = $visitObject->visitGroupObject->groupModality;
+            $visitName = $visitObject->visitType;
+            $mappedVisitByGroup[$modality][$visitName][] = $visitObject;
+        };
+
+
+
+        foreach ($mappedVisitByGroup as $modality => $visitTypes) {
+
+            $groupObject = $this->studyObject->getSpecificGroup($modality);
+
+            foreach ($visitTypes as $visitType => $visitArray) {
+
+                //Export Reviews
+                $genericHeader = array('ID Visit', 'ID review', 'Reviewer', 'Review Date', 'Validated', 'Local Form', 'Adjudcation_form', 'Review Deleted');
+
+
+                $visitTypeObject = $groupObject->getVisitType($visitType);
+                $specificFormTable = $visitTypeObject->getSpecificFormColumn();
+                unset($specificFormTable[0]);
+
+                $csv[] = array_merge($genericHeader, $specificFormTable);
+
+                foreach ($visitArray as $visitObject) {
+
+                    $csv[] = $this->getReviews($visitObject);
+                }
+
+                $reviewCsvFiles[$modality . '_' . $visitType] = $this->writeCsv($csv);
+            }
         }
 
-        return $visitsReviewsCsv;
-       
+        return $reviewCsvFiles;
     }
+
+    private function getReviews(Visit $visitObject)
+    {
+
+        $localReviews = [];
+        try {
+            $localReviews[] = $visitObject->getReviewsObject(true);
+        } catch (Exception $e) {
+            error_log($e->getMessage());
+        }
+
+        $expertReviews = [];
+        try {
+            $expertReviews = $visitObject->getReviewsObject(false);
+        } catch (Exception $e) {
+            error_log($e->getMessage());
+        }
+
+        //Merge all reviews in an array
+        $reviewObjects = [];
+
+        if (!empty($localReviews)) {
+            array_push($reviewObjects, ...$localReviews);
+        }
+
+        if (!empty($expertReviews)) {
+            array_push($reviewObjects, ...$expertReviews);
+        }
+
+        $csv = [];
+        foreach ($reviewObjects as $reviewObject) {
+            $csv[] = $this->getReviewDatas($reviewObject);
+        }
+
+        return $csv;
+    }
+
+    private function getReviewDatas(Review $review)
+    {
+        //Add to final map
+        $reviewDatas = $this->getGenericData($review);
+        $specificData = $review->getSpecificData();
+        unset($specificData["id_review"]);
+
+        $reviewLine = array_merge($reviewDatas, $specificData);
+
+        return $reviewLine;
+    }
+
+
+    private function getGenericData(Review $review)
+    {
+        //Add to final map
+        $reviewDatas = array(
+            $review->id_visit, $review->id_review,
+            $review->username, $review->reviewDate, $review->validated, $review->isLocal, $review->isAdjudication, $review->deleted
+        );
+
+        return $reviewDatas;
+    }
+
+
+    /*
 
     //SK ICI RISQUE SORTIE DE MEMOIRE A EVALUER...
     //GeNerator à prevoir ?
@@ -242,19 +314,19 @@ Class Export_Study_Data{
         return $ReviewCsvFiles;
 
     }
+*/
 
+    private function writeCsv($csvArray)
+    {
 
-    private function writeCsv($csvArray){
-    
         $tempCsv = tempnam(ini_get('upload_tmp_dir'), 'TMPCSV_');
         $fichier_csv = fopen($tempCsv, 'w');
         foreach ($csvArray as $fields) {
             fputcsv($fichier_csv, $fields);
         }
         fclose($fichier_csv);
-        
+
         return $tempCsv;
-        
     }
 
 
@@ -274,38 +346,33 @@ Class Export_Study_Data{
      * @param Visit $visitObject
      * @return number
      */
-    private function dertermineVisitStatusCode(Visit $visitObject){
-        
-        if($visitObject->statusDone==Visit::NOT_DONE){
+    private function dertermineVisitStatusCode(Visit $visitObject)
+    {
+
+        if ($visitObject->statusDone == Visit::NOT_DONE) {
             return 0;
-        }else if($visitObject->uploadStatus==Visit::NOT_DONE || $visitObject->stateInvestigatorForm==Visit::NOT_DONE){
-            if($visitObject->uploadStatus==Visit::NOT_DONE && $visitObject->stateInvestigatorForm==Visit::NOT_DONE){
+        } else if ($visitObject->uploadStatus == Visit::NOT_DONE || $visitObject->stateInvestigatorForm == Visit::NOT_DONE) {
+            if ($visitObject->uploadStatus == Visit::NOT_DONE && $visitObject->stateInvestigatorForm == Visit::NOT_DONE) {
                 return 1;
-            }
-            else if($visitObject->stateInvestigatorForm==Visit::NOT_DONE){
+            } else if ($visitObject->stateInvestigatorForm == Visit::NOT_DONE) {
                 return 3;
-            } 
-            else if($visitObject->uploadStatus==Visit::NOT_DONE){
+            } else if ($visitObject->uploadStatus == Visit::NOT_DONE) {
                 return 2;
             }
-        }else if($visitObject->qcStatus==Visit::QC_NOT_DONE){
+        } else if ($visitObject->qcStatus == Visit::QC_NOT_DONE) {
             return 4;
-        }else if($visitObject->qcStatus==Visit::QC_CORRECTIVE_ACTION_ASKED){
+        } else if ($visitObject->qcStatus == Visit::QC_CORRECTIVE_ACTION_ASKED) {
             return 5;
-        }else if($visitObject->qcStatus==Visit::QC_REFUSED){
+        } else if ($visitObject->qcStatus == Visit::QC_REFUSED) {
             return 6;
-        }else if($visitObject->reviewStatus==Visit::NOT_DONE){
+        } else if ($visitObject->reviewStatus == Visit::NOT_DONE) {
             return 7;
-        }else if($visitObject->reviewStatus==Form_Processor::ONGOING){
+        } else if ($visitObject->reviewStatus == Form_Processor::ONGOING) {
             return 8;
-        }else if($visitObject->reviewStatus==Form_Processor::WAIT_ADJUDICATION){
+        } else if ($visitObject->reviewStatus == Form_Processor::WAIT_ADJUDICATION) {
             return 9;
-        }else if($visitObject->reviewStatus==Form_Processor::DONE){
+        } else if ($visitObject->reviewStatus == Form_Processor::DONE) {
             return 10;
         }
-        
     }
-
-
-    
 }
