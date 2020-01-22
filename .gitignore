@@ -1,4 +1,5 @@
 /src/data/_config/config.inc.php
+/src/data/cron/config_ftp.php
 /src/data/logs/*
 !/src/data/.htaccess
 /src/data/form/Poo/*
