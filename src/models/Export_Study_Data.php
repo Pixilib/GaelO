@@ -36,7 +36,6 @@ class Export_Study_Data
                 $modalityCreatedVisit = $this->studyObject->getStudySpecificGroupManager($visitGroup->groupModality)->getCreatedVisits();
                 array_push($this->allcreatedVisits, ...$modalityCreatedVisit);
             } catch (Exception $e) {
-                error_log($e->getMessage());
             }
         }
     }
@@ -176,14 +175,12 @@ class Export_Study_Data
         try {
             $localReviews[] = $visitObject->getReviewsObject(true);
         } catch (Exception $e) {
-            error_log($e->getMessage());
         }
 
         $expertReviews = [];
         try {
             $expertReviews = $visitObject->getReviewsObject(false);
         } catch (Exception $e) {
-            error_log($e->getMessage());
         }
 
         //Merge all reviews in an array
@@ -214,8 +211,6 @@ class Export_Study_Data
 
         $reviewLine = array_merge($reviewDatas, array_values($specificData) );
 
-        error_log(implode(',',$reviewLine) );
-
         return $reviewLine;
     }
 
@@ -227,7 +222,7 @@ class Export_Study_Data
             $review->id_visit, $review->id_review,
             $review->username, $review->reviewDate, $review->validated, $review->isLocal, $review->isAdjudication, $review->deleted
         );
-        error_log(implode(',', $reviewDatas));
+
         return $reviewDatas;
     }
 
