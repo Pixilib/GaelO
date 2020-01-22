@@ -11,12 +11,16 @@ Refaire un tour sur les commentaires
 Gata : 
 Load des form
 test des forms
-exports automatises
+exports automatises => Formt a valider
 git lysarc
 
 Simuler ITSELF : 
 Verif absence collusion entre groupes
 Ajouter Modality dans les JSON du tracker audit trail (que visit name, insuffisant)
+
+
+Tests:
+Source du review manager a revoir => A tester + verif que statistics ne casse pas trop
 
 + Tard : 
 Reminder Visit Upload manager a revoir
@@ -24,10 +28,6 @@ Review reminder a revoir
 Download manager a valider
 Nb tree : si une visite review ajoute toute les autre groups visits en lecture
 A voir securité access review => dissocier niveau de reviewer ou jouer sur les job ?
-
-Tests:
-Source du review manager a revoir => A tester + verif que statistics ne casse pas trop
-
 //Ajout dans requirement install
 php-xml
 php-mbstring
