@@ -158,7 +158,7 @@ Class Study {
 
     }
 
-    public function getSpecificGroup(String $groupModality){
+    public function getSpecificGroup(String $groupModality) : Visit_Group {
 
         $groupQuery = $this->linkpdo->prepare('SELECT id FROM visit_group WHERE study = :study AND group_modality=:groupModality');
         $groupQuery->execute(array('study' => $this->study, 'groupModality'=> $groupModality));
@@ -168,7 +168,7 @@ Class Study {
 
     }
 
-    public function getStudySpecificGroupManager(String $groupModality){
+    public function getStudySpecificGroupManager(String $groupModality) : Study_Visit_Manager {
 
         $visitGroup=$this->getSpecificGroup($groupModality);
         
@@ -176,8 +176,12 @@ Class Study {
 
     }
 
-    public function getReviewManager(){
+    public function getReviewManager() : Study_Review_Manager {
         return new Study_Review_Manager($this);
+    }
+
+    public function getExportStudyData() : Export_Study_Data{
+        return new Export_Study_Data($this);
     }
     
     public function getAllPatientsInStudy(){

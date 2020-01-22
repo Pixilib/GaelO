@@ -34,7 +34,7 @@ if ($accessCheck && $_SESSION['role'] == User::SUPERVISOR ) {
 
     $studyObject=new Study($_SESSION['study'], $linkpdo);
 
-    $exportObject=new Export_Study_Data($studyObject, $linkpdo);
+    $exportObject=$studyObject->getExportStudyData();
 
     $patientCsvFile=$exportObject->exportPatientTable();
 

@@ -164,13 +164,13 @@ class FTP_Reader
 
     }
 
-    public function writeExportDataFile($studyName, String $file){
+    public function writeExportDataFile(String $fileName, String $file){
 
         if ($this->ftpIsSftp) {
 
             $sftp = $this->connectAndGoToFolder();
 
-            $result = $sftp->put("Export".$studyName, $file, SFTP::SOURCE_LOCAL_FILE);
+            $result = $sftp->put($fileName, $file, SFTP::SOURCE_LOCAL_FILE);
 
             return $result;
 
@@ -178,7 +178,7 @@ class FTP_Reader
 
             $ftp = $this->connectAndGoToFolder();
 
-            $result = ftp_fput($ftp,"Export".$studyName, fopen($file, 'r'));
+            $result = ftp_fput($ftp, $fileName, fopen($file, 'r'));
 
             return $result;
         }

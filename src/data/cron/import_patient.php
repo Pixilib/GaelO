@@ -21,15 +21,17 @@
 
 $_SERVER['DOCUMENT_ROOT'] ='/gaelo';
 require_once($_SERVER['DOCUMENT_ROOT'].'/vendor/autoload.php');
+require_once('config_ftp.php');
 
 $linkpdo=Session::getLinkpdo();
 
 echo ('ScriptStarted');
 
-$studyName = "ITSELF";
+//Get Study Name from command variable
+$studyName=$_SERVER['argv'][2];
 
 $ftpReader = new FTP_Reader($linkpdo);    
-$ftpReader->setFTPCredential();
+$ftpReader->setFTPCredential(FTP_HOSTNAME, FTP_USERNAME, FTP_PASSWORD, FTP_PORT, FTP_IS_SFTP);
 $ftpReader->setFolder("/GAELO/".$studyName."/ExportCS");
 $ftpReader->setSearchedFile($studyName . '_PATIENTS.txt');
 $ftpReader->setLastUpdateTimingLimit(10*24 * 60);

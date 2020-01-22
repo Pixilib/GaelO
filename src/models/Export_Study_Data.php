@@ -13,7 +13,7 @@
  with this program; if not, write to the Free Software Foundation, Inc.,
  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
-
+//SK Quid du generator
 
 class Export_Study_Data
 {
@@ -140,17 +140,15 @@ class Export_Study_Data
             $mappedVisitByGroup[$modality][$visitName][] = $visitObject;
         };
 
-
-
         foreach ($mappedVisitByGroup as $modality => $visitTypes) {
 
             $groupObject = $this->studyObject->getSpecificGroup($modality);
 
             foreach ($visitTypes as $visitType => $visitArray) {
+                $csv = [];
 
                 //Export Reviews
                 $genericHeader = array('ID Visit', 'ID review', 'Reviewer', 'Review Date', 'Validated', 'Local Form', 'Adjudcation_form', 'Review Deleted');
-
 
                 $visitTypeObject = $groupObject->getVisitType($visitType);
                 $specificFormTable = $visitTypeObject->getSpecificFormColumn();
@@ -160,7 +158,8 @@ class Export_Study_Data
 
                 foreach ($visitArray as $visitObject) {
 
-                    $csv[] = $this->getReviews($visitObject);
+                    array_push($csv, ...$this->getReviews($visitObject) );
+
                 }
 
                 $reviewCsvFiles[$modality . '_' . $visitType] = $this->writeCsv($csv);
@@ -170,7 +169,7 @@ class Export_Study_Data
         return $reviewCsvFiles;
     }
 
-    private function getReviews(Visit $visitObject)
+    private function getReviews(Visit $visitObject) : Array
     {
 
         $localReviews = [];
@@ -206,14 +205,16 @@ class Export_Study_Data
         return $csv;
     }
 
-    private function getReviewDatas(Review $review)
+    private function getReviewDatas(Review $review) : Array
     {
         //Add to final map
         $reviewDatas = $this->getGenericData($review);
         $specificData = $review->getSpecificData();
         unset($specificData["id_review"]);
 
-        $reviewLine = array_merge($reviewDatas, $specificData);
+        $reviewLine = array_merge($reviewDatas, array_values($specificData) );
+
+        error_log(implode(',',$reviewLine) );
 
         return $reviewLine;
     }
@@ -226,95 +227,9 @@ class Export_Study_Data
             $review->id_visit, $review->id_review,
             $review->username, $review->reviewDate, $review->validated, $review->isLocal, $review->isAdjudication, $review->deleted
         );
-
+        error_log(implode(',', $reviewDatas));
         return $reviewDatas;
     }
-
-
-    /*
-
-    //SK ICI RISQUE SORTIE DE MEMOIRE A EVALUER...
-    //GeNerator à prevoir ?
-    private function getReviewDataGroup(Study_Visit_Manager $visitStudyManager) : Array {
-
-        //Export Reviews
-        $genericHeader=array('ID Visit', 'ID review', 'Reviewer','Review Date','Validated','Local Form','Adjudcation_form', 'Review Deleted');
-        //Add specific header for each visit Type
-        $visitsTypeAnswer= $visitStudyManager->getVisitGroupObject()->getAllVisitTypesOfGroup();
-        $specificColumn=[];
-        //Prepare Review CSV
-        $reviewCSV=[];
-        
-        //Generate title with specific column name
-        foreach ($visitsTypeAnswer as $visitType){
-            $reviewCSV[$visitType->name]=[];
-            $specificFormTable=$visitType->getSpecificFormColumn();
-            unset($specificFormTable[0]);
-            $specificColumn[$visitType->name]=$specificFormTable;
-            $reviewCSV[$visitType->name][]=array_merge($genericHeader, $specificColumn[$visitType->name]);
-            
-        }
-
-        $allcreatedVisits=[];
-        try{
-            $allcreatedVisits=$visitStudyManager->getCreatedVisits(false);
-        }catch(Exception $e){
-            error_log($e->getMessage());
-        }
-
-
-        foreach ($allcreatedVisits as $visit) {
-            
-            $localReviews=[];
-            try{
-                $localReviews=$visit->getReviewsObject(true);
-            }catch(Exception $e){
-                error_log($e->getMessage());
-            }
-
-            $expertReviews=[];
-            try{
-                $expertReviews=$visit->getReviewsObject(false);
-            }catch(Exception $e){
-                error_log($e->getMessage());
-            }
-            
-            //Merge all reviews in an array
-            $reviews=[];
-            if(!empty($localReviews)){
-                array_push($reviews, ...$localReviews);
-            }
-            if(!empty($expertReviews)){
-                array_push($reviews, ...$expertReviews);
-            }
-            
-            foreach ($reviews as $review){
-                //Add to final map
-                $reviewDatas=array($review->id_visit, $review->id_review,
-                    $review->username, $review->reviewDate, $review->validated, $review->isLocal,$review->isAdjudication, $review->deleted);
-                
-                $specificData=$review->getSpecificData();
-                foreach ($specificColumn[$visit->visitType] as $key){
-                    if($key=="id_review") continue;
-                    $reviewDatas[]=$specificData[$key];
-                }
-                
-                $reviewCSV[$visit->visitType][]=$reviewDatas;
-                
-            }
-        }
-        
-        //For each Visit create a CSV file in a key array ordered by visit
-        $ReviewCsvFiles=[];
-        $groupModality=$visitStudyManager->getVisitGroupObject()->groupModality;
-        foreach ($visitsTypeAnswer as $visit){
-            $ReviewCsvFiles[$groupModality.'_'.$visit->name]=$this->writeCsv($reviewCSV[$visit->name]);
-        }
-
-        return $ReviewCsvFiles;
-
-    }
-*/
 
     private function writeCsv($csvArray)
     {

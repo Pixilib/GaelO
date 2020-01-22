@@ -21,54 +21,60 @@
 
 $_SERVER['DOCUMENT_ROOT'] ='/gaelo';
 require_once($_SERVER['DOCUMENT_ROOT'].'/vendor/autoload.php');
+require_once('config_ftp.php');
 
 $linkpdo=Session::getLinkpdo();
 
-$studyName="GATA";
-//Should contain study variable name
-echo($_SERVER['argv'][1]);
+//Get Study Name from command variable
+$studyName=$_SERVER['argv'][2];
 
-$zipFileData=generateZipExport();
+//Generate the temporary file to be exported
+$fileArray=generateExportFile();
 
-$ftpReader = new FTP_Reader($linkpdo);
-
+//Send process to destination
 try {
-    $ftpReader->setFTPCredential();
+    $ftpReader = new FTP_Reader($linkpdo);
+    $ftpReader->setFTPCredential(FTP_HOSTNAME, FTP_USERNAME, FTP_PASSWORD, FTP_PORT, FTP_IS_SFTP);
     $ftpReader->setFolder("/GAELO/".$studyName."/ExportGAELO");
-    $ftpReader->writeExportDataFile($studyName, $zipFileData);
+
+    foreach($fileArray as $fileName => $fileToUpload){
+
+        $ftpReader->writeExportDataFile($fileName.'.csv', $fileToUpload);
+
+    }
+    
+    
 
 } catch (Exception $e) {
     $ftpReader->sendFailedReadFTP($e->getMessage());
     print($e->getMessage());
 }
 
-function generateZipExport(){
+function generateExportFile(){
 
     global $studyName;
     global $linkpdo;
+
     $studyObject=new Study($studyName, $linkpdo);
 
-    $exportObject=new Export_Study_Data($studyObject, $linkpdo);
+    $exportObject=$studyObject->getExportStudyData();
 
-    $patientCsvFile=$exportObject->exportPatientTable();
+    $fileArray=[];
 
-    $visitCsvFile=$exportObject->exportVisitTable();
+    $fileArray['Export_Patients']=$exportObject->exportPatientTable();
 
-    $orthancCsvFile=$exportObject->getImagingData();
+    $fileArray['Export_Visits']=$exportObject->exportVisitTable();
 
-    $ReivewCsvFiles=$exportObject->getReviewData();
+    $fileArray['Export_DICOM']=$exportObject->getImagingData();
 
-    //Final ZIP creation
-    $zip = new ZipArchive;
-    $tempZip = tempnam(ini_get('upload_tmp_dir'), 'TMPZIP_');
-    $zip->open($tempZip, ZipArchive::CREATE);
-    $zip->addFile($patientCsvFile, "export_patient.csv");
-    $zip->addFile($visitCsvFile, "export_visits.csv");
-    $zip->addFile($orthancCsvFile, "export_orthanc.csv");
-    foreach ($ReivewCsvFiles as $key=>$file){
-        $zip->addFile($file, "export_review_$key.csv");
+    $reviewsFiles=$exportObject->getReviewData();
+
+    foreach($reviewsFiles as $key => $file){
+
+        $fileArray['Export_Review_'.$key]=$file;
+
     }
-    $zip->close();
+
     
-    return $tempZip;
+    return $fileArray;
 }

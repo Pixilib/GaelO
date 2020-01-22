@@ -27,15 +27,13 @@ use GO\Scheduler;
 $scheduler = new Scheduler();
 
 //Define action and timing
-$scheduler->php(__DIR__.'/import_patient.php')->monday(6, 00)->output('/var/log/gaelo_cron.log');
-$scheduler->php(__DIR__.'/import_patient.php')->tuesday(6, 00)->output('/var/log/gaelo_cron.log');
-$scheduler->php(__DIR__.'/import_patient.php')->wednesday(6, 00)->output('/var/log/gaelo_cron.log');
-$scheduler->php(__DIR__.'/import_patient.php')->thursday(6, 00)->output('/var/log/gaelo_cron.log');
-$scheduler->php(__DIR__.'/import_patient.php')->friday(6, 00)->output('/var/log/gaelo_cron.log');
+$scheduler->php(__DIR__.'/import_patient.php', null, array("GATA"))->monday(6, 00)->output('/var/log/gaelo_cron.log');
+$scheduler->php(__DIR__.'/import_patient.php', null, array("GATA"))->tuesday(6, 00)->output('/var/log/gaelo_cron.log');
+$scheduler->php(__DIR__.'/import_patient.php', null, array("GATA"))->wednesday(6, 00)->output('/var/log/gaelo_cron.log');
+$scheduler->php(__DIR__.'/import_patient.php', null, array("GATA"))->thursday(6, 00)->output('/var/log/gaelo_cron.log');
+$scheduler->php(__DIR__.'/import_patient.php', null, array("GATA"))->friday(6, 00)->output('/var/log/gaelo_cron.log');
 
 $scheduler->php(__DIR__.'/export_data.php', null, array("GATA"))->sunday(21, 00)->output('/var/log/gaelo_cron.log');
 
 // Let the scheduler execute jobs which are due.
 $scheduler->run();
-
-?>
