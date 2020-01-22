@@ -64,7 +64,12 @@
 				$newVisit['acquisitionDate']=$createdVisit->acquisitionDate;
 				$newVisit['reviewStatus']=$createdVisit->reviewStatus;
 				//Retrieve review
-				$reviewObjects=$createdVisit->getReviewsObject(false);
+				try{
+					$reviewObjects=$createdVisit->getReviewsObject(false);
+				}catch(Exception $e) {
+					$reviewObjects=[];
+				}
+
 				$newVisit['numberOfReview']=count($reviewObjects);
 				$newVisit['reviewDoneBy']=[];
 				$newVisit['reviewDetailsArray']=[];

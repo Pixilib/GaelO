@@ -51,6 +51,7 @@
 </div>
 
 <script type="text/javascript">
+$(document).ready(function () {
 	//DataTable for visit by visit details
 	let reviewTable=$('#reviewTable').DataTable({
 		"sDom": 'Blrtip',
@@ -152,4 +153,5 @@
 			});
 		}
 	});
+});
 </script>

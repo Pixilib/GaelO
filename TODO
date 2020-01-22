@@ -23,6 +23,7 @@ Tests:
 Source du review manager a revoir => A tester + verif que statistics ne casse pas trop
 
 + Tard : 
+Upload Manager => Bug avec PTD 4 qui apparait
 Reminder Visit Upload manager a revoir
 Review reminder a revoir
 Download manager a valider
