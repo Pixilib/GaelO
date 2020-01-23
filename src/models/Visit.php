@@ -71,21 +71,6 @@ class Visit{
     const NOT_DONE="Not Done";
     
     const UPLOAD_PROCESSING="Processing";
-
-    public static function getVisitbyPatientAndVisitName(int $patientCode, String $visitType, PDO $linkpdo){
-
-        $visitQuery = $linkpdo->prepare ( 'SELECT id_visit FROM visits WHERE patient_code=:patientCode AND visit_type=:visitType' );
-        
-        $visitQuery->execute ( array('patientCode' => $patientCode, 'visitType'=>$visitType) );
-        $visitId = $visitQuery->fetch(PDO::FETCH_COLUMN);
-
-        if(empty($visitId)){
-            throw new Exception("Visit Non Existing");
-        }else{
-            return new Visit($visitId, $linkpdo);
-        }
-        
-    }
     
     public function __construct($id_visit, PDO $linkpdo){
         $this->linkpdo=$linkpdo;

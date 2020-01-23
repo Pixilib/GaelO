@@ -1,6 +1,8 @@
 Passage Visit Group : 
 => Controleur statitics a generaliser pour autres modalite
 
+Fichier spécifique faire un sous repertoire par etude
+
 Gata : 
 Load des form
 test des forms
@@ -9,11 +11,9 @@ git lysarc
 
 Tests:
 Source du review manager a revoir => A tester + verif que statistics ne casse pas trop
-Nouveau refactoring de sauvegarde administrator
 Verif que les visit modality apparaissent dans le tracker
 Simuler ITSELF : Verif absence collusion entre groupes visites
-Fusionner le tree et l'API get review=> A tester (tree non cassé et API cohérente)
-Gata Upload Manager => Bug avec PTD 4 qui apparait (conflit avec PTD8?)
+Fusionner le tree et l'API get review=> A tester
 
 + Tard : 
 Reminder Visit Upload manager a revoir

@@ -46,7 +46,6 @@ if ($_SESSION['admin']) {
     exportPath('upload/documentation');
     
     //Export the full list of series in JSON
-
     $seriesJsonFile = Global_Data::dumpOrthancSeriesJSON($linkpdo);
     $zip->addFile($seriesJsonFile, 'seriesOrthancId.json');
     
@@ -64,8 +63,6 @@ if ($_SESSION['admin']) {
 
 /**
  * Export a source folder to the current zip object
- * ex : source = /data/_config
- * destination = _config
  */
 function exportPath(String $pathName){
     global $zip;
@@ -74,8 +71,11 @@ function exportPath(String $pathName){
 
     foreach ($fileGenerator as $file) {
         $filePath = $file->getRealPath();
+        error_log($filePath);
         
         // Add current file to archive
-        $zip->addFile($filePath, $pathName.'/');
+        $result=$zip->addFile($filePath, $pathName.'/'.basename($file));
+        error_log(intval($result));
+
     }
 }

@@ -218,7 +218,7 @@ class Patient_Visit_Manager
 
         try {
             //Visit Created check compliancy
-            $visitObject = Visit::getVisitbyPatientAndVisitName($this->patientCode, $visitName, $this->linkpdo);
+            $visitObject = $this->getCreatedVisitByVisitName($visitName);
             $visitAnswer['state_investigator_form'] = $visitObject->stateInvestigatorForm;
             $visitAnswer['state_quality_control'] = $visitObject->stateQualityControl;
             $visitAnswer['acquisition_date'] = $visitObject->acquisitionDate;
@@ -284,5 +284,20 @@ class Patient_Visit_Manager
     {
         $awaitingReviews = $this->getAwaitingReviewVisits();
         return (!empty($awaitingReviews));
+    }
+
+    public function getCreatedVisitByVisitName(String $visitType){
+
+        $visitQuery = $this->linkpdo->prepare ( 'SELECT id_visit FROM visits WHERE patient_code=:patientCode AND visit_type=:visitType AND deleted=0 ' );
+        
+        $visitQuery->execute ( array('patientCode' => $this->patientCode, 'visitType'=>$visitType) );
+        $visitId = $visitQuery->fetch(PDO::FETCH_COLUMN);
+
+        if(empty($visitId)){
+            throw new Exception("Visit Non Existing");
+        }else{
+            return new Visit($visitId, $this->linkpdo);
+        }
+        
     }
 }

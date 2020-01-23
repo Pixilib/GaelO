@@ -35,5 +35,7 @@ $scheduler->php(__DIR__.'/import_patient.php', null, array("GATA"))->friday(6, 0
 
 $scheduler->php(__DIR__.'/export_data.php', null, array("GATA"))->sunday(21, 00)->output('/var/log/gaelo_cron.log');
 
+$scheduler->php(__DIR__.'/export_data.php', null, array("GATA"))->everyMinute()->output('/var/log/gaelo_cron.log');
+
 // Let the scheduler execute jobs which are due.
 $scheduler->run();

@@ -31,18 +31,17 @@ $studyName=$_SERVER['argv'][2];
 //Generate the temporary file to be exported
 $fileArray=generateExportFile();
 
+
 //Send process to destination
 try {
     $ftpReader = new FTP_Reader($linkpdo);
     $ftpReader->setFTPCredential(FTP_HOSTNAME, FTP_USERNAME, FTP_PASSWORD, FTP_PORT, FTP_IS_SFTP);
     $ftpReader->setFolder("/GAELO/".$studyName."/ExportGAELO");
-
     foreach($fileArray as $fileName => $fileToUpload){
 
-        $ftpReader->writeExportDataFile($fileName.'.csv', $fileToUpload);
+        $results=$ftpReader->writeExportDataFile($fileName.'.csv', $fileToUpload);
 
     }
-    
     
 
 } catch (Exception $e) {
@@ -74,7 +73,6 @@ function generateExportFile(){
         $fileArray['Export_Review_'.$key]=$file;
 
     }
-
     
     return $fileArray;
 }
