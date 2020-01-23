@@ -362,9 +362,6 @@ function make_interface_tableau_study_supervisor(Visit $visitObject){
                 	<td></td>
             	<?php 
             	   for($i = 0; $i < $studies_number; $i ++) {
-                        //SK A GERER ICI REACTIVATION DES STUDIES 
-                        //Activation que si pas d'autre study active pour la visit=> fait dans objet study
-                        //Et gerer dans ajax confirm link
                         ?>
                         <td>
                         	<a href='scripts/reactivate_study.php?Study_Orthanc_Id=<?=$data_studies[$i]->studyOrthancId?>&id_visit=<?=$visitObject->id_visit?>' class="ajaxLinkConfirm refreshVisitSupervisor"><input class="btn btn-danger" type="button" value="Reactivate Study"></a>

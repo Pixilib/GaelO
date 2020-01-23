@@ -63,6 +63,9 @@ class Tree
     return $class;
   }
 
+  /**
+   * Create visit entry in Tree from a visit Object
+   */
   private function visitObjectToTreeObject(Visit $visitObject)
   {
 
@@ -70,6 +73,7 @@ class Tree
     $jsonVisitLevel['parent'] = $visitObject->patientCode . '_' . $visitObject->visitGroupObject->groupModality;
     $jsonVisitLevel['icon'] = '/assets/images/report-icon.png';
     $jsonVisitLevel['text'] = $visitObject->visitType;
+    $jsonVisitLevel['level'] = 'visit';
     $jsonVisitLevel['state']['opened'] = false;
 
     if ($this->role == User::INVESTIGATOR ||  $this->role == User::CONTROLLER) {
@@ -81,6 +85,9 @@ class Tree
     return $jsonVisitLevel;
   }
 
+  /**
+   * Create a patient entry in Tree
+   */
   private function patientObjectToTreeObject(String $patientCode)
   {
 
@@ -88,11 +95,15 @@ class Tree
     $jsonPatientLevel['parent'] = '#';
     $jsonPatientLevel['icon'] = '/assets/images/person-icon.png';
     $jsonPatientLevel['text'] = $patientCode;
+    $jsonPatientLevel['level'] = 'patient';
     $jsonPatientLevel['state']['opened'] = false;
 
     return $jsonPatientLevel;
   }
 
+  /**
+   * Create a Visit group entry in tree
+   */
   private function visitGroupToTreeObject($patientCode, $groupModality)
   {
 
@@ -100,12 +111,16 @@ class Tree
     $jsonGroupLevel['parent'] = $patientCode;
     $jsonGroupLevel['icon'] = '/assets/images/person-icon.png';
     $jsonGroupLevel['text'] = $groupModality;
+    $jsonGroupLevel['level'] = 'visit_group';
     $jsonGroupLevel['state']['opened'] = true;
 
 
     return $jsonGroupLevel;
   }
 
+  /**
+   * sort Visits in key by modality
+   */
   private function processVisitsArray($visitsArray)
   {
 
@@ -118,6 +133,9 @@ class Tree
     return $sortedModalities;
   }
 
+  /**
+   * Select visit from patients for some roles 
+   */
   private function makeTreeFromPatients($patientsArray)
   {
 
@@ -135,6 +153,9 @@ class Tree
     return $resultTree;
   }
 
+  /**
+   * Sort an array of Visits by patient code
+   */
   private function makeTreeFromVisits($visitsArray)
   {
 
@@ -148,6 +169,9 @@ class Tree
     return $resultTree;
   }
 
+  /**
+   * Generate the final JSON tree by adding patient, modality and visit items
+   */
   private function treeStructuretoJsonTree($treeStructure)
   {
     $jsonTree = [];

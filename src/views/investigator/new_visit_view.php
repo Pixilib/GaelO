@@ -13,8 +13,6 @@
  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
- //SK ICI CHANGER L INTERFACE ON DOIT LISTER LES ID DES GROUPES DE VISITES DISPO POUR CE PATIENT
- //ET LAISSER L UTILISATEUR CHOISIR SON GROUPE
  ?>
  
  <script type="text/javascript">
@@ -56,8 +54,6 @@
 			$('#visite').empty()
 			
 			let selectedModality= $( "#modalityGroup option:selected" ).text().trim();
-			console.log(selectedModality)
-			console.log(visitsToCreate)
 			let possibleVisits=visitsToCreate[selectedModality]['visitsName']
 			possibleVisits.forEach(visit=>{
 				$("#visite").append(new Option(visit, visit))

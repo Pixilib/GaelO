@@ -19,7 +19,6 @@
 
 use PHPMailer\PHPMailer\PHPMailer;
 
-//SK DANS EMAILS MANQUE REFERENCE A LA STUDY CONCERNEE DANS LE CADRE MULTISTUDY
 Class Send_Email {
     
     private $message;
@@ -292,6 +291,8 @@ Class Send_Email {
     }
     
     //SK VOIR COMBIEN DE FOIS CETTE METHODE EST APPELEE
+    //1 seule fois
+    //Ajouter le role en parametre et inclusion des mails en interne et retourn self ?
     public function selectDesinatorEmailsfromCenters(String $study, int $center, ?array $job=null) : Array {
         //Select All users that has a matching center
         $users =$this->getUsersAffiliatedToCenter($center);

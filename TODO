@@ -1,11 +1,6 @@
 Passage Visit Group : 
 => Controleur statitics a generaliser pour autres modalite
 
-Refactoring : 
-Fusionner le tree et l'API get review=> Recreer la hirarchie a partir de l'array
-Se repencher sur la logique du modele 
-Refaire un tour sur les commentaires => Tree et Visit Group
-
 Gata : 
 Load des form
 test des forms
@@ -17,11 +12,13 @@ Source du review manager a revoir => A tester + verif que statistics ne casse pa
 Nouveau refactoring de sauvegarde administrator
 Verif que les visit modality apparaissent dans le tracker
 Simuler ITSELF : Verif absence collusion entre groupes visites
+Fusionner le tree et l'API get review=> A tester (tree non cassé et API cohérente)
+Gata Upload Manager => Bug avec PTD 4 qui apparait (conflit avec PTD8?)
 
 + Tard : 
-Upload Manager => Bug avec PTD 4 qui apparait
 Reminder Visit Upload manager a revoir
 Review reminder a revoir
 Download manager a valider
 Nb tree : si une visite review ajoute toute les autre groups visits en lecture
 A voir securité access review => dissocier niveau de reviewer ou jouer sur les job ?
+Revoir Connecteur Java avec nouveau groupe visite

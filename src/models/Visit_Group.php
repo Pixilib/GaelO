@@ -49,7 +49,9 @@ class Visit_Group
         $this->groupModality = $visitGroupData['group_modality'];
     }
 
-
+    /**
+     * Get Visit Type object from Visit Name in this group
+     */
     public function getVisitType(String $visitName): Visit_Type
     {
         return new Visit_Type($this->linkpdo, $this->groupId, $visitName);
@@ -73,23 +75,35 @@ class Visit_Group
         return $visitTypeArray;
     }
 
+    /**
+     * Get iterator for Visit Type in this group
+     */
     public function getAllVisitTypesOfGroupIterator(): Visit_Type_Iterator
     {
         return new Visit_Type_Iterator($this->getAllVisitTypesOfGroup());
     }
 
+    /**
+     * Get Study Visit manager of this group
+     */
     public function getStudyVisitManager(): Study_Visit_Manager
     {
         $studyObject = new Study($this->studyName, $this->linkpdo);
         return new Study_Visit_Manager($studyObject, $this, $this->linkpdo);
     }
 
+    /**
+     * Get study Object of this group
+     */
     public function getStudy(): Study
     {
         return new Study($this->studyName, $this->linkpdo);
     }
 
-    public static function createVisitGroup(String $studyName, String $groupModality, PDO $linkpdo) : Visit_Group
+    /**
+     * Create a new Visit Group
+     */
+    public static function createVisitGroup(String $studyName, String $groupModality, PDO $linkpdo): Visit_Group
     {
 
         $req = $linkpdo->prepare('INSERT INTO visit_group (study,  group_modality)
