@@ -168,4 +168,5 @@ Class Session{
         define('GAELO_SMTP_SECURE', $result['smtp_secure']);
         
     }
+
 }

@@ -40,7 +40,8 @@ if ($_SESSION['role']==User::SUPERVISOR && $permissionCheck && $visitObject->rev
     //Log activity
     $actionDetails['type_visit']=$visitObject->visitType;
     $actionDetails['patient_code']=$visitObject->patientCode;
-    $actionDetails['Reason']=$reason;
+    $actionDetails['modality_visit']=$visitObject->visitGroupObject->groupModality;
+    $actionDetails['reason']=$reason;
     Tracker::logActivity($_SESSION['username'], $_SESSION['role'], $visitObject->study, $id_visit, "Reset QC", $actionDetails);
     
     echo(json_encode(true));

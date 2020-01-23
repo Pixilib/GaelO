@@ -49,8 +49,9 @@ if (isset($_SESSION['username'])) {
         //Log Delete operation
         $actionDetails["patient_code"]=$visitObject->patientCode;
         $actionDetails["type_visit"]=$visitObject->visitType;
-        $actionDetails["Visit"]="Deleted";
-        $actionDetails["Reason"]=$reason;
+        $actionDetails['modality_visit']=$visitObject->visitGroupObject->groupModality;
+        $actionDetails["visit"]="Deleted";
+        $actionDetails["reason"]=$reason;
         Tracker::logActivity($username, $role, $study, $id_visit, "Delete Visit", $actionDetails);
         $answer=true;
     } else {

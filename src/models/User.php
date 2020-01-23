@@ -177,7 +177,7 @@ class User {
                 $this->userStatus="Blocked";
                 //Log login event
                 $log['message']="Blocked";
-                Tracker::logActivity($this->username, "User",null,null, "Account Blocked", $log);
+                Tracker::logActivity($this->username, "User", null, null, "Account Blocked", $log);
                 //Send email notification
                 $this->sendBlockedEmail();
                 

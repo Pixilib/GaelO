@@ -103,7 +103,8 @@ if (isset($_SESSION['username']) ) {
         $actionDetails['action']=$action;
         $actionDetails['patient_code']=$visitObject->patientCode;
         $actionDetails['type_visit']=$visitObject->visitType;
-        $actionDetails['Reason']=$reason;
+        $actionDetails['modality_visit']=$visitObject->visitGroupObject->groupModality;
+        $actionDetails['reason']=$reason;
         Tracker::logActivity($username, $role, $_SESSION['study'], $id_visit, "Change Serie", $actionDetails);
         $answer=true;
         

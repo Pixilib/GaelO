@@ -15,6 +15,9 @@
  */
 //SK Quid du generator
 
+/**
+ * Export all data relative to a study
+ */
 class Export_Study_Data
 {
 
@@ -35,8 +38,7 @@ class Export_Study_Data
             try {
                 $modalityCreatedVisit = $this->studyObject->getStudySpecificGroupManager($visitGroup->groupModality)->getCreatedVisits();
                 array_push($this->allcreatedVisits, ...$modalityCreatedVisit);
-            } catch (Exception $e) {
-            }
+            } catch (Exception $e) { }
         }
     }
 
@@ -63,6 +65,9 @@ class Export_Study_Data
         return $patientCsvString;
     }
 
+    /**
+     * Export the visit table relative to this study
+     */
     public function exportVisitTable(): String
     {
 
@@ -90,7 +95,9 @@ class Export_Study_Data
         return $visitCsvString;
     }
 
-    //A GENERALISER QUAND VIENDRA CYTOMINE
+    /**
+     * Export Data relative to Imaging stored data (Orthanc Stored Data)
+     */
     public function getImagingData()
     {
 
@@ -128,6 +135,9 @@ class Export_Study_Data
         return $orthancCsvFile;
     }
 
+    /**
+     * Return an associative array in which each CSV file reference will be stored
+     */
     public function getReviewData()
     {
 
@@ -157,8 +167,7 @@ class Export_Study_Data
 
                 foreach ($visitArray as $visitObject) {
 
-                    array_push($csv, ...$this->getReviews($visitObject) );
-
+                    array_push($csv, ...$this->getReviews($visitObject));
                 }
 
                 $reviewCsvFiles[$modality . '_' . $visitType] = $this->writeCsv($csv);
@@ -168,31 +177,24 @@ class Export_Study_Data
         return $reviewCsvFiles;
     }
 
-    private function getReviews(Visit $visitObject) : Array
+    /**
+     * Merge local and review form and call getReviewDatas function to build one line of the CSV array for each review
+     */
+    private function getReviews(Visit $visitObject): array
     {
 
         $localReviews = [];
         try {
             $localReviews[] = $visitObject->getReviewsObject(true);
-        } catch (Exception $e) {
-        }
+        } catch (Exception $e) { }
 
         $expertReviews = [];
         try {
             $expertReviews = $visitObject->getReviewsObject(false);
-        } catch (Exception $e) {
-        }
+        } catch (Exception $e) { }
 
         //Merge all reviews in an array
-        $reviewObjects = [];
-
-        if (!empty($localReviews)) {
-            array_push($reviewObjects, ...$localReviews);
-        }
-
-        if (!empty($expertReviews)) {
-            array_push($reviewObjects, ...$expertReviews);
-        }
+        $reviewObjects = array_merge($localReviews, $expertReviews);
 
         $csv = [];
         foreach ($reviewObjects as $reviewObject) {
@@ -202,20 +204,25 @@ class Export_Study_Data
         return $csv;
     }
 
-    private function getReviewDatas(Review $review) : Array
+    /**
+     * Merge generic and specific column to build a CSV array
+     */
+    private function getReviewDatas(Review $review): array
     {
         //Add to final map
         $reviewDatas = $this->getGenericData($review);
         $specificData = $review->getSpecificData();
         unset($specificData["id_review"]);
 
-        $reviewLine = array_merge($reviewDatas, array_values($specificData) );
+        $reviewLine = array_merge($reviewDatas, array_values($specificData));
 
         return $reviewLine;
     }
 
-
-    private function getGenericData(Review $review)
+    /**
+     * Build the generic part of the review array
+     */
+    private function getGenericData(Review $review) : array
     {
         //Add to final map
         $reviewDatas = array(
@@ -226,7 +233,10 @@ class Export_Study_Data
         return $reviewDatas;
     }
 
-    private function writeCsv($csvArray)
+    /**
+     * Write CSV Array to a temporary file
+     */
+    private function writeCsv($csvArray) : String
     {
 
         $tempCsv = tempnam(ini_get('upload_tmp_dir'), 'TMPCSV_');
@@ -253,10 +263,11 @@ class Export_Study_Data
      * 8 Review ongoing
      * 9 Review Wait adjudication
      * 10 review done
+     * -1 If any of these case (should not happen)
      * @param Visit $visitObject
      * @return number
      */
-    private function dertermineVisitStatusCode(Visit $visitObject)
+    private function dertermineVisitStatusCode(Visit $visitObject) : int
     {
 
         if ($visitObject->statusDone == Visit::NOT_DONE) {
@@ -283,6 +294,10 @@ class Export_Study_Data
             return 9;
         } else if ($visitObject->reviewStatus == Form_Processor::DONE) {
             return 10;
+        }else{
+            //If none of these case return -1, should not happen
+            return -1;
         }
     }
+
 }

@@ -41,6 +41,7 @@ if ($_SESSION['role']==User::SUPERVISOR && $permissionsCheck) {
 			//Log activity
 			$actionDetails['type_visit']=$visitObject->visitType;
 			$actionDetails['patient_code']=$visitObject->patientCode;
+			$actionDetails['modality_visit']=$visitObject->visitGroupObject->groupModality;
 			$actionDetails['local_review']=$reviewObject->isLocal;
 			$actionDetails['id_review']=$reviewObject->id_review;
 			$actionDetails['reason']=$reason;

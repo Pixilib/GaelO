@@ -50,14 +50,15 @@ class Visit_Group
     }
 
 
-    public function getVisitType(String $visitName){
+    public function getVisitType(String $visitName): Visit_Type
+    {
         return new Visit_Type($this->linkpdo, $this->groupId, $visitName);
     }
 
     /**
      * Return all visit type of the current visit group
      */
-    public function getAllVisitTypesOfGroup()
+    public function getAllVisitTypesOfGroup(): array
     {
 
         $allVisitsType = $this->linkpdo->prepare('SELECT name FROM visit_type WHERE group_id= :groupId ORDER BY visit_order');
@@ -72,21 +73,23 @@ class Visit_Group
         return $visitTypeArray;
     }
 
-    public function getAllVisitTypesOfGroupIterator(){
+    public function getAllVisitTypesOfGroupIterator(): Visit_Type_Iterator
+    {
         return new Visit_Type_Iterator($this->getAllVisitTypesOfGroup());
     }
 
-    public function getStudyVisitManager(){
-        $studyObject=new Study($this->studyName, $this->linkpdo);
+    public function getStudyVisitManager(): Study_Visit_Manager
+    {
+        $studyObject = new Study($this->studyName, $this->linkpdo);
         return new Study_Visit_Manager($studyObject, $this, $this->linkpdo);
     }
 
-    public function getStudy()
+    public function getStudy(): Study
     {
         return new Study($this->studyName, $this->linkpdo);
     }
 
-    public static function createVisitGroup(String $studyName, String $groupModality, PDO $linkpdo)
+    public static function createVisitGroup(String $studyName, String $groupModality, PDO $linkpdo) : Visit_Group
     {
 
         $req = $linkpdo->prepare('INSERT INTO visit_group (study,  group_modality)

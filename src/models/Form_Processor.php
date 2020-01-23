@@ -171,6 +171,7 @@ abstract class Form_Processor {
 		if($this->local) $role="Investigator"; else $role="Reviewer";
 		$actionDetails['patient_code']=$this->visitObject->patientCode;
 		$actionDetails['type_visit']=$this->visitObject->visitType;
+		$actionDetails['modality_visit']=$this->visitObject->visitGroupObject->groupModality;
 		$actionDetails['id_review']=$idReview;
 		$actionDetails['local_review']=intval($this->local);
 		$actionDetails['adjudication']=intval($this->reviewStatus==Form_Processor::WAIT_ADJUDICATION);

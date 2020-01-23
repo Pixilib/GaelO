@@ -59,7 +59,7 @@ Class Visit_Type{
      * Return name of specific table of this visit type
      * @return array
      */
-    public function getSpecificFormColumn(){
+    public function getSpecificFormColumn() : Array {
         $visitsTypeColumnQuery=$this->linkpdo->prepare('SELECT `COLUMN_NAME`
                                             FROM `INFORMATION_SCHEMA`.`COLUMNS`
                                             WHERE  `TABLE_NAME`="'.$this->tableReviewSpecificName.'"');
@@ -73,7 +73,7 @@ Class Visit_Type{
      * Return name and type of the specific table of this visit
      * @return array
      */
-    public function getSpecificTableInputType(){
+    public function getSpecificTableInputType() : Array {
         $query = $this->linkpdo->prepare('SELECT COLUMN_NAME, COLUMN_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME="'.$this->tableReviewSpecificName.'"');
         $query->execute();
         $datas=$query->fetchAll(PDO::FETCH_ASSOC);
@@ -82,7 +82,7 @@ Class Visit_Type{
         
     }
 
-    public function getVisitGroup(){
+    public function getVisitGroup() : Visit_Group{
         return new Visit_Group($this->linkpdo, $this->groupId);
     }
     

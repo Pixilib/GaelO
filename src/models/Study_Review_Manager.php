@@ -17,81 +17,78 @@
 /**
  * Review status progress determination
  */
- class Study_Review_Manager
+class Study_Review_Manager
 {
 
-    private $studyObject;
+	private $studyObject;
 
 
-    public function __construct(Study $studyObject)
-    {
-        $this->studyObject=$studyObject;
+	public function __construct(Study $studyObject)
+	{
+		$this->studyObject = $studyObject;
+	}
 
-    }
+	private function getAvailableReviewersName(): Array
+	{
+		//List the Reviewers declared in the study
+		$reviewerUsersObjects = $this->studyObject->getUsersByRoleInStudy(User::REVIEWER);
+		$availableReviewers = [];
+		foreach ($reviewerUsersObjects as $reviewerObject) {
+			$availableReviewers[] = $reviewerObject->lastName . " " . $reviewerObject->firstName;
+		}
 
-    private function getAvailableReviewersName() : Array {
-        //List the Reviewers declared in the study
-		$reviewerUsersObjects=$this->studyObject->getUsersByRoleInStudy(User::REVIEWER);
-		$availableReviewers=[];
-		foreach ($reviewerUsersObjects as $reviewerObject){
-			$availableReviewers[]=$reviewerObject->lastName." ".$reviewerObject->firstName;
-        }
-        
-        return $availableReviewers;
-    }
+		return $availableReviewers;
+	}
 
-    /**
+	/**
 	 * List users who have done reviews (and other reviewers missing) for each visit
 	 * with date of review, status of review, 
 	 * @return array[]
 	 */
-	public function getReviewsDetailsByVisit(){
+	public function getReviewsDetailsByVisit() : Array
+	{
 
-        $availableReviewers=$this->getAvailableReviewersName();
+		$availableReviewers = $this->getAvailableReviewersName();
 		//Retrieve created Visit from the study Object
-		$createdVisitObjects=$this->studyObject->getAllCreatedVisits();
-		
+		$createdVisitObjects = $this->studyObject->getAllCreatedVisits();
+
 		//GlobalMap
-		$reviewdetailsMap=[];
-		
-		foreach ($createdVisitObjects as $createdVisit){
-			if($createdVisit->stateQualityControl==Visit::QC_ACCEPTED){
+		$reviewdetailsMap = [];
+
+		foreach ($createdVisitObjects as $createdVisit) {
+			if ($createdVisit->stateQualityControl == Visit::QC_ACCEPTED) {
 				//If QC Accepted, visit is suitable for review so analyze it
-                $newVisit['visitId']=$createdVisit->id_visit;
-                $newVisit['visitModality']=$createdVisit->visitGroupObject->groupModality;
-				$newVisit['patientNumber']=$createdVisit->patientCode;
-				$newVisit['visit']=$createdVisit->visitType;
-				$newVisit['acquisitionDate']=$createdVisit->acquisitionDate;
-				$newVisit['reviewStatus']=$createdVisit->reviewStatus;
+				$newVisit['visitId'] = $createdVisit->id_visit;
+				$newVisit['visitModality'] = $createdVisit->visitGroupObject->groupModality;
+				$newVisit['patientNumber'] = $createdVisit->patientCode;
+				$newVisit['visit'] = $createdVisit->visitType;
+				$newVisit['acquisitionDate'] = $createdVisit->acquisitionDate;
+				$newVisit['reviewStatus'] = $createdVisit->reviewStatus;
 				//Retrieve review
-				try{
-					$reviewObjects=$createdVisit->getReviewsObject(false);
-				}catch(Exception $e) {
-					$reviewObjects=[];
+				try {
+					$reviewObjects = $createdVisit->getReviewsObject(false);
+				} catch (Exception $e) {
+					$reviewObjects = [];
 				}
 
-				$newVisit['numberOfReview']=count($reviewObjects);
-				$newVisit['reviewDoneBy']=[];
-				$newVisit['reviewDetailsArray']=[];
-				foreach ($reviewObjects as $review){
-					$reviewerObject=$review->getUserObject();
-					$details['user']=$reviewerObject->lastName." ".$reviewerObject->firstName;
-					$details['date']=$review->reviewDate;
-					$newVisit['reviewDetailsArray'][]=$details;
-					$newVisit['reviewDoneBy'][]=$reviewerObject->lastName." ".$reviewerObject->firstName;
+				$newVisit['numberOfReview'] = count($reviewObjects);
+				$newVisit['reviewDoneBy'] = [];
+				$newVisit['reviewDetailsArray'] = [];
+				foreach ($reviewObjects as $review) {
+					$reviewerObject = $review->getUserObject();
+					$details['user'] = $reviewerObject->lastName . " " . $reviewerObject->firstName;
+					$details['date'] = $review->reviewDate;
+					$newVisit['reviewDetailsArray'][] = $details;
+					$newVisit['reviewDoneBy'][] = $reviewerObject->lastName . " " . $reviewerObject->firstName;
 				}
-				
+
 				//Determine missing reviewer for this visit
-				$newVisit['reviewNotDoneBy']=array_diff($availableReviewers, $newVisit['reviewDoneBy']);
-				
+				$newVisit['reviewNotDoneBy'] = array_diff($availableReviewers, $newVisit['reviewDoneBy']);
+
 				//Add all data to the global map
-				$reviewdetailsMap[ $createdVisit->id_visit ]=$newVisit;
-				
+				$reviewdetailsMap[$createdVisit->id_visit] = $newVisit;
 			}
 		}
 		return $reviewdetailsMap;
-		
-		
 	}
-
 }

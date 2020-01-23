@@ -21,9 +21,9 @@
 class Study_Visit_Manager
 {
 
-    private $studyObject;
-    private $visitGroupObject;
-    private $linkpdo;
+    private Study $studyObject;
+    private Visit_Group $visitGroupObject;
+    private PDO $linkpdo;
 
 
     public function __construct(Study $studyObject, Visit_Group $visitGroupObject, PDO $linkpdo)
@@ -33,15 +33,15 @@ class Study_Visit_Manager
         $this->visitGroupObject = $visitGroupObject;
     }
 
-    public function getVisitGroupObject()
+    public function getVisitGroupObject() : Visit_Group
     {
         return $this->visitGroupObject;
     }
 
     /**
-     * Return uploaded and non deleted visit Objects
+     * Return uploaded and non deleted visit Objects (visit Done and Upload status done)
      */
-    public function getUploadedVisits()
+    public function getUploadedVisits() : Array
     {
 
         $uploadedVisitQuery = $this->linkpdo->prepare('SELECT id_visit FROM visits WHERE visit_group_id = :visitGroupId
@@ -62,7 +62,10 @@ class Study_Visit_Manager
         return $visitObjectArray;
     }
 
-    public function getAwaitingUploadVisit()
+    /**
+     * Get visits with a awaiting upload status (Visit Done but upload status not done)
+     */
+    public function getAwaitingUploadVisit() : Array
     {
 
         $uploadedVisitQuery = $this->linkpdo->prepare("SELECT id_visit FROM visits WHERE visit_group_id = :visitGroupId
@@ -91,7 +94,7 @@ class Study_Visit_Manager
      * @param string $username
      * @return Visit[]
      */
-    public function getAwaitingReviewVisit(string $username = null)
+    public function getAwaitingReviewVisit(string $username = null) : Array
     {
 
         //Query visit to analyze visit awaiting a review
@@ -123,9 +126,9 @@ class Study_Visit_Manager
 
     /**
      * For controller tree
-     * List all visits that are QC or waiting QC
+     * List all visits that awaiting QC Action (QC not done or waiting definitive conclusion)
      */
-    public function getVisitForControllerAction()
+    public function getVisitForControllerAction() : Array
     {
 
         $visitsQuery = $this->linkpdo->prepare('SELECT id_visit FROM visits INNER JOIN visit_type ON (visit_type.name=visits.visit_type AND visit_type.group_id=visits.visit_group_id) 
@@ -151,7 +154,10 @@ class Study_Visit_Manager
         return $visitObjectArray;
     }
 
-    public function getVisitWithQCStatus($qcStatus)
+    /**
+     * Return visits with a specific QC Status
+     */
+    public function getVisitWithQCStatus($qcStatus) : Array
     {
 
         $visitQuery = $this->linkpdo->prepare("SELECT id_visit FROM visits WHERE study = :study
@@ -174,7 +180,10 @@ class Study_Visit_Manager
         return $visitObjectArray;
     }
 
-    public function getVisitsMissingInvestigatorForm()
+    /**
+     * Get Visits with image uploaded status but investigator form missing
+     */
+    public function getVisitsMissingInvestigatorForm() : Array
     {
 
         $visitQuery = $this->linkpdo->prepare("SELECT id_visit FROM visits WHERE visit_group_id = :visitGroupId
@@ -198,9 +207,9 @@ class Study_Visit_Manager
     }
 
     /**
-     * Return studie's visit object
+     * Return studie's created visits
      */
-    public function getCreatedVisits(bool $deleted = false)
+    public function getCreatedVisits(bool $deleted = false) : Array
     {
 
         $uploadedVisitQuery = $this->linkpdo->prepare('SELECT id_visit FROM visits 
@@ -226,6 +235,9 @@ class Study_Visit_Manager
         return $visitObjectArray;
     }
 
+    /**
+     * Determine all patient status for a specific visitType
+     */
     public function getPatientVisitStatusForVisitType(Visit_Type $visitType)
     {
 
@@ -255,7 +267,9 @@ class Study_Visit_Manager
         return $results;
     }
 
-
+    /**
+     * Determine all visits status for all visit type for all patients
+     */
     public function getPatientsAllVisitsStatus()
     {
 

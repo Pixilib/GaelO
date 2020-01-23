@@ -66,6 +66,9 @@ if (isset ( $_SESSION ['username'] ) && $visitAllowed) {
 		$visitObject->setCorrectiveAction($newSeries, $formCorrected, $correctiveActionDecision, $_POST['other_comment'], $username);
 		
 		//Log Activity
+		$actionDetails['patient_code']=$visitObject->patientCode;
+		$actionDetails['type_visit']=$visitObject->visitType;
+        $actionDetails['modality_visit']=$visitObject->visitGroupObject->groupModality;
 		$actionDetails['new_series_uploaded']=$newSeries;
 		$actionDetails['form_corrected']=$formCorrected;
 		$actionDetails['other_comment']=$_POST['other_comment'];

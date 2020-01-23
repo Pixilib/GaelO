@@ -120,7 +120,8 @@ if( $accessCheck && $role== User::INVESTIGATOR && $visitObject->uploadStatus==Vi
         $answer['receivedConfirmation']=true;
         $logDetails['uploadedSeries']=$studyDetails['seriesInStudy'];
         $logDetails['patientNumber']=$visitObject->patientCode;
-        $logDetails['visitType']=$visitObject->visitType;
+		$logDetails['visitType']=$visitObject->visitType;
+		$logDetails['modality_visit']=$visitObject->visitGroupObject->groupModality;
         //Log import
         Tracker::logActivity($username, $role, $study, $visitObject->id_visit, "Upload Series", $logDetails );
 	

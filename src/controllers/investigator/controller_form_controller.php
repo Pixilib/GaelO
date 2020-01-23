@@ -73,6 +73,7 @@ if (isset($_SESSION['username']) && $patientAllowed) {
         //Log action
         $actionDetails['patient_code']=$visitObject->patientCode;
         $actionDetails['type_visit']=$visitObject->visitType;
+        $actionDetails['modality_visit']=$visitObject->visitGroupObject->groupModality;
         $actionDetails['form_accepted']=$formAccepted;
         $actionDetails['image_accepted']=$imageAccepted;
         $actionDetails['form_comment']=$_POST['formComment'];

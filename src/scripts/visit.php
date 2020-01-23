@@ -55,6 +55,7 @@ if($_SERVER['REQUEST_METHOD']==='GET'){
                 // Log action
                 $actionDetails['patient_code'] = $patientCode;
                 $actionDetails['type_visit'] = $visitType;
+                $actionDetails['modality_visit']=$visitObject->visitGroupObject->groupModality;
                 Tracker::logActivity($username, $_SESSION['role'], $study, $createdId, "Create Visit", $actionDetails);
                 $answer="Success";
             }else{
