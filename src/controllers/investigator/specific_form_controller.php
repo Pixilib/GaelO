@@ -33,7 +33,6 @@ $isLocalformNeeded = $visitObject->getVisitCharacteristics()->localFormNeeded;
 
 if($permissionResults){
     
-    $visitObject=new Visit($id_visit, $linkpdo);
     //Determine if calling local or reviewer form
     $local = ($_SESSION['role']==User::REVIEWER) ? false : true ;
     $formProcessorObject=$visitObject->getFromProcessor($local, $username);

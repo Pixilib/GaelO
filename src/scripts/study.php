@@ -61,8 +61,8 @@ if($_SERVER['REQUEST_METHOD']==='GET'){
                 Visit_Type::createVisitType($studyName, $visitGroup , $visit['name'], $visit['order'], $visit['dayMin'] , $visit['dayMax'], $localForm,
                 $qc, $review, $optional, $visit['anonProfile'], $linkpdo);
                 
-                $rootSpecificModelsFolder=$_SERVER["DOCUMENT_ROOT"].'/data/form/Poo';
-                $rootSpecificScriptFolder=$_SERVER["DOCUMENT_ROOT"].'/data/form/scripts';
+                $rootSpecificModelsFolder=$_SERVER["DOCUMENT_ROOT"].'/data/form/'.$studyName.'/Poo';
+                $rootSpecificScriptFolder=$_SERVER["DOCUMENT_ROOT"].'/data/form/'.$studyName.'/scripts';
                 
                 //Create root folder if not existing
                 if (!is_dir($rootSpecificModelsFolder)) {

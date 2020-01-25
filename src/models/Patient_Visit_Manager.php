@@ -200,7 +200,7 @@ class Patient_Visit_Manager
 
         $registrationDate = $this->patientObject->getImmutableRegistrationDate();
 
-        $visitType = new Visit_Type($this->linkpdo, $this->visitGroup->groupId, $visitName);
+        $visitType = Visit_Type::getVisitTypeByName($this->visitGroup->groupId, $visitName, $this->linkpdo);
 
         $dateDownLimit = $registrationDate->modify($visitType->limitLowDays . 'day');
         $dateUpLimit = $registrationDate->modify($visitType->limitUpDays . 'day');

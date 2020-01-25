@@ -142,7 +142,7 @@ class Patient{
      */
     public function getPatientVisitManager(Visit_Group $visitGroupObject) {
         //Look if specific patient visit manager exists for this study
-        $specificObjectFile=$_SERVER["DOCUMENT_ROOT"]."/data/form/Poo/".$this->patientStudy."_Patient_Visit_Manager.php";
+        $specificObjectFile=$_SERVER["DOCUMENT_ROOT"].'/data/form/'.$this->patientStudy.'/Poo/'.$this->patientStudy."_Patient_Visit_Manager.php";
             
         if(is_file($specificObjectFile)){
             require_once($specificObjectFile);

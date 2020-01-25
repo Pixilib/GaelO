@@ -290,13 +290,12 @@ Class Send_Email {
 
     }
     
-    //SK VOIR COMBIEN DE FOIS CETTE METHODE EST APPELEE
-    //1 seule fois
-    //Ajouter le role en parametre et inclusion des mails en interne et retourn self ?
-    public function selectDesinatorEmailsfromCenters(String $study, int $center, ?array $job=null) : Array {
+    /**
+     * Add investigators emails having a particular center center in main or affiliated center
+     */
+    public function selectInvestigatorsEmailsWithSameCenter(String $study, int $center, ?array $job=null) : Send_Email {
         //Select All users that has a matching center
         $users =$this->getUsersAffiliatedToCenter($center);
-        $finalEmailList=[];
         //For each user check that we match role requirement (array if investigator), string if monitor or supervisor
         foreach ($users as $user){
             
@@ -305,12 +304,12 @@ Class Send_Email {
             }
         
             if($user->isRoleAllowed($study, User::INVESTIGATOR)){
-                $finalEmailList[]=$user->userEmail;;
+                $this->addEmails($user->userEmail);
             }
             
         }
         
-        return $finalEmailList;
+        return $this;
     }
 
     public function addAminEmails() : Send_Email {

@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Client :  localhost
--- Généré le :  Lun 13 Janvier 2020 à 01:07
+-- Généré le :  Sam 25 Janvier 2020 à 15:52
 -- Version du serveur :  5.7.28-0ubuntu0.16.04.2
 -- Version de PHP :  7.3.13-1+ubuntu16.04.1+deb.sury.org+1
 
@@ -634,8 +634,7 @@ CREATE TABLE `visits` (
   `creation_date` datetime DEFAULT NULL,
   `patient_code` bigint(13) NOT NULL,
   `acquisition_date` date DEFAULT NULL,
-  `visit_group_id` int(11) NOT NULL,
-  `visit_type` varchar(32) NOT NULL,
+  `visit_type_id` int(11) NOT NULL,
   `status_done` enum('Not Done','Done') NOT NULL DEFAULT 'Not Done',
   `reason_for_not_done` tinytext,
   `upload_status` enum('Not Done','Processing','Done') NOT NULL DEFAULT 'Not Done',
@@ -679,6 +678,7 @@ CREATE TABLE `visit_group` (
 --
 
 CREATE TABLE `visit_type` (
+  `id` int(11) NOT NULL,
   `group_id` int(11) NOT NULL,
   `name` varchar(32) NOT NULL,
   `table_review_specific` varchar(70) NOT NULL,
@@ -820,9 +820,7 @@ ALTER TABLE `visits`
   ADD KEY `controller_username` (`controller_username`),
   ADD KEY `corrective_action_username` (`corrective_action_username`),
   ADD KEY `creator_name` (`creator_name`),
-  ADD KEY `visit_group_id` (`visit_group_id`),
-  ADD KEY `visit_type` (`visit_type`),
-  ADD KEY `visits_group_id` (`visit_group_id`,`visit_type`);
+  ADD KEY `visit_type_id` (`visit_type_id`) USING BTREE;
 
 --
 -- Index pour la table `visit_group`
@@ -835,7 +833,7 @@ ALTER TABLE `visit_group`
 -- Index pour la table `visit_type`
 --
 ALTER TABLE `visit_type`
-  ADD PRIMARY KEY (`group_id`,`name`),
+  ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `table_review_specific` (`table_review_specific`),
   ADD UNIQUE KEY `group_id_2` (`group_id`,`visit_order`),
   ADD KEY `group_id` (`group_id`);
@@ -944,7 +942,7 @@ ALTER TABLE `visits`
   ADD CONSTRAINT `patientNumber` FOREIGN KEY (`patient_code`) REFERENCES `patients` (`code`),
   ADD CONSTRAINT `usernameController` FOREIGN KEY (`controller_username`) REFERENCES `users` (`username`),
   ADD CONSTRAINT `usernameCorrective` FOREIGN KEY (`corrective_action_username`) REFERENCES `users` (`username`),
-  ADD CONSTRAINT `visits_group_id` FOREIGN KEY (`visit_group_id`,`visit_type`) REFERENCES `visit_type` (`group_id`, `name`);
+  ADD CONSTRAINT `visit_type_id` FOREIGN KEY (`visit_type_id`) REFERENCES `visit_type` (`id`);
 
 --
 -- Contraintes pour la table `visit_group`

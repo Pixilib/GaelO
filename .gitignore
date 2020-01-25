@@ -2,7 +2,7 @@
 /src/data/cron/config_ftp.php
 /src/data/logs/*
 !/src/data/.htaccess
-/src/data/form/Poo/*
-/src/data/form/scripts/*
+!/src/data/form/.htaccess
+/src/data/form/*
 /src/vendor
 /src/composer.phar

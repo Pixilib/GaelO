@@ -107,23 +107,14 @@ if (isset($_SESSION['username']) && $patientAllowed) {
         }else{
             $commentImage=$_POST['imageComment'];
         }
-        
-        
-        $message="Quality Control of the following visit has been set to : ".$controlDecision."<br>
-                Patient Number:".$visitObject->patientCode."<br>
-                Visit : ".$visitObject->visitType."<br>
-                Investigation Form : ".$formAccepted." Comment :".$commentForm."<br>
-                Image Series : ".$imageAccepted." Comment :".$commentImage." <br>";
-        
+
         $email=new Send_Email($linkpdo);
         $email->addGroupEmails($visitObject->study, User::SUPERVISOR)
                 ->addGroupEmails($visitObject->study, User::MONITOR)
                 ->addEmail($userObject->userEmail)
-                ->addEmail( $email->getUserEmails($visitObject->uploaderUsername) );
-        $email->setMessage($message);
-        $patientCenter=$visitObject->getPatient()->getPatientCenter();
-        $sameCenterEmails=$email->selectDesinatorEmailsfromCenters($visitObject->study, $patientCenter->code);
-        $email->addEmails($sameCenterEmails);
+                ->addEmail( $email->getUserEmails($visitObject->uploaderUsername) )
+                ->selectInvestigatorsEmailsWithSameCenter($visitObject->study, $visitObject->getPatient()->getPatientCenter()->code);
+
         $email->sendQCDesicionEmail($controlDecision, $visitObject->study ,$visitObject->patientCode, $visitObject->visitType, $formAccepted, $commentForm, $imageAccepted, $commentImage);
         
         

@@ -104,32 +104,33 @@ class Visit{
         
         $this->statusDone=$visitDbData['status_done'];
         $this->reasonForNotDone=$visitDbData['reason_for_not_done'];
+        $this->visitTypeId=$visitDbData['visit_type_id'];
         $this->visitGroupId=$visitDbData['visit_group_id'];
         $this->patientCode=$visitDbData['patient_code'];
-        $this->visitType=$visitDbData['visit_type'];
         
         $this->uploadStatus=$visitDbData['upload_status'];
         $this->acquisitionDate=$visitDbData['acquisition_date'];
         $this->stateInvestigatorForm=$visitDbData['state_investigator_form'];
         $this->stateQualityControl=$visitDbData['state_quality_control'];
-        
+
         $this->newSeriesUpload=$visitDbData['corrective_action_new_upload'];
         $this->investigatorFormIsCorrected=$visitDbData['corrective_action_investigator_form'];
         $this->otherCorrectiveAction=$visitDbData['corrective_action_other'];
         $this->correctiveActionDecision=$visitDbData['corrective_action_decision'];
-        
         $this->reviewAvailable=$visitDbData['review_available'];
-        
         $this->reviewStatus=$visitDbData['review_status'];
         $this->reviewConclusionDate=$visitDbData['review_conclusion_date'];
         $this->reviewConclusion=$visitDbData['review_conclusion_value'];
-        
         $this->correctiveActionUsername=$visitDbData['corrective_action_username'];
         $this->correctiveActionDate=$visitDbData['corrective_action_date'];
         $this->deleted=$visitDbData['deleted'];
+        
 
-        //Get group detail
-        $this->visitGroupObject=new Visit_Group($this->linkpdo, $this->visitGroupId);
+        //Get VisitType detail
+        $this->visitTypeObject=new Visit_Type($this->linkpdo, $this->visitTypeId);
+        $this->visitType=$this->visitTypeObject->name;
+        //Get VisitGroup details
+        $this->visitGroupObject=new Visit_Group($this->linkpdo, $this->visitTypeObject->groupId);
         $this->study=$this->visitGroupObject->studyName;
         
         if( $this->uploadStatus == Visit::DONE){
@@ -225,12 +226,18 @@ class Visit{
     }
     
     /**
-     * Return visit type details of this visit
+     * Return visit type object related to this visit
      * @return Visit_Type
      */
     public function getVisitCharacteristics() : Visit_Type {
-        $visitTypeObject=new Visit_Type($this->linkpdo, $this->visitGroupId, $this->visitType);
-        return $visitTypeObject;  
+        return $this->visitTypeObject;  
+    }
+
+    /**
+     * Return visit group object related to this visit
+     */
+    public function getVisitGroup() : Visit_Group {
+        return $this->visitGroupObject;
     }
     
     /**
@@ -555,7 +562,7 @@ class Visit{
     public function getFromProcessor(bool $local, string $username){
         //Destination of the specific post processing POO
         $modality=$this->visitGroupObject->groupModality;
-        $specificObjectFile=$_SERVER["DOCUMENT_ROOT"]."/data/form/Poo/".$modality."_".$this->study."_".$this->visitType.".php";
+        $specificObjectFile=$_SERVER["DOCUMENT_ROOT"].'/data/form/'.$this->study.'/Poo/'.$modality."_".$this->study."_".$this->visitType.".php";
         
         $formProcessor=null;
         
@@ -653,7 +660,7 @@ class Visit{
     
     /**
      * Create a new visit
-     * @param $visitType
+     * @param $visitName
      * @param $study
      * @param $patientCode
      * @param $statusDone
@@ -663,7 +670,9 @@ class Visit{
      * @param $linkpdo
      * @return string
      */
-    public static function createVisit($visitType, $visitGroupId, $patientCode, $statusDone, $reasonNotDone, $acquisitionDate, $username, PDO $linkpdo){
+    public static function createVisit($visitName, $visitGroupId, $patientCode, $statusDone, $reasonNotDone, $acquisitionDate, $username, PDO $linkpdo){
+        
+        $visitType = Visit_Type::getVisitTypeByName($visitGroupId, $visitName, $linkpdo);
         
         //Add visit verifying that this visit doesn't already have an active visite registered
         $insertion = $linkpdo->prepare ( 'INSERT INTO visits(visit_group_id, visit_type, status_done, patient_code, reason_for_not_done, acquisition_date, creator_name, creation_date)
@@ -671,8 +680,7 @@ class Visit{
 											WHERE NOT EXISTS (SELECT id_visit FROM visits WHERE patient_code=:patient_code AND visit_group_id=:visitGroupID AND visit_type=:type_visite AND deleted=0) ' );
         
         $insertion->execute ( array (
-            'visitGroupID'=>$visitGroupId,
-            'type_visite' => $visitType,
+            'visit_type_id'=>$visitType->id,
             'status_done' => $statusDone,
             'patient_code' => $patientCode,
             'reason' => $reasonNotDone,

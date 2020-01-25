@@ -33,18 +33,18 @@ Class Visit_Type{
 
     public $linkpdo;
     
-    public function __construct(PDO $linkpdo, String $groupId, String $name){
+    public function __construct(PDO $linkpdo, int $visitTypeId){
         
         $this->linkpdo=$linkpdo;
-        $visitTypeQuery = $this->linkpdo->prepare('SELECT * FROM visit_type WHERE group_id = :groupId AND name= :name');
-        $visitTypeQuery->execute(array('groupId' => $groupId, 'name'=>$name));
+        $visitTypeQuery = $this->linkpdo->prepare('SELECT * FROM visit_type WHERE id = :visitTypeId');
+        $visitTypeQuery->execute(array('visitTypeId' => $visitTypeId));
         $visitType=$visitTypeQuery->fetch(PDO::FETCH_ASSOC);
 
+        $this->id=$visitType['id'];
         $this->groupId=$visitType['group_id'];
         $this->name=$visitType['name'];
         $this->tableReviewSpecificName=$visitType['table_review_specific'];
         $this->visitOrder=$visitType['visit_order'];
-
         $this->localFormNeeded=$visitType['local_form_needed'];
         $this->qcNeeded=$visitType['qc_needed'];
         $this->reviewNeeded=$visitType['review_needed'];
@@ -53,6 +53,15 @@ Class Visit_Type{
         $this->limitUpDays=$visitType['limit_up_days'];
         $this->anonProfile=$visitType['anon_profile'];
         
+    }
+
+    public static function getVisitTypeByName(int $groupId, $visitName,PDO $linkpdo){
+
+        $visitTypeQuery = $linkpdo->prepare('SELECT id FROM visit_type WHERE group_id = :groupId AND name= :name');
+        $visitTypeQuery->execute(array('groupId' => $groupId, 'name'=>$visitName));
+        $visitTypeId=$visitTypeQuery->fetch(PDO::FETCH_COLUMN);
+        return new Visit_Type($linkpdo, $visitTypeId);
+
     }
     
     /**
