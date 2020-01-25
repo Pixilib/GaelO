@@ -689,7 +689,7 @@ class Visit{
         
         $createdId=$linkpdo->lastInsertId();
         
-        return $createdId;
+        return new Visit($createdId, $linkpdo);
     }
     
 }

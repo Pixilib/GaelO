@@ -1,6 +1,5 @@
 Passage Visit Group : 
 => Controleur statitics a generaliser pour autres modalite
-
 Visit voir a quel moment on accede a visitType et Study depuis object visit
 Se pencher sur monitoring de Docker
 
@@ -11,7 +10,6 @@ exports automatises => Form a valider
 git lysarc
 
 Tests:
-Fichier spécifique faire un sous repertoire par etude => A tester
 Methode envoie mail meme centre a encapsuler => A tester (envoi mail QC)
 Source du review manager a revoir => A tester + verif que statistics ne casse pas trop
 Verif que les visit modality apparaissent dans le tracker

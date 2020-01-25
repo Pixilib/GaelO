@@ -51,12 +51,12 @@ if($_SERVER['REQUEST_METHOD']==='GET'){
             
             if (! empty($visitType) && ! empty($statusDone)) {
 
-                $createdId = Visit::createVisit($visitType, $groupId, $patientCode, $statusDone, $reasonNotDone, $acquisitionDate, $username, $linkpdo);
+                $visitObject = Visit::createVisit($visitType, $groupId, $patientCode, $statusDone, $reasonNotDone, $acquisitionDate, $username, $linkpdo);
                 // Log action
                 $actionDetails['patient_code'] = $patientCode;
                 $actionDetails['type_visit'] = $visitType;
                 $actionDetails['modality_visit']=$visitObject->visitGroupObject->groupModality;
-                Tracker::logActivity($username, $_SESSION['role'], $study, $createdId, "Create Visit", $actionDetails);
+                Tracker::logActivity($username, $_SESSION['role'], $study, $visitObject->id_visit , "Create Visit", $actionDetails);
                 $answer="Success";
             }else{
                 $answer="Missing Data";
