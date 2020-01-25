@@ -565,7 +565,7 @@ class Visit{
         $formProcessor=null;
         
         if(is_file($specificObjectFile)){
-            require($specificObjectFile);
+            require_once($specificObjectFile);
             $objectName=$modality."_".$this->study."_".$this->visitType;
             $formProcessor = new $objectName($this, $local, $username, $this->linkpdo);
         }else{
