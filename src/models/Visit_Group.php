@@ -54,7 +54,7 @@ class Visit_Group
      */
     public function getVisitType(String $visitName): Visit_Type
     {
-        return new Visit_Type($this->linkpdo, $this->groupId, $visitName);
+        return Visit_Type::getVisitTypeByName($this->groupId, $visitName, $this->linkpdo);
     }
 
     /**
@@ -86,10 +86,10 @@ class Visit_Group
     /**
      * Get Study Visit manager of this group
      */
-    public function getStudyVisitManager(): Study_Visit_Manager
+    public function getStudyVisitManager(): Group_Visit_Manager
     {
         $studyObject = new Study($this->studyName, $this->linkpdo);
-        return new Study_Visit_Manager($studyObject, $this, $this->linkpdo);
+        return new Group_Visit_Manager($studyObject, $this, $this->linkpdo);
     }
 
     /**

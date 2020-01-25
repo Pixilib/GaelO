@@ -857,6 +857,12 @@ ALTER TABLE `reviews`
 --
 ALTER TABLE `visits`
   MODIFY `id_visit` int(11) NOT NULL AUTO_INCREMENT;
+  
+--
+-- AUTO_INCREMENT pour la table `visit_type`
+--
+ALTER TABLE `visit_type`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT pour la table `visit_group`
 --

@@ -56,16 +56,17 @@ class Patient_Visit_Manager
     {
 
         $visitQuery = $this->linkpdo->prepare('SELECT id_visit FROM visits
-													INNER JOIN visit_type ON (visit_type.name=visits.visit_type AND visit_type.group_id=visits.visit_group_id)
-                                          			WHERE patient_code = :patientCode
-                                                    AND visits.visit_group_id = :groupId
-													AND visits.deleted=:deleted
-													ORDER BY visit_type.visit_order');
+                                                                INNER JOIN visit_type ON 
+                                                                (visit_type.id=visits.visit_type_id 
+                                                                AND visit_type.group_id = :visitGroupId)
+													    WHERE patient_code = :patientCode
+													    AND visits.deleted=:deleted
+													    ORDER BY visit_type.visit_order');
 
 
         $visitQuery->execute(array(
             'patientCode' => $this->patientCode,
-            'groupId' => $this->visitGroup->groupId,
+            'visitGroupId' => $this->visitGroup->groupId,
             'deleted' => $deletedVisits
         ));
 
@@ -88,18 +89,19 @@ class Patient_Visit_Manager
     {
 
         $visitQuery = $this->linkpdo->prepare('SELECT id_visit FROM visits
-													INNER JOIN visit_type ON (visit_type.name=visits.visit_type AND visit_type.group_id=visits.visit_group_id)
-                                          			WHERE patient_code = :patientCode
-                                                    AND visits.visit_group_id = :groupId
-                                                    AND visits.state_quality_control = :qcStatus
-													AND visits.deleted=:deleted
-													ORDER BY visit_type.visit_order');
+													            INNER JOIN visit_type ON 
+                                                                (visit_type.id=visits.visit_type_id 
+                                                                AND visit_type.group_id = :visitGroupId)
+                                                    WHERE patient_code = :patientCode
+                                                    AND state_quality_control = :qcStatus
+													AND deleted=:deleted
+													ORDER BY visit_order');
 
 
         $visitQuery->execute(array(
             'patientCode' => $this->patientCode,
             'qcStatus' => Visit::QC_ACCEPTED,
-            'groupId' => $this->visitGroup->groupId,
+            'visitGroupId' => $this->visitGroup->groupId,
             'deleted' => $deletedVisits
         ));
 
@@ -199,7 +201,6 @@ class Patient_Visit_Manager
     {
 
         $registrationDate = $this->patientObject->getImmutableRegistrationDate();
-
         $visitType = Visit_Type::getVisitTypeByName($this->visitGroup->groupId, $visitName, $this->linkpdo);
 
         $dateDownLimit = $registrationDate->modify($visitType->limitLowDays . 'day');
@@ -218,7 +219,7 @@ class Patient_Visit_Manager
 
         try {
             //Visit Created check compliancy
-            $visitObject = $this->getCreatedVisitByVisitName($visitName);
+            $visitObject = $this->getCreatedVisitForVisitTypeId($visitType->id);
             $visitAnswer['state_investigator_form'] = $visitObject->stateInvestigatorForm;
             $visitAnswer['state_quality_control'] = $visitObject->stateQualityControl;
             $visitAnswer['acquisition_date'] = $visitObject->acquisitionDate;
@@ -286,11 +287,11 @@ class Patient_Visit_Manager
         return (!empty($awaitingReviews));
     }
 
-    public function getCreatedVisitByVisitName(String $visitType){
-
-        $visitQuery = $this->linkpdo->prepare ( 'SELECT id_visit FROM visits WHERE patient_code=:patientCode AND visit_type=:visitType AND deleted=0 ' );
+    public function getCreatedVisitForVisitTypeId($visitTypeId){
+        error_log($visitTypeId);
+        $visitQuery = $this->linkpdo->prepare ( 'SELECT id_visit FROM visits WHERE patient_code=:patientCode AND visits.visit_type_id=:visitTypeId AND deleted=0 ' );
         
-        $visitQuery->execute ( array('patientCode' => $this->patientCode, 'visitType'=>$visitType) );
+        $visitQuery->execute ( array('patientCode' => $this->patientCode, 'visitTypeId'=>$visitTypeId) );
         $visitId = $visitQuery->fetch(PDO::FETCH_COLUMN);
 
         if(empty($visitId)){

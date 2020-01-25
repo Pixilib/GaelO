@@ -168,11 +168,11 @@ Class Study {
 
     }
 
-    public function getStudySpecificGroupManager(String $groupModality) : Study_Visit_Manager {
+    public function getStudySpecificGroupManager(String $groupModality) : Group_Visit_Manager {
 
         $visitGroup=$this->getSpecificGroup($groupModality);
         
-        return new Study_Visit_Manager($this, $visitGroup, $this->linkpdo);
+        return new Group_Visit_Manager($this, $visitGroup, $this->linkpdo);
 
     }
 

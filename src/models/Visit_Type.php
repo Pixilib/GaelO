@@ -18,11 +18,11 @@
  */
 Class Visit_Type{
     
+    public $id;
     public $groupId;
     public $name;
     public $tableReviewSpecificName;
     public $visitOrder;
-
     public $localFormNeeded;
     public $qcNeeded;
     public $reviewNeeded;
@@ -55,8 +55,7 @@ Class Visit_Type{
         
     }
 
-    public static function getVisitTypeByName(int $groupId, $visitName,PDO $linkpdo){
-
+    public static function getVisitTypeByName($groupId, String $visitName,PDO $linkpdo) : Visit_Type {
         $visitTypeQuery = $linkpdo->prepare('SELECT id FROM visit_type WHERE group_id = :groupId AND name= :name');
         $visitTypeQuery->execute(array('groupId' => $groupId, 'name'=>$visitName));
         $visitTypeId=$visitTypeQuery->fetch(PDO::FETCH_COLUMN);

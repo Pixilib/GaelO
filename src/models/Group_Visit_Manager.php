@@ -18,7 +18,7 @@
  * Manage visit for a group level of a study
  */
 
-class Study_Visit_Manager
+class Group_Visit_Manager
 {
 
     private Study $studyObject;
@@ -33,7 +33,7 @@ class Study_Visit_Manager
         $this->visitGroupObject = $visitGroupObject;
     }
 
-    public function getVisitGroupObject() : Visit_Group
+    public function getVisitGroupObject(): Visit_Group
     {
         return $this->visitGroupObject;
     }
@@ -41,12 +41,15 @@ class Study_Visit_Manager
     /**
      * Return uploaded and non deleted visit Objects (visit Done and Upload status done)
      */
-    public function getUploadedVisits() : Array
+    public function getUploadedVisits(): array
     {
 
-        $uploadedVisitQuery = $this->linkpdo->prepare('SELECT id_visit FROM visits WHERE visit_group_id = :visitGroupId
-                                                    AND deleted=0
-                                                    AND visits.upload_status="Done" ');
+        $uploadedVisitQuery = $this->linkpdo->prepare('SELECT id_visit FROM visits 
+                                                                    INNER JOIN visit_type ON 
+                                                                        (visit_type.id=visits.visit_type_id 
+                                                                        AND visit_type.group_id = :visitGroupId)
+                                                                WHERE deleted=0
+                                                                    AND upload_status="Done" ');
 
         $uploadedVisitQuery->execute(array(
             'visitGroupId' => $this->visitGroupObject->groupId
@@ -65,13 +68,16 @@ class Study_Visit_Manager
     /**
      * Get visits with a awaiting upload status (Visit Done but upload status not done)
      */
-    public function getAwaitingUploadVisit() : Array
+    public function getAwaitingUploadVisit(): array
     {
 
-        $uploadedVisitQuery = $this->linkpdo->prepare("SELECT id_visit FROM visits WHERE visit_group_id = :visitGroupId
-														AND deleted=0
-														AND visits.upload_status ='Not Done'
-														AND visits.status_done='Done' ");
+        $uploadedVisitQuery = $this->linkpdo->prepare("SELECT id_visit FROM visits 
+                                                                    INNER JOIN visit_type ON 
+                                                                         (visit_type.id=visits.visit_type_id 
+                                                                            AND visit_type.group_id = :visitGroupId)
+                                                                WHERE deleted=0
+														        AND upload_status = 'Not Done'
+														        AND status_done = 'Done' ");
 
         $uploadedVisitQuery->execute(
             array(
@@ -94,14 +100,17 @@ class Study_Visit_Manager
      * @param string $username
      * @return Visit[]
      */
-    public function getAwaitingReviewVisit(string $username = null) : Array
+    public function getAwaitingReviewVisit(string $username = null): array
     {
 
         //Query visit to analyze visit awaiting a review
-        $idVisitsQuery = $this->linkpdo->prepare('SELECT id_visit FROM visits INNER JOIN visit_type ON (visits.visit_type=visit_type.name AND visit_type.group_id=visits.visit_group_id)
-                                      WHERE visit_group_id = :visitGroupId
-                                      AND deleted=0
-                                      AND review_available=1 ORDER BY visit_type.visit_order ');
+        $idVisitsQuery = $this->linkpdo->prepare('SELECT id_visit FROM visits 
+                                                                    INNER JOIN visit_type ON 
+                                                                        (visit_type.id=visits.visit_type_id 
+                                                                        AND visit_type.group_id = :visitGroupId)
+                                                                WHERE deleted=0
+                                                                AND review_available=1 
+                                                                ORDER BY visit_type.visit_order ');
 
         $idVisitsQuery->execute(array(
             'visitGroupId' => $this->visitGroupObject->groupId
@@ -128,18 +137,20 @@ class Study_Visit_Manager
      * For controller tree
      * List all visits that awaiting QC Action (QC not done or waiting definitive conclusion)
      */
-    public function getVisitForControllerAction() : Array
+    public function getVisitForControllerAction(): array
     {
 
-        $visitsQuery = $this->linkpdo->prepare('SELECT id_visit FROM visits INNER JOIN visit_type ON (visit_type.name=visits.visit_type AND visit_type.group_id=visits.visit_group_id) 
-											WHERE visit_group_id = :visitGroupId
-                                            AND deleted=0
-											AND status_done ="Done"
-											AND upload_status= "Done"
-											AND state_investigator_form="Done"
-                                            AND (state_quality_control = "Not Done"
-                                                OR state_quality_control = "Wait Definitive Conclusion")
-											ORDER BY visit_type.visit_order');
+        $visitsQuery = $this->linkpdo->prepare('SELECT id_visit FROM visits 
+                                                    INNER JOIN visit_type ON 
+                                                        (visit_type.id=visits.visit_type_id 
+                                                        AND visit_type.group_id = :visitGroupId)
+                                                    WHERE deleted=0
+                                                    AND status_done = "Done"
+                                                    AND upload_status= "Done"
+                                                    AND state_investigator_form = "Done"
+                                                    AND (state_quality_control = "Not Done"
+                                                        OR state_quality_control = "Wait Definitive Conclusion")
+                                                    ORDER BY visit_type.visit_order');
         $visitsQuery->execute(array(
             'visitGroupId' => $this->visitGroupObject->groupId
         ));
@@ -157,12 +168,14 @@ class Study_Visit_Manager
     /**
      * Return visits with a specific QC Status
      */
-    public function getVisitWithQCStatus($qcStatus) : Array
+    public function getVisitWithQCStatus($qcStatus): array
     {
 
-        $visitQuery = $this->linkpdo->prepare("SELECT id_visit FROM visits WHERE study = :study
-                                                        AND visit_group_id = :visitGroupId
-														AND deleted=0
+        $visitQuery = $this->linkpdo->prepare("SELECT id_visit FROM visits 
+                                                        INNER JOIN visit_type ON 
+                                                            (visit_type.id=visits.visit_type_id 
+                                                            AND visit_type.group_id = :visitGroupId)
+                                                        WHERE deleted=0
                                                         AND state_quality_control=:qcStatus");
 
         $visitQuery->execute(array(
@@ -183,16 +196,18 @@ class Study_Visit_Manager
     /**
      * Get Visits with image uploaded status but investigator form missing
      */
-    public function getVisitsMissingInvestigatorForm() : Array
+    public function getVisitsMissingInvestigatorForm(): array
     {
 
-        $visitQuery = $this->linkpdo->prepare("SELECT id_visit FROM visits WHERE visit_group_id = :visitGroupId
-                                                            AND deleted=0 
+        $visitQuery = $this->linkpdo->prepare("SELECT id_visit FROM visits 
+                                                            INNER JOIN visit_type ON 
+                                                                (visit_type.id=visits.visit_type_id 
+                                                                AND visit_type.group_id = :visitGroupId)
+                                                            WHERE deleted=0 
                                                             AND state_investigator_form !='Done' 
                                                             AND upload_status='Done'");
 
         $visitQuery->execute(array(
-            'study' => $this->study,
             'visitGroupId' => $this->visitGroupObject->groupId
         ));
 
@@ -209,14 +224,13 @@ class Study_Visit_Manager
     /**
      * Return studie's created visits
      */
-    public function getCreatedVisits(bool $deleted = false) : Array
+    public function getCreatedVisits(bool $deleted = false): array
     {
 
         $uploadedVisitQuery = $this->linkpdo->prepare('SELECT id_visit FROM visits 
                                                     INNER JOIN visit_type ON 
-                                                        (visit_type.name=visits.visit_type 
-                                                        AND visit_type.group_id = visits.visit_group_id)
-                                                    WHERE visit_group_id = :visitGroupId
+                                                        (visit_type.id=visits.visit_type_id 
+                                                        AND visit_type.group_id = :visitGroupId)
                                                     AND deleted = :deleted 
                                                     ORDER BY patient_code, visit_type.visit_order');
 

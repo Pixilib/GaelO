@@ -45,7 +45,7 @@ class Visit{
     public $controlDate;
     public $correctiveActionUsername;
     public $correctiveActionDate;
-    public $visitGroupId;
+    public $visitTypeId;
     public $study;
     public $patientCode;
     public $visitType;
@@ -105,7 +105,6 @@ class Visit{
         $this->statusDone=$visitDbData['status_done'];
         $this->reasonForNotDone=$visitDbData['reason_for_not_done'];
         $this->visitTypeId=$visitDbData['visit_type_id'];
-        $this->visitGroupId=$visitDbData['visit_group_id'];
         $this->patientCode=$visitDbData['patient_code'];
         
         $this->uploadStatus=$visitDbData['upload_status'];
@@ -370,10 +369,9 @@ class Visit{
      */
     private function isNoOtherActivatedVisit(){
     	$visitQuery = $this->linkpdo->prepare('SELECT id_visit FROM visits
-                                        WHERE visits.visit_group_id=:visitGroupID AND visits.visit_type=:visitType AND visits.patient_code=:patientCode AND visits.deleted=0;
+                                        WHERE visit_type_id=:visitTypeID AND patient_code=:patientCode AND deleted=0;
                                     ');
-    	$visitQuery->execute(array('visitGroupID' => $this->visitGroupId,
-    			'visitType'=> $this->visitType,
+    	$visitQuery->execute(array('visitTypeID' => $this->visitTypeId,
     			'patientCode'=>$this->patientCode ));
     	
     	$dataVisits = $visitQuery->fetchAll(PDO::FETCH_COLUMN);
@@ -675,12 +673,12 @@ class Visit{
         $visitType = Visit_Type::getVisitTypeByName($visitGroupId, $visitName, $linkpdo);
         
         //Add visit verifying that this visit doesn't already have an active visite registered
-        $insertion = $linkpdo->prepare ( 'INSERT INTO visits(visit_group_id, visit_type, status_done, patient_code, reason_for_not_done, acquisition_date, creator_name, creation_date)
-      										SELECT :visitGroupID, :type_visite, :status_done, :patient_code, :reason, :acquisition_date, :creator_name, :creation_date FROM DUAL
-											WHERE NOT EXISTS (SELECT id_visit FROM visits WHERE patient_code=:patient_code AND visit_group_id=:visitGroupID AND visit_type=:type_visite AND deleted=0) ' );
+        $insertion = $linkpdo->prepare ( 'INSERT INTO visits(visit_type_id, status_done, patient_code, reason_for_not_done, acquisition_date, creator_name, creation_date)
+      										SELECT :visitTypeId, :status_done, :patient_code, :reason, :acquisition_date, :creator_name, :creation_date FROM DUAL
+											WHERE NOT EXISTS (SELECT id_visit FROM visits WHERE patient_code=:patient_code AND visit_type_id=:visitTypeId AND deleted=0) ' );
         
         $insertion->execute ( array (
-            'visit_type_id'=>$visitType->id,
+            'visitTypeId'=>$visitType->id,
             'status_done' => $statusDone,
             'patient_code' => $patientCode,
             'reason' => $reasonNotDone,
