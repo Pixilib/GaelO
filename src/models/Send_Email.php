@@ -192,7 +192,7 @@ Class Send_Email {
                     <img id="logo-gaelo" src=cid:logo_gaelo alt="Banner Image"/>
                 </header>
                 <h1><a href="http://'.$this->webAddress.'">'.$this->platformName.'</a></h1>
-                <div id="message">Dear '.$nameString.',<br>'.$this->message.'</div>
+                <div id="message"><b>Dear '.$nameString.',</b><br>'.$this->message.'</div>
                 <div class="footer">
                     <p id ="footer-contact">Please contact the Imaging Department of '.$this->corporation.' for any questions (<a HREF="mailto:'.$this->adminEmail.'">'.$this->adminEmail.'</a>) <br>
                                 Kind regards, <br>
@@ -304,7 +304,7 @@ Class Send_Email {
             }
         
             if($user->isRoleAllowed($study, User::INVESTIGATOR)){
-                $this->addEmails($user->userEmail);
+                $this->addEmail($user->userEmail);
             }
             
         }

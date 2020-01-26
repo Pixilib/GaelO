@@ -56,8 +56,8 @@ class Study_Review_Manager
 		$reviewdetailsMap = [];
 
 		foreach ($createdVisitObjects as $createdVisit) {
-			if ($createdVisit->stateQualityControl == Visit::QC_ACCEPTED) {
-				//If QC Accepted, visit is suitable for review so analyze it
+			if ($createdVisit->stateQualityControl == Visit::QC_ACCEPTED && $createdVisit->visitTypeObject->reviewNeeded) {
+				//If QC Accepted and review needed we analyze it
 				$newVisit['visitId'] = $createdVisit->id_visit;
 				$newVisit['visitModality'] = $createdVisit->visitGroupObject->groupModality;
 				$newVisit['patientNumber'] = $createdVisit->patientCode;
