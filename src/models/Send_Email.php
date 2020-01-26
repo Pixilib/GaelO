@@ -74,10 +74,10 @@ Class Send_Email {
      * @return string
      */
     public function sendEmail(){
-        
+
         $mail = new PHPMailer(true); // Passing `true` enables exceptions
         $mail->CharSet = 'UTF-8';
-        
+
         //Recipients
         if($this->smtp_config['useSMTP']){
             $mail->IsSMTP();    // Set mailer to use SMTP
@@ -97,10 +97,7 @@ Class Send_Email {
                 $mail->DKIM_identity = $mail->From;
             }
         }
-        
 
-
-        
         //Add Sender Name
         $mail->setFrom($this->adminEmail, $this->corporation, true);
         
@@ -109,8 +106,8 @@ Class Send_Email {
             $mail->addReplyTo($this->replyTo); 
         }catch (Exception $e){
             error_log("Reply to email problem".$e->getMessage());
+            return false;
         }
-        
         
         //Add destinators
         if (sizeof($this->emailsDestinators)>1){
@@ -119,6 +116,7 @@ Class Send_Email {
                     $mail->addBCC($value);
                 }catch (Exception $e){
                     error_log('error adding email'.$e->getMessage());
+                    return false;
                 }
                 //Add message to mail object
                 $this->buildMessage($mail);
@@ -128,23 +126,25 @@ Class Send_Email {
             //If only one add regular adress
             try{
                 $mail->addAddress($this->emailsDestinators[0]);
-                $userObject=user::getUserByEmail($this->emailsDestinators[0], $this->linkpdo);
+                $userObject=User::getUserByEmail($this->emailsDestinators[0], $this->linkpdo);
                 $this->buildMessage($mail, $userObject->lastName, $userObject->firstName);
             }catch (Exception $e){
                 error_log('error adding email'.$e->getMessage());
+                return false;
             }
 
            
         }
-        
+
         //Content
         $mail->isHTML(true);                                  // Set email format to HTML
         $mail->Subject = $this->corporation.' Imaging Platform -' . $this->subject;
         try{
-            $mail->send();
+            $answer=$mail->send();
+            return $answer;
         }catch (Exception $e){
-            //echo("Message could not be sent. Mailer Error: {$mail->ErrorInfo}");
             error_log("Message could not be sent. Mailer Error: {$mail->ErrorInfo}");
+            return false;
         }
         
         

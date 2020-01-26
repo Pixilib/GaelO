@@ -36,7 +36,7 @@ echo(implode(',',$fileArray));
 try {
     $ftpReader = new FTP_Reader($linkpdo);
     $ftpReader->setFTPCredential(FTP_HOSTNAME, FTP_USERNAME, FTP_PASSWORD, FTP_PORT, FTP_IS_SFTP);
-    $ftpReader->setFolder("/GAELO/".$studyName."/ExportGAELO");
+    $ftpReader->setFolder("/".$studyName."_ExportGAELO");
     foreach($fileArray as $fileName => $fileToUpload){
 
         $results=$ftpReader->writeExportDataFile($fileName.'.csv', $fileToUpload);

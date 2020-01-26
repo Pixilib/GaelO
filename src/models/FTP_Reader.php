@@ -276,14 +276,14 @@ class FTP_Reader
 
 
     function sendFailedReadFTP($exceptionMessage){
-        echo('sendEmail');
         try{
             $email = new Send_Email($this->linkpdo);
             $email->setMessage("FTP Import Has failed <br> Reason : ".$exceptionMessage);
             $email->setSubject('Auto Import Failed');
             $email->addAminEmails();
-            $email->sendEmail();
+            $answer=$email->sendEmail();
         }catch(Exception $e){
+            echo('sendEmailException');
             echo($e->getMessage());
         }
 
