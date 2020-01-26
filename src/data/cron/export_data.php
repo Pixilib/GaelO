@@ -27,10 +27,10 @@ $linkpdo=Session::getLinkpdo();
 
 //Get Study Name from command variable
 $studyName=$_SERVER['argv'][2];
-
+echo($studyName);
 //Generate the temporary file to be exported
 $fileArray=generateExportFile();
-
+echo(implode(',',$fileArray));
 
 //Send process to destination
 try {
@@ -45,8 +45,9 @@ try {
     
 
 } catch (Exception $e) {
+    echo('Failure');
+    echo($e->getMessage());
     $ftpReader->sendFailedReadFTP($e->getMessage());
-    print($e->getMessage());
 }
 
 function generateExportFile(){
