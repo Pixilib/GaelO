@@ -28,12 +28,12 @@
     <noscript> You need to enable JavaScript to run this app. </noscript>
 
     <div id="root"></div>
-    <script crossorigin src="https://unpkg.com/@ohif/viewer@1.4.3/dist/index.umd.js"></script>
-    <script crossorigin src="https://unpkg.com/@ohif/extension-dicom-microscopy@0.50.5/dist/index.umd.js"></script>
-    <script crossorigin src="https://unpkg.com/@ohif/extension-vtk@0.52.1/dist/index.umd.js"></script>
-    <script crossorigin src="https://unpkg.com/@ohif/extension-cornerstone@1.2.5/dist/index.umd.js"></script>
-    <script crossorigin src="https://unpkg.com/@ohif/extension-dicom-html@1.0.0/dist/index.umd.js"></script>
-    
+    <script crossorigin src="https://unpkg.com/@ohif/viewer/dist/index.umd.js"></script>
+    <script crossorigin src="https://unpkg.com/@ohif/extension-vtk/dist/index.umd.js"></script>
+    <script crossorigin src="https://unpkg.com/@ohif/extension-cornerstone/dist/index.umd.js"></script>
+    <script crossorigin src="https://unpkg.com/@ohif/extension-dicom-html/dist/index.umd.js"></script>
+    <script
+    src="https://polyfill.io/v3/polyfill.min.js?flags=gated&features=default%2CObject.values%2CArray.prototype.flat%2CObject.entries%2CSymbol%2CArray.prototype.includes%2CString.prototype.repeat%2CArray.prototype.find"></script>
     <script>
       var containerId = "root";
       var componentRenderedOrUpdatedCallback = function() {
@@ -42,7 +42,11 @@
       window.OHIFViewer.installViewer(
         {
           routerBasename: '/ohif',
-          showStudyList: false,
+          whiteLabelling: {},
+          cornerstoneExtensionConfig: {},
+          extensions: [OHIFExtCornerstone, OHIFExtDicomHtml],
+          showStudyList: true,
+          filterQueryParam: false,
           servers: {
             dicomWeb: [
               {
@@ -59,8 +63,7 @@
                 enableStudyLazyLoad: true
               }
             ]
-          },
-          extensions: [OHIFExtDicomMicroscopy, OHIFExtVtk, OHIFExtCornerstone, OHIFExtDicomHtml]
+          }
         },
         containerId,
         componentRenderedOrUpdatedCallback

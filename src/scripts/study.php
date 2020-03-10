@@ -78,8 +78,15 @@ if($_SERVER['REQUEST_METHOD']==='GET'){
                 $modelScriptFile=$_SERVER["DOCUMENT_ROOT"].'/form_models/study_visit_script.php';
                 $destinationPoo=$rootSpecificModelsFolder.DIRECTORY_SEPARATOR.$modality."_".$studyName."_".$visit['name'].'.php';
                 $destinationScript=$rootSpecificScriptFolder.DIRECTORY_SEPARATOR.$modality."_".$studyName."_".$visit['name'].'.php';
-                copy($modelPooFile, $destinationPoo);
-                copy($modelScriptFile, $destinationScript);
+                //Check that File doesnt exist to avoid override of existing file
+                if(! is_file($destinationPoo)){
+                    copy($modelPooFile, $destinationPoo);
+                }
+                if( ! is_file($destinationScript)){
+                    copy($modelScriptFile, $destinationScript);
+                }
+                
+                
 
             }
 
