@@ -1,3 +1,6 @@
+Bug : 
+Quand QC le form investigateur apparait meme si il est optionel
+
 Passage Visit Group : 
 => Controleur statitics a generaliser pour autres modalite
 Se pencher sur monitoring de Docker
