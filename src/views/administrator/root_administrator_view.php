@@ -68,7 +68,7 @@
 		
 		//Load the dynamic table on click on the study selector
 		$('#confirmSelect').on('click', function (){
-			$("#studyTable").load('/user_table',{
+			$("#userTable").load('/user_table',{
 				 study : $( "#studySelector" ).val()
 			});
 
@@ -76,18 +76,17 @@
 
 		//Load the log on click
 		$('#adminLogs').on('click', function (){
-			$("#studyTable").load('/tracker_admin');
+			$("#adminDisplay").load('/tracker_admin');
 
 		});
 
 		$('#usersLogs').on('click', function (){
-			$("#studyTable").load('/tracker_user');
-
+			$("#adminDisplay").load('/tracker_user');
 		});
 		
 		//Load visit builder in dialog
 		$('#defineVisit').on('click', function (){
-			$( "#studyTable" ).load('/visit_builder');
+			$( "#adminDisplay" ).load('/visit_builder');
 		});
 		
 		//Load the new user dialog
@@ -150,26 +149,31 @@
 	</div>
 	<br>
 
-			<!------------ Study Selector ----------------------->
-	<label>User account database of study:</label> <SELECT
-		class="custom-select" name="Study" id="studySelector"
-		style="width: auto;">
-		<?php
-        // Generate the study selector, starting with "All Studies" and then all availables studies
-        echo '<option value="All Studies">All Studies</option>';
-        
-        foreach ($etudes as $etude) {
-            echo '<option value="' . htmlspecialchars($etude) . '">' . htmlspecialchars($etude) . '</option>';
-        }
-        
-        ?>
-	</SELECT>
 
-	<button id="confirmSelect" class="btn btn-primary">Confirm</button>
 
 </div>
 <br>
 
 <div id="adminDialog"></div>
-<div id="studyTable"></div>
+<div id="adminDisplay">
+	<!------------ Study Selector ----------------------->
+	<div class="text-center">
+		<label>User account database of study:</label> <SELECT
+			class="custom-select" name="Study" id="studySelector"
+			style="width: auto;">
+			<?php
+			// Generate the study selector, starting with "All Studies" and then all availables studies
+			echo '<option value="All Studies">All Studies</option>';
+			
+			foreach ($etudes as $etude) {
+				echo '<option value="' . htmlspecialchars($etude) . '">' . htmlspecialchars($etude) . '</option>';
+			}
+			
+			?>
+		</SELECT>
+		<button id="confirmSelect" class="btn btn-primary">Confirm</button>
+	</div>
+	<div id = "userTable"></div>
+
+</div>
 
