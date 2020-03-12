@@ -193,7 +193,7 @@ abstract class Form_Processor {
 	 * @param string $reviewStatus
 	 * @param $conclusionValue
 	 */
-	protected function changeVisitValidationStatus(string $reviewStatus, $conclusionValue=null){
+	protected function changeVisitValidationStatus(string $reviewStatus, $conclusionValue="N/A"){
 	    $this->visitObject->changeVisitValidationStatus($reviewStatus, $conclusionValue);
 		$this->reviewAvailabilityDecision($reviewStatus);
 
