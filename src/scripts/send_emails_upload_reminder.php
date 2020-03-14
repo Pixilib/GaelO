@@ -131,3 +131,4 @@ if ($accessCheck && $_SESSION['role'] == User::SUPERVISOR ) {
       $emailSender->setMessage($message);
       $emailSender->sendEmail($emails, "Reminder : Missing Investigator Form", $emailSender->getUserEmails($username));
       $sentEmails++;
+}

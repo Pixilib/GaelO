@@ -98,7 +98,7 @@ if ($_SESSION['admin']) {
                 Tracker::logActivity($_SESSION['username'], "Administrator", null, null, "Create User", $actionDetails);
                 
                 // Send confirmation message
-                $mail = new Send_Email($linkpdo);
+                $mails = new Send_Email($linkpdo);
                 $mails->addEmail($email);
                 $mails->sendNewAccountMessage($username, $mdp);
                 
