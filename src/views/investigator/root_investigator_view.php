@@ -93,30 +93,33 @@
 					"Only Ongoing" : {
 						"label" : "Only Ongoing",
 						"action" : function (object) {
-							let treeJson = $('#containerTree').jstree(true).get_json('#', {'flat': true})
-							console.log(treeJson)
-							let ongoingItems = treeJson.filter (function(item) {
-								if( item.icon == "/assets/images/report-icon.png" && item.li_attr.class !== "Ongoing"){
-									return true
-								}
-
-							}) 
-							
-							//SK A REVOIR boucler sur les items à filter et les cacher
-							//Probleme de filter les parents...
-							$('#containerTree').jstree(true).delete_node(ongoingItems)
-							removeParentsIfNoChild()
-							
-							
+							filterVisitByClassName("Ongoing")
 						}
 					},
 					"Only Adjucation" : {
-						"label" : "Only Adjudication"
+						"label" : "Only Adjudication",
+						"action" : function (object){
+							filterVisitByClassName("WaitAdjudication")
+						}
 
 					}
 				}
 			)
 
+		}
+
+		function filterVisitByClassName(className) {
+			let treeJson = $('#containerTree').jstree(true).get_json('#', {'flat': true})
+			console.log(treeJson)
+			let ongoingItems = treeJson.filter (function(item) {
+				if( item.icon == "/assets/images/report-icon.png" && item.li_attr.class !== className){
+					return true
+				}
+
+			}) 
+
+			$('#containerTree').jstree(true).delete_node(ongoingItems)
+			removeParentsIfNoChild()
 		}
 
 		/**
