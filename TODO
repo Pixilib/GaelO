@@ -1,9 +1,8 @@
-Bug : 
-Quand QC le form investigateur apparait meme si il est optionel
+Se pencher sur monitoring de Docker => Tester absence de log access
 
 Passage Visit Group : 
 => Controleur statitics a generaliser pour autres modalite
-Se pencher sur monitoring de Docker
+
 
 Tests:
 Fusionner le tree et l'API get review=> A tester

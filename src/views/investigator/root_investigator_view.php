@@ -79,9 +79,16 @@
 				"show_only_matches": true,
 				"show_only_matches_children" : true
 			},
-			//SK To Evaluate in the Future
+			//Context menu for filtering actions
 			"contextmenu": {
-				"items": reviewerContextMenu()
+				"items": <?php 
+				if($_SESSION['role'] == User::INVESTIGATOR){
+					echo('investigatorContextMenu()');
+				}else if($_SESSION['role'] == User::CONTROLLER){
+					echo('controllerContextMenu()');
+				}else if($_SESSION['role'] == User::REVIEWER){
+					echo('reviewerContextMenu()');
+				} ?>
 
 			}
 		});
@@ -102,6 +109,48 @@
 							filterVisitByClassName("WaitAdjudication")
 						}
 
+					}
+				}
+			)
+
+		}
+
+		function investigatorContextMenu(){
+
+			return (
+				{
+					"Missing Images" : {
+						"label" : "Missing Images",
+						"action" : function (object) {
+							filterVisitByClassName("NotUpload")
+						}
+					},
+					"Missing Form" : {
+						"label" : "Missing Form",
+						"action" : function (object){
+							filterVisitByClassName("NotForm")
+						}
+					},
+					"Missing Both" : {
+						"label" : "Missing Both",
+						"action" : function (object){
+							filterVisitByClassName("NotBoth")
+						}
+					}
+				}
+			)
+
+		}
+
+		function controllerContextMenu(){
+
+			return (
+				{
+					"Awaiting QC" : {
+						"label" : "Awaiting QC",
+						"action" : function (object) {
+							filterVisitByClassName("NotBoth")
+						}
 					}
 				}
 			)
