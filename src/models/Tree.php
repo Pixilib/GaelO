@@ -58,6 +58,9 @@ class Tree
       } else if ($visitObject->stateQualityControl == Visit::QC_NOT_DONE || $$visitObject->stateQualityControl == Visit::QC_WAIT_DEFINITVE_CONCLUSION) {
         $class = "NotBoth";
       }
+    }else if ($this->role == User::REVIEWER){
+      //Add status of review process (need to remove space from status string)
+      $class = str_replace(" ","", $visitObject->reviewStatus); ;
     }
 
     return $class;
@@ -76,7 +79,7 @@ class Tree
     $jsonVisitLevel['level'] = 'visit';
     $jsonVisitLevel['state']['opened'] = false;
 
-    if ($this->role == User::INVESTIGATOR ||  $this->role == User::CONTROLLER) {
+    if ($this->role == User::INVESTIGATOR ||  $this->role == User::CONTROLLER || $this->role == User::REVIEWER) {
       //NB SI BESOIN ON PEUT AJOUTER UN CUSTOM ATRRIBUT A LA PLACE DE class
       $attr['class'] = $this->determineClassOfVisit($visitObject);
       $jsonVisitLevel['li_attr'] = $attr;

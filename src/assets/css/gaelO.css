@@ -30,6 +30,18 @@ body{
   color: red;
 }
 
+.Ongoing{
+  color : orange
+}
+
+.WaitAdjudication{
+  color : red
+}
+
+.Done{
+  color : green
+}
+
 /*Css for regular element*/
 
 label{
