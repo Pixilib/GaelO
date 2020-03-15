@@ -13,19 +13,13 @@
  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-/**
- * Automatically import patients defined in JSON for a set of study
- * Define the local or FTP path as source
- * This is called by cron.php script
- */
-
 $_SERVER['DOCUMENT_ROOT'] ='/gaelo';
 require_once($_SERVER['DOCUMENT_ROOT'].'/vendor/autoload.php');
 require_once('config_ftp.php');
 
 $linkpdo=Session::getLinkpdo();
 
-echo ('ScriptStarted');
+echo ('Copy FTP Script Started');
 
 //Get Study Name from command variable
 $studyName=$_SERVER['argv'][2];
@@ -33,41 +27,17 @@ $studyName=$_SERVER['argv'][2];
 $ftpReader = new FTP_Reader($linkpdo);    
 $ftpReader->setFTPCredential(FTP_HOSTNAME, FTP_USERNAME, FTP_PASSWORD, FTP_PORT, FTP_IS_SFTP);
 $ftpReader->setFolder("/".$studyName."_ExportCS");
-$ftpReader->setSearchedFile($studyName . '_PATIENTS.txt');
+$ftpReader->setSearchedFile($studyName . '_VISITS.txt');
 $ftpReader->setLastUpdateTimingLimit(24 * 60);
 
 try {
     $files = $ftpReader->getFilesFromFTP();
+    copy($files[0], $_SERVER['DOCUMENT_ROOT'].$_SERVER['argv'][3]);
 } catch (Exception $e) {
     $ftpReader->sendFailedReadFTP($e->getMessage());
     print($e->getMessage());
 }
 
-$fileAsString = file_get_contents($files[0]);
-$arrayLysarc = $ftpReader::parseLysarcTxt($fileAsString);
 
-print_r($arrayLysarc);
-$jsonImport = json_encode($arrayLysarc);
-print($jsonImport);
-
-$importPatient = new Import_Patient($jsonImport, $studyName, $linkpdo);
-$importPatient -> readJson();
-
-print_r($importPatient->sucessList);
-print_r($importPatient->failList);
-
-//log activity
-$actionDetails['Success']=$importPatient->sucessList;
-$actionDetails['Fail']=$importPatient->failList;
-$actionDetails['email']=$importPatient->getTextImportAnswer();
-Tracker::logActivity("administrator", User::SUPERVISOR, $studyName , null , "Import Patients", $actionDetails);
-
-
-//Send the email to administrators of the plateforme
-$email = new Send_Email($linkpdo);
-$email->addGroupEmails($studyName, User::SUPERVISOR);
-$email->setSubject('Auto Import Report');
-$email->setMessage($importPatient->getHTMLImportAnswer());
-$email->sendEmail();
 
 
