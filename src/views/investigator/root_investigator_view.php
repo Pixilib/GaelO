@@ -88,6 +88,8 @@
 					echo('controllerContextMenu()');
 				}else if($_SESSION['role'] == User::REVIEWER){
 					echo('reviewerContextMenu()');
+				}else{
+					echo('{}');
 				} ?>
 
 			}

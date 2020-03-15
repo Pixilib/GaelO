@@ -1,4 +1,6 @@
 Se pencher sur monitoring de Docker => Tester absence de log access
+Tester code couleur review ongoing
+Tester les filtre investigateur / controller  / reviewer
 
 Passage Visit Group : 
 => Controleur statitics a generaliser pour autres modalite
