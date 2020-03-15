@@ -12,6 +12,7 @@ Features :
   - FTP/SFTP class to retrieve data from remote server (ex : automatic import of included patient list)
   
 Enhancements : 
+  - Tree filter in right click to filter visits according to some status (depending on current role)
   - Anon profile, optional visit, local form needed, Qc needed, Review needed are now defined per visit type
   - Monitors now recieve QC decision emails
   - Supervisors are notified in case of a not done visit creation
