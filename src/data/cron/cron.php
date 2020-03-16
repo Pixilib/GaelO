@@ -27,9 +27,6 @@ use GO\Scheduler;
 $scheduler = new Scheduler();
 
 //Define action and timing
-scheduleWorkindDays("import_patient.php", ["GATA"], 6, 0);
-scheduleWorkindDays("import_file_from_ftp.php", ["GATA","/data/form/GATA/FTP_data/GATA_VISITS.txt"], 6, 0);
-scheduleSundays("export_data.php", ["GATA"], 21, 0);
 
 // Let the scheduler execute jobs which are due.
 $scheduler->run();
