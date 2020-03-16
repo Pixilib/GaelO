@@ -31,11 +31,9 @@ $patientAllowed=$userObject->isPatientAllowed($patient, $role);
 if( isset($_SESSION['username']) && $patientAllowed ){
 	
     //Instanciate Visit manager to check if visit creation is still possible
-    $visitManager=new Visit_Manager($patient, $linkpdo);
-    $visitPossible=$visitManager->isMissingVisit();
     $patientObject=new Patient($patient, $linkpdo);
-    
-    $visitArray=$patientObject->getPatientsVisits();
+    $visitPossible=$patientObject->isMissingVisit();
+    $visitArray=$patientObject->getAllCreatedPatientsVisits();
     
     require 'includes/table_visit.php';
     require 'views/investigator/patient_interface_view.php';

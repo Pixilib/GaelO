@@ -34,6 +34,7 @@ if ($accessCheck && $_SESSION['role'] == User::SUPERVISOR ) {
     $answer=$visitObject->changeDeletionStatus(false);
     $actionDetails['visit_type']=$visitObject->visitType;
     $actionDetails['patient_code']=$visitObject->patientCode;
+    $actionDetails['modality_visit']=$visitObject->visitGroupObject->groupModality;
     Tracker::logActivity($_SESSION['username'], $_SESSION['role'], $visitObject->study, $visitObject->id_visit, "Reactivate Visit", $actionDetails);
 	//output the resulting answer
 	echo(json_encode($answer));

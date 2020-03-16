@@ -56,8 +56,13 @@ if (isset($_SESSION['username']) && $patientAllowed) {
         if (isset($_POST['ask_corrective_action'])) {
             $controlDecision=Visit::QC_CORRECTIVE_ACTION_ASKED;
             //Make Investigator Form as Draft and update form status in visit
-            $localReviewObject=$visitObject->getReviewsObject(true);
-            $localReviewObject->unlockForm();
+            try{
+                $localReviewObject=$visitObject->getReviewsObject(true);
+                $localReviewObject->unlockForm();
+            }catch(Exception $e){
+                error_log($e->getMessage());
+            }
+
             $visitObject->changeVisitStateInvestigatorForm(Visit::LOCAL_FORM_DRAFT);
             
         }
@@ -68,6 +73,7 @@ if (isset($_SESSION['username']) && $patientAllowed) {
         //Log action
         $actionDetails['patient_code']=$visitObject->patientCode;
         $actionDetails['type_visit']=$visitObject->visitType;
+        $actionDetails['modality_visit']=$visitObject->visitGroupObject->groupModality;
         $actionDetails['form_accepted']=$formAccepted;
         $actionDetails['image_accepted']=$imageAccepted;
         $actionDetails['form_comment']=$_POST['formComment'];
@@ -101,46 +107,22 @@ if (isset($_SESSION['username']) && $patientAllowed) {
         }else{
             $commentImage=$_POST['imageComment'];
         }
-        
-        
-        $message="Quality Control of the following visit has been set to : ".$controlDecision."<br>
-                Patient Number:".$visitObject->patientCode."<br>
-                Visit : ".$visitObject->visitType."<br>
-                Investigation Form : ".$formAccepted." Comment :".$commentForm."<br>
-                Image Series : ".$imageAccepted." Comment :".$commentImage." <br>";
-        
+
         $email=new Send_Email($linkpdo);
-        $email->setMessage($message);
-        //List all supervisors of the study
-        $supervisorsEmail=$email->getRolesEmails(User::SUPERVISOR, $visitObject->study);
-        //Get users email
-        $userEmail=$email->getUserEmails($_SESSION['username']);
-        array_push($supervisorsEmail, $userEmail);
-        //Get users affiliated to a same center than patient
-        $patientObject=$visitObject->getPatient();
-        $patientCenter=$patientObject->getPatientCenter();
-        $usersAffiliatedSameCenters=$patientCenter->getUsersAffiliatedToCenter($linkpdo, $patientCenter->code);
-        //Select thoose who are investigators in the current study
-        foreach ($usersAffiliatedSameCenters as $user){
-        	$userRoles=$userObject->getRolesInStudy($_SESSION['study']);
-            if(in_array(User::INVESTIGATOR, $userRoles)){
-            	if(! in_array($user->userEmail, $supervisorsEmail)) array_push($supervisorsEmail, $user->userEmail);
-            }
-        }
+        $email->addGroupEmails($visitObject->study, User::SUPERVISOR)
+                ->addGroupEmails($visitObject->study, User::MONITOR)
+                ->addEmail($userObject->userEmail)
+                ->addEmail( $email->getUserEmails($visitObject->uploaderUsername) )
+                ->selectInvestigatorsEmailsWithSameCenter($visitObject->study, $visitObject->getPatient()->getPatientCenter()->code);
+
+        $email->sendQCDesicionEmail($controlDecision, $visitObject->study ,$visitObject->patientCode, $visitObject->visitType, $formAccepted, $commentForm, $imageAccepted, $commentImage);
         
-        $email->sendEmail($supervisorsEmail, "Quality Control");
         
-        //If Accepted inform the reviewers of the study by email
-        if($controlDecision=="Accepted"){
+        //If QC Accepted and review needed for this visit inform the reviewers of the study by email
+        if($controlDecision==Visit::QC_ACCEPTED && $visitObject->getVisitCharacteristics->reviewNeeded){
           $email=new Send_Email($linkpdo);
-          $message="Quality Control of the following visit has been ".$controlDecision."<br>
-                Patient Number:".$visitObject->patientCode."<br>
-                Visit : ".$visitObject->visitType."<br>
-                The visit is Available for Review";
-          $reviewersEmails=$email->getRolesEmails(User::REVIEWER, $visitObject->study);
-          $email->setMessage($message);
-          $email->sendEmail($reviewersEmails, "Awaiting Review");
-          
+          $email->addGroupEmails($visitObject->study, User::REVIEWER);
+          $email->sendReviewReadyMessage($visitObject->study, $visitObject->patientCode, $visitObject->visitType);        
         }
 
       //if send form with uncorrect permission, refuse
@@ -152,7 +134,7 @@ if (isset($_SESSION['username']) && $patientAllowed) {
            
       }else{
         //if No form submitted, display the html form +- results
-        $studyObject=new Study($_SESSION ['study'], $linkpdo);
+        $visitType=$visitObject->getVisitCharacteristics();
         require 'views/investigator/controller_form_view.php';
 	}
 }else {

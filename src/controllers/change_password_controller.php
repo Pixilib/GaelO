@@ -62,7 +62,7 @@ if (isset($_SESSION['temp'])) {
 		} else if($mdp1==$mdp2 && strtolower($mdp1) != $mdp1 && $checkCurrentPassword && !password_verify($mdp1, $currentTempPassword) && !password_verify($mdp1, $twoPreviousPassword[0]) && !password_verify($mdp1, $twoPreviousPassword[1]) && !password_verify($mdp1, $currentPassword) ){
 				$answer['result']="OK" ;
 				//Update the database with new password
-				User::updateUserPassword($username, $mdp1, $linkpdo, User::ACTIVATED);
+				$userObject->updateUserPassword($mdp1, User::ACTIVATED);
 
 				//Log Change Password action
 				Tracker::logActivity($username, "User", null, null, "Change Password", "Password Changed");

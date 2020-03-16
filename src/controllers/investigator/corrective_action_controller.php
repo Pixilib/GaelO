@@ -66,33 +66,21 @@ if (isset ( $_SESSION ['username'] ) && $visitAllowed) {
 		$visitObject->setCorrectiveAction($newSeries, $formCorrected, $correctiveActionDecision, $_POST['other_comment'], $username);
 		
 		//Log Activity
+		$actionDetails['patient_code']=$visitObject->patientCode;
+		$actionDetails['type_visit']=$visitObject->visitType;
+        $actionDetails['modality_visit']=$visitObject->visitGroupObject->groupModality;
 		$actionDetails['new_series_uploaded']=$newSeries;
 		$actionDetails['form_corrected']=$formCorrected;
 		$actionDetails['other_comment']=$_POST['other_comment'];
 		$actionDetails['corrective_action_done']=$correctiveActionDecision;
 		Tracker::logActivity($username, $role, $_SESSION ['study'], $id_visit, "Corrective Action", $actionDetails);
 		
-		// prepare email message
-		if (! $correctiveActionDecision) {
-		    $message = "No corrective action could be applied on the following visit: <br>
-			            Patient Number : " . $_POST ['patient_num'] . "<br>
-			            Uploaded visit : " . $_POST ['type_visit'] . "<br>";
-		} 
-		else {
-		    $message = "A corrective action was applied on the following visit: <br>
-		          		Patient Number : " . $_POST ['patient_num'] . "<br>
-		          		Uploaded visit : " . $_POST ['type_visit'] . "<br>";
-			
-		}
-		
 		
 		// Send notification email to all Controllers and Supervisors of the study
 		$sendEmail = new Send_Email ($linkpdo);
-		$sendEmail->setMessage ( $message );
-		$supervisorsEmails=$sendEmail->getRolesEmails(User::SUPERVISOR, $study);
-		$controllerEmails=$sendEmail->getRolesEmails(User::CONTROLLER, $study);
-		$allemails=array_merge($supervisorsEmails, $controllerEmails);
-		$sendEmail->sendEmail ( $allemails, $study.' - Corrective Action' );
+		$sendEmail->addGroupEmails($visitObject->study, User::SUPERVISOR)
+					->addGroupEmails($visitObject->study, User::CONTROLLER);
+		$sendEmail->sendCorrectiveActionDoneMessage($correctiveActionDecision, $visitObject->study, $visitObject->patientCode, $visitObject->visitType);
 		
 		$answer="Success";
 		echo(json_encode($answer));

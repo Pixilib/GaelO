@@ -14,29 +14,41 @@
  */
 ?>
 
-<?php if($role == User::INVESTIGATOR && $visitPossible ){ ?>
+
     <script type="text/javascript">
         
         $( document ).ready(function() {
-        //Dialog for the add visit form
-          $("#addVisit").dialog({
-           		autoOpen: false,
-           		modal : true,
-           		width : 'auto',
-           		height : 'auto',
-           		title: "Add new visit"
-           	});
-        	
-        	
-        //load and open dialog when click on Add visit Button
-        $('#createStudy').on('click', function(){
-        	$( "#addVisit" ).load('/new_visit',{
-        		patient_num : <?=$patient?>
-        	}, function(){
-        		$( "#addVisit" ).dialog('open');
-        	});
-        	
-        });
+
+			<?php if($role == User::INVESTIGATOR && $visitPossible ){ ?>
+				//Dialog for the add visit form
+				$("#addVisit").dialog({
+					autoOpen: false,
+					modal : true,
+					width : 'auto',
+					height : 'auto',
+					title: "Add new visit"
+				});
+				
+				
+				//load and open dialog when click on Add visit Button
+				$('#createStudy').on('click', function(){
+					$( "#addVisit" ).load('/new_visit',{
+						patient_num : <?=$patient?>
+					}, function(){
+						$( "#addVisit" ).dialog('open');
+					});
+					
+				});
+
+			<?php 
+			} ?>
+
+			//Update Tree selection when click on Visit Name in patient Visit details
+			$('#tab_visits').on('click', '.visitLink', function(event) {
+				let visitId=$(this).attr('data-visitid')
+				$('#containerTree').jstree("deselect_all")
+				$('#containerTree').jstree(true).select_node(visitId)
+			})
         
         });
         
@@ -46,9 +58,12 @@
         	});
         	$('#containerTree').jstree(true).refresh();
         };
+
+
     
     </script>
-    
+
+<?php if($role == User::INVESTIGATOR && $visitPossible ){ ?>
     <div id="createVisitButton">
     	<button id='createStudy' class="btn btn-primary">New Visit</button>
     </div>

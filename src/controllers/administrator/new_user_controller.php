@@ -98,17 +98,9 @@ if ($_SESSION['admin']) {
                 Tracker::logActivity($_SESSION['username'], "Administrator", null, null, "Create User", $actionDetails);
                 
                 // Send confirmation message
-                $mail = new Send_Email($linkpdo);
-                
-                $message = "Your account is created for the upload platform used to exchange
-                imaging data. Please log in at: " . $mail->webAddress . " <br>
-                Username : $username<br>
-                Temporary password : $mdp<br>
-                You will be asked to change this password at your first log in attempt
-                on the platform.<br><br>";
-                
-                $mail->setMessage($message);
-                $mail->sendEmail($email, 'New account');
+                $mails = new Send_Email($linkpdo);
+                $mails->addEmail($email);
+                $mails->sendNewAccountMessage($username, $mdp);
                 
                 $answer = "Success";
             } catch (exception $e1) {

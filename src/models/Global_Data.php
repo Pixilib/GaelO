@@ -17,6 +17,8 @@
  * Static methods for global data
  */
 
+use Ifsnop\Mysqldump as IMysqldump;
+
 Class Global_Data{
     
     /**
@@ -213,5 +215,71 @@ Class Global_Data{
 	    ));
 	    
 	}
+
+	/**
+	 * Generate a raw dump of the database for backum purpose
+	 */
+    public static function dumpDatabase() : String {
+        
+        $fileSql=tempnam(ini_get('upload_tmp_dir'), 'TMPDB_');
+   
+        try {
+            if(DATABASE_SSL){
+                $dump = new IMysqldump\Mysqldump('mysql:host='.DATABASE_HOST.';dbname='.DATABASE_NAME.'', ''.DATABASE_USERNAME.'', ''.DATABASE_PASSWORD.'', array(), Session::getSSLPDOArrayOptions() );
+            }else{
+                $dump = new IMysqldump\Mysqldump('mysql:host='.DATABASE_HOST.';dbname='.DATABASE_NAME.'', ''.DATABASE_USERNAME.'', ''.DATABASE_PASSWORD.'');   
+            }
+            
+            $dump->start($fileSql);
+        } catch (Exception $e) {
+            echo 'mysqldump-php error: ' . $e->getMessage();
+        }
+
+        return $fileSql;
+
+	}
+	
+	/**
+	 * Generate a JSON File with all Series stored in Orthanc (either marked deleted or not)
+	 * For backup purposes
+	 */
+	public static function dumpOrthancSeriesJSON(PDO $linkpdo) : String {
+
+		$seriesFullJson=json_encode(Global_Data::getAllSeriesOrthancID($linkpdo), JSON_PRETTY_PRINT);
+		$seriesJsonFile = tempnam(ini_get('upload_tmp_dir'), 'TMPSeriesJson_');
+		$seriesJsonHandler= fopen($seriesJsonFile, 'w');
+		fwrite($seriesJsonHandler, $seriesFullJson);
+		fclose($seriesJsonHandler);
+
+		return $seriesJsonFile;
+
+	}
+
+	/**
+	 * Return file of a folder on the server
+	 * Use of Generator
+	 * For backup purpose
+	 */
+	public static function getFileInPath(String $sourcePath) {
+
+		$path = realpath($_SERVER['DOCUMENT_ROOT'].$sourcePath);
+
+		if(is_dir($path)){
+			// Create recursive directory iterator
+			$files = new RecursiveIteratorIterator(
+				new RecursiveDirectoryIterator($path),
+				RecursiveIteratorIterator::LEAVES_ONLY
+				);
+			
+			foreach ($files as $name => $file) {
+				// Skip directories (they would be added automatically)
+				if (!$file->isDir()) {
+					// Get real and relative path for current file
+					yield $file;
+				}
+			}
+		}
+	}
+	
 	
 }

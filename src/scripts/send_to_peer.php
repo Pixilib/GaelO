@@ -34,15 +34,13 @@ if ($accessCheck && $_SESSION['role'] == User::SUPERVISOR ) {
 	$orthanc = new Orthanc();
 	foreach ($selectedUsers as $username){
 	    //For each target user add Peer in Orthanc and push an async peer request
-	    $userObject=new User($username, $linkpdo);
+		$userObject=new User($username, $linkpdo);
+		//Nb : The peer stays declared in Orthanc as removal of a peer with an async transfert will break the transfers
 	    $orthanc->addPeer($username, $userObject->orthancAddress, $userObject->orthancLogin, $userObject->orthancPassword);
 	    $jobAnswer["answer"]=json_decode($orthanc->sendToPeerAsyncWithAccelerator($username, $ids, false));
 	    $jobAnswer["username"]=$username;
 	    $results[]=$jobAnswer;
 	}
-	
-	//SK EN Async fait plancer le tranfert
-	//$orthanc->removeAllPeers();
 	
 	echo(json_encode($results));
 	

@@ -25,7 +25,6 @@ $data = json_decode(file_get_contents("php://input"), true);
 
 $type_visit=$data['type_visit'];
 $patient_num=$data['patient_num'];
-//SK ID VISIT A FAIRE PASSER
 $id_visit=$data['id_visit'];
 
 // Check reviewer's permissions

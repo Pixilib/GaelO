@@ -68,6 +68,9 @@ if ( !isset($_GET['page']) ) {
 }else if ($_GET['page'] == 'modify_user'){
     require 'controllers/administrator/modify_user_controller.php';
     
+}else if ($_GET['page'] == 'my_account'){
+    require 'controllers/my_account_controller.php';
+    
 }else if ($_GET['page'] == 'export_database'){
     require 'controllers/administrator/export_database_controller.php';
     
@@ -88,9 +91,6 @@ if ( !isset($_GET['page']) ) {
     
 }else if ($_GET['page'] == 'change_patient_status'){
     require 'controllers/supervisor/change_patient_status_controller.php';
-    
-}else if ($_GET['page'] == 'reminder_emails'){
-    require 'controllers/supervisor/reminder_emails_controller.php';
     
 }else if ($_GET['page'] == 'documentation_supervisor'){
     require 'controllers/supervisor/documentation_controller.php';

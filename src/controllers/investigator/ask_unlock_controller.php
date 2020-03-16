@@ -39,18 +39,9 @@ if (isset($_SESSION['username']) && $patientAllowed) {
         
         if (!empty($request)) {
             $emailObject = new Send_Email($linkpdo);
-            $emailList = $emailObject->getRolesEmails(User::SUPERVISOR, $study);
-            $emailList[] = $emailObject->getUserEmails($username);
+            $emailObject->addGroupEmails($study, User::SUPERVISOR)->addEmail($userObject->userEmail);
+            $emailObject->sendUnlockRequestMessage($_SESSION['role'], $username, $type_visit, $patient_num, $study, $request );
             
-            $message = "An Unlock " . $_SESSION['role'] . " form Request was emitted by " . $username . 
-                        " for the " . $type_visit . 
-                        " visit of patient " . $patient_num . 
-                        " in Study " . $study . "<br>
-						Reason for request: " . $request . " <br>";
-            
-            // Send email
-            $emailObject->setMessage($message);
-            $emailObject->sendEmail($emailList, 'Ask Unlock');
             $answer="Success";
         }else{
             $answer="Missing Reason";

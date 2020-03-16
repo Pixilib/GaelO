@@ -31,10 +31,8 @@ if ( isset($_POST['send']) ) {
 		Request : ".$_POST['request']."<br>";
 		
 		$mail=new Send_Email($linkpdo);
-		$mail->setMessage($message);
-		$email=$mail->getAdminsEmails();
-		array_push($email, $_POST['email']);
-		$mail->sendEmail($email, 'Request');
+		$mail->addAminEmails()->addEmail($_POST['email']);
+		$mail->sendRequestMessage($_POST['name'], $_POST['email'], $_POST['ic'], $_POST['request']);
 
 	}
 

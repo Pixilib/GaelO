@@ -177,7 +177,7 @@ class User {
                 $this->userStatus="Blocked";
                 //Log login event
                 $log['message']="Blocked";
-                Tracker::logActivity($this->username, "User",null,null, "Account Blocked", $log);
+                Tracker::logActivity($this->username, "User", null, null, "Account Blocked", $log);
                 //Send email notification
                 $this->sendBlockedEmail();
                 
@@ -324,26 +324,22 @@ class User {
      * @param string $role
      * @return boolean
      */
-    public function isPatientAllowed($patientNumber, string $role){
+    public function isPatientAllowed($patientCode, string $role){
         
         if(empty($role)) return false;
-        
-        $connecter = $this->linkpdo->prepare('SELECT center, study FROM patients WHERE code = :patientNumber');
-        $connecter->execute(array(
-            "patientNumber" => $patientNumber,
-        ));
-        $patient = $connecter->fetch(PDO::FETCH_ASSOC);
+
+        $patientObject=new Patient($patientCode, $this->linkpdo);
         
         //If Investigator check the current patient is from one of the centers of the user
         if ($role==$this::INVESTIGATOR){
             $userCenters=$this->getInvestigatorsCenters();
-            if (in_array($patient['center'], $userCenters) && $this->isRoleAllowed($patient['study'], $role)){
+            if (in_array($patientObject->patientCenter, $userCenters) && $this->isRoleAllowed($patientObject->patientStudy, $role)){
                 return true;
             }
         
         //For other patient's permission is defined by patient's study availabilty
         }else {
-            if ($this->isRoleAllowed($patient['study'], $role)){
+            if ($this->isRoleAllowed($patientObject->patientStudy, $role)){
                 return true;
             }
         }
@@ -373,7 +369,11 @@ class User {
             if($role==$this::INVESTIGATOR){ 
                 if ( $this->isPatientAllowed($visitData->patientCode, $role) ) return true;
             }else if($role==$this::REVIEWER){
-                if($visitData->reviewAvailable) return true;
+                //For reviewer the visit access is allowed if one of the created visits is still awaiting review
+                //This is made to allow access to references scans
+                $patientObject=$visitData->getPatient();
+                $isAwaitingReview=$patientObject->getPatientStudy()->isHavingAwaitingReviewImagingVisit();
+                return $isAwaitingReview;
             }else{
                 //Controller, Supervisor, Admin, Monitor simply accept when role is available in patient's study (no specific rules)
                 return true;
@@ -390,25 +390,12 @@ class User {
      */
     private function sendBlockedEmail(){
         //Get all studies assosciated with account
-        $etude = $this->linkpdo->prepare('SELECT DISTINCT study FROM roles, studies 
-                                                    WHERE username = :username AND roles.study=studies.name AND studies.active=1');
-        $etude->execute(array('username' => $this->username));
-        $results=$etude->fetchAll(PDO::FETCH_COLUMN);
+        $linkedStudies=$this->getAllStudiesWithRole();
         //Send Email notification
-        $etudesString= implode('<br>', $results);
-        
-        $message = 'The following user account is blocked after too many bad password
-                attempts.<br>
-                Username : '.$this->username.'<br>
-                The account is linked to the following studies:<br>
-                '. $etudesString.' </br>';
-                
         $sendEmail=new Send_Email($this->linkpdo);
-        //Destination list = administrators and user
-        $destinators=$sendEmail->getAdminsEmails();
-        $destinators[]=$sendEmail->getUserEmails($this->username);
-        $sendEmail->setMessage($message);
-        $sendEmail->sendEmail($destinators, 'Account Blocked');
+        $sendEmail->addAminEmails()->addEmail($this->userEmail);
+        $sendEmail->sendBlockedAccountNotification($this->username, $linkedStudies);
+
     }
     
     /**
@@ -465,14 +452,12 @@ class User {
     
     /**
      * Update password and account status of an user
-     * @param $username
      * @param $password
-     * @param $linkpdo
      * @param $status
      */
-    public static function updateUserPassword(string $username, string $password, PDO $linkpdo, string $status){
+    public function updateUserPassword(string $password, string $status){
         //Update the database with new password and switch old passwords
-        $req = $linkpdo->prepare('UPDATE users
+        $req = $this->linkpdo->prepare('UPDATE users
                                     SET previous_password_2=users.previous_password_1,
                                         previous_password_1=users.password,
                                         password = :mdp,
@@ -481,7 +466,7 @@ class User {
                                         status = :status
                                     WHERE username = :username');
         
-        $req->execute(array('username' => $username,
+        $req->execute(array('username' => $this->username,
             'mdp' => password_hash($password, PASSWORD_DEFAULT),
             'status'=>$status,
             'datePassword' => date('Y-m-d')));
@@ -490,20 +475,18 @@ class User {
     
     /**
      * Generate a temp password and set account to unconfirmed
-     * @param $username
      * @param $password
-     * @param $linkpdo
      */
-    public static function setUnconfirmedAccount(string $username, string $password, PDO $linkpdo){
+    public function setUnconfirmedAccount(string $password){
         
-        $req = $linkpdo->prepare('UPDATE users
+        $req = $this->linkpdo->prepare('UPDATE users
                                     SET temp_password = :mdp,
                                         number_attempts = 0,
                                         creation_date_password = :datePassword,
                                         status = :status
                                     WHERE username = :username');
         
-        $req->execute(array('username' => $username,
+        $req->execute(array('username' => $this->username,
             'mdp' => password_hash($password, PASSWORD_DEFAULT),
             'status'=>self::UNCONFIRMED,
             'datePassword' => date('Y-m-d')));
@@ -547,7 +530,7 @@ class User {
             'prenom' => $first_name,
             'email' => $email,
             'date_Utilisateur' => date('Y-m-d'),
-            'telephone' => empty($phone) ? $phone : null,
+            'telephone' => empty($phone) ? null : $phone,
             'job' => $job,
             'statut' => $status,
             'admin'=>intval($administrator),

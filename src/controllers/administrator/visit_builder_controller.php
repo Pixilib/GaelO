@@ -37,11 +37,17 @@ if (empty($_POST)) {
                 // Get visit types of the study
                 try {
                     $study = new Study($_POST['study'], $linkpdo);
-                    $possibleVisits = $study->getAllPossibleVisits();
+                    $visitGroups=$study->getAllPossibleVisitGroups();
                     $visitTypes = [];
-                    foreach ($possibleVisits as $v) {
-                        $visitTypes[$v->name] = $v->getSpecificTableInputType();
+
+                    foreach($visitGroups as $visitGroup){
+                        $possibleVisits = $visitGroup->getAllVisitTypesOfGroup();
+                        foreach ($possibleVisits as $v) {
+                            $visitTypes[$visitGroup->groupModality."_".$v->name] = $v->getSpecificTableInputType();
+                        }
+
                     }
+                   
                     echo json_encode($visitTypes);
                 } catch (Exception $e) {
                     echo 'Could not retrieve visit types list';
@@ -51,7 +57,9 @@ if (empty($_POST)) {
 
         case 'isDBTableEmpty':
             if (isset($_POST['study'], $_POST['visitType'])) {
-                $visitType = new Visit_Type($linkpdo, $_POST['study'], $_POST['visitType']);
+                //Explode first occurence of _ to split modality and visit Name
+                $visitType=getVisitTypeObject($_POST['study'],$_POST['visitType']);
+
                 try {
                     $response = [];
                     $response['isEmpty'] = Visit_Builder::isTableEmpty($visitType);
@@ -65,7 +73,9 @@ if (empty($_POST)) {
         case 'commitChanges':
             try {
                 if (isset($_POST['study'], $_POST['visitType'])) {
-                    $visitType = new Visit_Type($linkpdo, $_POST['study'], $_POST['visitType']);
+
+                    //Explode first occurence of _ to split modality and visit Name
+                    $visitType=getVisitTypeObject($_POST['study'],$_POST['visitType']);
 
                     // Alter existing columns
                     if (isset($_POST['changes'])) {
@@ -139,4 +149,17 @@ if (empty($_POST)) {
 
             break;
     }
+}
+
+/**
+ * Adapter to retrieve modality and return the corresponding
+ * modality and visit type object
+ */
+function getVisitTypeObject($study, $modalityVisitTypeString){
+    global $linkpdo;
+    $modalityVisit = explode('_', $modalityVisitTypeString, 2);
+    $studyObject=new Study($study, $linkpdo);
+    $visitGroup=$studyObject->getSpecificGroup($modalityVisit[0]);
+
+    return $visitGroup->getVisitType($modalityVisit[1]);
 }

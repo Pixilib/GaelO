@@ -35,6 +35,8 @@ class Patient{
     public $patientWithdrawReason;
     public $patientWithdrawDate;
     public $patientWithdrawDateString;
+
+    const PATIENT_WITHDRAW="withdraw";
     
     function __construct($patientCode, PDO $linkpdo) {
         $this->patient=$patientCode;
@@ -64,12 +66,16 @@ class Patient{
         $this->patientWithdrawDateString=$dataPatient['withdraw_date'];
         
     }
+
+    public function getImmutableRegistrationDate() : DateTimeImmutable {
+        return new DateTimeImmutable($this->patientRegistrationDate);
+    }
     
     /**
      * get Patient's Center Object
      * @return Center
      */
-    public function getPatientCenter(){
+    public function getPatientCenter() : Center {
         $centerObject=new Center($this->linkpdo, $this->patientCenter);
         return $centerObject;
     }
@@ -80,7 +86,7 @@ class Patient{
      * @param string $withdrawDate
      * @param string $withdrawReason
      */
-    public function changeWithdrawStatus(bool $withdraw, string $withdrawDate, string $withdrawReason){
+    public function changeWithdrawStatus(bool $withdraw, ?string $withdrawDate, ?string $withdrawReason){
         
         $insertion = $this->linkpdo->prepare('UPDATE patients
                                             SET withdraw = :withdraw,
@@ -130,32 +136,118 @@ class Patient{
        
         
     }
-    
+
     /**
-     * Return visits of a given patient
-     * @param bool $deletedVisits
-     * @return Visit[]
+     * Return visit Manage to manage patient's visit status
      */
-    public function getPatientsVisits(bool $deletedVisits=false){
-    	
-    	$visite = $this->linkpdo->prepare('SELECT id_visit FROM visits
-													INNER JOIN visit_type ON (visit_type.name=visits.visit_type AND visit_type.study=visits.study)
-                                          			WHERE patient_code = :patientCode
-													AND visits.deleted=:deleted
-													ORDER BY visit_type.visit_order');
-    	
-    	
-    	$visite->execute(array('patientCode' => $this->patientCode, 'deleted'=>$deletedVisits));
-    	
-    	$visitsResults = $visite->fetchAll(PDO::FETCH_COLUMN);
-    	
-    	$visitsObjectArray=[];
-    	foreach ($visitsResults as $idVisit){
-    		$visitsObjectArray[]=new Visit($idVisit, $this->linkpdo);
-    	}
-    	
-    	return $visitsObjectArray;
-    	
+    public function getPatientVisitManager(Visit_Group $visitGroupObject) {
+        //Look if specific patient visit manager exists for this study
+        $specificObjectFile=$_SERVER["DOCUMENT_ROOT"].'/data/form/'.$this->patientStudy.'/Poo/'.$this->patientStudy."_Patient_Visit_Manager.php";
+            
+        if(is_file($specificObjectFile)){
+            require_once($specificObjectFile);
+            $objectName=$this->patientStudy."_Patient_Visit_Manager";
+            return new $objectName($this, $visitGroupObject, $this->linkpdo);
+        }else{
+            return new Patient_Visit_Manager($this, $visitGroupObject, $this->linkpdo);
+        }
+
+    }
+
+    private function getAllPossibleVisitGroup() : Array { 
+
+        $patientStudy=$this->getPatientStudy();
+        $possibleStudyGroups=$patientStudy->getAllPossibleVisitGroups();
+
+        return $possibleStudyGroups;
+
+    }
+
+    /**
+     * Return visits created for this patient without group filter
+     */
+    public function getAllCreatedPatientsVisits(bool $deletedVisits = false) : Array
+    {
+        $possibleStudyGroups=$this->getAllPossibleVisitGroup();
+
+        $visitsObjectArray = [];
+
+        foreach($possibleStudyGroups as $studyGroup){
+            $createdVisits=$this->getPatientVisitManager($studyGroup)->getCreatedPatientsVisits($deletedVisits);
+            array_push($visitsObjectArray, ...$createdVisits);
+        }
+
+        return $visitsObjectArray;
+    }
+
+
+     /**
+     * Return visits uploaded for this patient without group filter
+     */
+    public function getAllQcDonePatientsVisits(bool $deletedVisits = false) : Array
+    {
+        $possibleStudyGroups=$this->getAllPossibleVisitGroup();
+
+        $visitsObjectArray = [];
+
+        foreach($possibleStudyGroups as $studyGroup){
+            $createdVisits=$this->getPatientVisitManager($studyGroup)->getQcDonePatientsVisits($deletedVisits);
+            array_push($visitsObjectArray, ...$createdVisits);
+        }
+
+        return $visitsObjectArray;
+    }
+
+    public function getAllVisitToCreate() : array {
+
+        $possiblevisitsGroups=$this->getAllPossibleVisitGroup();
+
+        $visitsObjectArray = [];
+
+        foreach($possiblevisitsGroups as $visitGroup){
+            try{
+                $availableVisits=$this->getPatientVisitManager($visitGroup)->getAvailableVisitsToCreate();
+            }catch (Exception $e){
+                $availableVisits=array($e->getMessage());
+            }
+
+            $visitsObjectArray [$visitGroup->groupModality]['visitsName'] = $availableVisits;
+            $visitsObjectArray [$visitGroup->groupModality]['groupId'] = $visitGroup->groupId;
+        }
+
+        return $visitsObjectArray;
+
+    }
+
+    public function isMissingVisit(){
+
+        $modalitiesMissingVisits=$this->getMissingVisitModalities();
+
+        $isMissingSomeVisits= ( sizeof($modalitiesMissingVisits) > 0 ) ;
+
+        return $isMissingSomeVisits ; 
+
+    }
+
+    public function getMissingVisitModalities(){
+
+        $possiblevisitsGroups=$this->getAllPossibleVisitGroup();
+
+        $visitsMissingGroupsArray = [];
+
+        foreach($possiblevisitsGroups as $visitGroup){
+            $missingVisit=$this->getPatientVisitManager($visitGroup)->isMissingVisit();
+            if($missingVisit){
+                $visitsMissingGroupsArray[]=$visitGroup->groupModality;
+            }
+        }
+
+        return $visitsMissingGroupsArray;
+
+    }
+
+    public function getPatientStudy() : Study {
+        return new Study($this->patientStudy, $this->linkpdo);
     }
       
 }

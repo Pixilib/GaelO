@@ -30,6 +30,18 @@ body{
   color: red;
 }
 
+.Ongoing{
+  color : orange
+}
+
+.WaitAdjudication{
+  color : red
+}
+
+.Done{
+  color : green
+}
+
 /*Css for regular element*/
 
 label{
@@ -129,6 +141,10 @@ font-size: 14px;
 	font-size: .875rem;
 	line-height: 0.9;
 	border-radius: .2rem;
+}
+
+.visitLink {
+	text-decoration: underline;
 }
 
 #tree {

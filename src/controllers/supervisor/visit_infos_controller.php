@@ -30,14 +30,19 @@ if ($accessCheck && $_SESSION['role'] == User::SUPERVISOR) {
 	$visit_type = $visitObject->visitType;
 	$patientNumber = $visitObject->patientCode;
 	$study = $visitObject->study;
-	$localReviewObject=$visitObject->getReviewsObject(true);
-	$reviewsNotLocal=$visitObject->getReviewsObject(false);
-	
-	//Merge local and non local review in a single array
 	$data_reviews=[];
-	if(!empty($localReviewObject))$data_reviews[]=$localReviewObject;
-	foreach ($reviewsNotLocal as $notLocalReview){
-	    $data_reviews[]=$notLocalReview;
+
+	try {
+		$data_reviews[]=$visitObject->getReviewsObject(true);
+	}catch(Exception $e){
+		error_log($e->getMessage());
+	}
+
+	try {
+		$reviewsNotLocal=$visitObject->getReviewsObject(false);
+		array_push($data_reviews, ...$reviewsNotLocal);
+	}catch(Exception $e){
+		error_log($e->getMessage());
 	}
 	
 	$trackerVisitResponses=Tracker::getTackerForVisit($id_visit, $linkpdo);

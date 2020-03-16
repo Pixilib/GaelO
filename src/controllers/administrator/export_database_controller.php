@@ -19,20 +19,9 @@ Session::checkSession();
 $linkpdo=Session::getLinkpdo();
 
 if ($_SESSION['admin']) {
-    
-    $fileSql=tempnam(ini_get('upload_tmp_dir'), 'TMPDB_');
-   
-    try {
-        if(DATABASE_SSL){
-            $dump = new IMysqldump\Mysqldump('mysql:host='.DATABASE_HOST.';dbname='.DATABASE_NAME.'', ''.DATABASE_USERNAME.'', ''.DATABASE_PASSWORD.'', array(), Session::getSSLPDOArrayOptions() );
-        }else{
-            $dump = new IMysqldump\Mysqldump('mysql:host='.DATABASE_HOST.';dbname='.DATABASE_NAME.'', ''.DATABASE_USERNAME.'', ''.DATABASE_PASSWORD.'');   
-        }
-        
-        $dump->start($fileSql);
-    } catch (Exception $e) {
-        echo 'mysqldump-php error: ' . $e->getMessage();
-    }
+
+    //Get dump SQL file
+    $fileSql=Global_Data::dumpDatabase();
     
     $date = Date('Ymd_his');
     
@@ -42,26 +31,22 @@ if ($_SESSION['admin']) {
     $zip->addFile($fileSql, "export_database_$date.sql");
 
     //Export the config files
-    exportPath('/data/_config', '_config/');
+    exportPath('_config');
 
     //Export the cron files
-    exportPath('/data/cron', 'cron/');
+    exportPath('cron');
 
     //Export the form files
-    exportPath('/data/form', 'form/');
+    exportPath('form');
     
     //Export the logs files
-    exportPath('/data/logs', 'logs/');
+    exportPath('logs');
     
     //Export the documentation files
-    exportPath('/data/upload/documentation', 'upload/documentation');
+    exportPath('upload/documentation');
     
     //Export the full list of series in JSON
-    $seriesFullJson=json_encode(Global_Data::getAllSeriesOrthancID($linkpdo), JSON_PRETTY_PRINT);
-    $seriesJsonFile = tempnam(ini_get('upload_tmp_dir'), 'TMPSeriesJson_');
-    $seriesJsonHandler= fopen($seriesJsonFile, 'w');
-    fwrite($seriesJsonHandler, $seriesFullJson);
-    fclose($seriesJsonHandler);
+    $seriesJsonFile = Global_Data::dumpOrthancSeriesJSON($linkpdo);
     $zip->addFile($seriesJsonFile, 'seriesOrthancId.json');
     
     $zip->close();
@@ -78,30 +63,19 @@ if ($_SESSION['admin']) {
 
 /**
  * Export a source folder to the current zip object
- * ex : source = /data/_config
- * destination = _config
  */
-function exportPath(String $sourcePath, String $destinationPath){
+function exportPath(String $pathName){
     global $zip;
 
-    $path = realpath($_SERVER['DOCUMENT_ROOT'].$sourcePath);
-    if(is_dir($path)){
-        // Create recursive directory iterator
-        $files = new RecursiveIteratorIterator(
-            new RecursiveDirectoryIterator($path),
-            RecursiveIteratorIterator::LEAVES_ONLY
-            );
+    $fileGenerator = Global_Data::getFileInPath('/data/'.$pathName);
+
+    foreach ($fileGenerator as $file) {
+        $filePath = $file->getRealPath();
+        error_log($filePath);
         
-        foreach ($files as $name => $file) {
-            // Skip directories (they would be added automatically)
-            if (!$file->isDir()) {
-                // Get real and relative path for current file
-                $filePath = $file->getRealPath();
-                $relativePath = substr($filePath, strlen($path) + 1);
-                
-                // Add current file to archive
-                $zip->addFile($filePath, $destinationPath.$relativePath);
-            }
-        }
+        // Add current file to archive
+        $result=$zip->addFile($filePath, $pathName.'/'.basename($file));
+        error_log(intval($result));
+
     }
 }

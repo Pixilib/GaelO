@@ -36,16 +36,14 @@ $userObject=new User($_SESSION['username'], $linkpdo);
 if($_SESSION['role']==User::SUPERVISOR){
     $permissionCheck=$userObject->isRoleAllowed($_SESSION['study'], $_SESSION['role']);
     $postdata=$_POST['json'];
-    $json=json_decode($postdata,true);
+    $json=json_decode($postdata, true);
     //SK ICI VERIFIER QUE LES id SONT BIEN DE L ETUDE AVEC LES DROITS ? Securite
     $ids=$json['json'];
 }
 else if($_SESSION['role']==User::REVIEWER){
     $permissionCheck=$userObject->isVisitAllowed($_POST['id_visit'], $_SESSION['role']);
     $visitObject=new Visit($_POST['id_visit'], $linkpdo);
-    if($visitObject->reviewAvailable){
-        $ids=$visitObject->getSeriesOrthancID();
-    }
+	$ids=$visitObject->getSeriesOrthancID();
     
 }else if($_SESSION['role']==User::CONTROLLER){
     $permissionCheck=$userObject->isVisitAllowed($_POST['id_visit'], $_SESSION['role']);

@@ -1,4 +1,5 @@
 <?php
+
 /**
  Copyright (C) 2018 KANOUN Salim
  This program is free software; you can redistribute it and/or modify
@@ -17,37 +18,42 @@
  * List all Visit waiting reviews for the user accross all studies
  */
 
-require_once($_SERVER['DOCUMENT_ROOT'].'/rest/check_login.php');
+require_once($_SERVER['DOCUMENT_ROOT'] . '/rest/check_login.php');
 
-$visitsResults=[];
+$visitsResults = [];
 
-$possibleStudyList=$userObject->getRolesMap();
+$possibleStudyList = $userObject->getRolesMap();
 
-foreach ($possibleStudyList as $study =>$roles){
+foreach ($possibleStudyList as $study => $roles) {
     //In Each study with role consider studies where the user is reviewer
-    if(in_array(User::REVIEWER, $roles)){
-        
-        //Get all awayting review visit for this user in this study and add details in the global list
-        $studyObject=new Study($study, $linkpdo);
-        $visitObjectArray=$studyObject->getAwaitingReviewVisit($username);
-        
-        foreach ($visitObjectArray as $visit){
-            
-            $visitDetails['patientCode']=$visit->patientCode;
-            $visitDetails['idVisit']=$visit->id_visit;
-            $visitDetails['visitType']=$visit->visitType;
-            $visitDetails['visitStatus']=$visit->reviewStatus;
-            
-            $dicomDetailsObject=$visit->getStudyDicomDetails();
-            $visitDetails['studyDate']=$dicomDetailsObject->studyAcquisitionDate;
-            $visitDetails['studyUID']=$dicomDetailsObject->studyUID;
-            
-            $visitsResults[$study][]=$visitDetails;
+    if (in_array(User::REVIEWER, $roles)) {
+
+        //Get Tree for role reviewer
+        $studyObject = new Study($study, $linkpdo);
+        $treeObject = new Tree(User::REVIEWER, $username, $study, $linkpdo);
+        $treeItemArray = $treeObject->buildTree();
+
+        foreach ($treeItemArray as $item) {
+
+            if ($item['level'] == 'visit') {
+
+                //create a patient entry
+                $visitObject = new Visit($item['id'], $linkpdo);
+                $visitDetails['patientCode'] = $visitObject->patientCode;
+                $visitDetails['idVisit'] = $visitObject->id_visit;
+                $visitDetails['visitType'] = $visitObject->visitType;
+                $visitDetails['visitStatus'] = $visitObject->reviewStatus;
+                $visitDetails['visitModality'] = $visitObject->visitGroupObject->groupModality;
+
+                $dicomDetailsObject = $visitObject->getStudyDicomDetails();
+                $visitDetails['studyDate'] = $dicomDetailsObject->studyAcquisitionDate;
+                $visitDetails['studyUID'] = $dicomDetailsObject->studyUID;
+            }
         }
-        
+
+        $visitsResults[$study][] = $visitDetails;
     }
-    
 }
 
 header("Content-Type: application/json; charset=UTF-8");
-echo(json_encode($visitsResults));
+echo (json_encode($visitsResults));

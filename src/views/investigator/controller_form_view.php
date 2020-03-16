@@ -43,12 +43,16 @@
             }
         
         // If form Not needed unactivate the form option
-        if (! $studyObject->formNeeded) {
-            ?>$('input:radio[name="formDecision"]').prop("disabled", true);<?php
+        if (! $visitType->localFormNeeded) {
+			?>$("#accepted1").attr( 'checked', true )
+			//Disable other radiobutton to force send the accepted value (disable make the choice unsent)
+			$("#refused1").prop("disabled", true);
+			<?php
         }
         // if image Qc not Need unactivate the form option
-        if (! $studyObject->qcNeeded) {
-            ?>$('input:radio[name="imageDecision"]').prop("disabled", true); <?php
+        if (! $visitType->qcNeeded) {
+			?>$("#accepted2").attr( 'checked', true )
+			$('#refused2').prop("disabled", true); <?php
         }
         ?>
 	});
@@ -102,7 +106,6 @@
   		        	//Refresh Tree
   		        	$('#containerTree').jstree(true).refresh();
   		        	console.log(data);
-
 	              
 	           }
          	});		

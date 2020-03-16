@@ -171,6 +171,7 @@ abstract class Form_Processor {
 		if($this->local) $role="Investigator"; else $role="Reviewer";
 		$actionDetails['patient_code']=$this->visitObject->patientCode;
 		$actionDetails['type_visit']=$this->visitObject->visitType;
+		$actionDetails['modality_visit']=$this->visitObject->visitGroupObject->groupModality;
 		$actionDetails['id_review']=$idReview;
 		$actionDetails['local_review']=intval($this->local);
 		$actionDetails['adjudication']=intval($this->reviewStatus==Form_Processor::WAIT_ADJUDICATION);
@@ -192,9 +193,31 @@ abstract class Form_Processor {
 	 * @param string $reviewStatus
 	 * @param $conclusionValue
 	 */
-	protected function changeVisitValidationStatus(string $reviewStatus, $conclusionValue=null){
+	protected function changeVisitValidationStatus(string $reviewStatus, $conclusionValue="N/A"){
 	    $this->visitObject->changeVisitValidationStatus($reviewStatus, $conclusionValue);
 		$this->reviewAvailabilityDecision($reviewStatus);
+
+		//Send Notification emails
+		if($reviewStatus == Form_Processor::WAIT_ADJUDICATION){
+
+			$email=new Send_Email($this->linkpdo);
+			//SK A AMELIORER POUR EVITER DE MAILIER LES REVIEWER QUI ONT DEJA REPONDU
+			//NECESSITE DE FILTER LA LISTE DES REVIEWERS DE L ETUDE
+			$email->addGroupEmails($this->visitObject->study, User::REVIEWER)
+					->addGroupEmails($this->visitObject->study, User::SUPERVISOR);
+			$email->sendAwaitingAdjudicationMessage($this->visitObject->study, $this->visitObject->patientCode, $this->visitObject->visitType);
+
+		}else if($reviewStatus == Form_Processor::DONE){
+
+			$email=new Send_Email($this->linkpdo);
+			$uploaderUserObject=new User($this->visitObject->uploaderUsername, $this->linkpdo);
+			$uploaderEmail=$uploaderUserObject->userEmail;
+			$email->addGroupEmails($this->visitObject->study, User::MONITOR)
+					->addGroupEmails($this->visitObject->study, User::SUPERVISOR)
+					->addEmail($uploaderEmail);
+			$email->sendVisitConcludedMessage($this->visitObject->study, $this->visitObject->patientCode, $this->visitObject->visitType, $conclusionValue);
+
+		}
 	}
 	
 	/**
@@ -203,16 +226,17 @@ abstract class Form_Processor {
 	 * @return array of the general and specific table
 	 */
 	public function getSavedForm(){
-	    
-	    if($this->local){
-	        $formObject=$this->visitObject->getReviewsObject(true);
-	    }else{
-	        $formObject=$this->visitObject->queryExistingReviewForReviewer($this->username);
-	    }
-	    
-	    if(!empty($formObject)){
-	        return $formObject;
-	    }
+		try{
+
+			if($this->local){
+				return $this->visitObject->getReviewsObject(true);
+			}else{
+				return $this->visitObject->queryExistingReviewForReviewer($this->username);
+			}
+
+		}catch(Exception $e){
+			error_log($e->getMessage());
+		}
 	    
 	    return null;
 		

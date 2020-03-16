@@ -57,7 +57,7 @@ if($permissionDicomWeb){
     $response = $proxy->forward($request) ->to($calledURL);
     
     // Output response to the browser.
-    (new Zend\Diactoros\Response\SapiEmitter)->emit($response);
+    (new Narrowspark\HttpEmitter\SapiEmitter)->emit($response);
 
 }else{
     header('HTTP/1.0 403 Forbidden');

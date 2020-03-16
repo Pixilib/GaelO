@@ -277,7 +277,7 @@
 
 				case 'varchar':
 					tr.find(`td[name="type-param"]`).html(`
-						<input class="form-control form-control-sm" type="text" name="type-param" value="" pattern="[0-9]{1,}" required data-container="body" data-toggle="popover" data-trigger="focus" data-placement="top" data-content="Number of characters.">
+						<input class="form-control form-control-sm" type="text" name="type-param" value="" pattern="[0-9]{1,}" required data-container="body" data-toggle="popover" data-trigger="focus" data-placement="left" data-content="Number of characters.">
 					`);
 					break;
 
@@ -285,10 +285,10 @@
 					tr.find(`td[name="type-param"]`).html(`
 						<div class="row">
 							<div class="col-6 pr-1">
-								<input class="form-control form-control-sm" type="text" name="type-param-precision" value="" pattern="[0-9]{1,}" required data-container="body" data-toggle="popover" data-trigger="focus" data-placement="top" data-content="Number of significant digits.">
+								<input class="form-control form-control-sm" type="text" name="type-param-precision" value="" pattern="[0-9]{1,}" required data-container="body" data-toggle="popover" data-trigger="focus" data-placement="left" data-content="Number of significant digits.">
 							</div>
 							<div class="col-6 pl-1">
-								<input class="form-control form-control-sm" type="text" name="type-param-scale" value="" pattern="[0-9]{1,}" required data-container="body" data-toggle="popover" data-trigger="focus" data-placement="top" data-content="Number of digits that can be stored following the decimal point.">
+								<input class="form-control form-control-sm" type="text" name="type-param-scale" value="" pattern="[0-9]{1,}" required data-container="body" data-toggle="popover" data-trigger="focus" data-placement="left" data-content="Number of digits that can be stored following the decimal point.">
 							</div>
 						</div>
 					`);
@@ -296,7 +296,7 @@
 
 				case 'enum':
 					tr.find(`td[name="type-param"]`).html(`
-						<input class="form-control form-control-sm" type="text" name="type-param-scale" value="" required data-container="body" data-toggle="popover" data-trigger="focus" data-placement="top" data-content="List of permitted values. Each entry is comma-separated. Whitespaces are allowed.">
+						<input class="form-control form-control-sm" type="text" name="type-param-scale" value="" required data-container="body" data-toggle="popover" data-trigger="focus" data-placement="left" data-content="List of permitted values. Each entry is comma-separated. Whitespaces are allowed.">
 					`);
 					break;
 			}

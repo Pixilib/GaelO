@@ -45,6 +45,7 @@ class Visit{
     public $controlDate;
     public $correctiveActionUsername;
     public $correctiveActionDate;
+    public $visitTypeId;
     public $study;
     public $patientCode;
     public $visitType;
@@ -54,6 +55,7 @@ class Visit{
     public $deleted;
     
     public $studyDicomObject;
+    public $visitGroupObject;
     
     const QC_NOT_DONE="Not Done";
     const QC_ACCEPTED="Accepted";
@@ -102,29 +104,33 @@ class Visit{
         
         $this->statusDone=$visitDbData['status_done'];
         $this->reasonForNotDone=$visitDbData['reason_for_not_done'];
-        $this->study=$visitDbData['study'];
+        $this->visitTypeId=$visitDbData['visit_type_id'];
         $this->patientCode=$visitDbData['patient_code'];
-        $this->visitType=$visitDbData['visit_type'];
         
         $this->uploadStatus=$visitDbData['upload_status'];
         $this->acquisitionDate=$visitDbData['acquisition_date'];
         $this->stateInvestigatorForm=$visitDbData['state_investigator_form'];
         $this->stateQualityControl=$visitDbData['state_quality_control'];
-        
+
         $this->newSeriesUpload=$visitDbData['corrective_action_new_upload'];
         $this->investigatorFormIsCorrected=$visitDbData['corrective_action_investigator_form'];
         $this->otherCorrectiveAction=$visitDbData['corrective_action_other'];
         $this->correctiveActionDecision=$visitDbData['corrective_action_decision'];
-        
         $this->reviewAvailable=$visitDbData['review_available'];
-        
         $this->reviewStatus=$visitDbData['review_status'];
         $this->reviewConclusionDate=$visitDbData['review_conclusion_date'];
         $this->reviewConclusion=$visitDbData['review_conclusion_value'];
-        
         $this->correctiveActionUsername=$visitDbData['corrective_action_username'];
         $this->correctiveActionDate=$visitDbData['corrective_action_date'];
         $this->deleted=$visitDbData['deleted'];
+        
+
+        //Get VisitType detail
+        $this->visitTypeObject=new Visit_Type($this->linkpdo, $this->visitTypeId);
+        $this->visitType=$this->visitTypeObject->name;
+        //Get VisitGroup details
+        $this->visitGroupObject=new Visit_Group($this->linkpdo, $this->visitTypeObject->groupId);
+        $this->study=$this->visitGroupObject->studyName;
         
         if( $this->uploadStatus == Visit::DONE){
             $studyDicomObject=$this->getStudyDicomDetails();
@@ -174,17 +180,17 @@ class Visit{
      */
     private function skipQcIfNeeded(){
         
-        $parentStudyObject=$this->getParentStudyObject();
+        $visitType=$this->getVisitCharacteristics();
         
-        if(! $parentStudyObject->formNeeded || $parentStudyObject->qcNeeded) {
+        if(! $visitType->localFormNeeded || $visitType->qcNeeded) {
 
             //If QC Not needed validate it
-            if( !$parentStudyObject->qcNeeded ){
+            if( !$visitType->qcNeeded ){
                 $this->editQc(true, true, null, null, Visit::QC_ACCEPTED, null);
                 
             }
             //If form Not Needed put investigator form to Done
-            if(!$parentStudyObject->formNeeded){
+            if(!$visitType->localFormNeeded){
                 $this->changeVisitStateInvestigatorForm(Visit::DONE);
             }
             
@@ -219,12 +225,18 @@ class Visit{
     }
     
     /**
-     * Return visit type details of this visit
+     * Return visit type object related to this visit
      * @return Visit_Type
      */
-    public function getVisitCharacteristics(){
-        $visitTypeObject=new Visit_Type($this->linkpdo, $this->study, $this->visitType);
-        return $visitTypeObject;  
+    public function getVisitCharacteristics() : Visit_Type {
+        return $this->visitTypeObject;  
+    }
+
+    /**
+     * Return visit group object related to this visit
+     */
+    public function getVisitGroup() : Visit_Group {
+        return $this->visitGroupObject;
     }
     
     /**
@@ -312,6 +324,10 @@ class Visit{
         
         $reviewQuery->execute ( array('idVisit' => $this->id_visit, 'isLocal'=>intval($local)) );
         $reviewResults = $reviewQuery->fetchAll(PDO::FETCH_COLUMN);
+
+        if(empty($reviewResults)){
+            throw new Exception('No Review Found');
+        }
         
         if($local && sizeof($reviewResults)==1){
             return new Review($reviewResults[0], $this->linkpdo);
@@ -329,18 +345,21 @@ class Visit{
     
     /**
      * return the existing reviewer review for this visit
-     * @return null if no review for this reviewer in this visit
+     * @throws Exception if not available review for reviewer
      */
     public function queryExistingReviewForReviewer($username){
-        $reviewsObjects=$this->getReviewsObject(false);
         
+        $reviewsObjects=$this->getReviewsObject(false);
+
         foreach ($reviewsObjects as $review){
             if($review->username==$username){
                 return $review;
             }
         }
-        //If not found return null
-        return null;
+
+        if (empty($reviewsObjects)){
+            throw new Exception('No review for reviwer');
+        }
         
     }
 
@@ -350,10 +369,9 @@ class Visit{
      */
     private function isNoOtherActivatedVisit(){
     	$visitQuery = $this->linkpdo->prepare('SELECT id_visit FROM visits
-                                        WHERE visits.study=:study AND visits.visit_type=:visitType AND visits.patient_code=:patientCode AND visits.deleted=0;
+                                        WHERE visit_type_id=:visitTypeID AND patient_code=:patientCode AND deleted=0;
                                     ');
-    	$visitQuery->execute(array('study' => $this->study,
-    			'visitType'=> $this->visitType,
+    	$visitQuery->execute(array('visitTypeID' => $this->visitTypeId,
     			'patientCode'=>$this->patientCode ));
     	
     	$dataVisits = $visitQuery->fetchAll(PDO::FETCH_COLUMN);
@@ -401,7 +419,7 @@ class Visit{
         $this->refreshVisitData();
         
         if($controlDecision==Visit::QC_ACCEPTED){
-            if( $this->getParentStudyObject()->reviewNeeded){
+            if( $this->getVisitCharacteristics()->reviewNeeded){
                 //If review needed make it available for reviewers
                 $this->changeReviewAvailability(true);
             }else{
@@ -541,14 +559,17 @@ class Visit{
      */
     public function getFromProcessor(bool $local, string $username){
         //Destination of the specific post processing POO
-        $specificObjectFile=$_SERVER["DOCUMENT_ROOT"]."/data/form/Poo/$this->study"."_"."$this->visitType.php";
+        $modality=$this->visitGroupObject->groupModality;
+        $specificObjectFile=$_SERVER["DOCUMENT_ROOT"].'/data/form/'.$this->study.'/Poo/'.$modality."_".$this->study."_".$this->visitType.".php";
         
         $formProcessor=null;
         
         if(is_file($specificObjectFile)){
-            require($specificObjectFile);
-            $objectName=$this->study."_".$this->visitType;
+            require_once($specificObjectFile);
+            $objectName=$modality."_".$this->study."_".$this->visitType;
             $formProcessor = new $objectName($this, $local, $username, $this->linkpdo);
+        }else{
+            throw new Exception('Missing From Processor for this visit');
         }
     	
     	return $formProcessor;
@@ -563,24 +584,20 @@ class Visit{
      */
     private function sendUploadedVisitEmailToController(?string $username){
         
-        $emailObject=new Send_Email($this->linkpdo);
-
-        $message = "The following visit has been uploaded on the platform: <br>
-                  Patient Number : ".$this->patientCode."<br>
-                  Uploaded visit : ".$this->visitType."<br>";
-        
-        $emailObject->setMessage($message);
-        
         if($this->uploadStatus==Visit::DONE 
             && $this->stateInvestigatorForm==Visit::DONE 
             && $this->stateQualityControl==Visit::NOT_DONE){
-			//Inform Controllers that Visit is uploaded and awaiting QC
-            $email=$emailObject->getRolesEmails(User::CONTROLLER, $this->study);
+            //Inform Controllers that Visit is uploaded and awaiting QC
+            $emailObject=new Send_Email($this->linkpdo);
+            $emailObject->addGroupEmails($this->study, User::CONTROLLER)
+                        ->addGroupEmails($this->study, User::MONITOR)
+                        ->addGroupEmails($this->study, User::SUPERVISOR);
+			
             if($username!=null) {
-                $email[]=$emailObject->getUserEmails($username);
+                $emailObject->addEmail($emailObject->getUserEmails($username));
             }
-            error_log("UploadEmails".implode(';', $email));
-            $emailObject->sendEmail($email, $this->study.' - New upload');
+            $emailObject->sendUploadedVisitMessage($this->study, $this->patientCode,$this->visitType);
+
             return true;
             
         } else {
@@ -592,43 +609,18 @@ class Visit{
      * Send emails to reviewers saying the visit is available for review
      */
     private function sendAvailableReviewMail(){
-        
         $emailObject=new Send_Email($this->linkpdo);
-        
-        $message = "The following visit is ready for review in the platform: <br>
-                  Patient Number : ".$this->patientCode."<br>
-                  Uploaded visit : ".$this->visitType."<br>";
-        
-        $emailObject->setMessage($message);
-        
-        $email=$emailObject->getRolesEmails(User::REVIEWER, $this->study);
-        
-        error_log("ReviewEmailNotification".implode(';', $email));
-        
-        $emailObject->sendEmail($email, $this->study.' - Visit Awaiting Review');
-
-        
+        $emailObject->addGroupEmails($this->study, User::REVIEWER);
+        $emailObject->sendReviewReadyMessage($this->study, $this->patientCode, $this->visitType);    
     }
     
     /**
      * Send emails to supervisors when visit recieved and QC done and does not need review process
      */
     private function sendUploadNotificationToSupervisor(){
-        
         $emailObject=new Send_Email($this->linkpdo);
-        
-        $message = "The following visit has been uploaded to the platform: <br>
-                  Patient Number : ".$this->patientCode."<br>
-                  Uploaded visit : ".$this->visitType."<br>";
-        
-        $emailObject->setMessage($message);
-        
-        $email=$emailObject->getRolesEmails(User::SUPERVISOR, $this->study);
-        
-        error_log("SupervisorEmailNotification".implode(';', $email));
-        
-        $emailObject->sendEmail($email, $this->study.' - Visit Recieved');
-        
+        $emailObject->addGroupEmails($this->study, User::SUPERVISOR);
+        $emailObject->sendUploadedVisitMessage($this->study, $this->patientCode, $this->visitType);     
     }
     
     /**
@@ -645,15 +637,28 @@ class Visit{
      * @return boolean
      */
     public function isAwaitingReviewForReviewerUser(string $username){
+
+        try{
+            $reviewObject=$this->queryExistingReviewForReviewer($username);
+        }catch(Exception $e){
+            //User does not have any review, so visit still awaiting it's review
+            return true;
+        }
+
+        //If found look at validation status.
+        //not awaiting review if form already validated
+        if($reviewObject->validated){
+            return false;
+        }else{
+            return true;
+        }
         
-        $reviewForReviwer=$this->queryExistingReviewForReviewer($username);
-        if(empty($reviewForReviwer)) return true; else return false;
-        
+
     }
     
     /**
      * Create a new visit
-     * @param $visitType
+     * @param $visitName
      * @param $study
      * @param $patientCode
      * @param $statusDone
@@ -663,16 +668,17 @@ class Visit{
      * @param $linkpdo
      * @return string
      */
-    public static function createVisit($visitType, $study, $patientCode, $statusDone, $reasonNotDone, $acquisitionDate, $username, PDO $linkpdo){
+    public static function createVisit($visitName, $visitGroupId, $patientCode, $statusDone, $reasonNotDone, $acquisitionDate, $username, PDO $linkpdo){
+        
+        $visitType = Visit_Type::getVisitTypeByName($visitGroupId, $visitName, $linkpdo);
         
         //Add visit verifying that this visit doesn't already have an active visite registered
-        $insertion = $linkpdo->prepare ( 'INSERT INTO visits(study, visit_type, status_done, patient_code, reason_for_not_done, acquisition_date, creator_name, creation_date)
-      										SELECT :study, :type_visite, :status_done, :patient_code, :reason, :acquisition_date, :creator_name, :creation_date FROM DUAL
-											WHERE NOT EXISTS (SELECT id_visit FROM visits WHERE patient_code=:patient_code AND study=:study AND visit_type=:type_visite AND deleted=0) ' );
+        $insertion = $linkpdo->prepare ( 'INSERT INTO visits(visit_type_id, status_done, patient_code, reason_for_not_done, acquisition_date, creator_name, creation_date)
+      										SELECT :visitTypeId, :status_done, :patient_code, :reason, :acquisition_date, :creator_name, :creation_date FROM DUAL
+											WHERE NOT EXISTS (SELECT id_visit FROM visits WHERE patient_code=:patient_code AND visit_type_id=:visitTypeId AND deleted=0) ' );
         
         $insertion->execute ( array (
-            'study'=>$study,
-            'type_visite' => $visitType,
+            'visitTypeId'=>$visitType->id,
             'status_done' => $statusDone,
             'patient_code' => $patientCode,
             'reason' => $reasonNotDone,
@@ -683,7 +689,7 @@ class Visit{
         
         $createdId=$linkpdo->lastInsertId();
         
-        return $createdId;
+        return new Visit($createdId, $linkpdo);
     }
     
 }

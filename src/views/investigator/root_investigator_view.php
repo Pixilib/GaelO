@@ -73,54 +73,140 @@
 				'dblclick_toggle': false,
 				'check_callback': true
 			},
-			"plugins": ["search", /*"contextmenu",*/ "state"],
+			"plugins": ["search", "contextmenu", "state"],
 			"search": {
 				"case_sensitive": false,
 				"show_only_matches": true,
 				"show_only_matches_children" : true
-			}/*,
-			//SK To Evaluate in the Future
+			},
+			//Context menu for filtering actions
 			"contextmenu": {
-				"items": function($node) {
-					return {
-						"Show": {
-							"label": "Remove Concluded",
-							"action": function(obj) {
-								$($('#containerTree').jstree(true).get_json('#', {
-									flat: true
-								})).each(function(index, value) {
-									//Look the visit level
-									if (value.parent != '#') {
-										//If review done, start the remove process
-										if (value.li_attr.review == "Done") {
-											//Get the current node
-											var node = $('#containerTree').jstree(true).get_node(value.id);
-											//Get parent ID
-											var parentID = $('#containerTree').jstree(true).get_parent(node);
-											//Get Parent Node
-											var nodeParent = $('#containerTree').jstree(true).get_node(parentID);
-											//Delete visit Node
-											$('#containerTree').jstree(true).delete_node(node);
-											//Check if parent now empty, if yes, remove the parent (patient node)
-											if (nodeParent.children.length == 0) {
-												$('#containerTree').jstree(true).delete_node(nodeParent);
-											}
+				"items": <?php 
+				if($_SESSION['role'] == User::INVESTIGATOR){
+					echo('investigatorContextMenu()');
+				}else if($_SESSION['role'] == User::CONTROLLER){
+					echo('controllerContextMenu()');
+				}else if($_SESSION['role'] == User::REVIEWER){
+					echo('reviewerContextMenu()');
+				}else{
+					echo('{}');
+				} ?>
 
-										}
-									}
-								});
-							}
-						}
-					};
-				}
-			}*/
+			}
 		});
 
+		function reviewerContextMenu(){
+
+			return (
+				{
+					"Only Ongoing" : {
+						"label" : "Only Ongoing",
+						"action" : function (object) {
+							filterVisitByClassName("Ongoing")
+						}
+					},
+					"Only Adjucation" : {
+						"label" : "Only Adjudication",
+						"action" : function (object){
+							filterVisitByClassName("WaitAdjudication")
+						}
+
+					}
+				}
+			)
+
+		}
+
+		function investigatorContextMenu(){
+
+			return (
+				{
+					"Missing Images" : {
+						"label" : "Missing Images",
+						"action" : function (object) {
+							filterVisitByClassName("NotUpload")
+						}
+					},
+					"Missing Form" : {
+						"label" : "Missing Form",
+						"action" : function (object){
+							filterVisitByClassName("NotForm")
+						}
+					},
+					"Missing Both" : {
+						"label" : "Missing Both",
+						"action" : function (object){
+							filterVisitByClassName("NotBoth")
+						}
+					}
+				}
+			)
+
+		}
+
+		function controllerContextMenu(){
+
+			return (
+				{
+					"Awaiting QC" : {
+						"label" : "Awaiting QC",
+						"action" : function (object) {
+							filterVisitByClassName("NotBoth")
+						}
+					}
+				}
+			)
+
+		}
+
+		function filterVisitByClassName(className) {
+			let treeJson = $('#containerTree').jstree(true).get_json('#', {'flat': true})
+			console.log(treeJson)
+			let ongoingItems = treeJson.filter (function(item) {
+				if( item.icon == "/assets/images/report-icon.png" && item.li_attr.class !== className){
+					return true
+				}
+
+			}) 
+
+			$('#containerTree').jstree(true).delete_node(ongoingItems)
+			removeParentsIfNoChild()
+		}
+
+		/**
+		 * Remove parents modality and patient with no childs
+		 * SK : ALGO BOF BOF
+		 */
+		function removeParentsIfNoChild(){
+
+			let treeJson = $('#containerTree').jstree(true).get_json('#', {'flat': true})
+
+			let ongoingItems = treeJson.filter (function(item) {
+				//Look at child only for modality level (has _ )
+				if( item.id.includes("_") ) {
+
+					let child = $('#containerTree').jstree(true).get_children_dom(item.id)
+					//If no child remove the modality level
+					if(child.length == 0){
+						$('#containerTree').jstree(true).delete_node(item.id)
+					}
+					//Look if parrent still have other modalities
+					let parentChildItems = $('#containerTree').jstree(true).get_children_dom(item.parent)
+					if(parentChildItems.length == 0 ){
+						$('#containerTree').jstree(true).delete_node(item.parent)
+					} 
+
+				}
+
+			})
+
+		}
+
 		$('#containerTree').on('select_node.jstree', function(e, data) {
-			var selectedNode = data.node;
+			let selectedNode = data.node;
 			//if Patient node (parent is root tree), load the study interface
-			if (data.instance.get_parent(selectedNode) == '#') {
-				var selectedPatientNumber = selectedNode.id;
+			if (selectedNode.parent == '#') {
+				let selectedPatientNumber = selectedNode.id;
 				$("#contenu").load('/patient_interface', {
 					patient_num: selectedPatientNumber
 				});
@@ -128,9 +214,9 @@
 				//Open the selected node
 				$('#containerTree').jstree(true).open_node(selectedPatientNumber);
 
-			} else {
-				var selectedPatientNumber = data.instance.get_node(selectedNode.parent).id;
-				var selectedIdVisit = data.instance.get_node(selectedNode).id;
+			} else if ( selectedNode.children.length==0 ) {
+				let selectedPatientNumber = selectedNode.parents[1];
+				let selectedIdVisit = selectedNode.id;
 				//Load visit interface
 				$("#contenu").load('/visit_interface', {
 					id_visit: selectedIdVisit,

@@ -16,15 +16,17 @@
 
 <script type="text/javascript"> 
     $(document).ready(function () {
-        
-        $( "#datepicker" ).datepicker({
-        		yearRange: "-10:+1",
-        		changeYear: true,
-        		dateFormat: "yy-mm-dd",
-        		onSelect: function(dateText){
-        			  $('#withdraw_date').val(dateText);
-        		}
-    	});
+
+		$('#datePicker').datepicker({
+			toggleActive: true,
+			format: "yyyy-mm-dd"
+		});
+
+				
+		$('#datePicker').datepicker().on('changeDate', function(e) {
+			let formattedDate=$('#datePicker').datepicker("getFormattedDate")
+			$('#withdraw_date').val(formattedDate);
+		});
     
         $( "#validateChangeStatus" ).on('click', function() {
         	if( $('#withdraw').val()==1 && ( !$('#withdraw_date').val().length>0 || !$('#reason').val().length>0) ){
@@ -87,7 +89,7 @@
         <br>
         <div id="dateWithdraw">
         	<label class="control-label">Date:</label>
-        	<div id="datepicker"></div>
+        	<div id="datePicker"></div>
         	<br>
             <input class="form-control" name="withdraw_date" id="withdraw_date" type="hidden" >
         </div>

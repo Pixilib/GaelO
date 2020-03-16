@@ -27,12 +27,12 @@ $study = $_SESSION['study'];
 $userObject=new User($username, $linkpdo);
 $permissionResults = $userObject->isVisitAllowed($id_visit, $_SESSION['role']);
 
-$studyObject=new Study($study, $linkpdo);
-$formNeeded=$studyObject->formNeeded;
+
+$visitObject=new Visit($id_visit, $linkpdo);
+$isLocalformNeeded = $visitObject->getVisitCharacteristics()->localFormNeeded;
 
 if($permissionResults){
     
-    $visitObject=new Visit($id_visit, $linkpdo);
     //Determine if calling local or reviewer form
     $local = ($_SESSION['role']==User::REVIEWER) ? false : true ;
     $formProcessorObject=$visitObject->getFromProcessor($local, $username);
@@ -55,11 +55,11 @@ if($permissionResults){
         //Load Specific form
         
         //If form not needed for investigator, return and do not output the form
-        if ( ! $formNeeded && $_SESSION['role']==User::INVESTIGATOR){
+        if ( ! $isLocalformNeeded && in_array( $_SESSION['role'], array(User::INVESTIGATOR, User::CONTROLLER) ) ) {
             exit();
         }
         
-        if($_SESSION['role']==User::INVESTIGATOR || $_SESSION['role']==User::REVIEWER){
+        if($_SESSION['role']==User::INVESTIGATOR || ($_SESSION['role']==User::REVIEWER && $visitObject->reviewAvailable) ){
             $roleDisable=false;
         }else{
             $roleDisable=true;
@@ -76,11 +76,8 @@ if($permissionResults){
             $validatedForm=false;
         }
         
-        //Nothing to display + Form filling not allowed = Nothing to show
-        if($roleDisable && empty($results)){
-            exit();
-        }
-        
+
+        $visitGroupModality=$visitObject->visitGroupObject->groupModality;
         require 'views/investigator/specific_form_view.php';
         
     }

@@ -15,7 +15,6 @@
 
 /**
  * Center management in the plateform
- * @author salim
  */
 
 Class Center{
@@ -63,7 +62,7 @@ Class Center{
 	        'code'=>$this->code));
 	    
 	}
-	
+
 	/**
 	 * Return all users having a specific center in main of affiliated centers
 	 * @param PDO $linkpdo
@@ -94,7 +93,6 @@ Class Center{
 		}
 		
 		return $usersObjects;
-
 	}
 
 	/**

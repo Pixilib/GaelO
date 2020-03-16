@@ -91,7 +91,7 @@ if( $accessCheck && $role== User::INVESTIGATOR && $visitObject->uploadStatus==Vi
 		//Read imported map, it only have only one study
 		foreach ($importedMap as $studyID=>$seriesIDs){
 			//Anonymize and store new anonymized study Orthanc ID
-			$anonymizedIDArray[]=$orthancExposedObject->Anonymize($studyID, "Default", $visitObject->patientCode, $visitObject->visitType, $visitObject->study);
+			$anonymizedIDArray[]=$orthancExposedObject->Anonymize($studyID, $visitObject->getVisitCharacteristics()->anonProfile, $visitObject->patientCode, $visitObject->visitType, $visitObject->study);
 			error_log("Anonymization done at ".(microtime(true)-$start_time));
 			//Delete original import
 			$orthancExposedObject->deleteFromOrthanc("studies", $studyID);
@@ -120,7 +120,8 @@ if( $accessCheck && $role== User::INVESTIGATOR && $visitObject->uploadStatus==Vi
         $answer['receivedConfirmation']=true;
         $logDetails['uploadedSeries']=$studyDetails['seriesInStudy'];
         $logDetails['patientNumber']=$visitObject->patientCode;
-        $logDetails['visitType']=$visitObject->visitType;
+		$logDetails['visitType']=$visitObject->visitType;
+		$logDetails['modality_visit']=$visitObject->visitGroupObject->groupModality;
         //Log import
         Tracker::logActivity($username, $role, $study, $visitObject->id_visit, "Upload Series", $logDetails );
 	
@@ -234,21 +235,10 @@ function warningAdminError(string $errorMessage, PDO $linkpdo){
 	global $zipPath;
 	global $study;
 	global $username;
-	
-	$message="An Import Error occured during validation of upload <br>
-	Visit ID : ".$visitObject->id_visit."<br>
-    Patient Code : ".$visitObject->patientCode."<br>
-    Visit Type : ".$visitObject->visitType."<br>
-	Study : ".$study."<br>
-	zipPath : ".$zipPath."<br>
-	username: ".$username."<br>
-	error  : ".$errorMessage."<br>" ;
-	
-	$destinators=$sendEmails->getRolesEmails(User::SUPERVISOR, $study);
-	$destinators[]=$sendEmails->getUserEmails($username);
-	
-	$sendEmails->setMessage($message);
-	$sendEmails->sendEmail($destinators, "Error During Import");
+
+	$sendEmails->addGroupEmails($study, User::SUPERVISOR)->addEmail($sendEmails->getUserEmails($username));
+	$sendEmails->sendUploadValidationFailure($visitObject->id_visit, $visitObject->patientCode, $visitObject->visitType,
+			$study, $zipPath, $username, $errorMessage);
 }
 
 /**

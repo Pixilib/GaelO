@@ -4,7 +4,10 @@
 		"ifsnop/mysqldump-php" : "^2.7",
 		"monolog/monolog" : "^1.24",
 		"html2text/html2text" : "~4.2",
-		"jenssegers/proxy" : "~3.0"
+		"jenssegers/proxy" : "~3.0",
+		"phpseclib/phpseclib": "^2.0",
+		"peppeocchi/php-cron-scheduler": "3.*",
+		"narrowspark/http-emitter": "^1.0"
 	},
 	"name" : "salim-kanoun/gaelo",
 	"description" : "Open source imaging management in clinical trial",
