@@ -1,6 +1,6 @@
 /src/data/_config
 !/src/data/_config/.htaccess
-!/src/data/_config/.dkim.private_sample
+!/src/data/_config/dkim.private_sample
 
 /src/data/logs
 !/src/data/logs/.htaccess
