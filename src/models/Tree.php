@@ -55,7 +55,7 @@ class Tree
     } else if ($this->role == User::CONTROLLER) {
       if ($visitObject->stateQualityControl == Visit::QC_ACCEPTED || $visitObject->stateQualityControl == Visit::QC_REFUSED) {
         $class = "OK";
-      } else if ($visitObject->stateQualityControl == Visit::QC_NOT_DONE || $$visitObject->stateQualityControl == Visit::QC_WAIT_DEFINITVE_CONCLUSION) {
+      } else if ($visitObject->stateQualityControl == Visit::QC_NOT_DONE || $visitObject->stateQualityControl == Visit::QC_WAIT_DEFINITVE_CONCLUSION) {
         $class = "NotBoth";
       }
     }else if ($this->role == User::REVIEWER){
