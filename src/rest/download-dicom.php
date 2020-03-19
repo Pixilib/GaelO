@@ -32,8 +32,7 @@ $visitObject=new Visit($id_visit, $linkpdo);
 $visitPermissions=$userObject->isVisitAllowed($id_visit, User::REVIEWER);
 
 //If permission granted and visit active and review available and QC done
-if($visitPermissions
-    && !$visitObject->deleted && $visitObject->reviewAvailable && $visitObject->stateQualityControl==Visit::QC_ACCEPTED) {
+if($visitPermissions) {
     
     //Get Array of Orthanc Series ID
     $resultatsIDs = $visitObject->getSeriesOrthancID();
