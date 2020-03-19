@@ -57,6 +57,10 @@ if (isset($_SESSION['admin'])) {
    
     
    
+    $date =Date('Ymd_his');
+    header('Content-type: text/csv');
+    header('Content-Disposition: attachment; filename="export'.$date.'.csv"');
+    
     $output = fopen('php://output', 'w');
     
     foreach ($list as $fields) {
@@ -65,9 +69,7 @@ if (isset($_SESSION['admin'])) {
     
     //Output
     fclose($output);
-    $date =Date('Ymd_his');
-    header('Content-type: text/csv');
-    header('Content-Disposition: attachment; filename="export'.$date.'.csv"');
+
     
 }else{
     header('HTTP/1.0 403 Forbidden');

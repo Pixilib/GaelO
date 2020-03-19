@@ -47,7 +47,6 @@ if($roleAllowed && $studyAllowed){
     while(!feof($file))
     {
         print(@fread($file, 1024*1024));
-        ob_flush();
         flush();
     }
     

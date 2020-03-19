@@ -71,11 +71,9 @@ function exportPath(String $pathName){
 
     foreach ($fileGenerator as $file) {
         $filePath = $file->getRealPath();
-        error_log($filePath);
         
         // Add current file to archive
-        $result=$zip->addFile($filePath, $pathName.'/'.basename($file));
-        error_log(intval($result));
+        $zip->addFile($filePath, $pathName.'/'.basename($file));
 
     }
 }

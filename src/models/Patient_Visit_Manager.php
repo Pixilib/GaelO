@@ -288,7 +288,6 @@ class Patient_Visit_Manager
     }
 
     public function getCreatedVisitForVisitTypeId($visitTypeId){
-        error_log($visitTypeId);
         $visitQuery = $this->linkpdo->prepare ( 'SELECT id_visit FROM visits WHERE patient_code=:patientCode AND visits.visit_type_id=:visitTypeId AND deleted=0 ' );
         
         $visitQuery->execute ( array('patientCode' => $this->patientCode, 'visitTypeId'=>$visitTypeId) );

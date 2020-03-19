@@ -69,7 +69,6 @@ if( $accessCheck && $role== User::INVESTIGATOR && $visitObject->uploadStatus==Vi
         //Check that ZIP is not a bomb
         $zipSize=filesize($zipPath);
         $uncompressedzipSize=get_zip_originalsize($zipPath);
-        error_log("compression Ratio ".($uncompressedzipSize/$zipSize));
         if($uncompressedzipSize/$zipSize >20){
             throw new Exception("Bomb Zip");
         }
@@ -92,14 +91,14 @@ if( $accessCheck && $role== User::INVESTIGATOR && $visitObject->uploadStatus==Vi
 		foreach ($importedMap as $studyID=>$seriesIDs){
 			//Anonymize and store new anonymized study Orthanc ID
 			$anonymizedIDArray[]=$orthancExposedObject->Anonymize($studyID, $visitObject->getVisitCharacteristics()->anonProfile, $visitObject->patientCode, $visitObject->visitType, $visitObject->study);
-			error_log("Anonymization done at ".(microtime(true)-$start_time));
+			//error_log("Anonymization done at ".(microtime(true)-$start_time));
 			//Delete original import
 			$orthancExposedObject->deleteFromOrthanc("studies", $studyID);
 			
 		}
 		//Send to Orthanc Pacs and fill the database
 		$orthancExposedObject->sendToPeer("OrthancPacs", $anonymizedIDArray);
-		error_log("Peer sent at ".(microtime(true)-$start_time));
+		//error_log("Peer sent at ".(microtime(true)-$start_time));
 		//erase transfered anonymized study from orthanc exposed
 		$orthancExposedObject->deleteFromOrthanc("studies", $anonymizedIDArray[0]);
 
@@ -131,13 +130,9 @@ if( $accessCheck && $role== User::INVESTIGATOR && $visitObject->uploadStatus==Vi
 		
 
 }else{
-	error_log("Acess Forbidden");
 	header('HTTP/1.0 403 Forbidden');
 	die('You are not allowed to access this file.');
 }
-
-//Log final answer
-error_log("output answer import ".json_encode($answer));
 
 
 /**
@@ -179,7 +174,7 @@ function sendFolderToOrthanc(string $destination, Orthanc $orthancExposedObject)
 	//Delete original file after import
 	recursive_directory_delete($destination);
 	
-	error_log("Imported ".$importedInstances." files in ".(microtime(true)-$start_time));
+	//error_log("Imported ".$importedInstances." files in ".(microtime(true)-$start_time));
 	
 	if(count($importedMap)==1 && $importedInstances == $nbOfInstances){
 		return $importedMap;

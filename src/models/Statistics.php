@@ -71,6 +71,7 @@ class Statistics {
 		
 		
 		foreach ($allPatientStatus as $visitType => $patients){
+			
 			foreach ($patients as $patientCode=>$patientDetails){
 				
 				if($patientDetails['status']==Patient_Visit_Manager::DONE || $patientDetails['status']==Patient_Visit_Manager::SHOULD_BE_DONE){
