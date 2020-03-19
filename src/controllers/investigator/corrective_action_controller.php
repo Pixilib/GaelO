@@ -86,7 +86,7 @@ if (isset ( $_SESSION ['username'] ) && $visitAllowed) {
 		echo(json_encode($answer));
 		
 	} else {
-	    $studyObject=new Study($_SESSION['study'], $linkpdo);
+		$visitType=$visitObject->getVisitCharacteristics();
 	    require 'views/investigator/corrective_action_view.php';
 	}
 }else {

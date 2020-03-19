@@ -25,7 +25,7 @@ $linkpdo=Session::getLinkpdo();
 
 if (isset($_SESSION['admin'])) {
 	
-	$study= $_SESSION['study'] ;
+	$study=$_SESSION['study'] ;
     $username=$_SESSION['admin'];
     
     if($study == "All Studies"){
