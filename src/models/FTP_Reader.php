@@ -231,6 +231,15 @@ class FTP_Reader
         // Get files in the ftp folder
         $fileArray = ftp_nlist($ftpConnect, ".");
 
+        //Remove . and ..
+        $fileArray = array_filter($fileArray, function($file){
+            if($file =='.' || $file == '..'){
+                return false;
+            }else{
+                return true;
+            }
+        });
+
         $selectedFiles = $this->selectWantedFiles($fileArray);
 
         $resultFileArray = [];
