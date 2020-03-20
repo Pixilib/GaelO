@@ -44,13 +44,22 @@ if($roleAllowed && $studyAllowed){
     
     set_time_limit(0);
     $file = @fopen($documentationObject->documentFileLocation,"rb");
-    while(!feof($file))
-    {
-        print(@fread($file, 1024*1024));
-        flush();
+    if($file){
+
+        while(!feof($file))
+        {
+            print(@fread($file, 1024*1024));
+            flush();
+        }
+
+        fclose($file);
+
+    }else{
+        throw new Exception("Can't Find Documentation");
     }
+
     
-    fclose($file);
+ 
     
     
 }else {
