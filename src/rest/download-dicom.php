@@ -41,12 +41,14 @@ if($visitPermissions) {
 	$tempfile=$orthanc->getZipTempFile($resultatsIDs);
 	
 	$file = @fopen($tempfile,"rb");
-	while(!feof($file))
-	{
-		print(@fread($file, 1024*8));
-		ob_flush();
-		flush();
+	if($file){
+		while(!feof($file))
+		{
+			print(@fread($file, 1024*8));
+			flush();
+		}
 	}
+
 
 	//Delete temp file at the end of reading
 	unlink($tempfile);
