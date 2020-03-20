@@ -192,6 +192,17 @@ class FTP_Reader
 
         $fileArray = $sftp->nlist();
 
+        //Remove . and ..
+        $fileArray = array_filter($fileArray, function($file){
+            if($file =='.' || $file == '..'){
+                return false;
+            }else{
+                return true;
+            }
+        });
+        
+
+
         print_r($fileArray);
 
         $selectedFiles = $this->selectWantedFiles($fileArray);
