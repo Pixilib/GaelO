@@ -192,10 +192,6 @@ class FTP_Reader
 
         $fileArray = $sftp->nlist();
 
-        //Remove . and ..
-        unset($fileArray[0]);
-        unset($fileArray[1]);
-
         print_r($fileArray);
 
         $selectedFiles = $this->selectWantedFiles($fileArray);
