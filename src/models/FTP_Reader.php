@@ -196,6 +196,8 @@ class FTP_Reader
         unset($fileArray[0]);
         unset($fileArray[1]);
 
+        print_r($fileArray);
+
         $selectedFiles = $this->selectWantedFiles($fileArray);
 
         $resultFileArray = [];
