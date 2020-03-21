@@ -20,13 +20,29 @@
 
 		$("#countrySelect").chosen();
 
+		$('#parseJson').on('click', function() {
+			let fr = new FileReader();
+			fr.readAsText($("#fileImportCenter")[0].files[0]);
+			fr.onload = () => {
+				fillTable(JSON.parse(fr.result));
+			}	
+		});
+
+		function fillTable( jsonData ){
+			for (var centercode of Object.keys(jsonData)) {
+				if( $('#centersTable td:contains('+centercode+')').length>0){
+					console.log(centercode + 'already in list, not modified')
+				}else{
+					$('#centersTable').append('<tr class="bg-warning"><td contenteditable="true">'+ centercode +'</td><td contenteditable="true">'+jsonData[centercode]['centerName']+'</td><td contenteditable="true">'+jsonData[centercode]['countryCode']+'</td></tr>');
+				}
+			}
+		}
+
 		$('#centersTable').DataTable( {
 	        "scrollY":        "200px",
 	        "scrollCollapse": true,
 	        "paging":         false
 	    } );
-	    
-		//$("#centersTable").dataTable();
 
 		$('#addCenter').on('click', function(){
 			if( $('#centerNumber').val().length>0 && $('#centerDescription').val().length>0 && $('#countrySelect').val().length>0){
@@ -35,7 +51,7 @@
 				if( $('#centersTable td:contains('+centerNumber+')').length>0){
 					alertifyError("Center Code already in list");
 				}else{
-					$('#centersTable'). append('<tr><td contenteditable="true">'+ $('#centerNumber').val()+'</td><td contenteditable="true">'+$('#centerDescription').val()+'</td><td contenteditable="true">'+$('#countrySelect').val()+'</td></tr>');
+					$('#centersTable'). append('<tr class="bg-warning"><td contenteditable="true">'+ $('#centerNumber').val()+'</td><td contenteditable="true">'+$('#centerDescription').val()+'</td><td contenteditable="true">'+$('#countrySelect').val()+'</td></tr>');
 					$('#centerNumber').val()='';
 					$('#centerDescription').val()='';
 				}
@@ -105,6 +121,10 @@
     			</tbody>
     		</table>
 		</div>
+	<div>
+		<input type="file" id="fileImportCenter">
+		<button id="parseJson" type="button" class="btn btn-dark">Import Json</button>
+	</div>
 	<div class="container mt-5">
 		<form name="formulaire" id="changeCenterForm" class="text-center">
 			<div class="row">
