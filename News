@@ -10,6 +10,7 @@ Features :
     - Cron services to automatize recurrent tasks
   - Patient Visit Manager can be redifined through inheritance for custom visit creation workflow and status determination
   - FTP/SFTP class to retrieve data from remote server (ex : automatic import of included patient list)
+  - Json Import for centers
   
 Enhancements : 
   - Tree filter in right click to filter visits according to some status (depending on current role)
