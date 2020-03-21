@@ -66,11 +66,11 @@ if($_SERVER['REQUEST_METHOD']==='GET'){
                 
                 //Create root folder if not existing
                 if (!is_dir($rootSpecificModelsFolder)) {
-                    mkdir($rootSpecificModelsFolder, 0777, true);
+                    mkdir($rootSpecificModelsFolder, 0755, true);
                 }
                 
                 if (!is_dir($rootSpecificScriptFolder)) {
-                    mkdir($rootSpecificScriptFolder, 0777, true);
+                    mkdir($rootSpecificScriptFolder, 0755, true);
                 }
                 
                 //Create specific file that will need to be edited by user to fill specific data of the forms
