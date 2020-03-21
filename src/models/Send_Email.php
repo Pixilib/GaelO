@@ -33,7 +33,7 @@ Class Send_Email {
 
     public $replyTo;
     
-    public function __construct($linkpdo){
+    public function __construct(PDO $linkpdo){
         $this->linkpdo= $linkpdo;
        
         $this->smtp_config=array(
@@ -116,12 +116,10 @@ Class Send_Email {
                     $mail->addBCC($value);
                 }catch (Exception $e){
                     error_log('error adding email'.$e->getMessage());
-                    return false;
                 }
-                //Add message to mail object
-                $this->buildMessage($mail);
-                
              }
+            //Add message to mail object
+            $this->buildMessage($mail); 
         } else if(sizeof($this->emailsDestinators) == 1){
             //If only one add regular adress
             try{
@@ -245,7 +243,7 @@ Class Send_Email {
      * @param string $study
      * @return array mails
      */
-    public function getRolesEmails(string $role, string $study){
+    public function getRolesEmails( string $study, string $role){
     	$connecter = $this->linkpdo->prepare('SELECT users.email FROM roles, users 
                                                      WHERE roles.study=:study 
                                                         AND roles.username=users.username 
@@ -336,7 +334,7 @@ Class Send_Email {
 
     public function addGroupEmails(String $study, String $role) : Send_Email {
 
-        $emails=$this->getRolesEmails($study,$role);
+        $emails=$this->getRolesEmails($study, $role);
         $this->addEmails($emails);
         return $this;
 
