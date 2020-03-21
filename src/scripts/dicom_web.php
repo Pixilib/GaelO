@@ -36,7 +36,7 @@ if($permissionDicomWeb){
     unset($_GET['page']);
     
     $calledURL=GAELO_ORTHANC_PACS_ADDRESS.':'.GAELO_ORTHANC_PACS_PORT;
-    set_time_limit(180);
+    
     // Create a PSR7 request based on the current browser request.
     $request = ServerRequestFactory::fromGlobals();
     

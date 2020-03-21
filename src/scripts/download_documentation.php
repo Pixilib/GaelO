@@ -42,7 +42,6 @@ if($roleAllowed && $studyAllowed){
     header("Content-Length: ".filesize($documentationObject->documentFileLocation));
     header('Content-Disposition: attachment; filename="Documentation-'.$_SESSION['study'].'_'.$documentationObject->documentName.'.pdf"');
     
-    set_time_limit(0);
     $file = @fopen($documentationObject->documentFileLocation,"rb");
     if($file){
 
