@@ -38,7 +38,7 @@ abstract class Form_Processor {
 	private $username;
 	protected $reviewStatus;
 	protected $reviewAvailable;
-	protected $reviewObject;
+	public $reviewObject;
 	protected $rawDataForm;
 	
 	//Constant for Review status

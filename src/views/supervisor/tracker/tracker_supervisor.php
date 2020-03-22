@@ -116,7 +116,7 @@
 								data-toggle="popover" 
 								data-placement="right" 
 								data-content="<?=htmlspecialchars('<pre><code>'.json_encode($eventDetails, JSON_PRETTY_PRINT|JSON_HEX_QUOT|JSON_HEX_TAG|JSON_HEX_AMP|JSON_HEX_APOS).'</code></pre>')?>">
-							Show Form
+							Show Details
 							</a>
 						<?php
 					}
