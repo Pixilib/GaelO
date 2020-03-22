@@ -31,7 +31,7 @@ abstract class Form_Processor {
 	
 	protected $linkpdo;
 	private $visitObject;
-	private $study;
+	protected $study;
 	protected $id_visit;
 	protected $specificTable;
 	protected $local;
@@ -83,7 +83,7 @@ abstract class Form_Processor {
 	/*
 	 * Create new entry in review table
 	 */
-	private function createReview(){
+	protected function createReview(){
 		$this->reviewObject = Review::createReview($this->id_visit, $this->username, $this->local,
 			($this->reviewStatus == Visit::REVIEW_WAIT_ADJUDICATION), $this->linkpdo);
 	}
@@ -152,65 +152,6 @@ abstract class Form_Processor {
 		if ($validate && !$this->local &&  $this->reviewStatus != Visit::REVIEW_DONE ) $this->setVisitValidation();
 		
 	}
-
-	private function getAssociatedFileArrayInDb(){
-		$querySentFile = $this->linkpdo->prepare('SELECT sent_files FROM '.$this->specificTable.' WHERE id_review = :idReview ');
-        $querySentFile->execute(array('id_review' => $this->reviewObject->id_review));
-		$sentFileString=$querySentFile->fetch(PDO::FETCH_COLUMN);
-		
-		return json_decode($sentFileString);
-	}
-
-	/**
-	 * Update the file array column
-	 * File array should be an associative array following 
-	 * key => filename
-	 */
-	private function updateAssociatedFileArrayInDB($fileArray){
-		try{
-			$updateRequest = $this->linkpdo->prepare('UPDATE '.$this->specificTable.'
-                              SET sent_files = :sent_files
-								WHERE id_review = :id_review');
-		
-			$answer = $updateRequest->execute(array( 'id_review' => $this->reviewObject->id_review , 
-													'sent_files' => json_encode($fileArray) ));
-		}catch( Exception $e){
-			return false;
-		}
-		return $answer;
-
-	}
-
-	/**
-	 * Store files one by one, each file is defined by a Key (visit specific and a path)
-	 */
-	protected function storeAssociatedFile($key, $uploadedFile){
-
-		//If first form upload create a draft form to insert file uploaded data
-		if(empty($this->reviewObject)){
-			$this->createReview();
-		}
-
-		$fileArray = $this->getAssociatedFileArrayInDb();
-		//Copy temporary file to finale destination
-		//Get extension of file and check extension is allowed
-		//SK A FAIRE DANS LA CLASSE FILLE AVEC CHECK DE SIZE
-		$extension= null;
-		copy($uploadedFile, $_SERVER['DOCUMENT_ROOT'] . '/data/upload/attached_review_file/'.$this->id_visit.'/'.$this->username.'/'.$key.'_'.$this->visitObject->visitType.'.'.$extension);
-		//Add or overide file key
-		$fileArray[$key] = $uploadedFile;
-		$this->updateAssociatedFileArrayInDB($fileArray);
-
-	}
-
-	protected function deleteAssociatedFile($fileKey){
-
-	}
-
-	protected function getAssociatedFile($fileKey){
-
-	}
-	
 	
 	/**
 	 * update the review conclusion of the visit, pass decision in argument

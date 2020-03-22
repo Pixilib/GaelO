@@ -28,9 +28,9 @@ $accessCheck=$userObject->isRoleAllowed($visitObject->study, $_SESSION['role']);
 if ($accessCheck) {
 
 	if ($_SERVER['REQUEST_METHOD']==='POST' && in_array($_SESSION['role'], array(User::INVESTIGATOR, User::REVIEWER)) ){
-
+    //Store or modify a file
     }else if ($_SERVER['REQUEST_METHOD']==='PUT' && in_array($_SESSION['role'], array(User::INVESTIGATOR, User::REVIEWER)) ){
-
+    //SK A PRIORI PAS POSSIBLE, FILE UTILISE POST
     }else if ($_SERVER['REQUEST_METHOD']==='DELETE' && in_array($_SESSION['role'], array(User::INVESTIGATOR, User::REVIEWER))){
 
     }else if($_SERVER['REQUEST_METHOD']==='GET'){
