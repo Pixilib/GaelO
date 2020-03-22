@@ -71,6 +71,11 @@ class Visit{
     const NOT_DONE="Not Done";
     
     const UPLOAD_PROCESSING="Processing";
+
+    const REVIEW_NOT_DONE ='Not Done';
+	const REVIEW_ONGOING ='Ongoing';
+	const REVIEW_WAIT_ADJUDICATION ='Wait Adjudication';
+	const REVIEW_DONE='Done';
     
     public function __construct($id_visit, PDO $linkpdo){
         $this->linkpdo=$linkpdo;

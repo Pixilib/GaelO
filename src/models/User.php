@@ -136,7 +136,7 @@ class User {
         }
 
         //Check password correct
-        if($this->userStatus==self::UNCONFIRMED){
+        if($this->userStatus==User::UNCONFIRMED){
             //Use the temp password for check
             $this->passwordCorrect=password_verify($password, $this->tempPassword);
         }else{
@@ -145,7 +145,7 @@ class User {
         }
         
         // If password OK, password date OK, and Account status active return OK for connexion
-        if ( $this->passwordCorrect && $this->passwordDateValide && $this->userStatus == self::ACTIVATED) {
+        if ( $this->passwordCorrect && $this->passwordDateValide && $this->userStatus == User::ACTIVATED) {
             //Update the last connexion date in DB and number attempt account to zero
             $now=date("Y-m-d H:i:s");
             $reset_tentatives = $this->linkpdo->prepare('UPDATE users SET number_attempts = 0, connexion_date=:datenow WHERE username = :username');
@@ -488,7 +488,7 @@ class User {
         
         $req->execute(array('username' => $this->username,
             'mdp' => password_hash($password, PASSWORD_DEFAULT),
-            'status'=>self::UNCONFIRMED,
+            'status'=>User::UNCONFIRMED,
             'datePassword' => date('Y-m-d')));
         
     }

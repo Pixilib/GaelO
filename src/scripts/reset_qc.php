@@ -32,7 +32,7 @@ $permissionCheck=$userObject->isVisitAllowed($id_visit, User::SUPERVISOR);
 $visitObject=new Visit($id_visit, $linkpdo);
 
 //If supervisor session and permission OK
-if ($_SESSION['role']==User::SUPERVISOR && $permissionCheck && $visitObject->reviewStatus == Form_Processor::NOT_DONE) {
+if ($_SESSION['role']==User::SUPERVISOR && $permissionCheck && $visitObject->reviewStatus == Visit::REVIEW_NOT_DONE) {
     
     //Do Qc Reset
     $visitObject->resetQC();

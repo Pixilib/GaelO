@@ -167,7 +167,7 @@ class Statistics {
 		$responseDelayArray=[];
 		
 		foreach ($uploadedVisitArray as $visit){
-			if($visit->reviewStatus==Form_Processor::DONE){
+			if($visit->reviewStatus== Visit::REVIEW_DONE){
 				$qcDate=new DateTimeImmutable($visit->controlDate);
 				$conclusionDate=new DateTimeImmutable($visit->reviewConclusionDate);
 				$conclusionDelay=($conclusionDate->getTimestamp()-$qcDate->getTimestamp())/ (3600*24);

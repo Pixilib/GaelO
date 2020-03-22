@@ -67,7 +67,7 @@ if($permissionResults){
         
         //Return local form or user's review according to parameters which retrieved the form processor
         //of this study
-        $reviewObject=$formProcessorObject->getSavedForm();
+        $reviewObject=$formProcessorObject->reviewObject;
         
         if(!empty($reviewObject)){
             $validatedForm=$reviewObject->validated;

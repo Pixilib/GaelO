@@ -288,11 +288,11 @@ class Export_Study_Data
             return 6;
         } else if ($visitObject->reviewStatus == Visit::NOT_DONE) {
             return 7;
-        } else if ($visitObject->reviewStatus == Form_Processor::ONGOING) {
+        } else if ($visitObject->reviewStatus == Visit::REVIEW_ONGOING) {
             return 8;
-        } else if ($visitObject->reviewStatus == Form_Processor::WAIT_ADJUDICATION) {
+        } else if ($visitObject->reviewStatus == Visit::REVIEW_WAIT_ADJUDICATION) {
             return 9;
-        } else if ($visitObject->reviewStatus == Form_Processor::DONE) {
+        } else if ($visitObject->reviewStatus == Visit::REVIEW_DONE) {
             return 10;
         }else{
             //If none of these case return -1, should not happen

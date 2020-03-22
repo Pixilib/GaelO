@@ -65,7 +65,7 @@ class study_visit extends Form_Processor {
 	public function setVisitValidation(){
 	    /*
 	     * Possible to get all saved form with $datas=$this->getAllValidatedFormsOfVisit();
-	     * then need to set each rule for Not Done, Ongoing, Wait Adjudication, Done with $this->changeVisitValidationStatus(Form_Processor::DONE);
+	     * then need to set each rule for Not Done, Ongoing, Wait Adjudication, Done with $this->changeVisitValidationStatus(Visit::REVIEW_DONE);
 	    */
 		
 		
