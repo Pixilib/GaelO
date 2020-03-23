@@ -294,19 +294,19 @@ class Statistics {
         $reviewsJson=[];
         foreach ($createdVisits as $visit){
 
-					$reviews=array();
+					$reviews=[];
 
-					$localReview=$visit->getReviewsObject(true);
-					if(!empty($localReview)){
-						$reviews[]=$localReview;
+					try{
+						$reviews[]=$visit->getReviewsObject(true);
+					}catch(Exception $e){ }
 
-					}
+					try{
+						$reviewsReviewers=$visit->getReviewsObject(false);
+						foreach ($reviewsReviewers as $expertReview){
+							$reviews[]=$expertReview;
+						}
+					}catch(Exception $e){ }
 
-					$reviewsReviewers=$visit->getReviewsObject(false);
-
-					foreach ($reviewsReviewers as $expertReview){
-						$reviews[]=$expertReview;
-					}
 
 	        foreach ($reviews as $review){
 
