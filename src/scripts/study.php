@@ -41,9 +41,9 @@ if($_SERVER['REQUEST_METHOD']==='GET'){
 
         $studyName=$_POST['studyName'];
         $visitsGroupArray=$_POST['visitsData'];
-    
+        $patientCodePrefix = $_POST['patientCodePrefix'];
         //Add the new study as an active study
-        Study::createStudy($studyName, $linkpdo);
+        Study::createStudy($studyName, $patientCodePrefix, $linkpdo);
          
         //Add the visit in study with order
         foreach($visitsGroupArray as $modality=>$visitsArray){

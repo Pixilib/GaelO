@@ -24,12 +24,14 @@ class Import_Patient{
 	public $sucessList;
 	public $failList;
 	private $study;
+	private $studyObject;
 	
 	public function __construct($originalJson, $study, $linkpdo){
 	    $this->linkpdo= $linkpdo;
 		//Store the JSON file and the target study
 	    $this->originalJson=$originalJson;
 		$this->study = $study;
+		$this->studyObject = new Study($study, $linkpdo);
 	}
 
 	public function readJson(){
@@ -51,8 +53,9 @@ class Import_Patient{
 			$isNewPatient=$this->isNewPatient($patientNumber);
 			$isCorrectPatientNumberLenght=$this->isCorrectPatientNumberLenght($patientNumber);
 			$isExistingCenter=$this->isExistingCenter($patientInvestigatorNumCenter);
+			$isPrefixCorrect = $this->isCorrectPrefix($patientNumber);
 			
-			if ($isNewPatient && $isCorrectPatientNumberLenght && $isExistingCenter && !empty($patientRegistrationDate) ){
+			if ($isNewPatient && $isCorrectPatientNumberLenght && $isPrefixCorrect && $isExistingCenter && !empty($patientRegistrationDate) ){
 			    //Store in DB
 			    $birthDateArray=explode("/", $patientDateOfBirth);
 			    if(GAELO_DATE_FORMAT=='m.d.Y'){
@@ -97,6 +100,8 @@ class Import_Patient{
 				    
 				} else if(empty($patientRegistrationDate)){
 				    $this->failList['Empty Registration Date'][]=$patientNumber;
+				} else if( ! $isPrefixCorrect){
+					$this->failList['Wrong Patient Code Prefix'][]=$patientNumber;
 				}
 				
 				
@@ -169,6 +174,23 @@ class Import_Patient{
 			return false;
 		}
 	}
+
+	private function isCorrectPrefix($patientNumber){
+		//If no prefix return true
+		if(empty($this->studyObject->patientCodePrefix)){
+			return true;
+		}
+		//test that patient code start with study prefix
+		$patientNumberString = strval($patientNumber);
+		$studyPrefixString = strval($this->studyObject->patientCodePrefix);
+		return $this->startsWith( $patientNumberString, $studyPrefixString );
+
+	}
+
+	private function startsWith (string $string, string $startString) { 
+		$len = strlen($startString); 
+		return (substr($string, 0, $len) === $startString); 
+	} 
 
     /**
      * Check that patient's center is one of known center in the plateform
