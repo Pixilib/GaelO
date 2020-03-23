@@ -230,8 +230,8 @@ class Import_Patient{
 			VALUES(:study, :code, :first_name, :last_name, :gender, :birth_day, :birth_month, :birth_year, :registration_date, :investigator_name, :center)');
 			
 			$insert_bdd->execute(array('code' => $patientNumber,
-													'first_name' => $patientFirstName,
-													'last_name' => $patientLastName,
+													'first_name' => @strtoupper($patientFirstName[0]),
+													'last_name' => @strtoupper($patientLastName[0]),
                                                     'gender' => @strtoupper($patientGender[0]),
 													'birth_day' => $patientBirthDay,
 													'birth_month' => $patientBirthMonth,

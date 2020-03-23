@@ -33,7 +33,8 @@ if ($accessCheck && $_SESSION['role'] == User::SUPERVISOR) {
 	$data_reviews=[];
 
 	try {
-		$data_reviews[]=$visitObject->getReviewsObject(true);
+		$localReviewObject=$visitObject->getReviewsObject(true);
+		$data_reviews[]=$localReviewObject;
 	}catch(Exception $e){
 		error_log($e->getMessage());
 	}
