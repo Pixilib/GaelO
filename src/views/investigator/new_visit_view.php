@@ -43,7 +43,8 @@
 
 		$('#datePicker').datepicker({
 			toggleActive: true,
-			format: "yyyy-mm-dd"
+			format: "yyyy-mm-dd",
+			endDate: '0d'
 		});
 		
 		$('#datePicker').datepicker().on('changeDate', function(e) {
