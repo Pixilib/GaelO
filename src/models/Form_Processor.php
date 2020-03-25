@@ -41,12 +41,6 @@ abstract class Form_Processor {
 	public $reviewObject;
 	protected $rawDataForm;
 	
-	//Constant for Review status
-	const NOT_DONE ='Not Done';
-	const ONGOING ='Ongoing';
-	const WAIT_ADJUDICATION ='Wait Adjudication';
-	const DONE='Done';
-	
 	function __construct(Visit $visitObject, bool $local, string $username, PDO $linkpdo){
 		$this->linkpdo=$linkpdo;
 		$this->local=$local;
