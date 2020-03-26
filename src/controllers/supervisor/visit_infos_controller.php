@@ -35,16 +35,12 @@ if ($accessCheck && $_SESSION['role'] == User::SUPERVISOR) {
 	try {
 		$localReviewObject=$visitObject->getReviewsObject(true);
 		$data_reviews[]=$localReviewObject;
-	}catch(Exception $e){
-		error_log($e->getMessage());
-	}
+	}catch(Exception $e){ }
 
 	try {
 		$reviewsNotLocal=$visitObject->getReviewsObject(false);
 		array_push($data_reviews, ...$reviewsNotLocal);
-	}catch(Exception $e){
-		error_log($e->getMessage());
-	}
+	}catch(Exception $e){ }
 	
 	$trackerVisitResponses=Tracker::getTackerForVisit($id_visit, $linkpdo);
 	

@@ -30,7 +30,7 @@
 abstract class Form_Processor {
 	
 	protected $linkpdo;
-	private $visitObject;
+	protected $visitObject;
 	protected $study;
 	protected $id_visit;
 	protected $specificTable;

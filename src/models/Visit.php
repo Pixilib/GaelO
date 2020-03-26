@@ -355,17 +355,17 @@ class Visit{
     public function queryExistingReviewForReviewer($username){
         
         $reviewsObjects=$this->getReviewsObject(false);
-
-        foreach ($reviewsObjects as $review){
+        $filteredReview = array_filter($reviewsObjects, function ($review) use ($username) {
             if($review->username==$username){
-                return $review;
+                return true;
+            }else {
+                return false;
             }
-        }
+        });
 
-        if (empty($reviewsObjects)){
-            throw new Exception('No review for reviwer');
-        }
-        
+        if (sizeof($filteredReview) == 1) return $filteredReview[0];
+        else throw new Exception('No review for reviwer');
+
     }
 
     /**
