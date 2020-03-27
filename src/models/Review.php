@@ -155,7 +155,6 @@ Class Review{
         $this->changeReviewValidationStatus(false);
         
         if($this->isLocal) {
-            $visitObject->resetQC();
         	$visitObject->changeVisitStateInvestigatorForm(Visit::LOCAL_FORM_DRAFT);
         }else{
         	$formProcessor=$visitObject->getFromProcessor($this->isLocal, $this->username);
