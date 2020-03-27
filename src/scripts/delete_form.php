@@ -27,6 +27,7 @@ $reason=$_POST['reason'];
 
 $userObject=new User($_SESSION['username'], $linkpdo);
 $reviewObject=new Review($id_review, $linkpdo);
+$visitObject=$reviewObject->getParentVisitObject();
 $permissionsCheck=$userObject->isVisitAllowed($reviewObject->id_visit, User::SUPERVISOR);
 
 //If supervisor session and permission OK
@@ -37,7 +38,6 @@ if ($_SESSION['role']==User::SUPERVISOR && $permissionsCheck) {
 		
 		try{
 			$reviewObject->deleteReview();
-			$visitObject=$reviewObject->getParentVisitObject();
 			//Log activity
 			$actionDetails['type_visit']=$visitObject->visitType;
 			$actionDetails['patient_code']=$visitObject->patientCode;
@@ -55,7 +55,7 @@ if ($_SESSION['role']==User::SUPERVISOR && $permissionsCheck) {
 		//Notify the user that his form has been Deleted
 		$email=new Send_Email($linkpdo);
 		$email->addEmail($email->getUserEmails($reviewObject->username));
-		$email->sendDeletedFormMessage($visitObject->study, $visitObject->patientCode,$visitObject->visitType);
+		$email->sendDeletedFormMessage($visitObject->study, $visitObject->patientCode, $visitObject->visitType);
 
 	}else{
 		$answer=false;
