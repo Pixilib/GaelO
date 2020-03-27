@@ -34,9 +34,6 @@ $permissionsCheck=$userObject->isVisitAllowed($reviewObject->id_visit, User::SUP
 
 //If supervisor session and permission OK
 if ($_SESSION['role']==User::SUPERVISOR && $permissionsCheck) {
-		//Get data on the review / visit we are going to unlock
-
-		$visitObject= $reviewObject->getParentVisitObject();
 		try{
 			//Unvalidate the form for unlock
 			$reviewObject->unlockForm();
@@ -57,7 +54,8 @@ if ($_SESSION['role']==User::SUPERVISOR && $permissionsCheck) {
 			Tracker::logActivity($username, $_SESSION['role'], $study, $visitObject->id_visit, "Unlock Form", $actionDetails);
 			$answer=true;
 		}catch (Exception $e){
-			$answer=false;			
+			$answer=false;
+			error_log($e);			
 		}
 		echo(json_encode($answer));
 

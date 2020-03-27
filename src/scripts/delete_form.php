@@ -45,10 +45,11 @@ if ($_SESSION['role']==User::SUPERVISOR && $permissionsCheck) {
 			$actionDetails['local_review']=$reviewObject->isLocal;
 			$actionDetails['id_review']=$reviewObject->id_review;
 			$actionDetails['reason']=$reason;
+			error_log($actionDetails);
 			Tracker::logActivity($_SESSION['username'], $_SESSION['role'], $_SESSION['study'], $reviewObject->id_visit, "Delete Form", $actionDetails);
 			$answer=true;
-		}catch(Exception $e){
-		    error_log($e->getMessage());
+		}catch(Throwable $t){
+		    error_log($t->getMessage());
 			$answer=false;
 		}
 		

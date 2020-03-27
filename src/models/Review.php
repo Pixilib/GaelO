@@ -74,7 +74,7 @@ Class Review{
      * Return user who has made this review
      * @return User
      */
-    public function getUserObject(){
+    public function getUserObject() : User {
         return new User($this->username, $this->linkpdo);
     }
     
@@ -82,7 +82,7 @@ Class Review{
      * Return parent visit Object
      * @return Visit
      */
-    public function getParentVisitObject(){
+    public function getParentVisitObject() : Visit {
         $visitsObject=new Visit($this->id_visit, $this->linkpdo);
         return $visitsObject;
     }
