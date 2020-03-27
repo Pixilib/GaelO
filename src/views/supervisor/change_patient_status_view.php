@@ -74,7 +74,7 @@
 
 </script>
         	
-<form class="col align-self-center" id="changePatientStatusForm">
+<form id="changePatientStatusForm">
     	<?php 
         if(!$patientObject->patientWithdraw){
         ?>
@@ -86,14 +86,10 @@
 		<?php 
         }
         ?>  
-        <br>
         <div id="dateWithdraw">
-        	<label class="control-label">Date:</label>
         	<div id="datePicker"></div>
-        	<br>
             <input class="form-control" name="withdraw_date" id="withdraw_date" type="hidden" >
         </div>
-        <br>
         <label class="control-label">Reason:</label>
         <div class="text-center">
         	<input type="text" class="form-control" id="reason" placeholder="Reason" name="reason" maxlength="255" required>
