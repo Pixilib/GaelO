@@ -362,7 +362,7 @@ class Visit{
                 return false;
             }
         });
-
+        $filteredReview = array_values ( $filteredReview );
         if (sizeof($filteredReview) == 1) return $filteredReview[0];
         else throw new Exception('No review for reviwer');
 
