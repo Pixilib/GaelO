@@ -33,45 +33,14 @@ abstract class Form_Processor_File extends Form_Processor {
         parent::__construct($visitObject, $local, $username, $linkpdo);
     }
 
-
-	private function getAssociatedFileArrayInDb(){
-		$querySentFile = $this->linkpdo->prepare('SELECT sent_files FROM '.$this->specificTable.' WHERE id_review = :idReview ');
-        $querySentFile->execute(array('id_review' => $this->reviewObject->id_review));
-		$sentFileString=$querySentFile->fetch(PDO::FETCH_COLUMN);
-		
-		return json_decode($sentFileString);
-	}
-
-	/**
-	 * Update the file array column
-	 * File array should be an associative array following 
-	 * key => filename
-	 */
-	private function updateAssociatedFileArrayInDB($fileArray){
-		try{
-			$updateRequest = $this->linkpdo->prepare('UPDATE '.$this->specificTable.'
-                              SET sent_files = :sent_files
-								WHERE id_review = :id_review');
-		
-			$answer = $updateRequest->execute(array( 'id_review' => $this->reviewObject->id_review , 
-													'sent_files' => json_encode($fileArray) ));
-		}catch( Exception $e){
-			return false;
-		}
-		return $answer;
-
-    }
-
-    private function getPath(){
-        $path = $_SERVER['DOCUMENT_ROOT'] . '/data/upload/attached_review_file/'.$this->study;
-        return $path;
-    }
+    //Should return an array of string of allowed key files
+    abstract function getAllowedFileKeys() : array ;
 
     /**
-     * Can be overwitten if need to allow other extensions
+     * Can be overwitten if need to allow other MIME Type
      */
-    protected function getAllowedExtension() : array {
-        return array('.csv');
+    protected function getAllowedType() : array {
+        return array('text/csv');
     }
     
     protected function getMaxSizeMb() : int{
@@ -82,59 +51,68 @@ abstract class Form_Processor_File extends Form_Processor {
 	/**
 	 * Store or overwirte a file, each file is defined by a Key (visit specific)
 	 */
-	protected function storeAssociatedFile($key, $uploadedFile){
+	protected function storeAssociatedFile($fileKey, $mime, $fileSize, $uploadedTempFile){
 
 		//If first form upload create a draft form to insert file uploaded data
 		if(empty($this->reviewObject)){
 			$this->createReview();
-		}
-
-        $fileArray = $this->getAssociatedFileArrayInDb();
+		}else {
+            //If review exist but validated throw exception
+            if($this->reviewObject->validated){
+                throw new Exception('Validated Review, can\'t add File' );
+            }
+        }
         
 		//Get extension of file and check extension is allowed
 		//Get filesize and check it matches limits
-        $extension= strrchr($uploadedFile, '.');
-        $bytes = filesize($uploadedFile);
-        $sizeMb = $bytes / 1048576 ;
+        $sizeMb = $fileSize / 1048576 ;
         if($sizeMb > $this->getMaxSizeMb) throw new Exception('File over limits');
-        if( !in_array($extension, $this->getAllowedExtension()) ) throw new Exception('Extension not allowed') ;
+        if( ! $this->isInDeclaredKey($fileKey)) throw new Exception('Unhauthrized file key') ; 
+        if( ! $this->isInAllowedType($mime) ) throw new Exception('Extension not allowed') ;
 
-        $fileName= $this->visitObject->patientCode.'_'.$this->visitObject->visitType.'_'.$key.$extension;
+        $mimes = new \Mimey\MimeTypes;
+        $extension = $mimes->getExtension($mime);
+        $fileName= $this->visitObject->patientCode.'_'.$this->visitObject->visitType.'_'.$fileKey.$extension;
 
-        $path = $this->getPath();
+        $path = $this->reviewObject->getAssociatedFileRootPath();
         if ( !is_dir($path) ) {
             mkdir($path, 0755, true);
         }
         //Copy file to finale destination with final name
-        copy($uploadedFile, $path.'/'.$fileName);
+        move_uploaded_file($uploadedTempFile, $path.'/'.$fileName);
         
-		//Add or overide file key and write to database
-		$fileArray[$key] = $uploadedFile;
-		$this->updateAssociatedFileArrayInDB($fileArray);
+        //Add or overide file key and write to database
+        $fileArray = $this->reviewObject->getAssociatedFile();
+		$fileArray[$fileKey] = $uploadedFile;
+		$this->reviewObject->updateAssociatedFiles($fileArray);
 
-	}
+    }
+    
+    private function isInDeclaredKey($fileKey){
+        return in_array($fileKey, $this->getAllowedFileKeys) ;
+    }
+
+    private function isInAllowedType($extension){
+        return in_array($extension, $this->getAllowedType());
+    }
 
     /**
      * Delete an associative file
      */
 	protected function deleteAssociatedFile($fileKey){
 
-        $fileArray = $this->getAssociatedFileArrayInDb();
-        unlink($this->getPath().'/'.$fileArray[$fileKey]);
-        unset($fileArray[$fileKey]);
-        $this->updateAssociatedFileArrayInDB($fileArray);
+        if($this->isInDeclaredKey($fileKey) &&  ! $this->reviewObject->validated){
+
+            $fileArray = $this->reviewObject->getAssociatedFile();
+            unlink($this->reviewObject->getAssociatedFileRootPath().'/'.$fileArray[$fileKey]);
+            unset($fileArray[$fileKey]);
+            $this->reviewObject->updateAssociatedFiles($fileArray);
+
+        }else{
+            throw new Exception('Unavailable Key or validated Review, can\'t remove file');
+        }
 
 	}
-
-    /**
-     * Return file destination of an associated file
-     */
-	protected function getAssociatedFile($fileKey) : String {
-
-        $fileArray = $this->getAssociatedFileArrayInDb();
-        return $this->getPath().'/'.$fileArray[$fileKey];
-	}
-	
 
 
 }

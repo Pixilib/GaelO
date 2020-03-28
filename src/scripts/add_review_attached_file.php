@@ -13,7 +13,7 @@
  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-header( 'content-type: text/html; charset=utf-8' );
+header( 'content-type: application/json; charset=utf-8' );
 require_once($_SERVER['DOCUMENT_ROOT'].'/vendor/autoload.php');
 
 Session::checkSession();
@@ -21,16 +21,32 @@ $linkpdo=Session::getLinkpdo();
 
 $userObject=new User($_SESSION['username'], $linkpdo);
 
+$visitId=$_POST['visit_id'];
+$fileKey=$_POST['file_key'];
+$local = $_SESSION['role'] == User::INVESTIGATOR ? true : false ; 
+
 //Need to retrieve study before testing permission, can't test visit permissions directly because permission class tests non deleted status
-$visitObject=new Visit($_POST['visit_id'], $linkpdo);
+$visitObject=new Visit($visitId, $linkpdo);
 $accessCheck=$userObject->isRoleAllowed($visitObject->study, $_SESSION['role']);
 
-if ($accessCheck) {
+if ($accessCheck && in_array($_SESSION['role'], array(User::INVESTIGATOR, User::REVIEWER)) ) {
+    $formProcessor = $visitObject->getFromProcessor($local, $_SESSION['username']);
 
+    if(! $formProcessor instanceof Form_Processor_File){
+        throw new Exception('Wrong From Processor type');
+    }
+    
+    //SK ICI TRAITER LE FILE OBJECT
+    $filename=$_FILES[0]['name'];
+    $fileMime=$_FILES[0]['type'];
+    $tempFileLocation=$_FILES[0]['tmp_name'];
+    $fileSize=$_FILES[0]['size'];
+    $formProcessor->storeAssociatedFile($fileKey, $fileMime, $fileSize, $tempFileLocation);
+    return json_encode((true));
+/*
 	if ($_SERVER['REQUEST_METHOD']==='POST' && in_array($_SESSION['role'], array(User::INVESTIGATOR, User::REVIEWER)) ){
     //Store or modify a file
-    }else if ($_SERVER['REQUEST_METHOD']==='PUT' && in_array($_SESSION['role'], array(User::INVESTIGATOR, User::REVIEWER)) ){
-    //SK A PRIORI PAS POSSIBLE, FILE UTILISE POST
+    $formProcessor->storeAssociatedFile($fileKey, )
     }else if ($_SERVER['REQUEST_METHOD']==='DELETE' && in_array($_SESSION['role'], array(User::INVESTIGATOR, User::REVIEWER))){
 
     }else if($_SERVER['REQUEST_METHOD']==='GET'){
@@ -39,7 +55,7 @@ if ($accessCheck) {
         header('HTTP/1.0 403 Forbidden');
         die('You are not allowed to access this file.');
     }
-
+*/
 
 } else {
     header('HTTP/1.0 403 Forbidden');

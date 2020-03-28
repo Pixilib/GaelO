@@ -562,7 +562,7 @@ class Visit{
      * @param string $username
      * @return Form_Processor
      */
-    public function getFromProcessor(bool $local, string $username){
+    public function getFromProcessor(bool $local, string $username) {
         //Destination of the specific post processing POO
         $modality=$this->visitGroupObject->groupModality;
         $specificObjectFile=$_SERVER["DOCUMENT_ROOT"].'/data/form/'.$this->study.'/Poo/'.$modality."_".$this->study."_".$this->visitType.".php";

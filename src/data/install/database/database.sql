@@ -502,6 +502,7 @@ CREATE TABLE `reviews` (
   `validated` tinyint(1) NOT NULL DEFAULT '0',
   `is_local` tinyint(1) NOT NULL DEFAULT '1',
   `is_adjudication` tinyint(1) NOT NULL DEFAULT '0',
+  `sent_files` text NOT NULL,
   `deleted` tinyint(1) NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 

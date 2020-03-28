@@ -47,7 +47,8 @@ Class Review{
         $this->isLocal=intval($reviewData['is_local']);
         $this->deleted=$reviewData['deleted'];
         $this->isAdjudication=$reviewData['is_adjudication'];
-        
+        //Store associated file as a php array
+        $this->associatedFiles = json_decode($reviewData['sent_files']);
        
         
     }
@@ -129,6 +130,43 @@ Class Review{
         }
     }
 
+	/**
+	 * Update the file array column
+	 * File array should be an associative array following 
+	 * key => filename
+     * The fulll associated array should be sent
+	 */
+	public function updateAssociatedFiles($fileArray){
+
+        $updateRequest = $this->linkpdo->prepare('UPDATE reviews
+                            SET sent_files = :sent_files
+                            WHERE id_review = :id_review');
+    
+        $answer = $updateRequest->execute(array( 'id_review' => $this->reviewObject->id_review , 
+                                                'sent_files' => json_encode($fileArray) ));
+
+		return $answer;
+
+    }
+
+
+    /**
+     * Return path where are stored the associated files
+     */
+    public function getAssociatedFileRootPath() : String {
+        $path = $_SERVER['DOCUMENT_ROOT'] . '/data/upload/attached_review_file/'.$this->getParentVisitObject()->study;
+        return $path;
+    }
+
+
+    /**
+     * Return file destination of an associated file
+     */
+	protected function getAssociatedFilePath($fileKey) : String {
+        $fileArray = $this->reviewObject->getAssociatedFile();
+        return $this->getAssociatedFileRootPath().'/'.$fileArray[$fileKey];
+	}
+
     /**
      * In case of failure of writing specific form.
      * Only used in form processor
@@ -169,13 +207,14 @@ Class Review{
 	 */
 	public static function createReview(int $id_visit, string $username, bool $local, bool $adjudication, PDO $linkpdo) : Review {
 	    
-	    $newReview = $linkpdo->prepare('INSERT INTO reviews(id_visit, username, review_date, validated , is_local, is_adjudication) VALUES (:idvisit, :username, :reviewdate, :validated, :local, :adjudication)');
+	    $newReview = $linkpdo->prepare('INSERT INTO reviews(id_visit, username, review_date, validated , is_local, is_adjudication, sent_files) VALUES (:idvisit, :username, :reviewdate, :validated, :local, :adjudication, :emptyFileArray)');
 	    $newReview->execute(array(
 	        'idvisit' =>$id_visit,
 	        'username'=>$username,
 	        'reviewdate'=>date("Y-m-d H:i:s"),
 	        'validated'=> 0,
-	        'local'=>intval($local),
+            'local'=>intval($local),
+            'emptyFileArray'=>json_encode( array() ),
 	        'adjudication'=>intval($adjudication)
 	    ));
         $idReview=$linkpdo->lastInsertId();

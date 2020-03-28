@@ -22,8 +22,8 @@
 use Proxy\Proxy;
 use Proxy\Adapter\Guzzle\GuzzleAdapter;
 use Proxy\Filter\RemoveEncodingFilter;
-use Zend\Diactoros\ServerRequestFactory;
-use Zend\Diactoros\Request;
+use Laminas\Diactoros\ServerRequestFactory;
+use Laminas\Diactoros\Request;
 
 Session::checkSession(false);
 $linkpdo=Session::getLinkpdo();
