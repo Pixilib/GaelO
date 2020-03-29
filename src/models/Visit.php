@@ -52,6 +52,7 @@ class Visit{
     public $reviewAvailable;
     public $reviewConclusionDate;
     public $reviewConclusion;
+    public $lastReminderUpload;
     public $deleted;
     
     public $studyDicomObject;
@@ -128,6 +129,7 @@ class Visit{
         $this->correctiveActionUsername=$visitDbData['corrective_action_username'];
         $this->correctiveActionDate=$visitDbData['corrective_action_date'];
         $this->deleted=$visitDbData['deleted'];
+        $this->lastReminderUpload=$visitDbData['last_reminder_upload'];
         
 
         //Get VisitType detail
@@ -178,6 +180,15 @@ class Visit{
             $this->skipQcIfNeeded();
             $this->sendUploadedVisitEmailToController($username);
         }
+    }
+
+    public function updateLastReminderUpload(){
+
+        $changeReminderUpload=$this->linkpdo->prepare('UPDATE visits SET last_reminder_upload= :lastReminderDateTime WHERE id_visit = :idvisit');
+        $changeReminderUpload->execute(array(
+            'lastReminderDateTime'=> date("Y-m-d H:i:s"),
+            'idvisit'=> $this->id_visit)
+            );
     }
     
     /**

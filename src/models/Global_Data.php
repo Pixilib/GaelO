@@ -95,6 +95,19 @@ Class Global_Data{
 		}
 		return $centerObject;
 	}
+
+	public static function getAllCentersAsJson(PDO $linkpdo) : String {
+		$centersObjectArray = Global_Data::getAllCentersObjects($linkpdo);
+		$centerResponseArray = array_map(function($centerObject){
+			$centerResponse[$centerObject->code]=[];
+			$centerResponse[$centerObject->code]['centerName']=$centerObject->name;
+			$centerResponse[$centerObject->code]['countryCode']=$centerObject->countryCode;
+			return $centerResponse;
+
+		}, $centersObjectArray);
+
+		return json_encode($centerResponseArray);
+	}
 	
 	/**
 	 * Get All possible countries
@@ -260,9 +273,7 @@ Class Global_Data{
 	 * Use of Generator
 	 * For backup purpose
 	 */
-	public static function getFileInPath(String $sourcePath) {
-
-		$path = realpath($_SERVER['DOCUMENT_ROOT'].$sourcePath);
+	public static function getFileInPath(String $path) {
 
 		if(is_dir($path)){
 			// Create recursive directory iterator
