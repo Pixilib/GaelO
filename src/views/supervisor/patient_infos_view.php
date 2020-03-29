@@ -22,6 +22,7 @@
     					patient_num : <?=$_POST['patient_num'] ?> } , function() {
     						$( "#change_patient_status" ).dialog('open');
         	});
+			
     		
     	});
 

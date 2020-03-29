@@ -17,13 +17,13 @@
 <script type="text/javascript"> 
     $(document).ready(function () {
 
-		$('#datePicker').datepicker({
+		$('#datePickerPatient').datepicker({
 			toggleActive: true,
 			format: "yyyy-mm-dd"
 		});
 
 				
-		$('#datePicker').datepicker().on('changeDate', function(e) {
+		$('#datePickerPatient').datepicker().on('changeDate', function(e) {
 			let formattedDate=$('#datePicker').datepicker("getFormattedDate")
 			$('#withdraw_date').val(formattedDate);
 		});
@@ -87,7 +87,7 @@
         }
         ?>  
         <div id="dateWithdraw">
-        	<div id="datePicker"></div>
+        	<div id="datePickerPatient"></div>
             <input class="form-control" name="withdraw_date" id="withdraw_date" type="hidden" >
         </div>
         <label class="control-label">Reason:</label>
