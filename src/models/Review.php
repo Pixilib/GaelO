@@ -149,6 +149,22 @@ Class Review{
 
     }
 
+    public function storeAssociatedFile($temporaryFile, $finalFilename){
+        $path = $this->getAssociatedFileRootPath();
+        if ( !is_dir($path) ) {
+            mkdir($path, 0755, true);
+        }
+        //Copy file to finale destination with final name
+        $result = move_uploaded_file($temporaryFile, $path.'/'.$finalFilename);
+        
+        if($result){
+            return $path.'/'.$finalFilename;
+        }else{
+            throw New Exception('Error writing associated File');
+        }
+        
+    }
+
 
     /**
      * Return path where are stored the associated files

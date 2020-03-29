@@ -42,7 +42,9 @@ if ($accessCheck && $_SESSION['role'] == User::SUPERVISOR ) {
 
     $orthancCsvFile=$exportObject->getImagingData();
 
-    $ReivewCsvFiles=$exportObject->getReviewData();
+    $reviewCsvFiles=$exportObject->getReviewData();
+    
+    $associatedFileZip=$exportObject->exportAssociatedFiles();
    
     //Output everything for download
     $date =Date('Ymd_his');
@@ -56,9 +58,10 @@ if ($accessCheck && $_SESSION['role'] == User::SUPERVISOR ) {
     $zip->addFile($patientCsvFile, "export_patient.csv");
     $zip->addFile($visitCsvFile, "export_visits.csv");
     $zip->addFile($orthancCsvFile, "export_orthanc.csv");
-    foreach ($ReivewCsvFiles as $key=>$file){
+    foreach ($reviewCsvFiles as $key=>$file){
         $zip->addFile($file, "export_review_$key.csv");
     }
+    $zip->addFile($associatedFileZip, "associatedFiles.zip");
     $zip->close();
     
     
@@ -69,7 +72,7 @@ if ($accessCheck && $_SESSION['role'] == User::SUPERVISOR ) {
     unlink($visitCsvFile);
     unlink($orthancCsvFile);
     unlink($tempZip);
-    foreach ($ReivewCsvFiles as $key=>$file){
+    foreach ($reviewCsvFiles as $key=>$file){
         unlink($file);
     }
     

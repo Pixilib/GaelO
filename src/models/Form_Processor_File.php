@@ -74,16 +74,11 @@ abstract class Form_Processor_File extends Form_Processor {
         $extension = $mimes->getExtension($mime);
         $fileName= $this->visitObject->patientCode.'_'.$this->visitObject->visitType.'_'.$fileKey.$extension;
 
-        $path = $this->reviewObject->getAssociatedFileRootPath();
-        if ( !is_dir($path) ) {
-            mkdir($path, 0755, true);
-        }
-        //Copy file to finale destination with final name
-        move_uploaded_file($uploadedTempFile, $path.'/'.$fileName);
+        $associatedFinalFile = $this->reviewObject->storeAssociatedFile($uploadedTempFile, $fileName);
         
         //Add or overide file key and write to database
         $fileArray = $this->reviewObject->getAssociatedFile();
-		$fileArray[$fileKey] = $uploadedFile;
+		$fileArray[$fileKey] = $associatedFinalFile;
 		$this->reviewObject->updateAssociatedFiles($fileArray);
 
     }
