@@ -213,6 +213,25 @@ abstract class Form_Processor {
 	    $datas=$query->fetchAll(PDO::FETCH_ASSOC);
 	    return $datas;
 	}
+
+	/**
+	 * Return of validated review object (no local form)
+	 */
+	public function getValidatedReviewObjects() : array {
+		$reviewsObject=$this->visitObject->getReviewsObject(false);
+		//Filter only validated review that will be analyzed
+		$validatedReviewObjects = array_filter($reviewsObject, function($review){
+			if($review->validated){
+				return true;
+			}else{
+				return false;
+			}
+		});
+		//Reindex results from index zero
+		$validatedReviewObjects = array_values($validatedReviewObjects);
+
+		return $validatedReviewObjects;
+	}
 	
 	/**
 	 * When Review conclusion "Done" reached Will make review unavailable for new review
