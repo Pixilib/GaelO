@@ -24,7 +24,7 @@
 
 				
 		$('#datePickerPatient').datepicker().on('changeDate', function(e) {
-			let formattedDate=$('#datePicker').datepicker("getFormattedDate")
+			let formattedDate=$('#datePickerPatient').datepicker("getFormattedDate")
 			$('#withdraw_date').val(formattedDate);
 		});
     
