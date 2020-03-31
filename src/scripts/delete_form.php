@@ -27,6 +27,7 @@ $reason=$_POST['reason'];
 
 $userObject=new User($_SESSION['username'], $linkpdo);
 $reviewObject=new Review($id_review, $linkpdo);
+$visitObject=$reviewObject->getParentVisitObject();
 $permissionsCheck=$userObject->isVisitAllowed($reviewObject->id_visit, User::SUPERVISOR);
 
 //If supervisor session and permission OK
@@ -37,7 +38,6 @@ if ($_SESSION['role']==User::SUPERVISOR && $permissionsCheck) {
 		
 		try{
 			$reviewObject->deleteReview();
-			$visitObject=$reviewObject->getParentVisitObject();
 			//Log activity
 			$actionDetails['type_visit']=$visitObject->visitType;
 			$actionDetails['patient_code']=$visitObject->patientCode;
@@ -47,15 +47,15 @@ if ($_SESSION['role']==User::SUPERVISOR && $permissionsCheck) {
 			$actionDetails['reason']=$reason;
 			Tracker::logActivity($_SESSION['username'], $_SESSION['role'], $_SESSION['study'], $reviewObject->id_visit, "Delete Form", $actionDetails);
 			$answer=true;
-		}catch(Exception $e){
-		    error_log($e->getMessage());
+		}catch(Throwable $t){
+		    error_log($t->getMessage());
 			$answer=false;
 		}
 		
 		//Notify the user that his form has been Deleted
 		$email=new Send_Email($linkpdo);
 		$email->addEmail($email->getUserEmails($reviewObject->username));
-		$email->sendDeletedFormMessage($visitObject->study, $visitObject->patientCode,$visitObject->visitType);
+		$email->sendDeletedFormMessage($visitObject->study, $visitObject->patientCode, $visitObject->visitType);
 
 	}else{
 		$answer=false;

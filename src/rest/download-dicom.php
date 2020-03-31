@@ -32,8 +32,7 @@ $visitObject=new Visit($id_visit, $linkpdo);
 $visitPermissions=$userObject->isVisitAllowed($id_visit, User::REVIEWER);
 
 //If permission granted and visit active and review available and QC done
-if($visitPermissions
-    && !$visitObject->deleted && $visitObject->reviewAvailable && $visitObject->stateQualityControl==Visit::QC_ACCEPTED) {
+if($visitPermissions) {
     
     //Get Array of Orthanc Series ID
     $resultatsIDs = $visitObject->getSeriesOrthancID();
@@ -42,12 +41,14 @@ if($visitPermissions
 	$tempfile=$orthanc->getZipTempFile($resultatsIDs);
 	
 	$file = @fopen($tempfile,"rb");
-	while(!feof($file))
-	{
-		print(@fread($file, 1024*8));
-		ob_flush();
-		flush();
+	if($file){
+		while(!feof($file))
+		{
+			print(@fread($file, 1024*8));
+			flush();
+		}
 	}
+
 
 	//Delete temp file at the end of reading
 	unlink($tempfile);

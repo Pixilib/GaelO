@@ -24,12 +24,14 @@ class Import_Patient{
 	public $sucessList;
 	public $failList;
 	private $study;
+	private $studyObject;
 	
 	public function __construct($originalJson, $study, $linkpdo){
 	    $this->linkpdo= $linkpdo;
 		//Store the JSON file and the target study
 	    $this->originalJson=$originalJson;
 		$this->study = $study;
+		$this->studyObject = new Study($study, $linkpdo);
 	}
 
 	public function readJson(){
@@ -51,8 +53,9 @@ class Import_Patient{
 			$isNewPatient=$this->isNewPatient($patientNumber);
 			$isCorrectPatientNumberLenght=$this->isCorrectPatientNumberLenght($patientNumber);
 			$isExistingCenter=$this->isExistingCenter($patientInvestigatorNumCenter);
+			$isPrefixCorrect = $this->isCorrectPrefix($patientNumber);
 			
-			if ($isNewPatient && $isCorrectPatientNumberLenght && $isExistingCenter && !empty($patientRegistrationDate) ){
+			if ($isNewPatient && $isCorrectPatientNumberLenght && $isPrefixCorrect && $isExistingCenter && !empty($patientRegistrationDate) ){
 			    //Store in DB
 			    $birthDateArray=explode("/", $patientDateOfBirth);
 			    if(GAELO_DATE_FORMAT=='m.d.Y'){
@@ -97,6 +100,8 @@ class Import_Patient{
 				    
 				} else if(empty($patientRegistrationDate)){
 				    $this->failList['Empty Registration Date'][]=$patientNumber;
+				} else if( ! $isPrefixCorrect){
+					$this->failList['Wrong Patient Code Prefix'][]=$patientNumber;
 				}
 				
 				
@@ -170,6 +175,23 @@ class Import_Patient{
 		}
 	}
 
+	private function isCorrectPrefix($patientNumber){
+		//If no prefix return true
+		if(empty($this->studyObject->patientCodePrefix)){
+			return true;
+		}
+		//test that patient code start with study prefix
+		$patientNumberString = strval($patientNumber);
+		$studyPrefixString = strval($this->studyObject->patientCodePrefix);
+		return $this->startsWith( $patientNumberString, $studyPrefixString );
+
+	}
+
+	private function startsWith (string $string, string $startString) { 
+		$len = strlen($startString); 
+		return (substr($string, 0, $len) === $startString); 
+	} 
+
     /**
      * Check that patient's center is one of known center in the plateform
      * @param $patientNumCenter
@@ -208,8 +230,8 @@ class Import_Patient{
 			VALUES(:study, :code, :first_name, :last_name, :gender, :birth_day, :birth_month, :birth_year, :registration_date, :investigator_name, :center)');
 			
 			$insert_bdd->execute(array('code' => $patientNumber,
-													'first_name' => $patientFirstName,
-													'last_name' => $patientLastName,
+													'first_name' => @strtoupper($patientFirstName[0]),
+													'last_name' => @strtoupper($patientLastName[0]),
                                                     'gender' => @strtoupper($patientGender[0]),
 													'birth_day' => $patientBirthDay,
 													'birth_month' => $patientBirthMonth,

@@ -288,8 +288,7 @@ class Patient_Visit_Manager
     }
 
     public function getCreatedVisitForVisitTypeId($visitTypeId){
-        error_log($visitTypeId);
-        $visitQuery = $this->linkpdo->prepare ( 'SELECT id_visit FROM visits WHERE patient_code=:patientCode AND visits.visit_type_id=:visitTypeId AND deleted=0 ' );
+        $visitQuery = $this->linkpdo->prepare ( 'SELECT id_visit FROM visits WHERE patient_code=:patientCode AND visit_type_id=:visitTypeId AND deleted=0 ' );
         
         $visitQuery->execute ( array('patientCode' => $this->patientCode, 'visitTypeId'=>$visitTypeId) );
         $visitId = $visitQuery->fetch(PDO::FETCH_COLUMN);
@@ -300,5 +299,20 @@ class Patient_Visit_Manager
             return new Visit($visitId, $this->linkpdo);
         }
         
+    }
+
+    public function getCreatedVisitByVisitName($visitName){
+
+        $visitQuery = $this->linkpdo->prepare ( 'SELECT id_visit FROM visits, visit_type WHERE visits.visit_type_id = visit_type.id AND visits.patient_code=:patientCode AND visit_type.name=:visitName AND visits.deleted=0 ' );
+        
+        $visitQuery->execute ( array('patientCode' => $this->patientCode, 'visitName'=>$visitName) );
+        $visitId = $visitQuery->fetch(PDO::FETCH_COLUMN);
+
+        if(empty($visitId)){
+            throw new Exception("Visit Non Existing");
+        }else{
+            return new Visit($visitId, $this->linkpdo);
+        }
+
     }
 }

@@ -31,20 +31,16 @@ $reason=$_POST['reason'];
 $userObject=new User($username, $linkpdo);
 $reviewObject=new Review($id_review, $linkpdo);
 $permissionsCheck=$userObject->isVisitAllowed($reviewObject->id_visit, User::SUPERVISOR);
+$visitObject=$reviewObject->getParentVisitObject();
 
 //If supervisor session and permission OK
 if ($_SESSION['role']==User::SUPERVISOR && $permissionsCheck) {
-		//Get data on the review / visit we are going to unlock
-
-		$visitObject= $reviewObject->getParentVisitObject();
 		try{
 			//Unvalidate the form for unlock
 			$reviewObject->unlockForm();
-			$visitObject=$reviewObject->getParentVisitObject();
-
 			//Notify the user that his form has been unlocked
 			$email=new Send_Email($linkpdo);
-			$email->addEmail($email->getUserEmails($reviewObject->username));
+			$email->addEmail( $email->getUserEmails($reviewObject->username) );
 			$email->sendUnlockedFormMessage($visitObject->study, $visitObject->patientCode, $visitObject->visitType);
 			
 			//Log activity
@@ -57,7 +53,8 @@ if ($_SESSION['role']==User::SUPERVISOR && $permissionsCheck) {
 			Tracker::logActivity($username, $_SESSION['role'], $study, $visitObject->id_visit, "Unlock Form", $actionDetails);
 			$answer=true;
 		}catch (Exception $e){
-			$answer=false;			
+			$answer=false;
+			error_log($e);			
 		}
 		echo(json_encode($answer));
 

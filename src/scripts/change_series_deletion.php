@@ -79,10 +79,15 @@ if (isset($_SESSION['username']) ) {
                 if(count($remainingSeriesOrthancID)==0){
                     //Set study to deleted status
                     $seriesObject->studyDetailsObject->changeDeletionStatus(true);
-                    //Set Visit upload status to Not Done and reset QC
-                    $visitObject->resetQC();
-                    $visitObject->changeVisitStateInvestigatorForm(Visit::LOCAL_FORM_DRAFT);
+                    //Set Visit upload status to Not Done
                     $visitObject->changeUploadStatus(Visit::NOT_DONE);
+                    //Reset QC only if suppervisor, we don't change QC status for investigator and controller
+                    //As the QC process in ongoing
+                    if($role==User::SUPERVISOR){
+                        $visitObject->resetQC();
+                    }
+                    $visitObject->changeVisitStateInvestigatorForm(Visit::LOCAL_FORM_DRAFT);
+                    
                 }
                 
                 $changedArrayResult[]=$serieOrthancID;

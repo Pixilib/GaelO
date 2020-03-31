@@ -34,7 +34,7 @@ class Visit_Type_Iterator implements Iterator
         $this->index--;
     }
 
-    public function hasPrevious(): Visit_Type
+    public function hasPrevious()
     {
         $this->previous();
         if ($this->valid()) return $this->current();
@@ -46,7 +46,7 @@ class Visit_Type_Iterator implements Iterator
         $this->index++;
     }
 
-    public function hasNext(): Visit_Type
+    public function hasNext()
     {
         $this->next();
         if ($this->valid()) return $this->current();

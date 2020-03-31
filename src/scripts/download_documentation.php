@@ -42,16 +42,23 @@ if($roleAllowed && $studyAllowed){
     header("Content-Length: ".filesize($documentationObject->documentFileLocation));
     header('Content-Disposition: attachment; filename="Documentation-'.$_SESSION['study'].'_'.$documentationObject->documentName.'.pdf"');
     
-    set_time_limit(0);
     $file = @fopen($documentationObject->documentFileLocation,"rb");
-    while(!feof($file))
-    {
-        print(@fread($file, 1024*1024));
-        ob_flush();
-        flush();
+    if($file){
+
+        while(!feof($file))
+        {
+            print(@fread($file, 1024*1024));
+            flush();
+        }
+
+        fclose($file);
+
+    }else{
+        throw new Exception("Can't Find Documentation");
     }
+
     
-    fclose($file);
+ 
     
     
 }else {

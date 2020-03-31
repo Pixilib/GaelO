@@ -47,7 +47,8 @@ Class Review{
         $this->isLocal=intval($reviewData['is_local']);
         $this->deleted=$reviewData['deleted'];
         $this->isAdjudication=$reviewData['is_adjudication'];
-        
+        //Store associated file as a php array
+        $this->associatedFiles = json_decode($reviewData['sent_files']);
        
         
     }
@@ -74,7 +75,7 @@ Class Review{
      * Return user who has made this review
      * @return User
      */
-    public function getUserObject(){
+    public function getUserObject() : User {
         return new User($this->username, $this->linkpdo);
     }
     
@@ -82,7 +83,7 @@ Class Review{
      * Return parent visit Object
      * @return Visit
      */
-    public function getParentVisitObject(){
+    public function getParentVisitObject() : Visit {
         $visitsObject=new Visit($this->id_visit, $this->linkpdo);
         return $visitsObject;
     }
@@ -112,6 +113,86 @@ Class Review{
         
         
     }
+
+    public function updateReviewDate(){
+        $update = $this->linkpdo->prepare('UPDATE reviews SET review_date = :reviewdate WHERE id_review = :idReview');
+        $update->execute( array( 'reviewdate'=> date("Y-m-d H:i:s"), 'idReview' => $this->id_review ) );
+
+    }
+
+    public function changeReviewValidationStatus(bool $validate){
+
+        $update = $this->linkpdo->prepare('UPDATE reviews SET validated = :validated WHERE id_review = :idReview');
+        $update->execute( array( 'validated'=> intval($validate), 'idReview' => $this->id_review ) );
+
+        if($validate){
+            $this->updateReviewDate();
+        }
+    }
+
+	/**
+	 * Update the file array column
+	 * File array should be an associative array following 
+	 * key => filename
+     * The fulll associated array should be sent
+	 */
+	public function updateAssociatedFiles($fileArray){
+
+        $updateRequest = $this->linkpdo->prepare('UPDATE reviews
+                            SET sent_files = :sent_files
+                            WHERE id_review = :id_review');
+    
+        $answer = $updateRequest->execute(array( 'id_review' => $this->reviewObject->id_review , 
+                                                'sent_files' => json_encode($fileArray) ));
+
+		return $answer;
+
+    }
+
+    public function storeAssociatedFile($temporaryFile, $finalFilename){
+        $path = $this->getAssociatedFileRootPath();
+        if ( !is_dir($path) ) {
+            mkdir($path, 0755, true);
+        }
+        //Copy file to finale destination with final name
+        $result = move_uploaded_file($temporaryFile, $path.'/'.$finalFilename);
+        
+        if($result){
+            return $path.'/'.$finalFilename;
+        }else{
+            throw New Exception('Error writing associated File');
+        }
+        
+    }
+
+
+    /**
+     * Return path where are stored the associated files
+     */
+    public function getAssociatedFileRootPath() : String {
+        $path = $_SERVER['DOCUMENT_ROOT'] . '/data/upload/attached_review_file/'.$this->getParentVisitObject()->study;
+        return $path;
+    }
+
+
+    /**
+     * Return file destination of an associated file
+     */
+	protected function getAssociatedFilePath($fileKey) : String {
+        $fileArray = $this->reviewObject->getAssociatedFile();
+        return $this->getAssociatedFileRootPath().'/'.$fileArray[$fileKey];
+	}
+
+    /**
+     * In case of failure of writing specific form.
+     * Only used in form processor
+     */
+    public function hardDeleteReview() {
+
+        $dbStatus = $this->linkpdo->prepare('DELETE FROM reviews WHERE id_review=:idReview');
+	    $dbStatus->execute(array ('idReview'=> $this->id_review));
+
+    }
     
     /**
      * Unlock the current form
@@ -125,11 +206,7 @@ Class Review{
     	}
     	
         //Update review table
-        $update = $this->linkpdo->prepare('UPDATE reviews SET
-                                        validated = 0 WHERE id_review = :idReview');
-        $update->execute( array( 'idReview' => $this->id_review ) );
-        
-
+        $this->changeReviewValidationStatus(false);
         
         if($this->isLocal) {
         	$visitObject->changeVisitStateInvestigatorForm(Visit::LOCAL_FORM_DRAFT);
@@ -139,5 +216,27 @@ Class Review{
         }
         
     }
+
+
+    	/*
+	 * Create new entry in review table
+	 */
+	public static function createReview(int $id_visit, string $username, bool $local, bool $adjudication, PDO $linkpdo) : Review {
+	    
+	    $newReview = $linkpdo->prepare('INSERT INTO reviews(id_visit, username, review_date, validated , is_local, is_adjudication, sent_files) VALUES (:idvisit, :username, :reviewdate, :validated, :local, :adjudication, :emptyFileArray)');
+	    $newReview->execute(array(
+	        'idvisit' =>$id_visit,
+	        'username'=>$username,
+	        'reviewdate'=>date("Y-m-d H:i:s"),
+	        'validated'=> 0,
+            'local'=>intval($local),
+            'emptyFileArray'=>json_encode( array() ),
+	        'adjudication'=>intval($adjudication)
+	    ));
+        $idReview=$linkpdo->lastInsertId();
+        
+	    $reviewObject = new Review($idReview, $linkpdo);
+	    return $reviewObject;
+	}
     
 }

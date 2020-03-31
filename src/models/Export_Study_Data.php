@@ -65,6 +65,38 @@ class Export_Study_Data
         return $patientCsvString;
     }
 
+
+    /**
+     * 
+     */
+    public function exportAssociatedFiles()
+    {
+
+        $zip = new ZipArchive;
+        $tempZip = tempnam(ini_get('upload_tmp_dir'), 'TMPZIPAF_');
+        $zip->open($tempZip, ZipArchive::CREATE);
+        
+
+        foreach ($this->allcreatedVisits as $visitObject) {
+            $reviewsObjects = $this->getAllreviewObjects($visitObject);
+
+            foreach($reviewsObjects as $reviewObject){
+
+                foreach($reviewObject->associatedFiles as $associatedFileKey => $associatedFilePath){
+                    $zip->addFile($associatedFilePath);
+
+                };
+
+            }
+
+        }
+
+        $zip->close();
+
+        return $tempZip;
+
+    }
+
     /**
      * Export the visit table relative to this study
      */
@@ -177,11 +209,7 @@ class Export_Study_Data
         return $reviewCsvFiles;
     }
 
-    /**
-     * Merge local and review form and call getReviewDatas function to build one line of the CSV array for each review
-     */
-    private function getReviews(Visit $visitObject): array
-    {
+    private function getAllreviewObjects($visitObject) : array {
 
         $localReviews = [];
         try {
@@ -195,6 +223,18 @@ class Export_Study_Data
 
         //Merge all reviews in an array
         $reviewObjects = array_merge($localReviews, $expertReviews);
+
+        return $reviewObjects;
+
+    }
+
+    /**
+     * Merge local and review form and call getReviewDatas function to build one line of the CSV array for each review
+     */
+    private function getReviews(Visit $visitObject): array
+    {
+
+        $reviewObjects = $this->getAllreviewObjects($visitObject);
 
         $csv = [];
         foreach ($reviewObjects as $reviewObject) {
@@ -288,11 +328,11 @@ class Export_Study_Data
             return 6;
         } else if ($visitObject->reviewStatus == Visit::NOT_DONE) {
             return 7;
-        } else if ($visitObject->reviewStatus == Form_Processor::ONGOING) {
+        } else if ($visitObject->reviewStatus == Visit::REVIEW_ONGOING) {
             return 8;
-        } else if ($visitObject->reviewStatus == Form_Processor::WAIT_ADJUDICATION) {
+        } else if ($visitObject->reviewStatus == Visit::REVIEW_WAIT_ADJUDICATION) {
             return 9;
-        } else if ($visitObject->reviewStatus == Form_Processor::DONE) {
+        } else if ($visitObject->reviewStatus == Visit::REVIEW_DONE) {
             return 10;
         }else{
             //If none of these case return -1, should not happen

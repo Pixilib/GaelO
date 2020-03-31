@@ -81,12 +81,13 @@ if ($permissionCheck && count($ids)>0) {
 	header("Expires: 0");
 	
 	$file = @fopen($tempFileName,"rb");
-	while(!feof($file))
-	{
-		print(@fread($file, 1024*1024));
-		ob_flush();
-		flush();
+	if($file){
+		while(!feof($file)) {
+			print(@fread($file, 1024*1024));
+			flush();
+		}
 	}
+
 	
 	fclose($file);
 	

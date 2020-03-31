@@ -71,6 +71,7 @@ class Statistics {
 		
 		
 		foreach ($allPatientStatus as $visitType => $patients){
+			
 			foreach ($patients as $patientCode=>$patientDetails){
 				
 				if($patientDetails['status']==Patient_Visit_Manager::DONE || $patientDetails['status']==Patient_Visit_Manager::SHOULD_BE_DONE){
@@ -166,7 +167,7 @@ class Statistics {
 		$responseDelayArray=[];
 		
 		foreach ($uploadedVisitArray as $visit){
-			if($visit->reviewStatus==Form_Processor::DONE){
+			if($visit->reviewStatus== Visit::REVIEW_DONE){
 				$qcDate=new DateTimeImmutable($visit->controlDate);
 				$conclusionDate=new DateTimeImmutable($visit->reviewConclusionDate);
 				$conclusionDelay=($conclusionDate->getTimestamp()-$qcDate->getTimestamp())/ (3600*24);
@@ -293,19 +294,19 @@ class Statistics {
         $reviewsJson=[];
         foreach ($createdVisits as $visit){
 
-					$reviews=array();
+					$reviews=[];
 
-					$localReview=$visit->getReviewsObject(true);
-					if(!empty($localReview)){
-						$reviews[]=$localReview;
+					try{
+						$reviews[]=$visit->getReviewsObject(true);
+					}catch(Exception $e){ }
 
-					}
+					try{
+						$reviewsReviewers=$visit->getReviewsObject(false);
+						foreach ($reviewsReviewers as $expertReview){
+							$reviews[]=$expertReview;
+						}
+					}catch(Exception $e){ }
 
-					$reviewsReviewers=$visit->getReviewsObject(false);
-
-					foreach ($reviewsReviewers as $expertReview){
-						$reviews[]=$expertReview;
-					}
 
 	        foreach ($reviews as $review){
 

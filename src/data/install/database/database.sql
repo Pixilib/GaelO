@@ -502,6 +502,7 @@ CREATE TABLE `reviews` (
   `validated` tinyint(1) NOT NULL DEFAULT '0',
   `is_local` tinyint(1) NOT NULL DEFAULT '1',
   `is_adjudication` tinyint(1) NOT NULL DEFAULT '0',
+  `sent_files` text NOT NULL,
   `deleted` tinyint(1) NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -567,6 +568,7 @@ INSERT INTO `states` (`quality_state`) VALUES
 
 CREATE TABLE `studies` (
   `name` varchar(32) NOT NULL,
+  `patient_code_prefix` bigint(13) DEFAULT NULL,
   `active` tinyint(1) NOT NULL DEFAULT '1'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -656,6 +658,7 @@ CREATE TABLE `visits` (
   `review_status` set('Not Done','Ongoing','Wait Adjudication','Done') NOT NULL DEFAULT 'Not Done',
   `review_conclusion_value` tinytext,
   `review_conclusion_date` datetime DEFAULT NULL,
+  `last_reminder_upload` datetime DEFAULT NULL,
   `deleted` tinyint(1) NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 

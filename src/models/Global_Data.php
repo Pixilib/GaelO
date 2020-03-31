@@ -95,6 +95,20 @@ Class Global_Data{
 		}
 		return $centerObject;
 	}
+
+	public static function getAllCentersAsJson(PDO $linkpdo) : String {
+		$centersObjectArray = Global_Data::getAllCentersObjects($linkpdo);
+		$centerResponseArray = [];
+		
+		foreach ($centersObjectArray as $centerObject){
+			$centerResponseArray[$centerObject->code]['centerName']=$centerObject->name;
+			$centerResponseArray[$centerObject->code]['countryCode']=$centerObject->countryCode;
+		}
+
+		$temporaryFile = Global_Data::writeTextAsTempFile( json_encode($centerResponseArray, JSON_FORCE_OBJECT) );
+
+		return $temporaryFile;
+	}
 	
 	/**
 	 * Get All possible countries
@@ -238,6 +252,16 @@ Class Global_Data{
         return $fileSql;
 
 	}
+
+	public static function writeTextAsTempFile($strData) : String {
+		$seriesJsonFile = tempnam(ini_get('upload_tmp_dir'), 'TMPGaelOFile_');
+		$seriesJsonHandler= fopen($seriesJsonFile, 'w');
+		fwrite($seriesJsonHandler, $strData);
+		fclose($seriesJsonHandler);
+
+		return $seriesJsonFile;
+
+	}
 	
 	/**
 	 * Generate a JSON File with all Series stored in Orthanc (either marked deleted or not)
@@ -246,10 +270,7 @@ Class Global_Data{
 	public static function dumpOrthancSeriesJSON(PDO $linkpdo) : String {
 
 		$seriesFullJson=json_encode(Global_Data::getAllSeriesOrthancID($linkpdo), JSON_PRETTY_PRINT);
-		$seriesJsonFile = tempnam(ini_get('upload_tmp_dir'), 'TMPSeriesJson_');
-		$seriesJsonHandler= fopen($seriesJsonFile, 'w');
-		fwrite($seriesJsonHandler, $seriesFullJson);
-		fclose($seriesJsonHandler);
+		$seriesJsonFile =  Global_Data::writeTextAsTempFile($seriesFullJson);
 
 		return $seriesJsonFile;
 
@@ -260,9 +281,7 @@ Class Global_Data{
 	 * Use of Generator
 	 * For backup purpose
 	 */
-	public static function getFileInPath(String $sourcePath) {
-
-		$path = realpath($_SERVER['DOCUMENT_ROOT'].$sourcePath);
+	public static function getFileInPath(String $path) {
 
 		if(is_dir($path)){
 			// Create recursive directory iterator

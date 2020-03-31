@@ -105,7 +105,21 @@
 				</td>
 				<td>
 					<?php 
-					if($supervisorEvent['action_type']=="Import Patients") echo('<pre><code>'.json_encode($eventDetails, JSON_PRETTY_PRINT|JSON_HEX_QUOT|JSON_HEX_TAG|JSON_HEX_AMP|JSON_HEX_APOS).'</code></pre>');
+					if($supervisorEvent['action_type']=="Import Patients")  {
+						?>			
+							<a tabindex="0" role="button" 
+								data-trigger="focus" 
+								class="btn btn-primary popover-dismiss" 
+								data-container="body" 
+								data-html="true"
+								title="form details"
+								data-toggle="popover" 
+								data-placement="right" 
+								data-content="<?=htmlspecialchars('<pre><code>'.json_encode($eventDetails, JSON_PRETTY_PRINT|JSON_HEX_QUOT|JSON_HEX_TAG|JSON_HEX_AMP|JSON_HEX_APOS).'</code></pre>')?>">
+							Show Details
+							</a>
+						<?php
+					}
 					?>
 				</td>
 				<td>

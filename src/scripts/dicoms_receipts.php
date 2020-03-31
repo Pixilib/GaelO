@@ -80,7 +80,7 @@ if ($investigatorAccess && $_SESSION['role'] == User::INVESTIGATOR) {
 
 			// Create the temporary directory
 			if (!is_dir($tempDir)) {
-				mkdir($tempDir, 0777, true);
+				mkdir($tempDir, 0755, true);
 			}
 
 			// Move the temporary file

@@ -193,8 +193,17 @@ class FTP_Reader
         $fileArray = $sftp->nlist();
 
         //Remove . and ..
-        unset($fileArray[0]);
-        unset($fileArray[1]);
+        $fileArray = array_filter($fileArray, function($file){
+            if($file =='.' || $file == '..'){
+                return false;
+            }else{
+                return true;
+            }
+        });
+        
+
+
+        print_r($fileArray);
 
         $selectedFiles = $this->selectWantedFiles($fileArray);
 
@@ -221,6 +230,15 @@ class FTP_Reader
 
         // Get files in the ftp folder
         $fileArray = ftp_nlist($ftpConnect, ".");
+
+        //Remove . and ..
+        $fileArray = array_filter($fileArray, function($file){
+            if($file =='.' || $file == '..'){
+                return false;
+            }else{
+                return true;
+            }
+        });
 
         $selectedFiles = $this->selectWantedFiles($fileArray);
 

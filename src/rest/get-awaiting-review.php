@@ -48,12 +48,15 @@ foreach ($possibleStudyList as $study => $roles) {
                 $dicomDetailsObject = $visitObject->getStudyDicomDetails();
                 $visitDetails['studyDate'] = $dicomDetailsObject->studyAcquisitionDate;
                 $visitDetails['studyUID'] = $dicomDetailsObject->studyUID;
+
+                $visitsResults[$study][] = $visitDetails;
             }
         }
 
-        $visitsResults[$study][] = $visitDetails;
+        
     }
 }
 
 header("Content-Type: application/json; charset=UTF-8");
-echo (json_encode($visitsResults));
+if(empty($visitsResults)) echo(json_encode (json_decode ("{}")));
+else echo (json_encode($visitsResults));

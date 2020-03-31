@@ -296,8 +296,8 @@ class Group_Visit_Manager
 
             $allPatientStatus = $this->getPatientVisitStatusForVisitType($visitType);
 
-            $results[$visitType->name] = [];
-            array_push($results, ...$allPatientStatus);
+            $results[$visitType->name] = $allPatientStatus;
+            //array_push($results, ...$allPatientStatus);
         }
 
         return $results;

@@ -44,10 +44,16 @@ if ($_SESSION['admin']) {
     
     //Export the documentation files
     exportPath('upload/documentation');
+
+    //Export Review Associated Files
+    exportPath('upload/attached_review_file');
     
     //Export the full list of series in JSON
     $seriesJsonFile = Global_Data::dumpOrthancSeriesJSON($linkpdo);
     $zip->addFile($seriesJsonFile, 'seriesOrthancId.json');
+    //Export the full list of centers in JSON
+    $centersJsonFile = Global_Data::getAllCentersAsJson($linkpdo);
+    $zip->addFile($centersJsonFile, 'centers.json');
     
     $zip->close();
     
@@ -67,15 +73,15 @@ if ($_SESSION['admin']) {
 function exportPath(String $pathName){
     global $zip;
 
-    $fileGenerator = Global_Data::getFileInPath('/data/'.$pathName);
+    $relativePath = $_SERVER['DOCUMENT_ROOT'].'/data';
+    $absolutePath = realpath($relativePath.'/'.$pathName);
+    $fileGenerator = Global_Data::getFileInPath($absolutePath);
 
     foreach ($fileGenerator as $file) {
         $filePath = $file->getRealPath();
-        error_log($filePath);
-        
+        $subPathDestination = substr($filePath, strlen($relativePath));
         // Add current file to archive
-        $result=$zip->addFile($filePath, $pathName.'/'.basename($file));
-        error_log(intval($result));
+        $zip->addFile($filePath, $subPathDestination);
 
     }
 }

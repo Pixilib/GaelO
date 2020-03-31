@@ -53,12 +53,12 @@
         }
         
         // If Form not needed deactive form checkbox
-        if (! $studyObject->formNeeded) {
+        if (! $visitType->localFormNeeded) {
             ?> $('input:checkbox[name="information_corrected"]').prop("disabled", true); <?php
         }
         
         // If Image QC not needed deactive form checkbox
-        if (! $studyObject->qcNeeded) {
+        if (! $visitType->qcNeeded) {
             ?> $('input:checkbox[name="new_series"]').prop("disabled", true); <?php
         }
         ?>

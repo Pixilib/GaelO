@@ -21,6 +21,7 @@ Class Study {
     
     private $linkpdo;
     public $study;
+    public $patientCodePrefix;
     
     public function __construct(String $study, PDO $linkpdo){
 
@@ -32,6 +33,7 @@ Class Study {
         $result = $connecter->fetch(PDO::FETCH_ASSOC);
 
         $this->study=$result['name'];
+        $this->patientCodePrefix = $result['patient_code_prefix'];
         
         
     }
@@ -296,12 +298,13 @@ Class Study {
         
     }
     
-    public static function createStudy(string $studyName, PDO $linkpdo){
+    public static function createStudy(string $studyName, $patientCodePrefix, PDO $linkpdo){
         
-        $req = $linkpdo->prepare('INSERT INTO studies (name) VALUES(:studyName) ');
+        $req = $linkpdo->prepare('INSERT INTO studies (name, patient_code_prefix) VALUES(:studyName, :patientCodePrefix) ');
         
         $req->execute(array(
-            'studyName' => $studyName
+            'studyName' => $studyName,
+            'patientCodePrefix' => $patientCodePrefix
         ));
         
     }

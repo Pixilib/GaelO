@@ -47,6 +47,7 @@
 			?>$("#accepted1").attr( 'checked', true )
 			//Disable other radiobutton to force send the accepted value (disable make the choice unsent)
 			$("#refused1").prop("disabled", true);
+			$("#formComment").prop("readonly", true);
 			<?php
         }
         // if image Qc not Need unactivate the form option

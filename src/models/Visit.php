@@ -52,6 +52,7 @@ class Visit{
     public $reviewAvailable;
     public $reviewConclusionDate;
     public $reviewConclusion;
+    public $lastReminderUpload;
     public $deleted;
     
     public $studyDicomObject;
@@ -71,6 +72,11 @@ class Visit{
     const NOT_DONE="Not Done";
     
     const UPLOAD_PROCESSING="Processing";
+
+    const REVIEW_NOT_DONE ='Not Done';
+	const REVIEW_ONGOING ='Ongoing';
+	const REVIEW_WAIT_ADJUDICATION ='Wait Adjudication';
+	const REVIEW_DONE='Done';
     
     public function __construct($id_visit, PDO $linkpdo){
         $this->linkpdo=$linkpdo;
@@ -123,6 +129,7 @@ class Visit{
         $this->correctiveActionUsername=$visitDbData['corrective_action_username'];
         $this->correctiveActionDate=$visitDbData['corrective_action_date'];
         $this->deleted=$visitDbData['deleted'];
+        $this->lastReminderUpload=$visitDbData['last_reminder_upload'];
         
 
         //Get VisitType detail
@@ -173,6 +180,15 @@ class Visit{
             $this->skipQcIfNeeded();
             $this->sendUploadedVisitEmailToController($username);
         }
+    }
+
+    public function updateLastReminderUpload(){
+
+        $changeReminderUpload=$this->linkpdo->prepare('UPDATE visits SET last_reminder_upload= :lastReminderDateTime WHERE id_visit = :idvisit');
+        $changeReminderUpload->execute(array(
+            'lastReminderDateTime'=> date("Y-m-d H:i:s"),
+            'idvisit'=> $this->id_visit)
+            );
     }
     
     /**
@@ -350,17 +366,17 @@ class Visit{
     public function queryExistingReviewForReviewer($username){
         
         $reviewsObjects=$this->getReviewsObject(false);
-
-        foreach ($reviewsObjects as $review){
+        $filteredReview = array_filter($reviewsObjects, function ($review) use ($username) {
             if($review->username==$username){
-                return $review;
+                return true;
+            }else {
+                return false;
             }
-        }
+        });
+        $filteredReview = array_values ( $filteredReview );
+        if (sizeof($filteredReview) == 1) return $filteredReview[0];
+        else throw new Exception('No review for reviwer');
 
-        if (empty($reviewsObjects)){
-            throw new Exception('No review for reviwer');
-        }
-        
     }
 
     /**
@@ -557,7 +573,7 @@ class Visit{
      * @param string $username
      * @return Form_Processor
      */
-    public function getFromProcessor(bool $local, string $username){
+    public function getFromProcessor(bool $local, string $username) {
         //Destination of the specific post processing POO
         $modality=$this->visitGroupObject->groupModality;
         $specificObjectFile=$_SERVER["DOCUMENT_ROOT"].'/data/form/'.$this->study.'/Poo/'.$modality."_".$this->study."_".$this->visitType.".php";
