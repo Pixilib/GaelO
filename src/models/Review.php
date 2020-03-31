@@ -142,7 +142,7 @@ Class Review{
                             SET sent_files = :sent_files
                             WHERE id_review = :id_review');
     
-        $answer = $updateRequest->execute(array( 'id_review' => $this->reviewObject->id_review , 
+        $answer = $updateRequest->execute(array( 'id_review' => $this->id_review , 
                                                 'sent_files' => json_encode($fileArray) ));
 
 		return $answer;
@@ -179,7 +179,7 @@ Class Review{
      * Return file destination of an associated file
      */
 	protected function getAssociatedFilePath($fileKey) : String {
-        $fileArray = $this->reviewObject->getAssociatedFile();
+        $fileArray = $this->associatedFiles;
         return $this->getAssociatedFileRootPath().'/'.$fileArray[$fileKey];
 	}
 

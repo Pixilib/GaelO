@@ -66,7 +66,7 @@ abstract class Form_Processor_File extends Form_Processor {
 		//Get extension of file and check extension is allowed
 		//Get filesize and check it matches limits
         $sizeMb = $fileSize / 1048576 ;
-        if($sizeMb > $this->getMaxSizeMb) throw new Exception('File over limits');
+        if($sizeMb > $this->getMaxSizeMb()) throw new Exception('File over limits');
         if( ! $this->isInDeclaredKey($fileKey)) throw new Exception('Unhauthrized file key') ; 
         if( ! $this->isInAllowedType($mime) ) throw new Exception('Extension not allowed') ;
 
@@ -84,7 +84,7 @@ abstract class Form_Processor_File extends Form_Processor {
     }
     
     private function isInDeclaredKey($fileKey){
-        return in_array($fileKey, $this->getAllowedFileKeys) ;
+        return in_array($fileKey, $this->getAllowedFileKeys()) ;
     }
 
     private function isInAllowedType($extension){
