@@ -298,7 +298,7 @@ Class Study {
         
     }
     
-    public static function createStudy(string $studyName, int $patientCodePrefix, PDO $linkpdo){
+    public static function createStudy(string $studyName, $patientCodePrefix, PDO $linkpdo){
         
         $req = $linkpdo->prepare('INSERT INTO studies (name, patient_code_prefix) VALUES(:studyName, :patientCodePrefix) ');
         
