@@ -1,0 +1,6 @@
+build:
+    nodes:
+      analysis:
+        filter:
+            excluded_paths:
+                - src/data/install/

@@ -568,7 +568,7 @@ INSERT INTO `states` (`quality_state`) VALUES
 
 CREATE TABLE `studies` (
   `name` varchar(32) NOT NULL,
-  `patient_code_prefix` bigint(13) DEFAULT NULL,
+  `patient_code_prefix` tinytext DEFAULT NULL,
   `active` tinyint(1) NOT NULL DEFAULT '1'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
