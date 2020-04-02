@@ -85,7 +85,7 @@ if ($visitObject->statusDone == Visit::NOT_DONE) {
         
             	<?php
             }
-            if ($role == User::REVIEWER ||  $role == User::INVESTIGATOR || ($role == User::CONTROLLER && ($visitObject->stateQualityControl == Visit::QC_NOT_DONE || $visitObject->stateQualityControl == Visit::QC_WAIT_DEFINITVE_CONCLUSION))) {
+            if ($role == User::REVIEWER ||  ($role == User::INVESTIGATOR  && $visitObject->uploadStatus==Visit::DONE) || ($role == User::CONTROLLER && ($visitObject->stateQualityControl == Visit::QC_NOT_DONE || $visitObject->stateQualityControl == Visit::QC_WAIT_DEFINITVE_CONCLUSION))) {
                 ?>
             		$("#reviewerDownloadDicomBtn").on('click', function() {
             			$("#downloadForm").submit();
@@ -192,7 +192,7 @@ if ($role != User::REVIEWER) {
     <?php
 }
 // If reviewer or controler with awaiting QC action add an invisible form and a button to make dicom zip dowload
-if ($role == User::REVIEWER || $role == User::INVESTIGATOR || ($role == User::CONTROLLER && ($visitObject->stateQualityControl == Visit::QC_WAIT_DEFINITVE_CONCLUSION || $visitObject->stateQualityControl == Visit::QC_NOT_DONE))) {
+if ($role == User::REVIEWER || ($role == User::INVESTIGATOR  && $visitObject->uploadStatus==Visit::DONE) || ($role == User::CONTROLLER && ($visitObject->stateQualityControl == Visit::QC_WAIT_DEFINITVE_CONCLUSION || $visitObject->stateQualityControl == Visit::QC_NOT_DONE))) {
     ?>
     <div class="text-center mt-3 mb-3">
     	<input class="btn btn-primary" type="button"

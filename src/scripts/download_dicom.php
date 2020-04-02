@@ -33,24 +33,31 @@ $userObject=new User($_SESSION['username'], $linkpdo);
 
 //Permission check, different level check if supervisor or reviewer 
 
-if($_SESSION['role']==User::SUPERVISOR){
+if($_SESSION['role'] == User::SUPERVISOR){
     $permissionCheck=$userObject->isRoleAllowed($_SESSION['study'], $_SESSION['role']);
     $postdata=$_POST['json'];
     $json=json_decode($postdata, true);
     //SK ICI VERIFIER QUE LES id SONT BIEN DE L ETUDE AVEC LES DROITS ? Securite
     $ids=$json['json'];
 }
-else if($_SESSION['role']==User::REVIEWER || $_SESSION['role'] == User::INVESTIGATOR ){
+else if($_SESSION['role'] == User::REVIEWER){
     $permissionCheck=$userObject->isVisitAllowed($_POST['id_visit'], $_SESSION['role']);
     $visitObject=new Visit($_POST['id_visit'], $linkpdo);
 	$ids=$visitObject->getSeriesOrthancID();
     
-}else if($_SESSION['role']==User::CONTROLLER){
+}else if($_SESSION['role'] == User::CONTROLLER){
     $permissionCheck=$userObject->isVisitAllowed($_POST['id_visit'], $_SESSION['role']);
     $visitObject=new Visit($_POST['id_visit'], $linkpdo);
     if(in_array($visitObject->qcStatus, array(Visit::QC_NOT_DONE, Visit::QC_WAIT_DEFINITVE_CONCLUSION)) ){
         $ids=$visitObject->getSeriesOrthancID();
     }
+} else if ( $_SESSION['role'] == User::INVESTIGATOR  ){
+	$permissionCheck=$userObject->isVisitAllowed($_POST['id_visit'], $_SESSION['role']);
+    $visitObject=new Visit($_POST['id_visit'], $linkpdo);
+	if($visitObject->uploadStatus==Visit::DONE){
+		$ids=$visitObject->getSeriesOrthancID();
+	}
+
 }
 
 if ($permissionCheck && count($ids)>0) {

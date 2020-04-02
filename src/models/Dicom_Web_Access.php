@@ -93,7 +93,7 @@ class Dicom_Web_Access {
         $visitObject=new Visit($id_visit, $this->linkpdo);
         
         //Check Visit Availability of the calling user
-        if($this->userRole == User::REVIEWER || $this->userRole == User::INVESTIGATOR ) {
+        if($this->userRole == User::REVIEWER || ($this->userRole == User::INVESTIGATOR && $visitObject->uploadStatus==Visit::DONE) ) {
             //Check that visit is in patient that is still awaiting for some reviews
             $visitCheck=$this->userObject->isVisitAllowed($id_visit, $this->userRole);
         }else if($this->userRole == User::CONTROLLER){
