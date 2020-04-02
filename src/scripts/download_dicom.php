@@ -40,7 +40,7 @@ if($_SESSION['role']==User::SUPERVISOR){
     //SK ICI VERIFIER QUE LES id SONT BIEN DE L ETUDE AVEC LES DROITS ? Securite
     $ids=$json['json'];
 }
-else if($_SESSION['role']==User::REVIEWER){
+else if($_SESSION['role']==User::REVIEWER || $_SESSION['role'] == User::INVESTIGATOR ){
     $permissionCheck=$userObject->isVisitAllowed($_POST['id_visit'], $_SESSION['role']);
     $visitObject=new Visit($_POST['id_visit'], $linkpdo);
 	$ids=$visitObject->getSeriesOrthancID();
