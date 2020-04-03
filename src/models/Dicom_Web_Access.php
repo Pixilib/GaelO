@@ -20,7 +20,7 @@
  */
 class Dicom_Web_Access {
 
-    private $isStudyRequested;
+    private $isStudyMetadataRequested;
     private $isSerieRequested;
     private $requestedURI;
     private $userObject;
@@ -33,8 +33,8 @@ class Dicom_Web_Access {
         $this->userRole=$userRole;
         $this->linkpdo=$linkpdo;
         
-        if(strpos($requestedURI, "/series/")!== false) $this->isSerieRequested=true;
-        else if(strpos($requestedURI, "/studies/") !==false) $this->isStudyRequested=true;
+        if( $this->endsWith($requestedURI, "/series") ) $this->isStudyMetadataRequested=true; 
+        else $this->isSerieRequested=true;
         
     }
     
@@ -56,7 +56,7 @@ class Dicom_Web_Access {
      */
     private function getUID(){
         if($this->isSerieRequested) $level="series";
-        else if($this->isStudyRequested) $level="studies";
+        else if($this->isStudyMetadataRequested) $level="studies";
         $studySubString=strstr($this->requestedURI, "/".$level."/");
         $studySubString=str_replace("/".$level."/", "", $studySubString);
         $endStudyUIDPosition=strpos($studySubString, "/");
@@ -75,7 +75,7 @@ class Dicom_Web_Access {
             $seriesObject=Series_Details::getSerieObjectByUID($uid, $this->linkpdo);
             $studyObject=$seriesObject->studyDetailsObject;
             
-        } else if($this->isStudyRequested) {
+        } else if($this->isStudyMetadataRequested) {
             $studyObject=Study_Details::getStudyObjectByUID($uid, $this->linkpdo);
         }
         
@@ -108,6 +108,10 @@ class Dicom_Web_Access {
         
         return $visitCheck;
         
+    }
+
+    private function endsWith($haystack, $needle) {
+        return substr_compare($haystack, $needle, -strlen($needle)) === 0;
     }
 
 }

@@ -44,8 +44,9 @@
           routerBasename: '/ohif',
           whiteLabelling: {},
           cornerstoneExtensionConfig: {},
+          maxConcurrentMetadataRequests: 1,
           extensions: [OHIFExtCornerstone, OHIFExtDicomHtml],
-          showStudyList: true,
+          showStudyList: false,
           filterQueryParam: false,
           servers: {
             dicomWeb: [

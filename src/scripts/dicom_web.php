@@ -54,7 +54,19 @@ if($permissionDicomWeb){
     $proxy->filter(new RemoveEncodingFilter());
     
     // Forward the request and get the response.
-    $response = $proxy->forward($request) ->to($calledURL);
+    $response = $proxy -> forward($request) -> filter(function ($request, $response, $next) {
+        // Manipulate the request object.
+        $serverName = $_SERVER['SERVER_NAME'];
+        $port =  $_SERVER['SERVER_PORT'];
+        $protocol = @$_SERVER['HTTPS'] == true ? 'https' : 'http';
+        //error_log('by=localhost:8080;for=localhost:8080;host='.$serverName.':'.$port.';proto='.$protocol);
+        //Set Fowarded Message to update orthanc Host server
+        $request = $request->withHeader('Forwarded', 'by=localhost:8080;for=localhost:8080;host='.$serverName.':'.$port.';proto='.$protocol);
+
+        $response = $next($request, $response);
+        
+		return $response;
+	}) -> to($calledURL);
     
     // Output response to the browser.
     (new Narrowspark\HttpEmitter\SapiEmitter)->emit($response);
