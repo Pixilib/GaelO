@@ -73,10 +73,12 @@ class Dicom_Web_Access {
        
         if($this->isSerieRequested) {
             $seriesObject=Series_Details::getSerieObjectByUID($uid, $this->linkpdo);
+            if($this->userRole != User::SUPERVISOR && $seriesObject->deleted) throw new Exception('Deleted Series');
             $studyObject=$seriesObject->studyDetailsObject;
             
         } else if($this->isStudyMetadataRequested) {
             $studyObject=Study_Details::getStudyObjectByUID($uid, $this->linkpdo);
+            if($this->userRole != User::SUPERVISOR && $studyObject->deleted) throw new Exception('Deleted Study');
         }
         
         return $studyObject->idVisit;
@@ -101,7 +103,9 @@ class Dicom_Web_Access {
             if(in_array($visitObject->stateQualityControl, array(Visit::QC_WAIT_DEFINITVE_CONCLUSION, Visit::QC_NOT_DONE)) ){
                 $visitCheck=$this->userObject->isVisitAllowed($id_visit, $this->userRole);
             }
-        }else{
+        }else if($this->userRole == User::SUPERVISOR){
+            $visitCheck=$this->userObject->isVisitAllowed($id_visit, $this->userRole);
+        }else {
             //Other roles can't have access to images
             $visitCheck=false;
         }

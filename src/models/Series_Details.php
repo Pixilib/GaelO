@@ -110,7 +110,7 @@ Class Series_Details{
     public static function getSerieObjectByUID (string $uid, PDO $linkpdo){
         
         $seriesQuery = $linkpdo->prepare ( 'SELECT series_orthanc_id FROM orthanc_series
-                                                WHERE serie_uid=:seriesUID and deleted=0' );
+                                                WHERE serie_uid=:seriesUID' );
         
         $seriesQuery->execute(array(
             "seriesUID" => $uid

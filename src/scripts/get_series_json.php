@@ -39,6 +39,7 @@ if ($_SESSION['role']==User::SUPERVISOR && $permissionsCheck) {
     
     foreach ($uplodadedVisits as $visitObject){
         $seriesObject=$visitObject->getSeriesDetails($deleted);
+        $studyUID = $seriesObject[0]->studyDetailsObject->studyUID;
         
         $sumOfImages=0;
         $sumOfSize=0;
@@ -63,6 +64,7 @@ if ($_SESSION['role']==User::SUPERVISOR && $permissionsCheck) {
             $jsonObject['nb_instances'] = $sumOfImages;
             $jsonObject['Disk_Size'] = $sumOfSize;
             $jsonObject['orthancSeriesIDs'] = $idList;
+            $jsonObject['studyUID'] = $studyUID;
             
             $json[] =$jsonObject;
         }
