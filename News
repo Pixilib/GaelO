@@ -24,5 +24,6 @@ Enhancements :
   - Replaced Jquery datepicker by Bootrastrp datepicker
   - Simplified download interface for DICOM (supervisor)
   - faster visit status determination in upload manager (supervisor)
+  - Add OHIF viewer for supervisors and investigators
 
 
