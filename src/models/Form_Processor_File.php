@@ -51,7 +51,7 @@ abstract class Form_Processor_File extends Form_Processor {
 	/**
 	 * Store or overwirte a file, each file is defined by a Key (visit specific)
 	 */
-	protected function storeAssociatedFile($fileKey, $mime, $fileSize, $uploadedTempFile){
+	public function storeAssociatedFile($fileKey, $mime, $fileSize, $uploadedTempFile){
 
 		//If first form upload create a draft form to insert file uploaded data
 		if(empty($this->reviewObject)){
@@ -77,7 +77,7 @@ abstract class Form_Processor_File extends Form_Processor {
         $associatedFinalFile = $this->reviewObject->storeAssociatedFile($uploadedTempFile, $fileName);
         
         //Add or overide file key and write to database
-        $fileArray = $this->reviewObject->getAssociatedFile();
+        $fileArray = $this->reviewObject->getAssociatedFilePath();
 		$fileArray[$fileKey] = $associatedFinalFile;
 		$this->reviewObject->updateAssociatedFiles($fileArray);
 
@@ -94,7 +94,7 @@ abstract class Form_Processor_File extends Form_Processor {
     /**
      * Delete an associative file
      */
-	protected function deleteAssociatedFile($fileKey){
+	public function deleteAssociatedFile($fileKey){
 
         if($this->isInDeclaredKey($fileKey) &&  ! $this->reviewObject->validated){
 

@@ -37,10 +37,12 @@ if ($accessCheck && in_array($_SESSION['role'], array(User::INVESTIGATOR, User::
     }
     
     //SK ICI TRAITER LE FILE OBJECT
-    $filename=$_FILES[0]['name'];
-    $fileMime=$_FILES[0]['type'];
-    $tempFileLocation=$_FILES[0]['tmp_name'];
-    $fileSize=$_FILES[0]['size'];
+    error_log(print_r($_FILES, true));
+
+    $filename=$_FILES['files']['name'][0];
+    $fileMime=$_FILES['files']['type'][0];
+    $tempFileLocation=$_FILES['files']['tmp_name'][0];
+    $fileSize=$_FILES['files']['size'][0];
     $formProcessor->storeAssociatedFile($fileKey, $fileMime, $fileSize, $tempFileLocation);
     return json_encode((true));
 /*
