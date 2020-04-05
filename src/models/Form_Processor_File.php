@@ -51,7 +51,7 @@ abstract class Form_Processor_File extends Form_Processor {
 	/**
 	 * Store or overwirte a file, each file is defined by a Key (visit specific)
 	 */
-	public function storeAssociatedFile($fileKey, $mime, $fileSize, $uploadedTempFile){
+	public function storeAssociatedFile(string $fileKey, string $mime, int $fileSize, string $uploadedTempFile){
 
 		//If first form upload create a draft form to insert file uploaded data
 		if(empty($this->reviewObject)){
@@ -72,34 +72,34 @@ abstract class Form_Processor_File extends Form_Processor {
 
         $mimes = new \Mimey\MimeTypes;
         $extension = $mimes->getExtension($mime);
-        $fileName= $this->visitObject->patientCode.'_'.$this->visitObject->visitType.'_'.$fileKey.$extension;
+        $fileName= $this->visitObject->patientCode.'_'.$this->visitObject->visitType.'_'.$fileKey.'.'.$extension;
 
         $associatedFinalFile = $this->reviewObject->storeAssociatedFile($uploadedTempFile, $fileName);
         
         //Add or overide file key and write to database
-        $fileArray = $this->reviewObject->getAssociatedFilePath();
+        $fileArray = $this->reviewObject->associatedFiles;
 		$fileArray[$fileKey] = $associatedFinalFile;
 		$this->reviewObject->updateAssociatedFiles($fileArray);
 
     }
     
-    private function isInDeclaredKey($fileKey){
+    private function isInDeclaredKey(string $fileKey){
         return in_array($fileKey, $this->getAllowedFileKeys()) ;
     }
 
-    private function isInAllowedType($extension){
+    private function isInAllowedType(string $extension){
         return in_array($extension, $this->getAllowedType());
     }
 
     /**
      * Delete an associative file
      */
-	public function deleteAssociatedFile($fileKey){
+	public function deleteAssociatedFile(string $fileKey){
 
         if($this->isInDeclaredKey($fileKey) &&  ! $this->reviewObject->validated){
 
             $fileArray = $this->reviewObject->getAssociatedFile();
-            unlink($this->reviewObject->getAssociatedFileRootPath().'/'.$fileArray[$fileKey]);
+            unlink( $this->reviewObject->getAssociatedFilePath($fileArray[$fileKey]) );
             unset($fileArray[$fileKey]);
             $this->reviewObject->updateAssociatedFiles($fileArray);
 

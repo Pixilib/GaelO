@@ -28,6 +28,7 @@ Class Review{
     public $isAdjudication;
     public $deleted;
     public $id_review;
+    public $associatedFiles;
     
     
     public function __construct($id_review, PDO $linkpdo){
@@ -169,8 +170,8 @@ Class Review{
     /**
      * Return path where are stored the associated files
      */
-    public function getAssociatedFileRootPath() : String {
-        $path = $_SERVER['DOCUMENT_ROOT'] . '/data/upload/attached_review_file/'.$this->getParentVisitObject()->study;
+    private function getAssociatedFileRootPath() : String {
+        $path = $_SERVER['DOCUMENT_ROOT'] . '/data/upload/attached_review_file/'.$this->getParentVisitObject()->study.'/'.$this->id_review;
         return $path;
     }
 
@@ -178,7 +179,7 @@ Class Review{
     /**
      * Return file destination of an associated file
      */
-	protected function getAssociatedFilePath($fileKey) : String {
+	public function getAssociatedFilePath(string $fileKey) : String {
         $fileArray = $this->associatedFiles;
         return $this->getAssociatedFileRootPath().'/'.$fileArray[$fileKey];
 	}
