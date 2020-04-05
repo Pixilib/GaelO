@@ -231,7 +231,7 @@ Class Review{
 	        'reviewdate'=>date("Y-m-d H:i:s"),
 	        'validated'=> 0,
             'local'=>intval($local),
-            'emptyFileArray'=>json_encode( array() ),
+            'emptyFileArray'=>json_encode( array(), JSON_FORCE_OBJECT ),
 	        'adjudication'=>intval($adjudication)
 	    ));
         $idReview=$linkpdo->lastInsertId();
