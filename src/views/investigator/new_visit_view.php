@@ -168,7 +168,7 @@
     	</div>
     	<div id="reasonNotDonDiv" class="text-center" style="display:none">
 			<label class="control-label">Reason:</label>
-			<SELECT id="reasonNotDoneSelect">
+			<SELECT class="form-control" id="reasonNotDoneSelect">
 				<option value="" > Choose </option>
 				<option value="Not Performed" >Not Performed</option>
 				<option value="Image Lost" >Image Lost</option>
