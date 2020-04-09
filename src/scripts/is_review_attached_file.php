@@ -20,35 +20,25 @@ $linkpdo=Session::getLinkpdo();
 
 $userObject=new User($_SESSION['username'], $linkpdo);
 
-$idVisit=$_POST['id_visit'];
+$visitId=$_POST['id_visit'];
 $fileKey=$_POST['file_key'];
 $local = $_SESSION['role'] == User::INVESTIGATOR ? true : false ; 
 
 //Need to retrieve study before testing permission, can't test visit permissions directly because permission class tests non deleted status
-$visitObject=new Visit($idVisit, $linkpdo);
+$visitObject=new Visit($visitId, $linkpdo);
 $accessCheck=$userObject->isRoleAllowed($visitObject->study, $_SESSION['role']);
 
 if ($accessCheck && in_array($_SESSION['role'], array(User::INVESTIGATOR, User::REVIEWER)) ) {
 
-    $reviewObject = $visitObject->queryExistingReviewForReviewer($_SESSION['username']);
-    $filePath = $reviewObject->getAssociatedFilePath($fileKey);
-    
-    header('Content-type: application/octet-stream; charset=utf-8' );
-    header("Content-Transfer-Encoding: Binary");
-    header("Cache-Control: no-cache");
-    header("Content-Length: ".filesize($filePath));
-    header('Content-Disposition: attachment; filename="'.basename($filePath).'"');
-    $file = @fopen($filePath,"rb");
-    if($file){
-        while(!feof($file))
-        {
-            print(@fread($file, 1024*1024));
-            flush();
-        }
-        fclose($file);
-    }else{
-        throw new Exception("Can't Find Attached File");
+    try{
+        $reviewObject =  $visitObject->queryExistingReviewForReviewer($_SESSION['username']);
+        $filePath = $reviewObject->getAssociatedFilePath($fileKey);
+        $answer = is_file($filePath);
+    }catch(Exception $e){
+        $answer = false;
     }
+
+    echo(json_encode($answer));
 
 } else {
     header('HTTP/1.0 403 Forbidden');
