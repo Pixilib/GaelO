@@ -49,7 +49,7 @@ Class Review{
         $this->deleted=$reviewData['deleted'];
         $this->isAdjudication=$reviewData['is_adjudication'];
         //Store associated file as a php array
-        $this->associatedFiles = json_decode($reviewData['sent_files']);
+        $this->associatedFiles = json_decode($reviewData['sent_files'], true);
        
         
     }
@@ -159,7 +159,7 @@ Class Review{
         $result = move_uploaded_file($temporaryFile, $path.'/'.$finalFilename);
         
         if($result){
-            return $path.'/'.$finalFilename;
+            return $finalFilename;
         }else{
             throw New Exception('Error writing associated File');
         }
@@ -181,6 +181,7 @@ Class Review{
      */
 	public function getAssociatedFilePath(string $fileKey) : String {
         $fileArray = $this->associatedFiles;
+        error_log($this->getAssociatedFileRootPath().'/'.$fileArray[$fileKey]);
         return $this->getAssociatedFileRootPath().'/'.$fileArray[$fileKey];
 	}
 

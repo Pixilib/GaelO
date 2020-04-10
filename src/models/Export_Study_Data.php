@@ -189,7 +189,7 @@ class Export_Study_Data
                 $csv = [];
 
                 //Export Reviews
-                $genericHeader = array('ID Visit', 'ID review', 'Reviewer', 'Review Date', 'Validated', 'Local Form', 'Adjudcation_form', 'Review Deleted');
+                $genericHeader = array('Patient Code','ID Visit', 'ID review', 'Reviewer', 'Review Date', 'Validated', 'Local Form', 'Adjudcation_form', 'Review Deleted');
 
                 $visitTypeObject = $groupObject->getVisitType($visitType);
                 $specificFormTable = $visitTypeObject->getSpecificFormColumn();
@@ -238,7 +238,9 @@ class Export_Study_Data
 
         $csv = [];
         foreach ($reviewObjects as $reviewObject) {
-            $csv[] = $this->getReviewDatas($reviewObject);
+            $patientCode = $visitObject->patientCode;
+            $reviewData = $this->getReviewDatas($reviewObject);
+            $csv[] = [$patientCode, ...$reviewData];
         }
 
         return $csv;

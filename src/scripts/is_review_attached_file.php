@@ -31,10 +31,12 @@ $accessCheck=$userObject->isRoleAllowed($visitObject->study, $_SESSION['role']);
 if ($accessCheck && in_array($_SESSION['role'], array(User::INVESTIGATOR, User::REVIEWER)) ) {
 
     try{
-        $reviewObject =  $visitObject->queryExistingReviewForReviewer($_SESSION['username']);
+        if($_SESSION['role'] == User::INVESTIGATOR) $reviewObject = $visitObject->getReviewsObject(true);
+        else $reviewObject =  $visitObject->queryExistingReviewForReviewer($_SESSION['username']);
         $filePath = $reviewObject->getAssociatedFilePath($fileKey);
         $answer = is_file($filePath);
     }catch(Exception $e){
+        error_log("no review");
         $answer = false;
     }
 
