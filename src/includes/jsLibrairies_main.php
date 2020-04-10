@@ -150,3 +150,6 @@
 <link rel="stylesheet" href="assets/css/gaelO-static.css">
 <link rel="stylesheet" href="assets/css/gaelO-fonts.css">
 <link rel="stylesheet" href="assets/css/gaelO.css">
+
+<script type="text/javascript" src="assets/javascripts/PetCtCSVParser.js" ></script>
+<script type="text/javascript" src="assets/javascripts/uppyCsvPlugin.js" ></script>

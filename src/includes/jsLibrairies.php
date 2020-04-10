@@ -150,3 +150,6 @@
 <link rel="preload" as="style" href="assets/css/dicomupload.css?version=<?= $uploaderVersion?>" type="text/css" >
 
 <script type="text/javascript" src="assets/javascripts/gaelO-chart.js?version=<?= $uploaderVersion?>" defer></script>
+
+<script type="text/javascript" src="assets/javascripts/PetCtCSVParser.js" ></script>
+<script type="text/javascript" src="assets/javascripts/uppyCsvPlugin.js" ></script>
