@@ -117,6 +117,11 @@
 <script type="text/javascript"
 	src='https://unpkg.com/simple-statistics@7.0.2/dist/simple-statistics.min.js' ></script>
 
+
+<!-- Uppy -->
+<link href="https://transloadit.edgly.net/releases/uppy/v1.12.1/uppy.min.css" rel="stylesheet">
+<script src="https://transloadit.edgly.net/releases/uppy/v1.12.1/uppy.min.js"></script>
+
 <?php $uploaderVersion="2.5"?>
 <!-- JavaScript  CustomJS/CSS -->
 <script type="text/javascript" src="assets/javascripts/dicomupload/_browserSupport.js?version=<?= $uploaderVersion?>" ></script>
