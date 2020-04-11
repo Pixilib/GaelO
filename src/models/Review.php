@@ -183,7 +183,20 @@ Class Review{
         $fileArray = $this->associatedFiles;
         error_log($this->getAssociatedFileRootPath().'/'.$fileArray[$fileKey]);
         return $this->getAssociatedFileRootPath().'/'.$fileArray[$fileKey];
-	}
+    }
+    
+    public function deleteAssociatedFile($fileKey) {
+
+        if(! $this->validated){
+            unlink( $this->getAssociatedFilePath($fileKey) );
+            unset($this->associatedFiles[$fileKey]);
+            $this->updateAssociatedFiles($this->associatedFiles);
+
+        }else{
+            throw new Exception('Unavailable Key or validated Review, can\'t remove file');
+        }
+
+    }
 
     /**
      * In case of failure of writing specific form.

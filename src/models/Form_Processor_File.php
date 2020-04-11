@@ -91,23 +91,5 @@ abstract class Form_Processor_File extends Form_Processor {
         return in_array($extension, $this->getAllowedType());
     }
 
-    /**
-     * Delete an associative file
-     */
-	public function deleteAssociatedFile(string $fileKey){
-
-        if($this->isInDeclaredKey($fileKey) &&  ! $this->reviewObject->validated){
-
-            $fileArray = $this->reviewObject->getAssociatedFile();
-            unlink( $this->reviewObject->getAssociatedFilePath($fileArray[$fileKey]) );
-            unset($fileArray[$fileKey]);
-            $this->reviewObject->updateAssociatedFiles($fileArray);
-
-        }else{
-            throw new Exception('Unavailable Key or validated Review, can\'t remove file');
-        }
-
-	}
-
 
 }
