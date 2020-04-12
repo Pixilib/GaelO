@@ -20,7 +20,7 @@
  */
 class Dicom_Web_Access {
 
-    private $isStudyRequested;
+    private $isStudyMetadataRequested;
     private $isSerieRequested;
     private $requestedURI;
     private $userObject;
@@ -33,8 +33,8 @@ class Dicom_Web_Access {
         $this->userRole=$userRole;
         $this->linkpdo=$linkpdo;
         
-        if(strpos($requestedURI, "/series/")!== false) $this->isSerieRequested=true;
-        else if(strpos($requestedURI, "/studies/") !==false) $this->isStudyRequested=true;
+        if( $this->endsWith($requestedURI, "/series") ) $this->isStudyMetadataRequested=true; 
+        else $this->isSerieRequested=true;
         
     }
     
@@ -56,7 +56,7 @@ class Dicom_Web_Access {
      */
     private function getUID(){
         if($this->isSerieRequested) $level="series";
-        else if($this->isStudyRequested) $level="studies";
+        else if($this->isStudyMetadataRequested) $level="studies";
         $studySubString=strstr($this->requestedURI, "/".$level."/");
         $studySubString=str_replace("/".$level."/", "", $studySubString);
         $endStudyUIDPosition=strpos($studySubString, "/");
@@ -73,10 +73,12 @@ class Dicom_Web_Access {
        
         if($this->isSerieRequested) {
             $seriesObject=Series_Details::getSerieObjectByUID($uid, $this->linkpdo);
+            if($this->userRole != User::SUPERVISOR && $seriesObject->deleted) throw new Exception('Deleted Series');
             $studyObject=$seriesObject->studyDetailsObject;
             
-        } else if($this->isStudyRequested) {
+        } else if($this->isStudyMetadataRequested) {
             $studyObject=Study_Details::getStudyObjectByUID($uid, $this->linkpdo);
+            if($this->userRole != User::SUPERVISOR && $studyObject->deleted) throw new Exception('Deleted Study');
         }
         
         return $studyObject->idVisit;
@@ -93,21 +95,27 @@ class Dicom_Web_Access {
         $visitObject=new Visit($id_visit, $this->linkpdo);
         
         //Check Visit Availability of the calling user
-        if($this->userRole == user::REVIEWER) {
+        if($this->userRole == User::REVIEWER || ($this->userRole == User::INVESTIGATOR && $visitObject->uploadStatus==Visit::DONE) ) {
             //Check that visit is in patient that is still awaiting for some reviews
             $visitCheck=$this->userObject->isVisitAllowed($id_visit, $this->userRole);
-        }else if($this->userRole == user::CONTROLLER){
+        }else if($this->userRole == User::CONTROLLER){
             //Check that QC status still require an action from Controller
             if(in_array($visitObject->stateQualityControl, array(Visit::QC_WAIT_DEFINITVE_CONCLUSION, Visit::QC_NOT_DONE)) ){
                 $visitCheck=$this->userObject->isVisitAllowed($id_visit, $this->userRole);
             }
-        }else{
+        }else if($this->userRole == User::SUPERVISOR){
+            $visitCheck=$this->userObject->isVisitAllowed($id_visit, $this->userRole);
+        }else {
             //Other roles can't have access to images
             $visitCheck=false;
         }
         
         return $visitCheck;
         
+    }
+
+    private function endsWith($haystack, $needle) {
+        return substr_compare($haystack, $needle, -strlen($needle)) === 0;
     }
 
 }

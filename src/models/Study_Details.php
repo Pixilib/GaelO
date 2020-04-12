@@ -42,7 +42,7 @@ Class Study_Details{
     public static function getStudyObjectByUID(string $studyUID, PDO $linkpdo){
         
         $studyQuery = $linkpdo->prepare ( 'SELECT study_orthanc_id FROM orthanc_studies
-                                                WHERE study_uid=:studyUID and deleted=0' );
+                                                WHERE study_uid=:studyUID' );
         
         $studyQuery->execute(array(
             "studyUID" => $studyUID

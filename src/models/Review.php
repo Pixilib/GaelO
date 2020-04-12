@@ -28,6 +28,7 @@ Class Review{
     public $isAdjudication;
     public $deleted;
     public $id_review;
+    public $associatedFiles;
     
     
     public function __construct($id_review, PDO $linkpdo){
@@ -48,7 +49,7 @@ Class Review{
         $this->deleted=$reviewData['deleted'];
         $this->isAdjudication=$reviewData['is_adjudication'];
         //Store associated file as a php array
-        $this->associatedFiles = json_decode($reviewData['sent_files']);
+        $this->associatedFiles = json_decode($reviewData['sent_files'], true);
        
         
     }
@@ -142,7 +143,7 @@ Class Review{
                             SET sent_files = :sent_files
                             WHERE id_review = :id_review');
     
-        $answer = $updateRequest->execute(array( 'id_review' => $this->reviewObject->id_review , 
+        $answer = $updateRequest->execute(array( 'id_review' => $this->id_review , 
                                                 'sent_files' => json_encode($fileArray) ));
 
 		return $answer;
@@ -158,7 +159,7 @@ Class Review{
         $result = move_uploaded_file($temporaryFile, $path.'/'.$finalFilename);
         
         if($result){
-            return $path.'/'.$finalFilename;
+            return $finalFilename;
         }else{
             throw New Exception('Error writing associated File');
         }
@@ -169,8 +170,8 @@ Class Review{
     /**
      * Return path where are stored the associated files
      */
-    public function getAssociatedFileRootPath() : String {
-        $path = $_SERVER['DOCUMENT_ROOT'] . '/data/upload/attached_review_file/'.$this->getParentVisitObject()->study;
+    private function getAssociatedFileRootPath() : String {
+        $path = $_SERVER['DOCUMENT_ROOT'] . '/data/upload/attached_review_file/'.$this->getParentVisitObject()->study.'/'.$this->id_review;
         return $path;
     }
 
@@ -178,10 +179,24 @@ Class Review{
     /**
      * Return file destination of an associated file
      */
-	protected function getAssociatedFilePath($fileKey) : String {
-        $fileArray = $this->reviewObject->getAssociatedFile();
+	public function getAssociatedFilePath(string $fileKey) : String {
+        $fileArray = $this->associatedFiles;
+        error_log($this->getAssociatedFileRootPath().'/'.$fileArray[$fileKey]);
         return $this->getAssociatedFileRootPath().'/'.$fileArray[$fileKey];
-	}
+    }
+    
+    public function deleteAssociatedFile($fileKey) {
+
+        if(! $this->validated){
+            unlink( $this->getAssociatedFilePath($fileKey) );
+            unset($this->associatedFiles[$fileKey]);
+            $this->updateAssociatedFiles($this->associatedFiles);
+
+        }else{
+            throw new Exception('Unavailable Key or validated Review, can\'t remove file');
+        }
+
+    }
 
     /**
      * In case of failure of writing specific form.
@@ -230,7 +245,7 @@ Class Review{
 	        'reviewdate'=>date("Y-m-d H:i:s"),
 	        'validated'=> 0,
             'local'=>intval($local),
-            'emptyFileArray'=>json_encode( array() ),
+            'emptyFileArray'=>json_encode( array(), JSON_FORCE_OBJECT ),
 	        'adjudication'=>intval($adjudication)
 	    ));
         $idReview=$linkpdo->lastInsertId();

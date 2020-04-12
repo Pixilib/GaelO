@@ -148,6 +148,12 @@
     			{ data: 'nb_instances' },
     			{ data: 'Disk_Size' },
     			{ data: 'orthancSeriesIDs' },
+				{
+					render: function ( data, type, row, meta ) {
+						return '<a href="/ohif/viewer/'+row.studyUID+'" target="_blank" ">OHIF Viewer</a>';
+					}
+				},
+				{ data: 'studyUID' },
     		],
     		"columnDefs": [
     			{ "title": "Center", "targets": 0 },
@@ -160,7 +166,9 @@
     			{ "title": "Number of Series", "targets": 7 },
     			{ "title": "Number of Instances", "targets": 8 },
     			{ "title": "Disk_Size (MB)", "targets": 9 },
-    			{ "title": "OrthancID","visible": false, "targets": 10 }
+    			{ "title": "OrthancID", "visible": false, "targets": 10 },
+				{ "title": "View", "targets": 11 },
+				{ "title": "studyUID", "visible": false, "targets": 12 },
     			
     		],
     		"bSortCellsTop": true
@@ -218,6 +226,8 @@
 				<th></th>
 				<th></th>
 				<th></th>
+				<th></th>
+				<th></th>
 			</tr>
 			<!-- Search elements -->
 			<tr>
@@ -229,6 +239,8 @@
 				<th><input type="text" placeholder="Search"  class="column_search" style="max-width:75px"/></th>
 				<th><input type="text" placeholder="Search"  class="column_search" style="max-width:75px"/></th>
    				<th></th>
+				<th></th>
+				<th></th>
 				<th></th>
 				<th></th>
 			</tr>

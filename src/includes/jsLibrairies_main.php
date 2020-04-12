@@ -117,7 +117,14 @@
 <script type="text/javascript"
 	src='https://unpkg.com/simple-statistics@7.0.2/dist/simple-statistics.min.js' ></script>
 
-<?php $uploaderVersion="2.5"?>
+
+<!-- Uppy -->
+<link href="https://transloadit.edgly.net/releases/uppy/v1.12.1/uppy.min.css" rel="stylesheet">
+<script src="https://transloadit.edgly.net/releases/uppy/v1.12.1/uppy.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.1.0/papaparse.min.js"></script>
+
+<?php $uploaderVersion="2.7"?>
 <!-- JavaScript  CustomJS/CSS -->
 <script type="text/javascript" src="assets/javascripts/dicomupload/_browserSupport.js?version=<?= $uploaderVersion?>" ></script>
 <script type="text/javascript" src="assets/javascripts/dicomupload/CheckPatientPanel.js?version=<?= $uploaderVersion?>" ></script>
@@ -143,3 +150,6 @@
 <link rel="stylesheet" href="assets/css/gaelO-static.css">
 <link rel="stylesheet" href="assets/css/gaelO-fonts.css">
 <link rel="stylesheet" href="assets/css/gaelO.css">
+
+<script type="text/javascript" src="assets/javascripts/PetCtCSVParser.js" ></script>
+<script type="text/javascript" src="assets/javascripts/uppyCsvPlugin.js" ></script>

@@ -14,4 +14,10 @@
 
 /src/vendor
 
+/src/data/upload/*/**
+!/src/data/upload/documentation/.htaccess
+!/src/data/upload/.htaccess
+!/src/data/upload/from_ftp/.htaccess
+!/src/data/upload/attached_review_file/.htaccess
+
 

@@ -51,7 +51,7 @@ abstract class Form_Processor_File extends Form_Processor {
 	/**
 	 * Store or overwirte a file, each file is defined by a Key (visit specific)
 	 */
-	protected function storeAssociatedFile($fileKey, $mime, $fileSize, $uploadedTempFile){
+	public function storeAssociatedFile(string $fileKey, string $mime, int $fileSize, string $uploadedTempFile){
 
 		//If first form upload create a draft form to insert file uploaded data
 		if(empty($this->reviewObject)){
@@ -66,48 +66,30 @@ abstract class Form_Processor_File extends Form_Processor {
 		//Get extension of file and check extension is allowed
 		//Get filesize and check it matches limits
         $sizeMb = $fileSize / 1048576 ;
-        if($sizeMb > $this->getMaxSizeMb) throw new Exception('File over limits');
+        if($sizeMb > $this->getMaxSizeMb()) throw new Exception('File over limits');
         if( ! $this->isInDeclaredKey($fileKey)) throw new Exception('Unhauthrized file key') ; 
         if( ! $this->isInAllowedType($mime) ) throw new Exception('Extension not allowed') ;
 
         $mimes = new \Mimey\MimeTypes;
         $extension = $mimes->getExtension($mime);
-        $fileName= $this->visitObject->patientCode.'_'.$this->visitObject->visitType.'_'.$fileKey.$extension;
+        $fileName= $this->visitObject->patientCode.'_'.$this->visitObject->visitType.'_'.$fileKey.'.'.$extension;
 
         $associatedFinalFile = $this->reviewObject->storeAssociatedFile($uploadedTempFile, $fileName);
         
         //Add or overide file key and write to database
-        $fileArray = $this->reviewObject->getAssociatedFile();
+        $fileArray = $this->reviewObject->associatedFiles;
 		$fileArray[$fileKey] = $associatedFinalFile;
 		$this->reviewObject->updateAssociatedFiles($fileArray);
 
     }
     
-    private function isInDeclaredKey($fileKey){
-        return in_array($fileKey, $this->getAllowedFileKeys) ;
+    private function isInDeclaredKey(string $fileKey){
+        return in_array($fileKey, $this->getAllowedFileKeys()) ;
     }
 
-    private function isInAllowedType($extension){
+    private function isInAllowedType(string $extension){
         return in_array($extension, $this->getAllowedType());
     }
-
-    /**
-     * Delete an associative file
-     */
-	protected function deleteAssociatedFile($fileKey){
-
-        if($this->isInDeclaredKey($fileKey) &&  ! $this->reviewObject->validated){
-
-            $fileArray = $this->reviewObject->getAssociatedFile();
-            unlink($this->reviewObject->getAssociatedFileRootPath().'/'.$fileArray[$fileKey]);
-            unset($fileArray[$fileKey]);
-            $this->reviewObject->updateAssociatedFiles($fileArray);
-
-        }else{
-            throw new Exception('Unavailable Key or validated Review, can\'t remove file');
-        }
-
-	}
 
 
 }

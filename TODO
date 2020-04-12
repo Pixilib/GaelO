@@ -1,19 +1,14 @@
 Fixer la version de OHIF
 Se pencher sur monitoring de Docker => Tester absence de log access
-Tester code couleur review ongoing
-Tester les filtre investigateur / controller  / reviewer
 
 Passage Visit Group : 
 => Controleur statitics a generaliser pour autres modalite
 
-
-Tests:
-Fusionner le tree et l'API get review=> A tester
+Fiji : reprendre integration
 
 + Tard : 
-Revoir Connecteur Java avec nouveau groupe visite
 Reminder Visit Upload manager a revoir
 Review reminder a revoir
 Securité access review => dissocier visit groupe en fonction du Job reviewer, pour eviter d'ouvrir toutes les visites (pas d'acces anapath si reviewer med nuc)
-Check / Auto build numero de patient  
 Objet Visit : Ne pas instancier automatiquement Visit Groupe et Visit Type, seulement quand on a besoin avec Getteur
+Options export review deleted et draft dans export

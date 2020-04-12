@@ -29,10 +29,10 @@ class study_visit extends Form_Processor {
 	 * @param $id_Review
 	 * @param $specificTable
 	 */
-	protected function saveSpecificForm($inputData, $id_review, $specificTable, $update) {
+	protected function saveSpecificForm($inputData, $id_review, $update) {
 	    // Draft exist, we update the draft
 		if ($update){
-			$req_update = $this->linkpdo->prepare('UPDATE '.$specificTable.'
+			$req_update = $this->linkpdo->prepare('UPDATE '.$this->specificTable.'
                               SET item = :value,
                                   item2 = :value2
                                 WHERE id_review = :id_review');
@@ -44,7 +44,7 @@ class study_visit extends Form_Processor {
 			
 		} else{
 			//Draft doesn't exist we create a new entry in the specific table
-			$insertion = $this->linkpdo->prepare('INSERT INTO '.$specificTable.' (id_review, item, item2)
+			$insertion = $this->linkpdo->prepare('INSERT INTO '.$this->specificTable.' (id_review, item, item2)
                                         VALUES (:id_review, :value, :value2)');
 			
 			$insertion->execute(array(

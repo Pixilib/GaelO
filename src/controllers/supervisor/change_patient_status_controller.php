@@ -65,4 +65,3 @@ if ($accessCheck && $_SESSION['role'] == User::SUPERVISOR) {
 }else {
     require 'includes/no_access.php';
 }
-?>

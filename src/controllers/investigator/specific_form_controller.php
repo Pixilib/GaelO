@@ -45,7 +45,7 @@ if($permissionResults){
             $validate=false;
         }
         try{
-            $formProcessorObject->saveForm($_POST, $validate, $linkpdo);
+            $formProcessorObject->saveForm($_POST, $validate);
             echo(json_encode(true));
         }catch(Exception $e){
             echo(json_encode(false));

@@ -63,6 +63,19 @@
 
 		});
 
+		$("#reasonNotDoneSelect").on('change', function(){
+
+			let selectedValue = $("#reasonNotDoneSelect").val()
+			if (selectedValue === 'Other'){
+				$("#reason").val('')
+				$("#reason").show()
+			}else if(selectedValue !== ''){
+				$("#reason").hide()
+				$("#reason").val(selectedValue)
+			}
+
+		})
+
     	$(".visitStatusSelect").on('change', function (){
         	if($("#Done").is(':checked')){
         		$("#dateDiv").show();
@@ -154,9 +167,16 @@
     			type="hidden">
     	</div>
     	<div id="reasonNotDonDiv" class="text-center" style="display:none">
-    		<label class="control-label">Reason:</label>
+			<label class="control-label">Reason:</label>
+			<SELECT class="form-control" id="reasonNotDoneSelect">
+				<option value="" > Choose </option>
+				<option value="Not Performed" >Not Performed</option>
+				<option value="Image Lost" >Image Lost</option>
+				<option value="Patient Withdrawn">Patient Withdrawn</option>
+				<option value="Other">Other</option>
+			</SELECT>
     		<input type="text" class="form-control" id="reason"
-    			placeholder="Reason" maxlength="255" name="reason">
+    			placeholder="Reason" maxlength="255" name="reason" style="display:none">
     	</div>
     	<input type="hidden" name="patient_num" id="patient_num"
     		value="<?=$patientCode?>" /> <input type="hidden" name="study"

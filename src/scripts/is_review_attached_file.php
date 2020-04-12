@@ -13,7 +13,6 @@
  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-header( 'content-type: application/json; charset=utf-8' );
 require_once($_SERVER['DOCUMENT_ROOT'].'/vendor/autoload.php');
 
 Session::checkSession();
@@ -21,7 +20,7 @@ $linkpdo=Session::getLinkpdo();
 
 $userObject=new User($_SESSION['username'], $linkpdo);
 
-$visitId=$_POST['visit_id'];
+$visitId=$_POST['id_visit'];
 $fileKey=$_POST['file_key'];
 $local = $_SESSION['role'] == User::INVESTIGATOR ? true : false ; 
 
@@ -30,34 +29,18 @@ $visitObject=new Visit($visitId, $linkpdo);
 $accessCheck=$userObject->isRoleAllowed($visitObject->study, $_SESSION['role']);
 
 if ($accessCheck && in_array($_SESSION['role'], array(User::INVESTIGATOR, User::REVIEWER)) ) {
-    $formProcessor = $visitObject->getFromProcessor($local, $_SESSION['username']);
 
-    if(! $formProcessor instanceof Form_Processor_File){
-        throw new Exception('Wrong From Processor type');
+    try{
+        if($_SESSION['role'] == User::INVESTIGATOR) $reviewObject = $visitObject->getReviewsObject(true);
+        else $reviewObject =  $visitObject->queryExistingReviewForReviewer($_SESSION['username']);
+        $filePath = $reviewObject->getAssociatedFilePath($fileKey);
+        $answer = is_file($filePath);
+    }catch(Exception $e){
+        error_log("no review");
+        $answer = false;
     }
-    
-    //SK ICI TRAITER LE FILE OBJECT
-    error_log(print_r($_FILES, true));
 
-    $filename=$_FILES['files']['name'][0];
-    $fileMime=$_FILES['files']['type'][0];
-    $tempFileLocation=$_FILES['files']['tmp_name'][0];
-    $fileSize=$_FILES['files']['size'][0];
-    $formProcessor->storeAssociatedFile($fileKey, $fileMime, $fileSize, $tempFileLocation);
-    return json_encode((true));
-/*
-	if ($_SERVER['REQUEST_METHOD']==='POST' && in_array($_SESSION['role'], array(User::INVESTIGATOR, User::REVIEWER)) ){
-    //Store or modify a file
-    $formProcessor->storeAssociatedFile($fileKey, )
-    }else if ($_SERVER['REQUEST_METHOD']==='DELETE' && in_array($_SESSION['role'], array(User::INVESTIGATOR, User::REVIEWER))){
-
-    }else if($_SERVER['REQUEST_METHOD']==='GET'){
-
-    }else{
-        header('HTTP/1.0 403 Forbidden');
-        die('You are not allowed to access this file.');
-    }
-*/
+    echo(json_encode($answer));
 
 } else {
     header('HTTP/1.0 403 Forbidden');
