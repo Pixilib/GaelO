@@ -35,17 +35,17 @@ if ($accessCheck && $_SESSION['role'] == User::SUPERVISOR) {
 	try {
 		$localReviewObject=$visitObject->getReviewsObject(true);
 		$data_reviews[]=$localReviewObject;
-	}catch (Exception $e) { }
+	} catch (Exception $e) { }
 
 	try {
 		$reviewsNotLocal=$visitObject->getReviewsObject(false);
 		array_push($data_reviews, ...$reviewsNotLocal);
-	}catch (Exception $e) { }
+	} catch (Exception $e) { }
 	
 	$trackerVisitResponses=Tracker::getTackerForVisit($id_visit, $linkpdo);
 	
 	require 'views/supervisor/visit_infos_view.php';
 	
-}else {
+} else {
 	require 'includes/no_access.php';
 }

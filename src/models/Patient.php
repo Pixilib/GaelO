@@ -148,7 +148,7 @@ class Patient {
 			require_once($specificObjectFile);
 			$objectName=$this->patientStudy."_Patient_Visit_Manager";
 			return new $objectName($this, $visitGroupObject, $this->linkpdo);
-		} else {
+		}else {
 			return new Patient_Visit_Manager($this, $visitGroupObject, $this->linkpdo);
 		}
 
@@ -207,7 +207,7 @@ class Patient {
 		foreach ($possiblevisitsGroups as $visitGroup) {
 			try {
 				$availableVisits=$this->getPatientVisitManager($visitGroup)->getAvailableVisitsToCreate();
-			} catch (Exception $e) {
+			}catch (Exception $e) {
 				$availableVisits=array($e->getMessage());
 			}
 

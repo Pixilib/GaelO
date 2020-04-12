@@ -39,7 +39,7 @@ if ($visitAccessCheck) {
 	header("Content-Type: application/json; charset=UTF-8");
 	echo(json_encode($answer));
 	
-}else {
+} else {
 	header('HTTP/1.0 403 Forbidden');
 }
 

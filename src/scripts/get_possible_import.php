@@ -51,7 +51,7 @@ if ($studyInvestigatorAllowed) {
 		}
 	}
     
-}else {
+} else {
 	$AvailablePatients=[];
 }
 

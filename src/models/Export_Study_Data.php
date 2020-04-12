@@ -38,7 +38,7 @@ class Export_Study_Data
 			try {
 				$modalityCreatedVisit=$this->studyObject->getStudySpecificGroupManager($visitGroup->groupModality)->getCreatedVisits();
 				array_push($this->allcreatedVisits, ...$modalityCreatedVisit);
-			} catch (Exception $e) { }
+			}catch (Exception $e) { }
 		}
 	}
 
@@ -214,12 +214,12 @@ class Export_Study_Data
 		$localReviews=[];
 		try {
 			$localReviews[]=$visitObject->getReviewsObject(true);
-		} catch (Exception $e) { }
+		}catch (Exception $e) { }
 
 		$expertReviews=[];
 		try {
 			$expertReviews=$visitObject->getReviewsObject(false);
-		} catch (Exception $e) { }
+		}catch (Exception $e) { }
 
 		//Merge all reviews in an array
 		$reviewObjects=array_merge($localReviews, $expertReviews);
@@ -314,29 +314,29 @@ class Export_Study_Data
 
 		if ($visitObject->statusDone == Visit::NOT_DONE) {
 			return 0;
-		} else if ($visitObject->uploadStatus == Visit::NOT_DONE || $visitObject->stateInvestigatorForm == Visit::NOT_DONE) {
+		}else if ($visitObject->uploadStatus == Visit::NOT_DONE || $visitObject->stateInvestigatorForm == Visit::NOT_DONE) {
 			if ($visitObject->uploadStatus == Visit::NOT_DONE && $visitObject->stateInvestigatorForm == Visit::NOT_DONE) {
 				return 1;
-			} else if ($visitObject->stateInvestigatorForm == Visit::NOT_DONE) {
+			}else if ($visitObject->stateInvestigatorForm == Visit::NOT_DONE) {
 				return 3;
-			} else if ($visitObject->uploadStatus == Visit::NOT_DONE) {
+			}else if ($visitObject->uploadStatus == Visit::NOT_DONE) {
 				return 2;
 			}
-		} else if ($visitObject->qcStatus == Visit::QC_NOT_DONE) {
+		}else if ($visitObject->qcStatus == Visit::QC_NOT_DONE) {
 			return 4;
-		} else if ($visitObject->qcStatus == Visit::QC_CORRECTIVE_ACTION_ASKED) {
+		}else if ($visitObject->qcStatus == Visit::QC_CORRECTIVE_ACTION_ASKED) {
 			return 5;
-		} else if ($visitObject->qcStatus == Visit::QC_REFUSED) {
+		}else if ($visitObject->qcStatus == Visit::QC_REFUSED) {
 			return 6;
-		} else if ($visitObject->reviewStatus == Visit::NOT_DONE) {
+		}else if ($visitObject->reviewStatus == Visit::NOT_DONE) {
 			return 7;
-		} else if ($visitObject->reviewStatus == Visit::REVIEW_ONGOING) {
+		}else if ($visitObject->reviewStatus == Visit::REVIEW_ONGOING) {
 			return 8;
-		} else if ($visitObject->reviewStatus == Visit::REVIEW_WAIT_ADJUDICATION) {
+		}else if ($visitObject->reviewStatus == Visit::REVIEW_WAIT_ADJUDICATION) {
 			return 9;
-		} else if ($visitObject->reviewStatus == Visit::REVIEW_DONE) {
+		}else if ($visitObject->reviewStatus == Visit::REVIEW_DONE) {
 			return 10;
-		} else {
+		}else {
 			//If none of these case return -1, should not happen
 			return -1;
 		}

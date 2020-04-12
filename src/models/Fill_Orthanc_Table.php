@@ -64,10 +64,10 @@ class Fill_Orthanc_Table {
 				}
 				$this->visitObject->changeUploadStatus(Visit::DONE, $this->username);
                 
-			}catch (Exception $e1) {
+			} catch (Exception $e1) {
 				throw new Exception("Error during import ".$e1->getMessage());
 			}
-		}else {
+		} else {
 			throw new Exception("Error during import Study Already Known");
 		}
 	}
@@ -267,12 +267,12 @@ class Fill_Orthanc_Table {
 			if ($dateObject !== false) {
 				$parsedDateTime=$dateObject->format('H:i:s');
 			}
-		}else if ($type == 1) {
+		} else if ($type == 1) {
 			$dateObject=DateTime::createFromFormat('Ymd', $string);
 			if ($dateObject !== false) {
 				$parsedDateTime=$dateObject->format('Y-m-d');
 			}
-		}else if ($type == 0) {
+		} else if ($type == 0) {
 			$dateObject=DateTime::createFromFormat('YmdHis', $string);
 			if ($dateObject !== false) {
 				$parsedDateTime=$dateObject->format('Y-m-d H:i:s');

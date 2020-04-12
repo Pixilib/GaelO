@@ -127,7 +127,7 @@ class Group_Visit_Manager
 				if ($visitObject->isAwaitingReviewForReviewerUser($username)) {
 					$visitObjectArray[]=$visitObject;
 				}
-			} else {
+			}else {
 				$visitObjectArray[]=$visitObject;
 			}
 		}

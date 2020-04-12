@@ -39,7 +39,7 @@
 			?>
             	$('#no_corrective_action').hide();
         	<?php
-			}else {
+			} else {
 			?>
             	$('#corrective_action').hide();
         	<?php

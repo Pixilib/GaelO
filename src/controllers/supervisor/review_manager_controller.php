@@ -49,7 +49,7 @@ if ($accessCheck && $_SESSION['role'] == User::SUPERVISOR) {
     
 	require 'views/supervisor/review_manager_view.php';
     
-}else {
+} else {
     
 	require 'includes/no_access.php';
 }
