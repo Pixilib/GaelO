@@ -30,6 +30,6 @@ if (isset($_SESSION['username'])) {
 	//Output results
 	echo(json_encode($roles));
     
-}else {
+} else {
 	echo(json_encode(array("No Access")));
 }

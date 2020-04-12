@@ -38,13 +38,13 @@ if ($visitAccessCheck) {
 		$result=$reviewObject->getSpecificData();
 		echo(json_encode($result));
 
-	}catch (Exception $e) {
+	} catch (Exception $e) {
 		error_log($e->getMessage());
 		header('HTTP/1.0 404 Not Found');
 	}
 
     
-}else {
+} else {
 	header('HTTP/1.0 403 Forbidden');
 	die('You are not allowed to access this file.'); 
     

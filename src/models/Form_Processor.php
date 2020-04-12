@@ -102,7 +102,7 @@ abstract class Form_Processor {
 		if (empty($this->reviewObject)) {
 			$this->createReview();
 			$update=false;       
-		} else {
+		}else {
 			$update=true;
 			//If already existing validated review, exit without modifying anything
 			if ($this->reviewObject->validated) {
@@ -114,7 +114,7 @@ abstract class Form_Processor {
 		//Call the child redifined save specific form to save the specific data of the form
 		try {
 			$this->saveSpecificForm($data, $this->reviewObject->id_review, $update);
-		} catch (Exception $e) {
+		}catch (Exception $e) {
 			error_log($e->getMessage());
 			if (!$update) {
 				$this->reviewObject->hardDeleteReview();
@@ -129,7 +129,7 @@ abstract class Form_Processor {
 		if ($this->local) {
 			if ($validate) {
 				$this->visitObject->changeVisitStateInvestigatorForm(Visit::LOCAL_FORM_DONE);
-			} else {
+			}else {
 				$this->visitObject->changeVisitStateInvestigatorForm(Visit::LOCAL_FORM_DRAFT);
 			}
 		}
@@ -137,7 +137,7 @@ abstract class Form_Processor {
 		//Log Activity
 		if ($this->local) {
 			$role="Investigator";
-		} else {
+		}else {
 			$role="Reviewer";
 		}
 		$actionDetails['patient_code']=$this->visitObject->patientCode;
@@ -179,7 +179,7 @@ abstract class Form_Processor {
 					->addGroupEmails($this->visitObject->study, User::SUPERVISOR);
 			$email->sendAwaitingAdjudicationMessage($this->visitObject->study, $this->visitObject->patientCode, $this->visitObject->visitType);
 
-		} else if ($reviewStatus == Visit::REVIEW_DONE) {
+		}else if ($reviewStatus == Visit::REVIEW_DONE) {
 
 			$email=new Send_Email($this->linkpdo);
 			$uploaderUserObject=new User($this->visitObject->uploaderUsername, $this->linkpdo);
@@ -201,11 +201,11 @@ abstract class Form_Processor {
 		try {
 			if ($this->local) {
 				$this->reviewObject=$this->visitObject->getReviewsObject(true);
-			} else {
+			}else {
 				$this->reviewObject=$this->visitObject->queryExistingReviewForReviewer($this->username);
 			}
 
-		} catch (Exception $e) { }
+		}catch (Exception $e) { }
 	    
 		return $this->reviewObject;
 		
@@ -234,7 +234,7 @@ abstract class Form_Processor {
 		$validatedReviewObjects=array_filter($reviewsObject, function($review) {
 			if ($review->validated) {
 				return true;
-			} else {
+			}else {
 				return false;
 			}
 		});

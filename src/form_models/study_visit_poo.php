@@ -42,7 +42,7 @@ class study_visit extends Form_Processor {
 					'value2' =>'',
 					'id_review' => $id_review ));
 			
-		}else {
+		} else {
 			//Draft doesn't exist we create a new entry in the specific table
 			$insertion=$this->linkpdo->prepare('INSERT INTO '.$this->specificTable.' (id_review, item, item2)
                                         VALUES (:id_review, :value, :value2)');
