@@ -24,7 +24,7 @@ require_once(__DIR__.'/../../vendor/autoload.php');
 use GO\Scheduler;
 
 // Create a new scheduler
-$scheduler = new Scheduler();
+$scheduler=new Scheduler();
 
 //Define action and timing
 
@@ -33,15 +33,15 @@ $scheduler = new Scheduler();
 $scheduler->run();
 
 function scheduleWorkindDays(String $scriptName, array $arugments, int $hour, int $min){
-    global $scheduler;
-    $scheduler->php(__DIR__.'/'.$scriptName, null, $arugments)->monday($hour, $min)->output('/var/log/gaelo_cron.log');
-    $scheduler->php(__DIR__.'/'.$scriptName, null, $arugments)->tuesday($hour, $min)->output('/var/log/gaelo_cron.log');
-    $scheduler->php(__DIR__.'/'.$scriptName, null, $arugments)->wednesday($hour, $min)->output('/var/log/gaelo_cron.log');
-    $scheduler->php(__DIR__.'/'.$scriptName, null, $arugments)->thursday($hour, $min)->output('/var/log/gaelo_cron.log');
-    $scheduler->php(__DIR__.'/'.$scriptName, null, $arugments)->friday($hour, $min)->output('/var/log/gaelo_cron.log');
+	global $scheduler;
+	$scheduler->php(__DIR__.'/'.$scriptName, null, $arugments)->monday($hour, $min)->output('/var/log/gaelo_cron.log');
+	$scheduler->php(__DIR__.'/'.$scriptName, null, $arugments)->tuesday($hour, $min)->output('/var/log/gaelo_cron.log');
+	$scheduler->php(__DIR__.'/'.$scriptName, null, $arugments)->wednesday($hour, $min)->output('/var/log/gaelo_cron.log');
+	$scheduler->php(__DIR__.'/'.$scriptName, null, $arugments)->thursday($hour, $min)->output('/var/log/gaelo_cron.log');
+	$scheduler->php(__DIR__.'/'.$scriptName, null, $arugments)->friday($hour, $min)->output('/var/log/gaelo_cron.log');
 }
 
 function scheduleSundays(String $scriptName, array $arugments, int $hour, int $min){
-    global $scheduler;
-    $scheduler->php(__DIR__.'/'.$scriptName, null, $arugments)->sunday($hour, $min)->output('/var/log/gaelo_cron.log');
+	global $scheduler;
+	$scheduler->php(__DIR__.'/'.$scriptName, null, $arugments)->sunday($hour, $min)->output('/var/log/gaelo_cron.log');
 }

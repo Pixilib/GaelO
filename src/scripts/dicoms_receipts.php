@@ -24,17 +24,17 @@ require_once($_SERVER['DOCUMENT_ROOT'].'/vendor/autoload.php');
 Session::checkSession();
 
 try{
-    $linkpdo = Session::getLinkpdo();
+	$linkpdo = Session::getLinkpdo();
 }catch(Exception $e){
-    //Non 200 OK response should ask Resumable to reset the chunk
-    //Usefull in case of database resolution failure
-    header('HTTP/1.0 210 No Database');
-    exit();
+	//Non 200 OK response should ask Resumable to reset the chunk
+	//Usefull in case of database resolution failure
+	header('HTTP/1.0 210 No Database');
+	exit();
 }
 
 
-$userObject = new User($_SESSION['username'], $linkpdo);
-$investigatorAccess = $userObject->isRoleAllowed($_SESSION['study'], User::INVESTIGATOR);
+$userObject=new User($_SESSION['username'], $linkpdo);
+$investigatorAccess=$userObject->isRoleAllowed($_SESSION['study'], User::INVESTIGATOR);
 
 
 if ($investigatorAccess && $_SESSION['role'] == User::INVESTIGATOR) {
@@ -43,22 +43,22 @@ if ($investigatorAccess && $_SESSION['role'] == User::INVESTIGATOR) {
 	if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 
 		if (!(isset($_GET['resumableIdentifier']) && trim($_GET['resumableIdentifier']) != '')) {
-			$_GET['resumableIdentifier'] = '';
+			$_GET['resumableIdentifier']='';
 		}
 
 		if (!(isset($_GET['resumableFilename']) && trim($_GET['resumableFilename']) != '')) {
-			$_GET['resumableFilename'] = '';
+			$_GET['resumableFilename']='';
 		}
 
 		if (!(isset($_GET['resumableChunkNumber']) && trim($_GET['resumableChunkNumber']) != '')) {
-			$_GET['resumableChunkNumber'] = '';
+			$_GET['resumableChunkNumber']='';
 		}
 
-		$tempDir = UPLOADS_TEMP_DIR . DIRECTORY_SEPARATOR . $_GET['resumableIdentifier'];
-		$chunk_file = $tempDir . DIRECTORY_SEPARATOR . $_GET['resumableFilename'] . '.part' . $_GET['resumableChunkNumber'];
+		$tempDir=UPLOADS_TEMP_DIR.DIRECTORY_SEPARATOR.$_GET['resumableIdentifier'];
+		$chunk_file=$tempDir.DIRECTORY_SEPARATOR.$_GET['resumableFilename'].'.part'.$_GET['resumableChunkNumber'];
 		if (file_exists($chunk_file)) {
 			header("HTTP/1.0 200 Ok");
-		} else {
+		}else {
 			header("HTTP/1.0 404 Not Found");
 		}
 	}
@@ -74,9 +74,9 @@ if ($investigatorAccess && $_SESSION['role'] == User::INVESTIGATOR) {
 
 			// Init the destination file as <filename.ext>.part<#chunk>
 			if (isset($_POST['resumableIdentifier']) && trim($_POST['resumableIdentifier']) != '') {
-				$tempDir = UPLOADS_TEMP_DIR . DIRECTORY_SEPARATOR . $_POST['resumableIdentifier'];
+				$tempDir=UPLOADS_TEMP_DIR.DIRECTORY_SEPARATOR.$_POST['resumableIdentifier'];
 			}
-			$dest_file = $tempDir . DIRECTORY_SEPARATOR . $_POST['resumableFilename'] . '.part' . $_POST['resumableChunkNumber'];
+			$dest_file=$tempDir.DIRECTORY_SEPARATOR.$_POST['resumableFilename'].'.part'.$_POST['resumableChunkNumber'];
 
 			// Create the temporary directory
 			if (!is_dir($tempDir)) {
@@ -91,7 +91,7 @@ if ($investigatorAccess && $_SESSION['role'] == User::INVESTIGATOR) {
 		}
 	}
 } else {
-    header('HTTP/1.0 403 Forbidden');
+	header('HTTP/1.0 403 Forbidden');
 }
 
 
@@ -101,13 +101,13 @@ if ($investigatorAccess && $_SESSION['role'] == User::INVESTIGATOR) {
 function rrmdir(string $dir)
 {
 	if (is_dir($dir)) {
-		$objects = scandir($dir);
+		$objects=scandir($dir);
 		foreach ($objects as $object) {
 			if ($object != "." && $object != "..") {
-				if (filetype($dir . "/" . $object) == "dir") {
-					rrmdir($dir . "/" . $object);
-				} else {
-					unlink($dir . "/" . $object);
+				if (filetype($dir."/".$object) == "dir") {
+					rrmdir($dir."/".$object);
+				}else {
+					unlink($dir."/".$object);
 				}
 			}
 		}
@@ -127,31 +127,31 @@ function rrmdir(string $dir)
 function createFileFromChunks(string $tempDir, string $fileName, string $totalSize, string $total_files)
 {
 	// count all the parts of this file
-	$total_files_on_server_size = 0;
-	$temp_total = 0;
+	$total_files_on_server_size=0;
+	$temp_total=0;
 	foreach (scandir($tempDir) as $file) {
-		$temp_total = $total_files_on_server_size;
-		$tempfilesize = filesize($tempDir . DIRECTORY_SEPARATOR . $file);
-		$total_files_on_server_size = $temp_total + $tempfilesize;
+		$temp_total=$total_files_on_server_size;
+		$tempfilesize=filesize($tempDir.DIRECTORY_SEPARATOR.$file);
+		$total_files_on_server_size=$temp_total+$tempfilesize;
 	}
 	// check that all the parts are present
 	// If the Size of all the chunks on the server is equal to the size of the file uploaded.
 	if ($total_files_on_server_size >= $totalSize) {
 
 		// create the final destination file 
-		$fileFullPath = $tempDir . DIRECTORY_SEPARATOR . $fileName;
-		if (($fp = fopen($fileFullPath, 'w')) !== false) {
-			for ($i = 1; $i <= $total_files; $i++) {
-				fwrite($fp, file_get_contents($tempDir . DIRECTORY_SEPARATOR . $fileName . '.part' . $i));
+		$fileFullPath=$tempDir.DIRECTORY_SEPARATOR.$fileName;
+		if (($fp=fopen($fileFullPath, 'w')) !== false) {
+			for ($i=1; $i <= $total_files; $i++) {
+				fwrite($fp, file_get_contents($tempDir.DIRECTORY_SEPARATOR.$fileName.'.part'.$i));
 			}
 			fclose($fp);
-		} else {
+		}else {
 			return false;
 		}
 
 		// Move the final destination file and delete temp directory
-		rename($fileFullPath, UPLOADS_DIR . DIRECTORY_SEPARATOR . $fileName);
+		rename($fileFullPath, UPLOADS_DIR.DIRECTORY_SEPARATOR.$fileName);
 		//rrmdir($tempDir);
-		rrmdir(UPLOADS_TEMP_DIR . DIRECTORY_SEPARATOR . $_POST['resumableIdentifier']);
+		rrmdir(UPLOADS_TEMP_DIR.DIRECTORY_SEPARATOR.$_POST['resumableIdentifier']);
 	}
 }

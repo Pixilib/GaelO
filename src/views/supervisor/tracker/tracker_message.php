@@ -33,9 +33,9 @@
         </thead>
         <tbody>
         <?php 
-        foreach ($trackerMessages as $messageEvent){
-        	$eventDetails=json_decode($messageEvent['action_details'], true);
-        ?>
+		foreach ($trackerMessages as $messageEvent){
+			$eventDetails=json_decode($messageEvent['action_details'], true);
+		?>
         	<tr>
 				<td><?=$messageEvent['date']?></td>
 				<td><?=htmlspecialchars($messageEvent['username'])?></td>
@@ -47,8 +47,8 @@
 				</td>
 			</tr>
 		<?php 
-        }
-        ?>
+		}
+		?>
         </tbody>
     </table>
 </div>

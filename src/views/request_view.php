@@ -21,7 +21,7 @@
 	<meta charset="utf-8">
 	<title>Send Request</title>
 
-	<?php include_once $_SERVER['DOCUMENT_ROOT'] . '/includes/jsLibrairies.php'; ?>
+	<?php include_once $_SERVER['DOCUMENT_ROOT'].'/includes/jsLibrairies.php'; ?>
 
 	<script type="text/javascript">
 		$(document).ready(function() {
@@ -49,7 +49,7 @@
 
 <body>
 
-	<?php require $_SERVER['DOCUMENT_ROOT'] . '/includes/header.php'; ?>
+	<?php require $_SERVER['DOCUMENT_ROOT'].'/includes/header.php'; ?>
 
 	<div id="requestConfirm" class="text-center alert alert-success" style="display: none;"></div>
 	<div class="block block-400">

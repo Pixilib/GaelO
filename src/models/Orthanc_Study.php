@@ -17,7 +17,7 @@
  * Collect study's data from Orthanc Server
  */
 
- class Orthanc_Study{
+ class Orthanc_Study {
 	public $studyOrthancID;
 	public $studyIsStable;
 	public $studyDate;
@@ -44,21 +44,21 @@
 	private $context;
 	
 	public function __construct($studyOrthancId, $url, $context){
-	    //Set http adress of orthanc
-	    if($url==null && $context==null){
-	        $linkpdo=Session::getLinkpdo();
+		//Set http adress of orthanc
+		if($url==null && $context==null){
+			$linkpdo=Session::getLinkpdo();
 	        
-	        $this->url=GAELO_ORTHANC_PACS_ADDRESS.':'.GAELO_ORTHANC_PACS_PORT;
-	    	$this->context = array(
-	    			'http' => array(
-	    			    'header'  => "Authorization: Basic " . base64_encode( GAELO_ORTHANC_PACS_LOGIN.':'.GAELO_ORTHANC_PACS_PASSWORD )
-	    			)
-	    	);
+			$this->url=GAELO_ORTHANC_PACS_ADDRESS.':'.GAELO_ORTHANC_PACS_PORT;
+			$this->context = array(
+					'http' => array(
+						'header'  => "Authorization: Basic " . base64_encode( GAELO_ORTHANC_PACS_LOGIN.':'.GAELO_ORTHANC_PACS_PASSWORD )
+					)
+			);
 	    	
-	    }else{
-	    	$this->url=$url;
-	    	$this->context = $context;	
-	    }
+		}else{
+			$this->url=$url;
+			$this->context = $context;	
+		}
 	    
 		//put current study orthanc ID in memory
 		$this->studyOrthancID=$studyOrthancId;
@@ -69,8 +69,8 @@
 	 *Get study related tags and store them in this object
 	 */
 	public function retrieveStudyData(){
-	    $context  = stream_context_create($this->context);
-	    $json = file_get_contents($this->url.'/studies/'.$this->studyOrthancID, false, $context);
+		$context  = stream_context_create($this->context);
+		$json = file_get_contents($this->url.'/studies/'.$this->studyOrthancID, false, $context);
 		//On le decode
 		$studiesJson=json_decode($json, true);
 		//On cree un object patient avec les information
@@ -79,9 +79,9 @@
 		$this->studyDescription=$studiesJson['MainDicomTags']['StudyDescription'];
 		$this->studyInstanceUID=$studiesJson['MainDicomTags']['StudyInstanceUID'];
 		$this->studyLastUpdate=$studiesJson['LastUpdate'];
-		$this->seriesInStudy= $studiesJson['Series'];
+		$this->seriesInStudy=$studiesJson['Series'];
 		$this->numberOfSeriesInStudy=sizeof($studiesJson['Series']);
-		$this->studyIsStable= $studiesJson['IsStable'];
+		$this->studyIsStable=$studiesJson['IsStable'];
 		$this->parentPatientName=$studiesJson['PatientMainDicomTags']['PatientName'];
 		$this->parentPatientID=$studiesJson['PatientMainDicomTags']['PatientID'];
 		$this->parentPartientOrthancID=$studiesJson['ParentPatient'];
@@ -96,21 +96,21 @@
 	 *Get study statistics info (size in MB, number of instances) and store them in this object
 	 */
 	private function retrieveStudyStatistics(){
-	    $context  = stream_context_create($this->context);
-	    $json = file_get_contents($this->url.'/studies/'.$this->studyOrthancID.'/statistics/', false, $context);
-	    //On le decode
-	    $statisticsJson=json_decode($json, true);
-	    $this->countInstances=$statisticsJson['CountInstances'];
-	    $this->diskSizeMb=$statisticsJson['DiskSizeMB'];
-	    $this->uncompressedSizeMb=$statisticsJson['UncompressedSizeMB'];
+		$context  = stream_context_create($this->context);
+		$json = file_get_contents($this->url.'/studies/'.$this->studyOrthancID.'/statistics/', false, $context);
+		//On le decode
+		$statisticsJson=json_decode($json, true);
+		$this->countInstances=$statisticsJson['CountInstances'];
+		$this->diskSizeMb=$statisticsJson['DiskSizeMB'];
+		$this->uncompressedSizeMb=$statisticsJson['UncompressedSizeMB'];
 	    
 	}
 	
 	/**
 	 * Create a series object with series data for each series and store them in this object
 	 */
-	private function getSeriesMainTag(){
-		foreach ($this->seriesInStudy as $seriesID){
+	private function getSeriesMainTag() {
+		foreach ($this->seriesInStudy as $seriesID) {
 			$series=new Orthanc_Serie($seriesID, $this->url, $this->context);
 			@$series->retrieveSeriesData();
 			$this->orthancSeries[]=$series;

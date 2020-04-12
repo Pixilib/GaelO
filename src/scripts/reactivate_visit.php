@@ -17,7 +17,7 @@
  * Reset a visit as activated
  */
 
-header( 'content-type: text/html; charset=utf-8' );
+header('content-type: text/html; charset=utf-8');
 require_once($_SERVER['DOCUMENT_ROOT'].'/vendor/autoload.php');
 
 Session::checkSession();
@@ -29,16 +29,16 @@ $userObject=new User($_SESSION['username'], $linkpdo);
 $visitObject=new Visit($_POST['visit_id'], $linkpdo);
 $accessCheck=$userObject->isRoleAllowed($visitObject->study, $_SESSION['role']);
 
-if ($accessCheck && $_SESSION['role'] == User::SUPERVISOR ) {
+if ($accessCheck && $_SESSION['role'] == User::SUPERVISOR) {
 	
-    $answer=$visitObject->changeDeletionStatus(false);
-    $actionDetails['visit_type']=$visitObject->visitType;
-    $actionDetails['patient_code']=$visitObject->patientCode;
-    $actionDetails['modality_visit']=$visitObject->visitGroupObject->groupModality;
-    Tracker::logActivity($_SESSION['username'], $_SESSION['role'], $visitObject->study, $visitObject->id_visit, "Reactivate Visit", $actionDetails);
+	$answer=$visitObject->changeDeletionStatus(false);
+	$actionDetails['visit_type']=$visitObject->visitType;
+	$actionDetails['patient_code']=$visitObject->patientCode;
+	$actionDetails['modality_visit']=$visitObject->visitGroupObject->groupModality;
+	Tracker::logActivity($_SESSION['username'], $_SESSION['role'], $visitObject->study, $visitObject->id_visit, "Reactivate Visit", $actionDetails);
 	//output the resulting answer
 	echo(json_encode($answer));
 
 }else {
-    echo(json_encode(false));
+	echo(json_encode(false));
 }

@@ -31,52 +31,52 @@ $linkpdo=Session::getLinkpdo();
 $userObject=new User($_SESSION['username'], $linkpdo);
 $permissionDicomWebObject=new Dicom_Web_Access($_SERVER['REQUEST_URI'], $userObject, $_SESSION['role'], $linkpdo);
 try{
-    $permissionDicomWeb=$permissionDicomWebObject->getDecision();
+	$permissionDicomWeb=$permissionDicomWebObject->getDecision();
 }catch( Exception $e){
-    header('HTTP/1.0 403 Forbidden');
-    exit();
+	header('HTTP/1.0 403 Forbidden');
+	exit();
 }
 
 
 if($permissionDicomWeb){   
-    unset($_GET['page']);
+	unset($_GET['page']);
     
-    $calledURL=GAELO_ORTHANC_PACS_ADDRESS.':'.GAELO_ORTHANC_PACS_PORT;
+	$calledURL=GAELO_ORTHANC_PACS_ADDRESS.':'.GAELO_ORTHANC_PACS_PORT;
     
-    // Create a PSR7 request based on the current browser request.
-    $request = ServerRequestFactory::fromGlobals();
+	// Create a PSR7 request based on the current browser request.
+	$request = ServerRequestFactory::fromGlobals();
     
-    $finalURI=str_replace("orthanc/", "", $_SERVER['REQUEST_URI']);
+	$finalURI=str_replace("orthanc/", "", $_SERVER['REQUEST_URI']);
     
-    $request = new Request($finalURI, 'GET', 'php://temp', array('Authorization' => "Basic " . base64_encode('dicomWeb:dicomWeb')) );
+	$request = new Request($finalURI, 'GET', 'php://temp', array('Authorization' => "Basic " . base64_encode('dicomWeb:dicomWeb')) );
     
-    // Create a guzzle client
-    $guzzle = new GuzzleHttp\Client();
+	// Create a guzzle client
+	$guzzle = new GuzzleHttp\Client();
     
-    // Create the proxy instance
-    $proxy = new Proxy(new GuzzleAdapter($guzzle));
+	// Create the proxy instance
+	$proxy = new Proxy(new GuzzleAdapter($guzzle));
     
-    // Add a response filter that removes the encoding headers.
-    $proxy->filter(new RemoveEncodingFilter());
+	// Add a response filter that removes the encoding headers.
+	$proxy->filter(new RemoveEncodingFilter());
     
-    // Forward the request and get the response.
-    $response = $proxy -> forward($request) -> filter(function ($request, $response, $next) {
-        // Manipulate the request object.
-        $serverName = $_SERVER['SERVER_NAME'];
-        $port =  $_SERVER['SERVER_PORT'];
-        $protocol = @$_SERVER['HTTPS'] == true ? 'https' : 'http';
-        //error_log('by=localhost:8080;for=localhost:8080;host='.$serverName.':'.$port.';proto='.$protocol);
-        //Set Fowarded Message to update orthanc Host server
-        $request = $request->withHeader('Forwarded', 'by=localhost:8080;for=localhost:8080;host='.$serverName.':'.$port.';proto='.$protocol);
+	// Forward the request and get the response.
+	$response = $proxy -> forward($request) -> filter(function ($request, $response, $next) {
+		// Manipulate the request object.
+		$serverName = $_SERVER['SERVER_NAME'];
+		$port =  $_SERVER['SERVER_PORT'];
+		$protocol = @$_SERVER['HTTPS'] == true ? 'https' : 'http';
+		//error_log('by=localhost:8080;for=localhost:8080;host='.$serverName.':'.$port.';proto='.$protocol);
+		//Set Fowarded Message to update orthanc Host server
+		$request = $request->withHeader('Forwarded', 'by=localhost:8080;for=localhost:8080;host='.$serverName.':'.$port.';proto='.$protocol);
 
-        $response = $next($request, $response);
+		$response = $next($request, $response);
         
 		return $response;
 	}) -> to($calledURL);
     
-    // Output response to the browser.
-    (new Narrowspark\HttpEmitter\SapiEmitter)->emit($response);
+	// Output response to the browser.
+	(new Narrowspark\HttpEmitter\SapiEmitter)->emit($response);
 
 }else{
-    header('HTTP/1.0 403 Forbidden');
+	header('HTTP/1.0 403 Forbidden');
 }

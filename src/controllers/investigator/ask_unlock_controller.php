@@ -33,26 +33,26 @@ $patientAllowed = $userObject->isVisitAllowed($id_visit, $_SESSION['role']);
 // If permission granted
 if (isset($_SESSION['username']) && $patientAllowed) {
     
-    // Post processing of form if sent
-    if (isset($_POST['validate'])) {
-        $request = $_POST['request'];
+	// Post processing of form if sent
+	if (isset($_POST['validate'])) {
+		$request = $_POST['request'];
         
-        if (!empty($request)) {
-            $emailObject = new Send_Email($linkpdo);
-            $emailObject->addGroupEmails($study, User::SUPERVISOR)->addEmail($userObject->userEmail);
-            $emailObject->sendUnlockRequestMessage($_SESSION['role'], $username, $type_visit, $patient_num, $study, $request );
+		if (!empty($request)) {
+			$emailObject = new Send_Email($linkpdo);
+			$emailObject->addGroupEmails($study, User::SUPERVISOR)->addEmail($userObject->userEmail);
+			$emailObject->sendUnlockRequestMessage($_SESSION['role'], $username, $type_visit, $patient_num, $study, $request );
             
-            $answer="Success";
-        }else{
-            $answer="Missing Reason";
-        }
+			$answer="Success";
+		}else{
+			$answer="Missing Reason";
+		}
         
-        echo(json_encode($answer));
+		echo(json_encode($answer));
         
-    } else {
-        require 'views/investigator/ask_unlock_view.php';
-    }
+	} else {
+		require 'views/investigator/ask_unlock_view.php';
+	}
     
 } else {
-    require 'includes/no_access.php';
+	require 'includes/no_access.php';
 }

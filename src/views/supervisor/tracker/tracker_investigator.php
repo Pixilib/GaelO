@@ -60,16 +60,18 @@
             </thead>
             <tbody>
             <?php 
-            foreach ($trackerData as $investigatorEvent){
-            	$eventDetails=json_decode($investigatorEvent['action_details'], true);
-            ?>
+			foreach ($trackerData as $investigatorEvent){
+				$eventDetails=json_decode($investigatorEvent['action_details'], true);
+			?>
             	<tr>
 					<td><?=$investigatorEvent['date']?></td>
 					<td><?=htmlspecialchars($investigatorEvent['username'])?></td>
-					<td><?php if($investigatorEvent['action_type']=="Create Visit") echo('<pre><code>'.json_encode($eventDetails, JSON_PRETTY_PRINT|JSON_HEX_QUOT|JSON_HEX_TAG|JSON_HEX_AMP|JSON_HEX_APOS).'</code></pre>')?></td>
+					<td><?php if($investigatorEvent['action_type']=="Create Visit") {
+	echo('<pre><code>'.json_encode($eventDetails, JSON_PRETTY_PRINT|JSON_HEX_QUOT|JSON_HEX_TAG|JSON_HEX_AMP|JSON_HEX_APOS).'</code></pre>')?></td>
 					<td><?php if($investigatorEvent['action_type']=="Upload Series") echo('<pre><code>'.json_encode($eventDetails, JSON_PRETTY_PRINT|JSON_HEX_QUOT|JSON_HEX_TAG|JSON_HEX_AMP|JSON_HEX_APOS).'</code></pre>')?></td>
 					<td><?php if($investigatorEvent['action_type']=="Save Form") {
 						$specificForm=$eventDetails['raw_data'];
+}
 						unset($eventDetails['raw_data']);
 						echo('<pre><code>'.json_encode($eventDetails, JSON_PRETTY_PRINT|JSON_HEX_QUOT|JSON_HEX_TAG|JSON_HEX_AMP|JSON_HEX_APOS).'</code></pre>');
 						?>
@@ -89,13 +91,13 @@
 						}
 						?>
 					</td>
-					<td><?php if($investigatorEvent['action_type']=="Corrective Action") echo('<pre><code>'.json_encode($eventDetails, JSON_PRETTY_PRINT|JSON_HEX_QUOT|JSON_HEX_TAG|JSON_HEX_AMP|JSON_HEX_APOS).'</code></pre>')?></td>
-					<td><?php if($investigatorEvent['action_type']=="Change Serie") echo('<pre><code>'.json_encode($eventDetails, JSON_PRETTY_PRINT|JSON_HEX_QUOT|JSON_HEX_TAG|JSON_HEX_AMP|JSON_HEX_APOS).'</code></pre>')?></td>
-					<td><?php if($investigatorEvent['action_type']=="Delete Visit") echo('<pre><code>'.json_encode($eventDetails, JSON_PRETTY_PRINT|JSON_HEX_QUOT|JSON_HEX_TAG|JSON_HEX_AMP|JSON_HEX_APOS).'</code></pre>')?></td>
+					<td><?php if ($investigatorEvent['action_type'] == "Corrective Action") echo('<pre><code>'.json_encode($eventDetails, JSON_PRETTY_PRINT|JSON_HEX_QUOT|JSON_HEX_TAG|JSON_HEX_AMP|JSON_HEX_APOS).'</code></pre>')?></td>
+					<td><?php if ($investigatorEvent['action_type'] == "Change Serie") echo('<pre><code>'.json_encode($eventDetails, JSON_PRETTY_PRINT|JSON_HEX_QUOT|JSON_HEX_TAG|JSON_HEX_AMP|JSON_HEX_APOS).'</code></pre>')?></td>
+					<td><?php if ($investigatorEvent['action_type'] == "Delete Visit") echo('<pre><code>'.json_encode($eventDetails, JSON_PRETTY_PRINT|JSON_HEX_QUOT|JSON_HEX_TAG|JSON_HEX_AMP|JSON_HEX_APOS).'</code></pre>')?></td>
 				</tr>
 			<?php 
-            }
-            ?>
+			}
+			?>
 			</tbody>
         </table>
 </div>

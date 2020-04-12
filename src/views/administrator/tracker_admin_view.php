@@ -148,43 +148,53 @@
             </thead>
             <tbody>
             <?php 
-            //Specific query because administrator log are not study defined
-            foreach ($trackerAdministrator as $administratorEvent){
-            	$eventDetails=json_decode($administratorEvent['action_details'], true);
-            ?>
+			//Specific query because administrator log are not study defined
+			foreach ($trackerAdministrator as $administratorEvent){
+				$eventDetails=json_decode($administratorEvent['action_details'], true);
+			?>
             	<tr>
 					<td><?php echo($administratorEvent['date']);?></td>
 					<td><?php echo($administratorEvent['username']);?></td>
 					<td>
 					<?php 
-					if ($administratorEvent['action_type']=="Create User") echo('<pre><code>'.json_encode($eventDetails, JSON_PRETTY_PRINT|JSON_HEX_QUOT|JSON_HEX_TAG|JSON_HEX_AMP|JSON_HEX_APOS).'</code></pre>');
+					if ($administratorEvent['action_type']=="Create User") {
+						echo('<pre><code>'.json_encode($eventDetails, JSON_PRETTY_PRINT|JSON_HEX_QUOT|JSON_HEX_TAG|JSON_HEX_AMP|JSON_HEX_APOS).'</code></pre>');
+					}
 					?>
 					</td>
 					<td>
 					<?php 
-					if ($administratorEvent['action_type']=="Edit User") echo('<pre><code>'.json_encode($eventDetails, JSON_PRETTY_PRINT|JSON_HEX_QUOT|JSON_HEX_TAG|JSON_HEX_AMP|JSON_HEX_APOS).'</code></pre>');
+					if ($administratorEvent['action_type']=="Edit User") {
+						echo('<pre><code>'.json_encode($eventDetails, JSON_PRETTY_PRINT|JSON_HEX_QUOT|JSON_HEX_TAG|JSON_HEX_AMP|JSON_HEX_APOS).'</code></pre>');
+					}
 					?>
 					</td>
 					<td> 
 					<?php 
-					if ($administratorEvent['action_type']=="Change Center") echo('<pre><code>'.json_encode($eventDetails, JSON_PRETTY_PRINT|JSON_HEX_QUOT|JSON_HEX_TAG|JSON_HEX_AMP|JSON_HEX_APOS).'</code></pre>');
+					if ($administratorEvent['action_type']=="Change Center") {
+						echo('<pre><code>'.json_encode($eventDetails, JSON_PRETTY_PRINT|JSON_HEX_QUOT|JSON_HEX_TAG|JSON_HEX_AMP|JSON_HEX_APOS).'</code></pre>');
+					}
 					?>
 					</td>
 					<td> 
 					<?php 
-					if ($administratorEvent['action_type']=="Create Study") echo('<pre><code>'.json_encode($eventDetails, JSON_PRETTY_PRINT|JSON_HEX_QUOT|JSON_HEX_TAG|JSON_HEX_AMP|JSON_HEX_APOS).'</code></pre>');
+					if ($administratorEvent['action_type']=="Create Study") {
+						echo('<pre><code>'.json_encode($eventDetails, JSON_PRETTY_PRINT|JSON_HEX_QUOT|JSON_HEX_TAG|JSON_HEX_AMP|JSON_HEX_APOS).'</code></pre>');
+					}
 					?>
 					</td>
 					<td> 
 					<?php 
-					if ($administratorEvent['action_type']=="Change Study Activation") echo('<pre><code>'.json_encode($eventDetails, JSON_PRETTY_PRINT|JSON_HEX_QUOT|JSON_HEX_TAG|JSON_HEX_AMP|JSON_HEX_APOS).'</code></pre>');
+					if ($administratorEvent['action_type']=="Change Study Activation") {
+						echo('<pre><code>'.json_encode($eventDetails, JSON_PRETTY_PRINT|JSON_HEX_QUOT|JSON_HEX_TAG|JSON_HEX_AMP|JSON_HEX_APOS).'</code></pre>');
+					}
 					?>
 					</td>
 
 				</tr>
 			<?php 
-            }
-            ?>
+			}
+			?>
             </tbody>
         </table>
     </div>

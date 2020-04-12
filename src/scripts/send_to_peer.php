@@ -17,7 +17,7 @@
  * Send the selected study to the selected users (ex : to send to reviewers)
  */
 
-header( 'content-type: text/html; charset=utf-8' );
+header('content-type: text/html; charset=utf-8');
 require_once($_SERVER['DOCUMENT_ROOT'].'/vendor/autoload.php');
 
 Session::checkSession();
@@ -28,22 +28,22 @@ $accessCheck=$userObject->isRoleAllowed($_SESSION['study'], $_SESSION['role']);
 
 if ($accessCheck && $_SESSION['role'] == User::SUPERVISOR ) {
     
-    $selectedUsers=$_POST['selectedUsers'];
+	$selectedUsers=$_POST['selectedUsers'];
 	$ids=json_decode($_POST['json']);
 	
 	$orthanc = new Orthanc();
 	foreach ($selectedUsers as $username){
-	    //For each target user add Peer in Orthanc and push an async peer request
+		//For each target user add Peer in Orthanc and push an async peer request
 		$userObject=new User($username, $linkpdo);
 		//Nb : The peer stays declared in Orthanc as removal of a peer with an async transfert will break the transfers
-	    $orthanc->addPeer($username, $userObject->orthancAddress, $userObject->orthancLogin, $userObject->orthancPassword);
-	    $jobAnswer["answer"]=json_decode($orthanc->sendToPeerAsyncWithAccelerator($username, $ids, false));
-	    $jobAnswer["username"]=$username;
-	    $results[]=$jobAnswer;
+		$orthanc->addPeer($username, $userObject->orthancAddress, $userObject->orthancLogin, $userObject->orthancPassword);
+		$jobAnswer["answer"]=json_decode($orthanc->sendToPeerAsyncWithAccelerator($username, $ids, false));
+		$jobAnswer["username"]=$username;
+		$results[]=$jobAnswer;
 	}
 	
 	echo(json_encode($results));
 	
 }else{
-    echo(json_encode(false));
+	echo(json_encode(false));
 }

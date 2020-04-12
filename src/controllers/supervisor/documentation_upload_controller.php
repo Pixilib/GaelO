@@ -24,14 +24,14 @@ $userObject=new User($_SESSION['username'], $linkpdo);
 $accessCheck=$userObject->isRoleAllowed($_SESSION['study'], $_SESSION['role']);
 
 if ($accessCheck && $_SESSION['role'] == User::SUPERVISOR) {
-    $version=$_POST['version'];
+	$version=$_POST['version'];
 
-    $uploadDirectoryDestination = ($_SERVER['DOCUMENT_ROOT']."/data/upload/documentation/".$_SESSION['study']."/");
-    if (!is_dir($uploadDirectoryDestination)) {
-        mkdir( $uploadDirectoryDestination , 0755, true );
-    }
+	$uploadDirectoryDestination = ($_SERVER['DOCUMENT_ROOT']."/data/upload/documentation/".$_SESSION['study']."/");
+	if (!is_dir($uploadDirectoryDestination)) {
+		mkdir( $uploadDirectoryDestination , 0755, true );
+	}
     
-    //Get the filename and Add "_version" before extension to get unique name
+	//Get the filename and Add "_version" before extension to get unique name
 	$uploadedFilename = basename($_FILES['documentationfile']['name']);
 	
 	$uploadedSize = $_FILES['documentationfile']['size'];
@@ -63,14 +63,14 @@ if ($accessCheck && $_SESSION['role'] == User::SUPERVISOR) {
             header('Location: /index.php');
             exit;
 		//if error when moving file.
-		} else {
+		}else {
 		    echo 'Failed ! Err'.$_FILES['documentationfile']["error"];
 		}
-	} else {
+	}else {
 		echo $erreur;
 	}
 
-}else {
+} else {
     require 'includes/no_access.php';
 }
 
@@ -82,26 +82,26 @@ function getMaximumFileUploadSize()
 function convertPHPSizeToBytes($sSize)
 {
     //
-    $sSuffix = strtoupper(substr($sSize, -1));
-    if (!in_array($sSuffix,array('P','T','G','M','K'))){
+    $sSuffix=strtoupper(substr($sSize, -1));
+    if (!in_array($sSuffix, array('P', 'T', 'G', 'M', 'K'))) {
         return (int)$sSize;
     }
-    $iValue = substr($sSize, 0, -1);
+    $iValue=substr($sSize, 0, -1);
     switch ($sSuffix) {
         case 'P':
-            $iValue *= 1024;
+            $iValue*=1024;
             // Fallthrough intended
         case 'T':
-            $iValue *= 1024;
+            $iValue*=1024;
             // Fallthrough intended
         case 'G':
-            $iValue *= 1024;
+            $iValue*=1024;
             // Fallthrough intended
         case 'M':
-            $iValue *= 1024;
+            $iValue*=1024;
             // Fallthrough intended
         case 'K':
-            $iValue *= 1024;
+            $iValue*=1024;
             break;
     }
     return (int)$iValue;

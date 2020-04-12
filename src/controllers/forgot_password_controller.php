@@ -19,19 +19,19 @@
 
 $linkpdo=Session::getLinkpdo();
 //Processing form if sent
-if (isset($_POST['send'])){
+if (isset($_POST['send'])) {
 	
 	$username=$_POST['username'];
-	$email = $_POST['email'];
+	$email=$_POST['email'];
 	
 	$userObject=new User($username, $linkpdo);
 	
 	//If matching email (case insensitive comparison)
-	if(strcasecmp($userObject->userEmail, $email) == 0){
+	if (strcasecmp($userObject->userEmail, $email) == 0) {
 	    
-		if($userObject->userStatus == User::ACTIVATED || $userObject->userStatus== User::UNCONFIRMED || $userObject->userStatus== User::BLOCKED ){
+		if ($userObject->userStatus == User::ACTIVATED || $userObject->userStatus == User::UNCONFIRMED || $userObject->userStatus == User::BLOCKED) {
 	        
-		$new_mdp = substr(uniqid(), 1,10);
+		$new_mdp=substr(uniqid(), 1, 10);
 		$userObject->setUnconfirmedAccount($new_mdp);
 		
 		//Log reset password event
@@ -40,14 +40,14 @@ if (isset($_POST['send'])){
 		// Send Email
 		$sendEmail=new Send_Email($linkpdo);
 		$sendEmail->addEmail($email);
-		$sendEmail->sendNewPasswordEmail($username,$new_mdp);
+		$sendEmail->sendNewPasswordEmail($username, $new_mdp);
 		
 		$answer="Success";
 
-	   } else {
+	   }else {
 		
 		//Get studies associated with account
-        $linkedStudy=$userObject->getAllStudiesWithRole();
+		$linkedStudy=$userObject->getAllStudiesWithRole();
 		
 		$sendEmail=new Send_Email($linkpdo);
 		$sendEmail->addAminEmails()->addEmail($email);
@@ -58,12 +58,12 @@ if (isset($_POST['send'])){
 	   }
 	   
 	} else {
-	    $answer="Unknown";
-    }
+		$answer="Unknown";
+	}
     
-    echo(json_encode($answer));
+	echo(json_encode($answer));
     
 //not data sent, form display
 } else{
-    require 'views/forgot_password_view.php';
+	require 'views/forgot_password_view.php';
 }

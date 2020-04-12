@@ -17,7 +17,7 @@
  * Import patient in study (import data from Json structured file)
  */
 
-class Import_Patient{
+class Import_Patient {
 
 	private $originalJson;
 	private $linkpdo;
@@ -27,9 +27,9 @@ class Import_Patient{
 	private $studyObject;
 	
 	public function __construct($originalJson, $study, $linkpdo){
-	    $this->linkpdo= $linkpdo;
+		$this->linkpdo= $linkpdo;
 		//Store the JSON file and the target study
-	    $this->originalJson=$originalJson;
+		$this->originalJson=$originalJson;
 		$this->study = $study;
 		$this->studyObject = new Study($study, $linkpdo);
 	}
@@ -37,17 +37,17 @@ class Import_Patient{
 	public function readJson(){
 		$jsonImport=json_decode($this->originalJson, true);
 		
-        //For each patient from the array list
+		//For each patient from the array list
 		foreach ($jsonImport as $patient){
 			//Get patient info
-		    $patientNumber=$patient['patientNumber'];
-		    $patientLastName=$patient['lastName'];
-		    $patientFirstName=$patient['firstName'];
-		    $patientGender=$patient['gender'];
-		    $patientInvestigatorNumCenter=$patient['investigatorNumCenter'];
-		    $patientDateOfBirth=$patient['dateOfBirth'];
-		    $patientInvestigatorName=$patient['investigatorName'];
-		    $patientRegistrationDate= $this->parseRegistrationDate($patient['registrationDate']);
+			$patientNumber=$patient['patientNumber'];
+			$patientLastName=$patient['lastName'];
+			$patientFirstName=$patient['firstName'];
+			$patientGender=$patient['gender'];
+			$patientInvestigatorNumCenter=$patient['investigatorNumCenter'];
+			$patientDateOfBirth=$patient['dateOfBirth'];
+			$patientInvestigatorName=$patient['investigatorName'];
+			$patientRegistrationDate= $this->parseRegistrationDate($patient['registrationDate']);
 		    
 			//Check condition before import
 			$isNewPatient=$this->isNewPatient($patientNumber);
@@ -61,8 +61,7 @@ class Import_Patient{
 			    if(GAELO_DATE_FORMAT=='m.d.Y'){
 			    	$birthDay=intval($birthDateArray[1]);
 			    	$birthMonth=intval($birthDateArray[0]);
-			    }
-			    else if(GAELO_DATE_FORMAT=='d.m.Y'){
+			    } else if(GAELO_DATE_FORMAT=='d.m.Y'){
 			    	$birthDay=intval($birthDateArray[0]);
 			    	$birthMonth=intval($birthDateArray[1]);
 			    }
@@ -74,8 +73,7 @@ class Import_Patient{
 				//Store the patient result import process in this object
 				if ($insertddb){
 						$this->sucessList[] = $patientNumber;
-				}
-				else{
+				} else{
 					$patientFailed['PatientNumber']=$patientNumber;
 					$patientFailed['Reason']="Can't write to DB, wrong date or other wrong input";
 					$this->failList[]=$patientFailed;
@@ -87,8 +85,7 @@ class Import_Patient{
 				if(!$isExistingCenter) {
 				    if( empty($patientInvestigatorNumCenter) ){
 				        $this->failList['Missing Num Center'][]=$patientNumber;
-				    }
-				    else {
+				    } else {
 				        $this->failList['Unknown Center'][]=$patientNumber;
 				    }
 
@@ -122,8 +119,7 @@ class Import_Patient{
 	    if(GAELO_DATE_FORMAT=='m.d.Y'){
 	        $registrationDay=intval($dateNbArray[1]);
 	        $registrationMonth=intval($dateNbArray[0]);
-	    }
-	    else if(GAELO_DATE_FORMAT=='d.m.Y'){
+	    } else if(GAELO_DATE_FORMAT=='d.m.Y'){
 	        $registrationDay=intval($dateNbArray[0]);
 	        $registrationMonth=intval($dateNbArray[1]);
 	    }
@@ -153,7 +149,7 @@ class Import_Patient{
 	private function isNewPatient($patientCode){
 	    try{
 	        new Patient($patientCode, $this->linkpdo);
-	    }catch(Exception $e1){
+	    } catch(Exception $e1){
 	        return true;
 	    }
 	    
@@ -165,30 +161,30 @@ class Import_Patient{
 	 * @param $patientNumber
 	 * @return boolean
 	 */
-	private function isCorrectPatientNumberLenght($patientNumber){
+	private function isCorrectPatientNumberLenght($patientNumber) {
 		$lenghtImport=strlen($patientNumber);
 		
-		if($lenghtImport == GAELO_PATIENT_CODE_LENGHT){
+		if ($lenghtImport == GAELO_PATIENT_CODE_LENGHT) {
 			return true;
-		} else{
+		}else {
 			return false;
 		}
 	}
 
-	private function isCorrectPrefix($patientNumber){
+	private function isCorrectPrefix($patientNumber) {
 		//If no prefix return true
-		if(empty($this->studyObject->patientCodePrefix)){
+		if (empty($this->studyObject->patientCodePrefix)) {
 			return true;
 		}
 		//test that patient code start with study prefix
-		$patientNumberString = strval($patientNumber);
-		$studyPrefixString = strval($this->studyObject->patientCodePrefix);
-		return $this->startsWith( $patientNumberString, $studyPrefixString );
+		$patientNumberString=strval($patientNumber);
+		$studyPrefixString=strval($this->studyObject->patientCodePrefix);
+		return $this->startsWith($patientNumberString, $studyPrefixString);
 
 	}
 
-	private function startsWith (string $string, string $startString) { 
-		$len = strlen($startString); 
+	private function startsWith(string $string, string $startString) { 
+		$len=strlen($startString); 
 		return (substr($string, 0, $len) === $startString); 
 	} 
 
@@ -198,11 +194,13 @@ class Import_Patient{
      * @return boolean
      */
 	private function isExistingCenter($patientNumCenter){
-	    if(is_null($patientNumCenter) || strlen($patientNumCenter)==0) return false;
+	    if(is_null($patientNumCenter) || strlen($patientNumCenter)==0) {
+	    	return false;
+	    }
 	    
 	    try{
 	        new Center($this->linkpdo, $patientNumCenter);
-	    }catch(Exception $e1){
+	    } catch(Exception $e1){
 	        return false;
 	    }
 	    
@@ -223,7 +221,7 @@ class Import_Patient{
 	 * @return boolean
 	 */
 	private function addPatientToDatabase($patientNumber, string $patientLastName, string $patientFirstName, string $patientGender
-	    , $patientInvestigatorNumCenter, $dateRegistration, $patientBirthDay, $patientBirthMonth, $patientBirthYear, string $patientInvestigatorName){
+		, $patientInvestigatorNumCenter, $dateRegistration, $patientBirthDay, $patientBirthMonth, $patientBirthYear, string $patientInvestigatorName){
 		
 		try {
 			$insert_bdd = $this->linkpdo->prepare('INSERT INTO patients(study, code, first_name, last_name, gender, birth_day, birth_month, birth_year, registration_date, investigator_name, center)
@@ -232,7 +230,7 @@ class Import_Patient{
 			$insert_bdd->execute(array('code' => $patientNumber,
 													'first_name' => @strtoupper($patientFirstName[0]),
 													'last_name' => @strtoupper($patientLastName[0]),
-                                                    'gender' => @strtoupper($patientGender[0]),
+													'gender' => @strtoupper($patientGender[0]),
 													'birth_day' => $patientBirthDay,
 													'birth_month' => $patientBirthMonth,
 													'birth_year' => $patientBirthYear,
@@ -242,7 +240,7 @@ class Import_Patient{
 													'study' => $this->study));
 			$success=true;
 		} catch (Exception $e) {
-		    $success=false;
+			$success=false;
 			error_log($e);
 		}
 
@@ -251,13 +249,13 @@ class Import_Patient{
 	}
 	
 	public function getHTMLImportAnswer(){
-	    return $this->buildSuccessAnswer().$this->buildErrorAnswer();
+		return $this->buildSuccessAnswer().$this->buildErrorAnswer();
 	}
 	
 	public function getTextImportAnswer(){
-	    //Prepare Html2PlainText for email validity (both version to enhance spam validation)
-	    $htmlMessageObject = new \Html2Text\Html2Text($this->getHTMLImportAnswer());
-	    return $htmlMessageObject->getText();
+		//Prepare Html2PlainText for email validity (both version to enhance spam validation)
+		$htmlMessageObject = new \Html2Text\Html2Text($this->getHTMLImportAnswer());
+		return $htmlMessageObject->getText();
 	    
 	}
 	
@@ -272,11 +270,14 @@ class Import_Patient{
 	        foreach ($this->failList as $key=>$value){
 	            if(! empty($value)){
 	                $failReport=$failReport.$key.':<br>';
-	                if(is_array($value)) $failReport=$failReport.implode('<br>',$value).'<br>';
-	                else $failReport=$failReport.$value.'<br>';
+	                if(is_array($value)) {
+	                	$failReport=$failReport.implode('<br>',$value).'<br>';
+	                } else {
+	                	$failReport=$failReport.$value.'<br>';
+	                }
 	            }
 	        }
-	    }else{
+	    } else{
 	        $failReport=$failReport.' None <br>' ;
 	    }
 	    
@@ -288,18 +289,18 @@ class Import_Patient{
 	 * @return string
 	 */
 	private function buildSuccessAnswer(){
-	    //List of succeded patients
-	    $successReport='Success Patients: <br>';
-	    if ( !empty($this->sucessList) ){
-	        foreach ($this->sucessList as $value) {
-	            $success=$value;
-	            $successReport=$successReport.$success.'<br>';
-	        }
-	    } else {
-	        $successReport=$successReport.' None <br>';
-	    }
+		//List of succeded patients
+		$successReport='Success Patients: <br>';
+		if ( !empty($this->sucessList) ){
+			foreach ($this->sucessList as $value) {
+				$success=$value;
+				$successReport=$successReport.$success.'<br>';
+			}
+		} else {
+			$successReport=$successReport.' None <br>';
+		}
 	    
-	    return $successReport;
+		return $successReport;
 	}
 
 }

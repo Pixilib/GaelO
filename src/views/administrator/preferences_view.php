@@ -54,16 +54,16 @@
 		    <label for="patientCodeLenght">Patient Code Lenght (max=18)</label><input name="patientCodeLenght" type="number" max="18" value="<?=GAELO_PATIENT_CODE_LENGHT?>"><br>
 		    <label for="parseDateImport">Parse Date Import : </label>
 		    	<label>MM/DD/YYY</label>
-		    	<input name="parseDateImport" type="radio" maxlength="10" value="m.d.Y" <?php if (GAELO_DATE_FORMAT=="m.d.Y") echo("checked")?>>
+		    	<input name="parseDateImport" type="radio" maxlength="10" value="m.d.Y" <?php if (GAELO_DATE_FORMAT == "m.d.Y") echo("checked")?>>
 		    	<label>DD/MM/YYY</label>
-		    	<input name="parseDateImport" type="radio" maxlength="10" value="d.m.Y" <?php if (GAELO_DATE_FORMAT=="d.m.Y") echo("checked")?>>
+		    	<input name="parseDateImport" type="radio" maxlength="10" value="d.m.Y" <?php if (GAELO_DATE_FORMAT == "d.m.Y") echo("checked")?>>
 		    	<br>
 		    	
 			<label for="parseCountryName">Parse Country Name : </label>
 	    	<label>US</label>
-	    	<input name="parseCountryName" type="radio" value="US" <?php if (GAELO_COUNTRY_LANGUAGE=="US") echo("checked")?>>
+	    	<input name="parseCountryName" type="radio" value="US" <?php if (GAELO_COUNTRY_LANGUAGE == "US") echo("checked")?>>
 	    	<label>FR</label>
-	    	<input name="parseCountryName" type="radio" value="FR" <?php if (GAELO_COUNTRY_LANGUAGE=="FR") echo("checked")?>>
+	    	<input name="parseCountryName" type="radio" value="FR" <?php if (GAELO_COUNTRY_LANGUAGE == "FR") echo("checked")?>>
 	    	<br>
 		   
 		   	<label for="orthancExposedInternalAddress">Orthanc Exposed Internal Address</label><input name="orthancExposedInternalAddress" type="text" maxlength="255" value="<?=GAELO_ORTHANC_EXPOSED_INTERNAL_ADDRESS?>"><br>
@@ -83,7 +83,7 @@
 		    <label for="orthancPacsLogin">Orthanc Pacs Login</label><input name="orthancPacsLogin" type="text" maxlength="255" value="<?=GAELO_ORTHANC_PACS_LOGIN?>"><br>	    
 		    <label for="orthancPacsPassword">Orthanc Pacs Password</label><input name="orthancPacsPassword" type="password" maxlength="255" value="<?=GAELO_ORTHANC_PACS_PASSWORD?>"><br>
 		    
-			<label for="orthancPacsPassword">Use SMTP</label><input name="useSmtp" type="checkbox" value="1" <?php if(GAELO_USE_SMTP) echo('checked');?>><br>
+			<label for="orthancPacsPassword">Use SMTP</label><input name="useSmtp" type="checkbox" value="1" <?php if (GAELO_USE_SMTP) echo('checked'); ?>><br>
 		    <label for="orthancPacsPassword">SMTP Host</label><input name="smtpHost" type="text" maxlength="255" value="<?=GAELO_SMTP_HOST?>"><br>
 		    <label for="orthancPacsPassword">SMTP Port</label><input name="smtpPort" type="text" value="<?=GAELO_SMTP_PORT?>"><br>
 		    <label for="orthancPacsPassword">SMTP User</label><input name="smtpUser" type="text" maxlength="255" value="<?=GAELO_SMTP_USER?>"><br>

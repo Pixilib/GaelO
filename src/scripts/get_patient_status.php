@@ -27,19 +27,19 @@ $userObject=new User($_SESSION['username'], $linkpdo);
 $permissionsCheck=$userObject->isRoleAllowed($_SESSION['study'], User::SUPERVISOR);
 
 //If supervisor session and permission OK
-if ($_SESSION['role']==User::SUPERVISOR && $permissionsCheck) {
+if ($_SESSION['role'] == User::SUPERVISOR && $permissionsCheck) {
 
-    $modality=$_POST['modality'];
-    $visitName=$_POST['visit_type'];
+	$modality=$_POST['modality'];
+	$visitName=$_POST['visit_type'];
 
-    $studyObject=new Study($_SESSION['study'], $linkpdo);
-    $visitTypeObject=$studyObject->getSpecificGroup($modality)->getVisitType($visitName);
+	$studyObject=new Study($_SESSION['study'], $linkpdo);
+	$visitTypeObject=$studyObject->getSpecificGroup($modality)->getVisitType($visitName);
 
-    $studyVisitManager=$studyObject->getStudySpecificGroupManager($modality);
-    $patientStatus = $studyVisitManager->getPatientVisitStatusForVisitType($visitTypeObject);
+	$studyVisitManager=$studyObject->getStudySpecificGroupManager($modality);
+	$patientStatus = $studyVisitManager->getPatientVisitStatusForVisitType($visitTypeObject);
     
-    echo(json_encode($patientStatus));
+	echo(json_encode($patientStatus));
     
 }else{
-    echo(json_encode("No Access"));
+	echo(json_encode("No Access"));
 }

@@ -17,14 +17,14 @@
  * Reset the Quality control of a visit ID
  */
 
-header( 'content-type: text/html; charset=utf-8' );
+header('content-type: text/html; charset=utf-8');
 require_once($_SERVER['DOCUMENT_ROOT'].'/vendor/autoload.php');
 
 Session::checkSession();
 $linkpdo=Session::getLinkpdo();
 
-$id_visit = $_POST['id_visit'];
-$reason = $_POST['reason'];
+$id_visit=$_POST['id_visit'];
+$reason=$_POST['reason'];
 
 $userObject=new User($_SESSION['username'], $linkpdo);
 $permissionCheck=$userObject->isVisitAllowed($id_visit, User::SUPERVISOR);
@@ -32,20 +32,20 @@ $permissionCheck=$userObject->isVisitAllowed($id_visit, User::SUPERVISOR);
 $visitObject=new Visit($id_visit, $linkpdo);
 
 //If supervisor session and permission OK
-if ($_SESSION['role']==User::SUPERVISOR && $permissionCheck && $visitObject->reviewStatus == Visit::REVIEW_NOT_DONE) {
+if ($_SESSION['role'] == User::SUPERVISOR && $permissionCheck && $visitObject->reviewStatus == Visit::REVIEW_NOT_DONE) {
     
-    //Do Qc Reset
-    $visitObject->resetQC();
+	//Do Qc Reset
+	$visitObject->resetQC();
     
-    //Log activity
-    $actionDetails['type_visit']=$visitObject->visitType;
-    $actionDetails['patient_code']=$visitObject->patientCode;
-    $actionDetails['modality_visit']=$visitObject->visitGroupObject->groupModality;
-    $actionDetails['reason']=$reason;
-    Tracker::logActivity($_SESSION['username'], $_SESSION['role'], $visitObject->study, $id_visit, "Reset QC", $actionDetails);
+	//Log activity
+	$actionDetails['type_visit']=$visitObject->visitType;
+	$actionDetails['patient_code']=$visitObject->patientCode;
+	$actionDetails['modality_visit']=$visitObject->visitGroupObject->groupModality;
+	$actionDetails['reason']=$reason;
+	Tracker::logActivity($_SESSION['username'], $_SESSION['role'], $visitObject->study, $id_visit, "Reset QC", $actionDetails);
     
-    echo(json_encode(true));
+	echo(json_encode(true));
     
 } else {
-    echo(json_encode(false));
+	echo(json_encode(false));
 }

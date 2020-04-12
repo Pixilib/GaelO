@@ -19,7 +19,7 @@
  * This class is not used anymore ...
  */
 
-class Orthanc_Patient{
+class Orthanc_Patient {
 	public $patientName;
 	public $patientID;
 	public $patientSex;
@@ -32,10 +32,10 @@ class Orthanc_Patient{
 	
 	
 	public function __construct($patientOrthancID, $url, $context){
-	    //Set orthanc address
-	    $this->url=$url;
-	    $this->context = $context;
-	    //Set current patient Orthanc ID
+		//Set orthanc address
+		$this->url=$url;
+		$this->context = $context;
+		//Set current patient Orthanc ID
 		$this->patientOrthancID=$patientOrthancID;
 	}
 	
@@ -43,8 +43,8 @@ class Orthanc_Patient{
 	 * Get and store the main tags of the patient level
 	 */
 	public function retrievePatientData(){
-	    $context  = stream_context_create($this->context);
-	    $json = file_get_contents($this->url.'/patients/'.$this->patientOrthancID, false, $context);
+		$context  = stream_context_create($this->context);
+		$json = file_get_contents($this->url.'/patients/'.$this->patientOrthancID, false, $context);
 		$patientJson=json_decode($json, true);
 		//Add needed informations in this object
 		$this->patientName=$patientJson['MainDicomTags']['PatientName'];
@@ -58,8 +58,8 @@ class Orthanc_Patient{
 	/**
 	 * Retrieve data from study level
 	 */
-	public function getStudiesData(){
-		foreach ($this->studiesOrthancID as $studyID){
+	public function getStudiesData() {
+		foreach ($this->studiesOrthancID as $studyID) {
 			//Create a study object of each study
 			$study=new Orthanc_Study($studyID, $this->url, $this->context);
 			//fetch the data of the study level

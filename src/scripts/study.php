@@ -35,7 +35,7 @@ if($_SERVER['REQUEST_METHOD']==='GET'){
 
     }
 
-}else if ($_SERVER['REQUEST_METHOD']==='POST'){
+} else if ($_SERVER['REQUEST_METHOD']==='POST'){
 
     if ($_SESSION['admin']) {
 
@@ -79,10 +79,10 @@ if($_SERVER['REQUEST_METHOD']==='GET'){
                 $destinationPoo=$rootSpecificModelsFolder.DIRECTORY_SEPARATOR.$modality."_".$studyName."_".$visit['name'].'.php';
                 $destinationScript=$rootSpecificScriptFolder.DIRECTORY_SEPARATOR.$modality."_".$studyName."_".$visit['name'].'.php';
                 //Check that File doesnt exist to avoid override of existing file
-                if(! is_file($destinationPoo)){
+                if (!is_file($destinationPoo)) {
                     copy($modelPooFile, $destinationPoo);
                 }
-                if( ! is_file($destinationScript)){
+                if (!is_file($destinationScript)) {
                     copy($modelScriptFile, $destinationScript);
                 }
                 
@@ -105,6 +105,6 @@ if($_SERVER['REQUEST_METHOD']==='GET'){
     
 
 
-}else if ($_SERVER['REQUEST_METHOD']==='PUT'){
+} else if ($_SERVER['REQUEST_METHOD']==='PUT'){
 
 }

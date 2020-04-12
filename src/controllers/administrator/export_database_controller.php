@@ -23,10 +23,10 @@ if ($_SESSION['admin']) {
     //Get dump SQL file
     $fileSql=Global_Data::dumpDatabase();
     
-    $date = Date('Ymd_his');
+    $date=Date('Ymd_his');
     
-    $zip = new ZipArchive;
-    $tempZip = tempnam(ini_get('upload_tmp_dir'), 'TMPZIPDB_');
+    $zip=new ZipArchive;
+    $tempZip=tempnam(ini_get('upload_tmp_dir'), 'TMPZIPDB_');
     $zip->open($tempZip, ZipArchive::CREATE);
     $zip->addFile($fileSql, "export_database_$date.sql");
 
@@ -49,10 +49,10 @@ if ($_SESSION['admin']) {
     exportPath('upload/attached_review_file');
     
     //Export the full list of series in JSON
-    $seriesJsonFile = Global_Data::dumpOrthancSeriesJSON($linkpdo);
+    $seriesJsonFile=Global_Data::dumpOrthancSeriesJSON($linkpdo);
     $zip->addFile($seriesJsonFile, 'seriesOrthancId.json');
     //Export the full list of centers in JSON
-    $centersJsonFile = Global_Data::getAllCentersAsJson($linkpdo);
+    $centersJsonFile=Global_Data::getAllCentersAsJson($linkpdo);
     $zip->addFile($centersJsonFile, 'centers.json');
     
     $zip->close();
@@ -63,7 +63,7 @@ if ($_SESSION['admin']) {
     unlink($tempZip);
     unlink($fileSql);
     
-}else{
+} else{
     require 'includes/no_access.php';
 }
 

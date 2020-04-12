@@ -32,7 +32,7 @@ if ($permissionCheck && $_POST['role'] == User::SUPERVISOR) {
 	require 'views/supervisor/supervisor_root_view.php';
 
 } else {
-    require 'includes/no_access.php';
+	require 'includes/no_access.php';
 }
 
 /**
@@ -43,27 +43,27 @@ if ($permissionCheck && $_POST['role'] == User::SUPERVISOR) {
  */
 function make_Json(Study $studyObject)
 {
-	$json = [];
-	$activeVisitsArray = $studyObject->getAllCreatedVisits(false);
+	$json=[];
+	$activeVisitsArray=$studyObject->getAllCreatedVisits(false);
 
 	foreach ($activeVisitsArray as $visitObject) {
-		$patientObject = $visitObject->getPatient();
-		$jsonObject['center'] = $patientObject->getPatientCenter()->code;
-		$jsonObject['code'] = "<a onclick='linkPatientInfos(" . $patientObject->patientCode . ")' href='javascript:void(0);'>" . $patientObject->patientCode . "</a>";
+		$patientObject=$visitObject->getPatient();
+		$jsonObject['center']=$patientObject->getPatientCenter()->code;
+		$jsonObject['code']="<a onclick='linkPatientInfos(".$patientObject->patientCode.")' href='javascript:void(0);'>".$patientObject->patientCode."</a>";
 		if (!$patientObject->patientWithdraw) {
-			$jsonObject['withdraw'] = "Included";
-		} else {
-			$jsonObject['withdraw'] = "Withdrawn";
+			$jsonObject['withdraw']="Included";
+		}else {
+			$jsonObject['withdraw']="Withdrawn";
 		}
-		$jsonObject['visit_modality'] = $visitObject->visitGroupObject->groupModality;
-		$jsonObject['visit_type'] = "<a onclick='linkVisitInfos(" . $visitObject->id_visit . ")' href='javascript:void(0);'>" . $visitObject->visitType . "</a>";
-		$jsonObject['status_done'] = $visitObject->statusDone;
-		$jsonObject['upload_status'] = $visitObject->uploadStatus;
-		$jsonObject['state_investigator_form'] = $visitObject->stateInvestigatorForm;
-		$jsonObject['state_quality_control'] = $visitObject->stateQualityControl;
-		$jsonObject['review'] = $visitObject->reviewStatus;
+		$jsonObject['visit_modality']=$visitObject->visitGroupObject->groupModality;
+		$jsonObject['visit_type']="<a onclick='linkVisitInfos(".$visitObject->id_visit.")' href='javascript:void(0);'>".$visitObject->visitType."</a>";
+		$jsonObject['status_done']=$visitObject->statusDone;
+		$jsonObject['upload_status']=$visitObject->uploadStatus;
+		$jsonObject['state_investigator_form']=$visitObject->stateInvestigatorForm;
+		$jsonObject['state_quality_control']=$visitObject->stateQualityControl;
+		$jsonObject['review']=$visitObject->reviewStatus;
 
-		$json[] = $jsonObject;
+		$json[]=$jsonObject;
 	}
 
 	return json_encode($json);

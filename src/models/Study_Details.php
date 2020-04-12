@@ -17,7 +17,7 @@
  * Access data of a dicom study in database
  */
 
-Class Study_Details{
+Class Study_Details {
     private $linkpdo;
     public $studyUID;
     public $idVisit;
@@ -39,9 +39,9 @@ Class Study_Details{
     public $deleted;
     public $numberOfInstances;
     
-    public static function getStudyObjectByUID(string $studyUID, PDO $linkpdo){
+    public static function getStudyObjectByUID(string $studyUID, PDO $linkpdo) {
         
-        $studyQuery = $linkpdo->prepare ( 'SELECT study_orthanc_id FROM orthanc_studies
+        $studyQuery=$linkpdo->prepare('SELECT study_orthanc_id FROM orthanc_studies
                                                 WHERE study_uid=:studyUID' );
         
         $studyQuery->execute(array(
@@ -54,11 +54,11 @@ Class Study_Details{
         
     }
     
-    public function __construct($studyOrthancId, $linkpdo){
+    public function __construct($studyOrthancId, $linkpdo) {
         $this->linkpdo=$linkpdo;
         $this->studyOrthancId=$studyOrthancId;
         
-        $studyQuery = $this->linkpdo->prepare ( 'SELECT * FROM orthanc_studies
+        $studyQuery=$this->linkpdo->prepare('SELECT * FROM orthanc_studies
                                                 WHERE study_orthanc_id=:studyOrthancID' );
         
         $studyQuery->execute(array(
@@ -87,9 +87,9 @@ Class Study_Details{
         
     }
     
-    public function getChildSeries(){
+    public function getChildSeries() {
         
-        $idFetcher = $this->linkpdo->prepare("SELECT orthanc_series.series_orthanc_id FROM orthanc_series, orthanc_studies
+        $idFetcher=$this->linkpdo->prepare("SELECT orthanc_series.series_orthanc_id FROM orthanc_series, orthanc_studies
 										WHERE orthanc_series.study_orthanc_id=orthanc_studies.study_orthanc_id
                                         AND orthanc_studies.study_orthanc_id=:studyOrthancID");
         
@@ -100,7 +100,7 @@ Class Study_Details{
         $orthancSeriesIDs=$idFetcher->fetchAll(PDO::FETCH_COLUMN);
         
         $childSeriesObject=[];
-        foreach ($orthancSeriesIDs as $orthancSerieID){
+        foreach ($orthancSeriesIDs as $orthancSerieID) {
             $childSeriesObject[]=new Series_Details($orthancSerieID, $this->linkpdo);
         }
         
@@ -138,7 +138,7 @@ Class Study_Details{
         
         if(empty($dataStudies)){
             return false;
-        }else{
+        } else{
             return true;
         }
         

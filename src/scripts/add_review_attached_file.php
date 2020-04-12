@@ -13,7 +13,7 @@
  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-header( 'content-type: application/json; charset=utf-8' );
+header('content-type: application/json; charset=utf-8');
 require_once($_SERVER['DOCUMENT_ROOT'].'/vendor/autoload.php');
 
 Session::checkSession();
@@ -23,16 +23,16 @@ $userObject=new User($_SESSION['username'], $linkpdo);
 
 $visitId=$_POST['visit_id'];
 $fileKey=$_POST['file_key'];
-$local = $_SESSION['role'] == User::INVESTIGATOR ? true : false ; 
+$local=$_SESSION['role'] == User::INVESTIGATOR ? true : false; 
 
 //Need to retrieve study before testing permission, can't test visit permissions directly because permission class tests non deleted status
 $visitObject=new Visit($visitId, $linkpdo);
 $accessCheck=$userObject->isRoleAllowed($visitObject->study, $_SESSION['role']);
 
-if ($accessCheck && in_array($_SESSION['role'], array(User::INVESTIGATOR, User::REVIEWER)) ) {
-    $formProcessor = $visitObject->getFromProcessor($local, $_SESSION['username']);
+if ($accessCheck && in_array($_SESSION['role'], array(User::INVESTIGATOR, User::REVIEWER))) {
+    $formProcessor=$visitObject->getFromProcessor($local, $_SESSION['username']);
 
-    if(! $formProcessor instanceof Form_Processor_File){
+    if (!$formProcessor instanceof Form_Processor_File) {
         throw new Exception('Wrong From Processor type');
     }
     
@@ -59,7 +59,7 @@ if ($accessCheck && in_array($_SESSION['role'], array(User::INVESTIGATOR, User::
     }
 */
 
-} else {
+}else {
     header('HTTP/1.0 403 Forbidden');
 	die('You are not allowed to access this file.');
 }

@@ -30,22 +30,22 @@ $visitAccessCheck=$userObject->isVisitAllowed($id_visit, User::REVIEWER);
 
 if($visitAccessCheck){
     
-    $result=[];
+	$result=[];
     
-    $visitObject=new Visit($id_visit, $linkpdo);
-    try{
-        $reviewObject=$visitObject->queryExistingReviewForReviewer($username);
-        $result=$reviewObject->getSpecificData();
-        echo(json_encode($result));
+	$visitObject=new Visit($id_visit, $linkpdo);
+	try{
+		$reviewObject=$visitObject->queryExistingReviewForReviewer($username);
+		$result=$reviewObject->getSpecificData();
+		echo(json_encode($result));
 
-    }catch (Exception $e){
-        error_log($e->getMessage());
-        header('HTTP/1.0 404 Not Found');
-    }
+	}catch (Exception $e){
+		error_log($e->getMessage());
+		header('HTTP/1.0 404 Not Found');
+	}
 
     
 }else{
-    header('HTTP/1.0 403 Forbidden');
-    die('You are not allowed to access this file.'); 
+	header('HTTP/1.0 403 Forbidden');
+	die('You are not allowed to access this file.'); 
     
 }

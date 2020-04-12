@@ -20,26 +20,26 @@
 Session::checkSession();
 $linkpdo=Session::getLinkpdo();
 
-$study = $_SESSION['study'];
-$role = $_SESSION['role'];
-$username = $_SESSION['username'];
+$study=$_SESSION['study'];
+$role=$_SESSION['role'];
+$username=$_SESSION['username'];
 
-$patient_num = $_POST['patient_num'];
-$type_visit = $_POST['type_visit'];
+$patient_num=$_POST['patient_num'];
+$type_visit=$_POST['type_visit'];
 $id_visit=$_POST['id_visit'];
 
 $userObject=new User($username, $linkpdo);
 $visitAllowed=$userObject->isVisitAllowed($id_visit, $role);
 
 //If permission granted
-if( isset($_SESSION['username']) && $visitAllowed ){
+if (isset($_SESSION['username']) && $visitAllowed) {
     
-    //Retrieve visit Data for quality state
-    $visitObject=new Visit($id_visit, $linkpdo);
-    $patientObject=new Patient($patient_num, $linkpdo);
-    require 'includes/table_visit.php';
-    require 'views/investigator/visit_interface_view.php';
+	//Retrieve visit Data for quality state
+	$visitObject=new Visit($id_visit, $linkpdo);
+	$patientObject=new Patient($patient_num, $linkpdo);
+	require 'includes/table_visit.php';
+	require 'views/investigator/visit_interface_view.php';
    
 }else {
-    require 'includes/no_access.php';
+	require 'includes/no_access.php';
 }

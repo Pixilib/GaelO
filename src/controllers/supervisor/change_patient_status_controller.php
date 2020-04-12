@@ -27,24 +27,24 @@ if ($accessCheck && $_SESSION['role'] == User::SUPERVISOR) {
     //Query Patient status
     $patientObject=new Patient($_POST['patient_num'], $linkpdo);
     //Process data to write in database
-    if (isset($_POST['validate'])){
+    if (isset($_POST['validate'])) {
             
             $withdraw=$_POST['withdraw'];
-            $withdraw_date = $_POST['withdraw_date']; 
-            $withdraw_reason= $_POST['reason'];
+            $withdraw_date=$_POST['withdraw_date']; 
+            $withdraw_reason=$_POST['reason'];
             
-            if($withdraw) {
-                if(!empty($withdraw_date) && !empty($withdraw_reason)){
+            if ($withdraw) {
+                if (!empty($withdraw_date) && !empty($withdraw_reason)) {
                     $patientObject->changeWithdrawStatus(true, $withdraw_date, $withdraw_reason);
-                }else{
+                }else {
                     echo(json_encode("Error"));
                     return;
                 } 
-            }else{
-                if(!empty($withdraw_reason)){
-                    $withdraw_date = null;
+            }else {
+                if (!empty($withdraw_reason)) {
+                    $withdraw_date=null;
                     $patientObject->changeWithdrawStatus(false, $withdraw_date, null);
-                }else{
+                }else {
                     echo(json_encode("Error"));
                     return;
                 }
@@ -58,10 +58,10 @@ if ($accessCheck && $_SESSION['role'] == User::SUPERVISOR) {
             $actionDetails['withdraw']=$withdraw;
             Tracker::logActivity($_SESSION['username'], User::SUPERVISOR, $_SESSION['study'], null, "Patient Withdraw", $actionDetails);
             echo(json_encode("Success"));
-    } else{
+    }else {
         require 'views/supervisor/change_patient_status_view.php';
     }
 
-}else {
+} else {
     require 'includes/no_access.php';
 }

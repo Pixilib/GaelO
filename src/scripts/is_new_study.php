@@ -27,13 +27,13 @@ $investigatorAccess=$userObject->isRoleAllowed($_SESSION['study'], User::INVESTI
 
 if ( $investigatorAccess && $_SESSION['role'] == User::INVESTIGATOR) {
     
-    $studyObject=new Study($_SESSION['study'], $linkpdo);
+	$studyObject=new Study($_SESSION['study'], $linkpdo);
     
-    $answer= $studyObject->isOriginalOrthancNeverKnown($_POST['originalOrthancID']);
+	$answer= $studyObject->isOriginalOrthancNeverKnown($_POST['originalOrthancID']);
   
-    //Output results
-    echo(json_encode($answer));
+	//Output results
+	echo(json_encode($answer));
     
 }else {
-    echo(json_encode(array("No Access")));
+	echo(json_encode(array("No Access")));
 }

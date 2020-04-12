@@ -20,11 +20,11 @@
 $linkpdo=Session::getLinkpdo();
 
 //If form sent check form completion
-if ( isset($_POST['send']) ) {
+if (isset($_POST['send'])) {
 	
-	if( !empty($_POST['name']) && !empty($_POST['email']) && !empty($_POST['ic']) && !empty($_POST['request'])) {
+	if (!empty($_POST['name']) && !empty($_POST['email']) && !empty($_POST['ic']) && !empty($_POST['request'])) {
 		
-		$message = "The following request was sent and will be processed as soon as possible:<br>
+		$message="The following request was sent and will be processed as soon as possible:<br>
 		Name : ".$_POST['name']."<br>
 		E-mail : ".$_POST['email']."<br>
 		Investigational center : ".$_POST['ic']."<br>
@@ -37,5 +37,5 @@ if ( isset($_POST['send']) ) {
 	}
 
 } else {
-    require 'views/request_view.php';
+	require 'views/request_view.php';
 }

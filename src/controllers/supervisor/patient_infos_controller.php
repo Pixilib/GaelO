@@ -25,42 +25,42 @@ $accessCheck=$userObject->isPatientAllowed($_POST['patient_num'], $_SESSION['rol
 
 if ($accessCheck && $_SESSION['role'] == User::SUPERVISOR ) {
     
-    $patientObject = new Patient($_POST['patient_num'], $linkpdo);
+	$patientObject = new Patient($_POST['patient_num'], $linkpdo);
     
-    if(isset($_POST['initials'])){
+	if(isset($_POST['initials'])){
         
-        try{
-            $patientObject->editPatientDetails($_POST['initials'], $_POST['gender'], $_POST['birthdate'], 
-                $_POST['registrationDate'], $_POST['investigator'], $_POST['center']);
-            $answer=true;
+		try{
+			$patientObject->editPatientDetails($_POST['initials'], $_POST['gender'], $_POST['birthdate'], 
+				$_POST['registrationDate'], $_POST['investigator'], $_POST['center']);
+			$answer=true;
             
-            $editDetails['patient_code']=$_POST['patient_num'];
-            $editDetails['initials']=$_POST['initials'];
-            $editDetails['gender']=$_POST['gender'];
-            $editDetails['birthdate']=$_POST['birthdate'];
-            $editDetails['registrationDate']=$_POST['registrationDate'];
-            $editDetails['investigator']=$_POST['investigator'];
-            $editDetails['center']=$_POST['center'];
+			$editDetails['patient_code']=$_POST['patient_num'];
+			$editDetails['initials']=$_POST['initials'];
+			$editDetails['gender']=$_POST['gender'];
+			$editDetails['birthdate']=$_POST['birthdate'];
+			$editDetails['registrationDate']=$_POST['registrationDate'];
+			$editDetails['investigator']=$_POST['investigator'];
+			$editDetails['center']=$_POST['center'];
             
-            Tracker::logActivity($_SESSION['username'], $_SESSION['role'], $patientObject->patientStudy, null , "Edit Patient", $editDetails);
+			Tracker::logActivity($_SESSION['username'], $_SESSION['role'], $patientObject->patientStudy, null , "Edit Patient", $editDetails);
             
-        }catch(Exception $e){
-            error_log($e->getMessage());
-            $answer=false;
-        }
+		}catch(Exception $e){
+			error_log($e->getMessage());
+			$answer=false;
+		}
         
-        echo(json_encode($answer));
+		echo(json_encode($answer));
         
-    }else{
-        $visitsObjects=$patientObject->getAllCreatedPatientsVisits(false);
-        $visitsObjectDeleted=$patientObject->getAllCreatedPatientsVisits(true);
-        foreach ($visitsObjectDeleted as $visitDeleted){
-            $visitsObjects[]=$visitDeleted;
-        } 
+	}else{
+		$visitsObjects=$patientObject->getAllCreatedPatientsVisits(false);
+		$visitsObjectDeleted=$patientObject->getAllCreatedPatientsVisits(true);
+		foreach ($visitsObjectDeleted as $visitDeleted){
+			$visitsObjects[]=$visitDeleted;
+		} 
         
-        require 'views/supervisor/patient_infos_view.php';
-    }
+		require 'views/supervisor/patient_infos_view.php';
+	}
     
-}else {
+} else {
 	require 'includes/no_access.php';
 }

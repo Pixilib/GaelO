@@ -32,10 +32,10 @@ if (isset($_SESSION['username']) && $patientAllowed) {
     $visitObject=new Visit($id_visit, $linkpdo);
 
 	//If form sended and controller role and quality controle not done, accept to store control quality result in database
-    if( ( isset($_POST['refuse']) || isset($_POST['accept']) || isset($_POST['ask_corrective_action']) ) 
+    if ((isset($_POST['refuse']) || isset($_POST['accept']) || isset($_POST['ask_corrective_action'])) 
 	       && $role == User::CONTROLLER 
-           && $visitObject->uploadStatus ==Visit::DONE
-           && ( $visitObject->stateQualityControl ==Visit::NOT_DONE || $visitObject->stateQualityControl ==Visit::QC_WAIT_DEFINITVE_CONCLUSION ) ) {
+           && $visitObject->uploadStatus == Visit::DONE
+           && ($visitObject->stateQualityControl == Visit::NOT_DONE || $visitObject->stateQualityControl == Visit::QC_WAIT_DEFINITVE_CONCLUSION)) {
       
         $formAccepted=false;
         $imageAccepted=false;
@@ -59,7 +59,7 @@ if (isset($_SESSION['username']) && $patientAllowed) {
             try{
                 $localReviewObject=$visitObject->getReviewsObject(true);
                 $localReviewObject->unlockForm();
-            }catch(Exception $e){
+            } catch(Exception $e){
                 error_log($e->getMessage());
             }
 
@@ -86,25 +86,25 @@ if (isset($_SESSION['username']) && $patientAllowed) {
         //Changing Boolean in text to send email
         if($formAccepted){
             $formAccepted="Accepted";
-        }else{
+        } else{
             $formAccepted="Refused";
         }
         
         if($imageAccepted){
             $imageAccepted="Accepted";
-        }else{
+        } else{
             $imageAccepted="Refused";
         }
         
         if(empty($_POST['formComment'])){
             $commentForm="N/A";
-        }else{
+        } else{
             $commentForm=$_POST['formComment'];
         }
         
         if(empty($_POST['imageComment'])){
             $commentImage="N/A";
-        }else{
+        } else{
             $commentImage=$_POST['imageComment'];
         }
 
@@ -132,11 +132,11 @@ if (isset($_SESSION['username']) && $patientAllowed) {
            
           print("No Access");        
            
-      }else{
+      } else{
         //if No form submitted, display the html form +- results
         $visitType=$visitObject->getVisitCharacteristics();
         require 'views/investigator/controller_form_view.php';
 	}
-}else {
+} else {
     require 'includes/no_access.php';
 }

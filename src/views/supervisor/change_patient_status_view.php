@@ -61,14 +61,14 @@
         });	
     
         <?php 
-        //If patient withdraw set the hidden withdraw value to 0 and hide the date selector
-        if($patientObject->patientWithdraw){
-        ?>
+		//If patient withdraw set the hidden withdraw value to 0 and hide the date selector
+		if($patientObject->patientWithdraw){
+		?>
             $("#dateWithdraw").hide();
             $("#withdraw").val('0');
        <?php 
-        }
-        ?>
+		}
+		?>
     	
     });
 
@@ -80,7 +80,7 @@
         ?>
             <label class="control-label">Declare patient withdrawal from the study</label>
 		<?php 
-        }else{
+        } else{
         ?>
             <label class="control-label">Cancel Withdrawal (re-inclusion)</label>
 		<?php 

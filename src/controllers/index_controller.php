@@ -17,7 +17,9 @@
  * Display connexion form hand check access permission
  */
 
-if(session_status() == PHP_SESSION_NONE) session_start();
+if(session_status() == PHP_SESSION_NONE) {
+	session_start();
+}
 
 //If session already opened, redirect to main
 if (isset($_SESSION['username'])) {
@@ -26,7 +28,7 @@ if (isset($_SESSION['username'])) {
 //If form sent, process it
 else if ( ! empty($_POST['formSent'])  ){
    
-    $linkpdo=Session::getLinkpdo();
+	$linkpdo=Session::getLinkpdo();
 	
 	$userObject= new User($_POST['username'],$linkpdo);
 	$connexionPermission=$userObject->isPasswordCorrectAndActivitedAccount($_POST['mdp']);
@@ -43,7 +45,7 @@ else if ( ! empty($_POST['formSent'])  ){
 			$email->sendAdminLoggedAlertEmail($_POST['username'], $_SERVER['REMOTE_ADDR']);
 
 		}else{
-		    $_SESSION['admin'] = false;
+			$_SESSION['admin'] = false;
 		}
 
 		//open user session
@@ -53,7 +55,7 @@ else if ( ! empty($_POST['formSent'])  ){
 		$result['result']="user";
 		
 		//If not allowed, action depend on reason
-	}else{
+	} else{
 		//Case outdated password or unconfirmed status, open temp session to redirect to change password
 		if ( $userObject->passwordCorrect && (!$userObject->passwordDateValide || $userObject->userStatus =="Unconfirmed") ){
 			//mot de passe non valide, on le change
@@ -64,14 +66,14 @@ else if ( ! empty($_POST['formSent'])  ){
 		} else if ( $userObject->passwordCorrect && ($userObject->userStatus !=null && $userObject->userStatus !="Activated") ) {
 			$result['result']=$userObject->userStatus;	
 		//case non existing user
-		}else if(!$userObject->isExistingUser){
+		} else if(!$userObject->isExistingUser){
 			$result['result']="unknown";
 		//Case wrong password
 		} else{
 			//if too much tentative, account blocked
 			if ($userObject->loginAttempt >2){
 				$result['result']="NowBlocked";
-			}else{
+			} else{
 				$result['result']="WrongPassword";
 				$result['attempt']=$userObject->loginAttempt;
 			}
@@ -83,11 +85,11 @@ else if ( ! empty($_POST['formSent'])  ){
 //No data sent, display the form and it's script
 } else {
     
-    try{
-        Session::getLinkpdo();
-    }catch(Exception $e){
-        error_log("Can't Connect DB");
-    }
+	try{
+		Session::getLinkpdo();
+	}catch(Exception $e){
+		error_log("Can't Connect DB");
+	}
     
-    require 'views/index_view.php';
+	require 'views/index_view.php';
 }

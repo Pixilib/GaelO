@@ -33,56 +33,56 @@ $isLocalformNeeded = $visitObject->getVisitCharacteristics()->localFormNeeded;
 
 if($permissionResults){
     
-    //Determine if calling local or reviewer form
-    $local = ($_SESSION['role']==User::REVIEWER) ? false : true ;
-    $formProcessorObject=$visitObject->getFromProcessor($local, $username);
+	//Determine if calling local or reviewer form
+	$local = ($_SESSION['role']==User::REVIEWER) ? false : true ;
+	$formProcessorObject=$visitObject->getFromProcessor($local, $username);
     
-    if (!empty($_POST['draft']) || !empty($_POST['validate']) ){
-        //Process the form
-        if(!empty($_POST['validate'])){
-            $validate=true;
-        }else {
-            $validate=false;
-        }
-        try{
-            $formProcessorObject->saveForm($_POST, $validate);
-            echo(json_encode(true));
-        }catch(Exception $e){
-            echo(json_encode(false));
-        }
+	if (!empty($_POST['draft']) || !empty($_POST['validate']) ){
+		//Process the form
+		if(!empty($_POST['validate'])){
+			$validate=true;
+		}else {
+			$validate=false;
+		}
+		try{
+			$formProcessorObject->saveForm($_POST, $validate);
+			echo(json_encode(true));
+		}catch(Exception $e){
+			echo(json_encode(false));
+		}
 
-    }else{
-        //Load Specific form
+	}else{
+		//Load Specific form
         
-        //If form not needed for investigator, return and do not output the form
-        if ( ! $isLocalformNeeded && in_array( $_SESSION['role'], array(User::INVESTIGATOR, User::CONTROLLER) ) ) {
-            exit();
-        }
+		//If form not needed for investigator, return and do not output the form
+		if ( ! $isLocalformNeeded && in_array( $_SESSION['role'], array(User::INVESTIGATOR, User::CONTROLLER) ) ) {
+			exit();
+		}
         
-        if($_SESSION['role']==User::INVESTIGATOR || ($_SESSION['role']==User::REVIEWER && $visitObject->reviewAvailable) ){
-            $roleDisable=false;
-        }else{
-            $roleDisable=true;
-        }
+		if($_SESSION['role']==User::INVESTIGATOR || ($_SESSION['role']==User::REVIEWER && $visitObject->reviewAvailable) ){
+			$roleDisable=false;
+		}else{
+			$roleDisable=true;
+		}
         
-        //Return local form or user's review according to parameters which retrieved the form processor
-        //of this study
-        $reviewObject=$formProcessorObject->reviewObject;
+		//Return local form or user's review according to parameters which retrieved the form processor
+		//of this study
+		$reviewObject=$formProcessorObject->reviewObject;
         
-        if(!empty($reviewObject)){
-            $validatedForm=$reviewObject->validated;
-            $results=$reviewObject->getSpecificData();
-        }else{
-            $validatedForm=false;
-        }
+		if(!empty($reviewObject)){
+			$validatedForm=$reviewObject->validated;
+			$results=$reviewObject->getSpecificData();
+		}else{
+			$validatedForm=false;
+		}
         
 
-        $visitGroupModality=$visitObject->visitGroupObject->groupModality;
-        require 'views/investigator/specific_form_view.php';
+		$visitGroupModality=$visitObject->visitGroupObject->groupModality;
+		require 'views/investigator/specific_form_view.php';
         
-    }
+	}
     
 }else {
-    require 'includes/no_access.php';
+	require 'includes/no_access.php';
 }
 

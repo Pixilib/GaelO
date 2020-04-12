@@ -30,29 +30,29 @@ $accessCheck=$userObject->isRoleAllowed($visitObject->study, $_SESSION['role']);
 
 if ($accessCheck && in_array($_SESSION['role'], array(User::INVESTIGATOR, User::REVIEWER)) ) {
     
-    if($_SESSION['role'] == User::INVESTIGATOR) $reviewObject = $visitObject->getReviewsObject(true);
-    else $reviewObject =  $visitObject->queryExistingReviewForReviewer($_SESSION['username']);
+	if($_SESSION['role'] == User::INVESTIGATOR) $reviewObject = $visitObject->getReviewsObject(true);
+	else $reviewObject =  $visitObject->queryExistingReviewForReviewer($_SESSION['username']);
 
-    $filePath = $reviewObject->getAssociatedFilePath($fileKey);
+	$filePath = $reviewObject->getAssociatedFilePath($fileKey);
     
-    header('Content-type: application/octet-stream; charset=utf-8' );
-    header("Content-Transfer-Encoding: Binary");
-    header("Cache-Control: no-cache");
-    header("Content-Length: ".filesize($filePath));
-    header('Content-Disposition: attachment; filename="'.basename($filePath).'"');
-    $file = @fopen($filePath,"rb");
-    if($file){
-        while(!feof($file))
-        {
-            print(@fread($file, 1024*1024));
-            flush();
-        }
-        fclose($file);
-    }else{
-        throw new Exception("Can't Find Attached File");
-    }
+	header('Content-type: application/octet-stream; charset=utf-8' );
+	header("Content-Transfer-Encoding: Binary");
+	header("Cache-Control: no-cache");
+	header("Content-Length: ".filesize($filePath));
+	header('Content-Disposition: attachment; filename="'.basename($filePath).'"');
+	$file = @fopen($filePath,"rb");
+	if($file){
+		while(!feof($file))
+		{
+			print(@fread($file, 1024*1024));
+			flush();
+		}
+		fclose($file);
+	}else{
+		throw new Exception("Can't Find Attached File");
+	}
 
 } else {
-    header('HTTP/1.0 403 Forbidden');
+	header('HTTP/1.0 403 Forbidden');
 	die('You are not allowed to access this file.');
 }
