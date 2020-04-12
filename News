@@ -26,5 +26,6 @@ Enhancements :
   - faster visit status determination in upload manager (supervisor)
   - Add OHIF viewer for supervisors and investigators
   - Reduced ZIP compression level of Dicom before upload to decrease CPU comsuption in the client
+  - Small memory usage reduction when zipping dicom
 
 
