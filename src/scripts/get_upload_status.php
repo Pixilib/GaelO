@@ -28,7 +28,7 @@ if ($visitAccess && $_SESSION['role'] == User::INVESTIGATOR) {
 	$visitObject=new Visit($id_visit, $linkpdo);
 	echo(json_encode($visitObject->uploadStatus));
 	
-} else {
+}else {
 	header('HTTP/1.0 403 Forbidden');
 	die('You are not allowed to access this file.');
 }

@@ -141,7 +141,7 @@ class Statistics {
 
 				if ($visit->correctiveActionDate == null) {
 					$hasCorrectiveAction=false;
-				}else {
+				} else {
 					$hasCorrectiveAction=true;
 				}
 
@@ -226,7 +226,7 @@ class Statistics {
 				$center=$patientObject->getPatientCenter();
 				if ($visit->correctiveActionDate == null) {
 					$hasCorrectiveAction=false;
-				}else {
+				} else {
 					$hasCorrectiveAction=true;
 				}
 				$responseQcArrayDetails['qcStatus']=$visit->qcStatus;
@@ -298,14 +298,14 @@ class Statistics {
 
 					try {
 						$reviews[]=$visit->getReviewsObject(true);
-					}catch (Exception $e) { }
+					} catch (Exception $e) { }
 
 					try {
 						$reviewsReviewers=$visit->getReviewsObject(false);
 						foreach ($reviewsReviewers as $expertReview) {
 							$reviews[]=$expertReview;
 						}
-					}catch (Exception $e) { }
+					} catch (Exception $e) { }
 
 
 			foreach ($reviews as $review) {

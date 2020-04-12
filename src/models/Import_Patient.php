@@ -61,8 +61,7 @@ class Import_Patient {
 				if (GAELO_DATE_FORMAT == 'm.d.Y') {
 					$birthDay=intval($birthDateArray[1]);
 					$birthMonth=intval($birthDateArray[0]);
-				}
-				else if (GAELO_DATE_FORMAT == 'd.m.Y') {
+				} else if (GAELO_DATE_FORMAT == 'd.m.Y') {
 					$birthDay=intval($birthDateArray[0]);
 					$birthMonth=intval($birthDateArray[1]);
 				}
@@ -74,33 +73,31 @@ class Import_Patient {
 				//Store the patient result import process in this object
 				if ($insertddb) {
 						$this->sucessList[]=$patientNumber;
-				}
-				else {
+				} else {
 					$patientFailed['PatientNumber']=$patientNumber;
 					$patientFailed['Reason']="Can't write to DB, wrong date or other wrong input";
 					$this->failList[]=$patientFailed;
 				}
 
 			//If conditions not met, add to the fail list with the respective error reason
-			}else {
+			} else {
 			    
 				if (!$isExistingCenter) {
 					if (empty($patientInvestigatorNumCenter)) {
 						$this->failList['Missing Num Center'][]=$patientNumber;
-					}
-					else {
+					} else {
 						$this->failList['Unknown Center'][]=$patientNumber;
 					}
 
-				}else if (!$isCorrectPatientNumberLenght) {
+				} else if (!$isCorrectPatientNumberLenght) {
 					$this->failList['Wrong PatientNumber length'][]=$patientNumber;
 				    
-				}else if (!$isNewPatient) {
+				} else if (!$isNewPatient) {
 					$this->failList['Patient already in Database'][]=$patientNumber;
 				    
-				}else if (empty($patientRegistrationDate)) {
+				} else if (empty($patientRegistrationDate)) {
 					$this->failList['Empty Registration Date'][]=$patientNumber;
-				}else if (!$isPrefixCorrect) {
+				} else if (!$isPrefixCorrect) {
 					$this->failList['Wrong Patient Code Prefix'][]=$patientNumber;
 				}
 				
@@ -122,8 +119,7 @@ class Import_Patient {
 		if (GAELO_DATE_FORMAT == 'm.d.Y') {
 			$registrationDay=intval($dateNbArray[1]);
 			$registrationMonth=intval($dateNbArray[0]);
-		}
-		else if (GAELO_DATE_FORMAT == 'd.m.Y') {
+		} else if (GAELO_DATE_FORMAT == 'd.m.Y') {
 			$registrationDay=intval($dateNbArray[0]);
 			$registrationMonth=intval($dateNbArray[1]);
 		}
@@ -136,7 +132,7 @@ class Import_Patient {
 	    
 		try {
 			$dateResult=new DateTime($registrationYear.'-'.$registrationMonth.'-'.$registrationDay);
-		}catch (Exception $e) {
+		} catch (Exception $e) {
 			error_log($e->getMessage());
 			return null;
 		}
@@ -153,7 +149,7 @@ class Import_Patient {
 	private function isNewPatient($patientCode) {
 		try {
 			new Patient($patientCode, $this->linkpdo);
-		}catch (Exception $e1) {
+		} catch (Exception $e1) {
 			return true;
 		}
 	    
@@ -170,7 +166,7 @@ class Import_Patient {
 		
 		if ($lenghtImport == GAELO_PATIENT_CODE_LENGHT) {
 			return true;
-		}else {
+		} else {
 			return false;
 		}
 	}
@@ -198,11 +194,13 @@ class Import_Patient {
 	 * @return boolean
 	 */
 	private function isExistingCenter($patientNumCenter) {
-		if (is_null($patientNumCenter) || strlen($patientNumCenter) == 0) return false;
+		if (is_null($patientNumCenter) || strlen($patientNumCenter) == 0) {
+			return false;
+		}
 	    
 		try {
 			new Center($this->linkpdo, $patientNumCenter);
-		}catch (Exception $e1) {
+		} catch (Exception $e1) {
 			return false;
 		}
 	    
@@ -241,7 +239,7 @@ class Import_Patient {
 													'center' => $patientInvestigatorNumCenter,
 													'study' => $this->study));
 			$success=true;
-		}catch (Exception $e) {
+		} catch (Exception $e) {
 			$success=false;
 			error_log($e);
 		}
@@ -272,11 +270,14 @@ class Import_Patient {
 			foreach ($this->failList as $key=>$value) {
 				if (!empty($value)) {
 					$failReport=$failReport.$key.':<br>';
-					if (is_array($value)) $failReport=$failReport.implode('<br>', $value).'<br>';
-					else $failReport=$failReport.$value.'<br>';
+					if (is_array($value)) {
+						$failReport=$failReport.implode('<br>', $value).'<br>';
+					} else {
+						$failReport=$failReport.$value.'<br>';
+					}
 				}
 			}
-		}else {
+		} else {
 			$failReport=$failReport.' None <br>';
 		}
 	    
@@ -295,7 +296,7 @@ class Import_Patient {
 				$success=$value;
 				$successReport=$successReport.$success.'<br>';
 			}
-		}else {
+		} else {
 			$successReport=$successReport.' None <br>';
 		}
 	    

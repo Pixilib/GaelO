@@ -60,12 +60,19 @@ class Documentation {
 	 */
     
 	public function isDocumentationAllowedForRole(String $role) {
-		if ($role == User::INVESTIGATOR) return $this->accessInvestigator;
-		else if ($role == User::CONTROLLER) return $this->accessController;
-		else if ($role == User::MONITOR) return $this->accessMonitor;
-		else if ($role == User::REVIEWER) return $this->accessReviewer;
-		else if ($role == User::SUPERVISOR) return true;
-		else return false;
+		if ($role == User::INVESTIGATOR) {
+			return $this->accessInvestigator;
+		} else if ($role == User::CONTROLLER) {
+			return $this->accessController;
+		} else if ($role == User::MONITOR) {
+			return $this->accessMonitor;
+		} else if ($role == User::REVIEWER) {
+			return $this->accessReviewer;
+		} else if ($role == User::SUPERVISOR) {
+			return true;
+		} else {
+			return false;
+		}
 	}
     
 	/**

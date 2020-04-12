@@ -34,7 +34,7 @@ class Tracker {
 				'role' => $role
 			));
            
-		}else {
+		} else {
 			$queryTracker=$linkpdo->prepare('SELECT * FROM tracker WHERE study = :study AND role=:role');
 			$queryTracker->execute(array('study' => $study,
 				'role' => $role,

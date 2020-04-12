@@ -34,6 +34,6 @@ if ($investigatorAccess && $_SESSION['role'] == User::INVESTIGATOR) {
 	//Output results
 	echo(json_encode($answer));
     
-} else {
+}else {
 	echo(json_encode(array("No Access")));
 }

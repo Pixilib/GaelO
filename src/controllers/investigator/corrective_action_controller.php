@@ -85,10 +85,10 @@ if (isset ($_SESSION ['username']) && $visitAllowed) {
 		$answer="Success";
 		echo(json_encode($answer));
 		
-	}else {
+	} else {
 		$visitType=$visitObject->getVisitCharacteristics();
 		require 'views/investigator/corrective_action_view.php';
 	}
-}else {
+} else {
 	require 'includes/no_access.php';
 }
