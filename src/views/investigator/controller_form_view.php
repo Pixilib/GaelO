@@ -34,16 +34,16 @@
           $("#imageComment").val("<?=htmlentities($visitObject->imageQualityComment)?>");
           <?php
 			// Form deactivation if not controller or controller but not in not done or wait definitive conclusion status
-			if ( $_SESSION['role'] != User::CONTROLLER 
-				|| ( $_SESSION['role'] == User::CONTROLLER 
-						&& !in_array($visitObject->stateQualityControl, array(Visit::QC_NOT_DONE, Visit::QC_WAIT_DEFINITVE_CONCLUSION)) ) ) {
+			if ($_SESSION['role'] != User::CONTROLLER 
+				|| ($_SESSION['role'] == User::CONTROLLER 
+						&& !in_array($visitObject->stateQualityControl, array(Visit::QC_NOT_DONE, Visit::QC_WAIT_DEFINITVE_CONCLUSION)))) {
 			?>
 				$("#controler_form :input").prop("disabled", true); 
             <?php
 			}
         
 		// If form Not needed unactivate the form option
-		if (! $visitType->localFormNeeded) {
+		if (!$visitType->localFormNeeded) {
 			?>$("#accepted1").attr( 'checked', true )
 			//Disable other radiobutton to force send the accepted value (disable make the choice unsent)
 			$("#refused1").prop("disabled", true);
@@ -51,7 +51,7 @@
 			<?php
 		}
 		// if image Qc not Need unactivate the form option
-		if (! $visitType->qcNeeded) {
+		if (!$visitType->qcNeeded) {
 			?>$("#accepted2").attr( 'checked', true )
 			$('#refused2').prop("disabled", true); <?php
 		}

@@ -39,6 +39,6 @@ if ($accessCheck && $_SESSION['role'] == User::SUPERVISOR) {
 	//output the resulting answer
 	echo(json_encode($answer));
 
-}else {
+} else {
 	echo(json_encode(false));
 }

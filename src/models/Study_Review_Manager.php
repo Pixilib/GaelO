@@ -67,7 +67,7 @@ class Study_Review_Manager
 				//Retrieve review
 				try {
 					$reviewObjects=$createdVisit->getReviewsObject(false);
-				}catch (Exception $e) {
+				} catch (Exception $e) {
 					$reviewObjects=[];
 				}
 
