@@ -1,6 +1,9 @@
 build:
-    nodes:
-      analysis:
-        filter:
-            excluded_paths:
-                - src/data/install/
+  nodes:
+    analysis:
+      filter:
+        excluded_paths:
+            - src/data/install/
+      tests:
+        override:
+          - php-scrutinizer-run
