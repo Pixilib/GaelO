@@ -113,7 +113,6 @@ Class Study_Details {
 		//Activate only if no other activated study
 		if ($deleted == false && $this->isExistingActivatedStudyForVisit() == true) {
 			throw new Exception("already existing activated study");
-			return;
 		}
         
 		$changeStatusUpload=$this->linkpdo->prepare('UPDATE orthanc_studies SET deleted = :deleted WHERE id_visit = :idvisit AND study_orthanc_id=:studyOrthancID');

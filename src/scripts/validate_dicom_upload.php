@@ -158,7 +158,7 @@ function sendFolderToOrthanc(string $destination, Orthanc $orthancExposedObject)
 	
 	$importedMap=null;
 	$importedInstances=0;
-	$start_time=microtime(true);
+	//$start_time=microtime(true);
 	
 	//Import dicom file one by one
 	foreach ($files as $file) {

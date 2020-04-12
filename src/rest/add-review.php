@@ -34,7 +34,7 @@ if ($visitAccessCheck) {
 	//Instanciate the specific object for review management
 	$visitObject=new Visit($id_visit, $linkpdo);
 	$ReviewObect=$visitObject->getFromProcessor(false, $username);
-	$ReviewObect->saveForm($data, $data['validate'], $linkpdo);
+	$ReviewObect->saveForm($data, $data['validate']);
 	$answer="Saved";
 	header("Content-Type: application/json; charset=UTF-8");
 	echo(json_encode($answer));

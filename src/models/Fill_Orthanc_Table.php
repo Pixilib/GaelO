@@ -56,7 +56,7 @@ class Fill_Orthanc_Table {
 		if ($this->visitObject->getParentStudyObject()->isOriginalOrthancNeverKnown($anonFromOrthancStudyId)) {
 			try {
 				//Fill la database
-				$this->addToDbStudy($anonFromOrthancStudyId, $this->username);
+				$this->addToDbStudy($anonFromOrthancStudyId);
                 
 				foreach ($this->studyOrthancObject->orthancSeries as $serie) {
 					//Fill series database

@@ -132,7 +132,7 @@ Class Orthanc {
 	    
  		$temp=tempnam(ini_get('upload_tmp_dir'), 'TMP_');
 	    
-		$nbbytes=file_put_contents($temp, fopen($this->url.'/tools/create-archive', 'rb', false, $context));
+		file_put_contents($temp, fopen($this->url.'/tools/create-archive', 'rb', false, $context));
 	    
 		return $temp;
 	}
@@ -153,7 +153,7 @@ Class Orthanc {
 		);
 	    
 		$context=stream_context_create($opts);
-		$result=file_get_contents($this->url.'/'.$level.'/'.$uid, false, $context);
+		file_get_contents($this->url.'/'.$level.'/'.$uid, false, $context);
 	    
 	}
 	
@@ -490,7 +490,7 @@ Class Orthanc {
 		$studyOrthanc=new Orthanc_Study($orthancStudyID, $this->url, $this->context);
 		$studyOrthanc->retrieveStudyData();
 		$seriesObjects=$studyOrthanc->orthancSeries;
-		foreach ($studyOrthanc->orthancSeries as $serie) {
+		foreach ($seriesObjects as $serie) {
 			if ($serie->isSecondaryCapture()) {
 				$this->deleteFromOrthanc("series", $serie->serieOrthancID);
 				error_log("Deleted SC");

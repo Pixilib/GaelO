@@ -46,8 +46,7 @@
 	public function __construct($studyOrthancId, $url, $context) {
 		//Set http adress of orthanc
 		if ($url == null && $context == null) {
-			$linkpdo=Session::getLinkpdo();
-	        
+			
 			$this->url=GAELO_ORTHANC_PACS_ADDRESS.':'.GAELO_ORTHANC_PACS_PORT;
 			$this->context=array(
 					'http' => array(

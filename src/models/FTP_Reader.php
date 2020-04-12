@@ -95,9 +95,6 @@ class FTP_Reader
 		//$lastUpdateTime=DateTime::createFromFormat('U', $mtim);
 		$dateNow=new DateTime();
 
-		print($dateNow->getTimestamp());
-		print($mtimStamp);
-
 		if (($this->lastUpdateLimit != null) &&
 			($dateNow->getTimestamp()-$mtimStamp) > ($this->lastUpdateLimit*60)
 		) {
@@ -111,8 +108,6 @@ class FTP_Reader
 	 */
 	public function getFilesFromFTP()
 	{
-
-		error_log('starting FTP connexion');
 
 		if ($this->ftpIsSftp) {
 
@@ -299,7 +294,7 @@ class FTP_Reader
 			$email->setMessage("FTP Import Has failed <br> Reason : ".$exceptionMessage);
 			$email->setSubject('Auto Import Failed');
 			$email->addAminEmails();
-			$answer=$email->sendEmail();
+			$email->sendEmail();
 		}catch (Exception $e) {
 			echo('sendEmailException');
 			echo($e->getMessage());
