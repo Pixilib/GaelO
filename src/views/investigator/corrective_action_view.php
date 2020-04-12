@@ -39,13 +39,13 @@
 			?>
             	$('#no_corrective_action').hide();
         	<?php
-			} else {
+			}else {
 			?>
             	$('#corrective_action').hide();
         	<?php
 			}
             
-			if(!empty($visitObject->otherCorrectiveAction)){
+			if (!empty($visitObject->otherCorrectiveAction)) {
 				?>
                 $('#other_comment').val("<?=htmlspecialchars($visitObject->otherCorrectiveAction)?>");
                 <?php 
@@ -53,12 +53,12 @@
 		}
         
 		// If Form not needed deactive form checkbox
-		if (! $visitType->localFormNeeded) {
+		if (!$visitType->localFormNeeded) {
 			?> $('input:checkbox[name="information_corrected"]').prop("disabled", true); <?php
 		}
         
 		// If Image QC not needed deactive form checkbox
-		if (! $visitType->qcNeeded) {
+		if (!$visitType->qcNeeded) {
 			?> $('input:checkbox[name="new_series"]').prop("disabled", true); <?php
 		}
 		?>

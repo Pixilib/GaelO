@@ -26,44 +26,44 @@ if ($_SESSION['admin']) {
     
 	//Form Processing
     
-	if(!empty($_POST)){
+	if (!empty($_POST)) {
         
 		$unvactivatedStudies=[];
 		$activatedStudies=[];
         
-		if(isset($_POST['activatedStudies'])){
+		if (isset($_POST['activatedStudies'])) {
 			$activatedStudies=$_POST['activatedStudies'];
 		}
-		if(isset($_POST['unactivatedStudies'])){
+		if (isset($_POST['unactivatedStudies'])) {
 			$unvactivatedStudies=$_POST['unactivatedStudies'];
 		}
 
-		foreach ($activatedStudies as $activatedStudy){
+		foreach ($activatedStudies as $activatedStudy) {
 			$studyObject=new Study($activatedStudy, $linkpdo);
 			$studyObject->changeStudyActivation(true);
 		}
         
-		foreach ($unvactivatedStudies as $unactivatedStudy){
+		foreach ($unvactivatedStudies as $unactivatedStudy) {
 			$studyObject=new Study($unactivatedStudy, $linkpdo);
 			$studyObject->changeStudyActivation(false);  
 		}
         
 		//Log the Study Creation
 		$actionDetails['details']=$_POST;
-		Tracker::logActivity($_SESSION['username'], User::ADMINISTRATOR, null , null ,"Change Study Activation", $actionDetails);
+		Tracker::logActivity($_SESSION['username'], User::ADMINISTRATOR, null, null, "Change Study Activation", $actionDetails);
         
 		echo(json_encode("Success"));
         
 	//Display Form
-	} else{
+	}else {
     	
 		$studyAllanswers=Global_Data::getAllStudies($linkpdo);
-		$activatedStudiesDb=Global_Data::getAllStudies($linkpdo,true);
+		$activatedStudiesDb=Global_Data::getAllStudies($linkpdo, true);
 		$unactivatedStudiesDb=array_diff($studyAllanswers, $activatedStudiesDb);
     	
 		require 'views/administrator/study_activation_view.php';
 	
 	}
-}else{
+}else {
 	require 'includes/no_access.php';
 }

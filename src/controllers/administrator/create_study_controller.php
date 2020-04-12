@@ -27,6 +27,6 @@ if ($_SESSION['admin']) {
 	//Display form
 	require('views/administrator/create_study_view.php');
     
-}else{
+}else {
 	require 'includes/no_access.php';
 }

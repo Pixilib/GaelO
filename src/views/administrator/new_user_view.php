@@ -132,7 +132,7 @@
 				<!------------------------- Roles selector ----------------------->
 				<SELECT id="one" class="custom-select" name="role">
 				<?php
-				$allRoles = array(
+				$allRoles=array(
 					User::INVESTIGATOR,
 					User::MONITOR,
 					User::CONTROLLER,
@@ -141,7 +141,7 @@
 				);
 				foreach ($availableStudies as $availableStudy) {
 					foreach ($allRoles as $roleValue) {
-						echo '<option value="' . $roleValue . '@' . htmlspecialchars($availableStudy) . '">[' . htmlspecialchars($availableStudy) . '] - [' . $roleValue . ']</option>';
+						echo '<option value="'.$roleValue.'@'.htmlspecialchars($availableStudy).'">['.htmlspecialchars($availableStudy).'] - ['.$roleValue.']</option>';
 					}
 				}
 				?>
@@ -165,7 +165,7 @@
                 <?php
 				// Add all available jobs
 				foreach ($jobs as $job) {
-					echo '<option value="' . $job . '">' . $job . '</option>';
+					echo '<option value="'.$job.'">'.$job.'</option>';
 				}
 				?>
               </SELECT>
@@ -180,7 +180,7 @@
               <?php
 			// Add all possible centers
 			foreach ($centers as $center) {
-				echo '<option value="' . $center->code . '">[' . $center->code . '] - [' . htmlspecialchars($center->name) . ']</option>';
+				echo '<option value="'.$center->code.'">['.$center->code.'] - ['.htmlspecialchars($center->name).']</option>';
 			}
 			?>
             </SELECT>
@@ -205,7 +205,7 @@
 				<?php
 				// Add all possible centers
 				foreach ($centers as $center) {
-					echo '<option value="' . $center->code . '">[' . $center->code . '] - [' . htmlspecialchars($center->name) . ']</option>';
+					echo '<option value="'.$center->code.'">['.$center->code.'] - ['.htmlspecialchars($center->name).']</option>';
 				}
 				?>
 				</SELECT> <input

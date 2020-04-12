@@ -87,20 +87,20 @@
 				<SELECT class="custom-select" name="statut">
                   <?php
 				// Display current status as first one
-				echo '<option value="' . $userObject->userStatus . '">' . $userObject->userStatus . '</option>';
+				echo '<option value="'.$userObject->userStatus.'">'.$userObject->userStatus.'</option>';
 				// Array of all possible status
 				$possibleStatus;
 				if ($userObject->userStatus == User::ACTIVATED || $userObject->userStatus == User::BLOCKED) {
-					$possibleStatus = array(
+					$possibleStatus=array(
 						User::UNCONFIRMED,
 						User::DEACTIVATED
 					);
-				} else if ($userObject->userStatus == User::UNCONFIRMED) {
-					$possibleStatus = array(
+				}else if ($userObject->userStatus == User::UNCONFIRMED) {
+					$possibleStatus=array(
 						User::DEACTIVATED
 					);
-				} else if ($userObject->userStatus == User::DEACTIVATED) {
-					$possibleStatus = array(
+				}else if ($userObject->userStatus == User::DEACTIVATED) {
+					$possibleStatus=array(
 						User::UNCONFIRMED
 					);
 				}
@@ -108,9 +108,9 @@
 				// Add in the selected possible status and change the "unconfirmed" name by "password reset" in display
 				foreach ($possibleStatus as $status) {
 					if ($status == "Unconfirmed") {
-						echo '<option value="' . $status . '">Password Reset</option>';
-					} else {
-						echo '<option value="' . $status . '">' . $status . '</option>';
+						echo '<option value="'.$status.'">Password Reset</option>';
+					}else {
+						echo '<option value="'.$status.'">'.$status.'</option>';
 					}
 				}
 				?>
@@ -172,7 +172,7 @@
                     
 					foreach ($userRoles as $study => $existingRoles) {
 						foreach ($existingRoles as $role) {
-							echo '<option value="' . $role . '@' . htmlspecialchars($study) . '">[' . htmlspecialchars($study) . '] - [' . $role . ']</option>';
+							echo '<option value="'.$role.'@'.htmlspecialchars($study).'">['.htmlspecialchars($study).'] - ['.$role.']</option>';
 						}
 					}
 					?>
@@ -184,7 +184,7 @@
 				<!--------------------------------Display all available roles ----------------------->
 				<SELECT id="one" class="custom-select" name="role">
                       <?php
-					$roles = array(
+					$roles=array(
 						User::INVESTIGATOR,
 						User::MONITOR,
 						User::CONTROLLER,
@@ -193,7 +193,7 @@
 					);
 					foreach ($availableStudies as $study) {
 						foreach ($roles as $role) {
-							echo '<option value="' . $role . '@' . htmlspecialchars($study) . '">[' . htmlspecialchars($study) . '] - [' . $role . ']</option>';
+							echo '<option value="'.$role.'@'.htmlspecialchars($study).'">['.htmlspecialchars($study).'] - ['.$role.']</option>';
 						}
 					}
 					?>
@@ -216,11 +216,11 @@
 				<SELECT class="custom-select" name="job">
                   <?php
 				// Current job appear first in selector
-				echo '<option value="' . $userObject->userJob . '">' . $userObject->userJob . '</option>';
+				echo '<option value="'.$userObject->userJob.'">'.$userObject->userJob.'</option>';
 				// add other possible job
 				foreach ($jobs as $job) {
 					if ($job != $userObject->userJob) {
-						echo '<option value="' . $job . '">' . $job . '</option>';
+						echo '<option value="'.$job.'">'.$job.'</option>';
 					}
 				}
 				?>
@@ -236,12 +236,12 @@
 				required>
                 <?php
 				// Display users's main center as first option
-				echo '<option value="' . $mainCenter->code . '">[' . $mainCenter->code . '] - [' . htmlspecialchars($mainCenter->name) . ']</option>';
+				echo '<option value="'.$mainCenter->code.'">['.$mainCenter->code.'] - ['.htmlspecialchars($mainCenter->name).']</option>';
                 
 				// Add others
 				foreach ($centers as $center) {
 					if ($center->code != $mainCenter->code) {
-						echo '<option value="' . $center->code . '">[' . $center->code . '] - [' . htmlspecialchars($center->name) . ']</option>';
+						echo '<option value="'.$center->code.'">['.$center->code.'] - ['.htmlspecialchars($center->name).']</option>';
 					}
 				}
 				?>
@@ -259,7 +259,7 @@
                         <?php
 						// Add option
 						foreach ($usersAffiliatedCenters as $center) {
-							echo '<option value="' . $center->code . '">[' . $center->code . '] - [' . htmlspecialchars($center->name) . ']</option>';
+							echo '<option value="'.$center->code.'">['.$center->code.'] - ['.htmlspecialchars($center->name).']</option>';
 						}
 						?>
                       </SELECT> <input
@@ -273,7 +273,7 @@
                     <?php
                     
 					foreach ($centers as $center) {
-						echo '<option value="' . $center->code . '">[' . $center->code . '] - [' . htmlspecialchars($center->name) . ']</option>';
+						echo '<option value="'.$center->code.'">['.$center->code.'] - ['.htmlspecialchars($center->name).']</option>';
 					}
 					?>
                   </SELECT> <input

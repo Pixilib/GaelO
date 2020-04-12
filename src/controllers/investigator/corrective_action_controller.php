@@ -21,45 +21,45 @@
 Session::checkSession();
 $linkpdo=Session::getLinkpdo();
 
-$username = $_SESSION ['username'];
-$study = $_SESSION ['study'];
-$role = $_SESSION ['role'];
+$username=$_SESSION ['username'];
+$study=$_SESSION ['study'];
+$role=$_SESSION ['role'];
 
-$id_visit = $_POST ['id_visit'];
-$type_visit = $_POST ['type_visit'];
-$patient_num = $_POST ['patient_num'];
+$id_visit=$_POST ['id_visit'];
+$type_visit=$_POST ['type_visit'];
+$patient_num=$_POST ['patient_num'];
 
 $userObject=new User($username, $linkpdo);
 $visitAllowed=$userObject->isVisitAllowed($id_visit, $role);
 
-if (isset ( $_SESSION ['username'] ) && $visitAllowed) {
+if (isset ($_SESSION ['username']) && $visitAllowed) {
 
 	$visitObject=new Visit($id_visit, $linkpdo);
 	
 	//If form sent and current status awaiting corrective action, accept to write the value in the database
-	if ( (isset ( $_POST ['corrective_action'] ) || isset ( $_POST ['no_corrective_action']) ) && $visitObject->stateQualityControl == 'Corrective Action Asked' && $role==User::INVESTIGATOR ) {
+	if ((isset ($_POST ['corrective_action']) || isset ($_POST ['no_corrective_action'])) && $visitObject->stateQualityControl == 'Corrective Action Asked' && $role == User::INVESTIGATOR) {
 
 		//Check Investigator have been validated before accepting the correction answer
-		if($visitObject->stateInvestigatorForm != "Done"){
+		if ($visitObject->stateInvestigatorForm != "Done") {
 			$answer="Form Missing";
 			echo(json_encode($answer));
 			return;
 	        
 		}
-		$newSeries = false;
+		$newSeries=false;
 		$formCorrected=false;
 		$correctiveActionDecision=false;
 	    
-		if ( isset($_POST['new_series']) ) {
-			$newSeries = true;
+		if (isset($_POST['new_series'])) {
+			$newSeries=true;
 		}
 		
-		if ( isset($_POST ['information_corrected']) ) {
-			$formCorrected = true;
+		if (isset($_POST ['information_corrected'])) {
+			$formCorrected=true;
 		}
 		
-		if ( isset($_POST ['corrective_action']) ) {
-			$correctiveActionDecision = true;
+		if (isset($_POST ['corrective_action'])) {
+			$correctiveActionDecision=true;
 		} 
 		
 		//Write in the database

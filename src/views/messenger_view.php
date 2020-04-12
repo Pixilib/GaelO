@@ -60,9 +60,9 @@ $(document).ready(function() {
     	<div class="row">
     		<select name="destinatorsRoles[]" id="destinatorsRoles" class="custom-select" style="width:auto;" multiple>
             	  <?php
-				  $roles = array("None", User::INVESTIGATOR, User::CONTROLLER, User::MONITOR, User::SUPERVISOR, User::REVIEWER, User::ADMINISTRATOR);
+				  $roles=array("None", User::INVESTIGATOR, User::CONTROLLER, User::MONITOR, User::SUPERVISOR, User::REVIEWER, User::ADMINISTRATOR);
 				  //add results in selector
-				  foreach ($roles as $role){
+				  foreach ($roles as $role) {
 					  echo'<option value='.$role.'>'.$role.' </option>';
 				  }
 				  ?>

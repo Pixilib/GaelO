@@ -25,26 +25,26 @@ if ($_SESSION['admin']) {
       
 	$inputDataCenters=json_decode($_POST['centersData'], true);
     
-	foreach ($inputDataCenters as $inputCenter){
+	foreach ($inputDataCenters as $inputCenter) {
         
 		$centersInputArray[$inputCenter[0]]['name']=$inputCenter[1];
 		$centersInputArray[$inputCenter[0]]['country_code']=$inputCenter[2];
 	}
     
 	//Get existing center in the database
-	foreach ($centers as $center){
-		$array_center_BDD[$center->code]['name'] = $center->name;
-		$array_center_BDD[$center->code]['country_code'] = $center->countryCode;
+	foreach ($centers as $center) {
+		$array_center_BDD[$center->code]['name']=$center->name;
+		$array_center_BDD[$center->code]['country_code']=$center->countryCode;
 	}
     
-	$insert_centers = @array_diff_assoc($centersInputArray, $array_center_BDD);
+	$insert_centers=@array_diff_assoc($centersInputArray, $array_center_BDD);
     
 	//Add missing centers in the database
 	foreach ($insert_centers as $code=>$details) {
         
-		try{
+		try {
 			Center::addCenter($linkpdo, $code, $details['name'], $details['country_code']);
-		}catch (Exception $e1){
+		}catch (Exception $e1) {
 			error_log($e1);
 			echo(json_encode("Error"));
 			return;
@@ -52,20 +52,20 @@ if ($_SESSION['admin']) {
         
 	}
 	//Update modified centers
-	$existing_centers = @array_intersect_key($centersInputArray, $array_center_BDD);
+	$existing_centers=@array_intersect_key($centersInputArray, $array_center_BDD);
 	foreach ($existing_centers as $code=>$details) {
 		//Select key interestion that have changes name of country
-		$isSameName=$centersInputArray[$code]['name']==$array_center_BDD[$code]['name'];
-		$isSameCountry=$centersInputArray[$code]['country_code']==$array_center_BDD[$code]['country_code'];
+		$isSameName=$centersInputArray[$code]['name'] == $array_center_BDD[$code]['name'];
+		$isSameCountry=$centersInputArray[$code]['country_code'] == $array_center_BDD[$code]['country_code'];
 		//Update database
 		$modified_centers=null;
         
-		if(!$isSameName || !$isSameCountry){
-			try{
+		if (!$isSameName || !$isSameCountry) {
+			try {
 				$centerObject=new Center($linkpdo, $code);
 				$centerObject->updateCenter($centersInputArray[$code]['name'], $centersInputArray[$code]['country_code']);
 				$modified_centers[$code]=$centersInputArray[$code];
-			}catch (Exception $e1){
+			}catch (Exception $e1) {
 				error_log($e1);
 				echo(json_encode("Error"));
 				return;
@@ -82,12 +82,12 @@ if ($_SESSION['admin']) {
 
 	echo(json_encode("Success"));
     
-	} else {
+	}else {
 		$countries=Global_Data::getAllcountries($linkpdo);
 		require 'views/administrator/modify_centers_view.php';
       
 	}
     
-} else {
+}else {
 	require 'includes/no_access.php';
 }

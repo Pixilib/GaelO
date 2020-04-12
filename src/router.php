@@ -17,7 +17,7 @@
  * Router
  */
 
-if ( !isset($_GET['page']) ) {
+if (!isset($_GET['page'])) {
 	require 'controllers/index_controller.php';
     
 }else if ($_GET['page'] == 'controller_form') {
@@ -44,7 +44,7 @@ if ( !isset($_GET['page']) ) {
 }else if ($_GET['page'] == 'new_visit') {
 	require 'controllers/investigator/new_visit_controller.php';
     
-}else if ($_GET['page'] == 'specific_form'){
+}else if ($_GET['page'] == 'specific_form') {
 	require 'controllers/investigator/specific_form_controller.php';
     
 }else if ($_GET['page'] == 'administrator') {
@@ -56,97 +56,97 @@ if ( !isset($_GET['page']) ) {
 }else if ($_GET['page'] == 'modify_centers') {
 	require 'controllers/administrator/modify_centers_controller.php';
     
-}else if ($_GET['page'] == 'preferences'){
+}else if ($_GET['page'] == 'preferences') {
 	require 'controllers/administrator/preferences_controller.php';
     
-}else if ($_GET['page'] == 'user_table'){
+}else if ($_GET['page'] == 'user_table') {
 	require 'controllers/administrator/user_table_controller.php';
     
-}else if ($_GET['page'] == 'new_user'){
+}else if ($_GET['page'] == 'new_user') {
 	require 'controllers/administrator/new_user_controller.php';
     
-}else if ($_GET['page'] == 'modify_user'){
+}else if ($_GET['page'] == 'modify_user') {
 	require 'controllers/administrator/modify_user_controller.php';
     
-}else if ($_GET['page'] == 'my_account'){
+}else if ($_GET['page'] == 'my_account') {
 	require 'controllers/my_account_controller.php';
     
-}else if ($_GET['page'] == 'export_database'){
+}else if ($_GET['page'] == 'export_database') {
 	require 'controllers/administrator/export_database_controller.php';
     
-}else if ($_GET['page'] == 'tracker_user'){
+}else if ($_GET['page'] == 'tracker_user') {
 	require 'controllers/administrator/tracker_user_controller.php';
     
-}else if ($_GET['page'] == 'tracker_admin'){
+}else if ($_GET['page'] == 'tracker_admin') {
 	require 'controllers/administrator/tracker_admin_controller.php';
     
-}else if ($_GET['page'] == 'create_study'){
+}else if ($_GET['page'] == 'create_study') {
 	require 'controllers/administrator/create_study_controller.php';
     
-}else if ($_GET['page'] == 'visit_builder'){
+}else if ($_GET['page'] == 'visit_builder') {
 	require 'controllers/administrator/visit_builder_controller.php';
     
-}else if ($_GET['page'] == 'preferences'){
+}else if ($_GET['page'] == 'preferences') {
 	require 'controllers/administrator/preferences_controller.php';
     
-}else if ($_GET['page'] == 'change_patient_status'){
+}else if ($_GET['page'] == 'change_patient_status') {
 	require 'controllers/supervisor/change_patient_status_controller.php';
     
-}else if ($_GET['page'] == 'documentation_supervisor'){
+}else if ($_GET['page'] == 'documentation_supervisor') {
 	require 'controllers/supervisor/documentation_controller.php';
     
-}else if ($_GET['page'] == 'documentation_upload'){
+}else if ($_GET['page'] == 'documentation_upload') {
 	require 'controllers/supervisor/documentation_upload_controller.php';
     
-}else if ($_GET['page'] == 'users_details'){
+}else if ($_GET['page'] == 'users_details') {
 	require 'controllers/supervisor/users_details_controller.php';
     
-}else if ($_GET['page'] == 'import_patients'){
+}else if ($_GET['page'] == 'import_patients') {
 	require 'controllers/supervisor/import_patients_controller.php';
     
-}else if ($_GET['page'] == 'patient_infos'){
+}else if ($_GET['page'] == 'patient_infos') {
 	require 'controllers/supervisor/patient_infos_controller.php';
     
-}else if ($_GET['page'] == 'visit_infos'){
+}else if ($_GET['page'] == 'visit_infos') {
 	require 'controllers/supervisor/visit_infos_controller.php';
     
-}else if ($_GET['page'] == 'root_supervisor'){
+}else if ($_GET['page'] == 'root_supervisor') {
 	require 'controllers/supervisor/supervisor_root_controller.php';
     
-}else if ($_GET['page'] == 'upload_manager'){
+}else if ($_GET['page'] == 'upload_manager') {
 	require 'controllers/supervisor/upload_manager_controller.php';
     
-}else if ($_GET['page'] == 'review_manager'){
+}else if ($_GET['page'] == 'review_manager') {
 	require 'controllers/supervisor/review_manager_controller.php';
     
-}else if ($_GET['page'] == 'download_manager'){
+}else if ($_GET['page'] == 'download_manager') {
 	require 'controllers/supervisor/download_manager_controller.php';
     
-}else if ($_GET['page'] == 'tracker'){
+}else if ($_GET['page'] == 'tracker') {
 	require 'controllers/supervisor/tracker_controller.php';
     
-}else if ($_GET['page'] == 'statistics'){
+}else if ($_GET['page'] == 'statistics') {
 	require 'controllers/supervisor/statistics_controller.php';
     
-}else if ($_GET['page'] == 'change_password'){
+}else if ($_GET['page'] == 'change_password') {
 	require 'controllers/change_password_controller.php';
     
-}else if ($_GET['page'] == 'forgot_password'){
+}else if ($_GET['page'] == 'forgot_password') {
 	require 'controllers/forgot_password_controller.php';
     
-}else if ($_GET['page'] == 'request'){
+}else if ($_GET['page'] == 'request') {
 	require 'controllers/request_controller.php';
     
-}else if ($_GET['page'] == 'messenger'){
+}else if ($_GET['page'] == 'messenger') {
 	require 'controllers/messenger_controller.php';
     
-}else if ($_GET['page'] == 'main'){
+}else if ($_GET['page'] == 'main') {
 	require 'controllers/main_controller.php';
     
-}else if (strpos($_GET['page'], 'orthanc') === 0){
+}else if (strpos($_GET['page'], 'orthanc') === 0) {
 	//Start with Orthanc to reach orthanc
 	require 'scripts/dicom_web.php';
     
-}else{
+}else {
 	require 'includes/404.php';
 }

@@ -30,14 +30,14 @@ class Statistics {
 	 * List review one by one with user and date
 	 * @return array
 	 */
-	public function getReviewsDate(){
+	public function getReviewsDate() {
 		$reviewdetailsMap=$this->studyObject->getReviewManager()->getReviewsDetailsByVisit();
 
 		$result=[];
 		
-		foreach($reviewdetailsMap as $visitType=>$details){
+		foreach ($reviewdetailsMap as $visitType=>$details) {
 			$review=[];
-			foreach($details['reviewDetailsArray'] as $detail){
+			foreach ($details['reviewDetailsArray'] as $detail) {
 				$review['username']=$detail['user'];
 				$review['date']=$detail['date'];
 				$result[]=$review;
@@ -94,18 +94,18 @@ class Statistics {
 	 * @param array $allPatientStatus
 	 * @return array
 	 */
-	private function getUploadDelay($allPatientStatus){
+	private function getUploadDelay($allPatientStatus) {
 
 		$resultArray=[];
 	    
-		foreach ($allPatientStatus as $visitType => $patients){
-			foreach ($patients as $patientCode=>$patientDetails){
+		foreach ($allPatientStatus as $visitType => $patients) {
+			foreach ($patients as $patientCode=>$patientDetails) {
 	            
-				if($patientDetails['status']==Patient_Visit_Manager::DONE && $patientDetails['state_investigator_form']==Patient_Visit_Manager::DONE){
+				if ($patientDetails['status'] == Patient_Visit_Manager::DONE && $patientDetails['state_investigator_form'] == Patient_Visit_Manager::DONE) {
 	                
 					$acquisitionDate=new DateTimeImmutable($patientDetails['acquisition_date']);
 					$uploadDate=new DateTimeImmutable($patientDetails['upload_date']);
-					$uploadDelay=($uploadDate->getTimestamp()-$acquisitionDate->getTimestamp()) / (3600*24);
+					$uploadDelay=($uploadDate->getTimestamp()-$acquisitionDate->getTimestamp())/(3600*24);
 					$visit['uploadDelay']=$uploadDelay;
 					$visit['acquisitionCompliancy']=$patientDetails['compliancy'];
 					$visit['visitType']=$visitType;
@@ -287,30 +287,30 @@ class Statistics {
 	 * Return specific data of all reviews
 	 * @return array[]
 	 */
-	public function getReviewData(){
+	public function getReviewData() {
 	    
 		$createdVisits=$this->studyVisitManager->getUploadedVisits();
         
 		$reviewsJson=[];
-		foreach ($createdVisits as $visit){
+		foreach ($createdVisits as $visit) {
 
 					$reviews=[];
 
-					try{
+					try {
 						$reviews[]=$visit->getReviewsObject(true);
-					}catch(Exception $e){ }
+					}catch (Exception $e) { }
 
-					try{
+					try {
 						$reviewsReviewers=$visit->getReviewsObject(false);
-						foreach ($reviewsReviewers as $expertReview){
+						foreach ($reviewsReviewers as $expertReview) {
 							$reviews[]=$expertReview;
 						}
-					}catch(Exception $e){ }
+					}catch (Exception $e) { }
 
 
-			foreach ($reviews as $review){
+			foreach ($reviews as $review) {
 
-						if($review->validated){
+						if ($review->validated) {
 								$specificData=$review->getSpecificData();
 								$parentVisit=$review->getParentVisitObject();
 								$visitType=$parentVisit->visitType;
@@ -329,7 +329,7 @@ class Statistics {
 		}
 		
 		$visitTypePossible=$this->studyVisitManager->getVisitGroupObject()->getAllVisitTypesOfGroup();
-		foreach ($visitTypePossible as $visitType){
+		foreach ($visitTypePossible as $visitType) {
 			$inputType=$visitType->getSpecificTableInputType();
 			$dataDetails[$visitType->name]=$inputType;
 		}

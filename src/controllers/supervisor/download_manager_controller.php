@@ -19,19 +19,19 @@
  */
 
 Session::checkSession();
-$linkpdo = Session::getLinkpdo();
+$linkpdo=Session::getLinkpdo();
 
-$userObject = new User($_SESSION['username'], $linkpdo);
-$accessCheck = $userObject->isRoleAllowed($_SESSION['study'], $_SESSION['role']);
+$userObject=new User($_SESSION['username'], $linkpdo);
+$accessCheck=$userObject->isRoleAllowed($_SESSION['study'], $_SESSION['role']);
 
 if ($accessCheck && $_SESSION['role'] == User::SUPERVISOR) {
 
 	//Get users roles in the study to pass it to the view    
-	$study = $_SESSION['study'];
-	$studyObject = new Study($study, $linkpdo);
-	$usersInStudy = $studyObject->getAllRolesByUsers();
+	$study=$_SESSION['study'];
+	$studyObject=new Study($study, $linkpdo);
+	$usersInStudy=$studyObject->getAllRolesByUsers();
 
 	require 'views/supervisor/download_manager_view.php';
-} else {
+}else {
 	require 'includes/no_access.php';
 }

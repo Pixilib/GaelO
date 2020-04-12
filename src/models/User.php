@@ -67,17 +67,17 @@ class User {
     
     
 
-	public function __construct(string $username, PDO $linkpdo){
+	public function __construct(string $username, PDO $linkpdo) {
 		$this->linkpdo=$linkpdo;
 		//Get the username from DB to get the case sensitive username
-		$connecter = $this->linkpdo->prepare('SELECT * FROM users WHERE username = :username');
+		$connecter=$this->linkpdo->prepare('SELECT * FROM users WHERE username = :username');
 		$connecter->execute(array("username" => $username));
-		$queryResults = $connecter->fetch(PDO::FETCH_ASSOC);
+		$queryResults=$connecter->fetch(PDO::FETCH_ASSOC);
 		//If no match in database => User doesn't exist
-		if (empty($queryResults)){
+		if (empty($queryResults)) {
 			$this->isExistingUser=false;
 		}
-		else{
+		else {
 			$this->isExistingUser=true;
 		}
         
@@ -106,11 +106,11 @@ class User {
        
 	}
     
-	public static function getUserByEmail(String $email, PDO $linkpdo){
+	public static function getUserByEmail(String $email, PDO $linkpdo) {
         
-		$connecter = $linkpdo->prepare('SELECT username FROM users WHERE email = :email');
+		$connecter=$linkpdo->prepare('SELECT username FROM users WHERE email = :email');
 		$connecter->execute(array("email" => $email));
-		$username = $connecter->fetch(PDO::FETCH_COLUMN);
+		$username=$connecter->fetch(PDO::FETCH_COLUMN);
         
 		return new User($username, $linkpdo);
         
@@ -121,58 +121,58 @@ class User {
 	 * @param String $password
 	 * @return boolean
 	 */
-	public function isPasswordCorrectAndActivitedAccount(string $password){
+	public function isPasswordCorrectAndActivitedAccount(string $password) {
         
-		$date = new DateTime($this->creationDatePassword);
-		$now = new DateTime();
+		$date=new DateTime($this->creationDatePassword);
+		$now=new DateTime();
 		$delayDay=$date->diff($now)->format("%a");
         
 		//If password delay over 90 => out dated password, need to be changed
-		if(intVal($delayDay)<=90){
+		if (intVal($delayDay) <= 90) {
 			$this->passwordDateValide=true;
 		}
-		else{
+		else {
 			$this->passwordDateValide=false;
 		}
 
 		//Check password correct
-		if($this->userStatus==User::UNCONFIRMED){
+		if ($this->userStatus == User::UNCONFIRMED) {
 			//Use the temp password for check
 			$this->passwordCorrect=password_verify($password, $this->tempPassword);
-		}else{
+		}else {
 			//use the current password for check
 			$this->passwordCorrect=password_verify($password, $this->password);
 		}
         
 		// If password OK, password date OK, and Account status active return OK for connexion
-		if ( $this->passwordCorrect && $this->passwordDateValide && $this->userStatus == User::ACTIVATED) {
+		if ($this->passwordCorrect && $this->passwordDateValide && $this->userStatus == User::ACTIVATED) {
 			//Update the last connexion date in DB and number attempt account to zero
 			$now=date("Y-m-d H:i:s");
-			$reset_tentatives = $this->linkpdo->prepare('UPDATE users SET number_attempts = 0, connexion_date=:datenow WHERE username = :username');
+			$reset_tentatives=$this->linkpdo->prepare('UPDATE users SET number_attempts = 0, connexion_date=:datenow WHERE username = :username');
 			//Exécution
-			$reset_tentatives->execute(array('username' => $this->username, 'datenow' =>$now ));
+			$reset_tentatives->execute(array('username' => $this->username, 'datenow' =>$now));
 			$this->loginAttempt=0;
             
-			Session::logInfo('Connected Login : '.$this->username.' Admin '.( ($this->isAdministrator) ? 'true' : 'false') );
+			Session::logInfo('Connected Login : '.$this->username.' Admin '.(($this->isAdministrator) ? 'true' : 'false'));
             
 			return true;
 		}
 		//Else, return false, add +1 to attempt account and block account if over 3
-		else if ( !$this->passwordCorrect) {
+		else if (!$this->passwordCorrect) {
             
-			Session::logInfo('Wrong Password : '.$this->username.' Admin '.(($this->isAdministrator) ? 'true' : 'false') );
+			Session::logInfo('Wrong Password : '.$this->username.' Admin '.(($this->isAdministrator) ? 'true' : 'false'));
             
 			//Add +1 to attempt account
-			$res = $this->linkpdo->prepare('UPDATE users SET number_attempts = number_attempts+1 WHERE username = :username');
+			$res=$this->linkpdo->prepare('UPDATE users SET number_attempts = number_attempts+1 WHERE username = :username');
 			$res->execute(array('username' => $this->username));
 			//Look at the new value
-			$tentatives = $this->linkpdo->prepare('SELECT number_attempts FROM users WHERE username = :username');
+			$tentatives=$this->linkpdo->prepare('SELECT number_attempts FROM users WHERE username = :username');
 			$tentatives->execute(array("username" => $this->username));
-			$nb_tentatives = $tentatives->fetch(PDO::FETCH_ASSOC);
+			$nb_tentatives=$tentatives->fetch(PDO::FETCH_ASSOC);
 			$this->loginAttempt=$nb_tentatives['number_attempts'];
 			//If over three block account
-			if($this->loginAttempt > 2){
-				$bloquer = $this->linkpdo->prepare('UPDATE users SET status = "Blocked" WHERE username = :username');
+			if ($this->loginAttempt > 2) {
+				$bloquer=$this->linkpdo->prepare('UPDATE users SET status = "Blocked" WHERE username = :username');
 				$bloquer->execute(array('username' => $this->username));
 				$this->userStatus="Blocked";
 				//Log login event
@@ -185,9 +185,9 @@ class User {
 
 			}
 		    
-		} else {
+		}else {
 			//If blocked status, re-send email notification
-			if ($this->userStatus=="Blocked"){
+			if ($this->userStatus == "Blocked") {
 				$this->sendBlockedEmail();
 			}
 	        
@@ -201,15 +201,15 @@ class User {
 	 * Return all studies available for the users (no matter it's role)
 	 * @return array
 	 */
-	public function getAllStudiesWithRole(){
+	public function getAllStudiesWithRole() {
     	
-		$connecter = $this->linkpdo->prepare('SELECT DISTINCT roles.study FROM roles, studies WHERE roles.username =:username
+		$connecter=$this->linkpdo->prepare('SELECT DISTINCT roles.study FROM roles, studies WHERE roles.username =:username
                                     AND studies.name=roles.study AND studies.active=1 ORDER BY roles.study');
 		$connecter->execute(array(
 				"username" => $this->username,
 		));
     	
-		$AvailableStudies = $connecter->fetchall(PDO::FETCH_COLUMN);
+		$AvailableStudies=$connecter->fetchall(PDO::FETCH_COLUMN);
     	
 		return $AvailableStudies;
 	}
@@ -221,7 +221,7 @@ class User {
 	 * @param $job
 	 * @return boolean
 	 */
-	public function isRoleAllowed(string $study, string $role){
+	public function isRoleAllowed(string $study, string $role) {
         
 		$query='SELECT * FROM roles, studies, users WHERE roles.username = :username 
                                                             AND roles.name=:role 
@@ -237,15 +237,15 @@ class User {
 		);
     	
     	
-		$connecter = $this->linkpdo->prepare($query);
+		$connecter=$this->linkpdo->prepare($query);
 		$connecter->execute($executeArray);
         
 		$rownb=$connecter->rowCount();
        
-		if($rownb==0){
+		if ($rownb == 0) {
 			return false;
 		}
-		else{
+		else {
 			return true;
 		}
 
@@ -255,7 +255,7 @@ class User {
 	 * Return main and affiliated centers for the current user
 	 * @return Array  : main centers in array
 	 */
-	public function getInvestigatorsCenters(){
+	public function getInvestigatorsCenters() {
 		$centers=$this->getAffiliatedCenters();
 		$centers[]=$this->mainCenter;
 		return $centers;
@@ -265,18 +265,18 @@ class User {
 	 * Return main center object of this user
 	 * @return Center
 	 */
-	public function getMainCenter(){
+	public function getMainCenter() {
 		return new Center($this->linkpdo, $this->mainCenter);
 	}
     
 	/**
 	 * Return affiliated center of the user
 	 */
-	public function getAffiliatedCenters(){
-		$result_center = $this->linkpdo->prepare('SELECT center FROM affiliated_centers WHERE affiliated_centers.username = :username ORDER BY center');
+	public function getAffiliatedCenters() {
+		$result_center=$this->linkpdo->prepare('SELECT center FROM affiliated_centers WHERE affiliated_centers.username = :username ORDER BY center');
 		$result_center->execute(array('username' => $this->username));
     	
-		$affiliatedCenterBdd= $result_center->fetchAll(PDO::FETCH_COLUMN);
+		$affiliatedCenterBdd=$result_center->fetchAll(PDO::FETCH_COLUMN);
     	
 		return $affiliatedCenterBdd;
 	}
@@ -284,10 +284,10 @@ class User {
 	/**
 	 * Return affiliated center of the user as Object
 	 */
-	public function getAffiliatedCentersAsObjects(){
+	public function getAffiliatedCentersAsObjects() {
 		$centersCode=$this->getAffiliatedCenters();
 		$centersObjects=[];
-		foreach ($centersCode as $code){
+		foreach ($centersCode as $code) {
 			$centersObjects[]=new Center($this->linkpdo, $code);
 		}
 		return $centersObjects;
@@ -298,10 +298,10 @@ class User {
 	 * @param $study
 	 * @return array of available roles
 	 */
-	public function getRolesInStudy(string $study){
-		$role = $this->linkpdo->prepare('SELECT name FROM roles WHERE roles.username = :username AND roles.study = :study ORDER BY roles.name');
+	public function getRolesInStudy(string $study) {
+		$role=$this->linkpdo->prepare('SELECT name FROM roles WHERE roles.username = :username AND roles.study = :study ORDER BY roles.name');
 		$role->execute(array('username' => $this->username, 'study' => $study));
-		$data_role = $role->fetchall(PDO::FETCH_COLUMN);
+		$data_role=$role->fetchall(PDO::FETCH_COLUMN);
 		return $data_role;
 	}
     
@@ -309,10 +309,10 @@ class User {
 	 * Retrun role map of users  : each study as key with an array of available roles
 	 * @return array[]
 	 */
-	public function getRolesMap(){
+	public function getRolesMap() {
 		$studies=$this->getAllStudiesWithRole();
 		$map=[];
-		foreach ($studies as $study){
+		foreach ($studies as $study) {
 			$map[$study]=$this->getRolesInStudy($study);
 		}
 		return $map;
@@ -324,22 +324,22 @@ class User {
 	 * @param string $role
 	 * @return boolean
 	 */
-	public function isPatientAllowed($patientCode, string $role){
+	public function isPatientAllowed($patientCode, string $role) {
         
-		if(empty($role)) return false;
+		if (empty($role)) return false;
 
 		$patientObject=new Patient($patientCode, $this->linkpdo);
         
 		//If Investigator check the current patient is from one of the centers of the user
-		if ($role==$this::INVESTIGATOR){
+		if ($role == $this::INVESTIGATOR) {
 			$userCenters=$this->getInvestigatorsCenters();
-			if (in_array($patientObject->patientCenter, $userCenters) && $this->isRoleAllowed($patientObject->patientStudy, $role)){
+			if (in_array($patientObject->patientCenter, $userCenters) && $this->isRoleAllowed($patientObject->patientStudy, $role)) {
 				return true;
 			}
         
 		//For other patient's permission is defined by patient's study availabilty
 		}else {
-			if ($this->isRoleAllowed($patientObject->patientStudy, $role)){
+			if ($this->isRoleAllowed($patientObject->patientStudy, $role)) {
 				return true;
 			}
 		}
@@ -358,23 +358,23 @@ class User {
 	 * @param string $role
 	 * @return boolean
 	 */
-	public function isVisitAllowed($id_visit, string $role){
+	public function isVisitAllowed($id_visit, string $role) {
         
-		if(empty($role)) return false;
+		if (empty($role)) return false;
         
 		$visitData=new Visit($id_visit, $this->linkpdo);
         
 		//Check that called Role exists for users and visit is not deleted
-		if( $this->isRoleAllowed($visitData->study, $role) && !$visitData->deleted ){
-			if($role==$this::INVESTIGATOR){ 
-				if ( $this->isPatientAllowed($visitData->patientCode, $role) ) return true;
-			}else if($role==$this::REVIEWER){
+		if ($this->isRoleAllowed($visitData->study, $role) && !$visitData->deleted) {
+			if ($role == $this::INVESTIGATOR) { 
+				if ($this->isPatientAllowed($visitData->patientCode, $role)) return true;
+			}else if ($role == $this::REVIEWER) {
 				//For reviewer the visit access is allowed if one of the created visits is still awaiting review
 				//This is made to allow access to references scans
 				$patientObject=$visitData->getPatient();
 				$isAwaitingReview=$patientObject->getPatientStudy()->isHavingAwaitingReviewImagingVisit();
 				return $isAwaitingReview;
-			}else{
+			}else {
 				//Controller, Supervisor, Admin, Monitor simply accept when role is available in patient's study (no specific rules)
 				return true;
 			}
@@ -388,7 +388,7 @@ class User {
 	/**
 	 * Send warning emails to notify that the account is blocked (to administrators + user)
 	 */
-	private function sendBlockedEmail(){
+	private function sendBlockedEmail() {
 		//Get all studies assosciated with account
 		$linkedStudies=$this->getAllStudiesWithRole();
 		//Send Email notification
@@ -403,8 +403,8 @@ class User {
 	 * @param string $role
 	 * @param string $study
 	 */
-	public function addRole(string $role, string $study){
-		$addRole = $this->linkpdo->prepare('INSERT INTO roles(name, username, study)
+	public function addRole(string $role, string $study) {
+		$addRole=$this->linkpdo->prepare('INSERT INTO roles(name, username, study)
                                         VALUES(:role, :username, :study)');
 		//Exécution
 		$addRole->execute(array('role' => $role,
@@ -417,8 +417,8 @@ class User {
 	 * Add Affiliated center to the user
 	 * @param $centerCode
 	 */
-	public function addAffiliatedCenter($centerCode){
-		$addCenter = $this->linkpdo->prepare('INSERT INTO affiliated_centers(username, center)
+	public function addAffiliatedCenter($centerCode) {
+		$addCenter=$this->linkpdo->prepare('INSERT INTO affiliated_centers(username, center)
                                                   VALUES(:username, :centerCode)');
 		$addCenter->execute(array('username' => $this->username, 'centerCode' => $centerCode));
         
@@ -428,8 +428,8 @@ class User {
 	 * Remove an affiliated center to the user
 	 * @param $centerCode
 	 */
-	public function removeAffiliatedCenter($centerCode){
-		$res = $this->linkpdo->prepare('DELETE FROM affiliated_centers WHERE username = :username
+	public function removeAffiliatedCenter($centerCode) {
+		$res=$this->linkpdo->prepare('DELETE FROM affiliated_centers WHERE username = :username
                   AND center = :centerCode');
 		$res->execute(array('username' => $this->username,
 				'centerCode' => $centerCode));
@@ -440,8 +440,8 @@ class User {
 	 * @param string $study
 	 * @param string $role
 	 */
-	public function deleteRole(string $study, string $role){
-		$res = $this->linkpdo->prepare('DELETE FROM roles WHERE username = :username
+	public function deleteRole(string $study, string $role) {
+		$res=$this->linkpdo->prepare('DELETE FROM roles WHERE username = :username
                   AND study = :study
                   AND name = :role');
 		$res->execute(array('username' => $this->username,
@@ -455,9 +455,9 @@ class User {
 	 * @param $password
 	 * @param $status
 	 */
-	public function updateUserPassword(string $password, string $status){
+	public function updateUserPassword(string $password, string $status) {
 		//Update the database with new password and switch old passwords
-		$req = $this->linkpdo->prepare('UPDATE users
+		$req=$this->linkpdo->prepare('UPDATE users
                                     SET previous_password_2=users.previous_password_1,
                                         previous_password_1=users.password,
                                         password = :mdp,
@@ -477,9 +477,9 @@ class User {
 	 * Generate a temp password and set account to unconfirmed
 	 * @param $password
 	 */
-	public function setUnconfirmedAccount(string $password){
+	public function setUnconfirmedAccount(string $password) {
         
-		$req = $this->linkpdo->prepare('UPDATE users
+		$req=$this->linkpdo->prepare('UPDATE users
                                     SET temp_password = :mdp,
                                         number_attempts = 0,
                                         creation_date_password = :datePassword,
@@ -507,9 +507,9 @@ class User {
 	 * @param $orthancLogin
 	 * @param s$orthancPassword
 	 */
-	public function updateUser($last_name, $first_name, $email, $phone, $job, $status, bool $administrator, $mainCenterCode, $orthancAddress, $orthancLogin, $orthancPassword){
+	public function updateUser($last_name, $first_name, $email, $phone, $job, $status, bool $administrator, $mainCenterCode, $orthancAddress, $orthancLogin, $orthancPassword) {
         
-		$req = $this->linkpdo->prepare('UPDATE users SET
+		$req=$this->linkpdo->prepare('UPDATE users SET
     								last_name = :nom,
     								first_name = :prenom,
     								email = :email,
@@ -536,9 +536,9 @@ class User {
 			'admin'=>intval($administrator),
 			'numero_centre' => $mainCenterCode,
 			'orthancAddress'=>empty($orthancAddress) ? null : $orthancAddress,
-			'orthancLogin'=>empty($orthancLogin) ? null : $orthancLogin ,
+			'orthancLogin'=>empty($orthancLogin) ? null : $orthancLogin,
 			'orthancPassword'=>empty($orthancPassword) ? null : $orthancPassword
-		)) ;
+		));
 	}
     
 	/**
@@ -559,15 +559,15 @@ class User {
 	 * @throws Exception
 	 */
 	public static function createUser($username, $last_name, $first_name, $email, $phone,
-				$mdp, $job, $mainCenter, $administrator, $orthancAddress, $orthancLogin, $orthancPassword, PDO $linkpdo){
+				$mdp, $job, $mainCenter, $administrator, $orthancAddress, $orthancLogin, $orthancPassword, PDO $linkpdo) {
             
 			//Check that new users is not already existing
-			$accountQuery = $linkpdo->prepare('SELECT * FROM users WHERE (users.username=:username OR users.email=:email)');
+			$accountQuery=$linkpdo->prepare('SELECT * FROM users WHERE (users.username=:username OR users.email=:email)');
 			$accountQuery->execute(array(
 				'username' => $username,
 				'email' => $email
 			));
-			$existingAccount = $accountQuery->fetchAll();
+			$existingAccount=$accountQuery->fetchAll();
             
 			if (!empty($existingAccount)) {
 			   throw new Exception("Account already existing");
@@ -575,7 +575,7 @@ class User {
             
             
 			// If new user, write it in database        
-			$req = $linkpdo->prepare('INSERT INTO users(username, last_name, first_name, email, creation_date_password, phone, password, temp_password, job, center, creation_date, is_administrator, orthanc_address, orthanc_login, orthanc_password)
+			$req=$linkpdo->prepare('INSERT INTO users(username, last_name, first_name, email, creation_date_password, phone, password, temp_password, job, center, creation_date, is_administrator, orthanc_address, orthanc_login, orthanc_password)
                   VALUES(:username, :nom, :prenom, :email, :creation_date_password, :telephone, :password, :tempPassword, :job, :numero_centre, :date_creation_account, :admin, :orthancAddress, :orthancLogin, :orthancPassword)');
             
 			$req->execute(array(

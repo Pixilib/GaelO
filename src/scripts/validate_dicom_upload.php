@@ -54,7 +54,7 @@ $userObject=new User($username, $linkpdo);
 
 $accessCheck=$userObject->isVisitAllowed($id_visit, User::INVESTIGATOR);
 
-if( $accessCheck && $role== User::INVESTIGATOR && $visitObject->uploadStatus==Visit::NOT_DONE){
+if ($accessCheck && $role == User::INVESTIGATOR && $visitObject->uploadStatus == Visit::NOT_DONE) {
 	//Run as a background task even if the user leave the website
 	ignore_user_abort(true);
 	//Set Visit as upload processing status
@@ -65,16 +65,16 @@ if( $accessCheck && $role== User::INVESTIGATOR && $visitObject->uploadStatus==Vi
 	 * Try block as each interruption of the proccess must make visit return as upload not done
 	 * To allow new upload
 	 */
-	try{
+	try {
 		//Check that ZIP is not a bomb
 		$zipSize=filesize($zipPath);
 		$uncompressedzipSize=get_zip_originalsize($zipPath);
-		if($uncompressedzipSize/$zipSize >20){
+		if ($uncompressedzipSize/$zipSize > 20) {
 			throw new Exception("Bomb Zip");
 		}
         
 		//Unzip recieved file
-		$zip = new ZipArchive;
+		$zip=new ZipArchive;
 		$zip->open($zipPath);
 		$zip->extractTo($destination);
 		$zip->close();
@@ -110,7 +110,7 @@ if( $accessCheck && $role== User::INVESTIGATOR && $visitObject->uploadStatus==Vi
 		$studyDetails=$fillTable->parseData($anonymizedIDArray[0]);
 
 		//Check that nb on instances in Orthanc PACS still match the original number of sent instances
-		if($studyDetails['countInstances']!=$nbOfInstances){
+		if ($studyDetails['countInstances'] != $nbOfInstances) {
 			throw new Exception("Error during Peer transfers"); 
 		}
     		
@@ -122,14 +122,14 @@ if( $accessCheck && $role== User::INVESTIGATOR && $visitObject->uploadStatus==Vi
 		$logDetails['visitType']=$visitObject->visitType;
 		$logDetails['modality_visit']=$visitObject->visitGroupObject->groupModality;
 		//Log import
-		Tracker::logActivity($username, $role, $study, $visitObject->id_visit, "Upload Series", $logDetails );
+		Tracker::logActivity($username, $role, $study, $visitObject->id_visit, "Upload Series", $logDetails);
 	
-	}catch(Exception $e1){
+	}catch (Exception $e1) {
 		handleException($e1);
 	}
 		
 
-}else{
+}else {
 	header('HTTP/1.0 403 Forbidden');
 	die('You are not allowed to access this file.');
 }
@@ -195,9 +195,9 @@ function sendFolderToOrthanc(string $destination, Orthanc $orthancExposedObject)
  * @param string $directory
  */
 function recursive_directory_delete(string $directory) {
-	$it = new RecursiveDirectoryIterator($directory, FilesystemIterator::SKIP_DOTS);
-	$it = new RecursiveIteratorIterator($it, RecursiveIteratorIterator::CHILD_FIRST);
-	foreach($it as $file) {
+	$it=new RecursiveDirectoryIterator($directory, FilesystemIterator::SKIP_DOTS);
+	$it=new RecursiveIteratorIterator($it, RecursiveIteratorIterator::CHILD_FIRST);
+	foreach ($it as $file) {
 		if ($file->isDir()) rmdir($file->getPathname());
 		else unlink($file->getPathname());
 	}
@@ -242,10 +242,10 @@ function warningAdminError(string $errorMessage, PDO $linkpdo) {
  * @return number
  */
 function get_zip_originalsize(string $filename) {
-	$size = 0;
-	$resource = zip_open($filename);
-	while ($dir_resource = zip_read($resource)) {
-		$size += zip_entry_filesize($dir_resource);
+	$size=0;
+	$resource=zip_open($filename);
+	while ($dir_resource=zip_read($resource)) {
+		$size+=zip_entry_filesize($dir_resource);
 	}
 	zip_close($resource);
     

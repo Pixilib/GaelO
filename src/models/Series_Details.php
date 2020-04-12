@@ -44,11 +44,11 @@ Class Series_Details {
     
 	public $studyDetailsObject;
 
-	public function __construct(String $seriesOrthancID, PDO $linkpdo){
+	public function __construct(String $seriesOrthancID, PDO $linkpdo) {
 		$this->linkpdo=$linkpdo;
 		$this->seriesOrthancID=$seriesOrthancID;
         
-		$seriesQuery = $this->linkpdo->prepare ( 'SELECT * FROM orthanc_series
+		$seriesQuery=$this->linkpdo->prepare('SELECT * FROM orthanc_series
                                                 WHERE series_orthanc_id=:seriesOrthancID' );
         
 		$seriesQuery->execute(array(
@@ -91,8 +91,8 @@ Class Series_Details {
 	 * Modify deleted status of the serie
 	 * @param bool $deleted
 	 */
-	public function changeDeletionStatus(bool $deleted){
-		$connecter = $this->linkpdo->prepare('UPDATE orthanc_series SET deleted=:deleted WHERE series_orthanc_id = :seriesOrthancID');
+	public function changeDeletionStatus(bool $deleted) {
+		$connecter=$this->linkpdo->prepare('UPDATE orthanc_series SET deleted=:deleted WHERE series_orthanc_id = :seriesOrthancID');
 		$connecter->execute(array(
 			"seriesOrthancID" => $this->seriesOrthancID,
 			"deleted"=>intval($deleted)
@@ -107,9 +107,9 @@ Class Series_Details {
 	 * @param PDO $linkpdo
 	 * @return Series_Details
 	 */
-	public static function getSerieObjectByUID (string $uid, PDO $linkpdo){
+	public static function getSerieObjectByUID(string $uid, PDO $linkpdo) {
         
-		$seriesQuery = $linkpdo->prepare ( 'SELECT series_orthanc_id FROM orthanc_series
+		$seriesQuery=$linkpdo->prepare('SELECT series_orthanc_id FROM orthanc_series
                                                 WHERE serie_uid=:seriesUID' );
         
 		$seriesQuery->execute(array(

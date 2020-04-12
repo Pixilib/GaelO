@@ -32,7 +32,7 @@ $scheduler=new Scheduler();
 // Let the scheduler execute jobs which are due.
 $scheduler->run();
 
-function scheduleWorkindDays(String $scriptName, array $arugments, int $hour, int $min){
+function scheduleWorkindDays(String $scriptName, array $arugments, int $hour, int $min) {
 	global $scheduler;
 	$scheduler->php(__DIR__.'/'.$scriptName, null, $arugments)->monday($hour, $min)->output('/var/log/gaelo_cron.log');
 	$scheduler->php(__DIR__.'/'.$scriptName, null, $arugments)->tuesday($hour, $min)->output('/var/log/gaelo_cron.log');
@@ -41,7 +41,7 @@ function scheduleWorkindDays(String $scriptName, array $arugments, int $hour, in
 	$scheduler->php(__DIR__.'/'.$scriptName, null, $arugments)->friday($hour, $min)->output('/var/log/gaelo_cron.log');
 }
 
-function scheduleSundays(String $scriptName, array $arugments, int $hour, int $min){
+function scheduleSundays(String $scriptName, array $arugments, int $hour, int $min) {
 	global $scheduler;
 	$scheduler->php(__DIR__.'/'.$scriptName, null, $arugments)->sunday($hour, $min)->output('/var/log/gaelo_cron.log');
 }

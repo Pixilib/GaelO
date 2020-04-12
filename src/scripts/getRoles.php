@@ -22,9 +22,9 @@ require_once($_SERVER['DOCUMENT_ROOT'].'/vendor/autoload.php');
 Session::checkSession();
 $linkpdo=Session::getLinkpdo();
 
-if ( isset($_SESSION['username']) ) {
+if (isset($_SESSION['username'])) {
     
-	$userObject= new User($_SESSION['username'], $linkpdo);
+	$userObject=new User($_SESSION['username'], $linkpdo);
 	$roles=$userObject->getRolesInStudy($_POST['study']);
   
 	//Output results

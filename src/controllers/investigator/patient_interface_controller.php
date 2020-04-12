@@ -20,20 +20,20 @@
 Session::checkSession();
 $linkpdo=Session::getLinkpdo();
 
-$patient = $_POST['patient_num'];
-$study = $_SESSION['study'];
-$role = $_SESSION['role'];
+$patient=$_POST['patient_num'];
+$study=$_SESSION['study'];
+$role=$_SESSION['role'];
 
 $userObject=new User($_SESSION['username'], $linkpdo);
 $patientAllowed=$userObject->isPatientAllowed($patient, $role);
 
 //Check user authorization
-if( isset($_SESSION['username']) && $patientAllowed ){
+if (isset($_SESSION['username']) && $patientAllowed) {
 	
 	//Instanciate Visit manager to check if visit creation is still possible
-	try{
+	try {
 		$patientObject=new Patient($patient, $linkpdo); 
-	}catch(Exception $e){
+	}catch (Exception $e) {
 		exit("No Patient Found");
 	}
 	$visitPossible=$patientObject->isMissingVisit();
@@ -43,7 +43,7 @@ if( isset($_SESSION['username']) && $patientAllowed ){
 	require 'views/investigator/patient_interface_view.php';
     
     
-} else {
+}else {
 	require 'includes/no_access.php';
 }
 

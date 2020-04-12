@@ -85,7 +85,7 @@ if ($visitObject->statusDone == Visit::NOT_DONE) {
         
             	<?php
 			}
-			if ($role == User::REVIEWER ||  ($role == User::INVESTIGATOR  && $visitObject->uploadStatus==Visit::DONE) || ($role == User::CONTROLLER && ($visitObject->stateQualityControl == Visit::QC_NOT_DONE || $visitObject->stateQualityControl == Visit::QC_WAIT_DEFINITVE_CONCLUSION))) {
+			if ($role == User::REVIEWER || ($role == User::INVESTIGATOR && $visitObject->uploadStatus == Visit::DONE) || ($role == User::CONTROLLER && ($visitObject->stateQualityControl == Visit::QC_NOT_DONE || $visitObject->stateQualityControl == Visit::QC_WAIT_DEFINITVE_CONCLUSION))) {
 				?>
             		$("#reviewerDownloadDicomBtn").on('click', function() {
             			$("#downloadForm").submit();
@@ -142,7 +142,7 @@ if ($visitObject->statusDone == Visit::NOT_DONE) {
 		        		checkIcon.show();
 		        		uploadStatusLabel.css("color", "green");
 		        		spinner.hide();
-		        		<?php if($visitObject->stateInvestigatorForm==Visit::DONE){
+		        		<?php if ($visitObject->stateInvestigatorForm == Visit::DONE) {
 							?>
 		        			refreshDivContenu();
 		        			<?php
@@ -192,7 +192,7 @@ if ($role != User::REVIEWER) {
     <?php
 }
 // If reviewer or controler with awaiting QC action add an invisible form and a button to make dicom zip dowload
-if ($role == User::REVIEWER || ($role == User::INVESTIGATOR  && $visitObject->uploadStatus==Visit::DONE) || ($role == User::CONTROLLER && ($visitObject->stateQualityControl == Visit::QC_WAIT_DEFINITVE_CONCLUSION || $visitObject->stateQualityControl == Visit::QC_NOT_DONE))) {
+if ($role == User::REVIEWER || ($role == User::INVESTIGATOR && $visitObject->uploadStatus == Visit::DONE) || ($role == User::CONTROLLER && ($visitObject->stateQualityControl == Visit::QC_WAIT_DEFINITVE_CONCLUSION || $visitObject->stateQualityControl == Visit::QC_NOT_DONE))) {
 	?>
     <div class="text-center mt-3 mb-3">
     	<input class="btn btn-primary" type="button"
@@ -222,10 +222,10 @@ if ($visitObject->uploadStatus == Visit::DONE && $role != User::REVIEWER) {
 <div id="formInvestigator"></div>
 
 <?php
-function replaceEmpty($data){
-	if (empty($data)){
+function replaceEmpty($data) {
+	if (empty($data)) {
 		return ('/');
-	}else{
+	}else {
 		return (htmlspecialchars($data));
 	}
 }
@@ -235,13 +235,13 @@ function replaceEmpty($data){
 function build_table_series($role, $visitObject)
 {
 	// Get Series Object Array with details
-	$data_series = $visitObject->getSeriesDetails();
+	$data_series=$visitObject->getSeriesDetails();
     
-	$series_number = count($data_series);
+	$series_number=count($data_series);
     
 	if ($series_number == 0) return;
     
-	$colspan = $series_number + 1;
+	$colspan=$series_number+1;
 	?>
 	<div style="overflow-x:auto;"> 
 		<table id="tab_series" class="table table-striped">
@@ -251,7 +251,7 @@ function build_table_series($role, $visitObject)
 			<tr>
 				<td>Series Number</td>
     			<?php 
-				for ($i = 0; $i < $series_number; $i ++) {
+				for ($i=0; $i < $series_number; $i++) {
 					if (empty($data_series[$i]->seriesNumber))
 						?>
                         <td> 
@@ -263,7 +263,7 @@ function build_table_series($role, $visitObject)
 			<tr>
     			<td>Manufacturer</td>
     			<?php 
-				for ($i = 0; $i < $series_number; $i ++) {
+				for ($i=0; $i < $series_number; $i++) {
 					?>
                     <td>
                     	<?=replaceEmpty($data_series[$i]->manufacturer)?>
@@ -274,7 +274,7 @@ function build_table_series($role, $visitObject)
 			<tr>
 				<td>Series Description</td>
 				<?php 
-				for ($i = 0; $i < $series_number; $i ++) {
+				for ($i=0; $i < $series_number; $i++) {
 					?>
                     <td>
                     	<?=replaceEmpty($data_series[$i]->seriesDescription)?>
@@ -286,7 +286,7 @@ function build_table_series($role, $visitObject)
 			<tr>
 				<td>Modality</td>
 				<?php 
-				for ($i = 0; $i < $series_number; $i ++) {
+				for ($i=0; $i < $series_number; $i++) {
 					?>
                     <td>
                     	<?=replaceEmpty($data_series[$i]->modality)?>
@@ -298,7 +298,7 @@ function build_table_series($role, $visitObject)
 			<tr>
 				<td>Acquisition Date Time</td>
 				<?php 
-				for ($i = 0; $i < $series_number; $i ++) {
+				for ($i=0; $i < $series_number; $i++) {
 					?>
                     <td>
                     	<?=replaceEmpty($data_series[$i]->acquisitionDateTime)?>
@@ -310,13 +310,13 @@ function build_table_series($role, $visitObject)
 			<tr>
 				<td>Total Dose (MBq)</td>
 				<?php 
-				for ($i = 0; $i < $series_number; $i ++) {
+				for ($i=0; $i < $series_number; $i++) {
 					?>
                     <td>
-                    <?php if (empty($data_series[$i]->injectedDose)){
+                    <?php if (empty($data_series[$i]->injectedDose)) {
 						echo('/');
-					}else{
-						echo(htmlspecialchars($data_series[$i]->injectedDose / 10 ** 6));
+					}else {
+						echo(htmlspecialchars($data_series[$i]->injectedDose/10 ** 6));
 					}
 					?>
                     </td>
@@ -327,7 +327,7 @@ function build_table_series($role, $visitObject)
 			<tr>
 				<td>Radiopharmaceutical</td>
 				<?php 
-				for ($i = 0; $i < $series_number; $i ++) {
+				for ($i=0; $i < $series_number; $i++) {
 					?>
                     <td>
                     	<?=replaceEmpty($data_series[$i]->radiopharmaceutical)?>
@@ -339,7 +339,7 @@ function build_table_series($role, $visitObject)
 			<tr>
 				<td>Injection Date Time</td>
 				<?php 
-				for ($i = 0; $i < $series_number; $i ++) {
+				for ($i=0; $i < $series_number; $i++) {
 					?>
                     <td>
                     	<?=replaceEmpty($data_series[$i]->injectedDateTime)?>
@@ -351,13 +351,13 @@ function build_table_series($role, $visitObject)
 			<tr>
 				<td>Radiopharm. Specific Activity (MBq)</td>
 				<?php 
-				for ($i = 0; $i < $series_number; $i ++) {
+				for ($i=0; $i < $series_number; $i++) {
 					?>
                     <td>
-                    <?php if (empty($data_series[$i]->injectedActivity)){
+                    <?php if (empty($data_series[$i]->injectedActivity)) {
 						echo('/');
-					}else{
-						echo(htmlspecialchars($data_series[$i]->injectedActivity / 10 ** 6));
+					}else {
+						echo(htmlspecialchars($data_series[$i]->injectedActivity/10 ** 6));
 					}
 					?>
                     </td>
@@ -368,7 +368,7 @@ function build_table_series($role, $visitObject)
 			<tr>
 				<td>Half Life (s)</td>
 				<?php 
-				for ($i = 0; $i < $series_number; $i ++) {
+				for ($i=0; $i < $series_number; $i++) {
 					?>
                     <td>
                     	<?=replaceEmpty($data_series[$i]->halfLife)?>
@@ -380,7 +380,7 @@ function build_table_series($role, $visitObject)
 			<tr>
 				<td>Patient's Weight (kg)</td>
 				<?php 
-				for ($i = 0; $i < $series_number; $i ++) {
+				for ($i=0; $i < $series_number; $i++) {
 					?>
                     <td>
                     	<?=replaceEmpty($data_series[$i]->patientWeight)?>
@@ -392,7 +392,7 @@ function build_table_series($role, $visitObject)
 			<tr>
 				<td>Slice Count</td>
 				<?php 
-				for ($i = 0; $i < $series_number; $i ++) {
+				for ($i=0; $i < $series_number; $i++) {
 					?>
                     <td>
                     	<?=replaceEmpty($data_series[$i]->numberInstances)?>
@@ -404,7 +404,7 @@ function build_table_series($role, $visitObject)
 			<tr>
 				<td>Upload Date</td>
 				<?php 
-				for ($i = 0; $i < $series_number; $i ++) {
+				for ($i=0; $i < $series_number; $i++) {
 					?>
                     <td>
                     	<?=replaceEmpty($data_series[$i]->studyDetailsObject->uploadDate)?>
@@ -418,7 +418,7 @@ function build_table_series($role, $visitObject)
 			?><tr>
     	        <td>Delete</td>
             <?php 
-			for ($i = 0; $i < $series_number; $i ++) {
+			for ($i=0; $i < $series_number; $i++) {
 				?>
                 <td>
                 	<a href=scripts/change_series_deletion.php?action=delete&Series_Orthanc_Id=<?=htmlspecialchars($data_series[$i]->seriesOrthancID)?> class="ajaxLinkConfirm" ><input class="btn btn-danger" type="button" value="Delete Series"></a>

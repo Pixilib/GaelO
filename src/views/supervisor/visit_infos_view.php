@@ -28,8 +28,8 @@ $(document).ready(function(){
 	}
     
 	//If a corrective action has been made and QC not concluded, display the corrective action form
-	if ($visitObject->stateQualityControl!=Visit::QC_ACCEPTED && $visitObject->stateQualityControl !=Visit::QC_REFUSED 
-		 && $visitObject->correctiveActionDate!= null) {
+	if ($visitObject->stateQualityControl != Visit::QC_ACCEPTED && $visitObject->stateQualityControl != Visit::QC_REFUSED 
+		 && $visitObject->correctiveActionDate != null) {
 	?>
 		$("#corrective_action_form").load('/corrective_action', {
 			id_visit :<?=$id_visit?>,
@@ -133,7 +133,7 @@ $(document).ready(function(){
 		
 		<div id="quality_control_form" ></div>
 		<?php 
-		if($visitObject->reviewStatus== Visit::NOT_DONE){
+		if ($visitObject->reviewStatus == Visit::NOT_DONE) {
 			?>
 		    <a href=scripts/reset_qc.php?id_visit=<?=$id_visit?> class="ajaxLinkConfirm refreshVisitSupervisor" ><input class='btn btn-danger' type="button" value='Reset QC'></a>
        		<?php
@@ -168,16 +168,16 @@ $(document).ready(function(){
 	<table class='table table-striped'>
     	<tr>
     		<th>Filled in by</th>
-    		<td><?php if(!empty($localReviewObject)) echo(htmlspecialchars($localReviewObject->username)); ?></td>
+    		<td><?php if (!empty($localReviewObject)) echo(htmlspecialchars($localReviewObject->username)); ?></td>
     	</tr>
     	<tr>
     		<th>Date</th>
-    		<td><?php if(!empty($localReviewObject)) echo($localReviewObject->reviewDate); ?></td>
+    		<td><?php if (!empty($localReviewObject)) echo($localReviewObject->reviewDate); ?></td>
     	</tr>
     </table>
    
     <?php 
-	if(!empty($localReviewObject) && $visitObject->stateQualityControl !=Visit::QC_ACCEPTED && $visitObject->stateQualityControl !=Visit::QC_REFUSED){
+	if (!empty($localReviewObject) && $visitObject->stateQualityControl != Visit::QC_ACCEPTED && $visitObject->stateQualityControl != Visit::QC_REFUSED) {
 		?>
          <a href=scripts/unlock_form.php?id_review=<?=$localReviewObject->id_review.'&id_visit='.$id_visit?> class="ajaxLinkConfirm refreshVisitSupervisor" ><input class='btn btn-danger' type="button" value='Unlock Form'></a>
 		 <a href=scripts/delete_form.php?id_review=<?=$localReviewObject->id_review.'&id_visit='.$id_visit?> class="ajaxLinkConfirm refreshVisitSupervisor" ><input class='btn btn-danger' type=button value='Delete Form'></a>
@@ -194,28 +194,28 @@ $(document).ready(function(){
 	<table class='table table-striped'>
     	<tr>
     		<th>Conclusion Date</th>
-    		<td><?php if(!empty($visitObject->reviewConclusionDate)) echo($visitObject->reviewConclusionDate); else echo("N/A") ?></td>
+    		<td><?php if (!empty($visitObject->reviewConclusionDate)) echo($visitObject->reviewConclusionDate); else echo("N/A") ?></td>
     	</tr>
     	<tr>
     		<th>Conclusion Value</th>
-    		<td><?php if(!empty($visitObject->reviewConclusion)) echo(htmlspecialchars($visitObject->reviewConclusion)); else echo("N/A") ?></td>
+    		<td><?php if (!empty($visitObject->reviewConclusion)) echo(htmlspecialchars($visitObject->reviewConclusion)); else echo("N/A") ?></td>
     	</tr>
     </table>
     
 	<?php make_interface_tableau_review_supervisor($data_reviews)?>
-	<?php makeHistoryTable("Form", $trackerVisitResponses, false);?>
+	<?php makeHistoryTable("Form", $trackerVisitResponses, false); ?>
 </div>
 
 <?php
-function makeHistoryTable($actionGroup, $trackerVisitResponses, bool $formInvestigator=null){
+function makeHistoryTable($actionGroup, $trackerVisitResponses, bool $formInvestigator=null) {
     
-	if($actionGroup=="Visit"){
+	if ($actionGroup == "Visit") {
 		$actionArray=array("Create Visit", "Delete Visit", "Reactivate Visit");
-	}else if($actionGroup=="Form"){
+	}else if ($actionGroup == "Form") {
 		$actionArray=array("Save Form", "Unlock Form", "Delete Form");
-	}else if($actionGroup=="Qc"){
+	}else if ($actionGroup == "Qc") {
 		$actionArray=array("Reset QC", "Quality Control", "Corrective Action");
-	}else if($actionGroup=="Serie"){
+	}else if ($actionGroup == "Serie") {
 		$actionArray=array("Import Series", "Change Serie");
 	}
 	?>
@@ -233,15 +233,15 @@ function makeHistoryTable($actionGroup, $trackerVisitResponses, bool $formInvest
         	</thead>
         	<tbody>
             	<?php 
-				foreach ($trackerVisitResponses as $response){
+				foreach ($trackerVisitResponses as $response) {
             	    
-					if(in_array($response['action_type'], $actionArray)){
+					if (in_array($response['action_type'], $actionArray)) {
             	        
 						$details=json_decode($response['action_details'], true);
             	        
-						if($actionGroup=="Form"){ 
-							if($formInvestigator && $details['local_review']=="0") continue(1);
-							if(!$formInvestigator && $details['local_review']=="1") continue(1);  
+						if ($actionGroup == "Form") { 
+							if ($formInvestigator && $details['local_review'] == "0") continue(1);
+							if (!$formInvestigator && $details['local_review'] == "1") continue(1);  
 						}
             	        
 					?>
@@ -262,14 +262,14 @@ function makeHistoryTable($actionGroup, $trackerVisitResponses, bool $formInvest
 <?php 
 }
 
-function make_study_table($visitObject){
+function make_study_table($visitObject) {
     
 	$dicomStudies=$visitObject->getStudyDicomDetails();
     
-	if(empty($dicomStudies)){
+	if (empty($dicomStudies)) {
 		//If no available studies, show all deleted studies in the DB
 		make_interface_tableau_study_supervisor($visitObject);
-	}else{
+	}else {
 		make_interface_tableau_series_supervisor($visitObject);
 	}
     
@@ -279,13 +279,13 @@ function make_study_table($visitObject){
  * Display all deleted DICOM studies
  * @param Visit $visitObject
  */
-function make_interface_tableau_study_supervisor(Visit $visitObject){
+function make_interface_tableau_study_supervisor(Visit $visitObject) {
 	$data_studies=$visitObject->getStudyDicomDetails(true);
 
-	$studies_number = count($data_studies);
+	$studies_number=count($data_studies);
     
 	//if no deleted studies do not display table at all
-	if($studies_number==0){
+	if ($studies_number == 0) {
 		return;
 	}
     
@@ -299,7 +299,7 @@ function make_interface_tableau_study_supervisor(Visit $visitObject){
     			<tr>
     				<td>Uploader</td>
     				<?php 
-					for($i = 0; $i < $studies_number; $i ++) {
+					for ($i=0; $i < $studies_number; $i++) {
 					?>
     				    <td><?=htmlspecialchars($data_studies [$i]->uploaderUsername)?></td>
     				<?php 
@@ -309,7 +309,7 @@ function make_interface_tableau_study_supervisor(Visit $visitObject){
 				<tr>
     				<td>Upload Date</td>
     				<?php 
-					for($i = 0; $i < $studies_number; $i ++) {
+					for ($i=0; $i < $studies_number; $i++) {
 					?>
     				    <td><?=$data_studies [$i]->uploadDate?></td>
 				    <?php
@@ -319,11 +319,11 @@ function make_interface_tableau_study_supervisor(Visit $visitObject){
     			<tr>
     				<td>Study Description</td>
     				<?php 
-					for($i = 0; $i < $studies_number; $i ++) {
-						if (empty ($data_studies[$i]->studyDescription) ){ ?>
+					for ($i=0; $i < $studies_number; $i++) {
+						if (empty ($data_studies[$i]->studyDescription)) { ?>
                         	<td>/</td>
                     	<?php
-						}else{ ?>
+						}else { ?>
                             <td><?=htmlspecialchars($data_studies[$i]->studyDescription)?></td>
                 		<?php 
 						}
@@ -333,11 +333,11 @@ function make_interface_tableau_study_supervisor(Visit $visitObject){
     			<tr>
     				<td>Acquisition Date Time</td>
     				<?php 
-					for($i = 0; $i < $studies_number; $i ++) {
-						if (empty ($data_studies[$i]->studyAcquisitionDateTime) ){ ?>
+					for ($i=0; $i < $studies_number; $i++) {
+						if (empty ($data_studies[$i]->studyAcquisitionDateTime)) { ?>
                         	<td>/</td>
                     	<?php
-						}else{ ?>
+						}else { ?>
                             <td><?=htmlspecialchars($data_studies[$i]->studyAcquisitionDateTime)?></td>
                 		<?php 
 						}
@@ -347,7 +347,7 @@ function make_interface_tableau_study_supervisor(Visit $visitObject){
     			<tr>
     				<td>Nb Series / Nb Instances</td>
     				<?php 
-					for($i = 0; $i < $studies_number; $i ++) {
+					for ($i=0; $i < $studies_number; $i++) {
 						?>
                             <td><?=$data_studies [$i]->nbOfSeries?> / <?=$data_studies [$i]->numberOfInstances?></td>
                             <?php 
@@ -356,12 +356,12 @@ function make_interface_tableau_study_supervisor(Visit $visitObject){
     			</tr>
     			
             <?php 
-			if($visitObject->stateQualityControl !=Visit::QC_ACCEPTED && $visitObject->stateQualityControl !=Visit::QC_REFUSED) {
+			if ($visitObject->stateQualityControl != Visit::QC_ACCEPTED && $visitObject->stateQualityControl != Visit::QC_REFUSED) {
 			?>
                 <tr>
                 	<td></td>
             	<?php 
-				   for($i = 0; $i < $studies_number; $i ++) {
+				   for ($i=0; $i < $studies_number; $i++) {
 						?>
                         <td>
                         	<a href='scripts/reactivate_study.php?Study_Orthanc_Id=<?=$data_studies[$i]->studyOrthancId?>&id_visit=<?=$visitObject->id_visit?>' class="ajaxLinkConfirm refreshVisitSupervisor"><input class="btn btn-danger" type="button" value="Reactivate Study"></a>
@@ -388,7 +388,7 @@ function make_interface_tableau_series_supervisor(Visit $visitObject) {
 	foreach ($deleted_series as $deleted_serie) {
 		$data_series[]=$deleted_serie;
 	}
-	$series_number = count($data_series);
+	$series_number=count($data_series);
 	?>
         <div style="overflow-x:auto;"> 
         	<table id="tab_series_super" class="table table-striped block">
@@ -398,11 +398,11 @@ function make_interface_tableau_series_supervisor(Visit $visitObject) {
     			<tr>
     				<td></td>
                 	<?php 
-					for($i = 0; $i < $series_number; $i ++) {
-						if (empty ($data_series[$i]->seriesNumber) ){ ?>
+					for ($i=0; $i < $series_number; $i++) {
+						if (empty ($data_series[$i]->seriesNumber)) { ?>
                         	<td>/</td>
                     	<?php
-						}else{ ?>
+						}else { ?>
                             <td>Serie <?=htmlspecialchars($data_series [$i]->seriesNumber)?></td>
                 		<?php 
 						}
@@ -412,11 +412,11 @@ function make_interface_tableau_series_supervisor(Visit $visitObject) {
     			<tr>
     				<td>Series Description</td>
     				<?php 
-					for($i = 0; $i < $series_number; $i ++) {
-						if (empty ($data_series[$i]->seriesDescription) ){ ?>
+					for ($i=0; $i < $series_number; $i++) {
+						if (empty ($data_series[$i]->seriesDescription)) { ?>
                         	<td>/</td>
                     	<?php
-						}else{ ?>
+						}else { ?>
                             <td><?=htmlspecialchars($data_series [$i]->seriesDescription)?></td>
                 		<?php 
 						}
@@ -426,11 +426,11 @@ function make_interface_tableau_series_supervisor(Visit $visitObject) {
     			<tr>
     				<td>Manufacturer</td>
     				<?php 
-					for($i = 0; $i < $series_number; $i ++) {
-						if (empty ($data_series[$i]->manufacturer) ){ ?>
+					for ($i=0; $i < $series_number; $i++) {
+						if (empty ($data_series[$i]->manufacturer)) { ?>
                         	<td>/</td>
                     	<?php
-						}else{ ?>
+						}else { ?>
                             <td><?=htmlspecialchars($data_series [$i]->manufacturer)?></td>
                 		<?php 
 						}
@@ -440,11 +440,11 @@ function make_interface_tableau_series_supervisor(Visit $visitObject) {
     			<tr>
     				<td>Modality</td>
     				<?php 
-					for($i = 0; $i < $series_number; $i ++) {
-						if (empty ($data_series[$i]->modality) ){ ?>
+					for ($i=0; $i < $series_number; $i++) {
+						if (empty ($data_series[$i]->modality)) { ?>
                         	<td>/</td>
                     	<?php
-						}else{ ?>
+						}else { ?>
                             <td><?=htmlspecialchars($data_series [$i]->modality)?></td>
                 		<?php 
 						}
@@ -454,11 +454,11 @@ function make_interface_tableau_series_supervisor(Visit $visitObject) {
     			<tr>
     				<td>Acquisition Date Time</td>
     				<?php 
-					for($i = 0; $i < $series_number; $i ++) {
-						if (empty ($data_series[$i]->acquisitionDateTime) ){ ?>
+					for ($i=0; $i < $series_number; $i++) {
+						if (empty ($data_series[$i]->acquisitionDateTime)) { ?>
                         	<td>/</td>
                     	<?php
-						}else{ ?>
+						}else { ?>
                             <td><?=htmlspecialchars($data_series [$i]->acquisitionDateTime)?></td>
                 		<?php 
 						}
@@ -468,11 +468,11 @@ function make_interface_tableau_series_supervisor(Visit $visitObject) {
     			<tr>
     				<td>Injected Dose (MBq)</td>
     				<?php 
-					for($i = 0; $i < $series_number; $i ++) {
-						if (empty ($data_series[$i]->injectedDose) ){ ?>
+					for ($i=0; $i < $series_number; $i++) {
+						if (empty ($data_series[$i]->injectedDose)) { ?>
                         	<td>/</td>
                     	<?php
-						}else{ ?>
+						}else { ?>
                             <td><?=htmlspecialchars(($data_series [$i]->injectedDose/10**6)) ?></td>
                 		<?php 
 						}
@@ -482,11 +482,11 @@ function make_interface_tableau_series_supervisor(Visit $visitObject) {
     			<tr>
     				<td>Injection Date Time</td>
     				<?php 
-					for($i = 0; $i < $series_number; $i ++) {
-						if (empty ($data_series[$i]->injectedDateTime) ){ ?>
+					for ($i=0; $i < $series_number; $i++) {
+						if (empty ($data_series[$i]->injectedDateTime)) { ?>
                         	<td>/</td>
                     	<?php
-						}else{ ?>
+						}else { ?>
                             <td><?=htmlspecialchars($data_series [$i]->injectedDateTime) ?></td>
                 		<?php 
 						}
@@ -496,11 +496,11 @@ function make_interface_tableau_series_supervisor(Visit $visitObject) {
     			<tr>
     				<td>Radiopharm. Specific Activity (MBq)</td>
     				<?php 
-					for($i = 0; $i < $series_number; $i ++) {
-						if (empty ($data_series[$i]->injectedActivity) ){ ?>
+					for ($i=0; $i < $series_number; $i++) {
+						if (empty ($data_series[$i]->injectedActivity)) { ?>
                         	<td>/</td>
                     	<?php
-						}else{ ?>
+						}else { ?>
                             <td><?=htmlspecialchars(($data_series [$i]->injectedActivity/10**6)) ?></td>
                 		<?php 
 						}
@@ -510,11 +510,11 @@ function make_interface_tableau_series_supervisor(Visit $visitObject) {
     			<tr>
     				<td>Patient's weight (kg)</td>
     				<?php 
-					for($i = 0; $i < $series_number; $i ++) {
-						if (empty ($data_series[$i]->patientWeight) ){ ?>
+					for ($i=0; $i < $series_number; $i++) {
+						if (empty ($data_series[$i]->patientWeight)) { ?>
                         	<td>/</td>
                     	<?php
-						}else{ ?>
+						}else { ?>
                             <td><?=htmlspecialchars($data_series [$i]->patientWeight)?></td>
                 		<?php 
 						}
@@ -524,11 +524,11 @@ function make_interface_tableau_series_supervisor(Visit $visitObject) {
     			<tr>
     				<td>Slice count</td>
     				<?php 
-					for($i = 0; $i < $series_number; $i ++) {
-						if (empty ($data_series[$i]->numberInstances) ){ ?>
+					for ($i=0; $i < $series_number; $i++) {
+						if (empty ($data_series[$i]->numberInstances)) { ?>
                         	<td>/</td>
                     	<?php
-						}else{ ?>
+						}else { ?>
                             <td><?=$data_series [$i]->numberInstances?></td>
                 		<?php 
 						}
@@ -538,11 +538,11 @@ function make_interface_tableau_series_supervisor(Visit $visitObject) {
     			<tr>
     				<td>Insert Date</td>
     				<?php 
-					for($i = 0; $i < $series_number; $i ++) {
-						if (empty ($data_series[$i]->uploadDate) ){ ?>
+					for ($i=0; $i < $series_number; $i++) {
+						if (empty ($data_series[$i]->uploadDate)) { ?>
                         	<td>/</td>
                     	<?php
-						}else{ ?>
+						}else { ?>
                             <td><?=$data_series [$i]->uploadDate?></td>
                 		<?php 
 						}
@@ -550,15 +550,15 @@ function make_interface_tableau_series_supervisor(Visit $visitObject) {
 					?>
                 </tr>
             <?php 
-			if($visitObject->stateQualityControl !=Visit::QC_ACCEPTED && $visitObject->stateQualityControl !=Visit::QC_REFUSED) {
+			if ($visitObject->stateQualityControl != Visit::QC_ACCEPTED && $visitObject->stateQualityControl != Visit::QC_REFUSED) {
 			?>
                 <tr>
                 	<td></td>
             	<?php 
-					for($i = 0; $i < $series_number; $i ++) {
+					for ($i=0; $i < $series_number; $i++) {
 						$deleted=false;
 						$action="delete";
-						if($data_series[$i]->deleted){
+						if ($data_series[$i]->deleted) {
 							$deleted=true;
 							$action="reactivate";
 						}
@@ -616,11 +616,11 @@ function make_interface_tableau_visites_supervisor($visitObject) {
 }
 
 
-function make_interface_tableau_review_supervisor($data_reviews){
+function make_interface_tableau_review_supervisor($data_reviews) {
     
 	$res_nb_reviews=count($data_reviews);
     
-	if($res_nb_reviews==0){
+	if ($res_nb_reviews == 0) {
 		return;
 	}
 	?>
@@ -629,7 +629,7 @@ function make_interface_tableau_review_supervisor($data_reviews){
     		<tr>
     			<th></th>
     			<?php 
-				for ($i=1 ; $i <= $res_nb_reviews ; $i++) {
+				for ($i=1; $i <= $res_nb_reviews; $i++) {
 				?>
                     <th>Review <?=$i?></th>
                 <?php 
@@ -639,11 +639,11 @@ function make_interface_tableau_review_supervisor($data_reviews){
         	<tr>
         		<td>Name</td>
             		<?php 
-					for ($i=0 ; $i < $res_nb_reviews ; $i++) {
+					for ($i=0; $i < $res_nb_reviews; $i++) {
 					?>
                         <td><?=$data_reviews[$i]->username?>
-                        <?php  if($data_reviews[$i]->isLocal) echo('- Local Investigator');
-							   if($data_reviews[$i]->isAdjudication) echo('- Adjudication Form');
+                        <?php  if ($data_reviews[$i]->isLocal) echo('- Local Investigator');
+							   if ($data_reviews[$i]->isAdjudication) echo('- Adjudication Form');
 						?>
         				</td>
                     <?php 
@@ -653,7 +653,7 @@ function make_interface_tableau_review_supervisor($data_reviews){
             <tr>
                 <td>Reading Date</td>
                 <?php
-				for ($i=0 ; $i < $res_nb_reviews ; $i++) {
+				for ($i=0; $i < $res_nb_reviews; $i++) {
 					?>
                     <td><?=$data_reviews[$i]->reviewDate ?>
         			</td>
@@ -664,7 +664,7 @@ function make_interface_tableau_review_supervisor($data_reviews){
     		<tr>
         		<td>Reading Form</td>
         		<?php 
-				for ($i=0 ; $i < $res_nb_reviews ; $i++) {
+				for ($i=0; $i < $res_nb_reviews; $i++) {
 					$dataSpecific=$data_reviews[$i]->getSpecificData();
 					?>
                     <td style="text-align:unset;">
@@ -677,7 +677,7 @@ function make_interface_tableau_review_supervisor($data_reviews){
     		<tr>
             	<td>Status</td>
             	<?php 
-				for ($i=0 ; $i < $res_nb_reviews ; $i++) {
+				for ($i=0; $i < $res_nb_reviews; $i++) {
 				?>
                     <td>
                     	<?php 
@@ -691,10 +691,10 @@ function make_interface_tableau_review_supervisor($data_reviews){
     		<tr>
     			<td>Action</td>
     			<?php 
-				for ($i=0 ; $i < $res_nb_reviews ; $i++) {
-					if($data_reviews[$i]->isLocal==0){
+				for ($i=0; $i < $res_nb_reviews; $i++) {
+					if ($data_reviews[$i]->isLocal == 0) {
 						//If validated show both unlock and delete button
-						if($data_reviews[$i]->validated){
+						if ($data_reviews[$i]->validated) {
 							?>
                             <td>
             		        	<a href="scripts/unlock_form.php?id_review=<?=$data_reviews[$i]->id_review?>&id_visit=<?=$data_reviews[$i]->id_visit?>" class="ajaxLinkConfirm refreshVisitSupervisor"><input class="btn btn-danger" type="button" value="Unlock Form"> </a>
@@ -702,7 +702,7 @@ function make_interface_tableau_review_supervisor($data_reviews){
             		        </td>
             		        <?php
 						//if not validated (not locked) show only delete button
-						}else{
+						}else {
 							?>
                             <td>
             		        	<a href="scripts/delete_form.php?id_review=<?=$data_reviews[$i]->id_review?>&id_visit=<?=$data_reviews[$i]->id_visit?>" class="ajaxLinkConfirm refreshVisitSupervisor"><input class="btn btn-danger" type="button" value="Delete Form"> </a>
@@ -710,7 +710,7 @@ function make_interface_tableau_review_supervisor($data_reviews){
         		        <?php 
 						}
                 
-					}else{
+					}else {
 					?>
         				<td></td>
         			<?php 

@@ -25,6 +25,6 @@ if ($_SESSION['admin']) {
 	$trackerUsers=Tracker::getTrackerByRoleStudy("User", $linkpdo);
 	require 'views/administrator/tracker_user_view.php';
     
-}else{
+}else {
 	require 'includes/no_access.php';
 }

@@ -25,6 +25,6 @@ if (isset($_SESSION['username'])) {
     
 	require 'views/my_account_view.php';
     
-}else{
+}else {
 	require 'includes/no_access.php';
 }

@@ -36,6 +36,6 @@ if (isset($_POST['send'])) {
 
 	}
 
-} else {
+}else {
 	require 'views/request_view.php';
 }

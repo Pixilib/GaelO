@@ -41,7 +41,7 @@ if (isset($_SESSION['username'])) {
 	$isSupervisor=$userObject->isRoleAllowed($study, User::SUPERVISOR);
    
 	//if investigator and quality control neither accpted or refused,  or supervisor Role => Allow delete of visit
-	if( ($role==User::INVESTIGATOR && $permissionStudy && $qualityControlStatus !=Visit::QC_ACCEPTED && $qualityControlStatus !=Visit::QC_REFUSED) || ($isSupervisor && $role==User::SUPERVISOR ) ){
+	if (($role == User::INVESTIGATOR && $permissionStudy && $qualityControlStatus != Visit::QC_ACCEPTED && $qualityControlStatus != Visit::QC_REFUSED) || ($isSupervisor && $role == User::SUPERVISOR)) {
         
 		//Delete the Visit by changing the boolean deleted value in table
 		$visitObject->changeDeletionStatus(true);
@@ -54,7 +54,7 @@ if (isset($_SESSION['username'])) {
 		$actionDetails["reason"]=$reason;
 		Tracker::logActivity($username, $role, $study, $id_visit, "Delete Visit", $actionDetails);
 		$answer=true;
-	} else {
+	}else {
 		$answer=false;
 	}
 	

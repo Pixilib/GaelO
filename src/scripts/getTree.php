@@ -27,13 +27,13 @@ $userObject=new User($_SESSION['username'], $linkpdo);
 $permissionCheck=$userObject->isRoleAllowed($_SESSION['study'], $_SESSION['role']);
 
 //If permission ok get the tree in JSON
-if($permissionCheck){
-	$obj = new Tree($_SESSION['role'], $_SESSION['username'], $_SESSION['study'], $linkpdo);
+if ($permissionCheck) {
+	$obj=new Tree($_SESSION['role'], $_SESSION['username'], $_SESSION['study'], $linkpdo);
 	$tree=$obj -> buildTree();
     
 }
 //If not permitted or tree query empty, display None in the tree
-if (! $permissionCheck || empty($tree)) $tree= array('id'=>0, 'parent'=>"#", "text"=>"None");
+if (!$permissionCheck || empty($tree)) $tree=array('id'=>0, 'parent'=>"#", "text"=>"None");
 
 //Echo the tree structure for JSTree
 echo(json_encode($tree));

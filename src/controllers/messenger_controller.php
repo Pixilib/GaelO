@@ -23,54 +23,54 @@ $linkpdo=Session::getLinkpdo();
 
 if (isset($_SESSION['username'])) {
     
-	if(!empty($_POST) && !empty($_SESSION['study'])){
+	if (!empty($_POST) && !empty($_SESSION['study'])) {
         
 		$individualUsers=array();
-		if (isset($_POST['destinatorsList'])){
+		if (isset($_POST['destinatorsList'])) {
 			$individualUsers=$_POST['destinatorsList'];
 		}
         
 		$rolesGroups=array();
-		if(isset($_POST['destinatorsRoles'])){
+		if (isset($_POST['destinatorsRoles'])) {
 			$rolesGroups=$_POST['destinatorsRoles'];
 		}
         
 		$message=$_POST['messageText'];
         
-		$sendEmail = new Send_Email($linkpdo);
+		$sendEmail=new Send_Email($linkpdo);
         
-		foreach ($rolesGroups as $role){
+		foreach ($rolesGroups as $role) {
             
-			if($role!=User::ADMINISTRATOR){
-				$sendEmail->addGroupEmails( $_SESSION['study'], $role);
-			}else{
+			if ($role != User::ADMINISTRATOR) {
+				$sendEmail->addGroupEmails($_SESSION['study'], $role);
+			}else {
 				$sendEmail->addAminEmails();            
 			}
             
 		}
         
-		foreach ($individualUsers as $user){
+		foreach ($individualUsers as $user) {
 			$sendEmail->addEmail($sendEmail->getUserEmails($user)); 
 		}
 
 		$userObject=new User($_SESSION['username'], $linkpdo);
-		$sendEmail->setMessage ( $message );
+		$sendEmail->setMessage($message);
 		$sendEmail->setSubject('Message From '.$userObject->firstName.' '.$userObject->lastName);
-		$sendEmail->sendEmail ();
+		$sendEmail->sendEmail();
         
 		$actionDetails['destinators']=json_encode($sendEmail->emailsDestinators);
-		$htmlMessageObject = new \Html2Text\Html2Text($message);
+		$htmlMessageObject=new \Html2Text\Html2Text($message);
 		$actionDetails['message']=$htmlMessageObject->getText();
         
 		Tracker::logActivity($_SESSION['username'], "User", $_SESSION['study'], null, "Send Message", $actionDetails);
         
 		echo(json_encode(true));
         
-	}else if (!empty($_SESSION['study'])){
+	}else if (!empty($_SESSION['study'])) {
         
 		//list all users having a role a in the study
 		$studyObject=new Study($_SESSION['study'], $linkpdo);
-		$usersObjects= $studyObject->getUsersWithRoleInStudy();
+		$usersObjects=$studyObject->getUsersWithRoleInStudy();
 		//Sort by Lastname
 		usort($usersObjects, function(User $a, User $b)
 		{
@@ -80,10 +80,10 @@ if (isset($_SESSION['username'])) {
 		require 'views/messenger_view.php';
         
 
-	}else{
+	}else {
 		require 'includes/no_access.php';
 	}
     
-}else{
+}else {
 	require 'includes/no_access.php';
 }

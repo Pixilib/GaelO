@@ -23,13 +23,13 @@ $linkpdo=Session::getLinkpdo();
 $userObject=new User($_SESSION['username'], $linkpdo);
 $accessCheck=$userObject->isPatientAllowed($_POST['patient_num'], $_SESSION['role']);
 
-if ($accessCheck && $_SESSION['role'] == User::SUPERVISOR ) {
+if ($accessCheck && $_SESSION['role'] == User::SUPERVISOR) {
     
-	$patientObject = new Patient($_POST['patient_num'], $linkpdo);
+	$patientObject=new Patient($_POST['patient_num'], $linkpdo);
     
-	if(isset($_POST['initials'])){
+	if (isset($_POST['initials'])) {
         
-		try{
+		try {
 			$patientObject->editPatientDetails($_POST['initials'], $_POST['gender'], $_POST['birthdate'], 
 				$_POST['registrationDate'], $_POST['investigator'], $_POST['center']);
 			$answer=true;
@@ -42,19 +42,19 @@ if ($accessCheck && $_SESSION['role'] == User::SUPERVISOR ) {
 			$editDetails['investigator']=$_POST['investigator'];
 			$editDetails['center']=$_POST['center'];
             
-			Tracker::logActivity($_SESSION['username'], $_SESSION['role'], $patientObject->patientStudy, null , "Edit Patient", $editDetails);
+			Tracker::logActivity($_SESSION['username'], $_SESSION['role'], $patientObject->patientStudy, null, "Edit Patient", $editDetails);
             
-		}catch(Exception $e){
+		}catch (Exception $e) {
 			error_log($e->getMessage());
 			$answer=false;
 		}
         
 		echo(json_encode($answer));
         
-	}else{
+	}else {
 		$visitsObjects=$patientObject->getAllCreatedPatientsVisits(false);
 		$visitsObjectDeleted=$patientObject->getAllCreatedPatientsVisits(true);
-		foreach ($visitsObjectDeleted as $visitDeleted){
+		foreach ($visitsObjectDeleted as $visitDeleted) {
 			$visitsObjects[]=$visitDeleted;
 		} 
         

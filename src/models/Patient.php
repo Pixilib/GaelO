@@ -40,13 +40,13 @@ class Patient {
     
 	function __construct($patientCode, PDO $linkpdo) {
 		$this->patient=$patientCode;
-		$this->linkpdo= $linkpdo;
+		$this->linkpdo=$linkpdo;
         
-		$queryPatientsData = $this->linkpdo->prepare('SELECT * FROM patients WHERE code = :patient');
+		$queryPatientsData=$this->linkpdo->prepare('SELECT * FROM patients WHERE code = :patient');
 		$queryPatientsData->execute(array('patient' => $this->patient));
-		$dataPatient = $queryPatientsData->fetch(PDO::FETCH_ASSOC);
+		$dataPatient=$queryPatientsData->fetch(PDO::FETCH_ASSOC);
         
-		if(empty($dataPatient)){
+		if (empty($dataPatient)) {
 			throw new Exception("Non Existing Patient");
 		}
         
@@ -86,9 +86,9 @@ class Patient {
 	 * @param string $withdrawDate
 	 * @param string $withdrawReason
 	 */
-	public function changeWithdrawStatus(bool $withdraw, ?string $withdrawDate, ?string $withdrawReason){
+	public function changeWithdrawStatus(bool $withdraw, ?string $withdrawDate, ?string $withdrawReason) {
         
-		$insertion = $this->linkpdo->prepare('UPDATE patients
+		$insertion=$this->linkpdo->prepare('UPDATE patients
                                             SET withdraw = :withdraw,
                                             withdraw_date = :withdraw_date,
                                             withdraw_reason = :withdraw_reason
@@ -110,8 +110,8 @@ class Patient {
 	 * @param $investigator
 	 * @param $centerCode
 	 */
-	public function editPatientDetails($initials, $gender, $birthDate, $registrationDate, $investigator, $centerCode){
-			$insertion = $this->linkpdo->prepare("UPDATE patients
+	public function editPatientDetails($initials, $gender, $birthDate, $registrationDate, $investigator, $centerCode) {
+			$insertion=$this->linkpdo->prepare("UPDATE patients
                                             SET first_name = :firstName,
                                             last_name = :lastName,
                                             gender = :gender,
@@ -144,11 +144,11 @@ class Patient {
 		//Look if specific patient visit manager exists for this study
 		$specificObjectFile=$_SERVER["DOCUMENT_ROOT"].'/data/form/'.$this->patientStudy.'/Poo/'.$this->patientStudy."_Patient_Visit_Manager.php";
             
-		if(is_file($specificObjectFile)){
+		if (is_file($specificObjectFile)) {
 			require_once($specificObjectFile);
 			$objectName=$this->patientStudy."_Patient_Visit_Manager";
 			return new $objectName($this, $visitGroupObject, $this->linkpdo);
-		}else{
+		}else {
 			return new Patient_Visit_Manager($this, $visitGroupObject, $this->linkpdo);
 		}
 
@@ -166,13 +166,13 @@ class Patient {
 	/**
 	 * Return visits created for this patient without group filter
 	 */
-	public function getAllCreatedPatientsVisits(bool $deletedVisits = false) : Array
+	public function getAllCreatedPatientsVisits(bool $deletedVisits=false) : Array
 	{
 		$possibleStudyGroups=$this->getAllPossibleVisitGroup();
 
-		$visitsObjectArray = [];
+		$visitsObjectArray=[];
 
-		foreach($possibleStudyGroups as $studyGroup){
+		foreach ($possibleStudyGroups as $studyGroup) {
 			$createdVisits=$this->getPatientVisitManager($studyGroup)->getCreatedPatientsVisits($deletedVisits);
 			array_push($visitsObjectArray, ...$createdVisits);
 		}
@@ -184,13 +184,13 @@ class Patient {
 	 /**
 	  * Return visits uploaded for this patient without group filter
 	  */
-	public function getAllQcDonePatientsVisits(bool $deletedVisits = false) : Array
+	public function getAllQcDonePatientsVisits(bool $deletedVisits=false) : Array
 	{
 		$possibleStudyGroups=$this->getAllPossibleVisitGroup();
 
-		$visitsObjectArray = [];
+		$visitsObjectArray=[];
 
-		foreach($possibleStudyGroups as $studyGroup){
+		foreach ($possibleStudyGroups as $studyGroup) {
 			$createdVisits=$this->getPatientVisitManager($studyGroup)->getQcDonePatientsVisits($deletedVisits);
 			array_push($visitsObjectArray, ...$createdVisits);
 		}
@@ -202,42 +202,42 @@ class Patient {
 
 		$possiblevisitsGroups=$this->getAllPossibleVisitGroup();
 
-		$visitsObjectArray = [];
+		$visitsObjectArray=[];
 
-		foreach($possiblevisitsGroups as $visitGroup){
-			try{
+		foreach ($possiblevisitsGroups as $visitGroup) {
+			try {
 				$availableVisits=$this->getPatientVisitManager($visitGroup)->getAvailableVisitsToCreate();
-			}catch (Exception $e){
+			}catch (Exception $e) {
 				$availableVisits=array($e->getMessage());
 			}
 
-			$visitsObjectArray [$visitGroup->groupModality]['visitsName'] = $availableVisits;
-			$visitsObjectArray [$visitGroup->groupModality]['groupId'] = $visitGroup->groupId;
+			$visitsObjectArray [$visitGroup->groupModality]['visitsName']=$availableVisits;
+			$visitsObjectArray [$visitGroup->groupModality]['groupId']=$visitGroup->groupId;
 		}
 
 		return $visitsObjectArray;
 
 	}
 
-	public function isMissingVisit(){
+	public function isMissingVisit() {
 
 		$modalitiesMissingVisits=$this->getMissingVisitModalities();
 
-		$isMissingSomeVisits= ( sizeof($modalitiesMissingVisits) > 0 ) ;
+		$isMissingSomeVisits=(sizeof($modalitiesMissingVisits) > 0);
 
-		return $isMissingSomeVisits ; 
+		return $isMissingSomeVisits; 
 
 	}
 
-	public function getMissingVisitModalities(){
+	public function getMissingVisitModalities() {
 
 		$possiblevisitsGroups=$this->getAllPossibleVisitGroup();
 
-		$visitsMissingGroupsArray = [];
+		$visitsMissingGroupsArray=[];
 
-		foreach($possiblevisitsGroups as $visitGroup){
+		foreach ($possiblevisitsGroups as $visitGroup) {
 			$missingVisit=$this->getPatientVisitManager($visitGroup)->isMissingVisit();
-			if($missingVisit){
+			if ($missingVisit) {
 				$visitsMissingGroupsArray[]=$visitGroup->groupModality;
 			}
 		}

@@ -47,18 +47,18 @@ if ($accessCheck && $_SESSION['role'] == User::SUPERVISOR) {
 	$associatedFileZip=$exportObject->exportAssociatedFiles();
    
 	//Output everything for download
-	$date =Date('Ymd_his');
+	$date=Date('Ymd_his');
 	header('Content-type: application/zip');
 	header('Content-Disposition: attachment; filename="export_study_'.$_SESSION['study'].'_'.$date.'.zip"');
     
 	//Final ZIP creation
-	$zip = new ZipArchive;
-	$tempZip = tempnam(ini_get('upload_tmp_dir'), 'TMPZIP_');
+	$zip=new ZipArchive;
+	$tempZip=tempnam(ini_get('upload_tmp_dir'), 'TMPZIP_');
 	$zip->open($tempZip, ZipArchive::CREATE);
 	$zip->addFile($patientCsvFile, "export_patient.csv");
 	$zip->addFile($visitCsvFile, "export_visits.csv");
 	$zip->addFile($orthancCsvFile, "export_orthanc.csv");
-	foreach ($reviewCsvFiles as $key=>$file){
+	foreach ($reviewCsvFiles as $key=>$file) {
 		$zip->addFile($file, "export_review_$key.csv");
 	}
 	$zip->addFile($associatedFileZip, "associatedFiles.zip");
@@ -72,7 +72,7 @@ if ($accessCheck && $_SESSION['role'] == User::SUPERVISOR) {
 	unlink($visitCsvFile);
 	unlink($orthancCsvFile);
 	unlink($tempZip);
-	foreach ($reviewCsvFiles as $key=>$file){
+	foreach ($reviewCsvFiles as $key=>$file) {
 		unlink($file);
 	}
     

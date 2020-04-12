@@ -87,63 +87,63 @@ abstract class Form_Processor {
 	 * This methods is triggered by the system at form submission and call the save specific form
 	 * to define which value need to be written in the specific table
 	 */
-	public function saveForm($data, bool $validate){
+	public function saveForm($data, bool $validate) {
 	    
 		$this->rawDataForm=$data;
 	    
 		//If reviewer check that review is available before saving process
-		if( !$this->local && !$this->reviewAvailable){
-			return ;
+		if (!$this->local && !$this->reviewAvailable) {
+			return;
 		}
 		
 		//Get saved form, return either local form or reviewer's users form if exist
 		//or null if not existing
 		
-		if(empty($this->reviewObject)){
+		if (empty($this->reviewObject)) {
 			$this->createReview();
 			$update=false;       
-		}else{
+		}else {
 			$update=true;
 			//If already existing validated review, exit without modifying anything
-			if($this->reviewObject->validated){
+			if ($this->reviewObject->validated) {
 				return;
 			}
 	       
 		}
 	    
 		//Call the child redifined save specific form to save the specific data of the form
-		try{
+		try {
 			$this->saveSpecificForm($data, $this->reviewObject->id_review, $update);
-		}catch(Exception $e){
+		}catch (Exception $e) {
 			error_log($e->getMessage());
-			if(!$update){
+			if (!$update) {
 				$this->reviewObject->hardDeleteReview();
 			}
 			throw new Exception("Error during save");
 		}
 		
-		if($validate) $this->reviewObject->changeReviewValidationStatus($validate);
+		if ($validate) $this->reviewObject->changeReviewValidationStatus($validate);
 		//update the visit status if we are processing a local form
-		if($this->local){
+		if ($this->local) {
 			if ($validate) $this->visitObject->changeVisitStateInvestigatorForm(Visit::LOCAL_FORM_DONE);
 			else $this->visitObject->changeVisitStateInvestigatorForm(Visit::LOCAL_FORM_DRAFT);	
 		}
 		
 		//Log Activity
-		if($this->local) $role="Investigator"; else $role="Reviewer";
+		if ($this->local) $role="Investigator"; else $role="Reviewer";
 		$actionDetails['patient_code']=$this->visitObject->patientCode;
 		$actionDetails['type_visit']=$this->visitObject->visitType;
 		$actionDetails['modality_visit']=$this->visitObject->visitGroupObject->groupModality;
 		$actionDetails['id_review']=$this->reviewObject->id_review;
 		$actionDetails['local_review']=intval($this->local);
-		$actionDetails['adjudication']=intval($this->reviewStatus==Visit::REVIEW_WAIT_ADJUDICATION);
-		$actionDetails['create']= !$update;
-		$actionDetails['raw_data']= $data;
+		$actionDetails['adjudication']=intval($this->reviewStatus == Visit::REVIEW_WAIT_ADJUDICATION);
+		$actionDetails['create']=!$update;
+		$actionDetails['raw_data']=$data;
 		
-		Tracker::logActivity($this->username, $role, $this->study ,$this->id_visit, "Save Form", $actionDetails);
+		Tracker::logActivity($this->username, $role, $this->study, $this->id_visit, "Save Form", $actionDetails);
 		
 		//If central review still not at "Done" status Check if validation is reached
-		if ($validate && !$this->local &&  $this->reviewStatus != Visit::REVIEW_DONE ) $this->setVisitValidation();
+		if ($validate && !$this->local && $this->reviewStatus != Visit::REVIEW_DONE) $this->setVisitValidation();
 		
 	}
 	
@@ -154,12 +154,12 @@ abstract class Form_Processor {
 	 * @param string $reviewStatus
 	 * @param $conclusionValue
 	 */
-	protected function changeVisitValidationStatus(string $reviewStatus, $conclusionValue="N/A"){
+	protected function changeVisitValidationStatus(string $reviewStatus, $conclusionValue="N/A") {
 		$this->visitObject->changeVisitValidationStatus($reviewStatus, $conclusionValue);
 		$this->reviewAvailabilityDecision($reviewStatus);
 
 		//Send Notification emails
-		if($reviewStatus == Visit::REVIEW_WAIT_ADJUDICATION){
+		if ($reviewStatus == Visit::REVIEW_WAIT_ADJUDICATION) {
 
 			$email=new Send_Email($this->linkpdo);
 			//SK A AMELIORER POUR EVITER DE MAILIER LES REVIEWER QUI ONT DEJA REPONDU
@@ -204,9 +204,9 @@ abstract class Form_Processor {
 	 * return all reviews (local and reviewer) of the current visit
 	 * Usefull to determine visit conclusion status
 	 */
-	public function getAllValidatedFormsOfVisit(){
+	public function getAllValidatedFormsOfVisit() {
 	    
-		$query = $this->linkpdo->prepare('SELECT * FROM reviews,'.$this->specificTable.' WHERE reviews.id_review='.$this->specificTable.'.id_review AND reviews.id_visit=:idVisit AND reviews.validated=1 AND reviews.deleted=0');
+		$query=$this->linkpdo->prepare('SELECT * FROM reviews,'.$this->specificTable.' WHERE reviews.id_review='.$this->specificTable.'.id_review AND reviews.id_visit=:idVisit AND reviews.validated=1 AND reviews.deleted=0');
 		$query->execute(array(
 			'idVisit'=>$this->id_visit
 		));
@@ -238,9 +238,9 @@ abstract class Form_Processor {
 	 * Can be overided if needed different condition
 	 * @param string $reviewConclusion
 	 */
-	protected function reviewAvailabilityDecision(string $reviewConclusion){
+	protected function reviewAvailabilityDecision(string $reviewConclusion) {
 		//If Done reached make the review unavailable for review
-		if($reviewConclusion== Visit::REVIEW_DONE){
+		if ($reviewConclusion == Visit::REVIEW_DONE) {
 			$this->visitObject->changeReviewAvailability(false);
 		}
 		//Needed in case of deletion of a review (even if true by default initialy, need to come back if deletion)

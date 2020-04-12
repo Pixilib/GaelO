@@ -18,22 +18,22 @@
  * Modify users detail by POST
  */
 
-header( 'content-type: text/html; charset=utf-8' );
+header('content-type: text/html; charset=utf-8');
 require_once($_SERVER['DOCUMENT_ROOT'].'/vendor/autoload.php');
 
 Session::checkSession();
 $linkpdo=Session::getLinkpdo();
 
-if($_SESSION['username']){
+if ($_SESSION['username']) {
 
-	if(!empty($_POST)) {
+	if (!empty($_POST)) {
 
 		$userObject=new User($_SESSION['username'], $linkpdo);
 
-		if($_SESSION['admin'] && isset($_POST['Username'])){
+		if ($_SESSION['admin'] && isset($_POST['Username'])) {
 			//Administrator updating data
 
-		}else{
+		}else {
 			//User updates it's own data
 			$userObject->updateUser($_POST['LastName'], $_POST['FirstName'], $userObject->userEmail, $_POST['Phone'], $userObject->userJob,
 									$userObject->userStatus, $userObject->isAdministrator, $userObject->mainCenter, $userObject->orthancAddress, 

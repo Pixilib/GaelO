@@ -33,7 +33,7 @@
         </thead>
         <tbody>
         <?php 
-		foreach ($trackerMessages as $messageEvent){
+		foreach ($trackerMessages as $messageEvent) {
 			$eventDetails=json_decode($messageEvent['action_details'], true);
 		?>
         	<tr>

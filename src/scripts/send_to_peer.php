@@ -26,13 +26,13 @@ $linkpdo=Session::getLinkpdo();
 $userObject=new User($_SESSION['username'], $linkpdo);
 $accessCheck=$userObject->isRoleAllowed($_SESSION['study'], $_SESSION['role']);
 
-if ($accessCheck && $_SESSION['role'] == User::SUPERVISOR ) {
+if ($accessCheck && $_SESSION['role'] == User::SUPERVISOR) {
     
 	$selectedUsers=$_POST['selectedUsers'];
 	$ids=json_decode($_POST['json']);
 	
-	$orthanc = new Orthanc();
-	foreach ($selectedUsers as $username){
+	$orthanc=new Orthanc();
+	foreach ($selectedUsers as $username) {
 		//For each target user add Peer in Orthanc and push an async peer request
 		$userObject=new User($username, $linkpdo);
 		//Nb : The peer stays declared in Orthanc as removal of a peer with an async transfert will break the transfers
@@ -44,6 +44,6 @@ if ($accessCheck && $_SESSION['role'] == User::SUPERVISOR ) {
 	
 	echo(json_encode($results));
 	
-}else{
+}else {
 	echo(json_encode(false));
 }

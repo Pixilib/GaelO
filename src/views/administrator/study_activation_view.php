@@ -61,7 +61,7 @@
 					name="activatedStudies[]" multiple>
 					<?php
 					foreach ($activatedStudiesDb as $study) {
-						echo '<option value="' . htmlspecialchars($study) . '">' . htmlspecialchars($study) . '</option>';
+						echo '<option value="'.htmlspecialchars($study).'">'.htmlspecialchars($study).'</option>';
 					}
 					?>
 					</SELECT>
@@ -80,7 +80,7 @@
 					name="unactivatedStudies[]" multiple>
                 <?php                   
 				foreach ($unactivatedStudiesDb as $study) {
-					echo '<option value="' . htmlspecialchars($study) . '">' . htmlspecialchars($study) . '</option>';
+					echo '<option value="'.htmlspecialchars($study).'">'.htmlspecialchars($study).'</option>';
 				}
 				?>
                 </SELECT>

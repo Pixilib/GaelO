@@ -23,29 +23,29 @@ require_once($_SERVER['DOCUMENT_ROOT'].'/vendor/autoload.php');
 Session::checkSession();
 $linkpdo=Session::getLinkpdo();
 
-if (isset($_SESSION['username']) ) {
+if (isset($_SESSION['username'])) {
 
 	$username=$_SESSION['username'];
 	$role=$_SESSION['role'];
-	$seriesOrthancID = $_POST['seriesOrthancId'] ;
+	$seriesOrthancID=$_POST['seriesOrthancId'];
 	$reason=$_POST['reason'];
 	$action=$_POST['action'];
     
 	$seriesOrthancIDToChange=[];
 	$visitObject=null;
     
-	if( strpos($seriesOrthancID, 'allVisit') !== FALSE && $action=='delete'){
+	if (strpos($seriesOrthancID, 'allVisit') !== FALSE && $action == 'delete') {
 		//If all visits get all series UID of this visit
 		$id_visit=intval(substr($seriesOrthancID, 8));
 		$visitObject=new Visit($id_visit, $linkpdo);
 		$seriesObjectArray=$visitObject->getSeriesDetails();
         
-		foreach ($seriesObjectArray as $serie){
+		foreach ($seriesObjectArray as $serie) {
 			$seriesOrthancIDToChange[]=$serie->seriesOrthancID;
            
 		}  
         
-	}else{
+	}else {
 		//Store the seriesOrthancID to Delete and it's ParentVisit ID
 		$seriesObject=new Series_Details($seriesOrthancID, $linkpdo);
 		$seriesOrthancIDToChange[]=$seriesObject->seriesOrthancID;
@@ -58,32 +58,32 @@ if (isset($_SESSION['username']) ) {
 	$visitAllowed=$userObject->isVisitAllowed($visitObject->id_visit, $_SESSION['role']);
     
 	//Check Permissions
-	if ( $visitAllowed && ($role==User::CONTROLLER|| $role==User::INVESTIGATOR || $role==User::SUPERVISOR) ){
+	if ($visitAllowed && ($role == User::CONTROLLER || $role == User::INVESTIGATOR || $role == User::SUPERVISOR)) {
         
 		$changedArrayResult=[];
         
-		foreach ($seriesOrthancIDToChange as $serieOrthancID){
+		foreach ($seriesOrthancIDToChange as $serieOrthancID) {
 			$seriesObject=new Series_Details($serieOrthancID, $linkpdo);
             
-			if( in_array($visitObject->stateQualityControl, array(Visit::QC_ACCEPTED, Visit::QC_REFUSED)) ){
+			if (in_array($visitObject->stateQualityControl, array(Visit::QC_ACCEPTED, Visit::QC_REFUSED))) {
 				//QC is terminated, Delete is Forbidden, return
 				print("Deletion not authorized");
 				return;
 			}
-			if($action=='delete'){
+			if ($action == 'delete') {
 				$seriesObject->changeDeletionStatus(true);
                 
 				//Check still available series in this visit
 				$remainingSeriesOrthancID=$visitObject->getSeriesOrthancID();
                 
-				if(count($remainingSeriesOrthancID)==0){
+				if (count($remainingSeriesOrthancID) == 0) {
 					//Set study to deleted status
 					$seriesObject->studyDetailsObject->changeDeletionStatus(true);
 					//Set Visit upload status to Not Done
 					$visitObject->changeUploadStatus(Visit::NOT_DONE);
 					//Reset QC only if suppervisor, we don't change QC status for investigator and controller
 					//As the QC process in ongoing
-					if($role==User::SUPERVISOR){
+					if ($role == User::SUPERVISOR) {
 						$visitObject->resetQC();
 					}
 					$visitObject->changeVisitStateInvestigatorForm(Visit::LOCAL_FORM_DRAFT);
@@ -92,8 +92,8 @@ if (isset($_SESSION['username']) ) {
                 
 				$changedArrayResult[]=$serieOrthancID;
                 
-			}else if($action=='reactivate'){
-				if($role!=User::SUPERVISOR){
+			}else if ($action == 'reactivate') {
+				if ($role != User::SUPERVISOR) {
 					print("Reactivation not authorized");
 					return;
 				}
@@ -113,12 +113,12 @@ if (isset($_SESSION['username']) ) {
 		Tracker::logActivity($username, $role, $_SESSION['study'], $id_visit, "Change Serie", $actionDetails);
 		$answer=true;
         
-	} else{
+	}else {
 		$answer=false;
 	}
 
 	echo(json_encode($answer));
 
-} else {
+}else {
 	echo(json_encode(false));
 }

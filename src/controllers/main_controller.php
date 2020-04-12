@@ -28,6 +28,6 @@ if (isset($_SESSION['username'])) {
     
 	require 'views/main_view.php';
     
-} else {
+}else {
 	require 'includes/no_access.php';
 }

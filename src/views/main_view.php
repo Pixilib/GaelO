@@ -269,7 +269,7 @@
 					}
 					//Add all available studies in the selector
 					foreach ($availableStudies as $study) {
-						echo '<option value="' . htmlspecialchars($study) . '">' . htmlspecialchars($study) . '</option>';
+						echo '<option value="'.htmlspecialchars($study).'">'.htmlspecialchars($study).'</option>';
 					}
 					?>
 				</select>

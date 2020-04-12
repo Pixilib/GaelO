@@ -19,40 +19,40 @@
  */
 
 Session::checkSession();
-$linkpdo = Session::getLinkpdo();
+$linkpdo=Session::getLinkpdo();
 
-$type_visit = $_POST['type_visit'];
-$id_visit = $_POST['id_visit'];
-$patient_num = $_POST['patient_num'];
-$username = $_SESSION['username'];
-$study = $_SESSION['study'];
+$type_visit=$_POST['type_visit'];
+$id_visit=$_POST['id_visit'];
+$patient_num=$_POST['patient_num'];
+$username=$_SESSION['username'];
+$study=$_SESSION['study'];
 
-$userObject = new User($username, $linkpdo);
-$patientAllowed = $userObject->isVisitAllowed($id_visit, $_SESSION['role']);
+$userObject=new User($username, $linkpdo);
+$patientAllowed=$userObject->isVisitAllowed($id_visit, $_SESSION['role']);
 
 // If permission granted
 if (isset($_SESSION['username']) && $patientAllowed) {
     
 	// Post processing of form if sent
 	if (isset($_POST['validate'])) {
-		$request = $_POST['request'];
+		$request=$_POST['request'];
         
 		if (!empty($request)) {
-			$emailObject = new Send_Email($linkpdo);
+			$emailObject=new Send_Email($linkpdo);
 			$emailObject->addGroupEmails($study, User::SUPERVISOR)->addEmail($userObject->userEmail);
-			$emailObject->sendUnlockRequestMessage($_SESSION['role'], $username, $type_visit, $patient_num, $study, $request );
+			$emailObject->sendUnlockRequestMessage($_SESSION['role'], $username, $type_visit, $patient_num, $study, $request);
             
 			$answer="Success";
-		}else{
+		}else {
 			$answer="Missing Reason";
 		}
         
 		echo(json_encode($answer));
         
-	} else {
+	}else {
 		require 'views/investigator/ask_unlock_view.php';
 	}
     
-} else {
+}else {
 	require 'includes/no_access.php';
 }
