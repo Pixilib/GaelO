@@ -63,11 +63,11 @@ if ($permissionDicomWeb) {
 	$response=$proxy -> forward($request) -> filter(function($request, $response, $next) {
 		// Manipulate the request object.
 		$serverName=$_SERVER['SERVER_NAME'];
-		$port=$_SERVER['SERVER_PORT'];
-		$protocol=@$_SERVER['HTTPS'] == true ? 'https' : 'http';
+		error_log($_SERVER['X-Forwarded-For']);
+		//$protocol=@$_SERVER['HTTPS'] == true ? 'https' : 'http';
 		//error_log('by=localhost:8080;for=localhost:8080;host='.$serverName.':'.$port.';proto='.$protocol);
 		//Set Fowarded Message to update orthanc Host server
-		$request=$request->withHeader('Forwarded', 'by=localhost:8080;for=localhost:8080;host='.$serverName.':'.$port.';proto='.$protocol);
+		$request=$request->withHeader('Forwarded', 'by=localhost:8080;for=localhost:8080;host='.$serverName.'/orthanc'.';proto=https');
 
 		$response=$next($request, $response);
         

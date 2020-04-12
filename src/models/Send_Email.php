@@ -419,8 +419,8 @@ Class Send_Email {
 
 	}
 
-	public function sendAdminLoggedAlertEmail($username, $remoteAdress) {
-		$message='the Admin user '.$username.' logged in from '.$remoteAdress.'
+	public function sendAdminLoggedAlertEmail($username, $remoteAddress) {
+		$message='the Admin user '.$username.' logged in from '.$remoteAddress.'
         <br> Please review this activity';
 		$this->setMessage($message);
 		$this->subject="Admin Logged In";
