@@ -1,14 +1,15 @@
 build:
   nodes:
-    analysis:
+    GaelO:
+      root_path: './src'
       tests:
         override:
           - php-scrutinizer-run
 filter:
   excluded_paths:
-      - "src/data/install/"
+      - "data/install/"
       # Everything in a root level "tests" directory will be excluded
   dependency_paths:
-      - "src/vendor/"
+      - "vendor/"
       # Everything in a root level "lib" directory will be excluded from analysis
       # but treated as a dependency
