@@ -1,9 +1,14 @@
 build:
   nodes:
     analysis:
-      filter:
-        excluded_paths:
-            - src/data/install/
       tests:
         override:
           - php-scrutinizer-run
+filter:
+  excluded_paths:
+      - "src/data/install/"
+      # Everything in a root level "tests" directory will be excluded
+  dependency_paths:
+      - "src/vendor/"
+      # Everything in a root level "lib" directory will be excluded from analysis
+      # but treated as a dependency
