@@ -122,15 +122,24 @@ abstract class Form_Processor {
 			throw new Exception("Error during save");
 		}
 		
-		if ($validate) $this->reviewObject->changeReviewValidationStatus($validate);
+		if ($validate) {
+			$this->reviewObject->changeReviewValidationStatus($validate);
+		}
 		//update the visit status if we are processing a local form
 		if ($this->local) {
-			if ($validate) $this->visitObject->changeVisitStateInvestigatorForm(Visit::LOCAL_FORM_DONE);
-			else $this->visitObject->changeVisitStateInvestigatorForm(Visit::LOCAL_FORM_DRAFT);	
+			if ($validate) {
+				$this->visitObject->changeVisitStateInvestigatorForm(Visit::LOCAL_FORM_DONE);
+			}else {
+				$this->visitObject->changeVisitStateInvestigatorForm(Visit::LOCAL_FORM_DRAFT);
+			}
 		}
 		
 		//Log Activity
-		if ($this->local) $role="Investigator"; else $role="Reviewer";
+		if ($this->local) {
+			$role="Investigator";
+		}else {
+			$role="Reviewer";
+		}
 		$actionDetails['patient_code']=$this->visitObject->patientCode;
 		$actionDetails['type_visit']=$this->visitObject->visitType;
 		$actionDetails['modality_visit']=$this->visitObject->visitGroupObject->groupModality;
@@ -143,7 +152,9 @@ abstract class Form_Processor {
 		Tracker::logActivity($this->username, $role, $this->study, $this->id_visit, "Save Form", $actionDetails);
 		
 		//If central review still not at "Done" status Check if validation is reached
-		if ($validate && !$this->local && $this->reviewStatus != Visit::REVIEW_DONE) $this->setVisitValidation();
+		if ($validate && !$this->local && $this->reviewStatus != Visit::REVIEW_DONE) {
+			$this->setVisitValidation();
+		}
 		
 	}
 	

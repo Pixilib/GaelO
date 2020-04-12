@@ -61,8 +61,7 @@ class Import_Patient {
 				if (GAELO_DATE_FORMAT == 'm.d.Y') {
 					$birthDay=intval($birthDateArray[1]);
 					$birthMonth=intval($birthDateArray[0]);
-				}
-				else if (GAELO_DATE_FORMAT == 'd.m.Y') {
+				}else if (GAELO_DATE_FORMAT == 'd.m.Y') {
 					$birthDay=intval($birthDateArray[0]);
 					$birthMonth=intval($birthDateArray[1]);
 				}
@@ -74,8 +73,7 @@ class Import_Patient {
 				//Store the patient result import process in this object
 				if ($insertddb) {
 						$this->sucessList[]=$patientNumber;
-				}
-				else {
+				}else {
 					$patientFailed['PatientNumber']=$patientNumber;
 					$patientFailed['Reason']="Can't write to DB, wrong date or other wrong input";
 					$this->failList[]=$patientFailed;
@@ -87,8 +85,7 @@ class Import_Patient {
 				if (!$isExistingCenter) {
 					if (empty($patientInvestigatorNumCenter)) {
 						$this->failList['Missing Num Center'][]=$patientNumber;
-					}
-					else {
+					}else {
 						$this->failList['Unknown Center'][]=$patientNumber;
 					}
 
@@ -122,8 +119,7 @@ class Import_Patient {
 		if (GAELO_DATE_FORMAT == 'm.d.Y') {
 			$registrationDay=intval($dateNbArray[1]);
 			$registrationMonth=intval($dateNbArray[0]);
-		}
-		else if (GAELO_DATE_FORMAT == 'd.m.Y') {
+		}else if (GAELO_DATE_FORMAT == 'd.m.Y') {
 			$registrationDay=intval($dateNbArray[0]);
 			$registrationMonth=intval($dateNbArray[1]);
 		}
@@ -198,7 +194,9 @@ class Import_Patient {
 	 * @return boolean
 	 */
 	private function isExistingCenter($patientNumCenter) {
-		if (is_null($patientNumCenter) || strlen($patientNumCenter) == 0) return false;
+		if (is_null($patientNumCenter) || strlen($patientNumCenter) == 0) {
+			return false;
+		}
 	    
 		try {
 			new Center($this->linkpdo, $patientNumCenter);
@@ -272,8 +270,11 @@ class Import_Patient {
 			foreach ($this->failList as $key=>$value) {
 				if (!empty($value)) {
 					$failReport=$failReport.$key.':<br>';
-					if (is_array($value)) $failReport=$failReport.implode('<br>', $value).'<br>';
-					else $failReport=$failReport.$value.'<br>';
+					if (is_array($value)) {
+						$failReport=$failReport.implode('<br>', $value).'<br>';
+					}else {
+						$failReport=$failReport.$value.'<br>';
+					}
 				}
 			}
 		}else {

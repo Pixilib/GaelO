@@ -53,7 +53,7 @@ if ($visitPermissions) {
 	//Delete temp file at the end of reading
 	unlink($tempfile);
 	
-}else {
+} else {
 	header('HTTP/1.0 403 Forbidden');
 	die('You are not allowed to access this file.'); 
 }

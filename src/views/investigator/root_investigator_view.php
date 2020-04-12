@@ -84,11 +84,11 @@
 				"items": <?php 
 				if ($_SESSION['role'] == User::INVESTIGATOR) {
 					echo('investigatorContextMenu()');
-				}else if ($_SESSION['role'] == User::CONTROLLER) {
+				} else if ($_SESSION['role'] == User::CONTROLLER) {
 					echo('controllerContextMenu()');
-				}else if ($_SESSION['role'] == User::REVIEWER) {
+				} else if ($_SESSION['role'] == User::REVIEWER) {
 					echo('reviewerContextMenu()');
-				}else {
+				} else {
 					echo('{}');
 				} ?>
 

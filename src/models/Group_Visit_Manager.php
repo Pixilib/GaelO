@@ -124,7 +124,9 @@ class Group_Visit_Manager
 			$visitObject=new Visit($visitId, $this->linkpdo);
 
 			if (!empty($username)) {
-				if ($visitObject->isAwaitingReviewForReviewerUser($username)) $visitObjectArray[]=$visitObject;
+				if ($visitObject->isAwaitingReviewForReviewerUser($username)) {
+					$visitObjectArray[]=$visitObject;
+				}
 			}else {
 				$visitObjectArray[]=$visitObject;
 			}

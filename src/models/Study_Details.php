@@ -138,7 +138,7 @@ Class Study_Details {
         
 		if (empty($dataStudies)) {
 			return false;
-		}else {
+		} else {
 			return true;
 		}
         

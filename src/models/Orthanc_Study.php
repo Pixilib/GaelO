@@ -55,7 +55,7 @@
 					)
 			);
 	    	
-		}else {
+		} else {
 			$this->url=$url;
 			$this->context=$context;	
 		}

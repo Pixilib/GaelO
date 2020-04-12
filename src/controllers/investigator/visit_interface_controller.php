@@ -40,6 +40,6 @@ if (isset($_SESSION['username']) && $visitAllowed) {
 	require 'includes/table_visit.php';
 	require 'views/investigator/visit_interface_view.php';
    
-}else {
+} else {
 	require 'includes/no_access.php';
 }

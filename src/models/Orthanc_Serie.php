@@ -143,7 +143,7 @@ Class Orthanc_Serie {
 		
 		if (in_array($this->sopClassUid, $scUids)) {
 			return true;
-		}else {
+		} else {
 			return false;
 		}
 		

@@ -76,7 +76,7 @@ if ($accessCheck && $_SESSION['role'] == User::SUPERVISOR) {
 		unlink($file);
 	}
     
-}else {
+} else {
 	header('HTTP/1.0 403 Forbidden');
 	die('You are not allowed to access this file.');
 }
