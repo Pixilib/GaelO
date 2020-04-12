@@ -57,16 +57,16 @@
 				<?php
 				//For each documentation database entry make checkbox to select visibility (and check them depending on database value)
 				foreach ($documentationObjects as $documentation) {
-				    ?>
+					?>
 				    <tr><td><img class="icon" src="assets/images/download.png" alt="Download" onclick="downloadDocumentation(<?=$documentation->documentId ?>)"></td>
 				    <td><?= htmlspecialchars($documentation->documentName)?></td>
 				    <td><?= htmlspecialchars($documentation->documentVersion)?></td>
 				    <td><?= $documentation->documentDate?></td>
-				    <td><input type="checkbox" name="inv<?= $documentation->documentId?>" value="1" class="form-check-input" <?php if($documentation->accessInvestigator) echo("checked")?>></td>
-				    <td><input type="checkbox" name="cont<?= $documentation->documentId?>" value="1" class="form-check-input" <?php if($documentation->accessController) echo("checked")?>></td>
-				    <td><input type="checkbox" name="mon<?= $documentation->documentId?>" value="1" class="form-check-input" <?php if($documentation->accessMonitor) echo("checked")?>></td>
-				    <td><input type="checkbox" name="rev<?= $documentation->documentId?>" value="1" class="form-check-input" <?php if($documentation->accessReviewer) echo("checked")?>></td>
-				    <td><input type="checkbox" name="deleted<?= $documentation->documentId?>" value="1" class="form-check-input" <?php if($documentation->deleted) echo("checked")?>></td>
+				    <td><input type="checkbox" name="inv<?= $documentation->documentId?>" value="1" class="form-check-input" <?php if ($documentation->accessInvestigator) echo("checked")?>></td>
+				    <td><input type="checkbox" name="cont<?= $documentation->documentId?>" value="1" class="form-check-input" <?php if ($documentation->accessController) echo("checked")?>></td>
+				    <td><input type="checkbox" name="mon<?= $documentation->documentId?>" value="1" class="form-check-input" <?php if ($documentation->accessMonitor) echo("checked")?>></td>
+				    <td><input type="checkbox" name="rev<?= $documentation->documentId?>" value="1" class="form-check-input" <?php if ($documentation->accessReviewer) echo("checked")?>></td>
+				    <td><input type="checkbox" name="deleted<?= $documentation->documentId?>" value="1" class="form-check-input" <?php if ($documentation->deleted) echo("checked")?>></td>
 					<?php
 				} ?>
 

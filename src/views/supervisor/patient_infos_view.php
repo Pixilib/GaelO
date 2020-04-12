@@ -135,7 +135,7 @@
 		</tr>
 		 <tr>
 			<td>Initials</td>
-			<td  class="patientDataEditable" id="initals" ><?=$patientObject->patientLastName,$patientObject->patientFirstName?></td>
+			<td  class="patientDataEditable" id="initals" ><?=$patientObject->patientLastName, $patientObject->patientFirstName?></td>
 		</tr>
 		<tr>
 			<td>Gender</td>
@@ -159,7 +159,7 @@
 		</tr>
 		<tr>
 			<td>Patient status</td>
-			<td><?php if ($patientObject->patientWithdraw) echo("Withdrawn") ; else echo("Included")?></td>
+			<td><?php if ($patientObject->patientWithdraw) echo("Withdrawn"); else echo("Included")?></td>
 			<td>
 			<button class='btn btn-danger' id='change_patient'>Modify</button>
 			</td>
@@ -196,7 +196,7 @@
 			<td>Investigator form</td>
 			<td>Quality control</td>
 			</tr>
-		<?php foreach ( $visitsObjects as $visit){ ?>
+		<?php foreach ($visitsObjects as $visit) { ?>
 			<tr>
 				<td><?=$visit->visitType?></td>
 				<td><?=$visit->visitGroupObject->groupModality?></td>
@@ -206,20 +206,20 @@
 				<td class="visitDetails" title="quality" ><?=$visit->stateQualityControl?></td>
 				<td class="visitDetails" title="review_div" ><?=$visit->reviewStatus?></td>
 			<?php 
-			if($visit->deleted){
+			if ($visit->deleted) {
 			?>
 				<td class="visitDetails">
 					<input class="btn btn-danger" type="button" value="Reactivate Visit" onclick="reactivateVisit(<?=$visit->id_visit?>)">
 				</td>
 			<?php 
-			}else{ ?>
+			}else { ?>
 				<td class="visitDetails" title="deleted" >Active</td>
 			<?php 
 			} ?>
 			</tr>
 		<?php 
-	    }
-	    ?>
+		}
+		?>
 		</table>
 	</div>
 

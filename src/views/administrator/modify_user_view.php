@@ -86,34 +86,34 @@
 				<!--------------Status Selecteur ----------------------->
 				<SELECT class="custom-select" name="statut">
                   <?php
-                // Display current status as first one
-                echo '<option value="' . $userObject->userStatus . '">' . $userObject->userStatus . '</option>';
-                // Array of all possible status
-                $possibleStatus;
-                if ($userObject->userStatus == User::ACTIVATED || $userObject->userStatus == User::BLOCKED) {
-                    $possibleStatus = array(
-                        User::UNCONFIRMED,
-                        User::DEACTIVATED
-                    );
-                } else if ($userObject->userStatus == User::UNCONFIRMED) {
-                    $possibleStatus = array(
-                        User::DEACTIVATED
-                    );
-                } else if ($userObject->userStatus == User::DEACTIVATED) {
-                    $possibleStatus = array(
-                        User::UNCONFIRMED
-                    );
-                }
+				// Display current status as first one
+				echo '<option value="' . $userObject->userStatus . '">' . $userObject->userStatus . '</option>';
+				// Array of all possible status
+				$possibleStatus;
+				if ($userObject->userStatus == User::ACTIVATED || $userObject->userStatus == User::BLOCKED) {
+					$possibleStatus = array(
+						User::UNCONFIRMED,
+						User::DEACTIVATED
+					);
+				} else if ($userObject->userStatus == User::UNCONFIRMED) {
+					$possibleStatus = array(
+						User::DEACTIVATED
+					);
+				} else if ($userObject->userStatus == User::DEACTIVATED) {
+					$possibleStatus = array(
+						User::UNCONFIRMED
+					);
+				}
                 
-                // Add in the selected possible status and change the "unconfirmed" name by "password reset" in display
-                foreach ($possibleStatus as $status) {
-                    if ($status == "Unconfirmed") {
-                        echo '<option value="' . $status . '">Password Reset</option>';
-                    } else {
-                        echo '<option value="' . $status . '">' . $status . '</option>';
-                    }
-                }
-                ?>
+				// Add in the selected possible status and change the "unconfirmed" name by "password reset" in display
+				foreach ($possibleStatus as $status) {
+					if ($status == "Unconfirmed") {
+						echo '<option value="' . $status . '">Password Reset</option>';
+					} else {
+						echo '<option value="' . $status . '">' . $status . '</option>';
+					}
+				}
+				?>
                 </SELECT>
 			</div>
 		</div>
@@ -170,12 +170,12 @@
 				<SELECT id="profile" name="profile[]" class="custom-select" multiple>
                       <?php
                     
-                    foreach ($userRoles as $study => $existingRoles) {
-                        foreach ($existingRoles as $role) {
-                            echo '<option value="' . $role . '@' . htmlspecialchars($study) . '">[' . htmlspecialchars($study) . '] - [' . $role . ']</option>';
-                        }
-                    }
-                    ?>
+					foreach ($userRoles as $study => $existingRoles) {
+						foreach ($existingRoles as $role) {
+							echo '<option value="' . $role . '@' . htmlspecialchars($study) . '">[' . htmlspecialchars($study) . '] - [' . $role . ']</option>';
+						}
+					}
+					?>
     
                     </SELECT> <input onclick="del_list('profile')"
 					class="btn btn-dark" type="button" value="-">
@@ -184,19 +184,19 @@
 				<!--------------------------------Display all available roles ----------------------->
 				<SELECT id="one" class="custom-select" name="role">
                       <?php
-                    $roles = array(
-                        User::INVESTIGATOR,
-                        User::MONITOR,
-                        User::CONTROLLER,
-                        User::SUPERVISOR,
-                        User::REVIEWER
-                    );
-                    foreach ($availableStudies as $study) {
-                        foreach ($roles as $role) {
-                            echo '<option value="' . $role . '@' . htmlspecialchars($study) . '">[' . htmlspecialchars($study) . '] - [' . $role . ']</option>';
-                        }
-                    }
-                    ?>
+					$roles = array(
+						User::INVESTIGATOR,
+						User::MONITOR,
+						User::CONTROLLER,
+						User::SUPERVISOR,
+						User::REVIEWER
+					);
+					foreach ($availableStudies as $study) {
+						foreach ($roles as $role) {
+							echo '<option value="' . $role . '@' . htmlspecialchars($study) . '">[' . htmlspecialchars($study) . '] - [' . $role . ']</option>';
+						}
+					}
+					?>
                     </SELECT> <input onclick="bascule('one','profile')"
 					class="btn btn-dark" type="button" value="+">
 			</div>
@@ -215,15 +215,15 @@
 				<!------------------------Display all jobs ----------------------->
 				<SELECT class="custom-select" name="job">
                   <?php
-                // Current job appear first in selector
-                echo '<option value="' . $userObject->userJob . '">' . $userObject->userJob . '</option>';
-                // add other possible job
-                foreach ($jobs as $job) {
-                    if ($job != $userObject->userJob) {
-                        echo '<option value="' . $job . '">' . $job . '</option>';
-                    }
-                }
-                ?>
+				// Current job appear first in selector
+				echo '<option value="' . $userObject->userJob . '">' . $userObject->userJob . '</option>';
+				// add other possible job
+				foreach ($jobs as $job) {
+					if ($job != $userObject->userJob) {
+						echo '<option value="' . $job . '">' . $job . '</option>';
+					}
+				}
+				?>
                 </SELECT>
 			</div>
 		</div>
@@ -235,16 +235,16 @@
 			<SELECT class="custom-select" name="main_center" id="main_center"
 				required>
                 <?php
-                // Display users's main center as first option
-                echo '<option value="' . $mainCenter->code . '">[' . $mainCenter->code . '] - [' . htmlspecialchars($mainCenter->name) . ']</option>';
+				// Display users's main center as first option
+				echo '<option value="' . $mainCenter->code . '">[' . $mainCenter->code . '] - [' . htmlspecialchars($mainCenter->name) . ']</option>';
                 
-                // Add others
-                foreach ($centers as $center) {
-                    if ($center->code != $mainCenter->code) {
-                        echo '<option value="' . $center->code . '">[' . $center->code . '] - [' . htmlspecialchars($center->name) . ']</option>';
-                    }
-                }
-                ?>
+				// Add others
+				foreach ($centers as $center) {
+					if ($center->code != $mainCenter->code) {
+						echo '<option value="' . $center->code . '">[' . $center->code . '] - [' . htmlspecialchars($center->name) . ']</option>';
+					}
+				}
+				?>
               </SELECT>
 		</div>
 
@@ -257,11 +257,11 @@
 				<SELECT name="afficheur_centre[]" id="afficheur_centre"
 					class="custom-select" multiple>
                         <?php
-                        // Add option
-                        foreach ($usersAffiliatedCenters as $center) {
-                            echo '<option value="' . $center->code . '">[' . $center->code . '] - [' . htmlspecialchars($center->name) . ']</option>';
-                        }
-                        ?>
+						// Add option
+						foreach ($usersAffiliatedCenters as $center) {
+							echo '<option value="' . $center->code . '">[' . $center->code . '] - [' . htmlspecialchars($center->name) . ']</option>';
+						}
+						?>
                       </SELECT> <input
 					onclick="del_list('afficheur_centre')" class="btn btn-dark"
 					type="button" value="-">
@@ -272,10 +272,10 @@
 					class="custom-select">
                     <?php
                     
-                    foreach ($centers as $center) {
-                        echo '<option value="' . $center->code . '">[' . $center->code . '] - [' . htmlspecialchars($center->name) . ']</option>';
-                    }
-                    ?>
+					foreach ($centers as $center) {
+						echo '<option value="' . $center->code . '">[' . $center->code . '] - [' . htmlspecialchars($center->name) . ']</option>';
+					}
+					?>
                   </SELECT> <input
 					onclick="bascule('selecteur_centre', 'afficheur_centre')"
 					class="btn btn-dark" type="button" value="+">

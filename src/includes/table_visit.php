@@ -18,13 +18,13 @@
  * @param Patient $patient
  */
 function build_patient_visit_table(Patient $patient) {
-    if ($patient->patientWithdraw)
-        $patientStatus = "Withdrawn";
-    else
-        $patientStatus = "Included";
+	if ($patient->patientWithdraw)
+		$patientStatus = "Withdrawn";
+	else
+		$patientStatus = "Included";
     
-    $patientCenter=$patient->getPatientCenter();
-    ?>
+	$patientCenter=$patient->getPatientCenter();
+	?>
 	<div style="overflow-x:auto;"> 
     	<table id='tab_patient' class='table table-striped table-sm table-border'>
         	<tr>
@@ -88,11 +88,11 @@ function build_visit_details_table(array $visitObjects, string $role) { ?>
     	        <td>Quality control</td>
 			</tr>
         	<?php 
-            foreach ($visitObjects as $visitObject) {
-                $numberOfSeries = count($visitObject->getSeriesOrthancID());
+			foreach ($visitObjects as $visitObject) {
+				$numberOfSeries = count($visitObject->getSeriesOrthancID());
                 
-                if ($numberOfSeries == 0) $numberOfSeries = "Not Uploaded";
-                ?>    
+				if ($numberOfSeries == 0) $numberOfSeries = "Not Uploaded";
+				?>    
                 <tr>
 					 <td><?=$visitObject->visitGroupObject->groupModality?></td>
 					 <td class="visitLink" data-visitid=<?=$visitObject->id_visit?> ><?=htmlspecialchars($visitObject->visitType)?></td>
@@ -103,20 +103,20 @@ function build_visit_details_table(array $visitObjects, string $role) { ?>
         	         <td><?=$numberOfSeries?></td>
         	         <td><?=$visitObject->acquisitionDate?></td>
                 <?php 
-                if ($role == User::INVESTIGATOR && (in_array($visitObject->stateQualityControl, array(Visit::QC_NOT_DONE, Visit::QC_CORRECTIVE_ACTION_ASKED)) ) ) {
-                    ?>
+				if ($role == User::INVESTIGATOR && (in_array($visitObject->stateQualityControl, array(Visit::QC_NOT_DONE, Visit::QC_CORRECTIVE_ACTION_ASKED)) ) ) {
+					?>
         			<td>
         				<a href=scripts/delete_visit.php?id_visit=<?=$visitObject->id_visit?> class="ajaxLinkConfirm">
         					<img class="icon" src="assets/images/corbeille.png" alt="Delete">
         				</a>
         			</td> 
         	        <?php
-                }
-                ?>
+				}
+				?>
                 </tr>
             <?php
-            }
-            ?>
+			}
+			?>
     </table> 
     </div>
 <?php     

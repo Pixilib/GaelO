@@ -30,19 +30,19 @@ $accessCheck=$userObject->isRoleAllowed($visitObject->study, $_SESSION['role']);
 
 if ($accessCheck && in_array($_SESSION['role'], array(User::INVESTIGATOR, User::REVIEWER)) ) {
 
-    try{
-        if($_SESSION['role'] == User::INVESTIGATOR) $reviewObject = $visitObject->getReviewsObject(true);
-        else $reviewObject =  $visitObject->queryExistingReviewForReviewer($_SESSION['username']);
-        $filePath = $reviewObject->getAssociatedFilePath($fileKey);
-        $answer = is_file($filePath);
-    }catch(Exception $e){
-        error_log("no review");
-        $answer = false;
-    }
+	try{
+		if($_SESSION['role'] == User::INVESTIGATOR) $reviewObject = $visitObject->getReviewsObject(true);
+		else $reviewObject =  $visitObject->queryExistingReviewForReviewer($_SESSION['username']);
+		$filePath = $reviewObject->getAssociatedFilePath($fileKey);
+		$answer = is_file($filePath);
+	}catch(Exception $e){
+		error_log("no review");
+		$answer = false;
+	}
 
-    echo(json_encode($answer));
+	echo(json_encode($answer));
 
 } else {
-    header('HTTP/1.0 403 Forbidden');
+	header('HTTP/1.0 403 Forbidden');
 	die('You are not allowed to access this file.');
 }

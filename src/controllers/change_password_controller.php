@@ -27,8 +27,8 @@ if (isset($_SESSION['temp'])) {
 	    
 		$username=$_SESSION['temp'];
 		$mdp1=$_POST['mdp1'];
-		$mdp2 = $_POST['mdp2'];
-		$old_password = $_POST['old_password'];
+		$mdp2=$_POST['mdp2'];
+		$old_password=$_POST['old_password'];
 		
 		//Get current password and two previous password from database
 		$userObject=new User($username, $linkpdo);
@@ -42,9 +42,9 @@ if (isset($_SESSION['temp'])) {
 		
 		//Check that reported old password is correct, if unconfirmed we use the temp password value
 		if($userObject->userStatus == User::UNCONFIRMED){
-		    $checkCurrentPassword=password_verify($old_password, $currentTempPassword);
+			$checkCurrentPassword=password_verify($old_password, $currentTempPassword);
 		}else{
-		    $checkCurrentPassword=password_verify($old_password, $currentPassword);
+			$checkCurrentPassword=password_verify($old_password, $currentPassword);
 		}
 
 		if($mdp1 != $mdp2){
@@ -72,10 +72,10 @@ if (isset($_SESSION['temp'])) {
 		
 	}else{
 	    
-	    require 'views/change_password_view.php';
+		require 'views/change_password_view.php';
 	    
 	}
 	
 } else {
-    require 'includes/no_access.php';
+	require 'includes/no_access.php';
 }

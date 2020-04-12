@@ -38,12 +38,12 @@
     	
 		//Form Unactivation if already validated or non investigator Reviewer Role
 	   <?php
-        if ($validatedForm || $roleDisable) { ?>
+		if ($validatedForm || $roleDisable) { ?>
 			$('#specificForm').find('input, textarea, button, select').attr('disabled','disabled');
 	   <?php
-        }
+		}
     
-        ?>
+		?>
     
 		//Validation of the form, send the form with Ajax
 		$( "#validate, #draft" ).on( "click", function(event) {
@@ -83,7 +83,7 @@
 				}
 
             	<?php
-                if (($_SESSION['role']) == User::INVESTIGATOR) {
+				if (($_SESSION['role']) == User::INVESTIGATOR) {
 				?>
 					if(window.dicomUploadInUse){
 						//Upload is pending, confirm sent form and unactivate form
@@ -100,14 +100,14 @@
 					}
             		
             	<?php
-                } else if (($_SESSION['role']) == User::REVIEWER) {
-                ?>
+				} else if (($_SESSION['role']) == User::REVIEWER) {
+				?>
 					$('#contenu').empty();
 					//Refresh the tree
 					$('#containerTree').jstree(true).refresh();
 	           <?php
-                }
-                ?>
+				}
+				?>
 			}
      	});	
     };
@@ -126,23 +126,23 @@
 <div id="div_bouttons" class="col text-center">
 	<div id="sendAskUnlock"></div>
     <?php
-    //If not disable by role add action button
-    if (!$roleDisable) {
+	//If not disable by role add action button
+	if (!$roleDisable) {
         
-        if(!$validatedForm){
-            // If investigator Role and form not validated, add Draft and Validate button
-            ?>
+		if(!$validatedForm){
+			// If investigator Role and form not validated, add Draft and Validate button
+			?>
             	<input class="btn btn-dark" type="button" id="draft" name="draft" value="draft" /> 
         		<input class="btn btn-dark" type="button" id="validate" name="validate" value="validate" />
     		<?php 
-        }else{
-            //Add Ask Unlock Button
-            if (!$local || ($local && $visitObject->qcStatus != Visit::QC_ACCEPTED && $visitObject->qcStatus != Visit::QC_REFUSED)) {
-            ?>
+		}else{
+			//Add Ask Unlock Button
+			if (!$local || ($local && $visitObject->qcStatus != Visit::QC_ACCEPTED && $visitObject->qcStatus != Visit::QC_REFUSED)) {
+			?>
 				<input class="btn btn-dark" id="ask_unlock" type="button" value="Ask Unlock">
     		<?php
-            }
-        }
-    }
-    ?>
+			}
+		}
+	}
+	?>
 </div>

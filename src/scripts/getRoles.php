@@ -24,12 +24,12 @@ $linkpdo=Session::getLinkpdo();
 
 if ( isset($_SESSION['username']) ) {
     
-    $userObject= new User($_SESSION['username'], $linkpdo);
-    $roles=$userObject->getRolesInStudy($_POST['study']);
+	$userObject= new User($_SESSION['username'], $linkpdo);
+	$roles=$userObject->getRolesInStudy($_POST['study']);
   
-    //Output results
-    echo(json_encode($roles));
+	//Output results
+	echo(json_encode($roles));
     
 }else {
-    echo(json_encode(array("No Access")));
+	echo(json_encode(array("No Access")));
 }

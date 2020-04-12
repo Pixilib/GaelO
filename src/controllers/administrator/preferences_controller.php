@@ -21,15 +21,15 @@ Session::checkSession();
 $linkpdo=Session::getLinkpdo();
 
 if ($_SESSION['admin']) {
-    if(isset($_POST['preferenceSubmit'])){
+	if(isset($_POST['preferenceSubmit'])){
         
-        Global_Data::updatePlateformPreferences($_POST, $linkpdo);
-        echo(json_encode("Success"));
+		Global_Data::updatePlateformPreferences($_POST, $linkpdo);
+		echo(json_encode("Success"));
         
-    }else{
-        require 'views/administrator/preferences_view.php';
+	}else{
+		require 'views/administrator/preferences_view.php';
         
 	}
 }else{
-    require 'includes/no_access.php';
+	require 'includes/no_access.php';
 }

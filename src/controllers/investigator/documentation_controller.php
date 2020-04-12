@@ -24,11 +24,11 @@ $userObject=new User($_SESSION['username'], $linkpdo);
 $studyAllowed=$userObject->isRoleAllowed($_SESSION['study'], $_SESSION['role']);
 
 if($studyAllowed){
-    //Select documentation available for the current role from database
-    $studyObject=new Study($_SESSION['study'], $linkpdo);
-    $documentationObjects=$studyObject->getDocumentation($_SESSION['role']);
-    require 'views/investigator/documentation_view.php';
+	//Select documentation available for the current role from database
+	$studyObject=new Study($_SESSION['study'], $linkpdo);
+	$documentationObjects=$studyObject->getDocumentation($_SESSION['role']);
+	require 'views/investigator/documentation_view.php';
     
 }else{
-    require 'includes/no_access.php';
+	require 'includes/no_access.php';
 }

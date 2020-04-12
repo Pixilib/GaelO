@@ -40,8 +40,8 @@
         <tbody>
 		<?php 
 		foreach ($trackerData as $controllerEvent){
-      		$eventDetails=json_decode($controllerEvent['action_details'], true);
-        ?>
+	  		$eventDetails=json_decode($controllerEvent['action_details'], true);
+		?>
         	<tr>
 				<td><?=$controllerEvent['date']?></td>
 				<td><?=$controllerEvent['username']?></td>
@@ -59,8 +59,8 @@
 
 			</tr>
 		<?php 
-        }
-        ?>
+		}
+		?>
         </tbody>
     </table>
 </div>

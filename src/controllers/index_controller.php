@@ -26,7 +26,7 @@ if (isset($_SESSION['username'])) {
 //If form sent, process it
 else if ( ! empty($_POST['formSent'])  ){
    
-    $linkpdo=Session::getLinkpdo();
+	$linkpdo=Session::getLinkpdo();
 	
 	$userObject= new User($_POST['username'],$linkpdo);
 	$connexionPermission=$userObject->isPasswordCorrectAndActivitedAccount($_POST['mdp']);
@@ -43,7 +43,7 @@ else if ( ! empty($_POST['formSent'])  ){
 			$email->sendAdminLoggedAlertEmail($_POST['username'], $_SERVER['REMOTE_ADDR']);
 
 		}else{
-		    $_SESSION['admin'] = false;
+			$_SESSION['admin'] = false;
 		}
 
 		//open user session
@@ -83,11 +83,11 @@ else if ( ! empty($_POST['formSent'])  ){
 //No data sent, display the form and it's script
 } else {
     
-    try{
-        Session::getLinkpdo();
-    }catch(Exception $e){
-        error_log("Can't Connect DB");
-    }
+	try{
+		Session::getLinkpdo();
+	}catch(Exception $e){
+		error_log("Can't Connect DB");
+	}
     
-    require 'views/index_view.php';
+	require 'views/index_view.php';
 }

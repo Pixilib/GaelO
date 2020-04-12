@@ -26,12 +26,12 @@ $accessCheck = $userObject->isRoleAllowed($_SESSION['study'], $_SESSION['role'])
 
 if ($accessCheck && $_SESSION['role'] == User::SUPERVISOR) {
 
-    //Get users roles in the study to pass it to the view    
-    $study = $_SESSION['study'];
-    $studyObject = new Study($study, $linkpdo);
-    $usersInStudy = $studyObject->getAllRolesByUsers();
+	//Get users roles in the study to pass it to the view    
+	$study = $_SESSION['study'];
+	$studyObject = new Study($study, $linkpdo);
+	$usersInStudy = $studyObject->getAllRolesByUsers();
 
-    require 'views/supervisor/download_manager_view.php';
+	require 'views/supervisor/download_manager_view.php';
 } else {
-    require 'includes/no_access.php';
+	require 'includes/no_access.php';
 }

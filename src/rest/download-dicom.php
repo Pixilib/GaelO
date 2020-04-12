@@ -21,7 +21,7 @@
 require_once($_SERVER['DOCUMENT_ROOT'].'/rest/check_login.php');
 
 // get posted data in a PHP Object
-$data = json_decode(file_get_contents("php://input"), true);
+$data=json_decode(file_get_contents("php://input"), true);
 
 $id_visit=$data['id_visit'];
 
@@ -34,9 +34,9 @@ $visitPermissions=$userObject->isVisitAllowed($id_visit, User::REVIEWER);
 //If permission granted and visit active and review available and QC done
 if($visitPermissions) {
     
-    //Get Array of Orthanc Series ID
-    $resultatsIDs = $visitObject->getSeriesOrthancID();
-    //Generate zip from orthanc and output it to the navigator
+	//Get Array of Orthanc Series ID
+	$resultatsIDs = $visitObject->getSeriesOrthancID();
+	//Generate zip from orthanc and output it to the navigator
 	$orthanc=new Orthanc();
 	$tempfile=$orthanc->getZipTempFile($resultatsIDs);
 	
@@ -54,6 +54,6 @@ if($visitPermissions) {
 	unlink($tempfile);
 	
 }else{
-    header('HTTP/1.0 403 Forbidden');
-    die('You are not allowed to access this file.'); 
+	header('HTTP/1.0 403 Forbidden');
+	die('You are not allowed to access this file.'); 
 }

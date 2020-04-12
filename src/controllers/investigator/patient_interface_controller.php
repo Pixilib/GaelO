@@ -30,21 +30,21 @@ $patientAllowed=$userObject->isPatientAllowed($patient, $role);
 //Check user authorization
 if( isset($_SESSION['username']) && $patientAllowed ){
 	
-    //Instanciate Visit manager to check if visit creation is still possible
-    try{
-        $patientObject=new Patient($patient, $linkpdo); 
-    }catch(Exception $e){
-        exit("No Patient Found");
-    }
-    $visitPossible=$patientObject->isMissingVisit();
-    $visitArray=$patientObject->getAllCreatedPatientsVisits();
+	//Instanciate Visit manager to check if visit creation is still possible
+	try{
+		$patientObject=new Patient($patient, $linkpdo); 
+	}catch(Exception $e){
+		exit("No Patient Found");
+	}
+	$visitPossible=$patientObject->isMissingVisit();
+	$visitArray=$patientObject->getAllCreatedPatientsVisits();
     
-    require 'includes/table_visit.php';
-    require 'views/investigator/patient_interface_view.php';
+	require 'includes/table_visit.php';
+	require 'views/investigator/patient_interface_view.php';
     
     
 } else {
-    require 'includes/no_access.php';
+	require 'includes/no_access.php';
 }
 
 

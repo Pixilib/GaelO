@@ -21,10 +21,10 @@ $linkpdo=Session::getLinkpdo();
 
 if ($_SESSION['admin']) {
     
-    //Specific query because administrator log are not study defined
-    $trackerUsers=Tracker::getTrackerByRoleStudy("User", $linkpdo);
-    require 'views/administrator/tracker_user_view.php';
+	//Specific query because administrator log are not study defined
+	$trackerUsers=Tracker::getTrackerByRoleStudy("User", $linkpdo);
+	require 'views/administrator/tracker_user_view.php';
     
 }else{
-    require 'includes/no_access.php';
+	require 'includes/no_access.php';
 }

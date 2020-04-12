@@ -17,14 +17,14 @@
  * Output the called Documentation
  */
 
-header( 'content-type: text/html; charset=utf-8' );
+header('content-type: text/html; charset=utf-8');
 require_once($_SERVER['DOCUMENT_ROOT'].'/vendor/autoload.php');
 
 Session::checkSession();
 $linkpdo=Session::getLinkpdo();
 
 @Session::logInfo('Username : '.$_SESSION['username'].
-    ' Role: '.$_SESSION ['role'].' Study: '.$_SESSION['study'].' Documentation ID: '.$_GET['idDocumentation']);
+	' Role: '.$_SESSION ['role'].' Study: '.$_SESSION['study'].' Documentation ID: '.$_GET['idDocumentation']);
 
 $idDocumentation=$_GET['idDocumentation'];
 $documentationObject=new Documentation($linkpdo, $idDocumentation);
@@ -33,34 +33,34 @@ $roleAllowed=$documentationObject->isDocumentationAllowedForRole($_SESSION['role
 $userObject=new User($_SESSION['username'], $linkpdo);
 $studyAllowed=$userObject->isRoleAllowed($documentationObject->study, $_SESSION['role']);
 
-if($roleAllowed && $studyAllowed){
+if ($roleAllowed && $studyAllowed) {
     
-    header($_SERVER['SERVER_PROTOCOL'].' 200 OK');
-    header("Content-Type: application/pdf");
-    header("Content-Transfer-Encoding: Binary");
-    header("Cache-Control: no-cache");
-    header("Content-Length: ".filesize($documentationObject->documentFileLocation));
-    header('Content-Disposition: attachment; filename="Documentation-'.$_SESSION['study'].'_'.$documentationObject->documentName.'.pdf"');
+	header($_SERVER['SERVER_PROTOCOL'].' 200 OK');
+	header("Content-Type: application/pdf");
+	header("Content-Transfer-Encoding: Binary");
+	header("Cache-Control: no-cache");
+	header("Content-Length: ".filesize($documentationObject->documentFileLocation));
+	header('Content-Disposition: attachment; filename="Documentation-'.$_SESSION['study'].'_'.$documentationObject->documentName.'.pdf"');
     
-    $file = @fopen($documentationObject->documentFileLocation,"rb");
-    if($file){
+	$file = @fopen($documentationObject->documentFileLocation,"rb");
+	if($file){
 
-        while(!feof($file))
-        {
-            print(@fread($file, 1024*1024));
-            flush();
-        }
+		while(!feof($file))
+		{
+			print(@fread($file, 1024*1024));
+			flush();
+		}
 
-        fclose($file);
+		fclose($file);
 
-    }else{
-        throw new Exception("Can't Find Documentation");
-    }
+	}else{
+		throw new Exception("Can't Find Documentation");
+	}
 
     
  
     
     
 }else {
-    require $_SERVER['DOCUMENT_ROOT'].'/includes/no_access.php';
+	require $_SERVER['DOCUMENT_ROOT'].'/includes/no_access.php';
 }

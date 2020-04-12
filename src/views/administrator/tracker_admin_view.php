@@ -148,10 +148,10 @@
             </thead>
             <tbody>
             <?php 
-            //Specific query because administrator log are not study defined
-            foreach ($trackerAdministrator as $administratorEvent){
-            	$eventDetails=json_decode($administratorEvent['action_details'], true);
-            ?>
+			//Specific query because administrator log are not study defined
+			foreach ($trackerAdministrator as $administratorEvent){
+				$eventDetails=json_decode($administratorEvent['action_details'], true);
+			?>
             	<tr>
 					<td><?php echo($administratorEvent['date']);?></td>
 					<td><?php echo($administratorEvent['username']);?></td>
@@ -183,8 +183,8 @@
 
 				</tr>
 			<?php 
-            }
-            ?>
+			}
+			?>
             </tbody>
         </table>
     </div>

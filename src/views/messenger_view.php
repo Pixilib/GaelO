@@ -60,12 +60,12 @@ $(document).ready(function() {
     	<div class="row">
     		<select name="destinatorsRoles[]" id="destinatorsRoles" class="custom-select" style="width:auto;" multiple>
             	  <?php
-            	  $roles = array("None", User::INVESTIGATOR, User::CONTROLLER, User::MONITOR, User::SUPERVISOR, User::REVIEWER, User::ADMINISTRATOR);
-                  //add results in selector
-                  foreach ($roles as $role){
-                      echo'<option value='.$role.'>'.$role.' </option>';
-                  }
-                  ?>
+				  $roles = array("None", User::INVESTIGATOR, User::CONTROLLER, User::MONITOR, User::SUPERVISOR, User::REVIEWER, User::ADMINISTRATOR);
+				  //add results in selector
+				  foreach ($roles as $role){
+					  echo'<option value='.$role.'>'.$role.' </option>';
+				  }
+				  ?>
         	</select>
         	
     	</div>
@@ -76,11 +76,11 @@ $(document).ready(function() {
     	<div class="row">
         	<select name="destinatorsList[]" id="destinatorsList" class="custom-select" style="width:auto;" multiple >
             	  <?php
-                  //add results in selector
-                  foreach ($usersObjects as $user) {
-                      echo'<option value='.htmlspecialchars($user->username).'>'.$user->firstName.' '.$user->lastName.' </option>';
-                  }
-                  ?>
+				  //add results in selector
+				  foreach ($usersObjects as $user) {
+					  echo'<option value='.htmlspecialchars($user->username).'>'.$user->firstName.' '.$user->lastName.' </option>';
+				  }
+				  ?>
         	</select>
     	</div>
     	

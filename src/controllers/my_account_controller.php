@@ -23,8 +23,8 @@ $linkpdo=Session::getLinkpdo();
 
 if (isset($_SESSION['username'])) {
     
-    require 'views/my_account_view.php';
+	require 'views/my_account_view.php';
     
 }else{
-    require 'includes/no_access.php';
+	require 'includes/no_access.php';
 }

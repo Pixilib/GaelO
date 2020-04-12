@@ -17,7 +17,7 @@
 	<div id="header-content">
 		<a href="/main">
 			<img id="logo-gaelo" src="assets/images/gaelo-logo-rectangle.png" alt="GaelO">
-			<div id="name-div"><?php if(defined('GAELO_PLATEFORM_NAME')) echo(htmlspecialchars(GAELO_PLATEFORM_NAME)); else echo('GaelO')?></div>
+			<div id="name-div"><?php if (defined('GAELO_PLATEFORM_NAME')) echo(htmlspecialchars(GAELO_PLATEFORM_NAME)); else echo('GaelO')?></div>
 		</a>
 	</div>
 </header>

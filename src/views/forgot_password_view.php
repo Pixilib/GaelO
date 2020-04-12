@@ -19,7 +19,7 @@
 <head>
 	<meta charset="utf-8">
 	<title>Ask New password</title>
-    <?php include_once $_SERVER['DOCUMENT_ROOT'].'/includes/jsLibrairies.php';?>
+    <?php include_once $_SERVER['DOCUMENT_ROOT'].'/includes/jsLibrairies.php'; ?>
     
     <script type="text/javascript">
      $(document).ready(function () {
@@ -62,7 +62,7 @@
 </head>
 <body>
 
-	<?php require $_SERVER['DOCUMENT_ROOT'].'/includes/header.php';?>
+	<?php require $_SERVER['DOCUMENT_ROOT'].'/includes/header.php'; ?>
 	
 	<div class="block block-400">
 		<div class="block-title">Password assistance</div>

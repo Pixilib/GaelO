@@ -13,7 +13,7 @@
  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-header( 'content-type: application/json; charset=utf-8' );
+header('content-type: application/json; charset=utf-8');
 require_once($_SERVER['DOCUMENT_ROOT'].'/vendor/autoload.php');
 
 Session::checkSession();
@@ -31,19 +31,19 @@ $accessCheck=$userObject->isRoleAllowed($visitObject->study, $_SESSION['role']);
 
 if ($accessCheck && in_array($_SESSION['role'], array(User::INVESTIGATOR, User::REVIEWER)) ) {
 
-    if($_SESSION['role'] == User::INVESTIGATOR) $reviewObject = $visitObject->getReviewsObject(true);
-    else $reviewObject =  $visitObject->queryExistingReviewForReviewer($_SESSION['username']);
+	if($_SESSION['role'] == User::INVESTIGATOR) $reviewObject = $visitObject->getReviewsObject(true);
+	else $reviewObject =  $visitObject->queryExistingReviewForReviewer($_SESSION['username']);
 
-    try{
-        $reviewObject->deleteAssociatedFile($fileKey);
-    }catch(Exception $e){
-        header('HTTP/1.0 403 Forbidden');
-        die('Delete File Error');
-    }
+	try{
+		$reviewObject->deleteAssociatedFile($fileKey);
+	}catch(Exception $e){
+		header('HTTP/1.0 403 Forbidden');
+		die('Delete File Error');
+	}
 
-    return json_encode((true));
+	return json_encode((true));
 
 } else {
-    header('HTTP/1.0 403 Forbidden');
+	header('HTTP/1.0 403 Forbidden');
 	die('You are not allowed to access this file.');
 }

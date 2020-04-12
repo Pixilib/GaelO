@@ -22,12 +22,12 @@ $linkpdo=Session::getLinkpdo();
 
 if (isset($_SESSION['username'])) {
     
-    //List all availables studies for the user
-    $userObject=new User($_SESSION['username'], $linkpdo);
-    $availableStudies=$userObject->getAllStudiesWithRole();
+	//List all availables studies for the user
+	$userObject=new User($_SESSION['username'], $linkpdo);
+	$availableStudies=$userObject->getAllStudiesWithRole();
     
-    require 'views/main_view.php';
+	require 'views/main_view.php';
     
 } else {
-    require 'includes/no_access.php';
+	require 'includes/no_access.php';
 }

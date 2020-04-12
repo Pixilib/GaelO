@@ -60,10 +60,10 @@
 				<SELECT id="activatedStudies" class="form-group col text-center"
 					name="activatedStudies[]" multiple>
 					<?php
-                    foreach ($activatedStudiesDb as $study) {
-                        echo '<option value="' . htmlspecialchars($study) . '">' . htmlspecialchars($study) . '</option>';
-                    }
-                    ?>
+					foreach ($activatedStudiesDb as $study) {
+						echo '<option value="' . htmlspecialchars($study) . '">' . htmlspecialchars($study) . '</option>';
+					}
+					?>
 					</SELECT>
 			</div>
 
@@ -79,10 +79,10 @@
 				<SELECT id="unactivatedStudies" class="form-group col text-center"
 					name="unactivatedStudies[]" multiple>
                 <?php                   
-                foreach ($unactivatedStudiesDb as $study) {
-                    echo '<option value="' . htmlspecialchars($study) . '">' . htmlspecialchars($study) . '</option>';
-                }
-                ?>
+				foreach ($unactivatedStudiesDb as $study) {
+					echo '<option value="' . htmlspecialchars($study) . '">' . htmlspecialchars($study) . '</option>';
+				}
+				?>
                 </SELECT>
 			</div>
 		</div>

@@ -32,48 +32,48 @@ $permissionsCheck=$userObject->isRoleAllowed($_SESSION['study'], User::SUPERVISO
 //If supervisor session and permission OK
 if ($_SESSION['role']==User::SUPERVISOR && $permissionsCheck) {
 
-    $studyObject=new Study($_SESSION['study'], $linkpdo);
-    $uplodadedVisits=$studyObject->getAllUploadedImagingVisits();
+	$studyObject=new Study($_SESSION['study'], $linkpdo);
+	$uplodadedVisits=$studyObject->getAllUploadedImagingVisits();
     
-    $json=[];
+	$json=[];
     
-    foreach ($uplodadedVisits as $visitObject){
-        $seriesObject=$visitObject->getSeriesDetails($deleted);
-        $studyUID = $seriesObject[0]->studyDetailsObject->studyUID;
+	foreach ($uplodadedVisits as $visitObject){
+		$seriesObject=$visitObject->getSeriesDetails($deleted);
+		$studyUID = $seriesObject[0]->studyDetailsObject->studyUID;
         
-        $sumOfImages=0;
-        $sumOfSize=0;
-        $idList=[];
+		$sumOfImages=0;
+		$sumOfSize=0;
+		$idList=[];
         
-        if( !empty($seriesObject) ){
-            foreach ($seriesObject as $serie){
-                $sumOfImages+=$serie->numberInstances;
-                $sumOfSize+=$serie->serieDiskSize;
-                $idList[]=$serie->seriesOrthancID;
-            }
+		if( !empty($seriesObject) ){
+			foreach ($seriesObject as $serie){
+				$sumOfImages+=$serie->numberInstances;
+				$sumOfSize+=$serie->serieDiskSize;
+				$idList[]=$serie->seriesOrthancID;
+			}
             
-            $patientObject=$visitObject->getPatient();
-            $jsonObject['center'] = $patientObject->patientCenter;
-            $jsonObject['code'] = $patientObject->patientCode;
-            $jsonObject['withdraw'] = boolval($patientObject->patientWithdraw);
-            $jsonObject['visit_type'] = $visitObject->visitType;
-            $jsonObject['visit_modality'] = $visitObject->visitGroupObject->groupModality;
-            $jsonObject['state_investigator_form'] =$visitObject->stateInvestigatorForm;
-            $jsonObject['state_quality_control'] = $visitObject->stateQualityControl;
-            $jsonObject['nb_series'] = count($seriesObject);
-            $jsonObject['nb_instances'] = $sumOfImages;
-            $jsonObject['Disk_Size'] = $sumOfSize;
-            $jsonObject['orthancSeriesIDs'] = $idList;
-            $jsonObject['studyUID'] = $studyUID;
+			$patientObject=$visitObject->getPatient();
+			$jsonObject['center'] = $patientObject->patientCenter;
+			$jsonObject['code'] = $patientObject->patientCode;
+			$jsonObject['withdraw'] = boolval($patientObject->patientWithdraw);
+			$jsonObject['visit_type'] = $visitObject->visitType;
+			$jsonObject['visit_modality'] = $visitObject->visitGroupObject->groupModality;
+			$jsonObject['state_investigator_form'] =$visitObject->stateInvestigatorForm;
+			$jsonObject['state_quality_control'] = $visitObject->stateQualityControl;
+			$jsonObject['nb_series'] = count($seriesObject);
+			$jsonObject['nb_instances'] = $sumOfImages;
+			$jsonObject['Disk_Size'] = $sumOfSize;
+			$jsonObject['orthancSeriesIDs'] = $idList;
+			$jsonObject['studyUID'] = $studyUID;
             
-            $json[] =$jsonObject;
-        }
+			$json[] =$jsonObject;
+		}
         
         
-    }
+	}
     
-    echo(json_encode($json));
+	echo(json_encode($json));
     
 }else{
-    echo(json_encode("No Access"));
+	echo(json_encode("No Access"));
 }

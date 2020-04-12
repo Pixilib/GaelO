@@ -18,18 +18,18 @@
  */
 class TagAnon {
     
-    const KEEP=0;
-    const REPLACE=1;
-    const CLEAR=2;
+	const KEEP=0;
+	const REPLACE=1;
+	const CLEAR=2;
     
-    public $tag;
-    public $choice;
-    public $newValue;
+	public $tag;
+	public $choice;
+	public $newValue;
     
-    public function __construct($tag, $choice, $newValue=null){
-        $this->tag=$tag;
-        $this->choice=$choice;
-        $this->newValue=$newValue;
-    }
+	public function __construct($tag, $choice, $newValue=null){
+		$this->tag=$tag;
+		$this->choice=$choice;
+		$this->newValue=$newValue;
+	}
     
 }

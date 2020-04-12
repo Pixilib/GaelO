@@ -23,10 +23,10 @@ $linkpdo=Session::getLinkpdo();
 //Only for admin role
 if ($_SESSION['admin']) {
 
-    $allStudiesArray=Global_Data::getAllStudies($linkpdo);
-    //Display form
-    require('views/administrator/create_study_view.php');
+	$allStudiesArray=Global_Data::getAllStudies($linkpdo);
+	//Display form
+	require('views/administrator/create_study_view.php');
     
 }else{
-    require 'includes/no_access.php';
+	require 'includes/no_access.php';
 }

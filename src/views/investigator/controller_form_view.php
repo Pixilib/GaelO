@@ -19,13 +19,13 @@
         <?php
         if ($visitObject->formQualityControl == true) {
             ?> $('input:radio[name="formDecision"]').filter('[value="accepted"]').attr("checked", true); <?php
-        } else {
+        }else {
             ?> $('input:radio[name="formDecision"]').filter('[value="refused"]').attr("checked", true); <?php
         }
         
         if ($visitObject->imageQualityControl == true) {
             ?> $('input:radio[name="imageDecision"]').filter('[value="accepted"]').attr("checked", true); <?php
-        } else {
+        }else {
             ?> $('input:radio[name="imageDecision"]').filter('[value="refused"]').attr("checked", true); <?php
         }
         ?>
@@ -173,7 +173,7 @@
               <?php
             // If controller role add button to validate form submission
             if ($role == User::CONTROLLER 
-                    && in_array($visitObject->stateQualityControl, array( Visit::QC_NOT_DONE, Visit::QC_WAIT_DEFINITVE_CONCLUSION ))) {
+                    && in_array($visitObject->stateQualityControl, array(Visit::QC_NOT_DONE, Visit::QC_WAIT_DEFINITVE_CONCLUSION))) {
                 ?>
                 <button name="refuse" id="refuse" type="button"
 				class="btn btn-danger">Refuse</button>
@@ -182,8 +182,8 @@
 			<button name="accept" id="accept" type="button"
 				class="btn btn-success">Accept</button>
                 <?php
-            }
-            ?>
+			}
+			?>
 
         </div>
 	</div>
