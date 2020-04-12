@@ -7,9 +7,9 @@ build:
           - php-scrutinizer-run
 filter:
   excluded_paths:
-      - "data/install/"
+      - "src/data/install/"
       # Everything in a root level "tests" directory will be excluded
   dependency_paths:
-      - "vendor/"
+      - "src/vendor/"
       # Everything in a root level "lib" directory will be excluded from analysis
       # but treated as a dependency
