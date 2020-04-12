@@ -22,7 +22,7 @@ require_once($_SERVER['DOCUMENT_ROOT'].'/vendor/autoload.php');
 Session::checkSession();
 $linkpdo=Session::getLinkpdo();
 
-$id_review = $_POST['idReview'];
+$id_review=$_POST['idReview'];
 $reason=$_POST['reason'];
 
 $userObject=new User($_SESSION['username'], $linkpdo);
@@ -31,12 +31,12 @@ $visitObject=$reviewObject->getParentVisitObject();
 $permissionsCheck=$userObject->isVisitAllowed($reviewObject->id_visit, User::SUPERVISOR);
 
 //If supervisor session and permission OK
-if ($_SESSION['role']==User::SUPERVISOR && $permissionsCheck) {
+if ($_SESSION['role'] == User::SUPERVISOR && $permissionsCheck) {
 	
 	//Fetch Data about the review / Visit we are going to delete
-    if(!$reviewObject->deleted && !empty($reason)){
+	if (!$reviewObject->deleted && !empty($reason)) {
 		
-		try{
+		try {
 			$reviewObject->deleteReview();
 			//Log activity
 			$actionDetails['type_visit']=$visitObject->visitType;
@@ -47,8 +47,8 @@ if ($_SESSION['role']==User::SUPERVISOR && $permissionsCheck) {
 			$actionDetails['reason']=$reason;
 			Tracker::logActivity($_SESSION['username'], $_SESSION['role'], $_SESSION['study'], $reviewObject->id_visit, "Delete Form", $actionDetails);
 			$answer=true;
-		}catch(Throwable $t){
-		    error_log($t->getMessage());
+		}catch (Throwable $t) {
+			error_log($t->getMessage());
 			$answer=false;
 		}
 		
@@ -57,12 +57,12 @@ if ($_SESSION['role']==User::SUPERVISOR && $permissionsCheck) {
 		$email->addEmail($email->getUserEmails($reviewObject->username));
 		$email->sendDeletedFormMessage($visitObject->study, $visitObject->patientCode, $visitObject->visitType);
 
-	}else{
+	}else {
 		$answer=false;
 	}
 	
 	echo(json_encode($answer));
 	
-} else {
-    echo(json_encode(false));
+}else {
+	echo(json_encode(false));
 }

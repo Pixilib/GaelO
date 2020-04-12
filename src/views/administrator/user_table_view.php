@@ -68,7 +68,7 @@
 		<?php 
 		///Fill the table with the data from the database
 		foreach ($usersObjects as $user) {
-        ?>
+		?>
 			<tr>
 				<td><?=htmlspecialchars($user->username)?></td>
 				<td><?=$user->mainCenter?></td>

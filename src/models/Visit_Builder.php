@@ -38,35 +38,35 @@ class Visit_Builder
 	 */
 	public static function isTableEmpty(Visit_Type $vt): bool
 	{
-		$linkpdo = Visit_Builder::getLinkpdo();
-		$table = $vt->tableReviewSpecificName;
-		$pdoSt = $linkpdo->query('SELECT * FROM ' . $table . ';');
+		$linkpdo=Visit_Builder::getLinkpdo();
+		$table=$vt->tableReviewSpecificName;
+		$pdoSt=$linkpdo->query('SELECT * FROM '.$table.';');
 		return count($pdoSt->fetchAll()) == 0;
 	}
 
 	public static function dropColumn(Visit_Type $vt, string $column) : PDOStatement
 	{
-		$linkpdo = Visit_Builder::getLinkpdo();
-		$table = $vt->tableReviewSpecificName;
-		$sql = 'ALTER TABLE `' . $table . '` DROP COLUMN `' . $column . '`;';
+		$linkpdo=Visit_Builder::getLinkpdo();
+		$table=$vt->tableReviewSpecificName;
+		$sql='ALTER TABLE `'.$table.'` DROP COLUMN `'.$column.'`;';
 		return $linkpdo->query($sql);
 	}
 
 
 	public static function alterColumn(Visit_Type $vt, $columnNameBefore, $columnNameAfter, $dataType) : PDOStatement
 	{ 
-		$linkpdo = Visit_Builder::getLinkpdo();
-		$table = $vt->tableReviewSpecificName;
-		$sql = 'ALTER TABLE `' . $table . '` CHANGE `' . $columnNameBefore . '` `' . $columnNameAfter . '` ' . $dataType . ';';
+		$linkpdo=Visit_Builder::getLinkpdo();
+		$table=$vt->tableReviewSpecificName;
+		$sql='ALTER TABLE `'.$table.'` CHANGE `'.$columnNameBefore.'` `'.$columnNameAfter.'` '.$dataType.';';
 		return $linkpdo->query($sql);
 	}
 
 
 	public static function addColumn(Visit_Type $vt, $columnName, $dataType) : PDOStatement
 	{
-		$linkpdo = Visit_Builder::getLinkpdo();
-		$table = $vt->tableReviewSpecificName;
-		$sql = 'ALTER TABLE `' . $table . '` ADD `' . $columnName . '` ' . $dataType . ';';
+		$linkpdo=Visit_Builder::getLinkpdo();
+		$table=$vt->tableReviewSpecificName;
+		$sql='ALTER TABLE `'.$table.'` ADD `'.$columnName.'` '.$dataType.';';
 		return $linkpdo->query($sql);
 	}
 
@@ -79,38 +79,38 @@ class Visit_Builder
 	 */
 	public static function formatDataType(string $typeLabel, $typeParams): string
 	{
-		$res = '';
+		$res='';
 		switch ($typeLabel) {
 			case 'int':
-				$res = 'INT(11)';
+				$res='INT(11)';
 				break;
 			case 'tinyint':
-				$res = 'TINYINT(1)';
+				$res='TINYINT(1)';
 				break;
 			case 'tinytext':
-				$res = 'TINYTEXT';
+				$res='TINYTEXT';
 				break;
 			case 'date':
-				$res = 'DATE';
+				$res='DATE';
 				break;
 			case 'varchar':
-				$param = Visit_Builder::escape($typeParams[0]);
+				$param=Visit_Builder::escape($typeParams[0]);
 				// Format params array into string e.g. '(123)'
-				$res = 'VARCHAR(' . $param . ')';
+				$res='VARCHAR('.$param.')';
 				break;
 			case 'decimal':
-				$param1 = Visit_Builder::escape($typeParams[0]);
-				$param2 = Visit_Builder::escape($typeParams[1]);
+				$param1=Visit_Builder::escape($typeParams[0]);
+				$param2=Visit_Builder::escape($typeParams[1]);
 				// Format params array into string e.g. '(12,3)'
-				$res = 'DECIMAL(' . $param1 . ',' . $param2 . ')';
+				$res='DECIMAL('.$param1.','.$param2.')';
 				break;
 			case 'enum':
-				$params = [];
+				$params=[];
 				foreach ($typeParams as $tp) {
 					array_push($params, Visit_Builder::escape($tp));
 				}
 				// Format params array into string e.g. '("abc","def","ghi")'
-				$res = 'ENUM("' . implode('","', $params) . '")';
+				$res='ENUM("'.implode('","', $params).'")';
 				break;
 			default:
 				throw new Exception('Unknown datatype');
@@ -139,14 +139,14 @@ class Visit_Builder
 	 */
 	public static function getColumnDataType(Visit_Type $vt, string $columnName): string
 	{
-		$columns = $vt->getSpecificTableInputType();
+		$columns=$vt->getSpecificTableInputType();
 		foreach ($columns as $c) {
 			// Retrieving original data type
 			if ($c['COLUMN_NAME'] == $columnName) {
 				return $c['COLUMN_TYPE'];
 			}
 		}
-		throw new Exception('Cannot find column ' . $columnName . ' for visit type ' . $vt);
+		throw new Exception('Cannot find column '.$columnName.' for visit type '.$vt);
 	}
 
 

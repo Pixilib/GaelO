@@ -24,17 +24,17 @@ Session::checkSession(true, true);
 $linkpdo=Session::getLinkpdo();
 
 //Check permissions
-$userObject= new User($_SESSION['username'], $linkpdo);
+$userObject=new User($_SESSION['username'], $linkpdo);
 $connexionPermission=$userObject->isRoleAllowed($_POST['etude'], $_POST['role']);
   
 //if requested role is allowed
-if($connexionPermission && ($_POST['role'] == User::INVESTIGATOR || $_POST['role'] == User::MONITOR || $_POST['role'] == User::CONTROLLER || $_POST['role'] == User::REVIEWER) ) {
-    //Store acceptance in session variable
-    $_SESSION['study'] = $_POST['etude'];
-    $_SESSION['role'] = $_POST['role'];	
+if ($connexionPermission && ($_POST['role'] == User::INVESTIGATOR || $_POST['role'] == User::MONITOR || $_POST['role'] == User::CONTROLLER || $_POST['role'] == User::REVIEWER)) {
+	//Store acceptance in session variable
+	$_SESSION['study']=$_POST['etude'];
+	$_SESSION['role']=$_POST['role'];	
     
-    require 'views/investigator/root_investigator_view.php';
+	require 'views/investigator/root_investigator_view.php';
 
-} else {
-    require 'includes/no_access.php';
+}else {
+	require 'includes/no_access.php';
 }

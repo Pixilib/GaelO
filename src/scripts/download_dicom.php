@@ -27,40 +27,40 @@ isset($_POST['id_visit']) ? $logIdVisit=$_POST['id_visit'] : $logIdVisit='N/A';
 isset($_POST['json']) ? $askedJson=$_POST['json'] : $askedJson='N/A';
 
 @Session::logInfo('Username : '.$_SESSION['username'].
-    ' Role: '.$_SESSION ['role'].' Study: '.$_SESSION['study'].' Visit ID: '.$logIdVisit.' Asked IDs: '.$askedJson);
+	' Role: '.$_SESSION ['role'].' Study: '.$_SESSION['study'].' Visit ID: '.$logIdVisit.' Asked IDs: '.$askedJson);
 
 $userObject=new User($_SESSION['username'], $linkpdo);
 
 //Permission check, different level check if supervisor or reviewer 
 
-if($_SESSION['role'] == User::SUPERVISOR){
-    $permissionCheck=$userObject->isRoleAllowed($_SESSION['study'], $_SESSION['role']);
-    $postdata=$_POST['json'];
-    $json=json_decode($postdata, true);
-    //SK ICI VERIFIER QUE LES id SONT BIEN DE L ETUDE AVEC LES DROITS ? Securite
-    $ids=$json['json'];
+if ($_SESSION['role'] == User::SUPERVISOR) {
+	$permissionCheck=$userObject->isRoleAllowed($_SESSION['study'], $_SESSION['role']);
+	$postdata=$_POST['json'];
+	$json=json_decode($postdata, true);
+	//SK ICI VERIFIER QUE LES id SONT BIEN DE L ETUDE AVEC LES DROITS ? Securite
+	$ids=$json['json'];
 }
-else if($_SESSION['role'] == User::REVIEWER){
-    $permissionCheck=$userObject->isVisitAllowed($_POST['id_visit'], $_SESSION['role']);
-    $visitObject=new Visit($_POST['id_visit'], $linkpdo);
+else if ($_SESSION['role'] == User::REVIEWER) {
+	$permissionCheck=$userObject->isVisitAllowed($_POST['id_visit'], $_SESSION['role']);
+	$visitObject=new Visit($_POST['id_visit'], $linkpdo);
 	$ids=$visitObject->getSeriesOrthancID();
     
-}else if($_SESSION['role'] == User::CONTROLLER){
-    $permissionCheck=$userObject->isVisitAllowed($_POST['id_visit'], $_SESSION['role']);
-    $visitObject=new Visit($_POST['id_visit'], $linkpdo);
-    if(in_array($visitObject->qcStatus, array(Visit::QC_NOT_DONE, Visit::QC_WAIT_DEFINITVE_CONCLUSION)) ){
-        $ids=$visitObject->getSeriesOrthancID();
-    }
-} else if ( $_SESSION['role'] == User::INVESTIGATOR  ){
+}else if ($_SESSION['role'] == User::CONTROLLER) {
 	$permissionCheck=$userObject->isVisitAllowed($_POST['id_visit'], $_SESSION['role']);
-    $visitObject=new Visit($_POST['id_visit'], $linkpdo);
-	if($visitObject->uploadStatus==Visit::DONE){
+	$visitObject=new Visit($_POST['id_visit'], $linkpdo);
+	if (in_array($visitObject->qcStatus, array(Visit::QC_NOT_DONE, Visit::QC_WAIT_DEFINITVE_CONCLUSION))) {
+		$ids=$visitObject->getSeriesOrthancID();
+	}
+}else if ($_SESSION['role'] == User::INVESTIGATOR) {
+	$permissionCheck=$userObject->isVisitAllowed($_POST['id_visit'], $_SESSION['role']);
+	$visitObject=new Visit($_POST['id_visit'], $linkpdo);
+	if ($visitObject->uploadStatus == Visit::DONE) {
 		$ids=$visitObject->getSeriesOrthancID();
 	}
 
 }
 
-if ($permissionCheck && count($ids)>0) {
+if ($permissionCheck && count($ids) > 0) {
 
 	//Download dicom corresponding to called ID with Orthanc APIs
 	$orthanc=new Orthanc();
@@ -73,13 +73,13 @@ if ($permissionCheck && count($ids)>0) {
 	header("Content-Length: ".filesize($tempFileName));
 	
 	//For supervisor generic file name as the zip can merge visits
-	if($_SESSION['role']==User::SUPERVISOR){
-	    $date =Date('Ymd_his');
-	    header('Content-Disposition: attachment; filename="Dicom-'.$_SESSION['study'].'_'.$date.'.zip"');
-    //For reviewer file name is identified by study_visit
-	}else{
-	    $name=$_SESSION['study'].$visitObject->visitType;
-	    header('Content-Disposition: attachment; filename="Dicom'.$name.'.zip"');
+	if ($_SESSION['role'] == User::SUPERVISOR) {
+		$date=Date('Ymd_his');
+		header('Content-Disposition: attachment; filename="Dicom-'.$_SESSION['study'].'_'.$date.'.zip"');
+	//For reviewer file name is identified by study_visit
+	}else {
+		$name=$_SESSION['study'].$visitObject->visitType;
+		header('Content-Disposition: attachment; filename="Dicom'.$name.'.zip"');
 	}
 	
 	header("Cache-Control: no-store, no-cache, must-revalidate");
@@ -87,9 +87,9 @@ if ($permissionCheck && count($ids)>0) {
 	header("Pragma: no-cache");
 	header("Expires: 0");
 	
-	$file = @fopen($tempFileName,"rb");
-	if($file){
-		while(!feof($file)) {
+	$file=@fopen($tempFileName, "rb");
+	if ($file) {
+		while (!feof($file)) {
 			print(@fread($file, 1024*1024));
 			flush();
 		}
@@ -101,6 +101,6 @@ if ($permissionCheck && count($ids)>0) {
 	$delete=unlink($tempFileName);
 
 }else {
-    header('HTTP/1.0 403 Forbidden');
-    die('You are not allowed to access this file.'); 
+	header('HTTP/1.0 403 Forbidden');
+	die('You are not allowed to access this file.'); 
 }

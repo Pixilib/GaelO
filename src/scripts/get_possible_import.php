@@ -23,37 +23,36 @@ $userObject=new User($_SESSION['username'], $linkpdo);
 $studyInvestigatorAllowed=$userObject->isRoleAllowed($_SESSION['study'], User::INVESTIGATOR);
 $usercenters=$userObject->getInvestigatorsCenters();
 
-if ($studyInvestigatorAllowed){
+if ($studyInvestigatorAllowed) {
 
-    //Get Visits awaiting import from specified study/Visit Type
+	//Get Visits awaiting import from specified study/Visit Type
 	$studyObject=new Study($_SESSION['study'], $linkpdo);
 	$VisitArrayWaintingUpload=$studyObject->getAllAwaitingUploadImagingVisit();
     
-    $AvailablePatients=[];
-    //Add the studies name in an array
-    foreach($VisitArrayWaintingUpload as $visit){
-    	$patientObject=$visit->getPatient();
-    	$patientCenter=$patientObject->getPatientCenter();
-        //Check If patient center is included in user's centers before filling the answer table
-    	if (in_array($patientCenter->code, $usercenters)){
-    		$patient['numeroPatient']=$patientObject->patientCode;
-    		$patient['firstName']=$patientObject->patientFirstName;
-    		$patient['lastName']=$patientObject->patientLastName;
-    		$patient['patientSex']=$patientObject->patientGender;
-    		$patient['patientDOB']=$patientObject->patientBirthDateUS;
-    		$patient['investigatorName']=$patientObject->patientInvestigatorName;
-    		$patient['country']=$patientCenter->countryName;
-    		$patient['centerNumber']=$patientCenter->code;
-    		$dateAcquisition=date('m-d-Y',strtotime($visit->acquisitionDate));
-            $patient['acquisitionDate']=$dateAcquisition;
-            $patient['idVisit']=$visit->id_visit;
-            $AvailablePatients[$visit->visitType][]=$patient;
-        }
-    }
+	$AvailablePatients=[];
+	//Add the studies name in an array
+	foreach ($VisitArrayWaintingUpload as $visit) {
+		$patientObject=$visit->getPatient();
+		$patientCenter=$patientObject->getPatientCenter();
+		//Check If patient center is included in user's centers before filling the answer table
+		if (in_array($patientCenter->code, $usercenters)) {
+			$patient['numeroPatient']=$patientObject->patientCode;
+			$patient['firstName']=$patientObject->patientFirstName;
+			$patient['lastName']=$patientObject->patientLastName;
+			$patient['patientSex']=$patientObject->patientGender;
+			$patient['patientDOB']=$patientObject->patientBirthDateUS;
+			$patient['investigatorName']=$patientObject->patientInvestigatorName;
+			$patient['country']=$patientCenter->countryName;
+			$patient['centerNumber']=$patientCenter->code;
+			$dateAcquisition=date('m-d-Y', strtotime($visit->acquisitionDate));
+			$patient['acquisitionDate']=$dateAcquisition;
+			$patient['idVisit']=$visit->id_visit;
+			$AvailablePatients[$visit->visitType][]=$patient;
+		}
+	}
     
-}
-else {
-    $AvailablePatients=[];
+} else {
+	$AvailablePatients=[];
 }
 
 //Add Orthanc Credential to answer

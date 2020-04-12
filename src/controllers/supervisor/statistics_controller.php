@@ -18,10 +18,10 @@
  */
 
 Session::checkSession();
-$linkpdo = Session::getLinkpdo();
+$linkpdo=Session::getLinkpdo();
 
-$userObject = new User($_SESSION['username'], $linkpdo);
-$accessCheck = $userObject->isRoleAllowed($_SESSION['study'], $_SESSION['role']);
+$userObject=new User($_SESSION['username'], $linkpdo);
+$accessCheck=$userObject->isRoleAllowed($_SESSION['study'], $_SESSION['role']);
 
 if ($accessCheck && $_SESSION['role'] == User::SUPERVISOR) {
 
@@ -29,55 +29,55 @@ if ($accessCheck && $_SESSION['role'] == User::SUPERVISOR) {
 		die('chartId is not set.');
 	}
 
-	$studyObj = new Study($_SESSION['study'], $linkpdo);
+	$studyObj=new Study($_SESSION['study'], $linkpdo);
 
 	//SK ICI A GENERALISER SUIVANT MODALITY GROUPE
-	$statisticsObj = $studyObj->getStatistics("PT");
+	$statisticsObj=$studyObj->getStatistics("PT");
 
 	switch ($_POST['chartId']) {
 		case 'acquPETDelay':
-			$chartData = json_encode($statisticsObj->getAcquisitionPetDelay(), JSON_NUMERIC_CHECK);
+			$chartData=json_encode($statisticsObj->getAcquisitionPetDelay(), JSON_NUMERIC_CHECK);
 			require 'views/supervisor/statistics/statistics_acqu_pet_delay.php';
 			break;
 
 		case 'studyProgress':
-			$chartData = json_encode($statisticsObj->getUploadFractionAndDelay(), JSON_NUMERIC_CHECK);
+			$chartData=json_encode($statisticsObj->getUploadFractionAndDelay(), JSON_NUMERIC_CHECK);
 			require 'views/supervisor/statistics/statistics_study_progress.php';
 			break;
 
 		case 'reviewCount':
-			$chartData = json_encode($statisticsObj->getReviewsDate(), JSON_NUMERIC_CHECK);
+			$chartData=json_encode($statisticsObj->getReviewsDate(), JSON_NUMERIC_CHECK);
 			require 'views/supervisor/statistics/statistics_review_count.php';
 			break;
 
 		case 'reviewData':
-			$chartData = json_encode($statisticsObj->getReviewData(), JSON_NUMERIC_CHECK);
+			$chartData=json_encode($statisticsObj->getReviewData(), JSON_NUMERIC_CHECK);
 			require 'views/supervisor/statistics/statistics_review_data.php';
 			break;
 
 		case 'reviewStatus':
-			$chartData = json_encode($statisticsObj->getReviewStatus(), JSON_NUMERIC_CHECK);
+			$chartData=json_encode($statisticsObj->getReviewStatus(), JSON_NUMERIC_CHECK);
 			require 'views/supervisor/statistics/statistics_review_status.php';
 			break;
 
 		case 'QCStatus':
-			$chartData = json_encode($statisticsObj->getQcStatus(), JSON_NUMERIC_CHECK);
+			$chartData=json_encode($statisticsObj->getQcStatus(), JSON_NUMERIC_CHECK);
 			require 'views/supervisor/statistics/statistics_qc_status.php';
 			break;
 
 		case 'QCTime':
-			$chartData = json_encode($statisticsObj->getQCTime(), JSON_NUMERIC_CHECK);
+			$chartData=json_encode($statisticsObj->getQCTime(), JSON_NUMERIC_CHECK);
 			require 'views/supervisor/statistics/statistics_qc_time.php';
 			break;
 
 		case 'conclusionTime':
-			$chartData = json_encode($statisticsObj->getConclusionTime(), JSON_NUMERIC_CHECK);
+			$chartData=json_encode($statisticsObj->getConclusionTime(), JSON_NUMERIC_CHECK);
 			require 'views/supervisor/statistics/statistics_conclusion_time.php';
 			break;
 
 		default:
 			die('Unknown chartId.');
 	}
-} else {
+}else {
 	require 'includes/no_access.php';
 }

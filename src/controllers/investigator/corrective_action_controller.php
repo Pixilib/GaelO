@@ -21,45 +21,45 @@
 Session::checkSession();
 $linkpdo=Session::getLinkpdo();
 
-$username = $_SESSION ['username'];
-$study = $_SESSION ['study'];
-$role = $_SESSION ['role'];
+$username=$_SESSION ['username'];
+$study=$_SESSION ['study'];
+$role=$_SESSION ['role'];
 
-$id_visit = $_POST ['id_visit'];
-$type_visit = $_POST ['type_visit'];
-$patient_num = $_POST ['patient_num'];
+$id_visit=$_POST ['id_visit'];
+$type_visit=$_POST ['type_visit'];
+$patient_num=$_POST ['patient_num'];
 
 $userObject=new User($username, $linkpdo);
 $visitAllowed=$userObject->isVisitAllowed($id_visit, $role);
 
-if (isset ( $_SESSION ['username'] ) && $visitAllowed) {
+if (isset ($_SESSION ['username']) && $visitAllowed) {
 
-    $visitObject=new Visit($id_visit, $linkpdo);
+	$visitObject=new Visit($id_visit, $linkpdo);
 	
 	//If form sent and current status awaiting corrective action, accept to write the value in the database
-    if ( (isset ( $_POST ['corrective_action'] ) || isset ( $_POST ['no_corrective_action']) ) && $visitObject->stateQualityControl == 'Corrective Action Asked' && $role==User::INVESTIGATOR ) {
+	if ((isset ($_POST ['corrective_action']) || isset ($_POST ['no_corrective_action'])) && $visitObject->stateQualityControl == 'Corrective Action Asked' && $role == User::INVESTIGATOR) {
 
-	    //Check Investigator have been validated before accepting the correction answer
-        if($visitObject->stateInvestigatorForm != "Done"){
-	        $answer="Form Missing";
-	        echo(json_encode($answer));
-	        return;
+		//Check Investigator have been validated before accepting the correction answer
+		if ($visitObject->stateInvestigatorForm != "Done") {
+			$answer="Form Missing";
+			echo(json_encode($answer));
+			return;
 	        
-	    }
-	    $newSeries = false;
-	    $formCorrected=false;
-	    $correctiveActionDecision=false;
+		}
+		$newSeries=false;
+		$formCorrected=false;
+		$correctiveActionDecision=false;
 	    
-		if ( isset($_POST['new_series']) ) {
-		    $newSeries = true;
+		if (isset($_POST['new_series'])) {
+			$newSeries=true;
 		}
 		
-		if ( isset($_POST ['information_corrected']) ) {
-		    $formCorrected = true;
+		if (isset($_POST ['information_corrected'])) {
+			$formCorrected=true;
 		}
 		
-		if ( isset($_POST ['corrective_action']) ) {
-		    $correctiveActionDecision = true;
+		if (isset($_POST ['corrective_action'])) {
+			$correctiveActionDecision=true;
 		} 
 		
 		//Write in the database
@@ -68,7 +68,7 @@ if (isset ( $_SESSION ['username'] ) && $visitAllowed) {
 		//Log Activity
 		$actionDetails['patient_code']=$visitObject->patientCode;
 		$actionDetails['type_visit']=$visitObject->visitType;
-        $actionDetails['modality_visit']=$visitObject->visitGroupObject->groupModality;
+		$actionDetails['modality_visit']=$visitObject->visitGroupObject->groupModality;
 		$actionDetails['new_series_uploaded']=$newSeries;
 		$actionDetails['form_corrected']=$formCorrected;
 		$actionDetails['other_comment']=$_POST['other_comment'];
@@ -77,7 +77,7 @@ if (isset ( $_SESSION ['username'] ) && $visitAllowed) {
 		
 		
 		// Send notification email to all Controllers and Supervisors of the study
-		$sendEmail = new Send_Email ($linkpdo);
+		$sendEmail=new Send_Email($linkpdo);
 		$sendEmail->addGroupEmails($visitObject->study, User::SUPERVISOR)
 					->addGroupEmails($visitObject->study, User::CONTROLLER);
 		$sendEmail->sendCorrectiveActionDoneMessage($correctiveActionDecision, $visitObject->study, $visitObject->patientCode, $visitObject->visitType);
@@ -85,10 +85,10 @@ if (isset ( $_SESSION ['username'] ) && $visitAllowed) {
 		$answer="Success";
 		echo(json_encode($answer));
 		
-	} else {
+	}else {
 		$visitType=$visitObject->getVisitCharacteristics();
-	    require 'views/investigator/corrective_action_view.php';
+		require 'views/investigator/corrective_action_view.php';
 	}
 }else {
-    require 'includes/no_access.php';
+	require 'includes/no_access.php';
 }

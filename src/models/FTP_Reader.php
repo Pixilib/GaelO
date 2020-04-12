@@ -23,298 +23,298 @@ use phpseclib\Net\SFTP;
 class FTP_Reader
 {
 
-    public $ftpUsername;
-    public $ftpPassword;
-    public $ftpHost;
-    public $ftpPort;
-    public $ftpIsSftp;
-    public $ftpFolder;
-    public $ftpFileName;
-    public $lastUpdateLimit;
-    private $linkpdo;
+	public $ftpUsername;
+	public $ftpPassword;
+	public $ftpHost;
+	public $ftpPort;
+	public $ftpIsSftp;
+	public $ftpFolder;
+	public $ftpFileName;
+	public $lastUpdateLimit;
+	private $linkpdo;
 
-    public function __construct($linkpdo)
-    {
-        $this->linkpdo=$linkpdo;
-        $this->ftpFileName = null;
-        $this->lastUpdateLimit = null;
-        $this->ftpFolder = '/';
-    }
+	public function __construct($linkpdo)
+	{
+		$this->linkpdo=$linkpdo;
+		$this->ftpFileName=null;
+		$this->lastUpdateLimit=null;
+		$this->ftpFolder='/';
+	}
 
-    /**
-     * 
-     */
-    public function setFTPCredential(String $host, String $username, String $password, int $port = 21, bool $ftpIsSftp = false)
-    {
-        $this->ftpHost = $host;
-        $this->ftpUsername = $username;
-        $this->ftpPassword = $password;
-        $this->ftpPort = $port;
-        $this->ftpIsSftp = $ftpIsSftp;
-    }
+	/**
+	 * 
+	 */
+	public function setFTPCredential(String $host, String $username, String $password, int $port=21, bool $ftpIsSftp=false)
+	{
+		$this->ftpHost=$host;
+		$this->ftpUsername=$username;
+		$this->ftpPassword=$password;
+		$this->ftpPort=$port;
+		$this->ftpIsSftp=$ftpIsSftp;
+	}
 
-    public function setFolder(String $folder)
-    {
-        $this->ftpFolder = $folder;
-    }
+	public function setFolder(String $folder)
+	{
+		$this->ftpFolder=$folder;
+	}
 
-    public function setSearchedFile(String $fileName)
-    {
-        $this->ftpFileName = $fileName;
-    }
+	public function setSearchedFile(String $fileName)
+	{
+		$this->ftpFileName=$fileName;
+	}
 
-    /**
-     * Number of minutes the last update of files should be inferior
-     */
-    public function setLastUpdateTimingLimit(int $lastUpdateLimit)
-    {
-        $this->lastUpdateLimit = $lastUpdateLimit;
-    }
+	/**
+	 * Number of minutes the last update of files should be inferior
+	 */
+	public function setLastUpdateTimingLimit(int $lastUpdateLimit)
+	{
+		$this->lastUpdateLimit=$lastUpdateLimit;
+	}
 
-    private function selectWantedFiles(array $fileArray)
-    {
-        if ($this->ftpFileName != null) {
-            $isAvailable = $this->isSearchedFileAvailable($fileArray);
-            if ($isAvailable) {
-                return array($this->ftpFileName);
-            } else {
-                throw new Exception('Target File Not Found');
-            }
-        } else {
-            return $fileArray;
-        }
-    }
+	private function selectWantedFiles(array $fileArray)
+	{
+		if ($this->ftpFileName != null) {
+			$isAvailable=$this->isSearchedFileAvailable($fileArray);
+			if ($isAvailable) {
+				return array($this->ftpFileName);
+			}else {
+				throw new Exception('Target File Not Found');
+			}
+		}else {
+			return $fileArray;
+		}
+	}
 
-    private function isSearchedFileAvailable(array $fileArray)
-    {
-        return in_array($this->ftpFileName, $fileArray) ? true : false;
-    }
+	private function isSearchedFileAvailable(array $fileArray)
+	{
+		return in_array($this->ftpFileName, $fileArray) ? true : false;
+	}
 
-    private function isLastUpdateInTimingLimit(int $mtimStamp)
-    {
-        //$lastUpdateTime=DateTime::createFromFormat('U', $mtim);
-        $dateNow = new DateTime();
+	private function isLastUpdateInTimingLimit(int $mtimStamp)
+	{
+		//$lastUpdateTime=DateTime::createFromFormat('U', $mtim);
+		$dateNow=new DateTime();
 
-        print($dateNow->getTimestamp());
-        print($mtimStamp);
+		print($dateNow->getTimestamp());
+		print($mtimStamp);
 
-        if (($this->lastUpdateLimit != null) &&
-            ($dateNow->getTimestamp() - $mtimStamp) > ($this->lastUpdateLimit * 60)
-        ) {
-            throw new Exception('File last update too old');
-        }
-        return true;
-    }
+		if (($this->lastUpdateLimit != null) &&
+			($dateNow->getTimestamp()-$mtimStamp) > ($this->lastUpdateLimit*60)
+		) {
+			throw new Exception('File last update too old');
+		}
+		return true;
+	}
 
-    /**
-     * Download the FTP folder taget and return an array of temporary dowloaded files
-     */
-    public function getFilesFromFTP()
-    {
+	/**
+	 * Download the FTP folder taget and return an array of temporary dowloaded files
+	 */
+	public function getFilesFromFTP()
+	{
 
-        error_log('starting FTP connexion');
+		error_log('starting FTP connexion');
 
-        if ($this->ftpIsSftp) {
+		if ($this->ftpIsSftp) {
 
-            $filesArray = $this->getSftp();
-        } else {
-            $filesArray = $this->getFtp();
-            //$ftpConnect = ftp_ssl_connect ($this->ftpHost, $this->ftpPort) or die("Can't Connect to Server ".$this->ftpHost);
+			$filesArray=$this->getSftp();
+		}else {
+			$filesArray=$this->getFtp();
+			//$ftpConnect = ftp_ssl_connect ($this->ftpHost, $this->ftpPort) or die("Can't Connect to Server ".$this->ftpHost);
 
-        }
+		}
 
-        return $filesArray;
-    }
+		return $filesArray;
+	}
 
-    private function connectAndGoToFolder() {
+	private function connectAndGoToFolder() {
 
-        if ($this->ftpIsSftp) {
+		if ($this->ftpIsSftp) {
 
-            $sftp = new SFTP($this->ftpHost);
-            if (!$sftp->login($this->ftpUsername, $this->ftpPassword)) {
-                throw new Exception('Login SFTP failed');
-            }
+			$sftp=new SFTP($this->ftpHost);
+			if (!$sftp->login($this->ftpUsername, $this->ftpPassword)) {
+				throw new Exception('Login SFTP failed');
+			}
     
-            if (!$sftp->chdir($this->ftpFolder)) {
-                throw new Exception("Can't reach SFTP Path Target");
-            };
+			if (!$sftp->chdir($this->ftpFolder)) {
+				throw new Exception("Can't reach SFTP Path Target");
+			};
 
-            return $sftp;
+			return $sftp;
 
-        } else {
+		}else {
 
-            if (!$ftpConnect = ftp_connect($this->ftpHost, $this->ftpPort)) {
-                throw new Exception('Cant Connect to Server' . $this->ftpHost);
-            }
+			if (!$ftpConnect=ftp_connect($this->ftpHost, $this->ftpPort)) {
+				throw new Exception('Cant Connect to Server'.$this->ftpHost);
+			}
     
-            if (!ftp_login($ftpConnect, $this->ftpUsername, $this->ftpPassword)) {
-                ftp_close($ftpConnect);
-                throw new Exception('Login failed');
-            };
+			if (!ftp_login($ftpConnect, $this->ftpUsername, $this->ftpPassword)) {
+				ftp_close($ftpConnect);
+				throw new Exception('Login failed');
+			};
     
-            //Move to the target folder
-            if (!ftp_chdir($ftpConnect, $this->ftpFolder)) {
-                ftp_close($ftpConnect);
-                throw new Exception("Can't reach FTP Path Target");
-            }
+			//Move to the target folder
+			if (!ftp_chdir($ftpConnect, $this->ftpFolder)) {
+				ftp_close($ftpConnect);
+				throw new Exception("Can't reach FTP Path Target");
+			}
 
-            return $ftpConnect;
+			return $ftpConnect;
 
-        }
+		}
 
-    }
+	}
 
-    public function writeExportDataFile(String $fileName, String $file){
+	public function writeExportDataFile(String $fileName, String $file) {
 
-        if ($this->ftpIsSftp) {
+		if ($this->ftpIsSftp) {
 
-            $sftp = $this->connectAndGoToFolder();
+			$sftp=$this->connectAndGoToFolder();
 
-            $result = $sftp->put($fileName, $file, SFTP::SOURCE_LOCAL_FILE);
+			$result=$sftp->put($fileName, $file, SFTP::SOURCE_LOCAL_FILE);
 
-            return $result;
+			return $result;
 
-        } else {      
+		}else {      
 
-            $ftp = $this->connectAndGoToFolder();
+			$ftp=$this->connectAndGoToFolder();
 
-            $result = ftp_fput($ftp, $fileName, fopen($file, 'r'));
+			$result=ftp_fput($ftp, $fileName, fopen($file, 'r'));
 
-            return $result;
-        }
+			return $result;
+		}
 
 
-    }
+	}
 
-    private function getSftp()
-    {
-        $sftp = $this->connectAndGoToFolder();
+	private function getSftp()
+	{
+		$sftp=$this->connectAndGoToFolder();
 
-        $fileArray = $sftp->nlist();
+		$fileArray=$sftp->nlist();
 
-        //Remove . and ..
-        $fileArray = array_filter($fileArray, function($file){
-            if($file =='.' || $file == '..'){
-                return false;
-            }else{
-                return true;
-            }
-        });
+		//Remove . and ..
+		$fileArray=array_filter($fileArray, function($file) {
+			if ($file == '.' || $file == '..') {
+				return false;
+			}else {
+				return true;
+			}
+		});
         
 
 
-        print_r($fileArray);
+		print_r($fileArray);
 
-        $selectedFiles = $this->selectWantedFiles($fileArray);
+		$selectedFiles=$this->selectWantedFiles($fileArray);
 
-        $resultFileArray = [];
+		$resultFileArray=[];
 
-        foreach ($selectedFiles as $fileInFtp) {
-            $fileState = $sftp->stat($fileInFtp);
-            $this->isLastUpdateInTimingLimit($fileState['mtime']);
-            print_r($fileState);
-            $temp = fopen(sys_get_temp_dir() . DIRECTORY_SEPARATOR . $fileInFtp, 'w');
-            //Retrieve File from SFTP
-            $sftp->get($fileInFtp, $temp);
-            fclose($temp);
-            //Store resulting file in array
-            $resultFileArray[] = sys_get_temp_dir() . DIRECTORY_SEPARATOR . $fileInFtp;
-        }
+		foreach ($selectedFiles as $fileInFtp) {
+			$fileState=$sftp->stat($fileInFtp);
+			$this->isLastUpdateInTimingLimit($fileState['mtime']);
+			print_r($fileState);
+			$temp=fopen(sys_get_temp_dir().DIRECTORY_SEPARATOR.$fileInFtp, 'w');
+			//Retrieve File from SFTP
+			$sftp->get($fileInFtp, $temp);
+			fclose($temp);
+			//Store resulting file in array
+			$resultFileArray[]=sys_get_temp_dir().DIRECTORY_SEPARATOR.$fileInFtp;
+		}
 
-        return $resultFileArray;
-    }
+		return $resultFileArray;
+	}
 
-    private function getFtp()
-    {
-        $ftpConnect = $this->connectAndGoToFolder();
+	private function getFtp()
+	{
+		$ftpConnect=$this->connectAndGoToFolder();
 
-        // Get files in the ftp folder
-        $fileArray = ftp_nlist($ftpConnect, ".");
+		// Get files in the ftp folder
+		$fileArray=ftp_nlist($ftpConnect, ".");
 
-        //Remove . and ..
-        $fileArray = array_filter($fileArray, function($file){
-            if($file =='.' || $file == '..'){
-                return false;
-            }else{
-                return true;
-            }
-        });
+		//Remove . and ..
+		$fileArray=array_filter($fileArray, function($file) {
+			if ($file == '.' || $file == '..') {
+				return false;
+			}else {
+				return true;
+			}
+		});
 
-        $selectedFiles = $this->selectWantedFiles($fileArray);
+		$selectedFiles=$this->selectWantedFiles($fileArray);
 
-        $resultFileArray = [];
+		$resultFileArray=[];
 
-        foreach ($selectedFiles as $fileInFtp) {
-            $temp = fopen(sys_get_temp_dir() . DIRECTORY_SEPARATOR . $fileInFtp, 'w');
-            ftp_fget($ftpConnect, $temp, $fileInFtp);
-            fclose($temp);
-            //Store resulting file in array
-            $resultFileArray[] = sys_get_temp_dir() . DIRECTORY_SEPARATOR . $fileInFtp;
-        }
+		foreach ($selectedFiles as $fileInFtp) {
+			$temp=fopen(sys_get_temp_dir().DIRECTORY_SEPARATOR.$fileInFtp, 'w');
+			ftp_fget($ftpConnect, $temp, $fileInFtp);
+			fclose($temp);
+			//Store resulting file in array
+			$resultFileArray[]=sys_get_temp_dir().DIRECTORY_SEPARATOR.$fileInFtp;
+		}
 
-        ftp_close($ftpConnect);
+		ftp_close($ftpConnect);
 
-        return $resultFileArray;
-    }
+		return $resultFileArray;
+	}
 
-    /**
-     * Transform Text file with # separator to an associative array
-     */
-    public static function parseLysarcTxt(String $txt)
-    {
-        //Erase last empty new line
-        $txt=rtrim($txt);
-        //Divided text in row by splitting new line
-        $lines = explode("\n", $txt);
+	/**
+	 * Transform Text file with # separator to an associative array
+	 */
+	public static function parseLysarcTxt(String $txt)
+	{
+		//Erase last empty new line
+		$txt=rtrim($txt);
+		//Divided text in row by splitting new line
+		$lines=explode("\n", $txt);
 
-        $titles = [];
-        $results = [];
+		$titles=[];
+		$results=[];
 
-        for ($i = 0; $i < sizeOf($lines); $i++) {
-            //remove return new line and last #
-            $lines[$i]=rtrim($lines[$i]);
-            $lines[$i]=rtrim($lines[$i], '#');
-            //split string in columns
-            $columns = explode("#", $lines[$i]);
-            if ($i == 0) {
-                //First line is column definition
-                $titles = $columns;
-            } else {
-                $patient = [];
-                //For each column associate data into an associative array
-                for ($j = 0; $j < sizeof($columns); $j++) {
-                    $patient[$titles[$j]] = $columns[$j];
-                }
-                $results[] = $patient;
-            }
-        }
+		for ($i=0; $i < sizeOf($lines); $i++) {
+			//remove return new line and last #
+			$lines[$i]=rtrim($lines[$i]);
+			$lines[$i]=rtrim($lines[$i], '#');
+			//split string in columns
+			$columns=explode("#", $lines[$i]);
+			if ($i == 0) {
+				//First line is column definition
+				$titles=$columns;
+			}else {
+				$patient=[];
+				//For each column associate data into an associative array
+				for ($j=0; $j < sizeof($columns); $j++) {
+					$patient[$titles[$j]]=$columns[$j];
+				}
+				$results[]=$patient;
+			}
+		}
 
-        return $results;
-    }
+		return $results;
+	}
 
 
-    function sendFailedReadFTP($exceptionMessage){
-        try{
-            $email = new Send_Email($this->linkpdo);
-            $email->setMessage("FTP Import Has failed <br> Reason : ".$exceptionMessage);
-            $email->setSubject('Auto Import Failed');
-            $email->addAminEmails();
-            $answer=$email->sendEmail();
-        }catch(Exception $e){
-            echo('sendEmailException');
-            echo($e->getMessage());
-        }
+	function sendFailedReadFTP($exceptionMessage) {
+		try {
+			$email=new Send_Email($this->linkpdo);
+			$email->setMessage("FTP Import Has failed <br> Reason : ".$exceptionMessage);
+			$email->setSubject('Auto Import Failed');
+			$email->addAminEmails();
+			$answer=$email->sendEmail();
+		}catch (Exception $e) {
+			echo('sendEmailException');
+			echo($e->getMessage());
+		}
 
     
-    }
+	}
 
 
-    /**
-     * Return files from a local folder
-     * @param string $folder
-     * @return string[]
-     */
-    /*
+	/**
+	 * Return files from a local folder
+	 * @param string $folder
+	 * @return string[]
+	 */
+	/*
     public static function getFilesFromFolder(string $folder)
     {
 

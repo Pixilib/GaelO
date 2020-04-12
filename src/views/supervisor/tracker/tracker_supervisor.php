@@ -84,28 +84,28 @@
         </thead>
         <tbody>
         <?php
-        foreach ($trackerData as $supervisorEvent){
-        	$eventDetails=json_decode($supervisorEvent['action_details'], true);
-        ?>
+		foreach ($trackerData as $supervisorEvent) {
+			$eventDetails=json_decode($supervisorEvent['action_details'], true);
+		?>
         	<tr>
-				<td><?=$supervisorEvent['date'];?></td>
+				<td><?=$supervisorEvent['date']; ?></td>
 				<td><?=htmlspecialchars($supervisorEvent['username'])?></td>
 				<td><?php 
 				$string="";
-				if(isset($eventDetails['patient_code'])){
-				    $string=$string.$eventDetails['patient_code']." / ";
-				    unset($eventDetails['patient_code']);
+				if (isset($eventDetails['patient_code'])) {
+					$string=$string.$eventDetails['patient_code']." / ";
+					unset($eventDetails['patient_code']);
 				}
-				if(isset($eventDetails['type_visit'])){
-				    $string=$string.$eventDetails['type_visit'];
-				    unset($eventDetails['type_visit']);
+				if (isset($eventDetails['type_visit'])) {
+					$string=$string.$eventDetails['type_visit'];
+					unset($eventDetails['type_visit']);
 				}
 				echo($string);
 					?>
 				</td>
 				<td>
 					<?php 
-					if($supervisorEvent['action_type']=="Import Patients")  {
+					if ($supervisorEvent['action_type'] == "Import Patients") {
 						?>			
 							<a tabindex="0" role="button" 
 								data-trigger="focus" 
@@ -124,59 +124,59 @@
 				</td>
 				<td>
 					<?php 
-					if($supervisorEvent['action_type']=="Edit Patient") echo('<pre><code>'.json_encode($eventDetails, JSON_PRETTY_PRINT|JSON_HEX_QUOT|JSON_HEX_TAG|JSON_HEX_AMP|JSON_HEX_APOS).'</code></pre>');
+					if ($supervisorEvent['action_type'] == "Edit Patient") echo('<pre><code>'.json_encode($eventDetails, JSON_PRETTY_PRINT|JSON_HEX_QUOT|JSON_HEX_TAG|JSON_HEX_AMP|JSON_HEX_APOS).'</code></pre>');
 					?>
 				</td>
 				<td>
 					<?php 
-					if($supervisorEvent['action_type']=="Patient Withdraw") echo('<pre><code>'.json_encode($eventDetails, JSON_PRETTY_PRINT|JSON_HEX_QUOT|JSON_HEX_TAG|JSON_HEX_AMP|JSON_HEX_APOS).'</code></pre>');
+					if ($supervisorEvent['action_type'] == "Patient Withdraw") echo('<pre><code>'.json_encode($eventDetails, JSON_PRETTY_PRINT|JSON_HEX_QUOT|JSON_HEX_TAG|JSON_HEX_AMP|JSON_HEX_APOS).'</code></pre>');
 					?>
 				</td>
 				<td>
 					<?php 
-				    if($supervisorEvent['action_type']=="Delete Visit") echo('<pre><code>'.json_encode($eventDetails, JSON_PRETTY_PRINT|JSON_HEX_QUOT|JSON_HEX_TAG|JSON_HEX_AMP|JSON_HEX_APOS).'</code></pre>');
+					if ($supervisorEvent['action_type'] == "Delete Visit") echo('<pre><code>'.json_encode($eventDetails, JSON_PRETTY_PRINT|JSON_HEX_QUOT|JSON_HEX_TAG|JSON_HEX_AMP|JSON_HEX_APOS).'</code></pre>');
 					?>
 				</td>
 				<td>
 					<?php 
-					if($supervisorEvent['action_type']=="Change Serie") echo('<pre><code>'.json_encode($eventDetails, JSON_PRETTY_PRINT|JSON_HEX_QUOT|JSON_HEX_TAG|JSON_HEX_AMP|JSON_HEX_APOS).'</code></pre>');
+					if ($supervisorEvent['action_type'] == "Change Serie") echo('<pre><code>'.json_encode($eventDetails, JSON_PRETTY_PRINT|JSON_HEX_QUOT|JSON_HEX_TAG|JSON_HEX_AMP|JSON_HEX_APOS).'</code></pre>');
 					?>
 				</td>	
 				<td> 
 					<?php 
-					if($supervisorEvent['action_type']=="Reset QC") echo('<pre><code>'.json_encode($eventDetails, JSON_PRETTY_PRINT|JSON_HEX_QUOT|JSON_HEX_TAG|JSON_HEX_AMP|JSON_HEX_APOS).'</code></pre>');
+					if ($supervisorEvent['action_type'] == "Reset QC") echo('<pre><code>'.json_encode($eventDetails, JSON_PRETTY_PRINT|JSON_HEX_QUOT|JSON_HEX_TAG|JSON_HEX_AMP|JSON_HEX_APOS).'</code></pre>');
 					?>
 				</td>
 				<td> 
 					<?php 
-					if($supervisorEvent['action_type']=="Unlock Form") echo('<pre><code>'.json_encode($eventDetails, JSON_PRETTY_PRINT|JSON_HEX_QUOT|JSON_HEX_TAG|JSON_HEX_AMP|JSON_HEX_APOS).'</code></pre>');
+					if ($supervisorEvent['action_type'] == "Unlock Form") echo('<pre><code>'.json_encode($eventDetails, JSON_PRETTY_PRINT|JSON_HEX_QUOT|JSON_HEX_TAG|JSON_HEX_AMP|JSON_HEX_APOS).'</code></pre>');
 					?>
 				</td>
 				<td> 
 					<?php 
-					if($supervisorEvent['action_type']=="Delete Form") echo('<pre><code>'.json_encode($eventDetails, JSON_PRETTY_PRINT|JSON_HEX_QUOT|JSON_HEX_TAG|JSON_HEX_AMP|JSON_HEX_APOS).'</code></pre>');
+					if ($supervisorEvent['action_type'] == "Delete Form") echo('<pre><code>'.json_encode($eventDetails, JSON_PRETTY_PRINT|JSON_HEX_QUOT|JSON_HEX_TAG|JSON_HEX_AMP|JSON_HEX_APOS).'</code></pre>');
 					?>
 				</td>
 				<td> 
 					<?php 
-					if($supervisorEvent['action_type']=="Add Documentation") echo('<pre><code>'.json_encode($eventDetails, JSON_PRETTY_PRINT|JSON_HEX_QUOT|JSON_HEX_TAG|JSON_HEX_AMP|JSON_HEX_APOS).'</code></pre>');
+					if ($supervisorEvent['action_type'] == "Add Documentation") echo('<pre><code>'.json_encode($eventDetails, JSON_PRETTY_PRINT|JSON_HEX_QUOT|JSON_HEX_TAG|JSON_HEX_AMP|JSON_HEX_APOS).'</code></pre>');
 					?>
 				</td>
 				<td> 
 					<?php 
-					if($supervisorEvent['action_type']=="Update Documentation") echo('<pre><code>'.json_encode($eventDetails, JSON_PRETTY_PRINT|JSON_HEX_QUOT|JSON_HEX_TAG|JSON_HEX_AMP|JSON_HEX_APOS).'</code></pre>');
+					if ($supervisorEvent['action_type'] == "Update Documentation") echo('<pre><code>'.json_encode($eventDetails, JSON_PRETTY_PRINT|JSON_HEX_QUOT|JSON_HEX_TAG|JSON_HEX_AMP|JSON_HEX_APOS).'</code></pre>');
 					?>
 				</td>
 				<td>
 					<?php 
-					if($supervisorEvent['action_type']=="Reactivate Visit") echo('<pre><code>'.json_encode($eventDetails, JSON_PRETTY_PRINT|JSON_HEX_QUOT|JSON_HEX_TAG|JSON_HEX_AMP|JSON_HEX_APOS).'</code></pre>');
+					if ($supervisorEvent['action_type'] == "Reactivate Visit") echo('<pre><code>'.json_encode($eventDetails, JSON_PRETTY_PRINT|JSON_HEX_QUOT|JSON_HEX_TAG|JSON_HEX_AMP|JSON_HEX_APOS).'</code></pre>');
 					?>
 				</td>
 
 			</tr>
 		<?php 
-        }
-        ?>
+		}
+		?>
         </tbody>
     </table>
 </div>

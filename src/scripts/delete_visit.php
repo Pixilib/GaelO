@@ -21,45 +21,45 @@ require_once($_SERVER['DOCUMENT_ROOT'].'/vendor/autoload.php');
 Session::checkSession();
 $linkpdo=Session::getLinkpdo();
 
-$id_visit = $_POST['id_visit'] ;
-$reason = $_POST['reason'] ;
+$id_visit=$_POST['id_visit'];
+$reason=$_POST['reason'];
 
 if (isset($_SESSION['username'])) {
 
-    $username=$_SESSION['username'];
-    $role=$_SESSION['role'];
+	$username=$_SESSION['username'];
+	$role=$_SESSION['role'];
 
-    //Get visit details
-    $visitObject=new Visit($id_visit, $linkpdo);
+	//Get visit details
+	$visitObject=new Visit($id_visit, $linkpdo);
   
-    //Get stateQC status and study name for acess control
-    $qualityControlStatus=$visitObject->stateQualityControl;
-    $study=$visitObject->study;
+	//Get stateQC status and study name for acess control
+	$qualityControlStatus=$visitObject->stateQualityControl;
+	$study=$visitObject->study;
 
-    $userObject=new User($username, $linkpdo);
-    $permissionStudy=$userObject->isRoleAllowed($study, User::INVESTIGATOR);
-    $isSupervisor=$userObject->isRoleAllowed($study, User::SUPERVISOR);
+	$userObject=new User($username, $linkpdo);
+	$permissionStudy=$userObject->isRoleAllowed($study, User::INVESTIGATOR);
+	$isSupervisor=$userObject->isRoleAllowed($study, User::SUPERVISOR);
    
-    //if investigator and quality control neither accpted or refused,  or supervisor Role => Allow delete of visit
-    if( ($role==User::INVESTIGATOR && $permissionStudy && $qualityControlStatus !=Visit::QC_ACCEPTED && $qualityControlStatus !=Visit::QC_REFUSED) || ($isSupervisor && $role==User::SUPERVISOR ) ){
+	//if investigator and quality control neither accpted or refused,  or supervisor Role => Allow delete of visit
+	if (($role == User::INVESTIGATOR && $permissionStudy && $qualityControlStatus != Visit::QC_ACCEPTED && $qualityControlStatus != Visit::QC_REFUSED) || ($isSupervisor && $role == User::SUPERVISOR)) {
         
-        //Delete the Visit by changing the boolean deleted value in table
-        $visitObject->changeDeletionStatus(true);
+		//Delete the Visit by changing the boolean deleted value in table
+		$visitObject->changeDeletionStatus(true);
         
-        //Log Delete operation
-        $actionDetails["patient_code"]=$visitObject->patientCode;
-        $actionDetails["type_visit"]=$visitObject->visitType;
-        $actionDetails['modality_visit']=$visitObject->visitGroupObject->groupModality;
-        $actionDetails["visit"]="Deleted";
-        $actionDetails["reason"]=$reason;
-        Tracker::logActivity($username, $role, $study, $id_visit, "Delete Visit", $actionDetails);
-        $answer=true;
-    } else {
-        $answer=false;
+		//Log Delete operation
+		$actionDetails["patient_code"]=$visitObject->patientCode;
+		$actionDetails["type_visit"]=$visitObject->visitType;
+		$actionDetails['modality_visit']=$visitObject->visitGroupObject->groupModality;
+		$actionDetails["visit"]="Deleted";
+		$actionDetails["reason"]=$reason;
+		Tracker::logActivity($username, $role, $study, $id_visit, "Delete Visit", $actionDetails);
+		$answer=true;
+	}else {
+		$answer=false;
 	}
 	
 	echo(json_encode($answer));
 
 }else {
-    echo(json_encode(false));
+	echo(json_encode(false));
 }

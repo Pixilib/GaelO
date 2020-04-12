@@ -17,45 +17,45 @@
  <script type="text/javascript"> 
 	$(document).ready(function () {
         <?php
-        if ($visitObject->formQualityControl == true) {
-            ?> $('input:radio[name="formDecision"]').filter('[value="accepted"]').attr("checked", true); <?php
-        } else {
-            ?> $('input:radio[name="formDecision"]').filter('[value="refused"]').attr("checked", true); <?php
-        }
+		if ($visitObject->formQualityControl == true) {
+			?> $('input:radio[name="formDecision"]').filter('[value="accepted"]').attr("checked", true); <?php
+		}else {
+			?> $('input:radio[name="formDecision"]').filter('[value="refused"]').attr("checked", true); <?php
+		}
         
-        if ($visitObject->imageQualityControl == true) {
-            ?> $('input:radio[name="imageDecision"]').filter('[value="accepted"]').attr("checked", true); <?php
-        } else {
-            ?> $('input:radio[name="imageDecision"]').filter('[value="refused"]').attr("checked", true); <?php
-        }
-        ?>
+		if ($visitObject->imageQualityControl == true) {
+			?> $('input:radio[name="imageDecision"]').filter('[value="accepted"]').attr("checked", true); <?php
+		}else {
+			?> $('input:radio[name="imageDecision"]').filter('[value="refused"]').attr("checked", true); <?php
+		}
+		?>
           //Add comment data
           $("#formComment").val("<?=htmlentities($visitObject->formQualityComment)?>");
           $("#imageComment").val("<?=htmlentities($visitObject->imageQualityComment)?>");
           <?php
-            // Form deactivation if not controller or controller but not in not done or wait definitive conclusion status
-            if ( $_SESSION['role'] != User::CONTROLLER 
-                || ( $_SESSION['role'] == User::CONTROLLER 
-                        && !in_array($visitObject->stateQualityControl, array(Visit::QC_NOT_DONE, Visit::QC_WAIT_DEFINITVE_CONCLUSION)) ) ) {
-            ?>
+			// Form deactivation if not controller or controller but not in not done or wait definitive conclusion status
+			if ($_SESSION['role'] != User::CONTROLLER 
+				|| ($_SESSION['role'] == User::CONTROLLER 
+						&& !in_array($visitObject->stateQualityControl, array(Visit::QC_NOT_DONE, Visit::QC_WAIT_DEFINITVE_CONCLUSION)))) {
+			?>
 				$("#controler_form :input").prop("disabled", true); 
             <?php
-            }
+			}
         
-        // If form Not needed unactivate the form option
-        if (! $visitType->localFormNeeded) {
+		// If form Not needed unactivate the form option
+		if (!$visitType->localFormNeeded) {
 			?>$("#accepted1").attr( 'checked', true )
 			//Disable other radiobutton to force send the accepted value (disable make the choice unsent)
 			$("#refused1").prop("disabled", true);
 			$("#formComment").prop("readonly", true);
 			<?php
-        }
-        // if image Qc not Need unactivate the form option
-        if (! $visitType->qcNeeded) {
+		}
+		// if image Qc not Need unactivate the form option
+		if (!$visitType->qcNeeded) {
 			?>$("#accepted2").attr( 'checked', true )
 			$('#refused2').prop("disabled", true); <?php
-        }
-        ?>
+		}
+		?>
 	});
 
     $('#refuse, #ask_corrective_action, #accept').click(function (event) {
@@ -171,10 +171,10 @@
 				value="<?=$id_visit?>" name="id_visit" id="id_visit">
 
               <?php
-            // If controller role add button to validate form submission
-            if ($role == User::CONTROLLER 
-                    && in_array($visitObject->stateQualityControl, array( Visit::QC_NOT_DONE, Visit::QC_WAIT_DEFINITVE_CONCLUSION ))) {
-                ?>
+			// If controller role add button to validate form submission
+			if ($role == User::CONTROLLER 
+					&& in_array($visitObject->stateQualityControl, array(Visit::QC_NOT_DONE, Visit::QC_WAIT_DEFINITVE_CONCLUSION))) {
+				?>
                 <button name="refuse" id="refuse" type="button"
 				class="btn btn-danger">Refuse</button>
 			<button name="ask_corrective_action" id="ask_corrective_action"
@@ -182,8 +182,8 @@
 			<button name="accept" id="accept" type="button"
 				class="btn btn-success">Accept</button>
                 <?php
-            }
-            ?>
+			}
+			?>
 
         </div>
 	</div>

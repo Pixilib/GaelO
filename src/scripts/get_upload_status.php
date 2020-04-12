@@ -23,7 +23,7 @@ $id_visit=$_POST['id_visit'];
 $userObject=new User($_SESSION['username'], $linkpdo);
 $visitAccess=$userObject->isVisitAllowed($id_visit, $_SESSION['role']);
 
-if ($visitAccess && $_SESSION['role']==User::INVESTIGATOR){
+if ($visitAccess && $_SESSION['role'] == User::INVESTIGATOR) {
 	
 	$visitObject=new Visit($id_visit, $linkpdo);
 	echo(json_encode($visitObject->uploadStatus));

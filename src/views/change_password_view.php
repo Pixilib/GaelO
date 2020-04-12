@@ -20,7 +20,7 @@
 <head>
 	<meta charset="utf-8">
 	<title>Change your password</title>
-	<?php require $_SERVER['DOCUMENT_ROOT'].'/includes/jsLibrairies.php';?>
+	<?php require $_SERVER['DOCUMENT_ROOT'].'/includes/jsLibrairies.php'; ?>
 	
 	<script type="text/javascript">
 	//Send form in Ajax and process JSON answers
@@ -81,7 +81,7 @@
 </head>
 
 <body>
-<?php require $_SERVER['DOCUMENT_ROOT'].'/includes/header.php';?>
+<?php require $_SERVER['DOCUMENT_ROOT'].'/includes/header.php'; ?>
 
     <div class="alert alert-danger text-center" id="error" style="display: none;" ></div>
     <div class="alert alert-success text-center" id="success" style="display: none;" ></div>
