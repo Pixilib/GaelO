@@ -24,44 +24,44 @@ $userObject=new User($_SESSION['username'], $linkpdo);
 $accessCheck=$userObject->isPatientAllowed($_POST['patient_num'], $_SESSION['role']);
 
 if ($accessCheck && $_SESSION['role'] == User::SUPERVISOR) {
-    //Query Patient status
-    $patientObject=new Patient($_POST['patient_num'], $linkpdo);
-    //Process data to write in database
-    if (isset($_POST['validate'])) {
+	//Query Patient status
+	$patientObject=new Patient($_POST['patient_num'], $linkpdo);
+	//Process data to write in database
+	if (isset($_POST['validate'])) {
             
-            $withdraw=$_POST['withdraw'];
-            $withdraw_date=$_POST['withdraw_date']; 
-            $withdraw_reason=$_POST['reason'];
+			$withdraw=$_POST['withdraw'];
+			$withdraw_date=$_POST['withdraw_date']; 
+			$withdraw_reason=$_POST['reason'];
             
-            if ($withdraw) {
-                if (!empty($withdraw_date) && !empty($withdraw_reason)) {
-                    $patientObject->changeWithdrawStatus(true, $withdraw_date, $withdraw_reason);
-                }else {
-                    echo(json_encode("Error"));
-                    return;
-                } 
-            }else {
-                if (!empty($withdraw_reason)) {
-                    $withdraw_date=null;
-                    $patientObject->changeWithdrawStatus(false, $withdraw_date, null);
-                }else {
-                    echo(json_encode("Error"));
-                    return;
-                }
+			if ($withdraw) {
+				if (!empty($withdraw_date) && !empty($withdraw_reason)) {
+					$patientObject->changeWithdrawStatus(true, $withdraw_date, $withdraw_reason);
+				}else {
+					echo(json_encode("Error"));
+					return;
+				} 
+			}else {
+				if (!empty($withdraw_reason)) {
+					$withdraw_date=null;
+					$patientObject->changeWithdrawStatus(false, $withdraw_date, null);
+				}else {
+					echo(json_encode("Error"));
+					return;
+				}
 
-            }
+			}
             
-            //Log action
-            $actionDetails['patient_code']=$patientObject->patientCode;
-            $actionDetails['reason']=$withdraw_reason;
-            $actionDetails['withdraw_date']=$withdraw_date;
-            $actionDetails['withdraw']=$withdraw;
-            Tracker::logActivity($_SESSION['username'], User::SUPERVISOR, $_SESSION['study'], null, "Patient Withdraw", $actionDetails);
-            echo(json_encode("Success"));
-    }else {
-        require 'views/supervisor/change_patient_status_view.php';
-    }
+			//Log action
+			$actionDetails['patient_code']=$patientObject->patientCode;
+			$actionDetails['reason']=$withdraw_reason;
+			$actionDetails['withdraw_date']=$withdraw_date;
+			$actionDetails['withdraw']=$withdraw;
+			Tracker::logActivity($_SESSION['username'], User::SUPERVISOR, $_SESSION['study'], null, "Patient Withdraw", $actionDetails);
+			echo(json_encode("Success"));
+	}else {
+		require 'views/supervisor/change_patient_status_view.php';
+	}
 
 }else {
-    require 'includes/no_access.php';
+	require 'includes/no_access.php';
 }

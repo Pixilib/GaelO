@@ -26,8 +26,8 @@ class Fill_Orthanc_Table {
 	private $visitObject;
 
     
-	public function __construct($id_visit, String $username, PDO $linkpdo){
-		$this->username= $username;
+	public function __construct($id_visit, String $username, PDO $linkpdo) {
+		$this->username=$username;
 		$this->linkpdo=$linkpdo;
 		$this->visitObject=new Visit($id_visit, $linkpdo);
 	}
@@ -37,8 +37,8 @@ class Fill_Orthanc_Table {
 	 * @param String $studyID
 	 * @return array
 	 */
-	public function parseData(String $studyID){
-		$studyData=new Orthanc_Study($studyID,null,null);
+	public function parseData(String $studyID) {
+		$studyData=new Orthanc_Study($studyID, null, null);
 		$studyData->retrieveStudyData();
 		$this->studyOrthancObject=$studyData;
 		$studyDetails=get_object_vars($studyData);
@@ -50,24 +50,24 @@ class Fill_Orthanc_Table {
 	 * Once done trigger the change upload status of visit to update upload status and eventually skip 
 	 * local form and/or QC
 	 */
-	public function fillDB($anonFromOrthancStudyId){
+	public function fillDB($anonFromOrthancStudyId) {
         
 		//Check that original OrthancID is unknown for this study
-		if($this->visitObject->getParentStudyObject()->isOriginalOrthancNeverKnown($anonFromOrthancStudyId) ){
-			try{
+		if ($this->visitObject->getParentStudyObject()->isOriginalOrthancNeverKnown($anonFromOrthancStudyId)) {
+			try {
 				//Fill la database
 				$this->addToDbStudy($anonFromOrthancStudyId, $this->username);
                 
-				foreach ($this->studyOrthancObject->orthancSeries as $serie){
+				foreach ($this->studyOrthancObject->orthancSeries as $serie) {
 					//Fill series database
 					$this->addtoDbSerie($serie);
 				}
 				$this->visitObject->changeUploadStatus(Visit::DONE, $this->username);
                 
-			}catch(Exception $e1){
+			}catch (Exception $e1) {
 				throw new Exception("Error during import ".$e1->getMessage());
 			}
-		}else{
+		}else {
 			throw new Exception("Error during import Study Already Known");
 		}
 	}
@@ -76,11 +76,11 @@ class Fill_Orthanc_Table {
 	 * Private function to write into Orthanc_Studies DB
 	 * @param string $anonFromOrthancStudyId
 	 */
-	private function addToDbStudy(string $anonFromOrthancStudyId){
+	private function addToDbStudy(string $anonFromOrthancStudyId) {
 			$studyAcquisitionDate2=$this->parseDateTime($this->studyOrthancObject->studyDate, 1);
 			$studyAcquisitionTime2=$this->parseDateTime($this->studyOrthancObject->studyTime, 2);
             
-			if($studyAcquisitionDate2!=null && $studyAcquisitionTime2!=null){
+			if ($studyAcquisitionDate2 != null && $studyAcquisitionTime2 != null) {
 				$acquisitionDateTime=$studyAcquisitionDate2." ".$studyAcquisitionTime2;
 			}
                         
@@ -162,12 +162,12 @@ class Fill_Orthanc_Table {
 	 * Private function to write into the Orthanc_Series DB
 	 * @param Orthanc_Serie $serie
 	 */
-	private function addtoDbSerie(Orthanc_Serie $serie){
+	private function addtoDbSerie(Orthanc_Serie $serie) {
         
 		$serieAcquisitionDate2=$this->parseDateTime($serie->seriesDate, 1);
 		$serieAcquisitionTime2=$this->parseDateTime($serie->seriesTime, 2);
         
-		if($serieAcquisitionDate2!=null && $serieAcquisitionTime2!=null){
+		if ($serieAcquisitionDate2 != null && $serieAcquisitionTime2 != null) {
 			$acquisitionDateTime=$serieAcquisitionDate2." ".$serieAcquisitionTime2;
 		}
         
@@ -227,12 +227,12 @@ class Fill_Orthanc_Table {
 				'HalfLife'=> is_numeric($serie->halfLife) ? $serie->halfLife : null,
 				'Injected_Time'=> $serie->injectedTime,
 				'Injected_DateTime'=> $this->parseDateTime($serie->injectedDateTime, 0),
-				'Injected_Activity'=> is_numeric($serie->injectedActivity) ? $serie->injectedActivity: null,
+				'Injected_Activity'=> is_numeric($serie->injectedActivity) ? $serie->injectedActivity : null,
 				'Series_Orthanc_ID'=> $serie->serieOrthancID,
 				'Number_Instances'=> $serie->numberOfInstanceInOrthanc,
 				'Serie_UID'=> $serie->seriesInstanceUID,
 				'Serie_Number'=> $serie->seriesNumber,
-				'Patient_Weight'=>is_numeric($serie->patientWeight) ? $serie->patientWeight:null,
+				'Patient_Weight'=>is_numeric($serie->patientWeight) ? $serie->patientWeight : null,
 				'Serie_Disk_Size'=> $serie->diskSizeMb,
 				'Serie_Uncompressed_Disk_Size' => $serie->uncompressedSizeMb,
 				'Manufacturer'=> $serie->seriesManufacturer,
@@ -250,31 +250,31 @@ class Fill_Orthanc_Table {
 	 * @param type 0=dateTime, 1=Date, 2=Time
 	 * return formated date for db saving, null if parse failed
 	 */
-	private function parseDateTime( $string, int $type){
+	private function parseDateTime($string, int $type) {
 		$parsedDateTime=null;
         
 		//If contain time split the ms (after.) which are not constant
-		if($type==0 || $type==2){
-			if(strpos($string, ".")) {
+		if ($type == 0 || $type == 2) {
+			if (strpos($string, ".")) {
 				$timeWithoutms=explode(".", $string);
 				$string=$timeWithoutms[0];
 			}
             
 		}
         
-		if($type==2){
+		if ($type == 2) {
 			$dateObject=DateTime::createFromFormat('His', $string);
-			if($dateObject!==false){
+			if ($dateObject !== false) {
 				$parsedDateTime=$dateObject->format('H:i:s');
 			}
-		}else if($type==1){
+		}else if ($type == 1) {
 			$dateObject=DateTime::createFromFormat('Ymd', $string);
-			if($dateObject!==false){
+			if ($dateObject !== false) {
 				$parsedDateTime=$dateObject->format('Y-m-d');
 			}
-		}else if($type==0){
+		}else if ($type == 0) {
 			$dateObject=DateTime::createFromFormat('YmdHis', $string);
-			if($dateObject!==false){
+			if ($dateObject !== false) {
 				$parsedDateTime=$dateObject->format('Y-m-d H:i:s');
 			}
 		}

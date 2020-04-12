@@ -35,7 +35,7 @@
         </thead>
         <tbody>
         <?php 
-		foreach ($trackerData as $reviewerEvent){
+		foreach ($trackerData as $reviewerEvent) {
 			$eventDetails=json_decode($reviewerEvent['action_details'], true);
 		?>
         	<tr>

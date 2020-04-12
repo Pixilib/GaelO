@@ -18,15 +18,15 @@
  */
 
 Session::checkSession();
-$linkpdo = Session::getLinkpdo();
+$linkpdo=Session::getLinkpdo();
 
-$userObject= new User($_SESSION['username'], $linkpdo);
-$accessCheck = $userObject->isRoleAllowed($_SESSION['study'], $_SESSION['role']);
+$userObject=new User($_SESSION['username'], $linkpdo);
+$accessCheck=$userObject->isRoleAllowed($_SESSION['study'], $_SESSION['role']);
 
 if ($accessCheck && $_SESSION['role'] == User::SUPERVISOR) {
     
-	if( !empty($_POST['json']) ){
-		$importPatient = new Import_Patient($_POST['json'], $_SESSION['study'], $linkpdo);
+	if (!empty($_POST['json'])) {
+		$importPatient=new Import_Patient($_POST['json'], $_SESSION['study'], $linkpdo);
 		$importPatient -> readJson();
         
 		//Build the Import report to send it by email
@@ -37,10 +37,10 @@ if ($accessCheck && $_SESSION['role'] == User::SUPERVISOR) {
 		$actionDetails['Success']=$importPatient->sucessList;
 		$actionDetails['Fail']=$importPatient->failList;
 		$actionDetails['email']=$textReport;
-		Tracker::logActivity($_SESSION['username'], User::SUPERVISOR, $_SESSION['study'] , null , "Import Patients", $actionDetails);
+		Tracker::logActivity($_SESSION['username'], User::SUPERVISOR, $_SESSION['study'], null, "Import Patients", $actionDetails);
         
 		//Send the email to administrators of the plateforme
-		$email = new Send_Email($linkpdo);
+		$email=new Send_Email($linkpdo);
 		$email->setMessage($htmlReport);
 		$email->addGroupEmails($_SESSION['study'], User::SUPERVISOR);
 		$email->setSubject('Import Report');
@@ -50,18 +50,18 @@ if ($accessCheck && $_SESSION['role'] == User::SUPERVISOR) {
 		echo($htmlReport);
 		echo("Report Sent by Email");
         
-	}else{
+	}else {
         
-		if(GAELO_DATE_FORMAT=='d.m.Y'){
+		if (GAELO_DATE_FORMAT == 'd.m.Y') {
 			$importFormat="DD/MM/YYYY";
             
-		}else if(GAELO_DATE_FORMAT=='m.d.Y'){
+		}else if (GAELO_DATE_FORMAT == 'm.d.Y') {
 			$importFormat="MM/DD/YYYY";
 		}
         
 		require 'views/supervisor/import_patients_view.php';
 	}
     
-}else{
+}else {
 	require 'includes/no_access.php';
 }

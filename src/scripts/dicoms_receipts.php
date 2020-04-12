@@ -16,16 +16,16 @@
 /**
  * Recive Chunks of upload an reconstruct final uploaded ZIP
  */
-define('UPLOADS_DIR', $_SERVER['DOCUMENT_ROOT'] . '/data/upload');
-define('UPLOADS_TEMP_DIR', UPLOADS_DIR . '/temp');
+define('UPLOADS_DIR', $_SERVER['DOCUMENT_ROOT'].'/data/upload');
+define('UPLOADS_TEMP_DIR', UPLOADS_DIR.'/temp');
 
 require_once($_SERVER['DOCUMENT_ROOT'].'/vendor/autoload.php');
 
 Session::checkSession();
 
-try{
-	$linkpdo = Session::getLinkpdo();
-}catch(Exception $e){
+try {
+	$linkpdo=Session::getLinkpdo();
+}catch (Exception $e) {
 	//Non 200 OK response should ask Resumable to reset the chunk
 	//Usefull in case of database resolution failure
 	header('HTTP/1.0 210 No Database');
@@ -90,7 +90,7 @@ if ($investigatorAccess && $_SESSION['role'] == User::INVESTIGATOR) {
 			}
 		}
 	}
-} else {
+}else {
 	header('HTTP/1.0 403 Forbidden');
 }
 

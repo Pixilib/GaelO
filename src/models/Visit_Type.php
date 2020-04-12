@@ -33,10 +33,10 @@ Class Visit_Type {
 
 	public $linkpdo;
     
-	public function __construct(PDO $linkpdo, int $visitTypeId){
+	public function __construct(PDO $linkpdo, int $visitTypeId) {
         
 		$this->linkpdo=$linkpdo;
-		$visitTypeQuery = $this->linkpdo->prepare('SELECT * FROM visit_type WHERE id = :visitTypeId');
+		$visitTypeQuery=$this->linkpdo->prepare('SELECT * FROM visit_type WHERE id = :visitTypeId');
 		$visitTypeQuery->execute(array('visitTypeId' => $visitTypeId));
 		$visitType=$visitTypeQuery->fetch(PDO::FETCH_ASSOC);
 
@@ -55,8 +55,8 @@ Class Visit_Type {
         
 	}
 
-	public static function getVisitTypeByName($groupId, String $visitName,PDO $linkpdo) : Visit_Type {
-		$visitTypeQuery = $linkpdo->prepare('SELECT id FROM visit_type WHERE group_id = :groupId AND name= :name');
+	public static function getVisitTypeByName($groupId, String $visitName, PDO $linkpdo) : Visit_Type {
+		$visitTypeQuery=$linkpdo->prepare('SELECT id FROM visit_type WHERE group_id = :groupId AND name= :name');
 		$visitTypeQuery->execute(array('groupId' => $groupId, 'name'=>$visitName));
 		$visitTypeId=$visitTypeQuery->fetch(PDO::FETCH_COLUMN);
 		return new Visit_Type($linkpdo, $visitTypeId);
@@ -82,7 +82,7 @@ Class Visit_Type {
 	 * @return array
 	 */
 	public function getSpecificTableInputType() : Array {
-		$query = $this->linkpdo->prepare('SELECT COLUMN_NAME, COLUMN_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME="'.$this->tableReviewSpecificName.'"');
+		$query=$this->linkpdo->prepare('SELECT COLUMN_NAME, COLUMN_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME="'.$this->tableReviewSpecificName.'"');
 		$query->execute();
 		$datas=$query->fetchAll(PDO::FETCH_ASSOC);
         
@@ -94,9 +94,9 @@ Class Visit_Type {
 		return new Visit_Group($this->linkpdo, $this->groupId);
 	}
     
-	public static function createVisitType(string $studyName, Visit_Group $visitGroup, String $visitName, int $order, int $limitLowDays, int $limitUpDays, bool $localFormNeed, bool $qcNeeded, bool $reviewNeeded, bool $optional, String $anonProfile, PDO $linkpdo){
+	public static function createVisitType(string $studyName, Visit_Group $visitGroup, String $visitName, int $order, int $limitLowDays, int $limitUpDays, bool $localFormNeed, bool $qcNeeded, bool $reviewNeeded, bool $optional, String $anonProfile, PDO $linkpdo) {
         
-		$req = $linkpdo->prepare('INSERT INTO visit_type (group_id, name, table_review_specific, visit_order, local_form_needed, qc_needed, review_needed, optional, limit_low_days, limit_up_days, anon_profile)
+		$req=$linkpdo->prepare('INSERT INTO visit_type (group_id, name, table_review_specific, visit_order, local_form_needed, qc_needed, review_needed, optional, limit_low_days, limit_up_days, anon_profile)
                                       VALUES(:groupId, :visitName, :tableSpecific, :order, :localFormNeeded, :qcNeeded, :reviewNeeded, :optional, :limitLowDays, :limitUpDays, :anonProfile)');
         
 		$tableSpecificName=$visitGroup->groupModality."_".$studyName."_".$visitName;
@@ -115,7 +115,7 @@ Class Visit_Type {
 		));
         
 		//Create specific table of the visit for form with relation with the review table
-		$req = $linkpdo->prepare(' CREATE TABLE '.$tableSpecificName.' (id_review integer(11) NOT NULL, PRIMARY KEY (id_review));
+		$req=$linkpdo->prepare(' CREATE TABLE '.$tableSpecificName.' (id_review integer(11) NOT NULL, PRIMARY KEY (id_review));
             ALTER TABLE '.$tableSpecificName.' ADD FOREIGN KEY fk_idReview (id_review) REFERENCES reviews(id_review);
             ALTER TABLE '.$tableSpecificName.' ADD PRIMARY KEY (`id_review`); ');
         

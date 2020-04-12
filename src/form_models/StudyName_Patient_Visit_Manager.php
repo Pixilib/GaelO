@@ -19,7 +19,7 @@
  */
 class StudyName_Patient_Visit_Manager extends Patient_Visit_Manager {
 	
-	public function __construct(Patient $patientObject, Visit_Group $visitGroupObject){
+	public function __construct(Patient $patientObject, Visit_Group $visitGroupObject) {
 		parent::__construct($patientObject, $visitGroupObject);
 	}
 	

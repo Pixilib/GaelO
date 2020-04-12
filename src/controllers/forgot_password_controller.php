@@ -57,13 +57,13 @@ if (isset($_POST['send'])) {
 		
 	   }
 	   
-	} else {
+	}else {
 		$answer="Unknown";
 	}
     
 	echo(json_encode($answer));
     
 //not data sent, form display
-} else{
+}else {
 	require 'views/forgot_password_view.php';
 }

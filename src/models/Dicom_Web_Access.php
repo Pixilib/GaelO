@@ -27,13 +27,13 @@ class Dicom_Web_Access {
 	private $userRole;
 	private $linkpdo;
     
-	public function __construct(string $requestedURI, User $userObject, string $userRole, PDO $linkpdo){
+	public function __construct(string $requestedURI, User $userObject, string $userRole, PDO $linkpdo) {
 		$this->requestedURI=$requestedURI;
 		$this->userObject=$userObject;
 		$this->userRole=$userRole;
 		$this->linkpdo=$linkpdo;
         
-		if( $this->endsWith($requestedURI, "/series") ) $this->isStudyMetadataRequested=true; 
+		if ($this->endsWith($requestedURI, "/series")) $this->isStudyMetadataRequested=true; 
 		else $this->isSerieRequested=true;
         
 	}
@@ -42,7 +42,7 @@ class Dicom_Web_Access {
 	 * Output the decision for access allowance
 	 * @return boolean
 	 */
-	public function getDecision(){
+	public function getDecision() {
 		//Get related visit ID of the called ressource
 		$id_visit=$this->getRelatedVisitID($this->getUID());
         
@@ -54,9 +54,9 @@ class Dicom_Web_Access {
 	 * Isolate the called Study or Series Instance UID 
 	 * @return string
 	 */
-	private function getUID(){
-		if($this->isSerieRequested) $level="series";
-		else if($this->isStudyMetadataRequested) $level="studies";
+	private function getUID() {
+		if ($this->isSerieRequested) $level="series";
+		else if ($this->isStudyMetadataRequested) $level="studies";
 		$studySubString=strstr($this->requestedURI, "/".$level."/");
 		$studySubString=str_replace("/".$level."/", "", $studySubString);
 		$endStudyUIDPosition=strpos($studySubString, "/");
@@ -69,16 +69,16 @@ class Dicom_Web_Access {
 	 * @param string $uid
 	 * @return string
 	 */
-	private function getRelatedVisitID(string $uid){
+	private function getRelatedVisitID(string $uid) {
        
-		if($this->isSerieRequested) {
+		if ($this->isSerieRequested) {
 			$seriesObject=Series_Details::getSerieObjectByUID($uid, $this->linkpdo);
-			if($this->userRole != User::SUPERVISOR && $seriesObject->deleted) throw new Exception('Deleted Series');
+			if ($this->userRole != User::SUPERVISOR && $seriesObject->deleted) throw new Exception('Deleted Series');
 			$studyObject=$seriesObject->studyDetailsObject;
             
-		} else if($this->isStudyMetadataRequested) {
+		}else if ($this->isStudyMetadataRequested) {
 			$studyObject=Study_Details::getStudyObjectByUID($uid, $this->linkpdo);
-			if($this->userRole != User::SUPERVISOR && $studyObject->deleted) throw new Exception('Deleted Study');
+			if ($this->userRole != User::SUPERVISOR && $studyObject->deleted) throw new Exception('Deleted Study');
 		}
         
 		return $studyObject->idVisit;
@@ -90,20 +90,20 @@ class Dicom_Web_Access {
 	 * @param string $id_visit
 	 * @return boolean
 	 */
-	private function isAccessAllowedForUser(string $id_visit){
+	private function isAccessAllowedForUser(string $id_visit) {
         
 		$visitObject=new Visit($id_visit, $this->linkpdo);
         
 		//Check Visit Availability of the calling user
-		if($this->userRole == User::REVIEWER || ($this->userRole == User::INVESTIGATOR && $visitObject->uploadStatus==Visit::DONE) ) {
+		if ($this->userRole == User::REVIEWER || ($this->userRole == User::INVESTIGATOR && $visitObject->uploadStatus == Visit::DONE)) {
 			//Check that visit is in patient that is still awaiting for some reviews
 			$visitCheck=$this->userObject->isVisitAllowed($id_visit, $this->userRole);
-		}else if($this->userRole == User::CONTROLLER){
+		}else if ($this->userRole == User::CONTROLLER) {
 			//Check that QC status still require an action from Controller
-			if(in_array($visitObject->stateQualityControl, array(Visit::QC_WAIT_DEFINITVE_CONCLUSION, Visit::QC_NOT_DONE)) ){
+			if (in_array($visitObject->stateQualityControl, array(Visit::QC_WAIT_DEFINITVE_CONCLUSION, Visit::QC_NOT_DONE))) {
 				$visitCheck=$this->userObject->isVisitAllowed($id_visit, $this->userRole);
 			}
-		}else if($this->userRole == User::SUPERVISOR){
+		}else if ($this->userRole == User::SUPERVISOR) {
 			$visitCheck=$this->userObject->isVisitAllowed($id_visit, $this->userRole);
 		}else {
 			//Other roles can't have access to images

@@ -28,9 +28,9 @@ Class Global_Data {
 	 * @param $countryCode
 	 * @return string
 	 */
-	public static function getCountryName(PDO $linkpdo, string $countryCode){
+	public static function getCountryName(PDO $linkpdo, string $countryCode) {
         
-		$countryQuery = $linkpdo->prepare("SELECT country_us FROM country WHERE country_code = :countryCode");
+		$countryQuery=$linkpdo->prepare("SELECT country_us FROM country WHERE country_code = :countryCode");
 		$countryQuery->execute(array('countryCode' => $countryCode));
 		$countryName=$countryQuery->fetch(PDO::FETCH_COLUMN);
         
@@ -44,14 +44,14 @@ Class Global_Data {
 	 * @param string $countryName
 	 * @return string
 	 */
-	public static function getCountryCode(PDO $linkpdo, string $countryName){
-		if(GAELO_COUNTRY_LANGUAGE=="FR"){
+	public static function getCountryCode(PDO $linkpdo, string $countryName) {
+		if (GAELO_COUNTRY_LANGUAGE == "FR") {
 			$request="SELECT country_code FROM country WHERE country_fr = :countryName";
-		}else if(GAELO_COUNTRY_LANGUAGE=="US"){
+		}else if (GAELO_COUNTRY_LANGUAGE == "US") {
 			$request="SELECT country_code FROM country WHERE country_us = :countryName";
 		}
         
-		$countryQuery = $linkpdo->prepare($request);
+		$countryQuery=$linkpdo->prepare($request);
 		$countryQuery->execute(array('countryName' => $countryName));
 		$countryName=$countryQuery->fetch(PDO::FETCH_COLUMN);
         
@@ -65,16 +65,16 @@ Class Global_Data {
 	 * @param bool $onlyActivated
 	 * @return array
 	 */
-	public static function getAllStudies(PDO $linkpdo, bool $onlyActivated=false){
+	public static function getAllStudies(PDO $linkpdo, bool $onlyActivated=false) {
         
-		if($onlyActivated){
-			$connecter = $linkpdo->prepare('SELECT name FROM studies WHERE active=1 ORDER BY name');
-		}else{
-			$connecter = $linkpdo->prepare('SELECT name FROM studies ORDER BY name');
+		if ($onlyActivated) {
+			$connecter=$linkpdo->prepare('SELECT name FROM studies WHERE active=1 ORDER BY name');
+		}else {
+			$connecter=$linkpdo->prepare('SELECT name FROM studies ORDER BY name');
 		}
 		$connecter->execute();
         
-		$AvailableStudies = $connecter->fetchall(PDO::FETCH_COLUMN);
+		$AvailableStudies=$connecter->fetchall(PDO::FETCH_COLUMN);
         
 		return $AvailableStudies;
 	}
@@ -84,28 +84,28 @@ Class Global_Data {
 	 * @param PDO $linkpdo
 	 * @return Center[]
 	 */
-	public static function getAllCentersObjects(PDO $linkpdo){
-		$centerQuery = $linkpdo->prepare('SELECT code FROM centers ORDER BY code');
+	public static function getAllCentersObjects(PDO $linkpdo) {
+		$centerQuery=$linkpdo->prepare('SELECT code FROM centers ORDER BY code');
 		$centerQuery->execute();
 		$centers=$centerQuery->fetchAll(PDO::FETCH_COLUMN);
 	    
 		$centerObject=[];
-		foreach ($centers as $center){
+		foreach ($centers as $center) {
 			$centerObject[]=new Center($linkpdo, $center);
 		}
 		return $centerObject;
 	}
 
 	public static function getAllCentersAsJson(PDO $linkpdo) : String {
-		$centersObjectArray = Global_Data::getAllCentersObjects($linkpdo);
-		$centerResponseArray = [];
+		$centersObjectArray=Global_Data::getAllCentersObjects($linkpdo);
+		$centerResponseArray=[];
 		
-		foreach ($centersObjectArray as $centerObject){
+		foreach ($centersObjectArray as $centerObject) {
 			$centerResponseArray[$centerObject->code]['centerName']=$centerObject->name;
 			$centerResponseArray[$centerObject->code]['countryCode']=$centerObject->countryCode;
 		}
 
-		$temporaryFile = Global_Data::writeTextAsTempFile( json_encode($centerResponseArray, JSON_FORCE_OBJECT) );
+		$temporaryFile=Global_Data::writeTextAsTempFile(json_encode($centerResponseArray, JSON_FORCE_OBJECT));
 
 		return $temporaryFile;
 	}
@@ -115,8 +115,8 @@ Class Global_Data {
 	 * @param PDO $linkpdo
 	 * @return array
 	 */
-	public static function getAllcountries(PDO $linkpdo){
-		$countryQuery = $linkpdo->prepare("SELECT * FROM country ORDER BY country_us");
+	public static function getAllcountries(PDO $linkpdo) {
+		$countryQuery=$linkpdo->prepare("SELECT * FROM country ORDER BY country_us");
 		$countryQuery->execute();
 		$countryCode=$countryQuery->fetchAll(PDO::FETCH_ASSOC);
 	    
@@ -140,13 +140,13 @@ Class Global_Data {
 	 * Return userObject array for all users in the system
 	 * @return User[]
 	 */
-	public static function getAllUsers(PDO $linkpdo){
-		$req = $linkpdo->prepare('SELECT username FROM users');
+	public static function getAllUsers(PDO $linkpdo) {
+		$req=$linkpdo->prepare('SELECT username FROM users');
 		$req->execute();
 		$answers=$req->fetchAll(PDO::FETCH_COLUMN);
 	    
 		$usersObjects=[];
-		foreach ($answers as $username){
+		foreach ($answers as $username) {
 			$usersObjects[]=new User($username, $linkpdo);
 		}
 		return $usersObjects;
@@ -158,8 +158,8 @@ Class Global_Data {
 	 * @param PDO $linkpdo
 	 * @return mixed
 	 */
-	public static function getAllSeriesOrthancID(PDO $linkpdo){
-		$seriesQuery = $linkpdo->prepare ( 'SELECT Series_Orthanc_ID FROM orthanc_series' );
+	public static function getAllSeriesOrthancID(PDO $linkpdo) {
+		$seriesQuery=$linkpdo->prepare('SELECT Series_Orthanc_ID FROM orthanc_series');
 		$seriesQuery->execute();
 		$seriesOrthancIds=$seriesQuery->fetchAll(PDO::FETCH_COLUMN);
 		return $seriesOrthancIds;
@@ -238,15 +238,15 @@ Class Global_Data {
 		$fileSql=tempnam(ini_get('upload_tmp_dir'), 'TMPDB_');
    
 		try {
-			if(DATABASE_SSL){
-				$dump = new IMysqldump\Mysqldump('mysql:host='.DATABASE_HOST.';dbname='.DATABASE_NAME.'', ''.DATABASE_USERNAME.'', ''.DATABASE_PASSWORD.'', array(), Session::getSSLPDOArrayOptions() );
-			}else{
-				$dump = new IMysqldump\Mysqldump('mysql:host='.DATABASE_HOST.';dbname='.DATABASE_NAME.'', ''.DATABASE_USERNAME.'', ''.DATABASE_PASSWORD.'');   
+			if (DATABASE_SSL) {
+				$dump=new IMysqldump\Mysqldump('mysql:host='.DATABASE_HOST.';dbname='.DATABASE_NAME.'', ''.DATABASE_USERNAME.'', ''.DATABASE_PASSWORD.'', array(), Session::getSSLPDOArrayOptions());
+			}else {
+				$dump=new IMysqldump\Mysqldump('mysql:host='.DATABASE_HOST.';dbname='.DATABASE_NAME.'', ''.DATABASE_USERNAME.'', ''.DATABASE_PASSWORD.'');   
 			}
             
 			$dump->start($fileSql);
-		} catch (Exception $e) {
-			echo 'mysqldump-php error: ' . $e->getMessage();
+		}catch (Exception $e) {
+			echo 'mysqldump-php error: '.$e->getMessage();
 		}
 
 		return $fileSql;

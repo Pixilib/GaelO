@@ -100,7 +100,7 @@
 					}
             		
             	<?php
-				} else if (($_SESSION['role']) == User::REVIEWER) {
+				}else if (($_SESSION['role']) == User::REVIEWER) {
 				?>
 					$('#contenu').empty();
 					//Refresh the tree
@@ -129,13 +129,13 @@
 	//If not disable by role add action button
 	if (!$roleDisable) {
         
-		if(!$validatedForm){
+		if (!$validatedForm) {
 			// If investigator Role and form not validated, add Draft and Validate button
 			?>
             	<input class="btn btn-dark" type="button" id="draft" name="draft" value="draft" /> 
         		<input class="btn btn-dark" type="button" id="validate" name="validate" value="validate" />
     		<?php 
-		}else{
+		}else {
 			//Add Ask Unlock Button
 			if (!$local || ($local && $visitObject->qcStatus != Visit::QC_ACCEPTED && $visitObject->qcStatus != Visit::QC_REFUSED)) {
 			?>

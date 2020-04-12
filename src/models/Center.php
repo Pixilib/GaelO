@@ -30,13 +30,13 @@ Class Center {
 	 * @param $code
 	 * @throws Exception
 	 */
-	public function __construct(PDO $linkpdo, $code){
+	public function __construct(PDO $linkpdo, $code) {
 	    
-		$centerQuery = $linkpdo->prepare('SELECT * FROM centers WHERE code=:code');
+		$centerQuery=$linkpdo->prepare('SELECT * FROM centers WHERE code=:code');
 		$centerQuery->execute(array('code'=>$code));
 		$center=$centerQuery->fetch(PDO::FETCH_ASSOC);
 	    
-		if(empty($center)){
+		if (empty($center)) {
 			throw new Exception("Non Existing Center");
 		}
 		$this->linkpdo=$linkpdo;
@@ -51,8 +51,8 @@ Class Center {
 	 * @param string $name
 	 * @param string $countryCode
 	 */
-	public function updateCenter(string $name, string $countryCode){
-		$updatePatient = $this->linkpdo->prepare("UPDATE centers
+	public function updateCenter(string $name, string $countryCode) {
+		$updatePatient=$this->linkpdo->prepare("UPDATE centers
                                             SET name = :centerName,
                                             country_code = :countryCode
                                             WHERE code = :code");

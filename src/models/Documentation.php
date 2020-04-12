@@ -33,9 +33,9 @@ class Documentation {
 	public $deleted;
     
     
-	public function __construct(PDO $linkpdo, int $idDocumentation){
+	public function __construct(PDO $linkpdo, int $idDocumentation) {
     	
-		$documentationQuery = $linkpdo->prepare("SELECT * FROM documentation WHERE id_documentation = :idDocumentation");
+		$documentationQuery=$linkpdo->prepare("SELECT * FROM documentation WHERE id_documentation = :idDocumentation");
 		$documentationQuery->execute(array('idDocumentation' => $idDocumentation));
 		$documentation=$documentationQuery->fetch(PDO::FETCH_ASSOC);
     	
@@ -50,7 +50,7 @@ class Documentation {
 		$this->accessReviewer=$documentation['reviewer'];
 		$this->deleted=$documentation['deleted'];
         
-		$this->documentFileLocation = ($_SERVER['DOCUMENT_ROOT']."/data/upload/documentation/".$this->study."/".$this->documentName);
+		$this->documentFileLocation=($_SERVER['DOCUMENT_ROOT']."/data/upload/documentation/".$this->study."/".$this->documentName);
 	}
     
 	/**
@@ -59,12 +59,12 @@ class Documentation {
 	 * @return boolean
 	 */
     
-	public function isDocumentationAllowedForRole(String $role){
-		if($role==User::INVESTIGATOR) return $this->accessInvestigator;
-		else if($role==User::CONTROLLER) return $this->accessController;
-		else if($role==User::MONITOR) return $this->accessMonitor;
-		else if($role==User::REVIEWER) return $this->accessReviewer;
-		else if($role==User::SUPERVISOR) return true;
+	public function isDocumentationAllowedForRole(String $role) {
+		if ($role == User::INVESTIGATOR) return $this->accessInvestigator;
+		else if ($role == User::CONTROLLER) return $this->accessController;
+		else if ($role == User::MONITOR) return $this->accessMonitor;
+		else if ($role == User::REVIEWER) return $this->accessReviewer;
+		else if ($role == User::SUPERVISOR) return true;
 		else return false;
 	}
     
@@ -78,8 +78,8 @@ class Documentation {
 	 * @param bool $reviewer
 	 * @param bool $deleted
 	 */
-	public static function updateDocumentation(PDO $linkpdo, int $idDocumentation, bool $investigator, bool $monitor, bool $controller, bool $reviewer, bool $deleted){
-		$update = $linkpdo->prepare('UPDATE documentation
+	public static function updateDocumentation(PDO $linkpdo, int $idDocumentation, bool $investigator, bool $monitor, bool $controller, bool $reviewer, bool $deleted) {
+		$update=$linkpdo->prepare('UPDATE documentation
                                     SET investigator = :investigator,
                                         controller = :controller,
                                         monitor = :monitor,
@@ -92,7 +92,7 @@ class Documentation {
 			'monitor' => intval($monitor),
 			'reviewer' =>intval($reviewer),
 			'deleted'=>intval($deleted),
-			'id' => $idDocumentation ));
+			'id' => $idDocumentation));
 	}
     
 	/**
@@ -102,8 +102,8 @@ class Documentation {
 	 * @param String $study
 	 * @param String $version
 	 */
-	public static function insertDocumentation(PDO $linkpdo, String $uploadedFilename, String $study, String $version){
-		$insertion = $linkpdo->prepare('INSERT INTO documentation (name, document_date, study, version)
+	public static function insertDocumentation(PDO $linkpdo, String $uploadedFilename, String $study, String $version) {
+		$insertion=$linkpdo->prepare('INSERT INTO documentation (name, document_date, study, version)
 																			VALUES (:name, :doc_date, :study, :version)');
 		$insertion->execute(array(
 			'name' => $uploadedFilename,

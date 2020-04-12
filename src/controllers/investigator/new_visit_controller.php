@@ -37,6 +37,6 @@ if (isset($_SESSION['username']) && $_SESSION['role'] == User::INVESTIGATOR && $
     
 	require 'views/investigator/new_visit_view.php';
     
-} else {
+}else {
 	require 'includes/no_access.php';
 }

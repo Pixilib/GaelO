@@ -172,7 +172,7 @@
 			?>
             <span class="badge badge-info"><?=$modality?></span>
             <?php
-			foreach($visitsName as $visitName){
+			foreach ($visitsName as $visitName) {
 				?>
                 <button type="button" data-modality=<?=$modality?> data-visitname="<?=$visitName?>" class="btn uploadManagerVisitBtn"><?=$visitName?> </button>
                 <?php

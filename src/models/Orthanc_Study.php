@@ -43,21 +43,21 @@
 	private $url;
 	private $context;
 	
-	public function __construct($studyOrthancId, $url, $context){
+	public function __construct($studyOrthancId, $url, $context) {
 		//Set http adress of orthanc
-		if($url==null && $context==null){
+		if ($url == null && $context == null) {
 			$linkpdo=Session::getLinkpdo();
 	        
 			$this->url=GAELO_ORTHANC_PACS_ADDRESS.':'.GAELO_ORTHANC_PACS_PORT;
-			$this->context = array(
+			$this->context=array(
 					'http' => array(
-						'header'  => "Authorization: Basic " . base64_encode( GAELO_ORTHANC_PACS_LOGIN.':'.GAELO_ORTHANC_PACS_PASSWORD )
+						'header'  => "Authorization: Basic ".base64_encode(GAELO_ORTHANC_PACS_LOGIN.':'.GAELO_ORTHANC_PACS_PASSWORD)
 					)
 			);
 	    	
-		}else{
+		}else {
 			$this->url=$url;
-			$this->context = $context;	
+			$this->context=$context;	
 		}
 	    
 		//put current study orthanc ID in memory
@@ -68,9 +68,9 @@
 	/**
 	 *Get study related tags and store them in this object
 	 */
-	public function retrieveStudyData(){
-		$context  = stream_context_create($this->context);
-		$json = file_get_contents($this->url.'/studies/'.$this->studyOrthancID, false, $context);
+	public function retrieveStudyData() {
+		$context=stream_context_create($this->context);
+		$json=file_get_contents($this->url.'/studies/'.$this->studyOrthancID, false, $context);
 		//On le decode
 		$studiesJson=json_decode($json, true);
 		//On cree un object patient avec les information
@@ -95,9 +95,9 @@
 	/**
 	 *Get study statistics info (size in MB, number of instances) and store them in this object
 	 */
-	private function retrieveStudyStatistics(){
-		$context  = stream_context_create($this->context);
-		$json = file_get_contents($this->url.'/studies/'.$this->studyOrthancID.'/statistics/', false, $context);
+	private function retrieveStudyStatistics() {
+		$context=stream_context_create($this->context);
+		$json=file_get_contents($this->url.'/studies/'.$this->studyOrthancID.'/statistics/', false, $context);
 		//On le decode
 		$statisticsJson=json_decode($json, true);
 		$this->countInstances=$statisticsJson['CountInstances'];

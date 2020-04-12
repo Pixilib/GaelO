@@ -25,11 +25,11 @@ $linkpdo=Session::getLinkpdo();
 $userObject=new User($_SESSION['username'], $linkpdo);
 $investigatorAccess=$userObject->isRoleAllowed($_SESSION['study'], User::INVESTIGATOR);
 
-if ( $investigatorAccess && $_SESSION['role'] == User::INVESTIGATOR) {
+if ($investigatorAccess && $_SESSION['role'] == User::INVESTIGATOR) {
     
 	$studyObject=new Study($_SESSION['study'], $linkpdo);
     
-	$answer= $studyObject->isOriginalOrthancNeverKnown($_POST['originalOrthancID']);
+	$answer=$studyObject->isOriginalOrthancNeverKnown($_POST['originalOrthancID']);
   
 	//Output results
 	echo(json_encode($answer));

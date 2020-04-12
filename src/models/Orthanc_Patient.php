@@ -31,10 +31,10 @@ class Orthanc_Patient {
 	private $context;
 	
 	
-	public function __construct($patientOrthancID, $url, $context){
+	public function __construct($patientOrthancID, $url, $context) {
 		//Set orthanc address
 		$this->url=$url;
-		$this->context = $context;
+		$this->context=$context;
 		//Set current patient Orthanc ID
 		$this->patientOrthancID=$patientOrthancID;
 	}
@@ -42,9 +42,9 @@ class Orthanc_Patient {
 	/** 
 	 * Get and store the main tags of the patient level
 	 */
-	public function retrievePatientData(){
-		$context  = stream_context_create($this->context);
-		$json = file_get_contents($this->url.'/patients/'.$this->patientOrthancID, false, $context);
+	public function retrievePatientData() {
+		$context=stream_context_create($this->context);
+		$json=file_get_contents($this->url.'/patients/'.$this->patientOrthancID, false, $context);
 		$patientJson=json_decode($json, true);
 		//Add needed informations in this object
 		$this->patientName=$patientJson['MainDicomTags']['PatientName'];

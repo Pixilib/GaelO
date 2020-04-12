@@ -22,55 +22,55 @@ $linkpdo=Session::getLinkpdo();
 
 if (isset($_SESSION['admin'])) {
     
-	if(isset($_POST['confirmer']) ){
+	if (isset($_POST['confirmer'])) {
         
 		//process the form
 		//Get post data
-		$status = $_POST['statut'];
-		$old_status = $_POST['old_status'];
+		$status=$_POST['statut'];
+		$old_status=$_POST['old_status'];
 		$username=$_POST['username'];
 		$last_name=$_POST['last_name'];
-		$first_name = $_POST['first_name'];
-		$email = $_POST['email'];
+		$first_name=$_POST['first_name'];
+		$email=$_POST['email'];
         
 		$administrator=false;
-		if(isset($_POST['administrator'])){
+		if (isset($_POST['administrator'])) {
 			$administrator=true;
 		}
         
-		if(!isset($_POST['profile'])){
-			$role = "@";
-		} else{
-			$role = $_POST['profile']; //format nameRole@nameStudy
+		if (!isset($_POST['profile'])) {
+			$role="@";
+		}else {
+			$role=$_POST['profile']; //format nameRole@nameStudy
 		}
         
-		$mainCenterCode = $_POST['main_center'];
+		$mainCenterCode=$_POST['main_center'];
         
 		$newAffiliatedCenters=[];
-		if(isset($_POST['afficheur_centre'])){
-			$newAffiliatedCenters = $_POST['afficheur_centre'];
+		if (isset($_POST['afficheur_centre'])) {
+			$newAffiliatedCenters=$_POST['afficheur_centre'];
 		}
         
-		$phone = $_POST['phone'];
-		$job = $_POST['job'];
+		$phone=$_POST['phone'];
+		$job=$_POST['job'];
         
-		$orthancAddress = $_POST['orthancAddress'];
-		$orthancLogin = $_POST['orthancLogin'];
-		$orthancPassword = $_POST['orthancPassword'];
+		$orthancAddress=$_POST['orthancAddress'];
+		$orthancLogin=$_POST['orthancLogin'];
+		$orthancPassword=$_POST['orthancPassword'];
         
 		//Erase character that are not number
-		$phone = preg_replace("/[^0-9]/", "", $phone);
+		$phone=preg_replace("/[^0-9]/", "", $phone);
         
 		//Chech that data are complete and write to the database
-		if(empty($_POST['username']) || empty($_POST['last_name']) || empty($_POST['first_name']) || empty($_POST['email']) || !is_numeric($_POST['main_center'])){
+		if (empty($_POST['username']) || empty($_POST['last_name']) || empty($_POST['first_name']) || empty($_POST['email']) || !is_numeric($_POST['main_center'])) {
 			$answer="Form Uncomplete";
 		}
-		else if(! preg_match('/^[a-z0-9\-_.]+@[a-z0-9\-_.]+\.[a-z]{2,4}$/i', $email)){
+		else if (!preg_match('/^[a-z0-9\-_.]+@[a-z0-9\-_.]+\.[a-z]{2,4}$/i', $email)) {
 			$answer="Email Not Valid";
 		}
         
 		//Write to the database
-		else{
+		else {
             
 			$userObject=new User($username, $linkpdo);
 			$userObject->updateUser($last_name, $first_name, $email, $phone,
@@ -78,11 +78,11 @@ if (isset($_SESSION['admin'])) {
             
 			//Update roles
 			$array=[];
-			if(isset($_POST['profile'])){
-				foreach($role as $valeur){
+			if (isset($_POST['profile'])) {
+				foreach ($role as $valeur) {
 					// Split role/Study string into two values
-					$valeur2 = explode("@", $valeur);
-					$array[$valeur2[1]][] = $valeur2[0];
+					$valeur2=explode("@", $valeur);
+					$array[$valeur2[1]][]=$valeur2[0];
 				}
                 
 				$arrayBDD=$userObject->getRolesMap();
@@ -92,14 +92,14 @@ if (isset($_SESSION['admin'])) {
 				$delete_roles=[];
 				//for common study, list all role to add and to remove
 				$commonstudies=@array_intersect_assoc($arrayBDD, $array);
-				foreach($commonstudies as $etude=>$role){
-					$insert_roles[$etude] = array_diff($array[$etude] , $arrayBDD[$etude] );
-					$delete_roles[$etude] = array_diff($arrayBDD[$etude], $array[$etude] );
+				foreach ($commonstudies as $etude=>$role) {
+					$insert_roles[$etude]=array_diff($array[$etude], $arrayBDD[$etude]);
+					$delete_roles[$etude]=array_diff($arrayBDD[$etude], $array[$etude]);
 				}
 				//Study that has no role anymore
-				$studyRoleToDelete = @array_diff_assoc($arrayBDD, $array);
+				$studyRoleToDelete=@array_diff_assoc($arrayBDD, $array);
 				//new studies with at least one role
-				$studyRoleToCreate = @array_diff_assoc($array ,$arrayBDD);
+				$studyRoleToCreate=@array_diff_assoc($array, $arrayBDD);
                 
 				//writing in database
 				insertRoleToUser($userObject, $insert_roles);
@@ -111,13 +111,13 @@ if (isset($_SESSION['admin'])) {
             
 			//Update affiatied centers
 			$array_center_BDD=$userObject->getAffiliatedCenters();
-			if(empty($array_center_BDD)){
+			if (empty($array_center_BDD)) {
 				$array_center_BDD=[];
 			}
             
 			//Isolate difference between new values and existing value in DB
-			$insert_centers = array_diff($newAffiliatedCenters, $array_center_BDD);
-			$delete_centers = array_diff($array_center_BDD, $newAffiliatedCenters);
+			$insert_centers=array_diff($newAffiliatedCenters, $array_center_BDD);
+			$delete_centers=array_diff($array_center_BDD, $newAffiliatedCenters);
             
 			//Add centers to User
 			foreach ($insert_centers as $centerCode) {
@@ -143,15 +143,15 @@ if (isset($_SESSION['admin'])) {
 			$actionDetails['is_admin']=$administrator;
 			$actionDetails['add_role_to_user']=@array_merge($insert_roles, $studyRoleToCreate);
 			$actionDetails['remove_role_to_user']=@array_merge($delete_roles, $studyRoleToDelete);
-			$actionDetails['orthanc_address'] = $orthancAddress;
-			$actionDetails['orthanc_login'] = $orthancLogin;
-			$actionDetails['orthan_password_length'] = strlen($orthancPassword);
+			$actionDetails['orthanc_address']=$orthancAddress;
+			$actionDetails['orthanc_login']=$orthancLogin;
+			$actionDetails['orthan_password_length']=strlen($orthancPassword);
             
 			Tracker::logActivity($_SESSION['username'], "Administrator", null, null, "Edit User", $actionDetails);
             
 			//If new account status is unconfirmed (passord reset) , send the new password by email
-			if($status == USER::UNCONFIRMED){
-				$new_mdp = substr(uniqid(), 1,10);
+			if ($status == USER::UNCONFIRMED) {
+				$new_mdp=substr(uniqid(), 1, 10);
 				$userObject->setUnconfirmedAccount($new_mdp);
                 
 				$mail=new Send_Email($linkpdo);
@@ -166,9 +166,9 @@ if (isset($_SESSION['admin'])) {
 		//Output answer for Ajax
 		echo(json_encode($answer));
         
-	}else{
+	}else {
         
-		$username = $_GET['username'];
+		$username=$_GET['username'];
         
 		$userObject=new User($username, $linkpdo);
 		//Get all roles available in the database
@@ -188,7 +188,7 @@ if (isset($_SESSION['admin'])) {
 	}
     
 	
-} else {
+}else {
 	require 'includes/no_access.php';
 }
 
@@ -199,14 +199,14 @@ if (isset($_SESSION['admin'])) {
  * @param $hmap_diff_bdd
  * @return boolean
  */
-function deleteRoleToUser(User $userObject, $hmap_diff_bdd){
+function deleteRoleToUser(User $userObject, $hmap_diff_bdd) {
 	try {
 		foreach ($hmap_diff_bdd as $study => $arrayRole) {
-			foreach($arrayRole as $role){
+			foreach ($arrayRole as $role) {
 				$userObject->deleteRole($study, $role);
 			} 
 		}
-	} catch (Exception $e) { }
+	}catch (Exception $e) { }
 }
 
 
@@ -216,12 +216,12 @@ function deleteRoleToUser(User $userObject, $hmap_diff_bdd){
  * @param $hmap_diff_form
  * @return boolean
  */
-function insertRoleToUser(User $userObject, $hmap_diff_form){
+function insertRoleToUser(User $userObject, $hmap_diff_form) {
 	try {
 		foreach ($hmap_diff_form as $study => $arrayRole) {
-			foreach($arrayRole as $role){
+			foreach ($arrayRole as $role) {
 				$userObject->addRole($role, $study);
 			}
 		}
-	} catch (Exception $e) { }
+	}catch (Exception $e) { }
 }

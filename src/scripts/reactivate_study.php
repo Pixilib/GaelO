@@ -27,9 +27,9 @@ $studyOrthancID=new Study_Details($_POST['studyOrthancId'], $linkpdo);
 $userObject=new User($_SESSION['username'], $linkpdo);
 $visitAllowed=$userObject->isVisitAllowed($studyOrthancID->idVisit, $_SESSION['role']);
 
-if ($visitAllowed &&  $_SESSION['role']==User::SUPERVISOR ) {
+if ($visitAllowed && $_SESSION['role'] == User::SUPERVISOR) {
     
-	try{
+	try {
 		$studyOrthancID->changeDeletionStatus(false);
 		//Log Activity
 		$visitObject=new Visit($studyOrthancID->idVisit, $linkpdo);
@@ -41,13 +41,13 @@ if ($visitAllowed &&  $_SESSION['role']==User::SUPERVISOR ) {
 		$actionDetails['reason']=$_POST['reason'];
 		Tracker::logActivity($_SESSION['username'], $_SESSION['role'], $_SESSION['study'], $studyOrthancID->idVisit, "Change Serie", $actionDetails);
 		$answer=true;
-	}catch (Exception $e){
+	}catch (Exception $e) {
 		$answer=false;
 		error_log($e);
 	}
 
 	echo(json_encode($answer));
 
-} else {
+}else {
 	echo(json_encode(false));
 }

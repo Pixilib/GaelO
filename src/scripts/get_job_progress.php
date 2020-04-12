@@ -25,14 +25,14 @@ $linkpdo=Session::getLinkpdo();
 $userObject=new User($_SESSION['username'], $linkpdo);
 $studyAllowed=$userObject->isRoleAllowed($_SESSION['study'], $_SESSION['role']);
 
-if ($studyAllowed &&  $_SESSION['role']==User::SUPERVISOR ) {
+if ($studyAllowed && $_SESSION['role'] == User::SUPERVISOR) {
 
 	$orthancObject=new Orthanc();
 	$jobInfos=$orthancObject->getJobDetails($_POST['jobId']);
     
 	echo(json_encode($jobInfos));
     
-}else{
+}else {
 	header('HTTP/1.0 403 Forbidden');
 	die('You are not allowed to access this file.');
 }

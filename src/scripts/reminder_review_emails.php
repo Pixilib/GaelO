@@ -27,18 +27,18 @@ $linkpdo=Session::getLinkpdo();
 $userObject=new User($_SESSION['username'], $linkpdo);
 $accessCheck=$userObject->isRoleAllowed($_SESSION['study'], $_SESSION['role']);
 
-if ($accessCheck && $_SESSION['role'] == "Supervisor" ) {
+if ($accessCheck && $_SESSION['role'] == "Supervisor") {
     
-	$reviewdetailsMap=json_decode($_POST['reviewMap'],true);
+	$reviewdetailsMap=json_decode($_POST['reviewMap'], true);
 
 	$emailList=[];
 	$answer['nbReviewEmailed']=0;
-	foreach($reviewdetailsMap as $key => $value){
+	foreach ($reviewdetailsMap as $key => $value) {
 		//If Review conclusion not reached
-		if($value['reviewStatus']!= "Done" ){
+		if ($value['reviewStatus'] != "Done") {
 			$missingReviewers=$value['reviewNotDoneBy'];
             
-			foreach ($missingReviewers as $reviewer){
+			foreach ($missingReviewers as $reviewer) {
 				$missingReview['patientNumber']=$value['patientNumber'];
 				$missingReview['visit']=$value['visit'];
 				$missingReview['acquisitionDate']=$value['acquisitionDate'];
@@ -57,7 +57,7 @@ if ($accessCheck && $_SESSION['role'] == "Supervisor" ) {
     
 	$answer['nbReviewersEmailed']=0;
 	//Prepare and send email for each reviewer having missing reviews
-	foreach ($emailList as $user=>$missingReviews){
+	foreach ($emailList as $user=>$missingReviews) {
         
 	   $table="<table>
                 <thead>
@@ -70,7 +70,7 @@ if ($accessCheck && $_SESSION['role'] == "Supervisor" ) {
                 </thead>
 			    <tbody>";
        
-		foreach ($missingReviews as $missingReview){
+		foreach ($missingReviews as $missingReview) {
 			$table=$table."<tr>
             					<th>".$missingReview['patientNumber']."</th>
             					<th>".$missingReview['visit']."</th>
@@ -92,7 +92,7 @@ if ($accessCheck && $_SESSION['role'] == "Supervisor" ) {
 	$answer['status']="Success";
 	echo(json_encode($answer));
     
-}else{
+}else {
 	$answer['status']="No Access";
 	echo(json_encode($answer));
 }

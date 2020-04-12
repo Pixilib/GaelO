@@ -18,20 +18,20 @@
  */
 
 Session::checkSession(true, true);
-$linkpdo = Session::getLinkpdo();
+$linkpdo=Session::getLinkpdo();
 
-$userObject= new User($_SESSION['username'], $linkpdo);
-$permissionCheck = $userObject->isRoleAllowed($_POST['etude'], User::SUPERVISOR);
+$userObject=new User($_SESSION['username'], $linkpdo);
+$permissionCheck=$userObject->isRoleAllowed($_POST['etude'], User::SUPERVISOR);
 
 if ($permissionCheck && $_POST['role'] == User::SUPERVISOR) {
 	//If Ok allow study and role and write the session variable
-	$_SESSION['study'] = $_POST['etude'];
-	$_SESSION['role'] = $_POST['role'];
-	$studyObject = new Study($_SESSION['study'], $linkpdo);
+	$_SESSION['study']=$_POST['etude'];
+	$_SESSION['role']=$_POST['role'];
+	$studyObject=new Study($_SESSION['study'], $linkpdo);
 	
 	require 'views/supervisor/supervisor_root_view.php';
 
-} else {
+}else {
 	require 'includes/no_access.php';
 }
 

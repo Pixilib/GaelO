@@ -323,7 +323,7 @@
     	<SELECT name="selectedUsers[]" class="custom-select" size="7" style="width:auto;" multiple >
     	<?php 
 		//on parcourt la BDD res_centre
-		foreach($usersInStudy as $user=>$roles) {
+		foreach ($usersInStudy as $user=>$roles) {
 			echo ('<option value="'.htmlspecialchars($user).'">'.htmlspecialchars($user).'</option>');
 		}
 		?>

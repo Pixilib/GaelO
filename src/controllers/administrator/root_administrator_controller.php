@@ -24,9 +24,9 @@ $linkpdo=Session::getLinkpdo();
 if ($_SESSION['admin']) {
 
 	// Get all availables active studies
-	$etudes = Global_Data::getAllStudies($linkpdo, true);
+	$etudes=Global_Data::getAllStudies($linkpdo, true);
 	require 'views/administrator/root_administrator_view.php';
 
-} else {
+}else {
 	require 'includes/no_access.php';
 }

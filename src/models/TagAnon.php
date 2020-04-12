@@ -26,7 +26,7 @@ class TagAnon {
 	public $choice;
 	public $newValue;
     
-	public function __construct($tag, $choice, $newValue=null){
+	public function __construct($tag, $choice, $newValue=null) {
 		$this->tag=$tag;
 		$this->choice=$choice;
 		$this->newValue=$newValue;

@@ -46,6 +46,6 @@ if ($_SESSION['role'] == User::SUPERVISOR && $permissionCheck && $visitObject->r
     
 	echo(json_encode(true));
     
-} else {
+}else {
 	echo(json_encode(false));
 }

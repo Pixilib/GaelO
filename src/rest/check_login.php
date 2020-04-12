@@ -36,23 +36,23 @@ $linkpdo=Session::getLinkpdo();
 $userObject=new User($username, $linkpdo);
 $passwordCheck=$userObject->isPasswordCorrectAndActivitedAccount($password);
 
-if(!$passwordCheck){
+if (!$passwordCheck) {
     
-	if(!$userObject->isExistingUser){
+	if (!$userObject->isExistingUser) {
 		header('HTTP/1.1 420 Non existing user');
         
-	}else if(!$userObject->passwordCorrect && $userObject->userStatus == User::ACTIVATED && $userObject->passwordDateValide){
+	}else if (!$userObject->passwordCorrect && $userObject->userStatus == User::ACTIVATED && $userObject->passwordDateValide) {
 		header('HTTP/1.1 420 Wrong Password '.$userObject->loginAttempt."/3 wrong attempt");
         
-	} else if(!$userObject->passwordDateValide){
+	}else if (!$userObject->passwordDateValide) {
 		header('HTTP/1.1 420 Outdated Password, go to website to renew it');
         
-	} else if($userObject->userStatus != User::ACTIVATED){
+	}else if ($userObject->userStatus != User::ACTIVATED) {
 		header('HTTP/1.1 420 Account '.$userObject->userStatus);
 	}
     
 	exit();
     
-}else{
+}else {
 	header("HTTP/1.1 200 OK");
 }

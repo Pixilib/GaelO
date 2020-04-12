@@ -24,16 +24,16 @@ use Monolog\Processor\WebProcessor;
 /**
  * Methods that are call by all scripts
  */
-Class Session{
+Class Session {
     
-	public static function checkSession(bool $log=true, bool $writeSession=false){
+	public static function checkSession(bool $log=true, bool $writeSession=false) {
         
-		if(session_status() == PHP_SESSION_NONE) {
+		if (session_status() == PHP_SESSION_NONE) {
 				session_start();
 		}
         
 		//Write logs
-		if($log){
+		if ($log) {
 			isset($_POST['id_visit']) ? $logIdVisit=$_POST['id_visit'] : $logIdVisit='N/A';
 			isset($_POST['patient_num']) ? $logPatientNum=$_POST['patient_num'] : $logPatientNum='N/A';
 			@self::logInfo('Username : '.$_SESSION['username'].
@@ -42,20 +42,20 @@ Class Session{
 		}
 
 		//Check session availability
-		if (isset($_SESSION['LAST_ACTIVITY']) && (time() - $_SESSION['LAST_ACTIVITY'] > 1200)) {
+		if (isset($_SESSION['LAST_ACTIVITY']) && (time()-$_SESSION['LAST_ACTIVITY'] > 1200)) {
 			// last request was more than 30 minutes ago or unexisting
-			session_unset();     // unset $_SESSION variable for the run-time
-			session_destroy();   // destroy session data in storage
+			session_unset(); // unset $_SESSION variable for the run-time
+			session_destroy(); // destroy session data in storage
 			self::redirectAndEndScript();
-		}else if(empty($_SESSION)){
+		}else if (empty($_SESSION)) {
 			//if session already empty
 			self::redirectAndEndScript();
-		}else{
-			$_SESSION['LAST_ACTIVITY'] = time(); // update last activity time stamp
+		}else {
+			$_SESSION['LAST_ACTIVITY']=time(); // update last activity time stamp
 		}
         
 		//If script dosen't need to write on session data, close write to free async ajax request
-		if(!$writeSession){
+		if (!$writeSession) {
 			session_write_close();
 		}
         
@@ -64,7 +64,7 @@ Class Session{
 	/**
 	 * Redirect to index and end script execution
 	 */
-	private static function redirectAndEndScript(){
+	private static function redirectAndEndScript() {
 		echo '<meta http-equiv="Refresh" content="0;/index.php">';
 		exit("Session Lost");
 	}
@@ -74,24 +74,24 @@ Class Session{
 	 * And Fill Php constant parameter
 	 * @return PDO
 	 */
-	public static function getLinkpdo(){
+	public static function getLinkpdo() {
         
 		//Load the config file defining constants
-		if(!defined('DATABASE_HOST')){
+		if (!defined('DATABASE_HOST')) {
 			require_once($_SERVER["DOCUMENT_ROOT"].'/data/_config/config.inc.php');
 		}
         
 		//Instanciate PDO connexion with SSL or not
-		if(DATABASE_SSL){
-			$linkpdo= new PDO('mysql:host='.DATABASE_HOST.';dbname='.DATABASE_NAME.';charset=UTF8', ''.DATABASE_USERNAME.'', ''.DATABASE_PASSWORD.'', self::getSSLPDOArrayOptions() );    
-		}else{
-			$linkpdo= new PDO('mysql:host='.DATABASE_HOST.';dbname='.DATABASE_NAME.';charset=UTF8', ''.DATABASE_USERNAME.'', ''.DATABASE_PASSWORD.'');   
+		if (DATABASE_SSL) {
+			$linkpdo=new PDO('mysql:host='.DATABASE_HOST.';dbname='.DATABASE_NAME.';charset=UTF8', ''.DATABASE_USERNAME.'', ''.DATABASE_PASSWORD.'', self::getSSLPDOArrayOptions());    
+		}else {
+			$linkpdo=new PDO('mysql:host='.DATABASE_HOST.';dbname='.DATABASE_NAME.';charset=UTF8', ''.DATABASE_USERNAME.'', ''.DATABASE_PASSWORD.'');   
 		}
 
 		$linkpdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         
 		//Load preferences from the database
-		if(! defined('GAELO_PATIENT_CODE_LENGHT') ) Session::loadPreferencesInConstants($linkpdo);
+		if (!defined('GAELO_PATIENT_CODE_LENGHT')) Session::loadPreferencesInConstants($linkpdo);
         
 		return $linkpdo;
 	}
@@ -100,8 +100,8 @@ Class Session{
 	 * Options to use SSL connexion
 	 * @return array
 	 */
-	public static function getSSLPDOArrayOptions(){
-		$sslOptions = array(
+	public static function getSSLPDOArrayOptions() {
+		$sslOptions=array(
 			PDO::MYSQL_ATTR_SSL_CA => '',
 			PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT => false
 		);
@@ -113,15 +113,15 @@ Class Session{
 	 * Write log in a daily log file in log folder
 	 * @param string $stringInfo
 	 */
-	public static function logInfo(string $stringInfo){
+	public static function logInfo(string $stringInfo) {
         
-		if(is_writable($_SERVER["DOCUMENT_ROOT"].'/data/logs/')){
+		if (is_writable($_SERVER["DOCUMENT_ROOT"].'/data/logs/')) {
 			// create a log channel
-			$log = new Logger('OpenTrialProcessor');
+			$log=new Logger('OpenTrialProcessor');
 			$log->pushHandler(new RotatingFileHandler($_SERVER["DOCUMENT_ROOT"].'/data/logs/gaelO.log', Logger::INFO));
 			$log->pushProcessor(new WebProcessor());
 			$log->info($stringInfo);
-		}else{
+		}else {
 			error_log("Can't write logs folder");
 		}
 	}
@@ -130,14 +130,14 @@ Class Session{
 	 * Store preference from the database in PHP constants
 	 * @param PDO $linkpdo
 	 */
-	public static function loadPreferencesInConstants(PDO $linkpdo){
+	public static function loadPreferencesInConstants(PDO $linkpdo) {
         
-		$connecter = $linkpdo->prepare('SELECT * FROM preferences');
+		$connecter=$linkpdo->prepare('SELECT * FROM preferences');
 		$connecter->execute();
         
-		$result = $connecter->fetch(PDO::FETCH_ASSOC);
+		$result=$connecter->fetch(PDO::FETCH_ASSOC);
         
-		define('GAELO_PATIENT_CODE_LENGHT',$result['patient_code_length']);
+		define('GAELO_PATIENT_CODE_LENGHT', $result['patient_code_length']);
 		define('GAELO_PLATEFORM_NAME', $result['name']);
 		define('GAELO_ADMIN_EMAIL', $result['admin_email']);
 		define('GAELO_REPLY_TO', $result['email_reply_to']);

@@ -27,26 +27,26 @@ class Visit_Group
 
 	public $linkpdo;
 
-	const GROUP_MODALITY_PET = "PT";
-	const GROUP_MODALITY_CT = "CT";
-	const GROUP_MODALITY_MR = "MR";
+	const GROUP_MODALITY_PET="PT";
+	const GROUP_MODALITY_CT="CT";
+	const GROUP_MODALITY_MR="MR";
 
 	public function __construct(PDO $linkpdo, int $groupId)
 	{
 
-		$this->linkpdo = $linkpdo;
-		$visitGroupQuery = $this->linkpdo->prepare('SELECT * FROM visit_group WHERE id = :groupId');
+		$this->linkpdo=$linkpdo;
+		$visitGroupQuery=$this->linkpdo->prepare('SELECT * FROM visit_group WHERE id = :groupId');
 		$visitGroupQuery->execute(array('groupId' => $groupId));
 
-		$visitGroupData = $visitGroupQuery->fetch(PDO::FETCH_ASSOC);
+		$visitGroupData=$visitGroupQuery->fetch(PDO::FETCH_ASSOC);
 
 		if (empty($visitGroupData)) {
 			throw new Exception('No Visit Group Found');
 		}
 
-		$this->groupId = $visitGroupData['id'];
-		$this->studyName = $visitGroupData['study'];
-		$this->groupModality = $visitGroupData['group_modality'];
+		$this->groupId=$visitGroupData['id'];
+		$this->studyName=$visitGroupData['study'];
+		$this->groupModality=$visitGroupData['group_modality'];
 	}
 
 	/**
@@ -63,13 +63,13 @@ class Visit_Group
 	public function getAllVisitTypesOfGroup(): array
 	{
 
-		$allVisitsType = $this->linkpdo->prepare('SELECT id FROM visit_type WHERE group_id= :groupId ORDER BY visit_order');
+		$allVisitsType=$this->linkpdo->prepare('SELECT id FROM visit_type WHERE group_id= :groupId ORDER BY visit_order');
 		$allVisitsType->execute(array('groupId' => $this->groupId));
-		$allVisits = $allVisitsType->fetchall(PDO::FETCH_COLUMN);
+		$allVisits=$allVisitsType->fetchall(PDO::FETCH_COLUMN);
 
-		$visitTypeArray = [];
+		$visitTypeArray=[];
 		foreach ($allVisits as $visitTypeId) {
-			$visitTypeArray[] = new Visit_Type($this->linkpdo, $visitTypeId);
+			$visitTypeArray[]=new Visit_Type($this->linkpdo, $visitTypeId);
 		}
 
 		return $visitTypeArray;
@@ -88,7 +88,7 @@ class Visit_Group
 	 */
 	public function getStudyVisitManager(): Group_Visit_Manager
 	{
-		$studyObject = new Study($this->studyName, $this->linkpdo);
+		$studyObject=new Study($this->studyName, $this->linkpdo);
 		return new Group_Visit_Manager($studyObject, $this, $this->linkpdo);
 	}
 
@@ -106,7 +106,7 @@ class Visit_Group
 	public static function createVisitGroup(String $studyName, String $groupModality, PDO $linkpdo): Visit_Group
 	{
 
-		$req = $linkpdo->prepare('INSERT INTO visit_group (study,  group_modality)
+		$req=$linkpdo->prepare('INSERT INTO visit_group (study,  group_modality)
                                       VALUES(:studyName, :groupModality)');
 
 		$req->execute(array(
@@ -114,7 +114,7 @@ class Visit_Group
 			'groupModality' => $groupModality
 		));
 
-		$idGroup = $linkpdo->lastInsertId();
+		$idGroup=$linkpdo->lastInsertId();
 
 		return new Visit_Group($linkpdo, $idGroup);
 	}

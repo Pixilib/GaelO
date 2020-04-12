@@ -23,8 +23,8 @@ $linkpdo=Session::getLinkpdo();
 $userObject=new User($_SESSION['username'], $linkpdo);
 $accessCheck=$userObject->isRoleAllowed($_SESSION['study'], $_SESSION['role']);
 
-if ($accessCheck && $_SESSION['role'] == User::SUPERVISOR ) {
-	$username = $_SESSION['username'];
+if ($accessCheck && $_SESSION['role'] == User::SUPERVISOR) {
+	$username=$_SESSION['username'];
     
 	$reminderType="Upload";
 	$reminderType="Investigator Form";
@@ -60,7 +60,7 @@ if ($accessCheck && $_SESSION['role'] == User::SUPERVISOR ) {
 	 */
 
 
-	$message = '<table><tr>
+	$message='<table><tr>
     <th>Patient Number</th>
     <th>Initials</th>
     <th>Birthdate</th>
@@ -68,7 +68,7 @@ if ($accessCheck && $_SESSION['role'] == User::SUPERVISOR ) {
     <th>Theorical Date</th>
     </tr>';
 
-			$message = $message.'<tr>
+			$message=$message.'<tr>
             <td>'.$patientCode.'</td>
             <td>'.$patientDetails['firstname'].$patientDetails['lastname'].'</td>
             <td>'.$patientDetails['birthdate'].'</td>
@@ -77,7 +77,7 @@ if ($accessCheck && $_SESSION['role'] == User::SUPERVISOR ) {
             </tr>';
 
     
-	$message = $message.'</table>';
+	$message=$message.'</table>';
     
 	//Get emails account linked with the current center and respecting the role filter
 	$emails=$emailSender->selectDesinatorEmailsfromCenters($_SESSION['study'], $center, $jobs, $linkpdo);
@@ -88,14 +88,14 @@ if ($accessCheck && $_SESSION['role'] == User::SUPERVISOR ) {
 	$sentEmails++;
 
 
-	$message = $userText."<br> The investigation form has not been completed or validated for these visits.<br>
+	$message=$userText."<br> The investigation form has not been completed or validated for these visits.<br>
     <table>
     <tr>
     <td>Patient Code</td>
     <td>Visit Name</td>
     </tr>";
     
-	foreach ($details as $patientCode=>$visitsType){
+	foreach ($details as $patientCode=>$visitsType) {
 		$message=$message.'<tr>
         <td>'.$patientCode.'</td>
         <td>'.implode(",", $visitsType).'</td>
@@ -104,14 +104,14 @@ if ($accessCheck && $_SESSION['role'] == User::SUPERVISOR ) {
     
 	$message=$message.'</table>';
 	//List the destinators matching center and jobs requirement
-	$emails=$emailSender->selectDesinatorEmailsfromCenters($_SESSION['study'],$center, $jobs, $linkpdo);
+	$emails=$emailSender->selectDesinatorEmailsfromCenters($_SESSION['study'], $center, $jobs, $linkpdo);
 	//Send the email
 	$emailSender->setMessage($message);
 	$emailSender->sendEmail($emails, "Reminder : Missing Investigator Form", $emailSender->getUserEmails($username));
 	$sentEmails++;
 
 
-	$message = $userText."<br> A corrective action was asked, thanks for doing the corrective action.<br>
+	$message=$userText."<br> A corrective action was asked, thanks for doing the corrective action.<br>
     <table>
     <tr>
     <td>Patient Code</td>

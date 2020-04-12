@@ -52,12 +52,12 @@ if ($_SESSION['role'] == User::SUPERVISOR && $permissionsCheck) {
 			$actionDetails['reason']=$reason;
 			Tracker::logActivity($username, $_SESSION['role'], $study, $visitObject->id_visit, "Unlock Form", $actionDetails);
 			$answer=true;
-		}catch (Exception $e){
+		}catch (Exception $e) {
 			$answer=false;
 			error_log($e);			
 		}
 		echo(json_encode($answer));
 
-} else {
+}else {
 	echo(json_encode(false));
 }

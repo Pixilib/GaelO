@@ -19,9 +19,9 @@
  */
 function build_patient_visit_table(Patient $patient) {
 	if ($patient->patientWithdraw)
-		$patientStatus = "Withdrawn";
+		$patientStatus="Withdrawn";
 	else
-		$patientStatus = "Included";
+		$patientStatus="Included";
     
 	$patientCenter=$patient->getPatientCenter();
 	?>
@@ -89,9 +89,9 @@ function build_visit_details_table(array $visitObjects, string $role) { ?>
 			</tr>
         	<?php 
 			foreach ($visitObjects as $visitObject) {
-				$numberOfSeries = count($visitObject->getSeriesOrthancID());
+				$numberOfSeries=count($visitObject->getSeriesOrthancID());
                 
-				if ($numberOfSeries == 0) $numberOfSeries = "Not Uploaded";
+				if ($numberOfSeries == 0) $numberOfSeries="Not Uploaded";
 				?>    
                 <tr>
 					 <td><?=$visitObject->visitGroupObject->groupModality?></td>
@@ -103,7 +103,7 @@ function build_visit_details_table(array $visitObjects, string $role) { ?>
         	         <td><?=$numberOfSeries?></td>
         	         <td><?=$visitObject->acquisitionDate?></td>
                 <?php 
-				if ($role == User::INVESTIGATOR && (in_array($visitObject->stateQualityControl, array(Visit::QC_NOT_DONE, Visit::QC_CORRECTIVE_ACTION_ASKED)) ) ) {
+				if ($role == User::INVESTIGATOR && (in_array($visitObject->stateQualityControl, array(Visit::QC_NOT_DONE, Visit::QC_CORRECTIVE_ACTION_ASKED)))) {
 					?>
         			<td>
         				<a href=scripts/delete_visit.php?id_visit=<?=$visitObject->id_visit?> class="ajaxLinkConfirm">

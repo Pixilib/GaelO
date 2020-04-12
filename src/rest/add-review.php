@@ -30,7 +30,7 @@ $id_visit=$data['id_visit'];
 // Check reviewer's permissions
 $visitAccessCheck=$userObject->isVisitAllowed($id_visit, User::REVIEWER);
 
-if($visitAccessCheck) {
+if ($visitAccessCheck) {
 	//Instanciate the specific object for review management
 	$visitObject=new Visit($id_visit, $linkpdo);
 	$ReviewObect=$visitObject->getFromProcessor(false, $username);
@@ -39,7 +39,7 @@ if($visitAccessCheck) {
 	header("Content-Type: application/json; charset=UTF-8");
 	echo(json_encode($answer));
 	
-} else{
+}else {
 	header('HTTP/1.0 403 Forbidden');
 }
 

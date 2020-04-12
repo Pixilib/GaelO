@@ -22,10 +22,10 @@ $linkpdo=Session::getLinkpdo();
 
 if ($_SESSION['admin']) {
     
-	$trackerAdministrator = Tracker::getTrackerByRoleStudy(User::ADMINISTRATOR, $linkpdo);
+	$trackerAdministrator=Tracker::getTrackerByRoleStudy(User::ADMINISTRATOR, $linkpdo);
     
 	require 'views/administrator/tracker_admin_view.php';
     
-}else{
+}else {
 	require 'includes/no_access.php';
 }

@@ -36,10 +36,10 @@ if ($_SESSION['role'] == User::SUPERVISOR && $permissionsCheck) {
 	$visitTypeObject=$studyObject->getSpecificGroup($modality)->getVisitType($visitName);
 
 	$studyVisitManager=$studyObject->getStudySpecificGroupManager($modality);
-	$patientStatus = $studyVisitManager->getPatientVisitStatusForVisitType($visitTypeObject);
+	$patientStatus=$studyVisitManager->getPatientVisitStatusForVisitType($visitTypeObject);
     
 	echo(json_encode($patientStatus));
     
-}else{
+}else {
 	echo(json_encode("No Access"));
 }

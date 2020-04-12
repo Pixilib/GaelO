@@ -23,20 +23,20 @@ $linkpdo=Session::getLinkpdo();
 $userObject=new User($_SESSION['username'], $linkpdo);
 $accessCheck=$userObject->isRoleAllowed($_SESSION['study'], $_SESSION['role']);
 
-if ($accessCheck && $_SESSION['role'] == User::SUPERVISOR ) {
+if ($accessCheck && $_SESSION['role'] == User::SUPERVISOR) {
 	$askedRole=ucfirst($_POST['role']);
-	if(in_array($askedRole, array(User::INVESTIGATOR, user::CONTROLLER, user::SUPERVISOR, User::REVIEWER))){
+	if (in_array($askedRole, array(User::INVESTIGATOR, user::CONTROLLER, user::SUPERVISOR, User::REVIEWER))) {
 		$trackerData=Tracker::getTrackerByRoleStudy($askedRole, $linkpdo, $_SESSION['study']);
 		require 'views/supervisor/tracker/tracker_script.php';
 		require 'views/supervisor/tracker/tracker_'.(strtolower($askedRole)).'.php';
-	} else if($askedRole=="Message"){
+	}else if ($askedRole == "Message") {
 		$trackerMessages=Tracker::getMessageStudy($_SESSION['study'], $linkpdo);
 		require 'views/supervisor/tracker/tracker_script.php';
 		require 'views/supervisor/tracker/tracker_message.php';
-	}else{
+	}else {
 		require 'includes/no_access.php';
 	}
     
-}else{
+}else {
 	require 'includes/no_access.php';
 }

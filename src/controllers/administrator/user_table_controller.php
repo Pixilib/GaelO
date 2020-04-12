@@ -22,17 +22,17 @@ $linkpdo=Session::getLinkpdo();
 
 if ($_SESSION['admin']) {
 	
-	$_SESSION['study']= $_POST['study'];
+	$_SESSION['study']=$_POST['study'];
 	//Get users data
-	if($_SESSION['study'] == "All Studies"){
+	if ($_SESSION['study'] == "All Studies") {
 		$usersObjects=Global_Data::getAllUsers($linkpdo);
-	}else{
+	}else {
 		$studyObject=new Study($_SESSION['study'], $linkpdo);
 		$usersObjects=$studyObject->getUsersWithRoleInStudy();
 	}
 	
 	require 'views/administrator/user_table_view.php';
 
-} else {
+}else {
 	require 'includes/no_access.php';
 }

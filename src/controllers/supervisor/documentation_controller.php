@@ -22,11 +22,11 @@ $linkpdo=Session::getLinkpdo();
 $userObject=new User($_SESSION['username'], $linkpdo);
 $accessCheck=$userObject->isRoleAllowed($_SESSION['study'], $_SESSION['role']);
 
-if ($accessCheck && $_SESSION['role'] == User::SUPERVISOR ) {
+if ($accessCheck && $_SESSION['role'] == User::SUPERVISOR) {
 	$studyObject=new Study($_SESSION['study'], $linkpdo);
 	$documentationObjects=$studyObject->getDocumentation(User::SUPERVISOR);
     
-	if(isset($_POST['validate'])){
+	if (isset($_POST['validate'])) {
 
 		$actionDetails=[];
         
@@ -39,23 +39,23 @@ if ($accessCheck && $_SESSION['role'] == User::SUPERVISOR ) {
 			$reviewerPermissions=false;
 			$deleted=false;
             
-			if(isset($_POST['inv'.$documentation->documentId])){
+			if (isset($_POST['inv'.$documentation->documentId])) {
 				$investigatorPermissions=true;
 			}
             
-			if(isset($_POST['cont'.$documentation->documentId])){
+			if (isset($_POST['cont'.$documentation->documentId])) {
 				$controllerPermissions=true;
 			}
             
-			if(isset($_POST['mon'.$documentation->documentId])){
+			if (isset($_POST['mon'.$documentation->documentId])) {
 				$monitorPermissions=true;
 			}
             
-			if(isset($_POST['rev'.$documentation->documentId])){
+			if (isset($_POST['rev'.$documentation->documentId])) {
 				$reviewerPermissions=true;
 			}
             
-			if(isset($_POST['deleted'.$documentation->documentId])){
+			if (isset($_POST['deleted'.$documentation->documentId])) {
 				$deleted=true;
 			}
             
@@ -78,13 +78,13 @@ if ($accessCheck && $_SESSION['role'] == User::SUPERVISOR ) {
 		Tracker::logActivity($_SESSION['username'], User::SUPERVISOR, $_SESSION['study'], null, "Update Documentation", $actionDetails);
 		echo(json_encode("Success"));
         
-	}else{
+	}else {
 
 		require 'views/supervisor/documentation_view.php';
         
 	}
 
     
-}else{
+}else {
 	require 'includes/no_access.php';
 }

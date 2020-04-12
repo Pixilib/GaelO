@@ -18,38 +18,38 @@
  * List all Visit waiting reviews for the user accross all studies
  */
 
-require_once($_SERVER['DOCUMENT_ROOT'] . '/rest/check_login.php');
+require_once($_SERVER['DOCUMENT_ROOT'].'/rest/check_login.php');
 
-$visitsResults = [];
+$visitsResults=[];
 
-$possibleStudyList = $userObject->getRolesMap();
+$possibleStudyList=$userObject->getRolesMap();
 
 foreach ($possibleStudyList as $study => $roles) {
 	//In Each study with role consider studies where the user is reviewer
 	if (in_array(User::REVIEWER, $roles)) {
 
 		//Get Tree for role reviewer
-		$studyObject = new Study($study, $linkpdo);
-		$treeObject = new Tree(User::REVIEWER, $username, $study, $linkpdo);
-		$treeItemArray = $treeObject->buildTree();
+		$studyObject=new Study($study, $linkpdo);
+		$treeObject=new Tree(User::REVIEWER, $username, $study, $linkpdo);
+		$treeItemArray=$treeObject->buildTree();
 
 		foreach ($treeItemArray as $item) {
 
 			if ($item['level'] == 'visit') {
 
 				//create a patient entry
-				$visitObject = new Visit($item['id'], $linkpdo);
-				$visitDetails['patientCode'] = $visitObject->patientCode;
-				$visitDetails['idVisit'] = $visitObject->id_visit;
-				$visitDetails['visitType'] = $visitObject->visitType;
-				$visitDetails['visitStatus'] = $visitObject->reviewStatus;
-				$visitDetails['visitModality'] = $visitObject->visitGroupObject->groupModality;
+				$visitObject=new Visit($item['id'], $linkpdo);
+				$visitDetails['patientCode']=$visitObject->patientCode;
+				$visitDetails['idVisit']=$visitObject->id_visit;
+				$visitDetails['visitType']=$visitObject->visitType;
+				$visitDetails['visitStatus']=$visitObject->reviewStatus;
+				$visitDetails['visitModality']=$visitObject->visitGroupObject->groupModality;
 
-				$dicomDetailsObject = $visitObject->getStudyDicomDetails();
-				$visitDetails['studyDate'] = $dicomDetailsObject->studyAcquisitionDate;
-				$visitDetails['studyUID'] = $dicomDetailsObject->studyUID;
+				$dicomDetailsObject=$visitObject->getStudyDicomDetails();
+				$visitDetails['studyDate']=$dicomDetailsObject->studyAcquisitionDate;
+				$visitDetails['studyUID']=$dicomDetailsObject->studyUID;
 
-				$visitsResults[$study][] = $visitDetails;
+				$visitsResults[$study][]=$visitDetails;
 			}
 		}
 

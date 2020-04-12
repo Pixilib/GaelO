@@ -32,21 +32,21 @@ Class Orthanc {
 	 * Build connexion string in Orthanc, boolean to connect with Orthanc Exposed or Orthanc PACS
 	 * @param boolean $exposed
 	 */
-	public function __construct(bool $exposed=false){
+	public function __construct(bool $exposed=false) {
 		//Set Time Limit at 3H as operation could be really long
 		set_time_limit(10800);
 		//Set address of Orthanc server
-		if($exposed){
+		if ($exposed) {
 			$this->url=GAELO_ORTHANC_EXPOSED_INTERNAL_ADDRESS.':'.GAELO_ORTHANC_EXPOSED_INTERNAL_PORT;
-			$this->context = array(
+			$this->context=array(
 				'http' => array(
-					'header'  => "Authorization: Basic " . base64_encode(GAELO_ORTHANC_EXPOSED_INTERNAL_LOGIN.':'.GAELO_ORTHANC_EXPOSED_INTERNAL_PASSWORD)
+					'header'  => "Authorization: Basic ".base64_encode(GAELO_ORTHANC_EXPOSED_INTERNAL_LOGIN.':'.GAELO_ORTHANC_EXPOSED_INTERNAL_PASSWORD)
 	   			));
-		}else{
+		}else {
 			$this->url=GAELO_ORTHANC_PACS_ADDRESS.':'.GAELO_ORTHANC_PACS_PORT;
-			$this->context = array(
+			$this->context=array(
 	   			'http' => array(
-	   				'header'  => "Authorization: Basic " . base64_encode(GAELO_ORTHANC_PACS_LOGIN.':'.GAELO_ORTHANC_PACS_PASSWORD)
+	   				'header'  => "Authorization: Basic ".base64_encode(GAELO_ORTHANC_PACS_LOGIN.':'.GAELO_ORTHANC_PACS_PASSWORD)
 	   			) );
 	   }
 
@@ -56,9 +56,9 @@ Class Orthanc {
 	 * Return list of Peers declared in Orthanc
 	 * @return mixed
 	 */
-	public function getPeers(){
-		$context =stream_context_create($this->context);
-		$json = file_get_contents($this->url.'/peers/',false, $context);
+	public function getPeers() {
+		$context=stream_context_create($this->context);
+		$json=file_get_contents($this->url.'/peers/', false, $context);
 		$peers=json_decode($json, true);
 		return $peers;
 	}
@@ -93,16 +93,16 @@ Class Orthanc {
 				
 		);
 		
-		$opts = array('http' =>
+		$opts=array('http' =>
 				array(
 						'method'  => 'POST',
 						'content' => json_encode($query),
-						'header'=>  ['Content-Type: application/json Accept: application/json ',$this->context['http']['header']]
+						'header'=>  ['Content-Type: application/json Accept: application/json ', $this->context['http']['header']]
 				)
 		);
 
-		$context  = stream_context_create($opts);
-		$resultJson = file_get_contents($this->url.'/tools/find', false, $context);
+		$context=stream_context_create($opts);
+		$resultJson=file_get_contents($this->url.'/tools/find', false, $context);
 		$result=json_decode($resultJson);
 		
 		return $result;
@@ -113,26 +113,26 @@ Class Orthanc {
 	 * @param array $uidList
 	 * @return string temporary file path
 	 */
-	public function getZipTempFile(array $uidList){
+	public function getZipTempFile(array $uidList) {
 	   
-		if( !is_array($uidList)){
+		if (!is_array($uidList)) {
 			$uidList=array($uidList);
 		}
 	    
-		$opts = array('http' =>
+		$opts=array('http' =>
 			array(
 				'method'  => 'POST',
 				'content' => json_encode($uidList),
 				'timeout' => 3600,
-				'header'=>  ['Content-Type: application/json', 'Accept: application/zip',$this->context['http']['header'] ]
+				'header'=>  ['Content-Type: application/json', 'Accept: application/zip', $this->context['http']['header']]
 			)
 		);
 	    
-		$context = stream_context_create($opts);
+		$context=stream_context_create($opts);
 	    
- 		$temp = tempnam(ini_get('upload_tmp_dir'), 'TMP_');
+ 		$temp=tempnam(ini_get('upload_tmp_dir'), 'TMP_');
 	    
-		$nbbytes=file_put_contents($temp , fopen($this->url.'/tools/create-archive','rb', false, $context));
+		$nbbytes=file_put_contents($temp, fopen($this->url.'/tools/create-archive', 'rb', false, $context));
 	    
 		return $temp;
 	}
@@ -143,17 +143,17 @@ Class Orthanc {
 	 * @param  $level
 	 * @param  $uidList
 	 */
-	public function deleteFromOrthanc(string $level, string $uid){
+	public function deleteFromOrthanc(string $level, string $uid) {
 	    
-		$opts = array('http' =>
+		$opts=array('http' =>
 			array(
 				'method'  => 'DELETE',
-				'header'=>  ['Content-Type: application/json Accept: application/json',$this->context['http']['header']]
+				'header'=>  ['Content-Type: application/json Accept: application/json', $this->context['http']['header']]
 			)
 		);
 	    
-		$context  = stream_context_create($opts);
-		$result = file_get_contents($this->url.'/'.$level.'/'.$uid, false, $context);
+		$context=stream_context_create($opts);
+		$result=file_get_contents($this->url.'/'.$level.'/'.$uid, false, $context);
 	    
 	}
 	
@@ -165,21 +165,21 @@ Class Orthanc {
 	 * @param string $password
 	 * @return mixed
 	 */
-	public function addPeer(string $name , string $url, string $username, string $password){
+	public function addPeer(string $name, string $url, string $username, string $password) {
 	    
 		$peerValues['Username']=$username;
 		$peerValues['Password']=$password;
 		$peerValues['Url']=$url;
-		$opts = array('http' =>
+		$opts=array('http' =>
 			array(
 				'method'  => 'PUT',
 				'content' => json_encode($peerValues),
-				'header'=>  ['Content-Type: application/json Accept: application/json ',$this->context['http']['header']]
+				'header'=>  ['Content-Type: application/json Accept: application/json ', $this->context['http']['header']]
 			)
 		);
 	    
-		$context  = stream_context_create($opts);
-		$resultJson = file_get_contents($this->url.'/peers/'.$name, false, $context);
+		$context=stream_context_create($opts);
+		$resultJson=file_get_contents($this->url.'/peers/'.$name, false, $context);
 	    
 		$result=json_decode($resultJson);
 		return $result;
@@ -190,17 +190,17 @@ Class Orthanc {
 	 * Remove Peer declaration from Orthanc
 	 * @param string $name
 	 */
-	public function removePeer(string $name){
+	public function removePeer(string $name) {
 	    
-		$opts = array('http' =>
+		$opts=array('http' =>
 			array(
 				'method'  => 'DELETE',
-				'header'=>  ['Content-Type: application/json Accept: application/json ',$this->context['http']['header']]
+				'header'=>  ['Content-Type: application/json Accept: application/json ', $this->context['http']['header']]
 			)
 		);
 	    
-		$context  = stream_context_create($opts);
-		$resultJson = file_get_contents($this->url.'/peers/'.$name, false, $context);
+		$context=stream_context_create($opts);
+		$resultJson=file_get_contents($this->url.'/peers/'.$name, false, $context);
 	    
 		$result=json_decode($resultJson);
 	    
@@ -210,11 +210,11 @@ Class Orthanc {
 	/**
 	 * Remove all peers from orthanc
 	 */
-	public function removeAllPeers(){
+	public function removeAllPeers() {
 	    
 		$peers=$this->getPeers();
 	    
-		foreach ($peers as $peer){
+		foreach ($peers as $peer) {
 			$this->removePeer($peer);
 		}
 	    
@@ -225,12 +225,12 @@ Class Orthanc {
 	 * @param string $peer
 	 * @return boolean
 	 */
-	public function isPeerAccelerated(string $peer){
-		$context =stream_context_create($this->context);
-		$json = file_get_contents($this->url.'/transfers/peers/',false, $context);
+	public function isPeerAccelerated(string $peer) {
+		$context=stream_context_create($this->context);
+		$json=file_get_contents($this->url.'/transfers/peers/', false, $context);
 		$peersTest=json_decode($json, true);
 	    
-		if($peersTest[$peer]=="installed"){
+		if ($peersTest[$peer] == "installed") {
 			return true;
 		}
 	    
@@ -242,19 +242,19 @@ Class Orthanc {
 	 * @param string $peer
 	 * @param array $ids
 	 */
-	public function sendToPeer(string $peer, array $ids){
+	public function sendToPeer(string $peer, array $ids) {
 		
-		$opts = array('http' =>
+		$opts=array('http' =>
 				array(
 						'method'  => 'POST',
 						"timeout" => 300, 
 						'content' => json_encode($ids),
-						'header'=>  ['Content-Type: application/json Accept: application/json',$this->context['http']['header']]
+						'header'=>  ['Content-Type: application/json Accept: application/json', $this->context['http']['header']]
 				)
 		);
 		
-		$context = stream_context_create($opts);
-		$result = file_get_contents($this->url.'/peers/'.$peer.'/store', false, $context);
+		$context=stream_context_create($opts);
+		$result=file_get_contents($this->url.'/peers/'.$peer.'/store', false, $context);
 		return $result;
 	    
 	}
@@ -265,20 +265,20 @@ Class Orthanc {
 	 * @param array $ids
 	 * @return string
 	 */
-	public function sendToPeerAsync(string $peer, array $ids){
+	public function sendToPeerAsync(string $peer, array $ids) {
 		$data['Synchronous']=false;
 		$data['Resources']=$ids;
 	    
-		$opts = array('http' =>
+		$opts=array('http' =>
 			array(
 				'method'  => 'POST',
 				'content' => json_encode($data),
-				'header'=>  ['Content-Type: application/json Accept: application/json',$this->context['http']['header']]
+				'header'=>  ['Content-Type: application/json Accept: application/json', $this->context['http']['header']]
 			)
 		);
 	    
-		$context = stream_context_create($opts);
-		$result = file_get_contents($this->url.'/peers/'.$peer.'/store', false, $context);
+		$context=stream_context_create($opts);
+		$result=file_get_contents($this->url.'/peers/'.$peer.'/store', false, $context);
 		return $result;
 	}
 	
@@ -289,35 +289,35 @@ Class Orthanc {
 	 * @param bool $gzip
 	 * @return string
 	 */
-	public function sendToPeerAsyncWithAccelerator(string $peer, array $ids, bool $gzip){
+	public function sendToPeerAsyncWithAccelerator(string $peer, array $ids, bool $gzip) {
 	    
 		//If Peer dosen't have accelerated transfers fall back to regular orthanc peer transfers
-		if( ! $this->isPeerAccelerated($peer)){
+		if (!$this->isPeerAccelerated($peer)) {
 			$answer=$this->sendToPeerAsync($peer, $ids);
 			return $answer;
 		}
 	    
-		if(!$gzip) $data['Compression']="none" ; else $data['Compression']="gzip";
+		if (!$gzip) $data['Compression']="none"; else $data['Compression']="gzip";
 	    
 		$data['Peer']=$peer;
 	    
 	    
-		foreach ($ids as $serieID){
+		foreach ($ids as $serieID) {
 			$resourceSeries['Level']="Series";
 			$resourceSeries['ID']=$serieID;
 			$data['Resources'][]=$resourceSeries;
 		}
 	    
-		$opts = array('http' =>
+		$opts=array('http' =>
 			array(
 				'method'  => 'POST',
 				'content' => json_encode($data),
-				'header'=>  ['Content-Type: application/json Accept: application/json',$this->context['http']['header']]
+				'header'=>  ['Content-Type: application/json Accept: application/json', $this->context['http']['header']]
 			)
 		);
 	    
-		$context = stream_context_create($opts);
-		$result = file_get_contents($this->url.'/transfers/send', false, $context);
+		$context=stream_context_create($opts);
+		$result=file_get_contents($this->url.'/transfers/send', false, $context);
 	    
 		return $result;
 	    
@@ -328,21 +328,21 @@ Class Orthanc {
 	 * @param string $file (path)
 	 * @return string
 	 */
-	public function importFile(string $file){
+	public function importFile(string $file) {
 	    
-		try{
-			$opts = array('http' =>
+		try {
+			$opts=array('http' =>
 				array(
 					'method'  => 'POST',
 					'content' => file_get_contents($file),
-					'header'=>  ['Content-Type: application/dicom Accept: application/json',"content-length: ".filesize($file),$this->context['http']['header']]
+					'header'=>  ['Content-Type: application/dicom Accept: application/json', "content-length: ".filesize($file), $this->context['http']['header']]
 				)
 			);
     	    
-			$context = stream_context_create($opts);
-			$result = file_get_contents($this->url.'/instances', false, $context);
+			$context=stream_context_create($opts);
+			$result=file_get_contents($this->url.'/instances', false, $context);
     	    
-		}catch(Exception $e1){
+		}catch (Exception $e1) {
 			error_log("Error during import Dcm ".$e1->getMessage());
 		}
 		return $result;
@@ -359,22 +359,22 @@ Class Orthanc {
 	 * @param string $studyName
 	 * @return string
 	 */
-	public function Anonymize(string $studyID, string $profile, string $patientCode, string $visitType, string $studyName){
+	public function Anonymize(string $studyID, string $profile, string $patientCode, string $visitType, string $studyName) {
 	    
 		$jsonAnonQuery=$this->buildAnonQuery($profile, $patientCode, $patientCode, $visitType, $studyName);
 	    
-		$opts = array('http' =>
+		$opts=array('http' =>
 			array(
 				'method'  => 'POST',
 				"timeout" => 300,
 				'content' => json_encode($jsonAnonQuery),
-				'header'=>  ['Content-Type: application/json Accept: application/json',$this->context['http']['header']]
+				'header'=>  ['Content-Type: application/json Accept: application/json', $this->context['http']['header']]
 			)
 		);
 	    
-		$context = stream_context_create($opts);
+		$context=stream_context_create($opts);
 
-		$result = file_get_contents($this->url."/studies/".$studyID."/anonymize", false, $context);
+		$result=file_get_contents($this->url."/studies/".$studyID."/anonymize", false, $context);
         
 		//get the resulting Anonymized study Orthanc ID
 		$anonAnswer=json_decode($result, true);
@@ -395,10 +395,10 @@ Class Orthanc {
 	 * @param string $newStudyDescription
 	 * @return string
 	 */
-	private function buildAnonQuery(string $profile, string $newPatientName, string $newPatientID, string $newStudyDescription, string $clinicalStudy){
+	private function buildAnonQuery(string $profile, string $newPatientName, string $newPatientID, string $newStudyDescription, string $clinicalStudy) {
     	    
 		$tagsObjects=[];
-		if($profile=="Default"){
+		if ($profile == "Default") {
 			$date=TagAnon::KEEP;
 			$body=TagAnon::KEEP;
             
@@ -407,7 +407,7 @@ Class Orthanc {
 			$tagsObjects[]=new TagAnon("0008,103E", TagAnon::KEEP); //series Description
            
     
-		}else if($profile=="Full"){
+		}else if ($profile == "Full") {
 			$date=TagAnon::CLEAR;
 			$body=TagAnon::CLEAR;
             
@@ -452,7 +452,7 @@ Class Orthanc {
 		$tagsObjects[]=new TagAnon("0010,1030", $body); // Patient's weight
     
 		//Others
-		$tagsObjects[]=new TagAnon("0008,0050", TagAnon::REPLACE, $clinicalStudy);  // Accession Number contains study name
+		$tagsObjects[]=new TagAnon("0008,0050", TagAnon::REPLACE, $clinicalStudy); // Accession Number contains study name
 		$tagsObjects[]=new TagAnon("0010,0020", TagAnon::REPLACE, $newPatientID); //new Patient Name
 		$tagsObjects[]=new TagAnon("0010,0010", TagAnon::REPLACE, $newPatientName); //new Patient Name
     	
@@ -467,11 +467,11 @@ Class Orthanc {
 		$jsonArrayAnon['KeepPrivateTags']=false;
 		$jsonArrayAnon['Force']=true;
     	
-		foreach($tagsObjects as $tag) {
+		foreach ($tagsObjects as $tag) {
     	    
-			if($tag->choice==TagAnon::REPLACE){
+			if ($tag->choice == TagAnon::REPLACE) {
 				$jsonArrayAnon['Replace'][$tag->tag]=$tag->newValue;
-			}else if($tag->choice==TagAnon::KEEP){
+			}else if ($tag->choice == TagAnon::KEEP) {
 				$jsonArrayAnon['Keep'][]=$tag->tag;
 			}
             
@@ -485,13 +485,13 @@ Class Orthanc {
 	 * Remove secondary captures in the study
 	 * @param string $orthancStudyID
 	 */
-	private function removeSC(string $orthancStudyID){
+	private function removeSC(string $orthancStudyID) {
     	
 		$studyOrthanc=new Orthanc_Study($orthancStudyID, $this->url, $this->context);
 		$studyOrthanc->retrieveStudyData();
 		$seriesObjects=$studyOrthanc->orthancSeries;
-		foreach ($studyOrthanc->orthancSeries as $serie){
-			if($serie->isSecondaryCapture() ){
+		foreach ($studyOrthanc->orthancSeries as $serie) {
+			if ($serie->isSecondaryCapture()) {
 				$this->deleteFromOrthanc("series", $serie->serieOrthancID);
 				error_log("Deleted SC");
 			}
@@ -505,10 +505,10 @@ Class Orthanc {
 	 * @param String $jobId
 	 * @return mixed
 	 */
-	public function getJobDetails(String $jobId){
+	public function getJobDetails(String $jobId) {
         
-		$context =stream_context_create($this->context);
-		$json = file_get_contents($this->url.'/jobs/'.$jobId, false, $context);
+		$context=stream_context_create($this->context);
+		$json=file_get_contents($this->url.'/jobs/'.$jobId, false, $context);
         
 		return json_decode($json, true);
         

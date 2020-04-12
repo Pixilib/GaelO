@@ -23,14 +23,14 @@ $linkpdo=Session::getLinkpdo();
 $userObject=new User($_SESSION['username'], $linkpdo);
 $accessCheck=$userObject->isRoleAllowed($_SESSION['study'], $_SESSION['role']);
 
-if ($accessCheck && $_SESSION['role'] == User::SUPERVISOR ) {
+if ($accessCheck && $_SESSION['role'] == User::SUPERVISOR) {
     
 	$studyObject=new Study($_SESSION['study'], $linkpdo);
 	$reviewdetailsMap=$studyObject->getReviewManager()->getReviewsDetailsByVisit();
 	
 	$usernameCounter=[];
-	foreach ($reviewdetailsMap as $visitID=>$details){
-		foreach ($details['reviewDoneBy'] as $reviewer){
+	foreach ($reviewdetailsMap as $visitID=>$details) {
+		foreach ($details['reviewDoneBy'] as $reviewer) {
 			$usernameCounter[]=$reviewer;
 		}
 	}
@@ -41,7 +41,7 @@ if ($accessCheck && $_SESSION['role'] == User::SUPERVISOR ) {
 	$uniqueUsers=[];
 	$numberOfReads=[];
 	$countusername=array_count_values($usernameCounter);
-	foreach ($countusername as $key => $value){
+	foreach ($countusername as $key => $value) {
 		$uniqueUsers[]=$key;
 		$numberOfReads[]=$value;
 	}
@@ -54,13 +54,13 @@ if ($accessCheck && $_SESSION['role'] == User::SUPERVISOR ) {
 	require 'includes/no_access.php';
 }
 
-function generateJSONforDatatable($reviewdetailsMap){
+function generateJSONforDatatable($reviewdetailsMap) {
 	$newmap=$reviewdetailsMap;
     
 	$reviewdetailsArray=null;
 	//Transform the hasmap to an array by id Visit
-	foreach($newmap as $key => $value){
-		$value['reviewNotDoneBy']= implode("/", $value['reviewNotDoneBy']);
+	foreach ($newmap as $key => $value) {
+		$value['reviewNotDoneBy']=implode("/", $value['reviewNotDoneBy']);
 		//Implode Reviewer Done to make the final string
 		$value['reviewDoneBy']=implode("/", $value['reviewDoneBy']);
 		$reviewdetailsArray[]=$value;

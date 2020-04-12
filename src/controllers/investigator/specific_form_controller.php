@@ -21,47 +21,47 @@ $linkpdo=Session::getLinkpdo();
 $id_visit=$_POST['id_visit'];
 $patient_num=$_POST['patient_num'];
 $type_visit=$_POST['type_visit'];
-$username= $_SESSION['username'];
-$study = $_SESSION['study'];
+$username=$_SESSION['username'];
+$study=$_SESSION['study'];
 
 $userObject=new User($username, $linkpdo);
-$permissionResults = $userObject->isVisitAllowed($id_visit, $_SESSION['role']);
+$permissionResults=$userObject->isVisitAllowed($id_visit, $_SESSION['role']);
 
 
 $visitObject=new Visit($id_visit, $linkpdo);
-$isLocalformNeeded = $visitObject->getVisitCharacteristics()->localFormNeeded;
+$isLocalformNeeded=$visitObject->getVisitCharacteristics()->localFormNeeded;
 
-if($permissionResults){
+if ($permissionResults) {
     
 	//Determine if calling local or reviewer form
-	$local = ($_SESSION['role']==User::REVIEWER) ? false : true ;
+	$local=($_SESSION['role'] == User::REVIEWER) ? false : true;
 	$formProcessorObject=$visitObject->getFromProcessor($local, $username);
     
-	if (!empty($_POST['draft']) || !empty($_POST['validate']) ){
+	if (!empty($_POST['draft']) || !empty($_POST['validate'])) {
 		//Process the form
-		if(!empty($_POST['validate'])){
+		if (!empty($_POST['validate'])) {
 			$validate=true;
 		}else {
 			$validate=false;
 		}
-		try{
+		try {
 			$formProcessorObject->saveForm($_POST, $validate);
 			echo(json_encode(true));
-		}catch(Exception $e){
+		}catch (Exception $e) {
 			echo(json_encode(false));
 		}
 
-	}else{
+	}else {
 		//Load Specific form
         
 		//If form not needed for investigator, return and do not output the form
-		if ( ! $isLocalformNeeded && in_array( $_SESSION['role'], array(User::INVESTIGATOR, User::CONTROLLER) ) ) {
+		if (!$isLocalformNeeded && in_array($_SESSION['role'], array(User::INVESTIGATOR, User::CONTROLLER))) {
 			exit();
 		}
         
-		if($_SESSION['role']==User::INVESTIGATOR || ($_SESSION['role']==User::REVIEWER && $visitObject->reviewAvailable) ){
+		if ($_SESSION['role'] == User::INVESTIGATOR || ($_SESSION['role'] == User::REVIEWER && $visitObject->reviewAvailable)) {
 			$roleDisable=false;
-		}else{
+		}else {
 			$roleDisable=true;
 		}
         
@@ -69,10 +69,10 @@ if($permissionResults){
 		//of this study
 		$reviewObject=$formProcessorObject->reviewObject;
         
-		if(!empty($reviewObject)){
+		if (!empty($reviewObject)) {
 			$validatedForm=$reviewObject->validated;
 			$results=$reviewObject->getSpecificData();
-		}else{
+		}else {
 			$validatedForm=false;
 		}
         
