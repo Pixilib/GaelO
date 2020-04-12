@@ -22,69 +22,69 @@ $linkpdo=Session::getLinkpdo();
 $userObject=new User($_SESSION['username'], $linkpdo);
 $accessCheck=$userObject->isRoleAllowed($_SESSION['study'], $_SESSION['role']);
 
-if ($accessCheck && $_SESSION['role'] == User::SUPERVISOR ) {
-    $studyObject=new Study($_SESSION['study'], $linkpdo);
-    $documentationObjects=$studyObject->getDocumentation(User::SUPERVISOR);
+if ($accessCheck && $_SESSION['role'] == User::SUPERVISOR) {
+	$studyObject=new Study($_SESSION['study'], $linkpdo);
+	$documentationObjects=$studyObject->getDocumentation(User::SUPERVISOR);
     
-    if(isset($_POST['validate'])){
+	if (isset($_POST['validate'])) {
 
-        $actionDetails=[];
+		$actionDetails=[];
         
-        //For each documentation we update to the new checkboxes options
-        foreach ($documentationObjects as $documentation) {
+		//For each documentation we update to the new checkboxes options
+		foreach ($documentationObjects as $documentation) {
             
-            $investigatorPermissions=false;
-            $controllerPermissions=false;
-            $monitorPermissions=false;
-            $reviewerPermissions=false;
-            $deleted=false;
+			$investigatorPermissions=false;
+			$controllerPermissions=false;
+			$monitorPermissions=false;
+			$reviewerPermissions=false;
+			$deleted=false;
             
-            if(isset($_POST['inv'.$documentation->documentId])){
-                $investigatorPermissions=true;
-            }
+			if (isset($_POST['inv'.$documentation->documentId])) {
+				$investigatorPermissions=true;
+			}
             
-            if(isset($_POST['cont'.$documentation->documentId])){
-                $controllerPermissions=true;
-            }
+			if (isset($_POST['cont'.$documentation->documentId])) {
+				$controllerPermissions=true;
+			}
             
-            if(isset($_POST['mon'.$documentation->documentId])){
-                $monitorPermissions=true;
-            }
+			if (isset($_POST['mon'.$documentation->documentId])) {
+				$monitorPermissions=true;
+			}
             
-            if(isset($_POST['rev'.$documentation->documentId])){
-                $reviewerPermissions=true;
-            }
+			if (isset($_POST['rev'.$documentation->documentId])) {
+				$reviewerPermissions=true;
+			}
             
-            if(isset($_POST['deleted'.$documentation->documentId])){
-                $deleted=true;
-            }
+			if (isset($_POST['deleted'.$documentation->documentId])) {
+				$deleted=true;
+			}
             
-            Documentation::updateDocumentation($linkpdo, $documentation->documentId, $investigatorPermissions,
-                $monitorPermissions, $controllerPermissions, $reviewerPermissions, $deleted);
+			Documentation::updateDocumentation($linkpdo, $documentation->documentId, $investigatorPermissions,
+				$monitorPermissions, $controllerPermissions, $reviewerPermissions, $deleted);
             
-            //Log Action
-            $docUpdateDetails['documentation_id']=$documentation->documentId;
-            $docUpdateDetails['name']=$documentation->documentName;
-            $docUpdateDetails['version']=$documentation->documentVersion;
-            $docUpdateDetails['investigator']=$investigatorPermissions;
-            $docUpdateDetails['controller']=$controllerPermissions;
-            $docUpdateDetails['monitor']=$monitorPermissions;
-            $docUpdateDetails['reviewer']=$reviewerPermissions;
-            $docUpdateDetails['deleted']=$deleted;
-            $actionDetails[]=$docUpdateDetails;
-        }
+			//Log Action
+			$docUpdateDetails['documentation_id']=$documentation->documentId;
+			$docUpdateDetails['name']=$documentation->documentName;
+			$docUpdateDetails['version']=$documentation->documentVersion;
+			$docUpdateDetails['investigator']=$investigatorPermissions;
+			$docUpdateDetails['controller']=$controllerPermissions;
+			$docUpdateDetails['monitor']=$monitorPermissions;
+			$docUpdateDetails['reviewer']=$reviewerPermissions;
+			$docUpdateDetails['deleted']=$deleted;
+			$actionDetails[]=$docUpdateDetails;
+		}
         
         
-        Tracker::logActivity($_SESSION['username'], User::SUPERVISOR, $_SESSION['study'], null, "Update Documentation", $actionDetails);
-        echo(json_encode("Success"));
+		Tracker::logActivity($_SESSION['username'], User::SUPERVISOR, $_SESSION['study'], null, "Update Documentation", $actionDetails);
+		echo(json_encode("Success"));
         
-    }else{
+	}else {
 
-        require 'views/supervisor/documentation_view.php';
+		require 'views/supervisor/documentation_view.php';
         
-    }
+	}
 
     
-}else{
-    require 'includes/no_access.php';
+}else {
+	require 'includes/no_access.php';
 }

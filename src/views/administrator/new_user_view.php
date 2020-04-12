@@ -132,19 +132,19 @@
 				<!------------------------- Roles selector ----------------------->
 				<SELECT id="one" class="custom-select" name="role">
 				<?php
-                $allRoles = array(
-                    User::INVESTIGATOR,
-                    User::MONITOR,
-                    User::CONTROLLER,
-                    User::SUPERVISOR,
-                    User::REVIEWER
-                );
-                foreach ($availableStudies as $availableStudy) {
-                    foreach ($allRoles as $roleValue) {
-                        echo '<option value="' . $roleValue . '@' . htmlspecialchars($availableStudy) . '">[' . htmlspecialchars($availableStudy) . '] - [' . $roleValue . ']</option>';
-                    }
-                }
-                ?>
+				$allRoles=array(
+					User::INVESTIGATOR,
+					User::MONITOR,
+					User::CONTROLLER,
+					User::SUPERVISOR,
+					User::REVIEWER
+				);
+				foreach ($availableStudies as $availableStudy) {
+					foreach ($allRoles as $roleValue) {
+						echo '<option value="'.$roleValue.'@'.htmlspecialchars($availableStudy).'">['.htmlspecialchars($availableStudy).'] - ['.$roleValue.']</option>';
+					}
+				}
+				?>
 				</SELECT> <input onclick="bascule('one','profile')"
 					class="btn btn-dark" type="button" value="+">
 			</div>
@@ -163,11 +163,11 @@
 				<!-------------------- Job Selector ----------------------->
 				<SELECT class="custom-select" name="job">
                 <?php
-                // Add all available jobs
-                foreach ($jobs as $job) {
-                    echo '<option value="' . $job . '">' . $job . '</option>';
-                }
-                ?>
+				// Add all available jobs
+				foreach ($jobs as $job) {
+					echo '<option value="'.$job.'">'.$job.'</option>';
+				}
+				?>
               </SELECT>
 			</div>
 		</div>
@@ -178,11 +178,11 @@
 			<!------------------------ Main Center Selector ----------------------->
 			<SELECT class="custom-select" name="center" id="center" required>
               <?php
-            // Add all possible centers
-            foreach ($centers as $center) {
-                echo '<option value="' . $center->code . '">[' . $center->code . '] - [' . htmlspecialchars($center->name) . ']</option>';
-            }
-            ?>
+			// Add all possible centers
+			foreach ($centers as $center) {
+				echo '<option value="'.$center->code.'">['.$center->code.'] - ['.htmlspecialchars($center->name).']</option>';
+			}
+			?>
             </SELECT>
 
 		</div>
@@ -203,11 +203,11 @@
 				<SELECT id="selecteur_centre" name="selecteur_centre"
 					class="custom-select">
 				<?php
-                // Add all possible centers
-                foreach ($centers as $center) {
-                    echo '<option value="' . $center->code . '">[' . $center->code . '] - [' . htmlspecialchars($center->name) . ']</option>';
-                }
-                ?>
+				// Add all possible centers
+				foreach ($centers as $center) {
+					echo '<option value="'.$center->code.'">['.$center->code.'] - ['.htmlspecialchars($center->name).']</option>';
+				}
+				?>
 				</SELECT> <input
 					onclick="bascule('selecteur_centre','afficheur_centre')"
 					class="btn btn-dark" type="button" value="+">

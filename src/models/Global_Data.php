@@ -19,93 +19,93 @@
 
 use Ifsnop\Mysqldump as IMysqldump;
 
-Class Global_Data{
+Class Global_Data {
     
-    /**
-     * Get CountryName by Code
-     * Source country list from : https://github.com/umpirsky/country-list
-     * @param PDO $linkpdo
-     * @param $countryCode
-     * @return string
-     */
-    public static function getCountryName(PDO $linkpdo, string $countryCode){
+	/**
+	 * Get CountryName by Code
+	 * Source country list from : https://github.com/umpirsky/country-list
+	 * @param PDO $linkpdo
+	 * @param $countryCode
+	 * @return string
+	 */
+	public static function getCountryName(PDO $linkpdo, string $countryCode) {
         
-        $countryQuery = $linkpdo->prepare("SELECT country_us FROM country WHERE country_code = :countryCode");
-        $countryQuery->execute(array('countryCode' => $countryCode));
-        $countryName=$countryQuery->fetch(PDO::FETCH_COLUMN);
+		$countryQuery=$linkpdo->prepare("SELECT country_us FROM country WHERE country_code = :countryCode");
+		$countryQuery->execute(array('countryCode' => $countryCode));
+		$countryName=$countryQuery->fetch(PDO::FETCH_COLUMN);
         
-        return  $countryName;
+		return  $countryName;
         
-    }
+	}
     
-    /**
-     * Return a country code depending of countryName (take account language prefrences)
-     * @param PDO $linkpdo
-     * @param string $countryName
-     * @return string
-     */
-    public static function getCountryCode(PDO $linkpdo, string $countryName){
-        if(GAELO_COUNTRY_LANGUAGE=="FR"){
-            $request="SELECT country_code FROM country WHERE country_fr = :countryName";
-        }else if(GAELO_COUNTRY_LANGUAGE=="US"){
-            $request="SELECT country_code FROM country WHERE country_us = :countryName";
-        }
+	/**
+	 * Return a country code depending of countryName (take account language prefrences)
+	 * @param PDO $linkpdo
+	 * @param string $countryName
+	 * @return string
+	 */
+	public static function getCountryCode(PDO $linkpdo, string $countryName) {
+		if (GAELO_COUNTRY_LANGUAGE == "FR") {
+			$request="SELECT country_code FROM country WHERE country_fr = :countryName";
+		}else if (GAELO_COUNTRY_LANGUAGE == "US") {
+			$request="SELECT country_code FROM country WHERE country_us = :countryName";
+		}
         
-        $countryQuery = $linkpdo->prepare($request);
-        $countryQuery->execute(array('countryName' => $countryName));
-        $countryName=$countryQuery->fetch(PDO::FETCH_COLUMN);
+		$countryQuery=$linkpdo->prepare($request);
+		$countryQuery->execute(array('countryName' => $countryName));
+		$countryName=$countryQuery->fetch(PDO::FETCH_COLUMN);
         
-        return  $countryName;
+		return  $countryName;
         
-    }
+	}
 	
-    /**
-     * Return all studies name in the platefome (activated true to get only active study)
-     * @param PDO $linkpdo
-     * @param bool $onlyActivated
-     * @return array
-     */
-    public static function getAllStudies(PDO $linkpdo, bool $onlyActivated=false){
+	/**
+	 * Return all studies name in the platefome (activated true to get only active study)
+	 * @param PDO $linkpdo
+	 * @param bool $onlyActivated
+	 * @return array
+	 */
+	public static function getAllStudies(PDO $linkpdo, bool $onlyActivated=false) {
         
-        if($onlyActivated){
-            $connecter = $linkpdo->prepare('SELECT name FROM studies WHERE active=1 ORDER BY name');
-        }else{
-            $connecter = $linkpdo->prepare('SELECT name FROM studies ORDER BY name');
-        }
-        $connecter->execute();
+		if ($onlyActivated) {
+			$connecter=$linkpdo->prepare('SELECT name FROM studies WHERE active=1 ORDER BY name');
+		}else {
+			$connecter=$linkpdo->prepare('SELECT name FROM studies ORDER BY name');
+		}
+		$connecter->execute();
         
-        $AvailableStudies = $connecter->fetchall(PDO::FETCH_COLUMN);
+		$AvailableStudies=$connecter->fetchall(PDO::FETCH_COLUMN);
         
-        return $AvailableStudies;
-    }
+		return $AvailableStudies;
+	}
     
-    /**
-     * Get All centers objects declared in the plateform
-     * @param PDO $linkpdo
-     * @return Center[]
-     */
-	public static function getAllCentersObjects(PDO $linkpdo){
-	    $centerQuery = $linkpdo->prepare('SELECT code FROM centers ORDER BY code');
-	    $centerQuery->execute();
-	    $centers=$centerQuery->fetchAll(PDO::FETCH_COLUMN);
+	/**
+	 * Get All centers objects declared in the plateform
+	 * @param PDO $linkpdo
+	 * @return Center[]
+	 */
+	public static function getAllCentersObjects(PDO $linkpdo) {
+		$centerQuery=$linkpdo->prepare('SELECT code FROM centers ORDER BY code');
+		$centerQuery->execute();
+		$centers=$centerQuery->fetchAll(PDO::FETCH_COLUMN);
 	    
 		$centerObject=[];
-		foreach ($centers as $center){
-		    $centerObject[]=new Center($linkpdo, $center);
+		foreach ($centers as $center) {
+			$centerObject[]=new Center($linkpdo, $center);
 		}
 		return $centerObject;
 	}
 
 	public static function getAllCentersAsJson(PDO $linkpdo) : String {
-		$centersObjectArray = Global_Data::getAllCentersObjects($linkpdo);
-		$centerResponseArray = [];
+		$centersObjectArray=Global_Data::getAllCentersObjects($linkpdo);
+		$centerResponseArray=[];
 		
-		foreach ($centersObjectArray as $centerObject){
+		foreach ($centersObjectArray as $centerObject) {
 			$centerResponseArray[$centerObject->code]['centerName']=$centerObject->name;
 			$centerResponseArray[$centerObject->code]['countryCode']=$centerObject->countryCode;
 		}
 
-		$temporaryFile = Global_Data::writeTextAsTempFile( json_encode($centerResponseArray, JSON_FORCE_OBJECT) );
+		$temporaryFile=Global_Data::writeTextAsTempFile(json_encode($centerResponseArray, JSON_FORCE_OBJECT));
 
 		return $temporaryFile;
 	}
@@ -115,12 +115,12 @@ Class Global_Data{
 	 * @param PDO $linkpdo
 	 * @return array
 	 */
-	public static function getAllcountries(PDO $linkpdo){
-	    $countryQuery = $linkpdo->prepare("SELECT * FROM country ORDER BY country_us");
-	    $countryQuery->execute();
-	    $countryCode=$countryQuery->fetchAll(PDO::FETCH_ASSOC);
+	public static function getAllcountries(PDO $linkpdo) {
+		$countryQuery=$linkpdo->prepare("SELECT * FROM country ORDER BY country_us");
+		$countryQuery->execute();
+		$countryCode=$countryQuery->fetchAll(PDO::FETCH_ASSOC);
 	    
-	    return  $countryCode;
+		return  $countryCode;
 	}
 	
 	/**
@@ -128,8 +128,8 @@ Class Global_Data{
 	 * @param PDO $linkpdo
 	 * @return array
 	 */
-	public static function getAllJobs(PDO $linkpdo){
-		$jobQuery = $linkpdo->prepare('SELECT name FROM job ORDER BY name');
+	public static function getAllJobs(PDO $linkpdo) {
+		$jobQuery=$linkpdo->prepare('SELECT name FROM job ORDER BY name');
 		$jobQuery->execute();
 		$jobs=$jobQuery->fetchAll(PDO::FETCH_COLUMN);
 		return $jobs;
@@ -140,16 +140,16 @@ Class Global_Data{
 	 * Return userObject array for all users in the system
 	 * @return User[]
 	 */
-	public static function getAllUsers(PDO $linkpdo){
-	    $req = $linkpdo->prepare('SELECT username FROM users');
-	    $req->execute();
-	    $answers=$req->fetchAll(PDO::FETCH_COLUMN);
+	public static function getAllUsers(PDO $linkpdo) {
+		$req=$linkpdo->prepare('SELECT username FROM users');
+		$req->execute();
+		$answers=$req->fetchAll(PDO::FETCH_COLUMN);
 	    
-	    $usersObjects=[];
-	    foreach ($answers as $username){
-	        $usersObjects[]=new User($username, $linkpdo);
-	    }
-	    return $usersObjects;
+		$usersObjects=[];
+		foreach ($answers as $username) {
+			$usersObjects[]=new User($username, $linkpdo);
+		}
+		return $usersObjects;
 	    
 	}
 	
@@ -158,11 +158,11 @@ Class Global_Data{
 	 * @param PDO $linkpdo
 	 * @return mixed
 	 */
-	public static function getAllSeriesOrthancID(PDO $linkpdo){
-	    $seriesQuery = $linkpdo->prepare ( 'SELECT Series_Orthanc_ID FROM orthanc_series' );
-	    $seriesQuery->execute();
-	    $seriesOrthancIds=$seriesQuery->fetchAll(PDO::FETCH_COLUMN);
-	    return $seriesOrthancIds;
+	public static function getAllSeriesOrthancID(PDO $linkpdo) {
+		$seriesQuery=$linkpdo->prepare('SELECT Series_Orthanc_ID FROM orthanc_series');
+		$seriesQuery->execute();
+		$seriesOrthancIds=$seriesQuery->fetchAll(PDO::FETCH_COLUMN);
+		return $seriesOrthancIds;
 	}
 	
 	/**
@@ -170,9 +170,9 @@ Class Global_Data{
 	 * @param array $post
 	 * @param PDO $linkpdo
 	 */
-	public static function updatePlateformPreferences(array $post, PDO $linkpdo){
+	public static function updatePlateformPreferences(array $post, PDO $linkpdo) {
 	    
-	    $prefUpdater=$linkpdo->prepare('UPDATE preferences SET patient_code_length=:codeLenght,
+		$prefUpdater=$linkpdo->prepare('UPDATE preferences SET patient_code_length=:codeLenght,
                                             name=:name,
                                             admin_email=:email,
                                             email_reply_to=:reply_to,
@@ -200,62 +200,62 @@ Class Global_Data{
                                             smtp_secure=:smtp_secure
                                             WHERE 1');
 	    
-	    $prefUpdater->execute(array('codeLenght'=>$post['patientCodeLenght'],
-	        'corporation'=>$post['coporation'],
-	        'address'=>$post['webAddress'],
-	        'email'=>$post['adminEmail'],
-	        'reply_to'=>$post['replyTo'],
-	        'name'=>$post['plateformName'],
-	        'parse_date_import'=>$post['parseDateImport'],
-	        'parseCountryName'=>$post['parseCountryName'],
-	        'Orthanc_Exposed_Internal_Address'=>$post['orthancExposedInternalAddress'],
-	        'Orthanc_Exposed_Internal_Port'=>$post['orthancExposedInternalPort'],
-	        'Orthanc_Exposed_Internal_Login'=>$post['orthancExposedInternalLogin'],
-	        'Orthanc_Exposed_Internal_Password'=>$post['orthancExposedInternalPassword'],
-	        'Orthanc_Pacs_Address'=>$post['orthancPacsAddress'],
-	        'Orthanc_Pacs_Port'=>$post['orthancPacsPort'],
-	        'Orthanc_Pacs_Login'=>$post['orthancPacsLogin'],
-	        'Orthanc_Pacs_Password'=>$post['orthancPacsPassword'],
-	        'use_smtp'=>isset($post['useSmtp']) ? 1 : 0,
-	        'smtp_host'=>$post['smtpHost'],
-	        'smtp_port'=>$post['smtpPort'],
-	        'smtp_user'=>$post['smtpUser'],
-	        'smtp_password'=>$post['smtpPassword'],
-	        'smtp_secure'=>$post['smtpSecure'],
-	        'Orthanc_Exposed_External_Address'=>$post['orthancExposedExternalAddress'],
-	        'Orthanc_Exposed_External_Port'=>$post['orthancExposedExternalPort'],
-	        'Orthanc_Exposed_External_Login'=>$post['orthancExposedExternalLogin'],
-	        'Orthanc_Exposed_External_Password'=>$post['orthancExposedExternalPassword']
-	    ));
+		$prefUpdater->execute(array('codeLenght'=>$post['patientCodeLenght'],
+			'corporation'=>$post['coporation'],
+			'address'=>$post['webAddress'],
+			'email'=>$post['adminEmail'],
+			'reply_to'=>$post['replyTo'],
+			'name'=>$post['plateformName'],
+			'parse_date_import'=>$post['parseDateImport'],
+			'parseCountryName'=>$post['parseCountryName'],
+			'Orthanc_Exposed_Internal_Address'=>$post['orthancExposedInternalAddress'],
+			'Orthanc_Exposed_Internal_Port'=>$post['orthancExposedInternalPort'],
+			'Orthanc_Exposed_Internal_Login'=>$post['orthancExposedInternalLogin'],
+			'Orthanc_Exposed_Internal_Password'=>$post['orthancExposedInternalPassword'],
+			'Orthanc_Pacs_Address'=>$post['orthancPacsAddress'],
+			'Orthanc_Pacs_Port'=>$post['orthancPacsPort'],
+			'Orthanc_Pacs_Login'=>$post['orthancPacsLogin'],
+			'Orthanc_Pacs_Password'=>$post['orthancPacsPassword'],
+			'use_smtp'=>isset($post['useSmtp']) ? 1 : 0,
+			'smtp_host'=>$post['smtpHost'],
+			'smtp_port'=>$post['smtpPort'],
+			'smtp_user'=>$post['smtpUser'],
+			'smtp_password'=>$post['smtpPassword'],
+			'smtp_secure'=>$post['smtpSecure'],
+			'Orthanc_Exposed_External_Address'=>$post['orthancExposedExternalAddress'],
+			'Orthanc_Exposed_External_Port'=>$post['orthancExposedExternalPort'],
+			'Orthanc_Exposed_External_Login'=>$post['orthancExposedExternalLogin'],
+			'Orthanc_Exposed_External_Password'=>$post['orthancExposedExternalPassword']
+		));
 	    
 	}
 
 	/**
 	 * Generate a raw dump of the database for backum purpose
 	 */
-    public static function dumpDatabase() : String {
+	public static function dumpDatabase() : String {
         
-        $fileSql=tempnam(ini_get('upload_tmp_dir'), 'TMPDB_');
+		$fileSql=tempnam(ini_get('upload_tmp_dir'), 'TMPDB_');
    
-        try {
-            if(DATABASE_SSL){
-                $dump = new IMysqldump\Mysqldump('mysql:host='.DATABASE_HOST.';dbname='.DATABASE_NAME.'', ''.DATABASE_USERNAME.'', ''.DATABASE_PASSWORD.'', array(), Session::getSSLPDOArrayOptions() );
-            }else{
-                $dump = new IMysqldump\Mysqldump('mysql:host='.DATABASE_HOST.';dbname='.DATABASE_NAME.'', ''.DATABASE_USERNAME.'', ''.DATABASE_PASSWORD.'');   
-            }
+		try {
+			if (DATABASE_SSL) {
+				$dump=new IMysqldump\Mysqldump('mysql:host='.DATABASE_HOST.';dbname='.DATABASE_NAME.'', ''.DATABASE_USERNAME.'', ''.DATABASE_PASSWORD.'', array(), Session::getSSLPDOArrayOptions());
+			}else {
+				$dump=new IMysqldump\Mysqldump('mysql:host='.DATABASE_HOST.';dbname='.DATABASE_NAME.'', ''.DATABASE_USERNAME.'', ''.DATABASE_PASSWORD.'');   
+			}
             
-            $dump->start($fileSql);
-        } catch (Exception $e) {
-            echo 'mysqldump-php error: ' . $e->getMessage();
-        }
+			$dump->start($fileSql);
+		}catch (Exception $e) {
+			echo 'mysqldump-php error: '.$e->getMessage();
+		}
 
-        return $fileSql;
+		return $fileSql;
 
 	}
 
 	public static function writeTextAsTempFile($strData) : String {
-		$seriesJsonFile = tempnam(ini_get('upload_tmp_dir'), 'TMPGaelOFile_');
-		$seriesJsonHandler= fopen($seriesJsonFile, 'w');
+		$seriesJsonFile=tempnam(ini_get('upload_tmp_dir'), 'TMPGaelOFile_');
+		$seriesJsonHandler=fopen($seriesJsonFile, 'w');
 		fwrite($seriesJsonHandler, $strData);
 		fclose($seriesJsonHandler);
 
@@ -270,7 +270,7 @@ Class Global_Data{
 	public static function dumpOrthancSeriesJSON(PDO $linkpdo) : String {
 
 		$seriesFullJson=json_encode(Global_Data::getAllSeriesOrthancID($linkpdo), JSON_PRETTY_PRINT);
-		$seriesJsonFile =  Global_Data::writeTextAsTempFile($seriesFullJson);
+		$seriesJsonFile=Global_Data::writeTextAsTempFile($seriesFullJson);
 
 		return $seriesJsonFile;
 
@@ -283,9 +283,9 @@ Class Global_Data{
 	 */
 	public static function getFileInPath(String $path) {
 
-		if(is_dir($path)){
+		if (is_dir($path)) {
 			// Create recursive directory iterator
-			$files = new RecursiveIteratorIterator(
+			$files=new RecursiveIteratorIterator(
 				new RecursiveDirectoryIterator($path),
 				RecursiveIteratorIterator::LEAVES_ONLY
 				);

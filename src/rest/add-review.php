@@ -21,7 +21,7 @@
 require_once($_SERVER['DOCUMENT_ROOT'].'/rest/check_login.php');
 
 // get posted data in a PHP Object
-$data = json_decode(file_get_contents("php://input"), true);
+$data=json_decode(file_get_contents("php://input"), true);
 
 $type_visit=$data['type_visit'];
 $patient_num=$data['patient_num'];
@@ -30,16 +30,16 @@ $id_visit=$data['id_visit'];
 // Check reviewer's permissions
 $visitAccessCheck=$userObject->isVisitAllowed($id_visit, User::REVIEWER);
 
-if($visitAccessCheck) {
-    //Instanciate the specific object for review management
-    $visitObject=new Visit($id_visit, $linkpdo);
+if ($visitAccessCheck) {
+	//Instanciate the specific object for review management
+	$visitObject=new Visit($id_visit, $linkpdo);
 	$ReviewObect=$visitObject->getFromProcessor(false, $username);
 	$ReviewObect->saveForm($data, $data['validate'], $linkpdo);
 	$answer="Saved";
 	header("Content-Type: application/json; charset=UTF-8");
 	echo(json_encode($answer));
 	
-} else{
-    header('HTTP/1.0 403 Forbidden');
+}else {
+	header('HTTP/1.0 403 Forbidden');
 }
 

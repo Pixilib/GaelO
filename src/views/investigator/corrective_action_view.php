@@ -17,51 +17,51 @@
  <script type="text/javascript">
 	$(document).ready(function () {
 		<?php
-        // If not waiting corrective action or not investigator, fill the form with existing data and disable it (show only)
-        if ($visitObject->stateQualityControl != Visit::QC_CORRECTIVE_ACTION_ASKED || $role != User::INVESTIGATOR) {
-            ?>
+		// If not waiting corrective action or not investigator, fill the form with existing data and disable it (show only)
+		if ($visitObject->stateQualityControl != Visit::QC_CORRECTIVE_ACTION_ASKED || $role != User::INVESTIGATOR) {
+			?>
         		$("#form_corrective_action :input").prop("disabled", true);
         	<?php
             
-            if ($visitObject->newSeriesUpload) {
-            ?>
+			if ($visitObject->newSeriesUpload) {
+			?>
         		$('input:checkbox[name="new_series"]').attr("checked", true);
         	<?php
-            }
+			}
             
-            if ($visitObject->investigatorFormIsCorrected) {
-            ?>
+			if ($visitObject->investigatorFormIsCorrected) {
+			?>
         		$('input:checkbox[name="information_corrected"]').attr("checked", true);
         	<?php
-            }
+			}
             
-            if ($visitObject->correctiveActionDecision) {
-            ?>
+			if ($visitObject->correctiveActionDecision) {
+			?>
             	$('#no_corrective_action').hide();
         	<?php
-            } else {
-            ?>
+			}else {
+			?>
             	$('#corrective_action').hide();
         	<?php
-            }
+			}
             
-            if(!empty($visitObject->otherCorrectiveAction)){
-                ?>
+			if (!empty($visitObject->otherCorrectiveAction)) {
+				?>
                 $('#other_comment').val("<?=htmlspecialchars($visitObject->otherCorrectiveAction)?>");
                 <?php 
-            }
-        }
+			}
+		}
         
-        // If Form not needed deactive form checkbox
-        if (! $visitType->localFormNeeded) {
-            ?> $('input:checkbox[name="information_corrected"]').prop("disabled", true); <?php
-        }
+		// If Form not needed deactive form checkbox
+		if (!$visitType->localFormNeeded) {
+			?> $('input:checkbox[name="information_corrected"]').prop("disabled", true); <?php
+		}
         
-        // If Image QC not needed deactive form checkbox
-        if (! $visitType->qcNeeded) {
-            ?> $('input:checkbox[name="new_series"]').prop("disabled", true); <?php
-        }
-        ?>
+		// If Image QC not needed deactive form checkbox
+		if (!$visitType->qcNeeded) {
+			?> $('input:checkbox[name="new_series"]').prop("disabled", true); <?php
+		}
+		?>
     
     	 $('#no_corrective_action, #corrective_action').click(function (event) {
              //Get clicked button for final decision

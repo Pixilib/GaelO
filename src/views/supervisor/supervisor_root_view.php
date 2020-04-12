@@ -418,14 +418,14 @@
 			<tbody>
 				<?php
 				//Get all patients in the current study
-				$allPatientsInStudy = $studyObject->getAllPatientsInStudy();
+				$allPatientsInStudy=$studyObject->getAllPatientsInStudy();
 
 				foreach ($allPatientsInStudy as $patient) {
 					?>
 					<tr>
 						<td><?=$patient->patientCenter?></td>
-						<td><?="<a onclick='linkPatientInfos(" . $patient->patientCode . ")' href='javascript:void(0);'>" . $patient->patientCode . "</a>"?></td>
-						<td><?=$patient->patientLastName . '' . $patient->patientFirstName?></td>
+						<td><?="<a onclick='linkPatientInfos(".$patient->patientCode.")' href='javascript:void(0);'>".$patient->patientCode."</a>"?></td>
+						<td><?=$patient->patientLastName.''.$patient->patientFirstName?></td>
 						<td><?=$patient->patientGender?></td>
 						<td><?=$patient->patientBirthDate?></td>
 						<td><?=$patient->patientRegistrationDate?></td>

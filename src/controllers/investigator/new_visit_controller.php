@@ -18,25 +18,25 @@
  */
 
 Session::checkSession();
-$linkpdo = Session::getLinkpdo();
+$linkpdo=Session::getLinkpdo();
 
-$study = $_SESSION['study'];
-$username = $_SESSION['username'];
-$patientCode = $_POST['patient_num'];
+$study=$_SESSION['study'];
+$username=$_SESSION['username'];
+$patientCode=$_POST['patient_num'];
 
-$userObject= new User($username, $linkpdo);
-$patientAllowed = $userObject->isPatientAllowed($patientCode, $_SESSION['role']);
+$userObject=new User($username, $linkpdo);
+$patientAllowed=$userObject->isPatientAllowed($patientCode, $_SESSION['role']);
 
 // Check user allowance (only available for an investigator)
 if (isset($_SESSION['username']) && $_SESSION['role'] == User::INVESTIGATOR && $patientAllowed) {
 
-    // Get available Visit in each visit group (in key) for creation
-    // Usually only one visit to create to respect visit order but could be multipled (if erased or custom creation workflow)
-    $patientObject=new Patient($patientCode, $linkpdo);
-    $typeVisiteDispo=$patientObject->getAllVisitToCreate();
+	// Get available Visit in each visit group (in key) for creation
+	// Usually only one visit to create to respect visit order but could be multipled (if erased or custom creation workflow)
+	$patientObject=new Patient($patientCode, $linkpdo);
+	$typeVisiteDispo=$patientObject->getAllVisitToCreate();
     
-    require 'views/investigator/new_visit_view.php';
+	require 'views/investigator/new_visit_view.php';
     
-} else {
-    require 'includes/no_access.php';
+}else {
+	require 'includes/no_access.php';
 }

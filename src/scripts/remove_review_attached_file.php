@@ -13,7 +13,7 @@
  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-header( 'content-type: application/json; charset=utf-8' );
+header('content-type: application/json; charset=utf-8');
 require_once($_SERVER['DOCUMENT_ROOT'].'/vendor/autoload.php');
 
 Session::checkSession();
@@ -23,27 +23,27 @@ $userObject=new User($_SESSION['username'], $linkpdo);
 
 $visitId=$_GET['id_visit'];
 $fileKey=$_GET['file_key'];
-$local = $_SESSION['role'] == User::INVESTIGATOR ? true : false ; 
+$local=$_SESSION['role'] == User::INVESTIGATOR ? true : false; 
 
 //Need to retrieve study before testing permission, can't test visit permissions directly because permission class tests non deleted status
 $visitObject=new Visit($visitId, $linkpdo);
 $accessCheck=$userObject->isRoleAllowed($visitObject->study, $_SESSION['role']);
 
-if ($accessCheck && in_array($_SESSION['role'], array(User::INVESTIGATOR, User::REVIEWER)) ) {
+if ($accessCheck && in_array($_SESSION['role'], array(User::INVESTIGATOR, User::REVIEWER))) {
 
-    if($_SESSION['role'] == User::INVESTIGATOR) $reviewObject = $visitObject->getReviewsObject(true);
-    else $reviewObject =  $visitObject->queryExistingReviewForReviewer($_SESSION['username']);
+	if ($_SESSION['role'] == User::INVESTIGATOR) $reviewObject=$visitObject->getReviewsObject(true);
+	else $reviewObject=$visitObject->queryExistingReviewForReviewer($_SESSION['username']);
 
-    try{
-        $reviewObject->deleteAssociatedFile($fileKey);
-    }catch(Exception $e){
-        header('HTTP/1.0 403 Forbidden');
-        die('Delete File Error');
-    }
+	try {
+		$reviewObject->deleteAssociatedFile($fileKey);
+	}catch (Exception $e) {
+		header('HTTP/1.0 403 Forbidden');
+		die('Delete File Error');
+	}
 
-    return json_encode((true));
+	return json_encode((true));
 
-} else {
-    header('HTTP/1.0 403 Forbidden');
+}else {
+	header('HTTP/1.0 403 Forbidden');
 	die('You are not allowed to access this file.');
 }

@@ -23,49 +23,49 @@ $linkpdo=Session::getLinkpdo();
 $userObject=new User($_SESSION['username'], $linkpdo);
 $accessCheck=$userObject->isRoleAllowed($_SESSION['study'], $_SESSION['role']);
 
-if ($accessCheck && $_SESSION['role'] == User::SUPERVISOR ) {
+if ($accessCheck && $_SESSION['role'] == User::SUPERVISOR) {
     
-    $studyObject=new Study($_SESSION['study'], $linkpdo);
+	$studyObject=new Study($_SESSION['study'], $linkpdo);
 	$reviewdetailsMap=$studyObject->getReviewManager()->getReviewsDetailsByVisit();
 	
 	$usernameCounter=[];
-	foreach ($reviewdetailsMap as $visitID=>$details){
-		foreach ($details['reviewDoneBy'] as $reviewer){
-            $usernameCounter[]=$reviewer;
+	foreach ($reviewdetailsMap as $visitID=>$details) {
+		foreach ($details['reviewDoneBy'] as $reviewer) {
+			$usernameCounter[]=$reviewer;
 		}
 	}
 	
 	
     
-    //Determine number of review by reviewer
-    $uniqueUsers=[];
-    $numberOfReads=[];
-    $countusername=array_count_values($usernameCounter);
-    foreach ($countusername as $key => $value){
-        $uniqueUsers[]=$key;
-        $numberOfReads[]=$value;
-    }
+	//Determine number of review by reviewer
+	$uniqueUsers=[];
+	$numberOfReads=[];
+	$countusername=array_count_values($usernameCounter);
+	foreach ($countusername as $key => $value) {
+		$uniqueUsers[]=$key;
+		$numberOfReads[]=$value;
+	}
     
     
-    require 'views/supervisor/review_manager_view.php';
+	require 'views/supervisor/review_manager_view.php';
     
 }else {
     
-    require 'includes/no_access.php';
+	require 'includes/no_access.php';
 }
 
-function generateJSONforDatatable($reviewdetailsMap){
-    $newmap=$reviewdetailsMap;
+function generateJSONforDatatable($reviewdetailsMap) {
+	$newmap=$reviewdetailsMap;
     
-    $reviewdetailsArray=null;
-    //Transform the hasmap to an array by id Visit
-    foreach($newmap as $key => $value){
-        $value['reviewNotDoneBy']= implode("/", $value['reviewNotDoneBy']);
-        //Implode Reviewer Done to make the final string
-        $value['reviewDoneBy']=implode("/", $value['reviewDoneBy']);
-        $reviewdetailsArray[]=$value;
+	$reviewdetailsArray=null;
+	//Transform the hasmap to an array by id Visit
+	foreach ($newmap as $key => $value) {
+		$value['reviewNotDoneBy']=implode("/", $value['reviewNotDoneBy']);
+		//Implode Reviewer Done to make the final string
+		$value['reviewDoneBy']=implode("/", $value['reviewDoneBy']);
+		$reviewdetailsArray[]=$value;
         
-    }
-    return json_encode($reviewdetailsArray);
+	}
+	return json_encode($reviewdetailsArray);
     
 }

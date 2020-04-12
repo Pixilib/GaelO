@@ -138,26 +138,26 @@
             </thead>
             <tbody>
             <?php 
-            foreach ($trackerUsers as $userEvent){
-                //Exclude message type event user which are related to a study
-                if(in_array($userEvent['action_type'], 
-                    array("Change Password","Ask New Password", "Account Blocked"))){
-                ?>
+			foreach ($trackerUsers as $userEvent) {
+				//Exclude message type event user which are related to a study
+				if (in_array($userEvent['action_type'], 
+					array("Change Password", "Ask New Password", "Account Blocked"))) {
+				?>
                 	<tr>
-    					<td><?=$userEvent['date'];?></td>
-    					<td><?=$userEvent['username'];?></td>
+    					<td><?=$userEvent['date']; ?></td>
+    					<td><?=$userEvent['username']; ?></td>
     					<td>
     					<?php 
-    					   if ($userEvent['action_type']=="Change Password") echo('Password Changed');
-    					   else if ($userEvent['action_type']=="Ask New Password") echo('Asked New Password');
-    					   else if ($userEvent['action_type']=="Account Blocked") echo('Account Blocked');
-    					?>
+						   if ($userEvent['action_type'] == "Change Password") echo('Password Changed');
+						   else if ($userEvent['action_type'] == "Ask New Password") echo('Asked New Password');
+						   else if ($userEvent['action_type'] == "Account Blocked") echo('Account Blocked');
+						?>
     					</td>
     				</tr>
     			<?php 
-                }
-            }
-            ?>
+				}
+			}
+			?>
             </tbody>
         </table>
     </div>

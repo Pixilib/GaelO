@@ -28,7 +28,7 @@
 	}
 	
 	//If available review in DB fill the form with available value (the draft/Validate status is automatically made by the platform)
-	<?php if(!empty($results)){ 
+	<?php if (!empty($results)) { 
 	?>
     	$(document).ready(function(){
     			//Fill here completion function
@@ -36,8 +36,8 @@
 				//with htmlspecialchars(string);
     	});
 	<?php 
-    } 
-    ?>
+	} 
+	?>
     		
 </script>
 

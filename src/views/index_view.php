@@ -20,7 +20,7 @@
 
 <head>
 	<title>Log In</title>
-	<?php include_once $_SERVER['DOCUMENT_ROOT'] . '/includes/jsLibrairies.php'; ?>
+	<?php include_once $_SERVER['DOCUMENT_ROOT'].'/includes/jsLibrairies.php'; ?>
 	<script type="text/javascript">
 		//Send form in Ajax and process JSON answers
 		$(document).ready(function() {
@@ -50,15 +50,15 @@
 									}, 2000);
 
 								} else if (data['result'] == "Blocked") {
-									$("#error").html("Your account has been blocked. Please contact <?php if(defined('GAELO_CORPORATION')) echo(GAELO_CORPORATION); else echo('GaelO')?> by clicking on “A request? Any questions? “, below this page");
+									$("#error").html("Your account has been blocked. Please contact <?php if (defined('GAELO_CORPORATION')) echo(GAELO_CORPORATION); else echo('GaelO')?> by clicking on “A request? Any questions? “, below this page");
 
 
 								} else if (data['result'] == "Deactivated") {
-									$("#error").html("Your account has been deactivated. Please contact <?php if(defined('GAELO_CORPORATION')) echo(GAELO_CORPORATION); else echo('GaelO')?> by clicking on “A request? Any questions? “, below this page");
+									$("#error").html("Your account has been deactivated. Please contact <?php if (defined('GAELO_CORPORATION')) echo(GAELO_CORPORATION); else echo('GaelO')?> by clicking on “A request? Any questions? “, below this page");
 
 
 								} else if (data['result'] == "unknown") {
-									$("#error").html("The username you entered is not recognized by the platform. Please enter your correct username or contact <?php if(defined('GAELO_CORPORATION')) echo(GAELO_CORPORATION); else echo('GaelO')?> by clicking on \"A request? Any questions?\", below this page.");
+									$("#error").html("The username you entered is not recognized by the platform. Please enter your correct username or contact <?php if (defined('GAELO_CORPORATION')) echo(GAELO_CORPORATION); else echo('GaelO')?> by clicking on \"A request? Any questions?\", below this page.");
 
 
 								} else if (data['result'] == "NowBlocked") {
@@ -108,7 +108,7 @@
 	<section id="logos">
 		<img id="logo-gaelo" src="assets/images/gaelo-logo-square.png" alt="GaelO">
 		<div id="name-div">
-			<?php if(defined('GAELO_PLATEFORM_NAME')) echo(GAELO_PLATEFORM_NAME); else echo('GaelO')?>
+			<?php if (defined('GAELO_PLATEFORM_NAME')) echo(GAELO_PLATEFORM_NAME); else echo('GaelO')?>
 		</div>
 	</section>
 

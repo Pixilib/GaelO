@@ -18,18 +18,18 @@
  */
 
 Session::checkSession();
-$linkpdo = Session::getLinkpdo();
+$linkpdo=Session::getLinkpdo();
 
-$userObject= new User($_SESSION['username'], $linkpdo);
-$accessCheck = $userObject->isRoleAllowed($_SESSION['study'], $_SESSION['role']);
+$userObject=new User($_SESSION['username'], $linkpdo);
+$accessCheck=$userObject->isRoleAllowed($_SESSION['study'], $_SESSION['role']);
 
 if ($accessCheck && $_SESSION['role'] == User::SUPERVISOR) {
 
-    $studyObject = new Study($_SESSION['study'], $linkpdo);
-    //Get and display all users and roles of this study
-    $rolesList = $studyObject->getAllRolesByUsers();
-    require 'views/supervisor/users_details_view.php';
+	$studyObject=new Study($_SESSION['study'], $linkpdo);
+	//Get and display all users and roles of this study
+	$rolesList=$studyObject->getAllRolesByUsers();
+	require 'views/supervisor/users_details_view.php';
     
-}else{
-    require 'includes/no_access.php';
+}else {
+	require 'includes/no_access.php';
 }
