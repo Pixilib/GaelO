@@ -1,4 +1,3 @@
-AJouter patient code dans export des données supervisor
 Fixer la version de OHIF
 Se pencher sur monitoring de Docker => Tester absence de log access
 

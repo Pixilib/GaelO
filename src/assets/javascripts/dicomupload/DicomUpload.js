@@ -714,7 +714,8 @@ class DicomUpload {
 				type: "uint8array",
 				compression: "DEFLATE",
 				compressionOptions: {
-					level: 3
+					level: 3,
+					streamFiles: true
 				}
 			},
 			// Callback on update
