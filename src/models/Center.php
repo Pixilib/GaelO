@@ -17,7 +17,7 @@
  * Center management in the plateform
  */
 
-Class Center{
+Class Center {
 	public $name;
 	public $code;
 	public $countryCode;
@@ -30,20 +30,20 @@ Class Center{
 	 * @param $code
 	 * @throws Exception
 	 */
-	public function __construct(PDO $linkpdo, $code){
+	public function __construct(PDO $linkpdo, $code) {
 	    
-	    $centerQuery = $linkpdo->prepare('SELECT * FROM centers WHERE code=:code');
-	    $centerQuery->execute(array('code'=>$code));
-	    $center=$centerQuery->fetch(PDO::FETCH_ASSOC);
+		$centerQuery=$linkpdo->prepare('SELECT * FROM centers WHERE code=:code');
+		$centerQuery->execute(array('code'=>$code));
+		$center=$centerQuery->fetch(PDO::FETCH_ASSOC);
 	    
-	    if(empty($center)){
-	        throw new Exception("Non Existing Center");
-	    }
-	    $this->linkpdo=$linkpdo;
-	    $this->name=$center['name'];
-	    $this->code=$center['code'];
-	    $this->countryCode=$center['country_code'];
-	    $this->countryName=Global_Data::getCountryName($linkpdo, $this->countryCode);
+		if (empty($center)) {
+			throw new Exception("Non Existing Center");
+		}
+		$this->linkpdo=$linkpdo;
+		$this->name=$center['name'];
+		$this->code=$center['code'];
+		$this->countryCode=$center['country_code'];
+		$this->countryName=Global_Data::getCountryName($linkpdo, $this->countryCode);
 	}
 
 	/**
@@ -51,15 +51,15 @@ Class Center{
 	 * @param string $name
 	 * @param string $countryCode
 	 */
-	public function updateCenter(string $name, string $countryCode){
-	    $updatePatient = $this->linkpdo->prepare("UPDATE centers
+	public function updateCenter(string $name, string $countryCode) {
+		$updatePatient=$this->linkpdo->prepare("UPDATE centers
                                             SET name = :centerName,
                                             country_code = :countryCode
                                             WHERE code = :code");
 	    
-	    $updatePatient->execute(array('centerName'=>$name,
-	        'countryCode'=>$countryCode,
-	        'code'=>$this->code));
+		$updatePatient->execute(array('centerName'=>$name,
+			'countryCode'=>$countryCode,
+			'code'=>$this->code));
 	    
 	}
 
@@ -69,7 +69,7 @@ Class Center{
 	 * @param $center
 	 * @return User[]
 	 */
-	public static function getUsersAffiliatedToCenter(PDO $linkpdo, $center){
+	public static function getUsersAffiliatedToCenter(PDO $linkpdo, $center) {
 		
 		//Select All users that has a matching center
 		$queryUsersEmail=$linkpdo->prepare('
@@ -87,7 +87,7 @@ Class Center{
 		$users=$queryUsersEmail->fetchAll(PDO::FETCH_COLUMN);
 		
 		$usersObjects=[];
-		foreach ($users as $user){
+		foreach ($users as $user) {
 			$usersObjects[]=new User($user, $linkpdo);
 			
 		}
@@ -102,12 +102,12 @@ Class Center{
 	 * @param $name
 	 * @param string $countryCode
 	 */
-	public static function addCenter(PDO $linkpdo, $code, String $name, String $countryCode){
-		$insertion = $linkpdo->prepare('INSERT INTO centers (code, name, country_code) VALUES (:code, :name, :countryCode)' );
+	public static function addCenter(PDO $linkpdo, $code, String $name, String $countryCode) {
+		$insertion=$linkpdo->prepare('INSERT INTO centers (code, name, country_code) VALUES (:code, :name, :countryCode)');
 		$insertion->execute(array(
 				'name' => $name,
 				'code' => $code,
-		        'countryCode' =>$countryCode
+				'countryCode' =>$countryCode
 		));
 	}
 }

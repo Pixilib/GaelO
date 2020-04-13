@@ -22,30 +22,30 @@ require_once($_SERVER['DOCUMENT_ROOT'].'/rest/check_login.php');
 header("Content-Type: application/json; charset=UTF-8");
 
 // get posted data in a PHP Object
-$data = json_decode(file_get_contents("php://input"), true);
+$data=json_decode(file_get_contents("php://input"), true);
 
 $id_visit=$data['id_visit'];
 
 $visitAccessCheck=$userObject->isVisitAllowed($id_visit, User::REVIEWER);
 
-if($visitAccessCheck){
+if ($visitAccessCheck) {
     
-    $result=[];
+	$result=[];
     
-    $visitObject=new Visit($id_visit, $linkpdo);
-    try{
-        $reviewObject=$visitObject->queryExistingReviewForReviewer($username);
-        $result=$reviewObject->getSpecificData();
-        echo(json_encode($result));
+	$visitObject=new Visit($id_visit, $linkpdo);
+	try {
+		$reviewObject=$visitObject->queryExistingReviewForReviewer($username);
+		$result=$reviewObject->getSpecificData();
+		echo(json_encode($result));
 
-    }catch (Exception $e){
-        error_log($e->getMessage());
-        header('HTTP/1.0 404 Not Found');
-    }
+	} catch (Exception $e) {
+		error_log($e->getMessage());
+		header('HTTP/1.0 404 Not Found');
+	}
 
     
-}else{
-    header('HTTP/1.0 403 Forbidden');
-    die('You are not allowed to access this file.'); 
+} else {
+	header('HTTP/1.0 403 Forbidden');
+	die('You are not allowed to access this file.'); 
     
 }

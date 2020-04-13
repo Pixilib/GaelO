@@ -22,30 +22,30 @@ $linkpdo=Session::getLinkpdo();
 
 $userObject=new User($_SESSION['username'], $linkpdo);
 $accessCheck=$userObject->isVisitAllowed($_POST['id_visit'], $_SESSION['role']);
-$visitObject=new Visit($_POST['id_visit'],$linkpdo);
+$visitObject=new Visit($_POST['id_visit'], $linkpdo);
 
 if ($accessCheck && $_SESSION['role'] == User::SUPERVISOR) {
     
-	$id_visit = $_POST['id_visit'];
-	$visit_type = $visitObject->visitType;
-	$patientNumber = $visitObject->patientCode;
-	$study = $visitObject->study;
+	$id_visit=$_POST['id_visit'];
+	$visit_type=$visitObject->visitType;
+	$patientNumber=$visitObject->patientCode;
+	$study=$visitObject->study;
 	$data_reviews=[];
 
 	try {
 		$localReviewObject=$visitObject->getReviewsObject(true);
 		$data_reviews[]=$localReviewObject;
-	}catch(Exception $e){ }
+	} catch (Exception $e) { }
 
 	try {
 		$reviewsNotLocal=$visitObject->getReviewsObject(false);
 		array_push($data_reviews, ...$reviewsNotLocal);
-	}catch(Exception $e){ }
+	} catch (Exception $e) { }
 	
 	$trackerVisitResponses=Tracker::getTackerForVisit($id_visit, $linkpdo);
 	
 	require 'views/supervisor/visit_infos_view.php';
 	
-}else {
-    require 'includes/no_access.php';
+} else {
+	require 'includes/no_access.php';
 }

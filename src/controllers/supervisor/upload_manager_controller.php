@@ -23,20 +23,20 @@ $linkpdo=Session::getLinkpdo();
 $userObject=new User($_SESSION['username'], $linkpdo);
 $accessCheck=$userObject->isRoleAllowed($_SESSION['study'], $_SESSION['role']);
 
-if ($accessCheck && $_SESSION['role'] == User::SUPERVISOR ) {
+if ($accessCheck && $_SESSION['role'] == User::SUPERVISOR) {
 	$username=$_SESSION['username'];
 	
 	//Get All visit / patient status from the visit Manager
 	$studyObject=new Study($_SESSION['study'], $linkpdo);
 	$possibleGroups=$studyObject->getAllPossibleVisitGroups();
 	$allVisits=[];
-	foreach($possibleGroups as $groupObject){
+	foreach ($possibleGroups as $groupObject) {
 		$visitTypes=$groupObject->getAllVisitTypesOfGroup();
-		$allVisits[$groupObject->groupModality]=array_map(function($visitType){return $visitType->name;},$visitTypes);
+		$allVisits[$groupObject->groupModality]=array_map(function($visitType) {return $visitType->name; },$visitTypes);
 	}
 	
-    require 'views/supervisor/upload_manager_view.php';
+	require 'views/supervisor/upload_manager_view.php';
     
-} else {
-    require 'includes/no_access.php';
+}else {
+	require 'includes/no_access.php';
 }

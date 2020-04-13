@@ -166,7 +166,7 @@
 			echo '<option value="All Studies">All Studies</option>';
 			
 			foreach ($etudes as $etude) {
-				echo '<option value="' . htmlspecialchars($etude) . '">' . htmlspecialchars($etude) . '</option>';
+				echo '<option value="'.htmlspecialchars($etude).'">'.htmlspecialchars($etude).'</option>';
 			}
 			
 			?>

@@ -21,7 +21,7 @@ class Statistics {
 	public $studyObject;
 	private $studyVisitManager;
 
-	public function __construct(Study $study, String $modalityType){
+	public function __construct(Study $study, String $modalityType) {
 		$this->studyObject=$study;
 		$this->studyVisitManager=$this->studyObject->getStudySpecificGroupManager($modalityType);
 	}
@@ -30,14 +30,14 @@ class Statistics {
 	 * List review one by one with user and date
 	 * @return array
 	 */
-	public function getReviewsDate(){
+	public function getReviewsDate() {
 		$reviewdetailsMap=$this->studyObject->getReviewManager()->getReviewsDetailsByVisit();
 
 		$result=[];
 		
-		foreach($reviewdetailsMap as $visitType=>$details){
-		    $review=[];
-			foreach($details['reviewDetailsArray'] as $detail){
+		foreach ($reviewdetailsMap as $visitType=>$details) {
+			$review=[];
+			foreach ($details['reviewDetailsArray'] as $detail) {
 				$review['username']=$detail['user'];
 				$review['date']=$detail['date'];
 				$result[]=$review;
@@ -51,7 +51,7 @@ class Statistics {
 	 * Provide uploadedFraction of patient in position 0 and upload delay in position 1
 	 * @return array
 	 */
-	public function getUploadFractionAndDelay(){
+	public function getUploadFractionAndDelay() {
 
 		$allPatientStatus=$this->studyVisitManager->getPatientsAllVisitsStatus();
 		$results[0]=$this->getUploadedFraction($allPatientStatus);
@@ -66,15 +66,15 @@ class Statistics {
 	 * @param array $allPatientStatus
 	 * @return array
 	 */
-	private function getUploadedFraction($allPatientStatus){
+	private function getUploadedFraction($allPatientStatus) {
 		$resultArray=[];
 		
 		
-		foreach ($allPatientStatus as $visitType => $patients){
+		foreach ($allPatientStatus as $visitType => $patients) {
 			
-			foreach ($patients as $patientCode=>$patientDetails){
+			foreach ($patients as $patientCode=>$patientDetails) {
 				
-				if($patientDetails['status']==Patient_Visit_Manager::DONE || $patientDetails['status']==Patient_Visit_Manager::SHOULD_BE_DONE){
+				if ($patientDetails['status'] == Patient_Visit_Manager::DONE || $patientDetails['status'] == Patient_Visit_Manager::SHOULD_BE_DONE) {
 					$visit['status']=$patientDetails['status'];
 					$visit['uploadStatus']=$patientDetails['upload_status'];
 					$visit['visitType']=$visitType;
@@ -94,30 +94,30 @@ class Statistics {
 	 * @param array $allPatientStatus
 	 * @return array
 	 */
-	private function getUploadDelay($allPatientStatus){
+	private function getUploadDelay($allPatientStatus) {
 
-	    $resultArray=[];
+		$resultArray=[];
 	    
-	    foreach ($allPatientStatus as $visitType => $patients){
-	        foreach ($patients as $patientCode=>$patientDetails){
+		foreach ($allPatientStatus as $visitType => $patients) {
+			foreach ($patients as $patientCode=>$patientDetails) {
 	            
-	            if($patientDetails['status']==Patient_Visit_Manager::DONE && $patientDetails['state_investigator_form']==Patient_Visit_Manager::DONE){
+				if ($patientDetails['status'] == Patient_Visit_Manager::DONE && $patientDetails['state_investigator_form'] == Patient_Visit_Manager::DONE) {
 	                
-	                $acquisitionDate=new DateTimeImmutable($patientDetails['acquisition_date']);
-	                $uploadDate=new DateTimeImmutable($patientDetails['upload_date']);
-	                $uploadDelay=($uploadDate->getTimestamp()-$acquisitionDate->getTimestamp()) / (3600*24);
-	                $visit['uploadDelay']=$uploadDelay;
-	                $visit['acquisitionCompliancy']=$patientDetails['compliancy'];
-	                $visit['visitType']=$visitType;
-	                $visit['idVisit']=$patientDetails['id_visit'];
-	                $visit['center']=$patientDetails['center'];
-	                $visit['country']=$patientDetails['country'];
-	                $resultArray[]=$visit;
-	            }
-	        }
-	    }
+					$acquisitionDate=new DateTimeImmutable($patientDetails['acquisition_date']);
+					$uploadDate=new DateTimeImmutable($patientDetails['upload_date']);
+					$uploadDelay=($uploadDate->getTimestamp()-$acquisitionDate->getTimestamp())/(3600*24);
+					$visit['uploadDelay']=$uploadDelay;
+					$visit['acquisitionCompliancy']=$patientDetails['compliancy'];
+					$visit['visitType']=$visitType;
+					$visit['idVisit']=$patientDetails['id_visit'];
+					$visit['center']=$patientDetails['center'];
+					$visit['country']=$patientDetails['country'];
+					$resultArray[]=$visit;
+				}
+			}
+		}
 	    
-	    return $resultArray;
+		return $resultArray;
 		
 	
 	}
@@ -126,22 +126,22 @@ class Statistics {
 	 * Return QC time (in days) for each visit (from upload date to QC)
 	 * @return array
 	 */
-	public function getQCTime(){
+	public function getQCTime() {
 		
 		$uploadedVisitArray=$this->studyVisitManager->getUploadedVisits();
 		
 		$responseDelayArray=[];
 		
-		foreach ($uploadedVisitArray as $visit){
-			$responseQcArrayDetails = [];
-			if($visit->qcStatus!=Visit::QC_NOT_DONE){
+		foreach ($uploadedVisitArray as $visit) {
+			$responseQcArrayDetails=[];
+			if ($visit->qcStatus != Visit::QC_NOT_DONE) {
 				$uploadDate=new DateTimeImmutable($visit->uploadDate);
 				$qcDate=new DateTimeImmutable($visit->controlDate);
-				$qcDelay=($qcDate->getTimestamp()-$uploadDate->getTimestamp()) / (3600*24);
+				$qcDelay=($qcDate->getTimestamp()-$uploadDate->getTimestamp())/(3600*24);
 
-				if($visit->correctiveActionDate==null){
+				if ($visit->correctiveActionDate == null) {
 					$hasCorrectiveAction=false;
-				}else{
+				}else {
 					$hasCorrectiveAction=true;
 				}
 
@@ -149,7 +149,7 @@ class Statistics {
 				$responseQcArrayDetails['qcDelay']=$qcDelay;
 				$responseQcArrayDetails['hasCorrectiveAction']=$hasCorrectiveAction;
 			}
-			$responseDelayArray[] = $responseQcArrayDetails;
+			$responseDelayArray[]=$responseQcArrayDetails;
 		}
 		
 		return $responseDelayArray;
@@ -160,17 +160,17 @@ class Statistics {
 	 * Output the time to reach the review conclusion (from QC date to Review Done status)
 	 * @return array[]
 	 */
-	public function getConclusionTime(){
+	public function getConclusionTime() {
 		
 		$uploadedVisitArray=$this->studyVisitManager->getUploadedVisits();
 		
 		$responseDelayArray=[];
 		
-		foreach ($uploadedVisitArray as $visit){
-			if($visit->reviewStatus== Visit::REVIEW_DONE){
+		foreach ($uploadedVisitArray as $visit) {
+			if ($visit->reviewStatus == Visit::REVIEW_DONE) {
 				$qcDate=new DateTimeImmutable($visit->controlDate);
 				$conclusionDate=new DateTimeImmutable($visit->reviewConclusionDate);
-				$conclusionDelay=($conclusionDate->getTimestamp()-$qcDate->getTimestamp())/ (3600*24);
+				$conclusionDelay=($conclusionDate->getTimestamp()-$qcDate->getTimestamp())/(3600*24);
 				
 				$responseConclusionArrayDetails['idVisit']=$visit->id_visit;
 				$responseConclusionArrayDetails['conclusionDelay']=$conclusionDelay;
@@ -187,19 +187,19 @@ class Statistics {
 	 * Return all review status for each visit
 	 * @return array
 	 */
-	public function getReviewStatus(){
+	public function getReviewStatus() {
 		
 		$uploadedVisitArray=$this->studyVisitManager->getUploadedVisits();
 		
 		$responseReviewArray=[];
 		
-		foreach ($uploadedVisitArray as $visit){
-			$responseReviewArrayElement = [];
-			if($visit->statusDone==Visit::DONE){
-				$responseReviewArrayElement['status'] = $visit->reviewStatus;
-				if($visit->reviewStatus==Visit::DONE){
-					$responseReviewArrayElement['visitType'] = $visit->visitType;
-					$responseReviewArrayElement['conclusionValue'] = $visit->reviewConclusion;
+		foreach ($uploadedVisitArray as $visit) {
+			$responseReviewArrayElement=[];
+			if ($visit->statusDone == Visit::DONE) {
+				$responseReviewArrayElement['status']=$visit->reviewStatus;
+				if ($visit->reviewStatus == Visit::DONE) {
+					$responseReviewArrayElement['visitType']=$visit->visitType;
+					$responseReviewArrayElement['conclusionValue']=$visit->reviewConclusion;
 				}
 			}
 			$responseReviewArray[]=$responseReviewArrayElement;
@@ -213,20 +213,20 @@ class Statistics {
 	 * Return array of each visit's QC status
 	 * @return string
 	 */
-	public function getQcStatus(){
+	public function getQcStatus() {
 		
 		$uploadedVisitArray=$this->studyVisitManager->getUploadedVisits();
 		
 		$responseQcArray=[];
 		
-		foreach ($uploadedVisitArray as $visit){
+		foreach ($uploadedVisitArray as $visit) {
 			$responseQcArrayDetails=[];
-			if($visit->statusDone==Visit::DONE){
+			if ($visit->statusDone == Visit::DONE) {
 				$patientObject=$visit->getPatient();
 				$center=$patientObject->getPatientCenter();
-				if($visit->correctiveActionDate==null){
+				if ($visit->correctiveActionDate == null) {
 					$hasCorrectiveAction=false;
-				}else{
+				}else {
 					$hasCorrectiveAction=true;
 				}
 				$responseQcArrayDetails['qcStatus']=$visit->qcStatus;
@@ -234,7 +234,7 @@ class Statistics {
 				$responseQcArrayDetails['center']=$center->name;
 				$responseQcArrayDetails['country']=$center->countryName;
 			}
-			$responseQcArray[] = $responseQcArrayDetails;
+			$responseQcArray[]=$responseQcArrayDetails;
 		}
 		
 		return $responseQcArray;
@@ -247,23 +247,23 @@ class Statistics {
 	 * Will only return the first PET series found for each visit
 	 * @return array|number
 	 */
-	public function getAcquisitionPetDelay(){
+	public function getAcquisitionPetDelay() {
 		
 		$uploadedVisitArray=$this->studyVisitManager->getUploadedVisits();
 		
 		$delayArray=array();
-		foreach ($uploadedVisitArray as $visit){
+		foreach ($uploadedVisitArray as $visit) {
 			$uploadedSeries=$visit->getSeriesDetails();
-			foreach ($uploadedSeries as $serie){
+			foreach ($uploadedSeries as $serie) {
 
-				if($serie->acquisitionDateTime==null || $serie->injectedDateTime==null){
+				if ($serie->acquisitionDateTime == null || $serie->injectedDateTime == null) {
 					continue;
 				}
 				
 				$acquisitionTime=new DateTimeImmutable($serie->acquisitionDateTime);
 				$injectionTime=new DateTimeImmutable($serie->injectedDateTime);
-				if($acquisitionTime!=null && $injectionTime!=null){
-					$acquisitionDelay=($acquisitionTime->getTimestamp() - $injectionTime->getTimestamp())/ 60;
+				if ($acquisitionTime != null && $injectionTime != null) {
+					$acquisitionDelay=($acquisitionTime->getTimestamp()-$injectionTime->getTimestamp())/60;
 					$relatedPatient=$visit->getPatient();
 					$patientCenter=$relatedPatient->getPatientCenter();
 					$delayDetails['country']=$patientCenter->countryName;
@@ -287,30 +287,30 @@ class Statistics {
 	 * Return specific data of all reviews
 	 * @return array[]
 	 */
-	public function getReviewData(){
+	public function getReviewData() {
 	    
-        $createdVisits=$this->studyVisitManager->getUploadedVisits();
+		$createdVisits=$this->studyVisitManager->getUploadedVisits();
         
-        $reviewsJson=[];
-        foreach ($createdVisits as $visit){
+		$reviewsJson=[];
+		foreach ($createdVisits as $visit) {
 
 					$reviews=[];
 
-					try{
+					try {
 						$reviews[]=$visit->getReviewsObject(true);
-					}catch(Exception $e){ }
+					}catch (Exception $e) { }
 
-					try{
+					try {
 						$reviewsReviewers=$visit->getReviewsObject(false);
-						foreach ($reviewsReviewers as $expertReview){
+						foreach ($reviewsReviewers as $expertReview) {
 							$reviews[]=$expertReview;
 						}
-					}catch(Exception $e){ }
+					}catch (Exception $e) { }
 
 
-	        foreach ($reviews as $review){
+			foreach ($reviews as $review) {
 
-						if($review->validated){
+						if ($review->validated) {
 								$specificData=$review->getSpecificData();
 								$parentVisit=$review->getParentVisitObject();
 								$visitType=$parentVisit->visitType;
@@ -325,19 +325,19 @@ class Statistics {
 								$reviewsJson['data'][$visitType][]=$reviewResult;
 						}
 
-	        }
+			}
 		}
 		
-        $visitTypePossible=$this->studyVisitManager->getVisitGroupObject()->getAllVisitTypesOfGroup();
-        foreach ($visitTypePossible as $visitType){
-            $inputType=$visitType->getSpecificTableInputType();
-            $dataDetails[$visitType->name]=$inputType;
-        }
+		$visitTypePossible=$this->studyVisitManager->getVisitGroupObject()->getAllVisitTypesOfGroup();
+		foreach ($visitTypePossible as $visitType) {
+			$inputType=$visitType->getSpecificTableInputType();
+			$dataDetails[$visitType->name]=$inputType;
+		}
         
-        $reviewsJson['structureDetails']=$dataDetails;
+		$reviewsJson['structureDetails']=$dataDetails;
         
-        return $reviewsJson;
-    }
+		return $reviewsJson;
+	}
 	   
 	
 }

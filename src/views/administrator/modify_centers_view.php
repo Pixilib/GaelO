@@ -107,17 +107,17 @@
     			</thead>
     			<tbody>
 					<?php
-                    // Add all existing centers in the selector
-                    foreach ($centers as $center) {
-                        ?>
+					// Add all existing centers in the selector
+					foreach ($centers as $center) {
+						?>
                         <tr>
                         <td><?=$center->code ?></td>
                         <td contenteditable="true"><?=htmlspecialchars($center->name)?></td>
                         <td contenteditable="true"><?=$center->countryCode ?></td>
                         </tr>
                         <?php
-                    }
-                    ?>
+					}
+					?>
     			</tbody>
     		</table>
 		</div>
@@ -141,7 +141,7 @@
 				<label class="col col-form-label">Country:</label> 
 				<select
 					class="col form-control" id="countrySelect">
-					<?php foreach ($countries as $country){
+					<?php foreach ($countries as $country) {
 					?>
 						<option value="<?= $country['country_code']?>"> <?=$country['country_us']?></option>
 					<?php 

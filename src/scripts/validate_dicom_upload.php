@@ -39,7 +39,7 @@ $zipPath=$_SERVER['DOCUMENT_ROOT'].'/data/upload/'.$_POST['file_name'];
 
 $destination=$_SERVER['DOCUMENT_ROOT'].'/data/upload/'.uniqid("upload");
 if (!is_dir($destination)) {
-		mkdir( $destination , 0755 );
+		mkdir($destination, 0755);
 }
 
 $id_visit=$_POST['id_visit'];
@@ -54,41 +54,41 @@ $userObject=new User($username, $linkpdo);
 
 $accessCheck=$userObject->isVisitAllowed($id_visit, User::INVESTIGATOR);
 
-if( $accessCheck && $role== User::INVESTIGATOR && $visitObject->uploadStatus==Visit::NOT_DONE){
-    //Run as a background task even if the user leave the website
-    ignore_user_abort(true);
-    //Set Visit as upload processing status
-    $visitObject->changeUploadStatus(Visit::UPLOAD_PROCESSING);
-    $start_time=microtime(true);
+if ($accessCheck && $role == User::INVESTIGATOR && $visitObject->uploadStatus == Visit::NOT_DONE) {
+	//Run as a background task even if the user leave the website
+	ignore_user_abort(true);
+	//Set Visit as upload processing status
+	$visitObject->changeUploadStatus(Visit::UPLOAD_PROCESSING);
+	$start_time=microtime(true);
 
-    /**
-     * Try block as each interruption of the proccess must make visit return as upload not done
-     * To allow new upload
-     */
-    try{
-        //Check that ZIP is not a bomb
-        $zipSize=filesize($zipPath);
-        $uncompressedzipSize=get_zip_originalsize($zipPath);
-        if($uncompressedzipSize/$zipSize >20){
-            throw new Exception("Bomb Zip");
-        }
+	/**
+	 * Try block as each interruption of the proccess must make visit return as upload not done
+	 * To allow new upload
+	 */
+	try {
+		//Check that ZIP is not a bomb
+		$zipSize=filesize($zipPath);
+		$uncompressedzipSize=get_zip_originalsize($zipPath);
+		if ($uncompressedzipSize/$zipSize > 20) {
+			throw new Exception("Bomb Zip");
+		}
         
 		//Unzip recieved file
-		$zip = new ZipArchive;
+		$zip=new ZipArchive;
 		$zip->open($zipPath);
 		$zip->extractTo($destination);
 		$zip->close();
 		unlink($zipPath);
 		
-	    //Send unziped files to Orthanc
+		//Send unziped files to Orthanc
 		$orthancExposedObject=new Orthanc(true);
 		$importedMap=sendFolderToOrthanc($destination, $orthancExposedObject);
 
 	
-	    //Anonymize, remove original and send anonymized to Orthanc PACS
+		//Anonymize, remove original and send anonymized to Orthanc PACS
 
 		//Read imported map, it only have only one study
-		foreach ($importedMap as $studyID=>$seriesIDs){
+		foreach ($importedMap as $studyID=>$seriesIDs) {
 			//Anonymize and store new anonymized study Orthanc ID
 			$anonymizedIDArray[]=$orthancExposedObject->Anonymize($studyID, $visitObject->getVisitCharacteristics()->anonProfile, $visitObject->patientCode, $visitObject->visitType, $visitObject->study);
 			//error_log("Anonymization done at ".(microtime(true)-$start_time));
@@ -103,33 +103,33 @@ if( $accessCheck && $role== User::INVESTIGATOR && $visitObject->uploadStatus==Vi
 		$orthancExposedObject->deleteFromOrthanc("studies", $anonymizedIDArray[0]);
 
 	
-        //Fill the Orthanc study / series table
-        //Reset the PDO object as the database connexion is likely to be timed out
+		//Fill the Orthanc study / series table
+		//Reset the PDO object as the database connexion is likely to be timed out
 		$linkpdo=Session::getLinkpdo();
 		$fillTable=new Fill_Orthanc_Table($visitObject->id_visit, $username, $linkpdo);
 		$studyDetails=$fillTable->parseData($anonymizedIDArray[0]);
 
-        //Check that nb on instances in Orthanc PACS still match the original number of sent instances
-    	if($studyDetails['countInstances']!=$nbOfInstances){
-    	    throw new Exception("Error during Peer transfers"); 
-    	}
+		//Check that nb on instances in Orthanc PACS still match the original number of sent instances
+		if ($studyDetails['countInstances'] != $nbOfInstances) {
+			throw new Exception("Error during Peer transfers"); 
+		}
     		
 		//Fill Orthanc Tables in Database and update visit status
-        $fillTable->fillDB($anonFromOrthancId);
-        $answer['receivedConfirmation']=true;
-        $logDetails['uploadedSeries']=$studyDetails['seriesInStudy'];
-        $logDetails['patientNumber']=$visitObject->patientCode;
+		$fillTable->fillDB($anonFromOrthancId);
+		$answer['receivedConfirmation']=true;
+		$logDetails['uploadedSeries']=$studyDetails['seriesInStudy'];
+		$logDetails['patientNumber']=$visitObject->patientCode;
 		$logDetails['visitType']=$visitObject->visitType;
 		$logDetails['modality_visit']=$visitObject->visitGroupObject->groupModality;
-        //Log import
-        Tracker::logActivity($username, $role, $study, $visitObject->id_visit, "Upload Series", $logDetails );
+		//Log import
+		Tracker::logActivity($username, $role, $study, $visitObject->id_visit, "Upload Series", $logDetails);
 	
-	}catch(Exception $e1){
-	    handleException($e1);
+	}catch (Exception $e1) {
+		handleException($e1);
 	}
 		
 
-}else{
+}else {
 	header('HTTP/1.0 403 Forbidden');
 	die('You are not allowed to access this file.');
 }
@@ -142,28 +142,28 @@ if( $accessCheck && $role== User::INVESTIGATOR && $visitObject->uploadStatus==Vi
  * @throws Exception
  * @return mixed
  */
-function sendFolderToOrthanc(string $destination, Orthanc $orthancExposedObject){
+function sendFolderToOrthanc(string $destination, Orthanc $orthancExposedObject) {
 	
 	global $nbOfInstances;
 	//Recursive scann of the unzipped folder
-	$rii = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($destination));
+	$rii=new RecursiveIteratorIterator(new RecursiveDirectoryIterator($destination));
 	
-	$files = array();
+	$files=array();
 	foreach ($rii as $file) {
-		if ($file->isDir()){
+		if ($file->isDir()) {
 			continue;
 		}
-		$files[] = $file->getPathname();
+		$files[]=$file->getPathname();
 	}
 	
 	$importedMap=null;
 	$importedInstances=0;
-	$start_time = microtime(true);
+	//$start_time=microtime(true);
 	
 	//Import dicom file one by one
-	foreach ($files as $file){
+	foreach ($files as $file) {
 		$importAnswer=$orthancExposedObject->importFile($file);
-		if(!empty($importAnswer)){
+		if (!empty($importAnswer)) {
 			$answerdetails=json_decode($importAnswer, true);
 			$importedMap[$answerdetails['ParentStudy']][$answerdetails['ParentSeries']][]=$answerdetails['ID'];
 			$importedInstances++;
@@ -176,13 +176,13 @@ function sendFolderToOrthanc(string $destination, Orthanc $orthancExposedObject)
 	
 	//error_log("Imported ".$importedInstances." files in ".(microtime(true)-$start_time));
 	
-	if(count($importedMap)==1 && $importedInstances == $nbOfInstances){
+	if (count($importedMap) == 1 && $importedInstances == $nbOfInstances) {
 		return $importedMap;
-	}else{
+	}else {
 		//These error shall never occur
-		if(count($importedMap)>1){
+		if (count($importedMap) > 1) {
 			throw new Exception("More than one study in Zip");
-		}else if ($importedInstances != $nbOfInstances){
+		}else if ($importedInstances != $nbOfInstances) {
 			throw new Exception("Imported DICOM not matching announced number of Instances");
 			
 		}
@@ -195,20 +195,20 @@ function sendFolderToOrthanc(string $destination, Orthanc $orthancExposedObject)
  * @param string $directory
  */
 function recursive_directory_delete(string $directory) {
-    $it = new RecursiveDirectoryIterator($directory, FilesystemIterator::SKIP_DOTS);
-    $it = new RecursiveIteratorIterator($it, RecursiveIteratorIterator::CHILD_FIRST);
-    foreach($it as $file) {
-        if ($file->isDir()) rmdir($file->getPathname());
-        else unlink($file->getPathname());
-    }
-    rmdir($directory);
+	$it=new RecursiveDirectoryIterator($directory, FilesystemIterator::SKIP_DOTS);
+	$it=new RecursiveIteratorIterator($it, RecursiveIteratorIterator::CHILD_FIRST);
+	foreach ($it as $file) {
+		if ($file->isDir()) rmdir($file->getPathname());
+		else unlink($file->getPathname());
+	}
+	rmdir($directory);
 }
 
 /**
  * In case of a thrown exception, warn administrator and uploader and set upload to not done
  * @param Exception $e1
  */
-function handleException(Exception $e1){
+function handleException(Exception $e1) {
 	global $visitObject;
 	global $linkpdo;
 	global $answer;
@@ -224,7 +224,7 @@ function handleException(Exception $e1){
  * @param string $errorMessage
  * @param PDO $linkpdo
  */
-function warningAdminError(string $errorMessage, PDO $linkpdo){
+function warningAdminError(string $errorMessage, PDO $linkpdo) {
 	$sendEmails=new Send_Email($linkpdo);
 	global $visitObject;
 	global $zipPath;
@@ -242,14 +242,14 @@ function warningAdminError(string $errorMessage, PDO $linkpdo){
  * @return number
  */
 function get_zip_originalsize(string $filename) {
-    $size = 0;
-    $resource = zip_open($filename);
-    while ($dir_resource = zip_read($resource)) {
-        $size += zip_entry_filesize($dir_resource);
-    }
-    zip_close($resource);
+	$size=0;
+	$resource=zip_open($filename);
+	while ($dir_resource=zip_read($resource)) {
+		$size+=zip_entry_filesize($dir_resource);
+	}
+	zip_close($resource);
     
-    return $size;
+	return $size;
 }
 
 

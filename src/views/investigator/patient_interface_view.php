@@ -19,7 +19,7 @@
         
         $( document ).ready(function() {
 
-			<?php if($role == User::INVESTIGATOR && $visitPossible ){ ?>
+			<?php if ($role == User::INVESTIGATOR && $visitPossible) { ?>
 				//Dialog for the add visit form
 				$("#addVisit").dialog({
 					autoOpen: false,
@@ -63,7 +63,7 @@
     
     </script>
 
-<?php if($role == User::INVESTIGATOR && $visitPossible ){ ?>
+<?php if ($role == User::INVESTIGATOR && $visitPossible) { ?>
     <div id="createVisitButton">
     	<button id='createStudy' class="btn btn-primary">New Visit</button>
     </div>

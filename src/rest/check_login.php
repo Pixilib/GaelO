@@ -22,9 +22,9 @@
 require_once($_SERVER['DOCUMENT_ROOT'].'/vendor/autoload.php');
 
 if (!isset($_SERVER['PHP_AUTH_USER'])) {
-    header('WWW-Authenticate: Basic realm="Gaelo"');
-    header('HTTP/1.0 401 Unauthorized');
-    exit;
+	header('WWW-Authenticate: Basic realm="Gaelo"');
+	header('HTTP/1.0 401 Unauthorized');
+	exit;
     
 }
 
@@ -36,23 +36,23 @@ $linkpdo=Session::getLinkpdo();
 $userObject=new User($username, $linkpdo);
 $passwordCheck=$userObject->isPasswordCorrectAndActivitedAccount($password);
 
-if(!$passwordCheck){
+if (!$passwordCheck) {
     
-    if(!$userObject->isExistingUser){
-        header('HTTP/1.1 420 Non existing user');
+	if (!$userObject->isExistingUser) {
+		header('HTTP/1.1 420 Non existing user');
         
-    }else if(!$userObject->passwordCorrect && $userObject->userStatus == User::ACTIVATED && $userObject->passwordDateValide){
-        header('HTTP/1.1 420 Wrong Password '.$userObject->loginAttempt."/3 wrong attempt");
+	}else if (!$userObject->passwordCorrect && $userObject->userStatus == User::ACTIVATED && $userObject->passwordDateValide) {
+		header('HTTP/1.1 420 Wrong Password '.$userObject->loginAttempt."/3 wrong attempt");
         
-    } else if(!$userObject->passwordDateValide){
-        header('HTTP/1.1 420 Outdated Password, go to website to renew it');
+	}else if (!$userObject->passwordDateValide) {
+		header('HTTP/1.1 420 Outdated Password, go to website to renew it');
         
-    } else if($userObject->userStatus != User::ACTIVATED){
-        header('HTTP/1.1 420 Account '.$userObject->userStatus);
-    }
+	}else if ($userObject->userStatus != User::ACTIVATED) {
+		header('HTTP/1.1 420 Account '.$userObject->userStatus);
+	}
     
-    exit();
+	exit();
     
-}else{
-    header("HTTP/1.1 200 OK");
+}else {
+	header("HTTP/1.1 200 OK");
 }

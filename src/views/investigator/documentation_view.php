@@ -26,16 +26,16 @@
 		</thead>
 		<tbody>
           <?php
-        // Fill the table for each database response
-        foreach ($documentationObjects as $documentation) {
-            ?>
+		// Fill the table for each database response
+		foreach ($documentationObjects as $documentation) {
+			?>
            	<tr><td><img class="icon" src="assets/images/download.png" alt="Download" onclick="downloadDocumentation(<?=$documentation->documentId?>)"></td>
             <td><?= htmlspecialchars($documentation->documentName)?></td>
             <td><?= htmlspecialchars($documentation->documentVersion)?></td>
             <td><?= $documentation->documentDate?></td></tr>
         <?php
-        }
-        ?>
+		}
+		?>
         </tbody>
 	</table>
 </div>

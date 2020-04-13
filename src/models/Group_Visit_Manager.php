@@ -21,57 +21,57 @@
 class Group_Visit_Manager
 {
 
-    private Study $studyObject;
-    private Visit_Group $visitGroupObject;
-    private PDO $linkpdo;
+	private Study $studyObject;
+	private Visit_Group $visitGroupObject;
+	private PDO $linkpdo;
 
 
-    public function __construct(Study $studyObject, Visit_Group $visitGroupObject, PDO $linkpdo)
-    {
-        $this->linkpdo = $linkpdo;
-        $this->studyObject = $studyObject;
-        $this->visitGroupObject = $visitGroupObject;
-    }
+	public function __construct(Study $studyObject, Visit_Group $visitGroupObject, PDO $linkpdo)
+	{
+		$this->linkpdo=$linkpdo;
+		$this->studyObject=$studyObject;
+		$this->visitGroupObject=$visitGroupObject;
+	}
 
-    public function getVisitGroupObject(): Visit_Group
-    {
-        return $this->visitGroupObject;
-    }
+	public function getVisitGroupObject(): Visit_Group
+	{
+		return $this->visitGroupObject;
+	}
 
-    /**
-     * Return uploaded and non deleted visit Objects (visit Done and Upload status done)
-     */
-    public function getUploadedVisits(): array
-    {
+	/**
+	 * Return uploaded and non deleted visit Objects (visit Done and Upload status done)
+	 */
+	public function getUploadedVisits(): array
+	{
 
-        $uploadedVisitQuery = $this->linkpdo->prepare('SELECT id_visit FROM visits 
+		$uploadedVisitQuery=$this->linkpdo->prepare('SELECT id_visit FROM visits 
                                                                     INNER JOIN visit_type ON 
                                                                         (visit_type.id=visits.visit_type_id 
                                                                         AND visit_type.group_id = :visitGroupId)
                                                                 WHERE deleted=0
                                                                     AND upload_status="Done" ');
 
-        $uploadedVisitQuery->execute(array(
-            'visitGroupId' => $this->visitGroupObject->groupId
-        ));
+		$uploadedVisitQuery->execute(array(
+			'visitGroupId' => $this->visitGroupObject->groupId
+		));
 
-        $uploadedVisitIds = $uploadedVisitQuery->fetchall(PDO::FETCH_COLUMN);
+		$uploadedVisitIds=$uploadedVisitQuery->fetchall(PDO::FETCH_COLUMN);
 
-        $visitObjectArray = [];
-        foreach ($uploadedVisitIds as $id_visit) {
-            $visitObjectArray[] = new Visit($id_visit, $this->linkpdo);
-        }
+		$visitObjectArray=[];
+		foreach ($uploadedVisitIds as $id_visit) {
+			$visitObjectArray[]=new Visit($id_visit, $this->linkpdo);
+		}
 
-        return $visitObjectArray;
-    }
+		return $visitObjectArray;
+	}
 
-    /**
-     * Get visits with a awaiting upload status (Visit Done but upload status not done)
-     */
-    public function getAwaitingUploadVisit(): array
-    {
+	/**
+	 * Get visits with a awaiting upload status (Visit Done but upload status not done)
+	 */
+	public function getAwaitingUploadVisit(): array
+	{
 
-        $uploadedVisitQuery = $this->linkpdo->prepare("SELECT id_visit FROM visits 
+		$uploadedVisitQuery=$this->linkpdo->prepare("SELECT id_visit FROM visits 
                                                                     INNER JOIN visit_type ON 
                                                                          (visit_type.id=visits.visit_type_id 
                                                                             AND visit_type.group_id = :visitGroupId)
@@ -79,32 +79,32 @@ class Group_Visit_Manager
 														        AND upload_status = 'Not Done'
 														        AND status_done = 'Done' ");
 
-        $uploadedVisitQuery->execute(
-            array(
-                'visitGroupId' => $this->visitGroupObject->groupId
-            )
-        );
-        $uploadedVisitIds = $uploadedVisitQuery->fetchAll(PDO::FETCH_COLUMN);
+		$uploadedVisitQuery->execute(
+			array(
+				'visitGroupId' => $this->visitGroupObject->groupId
+			)
+		);
+		$uploadedVisitIds=$uploadedVisitQuery->fetchAll(PDO::FETCH_COLUMN);
 
-        $visitObjectArray = [];
-        foreach ($uploadedVisitIds as $id_visit) {
-            $visitObjectArray[] = new Visit($id_visit, $this->linkpdo);
-        }
+		$visitObjectArray=[];
+		foreach ($uploadedVisitIds as $id_visit) {
+			$visitObjectArray[]=new Visit($id_visit, $this->linkpdo);
+		}
 
-        return $visitObjectArray;
-    }
+		return $visitObjectArray;
+	}
 
-    /**
-     * Get Visits awaiting review
-     * Optionally visit awaiting review can be specific to an username
-     * @param string $username
-     * @return Visit[]
-     */
-    public function getAwaitingReviewVisit(string $username = null): array
-    {
+	/**
+	 * Get Visits awaiting review
+	 * Optionally visit awaiting review can be specific to an username
+	 * @param string $username
+	 * @return Visit[]
+	 */
+	public function getAwaitingReviewVisit(string $username=null): array
+	{
 
-        //Query visit to analyze visit awaiting a review
-        $idVisitsQuery = $this->linkpdo->prepare('SELECT id_visit FROM visits 
+		//Query visit to analyze visit awaiting a review
+		$idVisitsQuery=$this->linkpdo->prepare('SELECT id_visit FROM visits 
                                                                     INNER JOIN visit_type ON 
                                                                         (visit_type.id=visits.visit_type_id 
                                                                         AND visit_type.group_id = :visitGroupId)
@@ -112,35 +112,37 @@ class Group_Visit_Manager
                                                                 AND review_available=1 
                                                                 ORDER BY visit_type.visit_order ');
 
-        $idVisitsQuery->execute(array(
-            'visitGroupId' => $this->visitGroupObject->groupId
-        ));
+		$idVisitsQuery->execute(array(
+			'visitGroupId' => $this->visitGroupObject->groupId
+		));
 
-        $visitList = $idVisitsQuery->fetchAll(PDO::FETCH_COLUMN);
+		$visitList=$idVisitsQuery->fetchAll(PDO::FETCH_COLUMN);
 
-        $visitObjectArray = [];
+		$visitObjectArray=[];
 
-        foreach ($visitList as $visitId) {
-            $visitObject = new Visit($visitId, $this->linkpdo);
+		foreach ($visitList as $visitId) {
+			$visitObject=new Visit($visitId, $this->linkpdo);
 
-            if (!empty($username)) {
-                if ($visitObject->isAwaitingReviewForReviewerUser($username)) $visitObjectArray[] = $visitObject;
-            } else {
-                $visitObjectArray[] = $visitObject;
-            }
-        }
+			if (!empty($username)) {
+				if ($visitObject->isAwaitingReviewForReviewerUser($username)) {
+					$visitObjectArray[]=$visitObject;
+				}
+			}else {
+				$visitObjectArray[]=$visitObject;
+			}
+		}
 
-        return $visitObjectArray;
-    }
+		return $visitObjectArray;
+	}
 
-    /**
-     * For controller tree
-     * List all visits that awaiting QC Action (QC not done or waiting definitive conclusion)
-     */
-    public function getVisitForControllerAction(): array
-    {
+	/**
+	 * For controller tree
+	 * List all visits that awaiting QC Action (QC not done or waiting definitive conclusion)
+	 */
+	public function getVisitForControllerAction(): array
+	{
 
-        $visitsQuery = $this->linkpdo->prepare('SELECT id_visit FROM visits 
+		$visitsQuery=$this->linkpdo->prepare('SELECT id_visit FROM visits 
                                                     INNER JOIN visit_type ON 
                                                         (visit_type.id=visits.visit_type_id 
                                                         AND visit_type.group_id = :visitGroupId)
@@ -151,55 +153,55 @@ class Group_Visit_Manager
                                                     AND (state_quality_control = "Not Done"
                                                         OR state_quality_control = "Wait Definitive Conclusion")
                                                     ORDER BY visit_type.visit_order');
-        $visitsQuery->execute(array(
-            'visitGroupId' => $this->visitGroupObject->groupId
-        ));
+		$visitsQuery->execute(array(
+			'visitGroupId' => $this->visitGroupObject->groupId
+		));
 
-        $visits = $visitsQuery->fetchAll(PDO::FETCH_COLUMN);
+		$visits=$visitsQuery->fetchAll(PDO::FETCH_COLUMN);
 
-        $visitObjectArray = [];
-        foreach ($visits as $visit) {
-            $visitObjectArray[] = new Visit($visit, $this->linkpdo);
-        }
+		$visitObjectArray=[];
+		foreach ($visits as $visit) {
+			$visitObjectArray[]=new Visit($visit, $this->linkpdo);
+		}
 
-        return $visitObjectArray;
-    }
+		return $visitObjectArray;
+	}
 
-    /**
-     * Return visits with a specific QC Status
-     */
-    public function getVisitWithQCStatus($qcStatus): array
-    {
+	/**
+	 * Return visits with a specific QC Status
+	 */
+	public function getVisitWithQCStatus($qcStatus): array
+	{
 
-        $visitQuery = $this->linkpdo->prepare("SELECT id_visit FROM visits 
+		$visitQuery=$this->linkpdo->prepare("SELECT id_visit FROM visits 
                                                         INNER JOIN visit_type ON 
                                                             (visit_type.id=visits.visit_type_id 
                                                             AND visit_type.group_id = :visitGroupId)
                                                         WHERE deleted=0
                                                         AND state_quality_control=:qcStatus");
 
-        $visitQuery->execute(array(
-            'study' => $this->study,
-            'qcStatus' => $qcStatus,
-            'visitGroupId' => $this->visitGroupObject->groupId
-        ));
-        $visitIds = $visitQuery->fetchall(PDO::FETCH_COLUMN);
+		$visitQuery->execute(array(
+			'study' => $this->study,
+			'qcStatus' => $qcStatus,
+			'visitGroupId' => $this->visitGroupObject->groupId
+		));
+		$visitIds=$visitQuery->fetchall(PDO::FETCH_COLUMN);
 
-        $visitObjectArray = [];
-        foreach ($visitIds as $id_visit) {
-            $visitObjectArray[] = new Visit($id_visit, $this->linkpdo);
-        }
+		$visitObjectArray=[];
+		foreach ($visitIds as $id_visit) {
+			$visitObjectArray[]=new Visit($id_visit, $this->linkpdo);
+		}
 
-        return $visitObjectArray;
-    }
+		return $visitObjectArray;
+	}
 
-    /**
-     * Get Visits with image uploaded status but investigator form missing
-     */
-    public function getVisitsMissingInvestigatorForm(): array
-    {
+	/**
+	 * Get Visits with image uploaded status but investigator form missing
+	 */
+	public function getVisitsMissingInvestigatorForm(): array
+	{
 
-        $visitQuery = $this->linkpdo->prepare("SELECT id_visit FROM visits 
+		$visitQuery=$this->linkpdo->prepare("SELECT id_visit FROM visits 
                                                             INNER JOIN visit_type ON 
                                                                 (visit_type.id=visits.visit_type_id 
                                                                 AND visit_type.group_id = :visitGroupId)
@@ -207,99 +209,99 @@ class Group_Visit_Manager
                                                             AND state_investigator_form !='Done' 
                                                             AND upload_status='Done'");
 
-        $visitQuery->execute(array(
-            'visitGroupId' => $this->visitGroupObject->groupId
-        ));
+		$visitQuery->execute(array(
+			'visitGroupId' => $this->visitGroupObject->groupId
+		));
 
-        $visitIds = $visitQuery->fetchAll(PDO::FETCH_COLUMN);
+		$visitIds=$visitQuery->fetchAll(PDO::FETCH_COLUMN);
 
-        $visitObjectArray = [];
-        foreach ($visitIds as $id_visit) {
-            $visitObjectArray[] = new Visit($id_visit, $this->linkpdo);
-        }
+		$visitObjectArray=[];
+		foreach ($visitIds as $id_visit) {
+			$visitObjectArray[]=new Visit($id_visit, $this->linkpdo);
+		}
 
-        return $visitObjectArray;
-    }
+		return $visitObjectArray;
+	}
 
-    /**
-     * Return studie's created visits
-     */
-    public function getCreatedVisits(bool $deleted = false): array
-    {
+	/**
+	 * Return studie's created visits
+	 */
+	public function getCreatedVisits(bool $deleted=false): array
+	{
 
-        $uploadedVisitQuery = $this->linkpdo->prepare('SELECT id_visit FROM visits 
+		$uploadedVisitQuery=$this->linkpdo->prepare('SELECT id_visit FROM visits 
                                                     INNER JOIN visit_type ON 
                                                         (visit_type.id=visits.visit_type_id 
                                                         AND visit_type.group_id = :visitGroupId)
                                                     AND deleted = :deleted 
                                                     ORDER BY patient_code, visit_type.visit_order');
 
-        $uploadedVisitQuery->execute(array(
-            'deleted' => intval($deleted),
-            'visitGroupId' => $this->visitGroupObject->groupId
-        ));
+		$uploadedVisitQuery->execute(array(
+			'deleted' => intval($deleted),
+			'visitGroupId' => $this->visitGroupObject->groupId
+		));
 
-        $uploadedVisitIds = $uploadedVisitQuery->fetchAll(PDO::FETCH_COLUMN);
+		$uploadedVisitIds=$uploadedVisitQuery->fetchAll(PDO::FETCH_COLUMN);
 
-        $visitObjectArray = [];
-        foreach ($uploadedVisitIds as $id_visit) {
-            $visitObjectArray[] = new Visit($id_visit, $this->linkpdo);
-        }
+		$visitObjectArray=[];
+		foreach ($uploadedVisitIds as $id_visit) {
+			$visitObjectArray[]=new Visit($id_visit, $this->linkpdo);
+		}
 
-        return $visitObjectArray;
-    }
+		return $visitObjectArray;
+	}
 
-    /**
-     * Determine all patient status for a specific visitType
-     */
-    public function getPatientVisitStatusForVisitType(Visit_Type $visitType)
-    {
+	/**
+	 * Determine all patient status for a specific visitType
+	 */
+	public function getPatientVisitStatusForVisitType(Visit_Type $visitType)
+	{
 
-        //Get patients list in this study
-        $allPatients = $this->studyObject->getAllPatientsInStudy();
+		//Get patients list in this study
+		$allPatients=$this->studyObject->getAllPatientsInStudy();
 
-        $results = [];
+		$results=[];
 
-        foreach ($allPatients as $patient) {
+		foreach ($allPatients as $patient) {
 
-            $patientCenter = $patient->getPatientCenter();
-            $visitManager = $patient->getPatientVisitManager($this->visitGroupObject);
+			$patientCenter=$patient->getPatientCenter();
+			$visitManager=$patient->getPatientVisitManager($this->visitGroupObject);
 
-            $patientData = [];
-            $patientData['center'] = $patientCenter->name;
-            $patientData['country'] = $patientCenter->countryName;
-            $patientData['firstname'] = $patient->patientFirstName;
-            $patientData['lastname'] = $patient->patientLastName;
-            $patientData['birthdate'] = $patient->patientBirthDate;
-            $patientData['registration_date'] = $patient->patientRegistrationDate;
+			$patientData=[];
+			$patientData['center']=$patientCenter->name;
+			$patientData['country']=$patientCenter->countryName;
+			$patientData['firstname']=$patient->patientFirstName;
+			$patientData['lastname']=$patient->patientLastName;
+			$patientData['birthdate']=$patient->patientBirthDate;
+			$patientData['registration_date']=$patient->patientRegistrationDate;
 
-            $visitStatus = $visitManager->determineVisitStatus($visitType->name);
+			$visitStatus=$visitManager->determineVisitStatus($visitType->name);
 
-            $results[$patient->patientCode] = array_merge($patientData, $visitStatus);
-        }
+			$results[$patient->patientCode]=array_merge($patientData, $visitStatus);
+		}
 
-        return $results;
-    }
+		return $results;
+	}
 
-    /**
-     * Determine all visits status for all visit type for all patients
-     */
-    public function getPatientsAllVisitsStatus()
-    {
+	/**
+	 * Determine all visits status for all visit type for all patients
+	 */
+	public function getPatientsAllVisitsStatus()
+	{
 
-        //Get ordered list of possible visits in this study
-        $allVisitsType = $this->visitGroupObject->getAllVisitTypesOfGroup();
+		//Get ordered list of possible visits in this study
+		$allVisitsType=$this->visitGroupObject->getAllVisitTypesOfGroup();
 
-        $results = [];
+		$results=[];
 
-        foreach ($allVisitsType as $visitType) {
+		foreach ($allVisitsType as $visitType) {
 
-            $allPatientStatus = $this->getPatientVisitStatusForVisitType($visitType);
+			$allPatientStatus=$this->getPatientVisitStatusForVisitType($visitType);
 
-            $results[$visitType->name] = $allPatientStatus;
-            //array_push($results, ...$allPatientStatus);
-        }
+			$results[$visitType->name]=$allPatientStatus;
+			//array_push($results, ...$allPatientStatus);
+		}
 
-        return $results;
-    }
+		return $results;
+	}
 }

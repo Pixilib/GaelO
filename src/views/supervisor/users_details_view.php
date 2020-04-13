@@ -48,15 +48,15 @@
 		</thead>
 		<tbody>
 			<?php
-            foreach ($rolesList as $username => $role) {
-                ?>
+			foreach ($rolesList as $username => $role) {
+				?>
                 <tr>
                 <th><?=htmlspecialchars($username)?></th>
                 <th><?=implode(', ', $role)?></th>
                 </tr>
                 <?php 
-            }
-            ?>
+			}
+			?>
 		</tbody>
 	</table>
 </div>

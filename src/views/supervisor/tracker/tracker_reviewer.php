@@ -35,9 +35,9 @@
         </thead>
         <tbody>
         <?php 
-        foreach ($trackerData as $reviewerEvent){
-        	$eventDetails=json_decode($reviewerEvent['action_details'], true);
-        ?>
+		foreach ($trackerData as $reviewerEvent) {
+			$eventDetails=json_decode($reviewerEvent['action_details'], true);
+		?>
         	<tr>
 				<td><?=$reviewerEvent['date']?></td>
 				<td><?=htmlspecialchars($reviewerEvent['username'])?></td>
@@ -53,8 +53,8 @@
 
 			</tr>
 		<?php 
-        }
-        ?>
+		}
+		?>
         </tbody>
     </table>
 </div>

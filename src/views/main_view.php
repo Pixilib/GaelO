@@ -20,7 +20,7 @@
 <head>
 	<meta charset="utf-8">
 
-	<?php include_once $_SERVER['DOCUMENT_ROOT'] . '/includes/jsLibrairies_main.php'; ?>
+	<?php include_once $_SERVER['DOCUMENT_ROOT'].'/includes/jsLibrairies_main.php'; ?>
 
 	<script type="text/javascript">
 		$(document).ready(function() {
@@ -254,7 +254,7 @@
 </head>
 
 <body>
-	<?php require $_SERVER['DOCUMENT_ROOT'] . '/includes/header.php'; ?>
+	<?php require $_SERVER['DOCUMENT_ROOT'].'/includes/header.php'; ?>
 
 	<main class="container">
 		<div class="block block-content">
@@ -269,7 +269,7 @@
 					}
 					//Add all available studies in the selector
 					foreach ($availableStudies as $study) {
-					    echo '<option value="' . htmlspecialchars($study) . '">' . htmlspecialchars($study) . '</option>';
+						echo '<option value="'.htmlspecialchars($study).'">'.htmlspecialchars($study).'</option>';
 					}
 					?>
 				</select>

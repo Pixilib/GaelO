@@ -19,8 +19,8 @@
  */
 class study_visit extends Form_Processor {
 	
-    public function __construct($idVisit, $local, $username, $linkpdo){
-        parent::__construct($idVisit, $local, $username, $linkpdo);
+	public function __construct($idVisit, $local, $username, $linkpdo) {
+		parent::__construct($idVisit, $local, $username, $linkpdo);
 	}
 	
 	/**
@@ -30,9 +30,9 @@ class study_visit extends Form_Processor {
 	 * @param $specificTable
 	 */
 	protected function saveSpecificForm($inputData, $id_review, $update) {
-	    // Draft exist, we update the draft
-		if ($update){
-			$req_update = $this->linkpdo->prepare('UPDATE '.$this->specificTable.'
+		// Draft exist, we update the draft
+		if ($update) {
+			$req_update=$this->linkpdo->prepare('UPDATE '.$this->specificTable.'
                               SET item = :value,
                                   item2 = :value2
                                 WHERE id_review = :id_review');
@@ -42,16 +42,16 @@ class study_visit extends Form_Processor {
 					'value2' =>'',
 					'id_review' => $id_review ));
 			
-		} else{
+		} else {
 			//Draft doesn't exist we create a new entry in the specific table
-			$insertion = $this->linkpdo->prepare('INSERT INTO '.$this->specificTable.' (id_review, item, item2)
+			$insertion=$this->linkpdo->prepare('INSERT INTO '.$this->specificTable.' (id_review, item, item2)
                                         VALUES (:id_review, :value, :value2)');
 			
 			$insertion->execute(array(
-            					'id_review' => $id_review,
-                                'value' => '',
-                                'value2' =>''
-                                ));
+								'id_review' => $id_review,
+								'value' => '',
+								'value2' =>''
+								));
 		}
 		
 	}
@@ -62,8 +62,8 @@ class study_visit extends Form_Processor {
 	 * {@inheritDoc}
 	 * @see Form_Processor::setVisitValidation()
 	 */
-	public function setVisitValidation(){
-	    /*
+	public function setVisitValidation() {
+		/*
 	     * Possible to get all saved form with $datas=$this->getAllValidatedFormsOfVisit();
 	     * then need to set each rule for Not Done, Ongoing, Wait Adjudication, Done with $this->changeVisitValidationStatus(Visit::REVIEW_DONE);
 	    */

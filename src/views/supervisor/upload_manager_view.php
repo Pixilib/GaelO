@@ -167,19 +167,19 @@
 
 <div class="text-center">
     <?php
-        // Add 1 button per visit
-        foreach ($allVisits as $modality => $visitsName) {
-            ?>
+		// Add 1 button per visit
+		foreach ($allVisits as $modality => $visitsName) {
+			?>
             <span class="badge badge-info"><?=$modality?></span>
             <?php
-            foreach($visitsName as $visitName){
-                ?>
+			foreach ($visitsName as $visitName) {
+				?>
                 <button type="button" data-modality=<?=$modality?> data-visitname="<?=$visitName?>" class="btn uploadManagerVisitBtn"><?=$visitName?> </button>
                 <?php
-            }
-            echo('<br>');
-        }
-    ?>
+			}
+			echo('<br>');
+		}
+	?>
 </div>
 <br>
 
