@@ -144,6 +144,7 @@ abstract class Form_Processor {
 		$actionDetails['type_visit']=$this->visitObject->visitType;
 		$actionDetails['modality_visit']=$this->visitObject->visitGroupObject->groupModality;
 		$actionDetails['id_review']=$this->reviewObject->id_review;
+		$actionDetails['associated_files']=$this->reviewObject->associatedFiles;
 		$actionDetails['local_review']=intval($this->local);
 		$actionDetails['adjudication']=intval($this->reviewStatus == Visit::REVIEW_WAIT_ADJUDICATION);
 		$actionDetails['create']=!$update;
