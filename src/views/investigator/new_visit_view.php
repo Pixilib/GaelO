@@ -72,6 +72,9 @@
 			}else if(selectedValue !== ''){
 				$("#reason").hide()
 				$("#reason").val(selectedValue)
+			}else if (selectedValue ===''){
+				$("#reason").val('')
+				$("#reason").hide()
 			}
 
 		})
