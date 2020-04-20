@@ -288,18 +288,17 @@
 					<input class="btn btn-danger" type="button" value="Admin" id="adminButton" style="margin-left: 20px;">
 				<?php
 				}
-				?>
+				?>			
 				<div class="float-right">
 					<button id="messengerButton" class="btn btn-info">Messenger</button>
 					<button id="myAccountButton" class="btn btn-info mr-5">My Account</button>
 				</div>
 
 			</div>
+
 			<div>
 				<div id="messengerDialog"></div>
-
 				<div id="mainDiv"> </div>
-
 			</div>
 			<div id="reasonDiv" style="display: none;">
 				<form>Enter Reason<input type="text" name="reason" maxlength="255" id="reasonDelete"><br>
