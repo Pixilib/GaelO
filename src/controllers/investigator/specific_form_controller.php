@@ -55,7 +55,7 @@ if ($permissionResults) {
 		//Load Specific form
         
 		//If form not needed for investigator, return and do not output the form
-		if (!$isLocalformNeeded && in_array($_SESSION['role'], array(User::INVESTIGATOR, User::CONTROLLER))) {
+		if (!$isLocalformNeeded && in_array($_SESSION['role'], array(User::INVESTIGATOR, User::MONITOR, User::CONTROLLER))) {
 			exit();
 		}
         
