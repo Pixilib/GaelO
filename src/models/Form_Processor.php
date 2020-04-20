@@ -1,6 +1,6 @@
 <?php
 /**
- Copyright (C) 2018 KANOUN Salim
+ Copyright (C) 2018-2020 KANOUN Salim
  This program is free software; you can redistribute it and/or modify
  it under the terms of the Affero GNU General Public v.3 License as published by
  the Free Software Foundation;
@@ -144,6 +144,7 @@ abstract class Form_Processor {
 		$actionDetails['type_visit']=$this->visitObject->visitType;
 		$actionDetails['modality_visit']=$this->visitObject->visitGroupObject->groupModality;
 		$actionDetails['id_review']=$this->reviewObject->id_review;
+		$actionDetails['associated_files']=$this->reviewObject->associatedFiles;
 		$actionDetails['local_review']=intval($this->local);
 		$actionDetails['adjudication']=intval($this->reviewStatus == Visit::REVIEW_WAIT_ADJUDICATION);
 		$actionDetails['create']=!$update;

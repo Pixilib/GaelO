@@ -1,6 +1,6 @@
 <?php
 /**
- Copyright (C) 2018 KANOUN Salim
+ Copyright (C) 2018-2020 KANOUN Salim
  This program is free software; you can redistribute it and/or modify
  it under the terms of the Affero GNU General Public v.3 License as published by
  the Free Software Foundation;
@@ -55,7 +55,7 @@ if ($permissionResults) {
 		//Load Specific form
         
 		//If form not needed for investigator, return and do not output the form
-		if (!$isLocalformNeeded && in_array($_SESSION['role'], array(User::INVESTIGATOR, User::CONTROLLER))) {
+		if (!$isLocalformNeeded && in_array($_SESSION['role'], array(User::INVESTIGATOR, User::MONITOR, User::CONTROLLER))) {
 			exit();
 		}
         
