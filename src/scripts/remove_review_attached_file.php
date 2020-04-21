@@ -41,7 +41,7 @@ if ($accessCheck && in_array($_SESSION['role'], array(User::INVESTIGATOR, User::
 		die('Delete File Error');
 	}
 
-	return json_encode((true));
+	echo( json_encode((true)) );
 
 }else {
 	header('HTTP/1.0 403 Forbidden');

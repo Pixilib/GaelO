@@ -40,7 +40,7 @@ abstract class Form_Processor_File extends Form_Processor {
 	 * Can be overwitten if need to allow other MIME Type
 	 */
 	protected function getAllowedType() : array {
-		return array('text/csv');
+		return array('text/csv', 'application/vnd.ms-excel');
 	}
     
 	protected function getMaxSizeMb() : int{

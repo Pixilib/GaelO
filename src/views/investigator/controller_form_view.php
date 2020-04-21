@@ -65,13 +65,13 @@
         
         //If refuse check that both items are refused
         if (id=="refuse"){
-        	if ( $("#refused2").is( ":checked" ) && $("#refused1").is( ":checked" ) && !($('#formComment').val().length===0) && !($('#imageComment').val().length===0) ){
+        	if (  ($("#refused2").is( ":checked" ) && !($('#imageComment').val().length===0) ) || ( $("#refused1").is( ":checked" ) && !($('#formComment').val().length===0) ) ){
             	if(confirm( "Refuse decision, visit will not be send to reviewers, are you sure?" )){
                 	check=true
             	}
         	} 
         	else{
-        		alertifyError('To Refuse quality control, both items should be selected with associated comments');
+        		alertifyError('To Refuse quality control, at least one of the item should be refused with an associated comment');
         	}
     	//If corrective action check that at least one item is refused
         }else if(id=="ask_corrective_action"){

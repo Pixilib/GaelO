@@ -188,7 +188,9 @@ Class Review {
 	public function deleteAssociatedFile($fileKey) {
 
 		if (!$this->validated) {
-			unlink($this->getAssociatedFilePath($fileKey));
+			$filePath = $this->getAssociatedFilePath($fileKey);
+			if( ! is_file( $filePath ) ) throw new Exception('No File To Delete');
+			unlink( $filePath );
 			unset($this->associatedFiles[$fileKey]);
 			$this->updateAssociatedFiles($this->associatedFiles);
 
