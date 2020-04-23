@@ -255,8 +255,11 @@ class Export_Study_Data
 		$reviewDatas=$this->getGenericData($review);
 		$specificData=$review->getSpecificData();
 		unset($specificData["id_review"]);
-
-		$reviewLine=array_merge($reviewDatas, array_values($specificData));
+		$specificDataArray = [];
+		if( !empty($specificData) ){
+			$specificDataArray = array_values($specificData);
+		}
+		$reviewLine=[$reviewDatas, ...$specificDataArray];
 
 		return $reviewLine;
 	}
