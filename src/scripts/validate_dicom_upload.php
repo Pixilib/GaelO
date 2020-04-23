@@ -175,6 +175,8 @@ function sendFolderToOrthanc(string $destination, Orthanc $orthancExposedObject)
 	recursive_directory_delete($destination);
 	
 	//error_log("Imported ".$importedInstances." files in ".(microtime(true)-$start_time));
+	error_log('Imported Instances :'.$importedInstances);
+	error_log('Announced number of Instances :'.$nbOfInstances);
 	
 	if (count($importedMap) == 1 && $importedInstances == $nbOfInstances) {
 		return $importedMap;
