@@ -36,9 +36,6 @@ if ($accessCheck && in_array($_SESSION['role'], array(User::INVESTIGATOR, User::
 		throw new Exception('Wrong From Processor type');
 		return json_encode((false));
 	}
-    
-	//SK ICI TRAITER LE FILE OBJECT
-	error_log(print_r($_FILES, true));
 
 	$filename=$_FILES['files']['name'][0];
 	$fileMime=$_FILES['files']['type'][0];

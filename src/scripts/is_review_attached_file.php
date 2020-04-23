@@ -36,7 +36,6 @@ if ($accessCheck && in_array($_SESSION['role'], array(User::INVESTIGATOR, User::
 		$filePath=$reviewObject->getAssociatedFilePath($fileKey);
 		$answer=is_file($filePath);
 	}catch (Exception $e) {
-		error_log("no review");
 		$answer=false;
 	}
 

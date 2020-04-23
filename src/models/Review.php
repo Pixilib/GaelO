@@ -181,8 +181,12 @@ Class Review {
 	 */
 	public function getAssociatedFilePath(string $fileKey) : String {
 		$fileArray=$this->associatedFiles;
-		error_log($this->getAssociatedFileRootPath().'/'.$fileArray[$fileKey]);
-		return $this->getAssociatedFileRootPath().'/'.$fileArray[$fileKey];
+		if(array_key_exists($fileKey, $fileArray)){
+			return $this->getAssociatedFileRootPath().'/'.$fileArray[$fileKey];
+		} else {
+			throw new Exception('Non Existing Key');
+		}
+		
 	}
     
 	public function deleteAssociatedFile($fileKey) {
@@ -195,7 +199,7 @@ Class Review {
 			$this->updateAssociatedFiles($this->associatedFiles);
 
 		}else {
-			throw new Exception('Unavailable Key or validated Review, can\'t remove file');
+			throw new Exception('Validated Review, can\'t remove file');
 		}
 
 	}
