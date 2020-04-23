@@ -209,7 +209,7 @@ class Export_Study_Data
 		return $reviewCsvFiles;
 	}
 
-	private function getAllreviewObjects($visitObject) : array {
+	private function getAllreviewObjects(Visit $visitObject) : array {
 
 		$localReviews=[];
 		try {

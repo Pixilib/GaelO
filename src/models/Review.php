@@ -39,6 +39,8 @@ Class Review {
 			"idReview" => $id_review,
 		));
 		$reviewData=$dataFetcher->fetch(PDO::FETCH_ASSOC);
+
+		if(empty($reviewData)) throw new Exception('No Review '.$id_review.' found');
         
 		$this->id_visit=$reviewData['id_visit'];
 		$this->username=$reviewData['username'];
