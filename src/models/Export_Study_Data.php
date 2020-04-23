@@ -83,7 +83,8 @@ class Export_Study_Data
 			foreach ($reviewsObjects as $reviewObject) {
 
 				foreach ($reviewObject->associatedFiles as $associatedFileKey => $associatedFilePath) {
-					$zip->addFile($associatedFilePath);
+					$associatedFileLocation = $reviewObject->getAssociatedFilePath($associatedFileKey);
+					$zip->addFile($associatedFileLocation);
 
 				};
 
