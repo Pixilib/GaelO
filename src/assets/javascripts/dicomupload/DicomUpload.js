@@ -489,11 +489,11 @@ class DicomUpload {
 
 			} catch (e) {
 				// Only catch 'Not a DICOM' error
-				if (e != 'Not a DICOM') {
-					throw e;
+				if (e == 'Not a DICOM') {
+					// Try to parse as zip file
+					this.readAsZipFile(file, byteArray)
 				}
-				// Try to parse as zip file
-				this.readAsZipFile(file, byteArray);
+				
 			}
 		}
 	}
@@ -503,35 +503,17 @@ class DicomUpload {
 	 */
 	readAsDicomFile(file, byteArray) {
 		try {
-			let dicomFile = new DicomFile(file, dicomParser.parseDicom(byteArray));
+
+			let parsedDicom = dicomParser.parseDicom(byteArray)
+			let dicomFile = new DicomFile(file, parsedDicom);
 
 			this.m.register(dicomFile);
-
 			this.m.move(file, 'queuedFiles', 'parsedFiles');
 
 		} catch (e) {
-
-			switch (e) {
-				case 'dicomParser.readPart10Header: DICM prefix not found at location 132 - this is not a valid DICOM P10 file.':
-					//console.warn('Not a DICOM file: ' + file.name + ' -> Try to unzip it.');
-					throw 'Not a DICOM';
-					break;
-				case 'Not expected visit.':
-					//console.warn(file.name + ' does not correspond to the expected visits. ');
-					file.ignoredBecause = 'This dicom file does not correspond to the expected visits.';
-					break;
-				case 'DICOM file duplicates found.':
-					//console.warn('DICOM file duplicates found. ' + file.name);
-					file.ignoredBecause = 'Duplicates. This instance is already loaded.';
-					break;
-				case 'Secondary Capture Image Storage are not allowed.':
-					//console.warn('Secondary Capture Image Storage are not allowed. ' + file.name);
-					file.ignoredBecause = 'Secondary Capture Image Storage are not allowed.';
-					break;
-				default:
-					console.warn(e);
-					file.ignoredBecause = e;
-			}
+			console.warn(e);
+			if(e.includes('dicomParser')) throw 'Not a DICOM'
+			file.ignoredBecause = e;
 			this.m.move(file, 'queuedFiles', 'ignoredFiles');
 		}
 	}
@@ -542,39 +524,37 @@ class DicomUpload {
 	 */
 	readAsZipFile(file, byteArray) {
 		let zip = new JSZip();
-		let promisedZip = zip.loadAsync(byteArray);
+		zip.loadAsync(byteArray)
+			.then(() => {
+				// Remove the zip file from the loaded files
+				this.m.remove(file, 'loadedFiles');
+				this.m.remove(file, 'queuedFiles');
 
-		promisedZip.then(() => {
-			// Remove the zip file from the loaded files
-			this.m.remove(file, 'loadedFiles');
-			this.m.remove(file, 'queuedFiles');
-
-			for (let elmt in zip.files) {
-				elmt = zip.files[elmt];
-				// Check if it is a file or a directory
-				if (!elmt.dir) {
-					// Decompress file
-					elmt.async('blob').then((data) => {
-						let elmtFile = new File([data], elmt.name);
-						this.m.dz.obj.addFile(elmtFile);
-					});
+				for (let elmt in zip.files) {
+					elmt = zip.files[elmt];
+					// Check if it is a file or a directory
+					if (!elmt.dir) {
+						// Decompress file
+						elmt.async('blob').then((data) => {
+							let elmtFile = new File([data], elmt.name);
+							this.m.dz.obj.addFile(elmtFile);
+						});
+					}
 				}
-			}
-		});
+			})
+			.catch((e) => {
+				console.log(e)
+				//console.warn('Not a ZIP file: ' + file.name + ' -> This file will be ignored.');
+				file.ignoredBecause = 'Not a ZIP or a DICOM file.';
+				this.m.move(file, 'queuedFiles', 'ignoredFiles');
 
-		promisedZip.catch((e) => {
-			console.log(e)
-			//console.warn('Not a ZIP file: ' + file.name + ' -> This file will be ignored.');
-			file.ignoredBecause = 'Not a ZIP or a DICOM file.';
-			this.m.move(file, 'queuedFiles', 'ignoredFiles');
-
-			// Dispatch 'endParsing' event to trigger the controller
-			if (this.m.queuedFiles.length == 0) {
-				Util.dispatchEventOn('parsingEnd', this.m.dz.dom[0]);
-			} else {
-				Util.dispatchEventOn('parsing', this.m.dz.dom[0]);
-			}
-		});
+				// Dispatch 'endParsing' event to trigger the controller
+				if (this.m.queuedFiles.length == 0) {
+					Util.dispatchEventOn('parsingEnd', this.m.dz.dom[0]);
+				} else {
+					Util.dispatchEventOn('parsing', this.m.dz.dom[0]);
+				}
+			});
 	}
 
 	// ~
