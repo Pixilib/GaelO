@@ -1,5 +1,6 @@
 Fixer la version de OHIF
-Se pencher sur monitoring de Docker => Tester absence de log access
+Decommenter supression du ZIP validation Upload
+Se pencher sur monitoring de Docker => Documenter collection de logs avec LogzIO
 
 Passage Visit Group : 
 => Controleur statitics a generaliser pour autres modalite
