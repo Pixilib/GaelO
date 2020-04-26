@@ -260,7 +260,7 @@ class Export_Study_Data
 		if( !empty($specificData) ){
 			$specificDataArray = array_values($specificData);
 		}
-		$reviewLine=[$reviewDatas, ...$specificDataArray];
+		$reviewLine=[...$reviewDatas, ...$specificDataArray];
 
 		return $reviewLine;
 	}

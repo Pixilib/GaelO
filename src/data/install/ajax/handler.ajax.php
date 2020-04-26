@@ -23,7 +23,6 @@
 	$database_username = isset($_POST['db_username']) ? prepare_input($_POST['db_username']) : '';
 	$database_password = isset($_POST['db_password']) ? prepare_input($_POST['db_password']) : '';
 	$database_ssl = isset($_POST['db_ssl']) ? prepare_input($_POST['db_ssl']) : false;
-	error_log($database_ssl);
     $arr = array();
 
 	$arr[] = '"status": "0"';
