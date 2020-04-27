@@ -175,6 +175,9 @@ class DicomUpload {
 				this.m.dz.dom.text('Drag & drop files here');
 		});
 
+		this.m.dz.on('dragend', () => {
+			console.log('End of Drag')
+		});
 
 		this.m.dz.on('addedfile', (file) => {
 			this.v.controls.hide();
@@ -473,48 +476,43 @@ class DicomUpload {
 		const reader = new FileReader();
 		reader.readAsArrayBuffer(file);
 		reader.onload = () => {
-			// Retrieve file content as Uint8Array
-			const arrayBuffer = reader.result;
-			const byteArray = new Uint8Array(arrayBuffer);
-
 			try {
+				// Retrieve file content as Uint8Array
+				const arrayBuffer = reader.result;
+				const byteArray = new Uint8Array(arrayBuffer);
 				// Try to parse as dicom file
-				this.readAsDicomFile(file, byteArray);
+
+				//Will throw exception if not dicom file (exeption from dicomParser)
+				let parsedDicom = dicomParser.parseDicom(byteArray)
+				//But read data in a DicomFile Object
+				let dicomFile = new DicomFile(file, parsedDicom);
+				//Register this file in the instances / series / study array list to send
+				//If known instance will throw and exection
+				this.m.register(dicomFile);
+				//If we passed these step add the file to the parsedlist
+				this.m.move(file, 'queuedFiles', 'parsedFiles');
 
 				if (this.m.queuedFiles.length == 0) {
+					console.log('end of parsing')
 					Util.dispatchEventOn('parsingEnd', this.m.dz.dom[0]);
 				} else {
+					console.log('Continue parsing')
 					Util.dispatchEventOn('parsing', this.m.dz.dom[0]);
 				}
 
 			} catch (e) {
-				// Only catch 'Not a DICOM' error
-				if (e == 'Not a DICOM') {
+				console.warn(e)
+				// Only catch error from dicomParser, if not a dicom try to read as ZIP
+				//If not error from dicomParser (known instance...) add to ignore list
+				if(e.includes('dicomParser')) {
 					// Try to parse as zip file
 					this.readAsZipFile(file, byteArray)
+				}else{
+					file.ignoredBecause = e;
+					this.m.move(file, 'queuedFiles', 'ignoredFiles');
 				}
 				
 			}
-		}
-	}
-
-	/**
-	 * Try to parse 'byteArray' as a dicom file
-	 */
-	readAsDicomFile(file, byteArray) {
-		try {
-
-			let parsedDicom = dicomParser.parseDicom(byteArray)
-			let dicomFile = new DicomFile(file, parsedDicom);
-
-			this.m.register(dicomFile);
-			this.m.move(file, 'queuedFiles', 'parsedFiles');
-
-		} catch (e) {
-			console.warn(e);
-			if(e.includes('dicomParser')) throw 'Not a DICOM'
-			file.ignoredBecause = e;
-			this.m.move(file, 'queuedFiles', 'ignoredFiles');
 		}
 	}
 
