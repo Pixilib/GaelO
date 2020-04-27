@@ -197,11 +197,14 @@ class CheckPatientPanel {
 		this.fields.acqd.setExpected(Util.fDate(v.acquisitionDate));
 
 		let patientName = st.getPatientName();
-		if (patientName.givenName != undefined) {
-			this.fields.fname.setCurrent(patientName.givenName.charAt(0));
-		}
-		if (patientName.familyName != undefined) {
-			this.fields.lname.setCurrent(patientName.familyName.charAt(0));
+
+		if(patientName != undefined){
+			if (patientName.givenName != undefined) {
+				this.fields.fname.setCurrent(patientName.givenName.charAt(0));
+			}
+			if (patientName.familyName != undefined) {
+				this.fields.lname.setCurrent(patientName.familyName.charAt(0));
+			}
 		}
 
 		this.fields.birthd.setCurrent(Util.fDate(st.getPatientBirthDate()));
