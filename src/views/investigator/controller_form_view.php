@@ -98,17 +98,14 @@
 	           type: "POST",
 	           url: '/controller_form',
 	           data: $("#controler_form").serialize()+"&"+id+"=1", // serializes the form's elements.
-	           success: function(data)
-	           {
+	           success: function(data) {
   		           //Get the div containing the visit interface
   		        	var parent_id = $('#controler_form').parent().parent().attr('id');
   		        	//empty it
   		        	$('#'+parent_id).empty();
   		        	//Refresh Tree
   		        	$('#containerTree').jstree(true).refresh();
-  		        	console.log(data);
-	              
-	           }
+				}
          	});		
         }
     });

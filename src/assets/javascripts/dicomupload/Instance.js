@@ -26,9 +26,9 @@ class Instance {
 	getFilePath() {
 		let res = this.dicomFile.originalFile.fullPath;
 		if (res === undefined) {
-			// This file is in the root directory
-			// and does not have a fullPath
-			res = this.dicomFile.originalFile.name;
+			// Uploaded by folder selection,
+			//doesn't have a full path but has a webkitrelativepath
+			res = this.dicomFile.originalFile.webkitRelativePath;
 		}
 		return res;
 	}

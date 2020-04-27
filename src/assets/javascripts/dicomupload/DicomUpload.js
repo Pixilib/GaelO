@@ -175,10 +175,6 @@ class DicomUpload {
 				this.m.dz.dom.text('Drag & drop files here');
 		});
 
-		this.m.dz.on('dragend', () => {
-			console.log('End of Drag')
-		});
-
 		this.m.dz.on('addedfile', (file) => {
 			this.v.controls.hide();
 			this.m.loadedFiles.push(file);
@@ -476,12 +472,11 @@ class DicomUpload {
 		const reader = new FileReader();
 		reader.readAsArrayBuffer(file);
 		reader.onload = () => {
+			// Retrieve file content as Uint8Array
+			const arrayBuffer = reader.result;
+			const byteArray = new Uint8Array(arrayBuffer);
 			try {
-				// Retrieve file content as Uint8Array
-				const arrayBuffer = reader.result;
-				const byteArray = new Uint8Array(arrayBuffer);
 				// Try to parse as dicom file
-
 				//Will throw exception if not dicom file (exeption from dicomParser)
 				let parsedDicom = dicomParser.parseDicom(byteArray)
 				//But read data in a DicomFile Object
@@ -493,10 +488,8 @@ class DicomUpload {
 				this.m.move(file, 'queuedFiles', 'parsedFiles');
 
 				if (this.m.queuedFiles.length == 0) {
-					console.log('end of parsing')
 					Util.dispatchEventOn('parsingEnd', this.m.dz.dom[0]);
 				} else {
-					console.log('Continue parsing')
 					Util.dispatchEventOn('parsing', this.m.dz.dom[0]);
 				}
 
@@ -510,6 +503,9 @@ class DicomUpload {
 				}else{
 					file.ignoredBecause = e;
 					this.m.move(file, 'queuedFiles', 'ignoredFiles');
+					if (this.m.queuedFiles.length == 0) {
+						Util.dispatchEventOn('parsingEnd', this.m.dz.dom[0]);
+					}
 				}
 				
 			}
@@ -665,6 +661,7 @@ class DicomUpload {
 					jszip.file(inst.getFilePath(), finalByteArray);
 
 					counter++;
+
 					if (counter == study.getNbQueuedInstances()) {
 						// No more file to add, compression can begin
 						this.compressZip(jszip, study, indexStudyToUpload);

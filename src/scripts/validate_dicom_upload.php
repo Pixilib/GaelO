@@ -78,7 +78,7 @@ if ($accessCheck && $role == User::INVESTIGATOR && $visitObject->uploadStatus ==
 		$zip->open($zipPath);
 		$zip->extractTo($destination);
 		$zip->close();
-		//unlink($zipPath);
+		unlink($zipPath);
 		
 		//Send unziped files to Orthanc
 		$orthancExposedObject=new Orthanc(true);
