@@ -121,6 +121,10 @@ abstract class Form_Processor {
 			}
 			throw new Exception("Error during save");
 		}
+
+		if($update){
+			$this->reviewObject->updateReviewDate();
+		}
 		
 		if ($validate) {
 			$this->reviewObject->changeReviewValidationStatus($validate);

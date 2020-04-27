@@ -76,8 +76,6 @@
         		}	
         	});
         	
-    		
-    	     console.log("yeahhhh!!! but this doesn't work for me :(");
     	});
     
     	//Dialog to set patient withdrawn

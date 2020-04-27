@@ -69,7 +69,7 @@ if ($accessCheck && $role == User::INVESTIGATOR && $visitObject->uploadStatus ==
 		//Check that ZIP is not a bomb
 		$zipSize=filesize($zipPath);
 		$uncompressedzipSize=get_zip_originalsize($zipPath);
-		if ($uncompressedzipSize/$zipSize > 20) {
+		if ($uncompressedzipSize/$zipSize > 50) {
 			throw new Exception("Bomb Zip");
 		}
         
@@ -175,6 +175,8 @@ function sendFolderToOrthanc(string $destination, Orthanc $orthancExposedObject)
 	recursive_directory_delete($destination);
 	
 	//error_log("Imported ".$importedInstances." files in ".(microtime(true)-$start_time));
+	error_log('Imported Instances :'.$importedInstances);
+	error_log('Announced number of Instances :'.$nbOfInstances);
 	
 	if (count($importedMap) == 1 && $importedInstances == $nbOfInstances) {
 		return $importedMap;

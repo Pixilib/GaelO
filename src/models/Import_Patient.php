@@ -133,7 +133,6 @@ class Import_Patient {
 		try {
 			$dateResult=new DateTime($registrationYear.'-'.$registrationMonth.'-'.$registrationDay);
 		}catch (Exception $e) {
-			error_log($e->getMessage());
 			return null;
 		}
 		return $dateResult;
@@ -241,7 +240,6 @@ class Import_Patient {
 			$success=true;
 		}catch (Exception $e) {
 			$success=false;
-			error_log($e);
 		}
 
 		return $success;

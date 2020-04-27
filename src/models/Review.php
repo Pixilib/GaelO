@@ -39,6 +39,8 @@ Class Review {
 			"idReview" => $id_review,
 		));
 		$reviewData=$dataFetcher->fetch(PDO::FETCH_ASSOC);
+
+		if(empty($reviewData)) throw new Exception('No Review '.$id_review.' found');
         
 		$this->id_visit=$reviewData['id_visit'];
 		$this->username=$reviewData['username'];
@@ -181,19 +183,25 @@ Class Review {
 	 */
 	public function getAssociatedFilePath(string $fileKey) : String {
 		$fileArray=$this->associatedFiles;
-		error_log($this->getAssociatedFileRootPath().'/'.$fileArray[$fileKey]);
-		return $this->getAssociatedFileRootPath().'/'.$fileArray[$fileKey];
+		if(array_key_exists($fileKey, $fileArray)){
+			return $this->getAssociatedFileRootPath().'/'.$fileArray[$fileKey];
+		} else {
+			throw new Exception('Non Existing Key');
+		}
+		
 	}
     
 	public function deleteAssociatedFile($fileKey) {
 
 		if (!$this->validated) {
-			unlink($this->getAssociatedFilePath($fileKey));
+			$filePath = $this->getAssociatedFilePath($fileKey);
+			if( ! is_file( $filePath ) ) throw new Exception('No File To Delete');
+			unlink( $filePath );
 			unset($this->associatedFiles[$fileKey]);
 			$this->updateAssociatedFiles($this->associatedFiles);
 
 		}else {
-			throw new Exception('Unavailable Key or validated Review, can\'t remove file');
+			throw new Exception('Validated Review, can\'t remove file');
 		}
 
 	}

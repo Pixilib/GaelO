@@ -250,7 +250,7 @@ class DicomUploadModel {
 			serie.instances.push(inst);
 
 		} else {
-			throw 'DICOM file duplicates found.';
+			throw 'Duplicates. This instance is already loaded.';
 		}
 	}
 

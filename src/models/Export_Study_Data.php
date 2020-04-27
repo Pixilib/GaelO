@@ -83,7 +83,8 @@ class Export_Study_Data
 			foreach ($reviewsObjects as $reviewObject) {
 
 				foreach ($reviewObject->associatedFiles as $associatedFileKey => $associatedFilePath) {
-					$zip->addFile($associatedFilePath);
+					$associatedFileLocation = $reviewObject->getAssociatedFilePath($associatedFileKey);
+					$zip->addFile($associatedFileLocation);
 
 				};
 
@@ -209,7 +210,7 @@ class Export_Study_Data
 		return $reviewCsvFiles;
 	}
 
-	private function getAllreviewObjects($visitObject) : array {
+	private function getAllreviewObjects(Visit $visitObject) : array {
 
 		$localReviews=[];
 		try {
@@ -255,8 +256,11 @@ class Export_Study_Data
 		$reviewDatas=$this->getGenericData($review);
 		$specificData=$review->getSpecificData();
 		unset($specificData["id_review"]);
-
-		$reviewLine=array_merge($reviewDatas, array_values($specificData));
+		$specificDataArray = [];
+		if( !empty($specificData) ){
+			$specificDataArray = array_values($specificData);
+		}
+		$reviewLine=[...$reviewDatas, ...$specificDataArray];
 
 		return $reviewLine;
 	}

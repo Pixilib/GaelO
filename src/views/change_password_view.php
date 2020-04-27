@@ -35,7 +35,7 @@
 					dataType: 'json',
 					data: $("#changePassForm").serialize()+"&confirmer=1", // serializes the form's elements.
 					success: function(data) {
-						console.log(data);
+						
 						if (data['result'] == "DifferentPassword") {
 							$("#error").html("Both entries for the new password you entered are not a match. Please try again.");
 							$("#error").show();
