@@ -495,9 +495,10 @@ class DicomUpload {
 
 			} catch (e) {
 				console.warn(e)
-				// Only catch error from dicomParser, if not a dicom try to read as ZIP
-				//If not error from dicomParser (known instance...) add to ignore list
-				if(e.includes('dicomParser')) {
+				// Only catch String error from dicomParser, if not a dicom try to read as ZIP
+				// For dicomdir dicom file dicomParser trigger a type error (this is why we only look at string type error)
+				// If not error from dicomParser (known instance...) add to ignore list
+				if( e.includes('dicomParser')) {
 					// Try to parse as zip file
 					this.readAsZipFile(file, byteArray)
 				}else{

@@ -34,6 +34,7 @@ $isLocalformNeeded=$visitObject->getVisitCharacteristics()->localFormNeeded;
 if ($permissionResults) {
 	//Determine if calling local or reviewer form
 	$local=($_SESSION['role'] == User::REVIEWER) ? false : true;
+	//SK ICI PRODUIT UNE ERREUR SI LE FORMULAIRE LOCAL N EXISTE PAS => A respecter pour eviter les effets de bords
 	$formProcessorObject=$visitObject->getFromProcessor($local, $username);
     
 	if (!empty($_POST['draft']) || !empty($_POST['validate'])) {

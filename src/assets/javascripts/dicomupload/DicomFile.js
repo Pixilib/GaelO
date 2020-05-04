@@ -46,6 +46,11 @@ class DicomFile {
 
 	retrieveHeaderData(byteArray) {
 		let pxData = this.dataSet.elements.x7fe00010;
+		//If no pixel data return the full byte array
+		if(pxData === undefined){
+			return byteArray.slice()
+		}
+		//if pixel data here return only header
 		return byteArray.slice(0, pxData.dataOffset-1);
 	}
 
@@ -192,6 +197,11 @@ class DicomFile {
 	getSOPClassUID() {
 		return this.get("00080016");
 	}
+	//SK A TESTER : On ne pourrait utiliser que le 0002,0222
+	//Ce tag est un duplicat de 00080016 cf https://stackoverflow.com/questions/32689446/is-it-true-that-dicom-media-storage-sop-instance-uid-sop-instance-uid-why
+	getMediaStorageSOP(){
+		return this.get("00020002")
+	}
 	getSeriesNumber() {
 		return this.get("00200011");
 	}
@@ -254,6 +264,13 @@ class DicomFile {
 			'1.2.840.10008.5.1.4.1.1.88.67'
 		];
 		return secondaryCaptureImgValues.includes(this.getSOPClassUID());
+	}
+
+	isDicomDir(){
+		const dicomDirSopValues = [
+			'1.2.840.10008.1.3.10'
+		]
+		return dicomDirSopValues.includes(this.getMediaStorageSOP());
 	}
 
 	clearData() {
