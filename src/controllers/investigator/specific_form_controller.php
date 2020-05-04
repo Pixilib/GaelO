@@ -29,23 +29,12 @@ $permissionResults=$userObject->isVisitAllowed($id_visit, $_SESSION['role']);
 
 
 $visitObject=new Visit($id_visit, $linkpdo);
-$isLocalformNeeded = $visitObject->getVisitCharacteristics()->localFormNeeded;
-$isReviewFormNeeded = $visitObject->getVisitCharacteristics()->reviewNeeded;
+$isLocalformNeeded=$visitObject->getVisitCharacteristics()->localFormNeeded;
 
 if ($permissionResults) {
 	//Determine if calling local or reviewer form
 	$local=($_SESSION['role'] == User::REVIEWER) ? false : true;
-
-	if( $local &&  ! $isLocalformNeeded ){
-		//No local form nothing to do
-		exit();
-	}
-
-	if( ! $local && ! $isReviewFormNeeded ){
-		//no review form nothing to do
-		exit();
-	}
-
+	//SK ICI PRODUIT UNE ERREUR SI LE FORMULAIRE LOCAL N EXISTE PAS => A respecter pour eviter les effets de bords
 	$formProcessorObject=$visitObject->getFromProcessor($local, $username);
     
 	if (!empty($_POST['draft']) || !empty($_POST['validate'])) {
@@ -64,6 +53,11 @@ if ($permissionResults) {
 
 	}else {
 		//Load Specific form
+        
+		//If form not needed for investigator, return and do not output the form
+		if (!$isLocalformNeeded && in_array($_SESSION['role'], array(User::INVESTIGATOR, User::MONITOR, User::CONTROLLER))) {
+			exit();
+		}
         
 		if ($_SESSION['role'] == User::INVESTIGATOR || ($_SESSION['role'] == User::REVIEWER && $visitObject->reviewAvailable)) {
 			$roleDisable=false;
