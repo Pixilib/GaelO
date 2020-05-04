@@ -199,6 +199,10 @@ class DicomUploadModel {
 			throw 'Secondary Capture Image Storage are not allowed.';
 		}
 
+		if(dicomFile.isDicomDir()){
+			throw 'Dicomdir File, ignoring'
+		}
+
 		// Check if the study has already been registered (on client-side)
 		if (!this.isKnownStudy(dicomFile)) {
 			let st = new Study(
