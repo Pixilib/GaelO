@@ -438,9 +438,10 @@ class Visit {
 			if ($this->getVisitCharacteristics()->reviewNeeded) {
 				//If review needed make it available for reviewers
 				$this->changeReviewAvailability(true);
-			}else {
+			}else if( ! $this->getVisitCharacteristics()->qcNeeded) {
 				//The visit is QC accepted and will not go further as Review is not needed
 				//Inform supervisors that the visit is well recieved
+				//Do this only if QC is not needed as supervisor will get QC notification otherwise (avoid dual mail)
 				$this->sendUploadNotificationToSupervisor();
 			}
 		}
