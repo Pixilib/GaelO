@@ -176,11 +176,16 @@ class DicomUpload {
 		});
 
 		this.m.dz.on('addedfile', (file) => {
-			this.v.controls.hide();
-			this.m.loadedFiles.push(file);
-			this.m.queuedFiles.push(file);
-			this.v.statusInfo.setInfo('Loading & parsing files');
-			this.read(file);
+			if(file.type == 'application/zip'){
+				this.readAsZipFile(file)
+			} else {
+				this.v.controls.hide();
+				this.m.loadedFiles.push(file);
+				this.m.queuedFiles.push(file);
+				this.v.statusInfo.setInfo('Loading & parsing files');
+				this.read(file);
+			}
+			
 		});
 
 
@@ -192,8 +197,16 @@ class DicomUpload {
 		});
 
 		this.m.dz.dom[0].addEventListener('parsingEnd', () => {
+
 			this.m.dz.dom.text('Drag & drop files here');
 			this.m.dz.dom.removeClass('dz-parsing');
+
+			if (this.m.studies.length == 0) {
+				this.m.dz.reloadWebKitDir();
+				this.updateViewStatusInfo();
+				return
+			}
+			
 			this.m.checkStudies();
 
 			// Display help alert if all the studies need to check patient
@@ -495,19 +508,13 @@ class DicomUpload {
 
 			} catch (e) {
 				console.warn(e)
-				// Only catch String error from dicomParser, if not a dicom try to read as ZIP
-				// For dicomdir dicom file dicomParser trigger a type error (this is why we only look at string type error)
-				// If not error from dicomParser (known instance...) add to ignore list
-				if( e.includes('dicomParser')) {
-					// Try to parse as zip file
-					this.readAsZipFile(file, byteArray)
-				}else{
-					file.ignoredBecause = e;
-					this.m.move(file, 'queuedFiles', 'ignoredFiles');
-					if (this.m.queuedFiles.length == 0) {
-						Util.dispatchEventOn('parsingEnd', this.m.dz.dom[0]);
-					}
+				file.ignoredBecause = e;
+				//Add to ignore list
+				this.m.move(file, 'queuedFiles', 'ignoredFiles');
+				if (this.m.queuedFiles.length == 0) {
+					Util.dispatchEventOn('parsingEnd', this.m.dz.dom[0]);
 				}
+				
 				
 			}
 		}
@@ -517,39 +524,41 @@ class DicomUpload {
 	 * Explore zip file and virtually drop its content
 	 * into the drop zone 'added file' list
 	 */
-	readAsZipFile(file, byteArray) {
-		let zip = new JSZip();
-		zip.loadAsync(byteArray)
-			.then(() => {
+	readAsZipFile(file) {
+		const reader = new FileReader();
+		reader.readAsArrayBuffer(file);
+		reader.onload = () => {
+			// Retrieve file content as Uint8Array
+			const arrayBuffer = reader.result;
+			const byteArray = new Uint8Array(arrayBuffer);
+			
+			JSZip.loadAsync(byteArray).then((zip) => {
 				// Remove the zip file from the loaded files
-				this.m.remove(file, 'loadedFiles');
-				this.m.remove(file, 'queuedFiles');
-
+				let promises = []
 				for (let elmt in zip.files) {
 					elmt = zip.files[elmt];
 					// Check if it is a file or a directory
 					if (!elmt.dir) {
 						// Decompress file
-						elmt.async('blob').then((data) => {
+						promises.push(
+							elmt.async('blob').then((data) => {
 							let elmtFile = new File([data], elmt.name);
-							this.m.dz.obj.addFile(elmtFile);
-						});
+							//Add full path to match drag and drop upload
+							elmtFile.fullPath=elmt.name
+							return elmtFile
+							})
+						)
 					}
 				}
+				Promise.all(promises).then(elements =>{
+					elements.forEach(elmtFile =>{
+						this.m.dz.obj.addFile(elmtFile);
+					})
+				})
+			}).catch((e) => {
+				console.log('error zip' +e )
 			})
-			.catch((e) => {
-				console.log(e)
-				//console.warn('Not a ZIP file: ' + file.name + ' -> This file will be ignored.');
-				file.ignoredBecause = 'Not a ZIP or a DICOM file.';
-				this.m.move(file, 'queuedFiles', 'ignoredFiles');
-
-				// Dispatch 'endParsing' event to trigger the controller
-				if (this.m.queuedFiles.length == 0) {
-					Util.dispatchEventOn('parsingEnd', this.m.dz.dom[0]);
-				} else {
-					Util.dispatchEventOn('parsing', this.m.dz.dom[0]);
-				}
-			});
+		}
 	}
 
 	// ~
@@ -682,9 +691,9 @@ class DicomUpload {
 		if (study.isUploadAborted) {
 			throw 'Study #' + (indexStudyToUpload + 1) + ': Upload aborted';
 		}
-
+		console.log('starting zip')
 		// Generate a blob zip file with the jszip object
-		let promisedZipFile = jszip.generateAsync(
+		jszip.generateAsync(
 			// Zipping options
 			{
 				type: "uint8array",
@@ -698,13 +707,13 @@ class DicomUpload {
 			(metadata) => {
 				this.v.zippingProgress[indexStudyToUpload] = metadata.percent;
 			}
-		);
-
-		promisedZipFile.then((blob) => {
+		).then((blob) => {
 			this.v.statusInfo.setInfo('');
 			let fileName = `dicom-${Date.now()}-${study.visit.idVisit}.zip`;
 			let zipFile = blob;
 			this.upload(zipFile, fileName, 'application/zip', indexStudyToUpload, study);
+		}).catch((error)=>{
+			console.log(error)
 		});
 	}
 
