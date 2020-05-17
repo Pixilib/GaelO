@@ -129,7 +129,7 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.1.0/papaparse.min.js"></script>
 
-<?php $uploaderVersion="3.2"?>
+<?php $uploaderVersion="3.3"?>
 <!-- JavaScript  CustomJS/CSS -->
 <script type="text/javascript" src="assets/javascripts/dicomupload/_browserSupport.js?version=<?= $uploaderVersion?>" defer></script>
 <script type="text/javascript" src="assets/javascripts/dicomupload/CheckPatientPanel.js?version=<?= $uploaderVersion?>" defer></script>
