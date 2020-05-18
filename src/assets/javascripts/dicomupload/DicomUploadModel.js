@@ -78,6 +78,19 @@ class DicomUploadModel {
 		return null;
 	}
 
+	getInstance(SOPInstanceUID) {
+		for (let st of this.studies) {
+			for (let sr of st.series) {
+				for (let inst of sr.instances) {
+					if (inst.SOPInstanceUID == SOPInstanceUID) {
+						return inst;
+					}
+				};
+			};
+		};
+		return null;
+	}
+
 	isKnownStudy(dicomFile) {
 		return this.getStudy(dicomFile.getStudyInstanceUID()) !== null;
 	}
