@@ -2,11 +2,15 @@ GaelO
 
 --Next Release --
 
+--GaelO 1.1.3 19/05/20--
+  BugFix :
+    - Better Dicom parsing at upload
+    - Fix Form saving with associated files upload
+
 --GaelO 1.1.2 06/05/20--
   BugFix :
     - When Review is not needed, supervisor recieve 2 notification emails when QC is done
     - ZIPed Dicom upload was broken for zip containing some non dicom files
-  
 
 --GaelO 1.1.1 04/05/20 --
   BugFix : dicomdir breaks dicom parsing
