@@ -129,93 +129,84 @@ class DicomFile {
 		}
 	}
 
-	/**
-	 * Get value of a dicom attribute
-	 */
-	get(id, dataSet = this.dataSet) {
-		id = id.toLowerCase();
-
-		// Recursively look for the dicom attribute
-		for (let elmtName in dataSet.elements) {
-			let elmt = dataSet.elements[elmtName];
-
-			// Check if this is a SQ element
-			if (elmt.items !== undefined) {
-				for (let it of elmt.items) {
-					// Get value of the dicom attribute in the dataset of the SQ
-					let got = this.get(id, it.dataSet);
-					if (got !== undefined) {
-						return got;
-					}
-				}
-			}
-
-			if (elmtName == `x${id}` && elmt.length > 0) {
-				// Return the value of the dicom attribute
-				return this.string(elmt);
-			}
-
+	getRadiopharmaceuticalTag(tagAddress){
+		try{
+			let elmt = this.dataSet.elements['x00540016']
+			let radioPharmElements = elmt.items[0].dataSet.elements
+			return this.string(radioPharmElements['x'+tagAddress])
+		}catch ( error ) { 
+			console.log(error)
+			return undefined 
 		}
-		return undefined;
 	}
+
+	getDicomTag(tagAddress){
+		let elmt = this.dataSet.elements['x'+tagAddress]
+		if ( elmt.length > 0) {
+			// Return the value of the dicom attribute
+			return this.string(elmt);
+		}
+		else return undefined
+	}
+
 	getAccessionNumber() {
-		return this.get("00080050");
+		return this.getDicomTag("00080050");
 	}
 	getAcquisitionDate() {
-		return this.get("00080020");
+		return this.getDicomTag("00080020");
 	}
 	getInstanceNumber() {
-		return this.get("00200013");
+		return this.getDicomTag("00200013");
 	}
 	getModality() {
-		return this.get("00080060");
+		return this.getDicomTag("00080060");
 	}
 	getPatientBirthDate() {
-		return this.get("00100030");
+		return this.getDicomTag("00100030");
 	}
 	getPatientID() {
-		return this.get("00100020");
+		return this.getDicomTag("00100020");
 	}
 	getPatientName() {
-		return this.get("00100010");
+		return this.getDicomTag("00100010");
 	}
 	getPatientSex() {
-		return this.get("00100040");
+		return this.getDicomTag("00100040");
 	}
 	getSeriesInstanceUID() {
-		return this.get("0020000E");
+		return this.getDicomTag("0020000e");
 	}
 	getSeriesDate() {
-		return this.get("00080021");
+		return this.getDicomTag("00080021");
 	}
 	getSeriesDescription() {
-		return this.get("0008103E");
+		return this.getDicomTag("0008103e");
 	}
 	getSOPInstanceUID() {
-		return this.get("00080018");
+		return this.getDicomTag("00080018");
 	}
 	getSOPClassUID() {
-		return this.get("00080016");
+		return this.getDicomTag("00080016");
 	}
-	//SK A TESTER : On ne pourrait utiliser que le 0002,0222
+	//SK A TESTER : On ne pourrait utiliser que le 0002,0002
 	//Ce tag est un duplicat de 00080016 cf https://stackoverflow.com/questions/32689446/is-it-true-that-dicom-media-storage-sop-instance-uid-sop-instance-uid-why
 	getMediaStorageSOP(){
-		return this.get("00020002")
+		return this.getDicomTag("00020002")
 	}
 	getSeriesNumber() {
-		return this.get("00200011");
+		return this.getDicomTag('00200011')
 	}
 	getStudyInstanceUID() {
-		return this.get("0020000D");
+		return this.getDicomTag('0020000d')
 	}
 	getStudyDate() {
-		return this.get("00080020");
+		return this.getDicomTag("00080020");
 	}
 	getStudyID() {
-		return this.get("00200010");
+		return this.getDicomTag("00200010");
 	}
 	getStudyDescription() {
-		return this.get("00081030");
+		return this.getDicomTag("00081030");
 	}
 
 	/**

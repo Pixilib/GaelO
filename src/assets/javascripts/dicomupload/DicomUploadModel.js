@@ -58,8 +58,6 @@ class DicomUploadModel {
 		// ~
 	}
 
-	// ~
-
 	getStudy(studyInstanceUID) {
 		for (let st of this.studies) {
 			if (st.studyInstanceUID == studyInstanceUID) {
@@ -92,8 +90,6 @@ class DicomUploadModel {
 		};
 		return null;
 	}
-
-	// ~
 
 	isKnownStudy(dicomFile) {
 		return this.getStudy(dicomFile.getStudyInstanceUID()) !== null;
@@ -141,8 +137,6 @@ class DicomUploadModel {
 		}
 	}
 
-	// ~
-
 	hasQueuedStudies() {
 		for (let st of this.queuedStudies) {
 			if (st.hasQueuedSeries()) {
@@ -183,8 +177,6 @@ class DicomUploadModel {
 			this[toArrName].push(elmt);
 		}
 	}
-
-	// ~
 
 	/**
 	* Register the study, serie, instance of a dicom file if not known yet
@@ -258,8 +250,6 @@ class DicomUploadModel {
 		}
 	}
 
-	// ~
-
 	checkStudies() {
 		for (let st of this.studies) {
 
@@ -299,8 +289,6 @@ class DicomUploadModel {
 		}
 	}
 
-	// ~
-
 	checkSeries(st) {
 		function isset(e) {
 			return !(e == 'null' || e === undefined || e == '');
@@ -314,29 +302,25 @@ class DicomUploadModel {
 			if (!isset(dicomFile.getModality())) {
 				sr.setWarning('missingTag00080060', 'Missing tag: Modality', true);
 			} else {
-				if (!isset(dicomFile.getStudyDate())) {
-					sr.setWarning('missingTag00080020', 'Missing tag: StudyDate', true);
+				if (!isset(dicomFile.getDicomTag('00080021')) && !isset(dicomFile.getDicomTag('00080022')) ) {
+					sr.setWarning('missingTag00080022', 'Missing tag: SeriesDate', true);
 				}
 				if (sr.modality == 'PT') {
-					if (!isset(dicomFile.get('00101030'))) {
+					if ( !isset(dicomFile.getDicomTag('00101030')) ) {
 						sr.setWarning('missingTag00101030', 'Missing tag: Patient Weight', true);
 					}
-					if (!isset(dicomFile.get('00080030'))) {
-						sr.setWarning('missingTag00101030', 'Missing tag: Modality', true);
+					if ( !isset(dicomFile.getDicomTag('00080031'))  && !isset(dicomFile.getDicomTag('00080032')) ) {
+						sr.setWarning('missingTag00101031', 'Missing tag: Series Time', true);
 					}
-					if (!isset(dicomFile.get('00181074'))) {
+					if ( !isset(dicomFile.getRadiopharmaceuticalTag('00181074')) ) {
 						sr.setWarning('missingTag00181074', 'Missing tag: Radionuclide Total Dose', true);
 					}
-					if (!isset(dicomFile.get('00181072'))) {
+					if (!isset(dicomFile.getRadiopharmaceuticalTag('00181072')) && !isset(dicomFile.getRadiopharmaceuticalTag('00181078')) ) {
 						sr.setWarning('missingTag00181072', 'Missing tag: Radiopharmaceutical Start Time', true);
 					}
-					if (!isset(dicomFile.get('00181075'))) {
+					if ( !isset(dicomFile.getRadiopharmaceuticalTag('00181075')) ) {
 						sr.setWarning('missingTag00181075', 'Missing tag: Radionuclide Half Life', true);
 					}
-					/*
-					if (!isset(dicomFile.get('00181077'))) {
-						sr.setWarning('missingTag00181077', 'Missing tag: RadiopharmaceuticalSpecificActivity', true);
-					}*/
 				}
 			}
 
@@ -357,8 +341,6 @@ class DicomUploadModel {
 			}
 		}
 	}
-
-	// ~
 
 	findExpectedVisit(st) {
 		let thisP = st.getPatientName();
