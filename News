@@ -16,30 +16,31 @@ GaelO
   BugFix : dicomdir breaks dicom parsing
 
 -- GaelO 1.1.0 29/04/20 --
-Features : 
-  - Visit group to manage multiple modalities (in which each modality will have it's visit type)
-  - User's data edition panel
-  - Docker : 
-    - SMTP service for (mail() function)
-    - Cron services to automatize recurrent tasks
-  - Patient Visit Manager can be redifined through inheritance for custom visit creation workflow and status determination
-  - FTP/SFTP class to retrieve data from remote server (ex : automatic import of included patient list)
-  - Json Import for centers
-  - Possibility to declare patient code prefix per study at study creation (to avoid wrong patient import)
-  - Possibility to associate file upload with specific form
-  
-Enhancements : 
-  - Tree filter in right click to filter visits according to some status (depending on current role)
-  - Anon profile, optional visit, local form needed, Qc needed, Review needed are now defined per visit type
-  - Monitors now recieve QC decision emails
-  - Supervisors are notified in case of a not done visit creation
-  - Email notification when visit review is awaiting adjudication or concluded
-  - Export button on DataTables now export only visible (filtered) data
-  - Replaced Jquery datepicker by Bootrastrp datepicker
-  - Simplified download interface for DICOM (supervisor)
-  - faster visit status determination in upload manager (supervisor)
-  - Add OHIF viewer for supervisors and investigators
-  - Reduced ZIP compression level of Dicom before upload to decrease CPU comsuption in the client
-  - Small memory usage reduction when zipping dicom
+
+  Features : 
+    - Visit group to manage multiple modalities (in which each modality will have it's visit type)
+    - User's data edition panel
+    - Docker : 
+      - SMTP service for (mail() function)
+      - Cron services to automatize recurrent tasks
+    - Patient Visit Manager can be redifined through inheritance for custom visit creation workflow and status determination
+    - FTP/SFTP class to retrieve data from remote server (ex : automatic import of included patient list)
+    - Json Import for centers
+    - Possibility to declare patient code prefix per study at study creation (to avoid wrong patient import)
+    - Possibility to associate file upload with specific form
+
+  Enhancements : 
+    - Tree filter in right click to filter visits according to some status (depending on current role)
+    - Anon profile, optional visit, local form needed, Qc needed, Review needed are now defined per visit type
+    - Monitors now recieve QC decision emails
+    - Supervisors are notified in case of a not done visit creation
+    - Email notification when visit review is awaiting adjudication or concluded
+    - Export button on DataTables now export only visible (filtered) data
+    - Replaced Jquery datepicker by Bootrastrp datepicker
+    - Simplified download interface for DICOM (supervisor)
+    - faster visit status determination in upload manager (supervisor)
+    - Add OHIF viewer for supervisors and investigators
+    - Reduced ZIP compression level of Dicom before upload to decrease CPU comsuption in the client
+    - Small memory usage reduction when zipping dicom
 
 

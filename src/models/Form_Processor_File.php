@@ -48,6 +48,13 @@ abstract class Form_Processor_File extends Form_Processor {
 		return 5;
 	}
 
+	private function createEmptySpecificForm(){
+		$insertion = $this->linkpdo->prepare('INSERT INTO '.$this->specificTable.' (id_review) VALUES (:id_review)');
+		$insertion->execute(array(
+			'id_review' => $this->reviewObject->id_review )
+		);
+	}
+
 	/**
 	 * Store or overwirte a file, each file is defined by a Key (visit specific)
 	 */
@@ -56,6 +63,7 @@ abstract class Form_Processor_File extends Form_Processor {
 		//If first form upload create a draft form to insert file uploaded data
 		if (empty($this->reviewObject)) {
 			$this->createReview();
+			$this->createEmptySpecificForm();
 		}else {
 			//If review exist but validated throw exception
 			if ($this->reviewObject->validated) {
