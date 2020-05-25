@@ -142,7 +142,7 @@ class DicomFile {
 
 	getDicomTag(tagAddress){
 		let elmt = this.dataSet.elements['x'+tagAddress]
-		if ( elmt.length > 0) {
+		if ( elmt !== undefined && elmt.length > 0) {
 			// Return the value of the dicom attribute
 			return this.string(elmt);
 		}

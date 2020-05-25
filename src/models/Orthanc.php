@@ -122,7 +122,7 @@ Class Orthanc {
 		$opts=array('http' =>
 			array(
 				'method'  => 'POST',
-				'content' => json_encode($uidList),
+				'content' => json_encode(array('Transcode'=>'1.2.840.10008.1.2.1', 'Resources' => $uidList)),
 				'timeout' => 3600,
 				'header'=>  ['Content-Type: application/json', 'Accept: application/zip', $this->context['http']['header']]
 			)
