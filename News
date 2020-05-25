@@ -3,6 +3,7 @@ GaelO
 --Next Release --
 
 Dicom Transcoding, compression on storage and decompression on export thanks to Orthanc 1.7.0
+Fix reading failure if missing tag at dicom upload
 
 --GaelO 1.1.3 19/05/20--
   BugFix :
