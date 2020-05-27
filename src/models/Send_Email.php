@@ -441,7 +441,7 @@ Class Send_Email {
 	}
 
 	public function sendReviewReadyMessage(String $study, int $patientCode, String $visitType) {
-		$message="The following visit is ready for review in the platform: <br>
+		$message = "The following visit is ready for review in the platform: <br>
         Study : ".$study."<br>
         Patient Number : ".$patientCode."<br>
         Visit : ".$visitType."<br>";
