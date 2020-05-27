@@ -2,7 +2,7 @@ GaelO
 
 --Next Release --
 
-Dicom Transcoding, compression on storage and decompression on export thanks to Orthanc 1.7.0
+Dicom Transcoding, compression on storage and decompression on export thanks to Orthanc 1.7.1
 Fix reading failure if missing tag at dicom upload
 Remove duplicate reviewer notification
 Update phpmailer
