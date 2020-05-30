@@ -113,7 +113,7 @@ Class Orthanc {
 	 * @param array $uidList
 	 * @return string temporary file path
 	 */
-	public function getZipTempFile(array $uidList) {
+	public function getZipStream(array $uidList) {
 	   
 		if (!is_array($uidList)) {
 			$uidList=array($uidList);
@@ -129,12 +129,11 @@ Class Orthanc {
 		);
 	    
 		$context=stream_context_create($opts);
+
+		$tempFile = tmpfile();
+		stream_copy_to_stream ( fopen($this->url.'/tools/create-archive', 'rb', false, $context) , $tempFile);
 	    
- 		$temp=tempnam(ini_get('upload_tmp_dir'), 'TMP_');
-	    
-		file_put_contents($temp, fopen($this->url.'/tools/create-archive', 'rb', false, $context));
-	    
-		return $temp;
+		return $tempFile;
 	}
 	
 	
