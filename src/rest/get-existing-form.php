@@ -33,10 +33,11 @@ if ($visitAccessCheck) {
 	$result=[];
     
 	$visitObject=new Visit($id_visit, $linkpdo);
+	
 	try {
-		$reviewObject=$visitObject->queryExistingReviewForReviewer($username);
-		$result=$reviewObject->getSpecificData();
-		echo(json_encode($result));
+		$formProcessor = $visitObject->getFromProcessor(false, $username);
+		$reviewData = $formProcessor->getExistingFormData();
+		echo(json_encode($reviewData));
 
 	} catch (Exception $e) {
 		error_log($e->getMessage());
