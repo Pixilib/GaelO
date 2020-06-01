@@ -102,5 +102,9 @@ function alertifyMessage(message) {
 	alertify.message(message);
 }
 
+function µ(str) {
+	// Escape & < > " chars
+	return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
 
 

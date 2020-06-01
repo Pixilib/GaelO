@@ -31,7 +31,7 @@ class Util {
 		if (text == '[object Object]') {
 			return '<span class="unknown">Unreadable</span>';
 		}
-		return text;
+		return µ(text);
 	}
 
 	/**

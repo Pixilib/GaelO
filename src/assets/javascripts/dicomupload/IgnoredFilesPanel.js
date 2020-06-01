@@ -56,7 +56,7 @@ class IgnoredFilesPanel {
 
 			this.dom.find('tbody').append(`
 				<tr>
-					<td>${file.name}</td>
+					<td>${µ(file.name)}</td>
 					<td>${file.ignoredBecause}</td>
 				</tr>
 			`);

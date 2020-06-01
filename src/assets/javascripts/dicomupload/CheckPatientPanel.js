@@ -114,35 +114,35 @@ class CheckPatientPanel {
 										</tr>
 									</thead>
 									<tbody>
-										<tr id="${this.fields.fname.idRow}">
+										<tr id="${µ(this.fields.fname.idRow)}">
 											<th>First name</th>
-											<td id="${this.fields.fname.idExpected}"></td>
-											<td id="${this.fields.fname.idCurrent}"></td>
-											<td><button id="${this.fields.fname.idBtn}">Ignore</button></td>
+											<td id="${µ(this.fields.fname.idExpected)}"></td>
+											<td id="${µ(this.fields.fname.idCurrent)}"></td>
+											<td><button id="${µ(this.fields.fname.idBtn)}">Ignore</button></td>
 										</tr>
-										<tr id="${this.fields.lname.idRow}">
+										<tr id="${µ(this.fields.lname.idRow)}">
 											<th>Last name</th>
-											<td id="${this.fields.lname.idExpected}"></td>
-											<td id="${this.fields.lname.idCurrent}"></td>
-											<td><button id="${this.fields.lname.idBtn}">Ignore</button></td>
+											<td id="${µ(this.fields.lname.idExpected)}"></td>
+											<td id="${µ(this.fields.lname.idCurrent)}"></td>
+											<td><button id="${µ(this.fields.lname.idBtn)}">Ignore</button></td>
 										</tr>
-										<tr id="${this.fields.birthd.idRow}">
+										<tr id="${µ(this.fields.birthd.idRow)}">
 											<th>Birth date</th>
-											<td id="${this.fields.birthd.idExpected}"></td>
-											<td id="${this.fields.birthd.idCurrent}"></td>
-											<td><button id="${this.fields.birthd.idBtn}">Ignore</button></td>
+											<td id="${µ(this.fields.birthd.idExpected)}"></td>
+											<td id="${µ(this.fields.birthd.idCurrent)}"></td>
+											<td><button id="${µ(this.fields.birthd.idBtn)}">Ignore</button></td>
 										</tr>
-										<tr id="${this.fields.sex.idRow}">
+										<tr id="${µ(this.fields.sex.idRow)}">
 											<th>Sex</th>
-											<td id="${this.fields.sex.idExpected}"></td>
-											<td id="${this.fields.sex.idCurrent}"></td>
-											<td><button id="${this.fields.sex.idBtn}">Ignore</button></td>
+											<td id="${µ(this.fields.sex.idExpected)}"></td>
+											<td id="${µ(this.fields.sex.idCurrent)}"></td>
+											<td><button id="${µ(this.fields.sex.idBtn)}">Ignore</button></td>
 										</tr>
-										<tr id="${this.fields.acqd.idRow}">
+										<tr id="${µ(this.fields.acqd.idRow)}">
 											<th>Acquisition date</th>
-											<td id="${this.fields.acqd.idExpected}"></td>
-											<td id="${this.fields.acqd.idCurrent}"></td>
-											<td><button id="${this.fields.acqd.idBtn}">Ignore</button></td>
+											<td id="${µ(this.fields.acqd.idExpected)}"></td>
+											<td id="${µ(this.fields.acqd.idCurrent)}"></td>
+											<td><button id="${µ(this.fields.acqd.idBtn)}">Ignore</button></td>
 										</tr>
 									</tbody>
 								</table>
