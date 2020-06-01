@@ -250,6 +250,19 @@ abstract class Form_Processor {
 	}
 	
 	/**
+	 * Get existing form for current user
+	 * can be overrided to add additional data such as investigator form data
+	 */
+	public function getExistingFormData() {
+		if( ! empty($this->reviewObject)){
+			return ($this->reviewObject->getSpecificData());
+		}else{
+			return [];
+		}
+		
+	}
+	
+	/**
 	 * When Review conclusion "Done" reached Will make review unavailable for new review
 	 * Can be overided if needed different condition
 	 * @param string $reviewConclusion

@@ -256,8 +256,8 @@ class StudiesPanel {
 		let inputAttr = Util.arrayToString(args.inputAttr, ' ');
 
 		$('#du-studies-tbody').append(`
-			<tr id="du-st-${study.studyInstanceUID}" class="row-clickable ${classes}">
-				<td><input name="${study.studyInstanceUID}" type="checkbox" ${inputAttr}></td>
+			<tr id="du-st-${µ(study.studyInstanceUID)}" class="row-clickable ${classes}">
+				<td><input name="${µ(study.studyInstanceUID)}" type="checkbox" ${inputAttr}></td>
 				<td>${args.patientPanel}</td>
 				<td>${args.patientRemove}</td>
 				<td>${args.status}</td>

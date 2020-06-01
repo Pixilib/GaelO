@@ -65,12 +65,13 @@ if ($permissionCheck && count($ids) > 0) {
 	//Download dicom corresponding to called ID with Orthanc APIs
 	$orthanc=new Orthanc();
 	
-	$tempFileName=$orthanc->getZipTempFile($ids);
+	$zipStream=$orthanc->getZipStream($ids);
+	$fstat = fstat($zipStream);
 	
 	header("Content-Type: application/zip");
 	header("Content-Transfer-Encoding: Binary");
 	header("Cache-Control: no-cache");
-	header("Content-Length: ".filesize($tempFileName));
+	header("Content-Length: ".$fstat['size']);
 	
 	//For supervisor generic file name as the zip can merge visits
 	if ($_SESSION['role'] == User::SUPERVISOR) {
@@ -87,18 +88,15 @@ if ($permissionCheck && count($ids) > 0) {
 	header("Pragma: no-cache");
 	header("Expires: 0");
 	
-	$file=@fopen($tempFileName, "rb");
-	if ($file) {
-		while (!feof($file)) {
-			print(@fread($file, 1024*1024));
-			flush();
-		}
-	}
+	rewind($zipStream);
+	if(!$zipStream) exit('no file to stream');
 
+	while (!feof($zipStream)) {
+		print(@fread($zipStream, 1024*1024));
+		flush();
+	}
 	
-	fclose($file);
-	
-	$delete=unlink($tempFileName);
+	fclose($zipStream);
 
 }else {
 	header('HTTP/1.0 403 Forbidden');

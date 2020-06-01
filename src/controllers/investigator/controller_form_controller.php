@@ -122,13 +122,6 @@ if (isset($_SESSION['username']) && $patientAllowed) {
 
 		$email->sendQCDesicionEmail($controlDecision, $visitObject->study, $visitObject->patientCode, $visitObject->visitType, $formAccepted, $commentForm, $imageAccepted, $commentImage);
         
-        
-		//If QC Accepted and review needed for this visit inform the reviewers of the study by email
-		if ($controlDecision == Visit::QC_ACCEPTED && $visitObject->getVisitCharacteristics()->reviewNeeded) {
-		  $email=new Send_Email($linkpdo);
-		  $email->addGroupEmails($visitObject->study, User::REVIEWER);
-		  $email->sendReviewReadyMessage($visitObject->study, $visitObject->patientCode, $visitObject->visitType);        
-		}
 
 	  //if send form with uncorrect permission, refuse
 	  }else if (isset($_POST['refuse']) || isset($_POST['accept']) || isset($_POST['ask_corrective_action'])

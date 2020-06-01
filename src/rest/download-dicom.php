@@ -38,20 +38,27 @@ if ($visitPermissions) {
 	$resultatsIDs=$visitObject->getSeriesOrthancID();
 	//Generate zip from orthanc and output it to the navigator
 	$orthanc=new Orthanc();
-	$tempfile=$orthanc->getZipTempFile($resultatsIDs);
-	
-	$file=@fopen($tempfile, "rb");
-	if ($file) {
-		while (!feof($file))
-		{
-			print(@fread($file, 1024*8));
-			flush();
-		}
+	$zipStream=$orthanc->getZipStream($resultatsIDs);
+	$fstat = fstat($zipStream);
+
+	header("Content-Type: application/zip");
+	header("Content-Transfer-Encoding: Binary");
+	header("Cache-Control: no-cache");
+	header("Content-Length: ".$fstat['size']);
+	header("Cache-Control: no-store, no-cache, must-revalidate");
+	header("Cache-Control: post-check=0, pre-check=0", false);
+	header("Pragma: no-cache");
+	header("Expires: 0");
+
+	rewind($zipStream);
+	if(!$zipStream) exit('no file to stream');
+
+	while (!feof($zipStream)) {
+		print(@fread($zipStream, 1024*1024));
+		flush();
 	}
-
-
-	//Delete temp file at the end of reading
-	unlink($tempfile);
+	
+	fclose($zipStream);
 	
 } else {
 	header('HTTP/1.0 403 Forbidden');

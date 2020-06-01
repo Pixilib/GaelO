@@ -204,8 +204,8 @@ class SeriesPanel {
 		let inputAttr = Util.arrayToString(args.inputAttr, ' ');
 
 		$('#du-series-tbody').append(`
-		<tr id="du-sr-${serie.seriesInstanceUID}" class="row-clickable ${classes}">
-			<td><input name="${serie.seriesInstanceUID}" type="checkbox" ${inputAttr}></td>
+		<tr id="du-sr-${µ(serie.seriesInstanceUID)}" class="row-clickable ${classes}">
+			<td><input name="${µ(serie.seriesInstanceUID)}" type="checkbox" ${inputAttr}></td>
 			<td>${args.status}</td>
 			<td>${Util.ft(serie.seriesDescription)}</td>
 			<td>${Util.ft(serie.modality)}</td>
