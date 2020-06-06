@@ -48,6 +48,7 @@ if ($permissionResults) {
 			$formProcessorObject->saveForm($_POST, $validate);
 			echo(json_encode(true));
 		}catch (Exception $e) {
+			error_log($e);
 			echo(json_encode(false));
 		}
 

@@ -245,7 +245,8 @@ Class Review {
 	 * Create new entry in review table
 	 */
 	public static function createReview(int $id_visit, string $username, bool $local, bool $adjudication, PDO $linkpdo) : Review {
-	    
+		
+		$linkpdo->exec('LOCK TABLES reviews WRITE');
 		$newReview=$linkpdo->prepare('INSERT INTO reviews(id_visit, username, review_date, validated , is_local, is_adjudication, sent_files) VALUES (:idvisit, :username, :reviewdate, :validated, :local, :adjudication, :emptyFileArray)');
 		$newReview->execute(array(
 			'idvisit' =>$id_visit,
@@ -257,6 +258,7 @@ Class Review {
 			'adjudication'=>intval($adjudication)
 		));
 		$idReview=$linkpdo->lastInsertId();
+		$linkpdo->exec('UNLOCK TABLES');
         
 		$reviewObject=new Review($idReview, $linkpdo);
 		return $reviewObject;
