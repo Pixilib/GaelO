@@ -111,7 +111,7 @@ Class Orthanc {
 	/**
 	 * return the ZIP as temp file containing the Orthanc ID ressources dicoms
 	 * @param array $uidList
-	 * @return string temporary file path
+	 * @return resource temporary file path
 	 */
 	public function getZipStream(array $uidList) {
 	   
