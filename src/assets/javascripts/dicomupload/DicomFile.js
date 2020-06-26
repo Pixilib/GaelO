@@ -104,7 +104,6 @@ class DicomFile {
 	/**
 	 * Write unsignificant content at a specified tag in the dataset
 	 */
-	//SK ANONYMISATION A RECHECK
 	erase(id, newContent = '*') {
 		id = id.toLowerCase();
 

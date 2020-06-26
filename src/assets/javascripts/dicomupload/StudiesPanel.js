@@ -261,7 +261,7 @@ class StudiesPanel {
 				<td>${args.patientPanel}</td>
 				<td>${args.patientRemove}</td>
 				<td>${args.status}</td>
-				<td>${Util.ft(study.getPatientName().toString())}</td>
+				<td>${Util.ft(study.getPatientName())}</td>
 				<td>${Util.ft(study.studyDescription)}</td>
 				<td>${Util.ft(study.accessionNumber)}</td>
 				<td>${Util.ft(study.getDate('studyDate'))}</td>
