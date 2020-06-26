@@ -1,6 +1,7 @@
 GaelO
 
 --Next Release --
+  Fix frontend deidentification of dicom tag sequence
 
 --GaelO 1.2.1 06/06/20--
   Add Lock database at specific form creation
