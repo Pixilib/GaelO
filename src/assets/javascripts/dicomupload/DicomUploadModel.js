@@ -345,6 +345,10 @@ class DicomUploadModel {
 	findExpectedVisit(st) {
 		let thisP = st.getPatientName();
 
+		if(thisP === undefined){
+			return undefined
+		}
+
 		if (thisP.givenName === undefined) {
 			return undefined;
 		}

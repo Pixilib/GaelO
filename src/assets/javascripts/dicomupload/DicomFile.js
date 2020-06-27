@@ -113,6 +113,23 @@ class DicomFile {
 			throw `Can't find ${id.toUpperCase()} while erasing.`;
 		}
 
+		if(element.vr === "SQ"){
+			//Treat each item of sequence
+			element.items.forEach(item =>{
+				let sequenceElement = item.dataSet.elements
+				let elementsInSeq = Object.keys(sequenceElement)
+				//erase each tag in this item
+				elementsInSeq.forEach( tag => {
+					this.__editElement(sequenceElement[tag], newContent)
+				})
+			})
+		}else{
+			this.__editElement(element, newContent)
+		}
+	}
+
+	__editElement(element, newContent){
+
 		// Retrieve the index position of the element in the data set array
 		const dataOffset = element.dataOffset;
 
@@ -127,6 +144,7 @@ class DicomFile {
 			// Write this char in the array
 			this.header[dataOffset + i] = char;
 		}
+
 	}
 
 	getRadiopharmaceuticalTag(tagAddress){
