@@ -1,5 +1,8 @@
 GaelO
 
+--Pending Changes --
+  Fix update review avaibility when QC is reset to Refused
+  
 --GaelO 1.2.2 27/06/20--
   Fix frontend deidentification of dicom tag sequence
 
