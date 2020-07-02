@@ -147,6 +147,10 @@ if (!isset($_GET['page'])) {
 	//Start with Orthanc to reach orthanc
 	require 'scripts/dicom_web.php';
     
+}else if (strpos($_GET['page'], 'tus') === 0) {
+	//Start with Orthanc to reach orthanc
+	require 'scripts/tus_upload.php';
+    
 }else {
 	require 'includes/404.php';
 }
