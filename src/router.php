@@ -148,7 +148,7 @@ if (!isset($_GET['page'])) {
 	require 'scripts/dicom_web.php';
     
 }else if (strpos($_GET['page'], 'tus') === 0) {
-	//Start with Orthanc to reach orthanc
+	//tus subrouter
 	require 'scripts/tus_upload.php';
     
 }else {
