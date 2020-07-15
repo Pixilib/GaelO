@@ -125,6 +125,11 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.1.0/papaparse.min.js"></script>
 
 <?php $uploaderVersion="3.6"?>
+
+<!-- GaelO Uploader -->
+<script src="https://unpkg.com/gaelo-uploader@0.1.0/dist/bundle.js"></script>
+
+
 <!-- JavaScript  CustomJS/CSS -->
 <script type="text/javascript" src="assets/javascripts/dicomupload/_browserSupport.js?version=<?= $uploaderVersion?>" ></script>
 <script type="text/javascript" src="assets/javascripts/dicomupload/CheckPatientPanel.js?version=<?= $uploaderVersion?>" ></script>
