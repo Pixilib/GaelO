@@ -15,7 +15,7 @@
 
 /**
  * Validate the uploaded dicom, this script act as follow : 
- * Unzip the recieved ZIP
+ * Unzip the recieved ZIPs
  * Send each dicom to Orthanc Exposed
  * Produce the Anonymize query in Orthanc Exposed
  * Delete the original import in Orthanc Exposed
@@ -72,6 +72,13 @@ if ($accessCheck && $role == User::INVESTIGATOR && $visitObject->uploadStatus ==
 	foreach($cacheContent as $key => $uploadObject){
 
 		if($uploadObject['idVisit'] == $id_visit){
+
+			$zipSize=filesize($uploadObject['file_path']);
+			$uncompressedzipSize=get_zip_originalsize($uploadObject['file_path']);
+			if ($uncompressedzipSize/$zipSize > 50) {
+				throw new Exception("Bomb Zip");
+			}
+
 			$zip=new ZipArchive;
 			$zip->open($uploadObject['file_path']);
 			$zip->extractTo($unzipedPath);
