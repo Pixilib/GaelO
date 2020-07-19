@@ -37,16 +37,21 @@ $linkpdo=Session::getLinkpdo();
 
 $timeStamp = $_POST['timeStamp'];
 $id_visit = $_POST['id_visit'];
+$nbOfInstances = $_POST['totalDicomFiles'];
+$anonFromOrthancId=$_POST['originalOrthancStudyID'];
 $username=$_SESSION['username'];
 $study=$_SESSION['study'];
 $role=$_SESSION['role'];
-$nbOfInstances = $_POST['totalDicomFiles'];
-$anonFromOrthancId=$_POST['originalOrthancStudyID'];
+
 
 $unzipedPath = $_SERVER['DOCUMENT_ROOT'].'/data/upload/temp/'.$timeStamp.'_'.$id_visit;
 
 $visitObject=new Visit($id_visit, $linkpdo);
 $userObject=new User($username, $linkpdo);
+
+error_log($username);
+error_log($study);
+error_log($role);
 
 $accessCheck=$userObject->isVisitAllowed($id_visit, User::INVESTIGATOR);
 
@@ -71,7 +76,7 @@ if ($accessCheck && $role == User::INVESTIGATOR && $visitObject->uploadStatus ==
 
 	foreach($cacheContent as $key => $uploadObject){
 
-		if($uploadObject['idVisit'] == $id_visit){
+		if($uploadObject['metadata']['idVisit'] == $id_visit){
 
 			$zipSize=filesize($uploadObject['file_path']);
 			$uncompressedzipSize=get_zip_originalsize($uploadObject['file_path']);
