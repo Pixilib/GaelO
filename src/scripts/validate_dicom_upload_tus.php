@@ -51,11 +51,60 @@ $userObject=new User($username, $linkpdo);
 $accessCheck=$userObject->isVisitAllowed($id_visit, User::INVESTIGATOR);
 
 if ($accessCheck && $role == User::INVESTIGATOR && $visitObject->uploadStatus == Visit::NOT_DONE) {
+	
 	//Run as a background task even if the user leave the website
 	ignore_user_abort(true);
 	//Set Visit as upload processing status
 	$visitObject->changeUploadStatus(Visit::UPLOAD_PROCESSING);
 	$start_time=microtime(true);
+			
+	if (!is_dir($unzipedPath)) {
+		mkdir($unzipedPath, 0755);
+	}
+
+	\TusPhp\Config::set($_SERVER['DOCUMENT_ROOT'].'/data/_config/tus_server.php');
+	$server = new \TusPhp\Tus\Server();
+
+	$tusCache =  $server->getCache();
+
+	$cacheContent = $tusCache->getCacheContents();
+
+	foreach($cacheContent as $key => $uploadObject){
+
+		if($uploadObject['idVisit'] == $id_visit){
+			$zip=new ZipArchive;
+			$zip->open($uploadObject['file_path']);
+			$zip->extractTo($unzipedPath);
+			$zip->close();
+			unlink($uploadObject['file_path']);
+			$tusCache->delete($key);
+		}
+
+	}
+/*
+$server->event()->addListener('tus-server.upload.complete', function (\TusPhp\Events\TusEvent $event)  use ($server) {
+    $filesDetails = $event->getFile()->details();
+    $tusFile = $event->getFile();
+    $uploadMetadata = $filesDetails['metadata'];
+    $uploadedZipPath = $tusFile->getFilePath();
+
+    //Defining upziping folder
+    $desinationUnzipPath = $_SERVER['DOCUMENT_ROOT'].'/data/upload/temp/'.$uploadMetadata['timeStamp'].'_'.$uploadMetadata['idVisit'];
+
+    //Unzip uploaded file
+    $zip=new ZipArchive;
+    $zip->open($uploadedZipPath);
+    $zip->extractTo($desinationUnzipPath);
+    $zip->close();
+
+    //Remove unziped file from TUS
+    $server->getCache()->delete($tusFile->getKey());
+    unlink($uploadedZipPath);
+
+	});
+	*/
+	
+	
 
 	/**
 	 * Try block as each interruption of the proccess must make visit return as upload not done
