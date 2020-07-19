@@ -43,7 +43,7 @@ $role=$_SESSION['role'];
 $nbOfInstances = $_POST['totalDicomFiles'];
 $anonFromOrthancId=$_POST['originalOrthancStudyID'];
 
-$unzipedPath = $_SERVER['DOCUMENT_ROOT'].'/data/upload/'.$timeStamp.'_'.$id_visit;
+$unzipedPath = $_SERVER['DOCUMENT_ROOT'].'/data/upload/temp/'.$timeStamp.'_'.$id_visit;
 
 $visitObject=new Visit($id_visit, $linkpdo);
 $userObject=new User($username, $linkpdo);

@@ -2,7 +2,7 @@
 //SK reste a implementer securite
 require_once($_SERVER['DOCUMENT_ROOT'].'/vendor/autoload.php');
 
-define('UPLOADS_DIR', $_SERVER['DOCUMENT_ROOT'].'/data/upload');
+define('UPLOADS_DIR', $_SERVER['DOCUMENT_ROOT'].'/data/upload/temp');
 
 \TusPhp\Config::set($_SERVER['DOCUMENT_ROOT'].'/data/_config/tus_server.php');
 $server = new \TusPhp\Tus\Server(); //Either redis, file or apcu. Leave empty for file based cache.
@@ -16,7 +16,7 @@ $server->event()->addListener('tus-server.upload.complete', function (\TusPhp\Ev
     $uploadedZipPath = $tusFile->getFilePath();
 
     //Defining upziping folder
-    $desinationUnzipPath = $_SERVER['DOCUMENT_ROOT'].'/data/upload/'.$uploadMetadata['timeStamp'].'_'.$uploadMetadata['idVisit'];
+    $desinationUnzipPath = $_SERVER['DOCUMENT_ROOT'].'/data/upload/temp/'.$uploadMetadata['timeStamp'].'_'.$uploadMetadata['idVisit'];
     if (!is_dir($desinationUnzipPath)) {
             mkdir($desinationUnzipPath, 0755);
     }
@@ -27,7 +27,7 @@ $server->event()->addListener('tus-server.upload.complete', function (\TusPhp\Ev
     $zip->close();
 
     //Remove unziped file from TUS
-    $server->cache->delete($tusFile->getKey());
+    $server->getCache()->delete($tusFile->getKey());
     unlink($uploadedZipPath);
 
 });
