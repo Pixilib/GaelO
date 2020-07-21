@@ -43,7 +43,6 @@ $username=$_SESSION['username'];
 $study=$_SESSION['study'];
 $role=$_SESSION['role'];
 
-
 $unzipedPath = $_SERVER['DOCUMENT_ROOT'].'/data/upload/temp/'.$timeStamp.'_'.$id_visit;
 
 $visitObject=new Visit($id_visit, $linkpdo);
@@ -93,30 +92,6 @@ if ($accessCheck && $role == User::INVESTIGATOR && $visitObject->uploadStatus ==
 		}
 
 	}
-/*
-$server->event()->addListener('tus-server.upload.complete', function (\TusPhp\Events\TusEvent $event)  use ($server) {
-    $filesDetails = $event->getFile()->details();
-    $tusFile = $event->getFile();
-    $uploadMetadata = $filesDetails['metadata'];
-    $uploadedZipPath = $tusFile->getFilePath();
-
-    //Defining upziping folder
-    $desinationUnzipPath = $_SERVER['DOCUMENT_ROOT'].'/data/upload/temp/'.$uploadMetadata['timeStamp'].'_'.$uploadMetadata['idVisit'];
-
-    //Unzip uploaded file
-    $zip=new ZipArchive;
-    $zip->open($uploadedZipPath);
-    $zip->extractTo($desinationUnzipPath);
-    $zip->close();
-
-    //Remove unziped file from TUS
-    $server->getCache()->delete($tusFile->getKey());
-    unlink($uploadedZipPath);
-
-	});
-	*/
-	
-	
 
 	/**
 	 * Try block as each interruption of the proccess must make visit return as upload not done
@@ -128,9 +103,7 @@ $server->event()->addListener('tus-server.upload.complete', function (\TusPhp\Ev
 		$orthancExposedObject=new Orthanc(true);
 		$importedMap=sendFolderToOrthanc($unzipedPath, $orthancExposedObject);
 
-	
 		//Anonymize, remove original and send anonymized to Orthanc PACS
-
 		//Read imported map, it only have only one study
 		foreach ($importedMap as $studyID=>$seriesIDs) {
 			//Anonymize and store new anonymized study Orthanc ID
