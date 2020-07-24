@@ -28,6 +28,11 @@ $scheduler=new Scheduler();
 
 //Define action and timing
 
+//Execute each hour TUS script to remove expired incomplete upload
+$tusConfigFile = dirname(__DIR__, 1).'/data/_config/tus_server.php';
+$rootPath = dirname(__DIR__, 2);
+$scheduler->raw($rootPath.'/vendor/bin/tus tus:expired --config='.$tusConfigFile)->hourly()->output('/var/log/tus_cron.log');
+
 
 // Let the scheduler execute jobs which are due.
 $scheduler->run();
