@@ -32,8 +32,15 @@ if ($visitObject->statusDone == Visit::NOT_DONE) {
             <?php
 			if ($visitObject->uploadStatus == Visit::NOT_DONE && $role === User::INVESTIGATOR) {
 			?>
-                window.Gaelo_Uploader.installUploader({}, 'dicomUploaderv2')
+                window.Gaelo_Uploader.installUploader({
+					developerMode: false,
+					multiUpload: false,
+					minNbOfInstances: 30,
+					idVisit: <?= $id_visit ?? 'null' ?>,
+					callbackOnComplete: refreshDivContenu
+				}, 'dicomUploaderv2')
 				checkBrowserSupportDicomUpload('#uploadDicom');
+				/*
                	new DicomUpload('#uploadDicom', {
                     expectedVisitsURL: '../../scripts/get_possible_import.php',
                     validationScriptURL: '../../scripts/validate_dicom_upload.php',
@@ -41,7 +48,8 @@ if ($visitObject->statusDone == Visit::NOT_DONE) {
                     isNewStudyURL: '../../scripts/is_new_study.php',
                     callbackOnComplete: refreshDivContenu,
                     idVisit: <?= $id_visit ?? 'null' ?>
-                }); 
+				}); 
+				*/
            <?php
 			}
 			?>
