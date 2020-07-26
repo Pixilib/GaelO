@@ -48,11 +48,18 @@ $unzipedPath = $_SERVER['DOCUMENT_ROOT'].'/data/upload/temp/'.$timeStamp.'_'.$id
 $visitObject=new Visit($id_visit, $linkpdo);
 $userObject=new User($username, $linkpdo);
 
+error_log($timeStamp);
+error_log($id_visit);
+error_log($nbOfInstances);
+error_log($anonFromOrthancId);
 error_log($username);
 error_log($study);
 error_log($role);
 
 $accessCheck=$userObject->isVisitAllowed($id_visit, User::INVESTIGATOR);
+error_log($accessCheck);
+error_log($role == User::INVESTIGATOR);
+error_log($visitObject->uploadStatus);
 
 if ($accessCheck && $role == User::INVESTIGATOR && $visitObject->uploadStatus == Visit::NOT_DONE) {
 	
