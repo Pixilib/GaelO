@@ -18,11 +18,19 @@ use Illuminate\Support\Str;
 */
 
 $factory->define(User::class, function (Faker $faker) {
+    
     return [
-        'name' => $faker->name,
-        'email' => $faker->unique()->safeEmail,
-        'email_verified_at' => now(),
+        'username' => 'administrator',
+        'lastname' => 'administrator',
+        'firstname' => 'administrator',
+        'email' => 'administrator@administrator.fr',
+        'last_password_update' => now()->subDays(100),
+        'creation_date'=> now(),
+        'status' => 'Activated',
         'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password
-        'remember_token' => Str::random(10),
+        'center_code' => 0,
+        'job_name' => 'Monitor',
+        'administrator' => true,
+        'remember_token' => Str::random(10)
     ];
 });
