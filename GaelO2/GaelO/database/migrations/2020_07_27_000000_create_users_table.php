@@ -35,6 +35,7 @@ class CreateUsersTable extends Migration
             $table->string('orthanc_address')->nullable(true);
             $table->string('orthanc_login')->nullable(true);
             $table->string('orthanc_password')->nullable(true);
+            $table->string('api_token', 80) ->unique()->nullable()->default(null);
             //SK rememberToken sert a CSRF, peut etre pas utile si JWT a documenter
             $table->rememberToken();
             $table->timestamps();
