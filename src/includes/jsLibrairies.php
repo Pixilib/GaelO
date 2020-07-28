@@ -130,28 +130,9 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.1.0/papaparse.min.js"></script>
 
 <!-- GaelO Uploader -->
-<script src="https://unpkg.com/gaelo-uploader@0.2.3/dist/bundle.js"></script>
+<script src="https://unpkg.com/gaelo-uploader@0.2.5/dist/bundle.js"></script>
 
 <?php $uploaderVersion="3.6"?>
-<!-- JavaScript  CustomJS/CSS -->
-<script type="text/javascript" src="assets/javascripts/dicomupload/_browserSupport.js?version=<?= $uploaderVersion?>" defer></script>
-<script type="text/javascript" src="assets/javascripts/dicomupload/CheckPatientPanel.js?version=<?= $uploaderVersion?>" defer></script>
-<script type="text/javascript" src="assets/javascripts/dicomupload/DAO.js?version=<?= $uploaderVersion?>" defer></script>
-<script type="text/javascript" src="assets/javascripts/dicomupload/DicomDropZone.js?version=<?= $uploaderVersion?>" defer></script>
-<script type="text/javascript" src="assets/javascripts/dicomupload/DicomFile.js?version=<?= $uploaderVersion?>" defer></script>
-<script type="text/javascript" src="assets/javascripts/dicomupload/DicomUpload.js?version=<?= $uploaderVersion?>" defer></script>
-<script type="text/javascript" src="assets/javascripts/dicomupload/DicomUploadModel.js?version=<?= $uploaderVersion?>" defer></script>
-<script type="text/javascript" src="assets/javascripts/dicomupload/DicomUploadView.js?version=<?= $uploaderVersion?>" defer></script>
-<script type="text/javascript" src="assets/javascripts/dicomupload/IgnoredFilesPanel.js?version=<?= $uploaderVersion?>" defer></script>
-<script type="text/javascript" src="assets/javascripts/dicomupload/Instance.js?version=<?= $uploaderVersion?>" defer></script>
-<script type="text/javascript" src="assets/javascripts/dicomupload/SelectPatientPanel.js?version=<?= $uploaderVersion?>" defer></script>
-<script type="text/javascript" src="assets/javascripts/dicomupload/Serie.js?version=<?= $uploaderVersion?>" defer></script>
-<script type="text/javascript" src="assets/javascripts/dicomupload/Study.js?version=<?= $uploaderVersion?>" defer></script>
-<script type="text/javascript" src="assets/javascripts/dicomupload/StudiesPanel.js?version=<?= $uploaderVersion?>" defer></script>
-<script type="text/javascript" src="assets/javascripts/dicomupload/SeriesPanel.js?version=<?= $uploaderVersion?>" defer></script>
-<script type="text/javascript" src="assets/javascripts/dicomupload/Util.js?version=<?= $uploaderVersion?>" defer></script>
-<link rel="preload" as="style" href="assets/css/dicomupload.css?version=<?= $uploaderVersion?>" type="text/css" >
-
 <script type="text/javascript" src="assets/javascripts/gaelO-chart.js?version=<?= $uploaderVersion?>" defer></script>
 
 <script type="text/javascript" src="assets/javascripts/PetCtCSVParser.js" ></script>

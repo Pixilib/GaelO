@@ -161,4 +161,33 @@ function checkBrowserSupportDicomUpload(selectorDom) {
 	}
 }
 
+const preventDefault = function (event){
+	event.preventDefault();
+	event.returnValue = ''; // Needed for Chrome
+}
+
+/**
+ * Set listeners on page changing and page refreshing
+ * The user will be asked to confirm before updating the page
+ */
+function preventAjaxDivLoading() {
+	// Prevent page changing
+	window.addEventListener('beforeunload', preventDefault);
+
+	// Prevent ajax div loading
+	$(document).ajaxSend((evt, request, settings) => {
+		request.abort();
+		alertify.confirm('Close?', 'Your upload will be lost. Do you want to <strong>cancel the upload</strong>? </br> In that case, Click OK and redo your action.', () => {
+			//SK CANCEL DANS L UPLOADER?
+			$(document).off('ajaxSend');
+			refreshInvestigatorDiv();
+		}, () => { });
+	});
+}
+
+function allowAjaxDivLoading(){
+	window.removeEventListener('beforeunload', preventDefault);
+	$(document).off('ajaxSend');
+}
+
 

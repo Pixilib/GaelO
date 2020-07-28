@@ -245,8 +245,8 @@ function handleException(Exception $e1) {
 	//If more than own study uploaded or difference of instance number an exception is thrown
 	$answer['receivedConfirmation']=false;
 	$answer['errorDetails']=$e1->getMessage();
-	warningAdminError($e1->getMessage(), $linkpdo);
 	$visitObject->changeUploadStatus(Visit::NOT_DONE);
+	warningAdminError($e1->getMessage(), $linkpdo);
 	die($e1->getMessage());
 }
 /**
