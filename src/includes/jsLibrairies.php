@@ -130,7 +130,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.1.0/papaparse.min.js"></script>
 
 <!-- GaelO Uploader -->
-<script src="https://unpkg.com/gaelo-uploader@0.2.2/dist/bundle.js"></script>
+<script src="https://unpkg.com/gaelo-uploader@0.2.3/dist/bundle.js"></script>
 
 <?php $uploaderVersion="3.6"?>
 <!-- JavaScript  CustomJS/CSS -->

@@ -127,7 +127,7 @@
 <?php $uploaderVersion="3.6"?>
 
 <!-- GaelO Uploader -->
-<script src="https://unpkg.com/gaelo-uploader@0.2.2/dist/bundle.js"></script>
+<script src="https://unpkg.com/gaelo-uploader@0.2.3/dist/bundle.js"></script>
 
 
 <!-- JavaScript  CustomJS/CSS -->
