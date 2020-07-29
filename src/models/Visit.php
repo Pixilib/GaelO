@@ -444,6 +444,8 @@ class Visit {
 				//Do this only if QC is not needed as supervisor will get QC notification otherwise (avoid dual mail)
 				$this->sendUploadNotificationToSupervisor();
 			}
+		}else if ($controlDecision == Visit::QC_REFUSED){
+			$this->changeReviewAvailability(false);
 		}
         
 	}
