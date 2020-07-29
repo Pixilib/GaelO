@@ -32,15 +32,22 @@ if ($visitObject->statusDone == Visit::NOT_DONE) {
             <?php
 			if ($visitObject->uploadStatus == Visit::NOT_DONE && $role === User::INVESTIGATOR) {
 			?>
-                checkBrowserSupportDicomUpload('#uploadDicom');
-               	new DicomUpload('#uploadDicom', {
-                    expectedVisitsURL: '../../scripts/get_possible_import.php',
-                    validationScriptURL: '../../scripts/validate_dicom_upload.php',
-                    dicomsReceiptsScriptURL: '../../scripts/dicoms_receipts.php',
-                    isNewStudyURL: '../../scripts/is_new_study.php',
-                    callbackOnComplete: refreshDivContenu,
-                    idVisit: <?= $id_visit ?? 'null' ?>
-                }); 
+                window.Gaelo_Uploader.installUploader({
+					developerMode: false,
+					multiUpload: false,
+					minNbOfInstances: 30,
+					idVisit: <?= $id_visit ?>,
+					callbackOnStartAction: ()=>{
+						preventAjaxDivLoading()
+					},
+					callbackOnUploadComplete: ()=>{
+						allowAjaxDivLoading()
+					},
+  					callbackOnValidationSent: ()=>{
+						refreshDivContenu()
+					}
+				}, 'dicomUploaderv2')
+				checkBrowserSupportDicomUpload('#dicomUploaderv2');
            <?php
 			}
 			?>
@@ -216,7 +223,7 @@ if ($visitObject->uploadStatus == Visit::DONE && $role != User::REVIEWER) {
 }
 ?>
 
-<div id="uploadDicom" class="mt-3"></div>
+<div id="dicomUploaderv2" class="mt-3"></div>
 <div id="correctiveAction"></div>
 <div id="controlerForm"></div>
 <div id="formInvestigator"></div>

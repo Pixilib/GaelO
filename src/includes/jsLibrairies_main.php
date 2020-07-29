@@ -124,26 +124,11 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.1.0/papaparse.min.js"></script>
 
-<?php $uploaderVersion="3.7"?>
-<!-- JavaScript  CustomJS/CSS -->
-<script type="text/javascript" src="assets/javascripts/dicomupload/_browserSupport.js?version=<?= $uploaderVersion?>" ></script>
-<script type="text/javascript" src="assets/javascripts/dicomupload/CheckPatientPanel.js?version=<?= $uploaderVersion?>" ></script>
-<script type="text/javascript" src="assets/javascripts/dicomupload/DAO.js?version=<?= $uploaderVersion?>" ></script>
-<script type="text/javascript" src="assets/javascripts/dicomupload/DicomDropZone.js?version=<?= $uploaderVersion?>" ></script>
-<script type="text/javascript" src="assets/javascripts/dicomupload/DicomFile.js?version=<?= $uploaderVersion?>" ></script>
-<script type="text/javascript" src="assets/javascripts/dicomupload/DicomUpload.js?version=<?= $uploaderVersion?>" ></script>
-<script type="text/javascript" src="assets/javascripts/dicomupload/DicomUploadModel.js?version=<?= $uploaderVersion?>" ></script>
-<script type="text/javascript" src="assets/javascripts/dicomupload/DicomUploadView.js?version=<?= $uploaderVersion?>" ></script>
-<script type="text/javascript" src="assets/javascripts/dicomupload/IgnoredFilesPanel.js?version=<?= $uploaderVersion?>" ></script>
-<script type="text/javascript" src="assets/javascripts/dicomupload/Instance.js?version=<?= $uploaderVersion?>" ></script>
-<script type="text/javascript" src="assets/javascripts/dicomupload/SelectPatientPanel.js?version=<?= $uploaderVersion?>" ></script>
-<script type="text/javascript" src="assets/javascripts/dicomupload/Serie.js?version=<?= $uploaderVersion?>" ></script>
-<script type="text/javascript" src="assets/javascripts/dicomupload/Study.js?version=<?= $uploaderVersion?>" ></script>
-<script type="text/javascript" src="assets/javascripts/dicomupload/StudiesPanel.js?version=<?= $uploaderVersion?>" ></script>
-<script type="text/javascript" src="assets/javascripts/dicomupload/SeriesPanel.js?version=<?= $uploaderVersion?>" ></script>
-<script type="text/javascript" src="assets/javascripts/dicomupload/Util.js?version=<?= $uploaderVersion?>" ></script>
-<link rel="stylesheet" href="assets/css/dicomupload.css?version=<?= $uploaderVersion?>" type="text/css" >
+<!-- GaelO Uploader -->
+<script src="https://unpkg.com/gaelo-uploader@0.2.9/dist/bundle.js"></script>
 
+<!-- GaelO CSS -->
+<?php $uploaderVersion="3.7"?>
 <script type="text/javascript" src="assets/javascripts/gaelO.js" ></script>
 <script type="text/javascript" src="assets/javascripts/gaelO-chart.js?version=<?= $uploaderVersion?>" ></script>
 <link rel="stylesheet" href="assets/css/gaelO-specific.css">

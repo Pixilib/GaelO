@@ -43,7 +43,7 @@ if ($accessCheck && $_SESSION['role'] == User::SUPERVISOR) {
 		$email=new Send_Email($linkpdo);
 		$email->setMessage($htmlReport);
 		$email->addGroupEmails($_SESSION['study'], User::SUPERVISOR);
-		$email->setSubject('Import Report');
+		$email->setSubject('Import Report - '.$_SESSION['study']);
 		$email->sendEmail();
         
 		//Print the sent Report in the web page
