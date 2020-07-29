@@ -128,7 +128,7 @@
 <script src="https://unpkg.com/gaelo-uploader@0.2.9/dist/bundle.js"></script>
 
 <!-- GaelO CSS -->
-<?php $uploaderVersion="3.6"?>
+<?php $uploaderVersion="3.7"?>
 <script type="text/javascript" src="assets/javascripts/gaelO.js" ></script>
 <script type="text/javascript" src="assets/javascripts/gaelO-chart.js?version=<?= $uploaderVersion?>" ></script>
 <link rel="stylesheet" href="assets/css/gaelO-specific.css">

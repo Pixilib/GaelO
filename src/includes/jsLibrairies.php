@@ -132,7 +132,7 @@
 <!-- GaelO Uploader -->
 <script src="https://unpkg.com/gaelo-uploader@0.2.9/dist/bundle.js"></script>
 
-<?php $uploaderVersion="3.6"?>
+<?php $uploaderVersion="3.7"?>
 <script type="text/javascript" src="assets/javascripts/gaelO-chart.js?version=<?= $uploaderVersion?>" defer></script>
 
 <script type="text/javascript" src="assets/javascripts/PetCtCSVParser.js" ></script>
