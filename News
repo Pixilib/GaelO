@@ -2,6 +2,7 @@ GaelO
 
 --Pending Changes --
   Uploader v2
+  OHIF static build instead of using script tag
   Fix update review avaibility when QC is reset to Refused
   Add study name in patient import email
   
