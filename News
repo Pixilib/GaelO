@@ -1,7 +1,9 @@
 GaelO
 
 --Pending Changes --
+  Uploader v2
   Fix update review avaibility when QC is reset to Refused
+  Add study name in patient import email
   
 --GaelO 1.2.2 27/06/20--
   Fix frontend deidentification of dicom tag sequence
