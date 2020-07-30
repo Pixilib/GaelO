@@ -19,3 +19,4 @@ Route::get('/user', function ( ) {
 
 Route::post('login', 'UserController@login');
 Route::post('register', 'RegisterController@register');
+Route::get('testClean', 'UserController@loginClean');
