@@ -21,4 +21,5 @@
 !/src/data/upload/from_ftp/.htaccess
 !/src/data/upload/attached_review_file/.htaccess
 
+/GaelO2/*/**
 
