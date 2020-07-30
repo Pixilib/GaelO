@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\User;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
@@ -29,6 +30,7 @@ class RegisterController extends Controller
 
     public function register(Request $request){
         $this->create($request->all());
+        return response()->json("cii");
     }
 
     /**
@@ -37,7 +39,7 @@ class RegisterController extends Controller
      * @param  array  $data
      * @return \App\User
      */
-    protected function create(array $data)
+    private function create(array $data)
     {
         return User::create([
             'lastname' => isset($data['lastname']) ? $data['lastname'] : null,
@@ -53,6 +55,6 @@ class RegisterController extends Controller
             'password' => Hash::make($data['password']),
             'api_token' => Str::random(60),
         ]);
-        return response()->json(['success' => true]);
+        
     }
 }

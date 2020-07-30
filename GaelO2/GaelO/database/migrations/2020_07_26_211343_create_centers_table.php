@@ -14,11 +14,10 @@ class CreateCentersTable extends Migration
     public function up()
     {
         Schema::create('centers', function (Blueprint $table) {
-            $table->integer('code')->unique();
+            $table->integer('code')->unique()->primary();
             $table->string('name')->unique();
             $table->string('country_code',2)->nullable(false);
             $table->timestamps();
-            $table->primary('code');
             $table->foreign('country_code')->references('code')->on('countries');
         });
     }
