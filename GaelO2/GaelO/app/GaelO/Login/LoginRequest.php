@@ -1,8 +1,8 @@
 <?php
 
-namespace GaelO;
+namespace App\GaelO\Login;
 
-class Login {
+class LoginRequest {
     public string $username;
     public string $password;
 }
