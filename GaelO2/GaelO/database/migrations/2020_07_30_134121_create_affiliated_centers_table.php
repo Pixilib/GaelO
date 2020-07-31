@@ -15,12 +15,12 @@ class CreateAffiliatedCentersTable extends Migration
     {
         Schema::create('affiliated_centers', function (Blueprint $table) {
             $table->id();
-            $table->string('username')->nullable(false);
-            $table->integer('center')->nullable(false);
+            $table->string('user_name')->nullable(false);
+            $table->integer('center_code')->nullable(false);
             $table->timestamps();
-
+            //Dependencies
             $table->foreign('center_code')->references('code')->on('centers');
-            $table->foreign('user_username')->references('username')->on('users');
+            $table->foreign('user_name')->references('username')->on('users');
         });
     }
 

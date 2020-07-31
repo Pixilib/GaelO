@@ -17,7 +17,7 @@ class CreateDocumentationTable extends Migration
             $table->id('id_documentation')->primary();
             $table->string('name')->nullable(false);
             $table->date('document_date')->nullable(false);
-            $table->string('study')->nullable(false);
+            $table->string('study_name')->nullable(false);
             $table->string('version')->nullable(false);
             $table->integer('investigator')->default(0)->nullable(false);
             $table->integer('controller')->default(0)->nullable(false);
@@ -26,7 +26,7 @@ class CreateDocumentationTable extends Migration
             $table->integer('deleted')->default(0)->nullable(false);
             $table->timestamps();
             //EO convention nom clé multiple?
-            $table->foreign('study_name_study')->references('name', 'study')->on('studies');
+            $table->foreign('study_name')->references('name')->on('studies');
         });
     }
 

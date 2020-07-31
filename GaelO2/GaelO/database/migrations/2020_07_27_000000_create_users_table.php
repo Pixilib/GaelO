@@ -13,6 +13,7 @@ class CreateUsersTable extends Migration
      */
     public function up()
     {
+        //Renamed for testing purposes
         Schema::create('users', function (Blueprint $table) {
             $table->id();
             $table->string('lastname')->nullable(true);
@@ -27,7 +28,8 @@ class CreateUsersTable extends Migration
             $table->dateTime('last_password_update')->nullable(false);
             $table->dateTime('creation_date')->nullable(false);
             $table->dateTime('last_connexion')->nullable(true);
-            $table->set('status', ['Blocked','Deactivated','Unconfirmed','Activated'])->default('Unconfirmed')->nullable(false);
+            //EO pas de 'set' en postgresql (équivalent 'bit' mais pas supporté par Laravel)
+            $table->enum('status', ['Blocked','Deactivated','Unconfirmed','Activated'])->default('Unconfirmed')->nullable(false);
             $table->integer('attempts')->default(0)->nullable(false);
             $table->boolean('administrator')->default(false)->nullable(false);
             $table->integer('center_code')->nullable(false);
