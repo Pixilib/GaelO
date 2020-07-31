@@ -13,20 +13,20 @@ class CreateReviewsTable extends Migration
      */
     public function up()
     {
-        Schema::table('reviews', function (Blueprint $table) {
+        Schema::create('reviews', function (Blueprint $table) {
             $table->integer('id_review')->primary();
             $table->integer('id_visit')->nullable(false);
             $table->string('user_name')->nullable(false);
-            $table->dateTime('review_date', 0)->nullable(false);
-            $table->tinyInteger('validated',1)->nullable(false)->default(0);
-            $table->tinyInteger('is_local',1)->nullable(false)->default(1);
-            $table->tinyInteger('is_adjudication',1)->nullable(false)->default(0);
+            $table->dateTime('review_date')->nullable(false);
+            $table->tinyInteger('validated')->nullable(false)->default(0);
+            $table->tinyInteger('is_local')->nullable(false)->default(1);
+            $table->tinyInteger('is_adjudication')->nullable(false)->default(0);
             $table->text('sent_files')->nullable(false);
-            $table->tinyInteger('deleted',1)->nullable(false)->default(0);
+            $table->tinyInteger('deleted')->nullable(false)->default(0);
             $table->timestamps();
             //Dependencies
             $table->foreign('id_visit')->references('id_visit')->on('visits');
-            $table->forgein('user_name')->references('username')->on('users');
+            $table->foreign('user_name')->references('username')->on('users');
         });
     }
 

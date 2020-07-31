@@ -13,8 +13,8 @@ class CreateVisitsTable extends Migration
      */
     public function up()
     {
-        Schema::table('visits', function (Blueprint $table) {
-            $table->bigIncrements('id_visit')->primary();
+        Schema::create('visits', function (Blueprint $table) {
+            $table->bigIncrements('id_visit');
             $table->string('creator_name')->default(null);
             $table->dateTime('creation_date')->default(null);
             $table->bigInteger('patient_code')->nullable(false);
@@ -27,23 +27,23 @@ class CreateVisitsTable extends Migration
             $table->enum('state_quality_control', ['Not Done','Wait Definitive Conclusion','Corrective Action Asked','Refused','Accepted'])->nullable(false)->default('Not Done');
             $table->string('controller_username')->default(null);
             $table->dateTime('control_date')->default(null);
-            $table->tinyInteger('image_quality_control',1)->nullable(false)->default('0');
-            $table->tinyInteger('form_quality_control',1)->nullable(false)->default('0');
+            $table->tinyInteger('image_quality_control')->nullable(false)->default('0');
+            $table->tinyInteger('form_quality_control')->nullable(false)->default('0');
             $table->text('image_quality_comment');
             $table->text('form_quality_comment');
             $table->string('corrective_action_username')->default(null);
             $table->dateTime('corrective_action_date')->default(null);
-            $table->tinyInteger('corrective_action_new_upload',1)->nullable(false)->default('0');
-            $table->tinyInteger('corrective_action_investigator_form',1)->default(null);
+            $table->tinyInteger('corrective_action_new_upload')->nullable(false)->default('0');
+            $table->tinyInteger('corrective_action_investigator_form')->default(null);
             $table->text('corrective_action_other');
-            $table->tinyInteger('corrective_action_decision',1)->default(null);
-            $table->tinyInteger('review_available',1)->nullable(false)->default('0');
+            $table->tinyInteger('corrective_action_decision')->default(null);
+            $table->tinyInteger('review_available')->nullable(false)->default('0');
             //EO pas de 'set' en postgresql (équivalent 'bit' mais pas supporté par Laravel)
             $table->enum('review_status', ['Not Done','Ongoing','Wait Adjudication','Done'])->nullable(false)->default('Not Done');
             $table->text('review_conclusion_value');
             $table->dateTime('review_conclusion_date')->default(null);
             $table->dateTime('last_reminder_upload')->default(null);
-            $table->$table->tinyInteger('deleted',1)->nullable(false)->default('0');
+            $table->tinyInteger('deleted')->nullable(false)->default('0');
             $table->timestamps();
             //Dependencies
             $table->foreign('patient_code')->references('code')->on('patients');

@@ -13,11 +13,11 @@ class CreatePatientsTable extends Migration
      */
     public function up()
     {
-        Schema::table('patients', function (Blueprint $table) {
+        Schema::create('patients', function (Blueprint $table) {
             $table->bigInteger('code')->primary();
-            $table->string('first_name',1)->default(null);
-            $table->string('last_name',1)->default(null);
-            $table->string('gender',1)->default(null);
+            $table->string('first_name')->default(null);
+            $table->string('last_name')->default(null);
+            $table->string('gender')->default(null);
             $table->integer('birth_day')->default(null);
             $table->integer('birth_month')->default(null);
             $table->integer('birth_year')->default(null);
@@ -26,7 +26,7 @@ class CreatePatientsTable extends Migration
             $table->integer('center')->default(null);
             $table->string('study_name')->default(null);
             $table->text('withdraw_reason');
-            $table->tinyInteger('withdraw',1)->default(0)->nullable(false);
+            $table->tinyInteger('withdraw')->default(0)->nullable(false);
             $table->date('withdraw_date')->default(null);
             $table->timestamps();
             //Dependencies

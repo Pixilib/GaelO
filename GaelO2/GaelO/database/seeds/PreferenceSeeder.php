@@ -22,7 +22,7 @@ class PreferenceSeeder extends Seeder
             'parse_country_name'=>'US', 
             'orthanc_exposed_internal_address'=>'http://orthancexposed', 
             'orthanc_exposed_internal_port'=>8042, 
-            'orthanc_exposed_exteœrnal_address'=>'', 
+            'orthanc_exposed_external_address'=>'', 
             'orthanc_exposed_external_port'=>0, 
             'orthanc_exposed_internal_login'=>'internal', 
             'orthanc_exposed_internal_password'=>'GaelO', 

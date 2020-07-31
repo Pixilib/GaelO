@@ -13,16 +13,16 @@ class CreateVisitTypesTable extends Migration
      */
     public function up()
     {
-        Schema::table('visit_types', function (Blueprint $table) {
-            $table->id()->primary();
+        Schema::create('visit_types', function (Blueprint $table) {
+            $table->id();
             $table->integer('visit_group_id')->nullable(false);
             $table->string('name')->nullable(false);
             $table->string('table_review_specific')->nullable(false);
             $table->integer('visit_order')->nullable(false);
-            $table->tinyInteger('local_form_needed',1)->nullable(false);
-            $table->tinyInteger('qc_needed',1)->nullable(false);
-            $table->tinyInteger('review_needed',1)->nullable(false);
-            $table->tinyInteger('optional',1)->nullable(false);
+            $table->tinyInteger('local_form_needed')->nullable(false);
+            $table->tinyInteger('qc_needed')->nullable(false);
+            $table->tinyInteger('review_needed')->nullable(false);
+            $table->tinyInteger('optional')->nullable(false);
             $table->integer('limit_low_days')->nullable(false);
             $table->integer('limit_up_days')->nullable(false);
             //EO pas de 'set' en postgresql (équivalent 'bit' mais pas supporté par Laravel)

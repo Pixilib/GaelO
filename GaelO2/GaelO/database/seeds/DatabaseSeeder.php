@@ -15,5 +15,8 @@ class DatabaseSeeder extends Seeder
         $this->call(JobSeeder::class);
         $this->call(CenterSeeder::class);
         $this->call(UserSeeder::class);
+        $this->call(PreferenceSeeder::class);
+        $this->call(StateSeeder::class);
+        $this->call(SelectRoleSeeder::class);
     }
 }

@@ -13,7 +13,7 @@ class CreateOrthancStudiesTable extends Migration
      */
     public function up()
     {
-        Schema::table('orthanc_studies', function (Blueprint $table) {
+        Schema::create('orthanc_studies', function (Blueprint $table) {
             $table->integer('id_visit');
             $table->string('uploader_name')->default(null);
             $table->dateTime('upload_date')->default(null);
@@ -31,7 +31,7 @@ class CreateOrthancStudiesTable extends Migration
             $table->integer('number_of_instances')->nullable(false);
             $table->integer('disk_size')->nullable(false);
             $table->integer('uncompressed_disk_size')->nullable(false);
-            $table->integer('deleted',1)->default(0)->nullable(false);
+            $table->integer('deleted')->default(0)->nullable(false);
             $table->timestamps();
             //Dependencies
             $table->foreign('id_visit')->references('id_visit')->on('visits');

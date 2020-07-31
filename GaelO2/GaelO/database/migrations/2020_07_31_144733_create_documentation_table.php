@@ -14,7 +14,7 @@ class CreateDocumentationTable extends Migration
     public function up()
     {
         Schema::create('documentation', function (Blueprint $table) {
-            $table->id('id_documentation')->primary();
+            $table->bigIncrements('id_documentation');
             $table->string('name')->nullable(false);
             $table->date('document_date')->nullable(false);
             $table->string('study_name')->nullable(false);

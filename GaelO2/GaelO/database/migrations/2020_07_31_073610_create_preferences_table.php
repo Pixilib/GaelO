@@ -13,16 +13,16 @@ class CreatePreferencesTable extends Migration
      */
     public function up()
     {
-        Schema::table('preferences', function (Blueprint $table) {
+        Schema::create('preferences', function (Blueprint $table) {
             //EO No primary key?
-            $table->smallInteger('patient_code_length',2)->nullable(false)->primary();
+            $table->smallInteger('patient_code_length')->nullable(false);
             $table->string('name')->nullable(false);
             $table->text('admin_email')->nullable(false);
             $table->text('email_reply_to')->nullable(false);
             $table->string('corporation')->nullable(false);
             $table->text('address')->nullable(false);
             $table->string('parse_date_import')->nullable(false)->default('m.d.Y');
-            $table->string('parse_country_name',2)->nullable(false)->default('US');
+            $table->string('parse_country_name')->nullable(false)->default('US');
             $table->text('orthanc_exposed_internal_address')->nullable(false);
             $table->integer('orthanc_exposed_internal_port')->nullable(false);
             $table->text('orthanc_exposed_external_address')->nullable(false);
@@ -35,7 +35,7 @@ class CreatePreferencesTable extends Migration
             $table->integer('orthanc_pacs_port')->nullable(false);
             $table->text('orthanc_pacs_login')->nullable(false);
             $table->text('orthanc_pacs_password')->nullable(false);
-            $table->tinyInteger('use_smtp',1)->nullable(false);
+            $table->tinyInteger('use_smtp')->nullable(false);
             $table->text('smtp_host')->nullable(false);
             $table->integer('smtp_port')->nullable(false);
             $table->text('smtp_user')->nullable(false);

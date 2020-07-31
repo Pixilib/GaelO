@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateStudiesTable extends Migration
+class CreateSelectRolesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +13,8 @@ class CreateStudiesTable extends Migration
      */
     public function up()
     {
-        Schema::create('studies', function (Blueprint $table) {
-            $table->string('name')->primary();
-            $table->text('patient_code_prefix')->default(null);
-            $table->tinyInteger('active')->default(1);
+        Schema::create('select_roles', function (Blueprint $table) {
+            $table->string('role_name')->primary();
             $table->timestamps();
         });
     }
@@ -28,6 +26,6 @@ class CreateStudiesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('studies');
+        Schema::dropIfExists('select_roles');
     }
 }
