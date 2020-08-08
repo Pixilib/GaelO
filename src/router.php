@@ -149,7 +149,7 @@ if (!isset($_GET['page'])) {
     
 }else if (strpos($_GET['page'], 'tus') === 0) {
 	//tus subrouter
-	require 'scripts/tus_upload.php';
+	require 'scripts/tus_reverse_proxy.php';
     
 }else {
 	require 'includes/404.php';
