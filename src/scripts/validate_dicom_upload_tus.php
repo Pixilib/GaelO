@@ -147,6 +147,7 @@ if ($accessCheck && $role == User::INVESTIGATOR && $visitObject->uploadStatus ==
 		Tracker::logActivity($username, $role, $study, $visitObject->id_visit, "Upload Series", $logDetails);
 	
 	}catch (Throwable $e1) {
+		error_log($e1->getMessage());
 		handleException($e1);
 	}
 		
@@ -255,13 +256,13 @@ function handleException(Throwable $e1) {
 function warningAdminError(string $errorMessage, PDO $linkpdo) {
 	$sendEmails=new Send_Email($linkpdo);
 	global $visitObject;
-	global $zipPath;
+	global $unzipedPath;
 	global $study;
 	global $username;
 
 	$sendEmails->addGroupEmails($study, User::SUPERVISOR)->addEmail($sendEmails->getUserEmails($username));
 	$sendEmails->sendUploadValidationFailure($visitObject->id_visit, $visitObject->patientCode, $visitObject->visitType,
-			$study, $zipPath, $username, $errorMessage);
+			$study, $unzipedPath, $username, $errorMessage);
 }
 
 /**
