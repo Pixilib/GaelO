@@ -46,7 +46,7 @@ if ($roleAllowed ) {
 	$proxy->filter(new RemoveEncodingFilter());
     
 	// Forward the request and get the response.
-	$response=$proxy -> forward($request) -> filter(function($request, $response, $next) {
+	$response=$proxy -> forward($request) /*-> filter(function($request, $response, $next) {
         //SK A TESTER SUR SERVEUR TEST, normalement appache ajoute XForwarded et du coup
         //ce middelware pourrait sauter hors dev
 		// Manipulate the request object.
@@ -58,7 +58,7 @@ if ($roleAllowed ) {
 		$response=$next($request, $response);
         
 		return $response;
-	}) -> to(TUS_SERVER);
+	}) */ -> to(TUS_SERVER);
     //error_log(print_r($response, true));
 	// Output response to the browser.
 	(new Narrowspark\HttpEmitter\SapiEmitter)->emit($response);
