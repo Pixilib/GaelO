@@ -58,7 +58,7 @@ error_log($anonFromOrthancId);
 error_log($username);
 error_log($study);
 error_log($role);
-error_log($tusFilesID);
+error_log(print_r($tusFilesID, true));
 
 $accessCheck=$userObject->isVisitAllowed($id_visit, User::INVESTIGATOR);
 error_log($accessCheck);
