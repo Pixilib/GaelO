@@ -308,6 +308,15 @@
 		</div>
 	</main>
 
+	<footer class="page-footer font-small pt-4">
+		<!-- Copyright -->
+		<div class="text-center">
+			GaelO <?= GAELO_VERSION ?>
+		</div>
+		<!-- Copyright -->
+
+	</footer>
+
 </body>
 
 </html>
