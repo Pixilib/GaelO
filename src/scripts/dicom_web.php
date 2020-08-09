@@ -22,7 +22,6 @@
 use Proxy\Proxy;
 use Proxy\Adapter\Guzzle\GuzzleAdapter;
 use Proxy\Filter\RemoveEncodingFilter;
-use Laminas\Diactoros\ServerRequestFactory;
 use Laminas\Diactoros\Request;
 
 Session::checkSession(false);
@@ -37,14 +36,10 @@ try {
 	exit();
 }
 
-
 if ($permissionDicomWeb) {   
 	unset($_GET['page']);
     
 	$calledURL=GAELO_ORTHANC_PACS_ADDRESS.':'.GAELO_ORTHANC_PACS_PORT;
-    
-	// Create a PSR7 request based on the current browser request.
-	$request=ServerRequestFactory::fromGlobals();
     
 	$finalURI=str_replace("orthanc/", "", $_SERVER['REQUEST_URI']);
     

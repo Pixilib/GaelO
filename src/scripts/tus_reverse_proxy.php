@@ -28,12 +28,10 @@ Session::checkSession(false);
 $linkpdo=Session::getLinkpdo();
 
 $userObject=new User($_SESSION['username'], $linkpdo);
-$roleAllowed = $userObject->isRoleAllowed($_SESSION['study'], $_SESSION['role']);
-//$userObject->isVisitAllowed()
+$roleAllowed = $userObject->isRoleAllowed($_SESSION['study'], User::INVESTIGATOR);
 
 if ($roleAllowed ) {   
-    error_log($_GET['page']);
-    error_log($_SERVER['REQUEST_URI']);
+	
     unset($_GET['page']);
 	// Create a PSR7 request based on the current browser request.
     $request=ServerRequestFactory::fromGlobals();
