@@ -116,36 +116,51 @@
                             {
                                 extend: 'copy',
                                 exportOptions: {
-                                    columns: ':visible',
-                                    rows: ':visible'
+                                    modifier : {
+                                        order : 'index', // 'current', 'applied','index', 'original'
+                                        page : 'all', // 'all', 'current'
+                                        search : 'applied' // 'none', 'applied', 'removed'
+                                    }
                                 }
                             },
                             {
                                 extend: 'excel',
                                 exportOptions: {
-                                    columns: ':visible',
-                                    rows: ':visible'
+                                    modifier : {
+                                        order : 'index', // 'current', 'applied','index', 'original'
+                                        page : 'all', // 'all', 'current'
+                                        search : 'applied' // 'none', 'applied', 'removed'
+                                    }
                                 }
                             },
                             {
                                 extend: 'csv',
                                 exportOptions: {
-                                    columns: ':visible',
-                                    rows: ':visible'
+                                    modifier : {
+                                        order : 'index', // 'current', 'applied','index', 'original'
+                                        page : 'all', // 'all', 'current'
+                                        search : 'applied' // 'none', 'applied', 'removed'
+                                    }
                                 }
                             },
                             {
                                 extend: 'pdf',
                                 exportOptions: {
-                                    columns: ':visible',
-                                    rows: ':visible'
+                                    modifier : {
+                                        order : 'index', // 'current', 'applied','index', 'original'
+                                        page : 'all', // 'all', 'current'
+                                        search : 'applied' // 'none', 'applied', 'removed'
+                                    }
                                 }
                             },
                             {
                                 extend: 'print',
                                 exportOptions: {
-                                    columns: ':visible',
-                                    rows: ':visible'
+                                    modifier : {
+                                        order : 'index', // 'current', 'applied','index', 'original'
+                                        page : 'all', // 'all', 'current'
+                                        search : 'applied' // 'none', 'applied', 'removed'
+                                    }
                                 }
                             }
                             ]

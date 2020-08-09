@@ -19,6 +19,7 @@
  * @package     GaelO
  * @author      Salim Kanoun <Salim.Kanoun@gmail.com>
  */
+define('GAELO_VERSION', 'dev');
 header('content-type: text/html; charset=utf-8');
 require_once('vendor/autoload.php');
 require 'router.php';
