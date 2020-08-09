@@ -5,6 +5,10 @@ GaelO
   OHIF static build instead of using script tag
   Fix update review avaibility when QC is reset to Refused
   Add study name in patient import email
+  Interface : 
+    - Export of tables now export all pages (and not juste visible lines)
+    - Add footer with version number
+    - Additional warning explaining that special character are not allowed in password
   
 --GaelO 1.2.2 27/06/20--
   Fix frontend deidentification of dicom tag sequence
