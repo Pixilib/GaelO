@@ -143,14 +143,7 @@ function checkBrowserSupportDicomUpload(selectorDom) {
 		');
 		throw 'ECMAScript6 not supported.';
 	}
-	
-	if (!(new Resumable()).support) {
-		$(selectorDom).append('\
-			<div class="alert alert-danger" role="alert">\
-				Sorry, your browser does not support \'Resumable.js\'. You will not be able to upload files. Please use Firefox 54+, Opera 62+, Edge 17+, Safari 12+, Chrome 58+ or newer versions.\
-			</div>\
-		');
-	}
+
 
 	if (!isSupported['webKitDirectory']) {
 		$(selectorDom).append('\
