@@ -31,7 +31,7 @@ $userObject=new User($_SESSION['username'], $linkpdo);
 $roleAllowed = $userObject->isRoleAllowed($_SESSION['study'], User::INVESTIGATOR);
 
 if ($roleAllowed ) {   
-	
+
     unset($_GET['page']);
 	// Create a PSR7 request based on the current browser request.
     $request=ServerRequestFactory::fromGlobals();
@@ -51,9 +51,9 @@ if ($roleAllowed ) {
         //ce middelware pourrait sauter hors dev
 		// Manipulate the request object.
         $serverName=$_SERVER['SERVER_NAME'];
-        $serverPort=$_SERVER['REMOTE_PORT'];
+        //$serverPort=$_SERVER['REMOTE_PORT'];
         $protocol = $_SERVER['https'] == true ? 'https' : 'http';
-        $request=$request->withHeader('X-Forwarded-Host', $serverName.':3000');
+        $request=$request->withHeader('X-Forwarded-Host', $serverName);
         $request=$request->withHeader('X-Forwarded-Proto', $protocol);
 		$response=$next($request, $response);
         
