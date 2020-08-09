@@ -32,6 +32,8 @@
 
 require_once($_SERVER['DOCUMENT_ROOT'].'/vendor/autoload.php');
 
+use GuzzleHttp\Client;
+
 Session::checkSession();
 $linkpdo=Session::getLinkpdo();
 
@@ -42,6 +44,7 @@ $anonFromOrthancId=$_POST['originalOrthancStudyID'];
 $username=$_SESSION['username'];
 $study=$_SESSION['study'];
 $role=$_SESSION['role'];
+$tusFilesID = json_decode($_POST['sucessIDsUploaded']);
 
 $unzipedPath = $_SERVER['DOCUMENT_ROOT'].'/data/upload/temp/'.$timeStamp.'_'.$id_visit;
 
@@ -55,6 +58,7 @@ error_log($anonFromOrthancId);
 error_log($username);
 error_log($study);
 error_log($role);
+error_log($tusFilesID);
 
 $accessCheck=$userObject->isVisitAllowed($id_visit, User::INVESTIGATOR);
 error_log($accessCheck);
@@ -67,45 +71,40 @@ if ($accessCheck && $role == User::INVESTIGATOR && $visitObject->uploadStatus ==
 	ignore_user_abort(true);
 	//Set Visit as upload processing status
 	$visitObject->changeUploadStatus(Visit::UPLOAD_PROCESSING);
-	$start_time=microtime(true);
-			
-	if (!is_dir($unzipedPath)) {
-		mkdir($unzipedPath, 0755);
-	}
-
-	\TusPhp\Config::set($_SERVER['DOCUMENT_ROOT'].'/data/_config/tus_server.php');
-	$server = new \TusPhp\Tus\Server();
-
-	$tusCache =  $server->getCache();
-
-	$cacheContent = $tusCache->getCacheContents();
-
-	foreach($cacheContent as $key => $uploadObject){
-
-		if($uploadObject['metadata']['idVisit'] == $id_visit){
-
-			$zipSize=filesize($uploadObject['file_path']);
-			$uncompressedzipSize=get_zip_originalsize($uploadObject['file_path']);
-			if ($uncompressedzipSize/$zipSize > 50) {
-				throw new Exception("Bomb Zip");
-			}
-
-			$zip=new ZipArchive;
-			$zip->open($uploadObject['file_path']);
-			$zip->extractTo($unzipedPath);
-			$zip->close();
-			unlink($uploadObject['file_path']);
-			$tusCache->delete($key);
-		}
-
-	}
-
+    $start_time=microtime(true);
 	/**
 	 * Try block as each interruption of the proccess must make visit return as upload not done
 	 * To allow new upload
 	 */
 	try {
+
+		if (!is_dir($unzipedPath)) {
+			mkdir($unzipedPath, 0755);
+		}
+
+		//Unzip each uploaded file and remove them from tus
+		foreach($tusFilesID as $fileName){
+			$tempZipPath = get_tus_file($fileName);
+
+			$zipSize=filesize($tempZipPath);
+			$uncompressedzipSize=get_zip_originalsize($tempZipPath);
+			if ($uncompressedzipSize/$zipSize > 50) {
+				throw new Exception("Bomb Zip");
+			}
+
+			$zip=new ZipArchive;
+			$zip->open($tempZipPath);
+			$zip->extractTo($unzipedPath);
+			$zip->close();
+			
+			//Remove file from TUS and downloaded temporary zip
+			delete_tus_file($fileName);
+			unlink($tempZipPath);
+
+		}
 		
+
+
 		//Send unziped files to Orthanc
 		$orthancExposedObject=new Orthanc(true);
 		$importedMap=sendFolderToOrthanc($unzipedPath, $orthancExposedObject);
@@ -125,7 +124,6 @@ if ($accessCheck && $role == User::INVESTIGATOR && $visitObject->uploadStatus ==
 		//error_log("Peer sent at ".(microtime(true)-$start_time));
 		//erase transfered anonymized study from orthanc exposed
 		$orthancExposedObject->deleteFromOrthanc("studies", $anonymizedIDArray[0]);
-
 	
 		//Fill the Orthanc study / series table
 		//Reset the PDO object as the database connexion is likely to be timed out
@@ -148,7 +146,7 @@ if ($accessCheck && $role == User::INVESTIGATOR && $visitObject->uploadStatus ==
 		//Log import
 		Tracker::logActivity($username, $role, $study, $visitObject->id_visit, "Upload Series", $logDetails);
 	
-	}catch (Exception $e1) {
+	}catch (Throwable $e1) {
 		handleException($e1);
 	}
 		
@@ -238,7 +236,7 @@ function recursive_directory_delete(string $directory) {
  * In case of a thrown exception, warn administrator and uploader and set upload to not done
  * @param Exception $e1
  */
-function handleException(Exception $e1) {
+function handleException(Throwable $e1) {
 	global $visitObject;
 	global $linkpdo;
 	global $answer;
@@ -280,6 +278,40 @@ function get_zip_originalsize(string $filename) {
 	zip_close($resource);
     
 	return $size;
+}
+
+function get_tus_file($fileName) {
+    
+    $client = new Client([
+        // Base URI is used with relative requests
+		'base_uri' => TUS_SERVER.'/tus/',
+		'headers' => ['Tus-Resumable' => '1.0.0']
+    ]);
+	$downloadedFileName = tempnam(sys_get_temp_dir(), 'dicom');
+	error_log($downloadedFileName);
+
+	$resource  = fopen( $downloadedFileName, 'r+');
+	
+	$client->request('GET', $fileName, ['sink' => $resource]);
+
+    return $downloadedFileName;
+}
+
+function delete_tus_file($fileName){
+
+    $client = new Client([
+        // Base URI is used with relative requests
+		'base_uri' => TUS_SERVER.'/tus/',
+		'headers' => ['Tus-Resumable' => '1.0.0']
+    ]);
+
+	$response = $client->request('DELETE', $fileName);
+	
+    $code = $response->getStatusCode(); // 200
+	$reason = $response->getReasonPhrase(); // OK
+	error_log($code);
+	error_log($reason);
+
 }
 
 

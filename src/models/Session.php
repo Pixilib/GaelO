@@ -145,6 +145,8 @@ Class Session {
 		define('GAELO_WEB_ADDRESS', $result['address']);
 		define('GAELO_DATE_FORMAT', $result['parse_date_import']);
 		define('GAELO_COUNTRY_LANGUAGE', $result['parse_country_name']);
+		
+		define('TUS_SERVER', 'http://tus:1080');
 
 		define('GAELO_ORTHANC_EXPOSED_INTERNAL_ADDRESS', $result['orthanc_exposed_internal_address']);
 		define('GAELO_ORTHANC_EXPOSED_INTERNAL_PORT', $result['orthanc_exposed_internal_port']);
