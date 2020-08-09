@@ -98,18 +98,9 @@
 <script
 	src="https://cdnjs.cloudflare.com/ajax/libs/AlertifyJS/1.11.4/alertify.min.js" ></script>
 
-<!-- JavaScript  DicomParser -->
-<script src="//cdn.jsdelivr.net/npm/dicom-parser@1.8.3/dist/dicomParser.min.js" ></script>
-<!-- JavaScript  Dropzone -->
-<script src="//cdnjs.cloudflare.com/ajax/libs/dropzone/5.5.1/min/dropzone.min.js" ></script>
-<link href="//cdnjs.cloudflare.com/ajax/libs/dropzone/5.5.1/min/dropzone.min.css" rel="stylesheet">
 <!-- JavaScript  jszip -->
 <script src="//cdnjs.cloudflare.com/ajax/libs/jszip/3.2.0/jszip.min.js" ></script>
-<!-- JavaScript  Resumable -->
-<script src="//cdnjs.cloudflare.com/ajax/libs/resumable.js/1.1.0/resumable.min.js" ></script>
-<!-- JavaScript  Crypto -->
-<script src="//cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/crypto-js.min.js"  ></script>
-<script src="//cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/sha1.min.js" ></script>
+
 <!-- JavaScript  alaSQL -->
 <script type="text/javascript"
 	src="https://cdnjs.cloudflare.com/ajax/libs/alasql/0.4.11/alasql.min.js" ></script>

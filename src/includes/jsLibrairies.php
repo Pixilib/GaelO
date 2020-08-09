@@ -104,18 +104,9 @@
 <script type="text/javascript"
 	src='https://cdnjs.cloudflare.com/ajax/libs/tinymce/4.9.2/tinymce.min.js' defer></script>
 
-<!-- JavaScript  DicomParser -->
-<script src="//cdn.jsdelivr.net/npm/dicom-parser@1.8.3/dist/dicomParser.min.js" defer></script>
-<!-- JavaScript  Dropzone -->
-<script src="//cdnjs.cloudflare.com/ajax/libs/dropzone/5.5.1/min/dropzone.min.js" defer></script>
-<link rel="preload" as="style" href="//cdnjs.cloudflare.com/ajax/libs/dropzone/5.5.1/min/dropzone.min.css">
 <!-- JavaScript  jszip -->
 <script src="//cdnjs.cloudflare.com/ajax/libs/jszip/3.2.0/jszip.min.js" defer></script>
-<!-- JavaScript  Resumable -->
-<script src="//cdnjs.cloudflare.com/ajax/libs/resumable.js/1.1.0/resumable.min.js" defer></script>
-<!-- JavaScript  Crypto -->
-<script src="//cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/crypto-js.min.js"  defer></script>
-<script src="//cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/sha1.min.js" defer></script>
+
 <!-- JavaScript  alaSQL -->
 <script type="text/javascript"
 	src="https://cdnjs.cloudflare.com/ajax/libs/alasql/0.4.11/alasql.min.js" defer></script>
@@ -132,8 +123,12 @@
 <!-- GaelO Uploader -->
 <script src="https://unpkg.com/gaelo-uploader/dist/bundle.js"></script>
 
-<?php $uploaderVersion="3.7"?>
-<script type="text/javascript" src="assets/javascripts/gaelO-chart.js?version=<?= $uploaderVersion?>" defer></script>
+<script type="text/javascript" src="assets/javascripts/gaelO.js" ></script>
+<link rel="stylesheet" href="assets/css/gaelO-specific.css">
+<link rel="stylesheet" href="assets/css/gaelO-static.css">
+<link rel="stylesheet" href="assets/css/gaelO-fonts.css">
+<link rel="stylesheet" href="assets/css/gaelO.css">
+
 
 <script type="text/javascript" src="assets/javascripts/PetCtCSVParser.js" ></script>
 <script type="text/javascript" src="assets/javascripts/uppyCsvPlugin.js" ></script>

@@ -51,7 +51,7 @@ if ($roleAllowed ) {
         //ce middelware pourrait sauter hors dev
 		// Manipulate the request object.
         $serverName=$_SERVER['SERVER_NAME'];
-        //$serverPort=$_SERVER['REMOTE_PORT'];
+        //$serverPort=$_SERVER['SERVER_PORT'];
         $protocol = $_SERVER['https'] == true ? 'https' : 'http';
         $request=$request->withHeader('X-Forwarded-Host', $serverName);
         $request=$request->withHeader('X-Forwarded-Proto', $protocol);
