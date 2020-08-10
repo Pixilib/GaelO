@@ -15,7 +15,7 @@ class CreateVisitTypesTable extends Migration
     {
         Schema::create('visit_types', function (Blueprint $table) {
             $table->id();
-            $table->integer('visit_group_id')->nullable(false);
+            $table->unsignedBigInteger('visit_group_id')->nullable(false);
             $table->string('name')->nullable(false);
             $table->string('table_review_specific')->nullable(false);
             $table->integer('visit_order')->nullable(false);
