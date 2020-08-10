@@ -46,14 +46,14 @@ if ($roleAllowed ) {
 	$proxy->filter(new RemoveEncodingFilter());
     
 	// Forward the request and get the response.
-	$response=$proxy -> forward($request) /*-> filter(function($request, $response, $next) {
+	$response=$proxy -> forward($request) -> filter(function($request, $response, $next) {
 		//TEST ONLY
         $request=$request->withHeader('X-Forwarded-Host', 'localhost:8080');
         $request=$request->withHeader('X-Forwarded-Proto', 'http');
 		$response=$next($request, $response);
         
 		return $response;
-	}) */ -> to(TUS_SERVER);
+	})  -> to(TUS_SERVER);
     //error_log(print_r($response, true));
 	// Output response to the browser.
 	(new Narrowspark\HttpEmitter\SapiEmitter)->emit($response);
