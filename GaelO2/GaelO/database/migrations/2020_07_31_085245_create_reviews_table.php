@@ -22,7 +22,7 @@ class CreateReviewsTable extends Migration
             $table->boolean('local')->nullable(false)->default(true);
             $table->boolean('adjudication')->nullable(false)->default(false);
             $table->json('sent_files')->nullable(false)->default([]);
-            $table->boolean('deleted')->nullable(false)->default(false);
+            $table->softDeletes();
             $table->timestamps();
             //Dependencies
             $table->foreign('visit_id')->references('id')->on('visits');

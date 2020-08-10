@@ -44,7 +44,7 @@ class CreateVisitsTable extends Migration
             $table->text('review_conclusion_value');
             $table->dateTime('review_conclusion_date')->default(null);
             $table->dateTime('last_reminder_upload')->default(null);
-            $table->tinyInteger('deleted')->nullable(false)->default('0');
+            $table->softDeletes();
             $table->timestamps();
             //Dependencies
             $table->foreign('patient_code')->references('code')->on('patients');

@@ -34,7 +34,7 @@ class CreateOrthancSeriesTable extends Migration
             $table->bigInteger('series_uncompressed_disk_size')->nullable(false);
             $table->text('manufacturer');
             $table->text('model_name');
-            $table->boolean('deleted')->default(false)->nullable(false);
+            $table->softDeletes();
             $table->timestamps();
             //Dependencies
             $table->foreign('study_orthanc_id')->references('study_orthanc_id')->on('orthanc_studies');

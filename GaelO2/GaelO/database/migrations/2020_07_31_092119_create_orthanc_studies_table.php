@@ -31,7 +31,7 @@ class CreateOrthancStudiesTable extends Migration
             $table->integer('number_of_instances')->nullable(false);
             $table->integer('disk_size')->nullable(false);
             $table->integer('uncompressed_disk_size')->nullable(false);
-            $table->boolean('deleted')->default(false)->nullable(false);
+            $table->softDeletes();
             $table->timestamps();
             //Dependencies
             $table->foreign('visit_id')->references('id')->on('visits');

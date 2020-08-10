@@ -23,7 +23,7 @@ class CreateDocumentationTable extends Migration
             $table->boolean('controller')->default(false)->nullable(false);
             $table->boolean('monitor')->default(false)->nullable(false);
             $table->boolean('reviewer')->default(false)->nullable(false);
-            $table->boolean('deleted')->default(false)->nullable(false);
+            $table->softDeletes();
             $table->timestamps();
             //EO convention nom clé multiple?
             $table->foreign('study_name')->references('name')->on('studies');
