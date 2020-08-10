@@ -20,7 +20,7 @@ class CreateTrackerTable extends Migration
             $table->string('role')->nullable(false);
             $table->integer('visit_id')->default(null);
             $table->string('action_type')->nullable(false);
-            $table->text('action_details');
+            $table->json('action_details');
             $table->timestamps();
             $table->primary(['date', 'user_id']);
             //Dependencies
