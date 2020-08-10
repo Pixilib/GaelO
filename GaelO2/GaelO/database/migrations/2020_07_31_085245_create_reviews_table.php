@@ -14,19 +14,19 @@ class CreateReviewsTable extends Migration
     public function up()
     {
         Schema::create('reviews', function (Blueprint $table) {
-            $table->integer('id_review')->primary();
-            $table->integer('id_visit')->nullable(false);
-            $table->string('user_name')->nullable(false);
+            $table->id();
+            $table->unsignedBigInteger('visit_id')->nullable(false);
+            $table->unsignedBigInteger('user_id')->nullable(false);
             $table->dateTime('review_date')->nullable(false);
-            $table->tinyInteger('validated')->nullable(false)->default(0);
-            $table->tinyInteger('is_local')->nullable(false)->default(1);
-            $table->tinyInteger('is_adjudication')->nullable(false)->default(0);
-            $table->text('sent_files')->nullable(false);
-            $table->tinyInteger('deleted')->nullable(false)->default(0);
+            $table->boolean('validated')->nullable(false)->default(false);
+            $table->boolean('local')->nullable(false)->default(true);
+            $table->boolean('adjudication')->nullable(false)->default(false);
+            $table->json('sent_files')->nullable(false)->default([]);
+            $table->boolean('deleted')->nullable(false)->default(false);
             $table->timestamps();
             //Dependencies
-            $table->foreign('id_visit')->references('id_visit')->on('visits');
-            $table->foreign('user_name')->references('username')->on('users');
+            $table->foreign('visit_id')->references('id')->on('visits');
+            $table->foreign('user_id')->references('id')->on('users');
         });
     }
 

@@ -24,7 +24,7 @@ class UserSeeder extends Seeder
             'status' => 'Activated',
             'password' => Hash::make('administrator'), // password
             'center_code' => 0,
-            'job_name' => 'Monitor',
+            'job' => 'Monitor',
             'administrator' => true,
             'remember_token' => Str::random(10)
         ]);

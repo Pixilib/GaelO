@@ -19,14 +19,14 @@ class CreateVisitTypesTable extends Migration
             $table->string('name')->nullable(false);
             $table->string('table_review_specific')->nullable(false);
             $table->integer('visit_order')->nullable(false);
-            $table->tinyInteger('local_form_needed')->nullable(false);
-            $table->tinyInteger('qc_needed')->nullable(false);
-            $table->tinyInteger('review_needed')->nullable(false);
-            $table->tinyInteger('optional')->nullable(false);
+            $table->boolean('local_form_needed')->default(true)->nullable(false);
+            $table->boolean('qc_needed')->default(true)->nullable(false);
+            $table->boolean('review_needed')->default(true)->nullable(false);
+            $table->boolean('optional')->default(false)->nullable(false);
             $table->integer('limit_low_days')->nullable(false);
             $table->integer('limit_up_days')->nullable(false);
-            //EO pas de 'set' en postgresql (équivalent 'bit' mais pas supporté par Laravel)
-            $table->enum('anon_profile', ['Default', 'Full'])->nullable(false);
+            $table->enum('anon_profile', ['Default', 'Full'])->default('Default')->nullable(false);
+            //Foreign keys
             $table->foreign('visit_group_id')->references('id')->on('visit_groups');
         });
     }

@@ -16,8 +16,7 @@ class CreateVisitGroupsTable extends Migration
         Schema::create('visit_groups', function (Blueprint $table) {
             $table->id();
             $table->string('study_name')->nullable(false);
-            //EO pas de 'set' en postgresql (équivalent 'bit' mais pas supporté par Laravel)
-            $table->enum('group_modality', ['PT', 'MR', 'CT'])->nullable(false);
+            $table->enum('group_modality', ['PT', 'MR', 'CT', 'US', 'NM', 'RT'])->nullable(false);
             //Dependencies
             $table->foreign('study_name')->references('name')->on('studies');
         });

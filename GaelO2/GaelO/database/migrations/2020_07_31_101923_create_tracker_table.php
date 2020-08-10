@@ -14,17 +14,17 @@ class CreateTrackerTable extends Migration
     public function up()
     {
         Schema::create('tracker', function (Blueprint $table) {
-            $table->dateTime('date');
-            $table->string('user_name');
-            $table->string('role');
-            $table->primary(['date', 'user_name', 'role']);
             $table->string('study_name')->default(null);
-            $table->integer('id_visit')->default(null);
+            $table->unsignedBigInteger('user_id');
+            $table->dateTime('date');
+            $table->string('role')->nullable(false);
+            $table->integer('visit_id')->default(null);
             $table->string('action_type')->nullable(false);
             $table->text('action_details');
             $table->timestamps();
+            $table->primary(['date', 'user_id']);
             //Dependencies
-            $table->foreign('user_name')->references('username')->on('users');
+            $table->foreign('user_id')->references('id')->on('users');
             $table->foreign('study_name')->references('name')->on('studies');
         });
     }

@@ -14,7 +14,7 @@ class CreatePatientsTable extends Migration
     public function up()
     {
         Schema::create('patients', function (Blueprint $table) {
-            $table->bigInteger('code')->primary();
+            $table->unsignedBigInteger('code')->primary();
             $table->string('first_name')->default(null);
             $table->string('last_name')->default(null);
             $table->string('gender')->default(null);
@@ -22,15 +22,16 @@ class CreatePatientsTable extends Migration
             $table->integer('birth_month')->default(null);
             $table->integer('birth_year')->default(null);
             $table->date('registration_date')->nullable(false);
-            $table->text('investigator_name');
-            $table->integer('center')->default(null);
+            $table->string('investigator_name')->default(null);
+            $table->unsignedInteger('center_code')->default(null);
             $table->string('study_name')->default(null);
-            $table->text('withdraw_reason');
-            $table->tinyInteger('withdraw')->default(0)->nullable(false);
+            $table->boolean('withdraw')->default(false)->nullable(false);
+            $table->string('withdraw_reason')->default(null);
             $table->date('withdraw_date')->default(null);
             $table->timestamps();
             //Dependencies
             $table->foreign('study_name')->references('name')->on('studies');
+            $table->foreign('center_code')->references('code')->on('centers');
         });
     }
 
