@@ -3,7 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
-
+use Interfaces\Mailer as PHPMailer
 /**
  Copyright (C) 2018-2020 KANOUN Salim
  This program is free software; you can redistribute it and/or modify
