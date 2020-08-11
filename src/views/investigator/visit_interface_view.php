@@ -217,7 +217,7 @@ if ($role == User::REVIEWER || ($role == User::INVESTIGATOR && $visitObject->upl
 }
 // If upload validated display the detailed tables
 if ($visitObject->uploadStatus == Visit::DONE && $role != User::REVIEWER) {
-	build_patient_visit_table($patientObject);
+	build_patient_visit_table($patientObject, $role);
 	build_visit_details_table(array($visitObject), $_SESSION['role']);
 	build_table_series($role, $visitObject);
 }
@@ -250,199 +250,218 @@ function build_table_series($role, $visitObject)
     
 	$colspan=$series_number+1;
 	?>
-	<div style="overflow-x:auto;"> 
-		<table id="tab_series" class="table table-striped">
-			<tr>
-				<th colspan=<?=$colspan ?>>Series information</th>
-			</tr>
-			<tr>
-				<td>Series Number</td>
-    			<?php 
-				for ($i=0; $i < $series_number; $i++) {
-					if (empty($data_series[$i]->seriesNumber))
+	<div class="accordion mt-3" id="accordionExample">
+		<div >
+			<div id="headingOne">
+				<h2 class="mb-0">
+					<button class="btn btn-primary collapsed" type="button" data-toggle="collapse" data-target="#seriesDetails" aria-expanded="true" aria-controls="collapseOne">
+						Series Details
+					</button>
+				</h2>
+			</div>
+
+			<div id="seriesDetails" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
+			<div class="card-body">
+				<div style="overflow-x:auto;"> 
+					<table id="tab_series" class="table table-striped">
+						<tr>
+							<th colspan=<?=$colspan ?>>Series information</th>
+						</tr>
+						<tr>
+							<td>Series Number</td>
+							<?php 
+							for ($i=0; $i < $series_number; $i++) {
+								if (empty($data_series[$i]->seriesNumber))
+									?>
+									<td> 
+										<?=replaceEmpty($data_series[$i]->seriesNumber)?>
+									</td>
+							<?php 
+							}?>
+						</tr>
+						<tr>
+							<td>Manufacturer</td>
+							<?php 
+							for ($i=0; $i < $series_number; $i++) {
+								?>
+								<td>
+									<?=replaceEmpty($data_series[$i]->manufacturer)?>
+								</td>
+						<?php 
+							}?>
+						</tr>
+						<tr>
+							<td>Series Description</td>
+							<?php 
+							for ($i=0; $i < $series_number; $i++) {
+								?>
+								<td>
+									<?=replaceEmpty($data_series[$i]->seriesDescription)?>
+								</td>
+						<?php 
+							}
+							?>
+						</tr>
+						<tr>
+							<td>Modality</td>
+							<?php 
+							for ($i=0; $i < $series_number; $i++) {
+								?>
+								<td>
+									<?=replaceEmpty($data_series[$i]->modality)?>
+								</td>
+						<?php 
+							}
+							?>
+						</tr>
+						<tr>
+							<td>Acquisition Date Time</td>
+							<?php 
+							for ($i=0; $i < $series_number; $i++) {
+								?>
+								<td>
+									<?=replaceEmpty($data_series[$i]->acquisitionDateTime)?>
+								</td>
+						<?php 
+							}
+							?>
+						</tr>
+						<tr>
+							<td>Total Dose (MBq)</td>
+							<?php 
+							for ($i=0; $i < $series_number; $i++) {
+								?>
+								<td>
+								<?php if (empty($data_series[$i]->injectedDose)) {
+									echo('/');
+								}else {
+									echo(htmlspecialchars($data_series[$i]->injectedDose/10 ** 6));
+								}
+								?>
+								</td>
+							<?php
+							}
+							?>
+						</tr>
+						<tr>
+							<td>Radiopharmaceutical</td>
+							<?php 
+							for ($i=0; $i < $series_number; $i++) {
+								?>
+								<td>
+									<?=replaceEmpty($data_series[$i]->radiopharmaceutical)?>
+								</td>
+						<?php 
+							}
+							?>
+						</tr>
+						<tr>
+							<td>Injection Date Time</td>
+							<?php 
+							for ($i=0; $i < $series_number; $i++) {
+								?>
+								<td>
+									<?=replaceEmpty($data_series[$i]->injectedDateTime)?>
+								</td>
+						<?php 
+							}
+							?>
+						</tr>
+						<tr>
+							<td>Radiopharm. Specific Activity (MBq)</td>
+							<?php 
+							for ($i=0; $i < $series_number; $i++) {
+								?>
+								<td>
+								<?php if (empty($data_series[$i]->injectedActivity)) {
+									echo('/');
+								}else {
+									echo(htmlspecialchars($data_series[$i]->injectedActivity/10 ** 6));
+								}
+								?>
+								</td>
+							<?php
+							}
+							?>
+						</tr>
+						<tr>
+							<td>Half Life (s)</td>
+							<?php 
+							for ($i=0; $i < $series_number; $i++) {
+								?>
+								<td>
+									<?=replaceEmpty($data_series[$i]->halfLife)?>
+								</td>
+							<?php 
+							}
+							?>
+						</tr>
+						<tr>
+							<td>Patient's Weight (kg)</td>
+							<?php 
+							for ($i=0; $i < $series_number; $i++) {
+								?>
+								<td>
+									<?=replaceEmpty($data_series[$i]->patientWeight)?>
+								</td>
+							<?php 
+							}
+							?>
+						</tr>
+						<tr>
+							<td>Slice Count</td>
+							<?php 
+							for ($i=0; $i < $series_number; $i++) {
+								?>
+								<td>
+									<?=replaceEmpty($data_series[$i]->numberInstances)?>
+								</td>
+							<?php 
+							}
+							?>
+						</tr>
+						<tr>
+							<td>Upload Date</td>
+							<?php 
+							for ($i=0; $i < $series_number; $i++) {
+								?>
+								<td>
+									<?=replaceEmpty($data_series[$i]->studyDetailsObject->uploadDate)?>
+								</td>
+							<?php 
+							}
+							?>
+						</tr>
+						<?php 
+						if (($role == User::INVESTIGATOR || $role == User::CONTROLLER) && ($visitObject->stateQualityControl != Visit::QC_ACCEPTED && $visitObject->stateQualityControl != Visit::QC_REFUSED)) {
+						?><tr>
+							<td>Delete</td>
+						<?php 
+						for ($i=0; $i < $series_number; $i++) {
+							?>
+							<td>
+								<a href=scripts/change_series_deletion.php?action=delete&Series_Orthanc_Id=<?=htmlspecialchars($data_series[$i]->seriesOrthancID)?> class="ajaxLinkConfirm" ><input class="btn btn-danger" type="button" value="Delete Series"></a>
+							</td>
+						<?php 
+						}
 						?>
-                        <td> 
-                        	<?=replaceEmpty($data_series[$i]->seriesNumber)?>
-                        </td>
-            	<?php 
-				}?>
-    		</tr>
-			<tr>
-    			<td>Manufacturer</td>
-    			<?php 
-				for ($i=0; $i < $series_number; $i++) {
-					?>
-                    <td>
-                    	<?=replaceEmpty($data_series[$i]->manufacturer)?>
-                	</td>
-               <?php 
-				}?>
-   			</tr>
-			<tr>
-				<td>Series Description</td>
-				<?php 
-				for ($i=0; $i < $series_number; $i++) {
-					?>
-                    <td>
-                    	<?=replaceEmpty($data_series[$i]->seriesDescription)?>
-                	</td>
-               <?php 
-				}
-				?>
-			</tr>
-			<tr>
-				<td>Modality</td>
-				<?php 
-				for ($i=0; $i < $series_number; $i++) {
-					?>
-                    <td>
-                    	<?=replaceEmpty($data_series[$i]->modality)?>
-                	</td>
-               <?php 
-				}
-				?>
-			</tr>
-			<tr>
-				<td>Acquisition Date Time</td>
-				<?php 
-				for ($i=0; $i < $series_number; $i++) {
-					?>
-                    <td>
-                    	<?=replaceEmpty($data_series[$i]->acquisitionDateTime)?>
-                	</td>
-               <?php 
-				}
-				?>
-   			</tr>
-			<tr>
-				<td>Total Dose (MBq)</td>
-				<?php 
-				for ($i=0; $i < $series_number; $i++) {
-					?>
-                    <td>
-                    <?php if (empty($data_series[$i]->injectedDose)) {
-						echo('/');
-					}else {
-						echo(htmlspecialchars($data_series[$i]->injectedDose/10 ** 6));
-					}
-					?>
-                    </td>
-                <?php
-				}
-				?>
-			</tr>
-			<tr>
-				<td>Radiopharmaceutical</td>
-				<?php 
-				for ($i=0; $i < $series_number; $i++) {
-					?>
-                    <td>
-                    	<?=replaceEmpty($data_series[$i]->radiopharmaceutical)?>
-                	</td>
-               <?php 
-				}
-				?>
-			</tr>
-			<tr>
-				<td>Injection Date Time</td>
-				<?php 
-				for ($i=0; $i < $series_number; $i++) {
-					?>
-                    <td>
-                    	<?=replaceEmpty($data_series[$i]->injectedDateTime)?>
-                	</td>
-               <?php 
-				}
-				?>
-			</tr>
-			<tr>
-				<td>Radiopharm. Specific Activity (MBq)</td>
-				<?php 
-				for ($i=0; $i < $series_number; $i++) {
-					?>
-                    <td>
-                    <?php if (empty($data_series[$i]->injectedActivity)) {
-						echo('/');
-					}else {
-						echo(htmlspecialchars($data_series[$i]->injectedActivity/10 ** 6));
-					}
-					?>
-                    </td>
-                <?php
-				}
-				?>
-			</tr>
-			<tr>
-				<td>Half Life (s)</td>
-				<?php 
-				for ($i=0; $i < $series_number; $i++) {
-					?>
-                    <td>
-                    	<?=replaceEmpty($data_series[$i]->halfLife)?>
-                	</td>
-				<?php 
-				}
-				?>
-			</tr>
-			<tr>
-				<td>Patient's Weight (kg)</td>
-				<?php 
-				for ($i=0; $i < $series_number; $i++) {
-					?>
-                    <td>
-                    	<?=replaceEmpty($data_series[$i]->patientWeight)?>
-                	</td>
-				<?php 
-				}
-				?>
-			</tr>
-			<tr>
-				<td>Slice Count</td>
-				<?php 
-				for ($i=0; $i < $series_number; $i++) {
-					?>
-                    <td>
-                    	<?=replaceEmpty($data_series[$i]->numberInstances)?>
-                	</td>
-				<?php 
-				}
-				?>
-			</tr>
-			<tr>
-				<td>Upload Date</td>
-				<?php 
-				for ($i=0; $i < $series_number; $i++) {
-					?>
-                    <td>
-                    	<?=replaceEmpty($data_series[$i]->studyDetailsObject->uploadDate)?>
-                	</td>
-				<?php 
-				}
-				?>
-			</tr>
-			<?php 
-			if (($role == User::INVESTIGATOR || $role == User::CONTROLLER) && ($visitObject->stateQualityControl != Visit::QC_ACCEPTED && $visitObject->stateQualityControl != Visit::QC_REFUSED)) {
-			?><tr>
-    	        <td>Delete</td>
-            <?php 
-			for ($i=0; $i < $series_number; $i++) {
-				?>
-                <td>
-                	<a href=scripts/change_series_deletion.php?action=delete&Series_Orthanc_Id=<?=htmlspecialchars($data_series[$i]->seriesOrthancID)?> class="ajaxLinkConfirm" ><input class="btn btn-danger" type="button" value="Delete Series"></a>
-            	</td>
-        	<?php 
-			}
-			?>
-           	</tr>
-            <tr>
-            	<td colspan="<?=$colspan?>">
-            		<a href=scripts/change_series_deletion.php?action=delete&Series_Orthanc_Id=allVisit<?=$visitObject->id_visit?> class="ajaxLinkConfirm" ><input class="btn btn-danger" type="button" value="Delete All (Reset Upload)"></a>
-        		</td>
-    		</tr>
-    	<?php 
-		}?>
-        </table> 
-    </div>
+						</tr>
+						<tr>
+							<td colspan="<?=$colspan?>">
+								<a href=scripts/change_series_deletion.php?action=delete&Series_Orthanc_Id=allVisit<?=$visitObject->id_visit?> class="ajaxLinkConfirm" ><input class="btn btn-danger" type="button" value="Delete All (Reset Upload)"></a>
+							</td>
+						</tr>
+					<?php 
+					}?>
+					</table> 
+				</div>
+			</div>
+			</div>
+		</div>
+	</div>
+	
+	
+	
 <?php 
 }
 ?>
