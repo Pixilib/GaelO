@@ -9,7 +9,10 @@ use App\GaelO\Login\Login;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\User;
-
+use App\GaelO\CreateUser\CreateUserRequest;
+use App\GaelO\CreateUser\CreateUserResponse;
+use App\GaelO\CreateUser\CreateUser;
+use App;
 class UserController extends Controller
 {
     public $successStatus = 200;
@@ -64,5 +67,20 @@ class UserController extends Controller
         $user = User::find(1);
         $roles=$user->roles;
         return response()->json($roles);
+    }
+
+    public function createUser(Request $request, CreateUserRequest $createUserRequest, CreateUserResponse $createUserResponse) {
+        $requestData = $request->all();
+
+        $createUserRequestData = get_object_vars($createUserRequest);
+        foreach($createUserRequestData as $property => $value) {
+            error_log($property);
+            $createUserRequest->$property = isset($requestData[$property]) ? $requestData[$property] : null;
+        } 
+        error_log(print_r($createUserRequest, true));
+        $createUser = App::make('CreateUser');
+        $createUser->execute($createUserRequest, $createUserResponse);
+        return response()->json($createUserResponse);
+
     }
 }
