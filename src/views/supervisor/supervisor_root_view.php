@@ -292,7 +292,7 @@
 		});
 
 		// Apply the search
-		$('#visitStatusDiv').on('change', ".column_search", function() {
+		$('#visitStatusDiv').on('change keyup', ".column_search", function() {
 			let searchValue = this.value
 			let regex = false
 
@@ -370,7 +370,7 @@
 		});
 
 
-		$('#patientInformation').on('change', ".column_search", function() {
+		$('#patientInformation').on('change keyup', ".column_search", function() {
 			let searchValue = this.value
 			let regex = false
 
@@ -465,7 +465,7 @@
 					<th><input type="text" placeholder="Search" class="column_search" style="max-width:75px" /> </th>
 					<th><input type="text" placeholder="Search" class="column_search" style="max-width:75px" /> </th>
 					<th>
-						<select type="text" placeholder="Search" class="column_search" style="max-width:75px" >
+						<select type="text" placeholder="Search" class="column_search select_search" style="max-width:75px" >
 							<option value="">Choose</option>	
 							<option value="Included">Included</option>
 							<option value="Withdrawn">Withdrawn</option>
@@ -533,7 +533,7 @@
 						</select>
 					</th>
     				<th>
-						<select type="text" placeholder="Search" class="column_search" style="max-width:75px" >
+						<select type="text" placeholder="Search" class="column_search select_search" style="max-width:75px" >
 							<option value="">Choose</option>	
 							<option value="<?=Visit::DONE?>" > <?=Visit::DONE?></option>
 							<option value="<?=Visit::UPLOAD_PROCESSING?>"> <?=Visit::UPLOAD_PROCESSING?> </option>
@@ -541,7 +541,7 @@
 						</select>
 					</th>
     				<th>
-						<select type="text" placeholder="Search" class="column_search" style="max-width:75px" >
+						<select type="text" placeholder="Search" class="column_search select_search" style="max-width:75px" >
 							<option value="">Choose</option>	
 							<option value="<?=Visit::LOCAL_FORM_NOT_DONE?>"> <?=Visit::LOCAL_FORM_NOT_DONE?> </option>
 							<option value="<?=Visit::LOCAL_FORM_DRAFT?>"> <?=Visit::LOCAL_FORM_DRAFT?> </option>
@@ -549,7 +549,7 @@
 						</select> 
 					</th>
     				<th>
-						<select type="text" placeholder="Search" class="column_search" style="max-width:75px" >
+						<select type="text" placeholder="Search" class="column_search select_search" style="max-width:75px" >
 							<option value="">Choose</option>
 							<option value="<?=Visit::QC_NOT_DONE?>"> <?=Visit::QC_NOT_DONE?> </option>
 							<option value="<?=Visit::QC_CORRECTIVE_ACTION_ASKED?>"> <?=Visit::QC_CORRECTIVE_ACTION_ASKED?> </option>
@@ -559,7 +559,7 @@
 						</select> 
 					</th>
     				<th>
-						<select type="text" placeholder="Search" class="column_search" style="max-width:75px" >
+						<select type="text" placeholder="Search" class="column_search select_search" style="max-width:75px" >
 							<option value="">Choose</option>	
 							<option value="<?=Visit::REVIEW_NOT_DONE?>" > <?=Visit::REVIEW_NOT_DONE?> </option>
 							<option value="<?=Visit::REVIEW_ONGOING?>" > <?=Visit::REVIEW_ONGOING?> </option>
