@@ -13,6 +13,7 @@ GaelO
     - Show review status for investigator
     - Hide patient center for reviewer
     - Add show / hide for series details
+    - Supervisor root add Select filter for Patient and Visit Table
   
 --GaelO 1.2.2 27/06/20--
   Fix frontend deidentification of dicom tag sequence
