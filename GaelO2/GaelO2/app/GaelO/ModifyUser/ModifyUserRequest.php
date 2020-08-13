@@ -7,7 +7,6 @@ class ModifyUserRequest {
     public string $firstname ;
     public string $username ;
     public string $email ;
-    public string $password ;
     public string $phone ;
     public string $status;
     public boolean $administrator;

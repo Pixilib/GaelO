@@ -13,6 +13,7 @@ use App\GaelO\CreateUser\CreateUserRequest;
 use App\GaelO\CreateUser\CreateUserResponse;
 use App\GaelO\CreateUser\CreateUser;
 use App;
+
 class UserController extends Controller
 {
     public $successStatus = 200;
@@ -63,7 +64,7 @@ class UserController extends Controller
         return response()->json($loginResponse);
     }
 
-    public function getUser() {
+    public function getUser(int $id, CreateUserRequest $createUserRequest) {
         $user = User::find(1);
         $roles=$user->roles;
         return response()->json($roles);
@@ -80,7 +81,7 @@ class UserController extends Controller
         error_log(print_r($createUserRequest, true));
         $createUser = App::make('CreateUser');
         $createUser->execute($createUserRequest, $createUserResponse);
-        return response()->json($createUserResponse);
+        return response()->json($createUserResponse, 201);
 
     }
 }
