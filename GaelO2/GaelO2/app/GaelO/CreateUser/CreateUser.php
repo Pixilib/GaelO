@@ -26,6 +26,7 @@ class CreateUser {
     //logique métier (ex validation ...)
      public function execute(CreateUserRequest $userRequest, CreateUserResponse $userResponse) : void
     {   
+        error_log(print_r($userRequest));
         $username = $userRequest->username;
         $userResponse->username = $userRequest->username;
         if($username == true) $userResponse->success = true;
