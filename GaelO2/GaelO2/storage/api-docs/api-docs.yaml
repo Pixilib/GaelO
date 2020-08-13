@@ -1,0 +1,39 @@
+openapi: "3.0.0"
+info:
+  title: API Title
+  version: '1.0'
+paths:
+  /api/user/{id}:
+    get:
+      description: Get user details
+      parameters:
+        - in: path
+          name: id
+          required: false
+          schema:
+            type: integer
+          description: Numeric ID of the user to get          
+      responses:
+        '200':
+          description: OK
+
+    post:
+      description: User creation
+      requestBody:
+        description: User details
+        required: true
+        content:
+          application/json:
+            schema:
+              title: User
+              type: object
+              properties:
+                username:
+                  type: string
+                  description: username
+                    
+      responses:
+        '201':
+          description: User created
+
+
