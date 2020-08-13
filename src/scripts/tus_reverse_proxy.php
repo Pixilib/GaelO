@@ -46,15 +46,10 @@ if ($roleAllowed ) {
 	$proxy->filter(new RemoveEncodingFilter());
     
 	// Forward the request and get the response.
-	$response=$proxy -> forward($request) /*-> filter(function($request, $response, $next) {
-        //SK A TESTER SUR SERVEUR TEST, normalement appache ajoute XForwarded et du coup
-        //ce middelware pourrait sauter hors dev
-		// Manipulate the request object.
-        $serverName=$_SERVER['SERVER_NAME'];
-        //$serverPort=$_SERVER['SERVER_PORT'];
-        $protocol = $_SERVER['https'] == true ? 'https' : 'http';
-        $request=$request->withHeader('X-Forwarded-Host', $serverName);
-        $request=$request->withHeader('X-Forwarded-Proto', $protocol);
+	$response=$proxy -> forward($request) /* -> filter(function($request, $response, $next) {
+		//TEST ONLY
+        $request=$request->withHeader('X-Forwarded-Host', 'localhost:8080');
+        $request=$request->withHeader('X-Forwarded-Proto', 'http');
 		$response=$next($request, $response);
         
 		return $response;

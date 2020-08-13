@@ -73,6 +73,6 @@
 }
 
 //Add patient and visit table
-build_patient_visit_table($patientObject);
+build_patient_visit_table($patientObject, $_SESSION['role']);
 build_visit_details_table($visitArray, $_SESSION['role']);
 ?>
