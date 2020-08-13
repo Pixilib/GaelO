@@ -24,6 +24,18 @@ class UserAdapterProvider extends ServiceProvider
         $this->app->bind('CreateUserResponse', function ($app) {
             return new \App\GaelO\CreateUser\CreateUserResponse();
         });
+
+        $this->app->bind('ModifyUser', function ($app) {
+            return new \App\GaelO\ModifyUser\ModifyUser (new \App\GaelO\Adapters\Model\UserAdapter);
+        });
+
+        $this->app->bind('ModifyUserRequest', function ($app) {
+            return new \App\GaelO\ModifyUser\ModifyUserRequest();
+        });
+
+        $this->app->bind('ModifyUserResponse', function ($app) {
+            return new \App\GaelO\ModifyUser\ModifyUserResponse();
+        });
     }
 
     /**
