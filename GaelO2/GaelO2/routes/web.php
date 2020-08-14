@@ -14,5 +14,6 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    //Return React Front end as static file
+    return File::get(public_path() . '/build/index.html');
 });
