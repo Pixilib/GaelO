@@ -17,6 +17,7 @@ use App\GaelO\ModifyUser\ModifyUserRequest;
 use App\GaelO\ModifyUser\ModifyUserResponse;
 use App\GaelO\ModifyUser\ModifyUser;
 
+
 class UserController extends Controller
 {
     public $successStatus = 200;
@@ -73,44 +74,47 @@ class UserController extends Controller
         return response()->json($user);
     }
 
+    public function getAllUsers(CreateUserRequest $createUserRequest) {
+        $users = null ;
+        return response()->json();
+    }
+
     public function createUser(Request $request, CreateUserRequest $createUserRequest, CreateUserResponse $createUserResponse) {
         $requestData = $request->all();
 
-        $createUserRequestData = get_object_vars($createUserRequest);
-        foreach($createUserRequestData as $property => $value) {
-            error_log($property);
+        foreach($requestData as $property => $value) {
             $createUserRequest->$property = isset($requestData[$property]) ? $requestData[$property] : null;
         } 
-        error_log(print_r($createUserRequest, true));
         $createUser = App::make('CreateUser');
-        $createUser->execute($createUserRequest, $createUserResponse);
+        $createUser->createUser($createUserRequest, $createUserResponse);
         return response()->json($createUserResponse, 201);
 
     }
 
-    public function editUser(Request $request, EditUserRequest $editUserRequest, EditUserResponse $editUserResponse) {
+    public function modifyUser(Request $request, ModifyUserRequest $modifyUserRequest, ModifyUserResponse $modifyUserResponse) {
         $requestData = $request->all();
 
-        $editUserRequestData = get_object_vars($editUserRequest);
-        foreach($editUserRequestData as $property => $value) {
-            $editUserRequest->$property = isset($requestData[$property]) ? $requestData[$property] : null;
+        $modifyUserRequestData = get_object_vars($modifyUserRequest);
+        foreach($modifyUserRequestData as $property => $value) {
+            $modifyUserRequest->$property = isset($requestData[$property]) ? $requestData[$property] : null;
         }
          
-        $editUser = App::make('EditUser');
-        $editUser->editUser($editUserRequest, $editUserResponse);
-        return response()->json($editUserResponse, 200);
+        $editUser = App::make('ModifyUser');
+        $editUser->editUser($modifyUserRequest, $modifyUserResponse);
+        return response()->json($modifyUserResponse, 200);
     }
 
-    public function editUserPassword(Request $request, EditUserPasswordRequest $editUserPasswordRequest, EditUserPasswordResponse $editUserPasswordResponse) {
+    public function changeUserPassword(Request $request, ModifyUserRequest $modifyUserRequest, ModifyUserResponse $modifyUserResponse) {
         $requestData = $request->all();
-        $username = $editUserPasswordRequest->username;
-        $prevPass2 = DB::table('users')->select('password_previous1')->where('username', '=', $username);
-        $prevPass1 = DB::table('users')->select('password')->where('username', '=', $username);
-        $editUserPasswordResponse->password_previous2 = $prevPass2;
-        $editUserPasswordResponse->password_previous1 = $prevPass1;
-        $editUserPasswordResponse->password = $requestData['password'];
-        $editUserPassword = App::make('EditUser');
-        $editUserPassword->execute($editUserPasswordRequest, $editUserPasswordResponse);
-        return response()->json($editUserPasswordResponse, 200);
+        
+        $changeUserPassword = App::make('ModifyUser');
+
+        $modifyUserRequest->username = $request['username'];
+        $modifyUserRequest->password1 = $request['password1'];
+        $modifyUserRequest->password2 = $request['password2'];
+        $modifyUserRequest->previous_password = $request['previous_password'];
+
+        $changeUserPassword->changeUserPassword($modifyUserRequest, $modifyUserResponse);
+        return response()->json($modifyUserResponse, 200);
     }
 }

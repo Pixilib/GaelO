@@ -16,7 +16,8 @@ paths:
       responses:
         '200':
           description: OK
-
+          
+  /api/user/:
     post:
       description: User creation
       requestBody:
@@ -35,5 +36,33 @@ paths:
       responses:
         '201':
           description: User created
+
+    patch:
+      description: User password change
+      requestBody:
+        description: Username and password
+        required: true
+        content:
+          application/json:
+            schema:
+              title: User
+              type: object
+              properties:
+                username:
+                  type: string
+                  description: username
+                previous_password:
+                  type: string
+                  description: previous password
+                password1:
+                  type: string
+                  description: password
+                password2:
+                  type: string
+                  description: password verification
+      responses:
+        '200':
+          description: OK
+
 
 
