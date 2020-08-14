@@ -85,6 +85,7 @@ class UserController extends Controller
         foreach($requestData as $property => $value) {
             $createUserRequest->$property = isset($requestData[$property]) ? $requestData[$property] : null;
         } 
+        var_dump($createUserRequest);
         $createUser = App::make('CreateUser');
         $createUser->createUser($createUserRequest, $createUserResponse);
         return response()->json($createUserResponse, 201);

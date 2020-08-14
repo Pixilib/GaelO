@@ -31,7 +31,38 @@ paths:
               properties:
                 username:
                   type: string
-                  description: username
+                  description: username          
+                last_name:
+                  type: string
+                  description: last name
+                first_name:
+                  type: string
+                  description: first_name
+                email:
+                  type: string
+                  description: email
+                phone:
+                  type: string
+                  description: phone number
+                administrator:
+                  type: boolean
+                  description: is administrator
+                center_code:
+                  type: integer
+                  description: center code
+                job:
+                  type: string
+                  description: job (CRA, Monitor, Nuclearist, PI, Radiologist, Study nurse, Supervision)
+                orthanc_address:
+                  type: string
+                  description: orthanc address
+                orthanc_login:
+                  type: string
+                  description: orthanc login
+                orthanc_password:
+                  type: string
+                  description: orthanc password
+
                     
       responses:
         '201':

@@ -7,7 +7,7 @@ class CreateUserRequest {
     public string $firstname ;
     public string $username ;
     public string $email ;
-    public string $password ;
+    public string $password_temporary ;
     public string $phone ;
     public string $status;
     public boolean $administrator;
