@@ -4,18 +4,40 @@ namespace App\GaelO\Adapters\Model;
 
 use App\User;
 use App\GaelO\Interfaces\PersistenceInterface;
+use App\GaelO\Util;
 
-class UserAdapter extends User implements PersistenceInterface {
+class UserAdapter implements PersistenceInterface {
 
-    public function saveData($id, array $data){
-        $model = $this->find($id);
-        // call eloquent save method
-        $model->save($data);
+    public function __construct(){
+        $this->user = new User();
+    }
+
+    public function createUser(array $data){
+        $model = Util::fillArray($data);
+        var_dump($model);
+        $model->save();
+    }
+
+    public function updateUser($id, array $data){
+        $model = $this->user->find($id);
+
+        $model = Util::fillObject($data, $model);
+        
+        $model->save();
     }
 
     public function retrieveData($id){
-        return $this->find($id)->toArray();
+        return $this->user->find($id)->toArray();
     }   
+
+    public function getAllUsers() {
+        return $this->user->toArray();
+    }
+
+    public function getUserByUsername($username){
+        $user = $this->user->where('username', $username)->first();
+        return $user->toArray();
+    }
 
 }
 
