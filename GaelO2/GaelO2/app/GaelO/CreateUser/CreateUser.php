@@ -7,6 +7,7 @@ use App\GaelO\Interfaces\PersistenceInterface;
 use App\GaelO\CreateUser\CreateUserRequest;
 use App\GaelO\CreateUser\CreateUserResponse;
 
+use App\GaelO\Util;
 
 class CreateUser {
 
@@ -24,12 +25,20 @@ class CreateUser {
      }
 
     //logique métier (ex validation ...)
-     public function execute(CreateUserRequest $userRequest, CreateUserResponse $userResponse) : void
+     public function createUser(CreateUserRequest $userRequest, CreateUserResponse $userResponse) : void
     {   
-        error_log(print_r($userRequest));
-        $username = $userRequest->username;
-        $userResponse->username = $userRequest->username;
+        $newUser = $userRequest;
+        $data = get_object_vars($userRequest);
+
+        
+        //Check on fields (password length...)
+
+        $this->persistenceInterface->createUser($data);
         if($username == true) $userResponse->success = true;
+    }
+
+    private function validatePassword(string $password) {
+
     }
   
 }
