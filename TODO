@@ -1,13 +1,1 @@
-Se pencher sur monitoring de Docker => Documenter collection de logs avec LogzIO
-
-Passage Visit Group : 
-=> Controleur statitics a generaliser pour autres modalite
-
-Fiji : reprendre integration
-
-+ Tard : 
-Reminder Visit Upload manager a revoir
-Review reminder a revoir
-Securité access review => dissocier visit groupe en fonction du Job reviewer, pour eviter d'ouvrir toutes les visites (pas d'acces anapath si reviewer med nuc)
-Objet Visit : Ne pas instancier automatiquement Visit Groupe et Visit Type, seulement quand on a besoin avec Getteur
-Options export review deleted et draft dans export
+Create / Modify user + tests
