@@ -2,7 +2,7 @@
 
 namespace App\GaelO\CreateUser;
 
-class CreateUserRequest {
+class GetUserRequest {
     public string $lastname ;
     public string $firstname ;
     public string $username ;
