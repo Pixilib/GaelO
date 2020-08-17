@@ -53,23 +53,21 @@ class ChangePassword {
         //+ Tracker log
         $userResponse->status = 200;
 
-        
-
      }
 
-    private function checkNewPassword($passwordCandidate, $temporaryPassword, $previousPassword1, $previousPassword2){
+    private function checkNewPassword($passwordCandidate, $temporaryPassword, $previousPassword1, $previousPassword2) : void {
         if( $passwordCandidate == $temporaryPassword || $passwordCandidate == $previousPassword1 || $passwordCandidate == $previousPassword2 ){
             throw new Exception('Already Previously Used Password')
         }
     }
 
-    private function checkPasswordFormatCorrect(string $password) {
+    private function checkPasswordFormatCorrect(string $password) : void {
         if ( strlen($password) < 8 ||  !preg_match('/[^a-z0-9]/i', $password) || strtolower($password) != $password) ){
             throw new Exception('Password Contraints Failure');
         }
     }
 
-    private function checkMatchPasswords(string $pass1, string $pass2, bool $currentPasswordCheck) {
+    private function checkMatchPasswords(string $pass1, string $pass2, bool $currentPasswordCheck) : void {
         if( $pass1 != $pass2 ) {
             if ($currentPasswordCheck) throw new Exception('Not Matching Current Password');
             else  throw new Exception('Not Matching Previous Password');
