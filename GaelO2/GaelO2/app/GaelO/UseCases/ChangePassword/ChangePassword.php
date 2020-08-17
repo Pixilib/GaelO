@@ -8,6 +8,7 @@ use App\GaelO\UseCases\ChangePassword\ChangePasswordRequest;
 use App\GaelO\UseCases\ChangePassword\ChangePasswordResponse;
 use App\GaelO\Adapters\LaravelFunctionAdapter;
 use App\GaelO\Util;
+use App\GaelO\Constants\Constants;
 
 class ChangePassword {
 
@@ -20,29 +21,25 @@ class ChangePassword {
         $previousPassword = $userRequest->previous_password;
         $password1 = $userRequest->password1;
         $password2 = $userRequest->password2;
-
-        if($password1 !== $password2) {
-            throw new Exception('Different passwords');
-        }
-
+        //SK : Ici tu devrait faire venir l'ID depuis la route non ?
         $user = $this->persistenceInterface->getUserByUsername($username);
 
-        if($user['status'] == 'Unconfirmed') {
-            $checkCurrentPassword = $this->checkMatchPasswords($previousPassword, $user['password_temporary']);
-        } else {
-            $checkCurrentPassword = $this->checkMatchPasswords($previousPassword, $user['password']);
-        }
+        try{
+            $this->checkNewPassword($password1, $user['password_temporary'] , $user['password_previous1'],  $user['password_previous2']);
+            $this->checkMatchPasswords($password1, $password2, false);
+            $this->checkPasswordFormatCorrect($password1)
 
-        if(!$checkCurrentPassword) {
-            throw new Exception('Wrong old password');
-        }
+            if($user['status'] == Constants.USER_STATUS_UNCONFIRMED) {
+                $this->checkMatchPasswords($previousPassword, $user['password_temporary'], true);
+            } else {
+                $this->checkMatchPasswords($previousPassword, $user['password'], true);
+            }
 
-        if(!$this->checkPasswordFormat($password1)){
-            throw new Exception('Incorrect Format');
-        }
-
-        if($password1 == $user['password_temporary'] || $password1 == $user['password_previous1'] || $password1 == $user['password_previous2']){
-            throw new Exception('Match previous password');
+        }catch(Throwable $t) {
+            //SK ICI on devrait definir nos execption à nous pour pouvoir output nos exeception message et pas celles qui viennent du framework
+            $userResponse->status = 500;
+            $userResponse->statusText = $t->getMessage();
+            
         }
 
         $data['password_previous1'] = $user['password'];
@@ -52,18 +49,31 @@ class ChangePassword {
         $data['status'] = 'Activated';
         
         $this->persistenceInterface->update($user['id'], $data);
-        
+    
         //+ Tracker log
         $userResponse->status = 200;
 
+        
+
      }
 
-    private function checkPasswordFormat(string $password) {
-        return (strlen($password) < 8 || preg_match('/[^a-z0-9]/i', $password) || strtolower($password) == $password);
+    private function checkNewPassword($passwordCandidate, $temporaryPassword, $previousPassword1, $previousPassword2){
+        if( $passwordCandidate == $temporaryPassword || $passwordCandidate == $previousPassword1 || $passwordCandidate == $previousPassword2 ){
+            throw new Exception('Already Previously Used Password')
+        }
     }
 
-    private function checkMatchPasswords(string $pass1, string $pass2) {
-        return $pass1 = $pass2;
+    private function checkPasswordFormatCorrect(string $password) {
+        if ( strlen($password) < 8 ||  !preg_match('/[^a-z0-9]/i', $password) || strtolower($password) != $password) ){
+            throw new Exception('Password Contraints Failure');
+        }
+    }
+
+    private function checkMatchPasswords(string $pass1, string $pass2, bool $currentPasswordCheck) {
+        if( $pass1 != $pass2 ) {
+            if ($currentPasswordCheck) throw new Exception('Not Matching Current Password');
+            else  throw new Exception('Not Matching Previous Password');
+        }
     }
   
 }
