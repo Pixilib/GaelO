@@ -18,7 +18,7 @@ class GetUser {
     {   
         $id = $userRequest->id;
         try {
-            if ($id == 0) $userResponse->body = $this->persistenceInterface->getAllUsers();
+            if ($id == 0) $userResponse->body = $this->persistenceInterface->getAll();
             else $userResponse->body = $this->persistenceInterface->find($id);
             $userResponse->status = 200;
             $userResponse->statusText = 'OK';

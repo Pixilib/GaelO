@@ -13,9 +13,8 @@ class UserRepository implements PersistenceInterface {
     }
 
     public function create(array $data){
-        $this->user = Util::fillObject($data, $this->user);
-        $this->user->save();
-        
+        $model = Util::fillObject($data, $this->user);
+        $model->save();
     }
 
     public function update($id, array $data){
@@ -26,13 +25,13 @@ class UserRepository implements PersistenceInterface {
 
     public function find($id){
         return $this->user->find($id)->toArray();
-    }   
-
+    }
+    
     public function delete($id) {
         return $this->user->find($id)->delete();
     }
 
-    public function getAllUsers() {
+    public function getAll() {
         return $this->user->get()->toArray();
     }
 
@@ -42,13 +41,13 @@ class UserRepository implements PersistenceInterface {
     }
 
     public function getAdministrators(bool $deactivated =  false ){
-        $user = $this->user->where('administrator', true)->where('status', '!=', 'Deactivated');
+        $user = $this->user->where('administrator', true);
         return $user->toArray();
     }
 
     public function getAdministratorsEmails(){
-        $emails = $this->user->where('administrator', true)->where('status', '!=', 'Deactivated')->lists('email');
-        return $emails->toArray();
+        $emails = $this->user->where('administrator', true)->lists('email');
+        return $$emails->toArray();
     }
 
 }
