@@ -3,7 +3,7 @@ info:
   title: API Title
   version: '1.0'
 paths:
-  /api/user/{id}:
+  /api/users/{id}:
     get:
       description: Get user details
       parameters:
@@ -16,8 +16,18 @@ paths:
       responses:
         '200':
           description: OK
+
+    delete:
+      description: Delete user
+      parameters:
+        - in: path
+          name: id 
+      responses:
+        '200':
+          description: OK
+
           
-  /api/user/:
+  /api/users/:
     post:
       description: User creation
       requestBody:
@@ -32,10 +42,10 @@ paths:
                 username:
                   type: string
                   description: username          
-                last_name:
+                lastname:
                   type: string
                   description: last name
-                first_name:
+                firstname:
                   type: string
                   description: first_name
                 email:
@@ -52,6 +62,7 @@ paths:
                   description: center code
                 job:
                   type: string
+                  default: CRA
                   description: job (CRA, Monitor, Nuclearist, PI, Radiologist, Study nurse, Supervision)
                 orthanc_address:
                   type: string

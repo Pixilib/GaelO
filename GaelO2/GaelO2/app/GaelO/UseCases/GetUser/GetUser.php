@@ -17,9 +17,15 @@ class GetUser {
     public function execute(GetUserRequest $userRequest, GetUserResponse $userResponse) : void
     {   
         $id = $userRequest->id;
-        if ($id == 0) $this->persistenceInterface->getAllUsers();
-        $userResponse->body = $this->persistenceInterface->find($id);
-        if($id == true) $userResponse->status = 200;
+        try {
+            if ($id == 0) $userResponse->body = $this->persistenceInterface->getAllUsers();
+            else $userResponse->body = $this->persistenceInterface->find($id);
+            $userResponse->status = 200;
+            $userResponse->statusText = 'OK';
+        } catch (\Throwable $t) {
+            $userResponse->body = $t->getMessage();
+            $userResponse->status = 500;
+        }
     }
 
 }

@@ -15,7 +15,7 @@ class ChangePassword {
         $this->persistenceInterface = $persistenceInterface;
      } 
 
-     public function changeUserPassword(ChangePasswordRequest $userRequest, ChangePasswordResponse $userResponse) : void {
+     public function execute(ChangePasswordRequest $userRequest, ChangePasswordResponse $userResponse) : void {
         $username = $userRequest->username; 
         $previousPassword = $userRequest->previous_password;
         $password1 = $userRequest->password1;
@@ -51,10 +51,17 @@ class ChangePassword {
         $data['last_password_update'] = Util::now();
         $data['status'] = 'Activated';
         
-        $this->persistenceInterface->update($user['id'], $data);
+        try {
+            $this->persistenceInterface->update($user['id'], $data);
+            $userResponse->status = 200;
+            $userResponse->body = 'Password Updated';
+            $userResponse->statusText = 'OK';
+        } catch (\Throwable $t) {
+            $userResponse->status = 500;
+        }
         
         //+ Tracker log
-        $userResponse->status = 200;
+        
 
      }
 

@@ -13,9 +13,9 @@ class UserRepository implements PersistenceInterface {
     }
 
     public function create(array $data){
-        $model = Util::fillArray($data);
-        var_dump($model);
-        $model->save();
+        $this->user = Util::fillObject($data, $this->user);
+        $this->user->save();
+        
     }
 
     public function update($id, array $data){
@@ -29,7 +29,7 @@ class UserRepository implements PersistenceInterface {
     }   
 
     public function delete($id) {
-        return $this->user->find($id); //->delete()
+        return $this->user->find($id)->delete();
     }
 
     public function getAllUsers() {

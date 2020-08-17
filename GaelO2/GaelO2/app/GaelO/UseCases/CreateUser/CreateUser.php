@@ -31,22 +31,32 @@ class CreateUser {
         //Generate password
         $password=substr(uniqid(), 1, 10);
         $data['password_temporary'] = $password;
+        $data['password'] = $password;
+        $data['creation_date'] = Util::now();
+        $data['last_password_update'] = Util::now();
         if(isset($data['administrator'])) $data['administrator'] = true;
         
         //Let only numbers for phone number
         $data['phone']=preg_replace("/[^0-9]/", "", $data['phone']);
         //Check form completion
-        if(!isset($data['username']) || !isset($data['last_name']) || !isset($data['email']) || !is_numeric($data['center'])) {
+        if(!isset($data['username']) || !isset($data['lastname']) || !isset($data['email']) || !is_numeric($data['center_code'])) {
             throw new Exception('Form incomplete');
         } else if (!preg_match('/^[a-z0-9\-_.]+@[a-z0-9\-_.]+\.[a-z]{2,4}$/i', $data['email'])) {
             throw new Exception('Not a valid email format');
         } else {
-            //Data are ok to be written in db        
-            $this->persistenceInterface->create($data);
-
+            //Data are ok to be written in db
+            try {
+                $this->persistenceInterface->create($data);
+                $userResponse->status = 201;
+                $userResponse->body = 'User created';
+                $userResponse->statusText = 'Created';
+            } catch (\Throwable $t) {
+                $userResponse->status = 500;
+            }
             //ADD LOG + MAIL CONFIRMATION
+
             
-            $userResponse->status = 201;
+            
         }
 
         //Check on fields (password length...)

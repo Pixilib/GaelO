@@ -18,10 +18,14 @@ class ModifyUser {
      public function execute(ModifyUserRequest $userRequest, ModifyUserResponse $userResponse) : void
     {   
         $username = $userRequest->username;
-        $user->getUserByUsername($username);
-        echo $user;
-        $userResponse->username = $userRequest->username;
-        if($username == true) $userResponse->status = 200;
+        try {        
+            $user->getUserByUsername($username);
+            $userResponse->status = 200;
+            $userResponse->body = 'User modified';
+            $userResponse->statusText = 'OK';  
+        } catch (\Throwable $t) {
+            $userResponse->status = 500;            
+        } 
     }
 
 }

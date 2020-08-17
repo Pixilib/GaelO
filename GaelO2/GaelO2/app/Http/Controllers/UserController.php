@@ -22,7 +22,10 @@ use App\GaelO\UseCases\GetUser\GetUser;
 use App\GaelO\UseCases\ChangePassword\ChangePasswordRequest;
 use App\GaelO\UseCases\ChangePassword\ChangePasswordResponse;
 use App\GaelO\UseCases\ChangePassword\ChangePassword;
-
+use App\GaelO\UseCases\DeleteUser\DeleteUserRequest;
+use App\GaelO\UseCases\DeleteUser\DeleteUserResponse;
+use App\GaelO\UseCases\DeleteUser\DeleteUser;
+use App\GaelO\Util;
 class UserController extends Controller
 {
     public $successStatus = 200;
@@ -77,7 +80,7 @@ class UserController extends Controller
         $getUserRequest->id = $id;
         $getUser = App::make('GetUser');
         $getUser->execute($getUserRequest, $getUserResponse);
-        return response()->json($getUserResponse);
+        return response()->json($getUserResponse->body, $getUserResponse->status);
     }
 
     public function createUser(Request $request, CreateUserRequest $createUserRequest, CreateUserResponse $createUserResponse) {
@@ -107,12 +110,18 @@ class UserController extends Controller
     public function changeUserPassword(Request $request, ChangePasswordRequest $changePasswordRequest, ChangePasswordResponse $changePasswordResponse) {
         $requestData = $request->all();
         
-        $changePasswordRequest->username = $request['username'];
-        $changePasswordRequest->password1 = $request['password1'];
-        $changePasswordRequest->password2 = $request['password2'];
-        $changePasswordRequest->previous_password = $request['previous_password'];
+        $changePasswordRequest = Util::fillObject($requestData, $changePasswordRequest);
         $changePassword = App::make('ChangePassword');
         $changePassword->execute($changePasswordRequest, $changePasswordResponse);
-        return response()->json($changePasswordResponse, );
+        return response()->json($changePasswordResponse);
+    }
+
+    public function deleteUser(int $id, Request $request, DeleteUserRequest $deleteUserRequest, DeleteUserResponse $deleteUserResponse) {
+        $requestData = get_object_vars($request);
+        $deleteUserRequest->id = $id;
+        $deleteUserRequest = Util::fillObject($requestData, $deleteUserRequest);
+        $deleteUser = App::make('DeleteUser');
+        $deleteUser->execute($deleteUserRequest, $deleteUserResponse);
+        return response()->json($deleteUserResponse);
     }
 }
