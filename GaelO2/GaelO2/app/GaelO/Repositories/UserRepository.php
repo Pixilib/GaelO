@@ -1,6 +1,6 @@
 <?php
 
-namespace App\GaelO\Adapters\Model;
+namespace App\GaelO\Repositories;
 
 use App\User;
 use App\GaelO\Interfaces\PersistenceInterface;
