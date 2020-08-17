@@ -1,11 +1,11 @@
 <?php
 
-namespace App\GaelO\ModifyUser;
+namespace App\GaelO\UseCases\ModifyUser;
 
 use App\GaelO\Interfaces\PersistenceInterface;
 
-use App\GaelO\ModifyUser\ModifyUserRequest;
-use App\GaelO\ModifyUser\ModifyUserResponse;
+use App\GaelO\UseCases\ModifyUser\ModifyUserRequest;
+use App\GaelO\UseCases\ModifyUser\ModifyUserResponse;
 use App\GaelO\Adapters\LaravelFunctionAdapter;
 use App\GaelO\Util;
 
@@ -51,7 +51,7 @@ class ModifyUser {
         $data['last_password_update'] = Util::now();
         $data['status'] = 'Activated';
         
-        $this->persistenceInterface->updateUser($user['id'], $data);
+        $this->persistenceInterface->update($user['id'], $data);
         
         //+ Tracker log
         $userResponse->success = true;

@@ -95,5 +95,12 @@ paths:
         '200':
           description: OK
 
+    get:
+      description: Get all users
+      responses:
+        '200':
+          description: OK
+
+
 
 

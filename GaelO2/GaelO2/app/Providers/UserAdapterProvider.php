@@ -14,27 +14,27 @@ class UserAdapterProvider extends ServiceProvider
     public function register()
     {                
         $this->app->bind('CreateUser', function ($app) {
-            return new \App\GaelO\CreateUser\CreateUser (new \App\GaelO\Repositories\UserRepository());
+            return new \App\GaelO\UseCases\CreateUser\CreateUser (new \App\GaelO\Repositories\UserRepository());
         });
 
         $this->app->bind('CreateUserRequest', function ($app) {
-            return new \App\GaelO\CreateUser\CreateUserRequest();
+            return new \App\GaelO\UseCases\CreateUser\CreateUserRequest();
         });
 
         $this->app->bind('CreateUserResponse', function ($app) {
-            return new \App\GaelO\CreateUser\CreateUserResponse();
+            return new \App\GaelO\UseCases\CreateUser\CreateUserResponse();
         });
 
         $this->app->bind('ModifyUser', function ($app) {
-            return new \App\GaelO\ModifyUser\ModifyUser (new \App\GaelO\Repositories\UserRepository());
+            return new \App\GaelO\UseCases\ModifyUser\ModifyUser (new \App\GaelO\Repositories\UserRepository());
         });
 
         $this->app->bind('ModifyUserRequest', function ($app) {
-            return new \App\GaelO\ModifyUser\ModifyUserRequest();
+            return new \App\GaelO\UseCases\ModifyUser\ModifyUserRequest();
         });
 
         $this->app->bind('ModifyUserResponse', function ($app) {
-            return new \App\GaelO\ModifyUser\ModifyUserResponse();
+            return new \App\GaelO\UseCases\ModifyUser\ModifyUserResponse();
         });
     }
 

@@ -1,11 +1,11 @@
 <?php
 
-namespace App\GaelO\CreateUser;
+namespace App\GaelO\UseCases\CreateUser;
 
 use App\GaelO\Interfaces\PersistenceInterface;
 
-use App\GaelO\CreateUser\CreateUserRequest;
-use App\GaelO\CreateUser\CreateUserResponse;
+use App\GaelO\UseCases\CreateUser\CreateUserRequest;
+use App\GaelO\UseCases\CreateUser\CreateUserResponse;
 
 use App\GaelO\Util;
 

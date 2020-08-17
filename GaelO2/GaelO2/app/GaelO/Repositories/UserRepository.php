@@ -28,6 +28,10 @@ class UserRepository implements PersistenceInterface {
         return $this->user->find($id)->toArray();
     }   
 
+    public function delete($id) {
+        return $this->user->find($id); //->delete()
+    }
+
     public function getAllUsers() {
         return $this->user->get()->toArray();
     }

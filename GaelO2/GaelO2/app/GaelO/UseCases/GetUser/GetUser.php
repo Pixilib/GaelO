@@ -1,11 +1,11 @@
 <?php
 
-namespace App\GaelO\GetUser;
+namespace App\GaelO\UseCases\GetUser;
 
 use App\GaelO\Interfaces\PersistenceInterface;
 
-use App\GaelO\GetUser\GetUserRequest;
-use App\GaelO\GetUser\GetUserResponse;
+use App\GaelO\UseCases\GetUser\GetUserRequest;
+use App\GaelO\UseCases\GetUser\GetUserResponse;
 
 
 class GetUser {
@@ -16,11 +16,16 @@ class GetUser {
 
     public function get(GetUserRequest $userRequest, GetUserResponse $userResponse) : void
     {   
-        $username = $userRequest->username;
-        $userResponse->username = $userRequest->username;
-        if($username == true) $userResponse->success = true;
+        $id = $userRequest->id;
+        $userResponse->user = $this->persistenceInterface->find($id);
+        if($id == true) $userResponse->success = true;
     }
   
+    public function getAllUsers(GetUserRequest $userRequest, GetUserResponse $userResponse) 
+    {
+        $userResponse->users = $this->persistenceInterface->getAllUsers();
+        $userResponse->success = true;
+    }
 }
 
 ?>

@@ -9,13 +9,13 @@ use App\GaelO\Login\Login;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\User;
-use App\GaelO\CreateUser\CreateUserRequest;
-use App\GaelO\CreateUser\CreateUserResponse;
-use App\GaelO\CreateUser\CreateUser;
+use App\GaelO\UseCases\CreateUser\CreateUserRequest;
+use App\GaelO\UseCases\CreateUser\CreateUserResponse;
+use App\GaelO\UseCases\CreateUser\CreateUser;
 use App;
-use App\GaelO\ModifyUser\ModifyUserRequest;
-use App\GaelO\ModifyUser\ModifyUserResponse;
-use App\GaelO\ModifyUser\ModifyUser;
+use App\GaelO\UseCases\ModifyUser\ModifyUserRequest;
+use App\GaelO\UseCases\ModifyUser\ModifyUserResponse;
+use App\GaelO\UseCases\ModifyUser\ModifyUser;
 
 
 class UserController extends Controller
@@ -74,9 +74,14 @@ class UserController extends Controller
         return response()->json($user);
     }
 
-    public function getAllUsers(CreateUserRequest $createUserRequest) {
-        $users = null ;
-        return response()->json();
+    public function getAllUsers(GetUserRequest $getUserRequest, GetUserResponse $getUserResponse) {
+        error_log('ici');
+        
+        $getAllUsers = App::make('GetUser');
+        $getAllUsers->getAllUsers($getUserRequest, $getUserResponse);
+        var_dump($getUserResponse);
+        Util::fillObject($getUserResponse->users, $getUserRequest);
+        return response()->json($getUserResponses->users);
     }
 
     public function createUser(Request $request, CreateUserRequest $createUserRequest, CreateUserResponse $createUserResponse) {

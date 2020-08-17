@@ -1,6 +1,6 @@
 <?php
 
-namespace App\GaelO\ModifyUser;
+namespace App\GaelO\UseCases\ModifyUser;
 
 class ModifyUserRequest {
     public string $lastname ;

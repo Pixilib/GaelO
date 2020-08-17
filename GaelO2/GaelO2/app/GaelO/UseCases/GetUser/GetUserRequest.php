@@ -1,6 +1,6 @@
 <?php
 
-namespace App\GaelO\CreateUser;
+namespace App\GaelO\UseCases\CreateUser;
 
 class GetUserRequest {
     public string $lastname ;
