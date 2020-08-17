@@ -1,6 +1,8 @@
 <?php
 
-interface Mailer {
+namespace App\GaelO\Interfaces;
+
+Interface MailInterface {
     
     public function setFrom(array $from);
     public function setTo(array $to);
