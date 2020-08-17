@@ -14,7 +14,9 @@ Class MailServices extends SendEmailAdapter {
         $userAdministratorsArray = $this->userRepository->getAdministrators();
         //SK A VOIR
         $userAdministratorsCollection = new CollectionAdapter($userAdministratorsArray);
-        return $userAdministratorsCollection->get('email');
+        return $userAdministratorsCollection->filter(function($user){
+            return $user['email'];
+        })
     } 
 
 }
