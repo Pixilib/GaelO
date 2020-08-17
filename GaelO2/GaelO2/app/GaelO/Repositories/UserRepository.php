@@ -37,9 +37,14 @@ class UserRepository implements PersistenceInterface {
         return $user->toArray();
     }
 
-    public function getAdministrators(){
-        $user = $this->user->where('administrator', true);
+    public function getAdministrators(bool $deactivated =  false ){
+        $user = $this->user->where('administrator', true)->where('status', '!=', 'Deactivated');
         return $user->toArray();
+    }
+
+    public function getAdministratorsEmails(){
+        $emails = $this->user->where('administrator', true)->where('status', '!=', 'Deactivated')->lists('email');
+        return $emails->toArray();
     }
 
 }
