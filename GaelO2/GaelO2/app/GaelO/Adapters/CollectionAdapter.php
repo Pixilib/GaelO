@@ -1,5 +1,5 @@
 <?php
-
+/*
 namespace App\GaelO\Adapters;
 
 use Illuminate\Support;
@@ -10,4 +10,4 @@ class CollectionAdapter extends Collection {
         parent::__construct($items);
     }
 
-}
+}*/

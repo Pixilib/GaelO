@@ -25,7 +25,7 @@ class CreateUser {
      }
 
     //logique métier (ex validation ...)
-     public function createUser(CreateUserRequest $userRequest, CreateUserResponse $userResponse) : void
+     public function execute(CreateUserRequest $userRequest, CreateUserResponse $userResponse) : void
     {   
         $data = get_object_vars($userRequest);
         //Generate password
@@ -42,11 +42,11 @@ class CreateUser {
             throw new Exception('Not a valid email format');
         } else {
             //Data are ok to be written in db        
-            $this->persistenceInterface->createUser($data);
+            $this->persistenceInterface->create($data);
 
             //ADD LOG + MAIL CONFIRMATION
             
-            $userResponse->success = true;
+            $userResponse->status = 201;
         }
 
         //Check on fields (password length...)

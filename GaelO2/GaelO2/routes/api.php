@@ -15,7 +15,6 @@ use Illuminate\Support\Facades\Route;
 */
 Route::post('user', 'UserController@createUser');
 Route::get('user/{id?}', 'UserController@getUser');
-Route::get('user', 'UserController@getAllUsers');
 Route::patch('user', 'UserController@changeUserPassword');
 Route::post('login', 'UserController@login');
 Route::post('register', 'RegisterController@register');

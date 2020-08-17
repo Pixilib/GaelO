@@ -1,9 +1,9 @@
 <?php
 
-namespace App\GaelO\Login;
+namespace App\GaelO\UseCases\Login;
 
-use App\GaelO\Login\LoginRequest;
-use App\GaelO\Login\LoginResponse;
+use App\GaelO\UseCases\Login\LoginRequest;
+use App\GaelO\UseCases\Login\LoginResponse;
 
 class Login {
 

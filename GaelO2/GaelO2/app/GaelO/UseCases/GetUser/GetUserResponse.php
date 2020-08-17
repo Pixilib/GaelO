@@ -1,9 +1,9 @@
 <?php
 
-namespace App\GaelO\UseCases\CreateUser;
+namespace App\GaelO\UseCases\GetUser;
 
 class GetUserResponse {
-    public bool $success;
-    public string $error;
-    public string $codeResponse;
+    public $body;
+    public int $status;
+    public string $statusText;
 }

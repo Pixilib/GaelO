@@ -1,6 +1,6 @@
 <?php
 
-namespace App\GaelO\Login;
+namespace App\GaelO\UseCases\Login;
 
 class LoginResponse {
     public bool $success;

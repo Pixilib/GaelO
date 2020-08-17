@@ -16,7 +16,12 @@ use App;
 use App\GaelO\UseCases\ModifyUser\ModifyUserRequest;
 use App\GaelO\UseCases\ModifyUser\ModifyUserResponse;
 use App\GaelO\UseCases\ModifyUser\ModifyUser;
-
+use App\GaelO\UseCases\GetUser\GetUserRequest;
+use App\GaelO\UseCases\GetUser\GetUserResponse;
+use App\GaelO\UseCases\GetUser\GetUser;
+use App\GaelO\UseCases\ChangePassword\ChangePasswordRequest;
+use App\GaelO\UseCases\ChangePassword\ChangePasswordResponse;
+use App\GaelO\UseCases\ChangePassword\ChangePassword;
 
 class UserController extends Controller
 {
@@ -68,20 +73,11 @@ class UserController extends Controller
         return response()->json($loginResponse);
     }
 
-    public function getUser($id=0, CreateUserRequest $createUserRequest) {
-        error_log($id);
-        $user = User::find($id);
-        return response()->json($user);
-    }
-
-    public function getAllUsers(GetUserRequest $getUserRequest, GetUserResponse $getUserResponse) {
-        error_log('ici');
-        
-        $getAllUsers = App::make('GetUser');
-        $getAllUsers->getAllUsers($getUserRequest, $getUserResponse);
-        var_dump($getUserResponse);
-        Util::fillObject($getUserResponse->users, $getUserRequest);
-        return response()->json($getUserResponses->users);
+    public function getUser($id=0, GetUserRequest $getUserRequest, GetUserResponse $getUserResponse) {
+        $getUserRequest->id = $id;
+        $getUser = App::make('GetUser');
+        $getUser->execute($getUserRequest, $getUserResponse);
+        return response()->json($getUserResponse);
     }
 
     public function createUser(Request $request, CreateUserRequest $createUserRequest, CreateUserResponse $createUserResponse) {
@@ -90,9 +86,8 @@ class UserController extends Controller
         foreach($requestData as $property => $value) {
             $createUserRequest->$property = isset($requestData[$property]) ? $requestData[$property] : null;
         } 
-        var_dump($createUserRequest);
         $createUser = App::make('CreateUser');
-        $createUser->createUser($createUserRequest, $createUserResponse);
+        $createUser->execute($createUserRequest, $createUserResponse);
         return response()->json($createUserResponse, 201);
 
     }
@@ -104,23 +99,20 @@ class UserController extends Controller
         foreach($modifyUserRequestData as $property => $value) {
             $modifyUserRequest->$property = isset($requestData[$property]) ? $requestData[$property] : null;
         }
-         
-        $editUser = App::make('ModifyUser');
-        $editUser->editUser($modifyUserRequest, $modifyUserResponse);
+        $modifyUser = App::make('ModifyUser');
+        $modifyUser->execute($modifyUserRequest, $modifyUserResponse);
         return response()->json($modifyUserResponse, 200);
     }
 
-    public function changeUserPassword(Request $request, ModifyUserRequest $modifyUserRequest, ModifyUserResponse $modifyUserResponse) {
+    public function changeUserPassword(Request $request, ChangePasswordRequest $changePasswordRequest, ChangePasswordResponse $changePasswordResponse) {
         $requestData = $request->all();
         
-        $changeUserPassword = App::make('ModifyUser');
-
-        $modifyUserRequest->username = $request['username'];
-        $modifyUserRequest->password1 = $request['password1'];
-        $modifyUserRequest->password2 = $request['password2'];
-        $modifyUserRequest->previous_password = $request['previous_password'];
-
-        $changeUserPassword->changeUserPassword($modifyUserRequest, $modifyUserResponse);
-        return response()->json($modifyUserResponse, 200);
+        $changePasswordRequest->username = $request['username'];
+        $changePasswordRequest->password1 = $request['password1'];
+        $changePasswordRequest->password2 = $request['password2'];
+        $changePasswordRequest->previous_password = $request['previous_password'];
+        $changePassword = App::make('ChangePassword');
+        $changePassword->execute($changePasswordRequest, $changePasswordResponse);
+        return response()->json($changePasswordResponse, );
     }
 }

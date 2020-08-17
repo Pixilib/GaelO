@@ -14,18 +14,14 @@ class GetUser {
         $this->persistenceInterface = $persistenceInterface;
      } 
 
-    public function get(GetUserRequest $userRequest, GetUserResponse $userResponse) : void
+    public function execute(GetUserRequest $userRequest, GetUserResponse $userResponse) : void
     {   
         $id = $userRequest->id;
-        $userResponse->user = $this->persistenceInterface->find($id);
-        if($id == true) $userResponse->success = true;
+        if ($id == 0) $this->persistenceInterface->getAllUsers();
+        $userResponse->body = $this->persistenceInterface->find($id);
+        if($id == true) $userResponse->status = 200;
     }
-  
-    public function getAllUsers(GetUserRequest $userRequest, GetUserResponse $userResponse) 
-    {
-        $userResponse->users = $this->persistenceInterface->getAllUsers();
-        $userResponse->success = true;
-    }
+
 }
 
 ?>
