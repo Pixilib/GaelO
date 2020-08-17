@@ -16,9 +16,10 @@ class UserCreated extends Mailable
      *
      * @return void
      */
-    public function __construct()
+    public function __construct(string $from, array $parameters)
     {
-        //
+        $this->from = $from;
+        $this->parameters = $parameters;
     }
 
     /**
@@ -28,14 +29,6 @@ class UserCreated extends Mailable
      */
     public function build()
     {
-        return $this->view('mails.mail_create_user')->with([
-            'name' => 'salim',
-            'username' => 'salim',
-            'password' => 'salim',
-            'platformName'=>'GaelO',
-            'webAddress' => 'gaelo.fr',
-            'corporation' => 'lysarc',
-            'adminEmail' => 'salim.kanoun@gmail.com'
-        ]);;
+        return $this->object('User Created')->view('mails.mail_create_user')->from($this->from)->with($this->parameters);
     }
 }
