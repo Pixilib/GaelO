@@ -14,7 +14,7 @@ class UserAdapterProvider extends ServiceProvider
     public function register()
     {                
         $this->app->bind('CreateUser', function ($app) {
-            return new \App\GaelO\CreateUser\CreateUser (new \App\GaelO\Adapters\Model\UserAdapter());
+            return new \App\GaelO\CreateUser\CreateUser (new \App\GaelO\Adapters\Model\UserRepository());
         });
 
         $this->app->bind('CreateUserRequest', function ($app) {
@@ -27,7 +27,7 @@ class UserAdapterProvider extends ServiceProvider
 
         $this->app->bind('ModifyUser', function ($app) {
             echo 'là';
-            return new \App\GaelO\ModifyUser\ModifyUser (new \App\GaelO\Adapters\Model\UserAdapter());
+            return new \App\GaelO\ModifyUser\ModifyUser (new \App\GaelO\Adapters\Model\UserRepository());
         });
 
         $this->app->bind('ModifyUserRequest', function ($app) {

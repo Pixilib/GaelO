@@ -4,11 +4,13 @@ namespace App\GaelO\Interfaces;
 
 interface PersistenceInterface {
 
-   public function updateUser($id, array $data);
+   public function update($id, array $data);
 
-   public function createUser(array $data);
+   public function create(array $data);
 
-   public function retrieveData($id);    
+   public function find($id);  
+   
+   public function delete($id);
 }
 
 ?>
