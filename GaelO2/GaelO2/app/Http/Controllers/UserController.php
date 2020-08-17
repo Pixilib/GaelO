@@ -8,7 +8,6 @@ use App\GaelO\Login\LoginResponse;
 use App\GaelO\Login\Login;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
-use App\User;
 use App\GaelO\UseCases\CreateUser\CreateUserRequest;
 use App\GaelO\UseCases\CreateUser\CreateUserResponse;
 use App\GaelO\UseCases\CreateUser\CreateUser;
@@ -26,13 +25,17 @@ use App\GaelO\UseCases\DeleteUser\DeleteUserRequest;
 use App\GaelO\UseCases\DeleteUser\DeleteUserResponse;
 use App\GaelO\UseCases\DeleteUser\DeleteUser;
 use App\GaelO\Util;
+
+use Illuminate\Support\Facades\Mail;
+use App\Mail\UserCreated;
+
 class UserController extends Controller
 {
     public $successStatus = 200;
-    /** 
+    /**
      * login api (exposed at /api/login)
-     * 
-     * @return \Illuminate\Http\Response 
+     *
+     * @return \Illuminate\Http\Response
      */
     public function login()
     {
@@ -45,28 +48,9 @@ class UserController extends Controller
         }
     }
 
-    /** 
-     * details api 
-     * 
-     * @return \Illuminate\Http\Response 
-     */
-    public function details()
-    {
-        $user = Auth::user();
-        return response()->json(['success' => $user], $this->successStatus);
-    }
-
     //Controlleur implementant la clean architecture
     public function loginClean(Request $request){
-        //On recupere les infos qui nous interesse a partir du framework
         $requestData = $request->all();
-        //On cree un object LoginRequest et un object LoginResponse
-        //LoginRequest est un DTO qui contient les information qui nous interessent du framework
-        //LoginResponse est la reponse de notre hexagone, c'est aussi un DTO, il suffit de le mettre dans response()->json() pour emmetre la reponse
-        //La methode execute rempli l'object LoginResponse avec la logique metier ad hoc (fait dans l'hexagone)
-        //Du coup dans l'hexagone il faudra faire des interface pour tous les appels aux fonctions du framework (appel db, email, log)
-        //Par rapport à la video j'ai enleve la partie "Presenter" vue qu'on a plus de vue coté back, on a que du JSON et comme je suis obligé 
-        //de return le response().json() depuis le controller je laisse la partie "presenter" dans le controller
         $loginRequest = new LoginRequest();
         $loginRequest->username = $requestData['username'];
         $loginRequest->password = $requestData['password'];
@@ -88,7 +72,7 @@ class UserController extends Controller
 
         foreach($requestData as $property => $value) {
             $createUserRequest->$property = isset($requestData[$property]) ? $requestData[$property] : null;
-        } 
+        }
         $createUser = App::make('CreateUser');
         $createUser->execute($createUserRequest, $createUserResponse);
         return response()->json($createUserResponse, 201);
@@ -109,7 +93,7 @@ class UserController extends Controller
 
     public function changeUserPassword(Request $request, ChangePasswordRequest $changePasswordRequest, ChangePasswordResponse $changePasswordResponse) {
         $requestData = $request->all();
-        
+
         $changePasswordRequest = Util::fillObject($requestData, $changePasswordRequest);
         $changePassword = App::make('ChangePassword');
         $changePassword->execute($changePasswordRequest, $changePasswordResponse);
@@ -123,5 +107,10 @@ class UserController extends Controller
         $deleteUser = App::make('DeleteUser');
         $deleteUser->execute($deleteUserRequest, $deleteUserResponse);
         return response()->json($deleteUserResponse);
+    }
+
+    public function testMail(){
+        Mail::to('salim.kanoun@gmail.com')->queue(new UserCreated());
+        return response()->json(true);
     }
 }
