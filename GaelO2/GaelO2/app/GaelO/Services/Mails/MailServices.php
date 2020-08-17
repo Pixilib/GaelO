@@ -10,11 +10,9 @@ Class MailServices extends SendEmailAdapter {
         $this->userRepository = $userRepository
     }
 
-    getAdminsEmails(){
-        $userAdministratorsArray = $this->userRepository->getAdministrators();
-        //SK A VOIR
-        $userAdministratorsCollection = new CollectionAdapter($userAdministratorsArray);
-        return $userAdministratorsCollection->get('email');
-    } 
+    addAdminsEmails(){
+        $adminsEmails = $this->userRepository->getAdministratorsEmails();
+        return $adminsEmails
+    }
 
 }
