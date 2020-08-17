@@ -27,7 +27,7 @@ class ChangePassword {
         try{
             $this->checkNewPassword($password1, $user['password_temporary'] , $user['password_previous1'],  $user['password_previous2']);
             $this->checkMatchPasswords($password1, $password2, false);
-            $this->checkPasswordFormatCorrect($password1)
+            $this->checkPasswordFormatCorrect($password1);
 
             if($user['status'] == Constants.USER_STATUS_UNCONFIRMED) {
                 $this->checkMatchPasswords($previousPassword, $user['password_temporary'], true);
@@ -59,12 +59,12 @@ class ChangePassword {
 
     private function checkNewPassword($passwordCandidate, $temporaryPassword, $previousPassword1, $previousPassword2){
         if( $passwordCandidate == $temporaryPassword || $passwordCandidate == $previousPassword1 || $passwordCandidate == $previousPassword2 ){
-            throw new Exception('Already Previously Used Password')
+            throw new Exception('Already Previously Used Password');
         }
     }
 
     private function checkPasswordFormatCorrect(string $password) {
-        if ( strlen($password) < 8 ||  !preg_match('/[^a-z0-9]/i', $password) || strtolower($password) != $password) ){
+        if ( strlen($password) < 8 || !preg_match('/[^a-z0-9]/i', $password) || strtolower($password != $password) ){
             throw new Exception('Password Contraints Failure');
         }
     }
