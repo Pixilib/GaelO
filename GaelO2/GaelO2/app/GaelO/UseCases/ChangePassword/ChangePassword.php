@@ -53,11 +53,9 @@ class ChangePassword {
         //+ Tracker log
         
 
-        
-
      }
 
-    private function checkNewPassword($passwordCandidate, $temporaryPassword, $previousPassword1, $previousPassword2){
+    private function checkNewPassword($passwordCandidate, $temporaryPassword, $previousPassword1, $previousPassword2) : void {
         if( $passwordCandidate == $temporaryPassword || $passwordCandidate == $previousPassword1 || $passwordCandidate == $previousPassword2 ){
             throw new Exception('Already Previously Used Password');
         }
@@ -69,7 +67,7 @@ class ChangePassword {
         }
     }
 
-    private function checkMatchPasswords(string $pass1, string $pass2, bool $currentPasswordCheck) {
+    private function checkMatchPasswords(string $pass1, string $pass2, bool $currentPasswordCheck) : void {
         if( $pass1 != $pass2 ) {
             if ($currentPasswordCheck) throw new Exception('Not Matching Current Password');
             else  throw new Exception('Not Matching Previous Password');
