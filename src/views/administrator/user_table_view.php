@@ -23,13 +23,22 @@
 				"scrollX": true
 			}
 		);
-		
-		$( '#adminUserDiv'  ).on( 'keyup', ".column_search" ,function () {
+
+		//Search function in dataTable manual download
+		$('#adminUserDiv').on('change keyup', ".column_search", function() {
+			let searchValue = this.value
+			let regex = false
+
+			if($(this).prop("class").includes('select_search') && this.value != ""){
+				searchValue = "^"+this.value+"$"
+				regex = true
+			}
+
 			$('#tableau_admin').DataTable()
 				.column( $(this).parent().index() )
 				.search( this.value )
 				.draw();
-		} );
+		});
 
 	});
 
@@ -60,7 +69,15 @@
 				<th><input type="text" placeholder="Search" class="column_search" style="max-width:75px" /></th>
 				<th><input type="text" placeholder="Search" class="column_search" style="max-width:75px" /></th>
 				<th><input type="text" placeholder="Search" class="column_search" style="max-width:75px" /></th>
-				<th><input type="text" placeholder="Search" class="column_search" style="max-width:75px" /></th>
+				<th>
+					<select type="text" placeholder="Search" class="column_search select_search" style="max-width:75px" >
+						<option value="">Choose</option>
+						<option value="<?=User::ACTIVATED?>"><?=User::ACTIVATED?></option>
+						<option value="<?=User::UNCONFIRMED?>"><?=User::UNCONFIRMED?></option>	
+						<option value="<?=User::BLOCKED?>"><?=User::BLOCKED?></option>
+						<option value="<?=User::DEACTIVATED?>"><?=User::DEACTIVATED?></option>
+					</select>
+				</th>
 				<th></th>
 			</tr>
 		</thead>
