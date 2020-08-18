@@ -14,8 +14,7 @@
  */
 ?>
 <script type="text/javascript">
-
-	$('#userRoles').DataTable({
+    $('#userRoles').DataTable({
 			"sDom": 'Blrtip',
 			"scrollX": true,
 			buttons: [{
@@ -24,7 +23,6 @@
 				buttons: [
 					{
 						extend: 'copy',
-						filename : 'ExportRoles'
 						exportOptions: {
 							modifier : {
 								order : 'index', // 'current', 'applied','index', 'original'
@@ -35,7 +33,7 @@
 					},
 					{
 						extend: 'excel',
-						filename : 'ExportRoles'
+						filename : '<?= $_SESSION['study']?>_Users_Details_Export',
 						exportOptions: {
 							modifier : {
 								order : 'index', // 'current', 'applied','index', 'original'
@@ -46,7 +44,7 @@
 					},
 					{
 						extend: 'csv',
-						filename : 'ExportRoles'
+						filename : '<?= $_SESSION['study']?>_Users_Details_Export',
 						exportOptions: {
 							modifier : {
 								order : 'index', // 'current', 'applied','index', 'original'
@@ -57,7 +55,7 @@
 					},
 					{
 						extend: 'pdf',
-						filename : 'ExportRoles'
+						filename : '<?= $_SESSION['study']?>_Users_Details_Export',
 						exportOptions: {
 							modifier : {
 								order : 'index', // 'current', 'applied','index', 'original'
@@ -79,7 +77,7 @@
 					]
 			}],
 			"bSortCellsTop": true,
-			"iDisplayLength": 5
+			"iDisplayLength": 10
 		});
 
 	// Search function on datatable

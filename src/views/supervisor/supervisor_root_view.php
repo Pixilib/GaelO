@@ -111,7 +111,7 @@
 					},
 					{
 						extend: 'excel',
-						filename : 'ExportVisits',
+						filename : '<?= $_SESSION['study']?>_Visits_Export',
 						exportOptions: {
 							modifier : {
 								order : 'index', // 'current', 'applied','index', 'original'
@@ -122,7 +122,7 @@
 					},
 					{
 						extend: 'csv',
-						filename : 'ExportVisits',
+						filename : '<?= $_SESSION['study']?>_Visits_Export',
 						exportOptions: {
 							modifier : {
 								order : 'index', // 'current', 'applied','index', 'original'
@@ -133,7 +133,7 @@
 					},
 					{
 						extend: 'pdf',
-						filename : 'ExportVisits',
+						filename : '<?= $_SESSION['study']?>_Visits_Export',
 						exportOptions: {
 							modifier : {
 								order : 'index', // 'current', 'applied','index', 'original'
@@ -265,7 +265,7 @@
 					},
 					{
 						extend: 'excel',
-						filename : 'ExportPatient',
+						filename : '<?= $_SESSION['study']?>_Patients_Export',
 						exportOptions: {
 							modifier : {
 								order : 'index', // 'current', 'applied','index', 'original'
@@ -276,7 +276,7 @@
 					},
 					{
 						extend: 'csv',
-						filename : 'ExportPatient',
+						filename : '<?= $_SESSION['study']?>_Patients_Export',
 						exportOptions: {
 							modifier : {
 								order : 'index', // 'current', 'applied','index', 'original'
@@ -287,7 +287,7 @@
 					},
 					{
 						extend: 'pdf',
-						filename : 'ExportPatient',
+						filename : '<?= $_SESSION['study']?>_Patients_Export',
 						exportOptions: {
 							modifier : {
 								order : 'index', // 'current', 'applied','index', 'original'
