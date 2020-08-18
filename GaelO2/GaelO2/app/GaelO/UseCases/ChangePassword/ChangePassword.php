@@ -10,6 +10,8 @@ use App\GaelO\Adapters\LaravelFunctionAdapter;
 use App\GaelO\Util;
 use App\GaelO\Constants\Constants;
 
+use App\GaelO\Exceptions\GaelOException;
+
 class ChangePassword {
 
     public function __construct(PersistenceInterface $persistenceInterface){
@@ -35,10 +37,10 @@ class ChangePassword {
                 $this->checkMatchPasswords($previousPassword, $user['password'], true);
             }
 
-        }catch(Throwable $t) {
+        }catch(GaelOException $e) {
             //SK ICI on devrait definir nos execption à nous pour pouvoir output nos exeception message et pas celles qui viennent du framework
             $userResponse->status = 500;
-            $userResponse->statusText = $t->getMessage();
+            $userResponse->statusText = $e->getMessage();
             
         }
 
@@ -57,20 +59,20 @@ class ChangePassword {
 
     private function checkNewPassword($passwordCandidate, $temporaryPassword, $previousPassword1, $previousPassword2) : void {
         if( $passwordCandidate == $temporaryPassword || $passwordCandidate == $previousPassword1 || $passwordCandidate == $previousPassword2 ){
-            throw new Exception('Already Previously Used Password');
+            throw new GaelOException('Already Previously Used Password');
         }
     }
 
     private function checkPasswordFormatCorrect(string $password) {
         if ( strlen($password) < 8 || !preg_match('/[^a-z0-9]/i', $password) || strtolower($password != $password) ){
-            throw new Exception('Password Contraints Failure');
+            throw new GaelOException('Password Contraints Failure');
         }
     }
 
     private function checkMatchPasswords(string $pass1, string $pass2, bool $currentPasswordCheck) : void {
         if( $pass1 != $pass2 ) {
             if ($currentPasswordCheck) throw new Exception('Not Matching Current Password');
-            else  throw new Exception('Not Matching Previous Password');
+            else  throw new GaelOException('Not Matching Previous Password');
         }
     }
   
