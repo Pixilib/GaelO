@@ -57,7 +57,7 @@ class UserController extends Controller
         $loginResponse = new LoginResponse();
         $login = new Login();
         $login->execute($loginRequest, $loginResponse);
-        return response()->json($loginResponse);
+        return response()->json($loginResponse->body, $loginResponse->status);
     }
 
     public function getUser($id=0, GetUserRequest $getUserRequest, GetUserResponse $getUserResponse) {
@@ -72,7 +72,7 @@ class UserController extends Controller
         $createUserRequest = Util::fillObject($requestData, $createUserRequest);
         $createUser = App::make('CreateUser');
         $createUser->execute($createUserRequest, $createUserResponse);
-        return response()->json($createUserResponse, 201);
+        return response()->json($createUserResponse->body, $createUserResponse->status);
 
     }
 
@@ -81,7 +81,7 @@ class UserController extends Controller
         $modifyUserRequest = Util::fillObject($requestData, $modifyUserRequest);
         $modifyUser = App::make('ModifyUser');
         $modifyUser->execute($modifyUserRequest, $modifyUserResponse);
-        return response()->json($modifyUserResponse, 200);
+        return response()->json($modifyUserResponse->body, $modifyUserResponse->status);
     }
 
     public function changeUserPassword(Request $request, ChangePasswordRequest $changePasswordRequest, ChangePasswordResponse $changePasswordResponse) {
@@ -89,7 +89,7 @@ class UserController extends Controller
         $changePasswordRequest = Util::fillObject($requestData, $changePasswordRequest);
         $changePassword = App::make('ChangePassword');
         $changePassword->execute($changePasswordRequest, $changePasswordResponse);
-        return response()->json($changePasswordResponse);
+        return response()->json($changePasswordResponse->body, $changePasswordResponse->status);
     }
 
     public function deleteUser(int $id, Request $request, DeleteUserRequest $deleteUserRequest, DeleteUserResponse $deleteUserResponse) {
@@ -98,7 +98,7 @@ class UserController extends Controller
         $deleteUserRequest = Util::fillObject($requestData, $deleteUserRequest);
         $deleteUser = App::make('DeleteUser');
         $deleteUser->execute($deleteUserRequest, $deleteUserResponse);
-        return response()->json($deleteUserResponse);
+        return response()->json($deleteUserResponse->body, $deleteUserResponse->status);
     }
 
     public function testMail(){
