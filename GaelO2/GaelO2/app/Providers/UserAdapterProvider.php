@@ -60,6 +60,18 @@ class UserAdapterProvider extends ServiceProvider
         $this->app->bind('DeleteUserResponse', function ($app) {
             return new \App\GaelO\UseCases\DeleteUser\DeleteUserResponse();
         });
+
+        $this->app->bind('ChangePassword', function ($app) {
+            return new \App\GaelO\UseCases\ChangePassword\ChangePassword (new \App\GaelO\Repositories\UserRepository());
+        });
+
+        $this->app->bind('ChangePasswordRequest', function ($app) {
+            return new \App\GaelO\UseCases\ChangePassword\ChangePasswordRequest();
+        });
+
+        $this->app->bind('ChangePasswordResponse', function ($app) {
+            return new \App\GaelO\UseCases\ChangePassword\ChangePasswordResponse();
+        });
     }
 
     /**

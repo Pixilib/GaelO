@@ -20,7 +20,6 @@ class ChangePassword {
 
     public function execute(ChangePasswordRequest $userRequest, ChangePasswordResponse $userResponse) : void {
         $id = $userRequest->id;
-        $username = $userRequest->username; 
         $previousPassword = $userRequest->previous_password;
         $password1 = $userRequest->password1;
         $password2 = $userRequest->password2;
@@ -42,6 +41,7 @@ class ChangePassword {
         }catch(GaelOException $e) {
             $userResponse->status = 400;
             $userResponse->statusText = $e->getMessage();
+            echo ($userResponse->statusText);
             return;
         }
 
@@ -53,6 +53,9 @@ class ChangePassword {
         
         $this->persistenceInterface->update($user['id'], $data);
     
+
+        $userResponse->status = 200;
+        $userResponse->body = 'Password updated';
         //+ Tracker log => A faire
         //Tracker::logActivity($username, "User", null, null, "Change Password", "Password Changed");
 
@@ -87,7 +90,7 @@ class ChangePassword {
      */
     private function checkMatchPasswords(string $pass1, string $pass2, bool $currentPasswordCheck) : void {
         if( $pass1 != $pass2 ) {
-            if ($currentPasswordCheck) throw new Exception('Not Matching Current Password');
+            if ($currentPasswordCheck) throw new GaelOException('Not Matching Current Password');
             else  throw new GaelOException('Not Matching New Password');
         }
     }

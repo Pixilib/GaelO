@@ -93,9 +93,6 @@ paths:
                 id:
                   type: string
                   description: user id
-                username:
-                  type: string
-                  description: username
                 previous_password:
                   type: string
                   description: previous password

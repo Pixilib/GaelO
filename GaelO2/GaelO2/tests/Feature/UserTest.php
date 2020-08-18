@@ -1,7 +1,6 @@
 <?php
 
 namespace Tests\Feature;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
@@ -46,12 +45,45 @@ class UserTest extends TestCase
 
     }
 
-    public function testGetUser()
-    {
+    public function testGetUser() {
+        //Test get user 1
         $response = $this->json('GET', '/api/users/1') -> assertSuccessful();
+        //Test get all users
+        $response = $this->json('GET', '/api/users') -> assertSuccessful();
+        //Test get incorrect user
         $response = $this->json('GET', '/api/users/-1') -> assertStatus(500);
     }
 
-    //        $user = factory(User::class, 10)->create();
+    public function testDeleteUser() {
+        //Test delete first user
+        $response = $this->json('DELETE', '/api/users/1') -> assertSuccessful();
+        //Test delete non-existing user
+        $response = $this->json('DELETE', '/api/users/0') -> assertStatus(500);
+    }
+
+    public function testChangePassword() {
+        $user = factory(User::class)->create(['password' => 'Ceciest1test', 'status' => 'Activated', 'password_previous1' => 'Cecietait1test']);
+        $data = [
+            'id' => 2,
+            'previous_password' => 'Ceciest1test',
+            'password1' => 'Ceciest1nveautest',
+            'password2' => 'Ceciest1nveautest'
+        ];
+        
+        //Test data correctly updated
+        $response = $this->json('PATCH', '/api/users', $data) -> assertStatus(200);
+        //Test password format incorrect
+        $data['password1'] = 'test';
+        $data['password2'] = $data['password1'];
+        $response = $this->json('PATCH', '/api/users', $data) -> assertStatus(400);
+        $response -> dump();
+        //Test two passwords do not match
+        $data['password2'] = 'CeciEst1nveautest'; 
+        $response = $this->json('PATCH', '/api/users', $data) -> assertStatus(400);
+        //Test previously used password
+        $data['password1'] = 'Cecietait1test'; 
+        $data['password2'] = $data['password1'];
+        $response = $this->json('PATCH', '/api/users', $data) -> assertStatus(400);
+    }
 
 }
