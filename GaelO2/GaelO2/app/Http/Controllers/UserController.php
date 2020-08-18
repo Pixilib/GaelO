@@ -69,10 +69,7 @@ class UserController extends Controller
 
     public function createUser(Request $request, CreateUserRequest $createUserRequest, CreateUserResponse $createUserResponse) {
         $requestData = $request->all();
-
-        foreach($requestData as $property => $value) {
-            $createUserRequest->$property = isset($requestData[$property]) ? $requestData[$property] : null;
-        }
+        $createUserRequest = Util::fillObject($requestData, $createUserRequest);
         $createUser = App::make('CreateUser');
         $createUser->execute($createUserRequest, $createUserResponse);
         return response()->json($createUserResponse, 201);
@@ -81,11 +78,7 @@ class UserController extends Controller
 
     public function modifyUser(Request $request, ModifyUserRequest $modifyUserRequest, ModifyUserResponse $modifyUserResponse) {
         $requestData = $request->all();
-
-        $modifyUserRequestData = get_object_vars($modifyUserRequest);
-        foreach($modifyUserRequestData as $property => $value) {
-            $modifyUserRequest->$property = isset($requestData[$property]) ? $requestData[$property] : null;
-        }
+        $modifyUserRequest = Util::fillObject($requestData, $modifyUserRequest);
         $modifyUser = App::make('ModifyUser');
         $modifyUser->execute($modifyUserRequest, $modifyUserResponse);
         return response()->json($modifyUserResponse, 200);
@@ -93,7 +86,6 @@ class UserController extends Controller
 
     public function changeUserPassword(Request $request, ChangePasswordRequest $changePasswordRequest, ChangePasswordResponse $changePasswordResponse) {
         $requestData = $request->all();
-
         $changePasswordRequest = Util::fillObject($requestData, $changePasswordRequest);
         $changePassword = App::make('ChangePassword');
         $changePassword->execute($changePasswordRequest, $changePasswordResponse);
