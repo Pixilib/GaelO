@@ -7,7 +7,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
-class UserCreated extends Mailable
+class UnlockedForm extends Mailable
 {
     use Queueable, SerializesModels;
 
@@ -16,9 +16,16 @@ class UserCreated extends Mailable
      *
      * @return void
      */
-    public function __construct(array $parameters)
+    public function __construct($parameters)
     {
         $this->parameters = $parameters;
+        /*
+        array(
+            'study'=>'',
+            'patientCode'=>'',
+            'visitType'=>''
+        )
+        */
     }
 
     /**
@@ -28,8 +35,8 @@ class UserCreated extends Mailable
      */
     public function build()
     {
-        return $this->object('User Created')
-            ->view('mails.mail_create_user')
-            ->with($this->parameters);
+        return $this->view('mails.mail_unlocked_form')
+        ->object($this->parameters['study']." - Form Unlocked")
+        ->with($this->parameters);
     }
 }

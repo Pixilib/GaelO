@@ -7,7 +7,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
-class UserCreated extends Mailable
+class VisitNotDone extends Mailable
 {
     use Queueable, SerializesModels;
 
@@ -16,9 +16,15 @@ class UserCreated extends Mailable
      *
      * @return void
      */
-    public function __construct(array $parameters)
+    public function __construct($parameters)
     {
         $this->parameters = $parameters;
+        /*
+        array('patientCode'=>'',
+        'study'=>'',
+        'visitType'=>'',
+        'creatorUser'=>'');
+        */
     }
 
     /**
@@ -28,8 +34,8 @@ class UserCreated extends Mailable
      */
     public function build()
     {
-        return $this->object('User Created')
-            ->view('mails.mail_create_user')
+        return $this->view('mails.mail_visit_not_done')
+            ->object($this->parameters['study']." - Visit Not Done")
             ->with($this->parameters);
     }
 }

@@ -7,7 +7,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
-class UserCreated extends Mailable
+class UploadFailure extends Mailable
 {
     use Queueable, SerializesModels;
 
@@ -19,6 +19,15 @@ class UserCreated extends Mailable
     public function __construct(array $parameters)
     {
         $this->parameters = $parameters;
+        /*
+        array('idVisit' =>'',
+        'patientCode' => '',
+        'visitType'=> '',
+        'study'=>'',
+        'zipPath'=>'',
+        'username'=>'',
+        'errorMessage'=>'');
+        */
     }
 
     /**
@@ -28,8 +37,8 @@ class UserCreated extends Mailable
      */
     public function build()
     {
-        return $this->object('User Created')
-            ->view('mails.mail_create_user')
+        return $this->view('mails.mail_upload_failure')
+            ->subject($this->parameters['study']." - Error During Import")
             ->with($this->parameters);
     }
 }
