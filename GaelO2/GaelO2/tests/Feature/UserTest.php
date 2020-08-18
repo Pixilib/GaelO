@@ -5,7 +5,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\TestCase;
-use App\User; 
+use App\User;
 
 class UserTest extends TestCase
 {
@@ -37,7 +37,7 @@ class UserTest extends TestCase
         'orthanc_address' => 'test',
         'orthanc_login' => 'test',
         'orthanc_password' => 'test'];
-        
+
         //Test user creation
         $response = $this->json('POST', '/api/users', $data) -> assertSuccessful();
         //Test that copies don't insert
@@ -58,7 +58,7 @@ class UserTest extends TestCase
         //Test delete first user
         $response = $this->json('DELETE', '/api/users/1') -> assertSuccessful();
         //Test delete non-existing user
-        $response = $this->json('DELETE', '/api/users/0') -> assertStatus(500);
+        $response = $this->json('DELETE', '/api/users/-1') -> assertStatus(500);
     }
 
     public function testChangePassword() {
@@ -69,7 +69,7 @@ class UserTest extends TestCase
             'password1' => 'Ceciest1nveautest',
             'password2' => 'Ceciest1nveautest'
         ];
-        
+
         //Test data correctly updated
         $response = $this->json('PATCH', '/api/users', $data) -> assertStatus(200);
         //Test password format incorrect
@@ -78,10 +78,10 @@ class UserTest extends TestCase
         $response = $this->json('PATCH', '/api/users', $data) -> assertStatus(400);
         $response -> dump();
         //Test two passwords do not match
-        $data['password2'] = 'CeciEst1nveautest'; 
+        $data['password2'] = 'CeciEst1nveautest';
         $response = $this->json('PATCH', '/api/users', $data) -> assertStatus(400);
         //Test previously used password
-        $data['password1'] = 'Cecietait1test'; 
+        $data['password1'] = 'Cecietait1test';
         $data['password2'] = $data['password1'];
         $response = $this->json('PATCH', '/api/users', $data) -> assertStatus(400);
     }
