@@ -254,14 +254,14 @@ function build_table_series($role, $visitObject)
 		<div >
 			<div id="headingOne">
 				<h2 class="mb-0">
-					<button class="btn btn-primary collapsed" type="button" data-toggle="collapse" data-target="#seriesDetails" aria-expanded="true" aria-controls="collapseOne">
-						Series Details
+					<button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#seriesDetails" aria-expanded="true" aria-controls="collapseOne">
+						Show/Hide Series Details
 					</button>
 				</h2>
 			</div>
 
-			<div id="seriesDetails" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
-			<div class="card-body">
+			<div id="seriesDetails" class="show mt-3" aria-labelledby="headingOne" data-parent="#accordionExample">
+			<div>
 				<div style="overflow-x:auto;"> 
 					<table id="tab_series" class="table table-striped">
 						<tr>

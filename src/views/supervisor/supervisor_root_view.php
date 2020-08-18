@@ -91,69 +91,6 @@
 			$("#documentation").dialog("open");
 		});
 
-		$('#userRoles').DataTable({
-			"sDom": 'Blrtip',
-			"scrollX": true,
-			buttons: [{
-				extend: 'collection',
-				text: 'Export',
-				buttons: [
-					{
-						extend: 'copy',
-						exportOptions: {
-							modifier : {
-								order : 'index', // 'current', 'applied','index', 'original'
-								page : 'all', // 'all', 'current'
-								search : 'applied' // 'none', 'applied', 'removed'
-							}
-						}
-					},
-					{
-						extend: 'excel',
-						exportOptions: {
-							modifier : {
-								order : 'index', // 'current', 'applied','index', 'original'
-								page : 'all', // 'all', 'current'
-								search : 'applied' // 'none', 'applied', 'removed'
-							}
-						}
-					},
-					{
-						extend: 'csv',
-						exportOptions: {
-							modifier : {
-								order : 'index', // 'current', 'applied','index', 'original'
-								page : 'all', // 'all', 'current'
-								search : 'applied' // 'none', 'applied', 'removed'
-							}
-						}
-					},
-					{
-						extend: 'pdf',
-						exportOptions: {
-							modifier : {
-								order : 'index', // 'current', 'applied','index', 'original'
-								page : 'all', // 'all', 'current'
-								search : 'applied' // 'none', 'applied', 'removed'
-							}
-						}
-					},
-					{
-						extend: 'print',
-						exportOptions: {
-							modifier : {
-								order : 'index', // 'current', 'applied','index', 'original'
-								page : 'all', // 'all', 'current'
-								search : 'applied' // 'none', 'applied', 'removed'
-							}
-						}
-					}
-					]
-			}],
-			"bSortCellsTop": true,
-			"iDisplayLength": 5
-		});
-
 		//Build the datatable dysplaying each visit status
 		$('#tableau').DataTable({
 			"sDom": 'Blrtip',
@@ -174,6 +111,7 @@
 					},
 					{
 						extend: 'excel',
+						filename : '<?= $_SESSION['study']?>_Visits_Export',
 						exportOptions: {
 							modifier : {
 								order : 'index', // 'current', 'applied','index', 'original'
@@ -184,6 +122,7 @@
 					},
 					{
 						extend: 'csv',
+						filename : '<?= $_SESSION['study']?>_Visits_Export',
 						exportOptions: {
 							modifier : {
 								order : 'index', // 'current', 'applied','index', 'original'
@@ -194,6 +133,7 @@
 					},
 					{
 						extend: 'pdf',
+						filename : '<?= $_SESSION['study']?>_Visits_Export',
 						exportOptions: {
 							modifier : {
 								order : 'index', // 'current', 'applied','index', 'original'
@@ -325,6 +265,7 @@
 					},
 					{
 						extend: 'excel',
+						filename : '<?= $_SESSION['study']?>_Patients_Export',
 						exportOptions: {
 							modifier : {
 								order : 'index', // 'current', 'applied','index', 'original'
@@ -335,6 +276,7 @@
 					},
 					{
 						extend: 'csv',
+						filename : '<?= $_SESSION['study']?>_Patients_Export',
 						exportOptions: {
 							modifier : {
 								order : 'index', // 'current', 'applied','index', 'original'
@@ -345,6 +287,7 @@
 					},
 					{
 						extend: 'pdf',
+						filename : '<?= $_SESSION['study']?>_Patients_Export',
 						exportOptions: {
 							modifier : {
 								order : 'index', // 'current', 'applied','index', 'original'

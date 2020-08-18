@@ -125,6 +125,7 @@
                             },
                             {
                                 extend: 'excel',
+                                filename : '<?= $_SESSION['study']?>_Uploads_Manager_Export',
                                 exportOptions: {
                                     modifier : {
                                         order : 'index', // 'current', 'applied','index', 'original'
@@ -135,6 +136,7 @@
                             },
                             {
                                 extend: 'csv',
+                                filename : '<?= $_SESSION['study']?>_Uploads_Manager_Export',
                                 exportOptions: {
                                     modifier : {
                                         order : 'index', // 'current', 'applied','index', 'original'
@@ -145,6 +147,7 @@
                             },
                             {
                                 extend: 'pdf',
+                                filename : '<?= $_SESSION['study']?>_Uploads_Manager_Export',
                                 exportOptions: {
                                     modifier : {
                                         order : 'index', // 'current', 'applied','index', 'original'

@@ -33,6 +33,7 @@
 					},
 					{
 						extend: 'excel',
+						filename : 'GaelO_Tracker_Export',
 						exportOptions: {
 							modifier : {
 								order : 'index', // 'current', 'applied','index', 'original'
@@ -43,6 +44,7 @@
 					},
 					{
 						extend: 'csv',
+						filename : 'GaelO_Tracker_Export',
 						exportOptions: {
 							modifier : {
 								order : 'index', // 'current', 'applied','index', 'original'
@@ -53,6 +55,7 @@
 					},
 					{
 						extend: 'pdf',
+						filename : 'GaelO_Tracker_Export',
 						exportOptions: {
 							modifier : {
 								order : 'index', // 'current', 'applied','index', 'original'
