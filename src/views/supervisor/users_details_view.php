@@ -14,11 +14,73 @@
  */
 ?>
 <script type="text/javascript">
-    $('#userRoles').DataTable( {
-    	"sDom": 'lrtip',
-    	"bSortCellsTop": true,
-    	"scrollX": true
-    });
+
+	$('#userRoles').DataTable({
+			"sDom": 'Blrtip',
+			"scrollX": true,
+			buttons: [{
+				extend: 'collection',
+				text: 'Export',
+				buttons: [
+					{
+						extend: 'copy',
+						filename : 'ExportRoles'
+						exportOptions: {
+							modifier : {
+								order : 'index', // 'current', 'applied','index', 'original'
+								page : 'all', // 'all', 'current'
+								search : 'applied' // 'none', 'applied', 'removed'
+							}
+						}
+					},
+					{
+						extend: 'excel',
+						filename : 'ExportRoles'
+						exportOptions: {
+							modifier : {
+								order : 'index', // 'current', 'applied','index', 'original'
+								page : 'all', // 'all', 'current'
+								search : 'applied' // 'none', 'applied', 'removed'
+							}
+						}
+					},
+					{
+						extend: 'csv',
+						filename : 'ExportRoles'
+						exportOptions: {
+							modifier : {
+								order : 'index', // 'current', 'applied','index', 'original'
+								page : 'all', // 'all', 'current'
+								search : 'applied' // 'none', 'applied', 'removed'
+							}
+						}
+					},
+					{
+						extend: 'pdf',
+						filename : 'ExportRoles'
+						exportOptions: {
+							modifier : {
+								order : 'index', // 'current', 'applied','index', 'original'
+								page : 'all', // 'all', 'current'
+								search : 'applied' // 'none', 'applied', 'removed'
+							}
+						}
+					},
+					{
+						extend: 'print',
+						exportOptions: {
+							modifier : {
+								order : 'index', // 'current', 'applied','index', 'original'
+								page : 'all', // 'all', 'current'
+								search : 'applied' // 'none', 'applied', 'removed'
+							}
+						}
+					}
+					]
+			}],
+			"bSortCellsTop": true,
+			"iDisplayLength": 5
+		});
 
 	// Search function on datatable
 	$('#userDetailsRoles').on('keyup', ".column_search_user_role", function() {
