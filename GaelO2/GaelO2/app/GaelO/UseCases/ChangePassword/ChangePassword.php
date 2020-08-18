@@ -16,7 +16,7 @@ class ChangePassword {
 
     public function __construct(PersistenceInterface $persistenceInterface){
         $this->persistenceInterface = $persistenceInterface;
-     } 
+     }
 
     public function execute(ChangePasswordRequest $userRequest, ChangePasswordResponse $userResponse) : void {
         $id = $userRequest->id;
@@ -50,12 +50,11 @@ class ChangePassword {
         $data['password'] = LaravelFunctionAdapter::hash($password1);
         $data['last_password_update'] = Util::now();
         $data['status'] = Constants::USER_STATUS_ACTIVATED;
-        
+
         $this->persistenceInterface->update($user['id'], $data);
-    
+
 
         $userResponse->status = 200;
-        $userResponse->body = 'Password updated';
         //+ Tracker log => A faire
         //Tracker::logActivity($username, "User", null, null, "Change Password", "Password Changed");
 
@@ -65,16 +64,16 @@ class ChangePassword {
       * Check that candidate password is not in the 3 last used passwords
       */
     private function checkNewPassword($passwordCandidate, $temporaryPassword, $currentPassword, $previousPassword1, $previousPassword2) : void {
-        if( $passwordCandidate == $temporaryPassword || 
+        if( $passwordCandidate == $temporaryPassword ||
                 $passwordCandidate == $currentPassword ||
-                $passwordCandidate == $previousPassword1 || 
+                $passwordCandidate == $previousPassword1 ||
                 $passwordCandidate == $previousPassword2 ) {
             throw new GaelOException('Already Previously Used Password');
         }
     }
 
     /**
-     * Check Password constraints : 
+     * Check Password constraints :
      * Should have length at least 8 carachters
      * Should not have carachters different from alfa numerical
      * Should have at least a differente case (so strlower should not be equal to original string)
@@ -94,7 +93,7 @@ class ChangePassword {
             else  throw new GaelOException('Not Matching New Password');
         }
     }
-  
+
 }
 
 ?>
