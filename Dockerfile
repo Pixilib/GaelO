@@ -21,6 +21,7 @@ RUN apt-get update -qy && \
     unzip \
     libzip-dev \
     zip && \
+    supervisor \
     apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 RUN docker-php-ext-install zip opcache pdo pdo_mysql pdo_pgsql pcntl mbstring intl

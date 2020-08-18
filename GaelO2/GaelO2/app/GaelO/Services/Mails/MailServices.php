@@ -2,17 +2,18 @@
 
 namespace App\GaelO\Services\Mails;
 
-use App\GaelO\Adapters;
+use App\GaelO\Adapters\SendEmailAdapter;
+use App\GaelO\Repositories\UserRepository;
 
 Class MailServices extends SendEmailAdapter {
 
     public function __construct(UserRepository $userRepository){
-        $this->userRepository = $userRepository
+        $this->userRepository = $userRepository;
     }
 
-    addAdminsEmails(){
+    public function addAdminsEmails(){
         $adminsEmails = $this->userRepository->getAdministratorsEmails();
-        return $adminsEmails
+        return $adminsEmails;
     }
 
 }

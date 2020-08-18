@@ -1,6 +1,4 @@
 <?php
-
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -13,10 +11,15 @@ use Illuminate\Support\Facades\Route;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
-Route::post('users', 'UserController@createUser');
+
+//Users Routes
 Route::get('users/{id?}', 'UserController@getUser');
+Route::post('users', 'UserController@createUser');
+//SK ICI a generaliser pour l'edition ou on fait un PUT ?
 Route::patch('users', 'UserController@changeUserPassword');
 Route::delete('users/{id}', 'UserController@deleteUser');
-Route::post('login', 'UserController@login');
-Route::post('register', 'RegisterController@register');
-Route::get('testClean', 'UserController@loginClean');
+
+//Login Routes
+Route::post('login', 'UserController@loginClean');
+
+Route::get('mail', 'UserController@testMail');
