@@ -90,6 +90,9 @@ paths:
               title: User
               type: object
               properties:
+                id:
+                  type: string
+                  description: user id
                 username:
                   type: string
                   description: username

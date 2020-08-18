@@ -19,12 +19,13 @@ class ChangePassword {
      } 
 
     public function execute(ChangePasswordRequest $userRequest, ChangePasswordResponse $userResponse) : void {
+        $id = $userRequest->id;
         $username = $userRequest->username; 
         $previousPassword = $userRequest->previous_password;
         $password1 = $userRequest->password1;
         $password2 = $userRequest->password2;
 
-        $user = $this->persistenceInterface->getUserByUsername($username);
+        $user = $this->persistenceInterface->find($id);
 
         try{
 
