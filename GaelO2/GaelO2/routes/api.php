@@ -27,10 +27,11 @@ Route::post('centers', 'CenterController@createCenter');
 Route::get('mail', 'UserController@testMail');
 
 //Login Routes
-//Route::post('login', 'UserController@loginClean');
 Route::post('login', 'AuthController@login');
-Route::delete('login', 'AuthController@logout');
-//middleware('auth:api')->
+Route::middleware('auth:api')->delete('login', 'AuthController@logout');
+
+//test auth middelware
+Route::middleware(['auth:api', 'admin'])->get('admin', 'AuthController@logout');
 
 //Miscellaneous Routes
 Route::get('countries/{code?}', 'CountryController@getCountry');

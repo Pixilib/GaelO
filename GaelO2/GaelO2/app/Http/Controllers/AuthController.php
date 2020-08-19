@@ -10,16 +10,11 @@ use Carbon\Carbon;
 class AuthController extends Controller
 {
     public function login(Request $request){
-        
-        $request->validate([
-            'username' => 'required|string',
-            'password' => 'required|string'
-        ]);
 
         if(! Auth::attempt( ['username'=> $request->username, 'password' => $request->password, 'status'=>'activated' ]) ) {
             return response()->json('Unauthorized', 401);
         }
-        //$user = $request->user();
+
         $user = User::where('username', $request->username)->first();
 
         $tokenResult = $user->createToken('Personal Access Token');
@@ -37,6 +32,6 @@ class AuthController extends Controller
 
     public function logout(Request $request) {
         $request->user()->token()->revoke();
-        return response();
+        return response()->json();
     }
 }
