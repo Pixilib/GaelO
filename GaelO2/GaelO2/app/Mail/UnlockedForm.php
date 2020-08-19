@@ -11,6 +11,8 @@ class UnlockedForm extends Mailable
 {
     use Queueable, SerializesModels;
 
+    protected array $parameters;
+
     /**
      * Create a new message instance.
      *
@@ -36,7 +38,7 @@ class UnlockedForm extends Mailable
     public function build()
     {
         return $this->view('mails.mail_unlocked_form')
-        ->object($this->parameters['study']." - Form Unlocked Patient - ".$this->parameters['patientCode'])
+        ->subject($this->parameters['study']." - Form Unlocked Patient - ".$this->parameters['patientCode'])
         ->with($this->parameters);
     }
 }

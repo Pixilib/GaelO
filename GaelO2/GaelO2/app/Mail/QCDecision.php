@@ -11,6 +11,8 @@ class QCDecision extends Mailable
 {
     use Queueable, SerializesModels;
 
+    protected array $parameters;
+
     /**
      * Create a new message instance.
      *
@@ -43,7 +45,7 @@ class QCDecision extends Mailable
     public function build()
     {
         return $this->view('mails.mail.qc_decision')
-        ->object($this->parameters['study']." - Quality Control Patient - ".$this->parameters['patientCode'])
+        ->subject($this->parameters['study']." - Quality Control Patient - ".$this->parameters['patientCode'])
         ->with($this->parameters);
     }
 }

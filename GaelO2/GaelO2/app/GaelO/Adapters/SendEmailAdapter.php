@@ -22,11 +22,10 @@ use App\Mail\UploadedVisit;
 use App\Mail\UploadFailure;
 use App\Mail\UserCreated;
 use App\Mail\VisitNotDone;
-use Mail_Constants;
+
+use App\GaelO\Constants\MailConstants;
 
 class SendEmailAdapter implements MailInterface {
-
-
 
     public function setReplyTo(string $replyTo){
         $this->replyTo = $replyTo;
@@ -37,70 +36,70 @@ class SendEmailAdapter implements MailInterface {
 
     }
 
-    public function setVariable(array $variables){
-        $this->variables = $variables;
-        $this->variables['platformName']= "GaelO";
-        $this->variables['webAddress']= "http://gaelo.fr";
-        $this->variables['corporation']= "GaelO";
-        $this->variables['adminEmail']= "salim.kanoun@gmail.com";
+    public function setParameters(array $parameters){
+        $this->parameters = $parameters;
+        $this->parameters['platformName']= "GaelO";
+        $this->parameters['webAddress']= "http://gaelo.fr";
+        $this->parameters['corporation']= "GaelO";
+        $this->parameters['adminEmail']= "salim.kanoun@gmail.com";
 
     }
 
     public function sendModel(int $model){
 
         switch ($model) {
-            case Mail_Constants::EMAIL_REQUEST:
+            case MailConstants::EMAIL_REQUEST:
                 $this->model = new Request($this->parameters);
                 break;
-            case Mail_Constants::EMAIL_VISIT_NOT_DONE:
+            case MailConstants::EMAIL_VISIT_NOT_DONE:
                 $this->model = new VisitNotDone($this->parameters);
                 break;
-            case Mail_Constants::EMAIL_USER_CREATED:
+            case MailConstants::EMAIL_USER_CREATED:
                 $this->model = new UserCreated($this->parameters);
                 break;
-            case Mail_Constants::EMAIL_UPLOAD_FAILURE:
+            case MailConstants::EMAIL_UPLOAD_FAILURE:
                 $this->model = new UploadFailure($this->parameters);
                 break;
-            case Mail_Constants::EMAIL_UPLOADED_VISIT:
+            case MailConstants::EMAIL_UPLOADED_VISIT:
                 $this->model = new UploadedVisit($this->parameters);
                 break;
-            case Mail_Constants::EMAIL_UNLOCK_REQUEST:
+            case MailConstants::EMAIL_UNLOCK_REQUEST:
                 $this->model = new UnlockRequest($this->parameters);
                 break;
-            case Mail_Constants::EMAIL_UNLOCK_FORM:
+            case MailConstants::EMAIL_UNLOCK_FORM:
                 $this->model = new UnlockedForm($this->parameters);
                 break;
-            case Mail_Constants::EMAIL_UNCONFIRMED_ACCOUNT:
+            case MailConstants::EMAIL_UNCONFIRMED_ACCOUNT:
                 $this->model = new UnconfirmedAccount($this->parameters);
                 break;
-            case Mail_Constants::EMAIL_REVIEW_READY:
+            case MailConstants::EMAIL_REVIEW_READY:
                 $this->model = new ReviewReady($this->parameters);
                 break;
-            case Mail_Constants::EMAIL_RESET_PASSWORD:
+            case MailConstants::EMAIL_RESET_PASSWORD:
                 $this->model = new ResetPassword($this->parameters);
                 break;
-            case Mail_Constants::EMAIL_QC_DECISION:
+            case MailConstants::EMAIL_QC_DECISION:
                 $this->model = new QCDecision($this->parameters);
                 break;
-            case Mail_Constants::EMAIL_DELETED_FORM:
+            case MailConstants::EMAIL_DELETED_FORM:
                 $this->model = new DeletedForm($this->parameters);
                 break;
-            case Mail_Constants::EMAIL_CORRECTIVE_ACTION:
+            case MailConstants::EMAIL_CORRECTIVE_ACTION:
                 $this->model = new CorrectiveAction($this->parameters);
                 break;
-            case Mail_Constants::EMAIL_CONCLUSION:
+            case MailConstants::EMAIL_CONCLUSION:
                 $this->model = new Conclusion($this->parameters);
                 break;
-            case Mail_Constants::EMAIL_CHANGE_PASSWORD_DEACTIVATED:
+            case MailConstants::EMAIL_CHANGE_PASSWORD_DEACTIVATED:
                 $this->model = new ChangePasswordDeactivated($this->parameters);
                 break;
-            case Mail_Constants::EMAIL_BLOCKED_ACCOUNT:
+            case MailConstants::EMAIL_BLOCKED_ACCOUNT:
                 $this->model = new BlockedAccount($this->parameters);
                 break;
-            case Mail_Constants::EMAIL_ADMIN_LOGGED:
+            case MailConstants::EMAIL_ADMIN_LOGGED:
                 $this->model = new AdminLoged($this->parameters);
                 break;
-            case Mail_Constants::EMAIL_ADJUDICATION:
+            case MailConstants::EMAIL_ADJUDICATION:
                 $this->model = new Adjudication($this->parameters);
                 break;
         }

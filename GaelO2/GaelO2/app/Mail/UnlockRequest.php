@@ -11,6 +11,8 @@ class UnlockRequest extends Mailable
 {
     use Queueable, SerializesModels;
 
+    protected array $parameters;
+
     /**
      * Create a new message instance.
      *
@@ -38,7 +40,7 @@ class UnlockRequest extends Mailable
     public function build()
     {
         return $this->view('mails.mail_unlock_request')
-            ->object($this->parameters['study']." - Unlock Request")
+            ->subject($this->parameters['study']." - Unlock Request")
             ->with($this->parameters);
     }
 }

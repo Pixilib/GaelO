@@ -11,6 +11,7 @@ class Request extends Mailable
 {
     use Queueable, SerializesModels;
 
+    protected array $parameters;
     /**
      * Create a new message instance.
      *
@@ -35,7 +36,7 @@ class Request extends Mailable
     public function build()
     {
         return $this->view('mails.mail_request')
-        ->object("GaelO -Request")
+        ->subject("GaelO -Request")
         ->with($this->parameters);
     }
 }

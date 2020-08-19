@@ -1,9 +1,9 @@
 <?php
 
-namespace App\GaelO\COnstants;
-class Constants{
+namespace App\GaelO\Constants;
+class Constants {
 
     const USER_STATUS_UNCONFIRMED = "Unconfirmed";
     const USER_STATUS_ACTIVATED = "Activated";
-    
+
 }

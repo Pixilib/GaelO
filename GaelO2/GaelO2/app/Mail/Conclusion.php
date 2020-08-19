@@ -11,6 +11,8 @@ class Conclusion extends Mailable
 {
     use Queueable, SerializesModels;
 
+    protected array $parameters;
+
     /**
      * Create a new message instance.
      *
@@ -35,7 +37,7 @@ class Conclusion extends Mailable
     public function build()
     {
         return $this->view('mails.mail_conclusion')
-        ->object($this->parameters['study']." - Visit Concluded Patient - ".$this->parameters['patientCode'])
+        ->subject($this->parameters['study']." - Visit Concluded Patient - ".$this->parameters['patientCode'])
         ->with($this->parameters);
     }
 }

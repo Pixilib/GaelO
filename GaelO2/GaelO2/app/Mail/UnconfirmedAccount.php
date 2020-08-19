@@ -11,6 +11,8 @@ class UnconfirmedAccount extends Mailable
 {
     use Queueable, SerializesModels;
 
+    protected array $parameters;
+
     /**
      * Create a new message instance.
      *
@@ -34,7 +36,7 @@ class UnconfirmedAccount extends Mailable
     public function build()
     {
         return $this->view('mails.mail_unconfirmed_account')
-        ->object("GaelO - Account Reactivation")
+        ->subject("GaelO - Account Reactivation")
         ->with($this->parameters);
     }
 }

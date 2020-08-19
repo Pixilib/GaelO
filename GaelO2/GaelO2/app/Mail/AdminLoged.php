@@ -11,6 +11,8 @@ class AdminLoged extends Mailable
 {
     use Queueable, SerializesModels;
 
+    protected array $parameters;
+
     /**
      * Create a new message instance.
      *
@@ -33,7 +35,7 @@ class AdminLoged extends Mailable
     public function build()
     {
         return $this->view('mails.mail_admin_logged')
-        ->object("GaelO - Admin Logged In")
+        ->subject("GaelO - Admin Logged In")
         ->with($this->parameters);
     }
 }

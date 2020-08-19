@@ -11,6 +11,8 @@ class BlockedAccount extends Mailable
 {
     use Queueable, SerializesModels;
 
+    protected array $parameters;
+
     /**
      * Create a new message instance.
      *
@@ -33,7 +35,7 @@ class BlockedAccount extends Mailable
     public function build()
     {
         return $this->view('mails.mail_blocked_account')
-        ->object("GaelO - Blocked Account")
+        ->subject("GaelO - Blocked Account")
         ->with($this->parameters);
     }
 }

@@ -11,6 +11,8 @@ class CorrectiveAction extends Mailable
 {
     use Queueable, SerializesModels;
 
+    protected array $parameters;
+
     /**
      * Create a new message instance.
      *
@@ -35,7 +37,7 @@ class CorrectiveAction extends Mailable
     public function build()
     {
         return $this->view('mails.mail_corrective_action')
-        ->object($this->parameters['study']." - Corrective Action Patient - ".$this->parameters['patientCode'])
+        ->subject($this->parameters['study']." - Corrective Action Patient - ".$this->parameters['patientCode'])
         ->with($this->parameters);
     }
 }

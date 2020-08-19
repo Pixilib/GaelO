@@ -11,6 +11,8 @@ class Adjudication extends Mailable
 {
     use Queueable, SerializesModels;
 
+    protected array $parameters;
+
     /**
      * Create a new message instance.
      *
@@ -36,7 +38,7 @@ class Adjudication extends Mailable
     public function build()
     {
         return $this->view('mails.adjudication')
-        ->object($this->parameters['study']." - Awaiting Adjudication Patient - ".$this->parameters['patientCode'])
+        ->subject($this->parameters['study']." - Awaiting Adjudication Patient - ".$this->parameters['patientCode'])
         ->with($this->parameters);
     }
 }

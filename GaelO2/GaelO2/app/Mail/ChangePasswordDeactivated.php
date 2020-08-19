@@ -11,6 +11,8 @@ class ChangePasswordDeactivated extends Mailable
 {
     use Queueable, SerializesModels;
 
+    protected array $parameters;
+
     /**
      * Create a new message instance.
      *
@@ -38,7 +40,7 @@ class ChangePasswordDeactivated extends Mailable
     {
 
         return $this->view('mails.mail_change_password_deactivated')
-        ->object("GaelO - Blocked Account")
+        ->subject("GaelO - Blocked Account")
         ->with($this->parameters);
     }
 }

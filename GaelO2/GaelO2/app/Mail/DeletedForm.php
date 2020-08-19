@@ -11,6 +11,8 @@ class DeletedForm extends Mailable
 {
     use Queueable, SerializesModels;
 
+    protected array $parameters;
+
     /**
      * Create a new message instance.
      *
@@ -34,7 +36,7 @@ class DeletedForm extends Mailable
     public function build()
     {
         return $this->view('mails.mail_deleted_form')
-        ->object($this->parameters['study']." - Form Deleted Patient - ".$this->parameters['patientCode'])
+        ->subject($this->parameters['study']." - Form Deleted Patient - ".$this->parameters['patientCode'])
         ->with($this->parameters);
     }
 }

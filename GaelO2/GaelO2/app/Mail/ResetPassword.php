@@ -11,6 +11,8 @@ class ResetPassword extends Mailable
 {
     use Queueable, SerializesModels;
 
+    protected array $parameters;
+
     /**
      * Create a new message instance.
      *
@@ -33,7 +35,7 @@ class ResetPassword extends Mailable
     public function build()
     {
         return $this->view('mails.mail_reset_password')
-        ->object("GaelO - New Password")
+        ->subject("GaelO - New Password")
         ->with($this->parameters);
     }
 }

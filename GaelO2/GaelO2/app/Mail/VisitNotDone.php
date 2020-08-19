@@ -11,6 +11,8 @@ class VisitNotDone extends Mailable
 {
     use Queueable, SerializesModels;
 
+    protected array $parameters;
+
     /**
      * Create a new message instance.
      *
@@ -35,7 +37,7 @@ class VisitNotDone extends Mailable
     public function build()
     {
         return $this->view('mails.mail_visit_not_done')
-            ->object($this->parameters['study']." - Visit Not Done - Patient ".$this->parameters['patientCode'])
+            ->subject($this->parameters['study']." - Visit Not Done - Patient ".$this->parameters['patientCode'])
             ->with($this->parameters);
     }
 }

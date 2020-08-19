@@ -26,7 +26,7 @@ class UserRepository implements PersistenceInterface {
     public function find($id){
         return $this->user->find($id)->toArray();
     }
-    
+
     public function delete($id) {
         return $this->user->find($id)->delete();
     }
@@ -40,14 +40,14 @@ class UserRepository implements PersistenceInterface {
         return $user->toArray();
     }
 
-    public function getAdministrators(bool $deactivated =  false ){
+    public function getAdministrators(bool $deactivated =  false){
         $user = $this->user->where('administrator', true);
         return $user->toArray();
     }
 
     public function getAdministratorsEmails(){
-        $emails = $this->user->where('administrator', true)->lists('email');
-        return $$emails->toArray();
+        $emails = $this->user->where('administrator', true)->pluck('email');
+        return $emails->toArray();
     }
 
 }

@@ -11,6 +11,8 @@ class ReviewReady extends Mailable
 {
     use Queueable, SerializesModels;
 
+    protected array $parameters;
+
     /**
      * Create a new message instance.
      *
@@ -34,7 +36,7 @@ class ReviewReady extends Mailable
     public function build()
     {
         return $this->view('mails.mail_review_ready')
-        ->object($this->parameters['study']." - Awaiting Review Patient - ".$this->parameters['patientCode'])
+        ->subject($this->parameters['study']." - Awaiting Review Patient - ".$this->parameters['patientCode'])
         ->with($this->parameters);
     }
 }

@@ -11,6 +11,8 @@ class UserCreated extends Mailable
 {
     use Queueable, SerializesModels;
 
+    protected array $parameters;
+
     /**
      * Create a new message instance.
      *
@@ -28,7 +30,7 @@ class UserCreated extends Mailable
      */
     public function build()
     {
-        return $this->object('User Created')
+        return $this->subject('User Created')
             ->view('mails.mail_create_user')
             ->with($this->parameters);
     }

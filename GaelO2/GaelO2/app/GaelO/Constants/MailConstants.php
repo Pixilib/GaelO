@@ -1,6 +1,8 @@
 <?php
 
-class Mail_Constants {
+namespace App\GaelO\Constants;
+
+class MailConstants {
 
     const EMAIL_REQUEST = 0;
     const EMAIL_VISIT_NOT_DONE=1;

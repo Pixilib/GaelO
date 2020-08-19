@@ -5,8 +5,7 @@ namespace App\GaelO\Services\Mails;
 use App\GaelO\Interfaces\MailInterface;
 use App\GaelO\Adapters\SendEmailAdapter;
 use App\GaelO\Repositories\UserRepository;
-use App\GaelO\Constants\Mail_Constants;
-use Mail_Constants as GlobalMail_Constants;
+use App\GaelO\Constants\MailConstants;
 
 Class MailServices extends SendEmailAdapter {
 
@@ -20,11 +19,14 @@ Class MailServices extends SendEmailAdapter {
         return $adminsEmails;
     }
 
+    /**
+     * Parameters in associative array : name, email, center, request
+     */
     public function sendRequestMessage(array $parameters){
         $adminMails = $this->getAdminsEmails();
         $this->mailInterface->setTo($adminMails);
-        $this->mailInterface->setVariable($parameters);
-        $this->mailInterface->sendModel(GlobalMail_Constants::EMAIL_REQUEST);
+        $this->mailInterface->setParameters($parameters);
+        $this->mailInterface->sendModel(MailConstants::EMAIL_REQUEST);
 
     }
 
