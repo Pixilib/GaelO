@@ -7,7 +7,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
-class UserCreated extends Mailable
+class CorrectiveAction extends Mailable
 {
     use Queueable, SerializesModels;
 
@@ -16,9 +16,9 @@ class UserCreated extends Mailable
      *
      * @return void
      */
-    public function __construct(array $parameters)
+    public function __construct()
     {
-        $this->parameters = $parameters;
+        //
     }
 
     /**
@@ -28,8 +28,6 @@ class UserCreated extends Mailable
      */
     public function build()
     {
-        return $this->object('User Created')
-            ->view('mails.mail_create_user')
-            ->with($this->parameters);
+        return $this->view('view.name');
     }
 }
