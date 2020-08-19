@@ -16,7 +16,7 @@ class ReviewReady extends Mailable
      *
      * @return void
      */
-    public function __construct($parameters)
+    public function __construct(array $parameters)
     {
         $this->parameters = $parameters;
         /*
@@ -34,7 +34,7 @@ class ReviewReady extends Mailable
     public function build()
     {
         return $this->view('mails.mail_review_ready')
-        ->object($this->parameters['study']." - Awaiting Review")
+        ->object($this->parameters['study']." - Awaiting Review Patient - ".$this->parameters['patientCode'])
         ->with($this->parameters);
     }
 }

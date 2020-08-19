@@ -16,9 +16,17 @@ class ChangePasswordDeactivated extends Mailable
      *
      * @return void
      */
-    public function __construct()
+    public function __construct(array $parameters)
     {
-        //
+        $this->parameters = $parameters;
+        /*
+        array('studies'=>array(),
+        'adminEmail'=> '',
+        'username'=>'',
+        'corporation')
+        */
+
+
     }
 
     /**
@@ -28,6 +36,9 @@ class ChangePasswordDeactivated extends Mailable
      */
     public function build()
     {
-        return $this->view('view.name');
+
+        return $this->view('mails.mail_change_password_deactivated')
+        ->object("GaelO - Blocked Account")
+        ->with($this->parameters);
     }
 }

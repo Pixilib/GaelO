@@ -16,7 +16,7 @@ class QCDecision extends Mailable
      *
      * @return void
      */
-    public function __construct($parameters)
+    public function __construct(array $parameters)
     {
         $this->parameters = $parameters;
         /*
@@ -43,7 +43,7 @@ class QCDecision extends Mailable
     public function build()
     {
         return $this->view('mails.mail.qc_decision')
-        ->object($this->parameters['study']." - Quality Control")
+        ->object($this->parameters['study']." - Quality Control Patient - ".$this->parameters['patientCode'])
         ->with($this->parameters);
     }
 }

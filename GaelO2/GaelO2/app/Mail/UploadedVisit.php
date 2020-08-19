@@ -16,7 +16,7 @@ class UploadedVisit extends Mailable
      *
      * @return void
      */
-    public function __construct($parameters)
+    public function __construct(array $parameters)
     {
         $this->parameters = $parameters;
         /*
@@ -34,7 +34,7 @@ class UploadedVisit extends Mailable
     public function build()
     {
         return $this->view('mails.uploaded_visit')
-            ->object($this->parameters['study']." - New Upload")
+            ->object($this->parameters['study']." - New Upload Patient - ".$this->parameters['patientCode'])
             ->with($this->parameters);
     }
 }

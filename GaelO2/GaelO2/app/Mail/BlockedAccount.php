@@ -16,9 +16,13 @@ class BlockedAccount extends Mailable
      *
      * @return void
      */
-    public function __construct()
+    public function __construct(array $parameters)
     {
-        //
+        $this->parameters = $parameters;
+        /*
+        array('username'=>'',
+        'studies'=>array())
+        */
     }
 
     /**
@@ -28,6 +32,8 @@ class BlockedAccount extends Mailable
      */
     public function build()
     {
-        return $this->view('view.name');
+        return $this->view('mails.mail_blocked_account')
+        ->object("GaelO - Blocked Account")
+        ->with($this->parameters);
     }
 }
