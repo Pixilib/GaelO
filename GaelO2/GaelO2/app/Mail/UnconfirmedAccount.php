@@ -16,9 +16,14 @@ class UnconfirmedAccount extends Mailable
      *
      * @return void
      */
-    public function __construct()
+    public function __construct($parameters)
     {
-        //
+        $this->parameters = $parameters;
+        /*
+        array('webAddress'=>'',
+        'username' => '',
+        'newPassword' =>'');
+        */
     }
 
     /**
@@ -28,6 +33,8 @@ class UnconfirmedAccount extends Mailable
      */
     public function build()
     {
-        return $this->view('view.name');
+        return $this->view('mails.mail_unconfirmed_account')
+        ->object("GaelO - Account Reactivation")
+        ->with($this->parameters);
     }
 }

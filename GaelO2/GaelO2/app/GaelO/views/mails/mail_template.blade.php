@@ -56,7 +56,7 @@
         @yield('content')
     </div>
     <div class="footer">
-        <p id="footer-contact">Please contact the Imaging Department of {{$corporation}} for any questions (<a HREF="mailto:'.$this->adminEmail.'">{{$adminEmail}}</a>) <br>
+        <p id="footer-contact">Please contact the Imaging Department of {{$corporation}} for any questions (<a HREF="mailto:{{$adminEmail}}">{{$adminEmail}}</a>) <br>
             Kind regards, <br>
             The Imaging Department of {{$corporation}}. <br>
         </p>

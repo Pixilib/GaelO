@@ -16,9 +16,23 @@ class QCDecision extends Mailable
      *
      * @return void
      */
-    public function __construct()
+    public function __construct($parameters)
     {
-        //
+        $this->parameters = $parameters;
+        /*
+        array(
+            "controlDecision"=> "",
+            "study" => "",
+            "patientCode" => "",
+            "visitType" => "",
+            "formDecision" => "",
+            "formComment" => "",
+            "imageDecision" => "",
+            "imageComment" => ""
+
+        )
+        */
+
     }
 
     /**
@@ -28,6 +42,8 @@ class QCDecision extends Mailable
      */
     public function build()
     {
-        return $this->view('view.name');
+        return $this->view('mails.mail.qc_decision')
+        ->object($this->parameters['study']." - Quality Control")
+        ->with($this->parameters);
     }
 }
