@@ -12,7 +12,7 @@ class UserAdapterProvider extends ServiceProvider
      * @return void
      */
     public function register()
-    {                
+    {
         $this->app->bind('CreateUser', function ($app) {
             return new \App\GaelO\UseCases\CreateUser\CreateUser (new \App\GaelO\Repositories\UserRepository());
         });

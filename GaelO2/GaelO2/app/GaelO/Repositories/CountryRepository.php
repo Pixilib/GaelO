@@ -17,18 +17,18 @@ class CountryRepository implements PersistenceInterface {
         $model->save();
     }
 
-    public function update($id, array $data){
-        $model = $this->country->find($id);
+    public function update($code, array $data){
+        $model = $this->country->find($code);
         $model = Util::fillObject($data, $model);
         $model->save();
     }
 
-    public function find($id){
-        return $this->country->find($id)->toArray();
+    public function find($code){
+        return $this->country->get()->where('code', $code);
     }
 
-    public function delete($id) {
-        return $this->country->find($id)->delete();
+    public function delete($code) {
+        return $this->country->find($code)->delete();
     }
 
     public function getAll() {

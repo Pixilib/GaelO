@@ -175,7 +175,11 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
         App\Providers\UserAdapterProvider::class,
-
+        App\Providers\CountryAdapterProvider::class,
+        App\Providers\RoleAdapterProvider::class,
+        App\Providers\StudyAdapterProvider::class,
+        App\Providers\VisitAdapterProvider::class,
+        App\Providers\CenterAdapterProvider::class
     ],
 
     /*

@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\GaelO\Login\LoginRequest;
-use App\GaelO\Login\LoginResponse;
-use App\GaelO\Login\Login;
+use App\GaelO\UseCases\Login\LoginRequest;
+use App\GaelO\UseCases\Login\LoginResponse;
+use App\GaelO\UseCases\Login\Login;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\GaelO\UseCases\CreateUser\CreateUserRequest;

@@ -3,6 +3,59 @@ info:
   title: API Title
   version: '1.0'
 paths:
+  /api/centers:
+    get:
+      description: Get centers
+      parameters:
+        - in: path
+          name: code
+          required: false
+          schema:
+            type: integer
+          description: Code of the center to get
+      responses:
+        '200':
+          description: OK
+
+    post:
+      description: Center creation
+      requestBody:
+        description: Center details
+        required: true
+        content:
+          application/json:
+            schema:
+              title: Center
+              type: object
+              properties:
+                code:
+                  type: integer
+                  description: center code
+                name:
+                  type: string
+                  description: center name
+                country_code:
+                  type: string
+                  description: country code
+      responses:
+        '200':
+          description: OK
+
+
+  /api/countries:
+    get:
+      description: Get countries
+      parameters:
+        - in: path
+          name: code
+          required: false
+          schema:
+            type: string
+          description: Code of the country to get
+      responses:
+        '200':
+          description: OK
+
   /api/users/{id}:
     get:
       description: Get user details
@@ -12,7 +65,7 @@ paths:
           required: false
           schema:
             type: integer
-          description: Numeric ID of the user to get          
+          description: Numeric ID of the user to get
       responses:
         '200':
           description: OK
@@ -21,12 +74,12 @@ paths:
       description: Delete user
       parameters:
         - in: path
-          name: id 
+          name: id
       responses:
         '200':
           description: OK
 
-          
+
   /api/users/:
     post:
       description: User creation
@@ -41,13 +94,13 @@ paths:
               properties:
                 username:
                   type: string
-                  description: username          
+                  description: username
                 lastname:
                   type: string
                   description: last name
                 firstname:
                   type: string
-                  description: first_name
+                  description: first name
                 email:
                   type: string
                   description: email
@@ -74,7 +127,7 @@ paths:
                   type: string
                   description: orthanc password
 
-                    
+
       responses:
         '201':
           description: User created

@@ -21,5 +21,6 @@ Route::delete('users/{id}', 'UserController@deleteUser');
 
 //Login Routes
 Route::post('login', 'UserController@loginClean');
-
+Route::get('countries/{code?}', 'CountryController@getCountry');
+Route::get('centers/{code?}', 'CenterController@getCenter');
 Route::get('mail', 'UserController@testMail');

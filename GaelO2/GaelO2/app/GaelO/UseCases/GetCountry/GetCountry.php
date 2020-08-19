@@ -1,30 +1,30 @@
 <?php
 
-namespace App\GaelO\UseCases\GetCountry;
+namespace App\GaelO\UseCases\GetCenter;
 
 use App\GaelO\Interfaces\PersistenceInterface;
 
-use App\GaelO\UseCases\GetCountry\GetCountryRequest;
-use App\GaelO\UseCases\GetCountry\GetCountryResponse;
+use App\GaelO\UseCases\GetCenter\GetCenterRequest;
+use App\GaelO\UseCases\GetCenter\GetCenterResponse;
 
 
-class GetCountry {
+class GetCenter {
 
     public function __construct(PersistenceInterface $persistenceInterface){
         $this->persistenceInterface = $persistenceInterface;
      }
 
-    public function execute(GetCountryRequest $countryRequest, GetCountryResponse $countryResponse) : void
+    public function execute(GetCenterRequest $centerRequest, GetCenterResponse $centerResponse) : void
     {
-        $code = $countryRequest->code;
+        $code = $centerRequest->code;
         try {
-            if ($code == 0) $countryResponse->body = $this->persistenceInterface->getAll();
-            else $countryResponse->body = $this->persistenceInterface->find($code);
-            $countryResponse->status = 200;
-            $countryResponse->statusText = 'OK';
+            if ($code == '') $centerResponse->body = $this->persistenceInterface->getAll();
+            else $centerResponse->body = $this->persistenceInterface->find($code);
+            $centerResponse->status = 200;
+            $centerResponse->statusText = 'OK';
         } catch (\Throwable $t) {
-            $countryResponse->statusText = $t->getMessage();
-            $countryResponse->status = 500;
+            $centerResponse->statusText = $t->getMessage();
+            $centerResponse->status = 500;
         }
     }
 
