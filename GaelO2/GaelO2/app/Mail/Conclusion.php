@@ -16,9 +16,15 @@ class Conclusion extends Mailable
      *
      * @return void
      */
-    public function __construct()
+    public function __construct(array $parameters)
     {
-        //
+        $this->parameters = $parameters;
+        /*
+        array('study'=>'',
+        'patientCode'=>'',
+        'visitType'=> '',
+        'conclusionValue'=>'')
+        */
     }
 
     /**
@@ -28,6 +34,8 @@ class Conclusion extends Mailable
      */
     public function build()
     {
-        return $this->view('view.name');
+        return $this->view('mails.mail_conclusion')
+        ->object($this->parameters['study']." - Visit Concluded Patient - ".$this->parameters['patientCode'])
+        ->with($this->parameters);
     }
 }

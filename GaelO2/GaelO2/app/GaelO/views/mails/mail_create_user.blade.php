@@ -6,5 +6,5 @@
     Username : {{$username}}<br>
     Temporary password : {{$password}}<br>
     You will be asked to change this password at your first log in attempt
-    on the platform.<br><br>
+    on the platform.<br>
 @endsection

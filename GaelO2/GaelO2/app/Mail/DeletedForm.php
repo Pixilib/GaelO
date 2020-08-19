@@ -16,9 +16,14 @@ class DeletedForm extends Mailable
      *
      * @return void
      */
-    public function __construct()
+    public function __construct(array $parameters)
     {
-        //
+        $this->parameters = $parameters;
+        /*
+        array('study'=>'',
+        'patientCode'=>'',
+        'visitType'=>'')
+        */
     }
 
     /**
@@ -28,6 +33,8 @@ class DeletedForm extends Mailable
      */
     public function build()
     {
-        return $this->view('view.name');
+        return $this->view('mails.mail_deleted_form')
+        ->object($this->parameters['study']." - Form Deleted Patient - ".$this->parameters['patientCode'])
+        ->with($this->parameters);
     }
 }

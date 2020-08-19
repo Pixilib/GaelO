@@ -179,7 +179,9 @@ return [
         App\Providers\RoleAdapterProvider::class,
         App\Providers\StudyAdapterProvider::class,
         App\Providers\VisitAdapterProvider::class,
-        App\Providers\CenterAdapterProvider::class
+        App\Providers\CenterAdapterProvider::class,
+        App\Providers\EmailServiceProvider::class
+
     ],
 
     /*

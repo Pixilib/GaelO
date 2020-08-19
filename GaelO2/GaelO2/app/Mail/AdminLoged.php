@@ -16,9 +16,13 @@ class AdminLoged extends Mailable
      *
      * @return void
      */
-    public function __construct()
+    public function __construct(array $parameters)
     {
-        //
+        $this->parameters = $parameters;
+        /*
+        array('username'=> '',
+        'remoteAddress'=> '')
+        */
     }
 
     /**
@@ -28,6 +32,8 @@ class AdminLoged extends Mailable
      */
     public function build()
     {
-        return $this->view('view.name');
+        return $this->view('mails.mail_admin_logged')
+        ->object("GaelO - Admin Logged In")
+        ->with($this->parameters);
     }
 }

@@ -16,7 +16,7 @@ class UnlockedForm extends Mailable
      *
      * @return void
      */
-    public function __construct($parameters)
+    public function __construct(array $parameters)
     {
         $this->parameters = $parameters;
         /*
@@ -36,7 +36,7 @@ class UnlockedForm extends Mailable
     public function build()
     {
         return $this->view('mails.mail_unlocked_form')
-        ->object($this->parameters['study']." - Form Unlocked")
+        ->object($this->parameters['study']." - Form Unlocked Patient - ".$this->parameters['patientCode'])
         ->with($this->parameters);
     }
 }

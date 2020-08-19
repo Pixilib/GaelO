@@ -16,9 +16,13 @@ class ResetPassword extends Mailable
      *
      * @return void
      */
-    public function __construct()
+    public function __construct(array $parameters)
     {
-        //
+        $this->parameters = $parameters;
+        /*
+        array('username'=> '',
+        'newPassword' => '')
+        */
     }
 
     /**
@@ -28,6 +32,8 @@ class ResetPassword extends Mailable
      */
     public function build()
     {
-        return $this->view('view.name');
+        return $this->view('mails.mail_reset_password')
+        ->object("GaelO - New Password")
+        ->with($this->parameters);
     }
 }

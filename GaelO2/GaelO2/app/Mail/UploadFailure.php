@@ -38,7 +38,7 @@ class UploadFailure extends Mailable
     public function build()
     {
         return $this->view('mails.mail_upload_failure')
-            ->subject($this->parameters['study']." - Error During Import")
+            ->subject($this->parameters['study']." - Error During Import Patient - ".$this->parameters['patientCode'])
             ->with($this->parameters);
     }
 }

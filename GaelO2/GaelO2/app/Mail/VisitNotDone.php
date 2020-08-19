@@ -16,7 +16,7 @@ class VisitNotDone extends Mailable
      *
      * @return void
      */
-    public function __construct($parameters)
+    public function __construct(array $parameters)
     {
         $this->parameters = $parameters;
         /*
@@ -35,7 +35,7 @@ class VisitNotDone extends Mailable
     public function build()
     {
         return $this->view('mails.mail_visit_not_done')
-            ->object($this->parameters['study']." - Visit Not Done")
+            ->object($this->parameters['study']." - Visit Not Done - Patient ".$this->parameters['patientCode'])
             ->with($this->parameters);
     }
 }

@@ -16,9 +16,15 @@ class CorrectiveAction extends Mailable
      *
      * @return void
      */
-    public function __construct()
+    public function __construct(array $parameters)
     {
-        //
+        $this->parameters =$parameters;
+        /*
+        array('done'=>'',
+        'study'=> '',
+        'patientCode'=>'',
+        'visitType'=>'')
+        */
     }
 
     /**
@@ -28,6 +34,8 @@ class CorrectiveAction extends Mailable
      */
     public function build()
     {
-        return $this->view('view.name');
+        return $this->view('mails.mail_corrective_action')
+        ->object($this->parameters['study']." - Corrective Action Patient - ".$this->parameters['patientCode'])
+        ->with($this->parameters);
     }
 }
