@@ -15,7 +15,6 @@ class DeleteUser {
 
      public function execute(DeleteUserRequest $userRequest, DeleteUserResponse $userResponse) : void {
         $this->persistenceInterface->delete($userRequest->id);
-        $userResponse->body = 'User deleted';
         $userResponse->status = '200';
         $userResponse->statusText = 'OK';
     }
