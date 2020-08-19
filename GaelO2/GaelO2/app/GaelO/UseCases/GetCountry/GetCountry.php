@@ -1,20 +1,20 @@
 <?php
 
-namespace App\GaelO\UseCases\GetCenter;
+namespace App\GaelO\UseCases\GetCountry;
 
 use App\GaelO\Interfaces\PersistenceInterface;
 
-use App\GaelO\UseCases\GetCenter\GetCenterRequest;
-use App\GaelO\UseCases\GetCenter\GetCenterResponse;
+use App\GaelO\UseCases\GetCountry\GetCountryRequest;
+use App\GaelO\UseCases\GetCountry\GetCountryResponse;
 
 
-class GetCenter {
+class GetCountry {
 
     public function __construct(PersistenceInterface $persistenceInterface){
         $this->persistenceInterface = $persistenceInterface;
      }
 
-    public function execute(GetCenterRequest $centerRequest, GetCenterResponse $centerResponse) : void
+    public function execute(GetCountryRequest $centerRequest, GetCountryResponse $centerResponse) : void
     {
         $code = $centerRequest->code;
         try {
