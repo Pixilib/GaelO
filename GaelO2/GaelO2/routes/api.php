@@ -19,13 +19,18 @@ Route::post('users', 'UserController@createUser');
 Route::patch('users', 'UserController@changeUserPassword');
 Route::delete('users/{id}', 'UserController@deleteUser');
 
-//Login Routes
-//Route::post('login', 'UserController@loginClean');
-Route::get('countries/{code?}', 'CountryController@getCountry');
+//Centers Routes
 Route::get('centers/{code?}', 'CenterController@getCenter');
+Route::post('centers', 'CenterController@createCenter');
+
+//Mail Route
 Route::get('mail', 'UserController@testMail');
 
-
+//Login Routes
+//Route::post('login', 'UserController@loginClean');
 Route::post('login', 'AuthController@login');
 Route::delete('login', 'AuthController@logout');
 //middleware('auth:api')->
+
+//Miscellaneous Routes
+Route::get('countries/{code?}', 'CountryController@getCountry');
