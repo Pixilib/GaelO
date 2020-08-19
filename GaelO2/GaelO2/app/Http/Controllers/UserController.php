@@ -10,22 +10,16 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\GaelO\UseCases\CreateUser\CreateUserRequest;
 use App\GaelO\UseCases\CreateUser\CreateUserResponse;
-use App\GaelO\UseCases\CreateUser\CreateUser;
-use App;
 use App\GaelO\UseCases\ModifyUser\ModifyUserRequest;
 use App\GaelO\UseCases\ModifyUser\ModifyUserResponse;
-use App\GaelO\UseCases\ModifyUser\ModifyUser;
 use App\GaelO\UseCases\GetUser\GetUserRequest;
 use App\GaelO\UseCases\GetUser\GetUserResponse;
-use App\GaelO\UseCases\GetUser\GetUser;
 use App\GaelO\UseCases\ChangePassword\ChangePasswordRequest;
 use App\GaelO\UseCases\ChangePassword\ChangePasswordResponse;
-use App\GaelO\UseCases\ChangePassword\ChangePassword;
 use App\GaelO\UseCases\DeleteUser\DeleteUserRequest;
 use App\GaelO\UseCases\DeleteUser\DeleteUserResponse;
-use App\GaelO\UseCases\DeleteUser\DeleteUser;
 use App\GaelO\Util;
-
+use App;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\UserCreated;
 

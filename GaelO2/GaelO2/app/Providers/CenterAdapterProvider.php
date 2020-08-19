@@ -24,16 +24,16 @@ class CenterAdapterProvider extends ServiceProvider
         $this->app->bind('GetCenterResponse', function ($app) {
             return new \App\GaelO\UseCases\GetCenter\GetCenterResponse();
         });
-        $this->app->bind('CreateCenter', function ($app) {
-            return new \App\GaelO\UseCases\CreateCenter\CreateCenter (new \App\GaelO\Repositories\CountryRepository());
+        $this->app->bind('ModifyCenter', function ($app) {
+            return new \App\GaelO\UseCases\ModifyCenter\ModifyCenter (new \App\GaelO\Repositories\CountryRepository());
         });
 
-        $this->app->bind('CreateCenterRequest', function ($app) {
-            return new \App\GaelO\UseCases\CreateCenter\CreateCenterRequest();
+        $this->app->bind('ModifyCenterRequest', function ($app) {
+            return new \App\GaelO\UseCases\ModifyCenter\ModifyCenterRequest();
         });
 
-        $this->app->bind('CreateCenterResponse', function ($app) {
-            return new \App\GaelO\UseCases\CreateCenter\CreateCenterResponse();
+        $this->app->bind('ModifyCenterResponse', function ($app) {
+            return new \App\GaelO\UseCases\ModifyCenter\ModifyCenterResponse();
         });
     }
 

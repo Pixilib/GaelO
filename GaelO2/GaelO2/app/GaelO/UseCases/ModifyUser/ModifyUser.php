@@ -17,9 +17,13 @@ class ModifyUser {
 
      public function execute(ModifyUserRequest $userRequest, ModifyUserResponse $userResponse) : void
     {
+        //TODO
+        $id = $userRequest->id;
         $username = $userRequest->username;
+        $user = $this->persistenceInterface->find($id);
+
         try {
-            $this->persistenceInterface->getUserByUsername($username);
+            $this->persistenceInterface->update($user['id'], $data);
             $userResponse->status = 200;
             $userResponse->statusText = 'OK';
         } catch (\Throwable $t) {
