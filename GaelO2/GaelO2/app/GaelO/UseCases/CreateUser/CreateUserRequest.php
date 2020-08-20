@@ -8,7 +8,6 @@ class CreateUserRequest {
     public string $username ;
     public string $email ;
     public string $phone ;
-    public string $status;
     public bool $administrator;
     public int $center_code ;
     public string $job;

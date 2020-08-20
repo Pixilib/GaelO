@@ -37,7 +37,7 @@ class CreateUser {
         if(isset($data['administrator'])) $data['administrator'] = true;
 
         //Let only numbers for phone number
-        $data['phone']=preg_replace("/[^0-9]/", "", $data['phone']);
+        if (isset($data['phone'])) $data['phone']=preg_replace("/[^0-9]/", "", $data['phone']);
         //Check form completion
         if(!isset($data['username']) || !isset($data['lastname']) || !isset($data['email']) || !is_numeric($data['center_code'])) {
             throw new GaelOException('Form incomplete');
@@ -50,6 +50,7 @@ class CreateUser {
                 $userResponse->status = 201;
                 $userResponse->statusText = 'Created';
             } catch (\Throwable $t) {
+                error_log(print_r($t->getMessage()));
                 $userResponse->status = 500;
             }
             //ADD LOG + MAIL CONFIRMATION
