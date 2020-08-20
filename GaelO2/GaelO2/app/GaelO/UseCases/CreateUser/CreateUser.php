@@ -36,6 +36,8 @@ class CreateUser {
         $data['last_password_update'] = Util::now();
         if(isset($data['administrator'])) $data['administrator'] = true;
 
+        //CHECK UNIQUE FIELDS
+
         //Let only numbers for phone number
         if (isset($data['phone'])) $data['phone']=preg_replace("/[^0-9]/", "", $data['phone']);
         //Check form completion
@@ -45,18 +47,10 @@ class CreateUser {
             throw new GaelOException('Not a valid email format');
         } else {
             //Data are ok to be written in db
-            try {
-                $this->persistenceInterface->create($data);
-                $userResponse->status = 201;
-                $userResponse->statusText = 'Created';
-            } catch (\Throwable $t) {
-                error_log(print_r($t->getMessage()));
-                $userResponse->status = 500;
-            }
+            $this->persistenceInterface->create($data);
+            $userResponse->status = 201;
+            $userResponse->statusText = 'Created';
             //ADD LOG + MAIL CONFIRMATION
-
-
-
         }
 
         //Check on fields (password length...)
