@@ -6,6 +6,7 @@ use App\GaelO\Interfaces\MailInterface;
 use App\GaelO\Adapters\SendEmailAdapter;
 use App\GaelO\Repositories\UserRepository;
 use App\GaelO\Constants\MailConstants;
+use Symfony\Component\Console\EventListener\ErrorListener;
 
 Class MailServices extends SendEmailAdapter {
 
@@ -17,6 +18,11 @@ Class MailServices extends SendEmailAdapter {
     public function getAdminsEmails(){
         $adminsEmails = $this->userRepository->getAdministratorsEmails();
         return $adminsEmails;
+    }
+
+    public function getInvestigatorOfCenterInStudy($study, $center, $job=null){
+        $emails = $this->userRepository->getInvestigatorsStudyFromCenterEmails($study, $center, $job);
+        print_r($emails);
     }
 
     /**

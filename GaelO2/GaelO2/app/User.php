@@ -41,4 +41,9 @@ class User extends Authenticatable
     public function roles() {
         return $this -> hasMany('App\Role', 'user_id');
     }
+
+    public function centers(){
+        return $this->hasMany('App\Center', 'user_id');
+    }
+
 }
