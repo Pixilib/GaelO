@@ -34,18 +34,36 @@ class EmailTest extends TestCase
     }
 
     public function testGetInvestigatorEmails(){
+        //SK A TESTER DANS USERREPOSITORY
         $userRepository = new UserRepository();
-        factory(Study::class)->create(['name'=>'test']);
-        factory(Center::class)->create(['code'=>3]);
-        factory(User::class)->create(['center_code'=>0, 'job'=>'CRA'])
-        ->each(function ($user) {
-            $user->centers()->save(factory(AffiliatedCenter::class)->create(['user_id'=>$user->id, 'center_code'=>3]));
-            $user->roles()->save(factory(Role::class)->create(['user_id'=>$user->id, 'name'=>'Investigator', 'study_name'=>'test']));
+        $studies = factory(Study::class, 2)->create();
+        $center = factory(Center::class)->create(['code'=>3]);
+        $users = factory(User::class,10)->create(['job'=>'CRA']);
+
+        $users->each(function ($user) use ($center, $studies)  {
+            $studiesModel = $studies->first();
+            $user->centers()->save(factory(AffiliatedCenter::class)->create(['user_id'=>$user->id, 'center_code'=>$center->code]));
+            $user->roles()->save(factory(Role::class)->create(['user_id'=>$user->id, 'name'=>'Investigator', 'study_name'=>$studiesModel->name]));
         });
-        $investigatorsEmails = $userRepository->getInvestigatorsStudyFromCenterEmails('test', 3, 'CRA');
-        dd($investigatorsEmails);
-        $study = factory(Study::class,2)->create();
-        $emailService  = App::Make('MailServices');
+
+        $investigatorsEmails = $userRepository->getInvestigatorsStudyFromCenterEmails($studies->first()->name, 3, 'CRA');
+        $this->assertEquals(10, sizeof($investigatorsEmails));
+
+    }
+
+    public function testGetMailsByRoleStudy(){
+        $userRepository = new UserRepository();
+        $studies = factory(Study::class, 2)->create();
+        $users = factory(User::class,10)->create();
+
+        $users->each(function ($user) use ($studies)  {
+            $studiesModel = $studies->first();
+            $user->roles()->save(factory(Role::class)->create(['user_id'=>$user->id, 'name'=>'Investigator', 'study_name'=>$studiesModel->name]));
+        });
+        $investigatorsEmails = $userRepository->getUsersEmailsByRolesInStudy($studies->first()->name, 'Investigator');
+        $this->assertEquals(10, sizeof($investigatorsEmails));
+        $investigatorsEmails = $userRepository->getUsersEmailsByRolesInStudy($studies->first()->name, 'Supervisor');
+        $this->assertEquals(0, sizeof($investigatorsEmails));
 
     }
 }
