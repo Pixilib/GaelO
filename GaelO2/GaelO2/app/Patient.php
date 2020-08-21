@@ -7,10 +7,10 @@ use Illuminate\Database\Eloquent\Model;
 class Patient extends Model
 {
     public function center(){
-        return $this->hasOne('App\Center', 'code', 'center_code');
+        return $this->belongsTo('App\Center', 'center_code', 'code');
     }
 
     public function study(){
-        return $this->hasOne('App\Study', 'name', 'study_name');
+        return $this->belongsTo('App\Study', 'study_name', 'name');
     }
 }

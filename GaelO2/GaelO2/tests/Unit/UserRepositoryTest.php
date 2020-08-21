@@ -11,7 +11,7 @@ use App\Study;
 use App\User;
 use App\Center;
 use App\Role;
-use App\AffiliatedCenter;
+use App\CenterUser;
 use App\GaelO\Repositories\UserRepository;
 
 class UserRepositoryTest extends TestCase
@@ -45,15 +45,15 @@ class UserRepositoryTest extends TestCase
         //For CRA users assing center 3 with role investigator in first study
         $usersCRA->each(function ($user) use ($center, $studies)  {
             $studiesModel = $studies->first();
-            $user->centers()->save(factory(AffiliatedCenter::class)->create(['user_id'=>$user->id, 'center_code'=>$center->code]));
-            $user->roles()->save(factory(Role::class)->create(['user_id'=>$user->id, 'name'=>'Investigator', 'study_name'=>$studiesModel->name]));
+            factory(CenterUser::class)->create(['user_id'=>$user->id, 'center_code'=>$center->code]);
+            factory(Role::class)->create(['user_id'=>$user->id, 'name'=>'Investigator', 'study_name'=>$studiesModel->name]);
         });
 
         //For Supervision user assing center 5 with role investigator in last study
         $userSupervision->each(function ($user) use ($studies)  {
             $studiesModel = $studies->last();
-            $user->centers()->save(factory(AffiliatedCenter::class)->create(['user_id'=>$user->id, 'center_code'=>5]));
-            $user->roles()->save(factory(Role::class)->create(['user_id'=>$user->id, 'name'=>'Investigator', 'study_name'=>$studiesModel->name]));
+            factory(CenterUser::class)->create(['user_id'=>$user->id, 'center_code'=>5]);
+            factory(Role::class)->create(['user_id'=>$user->id, 'name'=>'Investigator', 'study_name'=>$studiesModel->name]);
         });
 
         //Querying investigator from first study and center 3 with CRA role should return 10 results

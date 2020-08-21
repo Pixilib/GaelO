@@ -11,6 +11,6 @@ class VisitType extends Model
     }
 
     public function visitGroup(){
-        $this->hasOne('App\VisitGroup', 'id', 'visit_group_id');
+        $this->belongsTo('App\VisitGroup', 'visit_group_id' , 'id');
     }
 }

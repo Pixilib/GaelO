@@ -43,7 +43,12 @@ class User extends Authenticatable
     }
 
     public function centers(){
-        return $this->hasMany('App\Center', 'user_id');
+        //a voir SK
+        return $this->hasManyThrough('App\Center', 'App\UserCenter', 'user_id', 'center_code', 'code', 'id');
+    }
+
+    public function mainCenter(){
+        return $this->belongsTo('App\Center', 'code','center_code');
     }
 
 }

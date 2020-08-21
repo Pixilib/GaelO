@@ -28,7 +28,6 @@ class CreateUsersTable extends Migration
             $table->dateTime('last_password_update')->nullable(false);
             $table->dateTime('creation_date')->nullable(false);
             $table->dateTime('last_connexion')->nullable(true);
-            //EO pas de 'set' en postgresql (équivalent 'bit' mais pas supporté par Laravel)
             $table->enum('status', ['Unconfirmed', 'Activated', 'Blocked'])->default('Unconfirmed')->nullable(false);
             $table->integer('attempts')->default(0)->nullable(false);
             $table->boolean('administrator')->default(false)->nullable(false);

@@ -56,14 +56,14 @@ class UserRepository implements PersistenceInterface {
         $emails = $this->user
         ->join('roles', function ($join) {
             $join->on('users.id', '=', 'roles.user_id');
-        })->join('affiliated_centers', function ($join) {
-            $join->on('users.id', '=', 'affiliated_centers.user_id');
+        })->join('center_user', function ($join) {
+            $join->on('users.id', '=', 'center_user.user_id');
         })->where(function ($query) use ($study, $job) {
             $query->where('roles.name', '=', Constants::ROLE_INVESTIGATOR)
             ->where('roles.study_name', '=', $study)
             ->where('users.job', '=', $job);
         })->where(function  ($query) use ($centerCode) {
-            $query->where('affiliated_centers.center_code', '=', $centerCode)
+            $query->where('center_user.center_code', '=', $centerCode)
             ->orWhere('users.center_code', '=', $centerCode);
         })
         ->get()->pluck('email');

@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateAffiliatedCentersTable extends Migration
+class CreateCenterUserTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,7 @@ class CreateAffiliatedCentersTable extends Migration
      */
     public function up()
     {
-        Schema::create('affiliated_centers', function (Blueprint $table) {
+        Schema::create('center_user', function (Blueprint $table) {
             $table->unsignedBigInteger('user_id')->nullable(false);
             $table->unsignedInteger('center_code')->nullable(false);
             $table->timestamps();
@@ -32,6 +32,6 @@ class CreateAffiliatedCentersTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('affiliated_centers');
+        Schema::dropIfExists('center_user');
     }
 }

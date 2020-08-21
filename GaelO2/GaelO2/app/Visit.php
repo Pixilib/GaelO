@@ -11,22 +11,22 @@ class Visit extends Model
     }
 
     public function patient(){
-        $this->hasOne('App\Patient', 'code', 'patient_code');
+        $this->belongsTo('App\Patient', 'patient_code', 'code');
     }
 
     public function visitType(){
-        $this->hasOne('App\VisitType', 'id', 'visit_type_id');
+        $this->belongsTo('App\VisitType', 'visit_type_id', 'id');
     }
 
     public function creator(){
-        $this->hasOne('App\User', 'id', 'creator_user_id');
+        $this->belongsTo('App\User', 'creator_user_id' , 'id');
     }
 
     public function controller(){
-        $this->hasOne('App\User', 'id', 'controller_user_id');
+        $this->belongsTo('App\User', 'controller_user_id' , 'id');
     }
 
     public function correctiveActionUser(){
-        $this->hasOne('App\User', 'id', 'corrective_action_user_id');
+        $this->belongsTo('App\User', 'corrective_action_user_id' , 'id');
     }
 }
