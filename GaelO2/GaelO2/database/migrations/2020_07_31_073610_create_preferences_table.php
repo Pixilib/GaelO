@@ -14,7 +14,6 @@ class CreatePreferencesTable extends Migration
     public function up()
     {
         Schema::create('preferences', function (Blueprint $table) {
-            //EO No primary key?
             $table->smallInteger('patient_code_length')->nullable(false);
             $table->string('name')->nullable(false);
             $table->text('admin_email')->nullable(false);

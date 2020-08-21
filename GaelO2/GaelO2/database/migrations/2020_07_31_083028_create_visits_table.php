@@ -39,7 +39,6 @@ class CreateVisitsTable extends Migration
             $table->text('corrective_action_other');
             $table->boolean('corrective_action_decision')->default(null);
             $table->boolean('review_available')->nullable(false)->default(false);
-            //EO pas de 'set' en postgresql (équivalent 'bit' mais pas supporté par Laravel)
             $table->enum('review_status', ['Not Done', 'Not Needed', 'Ongoing','Wait Adjudication','Done'])->nullable(false)->default('Not Done');
             $table->text('review_conclusion_value');
             $table->dateTime('review_conclusion_date')->default(null);

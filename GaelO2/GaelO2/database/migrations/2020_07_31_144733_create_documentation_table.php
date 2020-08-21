@@ -25,7 +25,8 @@ class CreateDocumentationTable extends Migration
             $table->boolean('reviewer')->default(false)->nullable(false);
             $table->softDeletes();
             $table->timestamps();
-            //EO convention nom clé multiple?
+
+            $table->unique(array('name', 'version'));
             $table->foreign('study_name')->references('name')->on('studies');
         });
     }

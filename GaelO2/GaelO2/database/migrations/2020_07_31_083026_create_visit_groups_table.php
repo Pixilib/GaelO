@@ -17,7 +17,8 @@ class CreateVisitGroupsTable extends Migration
             $table->id();
             $table->string('study_name')->nullable(false);
             $table->enum('group_modality', ['PT', 'MR', 'CT', 'US', 'NM', 'RT'])->nullable(false);
-            //Dependencies
+
+            $table->unique(['study_name', 'group_modality']);
             $table->foreign('study_name')->references('name')->on('studies');
         });
     }
