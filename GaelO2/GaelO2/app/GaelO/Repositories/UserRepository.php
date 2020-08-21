@@ -43,7 +43,7 @@ class UserRepository implements PersistenceInterface {
         return $user->toArray();
     }
 
-    public function getAdministrators(bool $deactivated =  false){
+    public function getAdministrators(){
         $user = $this->user->where('administrator', true);
         return $user->toArray();
     }
@@ -53,7 +53,7 @@ class UserRepository implements PersistenceInterface {
         return $emails->toArray();
     }
 
-    public function getInvestigatorsStudyFromCenterEmails($study, $centerCode, $job){
+    public function getInvestigatorsStudyFromCenterEmails(string $study, int $centerCode, string $job){
 
         $emails = DB::table('users')
         ->join('roles', function ($join) {
@@ -71,6 +71,20 @@ class UserRepository implements PersistenceInterface {
         ->get()->pluck('email');
 
         return $emails->toArray();
+    }
+
+    public function getUsersEmailsByRolesInStudy(string $study, string $role ){
+
+        $emails = DB::table('users')
+        ->join('roles', function ($join) {
+            $join->on('users.id', '=', 'roles.user_id');
+        })->where(function ($query) use ($study, $role) {
+            $query->where('roles.name', '=', $role)
+            ->where('roles.study_name', '=', $study);
+        })->get()->pluck('email');
+
+        return $emails->toArray();
+
     }
 }
 

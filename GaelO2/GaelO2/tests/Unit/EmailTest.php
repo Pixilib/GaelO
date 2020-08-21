@@ -50,4 +50,20 @@ class EmailTest extends TestCase
         $this->assertEquals(10, sizeof($investigatorsEmails));
 
     }
+
+    public function testGetMailsByRoleStudy(){
+        $userRepository = new UserRepository();
+        $studies = factory(Study::class, 2)->create();
+        $users = factory(User::class,10)->create();
+
+        $users->each(function ($user) use ($studies)  {
+            $studiesModel = $studies->first();
+            $user->roles()->save(factory(Role::class)->create(['user_id'=>$user->id, 'name'=>'Investigator', 'study_name'=>$studiesModel->name]));
+        });
+        $investigatorsEmails = $userRepository->getUsersEmailsByRolesInStudy($studies->first()->name, 'Investigator');
+        $this->assertEquals(10, sizeof($investigatorsEmails));
+        $investigatorsEmails = $userRepository->getUsersEmailsByRolesInStudy($studies->first()->name, 'Supervisor');
+        $this->assertEquals(0, sizeof($investigatorsEmails));
+
+    }
 }
