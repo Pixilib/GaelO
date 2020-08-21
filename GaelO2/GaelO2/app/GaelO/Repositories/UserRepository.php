@@ -70,21 +70,6 @@ class UserRepository implements PersistenceInterface {
         })
         ->get()->pluck('email');
 
-/*
-        $emails = DB::table('users')
-            ->with('roles')
-            ->with('affiliated_centers')
-            ->select('users.email')
-            ->where('roles.role_name', '=', Constants::ROLE_INVESTIGATOR)
-            ->where('roles.study_name', '=', $study)
-            ->where(function  ($query) use ($centerCode) {
-                $query->where('affiliated_centers.center_code', '=', $centerCode)
-                ->orWhere('users.center_code', '=', $centerCode);
-            })
-            ->when($job, function ($query, $job) {
-                return $query->where('users.job', '=', $job);
-            })
-            ->pluck('email');*/
         return $emails->toArray();
     }
 }
