@@ -9,8 +9,8 @@ class ModifyUserRequest {
     public string $email ;
     public string $phone ;
     public string $status;
-    public boolean $administrator;
-    public unsignedInteger $center_code ;
+    public bool $administrator;
+    public int $center_code ;
     public string $job;
     public string $orthanc_address;
     public string $orthanc_login;
