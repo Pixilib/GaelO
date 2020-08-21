@@ -24,9 +24,11 @@ class ModifyUser {
         $user = $this->persistenceInterface->find($id);
 
         try {
-            $this->persistenceInterface->update($user['id'], $data);
-            $userResponse->status = 200;
-            $userResponse->statusText = 'OK';
+            if ($this->isFormComplete($data) && $this->isEmailValid($data) && $this->isUserUnique($data)) {
+                $this->persistenceInterface->update($user['id'], $data);
+                $userResponse->status = 200;
+                $userResponse->statusText = 'OK';
+            }
         } catch (GaelOException $e) {
             $userResponse->status = 500;
             $userResponse->statusText = $e->getMessage();
