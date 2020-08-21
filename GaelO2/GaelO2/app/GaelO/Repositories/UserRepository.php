@@ -61,7 +61,7 @@ class UserRepository implements PersistenceInterface {
         })->join('affiliated_centers', function ($join) {
             $join->on('users.id', '=', 'affiliated_centers.user_id');
         })->where(function ($query) use ($study, $job) {
-            $query->where('roles.role_name', '=', Constants::ROLE_INVESTIGATOR)
+            $query->where('roles.name', '=', Constants::ROLE_INVESTIGATOR)
             ->where('roles.study_name', '=', $study)
             ->where('users.job', '=', $job);
         })->where(function  ($query) use ($centerCode) {
