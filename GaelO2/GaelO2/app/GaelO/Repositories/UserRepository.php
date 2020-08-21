@@ -7,8 +7,6 @@ use App\User;
 use App\GaelO\Interfaces\PersistenceInterface;
 use App\GaelO\Util;
 
-use Illuminate\Support\Facades\DB;
-
 class UserRepository implements PersistenceInterface {
 
     public function __construct(){
@@ -55,7 +53,7 @@ class UserRepository implements PersistenceInterface {
 
     public function getInvestigatorsStudyFromCenterEmails(string $study, int $centerCode, string $job){
 
-        $emails = DB::table('users')
+        $emails = $this->user
         ->join('roles', function ($join) {
             $join->on('users.id', '=', 'roles.user_id');
         })->join('affiliated_centers', function ($join) {
@@ -75,7 +73,7 @@ class UserRepository implements PersistenceInterface {
 
     public function getUsersEmailsByRolesInStudy(string $study, string $role ){
 
-        $emails = DB::table('users')
+        $emails = $this->user
         ->join('roles', function ($join) {
             $join->on('users.id', '=', 'roles.user_id');
         })->where(function ($query) use ($study, $role) {
