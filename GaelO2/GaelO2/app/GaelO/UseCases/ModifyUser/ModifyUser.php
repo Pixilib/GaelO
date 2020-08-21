@@ -49,8 +49,12 @@ class ModifyUser {
         $getUsers = $this->persistenceInterface->getAll();
         foreach($getUsers as $index => $users) {
             foreach($users as $property => $value) {
-                if ($data['username'] == $users['username']) throw new GaelOException('Username already taken');
-                if ($data['email'] == $users['email']) throw new GaelOException('Email already taken');
+                //Do not compare to modifying user
+                if ($users['id'] != $data['id']) {
+                    if ($data['username'] == $users['username']) throw new GaelOException('Username already taken');
+                    if ($data['email'] == $users['email']) throw new GaelOException('Email already taken');
+                }
+
             }
 
         }
