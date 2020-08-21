@@ -67,11 +67,11 @@ class UserController extends Controller
         $createUser = App::make('CreateUser');
         $createUser->execute($createUserRequest, $createUserResponse);
         return response()->json($createUserResponse->body, $createUserResponse->status);
-
     }
 
-    public function modifyUser(Request $request, ModifyUserRequest $modifyUserRequest, ModifyUserResponse $modifyUserResponse) {
+    public function modifyUser(int $id, Request $request, ModifyUserRequest $modifyUserRequest, ModifyUserResponse $modifyUserResponse) {
         $requestData = $request->all();
+        $requestData['id'] = $id;
         $modifyUserRequest = Util::fillObject($requestData, $modifyUserRequest);
         $modifyUser = App::make('ModifyUser');
         $modifyUser->execute($modifyUserRequest, $modifyUserResponse);
