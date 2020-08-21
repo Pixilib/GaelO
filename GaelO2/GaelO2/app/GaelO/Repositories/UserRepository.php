@@ -54,6 +54,23 @@ class UserRepository implements PersistenceInterface {
     }
 
     public function getInvestigatorsStudyFromCenterEmails($study, $centerCode, $job){
+
+        $emails = DB::table('users')
+        ->join('roles', function ($join) {
+            $join->on('users.id', '=', 'roles.user_id');
+        })->join('affiliated_centers', function ($join) {
+            $join->on('users.id', '=', 'affiliated_centers.user_id');
+        })->where(function ($query) use ($study, $job) {
+            $query->where('roles.role_name', '=', Constants::ROLE_INVESTIGATOR)
+            ->where('roles.study_name', '=', $study)
+            ->where('users.job', '=', $job);
+        })->where(function  ($query) use ($centerCode) {
+            $query->where('affiliated_centers.center_code', '=', $centerCode)
+            ->orWhere('users.center_code', '=', $centerCode);
+        })
+        ->get()->pluck('email');
+
+/*
         $emails = DB::table('users')
             ->with('roles')
             ->with('affiliated_centers')
@@ -67,7 +84,7 @@ class UserRepository implements PersistenceInterface {
             ->when($job, function ($query, $job) {
                 return $query->where('users.job', '=', $job);
             })
-            ->pluck('email');
+            ->pluck('email');*/
         return $emails->toArray();
     }
 }
