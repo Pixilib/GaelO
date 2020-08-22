@@ -36,7 +36,7 @@ class Request extends Mailable
     public function build()
     {
         return $this->view('mails.mail_request')
-        ->subject("GaelO -Request")
+        ->subject("GaelO - Request")
         ->with($this->parameters);
     }
 }
