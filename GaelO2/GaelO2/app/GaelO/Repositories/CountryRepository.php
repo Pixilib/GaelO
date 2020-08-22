@@ -8,8 +8,8 @@ use App\GaelO\Util;
 
 class CountryRepository implements PersistenceInterface {
 
-    public function __construct(){
-        $this->country = new Country();
+    public function __construct(Country $country){
+        $this->country = $country;
     }
 
     public function create(array $data){
@@ -24,7 +24,7 @@ class CountryRepository implements PersistenceInterface {
     }
 
     public function find($code){
-        return $this->country->get()->where('code', $code);
+        return $this->country->where('code', $code)->firstOrFail()->toArray();
     }
 
     public function delete($code) {

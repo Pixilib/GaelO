@@ -14,18 +14,13 @@ class GetCountry {
         $this->persistenceInterface = $persistenceInterface;
      }
 
-    public function execute(GetCountryRequest $centerRequest, GetCountryResponse $centerResponse) : void
+    public function execute(GetCountryRequest $countryRequest, GetCountryResponse $countryResponse) : void
     {
-        $code = $centerRequest->code;
-        try {
-            if ($code == '') $centerResponse->body = $this->persistenceInterface->getAll();
-            else $centerResponse->body = $this->persistenceInterface->find($code);
-            $centerResponse->status = 200;
-            $centerResponse->statusText = 'OK';
-        } catch (\Throwable $t) {
-            $centerResponse->statusText = $t->getMessage();
-            $centerResponse->status = 500;
-        }
+        $code = $countryRequest->code;
+        if ($code == '') $countryResponse->body = $this->persistenceInterface->getAll();
+        else $countryResponse->body = $this->persistenceInterface->find($code);
+        $countryResponse->status = 200;
+        $countryResponse->statusText = 'OK';
     }
 
 }

@@ -10,9 +10,8 @@ use App\GaelO\UseCases\GetCountry\GetCountryResponse;
 
 class CountryController extends Controller
 {
-    public function getCountry(string $code='', GetCountryRequest $getCountryRequest, GetCountryResponse $getCountryResponse) {
+    public function getCountry(string $code='', GetCountryRequest $getCountryRequest, GetCountryResponse $getCountryResponse, GetCountry $getCountry) {
         $getCountryRequest->code = $code;
-        $getCountry = App::make('GetCountry');
         $getCountry->execute($getCountryRequest, $getCountryResponse);
         return response()->json($getCountryResponse->body, $getCountryResponse->status);
     }

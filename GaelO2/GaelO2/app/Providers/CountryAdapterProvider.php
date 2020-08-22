@@ -13,17 +13,14 @@ class CountryAdapterProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->bind('GetCountry', function ($app) {
-            return new \App\GaelO\UseCases\GetCountry\GetCountry (new \App\GaelO\Repositories\CountryRepository());
-        });
+        $this->app->when(
+            [\App\GaelO\UseCases\GetCountry\GetCountry::class])
+        ->needs(\App\GaelO\Interfaces\PersistenceInterface::class)
+        ->give(\App\GaelO\Repositories\CountryRepository::class);
 
-        $this->app->bind('GetCountryRequest', function ($app) {
-            return new \App\GaelO\UseCases\GetCountry\GetCountryRequest();
-        });
-
-        $this->app->bind('GetCountryResponse', function ($app) {
-            return new \App\GaelO\UseCases\GetCountry\GetCountryResponse();
-        });
+        $this->app->bind('GetCountry', \App\GaelO\UseCases\GetCountry\GetCountry::class);
+        $this->app->bind('GetCountryRequest', \App\GaelO\UseCases\GetCountry\GetCountryRequest::class);
+        $this->app->bind('GetCountryResponse', \App\GaelO\UseCases\GetCountry\GetCountryResponse::class);
     }
 
     /**
