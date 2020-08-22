@@ -25,7 +25,7 @@ class UserRepository implements PersistenceInterface {
     }
 
     public function find($id){
-        return $this->user->find($id)->firstOrFail()->toArray();
+        return $this->user->find($id)->toArray();
     }
 
     public function delete($id) {
