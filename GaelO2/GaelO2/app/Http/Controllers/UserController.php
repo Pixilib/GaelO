@@ -20,6 +20,7 @@ use App\GaelO\UseCases\DeleteUser\DeleteUserRequest;
 use App\GaelO\UseCases\DeleteUser\DeleteUserResponse;
 use App\GaelO\Util;
 use App;
+use App\GaelO\UseCases\CreateUser\CreateUser;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\UserCreated;
 
@@ -63,8 +64,8 @@ class UserController extends Controller
 
     public function createUser(Request $request, CreateUserRequest $createUserRequest, CreateUserResponse $createUserResponse) {
         $requestData = $request->all();
-        $createUserRequest = Util::fillObject($requestData, $createUserRequest);
         $createUser = App::make('CreateUser');
+        $createUserRequest = Util::fillObject($requestData, $createUserRequest);
         $createUser->execute($createUserRequest, $createUserResponse);
         return response()->json($createUserResponse->body, $createUserResponse->status);
     }

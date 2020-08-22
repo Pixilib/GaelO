@@ -15,10 +15,9 @@ use Illuminate\Support\Facades\Route;
 //Users Routes
 Route::get('users/{id?}', 'UserController@getUser');
 Route::post('users', 'UserController@createUser');
-//SK ICI a generaliser pour l'edition ou on fait un PUT ?
+//SK pourquoi ce patch sans user ID ??, l'uri devrait etre user/{id}/password pour changer le pass
 Route::patch('users', 'UserController@changeUserPassword');
 Route::patch('users/{id}', 'UserController@modifyUser');
-
 Route::delete('users/{id}', 'UserController@deleteUser');
 
 //Centers Routes
@@ -26,6 +25,7 @@ Route::get('centers/{code?}', 'CenterController@getCenter');
 Route::post('centers', 'CenterController@createCenter');
 
 //Mail Route
+Route::post('request', 'RequestController@sendRequest');
 Route::get('mail', 'UserController@testMail');
 
 //Login Routes

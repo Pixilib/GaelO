@@ -180,7 +180,8 @@ return [
         App\Providers\StudyAdapterProvider::class,
         App\Providers\VisitAdapterProvider::class,
         App\Providers\CenterAdapterProvider::class,
-        App\Providers\EmailServiceProvider::class
+        App\Providers\EmailServiceProvider::class,
+        App\Providers\RequestProvider::class,
 
     ],
 

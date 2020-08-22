@@ -14,9 +14,10 @@ class EmailServiceProvider extends ServiceProvider
     public function register()
     {
 
-        $this->app->bind('MailServices', function ($app) {
-            return new \App\GaelO\Services\Mails\MailServices(new \App\GaelO\Adapters\SendEmailAdapter, new \App\GaelO\Repositories\UserRepository);
-        });
+        $this->app->bind(
+            'App\GaelO\Interfaces\MailInterface',
+            'App\GaelO\Adapters\SendEmailAdapter'
+        );
 
     }
 
