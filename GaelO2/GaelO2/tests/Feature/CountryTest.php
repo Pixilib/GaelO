@@ -27,8 +27,9 @@ class CountryTest extends TestCase
 
     public function testGetCountry()
     {
-        $response = $this->json('GET', '/api/countries/FR')-> assertSuccessful();
-        $response = $this->json('GET', '/api/countries') -> assertSuccessful();
+        $response = $this->json('GET', '/api/countries/FR')->assertSuccessful()->assertJson(['code'=>'FR']);
+        $response = $this->json('GET', '/api/countries') -> decodeResponseJson();
+        $this->assertEquals( 255,  sizeof($response) );
         $response = $this->json('GET', '/api/countries/WrongCountry') -> assertStatus(404);
     }
 }
