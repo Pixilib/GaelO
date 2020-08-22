@@ -7,7 +7,7 @@ use Faker\Generator as Faker;
 
 $factory->define(Study::class, function (Faker $faker) {
     return [
-        'name' => $faker->word,
+        'name' => $faker->unique()->word,
         'patient_code_prefix' => $faker->randomNumber(5),
     ];
 });

@@ -20,10 +20,10 @@ class CreateUsersTable extends Migration
             $table->string('firstname')->nullable(true);
             $table->string('username')->unique()->nullable(false);
             $table->string('email')->unique()->nullable(false);
+            $table->string('password_temporary')->nullable(true);
             $table->string('password')->nullable(false);
             $table->string('password_previous1')->nullable(true);
             $table->string('password_previous2')->nullable(true);
-            $table->string('password_temporary')->nullable(true);
             $table->string('phone')->nullable(true);
             $table->dateTime('last_password_update')->nullable(false);
             $table->dateTime('creation_date')->nullable(false);

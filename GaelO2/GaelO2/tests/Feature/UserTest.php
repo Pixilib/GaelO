@@ -39,8 +39,7 @@ class UserTest extends TestCase
         'orthanc_password' => 'test'];
 
         //Test user creation
-        $response = $this->json('POST', '/api/users', $data);
-        dd($response);// -> assertSuccessful();
+        $response = $this->json('POST', '/api/users', $data)-> assertSuccessful();
         //Test that copies don't insert
         $response = $this->json('POST', '/api/users', $data) -> assertStatus(500);
 
@@ -48,7 +47,7 @@ class UserTest extends TestCase
 
     public function testGetUser() {
         //Test get user 1
-        $response = $this->json('GET', '/api/users/1') -> assertSuccessful();
+        $response = $this->json('GET', '/api/users/1')-> assertSuccessful();
         //Test get all users
         $response = $this->json('GET', '/api/users') -> assertSuccessful();
         //Test get incorrect user

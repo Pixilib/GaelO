@@ -15,10 +15,14 @@ class UserAdapterProvider extends ServiceProvider
     {
 
         $this->app->bind('CreateUser', \App\GaelO\UseCases\CreateUser\CreateUser::class);
+        $this->app->bind('GetUser', \App\GaelO\UseCases\GetUser\GetUser::class);
+        //$this->app->bind('User', \App\User::class);
 
-        $this->app->when([App\GaelO\UseCases\CreateUser\CreateUser::class])
-          ->needs(App\GaelO\Interfaces\PersistenceInterface::class)
-          ->give(App\GaelO\Repositories\UserRepository::class);
+        $this->app->when(
+            [\App\GaelO\UseCases\CreateUser\CreateUser::class,
+            \App\GaelO\UseCases\GetUser\GetUser::class])
+          ->needs(\App\GaelO\Interfaces\PersistenceInterface::class)
+          ->give(\App\GaelO\Repositories\UserRepository::class);
 
         $this->app->bind('CreateUserRequest', \App\GaelO\UseCases\CreateUser\CreateUserRequest::class);
         $this->app->bind('CreateUserResponse', \App\GaelO\UseCases\CreateUser\CreateUserResponse::class);

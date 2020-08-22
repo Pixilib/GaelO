@@ -12,6 +12,7 @@ use App\GaelO\UseCases\CreateUser\CreateUserRequest;
 use App\GaelO\UseCases\CreateUser\CreateUserResponse;
 use App\GaelO\UseCases\ModifyUser\ModifyUserRequest;
 use App\GaelO\UseCases\ModifyUser\ModifyUserResponse;
+
 use App\GaelO\UseCases\GetUser\GetUserRequest;
 use App\GaelO\UseCases\GetUser\GetUserResponse;
 use App\GaelO\UseCases\ChangePassword\ChangePasswordRequest;
@@ -21,6 +22,8 @@ use App\GaelO\UseCases\DeleteUser\DeleteUserResponse;
 use App\GaelO\Util;
 use App;
 use App\GaelO\UseCases\CreateUser\CreateUser;
+use App\GaelO\UseCases\GetUser\GetUser;
+
 use Illuminate\Support\Facades\Mail;
 use App\Mail\UserCreated;
 
@@ -55,16 +58,14 @@ class UserController extends Controller
         return response()->json($loginResponse->body, $loginResponse->status);
     }
 
-    public function getUser($id=0, GetUserRequest $getUserRequest, GetUserResponse $getUserResponse) {
+    public function getUser(int $id=0, GetUserRequest $getUserRequest, GetUserResponse $getUserResponse, GetUser $getUser) {
         $getUserRequest->id = $id;
-        $getUser = App::make('GetUser');
         $getUser->execute($getUserRequest, $getUserResponse);
         return response()->json($getUserResponse->body, $getUserResponse->status);
     }
 
-    public function createUser(Request $request, CreateUserRequest $createUserRequest, CreateUserResponse $createUserResponse) {
+    public function createUser(Request $request, CreateUserRequest $createUserRequest, CreateUserResponse $createUserResponse, CreateUser $createUser) {
         $requestData = $request->all();
-        $createUser = App::make('CreateUser');
         $createUserRequest = Util::fillObject($requestData, $createUserRequest);
         $createUser->execute($createUserRequest, $createUserResponse);
         return response()->json($createUserResponse->body, $createUserResponse->status);

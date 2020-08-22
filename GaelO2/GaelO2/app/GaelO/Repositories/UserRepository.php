@@ -9,8 +9,8 @@ use App\GaelO\Util;
 
 class UserRepository implements PersistenceInterface {
 
-    public function __construct(){
-        $this->user = new User();
+    public function __construct(User $user){
+        $this->user = $user;
     }
 
     public function create(array $data){
