@@ -37,3 +37,6 @@ Route::middleware(['auth:api', 'admin'])->get('admin', 'AuthController@logout');
 
 //Miscellaneous Routes
 Route::get('countries/{code?}', 'CountryController@getCountry');
+
+//Tools Routes
+Route::post('tools/reset-password', 'ToolsController@resetPassword');
