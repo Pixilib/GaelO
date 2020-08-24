@@ -32,8 +32,9 @@ class ResetPassword {
             //update user
             $this->persistenceInterface->update($userEntity['id'], $userEntity);
             //send email
-            $emailsParameters = ['username' => $userEntity['username'], 'email'=>$userEntity['email'] , 'newPassword' => $newPassword];
+            $emailsParameters = ['name'=> ($userEntity['firstname'].' '.$userEntity['lastname']), 'username' => $userEntity['username'], 'email'=>$userEntity['email'] , 'newPassword' => $newPassword];
             $this->mailServices->sendResetPasswordMessage($emailsParameters);
+            $resetPasswordResponse->status = 200;
             //SK TODO tracker
 
         } catch (GaelOException $e){

@@ -36,7 +36,6 @@ class ResetPasswordTest extends TestCase
             'email' => 'administrator@administrator.fr'
         ];
         $response = $this->post('api/tools/reset-password', $data);
-        dd($response);
         $response->assertStatus(200);
     }
 }
