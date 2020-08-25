@@ -51,6 +51,10 @@ class UserRepository implements PersistenceInterface {
         return $emails->toArray();
     }
 
+    /**
+     * Get Emails array of user having an Investigator roles, affiliated (main or affiliated) in centercode
+     * and having a particular job
+     */
     public function getInvestigatorsStudyFromCenterEmails(string $study, int $centerCode, string $job){
 
         $emails = $this->user
@@ -83,6 +87,22 @@ class UserRepository implements PersistenceInterface {
 
         return $emails->toArray();
 
+    }
+
+    /**
+     * Return users data of users affiliated (main or affiliated) to a center
+     */
+    public function getUsersAffiliatedToCenter(int $centerCode){
+
+        $users = $this->user
+        ->join('center_user', function ($join) {
+            $join->on('users.id', '=', 'center_user.user_id');
+        })->where(function  ($query) use ($centerCode) {
+            $query->where('center_user.center_code', '=', $centerCode)
+            ->orWhere('users.center_code', '=', $centerCode);
+        })->get();
+
+        return $users->toArray();
     }
 }
 

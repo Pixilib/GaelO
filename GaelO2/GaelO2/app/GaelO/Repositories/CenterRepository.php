@@ -17,6 +17,16 @@ class CenterRepository implements PersistenceInterface {
         $model->save();
     }
 
+    public function createCenter(int $code, string $name, string $countryCode){
+        $data = [
+            'code' => $code,
+            'name' => $name,
+            'country_code' => $countryCode
+        ];
+
+        $this->create($data);
+    }
+
     public function update($id, array $data){
         $model = $this->center->find($id);
         $model = Util::fillObject($data, $model);
