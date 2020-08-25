@@ -104,6 +104,11 @@ class UserRepository implements PersistenceInterface {
 
         return $users->toArray();
     }
+
+    public function isAlreadyKnownUsernameOrEmail(string $username, string $email){
+        $users = $this->user->where('username', $username)->orWhere('email', $email);
+        return $users;
+    }
 }
 
 ?>

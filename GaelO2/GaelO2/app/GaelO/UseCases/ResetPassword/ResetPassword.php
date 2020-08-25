@@ -46,6 +46,8 @@ class ResetPassword {
         } catch (GaelOException $e){
             $resetPasswordResponse->status = 500;
             $resetPasswordResponse->statusText = $e->getMessage();
+        } catch (\Exception $e) {
+            throw $e;
         }
 
     }

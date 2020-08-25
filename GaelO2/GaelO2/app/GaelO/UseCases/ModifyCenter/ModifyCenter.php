@@ -25,6 +25,8 @@ class ModifyCenter {
             $centerResponse->statusText = 'OK';
         } catch (\Throwable $t) {
             $centerResponse->status = 500;
+        } catch (\Exception $e) {
+            throw $e;
         }
     }
 

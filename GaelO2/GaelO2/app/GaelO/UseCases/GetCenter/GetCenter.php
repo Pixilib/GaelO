@@ -25,6 +25,8 @@ class GetCenter {
         } catch (\Throwable $t) {
             $centerResponse->statusText = $t->getMessage();
             $centerResponse->status = 500;
+        } catch (\Exception $e) {
+            throw $e;
         }
     }
 

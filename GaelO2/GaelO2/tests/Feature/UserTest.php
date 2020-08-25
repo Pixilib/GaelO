@@ -61,6 +61,22 @@ class UserTest extends TestCase
         $response = $this->json('DELETE', '/api/users/-1') -> assertStatus(500);
     }
 
+    public function testModifyUser(){
+
+        $user = factory(User::class)->create();
+        $requestBody = [
+            'username' => $user['username'],
+            'lastname' => $user['lastname'],
+            'email' => $user['email'],
+            'center_code' => $user['center_code']
+        ];
+
+        $response = $this->json('PATCH', '/api/users/'.$user['id'], $requestBody);
+        dd($response);
+
+
+    }
+
     public function testChangePassword() {
         $user = factory(User::class)->create(['password' => 'Ceciest1test', 'status' => 'Activated', 'password_previous1' => 'Cecietait1test']);
         $data = [
@@ -71,7 +87,7 @@ class UserTest extends TestCase
         ];
 
         //Test data correctly updated
-        $response = $this->json('PATCH', '/api/users', $data) -> assertStatus(200);
+        $response = $this->json('PATCH', '/api/users', $data)-> assertStatus(200);
         //Test password format incorrect
         $data['password1'] = 'test';
         $data['password2'] = $data['password1'];
