@@ -52,8 +52,8 @@ class ModifyUser {
     }
 
     private function checkUserUnique(array $data) {
-        $users = $this->persistenceInterface->getUserMatchingUsernameOrEmail($data['username'], $data['email']);
-        if( sizeof($users) > 0) throw new GaelOException("Existing Username or Email");
+        $users = $this->persistenceInterface->isAlreadyKnownUsernameOrEmail($data['username'], $data['email']);
+        if( $users.count() > 0) throw new GaelOException("Existing Username or Email");
     }
 
 }
