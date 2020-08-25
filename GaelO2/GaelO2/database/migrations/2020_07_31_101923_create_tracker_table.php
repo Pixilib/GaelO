@@ -16,7 +16,7 @@ class CreateTrackerTable extends Migration
         Schema::create('tracker', function (Blueprint $table) {
             $table->string('study_name')->default(null);
             $table->unsignedBigInteger('user_id');
-            $table->dateTime('date');
+            $table->dateTime('date', 6);
             $table->string('role')->nullable(false);
             $table->integer('visit_id')->default(null);
             $table->string('action_type')->nullable(false);

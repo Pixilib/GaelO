@@ -17,7 +17,7 @@ class CreateVisitsTable extends Migration
 
             $table->id();
             $table->unsignedBigInteger('creator_user_id')->default(null);
-            $table->dateTime('creation_date')->default(null);
+            $table->dateTime('creation_date', 6)->default(null);
             $table->unsignedBigInteger('patient_code')->nullable(false);
             $table->date('acquisition_date')->default(null);
             $table->unsignedBigInteger('visit_type_id')->nullable(false);
@@ -27,13 +27,13 @@ class CreateVisitsTable extends Migration
             $table->enum('state_investigator_form', ['Not Done', 'Not Needed', 'Draft', 'Done'])->nullable(false)->default('Not Done');
             $table->enum('state_quality_control', ['Not Done', 'Not Needed', 'Wait Definitive Conclusion','Corrective Action Asked','Refused','Accepted'])->nullable(false)->default('Not Done');
             $table->unsignedBigInteger('controller_user_id')->default(null);
-            $table->dateTime('control_date')->default(null);
+            $table->dateTime('control_date', 6)->default(null);
             $table->boolean('image_quality_control')->nullable(false)->default(false);
             $table->boolean('form_quality_control')->nullable(false)->default(false);
             $table->text('image_quality_comment');
             $table->text('form_quality_comment');
             $table->unsignedBigInteger('corrective_action_user_id')->default(null);
-            $table->dateTime('corrective_action_date')->default(null);
+            $table->dateTime('corrective_action_date', 6)->default(null);
             $table->boolean('corrective_action_new_upload')->nullable(false)->default(false);
             $table->boolean('corrective_action_investigator_form')->default(null);
             $table->text('corrective_action_other');
@@ -41,8 +41,8 @@ class CreateVisitsTable extends Migration
             $table->boolean('review_available')->nullable(false)->default(false);
             $table->enum('review_status', ['Not Done', 'Not Needed', 'Ongoing','Wait Adjudication','Done'])->nullable(false)->default('Not Done');
             $table->text('review_conclusion_value');
-            $table->dateTime('review_conclusion_date')->default(null);
-            $table->dateTime('last_reminder_upload')->default(null);
+            $table->dateTime('review_conclusion_date', 6)->default(null);
+            $table->dateTime('last_reminder_upload', 6)->default(null);
             $table->softDeletes();
             $table->timestamps();
             //Dependencies
