@@ -1,4 +1,4 @@
-s<?php
+<?php
 
 namespace App\GaelO\Repositories;
 
@@ -24,20 +24,6 @@ class TrackerRepository implements PersistenceInterface {
     public function create(array $data){
         $model = Util::fillObject($data, $this->tracker);
         $model->save();
-    }
-
-    public function addTrackerEvent(int $userId, string $role, ?string $study, ?int $id_visit, string $actionType, array $actionDetails){
-        $data = [
-            'study_name' => $study,
-            'user_id' => $userId,
-            'date'=> Util::now(),
-            'role' => $role,
-            'visit_id'=> $id_visit,
-            'action_type' => $actionType,
-            'action_details' => json_encode($actionDetails)
-        ];
-        $this->create($data);
-
     }
 
     public function find(int $id){
