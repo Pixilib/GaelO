@@ -31,13 +31,13 @@ class ChangePassword {
         try{
 
             if($user['status'] == Constants::USER_STATUS_UNCONFIRMED) {
-                $this->checkMatchPasswords($previousPassword, $user['password_temporary'], true);
+                $this->checkMatchHashPasswords($previousPassword, $user['password_temporary']);
             } else {
-                $this->checkMatchPasswords($previousPassword, $user['password'], true);
+                $this->checkMatchHashPasswords($previousPassword, $user['password']);
             }
 
             $this->checkPasswordFormatCorrect($password1);
-            $this->checkMatchPasswords($password1, $password2, false);
+            $this->checkMatchPasswords($password1, $password2);
             $this->checkNewPassword( LaravelFunctionAdapter::hash($password1), $user['password_temporary'] , $user['password'], $user['password_previous1'], $user['password_previous2']);
 
             $data['password_previous1'] = $user['password'];
@@ -91,10 +91,15 @@ class ChangePassword {
     /**
      * Check password equality, used to check current password and new candidate password
      */
-    private function checkMatchPasswords(string $pass1, string $pass2, bool $currentPasswordCheck) : void {
+    private function checkMatchPasswords(string $pass1, string $pass2) : void {
         if( $pass1 != $pass2 ) {
-            if ($currentPasswordCheck) throw new GaelOException('Not Matching Current Password');
-            else  throw new GaelOException('Not Matching New Password');
+            throw new GaelOException('Not Matching New Passwords');
+        }
+    }
+
+    private function checkMatchHashPasswords(string $plainTextPassword, string $hashComparator) : void {
+        if( LaravelFunctionAdapter::hash($plainTextPassword) != $hashComparator ) {
+            throw new GaelOException('Wrong User Password');
         }
     }
 

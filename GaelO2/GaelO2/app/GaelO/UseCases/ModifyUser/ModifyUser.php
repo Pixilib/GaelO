@@ -44,7 +44,19 @@ class ModifyUser {
     }
 
     private function checkFormComplete(array $data) {
-        if(!isset($data['username']) || !isset($data['lastname']) || !isset($data['email']) || !is_numeric($data['center_code'])) throw new GaelOException('Form incomplete');
+        if(!isset($data['username']) ||
+        !isset($data['lastname']) ||
+        !isset($data['firstname']) ||
+        !isset($data['email']) ||
+        !is_numeric($data['center_code'] ||
+        !isset($data['job']) ||
+        !isset($data['status']) ||
+        !isset($data['administrator']) ||
+        !isset($data['phone']) ||
+        !isset($data['orthanc_address']) ||
+        !isset($data['orthanc_login']) ||
+        !isset($data['orthanc_password'])
+        )) throw new GaelOException('Form incomplete');
     }
 
     private function checkEmailValid(array $data) {
@@ -53,7 +65,7 @@ class ModifyUser {
 
     private function checkUserUnique(array $data) {
         $users = $this->persistenceInterface->isAlreadyKnownUsernameOrEmail($data['username'], $data['email']);
-        if( $users.count() > 0) throw new GaelOException("Existing Username or Email");
+        if( sizeof($users) > 0) throw new GaelOException("Existing Username or Email");
     }
 
 }

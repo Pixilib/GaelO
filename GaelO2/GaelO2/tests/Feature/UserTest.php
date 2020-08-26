@@ -71,8 +71,7 @@ class UserTest extends TestCase
             'center_code' => $user['center_code']
         ];
 
-        $response = $this->json('PATCH', '/api/users/'.$user['id'], $requestBody);
-        dd($response);
+        $response = $this->json('PATCH', '/api/users/'.$user['id'], $requestBody)-> assertSuccessful();
 
 
     }
@@ -87,19 +86,19 @@ class UserTest extends TestCase
         ];
 
         //Test data correctly updated
-        $response = $this->json('PATCH', '/api/users', $data)-> assertStatus(200);
+        $response = $this->json('PUT', '/api/users'+$data['id'], $data)-> assertStatus(200);
         //Test password format incorrect
         $data['password1'] = 'test';
         $data['password2'] = $data['password1'];
-        $response = $this->json('PATCH', '/api/users', $data) -> assertStatus(400);
+        $response = $this->json('PUT', '/api/users'+$data['id'], $data) -> assertStatus(400);
         $response -> dump();
         //Test two passwords do not match
         $data['password2'] = 'CeciEst1nveautest';
-        $response = $this->json('PATCH', '/api/users', $data) -> assertStatus(400);
+        $response = $this->json('PUT', '/api/users'+$data['id'], $data) -> assertStatus(400);
         //Test previously used password
         $data['password1'] = 'Cecietait1test';
         $data['password2'] = $data['password1'];
-        $response = $this->json('PATCH', '/api/users', $data) -> assertStatus(400);
+        $response = $this->json('PUT', '/api/users'+$data['id'], $data) -> assertStatus(400);
     }
 
 }
