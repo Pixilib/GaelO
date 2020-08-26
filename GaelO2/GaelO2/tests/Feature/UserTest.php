@@ -71,7 +71,8 @@ class UserTest extends TestCase
             'center_code' => $user['center_code']
         ];
 
-        $response = $this->json('PATCH', '/api/users/'.$user['id'], $requestBody)-> assertSuccessful();
+        $response = $this->json('PUT', '/api/users/'.$user['id'], $requestBody);
+        dd($response);//-> assertSuccessful();
 
 
     }
@@ -87,6 +88,7 @@ class UserTest extends TestCase
 
         //Test data correctly updated
         $response = $this->json('PUT', '/api/users'+$data['id'], $data)-> assertStatus(200);
+        dd($response);
         //Test password format incorrect
         $data['password1'] = 'test';
         $data['password2'] = $data['password1'];

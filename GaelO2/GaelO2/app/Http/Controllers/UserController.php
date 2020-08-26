@@ -29,7 +29,6 @@ use App\GaelO\Util;
 
 class UserController extends Controller
 {
-    public $successStatus = 200;
 
     public function getUser(int $id=0, GetUserRequest $getUserRequest, GetUserResponse $getUserResponse, GetUser $getUser) {
         $getUserRequest->id = $id;
@@ -41,7 +40,10 @@ class UserController extends Controller
         $requestData = $request->all();
         $createUserRequest = Util::fillObject($requestData, $createUserRequest);
         $createUser->execute($createUserRequest, $createUserResponse);
-        return response()->json($createUserResponse->body, $createUserResponse->status);
+        //SK Cette reponse a generaliser
+        return response()
+            ->json($createUserResponse->body)
+            ->setStatusCode($createUserResponse->status, $createUserResponse->statusText);
     }
 
     public function modifyUser(int $id, Request $request, ModifyUserRequest $modifyUserRequest, ModifyUserResponse $modifyUserResponse, ModifyUser $modifyUser) {
@@ -49,7 +51,9 @@ class UserController extends Controller
         $requestData['id'] = $id;
         $modifyUserRequest = Util::fillObject($requestData, $modifyUserRequest);
         $modifyUser->execute($modifyUserRequest, $modifyUserResponse);
-        return response()->json($modifyUserResponse->body, $modifyUserResponse->status);
+        return response()
+            ->json($modifyUserResponse->body)
+            ->setStatusCode($modifyUserResponse->status, $modifyUserResponse->statusText);
     }
 
     public function changeUserPassword(Request $request, ChangePasswordRequest $changePasswordRequest, ChangePasswordResponse $changePasswordResponse, ChangePassword $changePassword) {
