@@ -13,6 +13,7 @@ class CountryController extends Controller
     public function getCountry(string $code='', GetCountryRequest $getCountryRequest, GetCountryResponse $getCountryResponse, GetCountry $getCountry) {
         $getCountryRequest->code = $code;
         $getCountry->execute($getCountryRequest, $getCountryResponse);
-        return response()->json($getCountryResponse->body, $getCountryResponse->status);
+        return response()->json($getCountryResponse->body)
+                ->setStatusCode($getCountryResponse->status, $getCountryResponse->statusText);
     }
 }

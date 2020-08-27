@@ -5,6 +5,8 @@ class Constants {
 
     const USER_STATUS_UNCONFIRMED = "Unconfirmed";
     const USER_STATUS_ACTIVATED = "Activated";
+    const USER_STATUS_BLOCKED = "Blocked";
+    const USER_STATUS_DEACTIVATED = "Deactivated";
 
     const ROLE_INVESTIGATOR = "Investigator";
     const ROLE_MONITOR = "Monitor";

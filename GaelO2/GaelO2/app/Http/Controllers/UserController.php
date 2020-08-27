@@ -33,17 +33,16 @@ class UserController extends Controller
     public function getUser(int $id=0, GetUserRequest $getUserRequest, GetUserResponse $getUserResponse, GetUser $getUser) {
         $getUserRequest->id = $id;
         $getUser->execute($getUserRequest, $getUserResponse);
-        return response()->json($getUserResponse->body, $getUserResponse->status);
+        return response()->json($getUserResponse->body)
+                ->setStatusCode($getUserResponse->status, $getUserResponse->statusText);
     }
 
     public function createUser(Request $request, CreateUserRequest $createUserRequest, CreateUserResponse $createUserResponse, CreateUser $createUser) {
         $requestData = $request->all();
         $createUserRequest = Util::fillObject($requestData, $createUserRequest);
         $createUser->execute($createUserRequest, $createUserResponse);
-        //SK Cette reponse a generaliser
-        return response()
-            ->json($createUserResponse->body)
-            ->setStatusCode($createUserResponse->status, $createUserResponse->statusText);
+        return response()->json($createUserResponse->body)
+                ->setStatusCode($createUserResponse->status, $createUserResponse->statusText);
     }
 
     public function modifyUser(int $id, Request $request, ModifyUserRequest $modifyUserRequest, ModifyUserResponse $modifyUserResponse, ModifyUser $modifyUser) {
@@ -51,16 +50,16 @@ class UserController extends Controller
         $requestData['id'] = $id;
         $modifyUserRequest = Util::fillObject($requestData, $modifyUserRequest);
         $modifyUser->execute($modifyUserRequest, $modifyUserResponse);
-        return response()
-            ->json($modifyUserResponse->body)
-            ->setStatusCode($modifyUserResponse->status, $modifyUserResponse->statusText);
+        return response()->json($modifyUserResponse->body)
+                ->setStatusCode($modifyUserResponse->status, $modifyUserResponse->statusText);
     }
 
     public function changeUserPassword(Request $request, ChangePasswordRequest $changePasswordRequest, ChangePasswordResponse $changePasswordResponse, ChangePassword $changePassword) {
         $requestData = $request->all();
         $changePasswordRequest = Util::fillObject($requestData, $changePasswordRequest);
         $changePassword->execute($changePasswordRequest, $changePasswordResponse);
-        return response()->json($changePasswordResponse->body, $changePasswordResponse->status);
+        return response()->json($changePasswordResponse->body)
+                ->setStatusCode($changePasswordResponse->status, $changePasswordResponse->statusText);
     }
 
     public function deleteUser(int $id, Request $request, DeleteUserRequest $deleteUserRequest, DeleteUserResponse $deleteUserResponse, DeleteUser $deleteUser) {
@@ -68,7 +67,8 @@ class UserController extends Controller
         $deleteUserRequest->id = $id;
         $deleteUserRequest = Util::fillObject($requestData, $deleteUserRequest);
         $deleteUser->execute($deleteUserRequest, $deleteUserResponse);
-        return response()->json($deleteUserResponse->body, $deleteUserResponse->status);
+        return response()->json($deleteUserResponse->body)
+                    ->setStatusCode($deleteUserResponse->status, $deleteUserResponse->statusText);
     }
 
 }
