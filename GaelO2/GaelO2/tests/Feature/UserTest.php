@@ -64,15 +64,44 @@ class UserTest extends TestCase
     public function testModifyUser(){
 
         $user = factory(User::class)->create();
-        $requestBody = [
+        $user2 = factory(User::class)->create(['username' => 'salim', 'email'=>'salim.kanoun@gmail.com']);
+
+        $validRequest = [
             'username' => $user['username'],
             'lastname' => $user['lastname'],
+            'firstname' => $user['firstname'],
             'email' => $user['email'],
-            'center_code' => $user['center_code']
+            'phone' =>$user['phone'],
+            'status' =>$user['status'],
+            'administrator' =>$user['administrator'],
+            'center_code' => $user['center_code'],
+            'job' => $user['job'],
+            'orthanc_address'=>$user['orthanc_address'],
+            'orthanc_login'=>$user['orthanc_login'],
+            'orthanc_password'=>$user['orthanc_password'],
         ];
 
-        $response = $this->json('PUT', '/api/users/'.$user['id'], $requestBody);
-        dd($response);//-> assertSuccessful();
+        $response = $this->json('PUT', '/api/users/'.$user['id'], $validRequest)-> assertSuccessful();
+
+        $wrongEmailRequest = $validRequest;
+        $wrongEmailRequest['email'] = 'wrong';
+        $response = $this->json('PUT', '/api/users/'.$user['id'], $wrongEmailRequest);
+        $response-> assertStatus(400);
+
+        $incompleteRequest = $validRequest;
+        unset($incompleteRequest['phone']);
+        $response = $this->json('PUT', '/api/users/'.$user['id'], $incompleteRequest);
+        $response-> assertStatus(400);
+
+        $alreadyUsedUser = $validRequest;
+        $alreadyUsedUser['username'] = 'salim';
+        $response = $this->json('PUT', '/api/users/'.$user['id'], $alreadyUsedUser);
+        $response-> assertStatus(400);
+
+        $alreadyUsedEmail = $validRequest;
+        $alreadyUsedEmail['email'] = "salim.kanoun@gmail.com";
+        $response = $this->json('PUT', '/api/users/'.$user['id'], $alreadyUsedEmail);
+        $response-> assertStatus(400);
 
 
     }
@@ -87,12 +116,12 @@ class UserTest extends TestCase
         ];
 
         //Test data correctly updated
-        $response = $this->json('PUT', '/api/users'+$data['id'], $data)-> assertStatus(200);
+        $response = $this->json('PUT', '/api/users/'+$data['id']+'/password', $data);
         dd($response);
         //Test password format incorrect
         $data['password1'] = 'test';
         $data['password2'] = $data['password1'];
-        $response = $this->json('PUT', '/api/users'+$data['id'], $data) -> assertStatus(400);
+        $response = $this->json('PUT', '/api/users/'+$data['id'], $data) -> assertStatus(400);
         $response -> dump();
         //Test two passwords do not match
         $data['password2'] = 'CeciEst1nveautest';

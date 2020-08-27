@@ -28,7 +28,8 @@ class ModifyUser {
 
             $this->checkFormComplete($data);
             $this->checkEmailValid($data);
-            $this->checkUserUnique($data);
+            if($userRequest->email !== $user['email']) $this->checkNewEmailUnique($data['email']);
+            if($userRequest->username !== $user['username']) $this->checkNewUsernameUnique($data['username']);
 
             $this->persistenceInterface->update($user['id'], $data);
 
@@ -44,11 +45,11 @@ class ModifyUser {
     }
 
     private function checkFormComplete(array $data) {
-        if(!isset($data['username']) ||
+         if(!isset($data['username']) ||
         !isset($data['lastname']) ||
         !isset($data['firstname']) ||
         !isset($data['email']) ||
-        !is_numeric($data['center_code'] ||
+        !is_numeric($data['center_code']) ||
         !isset($data['job']) ||
         !isset($data['status']) ||
         !isset($data['administrator']) ||
@@ -56,16 +57,23 @@ class ModifyUser {
         !isset($data['orthanc_address']) ||
         !isset($data['orthanc_login']) ||
         !isset($data['orthanc_password'])
-        )) throw new GaelOException('Form incomplete');
+        ) throw new GaelOException('Form incomplete');
     }
 
     private function checkEmailValid(array $data) {
         if (!preg_match('/^[a-z0-9\-_.]+@[a-z0-9\-_.]+\.[a-z]{2,4}$/i', $data['email'])) throw new GaelOException('Not a valid email format');
     }
 
-    private function checkUserUnique(array $data) {
-        $users = $this->persistenceInterface->isAlreadyKnownUsernameOrEmail($data['username'], $data['email']);
-        if( sizeof($users) > 0) throw new GaelOException("Existing Username or Email");
+    private function checkNewUsernameUnique($username){
+        $user = $this->persistenceInterface->getUserByUsername($username);
+        if(!empty($user)) throw new GaelOException("Username Already Used");
+
+    }
+
+    private function checkNewEmailUnique($email){
+        $user = $this->persistenceInterface->getUserByEmail($email);
+        if(!empty($user)) throw new GaelOException("Email Already Known");
+
     }
 
 }

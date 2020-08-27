@@ -41,6 +41,11 @@ class UserRepository implements PersistenceInterface {
         return $user->toArray();
     }
 
+    public function getUserByEmail($email){
+        $user = $this->user->where('email', $email)->first();
+        return $user->toArray();
+    }
+
     public function getAdministrators(){
         $user = $this->user->where('administrator', true);
         return $user->toArray();
