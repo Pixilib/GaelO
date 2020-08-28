@@ -14,8 +14,9 @@ class UserRepository implements PersistenceInterface {
     }
 
     public function create(array $data){
-        $model = Util::fillObject($data, $this->user);
-        $model->save();
+        Util::fillObject($data, $this->user);
+        $this->user->save();
+        return $this->user->toArray();
     }
 
     public function update($id, array $data){
