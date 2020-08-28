@@ -5,14 +5,23 @@ namespace Tests\Feature;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
+use App\User;
+
+use Illuminate\Foundation\Testing\DatabaseMigrations;
 
 class ChangePasswordTest extends TestCase
 {
-    /**
-     * A basic feature test example.
-     *
-     * @return void
-     */
+
+    use DatabaseMigrations {
+        runDatabaseMigrations as baseRunDatabaseMigrations;
+    }
+
+    public function runDatabaseMigrations()
+    {
+        $this->baseRunDatabaseMigrations();
+        $this->artisan('db:seed');
+    }
+
     public function testChangePassword()
     {
         $user = factory(User::class)->create(['password' => 'Ceciest1test', 'status' => 'Activated', 'password_previous1' => 'Cecietait1test']);
@@ -38,6 +47,6 @@ class ChangePasswordTest extends TestCase
         $data['password1'] = 'Cecietait1test';
         $data['password2'] = $data['password1'];
         //$response = $this->json('PUT', '/api/users'+$data['id'], $data) -> assertStatus(400);
-        }
+
     }
 }
