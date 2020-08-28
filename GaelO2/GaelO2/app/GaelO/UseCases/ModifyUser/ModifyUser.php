@@ -2,19 +2,22 @@
 
 namespace App\GaelO\UseCases\ModifyUser;
 
+use App\GaelO\Adapters\LaravelFunctionAdapter;
+use App\GaelO\Constants\Constants;
 use App\GaelO\Interfaces\PersistenceInterface;
 
 use App\GaelO\UseCases\ModifyUser\ModifyUserRequest;
 use App\GaelO\UseCases\ModifyUser\ModifyUserResponse;
 use App\GaelO\Exceptions\GaelOException;
-
+use App\GaelO\Services\Mails\MailServices;
 use App\GaelO\Services\TrackerService;
 
 class ModifyUser {
 
-    public function __construct(PersistenceInterface $persistenceInterface, TrackerService $trackerService){
+    public function __construct(PersistenceInterface $persistenceInterface, TrackerService $trackerService, MailServices $mailService){
         $this->persistenceInterface = $persistenceInterface;
         $this->trackerService = $trackerService;
+        $this->mailService = $mailService;
      }
 
      public function execute(ModifyUserRequest $userRequest, ModifyUserResponse $userResponse) : void
@@ -31,7 +34,35 @@ class ModifyUser {
             if($userRequest->email !== $user['email']) $this->checkNewEmailUnique($data['email']);
             if($userRequest->username !== $user['username']) $this->checkNewUsernameUnique($data['username']);
 
+            if($userRequest->status === Constants::USER_STATUS_UNCONFIRMED) {
+                $newPassword = substr(uniqid(), 1, 10);
+                $data['password_temporary'] = LaravelFunctionAdapter::hash( $newPassword );
+
+                $this->mailService->sendResetPasswordMessage(
+                    ($data['firstname'].' '.$data['lastname']),
+                    $data['username'],
+                    $newPassword,
+                    $data['email']
+                );
+            }else{
+                $data['password_temporary'] = null;
+            }
+
+            //These property can't be modified in user edition
+            $data['password'] = $user['password'];
+            $data['password_previous1'] = $user['password_previous1'];
+            $data['password_previous2'] = $user['password_previous2'];
+            $data['last_password_update'] = $user['last_password_update'];
+            $data['creation_date'] = $user['creation_date'];
+
             $this->persistenceInterface->update($user['id'], $data);
+
+            $details = [
+                'modified_user_id'=>$user['id'],
+                'status'=>$user['status']
+            ];
+
+            $this->trackerService->writeAction($user['id'], Constants::TRACKER_ROLE_USER, null, null, Constants::TRACKER_EDIT_USER, $details);
 
             $userResponse->status = 200;
             $userResponse->statusText = 'OK';
@@ -65,14 +96,14 @@ class ModifyUser {
     }
 
     private function checkNewUsernameUnique($username){
-        $user = $this->persistenceInterface->getUserByUsername($username);
-        if(!empty($user)) throw new GaelOException("Username Already Used");
+        $knownUsername = $this->persistenceInterface->isExistingUsername($username);
+        if($knownUsername) throw new GaelOException("Username Already Used");
 
     }
 
     private function checkNewEmailUnique($email){
-        $user = $this->persistenceInterface->getUserByEmail($email);
-        if(!empty($user)) throw new GaelOException("Email Already Known");
+        $knownEmail = $this->persistenceInterface->isExistingEmail($email);
+        if($knownEmail) throw new GaelOException("Email Already Known");
 
     }
 

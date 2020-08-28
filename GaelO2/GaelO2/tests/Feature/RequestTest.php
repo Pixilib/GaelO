@@ -24,7 +24,7 @@ class RequestTest extends TestCase
         $this->artisan('db:seed');
     }
     /**
-     * A basic feature test example.
+     * Test Send Request API
      *
      * @return void
      */
@@ -35,7 +35,6 @@ class RequestTest extends TestCase
         'name' => 'truc',
         'request' => 'fgfdgfgfdgfdgfdg'];
 
-        //Test user creation
-        $response = $this->json('POST', '/api/request', $data)-> assertSuccessful();
+        $this->json('POST', '/api/request', $data)-> assertSuccessful();
     }
 }

@@ -41,6 +41,17 @@ class UserRepository implements PersistenceInterface {
         return $user->toArray();
     }
 
+    public function isExistingUsername($username){
+        $user = $this->user->where('username', $username);
+        return $user->count() > 0 ? true : false;
+    }
+
+
+    public function isExistingEmail($email){
+        $user = $this->user->where('email', $email);
+        return $user->count() > 0 ? true : false;
+    }
+
     public function getUserByEmail($email){
         $user = $this->user->where('email', $email)->first();
         return $user->toArray();

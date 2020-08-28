@@ -34,8 +34,11 @@ class ResetPassword {
             //update user
             $this->persistenceInterface->update($userEntity['id'], $userEntity);
             //send email
-            $emailsParameters = ['name'=> ($userEntity['firstname'].' '.$userEntity['lastname']), 'username' => $userEntity['username'], 'email'=>$userEntity['email'] , 'newPassword' => $newPassword];
-            $this->mailServices->sendResetPasswordMessage($emailsParameters);
+            $this->mailServices->sendResetPasswordMessage(
+                ($userEntity['firstname'].' '.$userEntity['lastname']),
+                $userEntity['username'],
+                $newPassword,
+                $userEntity['email']);
             //Write action in tracker
             $this->trackerService->writeAction($userEntity['id'], Constants::TRACKER_ROLE_USER, null, null, Constants::TRACKER_RESET_PASSWORD, null);
 

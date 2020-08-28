@@ -37,9 +37,15 @@ Class MailServices extends SendEmailAdapter {
     }
 
     /**
-     * Parameter in associative array : username, newPassword
+     * Parameter in associative array : name, username, newPassword, email
      */
-    public function sendResetPasswordMessage(array $parameters){
+    public function sendResetPasswordMessage(string $name, string $username, string $newPassword, string $email){
+        $parameters = [
+            'name'=> $name,
+            'username'=> $username,
+            'newPassword'=> $newPassword,
+            'email'=> $email
+        ];
         $this->mailInterface->setTo([$parameters['email']]);
         $this->mailInterface->setParameters($parameters);
         $this->mailInterface->sendModel(MailConstants::EMAIL_RESET_PASSWORD);
