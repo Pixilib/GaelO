@@ -5,25 +5,30 @@ namespace App\GaelO\UseCases\Login;
 use App\GaelO\Adapters\LaravelFunctionAdapter;
 use App\GaelO\Constants\Constants;
 use App\GaelO\Interfaces\PersistenceInterface;
+use App\GaelO\Services\Mails\MailServices;
+use App\GaelO\Services\TrackerService;
 use App\GaelO\Util;
 
 class Login{
 
-    public function __construct(PersistenceInterface $userRepository){
+    public function __construct(PersistenceInterface $userRepository, MailServices $mailService, TrackerService $trackerService){
         $this->userRepository = $userRepository;
+        $this->trackerService = $trackerService;
+        $this->mailService = $mailService;
     }
 
     public function execute(LoginRequest $loginRequest, LoginResponse $loginResponse){
 
-        $user = $this->persistenceInterface->getUserByUsername($loginRequest->username);
+        $user = $this->userRepository->getUserByUsername($loginRequest->username);
 
         $inputHashedPassword = LaravelFunctionAdapter::hash($loginRequest->password);
+        $passwordCheck = LaravelFunctionAdapter::checkHash($loginRequest->password, $user['password']);
         $dateNow = new \DateTime();
         $dateUpdatePassword= new \DateTime($user['last_password_update']);
         $attempts = $user['attempts'];
         $delayDay=$dateUpdatePassword->diff($dateNow)->format("%a");
 
-        if($user['password'] !== $inputHashedPassword){
+        if( !$passwordCheck ){
             $loginResponse->status = 401;
             $loginResponse->statusText = "Unauthorized";
             $this->increaseAttemptCount($user);
@@ -48,7 +53,7 @@ class Login{
                 $loginResponse->status = 428;
                 $loginResponse->statusText = "Password Expired";
             }else if($user['status'] === Constants::USER_STATUS_ACTIVATED && $delayDay<90 && $attempts<3){
-                $this->updateDbOnSuccess($user);
+                $this->updateDbOnSuccess($user, $loginRequest->ip);
                 $loginResponse->status = 200;
                 $loginResponse->statusText = "OK";
             }else{
@@ -66,29 +71,24 @@ class Login{
             if ($user['attempts'] == 3) $this->writeBlockedAccountInTracker($user);
             $this->sendBlockedEmail($user);
         }
-        $this->persistenceInterface->update($user['id'], $user);
+        $this->userRepository->update($user['id'], $user);
     }
 
-    //SK TODO
     private function writeBlockedAccountInTracker($user){
-
+        $this->trackerService->writeAction($user['id'], Constants::TRACKER_ROLE_USER, null, null, Constants::TRACKER_ACCOUNT_BLOCKED, ['message'=> 'Account Blocked']);
     }
 
-    //SK TODO
     private function sendBlockedEmail($user){
-
+        $this->mailService->sendAccountBlockedMessage($user['username'], $user['email']);
     }
 
-    //SK TODO
-    private function sendAdminConnectedEmail(){
-
-    }
-
-    private function updateDbOnSuccess($user){
+    private function updateDbOnSuccess($user, $ip){
         $user['last_connexion'] = Util::now();
         $user['attempts'] = 0;
-        $this->persistenceInterface->update($user['id'], $user);
-        if ($user['administrator']) $this->sendAdminConnectedEmail();
+        $this->userRepository->update($user['id'], $user);
+        if ($user['administrator']) {
+            $this->mailService->sendAdminConnectedMessage($user['username'], $ip);
+        }
     }
 
 

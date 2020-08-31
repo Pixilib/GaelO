@@ -23,6 +23,8 @@ class ResetPassword {
         $username = $resetPasswordRequest->username;
         $email = $resetPasswordRequest->email;
         try{
+            $this->isExistingUser($username);
+
             $userEntity = $this->persistenceInterface->getUserByUsername($username);
             $this->checkEmailMatching($email, $userEntity['email']);
             //update properties of user
@@ -47,12 +49,17 @@ class ResetPassword {
 
 
         } catch (GaelOException $e){
-            $resetPasswordResponse->status = 500;
+            $resetPasswordResponse->status = 400;
             $resetPasswordResponse->statusText = $e->getMessage();
         } catch (\Exception $e) {
             throw $e;
         }
 
+    }
+
+    private function isExistingUser($username){
+        $knownUsername = $this->persistenceInterface->isExistingUsername($username);
+        if( ! $knownUsername) throw new GaelOException("Username Unknown");
     }
 
     private function checkEmailMatching($inputEmail, $databaseEmail){

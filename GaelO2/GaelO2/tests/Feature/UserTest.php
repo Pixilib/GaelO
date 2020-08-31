@@ -29,7 +29,7 @@ class UserTest extends TestCase
         //Fill user table
         factory(User::class, 5)->create(["administrator"=>true]);
         //Test get user 4
-        $response = $this->json('GET', '/api/users/4')
+        $this->json('GET', '/api/users/4')
             ->assertStatus(200)
             ->assertJsonFragment(['administrator'=>true]);
         //Test get all users

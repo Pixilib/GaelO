@@ -126,6 +126,14 @@ class UserRepository implements PersistenceInterface {
         $users = $this->user->where('username', $username)->orWhere('email', $email)->get();
         return $users->toArray();
     }
+
+    public function getAllStudiesWithRoleForUser(string $username){
+        $user = $this->user->where('username', $username);
+        $studies = $user->roles()->join('studies', function ($join) {
+            $join->on('roles.study_name', '=', 'studies.name');
+        })->distinct('study_name')->get();
+        return empty($studies)===true ?  [] : $studies->toArray();
+    }
 }
 
 ?>

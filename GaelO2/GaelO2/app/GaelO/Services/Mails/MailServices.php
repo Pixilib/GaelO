@@ -22,7 +22,7 @@ Class MailServices extends SendEmailAdapter {
 
     public function getInvestigatorOfCenterInStudy($study, $center, $job=null){
         $emails = $this->userRepository->getInvestigatorsStudyFromCenterEmails($study, $center, $job);
-        print_r($emails);
+        return $emails;
     }
 
     /**
@@ -49,6 +49,32 @@ Class MailServices extends SendEmailAdapter {
         $this->mailInterface->setTo([$parameters['email']]);
         $this->mailInterface->setParameters($parameters);
         $this->mailInterface->sendModel(MailConstants::EMAIL_RESET_PASSWORD);
+
+    }
+
+    public function sendAccountBlockedMessage($username, $email){
+        //Get all studies with role for the user
+        $studies = $this->userRepository->getAllStudiesWithRoleForUser($username);
+        $parameters = [
+            'username'=>$username,
+            'studies'=>$studies
+        ];
+        //Send to user and administrators
+        $this->mailInterface->setTo( [$email, ...$this->getAdminsEmails()] );
+        $this->mailInterface->setParameters($parameters);
+        $this->mailInterface->sendModel(MailConstants::EMAIL_BLOCKED_ACCOUNT);
+
+    }
+
+    public function sendAdminConnectedMessage($username, $remoteAddress){
+        $parameters = [
+            'username'=>$username,
+            'remoteAddress'=>$remoteAddress
+        ];
+        //Send to administrators
+        $this->mailInterface->setTo( $this->getAdminsEmails() );
+        $this->mailInterface->setParameters($parameters);
+        $this->mailInterface->sendModel(MailConstants::EMAIL_ADMIN_LOGGED);
 
     }
 

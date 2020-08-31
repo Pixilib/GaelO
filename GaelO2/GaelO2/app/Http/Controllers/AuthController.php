@@ -19,6 +19,7 @@ class AuthController extends Controller
 
         $requestData = $request->all();
         $loginRequest = Util::fillObject($requestData, $loginRequest);
+        $loginRequest->ip = $request->ip();
 
         $login->execute($loginRequest, $loginResponse);
 
@@ -38,7 +39,7 @@ class AuthController extends Controller
             ], 200);
 
         }else{
-            return response()
+            return response()->json([])
             ->setStatusCode($loginResponse->status, $loginResponse->statusText);
         }
 

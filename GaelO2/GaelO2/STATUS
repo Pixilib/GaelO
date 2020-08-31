@@ -2,3 +2,5 @@ CreateUser => Reste Mail notification
 UpdateUser => OK
 Request => OK
 Delete User => Reste Mail notification + Tracker
+Login => A tester
+ChangePassword => A tester
