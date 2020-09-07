@@ -1,14 +1,17 @@
 <?php
 
 namespace Tests\Feature;
+
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
+use Illuminate\Support\Facades\Artisan;
+use Laravel\Passport\Passport;
 
 use Tests\TestCase;
 use App\User;
-use Illuminate\Support\Facades\Artisan;
-use Laravel\Passport\Passport;
+use App\Study;
+use App\Role;
 
 class UserTest extends TestCase
 {
@@ -48,6 +51,28 @@ class UserTest extends TestCase
         $this->json('GET', '/api/users') -> assertJsonCount(6);
         //Test get incorrect user
         $this->json('GET', '/api/users/-1') -> assertStatus(500);
+    }
+
+    public function testGetUserRoles(){
+
+        //Create 5 users
+        $users = factory(User::class, 5)->create(["administrator"=>true]);
+        //Create 2 random studies
+        $studies = factory(Study::class, 2)->create();
+
+        $users->each(function ($user) use ($studies)  {
+            $studies->each(function ($study) use($user) {
+                factory(Role::class)->create(['user_id'=>$user->id, 'name'=>'Investigator', 'study_name'=>$study->name]);
+                factory(Role::class)->create(['user_id'=>$user->id, 'name'=>'Supervisor', 'study_name'=>$study->name]);
+                factory(Role::class)->create(['user_id'=>$user->id, 'name'=>'Monitor', 'study_name'=>$study->name]);
+
+            });
+
+        });
+
+        $response = $this->json('GET', '/api/users/4/roles');
+        dd($response->content());
+
     }
 
 }

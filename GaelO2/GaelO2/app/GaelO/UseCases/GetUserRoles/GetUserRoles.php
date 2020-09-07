@@ -10,7 +10,7 @@ class GetUserRoles {
         $this->persistenceInterface = $persistenceInterface;
     }
 
-    public function execute(GetUserRolesRequest $getUserRolesRequest, GetUserRoleResponse $getUserRoleResponse) : void {
+    public function execute(GetUserRolesRequest $getUserRolesRequest, GetUserRolesResponse $getUserRoleResponse) : void {
 
         if( empty($getUserRolesRequest->study) ){
             $roles = $this->persistenceInterface->getUsersRoles($getUserRolesRequest->userId);

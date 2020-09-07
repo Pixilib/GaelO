@@ -24,7 +24,9 @@ use App\GaelO\UseCases\ChangePassword\ChangePasswordResponse;
 use App\GaelO\UseCases\DeleteUser\DeleteUser;
 use App\GaelO\UseCases\DeleteUser\DeleteUserRequest;
 use App\GaelO\UseCases\DeleteUser\DeleteUserResponse;
-
+use App\GaelO\UseCases\GetUserRoles\GetUserRoles;
+use App\GaelO\UseCases\GetUserRoles\GetUserRolesRequest;
+use App\GaelO\UseCases\GetUserRoles\GetUserRolesResponse;
 use App\GaelO\Util;
 use Illuminate\Support\Facades\Auth;
 
@@ -74,6 +76,15 @@ class UserController extends Controller
         $deleteUser->execute($deleteUserRequest, $deleteUserResponse);
         return response()->noContent()
                     ->setStatusCode($deleteUserResponse->status, $deleteUserResponse->statusText);
+    }
+
+    public function getRoles(int $id, string $study = '', GetUserRolesRequest $getUserRolesRequest, GetUserRolesResponse $getUserRolesResponse, GetUserRoles $getUserRoles){
+        $getUserRolesRequest->userId = $id;
+        $getUserRolesRequest->study = $study;
+        $getUserRoles->execute($getUserRolesRequest, $getUserRolesResponse);
+        return response()->json($getUserRolesResponse->body)
+                ->setStatusCode($getUserRolesResponse->status, $getUserRolesResponse->statusText);
+
     }
 
 }

@@ -136,14 +136,19 @@ class UserRepository implements PersistenceInterface {
     }
 
     public function getUsersRoles(int $userId){
-        $roles = $this->user->where('id', $userId)->first()->roles();
-        return $roles->toArray();
+        $roles = $this->user->where('id', $userId)->first()->roles()->get(['name', 'study_name']);
+        return $roles->groupBy(['study_name'])
+                ->map(function ($group) {
+                    return $group->map(function ($value) {
+                        return $value->name;
+                    });
+                })
+                ->toArray();
     }
 
     public function getUsersRolesInStudy(int $userId, String $study){
-
         $user = $this->user->where('id', $userId)->first();
-        $roles = $user->roles()->where('study_name', $study)->get();
+        $roles = $user->roles()->where('study_name', $study)->get()->pluck('name');
         return $roles->toArray();
 
     }
