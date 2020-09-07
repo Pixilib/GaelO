@@ -70,8 +70,8 @@ class UserTest extends TestCase
 
         });
 
-        $response = $this->json('GET', '/api/users/4/roles');
-        dd($response->content());
+        //SK A CONTINUER ICI
+        $response = $this->json('GET', '/api/users/4/roles')->assertSuccessful();
 
     }
 

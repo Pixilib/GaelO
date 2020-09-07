@@ -9,14 +9,11 @@ ChangePassword => OK
 ChangePassword / Create User / Modify user / Reset password => Faire passer l'utilisateur courant pout le tracker
 
 A faire
-CreateRole
-DeleteRole
-CreateStudy
-DeleteStudy
-AddCenter
-ModifyCenter
-ExportDatabase
-Preference : GET et put
+User's Roles : GET, POST, DELETE
+Study : GET, DELETE
+Center : GET, POST, PUT
+ExportDatabase : GET ?
+Preference : GET, PUT
 Tracker GET
 
 Orthanc
