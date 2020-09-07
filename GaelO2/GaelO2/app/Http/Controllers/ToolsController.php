@@ -14,7 +14,7 @@ class ToolsController extends Controller
         $requestData = $request->all();
         $requestRequest = Util::fillObject($requestData, $resetPasswordRequest);
         $resetPassword->execute($requestRequest, $resetPasswordResponse);
-        return response()->json([])
+        return response()->noContent()
                     ->setStatusCode($resetPasswordResponse->status, $resetPasswordResponse->statusText);
     }
 }

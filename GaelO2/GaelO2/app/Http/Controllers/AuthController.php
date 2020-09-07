@@ -39,8 +39,7 @@ class AuthController extends Controller
             ], 200);
 
         }else{
-            return response()->json([])
-            ->setStatusCode($loginResponse->status, $loginResponse->statusText);
+            return response()->noContent()->setStatusCode($loginResponse->status, $loginResponse->statusText);
         }
 
 

@@ -56,6 +56,7 @@ Class MailServices extends SendEmailAdapter {
         //Get all studies with role for the user
         $studies = $this->userRepository->getAllStudiesWithRoleForUser($username);
         $parameters = [
+            'name'=>'user',
             'username'=>$username,
             'studies'=>$studies
         ];

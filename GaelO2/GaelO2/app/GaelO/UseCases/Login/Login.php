@@ -21,12 +21,24 @@ class Login{
 
         $user = $this->userRepository->getUserByUsername($loginRequest->username);
 
-        $inputHashedPassword = LaravelFunctionAdapter::hash($loginRequest->password);
         $passwordCheck = LaravelFunctionAdapter::checkHash($loginRequest->password, $user['password']);
         $dateNow = new \DateTime();
         $dateUpdatePassword= new \DateTime($user['last_password_update']);
         $attempts = $user['attempts'];
         $delayDay=$dateUpdatePassword->diff($dateNow)->format("%a");
+
+        if($user['status'] === Constants::USER_STATUS_UNCONFIRMED){
+            $tempPasswordCheck = LaravelFunctionAdapter::checkHash($loginRequest->password, $user['password_temporary']);
+            if($tempPasswordCheck){
+                $loginResponse->status = 432;
+                $loginResponse->statusText = "Unconfirmed";
+            }else{
+                $loginResponse->status = 433;
+                $loginResponse->statusText = "Wrong Temporary Password";
+                $this->increaseAttemptCount($user);
+            }
+            return;
+        }
 
         if( !$passwordCheck ){
             $loginResponse->status = 401;
@@ -35,22 +47,12 @@ class Login{
 
         } else {
 
-            if($user['status'] === Constants::USER_STATUS_UNCONFIRMED){
-                if($user['password_temporary'] === $inputHashedPassword){
-                    $loginResponse->status = 429;
-                    $loginResponse->statusText = "Unconfirmed";
-                }else{
-                    $loginResponse->status = 401;
-                    $loginResponse->statusText = "Unauthorized";
-                    $this->increaseAttemptCount($user);
-                }
-
-            }else if ($user['status'] === Constants::USER_STATUS_BLOCKED){
+            if ($user['status'] === Constants::USER_STATUS_BLOCKED){
                 $this->sendBlockedEmail($user);
-                $loginResponse->status = 427;
+                $loginResponse->status = 434;
                 $loginResponse->statusText = "Blocked";
             }else if ($user['status'] === Constants::USER_STATUS_ACTIVATED && $delayDay>90){
-                $loginResponse->status = 428;
+                $loginResponse->status = 435;
                 $loginResponse->statusText = "Password Expired";
             }else if($user['status'] === Constants::USER_STATUS_ACTIVATED && $delayDay<90 && $attempts<3){
                 $this->updateDbOnSuccess($user, $loginRequest->ip);
@@ -64,9 +66,9 @@ class Login{
     }
 
     private function increaseAttemptCount($user){
-        $user['attempts'] = $user['attempts']++;
+        $user['attempts'] = ++$user['attempts'];
 
-        if( $user['attempts'] > 2 ){
+        if( $user['attempts'] >= 3 ){
             $user['status'] = Constants::USER_STATUS_BLOCKED;
             if ($user['attempts'] == 3) $this->writeBlockedAccountInTracker($user);
             $this->sendBlockedEmail($user);
