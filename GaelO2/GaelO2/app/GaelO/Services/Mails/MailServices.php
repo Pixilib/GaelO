@@ -68,6 +68,7 @@ Class MailServices extends SendEmailAdapter {
 
     public function sendAdminConnectedMessage($username, $remoteAddress){
         $parameters = [
+            'name'=> 'Administrator',
             'username'=>$username,
             'remoteAddress'=>$remoteAddress
         ];
