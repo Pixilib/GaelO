@@ -15,7 +15,6 @@ use Illuminate\Support\Facades\Route;
 //Users Routes
 Route::get('users/{id?}', 'UserController@getUser');
 Route::post('users', 'UserController@createUser');
-//SK pourquoi ce patch sans user ID ??, l'uri devrait etre user/{id}/password pour changer le pass
 Route::put('users/{id}/password', 'UserController@changeUserPassword');
 Route::put('users/{id}', 'UserController@modifyUser');
 Route::delete('users/{id}', 'UserController@deleteUser');

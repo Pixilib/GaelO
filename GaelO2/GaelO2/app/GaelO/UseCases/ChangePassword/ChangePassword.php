@@ -30,7 +30,7 @@ class ChangePassword {
 
         try{
 
-            if($user['status'] == Constants::USER_STATUS_UNCONFIRMED) {
+            if($user['status'] === Constants::USER_STATUS_UNCONFIRMED) {
                 $this->checkMatchHashPasswords($previousPassword, $user['password_temporary']);
             } else {
                 $this->checkMatchHashPasswords($previousPassword, $user['password']);
@@ -38,7 +38,12 @@ class ChangePassword {
 
             $this->checkPasswordFormatCorrect($password1);
             $this->checkMatchPasswords($password1, $password2);
-            $this->checkNewPassword( LaravelFunctionAdapter::hash($password1), $user['password_temporary'] , $user['password'], $user['password_previous1'], $user['password_previous2']);
+            $this->checkNewPassword(
+                $password1,
+                $user['password_temporary'] ,
+                $user['password'],
+                $user['password_previous1'],
+                $user['password_previous2']);
 
             $data['password_previous1'] = $user['password'];
             $data['password_previous2'] = $user['password_previous1'];
@@ -68,10 +73,15 @@ class ChangePassword {
       * Check that candidate password is not in the 3 last used passwords
       */
     private function checkNewPassword($passwordCandidate, $temporaryPassword, $currentPassword, $previousPassword1, $previousPassword2) : void {
-        if( $passwordCandidate == $temporaryPassword ||
-                $passwordCandidate == $currentPassword ||
-                $passwordCandidate == $previousPassword1 ||
-                $passwordCandidate == $previousPassword2 ) {
+        $checkTemporary = LaravelFunctionAdapter::checkHash($passwordCandidate, $temporaryPassword);
+        $checkCurrent = LaravelFunctionAdapter::checkHash($passwordCandidate, $currentPassword);
+        $checkPrevious1 = LaravelFunctionAdapter::checkHash($passwordCandidate, $previousPassword1);
+        $checkPrevious2 = LaravelFunctionAdapter::checkHash($passwordCandidate, $previousPassword2);
+
+        if( $checkTemporary ||
+            $checkCurrent ||
+            $checkPrevious1 ||
+            $checkPrevious2 ) {
             throw new GaelOException('Already Previously Used Password');
         }
     }
@@ -83,7 +93,16 @@ class ChangePassword {
      * Should have at least a differente case (so strlower should not be equal to original string)
      */
     private function checkPasswordFormatCorrect(string $password) {
-        if ( strlen($password) < 8 || preg_match('/[^a-z0-9]/i', $password) || strtolower($password) == $password ){
+        $checkLetterAndNumber =  preg_match('/(?i)([a-z])/', $password) && preg_match('/([0-9])/', $password);
+        $checkOnlyAlphaNumerical = !preg_match('/(?i)([^a-z0-9])/', $password);
+        $checkNotAllSameCase = (strtolower($password) !== $password);
+        $checkLength= strlen($password) >= 8;
+
+        if ( $checkLength === false ||
+                $checkLetterAndNumber === false  ||
+                $checkOnlyAlphaNumerical === false  ||
+                $checkNotAllSameCase === false
+            ){
             throw new GaelOException('Password Contraints Failure');
         }
     }
@@ -98,7 +117,7 @@ class ChangePassword {
     }
 
     private function checkMatchHashPasswords(string $plainTextPassword, string $hashComparator) : void {
-        if( LaravelFunctionAdapter::hash($plainTextPassword) != $hashComparator ) {
+        if( !LaravelFunctionAdapter::checkHash($plainTextPassword, $hashComparator) ) {
             throw new GaelOException('Wrong User Password');
         }
     }

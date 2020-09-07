@@ -54,11 +54,12 @@ class UserController extends Controller
                 ->setStatusCode($modifyUserResponse->status, $modifyUserResponse->statusText);
     }
 
-    public function changeUserPassword(Request $request, ChangePasswordRequest $changePasswordRequest, ChangePasswordResponse $changePasswordResponse, ChangePassword $changePassword) {
+    public function changeUserPassword(int $id, Request $request, ChangePasswordRequest $changePasswordRequest, ChangePasswordResponse $changePasswordResponse, ChangePassword $changePassword) {
         $requestData = $request->all();
+        $requestData['id'] = $id;
         $changePasswordRequest = Util::fillObject($requestData, $changePasswordRequest);
         $changePassword->execute($changePasswordRequest, $changePasswordResponse);
-        return response()->json($changePasswordResponse->body)
+        return response()->noContent()
                 ->setStatusCode($changePasswordResponse->status, $changePasswordResponse->statusText);
     }
 
