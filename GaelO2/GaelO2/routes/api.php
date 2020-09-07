@@ -17,7 +17,7 @@ Route::get('users/{id?}', 'UserController@getUser');
 Route::post('users', 'UserController@createUser');
 Route::put('users/{id}/password', 'UserController@changeUserPassword');
 Route::put('users/{id}', 'UserController@modifyUser');
-Route::delete('users/{id}', 'UserController@deleteUser');
+Route::middleware('auth:api')->delete('users/{id}', 'UserController@deleteUser');
 
 //Centers Routes
 Route::get('centers/{code?}', 'CenterController@getCenter');

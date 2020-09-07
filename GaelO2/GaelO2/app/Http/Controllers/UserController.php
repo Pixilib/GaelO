@@ -26,6 +26,7 @@ use App\GaelO\UseCases\DeleteUser\DeleteUserRequest;
 use App\GaelO\UseCases\DeleteUser\DeleteUserResponse;
 
 use App\GaelO\Util;
+use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
@@ -64,11 +65,14 @@ class UserController extends Controller
     }
 
     public function deleteUser(int $id, Request $request, DeleteUserRequest $deleteUserRequest, DeleteUserResponse $deleteUserResponse, DeleteUser $deleteUser) {
+        $user = Auth::user();
+
         $requestData = get_object_vars($request);
         $deleteUserRequest->id = $id;
+        $deleteUserRequest->currentUserId = $user['id'];
         $deleteUserRequest = Util::fillObject($requestData, $deleteUserRequest);
         $deleteUser->execute($deleteUserRequest, $deleteUserResponse);
-        return response()->json($deleteUserResponse->body)
+        return response()->noContent()
                     ->setStatusCode($deleteUserResponse->status, $deleteUserResponse->statusText);
     }
 

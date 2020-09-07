@@ -1,10 +1,11 @@
-ChangePassword => A tester
+
 Delete User => Reste Mail notification + Tracker
 
 CreateUser => OK
 UpdateUser => OK
 Request => OK
 Login => OK
+ChangePassword => OK
 
 //Les tests ne font pas d'assertion sur le tracker et l'envoi de mails
 

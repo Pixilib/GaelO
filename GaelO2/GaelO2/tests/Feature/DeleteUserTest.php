@@ -7,6 +7,7 @@ use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\TestCase;
 use App\User;
+use Laravel\Passport\Passport;
 
 class DeleteUser extends TestCase
 {
@@ -19,13 +20,19 @@ class DeleteUser extends TestCase
     {
         $this->baseRunDatabaseMigrations();
         $this->artisan('db:seed');
+
     }
 
     public function testDeleteUser() {
+
+        Passport::actingAs(
+            User::where('id',1)->first()
+        );
+
         //Fill user table
         factory(User::class, 5)->create();
         //Remove number 3
-        $this->json('DELETE', '/api/users/3') -> assertSuccessful();
+        $response = $this->json('DELETE', '/api/users/3');
         //Test delete non-existing user should be refused
         $this->json('DELETE', '/api/users/-1') -> assertStatus(500);
         //Check that the user 3 has been remove
