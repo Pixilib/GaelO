@@ -12,7 +12,7 @@ class GetUser {
 
     public function __construct(PersistenceInterface $persistenceInterface){
         $this->persistenceInterface = $persistenceInterface;
-     }
+    }
 
     public function execute(GetUserRequest $userRequest, GetUserResponse $userResponse) : void
     {

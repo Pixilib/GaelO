@@ -21,28 +21,10 @@ class UserAdapterProvider extends ServiceProvider
             \App\GaelO\UseCases\ChangePassword\ChangePassword::class,
             \App\GaelO\UseCases\ResetPassword\ResetPassword::class,
             \App\GaelO\UseCases\ModifyUser\ModifyUser::class,
-            \App\GaelO\UseCases\Login\Login::class])
+            \App\GaelO\UseCases\Login\Login::class,
+            \App\GaelO\UseCases\GetUserRoles\GetUserRoles::class])
         ->needs(\App\GaelO\Interfaces\PersistenceInterface::class)
         ->give(\App\GaelO\Repositories\UserRepository::class);
-
-        $this->app->bind('CreateUser', \App\GaelO\UseCases\CreateUser\CreateUser::class);
-        $this->app->bind('CreateUserRequest', \App\GaelO\UseCases\CreateUser\CreateUserRequest::class);
-        $this->app->bind('CreateUserResponse', \App\GaelO\UseCases\CreateUser\CreateUserResponse::class);
-
-        $this->app->bind('ModifyUserRequest', \App\GaelO\UseCases\ModifyUser\ModifyUserRequest::class);
-        $this->app->bind('ModifyUserResponse', \App\GaelO\UseCases\ModifyUser\ModifyUserResponse::class);
-
-        $this->app->bind('GetUser', \App\GaelO\UseCases\GetUser\GetUser::class);
-        $this->app->bind('GetUserRequest', \App\GaelO\UseCases\GetUser\GetUserRequest::class);
-        $this->app->bind('GetUserResponse', \App\GaelO\UseCases\GetUser\GetUserResponse::class);
-
-        $this->app->bind('DeleteUser', \App\GaelO\UseCases\DeleteUser\DeleteUser::class);
-        $this->app->bind('DeleteUserRequest', \App\GaelO\UseCases\DeleteUser\DeleteUserRequest::class);
-        $this->app->bind('DeleteUserResponse', \App\GaelO\UseCases\DeleteUser\DeleteUserResponse::class);
-
-        $this->app->bind('ChangePassword', \App\GaelO\UseCases\ChangePassword\ChangePassword::class);
-        $this->app->bind('ChangePasswordRequest', \App\GaelO\UseCases\ChangePassword\ChangePasswordRequest::class);
-        $this->app->bind('ChangePasswordResponse', \App\GaelO\UseCases\ChangePassword\ChangePasswordResponse::class);
     }
 
     /**
