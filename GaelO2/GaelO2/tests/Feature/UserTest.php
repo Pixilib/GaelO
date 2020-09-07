@@ -7,6 +7,8 @@ use Illuminate\Foundation\Testing\DatabaseMigrations;
 
 use Tests\TestCase;
 use App\User;
+use Illuminate\Support\Facades\Artisan;
+use Laravel\Passport\Passport;
 
 class UserTest extends TestCase
 {
@@ -23,6 +25,16 @@ class UserTest extends TestCase
     {
         $this->baseRunDatabaseMigrations();
         $this->artisan('db:seed');
+    }
+
+    protected function setUp() : void{
+        parent::setUp();
+
+        Artisan::call('passport:install');
+        Passport::actingAs(
+            User::where('id',1)->first()
+        );
+
     }
 
     public function testGetUser() {

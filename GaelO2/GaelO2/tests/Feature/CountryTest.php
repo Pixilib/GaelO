@@ -6,7 +6,10 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 
 use Illuminate\Foundation\Testing\DatabaseMigrations;
+use Illuminate\Support\Facades\Artisan;
+use Laravel\Passport\Passport;
 use Tests\TestCase;
+use App\User;
 
 class CountryTest extends TestCase
 {
@@ -23,6 +26,16 @@ class CountryTest extends TestCase
     {
         $this->baseRunDatabaseMigrations();
         $this->artisan('db:seed');
+    }
+
+    protected function setUp() : void{
+        parent::setUp();
+
+        Artisan::call('passport:install');
+        Passport::actingAs(
+            User::where('id',1)->first()
+        );
+
     }
 
     public function testGetCountry()

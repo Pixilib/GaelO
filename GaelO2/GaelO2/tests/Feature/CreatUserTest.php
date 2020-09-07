@@ -8,6 +8,8 @@ use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\TestCase;
 use App\User;
+use Illuminate\Support\Facades\Artisan;
+use Laravel\Passport\Passport;
 
 class CreatUserTest extends TestCase
 {
@@ -37,6 +39,11 @@ class CreatUserTest extends TestCase
         'orthanc_address' => 'test',
         'orthanc_login' => 'test',
         'orthanc_password' => 'test'];
+
+        Artisan::call('passport:install');
+        Passport::actingAs(
+            User::where('id',1)->first()
+        );
     }
 
     /**

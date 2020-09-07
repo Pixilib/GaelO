@@ -9,6 +9,8 @@ use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\TestCase;
 use App\User;
 use App\Center;
+use Illuminate\Support\Facades\Artisan;
+use Laravel\Passport\Passport;
 
 class ModifyUserTest extends TestCase
 {
@@ -19,6 +21,11 @@ class ModifyUserTest extends TestCase
 
     protected function setUp() : void{
         parent::setUp();
+        Artisan::call('passport:install');
+        Passport::actingAs(
+            User::where('id',1)->first()
+        );
+
         factory(Center::class)->create(['code'=>3]);
         $user = factory(User::class)->create(['status'=>'Activated',
         'administrator'=>false,

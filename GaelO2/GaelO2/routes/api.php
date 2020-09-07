@@ -13,29 +13,25 @@ use Illuminate\Support\Facades\Route;
 */
 
 //Users Routes
-Route::get('users/{id?}', 'UserController@getUser');
-Route::post('users', 'UserController@createUser');
-Route::put('users/{id}/password', 'UserController@changeUserPassword');
-Route::put('users/{id}', 'UserController@modifyUser');
-Route::middleware('auth:api')->delete('users/{id}', 'UserController@deleteUser');
+Route::middleware(['auth:api', 'admin'])->get('users/{id?}', 'UserController@getUser');
+Route::middleware(['auth:api', 'admin'])->post('users', 'UserController@createUser');
+Route::middleware(['auth:api', 'admin'])->put('users/{id}/password', 'UserController@changeUserPassword');
+Route::middleware(['auth:api', 'admin'])->put('users/{id}', 'UserController@modifyUser');
+Route::middleware(['auth:api', 'admin'])->delete('users/{id}', 'UserController@deleteUser');
 
 //Centers Routes
-Route::get('centers/{code?}', 'CenterController@getCenter');
-Route::post('centers', 'CenterController@createCenter');
+Route::middleware(['auth:api', 'admin'])->get('centers/{code?}', 'CenterController@getCenter');
+Route::middleware(['auth:api', 'admin'])->post('centers', 'CenterController@createCenter');
 
 //Mail Route
 Route::post('request', 'RequestController@sendRequest');
-Route::get('mail', 'UserController@testMail');
 
-//Login Routes
+//Login-Logout Routes
 Route::post('login', 'AuthController@login');
 Route::middleware('auth:api')->delete('login', 'AuthController@logout');
 
-//test auth middelware
-Route::middleware(['auth:api', 'admin'])->get('admin', 'AuthController@logout');
-
 //Miscellaneous Routes
-Route::get('countries/{code?}', 'CountryController@getCountry');
+Route::middleware('auth:api')->get('countries/{code?}', 'CountryController@getCountry');
 
 //Tools Routes
 Route::post('tools/reset-password', 'ToolsController@resetPassword');

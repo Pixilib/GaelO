@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Hash;
 use Tests\TestCase;
 use App\User;
 use App\GaelO\Constants\Constants;
+use Illuminate\Support\Facades\Artisan;
 
 class Login extends TestCase
 {
@@ -24,7 +25,7 @@ class Login extends TestCase
 
     protected function setUp() : void{
         parent::setUp();
-        \Artisan::call('passport:install');
+        Artisan::call('passport:install');
     }
 
 

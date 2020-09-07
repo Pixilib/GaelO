@@ -7,6 +7,7 @@ use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\TestCase;
 use App\User;
+use Illuminate\Support\Facades\Artisan;
 use Laravel\Passport\Passport;
 
 class DeleteUser extends TestCase
@@ -23,11 +24,15 @@ class DeleteUser extends TestCase
 
     }
 
-    public function testDeleteUser() {
-
+    protected function setUp() : void{
+        parent::setUp();
+        Artisan::call('passport:install');
         Passport::actingAs(
             User::where('id',1)->first()
         );
+    }
+
+    public function testDeleteUser() {
 
         //Fill user table
         factory(User::class, 5)->create();
