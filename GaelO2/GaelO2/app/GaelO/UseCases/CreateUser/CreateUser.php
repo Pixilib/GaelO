@@ -54,8 +54,11 @@ class CreateUser {
                 Constants::TRACKER_CREATE_USER,
                 $detailsTracker);
 
-            //Send welcome email
-            //SK A FAIRE
+
+            $this->mailService->sendCreatedAccountMessage($createdUserEntity['email'],
+                                    $createdUserEntity['firstname'].' '.$createdUserEntity['lastname'],
+                                    $createdUserEntity['username'],
+                                    $password);
 
             $userResponse->status = 201;
             $userResponse->statusText = 'Created';

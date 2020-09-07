@@ -1,6 +1,6 @@
-CreateUser => Reste Mail notification
-Delete User => Reste Mail notification + Tracker
 ChangePassword => A tester
+Delete User => Reste Mail notification + Tracker
+
 
 UpdateUser => OK
 Request => OK

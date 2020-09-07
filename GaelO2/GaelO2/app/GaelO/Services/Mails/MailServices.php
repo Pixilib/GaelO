@@ -10,17 +10,17 @@ use Symfony\Component\Console\EventListener\ErrorListener;
 
 Class MailServices extends SendEmailAdapter {
 
-    public function __construct(MailInterface $mailInterface, UserRepository $userRepository){
+    public function __construct(MailInterface $mailInterface, UserRepository $userRepository) {
         $this->mailInterface = $mailInterface;
         $this->userRepository = $userRepository;
     }
 
-    public function getAdminsEmails(){
+    public function getAdminsEmails() : array {
         $adminsEmails = $this->userRepository->getAdministratorsEmails();
         return $adminsEmails;
     }
 
-    public function getInvestigatorOfCenterInStudy($study, $center, $job=null){
+    public function getInvestigatorOfCenterInStudy(String $study, String $center, ?String $job=null) : array {
         $emails = $this->userRepository->getInvestigatorsStudyFromCenterEmails($study, $center, $job);
         return $emails;
     }
@@ -28,7 +28,7 @@ Class MailServices extends SendEmailAdapter {
     /**
      * Parameters in associative array : name, email, center, request
      */
-    public function sendRequestMessage(array $parameters){
+    public function sendRequestMessage(array $parameters) : void {
         $destinators = [$this->getAdminsEmails(), $parameters['email']];
         $this->mailInterface->setTo($destinators);
         $this->mailInterface->setParameters($parameters);
@@ -39,7 +39,7 @@ Class MailServices extends SendEmailAdapter {
     /**
      * Parameter in associative array : name, username, newPassword, email
      */
-    public function sendResetPasswordMessage(string $name, string $username, string $newPassword, string $email){
+    public function sendResetPasswordMessage(string $name, string $username, string $newPassword, string $email) : void {
         $parameters = [
             'name'=> $name,
             'username'=> $username,
@@ -52,7 +52,7 @@ Class MailServices extends SendEmailAdapter {
 
     }
 
-    public function sendAccountBlockedMessage($username, $email){
+    public function sendAccountBlockedMessage(String $username, String $email) : void {
         //Get all studies with role for the user
         $studies = $this->userRepository->getAllStudiesWithRoleForUser($username);
         $parameters = [
@@ -67,7 +67,7 @@ Class MailServices extends SendEmailAdapter {
 
     }
 
-    public function sendAdminConnectedMessage($username, $remoteAddress){
+    public function sendAdminConnectedMessage(String $username, String $remoteAddress) : void {
         $parameters = [
             'name'=> 'Administrator',
             'username'=>$username,
@@ -77,6 +77,21 @@ Class MailServices extends SendEmailAdapter {
         $this->mailInterface->setTo( $this->getAdminsEmails() );
         $this->mailInterface->setParameters($parameters);
         $this->mailInterface->sendModel(MailConstants::EMAIL_ADMIN_LOGGED);
+
+    }
+
+    public function sendCreatedAccountMessage(string $userEmail, String $name, String $username, String $password) : void {
+
+        $parameters = [
+            'name'=> $name,
+            'username'=>$username,
+            'password'=>$password
+        ];
+
+        //Send to administrators
+        $this->mailInterface->setTo( [$userEmail] );
+        $this->mailInterface->setParameters($parameters);
+        $this->mailInterface->sendModel(MailConstants::EMAIL_USER_CREATED);
 
     }
 
