@@ -17,22 +17,34 @@ class StudyRepository implements PersistenceInterface {
         $model->save();
     }
 
-    public function update($id, array $data){
-        $model = $this->study->find($id);
+    public function update($name, array $data){
+        $model = $this->study->find($name);
         $model = Util::fillObject($data, $model);
         $model->save();
     }
 
-    public function find($id){
-        return $this->study->find($id)->toArray();
+    public function find($name){
+        return $this->study->find($name)->toArray();
     }
 
-    public function delete($id) {
-        return $this->study->find($id)->delete();
+    public function delete($name) {
+        return $this->study->find($name)->delete();
     }
 
     public function getAll() {
         return $this->study->get()->toArray();
+    }
+
+    public function addStudy($name, $patientCodePreffix) : void {
+
+        $data = [
+            'name'=>$name,
+            'patient_code_prefix'=>$patientCodePreffix
+        ];
+
+        $this->create($data);
+
+
     }
 
 }

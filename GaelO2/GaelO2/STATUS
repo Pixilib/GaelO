@@ -5,13 +5,15 @@ UpdateUser => OK
 Request => OK
 Login => OK
 ChangePassword => OK
+User's Roles : (GET), (POST), (DELETE)=>OK
 
 ChangePassword / Create User / Modify user / Reset password => Faire passer l'utilisateur courant pout le tracker
 Finir de type tous les retour de user repository pour gerer les reponse vides
 
 A faire
-User's Roles : (GET), (POST), (DELETE)
 Study : GET, POST, DELETE
+Visit Group : GET, POST
+Visit : GET, POST
 Center : GET, POST, PUT
 ExportDatabase : POST (creation d'une sauvegarde)
 Preference : GET, PUT
