@@ -10,17 +10,15 @@ ChangePassword / Create User / Modify user / Reset password => Faire passer l'ut
 Finir de type tous les retour de user repository pour gerer les reponse vides
 
 A faire
-User's Roles : (GET), POST -Reste Tracker, DELETE
-Study : GET, DELETE
+User's Roles : (GET), (POST), DELETE
+Study : GET, POST, DELETE
 Center : GET, POST, PUT
-ExportDatabase : GET ?
+ExportDatabase : POST (creation d'une sauvegarde)
 Preference : GET, PUT
 Tracker GET
 
 Orthanc
 ReverseProxy
-
-
 
 //Les tests ne font pas d'assertion sur le tracker et l'envoi de mails (mais exception si erreur en theorie)
 

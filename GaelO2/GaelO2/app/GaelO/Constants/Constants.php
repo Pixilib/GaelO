@@ -39,6 +39,7 @@ class Constants {
     const TRACKER_RESET_PASSWORD = "Ask New Password";
     const TRACKER_CHANGE_PASSWORD = "Password Changed";
     const TRACKER_ROLE_USER = "User";
+    const TRACKER_ROLE_ADMINISTRATOR = "Administrator";
 
 
 }

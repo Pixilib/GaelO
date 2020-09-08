@@ -1,6 +1,7 @@
 <?php
 namespace App\GaelO\UseCases\CreateUserRoles;
 
+use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Interfaces\PersistenceInterface;
 use App\GaelO\Services\TrackerService;
@@ -30,6 +31,10 @@ class CreateUserRoles {
 
         //Write in database and return sucess response (error will be handled by laravel)
         $this->persistenceInterface->addUserRoleInStudy($createRoleRequest->userId, $createRoleRequest->study, $newRoles);
+        $actionDetails = [
+            "Add Roles"=> $newRoles
+        ];
+        $this->trackerService->writeAction( $createRoleRequest->currentUserId, Constants::TRACKER_ROLE_ADMINISTRATOR, $createRoleRequest->study, null, Constants::TRACKER_EDIT_USER, $actionDetails);
         $createRoleResponse->statusText = "Created";
         $createRoleResponse->status = 201;
 
