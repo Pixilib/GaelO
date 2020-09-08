@@ -19,6 +19,7 @@ class Constants {
     const TRACKER_UPLOAD_SERIES = "Upload Series";
     const TRACKER_UNLOCK_FORM = "Unlock Form";
     const TRACKER_CREATE_STUDY = "Create Study";
+    const TRACKER_DEACTIVATE_STUDY = "Deactivate Study";
     const TRACKER_RESET_QC = "Reset QC";
     const TRACKER_REACTIVATE_VISIT = "Reactivate Visit";
     const TRACKER_CHANGE_DICOM_DELETION = "DICOM Deletion Change";
