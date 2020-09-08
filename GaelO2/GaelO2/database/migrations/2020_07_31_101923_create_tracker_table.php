@@ -13,12 +13,12 @@ class CreateTrackerTable extends Migration
      */
     public function up()
     {
-        Schema::create('tracker', function (Blueprint $table) {
-            $table->string('study_name')->default(null);
+        Schema::create('trackers', function (Blueprint $table) {
+            $table->string('study_name')->nullable(true)->default(null);
             $table->unsignedBigInteger('user_id');
-            $table->dateTime('date');
+            $table->dateTime('date', 6);
             $table->string('role')->nullable(false);
-            $table->integer('visit_id')->default(null);
+            $table->integer('visit_id')->nullable(true)->default(null);
             $table->string('action_type')->nullable(false);
             $table->json('action_details');
             $table->timestamps();
@@ -36,6 +36,6 @@ class CreateTrackerTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('tracker');
+        Schema::dropIfExists('trackers');
     }
 }

@@ -1,0 +1,31 @@
+
+Delete User => OK
+CreateUser => OK
+UpdateUser => OK
+Request => OK
+Login => OK
+ChangePassword => OK
+User's Roles : (GET), (POST), (DELETE)=>OK
+
+ChangePassword / Create User / Modify user / Reset password => Faire passer l'utilisateur courant pout le tracker
+Finir de type tous les retour de user repository pour gerer les reponse vides
+
+A faire
+Study : (GET), (POST), DELETE
+Visit Group : GET, POST
+Visit : GET, POST
+Center : GET, POST, PUT
+ExportDatabase : POST (creation d'une sauvegarde)
+Preference : GET, PUT
+Tracker GET
+
+Orthanc
+ReverseProxy
+
+//Les tests ne font pas d'assertion sur le tracker et l'envoi de mails (mais exception si erreur en theorie)
+
+Installation :
+Generation certificat :
+php artisan passport:keys
+Generation clés :
+php artisan key:generate

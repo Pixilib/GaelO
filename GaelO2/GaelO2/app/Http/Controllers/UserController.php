@@ -3,116 +3,117 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\GaelO\Login\LoginRequest;
-use App\GaelO\Login\LoginResponse;
-use App\GaelO\Login\Login;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
-use App\User;
+
+use App\GaelO\UseCases\CreateUser\CreateUser;
 use App\GaelO\UseCases\CreateUser\CreateUserRequest;
 use App\GaelO\UseCases\CreateUser\CreateUserResponse;
-use App\GaelO\UseCases\CreateUser\CreateUser;
-use App;
+
+use App\GaelO\UseCases\ModifyUser\ModifyUser;
 use App\GaelO\UseCases\ModifyUser\ModifyUserRequest;
 use App\GaelO\UseCases\ModifyUser\ModifyUserResponse;
-use App\GaelO\UseCases\ModifyUser\ModifyUser;
+
+use App\GaelO\UseCases\GetUser\GetUser;
 use App\GaelO\UseCases\GetUser\GetUserRequest;
 use App\GaelO\UseCases\GetUser\GetUserResponse;
-use App\GaelO\UseCases\GetUser\GetUser;
+
+use App\GaelO\UseCases\ChangePassword\ChangePassword;
 use App\GaelO\UseCases\ChangePassword\ChangePasswordRequest;
 use App\GaelO\UseCases\ChangePassword\ChangePasswordResponse;
-use App\GaelO\UseCases\ChangePassword\ChangePassword;
+use App\GaelO\UseCases\CreateUserRoles\CreateUserRoles;
+use App\GaelO\UseCases\CreateUserRoles\CreateUserRolesRequest;
+use App\GaelO\UseCases\CreateUserRoles\CreateUserRolesResponse;
+use App\GaelO\UseCases\DeleteUser\DeleteUser;
+use App\GaelO\UseCases\DeleteUser\DeleteUserRequest;
+use App\GaelO\UseCases\DeleteUser\DeleteUserResponse;
+use App\GaelO\UseCases\DeleteUserRole\DeleteUserRole;
+use App\GaelO\UseCases\DeleteUserRole\DeleteUserRoleRequest;
+use App\GaelO\UseCases\DeleteUserRole\DeleteUserRoleResponse;
+use App\GaelO\UseCases\GetUserRoles\GetUserRoles;
+use App\GaelO\UseCases\GetUserRoles\GetUserRolesRequest;
+use App\GaelO\UseCases\GetUserRoles\GetUserRolesResponse;
+use App\GaelO\Util;
+use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
-    public $successStatus = 200;
-    /** 
-     * login api (exposed at /api/login)
-     * 
-     * @return \Illuminate\Http\Response 
-     */
-    public function login()
-    {
-        if (Auth::attempt(['username' => request('username'), 'password' => request('password')])) {
-            $user = Auth::user();
-            $success['token'] =  $user->createToken('MyApp')->accessToken;
-            return response()->json(['success' => $success], $this->successStatus);
-        } else {
-            return response()->json(['error' => 'Unauthorised'], 401);
-        }
-    }
 
-    /** 
-     * details api 
-     * 
-     * @return \Illuminate\Http\Response 
-     */
-    public function details()
-    {
-        $user = Auth::user();
-        return response()->json(['success' => $user], $this->successStatus);
-    }
-
-    //Controlleur implementant la clean architecture
-    public function loginClean(Request $request){
-        //On recupere les infos qui nous interesse a partir du framework
-        $requestData = $request->all();
-        //On cree un object LoginRequest et un object LoginResponse
-        //LoginRequest est un DTO qui contient les information qui nous interessent du framework
-        //LoginResponse est la reponse de notre hexagone, c'est aussi un DTO, il suffit de le mettre dans response()->json() pour emmetre la reponse
-        //La methode execute rempli l'object LoginResponse avec la logique metier ad hoc (fait dans l'hexagone)
-        //Du coup dans l'hexagone il faudra faire des interface pour tous les appels aux fonctions du framework (appel db, email, log)
-        //Par rapport à la video j'ai enleve la partie "Presenter" vue qu'on a plus de vue coté back, on a que du JSON et comme je suis obligé 
-        //de return le response().json() depuis le controller je laisse la partie "presenter" dans le controller
-        $loginRequest = new LoginRequest();
-        $loginRequest->username = $requestData['username'];
-        $loginRequest->password = $requestData['password'];
-        $loginResponse = new LoginResponse();
-        $login = new Login();
-        $login->execute($loginRequest, $loginResponse);
-        return response()->json($loginResponse);
-    }
-
-    public function getUser($id=0, GetUserRequest $getUserRequest, GetUserResponse $getUserResponse) {
+    public function getUser(int $id=0, GetUserRequest $getUserRequest, GetUserResponse $getUserResponse, GetUser $getUser) {
         $getUserRequest->id = $id;
-        $getUser = App::make('GetUser');
         $getUser->execute($getUserRequest, $getUserResponse);
-        return response()->json($getUserResponse);
+        return response()->json($getUserResponse->body)
+                ->setStatusCode($getUserResponse->status, $getUserResponse->statusText);
     }
 
-    public function createUser(Request $request, CreateUserRequest $createUserRequest, CreateUserResponse $createUserResponse) {
+    public function createUser(Request $request, CreateUserRequest $createUserRequest, CreateUserResponse $createUserResponse, CreateUser $createUser) {
         $requestData = $request->all();
-
-        foreach($requestData as $property => $value) {
-            $createUserRequest->$property = isset($requestData[$property]) ? $requestData[$property] : null;
-        } 
-        $createUser = App::make('CreateUser');
+        $createUserRequest = Util::fillObject($requestData, $createUserRequest);
         $createUser->execute($createUserRequest, $createUserResponse);
-        return response()->json($createUserResponse, 201);
-
+        return response()->json($createUserResponse->body)
+                ->setStatusCode($createUserResponse->status, $createUserResponse->statusText);
     }
 
-    public function modifyUser(Request $request, ModifyUserRequest $modifyUserRequest, ModifyUserResponse $modifyUserResponse) {
+    public function modifyUser(int $id, Request $request, ModifyUserRequest $modifyUserRequest, ModifyUserResponse $modifyUserResponse, ModifyUser $modifyUser) {
         $requestData = $request->all();
-
-        $modifyUserRequestData = get_object_vars($modifyUserRequest);
-        foreach($modifyUserRequestData as $property => $value) {
-            $modifyUserRequest->$property = isset($requestData[$property]) ? $requestData[$property] : null;
-        }
-        $modifyUser = App::make('ModifyUser');
+        $requestData['id'] = $id;
+        $modifyUserRequest = Util::fillObject($requestData, $modifyUserRequest);
         $modifyUser->execute($modifyUserRequest, $modifyUserResponse);
-        return response()->json($modifyUserResponse, 200);
+        return response()->json($modifyUserResponse->body)
+                ->setStatusCode($modifyUserResponse->status, $modifyUserResponse->statusText);
     }
 
-    public function changeUserPassword(Request $request, ChangePasswordRequest $changePasswordRequest, ChangePasswordResponse $changePasswordResponse) {
+    public function changeUserPassword(int $id, Request $request, ChangePasswordRequest $changePasswordRequest, ChangePasswordResponse $changePasswordResponse, ChangePassword $changePassword) {
         $requestData = $request->all();
-        
-        $changePasswordRequest->username = $request['username'];
-        $changePasswordRequest->password1 = $request['password1'];
-        $changePasswordRequest->password2 = $request['password2'];
-        $changePasswordRequest->previous_password = $request['previous_password'];
-        $changePassword = App::make('ChangePassword');
+        $requestData['id'] = $id;
+        $changePasswordRequest = Util::fillObject($requestData, $changePasswordRequest);
         $changePassword->execute($changePasswordRequest, $changePasswordResponse);
-        return response()->json($changePasswordResponse, );
+        return response()->noContent()
+                ->setStatusCode($changePasswordResponse->status, $changePasswordResponse->statusText);
     }
+
+    public function deleteUser(int $id, Request $request, DeleteUserRequest $deleteUserRequest, DeleteUserResponse $deleteUserResponse, DeleteUser $deleteUser) {
+        $user = Auth::user();
+
+        $requestData = get_object_vars($request);
+        $deleteUserRequest->id = $id;
+        $deleteUserRequest->currentUserId = $user['id'];
+        $deleteUserRequest = Util::fillObject($requestData, $deleteUserRequest);
+        $deleteUser->execute($deleteUserRequest, $deleteUserResponse);
+        return response()->noContent()
+                    ->setStatusCode($deleteUserResponse->status, $deleteUserResponse->statusText);
+    }
+
+    public function getRoles(int $id, string $study = '', GetUserRolesRequest $getUserRolesRequest, GetUserRolesResponse $getUserRolesResponse, GetUserRoles $getUserRoles){
+        $getUserRolesRequest->userId = $id;
+        $getUserRolesRequest->study = $study;
+        $getUserRoles->execute($getUserRolesRequest, $getUserRolesResponse);
+        return response()->json($getUserRolesResponse->body)
+                ->setStatusCode($getUserRolesResponse->status, $getUserRolesResponse->statusText);
+
+    }
+
+    public function createRole(int $id, string $study, Request $request, CreateUserRoles $createUserRole, CreateUserRolesRequest $createUserRoleRequest, CreateUserRolesResponse $createUserRoleResponse){
+        $curentUser = Auth::user();
+        $rolesArray = $request->all();
+        $createUserRoleRequest->userId = $id;
+        $createUserRoleRequest->study = $study;
+        $createUserRoleRequest->currentUserId = $curentUser['id'];
+        $createUserRoleRequest->roles = $rolesArray;
+        $createUserRole->execute($createUserRoleRequest, $createUserRoleResponse);
+        return response()->noContent()
+        ->setStatusCode($createUserRoleResponse->status, $createUserRoleResponse->statusText);
+    }
+
+    public function deleteRole(int $id, String $study, String $roleName, DeleteUserRole $deleteUserRole, DeleteUserRoleRequest $deleteUserRoleRequest, DeleteUserRoleResponse $deleteUserRoleResponse) {
+        $curentUser = Auth::user();
+        $deleteUserRoleRequest->currentUserId = $curentUser['id'];
+        $deleteUserRoleRequest->userId = $id;
+        $deleteUserRoleRequest->study = $study;
+        $deleteUserRoleRequest->role = $roleName;
+        $deleteUserRole->execute($deleteUserRoleRequest, $deleteUserRoleResponse);
+
+        return response()->noContent()
+        ->setStatusCode($deleteUserRoleResponse->status, $deleteUserRoleResponse->statusText);
+    }
+
 }

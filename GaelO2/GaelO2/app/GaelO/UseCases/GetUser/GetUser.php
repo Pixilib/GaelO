@@ -12,14 +12,16 @@ class GetUser {
 
     public function __construct(PersistenceInterface $persistenceInterface){
         $this->persistenceInterface = $persistenceInterface;
-     } 
+    }
 
     public function execute(GetUserRequest $userRequest, GetUserResponse $userResponse) : void
-    {   
+    {
         $id = $userRequest->id;
-        if ($id == 0) $this->persistenceInterface->getAllUsers();
-        $userResponse->body = $this->persistenceInterface->find($id);
-        if($id == true) $userResponse->status = 200;
+        if ($id == 0) $userResponse->body = $this->persistenceInterface->getAll();
+        else $userResponse->body = $this->persistenceInterface->find($id);
+        $userResponse->status = 200;
+        $userResponse->statusText = 'OK';
+
     }
 
 }

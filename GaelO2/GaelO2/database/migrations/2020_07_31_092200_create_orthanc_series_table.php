@@ -14,8 +14,8 @@ class CreateOrthancSeriesTable extends Migration
     public function up()
     {
         Schema::create('orthanc_series', function (Blueprint $table) {
-            $table->string('series_orthanc_id', 44)->primary();
-            $table->string('study_orthanc_id', 44);
+            $table->string('orthanc_id', 44)->primary();
+            $table->string('orthanc_study_id', 44);
             $table->text('acquisition_date');
             $table->text('acquisition_time');
             $table->text('modality');
@@ -37,7 +37,7 @@ class CreateOrthancSeriesTable extends Migration
             $table->softDeletes();
             $table->timestamps();
             //Dependencies
-            $table->foreign('study_orthanc_id')->references('study_orthanc_id')->on('orthanc_studies');
+            $table->foreign('orthanc_study_id')->references('orthanc_id')->on('orthanc_studies');
         });
     }
 

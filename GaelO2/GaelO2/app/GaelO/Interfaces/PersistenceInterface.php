@@ -8,7 +8,9 @@ interface PersistenceInterface {
 
    public function create(array $data);
 
-   public function find($id);  
+   public function find(int $id);
+
+   public function getAll();
    
    public function delete($id);
 }

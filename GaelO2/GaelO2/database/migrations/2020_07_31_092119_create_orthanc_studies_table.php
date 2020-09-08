@@ -14,10 +14,10 @@ class CreateOrthancStudiesTable extends Migration
     public function up()
     {
         Schema::create('orthanc_studies', function (Blueprint $table) {
-            $table->string('study_orthanc_id', 44)->primary();
+            $table->string('orthanc_id', 44)->primary();
             $table->unsignedBigInteger('visit_id');
             $table->unsignedBigInteger('uploader_id')->default(null);
-            $table->dateTime('upload_date')->default(null);
+            $table->dateTime('upload_date', 6)->default(null);
             $table->text('acquisition_date');
             $table->text('acquisition_time');
             $table->dateTime('acquisition_datetime', 0)->default(null);

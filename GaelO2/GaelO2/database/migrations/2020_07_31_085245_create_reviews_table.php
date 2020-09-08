@@ -17,7 +17,7 @@ class CreateReviewsTable extends Migration
             $table->id();
             $table->unsignedBigInteger('visit_id')->nullable(false);
             $table->unsignedBigInteger('user_id')->nullable(false);
-            $table->dateTime('review_date')->nullable(false);
+            $table->dateTime('review_date', 6)->nullable(false);
             $table->boolean('validated')->nullable(false)->default(false);
             $table->boolean('local')->nullable(false)->default(true);
             $table->boolean('adjudication')->nullable(false)->default(false);

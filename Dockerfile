@@ -21,9 +21,10 @@ RUN apt-get update -qy && \
     unzip \
     libzip-dev \
     zip && \
+    supervisor \
     apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-RUN docker-php-ext-install zip opcache pdo pdo_mysql pdo_pgsql pcntl mbstring intl
+RUN docker-php-ext-install zip opcache pdo pdo_mysql pdo_pgsql pcntl mbstring intl sqlite-3
 COPY php.ini /usr/local/etc/php/conf.d/app.ini
 
 RUN curl -s https://getcomposer.org/installer | php -- --install-dir=/usr/bin/ --filename=composer
