@@ -127,11 +127,11 @@ class UserTest extends TestCase
 
         });
         $studyName = $studies->first()['name'];
-        $response = $this->json('DELETE', '/api/users/1/roles/'.$studyName.'/Investigator');
-        dd($response);
-        //->assertNoContent(200);
-
-
+        //Delete Investigator role
+        $this->json('DELETE', '/api/users/1/roles/'.$studyName.'/Investigator')->assertNoContent(200);
+        //Check the user still have only 2 remaining roles
+        $remainingroles = User::where('id',1)->first()->roles()->get();
+        $this->assertEquals(2, sizeof($remainingroles->toArray()));
 
     }
 

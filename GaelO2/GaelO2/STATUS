@@ -10,7 +10,7 @@ ChangePassword / Create User / Modify user / Reset password => Faire passer l'ut
 Finir de type tous les retour de user repository pour gerer les reponse vides
 
 A faire
-User's Roles : (GET), (POST), DELETE
+User's Roles : (GET), (POST), (DELETE)
 Study : GET, POST, DELETE
 Center : GET, POST, PUT
 ExportDatabase : POST (creation d'une sauvegarde)
