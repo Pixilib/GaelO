@@ -14,7 +14,8 @@ class StudyRepositoryProvider extends ServiceProvider
     public function register()
     {
         $this->app->when(
-            [\App\GaelO\UseCases\CreateStudy\CreateStudy::class])
+            [\App\GaelO\UseCases\CreateStudy\CreateStudy::class,
+            \App\GaelO\UseCases\GetStudy\GetStudy::class])
         ->needs(\App\GaelO\Interfaces\PersistenceInterface::class)
         ->give(\App\GaelO\Repositories\StudyRepository::class);
     }

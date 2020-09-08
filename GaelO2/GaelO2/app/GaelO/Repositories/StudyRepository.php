@@ -44,13 +44,17 @@ class StudyRepository implements PersistenceInterface {
 
         $this->create($data);
 
-
     }
 
     public function isExistingStudy($name) : bool {
         $studies = $this->study->withTrashed()->where('name',$name)->get();
         return $studies->count()> 0 ? true : false ;
 
+    }
+
+    public function getStudies() : array {
+        $studies = $this->study->withTrashed()->get();
+        return $studies->count() == 0 ? [] : $studies->toArray() ;
     }
 
 }

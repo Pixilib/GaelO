@@ -55,4 +55,11 @@ class StudyTest extends TestCase
         $this->assertEquals('NewStudy',$studyEntity[0]['name']);
         $this->assertEquals('1234',$studyEntity[0]['patient_code_prefix']);
     }
+
+    public function testGetStudy(){
+
+        $studies = $this->get('/api/studies')->content();
+        dd($studies);
+
+    }
 }
