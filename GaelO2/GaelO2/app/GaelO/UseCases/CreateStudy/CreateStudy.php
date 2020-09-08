@@ -15,7 +15,7 @@ class CreateStudy {
 
     public function execute(CreateStudyRequest $createStudyRequest, CreateStudyResponse $createStudyResponse){
         $studyName = $createStudyRequest->studyName;
-        $patientCodePreffix = $createStudyRequest->patientCodePreffix;
+        $patientCodePrefix = $createStudyRequest->patientCodePrefix;
 
        if( $this->persistenceInterface->isExistingStudy($studyName) ){
             $createStudyResponse->status = 409;
@@ -23,12 +23,12 @@ class CreateStudy {
             return;
        }
 
-        $this->persistenceInterface->addStudy($studyName, $patientCodePreffix);
+        $this->persistenceInterface->addStudy($studyName, $patientCodePrefix);
 
         $currentUserId=$createStudyRequest->currentUserId;
         $actionDetails = [
             'studyName'=>$studyName,
-            'patientCodePreffix'=> $patientCodePreffix
+            'patientCodePreffix'=> $patientCodePrefix
         ];
 
         $this->trackerService->writeAction($currentUserId, Constants::TRACKER_ROLE_ADMINISTRATOR, null, null, Constants::TRACKER_CREATE_STUDY, $actionDetails);

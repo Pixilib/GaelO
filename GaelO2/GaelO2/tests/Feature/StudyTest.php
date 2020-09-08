@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Artisan;
 use Laravel\Passport\Passport;
 use Tests\TestCase;
 use App\User;
+use App\Study;
 
 class StudyTest extends TestCase
 {
@@ -46,10 +47,12 @@ class StudyTest extends TestCase
     {
         $payload = [
             'studyName'=>'NewStudy',
-            'patientCodePreffix'=>'1234'
+            'patientCodePrefix'=>'1234'
         ];
-        $response = $this->post('/api/studies', $payload)->assertNoContent(201);
-        $response = $this->post('/api/studies', $payload)->assertNoContent(409);
-        //SK CHECKER QUE L ENREGISTEMENT EST BIEN DANS LA TABLE
+        $this->post('/api/studies', $payload)->assertNoContent(201);
+        $this->post('/api/studies', $payload)->assertNoContent(409);
+        $studyEntity = Study::where('name', 'NewStudy')->get()->toArray();
+        $this->assertEquals('NewStudy',$studyEntity[0]['name']);
+        $this->assertEquals('1234',$studyEntity[0]['patient_code_prefix']);
     }
 }
