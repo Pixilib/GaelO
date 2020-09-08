@@ -27,6 +27,9 @@ Route::middleware(['auth:api', 'admin'])->post('studies', 'StudyController@creat
 Route::middleware(['auth:api', 'admin'])->get('studies', 'StudyController@getStudy');
 Route::middleware(['auth:api', 'admin'])->delete('studies/{studyName}', 'StudyController@deleteStudy');
 
+//Preferences Routes
+Route::middleware(['auth:api', 'admin'])->get('preferences', 'PreferenceController@getPreference');
+
 //Centers Routes
 Route::middleware(['auth:api', 'admin'])->get('centers/{code?}', 'CenterController@getCenter');
 Route::middleware(['auth:api', 'admin'])->post('centers', 'CenterController@createCenter');

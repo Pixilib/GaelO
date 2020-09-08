@@ -4,9 +4,6 @@ namespace App\GaelO\UseCases\GetCenter;
 
 use App\GaelO\Interfaces\PersistenceInterface;
 
-use App\GaelO\UseCases\GetCenter\GetCenterRequest;
-use App\GaelO\UseCases\GetCenter\GetCenterResponse;
-
 
 class GetCenter {
 

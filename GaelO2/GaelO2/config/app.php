@@ -176,6 +176,7 @@ return [
         App\Providers\EmailServiceProvider::class,
         App\Providers\CountryAdapterProvider::class,
         App\Providers\StudyRepositoryProvider::class,
+        App\Providers\PreferenceRepositoryProvider::class
 
     ],
 
