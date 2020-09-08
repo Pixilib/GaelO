@@ -43,8 +43,7 @@ class StudyTest extends TestCase
      *
      * @return void
      */
-    public function testCreateStudy()
-    {
+    public function testCreateStudy() {
         $payload = [
             'studyName'=>'NewStudy',
             'patientCodePrefix'=>'1234'
@@ -57,9 +56,11 @@ class StudyTest extends TestCase
     }
 
     public function testGetStudy(){
+        $this->get('/api/studies')->assertJsonCount(0);
+    }
 
-        $studies = $this->get('/api/studies')->content();
-        dd($studies);
+    public function testDeleteStudy(){
 
+        //$this->delete('/api/studies/NewStudy')->assertNoContent(200);
     }
 }
