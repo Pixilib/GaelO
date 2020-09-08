@@ -14,11 +14,11 @@ Reactivation faire PATCH sur la ressource suprimée (A faire pour study, user)
 Query Param dans Study pour avoir la liste avec les deletion ? idem user ? et couvrir en test
 
 A faire
+Preference : (GET), PUT
 Center : GET, POST, PUT
-Preference : GET, PUT
 Tracker GET
 Visit Group : GET, POST
-Visit : GET, POST
+Visit Type : GET, POST
 ExportDatabase : POST (creation d'une sauvegarde)
 
 
