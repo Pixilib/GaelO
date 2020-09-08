@@ -58,7 +58,7 @@ class StudyTest extends TestCase
     }
 
     public function testGetStudy(){
-        $this->get('/api/studies')->assertJsonCount(0);
+        $this->get('/api/studies?full')->assertJsonCount(0);
     }
 
     public function testDeleteStudy(){
@@ -72,7 +72,7 @@ class StudyTest extends TestCase
         //Delete the created study
         $this->delete('/api/studies/NewStudy')->assertNoContent(200);
         //Check that the study is marked now as Deleted At (still need to be visible for the GUI)
-        $content = $this->get('/api/studies')->content();
+        $content = $this->get('/api/studies?full')->content();
         $content = json_decode($content, true);
         $this->assertNotNull($content['deleted_at']);
     }

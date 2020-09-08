@@ -11,6 +11,7 @@ Study : (GET), (POST), (DELETE) => OK
 ChangePassword / Create User / Modify user / Reset password => Faire passer l'utilisateur courant pout le tracker
 Finir de type tous les retour de user repository pour gerer les reponse vides
 Reactivation faire PATCH sur la ressource suprimée (A faire pour study, user)
+Query Param dans Study pour avoir la liste avec les deletion ? idem user ? et couvrir en test
 
 A faire
 Center : GET, POST, PUT
