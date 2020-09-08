@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\GaelO\UseCases\GetPreferences\GetPreferences;
-use App\GaelO\UseCases\GetPreferences\GetPreferencesResponse;
-use App\GaelO\UseCases\GetPreferences\GetPreferencesRequest;
+use App\GaelO\UseCases\GetPreference\GetPreferences;
+use App\GaelO\UseCases\GetPreference\GetPreferencesResponse;
+use App\GaelO\UseCases\GetPreference\GetPreferencesRequest;
 use Illuminate\Http\Request;
 
 class PreferenceController extends Controller

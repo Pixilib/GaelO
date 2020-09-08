@@ -14,7 +14,7 @@ class PreferenceRepositoryProvider extends ServiceProvider
     public function register()
     {
         $this->app->when(
-            [\App\GaelO\UseCases\GetPreferences\GetPreferences::class])
+            [\App\GaelO\UseCases\GetPreference\GetPreferences::class])
         ->needs(\App\GaelO\Interfaces\PersistenceInterface::class)
         ->give(\App\GaelO\Repositories\PreferencesRepository::class);
     }

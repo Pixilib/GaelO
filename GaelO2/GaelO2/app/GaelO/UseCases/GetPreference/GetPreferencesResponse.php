@@ -1,6 +1,6 @@
 <?php
 
-namespace App\GaelO\UseCases\GetPreferences;
+namespace App\GaelO\UseCases\GetPreference;
 
 class GetPreferencesResponse {
     public array $body;
