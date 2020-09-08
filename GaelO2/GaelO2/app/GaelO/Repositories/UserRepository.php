@@ -109,7 +109,7 @@ class UserRepository implements PersistenceInterface {
     /**
      * Return users data of users affiliated (main or affiliated) to a center
      */
-    public function getUsersAffiliatedToCenter(int $centerCode){
+    public function getUsersAffiliatedToCenter(int $centerCode) : array {
 
         $users = $this->user
         ->join('center_user', function ($join) {
@@ -119,7 +119,7 @@ class UserRepository implements PersistenceInterface {
             ->orWhere('users.center_code', '=', $centerCode);
         })->get();
 
-        return $users->toArray();
+        return empty($users) ? [] : $users->toArray();
     }
 
     public function isAlreadyKnownUsernameOrEmail(string $username, string $email){
@@ -127,7 +127,7 @@ class UserRepository implements PersistenceInterface {
         return $users->toArray();
     }
 
-    public function getAllStudiesWithRoleForUser(string $username){
+    public function getAllStudiesWithRoleForUser(string $username) : array {
         $user = $this->user->where('username', $username)->first();
         $studies = $user->roles()->join('studies', function ($join) {
             $join->on('roles.study_name', '=', 'studies.name');
@@ -135,21 +135,39 @@ class UserRepository implements PersistenceInterface {
         return empty($studies)===true ?  [] : $studies->toArray();
     }
 
-    public function getUsersRoles(int $userId){
+    public function getUsersRoles(int $userId) : array {
         $roles = $this->user->where('id', $userId)->first()->roles()->get(['name', 'study_name']);
-        return $roles->groupBy(['study_name'])
+        $roles = $roles->groupBy(['study_name'])
                 ->map(function ($group) {
                     return $group->map(function ($value) {
                         return $value->name;
                     });
-                })
-                ->toArray();
+                });
+
+        return empty($roles) ? [] : $roles->toArray();
     }
 
-    public function getUsersRolesInStudy(int $userId, String $study){
+    public function getUsersRolesInStudy(int $userId, String $study) : array {
         $user = $this->user->where('id', $userId)->first();
         $roles = $user->roles()->where('study_name', $study)->get()->pluck('name');
-        return $roles->toArray();
+        return empty($roles) ? [] : $roles->toArray();
+
+    }
+
+    public function addUserRoleInStudy(int $userId, String $study, Array $roles) : void {
+
+        $user = $this->user->where('id', $userId)->first();
+        $insertArray = [];
+
+        foreach($roles as $role){
+            $insertArray[] =[
+                'user_id'=>$user['id'],
+                'study_name'=> $study,
+                'name'=>$role
+            ];
+        }
+
+        $user->roles()->insert($insertArray);
 
     }
 }

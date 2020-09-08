@@ -20,7 +20,9 @@ use App\GaelO\UseCases\GetUser\GetUserResponse;
 use App\GaelO\UseCases\ChangePassword\ChangePassword;
 use App\GaelO\UseCases\ChangePassword\ChangePasswordRequest;
 use App\GaelO\UseCases\ChangePassword\ChangePasswordResponse;
-
+use App\GaelO\UseCases\CreateUserRoles\CreateUserRoles;
+use App\GaelO\UseCases\CreateUserRoles\CreateUserRolesRequest;
+use App\GaelO\UseCases\CreateUserRoles\CreateUserRolesResponse;
 use App\GaelO\UseCases\DeleteUser\DeleteUser;
 use App\GaelO\UseCases\DeleteUser\DeleteUserRequest;
 use App\GaelO\UseCases\DeleteUser\DeleteUserResponse;
@@ -85,6 +87,18 @@ class UserController extends Controller
         return response()->json($getUserRolesResponse->body)
                 ->setStatusCode($getUserRolesResponse->status, $getUserRolesResponse->statusText);
 
+    }
+
+    public function createRole(int $id, string $study, Request $request, CreateUserRoles $createUserRole, CreateUserRolesRequest $createUserRoleRequest, CreateUserRolesResponse $createUserRoleResponse){
+        $curentUser = Auth::user();
+        $rolesArray = $request->all();
+        $createUserRoleRequest->userId = $id;
+        $createUserRoleRequest->study = $study;
+        $createUserRoleRequest->currentUserId = $curentUser['id'];
+        $createUserRoleRequest->roles = $rolesArray;
+        $createUserRole->execute($createUserRoleRequest, $createUserRoleResponse);
+        return response()->noContent()
+        ->setStatusCode($createUserRoleResponse->status, $createUserRoleResponse->statusText);
     }
 
 }

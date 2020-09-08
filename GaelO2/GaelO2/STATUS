@@ -7,9 +7,10 @@ Login => OK
 ChangePassword => OK
 
 ChangePassword / Create User / Modify user / Reset password => Faire passer l'utilisateur courant pout le tracker
+Finir de type tous les retour de user repository pour gerer les reponse vides
 
 A faire
-User's Roles : GET, POST, DELETE
+User's Roles : (GET), POST -Reste Tracker, DELETE
 Study : GET, DELETE
 Center : GET, POST, PUT
 ExportDatabase : GET ?

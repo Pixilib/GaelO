@@ -70,8 +70,50 @@ class UserTest extends TestCase
 
         });
 
-        //SK A CONTINUER ICI
-        $response = $this->json('GET', '/api/users/4/roles')->assertSuccessful();
+        $content = $this->json('GET', '/api/users/4/roles')->content();
+        $content = json_decode($content, true);
+        $numberofStudies = sizeof(array_keys($content));
+        $firstStudyName = array_keys($content)[0];
+        $numberOfRoleInFirstStudy = sizeof($content[$firstStudyName]);
+        $this->assertEquals(2 , $numberofStudies);
+        $this->assertEquals(3, $numberOfRoleInFirstStudy);
+
+    }
+
+    public function testGetUserRolesInStudy(){
+
+        //Create 5 users
+        $users = factory(User::class, 5)->create(["administrator"=>true]);
+        //Create 2 random studies
+        $studies = factory(Study::class, 2)->create();
+
+        $users->each(function ($user) use ($studies)  {
+            $studies->each(function ($study) use($user) {
+                factory(Role::class)->create(['user_id'=>$user->id, 'name'=>'Investigator', 'study_name'=>$study->name]);
+                factory(Role::class)->create(['user_id'=>$user->id, 'name'=>'Supervisor', 'study_name'=>$study->name]);
+                factory(Role::class)->create(['user_id'=>$user->id, 'name'=>'Monitor', 'study_name'=>$study->name]);
+
+            });
+
+        });
+        $studyName = $studies->first()['name'];
+        $content = $this->json('GET', '/api/users/4/roles/'.$studyName)->content();
+        $content = json_decode($content, true);
+        $numberOfRoleInFirstStudy = sizeof($content);
+        $this->assertEquals(3, $numberOfRoleInFirstStudy);
+
+    }
+
+    public function testCreateRoleForUser(){
+        //Create 2 random studies
+        $studies = factory(Study::class, 1)->create();
+
+        $studyName = $studies->first()['name'];
+        $payload = ["Investigator", "Supervisor"];
+        //First call should be success
+        $this->json('POST', '/api/users/1/roles/'.$studyName, $payload)->assertNoContent(201);
+        //Second call should answer no new role with status 400
+        $this->json('POST', '/api/users/1/roles/'.$studyName, $payload)->assertNoContent(400);
 
     }
 

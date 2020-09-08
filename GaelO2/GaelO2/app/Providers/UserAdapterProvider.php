@@ -22,7 +22,8 @@ class UserAdapterProvider extends ServiceProvider
             \App\GaelO\UseCases\ResetPassword\ResetPassword::class,
             \App\GaelO\UseCases\ModifyUser\ModifyUser::class,
             \App\GaelO\UseCases\Login\Login::class,
-            \App\GaelO\UseCases\GetUserRoles\GetUserRoles::class])
+            \App\GaelO\UseCases\GetUserRoles\GetUserRoles::class,
+            \App\GaelO\UseCases\CreateUserRoles\CreateUserRoles::class])
         ->needs(\App\GaelO\Interfaces\PersistenceInterface::class)
         ->give(\App\GaelO\Repositories\UserRepository::class);
     }
