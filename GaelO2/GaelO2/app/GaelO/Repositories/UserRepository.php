@@ -6,11 +6,13 @@ use App\GaelO\Constants\Constants;
 use App\User;
 use App\GaelO\Interfaces\PersistenceInterface;
 use App\GaelO\Util;
+use App\Role;
 
 class UserRepository implements PersistenceInterface {
 
-    public function __construct(User $user){
+    public function __construct(User $user, Role $roles){
         $this->user = $user;
+        $this->roles = $roles;
     }
 
     public function create(array $data){
@@ -169,6 +171,14 @@ class UserRepository implements PersistenceInterface {
 
         $user->roles()->insert($insertArray);
 
+    }
+
+    public function deleteRoleForUser(int $userId, String $study, String $role) : void{
+        $this->roles->where([
+        ['user_id', '=', $userId],
+        ['study_name', '=', $study],
+        ['name','=', $role]
+        ])->delete();
     }
 }
 

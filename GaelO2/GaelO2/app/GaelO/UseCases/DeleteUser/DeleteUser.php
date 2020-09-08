@@ -14,13 +14,13 @@ class DeleteUser {
     public function __construct(PersistenceInterface $persistenceInterface, TrackerService $trackerService){
         $this->persistenceInterface = $persistenceInterface;
         $this->trackerService  = $trackerService;
-     }
+    }
 
-     public function execute(DeleteUserRequest $deleteRequest, DeleteUserResponse $deleteResponse) : void {
+    public function execute(DeleteUserRequest $deleteRequest, DeleteUserResponse $deleteResponse) : void {
 
         $currentUserDetails = $this->persistenceInterface->find($deleteRequest->currentUserId);
         $this->persistenceInterface->delete($deleteRequest->id);
-        $deleteResponse->status = '200';
+        $deleteResponse->status = 200;
         $deleteResponse->statusText = 'OK';
 
         $actionsDetails = [

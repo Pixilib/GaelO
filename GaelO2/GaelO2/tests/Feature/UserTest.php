@@ -117,4 +117,22 @@ class UserTest extends TestCase
 
     }
 
+    public function testDeleteUserRole(){
+        //Create 2 random studies
+        $studies = factory(Study::class, 1)->create();
+        $studies->each(function ($study)  {
+            factory(Role::class)->create(['user_id'=>1, 'name'=>'Investigator', 'study_name'=>$study->name]);
+            factory(Role::class)->create(['user_id'=>1, 'name'=>'Supervisor', 'study_name'=>$study->name]);
+            factory(Role::class)->create(['user_id'=>1, 'name'=>'Monitor', 'study_name'=>$study->name]);
+
+        });
+        $studyName = $studies->first()['name'];
+        $response = $this->json('DELETE', '/api/users/1/roles/'.$studyName.'/Investigator');
+        dd($response);
+        //->assertNoContent(200);
+
+
+
+    }
+
 }

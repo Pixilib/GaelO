@@ -20,6 +20,7 @@ Route::middleware(['auth:api', 'admin'])->put('users/{id}', 'UserController@modi
 Route::middleware(['auth:api', 'admin'])->delete('users/{id}', 'UserController@deleteUser');
 Route::middleware(['auth:api', 'admin'])->get('users/{id}/roles/{study?}', 'UserController@getRoles');
 Route::middleware(['auth:api', 'admin'])->post('users/{id}/roles/{study}', 'UserController@createRole');
+Route::middleware(['auth:api', 'admin'])->delete('users/{id}/roles/{study}/{roleName}', 'UserController@deleteRole');
 
 //Centers Routes
 Route::middleware(['auth:api', 'admin'])->get('centers/{code?}', 'CenterController@getCenter');

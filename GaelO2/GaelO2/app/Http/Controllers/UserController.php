@@ -26,6 +26,9 @@ use App\GaelO\UseCases\CreateUserRoles\CreateUserRolesResponse;
 use App\GaelO\UseCases\DeleteUser\DeleteUser;
 use App\GaelO\UseCases\DeleteUser\DeleteUserRequest;
 use App\GaelO\UseCases\DeleteUser\DeleteUserResponse;
+use App\GaelO\UseCases\DeleteUserRole\DeleteUserRole;
+use App\GaelO\UseCases\DeleteUserRole\DeleteUserRoleRequest;
+use App\GaelO\UseCases\DeleteUserRole\DeleteUserRoleResponse;
 use App\GaelO\UseCases\GetUserRoles\GetUserRoles;
 use App\GaelO\UseCases\GetUserRoles\GetUserRolesRequest;
 use App\GaelO\UseCases\GetUserRoles\GetUserRolesResponse;
@@ -99,6 +102,18 @@ class UserController extends Controller
         $createUserRole->execute($createUserRoleRequest, $createUserRoleResponse);
         return response()->noContent()
         ->setStatusCode($createUserRoleResponse->status, $createUserRoleResponse->statusText);
+    }
+
+    public function deleteRole(int $id, String $study, String $roleName, DeleteUserRole $deleteUserRole, DeleteUserRoleRequest $deleteUserRoleRequest, DeleteUserRoleResponse $deleteUserRoleResponse) {
+        $curentUser = Auth::user();
+        $deleteUserRoleRequest->currentUserId = $curentUser['id'];
+        $deleteUserRoleRequest->userId = $id;
+        $deleteUserRoleRequest->study = $study;
+        $deleteUserRoleRequest->role = $roleName;
+        $deleteUserRole->execute($deleteUserRoleRequest, $deleteUserRoleResponse);
+
+        return response()->noContent()
+        ->setStatusCode($deleteUserRoleResponse->status, $deleteUserRoleResponse->statusText);
     }
 
 }
