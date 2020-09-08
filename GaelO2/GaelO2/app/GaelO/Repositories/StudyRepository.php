@@ -8,8 +8,8 @@ use App\GaelO\Util;
 
 class StudyRepository implements PersistenceInterface {
 
-    public function __construct(){
-        $this->study = new Study();
+    public function __construct(Study $study){
+        $this->study = $study;
     }
 
     public function create(array $data){
@@ -24,7 +24,8 @@ class StudyRepository implements PersistenceInterface {
     }
 
     public function find($name){
-        return $this->study->find($name)->toArray();
+        $studies = $this->study->find($name)->get();
+        return $studies->count()> 0 ? $studies->toArray() : [] ;
     }
 
     public function delete($name) {
@@ -44,6 +45,12 @@ class StudyRepository implements PersistenceInterface {
 
         $this->create($data);
 
+
+    }
+
+    public function isExistingStudy($name) : bool {
+        $studies = $this->study->withTrashed()->where('name',$name)->get();
+        return $studies->count()> 0 ? true : false ;
 
     }
 

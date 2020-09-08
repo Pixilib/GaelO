@@ -22,6 +22,9 @@ Route::middleware(['auth:api', 'admin'])->get('users/{id}/roles/{study?}', 'User
 Route::middleware(['auth:api', 'admin'])->post('users/{id}/roles/{study}', 'UserController@createRole');
 Route::middleware(['auth:api', 'admin'])->delete('users/{id}/roles/{study}/{roleName}', 'UserController@deleteRole');
 
+//Study Routes
+Route::middleware(['auth:api', 'admin'])->post('studies', 'StudyController@createStudy');
+
 //Centers Routes
 Route::middleware(['auth:api', 'admin'])->get('centers/{code?}', 'CenterController@getCenter');
 Route::middleware(['auth:api', 'admin'])->post('centers', 'CenterController@createCenter');

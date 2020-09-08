@@ -4,6 +4,6 @@ namespace App\GaelO\UseCases\CreateStudy;
 
 class CreateStudyRequest {
     public int $currentUserId;
-    public int $studyName;
-    public int $patientCodePreffix;
+    public String $studyName;
+    public ?int $patientCodePreffix=null;
 }

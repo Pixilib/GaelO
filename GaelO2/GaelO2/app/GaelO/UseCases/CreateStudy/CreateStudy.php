@@ -17,6 +17,12 @@ class CreateStudy {
         $studyName = $createStudyRequest->studyName;
         $patientCodePreffix = $createStudyRequest->patientCodePreffix;
 
+       if( $this->persistenceInterface->isExistingStudy($studyName) ){
+            $createStudyResponse->status = 409;
+            $createStudyResponse->statusText = 'Conflict';
+            return;
+       }
+
         $this->persistenceInterface->addStudy($studyName, $patientCodePreffix);
 
         $currentUserId=$createStudyRequest->currentUserId;
@@ -27,8 +33,8 @@ class CreateStudy {
 
         $this->trackerService->writeAction($currentUserId, Constants::TRACKER_ROLE_ADMINISTRATOR, null, null, Constants::TRACKER_CREATE_STUDY, $actionDetails);
 
-        $createStudyResponse->status = 200;
-        $createStudyResponse->statusText = 'OK';
+        $createStudyResponse->status = 201;
+        $createStudyResponse->statusText = 'Created';
 
     }
 
