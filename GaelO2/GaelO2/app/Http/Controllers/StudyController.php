@@ -5,6 +5,10 @@ namespace App\Http\Controllers;
 use App\GaelO\UseCases\CreateStudy\CreateStudy;
 use App\GaelO\UseCases\CreateStudy\CreateStudyRequest;
 use App\GaelO\UseCases\CreateStudy\CreateStudyResponse;
+use App\GaelO\UseCases\DeleteStudy\DeleteStudy;
+use App\GaelO\UseCases\DeleteStudy\DeleteStudyQuery;
+use App\GaelO\UseCases\DeleteStudy\DeleteStudyRequest;
+use App\GaelO\UseCases\DeleteStudy\DeleteStudyResponse;
 use App\GaelO\UseCases\GetStudy\GetStudy;
 use App\GaelO\UseCases\GetStudy\GetStudyRequest;
 use App\GaelO\UseCases\GetStudy\GetStudyResponse;
@@ -32,7 +36,18 @@ class StudyController extends Controller
         $getStudy->execute($getStudyRequest, $getStudyResponse);
 
         return response()->json($getStudyResponse->body)
-        ->setStatusCode($getStudyResponse->status, $getStudyResponse->statusText);
+                ->setStatusCode($getStudyResponse->status, $getStudyResponse->statusText);
+
+    }
+
+    public function deleteStudy(String $studyName, DeleteStudy $deleteStudy,  DeleteStudyRequest $deleteStudyRequest, DeleteStudyResponse $deleteStudyResponse){
+        $currentUser = Auth::user();
+        $deleteStudyRequest->currentUserId = $currentUser['id'];
+        $deleteStudyRequest->studyName = $studyName;
+        $deleteStudy->execute($deleteStudyRequest, $deleteStudyResponse);
+
+        return response()->noContent()
+                ->setStatusCode($deleteStudyResponse->status, $deleteStudyResponse->statusText);
 
     }
 }

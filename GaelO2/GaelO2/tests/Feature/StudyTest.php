@@ -49,7 +49,9 @@ class StudyTest extends TestCase
             'patientCodePrefix'=>'1234'
         ];
         $this->post('/api/studies', $payload)->assertNoContent(201);
+        //Second creation of the same study should not be allowed
         $this->post('/api/studies', $payload)->assertNoContent(409);
+        //Check that created study is available
         $studyEntity = Study::where('name', 'NewStudy')->get()->toArray();
         $this->assertEquals('NewStudy',$studyEntity[0]['name']);
         $this->assertEquals('1234',$studyEntity[0]['patient_code_prefix']);
@@ -61,6 +63,17 @@ class StudyTest extends TestCase
 
     public function testDeleteStudy(){
 
-        //$this->delete('/api/studies/NewStudy')->assertNoContent(200);
+        $payload = [
+            'studyName'=>'NewStudy',
+            'patientCodePrefix'=>'1234'
+        ];
+        //Create Study
+        $this->post('/api/studies', $payload)->assertNoContent(201);
+        //Delete the created study
+        $this->delete('/api/studies/NewStudy')->assertNoContent(200);
+        //Check that the study is marked now as Deleted At (still need to be visible for the GUI)
+        $content = $this->get('/api/studies')->content();
+        $content = json_decode($content, true);
+        $this->assertNotNull($content['deleted_at']);
     }
 }

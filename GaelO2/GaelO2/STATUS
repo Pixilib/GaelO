@@ -6,18 +6,20 @@ Request => OK
 Login => OK
 ChangePassword => OK
 User's Roles : (GET), (POST), (DELETE)=>OK
+Study : (GET), (POST), (DELETE) => OK
 
 ChangePassword / Create User / Modify user / Reset password => Faire passer l'utilisateur courant pout le tracker
 Finir de type tous les retour de user repository pour gerer les reponse vides
+Reactivation faire PATCH sur la ressource suprimée (A faire pour study, user)
 
 A faire
-Study : (GET), (POST), DELETE
-Visit Group : GET, POST
-Visit : GET, POST
 Center : GET, POST, PUT
-ExportDatabase : POST (creation d'une sauvegarde)
 Preference : GET, PUT
 Tracker GET
+Visit Group : GET, POST
+Visit : GET, POST
+ExportDatabase : POST (creation d'une sauvegarde)
+
 
 Orthanc
 ReverseProxy
