@@ -44,21 +44,30 @@ class CenterTest extends TestCase
         $this->assertEquals(1,sizeof($answer));
     }
 
-    /*
+
     public function testAddCenter()
     {
         $payload = [
-            'name' => 'newCenter',
-            'code' => '2',
-            ''
+            'name' => 'Paris',
+            'code' => 8,
+            'countryCode'=>'US'
 
         ];
-        $response = $this->post('/api/centers')->content();
-        $answer = json_decode($response, true);
-        $this->assertEquals(1,sizeof($answer));
-    }*/
+        $response = $this->post('/api/centers', $payload)->assertNoContent(201);
+    }
 
     public function testModifyCenter(){
+
+        $payload = [
+            'name' => 'newCenter',
+            'countryCode'=>'FR'
+
+        ];
+        $response = $this->put('/api/centers/0', $payload)->assertNoContent(200);
+        //Non existing center modification should fail
+        $response = $this->put('/api/centers/1', $payload);
+        dd($response);
+
 
     }
 }

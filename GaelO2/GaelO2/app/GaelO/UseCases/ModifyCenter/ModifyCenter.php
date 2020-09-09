@@ -2,36 +2,40 @@
 
 namespace App\GaelO\UseCases\ModifyCenter;
 
+use App\GaelO\Constants\Constants;
 use App\GaelO\Interfaces\PersistenceInterface;
 
 use App\GaelO\UseCases\ModifyCenter\ModifyCenterRequest;
 use App\GaelO\UseCases\ModifyCenter\ModifyCenterResponse;
-use App\GaelO\Exceptions\GaelOException;
+use App\GaelO\Services\TrackerService;
 use App\GaelO\Util;
 
 class ModifyCenter {
 
-    public function __construct(PersistenceInterface $persistenceInterface){
+    public function __construct(PersistenceInterface $persistenceInterface, TrackerService $trackerService){
         $this->persistenceInterface = $persistenceInterface;
+        $this->trackerService = $trackerService;
      }
 
-    //logique métier (ex validation ...)
+
      public function execute(ModifyCenterRequest $centerRequest, ModifyCenterResponse $centerResponse) : void
     {
         $name = $centerRequest->name;
-        $this->persistenceInterace->updateCenter($name, $centerRequest->code, $centerRequest->country_code);
+        $this->persistenceInterface->updateCenter($name, $centerRequest->code, $centerRequest->countryCode);
+
+        $actionDetails = [
+            'modifiedCenter' => $centerRequest->code,
+            'centerName'=> $name,
+            'centerCountryCode' =>  $centerRequest->countryCode,
+        ];
+
+        $this->trackerService->writeAction($centerRequest->currentUserId, Constants::TRACKER_ROLE_ADMINISTRATOR, null, null, Constants::TRACKER_EDIT_CENTER, $actionDetails);
+
+
         $centerResponse->status = 200;
         $centerResponse->statusText = 'OK';
     }
 
-/*
-    if($this->persistenceInterface->isKnownCenter($name)){
-        $centerResponse->status = 409;
-        $centerResponse->statusText = 'Conflict';
-        return;
-
-    };
-    */
 
 }
 

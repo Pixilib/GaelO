@@ -34,7 +34,7 @@ class CenterRepository implements PersistenceInterface {
     }
 
     public function find($id){
-        return $this->center->find($id)->toArray();
+        return $this->center->find($id);
     }
 
     public function delete($id) {
@@ -47,12 +47,12 @@ class CenterRepository implements PersistenceInterface {
 
     public function getCenterByName($name) : array {
         $center = $this->center->where('name', $name)->get()->first();
-        return sizeof($center) >0  ? $center->toArray() : [];
+        return sizeof($center) > 0  ? $center->toArray() : [];
 
     }
 
-    public function isKnownCenter(String $name) {
-        return empty($this->getCenterByName($name)) ? false : true;
+    public function isKnownCenter(int $code) {
+        return empty($this->find($code)) ? false : true;
     }
 
     public function updateCenter(String $name, int $code, String $countryCode){

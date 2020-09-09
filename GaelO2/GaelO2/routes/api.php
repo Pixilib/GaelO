@@ -34,6 +34,7 @@ Route::middleware(['auth:api', 'admin'])->put('preferences', 'PreferenceControll
 //Centers Routes
 Route::middleware(['auth:api', 'admin'])->get('centers/{code?}', 'CenterController@getCenter');
 Route::middleware(['auth:api', 'admin'])->post('centers', 'CenterController@createCenter');
+Route::middleware(['auth:api', 'admin'])->put('centers/{code}', 'CenterController@modifyCenter');
 
 //Mail Route
 Route::post('request', 'RequestController@sendRequest');
