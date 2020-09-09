@@ -6,6 +6,7 @@ ChangePassword POST => OK
 User's Roles : (GET), (POST), (DELETE)=>OK
 Study : (GET), (POST), (DELETE) => OK
 Preference : (GET), (PUT) =>OK
+Center : GET, POST, PUT => OK
 
 ChangePassword / Create User / Modify user / Reset password => Faire passer l'utilisateur courant pout le tracker
 Finir de typer tous les retour de user repository pour gerer les reponse vides
@@ -14,8 +15,7 @@ Reactivation faire PATCH sur la ressource suprimée (A faire pour study, user)
 Query Param dans Study pour avoir la liste avec les deletion ? idem user ? et couvrir en test
 
 A faire
-Center : GET, POST, PUT
-Tracker GET
+Tracker GET=> utiliser les query string
 Visit Group : GET, POST
 Visit Type : GET, POST
 =>Visit Group et Visit Type faire Delete tant que pas de visite associées?

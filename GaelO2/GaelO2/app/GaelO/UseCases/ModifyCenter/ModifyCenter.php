@@ -21,6 +21,13 @@ class ModifyCenter {
      public function execute(ModifyCenterRequest $centerRequest, ModifyCenterResponse $centerResponse) : void
     {
         $name = $centerRequest->name;
+
+        if(!$this->persistenceInterface->isKnownCenter($centerRequest->code)){
+            $centerResponse->status = 400;
+            $centerResponse->statusText = 'Non Existing Center';
+            return;
+
+        };
         $this->persistenceInterface->updateCenter($name, $centerRequest->code, $centerRequest->countryCode);
 
         $actionDetails = [
