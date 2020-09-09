@@ -36,7 +36,7 @@ class PreferencesRepository implements PersistenceInterface {
         throw new GaelOException('Not Deletable');
     }
 
-    public function updatePreferences(int $patientCodeLength, $parseDateImport, $parseCountryName){
+    public function updatePreferences(int $patientCodeLength, String $parseDateImport, String $parseCountryName){
         $data = [
         'patient_code_length'=>$patientCodeLength,
         'parse_date_import'=>$parseDateImport,

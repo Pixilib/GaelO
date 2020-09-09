@@ -9,6 +9,7 @@ class GetPreferences {
 
     public function __construct(PersistenceInterface $persistenceInterface) {
         $this->persistenceInterface = $persistenceInterface;
+
     }
 
     public function execute(GetPreferencesRequest $getPreferencesRequest, GetPreferencesResponse $getPreferencesResponse){
@@ -28,6 +29,8 @@ class GetPreferences {
         $getPreferencesResponse->body = $preferences;
         $getPreferencesResponse->status = 200;
         $getPreferencesResponse->statusText = 'OK';
+
+
 
     }
 

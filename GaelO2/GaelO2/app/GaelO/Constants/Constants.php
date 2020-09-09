@@ -14,6 +14,7 @@ class Constants {
     const ROLE_SUPERVISOR  = "Supervisor";
     const ROLE_REVIEWER = "Reviewer";
 
+    const TRACKER_EDIT_PREFERENCE = "Preference edited";
     const TRACKER_SEND_MESSAGE = "Send Message";
     const TRACKER_CREATE_VISIT = "Create Visit";
     const TRACKER_UPLOAD_SERIES = "Upload Series";

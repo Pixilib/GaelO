@@ -46,16 +46,17 @@ class PreferenceTest extends TestCase
 
         $payload = [
             'patientCodeLength'=>15,
-            'parseDateImport'=>'m.d.Y',
+            'parseDateImport'=>'d.m.Y',
             'parseCountryName'=>'FR'
         ];
 
-        $this->put('api/preferences', $payload)->assertNoContent(200);
+        $this->put('api/preferences', $payload);
 
         $content = $this->get('api/preferences')->content();
         $newPreferenceArray = json_decode($content, true);
+
         $this->assertEquals(15, $newPreferenceArray['patientCodeLength']);
-        $this->assertEquals('m.d.Y', $newPreferenceArray['parseDateImport']);
+        $this->assertEquals('d.m.Y', $newPreferenceArray['parseDateImport']);
         $this->assertEquals('FR', $newPreferenceArray['parseCountryName']);
     }
 }
