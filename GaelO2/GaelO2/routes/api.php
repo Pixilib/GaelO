@@ -29,6 +29,7 @@ Route::middleware(['auth:api', 'admin'])->delete('studies/{studyName}', 'StudyCo
 
 //Preferences Routes
 Route::middleware(['auth:api', 'admin'])->get('preferences', 'PreferenceController@getPreference');
+Route::middleware(['auth:api', 'admin'])->put('preferences', 'PreferenceController@modifyPreference');
 
 //Centers Routes
 Route::middleware(['auth:api', 'admin'])->get('centers/{code?}', 'CenterController@getCenter');

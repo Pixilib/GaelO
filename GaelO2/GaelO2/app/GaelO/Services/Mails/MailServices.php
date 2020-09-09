@@ -31,6 +31,7 @@ Class MailServices extends SendEmailAdapter {
     public function sendRequestMessage(array $parameters) : void {
         $destinators = [$this->getAdminsEmails(), $parameters['email']];
         $this->mailInterface->setTo($destinators);
+        $this->mailInterface->setReplyTo();
         $this->mailInterface->setParameters($parameters);
         $this->mailInterface->sendModel(MailConstants::EMAIL_REQUEST);
 
@@ -47,6 +48,7 @@ Class MailServices extends SendEmailAdapter {
             'email'=> $email
         ];
         $this->mailInterface->setTo([$parameters['email']]);
+        $this->mailInterface->setReplyTo();
         $this->mailInterface->setParameters($parameters);
         $this->mailInterface->sendModel(MailConstants::EMAIL_RESET_PASSWORD);
 
@@ -62,6 +64,7 @@ Class MailServices extends SendEmailAdapter {
         ];
         //Send to user and administrators
         $this->mailInterface->setTo( [$email, ...$this->getAdminsEmails()] );
+        $this->mailInterface->setReplyTo();
         $this->mailInterface->setParameters($parameters);
         $this->mailInterface->sendModel(MailConstants::EMAIL_BLOCKED_ACCOUNT);
 
@@ -75,6 +78,7 @@ Class MailServices extends SendEmailAdapter {
         ];
         //Send to administrators
         $this->mailInterface->setTo( $this->getAdminsEmails() );
+        $this->mailInterface->setReplyTo();
         $this->mailInterface->setParameters($parameters);
         $this->mailInterface->sendModel(MailConstants::EMAIL_ADMIN_LOGGED);
 
@@ -90,6 +94,7 @@ Class MailServices extends SendEmailAdapter {
 
         //Send to administrators
         $this->mailInterface->setTo( [$userEmail] );
+        $this->mailInterface->setReplyTo();
         $this->mailInterface->setParameters($parameters);
         $this->mailInterface->sendModel(MailConstants::EMAIL_USER_CREATED);
 

@@ -2,7 +2,7 @@
 
 namespace App\GaelO\UseCases\ModifyPreference;
 
-class ModifyPrefrenceResponse {
+class ModifyPreferenceResponse {
     public int $status;
     public string $statusText;
 }

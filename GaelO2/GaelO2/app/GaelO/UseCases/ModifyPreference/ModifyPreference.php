@@ -12,22 +12,14 @@ class ModifyPreference {
         $this->trackerService = $trackerService;
     }
 
-    public function execute(ModifyPreferenceRequest $modifyPreferenceRequest, ModifyPrefrenceResponse $modifyPrefrenceResponse){
+    public function execute(ModifyPreferenceRequest $modifyPreferenceRequest, ModifyPreferenceResponse $modifyPrefrenceResponse){
 
-        //SK EMAIL A VOIR PEUT ETRE DOIT VENIR EN .env
-        //A REVOIR ICI A PRIORI LES MAILS INUTILES et PLATEFORM NAME AUSSI
-        //URL en env
-        //A priori garder que code length, parse date import et parse country name=>qui seront servi par un service
-        $newPreferences = [
-            'patient_code_length'=>$modifyPreferenceRequest->patientCodeLength,
-            'plateform_name'=>$modifyPreferenceRequest->plateformeName,
-            'admin_email'=>$modifyPreferenceRequest->adminEmail,
-            'email_reply_to'=>$modifyPreferenceRequest->replyToEmail,
-            'corporation'=>$modifyPreferenceRequest->corporation,
-            'url'=>$modifyPreferenceRequest->url,
-            'parse_date_import'=>$modifyPreferenceRequest->parseDateImport,
-            'parse_country_name'=>$modifyPreferenceRequest->parseCountryName
-        ];
+        $this->persistenceInterface->updatePreferences($modifyPreferenceRequest->patientCodeLength,
+                $modifyPreferenceRequest->parseDateImport,
+                $modifyPreferenceRequest->parseCountryName);
+
+        $modifyPrefrenceResponse->status=200;
+        $modifyPrefrenceResponse->statusText='OK';
 
     }
 

@@ -19,6 +19,10 @@ class LaravelFunctionAdapter {
         return Hash::check($plainValue, $hash);
 
     }
+
+    public static function getEnv($key){
+        return (env($key));
+    }
 }
 
 ?>
