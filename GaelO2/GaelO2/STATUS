@@ -1,10 +1,8 @@
 
-Delete User => OK
-CreateUser => OK
-UpdateUser => OK
-Request => OK
-Login => OK
-ChangePassword => OK
+User GET, POST, PUT, DELETE => OK
+Request POST => OK
+Login / Logout POST DELETE => OK
+ChangePassword POST => OK
 User's Roles : (GET), (POST), (DELETE)=>OK
 Study : (GET), (POST), (DELETE) => OK
 Preference : (GET), (PUT) =>OK
@@ -23,9 +21,11 @@ Visit Type : GET, POST
 =>Visit Group et Visit Type faire Delete tant que pas de visite associées?
 ExportDatabase : POST (creation d'une sauvegarde)
 
-
-Orthanc
+Service :
+Orthanc (ajout des env a faire)
 ReverseProxy
+
+Reflechir Etude Ancillaire : Probablement decoupler les review, une review reference une visite et une study
 
 //Les tests ne font pas d'assertion sur le tracker et l'envoi de mails (mais exception si erreur en theorie)
 
