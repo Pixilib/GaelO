@@ -17,7 +17,7 @@ class VisitRepository implements PersistenceInterface {
         $model->save();
     }
 
-    public function update($id, array $data){
+    public function update($id, array $data) : void {
         $model = $this->visit->find($id);
         $model = Util::fillObject($data, $model);
         $model->save();
@@ -27,12 +27,13 @@ class VisitRepository implements PersistenceInterface {
         return $this->visit->find($id)->toArray();
     }
 
-    public function delete($id) {
-        return $this->visit->find($id)->delete();
+    public function delete($id) : void {
+        $this->visit->find($id)->delete();
     }
 
-    public function getAll() {
-        return $this->visit->get()->toArray();
+    public function getAll() : array {
+        $visits = $this->visit->get();
+        return empty($visits) ? []  : $visits->toArray();
     }
 
 }

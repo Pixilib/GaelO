@@ -22,7 +22,7 @@ class UserRepository implements PersistenceInterface {
         return $this->user->toArray();
     }
 
-    public function update($id, array $data){
+    public function update($id, array $data) : void{
         $model = $this->user->find($id);
         $model = Util::fillObject($data, $model);
         $model->save();
@@ -32,18 +32,19 @@ class UserRepository implements PersistenceInterface {
         return $this->user->find($id)->toArray();
     }
 
-    public function delete($id) {
-        return $this->user->find($id)->delete();
+    public function delete($id) : void {
+        $this->user->find($id)->delete();
     }
 
-    public function getAll() {
-        return $this->user->get()->toArray();
+    public function getAll() : array {
+        $users = $this->user->get();
+        return empty($users) ? [] : $users->toArray();
     }
 
     public function createUser(String $username, String $lastName, String $firstName, String $status,
                                 String $email, ?String $phone, bool $administrator, int $centerCode, String $job,
                                 ?String $orthancAdress, ?String $orthancLogin, ?String $orthancPassword,
-                                String $passwordTemporary, ?String $password, String $creationDate, ?String $lastPasswordUpdate){
+                                String $passwordTemporary, ?String $password, String $creationDate, ?String $lastPasswordUpdate) : array {
 
         $data= ['username' => $username,
         'lastname' => $lastName,
@@ -69,7 +70,7 @@ class UserRepository implements PersistenceInterface {
     public function updateUser(int $id, String $username, String $lastName, String $firstName, String $status,
                                 String $email, ?String $phone, bool $administrator, int $centerCode, String $job,
                                 ?String $orthancAdress, ?String $orthancLogin, ?String $orthancPassword,
-                                ?String $passwordTemporary, ?String $password, String $creationDate, ?String $lastPasswordUpdate){
+                                ?String $passwordTemporary, ?String $password, String $creationDate, ?String $lastPasswordUpdate) : void {
 
         $data= ['username' => $username,
                 'lastname' => $lastName,
@@ -88,7 +89,7 @@ class UserRepository implements PersistenceInterface {
                 'creation_date'=> $creationDate,
                 'last_password_update'=> $lastPasswordUpdate];
 
-        return $this->update($id, $data);
+        $this->update($id, $data);
 
     }
 
@@ -97,37 +98,37 @@ class UserRepository implements PersistenceInterface {
         return $user->toArray();
     }
 
-    public function isExistingUsername($username){
+    public function isExistingUsername($username) : bool {
         $user = $this->user->where('username', $username);
         return $user->count() > 0 ? true : false;
     }
 
 
-    public function isExistingEmail($email){
+    public function isExistingEmail($email) : bool {
         $user = $this->user->where('email', $email);
         return $user->count() > 0 ? true : false;
     }
 
-    public function getUserByEmail($email){
+    public function getUserByEmail($email) : array {
         $user = $this->user->where('email', $email)->first();
-        return $user->toArray();
+        return empty($user) ? [] : $user->toArray();
     }
 
-    public function getAdministrators(){
+    public function getAdministrators() : array {
         $user = $this->user->where('administrator', true);
-        return $user->toArray();
+        return empty($user) ? [] : $user->toArray();
     }
 
-    public function getAdministratorsEmails(){
-        $emails = $this->user->where('administrator', true)->pluck('email');
-        return $emails->toArray();
+    public function getAdministratorsEmails() : array {
+        $emails = $this->user->where('administrator', true)->get();
+        return empty($emails) ? [] : $emails->pluck('email')->toArray();
     }
 
     /**
      * Get Emails array of user having an Investigator roles, affiliated (main or affiliated) in centercode
      * and having a particular job
      */
-    public function getInvestigatorsStudyFromCenterEmails(string $study, int $centerCode, string $job){
+    public function getInvestigatorsStudyFromCenterEmails(string $study, int $centerCode, string $job) : array {
 
         $emails = $this->user
         ->join('roles', function ($join) {
@@ -142,12 +143,12 @@ class UserRepository implements PersistenceInterface {
             $query->where('center_user.center_code', '=', $centerCode)
             ->orWhere('users.center_code', '=', $centerCode);
         })
-        ->get()->pluck('email');
+        ->get();
 
-        return $emails->toArray();
+        return empty($emails) ? [] : $emails->pluck('email')->toArray();
     }
 
-    public function getUsersEmailsByRolesInStudy(string $study, string $role ){
+    public function getUsersEmailsByRolesInStudy(string $study, string $role ) : array {
 
         $emails = $this->user
         ->join('roles', function ($join) {
@@ -155,9 +156,9 @@ class UserRepository implements PersistenceInterface {
         })->where(function ($query) use ($study, $role) {
             $query->where('roles.name', '=', $role)
             ->where('roles.study_name', '=', $study);
-        })->get()->pluck('email');
+        })->get();
 
-        return $emails->toArray();
+        return empty($emails) ? [] : $emails->pluck('email')->toArray();
 
     }
 
@@ -175,11 +176,6 @@ class UserRepository implements PersistenceInterface {
         })->get();
 
         return empty($users) ? [] : $users->toArray();
-    }
-
-    public function isAlreadyKnownUsernameOrEmail(string $username, string $email){
-        $users = $this->user->where('username', $username)->orWhere('email', $email)->get();
-        return $users->toArray();
     }
 
     public function getAllStudiesWithRoleForUser(string $username) : array {
@@ -226,12 +222,12 @@ class UserRepository implements PersistenceInterface {
 
     }
 
-    public function deleteRoleForUser(int $userId, String $study, String $role) : void{
+    public function deleteRoleForUser(int $userId, String $study, String $role) : void {
         $this->roles->where([
-        ['user_id', '=', $userId],
-        ['study_name', '=', $study],
-        ['name','=', $role]
-        ])->delete();
+            ['user_id', '=', $userId],
+            ['study_name', '=', $study],
+            ['name','=', $role]
+            ])->delete();
     }
 }
 

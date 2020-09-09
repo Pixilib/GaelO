@@ -14,7 +14,7 @@ class PreferencesRepository implements PersistenceInterface {
         $this->preferences = $preferences;
     }
 
-    public function update($id, array $data){
+    public function update($id, array $data) : void{
         $model = $this->preferences->get()->first();
         $model = Util::fillObject($data, $model);
         $model->save();
@@ -28,15 +28,15 @@ class PreferencesRepository implements PersistenceInterface {
         throw new GaelOException('Not Searchable');
     }
 
-    public function getAll(){
+    public function getAll() : array {
         return $this->preferences->get()->first()->toArray();
     }
 
-    public function delete($id){
+    public function delete($id) : void{
         throw new GaelOException('Not Deletable');
     }
 
-    public function updatePreferences(int $patientCodeLength, String $parseDateImport, String $parseCountryName){
+    public function updatePreferences(int $patientCodeLength, String $parseDateImport, String $parseCountryName) : void {
         $data = [
         'patient_code_length'=>$patientCodeLength,
         'parse_date_import'=>$parseDateImport,
