@@ -18,7 +18,6 @@ class DeleteUser {
 
     public function execute(DeleteUserRequest $deleteRequest, DeleteUserResponse $deleteResponse) : void {
 
-        $currentUserDetails = $this->persistenceInterface->find($deleteRequest->currentUserId);
         $this->persistenceInterface->delete($deleteRequest->id);
         $deleteResponse->status = 200;
         $deleteResponse->statusText = 'OK';
@@ -27,7 +26,9 @@ class DeleteUser {
             'deactivated_user'=>$deleteRequest->id
         ];
 
-        $this->trackerService->writeAction($currentUserDetails['id'], Constants::TRACKER_ROLE_USER, null, null, Constants::TRACKER_EDIT_USER, $actionsDetails);
+        $this->trackerService->writeAction($deleteRequest->currentUserId,
+                                Constants::TRACKER_ROLE_USER, null, null,
+                                Constants::TRACKER_EDIT_USER, $actionsDetails);
 
     }
 

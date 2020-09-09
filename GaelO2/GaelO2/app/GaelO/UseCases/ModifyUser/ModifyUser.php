@@ -18,23 +18,22 @@ class ModifyUser {
         $this->persistenceInterface = $persistenceInterface;
         $this->trackerService = $trackerService;
         $this->mailService = $mailService;
-     }
+    }
 
-     public function execute(ModifyUserRequest $userRequest, ModifyUserResponse $userResponse) : void
-    {
+    public function execute(ModifyUserRequest $modifyUserRequest, ModifyUserResponse $modifyUserResponse) : void {
 
         try {
 
-            $id = $userRequest->id;
-            $data = get_object_vars($userRequest);
+            $id = $modifyUserRequest->id;
+            $data = get_object_vars($modifyUserRequest);
             $user = $this->persistenceInterface->find($id);
 
             $this->checkFormComplete($data);
             $this->checkEmailValid($data);
-            if($userRequest->email !== $user['email']) $this->checkNewEmailUnique($data['email']);
-            if($userRequest->username !== $user['username']) $this->checkNewUsernameUnique($data['username']);
+            if($modifyUserRequest->email !== $user['email']) $this->checkNewEmailUnique($data['email']);
+            if($modifyUserRequest->username !== $user['username']) $this->checkNewUsernameUnique($data['username']);
 
-            if($userRequest->status === Constants::USER_STATUS_UNCONFIRMED) {
+            if($modifyUserRequest->status === Constants::USER_STATUS_UNCONFIRMED) {
                 $newPassword = substr(uniqid(), 1, 10);
                 $data['password_temporary'] = LaravelFunctionAdapter::hash( $newPassword );
 
@@ -55,21 +54,36 @@ class ModifyUser {
             $data['last_password_update'] = $user['last_password_update'];
             $data['creation_date'] = $user['creation_date'];
 
-            $this->persistenceInterface->update($user['id'], $data);
+            $this->persistenceInterface->updateUser($user['id'], $data['username'],
+                                                                $data['lastname'],
+                                                                $data['firstname'],
+                                                                $data['status'],
+                                                                $data['email'],
+                                                                $data['phone'],
+                                                                $data['administrator'],
+                                                                $data['centerCode'],
+                                                                $data['job'],
+                                                                $data['orthancAddress'],
+                                                                $data['orthancLogin'],
+                                                                $data['orthancPassword'],
+                                                                $data['password_temporary'],
+                                                                $data['password'],
+                                                                $data['creation_date'],
+                                                                $data['last_password_update']);
 
             $details = [
                 'modified_user_id'=>$user['id'],
                 'status'=>$user['status']
             ];
 
-            $this->trackerService->writeAction($user['id'], Constants::TRACKER_ROLE_USER, null, null, Constants::TRACKER_EDIT_USER, $details);
+            $this->trackerService->writeAction($modifyUserRequest->currentUserId, Constants::TRACKER_ROLE_USER, null, null, Constants::TRACKER_EDIT_USER, $details);
 
-            $userResponse->status = 200;
-            $userResponse->statusText = 'OK';
+            $modifyUserResponse->status = 200;
+            $modifyUserResponse->statusText = 'OK';
 
         } catch (GaelOException $e) {
-            $userResponse->status = 400;
-            $userResponse->statusText = $e->getMessage();
+            $modifyUserResponse->status = 400;
+            $modifyUserResponse->statusText = $e->getMessage();
         } catch (\Exception $e) {
             throw $e;
         }
@@ -80,14 +94,14 @@ class ModifyUser {
         !isset($data['lastname']) ||
         !isset($data['firstname']) ||
         !isset($data['email']) ||
-        !is_numeric($data['center_code']) ||
+        !is_numeric($data['centerCode']) ||
         !isset($data['job']) ||
         !isset($data['status']) ||
         !isset($data['administrator']) ||
         !isset($data['phone']) ||
-        !isset($data['orthanc_address']) ||
-        !isset($data['orthanc_login']) ||
-        !isset($data['orthanc_password'])
+        !isset($data['orthancAddress']) ||
+        !isset($data['orthancLogin']) ||
+        !isset($data['orthancPassword'])
         ) throw new GaelOException('Form incomplete');
     }
 

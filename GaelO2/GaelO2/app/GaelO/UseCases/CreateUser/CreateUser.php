@@ -42,6 +42,7 @@ class CreateUser {
             $createdUserEntity = $this->persistenceInterface->createUser($createUserRequest->username,
                                 $createUserRequest->lastname,
                                 $createUserRequest->firstname,
+                                Constants::USER_STATUS_UNCONFIRMED,
                                 $createUserRequest->email,
                                 $createUserRequest->phone,
                                 $createUserRequest->administrator,

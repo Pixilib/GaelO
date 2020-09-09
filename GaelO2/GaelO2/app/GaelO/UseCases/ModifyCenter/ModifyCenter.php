@@ -38,7 +38,6 @@ class ModifyCenter {
 
         $this->trackerService->writeAction($centerRequest->currentUserId, Constants::TRACKER_ROLE_ADMINISTRATOR, null, null, Constants::TRACKER_EDIT_CENTER, $actionDetails);
 
-
         $centerResponse->status = 200;
         $centerResponse->statusText = 'OK';
     }

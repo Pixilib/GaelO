@@ -56,11 +56,13 @@ class UserController extends Controller
     }
 
     public function modifyUser(int $id, Request $request, ModifyUserRequest $modifyUserRequest, ModifyUserResponse $modifyUserResponse, ModifyUser $modifyUser) {
+        $curentUser = Auth::user();
+        $modifyUserRequest->currentUserId = $curentUser['id'];
         $requestData = $request->all();
         $requestData['id'] = $id;
         $modifyUserRequest = Util::fillObject($requestData, $modifyUserRequest);
         $modifyUser->execute($modifyUserRequest, $modifyUserResponse);
-        return response()->json($modifyUserResponse->body)
+        return response()->noContent()
                 ->setStatusCode($modifyUserResponse->status, $modifyUserResponse->statusText);
     }
 

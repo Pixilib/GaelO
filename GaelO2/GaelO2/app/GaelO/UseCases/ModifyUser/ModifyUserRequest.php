@@ -3,6 +3,7 @@
 namespace App\GaelO\UseCases\ModifyUser;
 
 class ModifyUserRequest {
+    public int $currentUserId;
     public string $lastname ;
     public string $firstname ;
     public string $username ;
@@ -10,9 +11,9 @@ class ModifyUserRequest {
     public string $phone ;
     public string $status;
     public bool $administrator;
-    public int $center_code ;
+    public int $centerCode ;
     public string $job;
-    public string $orthanc_address;
-    public string $orthanc_login;
-    public string $orthanc_password;
+    public string $orthancAddress;
+    public string $orthancLogin;
+    public string $orthancPassword;
 }

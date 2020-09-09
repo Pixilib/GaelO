@@ -40,7 +40,7 @@ class UserRepository implements PersistenceInterface {
         return $this->user->get()->toArray();
     }
 
-    public function createUser(String $username, String $lastName, String $firstName,
+    public function createUser(String $username, String $lastName, String $firstName, String $status,
                                 String $email, ?String $phone, bool $administrator, int $centerCode, String $job,
                                 ?String $orthancAdress, ?String $orthancLogin, ?String $orthancPassword,
                                 String $passwordTemporary, ?String $password, String $creationDate, ?String $lastPasswordUpdate){
@@ -48,6 +48,7 @@ class UserRepository implements PersistenceInterface {
         $data= ['username' => $username,
         'lastname' => $lastName,
         'firstname' => $firstName,
+        'status' => $status,
         'email' => $email,
         'phone' => $phone,
         'administrator' => $administrator,
@@ -62,6 +63,32 @@ class UserRepository implements PersistenceInterface {
         'last_password_update'=> $lastPasswordUpdate];
 
         return $this->create($data);
+
+    }
+
+    public function updateUser(int $id, String $username, String $lastName, String $firstName, String $status,
+                                String $email, ?String $phone, bool $administrator, int $centerCode, String $job,
+                                ?String $orthancAdress, ?String $orthancLogin, ?String $orthancPassword,
+                                ?String $passwordTemporary, ?String $password, String $creationDate, ?String $lastPasswordUpdate){
+
+        $data= ['username' => $username,
+                'lastname' => $lastName,
+                'firstname' => $firstName,
+                'status' => $status,
+                'email' => $email,
+                'phone' => $phone,
+                'administrator' => $administrator,
+                'center_code' => $centerCode,
+                'job' => $job,
+                'orthanc_address' => $orthancAdress,
+                'orthanc_login' => $orthancLogin,
+                'orthanc_password' => $orthancPassword,
+                'password_temporary'=> $passwordTemporary,
+                'password'=> $password,
+                'creation_date'=> $creationDate,
+                'last_password_update'=> $lastPasswordUpdate];
+
+        return $this->update($id, $data);
 
     }
 

@@ -40,11 +40,11 @@ class ModifyUserTest extends TestCase
             'phone' => '0101010101',
             'status' => 'Blocked',
             'administrator' => true,
-            'center_code' => 0,
+            'centerCode' => 0,
             'job' => 'CRA',
-            'orthanc_address'=> 'http://gaelo.fr',
-            'orthanc_login'=>'gaelo',
-            'orthanc_password'=>'gaelo',
+            'orthancAddress'=> 'http://gaelo.fr',
+            'orthancLogin'=>'gaelo',
+            'orthancPassword'=>'gaelo',
         ];
         $this->user = $user;
 
@@ -63,23 +63,26 @@ class ModifyUserTest extends TestCase
      */
     public function testValidModify()
     {
-        $this->json('PUT', '/api/users/'.$this->user['id'], $this->validPayload)
-        -> assertSuccessful();
+        $beforeChangeUser = User::where('id',$this->user['id'])->get()->first()->toArray();
 
-        $updatedUser = User::where('id', $this->user['id'])->first();
+
+        $this->json('PUT', '/api/users/'.$this->user['id'], $this->validPayload)-> assertSuccessful();
+
 
         $updatedArray = ['username', 'lastname', 'firstname', 'email', 'phone', 'status',
         'administrator', 'center_code', 'job', 'orthanc_address', 'orthanc_login', 'orthanc_password'];
 
+        $afterChangeUser = User::where('id',$this->user['id'])->get()->first()->toArray();
+
         //Check that key needed to be updated has been updated in database
         foreach($updatedArray as $key){
-            $this->assertNotEquals($this->user[$key], $updatedUser[$key]);
+            $this->assertNotEquals($beforeChangeUser[$key], $afterChangeUser[$key]);
         }
 
-        $notUpdatedArray = ['password', 'previous_password1', 'previous_password2', 'last_password_update',
+        $notUpdatedArray = ['password', 'password_previous1', 'password_previous2', 'last_password_update',
         'creation_date'];
         foreach($notUpdatedArray as $key){
-            $this->assertEquals($this->user[$key], $updatedUser[$key]);
+            $this->assertEquals($beforeChangeUser[$key], $afterChangeUser[$key]);
         }
 
     }
