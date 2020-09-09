@@ -63,22 +63,22 @@ class ModifyUserTest extends TestCase
      */
     public function testValidModify()
     {
+        //Save database state before update
         $beforeChangeUser = User::where('id',$this->user['id'])->get()->first()->toArray();
-
-
+        //Update with update API, shoud be success
         $this->json('PUT', '/api/users/'.$this->user['id'], $this->validPayload)-> assertSuccessful();
 
-
-        $updatedArray = ['username', 'lastname', 'firstname', 'email', 'phone', 'status',
-        'administrator', 'center_code', 'job', 'orthanc_address', 'orthanc_login', 'orthanc_password'];
-
+        //Save after update
         $afterChangeUser = User::where('id',$this->user['id'])->get()->first()->toArray();
 
+         //Value expected to have changed
+         $updatedArray = ['username', 'lastname', 'firstname', 'email', 'phone', 'status',
+         'administrator', 'center_code', 'job', 'orthanc_address', 'orthanc_login', 'orthanc_password'];
         //Check that key needed to be updated has been updated in database
         foreach($updatedArray as $key){
             $this->assertNotEquals($beforeChangeUser[$key], $afterChangeUser[$key]);
         }
-
+        //Check value not supposed to change by edition
         $notUpdatedArray = ['password', 'password_previous1', 'password_previous2', 'last_password_update',
         'creation_date'];
         foreach($notUpdatedArray as $key){

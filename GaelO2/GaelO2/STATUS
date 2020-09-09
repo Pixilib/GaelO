@@ -8,9 +8,9 @@ Study : (GET), (POST), (DELETE) => OK
 Preference : (GET), (PUT) =>OK
 Center : GET, POST, PUT => OK
 
-ChangePassword / Create User / Modify user / Reset password => Faire passer l'utilisateur courant pout le tracker
+ChangePassword => Necessite middlewer qui check que l'user Courant == ID de la requete
 Finir de typer tous les retour de user repository pour gerer les reponse vides
-Check API JSON en camelCase (ne pas passer directement la DB dans la reponse)->ou faire les propriete d'API en snake_case ??
+Check API JSON en camelCase (ne pas passer directement la DB dans la reponse)->ou faire les propriete d'API en snake_case ??->Faut creer de pseudo entity pour le front
 Reactivation faire PATCH sur la ressource suprimée (A faire pour study, user)
 Query Param dans Study pour avoir la liste avec les deletion ? idem user ? et couvrir en test
 
