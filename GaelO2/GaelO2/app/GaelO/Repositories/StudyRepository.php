@@ -36,10 +36,10 @@ class StudyRepository implements PersistenceInterface {
         return $this->study->get()->toArray();
     }
 
-    public function addStudy(String $name, String $patientCodePreffix) : void {
+    public function addStudy(String $name, String $patientCodePrefix) : void {
         $data = [
             'name'=>$name,
-            'patient_code_prefix'=>$patientCodePreffix
+            'patient_code_prefix'=>$patientCodePrefix
         ];
 
         $this->create($data);

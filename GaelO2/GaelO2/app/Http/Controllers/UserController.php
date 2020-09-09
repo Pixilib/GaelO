@@ -46,10 +46,12 @@ class UserController extends Controller
     }
 
     public function createUser(Request $request, CreateUserRequest $createUserRequest, CreateUserResponse $createUserResponse, CreateUser $createUser) {
+        $curentUser = Auth::user();
+        $createUserRequest->currentUserId = $curentUser['id'];
         $requestData = $request->all();
         $createUserRequest = Util::fillObject($requestData, $createUserRequest);
         $createUser->execute($createUserRequest, $createUserResponse);
-        return response()->json($createUserResponse->body)
+        return response()->noContent()
                 ->setStatusCode($createUserResponse->status, $createUserResponse->statusText);
     }
 

@@ -34,11 +34,11 @@ class CreatUserTest extends TestCase
         'email' => 'truc@truc.fr',
         'phone' => '0600000000',
         'administrator' => true,
-        'center_code' => 0,
+        'centerCode' => 0,
         'job' => 'Monitor',
-        'orthanc_address' => 'test',
-        'orthanc_login' => 'test',
-        'orthanc_password' => 'test'];
+        'orthancAddress' => 'test',
+        'orthancLogin' => 'test',
+        'orthancPassword' => 'test'];
 
         Artisan::call('passport:install');
         Passport::actingAs(
@@ -52,11 +52,12 @@ class CreatUserTest extends TestCase
     public function testCreateCorrectPayload()
     {
         //Test user creation
-        $this->json('POST', '/api/users', $this->validPayload)-> assertSuccessful();
+        $resp = $this->json('POST', '/api/users', $this->validPayload)-> assertSuccessful();
         //Test that copies don't insert
         $this->json('POST', '/api/users', $this->validPayload) -> assertStatus(400);
 
-        $createdUser = User::where('username', $this->validPayload['username'])->first();
+        $createdUser = $this->json('GET', '/api/users/3')->content();
+        $createdUser = json_decode($createdUser, true);
 
         //Check that the created entity have the correcte values
         foreach($this->validPayload as $key=>$value){
@@ -65,11 +66,7 @@ class CreatUserTest extends TestCase
 
         //Check defaut value at user creation
         $this->assertEquals($createdUser['status'], Constants::USER_STATUS_UNCONFIRMED);
-        $this->assertNotNull($createdUser['password_temporary']);
-        $this->assertNull($createdUser['password']);
-        $this->assertNull($createdUser['previous_password1']);
-        $this->assertNull($createdUser['previous_password2']);
-        $this->assertNull($createdUser['last_password_update']);
+        $this->assertNull($createdUser['lastPasswordUpdate']);
     }
 
     public function testCreateAlreadyExistingUser(){

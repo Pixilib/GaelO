@@ -7,6 +7,7 @@ use App\User;
 use App\GaelO\Interfaces\PersistenceInterface;
 use App\GaelO\Util;
 use App\Role;
+use DateTime;
 
 class UserRepository implements PersistenceInterface {
 
@@ -37,6 +38,31 @@ class UserRepository implements PersistenceInterface {
 
     public function getAll() {
         return $this->user->get()->toArray();
+    }
+
+    public function createUser(String $username, String $lastName, String $firstName,
+                                String $email, ?String $phone, bool $administrator, int $centerCode, String $job,
+                                ?String $orthancAdress, ?String $orthancLogin, ?String $orthancPassword,
+                                String $passwordTemporary, ?String $password, String $creationDate, ?String $lastPasswordUpdate){
+
+        $data= ['username' => $username,
+        'lastname' => $lastName,
+        'firstname' => $firstName,
+        'email' => $email,
+        'phone' => $phone,
+        'administrator' => $administrator,
+        'center_code' => $centerCode,
+        'job' => $job,
+        'orthanc_address' => $orthancAdress,
+        'orthanc_login' => $orthancLogin,
+        'orthanc_password' => $orthancPassword,
+        'password_temporary'=> $passwordTemporary,
+        'password'=> $password,
+        'creation_date'=> $creationDate,
+        'last_password_update'=> $lastPasswordUpdate];
+
+        return $this->create($data);
+
     }
 
     public function getUserByUsername($username){

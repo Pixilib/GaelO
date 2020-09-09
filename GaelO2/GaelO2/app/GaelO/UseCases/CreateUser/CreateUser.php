@@ -21,17 +21,15 @@ class CreateUser {
         $this->mailService = $mailService;
      }
 
-     public function execute(CreateUserRequest $userRequest, CreateUserResponse $userResponse) : void
+     public function execute(CreateUserRequest $createUserRequest, CreateUserResponse $createUserResponse) : void
     {
-        $data = get_object_vars($userRequest);
+        $data = get_object_vars($createUserRequest);
         //Generate password
         $password=substr(uniqid(), 1, 10);
-        $data['password_temporary'] = LaravelFunctionAdapter::Hash($password);
-        $data['password'] = null;
-        $data['creation_date'] = Util::now();
-        $data['last_password_update'] = null;
-        //SK A quoi sert cette ligne ?, le boolean devrait deja venir dans le DTO Request
-        if(isset($data['administrator'])) $data['administrator'] = true;
+        $passwordTemporary = LaravelFunctionAdapter::Hash($password);
+        $password = null;
+        $creationDate = Util::now();
+        $lastPasswordUpdate = null;
 
         //Check form completion
         try {
@@ -39,15 +37,30 @@ class CreateUser {
             $this->checkEmailValid($data);
             $this->checkUserUnique($data);
             $this->checkPhoneCorrect($data['phone']);
-            //Data are ok to be written in db
-            $createdUserEntity = $this->persistenceInterface->create($data);
+
+            //In no Exception thrown by check methods data are ok to be written in db
+            $createdUserEntity = $this->persistenceInterface->createUser($createUserRequest->username,
+                                $createUserRequest->lastname,
+                                $createUserRequest->firstname,
+                                $createUserRequest->email,
+                                $createUserRequest->phone,
+                                $createUserRequest->administrator,
+                                $createUserRequest->centerCode,
+                                $createUserRequest->job,
+                                $createUserRequest->orthancAddress,
+                                $createUserRequest->orthancLogin,
+                                $createUserRequest->orthancPassword,
+                                $passwordTemporary,
+                                $password,
+                                $creationDate,
+                                $lastPasswordUpdate);
 
             //save user creation in tracker
             $detailsTracker = [
                 'id'=> $createdUserEntity['id']
             ];
 
-            $this->trackerService->writeAction($createdUserEntity['id'],
+            $this->trackerService->writeAction($createUserRequest->currentUserId,
                 Constants::TRACKER_ROLE_USER,
                 null,
                 null,
@@ -56,23 +69,23 @@ class CreateUser {
 
 
             $this->mailService->sendCreatedAccountMessage($createdUserEntity['email'],
-                                    $createdUserEntity['firstname'].' '.$createdUserEntity['lastname'],
-                                    $createdUserEntity['username'],
-                                    $password);
+                                $createdUserEntity['firstname'].' '.$createdUserEntity['lastname'],
+                                $createdUserEntity['username'],
+                                $passwordTemporary);
 
-            $userResponse->status = 201;
-            $userResponse->statusText = 'Created';
+            $createUserResponse->status = 201;
+            $createUserResponse->statusText = 'Created';
 
         } catch (GaelOException $e) {
-            $userResponse->status = 400;
-            $userResponse->statusText = $e->getMessage();
+            $createUserResponse->status = 400;
+            $createUserResponse->statusText = $e->getMessage();
         }catch (\Exception $e) {
             throw $e;
         }
     }
 
     private function checkFormComplete(array $data) : void {
-        if(!isset($data['username']) || !isset($data['lastname']) || !isset($data['email']) || !is_numeric($data['center_code'])) {
+        if(!isset($data['username']) || !isset($data['lastname']) || !isset($data['email']) || !is_numeric($data['centerCode']) || !isset($data['administrator']) ) {
             throw new GaelOException('Form incomplete');
         }
     }
