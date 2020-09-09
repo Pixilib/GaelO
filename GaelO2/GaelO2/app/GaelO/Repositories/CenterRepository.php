@@ -8,8 +8,8 @@ use App\GaelO\Util;
 
 class CenterRepository implements PersistenceInterface {
 
-    public function __construct(){
-        $this->center = new Center();
+    public function __construct(Center $center){
+        $this->center = $center;
     }
 
     public function create(array $data){
@@ -27,8 +27,8 @@ class CenterRepository implements PersistenceInterface {
         $this->create($data);
     }
 
-    public function update($id, array $data){
-        $model = $this->center->find($id);
+    public function update($code, array $data){
+        $model = $this->center->find($code);
         $model = Util::fillObject($data, $model);
         $model->save();
     }
@@ -43,6 +43,26 @@ class CenterRepository implements PersistenceInterface {
 
     public function getAll() {
         return $this->center->get()->toArray();
+    }
+
+    public function getCenterByName($name) : array {
+        $center = $this->center->where('name', $name)->get()->first();
+        return sizeof($center) >0  ? $center->toArray() : [];
+
+    }
+
+    public function isKnownCenter(String $name) {
+        return empty($this->getCenterByName($name)) ? false : true;
+    }
+
+    public function updateCenter(String $name, int $code, String $countryCode){
+        $data = [
+            'code' => $code,
+            'name' => $name,
+            'country_code' => $countryCode
+        ];
+        $this->update($code, $data);
+
     }
 
 }

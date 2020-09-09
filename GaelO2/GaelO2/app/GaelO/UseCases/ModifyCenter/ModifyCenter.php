@@ -19,16 +19,19 @@ class ModifyCenter {
      public function execute(ModifyCenterRequest $centerRequest, ModifyCenterResponse $centerResponse) : void
     {
         $name = $centerRequest->name;
-        try {
-            $this->persistenceInterface->getCenterByName($name);
-            $centerResponse->status = 200;
-            $centerResponse->statusText = 'OK';
-        } catch (\Throwable $t) {
-            $centerResponse->status = 500;
-        } catch (\Exception $e) {
-            throw $e;
-        }
+        $this->persistenceInterace->updateCenter($name, $centerRequest->code, $centerRequest->country_code);
+        $centerResponse->status = 200;
+        $centerResponse->statusText = 'OK';
     }
+
+/*
+    if($this->persistenceInterface->isKnownCenter($name)){
+        $centerResponse->status = 409;
+        $centerResponse->statusText = 'Conflict';
+        return;
+
+    };
+    */
 
 }
 
