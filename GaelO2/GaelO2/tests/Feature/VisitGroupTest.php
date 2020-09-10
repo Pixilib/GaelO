@@ -10,6 +10,7 @@ use Laravel\Passport\Passport;
 use Tests\TestCase;
 use App\User;
 use App\Study;
+use App\VisitGroup;
 
 class VisitGroupTest extends TestCase
 {
@@ -29,7 +30,7 @@ class VisitGroupTest extends TestCase
         $this->artisan('db:seed');
     }
 
-    protected function setUp() : void{
+    protected function setUp() : void {
         parent::setUp();
 
         Artisan::call('passport:install');
@@ -37,19 +38,21 @@ class VisitGroupTest extends TestCase
             User::where('id',1)->first()
         );
 
-        $this->study = factory(Study::class, 1)->create();
+        $this->study = factory(Study::class, 2)->create();
+
 
     }
 
-    public function testCreateVisitGroup()
-    {
+    public function testCreateVisitGroup() {
         $payload = [
             'modality' => 'CT'
         ];
         $study = $this->study->first()->toArray();
-        $response = $this->post('api/studies/'.$study['name'].'/visit-groups', $payload);
-        dd($response);
-        $response->assertStatus(200);
-        //SK RESTE A CHECKER L ENREGISTREMENT EN BDD
+        $response = $this->post('api/studies/'.$study['name'].'/visit-groups', $payload)->assertStatus(201);
+        //Check record in database
+        $visitGroup = VisitGroup::where('study_name', $study['name'])->get()->first()->toArray();
+        $this->assertEquals('CT', $visitGroup['modality']);
     }
+
+
 }

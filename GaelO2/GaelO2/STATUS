@@ -7,6 +7,7 @@ User's Roles : (GET), (POST), (DELETE)=>OK
 Study : (GET), (POST), (DELETE) => OK
 Preference : (GET), (PUT) =>OK
 Center : GET, POST, PUT => OK
+Visit Group : (GET), (POST) => OK
 
 ChangePassword => Necessite middlewer qui check que l'user Courant == ID de la requete
 Check API JSON en camelCase (ne pas passer directement la DB dans la reponse)->ou faire les propriete d'API en snake_case ??->Faut creer de pseudo entity pour le front
@@ -14,7 +15,6 @@ Reactivation faire PATCH sur la ressource suprimée (A faire pour study, user)
 Query Param dans Study pour avoir la liste avec les deletion ? idem user ? et couvrir en test
 
 A faire
-Visit Group : GET, (POST)
 Visit Type : GET, POST
 =>Visit Group et Visit Type faire Delete tant que rien dans le niveau n-1?
 Add Affiliated center (to user) => Add User Center POST, DELETE, GET(get users's center)

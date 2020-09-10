@@ -51,4 +51,5 @@ class StudyController extends Controller
                 ->setStatusCode($deleteStudyResponse->status, $deleteStudyResponse->statusText);
 
     }
+
 }
