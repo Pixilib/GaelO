@@ -1,0 +1,30 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\GaelO\UseCases\CreateVisitType\CreateVisitType;
+use App\GaelO\UseCases\CreateVisitType\CreateVisitTypeRequest;
+use App\GaelO\UseCases\CreateVisitType\CreateVisitTypeResponse;
+use App\GaelO\Util;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+
+class VisitTypeController extends Controller
+{
+    public function createVisitType(int $visitGroupId, Request $request, CreateVisitType $createVisitType,
+        CreateVisitTypeRequest $createVisitTypeRequest, CreateVisitTypeResponse $createVisitTypeResponse){
+
+        $curentUser = Auth::user();
+        $createVisitTypeRequest->currentUserId = $curentUser['id'];
+        $createVisitTypeRequest->visitGroupId = $visitGroupId;
+
+        $requestData = $request->all();
+        $createVisitTypeRequest = Util::fillObject($requestData, $createVisitTypeRequest);
+
+        $createVisitType->execute($createVisitTypeRequest, $createVisitTypeResponse);
+
+        return response()->noContent()
+                ->setStatusCode($createVisitTypeResponse->status, $createVisitTypeResponse->statusText);
+
+    }
+}
