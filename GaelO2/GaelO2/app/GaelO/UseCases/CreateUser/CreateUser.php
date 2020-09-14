@@ -15,6 +15,12 @@ use App\GaelO\Util;
 
 class CreateUser {
 
+    /**
+     * Dependency injection that will be provided by the Dependency Injection Container
+     * Persistence Interfate => Will be a instance of User Repository (defined by UserRepositoryProvider)
+     * Tracker Service to be able to write in the Tracker
+     * Mail Service to be able to send email
+     */
     public function __construct(PersistenceInterface $persistenceInterface, TrackerService $trackerService, MailServices $mailService){
         $this->persistenceInterface = $persistenceInterface;
         $this->trackerService = $trackerService;
@@ -38,7 +44,7 @@ class CreateUser {
             $this->checkUserUnique($data);
             $this->checkPhoneCorrect($data['phone']);
 
-            //In no Exception thrown by check methods data are ok to be written in db
+            //In no Exception thrown by checks methods, data are ok to be written in db
             $createdUserEntity = $this->persistenceInterface->createUser($createUserRequest->username,
                                 $createUserRequest->lastname,
                                 $createUserRequest->firstname,
@@ -60,7 +66,7 @@ class CreateUser {
             $detailsTracker = [
                 'id'=> $createdUserEntity['id']
             ];
-
+            //Save action in Tracker
             $this->trackerService->writeAction($createUserRequest->currentUserId,
                 Constants::TRACKER_ROLE_USER,
                 null,
@@ -68,7 +74,7 @@ class CreateUser {
                 Constants::TRACKER_CREATE_USER,
                 $detailsTracker);
 
-
+            //Send Welcom Email to give the plain password to new user.
             $this->mailService->sendCreatedAccountMessage($createdUserEntity['email'],
                                 $createdUserEntity['firstname'].' '.$createdUserEntity['lastname'],
                                 $createdUserEntity['username'],
@@ -78,9 +84,11 @@ class CreateUser {
             $createUserResponse->statusText = 'Created';
 
         } catch (GaelOException $e) {
+            //If Exception thrown by our buisness logic, handle it
             $createUserResponse->status = 400;
             $createUserResponse->statusText = $e->getMessage();
         }catch (\Exception $e) {
+            //If execption thrown by framework, let the framework handle it
             throw $e;
         }
     }

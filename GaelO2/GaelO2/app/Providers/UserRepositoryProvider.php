@@ -4,7 +4,7 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 
-class UserAdapterProvider extends ServiceProvider
+class UserRepositoryProvider extends ServiceProvider
 {
     /**
      * Register services.

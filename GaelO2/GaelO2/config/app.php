@@ -172,7 +172,7 @@ return [
         App\Providers\AuthServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
-        App\Providers\UserAdapterProvider::class,
+        App\Providers\UserRepositoryProvider::class,
         App\Providers\EmailServiceProvider::class,
         App\Providers\CountryAdapterProvider::class,
         App\Providers\StudyRepositoryProvider::class,

@@ -46,11 +46,16 @@ class UserController extends Controller
     }
 
     public function createUser(Request $request, CreateUserRequest $createUserRequest, CreateUserResponse $createUserResponse, CreateUser $createUser) {
+        //Get current user requesting the API
         $curentUser = Auth::user();
+        //Add current user ID in Request DTO
         $createUserRequest->currentUserId = $curentUser['id'];
         $requestData = $request->all();
+        //Fill DTO with all other request data
         $createUserRequest = Util::fillObject($requestData, $createUserRequest);
+        //Execute use case
         $createUser->execute($createUserRequest, $createUserResponse);
+        //Output result comming from usecase, here no content has to be shown (only http status code and text)
         return response()->noContent()
                 ->setStatusCode($createUserResponse->status, $createUserResponse->statusText);
     }
