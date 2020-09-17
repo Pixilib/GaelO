@@ -48,7 +48,7 @@ class VisitGroupTest extends TestCase
             'modality' => 'CT'
         ];
         $study = $this->study->first()->toArray();
-        $response = $this->post('api/studies/'.$study['name'].'/visit-groups', $payload)->assertStatus(201);
+        $this->json('POST', 'api/studies/'.$study['name'].'/visit-groups', $payload)->assertStatus(201);
         //Check record in database
         $visitGroup = VisitGroup::where('study_name', $study['name'])->get()->first()->toArray();
         $this->assertEquals('CT', $visitGroup['modality']);

@@ -53,7 +53,7 @@ class CenterTest extends TestCase
             'countryCode'=>'US'
 
         ];
-        $this->post('/api/centers', $payload)->assertNoContent(201);
+        $this->json('POST', '/api/centers', $payload)->assertNoContent(201);
     }
 
     public function testModifyCenter(){
@@ -63,7 +63,7 @@ class CenterTest extends TestCase
             'countryCode'=>'FR'
 
         ];
-        $this->put('/api/centers/0', $payload)->assertNoContent(200);
+        $this->json('PUT', '/api/centers/0', $payload)->assertNoContent(200);
 
 
     }
@@ -76,7 +76,7 @@ class CenterTest extends TestCase
 
         ];
         //Non existing center modification should fail
-        $this->put('/api/centers/1', $payload)->assertNoContent(400);
+        $this->json('PUT', '/api/centers/1', $payload)->assertNoContent(400);
 
     }
 }

@@ -39,7 +39,7 @@ class PreferenceTest extends TestCase
 
     public function testGetPreferences()
     {
-        $this->get('api/preferences')->assertStatus(200);
+        $this->json('GET', 'api/preferences')->assertStatus(200);
     }
 
     public function testPutPreferences(){
@@ -50,7 +50,7 @@ class PreferenceTest extends TestCase
             'parseCountryName'=>'FR'
         ];
 
-        $this->put('api/preferences', $payload);
+        $this->json('PUT', 'api/preferences', $payload);
 
         $content = $this->get('api/preferences')->content();
         $newPreferenceArray = json_decode($content, true);

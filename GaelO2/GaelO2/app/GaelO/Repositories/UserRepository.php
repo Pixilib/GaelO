@@ -94,7 +94,7 @@ class UserRepository implements PersistenceInterface {
     }
 
     public function getUserByUsername($username){
-        $user = $this->user->where('username', $username)->first();
+        $user = $this->user->where('username', $username)->firstOrFail();
         return $user->toArray();
     }
 

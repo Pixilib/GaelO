@@ -23,7 +23,6 @@ class ResetPassword {
         $username = $resetPasswordRequest->username;
         $email = $resetPasswordRequest->email;
         try{
-            $this->isExistingUser($username);
 
             $userEntity = $this->persistenceInterface->getUserByUsername($username);
             $this->checkEmailMatching($email, $userEntity['email']);
@@ -55,11 +54,6 @@ class ResetPassword {
             throw $e;
         }
 
-    }
-
-    private function isExistingUser($username){
-        $knownUsername = $this->persistenceInterface->isExistingUsername($username);
-        if( ! $knownUsername) throw new GaelOException("Username Unknown");
     }
 
     private function checkEmailMatching($inputEmail, $databaseEmail){
