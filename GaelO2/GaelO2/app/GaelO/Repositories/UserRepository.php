@@ -93,23 +93,28 @@ class UserRepository implements PersistenceInterface {
 
     }
 
-    public function getUserByUsername($username){
-        $user = $this->user->where('username', $username)->firstOrFail();
+    public function getUserByUsername(String $username, bool $withTrashed = false){
+        if($withTrashed){
+            $user = $this->user->withTrashed()->where('username', $username)->firstOrFail();
+        }else{
+            $user = $this->user->where('username', $username)->firstOrFail();
+        }
+
         return $user->toArray();
     }
 
-    public function isExistingUsername($username) : bool {
+    public function isExistingUsername(String $username) : bool {
         $user = $this->user->where('username', $username);
         return $user->count() > 0 ? true : false;
     }
 
 
-    public function isExistingEmail($email) : bool {
+    public function isExistingEmail(String $email) : bool {
         $user = $this->user->where('email', $email);
         return $user->count() > 0 ? true : false;
     }
 
-    public function getUserByEmail($email) : array {
+    public function getUserByEmail(String $email) : array {
         $user = $this->user->where('email', $email)->first();
         return empty($user) ? [] : $user->toArray();
     }
@@ -179,7 +184,7 @@ class UserRepository implements PersistenceInterface {
     }
 
     public function getAllStudiesWithRoleForUser(string $username) : array {
-        $user = $this->user->where('username', $username)->first();
+        $user = $this->user->withTrashed()->where('username', $username)->first();
         $studies = $user->roles()->join('studies', function ($join) {
             $join->on('roles.study_name', '=', 'studies.name');
         })->distinct('study_name')->get();

@@ -56,4 +56,18 @@ class ResetPasswordTest extends TestCase
         ->assertStatus(400);
 
     }
+
+    public function testResetDeactivatedAccount(){
+
+        $defaultUser = User::find(1);
+        $defaultUser->delete();
+
+        $data = [
+            'username' => 'administrator',
+            'email' => 'administrator@gaelo.fr'
+        ];
+
+        $this->json('POST', 'api/tools/reset-password', $data)->assertStatus(400);
+
+    }
 }

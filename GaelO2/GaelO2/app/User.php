@@ -44,7 +44,6 @@ class User extends Authenticatable
     }
 
     public function centers(){
-        //a voir SK
         return $this->hasManyThrough('App\Center', 'App\UserCenter', 'user_id', 'center_code', 'code', 'id');
     }
 

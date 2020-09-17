@@ -99,4 +99,20 @@ Class MailServices extends SendEmailAdapter {
 
     }
 
+    public function sendForbiddenResetPasswordDueToDeactivatedAccount(String $userEmail, String $username, Array $studies){
+
+        $parameters = [
+            'name' => 'user',
+            'username'=>$username,
+            'studies'=>$studies
+        ];
+
+        //Send to administrators
+        $this->mailInterface->setTo( [$userEmail] );
+        $this->mailInterface->setReplyTo();
+        $this->mailInterface->setParameters($parameters);
+        $this->mailInterface->sendModel(MailConstants::EMAIL_CHANGE_PASSWORD_DEACTIVATED);
+
+    }
+
 }

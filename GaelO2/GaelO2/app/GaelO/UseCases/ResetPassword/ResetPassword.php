@@ -24,7 +24,8 @@ class ResetPassword {
         $email = $resetPasswordRequest->email;
         try{
 
-            $userEntity = $this->persistenceInterface->getUserByUsername($username);
+            $userEntity = $this->persistenceInterface->getUserByUsername($username, true);
+            $this->checkNotDeactivatedAccount($userEntity);
             $this->checkEmailMatching($email, $userEntity['email']);
             //update properties of user
             $userEntity['status'] = Constants::USER_STATUS_UNCONFIRMED;
@@ -58,5 +59,16 @@ class ResetPassword {
 
     private function checkEmailMatching($inputEmail, $databaseEmail){
         if($inputEmail !== $databaseEmail) throw new GaelOException('Incorrect Email');
+    }
+
+    private function checkNotDeactivatedAccount(array $user){
+        if($user['deleted_at'] !== null) {
+            //Get studies with role to prepare Email
+            $studies  = $this->persistenceInterface->getAllStudiesWithRoleForUser($user['username']);
+            //Send Email change password failure
+            $this->mailServices->sendForbiddenResetPasswordDueToDeactivatedAccount($user['email'],
+                    $user['username'], $studies);
+            throw new GaelOException('Deactivated Account');
+        }
     }
 }
