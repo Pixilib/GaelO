@@ -14,7 +14,8 @@ class VisitTypeProvider extends ServiceProvider
     public function register()
     {
         $this->app->when(
-            [\App\GaelO\UseCases\CreateVisitType\CreateVisitType::class])
+            [\App\GaelO\UseCases\CreateVisitType\CreateVisitType::class,
+            \App\GaelO\UseCases\GetVisitType\GetVisitType::class])
         ->needs(\App\GaelO\Interfaces\PersistenceInterface::class)
         ->give(\App\GaelO\Repositories\VisitTypeRepository::class);
     }

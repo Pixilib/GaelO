@@ -42,6 +42,7 @@ Route::middleware(['auth:api', 'admin'])->get('studies/{studyName}/visit-groups'
 
 //VisitType Routes
 Route::middleware(['auth:api', 'admin'])->post('visit-groups/{visitGroupId}/visit-types', 'VisitTypeController@createVisitType');
+Route::middleware(['auth:api', 'admin'])->get('visit-types/{visitTypeId}', 'VisitTypeController@getVisitType');
 
 
 //Mail Route

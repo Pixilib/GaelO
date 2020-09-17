@@ -69,8 +69,21 @@ class VisitTypeTest extends TestCase
         ];
 
         $id = $this->visitGroup->id;
-        $this->post('api/visit-groups/'.$id.'/visit-types', $payload)->assertNoContent(201);
+        $this->json('POST', 'api/visit-groups/'.$id.'/visit-types', $payload)->assertNoContent(201);
         $visitGroup = VisitType::where('name', 'Baseline')->get()->first()->toArray();
         $this->assertEquals(13, sizeOf($visitGroup));
+    }
+
+    public function testGetVisitType(){
+
+        factory(VisitType::class)->create([
+            'visit_group_id' => $this->visitGroup->id
+        ]);
+
+        $response = $this->json('GET', 'api/visit-groups/'.$this->visitGroup->id.'/visit-types');
+        dd($response);
+        //->assertNoContent(201);
+
+
     }
 }

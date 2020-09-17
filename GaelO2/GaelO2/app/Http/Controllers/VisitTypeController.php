@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\GaelO\UseCases\CreateVisitType\CreateVisitType;
 use App\GaelO\UseCases\CreateVisitType\CreateVisitTypeRequest;
 use App\GaelO\UseCases\CreateVisitType\CreateVisitTypeResponse;
+use App\GaelO\UseCases\GetVisitType\GetVisitType;
+use App\GaelO\UseCases\GetVisitType\GetVisitTypeRequest;
+use App\GaelO\UseCases\GetVisitType\GetVisitTypeResponse;
 use App\GaelO\Util;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -26,5 +29,12 @@ class VisitTypeController extends Controller
         return response()->noContent()
                 ->setStatusCode($createVisitTypeResponse->status, $createVisitTypeResponse->statusText);
 
+    }
+
+    public function getVisitType(int $visitTypeId, GetVisitType $getVisitType, GetVisitTypeRequest $getVisitTypeRequest, GetVisitTypeResponse $getVisitTypeResponse){
+        $getVisitTypeRequest->visitTypeId = $visitTypeId;
+        $getVisitType->execute($getVisitTypeRequest, $getVisitTypeResponse);
+        return response()->json($getVisitTypeResponse->body)
+            ->setStatusCode($getVisitTypeResponse->status, $getVisitTypeResponse->statusText);
     }
 }
