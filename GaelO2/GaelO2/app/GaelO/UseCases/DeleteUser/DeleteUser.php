@@ -4,7 +4,6 @@ namespace App\GaelO\UseCases\DeleteUser;
 
 use App\GaelO\Constants\Constants;
 use App\GaelO\Interfaces\PersistenceInterface;
-use App\GaelO\Services\Mails\MailServices;
 use App\GaelO\Services\TrackerService;
 use App\GaelO\UseCases\DeleteUser\DeleteUserRequest;
 use App\GaelO\UseCases\DeleteUser\DeleteUserResponse;

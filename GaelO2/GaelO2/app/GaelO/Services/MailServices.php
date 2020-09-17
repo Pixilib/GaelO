@@ -1,12 +1,11 @@
 <?php
 
-namespace App\GaelO\Services\Mails;
+namespace App\GaelO\Services;
 
 use App\GaelO\Interfaces\MailInterface;
 use App\GaelO\Adapters\SendEmailAdapter;
 use App\GaelO\Repositories\UserRepository;
 use App\GaelO\Constants\MailConstants;
-use Symfony\Component\Console\EventListener\ErrorListener;
 
 Class MailServices extends SendEmailAdapter {
 

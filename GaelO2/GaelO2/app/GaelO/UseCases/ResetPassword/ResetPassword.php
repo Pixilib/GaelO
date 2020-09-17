@@ -8,7 +8,7 @@ use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\UseCases\ResetPassword\ResetPasswordResponse;
 use App\GaelO\Interfaces\PersistenceInterface;
-use App\GaelO\Services\Mails\MailServices;
+use App\GaelO\Services\MailServices;
 use App\GaelO\Services\TrackerService;
 
 class ResetPassword {

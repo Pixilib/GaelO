@@ -9,7 +9,7 @@ use App\GaelO\Interfaces\PersistenceInterface;
 use App\GaelO\UseCases\ModifyUser\ModifyUserRequest;
 use App\GaelO\UseCases\ModifyUser\ModifyUserResponse;
 use App\GaelO\Exceptions\GaelOException;
-use App\GaelO\Services\Mails\MailServices;
+use App\GaelO\Services\MailServices;
 use App\GaelO\Services\TrackerService;
 
 class ModifyUser {

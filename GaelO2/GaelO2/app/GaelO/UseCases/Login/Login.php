@@ -5,7 +5,7 @@ namespace App\GaelO\UseCases\Login;
 use App\GaelO\Adapters\LaravelFunctionAdapter;
 use App\GaelO\Constants\Constants;
 use App\GaelO\Interfaces\PersistenceInterface;
-use App\GaelO\Services\Mails\MailServices;
+use App\GaelO\Services\MailServices;
 use App\GaelO\Services\TrackerService;
 use App\GaelO\Util;
 

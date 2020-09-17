@@ -9,7 +9,7 @@ use App\GaelO\Interfaces\PersistenceInterface;
 use App\GaelO\UseCases\CreateUser\CreateUserRequest;
 use App\GaelO\UseCases\CreateUser\CreateUserResponse;
 use App\GaelO\Exceptions\GaelOException;
-use App\GaelO\Services\Mails\MailServices;
+use App\GaelO\Services\MailServices;
 use App\GaelO\Services\TrackerService;
 use App\GaelO\Util;
 
