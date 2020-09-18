@@ -16,10 +16,10 @@ Reactivation faire PATCH sur la ressource suprimée (A faire pour study, user)
 Query Param dans Study pour avoir la liste avec les deletion ? idem user ? et couvrir en test
 
 A faire
-GetStudyDetails => Donne les visites groupe et les visit Type=> Mettre tout dans get study ?
+GetStudyDetails => Donne les visites groupe et les visit Type=> Mettre tout dans get study avec query tag expand?
 Visit Group et Visit Type => Delete tant que rien dans le niveau n-1
-
 Add Affiliated center (to user) => Add User Center POST, DELETE, GET (get users's center + dans réponse user)
+
 Tracker GET=> utiliser les query string
 ExportDatabase : POST (creation d'une sauvegarde)
 

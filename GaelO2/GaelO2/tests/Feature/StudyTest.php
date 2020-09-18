@@ -57,23 +57,25 @@ class StudyTest extends TestCase
         $this->assertEquals('1234',$studyEntity[0]['patient_code_prefix']);
     }
 
-    public function testGetStudy(){
-        $this->json('GET', '/api/studies?full')->assertJsonCount(0);
+    public function testGetStudyWithDetails(){
+        //SK CREER STUDY + Visit Group + Visit Type et les faire sortir dans les details de study
+        $response = $this->json('GET', '/api/studies?expand')->content();
+
     }
 
-    public function testDeleteStudy(){
-
-        $payload = [
-            'studyName'=>'NewStudy',
-            'patientCodePrefix'=>'1234'
-        ];
-        //Create Study
-        $this->json('POST', '/api/studies', $payload)->assertNoContent(201);
-        //Delete the created study
-        $this->json('DELETE', '/api/studies/NewStudy')->assertNoContent(200);
-        //Check that the study is marked now as Deleted At (still need to be visible for the GUI)
-        $content = $this->json('GET', '/api/studies?full')->content();
-        $content = json_decode($content, true);
-        $this->assertNotNull($content['deleted_at']);
+    public function testGetStudies(){
+        factory(Study::class, 1)->create();
+        $this->json('GET', '/api/studies')->assertJsonCount(1);
     }
+
+    public function testGetDeletedStudies(){
+        $study = factory(Study::class, 1)->create();
+        $study->first()->delete();
+        $response = $this->json('GET', '/api/studies')->content();
+        $response = json_decode($response, true);
+        $this->assertTrue($response[0]['deleted']);
+    }
+
+
+
 }

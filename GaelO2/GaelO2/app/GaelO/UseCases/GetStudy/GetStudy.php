@@ -12,11 +12,19 @@ class GetStudy{
     }
 
     public function execute(GetStudyRequest $getStudyRequest, GetStudyResponse $getStudyResponse) : void{
-        $studies = $this->persistenceInterface->getStudies();
+        $studies = $this->persistenceInterface->getStudies(true);
 
-        if(sizeof($studies) === 1) $studies = $studies[0];
+        $responseArray = [];
+        foreach($studies as $study){
+            $responseArray[] = StudyEntity::fillFromDBReponseArray($study);
+        }
 
-        $getStudyResponse->body = $studies;
+        if($getStudyRequest->expand){
+            //SK ICI AJOUTER LES DATA VISIT GROUP ET VISIT TYPE
+            //Dans le meme use case mettre le retrieve de toute les study ou d'une seule avec les details?
+        }
+
+        $getStudyResponse->body = $responseArray;
         $getStudyResponse->status = 200;
         $getStudyResponse->statusText = 'OK';
 

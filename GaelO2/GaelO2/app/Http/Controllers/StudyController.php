@@ -32,8 +32,14 @@ class StudyController extends Controller
     }
 
     public function getStudy(Request $request, GetStudy $getStudy, GetStudyRequest $getStudyRequest, GetStudyResponse $getStudyResponse){
-        //SK ICI INTERESSANT METHODE DE RECUPERATION DES QUERY PARAM (? dans URL)
-        //$request->query();
+        //RECUPERATION DES QUERY PARAM (? dans URL)
+        $queryParam = $request->query();
+        if(array_key_exists('expand', $queryParam) ){
+            $getStudyRequest->expand = true;
+        }else {
+            $getStudyRequest->expand = false;
+        }
+
         $getStudy->execute($getStudyRequest, $getStudyResponse);
 
         return response()->json($getStudyResponse->body)

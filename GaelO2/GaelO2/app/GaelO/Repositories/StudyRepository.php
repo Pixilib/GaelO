@@ -53,8 +53,12 @@ class StudyRepository implements PersistenceInterface {
 
     }
 
-    public function getStudies() : array {
-        $studies = $this->study->withTrashed()->get();
+    public function getStudies(bool $withTrashed = false) : array {
+        if($withTrashed){
+            $studies = $this->study->withTrashed()->get();
+        }else {
+            $studies = $this->study->get();
+        }
         return $studies->count() == 0 ? [] : $studies->toArray() ;
     }
 
