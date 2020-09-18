@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\GaelO\UseCases\GetVisitType\VisitTypeEntity;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -76,14 +77,16 @@ class VisitTypeTest extends TestCase
 
     public function testGetVisitType(){
 
-        factory(VisitType::class)->create([
+        $visitType = factory(VisitType::class)->create([
             'visit_group_id' => $this->visitGroup->id
         ]);
 
-        $response = $this->json('GET', 'api/visit-groups/'.$this->visitGroup->id.'/visit-types');
-        dd($response);
-        //->assertNoContent(201);
-
+        $response = $this->json('GET', 'api/visit-types/'.$visitType->id)->content();
+        $response = json_decode($response, true);
+        //Check that all value in output entity is in response
+        foreach ( get_class_vars(VisitTypeEntity::class) as $key=>$value ){
+            $this->assertArrayHasKey($key, $response);
+        }
 
     }
 }
