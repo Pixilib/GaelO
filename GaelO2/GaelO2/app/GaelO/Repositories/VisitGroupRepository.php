@@ -47,6 +47,11 @@ class VisitGroupRepository implements PersistenceInterface {
 
     }
 
+    public function hasVisitTypes(int $visitGroupId){
+        $visitTypes = $this->visitGroup->find($visitGroupId)->visitTypes()->get();
+        return $visitTypes->count()>0 ? true : false;
+    }
+
     public function isExistingVisitGroup(String $studyName, String $modality) : bool {
         $visitGroup = $this->visitGroup->where([['study_name', '=', $studyName], ['modality', '=', $modality]])->get();
         return sizeof($visitGroup)>0;

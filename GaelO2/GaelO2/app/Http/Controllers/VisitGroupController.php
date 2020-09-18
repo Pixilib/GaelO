@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\GaelO\UseCases\CreateVisitGroup\CreateVisitGroup;
 use App\GaelO\UseCases\CreateVisitGroup\CreateVisitGroupRequest;
 use App\GaelO\UseCases\CreateVisitGroup\CreateVisitGroupResponse;
+use App\GaelO\UseCases\DeleteVisitGroup\DeleteVisitGroup;
+use App\GaelO\UseCases\DeleteVisitGroup\DeleteVisitGroupRequest;
+use App\GaelO\UseCases\DeleteVisitGroup\DeleteVisitGroupResponse;
 use App\GaelO\UseCases\GetVisitGroup\GetVisitGroup;
 use App\GaelO\UseCases\GetVisitGroup\GetVisitGroupRequest;
 use App\GaelO\UseCases\GetVisitGroup\GetVisitGroupResponse;
@@ -36,22 +39,11 @@ class VisitGroupController extends Controller
 
     }
 
-    public function testGetVisitGroupOfStudy(){
-
-        //No groups should response empty array
-        $response = $this->get('api/studies/'. $this->study[1]['name'].'/visit-groups')->content();
-        $responseArray =  json_decode($response, true);
-        $this->assertEmpty($responseArray);
-
-        //Add a PT modality
-        $this->visitGroup = factory(VisitGroup::class, 1)->create([
-            'study_name'=> $this->study[1]['name'],
-            'modality'=> 'PT']);
-
-        //Should have a PT modality
-        $response = $this->get('api/studies/'. $this->study[1]['name'].'/visit-groups')->content();
-        $responseArray =  json_decode($response, true);
-        $this->assertEquals('PT', $responseArray[0]);
+    public function deleteVisitGroup(int $visitGroupId, DeleteVisitGroup $deleteVisitGroup, DeleteVisitGroupRequest $deleteVisitGroupRequest, DeleteVisitGroupResponse $deleteVisitGroupResponse){
+        $deleteVisitGroupRequest->visitGroupId = $visitGroupId;
+        $deleteVisitGroup->execute($deleteVisitGroupRequest, $deleteVisitGroupResponse);
+        return response()->noContent()
+                ->setStatusCode($deleteVisitGroupResponse->status, $deleteVisitGroupResponse->statusText);
 
     }
 }

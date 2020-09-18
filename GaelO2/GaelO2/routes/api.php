@@ -39,7 +39,7 @@ Route::middleware(['auth:api', 'admin'])->put('centers/{code}', 'CenterControlle
 //VisitGroup Routes
 Route::middleware(['auth:api', 'admin'])->post('studies/{studyName}/visit-groups', 'VisitGroupController@createVisitGroup');
 Route::middleware(['auth:api', 'admin'])->get('visit-groups/{visitGroupId}', 'VisitGroupController@getVisitGroup');
-
+Route::middleware(['auth:api', 'admin'])->delete('visit-groups/{visitGroupId}', 'VisitGroupController@deleteVisitGroup');
 //VisitType Routes
 Route::middleware(['auth:api', 'admin'])->post('visit-groups/{visitGroupId}/visit-types', 'VisitTypeController@createVisitType');
 Route::middleware(['auth:api', 'admin'])->get('visit-types/{visitTypeId}', 'VisitTypeController@getVisitType');

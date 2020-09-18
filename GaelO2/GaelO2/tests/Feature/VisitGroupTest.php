@@ -12,6 +12,7 @@ use Tests\TestCase;
 use App\User;
 use App\Study;
 use App\VisitGroup;
+use App\VisitType;
 
 class VisitGroupTest extends TestCase
 {
@@ -67,6 +68,21 @@ class VisitGroupTest extends TestCase
         $visitGroup = VisitGroup::where('study_name', $study['name'])->get()->first()->toArray();
         $this->assertEquals('CT', $visitGroup['modality']);
     }
+
+    public function testDeleteVisitGroupShouldFailBecauseExistingVisitTypes(){
+        $visitGroup = factory(VisitGroup::class, 1)->create(['study_name'=> $this->study[0]->name]);
+        $visitGroup->each(function ($visitGroup) {
+            factory(VisitType::class)->create(['visit_group_id'=>$visitGroup->id]);
+        });
+        $this->json('DELETE', 'api/visit-groups/'.$visitGroup[0]->id)->assertNoContent(403);
+    }
+
+    public function testDeleteVisitGroup(){
+        $visitGroup = factory(VisitGroup::class, 1)->create(['study_name'=> $this->study[0]->name]);
+        $this->json('DELETE', 'api/visit-groups/'.$visitGroup[0]->id)->assertNoContent(200);
+    }
+
+
 
 
 
