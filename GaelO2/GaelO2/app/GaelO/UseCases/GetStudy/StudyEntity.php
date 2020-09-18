@@ -9,8 +9,8 @@ class StudyEntity {
 
     public static function fillFromDBReponseArray(array $array){
         $studyEntity  = new StudyEntity();
-        $studyEntity->studyName = $array['name'];
-        $studyEntity->modality = $array['patient_code_prefix'];
+        $studyEntity->name = $array['name'];
+        $studyEntity->patientCodePrefix = $array['patient_code_prefix'];
         $studyEntity->deleted = $array['deleted_at'] !== null;
 
         return $studyEntity;

@@ -3,7 +3,7 @@
 namespace App\GaelO\UseCases\GetVisitType;
 
 class VisitTypeEntity {
-
+    public int $id;
     public int $visitGroupId;
     public String $name;
     public int $visitOrder;
@@ -17,6 +17,7 @@ class VisitTypeEntity {
 
     public static function fillFromDBReponseArray(array $array){
         $VisitTypeEntity  = new VisitTypeEntity();
+        $VisitTypeEntity->id = $array['id'];
         $VisitTypeEntity->visitGroupId = $array['visit_group_id'];
         $VisitTypeEntity->name = $array['name'];
         $VisitTypeEntity->visitOrder = $array['visit_order'];

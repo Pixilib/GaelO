@@ -62,10 +62,9 @@ class StudyRepository implements PersistenceInterface {
         return $studies->count() == 0 ? [] : $studies->toArray() ;
     }
 
-    public function getStudiesVisitGroup(String $studyName) : array {
-        $visitGroupCollection = $this->study->withTrashed()->where('name',$studyName)->first()->visitGroups()->get(["modality"])
-                        ->map( function($record) {return $record->modality;}) ;
-        return empty($visitGroupCollection) ? [] : $visitGroupCollection->toArray();
+    public function getStudiesDetails() : array {
+        $studiesDetails = $this->study->withTrashed()->with(['visitGroupDetails'])->get();
+        return $studiesDetails->toArray();
     }
 
 }

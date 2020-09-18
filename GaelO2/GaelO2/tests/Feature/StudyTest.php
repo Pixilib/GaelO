@@ -10,6 +10,8 @@ use Laravel\Passport\Passport;
 use Tests\TestCase;
 use App\User;
 use App\Study;
+use App\VisitGroup;
+use App\VisitType;
 
 class StudyTest extends TestCase
 {
@@ -58,14 +60,23 @@ class StudyTest extends TestCase
     }
 
     public function testGetStudyWithDetails(){
-        //SK CREER STUDY + Visit Group + Visit Type et les faire sortir dans les details de study
-        $response = $this->json('GET', '/api/studies?expand')->content();
+        $study = factory(Study::class, 2)->create();
+
+        $study->each(function ($study) {
+            $visitGroups = factory(VisitGroup::class)->create(['study_name'=>$study->name], 3);
+            $visitGroups->each(function ($visitGroup) {
+                factory(VisitType::class)->create(['visit_group_id'=>$visitGroup->id], 3);
+            });
+        });
+
+        $response = $this->json('GET', '/api/studies?expand')->assertSuccessful();
+        $response->assertJsonCount(2);
 
     }
 
     public function testGetStudies(){
         factory(Study::class, 1)->create();
-        $this->json('GET', '/api/studies')->assertJsonCount(1);
+        $response = $this->json('GET', '/api/studies')->assertJsonCount(1);
     }
 
     public function testGetDeletedStudies(){

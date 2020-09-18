@@ -12,6 +12,9 @@ use App\GaelO\UseCases\DeleteStudy\DeleteStudyResponse;
 use App\GaelO\UseCases\GetStudy\GetStudy;
 use App\GaelO\UseCases\GetStudy\GetStudyRequest;
 use App\GaelO\UseCases\GetStudy\GetStudyResponse;
+use App\GaelO\UseCases\GetStudyDetails\GetStudyDetails;
+use App\GaelO\UseCases\GetStudyDetails\GetStudyDetailsRequest;
+use App\GaelO\UseCases\GetStudyDetails\GetStudyDetailsResponse;
 use App\GaelO\Util;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -31,19 +34,18 @@ class StudyController extends Controller
 
     }
 
-    public function getStudy(Request $request, GetStudy $getStudy, GetStudyRequest $getStudyRequest, GetStudyResponse $getStudyResponse){
+    public function getStudy(Request $request, GetStudy $getStudy, GetStudyRequest $getStudyRequest, GetStudyResponse $getStudyResponse, GetStudyDetails $getStudyDetails, GetStudyDetailsRequest $getStudyDetailsRequest, GetStudyDetailsResponse $getStudyDetailsResponse){
         //RECUPERATION DES QUERY PARAM (? dans URL)
         $queryParam = $request->query();
         if(array_key_exists('expand', $queryParam) ){
-            $getStudyRequest->expand = true;
+            $getStudyDetails->execute($getStudyDetailsRequest, $getStudyDetailsResponse);
+            return response()->json($getStudyDetailsResponse->body)
+            ->setStatusCode($getStudyDetailsResponse->status, $getStudyDetailsResponse->statusText);
         }else {
-            $getStudyRequest->expand = false;
+            $getStudy->execute($getStudyRequest, $getStudyResponse);
+            return response()->json($getStudyResponse->body)
+            ->setStatusCode($getStudyResponse->status, $getStudyResponse->statusText);
         }
-
-        $getStudy->execute($getStudyRequest, $getStudyResponse);
-
-        return response()->json($getStudyResponse->body)
-                ->setStatusCode($getStudyResponse->status, $getStudyResponse->statusText);
 
     }
 
