@@ -6,7 +6,7 @@ User's Roles : (GET), (POST), (DELETE)=>OK
 Study : (GET), (GET Expand), (POST), (DELETE) => OK
 Preference : (GET), (PUT) =>OK
 Center : (GET), (POST), (PUT) => OK
-Visit Group : (GET), (POST) => OK
+Visit Group : (GET), (POST), (DELETE) => OK
 Visit Type : (GET), (POST) => OK
 
 ChangePassword => Necessite middlewer qui check que l'user Courant == ID de la requete
@@ -15,7 +15,7 @@ Reactivation faire PATCH sur la ressource suprimée (A faire pour study, user)
 Query Param dans Study pour avoir la liste avec les deletion ? idem user ? et couvrir en test
 
 A faire
-Visit Group et Visit Type => Delete tant que rien dans le niveau n-1
+Delete Visit Type => Finir les test avec le cas Visit child
 Add Affiliated center (to user) => Add User Center POST, DELETE, GET (get users's center + dans réponse user)
 
 Tracker GET=> utiliser les query string
@@ -25,7 +25,9 @@ Service :
 Orthanc (ajout des env a faire)
 ReverseProxy
 
-Reflechir Etude Ancillaire : Probablement decoupler les review, une review reference une visite et une study
+Reflechir Etude Ancillaire :
+Probablement decoupler les review, une review reference une visite et une study
+Decoupler le status visit review egalement ?
 
 //Les tests ne font pas d'assertion sur le tracker et l'envoi de mails (mais exception si erreur en theorie)
 

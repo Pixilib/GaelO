@@ -89,4 +89,19 @@ class VisitTypeTest extends TestCase
         }
 
     }
+
+    public function testDeleteVisitType(){
+        $visitType = factory(VisitType::class)->create([
+            'visit_group_id' => $this->visitGroup->id
+        ]);
+        $this->json('DELETE', 'api/visit-types/'.$visitType->id)->assertNoContent(200);
+    }
+
+    public function testDeleteVisitTypeShouldFailedBecauseHasChildVisit(){
+        //SK A FAIRE
+        $visitType = factory(VisitType::class)->create([
+            'visit_group_id' => $this->visitGroup->id
+        ]);
+        //$this->json('DELETE', 'api/visit-types/'.$visitType->id)->assertNoContent(400);
+    }
 }

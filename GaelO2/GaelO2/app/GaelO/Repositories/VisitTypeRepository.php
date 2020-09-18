@@ -54,6 +54,11 @@ class VisitTypeRepository implements PersistenceInterface {
 
     }
 
+    public function hasVisits(int $visitTypeId){
+        $visits = $this->visitType->find($visitTypeId)->visits()->get();
+        return $visits->count()>0 ? true : false;
+    }
+
 
 }
 
