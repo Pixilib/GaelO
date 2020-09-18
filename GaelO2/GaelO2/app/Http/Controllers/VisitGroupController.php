@@ -26,10 +26,8 @@ class VisitGroupController extends Controller
                 ->setStatusCode($createVisitGroupResponse->status, $createVisitGroupResponse->statusText);
     }
 
-    public function getVisitGroup(String $studyName, Request $request, GetVisitGroup $getVisitGroup, GetVisitGroupRequest $getVisitGroupRequest, GetVisitGroupResponse $getVisitGroupResponse){
-        $getVisitGroupRequest->studyName = $studyName;
-        $requestData = $request->all();
-        $getVisitGroupRequest = Util::fillObject($requestData, $getVisitGroupRequest);
+    public function getVisitGroup(int $visitGroupId, GetVisitGroup $getVisitGroup, GetVisitGroupRequest $getVisitGroupRequest, GetVisitGroupResponse $getVisitGroupResponse){
+        $getVisitGroupRequest->visitGroupId = $visitGroupId;
 
         $getVisitGroup->execute($getVisitGroupRequest, $getVisitGroupResponse);
 

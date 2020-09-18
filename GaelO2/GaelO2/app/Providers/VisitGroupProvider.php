@@ -14,7 +14,8 @@ class VisitGroupProvider extends ServiceProvider
     public function register()
     {
         $this->app->when(
-            [\App\GaelO\UseCases\CreateVisitGroup\CreateVisitGroup::class])
+            [\App\GaelO\UseCases\CreateVisitGroup\CreateVisitGroup::class,
+            \App\GaelO\UseCases\GetVisitGroup\GetVisitGroup::class])
         ->needs(\App\GaelO\Interfaces\PersistenceInterface::class)
         ->give(\App\GaelO\Repositories\VisitGroupRepository::class);
     }

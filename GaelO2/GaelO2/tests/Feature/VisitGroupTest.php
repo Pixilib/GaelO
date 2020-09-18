@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\GaelO\UseCases\GetVisitGroup\VisitGroupEntity;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -43,6 +44,19 @@ class VisitGroupTest extends TestCase
 
     }
 
+    public function testGetVisitGroup(){
+
+        $visitGroup = factory(VisitGroup::class, 1)->create(['study_name'=> $this->study[0]->name]);
+        $response = $this->json('GET', 'api/visit-groups/'.$visitGroup[0]->id)->content();
+        $response = json_decode($response, true);
+        //Check all Item in visitGroupEntity are present in reponse
+        foreach ( get_class_vars(VisitGroupEntity::class) as $key=>$value ){
+            $this->assertArrayHasKey($key, $response);
+        }
+
+    }
+
+
     public function testCreateVisitGroup() {
         $payload = [
             'modality' => 'CT'
@@ -53,6 +67,7 @@ class VisitGroupTest extends TestCase
         $visitGroup = VisitGroup::where('study_name', $study['name'])->get()->first()->toArray();
         $this->assertEquals('CT', $visitGroup['modality']);
     }
+
 
 
 }

@@ -38,7 +38,7 @@ Route::middleware(['auth:api', 'admin'])->put('centers/{code}', 'CenterControlle
 
 //VisitGroup Routes
 Route::middleware(['auth:api', 'admin'])->post('studies/{studyName}/visit-groups', 'VisitGroupController@createVisitGroup');
-Route::middleware(['auth:api', 'admin'])->get('studies/{studyName}/visit-groups', 'VisitGroupController@getVisitGroup');
+Route::middleware(['auth:api', 'admin'])->get('visit-groups/{visitGroupId}', 'VisitGroupController@getVisitGroup');
 
 //VisitType Routes
 Route::middleware(['auth:api', 'admin'])->post('visit-groups/{visitGroupId}/visit-types', 'VisitTypeController@createVisitType');

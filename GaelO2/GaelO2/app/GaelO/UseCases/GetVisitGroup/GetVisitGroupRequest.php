@@ -3,6 +3,5 @@
 namespace App\GaelO\UseCases\GetVisitGroup;
 
 class GetVisitGroupRequest {
-    public string $studyName;
-
+    public int $visitGroupId;
 }

@@ -10,13 +10,13 @@ class GetVisitGroup {
         $this->persistenceInterface = $persistenceInterface;
     }
 
-    public function execute(GetVisitGroupRequest $getVisitGroupRequest, GetVisitGroupResponse $getVisitGroupResponse) : void {
+    public function execute(GetVisitGroupRequest $getVisitGroupRequest, GetVisitGroupResponse $getVisitTypeResponse){
 
-        $visitGroups = $this->persistenceInterface->getStudiesVisitGroup($getVisitGroupRequest->studyName);
-
-        $getVisitGroupResponse->body = $visitGroups;
-        $getVisitGroupResponse->status = 200;
-        $getVisitGroupResponse->statusText = 'OK';
+        $visitGroupData = $this->persistenceInterface->find($getVisitGroupRequest->visitGroupId);
+        $visitGroupEntity = VisitGroupEntity::fillFromDBReponseArray($visitGroupData);
+        $getVisitTypeResponse->body = $visitGroupEntity;
+        $getVisitTypeResponse->status = 200;
+        $getVisitTypeResponse->statusText = 'OK';
 
     }
 }

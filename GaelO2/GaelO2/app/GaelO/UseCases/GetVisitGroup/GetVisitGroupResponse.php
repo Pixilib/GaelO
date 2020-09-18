@@ -3,7 +3,7 @@
 namespace App\GaelO\UseCases\GetVisitGroup;
 
 class GetVisitGroupResponse {
-    public array $body;
+    public $body;
     public int $status;
     public string $statusText;
 }
