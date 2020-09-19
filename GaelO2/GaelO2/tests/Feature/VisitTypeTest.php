@@ -13,6 +13,8 @@ use App\User;
 use App\VisitGroup;
 use App\Study;
 use App\VisitType;
+use App\Visit;
+use App\Patient;
 
 class VisitTypeTest extends TestCase
 {
@@ -98,10 +100,25 @@ class VisitTypeTest extends TestCase
     }
 
     public function testDeleteVisitTypeShouldFailedBecauseHasChildVisit(){
-        //SK A FAIRE
         $visitType = factory(VisitType::class)->create([
             'visit_group_id' => $this->visitGroup->id
         ]);
-        //$this->json('DELETE', 'api/visit-types/'.$visitType->id)->assertNoContent(400);
+
+        $study = factory(Study::class)->create();
+
+        $patient = factory(Patient::class)->create([
+            'center_code'=>0,
+            'study_name'=>$study->name
+        ]);
+
+        factory(Visit::class)->create([
+            'creator_user_id'=>1,
+            'patient_code'=>$patient->code,
+            'visit_type_id' => $visitType->id,
+            'controller_user_id'=>1,
+            'corrective_action_user_id'=>1
+        ]);
+
+        $this->json('DELETE', 'api/visit-types/'.$visitType->id)->assertNoContent(403);
     }
 }
