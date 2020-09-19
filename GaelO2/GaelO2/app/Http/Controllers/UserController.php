@@ -32,6 +32,9 @@ use App\GaelO\UseCases\DeleteUser\DeleteUserResponse;
 use App\GaelO\UseCases\DeleteUserRole\DeleteUserRole;
 use App\GaelO\UseCases\DeleteUserRole\DeleteUserRoleRequest;
 use App\GaelO\UseCases\DeleteUserRole\DeleteUserRoleResponse;
+use App\GaelO\UseCases\GetAffiliatedCenter\GetAffiliatedCenter;
+use App\GaelO\UseCases\GetAffiliatedCenter\GetAffiliatedCenterRequest;
+use App\GaelO\UseCases\GetAffiliatedCenter\GetAffiliatedCenterResponse;
 use App\GaelO\UseCases\GetUserRoles\GetUserRoles;
 use App\GaelO\UseCases\GetUserRoles\GetUserRolesRequest;
 use App\GaelO\UseCases\GetUserRoles\GetUserRolesResponse;
@@ -139,6 +142,15 @@ class UserController extends Controller
 
         return response()->noContent()
         ->setStatusCode($addAffiliatedCenterResponse->status, $addAffiliatedCenterResponse->statusText);
+    }
+
+    public function getAffiliatedCenter(int $userId, GetAffiliatedCenter $getAffiliatedCenter, GetAffiliatedCenterRequest $getAffiliatedCenterRequest, GetAffiliatedCenterResponse $getAffiliatedCenterResponse){
+        $getAffiliatedCenterRequest->userId = $userId;
+        $getAffiliatedCenter->execute($getAffiliatedCenterRequest, $getAffiliatedCenterResponse);
+
+        return response()->json($getAffiliatedCenterResponse->body)
+        ->setStatusCode($getAffiliatedCenterResponse->status, $getAffiliatedCenterResponse->statusText);
+
     }
 
 }

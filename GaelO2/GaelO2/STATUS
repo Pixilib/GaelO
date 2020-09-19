@@ -8,14 +8,16 @@ Preference : (GET), (PUT) =>OK
 Center : (GET), (POST), (PUT) => OK
 Visit Group : (GET), (POST), (DELETE) => OK
 Visit Type : (GET), (POST), (DELETE) => OK
+Affiliated Center  : (GET), (POST)
 
-ChangePassword => Necessite middlewer qui check que l'user Courant == ID de la requete
+ChangePassword => Necessite middelware qui check que l'user Courant == ID de la requete
 Check API JSON en camelCase (ne pas passer directement la DB dans la reponse)-> Creer des entity perso pour l'input / output
 Reactivation faire PATCH sur la ressource suprimée (A faire pour study, user)
 Query Param dans Study pour avoir la liste avec les deletion ? idem user ? et couvrir en test
 
 A faire
-Add Affiliated center (to user) => Add User Center POST, DELETE, GET (get users's center + dans réponse user)
+Affiliated Center Post => Manque Tracker, manque check existing et Changer le payload en array ?
+Add Affiliated center (to user) => DELETE
 
 Tracker GET=> utiliser les query string
 ExportDatabase : POST (creation d'une sauvegarde)

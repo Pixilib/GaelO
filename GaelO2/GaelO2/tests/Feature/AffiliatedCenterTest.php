@@ -10,6 +10,7 @@ use Laravel\Passport\Passport;
 use Tests\TestCase;
 use App\User;
 use App\Center;
+use App\CenterUser;
 
 class AffiliatedCenterTest extends TestCase
 {
@@ -47,6 +48,10 @@ class AffiliatedCenterTest extends TestCase
     }
 
     public function testGetAffiliatedCenterOfUser(){
+        factory(CenterUser::class)->create(['user_id'=>1, 'center_code'=>3]);
+        $response = $this->json('GET', 'api/users/1/affiliated-centers')->assertSuccessful();
+        $response = json_decode($response->content(), true);
+        $this->assertEquals(sizeof($response), 1);
 
     }
 }

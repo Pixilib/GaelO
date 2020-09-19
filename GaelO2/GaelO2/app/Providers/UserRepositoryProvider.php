@@ -25,7 +25,8 @@ class UserRepositoryProvider extends ServiceProvider
             \App\GaelO\UseCases\GetUserRoles\GetUserRoles::class,
             \App\GaelO\UseCases\CreateUserRoles\CreateUserRoles::class,
             \App\GaelO\UseCases\DeleteUserRole\DeleteUserRole::class,
-            \App\GaelO\UseCases\AddAffiliatedCenter\AddAffiliatedCenter::class])
+            \App\GaelO\UseCases\AddAffiliatedCenter\AddAffiliatedCenter::class,
+            \App\GaelO\UseCases\GetAffiliatedCenter\GetAffiliatedCenter::class])
         ->needs(\App\GaelO\Interfaces\PersistenceInterface::class)
         ->give(\App\GaelO\Repositories\UserRepository::class);
     }
