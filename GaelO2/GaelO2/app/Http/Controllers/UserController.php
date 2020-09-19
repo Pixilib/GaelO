@@ -26,6 +26,9 @@ use App\GaelO\UseCases\ChangePassword\ChangePasswordResponse;
 use App\GaelO\UseCases\CreateUserRoles\CreateUserRoles;
 use App\GaelO\UseCases\CreateUserRoles\CreateUserRolesRequest;
 use App\GaelO\UseCases\CreateUserRoles\CreateUserRolesResponse;
+use App\GaelO\UseCases\DeleteAffiliatedCenter\DeleteAffiliatedCenter;
+use App\GaelO\UseCases\DeleteAffiliatedCenter\DeleteAffiliatedCenterRequest;
+use App\GaelO\UseCases\DeleteAffiliatedCenter\DeleteAffiliatedCenterResponse;
 use App\GaelO\UseCases\DeleteUser\DeleteUser;
 use App\GaelO\UseCases\DeleteUser\DeleteUserRequest;
 use App\GaelO\UseCases\DeleteUser\DeleteUserResponse;
@@ -150,6 +153,16 @@ class UserController extends Controller
 
         return response()->json($getAffiliatedCenterResponse->body)
         ->setStatusCode($getAffiliatedCenterResponse->status, $getAffiliatedCenterResponse->statusText);
+
+    }
+
+    public function deleteAffiliatedCenter(int $userId, int $centerCode, DeleteAffiliatedCenter $deleteAffiliatedCenter, DeleteAffiliatedCenterRequest $deleteAffiliatedCenterRequest, DeleteAffiliatedCenterResponse $deleteAffiliatedCenterResponse){
+        $deleteAffiliatedCenterRequest->userId = $userId;
+        $deleteAffiliatedCenterRequest->centerCode = $centerCode;
+        $deleteAffiliatedCenter->execute($deleteAffiliatedCenterRequest, $deleteAffiliatedCenterResponse);
+
+        return response()->noContent()
+        ->setStatusCode($deleteAffiliatedCenterResponse->status, $deleteAffiliatedCenterResponse->statusText);
 
     }
 

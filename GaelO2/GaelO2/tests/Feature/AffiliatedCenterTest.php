@@ -54,4 +54,15 @@ class AffiliatedCenterTest extends TestCase
         $this->assertEquals(sizeof($response), 1);
 
     }
+
+    public function testDeleteAffiliatedCenterOfUser(){
+        factory(CenterUser::class)->create(['user_id'=>1, 'center_code'=>3]);
+        $this->json('DELETE', 'api/users/1/affiliated-centers/3')->assertNoContent(200);
+        $databaseData = CenterUser::where(['user_id'=>1])->get();
+        $this->assertEquals(sizeof($databaseData->toArray()), 0);
+    }
+
+    public function testDeleteAffiliatedCenterOfUserShouldFailBecauseNotExistingAffiliatedCenter(){
+        $this->json('DELETE', 'api/users/1/affiliated-centers/3')->assertStatus(404);
+    }
 }

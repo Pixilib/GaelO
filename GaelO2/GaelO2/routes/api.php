@@ -23,6 +23,8 @@ Route::middleware(['auth:api', 'admin'])->post('users/{id}/roles/{study}', 'User
 Route::middleware(['auth:api', 'admin'])->delete('users/{id}/roles/{study}/{roleName}', 'UserController@deleteRole');
 Route::middleware(['auth:api', 'admin'])->post('users/{id}/affiliated-centers', 'UserController@addAffiliatedCenter');
 Route::middleware(['auth:api', 'admin'])->get('users/{id}/affiliated-centers', 'UserController@getAffiliatedCenter');
+Route::middleware(['auth:api', 'admin'])->delete('users/{id}/affiliated-centers/{centerCode}', 'UserController@deleteAffiliatedCenter');
+
 //Study Routes
 Route::middleware(['auth:api', 'admin'])->post('studies', 'StudyController@createStudy');
 Route::middleware(['auth:api', 'admin'])->get('studies', 'StudyController@getStudy');

@@ -250,6 +250,11 @@ class UserRepository implements PersistenceInterface {
 
     }
 
+    public function deleteAffiliatedCenter(int $userId, int $centerCode) : void {
+        $affiliatedCenter=$this->centerUser->where( ['user_id'=> $userId,'center_code'=>$centerCode] )->firstOrFail();
+        $affiliatedCenter->delete();
+    }
+
     public function getAffiliatedCenter(int $userId) : array {
         $user = $this->user->where('id', $userId)->first();
         $centers = $user->affiliatedCenters()->get();
