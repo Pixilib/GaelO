@@ -32,7 +32,7 @@ class UserRepositoryTest extends TestCase
      * Test email selection of investigator's study having a same main/affiliated center
      */
     public function testGetInvestigatorStudyEmailsWithJobs(){
-        $userRepository = new UserRepository( new User(), new Role() );
+        $userRepository = new UserRepository( new User(), new Role(), new CenterUser() );
         //Create 2 random studies
         $studies = factory(Study::class, 2)->create();
         //Create one center '3' and one center '5'
@@ -83,7 +83,7 @@ class UserRepositoryTest extends TestCase
      * Test mail selection acccording to Role in study
      */
     public function testGetMailsByRoleStudy(){
-        $userRepository = new UserRepository(new User(), new Role());
+        $userRepository = new UserRepository(new User(), new Role(), new CenterUser());
         $studies = factory(Study::class, 2)->create();
         $users = factory(User::class,10)->create();
         $users2 = factory(User::class,20)->create();
