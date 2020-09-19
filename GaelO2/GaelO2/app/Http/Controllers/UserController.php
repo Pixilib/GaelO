@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\GaelO\UseCases\AddAffiliatedCenter\AddAffiliatedCenter;
+use App\GaelO\UseCases\AddAffiliatedCenter\AddAffiliatedCenterRequest;
+use App\GaelO\UseCases\AddAffiliatedCenter\AddAffiliatedCenterResponse;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
@@ -123,6 +126,19 @@ class UserController extends Controller
 
         return response()->noContent()
         ->setStatusCode($deleteUserRoleResponse->status, $deleteUserRoleResponse->statusText);
+    }
+
+    public function addAffiliatedCenter(int $userId, Request $request, AddAffiliatedCenter $addAffiliatedCenter, AddAffiliatedCenterRequest $addAffiliatedCenterRequest, AddAffiliatedCenterResponse $addAffiliatedCenterResponse){
+        $requestData = $request->all();
+        $addAffiliatedCenterRequest = Util::fillObject($requestData, $addAffiliatedCenterRequest);
+        $curentUser = Auth::user();
+        $addAffiliatedCenterRequest->currentUserId = $curentUser['id'];
+        $addAffiliatedCenterRequest->userId = $userId;
+
+        $addAffiliatedCenter->execute($addAffiliatedCenterRequest, $addAffiliatedCenterResponse);
+
+        return response()->noContent()
+        ->setStatusCode($addAffiliatedCenterResponse->status, $addAffiliatedCenterResponse->statusText);
     }
 
 }

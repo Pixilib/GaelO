@@ -1,0 +1,52 @@
+<?php
+
+namespace Tests\Feature;
+
+use Illuminate\Foundation\Testing\DatabaseMigrations;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Support\Facades\Artisan;
+use Laravel\Passport\Passport;
+use Tests\TestCase;
+use App\User;
+use App\Center;
+
+class AffiliatedCenterTest extends TestCase
+{
+
+    use DatabaseMigrations {
+        runDatabaseMigrations as baseRunDatabaseMigrations;
+    }
+
+    public function runDatabaseMigrations() {
+        $this->baseRunDatabaseMigrations();
+        $this->artisan('db:seed');
+    }
+
+    protected function setUp() : void{
+        parent::setUp();
+        factory(Center::class)->create(['code'=>3]);
+
+        Artisan::call('passport:install');
+        Passport::actingAs(
+            User::where('id',1)->first()
+        );
+
+    }
+
+    public function testCreateAffiliatedCenterToUser()
+    {
+        $payload = [
+            'centerCode' => 3
+        ];
+        $this->json('POST', 'api/users/1/affiliated-centers', $payload)->assertNoContent(201);
+
+        $affiliatedCenter =User::where('id',1)->first()->affiliatedCenters()->get()->toArray();
+        $this->assertEquals(sizeof($affiliatedCenter), 1);
+        $this->assertEquals($affiliatedCenter[0]['code'], 3);
+    }
+
+    public function testGetAffiliatedCenterOfUser(){
+
+    }
+}

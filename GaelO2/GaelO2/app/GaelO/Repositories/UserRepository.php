@@ -2,6 +2,7 @@
 
 namespace App\GaelO\Repositories;
 
+use App\CenterUser;
 use App\GaelO\Constants\Constants;
 use App\User;
 use App\GaelO\Interfaces\PersistenceInterface;
@@ -11,9 +12,10 @@ use DateTime;
 
 class UserRepository implements PersistenceInterface {
 
-    public function __construct(User $user, Role $roles){
+    public function __construct(User $user, Role $roles, CenterUser $centerUser){
         $this->user = $user;
         $this->roles = $roles;
+        $this->centerUser = $centerUser;
     }
 
     public function create(array $data){
@@ -233,6 +235,26 @@ class UserRepository implements PersistenceInterface {
             ['study_name', '=', $study],
             ['name','=', $role]
             ])->delete();
+    }
+
+    public function addAffiliatedCenter(int $userId, int $centerCode) : void {
+
+        $user = $this->user->where('id', $userId)->first();
+
+        $insertArray = [
+            'user_id'=>$user['id'],
+            'center_code'=> $centerCode
+        ];
+
+        $this->centerUser->insert($insertArray);
+
+    }
+
+    public function getAffiliatedCenter(int $userId) : array {
+        $user = $this->user->where('id', $userId)->first();
+        $centers = $user->affiliatedCenters()->get();
+        return empty($centers) ? [] : $centers->toArray();
+
     }
 }
 
