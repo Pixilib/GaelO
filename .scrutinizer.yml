@@ -12,5 +12,6 @@ filter:
   excluded_paths:
       - "./GaelO2/GaelO2/public"
       - "./GaelO2/GaelO2/resources"
+      - "./src"
   dependency_paths:
       - "./GaelO2/GaelO2/vendor/"
