@@ -11,22 +11,25 @@ use App\User;
 use Illuminate\Support\Facades\Artisan;
 use Laravel\Passport\Passport;
 
-class CreatUserTest extends TestCase
+class CreateUserTest extends TestCase
 {
-
+    //Run Migration at each test
     use DatabaseMigrations {
         runDatabaseMigrations as baseRunDatabaseMigrations;
     }
-
+    //Run migration and seeds before each test
     public function runDatabaseMigrations()
     {
         $this->baseRunDatabaseMigrations();
         $this->artisan('db:seed');
     }
 
+    //This method is called before each test, it needs to call the parent setup methods
     protected function setUp() : void{
         parent::setUp();
+        //Create an existing user using factory on user table (and store the resulting entity in this class)
         $this->alreadyExistingUser = factory(User::class)->create();
+        //Define the valid payload the user creation should success
         $this->validPayload =
         ['username' => 'truc',
         'lastname' => 'truc',
@@ -34,12 +37,12 @@ class CreatUserTest extends TestCase
         'email' => 'truc@truc.fr',
         'phone' => '0600000000',
         'administrator' => true,
-        'center_code' => 0,
+        'centerCode' => 0,
         'job' => 'Monitor',
-        'orthanc_address' => 'test',
-        'orthanc_login' => 'test',
-        'orthanc_password' => 'test'];
-
+        'orthancAddress' => 'test',
+        'orthancLogin' => 'test',
+        'orthancPassword' => 'test'];
+        //Fake an authentified user to pass auth security for the tests
         Artisan::call('passport:install');
         Passport::actingAs(
             User::where('id',1)->first()
@@ -52,11 +55,12 @@ class CreatUserTest extends TestCase
     public function testCreateCorrectPayload()
     {
         //Test user creation
-        $this->json('POST', '/api/users', $this->validPayload)-> assertSuccessful();
-        //Test that copies don't insert
+        $resp = $this->json('POST', '/api/users', $this->validPayload)-> assertSuccessful();
+        //Test that copies of existing user don't insert
         $this->json('POST', '/api/users', $this->validPayload) -> assertStatus(400);
-
-        $createdUser = User::where('username', $this->validPayload['username'])->first();
+        //Use (and test) the GET api to get data of created user and check value are mathing the original request
+        $createdUser = $this->json('GET', '/api/users/3')->content();
+        $createdUser = json_decode($createdUser, true);
 
         //Check that the created entity have the correcte values
         foreach($this->validPayload as $key=>$value){
@@ -65,33 +69,44 @@ class CreatUserTest extends TestCase
 
         //Check defaut value at user creation
         $this->assertEquals($createdUser['status'], Constants::USER_STATUS_UNCONFIRMED);
-        $this->assertNotNull($createdUser['password_temporary']);
-        $this->assertNull($createdUser['password']);
-        $this->assertNull($createdUser['previous_password1']);
-        $this->assertNull($createdUser['previous_password2']);
-        $this->assertNull($createdUser['last_password_update']);
+        $this->assertNull($createdUser['lastPasswordUpdate']);
     }
 
+    /**
+     * Test that creating an existing user should fail
+     */
     public function testCreateAlreadyExistingUser(){
         $this->validPayload['username'] = $this->alreadyExistingUser['username'];
         $this->json('POST', '/api/users', $this->validPayload) -> assertStatus(400);
     }
 
+    /**
+     * Test that creating user with an already used email should fail
+     */
     public function testCreateAlreadyExistingEmail(){
         $this->validPayload['email'] = $this->alreadyExistingUser['email'];
         $this->json('POST', '/api/users', $this->validPayload) -> assertStatus(400);
     }
 
+    /**
+     * Test that creating user with missing data should fail
+     */
     public function testCreateIncompleteData(){
         unset($this->validPayload['lastname']);
         $this->json('POST', '/api/users', $this->validPayload) -> assertStatus(400);
     }
 
+    /**
+     * Test that creating user with invalid email should fail
+     */
     public function testCreateInvalidEmail(){
         $this->validPayload['email']= 'wrong';
         $this->json('POST', '/api/users', $this->validPayload) -> assertStatus(400);
     }
 
+    /**
+     * Test that creating user with a phone number not only composed by digit should fail
+     */
     public function testCreateInvalidPhone(){
         $this->validPayload['phone'] = "05G05";
         $this->json('POST', '/api/users', $this->validPayload) -> assertStatus(400);

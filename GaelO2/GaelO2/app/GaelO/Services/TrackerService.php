@@ -2,13 +2,13 @@
 
 namespace App\GaelO\Services;
 
-use App\GaelO\Interfaces\PersistenceInterface;
+use App\GaelO\Repositories\TrackerRepository;
 use App\GaelO\Util;
 
 class TrackerService {
 
-    public function __construct(PersistenceInterface $persistenceInterface){
-        $this->persistenceInterface = $persistenceInterface;
+    public function __construct(TrackerRepository $trackerRepository){
+        $this->trackerRepository = $trackerRepository;
     }
 
     public function writeAction(int $userId, string $role, ?string $study, ?int $id_visit, string $actionType, ?array $actionDetails){
@@ -22,6 +22,6 @@ class TrackerService {
             'action_details' => json_encode($actionDetails)
         ];
 
-        $this->persistenceInterface->create($data);
+        $this->trackerRepository->create($data);
     }
 }

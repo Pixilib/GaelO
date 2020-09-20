@@ -2,33 +2,46 @@
 
 namespace App\GaelO\UseCases\ModifyCenter;
 
+use App\GaelO\Constants\Constants;
 use App\GaelO\Interfaces\PersistenceInterface;
 
 use App\GaelO\UseCases\ModifyCenter\ModifyCenterRequest;
 use App\GaelO\UseCases\ModifyCenter\ModifyCenterResponse;
-use App\GaelO\Exceptions\GaelOException;
+use App\GaelO\Services\TrackerService;
 use App\GaelO\Util;
 
 class ModifyCenter {
 
-    public function __construct(PersistenceInterface $persistenceInterface){
+    public function __construct(PersistenceInterface $persistenceInterface, TrackerService $trackerService){
         $this->persistenceInterface = $persistenceInterface;
+        $this->trackerService = $trackerService;
      }
 
-    //logique métier (ex validation ...)
+
      public function execute(ModifyCenterRequest $centerRequest, ModifyCenterResponse $centerResponse) : void
     {
         $name = $centerRequest->name;
-        try {
-            $this->persistenceInterface->getCenterByName($name);
-            $centerResponse->status = 200;
-            $centerResponse->statusText = 'OK';
-        } catch (\Throwable $t) {
-            $centerResponse->status = 500;
-        } catch (\Exception $e) {
-            throw $e;
-        }
+
+        if(!$this->persistenceInterface->isKnownCenter($centerRequest->code)){
+            $centerResponse->status = 400;
+            $centerResponse->statusText = 'Non Existing Center';
+            return;
+
+        };
+        $this->persistenceInterface->updateCenter($name, $centerRequest->code, $centerRequest->countryCode);
+
+        $actionDetails = [
+            'modifiedCenter' => $centerRequest->code,
+            'centerName'=> $name,
+            'centerCountryCode' =>  $centerRequest->countryCode,
+        ];
+
+        $this->trackerService->writeAction($centerRequest->currentUserId, Constants::TRACKER_ROLE_ADMINISTRATOR, null, null, Constants::TRACKER_EDIT_CENTER, $actionDetails);
+
+        $centerResponse->status = 200;
+        $centerResponse->statusText = 'OK';
     }
+
 
 }
 

@@ -60,7 +60,6 @@ class ChangePasswordTest extends TestCase
     {
         $this->validPayload['password2']='wrongCopy';
         $response = $this->json('PUT', '/api/users/'.$this->user['id'].'/password', $this->validPayload);
-        //dd($response);
         $response->assertNoContent(400);
 
     }
@@ -69,7 +68,6 @@ class ChangePasswordTest extends TestCase
     {
         $this->validPayload['previous_password']='wrongPassword';
         $response = $this->json('PUT', '/api/users/'.$this->user['id'].'/password', $this->validPayload);
-        //dd($response);
         $response->assertNoContent(400);
 
     }
@@ -79,7 +77,6 @@ class ChangePasswordTest extends TestCase
         $this->validPayload['password1']='short';
         $this->validPayload['password2']='short';
         $response = $this->json('PUT', '/api/users/'.$this->user['id'].'/password', $this->validPayload);
-        //dd($response);
         $response->assertNoContent(400);
 
     }

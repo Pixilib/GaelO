@@ -6,5 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class Country extends Model
 {
-    protected $hidden = ['created_at', 'updated_at'];
+    protected $primaryKey = 'code';
+    public $incrementing = false;
 }

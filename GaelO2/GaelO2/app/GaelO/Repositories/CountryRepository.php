@@ -17,7 +17,7 @@ class CountryRepository implements PersistenceInterface {
         $model->save();
     }
 
-    public function update($code, array $data){
+    public function update($code, array $data) : void {
         $model = $this->country->find($code);
         $model = Util::fillObject($data, $model);
         $model->save();
@@ -27,12 +27,13 @@ class CountryRepository implements PersistenceInterface {
         return $this->country->where('code', $code)->firstOrFail()->toArray();
     }
 
-    public function delete($code) {
-        return $this->country->find($code)->delete();
+    public function delete($code) :void {
+        $this->country->find($code)->delete();
     }
 
-    public function getAll() {
-        return $this->country->get()->toArray();
+    public function getAll() : array {
+        $countries = $this->country->get();
+        return empty($countries) ? []  : $countries->toArray();
     }
 
 }

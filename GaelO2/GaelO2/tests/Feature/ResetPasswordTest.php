@@ -33,7 +33,7 @@ class ResetPasswordTest extends TestCase
             'username' => 'administrator',
             'email' => 'administrator@gaelo.fr'
         ];
-        $this->post('api/tools/reset-password', $data)
+        $this->json('post', 'api/tools/reset-password', $data)
         ->assertStatus(200);
         $modifiedUser = User::where('username', 'administrator')->first();
         $this->assertEquals( $modifiedUser['status'], Constants::USER_STATUS_UNCONFIRMED );
@@ -44,8 +44,7 @@ class ResetPasswordTest extends TestCase
             'username' => 'administrator2',
             'email' => 'administrator@gaelo.fr'
         ];
-        $this->post('api/tools/reset-password', $data)
-        ->assertStatus(400);
+        $this->json('POST', 'api/tools/reset-password', $data)->assertStatus(404);
     }
 
     public function testWrongEmailResetPassword(){
@@ -53,8 +52,22 @@ class ResetPasswordTest extends TestCase
             'username' => 'administrator',
             'email' => 'administrator2@gaelo.fr'
         ];
-        $this->post('api/tools/reset-password', $data)
+        $this->json('POST', 'api/tools/reset-password', $data)
         ->assertStatus(400);
+
+    }
+
+    public function testResetDeactivatedAccount(){
+
+        $defaultUser = User::find(1);
+        $defaultUser->delete();
+
+        $data = [
+            'username' => 'administrator',
+            'email' => 'administrator@gaelo.fr'
+        ];
+
+        $this->json('POST', 'api/tools/reset-password', $data)->assertStatus(400);
 
     }
 }

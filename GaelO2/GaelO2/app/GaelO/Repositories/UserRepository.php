@@ -2,17 +2,20 @@
 
 namespace App\GaelO\Repositories;
 
+use App\CenterUser;
 use App\GaelO\Constants\Constants;
 use App\User;
 use App\GaelO\Interfaces\PersistenceInterface;
 use App\GaelO\Util;
 use App\Role;
+use DateTime;
 
 class UserRepository implements PersistenceInterface {
 
-    public function __construct(User $user, Role $roles){
+    public function __construct(User $user, Role $roles, CenterUser $centerUser){
         $this->user = $user;
         $this->roles = $roles;
+        $this->centerUser = $centerUser;
     }
 
     public function create(array $data){
@@ -21,7 +24,7 @@ class UserRepository implements PersistenceInterface {
         return $this->user->toArray();
     }
 
-    public function update($id, array $data){
+    public function update($id, array $data) : void{
         $model = $this->user->find($id);
         $model = Util::fillObject($data, $model);
         $model->save();
@@ -31,50 +34,108 @@ class UserRepository implements PersistenceInterface {
         return $this->user->find($id)->toArray();
     }
 
-    public function delete($id) {
-        return $this->user->find($id)->delete();
+    public function delete($id) : void {
+        $this->user->find($id)->delete();
     }
 
-    public function getAll() {
-        return $this->user->get()->toArray();
+    public function getAll() : array {
+        $users = $this->user->get();
+        return empty($users) ? [] : $users->toArray();
     }
 
-    public function getUserByUsername($username){
-        $user = $this->user->where('username', $username)->first();
+    public function createUser(String $username, String $lastName, String $firstName, String $status,
+                                String $email, ?String $phone, bool $administrator, int $centerCode, String $job,
+                                ?String $orthancAdress, ?String $orthancLogin, ?String $orthancPassword,
+                                String $passwordTemporary, ?String $password, String $creationDate, ?String $lastPasswordUpdate) : array {
+
+        $data= ['username' => $username,
+        'lastname' => $lastName,
+        'firstname' => $firstName,
+        'status' => $status,
+        'email' => $email,
+        'phone' => $phone,
+        'administrator' => $administrator,
+        'center_code' => $centerCode,
+        'job' => $job,
+        'orthanc_address' => $orthancAdress,
+        'orthanc_login' => $orthancLogin,
+        'orthanc_password' => $orthancPassword,
+        'password_temporary'=> $passwordTemporary,
+        'password'=> $password,
+        'creation_date'=> $creationDate,
+        'last_password_update'=> $lastPasswordUpdate];
+
+        return $this->create($data);
+
+    }
+
+    public function updateUser(int $id, String $username, String $lastName, String $firstName, String $status,
+                                String $email, ?String $phone, bool $administrator, int $centerCode, String $job,
+                                ?String $orthancAdress, ?String $orthancLogin, ?String $orthancPassword,
+                                ?String $passwordTemporary, ?String $password, String $creationDate, ?String $lastPasswordUpdate) : void {
+
+        $data= ['username' => $username,
+                'lastname' => $lastName,
+                'firstname' => $firstName,
+                'status' => $status,
+                'email' => $email,
+                'phone' => $phone,
+                'administrator' => $administrator,
+                'center_code' => $centerCode,
+                'job' => $job,
+                'orthanc_address' => $orthancAdress,
+                'orthanc_login' => $orthancLogin,
+                'orthanc_password' => $orthancPassword,
+                'password_temporary'=> $passwordTemporary,
+                'password'=> $password,
+                'creation_date'=> $creationDate,
+                'last_password_update'=> $lastPasswordUpdate];
+
+        $this->update($id, $data);
+
+    }
+
+    public function getUserByUsername(String $username, bool $withTrashed = false){
+        if($withTrashed){
+            $user = $this->user->withTrashed()->where('username', $username)->firstOrFail();
+        }else{
+            $user = $this->user->where('username', $username)->firstOrFail();
+        }
+
         return $user->toArray();
     }
 
-    public function isExistingUsername($username){
+    public function isExistingUsername(String $username) : bool {
         $user = $this->user->where('username', $username);
         return $user->count() > 0 ? true : false;
     }
 
 
-    public function isExistingEmail($email){
+    public function isExistingEmail(String $email) : bool {
         $user = $this->user->where('email', $email);
         return $user->count() > 0 ? true : false;
     }
 
-    public function getUserByEmail($email){
+    public function getUserByEmail(String $email) : array {
         $user = $this->user->where('email', $email)->first();
-        return $user->toArray();
+        return empty($user) ? [] : $user->toArray();
     }
 
-    public function getAdministrators(){
+    public function getAdministrators() : array {
         $user = $this->user->where('administrator', true);
-        return $user->toArray();
+        return empty($user) ? [] : $user->toArray();
     }
 
-    public function getAdministratorsEmails(){
-        $emails = $this->user->where('administrator', true)->pluck('email');
-        return $emails->toArray();
+    public function getAdministratorsEmails() : array {
+        $emails = $this->user->where('administrator', true)->get();
+        return empty($emails) ? [] : $emails->pluck('email')->toArray();
     }
 
     /**
      * Get Emails array of user having an Investigator roles, affiliated (main or affiliated) in centercode
      * and having a particular job
      */
-    public function getInvestigatorsStudyFromCenterEmails(string $study, int $centerCode, string $job){
+    public function getInvestigatorsStudyFromCenterEmails(string $study, int $centerCode, string $job) : array {
 
         $emails = $this->user
         ->join('roles', function ($join) {
@@ -89,12 +150,12 @@ class UserRepository implements PersistenceInterface {
             $query->where('center_user.center_code', '=', $centerCode)
             ->orWhere('users.center_code', '=', $centerCode);
         })
-        ->get()->pluck('email');
+        ->get();
 
-        return $emails->toArray();
+        return empty($emails) ? [] : $emails->pluck('email')->toArray();
     }
 
-    public function getUsersEmailsByRolesInStudy(string $study, string $role ){
+    public function getUsersEmailsByRolesInStudy(string $study, string $role ) : array {
 
         $emails = $this->user
         ->join('roles', function ($join) {
@@ -102,9 +163,9 @@ class UserRepository implements PersistenceInterface {
         })->where(function ($query) use ($study, $role) {
             $query->where('roles.name', '=', $role)
             ->where('roles.study_name', '=', $study);
-        })->get()->pluck('email');
+        })->get();
 
-        return $emails->toArray();
+        return empty($emails) ? [] : $emails->pluck('email')->toArray();
 
     }
 
@@ -124,13 +185,8 @@ class UserRepository implements PersistenceInterface {
         return empty($users) ? [] : $users->toArray();
     }
 
-    public function isAlreadyKnownUsernameOrEmail(string $username, string $email){
-        $users = $this->user->where('username', $username)->orWhere('email', $email)->get();
-        return $users->toArray();
-    }
-
     public function getAllStudiesWithRoleForUser(string $username) : array {
-        $user = $this->user->where('username', $username)->first();
+        $user = $this->user->withTrashed()->where('username', $username)->first();
         $studies = $user->roles()->join('studies', function ($join) {
             $join->on('roles.study_name', '=', 'studies.name');
         })->distinct('study_name')->get();
@@ -173,12 +229,37 @@ class UserRepository implements PersistenceInterface {
 
     }
 
-    public function deleteRoleForUser(int $userId, String $study, String $role) : void{
+    public function deleteRoleForUser(int $userId, String $study, String $role) : void {
         $this->roles->where([
-        ['user_id', '=', $userId],
-        ['study_name', '=', $study],
-        ['name','=', $role]
-        ])->delete();
+            ['user_id', '=', $userId],
+            ['study_name', '=', $study],
+            ['name','=', $role]
+            ])->delete();
+    }
+
+    public function addAffiliatedCenter(int $userId, int $centerCode) : void {
+
+        $user = $this->user->where('id', $userId)->first();
+
+        $insertArray = [
+            'user_id'=>$user['id'],
+            'center_code'=> $centerCode
+        ];
+
+        $this->centerUser->insert($insertArray);
+
+    }
+
+    public function deleteAffiliatedCenter(int $userId, int $centerCode) : void {
+        $affiliatedCenter=$this->centerUser->where( ['user_id'=> $userId,'center_code'=>$centerCode] )->firstOrFail();
+        $affiliatedCenter->delete();
+    }
+
+    public function getAffiliatedCenter(int $userId) : array {
+        $user = $this->user->where('id', $userId)->first();
+        $centers = $user->affiliatedCenters()->get();
+        return empty($centers) ? [] : $centers->toArray();
+
     }
 }
 

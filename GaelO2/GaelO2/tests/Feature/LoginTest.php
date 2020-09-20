@@ -84,7 +84,7 @@ class Login extends TestCase
         $adminDefaultUser = User::where('id', 1)->first();
         $adminDefaultUser['status'] = Constants::USER_STATUS_BLOCKED;
         $adminDefaultUser->save();
-        $response = $this->json('POST', '/api/login', $data)->assertNoContent(434);
+        $this->json('POST', '/api/login', $data)->assertNoContent(434);
 
     }
 

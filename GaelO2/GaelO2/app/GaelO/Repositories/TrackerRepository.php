@@ -15,7 +15,7 @@ class TrackerRepository implements PersistenceInterface {
         $this->tracker = $tracker;
     }
 
-    public function update($id, array $data){
+    public function update($id, array $data) : void {
         $model = $this->tracker->find($id);
         $model = Util::fillObject($data, $model);
         $model->save();
@@ -30,32 +30,33 @@ class TrackerRepository implements PersistenceInterface {
         return $this->tracker->find($id)->toArray();
     }
 
-    public function getAll() {
-        return $this->tracker->get()->toArray();
+    public function getAll() :array {
+        $trackers = $this->tracker->get();
+        return empty($trackres) ? [] : $trackers->toArray();
     }
 
-    public function delete($id){
+    public function delete($id) :void {
         throw new GaelOException("Tracker Delete Forbidden");
     }
 
-    public function getTrackerOfRole(string $role){
+    public function getTrackerOfRole(string $role) : array {
         $trackerData = $this->tracker->where('role', $role);
-        return $trackerData->toArray();
+        return empty($trackerData) ? [] : $trackerData->toArray();
     }
 
-    public function getTrackerOfRoleAndStudy(string $study, string $role){
+    public function getTrackerOfRoleAndStudy(string $study, string $role) : array{
         $trackerData = $this->tracker->where('study_name', $study)->where('role', $role);
-        return $trackerData->toArray();
+        return empty($trackerData)  ? [] : $trackerData->toArray();
     }
 
-    public function getTrackerOfVisitId(int $visitId){
+    public function getTrackerOfVisitId(int $visitId) : array {
         $trackerData = $this->tracker->where('visit_id', $visitId);
-        return $trackerData->toArray();
+        return empty($trackerData) ? [] : $trackerData->toArray();
     }
 
-    public function getUsersInternalMessageOfStudy(string $study){
+    public function getUsersInternalMessageOfStudy(string $study) : array {
         $trackerData = $this->tracker->where('study_name', $study)->where("action_type", Constants::TRACKER_SEND_MESSAGE);
-        return $trackerData->toArray();
+        return empty($trackerData) ? [] : $trackerData->toArray();
     }
 
 }

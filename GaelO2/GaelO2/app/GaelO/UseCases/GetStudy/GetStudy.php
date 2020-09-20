@@ -12,9 +12,14 @@ class GetStudy{
     }
 
     public function execute(GetStudyRequest $getStudyRequest, GetStudyResponse $getStudyResponse) : void{
-        $studies = $this->persistenceInterface->getStudies();
+        $studies = $this->persistenceInterface->getStudies(true);
 
-        $getStudyResponse->body = $studies;
+        $responseArray = [];
+        foreach($studies as $study){
+            $responseArray[] = StudyEntity::fillFromDBReponseArray($study);
+        }
+
+        $getStudyResponse->body = $responseArray;
         $getStudyResponse->status = 200;
         $getStudyResponse->statusText = 'OK';
 

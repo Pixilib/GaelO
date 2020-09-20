@@ -17,7 +17,7 @@ class StudyRepository implements PersistenceInterface {
         $model->save();
     }
 
-    public function update($name, array $data){
+    public function update($name, array $data) : void{
         $model = $this->study->find($name);
         $model = Util::fillObject($data, $model);
         $model->save();
@@ -28,18 +28,19 @@ class StudyRepository implements PersistenceInterface {
         return $studies->count()> 0 ? $studies->toArray() : [] ;
     }
 
-    public function delete($name) {
-        return $this->study->find($name)->delete();
+    public function delete($name) : void {
+        $this->study->find($name)->delete();
     }
 
-    public function getAll() {
-        return $this->study->get()->toArray();
+    public function getAll() : array {
+        $studies = $this->study->get();
+        return empty($studies) ? [] : $studies->toArray();
     }
 
-    public function addStudy(String $name, String $patientCodePreffix) : void {
+    public function addStudy(String $name, String $patientCodePrefix) : void {
         $data = [
             'name'=>$name,
-            'patient_code_prefix'=>$patientCodePreffix
+            'patient_code_prefix'=>$patientCodePrefix
         ];
 
         $this->create($data);
@@ -52,9 +53,18 @@ class StudyRepository implements PersistenceInterface {
 
     }
 
-    public function getStudies() : array {
-        $studies = $this->study->withTrashed()->get();
+    public function getStudies(bool $withTrashed = false) : array {
+        if($withTrashed){
+            $studies = $this->study->withTrashed()->get();
+        }else {
+            $studies = $this->study->get();
+        }
         return $studies->count() == 0 ? [] : $studies->toArray() ;
+    }
+
+    public function getStudiesDetails() : array {
+        $studiesDetails = $this->study->withTrashed()->with(['visitGroupDetails'])->get();
+        return $studiesDetails->toArray();
     }
 
 }

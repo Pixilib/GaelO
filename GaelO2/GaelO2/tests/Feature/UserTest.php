@@ -48,7 +48,7 @@ class UserTest extends TestCase
             ->assertStatus(200)
             ->assertJsonFragment(['administrator'=>true]);
         //Test get all users
-        $this->json('GET', '/api/users') -> assertJsonCount(6);
+        $this->json('GET', '/api/users')-> assertJsonCount(6);
         //Test get incorrect user
         $this->json('GET', '/api/users/-1') -> assertStatus(500);
     }

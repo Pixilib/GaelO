@@ -8,7 +8,7 @@ use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\UseCases\ResetPassword\ResetPasswordResponse;
 use App\GaelO\Interfaces\PersistenceInterface;
-use App\GaelO\Services\Mails\MailServices;
+use App\GaelO\Services\MailServices;
 use App\GaelO\Services\TrackerService;
 
 class ResetPassword {
@@ -23,9 +23,9 @@ class ResetPassword {
         $username = $resetPasswordRequest->username;
         $email = $resetPasswordRequest->email;
         try{
-            $this->isExistingUser($username);
 
-            $userEntity = $this->persistenceInterface->getUserByUsername($username);
+            $userEntity = $this->persistenceInterface->getUserByUsername($username, true);
+            $this->checkNotDeactivatedAccount($userEntity);
             $this->checkEmailMatching($email, $userEntity['email']);
             //update properties of user
             $userEntity['status'] = Constants::USER_STATUS_UNCONFIRMED;
@@ -57,12 +57,18 @@ class ResetPassword {
 
     }
 
-    private function isExistingUser($username){
-        $knownUsername = $this->persistenceInterface->isExistingUsername($username);
-        if( ! $knownUsername) throw new GaelOException("Username Unknown");
-    }
-
     private function checkEmailMatching($inputEmail, $databaseEmail){
         if($inputEmail !== $databaseEmail) throw new GaelOException('Incorrect Email');
+    }
+
+    private function checkNotDeactivatedAccount(array $user){
+        if($user['deleted_at'] !== null) {
+            //Get studies with role to prepare Email
+            $studies  = $this->persistenceInterface->getAllStudiesWithRoleForUser($user['username']);
+            //Send Email change password failure
+            $this->mailServices->sendForbiddenResetPasswordDueToDeactivatedAccount($user['email'],
+                    $user['username'], $studies);
+            throw new GaelOException('Deactivated Account');
+        }
     }
 }

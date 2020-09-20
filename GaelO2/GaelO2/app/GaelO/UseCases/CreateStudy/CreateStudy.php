@@ -28,7 +28,7 @@ class CreateStudy {
         $currentUserId=$createStudyRequest->currentUserId;
         $actionDetails = [
             'studyName'=>$studyName,
-            'patientCodePreffix'=> $patientCodePrefix
+            'patientCodePrefix'=> $patientCodePrefix
         ];
 
         $this->trackerService->writeAction($currentUserId, Constants::TRACKER_ROLE_ADMINISTRATOR, null, null, Constants::TRACKER_CREATE_STUDY, $actionDetails);

@@ -15,7 +15,7 @@ class RequestController extends Controller
         $requestData = $request->all();
         $requestRequest = Util::fillObject($requestData, $requestRequest);
         $sendRequest->execute($requestRequest, $requestResponse);
-        return response()->json($requestResponse->body)
+        return response()->noContent()
                 ->setStatusCode($requestResponse->status, $requestResponse->statusText);
     }
 }

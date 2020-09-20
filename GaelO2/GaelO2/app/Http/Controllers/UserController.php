@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\GaelO\UseCases\AddAffiliatedCenter\AddAffiliatedCenter;
+use App\GaelO\UseCases\AddAffiliatedCenter\AddAffiliatedCenterRequest;
+use App\GaelO\UseCases\AddAffiliatedCenter\AddAffiliatedCenterResponse;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
@@ -23,12 +26,18 @@ use App\GaelO\UseCases\ChangePassword\ChangePasswordResponse;
 use App\GaelO\UseCases\CreateUserRoles\CreateUserRoles;
 use App\GaelO\UseCases\CreateUserRoles\CreateUserRolesRequest;
 use App\GaelO\UseCases\CreateUserRoles\CreateUserRolesResponse;
+use App\GaelO\UseCases\DeleteAffiliatedCenter\DeleteAffiliatedCenter;
+use App\GaelO\UseCases\DeleteAffiliatedCenter\DeleteAffiliatedCenterRequest;
+use App\GaelO\UseCases\DeleteAffiliatedCenter\DeleteAffiliatedCenterResponse;
 use App\GaelO\UseCases\DeleteUser\DeleteUser;
 use App\GaelO\UseCases\DeleteUser\DeleteUserRequest;
 use App\GaelO\UseCases\DeleteUser\DeleteUserResponse;
 use App\GaelO\UseCases\DeleteUserRole\DeleteUserRole;
 use App\GaelO\UseCases\DeleteUserRole\DeleteUserRoleRequest;
 use App\GaelO\UseCases\DeleteUserRole\DeleteUserRoleResponse;
+use App\GaelO\UseCases\GetAffiliatedCenter\GetAffiliatedCenter;
+use App\GaelO\UseCases\GetAffiliatedCenter\GetAffiliatedCenterRequest;
+use App\GaelO\UseCases\GetAffiliatedCenter\GetAffiliatedCenterResponse;
 use App\GaelO\UseCases\GetUserRoles\GetUserRoles;
 use App\GaelO\UseCases\GetUserRoles\GetUserRolesRequest;
 use App\GaelO\UseCases\GetUserRoles\GetUserRolesResponse;
@@ -46,19 +55,28 @@ class UserController extends Controller
     }
 
     public function createUser(Request $request, CreateUserRequest $createUserRequest, CreateUserResponse $createUserResponse, CreateUser $createUser) {
+        //Get current user requesting the API
+        $curentUser = Auth::user();
+        //Add current user ID in Request DTO
+        $createUserRequest->currentUserId = $curentUser['id'];
         $requestData = $request->all();
+        //Fill DTO with all other request data
         $createUserRequest = Util::fillObject($requestData, $createUserRequest);
+        //Execute use case
         $createUser->execute($createUserRequest, $createUserResponse);
-        return response()->json($createUserResponse->body)
+        //Output result comming from usecase, here no content has to be shown (only http status code and text)
+        return response()->noContent()
                 ->setStatusCode($createUserResponse->status, $createUserResponse->statusText);
     }
 
     public function modifyUser(int $id, Request $request, ModifyUserRequest $modifyUserRequest, ModifyUserResponse $modifyUserResponse, ModifyUser $modifyUser) {
+        $curentUser = Auth::user();
+        $modifyUserRequest->currentUserId = $curentUser['id'];
         $requestData = $request->all();
         $requestData['id'] = $id;
         $modifyUserRequest = Util::fillObject($requestData, $modifyUserRequest);
         $modifyUser->execute($modifyUserRequest, $modifyUserResponse);
-        return response()->json($modifyUserResponse->body)
+        return response()->noContent()
                 ->setStatusCode($modifyUserResponse->status, $modifyUserResponse->statusText);
     }
 
@@ -114,6 +132,38 @@ class UserController extends Controller
 
         return response()->noContent()
         ->setStatusCode($deleteUserRoleResponse->status, $deleteUserRoleResponse->statusText);
+    }
+
+    public function addAffiliatedCenter(int $userId, Request $request, AddAffiliatedCenter $addAffiliatedCenter, AddAffiliatedCenterRequest $addAffiliatedCenterRequest, AddAffiliatedCenterResponse $addAffiliatedCenterResponse){
+        $requestData = $request->all();
+        $addAffiliatedCenterRequest = Util::fillObject($requestData, $addAffiliatedCenterRequest);
+        $curentUser = Auth::user();
+        $addAffiliatedCenterRequest->currentUserId = $curentUser['id'];
+        $addAffiliatedCenterRequest->userId = $userId;
+
+        $addAffiliatedCenter->execute($addAffiliatedCenterRequest, $addAffiliatedCenterResponse);
+
+        return response()->noContent()
+        ->setStatusCode($addAffiliatedCenterResponse->status, $addAffiliatedCenterResponse->statusText);
+    }
+
+    public function getAffiliatedCenter(int $userId, GetAffiliatedCenter $getAffiliatedCenter, GetAffiliatedCenterRequest $getAffiliatedCenterRequest, GetAffiliatedCenterResponse $getAffiliatedCenterResponse){
+        $getAffiliatedCenterRequest->userId = $userId;
+        $getAffiliatedCenter->execute($getAffiliatedCenterRequest, $getAffiliatedCenterResponse);
+
+        return response()->json($getAffiliatedCenterResponse->body)
+        ->setStatusCode($getAffiliatedCenterResponse->status, $getAffiliatedCenterResponse->statusText);
+
+    }
+
+    public function deleteAffiliatedCenter(int $userId, int $centerCode, DeleteAffiliatedCenter $deleteAffiliatedCenter, DeleteAffiliatedCenterRequest $deleteAffiliatedCenterRequest, DeleteAffiliatedCenterResponse $deleteAffiliatedCenterResponse){
+        $deleteAffiliatedCenterRequest->userId = $userId;
+        $deleteAffiliatedCenterRequest->centerCode = $centerCode;
+        $deleteAffiliatedCenter->execute($deleteAffiliatedCenterRequest, $deleteAffiliatedCenterResponse);
+
+        return response()->noContent()
+        ->setStatusCode($deleteAffiliatedCenterResponse->status, $deleteAffiliatedCenterResponse->statusText);
+
     }
 
 }

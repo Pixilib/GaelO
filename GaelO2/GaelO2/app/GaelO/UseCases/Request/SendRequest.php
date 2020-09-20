@@ -3,7 +3,7 @@
 namespace App\GaelO\UseCases\Request;
 
 use App\GaelO\Exceptions\GaelOException;
-use App\GaelO\Services\Mails\MailServices;
+use App\GaelO\Services\MailServices;
 
 class SendRequest {
 

@@ -7,7 +7,7 @@
     @foreach ($studies as $study)
         <li>{{$study}}</li>
     @endforeach
-    Please contact the {{$this->corporation}} to activate your account:<br>
-    {{$this->adminEmail}}<br>
+    Please contact the {{$corporation}} to activate your account:<br>
+    {{$adminEmail}}<br>
 @endsection
 

@@ -21,14 +21,34 @@ Route::middleware(['auth:api', 'admin'])->delete('users/{id}', 'UserController@d
 Route::middleware(['auth:api', 'admin'])->get('users/{id}/roles/{study?}', 'UserController@getRoles');
 Route::middleware(['auth:api', 'admin'])->post('users/{id}/roles/{study}', 'UserController@createRole');
 Route::middleware(['auth:api', 'admin'])->delete('users/{id}/roles/{study}/{roleName}', 'UserController@deleteRole');
+Route::middleware(['auth:api', 'admin'])->post('users/{id}/affiliated-centers', 'UserController@addAffiliatedCenter');
+Route::middleware(['auth:api', 'admin'])->get('users/{id}/affiliated-centers', 'UserController@getAffiliatedCenter');
+Route::middleware(['auth:api', 'admin'])->delete('users/{id}/affiliated-centers/{centerCode}', 'UserController@deleteAffiliatedCenter');
 
 //Study Routes
 Route::middleware(['auth:api', 'admin'])->post('studies', 'StudyController@createStudy');
 Route::middleware(['auth:api', 'admin'])->get('studies', 'StudyController@getStudy');
+Route::middleware(['auth:api', 'admin'])->delete('studies/{studyName}', 'StudyController@deleteStudy');
+
+//Preferences Routes
+Route::middleware(['auth:api', 'admin'])->get('preferences', 'PreferenceController@getPreference');
+Route::middleware(['auth:api', 'admin'])->put('preferences', 'PreferenceController@modifyPreference');
 
 //Centers Routes
 Route::middleware(['auth:api', 'admin'])->get('centers/{code?}', 'CenterController@getCenter');
 Route::middleware(['auth:api', 'admin'])->post('centers', 'CenterController@createCenter');
+Route::middleware(['auth:api', 'admin'])->put('centers/{code}', 'CenterController@modifyCenter');
+
+//VisitGroup Routes
+Route::middleware(['auth:api', 'admin'])->post('studies/{studyName}/visit-groups', 'VisitGroupController@createVisitGroup');
+Route::middleware(['auth:api', 'admin'])->get('visit-groups/{visitGroupId}', 'VisitGroupController@getVisitGroup');
+Route::middleware(['auth:api', 'admin'])->delete('visit-groups/{visitGroupId}', 'VisitGroupController@deleteVisitGroup');
+
+//VisitType Routes
+Route::middleware(['auth:api', 'admin'])->post('visit-groups/{visitGroupId}/visit-types', 'VisitTypeController@createVisitType');
+Route::middleware(['auth:api', 'admin'])->get('visit-types/{visitTypeId}', 'VisitTypeController@getVisitType');
+Route::middleware(['auth:api', 'admin'])->delete('visit-types/{visitTypeId}', 'VisitTypeController@deleteVisitType');
+
 
 //Mail Route
 Route::post('request', 'RequestController@sendRequest');

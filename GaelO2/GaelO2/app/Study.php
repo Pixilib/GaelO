@@ -14,6 +14,15 @@ class Study extends Model
     public $incrementing = false;
 
     public function patients(){
-        $this->hasMany('App\Patient', 'study_name');
+        return $this->hasMany('App\Patient', 'study_name');
     }
+
+    public function visitGroups(){
+        return $this->hasMany('App\VisitGroup', 'study_name');
+    }
+
+    public function visitGroupDetails(){
+    return $this->hasMany('App\VisitGroup')->with('visitTypes');
+    }
+
 }
