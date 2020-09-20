@@ -13,14 +13,18 @@ Affiliated Center  : (GET), (POST), (DELETE)
 A faire
 Affiliated Center POST => manque check existing et Changer le payload en array
 Creer des entity perso pour l'input / output en camelCase :
-    -Preferences
     -Role
+
 Reactivation faire PATCH sur la ressource suprimée (A faire pour study, user)
 Tracker GET=> utiliser les query string
 ExportDatabase : POST (creation d'une sauvegarde)
 
 ChangePassword => Necessite middelware qui check que l'user Courant == ID de la requete
 Query Param dans Study pour avoir la liste avec les deletion ? idem user ? et couvrir en test
+
+Preparation Investigateur / Monitor / Controller / Reviewer :
+- Api creation Patient (GET, POST, PUT)
+- Api creation Visit (GET, POST, DELETE)
 
 Service :
 Orthanc (ajout des env a faire)
