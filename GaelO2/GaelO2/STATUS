@@ -10,19 +10,17 @@ Visit Group : (GET), (POST), (DELETE) => OK
 Visit Type : (GET), (POST), (DELETE) => OK
 Affiliated Center  : (GET), (POST), (DELETE)
 
-ChangePassword => Necessite middelware qui check que l'user Courant == ID de la requete
-Reactivation faire PATCH sur la ressource suprimée (A faire pour study, user)
-Query Param dans Study pour avoir la liste avec les deletion ? idem user ? et couvrir en test
-
 A faire
 Affiliated Center POST => manque check existing et Changer le payload en array
 Creer des entity perso pour l'input / output en camelCase :
     -Preferences
     -Role
-
-
+Reactivation faire PATCH sur la ressource suprimée (A faire pour study, user)
 Tracker GET=> utiliser les query string
 ExportDatabase : POST (creation d'une sauvegarde)
+
+ChangePassword => Necessite middelware qui check que l'user Courant == ID de la requete
+Query Param dans Study pour avoir la liste avec les deletion ? idem user ? et couvrir en test
 
 Service :
 Orthanc (ajout des env a faire)
@@ -31,6 +29,7 @@ ReverseProxy
 Reflechir Etude Ancillaire :
 Probablement decoupler les review, une review reference une visite et une study
 Decoupler le status visit review egalement ?
+Decoupler controle qualité ?
 
 //Les tests ne font pas d'assertion sur le tracker et l'envoi de mails (mais exception si erreur en theorie)
 
