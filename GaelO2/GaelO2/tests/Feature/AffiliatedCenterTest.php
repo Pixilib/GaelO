@@ -27,6 +27,7 @@ class AffiliatedCenterTest extends TestCase
     protected function setUp() : void{
         parent::setUp();
         factory(Center::class)->create(['code'=>3]);
+        factory(Center::class)->create(['code'=>4]);
 
         Artisan::call('passport:install');
         Passport::actingAs(
@@ -45,6 +46,18 @@ class AffiliatedCenterTest extends TestCase
         $affiliatedCenter =User::where('id',1)->first()->affiliatedCenters()->get()->toArray();
         $this->assertEquals(sizeof($affiliatedCenter), 1);
         $this->assertEquals($affiliatedCenter[0]['code'], 3);
+    }
+
+    public function testCreateMultipleAffiliatedCenterToUser(){
+
+        $payload = [
+            'centerCode' => [3,4]
+        ];
+        $this->json('POST', 'api/users/1/affiliated-centers', $payload)->assertNoContent(201);
+
+        $affiliatedCenter =User::where('id',1)->first()->affiliatedCenters()->get()->toArray();
+        $this->assertEquals(sizeof($affiliatedCenter), 2);
+
     }
 
     public function testGetAffiliatedCenterOfUser(){
