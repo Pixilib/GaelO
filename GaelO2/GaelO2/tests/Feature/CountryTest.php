@@ -40,9 +40,9 @@ class CountryTest extends TestCase
 
     public function testGetCountry()
     {
-        $response = $this->json('GET', '/api/countries/FR')->assertJson(['code'=>'FR']);
+        $this->json('GET', '/api/countries/FR')->assertJson(['code'=>'FR']);
         $response = $this->json('GET', '/api/countries') -> decodeResponseJson();
         $this->assertEquals( 255,  sizeof($response) );
-        $response = $this->json('GET', '/api/countries/WrongCountry') -> assertStatus(404);
+        $this->json('GET', '/api/countries/WrongCountry') -> assertStatus(404);
     }
 }

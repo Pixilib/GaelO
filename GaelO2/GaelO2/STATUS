@@ -15,11 +15,8 @@ Reactivation faire PATCH sur la ressource suprimée (A faire pour study, user)
 Query Param dans Study pour avoir la liste avec les deletion ? idem user ? et couvrir en test
 
 A faire
-Affiliated Center POST => Manque Tracker, manque check existing et Changer le payload en array
-Affiliated Center DELETE => Manque Tracker
+Affiliated Center POST => manque check existing et Changer le payload en array
 Creer des entity perso pour l'input / output en camelCase :
-    -Center
-    -Country
     -Preferences
     -Role
 

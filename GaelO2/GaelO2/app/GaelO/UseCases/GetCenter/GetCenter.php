@@ -14,8 +14,20 @@ class GetCenter {
     public function execute(GetCenterRequest $centerRequest, GetCenterResponse $centerResponse) : void
     {
         $code = $centerRequest->code;
-        if ($code == 0) $centerResponse->body = $this->persistenceInterface->getAll();
-        else $centerResponse->body = $this->persistenceInterface->find($code);
+
+        if ($code == -1) {
+            $centers = $this->persistenceInterface->getAll();
+            $response = [];
+            foreach($centers as $center){
+                $response[] = CenterEntity::fillFromDBReponseArray($center);
+            }
+            $centerResponse->body = $response;
+
+        } else {
+            $center  = $this->persistenceInterface->getCenterByCode($code);
+            $centerResponse->body = CenterEntity::fillFromDBReponseArray($center);
+        }
+
         $centerResponse->status = 200;
         $centerResponse->statusText = 'OK';
     }

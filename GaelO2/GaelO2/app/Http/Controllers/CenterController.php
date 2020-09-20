@@ -18,7 +18,7 @@ use Illuminate\Support\Facades\Auth;
 
 class CenterController extends Controller
 {
-    public function getCenter(int $code=0, GetCenterRequest $getCenterRequest, GetCenterResponse $getCenterResponse, GetCenter $getCenter) {
+    public function getCenter(int $code=-1, GetCenterRequest $getCenterRequest, GetCenterResponse $getCenterResponse, GetCenter $getCenter) {
         $getCenterRequest->code = $code;
         $getCenter->execute($getCenterRequest, $getCenterResponse);
         return response()->json($getCenterResponse->body)

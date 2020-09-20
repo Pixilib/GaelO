@@ -46,9 +46,15 @@ class CenterRepository implements PersistenceInterface {
         return empty($centers) ? [] : $centers->toArray();
     }
 
-    public function getCenterByName($name) : array {
+    public function getCenterByName(string $name) : array {
         $center = $this->center->where('name', $name)->get()->first();
-        return sizeof($center) > 0  ? $center->toArray() : [];
+        return $center !== null  ? $center->toArray() : [];
+
+    }
+
+    public function getCenterByCode(int $code) : array {
+        $center = $this->center->find($code)->get()->first();
+        return $center !== null  ? $center->toArray() : [];
 
     }
 

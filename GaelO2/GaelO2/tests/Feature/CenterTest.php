@@ -39,9 +39,18 @@ class CenterTest extends TestCase
 
     public function testGetCenter()
     {
-        $response = $this->get('/api/centers')->content();
+        $response = $this->json('GET', '/api/centers')->content();
         $answer = json_decode($response, true);
         $this->assertEquals(1,sizeof($answer));
+    }
+
+    public function testGetCenterDefault()
+    {
+        $response = $this->json('GET', '/api/centers/0')->content();
+        $answer = json_decode($response, true);
+        $this->assertArrayHasKey('code', $answer);
+        $this->assertArrayHasKey('name', $answer);
+        $this->assertArrayHasKey('countryCode', $answer);
     }
 
 
