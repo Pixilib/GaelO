@@ -14,8 +14,8 @@ A faire
 Affiliated Center POST => manque check existing et Changer le payload en array
 Creer des entity perso pour l'input / output en camelCase :
     -Role
-
 Reactivation faire PATCH sur la ressource suprimée (A faire pour study, user)
+CI/CD (https://medium.com/@tobiashn/putting-a-laravel-app-into-production-d847ac2a04ed?source=email-e7f4cb02701-1600390333596-digest.reader------0-59------------------04e5dd75_dc46_4393_805e_4aee0fee36a6-1-29facf24_1541_4eb6_bffc_1a4ba0ca2cb4----&sectionName=top)
 Tracker GET=> utiliser les query string
 ExportDatabase : POST (creation d'une sauvegarde)
 
@@ -25,6 +25,8 @@ Query Param dans Study pour avoir la liste avec les deletion ? idem user ? et co
 Preparation Investigateur / Monitor / Controller / Reviewer :
 - Api creation Patient (GET, POST, PUT)
 - Api creation Visit (GET, POST, DELETE)
+- Api QC (GET, PUT + API /reset)
+- Api Corrective Action (GET, PUT)
 
 Service :
 Orthanc (ajout des env a faire)
