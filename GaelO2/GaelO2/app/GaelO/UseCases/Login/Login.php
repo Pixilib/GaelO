@@ -42,7 +42,7 @@ class Login{
 
         if( !$passwordCheck ){
             $loginResponse->status = 401;
-            $loginResponse->statusText = "Unauthorized";
+            $loginResponse->statusText = "Wrong Password";
             $this->increaseAttemptCount($user);
 
         } else {
