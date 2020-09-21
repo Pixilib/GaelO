@@ -11,7 +11,7 @@ use App\User;
 use App\GaelO\Constants\Constants;
 use Illuminate\Support\Facades\Artisan;
 
-class Login extends TestCase
+class LoginTest extends TestCase
 {
     use DatabaseMigrations {
         runDatabaseMigrations as baseRunDatabaseMigrations;
