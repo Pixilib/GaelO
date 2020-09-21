@@ -25,6 +25,7 @@ Preparation Investigateur / Monitor / Controller / Reviewer :
 - Api creation Visit (GET, POST, DELETE)
 - Api QC (GET, PUT + API /reset)
 - Api Corrective Action (GET, PUT)
+- Api Documentation (GET, POST, DELETE, PUT?)
 
 Service :
 Orthanc (ajout des env a faire)
