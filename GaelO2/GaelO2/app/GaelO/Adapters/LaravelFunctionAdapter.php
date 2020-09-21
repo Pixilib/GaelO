@@ -3,6 +3,7 @@
 namespace App\GaelO\Adapters;
 
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Hash;
 
 class LaravelFunctionAdapter {
@@ -20,8 +21,8 @@ class LaravelFunctionAdapter {
 
     }
 
-    public static function getEnv($key){
-        return (env($key));
+    public static function getConfig($key){
+        return Config::get('app.'.$key);
     }
 }
 

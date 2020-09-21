@@ -12,9 +12,9 @@ Affiliated Center  : (GET), (POST), (DELETE) =>OK
 
 A faire
 Emilie => Pourquoi change dans get user par username ?
-passer les env en accesseur via config
-ChangePassword => Necessite middelware qui check que l'user Courant == ID de la requete
 
+Config => Remerge les mail avec mail et creer une config laravel a part pour Orthanc ?
+ChangePassword => Necessite middelware qui check que l'user Courant == ID de la requete
 Tracker GET=> utiliser les query string
 ExportDatabase : POST (creation d'une sauvegarde)
 Query Param dans Study pour avoir la liste avec les deletion ? idem user ? et couvrir en test

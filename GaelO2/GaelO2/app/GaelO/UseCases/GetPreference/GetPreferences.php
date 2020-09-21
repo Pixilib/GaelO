@@ -16,11 +16,11 @@ class GetPreferences {
 
         $preferencesDb = $this->persistenceInterface->getAll();
         //Add preference defined in env file (read only)
-        $preferences['plateformName'] =LaravelFunctionAdapter::getEnv('APP_NAME');
-        $preferences['adminEmail'] = LaravelFunctionAdapter::getEnv('MAIL_FROM_ADDRESS');
-        $preferences['emailReplyTo'] = LaravelFunctionAdapter::getEnv('MAIL_REPLY_TO_DEFAULT');
-        $preferences['corporation'] = LaravelFunctionAdapter::getEnv('APP_CORPORATION');
-        $preferences['url'] = LaravelFunctionAdapter::getEnv('APP_URL');
+        $preferences['plateformName'] =LaravelFunctionAdapter::getConfig('name');
+        $preferences['adminEmail'] = LaravelFunctionAdapter::getConfig('mailFromAddress');
+        $preferences['emailReplyTo'] = LaravelFunctionAdapter::getConfig('mailReplyToDefault');
+        $preferences['corporation'] = LaravelFunctionAdapter::getConfig('corporation');
+        $preferences['url'] = LaravelFunctionAdapter::getConfig('url');
 
         $preferences['patientCodeLength'] = $preferencesDb['patient_code_length'];
         $preferences['parseDateImport'] = $preferencesDb['parse_date_import'];

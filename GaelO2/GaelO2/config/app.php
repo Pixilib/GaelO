@@ -134,9 +134,9 @@ return [
     |
     */
     'url'=>env('APP_URL'),
-    'app_corporation' => env('APP_CORPORATION'),
-    'mail_from_address'=>env('MAIL_FROM_ADDRESS'),
-    'mai_reply_to_default'=>env('MAIL_REPLY_TO_DEFAULT'),
+    'corporation' => env('APP_CORPORATION'),
+    'mailFromAddress'=>env('MAIL_FROM_ADDRESS'),
+    'mailReplyToDefault'=>env('MAIL_REPLY_TO_DEFAULT'),
 
     'providers' => [
 
