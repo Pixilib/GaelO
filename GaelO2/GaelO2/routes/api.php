@@ -32,6 +32,7 @@ Route::middleware(['auth:api', 'admin'])->group(function () {
     Route::post('studies', 'StudyController@createStudy');
     Route::get('studies', 'StudyController@getStudy');
     Route::delete('studies/{studyName}', 'StudyController@deleteStudy');
+    Route::patch('studies/{studyName}/reactivate', 'StudyController@reactivateStudy');
 
     //Preferences Routes
     Route::get('preferences', 'PreferenceController@getPreference');

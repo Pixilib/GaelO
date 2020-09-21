@@ -3,7 +3,7 @@ Request (POST) => OK
 Login / Logout (POST) (DELETE) => OK
 ChangePassword (POST) => OK
 User's Roles : (GET), (POST), (DELETE)=>OK
-Study : (GET), (GET Expand), (POST), (DELETE) => OK
+Study : (GET), (GET Expand), (POST), (DELETE), (PATCH) => OK
 Preference : (GET), (PUT) =>OK
 Center : (GET), (POST), (PUT) => OK
 Visit Group : (GET), (POST), (DELETE) => OK
@@ -13,12 +13,13 @@ Affiliated Center  : (GET), (POST), (DELETE) =>OK
 A faire
 Emilie => Pourquoi change dans get user par username ?
 Reactivation faire PATCH sur la ressource suprimée (A faire pour study, user)
+passer les env en accesseur via config
+ChangePassword => Necessite middelware qui check que l'user Courant == ID de la requete
+
 Tracker GET=> utiliser les query string
 ExportDatabase : POST (creation d'une sauvegarde)
-
-ChangePassword => Necessite middelware qui check que l'user Courant == ID de la requete
 Query Param dans Study pour avoir la liste avec les deletion ? idem user ? et couvrir en test
-passer les env en accesseur via config
+
 
 Preparation Investigateur / Monitor / Controller / Reviewer :
 - Api creation Patient (GET, POST, PUT)

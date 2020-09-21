@@ -15,6 +15,9 @@ use App\GaelO\UseCases\GetStudy\GetStudyResponse;
 use App\GaelO\UseCases\GetStudyDetails\GetStudyDetails;
 use App\GaelO\UseCases\GetStudyDetails\GetStudyDetailsRequest;
 use App\GaelO\UseCases\GetStudyDetails\GetStudyDetailsResponse;
+use App\GaelO\UseCases\ReactivateStudy\ReactivateStudy;
+use App\GaelO\UseCases\ReactivateStudy\ReactivateStudyRequest;
+use App\GaelO\UseCases\ReactivateStudy\ReactivateStudyResponse;
 use App\GaelO\Util;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -58,6 +61,15 @@ class StudyController extends Controller
         return response()->noContent()
                 ->setStatusCode($deleteStudyResponse->status, $deleteStudyResponse->statusText);
 
+    }
+
+    public function reactivateStudy(string $studyName, ReactivateStudy $reactivateStudy, ReactivateStudyRequest $reactivateStudyRequest, ReactivateStudyResponse $reactivateStudyResponse){
+        $currentUser = Auth::user();
+        $reactivateStudyRequest->currentUserId = $currentUser['id'];
+        $reactivateStudyRequest->studyName = $studyName;
+        $reactivateStudy->execute($reactivateStudyRequest, $reactivateStudyResponse);
+        return response()->noContent()
+                ->setStatusCode($reactivateStudyResponse->status, $reactivateStudyResponse->statusText);
     }
 
 }
