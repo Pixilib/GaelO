@@ -1,4 +1,4 @@
-User (GET), (POST), (PUT), (DELETE) => OK
+User (GET), (POST), (PUT), (DELETE), (PATCH) => OK
 Request (POST) => OK
 Login / Logout (POST) (DELETE) => OK
 ChangePassword (POST) => OK
@@ -12,7 +12,6 @@ Affiliated Center  : (GET), (POST), (DELETE) =>OK
 
 A faire
 Emilie => Pourquoi change dans get user par username ?
-Reactivation faire PATCH sur la ressource suprimée (A faire pour study, user)
 passer les env en accesseur via config
 ChangePassword => Necessite middelware qui check que l'user Courant == ID de la requete
 

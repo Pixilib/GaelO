@@ -41,6 +41,9 @@ use App\GaelO\UseCases\GetAffiliatedCenter\GetAffiliatedCenterResponse;
 use App\GaelO\UseCases\GetUserRoles\GetUserRoles;
 use App\GaelO\UseCases\GetUserRoles\GetUserRolesRequest;
 use App\GaelO\UseCases\GetUserRoles\GetUserRolesResponse;
+use App\GaelO\UseCases\ReactivateUser\ReactivateUser;
+use App\GaelO\UseCases\ReactivateUser\ReactivateUserRequest;
+use App\GaelO\UseCases\ReactivateUser\ReactivateUserResponse;
 use App\GaelO\Util;
 use Illuminate\Support\Facades\Auth;
 
@@ -163,6 +166,18 @@ class UserController extends Controller
 
         return response()->noContent()
         ->setStatusCode($deleteAffiliatedCenterResponse->status, $deleteAffiliatedCenterResponse->statusText);
+
+    }
+
+    public function reactivateUser(int $userId, ReactivateUser $reactivateUser, ReactivateUserRequest $reactivateUserRequest, ReactivateUserResponse $reactivateUserResponse){
+        $curentUser = Auth::user();
+        $reactivateUserRequest->currentUserId = $curentUser['id'];
+        $reactivateUserRequest->userId = $userId;
+        $reactivateUser->execute($reactivateUserRequest, $reactivateUserResponse);
+
+        return response()->noContent()
+        ->setStatusCode($reactivateUserResponse->status, $reactivateUserResponse->statusText);
+
 
     }
 

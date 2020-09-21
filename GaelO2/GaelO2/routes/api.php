@@ -21,6 +21,7 @@ Route::middleware(['auth:api', 'admin'])->group(function () {
     Route::put('users/{id}/password', 'UserController@changeUserPassword');
     Route::put('users/{id}', 'UserController@modifyUser');
     Route::delete('users/{id}', 'UserController@deleteUser');
+    Route::patch('users/{id}/reactivate', 'UserController@reactivateUser');
     Route::get('users/{id}/roles/{study?}', 'UserController@getRoles');
     Route::post('users/{id}/roles/{study}', 'UserController@createRole');
     Route::delete('users/{id}/roles/{study}/{roleName}', 'UserController@deleteRole');

@@ -126,6 +126,10 @@ class UserRepository implements PersistenceInterface {
         return empty($user) ? [] : $user->toArray();
     }
 
+    public function reactivateUser(int $id) : void {
+        $this->user->withTrashed()->find($id)->restore();
+    }
+
     public function getAdministratorsEmails() : array {
         $emails = $this->user->where('administrator', true)->get();
         return empty($emails) ? [] : $emails->pluck('email')->toArray();
