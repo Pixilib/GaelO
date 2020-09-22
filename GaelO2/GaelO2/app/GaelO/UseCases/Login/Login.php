@@ -21,7 +21,7 @@ class Login{
 
         $user = $this->userRepository->getUserByUsername($loginRequest->username);
 
-        $passwordCheck = LaravelFunctionAdapter::checkHash($loginRequest->password, $user['password']);
+        if($user['status'] !== Constants::USER_STATUS_UNCONFIRMED) $passwordCheck = LaravelFunctionAdapter::checkHash($loginRequest->password, $user['password']);
         $dateNow = new \DateTime();
         $dateUpdatePassword= new \DateTime($user['last_password_update']);
         $attempts = $user['attempts'];
