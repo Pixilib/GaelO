@@ -25,10 +25,6 @@ class GetUser {
                 $responseArray[] = UserEntity::fillFromDBReponseArray($data);
             }
             $userResponse->body = $responseArray;
-        } else if ($id == -1) {
-            $dbData = $this->persistenceInterface->getUserByUsername($userRequest->username, false);
-            $responseEntity = UserEntity::fillFromDBReponseArray($dbData);
-            $userResponse->body = $responseEntity;
         } else {
             $dbData = $this->persistenceInterface->find($id);
             $responseEntity = UserEntity::fillFromDBReponseArray($dbData);
