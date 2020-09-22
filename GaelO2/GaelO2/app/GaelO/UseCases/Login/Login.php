@@ -30,6 +30,7 @@ class Login{
         if($user['status'] === Constants::USER_STATUS_UNCONFIRMED){
             $tempPasswordCheck = LaravelFunctionAdapter::checkHash($loginRequest->password, $user['password_temporary']);
             if($tempPasswordCheck){
+                $loginResponse->body = ['id' => $user['id']];
                 $loginResponse->status = 432;
                 $loginResponse->statusText = "Unconfirmed";
             }else{
@@ -52,6 +53,7 @@ class Login{
                 $loginResponse->status = 434;
                 $loginResponse->statusText = "Blocked";
             }else if ($user['status'] === Constants::USER_STATUS_ACTIVATED && $delayDay>90){
+                $loginResponse->body = ['id' => $user['id']];
                 $loginResponse->status = 435;
                 $loginResponse->statusText = "Password Expired";
             }else if($user['status'] === Constants::USER_STATUS_ACTIVATED && $delayDay<90 && $attempts<3){

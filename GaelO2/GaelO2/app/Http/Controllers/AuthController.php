@@ -39,7 +39,8 @@ class AuthController extends Controller
             ], 200);
 
         }else{
-            return response()->noContent()->setStatusCode($loginResponse->status, $loginResponse->statusText);
+            if ($loginResponse->body === null) return response()->noContent()->setStatusCode($loginResponse->status, $loginResponse->statusText);
+            else return response()->json($loginResponse->body)->setStatusCode($loginResponse->status, $loginResponse->statusText);
         }
 
 

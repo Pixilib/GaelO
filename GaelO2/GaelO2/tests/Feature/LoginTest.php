@@ -67,14 +67,20 @@ class LoginTest extends TestCase
         //Try with correct temporary password, should grant access of unconfirmed status
         $data = ['username'=> 'administrator',
         'password'=> 'tempPassword'];
-        $this->json('POST', '/api/login', $data)->assertNoContent(432);
+        $response = $this->json('POST', '/api/login', $data)->assertStatus(432);
+        $content = $response->content();
+        $responseArray = json_decode($content, true);
+        $this->assertEquals(1, $responseArray['id']);
     }
 
     public function testLoginPasswordPerished()
     {
         $data = ['username'=> 'administrator',
         'password'=> 'administrator'];
-        $this->json('POST', '/api/login', $data)->assertNoContent(435);
+        $response = $this->json('POST', '/api/login', $data)->assertStatus(435);
+        $content = $response->content();
+        $responseArray = json_decode($content, true);
+        $this->assertEquals(1, $responseArray['id']);
     }
 
     public function testAccountBlocked(){
