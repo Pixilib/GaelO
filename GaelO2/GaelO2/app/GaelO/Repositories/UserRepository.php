@@ -39,7 +39,7 @@ class UserRepository implements PersistenceInterface {
     }
 
     public function getAll() : array {
-        $users = $this->user->get();
+        $users = $this->user->withTrashed()->get();
         return empty($users) ? [] : $users->toArray();
     }
 

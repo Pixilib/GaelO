@@ -8,11 +8,11 @@ class CreateUserRequest {
     public string $firstname;
     public string $username;
     public string $email;
-    public string $phone;
+    public ?string $phone = null;
     public bool $administrator;
     public int $centerCode;
     public string $job;
-    public string $orthancAddress;
-    public string $orthancLogin;
-    public string $orthancLPassword;
+    public ?string $orthancAddress = null;
+    public ?string $orthancLogin = null;
+    public ?string $orthancPassword = null;
 }

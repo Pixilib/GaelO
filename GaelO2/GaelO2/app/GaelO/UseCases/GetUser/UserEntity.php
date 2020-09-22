@@ -3,7 +3,7 @@
 namespace App\GaelO\UseCases\GetUser;
 
 class UserEntity {
-
+    public int $id;
     public String $lastname;
     public String $firstName;
     public String $username;
@@ -22,6 +22,7 @@ class UserEntity {
 
     public static function fillFromDBReponseArray(array $array){
         $userEntity  = new UserEntity();
+        $userEntity->id = $array['id'];
         $userEntity->lastname = $array['lastname'];
         $userEntity->firstname = $array['firstname'];
         $userEntity->username = $array['username'];

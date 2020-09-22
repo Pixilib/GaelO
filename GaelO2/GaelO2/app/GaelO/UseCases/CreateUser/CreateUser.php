@@ -106,9 +106,9 @@ class CreateUser {
 
     }
 
-    private function checkPhoneCorrect(string $phone) : void {
+    private function checkPhoneCorrect(?string $phone) : void {
         //If contains non number caracters throw error
-        if (preg_match('/[^0-9]/', $phone)) {
+        if ($phone != null && preg_match('/[^0-9]/', $phone)) {
             throw new GaelOException('Not a valid email phone number');
         }
     }
