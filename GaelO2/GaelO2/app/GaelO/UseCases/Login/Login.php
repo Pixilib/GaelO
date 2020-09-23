@@ -21,7 +21,9 @@ class Login{
 
         $user = $this->userRepository->getUserByUsername($loginRequest->username);
 
-        if($user['status'] !== Constants::USER_STATUS_UNCONFIRMED) $passwordCheck = LaravelFunctionAdapter::checkHash($loginRequest->password, $user['password']);
+        $passwordCheck = null;
+
+        if($user['status'] !== Constants::USER_STATUS_UNCONFIRMED && $user['password'] !== null) $passwordCheck = LaravelFunctionAdapter::checkHash($loginRequest->password, $user['password']);
         $dateNow = new \DateTime();
         $dateUpdatePassword= new \DateTime($user['last_password_update']);
         $attempts = $user['attempts'];
@@ -33,7 +35,7 @@ class Login{
                 $loginResponse->body = ['id' => $user['id']];
                 $loginResponse->status = 432;
                 $loginResponse->statusText = "Unconfirmed";
-            }else{
+            } else {
                 $loginResponse->status = 433;
                 $loginResponse->statusText = "Wrong Temporary Password";
                 $this->increaseAttemptCount($user);
@@ -41,7 +43,7 @@ class Login{
             return;
         }
 
-        if( !$passwordCheck ){
+        if( $passwordCheck !== null && !$passwordCheck ){
             $loginResponse->status = 401;
             $loginResponse->statusText = "Wrong Password";
             $this->increaseAttemptCount($user);

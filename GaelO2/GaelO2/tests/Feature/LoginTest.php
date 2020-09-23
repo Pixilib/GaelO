@@ -112,4 +112,28 @@ class LoginTest extends TestCase
         $this->assertEquals($adminDefaultUser['attempts'], 3);
 
     }
+
+    public function testBlockingUnconfirmedAccount(){
+        // Three wrong attempts to login should block unconfirmed account
+        $adminDefaultUser = User::where('id', 1)->first();
+        $adminDefaultUser['status'] = Constants::USER_STATUS_UNCONFIRMED;
+        $adminDefaultUser['password'] = null;
+        $adminDefaultUser['password_temporary'] = 'password';
+        $adminDefaultUser->save();
+
+        $data = ['username'=> 'administrator',
+        'password'=> 'wrongPassword'];
+
+        $this->json('POST', '/api/login', $data)->assertNoContent(433);
+        $this->json('POST', '/api/login', $data)->assertNoContent(433);
+        $this->json('POST', '/api/login', $data)->assertNoContent(433);
+        $adminDefaultUser = User::where('id', 1)->first();
+
+        $data = ['username'=> 'administrator',
+        'password'=> 'password'];
+        $this->json('POST', '/api/login', $data)->assertNoContent(434);
+
+        $this->assertEquals($adminDefaultUser['status'], Constants::USER_STATUS_BLOCKED);
+        $this->assertEquals($adminDefaultUser['attempts'], 3);
+    }
 }
