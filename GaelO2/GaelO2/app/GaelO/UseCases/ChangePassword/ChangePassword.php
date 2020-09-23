@@ -74,9 +74,12 @@ class ChangePassword {
       */
     private function checkNewPassword($passwordCandidate, $temporaryPassword, $currentPassword, $previousPassword1, $previousPassword2) : void {
         $checkTemporary = LaravelFunctionAdapter::checkHash($passwordCandidate, $temporaryPassword);
-        $checkCurrent = LaravelFunctionAdapter::checkHash($passwordCandidate, $currentPassword);
-        $checkPrevious1 = LaravelFunctionAdapter::checkHash($passwordCandidate, $previousPassword1);
-        $checkPrevious2 = LaravelFunctionAdapter::checkHash($passwordCandidate, $previousPassword2);
+        if ($currentPassword !== null) $checkCurrent = LaravelFunctionAdapter::checkHash($passwordCandidate, $currentPassword);
+        else $checkCurrent = false;
+        if ($previousPassword1 !== null) $checkPrevious1 = LaravelFunctionAdapter::checkHash($passwordCandidate, $previousPassword1);
+        else $checkPrevious1 = false;
+        if ($previousPassword2) $checkPrevious2 = LaravelFunctionAdapter::checkHash($passwordCandidate, $previousPassword2);
+        else $checkPrevious2 = false;
 
         if( $checkTemporary ||
             $checkCurrent ||
@@ -112,7 +115,7 @@ class ChangePassword {
      */
     private function checkMatchPasswords(string $pass1, string $pass2) : void {
         if( $pass1 != $pass2 ) {
-            throw new GaelOException('Not Matching New Passwords');
+            throw new GaelOException('New Passwords Do Not Match');
         }
     }
 

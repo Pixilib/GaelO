@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\GaelO\Constants\Constants;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Hash;
@@ -143,4 +144,23 @@ class ChangePasswordTest extends TestCase
         $response->assertNoContent(400);
 
     }
+
+    public function testChangePasswordNoPreviousPassword(){
+        $this->user['password_previous1'] = null;
+        $this->user['password_previous2'] = null;
+        $this->user['last_password_update'] = now()->subDays(100);
+        $this->user->save();
+        $this->json('PUT', '/api/users/'.$this->user['id'].'/password', $this->validPayload)->assertNoContent(200);
+    }
+
+    public function testChangePasswordNoCurrentPassword(){
+        $this->user['password'] = null;
+        $this->user['password_previous1'] = null;
+        $this->user['password_previous2'] = null;
+        $this->user['status'] = Constants::USER_STATUS_UNCONFIRMED;
+        $this->user->save();
+        $this->validPayload['previous_password']='temporaryPassword';
+        $this->json('PUT', '/api/users/'.$this->user['id'].'/password', $this->validPayload)->assertNoContent(200);
+    }
+
 }

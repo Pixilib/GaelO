@@ -16,9 +16,7 @@ use Illuminate\Support\Facades\Route;
 Route::middleware(['auth:api', 'admin'])->group(function () {
 
     //Users Routes
-    Route::get('users/{id?}', 'UserController@getUser');
     Route::post('users', 'UserController@createUser');
-    Route::put('users/{id}/password', 'UserController@changeUserPassword');
     Route::put('users/{id}', 'UserController@modifyUser');
     Route::delete('users/{id}', 'UserController@deleteUser');
     Route::patch('users/{id}/reactivate', 'UserController@reactivateUser');
@@ -58,6 +56,7 @@ Route::middleware(['auth:api', 'admin'])->group(function () {
 
 //Routes that need authentication
 Route::middleware(['auth:api'])->group(function () {
+    Route::get('users/{id?}', 'UserController@getUser');
     //Logout Route
     Route::delete('login', 'AuthController@logout');
     //Miscellaneous Routes
@@ -69,6 +68,7 @@ Route::post('request', 'RequestController@sendRequest');
 
 //Login Route
 Route::post('login', 'AuthController@login');
+Route::put('users/{id}/password', 'UserController@changeUserPassword');
 
 //Tools Routes
 Route::post('tools/reset-password', 'ToolsController@resetPassword');

@@ -12,6 +12,7 @@ use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Services\MailServices;
 use App\GaelO\Services\TrackerService;
 use App\GaelO\Util;
+use Illuminate\Support\Facades\Log;
 
 class CreateUser {
 
@@ -32,11 +33,11 @@ class CreateUser {
         $data = get_object_vars($createUserRequest);
         //Generate password
         $password=substr(uniqid(), 1, 10);
+        Log::info($password);
         $passwordTemporary = LaravelFunctionAdapter::Hash($password);
         $password = null;
         $creationDate = Util::now();
         $lastPasswordUpdate = null;
-
         //Check form completion
         try {
             $this->checkFormComplete($data);
