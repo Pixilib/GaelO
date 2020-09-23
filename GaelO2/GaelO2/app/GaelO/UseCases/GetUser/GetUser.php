@@ -7,7 +7,6 @@ use App\GaelO\Interfaces\PersistenceInterface;
 use App\GaelO\UseCases\GetUser\GetUserRequest;
 use App\GaelO\UseCases\GetUser\GetUserResponse;
 
-
 class GetUser {
 
     public function __construct(PersistenceInterface $persistenceInterface){
