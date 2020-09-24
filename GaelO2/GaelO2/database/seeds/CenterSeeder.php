@@ -1,5 +1,6 @@
 <?php
 
+use App\Center;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
@@ -12,11 +13,12 @@ class CenterSeeder extends Seeder
      */
     public function run()
     {
-        DB::table('centers')->insert([   
+        DB::table('centers')->insert([
             'code' => 0,
             'name' => 'Default',
             'country_code' => 'FR']
         );
-     
+        factory(Center::class, 15)->create();
+
     }
 }

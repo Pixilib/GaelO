@@ -1,5 +1,6 @@
 <?php
 
+use App\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -19,7 +20,7 @@ class UserSeeder extends Seeder
             'lastname' => 'administrator',
             'firstname' => 'administrator',
             'email' => 'administrator@gaelo.fr',
-            'last_password_update' => now()->subDays(100),
+            'last_password_update' => now()->subDays(50),
             'creation_date'=> now(),
             'status' => 'Activated',
             'password' => Hash::make('administrator'), // password
@@ -28,5 +29,6 @@ class UserSeeder extends Seeder
             'administrator' => true,
             'remember_token' => Str::random(10)
         ]);
+        factory(User::class, 50)->create();
     }
 }
