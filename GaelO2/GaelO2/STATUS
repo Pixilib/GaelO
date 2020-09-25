@@ -11,7 +11,6 @@ Visit Type : (GET), (POST), (DELETE) => OK
 Affiliated Center  : (GET), (POST), (DELETE) =>OK
 
 A faire
-Need to change user status to deactivated on deletion
 Config => Remerge les mail avec mail et creer une config laravel a part pour Orthanc ?
 ChangePassword => Necessite middelware qui check que l'user Courant == ID de la requete
 Tracker GET=> utiliser les query string
