@@ -42,8 +42,6 @@ if ($visitObject->statusDone == Visit::NOT_DONE) {
 					},
 					callbackOnUploadComplete: ()=>{
 						allowAjaxDivLoading()
-					},
-  					callbackOnValidationSent: ()=>{
 						refreshDivContenu()
 					}
 				}, 'dicomUploaderv2')

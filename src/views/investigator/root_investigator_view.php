@@ -48,9 +48,7 @@
 					},
 					callbackOnUploadComplete: ()=>{
 						allowAjaxDivLoading()
-					},
-  					callbackOnValidationSent: ()=>{
-						  refreshDivContenu()
+						refreshDivContenu()
 					}
 				}, 'dicomUploaderv2')
 				checkBrowserSupportDicomUpload('#dicomUploaderv2');
