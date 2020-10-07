@@ -15,9 +15,7 @@ class DatabaseSeeder extends Seeder
             CountrySeeder::class,
             CenterSeeder::class,
             UserSeeder::class,
-            PreferenceSeeder::class,
-            StudySeeder::class,
-            VisitSeeder::class
+            PreferenceSeeder::class
         ]);
     }
 }

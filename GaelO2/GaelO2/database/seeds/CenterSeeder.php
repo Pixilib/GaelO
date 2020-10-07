@@ -1,6 +1,5 @@
 <?php
 
-use App\Center;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
@@ -18,7 +17,5 @@ class CenterSeeder extends Seeder
             'name' => 'Default',
             'country_code' => 'FR']
         );
-        factory(Center::class, 15)->create();
-
     }
 }

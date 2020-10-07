@@ -1,6 +1,5 @@
 <?php
 
-use App\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -29,6 +28,5 @@ class UserSeeder extends Seeder
             'administrator' => true,
             'remember_token' => Str::random(10)
         ]);
-        factory(User::class, 50)->create();
     }
 }
