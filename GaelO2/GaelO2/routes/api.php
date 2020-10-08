@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 //Routes that need authentication and to be admin
-Route::middleware(['auth:api', 'admin'])->group(function () {
+Route::middleware(['auth:api', 'admin', 'refresh_token'])->group(function () {
 
     //Users Routes
     Route::post('users', 'UserController@createUser');
@@ -55,7 +55,7 @@ Route::middleware(['auth:api', 'admin'])->group(function () {
 });
 
 //Routes that need authentication
-Route::middleware(['auth:api'])->group(function () {
+Route::middleware(['auth:api', 'refresh_token'])->group(function () {
     Route::get('users/{id?}', 'UserController@getUser');
     //Logout Route
     Route::delete('login', 'AuthController@logout');

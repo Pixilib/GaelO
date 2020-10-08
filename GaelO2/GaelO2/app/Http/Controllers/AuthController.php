@@ -29,7 +29,6 @@ class AuthController extends Controller
             $tokenResult = $user->createToken('Personal Access Token');
             $token = $tokenResult->token;
 
-            $token->expires_at = Carbon::now()->addHour();
             $token->save();
 
             return response()->json([
@@ -37,7 +36,7 @@ class AuthController extends Controller
                 'access_token' => $tokenResult->accessToken,
                 'token_type' => 'Bearer',
                 'expires_at' => Carbon::parse($tokenResult->token->expires_at)->toDateTimeString()
-            ], 200);
+            ], 200)->cookie('gaeloCookie', $tokenResult->accessToken);
 
         }else{
             if ($loginResponse->body === null) return response()->noContent()->setStatusCode($loginResponse->status, $loginResponse->statusText);

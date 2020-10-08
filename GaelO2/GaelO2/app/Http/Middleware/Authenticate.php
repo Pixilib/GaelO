@@ -21,8 +21,8 @@ class Authenticate extends Middleware
     }
 
     public function handle($request, Closure $next, ... $guards) {
-        if($request->cookie('tokenGaelO')) {
-            $value = $request->cookie('tokenGaelO');
+        if($request->cookie('gaeloCookie')) {
+            $value = $request->cookie('gaeloCookie');
             $request->headers->set('Authorization', 'Bearer '.$value);
         }
         $this->authenticate($request, $guards);
