@@ -47,8 +47,10 @@
 						preventAjaxDivLoading()
 					},
 					callbackOnUploadComplete: ()=>{
+						//Remove prevent Ajax listener
 						allowAjaxDivLoading()
-						refreshDivContenu()
+						alertifySuccess("Multi Upload Finished")
+						refreshInvestigatorDiv()
 					}
 				}, 'dicomUploaderv2')
 				checkBrowserSupportDicomUpload('#dicomUploaderv2');
