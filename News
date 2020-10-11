@@ -2,8 +2,10 @@ GaelO
 
 --Pending Changes --
   Uploader v2
+  Fiji Connector for reviews
   OHIF static build instead of using script tag
   Fix update review avaibility when QC is reset to Refused
+  Fix when resetQC visit is not removed from review
   Add study name in patient import notification email
   Add Study name and Patient code in notification email
   Interface : 
