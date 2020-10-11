@@ -235,8 +235,8 @@ class Visit {
 								WHERE (id_visit = :id_visit AND deleted=0)');
         
 		$update->execute(array('id_visit' => $this->id_visit));
-        
-		$this->refreshVisitData();
+		//Set visit to not review available (include a refresh of the current object)
+        $this->changeReviewAvailability(false);
         
 	}
     
