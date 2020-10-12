@@ -38,7 +38,7 @@ class UserEntity {
         $userEntity->orthancLogin = $array['orthanc_login'];
         $userEntity->orthancPassword = $array['orthanc_password'];
         $userEntity->deletedAt = $array['deleted_at'];
-        $userEntity->lastConnection = $array['last_connexion'];
+        $userEntity->lastConnection = $array['last_connection'];
         return $userEntity;
     }
 

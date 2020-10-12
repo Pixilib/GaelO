@@ -213,7 +213,6 @@ class UserRepository implements PersistenceInterface {
         $user = $this->user->where('id', $userId)->first();
         $roles = $user->roles()->where('study_name', $study)->get()->pluck('name');
         return empty($roles) ? [] : $roles->toArray();
-
     }
 
     public function addUserRoleInStudy(int $userId, String $study, Array $roles) : void {
@@ -264,6 +263,16 @@ class UserRepository implements PersistenceInterface {
         $centers = $user->affiliatedCenters()->get();
         return empty($centers) ? [] : $centers->toArray();
 
+    }
+
+    public function getUsersFromStudy(String $studyName, int $userId = 0) : array {
+        $users = $this->user->get();
+        $usersInStudy = [];
+        foreach($users as $user) {
+            $roles = $user->roles()->where('study_name', $studyName)->get();
+            if(!empty($roles[0])) array_push($usersInStudy, $user);
+        }
+        return $usersInStudy;
     }
 }
 

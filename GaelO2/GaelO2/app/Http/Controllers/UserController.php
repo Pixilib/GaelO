@@ -44,6 +44,9 @@ use App\GaelO\UseCases\GetUserRoles\GetUserRolesResponse;
 use App\GaelO\UseCases\ReactivateUser\ReactivateUser;
 use App\GaelO\UseCases\ReactivateUser\ReactivateUserRequest;
 use App\GaelO\UseCases\ReactivateUser\ReactivateUserResponse;
+use App\GaelO\UseCases\GetUserFromStudy\GetUserFromStudy;
+use App\GaelO\UseCases\GetUserFromStudy\GetUserFromStudyRequest;
+use App\GaelO\UseCases\GetUserFromStudy\GetUserFromStudyResponse;
 use App\GaelO\Util;
 use Illuminate\Support\Facades\Auth;
 
@@ -110,7 +113,6 @@ class UserController extends Controller
         $getUserRoles->execute($getUserRolesRequest, $getUserRolesResponse);
         return response()->json($getUserRolesResponse->body)
                 ->setStatusCode($getUserRolesResponse->status, $getUserRolesResponse->statusText);
-
     }
 
     public function createRole(int $id, string $study, Request $request, CreateUserRoles $createUserRole, CreateUserRolesRequest $createUserRoleRequest, CreateUserRolesResponse $createUserRoleResponse){
@@ -177,8 +179,13 @@ class UserController extends Controller
 
         return response()->noContent()
         ->setStatusCode($reactivateUserResponse->status, $reactivateUserResponse->statusText);
+    }
 
-
+    public function getUserFromStudy(string $studyName, GetUserFromStudyRequest $GetUserFromStudyRequest, GetUserFromStudyResponse $GetUserFromStudyResponse, GetUserFromStudy $GetUserFromStudy){
+        $GetUserFromStudyRequest->studyName = $studyName;
+        $GetUserFromStudy->execute($GetUserFromStudyRequest, $GetUserFromStudyResponse);
+        return response()->json($GetUserFromStudyResponse->body)
+                ->setStatusCode($GetUserFromStudyResponse->status, $GetUserFromStudyResponse->statusText);
     }
 
 }
