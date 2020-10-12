@@ -89,7 +89,7 @@ class Login{
     }
 
     private function updateDbOnSuccess($user, $ip){
-        $user['last_connexion'] = Util::now();
+        $user['last_connection'] = Util::now();
         $user['attempts'] = 0;
         $this->userRepository->update($user['id'], $user);
         if ($user['administrator']) {

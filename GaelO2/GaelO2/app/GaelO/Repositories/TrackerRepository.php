@@ -32,7 +32,7 @@ class TrackerRepository implements PersistenceInterface {
 
     public function getAll() :array {
         $trackers = $this->tracker->get();
-        return empty($trackres) ? [] : $trackers->toArray();
+        return empty($trackers) ? [] : $trackers->toArray();
     }
 
     public function delete($id) :void {
