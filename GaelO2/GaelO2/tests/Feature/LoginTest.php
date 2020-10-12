@@ -75,6 +75,9 @@ class LoginTest extends TestCase
 
     public function testLoginPasswordPerished()
     {
+        $adminDefaultUser = User::where('id', 1)->first();
+        $adminDefaultUser['last_password_update'] = date_create('10 June 2020');
+        $adminDefaultUser->save();
         $data = ['username'=> 'administrator',
         'password'=> 'administrator'];
         $response = $this->json('POST', '/api/login', $data)->assertStatus(435);
