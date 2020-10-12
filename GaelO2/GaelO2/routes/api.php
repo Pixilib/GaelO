@@ -52,6 +52,9 @@ Route::middleware(['auth:api', 'admin', 'refresh_token'])->group(function () {
     Route::get('visit-types/{visitTypeId}', 'VisitTypeController@getVisitType');
     Route::delete('visit-types/{visitTypeId}', 'VisitTypeController@deleteVisitType');
 
+    //Tracker Routes
+    Route::get('tracker', 'TrackerController@getTracker');
+
 });
 
 //Routes that need authentication
