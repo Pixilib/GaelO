@@ -76,5 +76,4 @@ Route::put('users/{id}/password', 'UserController@changeUserPassword');
 //Tools Routes
 Route::post('tools/reset-password', 'ToolsController@resetPassword');
 
-
 Route::get('studies/{studyName}/users', 'UserController@getUserFromStudy');

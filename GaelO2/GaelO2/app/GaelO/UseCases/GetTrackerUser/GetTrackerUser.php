@@ -13,20 +13,12 @@ class GetTrackerUser {
 
     public function execute(GetTrackerUserRequest $trackerRequest, GetTrackerUserResponse $trackerResponse) : void {
 
-        $admin = $trackerRequest->admin;
-
-        if ($admin) {
-            $dbData = $this->persistenceInterface->getAll();
-            $responseArray = [];
-            foreach($dbData as $data){
-                $responseArray[] = TrackerEntity::fillFromDBReponseArray($data);
-            }
-            $trackerResponse->body = $responseArray;
-        } else {
-            $dbData = $this->persistenceInterface->get();
-            $responseEntity = TrackerEntity::fillFromDBReponseArray($dbData);
-            $trackerResponse->body = $responseEntity;
+        $dbData = $this->persistenceInterface->getTrackerOfRole('User');
+        $responseArray = [];
+        foreach($dbData as $data){
+            $responseArray[] = TrackerEntity::fillFromDBReponseArray($data);
         }
+        $trackerResponse->body = $responseArray;
         $trackerResponse->status = 200;
         $trackerResponse->statusText = 'OK';
     }

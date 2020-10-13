@@ -12,7 +12,7 @@ class GetTrackerAdmin {
 
     public function execute(GetTrackerAdminRequest $trackerRequest, GetTrackerAdminResponse $trackerResponse) : void {
 
-        $dbData = $this->persistenceInterface->getTrackerOfRole('admin');
+        $dbData = $this->persistenceInterface->getTrackerOfRole('Administrator');
         $responseArray = [];
         foreach($dbData as $data){
             $responseArray[] = TrackerEntity::fillFromDBReponseArray($data);

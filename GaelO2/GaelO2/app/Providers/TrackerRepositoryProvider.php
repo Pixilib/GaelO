@@ -14,7 +14,8 @@ class TrackerRepositoryProvider extends ServiceProvider
     public function register()
     {
         $this->app->when(
-            [\App\GaelO\UseCases\GetTracker\GetTracker::class])
+            [\App\GaelO\UseCases\GetTrackerAdmin\GetTrackerAdmin::class,
+            \App\GaelO\UseCases\GetTrackerUser\GetTrackerUser::class])
         ->needs(\App\GaelO\Interfaces\PersistenceInterface::class)
         ->give(\App\GaelO\Repositories\TrackerRepository::class);
     }
