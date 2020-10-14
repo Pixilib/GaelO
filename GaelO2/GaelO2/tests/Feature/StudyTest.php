@@ -87,6 +87,18 @@ class StudyTest extends TestCase
         $this->assertTrue($response[0]['deleted']);
     }
 
+    public function testReactivateStudy(){
+        $study = factory(Study::class, 1)->create();
+        $studyName = $study->first()->name;
+        $study->first()->delete();
+        $payload = [];
+        $this->json('PATCH', '/api/studies/'.$studyName.'/reactivate', $payload)->assertNoContent(200);
+        $reactivatedStudy = Study::find($studyName)->first()->toArray();
+        //Check study is now undeleted
+        $this->assertNull($reactivatedStudy['deleted_at']);
+
+    }
+
 
 
 }

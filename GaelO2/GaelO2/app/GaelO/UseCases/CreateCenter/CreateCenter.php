@@ -23,7 +23,7 @@ class CreateCenter {
 
         if($this->persistenceInterface->isKnownCenter($code)){
             $createCenterResponse->status = 409;
-            $createCenterResponse->statusText = 'Conflict';
+            $createCenterResponse->statusText = 'Conflict. Code already used.';
             return;
 
         };

@@ -37,7 +37,6 @@ class UserTest extends TestCase
         Passport::actingAs(
             User::where('id',1)->first()
         );
-
     }
 
     public function testGetUser() {
@@ -132,7 +131,21 @@ class UserTest extends TestCase
         //Check the user still have only 2 remaining roles
         $remainingroles = User::where('id',1)->first()->roles()->get();
         $this->assertEquals(2, sizeof($remainingroles->toArray()));
+    }
 
+    public function testGetUserFromStudy() {
+        //Create a study
+        $study = factory(Study::class)->create(['name'=> 'study1']);
+
+        //Create 5 users
+        $users = factory(User::class, 5)->create(["administrator"=>true]);
+
+        $users->each(function ($user) use ($study)  {
+                factory(Role::class)->create(['user_id'=>$user->id, 'name'=>'Investigator', 'study_name'=>$study->name]);
+                factory(Role::class)->create(['user_id'=>$user->id, 'name'=>'Supervisor', 'study_name'=>$study->name]);
+                factory(Role::class)->create(['user_id'=>$user->id, 'name'=>'Monitor', 'study_name'=>$study->name]);
+        });
+        $content = $this->json('GET', '/api/studies/study1/users/')->assertStatus(200);
     }
 
 }

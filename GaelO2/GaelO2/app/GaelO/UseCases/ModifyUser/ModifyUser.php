@@ -90,19 +90,12 @@ class ModifyUser {
     }
 
     private function checkFormComplete(array $data) {
-         if(!isset($data['username']) ||
-        !isset($data['lastname']) ||
-        !isset($data['firstname']) ||
-        !isset($data['email']) ||
-        !is_numeric($data['centerCode']) ||
-        !isset($data['job']) ||
-        !isset($data['status']) ||
-        !isset($data['administrator']) ||
-        !isset($data['phone']) ||
-        !isset($data['orthancAddress']) ||
-        !isset($data['orthancLogin']) ||
-        !isset($data['orthancPassword'])
-        ) throw new GaelOException('Form incomplete');
+        if(!isset($data['username'])
+        || !isset($data['job'])
+        || !isset($data['email'])
+        || !is_numeric($data['centerCode'])
+        || !isset($data['administrator']) )
+        throw new GaelOException('Form incomplete');
     }
 
     private function checkEmailValid(array $data) {

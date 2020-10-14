@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\GaelO\Constants\Constants;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
@@ -10,7 +11,7 @@ use App\User;
 use Illuminate\Support\Facades\Artisan;
 use Laravel\Passport\Passport;
 
-class DeleteUser extends TestCase
+class DeleteUserTest extends TestCase
 {
 
     use DatabaseMigrations {
@@ -43,5 +44,15 @@ class DeleteUser extends TestCase
         //Check that the user 3 has been remove
         $queryUser = User::where('id', 3)->first();
         $this->assertEmpty($queryUser);
+    }
+
+    public function testReactivateUser(){
+
+        $payload = [];
+        User::find(1)->delete();
+        $this->json('PATCH', '/api/users/1/reactivate', $payload)->assertNoContent(200);
+        $user = User::find(1)->toArray();
+        $this->assertEquals(Constants::USER_STATUS_UNCONFIRMED, $user['status']);
+
     }
 }

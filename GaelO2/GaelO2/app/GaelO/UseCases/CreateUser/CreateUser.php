@@ -12,6 +12,7 @@ use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Services\MailServices;
 use App\GaelO\Services\TrackerService;
 use App\GaelO\Util;
+use Illuminate\Support\Facades\Log;
 
 class CreateUser {
 
@@ -32,11 +33,11 @@ class CreateUser {
         $data = get_object_vars($createUserRequest);
         //Generate password
         $password=substr(uniqid(), 1, 10);
+        Log::info($password);
         $passwordTemporary = LaravelFunctionAdapter::Hash($password);
         $password = null;
         $creationDate = Util::now();
         $lastPasswordUpdate = null;
-
         //Check form completion
         try {
             $this->checkFormComplete($data);
@@ -94,7 +95,11 @@ class CreateUser {
     }
 
     private function checkFormComplete(array $data) : void {
-        if(!isset($data['username']) || !isset($data['lastname']) || !isset($data['email']) || !is_numeric($data['centerCode']) || !isset($data['administrator']) ) {
+        if(!isset($data['username'])
+        || !isset($data['job'])
+        || !isset($data['email'])
+        || !is_numeric($data['centerCode'])
+        || !isset($data['administrator']) ) {
             throw new GaelOException('Form incomplete');
         }
     }
@@ -106,9 +111,9 @@ class CreateUser {
 
     }
 
-    private function checkPhoneCorrect(string $phone) : void {
+    private function checkPhoneCorrect(?string $phone) : void {
         //If contains non number caracters throw error
-        if (preg_match('/[^0-9]/', $phone)) {
+        if ($phone != null && preg_match('/[^0-9]/', $phone)) {
             throw new GaelOException('Not a valid email phone number');
         }
     }

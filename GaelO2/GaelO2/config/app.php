@@ -133,6 +133,10 @@ return [
     | this array to grant expanded functionality to your applications.
     |
     */
+    'url'=>env('APP_URL'),
+    'corporation' => env('APP_CORPORATION'),
+    'mailFromAddress'=>env('MAIL_FROM_ADDRESS'),
+    'mailReplyToDefault'=>env('MAIL_REPLY_TO_DEFAULT'),
 
     'providers' => [
 
@@ -179,8 +183,8 @@ return [
         App\Providers\PreferenceRepositoryProvider::class,
         App\Providers\CenterRepositoryProvider::class,
         App\Providers\VisitGroupProvider::class,
-        App\Providers\VisitTypeProvider::class
-
+        App\Providers\VisitTypeProvider::class,
+        App\Providers\TrackerRepositoryProvider::class
     ],
 
     /*

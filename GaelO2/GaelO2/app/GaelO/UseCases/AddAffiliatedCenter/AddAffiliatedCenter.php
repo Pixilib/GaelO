@@ -16,8 +16,15 @@ class AddAffiliatedCenter {
     public function execute(AddAffiliatedCenterRequest $addAffiliatedCenterRequest, AddAffiliatedCenterResponse $addAffiliatedCenterResponse){
 
         //Sk Verifier que le centre pas deja dans la liste
-        //Sk autoriser plusieurs centre d'un coup ?
-        $this->persistenceInterface->addAffiliatedCenter($addAffiliatedCenterRequest->userId, $addAffiliatedCenterRequest->centerCode);
+        if(is_array($addAffiliatedCenterRequest->centerCode)){
+            $centersArray = $addAffiliatedCenterRequest->centerCode;
+            foreach($centersArray as $center){
+                $this->persistenceInterface->addAffiliatedCenter($addAffiliatedCenterRequest->userId, $center);
+            }
+
+        }else{
+            $this->persistenceInterface->addAffiliatedCenter($addAffiliatedCenterRequest->userId, $addAffiliatedCenterRequest->centerCode);
+        }
 
         $actionDetails = [
             'addAffiliatedCenters' => $addAffiliatedCenterRequest->centerCode

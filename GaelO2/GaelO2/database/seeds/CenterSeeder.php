@@ -12,11 +12,10 @@ class CenterSeeder extends Seeder
      */
     public function run()
     {
-        DB::table('centers')->insert([   
+        DB::table('centers')->insert([
             'code' => 0,
             'name' => 'Default',
             'country_code' => 'FR']
         );
-     
     }
 }

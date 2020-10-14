@@ -11,7 +11,7 @@ use App\User;
 use App\GaelO\Constants\Constants;
 use Illuminate\Support\Facades\Artisan;
 
-class Login extends TestCase
+class LoginTest extends TestCase
 {
     use DatabaseMigrations {
         runDatabaseMigrations as baseRunDatabaseMigrations;
@@ -67,14 +67,23 @@ class Login extends TestCase
         //Try with correct temporary password, should grant access of unconfirmed status
         $data = ['username'=> 'administrator',
         'password'=> 'tempPassword'];
-        $this->json('POST', '/api/login', $data)->assertNoContent(432);
+        $response = $this->json('POST', '/api/login', $data)->assertStatus(432);
+        $content = $response->content();
+        $responseArray = json_decode($content, true);
+        $this->assertEquals(1, $responseArray['id']);
     }
 
     public function testLoginPasswordPerished()
     {
+        $adminDefaultUser = User::where('id', 1)->first();
+        $adminDefaultUser['last_password_update'] = date_create('10 June 2020');
+        $adminDefaultUser->save();
         $data = ['username'=> 'administrator',
         'password'=> 'administrator'];
-        $this->json('POST', '/api/login', $data)->assertNoContent(435);
+        $response = $this->json('POST', '/api/login', $data)->assertStatus(435);
+        $content = $response->content();
+        $responseArray = json_decode($content, true);
+        $this->assertEquals(1, $responseArray['id']);
     }
 
     public function testAccountBlocked(){
@@ -105,5 +114,29 @@ class Login extends TestCase
         $this->assertEquals($adminDefaultUser['status'], Constants::USER_STATUS_BLOCKED);
         $this->assertEquals($adminDefaultUser['attempts'], 3);
 
+    }
+
+    public function testBlockingUnconfirmedAccount(){
+        // Three wrong attempts to login should block unconfirmed account
+        $adminDefaultUser = User::where('id', 1)->first();
+        $adminDefaultUser['status'] = Constants::USER_STATUS_UNCONFIRMED;
+        $adminDefaultUser['password'] = null;
+        $adminDefaultUser['password_temporary'] = 'password';
+        $adminDefaultUser->save();
+
+        $data = ['username'=> 'administrator',
+        'password'=> 'wrongPassword'];
+
+        $this->json('POST', '/api/login', $data)->assertNoContent(433);
+        $this->json('POST', '/api/login', $data)->assertNoContent(433);
+        $this->json('POST', '/api/login', $data)->assertNoContent(433);
+        $adminDefaultUser = User::where('id', 1)->first();
+
+        $data = ['username'=> 'administrator',
+        'password'=> 'password'];
+        $this->json('POST', '/api/login', $data)->assertNoContent(434);
+
+        $this->assertEquals($adminDefaultUser['status'], Constants::USER_STATUS_BLOCKED);
+        $this->assertEquals($adminDefaultUser['attempts'], 3);
     }
 }

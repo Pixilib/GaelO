@@ -7,6 +7,7 @@ use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Interfaces\PersistenceInterface;
 use App\Tracker;
 use App\GaelO\Util;
+use Illuminate\Support\Facades\Log;
 
 class TrackerRepository implements PersistenceInterface {
 
@@ -32,7 +33,7 @@ class TrackerRepository implements PersistenceInterface {
 
     public function getAll() :array {
         $trackers = $this->tracker->get();
-        return empty($trackres) ? [] : $trackers->toArray();
+        return empty($trackers) ? [] : $trackers->toArray();
     }
 
     public function delete($id) :void {
@@ -40,12 +41,12 @@ class TrackerRepository implements PersistenceInterface {
     }
 
     public function getTrackerOfRole(string $role) : array {
-        $trackerData = $this->tracker->where('role', $role);
+        $trackerData = $this->tracker->where('role', $role)->get();
         return empty($trackerData) ? [] : $trackerData->toArray();
     }
 
     public function getTrackerOfRoleAndStudy(string $study, string $role) : array{
-        $trackerData = $this->tracker->where('study_name', $study)->where('role', $role);
+        $trackerData = $this->tracker->where('study_name', $study)->where('role', $role)->get();
         return empty($trackerData)  ? [] : $trackerData->toArray();
     }
 
@@ -55,7 +56,7 @@ class TrackerRepository implements PersistenceInterface {
     }
 
     public function getUsersInternalMessageOfStudy(string $study) : array {
-        $trackerData = $this->tracker->where('study_name', $study)->where("action_type", Constants::TRACKER_SEND_MESSAGE);
+        $trackerData = $this->tracker->where('study_name', $study)->where("action_type", Constants::TRACKER_SEND_MESSAGE)->get();
         return empty($trackerData) ? [] : $trackerData->toArray();
     }
 

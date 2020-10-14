@@ -28,7 +28,7 @@ use App\GaelO\Constants\MailConstants;
 class SendEmailAdapter implements MailInterface {
 
     public function setReplyTo( ?String $replyTo = null ){
-        if($replyTo == null) $this->replyTo= LaravelFunctionAdapter::getEnv('MAIL_REPLY_TO_DEFAULT');
+        if($replyTo == null) $this->replyTo= LaravelFunctionAdapter::getConfig('mailReplyToDefault');
         else $this->replyTo = $replyTo;
     }
 
@@ -39,10 +39,10 @@ class SendEmailAdapter implements MailInterface {
 
     public function setParameters(array $parameters){
         $this->parameters = $parameters;
-        $this->parameters['platformName'] = LaravelFunctionAdapter::getEnv('APP_NAME');
-        $this->parameters['webAddress'] = LaravelFunctionAdapter::getEnv('APP_URL');
-        $this->parameters['corporation'] = LaravelFunctionAdapter::getEnv('APP_CORPORATION');
-        $this->parameters['adminEmail']= LaravelFunctionAdapter::getEnv('MAIL_FROM_ADDRESS');
+        $this->parameters['platformName'] = LaravelFunctionAdapter::getConfig('name');
+        $this->parameters['webAddress'] = LaravelFunctionAdapter::getConfig('url');
+        $this->parameters['corporation'] = LaravelFunctionAdapter::getConfig('corporation');
+        $this->parameters['adminEmail']= LaravelFunctionAdapter::getConfig('mailFromAddress');
 
     }
 

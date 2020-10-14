@@ -67,6 +67,10 @@ class StudyRepository implements PersistenceInterface {
         return $studiesDetails->toArray();
     }
 
+    public function reactivateStudy(string $name) : void {
+        $this->study->withTrashed()->find($name)->restore();
+    }
+
 }
 
 ?>

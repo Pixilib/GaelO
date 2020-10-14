@@ -92,8 +92,11 @@ class CreateUserTest extends TestCase
      * Test that creating user with missing data should fail
      */
     public function testCreateIncompleteData(){
-        unset($this->validPayload['lastname']);
-        $this->json('POST', '/api/users', $this->validPayload) -> assertStatus(400);
+        $mandatoryTags = ['username', 'email', 'job', 'centerCode', 'administrator'];
+        foreach($mandatoryTags as $tag) {
+            unset($this->validPayload[$tag]);
+            $this->json('POST', '/api/users/', $this->validPayload)-> assertStatus(400);
+        }
     }
 
     /**
@@ -110,5 +113,25 @@ class CreateUserTest extends TestCase
     public function testCreateInvalidPhone(){
         $this->validPayload['phone'] = "05G05";
         $this->json('POST', '/api/users', $this->validPayload) -> assertStatus(400);
+    }
+
+    public function testCreateNoPhone(){
+        $this->validPayload['phone'] = null;
+        $this->json('POST', '/api/users', $this->validPayload) -> assertStatus(201);
+    }
+
+    public function testCreateNoOrthancAddress(){
+        $this->validPayload['orthancAddress'] = null;
+        $this->json('POST', '/api/users', $this->validPayload) -> assertStatus(201);
+    }
+
+    public function testCreateNoOrthancLogin(){
+        $this->validPayload['orthancLogin'] = null;
+        $this->json('POST', '/api/users', $this->validPayload) -> assertStatus(201);
+    }
+
+    public function testCreateNoOrthancPassword(){
+        $this->validPayload['orthancPassword'] = null;
+        $this->json('POST', '/api/users', $this->validPayload) -> assertStatus(201);
     }
 }

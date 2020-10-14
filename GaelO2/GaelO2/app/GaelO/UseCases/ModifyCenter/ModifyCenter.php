@@ -20,7 +20,6 @@ class ModifyCenter {
 
      public function execute(ModifyCenterRequest $centerRequest, ModifyCenterResponse $centerResponse) : void
     {
-        $name = $centerRequest->name;
 
         if(!$this->persistenceInterface->isKnownCenter($centerRequest->code)){
             $centerResponse->status = 400;
@@ -28,11 +27,11 @@ class ModifyCenter {
             return;
 
         };
-        $this->persistenceInterface->updateCenter($name, $centerRequest->code, $centerRequest->countryCode);
+        $this->persistenceInterface->updateCenter($centerRequest->name, $centerRequest->code, $centerRequest->countryCode);
 
         $actionDetails = [
             'modifiedCenter' => $centerRequest->code,
-            'centerName'=> $name,
+            'centerName'=> $centerRequest->name,
             'centerCountryCode' =>  $centerRequest->countryCode,
         ];
 
