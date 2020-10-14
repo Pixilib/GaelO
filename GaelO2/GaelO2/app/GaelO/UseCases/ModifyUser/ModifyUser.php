@@ -90,8 +90,12 @@ class ModifyUser {
     }
 
     private function checkFormComplete(array $data) {
-         if(!isset($data['username']) || !isset($data['lastname']) || !isset($data['email']) || !is_numeric($data['centerCode']) || !isset($data['administrator'])
-        ) throw new GaelOException('Form incomplete');
+        if(!isset($data['username'])
+        || !isset($data['job'])
+        || !isset($data['email'])
+        || !is_numeric($data['centerCode'])
+        || !isset($data['administrator']) )
+        throw new GaelOException('Form incomplete');
     }
 
     private function checkEmailValid(array $data) {

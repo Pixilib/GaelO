@@ -92,8 +92,11 @@ class CreateUserTest extends TestCase
      * Test that creating user with missing data should fail
      */
     public function testCreateIncompleteData(){
-        unset($this->validPayload['lastname']);
-        $this->json('POST', '/api/users', $this->validPayload) -> assertStatus(400);
+        $mandatoryTags = ['username', 'email', 'job', 'centerCode', 'administrator'];
+        foreach($mandatoryTags as $tag) {
+            unset($this->validPayload[$tag]);
+            $this->json('POST', '/api/users/', $this->validPayload)-> assertStatus(400);
+        }
     }
 
     /**

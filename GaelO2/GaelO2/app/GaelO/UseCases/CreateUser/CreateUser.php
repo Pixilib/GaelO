@@ -95,7 +95,11 @@ class CreateUser {
     }
 
     private function checkFormComplete(array $data) : void {
-        if(!isset($data['username']) || !isset($data['lastname']) || !isset($data['email']) || !is_numeric($data['centerCode']) || !isset($data['administrator']) ) {
+        if(!isset($data['username'])
+        || !isset($data['job'])
+        || !isset($data['email'])
+        || !is_numeric($data['centerCode'])
+        || !isset($data['administrator']) ) {
             throw new GaelOException('Form incomplete');
         }
     }
