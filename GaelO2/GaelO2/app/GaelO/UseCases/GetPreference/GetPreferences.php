@@ -16,7 +16,7 @@ class GetPreferences {
 
         $preferencesDb = $this->persistenceInterface->getAll();
         //Add preference defined in env file (read only)
-        $preferences['plateformName'] =LaravelFunctionAdapter::getConfig('name');
+        $preferences['platformName'] =LaravelFunctionAdapter::getConfig('name');
         $preferences['adminEmail'] = LaravelFunctionAdapter::getConfig('mailFromAddress');
         $preferences['emailReplyTo'] = LaravelFunctionAdapter::getConfig('mailReplyToDefault');
         $preferences['corporation'] = LaravelFunctionAdapter::getConfig('corporation');
