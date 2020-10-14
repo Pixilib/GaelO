@@ -37,7 +37,6 @@ class UserTest extends TestCase
         Passport::actingAs(
             User::where('id',1)->first()
         );
-
     }
 
     public function testGetUser() {
