@@ -26,6 +26,7 @@ Route::middleware(['auth:api', 'admin', 'refresh_token'])->group(function () {
     Route::post('users/{id}/affiliated-centers', 'UserController@addAffiliatedCenter');
     Route::get('users/{id}/affiliated-centers', 'UserController@getAffiliatedCenter');
     Route::delete('users/{id}/affiliated-centers/{centerCode}', 'UserController@deleteAffiliatedCenter');
+    Route::get('studies/{studyName}/users', 'UserController@getUserFromStudy');
 
     //Study Routes
     Route::post('studies', 'StudyController@createStudy');
@@ -76,4 +77,4 @@ Route::put('users/{id}/password', 'UserController@changeUserPassword');
 //Tools Routes
 Route::post('tools/reset-password', 'ToolsController@resetPassword');
 
-Route::get('studies/{studyName}/users', 'UserController@getUserFromStudy');
+Route::get('patients/{code?}', 'PatientController@getPatient');

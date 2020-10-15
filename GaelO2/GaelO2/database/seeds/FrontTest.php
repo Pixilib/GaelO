@@ -30,7 +30,24 @@ class FrontTest extends Seeder
                 'patient_code_prefix' => '123'
             ]);
 
-            factory(Patient::class, 5)->create();
+            //factory(Patient::class, 5)->create();
+
+            DB::table('patients')->insert([
+                'code'=>'123',
+                'first_name'=>'truc',
+                'last_name'=>'truc',
+                'gender'=>'M',
+                'birth_day'=>1,
+                'birth_month'=>2,
+                'birth_year'=>3,
+                'registration_date'=>now(),
+                'investigator_name'=>'bidule',
+                'center_code'=>0,
+                'study_name'=>'Study test',
+                'withdraw'=>false,
+                'withdraw_reason'=>'',
+                'withdraw_date'=>now()
+            ]);
 
             DB::table('visit_groups')->insert([
                 'study_name' => 'Study test',
