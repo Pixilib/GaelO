@@ -15,9 +15,9 @@ class GetPatient {
 
     public function execute(GetPatientRequest $patientRequest, GetPatientResponse $patientResponse) : void
     {
-        $id = $patientRequest->id;
+        $code = $patientRequest->code;
 
-        if ($id == 0) {
+        if ($code == 0) {
             $dbData = $this->persistenceInterface->getAll();
             $responseArray = [];
             foreach($dbData as $data){
@@ -25,7 +25,7 @@ class GetPatient {
             }
             $patientResponse->body = $responseArray;
         } else {
-            $dbData = $this->persistenceInterface->find($id);
+            $dbData = $this->persistenceInterface->find($code);
             $responseEntity = PatientEntity::fillFromDBReponseArray($dbData);
             $patientResponse->body = $responseEntity;
         }

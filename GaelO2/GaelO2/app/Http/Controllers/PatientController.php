@@ -28,7 +28,7 @@ class PatientController extends Controller
         $currentUser = Auth::user();
         $requestData = $request->all();
         $createPatientRequest = Util::fillObject($requestData, $createPatientRequest);
-        $createPatientRequest->currentUserId = $currentUser['id'];
+        $createPatientRequest->currentUserCode = $currentUser['code'];
         $createPatient->execute($createPatientRequest, $createPatientResponse);
 
         return response()->noContent()
@@ -53,7 +53,7 @@ class PatientController extends Controller
 
     public function deletePatient(String $patientName, DeletePatient $deletePatient,  DeletePatientRequest $deletePatientRequest, DeletePatientResponse $deletePatientResponse){
         $currentUser = Auth::user();
-        $deletePatientRequest->currentUserId = $currentUser['id'];
+        $deletePatientRequest->currentUserCode = $currentUser['code'];
         $deletePatientRequest->patientName = $patientName;
         $deletePatient->execute($deletePatientRequest, $deletePatientResponse);
 
@@ -64,7 +64,7 @@ class PatientController extends Controller
 
     public function reactivatePatient(string $patientName, ReactivatePatient $reactivatePatient, ReactivatePatientRequest $reactivatePatientRequest, ReactivatePatientResponse $reactivatePatientResponse){
         $currentUser = Auth::user();
-        $reactivatePatientRequest->currentUserId = $currentUser['id'];
+        $reactivatePatientRequest->currentUserCode = $currentUser['code'];
         $reactivatePatientRequest->patientName = $patientName;
         $reactivatePatient->execute($reactivatePatientRequest, $reactivatePatientResponse);
         return response()->noContent()
