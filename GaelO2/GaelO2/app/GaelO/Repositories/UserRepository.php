@@ -69,11 +69,10 @@ class UserRepository implements PersistenceInterface {
 
     }
 
-    public function updateUser(int $id, String $username, String $lastName, String $firstName, String $status,
+    public function updateUser(int $id, String $username, ?String $lastName, ?String $firstName, String $status,
                                 String $email, ?String $phone, bool $administrator, int $centerCode, String $job,
                                 ?String $orthancAdress, ?String $orthancLogin, ?String $orthancPassword,
                                 ?String $passwordTemporary, ?String $password, String $creationDate, ?String $lastPasswordUpdate) : void {
-
         $data= ['username' => $username,
                 'lastname' => $lastName,
                 'firstname' => $firstName,

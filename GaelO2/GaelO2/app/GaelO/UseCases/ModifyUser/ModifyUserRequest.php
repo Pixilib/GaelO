@@ -4,8 +4,8 @@ namespace App\GaelO\UseCases\ModifyUser;
 
 class ModifyUserRequest {
     public int $currentUserId;
-    public string $lastname;
-    public string $firstname;
+    public ?string $lastname = null;
+    public ?string $firstname = null;
     public string $username;
     public string $email;
     public ?string $phone = null;
