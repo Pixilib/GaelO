@@ -219,7 +219,7 @@ class Export_Study_Data
 
 		$expertReviews=[];
 		try {
-			$expertReviews=$visitObject->getReviewsObject(false);
+			$expertReviews=$visitObject->getReviewsObject(false, true);
 		}catch (Exception $e) { }
 
 		//Merge all reviews in an array

@@ -334,10 +334,15 @@ class Visit {
 	 * @param bool $local
 	 * @return Review|Review[]
 	 */
-	public function getReviewsObject(bool $local) {
+	public function getReviewsObject(bool $local, bool $onlyValidated=false) {
+        if(!$onlyValidated){
+			$reviewQuery=$this->linkpdo->prepare('SELECT id_review FROM reviews WHERE id_visit=:idVisit AND deleted=0 AND is_local=:isLocal');
         
-		$reviewQuery=$this->linkpdo->prepare('SELECT id_review FROM reviews WHERE id_visit=:idVisit AND deleted=0 AND is_local=:isLocal');
+		}else{
+			$reviewQuery=$this->linkpdo->prepare('SELECT id_review FROM reviews WHERE id_visit=:idVisit AND deleted=0 AND validated=1 AND is_local=:isLocal');
         
+		}
+		
 		$reviewQuery->execute(array('idVisit' => $this->id_visit, 'isLocal'=>intval($local)));
 		$reviewResults=$reviewQuery->fetchAll(PDO::FETCH_COLUMN);
 
