@@ -8,6 +8,7 @@ GaelO
   Fix when resetQC visit is not removed from review
   Add study name in patient import notification email
   Add Study name and Patient code in notification email
+  Removed draft (non validated) reviews form export study data
   Interface : 
     - Export of tables now export all pages (and not juste visible lines)
     - Add footer with version number
