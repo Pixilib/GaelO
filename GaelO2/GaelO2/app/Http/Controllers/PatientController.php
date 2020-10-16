@@ -9,6 +9,7 @@ use App\GaelO\UseCases\GetPatient\GetPatient;
 use App\GaelO\UseCases\GetPatient\GetPatientRequest;
 use App\GaelO\UseCases\GetPatient\GetPatientResponse;
 use App\GaelO\Util;
+use App\Preference;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
