@@ -184,7 +184,8 @@ return [
         App\Providers\CenterRepositoryProvider::class,
         App\Providers\VisitGroupProvider::class,
         App\Providers\VisitTypeProvider::class,
-        App\Providers\TrackerRepositoryProvider::class
+        App\Providers\TrackerRepositoryProvider::class,
+        App\Providers\PatientRepositoryProvider::class
     ],
 
     /*

@@ -19,7 +19,7 @@ class UserSeeder extends Seeder
             'lastname' => 'administrator',
             'firstname' => 'administrator',
             'email' => 'administrator@gaelo.fr',
-            'last_password_update' => now()->subDays(50),
+            'last_password_update' => now()->subDays(100),
             'creation_date'=> now(),
             'status' => 'Activated',
             'password' => Hash::make('administrator'), // password

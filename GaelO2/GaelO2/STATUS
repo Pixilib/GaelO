@@ -37,8 +37,12 @@ Decoupler controle qualité ?
 //Les tests ne font pas d'assertion sur le tracker et l'envoi de mails (mais exception si erreur en theorie)
 
 Installation :
-Generation certificat :
-php artisan passport:keys
+Installation DB :
+php artisan migrate:fresh --seed
+Installation Passport :
+php artisan passport:install
+//Generation certificat :
+//php artisan passport:keys
 Generation clés :
 php artisan key:generate
 

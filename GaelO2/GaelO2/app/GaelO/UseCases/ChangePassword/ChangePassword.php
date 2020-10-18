@@ -73,7 +73,8 @@ class ChangePassword {
       * Check that candidate password is not in the 3 last used passwords
       */
     private function checkNewPassword($passwordCandidate, $temporaryPassword, $currentPassword, $previousPassword1, $previousPassword2) : void {
-        $checkTemporary = LaravelFunctionAdapter::checkHash($passwordCandidate, $temporaryPassword);
+        if ($temporaryPassword !==null) $checkTemporary = LaravelFunctionAdapter::checkHash($passwordCandidate, $temporaryPassword);
+        else $checkTemporary = false;
         if ($currentPassword !== null) $checkCurrent = LaravelFunctionAdapter::checkHash($passwordCandidate, $currentPassword);
         else $checkCurrent = false;
         if ($previousPassword1 !== null) $checkPrevious1 = LaravelFunctionAdapter::checkHash($passwordCandidate, $previousPassword1);

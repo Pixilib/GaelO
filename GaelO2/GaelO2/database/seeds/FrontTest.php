@@ -1,6 +1,7 @@
 <?php
 
 use App\Center;
+use App\Patient;
 use App\Study;
 use App\User;
 use Illuminate\Database\Seeder;
@@ -23,11 +24,29 @@ class FrontTest extends Seeder
             ]);
 
             factory(Study::class, 10)->create();
-            factory(Center::class, 15)->create();
 
             DB::table('studies')->insert([
                 'name' => 'Study test',
                 'patient_code_prefix' => '123'
+            ]);
+
+            //factory(Patient::class, 5)->create();
+
+            DB::table('patients')->insert([
+                'code'=>'123',
+                'first_name'=>'truc',
+                'last_name'=>'truc',
+                'gender'=>'M',
+                'birth_day'=>1,
+                'birth_month'=>2,
+                'birth_year'=>3,
+                'registration_date'=>now(),
+                'investigator_name'=>'bidule',
+                'center_code'=>0,
+                'study_name'=>'Study test',
+                'withdraw'=>false,
+                'withdraw_reason'=>'',
+                'withdraw_date'=>now()
             ]);
 
             DB::table('visit_groups')->insert([
