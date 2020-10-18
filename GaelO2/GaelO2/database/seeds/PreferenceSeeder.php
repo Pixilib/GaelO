@@ -13,12 +13,7 @@ class PreferenceSeeder extends Seeder
     public function run()
     {
         DB::table('preferences')->insert(
-            ['patient_code_length'=>14, 
-            'name'=>'GaelO', 
-            'admin_email'=>'administrator@gaelo.fr', 
-            'email_reply_to'=>'administrator@gaelo.fr', 
-            'corporation'=>'GaelO', 
-            'gaelo_url'=>'GaelO.fr', 
+            ['patient_code_length'=>14,
             'parse_date_import' =>'m.d.Y',
             'parse_country_name' => 'US'
             ]

@@ -3,5 +3,7 @@
 namespace App\GaelO\UseCases\Login;
 
 class LoginResponse {
-    public bool $success;
+    public ?array $body = null;
+    public int $status;
+    public string $statusText;
 }

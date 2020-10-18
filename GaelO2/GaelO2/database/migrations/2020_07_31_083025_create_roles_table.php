@@ -14,12 +14,12 @@ class CreateRolesTable extends Migration
     public function up()
     {
         Schema::create('roles', function (Blueprint $table) {
-            $table->enum('role_name', ['Investigator', 'Monitor', 'Controller', 'Supervisor'])->nullable(false);
+            $table->enum('name', ['Investigator', 'Monitor', 'Controller', 'Supervisor'])->nullable(false);
             $table->unsignedBigInteger('user_id')->nullable(false);
             $table->string('study_name')->nullable(false);
             $table->timestamps();
             //Dependencies
-            $table->primary(['role_name', 'user_id', 'study_name']);
+            $table->primary(['name', 'user_id', 'study_name']);
             $table->foreign('user_id')->references('id')->on('users');
             $table->foreign('study_name')->references('name')->on('studies');
 

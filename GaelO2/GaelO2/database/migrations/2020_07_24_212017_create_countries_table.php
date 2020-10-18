@@ -17,7 +17,6 @@ class CreateCountriesTable extends Migration
             $table->string('code', 2)->primary();
             $table->string('country_us')->unique();
             $table->string('country_fr')->unique();
-            $table->timestamps();
         });
     }
 

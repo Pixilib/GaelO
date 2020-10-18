@@ -17,7 +17,6 @@ class CreateVisitTypesTable extends Migration
             $table->id();
             $table->unsignedBigInteger('visit_group_id')->nullable(false);
             $table->string('name')->nullable(false);
-            $table->string('table_review_specific')->nullable(false);
             $table->integer('visit_order')->nullable(false);
             $table->boolean('local_form_needed')->default(true)->nullable(false);
             $table->boolean('qc_needed')->default(true)->nullable(false);
@@ -26,7 +25,10 @@ class CreateVisitTypesTable extends Migration
             $table->integer('limit_low_days')->nullable(false);
             $table->integer('limit_up_days')->nullable(false);
             $table->enum('anon_profile', ['Default', 'Full'])->default('Default')->nullable(false);
-            //Foreign keys
+            $table->timestamps();
+
+            $table->unique(['visit_order', 'visit_group_id']);
+            $table->unique(['name', 'visit_group_id']);
             $table->foreign('visit_group_id')->references('id')->on('visit_groups');
         });
     }

@@ -1,0 +1,46 @@
+User (GET), (POST), (PUT), (DELETE), (PATCH) => OK
+Request (POST) => OK
+Login / Logout (POST) (DELETE) => OK
+ChangePassword (POST) => OK
+User's Roles : (GET), (POST), (DELETE)=>OK
+Study : (GET), (GET Expand), (POST), (DELETE), (PATCH) => OK
+Preference : (GET), (PUT) =>OK
+Center : (GET), (POST), (PUT) => OK
+Visit Group : (GET), (POST), (DELETE) => OK
+Visit Type : (GET), (POST), (DELETE) => OK
+Affiliated Center  : (GET), (POST), (DELETE) =>OK
+
+A faire
+Config => Remerge les mail avec mail et creer une config laravel a part pour Orthanc ?
+ChangePassword => Necessite middelware qui check que l'user Courant == ID de la requete
+Tracker GET=> utiliser les query string
+ExportDatabase : POST (creation d'une sauvegarde)
+Query Param dans Study pour avoir la liste avec les deletion ? idem user ? et couvrir en test
+
+
+Preparation Investigateur / Monitor / Controller / Reviewer :
+- Api creation Patient (GET, POST, PUT)
+- Api creation Visit (GET, POST, DELETE)
+- Api QC (GET, PUT + API /reset)
+- Api Corrective Action (GET, PUT)
+- Api Documentation (GET, POST, DELETE, PUT?)
+
+Service :
+Orthanc (ajout des env a faire)
+ReverseProxy
+
+Reflechir Etude Ancillaire :
+Probablement decoupler les review, une review reference une visite et une study
+Decoupler le status visit review egalement ?
+Decoupler controle qualité ?
+
+//Les tests ne font pas d'assertion sur le tracker et l'envoi de mails (mais exception si erreur en theorie)
+
+Installation :
+Generation certificat :
+php artisan passport:keys
+Generation clés :
+php artisan key:generate
+
+docs :
+https://medium.com/@tobiashn/putting-a-laravel-app-into-production-d847ac2a04ed?source=email-e7f4cb02701-1600390333596-digest.reader------0-59------------------04e5dd75_dc46_4393_805e_4aee0fee36a6-1-29facf24_1541_4eb6_bffc_1a4ba0ca2cb4----&sectionName=top

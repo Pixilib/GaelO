@@ -17,7 +17,7 @@ class CreatePatientsTable extends Migration
             $table->unsignedBigInteger('code')->primary();
             $table->string('first_name')->default(null);
             $table->string('last_name')->default(null);
-            $table->string('gender')->default(null);
+            $table->enum('gender', ['M', 'F'])->nullable(true)->default(null);
             $table->integer('birth_day')->default(null);
             $table->integer('birth_month')->default(null);
             $table->integer('birth_year')->default(null);

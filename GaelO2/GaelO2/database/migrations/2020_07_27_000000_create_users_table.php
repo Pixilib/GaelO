@@ -20,16 +20,15 @@ class CreateUsersTable extends Migration
             $table->string('firstname')->nullable(true);
             $table->string('username')->unique()->nullable(false);
             $table->string('email')->unique()->nullable(false);
-            $table->string('password')->nullable(false);
+            $table->string('password_temporary')->nullable(true);
+            $table->string('password')->nullable(true);
             $table->string('password_previous1')->nullable(true);
             $table->string('password_previous2')->nullable(true);
-            $table->string('password_temporary')->nullable(true);
             $table->string('phone')->nullable(true);
-            $table->dateTime('last_password_update')->nullable(false);
-            $table->dateTime('creation_date')->nullable(false);
-            $table->dateTime('last_connexion')->nullable(true);
-            //EO pas de 'set' en postgresql (équivalent 'bit' mais pas supporté par Laravel)
-            $table->enum('status', ['Unconfirmed', 'Activated', 'Blocked','Deactivated'])->default('Unconfirmed')->nullable(false);
+            $table->dateTime('last_password_update', 6)->nullable(true);
+            $table->dateTime('creation_date', 6)->nullable(false);
+            $table->dateTime('last_connection', 6)->nullable(true);
+            $table->enum('status', ['Unconfirmed', 'Activated', 'Blocked'])->default('Unconfirmed')->nullable(false);
             $table->integer('attempts')->default(0)->nullable(false);
             $table->boolean('administrator')->default(false)->nullable(false);
             $table->unsignedInteger('center_code')->nullable(false);
@@ -38,6 +37,7 @@ class CreateUsersTable extends Migration
             $table->string('orthanc_login')->nullable(true);
             $table->string('orthanc_password')->nullable(true);
             $table->string('api_token', 80) ->unique()->nullable()->default(null);
+            $table->softDeletes();
             //SK rememberToken sert a CSRF, peut etre pas utile si JWT a documenter
             $table->rememberToken();
             $table->timestamps();

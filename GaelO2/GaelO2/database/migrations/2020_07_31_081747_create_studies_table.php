@@ -16,7 +16,7 @@ class CreateStudiesTable extends Migration
         Schema::create('studies', function (Blueprint $table) {
             $table->string('name')->primary();
             $table->string('patient_code_prefix')->default(null);
-            $table->boolean('active')->default(true);
+            $table->softDeletes();
             $table->timestamps();
         });
     }

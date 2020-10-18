@@ -3,17 +3,16 @@
 namespace App\GaelO\UseCases\CreateUser;
 
 class CreateUserRequest {
-    public string $lastname ;
-    public string $firstname ;
-    public string $username ;
-    public string $email ;
-    public string $password_temporary ;
-    public string $phone ;
-    public string $status;
+    public int $currentUserId;
+    public ?string $lastname = null;
+    public ?string $firstname = null;
+    public string $username;
+    public string $email;
+    public ?string $phone = null;
     public bool $administrator;
-    public int $center_code ;
+    public int $centerCode;
     public string $job;
-    public string $orthanc_address;
-    public string $orthanc_login;
-    public string $orthanc_password;
+    public ?string $orthancAddress = null;
+    public ?string $orthancLogin = null;
+    public ?string $orthancPassword = null;
 }
