@@ -8,7 +8,7 @@ RUN npm install
 RUN npm run build
 
 
-FROM php:7.4.10-apache
+FROM php:7.4.9-apache
 
 RUN apt-get update -qy && \
     apt-get install -y --no-install-recommends apt-utils\
@@ -28,7 +28,7 @@ RUN apt-get update -qy && \
     zip && \
     apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-RUN docker-php-ext-install zip pdo pdo_mysql pdo_pgsql mbstring bcmath ctype json tokenizer xml bz2
+RUN docker-php-ext-install zip pdo pdo_mysql pdo_pgsql mbstring bcmath ctype fileinfo json tokenizer xml bz2
 COPY php.ini /usr/local/etc/php/conf.d/app.ini
 
 RUN curl -s https://getcomposer.org/installer | php -- --install-dir=/usr/bin/ --filename=composer
