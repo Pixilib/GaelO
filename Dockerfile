@@ -49,7 +49,7 @@ WORKDIR $APP_HOME
 COPY --chown=www-data:www-data GaelO2/GaelO2 .
 COPY --from=react /FrontEnd/build $APP_HOME/public
 
-RUN composer install --no-dev --no-interaction
+RUN composer install --no-dev --no-interaction --verbose --no-cache
 
 EXPOSE 80
 
