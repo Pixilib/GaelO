@@ -47,6 +47,7 @@ ENV COMPOSER_ALLOW_SUPERUSER=1
 WORKDIR $APP_HOME
 
 COPY --chown=www-data:www-data GaelO2/GaelO2 .
+ADD .env.example .env
 COPY --from=react /FrontEnd/build $APP_HOME/public
 
 RUN composer install --no-dev --no-interaction --verbose --no-cache
