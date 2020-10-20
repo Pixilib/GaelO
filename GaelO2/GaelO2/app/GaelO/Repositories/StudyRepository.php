@@ -72,8 +72,8 @@ class StudyRepository implements PersistenceInterface {
     }
 
     public function getStudy(string $name) : StudyEntity {
-        $study = $this->find($name);
-        return StudyEntity::fillFromDBReponseArray($study);
+        $study = $this->study->where('name', $name)->get()->toArray();
+        return StudyEntity::fillFromDBReponseArray($study[0]);
     }
 }
 
