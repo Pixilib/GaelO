@@ -51,19 +51,7 @@ $unzipedPath = $_SERVER['DOCUMENT_ROOT'].'/data/upload/temp/'.$timeStamp.'_'.$id
 $visitObject=new Visit($id_visit, $linkpdo);
 $userObject=new User($username, $linkpdo);
 
-error_log($timeStamp);
-error_log($id_visit);
-error_log($nbOfInstances);
-error_log($anonFromOrthancId);
-error_log($username);
-error_log($study);
-error_log($role);
-error_log(print_r($tusFilesID, true));
-
 $accessCheck=$userObject->isVisitAllowed($id_visit, User::INVESTIGATOR);
-error_log($accessCheck);
-error_log($role == User::INVESTIGATOR);
-error_log($visitObject->uploadStatus);
 
 if ($accessCheck && $role == User::INVESTIGATOR && $visitObject->uploadStatus == Visit::NOT_DONE) {
 	
@@ -289,7 +277,6 @@ function get_tus_file($fileName) {
 		'headers' => ['Tus-Resumable' => '1.0.0']
     ]);
 	$downloadedFileName = tempnam(sys_get_temp_dir(), 'dicom');
-	error_log($downloadedFileName);
 
 	$resource  = fopen( $downloadedFileName, 'r+');
 	
@@ -306,12 +293,10 @@ function delete_tus_file($fileName){
 		'headers' => ['Tus-Resumable' => '1.0.0']
     ]);
 
-	$response = $client->request('DELETE', $fileName);
+	$client->request('DELETE', $fileName);
 	
-    $code = $response->getStatusCode(); // 200
-	$reason = $response->getReasonPhrase(); // OK
-	error_log($code);
-	error_log($reason);
+    //$code = $response->getStatusCode(); // 200
+	//$reason = $response->getReasonPhrase(); // OK
 
 }
 

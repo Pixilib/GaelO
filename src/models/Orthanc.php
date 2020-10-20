@@ -492,7 +492,6 @@ Class Orthanc {
 		foreach ($seriesObjects as $serie) {
 			if ($serie->isSecondaryCapture()) {
 				$this->deleteFromOrthanc("series", $serie->serieOrthancID);
-				error_log("Deleted SC");
 			}
 		}
     	
