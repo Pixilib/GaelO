@@ -8,23 +8,20 @@ use App\GaelO\UseCases\CreatePatient\CreatePatientResponse;
 use App\GaelO\UseCases\GetPatient\GetPatient;
 use App\GaelO\UseCases\GetPatient\GetPatientRequest;
 use App\GaelO\UseCases\GetPatient\GetPatientResponse;
-use App\GaelO\Util;
-use App\Preference;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class PatientController extends Controller
 {
-    public function createPatient(Request $request, CreatePatient $createPatient, CreatePatientRequest $createPatientRequest, CreatePatientResponse $createPatientResponse){
+    public function createPatient(string $studyName, Request $request, CreatePatient $createPatient, CreatePatientRequest $createPatientRequest, CreatePatientResponse $createPatientResponse){
 
         $currentUser = Auth::user();
-        $requestData = $request->all();
-        $createPatientRequest = Util::fillObject($requestData, $createPatientRequest);
-        $createPatientRequest->currentUserCode = $currentUser['code'];
+        $createPatientRequest->patients = $request->all() ;
+        $createPatientRequest->studyName = $studyName;
+        $createPatientRequest->currentUserCode = $currentUser['id'];
         $createPatient->execute($createPatientRequest, $createPatientResponse);
 
-        return response()->noContent()
-                ->setStatusCode($createPatientResponse->status, $createPatientResponse->statusText);
+        return response()->json($createPatientResponse->body)->setStatusCode($createPatientResponse->status, $createPatientResponse->statusText);
 
     }
 

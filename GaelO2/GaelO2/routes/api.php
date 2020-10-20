@@ -78,3 +78,4 @@ Route::put('users/{id}/password', 'UserController@changeUserPassword');
 Route::post('tools/reset-password', 'ToolsController@resetPassword');
 
 Route::get('patients/{code?}', 'PatientController@getPatient');
+Route::post('studies/{studyName}/patients', 'PatientController@createPatient');

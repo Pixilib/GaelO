@@ -2,7 +2,6 @@
 
 namespace App\GaelO\UseCases\CreatePatient;
 
-use App\GaelO\Adapters\LaravelFunctionAdapter;
 use App\GaelO\Constants\Constants;
 use App\GaelO\Interfaces\PersistenceInterface;
 
@@ -11,62 +10,41 @@ use App\GaelO\UseCases\CreatePatient\CreatePatientResponse;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Services\MailServices;
 use App\GaelO\Services\TrackerService;
-use App\GaelO\Util;
-use App\ImportPatient;
-use Illuminate\Support\Facades\Log;
+use App\GaelO\UseCases\CreatePatient\ImportPatient;
+use App\GaelO\UseCases\GetPatient\PatientEntity;
 
 class CreatePatient {
 
-    public function __construct(PersistenceInterface $persistenceInterface, TrackerService $trackerService, MailServices $mailService){
-        $this->persistenceInterface = $persistenceInterface;
+    public function __construct(TrackerService $trackerService, MailServices $mailService, ImportPatient $importPatient){
+        $this->importPatient = $importPatient;
         $this->trackerService = $trackerService;
         $this->mailService = $mailService;
      }
 
      public function execute(CreatePatientRequest $createPatientRequest, CreatePatientResponse $createPatientResponse) : void
     {
-        $data = get_object_vars($createPatientRequest);
-
-        $importPatient=new ImportPatient($_POST['json'], $_SESSION['study']);
-		$importPatient -> readJson();
-
-		//Build the Import report to send it by email
-		$htmlReport=$importPatient->getHTMLImportAnswer();
-        $textReport=$importPatient->getTextImportAnswer();
+        $arrayPatients = [];
+        foreach($createPatientRequest->patients as $patient) {
+            $arrayPatients[] = PatientEntity::fillFromRequest($patient);
+        }
+        $createPatientRequest->patients = $arrayPatients;
+        $this->importPatient->setPatientEntities($createPatientRequest->patients);
+        $this->importPatient->setStudyName($createPatientRequest->studyName);
 
         //Check form completion
         try {
 
-            $this->checkFormComplete($importPatient);
-            //In no Exception thrown by checks methods, data are ok to be written in db
-            $createdPatientEntity = $this->persistenceInterface->createPatient($createPatientRequest->code,
-            $createPatientRequest->firstname,
-            $createPatientRequest->lastname,
-            $createPatientRequest->gender,
-            $createPatientRequest->birthDay,
-            $createPatientRequest->birthMonth,
-            $createPatientRequest->birthYear,
-            $createPatientRequest->registrationDate,
-            $createPatientRequest->investigatorName,
-            $createPatientRequest->centerCode,
-            $createPatientRequest->studyName,
-            $createPatientRequest->withdraw,
-            $createPatientRequest->withdrawReason,
-            $createPatientRequest->withdrawDate);
+            $this->importPatient->import();
 
-           //save patient creation in tracker
-            $detailsTracker = [
-                'success'=> $createdPatientEntity['code']
-            ];
             //Save action in Tracker
-            $actionDetails = [ /*
-                'createdCenterCode'=>$code,
-                'createdCenterName'=>$name,
-                'createdCenterCountryCode'=>$countryCode */
-            ];
+            $actionDetails['Success']=$this->importPatient->successList;
+            $actionDetails['Fail']=$this->importPatient->failList;
 
-            $this->trackerService->writeAction($createPatientRequest->currentUserCode, Constants::TRACKER_ROLE_USER, null, null, Constants::TRACKER_IMPORT_PATIENT, $actionDetails);
-
+            $createPatientResponse->body = [ 'success' => $this->importPatient->successList, 'fail' => $this->importPatient->failList];
+            $createPatientResponse->status = 200;
+            $createPatientResponse->statusText = 'OK';
+            $this->trackerService->writeAction($createPatientRequest->currentUserCode, Constants::TRACKER_IMPORT_PATIENT, null, null, Constants::TRACKER_IMPORT_PATIENT, $actionDetails);
+            // + send email
         } catch (GaelOException $e) {
             //If Exception thrown by our buisness logic, handle it
             $createPatientResponse->status = 400;
@@ -77,11 +55,4 @@ class CreatePatient {
         }
     }
 
-    private function checkFormComplete(array $data) : void {
-        if(!isset($data['code'])
-        || !isset($data['registrationDate'])
-        || !isset($data['withdraw'])) {
-            throw new GaelOException('Form incomplete');
-        }
-    }
 }

@@ -72,6 +72,11 @@ class CenterRepository implements PersistenceInterface {
 
     }
 
+    public function getExistingCenter() : array {
+        $centers = $this->center->get()->pluck('code');
+        return empty($centers) ? [] : $centers->toArray();
+    }
+
 }
 
 ?>

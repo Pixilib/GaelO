@@ -4,6 +4,7 @@ namespace App\GaelO\Repositories;
 
 use App\Study;
 use App\GaelO\Interfaces\PersistenceInterface;
+use App\GaelO\UseCases\GetStudy\StudyEntity;
 use App\GaelO\Util;
 
 class StudyRepository implements PersistenceInterface {
@@ -24,8 +25,7 @@ class StudyRepository implements PersistenceInterface {
     }
 
     public function find($name){
-        $studies = $this->study->find($name)->get();
-        return $studies->count()> 0 ? $studies->toArray() : [] ;
+        return $this->study->find($name)->firstOrFail()->toArray();
     }
 
     public function delete($name) : void {
@@ -71,6 +71,10 @@ class StudyRepository implements PersistenceInterface {
         $this->study->withTrashed()->find($name)->restore();
     }
 
+    public function getStudy(string $name) : StudyEntity {
+        $study = $this->find($name);
+        return StudyEntity::fillFromDBReponseArray($study);
+    }
 }
 
 ?>

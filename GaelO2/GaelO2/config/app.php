@@ -137,6 +137,7 @@ return [
     'corporation' => env('APP_CORPORATION'),
     'mailFromAddress'=>env('MAIL_FROM_ADDRESS'),
     'mailReplyToDefault'=>env('MAIL_REPLY_TO_DEFAULT'),
+    'patientCodeLength'=>env('GAELO_PATIENT_CODE_LENGTH'),
 
     'providers' => [
 

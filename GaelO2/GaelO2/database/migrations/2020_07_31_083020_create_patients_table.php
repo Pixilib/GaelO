@@ -26,8 +26,8 @@ class CreatePatientsTable extends Migration
             $table->unsignedInteger('center_code')->default(null);
             $table->string('study_name')->default(null);
             $table->boolean('withdraw')->default(false)->nullable(false);
-            $table->string('withdraw_reason')->default(null);
-            $table->date('withdraw_date')->default(null);
+            $table->string('withdraw_reason')->nullable(true)->default(null);
+            $table->date('withdraw_date')->nullable(true)->default(null);
             $table->timestamps();
             //Dependencies
             $table->foreign('study_name')->references('name')->on('studies');
