@@ -24,37 +24,56 @@
 				buttons: [
 					{
 						extend: 'copy',
+						filename : 'GaelO_Tracker_Export',
 						exportOptions: {
-							columns: ':visible',
-							rows: ':visible'
+							modifier : {
+								order : 'index', // 'current', 'applied','index', 'original'
+								page : 'all', // 'all', 'current'
+								search : 'applied' // 'none', 'applied', 'removed'
+							}
 						}
 					},
 					{
 						extend: 'excel',
+						filename : 'GaelO_Tracker_Export',
 						exportOptions: {
-							columns: ':visible',
-							rows: ':visible'
+							modifier : {
+								order : 'index', // 'current', 'applied','index', 'original'
+								page : 'all', // 'all', 'current'
+								search : 'applied' // 'none', 'applied', 'removed'
+							}
 						}
 					},
 					{
 						extend: 'csv',
+						filename : 'GaelO_Tracker_Export',
 						exportOptions: {
-							columns: ':visible',
-							rows: ':visible'
+							modifier : {
+								order : 'index', // 'current', 'applied','index', 'original'
+								page : 'all', // 'all', 'current'
+								search : 'applied' // 'none', 'applied', 'removed'
+							}
 						}
 					},
 					{
 						extend: 'pdf',
+						filename : 'GaelO_Tracker_Export',
 						exportOptions: {
-							columns: ':visible',
-							rows: ':visible'
+							modifier : {
+								order : 'index', // 'current', 'applied','index', 'original'
+								page : 'all', // 'all', 'current'
+								search : 'applied' // 'none', 'applied', 'removed'
+							}
 						}
 					},
 					{
 						extend: 'print',
 						exportOptions: {
-							columns: ':visible',
-							rows: ':visible'
+							modifier : {
+								order : 'index', // 'current', 'applied','index', 'original'
+								page : 'all', // 'all', 'current'
+								search : 'applied' // 'none', 'applied', 'removed'
+							}
 						}
 					}
 					] }

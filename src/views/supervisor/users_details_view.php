@@ -14,11 +14,71 @@
  */
 ?>
 <script type="text/javascript">
-    $('#userRoles').DataTable( {
-    	"sDom": 'lrtip',
-    	"bSortCellsTop": true,
-    	"scrollX": true
-    });
+    $('#userRoles').DataTable({
+			"sDom": 'Blrtip',
+			"scrollX": true,
+			buttons: [{
+				extend: 'collection',
+				text: 'Export',
+				buttons: [
+					{
+						extend: 'copy',
+						exportOptions: {
+							modifier : {
+								order : 'index', // 'current', 'applied','index', 'original'
+								page : 'all', // 'all', 'current'
+								search : 'applied' // 'none', 'applied', 'removed'
+							}
+						}
+					},
+					{
+						extend: 'excel',
+						filename : '<?= $_SESSION['study']?>_Users_Details_Export',
+						exportOptions: {
+							modifier : {
+								order : 'index', // 'current', 'applied','index', 'original'
+								page : 'all', // 'all', 'current'
+								search : 'applied' // 'none', 'applied', 'removed'
+							}
+						}
+					},
+					{
+						extend: 'csv',
+						filename : '<?= $_SESSION['study']?>_Users_Details_Export',
+						exportOptions: {
+							modifier : {
+								order : 'index', // 'current', 'applied','index', 'original'
+								page : 'all', // 'all', 'current'
+								search : 'applied' // 'none', 'applied', 'removed'
+							}
+						}
+					},
+					{
+						extend: 'pdf',
+						filename : '<?= $_SESSION['study']?>_Users_Details_Export',
+						exportOptions: {
+							modifier : {
+								order : 'index', // 'current', 'applied','index', 'original'
+								page : 'all', // 'all', 'current'
+								search : 'applied' // 'none', 'applied', 'removed'
+							}
+						}
+					},
+					{
+						extend: 'print',
+						exportOptions: {
+							modifier : {
+								order : 'index', // 'current', 'applied','index', 'original'
+								page : 'all', // 'all', 'current'
+								search : 'applied' // 'none', 'applied', 'removed'
+							}
+						}
+					}
+					]
+			}],
+			"bSortCellsTop": true,
+			"iDisplayLength": 10
+		});
 
 	// Search function on datatable
 	$('#userDetailsRoles').on('keyup', ".column_search_user_role", function() {

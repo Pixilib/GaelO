@@ -235,8 +235,8 @@ class Visit {
 								WHERE (id_visit = :id_visit AND deleted=0)');
         
 		$update->execute(array('id_visit' => $this->id_visit));
-        
-		$this->refreshVisitData();
+		//Set visit to not review available (include a refresh of the current object)
+        $this->changeReviewAvailability(false);
         
 	}
     
@@ -334,10 +334,15 @@ class Visit {
 	 * @param bool $local
 	 * @return Review|Review[]
 	 */
-	public function getReviewsObject(bool $local) {
+	public function getReviewsObject(bool $local, bool $onlyValidated=false) {
+        if(!$onlyValidated){
+			$reviewQuery=$this->linkpdo->prepare('SELECT id_review FROM reviews WHERE id_visit=:idVisit AND deleted=0 AND is_local=:isLocal');
         
-		$reviewQuery=$this->linkpdo->prepare('SELECT id_review FROM reviews WHERE id_visit=:idVisit AND deleted=0 AND is_local=:isLocal');
+		}else{
+			$reviewQuery=$this->linkpdo->prepare('SELECT id_review FROM reviews WHERE id_visit=:idVisit AND deleted=0 AND validated=1 AND is_local=:isLocal');
         
+		}
+		
 		$reviewQuery->execute(array('idVisit' => $this->id_visit, 'isLocal'=>intval($local)));
 		$reviewResults=$reviewQuery->fetchAll(PDO::FETCH_COLUMN);
 
@@ -444,6 +449,8 @@ class Visit {
 				//Do this only if QC is not needed as supervisor will get QC notification otherwise (avoid dual mail)
 				$this->sendUploadNotificationToSupervisor();
 			}
+		}else if ($controlDecision == Visit::QC_REFUSED){
+			$this->changeReviewAvailability(false);
 		}
         
 	}

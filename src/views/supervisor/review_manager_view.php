@@ -42,7 +42,15 @@
 				<th><input type="text" placeholder="Search" class="column_search" style="max-width: 75px" /></th>
 				<th><input type="text" placeholder="Search" class="column_search" style="max-width: 75px" /></th>
 				<th><input type="text" placeholder="Search" class="column_search" style="max-width: 75px" /></th>
-				<th><input type="text" placeholder="Search" class="column_search" style="max-width: 75px" /></th>
+				<th>
+					<select type="text" placeholder="Search" class="column_search select_search" style="max-width:75px" >
+								<option value="">Choose</option>	
+								<option value="<?=Visit::REVIEW_DONE?>"><?=Visit::REVIEW_DONE?></option>
+								<option value="<?=Visit::REVIEW_NOT_DONE?>"><?=Visit::REVIEW_NOT_DONE?></option>
+								<option value="<?=Visit::REVIEW_ONGOING?>"><?=Visit::REVIEW_ONGOING?></option>
+								<option value="<?=Visit::REVIEW_WAIT_ADJUDICATION?>"><?=Visit::REVIEW_WAIT_ADJUDICATION?></option>
+					</select> 	
+				</th>
 				<th><input type="text" placeholder="Search" class="column_search" style="max-width: 75px" /></th>
 				<th><input type="text" placeholder="Search" class="column_search" style="max-width: 75px" /></th>
 			</tr>
@@ -63,36 +71,54 @@ $(document).ready(function () {
 					{
 						extend: 'copy',
 						exportOptions: {
-							columns: ':visible',
-							rows: ':visible'
+							modifier : {
+								order : 'index', // 'current', 'applied','index', 'original'
+								page : 'all', // 'all', 'current'
+								search : 'applied' // 'none', 'applied', 'removed'
+							}
 						}
 					},
 					{
 						extend: 'excel',
+						filename : '<?= $_SESSION['study']?>_Reviews_Export',
 						exportOptions: {
-							columns: ':visible',
-							rows: ':visible'
+							modifier : {
+								order : 'index', // 'current', 'applied','index', 'original'
+								page : 'all', // 'all', 'current'
+								search : 'applied' // 'none', 'applied', 'removed'
+							}
 						}
 					},
 					{
 						extend: 'csv',
+						filename : '<?= $_SESSION['study']?>_Reviews_Export',
 						exportOptions: {
-							columns: ':visible',
-							rows: ':visible'
+							modifier : {
+								order : 'index', // 'current', 'applied','index', 'original'
+								page : 'all', // 'all', 'current'
+								search : 'applied' // 'none', 'applied', 'removed'
+							}
 						}
 					},
 					{
 						extend: 'pdf',
+						filename : '<?= $_SESSION['study']?>_Reviews_Export',
 						exportOptions: {
-							columns: ':visible',
-							rows: ':visible'
+							modifier : {
+								order : 'index', // 'current', 'applied','index', 'original'
+								page : 'all', // 'all', 'current'
+								search : 'applied' // 'none', 'applied', 'removed'
+							}
 						}
 					},
 					{
 						extend: 'print',
 						exportOptions: {
-							columns: ':visible',
-							rows: ':visible'
+							modifier : {
+								order : 'index', // 'current', 'applied','index', 'original'
+								page : 'all', // 'all', 'current'
+								search : 'applied' // 'none', 'applied', 'removed'
+							}
 						}
 					}
 					]
@@ -122,9 +148,16 @@ $(document).ready(function () {
 	});
 
 	// Search function on datatable
-	$('#reviewTableDiv').on('keyup', ".column_search", function() {
-		reviewTable.DataTable()
-			.column($(this).parent().index())
+	$('#reviewTableDiv').on('change keyup', ".column_search", function() {
+			let searchValue = this.value
+			let regex = false
+
+			if($(this).prop("class").includes('select_search') && this.value != ""){
+				searchValue = "^"+this.value+"$"
+				regex = true
+			}
+
+			reviewTable.column($(this).parent().index())
 			.search(this.value)
 			.draw();
 	});

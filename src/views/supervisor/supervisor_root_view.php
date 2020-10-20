@@ -91,61 +91,6 @@
 			$("#documentation").dialog("open");
 		});
 
-		$('#userRoles').DataTable({
-			"sDom": 'Blrtip',
-			"scrollX": true,
-			buttons: [{
-				extend: 'collection',
-				text: 'Export',
-				buttons: [
-					{
-						extend: 'copy',
-						exportOptions: {
-							columns: ':visible',
-							rows: ':visible'
-						}
-					},
-					{
-						extend: 'excel',
-						exportOptions: {
-							columns: ':visible',
-							rows: ':visible'
-						}
-					},
-					{
-						extend: 'csv',
-						exportOptions: {
-							columns: ':visible',
-							rows: ':visible'
-						}
-					},
-					{
-						extend: 'pdf',
-						exportOptions: {
-							columns: ':visible',
-							rows: ':visible'
-						}
-					},
-					{
-						extend: 'print',
-						exportOptions: {
-							columns: ':visible',
-							rows: ':visible'
-						}
-					}
-					]
-			}],
-			"bSortCellsTop": true,
-			"iDisplayLength": 5
-		});
-
-		$('#patientInformation').on('keyup', ".column_search_roles", function() {
-			$('#userRoles').DataTable()
-				.column($(this).parent().index())
-				.search(this.value)
-				.draw();
-		});
-
 		//Build the datatable dysplaying each visit status
 		$('#tableau').DataTable({
 			"sDom": 'Blrtip',
@@ -157,36 +102,54 @@
 					{
 						extend: 'copy',
 						exportOptions: {
-							columns: ':visible',
-							rows: ':visible'
+							modifier : {
+								order : 'index', // 'current', 'applied','index', 'original'
+								page : 'all', // 'all', 'current'
+								search : 'applied' // 'none', 'applied', 'removed'
+							}
 						}
 					},
 					{
 						extend: 'excel',
+						filename : '<?= $_SESSION['study']?>_Visits_Export',
 						exportOptions: {
-							columns: ':visible',
-							rows: ':visible'
+							modifier : {
+								order : 'index', // 'current', 'applied','index', 'original'
+								page : 'all', // 'all', 'current'
+								search : 'applied' // 'none', 'applied', 'removed'
+							}
 						}
 					},
 					{
 						extend: 'csv',
+						filename : '<?= $_SESSION['study']?>_Visits_Export',
 						exportOptions: {
-							columns: ':visible',
-							rows: ':visible'
+							modifier : {
+								order : 'index', // 'current', 'applied','index', 'original'
+								page : 'all', // 'all', 'current'
+								search : 'applied' // 'none', 'applied', 'removed'
+							}
 						}
 					},
 					{
 						extend: 'pdf',
+						filename : '<?= $_SESSION['study']?>_Visits_Export',
 						exportOptions: {
-							columns: ':visible',
-							rows: ':visible'
+							modifier : {
+								order : 'index', // 'current', 'applied','index', 'original'
+								page : 'all', // 'all', 'current'
+								search : 'applied' // 'none', 'applied', 'removed'
+							}
 						}
 					},
 					{
 						extend: 'print',
 						exportOptions: {
-							columns: ':visible',
-							rows: ':visible'
+							modifier : {
+								order : 'index', // 'current', 'applied','index', 'original'
+								page : 'all', // 'all', 'current'
+								search : 'applied' // 'none', 'applied', 'removed'
+							}
 						}
 					}
 					]
@@ -269,10 +232,18 @@
 		});
 
 		// Apply the search
-		$('#visitStatusDiv').on('keyup', ".column_search", function() {
+		$('#visitStatusDiv').on('change keyup', ".column_search", function() {
+			let searchValue = this.value
+			let regex = false
+
+			if($(this).prop("class").includes('select_search') && this.value != ""){
+				searchValue = "^"+this.value+"$"
+				regex = true
+			}
+
 			$('#tableau').DataTable()
 				.column($(this).parent().index())
-				.search(this.value)
+				.search(searchValue, regex)
 				.draw();
 		});
 
@@ -285,36 +256,54 @@
 					{
 						extend: 'copy',
 						exportOptions: {
-							columns: ':visible',
-							rows: ':visible'
+							modifier : {
+								order : 'index', // 'current', 'applied','index', 'original'
+								page : 'all', // 'all', 'current'
+								search : 'applied' // 'none', 'applied', 'removed'
+							}
 						}
 					},
 					{
 						extend: 'excel',
+						filename : '<?= $_SESSION['study']?>_Patients_Export',
 						exportOptions: {
-							columns: ':visible',
-							rows: ':visible'
+							modifier : {
+								order : 'index', // 'current', 'applied','index', 'original'
+								page : 'all', // 'all', 'current'
+								search : 'applied' // 'none', 'applied', 'removed'
+							}
 						}
 					},
 					{
 						extend: 'csv',
+						filename : '<?= $_SESSION['study']?>_Patients_Export',
 						exportOptions: {
-							columns: ':visible',
-							rows: ':visible'
+							modifier : {
+								order : 'index', // 'current', 'applied','index', 'original'
+								page : 'all', // 'all', 'current'
+								search : 'applied' // 'none', 'applied', 'removed'
+							}
 						}
 					},
 					{
 						extend: 'pdf',
+						filename : '<?= $_SESSION['study']?>_Patients_Export',
 						exportOptions: {
-							columns: ':visible',
-							rows: ':visible'
+							modifier : {
+								order : 'index', // 'current', 'applied','index', 'original'
+								page : 'all', // 'all', 'current'
+								search : 'applied' // 'none', 'applied', 'removed'
+							}
 						}
 					},
 					{
 						extend: 'print',
 						exportOptions: {
-							columns: ':visible',
-							rows: ':visible'
+							modifier : {
+								order : 'index', // 'current', 'applied','index', 'original'
+								page : 'all', // 'all', 'current'
+								search : 'applied' // 'none', 'applied', 'removed'
+							}
 						}
 					}
 					]
@@ -324,7 +313,15 @@
 		});
 
 
-		$('#patientInformation').on('keyup', ".column_search", function() {
+		$('#patientInformation').on('change keyup', ".column_search", function() {
+			let searchValue = this.value
+			let regex = false
+
+			if($(this).prop("class").includes('select_search') && this.value != ""){
+				searchValue = "^"+this.value+"$"
+				regex = true
+			}
+
 			$('#table_patient_informations').DataTable()
 				.column($(this).parent().index())
 				.search(this.value)
@@ -410,7 +407,13 @@
 					<th><input type="text" placeholder="Search" class="column_search" style="max-width:75px" /> </th>
 					<th><input type="text" placeholder="Search" class="column_search" style="max-width:75px" /> </th>
 					<th><input type="text" placeholder="Search" class="column_search" style="max-width:75px" /> </th>
-					<th><input type="text" placeholder="Search" class="column_search" style="max-width:75px" /> </th>
+					<th>
+						<select type="text" placeholder="Search" class="column_search select_search" style="max-width:75px" >
+							<option value="">Choose</option>	
+							<option value="Included">Included</option>
+							<option value="Withdrawn">Withdrawn</option>
+						</select> 			
+					</th>
 					<th><input type="text" placeholder="Search" class="column_search" style="max-width:75px" /> </th>
 					<th><input type="text" placeholder="Search" class="column_search" style="max-width:75px" /> </th>
 				</tr>
@@ -465,11 +468,48 @@
     				<th><input type="text" placeholder="Search" class="column_search" style="max-width:75px" /></th>
     				<th><input type="text" placeholder="Search" class="column_search" style="max-width:75px" /></th>
     				<th><input type="text" placeholder="Search" class="column_search" style="max-width:75px" /></th>
-    				<th><input type="text" placeholder="Search" class="column_search" style="max-width:75px" /></th>
-    				<th><input type="text" placeholder="Search" class="column_search" style="max-width:75px" /></th>
-    				<th><input type="text" placeholder="Search" class="column_search" style="max-width:75px" /></th>
-    				<th><input type="text" placeholder="Search" class="column_search" style="max-width:75px" /></th>
-    				<th><input type="text" placeholder="Search" class="column_search" style="max-width:75px" /></th>
+    				<th>
+						<select type="text" placeholder="Search" class="column_search select_search" style="max-width:75px" >
+							<option value="">Choose</option>	
+							<option value="<?=Visit::DONE?>"> <?=Visit::DONE?> </option>
+							<option value="<?=Visit::NOT_DONE?>"> <?=Visit::NOT_DONE?> </option>
+						</select>
+					</th>
+    				<th>
+						<select type="text" placeholder="Search" class="column_search select_search" style="max-width:75px" >
+							<option value="">Choose</option>	
+							<option value="<?=Visit::DONE?>" > <?=Visit::DONE?></option>
+							<option value="<?=Visit::UPLOAD_PROCESSING?>"> <?=Visit::UPLOAD_PROCESSING?> </option>
+							<option value="<?=Visit::NOT_DONE?>"> <?=Visit::NOT_DONE?> </option>
+						</select>
+					</th>
+    				<th>
+						<select type="text" placeholder="Search" class="column_search select_search" style="max-width:75px" >
+							<option value="">Choose</option>	
+							<option value="<?=Visit::LOCAL_FORM_NOT_DONE?>"> <?=Visit::LOCAL_FORM_NOT_DONE?> </option>
+							<option value="<?=Visit::LOCAL_FORM_DRAFT?>"> <?=Visit::LOCAL_FORM_DRAFT?> </option>
+							<option value="<?=Visit::LOCAL_FORM_DONE?>"> <?=Visit::LOCAL_FORM_DONE?> </option>
+						</select> 
+					</th>
+    				<th>
+						<select type="text" placeholder="Search" class="column_search select_search" style="max-width:75px" >
+							<option value="">Choose</option>
+							<option value="<?=Visit::QC_NOT_DONE?>"> <?=Visit::QC_NOT_DONE?> </option>
+							<option value="<?=Visit::QC_CORRECTIVE_ACTION_ASKED?>"> <?=Visit::QC_CORRECTIVE_ACTION_ASKED?> </option>
+							<option value="<?=Visit::QC_WAIT_DEFINITVE_CONCLUSION?>"> <?=Visit::QC_WAIT_DEFINITVE_CONCLUSION?> </option>
+							<option value="<?=Visit::QC_ACCEPTED?>"> <?=Visit::QC_ACCEPTED?> </option>
+							<option value="<?=Visit::QC_REFUSED?>"> <?=Visit::QC_REFUSED?> </option>	
+						</select> 
+					</th>
+    				<th>
+						<select type="text" placeholder="Search" class="column_search select_search" style="max-width:75px" >
+							<option value="">Choose</option>	
+							<option value="<?=Visit::REVIEW_NOT_DONE?>" > <?=Visit::REVIEW_NOT_DONE?> </option>
+							<option value="<?=Visit::REVIEW_ONGOING?>" > <?=Visit::REVIEW_ONGOING?> </option>
+							<option value="<?=Visit::REVIEW_WAIT_ADJUDICATION?>" > <?=Visit::REVIEW_WAIT_ADJUDICATION?> </option>
+							<option value="<?=Visit::REVIEW_DONE?>" > <?=Visit::REVIEW_DONE?> </option>
+						</select> 		
+					</th>
     			</tr>
     		</thead>
     	</table>
