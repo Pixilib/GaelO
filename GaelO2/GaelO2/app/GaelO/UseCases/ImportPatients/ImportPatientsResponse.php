@@ -1,8 +1,8 @@
 <?php
 
-namespace App\GaelO\UseCases\CreatePatient;
+namespace App\GaelO\UseCases\ImportPatients;
 
-class CreatePatientResponse {
+class ImportPatientsResponse {
     public array $body;
     public int $status;
     public string $statusText;

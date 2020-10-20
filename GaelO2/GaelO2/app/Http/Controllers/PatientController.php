@@ -16,17 +16,6 @@ use Illuminate\Support\Facades\Auth;
 
 class PatientController extends Controller
 {
-    public function createPatient(string $studyName, Request $request, CreatePatient $createPatient, CreatePatientRequest $createPatientRequest, CreatePatientResponse $createPatientResponse){
-
-        $currentUser = Auth::user();
-        $createPatientRequest->patients = $request->all() ;
-        $createPatientRequest->studyName = $studyName;
-        $createPatientRequest->currentUserCode = $currentUser['id'];
-        $createPatient->execute($createPatientRequest, $createPatientResponse);
-
-        return response()->json($createPatientResponse->body)->setStatusCode($createPatientResponse->status, $createPatientResponse->statusText);
-
-    }
 
     public function getPatient(int $code=0, GetPatientRequest $getPatientRequest, GetPatientResponse $getPatientResponse, GetPatient $getPatient) {
         $getPatientRequest->code = $code;

@@ -1,14 +1,13 @@
 <?php
 
-namespace App\GaelO\UseCases\CreatePatient;
+namespace App\GaelO\Services;
 
 use App\GaelO\Adapters\LaravelFunctionAdapter;
 use App\GaelO\Repositories\CenterRepository;
 use App\GaelO\Repositories\PatientRepository;
 use App\GaelO\Repositories\StudyRepository;
-use Illuminate\Support\Facades\Log;
 
-class ImportPatient
+class ImportPatientService
 {
     /**
      * Import patient in study

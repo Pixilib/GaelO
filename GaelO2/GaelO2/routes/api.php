@@ -68,7 +68,7 @@ Route::middleware(['auth:api', 'refresh_token'])->group(function () {
 
     Route::get('patients/{code?}', 'PatientController@getPatient');
     Route::get('studies/{studyName}/patients', 'PatientController@getPatientFromStudy');
-    Route::post('studies/{studyName}/patients', 'PatientController@createPatient');
+    Route::post('studies/{studyName}/import-patients', 'StudyController@importPatients');
 
 });
 

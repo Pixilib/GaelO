@@ -50,10 +50,10 @@ class ImportPatientTest extends TestCase
 
     public function testCreatePatient() {
         //Test patient creation
-        $resp = $this->json('POST', '/api/studies/test/patients', $this->validPayload)->assertSuccessful();
+        $resp = $this->json('POST', '/api/studies/test/import-patients', $this->validPayload)->assertSuccessful();
 
         //Test that copies of existing patients don't insert
-        $this->json('POST', '/api/studies/test/patients', $this->validPayload);
+        $this->json('POST', '/api/studies/test/import-patients', $this->validPayload);
         $this->json('GET', '/api/patients/0')->assertJsonCount(1);
 
         //assertion on fails and successes
@@ -63,20 +63,20 @@ class ImportPatientTest extends TestCase
 
     public function testCreateWrongDayOfBirth() {
         $this->validPayload[0]['birthDay'] = 0;
-        $resp = $this->json('POST', '/api/studies/test/patients', $this->validPayload);
+        $resp = $this->json('POST', '/api/studies/test/import-patients', $this->validPayload);
         //Check that inserting patient failed because day of birth was incorrect
         $this->assertEmpty($resp['success']);
         $this->assertNotEmpty($resp['fail']['Incorrect Birthdate day format']);
         $this->assertEquals(12341231234123, $resp['fail']['Incorrect Birthdate day format'][0]);
 
         $this->validPayload[0]['birthDay'] = 32;
-        $resp = $this->json('POST', '/api/studies/test/patients', $this->validPayload);
+        $resp = $this->json('POST', '/api/studies/test/import-patients', $this->validPayload);
         $this->assertEmpty($resp['success']);
         $this->assertNotEmpty($resp['fail']['Incorrect Birthdate day format']);
         $this->assertEquals(12341231234123, $resp['fail']['Incorrect Birthdate day format'][0]);
 
         $this->validPayload[0]['birthDay'] = null;
-        $resp = $this->json('POST', '/api/studies/test/patients', $this->validPayload);
+        $resp = $this->json('POST', '/api/studies/test/import-patients', $this->validPayload);
         $this->assertEmpty($resp['success']);
         $this->assertNotEmpty($resp['fail']['Incorrect Birthdate day format']);
         $this->assertEquals(12341231234123, $resp['fail']['Incorrect Birthdate day format'][0]);
@@ -85,20 +85,20 @@ class ImportPatientTest extends TestCase
 
     public function testCreateWrongMonthOfBirth() {
         $this->validPayload[0]['birthMonth'] = 0;
-        $resp = $this->json('POST', '/api/studies/test/patients', $this->validPayload);
+        $resp = $this->json('POST', '/api/studies/test/import-patients', $this->validPayload);
         //Check that inserting patient failed because day of birth was incorrect
         $this->assertEmpty($resp['success']);
         $this->assertNotEmpty($resp['fail']['Incorrect Birthdate month format']);
         $this->assertEquals(12341231234123, $resp['fail']['Incorrect Birthdate month format'][0]);
 
         $this->validPayload[0]['birthMonth'] = 13;
-        $resp = $this->json('POST', '/api/studies/test/patients', $this->validPayload);
+        $resp = $this->json('POST', '/api/studies/test/import-patients', $this->validPayload);
         $this->assertEmpty($resp['success']);
         $this->assertNotEmpty($resp['fail']['Incorrect Birthdate month format']);
         $this->assertEquals(12341231234123, $resp['fail']['Incorrect Birthdate month format'][0]);
 
         $this->validPayload[0]['birthMonth'] = null;
-        $resp = $this->json('POST', '/api/studies/test/patients', $this->validPayload);
+        $resp = $this->json('POST', '/api/studies/test/import-patients', $this->validPayload);
         $this->assertEmpty($resp['success']);
         $this->assertNotEmpty($resp['fail']['Incorrect Birthdate month format']);
         $this->assertEquals(12341231234123, $resp['fail']['Incorrect Birthdate month format'][0]);
@@ -107,20 +107,20 @@ class ImportPatientTest extends TestCase
 
     public function testCreateWrongYearOfBirth() {
         $this->validPayload[0]['birthYear'] = 1800;
-        $resp = $this->json('POST', '/api/studies/test/patients', $this->validPayload);
+        $resp = $this->json('POST', '/api/studies/test/import-patients', $this->validPayload);
         //Check that inserting patient failed because day of birth was incorrect
         $this->assertEmpty($resp['success']);
         $this->assertNotEmpty($resp['fail']['Incorrect Birthdate year format']);
         $this->assertEquals(12341231234123, $resp['fail']['Incorrect Birthdate year format'][0]);
 
         $this->validPayload[0]['birthYear'] = 3010;
-        $resp = $this->json('POST', '/api/studies/test/patients', $this->validPayload);
+        $resp = $this->json('POST', '/api/studies/test/import-patients', $this->validPayload);
         $this->assertEmpty($resp['success']);
         $this->assertNotEmpty($resp['fail']['Incorrect Birthdate year format']);
         $this->assertEquals(12341231234123, $resp['fail']['Incorrect Birthdate year format'][0]);
 
         $this->validPayload[0]['birthYear'] = null;
-        $resp = $this->json('POST', '/api/studies/test/patients', $this->validPayload);
+        $resp = $this->json('POST', '/api/studies/test/import-patients', $this->validPayload);
         $this->assertEmpty($resp['success']);
         $this->assertNotEmpty($resp['fail']['Incorrect Birthdate year format']);
         $this->assertEquals(12341231234123, $resp['fail']['Incorrect Birthdate year format'][0]);
@@ -128,8 +128,8 @@ class ImportPatientTest extends TestCase
     }
 
     public function testCreateAlreadyKnownPatient(){
-        $this->json('POST', '/api/studies/test/patients', $this->validPayload);
-        $resp = $this->json('POST', '/api/studies/test/patients', $this->validPayload);
+        $this->json('POST', '/api/studies/test/import-patients', $this->validPayload);
+        $resp = $this->json('POST', '/api/studies/test/import-patients', $this->validPayload);
         $this->assertEmpty($resp['success']);
         $this->assertNotEmpty($resp['fail']['Existing Patient Code']);
         $this->assertEquals(12341231234123, $resp['fail']['Existing Patient Code'][0]);
@@ -137,7 +137,7 @@ class ImportPatientTest extends TestCase
 
     public function testIncorrectPatientCodeLength(){
         $this->validPayload[0]['code'] = 123;
-        $resp = $this->json('POST', '/api/studies/test/patients', $this->validPayload);
+        $resp = $this->json('POST', '/api/studies/test/import-patients', $this->validPayload);
         $this->assertEmpty($resp['success']);
         $this->assertNotEmpty($resp['fail']['Incorrect Patient Code Length']);
         $this->assertEquals(123, $resp['fail']['Incorrect Patient Code Length'][0]);
@@ -145,7 +145,7 @@ class ImportPatientTest extends TestCase
 
     public function testIncorrectPatientPrefix(){
         $this->validPayload[0]['code'] = 12431234123412;
-        $resp = $this->json('POST', '/api/studies/test/patients', $this->validPayload);
+        $resp = $this->json('POST', '/api/studies/test/import-patients', $this->validPayload);
         $this->assertEmpty($resp['success']);
         $this->assertNotEmpty($resp['fail']['Wrong Patient Prefix']);
         $this->assertEquals(12431234123412, $resp['fail']['Wrong Patient Prefix'][0]);

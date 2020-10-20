@@ -20,7 +20,7 @@ class StudyRepositoryProvider extends ServiceProvider
             \App\GaelO\UseCases\GetVisitGroupFromStudy\GetVisitGroup::class,
             \App\GaelO\UseCases\GetStudyDetails\GetStudyDetails::class,
             \App\GaelO\UseCases\ReactivateStudy\ReactivateStudy::class,
-            \App\GaelO\UseCases\CreatePatient\ImportPatient::class])
+            \App\GaelO\Services\ImportPatientsService::class])
         ->needs(\App\GaelO\Interfaces\PersistenceInterface::class)
         ->give(\App\GaelO\Repositories\StudyRepository::class);
     }
