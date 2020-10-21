@@ -15,12 +15,12 @@ class CreatePatientsTable extends Migration
     {
         Schema::create('patients', function (Blueprint $table) {
             $table->unsignedBigInteger('code')->primary();
-            $table->string('first_name')->default(null);
-            $table->string('last_name')->default(null);
+            $table->string('first_name')->nullable(true)->default(null);
+            $table->string('last_name')->nullable(true)->default(null);
             $table->enum('gender', ['M', 'F'])->nullable(true)->default(null);
-            $table->integer('birth_day')->default(null);
-            $table->integer('birth_month')->default(null);
-            $table->integer('birth_year')->default(null);
+            $table->integer('birth_day')->nullable(true)->default(null);
+            $table->integer('birth_month')->nullable(true)->default(null);
+            $table->integer('birth_year')->nullable(true)->default(null);
             $table->date('registration_date')->nullable(false);
             $table->string('investigator_name')->default(null);
             $table->unsignedInteger('center_code')->default(null);

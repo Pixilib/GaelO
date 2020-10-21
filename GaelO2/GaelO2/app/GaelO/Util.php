@@ -3,10 +3,12 @@
 namespace App\GaelO;
 
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 
 class Util {
 
     public static function fillObject (array $dataToExtract, object $dataToFill) {
+        Log::info($dataToExtract);
         foreach($dataToExtract as $property => $value) {
             if (isset($value)) $dataToFill->$property = $dataToExtract[$property];
             else $dataToFill->$property = null;

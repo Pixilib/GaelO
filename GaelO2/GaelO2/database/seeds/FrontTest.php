@@ -30,6 +30,26 @@ class FrontTest extends Seeder
                 'patient_code_prefix' => '123'
             ]);
 
+            DB::table('roles')->insert([
+                'name' => 'Supervisor',
+                'user_id' => '1',
+                'study_name' => 'Study test',
+            ]);
+            DB::table('roles')->insert([
+                'name' => 'Monitor',
+                'user_id' => '1',
+                'study_name' => 'Study test',
+            ]);
+            DB::table('roles')->insert([
+                'name' => 'Investigator',
+                'user_id' => '1',
+                'study_name' => 'Study test',
+            ]);
+            DB::table('roles')->insert([
+                'name' => 'Controller',
+                'user_id' => '1',
+                'study_name' => 'Study test',
+            ]);
             //factory(Patient::class, 5)->create();
 
             DB::table('patients')->insert([

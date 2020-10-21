@@ -2,10 +2,12 @@
 
 namespace App\GaelO\UseCases\GetPatient;
 
+use Illuminate\Support\Facades\Log;
+
 class PatientEntity {
     public int $code;
-    public ?string $firstname;
-    public ?string $lastname;
+    public ?string $firstName;
+    public ?string $lastName;
     public ?string $gender;
     public ?int $birthDay;
     public ?int $birthMonth;
@@ -21,8 +23,8 @@ class PatientEntity {
     public static function fillFromDBReponseArray(array $array){
         $patientEntity  = new PatientEntity();
         $patientEntity->code = $array['code'];
-        $patientEntity->lastname = $array['last_name'];
-        $patientEntity->firstname = $array['first_name'];
+        $patientEntity->lastName = $array['last_name'];
+        $patientEntity->firstName = $array['first_name'];
         $patientEntity->birthDay = $array['birth_day'];
         $patientEntity->birthMonth = $array['birth_month'];
         $patientEntity->birthYear = $array['birth_year'];
@@ -40,8 +42,8 @@ class PatientEntity {
     public static function fillFromRequest(array $array) {
         $patientEntity = new PatientEntity();
         $patientEntity->code = $array['code'];
-        $patientEntity->lastname = $array['lastname'];
-        $patientEntity->firstname = $array['firstname'];
+        $patientEntity->lastName = $array['lastName'];
+        $patientEntity->firstName = $array['firstName'];
         $patientEntity->birthDay = $array['birthDay'];
         $patientEntity->birthMonth = $array['birthMonth'];
         $patientEntity->birthYear = $array['birthYear'];

@@ -62,13 +62,13 @@ class ImportPatientService
     }
 
     private function checkCorrectDate(?int $days, ?int $months, ?int $year) : void {
-        if (!$days || $days < 1 || $days > 31) {
+        if ($days !== null && ($days < 1 || $days > 31)) {
             throw new \Exception('Incorrect Birthdate day format');
         }
-        if (!$months || $months < 1 || $months > 12) {
+        if ($months !== null && ($months < 1 || $months > 12)) {
             throw new \Exception('Incorrect Birthdate month format');
         }
-        if (!$year || $year < 1900 || $year > 3000) {
+        if ($year !== null && ($year < 1900 || $year > 3000)) {
             throw new \Exception('Incorrect Birthdate year format');
         }
     }
