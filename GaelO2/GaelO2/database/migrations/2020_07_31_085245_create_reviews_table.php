@@ -15,6 +15,7 @@ class CreateReviewsTable extends Migration
     {
         Schema::create('reviews', function (Blueprint $table) {
             $table->id();
+            $table->string('study_name')->nullable(false);
             $table->unsignedBigInteger('visit_id')->nullable(false);
             $table->unsignedBigInteger('user_id')->nullable(false);
             $table->dateTime('review_date', 6)->nullable(false);
@@ -26,6 +27,7 @@ class CreateReviewsTable extends Migration
             $table->softDeletes();
             $table->timestamps();
             //Dependencies
+            $table->foreign('study_name')->references('name')->on('studies');
             $table->foreign('visit_id')->references('id')->on('visits');
             $table->foreign('user_id')->references('id')->on('users');
         });
