@@ -36,6 +36,15 @@ class VisitRepository implements PersistenceInterface {
         return empty($visits) ? []  : $visits->toArray();
     }
 
+    public function getReviewsInStudy(string $studyName){
+        $reviews = $this->visit->reviews()->where([['study_name', '=', $studyName]])->get();
+        return empty($reviews) ? []  : $reviews->toArray();
+    }
+
+    public function getReviewStatusInStudy(string $studyName){
+        return $this->visit->reviewStatus()->where([['study_name', '=', $studyName]])->firstOrFail()->toArray();
+    }
+
 }
 
 ?>

@@ -38,10 +38,6 @@ class CreateVisitsTable extends Migration
             $table->boolean('corrective_action_investigator_form')->default(null);
             $table->text('corrective_action_other');
             $table->boolean('corrective_action_decision')->default(null);
-            $table->boolean('review_available')->nullable(false)->default(false);
-            $table->enum('review_status', ['Not Done', 'Not Needed', 'Ongoing','Wait Adjudication','Done'])->nullable(false)->default('Not Done');
-            $table->text('review_conclusion_value');
-            $table->dateTime('review_conclusion_date', 6)->default(null);
             $table->dateTime('last_reminder_upload', 6)->default(null);
             $table->softDeletes();
             $table->timestamps();
