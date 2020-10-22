@@ -31,6 +31,23 @@ class VisitRepository implements PersistenceInterface {
         $this->visit->find($id)->delete();
     }
 
+    public function createVisit(int $creatorUserId, int $patientCode, ?string $acquisitionDate, int $visitTypeId,
+        string $statusDone, ?string $reasonForNotDone, string $stateInvestigatorForm, string $stateQualityControl){
+
+        $data = [
+            'creator_user_id' => $creatorUserId,
+            'patient_code' => $patientCode,
+            'acquisition_date' => $acquisitionDate,
+            'visit_type_id' => $visitTypeId,
+            'status_done' => $statusDone,
+            'reason_for_not_done' => $reasonForNotDone,
+            'creation_date' => Util::now(),
+            'state_investigator_form' => $stateInvestigatorForm,
+            'state_quality_control' => $stateQualityControl
+        ];
+        $this->create($data);
+    }
+
     public function getAll() : array {
         $visits = $this->visit->get();
         return empty($visits) ? []  : $visits->toArray();
@@ -44,6 +61,12 @@ class VisitRepository implements PersistenceInterface {
     public function getReviewStatusInStudy(string $studyName){
         return $this->visit->reviewStatus()->where([['study_name', '=', $studyName]])->firstOrFail()->toArray();
     }
+
+    public function isExistingVisit(int $patientCode, int $visitTypeId) : bool {
+        $visit = $this->visit->where([['patient_code', '=', $patientCode], ['visit_type_id', '=', $visitTypeId]])->get();
+        return $visit->count() > 0 ? true : false;
+    }
+
 
 }
 

@@ -4,7 +4,7 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 
-class VisitTypeProvider extends ServiceProvider
+class VisitProvider extends ServiceProvider
 {
     /**
      * Register services.
@@ -14,12 +14,11 @@ class VisitTypeProvider extends ServiceProvider
     public function register()
     {
         $this->app->when(
-            [\App\GaelO\UseCases\CreateVisitType\CreateVisitType::class,
-            \App\GaelO\UseCases\GetVisitType\GetVisitType::class,
-            \App\GaelO\UseCases\DeleteVisitType\DeleteVisitType::class,
+            [\App\GaelO\UseCases\CreateVisit\CreateVisit::class,
+            \App\GaelO\UseCases\GetVisit\GetVisit::class,
             \App\GaelO\Services\VisitService::class])
         ->needs(\App\GaelO\Interfaces\PersistenceInterface::class)
-        ->give(\App\GaelO\Repositories\VisitTypeRepository::class);
+        ->give(\App\GaelO\Repositories\VisitRepository::class);
     }
 
     /**

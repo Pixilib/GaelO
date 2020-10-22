@@ -70,6 +70,8 @@ Route::middleware(['auth:api', 'refresh_token'])->group(function () {
     Route::get('studies/{studyName}/patients', 'PatientController@getPatientFromStudy');
     Route::post('studies/{studyName}/import-patients', 'StudyController@importPatients');
 
+    Route::post('studies/{studyName}/visit-groups/{visitGroupId}/visit-types/{visitTypeId}/visits', 'VisitController@createVisit');
+    Route::get('studies/{studyName}/visit-groups/{visitGroupId}/visit-types/{visitTypeId}/visits/{id}', 'VisitController@getVisit');
 });
 
 //Mail Route
