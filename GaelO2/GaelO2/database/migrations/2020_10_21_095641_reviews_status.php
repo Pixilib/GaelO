@@ -19,8 +19,8 @@ class ReviewsStatus extends Migration
             $table->string('study_name')->nullable(false);
             $table->boolean('review_available')->nullable(false)->default(false);
             $table->enum('review_status', ['Not Done', 'Not Needed', 'Ongoing','Wait Adjudication','Done'])->nullable(false)->default('Not Done');
-            $table->text('review_conclusion_value')->default(null);
-            $table->dateTime('review_conclusion_date', 6)->default(null);
+            $table->text('review_conclusion_value')->nullable(true)->default(null);
+            $table->dateTime('review_conclusion_date', 6)->nullable(true)->default(null);
 
             //A visit ID in a Study have only one status
             $table->unique(['study_name', 'visit_id']);
