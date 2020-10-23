@@ -48,7 +48,55 @@ class ImportPatientTest extends TestCase
         );
     }
 
-    public function testCreatePatient() {
+    public function testImportMultiplePatients() {
+        $this->validPayload = [ ["code" => 12341231234123,
+        "lastName" => "test",
+        "firstName" => "test",
+        "gender" => "M",
+        "birthDay" => 1,
+        "birthMonth" => 1,
+        "birthYear" => 1998,
+        "studyName" => "test",
+        "registrationDate" => '10/19/2020',
+        "investigatorName" => "administrator",
+        "centerCode" => 0,
+        "withdraw" => false,
+        "withdrawReason" => null,
+        "withdrawDate" => null],
+        ["code" => 12341231234124,
+        "lastName" => "test",
+        "firstName" => "test",
+        "gender" => "M",
+        "birthDay" => 1,
+        "birthMonth" => 1,
+        "birthYear" => 1998,
+        "studyName" => "test",
+        "registrationDate" => '10/19/2020',
+        "investigatorName" => "administrator",
+        "centerCode" => 0,
+        "withdraw" => false,
+        "withdrawReason" => null,
+        "withdrawDate" => null],
+        ["code" => 12341231234125,
+        "lastName" => "test",
+        "firstName" => "test",
+        "gender" => "M",
+        "birthDay" => 1,
+        "birthMonth" => 1,
+        "birthYear" => 1998,
+        "studyName" => "test",
+        "registrationDate" => '10/19/2020',
+        "investigatorName" => "administrator",
+        "centerCode" => 0,
+        "withdraw" => false,
+        "withdrawReason" => null,
+        "withdrawDate" => null]
+    ];
+        $resp = $this->json('POST', '/api/studies/test/import-patients', $this->validPayload)->assertSuccessful();
+        $this->json('GET', '/api/patients')->assertJsonCount(3);
+    }
+
+    public function testImportPatient() {
         //Test patient creation
         $resp = $this->json('POST', '/api/studies/test/import-patients', $this->validPayload)->assertSuccessful();
 

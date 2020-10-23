@@ -20,15 +20,15 @@ class ImportPatients {
         $this->mailService = $mailService;
      }
 
-     public function execute(ImportPatientsRequest $ImportPatientsRequest, ImportPatientsResponse $ImportPatientsResponse) : void
+     public function execute(ImportPatientsRequest $importPatientsRequest, ImportPatientsResponse $importPatientsResponse) : void
     {
         $arrayPatients = [];
-        foreach($ImportPatientsRequest->patients as $patient) {
+        foreach($importPatientsRequest->patients as $patient) {
             $arrayPatients[] = PatientEntity::fillFromRequest($patient);
         }
-        $ImportPatientsRequest->patients = $arrayPatients;
-        $this->importPatient->setPatientEntities($ImportPatientsRequest->patients);
-        $this->importPatient->setStudyName($ImportPatientsRequest->studyName);
+        $importPatientsRequest->patients = $arrayPatients;
+        $this->importPatient->setPatientEntities($importPatientsRequest->patients);
+        $this->importPatient->setStudyName($importPatientsRequest->studyName);
 
         //Check form completion
         try {
@@ -39,15 +39,15 @@ class ImportPatients {
             $actionDetails['Success']=$this->importPatient->successList;
             $actionDetails['Fail']=$this->importPatient->failList;
 
-            $ImportPatientsResponse->body = [ 'success' => $this->importPatient->successList, 'fail' => $this->importPatient->failList];
-            $ImportPatientsResponse->status = 200;
-            $ImportPatientsResponse->statusText = 'OK';
-            $this->trackerService->writeAction($ImportPatientsRequest->currentUserCode, Constants::TRACKER_IMPORT_PATIENT, null, null, Constants::TRACKER_IMPORT_PATIENT, $actionDetails);
+            $importPatientsResponse->body = [ 'success' => $this->importPatient->successList, 'fail' => $this->importPatient->failList];
+            $importPatientsResponse->status = 200;
+            $importPatientsResponse->statusText = 'OK';
+            $this->trackerService->writeAction($importPatientsRequest->currentUserCode, Constants::TRACKER_IMPORT_PATIENT, null, null, Constants::TRACKER_IMPORT_PATIENT, $actionDetails);
             // + send email
         } catch (GaelOException $e) {
             //If Exception thrown by our buisness logic, handle it
-            $ImportPatientsResponse->status = 400;
-            $ImportPatientsResponse->statusText = $e->getMessage();
+            $importPatientsResponse->status = 400;
+            $importPatientsResponse->statusText = $e->getMessage();
         }catch (\Exception $e) {
             //If execption thrown by framework, let the framework handle it
             throw $e;
