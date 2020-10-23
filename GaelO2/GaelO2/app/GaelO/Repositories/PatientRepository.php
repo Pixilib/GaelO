@@ -6,6 +6,7 @@ use App\Patient;
 use App\GaelO\Interfaces\PersistenceInterface;
 use App\GaelO\UseCases\GetPatient\PatientEntity;
 use App\GaelO\Util;
+use Illuminate\Support\Facades\Log;
 
 class PatientRepository implements PersistenceInterface {
 
@@ -14,8 +15,11 @@ class PatientRepository implements PersistenceInterface {
     }
 
     public function create(array $data){
-        $model = Util::fillObject($data, $this->patient);
+        $patient = new Patient();
+        $model = Util::fillObject($data, $patient);
         $model->save();
+        Log::info($this->patient->get()->toArray());
+
     }
 
     public function update($code, array $data) : void {
@@ -33,8 +37,8 @@ class PatientRepository implements PersistenceInterface {
     }
 
     public function getAll() : array {
-        $countries = $this->patient->get();
-        return empty($countries) ? []  : $countries->toArray();
+        $patients = $this->patient->get();
+        return empty($patients) ? []  : $patients->toArray();
     }
 
     public function getPatientsInStudy(string $studyName) : array {

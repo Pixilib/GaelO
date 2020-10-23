@@ -13,7 +13,8 @@ class VisitRepository implements PersistenceInterface {
     }
 
     public function create(array $data){
-        $model = Util::fillObject($data, $this->visit);
+        $visit = new Visit();
+        $model = Util::fillObject($data, $visit);
         $model->save();
     }
 

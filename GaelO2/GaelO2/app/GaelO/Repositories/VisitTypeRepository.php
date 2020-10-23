@@ -15,7 +15,8 @@ class VisitTypeRepository implements PersistenceInterface {
     }
 
     public function create(array $data){
-        $model = Util::fillObject($data, $this->visitType);
+        $visitType = new VisitType();
+        $model = Util::fillObject($data, $visitType);
         $model->save();
     }
 

@@ -13,7 +13,8 @@ class CountryRepository implements PersistenceInterface {
     }
 
     public function create(array $data){
-        $model = Util::fillObject($data, $this->country);
+        $country = new Country();
+        $model = Util::fillObject($data, $country);
         $model->save();
     }
 

@@ -23,7 +23,8 @@ class TrackerRepository implements PersistenceInterface {
     }
 
     public function create(array $data){
-        $model = Util::fillObject($data, $this->tracker);
+        $tracker = new Tracker();
+        $model = Util::fillObject($data, $tracker);
         $model->save();
     }
 

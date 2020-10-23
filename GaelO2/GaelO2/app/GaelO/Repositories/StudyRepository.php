@@ -14,7 +14,8 @@ class StudyRepository implements PersistenceInterface {
     }
 
     public function create(array $data){
-        $model = Util::fillObject($data, $this->study);
+        $study = new Study();
+        $model = Util::fillObject($data, $study);
         $model->save();
     }
 
