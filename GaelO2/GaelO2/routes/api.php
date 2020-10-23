@@ -76,8 +76,8 @@ Route::middleware(['auth:api', 'refresh_token'])->group(function () {
 
     //Visit Routes
     Route::post('studies/{studyName}/visit-groups/{visitGroupId}/visit-types/{visitTypeId}/visits', 'VisitController@createVisit');
-    Route::get('studies/{studyName}/visit-groups/{visitGroupId}/visit-types/{visitTypeId}/visits/{id}', 'VisitController@getVisit');
-    Route::get('studies/{studyName}/visit-groups/{visitGroupId}/visit-types/{visitTypeId}/visits/{id}/patients/{patientCode}', 'VisitController@getPatientVisit');
+    Route::get('studies/{studyName}/visits/{id}', 'VisitController@getVisit');
+    Route::get('studies/{studyName}/visits/{id}/patients/{patientCode}', 'VisitController@getPatientVisit');
 });
 
 //Mail Route

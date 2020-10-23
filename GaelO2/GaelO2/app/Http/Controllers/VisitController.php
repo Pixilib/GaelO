@@ -33,8 +33,9 @@ class VisitController extends Controller
                 ->setStatusCode($createVisitResponse->status, $createVisitResponse->statusText);
     }
 
-    public function getVisit(String $studyName, int $visitGroupId, int $visitTypeId, Request $request, int $visitId = 0, GetVisit $getVisit, GetVisitRequest $getVisitRequest, GetVisitResponse $getVisitResponse){
+    public function getVisit(String $studyName, int $visitId = 0, GetVisit $getVisit, Request $request, GetVisitRequest $getVisitRequest, GetVisitResponse $getVisitResponse){
         $getVisitRequest->visitId = $visitId;
+        $getVisitRequest->studyName = $studyName;
         $queryParam = $request->query();
         $getVisitRequest->role = $queryParam['role'];
 
@@ -45,7 +46,7 @@ class VisitController extends Controller
 
     }
 
-    public function getPatientVisit(String $studyName, int $visitGroupId, int $visitTypeId, Request $request, int $visitId = 0, int $patientCode, GetPatientVisit $getPatientVisit, GetPatientVisitRequest $getPatientVisitRequest, GetPatientVisitResponse $getPatientVisitResponse){
+    public function getPatientVisit(String $studyName, int $visitId = 0, int $patientCode, Request $request, GetPatientVisit $getPatientVisit, GetPatientVisitRequest $getPatientVisitRequest, GetPatientVisitResponse $getPatientVisitResponse){
         $getPatientVisitRequest->visitId = $visitId;
         $getPatientVisitRequest->patientCode = $patientCode;
         $queryParam = $request->query();
