@@ -66,12 +66,18 @@ Route::middleware(['auth:api', 'refresh_token'])->group(function () {
     //Miscellaneous Routes
     Route::get('countries/{code?}', 'CountryController@getCountry');
 
+    //Patient Routes
     Route::get('patients/{code?}', 'PatientController@getPatient');
     Route::get('studies/{studyName}/patients', 'PatientController@getPatientFromStudy');
     Route::post('studies/{studyName}/import-patients', 'StudyController@importPatients');
 
+    //Patient Tree
+    //Route::get('studies/{studyName}/tree', 'StudyController@getStudyInfoForTree');
+
+    //Visit Routes
     Route::post('studies/{studyName}/visit-groups/{visitGroupId}/visit-types/{visitTypeId}/visits', 'VisitController@createVisit');
     Route::get('studies/{studyName}/visit-groups/{visitGroupId}/visit-types/{visitTypeId}/visits/{id}', 'VisitController@getVisit');
+    Route::get('studies/{studyName}/visit-groups/{visitGroupId}/visit-types/{visitTypeId}/visits/{id}/patients/{patientCode}', 'VisitController@getPatientVisit');
 });
 
 //Mail Route

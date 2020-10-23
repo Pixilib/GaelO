@@ -16,7 +16,8 @@ class VisitProvider extends ServiceProvider
         $this->app->when(
             [\App\GaelO\UseCases\CreateVisit\CreateVisit::class,
             \App\GaelO\UseCases\GetVisit\GetVisit::class,
-            \App\GaelO\Services\VisitService::class])
+            \App\GaelO\Services\VisitService::class,
+            \App\GaelO\UseCases\GetPatientVisit\GetPatientVisit::class])
         ->needs(\App\GaelO\Interfaces\PersistenceInterface::class)
         ->give(\App\GaelO\Repositories\VisitRepository::class);
     }

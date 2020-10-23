@@ -5,9 +5,9 @@ namespace App\Http\Controllers;
 use App\GaelO\UseCases\CreateVisit\CreateVisit;
 use App\GaelO\UseCases\CreateVisit\CreateVisitRequest;
 use App\GaelO\UseCases\CreateVisit\CreateVisitResponse;
-use App\GaelO\UseCases\DeleteVisit\DeleteVisit;
-use App\GaelO\UseCases\DeleteVisit\DeleteVisitRequest;
-use App\GaelO\UseCases\DeleteVisit\DeleteVisitResponse;
+use App\GaelO\UseCases\GetPatientVisit\GetPatientVisit;
+use App\GaelO\UseCases\GetPatientVisit\GetPatientVisitRequest;
+use App\GaelO\UseCases\GetPatientVisit\GetPatientVisitResponse;
 use App\GaelO\UseCases\GetVisit\GetVisit;
 use App\GaelO\UseCases\GetVisit\GetVisitRequest;
 use App\GaelO\UseCases\GetVisit\GetVisitResponse;
@@ -23,6 +23,8 @@ class VisitController extends Controller
         $createVisitRequest->studyName = $studyName;
         $createVisitRequest->visitGroupId = $visitGroupId;
         $createVisitRequest->visitTypeId = $visitTypeId;
+        $queryParam = $request->query();
+        $createVisitRequest->role = $queryParam['role'];
         $requestData = $request->all();
         $createVisitRequest = Util::fillObject($requestData, $createVisitRequest);
         $createVisit->execute($createVisitRequest, $createVisitResponse);
@@ -31,13 +33,28 @@ class VisitController extends Controller
                 ->setStatusCode($createVisitResponse->status, $createVisitResponse->statusText);
     }
 
-    public function getVisit(String $studyName, int $visitGroupId, int $visitTypeId, int $visitId, GetVisit $getVisit, GetVisitRequest $getVisitRequest, GetVisitResponse $getVisitResponse){
+    public function getVisit(String $studyName, int $visitGroupId, int $visitTypeId, Request $request, int $visitId = 0, GetVisit $getVisit, GetVisitRequest $getVisitRequest, GetVisitResponse $getVisitResponse){
         $getVisitRequest->visitId = $visitId;
+        $queryParam = $request->query();
+        $getVisitRequest->role = $queryParam['role'];
 
         $getVisit->execute($getVisitRequest, $getVisitResponse);
 
         return response()->json($getVisitResponse->body)
                 ->setStatusCode($getVisitResponse->status, $getVisitResponse->statusText);
+
+    }
+
+    public function getPatientVisit(String $studyName, int $visitGroupId, int $visitTypeId, Request $request, int $visitId = 0, int $patientCode, GetPatientVisit $getPatientVisit, GetPatientVisitRequest $getPatientVisitRequest, GetPatientVisitResponse $getPatientVisitResponse){
+        $getPatientVisitRequest->visitId = $visitId;
+        $getPatientVisitRequest->patientCode = $patientCode;
+        $queryParam = $request->query();
+        $getPatientVisitRequest->role = $queryParam['role'];
+
+        $getPatientVisit->execute($getPatientVisitRequest, $getPatientVisitResponse);
+
+        return response()->json($getPatientVisitResponse->body)
+                ->setStatusCode($getPatientVisitResponse->status, $getPatientVisitResponse->statusText);
 
     }
 }

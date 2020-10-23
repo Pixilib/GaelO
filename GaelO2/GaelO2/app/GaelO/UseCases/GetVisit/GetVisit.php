@@ -11,12 +11,21 @@ class GetVisit {
     }
 
     public function execute(GetVisitRequest $getVisitRequest, GetVisitResponse $getVisitTypeResponse){
-
-        $visitData = $this->persistenceInterface->find($getVisitRequest->visitId);
-        $visitEntity = VisitEntity::fillFromDBReponseArray($visitData);
-        $getVisitTypeResponse->body = $visitEntity;
+        $id = $getVisitRequest->visitId;
+        if ($id == 0) {
+            $dbData = $this->persistenceInterface->getAll();
+            $responseArray = [];
+            foreach($dbData as $data){
+                $responseArray[] = VisitEntity::fillFromDBReponseArray($data);
+            }
+            $getVisitRequest->body = $responseArray;
+        } else {
+            $dbData = $this->persistenceInterface->find($id);
+            $responseEntity = VisitEntity::fillFromDBReponseArray($dbData);
+            $getVisitRequest->body = $responseEntity;
+        }
+        $getVisitTypeResponse->body = $responseEntity;
         $getVisitTypeResponse->status = 200;
         $getVisitTypeResponse->statusText = 'OK';
-
     }
 }

@@ -33,10 +33,8 @@ class CreateVisit {
             $createVisitRequest->visitTypeId,
             $createVisitRequest->statusDone,
             $createVisitRequest->reasonForNotDone);
-
         $createVisitResponse->status = 201;
         $createVisitResponse->statusText = 'Created';
-
     }
 
 

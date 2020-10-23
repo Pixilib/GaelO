@@ -61,7 +61,7 @@ class VisitTest extends TestCase
         'visit_type_id' => $this->visitType['id'],
         'status_done' => 'Done']);
         $response = $this->json('GET', 'api/studies/test/visit-groups/'.$this->visitGroup['id'].
-        '/visit-types/'.$this->visitType['id'].'/visits/'.$visit['id'])->content();
+        '/visit-types/'.$this->visitType['id'].'/visits/'.$visit['id'].'?role=investigator')->content();
         $response = json_decode($response, true);
         //Check all Item in visitEntity are present in reponse
         foreach ( get_class_vars(VisitEntity::class) as $key=>$value ){
@@ -69,16 +69,58 @@ class VisitTest extends TestCase
             $key = str_replace('_', '', lcfirst(ucwords($key, '_')));
             $this->assertArrayHasKey($key, $response);
         }
+    }
 
+    public function testGetVisits(){
+        $visit = factory(Visit::class, 5)->create(['creator_user_id' => 1,
+        'patient_code' => $this->patient['code'],
+        'visit_type_id' => $this->visitType['id'],
+        'status_done' => 'Done']);
+        $this->json('GET', 'api/studies/test/visit-groups/'.$this->visitGroup['id'].
+        '/visit-types/'.$this->visitType['id'].'/visits/?role=investigator')->assertJsonCount(5);
     }
 
 
     public function testCreateVisit() {
 
         $resp = $this->json('POST', 'api/studies/test/visit-groups/'.$this->visitGroup['id'].
-        '/visit-types/'.$this->visitType['id'].'/visits', $this->validPayload)->assertStatus(201);
+        '/visit-types/'.$this->visitType['id'].'/visits'.'?role=investigator', $this->validPayload)->assertStatus(201);
         //Check record in database
         $visit = Visit::get()->first()->toArray();
         $this->assertNotEmpty($visit);
+    }
+
+    public function testGetPatientVisits() {
+        $this->patient2 = factory(Patient::class)->create(['code' => 12341234123413, 'study_name' => 'test', 'center_code' => 0]);
+
+        $visit = factory(Visit::class)->create(['creator_user_id' => 1,
+        'patient_code' => $this->patient['code'],
+        'visit_type_id' => $this->visitType['id'],
+        'status_done' => 'Done']);
+
+        $resp = $this->json('GET', 'api/studies/test/visit-groups/'.$this->visitGroup['id'].
+        '/visit-types/'.$this->visitType['id'].'/visits/'.$visit['id'].'/patients/'.$this->patient['code'].'?role=investigator')->content();
+        $resp = json_decode($resp, true);
+
+        foreach ( get_class_vars(VisitEntity::class) as $key=>$value ){
+            //Camelize keys
+            $key = str_replace('_', '', lcfirst(ucwords($key, '_')));
+            $this->assertArrayHasKey($key, $resp);
+        }
+
+        factory(Visit::class, 5)->create(['creator_user_id' => 1,
+        'patient_code' => $this->patient['code'],
+        'visit_type_id' => $this->visitType['id'],
+        'status_done' => 'Done']);
+
+        factory(Visit::class, 5)->create(['creator_user_id' => 1,
+        'patient_code' => $this->patient2['code'],
+        'visit_type_id' => $this->visitType['id'],
+        'status_done' => 'Done']);
+
+        $resp = $this->json('GET', 'api/studies/test/visit-groups/'.$this->visitGroup['id'].
+        '/visit-types/'.$this->visitType['id'].'/visits/0/patients/'.$this->patient['code'].'?role=investigator')->content();//->assertJsonCount(6);
+        $resp = json_decode($resp, true);
+
     }
 }
