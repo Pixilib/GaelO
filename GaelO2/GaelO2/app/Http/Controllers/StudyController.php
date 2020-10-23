@@ -24,7 +24,6 @@ use App\GaelO\UseCases\ReactivateStudy\ReactivateStudyResponse;
 use App\GaelO\Util;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-
 class StudyController extends Controller
 {
     public function createStudy(Request $request, CreateStudy $createStudy, CreateStudyRequest $createStudyRequest, CreateStudyResponse $createStudyResponse){
@@ -85,5 +84,4 @@ class StudyController extends Controller
 
         return response()->json($importPatientsResponse->body)->setStatusCode($importPatientsResponse->status, $importPatientsResponse->statusText);
     }
-
 }
