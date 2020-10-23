@@ -119,8 +119,6 @@ class VisitTest extends TestCase
         'status_done' => 'Done']);
 
         $resp = $this->json('GET', 'api/studies/test/visit-groups/'.$this->visitGroup['id'].
-        '/visit-types/'.$this->visitType['id'].'/visits/0/patients/'.$this->patient['code'].'?role=investigator')->content();//->assertJsonCount(6);
-        $resp = json_decode($resp, true);
-
+        '/visit-types/'.$this->visitType['id'].'/visits/0/patients/'.$this->patient['code'].'?role=investigator')->assertJsonCount(6);
     }
 }
