@@ -42,8 +42,10 @@ class ImportPatients {
             $importPatientsResponse->body = [ 'success' => $this->importPatient->successList, 'fail' => $this->importPatient->failList];
             $importPatientsResponse->status = 200;
             $importPatientsResponse->statusText = 'OK';
+
             $this->trackerService->writeAction($importPatientsRequest->currentUserCode, Constants::TRACKER_IMPORT_PATIENT, null, null, Constants::TRACKER_IMPORT_PATIENT, $actionDetails);
-            // + send email
+            $this->mailService->sendImportPatientMessage($importPatientsRequest->studyName, $this->importPatient->successList, $this->importPatient->failList);
+
         } catch (GaelOException $e) {
             //If Exception thrown by our buisness logic, handle it
             $importPatientsResponse->status = 400;
