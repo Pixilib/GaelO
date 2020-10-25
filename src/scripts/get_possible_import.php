@@ -47,7 +47,7 @@ if ($studyInvestigatorAllowed) {
 			$dateAcquisition=date('m-d-Y', strtotime($visit->acquisitionDate));
 			$patient['acquisitionDate']=$dateAcquisition;
 			$patient['visitType']=$visit->visitType;
-			$patient['idVisit']=$visit->id_visit;
+			$patient['idVisit']=intval($visit->id_visit);
 			$AvailablePatients[$visit->visitType][]=$patient;
 		}
 	}

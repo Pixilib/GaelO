@@ -13,7 +13,8 @@ class CenterRepository implements PersistenceInterface {
     }
 
     public function create(array $data){
-        $model = Util::fillObject($data, $this->center);
+        $center = new Center();
+        $model = Util::fillObject($data, $center);
         $model->save();
     }
 
@@ -70,6 +71,11 @@ class CenterRepository implements PersistenceInterface {
         ];
         $this->update($code, $data);
 
+    }
+
+    public function getExistingCenter() : array {
+        $centers = $this->center->get()->pluck('code');
+        return empty($centers) ? [] : $centers->toArray();
     }
 
 }

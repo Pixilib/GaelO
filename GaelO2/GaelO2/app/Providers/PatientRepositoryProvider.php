@@ -16,7 +16,9 @@ class PatientRepositoryProvider extends ServiceProvider
         $this->app->when(
             [\App\GaelO\UseCases\CreatePatient\CreatePatient::class,
             \App\GaelO\UseCases\GetPatient\GetPatient::class,
-            \App\GaelO\UseCases\DeletePatient\DeletePatient::class])
+            \App\GaelO\UseCases\GetPatientFromStudy\GetPatientFromStudy::class,
+            \App\GaelO\UseCases\DeletePatient\DeletePatient::class,
+            \App\GaelO\Services\ImportPatientsService::class])
         ->needs(\App\GaelO\Interfaces\PersistenceInterface::class)
         ->give(\App\GaelO\Repositories\PatientRepository::class);
     }

@@ -24,6 +24,7 @@ use App\Mail\UserCreated;
 use App\Mail\VisitNotDone;
 
 use App\GaelO\Constants\MailConstants;
+use App\Mail\ImportPatient;
 
 class SendEmailAdapter implements MailInterface {
 
@@ -102,6 +103,9 @@ class SendEmailAdapter implements MailInterface {
                 break;
             case MailConstants::EMAIL_ADJUDICATION:
                 $this->model = new Adjudication($this->parameters);
+                break;
+            case MailConstants::EMAIL_IMPORT_PATIENT:
+                $this->model = new ImportPatient($this->parameters);
                 break;
         }
 

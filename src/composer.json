@@ -9,8 +9,7 @@
 		"peppeocchi/php-cron-scheduler": "3.*",
 		"narrowspark/http-emitter": "^1.0",
 		"ralouphie/mimey": "^2.1",
-		"laminas/laminas-diactoros": "^2.2",
-		"ankitpokhrel/tus-php": "^2.0"
+		"laminas/laminas-diactoros": "^2.2"
 	},
 	"name" : "salim-kanoun/gaelo",
 	"description" : "Open source imaging management in clinical trial",

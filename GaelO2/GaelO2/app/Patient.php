@@ -6,6 +6,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class Patient extends Model
 {
+    protected $primaryKey = 'code';
+    public $incrementing = false;
+
     public function center(){
         return $this->belongsTo('App\Center', 'center_code', 'code');
     }

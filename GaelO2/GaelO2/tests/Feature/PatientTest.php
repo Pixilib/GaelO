@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\GaelO\UseCases\GetPatient\PatientEntity;
 use App\Patient;
 use App\Study;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
@@ -41,15 +42,31 @@ class PatientTest extends TestCase
 
     public function testGetPatient() {
         //Fill patient table
-        factory(Study::class)->create(['name'=>'Study test']);
-        factory(Patient::class, 5)->create(['code'=>123, 'center_code'=>0, 'study_name'=>'Study test']);
+        factory(Study::class)->create(['name'=>'test']);
+        factory(Patient::class)->create(['code'=>12345671234567, 'center_code'=>0, 'study_name'=>'test']);
+        factory(Patient::class, 5)->create(['center_code'=>0, 'study_name'=>'test']);
         //Test get patient 4
-        $this->json('GET', '/api/patients/123')
-            ->assertStatus(200)
-            ->assertJsonFragment(['administrator'=>true]);
+        $response = $this->json('GET', '/api/patients/12345671234567')
+            ->content();
+        $response = json_decode($response, true);
+
+        //Check all Item in patientEntity are present in reponse
+        foreach ( get_class_vars(PatientEntity::class) as $key=>$value ){
+            //Camelize keys
+            $key = str_replace('_', '', lcfirst(ucwords($key, '_')));
+            $this->assertArrayHasKey($key, $response);
+        }
+
         //Test get all patients
-        $this->json('GET', '/api/patients')-> assertJsonCount(5);
+        $this->json('GET', '/api/patients')-> assertJsonCount(6);
         //Test get incorrect patient
-        $this->json('GET', '/api/patients/-1') -> assertStatus(500);
+        $resp = $this->json('GET', '/api/patients/-1') -> assertStatus(404); //No query result for this model
+    }
+
+    public function testGetPatientFromStudy() {
+        factory(Study::class)->create(['name'=>'test']);
+        factory(Patient::class, 5)->create(['center_code'=>0, 'study_name'=>'test']);
+        $this->json('GET', '/api/studies/test/patients')
+            ->assertStatus(200);
     }
 }

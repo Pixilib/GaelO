@@ -15,13 +15,15 @@ use App\GaelO\UseCases\GetStudy\GetStudyResponse;
 use App\GaelO\UseCases\GetStudyDetails\GetStudyDetails;
 use App\GaelO\UseCases\GetStudyDetails\GetStudyDetailsRequest;
 use App\GaelO\UseCases\GetStudyDetails\GetStudyDetailsResponse;
+use App\GaelO\UseCases\ImportPatients\ImportPatients;
+use App\GaelO\UseCases\ImportPatients\ImportPatientsRequest;
+use App\GaelO\UseCases\ImportPatients\ImportPatientsResponse;
 use App\GaelO\UseCases\ReactivateStudy\ReactivateStudy;
 use App\GaelO\UseCases\ReactivateStudy\ReactivateStudyRequest;
 use App\GaelO\UseCases\ReactivateStudy\ReactivateStudyResponse;
 use App\GaelO\Util;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-
 class StudyController extends Controller
 {
     public function createStudy(Request $request, CreateStudy $createStudy, CreateStudyRequest $createStudyRequest, CreateStudyResponse $createStudyResponse){
@@ -72,4 +74,14 @@ class StudyController extends Controller
                 ->setStatusCode($reactivateStudyResponse->status, $reactivateStudyResponse->statusText);
     }
 
+    public function importPatients(string $studyName, Request $request, ImportPatients $importPatients, ImportPatientsRequest $importPatientsRequest, ImportPatientsResponse $importPatientsResponse){
+
+        $currentUser = Auth::user();
+        $importPatientsRequest->patients = $request->all() ;
+        $importPatientsRequest->studyName = $studyName;
+        $importPatientsRequest->currentUserCode = $currentUser['id'];
+        $importPatients->execute($importPatientsRequest, $importPatientsResponse);
+
+        return response()->json($importPatientsResponse->body)->setStatusCode($importPatientsResponse->status, $importPatientsResponse->statusText);
+    }
 }

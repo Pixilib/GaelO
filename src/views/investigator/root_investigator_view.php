@@ -37,14 +37,23 @@
 
 			if($("#uploadApp").text()=="Multi Uploader"){
 
-				$("#tree").html('<div id="uploadDicom" style="width:100%"></div>');
-				checkBrowserSupportDicomUpload('#uploadDicom');
-				new DicomUpload('#uploadDicom', {
-					multiImportMode: true,
-					expectedVisitsURL: '../../scripts/get_possible_import.php',
-					validationScriptURL: '../../scripts/validate_dicom_upload.php',
-					dicomsReceiptsScriptURL: '../../scripts/dicoms_receipts.php'
-				});
+				$("#tree").html('<div id="dicomUploaderv2" style="width:100%"></div>');
+
+				window.Gaelo_Uploader.installUploader({
+					developerMode: false,
+					multiUpload: true,
+					minNbOfInstances: 30,
+					callbackOnStartAction: ()=>{
+						preventAjaxDivLoading()
+					},
+					callbackOnUploadComplete: ()=>{
+						//Remove prevent Ajax listener
+						allowAjaxDivLoading()
+						alertifySuccess("Multi Upload Finished")
+						refreshInvestigatorDiv()
+					}
+				}, 'dicomUploaderv2')
+				checkBrowserSupportDicomUpload('#dicomUploaderv2');
 
 				$("#uploadApp").html("Exit Uploader");
 				$("#uploadApp").removeClass("btn-dark").addClass("btn-warning");

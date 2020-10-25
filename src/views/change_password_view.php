@@ -87,10 +87,11 @@
     <div class="alert alert-success text-center" id="success" style="display: none;" ></div>
     
     <div class="alert alert-info" id="info" >
-      Passowrd Should :<br>
-      ► Contains at least 8 alphanumerical characters with letters and numbers<br> 
-      ► Contains at least one capital letter <br> 
-      ► Be different from the last three password you used<br>	
+	Password Should :<br>
+	► Contains at least 8 alphanumerical characters with only letters and numbers<br>
+	► Not contains any special characters (such as , . ! # ... )<br>
+	► Contains at least one capital letter<br>
+	► Be different from the last three password you used<br>
     </div>
     
 	<div class="container jumbotron">

@@ -16,11 +16,11 @@ class CreateOrthancStudiesTable extends Migration
         Schema::create('orthanc_studies', function (Blueprint $table) {
             $table->string('orthanc_id', 44)->primary();
             $table->unsignedBigInteger('visit_id');
-            $table->unsignedBigInteger('uploader_id')->default(null);
-            $table->dateTime('upload_date', 6)->default(null);
+            $table->unsignedBigInteger('uploader_id')->nullable(true)->default(null);
+            $table->dateTime('upload_date', 6)->nullable(true)->default(null);
             $table->text('acquisition_date');
             $table->text('acquisition_time');
-            $table->dateTime('acquisition_datetime', 0)->default(null);
+            $table->dateTime('acquisition_datetime', 0)->nullable(true)->default(null);
             $table->string('anon_from_orthanc_id', 44)->nullable(false);
             $table->text('study_uid')->nullable(false);
             $table->text('study_description');

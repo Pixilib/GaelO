@@ -56,7 +56,12 @@ Route::middleware(['auth:api', 'admin', 'refresh_token'])->group(function () {
     //Tracker Routes
     Route::get('tracker', 'TrackerController@getTracker');
 
+
+
 });
+
+//Export DB Route
+Route::middleware('auth:api')->post('export-db', 'ExportDBController@exportDB');
 
 //Routes that need authentication
 Route::middleware(['auth:api', 'refresh_token'])->group(function () {
@@ -65,6 +70,19 @@ Route::middleware(['auth:api', 'refresh_token'])->group(function () {
     Route::delete('login', 'AuthController@logout');
     //Miscellaneous Routes
     Route::get('countries/{code?}', 'CountryController@getCountry');
+
+    //Patient Routes
+    Route::get('patients/{code?}', 'PatientController@getPatient');
+    Route::get('studies/{studyName}/patients', 'PatientController@getPatientFromStudy');
+    Route::post('studies/{studyName}/import-patients', 'StudyController@importPatients');
+
+    //Patient Tree
+    //Route::get('studies/{studyName}/tree', 'StudyController@getStudyInfoForTree');
+
+    //Visit Routes
+    Route::post('studies/{studyName}/visit-groups/{visitGroupId}/visit-types/{visitTypeId}/visits', 'VisitController@createVisit');
+    Route::get('studies/{studyName}/visit-groups/{visitGroupId}/visit-types/{visitTypeId}/visits/{id}', 'VisitController@getVisit');
+    Route::get('studies/{studyName}/visit-groups/{visitGroupId}/visit-types/{visitTypeId}/visits/{id}/patients/{patientCode}', 'VisitController@getPatientVisit');
 });
 
 //Mail Route
@@ -76,5 +94,3 @@ Route::put('users/{id}/password', 'UserController@changeUserPassword');
 
 //Tools Routes
 Route::post('tools/reset-password', 'ToolsController@resetPassword');
-
-Route::get('patients/{code?}', 'PatientController@getPatient');
