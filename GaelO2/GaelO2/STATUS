@@ -41,8 +41,6 @@ Installation DB :
 php artisan migrate:fresh --seed
 Installation Passport :
 php artisan passport:install
-//Generation certificat :
-//php artisan passport:keys
 Generation clés :
 php artisan key:generate
 
