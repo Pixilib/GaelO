@@ -28,44 +28,32 @@ class ChangePassword {
 
         $user = $this->persistenceInterface->find($id);
 
-        try{
-
-            if($user['status'] === Constants::USER_STATUS_UNCONFIRMED) {
-                $this->checkMatchHashPasswords($previousPassword, $user['password_temporary']);
-            } else {
-                $this->checkMatchHashPasswords($previousPassword, $user['password']);
-            }
-
-            $this->checkPasswordFormatCorrect($password1);
-            $this->checkMatchPasswords($password1, $password2);
-            $this->checkNewPassword(
-                $password1,
-                $user['password_temporary'] ,
-                $user['password'],
-                $user['password_previous1'],
-                $user['password_previous2']);
-
-            $data['password_previous1'] = $user['password'];
-            $data['password_previous2'] = $user['password_previous1'];
-            $data['password'] = LaravelFunctionAdapter::hash($password1);
-            $data['last_password_update'] = Util::now();
-            $data['status'] = Constants::USER_STATUS_ACTIVATED;
-
-            $this->persistenceInterface->update($user['id'], $data);
-            $this->trackerService->writeAction($user['id'], Constants::TRACKER_ROLE_USER, null, null, Constants::TRACKER_CHANGE_PASSWORD, null);
-
-            $userResponse->status = 200;
-            $userResponse->statusText = 'OK';
-
-        } catch(GaelOException $e) {
-            $userResponse->status = 400;
-            $userResponse->statusText = $e->getMessage();
-            return;
-        } catch (\Exception $e) {
-            throw $e;
+        if($user['status'] === Constants::USER_STATUS_UNCONFIRMED) {
+            $this->checkMatchHashPasswords($previousPassword, $user['password_temporary']);
+        } else {
+            $this->checkMatchHashPasswords($previousPassword, $user['password']);
         }
 
+        $this->checkPasswordFormatCorrect($password1);
+        $this->checkMatchPasswords($password1, $password2);
+        $this->checkNewPassword(
+            $password1,
+            $user['password_temporary'] ,
+            $user['password'],
+            $user['password_previous1'],
+            $user['password_previous2']);
 
+        $data['password_previous1'] = $user['password'];
+        $data['password_previous2'] = $user['password_previous1'];
+        $data['password'] = LaravelFunctionAdapter::hash($password1);
+        $data['last_password_update'] = Util::now();
+        $data['status'] = Constants::USER_STATUS_ACTIVATED;
+
+        $this->persistenceInterface->update($user['id'], $data);
+        $this->trackerService->writeAction($user['id'], Constants::TRACKER_ROLE_USER, null, null, Constants::TRACKER_CHANGE_PASSWORD, null);
+
+        $userResponse->status = 200;
+        $userResponse->statusText = 'OK';
 
     }
 

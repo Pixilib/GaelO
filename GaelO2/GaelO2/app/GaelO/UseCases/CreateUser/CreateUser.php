@@ -33,65 +33,57 @@ class CreateUser {
         $data = get_object_vars($createUserRequest);
         //Generate password
         $password=substr(uniqid(), 1, 10);
-        Log::info($password);
+
         $passwordTemporary = LaravelFunctionAdapter::Hash($password);
         $password = null;
         $creationDate = Util::now();
         $lastPasswordUpdate = null;
         //Check form completion
-        try {
-            $this->checkFormComplete($data);
-            $this->checkEmailValid($data);
-            $this->checkUserUnique($data);
-            $this->checkPhoneCorrect($data['phone']);
+        $this->checkFormComplete($data);
+        $this->checkEmailValid($data);
+        $this->checkUserUnique($data);
+        $this->checkPhoneCorrect($data['phone']);
 
-            //In no Exception thrown by checks methods, data are ok to be written in db
-            $createdUserEntity = $this->persistenceInterface->createUser($createUserRequest->username,
-                                $createUserRequest->lastname,
-                                $createUserRequest->firstname,
-                                Constants::USER_STATUS_UNCONFIRMED,
-                                $createUserRequest->email,
-                                $createUserRequest->phone,
-                                $createUserRequest->administrator,
-                                $createUserRequest->centerCode,
-                                $createUserRequest->job,
-                                $createUserRequest->orthancAddress,
-                                $createUserRequest->orthancLogin,
-                                $createUserRequest->orthancPassword,
-                                $passwordTemporary,
-                                $password,
-                                $creationDate,
-                                $lastPasswordUpdate);
+        //In no Exception thrown by checks methods, data are ok to be written in db
+        $createdUserEntity = $this->persistenceInterface->createUser($createUserRequest->username,
+                            $createUserRequest->lastname,
+                            $createUserRequest->firstname,
+                            Constants::USER_STATUS_UNCONFIRMED,
+                            $createUserRequest->email,
+                            $createUserRequest->phone,
+                            $createUserRequest->administrator,
+                            $createUserRequest->centerCode,
+                            $createUserRequest->job,
+                            $createUserRequest->orthancAddress,
+                            $createUserRequest->orthancLogin,
+                            $createUserRequest->orthancPassword,
+                            $passwordTemporary,
+                            $password,
+                            $creationDate,
+                            $lastPasswordUpdate);
 
-            //save user creation in tracker
-            $detailsTracker = [
-                'id'=> $createdUserEntity['id']
-            ];
-            //Save action in Tracker
-            $this->trackerService->writeAction($createUserRequest->currentUserId,
-                Constants::TRACKER_ROLE_USER,
-                null,
-                null,
-                Constants::TRACKER_CREATE_USER,
-                $detailsTracker);
+        //save user creation in tracker
+        $detailsTracker = [
+            'id'=> $createdUserEntity['id']
+        ];
+        //Save action in Tracker
+        $this->trackerService->writeAction($createUserRequest->currentUserId,
+            Constants::TRACKER_ROLE_USER,
+            null,
+            null,
+            Constants::TRACKER_CREATE_USER,
+            $detailsTracker);
 
-            //Send Welcom Email to give the plain password to new user.
-            $this->mailService->sendCreatedAccountMessage($createdUserEntity['email'],
-                                $createdUserEntity['firstname'].' '.$createdUserEntity['lastname'],
-                                $createdUserEntity['username'],
-                                $passwordTemporary);
+        //Send Welcom Email to give the plain password to new user.
+        $this->mailService->sendCreatedAccountMessage($createdUserEntity['email'],
+                            $createdUserEntity['firstname'].' '.$createdUserEntity['lastname'],
+                            $createdUserEntity['username'],
+                            $passwordTemporary);
 
-            $createUserResponse->status = 201;
-            $createUserResponse->statusText = 'Created';
+        $createUserResponse->status = 201;
+        $createUserResponse->statusText = 'Created';
 
-        } catch (GaelOException $e) {
-            //If Exception thrown by our buisness logic, handle it
-            $createUserResponse->status = 400;
-            $createUserResponse->statusText = $e->getMessage();
-        }catch (\Exception $e) {
-            //If execption thrown by framework, let the framework handle it
-            throw $e;
-        }
+
     }
 
     private function checkFormComplete(array $data) : void {

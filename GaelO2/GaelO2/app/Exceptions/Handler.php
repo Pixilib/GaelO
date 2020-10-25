@@ -2,6 +2,8 @@
 
 namespace App\Exceptions;
 
+use App\GaelO\Exceptions\GaelOAuthorizationException;
+use App\GaelO\Exceptions\GaelOException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Throwable;
@@ -53,6 +55,16 @@ class Handler extends ExceptionHandler
     {
         if ($exception instanceof ModelNotFoundException && $request->wantsJson()) {
             return response()->json(['message' => 'Not Found!'], 404);
+        }
+
+        if ($exception instanceof GaelOAuthorizationException && $request->wantsJson()) {
+            return response()->noContent()
+            ->setStatusCode(401, 'Unauthorized' );
+        }
+
+        if ($exception instanceof GaelOException && $request->wantsJson()) {
+            return response()->noContent()
+            ->setStatusCode(400, $exception->getMessage() );
         }
 
         return parent::render($request, $exception);
