@@ -23,15 +23,15 @@ class AuthorizationService {
         if( ! $userEntity->administrator) throw new GaelOAuthorizationException("Not Admin");
     }
 
-    public function isRoleAllowed(){
+    public function isRoleAllowed(int $userId, String $role){
 
     }
 
-    public function isPatientAllowed(){
+    public function isPatientAllowed(int $userId, int $patientCode){
 
     }
 
-    public function isVisitAllowed(){
+    public function isVisitAllowed(int $userId, int $visitId){
 
     }
 
