@@ -4,6 +4,7 @@ namespace App\GaelO\Services;
 
 use App\GaelO\Interfaces\MailInterface;
 use App\GaelO\Adapters\SendEmailAdapter;
+use App\GaelO\Constants\Constants;
 use App\GaelO\Repositories\UserRepository;
 use App\GaelO\Constants\MailConstants;
 
@@ -112,6 +113,22 @@ Class MailServices extends SendEmailAdapter {
         $this->mailInterface->setReplyTo();
         $this->mailInterface->setParameters($parameters);
         $this->mailInterface->sendModel(MailConstants::EMAIL_CHANGE_PASSWORD_DEACTIVATED);
+
+    }
+
+    public function sendImportPatientMessage(String $study, array $successList, array $failList){
+
+        $parameters = [
+            'study' => $study,
+            'successList'=>$successList,
+            'failList'=>$failList
+        ];
+
+        //Send to supervisors of the study
+        $this->mailInterface->setTo( $this->userRepository->getUsersEmailsByRolesInStudy($study, Constants::ROLE_SUPERVISOR) );
+        $this->mailInterface->setReplyTo();
+        $this->mailInterface->setParameters($parameters);
+        $this->mailInterface->sendModel(MailConstants::EMAIL_IMPORT_PATIENT);
 
     }
 

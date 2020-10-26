@@ -23,7 +23,7 @@ class ReviewsStatus extends Migration
             $table->dateTime('review_conclusion_date', 6)->nullable(true)->default(null);
 
             //A visit ID in a Study have only one status
-            $table->unique(['study_name', 'visit_id']);
+            $table->primary(['study_name', 'visit_id']);
 
             $table->foreign('visit_id')->references('id')->on('visits');
             $table->foreign('study_name')->references('name')->on('studies');

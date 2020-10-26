@@ -31,27 +31,20 @@ class ImportPatients {
         $this->importPatient->setStudyName($importPatientsRequest->studyName);
 
         //Check form completion
-        try {
+        $this->importPatient->import();
 
-            $this->importPatient->import();
+        //Save action in Tracker
+        $actionDetails['Success']=$this->importPatient->successList;
+        $actionDetails['Fail']=$this->importPatient->failList;
 
-            //Save action in Tracker
-            $actionDetails['Success']=$this->importPatient->successList;
-            $actionDetails['Fail']=$this->importPatient->failList;
+        $importPatientsResponse->body = [ 'success' => $this->importPatient->successList, 'fail' => $this->importPatient->failList];
+        $importPatientsResponse->status = 200;
+        $importPatientsResponse->statusText = 'OK';
 
-            $importPatientsResponse->body = [ 'success' => $this->importPatient->successList, 'fail' => $this->importPatient->failList];
-            $importPatientsResponse->status = 200;
-            $importPatientsResponse->statusText = 'OK';
-            $this->trackerService->writeAction($importPatientsRequest->currentUserCode, Constants::TRACKER_IMPORT_PATIENT, null, null, Constants::TRACKER_IMPORT_PATIENT, $actionDetails);
-            // + send email
-        } catch (GaelOException $e) {
-            //If Exception thrown by our buisness logic, handle it
-            $importPatientsResponse->status = 400;
-            $importPatientsResponse->statusText = $e->getMessage();
-        }catch (\Exception $e) {
-            //If execption thrown by framework, let the framework handle it
-            throw $e;
-        }
+        $this->trackerService->writeAction($importPatientsRequest->currentUserCode, Constants::TRACKER_IMPORT_PATIENT, null, null, Constants::TRACKER_IMPORT_PATIENT, $actionDetails);
+        $this->mailService->sendImportPatientMessage($importPatientsRequest->studyName, $this->importPatient->successList, $this->importPatient->failList);
+
+
     }
 
 }

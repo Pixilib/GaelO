@@ -22,4 +22,5 @@ class MailConstants {
     const EMAIL_BLOCKED_ACCOUNT=15;
     const EMAIL_ADMIN_LOGGED=16;
     const EMAIL_ADJUDICATION=17;
+    const EMAIL_IMPORT_PATIENT=18;
 }

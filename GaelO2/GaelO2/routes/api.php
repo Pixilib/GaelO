@@ -56,7 +56,12 @@ Route::middleware(['auth:api', 'admin', 'refresh_token'])->group(function () {
     //Tracker Routes
     Route::get('tracker', 'TrackerController@getTracker');
 
+
+
 });
+
+//Export DB Route
+Route::middleware('auth:api')->post('export-db', 'ExportDBController@exportDB');
 
 //Routes that need authentication
 Route::middleware(['auth:api', 'refresh_token'])->group(function () {

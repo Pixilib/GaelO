@@ -22,38 +22,29 @@ class ResetPassword {
     public function execute(ResetPasswordRequest $resetPasswordRequest, ResetPasswordResponse $resetPasswordResponse) : void {
         $username = $resetPasswordRequest->username;
         $email = $resetPasswordRequest->email;
-        try{
 
-            $userEntity = $this->persistenceInterface->getUserByUsername($username, true);
-            $this->checkNotDeactivatedAccount($userEntity);
-            $this->checkEmailMatching($email, $userEntity['email']);
-            //update properties of user
-            $userEntity['status'] = Constants::USER_STATUS_UNCONFIRMED;
-            $newPassword = substr(uniqid(), 1, 10);
-            $userEntity['password_temporary'] = LaravelFunctionAdapter::hash( $newPassword );
-            $userEntity['attempts'] = 0;
-            $userEntity['last_password_update'] = Util::now();
-            //update user
-            $this->persistenceInterface->update($userEntity['id'], $userEntity);
-            //send email
-            $this->mailServices->sendResetPasswordMessage(
-                ($userEntity['firstname'].' '.$userEntity['lastname']),
-                $userEntity['username'],
-                $newPassword,
-                $userEntity['email']);
-            //Write action in tracker
-            $this->trackerService->writeAction($userEntity['id'], Constants::TRACKER_ROLE_USER, null, null, Constants::TRACKER_RESET_PASSWORD, null);
+        $userEntity = $this->persistenceInterface->getUserByUsername($username, true);
+        $this->checkNotDeactivatedAccount($userEntity);
+        $this->checkEmailMatching($email, $userEntity['email']);
+        //update properties of user
+        $userEntity['status'] = Constants::USER_STATUS_UNCONFIRMED;
+        $newPassword = substr(uniqid(), 1, 10);
+        $userEntity['password_temporary'] = LaravelFunctionAdapter::hash( $newPassword );
+        $userEntity['attempts'] = 0;
+        $userEntity['last_password_update'] = Util::now();
+        //update user
+        $this->persistenceInterface->update($userEntity['id'], $userEntity);
+        //send email
+        $this->mailServices->sendResetPasswordMessage(
+            ($userEntity['firstname'].' '.$userEntity['lastname']),
+            $userEntity['username'],
+            $newPassword,
+            $userEntity['email']);
+        //Write action in tracker
+        $this->trackerService->writeAction($userEntity['id'], Constants::TRACKER_ROLE_USER, null, null, Constants::TRACKER_RESET_PASSWORD, null);
 
-            $resetPasswordResponse->status = 200;
-            $resetPasswordResponse->statusText = 'OK';
-
-
-        } catch (GaelOException $e){
-            $resetPasswordResponse->status = 400;
-            $resetPasswordResponse->statusText = $e->getMessage();
-        } catch (\Exception $e) {
-            throw $e;
-        }
+        $resetPasswordResponse->status = 200;
+        $resetPasswordResponse->statusText = 'OK';
 
     }
 

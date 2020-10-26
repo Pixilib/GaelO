@@ -50,6 +50,22 @@ class AffiliatedCenterTest extends TestCase
 
     public function testCreateMultipleAffiliatedCenterToUser(){
 
+        //With Array
+        $payload = [
+            'centerCode' => [0]
+        ];
+        $this->json('POST', 'api/users/1/affiliated-centers', $payload)->assertNoContent(400);
+
+        //With unique creation
+        $payload = [
+            'centerCode' => 0
+        ];
+        $this->json('POST', 'api/users/1/affiliated-centers', $payload)->assertNoContent(400);
+
+    }
+
+    public function testCreateAlreadyExistingAffiliatedCenterToUser(){
+
         $payload = [
             'centerCode' => [3,4]
         ];
