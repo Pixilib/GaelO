@@ -13,6 +13,9 @@ use App\Study;
 use App\Role;
 use Illuminate\Support\Facades\Log;
 use App\Tracker;
+use Illuminate\Support\Facades\DB;
+
+use function GuzzleHttp\json_encode;
 
 class TrackerTest extends TestCase
 {
@@ -43,20 +46,16 @@ class TrackerTest extends TestCase
 
     public function testGetUserTracker()
     {
-        //Manually create user so that the associated tracker can be created
-        $this->validPayload =
-        ['username' => 'truc',
-        'lastname' => 'truc',
-        'firstname' => 'truc',
-        'email' => 'truc@truc.fr',
-        'phone' => '0600000000',
-        'administrator' => true,
-        'centerCode' => 0,
-        'job' => 'Monitor',
-        'orthancAddress' => 'test',
-        'orthancLogin' => 'test',
-        'orthancPassword' => 'test'];
-        $resp = $this->json('POST', '/api/users', $this->validPayload);
+        factory(User::class, 1)->create(['administrator' => false]);
+        DB::table('trackers')->insert([
+            'study_name' => null,
+            'user_id' => 2,
+            'date' => now(),
+            'role' => 'User',
+            'visit_id' => null,
+            'action_type' => 'Something',
+            'action_details' => json_encode(array('a'=> 'b', 'c' => 'd'))
+        ]);
 
         //Test that admin tracker is empty
         $content = $this->json('GET', '/api/tracker?admin=true')->content();
@@ -70,13 +69,15 @@ class TrackerTest extends TestCase
     }
 
     public function testGetAdminTracker() {
-        //Create 2 random studies
-        $studies = factory(Study::class, 1)->create();
-
-        $studyName = $studies->first()['name'];
-        $payload = ["Investigator", "Supervisor"];
-        $this->json('POST', '/api/users/1/roles/'.$studyName, $payload);
-
+        DB::table('trackers')->insert([
+            'study_name' => null,
+            'user_id' => 1,
+            'date' => now(),
+            'role' => 'Administrator',
+            'visit_id' => null,
+            'action_type' => 'Something',
+            'action_details' => json_encode(array('a'=> 'b', 'c' => 'd'))
+        ]);
         //Test that user tracker is empty
         $content = $this->json('GET', '/api/tracker?admin=false')->content();
         $content = json_decode($content, true);
