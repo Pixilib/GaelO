@@ -9,6 +9,7 @@ use App\GaelO\Interfaces\PersistenceInterface;
 use App\GaelO\UseCases\CreateUser\CreateUserRequest;
 use App\GaelO\UseCases\CreateUser\CreateUserResponse;
 use App\GaelO\Exceptions\GaelOException;
+use App\GaelO\Services\AuthorizationService;
 use App\GaelO\Services\MailServices;
 use App\GaelO\Services\TrackerService;
 use App\GaelO\Util;
@@ -22,14 +23,17 @@ class CreateUser {
      * Tracker Service to be able to write in the Tracker
      * Mail Service to be able to send email
      */
-    public function __construct(PersistenceInterface $persistenceInterface, TrackerService $trackerService, MailServices $mailService){
+    public function __construct(PersistenceInterface $persistenceInterface, AuthorizationService $authorizationService,  TrackerService $trackerService, MailServices $mailService){
         $this->persistenceInterface = $persistenceInterface;
         $this->trackerService = $trackerService;
         $this->mailService = $mailService;
+        $this->authorizationService = $authorizationService;
      }
 
      public function execute(CreateUserRequest $createUserRequest, CreateUserResponse $createUserResponse) : void
     {
+        $this->authorizationService->isAdmin($createUserRequest->currentUserId);
+
         $data = get_object_vars($createUserRequest);
         //Generate password
         $password=substr(uniqid(), 1, 10);

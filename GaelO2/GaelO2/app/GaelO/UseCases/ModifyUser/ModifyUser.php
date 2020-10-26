@@ -9,18 +9,22 @@ use App\GaelO\Interfaces\PersistenceInterface;
 use App\GaelO\UseCases\ModifyUser\ModifyUserRequest;
 use App\GaelO\UseCases\ModifyUser\ModifyUserResponse;
 use App\GaelO\Exceptions\GaelOException;
+use App\GaelO\Services\AuthorizationService;
 use App\GaelO\Services\MailServices;
 use App\GaelO\Services\TrackerService;
 
 class ModifyUser {
 
-    public function __construct(PersistenceInterface $persistenceInterface, TrackerService $trackerService, MailServices $mailService){
+    public function __construct(PersistenceInterface $persistenceInterface, AuthorizationService $authorizationService, TrackerService $trackerService, MailServices $mailService){
         $this->persistenceInterface = $persistenceInterface;
+        $this->authorizationService = $authorizationService;
         $this->trackerService = $trackerService;
         $this->mailService = $mailService;
     }
 
     public function execute(ModifyUserRequest $modifyUserRequest, ModifyUserResponse $modifyUserResponse) : void {
+
+        $this->authorizationService->isAdmin($modifyUserRequest->currentUserId);
 
         $id = $modifyUserRequest->id;
         $data = get_object_vars($modifyUserRequest);

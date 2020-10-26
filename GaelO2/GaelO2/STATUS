@@ -14,15 +14,13 @@ Export-db : (POST) => OK
 A faire
 Config => Remerge les mail avec mail et creer une config laravel a part pour Orthanc ?
 ChangePassword => Necessite middelware qui check que l'user Courant == ID de la requete
-Tracker GET=> utiliser les query string
-Query Param dans Study pour avoir la liste avec les deletion ? idem user ? et couvrir en test
 
 
 Preparation Investigateur / Monitor / Controller / Reviewer :
 - Api creation Patient (GET, POST, PUT)
 - Api creation Visit (GET, POST, DELETE)
-- Api QC (GET, PUT + API /reset)
-- Api Corrective Action (GET, PUT)
+- Api QC (GET, PATCH + API /reset)
+- Api Corrective Action (GET, PATCH)
 - Api Documentation (GET, POST, DELETE, PUT?)
 
 Service :

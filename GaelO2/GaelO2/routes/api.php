@@ -12,13 +12,26 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+/*
+|--------------------------------------------------------------------------
+| Admin Routes
+|--------------------------------------------------------------------------
+|
+*/
+
+//User related Routes
+Route::middleware(['auth:api', 'refresh_token'])->post('users', 'UserController@createUser');
+Route::middleware(['auth:api', 'refresh_token'])->put('users/{id}', 'UserController@modifyUser');
+Route::middleware(['auth:api', 'refresh_token'])->delete('users/{id}', 'UserController@deleteUser');
+
+//Export DB Route (download binary doesn't support refresh token)
+Route::middleware('auth:api')->post('export-db', 'ExportDBController@exportDB');
+
+
 //Routes that need authentication and to be admin
 Route::middleware(['auth:api', 'admin', 'refresh_token'])->group(function () {
 
     //Users Routes
-    Route::post('users', 'UserController@createUser');
-    Route::put('users/{id}', 'UserController@modifyUser');
-    Route::delete('users/{id}', 'UserController@deleteUser');
     Route::patch('users/{id}/reactivate', 'UserController@reactivateUser');
     Route::get('users/{id}/roles/{study?}', 'UserController@getRoles');
     Route::post('users/{id}/roles/{study}', 'UserController@createRole');
@@ -60,8 +73,13 @@ Route::middleware(['auth:api', 'admin', 'refresh_token'])->group(function () {
 
 });
 
-//Export DB Route
-Route::middleware('auth:api')->post('export-db', 'ExportDBController@exportDB');
+
+/*
+|--------------------------------------------------------------------------
+| Users Routes
+|--------------------------------------------------------------------------
+|
+*/
 
 //Routes that need authentication
 Route::middleware(['auth:api', 'refresh_token'])->group(function () {
@@ -82,7 +100,15 @@ Route::middleware(['auth:api', 'refresh_token'])->group(function () {
     Route::get('visits/{id}/patients/{patientCode}', 'VisitController@getPatientVisit');
 });
 
-//Mail Route
+
+/*
+|--------------------------------------------------------------------------
+| Public Routes
+|--------------------------------------------------------------------------
+|
+*/
+
+//Request Route
 Route::post('request', 'RequestController@sendRequest');
 
 //Login Route
