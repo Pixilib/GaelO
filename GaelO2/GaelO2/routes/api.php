@@ -76,13 +76,10 @@ Route::middleware(['auth:api', 'refresh_token'])->group(function () {
     Route::get('studies/{studyName}/patients', 'PatientController@getPatientFromStudy');
     Route::post('studies/{studyName}/import-patients', 'StudyController@importPatients');
 
-    //Patient Tree
-    //Route::get('studies/{studyName}/tree', 'StudyController@getStudyInfoForTree');
-
     //Visit Routes
     Route::post('studies/{studyName}/visit-groups/{visitGroupId}/visit-types/{visitTypeId}/visits', 'VisitController@createVisit');
-    Route::get('studies/{studyName}/visits/{id}', 'VisitController@getVisit');
-    Route::get('studies/{studyName}/visits/{id}/patients/{patientCode}', 'VisitController@getPatientVisit');
+    Route::get('visits/{id}', 'VisitController@getVisit');
+    Route::get('visits/{id}/patients/{patientCode}', 'VisitController@getPatientVisit');
 });
 
 //Mail Route

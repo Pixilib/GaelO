@@ -7,6 +7,7 @@ use App\VisitType;
 use App\GaelO\Interfaces\PersistenceInterface;
 use App\GaelO\UseCases\GetVisitType\VisitTypeEntity;
 use App\GaelO\Util;
+use Illuminate\Support\Facades\Log;
 
 class VisitTypeRepository implements PersistenceInterface {
 
@@ -25,7 +26,11 @@ class VisitTypeRepository implements PersistenceInterface {
     }
 
     public function find($id){
-        return $this->visitType->find($id)->toArray();
+        $truc = $this->visitType->find($id);
+        Log::info($truc);
+        $truc->toArray();
+        Log::info($truc);
+        return $truc;
     }
 
     public function delete($id) : void {

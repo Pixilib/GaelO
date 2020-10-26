@@ -40,7 +40,7 @@ class FrontTest extends Seeder
             'remember_token' => Str::random(10)
         ]);
 
-        factory(Study::class, 10)->create();
+        factory(Study::class, 5)->create();
 
         DB::table('studies')->insert([
             'name' => 'Study test',
@@ -82,6 +82,13 @@ class FrontTest extends Seeder
             'visit_order' => 1,
             'limit_low_days' => 1,
             'limit_up_days' => 10,
+        ]);
+
+        DB::table('visits')->insert([
+            'creator_user_id' => 1,
+            'creation_date' => now(),
+            'patient_code' => Patient::first()['code'],
+            'visit_type_id' => 1
         ]);
 
         factory(User::class, 50)->create();

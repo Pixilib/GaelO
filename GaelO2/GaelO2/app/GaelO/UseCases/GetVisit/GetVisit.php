@@ -3,6 +3,7 @@
 namespace App\GaelO\UseCases\GetVisit;
 
 use App\GaelO\Interfaces\PersistenceInterface;
+use Illuminate\Support\Facades\Log;
 
 class GetVisit {
 
@@ -12,22 +13,17 @@ class GetVisit {
 
     public function execute(GetVisitRequest $getVisitRequest, GetVisitResponse $getVisitTypeResponse){
         $id = $getVisitRequest->visitId;
-        $studyName = $getVisitRequest->studyName;
-        $GLOBALS['studyName'] = $studyName;
         if ($id == 0) {
             $dbData = $this->persistenceInterface->getAll();
-            $dbData = array_filter($dbData, function ($element) {
-                return $element['study_name'] == $GLOBALS['studyName'];
-            });
             $responseArray = [];
             foreach($dbData as $data){
                 $responseArray[] = VisitEntity::fillFromDBReponseArray($data);
             }
-            $getVisitRequest->body = $responseArray;
+            $getVisitTypeResponse->body = $responseArray;
         } else {
             $dbData = $this->persistenceInterface->find($id);
             $responseEntity = VisitEntity::fillFromDBReponseArray($dbData);
-            $getVisitRequest->body = $responseEntity;
+            $getVisitTypeResponse->body = $responseEntity;
         }
         $getVisitTypeResponse->status = 200;
         $getVisitTypeResponse->statusText = 'OK';
