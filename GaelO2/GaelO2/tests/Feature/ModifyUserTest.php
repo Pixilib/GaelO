@@ -66,8 +66,7 @@ class ModifyUserTest extends TestCase
         //Save database state before update
         $beforeChangeUser = User::where('id',$this->user['id'])->get()->first()->toArray();
         //Update with update API, shoud be success
-        $this->json('PUT', '/api/users/'.$this->user['id'], $this->validPayload)-> assertSuccessful();
-
+        $resp = $this->json('PUT', '/api/users/'.$this->user['id'], $this->validPayload)-> assertSuccessful();
         //Save after update
         $afterChangeUser = User::where('id',$this->user['id'])->get()->first()->toArray();
 

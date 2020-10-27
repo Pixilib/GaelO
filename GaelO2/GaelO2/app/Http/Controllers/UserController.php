@@ -79,7 +79,7 @@ class UserController extends Controller
         $curentUser = Auth::user();
         $modifyUserRequest->currentUserId = $curentUser['id'];
         $requestData = $request->all();
-        $requestData['id'] = $id;
+        $requestData['userId'] = $id;
         $modifyUserRequest = Util::fillObject($requestData, $modifyUserRequest);
         $modifyUser->execute($modifyUserRequest, $modifyUserResponse);
         return response()->noContent()
