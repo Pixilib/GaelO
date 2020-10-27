@@ -48,31 +48,15 @@ class AffiliatedCenterTest extends TestCase
         $this->assertEquals($affiliatedCenter[0]['code'], 3);
     }
 
-    public function testCreateMultipleAffiliatedCenterToUser(){
-
-        //With Array
-        $payload = [
-            'centerCode' => [0]
-        ];
-        $this->json('POST', 'api/users/1/affiliated-centers', $payload)->assertNoContent(400);
-
-        //With unique creation
-        $payload = [
-            'centerCode' => 0
-        ];
-        $this->json('POST', 'api/users/1/affiliated-centers', $payload)->assertNoContent(400);
-
-    }
-
     public function testCreateAlreadyExistingAffiliatedCenterToUser(){
 
         $payload = [
-            'centerCode' => [3,4]
+            'centerCode' => 3
         ];
         $this->json('POST', 'api/users/1/affiliated-centers', $payload)->assertNoContent(201);
 
         $affiliatedCenter =User::where('id',1)->first()->affiliatedCenters()->get()->toArray();
-        $this->assertEquals(sizeof($affiliatedCenter), 2);
+        $this->assertEquals(sizeof($affiliatedCenter), 1);
 
     }
 
