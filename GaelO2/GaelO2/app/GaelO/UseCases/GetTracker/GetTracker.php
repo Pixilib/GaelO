@@ -2,6 +2,7 @@
 
 namespace App\GaelO\UseCases\GetTracker;
 
+use App\GaelO\Constants\Constants;
 use App\GaelO\Interfaces\PersistenceInterface;
 
 class GetTracker {
@@ -13,14 +14,14 @@ class GetTracker {
     public function execute(GetTrackerRequest $getTrackerRequest, GetTrackerResponse $getTrackerResponse) : void {
         $admin = $getTrackerRequest->admin;
         if ($admin === 'true') {
-            $dbData = $this->persistenceInterface->getTrackerOfRole('Administrator');
+            $dbData = $this->persistenceInterface->getTrackerOfRole(Constants::TRACKER_ROLE_ADMINISTRATOR);
             $responseArray = [];
             foreach($dbData as $data){
                 $responseArray[] = TrackerEntity::fillFromDBReponseArray($data);
             }
             $getTrackerResponse->body = $responseArray;
         } else {
-            $dbData = $this->persistenceInterface->getTrackerOfRole('User');
+            $dbData = $this->persistenceInterface->getTrackerOfRole(Constants::TRACKER_ROLE_USER);
             $responseArray = [];
             foreach($dbData as $data){
                 $responseArray[] = TrackerEntity::fillFromDBReponseArray($data);
