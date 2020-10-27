@@ -1,8 +1,8 @@
 <?php
 
-namespace App\GaelO\UseCases\GetTrackerUser;
+namespace App\GaelO\UseCases\GetTracker;
 
-class GetTrackerUserResponse {
+class GetTrackerResponse {
     public array $body;
     public int $status;
     public string $statusText;
