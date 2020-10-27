@@ -26,11 +26,7 @@ class VisitTypeRepository implements PersistenceInterface {
     }
 
     public function find($id){
-        $truc = $this->visitType->find($id);
-        Log::info($truc);
-        $truc->toArray();
-        Log::info($truc);
-        return $truc;
+        return $this->visitType->find($id)->toArray();
     }
 
     public function delete($id) : void {

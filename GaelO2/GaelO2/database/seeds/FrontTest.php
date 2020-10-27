@@ -75,10 +75,39 @@ class FrontTest extends Seeder
             'study_name' => 'Study test',
             'modality' => 'PT'
         ]);
+        DB::table('visit_groups')->insert([
+            'study_name' => 'Study test',
+            'modality' => 'CT'
+        ]);
+        DB::table('visit_groups')->insert([
+            'study_name' => 'Study test',
+            'modality' => 'MR'
+        ]);
 
         DB::table('visit_types')->insert([
             'visit_group_id' => 1,
-            'name' => 'Test',
+            'name' => 'Test1',
+            'visit_order' => 1,
+            'limit_low_days' => 1,
+            'limit_up_days' => 10,
+        ]);
+        DB::table('visit_types')->insert([
+            'visit_group_id' => 2,
+            'name' => 'Test2',
+            'visit_order' => 1,
+            'limit_low_days' => 1,
+            'limit_up_days' => 10,
+        ]);
+        DB::table('visit_types')->insert([
+            'visit_group_id' => 2,
+            'name' => 'Test3',
+            'visit_order' => 2,
+            'limit_low_days' => 1,
+            'limit_up_days' => 10,
+        ]);
+        DB::table('visit_types')->insert([
+            'visit_group_id' => 3,
+            'name' => 'Test4',
             'visit_order' => 1,
             'limit_low_days' => 1,
             'limit_up_days' => 10,
@@ -89,6 +118,24 @@ class FrontTest extends Seeder
             'creation_date' => now(),
             'patient_code' => Patient::first()['code'],
             'visit_type_id' => 1
+        ]);
+        DB::table('visits')->insert([
+            'creator_user_id' => 1,
+            'creation_date' => now(),
+            'patient_code' => Patient::first()['code'],
+            'visit_type_id' => 2
+        ]);
+        DB::table('visits')->insert([
+            'creator_user_id' => 1,
+            'creation_date' => now(),
+            'patient_code' => Patient::first()['code'],
+            'visit_type_id' => 3
+        ]);
+        DB::table('visits')->insert([
+            'creator_user_id' => 1,
+            'creation_date' => now(),
+            'patient_code' => Patient::first()['code'],
+            'visit_type_id' => 4
         ]);
 
         factory(User::class, 50)->create();

@@ -23,6 +23,10 @@ class AuthorizationService {
         if( ! $userEntity->administrator) throw new GaelOAuthorizationException("Not Admin");
     }
 
+    public function isSameUserId(int $currentUserId, int $requestedUserId) {
+        if ($currentUserId !== $requestedUserId) throw new GaelOAuthorizationException("Unauthorized");
+    }
+
     public function isRoleAllowed(int $userId, String $role){
 
     }
