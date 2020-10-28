@@ -1,9 +1,5 @@
-Se pencher sur monitoring de Docker => Documenter collection de logs avec LogzIO
-
 Passage Visit Group : 
 => Controleur statitics a generaliser pour autres modalite
-
-Fiji : reprendre integration
 
 + Tard : 
 Reminder Visit Upload manager a revoir
@@ -13,3 +9,8 @@ Objet Visit : Ne pas instancier automatiquement Visit Groupe et Visit Type, seul
 Options export review deleted et draft dans export
 
 OHIF Build :  QUICK_BUILD=true PUBLIC_URL=/ohif/ yarn build 
+
+Release : 
+Fixer Uploder
+Fixer OHIF
+Fixer Numero Version
