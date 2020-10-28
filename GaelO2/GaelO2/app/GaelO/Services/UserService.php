@@ -88,8 +88,8 @@ class UserService
     public function patchUser(ModifyUserIdentificationRequest $modifyUserIdentificationRequest) {
         $user = $this->persistenceInterface->find($modifyUserIdentificationRequest->userId);
 
-        $this->checkEmailValid($modifyUserIdentificationRequest->email);
-        $this->checkUsernameUnique($modifyUserIdentificationRequest->username);
+        if($modifyUserIdentificationRequest->email !== $user['email']) $this->checkEmailValid($modifyUserIdentificationRequest->email);
+        if($modifyUserIdentificationRequest->username !== $user['username']) $this->checkUsernameUnique($modifyUserIdentificationRequest->username);
 
         $this->persistenceInterface->updateUser($user['id'], $modifyUserIdentificationRequest->username,
                                                             $modifyUserIdentificationRequest->lastname,
