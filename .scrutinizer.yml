@@ -11,5 +11,6 @@ build:
 filter:
   excluded_paths:
       - "./src/data/install/"
+      - "./src/ohif/"
   dependency_paths:
       - "./src/vendor/"

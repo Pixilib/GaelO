@@ -30,8 +30,6 @@ $visitAccessCheck=$userObject->isVisitAllowed($id_visit, User::REVIEWER);
 
 if ($visitAccessCheck) {
     
-	$result=[];
-    
 	$visitObject=new Visit($id_visit, $linkpdo);
 	
 	try {

@@ -46,7 +46,8 @@ if ($studyInvestigatorAllowed) {
 			$patient['centerNumber']=$patientCenter->code;
 			$dateAcquisition=date('m-d-Y', strtotime($visit->acquisitionDate));
 			$patient['acquisitionDate']=$dateAcquisition;
-			$patient['idVisit']=$visit->id_visit;
+			$patient['visitType']=$visit->visitType;
+			$patient['idVisit']=intval($visit->id_visit);
 			$AvailablePatients[$visit->visitType][]=$patient;
 		}
 	}

@@ -11,3 +11,5 @@ Review reminder a revoir
 Securité access review => dissocier visit groupe en fonction du Job reviewer, pour eviter d'ouvrir toutes les visites (pas d'acces anapath si reviewer med nuc)
 Objet Visit : Ne pas instancier automatiquement Visit Groupe et Visit Type, seulement quand on a besoin avec Getteur
 Options export review deleted et draft dans export
+
+OHIF Build :  QUICK_BUILD=true PUBLIC_URL=/ohif/ yarn build 
