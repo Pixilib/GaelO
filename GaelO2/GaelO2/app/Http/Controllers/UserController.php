@@ -47,6 +47,9 @@ use App\GaelO\UseCases\ReactivateUser\ReactivateUserResponse;
 use App\GaelO\UseCases\GetUserFromStudy\GetUserFromStudy;
 use App\GaelO\UseCases\GetUserFromStudy\GetUserFromStudyRequest;
 use App\GaelO\UseCases\GetUserFromStudy\GetUserFromStudyResponse;
+use App\GaelO\UseCases\ModifyUserIdentification\ModifyUserIdentification;
+use App\GaelO\UseCases\ModifyUserIdentification\ModifyUserIdentificationRequest;
+use App\GaelO\UseCases\ModifyUserIdentification\ModifyUserIdentificationResponse;
 use App\GaelO\Util;
 use Illuminate\Support\Facades\Auth;
 
@@ -76,6 +79,17 @@ class UserController extends Controller
     }
 
     public function modifyUser(int $id, Request $request, ModifyUserRequest $modifyUserRequest, ModifyUserResponse $modifyUserResponse, ModifyUser $modifyUser) {
+        $curentUser = Auth::user();
+        $modifyUserRequest->currentUserId = $curentUser['id'];
+        $requestData = $request->all();
+        $requestData['userId'] = $id;
+        $modifyUserRequest = Util::fillObject($requestData, $modifyUserRequest);
+        $modifyUser->execute($modifyUserRequest, $modifyUserResponse);
+        return response()->noContent()
+                ->setStatusCode($modifyUserResponse->status, $modifyUserResponse->statusText);
+    }
+
+    public function modifyUserIdentification(int $id, Request $request, ModifyUserIdentificationRequest $modifyUserRequest, ModifyUserIdentificationResponse $modifyUserResponse, ModifyUserIdentification $modifyUser) {
         $curentUser = Auth::user();
         $modifyUserRequest->currentUserId = $curentUser['id'];
         $requestData = $request->all();

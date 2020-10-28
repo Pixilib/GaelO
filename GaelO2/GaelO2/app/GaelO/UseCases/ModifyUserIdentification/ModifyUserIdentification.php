@@ -31,7 +31,7 @@ class ModifyUserIdentification {
         $this->userService->patchUser($modifyUserIdentificationRequest);
 
         $details = [
-            'modified_user_id'=>$modifyUserIdentificationRequest->id,
+            'modified_user_id'=>$modifyUserIdentificationRequest->userId,
             'username'=>$modifyUserIdentificationRequest->username,
             'lastname'=>$modifyUserIdentificationRequest->lastname,
             'firstname'=>$modifyUserIdentificationRequest->firstname,

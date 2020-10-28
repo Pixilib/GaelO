@@ -2,17 +2,11 @@
 
 namespace Tests\Feature;
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Support\Facades\Artisan;
 use Laravel\Passport\Passport;
 use Tests\TestCase;
 use App\User;
-use App\Study;
-use App\Role;
-use Illuminate\Support\Facades\Log;
-use App\Tracker;
 use Illuminate\Support\Facades\DB;
 
 use function GuzzleHttp\json_encode;

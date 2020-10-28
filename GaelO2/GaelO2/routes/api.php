@@ -21,7 +21,7 @@ use Illuminate\Support\Facades\Route;
 
 //User related Routes
 Route::middleware(['auth:api', 'refresh_token'])->post('users', 'UserController@createUser');
-Route::middleware(['auth:api', 'refresh_token'])->put('users/{id}', 'UserController@modifyUser');
+Route::middleware(['auth:api', 'refresh_token'])->put('users/self/{id}', 'UserController@modifyUserIdentification');
 Route::middleware(['auth:api', 'refresh_token'])->delete('users/{id}', 'UserController@deleteUser');
 
 //Export DB Route (download binary doesn't support refresh token)
@@ -32,6 +32,7 @@ Route::middleware('auth:api')->post('export-db', 'ExportDBController@exportDB');
 Route::middleware(['auth:api', 'admin', 'refresh_token'])->group(function () {
 
     //Users Routes
+    Route::put('users/{id}', 'UserController@modifyUser');
     Route::patch('users/{id}/reactivate', 'UserController@reactivateUser');
     Route::get('users/{id}/roles/{study?}', 'UserController@getRoles');
     Route::post('users/{id}/roles/{study}', 'UserController@createRole');
