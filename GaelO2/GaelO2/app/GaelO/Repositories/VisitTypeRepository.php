@@ -5,7 +5,9 @@ namespace App\GaelO\Repositories;
 use App\GaelO\Exceptions\GaelOException;
 use App\VisitType;
 use App\GaelO\Interfaces\PersistenceInterface;
+use App\GaelO\UseCases\GetVisitType\VisitTypeEntity;
 use App\GaelO\Util;
+use Illuminate\Support\Facades\Log;
 
 class VisitTypeRepository implements PersistenceInterface {
 
@@ -14,7 +16,8 @@ class VisitTypeRepository implements PersistenceInterface {
     }
 
     public function create(array $data){
-        $model = Util::fillObject($data, $this->visitType);
+        $visitType = new VisitType();
+        $model = Util::fillObject($data, $visitType);
         $model->save();
     }
 
@@ -59,6 +62,10 @@ class VisitTypeRepository implements PersistenceInterface {
         return $visits->count()>0 ? true : false;
     }
 
+    public function getEntity(int $id) : VisitTypeEntity {
+        $entityArray = $this->visitType->find($id)->toArray();
+        return VisitTypeEntity::fillFromDBReponseArray($entityArray);
+    }
 
 }
 

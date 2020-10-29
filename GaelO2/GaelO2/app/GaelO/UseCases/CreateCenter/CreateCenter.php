@@ -25,7 +25,12 @@ class CreateCenter {
             $createCenterResponse->status = 409;
             $createCenterResponse->statusText = 'Conflict. Code already used.';
             return;
+        };
 
+        if(!empty($this->persistenceInterface->getCenterByName($createCenterRequest->name))){
+            $createCenterResponse->status = 409;
+            $createCenterResponse->statusText = 'Conflict. Name already used.';
+            return;
         };
 
         $this->persistenceInterface->createCenter($code, $name, $countryCode);

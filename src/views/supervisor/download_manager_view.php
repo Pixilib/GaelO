@@ -175,14 +175,20 @@
     	} );
     
         //Search function in dataTable manual download
-    	$( '#manual'  ).on( 'keyup', ".column_search" ,function () {
-    
-    		$('#tableau').DataTable()
+		$('#manual').on('change keyup', ".column_search", function() {
+			let searchValue = this.value
+			let regex = false
+
+			if($(this).prop("class").includes('select_search') && this.value != ""){
+				searchValue = "^"+this.value+"$"
+				regex = true
+			}
+
+			$('#tableau').DataTable()
     			.column( $(this).parent().index() )
     			.search( this.value )
     			.draw();
-    		
-    	});
+		});
     
     });
     
@@ -236,8 +242,24 @@
 				<th><input type="text" placeholder="Search"  class="column_search" style="max-width:75px"/></th>
 				<th><input type="text" placeholder="Search"  class="column_search" style="max-width:75px"/></th>
 				<th><input type="text" placeholder="Search"  class="column_search" style="max-width:75px"/></th>
-				<th><input type="text" placeholder="Search"  class="column_search" style="max-width:75px"/></th>
-				<th><input type="text" placeholder="Search"  class="column_search" style="max-width:75px"/></th>
+				<th>
+					<select type="text" placeholder="Search" class="column_search select_search" style="max-width:75px" >
+								<option value="">Choose</option>
+								<option value="<?=Visit::LOCAL_FORM_NOT_DONE?>"><?=Visit::LOCAL_FORM_NOT_DONE?></option>	
+								<option value="<?=Visit::LOCAL_FORM_DRAFT?>"><?=Visit::LOCAL_FORM_DRAFT?></option>
+								<option value="<?=Visit::LOCAL_FORM_DONE?>"><?=Visit::LOCAL_FORM_DONE?></option>
+					</select> 
+				</th>
+				<th>
+					<select type="text" placeholder="Search" class="column_search select_search" style="max-width:75px" >
+								<option value="">Choose</option>
+								<option value="<?=Visit::QC_NOT_DONE?>"><?=Visit::QC_NOT_DONE?></option>	
+								<option value="<?=Visit::QC_CORRECTIVE_ACTION_ASKED?>"><?=Visit::QC_CORRECTIVE_ACTION_ASKED?></option>
+								<option value="<?=Visit::QC_WAIT_DEFINITVE_CONCLUSION?>"><?=Visit::QC_WAIT_DEFINITVE_CONCLUSION?></option>
+								<option value="<?=Visit::QC_ACCEPTED?>"><?=Visit::QC_ACCEPTED?></option>
+								<option value="<?=Visit::QC_REFUSED?>"><?=Visit::QC_REFUSED?></option>
+					</select> 	
+				</th>
    				<th></th>
 				<th></th>
 				<th></th>

@@ -401,7 +401,7 @@ Class Send_Email {
                 Image Series : ".$imageDecision." Comment :".$imageComment." <br>";
 
 		$this->setMessage($message);
-		$this->subject='Quality Control';
+		$this->subject = $study.' - Quality Control Patient '.$patientCode;
 		$this->sendEmail();
 	}
 
@@ -446,7 +446,7 @@ Class Send_Email {
         Patient Number : ".$patientCode."<br>
         Visit : ".$visitType."<br>";
 		$this->setMessage($message);
-		$this->subject="Awaiting Review";
+		$this->subject=$study." - Awaiting Review Patient ".$patientCode;
 		$this->sendEmail();
 	}
 
@@ -466,7 +466,7 @@ Class Send_Email {
 			
 		}
 		$this->setMessage($message);
-		$this->subject="Corrective Action";
+		$this->subject= $study." - Corrective Action Patient ".$patientCode;
 		$this->sendEmail();
 
 	}
@@ -491,7 +491,7 @@ Class Send_Email {
         The visit is awaiting for your adjudication review";
 
 		$this->setMessage($message);
-		$this->subject="Awaiting Adjudication";
+		$this->subject= $study." - Awaiting Adjudication Patient ".$patientCode ;
 		$this->sendEmail();
 	}
 
@@ -503,7 +503,7 @@ Class Send_Email {
                 Conclusion Value : ".$conclusionValue;
 
 		$this->setMessage($message);
-		$this->subject="Visit Concluded";
+		$this->subject=$study." - Visit Concluded Patient ".$patientCode;
 		$this->sendEmail();
 	}
 
@@ -526,7 +526,7 @@ Class Send_Email {
         Uploaded visit : ".$visitType."<br>";
 
 		$this->setMessage($message);
-		$this->subject="New upload";
+		$this->subject= $study." - New upload Patient ".$patientCode;
 		$this->sendEmail();
 
 	}
@@ -539,7 +539,7 @@ Class Send_Email {
         You can now resend a new version of this form <br>";
 
 		$this->setMessage($message);
-		$this->subject="Form Deleted";
+		$this->subject= $study." - Form Deleted Patient ".$patientCode;
 		$this->sendEmail();
 
 	}
@@ -552,7 +552,7 @@ Class Send_Email {
         You can now resend a new version of this form <br>";
 
 		$this->setMessage($message);
-		$this->subject="Form Unlocked";
+		$this->subject= $study." - Form Unlocked Patient ".$patientCode;
 		$this->sendEmail();
 
 	}
@@ -568,7 +568,7 @@ Class Send_Email {
             error  : ".$errorMessage."<br>";
 
 		$this->setMessage($message);
-		$this->subject="Error During Import";
+		$this->subject=$study." - Error During Import Patient ".$patientCode;
 		$this->sendEmail();
 	}
 
@@ -580,7 +580,7 @@ Class Send_Email {
         Creating Username : ".$creatorUser."<br>";
 
 		$this->setMessage($message);
-		$this->subject="Visit Not Done";
+		$this->subject=$study." - Visit Not Done Patient ".$patientCode;
 		$this->sendEmail();
 	}
 

@@ -3,6 +3,7 @@
 namespace App\GaelO\UseCases\AddAffiliatedCenter;
 
 use App\GaelO\Constants\Constants;
+use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Interfaces\PersistenceInterface;
 use App\GaelO\Services\TrackerService;
 
@@ -15,16 +16,14 @@ class AddAffiliatedCenter {
 
     public function execute(AddAffiliatedCenterRequest $addAffiliatedCenterRequest, AddAffiliatedCenterResponse $addAffiliatedCenterResponse){
 
-        //Sk Verifier que le centre pas deja dans la liste
-        if(is_array($addAffiliatedCenterRequest->centerCode)){
-            $centersArray = $addAffiliatedCenterRequest->centerCode;
-            foreach($centersArray as $center){
-                $this->persistenceInterface->addAffiliatedCenter($addAffiliatedCenterRequest->userId, $center);
-            }
+        $existingCenter = $this->persistenceInterface->getAffiliatedCenter($addAffiliatedCenterRequest->userId);
 
-        }else{
-            $this->persistenceInterface->addAffiliatedCenter($addAffiliatedCenterRequest->userId, $addAffiliatedCenterRequest->centerCode);
+        //Check the request creation is not in Main or affiliated centers
+        if($addAffiliatedCenterRequest->centerCode === $existingCenter){
+            throw new GaelOException("Center already affiliated to user");
         }
+
+        $this->persistenceInterface->addAffiliatedCenter($addAffiliatedCenterRequest->userId, $addAffiliatedCenterRequest->centerCode);
 
         $actionDetails = [
             'addAffiliatedCenters' => $addAffiliatedCenterRequest->centerCode

@@ -24,6 +24,10 @@ class LaravelFunctionAdapter {
     public static function getConfig($key){
         return Config::get('app.'.$key);
     }
+
+    public static function getStoragePath(){
+        return storage_path();
+    }
 }
 
 ?>

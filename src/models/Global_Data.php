@@ -205,7 +205,7 @@ Class Global_Data {
 			'address'=>$post['webAddress'],
 			'email'=>$post['adminEmail'],
 			'reply_to'=>$post['replyTo'],
-			'name'=>$post['platformName'],
+			'name'=>$post['plateformName'],
 			'parse_date_import'=>$post['parseDateImport'],
 			'parseCountryName'=>$post['parseCountryName'],
 			'Orthanc_Exposed_Internal_Address'=>$post['orthancExposedInternalAddress'],

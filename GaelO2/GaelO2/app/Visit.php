@@ -10,6 +10,10 @@ class Visit extends Model
         return $this->hasMany('App\Review', 'visit_id');
     }
 
+    public function reviewStatus(){
+        return $this->hasMany('App\reviews_status', 'visit_id');
+    }
+
     public function patient(){
         return $this->belongsTo('App\Patient', 'patient_code', 'code');
     }

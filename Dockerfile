@@ -49,6 +49,7 @@ WORKDIR $APP_HOME
 COPY docker_start.sh /usr/local/bin/start
 COPY --chown=www-data:www-data GaelO2/GaelO2 .
 COPY --from=react /FrontEnd/build $APP_HOME/public
+RUN mv .env.example .env
 
 RUN composer install --no-dev --no-interaction
 RUN chmod u+x /usr/local/bin/start

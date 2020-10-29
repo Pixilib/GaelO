@@ -3,8 +3,6 @@
 namespace Tests\Feature;
 
 use App\GaelO\Constants\Constants;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\TestCase;
 use App\User;

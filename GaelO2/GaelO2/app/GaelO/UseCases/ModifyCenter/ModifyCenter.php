@@ -25,8 +25,14 @@ class ModifyCenter {
             $centerResponse->status = 400;
             $centerResponse->statusText = 'Non Existing Center';
             return;
-
         };
+
+        if(!empty($this->persistenceInterface->getCenterByName($centerRequest->name))){
+            $centerResponse->status = 409;
+            $centerResponse->statusText = 'Conflict. Name already used.';
+            return;
+        };
+
         $this->persistenceInterface->updateCenter($centerRequest->name, $centerRequest->code, $centerRequest->countryCode);
 
         $actionDetails = [

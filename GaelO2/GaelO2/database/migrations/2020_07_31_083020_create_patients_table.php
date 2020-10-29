@@ -15,19 +15,19 @@ class CreatePatientsTable extends Migration
     {
         Schema::create('patients', function (Blueprint $table) {
             $table->unsignedBigInteger('code')->primary();
-            $table->string('first_name')->default(null);
-            $table->string('last_name')->default(null);
+            $table->string('first_name')->nullable(true)->default(null);
+            $table->string('last_name')->nullable(true)->default(null);
             $table->enum('gender', ['M', 'F'])->nullable(true)->default(null);
-            $table->integer('birth_day')->default(null);
-            $table->integer('birth_month')->default(null);
-            $table->integer('birth_year')->default(null);
+            $table->integer('birth_day')->nullable(true)->default(null);
+            $table->integer('birth_month')->nullable(true)->default(null);
+            $table->integer('birth_year')->nullable(true)->default(null);
             $table->date('registration_date')->nullable(false);
             $table->string('investigator_name')->default(null);
             $table->unsignedInteger('center_code')->default(null);
             $table->string('study_name')->default(null);
             $table->boolean('withdraw')->default(false)->nullable(false);
-            $table->string('withdraw_reason')->default(null);
-            $table->date('withdraw_date')->default(null);
+            $table->string('withdraw_reason')->nullable(true)->default(null);
+            $table->date('withdraw_date')->nullable(true)->default(null);
             $table->timestamps();
             //Dependencies
             $table->foreign('study_name')->references('name')->on('studies');

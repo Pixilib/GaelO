@@ -42,6 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 		$studyName=$_POST['studyName'];
 		$visitsGroupArray=$_POST['visitsData'];
 		$patientCodePrefix=$_POST['patientCodePrefix'];
+		if(empty($patientCodePrefix)) $patientCodePrefix = null;
 		//Add the new study as an active study
 		Study::createStudy($studyName, $patientCodePrefix, $linkpdo);
          

@@ -17,7 +17,7 @@
  * Build patient table with patient details
  * @param Patient $patient
  */
-function build_patient_visit_table(Patient $patient) {
+function build_patient_visit_table(Patient $patient, String $role) {
 	if ($patient->patientWithdraw)
 		$patientStatus="Withdrawn";
 	else
@@ -53,11 +53,16 @@ function build_patient_visit_table(Patient $patient) {
         	<tr>
         		<td>Registration date</td>
         		<td><?=$patient->patientRegistrationDate?></td>
-        	</tr>
-        	<tr>
-        		<td>Number investigator center</td>
-        		<td><?= $patientCenter->code.' - '.htmlspecialchars($patientCenter->name) ?></td>
-        	</tr>
+			</tr>
+			<?php if ($role != User::REVIEWER) {
+			?>
+				<tr>
+        			<td>Number investigator center</td>
+        			<td><?= $patientCenter->code.' - '.htmlspecialchars($patientCenter->name) ?></td>
+        		</tr>
+			<?php
+			}?>
+
         </table>
     </div>
 <?php 
@@ -72,12 +77,12 @@ function build_visit_details_table(array $visitObjects, string $role) { ?>
     <div style="overflow-x:auto;">
 		<table id='tab_visits' class='table table-striped table-border'>
 			<tr>
-				<th colspan=7>Visit information</th>
+				<th colspan=9>Visit information</th>
 			</tr>
 			<tr>
 				<td rowspan=2>Modality</td>	
 				<td rowspan=2>Visit</td>
-    	        <td colspan=4>Visit status</td>
+    	        <td colspan=5>Visit status</td>
     	        <td rowspan=2>Number of series</td>
     	        <td rowspan=2>Acquisition date</td>
 			</tr>
@@ -86,6 +91,7 @@ function build_visit_details_table(array $visitObjects, string $role) { ?>
     	        <td>Series upload</td>
     	        <td>Investigator form</td>
     	        <td>Quality control</td>
+				<td>Review Status</td>
 			</tr>
         	<?php 
 			foreach ($visitObjects as $visitObject) {
@@ -100,6 +106,7 @@ function build_visit_details_table(array $visitObjects, string $role) { ?>
         	         <td><?=$visitObject->uploadStatus?></td>
         	         <td><?=$visitObject->stateInvestigatorForm?></td>
         	         <td><?=$visitObject->stateQualityControl?></td>
+					 <td><?=$visitObject->reviewStatus?></td>
         	         <td><?=$numberOfSeries?></td>
         	         <td><?=$visitObject->acquisitionDate?></td>
                 <?php 
