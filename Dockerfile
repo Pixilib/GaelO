@@ -56,6 +56,6 @@ RUN chmod u+x /usr/local/bin/start
 
 EXPOSE 80
 
-CMD ["/usr/local/bin/start"]
+ENTRYPOINT ["/usr/local/bin/start"]
 
 
