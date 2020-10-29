@@ -11,7 +11,6 @@ fi
 
 if [ "$role" = "app" ]; then
     service apache2 restart
-    exec apache2-foreground
 
 elif [ "$role" = "queue" ]; then
 
