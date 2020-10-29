@@ -171,9 +171,9 @@ class ModifyUserTest extends TestCase
         $beforeChangeUser = User::where('id',1)->first();
 
         $this->validPayload = [
-            'username' => 'username',
-            'lastname' => 'lastname',
-            'firstname' => 'firstname',
+            'username' => 'administrator',
+            'lastname' => 'administrator',
+            'firstname' => 'administrator',
             'email' => 'pris@pris.fr',
             'phone' => '0101010101',
         ];
