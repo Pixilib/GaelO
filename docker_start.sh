@@ -10,7 +10,7 @@ if [ "$env" != "local" ]; then
 fi
 
 if [ "$role" = "app" ]; then
-    service apache2 restart
+    echo "App started"
 
 elif [ "$role" = "queue" ]; then
 
