@@ -34,13 +34,5 @@ Decoupler controle qualité ?
 
 //Les tests ne font pas d'assertion sur le tracker et l'envoi de mails (mais exception si erreur en theorie)
 
-Installation :
-Installation DB :
-php artisan migrate:fresh --seed
-Installation Passport :
-php artisan passport:install
-Generation clés :
-php artisan key:generate
-
 docs :
 https://medium.com/@tobiashn/putting-a-laravel-app-into-production-d847ac2a04ed?source=email-e7f4cb02701-1600390333596-digest.reader------0-59------------------04e5dd75_dc46_4393_805e_4aee0fee36a6-1-29facf24_1541_4eb6_bffc_1a4ba0ca2cb4----&sectionName=top
