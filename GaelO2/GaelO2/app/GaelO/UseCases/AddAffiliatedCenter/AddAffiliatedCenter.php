@@ -16,27 +16,14 @@ class AddAffiliatedCenter {
 
     public function execute(AddAffiliatedCenterRequest $addAffiliatedCenterRequest, AddAffiliatedCenterResponse $addAffiliatedCenterResponse){
 
-        $existingCenterArray = $this->persistenceInterface->getAffiliatedCenter($addAffiliatedCenterRequest->userId);
-        $existingCenterArray[] = $this->persistenceInterface->find($addAffiliatedCenterRequest->userId)['center_code'];
+        $existingCenter = $this->persistenceInterface->getAffiliatedCenter($addAffiliatedCenterRequest->userId);
 
         //Check the request creation is not in Main or affiliated centers
-        if(!is_array($addAffiliatedCenterRequest->centerCode) && in_array($addAffiliatedCenterRequest->centerCode, $existingCenterArray)){
+        if($addAffiliatedCenterRequest->centerCode === $existingCenter){
             throw new GaelOException("Center already affiliated to user");
         }
 
-        if(is_array($addAffiliatedCenterRequest->centerCode) && !empty(array_intersect($addAffiliatedCenterRequest->centerCode, $existingCenterArray)) ){
-            throw new GaelOException("Center already affiliated to user");
-        }
-
-        if(is_array($addAffiliatedCenterRequest->centerCode)){
-            $centersArray = $addAffiliatedCenterRequest->centerCode;
-            foreach($centersArray as $center){
-                $this->persistenceInterface->addAffiliatedCenter($addAffiliatedCenterRequest->userId, $center);
-            }
-
-        }else{
-            $this->persistenceInterface->addAffiliatedCenter($addAffiliatedCenterRequest->userId, $addAffiliatedCenterRequest->centerCode);
-        }
+        $this->persistenceInterface->addAffiliatedCenter($addAffiliatedCenterRequest->userId, $addAffiliatedCenterRequest->centerCode);
 
         $actionDetails = [
             'addAffiliatedCenters' => $addAffiliatedCenterRequest->centerCode

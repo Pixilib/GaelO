@@ -3,8 +3,6 @@
 namespace Tests\Feature;
 
 use App\GaelO\Constants\Constants;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\TestCase;
 use App\User;
@@ -66,8 +64,7 @@ class ModifyUserTest extends TestCase
         //Save database state before update
         $beforeChangeUser = User::where('id',$this->user['id'])->get()->first()->toArray();
         //Update with update API, shoud be success
-        $this->json('PUT', '/api/users/'.$this->user['id'], $this->validPayload)-> assertSuccessful();
-
+        $resp = $this->json('PUT', '/api/users/'.$this->user['id'], $this->validPayload)-> assertSuccessful();
         //Save after update
         $afterChangeUser = User::where('id',$this->user['id'])->get()->first()->toArray();
 
@@ -122,4 +119,68 @@ class ModifyUserTest extends TestCase
         $this->assertNotSame($updatedUser['password_temporary'], $this->user['password_temporary']);
 
     }
+
+    public function testValidModifyUserIdentification()
+    {
+        //Save database state before update
+        $beforeChangeUser = User::where('id',1)->first();
+
+        $this->validPayload = [
+            'username' => 'username',
+            'lastname' => 'lastname',
+            'firstname' => 'firstname',
+            'email' => 'test@test.fr',
+            'phone' => '0101010101',
+        ];
+
+        //Update with update API, shoud be success
+        $resp = $this->json('PUT', '/api/users/self/1', $this->validPayload)-> assertSuccessful();
+        //Save after update
+        $afterChangeUser = User::where('id',$this->user['id'])->get()->first()->toArray();
+
+         //Value expected to have changed
+         $updatedArray = ['username', 'lastname', 'firstname', 'email', 'phone'];
+        //Check that key needed to be updated has been updated in database
+        foreach($updatedArray as $key){
+            $this->assertNotEquals($beforeChangeUser[$key], $afterChangeUser[$key]);
+        }
+    }
+
+    public function testModifyUserIdentificationAlreadyUsedUsername()
+    {
+        factory(User::class)->create(['username' => 'Pris']);
+        //Save database state before update
+        $beforeChangeUser = User::where('id',1)->first();
+
+        $this->validPayload = [
+            'username' => 'Pris',
+            'lastname' => 'lastname',
+            'firstname' => 'firstname',
+            'email' => 'test@test.fr',
+            'phone' => '0101010101',
+        ];
+
+        //Update with update API, shoud be success
+        $resp = $this->json('PUT', '/api/users/self/1', $this->validPayload)->assertNoContent(400);
+    }
+
+    public function testModifyUserIdentificationAlreadyUsedEmail()
+    {
+        factory(User::class)->create(['email' => 'pris@pris.fr']);
+        //Save database state before update
+        $beforeChangeUser = User::where('id',1)->first();
+
+        $this->validPayload = [
+            'username' => 'username',
+            'lastname' => 'lastname',
+            'firstname' => 'firstname',
+            'email' => 'pris@pris.fr',
+            'phone' => '0101010101',
+        ];
+
+        //Update with update API, shoud be success
+        $resp = $this->json('PUT', '/api/users/self/1', $this->validPayload)->assertStatus(500);
+    }
+
+
 }

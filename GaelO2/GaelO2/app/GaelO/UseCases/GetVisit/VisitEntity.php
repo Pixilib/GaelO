@@ -17,13 +17,13 @@ class VisitEntity {
     public ?string $controlDate;
     public bool $imageQualityControl;
     public bool $formQualityControl;
-    public string $imageQualityComment;
-    public string $formQualityComment;
+    public ?string $imageQualityComment;
+    public ?string $formQualityComment;
     public ?int $correctiveActionUserId;
     public ?string $correctiveActionDate;
     public bool $correctiveActionNewUpload;
     public ?bool $correctiveActionInvestigatorForm;
-    public string $correctiveActionOther;
+    public ?string $correctiveActionOther;
     public ?bool $correctiveActionDecision;
     public ?string $lastReminderUpload;
 

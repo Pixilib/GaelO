@@ -4,8 +4,6 @@ namespace Tests\Feature;
 
 use App\GaelO\UseCases\GetVisit\VisitEntity;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Artisan;
 use Laravel\Passport\Passport;
 use Tests\TestCase;
@@ -15,7 +13,6 @@ use App\Visit;
 use App\VisitGroup;
 use App\VisitType;
 use App\Patient;
-use Illuminate\Support\Facades\Log;
 
 class VisitTest extends TestCase
 {
@@ -60,8 +57,7 @@ class VisitTest extends TestCase
         'patient_code' => $this->patient['code'],
         'visit_type_id' => $this->visitType['id'],
         'status_done' => 'Done']);
-        $response = $this->json('GET', 'api/studies/test/visit-groups/'.$this->visitGroup['id'].
-        '/visit-types/'.$this->visitType['id'].'/visits/'.$visit['id'].'?role=investigator')->content();
+        $response = $this->json('GET', 'api/visits/'.$visit['id'].'?role=investigator')->content();
         $response = json_decode($response, true);
         //Check all Item in visitEntity are present in reponse
         foreach ( get_class_vars(VisitEntity::class) as $key=>$value ){
@@ -76,8 +72,7 @@ class VisitTest extends TestCase
         'patient_code' => $this->patient['code'],
         'visit_type_id' => $this->visitType['id'],
         'status_done' => 'Done']);
-        $this->json('GET', 'api/studies/test/visit-groups/'.$this->visitGroup['id'].
-        '/visit-types/'.$this->visitType['id'].'/visits/?role=investigator')->assertJsonCount(5);
+        $this->json('GET', 'api/visits/?role=investigator')->assertJsonCount(5);
     }
 
 
@@ -98,8 +93,7 @@ class VisitTest extends TestCase
         'visit_type_id' => $this->visitType['id'],
         'status_done' => 'Done']);
 
-        $resp = $this->json('GET', 'api/studies/test/visit-groups/'.$this->visitGroup['id'].
-        '/visit-types/'.$this->visitType['id'].'/visits/'.$visit['id'].'/patients/'.$this->patient['code'].'?role=investigator')->content();
+        $resp = $this->json('GET', 'api/visits/'.$visit['id'].'/patients/'.$this->patient['code'].'?role=investigator')->content();
         $resp = json_decode($resp, true);
 
         foreach ( get_class_vars(VisitEntity::class) as $key=>$value ){
@@ -118,9 +112,6 @@ class VisitTest extends TestCase
         'visit_type_id' => $this->visitType['id'],
         'status_done' => 'Done']);
 
-        $resp = $this->json('GET', 'api/studies/test/visit-groups/'.$this->visitGroup['id'].
-        '/visit-types/'.$this->visitType['id'].'/visits/0/patients/'.$this->patient['code'].'?role=investigator')->content();//->assertJsonCount(6);
-        $resp = json_decode($resp, true);
-
+        $resp = $this->json('GET', 'api/visits/0/patients/'.$this->patient['code'].'?role=investigator')->assertJsonCount(6);
     }
 }

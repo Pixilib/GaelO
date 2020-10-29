@@ -6,8 +6,6 @@ use App\GaelO\UseCases\GetPatient\PatientEntity;
 use App\Patient;
 use App\Study;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Artisan;
 use Laravel\Passport\Passport;
 use Tests\TestCase;

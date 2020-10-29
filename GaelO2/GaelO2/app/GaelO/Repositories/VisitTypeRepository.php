@@ -7,6 +7,7 @@ use App\VisitType;
 use App\GaelO\Interfaces\PersistenceInterface;
 use App\GaelO\UseCases\GetVisitType\VisitTypeEntity;
 use App\GaelO\Util;
+use Illuminate\Support\Facades\Log;
 
 class VisitTypeRepository implements PersistenceInterface {
 

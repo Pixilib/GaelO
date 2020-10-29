@@ -8,11 +8,10 @@ use App\GaelO\Interfaces\PersistenceInterface;
 
 use App\GaelO\UseCases\CreateUser\CreateUserRequest;
 use App\GaelO\UseCases\CreateUser\CreateUserResponse;
-use App\GaelO\Exceptions\GaelOException;
+use App\GaelO\Services\AuthorizationService;
 use App\GaelO\Services\MailServices;
 use App\GaelO\Services\TrackerService;
-use App\GaelO\Util;
-use Illuminate\Support\Facades\Log;
+use App\GaelO\Services\UserService;
 
 class CreateUser {
 
@@ -22,45 +21,21 @@ class CreateUser {
      * Tracker Service to be able to write in the Tracker
      * Mail Service to be able to send email
      */
-    public function __construct(PersistenceInterface $persistenceInterface, TrackerService $trackerService, MailServices $mailService){
+    public function __construct(PersistenceInterface $persistenceInterface, AuthorizationService $authorizationService,  TrackerService $trackerService, MailServices $mailService, UserService $userService){
         $this->persistenceInterface = $persistenceInterface;
         $this->trackerService = $trackerService;
         $this->mailService = $mailService;
+        $this->authorizationService = $authorizationService;
+        $this->userService = $userService;
      }
 
      public function execute(CreateUserRequest $createUserRequest, CreateUserResponse $createUserResponse) : void
     {
-        $data = get_object_vars($createUserRequest);
+        $this->authorizationService->isAdmin($createUserRequest->currentUserId);
         //Generate password
         $password=substr(uniqid(), 1, 10);
-
         $passwordTemporary = LaravelFunctionAdapter::Hash($password);
-        $password = null;
-        $creationDate = Util::now();
-        $lastPasswordUpdate = null;
-        //Check form completion
-        $this->checkFormComplete($data);
-        $this->checkEmailValid($data);
-        $this->checkUserUnique($data);
-        $this->checkPhoneCorrect($data['phone']);
-
-        //In no Exception thrown by checks methods, data are ok to be written in db
-        $createdUserEntity = $this->persistenceInterface->createUser($createUserRequest->username,
-                            $createUserRequest->lastname,
-                            $createUserRequest->firstname,
-                            Constants::USER_STATUS_UNCONFIRMED,
-                            $createUserRequest->email,
-                            $createUserRequest->phone,
-                            $createUserRequest->administrator,
-                            $createUserRequest->centerCode,
-                            $createUserRequest->job,
-                            $createUserRequest->orthancAddress,
-                            $createUserRequest->orthancLogin,
-                            $createUserRequest->orthancPassword,
-                            $passwordTemporary,
-                            $password,
-                            $creationDate,
-                            $lastPasswordUpdate);
+        $createdUserEntity = $this->userService->createUser($createUserRequest, $passwordTemporary);
 
         //save user creation in tracker
         $detailsTracker = [
@@ -82,36 +57,5 @@ class CreateUser {
 
         $createUserResponse->status = 201;
         $createUserResponse->statusText = 'Created';
-
-
-    }
-
-    private function checkFormComplete(array $data) : void {
-        if(!isset($data['username'])
-        || !isset($data['job'])
-        || !isset($data['email'])
-        || !is_numeric($data['centerCode'])
-        || !isset($data['administrator']) ) {
-            throw new GaelOException('Form incomplete');
-        }
-    }
-
-    private function checkEmailValid(array $data) : void {
-        if (!preg_match('/^[a-z0-9\-_.]+@[a-z0-9\-_.]+\.[a-z]{2,4}$/i', $data['email'])) {
-            throw new GaelOException('Not a valid email format');
-        }
-
-    }
-
-    private function checkPhoneCorrect(?string $phone) : void {
-        //If contains non number caracters throw error
-        if ($phone != null && preg_match('/[^0-9]/', $phone)) {
-            throw new GaelOException('Not a valid email phone number');
-        }
-    }
-
-    private function checkUserUnique(array $data) : void {
-        if($this->persistenceInterface->isExistingEmail($data['email'])) throw new GaelOException('Already Existing Username');
-        if($this->persistenceInterface->isExistingUsername($data['username'])) throw new GaelOException('Already used Email');
     }
 }
