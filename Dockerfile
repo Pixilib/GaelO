@@ -46,13 +46,17 @@ ENV COMPOSER_ALLOW_SUPERUSER=1
 
 WORKDIR $APP_HOME
 
+COPY docker_start.sh /usr/local/bin/start
 COPY --chown=www-data:www-data GaelO2/GaelO2 .
 COPY --from=react /FrontEnd/build $APP_HOME/public
+RUN mv .env.example .env
 
-RUN composer install --no-dev --no-interaction --verbose --no-cache
+RUN composer install --optimize-autoloader --no-dev --no-interaction
+RUN chmod u+x /usr/local/bin/start
 
 EXPOSE 80
 
 RUN service apache2 restart
+ENTRYPOINT ["/usr/local/bin/start"]
 
 

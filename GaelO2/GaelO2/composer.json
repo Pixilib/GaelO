@@ -1,12 +1,12 @@
 {
-    "name": "laravel/laravel",
+    "name": "salimkanoun/gaelo",
     "type": "project",
-    "description": "The Laravel Framework.",
+    "description": "GaelO Imaging platform for clinical trials",
     "keywords": [
         "framework",
         "laravel"
     ],
-    "license": "MIT",
+    "license": "AGPLv3",
     "require": {
         "php": "^7.2.5",
         "darkaonline/l5-swagger": "^7.0",
