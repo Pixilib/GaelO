@@ -56,6 +56,7 @@ RUN chmod u+x /usr/local/bin/start
 
 EXPOSE 80
 
+RUN service apache2 restart
 ENTRYPOINT ["/usr/local/bin/start"]
 
 

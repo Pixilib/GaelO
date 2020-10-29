@@ -11,6 +11,7 @@ fi
 
 if [ "$role" = "app" ]; then
     echo "App started"
+    apache2-foreground
 
 elif [ "$role" = "queue" ]; then
 
