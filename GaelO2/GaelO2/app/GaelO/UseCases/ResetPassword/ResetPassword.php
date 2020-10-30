@@ -29,8 +29,9 @@ class ResetPassword {
             $this->checkEmailMatching($email, $userEntity['email']);
         } catch (GaelOException $e) {
             $resetPasswordResponse->body = ['errorMessage' => $e->getMessage()];
-            $resetPasswordResponse->status = 500;
-            $resetPasswordResponse->statusText = "Internal Server Error";
+            $resetPasswordResponse->status = 400;
+            $resetPasswordResponse->statusText = "Bad Request";
+            return;
         }
         //update properties of user
         $userEntity['status'] = Constants::USER_STATUS_UNCONFIRMED;

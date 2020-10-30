@@ -33,12 +33,12 @@ class Login{
             $tempPasswordCheck = LaravelFunctionAdapter::checkHash($loginRequest->password, $user['password_temporary']);
             if($tempPasswordCheck){
                 $loginResponse->body = ['id' => $user['id'], 'errorMessage' => 'Unconfirmed'];
-                $loginResponse->status = 500;
-                $loginResponse->statusText = "Internal Server Error";
+                $loginResponse->status = 400;
+                $loginResponse->statusText = "Bad Request";
             } else {
                 $loginResponse->body = ['errorMessage' => 'Wrong Temporary Password'];
-                $loginResponse->status = 500;
-                $loginResponse->statusText = "Internal Server Error";
+                $loginResponse->status = 400;
+                $loginResponse->statusText = "Bad Request";
                 $this->increaseAttemptCount($user);
             }
             return;
@@ -46,8 +46,8 @@ class Login{
 
         if( $passwordCheck !== null && !$passwordCheck ){
             $loginResponse->body = ['errorMessage' => 'Wrong Password'];
-            $loginResponse->status = 500;
-            $loginResponse->statusText = "Internal Server Error";
+            $loginResponse->status = 401;
+            $loginResponse->statusText = "Unauthorized";
         $this->increaseAttemptCount($user);
 
         } else {
@@ -55,12 +55,12 @@ class Login{
             if ($user['status'] === Constants::USER_STATUS_BLOCKED){
                 $this->sendBlockedEmail($user);
                 $loginResponse->body = ['errorMessage' => 'Blocked'];
-                $loginResponse->status = 500;
-                $loginResponse->statusText = "Internal Server Error";
+                $loginResponse->status = 400;
+                $loginResponse->statusText = "Bad Request";
             }else if ($user['status'] === Constants::USER_STATUS_ACTIVATED && $delayDay>90){
                 $loginResponse->body = ['id' => $user['id'], 'errorMessage' => 'Password Expired'];
-                $loginResponse->status = 500;
-                $loginResponse->statusText = "Internal Server Error";
+                $loginResponse->status = 400;
+                $loginResponse->statusText = "Bad Request";
             }else if($user['status'] === Constants::USER_STATUS_ACTIVATED && $delayDay<90 && $attempts<3){
                 $this->updateDbOnSuccess($user, $loginRequest->ip);
                 $loginResponse->status = 200;

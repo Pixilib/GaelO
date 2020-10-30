@@ -28,8 +28,8 @@ class SendRequest {
 
         }catch (GaelOException $e) {
             $requestResponse->body = ['errorMessage' => $e->getMessage()];
-            $requestResponse->status = 500;
-            $requestResponse->statusText = "Internal Server Error";
+            $requestResponse->status = 400;
+            $requestResponse->statusText = "Bad Request";
         }
 
         return $requestResponse;

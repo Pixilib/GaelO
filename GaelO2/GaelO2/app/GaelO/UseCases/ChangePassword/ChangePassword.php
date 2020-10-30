@@ -35,9 +35,9 @@ class ChangePassword {
         }
 
         try {
-        $this->checkPasswordFormatCorrect($password1);
-        $this->checkMatchPasswords($password1, $password2);
-        $this->checkNewPassword(
+            $this->checkPasswordFormatCorrect($password1);
+            $this->checkMatchPasswords($password1, $password2);
+            $this->checkNewPassword(
             $password1,
             $user['password_temporary'] ,
             $user['password'],
@@ -45,8 +45,9 @@ class ChangePassword {
             $user['password_previous2']);
         } catch (GaelOException $e) {
             $changeUserPasswordResponse->body = ['errorMessage' => $e->getMessage()];
-            $changeUserPasswordResponse->status = 500;
-            $changeUserPasswordResponse->statusText = "Internal Server Error";
+            $changeUserPasswordResponse->status = 400;
+            $changeUserPasswordResponse->statusText = "Bad Request";
+            return;
         }
 
         $data['password_previous1'] = $user['password'];

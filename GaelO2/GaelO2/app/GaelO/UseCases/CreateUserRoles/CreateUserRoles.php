@@ -27,9 +27,10 @@ class CreateUserRoles {
 
         if(empty($newRoles)){
             $createRoleResponse->body = ['errorMessage' => 'No New Roles'];
-            $createRoleResponse->status = 500;
-            $createRoleResponse->statusText = "Internal Server Error";
+            $createRoleResponse->status = 400;
+            $createRoleResponse->statusText = "Bad Request";
             //throw new GaelOException("No New Roles");
+            return;
         }
 
         //Write in database and return sucess response (error will be handled by laravel)
