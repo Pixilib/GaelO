@@ -75,8 +75,6 @@ class UserRepositoryTest extends TestCase
         //Results of user query should be different
         $commonEmails = array_intersect($investigatorsEmails, $investigatorsEmails2);
         $this->assertEquals(0, sizeof($commonEmails));
-
-
     }
 
     /**

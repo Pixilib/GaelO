@@ -59,7 +59,7 @@ class ChangePasswordTest extends TestCase
     {
         $this->validPayload['password2']='wrongCopy';
         $response = $this->json('PUT', '/api/users/'.$this->user['id'].'/password', $this->validPayload);
-        $response->assertNoContent(400);
+        $response->assertStatus(400);
 
     }
 
@@ -67,7 +67,7 @@ class ChangePasswordTest extends TestCase
     {
         $this->validPayload['previous_password']='wrongPassword';
         $response = $this->json('PUT', '/api/users/'.$this->user['id'].'/password', $this->validPayload);
-        $response->assertNoContent(400);
+        $response->assertStatus(400);
 
     }
 
@@ -76,7 +76,7 @@ class ChangePasswordTest extends TestCase
         $this->validPayload['password1']='short';
         $this->validPayload['password2']='short';
         $response = $this->json('PUT', '/api/users/'.$this->user['id'].'/password', $this->validPayload);
-        $response->assertNoContent(400);
+        $response->assertStatus(400);
 
     }
 
@@ -85,7 +85,7 @@ class ChangePasswordTest extends TestCase
         $this->validPayload['password1']='LongPassWithNoDigit';
         $this->validPayload['password2']='LongPassWithNoDigit';
         $response = $this->json('PUT', '/api/users/'.$this->user['id'].'/password', $this->validPayload);
-        $response->assertNoContent(400);
+        $response->assertStatus(400);
 
     }
 
@@ -95,7 +95,7 @@ class ChangePasswordTest extends TestCase
         $this->validPayload['password1']='LongPassWithNoDigit';
         $this->validPayload['password2']='LongPassWithNoDigit';
         $response = $this->json('PUT', '/api/users/'.$this->user['id'].'/password', $this->validPayload);
-        $response->assertNoContent(400);
+        $response->assertStatus(400);
 
     }
     public function testChangePasswordAllSameCase()
@@ -103,7 +103,7 @@ class ChangePasswordTest extends TestCase
         $this->validPayload['password1']='azertyuio';
         $this->validPayload['password2']='azertyuio';
         $response = $this->json('PUT', '/api/users/'.$this->user['id'].'/password', $this->validPayload);
-        $response->assertNoContent(400);
+        $response->assertStatus(400);
 
     }
 
@@ -112,7 +112,7 @@ class ChangePasswordTest extends TestCase
         $this->validPayload['password1']='newPassword12345.';
         $this->validPayload['password2']='newPassword12345.';
         $response = $this->json('PUT', '/api/users/'.$this->user['id'].'/password', $this->validPayload);
-        $response->assertNoContent(400);
+        $response->assertStatus(400);
 
     }
 
@@ -121,7 +121,7 @@ class ChangePasswordTest extends TestCase
         $this->validPayload['password1']='password12345';
         $this->validPayload['password2']='password12345';
         $response = $this->json('PUT', '/api/users/'.$this->user['id'].'/password', $this->validPayload);
-        $response->assertNoContent(400);
+        $response->assertStatus(400);
 
     }
 
@@ -130,7 +130,7 @@ class ChangePasswordTest extends TestCase
         $this->validPayload['password1']='previousPassword1';
         $this->validPayload['password2']='previousPassword1';
         $response = $this->json('PUT', '/api/users/'.$this->user['id'].'/password', $this->validPayload);
-        $response->assertNoContent(400);
+        $response->assertStatus(400);
 
     }
 
@@ -139,7 +139,7 @@ class ChangePasswordTest extends TestCase
         $this->validPayload['password1']='previousPassword2';
         $this->validPayload['password2']='previousPassword2';
         $response = $this->json('PUT', '/api/users/'.$this->user['id'].'/password', $this->validPayload);
-        $response->assertNoContent(400);
+        $response->assertStatus(400);
 
     }
 
