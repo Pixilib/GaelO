@@ -22,14 +22,16 @@ class ModifyCenter {
     {
 
         if(!$this->persistenceInterface->isKnownCenter($centerRequest->code)){
+            $centerResponse->body = ['errorMessage' => 'Non Existing Center'];
             $centerResponse->status = 400;
-            $centerResponse->statusText = 'Non Existing Center';
+            $centerResponse->statusText = "Bad Request";
             return;
         };
 
         if(!empty($this->persistenceInterface->getCenterByName($centerRequest->name))){
+            $centerResponse->body = ['errorMessage' => 'Conflict. Name already used.'];
             $centerResponse->status = 409;
-            $centerResponse->statusText = 'Conflict. Name already used.';
+            $centerResponse->statusText = "Conflict";
             return;
         };
 

@@ -20,7 +20,10 @@ class AddAffiliatedCenter {
 
         //Check the request creation is not in Main or affiliated centers
         if($addAffiliatedCenterRequest->centerCode === $existingCenter){
-            throw new GaelOException("Center already affiliated to user");
+            $addAffiliatedCenterResponse->body = ['errorMessage' => 'Center already affiliated to user'];
+            $addAffiliatedCenterResponse->status = 500;
+            $addAffiliatedCenterResponse->statusText = "Internal Server Error";
+            //throw new GaelOException("Center already affiliated to user");
         }
 
         $this->persistenceInterface->addAffiliatedCenter($addAffiliatedCenterRequest->userId, $addAffiliatedCenterRequest->centerCode);

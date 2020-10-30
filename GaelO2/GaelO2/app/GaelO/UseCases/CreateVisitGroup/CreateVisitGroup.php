@@ -20,8 +20,9 @@ class CreateVisitGroup {
                                                         $createVisitGroupRequest->modality);
 
         if($existingVisitGroup) {
+            $createVisitGroupResponse->body = ['errorMessage' => 'Conflict'];
             $createVisitGroupResponse->status = 209;
-            $createVisitGroupResponse->statusText = 'Conflict';
+            $createVisitGroupResponse->statusText = "Conflict";
             return;
         }
 

@@ -21,8 +21,9 @@ class CreateVisit {
                                                         $createVisitRequest->visitTypeId);
 
         if($existingVisit) {
-            $createVisitResponse->status = 209;
-            $createVisitResponse->statusText = 'Conflict';
+            $createVisitResponse->body = ['errorMessage' => 'Conflict'];
+            $createVisitResponse->status = 500;
+            $createVisitResponse->statusText = "Conflict";
             return;
         }
 
