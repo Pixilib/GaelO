@@ -138,6 +138,15 @@ return [
     'mailFromAddress'=>env('MAIL_FROM_ADDRESS'),
     'mailReplyToDefault'=>env('MAIL_REPLY_TO_DEFAULT'),
     'patientCodeLength'=>env('GAELO_PATIENT_CODE_LENGTH'),
+    'orthancTemporaryAddress'=>env('ORTHANC_TEMPORARY_ADDRESS'),
+    'orthancTemporaryPort'=>env('ORTHANC_TEMPORARY_PORT'),
+    'orthancTemporaryLogin'=>env('ORTHANC_TEMPORARY_LOGIN'),
+    'orthancTemporaryPassword'=>env('ORTHANC_TEMPORARY_PASSWORD'),
+    'orthancStorageAddress'=>env('ORTHANC_STORAGE_ADDRESS'),
+    'orthancStoragePort'=>env('ORTHANC_STORAGE_PORT'),
+    'orthancStorageLogin'=>env('ORTHANC_STORAGE_LOGIN'),
+    'orthancStoragePassword'=>env('ORTHANC_STORAGE_PASSWORD'),
+
 
     'providers' => [
 
