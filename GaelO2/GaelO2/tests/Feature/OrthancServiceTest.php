@@ -15,6 +15,10 @@ class OrthancServiceTest extends TestCase
         parent::setUp();
         $this->orthancService = App::make(OrthancService::class);
         $this->orthancService->setOrthancServer(false);
+
+        if (true) {
+            $this->markTestSkipped('all tests in this file are invactive, this is only to check orthanc communication');
+        }
     }
     /**
      * A basic feature test example.
@@ -23,13 +27,30 @@ class OrthancServiceTest extends TestCase
      */
     public function testOrthancConnexion()
     {
-        $answerStatusCode = $this->orthancService->getOrthancPeers()->getStatusCode();
-        $this->assertEquals(200, $answerStatusCode);
+       $answer = $this->orthancService->getOrthancPeers();
+       $this->assertIsArray($answer);
     }
 
     public function testOrthancAddPeers()
     {
-        $answer = $this->orthancService->addPeer('testano', 'http://localhost:8043', 'salim', 'salim');
-        dd($answer);
+        $answer = $this->orthancService->addPeer('gaelotest', 'http://kanoun.fr:8043', 'salim', 'salim');
+        $statusCode = $answer->getStatusCode();
+        $this->assertEquals(200, $statusCode);
+    }
+
+    public function testOrthancDeletePeers(){
+
+        $answer = $this->orthancService->deletePeer('gaelotest');
+        $statusCode = $answer->getStatusCode();
+        $this->assertEquals(200, $statusCode);
+
+    }
+
+    public function testOrthancRemoveAllPeers(){
+
+        $this->orthancService->removeAllPeers();
+        $peers = $this->orthancService->getOrthancPeers();
+        $this->assertEmpty($peers);
+
     }
 }

@@ -36,7 +36,7 @@ class OrthancService {
     }
 
     public function getOrthancPeers(){
-        return $this->httpClientAdapter->requestJson('GET', '/peers');
+        return $this->httpClientAdapter->requestJson('GET', '/peers')->getJsonBody();
     }
 
     public function addPeer(string $name, string $url, string $username, string $password) {
@@ -56,17 +56,14 @@ class OrthancService {
 	 * @param string $name
 	 */
 	public function deletePeer(string $name) {
-
         return $this->httpClientAdapter->request('DELETE', '/peers/'.$name);
-
     }
 
     /**
 	 * Remove all peers from orthanc
 	 */
 	public function removeAllPeers() {
-
-		$peers=$this->getOrthancPeers();
+        $peers=$this->getOrthancPeers();
 
 		foreach ($peers as $peer) {
 			$this->deletePeer($peer);
@@ -100,9 +97,7 @@ class OrthancService {
     }
 
     public function deleteFromOrthanc(string $level, string $uid) {
-
         return $this->httpClientAdapter->request('DELETE', '/'.$level.'/'.$uid);
-
 	}
 
     public function getZipStream(){

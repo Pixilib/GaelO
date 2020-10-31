@@ -25,18 +25,24 @@ class HttpClientAdapter {
     }
 
     public function request(string $method, string $uri, $body = null) : Psr7ResponseAdapter {
+        $options = ['auth' => [$this->login, $this->password]];
 
-        $options = ['auth' => [$this->login, $this->password],
-                    $body];
-
+        if($body !==null) {
+            $bodyOption = ['body' => $body];
+            $options = array_merge($options, $bodyOption);
+        }
         $response = $this->client->request($method, $this->address.$uri , $options);
+
         return new Psr7ResponseAdapter($response);
 
     }
 
     public function requestJson(string $method, string $uri, array $body = []) : Psr7ResponseAdapter {
-        $response = $this->request($method, $uri, ['json' => $body ]);
-        return $response;
+        $authenticationOption = ['auth' => [$this->login, $this->password]];
+        $bodyOption = ['json' => $body];
+        $options = array_merge($authenticationOption, $bodyOption);
+        $response = $this->client->request($method, $this->address.$uri , $options);
+        return new Psr7ResponseAdapter($response);
     }
 
 }
