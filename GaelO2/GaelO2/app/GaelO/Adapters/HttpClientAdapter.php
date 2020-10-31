@@ -3,8 +3,6 @@
 namespace App\GaelO\Adapters;
 
 use GuzzleHttp\Client;
-use GuzzleHttp\Psr7\Request;
-use GuzzleHttp\Psr7\Response;
 
 class HttpClientAdapter {
 
@@ -26,17 +24,19 @@ class HttpClientAdapter {
         $this->password = $password;
     }
 
-    public function request(string $method, string $uri, array $body = null) : Response{
+    public function request(string $method, string $uri, $body = null) : Psr7ResponseAdapter {
 
-        $request = new Request($method, $this->address.$uri, ['auth' => [$this->login, $this->password]] ,$body);
-        return $this->client->send($request);
+        $options = ['auth' => [$this->login, $this->password],
+                    $body];
+
+        $response = $this->client->request($method, $this->address.$uri , $options);
+        return new Psr7ResponseAdapter($response);
 
     }
 
-    public function requestJson(string $method, string $uri, array $body = null) : array {
-        $response = $this->request($method, $uri, $body);
-        $body = $response->getBody();
-        return json_decode( $body, true );
+    public function requestJson(string $method, string $uri, array $body = []) : Psr7ResponseAdapter {
+        $response = $this->request($method, $uri, ['json' => $body ]);
+        return $response;
     }
 
 }

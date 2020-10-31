@@ -10,6 +10,12 @@ use Tests\TestCase;
 
 class OrthancServiceTest extends TestCase
 {
+
+    protected function setUp() : void{
+        parent::setUp();
+        $this->orthancService = App::make(OrthancService::class);
+        $this->orthancService->setOrthancServer(false);
+    }
     /**
      * A basic feature test example.
      *
@@ -17,9 +23,13 @@ class OrthancServiceTest extends TestCase
      */
     public function testOrthancConnexion()
     {
-        $orthancService = App::make(OrthancService::class);
-        $orthancService->setOrthancServer(false);
+        $answerStatusCode = $this->orthancService->getOrthancPeers()->getStatusCode();
+        $this->assertEquals(200, $answerStatusCode);
+    }
 
-        $answer = $orthancService->getOrthancPeers();
+    public function testOrthancAddPeers()
+    {
+        $answer = $this->orthancService->addPeer('testano', 'http://localhost:8043', 'salim', 'salim');
+        dd($answer);
     }
 }
