@@ -22,6 +22,6 @@ class Psr7ResponseAdapter {
 
     public function getJsonBody() : array {
         $body = $this->response->getBody();
-        return json_decode($body);
+        return json_decode($body, true);
     }
 }

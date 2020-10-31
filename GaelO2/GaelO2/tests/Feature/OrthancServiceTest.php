@@ -62,5 +62,20 @@ class OrthancServiceTest extends TestCase
 
     }
 
+    public function testSendDicomFile(){
+        $path = "/home/salim/11009101406003/VR/1.2.840.113704.1.111.2496.1287397130.8/CT_001_0ac8ec19aadc48f698ec8b1eadeecf04.dcm";
+        $answer = $this->orthancService->importFile($path);
+        $this->assertArrayHasKey("ParentStudy", $answer);
+    }
+
+    public function testSendDicomFileArray(){
+        $array = [
+            "/home/salim/11009101406003/VR/1.2.840.113704.1.111.2496.1287397130.8/CT_001_0ac8ec19aadc48f698ec8b1eadeecf04.dcm",
+            "/home/salim/11009101406003/VR/1.2.840.113704.1.111.2496.1287397130.8/CT_001_0b7033a437f446e28a999d79ca9901ef.dcm"
+        ];
+        $answer = $this->orthancService->importFiles($array);
+        $this->assertEquals(2, sizeof($answer));
+    }
+
 
 }
