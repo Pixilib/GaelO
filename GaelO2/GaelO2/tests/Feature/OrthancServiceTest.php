@@ -3,8 +3,6 @@
 namespace Tests\Feature;
 
 use App\GaelO\Services\OrthancService;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\App;
 use Tests\TestCase;
 
@@ -16,7 +14,7 @@ class OrthancServiceTest extends TestCase
         $this->orthancService = App::make(OrthancService::class);
         $this->orthancService->setOrthancServer(false);
 
-        if (true) {
+        if (false) {
             $this->markTestSkipped('all tests in this file are invactive, this is only to check orthanc communication');
         }
     }
@@ -38,6 +36,16 @@ class OrthancServiceTest extends TestCase
         $this->assertEquals(200, $statusCode);
     }
 
+    public function testOrthancPeerIsTransferAccelerated(){
+        $this->markTestSkipped('SK TO DO WITH REAL SETUP');
+        $bool = $this->orthancService->isPeerAccelerated('gaelotest');
+    }
+
+    public function testOrthancSendToPeer(){
+        $this->markTestSkipped('SK TO DO WITH REAL SETUP');
+        $response = $this->orthancService->sendToPeer('gaelotest', [''], true);
+    }
+
     public function testOrthancDeletePeers(){
 
         $answer = $this->orthancService->deletePeer('gaelotest');
@@ -53,4 +61,6 @@ class OrthancServiceTest extends TestCase
         $this->assertEmpty($peers);
 
     }
+
+
 }

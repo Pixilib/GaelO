@@ -113,11 +113,10 @@ class OrthancService {
 	 * @return boolean
 	 */
 	public function isPeerAccelerated(string $peer) {
-		$context=stream_context_create($this->context);
-		$json=file_get_contents($this->url.'/transfers/peers/', false, $context);
-		$peersTest=json_decode($json, true);
 
-		if ($peersTest[$peer] == "installed") {
+        $peers = $this->httpClientAdapter->request('GET', '/transfers/peers/')->getJsonBody();
+
+		if ($peers[$peer] == "installed") {
 			return true;
 		}
 
@@ -125,48 +124,18 @@ class OrthancService {
 	}
 
 	/**
-	 * Send id list of DICOM to a peer
-	 * @param string $peer
-	 * @param array $ids
-	 */
-	public function sendToPeer(string $peer, array $ids) {
-
-		$opts=array('http' =>
-				array(
-						'method'  => 'POST',
-						"timeout" => 300,
-						'content' => json_encode($ids),
-						'header'=>  ['Content-Type: application/json Accept: application/json', $this->context['http']['header']]
-				)
-		);
-
-		$context=stream_context_create($opts);
-		$result=file_get_contents($this->url.'/peers/'.$peer.'/store', false, $context);
-		return $result;
-
-	}
-
-	/**
-	 * Send to Orthanc peer but asynchroneously
+	 * Send to Orthanc ressources IDs to Orthanc peer
 	 * @param string $peer
 	 * @param array $ids
 	 * @return string
 	 */
-	public function sendToPeerAsync(string $peer, array $ids) {
-		$data['Synchronous']=false;
-		$data['Resources']=$ids;
+	public function sendToPeer(string $peer, array $ids, bool $synchronous) {
+        $data = [
+            'Synchronous'=> $synchronous,
+            'Resources'=> $ids
+        ];
 
-		$opts=array('http' =>
-			array(
-				'method'  => 'POST',
-				'content' => json_encode($data),
-				'header'=>  ['Content-Type: application/json Accept: application/json', $this->context['http']['header']]
-			)
-		);
-
-		$context=stream_context_create($opts);
-		$result=file_get_contents($this->url.'/peers/'.$peer.'/store', false, $context);
-		return $result;
+        return $this->httpClientAdapter->requestJson('POST', '/peers/'.$peer.'/store', $data);
 	}
 
 	/**
