@@ -23,14 +23,12 @@ class OrthancServiceTest extends TestCase
      *
      * @return void
      */
-    public function testOrthancConnexion()
-    {
+    public function testOrthancConnexion(){
        $answer = $this->orthancService->getOrthancPeers();
        $this->assertIsArray($answer);
     }
 
-    public function testOrthancAddPeers()
-    {
+    public function testOrthancAddPeers() {
         $answer = $this->orthancService->addPeer('gaelotest', 'http://kanoun.fr:8043', 'salim', 'salim');
         $statusCode = $answer->getStatusCode();
         $this->assertEquals(200, $statusCode);
@@ -47,7 +45,6 @@ class OrthancServiceTest extends TestCase
     }
 
     public function testOrthancDeletePeers(){
-
         $answer = $this->orthancService->deletePeer('gaelotest');
         $statusCode = $answer->getStatusCode();
         $this->assertEquals(200, $statusCode);
@@ -55,17 +52,10 @@ class OrthancServiceTest extends TestCase
     }
 
     public function testOrthancRemoveAllPeers(){
-
         $this->orthancService->removeAllPeers();
         $peers = $this->orthancService->getOrthancPeers();
         $this->assertEmpty($peers);
 
-    }
-
-    public function testSendDicomFile(){
-        $path = "/home/salim/11009101406003/VR/1.2.840.113704.1.111.2496.1287397130.8/CT_001_0ac8ec19aadc48f698ec8b1eadeecf04.dcm";
-        $answer = $this->orthancService->importFile($path);
-        $this->assertArrayHasKey("ParentStudy", $answer);
     }
 
     public function testSendDicomFileArray(){
@@ -75,6 +65,21 @@ class OrthancServiceTest extends TestCase
         ];
         $answer = $this->orthancService->importFiles($array);
         $this->assertEquals(2, sizeof($answer));
+    }
+
+    public function testSendDicomFile(){
+        $path = "/home/salim/11009101406003/VR/1.2.840.113704.1.111.2496.1287397130.8/CT_001_0ac8ec19aadc48f698ec8b1eadeecf04.dcm";
+        $answer = $this->orthancService->importFile($path);
+        $this->assertArrayHasKey("ParentStudy", $answer);
+        return $answer['ParentStudy'];
+    }
+
+    /**
+     * @depends testSendDicomFile
+     */
+    public function testGetStudyOrthancDetails($testingOrthancStudyID){
+        $studyDetails = $this->orthancService->getStudyOrthancDetails($testingOrthancStudyID);
+        $this->assertInstanceOf(\App\GaelO\Services\StoreObjects\OrthancStudy::class, $studyDetails);
     }
 
 

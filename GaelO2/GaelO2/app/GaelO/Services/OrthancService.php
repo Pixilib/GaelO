@@ -8,6 +8,7 @@ use App\GaelO\Constants\Constants;
 use App\GaelO\Constants\SettingsConstants;
 use App\GaelO\Services\StoreObjects\TagAnon;
 use App\GaelO\Services\StoreObjects\Orthanc_Study;
+use App\GaelO\Services\StoreObjects\OrthancStudy;
 
 class OrthancService
 {
@@ -327,7 +328,7 @@ class OrthancService
     private function removeSC(string $orthancStudyID)
     {
 
-        $studyOrthanc = new Orthanc_Study($this);
+        $studyOrthanc = new OrthancStudy($this);
         $studyOrthanc->setStudyOrthancID($orthancStudyID);
         $studyOrthanc->retrieveStudyData();
         $seriesObjects = $studyOrthanc->orthancSeries;
@@ -352,5 +353,12 @@ class OrthancService
         $json = file_get_contents($this->url . '/jobs/' . $jobId, false, $context);
 
         return json_decode($json, true);
+    }
+
+    public function getStudyOrthancDetails(string $orthancStudyID){
+        $studyOrthanc = new OrthancStudy($this);
+        $studyOrthanc->setStudyOrthancID($orthancStudyID);
+        $studyOrthanc->retrieveStudyData();
+        return $studyOrthanc;
     }
 }
