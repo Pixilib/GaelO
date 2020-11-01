@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\GaelO\Constants\Constants;
 use App\GaelO\Services\OrthancService;
 use Illuminate\Support\Facades\App;
 use Tests\TestCase;
@@ -18,11 +19,7 @@ class OrthancServiceTest extends TestCase
             $this->markTestSkipped('all tests in this file are invactive, this is only to check orthanc communication');
         }
     }
-    /**
-     * A basic feature test example.
-     *
-     * @return void
-     */
+
     public function testOrthancConnexion(){
        $answer = $this->orthancService->getOrthancPeers();
        $this->assertIsArray($answer);
@@ -42,6 +39,11 @@ class OrthancServiceTest extends TestCase
     public function testOrthancSendToPeer(){
         $this->markTestSkipped('SK TO DO WITH REAL SETUP');
         $response = $this->orthancService->sendToPeer('gaelotest', [''], true);
+    }
+
+    public function testGetOrthancJobDetails(){
+        $this->markTestSkipped('SK TO DO');
+        $this->orthancService->getJobDetails('id');
     }
 
     public function testOrthancDeletePeers(){
@@ -82,7 +84,21 @@ class OrthancServiceTest extends TestCase
         $this->assertInstanceOf(\App\GaelO\Services\StoreObjects\OrthancStudy::class, $studyDetails);
     }
 
-    //SK RESTE A FAIRE Anon, EXPORT, Send to peer, ZIP DOwnload
+    /**
+     * @depends testSendDicomFile
+     */
+    public function testAnonymizeOrthanc($testingOrthancStudyID){
+        $anonymized = $this->orthancService->anonymize($testingOrthancStudyID, Constants::ORTHANC_ANON_PROFILE_DEFAULT,
+                                                "code", "visit", "study");
+        //orthanc ID have 44 character lenght
+        $this->assertEquals(44, strlen($anonymized));
+    }
 
+
+    public function testOrthancArchiveZip(){
+        $this->markTestSkipped('SK OK, TO GENERALIZE');
+        $seriesIDsArray = ["a66b93bf-d6bb38ab-9b53f65b-e9c39913-8b2969db"];
+        $this->orthancService->getOrthancArchiveZip($seriesIDsArray);
+    }
 
 }

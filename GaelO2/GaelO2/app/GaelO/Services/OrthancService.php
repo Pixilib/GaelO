@@ -7,7 +7,6 @@ use App\GaelO\Adapters\LaravelFunctionAdapter;
 use App\GaelO\Constants\Constants;
 use App\GaelO\Constants\SettingsConstants;
 use App\GaelO\Services\StoreObjects\TagAnon;
-use App\GaelO\Services\StoreObjects\Orthanc_Study;
 use App\GaelO\Services\StoreObjects\OrthancStudy;
 
 class OrthancService
@@ -205,7 +204,7 @@ class OrthancService
      * @param string $studyName
      * @return string anonymizedOrthancStudyID
      */
-    public function Anonymize(string $studyID, string $profile, string $patientCode, string $visitType, string $studyName) : string
+    public function anonymize(string $studyID, string $profile, string $patientCode, string $visitType, string $studyName) : string
     {
 
         $jsonAnonQuery = $this->buildAnonQuery($profile, $patientCode, $patientCode, $visitType, $studyName);
@@ -213,7 +212,7 @@ class OrthancService
         $answer = $this->httpClientAdapter->requestJson('POST', "/studies/" . $studyID . "/anonymize", $jsonAnonQuery);
 
         //get the resulting Anonymized study Orthanc ID
-        $anonAnswer = json_decode($answer->getJsonBody(), true);
+        $anonAnswer = $answer->getJsonBody();
         $anonymizedID = $anonAnswer['ID'];
 
         //Remove SC if any in the anonymized study
@@ -346,13 +345,8 @@ class OrthancService
      * @param String $jobId
      * @return mixed
      */
-    public function getJobDetails(String $jobId)
-    {
-
-        $context = stream_context_create($this->context);
-        $json = file_get_contents($this->url . '/jobs/' . $jobId, false, $context);
-
-        return json_decode($json, true);
+    public function getJobDetails(String $jobId) {
+        return $this->httpClientAdapter->requestJson('GET', '/jobs/'.$jobId)->getJsonBody();
     }
 
     public function getStudyOrthancDetails(string $orthancStudyID){
@@ -360,5 +354,28 @@ class OrthancService
         $studyOrthanc->setStudyOrthancID($orthancStudyID);
         $studyOrthanc->retrieveStudyData();
         return $studyOrthanc;
+    }
+
+    /*
+    public function buildDicomZip(array $seriesOrthancIDs){
+
+        $seriesObjectArray = [];
+
+        foreach($seriesOrthancIDs as $seriesOrthancID){
+            $seriesOrthanc = new OrthancSeries($this);
+            $seriesOrthanc->setSeriesOrthancID($seriesOrthancID);
+            @$seriesOrthanc->retrieveSeriesData();
+            $seriesObjectArray[] = $seriesOrthanc;
+
+        }
+
+        $this->httpClientAdapter->collectInstancesInZip($seriesObjectArray);
+    }
+    */
+
+    public function getOrthancArchiveZip(array $seriesOrthancIDs){
+        $payload = array('Transcode'=>'1.2.840.10008.1.2.1', 'Resources' => $seriesOrthancIDs);
+        return $this->httpClientAdapter->requestJson('POST', '/tools/create-archive', $payload);
+
     }
 }

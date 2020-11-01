@@ -7,6 +7,7 @@ use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Pool;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
+use ZipArchive;
 
 class HttpClientAdapter {
 
@@ -86,6 +87,53 @@ class HttpClientAdapter {
 
         return $responseArray;
     }
+
+    //SK le multithreading gagne pas de temps sur le nmve mais permet de pas avoir une copie coté orthanc
+    /*
+    public function collectInstancesInZip(array $orthancSeriesObject){
+
+        $instanceArray = [];
+
+        array_map(function($seriesObject) use (&$instanceArray) {
+            $instanceArray = [...$instanceArray, ...$seriesObject->seriesInstances];
+        } , $orthancSeriesObject);
+
+        $requests = function ($orthancInstanceIDs) {
+
+            foreach ($orthancInstanceIDs as $orthancInstanceID) {
+
+                $headers = ['auth' => [$this->login, $this->password],
+                    'headers'  => ['Accept' => 'application/zip']
+                ];
+
+                yield new Request('GET', $this->address.'/instances/'.$orthancInstanceID.'/file', $headers);
+            }
+        };
+
+        $zip=new ZipArchive;
+        $tempZip=tempnam(ini_get('upload_tmp_dir'), 'TMPZIPORTHANC_');
+        $zip->open($tempZip, ZipArchive::CREATE);
+
+        $pool = new Pool($this->client, $requests($instanceArray), [
+            'concurrency' => 2,
+            'fulfilled' => function (Response $response, $index) use (&$zip) {
+                $zip->addFromString($index.".dcm", $response->getBody() );
+            },
+            'rejected' => function (RequestException $reason, $index) {
+                // this is delivered each failed request
+            },
+        ]);
+
+        // Initiate the transfers and create a promise
+        $promise = $pool->promise();
+
+        // Force the pool of requests to complete.
+        $promise->wait();
+
+        return $zip;
+
+    }
+    */
 
     public function requestJson(string $method, string $uri, array $body = []) : Psr7ResponseAdapter {
         $authenticationOption = ['auth' => [$this->login, $this->password]];
