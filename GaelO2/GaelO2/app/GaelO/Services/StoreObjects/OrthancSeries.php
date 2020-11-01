@@ -1,0 +1,138 @@
+<?php
+/**
+ Copyright (C) 2018-2020 KANOUN Salim
+ This program is free software; you can redistribute it and/or modify
+ it under the terms of the Affero GNU General Public v.3 License as published by
+ the Free Software Foundation;
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ Affero GNU General Public Public for more details.
+ You should have received a copy of the Affero GNU General Public Public along
+ with this program; if not, write to the Free Software Foundation, Inc.,
+ 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+ */
+
+namespace App\GaelO\Services\StoreObjects;
+
+use App\GaelO\Constants\Constants;
+use App\GaelO\Services\OrthancService;
+
+Class OrthancSeries {
+
+    private OrthancService $orthancService;
+
+    public string $serieOrthancID;
+
+	public string $parentStudyOrthancID;
+	public ?string $seriesManufacturer;
+	public ?string $seriesModelName;
+	public ?string $modality;
+	public ?string $seriesDate;
+	public ?string $seriesTime;
+	public ?string $seriesDescription;
+	public string $seriesInstanceUID;
+	public ?string $seriesNumber;
+	public bool $seriesIsStable;
+	public array $seriesInstances;
+	public int $numberOfInstanceInOrthanc;
+	public string $lastUpdate;
+	public float $diskSizeMb;
+	public float $uncompressedSizeMb;
+	public $patientWeight;
+	public $injectedDose;
+	public $injectedDateTime;
+	public $injectedActivity;
+	public $radiopharmaceutical;
+	public $halfLife;
+	public string $sopClassUid;
+
+	public function __construct(OrthancService $orthancService) {
+		$this->orthancService=$orthancService;
+    }
+
+    public function setSeriesOrthancID(string $seriesOrthancID){
+        $this->serieOrthancID=$seriesOrthancID;
+    }
+
+	/**
+	 *Get Series related data and store them in this object
+	 */
+	public function retrieveSeriesData() {
+		$seriesDetails=$this->orthancService->getOrthancRessourcesDetails(Constants::ORTHANC_SERIES_LEVEL, $this->serieOrthancID);
+
+		//add needed informations in the current object
+		$this->seriesManufacturer=$seriesDetails['MainDicomTags']['Manufacturer'];
+		$this->modality=$seriesDetails['MainDicomTags']['Modality'];
+		$this->seriesDate=$seriesDetails['MainDicomTags']['SeriesDate'];
+		$this->seriesTime=$seriesDetails['MainDicomTags']['SeriesTime'];
+		$this->seriesDescription=$seriesDetails['MainDicomTags']['SeriesDescription'];
+		$this->seriesInstanceUID=$seriesDetails['MainDicomTags']['SeriesInstanceUID'];
+		$this->seriesNumber=$seriesDetails['MainDicomTags']['SeriesNumber'];
+		$this->seriesIsStable=$seriesDetails['IsStable'];
+		$this->parentStudyOrthancID=$seriesDetails['ParentStudy'];
+		$this->seriesInstances=$seriesDetails['Instances'];
+		$this->numberOfInstanceInOrthanc=sizeof($seriesDetails['Instances']);
+		$this->lastUpdate=$seriesDetails['LastUpdate'];
+
+		//add instance data using the first Instance Orthanc ID
+		$this->retrieveInstancesData($seriesDetails['Instances'][0]);
+
+		//add statistics data
+		$this->retrieveSeriesStatistics();
+
+	}
+
+	/**
+	 * Get statistics of the series (size in MB)
+	 */
+	private function retrieveSeriesStatistics() {
+        $statistics=$this->orthancService->getOrthancRessourcesStatistics(Constants::ORTHANC_SERIES_LEVEL, $this->serieOrthancID);
+		$this->diskSizeMb=$statistics['DiskSizeMB'];
+		$this->uncompressedSizeMb=$statistics['UncompressedSizeMB'];
+	}
+
+	/**
+	 * Store some data only available in the Instance level
+	 * @param $instanceID
+	 */
+	private function retrieveInstancesData($instanceOrthancID) {
+		$instanceTags=$this->orthancService->getInstanceTags($instanceOrthancID);
+		$this->patientWeight=$instanceTags['0010,1030']['Value'];
+		$this->seriesModelName=$instanceTags['0008,1090']['Value'];
+		$this->injectedDose=$instanceTags['0054,0016']['Value'][0]['0018,1074']['Value'];
+		$this->injectedDateTime=$instanceTags['0054,0016']['Value'][0]['0018,1078']['Value'];
+		$this->injectedActivity=$instanceTags['0054,0016']['Value'][0]['0018,1077']['Value'];
+		$this->radiopharmaceutical=$instanceTags['0054,0016']['Value'][0]['0018,0031']['Value'];
+		$this->halfLife=$instanceTags['0054,0016']['Value'][0]['0018,1075']['Value'];
+		$this->sopClassUid=$instanceTags['0008,0016']['Value'];
+	}
+
+	/**
+	 * Return if this serie  in a secondary capture type
+	 * @return boolean
+	 */
+	public function isSecondaryCapture() {
+		$scUids[]="1.2.840.10008.5.1.4.1.1.7";
+		$scUids[]="1.2.840.10008.5.1.4.1.1.7.1";
+		$scUids[]="1.2.840.10008.5.1.4.1.1.7.2";
+		$scUids[]="1.2.840.10008.5.1.4.1.1.7.3";
+		$scUids[]="1.2.840.10008.5.1.4.1.1.7.4";
+		$scUids[]="1.2.840.10008.5.1.4.1.1.88.11";
+		$scUids[]="1.2.840.10008.5.1.4.1.1.88.22";
+		$scUids[]="1.2.840.10008.5.1.4.1.1.88.33";
+		$scUids[]="1.2.840.10008.5.1.4.1.1.88.40";
+		$scUids[]="1.2.840.10008.5.1.4.1.1.88.50";
+		$scUids[]="1.2.840.10008.5.1.4.1.1.88.59";
+		$scUids[]="1.2.840.10008.5.1.4.1.1.88.65";
+		$scUids[]="1.2.840.10008.5.1.4.1.1.88.67";
+
+		if (in_array($this->sopClassUid, $scUids)) {
+			return true;
+		} else {
+			return false;
+		}
+
+	}
+
+}

@@ -4,7 +4,10 @@ namespace App\GaelO\Services;
 
 use App\GaelO\Adapters\HttpClientAdapter;
 use App\GaelO\Adapters\LaravelFunctionAdapter;
+use App\GaelO\Constants\Constants;
 use App\GaelO\Constants\SettingsConstants;
+use App\GaelO\Services\StoreObjects\TagAnon;
+use App\GaelO\Services\StoreObjects\Orthanc_Study;
 
 class OrthancService
 {
@@ -15,7 +18,7 @@ class OrthancService
         $this->laravelFunctionAdapter = $laravelFunctionAdapter;
     }
 
-    public function setOrthancServer(bool $storage)
+    public function setOrthancServer(bool $storage) : void
     {
         //Set Time Limit at 3H as operation could be really long
         set_time_limit(10800);
@@ -36,7 +39,19 @@ class OrthancService
         $this->httpClientAdapter->setBasicAuthentication($login, $password);
     }
 
-    public function getOrthancPeers()
+    public function getOrthancRessourcesDetails(string $level, string $orthancID) : array {
+        return $this->httpClientAdapter->requestJson('GET', '/'.$level.'/'.$orthancID)->getJsonBody();
+    }
+
+    public function getOrthancRessourcesStatistics(string $level, string $orthancID) : array {
+        return $this->httpClientAdapter->requestJson('GET', '/'.$level.'/'.$orthancID.'/statistics/')->getJsonBody();
+    }
+
+    public function getInstanceTags(string $orthancInstanceID) : array {
+        return $this->httpClientAdapter->requestJson('GET', '/instances/'.$orthancInstanceID.'/tags/')->getJsonBody();
+    }
+
+    public function getOrthancPeers() : array
     {
         return $this->httpClientAdapter->requestJson('GET', '/peers')->getJsonBody();
     }
@@ -65,7 +80,7 @@ class OrthancService
     /**
      * Remove all peers from orthanc
      */
-    public function removeAllPeers()
+    public function removeAllPeers() : void
     {
         $peers = $this->getOrthancPeers();
 
@@ -83,7 +98,7 @@ class OrthancService
         string $studyUID,
         string $accessionNumber,
         string $studyDescription
-    ) {
+    ) : array {
 
         $query = array(
             'Level' => $level,
@@ -100,7 +115,7 @@ class OrthancService
 
         );
 
-        return $this->httpClientAdapter->requestJson('POST', '/tools/find', $query);
+        return $this->httpClientAdapter->requestJson('POST', '/tools/find', $query)->getJsonBody();
     }
 
     public function deleteFromOrthanc(string $level, string $uid)
@@ -113,7 +128,7 @@ class OrthancService
         //TO DO
     }
 
-    public function isPeerAccelerated(string $peer)
+    public function isPeerAccelerated(string $peer) : bool
     {
 
         $peers = $this->httpClientAdapter->request('GET', '/transfers/peers/')->getJsonBody();
@@ -160,7 +175,7 @@ class OrthancService
         return $this->httpClientAdapter->requestJson('POST', '/transfers/send', $data);
     }
 
-    public function importFile(string $file)
+    public function importFile(string $file) : array
     {
         $data = fopen($file, 'r');
         try {
@@ -171,7 +186,7 @@ class OrthancService
         return $results->getJsonBody();
     }
 
-    public function importFiles(array $files)
+    public function importFiles(array $files) : array
     {
         $arrayAnswer = $this->httpClientAdapter->requestUploadArrayDicom('POST', '/instances', $files);
         return $arrayAnswer;
@@ -187,27 +202,17 @@ class OrthancService
      * @param string $patientCode
      * @param string $visitType
      * @param string $studyName
-     * @return string
+     * @return string anonymizedOrthancStudyID
      */
-    public function Anonymize(string $studyID, string $profile, string $patientCode, string $visitType, string $studyName)
+    public function Anonymize(string $studyID, string $profile, string $patientCode, string $visitType, string $studyName) : string
     {
 
         $jsonAnonQuery = $this->buildAnonQuery($profile, $patientCode, $patientCode, $visitType, $studyName);
 
-        $opts = array('http' =>
-        array(
-            'method'  => 'POST',
-            "timeout" => 300,
-            'content' => json_encode($jsonAnonQuery),
-            'header' =>  ['Content-Type: application/json Accept: application/json', $this->context['http']['header']]
-        ));
-
-        $context = stream_context_create($opts);
-
-        $result = file_get_contents($this->url . "/studies/" . $studyID . "/anonymize", false, $context);
+        $answer = $this->httpClientAdapter->requestJson('POST', "/studies/" . $studyID . "/anonymize", $jsonAnonQuery);
 
         //get the resulting Anonymized study Orthanc ID
-        $anonAnswer = json_decode($result, true);
+        $anonAnswer = json_decode($answer->getJsonBody(), true);
         $anonymizedID = $anonAnswer['ID'];
 
         //Remove SC if any in the anonymized study
@@ -230,10 +235,11 @@ class OrthancService
         string $newPatientID,
         string $newStudyDescription,
         string $clinicalStudy
-    ) {
+    ) : array {
 
         $tagsObjects = [];
-        if ($profile == "Default") {
+
+        if ($profile == Constants::ORTHANC_ANON_PROFILE_DEFAULT) {
             $date = TagAnon::KEEP;
             $body = TagAnon::KEEP;
 
@@ -242,7 +248,7 @@ class OrthancService
             $tagsObjects[] = new TagAnon("0008,103E", TagAnon::KEEP); //series Description
 
 
-        } else if ($profile == "Full") {
+        } else if ($profile == Constants::ORTHANC_ANON_PROFILE_FULL) {
             $date = TagAnon::CLEAR;
             $body = TagAnon::CLEAR;
 
@@ -321,7 +327,8 @@ class OrthancService
     private function removeSC(string $orthancStudyID)
     {
 
-        $studyOrthanc = new Orthanc_Study($orthancStudyID, $this->url, $this->context);
+        $studyOrthanc = new Orthanc_Study($this);
+        $studyOrthanc->setStudyOrthancID($orthancStudyID);
         $studyOrthanc->retrieveStudyData();
         $seriesObjects = $studyOrthanc->orthancSeries;
         foreach ($seriesObjects as $serie) {

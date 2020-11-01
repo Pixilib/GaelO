@@ -55,4 +55,10 @@ class Constants {
     const QUALITY_CONTROL_CORRECTIVE_ACTION_ASKED = "Corrective Action Asked";
     const QUALITY_CONSTROL_REFUSED = "Refused";
     const QUALITY_CONTROL_ACCEPTED = "Accepted";
+
+    const ORTHANC_ANON_PROFILE_DEFAULT = "Default";
+    const ORTHANC_ANON_PROFILE_FULL = "Full";
+    const ORTHANC_PATIENTS_LEVEL="patients";
+    const ORTHANC_STUDIES_LEVEL="studies";
+    const ORTHANC_SERIES_LEVEL="series";
 }
