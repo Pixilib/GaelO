@@ -82,5 +82,7 @@ class OrthancServiceTest extends TestCase
         $this->assertInstanceOf(\App\GaelO\Services\StoreObjects\OrthancStudy::class, $studyDetails);
     }
 
+    //SK RESTE A FAIRE Anon, EXPORT, Send to peer, ZIP DOwnload
+
 
 }

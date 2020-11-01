@@ -23,9 +23,14 @@ Preparation Investigateur / Monitor / Controller / Reviewer :
 - Api Corrective Action (GET, PATCH)
 - Api Documentation (GET, POST, DELETE, PUT?)
 
-Service :
-Orthanc (ajout des env a faire)
-ReverseProxy
+Salim TODO :
+Service Orthanc=> Finir les tests
+Faire Service Import DICOM => Import + fill BDD Orthanc
+Faire API de telechargement de DICOM
+Authorisation DICOMWeb
+Faire Service ReverseProxy ?
+Api Documentation (GET, POST, DELETE, PUT?)
+Clean erreur 500 back, tester le front
 
 Reflechir Etude Ancillaire :
 Probablement decoupler les review, une review reference une visite et une study
