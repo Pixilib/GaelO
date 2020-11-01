@@ -56,6 +56,8 @@ class Constants {
     const QUALITY_CONSTROL_REFUSED = "Refused";
     const QUALITY_CONTROL_ACCEPTED = "Accepted";
 
+    const UPLOAD_STATUS_DONE = "Done";
+
     const ORTHANC_ANON_PROFILE_DEFAULT = "Default";
     const ORTHANC_ANON_PROFILE_FULL = "Full";
     const ORTHANC_PATIENTS_LEVEL="patients";
