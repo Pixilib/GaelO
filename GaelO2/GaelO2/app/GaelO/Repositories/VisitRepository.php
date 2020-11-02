@@ -81,6 +81,14 @@ class VisitRepository implements PersistenceInterface {
         return $dataArray;
     }
 
+    public function updateReviewAvailability(int $visitId, string $studyName, bool $available) : void {
+        $reviewStatusEntity = $this->visit->find($visitId)->reviewStatus()->where('study_name', $studyName)->get();
+        dd($reviewStatusEntity);
+        //SK ICI A FAIRE AVEC LA TABLE REVIEW STATUS
+        $reviewStatusEntity['review_status'] = $available;
+        $reviewStatusEntity->save();
+    }
+
 
 }
 
