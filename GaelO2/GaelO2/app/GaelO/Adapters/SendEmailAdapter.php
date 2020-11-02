@@ -107,6 +107,9 @@ class SendEmailAdapter implements MailInterface {
             case MailConstants::EMAIL_IMPORT_PATIENT:
                 $this->model = new ImportPatient($this->parameters);
                 break;
+            case MailConstants::EMAIL_UPLOADED_VISIT:
+                $this->model = new UploadedVisit($this->parameters);
+            break;
         }
 
         $this->sendEmail();

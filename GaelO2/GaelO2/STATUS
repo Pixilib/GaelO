@@ -25,6 +25,7 @@ Preparation Investigateur / Monitor / Controller / Reviewer :
 
 Salim TODO :
 Service Orthanc=> Finir les tests
+Service Visit => Continuer test passage en upload Done
 Faire Service/API Import DICOM => Import + fill BDD Orthanc
 Faire API de telechargement de DICOM
 Authorisation DICOMWeb

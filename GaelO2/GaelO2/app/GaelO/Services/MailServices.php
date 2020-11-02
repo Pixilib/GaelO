@@ -132,4 +132,33 @@ Class MailServices extends SendEmailAdapter {
 
     }
 
+    public function sendUploadedVisitMessage(string $userEmail, string $study, int $patientCode, string $visitType, bool $includeControllers){
+
+        $parameters = [
+            'study' => $study,
+            'patientCode'=>$patientCode,
+            'visitType'=>$visitType
+        ];
+
+        //Send to supervisors and monitors of the study
+        $destinators = [
+            $userEmail,
+            ...$this->userRepository->getUsersEmailsByRolesInStudy($study, Constants::ROLE_SUPERVISOR),
+            ...$this->userRepository->getUsersEmailsByRolesInStudy($study, Constants::ROLE_MONITOR)
+        ];
+        //If QC is awaiting add controllers
+        if ($includeControllers)  {
+            $destinators = [
+                ...$destinators,
+                ...$this->userRepository->getUsersEmailsByRolesInStudy($study, Constants::ROLE_CONTROLER)
+            ];
+        }
+
+        $this->mailInterface->setTo( $destinators );
+        $this->mailInterface->setReplyTo();
+        $this->mailInterface->setParameters($parameters);
+        $this->mailInterface->sendModel(MailConstants::EMAIL_UPLOADED_VISIT);
+
+    }
+
 }

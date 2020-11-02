@@ -68,6 +68,19 @@ class VisitRepository implements PersistenceInterface {
         return $visit->count() > 0 ? true : false;
     }
 
+    public function updateUploadStatus(int $visitId, string $newUploadStatus) : array {
+        $visitEntity = $this->visit->find($visitId);
+        $visitEntity['upload_status'] = $newUploadStatus;
+        $visitEntity->save();
+        return $visitEntity->toArray();
+    }
+
+    public function getVisitContext(int $visitId) : array {
+        $dataArray = $this->visit->find($visitId)->with('visitType')->first()->toArray();
+        $dataArray['visit_group']  = $this->visit->find($visitId)->visitType->visitGroup->toArray();
+        return $dataArray;
+    }
+
 
 }
 
