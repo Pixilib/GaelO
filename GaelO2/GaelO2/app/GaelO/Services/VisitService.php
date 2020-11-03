@@ -44,7 +44,7 @@ class VisitService
             $stateQualityControl
         );
 
-        //SK ICI CREER UNE REVIEW STATUS POUR LA VISITE CREE
+        //SK ICI CREER UNE REVIEW STATUS POUR LA VISITE CREE pour faire passer le test creation visite
     }
 
     public function updateUploadStatus(int $visitId, string $uploadStatus, int $uploaderUserId)

@@ -13,6 +13,7 @@ use App\Visit;
 use App\VisitGroup;
 use App\VisitType;
 use App\Patient;
+use App\ReviewStatus;
 
 class VisitTest extends TestCase
 {
@@ -83,6 +84,9 @@ class VisitTest extends TestCase
         //Check record in database
         $visit = Visit::get()->first()->toArray();
         $this->assertNotEmpty($visit);
+        //Check that review status has beed created
+        $reviewStatus = ReviewStatus::where('visit_id', $visit['id'])->get()->toArray();
+        $this->assertNotEmpty($reviewStatus);
     }
 
     public function testGetPatientVisits() {
