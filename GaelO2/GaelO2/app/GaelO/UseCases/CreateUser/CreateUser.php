@@ -31,31 +31,40 @@ class CreateUser {
 
      public function execute(CreateUserRequest $createUserRequest, CreateUserResponse $createUserResponse) : void
     {
-        $this->authorizationService->isAdmin($createUserRequest->currentUserId);
-        //Generate password
-        $password=substr(uniqid(), 1, 10);
-        $passwordTemporary = LaravelFunctionAdapter::Hash($password);
-        $createdUserEntity = $this->userService->createUser($createUserRequest, $passwordTemporary);
+        if($this->authorizationService->isAdmin($createUserRequest->currentUserId)){
+            //Generate password
+            $password=substr(uniqid(), 1, 10);
+            $passwordTemporary = LaravelFunctionAdapter::Hash($password);
+            $createdUserEntity = $this->userService->createUser($createUserRequest, $passwordTemporary);
 
-        //save user creation in tracker
+            $this->writeInTracker($createdUserEntity['id'], $createUserRequest->currentUserId);
+
+            //Send Welcom Email to give the plain password to new user.
+            $this->mailService->sendCreatedAccountMessage($createdUserEntity['email'],
+                                $createdUserEntity['firstname'].' '.$createdUserEntity['lastname'],
+                                $createdUserEntity['username'],
+                                $passwordTemporary);
+
+            $createUserResponse->status = 201;
+            $createUserResponse->statusText = 'Created';
+        }else{
+            $createUserResponse->status = 403;
+            $createUserResponse->statusText = 'Forbidden';
+        };
+
+    }
+
+    private function writeInTracker(int $createdUserId, int $userCreatorId) : void {
+
         $detailsTracker = [
-            'id'=> $createdUserEntity['id']
+            'id'=> $createdUserId
         ];
         //Save action in Tracker
-        $this->trackerService->writeAction($createUserRequest->currentUserId,
+        $this->trackerService->writeAction($userCreatorId,
             Constants::TRACKER_ROLE_USER,
             null,
             null,
             Constants::TRACKER_CREATE_USER,
             $detailsTracker);
-
-        //Send Welcom Email to give the plain password to new user.
-        $this->mailService->sendCreatedAccountMessage($createdUserEntity['email'],
-                            $createdUserEntity['firstname'].' '.$createdUserEntity['lastname'],
-                            $createdUserEntity['username'],
-                            $passwordTemporary);
-
-        $createUserResponse->status = 201;
-        $createUserResponse->statusText = 'Created';
     }
 }

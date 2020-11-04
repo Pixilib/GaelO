@@ -17,10 +17,9 @@ class AuthorizationService {
     //Peut etre besoin d'un GaelOAuthorizationExecption (pour lancer un unauthorized)
     //Appel via des statiques ?
 
-    public function isAdmin(int $userId){
+    public function isAdmin(int $userId) : bool {
         $userData = $this->userRepository->find($userId);
-        $userEntity = UserEntity::fillFromDBReponseArray($userData);
-        if( ! $userEntity->administrator) throw new GaelOAuthorizationException("Not Admin");
+        return $userData['administrator'] ==true;
     }
 
     public function isSameUserId(int $currentUserId, int $requestedUserId) {

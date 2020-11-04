@@ -17,30 +17,37 @@ class CreateUserRoles {
 
     public function execute(CreateUserRolesRequest $createRoleRequest, CreateUserRolesResponse $createRoleResponse){
 
-        $this->authorizationService->isAdmin($createRoleRequest->userId);
-        //Get current roles in study for users
-        $actualRolesArray = $this->persistenceInterface->getUsersRolesInStudy($createRoleRequest->userId, $createRoleRequest->study);
-        //Get request role to be add
-        $requestRolesArray = $createRoleRequest->roles;
-        //compute only new roles to be add in database
-        $newRoles = array_diff($requestRolesArray, $actualRolesArray);
+        if($this->authorizationService->isAdmin($createRoleRequest->userId)){
 
-        if(empty($newRoles)){
-            $createRoleResponse->body = ['errorMessage' => 'No New Roles'];
-            $createRoleResponse->status = 400;
-            $createRoleResponse->statusText = "Bad Request";
-            //throw new GaelOException("No New Roles");
-            return;
-        }
+            //Get current roles in study for users
+            $actualRolesArray = $this->persistenceInterface->getUsersRolesInStudy($createRoleRequest->userId, $createRoleRequest->study);
+            //Get request role to be add
+            $requestRolesArray = $createRoleRequest->roles;
+            //compute only new roles to be add in database
+            $newRoles = array_diff($requestRolesArray, $actualRolesArray);
 
-        //Write in database and return sucess response (error will be handled by laravel)
-        $this->persistenceInterface->addUserRoleInStudy($createRoleRequest->userId, $createRoleRequest->study, $newRoles);
-        $actionDetails = [
-            "Add Roles"=> $newRoles
-        ];
-        $this->trackerService->writeAction( $createRoleRequest->currentUserId, Constants::TRACKER_ROLE_ADMINISTRATOR, $createRoleRequest->study, null, Constants::TRACKER_EDIT_USER, $actionDetails);
-        $createRoleResponse->statusText = "Created";
-        $createRoleResponse->status = 201;
+            if(empty($newRoles)){
+                $createRoleResponse->body = ['errorMessage' => 'No New Roles'];
+                $createRoleResponse->status = 400;
+                $createRoleResponse->statusText = "Bad Request";
+                //throw new GaelOException("No New Roles");
+                return;
+            }
+
+            //Write in database and return sucess response (error will be handled by laravel)
+            $this->persistenceInterface->addUserRoleInStudy($createRoleRequest->userId, $createRoleRequest->study, $newRoles);
+            $actionDetails = [
+                "Add Roles"=> $newRoles
+            ];
+            $this->trackerService->writeAction( $createRoleRequest->currentUserId, Constants::TRACKER_ROLE_ADMINISTRATOR, $createRoleRequest->study, null, Constants::TRACKER_EDIT_USER, $actionDetails);
+            $createRoleResponse->statusText = "Created";
+            $createRoleResponse->status = 201;
+
+        }else {
+            $createRoleResponse->statusText = "Forbidden";
+            $createRoleResponse->status = 403;
+        };
+
 
     }
 }

@@ -19,20 +19,30 @@ class DeleteUser {
 
     public function execute(DeleteUserRequest $deleteRequest, DeleteUserResponse $deleteResponse) : void {
 
-        $this->authorizationService->isAdmin($deleteRequest->currentUserId);
+        if( $this->checkAuthorization($deleteRequest->currentUserId) ){
 
-        $this->persistenceInterface->delete($deleteRequest->id);
-        $deleteResponse->status = 200;
-        $deleteResponse->statusText = 'OK';
+            $this->persistenceInterface->delete($deleteRequest->id);
 
-        $actionsDetails = [
-            'deactivated_user'=>$deleteRequest->id
-        ];
+            $actionsDetails = [
+                'deactivated_user'=>$deleteRequest->id
+            ];
 
-        $this->trackerService->writeAction($deleteRequest->currentUserId,
-                                Constants::TRACKER_ROLE_USER, null, null,
-                                Constants::TRACKER_EDIT_USER, $actionsDetails);
+            $this->trackerService->writeAction($deleteRequest->currentUserId,
+                                    Constants::TRACKER_ROLE_USER, null, null,
+                                    Constants::TRACKER_EDIT_USER, $actionsDetails);
 
+            $deleteResponse->status = 200;
+            $deleteResponse->statusText = 'OK';
+
+        }else {
+            $deleteResponse->status = 403;
+            $deleteResponse->statusText = 'Forbidden';
+        };
+
+    }
+
+    private function checkAuthorization($userId) : bool {
+        return $this->authorizationService->isAdmin($userId);
     }
 
 }
