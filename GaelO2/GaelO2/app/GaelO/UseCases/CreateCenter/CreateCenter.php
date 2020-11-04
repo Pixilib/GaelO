@@ -28,8 +28,9 @@ class CreateCenter {
         };
 
         if(!empty($this->persistenceInterface->getCenterByName($createCenterRequest->name))){
+            $createCenterResponse->body = ['errorMessage' => 'Conflict. Name already used.'];
             $createCenterResponse->status = 409;
-            $createCenterResponse->statusText = 'Conflict. Name already used.';
+            $createCenterResponse->statusText = "Conflict";
             return;
         };
 

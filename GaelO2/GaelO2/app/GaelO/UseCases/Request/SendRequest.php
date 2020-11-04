@@ -27,9 +27,9 @@ class SendRequest {
             $requestResponse->statusText = 'OK';
 
         }catch (GaelOException $e) {
-            $requestResponse->status = 500;
-            $requestResponse->statusText = $e->getMessage();
-
+            $requestResponse->body = ['errorMessage' => $e->getMessage()];
+            $requestResponse->status = 400;
+            $requestResponse->statusText = "Bad Request";
         }
 
         return $requestResponse;

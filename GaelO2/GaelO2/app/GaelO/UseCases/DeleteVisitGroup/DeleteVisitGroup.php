@@ -14,8 +14,9 @@ class DeleteVisitGroup {
 
         $hasVisitTypes = $this->persistenceInterface->hasVisitTypes($deleteVisitGroupRequest->visitGroupId);
         if($hasVisitTypes){
+            $deleteVisitGroupResponse->body = ['errorMessage' => 'Existing Child Visit Type'];
             $deleteVisitGroupResponse->status = 403;
-            $deleteVisitGroupResponse->statusText = 'Existing Child Visit Type';
+            $deleteVisitGroupResponse->statusText = "Forbidden";
         }else{
             $this->persistenceInterface->delete($deleteVisitGroupRequest->visitGroupId);
             $deleteVisitGroupResponse->status = 200;

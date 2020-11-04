@@ -58,10 +58,17 @@ class Handler extends ExceptionHandler
         }
 
         if ($exception instanceof GaelOAuthorizationException && $request->wantsJson()) {
+            /*
+            NB : 
+            401 Unauthorized: If the request already included Authorization credentials, then the 401 response indicates that authorization has been refused for those credentials.
+            403 Forbidden:The server understood the request, but is refusing to fulfill it.
+            */
             return response()->noContent()
-            ->setStatusCode(401, 'Unauthorized' );
+            ->setStatusCode(403, 'Forbidden' );
         }
 
+        //SK a faire evoluer, gerer les execption dans les use case pour rendre les details d'erreur
+        //Les erreurs non catch reviendront en 500?
         if ($exception instanceof GaelOException && $request->wantsJson()) {
             return response()->noContent()
             ->setStatusCode(400, $exception->getMessage() );

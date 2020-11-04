@@ -18,8 +18,9 @@ class CreateStudy {
         $patientCodePrefix = $createStudyRequest->patientCodePrefix;
 
        if( $this->persistenceInterface->isExistingStudy($studyName) ){
+            $createStudyResponse->body = ['errorMessage' => 'Conflict'];
             $createStudyResponse->status = 409;
-            $createStudyResponse->statusText = 'Conflict';
+            $createStudyResponse->statusText = "Conflict";
             return;
        }
 

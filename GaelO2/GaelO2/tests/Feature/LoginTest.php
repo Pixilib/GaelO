@@ -49,7 +49,7 @@ class LoginTest extends TestCase
         $adminDefaultUser = User::where('id', 1)->first();
         $adminDefaultUser['last_password_update'] = now();
         $adminDefaultUser->save();
-        $this->json('POST', '/api/login', $data)->assertNoContent(401);
+        $this->json('POST', '/api/login', $data)->assertStatus(401);
     }
 
     public function testLoginShouldFailBecauseUnconfirmedAccound()
@@ -61,11 +61,11 @@ class LoginTest extends TestCase
         $adminDefaultUser['status'] = Constants::USER_STATUS_UNCONFIRMED;
         $adminDefaultUser['password_temporary'] = Hash::make('tempPassword');
         $adminDefaultUser->save();
-        $this->json('POST', '/api/login', $data)->assertNoContent(433);
+        $this->json('POST', '/api/login', $data)->assertStatus(400);
         //Try with correct temporary password, should grant access of unconfirmed status
         $data = ['username'=> 'administrator',
         'password'=> 'tempPassword'];
-        $response = $this->json('POST', '/api/login', $data)->assertStatus(432);
+        $response = $this->json('POST', '/api/login', $data)->assertStatus(400);
         $content = $response->content();
         $responseArray = json_decode($content, true);
         $this->assertEquals(1, $responseArray['id']);
@@ -78,7 +78,7 @@ class LoginTest extends TestCase
         $adminDefaultUser->save();
         $data = ['username'=> 'administrator',
         'password'=> 'administrator'];
-        $response = $this->json('POST', '/api/login', $data)->assertStatus(435);
+        $response = $this->json('POST', '/api/login', $data)->assertStatus(400);
         $content = $response->content();
         $responseArray = json_decode($content, true);
         $this->assertEquals(1, $responseArray['id']);
@@ -91,7 +91,7 @@ class LoginTest extends TestCase
         $adminDefaultUser = User::where('id', 1)->first();
         $adminDefaultUser['status'] = Constants::USER_STATUS_BLOCKED;
         $adminDefaultUser->save();
-        $this->json('POST', '/api/login', $data)->assertNoContent(434);
+        $this->json('POST', '/api/login', $data)->assertStatus(400);
 
     }
 
@@ -100,13 +100,13 @@ class LoginTest extends TestCase
         $data = ['username'=> 'administrator',
         'password'=> 'wrongPassword'];
 
-        $this->json('POST', '/api/login', $data)->assertNoContent(401);
-        $this->json('POST', '/api/login', $data)->assertNoContent(401);
-        $this->json('POST', '/api/login', $data)->assertNoContent(401);
+        $this->json('POST', '/api/login', $data)->assertStatus(401);
+        $this->json('POST', '/api/login', $data)->assertStatus(401);
+        $this->json('POST', '/api/login', $data)->assertStatus(401);
 
         $data = ['username'=> 'administrator',
         'password'=> 'administrator'];
-        $this->json('POST', '/api/login', $data)->assertNoContent(434);
+        $this->json('POST', '/api/login', $data)->assertStatus(400);
 
         $adminDefaultUser = User::where('id', 1)->first();
         $this->assertEquals($adminDefaultUser['status'], Constants::USER_STATUS_BLOCKED);
@@ -125,14 +125,14 @@ class LoginTest extends TestCase
         $data = ['username'=> 'administrator',
         'password'=> 'wrongPassword'];
 
-        $this->json('POST', '/api/login', $data)->assertNoContent(433);
-        $this->json('POST', '/api/login', $data)->assertNoContent(433);
-        $this->json('POST', '/api/login', $data)->assertNoContent(433);
+        $this->json('POST', '/api/login', $data)->assertStatus(400);
+        $this->json('POST', '/api/login', $data)->assertStatus(400);
+        $this->json('POST', '/api/login', $data)->assertStatus(400);
         $adminDefaultUser = User::where('id', 1)->first();
 
         $data = ['username'=> 'administrator',
         'password'=> 'password'];
-        $this->json('POST', '/api/login', $data)->assertNoContent(434);
+        $this->json('POST', '/api/login', $data)->assertStatus(400);
 
         $this->assertEquals($adminDefaultUser['status'], Constants::USER_STATUS_BLOCKED);
         $this->assertEquals($adminDefaultUser['attempts'], 3);

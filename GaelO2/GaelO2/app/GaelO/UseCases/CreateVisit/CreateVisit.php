@@ -20,21 +20,28 @@ class CreateVisit {
         $existingVisit = $this->persistenceInterface->isExistingVisit($createVisitRequest->patientCode,
                                                         $createVisitRequest->visitTypeId);
 
+                                                        
         if($existingVisit) {
-            $createVisitResponse->status = 209;
-            $createVisitResponse->statusText = 'Conflict';
+            $createVisitResponse->body = ['errorMessage' => 'Conflict'];
+            $createVisitResponse->status = 409;
+            $createVisitResponse->statusText = "Conflict";
             return;
+
+        }else{
+
+            $this->visitService->createVisit(
+                $createVisitRequest->creatorUserId,
+                $createVisitRequest->patientCode,
+                $createVisitRequest->acquisitionDate,
+                $createVisitRequest->visitTypeId,
+                $createVisitRequest->statusDone,
+                $createVisitRequest->reasonForNotDone);
+
+            $createVisitResponse->status = 201;
+            $createVisitResponse->statusText = 'Created';
         }
 
-        $this->visitService->createVisit(
-            $createVisitRequest->creatorUserId,
-            $createVisitRequest->patientCode,
-            $createVisitRequest->acquisitionDate,
-            $createVisitRequest->visitTypeId,
-            $createVisitRequest->statusDone,
-            $createVisitRequest->reasonForNotDone);
-        $createVisitResponse->status = 201;
-        $createVisitResponse->statusText = 'Created';
+
     }
 
 

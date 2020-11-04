@@ -32,38 +32,43 @@ class Login{
         if($user['status'] === Constants::USER_STATUS_UNCONFIRMED){
             $tempPasswordCheck = LaravelFunctionAdapter::checkHash($loginRequest->password, $user['password_temporary']);
             if($tempPasswordCheck){
-                $loginResponse->body = ['id' => $user['id']];
-                $loginResponse->status = 432;
-                $loginResponse->statusText = "Unconfirmed";
+                $loginResponse->body = ['id' => $user['id'], 'errorMessage' => 'Unconfirmed'];
+                $loginResponse->status = 400;
+                $loginResponse->statusText = "Bad Request";
             } else {
-                $loginResponse->status = 433;
-                $loginResponse->statusText = "Wrong Temporary Password";
+                $loginResponse->body = ['errorMessage' => 'Wrong Temporary Password'];
+                $loginResponse->status = 400;
+                $loginResponse->statusText = "Bad Request";
                 $this->increaseAttemptCount($user);
             }
             return;
         }
 
         if( $passwordCheck !== null && !$passwordCheck ){
+            $loginResponse->body = ['errorMessage' => 'Wrong Password'];
             $loginResponse->status = 401;
-            $loginResponse->statusText = "Wrong Password";
-            $this->increaseAttemptCount($user);
+            $loginResponse->statusText = "Unauthorized";
+        $this->increaseAttemptCount($user);
 
         } else {
 
             if ($user['status'] === Constants::USER_STATUS_BLOCKED){
                 $this->sendBlockedEmail($user);
-                $loginResponse->status = 434;
-                $loginResponse->statusText = "Blocked";
+                $loginResponse->body = ['errorMessage' => 'Blocked'];
+                $loginResponse->status = 400;
+                $loginResponse->statusText = "Bad Request";
             }else if ($user['status'] === Constants::USER_STATUS_ACTIVATED && $delayDay>90){
-                $loginResponse->body = ['id' => $user['id']];
-                $loginResponse->status = 435;
-                $loginResponse->statusText = "Password Expired";
+                $loginResponse->body = ['id' => $user['id'], 'errorMessage' => 'Password Expired'];
+                $loginResponse->status = 400;
+                $loginResponse->statusText = "Bad Request";
             }else if($user['status'] === Constants::USER_STATUS_ACTIVATED && $delayDay<90 && $attempts<3){
                 $this->updateDbOnSuccess($user, $loginRequest->ip);
                 $loginResponse->status = 200;
                 $loginResponse->statusText = "OK";
             }else{
-                throw new \Exception('Unknown Login Failure');
+                $loginResponse->body = ['errorMessage' => 'Unkown Login Failure'];
+                $loginResponse->status = 500;
+                $loginResponse->statusText = "Internal Server Error";
             }
         }
 

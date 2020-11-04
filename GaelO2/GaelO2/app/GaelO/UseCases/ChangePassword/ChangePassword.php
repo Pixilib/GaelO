@@ -20,11 +20,11 @@ class ChangePassword {
         $this->trackerService = $trackerService;
      }
 
-    public function execute(ChangePasswordRequest $userRequest, ChangePasswordResponse $userResponse) : void {
-        $id = $userRequest->id;
-        $previousPassword = $userRequest->previous_password;
-        $password1 = $userRequest->password1;
-        $password2 = $userRequest->password2;
+    public function execute(ChangePasswordRequest $changeUserPasswordRequest, ChangePasswordResponse $changeUserPasswordResponse) : void {
+        $id = $changeUserPasswordRequest->id;
+        $previousPassword = $changeUserPasswordRequest->previous_password;
+        $password1 = $changeUserPasswordRequest->password1;
+        $password2 = $changeUserPasswordRequest->password2;
 
         $user = $this->persistenceInterface->find($id);
 
@@ -34,14 +34,21 @@ class ChangePassword {
             $this->checkMatchHashPasswords($previousPassword, $user['password']);
         }
 
-        $this->checkPasswordFormatCorrect($password1);
-        $this->checkMatchPasswords($password1, $password2);
-        $this->checkNewPassword(
+        try {
+            $this->checkPasswordFormatCorrect($password1);
+            $this->checkMatchPasswords($password1, $password2);
+            $this->checkNewPassword(
             $password1,
             $user['password_temporary'] ,
             $user['password'],
             $user['password_previous1'],
             $user['password_previous2']);
+        } catch (GaelOException $e) {
+            $changeUserPasswordResponse->body = ['errorMessage' => $e->getMessage()];
+            $changeUserPasswordResponse->status = 400;
+            $changeUserPasswordResponse->statusText = "Bad Request";
+            return;
+        }
 
         $data['password_previous1'] = $user['password'];
         $data['password_previous2'] = $user['password_previous1'];
@@ -52,8 +59,8 @@ class ChangePassword {
         $this->persistenceInterface->update($user['id'], $data);
         $this->trackerService->writeAction($user['id'], Constants::TRACKER_ROLE_USER, null, null, Constants::TRACKER_CHANGE_PASSWORD, null);
 
-        $userResponse->status = 200;
-        $userResponse->statusText = 'OK';
+        $changeUserPasswordResponse->status = 200;
+        $changeUserPasswordResponse->statusText = 'OK';
 
     }
 

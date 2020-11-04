@@ -24,8 +24,15 @@ class ResetPassword {
         $email = $resetPasswordRequest->email;
 
         $userEntity = $this->persistenceInterface->getUserByUsername($username, true);
-        $this->checkNotDeactivatedAccount($userEntity);
-        $this->checkEmailMatching($email, $userEntity['email']);
+        try {
+            $this->checkNotDeactivatedAccount($userEntity);
+            $this->checkEmailMatching($email, $userEntity['email']);
+        } catch (GaelOException $e) {
+            $resetPasswordResponse->body = ['errorMessage' => $e->getMessage()];
+            $resetPasswordResponse->status = 400;
+            $resetPasswordResponse->statusText = "Bad Request";
+            return;
+        }
         //update properties of user
         $userEntity['status'] = Constants::USER_STATUS_UNCONFIRMED;
         $newPassword = substr(uniqid(), 1, 10);

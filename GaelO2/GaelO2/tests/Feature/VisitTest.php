@@ -89,6 +89,26 @@ class VisitTest extends TestCase
         $this->assertNotEmpty($reviewStatus);
     }
 
+    public function testCreateAlreadyCreatedVisit(){
+
+        //Create the visit in database
+        factory(Visit::class)->create(
+            [
+            'creator_user_id' => 1,
+            'patient_code' => $this->patient['code'],
+            'visit_type_id' => $this->visitType['id'],
+            'status_done' => 'Done',
+            'state_investigator_form'=> 'Done'
+            ]
+        );
+
+        //create request should return conflict
+        $resp = $this->json('POST', 'api/studies/test/visit-groups/'.$this->visitGroup['id'].
+        '/visit-types/'.$this->visitType['id'].'/visits'.'?role=investigator', $this->validPayload)->assertStatus(409);
+
+
+    }
+
     public function testGetPatientVisits() {
         $this->patient2 = factory(Patient::class)->create(['code' => 12341234123413, 'study_name' => 'test', 'center_code' => 0]);
 
