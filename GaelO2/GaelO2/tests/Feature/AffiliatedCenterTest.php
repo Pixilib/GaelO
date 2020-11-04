@@ -48,10 +48,11 @@ class AffiliatedCenterTest extends TestCase
 
     public function testCreateAlreadyExistingAffiliatedCenterToUser(){
 
+        factory(CenterUser::class)->create(['user_id'=>1, 'center_code'=>3]);
         $payload = [
             'centerCode' => 3
         ];
-        $this->json('POST', 'api/users/1/affiliated-centers', $payload)->assertNoContent(201);
+        $this->json('POST', 'api/users/1/affiliated-centers', $payload)->assertStatus(409);
 
         $affiliatedCenter =User::where('id',1)->first()->affiliatedCenters()->get()->toArray();
         $this->assertEquals(sizeof($affiliatedCenter), 1);

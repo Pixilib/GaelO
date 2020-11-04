@@ -19,23 +19,22 @@ class AddAffiliatedCenter {
         $existingCenter = $this->persistenceInterface->getAffiliatedCenter($addAffiliatedCenterRequest->userId);
 
         //Check the request creation is not in Main or affiliated centers
-        if($addAffiliatedCenterRequest->centerCode === $existingCenter){
+        if( in_array($addAffiliatedCenterRequest->centerCode, $existingCenter) ){
             $addAffiliatedCenterResponse->body = ['errorMessage' => 'Center already affiliated to user'];
-            $addAffiliatedCenterResponse->status = 500;
-            $addAffiliatedCenterResponse->statusText = "Internal Server Error";
-            //throw new GaelOException("Center already affiliated to user");
+            $addAffiliatedCenterResponse->status = 409;
+            $addAffiliatedCenterResponse->statusText = "Conflict";
+        } else {
+            $this->persistenceInterface->addAffiliatedCenter($addAffiliatedCenterRequest->userId, $addAffiliatedCenterRequest->centerCode);
+
+            $actionDetails = [
+                'addAffiliatedCenters' => $addAffiliatedCenterRequest->centerCode
+            ];
+            $this->trackerService->writeAction($addAffiliatedCenterRequest->userId, Constants::TRACKER_ROLE_ADMINISTRATOR, null, null, Constants::TRACKER_EDIT_USER, $actionDetails);
+
+            $addAffiliatedCenterResponse->status = '201';
+            $addAffiliatedCenterResponse->statusText = 'Created';
         }
 
-        $this->persistenceInterface->addAffiliatedCenter($addAffiliatedCenterRequest->userId, $addAffiliatedCenterRequest->centerCode);
 
-        $actionDetails = [
-            'addAffiliatedCenters' => $addAffiliatedCenterRequest->centerCode
-        ];
-
-        $this->trackerService->writeAction($addAffiliatedCenterRequest->userId, Constants::TRACKER_ROLE_ADMINISTRATOR, null, null, Constants::TRACKER_EDIT_USER, $actionDetails);
-
-
-        $addAffiliatedCenterResponse->status = '201';
-        $addAffiliatedCenterResponse->statusText = 'Created';
     }
 }
