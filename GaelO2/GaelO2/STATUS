@@ -21,7 +21,7 @@ Preparation Investigateur / Monitor / Controller / Reviewer :
 - Api creation Visit (GET, POST, DELETE)
 - Api QC (GET, PATCH + API /reset)
 - Api Corrective Action (GET, PATCH)
-- Api Documentation (GET, POST, DELETE, PUT?)
+- Api Documentation (GET, POST, DELETE, PUT)
 
 Salim TODO :
 Service Orthanc=> Finir les tests
@@ -30,7 +30,7 @@ Faire Service/API Import DICOM => Import + fill BDD Orthanc
 Faire API de telechargement de DICOM
 Authorisation DICOMWeb
 Faire Service ReverseProxy ?
-Api Documentation (GET, POST, DELETE, PUT?)
+Api Documentation (GET, POST, DELETE, PUT)
 Clean erreur 500 back, tester le front
 
 Reflechir Etude Ancillaire :
