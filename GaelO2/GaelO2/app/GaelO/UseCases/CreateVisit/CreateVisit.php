@@ -20,7 +20,7 @@ class CreateVisit {
         $existingVisit = $this->persistenceInterface->isExistingVisit($createVisitRequest->patientCode,
                                                         $createVisitRequest->visitTypeId);
 
-                                                        
+
         if($existingVisit) {
             $createVisitResponse->body = ['errorMessage' => 'Conflict'];
             $createVisitResponse->status = 409;
@@ -30,6 +30,7 @@ class CreateVisit {
         }else{
 
             $this->visitService->createVisit(
+                $createVisitRequest->studyName,
                 $createVisitRequest->creatorUserId,
                 $createVisitRequest->patientCode,
                 $createVisitRequest->acquisitionDate,

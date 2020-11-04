@@ -15,7 +15,7 @@ class OrthancServiceTest extends TestCase
         $this->orthancService = App::make(OrthancService::class);
         $this->orthancService->setOrthancServer(false);
 
-        if (false) {
+        if (true) {
             $this->markTestSkipped('all tests in this file are invactive, this is only to check orthanc communication');
         }
     }

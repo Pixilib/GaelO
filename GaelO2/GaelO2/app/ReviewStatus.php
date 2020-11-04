@@ -11,6 +11,8 @@ class ReviewStatus extends Model
     protected $primaryKey = ['visit_id', 'study_name'];
     public $incrementing = false;
 
+    protected $guarded = [];
+
     //SK : Parceque cle composite (cf https://www.nuomiphp.com/eplan/en/28200.html)
     protected function setKeysForSaveQuery(Builder $query)
     {

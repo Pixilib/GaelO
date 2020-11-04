@@ -49,6 +49,7 @@ class AffiliatedCenterTest extends TestCase
     public function testCreateAlreadyExistingAffiliatedCenterToUser(){
 
         factory(CenterUser::class)->create(['user_id'=>1, 'center_code'=>3]);
+
         $payload = [
             'centerCode' => 3
         ];

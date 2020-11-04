@@ -16,10 +16,13 @@ class AddAffiliatedCenter {
 
     public function execute(AddAffiliatedCenterRequest $addAffiliatedCenterRequest, AddAffiliatedCenterResponse $addAffiliatedCenterResponse){
 
-        $existingCenter = $this->persistenceInterface->getAffiliatedCenter($addAffiliatedCenterRequest->userId);
+        $existingAffiliatingCenter = $this->persistenceInterface->getAffiliatedCenter($addAffiliatedCenterRequest->userId);
+        $mainUserCenterCode = $this->persistenceInterface->find($addAffiliatedCenterRequest->userId)['center_code'];
+        $existingCenterCodeArray  = array_map( function($center) { return $center['code']; }, $existingAffiliatingCenter);
+        array_push($existingCenterCodeArray, $mainUserCenterCode);
 
         //Check the request creation is not in Main or affiliated centers
-        if( in_array($addAffiliatedCenterRequest->centerCode, $existingCenter) ){
+        if( in_array($addAffiliatedCenterRequest->centerCode, $existingCenterCodeArray) ){
             $addAffiliatedCenterResponse->body = ['errorMessage' => 'Center already affiliated to user'];
             $addAffiliatedCenterResponse->status = 409;
             $addAffiliatedCenterResponse->statusText = "Conflict";

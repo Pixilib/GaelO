@@ -5,11 +5,14 @@ namespace App\GaelO\Repositories;
 use App\Visit;
 use App\GaelO\Interfaces\PersistenceInterface;
 use App\GaelO\Util;
+use App\ReviewStatus;
+use Illuminate\Support\Facades\DB;
 
 class VisitRepository implements PersistenceInterface {
 
     public function __construct(){
         $this->visit = new Visit();
+        $this->reviewStatus = new ReviewStatus();
     }
 
     public function create(array $data){
@@ -32,7 +35,7 @@ class VisitRepository implements PersistenceInterface {
         $this->visit->find($id)->delete();
     }
 
-    public function createVisit(int $creatorUserId, int $patientCode, ?string $acquisitionDate, int $visitTypeId,
+    public function createVisit(string $studyName, int $creatorUserId, int $patientCode, ?string $acquisitionDate, int $visitTypeId,
         string $statusDone, ?string $reasonForNotDone, string $stateInvestigatorForm, string $stateQualityControl){
 
         $data = [
@@ -46,6 +49,15 @@ class VisitRepository implements PersistenceInterface {
             'state_investigator_form' => $stateInvestigatorForm,
             'state_quality_control' => $stateQualityControl
         ];
+
+        DB::transaction(function () use ($data, $studyName) {
+            $newVisit = $this->visit->create($data);
+            $this->reviewStatus->create([
+                'visit_id'=>$newVisit->id,
+                'study_name'=>$studyName
+            ]);
+        });
+
         $this->create($data);
     }
 

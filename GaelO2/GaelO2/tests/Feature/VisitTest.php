@@ -79,7 +79,7 @@ class VisitTest extends TestCase
 
     public function testCreateVisit() {
 
-        $resp = $this->json('POST', 'api/studies/test/visit-groups/'.$this->visitGroup['id'].
+        $this->json('POST', 'api/studies/test/visit-groups/'.$this->visitGroup['id'].
         '/visit-types/'.$this->visitType['id'].'/visits'.'?role=investigator', $this->validPayload)->assertStatus(201);
         //Check record in database
         $visit = Visit::get()->first()->toArray();

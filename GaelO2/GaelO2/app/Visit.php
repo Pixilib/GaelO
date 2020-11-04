@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Visit extends Model
 {
+    protected $guarded = [];
+
     public function reviews(){
         return $this->hasMany('App\Review', 'visit_id');
     }

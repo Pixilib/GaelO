@@ -17,6 +17,7 @@ class VisitService
     }
 
     public function createVisit(
+        string $studyName,
         int $creatorUserId,
         int $patientCode,
         ?string $acquisitionDate,
@@ -34,6 +35,7 @@ class VisitService
         if (!$visitTypeEntity->qcNeeded) $stateQualityControl = Constants::QUALITY_CONTROL_NOT_NEEDED;
 
         $this->visitRepository->createVisit(
+            $studyName,
             $creatorUserId,
             $patientCode,
             $acquisitionDate,
@@ -68,7 +70,6 @@ class VisitService
             }
 
         }
-
 
     }
 
