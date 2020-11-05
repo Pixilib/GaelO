@@ -43,7 +43,7 @@ class CreateUser {
             $this->mailService->sendCreatedAccountMessage($createdUserEntity['email'],
                                 $createdUserEntity['firstname'].' '.$createdUserEntity['lastname'],
                                 $createdUserEntity['username'],
-                                $passwordTemporary);
+                                $password);
 
             $createUserResponse->status = 201;
             $createUserResponse->statusText = 'Created';
