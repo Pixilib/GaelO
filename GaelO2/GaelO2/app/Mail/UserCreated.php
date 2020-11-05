@@ -30,7 +30,7 @@ class UserCreated extends Mailable
      */
     public function build()
     {
-        return $this->subject('User Created')
+        return $this->subject('GaelO - User Created')
             ->view('mails.mail_create_user')
             ->with($this->parameters);
     }
