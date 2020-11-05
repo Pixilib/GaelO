@@ -25,7 +25,7 @@ RUN apt-get update -qy && \
     libxml2-dev \
     openssl \
     sqlite3 \
-    zip && \
+    zip \
     mariadb-client && \
     apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
