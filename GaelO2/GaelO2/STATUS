@@ -31,7 +31,6 @@ Faire API de telechargement de DICOM
 Authorisation DICOMWeb
 Faire Service ReverseProxy ?
 Api Documentation (GET, POST, DELETE, PUT)
-Clean erreur 500 back, tester le front
 
 Reflechir Etude Ancillaire :
 Probablement decoupler les review, une review reference une visite et une study
