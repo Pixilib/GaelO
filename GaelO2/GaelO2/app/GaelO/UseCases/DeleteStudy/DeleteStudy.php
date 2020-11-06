@@ -3,25 +3,49 @@
 namespace App\GaelO\UseCases\DeleteStudy;
 
 use App\GaelO\Constants\Constants;
+use App\GaelO\Exceptions\GaelOException;
+use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\PersistenceInterface;
+use App\GaelO\Services\AuthorizationService;
 use App\GaelO\Services\TrackerService;
+use Exception;
 
 class DeleteStudy {
 
-    public function __construct(PersistenceInterface $persistenceInterface, TrackerService $trackerService) {
+    public function __construct(PersistenceInterface $persistenceInterface, AuthorizationService $authorizationService, TrackerService $trackerService) {
         $this->persistenceInterface=$persistenceInterface;
         $this->trackerService=$trackerService;
+        $this->authorizationService = $authorizationService;
     }
 
-    public function execute(DeleteStudyRequest $deleteStudyQuery, DeleteStudyResponse $deleteStudyResponse){
+    public function execute(DeleteStudyRequest $deleteStudyRequest, DeleteStudyResponse $deleteStudyResponse){
 
-        $studyName = $deleteStudyQuery->studyName;
-        $this->persistenceInterface->delete($studyName);
+        try{
 
-        $this->trackerService->writeAction($deleteStudyQuery->currentUserId, Constants::TRACKER_ROLE_ADMINISTRATOR, $studyName, null, Constants::TRACKER_DEACTIVATE_STUDY, []);
+            $this->checkAuthorization($deleteStudyRequest);
+            $studyName = $deleteStudyRequest->studyName;
+            $this->persistenceInterface->delete($studyName);
 
-        $deleteStudyResponse->status = 200;
-        $deleteStudyResponse->statusText = 'OK';
+            $this->trackerService->writeAction($deleteStudyRequest->currentUserId, Constants::TRACKER_ROLE_ADMINISTRATOR, $studyName, null, Constants::TRACKER_DEACTIVATE_STUDY, []);
+
+            $deleteStudyResponse->status = 200;
+            $deleteStudyResponse->statusText = 'OK';
+
+        } catch(GaelOException $e){
+            $deleteStudyResponse->status = $e->statusCode;
+            $deleteStudyResponse->statusText = $e->statusText;
+
+        } catch(Exception $e){
+            throw $e;
+        }
+
+    }
+
+    private function checkAuthorization(DeleteStudyRequest $deleteStudyRequest){
+        $this->authorizationService->setCurrentUser($deleteStudyRequest->currentUserId);
+        if ( ! $this->authorizationService->isAdmin()) {
+            throw new GaelOForbiddenException();
+        };
     }
 
 }

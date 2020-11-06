@@ -4,22 +4,28 @@ namespace App\GaelO\UseCases\CreateVisit;
 
 use App\GaelO\Exceptions\GaelOConflictException;
 use App\GaelO\Exceptions\GaelOException;
+use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\PersistenceInterface;
+use App\GaelO\Services\AuthorizationService;
 use App\GaelO\Services\TrackerService;
 use App\GaelO\Services\VisitService;
 
 class CreateVisit {
 
-    public function __construct(PersistenceInterface $persistenceInterface, TrackerService $trackerService, VisitService $visitService){
+    public function __construct(PersistenceInterface $persistenceInterface, AuthorizationService $authorizationService, TrackerService $trackerService, VisitService $visitService){
         $this->visitService = $visitService;
         $this->persistenceInterface = $persistenceInterface;
         $this->trackerService = $trackerService;
+        $this->authorizationService = $authorizationService;
 
     }
 
     public function execute(CreateVisitRequest $createVisitRequest, CreateVisitResponse $createVisitResponse) : void {
 
         try{
+
+            $this->checkAuthorization($createVisitRequest);
+
             $existingVisit = $this->persistenceInterface->isExistingVisit($createVisitRequest->patientCode,
                                                             $createVisitRequest->visitTypeId);
 
@@ -46,6 +52,13 @@ class CreateVisit {
             $createVisitResponse->body = $e->getErrorBody();
         }
 
+
+    }
+
+    private function checkAuthorization(CreateVisitRequest $createVisitRequest){
+        $this->authorizationService->setCurrentUser($createVisitRequest->currentUserId);
+        $answer = $this->authorizationService->isPatientAllowed($createVisitRequest->role, $createVisitRequest->patientCode);
+        if(!$answer) throw new GaelOForbiddenException();
 
     }
 

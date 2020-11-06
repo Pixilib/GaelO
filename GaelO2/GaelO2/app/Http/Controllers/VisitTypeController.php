@@ -42,9 +42,12 @@ class VisitTypeController extends Controller
     }
 
     public function deleteVisitType(int $visitTypeId, DeleteVisitType $deleteVisitType, DeleteVisitTypeRequest $deleteVisitTypeRequest, DeleteVisitTypeResponse $deleteVisitTypeResponse){
+        $curentUser = Auth::user();
+        $deleteVisitTypeRequest->currentUserId = $curentUser['id'];
         $deleteVisitTypeRequest->visitTypeId = $visitTypeId;
         $deleteVisitType->execute($deleteVisitTypeRequest, $deleteVisitTypeResponse);
-        return response()->noContent()
+
+        return response()->json($deleteVisitTypeResponse->body)
         ->setStatusCode($deleteVisitTypeResponse->status, $deleteVisitTypeResponse->statusText);
     }
 }

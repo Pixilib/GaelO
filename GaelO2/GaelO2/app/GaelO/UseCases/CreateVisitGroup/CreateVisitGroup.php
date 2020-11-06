@@ -2,8 +2,12 @@
 
 namespace App\GaelO\UseCases\CreateVisitGroup;
 
+use App\GaelO\Exceptions\GaelOConflictException;
+use App\GaelO\Exceptions\GaelOException;
+use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\PersistenceInterface;
 use App\GaelO\Services\TrackerService;
+use Exception;
 
 class CreateVisitGroup {
 
@@ -16,20 +20,37 @@ class CreateVisitGroup {
 
     public function execute(CreateVisitGroupRequest $createVisitGroupRequest, CreateVisitGroupResponse $createVisitGroupResponse) : void {
 
-        $existingVisitGroup = $this->persistenceInterface->isExistingVisitGroup($createVisitGroupRequest->studyName,
-                                                        $createVisitGroupRequest->modality);
+        try{
+            $this->checkAuthorization($createVisitGroupRequest);
 
-        if($existingVisitGroup) {
-            $createVisitGroupResponse->body = ['errorMessage' => 'Conflict'];
-            $createVisitGroupResponse->status = 209;
-            $createVisitGroupResponse->statusText = "Conflict";
-            return;
+            $existingVisitGroup = $this->persistenceInterface->isExistingVisitGroup($createVisitGroupRequest->studyName,
+                                                            $createVisitGroupRequest->modality);
+
+            if($existingVisitGroup) {
+                throw new GaelOConflictException("Already Exisiting Visit Group");
+            }
+
+            $this->persistenceInterface->createVisitGroup($createVisitGroupRequest->studyName, $createVisitGroupRequest->modality);
+
+            $createVisitGroupResponse->status = 201;
+            $createVisitGroupResponse->statusText = 'Created';
+
+        } catch (GaelOException $e) {
+
+            $createVisitGroupResponse->status = $e->statusCode;
+            $createVisitGroupResponse->statusText = $e->statusText;
+            $createVisitGroupResponse->body = $e->getErrorBody();
+
+        } catch (Exception $e){
+            throw $e;
         }
 
-        $this->persistenceInterface->createVisitGroup($createVisitGroupRequest->studyName, $createVisitGroupRequest->modality);
+    }
 
-        $createVisitGroupResponse->status = 201;
-        $createVisitGroupResponse->statusText = 'Created';
+    private function checkAuthorization(CreateVisitGroupRequest $createVisitGroupRequest){
+        $this->authorizationService->setCurrentUser($createVisitGroupRequest->currentUserId);
+        $answer = $this->authorizationService->isAdmin();
+        if(!$answer) throw new GaelOForbiddenException();
 
     }
 

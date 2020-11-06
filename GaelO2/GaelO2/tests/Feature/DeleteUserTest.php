@@ -36,7 +36,7 @@ class DeleteUserTest extends TestCase
         //Fill user table
         factory(User::class, 5)->create();
         //Remove number 3
-        $this->json('DELETE', '/api/users/3');
+        $this->json('DELETE', '/api/users/3')->assertSuccessful();
         //Check that the user 3 has been remove
         $queryUser = User::where('id', 3)->first();
         $this->assertEmpty($queryUser);

@@ -4,9 +4,11 @@ namespace App\GaelO\UseCases\ExportDatabase;
 
 use App\GaelO\Adapters\DatabaseDumper;
 use App\GaelO\Adapters\LaravelFunctionAdapter;
+use App\GaelO\Exceptions\GaelOException;
+use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Services\AuthorizationService;
 use App\GaelO\Services\PathService;
-
+use Exception;
 use ZipArchive;
 
 class ExportDatabase{
@@ -18,7 +20,8 @@ class ExportDatabase{
 
     public function execute(ExportDatabaseRequest $exportDatabaseRequest, ExportDatabaseResponse $exportDatabaseResponse){
 
-        if( $this->checkAuthorization($exportDatabaseRequest->currentUserId)) {
+        try{
+            $this->checkAuthorization($exportDatabaseRequest->currentUserId);
 
             $zip=new ZipArchive;
             $tempZip=tempnam(ini_get('upload_tmp_dir'), 'TMPZIPDB_');
@@ -38,9 +41,12 @@ class ExportDatabase{
             $exportDatabaseResponse->zipFile = $tempZip;
             $exportDatabaseResponse->fileName = "export_database_".$date."zip";
 
-        }else{
-            $exportDatabaseResponse->status = 403;
-            $exportDatabaseResponse->statusText = 'Forbidden';
+        }catch(GaelOException $e){
+            $exportDatabaseResponse->status = $e->statusText;
+            $exportDatabaseResponse->statusText = $e->statusCode;
+
+        }catch (Exception $e){
+            throw $e;
         };
 
 
@@ -61,8 +67,11 @@ class ExportDatabase{
 
     }
 
-    private function checkAuthorization($userId) : bool {
-        return $this->authorizationService->isAdmin($userId);
+    private function checkAuthorization($userId)  {
+        $this->authorizationService->setCurrentUser($userId);
+        if( ! $this->authorizationService->isAdmin($userId)) {
+            throw new GaelOForbiddenException();
+        };
     }
 
 }

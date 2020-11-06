@@ -262,6 +262,18 @@ class UserRepository implements PersistenceInterface {
         $user = $this->user->where('id', $userId)->first();
         $centers = $user->affiliatedCenters()->get();
         return empty($centers) ? [] : $centers->toArray();
+    }
+
+    public function getAllUsersCenters(int $userId) : array {
+
+        $user = $this->user->where('id', $userId)->first();
+        $centers = $user->affiliatedCenters()->get()->pluck('code');
+        if(empty($centers)){
+            return [ $user['center_code'] ];
+        }else {
+            return [...$centers->toArray(), $user['center_code']];
+        }
+
 
     }
 

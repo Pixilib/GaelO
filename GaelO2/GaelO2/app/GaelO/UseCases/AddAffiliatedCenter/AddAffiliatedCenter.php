@@ -3,9 +3,13 @@
 namespace App\GaelO\UseCases\AddAffiliatedCenter;
 
 use App\GaelO\Constants\Constants;
+use App\GaelO\Exceptions\GaelOConflictException;
+use App\GaelO\Exceptions\GaelOException;
+use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\PersistenceInterface;
 use App\GaelO\Services\AuthorizationService;
 use App\GaelO\Services\TrackerService;
+use Exception;
 
 class AddAffiliatedCenter {
 
@@ -17,12 +21,10 @@ class AddAffiliatedCenter {
 
     public function execute(AddAffiliatedCenterRequest $addAffiliatedCenterRequest, AddAffiliatedCenterResponse $addAffiliatedCenterResponse){
 
-        if( $this->authorizationService->isAdmin($addAffiliatedCenterRequest->currentUserId) ) {
+        try{
+            $this->checkAuthorization($addAffiliatedCenterRequest);
 
-            $existingAffiliatingCenter = $this->persistenceInterface->getAffiliatedCenter($addAffiliatedCenterRequest->userId);
-            $mainUserCenterCode = $this->persistenceInterface->find($addAffiliatedCenterRequest->userId)['center_code'];
-            $existingCenterCodeArray  = array_map( function($center) { return $center['code']; }, $existingAffiliatingCenter);
-            array_push($existingCenterCodeArray, $mainUserCenterCode);
+            $existingCenterCodeArray = $this->persistenceInterface->getAllUsersCenters($addAffiliatedCenterRequest->userId);
 
             //Check the request creation is not in Main or affiliated centers
             if( ! in_array($addAffiliatedCenterRequest->centerCode, $existingCenterCodeArray) ){
@@ -38,15 +40,23 @@ class AddAffiliatedCenter {
                 $addAffiliatedCenterResponse->statusText = 'Created';
 
             } else {
-                $addAffiliatedCenterResponse->body = ['errorMessage' => 'Center already affiliated to user'];
-                $addAffiliatedCenterResponse->status = 409;
-                $addAffiliatedCenterResponse->statusText = "Conflict";
+                throw new GaelOConflictException('Center already affiliated to user');
             }
 
-        } else {
-            $addAffiliatedCenterResponse->status = 403;
-            $addAffiliatedCenterResponse->statusText = 'Forbidden';
+        } catch(GaelOException $e) {
+            $addAffiliatedCenterResponse->status = $e->statusCode;
+            $addAffiliatedCenterResponse->statusText =$e->statusText;
+            $addAffiliatedCenterResponse->body =$e->getErrorBody();
+        } catch (Exception $e){
+            throw $e;
         };
 
+    }
+
+    private function checkAuthorization(AddAffiliatedCenterRequest $addAffiliatedCenterRequest){
+        $this->authorizationService->setCurrentUser($addAffiliatedCenterRequest->currentUserId);
+        if( ! $this->authorizationService->isAdmin()){
+            throw new GaelOForbiddenException();
+        };
     }
 }

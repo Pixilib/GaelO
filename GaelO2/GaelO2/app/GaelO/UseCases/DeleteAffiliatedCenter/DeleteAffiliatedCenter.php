@@ -3,28 +3,55 @@
 namespace App\GaelO\UseCases\DeleteAffiliatedCenter;
 
 use App\GaelO\Constants\Constants;
+use App\GaelO\Exceptions\GaelOException;
+use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\PersistenceInterface;
+use App\GaelO\Services\AuthorizationService;
 use App\GaelO\Services\TrackerService;
+use Exception;
 
 class DeleteAffiliatedCenter {
 
-    public function __construct(PersistenceInterface $persistenceInterface, TrackerService $trackerService) {
+    public function __construct(PersistenceInterface $persistenceInterface, AuthorizationService $authorizationService, TrackerService $trackerService) {
         $this->persistenceInterface=$persistenceInterface;
         $this->trackerService=$trackerService;
+        $this->authorizationService = $authorizationService;
     }
 
     public function execute(DeleteAffiliatedCenterRequest $deleteAffiliatedCenterRequest, DeleteAffiliatedCenterResponse $deleteAffiliatedCenterResponse){
 
-        $this->persistenceInterface->deleteAffiliatedCenter($deleteAffiliatedCenterRequest->userId, $deleteAffiliatedCenterRequest->centerCode);
+        try{
 
-        $actionDetails = [
-            'deletedAffiliatedCenters' => $deleteAffiliatedCenterRequest->centerCode
-        ];
+            $this->checkAuthorization($deleteAffiliatedCenterRequest);
 
-        $this->trackerService->writeAction($deleteAffiliatedCenterRequest->userId, Constants::TRACKER_ROLE_ADMINISTRATOR, null, null, Constants::TRACKER_EDIT_USER, $actionDetails);
+            $this->persistenceInterface->deleteAffiliatedCenter($deleteAffiliatedCenterRequest->userId, $deleteAffiliatedCenterRequest->centerCode);
 
-        $deleteAffiliatedCenterResponse->status = 200;
-        $deleteAffiliatedCenterResponse->statusText = 'OK';
+            $actionDetails = [
+                'deletedAffiliatedCenters' => $deleteAffiliatedCenterRequest->centerCode
+            ];
+
+            $this->trackerService->writeAction($deleteAffiliatedCenterRequest->userId, Constants::TRACKER_ROLE_ADMINISTRATOR, null, null, Constants::TRACKER_EDIT_USER, $actionDetails);
+
+            $deleteAffiliatedCenterResponse->status = 200;
+            $deleteAffiliatedCenterResponse->statusText = 'OK';
+
+        }catch (GaelOException $e) {
+
+            $deleteAffiliatedCenterResponse->status = $e->statusCode;
+            $deleteAffiliatedCenterResponse->statusText = $e->statusText;
+            $deleteAffiliatedCenterResponse->body = $e->getErrorBody();
+
+        }catch (Exception $e){
+            throw $e;
+        }
+
+    }
+
+    private function checkAuthorization(DeleteAffiliatedCenterRequest $deleteAffiliatedCenterRequest){
+        $this->authorizationService->setCurrentUser($deleteAffiliatedCenterRequest->currentUserId);
+        $answer = $this->authorizationService->isAdmin();
+        if(!$answer) throw new GaelOForbiddenException();
+
     }
 
 }

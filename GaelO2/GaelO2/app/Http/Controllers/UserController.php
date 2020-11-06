@@ -178,6 +178,8 @@ class UserController extends Controller
     }
 
     public function deleteAffiliatedCenter(int $userId, int $centerCode, DeleteAffiliatedCenter $deleteAffiliatedCenter, DeleteAffiliatedCenterRequest $deleteAffiliatedCenterRequest, DeleteAffiliatedCenterResponse $deleteAffiliatedCenterResponse){
+        $curentUser = Auth::user();
+        $deleteAffiliatedCenterRequest->currentUserId = $curentUser['id'];
         $deleteAffiliatedCenterRequest->userId = $userId;
         $deleteAffiliatedCenterRequest->centerCode = $centerCode;
         $deleteAffiliatedCenter->execute($deleteAffiliatedCenterRequest, $deleteAffiliatedCenterResponse);

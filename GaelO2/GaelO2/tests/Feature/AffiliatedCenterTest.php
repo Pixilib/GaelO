@@ -33,7 +33,7 @@ class AffiliatedCenterTest extends TestCase
         );
 
     }
-
+/*
     public function testCreateAffiliatedCenterToUser()
     {
         $payload = [
@@ -45,11 +45,10 @@ class AffiliatedCenterTest extends TestCase
         $this->assertEquals(sizeof($affiliatedCenter), 1);
         $this->assertEquals($affiliatedCenter[0]['code'], 3);
     }
-
+*/
     public function testCreateAlreadyExistingAffiliatedCenterToUser(){
 
         factory(CenterUser::class)->create(['user_id'=>1, 'center_code'=>3]);
-
         $payload = [
             'centerCode' => 3
         ];

@@ -3,11 +3,14 @@
 namespace App\GaelO\UseCases\DeleteUser;
 
 use App\GaelO\Constants\Constants;
+use App\GaelO\Exceptions\GaelOException;
+use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\PersistenceInterface;
 use App\GaelO\Services\AuthorizationService;
 use App\GaelO\Services\TrackerService;
 use App\GaelO\UseCases\DeleteUser\DeleteUserRequest;
 use App\GaelO\UseCases\DeleteUser\DeleteUserResponse;
+use Exception;
 
 class DeleteUser {
 
@@ -19,7 +22,9 @@ class DeleteUser {
 
     public function execute(DeleteUserRequest $deleteRequest, DeleteUserResponse $deleteResponse) : void {
 
-        if( $this->checkAuthorization($deleteRequest->currentUserId) ){
+        try{
+
+            $this->checkAuthorization($deleteRequest->currentUserId);
 
             $this->persistenceInterface->delete($deleteRequest->id);
 
@@ -34,15 +39,22 @@ class DeleteUser {
             $deleteResponse->status = 200;
             $deleteResponse->statusText = 'OK';
 
-        }else {
-            $deleteResponse->status = 403;
-            $deleteResponse->statusText = 'Forbidden';
+        }catch ( GaelOException $e ) {
+            $deleteResponse->status = $e->statusCode;
+            $deleteResponse->statusText = $e->statusText;
+            $deleteResponse->body = $e->getErrorBody();
+
+        } catch (Exception $e){
+            throw $e;
         };
 
     }
 
-    private function checkAuthorization($userId) : bool {
-        return $this->authorizationService->isAdmin($userId);
+    private function checkAuthorization($userId) {
+        $this->authorizationService->setCurrentUser($userId);
+        if( ! $this->authorizationService->isAdmin()) {
+            throw new GaelOForbiddenException();
+        };
     }
 
 }
