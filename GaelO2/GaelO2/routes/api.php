@@ -24,8 +24,16 @@ Route::middleware(['auth:api', 'refresh_token'])->post('users', 'UserController@
 Route::middleware(['auth:api', 'refresh_token'])->put('users/self/{id}', 'UserController@modifyUserIdentification');
 Route::middleware(['auth:api', 'refresh_token'])->delete('users/{id}', 'UserController@deleteUser');
 
+Route::middleware(['auth:api', 'refresh_token'])->post('users/{id}/affiliated-centers', 'UserController@addAffiliatedCenter');
+
 //Export DB Route (download binary doesn't support refresh token)
 Route::middleware('auth:api')->post('export-db', 'ExportDBController@exportDB');
+
+//Study Routes
+Route::middleware('auth:api')->post('studies', 'StudyController@createStudy');
+
+//Centers Routes
+Route::middleware('auth:api')->post('centers', 'CenterController@createCenter');
 
 
 //Routes that need authentication and to be admin
@@ -37,13 +45,13 @@ Route::middleware(['auth:api', 'admin', 'refresh_token'])->group(function () {
     Route::get('users/{id}/roles/{study?}', 'UserController@getRoles');
     Route::post('users/{id}/roles/{study}', 'UserController@createRole');
     Route::delete('users/{id}/roles/{study}/{roleName}', 'UserController@deleteRole');
-    Route::post('users/{id}/affiliated-centers', 'UserController@addAffiliatedCenter');
+
     Route::get('users/{id}/affiliated-centers', 'UserController@getAffiliatedCenter');
     Route::delete('users/{id}/affiliated-centers/{centerCode}', 'UserController@deleteAffiliatedCenter');
     Route::get('studies/{studyName}/users', 'UserController@getUserFromStudy');
 
     //Study Routes
-    Route::post('studies', 'StudyController@createStudy');
+
     Route::get('studies', 'StudyController@getStudy');
     Route::delete('studies/{studyName}', 'StudyController@deleteStudy');
     Route::patch('studies/{studyName}/reactivate', 'StudyController@reactivateStudy');
@@ -54,7 +62,6 @@ Route::middleware(['auth:api', 'admin', 'refresh_token'])->group(function () {
 
     //Centers Routes
     Route::get('centers/{code?}', 'CenterController@getCenter');
-    Route::post('centers', 'CenterController@createCenter');
     Route::put('centers/{code}', 'CenterController@modifyCenter');
 
     //VisitGroup Routes

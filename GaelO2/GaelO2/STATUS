@@ -24,6 +24,10 @@ Preparation Investigateur / Monitor / Controller / Reviewer :
 - Api Documentation (GET, POST, DELETE, PUT)
 
 Salim TODO :
+Fini refactorer tout les class :
+    Reste de createVisit (faire check permission) à ReactivateUser
+Enlever tout les noContent dans les controller ou faire une condition ?
+
 Service Orthanc=> Finir les tests
 Service Visit => Continuer test passage en upload Done
 Faire Service/API Import DICOM => Import + fill BDD Orthanc
@@ -31,6 +35,9 @@ Faire API de telechargement de DICOM
 Authorisation DICOMWeb
 Faire Service ReverseProxy ?
 Api Documentation (GET, POST, DELETE, PUT)
+
++Tard :
+New Roles passer en unique et pas en array ?
 
 Reflechir Etude Ancillaire :
 Probablement decoupler les review, une review reference une visite et une study

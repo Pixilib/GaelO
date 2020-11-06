@@ -4,6 +4,7 @@ namespace App\GaelO\UseCases\CreateUser;
 
 use App\GaelO\Adapters\LaravelFunctionAdapter;
 use App\GaelO\Constants\Constants;
+use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Interfaces\PersistenceInterface;
 
 use App\GaelO\UseCases\CreateUser\CreateUserRequest;
@@ -31,22 +32,31 @@ class CreateUser {
 
      public function execute(CreateUserRequest $createUserRequest, CreateUserResponse $createUserResponse) : void
     {
-        if($this->authorizationService->isAdmin($createUserRequest->currentUserId)){
-            //Generate password
-            $password=substr(uniqid(), 1, 10);
-            $passwordTemporary = LaravelFunctionAdapter::Hash($password);
-            $createdUserEntity = $this->userService->createUser($createUserRequest, $passwordTemporary);
+        if( $this->authorizationService->isAdmin($createUserRequest->currentUserId) ){
 
-            $this->writeInTracker($createdUserEntity['id'], $createUserRequest->currentUserId);
+            try{
+                //Generate password
+                $password=substr(uniqid(), 1, 10);
+                $passwordTemporary = LaravelFunctionAdapter::Hash($password);
+                $createdUserEntity = $this->userService->createUser($createUserRequest, $passwordTemporary);
 
-            //Send Welcom Email to give the plain password to new user.
-            $this->mailService->sendCreatedAccountMessage($createdUserEntity['email'],
-                                $createdUserEntity['firstname'].' '.$createdUserEntity['lastname'],
-                                $createdUserEntity['username'],
-                                $password);
+                $this->writeInTracker($createdUserEntity['id'], $createUserRequest->currentUserId);
 
-            $createUserResponse->status = 201;
-            $createUserResponse->statusText = 'Created';
+                //Send Welcom Email to give the plain password to new user.
+                $this->mailService->sendCreatedAccountMessage($createdUserEntity['email'],
+                                    $createdUserEntity['firstname'].' '.$createdUserEntity['lastname'],
+                                    $createdUserEntity['username'],
+                                    $password);
+
+                $createUserResponse->status = 201;
+                $createUserResponse->statusText = 'Created';
+
+            } catch (GaelOException $e) {
+                $createUserResponse->body = $e->getErrorBody();
+                $createUserResponse->status = $e->statusCode;
+                $createUserResponse->statusText = $e->statusText;
+
+            }
         }else{
             $createUserResponse->status = 403;
             $createUserResponse->statusText = 'Forbidden';

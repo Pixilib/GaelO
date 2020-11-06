@@ -2,6 +2,8 @@
 
 namespace App\GaelO\UseCases\CreateVisit;
 
+use App\GaelO\Exceptions\GaelOConflictException;
+use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Interfaces\PersistenceInterface;
 use App\GaelO\Services\TrackerService;
 use App\GaelO\Services\VisitService;
@@ -17,29 +19,31 @@ class CreateVisit {
 
     public function execute(CreateVisitRequest $createVisitRequest, CreateVisitResponse $createVisitResponse) : void {
 
-        $existingVisit = $this->persistenceInterface->isExistingVisit($createVisitRequest->patientCode,
-                                                        $createVisitRequest->visitTypeId);
+        try{
+            $existingVisit = $this->persistenceInterface->isExistingVisit($createVisitRequest->patientCode,
+                                                            $createVisitRequest->visitTypeId);
 
 
-        if($existingVisit) {
-            $createVisitResponse->body = ['errorMessage' => 'Conflict'];
-            $createVisitResponse->status = 409;
-            $createVisitResponse->statusText = "Conflict";
-            return;
+            if($existingVisit) {
+                throw new GaelOConflictException('Visit Already Created');
+            }else{
 
-        }else{
+                $this->visitService->createVisit(
+                    $createVisitRequest->studyName,
+                    $createVisitRequest->creatorUserId,
+                    $createVisitRequest->patientCode,
+                    $createVisitRequest->acquisitionDate,
+                    $createVisitRequest->visitTypeId,
+                    $createVisitRequest->statusDone,
+                    $createVisitRequest->reasonForNotDone);
 
-            $this->visitService->createVisit(
-                $createVisitRequest->studyName,
-                $createVisitRequest->creatorUserId,
-                $createVisitRequest->patientCode,
-                $createVisitRequest->acquisitionDate,
-                $createVisitRequest->visitTypeId,
-                $createVisitRequest->statusDone,
-                $createVisitRequest->reasonForNotDone);
-
-            $createVisitResponse->status = 201;
-            $createVisitResponse->statusText = 'Created';
+                $createVisitResponse->status = 201;
+                $createVisitResponse->statusText = 'Created';
+            }
+        } catch (GaelOException $e){
+            $createVisitResponse->status = $e->statusCode;
+            $createVisitResponse->statusText = $e->statusText;
+            $createVisitResponse->body = $e->getErrorBody();
         }
 
 

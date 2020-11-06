@@ -61,7 +61,7 @@ class CenterTest extends TestCase
             'countryCode'=>'US'
 
         ];
-        $this->json('POST', '/api/centers', $payload)->assertNoContent(201);
+        $this->json('POST', '/api/centers', $payload)->assertStatus(201);
     }
 
     public function testAddCenterExistingCode()
@@ -71,29 +71,35 @@ class CenterTest extends TestCase
             'code' => 8,
             'countryCode'=>'US'
         ];
-        $this->json('POST', '/api/centers', $payload)->assertNoContent(201);
+        $this->json('POST', '/api/centers', $payload)->assertStatus(201);
         $payload = [
             'name' => 'Toulouse',
             'code' => 8,
             'countryCode'=>'US'
         ];
-        $this->json('POST', '/api/centers', $payload)->assertNoContent(409);
+        $answer = $this->json('POST', '/api/centers', $payload);
+        $answer->assertStatus(409);
+        $answer->assertJsonStructure(["errorMessage"]);
     }
 
     public function testAddCenterExistingName()
     {
-        $payload = [
-            'name' => 'Paris',
-            'code' => 8,
-            'countryCode'=>'US'
-        ];
-        $this->json('POST', '/api/centers', $payload)->assertNoContent(201);
+        factory(Center::class)->create(
+            [
+                'code'=>8,
+                'name' => 'Paris',
+                'country_code'=>'US'
+            ]
+        );
+
         $payload = [
             'name' => 'Paris',
             'code' => 9,
             'countryCode'=>'US'
         ];
-        $this->json('POST', '/api/centers', $payload)->assertNoContent(409);
+        $answer = $this->json('POST', '/api/centers', $payload);
+        $answer->assertStatus(409);
+        $answer->assertJsonStructure(['errorMessage']);
     }
 
     public function testModifyCenter(){

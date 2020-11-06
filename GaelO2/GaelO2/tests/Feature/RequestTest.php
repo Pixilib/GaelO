@@ -33,6 +33,18 @@ class RequestTest extends TestCase
         'name' => 'truc',
         'request' => 'fgfdgfgfdgfdgfdg'];
 
-        $this->json('POST', '/api/request', $data)-> assertSuccessful();
+       $this->json('POST', '/api/request', $data)->assertSuccessful();
+    }
+
+    public function testIncompleteRequest(){
+
+        $data = ['center' => 'toulouse',
+        'name' => 'truc',
+        'request' => 'fgfdgfgfdgfdgfdg'];
+
+        $answer = $this->json('POST', '/api/request', $data);
+        $answer-> assertStatus(400);
+        $answer-> assertJsonStructure(["errorMessage"]);
+
     }
 }

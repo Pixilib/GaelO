@@ -46,7 +46,7 @@ class CenterController extends Controller
         $createCenterRequest = Util::fillObject($requestData, $createCenterRequest);
 
         $createCenter->execute($createCenterRequest, $createCenterResponse);
-        return response()->noContent()
+        return response()->json($createCenterResponse->body)
                 ->setStatusCode($createCenterResponse->status, $createCenterResponse->statusText);
     }
 }

@@ -44,7 +44,7 @@ class ChangePasswordTest extends TestCase
 
         Artisan::call('passport:install');
         Passport::actingAs(
-            User::where('id',1)->first()
+            User::where('id',$user->id)->first()
         );
 
     }
@@ -52,6 +52,13 @@ class ChangePasswordTest extends TestCase
     public function testChangePassword()
     {
         $this->json('PUT', '/api/users/'.$this->user['id'].'/password', $this->validPayload)->assertNoContent(200);
+
+    }
+
+    public function testChangePasswordFromNonSameUser()
+    {
+        //Should be unauthorized
+        $this->json('PUT', '/api/users/1/password', $this->validPayload)->assertNoContent(403);
 
     }
 

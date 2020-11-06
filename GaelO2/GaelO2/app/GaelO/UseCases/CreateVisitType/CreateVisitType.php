@@ -12,6 +12,8 @@ class CreateVisitType {
 
     public function execute( CreateVisitTypeRequest $createVisitTypeRequest, CreateVisitTypeResponse $createVisitTypeResponse ){
 
+        //SK Manque un is Existing Visit Type qui renvoi un conflict + test
+
         $this->persistenceInterface->createVisitType(
                     $createVisitTypeRequest->visitGroupId,
                     $createVisitTypeRequest->name,

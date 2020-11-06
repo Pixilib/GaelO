@@ -101,6 +101,8 @@ class UserController extends Controller
     }
 
     public function changeUserPassword(int $id, Request $request, ChangePasswordRequest $changePasswordRequest, ChangePasswordResponse $changePasswordResponse, ChangePassword $changePassword) {
+        $curentUser = Auth::user();
+        $changePasswordRequest->currentUserId = $curentUser['id'];
         $requestData = $request->all();
         $requestData['id'] = $id;
         $changePasswordRequest = Util::fillObject($requestData, $changePasswordRequest);
