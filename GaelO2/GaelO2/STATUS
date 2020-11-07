@@ -11,11 +11,6 @@ Visit Type : (GET), (POST), (DELETE) => OK
 Affiliated Center  : (GET), (POST), (DELETE) =>OK
 Export-db : (POST) => OK
 
-A faire
-Config => Remerge les mail avec mail et creer une config laravel a part pour Orthanc ?
-ChangePassword => Necessite middelware qui check que l'user Courant == ID de la requete
-
-
 Preparation Investigateur / Monitor / Controller / Reviewer :
 - Api creation Patient (GET, POST, PUT)
 - Api creation Visit (GET, POST, DELETE)
@@ -29,7 +24,9 @@ Fini refactorer tout les class :
     Reste GetPatientVisit (refac + changer l'access au données dans bdd)
     et de GetTracker à ImportPatient
 Enlever tout les noContent dans les controller ou faire une condition ? (sauf les Delete ou on a pas de message)
+Voir dans message d'erreur comment ajouter d'autre info que le message (pour id de login)
 
+Config => Remerge les mail avec mail et creer une config laravel a part pour Orthanc ?
 Service Orthanc=> Finir les tests
 Service Visit => Continuer test passage en upload Done
 Faire Service/API Import DICOM => Import + fill BDD Orthanc
@@ -41,18 +38,15 @@ Api Documentation (GET, POST, DELETE, PUT)
 +Tard :
 New Roles passer en unique et pas en array ?
 
-Reflechir Etude Ancillaire :
-Probablement decoupler les review, une review reference une visite et une study
-Decoupler le status visit review egalement ?
-Decoupler controle qualité ?
-
-//Les tests ne font pas d'assertion sur le tracker et l'envoi de mails (mais exception si erreur en theorie)
+//Les tests ne font pas d'assertion sur
+- les permissions (à ajouter)
+- le tracker
+- l'envoi de mails
 
 docs :
 https://medium.com/@tobiashn/putting-a-laravel-app-into-production-d847ac2a04ed?source=email-e7f4cb02701-1600390333596-digest.reader------0-59------------------04e5dd75_dc46_4393_805e_4aee0fee36a6-1-29facf24_1541_4eb6_bffc_1a4ba0ca2cb4----&sectionName=top
 
 
-Post Install
-
+A executer en post install :
 php artisan db:migrate --seed
 php artisan passport:install

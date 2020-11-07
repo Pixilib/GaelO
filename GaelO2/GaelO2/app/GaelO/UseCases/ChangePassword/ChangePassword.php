@@ -15,6 +15,7 @@ use App\GaelO\Services\TrackerService;
 
 use App\GaelO\Exceptions\GaelOBadRequestException;
 use App\GaelO\Exceptions\GaelOException;
+use App\GaelO\Exceptions\GaelOForbiddenException;
 use Exception;
 
 class ChangePassword {
@@ -26,58 +27,55 @@ class ChangePassword {
 
     public function execute(ChangePasswordRequest $changeUserPasswordRequest, ChangePasswordResponse $changeUserPasswordResponse) : void {
 
-        if( $changeUserPasswordRequest->currentUserId === $changeUserPasswordRequest->id ) {
+        try {
 
-            try {
-                $id = $changeUserPasswordRequest->id;
-                $previousPassword = $changeUserPasswordRequest->previous_password;
-                $password1 = $changeUserPasswordRequest->password1;
-                $password2 = $changeUserPasswordRequest->password2;
+            $this->checkAuthorization($changeUserPasswordRequest->currentUserId, $changeUserPasswordRequest->id);
+            $id = $changeUserPasswordRequest->id;
+            $previousPassword = $changeUserPasswordRequest->previous_password;
+            $password1 = $changeUserPasswordRequest->password1;
+            $password2 = $changeUserPasswordRequest->password2;
 
-                $user = $this->persistenceInterface->find($id);
+            $user = $this->persistenceInterface->find($id);
 
-                if($user['status'] === Constants::USER_STATUS_UNCONFIRMED) {
-                    $this->checkMatchHashPasswords($previousPassword, $user['password_temporary']);
-                } else {
-                    $this->checkMatchHashPasswords($previousPassword, $user['password']);
-                }
-
-                $this->checkPasswordFormatCorrect($password1);
-                $this->checkMatchPasswords($password1, $password2);
-                $this->checkNewPassword(
-                $password1,
-                $user['password_temporary'] ,
-                $user['password'],
-                $user['password_previous1'],
-                $user['password_previous2']);
-
-                $data['password_previous1'] = $user['password'];
-                $data['password_previous2'] = $user['password_previous1'];
-                $data['password'] = LaravelFunctionAdapter::hash($password1);
-                $data['last_password_update'] = Util::now();
-                $data['status'] = Constants::USER_STATUS_ACTIVATED;
-
-                $this->persistenceInterface->update($user['id'], $data);
-                $this->trackerService->writeAction($user['id'], Constants::TRACKER_ROLE_USER, null, null, Constants::TRACKER_CHANGE_PASSWORD, null);
-
-                $changeUserPasswordResponse->status = 200;
-                $changeUserPasswordResponse->statusText = 'OK';
-
-            } catch (GaelOException $e) {
-                $changeUserPasswordResponse->body = $e->getErrorBody();
-                $changeUserPasswordResponse->status = $e->statusCode;
-                $changeUserPasswordResponse->statusText = $e->statusText;
-            } catch(Exception $e){
-                throw $e;
+            if($user['status'] === Constants::USER_STATUS_UNCONFIRMED) {
+                $this->checkMatchHashPasswords($previousPassword, $user['password_temporary']);
+            } else {
+                $this->checkMatchHashPasswords($previousPassword, $user['password']);
             }
 
-        }else {
-            $changeUserPasswordResponse->status = 403;
-            $changeUserPasswordResponse->statusText = 'Forbidden';
+            $this->checkPasswordFormatCorrect($password1);
+            $this->checkMatchPasswords($password1, $password2);
+            $this->checkNewPassword(
+            $password1,
+            $user['password_temporary'] ,
+            $user['password'],
+            $user['password_previous1'],
+            $user['password_previous2']);
+
+            $data['password_previous1'] = $user['password'];
+            $data['password_previous2'] = $user['password_previous1'];
+            $data['password'] = LaravelFunctionAdapter::hash($password1);
+            $data['last_password_update'] = Util::now();
+            $data['status'] = Constants::USER_STATUS_ACTIVATED;
+
+            $this->persistenceInterface->update($user['id'], $data);
+            $this->trackerService->writeAction($user['id'], Constants::TRACKER_ROLE_USER, null, null, Constants::TRACKER_CHANGE_PASSWORD, null);
+
+            $changeUserPasswordResponse->status = 200;
+            $changeUserPasswordResponse->statusText = 'OK';
+
+        } catch (GaelOException $e) {
+            $changeUserPasswordResponse->body = $e->getErrorBody();
+            $changeUserPasswordResponse->status = $e->statusCode;
+            $changeUserPasswordResponse->statusText = $e->statusText;
+        } catch(Exception $e){
+            throw $e;
         }
 
+    }
 
-
+    private function checkAuthorization(int $currentUserId, int $userId){
+        if ($currentUserId !== $userId) throw new GaelOForbiddenException();
     }
 
      /**
