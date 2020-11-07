@@ -91,20 +91,20 @@ class ImportPatientTest extends TestCase
         "withdrawDate" => null]
     ];
         $resp = $this->json('POST', '/api/studies/test/import-patients', $this->validPayload)->assertSuccessful();
-        $this->json('GET', '/api/patients')->assertJsonCount(3);
+        $this->assertEquals(3,sizeof($resp['success']));
+        $this->assertEquals(0,sizeof($resp['fail']));
     }
 
     public function testImportPatient() {
         //Test patient creation
-        $resp = $this->json('POST', '/api/studies/test/import-patients', $this->validPayload)->assertSuccessful();
+        $reponse1 = $this->json('POST', '/api/studies/test/import-patients', $this->validPayload)->assertSuccessful();
+        $this->assertEquals(1,sizeof($reponse1['success']));
+        $this->assertEquals(0,sizeof($reponse1['fail']));
 
         //Test that copies of existing patients don't insert
-        $this->json('POST', '/api/studies/test/import-patients', $this->validPayload);
-        $this->json('GET', '/api/patients/0')->assertJsonCount(1);
-
-        //assertion on fails and successes
-        //Use (and test) the GET api to get data of created patient and check it is returned
-        $this->json('GET', '/api/patients/12341231234123')->assertJsonCount(14);
+        $response2 = $this->json('POST', '/api/studies/test/import-patients', $this->validPayload);
+        $this->assertEquals(0,sizeof($response2['success']));
+        $this->assertEquals(1,sizeof($response2['fail']));
     }
 
     public function testCreateWrongDayOfBirth() {

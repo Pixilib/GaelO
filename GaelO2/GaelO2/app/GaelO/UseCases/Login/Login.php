@@ -58,7 +58,7 @@ class Login{
 
                 if ($user['status'] === Constants::USER_STATUS_BLOCKED){
                     $this->sendBlockedEmail($user);
-                    throw new BadRequestException('Account Blocked');
+                    throw new GaelOBadRequestException('Account Blocked');
 
                 }else if ($user['status'] === Constants::USER_STATUS_ACTIVATED && $delayDay>90){
                     $loginResponse->body = ['id' => $user['id'], 'errorMessage' => 'Password Expired'];
