@@ -48,11 +48,11 @@ class DeleteUserTest extends TestCase
     }
 
     public function testReactivateUser(){
-
+        factory(User::class, 1)->create(["administrator"=> true]);
         $payload = [];
-        User::find(1)->delete();
-        $this->json('PATCH', '/api/users/1/reactivate', $payload)->assertNoContent(200);
-        $user = User::find(1)->toArray();
+        User::find(2)->delete();
+        $this->json('PATCH', '/api/users/2/reactivate', $payload)->assertNoContent(200);
+        $user = User::find(2)->toArray();
         $this->assertEquals(Constants::USER_STATUS_UNCONFIRMED, $user['status']);
 
     }

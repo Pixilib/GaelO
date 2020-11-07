@@ -16,6 +16,8 @@ class PreferenceController extends Controller
 {
     public function getPreference(GetPreferences $getPreferences, GetPreferencesRequest $getPreferencesRequest, GetPreferencesResponse $getPreferencesResponse){
 
+        $currentUser = Auth::user();
+        $getPreferencesRequest->currentUserId = $currentUser['id'];
         $getPreferences->execute($getPreferencesRequest, $getPreferencesResponse);
 
         return response()->json($getPreferencesResponse->body)

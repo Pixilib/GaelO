@@ -4,6 +4,8 @@ namespace App\GaelO\UseCases\ModifyUser;
 
 use App\GaelO\Adapters\LaravelFunctionAdapter;
 use App\GaelO\Constants\Constants;
+use App\GaelO\Exceptions\GaelOException;
+use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\PersistenceInterface;
 
 use App\GaelO\UseCases\ModifyUser\ModifyUserRequest;
@@ -12,6 +14,7 @@ use App\GaelO\Services\AuthorizationService;
 use App\GaelO\Services\MailServices;
 use App\GaelO\Services\TrackerService;
 use App\GaelO\Services\UserService;
+use Exception;
 
 class ModifyUser {
 
@@ -25,7 +28,9 @@ class ModifyUser {
 
     public function execute(ModifyUserRequest $modifyUserRequest, ModifyUserResponse $modifyUserResponse) : void {
 
-        if ($this->checkAuthorization($modifyUserRequest->currentUserId)){
+         try{
+
+            $this->checkAuthorization($modifyUserRequest->currentUserId);
 
             $temporaryPassword = null;
             if($modifyUserRequest->status === Constants::USER_STATUS_UNCONFIRMED) {
@@ -49,9 +54,13 @@ class ModifyUser {
             $modifyUserResponse->status = 200;
             $modifyUserResponse->statusText = 'OK';
 
-        } else {
-            $modifyUserResponse->status = 403;
-            $modifyUserResponse->statusText = 'Forbidden';
+        } catch (GaelOException $e) {
+
+            $modifyUserResponse->status = $e->statusCode;
+            $modifyUserResponse->statusText = $e->statusText;
+
+        } catch (Exception $e){
+            throw $e;
         };
 
 
@@ -66,8 +75,11 @@ class ModifyUser {
 
     }
 
-    private function checkAuthorization($userId) : bool {
-        return $this->authorizationService->isAdmin($userId);
+    private function checkAuthorization($userId)  {
+        $this->authorizationService->setCurrentUser($userId);
+        if( ! $this->authorizationService->isAdmin($userId)) {
+            throw new GaelOForbiddenException();
+        };
     }
 }
 

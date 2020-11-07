@@ -4,10 +4,14 @@ namespace App\GaelO\UseCases\Login;
 
 use App\GaelO\Adapters\LaravelFunctionAdapter;
 use App\GaelO\Constants\Constants;
+use App\GaelO\Exceptions\GaelOBadRequestException;
+use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Interfaces\PersistenceInterface;
 use App\GaelO\Services\MailServices;
 use App\GaelO\Services\TrackerService;
 use App\GaelO\Util;
+use Exception;
+use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 
 class Login{
 
@@ -19,58 +23,69 @@ class Login{
 
     public function execute(LoginRequest $loginRequest, LoginResponse $loginResponse){
 
-        $user = $this->userRepository->getUserByUsername($loginRequest->username);
+        try{
 
-        $passwordCheck = null;
+            $user = $this->userRepository->getUserByUsername($loginRequest->username);
 
-        if($user['status'] !== Constants::USER_STATUS_UNCONFIRMED && $user['password'] !== null) $passwordCheck = LaravelFunctionAdapter::checkHash($loginRequest->password, $user['password']);
-        $dateNow = new \DateTime();
-        $dateUpdatePassword= new \DateTime($user['last_password_update']);
-        $attempts = $user['attempts'];
-        $delayDay=$dateUpdatePassword->diff($dateNow)->format("%a");
+            $passwordCheck = null;
 
-        if($user['status'] === Constants::USER_STATUS_UNCONFIRMED){
-            $tempPasswordCheck = LaravelFunctionAdapter::checkHash($loginRequest->password, $user['password_temporary']);
-            if($tempPasswordCheck){
-                $loginResponse->body = ['id' => $user['id'], 'errorMessage' => 'Unconfirmed'];
-                $loginResponse->status = 400;
-                $loginResponse->statusText = "Bad Request";
-            } else {
-                $loginResponse->body = ['errorMessage' => 'Wrong Temporary Password'];
-                $loginResponse->status = 400;
-                $loginResponse->statusText = "Bad Request";
+            if($user['status'] !== Constants::USER_STATUS_UNCONFIRMED && $user['password'] !== null) $passwordCheck = LaravelFunctionAdapter::checkHash($loginRequest->password, $user['password']);
+            $dateNow = new \DateTime();
+            $dateUpdatePassword= new \DateTime($user['last_password_update']);
+            $attempts = $user['attempts'];
+            $delayDay=$dateUpdatePassword->diff($dateNow)->format("%a");
+
+            if($user['status'] === Constants::USER_STATUS_UNCONFIRMED){
+                $tempPasswordCheck = LaravelFunctionAdapter::checkHash($loginRequest->password, $user['password_temporary']);
+                if($tempPasswordCheck){
+                    $loginResponse->body = ['id' => $user['id'], 'errorMessage' => 'Unconfirmed'];
+                    $loginResponse->status = 400;
+                    $loginResponse->statusText = "Bad Request";
+                } else {
+                    $this->increaseAttemptCount($user);
+                    throw new GaelOBadRequestException('Wrong Temporary Password');
+                }
+                return;
+            }
+
+            if( $passwordCheck !== null && !$passwordCheck ){
+                $loginResponse->body = ['errorMessage' => 'Wrong Password'];
+                $loginResponse->status = 401;
+                $loginResponse->statusText = "Unauthorized";
                 $this->increaseAttemptCount($user);
+
+            } else {
+
+                if ($user['status'] === Constants::USER_STATUS_BLOCKED){
+                    $this->sendBlockedEmail($user);
+                    throw new BadRequestException('Account Blocked');
+
+                }else if ($user['status'] === Constants::USER_STATUS_ACTIVATED && $delayDay>90){
+                    $loginResponse->body = ['id' => $user['id'], 'errorMessage' => 'Password Expired'];
+                    $loginResponse->status = 400;
+                    $loginResponse->statusText = "Bad Request";
+                }else if($user['status'] === Constants::USER_STATUS_ACTIVATED && $delayDay<90 && $attempts<3){
+                    $this->updateDbOnSuccess($user, $loginRequest->ip);
+                    $loginResponse->status = 200;
+                    $loginResponse->statusText = "OK";
+                }else{
+                    throw new Exception("Unkown Login Failure");
+                }
             }
-            return;
+
+
+
+        } catch (GaelOException $e){
+
+            $loginResponse->body = $e->getErrorBody();
+            $loginResponse->status = $e->statusCode;
+            $loginResponse->statusText = $e->statusText;
+
+        } catch (Exception $e){
+            throw $e;
         }
 
-        if( $passwordCheck !== null && !$passwordCheck ){
-            $loginResponse->body = ['errorMessage' => 'Wrong Password'];
-            $loginResponse->status = 401;
-            $loginResponse->statusText = "Unauthorized";
-        $this->increaseAttemptCount($user);
 
-        } else {
-
-            if ($user['status'] === Constants::USER_STATUS_BLOCKED){
-                $this->sendBlockedEmail($user);
-                $loginResponse->body = ['errorMessage' => 'Blocked'];
-                $loginResponse->status = 400;
-                $loginResponse->statusText = "Bad Request";
-            }else if ($user['status'] === Constants::USER_STATUS_ACTIVATED && $delayDay>90){
-                $loginResponse->body = ['id' => $user['id'], 'errorMessage' => 'Password Expired'];
-                $loginResponse->status = 400;
-                $loginResponse->statusText = "Bad Request";
-            }else if($user['status'] === Constants::USER_STATUS_ACTIVATED && $delayDay<90 && $attempts<3){
-                $this->updateDbOnSuccess($user, $loginRequest->ip);
-                $loginResponse->status = 200;
-                $loginResponse->statusText = "OK";
-            }else{
-                $loginResponse->body = ['errorMessage' => 'Unkown Login Failure'];
-                $loginResponse->status = 500;
-                $loginResponse->statusText = "Internal Server Error";
-            }
-        }
 
     }
 

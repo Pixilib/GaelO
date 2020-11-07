@@ -26,7 +26,8 @@ Preparation Investigateur / Monitor / Controller / Reviewer :
 Salim TODO :
 Fini refactorer tout les class :
     Reste CreateVisitType  (faire check permission)
-    et de GetCountry à ReactivateUser
+    Reste GetPatientVisit (refac + changer l'access au données dans bdd)
+    et de GetTracker à ImportPatient
 Enlever tout les noContent dans les controller ou faire une condition ? (sauf les Delete ou on a pas de message)
 
 Service Orthanc=> Finir les tests

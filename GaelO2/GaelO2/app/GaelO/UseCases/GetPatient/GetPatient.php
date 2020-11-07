@@ -2,35 +2,55 @@
 
 namespace App\GaelO\UseCases\GetPatient;
 
+use App\GaelO\Constants\Constants;
+use App\GaelO\Exceptions\GaelOException;
+use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\PersistenceInterface;
-
+use App\GaelO\Services\AuthorizationService;
 use App\GaelO\UseCases\GetPatient\GetPatientRequest;
 use App\GaelO\UseCases\GetPatient\GetPatientResponse;
+use Exception;
 
 class GetPatient {
 
-    public function __construct(PersistenceInterface $persistenceInterface){
+    public function __construct(PersistenceInterface $persistenceInterface, AuthorizationService $authorizationService){
         $this->persistenceInterface = $persistenceInterface;
+        $this->authorizationService = $authorizationService;
     }
 
-    public function execute(GetPatientRequest $patientRequest, GetPatientResponse $patientResponse) : void
+    public function execute(GetPatientRequest $getPatientRequest, GetPatientResponse $getPatientResponse) : void
     {
-        $code = $patientRequest->code;
+        try{
+            $code = $getPatientRequest->code;
 
-        if ($code == 0) {
-            $dbData = $this->persistenceInterface->getAll();
-            $responseArray = [];
-            foreach($dbData as $data){
-                $responseArray[] = PatientEntity::fillFromDBReponseArray($data);
-            }
-            $patientResponse->body = $responseArray;
-        } else {
+            if ($code == 0) throw new GaelOForbiddenException();
+
+            $this->checkAuthorization($getPatientRequest->currentUserId, $getPatientRequest->role, $code );
             $dbData = $this->persistenceInterface->find($code);
             $responseEntity = PatientEntity::fillFromDBReponseArray($dbData);
-            $patientResponse->body = $responseEntity;
+
+            $getPatientResponse->body = $responseEntity;
+            $getPatientResponse->status = 200;
+            $getPatientResponse->statusText = 'OK';
+
+        } catch  (GaelOException $e){
+
+            $getPatientResponse->status = $e->statusCode;
+            $getPatientResponse->statusText = $e->statusText;
+            $getPatientResponse->body = $e->getErrorBody();
+
+        } catch (Exception $e){
+            throw $e;
         }
-        $patientResponse->status = 200;
-        $patientResponse->statusText = 'OK';
+
+
+    }
+
+    private function checkAuthorization(int $currentUserid, string $role, int $patientCode ){
+        $this->authorizationService->setCurrentUser($currentUserid);
+        if( ! $this->authorizationService->isPatientAllowed($role, $patientCode) ){
+            throw new GaelOForbiddenException();
+        };
 
     }
 

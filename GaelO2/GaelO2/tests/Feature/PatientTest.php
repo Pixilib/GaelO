@@ -44,7 +44,7 @@ class PatientTest extends TestCase
         factory(Patient::class)->create(['code'=>12345671234567, 'center_code'=>0, 'study_name'=>'test']);
         factory(Patient::class, 5)->create(['center_code'=>0, 'study_name'=>'test']);
         //Test get patient 4
-        $response = $this->json('GET', '/api/patients/12345671234567')
+        $response = $this->json('GET', '/api/patients/12345671234567?role=supervisor')
             ->content();
         $response = json_decode($response, true);
 
@@ -64,7 +64,7 @@ class PatientTest extends TestCase
     public function testGetPatientFromStudy() {
         factory(Study::class)->create(['name'=>'test']);
         factory(Patient::class, 5)->create(['center_code'=>0, 'study_name'=>'test']);
-        $this->json('GET', '/api/studies/test/patients')
+        $this->json('GET', '/api/studies/test/patients?role=supervisor')
             ->assertStatus(200);
     }
 }

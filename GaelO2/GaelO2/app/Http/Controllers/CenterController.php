@@ -35,7 +35,7 @@ class CenterController extends Controller
         $requestData = $request->all();
         $modifyCenterRequest = Util::fillObject($requestData, $modifyCenterRequest);
         $modifyCenter->execute($modifyCenterRequest, $modifyCenterResponse);
-        return response()->noContent()
+        return response()->json($modifyCenterResponse->body)
                 ->setStatusCode($modifyCenterResponse->status, $modifyCenterResponse->statusText);
     }
 

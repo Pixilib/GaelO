@@ -108,7 +108,8 @@ class CenterTest extends TestCase
             'countryCode'=>'FR'
 
         ];
-        $this->json('PUT', '/api/centers/0', $payload)->assertNoContent(200);
+        $answer = $this->json('PUT', '/api/centers/0', $payload);
+        $answer->assertStatus(200);
     }
 
     public function testModifyCenterNotExisting(){
@@ -119,7 +120,7 @@ class CenterTest extends TestCase
 
         ];
         //Non existing center modification should fail
-        $this->json('PUT', '/api/centers/1', $payload)->assertNoContent(400);
+        $this->json('PUT', '/api/centers/1', $payload)->assertStatus(400);
 
     }
 
@@ -140,6 +141,6 @@ class CenterTest extends TestCase
             'name' => 'Toulouse',
             'countryCode'=>'US'
         ];
-        $this->json('PUT', '/api/centers/8', $payload)->assertNoContent(409);
+        $this->json('PUT', '/api/centers/8', $payload)->assertStatus(409);
     }
 }

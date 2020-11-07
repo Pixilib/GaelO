@@ -29,9 +29,10 @@ class StudyController extends Controller
     public function createStudy(Request $request, CreateStudy $createStudy, CreateStudyRequest $createStudyRequest, CreateStudyResponse $createStudyResponse){
 
         $currentUser = Auth::user();
+        $createStudyRequest->currentUserId = $currentUser['id'];
         $requestData = $request->all();
         $createStudyRequest = Util::fillObject($requestData, $createStudyRequest);
-        $createStudyRequest->currentUserId = $currentUser['id'];
+
         $createStudy->execute($createStudyRequest, $createStudyResponse);
 
         return response()->noContent()
@@ -40,13 +41,15 @@ class StudyController extends Controller
     }
 
     public function getStudy(Request $request, GetStudy $getStudy, GetStudyRequest $getStudyRequest, GetStudyResponse $getStudyResponse, GetStudyDetails $getStudyDetails, GetStudyDetailsRequest $getStudyDetailsRequest, GetStudyDetailsResponse $getStudyDetailsResponse){
-        //RECUPERATION DES QUERY PARAM (? dans URL)
+        $currentUser = Auth::user();
         $queryParam = $request->query();
         if(array_key_exists('expand', $queryParam) ){
+            $getStudyDetailsRequest->currentUserId = $currentUser['id'];
             $getStudyDetails->execute($getStudyDetailsRequest, $getStudyDetailsResponse);
             return response()->json($getStudyDetailsResponse->body)
             ->setStatusCode($getStudyDetailsResponse->status, $getStudyDetailsResponse->statusText);
         }else {
+            $getStudyRequest->currentUserId = $currentUser['id'];
             $getStudy->execute($getStudyRequest, $getStudyResponse);
             return response()->json($getStudyResponse->body)
             ->setStatusCode($getStudyResponse->status, $getStudyResponse->statusText);
