@@ -169,6 +169,8 @@ class UserController extends Controller
     }
 
     public function getAffiliatedCenter(int $userId, GetAffiliatedCenter $getAffiliatedCenter, GetAffiliatedCenterRequest $getAffiliatedCenterRequest, GetAffiliatedCenterResponse $getAffiliatedCenterResponse){
+        $curentUser = Auth::user();
+        $getAffiliatedCenterRequest->currentUserId = $curentUser['id'];
         $getAffiliatedCenterRequest->userId = $userId;
         $getAffiliatedCenter->execute($getAffiliatedCenterRequest, $getAffiliatedCenterResponse);
 

@@ -26,7 +26,7 @@ Preparation Investigateur / Monitor / Controller / Reviewer :
 Salim TODO :
 Fini refactorer tout les class :
     Reste CreateVisitType  (faire check permission)
-    et de GetAffiliatedCenter à ReactivateUser
+    et de GetCountry à ReactivateUser
 Enlever tout les noContent dans les controller ou faire une condition ? (sauf les Delete ou on a pas de message)
 
 Service Orthanc=> Finir les tests
