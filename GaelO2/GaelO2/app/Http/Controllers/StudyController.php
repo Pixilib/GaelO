@@ -82,7 +82,7 @@ class StudyController extends Controller
         $currentUser = Auth::user();
         $importPatientsRequest->patients = $request->all() ;
         $importPatientsRequest->studyName = $studyName;
-        $importPatientsRequest->currentUserCode = $currentUser['id'];
+        $importPatientsRequest->currentUserId = $currentUser['id'];
         $importPatients->execute($importPatientsRequest, $importPatientsResponse);
 
         return response()->json($importPatientsResponse->body)->setStatusCode($importPatientsResponse->status, $importPatientsResponse->statusText);

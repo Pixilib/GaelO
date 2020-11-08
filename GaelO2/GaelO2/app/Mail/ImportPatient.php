@@ -3,13 +3,14 @@
 namespace App\Mail;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
 class ImportPatient extends Mailable
 {
     use Queueable, SerializesModels;
+
+    protected array $parameters;
 
     /**
      * Create a new message instance.

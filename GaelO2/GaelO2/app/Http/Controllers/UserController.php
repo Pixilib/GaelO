@@ -57,6 +57,8 @@ class UserController extends Controller
 {
 
     public function getUser(int $id=0, GetUserRequest $getUserRequest, GetUserResponse $getUserResponse, GetUser $getUser) {
+        $curentUser = Auth::user();
+        $getUserRequest->currentUserId = $curentUser['id'];
         $getUserRequest->id = $id;
         $getUser->execute($getUserRequest, $getUserResponse);
         return response()->json($getUserResponse->body)
@@ -201,11 +203,13 @@ class UserController extends Controller
         ->setStatusCode($reactivateUserResponse->status, $reactivateUserResponse->statusText);
     }
 
-    public function getUserFromStudy(string $studyName, GetUserFromStudyRequest $GetUserFromStudyRequest, GetUserFromStudyResponse $GetUserFromStudyResponse, GetUserFromStudy $GetUserFromStudy){
-        $GetUserFromStudyRequest->studyName = $studyName;
-        $GetUserFromStudy->execute($GetUserFromStudyRequest, $GetUserFromStudyResponse);
-        return response()->json($GetUserFromStudyResponse->body)
-                ->setStatusCode($GetUserFromStudyResponse->status, $GetUserFromStudyResponse->statusText);
+    public function getUserFromStudy(string $studyName, GetUserFromStudyRequest $getUserFromStudyRequest, GetUserFromStudyResponse $getUserFromStudyResponse, GetUserFromStudy $getUserFromStudy){
+        $curentUser = Auth::user();
+        $getUserFromStudyRequest->currentUserId = $curentUser['id'];
+        $getUserFromStudyRequest->studyName = $studyName;
+        $getUserFromStudy->execute($getUserFromStudyRequest, $getUserFromStudyResponse);
+        return response()->json($getUserFromStudyResponse->body)
+                ->setStatusCode($getUserFromStudyResponse->status, $getUserFromStudyResponse->statusText);
     }
 
 }

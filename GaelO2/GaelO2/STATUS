@@ -20,9 +20,11 @@ Preparation Investigateur / Monitor / Controller / Reviewer :
 
 Salim TODO :
 Fini refactorer tout les class :
-    Reste CreateVisitType  (faire check permission)
-    Reste GetPatientVisit (refac + changer l'access au données dans bdd)
-    et de GetTracker à ImportPatient
+    CreateVisitType  (faire check permission)
+    GetPatientVisit (refac + changer l'access au données dans bdd)
+    GetUser Role
+    Get Visit
+
 Enlever tout les noContent dans les controller ou faire une condition ? (sauf les Delete ou on a pas de message)
 Voir dans message d'erreur comment ajouter d'autre info que le message (pour id de login)
 

@@ -59,7 +59,6 @@ class CreateUserTest extends TestCase
         //Use (and test) the GET api to get data of created user and check value are mathing the original request
         $createdUser = $this->json('GET', '/api/users/3')->content();
         $createdUser = json_decode($createdUser, true);
-
         //Check that the created entity have the correcte values
         foreach($this->validPayload as $key=>$value){
             $this->assertEquals($this->validPayload[$key], $createdUser[$key]);

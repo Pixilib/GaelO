@@ -128,6 +128,7 @@ Class MailServices extends SendEmailAdapter {
     public function sendImportPatientMessage(String $study, array $successList, array $failList){
 
         $parameters = [
+            'name' => 'supervisor',
             'study' => $study,
             'successList'=>$successList,
             'failList'=>$failList

@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\GaelO\Constants\Constants;
 use App\GaelO\UseCases\GetPatient\PatientEntity;
 use App\Patient;
 use App\Study;
@@ -43,9 +44,10 @@ class PatientTest extends TestCase
         factory(Study::class)->create(['name'=>'test']);
         factory(Patient::class)->create(['code'=>12345671234567, 'center_code'=>0, 'study_name'=>'test']);
         factory(Patient::class, 5)->create(['center_code'=>0, 'study_name'=>'test']);
+        ImportPatientTest::addRoleToUser(1, Constants::ROLE_SUPERVISOR, 'test');
 
         //Test get patient 4
-        $response = $this->json('GET', '/api/patients/12345671234567?role=supervisor')
+        $response = $this->json('GET', '/api/patients/12345671234567?role=Supervisor')
             ->content();
         $response = json_decode($response, true);
 
@@ -57,15 +59,16 @@ class PatientTest extends TestCase
         }
 
         //Test get all patients
-        $this->json('GET', '/api/patients')-> assertJsonCount(6);
+        $this->json('GET', '/api/studies/test/patients?role=Supervisor')-> assertJsonCount(6);
         //Test get incorrect patient
-        $resp = $this->json('GET', '/api/patients/-1') -> assertStatus(404); //No query result for this model
+        $resp = $this->json('GET', '/api/patients/-1?role=Supervisor') -> assertStatus(404); //No query result for this model
     }
 
     public function testGetPatientFromStudy() {
         factory(Study::class)->create(['name'=>'test']);
         factory(Patient::class, 5)->create(['center_code'=>0, 'study_name'=>'test']);
-        $this->json('GET', '/api/studies/test/patients?role=supervisor')
+        ImportPatientTest::addRoleToUser(1, Constants::ROLE_SUPERVISOR, 'test');
+        $this->json('GET', '/api/studies/test/patients?role=Supervisor')
             ->assertStatus(200);
     }
 }

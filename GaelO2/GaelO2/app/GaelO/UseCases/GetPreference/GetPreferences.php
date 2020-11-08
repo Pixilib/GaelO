@@ -6,12 +6,14 @@ use App\GaelO\Adapters\LaravelFunctionAdapter;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\PersistenceInterface;
+use App\GaelO\Services\AuthorizationService;
 use Exception;
 
 class GetPreferences {
 
-    public function __construct(PersistenceInterface $persistenceInterface) {
+    public function __construct(PersistenceInterface $persistenceInterface, AuthorizationService $authorizationService) {
         $this->persistenceInterface = $persistenceInterface;
+        $this->authorizationService = $authorizationService;
 
     }
 

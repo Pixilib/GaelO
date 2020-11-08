@@ -5,6 +5,7 @@ namespace App\GaelO\UseCases\GetStudyDetails;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\PersistenceInterface;
+use App\GaelO\Services\AuthorizationService;
 use App\GaelO\UseCases\GetStudy\StudyEntity;
 use App\GaelO\UseCases\GetVisitGroup\VisitGroupEntity;
 use App\GaelO\UseCases\GetVisitType\VisitTypeEntity;
@@ -13,13 +14,15 @@ use Study_Details;
 
 class GetStudyDetails {
 
-    public function __construct(PersistenceInterface $persistenceInterface){
+    public function __construct(PersistenceInterface $persistenceInterface, AuthorizationService $authorizationService){
         $this->persistenceInterface = $persistenceInterface;
+        $this->authorizationService = $authorizationService;
     }
 
     public function execute(GetStudyDetailsRequest $getStudyDetailsRequest, GetStudyDetailsResponse $getStudyDetailsResponse) : void {
 
         try{
+            $this->checkAuthorization($getStudyDetailsRequest->currentUserId);
 
             $studyDetails = $this->persistenceInterface->getStudiesDetails($getStudyDetailsRequest->currentUserId);
 

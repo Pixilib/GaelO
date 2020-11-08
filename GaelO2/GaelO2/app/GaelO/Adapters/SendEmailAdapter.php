@@ -109,7 +109,6 @@ class SendEmailAdapter implements MailInterface {
                 break;
             break;
         }
-
         $this->sendEmail();
 
 

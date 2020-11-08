@@ -6,14 +6,16 @@ use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\PersistenceInterface;
+use App\GaelO\Services\AuthorizationService;
 use App\GaelO\Services\TrackerService;
 use Exception;
 
 class ReactivateStudy {
 
-    public function __construct(PersistenceInterface $persistenceInterface, TrackerService $trackerService){
+    public function __construct(PersistenceInterface $persistenceInterface, AuthorizationService $authorizationService, TrackerService $trackerService){
         $this->persistenceInterface = $persistenceInterface;
         $this->trackerService = $trackerService;
+        $this->authorizationService = $authorizationService;
     }
 
     public function execute(ReactivateStudyRequest $reactivateStudyRequest, ReactivateStudyResponse $reactivateStudyResponse){

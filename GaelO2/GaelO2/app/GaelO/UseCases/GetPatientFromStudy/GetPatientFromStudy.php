@@ -5,7 +5,7 @@ namespace App\GaelO\UseCases\GetPatientFromStudy;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\PersistenceInterface;
-
+use App\GaelO\Services\AuthorizationService;
 use App\GaelO\UseCases\GetPatientFromStudy\GetPatientFromStudyRequest;
 use App\GaelO\UseCases\GetPatientFromStudy\GetPatientFromStudyResponse;
 use App\GaelO\UseCases\GetPatient\PatientEntity;
@@ -13,8 +13,9 @@ use Exception;
 
 class GetPatientFromStudy {
 
-    public function __construct(PersistenceInterface $persistenceInterface){
+    public function __construct(PersistenceInterface $persistenceInterface, AuthorizationService $authorizationService){
         $this->persistenceInterface = $persistenceInterface;
+        $this->authorizationService = $authorizationService;
     }
 
     public function execute(GetPatientFromStudyRequest $patientRequest, GetPatientFromStudyResponse $patientResponse) : void

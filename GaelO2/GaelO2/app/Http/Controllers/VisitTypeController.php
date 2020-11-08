@@ -35,6 +35,8 @@ class VisitTypeController extends Controller
     }
 
     public function getVisitType(int $visitTypeId, GetVisitType $getVisitType, GetVisitTypeRequest $getVisitTypeRequest, GetVisitTypeResponse $getVisitTypeResponse){
+        $curentUser = Auth::user();
+        $getVisitTypeRequest->currentUserId = $curentUser['id'];
         $getVisitTypeRequest->visitTypeId = $visitTypeId;
         $getVisitType->execute($getVisitTypeRequest, $getVisitTypeResponse);
         return response()->json($getVisitTypeResponse->body)

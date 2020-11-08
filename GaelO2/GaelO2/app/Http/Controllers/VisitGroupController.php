@@ -30,6 +30,8 @@ class VisitGroupController extends Controller
     }
 
     public function getVisitGroup(int $visitGroupId, GetVisitGroup $getVisitGroup, GetVisitGroupRequest $getVisitGroupRequest, GetVisitGroupResponse $getVisitGroupResponse){
+        $curentUser = Auth::user();
+        $getVisitGroupRequest->currentUserId = $curentUser['id'];
         $getVisitGroupRequest->visitGroupId = $visitGroupId;
 
         $getVisitGroup->execute($getVisitGroupRequest, $getVisitGroupResponse);

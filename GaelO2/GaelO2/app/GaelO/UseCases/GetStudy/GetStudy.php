@@ -5,12 +5,14 @@ namespace App\GaelO\UseCases\GetStudy;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\PersistenceInterface;
+use App\GaelO\Services\AuthorizationService;
 use Exception;
 
 class GetStudy{
 
-    public function __construct(PersistenceInterface $persistenceInterface){
+    public function __construct(PersistenceInterface $persistenceInterface, AuthorizationService $authorizationService){
         $this->persistenceInterface = $persistenceInterface;
+        $this->authorizationService = $authorizationService;
 
     }
 

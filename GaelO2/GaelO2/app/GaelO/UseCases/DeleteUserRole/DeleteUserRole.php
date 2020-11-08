@@ -51,7 +51,7 @@ class DeleteUserRole {
 
     private function checkAuthorization(DeleteUserRoleRequest $deleteUserRoleRequest){
         $this->authorizationService->setCurrentUser($deleteUserRoleRequest->currentUserId);
-        if ($this->authorizationService->isAdmin() ){
+        if ( ! $this->authorizationService->isAdmin() ){
             throw new GaelOForbiddenException();
         };
 
