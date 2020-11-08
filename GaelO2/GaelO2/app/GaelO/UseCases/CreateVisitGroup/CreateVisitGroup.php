@@ -32,6 +32,8 @@ class CreateVisitGroup {
                 throw new GaelOConflictException("Already Exisiting Visit Group");
             }
 
+            //SK VERIFIER QUIL N Y A PAS DE VISITE CREE dans la study (etude demarée)
+
             $this->persistenceInterface->createVisitGroup($createVisitGroupRequest->studyName, $createVisitGroupRequest->modality);
 
             $createVisitGroupResponse->status = 201;

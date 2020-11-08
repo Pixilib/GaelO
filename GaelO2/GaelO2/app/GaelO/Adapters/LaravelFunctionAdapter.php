@@ -14,9 +14,11 @@ class LaravelFunctionAdapter {
 
     public static function checkHash(string $plainValue, string $hash){
         return Hash::check($plainValue, $hash);
-
     }
 
+    /**
+     * Config Available Keys are defined in SettingsConstants
+     */
     public static function getConfig($key){
         return Config::get('app.'.$key);
     }

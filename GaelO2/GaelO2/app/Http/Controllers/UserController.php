@@ -126,6 +126,8 @@ class UserController extends Controller
     }
 
     public function getRoles(int $id, string $study = '', GetUserRolesRequest $getUserRolesRequest, GetUserRolesResponse $getUserRolesResponse, GetUserRoles $getUserRoles){
+        $curentUser = Auth::user();
+        $getUserRolesRequest->currentUserId = $curentUser['id'];
         $getUserRolesRequest->userId = $id;
         $getUserRolesRequest->study = $study;
         $getUserRoles->execute($getUserRolesRequest, $getUserRolesResponse);

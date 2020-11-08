@@ -45,19 +45,7 @@ class VisitTypeTest extends TestCase
             'study_name' => $this->study->first()->name
         ]);
 
-
-
-    }
-
-    /**
-     * A basic feature test example.
-     *
-     * @return void
-     */
-    public function testCreateVisitType()
-    {
-
-        $payload = [
+        $this->payload = [
             'name'=>'Baseline',
             'visitOrder'=>0,
             'localFormNeeded'=>true,
@@ -69,10 +57,35 @@ class VisitTypeTest extends TestCase
             'anonProfile'=>'Default'
         ];
 
+
+
+    }
+
+    /**
+     * A basic feature test example.
+     *
+     * @return void
+     */
+    public function testCreateVisitType()
+    {
         $id = $this->visitGroup->id;
-        $this->json('POST', 'api/visit-groups/'.$id.'/visit-types', $payload)->assertNoContent(201);
+        $this->json('POST', 'api/visit-groups/'.$id.'/visit-types', $this->payload)->assertNoContent(201);
         $visitGroup = VisitType::where('name', 'Baseline')->get()->first()->toArray();
         $this->assertEquals(13, sizeOf($visitGroup));
+    }
+
+    public function testCreateVisitTypeShouldFailedBecauseAlreadyExistingName()
+    {
+
+        $visitType = factory(VisitType::class)->create([
+            'visit_group_id' => $this->visitGroup->id
+        ]);
+
+        $payload = $this->payload;
+        $payload['name'] = $visitType['name'];
+
+        $id = $this->visitGroup->id;
+        $this->json('POST', 'api/visit-groups/'.$id.'/visit-types', $payload)->assertStatus(409);
     }
 
     public function testGetVisitType(){

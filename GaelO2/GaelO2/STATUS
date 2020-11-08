@@ -19,16 +19,15 @@ Preparation Investigateur / Monitor / Controller / Reviewer :
 - Api Documentation (GET, POST, DELETE, PUT)
 
 Salim TODO :
-Fini refactorer tout les class :
-    CreateVisitType  (faire check permission)
+Fini de refactorer :
     GetPatientVisit (refac + changer l'access au données dans bdd)
-    GetUser Role
     Get Visit
 
-Enlever tout les noContent dans les controller ou faire une condition ? (sauf les Delete ou on a pas de message)
-Voir dans message d'erreur comment ajouter d'autre info que le message (pour id de login)
+//Les tests ne font pas d'assertion sur
+- les permissions (à ajouter via mock sur authorization service ?)
+- le tracker => Via un spy ?
+- l'envoi de mails => voir doc laravel
 
-Config => Remerge les mail avec mail et creer une config laravel a part pour Orthanc ?
 Service Orthanc=> Finir les tests
 Service Visit => Continuer test passage en upload Done
 Faire Service/API Import DICOM => Import + fill BDD Orthanc
@@ -39,11 +38,9 @@ Api Documentation (GET, POST, DELETE, PUT)
 
 +Tard :
 New Roles passer en unique et pas en array ?
-
-//Les tests ne font pas d'assertion sur
-- les permissions (à ajouter)
-- le tracker
-- l'envoi de mails
+Faire une condition pour les NoContent dans le controller ?
+Voir dans message d'erreur comment ajouter d'autre info que le message (pour id de login)
+CreateVisitType et CreateVisitGroup => Ajouter un forbidden si l'etude a déjà des visites crées (etude demarrée)
 
 docs :
 https://medium.com/@tobiashn/putting-a-laravel-app-into-production-d847ac2a04ed?source=email-e7f4cb02701-1600390333596-digest.reader------0-59------------------04e5dd75_dc46_4393_805e_4aee0fee36a6-1-29facf24_1541_4eb6_bffc_1a4ba0ca2cb4----&sectionName=top
