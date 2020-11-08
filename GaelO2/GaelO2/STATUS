@@ -41,6 +41,7 @@ New Roles passer en unique et pas en array ?
 Faire une condition pour les NoContent dans le controller ?
 Voir dans message d'erreur comment ajouter d'autre info que le message (pour id de login)
 CreateVisitType et CreateVisitGroup => Ajouter un forbidden si l'etude a déjà des visites crées (etude demarrée)
+Modify preference a faire disparaitre et le front devient un read only ?
 
 docs :
 https://medium.com/@tobiashn/putting-a-laravel-app-into-production-d847ac2a04ed?source=email-e7f4cb02701-1600390333596-digest.reader------0-59------------------04e5dd75_dc46_4393_805e_4aee0fee36a6-1-29facf24_1541_4eb6_bffc_1a4ba0ca2cb4----&sectionName=top
