@@ -53,7 +53,7 @@ class ResetPassword {
         } catch (GaelOException $e) {
             $resetPasswordResponse->status = $e->statusCode;
             $resetPasswordResponse->statusText = $e->statusText;
-            $resetPasswordRequest->body = $e->getErrorBody();
+            $resetPasswordResponse->body = $e->getErrorBody();
 
         } catch (Exception $e){
             throw $e;

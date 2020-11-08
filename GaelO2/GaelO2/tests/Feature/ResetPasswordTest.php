@@ -30,7 +30,7 @@ class ResetPasswordTest extends TestCase
             'username' => 'administrator',
             'email' => 'administrator@gaelo.fr'
         ];
-        $this->json('post', 'api/tools/reset-password', $data)->assertStatus(200);
+        $this->json('POST', 'api/tools/reset-password', $data)->assertStatus(200);
         $modifiedUser = User::where('username', 'administrator')->first();
         $this->assertEquals( $modifiedUser['status'], Constants::USER_STATUS_UNCONFIRMED );
     }
