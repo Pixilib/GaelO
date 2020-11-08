@@ -43,14 +43,14 @@ class Login{
                     $loginResponse->statusText = "Bad Request";
                 } else {
                     $this->increaseAttemptCount($user);
-                    throw new GaelOBadRequestException('Wrong Temporary Password, remaining'.(3- ++$user['attempts'] ).' attempts');
+                    throw new GaelOBadRequestException('Wrong Temporary Password, remaining '.(3- ++$user['attempts'] ).' attempts');
                 }
                 return;
             }
 
             if( $passwordCheck !== null && !$passwordCheck && $user['status'] !== Constants::USER_STATUS_BLOCKED){
                 $this->increaseAttemptCount($user);
-                $loginResponse->body = ['errorMessage' => 'Wrong Password remaining'.(3- ++$user['attempts'] ).' attempts'];
+                $loginResponse->body = ['errorMessage' => 'Wrong Password remaining '.(3- ++$user['attempts'] ).' attempts'];
                 $loginResponse->status = 401;
                 $loginResponse->statusText = "Unauthorized";
 
