@@ -51,14 +51,7 @@ class ChangePasswordTest extends TestCase
 
     public function testChangePassword()
     {
-        $this->json('PUT', '/api/users/'.$this->user['id'].'/password', $this->validPayload)->assertNoContent(200);
-
-    }
-
-    public function testChangePasswordFromNonSameUser()
-    {
-        //Should be unauthorized
-        $this->json('PUT', '/api/users/1/password', $this->validPayload)->assertNoContent(403);
+        $this->json('PUT', '/api/users/'.$this->user['id'].'/password', $this->validPayload)->assertStatus(200);
 
     }
 
@@ -155,7 +148,7 @@ class ChangePasswordTest extends TestCase
         $this->user['password_previous2'] = null;
         $this->user['last_password_update'] = now()->subDays(100);
         $this->user->save();
-        $this->json('PUT', '/api/users/'.$this->user['id'].'/password', $this->validPayload)->assertNoContent(200);
+        $this->json('PUT', '/api/users/'.$this->user['id'].'/password', $this->validPayload)->assertStatus(200);
     }
 
     public function testChangePasswordNoCurrentPassword(){
@@ -165,7 +158,7 @@ class ChangePasswordTest extends TestCase
         $this->user['status'] = Constants::USER_STATUS_UNCONFIRMED;
         $this->user->save();
         $this->validPayload['previous_password']='temporaryPassword';
-        $this->json('PUT', '/api/users/'.$this->user['id'].'/password', $this->validPayload)->assertNoContent(200);
+        $this->json('PUT', '/api/users/'.$this->user['id'].'/password', $this->validPayload)->assertStatus(200);
     }
 
 }

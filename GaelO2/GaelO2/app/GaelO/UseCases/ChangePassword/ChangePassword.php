@@ -29,7 +29,6 @@ class ChangePassword {
 
         try {
 
-            $this->checkAuthorization($changeUserPasswordRequest->currentUserId, $changeUserPasswordRequest->id);
             $id = $changeUserPasswordRequest->id;
             $previousPassword = $changeUserPasswordRequest->previous_password;
             $password1 = $changeUserPasswordRequest->password1;
@@ -72,10 +71,6 @@ class ChangePassword {
             throw $e;
         }
 
-    }
-
-    private function checkAuthorization(int $currentUserId, int $userId){
-        if ($currentUserId !== $userId) throw new GaelOForbiddenException();
     }
 
      /**
@@ -131,7 +126,7 @@ class ChangePassword {
 
     private function checkMatchHashPasswords(string $plainTextPassword, string $hashComparator) : void {
         if( !LaravelFunctionAdapter::checkHash($plainTextPassword, $hashComparator) ) {
-            throw new GaelOBadRequestException('Wrong User Password');
+            throw new GaelOBadRequestException('Wrong Previous Password');
         }
     }
 

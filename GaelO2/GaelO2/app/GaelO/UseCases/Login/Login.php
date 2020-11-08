@@ -35,7 +35,7 @@ class Login{
             $attempts = $user['attempts'];
             $delayDay=$dateUpdatePassword->diff($dateNow)->format("%a");
 
-            if($user['status'] === Constants::USER_STATUS_UNCONFIRMED){
+            if($user['status'] === Constants::USER_STATUS_UNCONFIRMED ){
                 $tempPasswordCheck = LaravelFunctionAdapter::checkHash($loginRequest->password, $user['password_temporary']);
                 if($tempPasswordCheck){
                     $loginResponse->body = ['id' => $user['id'], 'errorMessage' => 'Unconfirmed'];
@@ -43,16 +43,17 @@ class Login{
                     $loginResponse->statusText = "Bad Request";
                 } else {
                     $this->increaseAttemptCount($user);
-                    throw new GaelOBadRequestException('Wrong Temporary Password');
+                    throw new GaelOBadRequestException('Wrong Temporary Password, remaining'.(3- ++$user['attempts'] ).' attempts');
                 }
                 return;
             }
 
-            if( $passwordCheck !== null && !$passwordCheck ){
-                $loginResponse->body = ['errorMessage' => 'Wrong Password'];
+            if( $passwordCheck !== null && !$passwordCheck && $user['status'] !== Constants::USER_STATUS_BLOCKED){
+                $this->increaseAttemptCount($user);
+                $loginResponse->body = ['errorMessage' => 'Wrong Password remaining'.(3- ++$user['attempts'] ).' attempts'];
                 $loginResponse->status = 401;
                 $loginResponse->statusText = "Unauthorized";
-                $this->increaseAttemptCount($user);
+
 
             } else {
 
