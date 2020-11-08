@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\GaelO\Constants\Constants;
 use App\GaelO\UseCases\GetVisit\VisitEntity;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Support\Facades\Artisan;
@@ -14,6 +15,7 @@ use App\VisitGroup;
 use App\VisitType;
 use App\Patient;
 use App\ReviewStatus;
+use Tests\AuthorizationTools;
 
 class VisitTest extends TestCase
 {
@@ -78,9 +80,9 @@ class VisitTest extends TestCase
 
 
     public function testCreateVisit() {
-
-        $this->json('POST', 'api/studies/test/visit-groups/'.$this->visitGroup['id'].
-        '/visit-types/'.$this->visitType['id'].'/visits'.'?role=investigator', $this->validPayload)->assertStatus(201);
+        AuthorizationTools::addRoleToUser(1, Constants::ROLE_INVESTIGATOR, 'test');
+        $answer = $this->json('POST', 'api/studies/test/visit-groups/'.$this->visitGroup['id'].
+        '/visit-types/'.$this->visitType['id'].'/visits'.'?role=Investigator', $this->validPayload)->assertStatus(201);
         //Check record in database
         $visit = Visit::get()->first()->toArray();
         $this->assertNotEmpty($visit);
@@ -90,7 +92,7 @@ class VisitTest extends TestCase
     }
 
     public function testCreateAlreadyCreatedVisit(){
-
+        AuthorizationTools::addRoleToUser(1, Constants::ROLE_INVESTIGATOR, 'test');
         //Create the visit in database
         factory(Visit::class)->create(
             [
@@ -104,7 +106,7 @@ class VisitTest extends TestCase
 
         //create request should return conflict
         $resp = $this->json('POST', 'api/studies/test/visit-groups/'.$this->visitGroup['id'].
-        '/visit-types/'.$this->visitType['id'].'/visits'.'?role=investigator', $this->validPayload)->assertStatus(409);
+        '/visit-types/'.$this->visitType['id'].'/visits'.'?role=Investigator', $this->validPayload)->assertStatus(409);
 
 
     }

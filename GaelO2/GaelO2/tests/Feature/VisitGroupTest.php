@@ -72,12 +72,12 @@ class VisitGroupTest extends TestCase
         $visitGroup->each(function ($visitGroup) {
             factory(VisitType::class)->create(['visit_group_id'=>$visitGroup->id]);
         });
-        $this->json('DELETE', 'api/visit-groups/'.$visitGroup[0]->id)->assertNoContent(403);
+        $this->json('DELETE', 'api/visit-groups/'.$visitGroup[0]->id)->assertStatus(400);
     }
 
     public function testDeleteVisitGroup(){
         $visitGroup = factory(VisitGroup::class, 1)->create(['study_name'=> $this->study[0]->name]);
-        $this->json('DELETE', 'api/visit-groups/'.$visitGroup[0]->id)->assertNoContent(200);
+        $this->json('DELETE', 'api/visit-groups/'.$visitGroup[0]->id)->assertStatus(200);
     }
 
 

@@ -3,13 +3,13 @@
 namespace Tests\Feature;
 
 use App\GaelO\Constants\Constants;
-use App\Role;
 use App\Study;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Support\Facades\Artisan;
 use Laravel\Passport\Passport;
 use Tests\TestCase;
 use App\User;
+use Tests\AuthorizationTools;
 
 class ImportPatientTest extends TestCase
 {
@@ -48,17 +48,11 @@ class ImportPatientTest extends TestCase
         );
     }
 
-    public static function addRoleToUser(int $userId, string $role, string $studyName){
-        factory(Role::class, 1)->create(
-            ['name'=> $role,
-            'user_id' => $userId,
-            'study_name'=> $studyName]
-        );
-    }
+
 
     public function testImportMultiplePatients() {
 
-        ImportPatientTest::addRoleToUser(1, Constants::ROLE_SUPERVISOR, 'test');
+        AuthorizationTools::addRoleToUser(1, Constants::ROLE_SUPERVISOR, 'test');
         $this->validPayload = [ ["code" => 12341231234123,
         "lastName" => "test",
         "firstName" => "test",
@@ -108,7 +102,7 @@ class ImportPatientTest extends TestCase
     }
 
     public function testImportPatient() {
-        ImportPatientTest::addRoleToUser(1, Constants::ROLE_SUPERVISOR, 'test');
+        AuthorizationTools::addRoleToUser(1, Constants::ROLE_SUPERVISOR, 'test');
         //Test patient creation
         $reponse1 = $this->json('POST', '/api/studies/test/import-patients', $this->validPayload)->assertSuccessful();
         $this->assertEquals(1,sizeof($reponse1['success']));
@@ -121,7 +115,7 @@ class ImportPatientTest extends TestCase
     }
 
     public function testCreateWrongDayOfBirth() {
-        ImportPatientTest::addRoleToUser(1, Constants::ROLE_SUPERVISOR, 'test');
+        AuthorizationTools::addRoleToUser(1, Constants::ROLE_SUPERVISOR, 'test');
         $this->validPayload[0]['birthDay'] = 0;
         $resp = $this->json('POST', '/api/studies/test/import-patients', $this->validPayload);
         //Check that inserting patient failed because day of birth was incorrect
@@ -137,7 +131,7 @@ class ImportPatientTest extends TestCase
     }
 
     public function testCreateWrongMonthOfBirth() {
-        ImportPatientTest::addRoleToUser(1, Constants::ROLE_SUPERVISOR, 'test');
+        AuthorizationTools::addRoleToUser(1, Constants::ROLE_SUPERVISOR, 'test');
         $this->validPayload[0]['birthMonth'] = 0;
         $resp = $this->json('POST', '/api/studies/test/import-patients', $this->validPayload);
         //Check that inserting patient failed because day of birth was incorrect
@@ -153,7 +147,7 @@ class ImportPatientTest extends TestCase
     }
 
     public function testCreateWrongYearOfBirth() {
-        ImportPatientTest::addRoleToUser(1, Constants::ROLE_SUPERVISOR, 'test');
+        AuthorizationTools::addRoleToUser(1, Constants::ROLE_SUPERVISOR, 'test');
         $this->validPayload[0]['birthYear'] = 1800;
         $resp = $this->json('POST', '/api/studies/test/import-patients', $this->validPayload);
         //Check that inserting patient failed because day of birth was incorrect
@@ -169,7 +163,7 @@ class ImportPatientTest extends TestCase
     }
 
     public function testCreateAlreadyKnownPatient(){
-        ImportPatientTest::addRoleToUser(1, Constants::ROLE_SUPERVISOR, 'test');
+        AuthorizationTools::addRoleToUser(1, Constants::ROLE_SUPERVISOR, 'test');
         $this->json('POST', '/api/studies/test/import-patients', $this->validPayload);
         $resp = $this->json('POST', '/api/studies/test/import-patients', $this->validPayload);
         $this->assertEquals(0, count($resp['success']));
@@ -178,7 +172,7 @@ class ImportPatientTest extends TestCase
     }
 
     public function testIncorrectPatientCodeLength(){
-        ImportPatientTest::addRoleToUser(1, Constants::ROLE_SUPERVISOR, 'test');
+        AuthorizationTools::addRoleToUser(1, Constants::ROLE_SUPERVISOR, 'test');
         $this->validPayload[0]['code'] = 123;
         $resp = $this->json('POST', '/api/studies/test/import-patients', $this->validPayload);
         $this->assertEquals(0, count($resp['success']));
@@ -187,7 +181,7 @@ class ImportPatientTest extends TestCase
     }
 
     public function testIncorrectPatientPrefix(){
-        ImportPatientTest::addRoleToUser(1, Constants::ROLE_SUPERVISOR, 'test');
+        AuthorizationTools::addRoleToUser(1, Constants::ROLE_SUPERVISOR, 'test');
         $this->validPayload[0]['code'] = 12431234123412;
         $resp = $this->json('POST', '/api/studies/test/import-patients', $this->validPayload);
         $this->assertEquals(0, count($resp['success']));

@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Artisan;
 use Laravel\Passport\Passport;
 use Tests\TestCase;
 use App\User;
+use Tests\AuthorizationTools;
 
 class PatientTest extends TestCase
 {
@@ -44,7 +45,7 @@ class PatientTest extends TestCase
         factory(Study::class)->create(['name'=>'test']);
         factory(Patient::class)->create(['code'=>12345671234567, 'center_code'=>0, 'study_name'=>'test']);
         factory(Patient::class, 5)->create(['center_code'=>0, 'study_name'=>'test']);
-        ImportPatientTest::addRoleToUser(1, Constants::ROLE_SUPERVISOR, 'test');
+        AuthorizationTools::addRoleToUser(1, Constants::ROLE_SUPERVISOR, 'test');
 
         //Test get patient 4
         $response = $this->json('GET', '/api/patients/12345671234567?role=Supervisor')
@@ -67,7 +68,7 @@ class PatientTest extends TestCase
     public function testGetPatientFromStudy() {
         factory(Study::class)->create(['name'=>'test']);
         factory(Patient::class, 5)->create(['center_code'=>0, 'study_name'=>'test']);
-        ImportPatientTest::addRoleToUser(1, Constants::ROLE_SUPERVISOR, 'test');
+        AuthorizationTools::addRoleToUser(1, Constants::ROLE_SUPERVISOR, 'test');
         $this->json('GET', '/api/studies/test/patients?role=Supervisor')
             ->assertStatus(200);
     }

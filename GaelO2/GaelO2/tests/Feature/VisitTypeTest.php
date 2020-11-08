@@ -94,7 +94,7 @@ class VisitTypeTest extends TestCase
         $visitType = factory(VisitType::class)->create([
             'visit_group_id' => $this->visitGroup->id
         ]);
-        $this->json('DELETE', 'api/visit-types/'.$visitType->id)->assertNoContent(200);
+        $this->json('DELETE', 'api/visit-types/'.$visitType->id)->assertStatus(200);
     }
 
     public function testDeleteVisitTypeShouldFailedBecauseHasChildVisit(){
@@ -117,6 +117,6 @@ class VisitTypeTest extends TestCase
             'corrective_action_user_id'=>1
         ]);
 
-        $this->json('DELETE', 'api/visit-types/'.$visitType->id)->assertNoContent(403);
+        $this->json('DELETE', 'api/visit-types/'.$visitType->id)->assertStatus(409);
     }
 }
