@@ -106,7 +106,7 @@ class UserTest extends TestCase
         $studies = factory(Study::class, 1)->create();
 
         $studyName = $studies->first()['name'];
-        $payload = ["Investigator", "Supervisor"];
+        $payload = ["role" => "Investigator"];
         //First call should be success
         $this->json('POST', '/api/users/1/roles/'.$studyName, $payload)->assertNoContent(201);
         //Second call should answer no new role with status 400

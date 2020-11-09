@@ -135,11 +135,11 @@ class UserController extends Controller
 
     public function createRole(int $id, string $study, Request $request, CreateUserRoles $createUserRole, CreateUserRolesRequest $createUserRoleRequest, CreateUserRolesResponse $createUserRoleResponse){
         $curentUser = Auth::user();
-        $rolesArray = $request->all();
+        $requestData = $request->all();
         $createUserRoleRequest->userId = $id;
         $createUserRoleRequest->study = $study;
         $createUserRoleRequest->currentUserId = $curentUser['id'];
-        $createUserRoleRequest->roles = $rolesArray;
+        $createUserRoleRequest = Util::fillObject($requestData, $createUserRoleRequest);
         $createUserRole->execute($createUserRoleRequest, $createUserRoleResponse);
         return response()->noContent()
         ->setStatusCode($createUserRoleResponse->status, $createUserRoleResponse->statusText);

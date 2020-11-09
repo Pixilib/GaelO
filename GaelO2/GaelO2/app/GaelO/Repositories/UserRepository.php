@@ -215,20 +215,15 @@ class UserRepository implements PersistenceInterface {
         return empty($roles) ? [] : $roles->toArray();
     }
 
-    public function addUserRoleInStudy(int $userId, String $study, Array $roles) : void {
+    public function addUserRoleInStudy(int $userId, String $study, string $role) : void {
 
         $user = $this->user->where('id', $userId)->first();
-        $insertArray = [];
-
-        foreach($roles as $role){
-            $insertArray[] =[
-                'user_id'=>$user['id'],
-                'study_name'=> $study,
-                'name'=>$role
-            ];
-        }
-
-        $user->roles()->insert($insertArray);
+        $insertData =[
+            'user_id'=>$user['id'],
+            'study_name'=> $study,
+            'name'=>$role
+        ];
+        $user->roles()->insert($insertData);
 
     }
 

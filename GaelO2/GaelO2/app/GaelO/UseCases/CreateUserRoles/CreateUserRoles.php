@@ -25,19 +25,16 @@ class CreateUserRoles {
 
             //Get current roles in study for users
             $actualRolesArray = $this->persistenceInterface->getUsersRolesInStudy($createRoleRequest->userId, $createRoleRequest->study);
-            //Get request role to be add
-            $requestRolesArray = $createRoleRequest->roles;
-            //compute only new roles to be add in database
-            $newRoles = array_diff($requestRolesArray, $actualRolesArray);
 
-            if(empty($newRoles)){
-                throw new GaelOBadRequestException("No New Roles");
+
+            if( in_array($createRoleRequest->role, $actualRolesArray) ) {
+                throw new GaelOBadRequestException("Already Existing Role");
             }
 
             //Write in database and return sucess response (error will be handled by laravel)
-            $this->persistenceInterface->addUserRoleInStudy($createRoleRequest->userId, $createRoleRequest->study, $newRoles);
+            $this->persistenceInterface->addUserRoleInStudy($createRoleRequest->userId, $createRoleRequest->study, $createRoleRequest->role);
             $actionDetails = [
-                "Add Roles"=> $newRoles
+                "Add Roles"=> $createRoleRequest->role
             ];
             $this->trackerService->writeAction( $createRoleRequest->currentUserId, Constants::TRACKER_ROLE_ADMINISTRATOR, $createRoleRequest->study, null, Constants::TRACKER_EDIT_USER, $actionDetails);
 
