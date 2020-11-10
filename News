@@ -2,6 +2,10 @@ GaelO
 
 --Pending Changes --
 
+--GaelO 1.3.1 10/11/20--
+  Upgrade GaelO_Uploader to 1.0.1
+  Dicom Import to Orthanc uzing Guzzle to stream file content without running out memory
+
 --GaelO 1.3.0 28/10/20--
   Uploader v2
   Fiji Connector for reviews
