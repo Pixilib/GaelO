@@ -166,7 +166,7 @@ class UserController extends Controller
 
         $addAffiliatedCenter->execute($addAffiliatedCenterRequest, $addAffiliatedCenterResponse);
 
-        return response()->noContent()
+        return response()->json($addAffiliatedCenterResponse->body)
         ->setStatusCode($addAffiliatedCenterResponse->status, $addAffiliatedCenterResponse->statusText);
     }
 

@@ -37,6 +37,7 @@ Faire Service ReverseProxy ?
 Api Documentation (GET, POST, DELETE, PUT)
 
 +Tard :
+Erreur 500 si appelle affiliated cetner (get) et si il n'y en a pas en bdd (couvrir par test)
 Faire une condition pour les NoContent dans le controller ?
 Voir dans message d'erreur comment ajouter d'autre info que le message (pour id de login)
 CreateVisitType et CreateVisitGroup => Ajouter un forbidden si l'etude a déjà des visites crées (etude demarrée)
