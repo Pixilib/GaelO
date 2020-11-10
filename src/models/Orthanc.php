@@ -13,6 +13,8 @@
  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
+use GuzzleHttp\Client;
+
 /**
  * Main class for Orthanc communication, serve usefull APIs (get dicom tags, send to peer, download zip...)
  * 
@@ -35,15 +37,21 @@ Class Orthanc {
 	public function __construct(bool $exposed=false) {
 		//Set Time Limit at 3H as operation could be really long
 		set_time_limit(10800);
+
+		$this->client = new Client();
 		//Set address of Orthanc server
 		if ($exposed) {
 			$this->url=GAELO_ORTHANC_EXPOSED_INTERNAL_ADDRESS.':'.GAELO_ORTHANC_EXPOSED_INTERNAL_PORT;
+			$this->login = GAELO_ORTHANC_EXPOSED_INTERNAL_LOGIN;
+			$this->password = GAELO_ORTHANC_EXPOSED_INTERNAL_PASSWORD;
 			$this->context=array(
 				'http' => array(
 					'header'  => "Authorization: Basic ".base64_encode(GAELO_ORTHANC_EXPOSED_INTERNAL_LOGIN.':'.GAELO_ORTHANC_EXPOSED_INTERNAL_PASSWORD)
 	   			));
 		}else {
 			$this->url=GAELO_ORTHANC_PACS_ADDRESS.':'.GAELO_ORTHANC_PACS_PORT;
+			$this->login = GAELO_ORTHANC_PACS_LOGIN;
+			$this->password = GAELO_ORTHANC_PACS_PASSWORD;
 			$this->context=array(
 	   			'http' => array(
 	   				'header'  => "Authorization: Basic ".base64_encode(GAELO_ORTHANC_PACS_LOGIN.':'.GAELO_ORTHANC_PACS_PASSWORD)
@@ -346,6 +354,25 @@ Class Orthanc {
 		}
 		return $result;
 
+	}
+
+	/**
+	 * This method has the advantage to stream the content and avoid running out memory
+	 */
+	public function importFileGuzzle(string $file){
+		try{
+			$body = fopen($file, 'r');
+
+			$options = ['auth' => [$this->login, $this->password],
+			'headers'  => ['content-type' => 'application/dicom', 'Accept' => 'application/json'],
+			'body' => $body];
+
+			$response = $this->client->request('POST', $this->url.'/instances' , $options);
+			
+			return (string) $response->getBody();
+		} catch (Exception $e1) {
+			error_log("Error during import Dcm ".$e1->getMessage());
+		}
 	}
 
 	/**
