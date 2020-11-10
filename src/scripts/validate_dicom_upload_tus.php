@@ -177,7 +177,7 @@ function sendFolderToOrthanc(string $unzipedPath, Orthanc $orthancExposedObject)
 	
 	//Import dicom file one by one
 	foreach ($files as $file) {
-		$importAnswer=$orthancExposedObject->importFile($file);
+		$importAnswer=$orthancExposedObject->importFileGuzzle($file);
 		if (!empty($importAnswer)) {
 			$answerdetails=json_decode($importAnswer, true);
 			$importedMap[$answerdetails['ParentStudy']][$answerdetails['ParentSeries']][]=$answerdetails['ID'];
