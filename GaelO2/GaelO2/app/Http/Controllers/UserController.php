@@ -141,7 +141,7 @@ class UserController extends Controller
         $createUserRoleRequest->currentUserId = $curentUser['id'];
         $createUserRoleRequest = Util::fillObject($requestData, $createUserRoleRequest);
         $createUserRole->execute($createUserRoleRequest, $createUserRoleResponse);
-        return response()->noContent()
+        return response()->json($createUserRoleResponse->body)
         ->setStatusCode($createUserRoleResponse->status, $createUserRoleResponse->statusText);
     }
 

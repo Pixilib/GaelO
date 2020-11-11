@@ -131,7 +131,7 @@ class UserRepository implements PersistenceInterface {
     }
 
     public function getAdministratorsEmails() : array {
-        $emails = $this->user->where('administrator', true)->get();
+        $emails = $this->user->where([['administrator', true], ['status', 'Activated']])->get();
         return empty($emails) ? [] : $emails->pluck('email')->toArray();
     }
 
@@ -142,6 +142,7 @@ class UserRepository implements PersistenceInterface {
     public function getInvestigatorsStudyFromCenterEmails(string $study, int $centerCode, string $job) : array {
 
         $emails = $this->user
+        ->where('status', 'Activated')
         ->join('roles', function ($join) {
             $join->on('users.id', '=', 'roles.user_id');
         })->join('center_user', function ($join) {
@@ -162,6 +163,7 @@ class UserRepository implements PersistenceInterface {
     public function getUsersEmailsByRolesInStudy(string $study, string $role ) : array {
 
         $emails = $this->user
+        ->where('status', 'Activated')
         ->join('roles', function ($join) {
             $join->on('users.id', '=', 'roles.user_id');
         })->where(function ($query) use ($study, $role) {
@@ -179,6 +181,7 @@ class UserRepository implements PersistenceInterface {
     public function getUsersAffiliatedToCenter(int $centerCode) : array {
 
         $users = $this->user
+        ->where('status', 'Activated')
         ->join('center_user', function ($join) {
             $join->on('users.id', '=', 'center_user.user_id');
         })->where(function  ($query) use ($centerCode) {
@@ -272,7 +275,7 @@ class UserRepository implements PersistenceInterface {
 
     }
 
-    public function getUsersFromStudy(String $studyName, int $userId = 0) : array {
+    public function getUsersFromStudy(String $studyName) : array {
         $users = $this->user->get();
         $usersInStudy = [];
         foreach($users as $user) {
