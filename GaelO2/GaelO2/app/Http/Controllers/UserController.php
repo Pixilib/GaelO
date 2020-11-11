@@ -76,7 +76,7 @@ class UserController extends Controller
         //Execute use case
         $createUser->execute($createUserRequest, $createUserResponse);
         //Output result comming from usecase, here no content has to be shown (only http status code and text)
-        return response()->noContent()
+        return response()->json($createUserResponse->body)
                 ->setStatusCode($createUserResponse->status, $createUserResponse->statusText);
     }
 
