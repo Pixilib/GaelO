@@ -108,9 +108,9 @@ class UserTest extends TestCase
         $studyName = $studies->first()['name'];
         $payload = ["role" => "Investigator"];
         //First call should be success
-        $this->json('POST', '/api/users/1/roles/'.$studyName, $payload)->assertNoContent(201);
+        $this->json('POST', '/api/users/1/roles/'.$studyName, $payload)->assertStatus(201);
         //Second call should answer no new role with status 400
-        $this->json('POST', '/api/users/1/roles/'.$studyName, $payload)->assertNoContent(400);
+        $this->json('POST', '/api/users/1/roles/'.$studyName, $payload)->assertStatus(400);
 
     }
 

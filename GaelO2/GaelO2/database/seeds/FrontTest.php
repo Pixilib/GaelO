@@ -20,8 +20,7 @@ class FrontTest extends Seeder
     {
         $this->call([
             CountrySeeder::class,
-            CenterSeeder::class,
-            PreferenceSeeder::class,
+            CenterSeeder::class
         ]);
 
         //Make Admin default password valid

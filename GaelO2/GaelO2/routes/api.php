@@ -19,27 +19,18 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-//User related Routes
-Route::middleware(['auth:api', 'refresh_token'])->post('users', 'UserController@createUser');
-Route::middleware(['auth:api', 'refresh_token'])->put('users/self/{id}', 'UserController@modifyUserIdentification');
-Route::middleware(['auth:api', 'refresh_token'])->delete('users/{id}', 'UserController@deleteUser');
-
-Route::middleware(['auth:api', 'refresh_token'])->post('users/{id}/affiliated-centers', 'UserController@addAffiliatedCenter');
 
 //Export DB Route (download binary doesn't support refresh token)
 Route::middleware('auth:api')->post('export-db', 'ExportDBController@exportDB');
 
-//Study Routes
-Route::middleware('auth:api')->post('studies', 'StudyController@createStudy');
-
-//Centers Routes
-Route::middleware('auth:api')->post('centers', 'CenterController@createCenter');
-
-
 //Routes that need authentication and to be admin
-Route::middleware(['auth:api', 'admin', 'refresh_token'])->group(function () {
+Route::middleware(['auth:api', 'refresh_token'])->group(function () {
 
-    //Users Routes
+    //User related Routes
+    Route::post('users', 'UserController@createUser');
+    Route::put('users/self/{id}', 'UserController@modifyUserIdentification');
+    Route::delete('users/{id}', 'UserController@deleteUser');
+    Route::post('users/{id}/affiliated-centers', 'UserController@addAffiliatedCenter');
     Route::put('users/{id}', 'UserController@modifyUser');
     Route::patch('users/{id}/reactivate', 'UserController@reactivateUser');
     Route::get('users/{id}/roles/{study?}', 'UserController@getRoles');
@@ -56,9 +47,14 @@ Route::middleware(['auth:api', 'admin', 'refresh_token'])->group(function () {
     Route::delete('studies/{studyName}', 'StudyController@deleteStudy');
     Route::patch('studies/{studyName}/reactivate', 'StudyController@reactivateStudy');
 
+    //Study Routes
+    Route::post('studies', 'StudyController@createStudy');
+
+    //Centers Routes
+    Route::post('centers', 'CenterController@createCenter');
+
     //Preferences Routes
     Route::get('preferences', 'PreferenceController@getPreference');
-    Route::put('preferences', 'PreferenceController@modifyPreference');
 
     //Centers Routes
     Route::get('centers/{code?}', 'CenterController@getCenter');

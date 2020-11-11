@@ -190,7 +190,6 @@ return [
         App\Providers\EmailServiceProvider::class,
         App\Providers\CountryAdapterProvider::class,
         App\Providers\StudyRepositoryProvider::class,
-        App\Providers\PreferenceRepositoryProvider::class,
         App\Providers\CenterRepositoryProvider::class,
         App\Providers\VisitGroupProvider::class,
         App\Providers\VisitTypeProvider::class,
