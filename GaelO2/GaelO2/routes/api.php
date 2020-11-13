@@ -42,7 +42,6 @@ Route::middleware(['auth:api', 'refresh_token'])->group(function () {
     Route::get('studies/{studyName}/users', 'UserController@getUserFromStudy');
 
     //Study Routes
-
     Route::get('studies', 'StudyController@getStudy');
     Route::delete('studies/{studyName}', 'StudyController@deleteStudy');
     Route::patch('studies/{studyName}/reactivate', 'StudyController@reactivateStudy');
@@ -102,6 +101,8 @@ Route::middleware(['auth:api', 'refresh_token'])->group(function () {
     Route::post('studies/{studyName}/visit-groups/{visitGroupId}/visit-types/{visitTypeId}/visits', 'VisitController@createVisit');
     Route::get('visits/{id}', 'VisitController@getVisit');
     Route::get('visits/{id}/patients/{patientCode}', 'VisitController@getPatientVisit');
+
+    Route::post('studies/{studyName}/documentation', 'DocumentationController@createDocumentation');
 });
 
 

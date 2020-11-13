@@ -13,7 +13,7 @@ class CreateDocumentationTable extends Migration
      */
     public function up()
     {
-        Schema::create('documentation', function (Blueprint $table) {
+        Schema::create('documentations', function (Blueprint $table) {
             $table->id();
             $table->string('name')->nullable(false);
             $table->date('document_date')->nullable(false);
@@ -38,6 +38,6 @@ class CreateDocumentationTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('documentation');
+        Schema::dropIfExists('documentations');
     }
 }

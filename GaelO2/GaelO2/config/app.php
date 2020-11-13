@@ -196,6 +196,7 @@ return [
         App\Providers\TrackerRepositoryProvider::class,
         App\Providers\PatientRepositoryProvider::class,
         App\Providers\VisitProvider::class,
+        App\Providers\DocumentationRepositoryProvider::class,
     ],
 
     /*

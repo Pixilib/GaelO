@@ -15,6 +15,7 @@ class DocumentationRepositoryProvider extends ServiceProvider
     {
         $this->app->when(
             [\App\GaelO\UseCases\CreateDocumentation\CreateDocumentation::class])
+        ->needs(\App\GaelO\Interfaces\PersistenceInterface::class)
         ->give(\App\GaelO\Repositories\DocumentationRepository::class);
     }
 
