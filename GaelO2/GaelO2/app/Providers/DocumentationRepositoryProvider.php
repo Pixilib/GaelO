@@ -14,7 +14,8 @@ class DocumentationRepositoryProvider extends ServiceProvider
     public function register()
     {
         $this->app->when(
-            [\App\GaelO\UseCases\CreateDocumentation\CreateDocumentation::class])
+            [\App\GaelO\UseCases\CreateDocumentation\CreateDocumentation::class,
+            \App\GaelO\UseCases\StoreDocumentationFile\StoreDocumentationFile::class])
         ->needs(\App\GaelO\Interfaces\PersistenceInterface::class)
         ->give(\App\GaelO\Repositories\DocumentationRepository::class);
     }

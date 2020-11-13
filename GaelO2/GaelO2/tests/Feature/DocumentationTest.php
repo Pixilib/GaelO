@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Documentation;
 use App\GaelO\Constants\Constants;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Support\Facades\Artisan;
@@ -44,7 +45,7 @@ class DocumentationTest extends TestCase
     }
 
     public function testForbiddenWhenNotSupervisor(){
-        $response = $this->post('api/studies/'.$this->study->name.'/documentation', $this->validPayload);
+        $response = $this->post('api/studies/'.$this->study->name.'/documentations', $this->validPayload);
         $response->assertStatus(403);
     }
 
@@ -56,8 +57,16 @@ class DocumentationTest extends TestCase
     public function testCreateDocumentation()
     {
         AuthorizationTools::addRoleToUser(1, Constants::ROLE_SUPERVISOR, $this->study->name);
-        $response = $this->post('api/studies/'.$this->study->name.'/documentation', $this->validPayload);
+        $response = $this->post('api/studies/'.$this->study->name.'/documentations', $this->validPayload);
         $response->assertStatus(201);
         $response->assertJsonStructure(['id']);
+    }
+
+    public function testUploadDocumentation(){
+        AuthorizationTools::addRoleToUser(1, Constants::ROLE_SUPERVISOR, $this->study->name);
+        $documentation = factory(Documentation::class, 1)->create(['study_name'=>$this->study->name])->first();
+        $response = $this->post('api/documentations/'.$documentation['id'].'/file', ["binaryData"=>"testFileContent"]);
+        $response->assertStatus(201);
+
     }
 }

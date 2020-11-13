@@ -102,7 +102,8 @@ Route::middleware(['auth:api', 'refresh_token'])->group(function () {
     Route::get('visits/{id}', 'VisitController@getVisit');
     Route::get('visits/{id}/patients/{patientCode}', 'VisitController@getPatientVisit');
 
-    Route::post('studies/{studyName}/documentation', 'DocumentationController@createDocumentation');
+    Route::post('studies/{studyName}/documentations', 'DocumentationController@createDocumentation');
+    Route::post('documentations/{id}/file', 'DocumentationController@uploadDocumentation');
 });
 
 

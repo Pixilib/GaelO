@@ -23,6 +23,7 @@ class CreateDocumentationTable extends Migration
             $table->boolean('controller')->default(false)->nullable(false);
             $table->boolean('monitor')->default(false)->nullable(false);
             $table->boolean('reviewer')->default(false)->nullable(false);
+            $table->string('path')->nullable(true)->default(null);
             $table->softDeletes();
             $table->timestamps();
 

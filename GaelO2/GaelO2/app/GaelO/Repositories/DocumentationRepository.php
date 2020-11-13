@@ -19,8 +19,8 @@ class DocumentationRepository implements PersistenceInterface {
         return $model->toArray();
     }
 
-    public function update($code, array $data) : void{
-        $model = $this->documentation->find($code);
+    public function update($id, array $data) : void{
+        $model = $this->documentation->find($id);
         $model = Util::fillObject($data, $model);
         $model->save();
     }
@@ -36,6 +36,10 @@ class DocumentationRepository implements PersistenceInterface {
     public function getAll() : array {
         $documentations = $this->documentation->get();
         return empty($documentations) ? [] : $documentations->toArray();
+    }
+
+    public function getDocumentation(int $id){
+        return $this->find($id)->toArray();
     }
 
     public function createDocumentation(string $name, string $documentDate, string $studyName, string $version, bool $investigator,

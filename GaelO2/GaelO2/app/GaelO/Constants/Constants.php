@@ -32,6 +32,7 @@ class Constants {
     const TRACKER_EDIT_PATIENT = "Edit Patient";
     const TRACKER_IMPORT_PATIENT = "Import Patients";
     const TRACKER_ADD_DOCUMENTATION = "Add Documentation";
+    const TRACKER_UPLOAD_DOCUMENTATION = "Upload Documentation";
     const TRACKER_UPDATE_DOCUMENTATION = "Update Documentation";
     const TRACKER_PATIENT_WITHDRAW = "Patient Withdraw";
     const TRACKER_CORRECTIVE_ACTION = "Corrective Action";

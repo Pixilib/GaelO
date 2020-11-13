@@ -16,9 +16,15 @@ Preparation Investigateur / Monitor / Controller / Reviewer :
 - Api creation Visit (GET, POST, DELETE)
 - Api QC (GET, PATCH + API /reset)
 - Api Corrective Action (GET, PATCH)
-- Api Documentation (GET, POST, DELETE, PUT)
+- Api Documentation (GET, POST, DELETE)
 
 Salim TODO :
+
+Api Documentation
+- GET
+- POST => Reste Mime et Base64 à voir
+- DELETE
+
 Fini de refactorer :
     GetPatientVisit (refac + changer l'access au données dans bdd)
     Get Visit
@@ -34,7 +40,7 @@ Faire Service/API Import DICOM => Import + fill BDD Orthanc
 Faire API de telechargement de DICOM
 Authorisation DICOMWeb
 Faire Service ReverseProxy ?
-Api Documentation (GET, POST, DELETE, PUT)
+
 
 +Tard :
 Faire une condition pour les NoContent dans le controller ? => ou mettre toujours un payload vide pour eviter les errur error->json() dans front?
