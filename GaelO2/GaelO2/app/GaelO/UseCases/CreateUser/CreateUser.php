@@ -76,7 +76,7 @@ class CreateUser {
         ];
         //Save action in Tracker
         $this->trackerService->writeAction($userCreatorId,
-            Constants::TRACKER_ROLE_USER,
+            Constants::TRACKER_ROLE_ADMINISTRATOR,
             null,
             null,
             Constants::TRACKER_CREATE_USER,
