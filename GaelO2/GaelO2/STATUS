@@ -36,8 +36,9 @@ Fini de refactorer :
 
 Service Orthanc=> Finir les tests
 Service Visit => Continuer test passage en upload Done
+Upgrade Laravel 8
 Faire Service/API Import DICOM => Import + fill BDD Orthanc
-Faire API de telechargement de DICOM
+Faire API de telechargement de DICOM voir https://laravel.com/docs/8.x/responses#streamed-downloads
 Authorisation DICOMWeb
 Faire Service ReverseProxy ?
 
@@ -46,11 +47,6 @@ Faire Service ReverseProxy ?
 Faire une condition pour les NoContent dans le controller ? => ou mettre toujours un payload vide pour eviter les errur error->json() dans front?
 Voir dans message d'erreur comment ajouter d'autre info que le message (pour id de login)
 CreateVisitType et CreateVisitGroup => Ajouter un forbidden si l'etude a déjà des visites crées (etude demarrée)
-
-
-docs :
-https://medium.com/@tobiashn/putting-a-laravel-app-into-production-d847ac2a04ed?source=email-e7f4cb02701-1600390333596-digest.reader------0-59------------------04e5dd75_dc46_4393_805e_4aee0fee36a6-1-29facf24_1541_4eb6_bffc_1a4ba0ca2cb4----&sectionName=top
-
 
 A executer en post install :
 php artisan db:migrate --seed
