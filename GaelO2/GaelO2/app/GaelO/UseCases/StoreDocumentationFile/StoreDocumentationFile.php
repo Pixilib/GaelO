@@ -4,6 +4,7 @@ namespace App\GaelO\UseCases\StoreDocumentationFile;
 
 use App\GaelO\Adapters\LaravelFunctionAdapter;
 use App\GaelO\Constants\Constants;
+use App\GaelO\Exceptions\GaelOBadRequestException;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\PersistenceInterface;
@@ -22,14 +23,19 @@ class StoreDocumentationFile{
 
     public function execute(StoreDocumentationFileRequest $storeDocumentationFileRequest, StoreDocumentationFileResponse $storeDocumentationFileResponse){
 
-        //SK RESTE A CHECKER MIME TYPE PDF
-        //Base64 encode / decode a faire ? (voir comment faire Orthanc)
-
         try{
 
             $documentationEntity = $this->documentationRepository->getDocumentation($storeDocumentationFileRequest->id);
             $studyName = $documentationEntity['study_name'];
             $this->checkAuthorization($storeDocumentationFileRequest->currentUserId, $studyName);
+
+            if($storeDocumentationFileRequest->contentType !== 'application/pdf'){
+                throw new GaelOBadRequestException("Only application/pdf content accepted");
+            }
+
+            if( ! $this->is_base64_encoded($storeDocumentationFileRequest->binaryData)){
+                throw new GaelOBadRequestException("Payload should be base64 encoded");
+            }
 
             $storagePath = LaravelFunctionAdapter::getStoragePath();
 
@@ -38,7 +44,7 @@ class StoreDocumentationFile{
                 mkdir($destinationPath, 0755, true);
             }
 
-            file_put_contents ( $destinationPath.'/'.$documentationEntity['id'].'.pdf', $storeDocumentationFileRequest->binaryData );
+            file_put_contents ( $destinationPath.'/'.$documentationEntity['id'].'.pdf', base64_decode($storeDocumentationFileRequest->binaryData) );
 
             $documentationEntity['path']= $destinationPath.'/'.$documentationEntity['id'].'.pdf';
 
@@ -72,10 +78,18 @@ class StoreDocumentationFile{
 
     }
 
-    public function checkAuthorization(int $currentUserId, string $studyName){
+    private function checkAuthorization(int $currentUserId, string $studyName){
         $this->authorizationService->setCurrentUser($currentUserId);
         if( !$this->authorizationService->isRoleAllowed(Constants::ROLE_SUPERVISOR, $studyName)){
             throw new GaelOForbiddenException();
+        }
+    }
+
+    private function is_base64_encoded($data) : bool {
+        if (preg_match('%^[a-zA-Z0-9/+]*={0,2}$%', $data)) {
+        return true;
+        } else {
+        return false;
         }
     }
 }

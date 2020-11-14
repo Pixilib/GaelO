@@ -104,6 +104,7 @@ Route::middleware(['auth:api', 'refresh_token'])->group(function () {
 
     Route::post('studies/{studyName}/documentations', 'DocumentationController@createDocumentation');
     Route::post('documentations/{id}/file', 'DocumentationController@uploadDocumentation');
+    Route::delete('documentations/{id}', 'DocumentationController@deleteDocumentation');
 });
 
 

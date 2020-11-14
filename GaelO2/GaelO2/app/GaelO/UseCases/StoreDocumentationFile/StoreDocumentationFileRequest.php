@@ -6,4 +6,5 @@ class StoreDocumentationFileRequest{
     public int $currentUserId;
     public int $id;
     public string $binaryData;
+    public string $contentType;
 }

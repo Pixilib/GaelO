@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\GaelO\UseCases\CreateDocumentation\CreateDocumentation;
 use App\GaelO\UseCases\CreateDocumentation\CreateDocumentationRequest;
 use App\GaelO\UseCases\CreateDocumentation\CreateDocumentationResponse;
+use App\GaelO\UseCases\DeleteDocumentation\DeleteDocumentation;
+use App\GaelO\UseCases\DeleteDocumentation\DeleteDocumentationRequest;
+use App\GaelO\UseCases\DeleteDocumentation\DeleteDocumentationResponse;
 use App\GaelO\UseCases\StoreDocumentationFile\StoreDocumentationFile;
 use App\GaelO\UseCases\StoreDocumentationFile\StoreDocumentationFileRequest;
 use App\GaelO\UseCases\StoreDocumentationFile\StoreDocumentationFileResponse;
@@ -30,10 +33,22 @@ class DocumentationController extends Controller
         $requestData = $request->all();
         $storeDocumentationFileRequest->currentUserId = $currentUser['id'];
         $storeDocumentationFileRequest->id = $documentationId;
+        $storeDocumentationFileRequest->contentType = $request->headers->get('Content-Type');
         $storeDocumentationFileRequest = Util::fillObject($requestData, $storeDocumentationFileRequest);
         $storeDocumentationFile->execute($storeDocumentationFileRequest, $storeDocumentationFileResponse);
         return response()->json($storeDocumentationFileResponse->body)
                 ->setStatusCode($storeDocumentationFileResponse->status, $storeDocumentationFileResponse->statusText);
+
+    }
+
+    public function deleteDocumentation(int $documentationId, DeleteDocumentation $deleteDocumentation, DeleteDocumentationRequest $deleteDocumentationRequest, DeleteDocumentationResponse $deleteDocumentationResponse){
+        $currentUser = Auth::user();
+        $deleteDocumentationRequest->id = $documentationId;
+        $deleteDocumentationRequest->currentUserId = $currentUser['id'];
+        $deleteDocumentation->execute($deleteDocumentationRequest, $deleteDocumentationResponse);
+
+        return response()->noContent()
+                ->setStatusCode($deleteDocumentationResponse->status, $deleteDocumentationResponse->statusText);
 
     }
 }
