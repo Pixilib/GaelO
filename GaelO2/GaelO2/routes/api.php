@@ -22,6 +22,7 @@ use Illuminate\Support\Facades\Route;
 
 //Export DB Route (download binary doesn't support refresh token)
 Route::middleware('auth:api')->post('export-db', 'ExportDBController@exportDB');
+Route::middleware('auth:api')->get('documentations/{id}/file', 'DocumentationController@getDocumentationFile');
 
 //Routes that need authentication and to be admin
 Route::middleware(['auth:api', 'refresh_token'])->group(function () {
@@ -103,6 +104,7 @@ Route::middleware(['auth:api', 'refresh_token'])->group(function () {
     Route::get('visits/{id}', 'VisitController@getVisit');
     Route::get('visits/{id}/patients/{patientCode}', 'VisitController@getPatientVisit');
 
+    //Documentations routes
     Route::post('studies/{studyName}/documentations', 'DocumentationController@createDocumentation');
     Route::post('documentations/{id}/file', 'DocumentationController@uploadDocumentation');
     Route::delete('documentations/{id}', 'DocumentationController@deleteDocumentation');

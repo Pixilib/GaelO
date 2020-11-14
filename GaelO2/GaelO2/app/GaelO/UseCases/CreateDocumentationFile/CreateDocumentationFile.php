@@ -1,6 +1,6 @@
 <?php
 
-namespace App\GaelO\UseCases\StoreDocumentationFile;
+namespace App\GaelO\UseCases\CreateDocumentationFile;
 
 use App\GaelO\Adapters\LaravelFunctionAdapter;
 use App\GaelO\Constants\Constants;
@@ -12,7 +12,7 @@ use App\GaelO\Services\AuthorizationService;
 use App\GaelO\Services\TrackerService;
 use Exception;
 
-class StoreDocumentationFile{
+class CreateDocumentationFile{
 
     public function __construct(PersistenceInterface $documentationRepository, AuthorizationService $authorizationService, TrackerService $trackerService)
     {
@@ -21,41 +21,41 @@ class StoreDocumentationFile{
         $this->trackerService = $trackerService;
     }
 
-    public function execute(StoreDocumentationFileRequest $storeDocumentationFileRequest, StoreDocumentationFileResponse $storeDocumentationFileResponse){
+    public function execute(CreateDocumentationFileRequest $createDocumentationFileRequest, CreateDocumentationFileResponse $createDocumentationFileResponse){
 
         try{
 
-            $documentationEntity = $this->documentationRepository->getDocumentation($storeDocumentationFileRequest->id);
+            $documentationEntity = $this->documentationRepository->getDocumentation($createDocumentationFileRequest->id);
             $studyName = $documentationEntity['study_name'];
-            $this->checkAuthorization($storeDocumentationFileRequest->currentUserId, $studyName);
+            $this->checkAuthorization($createDocumentationFileRequest->currentUserId, $studyName);
 
-            if($storeDocumentationFileRequest->contentType !== 'application/pdf'){
+            if($createDocumentationFileRequest->contentType !== 'application/pdf'){
                 throw new GaelOBadRequestException("Only application/pdf content accepted");
             }
 
-            if( ! $this->is_base64_encoded($storeDocumentationFileRequest->binaryData)){
+            if( ! $this->is_base64_encoded($createDocumentationFileRequest->binaryData)){
                 throw new GaelOBadRequestException("Payload should be base64 encoded");
             }
 
             $storagePath = LaravelFunctionAdapter::getStoragePath();
 
-            $destinationPath = $storagePath.'/documentations/'.$studyName;
-            if (!is_dir($destinationPath)) {
-                mkdir($destinationPath, 0755, true);
+            $destinationPath = '/documentations/'.$studyName;
+            if (!is_dir($storagePath.'/'.$destinationPath)) {
+                mkdir($storagePath.'/'.$destinationPath, 0755, true);
             }
 
-            file_put_contents ( $destinationPath.'/'.$documentationEntity['id'].'.pdf', base64_decode($storeDocumentationFileRequest->binaryData) );
+            file_put_contents ( $storagePath.'/'.$destinationPath.'/'.$documentationEntity['id'].'.pdf', base64_decode($createDocumentationFileRequest->binaryData) );
 
             $documentationEntity['path']= $destinationPath.'/'.$documentationEntity['id'].'.pdf';
 
-            $this->documentationRepository->update($storeDocumentationFileRequest->id, $documentationEntity);
+            $this->documentationRepository->update($createDocumentationFileRequest->id, $documentationEntity);
 
             $actionDetails =[
-                'documentation_id'=>$storeDocumentationFileRequest->currentUserId,
+                'documentation_id'=>$createDocumentationFileRequest->currentUserId,
             ];
 
             $this->trackerService->writeAction(
-                $storeDocumentationFileRequest->currentUserId,
+                $createDocumentationFileRequest->currentUserId,
                 Constants::ROLE_SUPERVISOR,
                 $studyName,
                 null,
@@ -63,14 +63,14 @@ class StoreDocumentationFile{
                 $actionDetails);
 
             //Return created documentation ID to help front end to send file data
-            $storeDocumentationFileResponse->status = 201;
-            $storeDocumentationFileResponse->statusText =  'Created';
+            $createDocumentationFileResponse->status = 201;
+            $createDocumentationFileResponse->statusText =  'Created';
 
         } catch (GaelOException $e){
 
-            $storeDocumentationFileResponse->body = $e->getErrorBody();
-            $storeDocumentationFileResponse->status = $e->statusCode;
-            $storeDocumentationFileResponse->statusText =  $e->statusText;
+            $createDocumentationFileResponse->body = $e->getErrorBody();
+            $createDocumentationFileResponse->status = $e->statusCode;
+            $createDocumentationFileResponse->statusText =  $e->statusText;
 
         }catch (Exception $e){
             throw $e;

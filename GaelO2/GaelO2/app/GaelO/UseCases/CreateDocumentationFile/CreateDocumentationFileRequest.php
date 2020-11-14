@@ -1,8 +1,8 @@
 <?php
 
-namespace App\GaelO\UseCases\StoreDocumentationFile;
+namespace App\GaelO\UseCases\CreateDocumentationFile;
 
-class StoreDocumentationFileRequest{
+class CreateDocumentationFileRequest{
     public int $currentUserId;
     public int $id;
     public string $binaryData;

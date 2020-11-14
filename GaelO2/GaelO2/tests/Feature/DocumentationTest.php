@@ -125,4 +125,24 @@ class DocumentationTest extends TestCase
         $response->assertStatus(200);
         $this->assertEquals(2, sizeof($answerArray));
     }
+
+    public function testGetDocumentationFile(){
+        AuthorizationTools::addRoleToUser(1, Constants::ROLE_INVESTIGATOR, $this->study->name);
+        $filename = storage_path().'/documentations/'.$this->study->name.'/test.pdf';
+        file_put_contents ( $filename , 'content' );
+        $documentation = factory(Documentation::class, 1)->create(['study_name'=>$this->study->name, 'investigator' => true, 'path'=>'/documentations/'.$this->study->name.'/test.pdf'])->first();
+        $response = $this->get('api/documentations/'.$documentation->id.'/file');
+        $response->assertStatus(200);
+
+    }
+
+    public function testGetDocumentationFileShouldFailedBecauseNotAllowed(){
+        AuthorizationTools::addRoleToUser(1, Constants::ROLE_INVESTIGATOR, $this->study->name);
+        $filename = storage_path().'/documentations/'.$this->study->name.'/test.pdf';
+        file_put_contents ( $filename , 'content' );
+        $documentation = factory(Documentation::class, 1)->create(['study_name'=>$this->study->name, 'investigator' => false, 'path'=>'/documentations/'.$this->study->name.'/test.pdf'])->first();
+        $response = $this->get('api/documentations/'.$documentation->id.'/file');
+        $response->assertStatus(403);
+
+    }
 }

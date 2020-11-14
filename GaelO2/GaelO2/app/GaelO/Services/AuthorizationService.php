@@ -33,6 +33,14 @@ class AuthorizationService {
         return in_array($role, $existingRoles);
     }
 
+    /**
+     * Return if at least one of an array roles is existing for user
+     */
+    public function isOnOfRolesAllowed(array $roles, string $studyName){
+        $existingRoles = $this->userRepository->getUsersRolesInStudy($this->userId, $studyName);
+        return sizeof(array_intersect($roles, $existingRoles)) > 0 ;
+    }
+
     public function isPatientAllowed(string $role, int $patientCode) : bool {
 
         $patientDetails = $this->patientRepository->find($patientCode);

@@ -71,6 +71,7 @@ class DocumentationRepository implements PersistenceInterface {
         $documentations = $this->documentation->where([['study_name', $studyName], [strtolower($role), true]])->get();
         return empty($documentations) ? [] : $documentations->toArray();
     }
+
 }
 
 ?>
