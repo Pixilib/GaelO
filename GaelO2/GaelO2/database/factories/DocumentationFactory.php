@@ -7,7 +7,7 @@ use Faker\Generator as Faker;
 
 $factory->define(Documentation::class, function (Faker $faker) {
     return [
-        'id'=>$faker->randomNumber,
+        'id'=>$faker->unique()->randomNumber,
         'name'=>$faker->unique()->word,
         'document_date'=>now(),
         'study_name'=>$faker->word,
