@@ -92,10 +92,11 @@ Route::middleware(['auth:api', 'refresh_token'])->group(function () {
     //Miscellaneous Routes
     Route::get('countries/{code?}', 'CountryController@getCountry');
 
-    //Patient Routes
+    //studies Routes
     Route::get('patients/{code?}', 'PatientController@getPatient');
     Route::get('studies/{studyName}/patients', 'PatientController@getPatientFromStudy');
     Route::post('studies/{studyName}/import-patients', 'StudyController@importPatients');
+    Route::get('studies/{studyName}/documentations', 'DocumentationController@getDocumentationsFromStudy');
 
     //Visit Routes
     Route::post('studies/{studyName}/visit-groups/{visitGroupId}/visit-types/{visitTypeId}/visits', 'VisitController@createVisit');

@@ -99,4 +99,30 @@ class DocumentationTest extends TestCase
         $response->assertStatus(200);
 
     }
+
+    public function testGetDocumentation(){
+        AuthorizationTools::addRoleToUser(1, Constants::ROLE_SUPERVISOR, $this->study->name);
+        factory(Documentation::class, 3)->create(['study_name'=>$this->study->name]);
+        $response = $this->get('api/studies/'.$this->study->name.'/documentations?role=Supervisor');
+        $answerArray = json_decode($response->content(), true);
+        $response->assertStatus(200);
+        $this->assertEquals(3, sizeof($answerArray));
+    }
+
+    public function testGetDocumentationFailBecauseNotHavingRole(){
+        factory(Documentation::class, 3)->create(['study_name'=>$this->study->name]);
+        $response = $this->get('api/studies/'.$this->study->name.'/documentations?role=Supervisor');
+        $response->assertStatus(403);
+
+    }
+
+    public function testGetDocumentationOnlyInvestigator(){
+        AuthorizationTools::addRoleToUser(1, Constants::ROLE_INVESTIGATOR, $this->study->name);
+        factory(Documentation::class, 2)->create(['study_name'=>$this->study->name, 'investigator' => true]);
+        factory(Documentation::class, 5)->create(['study_name'=>$this->study->name, 'investigator' => false]);
+        $response = $this->get('api/studies/'.$this->study->name.'/documentations?role=Investigator');
+        $answerArray = json_decode($response->content(), true);
+        $response->assertStatus(200);
+        $this->assertEquals(2, sizeof($answerArray));
+    }
 }

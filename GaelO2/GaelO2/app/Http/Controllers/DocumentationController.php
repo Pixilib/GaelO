@@ -8,6 +8,9 @@ use App\GaelO\UseCases\CreateDocumentation\CreateDocumentationResponse;
 use App\GaelO\UseCases\DeleteDocumentation\DeleteDocumentation;
 use App\GaelO\UseCases\DeleteDocumentation\DeleteDocumentationRequest;
 use App\GaelO\UseCases\DeleteDocumentation\DeleteDocumentationResponse;
+use App\GaelO\UseCases\GetDocumentation\GetDocumentation;
+use App\GaelO\UseCases\GetDocumentation\GetDocumentationRequest;
+use App\GaelO\UseCases\GetDocumentation\GetDocumentationResponse;
 use App\GaelO\UseCases\StoreDocumentationFile\StoreDocumentationFile;
 use App\GaelO\UseCases\StoreDocumentationFile\StoreDocumentationFileRequest;
 use App\GaelO\UseCases\StoreDocumentationFile\StoreDocumentationFileResponse;
@@ -49,6 +52,18 @@ class DocumentationController extends Controller
 
         return response()->noContent()
                 ->setStatusCode($deleteDocumentationResponse->status, $deleteDocumentationResponse->statusText);
+
+    }
+
+    public function getDocumentationsFromStudy(string $studyName, Request $request, GetDocumentation $getDocumentation, GetDocumentationRequest $getDocumentationRequest, GetDocumentationResponse $getDocumentationResponse){
+        $currentUser = Auth::user();
+        $queryParam = $request->query();
+        $getDocumentationRequest->role = $queryParam['role'];
+        $getDocumentationRequest->studyName = $studyName;
+        $getDocumentationRequest->currentUserId = $currentUser['id'];
+        $getDocumentation->execute($getDocumentationRequest, $getDocumentationResponse);
+        return response()->json($getDocumentationResponse->body)
+                ->setStatusCode($getDocumentationResponse->status, $getDocumentationResponse->statusText);
 
     }
 }

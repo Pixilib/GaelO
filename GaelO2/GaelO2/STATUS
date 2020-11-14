@@ -21,9 +21,7 @@ Preparation Investigateur / Monitor / Controller / Reviewer :
 Salim TODO :
 
 Api Documentation
-- GET
-- POST => Reste Mime et Base64 à voir
-- DELETE
+- GET -> données et file
 
 Fini de refactorer :
     GetPatientVisit (refac + changer l'access au données dans bdd)
