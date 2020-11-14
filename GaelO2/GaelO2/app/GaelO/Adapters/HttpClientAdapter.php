@@ -7,6 +7,7 @@ use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Pool;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
+use GuzzleHttp\Psr7\Utils;
 use ZipArchive;
 
 class HttpClientAdapter {
@@ -141,6 +142,30 @@ class HttpClientAdapter {
         $options = array_merge($authenticationOption, $bodyOption);
         $response = $this->client->request($method, $this->address.$uri , $options);
         return new Psr7ResponseAdapter($response);
+    }
+
+    public function streamResponse(string $method, string $uri, array $body = []){
+
+        $response = $this->client->request($method, $this->address.$uri, ['stream' =>true, 'json' => $body, 'auth' => [$this->login, $this->password] ]);
+
+        $contentLength = $response->getHeader('content-Length')[0];
+        $contentType = $response->getHeader('content-Type')[0];
+
+        header("Content-Length: ".$contentLength);
+        header("Content-Type: ".$contentType);
+
+        $body = $response->getBody();
+        while (!$body->eof()) {
+            echo $body->read(1024);
+            ob_flush();
+            flush();
+        }
+
+    }
+
+    public function getPSR7Response(string $method, string $uri, array $body = []){
+        $response = $this->client->request($method, $this->address.$uri, ['stream' =>true, 'json' => $body, 'auth' => [$this->login, $this->password] ]);
+        return $response;
     }
 
 }
