@@ -25,8 +25,8 @@ Class OrthancSeries {
     public string $serieOrthancID;
 
 	public string $parentStudyOrthancID;
-	public ?string $seriesManufacturer;
-	public ?string $seriesModelName;
+	public ?string $manufacturer;
+	public ?string $modelName;
 	public ?string $modality;
 	public ?string $seriesDate;
 	public ?string $seriesTime;
@@ -37,8 +37,8 @@ Class OrthancSeries {
 	public array $seriesInstances;
 	public int $numberOfInstanceInOrthanc;
 	public string $lastUpdate;
-	public float $diskSizeMb;
-	public float $uncompressedSizeMb;
+	public int $diskSizeMb;
+	public int $uncompressedSizeMb;
 	public $patientWeight;
 	public $injectedDose;
 	public $injectedDateTime;
@@ -62,13 +62,13 @@ Class OrthancSeries {
 		$seriesDetails=$this->orthancService->getOrthancRessourcesDetails(Constants::ORTHANC_SERIES_LEVEL, $this->serieOrthancID);
 
 		//add needed informations in the current object
-		$this->seriesManufacturer=$seriesDetails['MainDicomTags']['Manufacturer'];
-		$this->modality=$seriesDetails['MainDicomTags']['Modality'];
-		$this->seriesDate=$seriesDetails['MainDicomTags']['SeriesDate'];
-		$this->seriesTime=$seriesDetails['MainDicomTags']['SeriesTime'];
-		$this->seriesDescription=$seriesDetails['MainDicomTags']['SeriesDescription'];
+		$this->manufacturer=$seriesDetails['MainDicomTags']['Manufacturer'] ?? null;
+		$this->modality=$seriesDetails['MainDicomTags']['Modality'] ?? null;
+		$this->seriesDate=$seriesDetails['MainDicomTags']['SeriesDate'] ?? null;
+		$this->seriesTime=$seriesDetails['MainDicomTags']['SeriesTime'] ?? null;
+		$this->seriesDescription=$seriesDetails['MainDicomTags']['SeriesDescription'] ?? null;
 		$this->seriesInstanceUID=$seriesDetails['MainDicomTags']['SeriesInstanceUID'];
-		$this->seriesNumber=$seriesDetails['MainDicomTags']['SeriesNumber'];
+		$this->seriesNumber=$seriesDetails['MainDicomTags']['SeriesNumber'] ?? null;
 		$this->seriesIsStable=$seriesDetails['IsStable'];
 		$this->parentStudyOrthancID=$seriesDetails['ParentStudy'];
 		$this->seriesInstances=$seriesDetails['Instances'];
@@ -98,13 +98,13 @@ Class OrthancSeries {
 	 */
 	private function retrieveInstancesData($instanceOrthancID) {
 		$instanceTags=$this->orthancService->getInstanceTags($instanceOrthancID);
-		$this->patientWeight=$instanceTags['0010,1030']['Value'];
-		$this->seriesModelName=$instanceTags['0008,1090']['Value'];
-		$this->injectedDose=$instanceTags['0054,0016']['Value'][0]['0018,1074']['Value'];
-		$this->injectedDateTime=$instanceTags['0054,0016']['Value'][0]['0018,1078']['Value'];
-		$this->injectedActivity=$instanceTags['0054,0016']['Value'][0]['0018,1077']['Value'];
-		$this->radiopharmaceutical=$instanceTags['0054,0016']['Value'][0]['0018,0031']['Value'];
-		$this->halfLife=$instanceTags['0054,0016']['Value'][0]['0018,1075']['Value'];
+		$this->patientWeight=is_numeric($instanceTags['0010,1030']['Value']) ? $instanceTags['0010,1030']['Value'] : null;
+		$this->modelName=$instanceTags['0008,1090']['Value'] ?? null;
+		$this->injectedDose=is_numeric($instanceTags['0054,0016']['Value'][0]['0018,1074']['Value']) ? $instanceTags['0054,0016']['Value'][0]['0018,1074']['Value'] : null;
+		$this->injectedDateTime=$instanceTags['0054,0016']['Value'][0]['0018,1078']['Value'] ?? null;
+		$this->injectedActivity=is_numeric($instanceTags['0054,0016']['Value'][0]['0018,1077']['Value'])? $instanceTags['0054,0016']['Value'][0]['0018,1077']['Value'] : null;
+		$this->radiopharmaceutical=$instanceTags['0054,0016']['Value'][0]['0018,0031']['Value'] ?? null;
+		$this->halfLife=is_numeric($instanceTags['0054,0016']['Value'][0]['0018,1075']['Value'])? $instanceTags['0054,0016']['Value'][0]['0018,1075']['Value'] : null;
 		$this->sopClassUid=$instanceTags['0008,0016']['Value'];
 	}
 

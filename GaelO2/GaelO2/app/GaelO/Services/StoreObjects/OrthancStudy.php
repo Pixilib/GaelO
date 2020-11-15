@@ -36,8 +36,8 @@ use App\GaelO\Services\OrthancService;
 	public string $studyLastUpdate;
 
 	public int $countInstances;
-	public float $diskSizeMb;
-	public float $uncompressedSizeMb;
+	public int $diskSizeMb;
+	public int $uncompressedSizeMb;
 
 	public array $seriesInStudy = [];
 	public int $numberOfSeriesInStudy;
@@ -63,16 +63,16 @@ use App\GaelO\Services\OrthancService;
 		$studyDetails=$this->orthancService->getOrthancRessourcesDetails(Constants::ORTHANC_STUDIES_LEVEL, $this->studyOrthancID);
 
 		//On cree un object patient avec les information
-		$this->studyDate=$studyDetails['MainDicomTags']['StudyDate'];
-		$this->studyTime=$studyDetails['MainDicomTags']['StudyTime'];
-		$this->studyDescription=$studyDetails['MainDicomTags']['StudyDescription'];
+		$this->studyDate=$studyDetails['MainDicomTags']['StudyDate'] ?? null;
+		$this->studyTime=$studyDetails['MainDicomTags']['StudyTime'] ?? null;
+		$this->studyDescription=$studyDetails['MainDicomTags']['StudyDescription'] ?? null;
 		$this->studyInstanceUID=$studyDetails['MainDicomTags']['StudyInstanceUID'];
 		$this->studyLastUpdate=$studyDetails['LastUpdate'];
 		$this->seriesInStudy=$studyDetails['Series'];
 		$this->numberOfSeriesInStudy=sizeof($studyDetails['Series']);
 		$this->studyIsStable=$studyDetails['IsStable'];
-		$this->parentPatientName=$studyDetails['PatientMainDicomTags']['PatientName'];
-		$this->parentPatientID=$studyDetails['PatientMainDicomTags']['PatientID'];
+		$this->parentPatientName=$studyDetails['PatientMainDicomTags']['PatientName'] ?? null;
+		$this->parentPatientID=$studyDetails['PatientMainDicomTags']['PatientID'] ?? null;
 		$this->parentPartientOrthancID=$studyDetails['ParentPatient'];
 
 		//add statistics info

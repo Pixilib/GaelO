@@ -11,6 +11,9 @@ class SettingsConstants {
     const URL = 'url';
     const PATIENT_CODE_LENGTH = 'patientCodeLength';
 
+    const TUS_ADDRESS = 'tusAddress';
+    const TUS_PORT = 'tusPort';
+
     const ORTHANC_TEMPORARY_ADDRESS = 'orthancTemporaryAddress';
     const ORTHANC_TEMPORARY_PORT = 'orthancTemporaryPort';
     const ORTHANC_TEMPORARY_LOGIN = 'orthancTemporaryLogin';

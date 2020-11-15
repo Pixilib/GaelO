@@ -12,8 +12,8 @@ use ZipArchive;
 
 class HttpClientAdapter {
 
-    private string $login;
-    private string $password;
+    private string $login = '';
+    private string $password = '';
     private string $address;
     private Client $client;
 
@@ -30,13 +30,19 @@ class HttpClientAdapter {
         $this->password = $password;
     }
 
-    public function request(string $method, string $uri, $body = null) : Psr7ResponseAdapter {
+    public function request(string $method, string $uri, $body = null, ?array $headers=null) : Psr7ResponseAdapter {
         $options = ['auth' => [$this->login, $this->password]];
 
         if($body !==null) {
             $bodyOption = ['body' => $body];
             $options = array_merge($options, $bodyOption);
         }
+
+        if($headers !==null) {
+            $bodyOption = ['headers' => $headers];
+            $headers = array_merge($options, $headers);
+        }
+
         $response = $this->client->request($method, $this->address.$uri , $options);
 
         return new Psr7ResponseAdapter($response);
@@ -169,6 +175,11 @@ class HttpClientAdapter {
      */
     public function getPSR7Response(string $method, string $uri, array $body = []){
         $response = $this->client->request($method, $this->address.$uri, ['stream' =>true, 'json' => $body, 'auth' => [$this->login, $this->password] ]);
+        return $response;
+    }
+
+    public function requestStreamResponseToFile(string $method, string $uri, $ressource, array $headers){
+        $response = $this->client->request($method, $this->address.$uri, ['sink' => $ressource, 'auth' => [$this->login, $this->password], 'headers'=> $headers ]);
         return $response;
     }
 
