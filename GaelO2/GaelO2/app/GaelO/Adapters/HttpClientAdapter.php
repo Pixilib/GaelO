@@ -163,6 +163,10 @@ class HttpClientAdapter {
 
     }
 
+    /**
+     * PSR7 can be the return value of the Laravel controller to stream the full response
+     * will be usefull for reverse proxy purposes
+     */
     public function getPSR7Response(string $method, string $uri, array $body = []){
         $response = $this->client->request($method, $this->address.$uri, ['stream' =>true, 'json' => $body, 'auth' => [$this->login, $this->password] ]);
         return $response;

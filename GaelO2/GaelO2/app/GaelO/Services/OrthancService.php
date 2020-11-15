@@ -383,10 +383,4 @@ class OrthancService
         $payload = array('Transcode'=>'1.2.840.10008.1.2.1', 'Resources' => $seriesOrthancIDs);
         $this->httpClientAdapter->streamResponse('POST', '/tools/create-archive', $payload);
     }
-
-    public function getOrthancZipWithPSR7Response(array $seriesOrthancIDs){
-        $payload = array('Transcode'=>'1.2.840.10008.1.2.1', 'Resources' => $seriesOrthancIDs);
-        return $this->httpClientAdapter->getPSR7Response('POST', '/tools/create-archive', $payload);
-
-    }
 }
