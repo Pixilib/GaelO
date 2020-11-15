@@ -21,15 +21,25 @@ Preparation Investigateur / Monitor / Controller / Reviewer :
 
 
 Salim TODO :
-* Modification Patient : PUT
-* Service Orthanc=> Finir les tests
--> Dissocier les test "unitaire" et les test d'integration pour récupéré les image d'une visite
--> Faire le use case de recupération des images d'une visite et son testing (garder le stramed response et faire passer le filename du zip via l'hexagone)
+* Service Orthanc=> Finir les tests (portage fini)
+
 * Service Visit => Continuer test passage en upload Done
-* Faire Service/API Import DICOM => Import + fill BDD Orthanc
+* Faire Service/API Import DICOM => Import + fill BDD Orthanc (CF INFRA)
 * Reverse proxy dicomweb et tus => implementer l'authorization et la réponse de guzzle remplace la reponse de laravel pour renvoyer la réponse
 
-Fini de refactorer :
+* Faire le use case de recupération des images d'une visite et son testing (Get dicoms)
+
+
+//Import des images
+-> Le usecase recupere les zip de tus et les decompresse (probablement besoin d'un service tus qui utilise httpclient)
+-> Le usecase les importe dans orthanc temporary
+-> Le usecase les anonymises
+-> le usecase les transfert vers orthanc pacs
+-> le usecase se connecte a orthanc pacs et fait la declaration des studies/series via registerOrthancStudyService
+-> le usecase change le statut de la visite via visit service
+-> le usecase catch les erreur, envoie les mails et ecrit dans le tracker
+
+Finir de refactorer :
     GetPatientVisit (refac + changer l'access au données dans bdd)
     Get Visit
 

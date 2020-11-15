@@ -10,12 +10,13 @@ use Illuminate\Http\Request;
 class DicomController extends Controller
 {
     /**
-     * EXPERIMENTAL, FAR TO BE SATISFAYING
+     * EXPERIMENTAL, FAR TO BE done
      */
     public function getVisitDicoms(int $visitId = 0, GetDicoms $getDicoms, GetDicomsRequest $getDicomsRequest, GetDicomsResponse $getDicomsResponse){
+        $getDicoms->execute($getDicomsRequest, $getDicomsResponse);
 
-        return response()->streamDownload(function() use( &$getDicoms, &$getDicomsRequest, &$getDicomsResponse){
-            $getDicoms->execute($getDicomsRequest, $getDicomsResponse);
-        }, 'downloadDicomGaelO.zip');
+        return response()->streamDownload( function() use( &$getDicoms){
+            $getDicoms->outputStream();
+        }, $getDicomsResponse->filename);
     }
 }

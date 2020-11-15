@@ -123,11 +123,6 @@ class OrthancService
         return $this->httpClientAdapter->request('DELETE', '/' . $level . '/' . $uid);
     }
 
-    public function getZipStream()
-    {
-        //TO DO
-    }
-
     public function isPeerAccelerated(string $peer) : bool
     {
 
@@ -355,31 +350,6 @@ class OrthancService
         $studyOrthanc->retrieveStudyData();
         return $studyOrthanc;
     }
-
-    /*
-    public function buildDicomZip(array $seriesOrthancIDs){
-
-        $seriesObjectArray = [];
-
-        foreach($seriesOrthancIDs as $seriesOrthancID){
-            $seriesOrthanc = new OrthancSeries($this);
-            $seriesOrthanc->setSeriesOrthancID($seriesOrthancID);
-            @$seriesOrthanc->retrieveSeriesData();
-            $seriesObjectArray[] = $seriesOrthanc;
-
-        }
-
-        $this->httpClientAdapter->collectInstancesInZip($seriesObjectArray);
-    }
-    */
-
-    /*
-    public function getOrthancArchiveZip(array $seriesOrthancIDs){
-        $payload = array('Transcode'=>'1.2.840.10008.1.2.1', 'Resources' => $seriesOrthancIDs);
-        return $this->httpClientAdapter->requestJson('POST', '/tools/create-archive', $payload);
-
-    }
-    */
 
     public function getOrthancZipStream(array $seriesOrthancIDs){
         $payload = array('Transcode'=>'1.2.840.10008.1.2.1', 'Resources' => $seriesOrthancIDs);

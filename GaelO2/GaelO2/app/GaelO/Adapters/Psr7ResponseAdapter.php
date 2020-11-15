@@ -1,6 +1,6 @@
 <?php
 
-namespace app\GaelO\Adapters;
+namespace App\GaelO\Adapters;
 
 use Psr\Http\Message\ResponseInterface;
 
