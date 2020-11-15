@@ -21,26 +21,22 @@ Preparation Investigateur / Monitor / Controller / Reviewer :
 
 
 Salim TODO :
-Modification Patient : PUT
+* Modification Patient : PUT
+* Service Orthanc=> Finir les tests
+-> Dissocier les test "unitaire" et les test d'integration pour récupéré les image d'une visite
+-> Faire le use case de recupération des images d'une visite et son testing (garder le stramed response et faire passer le filename du zip via l'hexagone)
+* Service Visit => Continuer test passage en upload Done
+* Faire Service/API Import DICOM => Import + fill BDD Orthanc
+* Reverse proxy dicomweb et tus => implementer l'authorization et la réponse de guzzle remplace la reponse de laravel pour renvoyer la réponse
 
 Fini de refactorer :
     GetPatientVisit (refac + changer l'access au données dans bdd)
     Get Visit
 
-Service Orthanc=> Finir les tests
-Faire API de telechargement de DICOM voir https://laravel.com/docs/8.x/responses#streamed-downloads
-
-Service Visit => Continuer test passage en upload Done
-Faire Service/API Import DICOM => Import + fill BDD Orthanc
-Authorisation DICOMWeb / Service ReverseProxy
-
 //Les tests ne font pas d'assertion sur
 - les permissions (à ajouter via mock sur authorization service ?)
 - le tracker => Via un spy ?
 - l'envoi de mails => voir doc laravel
-
-
-
 
 +Tard :
 Faire une condition pour les NoContent dans le controller ? => ou mettre toujours un payload vide pour eviter les errur error->json() dans front?
