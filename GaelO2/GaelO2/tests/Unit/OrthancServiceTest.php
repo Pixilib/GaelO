@@ -126,7 +126,8 @@ class OrthancServiceTest extends TestCase
     }
 
     public function testGetOrthancZipStreamedToLaravel(){
-        dd($this->get('api/visits/1/dicoms'));
+        $answer = $this->get('api/visits/1/dicoms');
+        $answer->assertStatus(200);
 
     }
 

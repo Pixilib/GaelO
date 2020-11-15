@@ -373,14 +373,17 @@ class OrthancService
     }
     */
 
+    /*
     public function getOrthancArchiveZip(array $seriesOrthancIDs){
         $payload = array('Transcode'=>'1.2.840.10008.1.2.1', 'Resources' => $seriesOrthancIDs);
         return $this->httpClientAdapter->requestJson('POST', '/tools/create-archive', $payload);
 
     }
+    */
 
     public function getOrthancZipStream(array $seriesOrthancIDs){
         $payload = array('Transcode'=>'1.2.840.10008.1.2.1', 'Resources' => $seriesOrthancIDs);
         $this->httpClientAdapter->streamResponse('POST', '/tools/create-archive', $payload);
     }
+
 }

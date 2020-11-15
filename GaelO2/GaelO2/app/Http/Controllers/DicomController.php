@@ -13,7 +13,9 @@ class DicomController extends Controller
      * EXPERIMENTAL, FAR TO BE SATISFAYING
      */
     public function getVisitDicoms(int $visitId = 0, GetDicoms $getDicoms, GetDicomsRequest $getDicomsRequest, GetDicomsResponse $getDicomsResponse){
-        $getDicoms->execute($getDicomsRequest, $getDicomsResponse);
-        return null;
+
+        return response()->streamDownload(function() use( &$getDicoms, &$getDicomsRequest, &$getDicomsResponse){
+            $getDicoms->execute($getDicomsRequest, $getDicomsResponse);
+        }, 'downloadDicomGaelO.zip');
     }
 }
