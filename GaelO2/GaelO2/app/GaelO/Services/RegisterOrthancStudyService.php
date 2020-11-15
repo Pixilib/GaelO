@@ -109,10 +109,10 @@ class RegisterOrthancStudyService
         $studyAcquisitionDate = $this->parseDateTime($this->studyOrthancObject->studyDate, 1);
         $studyAcquisitionTime = $this->parseDateTime($this->studyOrthancObject->studyTime, 2);
 
-        if ($this->orthancStudyRepository->isExistingOrthancStudyID($this->studyOrthancId)) {
+        if ($this->orthancStudyRepository->isExistingOrthancStudyID($this->studyOrthancObject->studyOrthancID)) {
 
             $this->orthancStudyRepository->updateStudy(
-                $this->studyOrthancId,
+                $this->studyOrthancObject->studyOrthancId,
                 $this->visitId,
                 $this->userId,
                 Util::now(),
@@ -132,7 +132,7 @@ class RegisterOrthancStudyService
         } else {
 
             $this->orthancStudyRepository->addStudy(
-                $this->studyOrthancId,
+                $this->studyOrthancObject->studyOrthancId,
                 $this->visitId,
                 $this->userId,
                 Util::now(),
