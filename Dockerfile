@@ -62,6 +62,7 @@ COPY docker_start.sh /usr/local/bin/start
 COPY --chown=www-data:www-data GaelO2/GaelO2 .
 COPY --from=react /FrontEnd/build $APP_HOME/public
 COPY --from=ohif /ohif/Viewers/platform/viewer/dist $APP_HOME/public/viewer
+COPY /ohif $APP_HOME/public/viewer
 RUN mv .env.example .env
 
 RUN composer install --optimize-autoloader --no-dev --no-interaction
