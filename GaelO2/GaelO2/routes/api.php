@@ -71,6 +71,9 @@ Route::middleware(['auth:api', 'refresh_token'])->group(function () {
     Route::get('visit-types/{visitTypeId}', 'VisitTypeController@getVisitType');
     Route::delete('visit-types/{visitTypeId}', 'VisitTypeController@deleteVisitType');
 
+    //Visits Routes
+    Route::post('visits/{id}/validate-dicom', 'VisitController@validateDicom');
+
     //Tracker Routes
     Route::get('tracker', 'TrackerController@getTracker');
 

@@ -102,7 +102,7 @@ class OrthancStudyRepository implements PersistenceInterface{
     }
 
     public function isExistingOrthancStudyID(string $orthancStudyID){
-        $orthancStudies = $this->orthancStudy->find($orthancStudyID)->get();
+        $orthancStudies = $this->orthancStudy->where('orthanc_id',$orthancStudyID);
         return $orthancStudies->count()>0 ? true : false;
     }
 }

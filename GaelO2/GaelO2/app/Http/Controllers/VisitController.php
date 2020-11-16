@@ -11,6 +11,9 @@ use App\GaelO\UseCases\GetPatientVisit\GetPatientVisitResponse;
 use App\GaelO\UseCases\GetVisit\GetVisit;
 use App\GaelO\UseCases\GetVisit\GetVisitRequest;
 use App\GaelO\UseCases\GetVisit\GetVisitResponse;
+use App\GaelO\UseCases\ValidateDicomUpload\ValidateDicomUpload;
+use App\GaelO\UseCases\ValidateDicomUpload\ValidateDicomUploadRequest;
+use App\GaelO\UseCases\ValidateDicomUpload\ValidateDicomUploadResponse;
 use App\GaelO\Util;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -55,6 +58,17 @@ class VisitController extends Controller
 
         return response()->json($getPatientVisitResponse->body)
                 ->setStatusCode($getPatientVisitResponse->status, $getPatientVisitResponse->statusText);
+
+    }
+
+    public function validateDicom(int $visitId, Request $request, ValidateDicomUpload $validateDicomUpload, ValidateDicomUploadRequest $validateDicomUploadRequest, ValidateDicomUploadResponse $validateDicomUploadResponse){
+
+        $curentUser = Auth::user();
+        $validateDicomUploadRequest->currentUserId = $curentUser['id'];
+        $validateDicomUploadRequest->visitId = $visitId;
+        $requestData = $request->all();
+        $validateDicomUploadRequest = Util::fillObject($requestData, $validateDicomUploadRequest);
+        $validateDicomUpload->execute($validateDicomUploadRequest, $validateDicomUploadResponse);
 
     }
 }

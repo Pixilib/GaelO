@@ -78,7 +78,7 @@ use App\GaelO\Services\OrthancService;
 		//add statistics info
 		$this->retrieveStudyStatistics();
 		//add series tag
-		$this->getSeriesMainTag();
+		$this->getSeriesMainTags();
 	}
 
 	/**
@@ -95,7 +95,7 @@ use App\GaelO\Services\OrthancService;
 	/**
 	 * Create a series object with series data for each series and store them in this object
 	 */
-	private function getSeriesMainTag() {
+	private function getSeriesMainTags() {
 		foreach ($this->seriesInStudy as $seriesOrthancID) {
             $series=new OrthancSeries($this->orthancService);
             $series->setSeriesOrthancID($seriesOrthancID);

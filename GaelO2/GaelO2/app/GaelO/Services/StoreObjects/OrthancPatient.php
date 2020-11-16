@@ -50,10 +50,10 @@ class OrthancPatient {
 	public function retrievePatientData() {
         $patientDetails=$this->orthancService->getOrthancRessourcesDetails(Constants::ORTHANC_PATIENTS_LEVEL, $this->patientOrthancID);
 		//Add needed informations in this object
-		$this->patientName=$patientDetails['MainDicomTags']['PatientName'];
-		$this->patientID=$patientDetails['MainDicomTags']['PatientID'];
-		$this->patientSex=$patientDetails['MainDicomTags']['PatientSex'];
-		$this->patientBirthDate=$patientDetails['MainDicomTags']['PatientBirthDate'];
+		$this->patientName=$patientDetails['MainDicomTags']['PatientName'] ?? null;
+		$this->patientID=$patientDetails['MainDicomTags']['PatientID'] ?? null;
+		$this->patientSex=$patientDetails['MainDicomTags']['PatientSex'] ?? null;
+		$this->patientBirthDate=$patientDetails['MainDicomTags']['PatientBirthDate'] ?? null;
 		$this->studiesOrthancID=$patientDetails['Studies'];
 		$this->getStudiesData();
 	}

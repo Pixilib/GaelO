@@ -18,8 +18,8 @@ class CreateOrthancStudiesTable extends Migration
             $table->unsignedBigInteger('visit_id')->nullable(false);
             $table->unsignedBigInteger('uploader_id')->nullable(false);
             $table->dateTime('upload_date', 6)->nullable(false);
-            $table->text('acquisition_date')->nullable(true);
-            $table->text('acquisition_time')->nullable(true);
+            $table->date('acquisition_date')->nullable(true);
+            $table->time('acquisition_time')->nullable(true);
             $table->string('anon_from_orthanc_id', 44)->nullable(false);
             $table->text('study_uid')->nullable(false);
             $table->text('study_description')->nullable(true);

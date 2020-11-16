@@ -16,8 +16,8 @@ class CreateOrthancSeriesTable extends Migration
         Schema::create('orthanc_series', function (Blueprint $table) {
             $table->string('orthanc_id', 44)->primary();
             $table->string('orthanc_study_id', 44)->nullable(false);
-            $table->text('acquisition_date')->nullable(true)->default(null);
-            $table->text('acquisition_time')->nullable(true)->default(null);
+            $table->date('acquisition_date')->nullable(true)->default(null);
+            $table->time('acquisition_time')->nullable(true)->default(null);
             $table->text('modality')->nullable(true)->default(null);
             $table->text('series_description')->nullable(true)->default(null);
             $table->bigInteger('injected_dose')->nullable(true)->default(null);
@@ -29,8 +29,8 @@ class CreateOrthancSeriesTable extends Migration
             $table->integer('number_of_instances')->nullable(false);
             $table->text('series_uid')->nullable(false);
             $table->text('series_number')->nullable(true)->default(null);
-            $table->bigInteger('series_disk_size')->nullable(false);
-            $table->bigInteger('series_uncompressed_disk_size')->nullable(false);
+            $table->integer('series_disk_size')->nullable(false);
+            $table->integer('series_uncompressed_disk_size')->nullable(false);
             $table->text('manufacturer')->nullable(true)->default(null);
             $table->text('model_name')->nullable(true)->default(null);
             $table->softDeletes();

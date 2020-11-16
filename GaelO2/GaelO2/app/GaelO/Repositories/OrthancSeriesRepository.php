@@ -107,7 +107,7 @@ class OrthancSeriesRepository implements PersistenceInterface{
     }
 
     public function isExistingOrthancSeriesID(string $orthancSeriesID){
-        $orthancSeries = $this->orthancSeries->find($orthancSeriesID)->get();
+        $orthancSeries = $this->orthancSeries->where('orthanc_id', $orthancSeriesID);
         return $orthancSeries->count()>0 ? true : false;
     }
 }

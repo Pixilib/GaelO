@@ -16,10 +16,8 @@
 
 namespace App\GaelO\Services;
 
-use App\GaelO\Adapters\LaravelFunctionAdapter;
 use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOBadRequestException;
-use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Repositories\OrthancSeriesRepository;
 use App\GaelO\Repositories\OrthancStudyRepository;
 use App\GaelO\Services\OrthancService;
@@ -27,7 +25,6 @@ use App\GaelO\Services\StoreObjects\OrthancSeries;
 use App\GaelO\Services\StoreObjects\OrthancStudy;
 use App\GaelO\Util;
 use DateTime;
-use Exception;
 
 /**
  * Fill Orthanc_Studies and Orthanc_Series table to link DICOM Orthanc storage with the web plateform
@@ -38,22 +35,24 @@ class RegisterOrthancStudyService
 {
 
     private OrthancService $orthancService;
+    private OrthancStudyRepository $orthancStudyRepository;
+    private OrthancSeriesRepository $orthancSeriesRepository;
+
     private int $visitId;
     private int $userId;
     private string $originalStudyOrthancId;
-    private $studyOrthancObject;
 
 
-    public function __construct(OrthancService $orthancService, VisitService $visitService, OrthancStudyRepository $orthancStudyRepository, OrthancSeriesRepository $orthancSeriesRepository)
+    public function __construct(OrthancService $orthancService, OrthancStudyRepository $orthancStudyRepository, OrthancSeriesRepository $orthancSeriesRepository)
     {
         $this->orthancService = $orthancService;
-        $this->visitService = $visitService;
         $this->orthancStudyRepository = $orthancStudyRepository;
         $this->orthancSeriesRepository = $orthancSeriesRepository;
     }
 
-    public function setData(int $visitId, string $userId, string $studyOrthancId, string $originalStudyOrthancId)
+    public function setData(bool $storage, int $visitId, string $userId, string $studyOrthancId, string $originalStudyOrthancId)
     {
+        $this->orthancService->setOrthancServer($storage);
         $this->visitId = $visitId;
         $this->userId = $userId;
         $this->studyOrthancId = $studyOrthancId;
@@ -61,40 +60,27 @@ class RegisterOrthancStudyService
     }
 
     /**
-     * return study details of a study stored in Orthanc
-     * @param String $studyID
-     * @return array
-     */
-    public function registerOrthancStudy()
-    {
-        $studyData = new OrthancStudy($this->orthancService, $this->studyOrthancId);
-        $studyData->retrieveStudyData();
-        $this->studyOrthancObject = $studyData;
-        $this->fillDB();
-    }
-
-    /**
      * Fill data in the database, write data for study and for each series
      * Once done trigger the change upload status of visit to update upload status and eventually skip
      * local form and/or QC
      */
-    public function fillDB()
+    public function execute()
     {
+        $studyOrthancObject = new OrthancStudy($this->orthancService);
+        $studyOrthancObject->setStudyOrthancID($this->studyOrthancId);
+        $studyOrthancObject->retrieveStudyData();
 
         //Check that original OrthancID is unknown for this study
-        if ($this->orthancStudyRepository->isExistingOriginalOrthancStudyID($this->originalStudyOrthancId)) {
-            try {
-                //Fill la database
-                $this->addToDbStudy();
+        if ( ! $this->orthancStudyRepository->isExistingOriginalOrthancStudyID($this->originalStudyOrthancId)) {
 
-                foreach ($this->studyOrthancObject->orthancSeries as $serie) {
-                    //Fill series database
-                    $this->addtoDbSerie($serie);
-                }
-                $this->visitService->updateUploadStatus($this->visitId, Constants::UPLOAD_STATUS_DONE, $this->username);
-            } catch (Exception $e1) {
-                throw new Exception("Error during import " . $e1->getMessage());
+            //Fill la database
+            $this->addToDbStudy($studyOrthancObject);
+
+            foreach ($studyOrthancObject->orthancSeries as $serie) {
+                //Fill each series in database
+                $this->addtoDbSerie($serie);
             }
+
         } else {
             throw new GaelOBadRequestException("Error during import Study Already Known");
         }
@@ -104,50 +90,50 @@ class RegisterOrthancStudyService
      * Private function to write into Orthanc_Studies DB
      * @param string $anonFromOrthancStudyId
      */
-    private function addToDbStudy()
+    private function addToDbStudy(OrthancStudy $studyOrthancObject)
     {
-        $studyAcquisitionDate = $this->parseDateTime($this->studyOrthancObject->studyDate, 1);
-        $studyAcquisitionTime = $this->parseDateTime($this->studyOrthancObject->studyTime, 2);
+        $studyAcquisitionDate = $this->parseDateTime($studyOrthancObject->studyDate, 1);
+        $studyAcquisitionTime = $this->parseDateTime($studyOrthancObject->studyTime, 2);
 
-        if ($this->orthancStudyRepository->isExistingOrthancStudyID($this->studyOrthancObject->studyOrthancID)) {
+        if ($this->orthancStudyRepository->isExistingOrthancStudyID($studyOrthancObject->studyOrthancID)) {
 
             $this->orthancStudyRepository->updateStudy(
-                $this->studyOrthancObject->studyOrthancId,
+                $studyOrthancObject->studyOrthancId,
                 $this->visitId,
                 $this->userId,
                 Util::now(),
                 $studyAcquisitionDate,
                 $studyAcquisitionTime,
                 $this->originalStudyOrthancId,
-                $this->studyOrthancObject->studyInstanceUID,
-                $this->studyOrthancObject->studyDescription,
-                $this->studyOrthancObject->parentPartientOrthancID,
-                $this->studyOrthancObject->parentPatientName,
-                $this->studyOrthancObject->parentPatientID,
-                $this->studyOrthancObject->numberOfSeriesInStudy,
-                $this->studyOrthancObject->countInstances,
-                $this->studyOrthancObject->diskSizeMb,
-                $this->studyOrthancObject->uncompressedSizeMb
+                $studyOrthancObject->studyInstanceUID,
+                $studyOrthancObject->studyDescription,
+                $studyOrthancObject->parentPartientOrthancID,
+                $studyOrthancObject->parentPatientName,
+                $studyOrthancObject->parentPatientID,
+                $studyOrthancObject->numberOfSeriesInStudy,
+                $studyOrthancObject->countInstances,
+                $studyOrthancObject->diskSizeMb,
+                $studyOrthancObject->uncompressedSizeMb
             );
         } else {
 
             $this->orthancStudyRepository->addStudy(
-                $this->studyOrthancObject->studyOrthancId,
+                $studyOrthancObject->studyOrthancID,
                 $this->visitId,
                 $this->userId,
                 Util::now(),
                 $studyAcquisitionDate,
                 $studyAcquisitionTime,
                 $this->originalStudyOrthancId,
-                $this->studyOrthancObject->studyInstanceUID,
-                $this->studyOrthancObject->studyDescription,
-                $this->studyOrthancObject->parentPartientOrthancID,
-                $this->studyOrthancObject->parentPatientName,
-                $this->studyOrthancObject->parentPatientID,
-                $this->studyOrthancObject->numberOfSeriesInStudy,
-                $this->studyOrthancObject->countInstances,
-                $this->studyOrthancObject->diskSizeMb,
-                $this->studyOrthancObject->uncompressedSizeMb
+                $studyOrthancObject->studyInstanceUID,
+                $studyOrthancObject->studyDescription,
+                $studyOrthancObject->parentPartientOrthancID,
+                $studyOrthancObject->parentPatientName,
+                $studyOrthancObject->parentPatientID,
+                $studyOrthancObject->numberOfSeriesInStudy,
+                $studyOrthancObject->countInstances,
+                $studyOrthancObject->diskSizeMb,
+                $studyOrthancObject->uncompressedSizeMb
             );
         }
     }
