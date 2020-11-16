@@ -31,12 +31,12 @@ Salim TODO :
 
 
 //Import des images
--> Le usecase recupere les zip de tus et les decompresse (probablement besoin d'un service tus qui utilise httpclient)
+-> Le usecase recupere les zip de tus et les decompresse via ServiceTus
 -> Le usecase les importe dans orthanc temporary
 -> Le usecase les anonymises
 -> le usecase les transfert vers orthanc pacs
--> le usecase se connecte a orthanc pacs et fait la declaration des studies/series via registerOrthancStudyService
--> le usecase change le statut de la visite via visit service
+-> OK : le usecase se connecte a orthanc pacs et fait la declaration des studies/series via registerOrthancStudyService
+-> OK : le usecase change le statut de la visite via visit service
 -> le usecase catch les erreur, envoie les mails et ecrit dans le tracker
 
 Finir de refactorer :
