@@ -75,7 +75,7 @@ Route::middleware(['auth:api', 'refresh_token'])->group(function () {
     Route::post('visits/{id}/validate-dicom', 'VisitController@validateDicom');
 
     //upload Routes
-    Route::any('tus', 'VisitController@tusUpload');
+    Route::any('studies/{studyName}/tus', 'StudyController@tusUpload');
 
     //Tracker Routes
     Route::get('tracker', 'TrackerController@getTracker');

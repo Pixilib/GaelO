@@ -75,9 +75,5 @@ class VisitController extends Controller
 
     }
 
-    public function tusUpload(Request $request, ReverseProxyTus $reverseProxyTus, ReverseProxyTusRequest $reverseProxyTusRequest, ReverseProxyTusResponse $reverseProxyTusResponse){
-        $curentUser = Auth::user();
-        $reverseProxyTusRequest->currentUserId = $curentUser['id'];
-        error_log(print_r($request, true));
-    }
+
 }

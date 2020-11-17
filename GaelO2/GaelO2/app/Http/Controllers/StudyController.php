@@ -24,6 +24,9 @@ use App\GaelO\UseCases\ImportPatients\ImportPatientsResponse;
 use App\GaelO\UseCases\ReactivateStudy\ReactivateStudy;
 use App\GaelO\UseCases\ReactivateStudy\ReactivateStudyRequest;
 use App\GaelO\UseCases\ReactivateStudy\ReactivateStudyResponse;
+use App\GaelO\UseCases\ReverseProxyTus\ReverseProxyTus;
+use App\GaelO\UseCases\ReverseProxyTus\ReverseProxyTusRequest;
+use App\GaelO\UseCases\ReverseProxyTus\ReverseProxyTusResponse;
 use App\GaelO\Util;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -101,5 +104,12 @@ class StudyController extends Controller
         $getKnownOrthancID->execute($getKnownOrthancIDRequest, $getKnownOrthancIDResponse);
         return response()->json($getKnownOrthancIDResponse->body)->setStatusCode($getKnownOrthancIDResponse->status, $getKnownOrthancIDResponse->statusText);
 
+    }
+
+    public function tusUpload(string $studyName, Request $request, ReverseProxyTus $reverseProxyTus, ReverseProxyTusRequest $reverseProxyTusRequest, ReverseProxyTusResponse $reverseProxyTusResponse){
+        $curentUser = Auth::user();
+        $reverseProxyTusRequest->currentUserId = $curentUser['id'];
+        $reverseProxyTusRequest->studyName = $studyName;
+        error_log(print_r($request, true));
     }
 }

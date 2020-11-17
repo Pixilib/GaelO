@@ -12,7 +12,7 @@ class ReverseProxyTus{
     }
 
     public function execute(ReverseProxyTusRequest $reverseProxyTusRequest, ReverseProxyTusResponse $reverseProxyTusResponse){
-
+        //Authorization check que Investigateur dans la study ?
     }
 
 }
