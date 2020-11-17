@@ -11,6 +11,9 @@ use App\GaelO\UseCases\GetPatientVisit\GetPatientVisitResponse;
 use App\GaelO\UseCases\GetVisit\GetVisit;
 use App\GaelO\UseCases\GetVisit\GetVisitRequest;
 use App\GaelO\UseCases\GetVisit\GetVisitResponse;
+use App\GaelO\UseCases\ReverseProxyTus\ReverseProxyTus;
+use App\GaelO\UseCases\ReverseProxyTus\ReverseProxyTusRequest;
+use App\GaelO\UseCases\ReverseProxyTus\ReverseProxyTusResponse;
 use App\GaelO\UseCases\ValidateDicomUpload\ValidateDicomUpload;
 use App\GaelO\UseCases\ValidateDicomUpload\ValidateDicomUploadRequest;
 use App\GaelO\UseCases\ValidateDicomUpload\ValidateDicomUploadResponse;
@@ -70,5 +73,11 @@ class VisitController extends Controller
         $validateDicomUploadRequest = Util::fillObject($requestData, $validateDicomUploadRequest);
         $validateDicomUpload->execute($validateDicomUploadRequest, $validateDicomUploadResponse);
 
+    }
+
+    public function tusUpload(Request $request, ReverseProxyTus $reverseProxyTus, ReverseProxyTusRequest $reverseProxyTusRequest, ReverseProxyTusResponse $reverseProxyTusResponse){
+        $curentUser = Auth::user();
+        $reverseProxyTusRequest->currentUserId = $curentUser['id'];
+        error_log(print_r($request, true));
     }
 }

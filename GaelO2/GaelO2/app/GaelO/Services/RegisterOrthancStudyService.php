@@ -41,6 +41,7 @@ class RegisterOrthancStudyService
     private int $visitId;
     private int $userId;
     private string $originalStudyOrthancId;
+    private int $studyName;
 
 
     public function __construct(OrthancService $orthancService, OrthancStudyRepository $orthancStudyRepository, OrthancSeriesRepository $orthancSeriesRepository)
@@ -50,13 +51,14 @@ class RegisterOrthancStudyService
         $this->orthancSeriesRepository = $orthancSeriesRepository;
     }
 
-    public function setData(bool $storage, int $visitId, string $userId, string $studyOrthancId, string $originalStudyOrthancId)
+    public function setData(bool $storage, int $visitId, string $studyName, string $userId, string $studyOrthancId, string $originalStudyOrthancId)
     {
         $this->orthancService->setOrthancServer($storage);
         $this->visitId = $visitId;
         $this->userId = $userId;
         $this->studyOrthancId = $studyOrthancId;
         $this->originalStudyOrthancId = $originalStudyOrthancId;
+        $this->studyName = $studyName;
     }
 
     /**
@@ -95,7 +97,7 @@ class RegisterOrthancStudyService
         $studyAcquisitionDate = $this->parseDateTime($studyOrthancObject->studyDate, 1);
         $studyAcquisitionTime = $this->parseDateTime($studyOrthancObject->studyTime, 2);
 
-        if ($this->orthancStudyRepository->isExistingOrthancStudyID($studyOrthancObject->studyOrthancID)) {
+        if ($this->orthancStudyRepository->isExistingOrthancStudyID($this->studyName, $studyOrthancObject->studyOrthancID)) {
 
             $this->orthancStudyRepository->updateStudy(
                 $studyOrthancObject->studyOrthancId,

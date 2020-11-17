@@ -101,8 +101,20 @@ class OrthancStudyRepository implements PersistenceInterface{
         return $orthancStudies->count()>0 ? true : false;
     }
 
-    public function isExistingOrthancStudyID(string $orthancStudyID){
-        $orthancStudies = $this->orthancStudy->where('orthanc_id',$orthancStudyID);
+    public function isExistingOrthancStudyID(string $studyName, string $orthancStudyID){
+
+        $orthancStudies = $this->orthancStudy->where('orthanc_id',$orthancStudyID)
+                                    ->join('visits', function ($join) {
+                                        $join->on('orthanc_studies.visit_id', '=', 'visits.id');
+                                    })->join('visit_types', function ($join) {
+                                        $join->on('visit_types.id', '=', 'visits.visit_type_id');
+                                    })->join('visit_groups', function ($join) {
+                                        $join->on('visit_groups.id', '=', 'visit_types.visit_group_id');
+                                    })->where(function ($query) use ($studyName) {
+                                        $query->where('visit_groups.study_name', '=', $studyName);
+                                    });
+
         return $orthancStudies->count()>0 ? true : false;
+
     }
 }

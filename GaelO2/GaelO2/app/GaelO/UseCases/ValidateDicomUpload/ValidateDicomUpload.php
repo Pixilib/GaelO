@@ -32,11 +32,14 @@ class ValidateDicomUpload{
             //Anonymize in temporary Orthanc
             // Send to Orthanc PACS, check completness
 
+            //SK STUDYNAME DOIT VENIR DE L ID VISITE DEPUIS LA DB
+            $studyName= 'test';
             $anonymizedOrthancStudyId = "7d2804c1-a17e7902-9a04d3fd-03e67d58-5ff3b85f";
             //Fill DB with studies /series information
             $this->registerOrthancStudyService->setData(
                 false,
                 $validateDicomUploadRequest->visitId,
+                $studyName,
                 $validateDicomUploadRequest->currentUserId,
                 $anonymizedOrthancStudyId,
                 $validateDicomUploadRequest->originalOrthancId

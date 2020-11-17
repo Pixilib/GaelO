@@ -2,14 +2,20 @@
 
 namespace Tests\Feature;
 
+use App\GaelO\Constants\Constants;
+use App\OrthancStudy;
+use App\Patient;
+use App\ReviewStatus;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Support\Facades\Artisan;
 use Laravel\Passport\Passport;
 use Tests\TestCase;
 use App\User;
 use App\Study;
+use App\Visit;
 use App\VisitGroup;
 use App\VisitType;
+use Tests\AuthorizationTools;
 
 class StudyTest extends TestCase
 {
@@ -97,6 +103,42 @@ class StudyTest extends TestCase
 
     }
 
+    public function testIsKnownOrthancStudyIDForbidden(){
+        $study = factory(Study::class, 1)->create();
+        $studyName = $study->first()->name;
+        $this->json('GET', '/api/studies/'.$studyName.'/orthanc-study-id/WrongOrthancID')->assertStatus(403);
+    }
+
+    public function testIsKnownOrthancStudyIDNot(){
+        $study = factory(Study::class, 1)->create();
+        $studyName = $study->first()->name;
+        AuthorizationTools::addRoleToUser(1, Constants::ROLE_INVESTIGATOR, $studyName);
+        $this->json('GET', '/api/studies/'.$studyName.'/orthanc-study-id/WrongOrthancID')->assertStatus(404);
+    }
+
+    public function testIsKnownOrthancStudyIDYes(){
+
+        $study = factory(Study::class, 1)->create()->first();
+        $visitGroup = factory(VisitGroup::class)->create(['study_name' => $study->name]);
+        $visitType = factory(VisitType::class)->create(['visit_group_id' => $visitGroup['id']]);
+        $patient = factory(Patient::class)->create(['code' => 12341234123412, 'study_name' => $study->name, 'center_code' => 0]);
+        $visit = factory(Visit::class)->create(['creator_user_id' => 1,
+        'patient_code' => $patient['code'],
+        'visit_type_id' => $visitType['id'],
+        'status_done' => 'Done']);
+        $reviewStatus = factory(ReviewStatus::class)->create([
+            'visit_id' => $visit->id,
+            'study_name'=> $study->name,
+        ]);
+        factory(OrthancStudy::class)->create([
+            'orthanc_id'=>'7d2804c1-a17e7902-9a04d3fd-03e67d58-5ff3b85f',
+            'visit_id' => $visit->id,
+            'uploader_id'=> 1,
+        ]);
+        $studyName = $study->name;
+        AuthorizationTools::addRoleToUser(1, Constants::ROLE_INVESTIGATOR, $studyName);
+        $this->json('GET', '/api/studies/'.$studyName.'/orthanc-study-id/7d2804c1-a17e7902-9a04d3fd-03e67d58-5ff3b85f')->assertStatus(200);
+    }
 
 
 }

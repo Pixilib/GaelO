@@ -9,6 +9,9 @@ use App\GaelO\UseCases\DeleteStudy\DeleteStudy;
 use App\GaelO\UseCases\DeleteStudy\DeleteStudyQuery;
 use App\GaelO\UseCases\DeleteStudy\DeleteStudyRequest;
 use App\GaelO\UseCases\DeleteStudy\DeleteStudyResponse;
+use App\GaelO\UseCases\GetKnownOrthancID\GetKnownOrthancID;
+use App\GaelO\UseCases\GetKnownOrthancID\GetKnownOrthancIDRequest;
+use App\GaelO\UseCases\GetKnownOrthancID\GetKnownOrthancIDResponse;
 use App\GaelO\UseCases\GetStudy\GetStudy;
 use App\GaelO\UseCases\GetStudy\GetStudyRequest;
 use App\GaelO\UseCases\GetStudy\GetStudyResponse;
@@ -86,5 +89,17 @@ class StudyController extends Controller
         $importPatients->execute($importPatientsRequest, $importPatientsResponse);
 
         return response()->json($importPatientsResponse->body)->setStatusCode($importPatientsResponse->status, $importPatientsResponse->statusText);
+    }
+
+    public function isKnownOrthancId(string $studyName, string $orthancStudyID, GetKnownOrthancID $getKnownOrthancID, GetKnownOrthancIDRequest $getKnownOrthancIDRequest, GetKnownOrthancIDResponse $getKnownOrthancIDResponse){
+
+        $currentUser = Auth::user();
+        $getKnownOrthancIDRequest->currentUserId = $currentUser['id'];
+        $getKnownOrthancIDRequest->studyName = $studyName;
+        $getKnownOrthancIDRequest->orthancStudyID = $orthancStudyID;
+
+        $getKnownOrthancID->execute($getKnownOrthancIDRequest, $getKnownOrthancIDResponse);
+        return response()->json($getKnownOrthancIDResponse->body)->setStatusCode($getKnownOrthancIDResponse->status, $getKnownOrthancIDResponse->statusText);
+
     }
 }
