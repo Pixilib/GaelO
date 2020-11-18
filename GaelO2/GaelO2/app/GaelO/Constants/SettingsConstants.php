@@ -9,6 +9,9 @@ class SettingsConstants {
     const MAIL_REPLY_TO_DEFAULT = 'mailReplyToDefault';
     const CORPORATION = 'corporation';
     const URL = 'url';
+    const APP_PORT = 'appPort';
+    const APP_PROTOCOL = 'appProtocol';
+    const APP_DOMAIN = 'appDomain';
     const PATIENT_CODE_LENGTH = 'patientCodeLength';
 
     const TUS_ADDRESS = 'tusAddress';

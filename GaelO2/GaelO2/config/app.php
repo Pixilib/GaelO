@@ -148,6 +148,9 @@ return [
     'orthancStoragePassword'=>env('ORTHANC_STORAGE_PASSWORD'),
     'tusAddress'=>env('TUS_ADDRESS'),
     'tusPort'=>env('TUS_PORT'),
+    'appPort'=>env('APP_PORT'),
+    'appProtocol'=>env('APP_PROTOCOL'),
+    'appDomain'=>env('APP_DOMAIN'),
 
 
     'providers' => [

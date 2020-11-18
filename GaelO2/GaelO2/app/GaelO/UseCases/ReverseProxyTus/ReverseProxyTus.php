@@ -5,25 +5,31 @@ namespace App\GaelO\UseCases\ReverseProxyTus;
 use App\GaelO\Adapters\HttpClientAdapter;
 use App\GaelO\Adapters\LaravelFunctionAdapter;
 use App\GaelO\Constants\SettingsConstants;
-use App\GaelO\Services\AuthorizationService;
 
 class ReverseProxyTus{
 
-    public function __construct(AuthorizationService $authorizationService, HttpClientAdapter $httpClientAdapter )
+    public function __construct(HttpClientAdapter $httpClientAdapter )
     {
-        $this->authorizationService = $authorizationService;
         $this->httpClientAdapter = $httpClientAdapter;
     }
 
     public function execute(ReverseProxyTusRequest $reverseProxyTusRequest, ReverseProxyTusResponse $reverseProxyTusResponse){
-        //Authorization check que Investigateur dans la study ?
+        //No particular RBAC, authentified users are allowed to send data (complicated to implement to get only users mathching the uploaded visit id)
+
+        //Get Headers from Request
+        $headers  = $reverseProxyTusRequest->header;
+        //Set server information to make TUS able to send the correct server location for client
+        $headers['X-Forwarded-Proto'] = LaravelFunctionAdapter::getConfig(SettingsConstants::APP_PROTOCOL);
+        $headers['X-Forwarded-Host'] = LaravelFunctionAdapter::getConfig(SettingsConstants::APP_DOMAIN).':'.LaravelFunctionAdapter::getConfig(SettingsConstants::APP_PORT);
+
+        //Get TUS address
         $address = LaravelFunctionAdapter::getConfig(SettingsConstants::TUS_ADDRESS);
         $port = LaravelFunctionAdapter::getConfig(SettingsConstants::TUS_PORT);
-        $headers  = $reverseProxyTusRequest->header;
-        $headers['X-Forwarded-Proto'] = "http";
-        $headers['X-Forwarded-Host'] = "localhost:3000";
-        error_log($reverseProxyTusRequest->url);
+
+        //Make query of TUS
         $response = $this->httpClientAdapter->rowRequest($reverseProxyTusRequest->method, $address.':'.$port.$reverseProxyTusRequest->url, $reverseProxyTusRequest->body ,$headers);
+
+        //Output response
         $reverseProxyTusResponse->status = $response->getStatusCode();
         $reverseProxyTusResponse->statusText = $response->getReasonPhrase();
         $reverseProxyTusResponse->body = $response->getBody();
