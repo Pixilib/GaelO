@@ -183,4 +183,10 @@ class HttpClientAdapter {
         return $response;
     }
 
+    public function rowRequest(string $method, string $url, $body,  array $headers ){
+        error_log(print_r($headers, true));
+        $response = $this->client->request($method, $url, ['body'=> $body, 'headers' => $headers ]);
+        return $response;
+    }
+
 }

@@ -12,12 +12,11 @@ use App\GaelO\Constants\SettingsConstants;
 class TusService{
 
 
-    public function __construct(HttpClientAdapter $httpClientAdapter, LaravelFunctionAdapter $laravelFunctionAdapter){
+    public function __construct(HttpClientAdapter $httpClientAdapter){
         $this->httpClientAdapter = $httpClientAdapter;
-        $this->laravelFunctionAdapter = $laravelFunctionAdapter;
 
-        $address = $this->laravelFunctionAdapter->getConfig(SettingsConstants::TUS_ADDRESS);
-        $port = $this->laravelFunctionAdapter->getConfig(SettingsConstants::TUS_PORT);
+        $address = LaravelFunctionAdapter::getConfig(SettingsConstants::TUS_ADDRESS);
+        $port = LaravelFunctionAdapter::getConfig(SettingsConstants::TUS_PORT);
         $this->httpClientAdapter->setAddress($address, $port);
     }
 
