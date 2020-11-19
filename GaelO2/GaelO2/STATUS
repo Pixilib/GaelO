@@ -22,6 +22,7 @@ Preparation Investigateur / Monitor / Controller / Reviewer :
 
 Salim TODO :
 * Service Orthanc=> Finir les tests (portage fini) => Test qui nécéssiteront Orthanc disponible
+* Service Tus => Faire les test => necessiteront TUS disponible
 
 * Service Visit => Continuer test passage en upload Done
 * Reverse proxy dicomweb et tus
@@ -29,7 +30,6 @@ Salim TODO :
 => DicomWeb : A Faire (sur le modele de TUS)
 
 * Faire le use case de recupération des images d'une visite et son testing (Get dicoms)
-
 
 //Import des images
 => Reste a faire check d'authorization

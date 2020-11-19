@@ -44,6 +44,7 @@ class ValidateDicomUpload{
             $visitEntity = $this->visitService->getVisitContext($validateDicomUploadRequest->currentUserId);
             $studyName = $visitEntity['visit_group']['study_name'];
             $visitType = $visitEntity['visit_type']['name'];
+            $visitGroup =  $visitEntity['visit_group']['modality'];
             $anonProfile = $visitEntity['visit_type']['anon_profile'];
 
             //TODO Authorization : Check Investigator Role, and patient is in affiliated center of user, and status upload not done, and visit status done
@@ -102,6 +103,7 @@ class ValidateDicomUpload{
             //Switch to Orthanc PACS to check images and fill database
             $this->orthancService->setOrthancServer(true);
 
+            $studyOrthancDetails = $this->orthancService->getOrthancRessourcesDetails('studies', $anonymizedOrthancStudyID);
             $statistics = $this->orthancService->getOrthancRessourcesStatistics('studies', $anonymizedOrthancStudyID);
             if($statistics['CountInstances'] !== $validateDicomUploadRequest->numberOfInstances){
                 throw new GaelOValidateDicomException("Error during Peer transfers");
@@ -120,6 +122,21 @@ class ValidateDicomUpload{
 
             //Change Visit status
             $this->visitService->updateUploadStatus($validateDicomUploadRequest->visitId, Constants::UPLOAD_STATUS_DONE, $validateDicomUploadRequest->currentUserId);
+
+            //Write success in Tracker
+            $actionDetails = [
+                'uploadedSeries'=>$studyOrthancDetails['Series'],
+                'patientCode'=> $patientCode,
+                'visitType'=>$visitType,
+                'visitGroup'=>$visitGroup
+            ];
+
+            $this->trackerService->writeAction($validateDicomUploadRequest->currentUserId,
+                            Constants::ROLE_INVESTIGATOR,
+                            $studyName,
+                            $validateDicomUploadRequest->visitId,
+                            Constants::TRACKER_UPLOAD_SERIES,
+                            $actionDetails);
 
             $validateDicomUploadResponse->status = 200;
             $validateDicomUploadResponse->statusText = 'OK';
