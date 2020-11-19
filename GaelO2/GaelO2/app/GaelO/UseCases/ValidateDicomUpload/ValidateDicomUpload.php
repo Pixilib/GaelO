@@ -98,7 +98,7 @@ class ValidateDicomUpload{
             $this->orthancService->sendToPeer("OrthancPacs", [$anonymizedOrthancStudyID], true);
 
             //erase transfered anonymized study from orthanc exposed
-            $this->orthancService->deleteFromOrthanc("studies", $importedOrthancStudyID);
+            $this->orthancService->deleteFromOrthanc("studies", $anonymizedOrthancStudyID);
 
             //Switch to Orthanc PACS to check images and fill database
             $this->orthancService->setOrthancServer(true);
@@ -150,6 +150,7 @@ class ValidateDicomUpload{
             $validateDicomUploadResponse->body = $e->getErrorBody();
 
         } catch (Exception $e){
+
             $this->handleImportException($e->getMessage(), $validateDicomUploadRequest->visitId,
                         $patientCode, $visitType, $unzipedPath, $studyName, $validateDicomUploadRequest->currentUserId);
 
@@ -172,6 +173,7 @@ class ValidateDicomUpload{
 
         //Recursive scann of the unzipped folder
         $filesArray = PathService::getPathAsFileArray($unzipedPath);
+
         if(sizeof($filesArray) != $numberOfInstances){
             throw new GaelOValidateDicomException("Number Of Uploaded Files dosen't match expected instance number");
         }
@@ -211,7 +213,7 @@ class ValidateDicomUpload{
      */
     private function handleImportException(string $errorMessage, int $visitId, string $patientCode, string $visitType,  string $unzipedPath, string $studyName, int $userId) {
 
-        $this->visitService->updateUploadStatus($visitId, Constants::UPLOAD_STATUS_NOT_DONE);
+        $this->visitService->updateUploadStatus($visitId, Constants::UPLOAD_STATUS_NOT_DONE, $userId);
 
         $actionDetails = [
             'reason'=>$errorMessage

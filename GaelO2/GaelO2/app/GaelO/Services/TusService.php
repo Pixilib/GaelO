@@ -26,14 +26,14 @@ class TusService{
 
         $resource  = fopen( $downloadedFileName, 'r+');
 
-        $this->httpClientAdapter->requestStreamResponseToFile('GET', '/tus/'.$tusFileId,  $resource, ['Tus-Resumable' => '1.0.0'] );
+        $this->httpClientAdapter->requestStreamResponseToFile('GET', '/api/tus/'.$tusFileId,  $resource, ['Tus-Resumable' => '1.0.0'] );
 
         return $downloadedFileName;
 
     }
 
     public function deleteZip(string $tusFileId) : void {
-        $this->httpClientAdapter->request('DELETE', '/tus/'.$tusFileId, null, ['Tus-Resumable' => '1.0.0'] );
+        $this->httpClientAdapter->rowRequest('DELETE', '/api/tus/'.$tusFileId, null, ['Tus-Resumable' => '1.0.0'] );
     }
 
 }

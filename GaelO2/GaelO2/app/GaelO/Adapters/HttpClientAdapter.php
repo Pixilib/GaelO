@@ -7,9 +7,6 @@ use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Pool;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
-use GuzzleHttp\Psr7\Utils;
-use ZipArchive;
-
 class HttpClientAdapter {
 
     private string $login = '';
@@ -66,8 +63,8 @@ class HttpClientAdapter {
 
             foreach ($files as $file) {
                 $body = fopen($file, 'r');
-                $headers = ['auth' => [$this->login, $this->password],
-                    'headers'  => ['content-type' => 'application/dicom', 'Accept' => 'application/json']
+                $headers = ['Authorization' => "Basic ".base64_encode($this->login.':'.$this->password),
+                'headers'  => ['content-type' => 'application/dicom', 'Accept' => 'application/json']
                 ];
 
                 yield new Request($method, $this->address.$uri, $headers , $body);
@@ -77,7 +74,7 @@ class HttpClientAdapter {
         $responseArray=[];
 
         $pool = new Pool($this->client, $requests($files), [
-            'concurrency' => 4,
+            'concurrency' => 1,
             'fulfilled' => function (Response $response, $index) use (&$responseArray) {
                 $responseArray[] = json_decode($response->getBody()->getContents(), true);
             },
@@ -183,9 +180,13 @@ class HttpClientAdapter {
         return $response;
     }
 
-    public function rowRequest(string $method, string $url, $body,  array $headers ){
-        error_log(print_r($headers, true));
-        $response = $this->client->request($method, $url, ['body'=> $body, 'headers' => $headers ]);
+    public function rowRequest(string $method, string $uri, $body,  array $headers ){
+        if($body !== null){
+            $options = ['body'=> $body, 'headers' => $headers ];
+        }else{
+            $options = ['headers' => $headers ];
+        }
+        $response = $this->client->request($method, $this->address.$uri, $options);
         return $response;
     }
 

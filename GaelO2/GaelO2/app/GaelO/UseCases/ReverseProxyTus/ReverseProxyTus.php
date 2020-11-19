@@ -28,7 +28,8 @@ class ReverseProxyTus{
         $port = LaravelFunctionAdapter::getConfig(SettingsConstants::TUS_PORT);
 
         //Make query of TUS
-        $response = $this->httpClientAdapter->rowRequest($reverseProxyTusRequest->method, $address.':'.$port.$reverseProxyTusRequest->url, $reverseProxyTusRequest->body ,$headers);
+        $this->httpClientAdapter->setAddress($address, $port);
+        $response = $this->httpClientAdapter->rowRequest($reverseProxyTusRequest->method, $reverseProxyTusRequest->url, $reverseProxyTusRequest->body ,$headers);
 
         //Output response
         $reverseProxyTusResponse->status = $response->getStatusCode();

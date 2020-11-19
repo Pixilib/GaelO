@@ -191,6 +191,7 @@ Class MailServices extends SendEmailAdapter {
                 string $studyName, string $zipPath, int $userId, string $errorMessage){
 
         $parameters = [
+            'name'=> 'User',
             'idVisit' => $visitId,
             'patientCode'=>$patientCode,
             'visitType'=>$visitType,

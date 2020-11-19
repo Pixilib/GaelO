@@ -41,7 +41,7 @@ class RegisterOrthancStudyService
     private int $visitId;
     private int $userId;
     private string $originalStudyOrthancId;
-    private int $studyName;
+    private string $studyName;
 
 
     public function __construct(OrthancService $orthancService, OrthancStudyRepository $orthancStudyRepository, OrthancSeriesRepository $orthancSeriesRepository)

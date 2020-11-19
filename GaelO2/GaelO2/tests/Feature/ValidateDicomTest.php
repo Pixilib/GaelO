@@ -55,7 +55,7 @@ class ValidateDicomTest extends TestCase
             'study_name'=> $this->study->name,
         ]);
 
-        if (true) {
+        if (false) {
             $this->markTestSkipped('all tests in this file are invactive, this is only to check orthanc communication');
         }
 
@@ -67,14 +67,13 @@ class ValidateDicomTest extends TestCase
         $payload = [
             'visitId'=>1,
             'originalOrthancId'=>'7d2804c1-a17e7902-9a04d3fd-03e67d58-5ff3b85f',
-            'uploadedFileTusId'=>['', ''],
-            'numberOfInstance'=>150
+            'uploadedFileTusId'=>['1d25e3ffe4e35f7e5da40861a04c7012'],
+            'numberOfInstances'=>326
         ];
 
         $response = $this->json('POST', 'api/visits/'.$this->visit->id.'/validate-dicom', $payload);
-        $response->assertSuccessful();
-        $orthancStudy = OrthancStudy::where('visit_id', $this->visit->id)->first()->series()->get()->toArray();
+        dd($response);
 
-        dd($orthancStudy);
+
     }
 }
