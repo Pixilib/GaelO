@@ -55,7 +55,7 @@ class ValidateDicomTest extends TestCase
             'study_name'=> $this->study->name,
         ]);
 
-        if (false) {
+        if (true) {
             $this->markTestSkipped('all tests in this file are invactive, this is only to check orthanc communication');
         }
 
@@ -72,7 +72,6 @@ class ValidateDicomTest extends TestCase
         ];
 
         $response = $this->json('POST', 'api/visits/'.$this->visit->id.'/validate-dicom', $payload);
-        dd($response);
 
 
     }

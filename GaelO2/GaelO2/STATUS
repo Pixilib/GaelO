@@ -21,26 +21,15 @@ Preparation Investigateur / Monitor / Controller / Reviewer :
 
 
 Salim TODO :
+
+* Validation des images => Reste a faire check d'authorization
+* GetDicoms a finir avec ses tests
 * Service Orthanc=> Finir les tests (portage fini) => Test qui nécéssiteront Orthanc disponible
 * Service Tus => Faire les test => necessiteront TUS disponible
 
 * Service Visit => Continuer test passage en upload Done
-* Reverse proxy dicomweb et tus
-=> Tus : A tester
-=> DicomWeb : A Faire (sur le modele de TUS)
+* Reverse proxy dicomweb à faire (comme TUS) => Pas de test pour les reverseproxy
 
-* Faire le use case de recupération des images d'une visite et son testing (Get dicoms)
-
-//Import des images
-=> Reste a faire check d'authorization
-
--> A tester : Le usecase recupere les zip de tus et les decompresse via ServiceTus
--> A tester : Le usecase les importe dans orthanc temporary
--> A tester : Le usecase les anonymises
--> A tester : le usecase les transfert vers orthanc pacs
--> OK : le usecase se connecte a orthanc pacs et fait la declaration des studies/series via registerOrthancStudyService
--> OK : le usecase change le statut de la visite via visit service
--> A tester : le usecase catch les erreur, envoie les mails et ecrit dans le tracker
 
 Finir de refactorer :
     GetPatientVisit (refac + changer l'access au données dans bdd)
