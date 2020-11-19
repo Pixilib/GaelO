@@ -7,5 +7,5 @@ class ValidateDicomUploadRequest{
     public int $visitId;
     public string $originalOrthancId;
     public array $uploadedFileTusId;
-    public int $numberOfInstance;
+    public int $numberOfInstances;
 }

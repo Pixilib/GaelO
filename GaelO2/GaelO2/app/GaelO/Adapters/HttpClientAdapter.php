@@ -60,7 +60,7 @@ class HttpClientAdapter {
 
     }
 
-    public function requestUploadArrayDicom(string $method, string $uri, array $files){
+    public function requestUploadArrayDicom(string $method, string $uri, array $files) : array {
 
         $requests = function ($files) use ($method, $uri) {
 

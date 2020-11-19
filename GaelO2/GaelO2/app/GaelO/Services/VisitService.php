@@ -16,6 +16,14 @@ class VisitService
         $this->mailServices = $mailServices;
     }
 
+    public function getVisitContext(int $visitId) : array {
+        return $this->visitRepository->getVisitContext($visitId);
+    }
+
+    public function getVisitData(int $visitId) : array {
+        return $this->visitRepository->find($visitId);
+    }
+
     public function createVisit(
         string $studyName,
         int $creatorUserId,
@@ -52,17 +60,19 @@ class VisitService
 
         $updatedEntity = $this->visitRepository->updateUploadStatus($visitId, $uploadStatus);
 
-        $visitEntity = $this->visitRepository->getVisitContext($visitId);
-        $patientCode = $updatedEntity['patient_code'];
-        $study = $visitEntity['visit_group']['study_name'];
-        $visitType = $visitEntity['visit_type']['name'];
-        $qcNeeded = $visitEntity['visit_type']['qc_needed'];
         //If uploaded done and investigator done (Done or Not Needed) send notification message
         if (
             $uploadStatus === Constants::UPLOAD_STATUS_DONE
             && $updatedEntity['state_investigator_form'] !== Constants::INVESTIGATOR_FORM_NOT_DONE
         ) {
+            $visitEntity = $this->getVisitContext($visitId);
+            $patientCode = $updatedEntity['patient_code'];
+            $study = $visitEntity['visit_group']['study_name'];
+            $visitType = $visitEntity['visit_type']['name'];
+            $qcNeeded = $visitEntity['visit_type']['qc_needed'];
+
             $this->mailServices->sendUploadedVisitMessage($uploaderUserId, $study, $patientCode, $visitType, $qcNeeded);
+            //If Qc NotNeeded mark visit as available for review
             if(!$qcNeeded) {
                 $this->updateReviewAvailability($visitId, true, $study, $patientCode, $visitType);
             }

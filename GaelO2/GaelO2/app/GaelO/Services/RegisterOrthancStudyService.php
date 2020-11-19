@@ -51,9 +51,9 @@ class RegisterOrthancStudyService
         $this->orthancSeriesRepository = $orthancSeriesRepository;
     }
 
-    public function setData(bool $storage, int $visitId, string $studyName, string $userId, string $studyOrthancId, string $originalStudyOrthancId)
+    public function setData(int $visitId, string $studyName, string $userId, string $studyOrthancId, string $originalStudyOrthancId)
     {
-        $this->orthancService->setOrthancServer($storage);
+        $this->orthancService->setOrthancServer(true);
         $this->visitId = $visitId;
         $this->userId = $userId;
         $this->studyOrthancId = $studyOrthancId;

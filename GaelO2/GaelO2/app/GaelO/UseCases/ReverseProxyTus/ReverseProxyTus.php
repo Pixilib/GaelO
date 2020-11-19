@@ -15,6 +15,7 @@ class ReverseProxyTus{
 
     public function execute(ReverseProxyTusRequest $reverseProxyTusRequest, ReverseProxyTusResponse $reverseProxyTusResponse){
         //No particular RBAC, authentified users are allowed to send data (complicated to implement to get only users mathching the uploaded visit id)
+        //SK on peut ajouter la study dans le header via uppy pour faire un checkrole
 
         //Get Headers from Request
         $headers  = $reverseProxyTusRequest->header;

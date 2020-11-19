@@ -21,23 +21,26 @@ Preparation Investigateur / Monitor / Controller / Reviewer :
 
 
 Salim TODO :
-* Service Orthanc=> Finir les tests (portage fini)
+* Service Orthanc=> Finir les tests (portage fini) => Test qui nécéssiteront Orthanc disponible
 
 * Service Visit => Continuer test passage en upload Done
-* Faire Service/API Import DICOM => Import + fill BDD Orthanc (CF INFRA)
-* Reverse proxy dicomweb et tus => implementer l'authorization et la réponse de guzzle remplace la reponse de laravel pour renvoyer la réponse
+* Reverse proxy dicomweb et tus
+=> Tus : A tester
+=> DicomWeb : A Faire (sur le modele de TUS)
 
 * Faire le use case de recupération des images d'une visite et son testing (Get dicoms)
 
 
 //Import des images
--> Le usecase recupere les zip de tus et les decompresse via ServiceTus
--> Le usecase les importe dans orthanc temporary
--> Le usecase les anonymises
--> le usecase les transfert vers orthanc pacs
+=> Reste a faire check d'authorization
+
+-> A tester : Le usecase recupere les zip de tus et les decompresse via ServiceTus
+-> A tester : Le usecase les importe dans orthanc temporary
+-> A tester : Le usecase les anonymises
+-> A tester : le usecase les transfert vers orthanc pacs
 -> OK : le usecase se connecte a orthanc pacs et fait la declaration des studies/series via registerOrthancStudyService
 -> OK : le usecase change le statut de la visite via visit service
--> le usecase catch les erreur, envoie les mails et ecrit dans le tracker
+-> A tester : le usecase catch les erreur, envoie les mails et ecrit dans le tracker
 
 Finir de refactorer :
     GetPatientVisit (refac + changer l'access au données dans bdd)
@@ -52,6 +55,7 @@ Finir de refactorer :
 Faire une condition pour les NoContent dans le controller ? => ou mettre toujours un payload vide pour eviter les errur error->json() dans front?
 Voir dans message d'erreur comment ajouter d'autre info que le message (pour id de login)
 CreateVisitType et CreateVisitGroup => Ajouter un forbidden si l'etude a déjà des visites crées (etude demarrée)
+ReverseProxy TUS => On peut ajouter le studyName dans le header dans uppy pour le recupérer dans le use case et checker le role Investigateur
 
 A executer en post install :
 php artisan db:migrate --seed

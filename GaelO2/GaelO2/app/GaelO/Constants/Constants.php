@@ -18,6 +18,7 @@ class Constants {
     const TRACKER_SEND_MESSAGE = "Send Message";
     const TRACKER_CREATE_VISIT = "Create Visit";
     const TRACKER_UPLOAD_SERIES = "Upload Series";
+    const TRACKER_UPLOAD_VALIDATION_FAILED = "Upload Failed";
     const TRACKER_UNLOCK_FORM = "Unlock Form";
     const TRACKER_CREATE_STUDY = "Create Study";
     const TRACKER_DEACTIVATE_STUDY = "Deactivate Study";
@@ -59,6 +60,8 @@ class Constants {
     const QUALITY_CONTROL_ACCEPTED = "Accepted";
 
     const UPLOAD_STATUS_DONE = "Done";
+    const UPLOAD_STATUS_NOT_DONE = "Not Done";
+    const UPLOAD_STATUS_PROCESSING = "Processing";
 
     const ORTHANC_ANON_PROFILE_DEFAULT = "Default";
     const ORTHANC_ANON_PROFILE_FULL = "Full";

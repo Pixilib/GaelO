@@ -187,4 +187,23 @@ Class MailServices extends SendEmailAdapter {
 
     }
 
+    public function sendValidationFailMessage(int $visitId, string $patientCode, string $visitType,
+                string $studyName, string $zipPath, int $userId, string $errorMessage){
+
+        $parameters = [
+            'idVisit' => $visitId,
+            'patientCode'=>$patientCode,
+            'visitType'=>$visitType,
+            'study'=> $studyName,
+            'zipPath'=> $zipPath,
+            'userId'=> $userId,
+            'errorMessage'=>$errorMessage
+        ];
+
+        $this->mailInterface->setTo( $this->userRepository->getAdministratorsEmails() );
+        $this->mailInterface->setReplyTo();
+        $this->mailInterface->setParameters($parameters);
+        $this->mailInterface->sendModel(MailConstants::EMAIL_UPLOAD_FAILURE);
+    }
+
 }
