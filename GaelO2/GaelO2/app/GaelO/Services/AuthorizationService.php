@@ -5,6 +5,7 @@ namespace App\GaelO\Services;
 use App\GaelO\Constants\Constants;
 use App\GaelO\Repositories\PatientRepository;
 use App\GaelO\Repositories\UserRepository;
+use App\GaelO\Repositories\VisitRepository;
 
 class AuthorizationService {
 
@@ -13,9 +14,10 @@ class AuthorizationService {
     private array $userData;
 
 
-    public function __construct(UserRepository $userRepository, PatientRepository $patientRepository) {
+    public function __construct(UserRepository $userRepository, PatientRepository $patientRepository, VisitService $visitService) {
         $this->userRepository = $userRepository;
         $this->patientRepository = $patientRepository;
+        $this->visitService = $visitService;
     }
 
     public function setCurrentUser(int $userId ){
@@ -63,8 +65,33 @@ class AuthorizationService {
         return false;
     }
 
-    public function isVisitAllowed(int $visitId){
+    public function isVisitAllowed(int $visitId, string $role) : bool {
 
+        $visitData  = $this->visitService->getVisitData($visitId);
+        $patientCode = $visitData['patient_code'];
+
+        $visitEntity = $this->visitService->getVisitContext($visitId);
+        $studyName = $visitEntity['visit_group']['study_name'];
+
+		//Check that called Role exists for users and visit is not deleted
+		if ($this->isRoleAllowed($role, $studyName) ) {
+			if ($role == Constants::ROLE_INVESTIGATOR) {
+				return $this->isPatientAllowed($patientCode, $role);
+			}else if ($role == Constants::ROLE_REVIEWER) {
+				//For reviewer the visit access is allowed if one of the created visits is still awaiting review
+                //This is made to allow access to references scans
+                //SK ICI A FAIRE
+				//$patientObject=$visitData->getPatient();
+				//$isAwaitingReview=$patientObject->getPatientStudy()->isHavingAwaitingReviewImagingVisit();
+				return false;
+			}else {
+				//Controller, Supervisor, Admin, Monitor simply accept when role is available in patient's study (no specific rules)
+				return true;
+			}
+
+        }
+
+        return false;
     }
 
 }

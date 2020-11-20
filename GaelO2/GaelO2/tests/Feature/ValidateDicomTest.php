@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\GaelO\Constants\Constants;
 use App\OrthancSeries;
 use App\OrthancStudy;
 use App\User;
@@ -15,6 +16,7 @@ use App\ReviewStatus;
 use App\Study;
 use Tests\TestCase;
 use App\Visit;
+use Tests\AuthorizationTools;
 
 class ValidateDicomTest extends TestCase
 {
@@ -57,6 +59,9 @@ class ValidateDicomTest extends TestCase
 
         if (true) {
             $this->markTestSkipped('all tests in this file are invactive, this is only to check orthanc communication');
+        }else{
+            $this->tusIdArray = ['1d25e3ffe4e35f7e5da40861a04c7012'];
+            $this->numberOfInstances = 326;
         }
 
     }
@@ -64,14 +69,30 @@ class ValidateDicomTest extends TestCase
 
     public function testValidateDicom()
     {
+        AuthorizationTools::addRoleToUser(1, Constants::ROLE_INVESTIGATOR, $this->study->name);
         $payload = [
             'visitId'=>1,
             'originalOrthancId'=>'7d2804c1-a17e7902-9a04d3fd-03e67d58-5ff3b85f',
-            'uploadedFileTusId'=>['1d25e3ffe4e35f7e5da40861a04c7012'],
-            'numberOfInstances'=>326
+            'uploadedFileTusId'=>$this->tusIdArray,
+            'numberOfInstances'=>$this->numberOfInstances
         ];
 
         $response = $this->json('POST', 'api/visits/'.$this->visit->id.'/validate-dicom', $payload);
+        $response->assertStatus(200);
+
+
+    }
+
+    public function testValidateDicomShouldBeForbidden()
+    {
+        $payload = [
+            'visitId'=>1,
+            'originalOrthancId'=>'7d2804c1-a17e7902-9a04d3fd-03e67d58-5ff3b85f',
+            'uploadedFileTusId'=>$this->tusIdArray,
+            'numberOfInstances'=>$this->numberOfInstances
+        ];
+
+        $this->json('POST', 'api/visits/'.$this->visit->id.'/validate-dicom', $payload)->assertStatus(403);
 
 
     }

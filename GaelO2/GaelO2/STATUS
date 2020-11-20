@@ -22,13 +22,14 @@ Preparation Investigateur / Monitor / Controller / Reviewer :
 
 Salim TODO :
 
-* Validation des images => Reste a faire check d'authorization
+* Validation des images => OK test à executer
+
 * GetDicoms a finir avec ses tests
 * Service Orthanc=> Finir les tests (portage fini) => Test qui nécéssiteront Orthanc disponible
+* Reverse proxy dicomweb à faire (comme TUS) => Test necessiteront Orthanc Disponible
 * Service Tus => Faire les test => necessiteront TUS disponible
 
 * Service Visit => Continuer test passage en upload Done
-* Reverse proxy dicomweb à faire (comme TUS) => Pas de test pour les reverseproxy
 
 
 Finir de refactorer :
