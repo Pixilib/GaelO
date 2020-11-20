@@ -1,6 +1,8 @@
 GaelO
 
 --Pending Changes --
+
+--GaelO 1.3.4 20/11/20--
   fix authorization now made at visit level to attach review files
 
 --GaelO 1.3.3 19/11/20--
