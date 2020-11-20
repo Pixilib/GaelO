@@ -43,6 +43,7 @@ foreach ($possibleStudyList as $study => $roles) {
 				$visitDetails['idVisit']=$visitObject->id_visit;
 				$visitDetails['visitType']=$visitObject->visitType;
 				$visitDetails['visitStatus']=$visitObject->reviewStatus;
+				$visitDetails['reviewAvailable']=$visitObject->reviewAvailable;
 				$visitDetails['visitModality']=$visitObject->visitGroupObject->groupModality;
 
 				$dicomDetailsObject=$visitObject->getStudyDicomDetails();

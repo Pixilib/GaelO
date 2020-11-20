@@ -27,7 +27,7 @@ $local=$_SESSION['role'] == User::INVESTIGATOR ? true : false;
 
 //Need to retrieve study before testing permission, can't test visit permissions directly because permission class tests non deleted status
 $visitObject=new Visit($visitId, $linkpdo);
-$accessCheck=$userObject->isRoleAllowed($visitObject->study, $_SESSION['role']);
+$accessCheck=$userObject->isVisitAllowed($visitId, $_SESSION['role']);
 
 if ($accessCheck && in_array($_SESSION['role'], array(User::INVESTIGATOR, User::REVIEWER))) {
 	$formProcessor=$visitObject->getFromProcessor($local, $_SESSION['username']);
