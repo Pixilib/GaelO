@@ -1,8 +1,8 @@
 <?php
 
-namespace App\GaelO\UseCases\ReverseProxyTus;
+namespace App\GaelO\UseCases\ReverseProxyDicomWeb;
 
-class ReverseProxyTusResponse{
+class ReverseProxyDicomWebResponse{
     public int $status;
     public string $statusText;
     public $body;
