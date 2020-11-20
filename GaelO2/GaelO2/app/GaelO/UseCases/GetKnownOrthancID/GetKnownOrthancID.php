@@ -22,7 +22,7 @@ class GetKnownOrthancID{
 
             $this->checkAuthorization($getKnownOrthancIDRequest->currentUserId, $getKnownOrthancIDRequest->studyName);
 
-            $known = $this->persistenceInterface->isExistingOrthancStudyID($getKnownOrthancIDRequest->studyName, $getKnownOrthancIDRequest->orthancStudyID);
+            $known = $this->persistenceInterface->isExistingOrthancStudyID($getKnownOrthancIDRequest->orthancStudyID);
 
             if($known){
                 $getKnownOrthancIDResponse->body = $known;

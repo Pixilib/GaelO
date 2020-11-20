@@ -73,7 +73,7 @@ class RegisterOrthancStudyService
         $studyOrthancObject->retrieveStudyData();
 
         //Check that original OrthancID is unknown for this study
-        if ( ! $this->orthancStudyRepository->isExistingOriginalOrthancStudyID($this->originalStudyOrthancId)) {
+        if ( ! $this->orthancStudyRepository->isExistingOriginalOrthancStudyID($this->originalStudyOrthancId, $this->studyName)) {
 
             //Fill la database
             $this->addToDbStudy($studyOrthancObject);
@@ -97,7 +97,7 @@ class RegisterOrthancStudyService
         $studyAcquisitionDate = $this->parseDateTime($studyOrthancObject->studyDate, 1);
         $studyAcquisitionTime = $this->parseDateTime($studyOrthancObject->studyTime, 2);
 
-        if ($this->orthancStudyRepository->isExistingOrthancStudyID($this->studyName, $studyOrthancObject->studyOrthancID)) {
+        if ($this->orthancStudyRepository->isExistingOrthancStudyID($studyOrthancObject->studyOrthancID)) {
 
             $this->orthancStudyRepository->updateStudy(
                 $studyOrthancObject->studyOrthancId,

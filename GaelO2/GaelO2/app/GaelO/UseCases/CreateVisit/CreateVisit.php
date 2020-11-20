@@ -57,7 +57,7 @@ class CreateVisit {
 
     private function checkAuthorization(CreateVisitRequest $createVisitRequest){
         $this->authorizationService->setCurrentUser($createVisitRequest->currentUserId);
-        $answer = $this->authorizationService->isPatientAllowed($createVisitRequest->role, $createVisitRequest->patientCode);
+        $answer = $this->authorizationService->isPatientAllowed($createVisitRequest->patientCode, $createVisitRequest->role);
         if(!$answer) throw new GaelOForbiddenException();
 
     }

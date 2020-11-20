@@ -43,7 +43,7 @@ class AuthorizationService {
         return sizeof(array_intersect($roles, $existingRoles)) > 0 ;
     }
 
-    public function isPatientAllowed(string $role, int $patientCode) : bool {
+    public function isPatientAllowed(int $patientCode, string $role) : bool {
 
         $patientDetails = $this->patientRepository->find($patientCode);
         $patientStudy = $patientDetails['study_name'];
@@ -74,21 +74,26 @@ class AuthorizationService {
         $studyName = $visitEntity['visit_group']['study_name'];
 
 		//Check that called Role exists for users and visit is not deleted
-		if ($this->isRoleAllowed($role, $studyName) ) {
-			if ($role == Constants::ROLE_INVESTIGATOR) {
-				return $this->isPatientAllowed($patientCode, $role);
-			}else if ($role == Constants::ROLE_REVIEWER) {
-				//For reviewer the visit access is allowed if one of the created visits is still awaiting review
-                //This is made to allow access to references scans
-                //SK ICI A FAIRE
-				//$patientObject=$visitData->getPatient();
-				//$isAwaitingReview=$patientObject->getPatientStudy()->isHavingAwaitingReviewImagingVisit();
-				return false;
-			}else {
-				//Controller, Supervisor, Admin, Monitor simply accept when role is available in patient's study (no specific rules)
-				return true;
-			}
-
+        if ($role === Constants::ROLE_INVESTIGATOR) {
+            return $this->isPatientAllowed($patientCode, $role);
+        }else if ($role === Constants::ROLE_REVIEWER) {
+            //For reviewer the visit access is allowed if one of the created visits is still awaiting review
+            //This is made to allow access to references scans
+            //SK ICI A FAIRE
+            //$patientObject=$visitData->getPatient();
+            //$isAwaitingReview=$patientObject->getPatientStudy()->isHavingAwaitingReviewImagingVisit();
+            return $this->isRoleAllowed($role, $studyName);
+        } else if ($role === Constants::ROLE_CONTROLER) {
+            //For controller controller role should be allows and visit QC status be not done or awaiting definitive conclusion
+            $allowedStatus = array(Constants::QUALITY_CONTROL_NOT_DONE, Constants::QUALITY_CONTROL_WAIT_DEFINITIVE_CONCLUSION);
+            if( $this->isRoleAllowed($role, $studyName) && in_array($visitData['state_quality_control'], $allowedStatus) ){
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            //Supervisor, Admin, Monitor simply accept when role is available in patient's study (no specific rules)
+            return $this->isRoleAllowed($role, $studyName);
         }
 
         return false;

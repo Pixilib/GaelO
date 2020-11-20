@@ -3,17 +3,22 @@
 namespace App\GaelO\Services;
 
 use App\GaelO\Constants\Constants;
+use App\GaelO\Repositories\OrthancStudyRepository;
 use App\GaelO\Repositories\VisitTypeRepository;
 use App\GaelO\Repositories\VisitRepository;
 
 class VisitService
 {
 
-    public function __construct(VisitRepository $visitRepository, VisitTypeRepository $visitTypeRepository, MailServices $mailServices)
+    public function __construct(VisitRepository $visitRepository,
+                            VisitTypeRepository $visitTypeRepository,
+                            OrthancStudyRepository $orthancStudyRepository,
+                            MailServices $mailServices)
     {
         $this->visitTypeRepository = $visitTypeRepository;
         $this->visitRepository = $visitRepository;
         $this->mailServices = $mailServices;
+        $this->orthancStudyRepository = $orthancStudyRepository;
     }
 
     public function getVisitContext(int $visitId) : array {
@@ -22,6 +27,16 @@ class VisitService
 
     public function getVisitData(int $visitId) : array {
         return $this->visitRepository->find($visitId);
+    }
+
+    public function getVisitSeriesIdsDicomArray(int $visitId, bool $deleted){
+        $studyOrthancId = $this->orthancStudyRepository->getStudyOrthancIDFromVisit($visitId);
+        $seriesEntities = $this->orthancStudyRepository->getChildSeries($studyOrthancId, $deleted);
+        $seriesOrthancIdArray = array_map(function($series){
+            return $series['orthanc_id'];
+        }, $seriesEntities);
+        return $seriesOrthancIdArray;
+
     }
 
     public function createVisit(
