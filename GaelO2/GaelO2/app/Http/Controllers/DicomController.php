@@ -22,11 +22,9 @@ class DicomController extends Controller
         $getDicoms->execute($getDicomsRequest, $getDicomsResponse);
 
         if($getDicomsResponse->status === 200) {
-
             return response()->streamDownload( function() use( &$getDicoms){
                 $getDicoms->outputStream();
             }, $getDicomsResponse->filename);
-
         }else{
             return response()->json($getDicomsResponse->body)
             ->setStatusCode($getDicomsResponse->status, $getDicomsResponse->statusText);

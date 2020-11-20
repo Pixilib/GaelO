@@ -29,7 +29,7 @@ class DicomTest extends TestCase
         $this->baseRunDatabaseMigrations();
         $this->artisan('db:seed');
 
-        if (false) {
+        if (true) {
             $this->markTestSkipped('Needs Orthanc To Be Tested');
         }
 
@@ -72,16 +72,12 @@ class DicomTest extends TestCase
     public function testGetOrthancZip(){
         AuthorizationTools::addRoleToUser(1, Constants::ROLE_INVESTIGATOR, $this->study->name);
         $answer = $this->get('api/visits/1/dicoms?role=Investigator');
-        dd($answer);
-
         $answer->assertStatus(200);
 
     }
 
     public function testGetOrthancShouldFailBeacauseNoRole(){
         $answer = $this->get('api/visits/1/dicoms?role=Investigator');
-        dd($answer);
         $answer->assertStatus(403);
-
     }
 }

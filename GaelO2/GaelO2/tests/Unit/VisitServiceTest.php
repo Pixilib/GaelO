@@ -4,7 +4,6 @@ namespace Tests\Unit;
 
 use App\GaelO\Constants\Constants;
 use App\GaelO\Services\MailServices;
-use App\GaelO\Services\VisitService;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\App;

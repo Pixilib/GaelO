@@ -24,21 +24,23 @@ class GetDicoms{
 
         try{
 
-             //Checker Authorization
-         $this->checkAuthorization($getDicomsRequest->currentUserId, $getDicomsRequest->visitId, $getDicomsRequest->role);
-        //Visits data
-        $visitData = $this->visitService->getVisitData($getDicomsRequest->visitId);
-        $visitContext = $this->visitService->getVisitContext($getDicomsRequest->visitId);
-        $studyName = $visitContext['visit_group']['study_name'];
-        $visitType = $visitContext['visit_type']['name'];
-        $visitGroup =  $visitContext['visit_group']['modality'];
-        $patientCode = $visitData['patient_code'];
+            //Checker Authorization
+            $this->checkAuthorization($getDicomsRequest->currentUserId, $getDicomsRequest->visitId, $getDicomsRequest->role);
+            //Visits data
+            $visitData = $this->visitService->getVisitData($getDicomsRequest->visitId);
+            $visitContext = $this->visitService->getVisitContext($getDicomsRequest->visitId);
+            $studyName = $visitContext['visit_group']['study_name'];
+            $visitType = $visitContext['visit_type']['name'];
+            $visitGroup =  $visitContext['visit_group']['modality'];
+            $patientCode = $visitData['patient_code'];
 
-        //Get SeriesOrthancID from database to be downloaded
-        $this->orthancSeriesIDs = $this->visitService->getVisitSeriesIdsDicomArray($getDicomsRequest->visitId, false);
-        //First output the filename, then the controller will call outputStream to get content of orthanc response
-        $getDicomsResponse->filename = 'DICOM_'.$studyName.'_'.$visitGroup.'_'.$visitType.'_'.$patientCode.'zip';
+            //Get SeriesOrthancID from database to be downloaded
+            $this->orthancSeriesIDs = $this->visitService->getVisitSeriesIdsDicomArray($getDicomsRequest->visitId, false);
+            //First output the filename, then the controller will call outputStream to get content of orthanc response
+            $getDicomsResponse->filename = 'DICOM_'.$studyName.'_'.$visitGroup.'_'.$visitType.'_'.$patientCode.'zip';
 
+            $getDicomsResponse->status = 200;
+            $getDicomsResponse->statusText = 'OK';
 
         }catch (GaelOException $e){
             $getDicomsResponse->status = $e->statusCode;

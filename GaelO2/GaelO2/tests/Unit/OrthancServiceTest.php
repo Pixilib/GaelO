@@ -17,7 +17,7 @@ class OrthancServiceTest extends TestCase
     {
         parent::setUp();
 
-        $this->httpClientSpy  = $this->spy(HttpClientAdapter::class);
+        //$this->httpClientSpy  = $this->spy(HttpClientAdapter::class);
 
         $this->orthancService = App::make(OrthancService::class);
         $this->orthancService->setOrthancServer(false);
@@ -28,45 +28,14 @@ class OrthancServiceTest extends TestCase
 
     }
 
-    public function testGetPeers()
+    public function testPeersFunctions()
     {
-        $this->httpClientSpy->shouldReceive('requestJson')->andReturns(
-            new Psr7ResponseAdapter(new Response(200, [], json_encode(['test' => ['localhost', '8042']])))
-        );
-        $this->orthancService->getOrthancPeers();
-        $this->httpClientSpy->shouldHaveReceived('requestJson')->with('GET', '/peers')->once();
-    }
-
-    public function testOrthancAddPeers()
-    {
-        $this->httpClientSpy->shouldReceive('requestJson')->andReturns(
-            new Psr7ResponseAdapter(new Response(200, [], null))
-        );
         $this->orthancService->addPeer('gaelotest', 'http://kanoun.fr:8043', 'salim', 'salim');
-        $data = array(
-            'Username' => 'salim',
-            'Password' => 'salim',
-            'Url' => 'http://kanoun.fr:8043'
-        );
-        $this->httpClientSpy->shouldHaveReceived('requestJson')->with('PUT', '/peers/gaelotest',  $data)->once();
-    }
-
-    public function testOrthancDeletePeers()
-    {
-        $this->httpClientSpy->shouldReceive('request')->andReturns(
-            new Psr7ResponseAdapter(new Response(200, [], null))
-        );
-        $this->orthancService->deletePeer('gaelotest');
-        $this->httpClientSpy->shouldHaveReceived('request')->with('DELETE', '/peers/gaelotest')->once();
-    }
-
-    public function testOrthancRemoveAllPeers()
-    {
-        $this->httpClientSpy->shouldReceive('request')->andReturns(
-            new Psr7ResponseAdapter(new Response(200, [], null))
-        );
+        $answer = $this->orthancService->getOrthancPeers();
+        $this->assertEquals(1, sizeof($answer));
         $this->orthancService->removeAllPeers();
-        $this->httpClientSpy->shouldHaveReceived('request')->once();
+        $answer = $this->orthancService->getOrthancPeers();
+        $this->assertEquals(0, sizeof($answer));
     }
 
     public function testOrthancPeerIsTransferAccelerated()
@@ -117,6 +86,22 @@ class OrthancServiceTest extends TestCase
     /**
      * @depends testSendDicomFile
      */
+    public function testGetStudyStatistics($testingOrthancStudyID){
+        $studyStatistics = $this->orthancService->getOrthancRessourcesStatistics('studies', $testingOrthancStudyID);
+        $this->assertIsArray($studyStatistics);
+    }
+
+    /**
+     * @depends testSendDicomFile
+     */
+    public function testGetOrthancRessourceDetails($testingOrthancStudyID){
+        $ressourceDetails = $this->orthancService->getOrthancRessourcesDetails('studies', $testingOrthancStudyID);
+        $this->assertIsArray($ressourceDetails);
+    }
+
+    /**
+     * @depends testSendDicomFile
+     */
     public function testAnonymizeOrthanc($testingOrthancStudyID)
     {
         $anonymized = $this->orthancService->anonymize(
@@ -128,20 +113,29 @@ class OrthancServiceTest extends TestCase
         );
         //orthanc ID have 44 character lenght
         $this->assertEquals(44, strlen($anonymized));
+        return $anonymized;
     }
 
-
-    public function testOrthancArchiveZip()
+    /**
+     * @depends testSendDicomFile
+     */
+    public function testGetOrthancZipStream($testingOrthancStudyID)
     {
-        $this->markTestSkipped('SK OK, TO GENERALIZE');
-        $seriesIDsArray = ["a66b93bf-d6bb38ab-9b53f65b-e9c39913-8b2969db"];
-        $this->orthancService->getOrthancArchiveZip($seriesIDsArray);
-    }
-
-    public function testGetOrthancZipStream()
-    {
-        $this->markTestSkipped('SK OK, TO GENERALIZE');
-        $seriesIDsArray = ["cd35ee80-1a6a667d-4084f535-6d6a0494-89cd7dd0"];
+        $seriesIDsArray = [$testingOrthancStudyID];
         $this->orthancService->getOrthancZipStream($seriesIDsArray);
+    }
+
+    /**
+     * @depends testAnonymizeOrthanc
+     */
+    public function testDeleteOrthancStudy($anonymizedID){
+        $ressourceDetails = $this->orthancService->getOrthancRessourcesDetails('studies', $anonymizedID);
+        $data = $this->orthancService->searchInOrthanc( 'studies', '', '', '', $ressourceDetails['MainDicomTags']['StudyInstanceUID'] );
+        $this->assertEquals(1, sizeof($data));
+        //Delete the anonymized studies
+        $this->orthancService->deleteFromOrthanc('studies', $anonymizedID);
+        //Check it has gone
+        $data = $this->orthancService->searchInOrthanc( 'studies', '', '', '', $ressourceDetails['MainDicomTags']['StudyInstanceUID'] );
+        $this->assertEquals(0, sizeof($data));
     }
 }

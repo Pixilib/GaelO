@@ -65,7 +65,7 @@ class OrthancService
             'Url' => $url
         );
 
-        return $this->httpClientAdapter->requestJson('PUT', '/peers/' . $name, $data);
+        $this->httpClientAdapter->requestJson('PUT', '/peers/' . $name, $data);
     }
 
     /**
@@ -74,7 +74,7 @@ class OrthancService
      */
     public function deletePeer(string $name)
     {
-        return $this->httpClientAdapter->request('DELETE', '/peers/' . $name);
+        $this->httpClientAdapter->request('DELETE', '/peers/' . $name);
     }
 
     /**
@@ -92,12 +92,12 @@ class OrthancService
 
     public function searchInOrthanc(
         string $level,
-        string $patientID,
-        string $patientName,
-        string $studyDate,
-        string $studyUID,
-        string $accessionNumber,
-        string $studyDescription
+        string $patientID = '',
+        string $patientName = '',
+        string $studyDate = '',
+        string $studyUID = '',
+        string $accessionNumber = '',
+        string $studyDescription = ''
     ) : array {
 
         $query = array(
@@ -120,7 +120,7 @@ class OrthancService
 
     public function deleteFromOrthanc(string $level, string $uid)
     {
-        return $this->httpClientAdapter->request('DELETE', '/' . $level . '/' . $uid);
+        $this->httpClientAdapter->request('DELETE', '/' . $level . '/' . $uid);
     }
 
     public function isPeerAccelerated(string $peer) : bool

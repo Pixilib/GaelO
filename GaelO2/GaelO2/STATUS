@@ -11,25 +11,23 @@ Visit Type : (GET), (POST), (DELETE) => OK
 Affiliated Center  : (GET), (POST), (DELETE) =>OK
 Export-db : (POST) => OK
 Documentation (GET, POST, DELETE) => OK
+Visit Dicoms (GET) => OK
 
 Preparation Investigateur / Monitor / Controller / Reviewer :
 - Api creation Patient (GET, POST, PUT) => Reste PUT
 - Api creation Visit (GET, POST, DELETE)
 - Api QC (GET, PATCH + API /reset)
 - Api Corrective Action (GET, PATCH)
-- Api review (POST, GET, DELETE)
-
+- Api Review (POST, GET, DELETE)
 
 Salim TODO :
 
 * Validation des images => OK test à executer
+* Service Visit => Continuer test passage en upload Done
 
-* GetDicoms a finir avec ses tests (role doit venir en query)
-* Service Orthanc=> Finir les tests (portage fini) => Test qui nécéssiteront Orthanc disponible
 * Reverse proxy dicomweb à faire (comme TUS) => Test necessiteront Orthanc Disponible
 * Service Tus => Faire les test => necessiteront TUS disponible
 
-* Service Visit => Continuer test passage en upload Done
 
 
 Finir de refactorer :
