@@ -180,12 +180,22 @@ class HttpClientAdapter {
         return $response;
     }
 
-    public function rowRequest(string $method, string $uri, $body,  array $headers ){
+    /**
+     * Used for reverse proxy purposes
+     */
+    public function rowRequest(string $method, string $uri, $body,  array $headers ) {
+        $options = [];
+
         if($body !== null){
-            $options = ['body'=> $body, 'headers' => $headers ];
-        }else{
-            $options = ['headers' => $headers ];
+            $options['body'] = $body;
         }
+
+        if($this->login !== '' && $this->password !== ''){
+            $options['auth'] = [$this->login, $this->password];
+        }
+
+        $options['headers'] = $headers;
+
         $response = $this->client->request($method, $this->address.$uri, $options);
         return $response;
     }

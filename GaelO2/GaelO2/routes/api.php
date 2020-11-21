@@ -75,7 +75,10 @@ Route::middleware(['auth:api', 'refresh_token'])->group(function () {
     Route::post('visits/{id}/validate-dicom', 'VisitController@validateDicom');
 
     //upload Routes
-    Route::any('tus/{filename?}', 'StudyController@tusUpload');
+    Route::any('tus/{filename?}', 'ReverseProxyController@tusUpload');
+
+    //DicomWeb Routes
+    Route::get('orthanc/{path?}', 'ReverseProxyController@dicomWebReverseProxy')->where(['path' => '.*']);;
 
     //Tracker Routes
     Route::get('tracker', 'TrackerController@getTracker');

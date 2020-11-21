@@ -106,17 +106,4 @@ class StudyController extends Controller
 
     }
 
-    public function tusUpload(string $filename=null, Request $request, ReverseProxyTus $reverseProxyTus, ReverseProxyTusRequest $reverseProxyTusRequest, ReverseProxyTusResponse $reverseProxyTusResponse){
-        $curentUser = Auth::user();
-        $reverseProxyTusRequest->currentUserId = $curentUser['id'];
-
-        $reverseProxyTusRequest->header =$request->header();
-        $reverseProxyTusRequest->url =$request->getRequestUri();
-        $reverseProxyTusRequest->method =$request->method();
-        $reverseProxyTusRequest->body =$request->getContent();
-
-        $reverseProxyTus->execute($reverseProxyTusRequest, $reverseProxyTusResponse);
-
-        return response($reverseProxyTusResponse->body, $reverseProxyTusResponse->status , $reverseProxyTusResponse->header);
-    }
 }

@@ -25,8 +25,8 @@ Salim TODO :
 * Validation des images => OK test à executer
 * Service Visit => Continuer test passage en upload Done
 
-* Reverse proxy dicomweb à faire (comme TUS) => Test necessiteront Orthanc Disponible
-* Service Tus => Faire les test => necessiteront TUS disponible
+* Reverse proxy dicomweb => Reste Authorization
+* Reverse Proxy Tus => A tester (passé dans le controller reverse proxy)
 
 Finir de refactorer :
     GetPatientVisit (refac + changer l'access au données dans bdd)
@@ -42,6 +42,7 @@ Faire une condition pour les NoContent dans le controller ? => ou mettre toujour
 Voir dans message d'erreur comment ajouter d'autre info que le message (pour id de login)
 CreateVisitType et CreateVisitGroup => Ajouter un forbidden si l'etude a déjà des visites crées (etude demarrée)
 ReverseProxy TUS => On peut ajouter le studyName dans le header dans uppy pour le recupérer dans le use case et checker le role Investigateur
+TUS est Joignable sur Delete => peut etre gerer le failure/cancel pour vider tus ?
 
 A executer en post install :
 php artisan db:migrate --seed

@@ -15,9 +15,11 @@ class ReverseProxyDicomWeb{
     }
 
     public function execute(ReverseProxyDicomWebRequest $reverseProxyDicomWebRequest, ReverseProxyDicomWebResponse $reverseProxyDicomWebResponse){
-        //SK ROUTE NON EXPOSEE, CONTROLLER NON FAIT
+
         //SKImplementer logique de DicomWebAccess dans Authorization (determiner visibilité fonction studyUID)
-        //Se connecter a Orthanc PACS
+
+
+        //Connect to Orthanc Pacs
         $this->httpClientAdapter->setAddress(
             LaravelFunctionAdapter::getConfig(SettingsConstants::ORTHANC_STORAGE_ADDRESS),
             LaravelFunctionAdapter::getConfig(SettingsConstants::ORTHANC_STORAGE_PORT)
@@ -26,15 +28,14 @@ class ReverseProxyDicomWeb{
             LaravelFunctionAdapter::getConfig(SettingsConstants::ORTHANC_STORAGE_LOGIN),
             LaravelFunctionAdapter::getConfig(SettingsConstants::ORTHANC_STORAGE_PASSWORD)
         );
-        //SK URL ENVOYE A PARSER
-        //$finalURI=str_replace("orthanc/", "", $_SERVER['REQUEST_URI']);
-        $calledUrl = '';
+        //Remove our GaelO Prefix to match the orthanc route
+        $calledUrl = str_replace("/api/orthanc", "", $reverseProxyDicomWebRequest->url);
 
         $gaelOProtocol = LaravelFunctionAdapter::getConfig(SettingsConstants::APP_PROTOCOL);
         $gaelOUrl = LaravelFunctionAdapter::getConfig(SettingsConstants::APP_DOMAIN);
         $gaelOPort = LaravelFunctionAdapter::getConfig(SettingsConstants::APP_PORT);
         $headers= $reverseProxyDicomWebRequest->header;
-        $headers['Forwarded'] = ['by=localhost;for=localhost;host='.$gaelOUrl.':'.$gaelOPort.'/orthanc'.';proto='.$gaelOProtocol];
+        $headers['Forwarded'] = ['by=localhost;for=localhost;host='.$gaelOUrl.':'.$gaelOPort.'/api/orthanc'.';proto='.$gaelOProtocol];
 
         $response = $this->httpClientAdapter->rowRequest('GET', $calledUrl, null ,$headers);
 
@@ -44,12 +45,6 @@ class ReverseProxyDicomWeb{
         $reverseProxyDicomWebResponse->body = $response->getBody();
         $reverseProxyDicomWebResponse->header = $response->getHeaders();
 
-        /*
-        $url = getenv("HOST_URL");
-		$port = getenv("HOST_PORT");
-		$protocol = getenv("HOST_PROTOCOL");
-        $request=$request->withHeader('Forwarded', 'by=localhost;for=localhost;host='.$url.':'.$port.'/orthanc'.';proto='.$protocol);
-        */
     }
 
     private function checkAuthorization(){
