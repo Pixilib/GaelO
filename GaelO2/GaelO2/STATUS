@@ -31,6 +31,8 @@ Finir de refactorer :
     GetPatientVisit (refac + changer l'access au données dans bdd)
     Get Visit
 
+Mettre a jour le docker-compose avec tus et les deux orthanc
+
 //Les tests ne font pas d'assertion sur
 - les permissions => A ajouter via les TestTools
 - le tracker => Via un spy ?
