@@ -12,6 +12,7 @@ Affiliated Center  : (GET), (POST), (DELETE) =>OK
 Export-db : (POST) => OK
 Documentation (GET, POST, DELETE) => OK
 Visit Dicoms (GET) => OK
+Tus : (All) => OK
 
 Preparation Investigateur / Monitor / Controller / Reviewer :
 - Api creation Patient (GET, POST, PUT) => Reste PUT
@@ -22,11 +23,9 @@ Preparation Investigateur / Monitor / Controller / Reviewer :
 
 Salim TODO :
 
-* Validation des images => OK test à executer
+* Validation des images => OK test à executer pour verification
+* Reverse proxy dicomweb => Reste Authorization + test authorization
 * Service Visit => Continuer test passage en upload Done
-
-* Reverse proxy dicomweb => Reste Authorization
-* Reverse Proxy Tus => A tester (passé dans le controller reverse proxy)
 
 Finir de refactorer :
     GetPatientVisit (refac + changer l'access au données dans bdd)
