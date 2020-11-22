@@ -6,18 +6,24 @@ use App\GaelO\Adapters\HttpClientAdapter;
 use App\GaelO\Adapters\LaravelFunctionAdapter;
 use App\GaelO\Constants\Constants;
 use App\GaelO\Constants\SettingsConstants;
+use App\GaelO\Exceptions\GaelOForbiddenException;
+use App\GaelO\Services\AuthorizationService;
 
 class ReverseProxyDicomWeb{
 
-    public function __construct(HttpClientAdapter $httpClientAdapter)
+    public function __construct(AuthorizationService $authorizationService,  HttpClientAdapter $httpClientAdapter)
     {
         $this->httpClientAdapter = $httpClientAdapter;
+        $this->authorizationService = $authorizationService;
     }
 
     public function execute(ReverseProxyDicomWebRequest $reverseProxyDicomWebRequest, ReverseProxyDicomWebResponse $reverseProxyDicomWebResponse){
 
-        //SKImplementer logique de DicomWebAccess dans Authorization (determiner visibilité fonction studyUID)
+        //Remove our GaelO Prefix to match the orthanc route
+        $calledUrl = str_replace("/api/orthanc", "", $reverseProxyDicomWebRequest->url);
 
+        //Sk : PROBLEME COMMENT FAIRE VENIR LE ROLE DEPUIS OHIF, Via HEADER PEUT ETRE ?
+        $this->checkAuthorization($reverseProxyDicomWebRequest->currentUserId, $calledUrl, $reverseProxyDicomWebRequest->role );
 
         //Connect to Orthanc Pacs
         $this->httpClientAdapter->setAddress(
@@ -28,8 +34,7 @@ class ReverseProxyDicomWeb{
             LaravelFunctionAdapter::getConfig(SettingsConstants::ORTHANC_STORAGE_LOGIN),
             LaravelFunctionAdapter::getConfig(SettingsConstants::ORTHANC_STORAGE_PASSWORD)
         );
-        //Remove our GaelO Prefix to match the orthanc route
-        $calledUrl = str_replace("/api/orthanc", "", $reverseProxyDicomWebRequest->url);
+
 
         $gaelOProtocol = LaravelFunctionAdapter::getConfig(SettingsConstants::APP_PROTOCOL);
         $gaelOUrl = LaravelFunctionAdapter::getConfig(SettingsConstants::APP_DOMAIN);
@@ -47,7 +52,10 @@ class ReverseProxyDicomWeb{
 
     }
 
-    private function checkAuthorization(){
-
+    private function checkAuthorization(int $currentUserId, string $requestedURI, string $role){
+        $this->authorizationService->setCurrentUser($currentUserId);
+        if(!$this->authorizationService->isDicomWebAccessGranted($requestedURI, $role)){
+            throw new GaelOForbiddenException();
+        };
     }
 }

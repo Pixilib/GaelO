@@ -53,14 +53,8 @@ class GetDicoms{
     }
 
     private function checkAuthorization(int $currentUserId, int $visitId, string $role){
-        //Monitor Can't access DownloadDicoms
-        if($role === Constants::ROLE_MONITOR){
-            throw new GaelOForbiddenException();
-        }
-
-        //Other Roles will be checked according to their rule access
         $this->authorizationService->setCurrentUser($currentUserId);
-        if( ! $this->authorizationService->isVisitAllowed($visitId, $role)){
+        if( ! $this->authorizationService->isDicomAccessAllowedForUser($visitId, $role)){
             throw new GaelOForbiddenException();
         }
     }

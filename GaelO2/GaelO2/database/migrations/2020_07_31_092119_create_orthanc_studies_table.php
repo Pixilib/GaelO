@@ -35,6 +35,7 @@ class CreateOrthancStudiesTable extends Migration
             //Dependencies
             $table->foreign('visit_id')->references('id')->on('visits');
             $table->foreign('uploader_id')->references('id')->on('users');
+            $table->unique('study_uid');
         });
     }
 

@@ -37,6 +37,7 @@ class CreateOrthancSeriesTable extends Migration
             $table->timestamps();
             //Dependencies
             $table->foreign('orthanc_study_id')->references('orthanc_id')->on('orthanc_studies');
+            $table->unique('series_uid');
         });
     }
 

@@ -131,6 +131,17 @@ class OrthancStudyRepository implements PersistenceInterface{
         return $this->orthancStudy->where('visit_id', $visitID)->firstOrFail()->value('orthanc_id');
     }
 
+    public function getStudyByStudyInstanceUID(string $studyInstanceUID, bool $includeDeleted) : array {
+        if($includeDeleted){
+            $study = $this->orthancStudy->where('study_uid',$studyInstanceUID)->first()->get()->toArray();
+        }else{
+            $study = $this->orthancStudy->where('study_uid',$studyInstanceUID)->withTrashed()->first()->get()->toArray();
+        }
+
+        return $study;
+
+    }
+
     public function getChildSeries(string $orthancStudyID, bool $deleted) : array {
         if($deleted === false){
             $series = $this->orthancStudy->where('orthanc_id',$orthancStudyID)->first()->series()->get()->toArray();
@@ -140,5 +151,9 @@ class OrthancStudyRepository implements PersistenceInterface{
 
         return $series;
 
+    }
+
+    public function getParentVisit(string $orthancStudyID) : array {
+        return $this->orthancStudy->where('orthanc_id', $orthancStudyID)->visit()->get()->toArray();
     }
 }

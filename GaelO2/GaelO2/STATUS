@@ -24,7 +24,12 @@ Preparation Investigateur / Monitor / Controller / Reviewer :
 Salim TODO :
 
 * Validation des images => OK test à executer pour verification
-* Reverse proxy dicomweb => Reste Authorization + test authorization
+* Get Dicom => tester authorization
+* Reverse proxy dicomweb  :
+-> Comment faire venir le role depuis ohif ? depuis header?
+-> tester systeme d'authorization
+-> Refactorer systeme d'authorization peut etre via héritage
+
 * Service Visit => Continuer test passage en upload Done
 
 Finir de refactorer :
