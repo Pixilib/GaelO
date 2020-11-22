@@ -163,8 +163,9 @@ class ValidateDicomUpload{
 
     private function checkAuthorization(int $currentUserId, int $visitId, string $uploadStatus ) : void {
 
-        $this->authorizationService->setCurrentUser($currentUserId);
-        if( ! $this->authorizationService->isVisitAllowed($visitId, Constants::ROLE_INVESTIGATOR ) || $uploadStatus !== Constants::UPLOAD_STATUS_NOT_DONE){
+        $this->authorizationService->setCurrentUserAndRole($currentUserId, Constants::ROLE_INVESTIGATOR );
+        $this->authorizationService->setVisitId($visitId);
+        if( ! $this->authorizationService->isVisitAllowed() || $uploadStatus !== Constants::UPLOAD_STATUS_NOT_DONE){
             throw new GaelOForbiddenException();
         };
 

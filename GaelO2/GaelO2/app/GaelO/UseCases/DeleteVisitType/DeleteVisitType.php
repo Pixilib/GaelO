@@ -21,7 +21,7 @@ class DeleteVisitType {
 
         try{
 
-            $this->checkAuthorization($deleteVisitTypeRequest);
+            $this->checkAuthorization($deleteVisitTypeRequest->currentUserId);
 
             $hasVisits = $this->persistenceInterface->hasVisits($deleteVisitTypeRequest->visitTypeId);
             if($hasVisits) throw new GaelOConflictException('Existing Child Visits');
@@ -42,8 +42,8 @@ class DeleteVisitType {
 
     }
 
-    public function checkAuthorization(DeleteVisitTypeRequest $deleteVisitTypeRequest){
-        $this->authorizationService->setCurrentUser($deleteVisitTypeRequest->currentUserId);
+    public function checkAuthorization(int $userId){
+        $this->authorizationService->setCurrentUserAndRole($userId);
         if( ! $this->authorizationService->isAdmin()) {
             throw new GaelOForbiddenException();
         };

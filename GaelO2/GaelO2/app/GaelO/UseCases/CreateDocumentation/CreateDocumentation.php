@@ -69,15 +69,11 @@ class CreateDocumentation {
             throw $e;
         }
 
-        //Retourne l'id pour pouvoir uploader le fichier via un POST sur l'URI /file
-        //Lors de upload : Check Extension autorisée  + check limit upload
-        //Utiliser service laraval pour stoker le fichier via un adapter
-        //https://laravel.com/docs/8.x/filesystem#file-uploads
     }
 
     public function checkAuthorization(int $currentUserId, string $studyName){
-        $this->authorizationService->setCurrentUser($currentUserId);
-        if( !$this->authorizationService->isRoleAllowed(Constants::ROLE_SUPERVISOR, $studyName)){
+        $this->authorizationService->setCurrentUserAndRole($currentUserId, Constants::ROLE_SUPERVISOR);
+        if( !$this->authorizationService->isRoleAllowed($studyName)){
             throw new GaelOForbiddenException();
         }
 

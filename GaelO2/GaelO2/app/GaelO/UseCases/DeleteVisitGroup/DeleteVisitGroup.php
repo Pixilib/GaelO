@@ -19,7 +19,7 @@ class DeleteVisitGroup {
     public function execute(DeleteVisitGroupRequest $deleteVisitGroupRequest, DeleteVisitGroupResponse $deleteVisitGroupResponse){
 
         try{
-            $this->checkAuthorization($deleteVisitGroupRequest);
+            $this->checkAuthorization($deleteVisitGroupRequest->currentUserId);
 
             $hasVisitTypes = $this->persistenceInterface->hasVisitTypes($deleteVisitGroupRequest->visitGroupId);
 
@@ -42,8 +42,8 @@ class DeleteVisitGroup {
 
     }
 
-    public function checkAuthorization(DeleteVisitGroupRequest $deleteVisitGroupRequest){
-        $this->authorizationService->setCurrentUser($deleteVisitGroupRequest->currentUserId);
+    public function checkAuthorization(int $userId) : void {
+        $this->authorizationService->setCurrentUserAndRole($userId);
         if( ! $this->authorizationService->isAdmin()) {
             throw new GaelOForbiddenException();
         };

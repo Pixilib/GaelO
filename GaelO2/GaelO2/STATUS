@@ -23,12 +23,13 @@ Preparation Investigateur / Monitor / Controller / Reviewer :
 
 Salim TODO :
 
+Revoir Test : A partir de DicomTest (bug attendu sur l'injection de dependance des nouvelles classes d'auth)
+
 * Validation des images => OK test à executer pour verification
 * Get Dicom => tester authorization
 * Reverse proxy dicomweb  :
 -> Comment faire venir le role depuis ohif ? depuis header?
 -> tester systeme d'authorization
--> Refactorer systeme d'authorization peut etre via héritage
 
 * Service Visit => Continuer test passage en upload Done
 

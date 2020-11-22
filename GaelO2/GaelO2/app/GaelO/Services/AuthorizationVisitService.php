@@ -42,7 +42,7 @@ class AuthorizationVisitService extends AuthorizationPatientService{
             }
         } else {
             //Supervisor, Monitor simply accept when role is available in patient's study (no specific rules)
-            return $this->isRoleAllowed($this->role, $this->studyName);
+            return $this->isRoleAllowed($this->studyName);
         }
 
         return false;

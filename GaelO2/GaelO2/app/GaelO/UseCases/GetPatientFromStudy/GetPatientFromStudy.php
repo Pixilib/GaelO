@@ -49,9 +49,9 @@ class GetPatientFromStudy {
 
     }
 
-    private function checkAuthorization(int $currentUserid, string $role, string $studyName){
-        $this->authorizationService->setCurrentUser($currentUserid);
-        if ( ! $this->authorizationService->isRoleAllowed($role, $studyName)){
+    private function checkAuthorization(int $currentUserId, string $role, string $studyName){
+        $this->authorizationService->setCurrentUserAndRole($currentUserId, $role);
+        if ( ! $this->authorizationService->isRoleAllowed($studyName)){
                     throw new GaelOForbiddenException();
         };
     }

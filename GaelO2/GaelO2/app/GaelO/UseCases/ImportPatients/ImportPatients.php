@@ -65,8 +65,8 @@ class ImportPatients {
     }
 
     private function checkAuthorization(int $userId, string $studyName){
-        $this->authorizationService->setCurrentUser($userId);
-        if(! $this->authorizationService->isRoleAllowed(Constants::ROLE_SUPERVISOR, $studyName)){
+        $this->authorizationService->setCurrentUserAndRole($userId, Constants::ROLE_SUPERVISOR);
+        if(! $this->authorizationService->isRoleAllowed($studyName)){
             throw new GaelOForbiddenException();
         };
 

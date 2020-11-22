@@ -19,7 +19,7 @@ class GetCenter {
     {
         try{
 
-            $this->checkAuthorization($getCenterRequest);
+            $this->checkAuthorization($getCenterRequest->currentUserId);
 
             $code = $getCenterRequest->code;
 
@@ -50,8 +50,8 @@ class GetCenter {
 
     }
 
-    private function checkAuthorization(GetCenterRequest $getCenterRequest){
-        $this->authorizationService->setCurrentUser($getCenterRequest->currentUserId);
+    private function checkAuthorization(int $userId){
+        $this->authorizationService->setCurrentUserAndRole($userId);
         if( ! $this->authorizationService->isAdmin()) {
             throw new GaelOForbiddenException();
         };

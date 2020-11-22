@@ -21,7 +21,7 @@ class CreateUserRoles {
 
         try{
 
-            $this->checkAuthorization($createRoleRequest);
+            $this->checkAuthorization($createRoleRequest->currentUserId);
 
             //Get current roles in study for users
             $actualRolesArray = $this->persistenceInterface->getUsersRolesInStudy($createRoleRequest->userId, $createRoleRequest->study);
@@ -49,9 +49,9 @@ class CreateUserRoles {
 
     }
 
-    private function checkAuthorization(CreateUserRolesRequest $createRoleRequest){
-        $this->authorizationService->setCurrentUser($createRoleRequest->currentUserId);
-        if( ! $this->authorizationService->isAdmin($createRoleRequest->currentUserId) ) {
+    private function checkAuthorization(int $userId) : void {
+        $this->authorizationService->setCurrentUserAndRole($userId);
+        if( ! $this->authorizationService->isAdmin($userId) ) {
             throw new GaelOForbiddenException();
         };
     }

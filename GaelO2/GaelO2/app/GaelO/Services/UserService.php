@@ -4,6 +4,7 @@ namespace App\GaelO\Services;
 
 use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOBadRequestException;
+use App\GaelO\Exceptions\GaelOConflictException;
 use App\GaelO\Repositories\UserRepository;
 use App\GaelO\UseCases\CreateUser\CreateUserRequest;
 use App\GaelO\UseCases\ModifyUser\ModifyUserRequest;
@@ -138,13 +139,13 @@ class UserService
 
     private function checkUsernameUnique(string $username) : void {
         $knownUsername = $this->persistenceInterface->isExistingUsername($username);
-        if($knownUsername) throw new GaelOBadRequestException("Username Already Used");
+        if($knownUsername) throw new GaelOConflictException("Username Already Used");
 
     }
 
     private function checkEmailUnique(string $email) : void {
         $knownEmail = $this->persistenceInterface->isExistingEmail($email);
-        if($knownEmail) throw new GaelOBadRequestException("Email Already Known");
+        if($knownEmail) throw new GaelOConflictException("Email Already Known");
 
     }
 }

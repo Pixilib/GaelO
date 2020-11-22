@@ -27,12 +27,12 @@ class AuthorizationPatientService extends AuthorizationService{
             $usersCenters = $this->userRepository->getAllUsersCenters($this->userId);
             if (
                 in_array($this->patientCenter, $usersCenters)
-                && $this->isRoleAllowed($this->role, $this->patientStudy)
+                && $this->isRoleAllowed($this->patientStudy)
             ) return true;
         } else {
             //For all other rols
             //Check user has investigator permission in patient's study
-            return $this->isRoleAllowed($this->role, $this->patientStudy);
+            return $this->isRoleAllowed($this->patientStudy);
         }
 
         return false;

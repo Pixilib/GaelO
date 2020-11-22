@@ -43,10 +43,10 @@ class AuthorizationService
         return $this->administrator;
     }
 
-    public function isRoleAllowed(string $role, string $studyName)
+    public function isRoleAllowed(string $studyName)
     {
         $existingRoles = $this->userRepository->getUsersRolesInStudy($this->userId, $studyName);
-        return in_array($role, $existingRoles);
+        return in_array($this->role, $existingRoles);
     }
 
     /**

@@ -79,8 +79,8 @@ class CreateDocumentationFile{
     }
 
     private function checkAuthorization(int $currentUserId, string $studyName){
-        $this->authorizationService->setCurrentUser($currentUserId);
-        if( !$this->authorizationService->isRoleAllowed(Constants::ROLE_SUPERVISOR, $studyName)){
+        $this->authorizationService->setCurrentUserAndRole($currentUserId, Constants::ROLE_SUPERVISOR);
+        if( !$this->authorizationService->isRoleAllowed($studyName)){
             throw new GaelOForbiddenException();
         }
     }

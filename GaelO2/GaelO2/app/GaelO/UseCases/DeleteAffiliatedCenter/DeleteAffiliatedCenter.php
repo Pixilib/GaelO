@@ -22,7 +22,7 @@ class DeleteAffiliatedCenter {
 
         try{
 
-            $this->checkAuthorization($deleteAffiliatedCenterRequest);
+            $this->checkAuthorization($deleteAffiliatedCenterRequest->currentUserId);
 
             $this->persistenceInterface->deleteAffiliatedCenter($deleteAffiliatedCenterRequest->userId, $deleteAffiliatedCenterRequest->centerCode);
 
@@ -47,10 +47,12 @@ class DeleteAffiliatedCenter {
 
     }
 
-    private function checkAuthorization(DeleteAffiliatedCenterRequest $deleteAffiliatedCenterRequest){
-        $this->authorizationService->setCurrentUser($deleteAffiliatedCenterRequest->currentUserId);
-        $answer = $this->authorizationService->isAdmin();
-        if(!$answer) throw new GaelOForbiddenException();
+    private function checkAuthorization(int $userId){
+        $this->authorizationService->setCurrentUserAndRole($userId);
+        if ( ! $this->authorizationService->isAdmin() ){
+            throw new GaelOForbiddenException();
+        }
+
 
     }
 

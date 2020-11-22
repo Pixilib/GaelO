@@ -23,7 +23,7 @@ class CreateStudy {
     public function execute(CreateStudyRequest $createStudyRequest, CreateStudyResponse $createStudyResponse){
 
         try{
-            $this->checkAuthorization($createStudyRequest);
+            $this->checkAuthorization($createStudyRequest->currentUserId);
 
             $studyName = $createStudyRequest->studyName;
             $patientCodePrefix = $createStudyRequest->patientCodePrefix;
@@ -55,9 +55,9 @@ class CreateStudy {
 
     }
 
-    private function checkAuthorization(CreateStudyRequest $createStudyRequest){
-        $this->authorizationService->setCurrentUser($createStudyRequest->currentUserId);
-        if( ! $this->authorizationService->isAdmin($createStudyRequest->currentUserId) ) {
+    private function checkAuthorization(int $currentUserId){
+        $this->authorizationService->setCurrentUserAndRole($currentUserId);
+        if( ! $this->authorizationService->isAdmin($currentUserId) ) {
             throw new GaelOForbiddenException();
         };
     }

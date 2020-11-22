@@ -7,6 +7,7 @@ use App\GaelO\Exceptions\GaelOBadRequestException;
 use App\GaelO\Exceptions\GaelOConflictException;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
+use App\GaelO\Exceptions\GaelONotFoundException;
 use App\GaelO\Interfaces\PersistenceInterface;
 use App\GaelO\Services\AuthorizationService;
 use App\GaelO\UseCases\ModifyCenter\ModifyCenterRequest;
@@ -31,7 +32,7 @@ class ModifyCenter {
             $this->checkAuthorization($modifyCenterRequest->currentUserId);
 
             if(!$this->persistenceInterface->isKnownCenter($modifyCenterRequest->code)){
-                throw new GaelOBadRequestException('Non Existing Center');
+                throw new GaelONotFoundException('Non Existing Center');
             };
 
             if(!empty($this->persistenceInterface->getCenterByName($modifyCenterRequest->name))){
@@ -64,8 +65,8 @@ class ModifyCenter {
     }
 
     private function checkAuthorization($userId)  {
-        $this->authorizationService->setCurrentUser($userId);
-        if( ! $this->authorizationService->isAdmin($userId)) {
+        $this->authorizationService->setCurrentUserAndRole($userId);
+        if( ! $this->authorizationService->isAdmin() ) {
             throw new GaelOForbiddenException();
         };
     }

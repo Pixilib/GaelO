@@ -48,8 +48,8 @@ class GetKnownOrthancID{
     }
 
     private function checkAuthorization(int $currentUserId, string $studyName){
-        $this->authorizationService->setCurrentUser($currentUserId);
-        if( ! $this->authorizationService->isRoleAllowed(Constants::ROLE_INVESTIGATOR, $studyName)){
+        $this->authorizationService->setCurrentUserAndRole($currentUserId, Constants::ROLE_INVESTIGATOR);
+        if( ! $this->authorizationService->isRoleAllowed($studyName)){
             throw new GaelOForbiddenException();
         };
 

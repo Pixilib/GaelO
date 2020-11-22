@@ -3,6 +3,8 @@
 namespace Tests;
 
 use App\Role;
+use Laravel\Passport\Passport;
+use App\User;
 
 class AuthorizationTools {
 
@@ -12,5 +14,13 @@ class AuthorizationTools {
             'user_id' => $userId,
             'study_name'=> $studyName]
         );
+    }
+
+    public static function actAsAdmin(bool $admin){
+        $user = factory(User::class)->create(['administrator'=>$admin]);
+        Passport::actingAs(
+            User::where('id',$user->id)->first()
+        );
+
     }
 }

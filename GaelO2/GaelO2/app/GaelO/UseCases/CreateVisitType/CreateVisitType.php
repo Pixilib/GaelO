@@ -26,7 +26,6 @@ class CreateVisitType {
             }
 
             //SK VERIFIER QUIL N Y A PAS DE VISITE CREE dans la study
-            //FAIRE TEST
 
             $this->persistenceInterface->createVisitType(
                 $createVisitTypeRequest->visitGroupId,
@@ -58,9 +57,11 @@ class CreateVisitType {
 
 
     private function checkAuthorization(int $userId){
-        $this->authorizationService->setCurrentUser($userId);
-        $answer = $this->authorizationService->isAdmin();
-        if(!$answer) throw new GaelOForbiddenException();
+        $this->authorizationService->setCurrentUserAndRole($userId);
+        if( ! $this->authorizationService->isAdmin()){
+            throw new GaelOForbiddenException();
+        }
+
 
     }
 

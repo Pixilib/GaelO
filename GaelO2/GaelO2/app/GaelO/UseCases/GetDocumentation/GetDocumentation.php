@@ -53,8 +53,8 @@ class GetDocumentation {
     }
 
     private function checkAuthorization(int $currentUserId, string $role, string $studyName){
-        $this->authorizationService->setCurrentUser($currentUserId);
-        if(!$this->authorizationService->isRoleAllowed($role, $studyName)){
+        $this->authorizationService->setCurrentUserAndRole($currentUserId, $role);
+        if(!$this->authorizationService->isRoleAllowed($studyName)){
             throw new GaelOForbiddenException();
         };
 

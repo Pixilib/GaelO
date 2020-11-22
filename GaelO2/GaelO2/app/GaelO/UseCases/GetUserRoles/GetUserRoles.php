@@ -47,8 +47,8 @@ class GetUserRoles {
 
         if( empty($studyName) ){
             //Get User's Role accross all studies, only for administrators
-            $this->authorizationService->setCurrentUser($currentUserId);
-            if( ! $this->authorizationService->isAdmin($currentUserId)) {
+            $this->authorizationService->setCurrentUserAndRole($currentUserId);
+            if( ! $this->authorizationService->isAdmin()) {
                 throw new GaelOForbiddenException();
             };
         }else{

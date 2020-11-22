@@ -67,8 +67,8 @@ class ExportDatabase{
 
     }
 
-    private function checkAuthorization($userId)  {
-        $this->authorizationService->setCurrentUser($userId);
+    private function checkAuthorization(int $userId) : void {
+        $this->authorizationService->setCurrentUserAndRole($userId);
         if( ! $this->authorizationService->isAdmin($userId)) {
             throw new GaelOForbiddenException();
         };

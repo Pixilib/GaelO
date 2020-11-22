@@ -24,7 +24,7 @@ class CreateCenter {
     public function execute(CreateCenterRequest $createCenterRequest, CreateCenterResponse $createCenterResponse){
 
         try{
-            $this->checkAuthorization($createCenterRequest);
+            $this->checkAuthorization($createCenterRequest->currentUserId);
 
             $code = $createCenterRequest->code;
             $name = $createCenterRequest->name;
@@ -62,9 +62,9 @@ class CreateCenter {
 
     }
 
-    private function checkAuthorization($createCenterRequest){
-        $this->authorizationService->setCurrentUser($createCenterRequest->currentUserId);
-        if( ! $this->authorizationService->isAdmin($createCenterRequest->currentUserId) ) {
+    private function checkAuthorization(int $currentUserId){
+        $this->authorizationService->setCurrentUserAndRole($currentUserId);
+        if( ! $this->authorizationService->isAdmin() ) {
             throw new GaelOForbiddenException();
         };
     }

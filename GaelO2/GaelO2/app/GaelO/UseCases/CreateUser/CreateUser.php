@@ -35,13 +35,23 @@ class CreateUser {
     {
 
         try {
-            $this->checkAuthorization($createUserRequest);
+            $this->checkAuthorization($createUserRequest->currentUserId);
             //Generate password
             $password=substr(uniqid(), 1, 10);
             $passwordTemporary = LaravelFunctionAdapter::Hash($password);
             $createdUserEntity = $this->userService->createUser($createUserRequest, $passwordTemporary);
 
-            $this->writeInTracker($createdUserEntity['id'], $createUserRequest->currentUserId);
+            //Save action in Tracker
+            $detailsTracker = [
+                'createdUserId'=> $createdUserEntity['id']
+            ];
+
+            $this->trackerService->writeAction($createUserRequest->currentUserId,
+                Constants::TRACKER_ROLE_ADMINISTRATOR,
+                null,
+                null,
+                Constants::TRACKER_CREATE_USER,
+                $detailsTracker);
 
             //Send Welcom Email to give the plain password to new user.
             $this->mailService->sendCreatedAccountMessage($createdUserEntity['email'],
@@ -62,24 +72,11 @@ class CreateUser {
 
     }
 
-    private function checkAuthorization(CreateUserRequest $createUserRequest){
-        $this->authorizationService->setCurrentUser($createUserRequest->currentUserId);
-        if( ! $this->authorizationService->isAdmin($createUserRequest->currentUserId) ) {
+    private function checkAuthorization(int $userId) : void {
+        $this->authorizationService->setCurrentUserAndRole($userId);
+        if( ! $this->authorizationService->isAdmin($userId) ) {
             throw new GaelOForbiddenException();
         };
     }
 
-    private function writeInTracker(int $createdUserId, int $userCreatorId) : void {
-
-        $detailsTracker = [
-            'id'=> $createdUserId
-        ];
-        //Save action in Tracker
-        $this->trackerService->writeAction($userCreatorId,
-            Constants::TRACKER_ROLE_ADMINISTRATOR,
-            null,
-            null,
-            Constants::TRACKER_CREATE_USER,
-            $detailsTracker);
-    }
 }

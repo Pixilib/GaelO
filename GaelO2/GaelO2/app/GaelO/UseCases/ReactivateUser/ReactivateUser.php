@@ -81,8 +81,8 @@ class ReactivateUser{
     }
 
     private function checkAuthorization($userId)  {
-        $this->authorizationService->setCurrentUser($userId);
-        if( ! $this->authorizationService->isAdmin($userId)) {
+        $this->authorizationService->setCurrentUserAndRole($userId);
+        if( ! $this->authorizationService->isAdmin() ) {
             throw new GaelOForbiddenException();
         };
     }

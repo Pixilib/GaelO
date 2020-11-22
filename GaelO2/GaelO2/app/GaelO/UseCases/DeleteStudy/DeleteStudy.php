@@ -22,7 +22,7 @@ class DeleteStudy {
 
         try{
 
-            $this->checkAuthorization($deleteStudyRequest);
+            $this->checkAuthorization($deleteStudyRequest->currentUserId);
             $studyName = $deleteStudyRequest->studyName;
             $this->persistenceInterface->delete($studyName);
 
@@ -41,8 +41,8 @@ class DeleteStudy {
 
     }
 
-    private function checkAuthorization(DeleteStudyRequest $deleteStudyRequest){
-        $this->authorizationService->setCurrentUser($deleteStudyRequest->currentUserId);
+    private function checkAuthorization(int $userId){
+        $this->authorizationService->setCurrentUserAndRole($userId);
         if ( ! $this->authorizationService->isAdmin()) {
             throw new GaelOForbiddenException();
         };

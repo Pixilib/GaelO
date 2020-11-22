@@ -22,7 +22,7 @@ class GetCountry {
     {
         try{
 
-            $this->checkAuthorization($getCountryRequest);
+            $this->checkAuthorization($getCountryRequest->currentUserId);
             $code = $getCountryRequest->code;
             if ($code == '') {
                 $responseArray = [];
@@ -50,8 +50,8 @@ class GetCountry {
 
     }
 
-    private function checkAuthorization(GetCountryRequest $getCountryRequest){
-        $this->authorizationService->setCurrentUser($getCountryRequest->currentUserId);
+    private function checkAuthorization(int $userId){
+        $this->authorizationService->setCurrentUserAndRole($userId);
         if(!$this->authorizationService->isAdmin()){
             throw new GaelOForbiddenException();
         };

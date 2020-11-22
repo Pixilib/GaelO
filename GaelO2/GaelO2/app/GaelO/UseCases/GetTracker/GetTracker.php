@@ -46,9 +46,9 @@ class GetTracker {
 
     }
 
-    private function checkAuthorization(int $userId)  {
-        $this->authorizationService->setCurrentUser($userId);
-        if( ! $this->authorizationService->isAdmin($userId)) {
+    private function checkAuthorization(int $userId) : void  {
+        $this->authorizationService->setCurrentUserAndRole($userId);
+        if( ! $this->authorizationService->isAdmin()) {
             throw new GaelOForbiddenException();
         };
     }

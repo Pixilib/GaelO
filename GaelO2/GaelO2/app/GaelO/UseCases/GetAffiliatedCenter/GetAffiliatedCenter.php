@@ -19,7 +19,7 @@ class GetAffiliatedCenter {
 
         try{
 
-            $this->checkAuthorization($getAffiliatedCenterRequest);
+            $this->checkAuthorization($getAffiliatedCenterRequest->currentUserId);
             $affiliatedCenters = $this->persistenceInterface->getAffiliatedCenter($getAffiliatedCenterRequest->userId);
             $centerResponseArray = [];
 
@@ -42,8 +42,8 @@ class GetAffiliatedCenter {
 
     }
 
-    private function checkAuthorization(GetAffiliatedCenterRequest $getAffiliatedCenterRequest){
-        $this->authorizationService->setCurrentUser($getAffiliatedCenterRequest->currentUserId);
+    private function checkAuthorization(int $userId) : void {
+        $this->authorizationService->setCurrentUserAndRole($userId);
         if( ! $this->authorizationService->isAdmin()) {
             throw new GaelOForbiddenException();
         };

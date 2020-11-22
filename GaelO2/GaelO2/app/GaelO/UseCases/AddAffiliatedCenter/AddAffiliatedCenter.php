@@ -22,7 +22,7 @@ class AddAffiliatedCenter {
     public function execute(AddAffiliatedCenterRequest $addAffiliatedCenterRequest, AddAffiliatedCenterResponse $addAffiliatedCenterResponse){
 
         try{
-            $this->checkAuthorization($addAffiliatedCenterRequest);
+            $this->checkAuthorization($addAffiliatedCenterRequest->currentUserId);
 
             $existingCenterCodeArray = $this->persistenceInterface->getAllUsersCenters($addAffiliatedCenterRequest->userId);
 
@@ -53,8 +53,8 @@ class AddAffiliatedCenter {
 
     }
 
-    private function checkAuthorization(AddAffiliatedCenterRequest $addAffiliatedCenterRequest){
-        $this->authorizationService->setCurrentUser($addAffiliatedCenterRequest->currentUserId);
+    private function checkAuthorization(int $userId){
+        $this->authorizationService->setCurrentUserAndRole($userId);
         if( ! $this->authorizationService->isAdmin()){
             throw new GaelOForbiddenException();
         };

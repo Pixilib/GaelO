@@ -5,6 +5,7 @@ namespace App\GaelO\UseCases\DeleteUser;
 use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
+use App\GaelO\Exceptions\GaelONotFoundException;
 use App\GaelO\Interfaces\PersistenceInterface;
 use App\GaelO\Services\AuthorizationService;
 use App\GaelO\Services\TrackerService;
@@ -25,6 +26,10 @@ class DeleteUser {
         try{
 
             $this->checkAuthorization($deleteRequest->currentUserId);
+
+            if ( ! $this->persistenceInterface->isExistingId($deleteRequest->id)){
+                throw new GaelONotFoundException('Non Exiting User Id');
+            };
 
             $this->persistenceInterface->delete($deleteRequest->id);
 
@@ -50,8 +55,8 @@ class DeleteUser {
 
     }
 
-    private function checkAuthorization($userId) {
-        $this->authorizationService->setCurrentUser($userId);
+    private function checkAuthorization(int $userId) : void {
+        $this->authorizationService->setCurrentUserAndRole($userId);
         if( ! $this->authorizationService->isAdmin()) {
             throw new GaelOForbiddenException();
         };

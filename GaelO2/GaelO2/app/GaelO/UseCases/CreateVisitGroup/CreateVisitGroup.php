@@ -23,7 +23,7 @@ class CreateVisitGroup {
     public function execute(CreateVisitGroupRequest $createVisitGroupRequest, CreateVisitGroupResponse $createVisitGroupResponse) : void {
 
         try{
-            $this->checkAuthorization($createVisitGroupRequest);
+            $this->checkAuthorization($createVisitGroupRequest->currentUserId);
 
             $existingVisitGroup = $this->persistenceInterface->isExistingVisitGroup($createVisitGroupRequest->studyName,
                                                             $createVisitGroupRequest->modality);
@@ -51,10 +51,12 @@ class CreateVisitGroup {
 
     }
 
-    private function checkAuthorization(CreateVisitGroupRequest $createVisitGroupRequest){
-        $this->authorizationService->setCurrentUser($createVisitGroupRequest->currentUserId);
-        $answer = $this->authorizationService->isAdmin();
-        if(!$answer) throw new GaelOForbiddenException();
+    private function checkAuthorization(int $userId){
+        $this->authorizationService->setCurrentUserAndRole($userId);
+        if(! $this->authorizationService->isAdmin() ){
+            throw new GaelOForbiddenException();
+        }
+
 
     }
 

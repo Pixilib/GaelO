@@ -51,7 +51,7 @@ class GetDocumentationFile{
     }
 
     private function checkAuthorization($currentUserId, $studyName, $documentationAllowedRoles){
-        $this->authorizationService->setCurrentUser($currentUserId);
+        $this->authorizationService->setCurrentUserAndRole($currentUserId);
         if ( ! $this->authorizationService->isOneOfRolesAllowed($documentationAllowedRoles, $studyName)){
             throw new GaelOForbiddenException();
         }

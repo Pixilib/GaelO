@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Artisan;
 use Laravel\Passport\Passport;
 use Tests\TestCase;
 use App\User;
+use Tests\AuthorizationTools;
 
 class CenterTest extends TestCase
 {
@@ -31,30 +32,44 @@ class CenterTest extends TestCase
     protected function setUp() : void{
         parent::setUp();
         Artisan::call('passport:install');
-        Passport::actingAs(
-            User::where('id',1)->first()
-        );
     }
 
-    public function testGetCenter()
+
+
+    public function testGetCenters()
     {
+        AuthorizationTools::actAsAdmin(true);
         $response = $this->json('GET', '/api/centers')->content();
         $answer = json_decode($response, true);
         $this->assertEquals(1,sizeof($answer));
     }
 
-    public function testGetCenterDefault()
+    public function testGetCentersShouldFailNotAdmin(){
+        AuthorizationTools::actAsAdmin(false);
+        $this->json('GET', '/api/centers')->assertStatus(403);
+    }
+
+    public function testGetCenter()
     {
-        $response = $this->json('GET', '/api/centers/0')->content();
+        AuthorizationTools::actAsAdmin(true);
+        $center = factory(Center::class)->create();
+        $response = $this->json('GET', '/api/centers/'.$center->code)->content();
         $answer = json_decode($response, true);
         $this->assertArrayHasKey('code', $answer);
         $this->assertArrayHasKey('name', $answer);
         $this->assertArrayHasKey('countryCode', $answer);
     }
 
+    public function testGetCenterShouldFailNotAdmin(){
+        AuthorizationTools::actAsAdmin(false);
+        $center = factory(Center::class)->create();
+        $this->json('GET', '/api/centers/'.$center->code)->assertStatus(403);
+    }
+
 
     public function testAddCenter()
     {
+        AuthorizationTools::actAsAdmin(true);
         $payload = [
             'name' => 'Paris',
             'code' => 8,
@@ -64,14 +79,27 @@ class CenterTest extends TestCase
         $this->json('POST', '/api/centers', $payload)->assertStatus(201);
     }
 
-    public function testAddCenterExistingCode()
+    public function testAddCenterShouldFailNotAdmin()
     {
+        AuthorizationTools::actAsAdmin(false);
         $payload = [
             'name' => 'Paris',
             'code' => 8,
             'countryCode'=>'US'
+
         ];
-        $this->json('POST', '/api/centers', $payload)->assertStatus(201);
+        $this->json('POST', '/api/centers', $payload)->assertStatus(403);
+    }
+
+    public function testAddCenterExistingCode()
+    {
+        AuthorizationTools::actAsAdmin(true);
+        factory(Center::class)->create(
+            [
+                'code'=>8
+            ]
+        );
+
         $payload = [
             'name' => 'Toulouse',
             'code' => 8,
@@ -84,6 +112,7 @@ class CenterTest extends TestCase
 
     public function testAddCenterExistingName()
     {
+        AuthorizationTools::actAsAdmin(true);
         factory(Center::class)->create(
             [
                 'code'=>8,
@@ -103,6 +132,7 @@ class CenterTest extends TestCase
     }
 
     public function testModifyCenter(){
+        AuthorizationTools::actAsAdmin(true);
         $payload = [
             'name' => 'newCenter',
             'countryCode'=>'FR'
@@ -112,20 +142,33 @@ class CenterTest extends TestCase
         $answer->assertStatus(200);
     }
 
-    public function testModifyCenterNotExisting(){
+    public function testModifyCenterShouldFailNotAdmin(){
+        AuthorizationTools::actAsAdmin(false);
+        $payload = [
+            'name' => 'newCenter',
+            'countryCode'=>'FR'
 
+        ];
+        $answer = $this->json('PUT', '/api/centers/0', $payload);
+        $answer->assertStatus(403);
+    }
+
+    public function testModifyCenterNotExisting(){
+        AuthorizationTools::actAsAdmin(true);
         $payload = [
             'name' => 'newCenter',
             'countryCode'=>'FR'
 
         ];
         //Non existing center modification should fail
-        $this->json('PUT', '/api/centers/1', $payload)->assertStatus(400);
+        $this->json('PUT', '/api/centers/1', $payload)->assertStatus(404);
 
     }
 
     public function testModifyCenterExistingName()
     {
+        AuthorizationTools::actAsAdmin(true);
+
         factory(Center::class)->create([
             'name' => 'Paris',
             'code' => 8,

@@ -53,8 +53,9 @@ class ReverseProxyDicomWeb{
     }
 
     private function checkAuthorization(int $currentUserId, string $requestedURI, string $role){
-        $this->authorizationService->setCurrentUser($currentUserId);
-        if(!$this->authorizationService->isDicomWebAccessGranted($requestedURI, $role)){
+        $this->authorizationService->setCurrentUserAndRole($currentUserId, $role);
+        $this->authorizationService->setRequestedUri($requestedURI);
+        if(!$this->authorizationService->isDicomAllowed() ){
             throw new GaelOForbiddenException();
         };
     }

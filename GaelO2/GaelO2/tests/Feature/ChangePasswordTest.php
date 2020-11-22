@@ -8,8 +8,6 @@ use Tests\TestCase;
 use App\User;
 
 use Illuminate\Foundation\Testing\DatabaseMigrations;
-use Illuminate\Support\Facades\Artisan;
-use Laravel\Passport\Passport;
 
 class ChangePasswordTest extends TestCase
 {
@@ -41,11 +39,6 @@ class ChangePasswordTest extends TestCase
             'password2'=>'newPassword12345'
         ];
         $this->user = $user;
-
-        Artisan::call('passport:install');
-        Passport::actingAs(
-            User::where('id',$user->id)->first()
-        );
 
     }
 

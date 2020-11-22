@@ -24,7 +24,7 @@ class CreateVisit {
 
         try{
 
-            $this->checkAuthorization($createVisitRequest);
+            $this->checkAuthorization($createVisitRequest->currentUserId, $createVisitRequest->role, $createVisitRequest->patientCode);
 
             $existingVisit = $this->persistenceInterface->isExistingVisit($createVisitRequest->patientCode,
                                                             $createVisitRequest->visitTypeId);
@@ -55,10 +55,13 @@ class CreateVisit {
 
     }
 
-    private function checkAuthorization(CreateVisitRequest $createVisitRequest){
-        $this->authorizationService->setCurrentUser($createVisitRequest->currentUserId);
-        $answer = $this->authorizationService->isPatientAllowed($createVisitRequest->patientCode, $createVisitRequest->role);
-        if(!$answer) throw new GaelOForbiddenException();
+    private function checkAuthorization(int $userId, string $role, int $patientCode) : void{
+        $this->authorizationService->setCurrentUserAndRole($userId, $role);
+        $this->authorizationService->setPatient($patientCode);
+        if (! $this->authorizationService->isPatientAllowed() ){
+            throw new GaelOForbiddenException();
+        }
+
 
     }
 

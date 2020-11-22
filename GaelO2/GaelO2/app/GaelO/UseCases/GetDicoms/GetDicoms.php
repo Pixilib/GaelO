@@ -52,8 +52,9 @@ class GetDicoms{
     }
 
     private function checkAuthorization(int $currentUserId, int $visitId, string $role){
-        $this->authorizationService->setCurrentUser($currentUserId);
-        if( ! $this->authorizationService->isDicomAccessAllowedForUser($visitId, $role)){
+        $this->authorizationService->setCurrentUserAndRole($currentUserId, $role);
+        $this->authorizationService->setVisitId($visitId);
+        if( ! $this->authorizationService->isDicomAllowed()){
             throw new GaelOForbiddenException();
         }
     }

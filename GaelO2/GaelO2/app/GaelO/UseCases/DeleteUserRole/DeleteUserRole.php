@@ -22,7 +22,7 @@ class DeleteUserRole {
 
         try {
 
-            $this->checkAuthorization($deleteUserRoleRequest);
+            $this->checkAuthorization($deleteUserRoleRequest->currentUserId);
 
             $study = $deleteUserRoleRequest->study;
             $role = $deleteUserRoleRequest->role;
@@ -49,8 +49,8 @@ class DeleteUserRole {
 
     }
 
-    private function checkAuthorization(DeleteUserRoleRequest $deleteUserRoleRequest){
-        $this->authorizationService->setCurrentUser($deleteUserRoleRequest->currentUserId);
+    private function checkAuthorization(int $userId){
+        $this->authorizationService->setCurrentUserAndRole($userId);
         if ( ! $this->authorizationService->isAdmin() ){
             throw new GaelOForbiddenException();
         };

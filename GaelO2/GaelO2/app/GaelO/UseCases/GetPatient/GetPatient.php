@@ -47,8 +47,9 @@ class GetPatient {
     }
 
     private function checkAuthorization(int $currentUserid, string $role, int $patientCode ){
-        $this->authorizationService->setCurrentUser($currentUserid);
-        if( ! $this->authorizationService->isPatientAllowed( $patientCode, $role) ){
+        $this->authorizationService->setCurrentUserAndRole($currentUserid, $role);
+        $this->authorizationService->setPatient($patientCode);
+        if( ! $this->authorizationService->isPatientAllowed() ){
             throw new GaelOForbiddenException();
         };
 
