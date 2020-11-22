@@ -101,13 +101,13 @@ class ModifyUserTest extends TestCase
     public function testUsingAlreadyUsedUsername(){
         $this->validPayload['username']='salim';
         $this->json('PUT', '/api/users/'.$this->user['id'], $this->validPayload)
-        -> assertStatus(400);
+        -> assertStatus(409);
     }
 
     public function testUsingAlreadyUsedEmail(){
         $this->validPayload['email'] = "salim.kanoun@gmail.com";
         $this->json('PUT', '/api/users/'.$this->user['id'], $this->validPayload)
-        -> assertStatus(400);
+        -> assertStatus(409);
     }
 
     public function testMakeAccountUnconfirmed(){
@@ -161,7 +161,7 @@ class ModifyUserTest extends TestCase
         ];
 
         //Update with update API, shoud be success
-        $resp = $this->json('PUT', '/api/users/self/1', $this->validPayload)->assertNoContent(400);
+        $resp = $this->json('PUT', '/api/users/self/1', $this->validPayload)->assertNoContent(409);
     }
 
     public function testModifyUserIdentificationAlreadyUsedEmail()

@@ -11,7 +11,7 @@ use App\GaelO\Repositories\UserRepository;
 class AuthorizationService
 {
 
-    private int $userId;
+    protected int $userId;
     private bool $administrator;
     private array $userData;
 
@@ -33,8 +33,8 @@ class AuthorizationService
     public function setCurrentUserAndRole(int $userId, string $role = null)
     {
         $this->userId = $userId;
-        $this->userData = $this->userRepository->find($userId);
-        $this->administrator = $this->userData['administrator'];
+        $userData = $this->userRepository->find($userId);
+        $this->administrator = $userData['administrator'];
         $this->role = $role;
     }
 

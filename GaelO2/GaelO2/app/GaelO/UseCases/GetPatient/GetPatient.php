@@ -6,6 +6,7 @@ use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\PersistenceInterface;
+use App\GaelO\Services\AuthorizationPatientService;
 use App\GaelO\Services\AuthorizationService;
 use App\GaelO\UseCases\GetPatient\GetPatientRequest;
 use App\GaelO\UseCases\GetPatient\GetPatientResponse;
@@ -13,7 +14,7 @@ use Exception;
 
 class GetPatient {
 
-    public function __construct(PersistenceInterface $persistenceInterface, AuthorizationService $authorizationService){
+    public function __construct(PersistenceInterface $persistenceInterface, AuthorizationPatientService $authorizationService){
         $this->persistenceInterface = $persistenceInterface;
         $this->authorizationService = $authorizationService;
     }

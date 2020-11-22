@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature;
+namespace Tests\Unit;
 
 use App\GaelO\Repositories\VisitRepository;
 use App\Patient;
@@ -63,6 +63,5 @@ class VisitRepositoryTest extends TestCase
     {
         $visitRepository = new VisitRepository();
         $visitContext = $visitRepository->getVisitContext($this->visit->id);
-        dd($visitContext);
     }
 }

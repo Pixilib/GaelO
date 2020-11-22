@@ -11,7 +11,7 @@ class AuthorizationPatientService extends AuthorizationService{
     protected int $patientCenter;
 
     public function setPatient(int $patientCode){
-        $this->$patientCode = $patientCode;
+        $this->patientCode = $patientCode;
         $patientDetails = $this->patientRepository->find($this->patientCode);
         $this->patientStudy = $patientDetails['study_name'];
         $this->patientCenter = $patientDetails['center_code'];

@@ -103,8 +103,8 @@ class AffiliatedCenterTest extends TestCase
         AuthorizationTools::actAsAdmin(true);
         factory(CenterUser::class)->create(['user_id'=>1, 'center_code'=>3]);
         $this->json('DELETE', 'api/users/1/affiliated-centers/3')->assertNoContent(200);
-        $databaseData = CenterUser::where(['user_id'=>1])->get();
-        $this->assertEquals(sizeof($databaseData->toArray()), 0);
+        $databaseData = CenterUser::where(['user_id'=>1])->get()->toArray();
+        $this->assertEquals(sizeof($databaseData), 0);
     }
 
     public function testDeleteAffiliatedCenterOfUserShouldFailBecauseNotExistingAffiliatedCenter(){

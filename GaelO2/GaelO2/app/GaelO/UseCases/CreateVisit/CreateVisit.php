@@ -6,13 +6,13 @@ use App\GaelO\Exceptions\GaelOConflictException;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\PersistenceInterface;
-use App\GaelO\Services\AuthorizationService;
+use App\GaelO\Services\AuthorizationPatientService;
 use App\GaelO\Services\TrackerService;
 use App\GaelO\Services\VisitService;
 
 class CreateVisit {
 
-    public function __construct(PersistenceInterface $persistenceInterface, AuthorizationService $authorizationService, TrackerService $trackerService, VisitService $visitService){
+    public function __construct(PersistenceInterface $persistenceInterface, AuthorizationPatientService $authorizationService, TrackerService $trackerService, VisitService $visitService){
         $this->visitService = $visitService;
         $this->persistenceInterface = $persistenceInterface;
         $this->trackerService = $trackerService;
