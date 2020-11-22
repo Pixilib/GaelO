@@ -21,7 +21,7 @@ class Visit extends Model
     }
 
     public function visitType(){
-        return $this->belongsTo('App\VisitType', 'visit_type_id', 'id');
+        return $this->belongsTo('App\VisitType', 'visit_type_id', 'id')->with('visitGroup');
     }
 
     public function creator(){

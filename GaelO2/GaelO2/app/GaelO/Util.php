@@ -14,6 +14,11 @@ class Util {
         return $dataToFill;
     }
 
+    public static function endsWith(string $haystack, string $needle): bool
+    {
+        return substr_compare($haystack, $needle, -strlen($needle)) === 0;
+    }
+
     public static function now() {
         return Carbon::now()->format('Y-m-d H:i:s.u');
         //SK A TESTER TRACKER A BESOIN DE MILISEC MAIS LARAVEL SEMBLE PAS TOUJOURS SUPPORTER

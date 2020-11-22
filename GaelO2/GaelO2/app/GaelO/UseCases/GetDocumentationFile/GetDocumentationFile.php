@@ -52,7 +52,7 @@ class GetDocumentationFile{
 
     private function checkAuthorization($currentUserId, $studyName, $documentationAllowedRoles){
         $this->authorizationService->setCurrentUser($currentUserId);
-        if ( ! $this->authorizationService->isOnOfRolesAllowed($documentationAllowedRoles, $studyName)){
+        if ( ! $this->authorizationService->isOneOfRolesAllowed($documentationAllowedRoles, $studyName)){
             throw new GaelOForbiddenException();
         }
     }

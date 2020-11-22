@@ -82,7 +82,7 @@ class VisitService
         ) {
             $visitEntity = $this->getVisitContext($visitId);
             $patientCode = $updatedEntity['patient_code'];
-            $study = $visitEntity['visit_group']['study_name'];
+            $study = $visitEntity['visit_type']['visit_group']['study_name'];
             $visitType = $visitEntity['visit_type']['name'];
             $qcNeeded = $visitEntity['visit_type']['qc_needed'];
 

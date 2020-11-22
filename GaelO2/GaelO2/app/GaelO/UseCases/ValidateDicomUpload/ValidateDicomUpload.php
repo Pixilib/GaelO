@@ -44,9 +44,9 @@ class ValidateDicomUpload{
             $patientCode = $visitData['patient_code'];
             $uploadStatus = $visitData['upload_status'];
             $visitEntity = $this->visitService->getVisitContext($validateDicomUploadRequest->visitId);
-            $studyName = $visitEntity['visit_group']['study_name'];
+            $studyName = $visitEntity['visit_type']['visit_group']['study_name'];
             $visitType = $visitEntity['visit_type']['name'];
-            $visitGroup =  $visitEntity['visit_group']['modality'];
+            $visitGroup =  $visitEntity['visit_type']['visit_group']['modality'];
             $anonProfile = $visitEntity['visit_type']['anon_profile'];
 
             //TODO Authorization : Check Investigator Role, and patient is in affiliated center of user, and status upload not done, and visit status done

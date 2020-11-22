@@ -27,12 +27,11 @@ class GetDicoms{
             //Checker Authorization
             $this->checkAuthorization($getDicomsRequest->currentUserId, $getDicomsRequest->visitId, $getDicomsRequest->role);
             //Visits data
-            $visitData = $this->visitService->getVisitData($getDicomsRequest->visitId);
             $visitContext = $this->visitService->getVisitContext($getDicomsRequest->visitId);
-            $studyName = $visitContext['visit_group']['study_name'];
+            $studyName = $visitContext['visit_type']['visit_group']['study_name'];
             $visitType = $visitContext['visit_type']['name'];
             $visitGroup =  $visitContext['visit_group']['modality'];
-            $patientCode = $visitData['patient_code'];
+            $patientCode = $visitContext['patient']['patient_code'];
 
             //Get SeriesOrthancID from database to be downloaded
             $this->orthancSeriesIDs = $this->visitService->getVisitSeriesIdsDicomArray($getDicomsRequest->visitId, false);

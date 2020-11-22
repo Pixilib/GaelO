@@ -30,11 +30,12 @@ class AuthorizationService
         $this->orthancSeriesRepository = $orthancSeriesRepository;
     }
 
-    public function setCurrentUser(int $userId)
+    public function setCurrentUserAndRole(int $userId, string $role = null)
     {
         $this->userId = $userId;
         $this->userData = $this->userRepository->find($userId);
         $this->administrator = $this->userData['administrator'];
+        $this->role = $role;
     }
 
     public function isAdmin(): bool
@@ -51,12 +52,12 @@ class AuthorizationService
     /**
      * Return if at least one of an array roles is existing for user
      */
-    public function isOnOfRolesAllowed(array $roles, string $studyName)
+    public function isOneOfRolesAllowed(array $roles, string $studyName)
     {
         $existingRoles = $this->userRepository->getUsersRolesInStudy($this->userId, $studyName);
         return sizeof(array_intersect($roles, $existingRoles)) > 0;
     }
-
+    /*
     public function isPatientAllowed(int $patientCode, string $role): bool
     {
 
@@ -80,7 +81,8 @@ class AuthorizationService
 
         return false;
     }
-
+*/
+/*
     public function isVisitAllowed(int $visitId, string $role): bool
     {
 
@@ -116,6 +118,7 @@ class AuthorizationService
         return false;
     }
 
+*/
 
 
 
@@ -123,77 +126,4 @@ class AuthorizationService
 
 
 
-
-
-    public function isDicomWebAccessGranted(string $requestedURI, string $role): bool
-    {
-
-        if ($this->endsWith($requestedURI, "/series"))  $level = "studies";
-        else $level = "series";
-
-        $includedDeleted = $role === Constants::ROLE_SUPERVISOR ? true : false;
-
-        //Extract StudyInstanceUID from requested URI
-        $requestedInstanceUID = $this->getUID($requestedURI, $level);
-
-        if ($level === "series") {
-            $seriesEntity = $this->orthancSeriesRepository->getStudyBySeriesInstanceUID($requestedInstanceUID, $includedDeleted);
-            $visitEntity = $this->orthancStudyRepository->getParentVisit($seriesEntity['orthanc_study_id']);
-        } else if ($level === "studies") {
-            $studyEntity = $this->orthancStudyRepository->getStudyByStudyInstanceUID($requestedInstanceUID, $includedDeleted);
-            $visitEntity = $this->orthancStudyRepository->getParentVisit($studyEntity['orthanc_id']);
-        }
-
-        //Return test of acess allowance
-        return $this->isDicomAccessAllowedForUser($visitEntity['id'], $role);
-    }
-
-
-
-    /**
-     * Check that visit is granter for the calling user (still awaiting review or still awaiting QC)
-     * @param string $id_visit
-     * @return boolean
-     */
-    public function isDicomAccessAllowedForUser(int $visitId, string $role): bool
-    {
-
-        //SK ICI DOUBLE APPEL A LA DB CAR RE APPELE DANS VISIT ALLOWED PEUT ETRE A ENCAPSULER LE TOUT
-        //OU VIA HERITAGE de AUTHORIZATIOn
-        $visitData  = $this->visitService->getVisitData($visitId);
-        $uploadStatus = $visitData['upload_status'];
-
-        //Check Visit Availability of the calling user
-        if ($role == Constants::ROLE_REVIEWER || ($role == Constants::ROLE_INVESTIGATOR && $uploadStatus == Constants::UPLOAD_STATUS_DONE)) {
-            //Check that visit is in patient that is still awaiting for some reviews
-            $visitCheck = $this->isVisitAllowed($visitId, $role);
-        } else if ($role == Constants::ROLE_CONTROLER) {
-            $visitCheck = $this->isVisitAllowed($visitId, $role);
-        } else if ($role == Constants::ROLE_SUPERVISOR) {
-            $visitCheck = $this->isVisitAllowed($visitId, $role);
-        } else {
-            //Other roles (monitor) can't have access to images
-            $visitCheck = false;
-        }
-
-        return $visitCheck;
-    }
-
-    /**
-     * Isolate the called Study or Series Instance UID
-     * @return string
-     */
-    private function getUID(string $requestedURI, string $level): string
-    {
-        $studySubString = strstr($requestedURI, "/" . $level . "/");
-        $studySubString = str_replace("/" . $level . "/", "", $studySubString);
-        $endStudyUIDPosition = strpos($studySubString, "/");
-        $studyUID = substr($studySubString, 0, $endStudyUIDPosition);
-        return $studyUID;
-    }
-
-    private function endsWith(string $haystack, string $needle): bool
-    {
-        return substr_compare($haystack, $needle, -strlen($needle)) === 0;
-    }
 }
