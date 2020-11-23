@@ -5,14 +5,16 @@ namespace App\GaelO\UseCases\GetDicoms;
 use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
+use App\GaelO\Services\AuthorizationDicomWebService;
 use App\GaelO\Services\AuthorizationService;
+use App\GaelO\Services\AuthorizationVisitService;
 use App\GaelO\Services\OrthancService;
 use App\GaelO\Services\VisitService;
 use Exception;
 
 class GetDicoms{
 
-    public function __construct(AuthorizationService $authorizationService, VisitService $visitService, OrthancService $orthancService)
+    public function __construct(AuthorizationDicomWebService $authorizationService, VisitService $visitService, OrthancService $orthancService)
     {
         $this->orthancService = $orthancService;
         $this->visitService = $visitService;
@@ -30,8 +32,8 @@ class GetDicoms{
             $visitContext = $this->visitService->getVisitContext($getDicomsRequest->visitId);
             $studyName = $visitContext['visit_type']['visit_group']['study_name'];
             $visitType = $visitContext['visit_type']['name'];
-            $visitGroup =  $visitContext['visit_group']['modality'];
-            $patientCode = $visitContext['patient']['patient_code'];
+            $visitGroup =  $visitContext['visit_type']['visit_group']['modality'];
+            $patientCode = $visitContext['patient']['code'];
 
             //Get SeriesOrthancID from database to be downloaded
             $this->orthancSeriesIDs = $this->visitService->getVisitSeriesIdsDicomArray($getDicomsRequest->visitId, false);

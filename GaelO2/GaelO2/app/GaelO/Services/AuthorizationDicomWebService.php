@@ -29,8 +29,6 @@ class AuthorizationDicomWebService extends AuthorizationVisitService
 
         $this->visitId = $visitEntity['id'];
         $visitContext = $this->visitService->getVisitContext($this->visitId);
-
-        $this->visitData  = $visitEntity;
         $this->patientStudy = $visitContext['visit_type']['visit_group']['study_name'];
         $this->patientCenter = $visitContext['patient']['center_code'];
     }
@@ -44,12 +42,12 @@ class AuthorizationDicomWebService extends AuthorizationVisitService
      */
     public function isDicomAllowed(): bool
     {
-        $uploadStatus = $this->visitData['upload_status'];
+        $uploadStatus = $this->visitUploadStatus;
 
         //Check Visit Availability of the calling user
         if (($this->role == Constants::ROLE_INVESTIGATOR && $uploadStatus == Constants::UPLOAD_STATUS_DONE)) {
             $visitCheck = $this->isVisitAllowed();
-        } else if ($this->role == Constants::ROLE_REVIEWER && $this->visitData['review_available']) {
+        } else if ($this->role == Constants::ROLE_REVIEWER && $this->visitReviewAvailable) {
             //SK RESTE A CHECKER QUE LE REVIEWER DOIT ENCORE FAIRE UNE REVIEW POUR CE PATIENT?
             //OU PLUTOT DOIT ETRE GERER DANS VISIT ALLOWED
             $visitCheck = $this->isVisitAllowed();

@@ -17,6 +17,14 @@ class ExportDBController extends Controller
         $requestData = $request->all();
         $exportDatabaseRequest = Util::fillObject($requestData, $exportDatabaseRequest);
         $exportDatabase->execute($exportDatabaseRequest, $exportDatabaseResponse);
-        return response()->download($exportDatabaseResponse->zipFile, $exportDatabaseResponse->fileName, array('Content-Type: application/zip','Content-Length: '. filesize($exportDatabaseResponse->zipFile)))->deleteFileAfterSend(true);
+        if($exportDatabaseResponse->status === 200){
+            return response()->download($exportDatabaseResponse->zipFile, $exportDatabaseResponse->fileName,
+                                            array('Content-Type: application/zip','Content-Length: '. filesize($exportDatabaseResponse->zipFile)))
+                            ->deleteFileAfterSend(true);
+        }else{
+            return response()->noContent()
+            ->setStatusCode($exportDatabaseResponse->status, $exportDatabaseResponse->statusText);
+        }
+
     }
 }

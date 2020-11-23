@@ -50,7 +50,8 @@ class DicomTest extends TestCase
         $this->visit = factory(Visit::class)->create(['creator_user_id' => 1,
         'patient_code' => $this->patient['code'],
         'visit_type_id' => $this->visitType['id'],
-        'status_done' => 'Done']);
+        'status_done' => 'Done',
+        'upload_status'=> 'Done']);
 
         $this->reviewStatus = factory(ReviewStatus::class)->create([
             'visit_id' => $this->visit->id,

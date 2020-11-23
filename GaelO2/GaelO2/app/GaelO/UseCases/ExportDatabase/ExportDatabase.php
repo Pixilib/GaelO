@@ -42,8 +42,8 @@ class ExportDatabase{
             $exportDatabaseResponse->fileName = "export_database_".$date."zip";
 
         }catch(GaelOException $e){
-            $exportDatabaseResponse->status = $e->statusText;
-            $exportDatabaseResponse->statusText = $e->statusCode;
+            $exportDatabaseResponse->status = $e->statusCode;
+            $exportDatabaseResponse->statusText = $e->statusText;
 
         }catch (Exception $e){
             throw $e;

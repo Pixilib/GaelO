@@ -87,8 +87,11 @@ class VisitRepository implements PersistenceInterface {
         return $visitEntity->toArray();
     }
 
-    public function getVisitContext(int $visitId) : array {
-        $dataArray = $this->visit->find($visitId)->with(['visitType', 'patient'])->first()->toArray();
+    public function getVisitContext(int $visitId, ?string $studyName= null) : array {
+
+        $dataArray = $this->visit->find($visitId)->with(['visitType', 'patient'])/*->join('reviews_status', function ($join) use ($studyName) {
+            $join->on('vist_id', '=', 'id')->where('study_name', $studyName);
+        })*/->first()->toArray();
         return $dataArray;
     }
 

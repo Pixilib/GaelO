@@ -114,6 +114,10 @@ class ImportPatientTest extends TestCase
         $this->assertEquals(1,sizeof($response2['fail']));
     }
 
+    public function testImportPatientForbiddenNoRole(){
+        $this->json('POST', '/api/studies/test/import-patients', $this->validPayload)->assertStatus(403);
+    }
+
     public function testCreateWrongDayOfBirth() {
         AuthorizationTools::addRoleToUser(1, Constants::ROLE_SUPERVISOR, 'test');
         $this->validPayload[0]['birthDay'] = 0;

@@ -23,10 +23,14 @@ Preparation Investigateur / Monitor / Controller / Reviewer :
 
 Salim TODO :
 
-Revoir Test : A partir de DicomTest (bug attendu sur l'injection de dependance des nouvelles classes d'auth)
+Pb : Un ID Visit peut maintenant a etre attachee a plusieurs etudes ancillaires
+=> Le scope de la study demandée doit venir du front
+=> Dans authorization on doit verifier que le visit ID a bien une etude === a celle demandee et que l'utilisateur a les droits dessus
+=> Le review status doit venir avec les info de la visit dans le repository (partie de code commentée)
+
+Revoir Test : A partir de ModifyUser (bug attendu sur l'injection de dependance des nouvelles classes d'auth)
 
 * Validation des images => OK test à executer pour verification
-* Get Dicom => tester authorization
 * Reverse proxy dicomweb  :
 -> Comment faire venir le role depuis ohif ? depuis header?
 -> tester systeme d'authorization

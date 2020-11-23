@@ -7,6 +7,7 @@ use Laravel\Passport\Passport;
 use Tests\TestCase;
 use App\User;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
+use Tests\AuthorizationTools;
 
 class ExportDbTest extends TestCase
 {
@@ -24,15 +25,21 @@ class ExportDbTest extends TestCase
     protected function setUp() : void{
         parent::setUp();
         Artisan::call('passport:install');
-        Passport::actingAs(
-            User::where('id',1)->first()
-        );
+
     }
 
     public function testExportDb()
     {
+        AuthorizationTools::actAsAdmin(true);
         $response = $this->post('/api/export-db', []);
         $response->assertStatus(200);
         $response->assertHeader('content-type', 'application/zip');
+    }
+
+    public function testExportDbShouldBeForbiddenNotAdmin()
+    {
+        AuthorizationTools::actAsAdmin(false);
+        $response = $this->post('/api/export-db', []);
+        $response->assertStatus(403);
     }
 }

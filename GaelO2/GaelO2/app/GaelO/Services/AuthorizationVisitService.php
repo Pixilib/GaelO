@@ -10,13 +10,26 @@ class AuthorizationVisitService extends AuthorizationPatientService{
     protected array $visitData;
     protected string $studyName;
 
+    protected string $visitUploadStatus;
+    protected bool $visitReviewAvailable;
+
     public function setVisitId($visitId){
         $this->visitId = $visitId;
         $visitContext = $this->visitService->getVisitContext($visitId);
 
         $this->stateQualityControl = $visitContext['state_quality_control'];
         $this->patientStudy = $visitContext['visit_type']['visit_group']['study_name'];
-        $this->patientCode = $visitContext['patient']['center_code'];
+        $this->patientCenter = $visitContext['patient']['center_code'];
+        $this->patientCode = $visitContext['patient']['code'];
+
+
+        $this->visitUploadStatus = $visitContext['upload_status'];
+        //$this->visitReviewAvailable = $visitContext['review_available'];
+        //SK ICI PROBLEME IL FAUT FAIRE VENIR LA STUDY DEMANDEE DEPUIS LE FRONT VU
+        // QUN VISIT ID VA ETRE ASSOCIEE A PLUSIEURS ETUDE ANCILLAIRE
+        //DANS LE CHECK PATIENT IL FAUT CHECK QUE LA STUDY APPELEE SOIT UNE ETUDE ANCILLAIRE
+        //DE L ETUDE PRINCEPS AUQUEL EST ATTACHE LE PATIENT
+        $this->visitReviewAvailable = true;
 
     }
 
