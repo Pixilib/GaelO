@@ -9,6 +9,7 @@ use App\User;
 use App\Center;
 use Illuminate\Support\Facades\Artisan;
 use Laravel\Passport\Passport;
+use Tests\AuthorizationTools;
 
 class ModifyUserTest extends TestCase
 {
@@ -24,12 +25,13 @@ class ModifyUserTest extends TestCase
             User::where('id',1)->first()
         );
 
-        factory(Center::class)->create(['code'=>3]);
-        $user = factory(User::class)->create(['status'=>'Activated',
+        $center = factory(Center::class)->create();
+
+        $this->user = factory(User::class)->create(['status'=>'Activated',
         'administrator'=>false,
         'job' => 'Supervision',
-        'center_code'=>3]);
-        factory(User::class)->create(['username' => 'salim', 'email'=>'salim.kanoun@gmail.com']);
+        'center_code'=> 0 ]);
+
         $this->validPayload = [
             'username' => 'username',
             'lastname' => 'lastname',
@@ -38,13 +40,12 @@ class ModifyUserTest extends TestCase
             'phone' => '0101010101',
             'status' => 'Blocked',
             'administrator' => true,
-            'centerCode' => 0,
+            'centerCode' => $center->code,
             'job' => 'CRA',
             'orthancAddress'=> 'http://gaelo.fr',
             'orthancLogin'=>'gaelo',
             'orthancPassword'=>'gaelo',
         ];
-        $this->user = $user;
 
     }
 
@@ -84,13 +85,20 @@ class ModifyUserTest extends TestCase
 
     }
 
+    public function testModifyForbiddenNotAdmin(){
+        AuthorizationTools::actAsAdmin(false);
+        $this->json('PUT', '/api/users/'.$this->user['id'], $this->validPayload)-> assertStatus(403);
+    }
+
     public function testWrongEmailValue(){
+        AuthorizationTools::actAsAdmin(true);
         $this->validPayload['email']='wrong email';
         $this->json('PUT', '/api/users/'.$this->user['id'], $this->validPayload)
         -> assertStatus(400);
     }
 
     public function testUncompleteRequest(){
+        AuthorizationTools::actAsAdmin(true);
         $mandatoryTags = ['username', 'email', 'job', 'centerCode', 'administrator'];
         foreach($mandatoryTags as $tag) {
             unset($this->validPayload[$tag]);
@@ -99,18 +107,21 @@ class ModifyUserTest extends TestCase
     }
 
     public function testUsingAlreadyUsedUsername(){
-        $this->validPayload['username']='salim';
+        AuthorizationTools::actAsAdmin(true);
+        $this->validPayload['username']='administrator';
         $this->json('PUT', '/api/users/'.$this->user['id'], $this->validPayload)
         -> assertStatus(409);
     }
 
     public function testUsingAlreadyUsedEmail(){
-        $this->validPayload['email'] = "salim.kanoun@gmail.com";
+        AuthorizationTools::actAsAdmin(true);
+        $this->validPayload['email'] = "administrator@gaelo.fr";
         $this->json('PUT', '/api/users/'.$this->user['id'], $this->validPayload)
         -> assertStatus(409);
     }
 
     public function testMakeAccountUnconfirmed(){
+        AuthorizationTools::actAsAdmin(true);
         $this->validPayload['status'] = Constants::USER_STATUS_UNCONFIRMED;
         $this->json('PUT', '/api/users/'.$this->user['id'], $this->validPayload)
         -> assertStatus(200);
@@ -119,68 +130,5 @@ class ModifyUserTest extends TestCase
         $this->assertNotSame($updatedUser['password_temporary'], $this->user['password_temporary']);
 
     }
-
-    public function testValidModifyUserIdentification()
-    {
-        //Save database state before update
-        $beforeChangeUser = User::where('id',1)->first();
-
-        $this->validPayload = [
-            'username' => 'username',
-            'lastname' => 'lastname',
-            'firstname' => 'firstname',
-            'email' => 'test@test.fr',
-            'phone' => '0101010101',
-        ];
-
-        //Update with update API, shoud be success
-        $resp = $this->json('PUT', '/api/users/self/1', $this->validPayload)-> assertSuccessful();
-        //Save after update
-        $afterChangeUser = User::where('id',$this->user['id'])->get()->first()->toArray();
-
-         //Value expected to have changed
-         $updatedArray = ['username', 'lastname', 'firstname', 'email', 'phone'];
-        //Check that key needed to be updated has been updated in database
-        foreach($updatedArray as $key){
-            $this->assertNotEquals($beforeChangeUser[$key], $afterChangeUser[$key]);
-        }
-    }
-
-    public function testModifyUserIdentificationAlreadyUsedUsername()
-    {
-        factory(User::class)->create(['username' => 'Pris']);
-        //Save database state before update
-        $beforeChangeUser = User::where('id',1)->first();
-
-        $this->validPayload = [
-            'username' => 'Pris',
-            'lastname' => 'lastname',
-            'firstname' => 'firstname',
-            'email' => 'test@test.fr',
-            'phone' => '0101010101',
-        ];
-
-        //Update with update API, shoud be success
-        $resp = $this->json('PUT', '/api/users/self/1', $this->validPayload)->assertNoContent(409);
-    }
-
-    public function testModifyUserIdentificationAlreadyUsedEmail()
-    {
-        factory(User::class)->create(['email' => 'pris@pris.fr']);
-        //Save database state before update
-        $beforeChangeUser = User::where('id',1)->first();
-
-        $this->validPayload = [
-            'username' => 'administrator',
-            'lastname' => 'administrator',
-            'firstname' => 'administrator',
-            'email' => 'pris@pris.fr',
-            'phone' => '0101010101',
-        ];
-
-        //Update with update API, shoud be success
-        $resp = $this->json('PUT', '/api/users/self/1', $this->validPayload)->assertStatus(500);
-    }
-
 
 }

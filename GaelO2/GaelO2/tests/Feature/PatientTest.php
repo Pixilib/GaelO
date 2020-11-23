@@ -32,20 +32,16 @@ class PatientTest extends TestCase
         Passport::actingAs(
             User::where('id',1)->first()
         );
-    }
 
-    public function testCreatePatient() {
-        $response = $this->get('/');
+        //Fill patient table
+        $this->study = factory(Study::class)->create();
+        factory(Patient::class)->create(['code'=>12345671234567, 'center_code'=>0, 'study_name'=>$this->study->name]);
 
-        $response->assertStatus(200);
     }
 
     public function testGetPatient() {
-        //Fill patient table
-        factory(Study::class)->create(['name'=>'test']);
-        factory(Patient::class)->create(['code'=>12345671234567, 'center_code'=>0, 'study_name'=>'test']);
-        factory(Patient::class, 5)->create(['center_code'=>0, 'study_name'=>'test']);
-        AuthorizationTools::addRoleToUser(1, Constants::ROLE_SUPERVISOR, 'test');
+
+        AuthorizationTools::addRoleToUser(1, Constants::ROLE_SUPERVISOR, $this->study->name);
 
         //Test get patient 4
         $response = $this->json('GET', '/api/patients/12345671234567?role=Supervisor')
@@ -59,17 +55,23 @@ class PatientTest extends TestCase
             $this->assertArrayHasKey($key, $response);
         }
 
-        //Test get all patients
-        $this->json('GET', '/api/studies/test/patients?role=Supervisor')-> assertJsonCount(6);
-        //Test get incorrect patient
-        $resp = $this->json('GET', '/api/patients/-1?role=Supervisor') -> assertStatus(404); //No query result for this model
+    }
+
+    public function testGetPatientFailNotSupervisor(){
+        $this->json('GET', '/api/patients/12345671234567?role=Supervisor')->assertStatus(403);
+    }
+
+    public function testGetIncorrectPatientShouldFail(){
+        AuthorizationTools::addRoleToUser(1, Constants::ROLE_SUPERVISOR, $this->study->name);
+        $this->json('GET', '/api/patients/-1?role=Supervisor') -> assertStatus(404);
     }
 
     public function testGetPatientFromStudy() {
-        factory(Study::class)->create(['name'=>'test']);
-        factory(Patient::class, 5)->create(['center_code'=>0, 'study_name'=>'test']);
-        AuthorizationTools::addRoleToUser(1, Constants::ROLE_SUPERVISOR, 'test');
-        $this->json('GET', '/api/studies/test/patients?role=Supervisor')
-            ->assertStatus(200);
+        AuthorizationTools::addRoleToUser(1, Constants::ROLE_SUPERVISOR, $this->study->name);
+        for($i=1; $i<6; $i++){
+            factory(Patient::class)->create(['code'=>(12345671234567)+$i, 'center_code'=>0, 'study_name'=>$this->study->name]);
+        }
+        $this->json('GET', '/api/studies/'.$this->study->name.'/patients?role=Supervisor')
+        -> assertJsonCount(6);
     }
 }

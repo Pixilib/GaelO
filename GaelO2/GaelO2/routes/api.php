@@ -30,10 +30,10 @@ Route::middleware(['auth:api', 'refresh_token'])->group(function () {
 
     //User related Routes
     Route::post('users', 'UserController@createUser');
-    Route::put('users/self/{id}', 'UserController@modifyUserIdentification');
     Route::delete('users/{id}', 'UserController@deleteUser');
     Route::post('users/{id}/affiliated-centers', 'UserController@addAffiliatedCenter');
     Route::put('users/{id}', 'UserController@modifyUser');
+    Route::patch('users/{id}', 'UserController@modifyUserIdentification');
     Route::patch('users/{id}/reactivate', 'UserController@reactivateUser');
     Route::get('users/{id}/roles/{study?}', 'UserController@getRoles');
     Route::post('users/{id}/roles/{study}', 'UserController@createRole');

@@ -7,6 +7,7 @@ use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Support\Facades\Artisan;
 use Laravel\Passport\Passport;
 use App\User;
+use Tests\AuthorizationTools;
 
 class PreferenceTest extends TestCase
 {
@@ -30,17 +31,21 @@ class PreferenceTest extends TestCase
     protected function setUp() : void{
         parent::setUp();
         Artisan::call('passport:install');
-        Passport::actingAs(
-            User::where('id',1)->first()
-        );
     }
 
     public function testGetPreferences()
     {
+        AuthorizationTools::actAsAdmin(true);
         $answer = $this->json('GET', 'api/preferences');
         $answer->assertStatus(200);
         $answer->assertJsonStructure(['platformName', 'adminEmail', 'emailReplyTo', 'corporation',
          'url', 'patientCodeLength']);
+
+    }
+
+    public function testGetPreferencesShouldFailNotAdmin(){
+        AuthorizationTools::actAsAdmin(false);
+        $this->json('GET', 'api/preferences')->assertStatus(403);
 
     }
 }
