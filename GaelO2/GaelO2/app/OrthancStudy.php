@@ -8,6 +8,7 @@ class OrthancStudy extends Model
 {
 
     protected $primaryKey = 'orthanc_id';
+    protected $keyType = 'string';
     public $incrementing = false;
 
     public function series(){

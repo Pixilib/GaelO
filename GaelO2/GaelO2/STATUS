@@ -30,7 +30,7 @@ Pb : Un ID Visit peut maintenant a etre attachee a plusieurs etudes ancillaires
 => Creer une table d'ancillaries studies ?
 => Quid des roles dans contexte d etude ancillaire (notament supervisor qui doit etre limité)
 
-Revoir Test : A partir de ReverseProxyTest (bug attendu sur l'injection de dependance des nouvelles classes d'auth)
+Revoir Test : A partir de StudyTest (bug attendu sur l'injection de dependance des nouvelles classes d'auth)
 
 * Validation des images => OK test à executer pour verification
 * Reverse proxy dicomweb  :

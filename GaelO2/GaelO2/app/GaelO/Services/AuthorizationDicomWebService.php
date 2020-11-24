@@ -20,17 +20,18 @@ class AuthorizationDicomWebService extends AuthorizationVisitService
         $requestedInstanceUID = $this->getUID($requestedURI, $level);
 
         if ($level === "series") {
-            $seriesEntity = $this->orthancSeriesRepository->getStudyBySeriesInstanceUID($requestedInstanceUID, $includedDeleted);
-            $visitEntity = $this->orthancStudyRepository->getParentVisit($seriesEntity['orthanc_study_id']);
+            $seriesEntity = $this->orthancSeriesRepository->getSeriesBySeriesInstanceUID($requestedInstanceUID, $includedDeleted);
+            $visitId = $seriesEntity['orthanc_study']['visit_id'];
         } else if ($level === "studies") {
             $studyEntity = $this->orthancStudyRepository->getStudyByStudyInstanceUID($requestedInstanceUID, $includedDeleted);
-            $visitEntity = $this->orthancStudyRepository->getParentVisit($studyEntity['orthanc_id']);
+            $visitId = $studyEntity['visit_id'];
         }
 
-        $this->visitId = $visitEntity['id'];
+        $this->visitId = $visitId;
         $visitContext = $this->visitService->getVisitContext($this->visitId);
-        $this->patientStudy = $visitContext['visit_type']['visit_group']['study_name'];
+        $this->studyName = $visitContext['visit_type']['visit_group']['study_name'];
         $this->patientCenter = $visitContext['patient']['center_code'];
+        $this->visitUploadStatus = $visitContext['upload_status'];
     }
 
 
@@ -67,10 +68,18 @@ class AuthorizationDicomWebService extends AuthorizationVisitService
      */
     private function getUID(string $requestedURI, string $level): string
     {
+
         $studySubString = strstr($requestedURI, "/" . $level . "/");
         $studySubString = str_replace("/" . $level . "/", "", $studySubString);
+
         $endStudyUIDPosition = strpos($studySubString, "/");
-        $studyUID = substr($studySubString, 0, $endStudyUIDPosition);
+
+        if($endStudyUIDPosition){
+            $studyUID = substr($studySubString, 0, $endStudyUIDPosition);
+        }else{
+            $studyUID = $studySubString;
+        };
+
         return $studyUID;
     }
 

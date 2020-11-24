@@ -80,7 +80,7 @@ class StudyTest extends TestCase
 
     public function testGetStudies(){
         factory(Study::class, 1)->create();
-        $response = $this->json('GET', '/api/studies')->assertJsonCount(1);
+        $this->json('GET', '/api/studies')->assertJsonCount(1);
     }
 
     public function testGetDeletedStudies(){

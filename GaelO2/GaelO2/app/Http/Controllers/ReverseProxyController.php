@@ -38,8 +38,13 @@ class ReverseProxyController extends Controller
         $reverseProxyDicomWebRequest->body =$request->getContent();
 
         $reverseProxyDicomWeb->execute($reverseProxyDicomWebRequest, $reverseProxyDicomWebResponse);
+        if($reverseProxyDicomWebResponse->status === 200){
+            return response($reverseProxyDicomWebResponse->body, $reverseProxyDicomWebResponse->status , $reverseProxyDicomWebResponse->header);
+        }else{
+            return response()->json($reverseProxyDicomWebResponse->body)
+                ->setStatusCode($reverseProxyDicomWebResponse->status, $reverseProxyDicomWebResponse->statusText);
+        }
 
-        return response($reverseProxyDicomWebResponse->body, $reverseProxyDicomWebResponse->status , $reverseProxyDicomWebResponse->header);
 
     }
 }
