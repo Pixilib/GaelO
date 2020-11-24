@@ -71,7 +71,7 @@ class ReverseProxyTest extends TestCase
             User::where('id',1)->first()
         );
 
-        if (false) {
+        if (true) {
             $this->markTestSkipped('all tests in this file are invactive, this is only to check orthanc communication');
         }
     }

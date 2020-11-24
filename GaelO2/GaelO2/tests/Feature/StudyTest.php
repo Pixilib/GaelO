@@ -44,23 +44,35 @@ class StudyTest extends TestCase
         );
     }
 
-    /**
-     * A basic feature test example.
-     *
-     * @return void
-     */
     public function testCreateStudy() {
         $payload = [
             'studyName'=>'NewStudy',
             'patientCodePrefix'=>'1234'
         ];
         $this->json('POST', '/api/studies', $payload)->assertNoContent(201);
-        //Second creation of the same study should not be allowed
-        $this->json('POST', '/api/studies', $payload)->assertNoContent(409);
+
         //Check that created study is available
         $studyEntity = Study::where('name', 'NewStudy')->get()->toArray();
         $this->assertEquals('NewStudy',$studyEntity[0]['name']);
         $this->assertEquals('1234',$studyEntity[0]['patient_code_prefix']);
+    }
+
+    public function testCreateStudyForbiddenNotAdmin(){
+        AuthorizationTools::actAsAdmin(false);
+        $payload = [
+            'studyName'=>'NewStudy',
+            'patientCodePrefix'=>'1234'
+        ];
+        $this->json('POST', '/api/studies', $payload)->assertStatus(403);
+    }
+
+    public function testCreateAlreadyExistingStudy(){
+        $study = factory(Study::class, 2)->create()->first();
+        $payload = [
+            'studyName'=>$study->name,
+            'patientCodePrefix'=>'1234'
+        ];
+        $this->json('POST', '/api/studies', $payload)->assertNoContent(409);
     }
 
     public function testGetStudyWithDetails(){
@@ -83,6 +95,12 @@ class StudyTest extends TestCase
         $this->json('GET', '/api/studies')->assertJsonCount(1);
     }
 
+    public function testGetStudiesForbiddenNotAdmin(){
+        AuthorizationTools::actAsAdmin(false);
+        factory(Study::class, 1)->create();
+        $this->json('GET', '/api/studies')->assertStatus(403);
+    }
+
     public function testGetDeletedStudies(){
         $study = factory(Study::class, 1)->create();
         $study->first()->delete();
@@ -101,6 +119,14 @@ class StudyTest extends TestCase
         //Check study is now undeleted
         $this->assertNull($reactivatedStudy['deleted_at']);
 
+    }
+
+    public function testReactivateStudyForbiddenNotAdmin(){
+        AuthorizationTools::actAsAdmin(false);
+        $study = factory(Study::class, 1)->create()->first();
+        $study->first()->delete();
+        $payload = [];
+        $this->json('PATCH', '/api/studies/'.$study->name.'/reactivate', $payload)->assertStatus(403);
     }
 
     public function testIsKnownOrthancStudyIDForbidden(){
