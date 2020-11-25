@@ -7,6 +7,7 @@ use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Exceptions\GaelOValidateDicomException;
 use App\GaelO\Services\AuthorizationService;
+use App\GaelO\Services\AuthorizationVisitService;
 use App\GaelO\Services\MailServices;
 use App\GaelO\Services\OrthancService;
 use App\GaelO\Services\PathService;
@@ -19,7 +20,7 @@ use ZipArchive;
 
 class ValidateDicomUpload{
 
-    public function __construct(AuthorizationService $authorizationService,
+    public function __construct(AuthorizationVisitService $authorizationService,
                         TusService $tusService,
                         OrthancService $orthancService,
                         RegisterOrthancStudyService $registerOrthancStudyService,
@@ -230,7 +231,7 @@ class ValidateDicomUpload{
         $this->mailServices->sendValidationFailMessage($visitId, $patientCode, $visitType,
                 $studyName, $unzipedPath, $userId, $errorMessage);
 
-        unlink($unzipedPath);
+        PathService::recursive_directory_delete($unzipedPath);
     }
 
 }

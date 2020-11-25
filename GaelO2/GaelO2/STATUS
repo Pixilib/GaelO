@@ -30,13 +30,7 @@ Pb : Un ID Visit peut maintenant a etre attachee a plusieurs etudes ancillaires
 => Creer une table d'ancillaries studies ?
 => Quid des roles dans contexte d etude ancillaire (notament supervisor qui doit etre limité)
 
-Revoir Test : A partir de UserTest (bug attendu sur l'injection de dependance des nouvelles classes d'auth)
-
-* Validation des images => OK test à executer pour verification
-* Reverse proxy dicomweb  :
--> Comment faire venir le role et study depuis ohif ? depuis header?
--> tester systeme d'authorization
-
+Revoir Test : A partir de VisitGroupTest
 * Service Visit => Continuer test passage en upload Done
 
 Finir de refactorer :
@@ -44,6 +38,7 @@ Finir de refactorer :
     Get Visit
 
 Mettre a jour le docker-compose avec tus et les deux orthanc
+Voir si on ajoute le login / mdp pour l'acces au dicom (probablment que oui
 
 //Les tests ne font pas d'assertion sur
 - les permissions => A ajouter via les TestTools
@@ -55,6 +50,7 @@ Faire une condition pour les NoContent dans le controller ? => ou mettre toujour
 Voir dans message d'erreur comment ajouter d'autre info que le message (pour id de login)
 CreateVisitType et CreateVisitGroup => Ajouter un forbidden si l'etude a déjà des visites crées (etude demarrée)
 ReverseProxy TUS => On peut ajouter le studyName dans le header dans uppy pour le recupérer dans le use case et checker le role Investigateur
+Reverse proxy dicomweb => Comment faire venir le role et study depuis ohif ? depuis header?
 TUS est Joignable sur Delete => peut etre gerer le failure/cancel pour vider tus ?
 
 A executer en post install :

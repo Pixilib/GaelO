@@ -44,17 +44,17 @@ class GetUserRoles {
     }
 
     private function checkAuthorization(int $currentUserId, int $userId, ?string $studyName){
+        $this->authorizationService->setCurrentUserAndRole($currentUserId);
+        $admin = $this->authorizationService->isAdmin();
 
-        if( empty($studyName) ){
+        if( empty($studyName) && !$admin ){
             //Get User's Role accross all studies, only for administrators
-            $this->authorizationService->setCurrentUserAndRole($currentUserId);
-            if( ! $this->authorizationService->isAdmin()) {
-                throw new GaelOForbiddenException();
-            };
-        }else{
-            //Get user's roles in study, only for user itself
-            return $currentUserId === $userId;
+            throw new GaelOForbiddenException();
+        }
 
+        if(!$admin && !empty($studyName) && $currentUserId !== $userId){
+            //Get user's roles in study, only for user itself
+            throw new GaelOForbiddenException();
         }
 
     }

@@ -32,7 +32,7 @@ class UserRepository implements PersistenceInterface {
     }
 
     public function find($id){
-        return $this->user->find($id)->toArray();
+        return $this->user->findOrFail($id)->toArray();
     }
 
     public function delete($id) : void {

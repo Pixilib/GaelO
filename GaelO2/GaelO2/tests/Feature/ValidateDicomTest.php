@@ -3,8 +3,6 @@
 namespace Tests\Feature;
 
 use App\GaelO\Constants\Constants;
-use App\OrthancSeries;
-use App\OrthancStudy;
 use App\User;
 use App\VisitGroup;
 use App\VisitType;
@@ -60,7 +58,7 @@ class ValidateDicomTest extends TestCase
         if (true) {
             $this->markTestSkipped('all tests in this file are invactive, this is only to check orthanc communication');
         }else{
-            $this->tusIdArray = ['1d25e3ffe4e35f7e5da40861a04c7012'];
+            $this->tusIdArray = ['c80f0bd67443e65d84ed663b37adf146'];
             $this->numberOfInstances = 326;
         }
 
