@@ -30,7 +30,7 @@ class GetVisitType {
 
             $getVisitTypeResponse->body = $e->getErrorBody();
             $getVisitTypeResponse->status = $e->statusCode;
-            $$getVisitTypeResponse->statusText = $e->statusText;
+            $getVisitTypeResponse->statusText = $e->statusText;
 
         } catch (Exception $e){
             throw $e;

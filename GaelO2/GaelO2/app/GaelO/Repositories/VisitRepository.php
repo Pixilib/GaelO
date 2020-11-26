@@ -101,6 +101,11 @@ class VisitRepository implements PersistenceInterface {
         $reviewStatusEntity->save();
     }
 
+    public function getPatientsVisits(int $patientCode){
+        $visits = $this->visit->where('patient_code', $patientCode)->get()->toArray();
+        return $visits;
+    }
+
 
 }
 

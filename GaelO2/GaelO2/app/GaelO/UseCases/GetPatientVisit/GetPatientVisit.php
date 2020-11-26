@@ -2,36 +2,54 @@
 
 namespace App\GaelO\UseCases\GetPatientVisit;
 
+use App\GaelO\Exceptions\GaelOException;
+use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\PersistenceInterface;
+use App\GaelO\Services\AuthorizationPatientService;
 use App\GaelO\UseCases\GetVisit\VisitEntity;
+use Exception;
 
 class GetPatientVisit {
 
-    public function __construct(PersistenceInterface $persistenceInterface){
+    public function __construct(PersistenceInterface $persistenceInterface, AuthorizationPatientService $authorizationPatientService){
         $this->persistenceInterface = $persistenceInterface;
+        $this->authorizationPatientService = $authorizationPatientService;
     }
 
     public function execute(GetPatientVisitRequest $getPatientVisitRequest, GetPatientVisitResponse $getPatientVisitResponse){
-        $visitId = $getPatientVisitRequest->visitId;
-        $patientCode = $getPatientVisitRequest->patientCode;
 
-        if ($visitId == 0) {
-            //SK ICI IL FAUT DANS LE REPOSITORY AVOIR UNE METHODE QUI RECUPERE TOUTE LES VISITE DU PATIENT
-            $dbData = $this->persistenceInterface->getAll();
-            $dbData = array_filter($dbData, function ($element) use ($patientCode) {
-                return $element['patient_code'] == $patientCode;
-            });
+        try{
+            $this->checkAuthorization($getPatientVisitRequest->currentUserId, $getPatientVisitRequest->patientCode, $getPatientVisitRequest->role);
+            $visitsArray = $this->persistenceInterface->getPatientsVisits($getPatientVisitRequest->patientCode);
+
             $responseArray = [];
-            foreach($dbData as $data){
+            foreach($visitsArray as $data){
                 $responseArray[] = VisitEntity::fillFromDBReponseArray($data);
             }
+
             $getPatientVisitResponse->body = $responseArray;
-        } else {
-            $dbData = $this->persistenceInterface->find($visitId);
-            $responseEntity = VisitEntity::fillFromDBReponseArray($dbData);
-            $getPatientVisitResponse->body = $responseEntity;
+            $getPatientVisitResponse->status = 200;
+            $getPatientVisitResponse->statusText = 'OK';
+
+        } catch(GaelOException $e){
+
+            $getPatientVisitResponse->status = $e->statusCode;
+            $getPatientVisitResponse->statusText = $e->statusText;
+            $getPatientVisitResponse->body = $e->getErrorBody();
+
+        } catch(Exception $e){
+
+            throw $e;
+
         }
-        $getPatientVisitResponse->status = 200;
-        $getPatientVisitResponse->statusText = 'OK';
+
+    }
+
+    private function checkAuthorization(int $userId, int $patientCode, string $role){
+        $this->authorizationPatientService->setCurrentUserAndRole($userId, $role);
+        $this->authorizationPatientService->setPatient($patientCode);
+        if( ! $this->authorizationPatientService->isPatientAllowed()){
+            throw new GaelOForbiddenException();
+        }
     }
 }

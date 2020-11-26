@@ -107,6 +107,7 @@ Route::middleware(['auth:api', 'refresh_token'])->group(function () {
 
     //studies Routes
     Route::get('patients/{code?}', 'PatientController@getPatient');
+    Route::get('patients/{patientCode}/visits', 'PatientController@getPatientVisit');
     Route::get('studies/{studyName}/patients', 'PatientController@getPatientFromStudy');
     Route::post('studies/{studyName}/import-patients', 'StudyController@importPatients');
     Route::get('studies/{studyName}/documentations', 'DocumentationController@getDocumentationsFromStudy');
@@ -114,7 +115,7 @@ Route::middleware(['auth:api', 'refresh_token'])->group(function () {
     //Visit Routes
     Route::post('studies/{studyName}/visit-groups/{visitGroupId}/visit-types/{visitTypeId}/visits', 'VisitController@createVisit');
     Route::get('visits/{id}', 'VisitController@getVisit');
-    Route::get('visits/{id}/patients/{patientCode}', 'VisitController@getPatientVisit');
+
 
     //Documentations routes
     Route::post('studies/{studyName}/documentations', 'DocumentationController@createDocumentation');

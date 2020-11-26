@@ -15,8 +15,8 @@ Visit Dicoms (GET) => OK
 Tus : (All) => OK
 
 Preparation Investigateur / Monitor / Controller / Reviewer :
-- Api creation Patient (GET, POST, PUT) => Reste PUT
-- Api creation Visit (GET, POST, DELETE)
+- Api Patient (GET, POST, PUT) => Reste PUT
+- Api Visit (GET, POST, DELETE)
 - Api QC (GET, PATCH + API /reset)
 - Api Corrective Action (GET, PATCH)
 - Api Review (POST, GET, DELETE)
@@ -30,20 +30,14 @@ Pb : Un ID Visit peut maintenant a etre attachee a plusieurs etudes ancillaires
 => Creer une table d'ancillaries studies ?
 => Quid des roles dans contexte d etude ancillaire (notament supervisor qui doit etre limité)
 
-Revoir Test : A partir de VisitGroupTest
+- Visit
+=> Necessite de faire passer la study pour permission du GET
+=> Supression autorisée que pour la study princeps
+=> Creation autorisée que la study princeps
+
 * Service Visit => Continuer test passage en upload Done
 
-Finir de refactorer :
-    GetPatientVisit (refac + changer l'access au données dans bdd)
-    Get Visit
-
-Mettre a jour le docker-compose avec tus et les deux orthanc
-Voir si on ajoute le login / mdp pour l'acces au dicom (probablment que oui
-
-//Les tests ne font pas d'assertion sur
-- les permissions => A ajouter via les TestTools
-- le tracker => Via un spy ?
-- l'envoi de mails => voir doc laravel
+Voir si on ajoute le login / mdp pour l'acces au dicom dans orthanc pacs avec differentiation avec lua script (probablment que oui)
 
 +Tard :
 Faire une condition pour les NoContent dans le controller ? => ou mettre toujours un payload vide pour eviter les errur error->json() dans front?
@@ -52,6 +46,10 @@ CreateVisitType et CreateVisitGroup => Ajouter un forbidden si l'etude a déjà 
 ReverseProxy TUS => On peut ajouter le studyName dans le header dans uppy pour le recupérer dans le use case et checker le role Investigateur
 Reverse proxy dicomweb => Comment faire venir le role et study depuis ohif ? depuis header?
 TUS est Joignable sur Delete => peut etre gerer le failure/cancel pour vider tus ?
+
+//Les tests ne font pas d'assertion sur
+- le tracker => Via un spy ?
+- l'envoi de mails => voir doc laravel
 
 A executer en post install :
 php artisan db:migrate --seed

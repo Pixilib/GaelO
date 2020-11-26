@@ -21,9 +21,11 @@ class Util {
 
     public static function now() {
         return Carbon::now()->format('Y-m-d H:i:s.u');
-        //SK A TESTER TRACKER A BESOIN DE MILISEC MAIS LARAVEL SEMBLE PAS TOUJOURS SUPPORTER
-        //LES DATE GENEREES SONT PASSEE EN 6 PRECISION DANS LES MIGRATION
-        //return now()->toDateTimeString();
+    }
+
+    public static function camelCaseToSnakeCase(string $string, string $us = "_")  : string {
+        return strtolower(preg_replace(
+            '/(?<=\d)(?=[A-Za-z])|(?<=[A-Za-z])(?=\d)|(?<=[a-z])(?=[A-Z])/', $us, $string));
     }
 }
 

@@ -13,6 +13,7 @@ use App\Study;
 use App\VisitType;
 use App\Visit;
 use App\Patient;
+use Tests\AuthorizationTools;
 
 class VisitTypeTest extends TestCase
 {
@@ -57,15 +58,8 @@ class VisitTypeTest extends TestCase
             'anonProfile'=>'Default'
         ];
 
-
-
     }
 
-    /**
-     * A basic feature test example.
-     *
-     * @return void
-     */
     public function testCreateVisitType()
     {
         $id = $this->visitGroup->id;
@@ -88,6 +82,13 @@ class VisitTypeTest extends TestCase
         $this->json('POST', 'api/visit-groups/'.$id.'/visit-types', $payload)->assertStatus(409);
     }
 
+    public function testCreateVisitTypeForbiddenNotAdmin()
+    {
+        AuthorizationTools::actAsAdmin(false);
+        $id = $this->visitGroup->id;
+        $this->json('POST', 'api/visit-groups/'.$id.'/visit-types', $this->payload)->assertStatus(403);
+    }
+
     public function testGetVisitType(){
 
         $visitType = factory(VisitType::class)->create([
@@ -103,11 +104,28 @@ class VisitTypeTest extends TestCase
 
     }
 
+    public function testGetVisitTypeForbiddenNotAdmin()
+    {
+        AuthorizationTools::actAsAdmin(false);
+        $visitType = factory(VisitType::class)->create([
+            'visit_group_id' => $this->visitGroup->id
+        ]);
+        $this->json('GET', 'api/visit-types/'.$visitType->id)->assertStatus(403);
+    }
+
     public function testDeleteVisitType(){
         $visitType = factory(VisitType::class)->create([
             'visit_group_id' => $this->visitGroup->id
         ]);
         $this->json('DELETE', 'api/visit-types/'.$visitType->id)->assertStatus(200);
+    }
+
+    public function testDeleteVisitTypeForbiddenNotAdmin(){
+        AuthorizationTools::actAsAdmin(false);
+        $visitType = factory(VisitType::class)->create([
+            'visit_group_id' => $this->visitGroup->id
+        ]);
+        $this->json('DELETE', 'api/visit-types/'.$visitType->id)->assertStatus(403);
     }
 
     public function testDeleteVisitTypeShouldFailedBecauseHasChildVisit(){

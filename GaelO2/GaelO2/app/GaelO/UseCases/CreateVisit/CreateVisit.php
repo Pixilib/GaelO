@@ -9,6 +9,7 @@ use App\GaelO\Interfaces\PersistenceInterface;
 use App\GaelO\Services\AuthorizationPatientService;
 use App\GaelO\Services\TrackerService;
 use App\GaelO\Services\VisitService;
+use Exception;
 
 class CreateVisit {
 
@@ -26,12 +27,14 @@ class CreateVisit {
 
             $this->checkAuthorization($createVisitRequest->currentUserId, $createVisitRequest->role, $createVisitRequest->patientCode);
 
-            $existingVisit = $this->persistenceInterface->isExistingVisit($createVisitRequest->patientCode,
+            $existingVisit = $this->persistenceInterface->isExistingVisit(
+                                                            $createVisitRequest->patientCode,
                                                             $createVisitRequest->visitTypeId);
 
-
             if($existingVisit) {
+
                 throw new GaelOConflictException('Visit Already Created');
+
             }else{
 
                 $this->visitService->createVisit(
@@ -47,9 +50,13 @@ class CreateVisit {
                 $createVisitResponse->statusText = 'Created';
             }
         } catch (GaelOException $e){
+
             $createVisitResponse->status = $e->statusCode;
             $createVisitResponse->statusText = $e->statusText;
             $createVisitResponse->body = $e->getErrorBody();
+
+        } catch (Exception $e){
+            throw $e;
         }
 
 

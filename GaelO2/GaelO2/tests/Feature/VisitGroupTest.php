@@ -11,6 +11,7 @@ use App\User;
 use App\Study;
 use App\VisitGroup;
 use App\VisitType;
+use Tests\AuthorizationTools;
 
 class VisitGroupTest extends TestCase
 {
@@ -55,6 +56,12 @@ class VisitGroupTest extends TestCase
 
     }
 
+    public function testGetVisitGroupForbiddenNotAdmin(){
+        AuthorizationTools::actAsAdmin(false);
+        $visitGroup = factory(VisitGroup::class, 1)->create(['study_name'=> $this->study[0]->name]);
+        $this->json('GET', 'api/visit-groups/'.$visitGroup[0]->id)->assertStatus(403);
+    }
+
 
     public function testCreateVisitGroup() {
         $payload = [
@@ -65,6 +72,16 @@ class VisitGroupTest extends TestCase
         //Check record in database
         $visitGroup = VisitGroup::where('study_name', $study['name'])->get()->first()->toArray();
         $this->assertEquals('CT', $visitGroup['modality']);
+    }
+
+    public function testCreateVisitGroupForbiddenNotAdmin(){
+        AuthorizationTools::actAsAdmin(false);
+        $payload = [
+            'modality' => 'CT'
+        ];
+        $study = $this->study->first()->toArray();
+        $this->json('POST', 'api/studies/'.$study['name'].'/visit-groups', $payload)->assertStatus(403);
+
     }
 
     public function testDeleteVisitGroupShouldFailBecauseExistingVisitTypes(){
@@ -80,8 +97,10 @@ class VisitGroupTest extends TestCase
         $this->json('DELETE', 'api/visit-groups/'.$visitGroup[0]->id)->assertStatus(200);
     }
 
-
-
-
+    public function testDeleteVisitGroupForbiddenNotAdmin(){
+        AuthorizationTools::actAsAdmin(false);
+        $visitGroup = factory(VisitGroup::class, 1)->create(['study_name'=> $this->study[0]->name]);
+        $this->json('DELETE', 'api/visit-groups/'.$visitGroup[0]->id)->assertStatus(403);
+    }
 
 }
