@@ -74,4 +74,28 @@ class PatientTest extends TestCase
         $this->json('GET', '/api/studies/'.$this->study->name.'/patients?role=Supervisor')
         -> assertJsonCount(6);
     }
+
+    public function testModifyPatient(){
+        $patient = factory(Patient::class)->create(['code'=>(22345671234567), 'center_code'=>0, 'study_name'=>$this->study->name]);
+
+        $payload = [
+            'firstname'=> 'a',
+            'lastname'=>'b',
+            'gender' => 'M',
+            'birthDay'=> 5,
+            'birthMonth'=> 10,
+            'birthYear'=> 1955,
+            'registrationDate'=>'12312020',
+            'investigatorName'=> 'salim',
+            'centerCode'=>0
+        ];
+
+        dd($this->json('PATCH', '/api/patients/'.$patient->code, $payload));
+        //SK A Faaire assertion sur la db
+        //Check role supervisor
+    }
+
+    public function testModifyPatientWithdraw(){
+
+    }
 }

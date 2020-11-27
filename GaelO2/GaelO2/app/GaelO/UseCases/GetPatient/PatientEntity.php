@@ -23,8 +23,8 @@ class PatientEntity {
     public static function fillFromDBReponseArray(array $array){
         $patientEntity  = new PatientEntity();
         $patientEntity->code = $array['code'];
-        $patientEntity->lastName = $array['last_name'];
-        $patientEntity->firstName = $array['first_name'];
+        $patientEntity->lastName = $array['lastname'];
+        $patientEntity->firstName = $array['firstname'];
         $patientEntity->birthDay = $array['birth_day'];
         $patientEntity->birthMonth = $array['birth_month'];
         $patientEntity->birthYear = $array['birth_year'];

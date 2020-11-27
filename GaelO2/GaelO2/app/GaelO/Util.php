@@ -27,6 +27,10 @@ class Util {
         return strtolower(preg_replace(
             '/(?<=\d)(?=[A-Za-z])|(?<=[A-Za-z])(?=\d)|(?<=[a-z])(?=[A-Z])/', $us, $string));
     }
-}
 
-?>
+    function snakeCaseToCamelCase(string $string) : string {
+        $str = str_replace('_', '', ucwords($string, '_'));
+        $str = lcfirst($str);
+        return $str;
+    }
+}

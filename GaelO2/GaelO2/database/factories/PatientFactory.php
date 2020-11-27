@@ -8,8 +8,8 @@ use Faker\Generator as Faker;
 $factory->define(Patient::class, function (Faker $faker) {
     return [
         'code'=>$faker->unique()->randomNumber,
-        'first_name'=>$faker->word,
-        'last_name'=>$faker->word,
+        'firstname'=>$faker->word,
+        'lastname'=>$faker->word,
         'gender'=>$faker->randomElement(['M', 'F']),
         'birth_day'=>$faker->randomNumber,
         'birth_month'=>$faker->randomNumber,

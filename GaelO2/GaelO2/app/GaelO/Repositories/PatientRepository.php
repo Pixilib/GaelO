@@ -52,8 +52,8 @@ class PatientRepository implements PersistenceInterface {
     public function addPatientInStudy(PatientEntity $patientEntity, String $studyName) : void {
         $arrayPatientEntity = [
             "code" => $patientEntity->code,
-            "last_name" => $patientEntity->lastName,
-            "first_name" => $patientEntity->firstName,
+            "lastname" => $patientEntity->lastName,
+            "firstname" => $patientEntity->firstName,
             "gender" => $patientEntity->gender,
             "birth_day" => $patientEntity->birthDay,
             "birth_month" => $patientEntity->birthMonth,
