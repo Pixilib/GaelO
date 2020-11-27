@@ -90,7 +90,7 @@ class PatientTest extends TestCase
             'centerCode'=>0
         ];
 
-        dd($this->json('PATCH', '/api/patients/'.$patient->code, $payload));
+        //dd($this->json('PATCH', '/api/patients/'.$patient->code, $payload));
         //SK A Faaire assertion sur la db
         //Check role supervisor
     }
