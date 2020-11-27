@@ -16,7 +16,7 @@ Tus : (All) => OK
 
 Preparation Investigateur / Monitor / Controller / Reviewer :
 - Api Patient (GET, POST, PUT) => Reste PUT
-- Api Visit (GET, POST, DELETE)
+- Api Visit (GET, POST, DELETE) => Reste DELETE
 - Api QC (GET, PATCH + API /reset)
 - Api Corrective Action (GET, PATCH)
 - Api Review (POST, GET, DELETE)
