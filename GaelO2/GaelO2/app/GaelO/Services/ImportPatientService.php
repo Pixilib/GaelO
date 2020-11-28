@@ -7,6 +7,8 @@ use App\GaelO\Exceptions\GaelOBadRequestException;
 use App\GaelO\Repositories\CenterRepository;
 use App\GaelO\Repositories\PatientRepository;
 use App\GaelO\Repositories\StudyRepository;
+use App\GaelO\Util;
+use DateTime;
 use Exception;
 
 class ImportPatientService
@@ -41,9 +43,10 @@ class ImportPatientService
         //For each patient from the array list
 		foreach ($this->patientEntities as $patientEntity) {
             try {
-                $patientEntity->registrationDate = $this->formatRegistrationDate($patientEntity->registrationDate);
+                $patientEntity->registrationDate = Util::formatUSDateStringToSQLDateFormat($patientEntity->registrationDate);
                 //Check condition before import
-                self::checkCorrectDate($patientEntity->birthDay, $patientEntity->birthMonth, $patientEntity->birthYear);
+                self::checkPatientGender($patientEntity->gender);
+                self::checkCorrectBirthDate($patientEntity->birthDay, $patientEntity->birthMonth, $patientEntity->birthYear);
                 $this->checkNewPatient($patientEntity->code);
                 $this->isCorrectPatientCodeLenght($patientEntity->code);
                 $this->isExistingCenter($patientEntity->centerCode);
@@ -63,7 +66,7 @@ class ImportPatientService
 
     }
 
-    public static function checkCorrectDate(?int $days, ?int $months, ?int $year) : void {
+    public static function checkCorrectBirthDate(?int $days, ?int $months, ?int $year) : void {
         if ($days !== null && ($days < 1 || $days > 31)) {
             throw new GaelOBadRequestException('Incorrect Birthdate day format');
         }
@@ -75,29 +78,11 @@ class ImportPatientService
         }
     }
 
-	/**
-	 * Format registration date according to plateform preference (french or US format)
-	 * @param string registrationDate
-	 * @return String
-	 */
-	private function formatRegistrationDate(string $registrationDate) : String {
-		$dateNbArray=explode('/', $registrationDate);
-        $registrationDay=intval($dateNbArray[1]);
-        $registrationMonth=intval($dateNbArray[0]);
-        $registrationYear=intval($dateNbArray[2]);
 
-		if ($registrationDay == 0 || $registrationMonth == 0 || $registrationYear == 0) {
-			throw new GaelOBadRequestException('Wrong Registration Date');
-		}
 
-		try {
-			$dateResult=new \DateTime($registrationYear.'-'.$registrationMonth.'-'.$registrationDay);
-            return $dateResult->format('Y-m-d');
-        }catch (\Exception $e) {
-			throw new GaelOBadRequestException('Wrong Registration Date');
-		}
-
-	}
+    public static function checkPatientGender(string $sex){
+        if($sex !== "M" && $sex!=="F") throw new GaelOBadRequestException("Incorrect Gender : M or F");
+    }
 
 	/**
 	 * Check that the importing patient is not already known in the system

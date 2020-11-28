@@ -13,7 +13,7 @@ Export-db : (POST) => OK
 Documentation (GET, POST, DELETE) => OK
 Visit Dicoms (GET) => OK
 Tus : (All) => OK
-Patient : ( GET, POST, PATCH (+withdraw) )
+Patient : ( GET, POST, PATCH (+withdraw) ) => OK
 
 Preparation Investigateur / Monitor / Controller / Reviewer :
 - Api Visit (GET, POST, DELETE) => Reste DELETE
@@ -22,8 +22,6 @@ Preparation Investigateur / Monitor / Controller / Reviewer :
 - Api Review (POST, GET, DELETE)
 
 Salim TODO :
-
-ModifyPatient et ModifyPatientWithdraw => Ajout authorisation + Faire tests
 
 Pb : Un ID Visit peut maintenant a etre attachee a plusieurs etudes ancillaires
 => Le scope de la study demandée doit venir du front

@@ -2,7 +2,10 @@
 
 namespace App\GaelO;
 
+use App\GaelO\Exceptions\GaelOBadRequestException;
 use Carbon\Carbon;
+use DateTime;
+use Exception;
 
 class Util {
 
@@ -32,5 +35,29 @@ class Util {
         $str = str_replace('_', '', ucwords($string, '_'));
         $str = lcfirst($str);
         return $str;
+    }
+
+    	/**
+	 * Format registration date according to plateform preference (french or US format)
+	 * @param string registrationDate
+	 * @return String
+	 */
+	public static function formatUSDateStringToSQLDateFormat(string $registrationDate) : String {
+		$dateNbArray=explode('/', $registrationDate);
+        $registrationDay=intval($dateNbArray[1]);
+        $registrationMonth=intval($dateNbArray[0]);
+        $registrationYear=intval($dateNbArray[2]);
+
+		if ($registrationDay == 0 || $registrationMonth == 0 || $registrationYear == 0) {
+			throw new GaelOBadRequestException('Wrong Registration Date');
+		}
+
+		try {
+			$dateResult=new DateTime($registrationYear.'-'.$registrationMonth.'-'.$registrationDay);
+            return $dateResult->format('Y-m-d');
+        }catch (Exception $e) {
+			throw new GaelOBadRequestException('Wrong Registration Date');
+		}
+
     }
 }

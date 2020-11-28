@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Artisan;
 use Laravel\Passport\Passport;
 use Tests\TestCase;
 use App\User;
+use DateTime;
 use Tests\AuthorizationTools;
 
 class PatientTest extends TestCase
@@ -76,26 +77,100 @@ class PatientTest extends TestCase
     }
 
     public function testModifyPatient(){
-        $patient = factory(Patient::class)->create(['code'=>(22345671234567), 'center_code'=>0, 'study_name'=>$this->study->name]);
+        AuthorizationTools::addRoleToUser(1, Constants::ROLE_SUPERVISOR, $this->study->name);
+        $patient = factory(Patient::class)->create(['center_code'=>0, 'study_name'=>$this->study->name]);
 
         $payload = [
             'firstname'=> 'a',
             'lastname'=>'b',
             'gender' => 'M',
             'birthDay'=> 5,
-            'birthMonth'=> 10,
+            'birthMonth'=> 12,
             'birthYear'=> 1955,
-            'registrationDate'=>'12312020',
+            'registrationDate'=>'12/31/2020',
             'investigatorName'=> 'salim',
             'centerCode'=>0
         ];
 
-        //dd($this->json('PATCH', '/api/patients/'.$patient->code, $payload));
-        //SK A Faaire assertion sur la db
-        //Check role supervisor
+        $this->json('PATCH', '/api/patients/'.$patient->code, $payload)->assertStatus(200);
+        //Check updated record in database
+        $updatedPatientEntity = Patient::find($patient->code)->toArray();
+        $this->assertEquals($payload['firstname'], $updatedPatientEntity['firstname']);
+        $this->assertEquals($payload['lastname'], $updatedPatientEntity['lastname']);
+        $this->assertEquals($payload['gender'], $updatedPatientEntity['gender']);
+        $this->assertEquals($payload['birthDay'], $updatedPatientEntity['birth_day']);
+        $this->assertEquals($payload['birthMonth'], $updatedPatientEntity['birth_month']);
+        $this->assertEquals($payload['birthYear'], $updatedPatientEntity['birth_year']);
+        $this->assertEquals(new DateTime($payload['registrationDate']), new DateTime($updatedPatientEntity['registration_date']));
+        $this->assertEquals($payload['investigatorName'], $updatedPatientEntity['investigator_name']);
+        $this->assertEquals($payload['centerCode'], $updatedPatientEntity['center_code']);
+    }
+
+    public function testModifyPatientWrongData(){
+        AuthorizationTools::addRoleToUser(1, Constants::ROLE_SUPERVISOR, $this->study->name);
+        $patient = factory(Patient::class)->create(['center_code'=>0, 'study_name'=>$this->study->name]);
+
+        $this->json('PATCH', '/api/patients/'.$patient->code, ['gender'=>'G'])->assertStatus(400);
+        $this->json('PATCH', '/api/patients/'.$patient->code, ['birthDay'=>32])->assertStatus(400);
+        $this->json('PATCH', '/api/patients/'.$patient->code, ['birthMonth'=>13])->assertStatus(400);
+        $this->json('PATCH', '/api/patients/'.$patient->code, ['birthYear'=>5000])->assertStatus(400);
+        $this->json('PATCH', '/api/patients/'.$patient->code, ['registrationDate'=>'31/01/2020'])->assertStatus(400);
+
+    }
+
+    public function testModifyPatientForbidenNotSupervisor(){
+        $patient = factory(Patient::class)->create(['center_code'=>0, 'study_name'=>$this->study->name]);
+
+        $this->json('PATCH', '/api/patients/'.$patient->code, ['gender'=>'M'])->assertStatus(403);
+
     }
 
     public function testModifyPatientWithdraw(){
+
+        AuthorizationTools::addRoleToUser(1, Constants::ROLE_SUPERVISOR, $this->study->name);
+        $patient = factory(Patient::class)->create(['center_code'=>0, 'study_name'=>$this->study->name]);
+
+        $payload = [
+            'withdraw' => true,
+            'withdrawDate'=> '12/31/2020',
+            'withdrawReason'=> 'fed-up'
+        ];
+
+        $this->json('PATCH', '/api/patients/'.$patient->code.'/withdraw', $payload)->assertStatus(200);
+        $updatedPatientEntity = Patient::find($patient->code)->toArray();
+        $this->assertEquals(true, boolval($updatedPatientEntity['withdraw']));
+        $this->assertEquals(new DateTime($payload['withdrawDate']), new DateTime($updatedPatientEntity['withdraw_date']));
+        $this->assertEquals($payload['withdrawReason'], $updatedPatientEntity['withdraw_reason']);
+
+    }
+
+    public function testModifyPatientWithdrawForbiddenNoRole(){
+        $patient = factory(Patient::class)->create(['center_code'=>0, 'study_name'=>$this->study->name]);
+
+        $payload = [
+            'withdraw' => true,
+            'withdrawDate'=> '12/31/2020',
+            'withdrawReason'=> 'fed-up'
+        ];
+
+        $this->json('PATCH', '/api/patients/'.$patient->code.'/withdraw', $payload)->assertStatus(403);
+
+    }
+
+    public function testModifyPatientRemoveWithdraw(){
+
+        AuthorizationTools::addRoleToUser(1, Constants::ROLE_SUPERVISOR, $this->study->name);
+        $patient = factory(Patient::class)->create(['center_code'=>0, 'study_name'=>$this->study->name]);
+
+        $payload = [
+            'withdraw' => false
+        ];
+
+        $this->json('PATCH', '/api/patients/'.$patient->code.'/withdraw', $payload)->assertStatus(200);
+        $updatedPatientEntity = Patient::find($patient->code)->toArray();
+        $this->assertEquals(false, boolval($updatedPatientEntity['withdraw']));
+        $this->assertNull($updatedPatientEntity['withdraw_date']);
+        $this->assertNull($updatedPatientEntity['withdraw_reason']);
 
     }
 }
