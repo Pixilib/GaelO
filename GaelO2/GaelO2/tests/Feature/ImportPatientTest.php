@@ -38,7 +38,7 @@ class ImportPatientTest extends TestCase
         "registrationDate" => '10/19/2020',
         "investigatorName" => "administrator",
         "centerCode" => 0,
-        "withdraw" => false,
+        "inclusionStatus"  => Constants::PATIENT_INCLUSION_STATUS_INCLUDED,
         "withdrawReason" => null,
         "withdrawDate" => null]];
 
@@ -63,10 +63,7 @@ class ImportPatientTest extends TestCase
         "studyName" => "test",
         "registrationDate" => '10/19/2020',
         "investigatorName" => "administrator",
-        "centerCode" => 0,
-        "withdraw" => false,
-        "withdrawReason" => null,
-        "withdrawDate" => null],
+        "centerCode" => 0],
         ["code" => 12341231234124,
         "lastName" => "test",
         "firstName" => "test",
@@ -77,10 +74,7 @@ class ImportPatientTest extends TestCase
         "studyName" => "test",
         "registrationDate" => '10/19/2020',
         "investigatorName" => "administrator",
-        "centerCode" => 0,
-        "withdraw" => false,
-        "withdrawReason" => null,
-        "withdrawDate" => null],
+        "centerCode" => 0],
         ["code" => 12341231234125,
         "lastName" => "test",
         "firstName" => "test",
@@ -91,10 +85,7 @@ class ImportPatientTest extends TestCase
         "studyName" => "test",
         "registrationDate" => '10/19/2020',
         "investigatorName" => "administrator",
-        "centerCode" => 0,
-        "withdraw" => false,
-        "withdrawReason" => null,
-        "withdrawDate" => null]
+        "centerCode" => 0]
     ];
         $resp = $this->json('POST', '/api/studies/test/import-patients', $this->validPayload)->assertSuccessful();
         $this->assertEquals(3,sizeof($resp['success']));

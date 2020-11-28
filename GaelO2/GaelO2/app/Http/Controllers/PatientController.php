@@ -20,9 +20,7 @@ use App\GaelO\UseCases\ModifyPatient\ModifyPatientResponse;
 use App\GaelO\UseCases\ModifyPatientWithdraw\ModifyPatientWithdraw;
 use App\GaelO\UseCases\ModifyPatientWithdraw\ModifyPatientWithdrawRequest;
 use App\GaelO\UseCases\ModifyPatientWithdraw\ModifyPatientWithdrawResponse;
-use App\GaelO\UseCases\ModifyUser\ModifyUser;
-use App\GaelO\UseCases\ModifyUser\ModifyUserRequest;
-use App\GaelO\UseCases\ModifyUser\ModifyUserResponse;
+
 use App\GaelO\Util;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -80,7 +78,7 @@ class PatientController extends Controller
 
     }
 
-    public function modifyPatientWithdraw(int $patientCode, Request $request, ModifyPatientWithdraw $modifyPatientWithdraw, ModifyPatientWithdrawRequest $modifyPatientWithdrawRequest, ModifyPatientWithdrawResponse $modifyPatientWithdrawResponse){
+    public function modifyPatientInclusionStatus(int $patientCode, Request $request, ModifyPatientWithdraw $modifyPatientWithdraw, ModifyPatientWithdrawRequest $modifyPatientWithdrawRequest, ModifyPatientWithdrawResponse $modifyPatientWithdrawResponse){
         $currentUser = Auth::user();
         $requestData = $request->all();
         //Fill DTO with all other request data

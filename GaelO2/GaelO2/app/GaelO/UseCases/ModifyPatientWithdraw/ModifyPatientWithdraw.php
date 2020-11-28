@@ -33,9 +33,9 @@ class ModifyPatientWithdraw {
             $modifiedData = [];
 
             //Handle Withdraw status update
-            $patientEntity['withdraw'] = $modifyPatientWithdrawRequest->withdraw;
+            $patientEntity['inclusion_status'] = $modifyPatientWithdrawRequest->inclusionStatus;
 
-            if($modifyPatientWithdrawRequest->withdraw){
+            if($modifyPatientWithdrawRequest->inclusionStatus === Constants::PATIENT_INCLUSION_STATUS_WITHDRAWN){
 
                 if(empty($modifyPatientWithdrawRequest->withdrawDate) ||
                     empty($modifyPatientWithdrawRequest->withdrawReason)
@@ -51,7 +51,7 @@ class ModifyPatientWithdraw {
                 $patientEntity['withdraw_date'] = null;
             }
 
-            $modifiedData['withdraw'] = $modifyPatientWithdrawRequest->withdraw;
+            $modifiedData['inclusion_status'] = $modifyPatientWithdrawRequest->inclusionStatus;
             $modifiedData['withdraw_reason'] = $patientEntity['withdraw_reason'];
             $modifiedData['withdraw_date'] = $patientEntity['withdraw_date'];
 

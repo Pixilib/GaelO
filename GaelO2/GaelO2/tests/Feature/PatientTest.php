@@ -125,20 +125,20 @@ class PatientTest extends TestCase
 
     }
 
-    public function testModifyPatientWithdraw(){
+    public function testModifyPatientInclusionStatus(){
 
         AuthorizationTools::addRoleToUser(1, Constants::ROLE_SUPERVISOR, $this->study->name);
         $patient = factory(Patient::class)->create(['center_code'=>0, 'study_name'=>$this->study->name]);
 
         $payload = [
-            'withdraw' => true,
+            'inclusionStatus' => Constants::PATIENT_INCLUSION_STATUS_WITHDRAWN,
             'withdrawDate'=> '12/31/2020',
             'withdrawReason'=> 'fed-up'
         ];
 
-        $this->json('PATCH', '/api/patients/'.$patient->code.'/withdraw', $payload)->assertStatus(200);
+        $this->json('PATCH', '/api/patients/'.$patient->code.'/inclusion-status', $payload)->assertStatus(200);
         $updatedPatientEntity = Patient::find($patient->code)->toArray();
-        $this->assertEquals(true, boolval($updatedPatientEntity['withdraw']));
+        $this->assertEquals(Constants::PATIENT_INCLUSION_STATUS_WITHDRAWN, $updatedPatientEntity['inclusion_status']);
         $this->assertEquals(new DateTime($payload['withdrawDate']), new DateTime($updatedPatientEntity['withdraw_date']));
         $this->assertEquals($payload['withdrawReason'], $updatedPatientEntity['withdraw_reason']);
 
@@ -148,12 +148,12 @@ class PatientTest extends TestCase
         $patient = factory(Patient::class)->create(['center_code'=>0, 'study_name'=>$this->study->name]);
 
         $payload = [
-            'withdraw' => true,
+            'inclusionStatus' => Constants::PATIENT_INCLUSION_STATUS_INCLUDED,
             'withdrawDate'=> '12/31/2020',
             'withdrawReason'=> 'fed-up'
         ];
 
-        $this->json('PATCH', '/api/patients/'.$patient->code.'/withdraw', $payload)->assertStatus(403);
+        $this->json('PATCH', '/api/patients/'.$patient->code.'/inclusion-status', $payload)->assertStatus(403);
 
     }
 
@@ -163,14 +163,15 @@ class PatientTest extends TestCase
         $patient = factory(Patient::class)->create(['center_code'=>0, 'study_name'=>$this->study->name]);
 
         $payload = [
-            'withdraw' => false
+            'inclusionStatus' => Constants::PATIENT_INCLUSION_STATUS_INCLUDED
         ];
 
-        $this->json('PATCH', '/api/patients/'.$patient->code.'/withdraw', $payload)->assertStatus(200);
+        $this->json('PATCH', '/api/patients/'.$patient->code.'/inclusion-status', $payload)->assertStatus(200);
         $updatedPatientEntity = Patient::find($patient->code)->toArray();
-        $this->assertEquals(false, boolval($updatedPatientEntity['withdraw']));
+        $this->assertEquals(Constants::PATIENT_INCLUSION_STATUS_INCLUDED, $updatedPatientEntity['inclusion_status']);
         $this->assertNull($updatedPatientEntity['withdraw_date']);
         $this->assertNull($updatedPatientEntity['withdraw_reason']);
 
     }
+
 }

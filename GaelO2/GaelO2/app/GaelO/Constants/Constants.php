@@ -8,6 +8,9 @@ class Constants {
     const USER_STATUS_BLOCKED = "Blocked";
     const USER_STATUS_DEACTIVATED = "Deactivated";
 
+    const PATIENT_INCLUSION_STATUS_INCLUDED = "Included";
+    const PATIENT_INCLUSION_STATUS_WITHDRAWN = "Withdrawn";
+
     const ROLE_INVESTIGATOR = "Investigator";
     const ROLE_MONITOR = "Monitor";
     const ROLE_CONTROLER = "Controller";
@@ -36,7 +39,7 @@ class Constants {
     const TRACKER_UPLOAD_DOCUMENTATION = "Upload Documentation";
     const TRACKER_UPDATE_DOCUMENTATION = "Update Documentation";
     const TRACKER_DELETE_DOCUMENTATION = "Delete Documentation";
-    const TRACKER_PATIENT_WITHDRAW = "Patient Withdraw";
+    const TRACKER_PATIENT_WITHDRAW = "Patient Withdrawal";
     const TRACKER_CORRECTIVE_ACTION = "Corrective Action";
     const TRACKER_QUALITY_CONTROL = "Quality Control";
     const TRACKER_CREATE_USER = "Create User";

@@ -61,10 +61,7 @@ class PatientRepository implements PersistenceInterface {
             "study_name" => $studyName,
             "registration_date" => $patientEntity->registrationDate,
             "investigator_name" => $patientEntity->investigatorName,
-            "center_code" => $patientEntity->centerCode,
-            "withdraw" => $patientEntity->withdraw,
-            "withdraw_reason" => $patientEntity->withdrawReason,
-            "withdraw_date" => $patientEntity->withdrawDate
+            "center_code" => $patientEntity->centerCode
         ];
         $this->create($arrayPatientEntity);
     }

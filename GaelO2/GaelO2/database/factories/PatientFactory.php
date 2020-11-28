@@ -18,7 +18,7 @@ $factory->define(Patient::class, function (Faker $faker) {
         'investigator_name'=>$faker->word,
         'center_code'=>$faker->unique()->randomNumber,
         'study_name'=>$faker->word,
-        'withdraw'=>$faker->randomElement([true, false]),
+        'inclusion_status'=>$faker->randomElement(['Included', 'Withdrawn']),
         'withdraw_reason'=>$faker->word,
         'withdraw_date'=>now()
     ];
