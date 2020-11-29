@@ -38,38 +38,41 @@ class BuildTreeTest extends TestCase
         $this->visitGroup = factory(VisitGroup::class)->create(['study_name' => $this->study->name]);
         $this->visitType = factory(VisitType::class)->create(['visit_group_id' => $this->visitGroup->id]);
         $this->patient = factory(Patient::class)->create(['study_name' => $this->study->name, 'center_code' => 0]);
-        $this->visit = factory(Visit::class)->create(['creator_user_id' => 1,
-                'patient_code' => $this->patient->code,
-                'visit_type_id' => $this->visitType->id
+        $this->visit = factory(Visit::class)->create([
+            'creator_user_id' => 1,
+            'patient_code' => $this->patient->code,
+            'visit_type_id' => $this->visitType->id
         ]);
 
         $this->reviewStatus = factory(ReviewStatus::class)->create([
             'visit_id' => $this->visit->id,
-            'study_name'=> $this->study->name,
+            'study_name' => $this->study->name,
         ]);
 
         $this->treeService = App::make(VisitTreeService::class);
-
     }
 
-   public function testTreeMonitor(){
+    public function testTreeMonitor()
+    {
 
         $this->treeService->setUserAndStudy(1, Constants::ROLE_MONITOR, $this->study->name);
         //dd($this->treeService->buildTree());
 
-   }
+    }
 
-   public function testTreeController(){
+    public function testTreeController()
+    {
 
-    $this->treeService->setUserAndStudy(1, Constants::ROLE_CONTROLER, $this->study->name);
-    //dd($this->treeService->buildTree());
+        $this->treeService->setUserAndStudy(1, Constants::ROLE_CONTROLER, $this->study->name);
+        //dd($this->treeService->buildTree());
 
-}
+    }
 
-public function testTreeInvestigator(){
+    public function testTreeInvestigator()
+    {
 
-    $this->treeService->setUserAndStudy(1, Constants::ROLE_INVESTIGATOR, $this->study->name);
-    dd($this->treeService->buildTree());
+        $this->treeService->setUserAndStudy(1, Constants::ROLE_INVESTIGATOR, $this->study->name);
+        //dd($this->treeService->buildTree());
 
-}
+    }
 }
