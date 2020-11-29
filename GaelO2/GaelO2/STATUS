@@ -23,8 +23,13 @@ Preparation Investigateur / Monitor / Controller / Reviewer :
 
 Salim TODO :
 
+-API Tree :
+Finir Test Unitaire Service creation tree
+Faire Route + Usecase + authorization
+
 Class d'authorisation revenir a l'heritage?
-Faire un objet specifique pour l'authorisation des Review ? (voir gaelo 1)
+Faire un objet specifique pour l'authorisation des Review ?
+Authorisation Visit => Permission doit checker que l'utilisateur a un role dans la study principale de la visite ou ses ancillaires
 
 Pb Authorisation : Un ID Visit peut maintenant a etre attachee a plusieurs etudes ancillaires
 => Le scope de la study demandée doit venir du front
@@ -33,8 +38,6 @@ Pb Authorisation : Un ID Visit peut maintenant a etre attachee a plusieurs etude
 => Creer une table d'ancillaries studies ? => Non juste limiter les roles des etudes ancillaires
 => Quid des roles dans contexte d etude ancillaire (notament supervisor qui doit etre limité)
 
-- Visit
-=> Necessite de faire passer la study pour permission du GET
 
 -Etude ancillaires
 => Crée dans les etudes comme étant acillaires De (patient code prefix reste a null)
