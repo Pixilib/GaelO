@@ -3,9 +3,13 @@
 namespace App\GaelO\Services;
 
 use App\GaelO\Adapters\LaravelFunctionAdapter;
+use App\GaelO\Exceptions\GaelOBadRequestException;
 use App\GaelO\Repositories\CenterRepository;
 use App\GaelO\Repositories\PatientRepository;
 use App\GaelO\Repositories\StudyRepository;
+use App\GaelO\Util;
+use DateTime;
+use Exception;
 
 class ImportPatientService
 {
@@ -39,9 +43,10 @@ class ImportPatientService
         //For each patient from the array list
 		foreach ($this->patientEntities as $patientEntity) {
             try {
-                $patientEntity->registrationDate = $this->formatRegistrationDate($patientEntity->registrationDate);
+                $patientEntity->registrationDate = Util::formatUSDateStringToSQLDateFormat($patientEntity->registrationDate);
                 //Check condition before import
-                $this->checkCorrectDate($patientEntity->birthDay, $patientEntity->birthMonth, $patientEntity->birthYear);
+                self::checkPatientGender($patientEntity->gender);
+                self::checkCorrectBirthDate($patientEntity->birthDay, $patientEntity->birthMonth, $patientEntity->birthYear);
                 $this->checkNewPatient($patientEntity->code);
                 $this->isCorrectPatientCodeLenght($patientEntity->code);
                 $this->isExistingCenter($patientEntity->centerCode);
@@ -53,7 +58,7 @@ class ImportPatientService
 				$this->successList[]=$patientEntity->code;
 
 			//If conditions not met, add to the fail list with the respective error reason
-            } catch(\Exception $error) {
+            } catch(Exception $error) {
                 $this->failList[$error->getMessage()][]=$patientEntity->code;
             }
 
@@ -61,41 +66,23 @@ class ImportPatientService
 
     }
 
-    private function checkCorrectDate(?int $days, ?int $months, ?int $year) : void {
+    public static function checkCorrectBirthDate(?int $days, ?int $months, ?int $year) : void {
         if ($days !== null && ($days < 1 || $days > 31)) {
-            throw new \Exception('Incorrect Birthdate day format');
+            throw new GaelOBadRequestException('Incorrect Birthdate day format');
         }
         if ($months !== null && ($months < 1 || $months > 12)) {
-            throw new \Exception('Incorrect Birthdate month format');
+            throw new GaelOBadRequestException('Incorrect Birthdate month format');
         }
         if ($year !== null && ($year < 1900 || $year > 3000)) {
-            throw new \Exception('Incorrect Birthdate year format');
+            throw new GaelOBadRequestException('Incorrect Birthdate year format');
         }
     }
 
-	/**
-	 * Format registration date according to plateform preference (french or US format)
-	 * @param string registrationDate
-	 * @return String
-	 */
-	private function formatRegistrationDate(string $registrationDate) : String {
-		$dateNbArray=explode('/', $registrationDate);
-        $registrationDay=intval($dateNbArray[1]);
-        $registrationMonth=intval($dateNbArray[0]);
-        $registrationYear=intval($dateNbArray[2]);
 
-		if ($registrationDay == 0 || $registrationMonth == 0 || $registrationYear == 0) {
-			throw new \Exception('Wrong Registration Date');
-		}
 
-		try {
-			$dateResult=new \DateTime($registrationYear.'-'.$registrationMonth.'-'.$registrationDay);
-            return $dateResult->format('Y-m-d');
-        }catch (\Exception $e) {
-			throw new \Exception('Wrong Registration Date');
-		}
-
-	}
+    public static function checkPatientGender(string $sex){
+        if($sex !== "M" && $sex!=="F") throw new GaelOBadRequestException("Incorrect Gender : M or F");
+    }
 
 	/**
 	 * Check that the importing patient is not already known in the system
@@ -104,7 +91,7 @@ class ImportPatientService
 	 */
 	private function checkNewPatient(int $patientCode) : void {
         if (in_array($patientCode, $this->existingPatientCode)) {
-            throw new \Exception('Existing Patient Code');
+            throw new GaelOBadRequestException('Existing Patient Code');
         }
 	}
 
@@ -116,13 +103,13 @@ class ImportPatientService
 		$lenghtImport=strlen((string) $patientCode);
 
 		if ($lenghtImport != $this->patientCodeLength) {
-			throw new \Exception('Incorrect Patient Code Length');
+			throw new GaelOBadRequestException('Incorrect Patient Code Length');
 		}
 	}
 
 	private function isCorrectPrefix(int $patientCode) : void {
 		if (!empty($this->studyEntity->patientCodePrefix) && !$this->startsWith((string) $patientCode, $this->studyEntity->patientCodePrefix)) {
-    		throw new \Exception('Wrong Patient Prefix');
+    		throw new GaelOBadRequestException('Wrong Patient Prefix');
         }
 	}
 
@@ -137,7 +124,7 @@ class ImportPatientService
 	 */
 	private function isExistingCenter($patientNumCenter) : void {
         if (!in_array($patientNumCenter, $this->existingCenter)) {
-            throw new \Exception('Unknown Center');
+            throw new GaelOBadRequestException('Unknown Center');
         }
 	}
 }

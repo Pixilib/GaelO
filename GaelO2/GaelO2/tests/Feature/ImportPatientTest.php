@@ -2,12 +2,14 @@
 
 namespace Tests\Feature;
 
+use App\GaelO\Constants\Constants;
 use App\Study;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Support\Facades\Artisan;
 use Laravel\Passport\Passport;
 use Tests\TestCase;
 use App\User;
+use Tests\AuthorizationTools;
 
 class ImportPatientTest extends TestCase
 {
@@ -36,7 +38,7 @@ class ImportPatientTest extends TestCase
         "registrationDate" => '10/19/2020',
         "investigatorName" => "administrator",
         "centerCode" => 0,
-        "withdraw" => false,
+        "inclusionStatus"  => Constants::PATIENT_INCLUSION_STATUS_INCLUDED,
         "withdrawReason" => null,
         "withdrawDate" => null]];
 
@@ -46,7 +48,11 @@ class ImportPatientTest extends TestCase
         );
     }
 
+
+
     public function testImportMultiplePatients() {
+
+        AuthorizationTools::addRoleToUser(1, Constants::ROLE_SUPERVISOR, 'test');
         $this->validPayload = [ ["code" => 12341231234123,
         "lastName" => "test",
         "firstName" => "test",
@@ -57,10 +63,7 @@ class ImportPatientTest extends TestCase
         "studyName" => "test",
         "registrationDate" => '10/19/2020',
         "investigatorName" => "administrator",
-        "centerCode" => 0,
-        "withdraw" => false,
-        "withdrawReason" => null,
-        "withdrawDate" => null],
+        "centerCode" => 0],
         ["code" => 12341231234124,
         "lastName" => "test",
         "firstName" => "test",
@@ -71,10 +74,7 @@ class ImportPatientTest extends TestCase
         "studyName" => "test",
         "registrationDate" => '10/19/2020',
         "investigatorName" => "administrator",
-        "centerCode" => 0,
-        "withdraw" => false,
-        "withdrawReason" => null,
-        "withdrawDate" => null],
+        "centerCode" => 0],
         ["code" => 12341231234125,
         "lastName" => "test",
         "firstName" => "test",
@@ -85,29 +85,32 @@ class ImportPatientTest extends TestCase
         "studyName" => "test",
         "registrationDate" => '10/19/2020',
         "investigatorName" => "administrator",
-        "centerCode" => 0,
-        "withdraw" => false,
-        "withdrawReason" => null,
-        "withdrawDate" => null]
+        "centerCode" => 0]
     ];
         $resp = $this->json('POST', '/api/studies/test/import-patients', $this->validPayload)->assertSuccessful();
-        $this->json('GET', '/api/patients')->assertJsonCount(3);
+        $this->assertEquals(3,sizeof($resp['success']));
+        $this->assertEquals(0,sizeof($resp['fail']));
     }
 
     public function testImportPatient() {
+        AuthorizationTools::addRoleToUser(1, Constants::ROLE_SUPERVISOR, 'test');
         //Test patient creation
-        $resp = $this->json('POST', '/api/studies/test/import-patients', $this->validPayload)->assertSuccessful();
+        $reponse1 = $this->json('POST', '/api/studies/test/import-patients', $this->validPayload)->assertSuccessful();
+        $this->assertEquals(1,sizeof($reponse1['success']));
+        $this->assertEquals(0,sizeof($reponse1['fail']));
 
         //Test that copies of existing patients don't insert
-        $this->json('POST', '/api/studies/test/import-patients', $this->validPayload);
-        $this->json('GET', '/api/patients/0')->assertJsonCount(1);
+        $response2 = $this->json('POST', '/api/studies/test/import-patients', $this->validPayload);
+        $this->assertEquals(0,sizeof($response2['success']));
+        $this->assertEquals(1,sizeof($response2['fail']));
+    }
 
-        //assertion on fails and successes
-        //Use (and test) the GET api to get data of created patient and check it is returned
-        $this->json('GET', '/api/patients/12341231234123')->assertJsonCount(14);
+    public function testImportPatientForbiddenNoRole(){
+        $this->json('POST', '/api/studies/test/import-patients', $this->validPayload)->assertStatus(403);
     }
 
     public function testCreateWrongDayOfBirth() {
+        AuthorizationTools::addRoleToUser(1, Constants::ROLE_SUPERVISOR, 'test');
         $this->validPayload[0]['birthDay'] = 0;
         $resp = $this->json('POST', '/api/studies/test/import-patients', $this->validPayload);
         //Check that inserting patient failed because day of birth was incorrect
@@ -123,6 +126,7 @@ class ImportPatientTest extends TestCase
     }
 
     public function testCreateWrongMonthOfBirth() {
+        AuthorizationTools::addRoleToUser(1, Constants::ROLE_SUPERVISOR, 'test');
         $this->validPayload[0]['birthMonth'] = 0;
         $resp = $this->json('POST', '/api/studies/test/import-patients', $this->validPayload);
         //Check that inserting patient failed because day of birth was incorrect
@@ -138,6 +142,7 @@ class ImportPatientTest extends TestCase
     }
 
     public function testCreateWrongYearOfBirth() {
+        AuthorizationTools::addRoleToUser(1, Constants::ROLE_SUPERVISOR, 'test');
         $this->validPayload[0]['birthYear'] = 1800;
         $resp = $this->json('POST', '/api/studies/test/import-patients', $this->validPayload);
         //Check that inserting patient failed because day of birth was incorrect
@@ -153,6 +158,7 @@ class ImportPatientTest extends TestCase
     }
 
     public function testCreateAlreadyKnownPatient(){
+        AuthorizationTools::addRoleToUser(1, Constants::ROLE_SUPERVISOR, 'test');
         $this->json('POST', '/api/studies/test/import-patients', $this->validPayload);
         $resp = $this->json('POST', '/api/studies/test/import-patients', $this->validPayload);
         $this->assertEquals(0, count($resp['success']));
@@ -161,6 +167,7 @@ class ImportPatientTest extends TestCase
     }
 
     public function testIncorrectPatientCodeLength(){
+        AuthorizationTools::addRoleToUser(1, Constants::ROLE_SUPERVISOR, 'test');
         $this->validPayload[0]['code'] = 123;
         $resp = $this->json('POST', '/api/studies/test/import-patients', $this->validPayload);
         $this->assertEquals(0, count($resp['success']));
@@ -169,6 +176,7 @@ class ImportPatientTest extends TestCase
     }
 
     public function testIncorrectPatientPrefix(){
+        AuthorizationTools::addRoleToUser(1, Constants::ROLE_SUPERVISOR, 'test');
         $this->validPayload[0]['code'] = 12431234123412;
         $resp = $this->json('POST', '/api/studies/test/import-patients', $this->validPayload);
         $this->assertEquals(0, count($resp['success']));

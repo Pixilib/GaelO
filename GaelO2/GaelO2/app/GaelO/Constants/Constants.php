@@ -8,6 +8,9 @@ class Constants {
     const USER_STATUS_BLOCKED = "Blocked";
     const USER_STATUS_DEACTIVATED = "Deactivated";
 
+    const PATIENT_INCLUSION_STATUS_INCLUDED = "Included";
+    const PATIENT_INCLUSION_STATUS_WITHDRAWN = "Withdrawn";
+
     const ROLE_INVESTIGATOR = "Investigator";
     const ROLE_MONITOR = "Monitor";
     const ROLE_CONTROLER = "Controller";
@@ -18,6 +21,7 @@ class Constants {
     const TRACKER_SEND_MESSAGE = "Send Message";
     const TRACKER_CREATE_VISIT = "Create Visit";
     const TRACKER_UPLOAD_SERIES = "Upload Series";
+    const TRACKER_UPLOAD_VALIDATION_FAILED = "Upload Failed";
     const TRACKER_UNLOCK_FORM = "Unlock Form";
     const TRACKER_CREATE_STUDY = "Create Study";
     const TRACKER_DEACTIVATE_STUDY = "Deactivate Study";
@@ -32,8 +36,10 @@ class Constants {
     const TRACKER_EDIT_PATIENT = "Edit Patient";
     const TRACKER_IMPORT_PATIENT = "Import Patients";
     const TRACKER_ADD_DOCUMENTATION = "Add Documentation";
+    const TRACKER_UPLOAD_DOCUMENTATION = "Upload Documentation";
     const TRACKER_UPDATE_DOCUMENTATION = "Update Documentation";
-    const TRACKER_PATIENT_WITHDRAW = "Patient Withdraw";
+    const TRACKER_DELETE_DOCUMENTATION = "Delete Documentation";
+    const TRACKER_PATIENT_WITHDRAW = "Patient Withdrawal";
     const TRACKER_CORRECTIVE_ACTION = "Corrective Action";
     const TRACKER_QUALITY_CONTROL = "Quality Control";
     const TRACKER_CREATE_USER = "Create User";
@@ -55,4 +61,14 @@ class Constants {
     const QUALITY_CONTROL_CORRECTIVE_ACTION_ASKED = "Corrective Action Asked";
     const QUALITY_CONSTROL_REFUSED = "Refused";
     const QUALITY_CONTROL_ACCEPTED = "Accepted";
+
+    const UPLOAD_STATUS_DONE = "Done";
+    const UPLOAD_STATUS_NOT_DONE = "Not Done";
+    const UPLOAD_STATUS_PROCESSING = "Processing";
+
+    const ORTHANC_ANON_PROFILE_DEFAULT = "Default";
+    const ORTHANC_ANON_PROFILE_FULL = "Full";
+    const ORTHANC_PATIENTS_LEVEL="patients";
+    const ORTHANC_STUDIES_LEVEL="studies";
+    const ORTHANC_SERIES_LEVEL="series";
 }

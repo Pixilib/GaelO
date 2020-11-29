@@ -14,7 +14,7 @@ class CreateRolesTable extends Migration
     public function up()
     {
         Schema::create('roles', function (Blueprint $table) {
-            $table->enum('name', ['Investigator', 'Monitor', 'Controller', 'Supervisor'])->nullable(false);
+            $table->enum('name', ['Investigator', 'Monitor', 'Controller', 'Supervisor', 'Reviewer'])->nullable(false);
             $table->unsignedBigInteger('user_id')->nullable(false);
             $table->string('study_name')->nullable(false);
             $table->timestamps();

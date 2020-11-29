@@ -4,7 +4,8 @@ namespace App\GaelO\UseCases\CreateVisit;
 
 class CreateVisitRequest {
     public string $role;
-    public int $creatorUserId;
+    public string $studyName;
+    public int $currentUserId;
     public int $patientCode;
     public ?string $acquisitionDate = null;
     public int $visitTypeId;

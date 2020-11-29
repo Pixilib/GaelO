@@ -13,7 +13,7 @@ class CreateDocumentationTable extends Migration
      */
     public function up()
     {
-        Schema::create('documentation', function (Blueprint $table) {
+        Schema::create('documentations', function (Blueprint $table) {
             $table->id();
             $table->string('name')->nullable(false);
             $table->date('document_date')->nullable(false);
@@ -23,6 +23,7 @@ class CreateDocumentationTable extends Migration
             $table->boolean('controller')->default(false)->nullable(false);
             $table->boolean('monitor')->default(false)->nullable(false);
             $table->boolean('reviewer')->default(false)->nullable(false);
+            $table->string('path')->nullable(true)->default(null);
             $table->softDeletes();
             $table->timestamps();
 
@@ -38,6 +39,6 @@ class CreateDocumentationTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('documentation');
+        Schema::dropIfExists('documentations');
     }
 }

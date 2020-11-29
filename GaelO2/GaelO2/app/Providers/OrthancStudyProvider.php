@@ -4,7 +4,7 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 
-class PreferenceRepositoryProvider extends ServiceProvider
+class OrthancStudyProvider extends ServiceProvider
 {
     /**
      * Register services.
@@ -14,10 +14,9 @@ class PreferenceRepositoryProvider extends ServiceProvider
     public function register()
     {
         $this->app->when(
-            [\App\GaelO\UseCases\GetPreference\GetPreferences::class,
-            \App\GaelO\UseCases\ModifyPreference\ModifyPreference::class])
+            [\App\GaelO\UseCases\GetKnownOrthancID\GetKnownOrthancID::class])
         ->needs(\App\GaelO\Interfaces\PersistenceInterface::class)
-        ->give(\App\GaelO\Repositories\PreferencesRepository::class);
+        ->give(\App\GaelO\Repositories\OrthancStudyRepository::class);
     }
 
     /**

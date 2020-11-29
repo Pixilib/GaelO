@@ -5,11 +5,14 @@ namespace App\GaelO\Repositories;
 use App\Visit;
 use App\GaelO\Interfaces\PersistenceInterface;
 use App\GaelO\Util;
+use App\ReviewStatus;
+use Illuminate\Support\Facades\DB;
 
 class VisitRepository implements PersistenceInterface {
 
     public function __construct(){
         $this->visit = new Visit();
+        $this->reviewStatus = new ReviewStatus();
     }
 
     public function create(array $data){
@@ -32,7 +35,7 @@ class VisitRepository implements PersistenceInterface {
         $this->visit->find($id)->delete();
     }
 
-    public function createVisit(int $creatorUserId, int $patientCode, ?string $acquisitionDate, int $visitTypeId,
+    public function createVisit(string $studyName, int $creatorUserId, int $patientCode, ?string $acquisitionDate, int $visitTypeId,
         string $statusDone, ?string $reasonForNotDone, string $stateInvestigatorForm, string $stateQualityControl){
 
         $data = [
@@ -46,6 +49,15 @@ class VisitRepository implements PersistenceInterface {
             'state_investigator_form' => $stateInvestigatorForm,
             'state_quality_control' => $stateQualityControl
         ];
+
+        DB::transaction(function () use ($data, $studyName) {
+            $newVisit = $this->visit->create($data);
+            $this->reviewStatus->create([
+                'visit_id'=>$newVisit->id,
+                'study_name'=>$studyName
+            ]);
+        });
+
         $this->create($data);
     }
 
@@ -66,6 +78,32 @@ class VisitRepository implements PersistenceInterface {
     public function isExistingVisit(int $patientCode, int $visitTypeId) : bool {
         $visit = $this->visit->where([['patient_code', '=', $patientCode], ['visit_type_id', '=', $visitTypeId]])->get();
         return $visit->count() > 0 ? true : false;
+    }
+
+    public function updateUploadStatus(int $visitId, string $newUploadStatus) : array {
+        $visitEntity = $this->visit->find($visitId);
+        $visitEntity['upload_status'] = $newUploadStatus;
+        $visitEntity->save();
+        return $visitEntity->toArray();
+    }
+
+    public function getVisitContext(int $visitId, ?string $studyName= null) : array {
+
+        $dataArray = $this->visit->find($visitId)->with(['visitType', 'patient'])/*->join('reviews_status', function ($join) use ($studyName) {
+            $join->on('vist_id', '=', 'id')->where('study_name', $studyName);
+        })*/->first()->toArray();
+        return $dataArray;
+    }
+
+    public function updateReviewAvailability(int $visitId, string $studyName, bool $available) : void {
+        $reviewStatusEntity = $this->visit->find($visitId)->reviewStatus()->where('study_name', $studyName)->firstOrFail();
+        $reviewStatusEntity['review_available'] = $available;
+        $reviewStatusEntity->save();
+    }
+
+    public function getPatientsVisits(int $patientCode){
+        $visits = $this->visit->where('patient_code', $patientCode)->get()->toArray();
+        return $visits;
     }
 
 

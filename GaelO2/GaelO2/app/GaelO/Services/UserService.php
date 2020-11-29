@@ -3,7 +3,8 @@
 namespace App\GaelO\Services;
 
 use App\GaelO\Constants\Constants;
-use App\GaelO\Exceptions\GaelOException;
+use App\GaelO\Exceptions\GaelOBadRequestException;
+use App\GaelO\Exceptions\GaelOConflictException;
 use App\GaelO\Repositories\UserRepository;
 use App\GaelO\UseCases\CreateUser\CreateUserRequest;
 use App\GaelO\UseCases\ModifyUser\ModifyUserRequest;
@@ -88,7 +89,10 @@ class UserService
     public function patchUser(ModifyUserIdentificationRequest $modifyUserIdentificationRequest) {
         $user = $this->persistenceInterface->find($modifyUserIdentificationRequest->userId);
 
-        if($modifyUserIdentificationRequest->email !== $user['email']) $this->checkEmailValid($modifyUserIdentificationRequest->email);
+        if($modifyUserIdentificationRequest->email !== $user['email']) {
+            $this->checkEmailValid($modifyUserIdentificationRequest->email);
+            $this->checkEmailUnique($modifyUserIdentificationRequest->email);
+        }
         if($modifyUserIdentificationRequest->username !== $user['username']) $this->checkUsernameUnique($modifyUserIdentificationRequest->username);
 
         $this->persistenceInterface->updateUser($user['id'], $modifyUserIdentificationRequest->username,
@@ -118,13 +122,13 @@ class UserService
         || !isset($userRequest->email)
         || !is_numeric($userRequest->centerCode)
         || !isset($userRequest->administrator) ) {
-            throw new GaelOException('Form incomplete');
+            throw new GaelOBadRequestException('Form incomplete');
         }
     }
 
     private function checkEmailValid(string $email) : void {
         if (!preg_match('/^[a-z0-9\-_.]+@[a-z0-9\-_.]+\.[a-z]{2,4}$/i', $email)) {
-            throw new GaelOException('Not a valid email format');
+            throw new GaelOBadRequestException('Not a valid email format');
         }
 
     }
@@ -132,19 +136,19 @@ class UserService
     private function checkPhoneCorrect(?string $phone) : void {
         //If contains non number caracters throw error
         if ($phone != null && preg_match('/[^0-9]/', $phone)) {
-            throw new GaelOException('Not a valid email phone number');
+            throw new GaelOBadRequestException('Not a valid email phone number');
         }
     }
 
     private function checkUsernameUnique(string $username) : void {
         $knownUsername = $this->persistenceInterface->isExistingUsername($username);
-        if($knownUsername) throw new GaelOException("Username Already Used");
+        if($knownUsername) throw new GaelOConflictException("Username Already Used");
 
     }
 
     private function checkEmailUnique(string $email) : void {
         $knownEmail = $this->persistenceInterface->isExistingEmail($email);
-        if($knownEmail) throw new GaelOException("Email Already Known");
+        if($knownEmail) throw new GaelOConflictException("Email Already Known");
 
     }
 }

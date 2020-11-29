@@ -16,15 +16,15 @@ class PatientEntity {
     public ?string $investigatorName;
     public int $centerCode;
     public string $studyName;
-    public bool $withdraw;
+    public string $inclusionStatus;
     public ?string $withdrawReason;
     public ?string $withdrawDate;
 
     public static function fillFromDBReponseArray(array $array){
         $patientEntity  = new PatientEntity();
         $patientEntity->code = $array['code'];
-        $patientEntity->lastName = $array['last_name'];
-        $patientEntity->firstName = $array['first_name'];
+        $patientEntity->lastName = $array['lastname'];
+        $patientEntity->firstName = $array['firstname'];
         $patientEntity->birthDay = $array['birth_day'];
         $patientEntity->birthMonth = $array['birth_month'];
         $patientEntity->birthYear = $array['birth_year'];
@@ -33,7 +33,7 @@ class PatientEntity {
         $patientEntity->investigatorName = $array['investigator_name'];
         $patientEntity->studyName = $array['study_name'];
         $patientEntity->centerCode = $array['center_code'];
-        $patientEntity->withdraw = $array['withdraw'];
+        $patientEntity->inclusionStatus = $array['inclusion_status'];
         $patientEntity->withdrawReason = $array['withdraw_reason'];
         $patientEntity->withdrawDate = $array['withdraw_date'];
         return $patientEntity;
@@ -52,9 +52,6 @@ class PatientEntity {
         $patientEntity->investigatorName = $array['investigatorName'];
         $patientEntity->studyName = $array['studyName'];
         $patientEntity->centerCode = $array['centerCode'];
-        $patientEntity->withdraw = $array['withdraw'];
-        $patientEntity->withdrawReason = $array['withdrawReason'];
-        $patientEntity->withdrawDate = $array['withdrawDate'];
         return $patientEntity;
     }
 

@@ -2,36 +2,62 @@
 
 namespace App\GaelO\UseCases\GetUser;
 
+use App\GaelO\Exceptions\GaelOException;
+use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\PersistenceInterface;
-
+use App\GaelO\Services\AuthorizationService;
 use App\GaelO\UseCases\GetUser\GetUserRequest;
 use App\GaelO\UseCases\GetUser\GetUserResponse;
+use Exception;
 
 class GetUser {
 
-    public function __construct(PersistenceInterface $persistenceInterface){
+    public function __construct(PersistenceInterface $persistenceInterface, AuthorizationService $authorizationService){
         $this->persistenceInterface = $persistenceInterface;
+        $this->authorizationService = $authorizationService;
     }
 
-    public function execute(GetUserRequest $userRequest, GetUserResponse $userResponse) : void
+    public function execute(GetUserRequest $getUserRequest, GetUserResponse $getUserResponse) : void
     {
-        $id = $userRequest->id;
 
-        if ($id == 0) {
-            $dbData = $this->persistenceInterface->getAll();
-            $responseArray = [];
-            foreach($dbData as $data){
-                $responseArray[] = UserEntity::fillFromDBReponseArray($data);
+        try{
+            $this->checkAuthorization($getUserRequest->currentUserId);
+
+            $id = $getUserRequest->id;
+
+            if ($id == 0) {
+                $dbData = $this->persistenceInterface->getAll();
+                $responseArray = [];
+                foreach($dbData as $data){
+                    $responseArray[] = UserEntity::fillFromDBReponseArray($data);
+                }
+                $getUserResponse->body = $responseArray;
+            } else {
+                $dbData = $this->persistenceInterface->find($id);
+                $responseEntity = UserEntity::fillFromDBReponseArray($dbData);
+                $getUserResponse->body = $responseEntity;
             }
-            $userResponse->body = $responseArray;
-        } else {
-            $dbData = $this->persistenceInterface->find($id);
-            $responseEntity = UserEntity::fillFromDBReponseArray($dbData);
-            $userResponse->body = $responseEntity;
-        }
-        $userResponse->status = 200;
-        $userResponse->statusText = 'OK';
+            $getUserResponse->status = 200;
+            $getUserResponse->statusText = 'OK';
 
+        } catch (GaelOException $e){
+
+            $getUserResponse->body = $e->getErrorBody();
+            $getUserResponse->status = $e->statusCode;
+            $getUserResponse->statusText = $e->statusText;
+
+        } catch (Exception $e){
+            throw $e;
+        }
+
+
+    }
+
+    private function checkAuthorization(int $userId)  {
+        $this->authorizationService->setCurrentUserAndRole($userId);
+        if( ! $this->authorizationService->isAdmin()) {
+            throw new GaelOForbiddenException();
+        };
     }
 
 }

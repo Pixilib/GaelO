@@ -7,6 +7,6 @@
     Visit Type : {{$visitType}}<br>
     Study : {{$study}}<br>
     zipPath : {{$zipPath}}<br>
-    username: {{$username}}<br>
+    userId: {{$userId}}<br>
     error  : {{$errorMessage}}<br>
 @endsection

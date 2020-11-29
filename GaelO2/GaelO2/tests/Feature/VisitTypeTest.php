@@ -13,6 +13,7 @@ use App\Study;
 use App\VisitType;
 use App\Visit;
 use App\Patient;
+use Tests\AuthorizationTools;
 
 class VisitTypeTest extends TestCase
 {
@@ -45,19 +46,7 @@ class VisitTypeTest extends TestCase
             'study_name' => $this->study->first()->name
         ]);
 
-
-
-    }
-
-    /**
-     * A basic feature test example.
-     *
-     * @return void
-     */
-    public function testCreateVisitType()
-    {
-
-        $payload = [
+        $this->payload = [
             'name'=>'Baseline',
             'visitOrder'=>0,
             'localFormNeeded'=>true,
@@ -69,10 +58,35 @@ class VisitTypeTest extends TestCase
             'anonProfile'=>'Default'
         ];
 
+    }
+
+    public function testCreateVisitType()
+    {
         $id = $this->visitGroup->id;
-        $this->json('POST', 'api/visit-groups/'.$id.'/visit-types', $payload)->assertNoContent(201);
+        $this->json('POST', 'api/visit-groups/'.$id.'/visit-types', $this->payload)->assertNoContent(201);
         $visitGroup = VisitType::where('name', 'Baseline')->get()->first()->toArray();
         $this->assertEquals(13, sizeOf($visitGroup));
+    }
+
+    public function testCreateVisitTypeShouldFailedBecauseAlreadyExistingName()
+    {
+
+        $visitType = factory(VisitType::class)->create([
+            'visit_group_id' => $this->visitGroup->id
+        ]);
+
+        $payload = $this->payload;
+        $payload['name'] = $visitType['name'];
+
+        $id = $this->visitGroup->id;
+        $this->json('POST', 'api/visit-groups/'.$id.'/visit-types', $payload)->assertStatus(409);
+    }
+
+    public function testCreateVisitTypeForbiddenNotAdmin()
+    {
+        AuthorizationTools::actAsAdmin(false);
+        $id = $this->visitGroup->id;
+        $this->json('POST', 'api/visit-groups/'.$id.'/visit-types', $this->payload)->assertStatus(403);
     }
 
     public function testGetVisitType(){
@@ -90,11 +104,28 @@ class VisitTypeTest extends TestCase
 
     }
 
+    public function testGetVisitTypeForbiddenNotAdmin()
+    {
+        AuthorizationTools::actAsAdmin(false);
+        $visitType = factory(VisitType::class)->create([
+            'visit_group_id' => $this->visitGroup->id
+        ]);
+        $this->json('GET', 'api/visit-types/'.$visitType->id)->assertStatus(403);
+    }
+
     public function testDeleteVisitType(){
         $visitType = factory(VisitType::class)->create([
             'visit_group_id' => $this->visitGroup->id
         ]);
-        $this->json('DELETE', 'api/visit-types/'.$visitType->id)->assertNoContent(200);
+        $this->json('DELETE', 'api/visit-types/'.$visitType->id)->assertStatus(200);
+    }
+
+    public function testDeleteVisitTypeForbiddenNotAdmin(){
+        AuthorizationTools::actAsAdmin(false);
+        $visitType = factory(VisitType::class)->create([
+            'visit_group_id' => $this->visitGroup->id
+        ]);
+        $this->json('DELETE', 'api/visit-types/'.$visitType->id)->assertStatus(403);
     }
 
     public function testDeleteVisitTypeShouldFailedBecauseHasChildVisit(){
@@ -117,6 +148,6 @@ class VisitTypeTest extends TestCase
             'corrective_action_user_id'=>1
         ]);
 
-        $this->json('DELETE', 'api/visit-types/'.$visitType->id)->assertNoContent(403);
+        $this->json('DELETE', 'api/visit-types/'.$visitType->id)->assertStatus(409);
     }
 }

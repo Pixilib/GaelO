@@ -32,7 +32,7 @@ class UserRepository implements PersistenceInterface {
     }
 
     public function find($id){
-        return $this->user->find($id)->toArray();
+        return $this->user->findOrFail($id)->toArray();
     }
 
     public function delete($id) : void {
@@ -116,6 +116,11 @@ class UserRepository implements PersistenceInterface {
         return $user->count() > 0 ? true : false;
     }
 
+    public function isExistingId(int $id) : bool {
+        $user = $this->user->where('id', $id);
+        return $user->count() > 0 ? true : false;
+    }
+
     public function getUserByEmail(String $email) : array {
         $user = $this->user->where('email', $email)->first();
         return empty($user) ? [] : $user->toArray();
@@ -131,7 +136,7 @@ class UserRepository implements PersistenceInterface {
     }
 
     public function getAdministratorsEmails() : array {
-        $emails = $this->user->where('administrator', true)->get();
+        $emails = $this->user->where([['administrator', true], ['status', 'Activated']])->get();
         return empty($emails) ? [] : $emails->pluck('email')->toArray();
     }
 
@@ -142,6 +147,7 @@ class UserRepository implements PersistenceInterface {
     public function getInvestigatorsStudyFromCenterEmails(string $study, int $centerCode, string $job) : array {
 
         $emails = $this->user
+        ->where('status', 'Activated')
         ->join('roles', function ($join) {
             $join->on('users.id', '=', 'roles.user_id');
         })->join('center_user', function ($join) {
@@ -162,6 +168,7 @@ class UserRepository implements PersistenceInterface {
     public function getUsersEmailsByRolesInStudy(string $study, string $role ) : array {
 
         $emails = $this->user
+        ->where('status', 'Activated')
         ->join('roles', function ($join) {
             $join->on('users.id', '=', 'roles.user_id');
         })->where(function ($query) use ($study, $role) {
@@ -179,6 +186,7 @@ class UserRepository implements PersistenceInterface {
     public function getUsersAffiliatedToCenter(int $centerCode) : array {
 
         $users = $this->user
+        ->where('status', 'Activated')
         ->join('center_user', function ($join) {
             $join->on('users.id', '=', 'center_user.user_id');
         })->where(function  ($query) use ($centerCode) {
@@ -215,20 +223,15 @@ class UserRepository implements PersistenceInterface {
         return empty($roles) ? [] : $roles->toArray();
     }
 
-    public function addUserRoleInStudy(int $userId, String $study, Array $roles) : void {
+    public function addUserRoleInStudy(int $userId, String $study, string $role) : void {
 
         $user = $this->user->where('id', $userId)->first();
-        $insertArray = [];
-
-        foreach($roles as $role){
-            $insertArray[] =[
-                'user_id'=>$user['id'],
-                'study_name'=> $study,
-                'name'=>$role
-            ];
-        }
-
-        $user->roles()->insert($insertArray);
+        $insertData =[
+            'user_id'=>$user['id'],
+            'study_name'=> $study,
+            'name'=>$role
+        ];
+        $user->roles()->insert($insertData);
 
     }
 
@@ -262,10 +265,22 @@ class UserRepository implements PersistenceInterface {
         $user = $this->user->where('id', $userId)->first();
         $centers = $user->affiliatedCenters()->get();
         return empty($centers) ? [] : $centers->toArray();
+    }
+
+    public function getAllUsersCenters(int $userId) : array {
+
+        $user = $this->user->where('id', $userId)->first();
+        $centers = $user->affiliatedCenters()->get()->pluck('code');
+        if(empty($centers)){
+            return [ $user['center_code'] ];
+        }else {
+            return [...$centers->toArray(), $user['center_code']];
+        }
+
 
     }
 
-    public function getUsersFromStudy(String $studyName, int $userId = 0) : array {
+    public function getUsersFromStudy(String $studyName) : array {
         $users = $this->user->get();
         $usersInStudy = [];
         foreach($users as $user) {

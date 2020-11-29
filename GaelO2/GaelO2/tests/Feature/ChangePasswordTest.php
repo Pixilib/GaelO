@@ -8,8 +8,6 @@ use Tests\TestCase;
 use App\User;
 
 use Illuminate\Foundation\Testing\DatabaseMigrations;
-use Illuminate\Support\Facades\Artisan;
-use Laravel\Passport\Passport;
 
 class ChangePasswordTest extends TestCase
 {
@@ -42,16 +40,11 @@ class ChangePasswordTest extends TestCase
         ];
         $this->user = $user;
 
-        Artisan::call('passport:install');
-        Passport::actingAs(
-            User::where('id',1)->first()
-        );
-
     }
 
     public function testChangePassword()
     {
-        $this->json('PUT', '/api/users/'.$this->user['id'].'/password', $this->validPayload)->assertNoContent(200);
+        $this->json('PUT', '/api/users/'.$this->user['id'].'/password', $this->validPayload)->assertStatus(200);
 
     }
 
@@ -148,7 +141,7 @@ class ChangePasswordTest extends TestCase
         $this->user['password_previous2'] = null;
         $this->user['last_password_update'] = now()->subDays(100);
         $this->user->save();
-        $this->json('PUT', '/api/users/'.$this->user['id'].'/password', $this->validPayload)->assertNoContent(200);
+        $this->json('PUT', '/api/users/'.$this->user['id'].'/password', $this->validPayload)->assertStatus(200);
     }
 
     public function testChangePasswordNoCurrentPassword(){
@@ -158,7 +151,7 @@ class ChangePasswordTest extends TestCase
         $this->user['status'] = Constants::USER_STATUS_UNCONFIRMED;
         $this->user->save();
         $this->validPayload['previous_password']='temporaryPassword';
-        $this->json('PUT', '/api/users/'.$this->user['id'].'/password', $this->validPayload)->assertNoContent(200);
+        $this->json('PUT', '/api/users/'.$this->user['id'].'/password', $this->validPayload)->assertStatus(200);
     }
 
 }

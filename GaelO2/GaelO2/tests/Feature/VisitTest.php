@@ -2,7 +2,10 @@
 
 namespace Tests\Feature;
 
+use App\GaelO\Constants\Constants;
+use App\GaelO\Services\AuthorizationService;
 use App\GaelO\UseCases\GetVisit\VisitEntity;
+use App\GaelO\Util;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Support\Facades\Artisan;
 use Laravel\Passport\Passport;
@@ -13,6 +16,8 @@ use App\Visit;
 use App\VisitGroup;
 use App\VisitType;
 use App\Patient;
+use App\ReviewStatus;
+use Tests\AuthorizationTools;
 
 class VisitTest extends TestCase
 {
@@ -53,11 +58,12 @@ class VisitTest extends TestCase
     }
 
     public function testGetVisit(){
+        AuthorizationTools::addRoleToUser(1, Constants::ROLE_INVESTIGATOR, $this->study->name);
         $visit = factory(Visit::class)->create(['creator_user_id' => 1,
         'patient_code' => $this->patient['code'],
         'visit_type_id' => $this->visitType['id'],
         'status_done' => 'Done']);
-        $response = $this->json('GET', 'api/visits/'.$visit['id'].'?role=investigator')->content();
+        $response = $this->json('GET', 'api/visits/'.$visit['id'].'?role=Investigator')->content();
         $response = json_decode($response, true);
         //Check all Item in visitEntity are present in reponse
         foreach ( get_class_vars(VisitEntity::class) as $key=>$value ){
@@ -67,26 +73,34 @@ class VisitTest extends TestCase
         }
     }
 
-    public function testGetVisits(){
-        $visit = factory(Visit::class, 5)->create(['creator_user_id' => 1,
+    public function testGetVisitForbiddenNoRole(){
+        $visit = factory(Visit::class)->create(['creator_user_id' => 1,
         'patient_code' => $this->patient['code'],
         'visit_type_id' => $this->visitType['id'],
         'status_done' => 'Done']);
-        $this->json('GET', 'api/visits/?role=investigator')->assertJsonCount(5);
+        $this->json('GET', 'api/visits/'.$visit['id'].'?role=Investigator')->assertStatus(403);
     }
 
 
     public function testCreateVisit() {
-
-        $resp = $this->json('POST', 'api/studies/test/visit-groups/'.$this->visitGroup['id'].
-        '/visit-types/'.$this->visitType['id'].'/visits'.'?role=investigator', $this->validPayload)->assertStatus(201);
+        AuthorizationTools::addRoleToUser(1, Constants::ROLE_INVESTIGATOR, 'test');
+        $answer = $this->json('POST', 'api/studies/test/visit-groups/'.$this->visitGroup['id'].
+        '/visit-types/'.$this->visitType['id'].'/visits?role=Investigator', $this->validPayload)->assertStatus(201);
         //Check record in database
         $visit = Visit::get()->first()->toArray();
         $this->assertNotEmpty($visit);
+        //Check that review status has beed created
+        $reviewStatus = ReviewStatus::where('visit_id', $visit['id'])->get()->toArray();
+        $this->assertNotEmpty($reviewStatus);
+    }
+
+    public function testCreateVisitForbiddenNoRole(){
+        $this->json('POST', 'api/studies/test/visit-groups/'.$this->visitGroup['id'].
+        '/visit-types/'.$this->visitType['id'].'/visits?role=Investigator', $this->validPayload)->assertStatus(403);
     }
 
     public function testCreateAlreadyCreatedVisit(){
-
+        AuthorizationTools::addRoleToUser(1, Constants::ROLE_INVESTIGATOR, 'test');
         //Create the visit in database
         factory(Visit::class)->create(
             [
@@ -99,13 +113,32 @@ class VisitTest extends TestCase
         );
 
         //create request should return conflict
-        $resp = $this->json('POST', 'api/studies/test/visit-groups/'.$this->visitGroup['id'].
-        '/visit-types/'.$this->visitType['id'].'/visits'.'?role=investigator', $this->validPayload)->assertStatus(409);
-
+        $this->json('POST', 'api/studies/test/visit-groups/'.$this->visitGroup['id'].
+        '/visit-types/'.$this->visitType['id'].'/visits'.'?role=Investigator', $this->validPayload)->assertStatus(409);
 
     }
 
     public function testGetPatientVisits() {
+        AuthorizationTools::addRoleToUser(1, Constants::ROLE_INVESTIGATOR, 'test');
+
+        $this->patient2 = factory(Patient::class)->create(['code' => 12341234123413, 'study_name' => 'test', 'center_code' => 0]);
+
+        $visit = factory(Visit::class, 5)->create(['creator_user_id' => 1,
+        'patient_code' => $this->patient['code'],
+        'visit_type_id' => $this->visitType['id'],
+        'status_done' => 'Done']);
+
+        $resp = $this->json('GET', 'api/patients/'.$this->patient['code'].'/visits?role=Investigator');
+        $resp->assertSuccessful();
+        $patientArray = json_decode($resp->content(), true);
+        $this->assertEquals(5, sizeof($patientArray));
+
+
+    }
+
+
+    public function testGetPatientVisitsForbiddenNoRole() {
+
         $this->patient2 = factory(Patient::class)->create(['code' => 12341234123413, 'study_name' => 'test', 'center_code' => 0]);
 
         $visit = factory(Visit::class)->create(['creator_user_id' => 1,
@@ -113,25 +146,9 @@ class VisitTest extends TestCase
         'visit_type_id' => $this->visitType['id'],
         'status_done' => 'Done']);
 
-        $resp = $this->json('GET', 'api/visits/'.$visit['id'].'/patients/'.$this->patient['code'].'?role=investigator')->content();
-        $resp = json_decode($resp, true);
+        $resp = $this->json('GET', 'api/patients/'.$this->patient['code'].'/visits?role=Investigator');
+        $resp->assertStatus(403);
 
-        foreach ( get_class_vars(VisitEntity::class) as $key=>$value ){
-            //Camelize keys
-            $key = str_replace('_', '', lcfirst(ucwords($key, '_')));
-            $this->assertArrayHasKey($key, $resp);
-        }
 
-        factory(Visit::class, 5)->create(['creator_user_id' => 1,
-        'patient_code' => $this->patient['code'],
-        'visit_type_id' => $this->visitType['id'],
-        'status_done' => 'Done']);
-
-        factory(Visit::class, 5)->create(['creator_user_id' => 1,
-        'patient_code' => $this->patient2['code'],
-        'visit_type_id' => $this->visitType['id'],
-        'status_done' => 'Done']);
-
-        $resp = $this->json('GET', 'api/visits/0/patients/'.$this->patient['code'].'?role=investigator')->assertJsonCount(6);
     }
 }

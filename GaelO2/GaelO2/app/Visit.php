@@ -6,12 +6,14 @@ use Illuminate\Database\Eloquent\Model;
 
 class Visit extends Model
 {
+    protected $guarded = [];
+
     public function reviews(){
         return $this->hasMany('App\Review', 'visit_id');
     }
 
     public function reviewStatus(){
-        return $this->hasMany('App\reviews_status', 'visit_id');
+        return $this->hasMany('App\ReviewStatus', 'visit_id');
     }
 
     public function patient(){
@@ -19,7 +21,7 @@ class Visit extends Model
     }
 
     public function visitType(){
-        return $this->belongsTo('App\VisitType', 'visit_type_id', 'id');
+        return $this->belongsTo('App\VisitType', 'visit_type_id', 'id')->with('visitGroup');
     }
 
     public function creator(){

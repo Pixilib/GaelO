@@ -10,8 +10,13 @@ use App\GaelO\Adapters\LaravelFunctionAdapter;
 use App\GaelO\Util;
 use App\GaelO\Constants\Constants;
 
-use App\GaelO\Exceptions\GaelOException;
+
 use App\GaelO\Services\TrackerService;
+
+use App\GaelO\Exceptions\GaelOBadRequestException;
+use App\GaelO\Exceptions\GaelOException;
+use App\GaelO\Exceptions\GaelOForbiddenException;
+use Exception;
 
 class ChangePassword {
 
@@ -21,20 +26,22 @@ class ChangePassword {
      }
 
     public function execute(ChangePasswordRequest $changeUserPasswordRequest, ChangePasswordResponse $changeUserPasswordResponse) : void {
-        $id = $changeUserPasswordRequest->id;
-        $previousPassword = $changeUserPasswordRequest->previous_password;
-        $password1 = $changeUserPasswordRequest->password1;
-        $password2 = $changeUserPasswordRequest->password2;
-
-        $user = $this->persistenceInterface->find($id);
-
-        if($user['status'] === Constants::USER_STATUS_UNCONFIRMED) {
-            $this->checkMatchHashPasswords($previousPassword, $user['password_temporary']);
-        } else {
-            $this->checkMatchHashPasswords($previousPassword, $user['password']);
-        }
 
         try {
+
+            $id = $changeUserPasswordRequest->id;
+            $previousPassword = $changeUserPasswordRequest->previous_password;
+            $password1 = $changeUserPasswordRequest->password1;
+            $password2 = $changeUserPasswordRequest->password2;
+
+            $user = $this->persistenceInterface->find($id);
+
+            if($user['status'] === Constants::USER_STATUS_UNCONFIRMED) {
+                $this->checkMatchHashPasswords($previousPassword, $user['password_temporary']);
+            } else {
+                $this->checkMatchHashPasswords($previousPassword, $user['password']);
+            }
+
             $this->checkPasswordFormatCorrect($password1);
             $this->checkMatchPasswords($password1, $password2);
             $this->checkNewPassword(
@@ -43,24 +50,26 @@ class ChangePassword {
             $user['password'],
             $user['password_previous1'],
             $user['password_previous2']);
+
+            $data['password_previous1'] = $user['password'];
+            $data['password_previous2'] = $user['password_previous1'];
+            $data['password'] = LaravelFunctionAdapter::hash($password1);
+            $data['last_password_update'] = Util::now();
+            $data['status'] = Constants::USER_STATUS_ACTIVATED;
+
+            $this->persistenceInterface->update($user['id'], $data);
+            $this->trackerService->writeAction($user['id'], Constants::TRACKER_ROLE_USER, null, null, Constants::TRACKER_CHANGE_PASSWORD, null);
+
+            $changeUserPasswordResponse->status = 200;
+            $changeUserPasswordResponse->statusText = 'OK';
+
         } catch (GaelOException $e) {
-            $changeUserPasswordResponse->body = ['errorMessage' => $e->getMessage()];
-            $changeUserPasswordResponse->status = 400;
-            $changeUserPasswordResponse->statusText = "Bad Request";
-            return;
+            $changeUserPasswordResponse->body = $e->getErrorBody();
+            $changeUserPasswordResponse->status = $e->statusCode;
+            $changeUserPasswordResponse->statusText = $e->statusText;
+        } catch(Exception $e){
+            throw $e;
         }
-
-        $data['password_previous1'] = $user['password'];
-        $data['password_previous2'] = $user['password_previous1'];
-        $data['password'] = LaravelFunctionAdapter::hash($password1);
-        $data['last_password_update'] = Util::now();
-        $data['status'] = Constants::USER_STATUS_ACTIVATED;
-
-        $this->persistenceInterface->update($user['id'], $data);
-        $this->trackerService->writeAction($user['id'], Constants::TRACKER_ROLE_USER, null, null, Constants::TRACKER_CHANGE_PASSWORD, null);
-
-        $changeUserPasswordResponse->status = 200;
-        $changeUserPasswordResponse->statusText = 'OK';
 
     }
 
@@ -81,7 +90,7 @@ class ChangePassword {
             $checkCurrent ||
             $checkPrevious1 ||
             $checkPrevious2 ) {
-            throw new GaelOException('Already Previously Used Password');
+            throw new GaelOBadRequestException('Already Previously Used Password');
         }
     }
 
@@ -102,7 +111,7 @@ class ChangePassword {
                 $checkOnlyAlphaNumerical === false  ||
                 $checkNotAllSameCase === false
             ){
-            throw new GaelOException('Password Contraints Failure');
+            throw new GaelOBadRequestException('Password Contraints Failure');
         }
     }
 
@@ -111,13 +120,13 @@ class ChangePassword {
      */
     private function checkMatchPasswords(string $pass1, string $pass2) : void {
         if( $pass1 != $pass2 ) {
-            throw new GaelOException('New Passwords Do Not Match');
+            throw new GaelOBadRequestException('New Passwords Do Not Match');
         }
     }
 
     private function checkMatchHashPasswords(string $plainTextPassword, string $hashComparator) : void {
         if( !LaravelFunctionAdapter::checkHash($plainTextPassword, $hashComparator) ) {
-            throw new GaelOException('Wrong User Password');
+            throw new GaelOBadRequestException('Wrong Previous Password');
         }
     }
 

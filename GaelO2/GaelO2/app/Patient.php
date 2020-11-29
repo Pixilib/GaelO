@@ -16,4 +16,8 @@ class Patient extends Model
     public function study(){
         return $this->belongsTo('App\Study', 'study_name', 'name');
     }
+
+    public function visits(){
+        return $this->hasMany('App\Visit', 'patient_code', 'code');
+    }
 }

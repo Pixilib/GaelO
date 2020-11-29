@@ -2,26 +2,51 @@
 
 namespace App\GaelO\UseCases\DeleteVisitType;
 
+use App\GaelO\Exceptions\GaelOBadRequestException;
+use App\GaelO\Exceptions\GaelOConflictException;
+use App\GaelO\Exceptions\GaelOException;
+use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\PersistenceInterface;
+use App\GaelO\Services\AuthorizationService;
+use Exception;
 
 class DeleteVisitType {
 
-    public function __construct(PersistenceInterface $persistenceInterface){
+    public function __construct(PersistenceInterface $persistenceInterface, AuthorizationService $authorizationService){
         $this->persistenceInterface = $persistenceInterface;
+        $this->authorizationService = $authorizationService;
     }
 
     public function execute(DeleteVisitTypeRequest $deleteVisitTypeRequest, DeleteVisitTypeResponse $deleteVisitTypeResponse){
 
-        $hasVisits = $this->persistenceInterface->hasVisits($deleteVisitTypeRequest->visitTypeId);
-        if($hasVisits){
-            $deleteVisitTypeResponse->body = ['errorMessage' => 'Existing Child Visits'];
-            $deleteVisitTypeResponse->status = 403;
-            $deleteVisitTypeResponse->statusText = "Forbidden";
-        }else{
+        try{
+
+            $this->checkAuthorization($deleteVisitTypeRequest->currentUserId);
+
+            $hasVisits = $this->persistenceInterface->hasVisits($deleteVisitTypeRequest->visitTypeId);
+            if($hasVisits) throw new GaelOConflictException('Existing Child Visits');
+
             $this->persistenceInterface->delete($deleteVisitTypeRequest->visitTypeId);
             $deleteVisitTypeResponse->status = 200;
             $deleteVisitTypeResponse->statusText = 'OK';
+
+        }catch(GaelOException $e){
+            $deleteVisitTypeResponse->status = $e->statusCode;
+            $deleteVisitTypeResponse->statusText = $e->statusText;
+            $deleteVisitTypeResponse->body = $e->getErrorBody();
+
+        }catch (Exception $e){
+            throw $e;
         }
+
+
+    }
+
+    public function checkAuthorization(int $userId){
+        $this->authorizationService->setCurrentUserAndRole($userId);
+        if( ! $this->authorizationService->isAdmin()) {
+            throw new GaelOForbiddenException();
+        };
     }
 
 }

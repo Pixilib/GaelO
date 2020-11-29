@@ -6,6 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class OrthancStudy extends Model
 {
+
+    protected $primaryKey = 'orthanc_id';
+    protected $keyType = 'string';
+    public $incrementing = false;
+
     public function series(){
         return $this->hasMany('App\OrthancSeries', 'orthanc_study_id', 'orthanc_id');
     }

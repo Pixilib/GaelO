@@ -4,6 +4,8 @@ namespace App\GaelO\UseCases\CreateUser;
 
 use App\GaelO\Adapters\LaravelFunctionAdapter;
 use App\GaelO\Constants\Constants;
+use App\GaelO\Exceptions\GaelOException;
+use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\PersistenceInterface;
 
 use App\GaelO\UseCases\CreateUser\CreateUserRequest;
@@ -31,31 +33,50 @@ class CreateUser {
 
      public function execute(CreateUserRequest $createUserRequest, CreateUserResponse $createUserResponse) : void
     {
-        $this->authorizationService->isAdmin($createUserRequest->currentUserId);
-        //Generate password
-        $password=substr(uniqid(), 1, 10);
-        $passwordTemporary = LaravelFunctionAdapter::Hash($password);
-        $createdUserEntity = $this->userService->createUser($createUserRequest, $passwordTemporary);
 
-        //save user creation in tracker
-        $detailsTracker = [
-            'id'=> $createdUserEntity['id']
-        ];
-        //Save action in Tracker
-        $this->trackerService->writeAction($createUserRequest->currentUserId,
-            Constants::TRACKER_ROLE_USER,
-            null,
-            null,
-            Constants::TRACKER_CREATE_USER,
-            $detailsTracker);
+        try {
+            $this->checkAuthorization($createUserRequest->currentUserId);
+            //Generate password
+            $password=substr(uniqid(), 1, 10);
+            $passwordTemporary = LaravelFunctionAdapter::Hash($password);
+            $createdUserEntity = $this->userService->createUser($createUserRequest, $passwordTemporary);
 
-        //Send Welcom Email to give the plain password to new user.
-        $this->mailService->sendCreatedAccountMessage($createdUserEntity['email'],
-                            $createdUserEntity['firstname'].' '.$createdUserEntity['lastname'],
-                            $createdUserEntity['username'],
-                            $passwordTemporary);
+            //Save action in Tracker
+            $detailsTracker = [
+                'createdUserId'=> $createdUserEntity['id']
+            ];
 
-        $createUserResponse->status = 201;
-        $createUserResponse->statusText = 'Created';
+            $this->trackerService->writeAction($createUserRequest->currentUserId,
+                Constants::TRACKER_ROLE_ADMINISTRATOR,
+                null,
+                null,
+                Constants::TRACKER_CREATE_USER,
+                $detailsTracker);
+
+            //Send Welcom Email to give the plain password to new user.
+            $this->mailService->sendCreatedAccountMessage($createdUserEntity['email'],
+                                $createdUserEntity['firstname'].' '.$createdUserEntity['lastname'],
+                                $createdUserEntity['username'],
+                                $password);
+
+            $createUserResponse->status = 201;
+            $createUserResponse->statusText = 'Created';
+
+        } catch (GaelOException $e) {
+
+            $createUserResponse->body = $e->getErrorBody();
+            $createUserResponse->status = $e->statusCode;
+            $createUserResponse->statusText = $e->statusText;
+
+        }
+
     }
+
+    private function checkAuthorization(int $userId) : void {
+        $this->authorizationService->setCurrentUserAndRole($userId);
+        if( ! $this->authorizationService->isAdmin($userId) ) {
+            throw new GaelOForbiddenException();
+        };
+    }
+
 }

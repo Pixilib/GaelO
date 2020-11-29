@@ -8,6 +8,7 @@ use Laravel\Passport\Passport;
 use Tests\TestCase;
 use App\User;
 use Illuminate\Support\Facades\DB;
+use Tests\AuthorizationTools;
 
 use function GuzzleHttp\json_encode;
 
@@ -36,6 +37,12 @@ class TrackerTest extends TestCase
         //Test that tracker routes work properly
         $this->json('GET', '/api/tracker?admin=false')->assertSuccessful();
         $this->json('GET', '/api/tracker?admin=true')->assertSuccessful();
+    }
+
+    public function testGetTrackerForbiddenNotAdmin(){
+        //To be changed when supervisor implemented
+        AuthorizationTools::actAsAdmin(false);
+        $this->json('GET', '/api/tracker?admin=false')->assertStatus(403);
     }
 
     public function testGetUserTracker()

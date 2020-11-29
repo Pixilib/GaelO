@@ -6,4 +6,5 @@ class GetVisitRequest {
     public string $studyName;
     public int $visitId;
     public string $role;
+    public int $currentUserId;
 }

@@ -14,8 +14,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             CountrySeeder::class,
             CenterSeeder::class,
-            UserSeeder::class,
-            PreferenceSeeder::class
+            UserSeeder::class
         ]);
     }
 }

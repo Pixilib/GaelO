@@ -39,8 +39,8 @@ class UserRepositoryTest extends TestCase
         $center = factory(Center::class)->create(['code'=>3]);
         factory(Center::class)->create(['code'=>5]);
         //Create 10 user job 'CRA' and 15 job 'Supervision'
-        $usersCRA = factory(User::class,10)->create(['job'=>'CRA']);
-        $userSupervision = factory(User::class,15)->create(['job'=>'Supervision']);
+        $usersCRA = factory(User::class,10)->create(['job'=>'CRA', 'status'=> 'Activated']);
+        $userSupervision = factory(User::class,15)->create(['job'=>'Supervision', 'status'=> 'Activated']);
 
         //For CRA users assing center 3 with role investigator in first study
         $usersCRA->each(function ($user) use ($center, $studies)  {
@@ -83,8 +83,8 @@ class UserRepositoryTest extends TestCase
     public function testGetMailsByRoleStudy(){
         $userRepository = new UserRepository(new User(), new Role(), new CenterUser());
         $studies = factory(Study::class, 2)->create();
-        $users = factory(User::class,10)->create();
-        $users2 = factory(User::class,20)->create();
+        $users = factory(User::class,10)->create(['status'=> 'Activated']);
+        $users2 = factory(User::class,20)->create(['status'=> 'Activated']);
 
         $users->each(function ($user) use ($studies)  {
             $studiesModel = $studies->first();

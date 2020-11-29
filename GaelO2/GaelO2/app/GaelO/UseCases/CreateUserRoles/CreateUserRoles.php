@@ -2,7 +2,9 @@
 namespace App\GaelO\UseCases\CreateUserRoles;
 
 use App\GaelO\Constants\Constants;
+use App\GaelO\Exceptions\GaelOBadRequestException;
 use App\GaelO\Exceptions\GaelOException;
+use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\PersistenceInterface;
 use App\GaelO\Services\AuthorizationService;
 use App\GaelO\Services\TrackerService;
@@ -17,30 +19,40 @@ class CreateUserRoles {
 
     public function execute(CreateUserRolesRequest $createRoleRequest, CreateUserRolesResponse $createRoleResponse){
 
-        $this->authorizationService->isAdmin($createRoleRequest->userId);
-        //Get current roles in study for users
-        $actualRolesArray = $this->persistenceInterface->getUsersRolesInStudy($createRoleRequest->userId, $createRoleRequest->study);
-        //Get request role to be add
-        $requestRolesArray = $createRoleRequest->roles;
-        //compute only new roles to be add in database
-        $newRoles = array_diff($requestRolesArray, $actualRolesArray);
+        try{
 
-        if(empty($newRoles)){
-            $createRoleResponse->body = ['errorMessage' => 'No New Roles'];
-            $createRoleResponse->status = 400;
-            $createRoleResponse->statusText = "Bad Request";
-            //throw new GaelOException("No New Roles");
-            return;
+            $this->checkAuthorization($createRoleRequest->currentUserId);
+
+            //Get current roles in study for users
+            $actualRolesArray = $this->persistenceInterface->getUsersRolesInStudy($createRoleRequest->userId, $createRoleRequest->study);
+
+
+            if( in_array($createRoleRequest->role, $actualRolesArray) ) {
+                throw new GaelOBadRequestException("Already Existing Role");
+            }
+
+            //Write in database and return sucess response (error will be handled by laravel)
+            $this->persistenceInterface->addUserRoleInStudy($createRoleRequest->userId, $createRoleRequest->study, $createRoleRequest->role);
+            $actionDetails = [
+                "Add Roles"=> $createRoleRequest->role
+            ];
+            $this->trackerService->writeAction( $createRoleRequest->currentUserId, Constants::TRACKER_ROLE_ADMINISTRATOR, $createRoleRequest->study, null, Constants::TRACKER_EDIT_USER, $actionDetails);
+
+            $createRoleResponse->statusText = "Created";
+            $createRoleResponse->status = 201;
+
+        } catch (GaelOException $e){
+            $createRoleResponse->statusText = $e->statusText;
+            $createRoleResponse->status = $e->statusCode;
+            $createRoleResponse->body = $e->getErrorBody();
         }
 
-        //Write in database and return sucess response (error will be handled by laravel)
-        $this->persistenceInterface->addUserRoleInStudy($createRoleRequest->userId, $createRoleRequest->study, $newRoles);
-        $actionDetails = [
-            "Add Roles"=> $newRoles
-        ];
-        $this->trackerService->writeAction( $createRoleRequest->currentUserId, Constants::TRACKER_ROLE_ADMINISTRATOR, $createRoleRequest->study, null, Constants::TRACKER_EDIT_USER, $actionDetails);
-        $createRoleResponse->statusText = "Created";
-        $createRoleResponse->status = 201;
+    }
 
+    private function checkAuthorization(int $userId) : void {
+        $this->authorizationService->setCurrentUserAndRole($userId);
+        if( ! $this->authorizationService->isAdmin($userId) ) {
+            throw new GaelOForbiddenException();
+        };
     }
 }

@@ -2,34 +2,59 @@
 
 namespace App\GaelO\UseCases\GetCountry;
 
+use App\GaelO\Exceptions\GaelOException;
+use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\PersistenceInterface;
+use App\GaelO\Services\AuthorizationService;
 use App\GaelO\UseCases\GetCountry\CountryEntity;
 use App\GaelO\UseCases\GetCountry\GetCountryRequest;
 use App\GaelO\UseCases\GetCountry\GetCountryResponse;
-
+use Exception;
 
 class GetCountry {
 
-    public function __construct(PersistenceInterface $persistenceInterface){
+    public function __construct(PersistenceInterface $persistenceInterface, AuthorizationService $authorizationService){
         $this->persistenceInterface = $persistenceInterface;
+        $this->authorizationService = $authorizationService;
      }
 
-    public function execute(GetCountryRequest $countryRequest, GetCountryResponse $countryResponse) : void
+    public function execute(GetCountryRequest $getCountryRequest, GetCountryResponse $getCountryResponse) : void
     {
-        $code = $countryRequest->code;
-        if ($code == '') {
-            $responseArray = [];
-            $countries = $this->persistenceInterface->getAll();
-            foreach($countries as $country){
-                $responseArray[] = CountryEntity::fillFromDBReponseArray($country);
+        try{
+
+            $this->checkAuthorization($getCountryRequest->currentUserId);
+            $code = $getCountryRequest->code;
+            if ($code == '') {
+                $responseArray = [];
+                $countries = $this->persistenceInterface->getAll();
+                foreach($countries as $country){
+                    $responseArray[] = CountryEntity::fillFromDBReponseArray($country);
+                }
+                $getCountryResponse->body = $responseArray;
+            }else {
+                $country = $this->persistenceInterface->find($code);
+                $getCountryResponse->body = CountryEntity::fillFromDBReponseArray($country);
             }
-            $countryResponse->body = $responseArray;
-        }else {
-            $country = $this->persistenceInterface->find($code);
-            $countryResponse->body = CountryEntity::fillFromDBReponseArray($country);
+            $getCountryResponse->status = 200;
+            $getCountryResponse->statusText = 'OK';
+
+        }catch (GaelOException $e){
+
+            $getCountryResponse->status = $e->statusCode;
+            $getCountryResponse->statusText = $e->statusText;
+            $getCountryRequest->body = $e->getErrorBody();
+
+        } catch (Exception $e){
+            throw $e;
         }
-        $countryResponse->status = 200;
-        $countryResponse->statusText = 'OK';
+
+    }
+
+    private function checkAuthorization(int $userId){
+        $this->authorizationService->setCurrentUserAndRole($userId);
+        if(!$this->authorizationService->isAdmin()){
+            throw new GaelOForbiddenException();
+        };
     }
 
 }

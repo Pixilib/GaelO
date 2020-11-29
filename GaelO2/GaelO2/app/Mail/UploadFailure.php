@@ -27,7 +27,7 @@ class UploadFailure extends Mailable
         'visitType'=> '',
         'study'=>'',
         'zipPath'=>'',
-        'username'=>'',
+        'userId'=>'',
         'errorMessage'=>'');
         */
     }

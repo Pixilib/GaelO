@@ -7,6 +7,7 @@ use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Support\Facades\Artisan;
 use Laravel\Passport\Passport;
 use App\User;
+use Tests\AuthorizationTools;
 
 class PreferenceTest extends TestCase
 {
@@ -30,31 +31,21 @@ class PreferenceTest extends TestCase
     protected function setUp() : void{
         parent::setUp();
         Artisan::call('passport:install');
-        Passport::actingAs(
-            User::where('id',1)->first()
-        );
     }
 
     public function testGetPreferences()
     {
-        $this->json('GET', 'api/preferences')->assertStatus(200);
+        AuthorizationTools::actAsAdmin(true);
+        $answer = $this->json('GET', 'api/preferences');
+        $answer->assertStatus(200);
+        $answer->assertJsonStructure(['platformName', 'adminEmail', 'emailReplyTo', 'corporation',
+         'url', 'patientCodeLength']);
+
     }
 
-    public function testPutPreferences(){
+    public function testGetPreferencesShouldFailNotAdmin(){
+        AuthorizationTools::actAsAdmin(false);
+        $this->json('GET', 'api/preferences')->assertStatus(403);
 
-        $payload = [
-            'patientCodeLength'=>15,
-            'parseDateImport'=>'d.m.Y',
-            'parseCountryName'=>'FR'
-        ];
-
-        $this->json('PUT', 'api/preferences', $payload);
-
-        $content = $this->get('api/preferences')->content();
-        $newPreferenceArray = json_decode($content, true);
-
-        $this->assertEquals(15, $newPreferenceArray['patientCodeLength']);
-        $this->assertEquals('d.m.Y', $newPreferenceArray['parseDateImport']);
-        $this->assertEquals('FR', $newPreferenceArray['parseCountryName']);
     }
 }

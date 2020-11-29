@@ -30,6 +30,8 @@ class VisitGroupController extends Controller
     }
 
     public function getVisitGroup(int $visitGroupId, GetVisitGroup $getVisitGroup, GetVisitGroupRequest $getVisitGroupRequest, GetVisitGroupResponse $getVisitGroupResponse){
+        $curentUser = Auth::user();
+        $getVisitGroupRequest->currentUserId = $curentUser['id'];
         $getVisitGroupRequest->visitGroupId = $visitGroupId;
 
         $getVisitGroup->execute($getVisitGroupRequest, $getVisitGroupResponse);
@@ -40,9 +42,11 @@ class VisitGroupController extends Controller
     }
 
     public function deleteVisitGroup(int $visitGroupId, DeleteVisitGroup $deleteVisitGroup, DeleteVisitGroupRequest $deleteVisitGroupRequest, DeleteVisitGroupResponse $deleteVisitGroupResponse){
+        $curentUser = Auth::user();
+        $deleteVisitGroupRequest->currentUserId = $curentUser['id'];
         $deleteVisitGroupRequest->visitGroupId = $visitGroupId;
         $deleteVisitGroup->execute($deleteVisitGroupRequest, $deleteVisitGroupResponse);
-        return response()->noContent()
+        return response()->json($deleteVisitGroupResponse->body)
                 ->setStatusCode($deleteVisitGroupResponse->status, $deleteVisitGroupResponse->statusText);
 
     }

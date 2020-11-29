@@ -8,6 +8,7 @@ use Tests\TestCase;
 use App\User;
 use Illuminate\Support\Facades\Artisan;
 use Laravel\Passport\Passport;
+use Tests\AuthorizationTools;
 
 class DeleteUserTest extends TestCase
 {
@@ -26,30 +27,36 @@ class DeleteUserTest extends TestCase
     protected function setUp() : void{
         parent::setUp();
         Artisan::call('passport:install');
-        Passport::actingAs(
-            User::where('id',1)->first()
-        );
+        factory(User::class, 5)->create();
     }
 
     public function testDeleteUser() {
-
-        //Fill user table
-        factory(User::class, 5)->create();
-        //Remove number 3
-        $response = $this->json('DELETE', '/api/users/3');
-        //Test delete non-existing user should be refused
-        $this->json('DELETE', '/api/users/-1') -> assertStatus(500);
+        AuthorizationTools::actAsAdmin(true);
+        //Remove User number 3
+        $this->json('DELETE', '/api/users/3')->assertSuccessful();
         //Check that the user 3 has been remove
         $queryUser = User::where('id', 3)->first();
         $this->assertEmpty($queryUser);
     }
 
-    public function testReactivateUser(){
+    public function testDeleteUserShouldFailNotAdmin() {
+        AuthorizationTools::actAsAdmin(false);
+        //Remove number 3
+        $this->json('DELETE', '/api/users/3')->assertStatus(403);
+    }
 
+    public function testDeleteNonExistingUser(){
+        AuthorizationTools::actAsAdmin(true);
+        //Test delete non-existing user should be refused
+        $this->json('DELETE', '/api/users/8') -> assertStatus(404);
+    }
+
+    public function testReactivateUser(){
+        AuthorizationTools::actAsAdmin(true);
         $payload = [];
-        User::find(1)->delete();
-        $this->json('PATCH', '/api/users/1/reactivate', $payload)->assertNoContent(200);
-        $user = User::find(1)->toArray();
+        User::find(2)->delete();
+        $this->json('PATCH', '/api/users/2/reactivate', $payload)->assertNoContent(200);
+        $user = User::find(2)->toArray();
         $this->assertEquals(Constants::USER_STATUS_UNCONFIRMED, $user['status']);
 
     }

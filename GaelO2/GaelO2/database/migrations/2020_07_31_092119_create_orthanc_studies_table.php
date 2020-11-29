@@ -15,18 +15,17 @@ class CreateOrthancStudiesTable extends Migration
     {
         Schema::create('orthanc_studies', function (Blueprint $table) {
             $table->string('orthanc_id', 44)->primary();
-            $table->unsignedBigInteger('visit_id');
-            $table->unsignedBigInteger('uploader_id')->nullable(true)->default(null);
-            $table->dateTime('upload_date', 6)->nullable(true)->default(null);
-            $table->text('acquisition_date');
-            $table->text('acquisition_time');
-            $table->dateTime('acquisition_datetime', 0)->nullable(true)->default(null);
+            $table->unsignedBigInteger('visit_id')->nullable(false);
+            $table->unsignedBigInteger('uploader_id')->nullable(false);
+            $table->dateTime('upload_date', 6)->nullable(false);
+            $table->date('acquisition_date')->nullable(true);
+            $table->time('acquisition_time')->nullable(true);
             $table->string('anon_from_orthanc_id', 44)->nullable(false);
             $table->text('study_uid')->nullable(false);
-            $table->text('study_description');
+            $table->text('study_description')->nullable(true);
             $table->string('patient_orthanc_id', 44)->nullable(false);
-            $table->text('patient_name');
-            $table->text('patient_id')->nullable(false);
+            $table->text('patient_name')->nullable(true);
+            $table->text('patient_id')->nullable(true);
             $table->integer('number_of_series')->nullable(false);
             $table->integer('number_of_instances')->nullable(false);
             $table->integer('disk_size')->nullable(false);
@@ -36,6 +35,7 @@ class CreateOrthancStudiesTable extends Migration
             //Dependencies
             $table->foreign('visit_id')->references('id')->on('visits');
             $table->foreign('uploader_id')->references('id')->on('users');
+            $table->unique('study_uid');
         });
     }
 

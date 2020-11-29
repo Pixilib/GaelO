@@ -57,6 +57,8 @@ class UserController extends Controller
 {
 
     public function getUser(int $id=0, GetUserRequest $getUserRequest, GetUserResponse $getUserResponse, GetUser $getUser) {
+        $curentUser = Auth::user();
+        $getUserRequest->currentUserId = $curentUser['id'];
         $getUserRequest->id = $id;
         $getUser->execute($getUserRequest, $getUserResponse);
         return response()->json($getUserResponse->body)
@@ -74,7 +76,7 @@ class UserController extends Controller
         //Execute use case
         $createUser->execute($createUserRequest, $createUserResponse);
         //Output result comming from usecase, here no content has to be shown (only http status code and text)
-        return response()->noContent()
+        return response()->json($createUserResponse->body)
                 ->setStatusCode($createUserResponse->status, $createUserResponse->statusText);
     }
 
@@ -105,7 +107,7 @@ class UserController extends Controller
         $requestData['id'] = $id;
         $changePasswordRequest = Util::fillObject($requestData, $changePasswordRequest);
         $changePassword->execute($changePasswordRequest, $changePasswordResponse);
-        return response()->noContent()
+        return response()->json($changePasswordResponse->body)
                 ->setStatusCode($changePasswordResponse->status, $changePasswordResponse->statusText);
     }
 
@@ -122,6 +124,8 @@ class UserController extends Controller
     }
 
     public function getRoles(int $id, string $study = '', GetUserRolesRequest $getUserRolesRequest, GetUserRolesResponse $getUserRolesResponse, GetUserRoles $getUserRoles){
+        $curentUser = Auth::user();
+        $getUserRolesRequest->currentUserId = $curentUser['id'];
         $getUserRolesRequest->userId = $id;
         $getUserRolesRequest->study = $study;
         $getUserRoles->execute($getUserRolesRequest, $getUserRolesResponse);
@@ -131,13 +135,13 @@ class UserController extends Controller
 
     public function createRole(int $id, string $study, Request $request, CreateUserRoles $createUserRole, CreateUserRolesRequest $createUserRoleRequest, CreateUserRolesResponse $createUserRoleResponse){
         $curentUser = Auth::user();
-        $rolesArray = $request->all();
+        $requestData = $request->all();
         $createUserRoleRequest->userId = $id;
         $createUserRoleRequest->study = $study;
         $createUserRoleRequest->currentUserId = $curentUser['id'];
-        $createUserRoleRequest->roles = $rolesArray;
+        $createUserRoleRequest = Util::fillObject($requestData, $createUserRoleRequest);
         $createUserRole->execute($createUserRoleRequest, $createUserRoleResponse);
-        return response()->noContent()
+        return response()->json($createUserRoleResponse->body)
         ->setStatusCode($createUserRoleResponse->status, $createUserRoleResponse->statusText);
     }
 
@@ -162,11 +166,13 @@ class UserController extends Controller
 
         $addAffiliatedCenter->execute($addAffiliatedCenterRequest, $addAffiliatedCenterResponse);
 
-        return response()->noContent()
+        return response()->json($addAffiliatedCenterResponse->body)
         ->setStatusCode($addAffiliatedCenterResponse->status, $addAffiliatedCenterResponse->statusText);
     }
 
     public function getAffiliatedCenter(int $userId, GetAffiliatedCenter $getAffiliatedCenter, GetAffiliatedCenterRequest $getAffiliatedCenterRequest, GetAffiliatedCenterResponse $getAffiliatedCenterResponse){
+        $curentUser = Auth::user();
+        $getAffiliatedCenterRequest->currentUserId = $curentUser['id'];
         $getAffiliatedCenterRequest->userId = $userId;
         $getAffiliatedCenter->execute($getAffiliatedCenterRequest, $getAffiliatedCenterResponse);
 
@@ -176,6 +182,8 @@ class UserController extends Controller
     }
 
     public function deleteAffiliatedCenter(int $userId, int $centerCode, DeleteAffiliatedCenter $deleteAffiliatedCenter, DeleteAffiliatedCenterRequest $deleteAffiliatedCenterRequest, DeleteAffiliatedCenterResponse $deleteAffiliatedCenterResponse){
+        $curentUser = Auth::user();
+        $deleteAffiliatedCenterRequest->currentUserId = $curentUser['id'];
         $deleteAffiliatedCenterRequest->userId = $userId;
         $deleteAffiliatedCenterRequest->centerCode = $centerCode;
         $deleteAffiliatedCenter->execute($deleteAffiliatedCenterRequest, $deleteAffiliatedCenterResponse);
@@ -195,11 +203,13 @@ class UserController extends Controller
         ->setStatusCode($reactivateUserResponse->status, $reactivateUserResponse->statusText);
     }
 
-    public function getUserFromStudy(string $studyName, GetUserFromStudyRequest $GetUserFromStudyRequest, GetUserFromStudyResponse $GetUserFromStudyResponse, GetUserFromStudy $GetUserFromStudy){
-        $GetUserFromStudyRequest->studyName = $studyName;
-        $GetUserFromStudy->execute($GetUserFromStudyRequest, $GetUserFromStudyResponse);
-        return response()->json($GetUserFromStudyResponse->body)
-                ->setStatusCode($GetUserFromStudyResponse->status, $GetUserFromStudyResponse->statusText);
+    public function getUserFromStudy(string $studyName, GetUserFromStudyRequest $getUserFromStudyRequest, GetUserFromStudyResponse $getUserFromStudyResponse, GetUserFromStudy $getUserFromStudy){
+        $curentUser = Auth::user();
+        $getUserFromStudyRequest->currentUserId = $curentUser['id'];
+        $getUserFromStudyRequest->studyName = $studyName;
+        $getUserFromStudy->execute($getUserFromStudyRequest, $getUserFromStudyResponse);
+        return response()->json($getUserFromStudyResponse->body)
+                ->setStatusCode($getUserFromStudyResponse->status, $getUserFromStudyResponse->statusText);
     }
 
 }

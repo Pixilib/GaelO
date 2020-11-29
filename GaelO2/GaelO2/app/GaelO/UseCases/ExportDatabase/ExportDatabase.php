@@ -4,9 +4,11 @@ namespace App\GaelO\UseCases\ExportDatabase;
 
 use App\GaelO\Adapters\DatabaseDumper;
 use App\GaelO\Adapters\LaravelFunctionAdapter;
+use App\GaelO\Exceptions\GaelOException;
+use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Services\AuthorizationService;
 use App\GaelO\Services\PathService;
-
+use Exception;
 use ZipArchive;
 
 class ExportDatabase{
@@ -18,25 +20,36 @@ class ExportDatabase{
 
     public function execute(ExportDatabaseRequest $exportDatabaseRequest, ExportDatabaseResponse $exportDatabaseResponse){
 
-        $this->authorizationService->isAdmin($exportDatabaseRequest->currentUserId);
+        try{
+            $this->checkAuthorization($exportDatabaseRequest->currentUserId);
 
-        $zip=new ZipArchive;
-        $tempZip=tempnam(ini_get('upload_tmp_dir'), 'TMPZIPDB_');
-        $zip->open($tempZip, ZipArchive::CREATE);
+            $zip=new ZipArchive;
+            $tempZip=tempnam(ini_get('upload_tmp_dir'), 'TMPZIPDB_');
+            $zip->open($tempZip, ZipArchive::CREATE);
 
-        $databaseDumpedFile = $this->databaseDumper->getDatabaseDumpFile();
+            $databaseDumpedFile = $this->databaseDumper->getDatabaseDumpFile();
 
-        $date=Date('Ymd_his');
-        $zip->addFile($databaseDumpedFile, "export_database_$date.sql");
+            $date=Date('Ymd_his');
+            $zip->addFile($databaseDumpedFile, "export_database_$date.sql");
 
-        $this->addRecursivelyInZip($zip, LaravelFunctionAdapter::getStoragePath() );
+            $this->addRecursivelyInZip($zip, LaravelFunctionAdapter::getStoragePath() );
 
-        $zip->close();
+            $zip->close();
 
-        $exportDatabaseResponse->status = 200;
-        $exportDatabaseResponse->statusText = 'OK';
-        $exportDatabaseResponse->zipFile = $tempZip;
-        $exportDatabaseResponse->fileName = "export_database_".$date."zip";
+            $exportDatabaseResponse->status = 200;
+            $exportDatabaseResponse->statusText = 'OK';
+            $exportDatabaseResponse->zipFile = $tempZip;
+            $exportDatabaseResponse->fileName = "export_database_".$date."zip";
+
+        }catch(GaelOException $e){
+            $exportDatabaseResponse->status = $e->statusCode;
+            $exportDatabaseResponse->statusText = $e->statusText;
+
+        }catch (Exception $e){
+            throw $e;
+        };
+
+
 
     }
 
@@ -52,6 +65,13 @@ class ExportDatabase{
 
         }
 
+    }
+
+    private function checkAuthorization(int $userId) : void {
+        $this->authorizationService->setCurrentUserAndRole($userId);
+        if( ! $this->authorizationService->isAdmin($userId)) {
+            throw new GaelOForbiddenException();
+        };
     }
 
 }

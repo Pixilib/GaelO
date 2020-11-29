@@ -5,5 +5,5 @@ class CreateUserRolesRequest {
     public int $currentUserId;
     public int $userId;
     public string $study;
-    public array $roles;
+    public string $role;
 }

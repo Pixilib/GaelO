@@ -19,6 +19,8 @@ use Illuminate\Support\Facades\Auth;
 class CenterController extends Controller
 {
     public function getCenter(int $code=-1, GetCenterRequest $getCenterRequest, GetCenterResponse $getCenterResponse, GetCenter $getCenter) {
+        $currentUser = Auth::user();
+        $getCenterRequest->currentUserId = $currentUser['id'];
         $getCenterRequest->code = $code;
         $getCenter->execute($getCenterRequest, $getCenterResponse);
         return response()->json($getCenterResponse->body)
@@ -33,7 +35,7 @@ class CenterController extends Controller
         $requestData = $request->all();
         $modifyCenterRequest = Util::fillObject($requestData, $modifyCenterRequest);
         $modifyCenter->execute($modifyCenterRequest, $modifyCenterResponse);
-        return response()->noContent()
+        return response()->json($modifyCenterResponse->body)
                 ->setStatusCode($modifyCenterResponse->status, $modifyCenterResponse->statusText);
     }
 
@@ -46,7 +48,7 @@ class CenterController extends Controller
         $createCenterRequest = Util::fillObject($requestData, $createCenterRequest);
 
         $createCenter->execute($createCenterRequest, $createCenterResponse);
-        return response()->noContent()
+        return response()->json($createCenterResponse->body)
                 ->setStatusCode($createCenterResponse->status, $createCenterResponse->statusText);
     }
 }

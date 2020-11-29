@@ -15,6 +15,15 @@ Class MailServices extends SendEmailAdapter {
         $this->userRepository = $userRepository;
     }
 
+    public function getUserEmail(int $userId){
+        return $this->userRepository->find($userId)['email'];
+    }
+
+    public function getUserName(int $userId){
+        $userEntity = $this->userRepository->find($userId);
+        return $userEntity['firstname'].' '.$userEntity['lastname'];
+    }
+
     public function getAdminsEmails() : array {
         $adminsEmails = $this->userRepository->getAdministratorsEmails();
         return $adminsEmails;
@@ -119,6 +128,7 @@ Class MailServices extends SendEmailAdapter {
     public function sendImportPatientMessage(String $study, array $successList, array $failList){
 
         $parameters = [
+            'name' => 'supervisor',
             'study' => $study,
             'successList'=>$successList,
             'failList'=>$failList
@@ -130,6 +140,71 @@ Class MailServices extends SendEmailAdapter {
         $this->mailInterface->setParameters($parameters);
         $this->mailInterface->sendModel(MailConstants::EMAIL_IMPORT_PATIENT);
 
+    }
+
+    public function sendUploadedVisitMessage(int $uploadUserId, string $study, int $patientCode, string $visitType, bool $qcNeeded){
+
+        $parameters = [
+            'name' => $this->getUserName($uploadUserId),
+            'study' => $study,
+            'patientCode'=>$patientCode,
+            'visitType'=>$visitType
+        ];
+
+        //Send to supervisors and monitors of the study
+        $destinators = [
+            $this->getUserEmail($uploadUserId),
+            ...$this->userRepository->getUsersEmailsByRolesInStudy($study, Constants::ROLE_SUPERVISOR),
+            ...$this->userRepository->getUsersEmailsByRolesInStudy($study, Constants::ROLE_MONITOR)
+        ];
+        //If QC is awaiting add controllers
+        if ($qcNeeded)  {
+            $destinators = [
+                ...$destinators,
+                ...$this->userRepository->getUsersEmailsByRolesInStudy($study, Constants::ROLE_CONTROLER)
+            ];
+        }
+
+        $this->mailInterface->setTo( $destinators );
+        $this->mailInterface->setReplyTo();
+        $this->mailInterface->setParameters($parameters);
+        $this->mailInterface->sendModel(MailConstants::EMAIL_UPLOADED_VISIT);
+
+    }
+
+    public function sendAvailableReviewMessage(string $study, int $patientCode, string $visitType){
+
+        $parameters = [
+            'study' => $study,
+            'patientCode'=>$patientCode,
+            'visitType'=>$visitType
+        ];
+
+        $this->mailInterface->setTo( $this->userRepository->getUsersEmailsByRolesInStudy($study, Constants::ROLE_REVIEWER) );
+        $this->mailInterface->setReplyTo();
+        $this->mailInterface->setParameters($parameters);
+        $this->mailInterface->sendModel(MailConstants::EMAIL_REVIEW_READY);
+
+    }
+
+    public function sendValidationFailMessage(int $visitId, string $patientCode, string $visitType,
+                string $studyName, string $zipPath, int $userId, string $errorMessage){
+
+        $parameters = [
+            'name'=> 'User',
+            'idVisit' => $visitId,
+            'patientCode'=>$patientCode,
+            'visitType'=>$visitType,
+            'study'=> $studyName,
+            'zipPath'=> $zipPath,
+            'userId'=> $userId,
+            'errorMessage'=>$errorMessage
+        ];
+
+        $this->mailInterface->setTo( $this->userRepository->getAdministratorsEmails() );
+        $this->mailInterface->setReplyTo();
+        $this->mailInterface->setParameters($parameters);
+        $this->mailInterface->sendModel(MailConstants::EMAIL_UPLOAD_FAILURE);
     }
 
 }

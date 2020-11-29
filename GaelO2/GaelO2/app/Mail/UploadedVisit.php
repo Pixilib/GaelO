@@ -35,7 +35,7 @@ class UploadedVisit extends Mailable
      */
     public function build()
     {
-        return $this->view('mails.uploaded_visit')
+        return $this->view('mails.mail_uploaded_visit')
             ->subject($this->parameters['study']." - New Upload Patient - ".$this->parameters['patientCode'])
             ->with($this->parameters);
     }

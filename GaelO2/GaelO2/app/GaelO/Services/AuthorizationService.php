@@ -2,41 +2,48 @@
 
 namespace App\GaelO\Services;
 
-use App\GaelO\Exceptions\GaelOAuthorizationException;
 use App\GaelO\Repositories\UserRepository;
-use App\GaelO\UseCases\GetUser\UserEntity;
 
-class AuthorizationService {
+class AuthorizationService
+{
 
+    public int $userId;
+    public ?string $requestedRole;
 
-    public function __construct(UserRepository $userRepository) {
+    public function __construct( UserRepository $userRepository ) {
         $this->userRepository = $userRepository;
-	}
-
-    //SK A DESIGNER
-    //Peut etre besoin d'un GaelOAuthorizationExecption (pour lancer un unauthorized)
-    //Appel via des statiques ?
-
-    public function isAdmin(int $userId){
-        $userData = $this->userRepository->find($userId);
-        $userEntity = UserEntity::fillFromDBReponseArray($userData);
-        if( ! $userEntity->administrator) throw new GaelOAuthorizationException("Not Admin");
     }
 
-    public function isSameUserId(int $currentUserId, int $requestedUserId) {
-        if ($currentUserId !== $requestedUserId) throw new GaelOAuthorizationException("Unauthorized");
+    public function setCurrentUserAndRole(int $userId, string $requestedRole = null)
+    {
+        $this->userId = $userId;
+        $this->requestedRole = $requestedRole;
     }
 
-    public function isRoleAllowed(int $userId, String $role){
-
+    public function isAdmin(): bool
+    {
+        $userData = $this->userRepository->find($this->userId);
+        return $userData['administrator'];
     }
 
-    public function isPatientAllowed(int $userId, int $patientCode){
-
+    public function isRoleAllowed(string $studyName)
+    {
+        $existingRoles = $this->userRepository->getUsersRolesInStudy($this->userId, $studyName);
+        return in_array($this->requestedRole, $existingRoles);
     }
 
-    public function isVisitAllowed(int $userId, int $visitId){
+    /**
+     * Return if at least one of an array roles is existing for user
+     */
+    public function isOneOfRolesAllowed(array $roles, string $studyName)
+    {
+        $existingRoles = $this->userRepository->getUsersRolesInStudy($this->userId, $studyName);
+        return sizeof(array_intersect($roles, $existingRoles)) > 0;
+    }
 
+    public function isCenterAffiliatedToUser(int $center) : bool {
+        $usersCenters = $this->userRepository->getAllUsersCenters($this->userId);
+        return in_array($center, $usersCenters);
     }
 
 }

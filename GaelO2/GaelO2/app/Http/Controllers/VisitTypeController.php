@@ -35,6 +35,8 @@ class VisitTypeController extends Controller
     }
 
     public function getVisitType(int $visitTypeId, GetVisitType $getVisitType, GetVisitTypeRequest $getVisitTypeRequest, GetVisitTypeResponse $getVisitTypeResponse){
+        $curentUser = Auth::user();
+        $getVisitTypeRequest->currentUserId = $curentUser['id'];
         $getVisitTypeRequest->visitTypeId = $visitTypeId;
         $getVisitType->execute($getVisitTypeRequest, $getVisitTypeResponse);
         return response()->json($getVisitTypeResponse->body)
@@ -42,9 +44,12 @@ class VisitTypeController extends Controller
     }
 
     public function deleteVisitType(int $visitTypeId, DeleteVisitType $deleteVisitType, DeleteVisitTypeRequest $deleteVisitTypeRequest, DeleteVisitTypeResponse $deleteVisitTypeResponse){
+        $curentUser = Auth::user();
+        $deleteVisitTypeRequest->currentUserId = $curentUser['id'];
         $deleteVisitTypeRequest->visitTypeId = $visitTypeId;
         $deleteVisitType->execute($deleteVisitTypeRequest, $deleteVisitTypeResponse);
-        return response()->noContent()
+
+        return response()->json($deleteVisitTypeResponse->body)
         ->setStatusCode($deleteVisitTypeResponse->status, $deleteVisitTypeResponse->statusText);
     }
 }

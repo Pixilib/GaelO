@@ -2,11 +2,11 @@
 
 namespace App\GaelO\Repositories;
 
-use App\GaelO\Exceptions\GaelOException;
 use App\VisitType;
 use App\GaelO\Interfaces\PersistenceInterface;
 use App\GaelO\UseCases\GetVisitType\VisitTypeEntity;
 use App\GaelO\Util;
+use Exception;
 use Illuminate\Support\Facades\Log;
 
 class VisitTypeRepository implements PersistenceInterface {
@@ -22,7 +22,7 @@ class VisitTypeRepository implements PersistenceInterface {
     }
 
     public function update($id, array $data) : void {
-        throw new GaelOException('Not updatable, delete / create a new visit type');
+        throw new Exception('Not updatable, delete / create a new visit type');
     }
 
     public function find($id){
@@ -34,7 +34,7 @@ class VisitTypeRepository implements PersistenceInterface {
     }
 
     public function getAll() : array {
-        throw new GaelOException('Non Requestable all Visit Types');
+        throw new Exception('Non Requestable all Visit Types');
     }
 
     public function createVisitType(int $visitGroupId, String $name, int $visitOrder, bool $localFormNeeded, bool $qcNeeded, bool $reviewNeeded,
@@ -65,6 +65,11 @@ class VisitTypeRepository implements PersistenceInterface {
     public function getEntity(int $id) : VisitTypeEntity {
         $entityArray = $this->visitType->find($id)->toArray();
         return VisitTypeEntity::fillFromDBReponseArray($entityArray);
+    }
+
+    public function isExistingVisitType(int $visitGroupId, String $name) : bool {
+        $visitGroup = $this->visitType->where([['visit_group_id', '=', $visitGroupId], ['name', '=', $name]])->get();
+        return sizeof($visitGroup)>0;
     }
 
 }

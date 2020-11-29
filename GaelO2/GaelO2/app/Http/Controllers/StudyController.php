@@ -9,6 +9,9 @@ use App\GaelO\UseCases\DeleteStudy\DeleteStudy;
 use App\GaelO\UseCases\DeleteStudy\DeleteStudyQuery;
 use App\GaelO\UseCases\DeleteStudy\DeleteStudyRequest;
 use App\GaelO\UseCases\DeleteStudy\DeleteStudyResponse;
+use App\GaelO\UseCases\GetKnownOrthancID\GetKnownOrthancID;
+use App\GaelO\UseCases\GetKnownOrthancID\GetKnownOrthancIDRequest;
+use App\GaelO\UseCases\GetKnownOrthancID\GetKnownOrthancIDResponse;
 use App\GaelO\UseCases\GetStudy\GetStudy;
 use App\GaelO\UseCases\GetStudy\GetStudyRequest;
 use App\GaelO\UseCases\GetStudy\GetStudyResponse;
@@ -21,6 +24,9 @@ use App\GaelO\UseCases\ImportPatients\ImportPatientsResponse;
 use App\GaelO\UseCases\ReactivateStudy\ReactivateStudy;
 use App\GaelO\UseCases\ReactivateStudy\ReactivateStudyRequest;
 use App\GaelO\UseCases\ReactivateStudy\ReactivateStudyResponse;
+use App\GaelO\UseCases\ReverseProxyTus\ReverseProxyTus;
+use App\GaelO\UseCases\ReverseProxyTus\ReverseProxyTusRequest;
+use App\GaelO\UseCases\ReverseProxyTus\ReverseProxyTusResponse;
 use App\GaelO\Util;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -29,9 +35,10 @@ class StudyController extends Controller
     public function createStudy(Request $request, CreateStudy $createStudy, CreateStudyRequest $createStudyRequest, CreateStudyResponse $createStudyResponse){
 
         $currentUser = Auth::user();
+        $createStudyRequest->currentUserId = $currentUser['id'];
         $requestData = $request->all();
         $createStudyRequest = Util::fillObject($requestData, $createStudyRequest);
-        $createStudyRequest->currentUserId = $currentUser['id'];
+
         $createStudy->execute($createStudyRequest, $createStudyResponse);
 
         return response()->noContent()
@@ -40,13 +47,15 @@ class StudyController extends Controller
     }
 
     public function getStudy(Request $request, GetStudy $getStudy, GetStudyRequest $getStudyRequest, GetStudyResponse $getStudyResponse, GetStudyDetails $getStudyDetails, GetStudyDetailsRequest $getStudyDetailsRequest, GetStudyDetailsResponse $getStudyDetailsResponse){
-        //RECUPERATION DES QUERY PARAM (? dans URL)
+        $currentUser = Auth::user();
         $queryParam = $request->query();
         if(array_key_exists('expand', $queryParam) ){
+            $getStudyDetailsRequest->currentUserId = $currentUser['id'];
             $getStudyDetails->execute($getStudyDetailsRequest, $getStudyDetailsResponse);
             return response()->json($getStudyDetailsResponse->body)
             ->setStatusCode($getStudyDetailsResponse->status, $getStudyDetailsResponse->statusText);
         }else {
+            $getStudyRequest->currentUserId = $currentUser['id'];
             $getStudy->execute($getStudyRequest, $getStudyResponse);
             return response()->json($getStudyResponse->body)
             ->setStatusCode($getStudyResponse->status, $getStudyResponse->statusText);
@@ -79,9 +88,22 @@ class StudyController extends Controller
         $currentUser = Auth::user();
         $importPatientsRequest->patients = $request->all() ;
         $importPatientsRequest->studyName = $studyName;
-        $importPatientsRequest->currentUserCode = $currentUser['id'];
+        $importPatientsRequest->currentUserId = $currentUser['id'];
         $importPatients->execute($importPatientsRequest, $importPatientsResponse);
 
         return response()->json($importPatientsResponse->body)->setStatusCode($importPatientsResponse->status, $importPatientsResponse->statusText);
     }
+
+    public function isKnownOrthancId(string $studyName, string $orthancStudyID, GetKnownOrthancID $getKnownOrthancID, GetKnownOrthancIDRequest $getKnownOrthancIDRequest, GetKnownOrthancIDResponse $getKnownOrthancIDResponse){
+
+        $currentUser = Auth::user();
+        $getKnownOrthancIDRequest->currentUserId = $currentUser['id'];
+        $getKnownOrthancIDRequest->studyName = $studyName;
+        $getKnownOrthancIDRequest->orthancStudyID = $orthancStudyID;
+
+        $getKnownOrthancID->execute($getKnownOrthancIDRequest, $getKnownOrthancIDResponse);
+        return response()->json($getKnownOrthancIDResponse->body)->setStatusCode($getKnownOrthancIDResponse->status, $getKnownOrthancIDResponse->statusText);
+
+    }
+
 }
