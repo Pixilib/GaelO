@@ -2,6 +2,7 @@
 
 namespace App\GaelO\UseCases\GetPatientFromStudy;
 
+use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\PersistenceInterface;
@@ -22,16 +23,15 @@ class GetPatientFromStudy {
     {
         try{
 
-            $this->checkAuthorization($patientRequest->currentUserId, $patientRequest->role, $patientRequest->studyName);
+            $this->checkAuthorization($patientRequest->currentUserId, $patientRequest->studyName);
 
             $studyName = $patientRequest->studyName;
-            $dbData = $this->persistenceInterface->getPatientsInStudy($studyName);
+            $patientsDbEntities = $this->persistenceInterface->getPatientsInStudy($studyName);
             $responseArray = [];
-            foreach($dbData as $data){
-                $data = $this->persistenceInterface->find($data);
-                $responseArray[] = PatientEntity::fillFromDBReponseArray($data);
+            foreach($patientsDbEntities as $patientEntity){
+                $responseArray[] = PatientEntity::fillFromDBReponseArray($patientEntity);
             }
-            //SK ICI SI PAS ADMINISTRATOR CACHER LE CENTER DU PATIENT ?
+
             $patientResponse->body = $responseArray;
             $patientResponse->status = 200;
             $patientResponse->statusText = 'OK';
@@ -49,10 +49,10 @@ class GetPatientFromStudy {
 
     }
 
-    private function checkAuthorization(int $currentUserId, string $role, string $studyName){
-        $this->authorizationService->setCurrentUserAndRole($currentUserId, $role);
+    private function checkAuthorization(int $currentUserId, string $studyName){
+        $this->authorizationService->setCurrentUserAndRole($currentUserId, Constants::ROLE_SUPERVISOR);
         if ( ! $this->authorizationService->isRoleAllowed($studyName)){
-                    throw new GaelOForbiddenException();
+            throw new GaelOForbiddenException();
         };
     }
 

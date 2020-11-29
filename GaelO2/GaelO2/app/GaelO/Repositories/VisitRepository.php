@@ -2,6 +2,7 @@
 
 namespace App\GaelO\Repositories;
 
+use App\GaelO\Constants\Constants;
 use App\Visit;
 use App\GaelO\Interfaces\PersistenceInterface;
 use App\GaelO\Util;
@@ -87,11 +88,9 @@ class VisitRepository implements PersistenceInterface {
         return $visitEntity->toArray();
     }
 
-    public function getVisitContext(int $visitId, ?string $studyName= null) : array {
+    public function getVisitContext(int $visitId) : array {
 
-        $dataArray = $this->visit->find($visitId)->with(['visitType', 'patient'])/*->join('reviews_status', function ($join) use ($studyName) {
-            $join->on('vist_id', '=', 'id')->where('study_name', $studyName);
-        })*/->first()->toArray();
+        $dataArray = $this->visit->find($visitId)->with(['visitType', 'patient'])->first()->toArray();
         return $dataArray;
     }
 
@@ -104,6 +103,41 @@ class VisitRepository implements PersistenceInterface {
     public function getPatientsVisits(int $patientCode){
         $visits = $this->visit->where('patient_code', $patientCode)->get()->toArray();
         return $visits;
+    }
+
+    public function getPatientVisitsWithContext(int $patientCode){
+
+        $answer = $this->visit->join('visit_types', function ($join) {
+            $join->on('visits.visit_type_id', '=', 'visit_types.id');
+        })->join('visit_groups', function ($join) {
+            $join->on('visit_types.id', '=', 'visit_groups.id');
+        })->where('patient_code', $patientCode)->get();
+
+        return $answer->count() === 0 ? []  : $answer->toArray();
+
+    }
+
+    public function getVisitsInStudy(string $studyName){
+
+        $answer = $this->visit->join('visit_types', function ($join) {
+            $join->on('visits.visit_type_id', '=', 'visit_types.id');
+        })->join('visit_groups', function ($join) {
+            $join->on('visit_types.id', '=', 'visit_groups.id');
+        })->where('study_name', $studyName)->get();
+
+        return $answer->count() === 0 ? []  : $answer->toArray();
+    }
+
+    public function getVisitsInStudyAwaitingControllerAction(string $studyName){
+        $controllerActionStatusArray = array(Constants::QUALITY_CONTROL_NOT_DONE, Constants::QUALITY_CONTROL_WAIT_DEFINITIVE_CONCLUSION);
+
+        $answer = $this->visit->join('visit_types', function ($join) {
+            $join->on('visits.visit_type_id', '=', 'visit_types.id');
+        })->join('visit_groups', function ($join) {
+            $join->on('visit_types.id', '=', 'visit_groups.id');
+        })->where('study_name', $studyName)->whereIn('state_quality_control', $controllerActionStatusArray)->get();
+
+        return $answer->count() === 0 ? []  : $answer->toArray();
     }
 
 
