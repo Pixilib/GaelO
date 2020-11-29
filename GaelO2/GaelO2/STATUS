@@ -23,7 +23,9 @@ Preparation Investigateur / Monitor / Controller / Reviewer :
 
 Salim TODO :
 
-Pb : Un ID Visit peut maintenant a etre attachee a plusieurs etudes ancillaires
+Class d'authorisation revenir a l'heritage?
+
+Pb Authorisation : Un ID Visit peut maintenant a etre attachee a plusieurs etudes ancillaires
 => Le scope de la study demandée doit venir du front
 => Dans authorization on doit verifier que le visit ID a bien une etude === a celle demandee et que l'utilisateur a les droits dessus
 => Le review status doit venir avec les info de la visit dans le repository (partie de code commentée)
@@ -34,10 +36,10 @@ Pb : Un ID Visit peut maintenant a etre attachee a plusieurs etudes ancillaires
 => Necessite de faire passer la study pour permission du GET
 => Supression autorisée que pour la study princeps
 => Creation autorisée que la study princeps
+=> Dans Etude ancillaire on ne peut que modifier les reviews de cette ancillaire=>object authorisation review specifique ?
 
 * Service Visit => Continuer test passage en upload Done
 
-Voir si on ajoute le login / mdp pour l'acces au dicom dans orthanc pacs avec differentiation avec lua script (probablment que oui)
 
 +Tard :
 Faire une condition pour les NoContent dans le controller ? => ou mettre toujours un payload vide pour eviter les errur error->json() dans front?
@@ -46,6 +48,8 @@ CreateVisitType et CreateVisitGroup => Ajouter un forbidden si l'etude a déjà 
 ReverseProxy TUS => On peut ajouter le studyName dans le header dans uppy pour le recupérer dans le use case et checker le role Investigateur
 Reverse proxy dicomweb => Comment faire venir le role et study depuis ohif ? depuis header?
 TUS est Joignable sur Delete => peut etre gerer le failure/cancel pour vider tus ?
+Deploiement ajouter le login / mdp pour dans orthanc pacs + bloquer delete dans lua script
+
 
 //Les tests ne font pas d'assertion sur
 - le tracker => Via un spy ?

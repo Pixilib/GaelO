@@ -28,8 +28,9 @@ class ModifyPatient {
 
         try{
 
+            $this->checkAuthorization($modifyPatientRequest->currentUserId, $modifyPatientRequest->patientCode);
+
             $patientEntity = $this->persistenceInterface->find($modifyPatientRequest->patientCode);
-            $this->checkAuthorization($modifyPatientRequest->currentUserId, $patientEntity['study_name']);
 
             $updatableData = ['firstname', 'lastname', 'gender', 'birthDay', 'birthMonth', 'birthYear',
             'registrationDate', 'investigatorName', 'centerCode'];
@@ -76,9 +77,10 @@ class ModifyPatient {
         }
     }
 
-    private function checkAuthorization(int $userId, string $study){
+    private function checkAuthorization(int $userId, int $patientCode){
         $this->authorizationPatientService->setCurrentUserAndRole($userId, Constants::ROLE_SUPERVISOR);
-        if( ! $this->authorizationPatientService->isRoleAllowed($study)){
+        $this->authorizationPatientService->setPatient($patientCode);
+        if( ! $this->authorizationPatientService->isPatientAllowed()){
             throw new GaelOForbiddenException();
         };
     }

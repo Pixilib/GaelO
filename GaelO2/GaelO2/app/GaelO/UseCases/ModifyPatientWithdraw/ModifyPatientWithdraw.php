@@ -27,8 +27,9 @@ class ModifyPatientWithdraw {
 
         try{
 
+            $this->checkAuthorization($modifyPatientWithdrawRequest->currentUserId, $modifyPatientWithdrawRequest->patientCode);
+
             $patientEntity = $this->persistenceInterface->find($modifyPatientWithdrawRequest->patientCode);
-            $this->checkAuthorization($modifyPatientWithdrawRequest->currentUserId, $patientEntity['study_name']);
 
             $modifiedData = [];
 
@@ -75,9 +76,10 @@ class ModifyPatientWithdraw {
 
     }
 
-    public function checkAuthorization(int $userId, string $study){
+    public function checkAuthorization(int $userId, int $patientCode){
         $this->authorizationPatientService->setCurrentUserAndRole($userId, Constants::ROLE_SUPERVISOR);
-        if( ! $this->authorizationPatientService->isRoleAllowed($study)){
+        $this->authorizationPatientService->setPatient($patientCode);
+        if( ! $this->authorizationPatientService->isPatientAllowed()){
             throw new GaelOForbiddenException();
         };
     }
