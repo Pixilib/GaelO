@@ -25,7 +25,7 @@ Route::middleware('auth:api')->post('export-db', 'ExportDBController@exportDB');
 Route::middleware('auth:api')->get('documentations/{id}/file', 'DocumentationController@getDocumentationFile');
 Route::get('visits/{id}/dicoms', 'DicomController@getVisitDicoms');
 
-//Routes that need authentication and to be admin
+//Routes that need authentication
 Route::middleware(['auth:api', 'refresh_token'])->group(function () {
 
     //User related Routes

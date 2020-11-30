@@ -5,6 +5,7 @@ namespace Tests;
 use App\Role;
 use Laravel\Passport\Passport;
 use App\User;
+use Illuminate\Support\Carbon;
 
 class AuthorizationTools {
 
@@ -17,9 +18,10 @@ class AuthorizationTools {
     }
 
     public static function actAsAdmin(bool $admin){
-        $user = factory(User::class)->create(['administrator'=>$admin]);
+        $user = factory(User::class)->create(['administrator'=>$admin, 'status'=>'Activated', 'last_password_update'=> Carbon::now()->format('Y-m-d H:i:s')]);
+
         Passport::actingAs(
-            User::where('id',$user->id)->first()
+            User::where('id', 2)->first()
         );
 
     }
