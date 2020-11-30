@@ -21,7 +21,7 @@ class AuthorizationTools {
         $user = factory(User::class)->create(['administrator'=>$admin, 'status'=>'Activated', 'last_password_update'=> Carbon::now()->format('Y-m-d H:i:s')]);
 
         Passport::actingAs(
-            User::where('id', 2)->first()
+            User::where('id', $user->id)->first()
         );
 
     }
