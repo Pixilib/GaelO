@@ -18,6 +18,9 @@ use App\GaelO\UseCases\GetStudy\GetStudyResponse;
 use App\GaelO\UseCases\GetStudyDetails\GetStudyDetails;
 use App\GaelO\UseCases\GetStudyDetails\GetStudyDetailsRequest;
 use App\GaelO\UseCases\GetStudyDetails\GetStudyDetailsResponse;
+use App\GaelO\UseCases\GetVisitsTree\GetVisitsTree;
+use App\GaelO\UseCases\GetVisitsTree\GetVisitsTreeRequest;
+use App\GaelO\UseCases\GetVisitsTree\GetVisitsTreeResponse;
 use App\GaelO\UseCases\ImportPatients\ImportPatients;
 use App\GaelO\UseCases\ImportPatients\ImportPatientsRequest;
 use App\GaelO\UseCases\ImportPatients\ImportPatientsResponse;
@@ -104,6 +107,18 @@ class StudyController extends Controller
         $getKnownOrthancID->execute($getKnownOrthancIDRequest, $getKnownOrthancIDResponse);
         return response()->json($getKnownOrthancIDResponse->body)->setStatusCode($getKnownOrthancIDResponse->status, $getKnownOrthancIDResponse->statusText);
 
+    }
+
+    public function getVisitsTree(string $studyName, Request $request, GetVisitsTree $getVisitsTree, GetVisitsTreeRequest $getVisitsTreeRequest, GetVisitsTreeResponse $getVisitsTreeResponse){
+        $currentUser = Auth::user();
+        $queryParam = $request->query();
+        $getVisitsTreeRequest->currentUserId = $currentUser['id'];
+        $getVisitsTreeRequest->role = $queryParam['role'];
+        $getVisitsTreeRequest->studyName = $studyName;
+
+        $getVisitsTree->execute($getVisitsTreeRequest, $getVisitsTreeResponse);
+
+        return response()->json($getVisitsTreeResponse->body)->setStatusCode($getVisitsTreeResponse->status, $getVisitsTreeResponse->statusText);
     }
 
 }

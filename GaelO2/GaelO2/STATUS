@@ -24,12 +24,11 @@ Preparation Investigateur / Monitor / Controller / Reviewer :
 Salim TODO :
 
 -API Tree :
+A debeuger : getVisitsAwaitingReviewForUser
 Finir Test Unitaire Service creation tree
-Faire Route + Usecase + authorization
 
 Class d'authorisation revenir a l'heritage?
 Faire un objet specifique pour l'authorisation des Review ?
-Authorisation Visit => Permission doit checker que l'utilisateur a un role dans la study principale de la visite ou ses ancillaires
 
 Pb Authorisation : Un ID Visit peut maintenant a etre attachee a plusieurs etudes ancillaires
 => Le scope de la study demandée doit venir du front

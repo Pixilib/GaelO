@@ -91,8 +91,10 @@ class VisitTreeService
             $visitsArray = $this->visitRepository->getVisitsInStudy($this->studyName);
 
         } else if ($this->role == Constants::ROLE_REVIEWER) {
-            //SK A FAIRE recupérer la liste des visites pour lesquelles on attend un review
-            //de l'utilisateur courrant
+            //Get Visits awaiting a review
+            //$visitsArray = $this->visitRepository->getVisitsAwaitingReviews($this->studyName);
+            $visitsArray = $this->visitRepository->getVisitsAwaitingReviewForUser($this->studyName, $this->userId);
+            //SK A FAIRE exclure les visits ou l'utilisateur a déjà validé une review
         }
 
 

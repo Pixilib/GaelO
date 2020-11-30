@@ -6,6 +6,7 @@ use App\GaelO\Constants\Constants;
 use App\Visit;
 use App\GaelO\Interfaces\PersistenceInterface;
 use App\GaelO\Util;
+use App\Review;
 use App\ReviewStatus;
 use Illuminate\Support\Facades\DB;
 
@@ -138,6 +139,47 @@ class VisitRepository implements PersistenceInterface {
         })->where('study_name', $studyName)->whereIn('state_quality_control', $controllerActionStatusArray)->get();
 
         return $answer->count() === 0 ? []  : $answer->toArray();
+    }
+
+
+    public function getVisitsAwaitingReviews(string $studyName){
+
+        $answer = $this->visit->join('visit_types', function ($join) {
+            $join->on('visits.visit_type_id', '=', 'visit_types.id');
+        })->join('visit_groups', function ($join) {
+            $join->on('visit_types.id', '=', 'visit_groups.id');
+        })->join('reviews_status', function ($join) {
+            $join->on('visits.id', '=', 'reviews_status.visit_id');
+        })->where('visit_groups.study_name', $studyName)->where('review_available', true)->get();
+
+        return $answer->count() === 0 ? []  : $answer->toArray();
+
+    }
+
+    public function getVisitsAwaitingReviewForUser(string $studyName, int $userId){
+
+        $answer = $this->visit->join('visit_types', function ($join) {
+            $join->on('visits.visit_type_id', '=', 'visit_types.id');
+        })->join('visit_groups', function ($join) {
+            $join->on('visit_types.id', '=', 'visit_groups.id');
+        })->join('reviews_status', function ($join) {
+            $join->on('visits.id', '=', 'reviews_status.visit_id');
+        })
+        ->whereNotExists(function($query) use ($studyName, $userId)
+            {
+                $query
+                ->from('reviews')
+                ->where('visit_id', '=', 'visits.id')
+                ->where('study_name', '=', $studyName)
+                ->where('validated', true )
+                ->where('user_id', $userId);
+            })
+        ->where('visit_groups.study_name', $studyName)
+        ->where('review_available', true)
+        ->get();
+
+        return $answer->count() === 0 ? []  : $answer->toArray();
+
     }
 
 

@@ -13,6 +13,10 @@ class ReviewStatus extends Model
 
     protected $guarded = [];
 
+    public function visit(){
+        return $this->belongsTo('App\Visit', 'visit_id', 'id');
+    }
+
     //SK : Parceque cle composite (cf https://www.nuomiphp.com/eplan/en/28200.html)
     protected function setKeysForSaveQuery(Builder $query)
     {

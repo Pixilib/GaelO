@@ -18,7 +18,6 @@ class PatientRepository implements PersistenceInterface {
         $patient = new Patient();
         $model = Util::fillObject($data, $patient);
         $model->save();
-        Log::info($this->patient->get()->toArray());
 
     }
 
