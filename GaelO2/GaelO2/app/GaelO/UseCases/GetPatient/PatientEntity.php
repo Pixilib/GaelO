@@ -2,7 +2,6 @@
 
 namespace App\GaelO\UseCases\GetPatient;
 
-use Illuminate\Support\Facades\Log;
 
 class PatientEntity {
     public int $code;
