@@ -35,9 +35,15 @@ class ModifyCenter {
                 throw new GaelONotFoundException('Non Existing Center');
             };
 
-            if(!empty($this->persistenceInterface->getCenterByName($modifyCenterRequest->name))){
+            //If center name has been changed, check that name isn't already used
+            if(!empty($modifyCenterRequest->name) && !empty($this->persistenceInterface->getCenterByName($modifyCenterRequest->name))){
                 throw new GaelOConflictException('Center Name already used');
             };
+
+            //Fill missing fields with known info from the database
+            $center = $this->persistenceInterface->find($modifyCenterRequest->code);
+            if(empty($modifyCenterRequest->name)) $modifyCenterRequest->name = $center->name;
+            if(empty($modifyCenterRequest->countryCode)) $modifyCenterRequest->countryCode = $center->country_code;
 
             $this->persistenceInterface->updateCenter($modifyCenterRequest->name, $modifyCenterRequest->code, $modifyCenterRequest->countryCode);
 
