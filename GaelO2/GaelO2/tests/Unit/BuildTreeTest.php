@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\GaelO\Constants\Constants;
 use App\GaelO\Services\VisitTreeService;
 use App\Patient;
+use App\Review;
 use App\ReviewStatus;
 use App\Study;
 use App\Visit;
@@ -47,6 +48,7 @@ class BuildTreeTest extends TestCase
         $this->reviewStatus = factory(ReviewStatus::class)->create([
             'visit_id' => $this->visit->id,
             'study_name' => $this->study->name,
+            'review_available'=>true
         ]);
 
         $this->treeService = App::make(VisitTreeService::class);
@@ -74,5 +76,18 @@ class BuildTreeTest extends TestCase
         $this->treeService->setUserAndStudy(1, Constants::ROLE_INVESTIGATOR, $this->study->name);
         //dd($this->treeService->buildTree());
 
+    }
+
+    public function testTreeReviewer(){
+
+        factory(Review::class)->create([
+            'visit_id' => $this->visit->id,
+            'study_name' => $this->study->name,
+            'user_id'=>1,
+            'validated'=>true
+        ]);
+
+        $this->treeService->setUserAndStudy(1, Constants::ROLE_REVIEWER, $this->study->name);
+        //dd($this->treeService->buildTree());
     }
 }

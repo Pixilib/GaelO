@@ -111,6 +111,7 @@ Route::middleware(['auth:api', 'refresh_token'])->group(function () {
     Route::patch('patients/{code?}/inclusion-status', 'PatientController@modifyPatientInclusionStatus');
     Route::get('patients/{patientCode}/visits', 'PatientController@getPatientVisit');
     Route::get('studies/{studyName}/patients', 'PatientController@getPatientFromStudy');
+    Route::get('studies/{studyName}/visits-tree', 'StudyController@getVisitsTree');
     Route::post('studies/{studyName}/import-patients', 'StudyController@importPatients');
     Route::get('studies/{studyName}/documentations', 'DocumentationController@getDocumentationsFromStudy');
 
