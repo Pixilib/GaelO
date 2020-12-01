@@ -3,11 +3,12 @@
 namespace App\GaelO\Services;
 
 use App\GaelO\Constants\Constants;
+use App\GaelO\Repositories\VisitRepository;
 
 class AuthorizationVisitService {
 
     private AuthorizationPatientService $authorizationPatientService;
-    private VisitService $visitService;
+    private VisitRepository $visitRepository;
 
     private string $requestedRole;
 
@@ -18,21 +19,22 @@ class AuthorizationVisitService {
     public string $visitUploadStatus;
     public bool $visitReviewAvailable;
 
-    public function __construct(AuthorizationPatientService $authorizationPatientService, VisitService $visitService)
+    public function __construct(AuthorizationPatientService $authorizationPatientService, VisitRepository $visitRepository)
     {
-        $this->visitService = $visitService;
+        $this->visitRepository = $visitRepository;
         $this->authorizationPatientService = $authorizationPatientService;
     }
 
     public function setCurrentUserAndRole(int $userId, string $role)
     {
         $this->requestedRole = $role;
+        $this->userId = $userId;
         $this->authorizationPatientService->setCurrentUserAndRole($userId, $role);
     }
 
     public function setVisitId($visitId){
         $this->visitId = $visitId;
-        $visitContext = $this->visitService->getVisitContext($visitId);
+        $visitContext = $this->visitRepository->getVisitContext($visitId);
 
         $this->stateQualityControl = $visitContext['state_quality_control'];
         $this->patientStudy = $visitContext['visit_type']['visit_group']['study_name'];
@@ -55,11 +57,8 @@ class AuthorizationVisitService {
     public function isVisitAllowed(): bool {
         //Check that called Role exists for users and visit is not deleted
         if ($this->requestedRole === Constants::ROLE_REVIEWER) {
-            //For reviewer the visit access is allowed if one of the created visits is still awaiting review
-            //This is made to allow access to references scans
-            //SK ICI A FAIRE
-            //$patientObject=$visitData->getPatient();
-            //$isAwaitingReview=$patientObject->getPatientStudy()->isHavingAwaitingReviewImagingVisit();
+            $this->visitRepository->isVisitAvailableForReview($this->visitId, $this->studyName, $this->userId);
+
             return $this->authorizationPatientService->isPatientAllowed();
         } else if ($this->requestedRole === Constants::ROLE_CONTROLER) {
             //For controller controller role should be allows and visit QC status be not done or awaiting definitive conclusion

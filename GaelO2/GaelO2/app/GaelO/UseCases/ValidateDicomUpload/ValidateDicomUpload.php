@@ -6,7 +6,6 @@ use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Exceptions\GaelOValidateDicomException;
-use App\GaelO\Services\AuthorizationService;
 use App\GaelO\Services\AuthorizationVisitService;
 use App\GaelO\Services\MailServices;
 use App\GaelO\Services\OrthancService;

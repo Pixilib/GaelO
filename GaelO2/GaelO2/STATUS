@@ -23,8 +23,9 @@ Preparation Investigateur / Monitor / Controller / Reviewer :
 
 Salim TODO :
 
+- API Pour avoir les visit "creable"
+
 -API Tree :
-A debeuger : getVisitsAwaitingReviewForUser
 Finir Test Unitaire Service creation tree
 
 Class d'authorisation revenir a l'heritage?
