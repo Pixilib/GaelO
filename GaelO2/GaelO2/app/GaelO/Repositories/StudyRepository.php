@@ -68,6 +68,11 @@ class StudyRepository implements PersistenceInterface {
         return $studiesDetails->toArray();
     }
 
+    public function getStudyDetails(string $name) : array {
+        $studiesDetails = $this->study->find($name)->with(['visitGroupDetails'])->get();
+        return $studiesDetails->first()->toArray();
+    }
+
     public function reactivateStudy(string $name) : void {
         $this->study->withTrashed()->find($name)->restore();
     }

@@ -23,7 +23,9 @@ Preparation Investigateur / Monitor / Controller / Reviewer :
 
 Salim TODO :
 
-- API Pour avoir les visit "creable"
+- API Pour avoir les visit "creable" => Fonction faite dans Visit Service et testée
+=> Faire le use case et permission (que investigateur) GET /studies//patients//remaining-visites
+//manque logique d'afficher le n+1 et n+2 si optional (si porté par le front pas finetunable)
 
 -API Tree :
 Finir Test Unitaire Service creation tree

@@ -40,7 +40,7 @@ class OrthancSeriesRepository implements PersistenceInterface{
     public function addSeries(string $seriesOrthancID, string $orthancStudyID, ?string $acquisitionDate,
                             ?string $acquisitionTime, ?string $modality, ?string $seriesDescription,
                             ?int $injectedDose, ?string $radiopharmaceutical, ?int $halfLife,
-                            ?string $injectedDateTime, ?int $injectedActivity, ?int $patientWeight,
+                            ?string $injectedTime,?string $injectedDateTime, ?int $injectedActivity, ?int $patientWeight,
                             int $numberOfInstances, string $seriesUID, ?string $seriesNumber,
                             int $seriesDiskSize, int $seriesUncompressedDiskSize, ?string $manufacturer,
                             ?string $modelName ){
@@ -55,6 +55,7 @@ class OrthancSeriesRepository implements PersistenceInterface{
             'injected_dose'=>$injectedDose,
             'radiopharmaceutical'=>$radiopharmaceutical,
             'half_life'=>$halfLife,
+            'injected_time'=>$injectedTime,
             'injected_datetime'=>$injectedDateTime,
             'injected_activity'=>$injectedActivity,
             'patient_weight'=>$patientWeight,
@@ -75,7 +76,7 @@ class OrthancSeriesRepository implements PersistenceInterface{
     public function updateSeries(string $seriesOrthancID, string $orthancStudyID, ?string $acquisitionDate,
             ?string $acquisitionTime, ?string $modality, ?string $seriesDescription,
             ?int $injectedDose, ?string $radiopharmaceutical, ?int $halfLife,
-            ?string $injectedDateTime, ?int $injectedActivity, ?int $patientWeight,
+            ?string $injectedTime,?string $injectedDateTime, ?int $injectedActivity, ?int $patientWeight,
             int $numberOfInstances, string $seriesUID, ?string $seriesNumber,
             int $seriesDiskSize, int $seriesUncompressedDiskSize, ?string $manufacturer,
             ?string $modelName ){
@@ -89,6 +90,7 @@ class OrthancSeriesRepository implements PersistenceInterface{
         'injected_dose'=>$injectedDose,
         'radiopharmaceutical'=>$radiopharmaceutical,
         'half_life'=>$halfLife,
+        'injected_time'=>$injectedTime,
         'injected_datetime'=>$injectedDateTime,
         'injected_activity'=>$injectedActivity,
         'patient_weight'=>$patientWeight,

@@ -4,21 +4,28 @@ namespace App\GaelO\Services;
 
 use App\GaelO\Constants\Constants;
 use App\GaelO\Repositories\OrthancStudyRepository;
+use App\GaelO\Repositories\PatientRepository;
+use App\GaelO\Repositories\StudyRepository;
 use App\GaelO\Repositories\VisitTypeRepository;
 use App\GaelO\Repositories\VisitRepository;
 
 class VisitService
 {
 
-    public function __construct(VisitRepository $visitRepository,
+    public function __construct(
+                            PatientRepository $patientRepository,
+                            StudyRepository $studyRepository,
+                            VisitRepository $visitRepository,
                             VisitTypeRepository $visitTypeRepository,
                             OrthancStudyRepository $orthancStudyRepository,
                             MailServices $mailServices)
     {
+        $this->patientRepository = $patientRepository;
         $this->visitTypeRepository = $visitTypeRepository;
         $this->visitRepository = $visitRepository;
         $this->mailServices = $mailServices;
         $this->orthancStudyRepository = $orthancStudyRepository;
+        $this->studyRepository = $studyRepository;
     }
 
     public function getVisitContext(int $visitId) : array {
@@ -105,6 +112,63 @@ class VisitService
         if($available){
             $this->mailServices->sendAvailableReviewMessage($study, $patientCode, $visitType);
         }
+
+    }
+
+    public function getAvailableVisitToCreate(string $patientCode) : array {
+
+        $patientEntity = $this->patientRepository->find($patientCode);
+
+        //If Patient status different from Included, No further visit creation is possible
+        if($patientEntity['inclusion_status'] !== Constants::PATIENT_INCLUSION_STATUS_INCLUDED){
+            return [];
+        }
+
+        //Get Created Patient's Visits
+        $createdVisitsArray = $this->patientRepository->getPatientsVisits($patientCode);
+
+        $createdVisitMap = [];
+
+        //Build array of Created visit Order indexed by visit group modality
+        foreach($createdVisitsArray as $createdVisit){
+            $visitOrder = $createdVisit['visit_type']['visit_order'];
+            $modality = $createdVisit['visit_type']['visit_group']['modality'];
+            $createdVisitMap[$modality][]=$visitOrder;
+        }
+
+
+        //Get Possibles visits groups and type from study
+        $studyVisitsDetails = $this->studyRepository->getStudyDetails($patientEntity['study_name']);
+
+        $studyVisitMap = [];
+        //Reindex possibiles visits by modality and order
+        foreach( $studyVisitsDetails['visit_group_details'] as $visitGroupDetails){
+
+            foreach($visitGroupDetails['visit_types'] as $visitType){
+
+                $studyVisitMap[ $visitGroupDetails['modality'] ] [$visitType['visit_order'] ] = [
+                    'groupId' => $visitType['visit_group_id'],
+                    'typeId'=>$visitType['id'],
+                    'name' => $visitType['name']
+                ];
+            }
+
+        }
+
+        $visitToCreateMap = [];
+
+        //Search for visits that have not been created
+        foreach( $studyVisitMap as $modality => $visitsArray){
+
+            foreach($visitsArray as $visitOrder => $visit){
+                if(  ! isset($createdVisitMap[$modality]) || !in_array($visitOrder, $createdVisitMap[$modality]) ){
+                    $visitToCreateMap[$modality][$visitOrder] = $visit;
+                }
+            }
+
+        }
+
+        return $visitToCreateMap;
 
     }
 }
