@@ -131,11 +131,19 @@ class CenterTest extends TestCase
         $answer->assertJsonStructure(['errorMessage']);
     }
 
-    public function testModifyCenter(){
+    public function testModifyCenterName(){
         AuthorizationTools::actAsAdmin(true);
         $payload = [
             'name' => 'newCenter',
-            'countryCode'=>'FR'
+        ];
+        $answer = $this->json('PUT', '/api/centers/0', $payload);
+        $answer->assertStatus(200);
+    }
+
+    public function testModifyCenterCountryCode(){
+        AuthorizationTools::actAsAdmin(true);
+        $payload = [
+            'countryCode' => 'US',
         ];
         $answer = $this->json('PUT', '/api/centers/0', $payload);
         $answer->assertStatus(200);

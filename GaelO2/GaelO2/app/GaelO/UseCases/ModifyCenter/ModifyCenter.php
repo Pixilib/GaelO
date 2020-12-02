@@ -41,17 +41,13 @@ class ModifyCenter {
             };
 
             //Fill missing fields with known info from the database
-            $center = $this->persistenceInterface->find($modifyCenterRequest->code);
-            if(empty($modifyCenterRequest->name)) $modifyCenterRequest->name = $center->name;
-            if(empty($modifyCenterRequest->countryCode)) $modifyCenterRequest->countryCode = $center->country_code;
+            $center = $this->persistenceInterface->getCenterByCode($modifyCenterRequest->code);
+            if(!empty($modifyCenterRequest->name)) $center['name'] = $modifyCenterRequest->name;
+            if(!empty($modifyCenterRequest->countryCode)) $center['country_code'] = $modifyCenterRequest->countryCode;
 
-            $this->persistenceInterface->updateCenter($modifyCenterRequest->name, $modifyCenterRequest->code, $modifyCenterRequest->countryCode);
+            $this->persistenceInterface->updateCenter($center['name'], $center['code'], $center['country_code']);
 
-            $actionDetails = [
-                'modifiedCenter' => $modifyCenterRequest->code,
-                'centerName'=> $modifyCenterRequest->name,
-                'centerCountryCode' =>  $modifyCenterRequest->countryCode,
-            ];
+            $actionDetails = $center;
 
             $this->trackerService->writeAction($modifyCenterRequest->currentUserId, Constants::TRACKER_ROLE_ADMINISTRATOR, null, null, Constants::TRACKER_EDIT_CENTER, $actionDetails);
 
