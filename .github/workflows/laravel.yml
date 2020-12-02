@@ -2,9 +2,9 @@ name: Laravel
 
 on:
   push:
-    branches: [ Gaelo2 ]
+    branches: [ Gaelo2, GaelO2-Emilie ]
   pull_request:
-    branches: [ Gaelo2 ]
+    branches: [ Gaelo2, GaelO2-Emilie ]
 
 jobs:
   laravel-tests:

@@ -54,9 +54,8 @@ class CenterRepository implements PersistenceInterface {
     }
 
     public function getCenterByCode(int $code) : array {
-        $center = $this->center->find($code)->get()->first();
-        return $center !== null  ? $center->toArray() : [];
-
+        $center = $this->center->find($code)->toArray();
+        return $center;
     }
 
     public function isKnownCenter(int $code) : bool {
