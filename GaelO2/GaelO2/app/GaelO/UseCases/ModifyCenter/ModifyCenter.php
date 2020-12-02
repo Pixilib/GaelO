@@ -35,17 +35,19 @@ class ModifyCenter {
                 throw new GaelONotFoundException('Non Existing Center');
             };
 
-            if(!empty($this->persistenceInterface->getCenterByName($modifyCenterRequest->name))){
+            //If center name has been changed, check that name isn't already used
+            if(!empty($modifyCenterRequest->name) && !empty($this->persistenceInterface->getCenterByName($modifyCenterRequest->name))){
                 throw new GaelOConflictException('Center Name already used');
             };
 
-            $this->persistenceInterface->updateCenter($modifyCenterRequest->name, $modifyCenterRequest->code, $modifyCenterRequest->countryCode);
+            //Fill missing fields with known info from the database
+            $center = $this->persistenceInterface->getCenterByCode($modifyCenterRequest->code);
+            if(!empty($modifyCenterRequest->name)) $center['name'] = $modifyCenterRequest->name;
+            if(!empty($modifyCenterRequest->countryCode)) $center['country_code'] = $modifyCenterRequest->countryCode;
 
-            $actionDetails = [
-                'modifiedCenter' => $modifyCenterRequest->code,
-                'centerName'=> $modifyCenterRequest->name,
-                'centerCountryCode' =>  $modifyCenterRequest->countryCode,
-            ];
+            $this->persistenceInterface->updateCenter($center['name'], $center['code'], $center['country_code']);
+
+            $actionDetails = $center;
 
             $this->trackerService->writeAction($modifyCenterRequest->currentUserId, Constants::TRACKER_ROLE_ADMINISTRATOR, null, null, Constants::TRACKER_EDIT_CENTER, $actionDetails);
 
