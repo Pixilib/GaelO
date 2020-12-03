@@ -136,7 +136,7 @@ class CenterTest extends TestCase
         $payload = [
             'name' => 'newCenter',
         ];
-        $answer = $this->json('PUT', '/api/centers/0', $payload);
+        $answer = $this->json('PATCH', '/api/centers/0', $payload);
         $answer->assertStatus(200);
     }
 
@@ -145,7 +145,7 @@ class CenterTest extends TestCase
         $payload = [
             'countryCode' => 'US',
         ];
-        $answer = $this->json('PUT', '/api/centers/0', $payload);
+        $answer = $this->json('PATCH', '/api/centers/0', $payload);
         $answer->assertStatus(200);
     }
 
@@ -156,7 +156,7 @@ class CenterTest extends TestCase
             'countryCode'=>'FR'
 
         ];
-        $answer = $this->json('PUT', '/api/centers/0', $payload);
+        $answer = $this->json('PATCH', '/api/centers/0', $payload);
         $answer->assertStatus(403);
     }
 
@@ -167,7 +167,7 @@ class CenterTest extends TestCase
             'countryCode'=>'FR'
         ];
         //Non existing center modification should fail
-        $this->json('PUT', '/api/centers/1', $payload)->assertStatus(404);
+        $this->json('PATCH', '/api/centers/1', $payload)->assertStatus(404);
 
     }
 
@@ -190,6 +190,6 @@ class CenterTest extends TestCase
             'name' => 'Toulouse',
             'countryCode'=>'US'
         ];
-        $this->json('PUT', '/api/centers/8', $payload)->assertStatus(409);
+        $this->json('PATCH', '/api/centers/8', $payload)->assertStatus(409);
     }
 }
