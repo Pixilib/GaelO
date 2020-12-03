@@ -8,7 +8,7 @@ use Faker\Generator as Faker;
 $factory->define(VisitType::class, function (Faker $faker) {
     return [
         'visit_group_id'=>  $faker->unique()->randomNumber,
-        'name'=>  $faker->word,
+        'name'=>  $faker->unique()->word,
         'visit_order'=>  $faker->unique()->randomNumber,
         'local_form_needed'=>$faker->randomElement([true, false]),
         'qc_needed'=>$faker->randomElement([true, false]),
