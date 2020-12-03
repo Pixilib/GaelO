@@ -73,6 +73,7 @@ Route::middleware(['auth:api', 'refresh_token'])->group(function () {
 
     //Visits Routes
     Route::post('visits/{id}/validate-dicom', 'VisitController@validateDicom');
+    Route::delete('visits/{id}', 'VisitController@deleteVisit');
 
     //upload Routes
     Route::any('tus/{filename?}', 'ReverseProxyController@tusUpload');

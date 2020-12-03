@@ -14,9 +14,9 @@ Documentation (GET, POST, DELETE) => OK
 Visit Dicoms (GET) => OK
 Tus : (All) => OK
 Patient : ( GET, POST, PATCH (+withdraw) ) => OK
+Api Visit (GET, POST, DELETE) => OK
 
 Preparation Investigateur / Monitor / Controller / Reviewer :
-- Api Visit (GET, POST, DELETE) => Reste DELETE
 - Api QC (GET, PATCH + API /reset)
 - Api Corrective Action (GET, PATCH)
 - Api Review (POST, GET, DELETE)
