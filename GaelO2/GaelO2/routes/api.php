@@ -59,7 +59,7 @@ Route::middleware(['auth:api', 'refresh_token'])->group(function () {
 
     //Centers Routes
     Route::get('centers/{code?}', 'CenterController@getCenter');
-    Route::put('centers/{code}', 'CenterController@modifyCenter');
+    Route::patch('centers/{code}', 'CenterController@modifyCenter');
 
     //VisitGroup Routes
     Route::post('studies/{studyName}/visit-groups', 'VisitGroupController@createVisitGroup');
@@ -138,7 +138,7 @@ Route::middleware(['auth:api', 'refresh_token'])->group(function () {
 Route::post('request', 'RequestController@sendRequest');
 
 //Login Route
-Route::post('login', 'AuthController@login');
+Route::post('login', 'AuthController@login')->name('login');
 Route::put('users/{id}/password', 'UserController@changeUserPassword');
 
 //Tools Routes
