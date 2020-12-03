@@ -21,7 +21,7 @@ class CreateOrthancStudiesTable extends Migration
             $table->date('acquisition_date')->nullable(true);
             $table->time('acquisition_time')->nullable(true);
             $table->string('anon_from_orthanc_id', 44)->nullable(false);
-            $table->text('study_uid')->nullable(false);
+            $table->string('study_uid', 256)->nullable(false);
             $table->text('study_description')->nullable(true);
             $table->string('patient_orthanc_id', 44)->nullable(false);
             $table->text('patient_name')->nullable(true);
