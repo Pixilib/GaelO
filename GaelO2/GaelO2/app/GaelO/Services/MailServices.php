@@ -211,6 +211,7 @@ Class MailServices extends SendEmailAdapter {
                        string $visitModality,string $visitType, string $formDecision, string $imageDecision, string $formComment, string $imageComment ){
 
         $parameters = [
+            'name'=> 'User',
             'controlDecision'=> $qcDecision,
             'study' => $studyName,
             'patientCode'=> $patientCode,

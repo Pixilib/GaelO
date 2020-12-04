@@ -5,7 +5,6 @@ namespace App\GaelO\UseCases\ModifyQualityControl;
 use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
-use App\GaelO\Services\AuthorizationService;
 use App\GaelO\Services\AuthorizationVisitService;
 use App\GaelO\Services\MailServices;
 use App\GaelO\Services\TrackerService;
@@ -19,7 +18,7 @@ class ModifyQualityControl {
     private TrackerService $trackerService;
     private MailServices $mailServices;
 
-    public function construct(AuthorizationVisitService $authorizationVisitService, VisitService $visitService, TrackerService $trackerService, MailServices $mailServices){
+    public function __construct(AuthorizationVisitService $authorizationVisitService, VisitService $visitService, TrackerService $trackerService, MailServices $mailServices){
         $this->authorizationVisitService = $authorizationVisitService;
         $this->visitService = $visitService;
         $this->trackerService = $trackerService;
@@ -86,6 +85,9 @@ class ModifyQualityControl {
                 $modifyQualityControlRequest->imageQcComment
             );
 
+            $modifyQualityControlResponse->status = 200;
+            $modifyQualityControlResponse->statusText = 'OK';
+
         }catch(GaelOException $e){
 
             $modifyQualityControlResponse->body = $e->getErrorBody();
@@ -99,9 +101,9 @@ class ModifyQualityControl {
 
     private function checkAuthorization(int $userId, int $visitId) : void {
         //Check user has controller role in the visit
-        $this->authorizationService->setCurrentUserAndRole($userId, Constants::ROLE_CONTROLER);
-        $this->authorizationService->setVisitId($visitId);
-        if ( ! $this->authorizationService->isVisitAllowed() ){
+        $this->authorizationVisitService->setCurrentUserAndRole($userId, Constants::ROLE_CONTROLER);
+        $this->authorizationVisitService->setVisitId($visitId);
+        if ( ! $this->authorizationVisitService->isVisitAllowed() ){
             throw new GaelOForbiddenException();
         }
 

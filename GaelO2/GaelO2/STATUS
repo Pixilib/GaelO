@@ -17,8 +17,8 @@ Patient : ( GET, POST, PATCH (+withdraw) ) => OK
 Api Visit (GET, POST, DELETE) => OK
 
 Preparation Investigateur / Monitor / Controller / Reviewer :
-- Api QC (GET, PATCH + API /reset)
-- Api Corrective Action (GET, PATCH)
+- Api QC (PATCH + API /reset) => PATCH Fait
+- Api Corrective Action (PATCH)
 - Api Review (POST, GET, DELETE)
 
 Salim TODO :

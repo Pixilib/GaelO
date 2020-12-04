@@ -38,7 +38,7 @@ class ReviewRepository{
     }
 
     public function unlockInvestigatorForm(int $visitId) : void {
-        $reviewEntity = $this->review->where('visits.id', '=', $visitId)->where('local', true)->firstOrFail();
+        $reviewEntity = $this->review->where('visit_id', '=', $visitId)->where('local', true)->firstOrFail();
         $reviewEntity->validated = false;
         $reviewEntity->save();
     }

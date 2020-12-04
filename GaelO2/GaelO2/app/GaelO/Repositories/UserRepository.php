@@ -144,7 +144,7 @@ class UserRepository implements PersistenceInterface {
      * Get Emails array of user having an Investigator roles, affiliated (main or affiliated) in centercode
      * and having a particular job
      */
-    public function getInvestigatorsStudyFromCenterEmails(string $study, int $centerCode, string $job) : array {
+    public function getInvestigatorsStudyFromCenterEmails(string $study, int $centerCode, ?string $job) : array {
 
         $emails = $this->user
         ->where('status', 'Activated')
@@ -153,9 +153,15 @@ class UserRepository implements PersistenceInterface {
         })->join('center_user', function ($join) {
             $join->on('users.id', '=', 'center_user.user_id');
         })->where(function ($query) use ($study, $job) {
-            $query->where('roles.name', '=', Constants::ROLE_INVESTIGATOR)
-            ->where('roles.study_name', '=', $study)
-            ->where('users.job', '=', $job);
+            if($job !== null){
+                $query->where('roles.name', '=', Constants::ROLE_INVESTIGATOR)
+                ->where('roles.study_name', '=', $study)
+                ->where('users.job', '=', $job);
+            }else{
+                $query->where('roles.name', '=', Constants::ROLE_INVESTIGATOR)
+                ->where('roles.study_name', '=', $study);
+            }
+
         })->where(function  ($query) use ($centerCode) {
             $query->where('center_user.center_code', '=', $centerCode)
             ->orWhere('users.center_code', '=', $centerCode);
