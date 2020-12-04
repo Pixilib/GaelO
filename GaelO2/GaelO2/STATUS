@@ -69,6 +69,7 @@ ReverseProxy TUS => On peut ajouter le studyName dans le header dans uppy pour l
 Reverse proxy dicomweb => Comment faire venir le role et study depuis ohif ? depuis header?
 TUS est Joignable sur Delete => peut etre gerer le failure/cancel pour vider tus ?
 Deploiement ajouter le login / mdp pour dans orthanc pacs + bloquer delete dans lua script
+table visit : UploadUserId plutot que CreateUserId
 
 
 //Les tests ne font pas d'assertion sur

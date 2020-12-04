@@ -14,6 +14,9 @@ use App\GaelO\UseCases\GetPatientVisit\GetPatientVisitResponse;
 use App\GaelO\UseCases\GetVisit\GetVisit;
 use App\GaelO\UseCases\GetVisit\GetVisitRequest;
 use App\GaelO\UseCases\GetVisit\GetVisitResponse;
+use App\GaelO\UseCases\ModifyQualityControl\ModifyQualityControl;
+use App\GaelO\UseCases\ModifyQualityControl\ModifyQualityControlRequest;
+use App\GaelO\UseCases\ModifyQualityControl\ModifyQualityControlResponse;
 use App\GaelO\UseCases\ValidateDicomUpload\ValidateDicomUpload;
 use App\GaelO\UseCases\ValidateDicomUpload\ValidateDicomUploadRequest;
 use App\GaelO\UseCases\ValidateDicomUpload\ValidateDicomUploadResponse;
@@ -81,6 +84,20 @@ class VisitController extends Controller
 
         return response()->noContent()
                 ->setStatusCode($deleteVisitResponse->status, $deleteVisitResponse->statusText);
+    }
+
+    public function modifyQualityControl(int $visitId, Request $request, ModifyQualityControl $modifyQualityControl, ModifyQualityControlRequest $modifyQualityControlRequest, ModifyQualityControlResponse $modifyQualityControlResponse){
+        $curentUser = Auth::user();
+        $requestData = $request->all();
+
+        $modifyQualityControlRequest = Util::fillObject($requestData, $modifyQualityControlRequest);
+        $modifyQualityControlRequest->currentUserId = $curentUser['id'];
+        $modifyQualityControlRequest->visitId = $visitId;
+
+        $modifyQualityControl->execute($modifyQualityControlRequest, $modifyQualityControlResponse);
+
+        return response()->json($modifyQualityControlResponse->body)
+                ->setStatusCode($modifyQualityControlResponse->status, $modifyQualityControlResponse->statusText);
     }
 
 

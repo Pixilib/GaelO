@@ -3,9 +3,7 @@
 namespace Tests\Feature;
 
 use App\GaelO\Constants\Constants;
-use App\GaelO\Services\AuthorizationService;
 use App\GaelO\UseCases\GetVisit\VisitEntity;
-use App\GaelO\Util;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Support\Facades\Artisan;
 use Laravel\Passport\Passport;

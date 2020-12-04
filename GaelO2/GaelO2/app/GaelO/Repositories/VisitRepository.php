@@ -203,6 +203,26 @@ class VisitRepository implements PersistenceInterface {
         return $answer->count() === 0 ? false  : true;
     }
 
+    public function editQc(int $visitId, string $stateQc, int $controllerId, bool $imageQc, bool $formQc, string $imageQcComment, string $formQcComment) : void{
+        $visitEntity = $this->visit->find($visitId);
+        $visitEntity['state_quality_control'] = $stateQc;
+
+        $visitEntity['controller_user_id'] = $controllerId;
+        $visitEntity['control_date'] = Util::now();
+        $visitEntity['image_quality_control'] = $imageQc;
+        $visitEntity['form_quality_control'] = $formQc;
+        $visitEntity['image_quality_comment'] = $imageQcComment;
+        $visitEntity['form_quality_comment'] = $formQcComment;
+
+        $visitEntity->save();
+    }
+
+    public function updateInvestigatorForm(int $visitId, string $stateInvestigatorForm) : void{
+        $visitEntity = $this->visit->find($visitId);
+        $visitEntity['state_investigator_form'] = $stateInvestigatorForm;
+        $visitEntity->save();
+    }
+
 
 }
 

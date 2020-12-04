@@ -27,6 +27,7 @@ class QCDecision extends Mailable
             "study" => "",
             "patientCode" => "",
             "visitType" => "",
+            "visitModality"=>"",
             "formDecision" => "",
             "formComment" => "",
             "imageDecision" => "",

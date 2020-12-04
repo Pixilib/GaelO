@@ -15,7 +15,7 @@ Class MailServices extends SendEmailAdapter {
         $this->userRepository = $userRepository;
     }
 
-    public function getUserEmail(int $userId){
+    public function getUserEmail(int $userId) : string{
         return $this->userRepository->find($userId)['email'];
     }
 
@@ -205,6 +205,38 @@ Class MailServices extends SendEmailAdapter {
         $this->mailInterface->setReplyTo();
         $this->mailInterface->setParameters($parameters);
         $this->mailInterface->sendModel(MailConstants::EMAIL_UPLOAD_FAILURE);
+    }
+
+    public function sendQcDecisionMessage(int $uploaderId, int $controllerId, string $studyName, int $centerCode, string $qcDecision, int $patientCode,
+                       string $visitModality,string $visitType, string $formDecision, string $imageDecision, string $formComment, string $imageComment ){
+
+        $parameters = [
+            'controlDecision'=> $qcDecision,
+            'study' => $studyName,
+            'patientCode'=> $patientCode,
+            'visitModality'=>$visitModality,
+            'visitType'=> $visitType,
+            'formDecision'=> $formDecision,
+            'formComment'=> $formComment,
+            'imageDecision'=> $imageDecision,
+            'imageComment'=> $imageComment
+        ];
+
+
+        $this->mailInterface->setTo( [
+            ...$this->userRepository->getUsersEmailsByRolesInStudy($studyName, Constants::ROLE_SUPERVISOR),
+            ...$this->userRepository->getUsersEmailsByRolesInStudy($studyName, Constants::ROLE_MONITOR),
+            $this->getUserEmail($uploaderId),
+            $this->getUserEmail($controllerId),
+            ...$this->getInvestigatorOfCenterInStudy($studyName, $centerCode)
+            ]
+        );
+
+        $this->mailInterface->setReplyTo();
+        $this->mailInterface->setParameters($parameters);
+        $this->mailInterface->sendModel(MailConstants::EMAIL_QC_DECISION);
+
+
     }
 
 }
