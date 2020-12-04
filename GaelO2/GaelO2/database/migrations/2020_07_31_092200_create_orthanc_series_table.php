@@ -28,7 +28,7 @@ class CreateOrthancSeriesTable extends Migration
             $table->bigInteger('injected_activity')->nullable(true)->default(null);
             $table->integer('patient_weight')->nullable(true)->default(null);
             $table->integer('number_of_instances')->nullable(false);
-            $table->text('series_uid')->nullable(false);
+            $table->string('series_uid', 256)->nullable(false);
             $table->text('series_number')->nullable(true)->default(null);
             $table->integer('series_disk_size')->nullable(false);
             $table->integer('series_uncompressed_disk_size')->nullable(false);

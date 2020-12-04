@@ -151,4 +151,100 @@ class VisitTest extends TestCase
 
 
     }
+
+    public function testDeleteVisit(){
+
+        AuthorizationTools::addRoleToUser(1, Constants::ROLE_SUPERVISOR, $this->study->name);
+
+        $visit = factory(Visit::class)->create(
+            [
+            'creator_user_id' => 1,
+            'patient_code' => $this->patient['code'],
+            'visit_type_id' => $this->visitType['id'],
+            'status_done' => 'Done',
+            'state_investigator_form'=> 'Done'
+            ]
+        );
+
+        $payload = [
+            'reason'=> 'false visit'
+        ];
+
+        $resp = $this->json('DELETE', 'api/visits/'.$visit->id.'?role=Supervisor', $payload);
+        $resp->assertStatus(200);
+    }
+
+    public function testDeleteVisitShouldFailNoReason(){
+        AuthorizationTools::addRoleToUser(1, Constants::ROLE_SUPERVISOR, $this->study->name);
+
+        $visit = factory(Visit::class)->create(
+            [
+            'creator_user_id' => 1,
+            'patient_code' => $this->patient['code'],
+            'visit_type_id' => $this->visitType['id'],
+            'status_done' => 'Done',
+            'state_investigator_form'=> 'Done'
+            ]
+        );
+
+        $resp = $this->json('DELETE', 'api/visits/'.$visit->id.'?role=Supervisor');
+        $resp->assertStatus(400);
+    }
+
+    public function testDeleteVisitShouldFailNoRole(){
+        $visit = factory(Visit::class)->create(
+            [
+            'creator_user_id' => 1,
+            'patient_code' => $this->patient['code'],
+            'visit_type_id' => $this->visitType['id'],
+            'status_done' => 'Done',
+            'state_investigator_form'=> 'Done'
+            ]
+        );
+
+        $payload = [
+            'reason'=> 'false visit'
+        ];
+
+        $resp = $this->json('DELETE', 'api/visits/'.$visit->id.'?role=Supervisor', $payload);
+        $resp->assertStatus(403);
+
+    }
+
+    public function testDeleteVistByInvestigatorFailQCDone(){
+
+        AuthorizationTools::addRoleToUser(1, Constants::ROLE_INVESTIGATOR, $this->study->name);
+
+        $visit = factory(Visit::class)->create(
+            [
+            'creator_user_id' => 1,
+            'patient_code' => $this->patient['code'],
+            'visit_type_id' => $this->visitType['id'],
+            'status_done' => 'Done',
+            'state_investigator_form'=> 'Done',
+            'state_quality_control'=> 'Accepted'
+            ]
+        );
+
+        $payload = [
+            'reason'=> 'false visit'
+        ];
+
+        $resp = $this->json('DELETE', 'api/visits/'.$visit->id.'?role=Investigator', $payload);
+        $resp->assertStatus(403);
+
+        $visit2 = factory(Visit::class)->create(
+            [
+            'creator_user_id' => 1,
+            'patient_code' => $this->patient['code'],
+            'visit_type_id' => $this->visitType['id'],
+            'status_done' => 'Done',
+            'state_investigator_form'=> 'Done',
+            'state_quality_control'=> 'Refused'
+            ]
+        );
+
+        $resp = $this->json('DELETE', 'api/visits/'.$visit2->id.'?role=Investigator', $payload);
+        $resp->assertStatus(403);
+    }
 }

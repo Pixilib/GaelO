@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\GaelO\UseCases\CreateVisit\CreateVisit;
 use App\GaelO\UseCases\CreateVisit\CreateVisitRequest;
 use App\GaelO\UseCases\CreateVisit\CreateVisitResponse;
+use App\GaelO\UseCases\DeleteVisit\DeleteVisit;
+use App\GaelO\UseCases\DeleteVisit\DeleteVisitRequest;
+use App\GaelO\UseCases\DeleteVisit\DeleteVisitResponse;
 use App\GaelO\UseCases\GetPatientVisit\GetPatientVisit;
 use App\GaelO\UseCases\GetPatientVisit\GetPatientVisitRequest;
 use App\GaelO\UseCases\GetPatientVisit\GetPatientVisitResponse;
@@ -63,6 +66,21 @@ class VisitController extends Controller
         $validateDicomUploadRequest = Util::fillObject($requestData, $validateDicomUploadRequest);
         $validateDicomUpload->execute($validateDicomUploadRequest, $validateDicomUploadResponse);
 
+    }
+
+    public function deleteVisit(int $visitId, Request $request, DeleteVisit $deleteVisit, DeleteVisitRequest $deleteVisitRequest, DeleteVisitResponse $deleteVisitResponse){
+        $curentUser = Auth::user();
+        $requestData = $request->all();
+        $queryParam = $request->query();
+        $deleteVisitRequest = Util::fillObject($requestData, $deleteVisitRequest);
+        $deleteVisitRequest->currentUserId = $curentUser['id'];
+        $deleteVisitRequest->visitId = $visitId;
+        $deleteVisitRequest->role = $queryParam['role'];
+
+        $deleteVisit->execute($deleteVisitRequest, $deleteVisitResponse);
+
+        return response()->noContent()
+                ->setStatusCode($deleteVisitResponse->status, $deleteVisitResponse->statusText);
     }
 
 
