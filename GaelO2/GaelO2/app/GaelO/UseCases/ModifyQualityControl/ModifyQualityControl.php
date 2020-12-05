@@ -3,6 +3,7 @@
 namespace App\GaelO\UseCases\ModifyQualityControl;
 
 use App\GaelO\Constants\Constants;
+use App\GaelO\Exceptions\GaelOBadRequestException;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Services\AuthorizationVisitService;
@@ -36,8 +37,27 @@ class ModifyQualityControl {
             $visitModality = $visitContext['visit_type']['visit_group']['modality'];
             $centerCode = $visitContext['patient']['center_code'];
             $creatorId = $visitContext['creator_user_id'];
+            $localFormNeeded = $visitContext['visit_type']['local_form_needed'];
 
             $this->checkAuthorization($modifyQualityControlRequest->currentUserId, $modifyQualityControlRequest->visitId);
+
+            if($modifyQualityControlRequest->stateQc === Constants::QUALITY_CONTROL_ACCEPTED){
+                if($localFormNeeded && ! $modifyQualityControlRequest->formQc){
+                    throw new GaelOBadRequestException('Form should be accepted to Accept QC');
+                }
+                if(!$modifyQualityControlRequest->imageQc){
+                    throw new GaelOBadRequestException('Image should be accepted to Accept QC');
+                }
+
+            }
+
+            if( $localFormNeeded && ! $modifyQualityControlRequest->formQc && empty($modifyQualityControlRequest->formQcComment)){
+                throw new GaelOBadRequestException('For Refused Form, a reason must be specified');
+            }
+
+            if( ! $modifyQualityControlRequest->imageQc && empty($modifyQualityControlRequest->imageQcComment)){
+                throw new GaelOBadRequestException('For Refused Image, a reason must be specified');
+            }
 
             $this->visitService->editQc(
                     $modifyQualityControlRequest->visitId,
@@ -81,8 +101,8 @@ class ModifyQualityControl {
                 $visitType,
                 $modifyQualityControlRequest->formQc ? 'Accepted ' : 'Refused',
                 $modifyQualityControlRequest->imageQc ? 'Accepted ' : 'Refused',
-                $modifyQualityControlRequest->formQcComment,
-                $modifyQualityControlRequest->imageQcComment
+                $modifyQualityControlRequest->formQcComment ?? 'None',
+                $modifyQualityControlRequest->imageQcComment ?? 'None'
             );
 
             $modifyQualityControlResponse->status = 200;

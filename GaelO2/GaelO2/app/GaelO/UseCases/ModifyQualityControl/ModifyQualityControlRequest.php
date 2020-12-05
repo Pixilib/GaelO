@@ -9,6 +9,6 @@ class ModifyQualityControlRequest {
     public int $controllerId;
     public bool $imageQc;
     public bool $formQc;
-    public string $imageQcComment;
-    public string $formQcComment;
+    public ?string $imageQcComment = null;
+    public ?string $formQcComment = null;
 }

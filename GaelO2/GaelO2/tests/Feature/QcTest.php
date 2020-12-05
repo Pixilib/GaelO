@@ -60,22 +60,21 @@ class QcTest extends TestCase
         AuthorizationTools::addRoleToUser(1, Constants::ROLE_CONTROLER, $this->study->name);
 
         $payload = [
-            'stateQc'=>'Accepted',
+            'stateQc'=>Constants::QUALITY_CONTROL_ACCEPTED,
             'imageQc'=>true,
-            'formQc'=>false,
-            'imageQcComment'=>'OK',
-            'formQcComment'=>'non'
+            'formQc'=>true
         ];
 
         $response = $this->patch('/api/visits/'.$this->visit->id.'/quality-control', $payload);
         $response->assertStatus(200);
+
     }
 
     public function testQcForbiddenNotRole(){
         $payload = [
-            'stateQc'=>'Accepted',
+            'stateQc'=>Constants::QUALITY_CONTROL_ACCEPTED,
             'imageQc'=>true,
-            'formQc'=>false,
+            'formQc'=>true,
             'imageQcComment'=>'OK',
             'formQcComment'=>'non'
         ];
@@ -90,9 +89,9 @@ class QcTest extends TestCase
         $this->visit->save();
         AuthorizationTools::addRoleToUser(1, Constants::ROLE_CONTROLER, $this->study->name);
         $payload = [
-            'stateQc'=>'Accepted',
+            'stateQc'=>Constants::QUALITY_CONTROL_ACCEPTED,
             'imageQc'=>true,
-            'formQc'=>false,
+            'formQc'=>true,
             'imageQcComment'=>'OK',
             'formQcComment'=>'non'
         ];
@@ -108,9 +107,9 @@ class QcTest extends TestCase
         $this->visit->save();
         AuthorizationTools::addRoleToUser(1, Constants::ROLE_CONTROLER, $this->study->name);
         $payload = [
-            'stateQc'=>'Accepted',
+            'stateQc'=>Constants::QUALITY_CONTROL_ACCEPTED,
             'imageQc'=>true,
-            'formQc'=>false,
+            'formQc'=>true,
             'imageQcComment'=>'OK',
             'formQcComment'=>'non'
         ];
@@ -141,5 +140,54 @@ class QcTest extends TestCase
 
         $response = $this->patch('/api/visits/'.$this->visit->id.'/quality-control', $payload);
         $response->assertStatus(200);
+    }
+
+    public function testQcAcceptedWithNoAcceptedItemShouldFail(){
+
+
+        AuthorizationTools::addRoleToUser(1, Constants::ROLE_CONTROLER, $this->study->name);
+        $payload = [
+            'stateQc'=> Constants::QUALITY_CONTROL_ACCEPTED ,
+            'imageQc'=>true,
+            'formQc'=>false,
+            'imageQcComment'=>'OK',
+            'formQcComment'=>'non'
+        ];
+
+        $response = $this->patch('/api/visits/'.$this->visit->id.'/quality-control', $payload);
+        $response->assertStatus(400);
+
+    }
+
+    public function testQCImageRefusedReasonShouldBeSpecified(){
+
+        AuthorizationTools::addRoleToUser(1, Constants::ROLE_CONTROLER, $this->study->name);
+
+        $payload = [
+            'stateQc'=> Constants::QUALITY_CONTROL_ACCEPTED ,
+            'imageQc'=>false,
+            'formQc'=>true,
+            'formQcComment'=>'non'
+        ];
+
+        $response = $this->patch('/api/visits/'.$this->visit->id.'/quality-control', $payload);
+        $response->assertStatus(400);
+
+    }
+
+    public function testQCFormRefusedReasonShouldBeSpecified(){
+
+        AuthorizationTools::addRoleToUser(1, Constants::ROLE_CONTROLER, $this->study->name);
+        $payload = [
+            'stateQc'=> Constants::QUALITY_CONTROL_ACCEPTED ,
+            'imageQc'=>true,
+            'formQc'=>false,
+            'imageQcComment'=>'OK'
+        ];
+
+        $response = $this->patch('/api/visits/'.$this->visit->id.'/quality-control', $payload);
+        $response->assertStatus(400);
+
+
     }
 }

@@ -183,7 +183,7 @@ class VisitService
 
     }
 
-    public function editQc(int $visitId, string $stateQc, int $controllerId, bool $imageQc, bool $formQc, string $imageQcComment, string $formQcComment){
+    public function editQc(int $visitId, string $stateQc, int $controllerId, bool $imageQc, bool $formQc, ?string $imageQcComment, ?string $formQcComment){
 
         $visitEntity = $this->getVisitContext($visitId);
         $localFormNeeded = $visitEntity['visit_type']['local_form_needed'];

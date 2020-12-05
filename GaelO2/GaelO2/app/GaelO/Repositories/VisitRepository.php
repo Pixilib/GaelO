@@ -203,7 +203,7 @@ class VisitRepository implements PersistenceInterface {
         return $answer->count() === 0 ? false  : true;
     }
 
-    public function editQc(int $visitId, string $stateQc, int $controllerId, bool $imageQc, bool $formQc, string $imageQcComment, string $formQcComment) : void{
+    public function editQc(int $visitId, string $stateQc, int $controllerId, bool $imageQc, bool $formQc, ?string $imageQcComment, ?string $formQcComment) : void{
         $visitEntity = $this->visit->find($visitId);
         $visitEntity['state_quality_control'] = $stateQc;
 
