@@ -35,9 +35,9 @@ class CreateVisitsTable extends Migration
             $table->unsignedBigInteger('corrective_action_user_id')->nullable(true)->default(null);
             $table->dateTime('corrective_action_date', 6)->nullable(true)->default(null);
             $table->boolean('corrective_action_new_upload')->nullable(false)->default(false);
-            $table->boolean('corrective_action_investigator_form')->nullable(true)->default(null);
+            $table->boolean('corrective_action_investigator_form')->nullable(false)->default(false);
             $table->string('corrective_action_other', 256)->nullable(true)->default(null);
-            $table->boolean('corrective_action_decision')->nullable(true)->default(null);
+            $table->boolean('corrective_action_applyed')->nullable(false)->default(false);
             $table->dateTime('last_reminder_upload', 6)->nullable(true)->default(null);
             $table->softDeletes();
             $table->timestamps();

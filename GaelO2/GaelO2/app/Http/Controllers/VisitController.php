@@ -14,6 +14,9 @@ use App\GaelO\UseCases\GetVisit\GetVisitResponse;
 use App\GaelO\UseCases\ModifyQualityControl\ModifyQualityControl;
 use App\GaelO\UseCases\ModifyQualityControl\ModifyQualityControlRequest;
 use App\GaelO\UseCases\ModifyQualityControl\ModifyQualityControlResponse;
+use App\GaelO\UseCases\ModifyQualityControlReset\ModifyQualityControlReset;
+use App\GaelO\UseCases\ModifyQualityControlReset\ModifyQualityControlResetRequest;
+use App\GaelO\UseCases\ModifyQualityControlReset\ModifyQualityControlResetResponse;
 use App\GaelO\UseCases\ValidateDicomUpload\ValidateDicomUpload;
 use App\GaelO\UseCases\ValidateDicomUpload\ValidateDicomUploadRequest;
 use App\GaelO\UseCases\ValidateDicomUpload\ValidateDicomUploadResponse;
@@ -95,6 +98,18 @@ class VisitController extends Controller
 
         return response()->json($modifyQualityControlResponse->body)
                 ->setStatusCode($modifyQualityControlResponse->status, $modifyQualityControlResponse->statusText);
+    }
+
+    public function modifyQualityControlReset(int $visitId, ModifyQualityControlReset $modifyQualityControlReset, ModifyQualityControlResetRequest $modifyQualityControlResetRequest, ModifyQualityControlResetResponse $modifyQualityControlResetResponse){
+        $curentUser = Auth::user();
+
+        $modifyQualityControlResetRequest->currentUserId = $curentUser['id'];
+        $modifyQualityControlResetRequest->visitId = $visitId;
+
+        $modifyQualityControlReset->execute($modifyQualityControlResetRequest, $modifyQualityControlResetResponse);
+
+        return response()->json($modifyQualityControlResetResponse->body)
+                ->setStatusCode($modifyQualityControlResetResponse->status, $modifyQualityControlResetResponse->statusText);
     }
 
 

@@ -74,6 +74,7 @@ Route::middleware(['auth:api', 'refresh_token'])->group(function () {
     //Visits Routes
     Route::post('visits/{id}/validate-dicom', 'VisitController@validateDicom');
     Route::patch('visits/{id}/quality-control', 'VisitController@modifyQualityControl');
+    Route::patch('visits/{id}/quality-control/reset', 'VisitController@modifyQualityControlReset');
     Route::delete('visits/{id}', 'VisitController@deleteVisit');
 
     //upload Routes

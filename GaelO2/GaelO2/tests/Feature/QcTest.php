@@ -190,4 +190,32 @@ class QcTest extends TestCase
 
 
     }
+
+    public function testResetQc()
+    {
+        AuthorizationTools::addRoleToUser(1, Constants::ROLE_CONTROLER, $this->study->name);
+
+        $payload = [];
+
+        //$response = $this->patch('/api/visits/'.$this->visit->id.'/quality-control/reset', $payload);
+        //$response->assertStatus(200);
+
+    }
+
+    public function testResetQcShouldFailNoRole()
+    {
+        $payload = [];
+
+        //$this->patch('/api/visits/'.$this->visit->id.'/quality-control/reset', $payload)->assertStatus(403);
+
+    }
+
+    public function testResetQcShouldFailReviewStatusNotNotDone()
+    {
+        //SK FAIRE REVIEW STATUS TO "Ongoing" et le test devrait envoyer un forbidden
+        $payload = [];
+
+        //$this->patch('/api/visits/'.$this->visit->id.'/quality-control/reset', $payload)->assertStatus(403);
+
+    }
 }
