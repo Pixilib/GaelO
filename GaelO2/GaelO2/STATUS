@@ -13,15 +13,18 @@ Export-db : (POST) => OK
 Documentation (GET, POST, DELETE) => OK
 Visit Dicoms (GET) => OK
 Tus : (All) => OK
-Patient : ( GET, POST, PATCH (+withdraw) ) => OK
+Patient : ( GET, POST, PATCH ) => OK
+Patient Withdraw : (PATCH)=> OK
 Api Visit (GET, POST, DELETE) => OK
-
-Preparation Investigateur / Monitor / Controller / Reviewer :
-- Api QC (PATCH + API /reset) => PATCH Fait
-- Api Corrective Action (PATCH)
-- Api Review (POST, GET, DELETE)
+QC : (PATCH) => OK
+QC Reset : Patch
 
 Salim TODO :
+
+Preparation Investigateur / Monitor / Controller / Reviewer :
+- Api QC Reset finir use case et test
+- Api Corrective Action (PATCH)
+- Api Review (POST, GET, DELETE)
 
 - API Pour avoir les visit "creable" => Fonction faite dans Visit Service et testée
 => Faire le use case et permission (que investigateur) GET /studies//patients//remaining-visites
