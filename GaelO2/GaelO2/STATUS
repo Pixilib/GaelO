@@ -21,8 +21,10 @@ QC Reset : (PATCH) => OK
 
 Salim TODO :
 
+- Api Corrective Action (PATCH) => WIP Reste mail + tests
+
 Preparation Investigateur / Monitor / Controller / Reviewer :
-- Api Corrective Action (PATCH)
+- Ask Unlock (POST)
 - Api Review (POST, GET, DELETE)
 
 - API Pour avoir les visit "creable" => Fonction faite dans Visit Service et testée

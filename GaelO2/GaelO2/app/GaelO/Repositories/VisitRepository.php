@@ -232,8 +232,24 @@ class VisitRepository implements PersistenceInterface {
         $visitEntity['corrective_action_date'] = null;
         $visitEntity['corrective_action_new_upload'] = false;
         $visitEntity['corrective_action_investigator_form'] = false;
-        $visitEntity['corrective_action_other'] = null;
+        $visitEntity['corrective_action_comment'] = null;
         $visitEntity['corrective_action_applyed'] = null;
+
+        $visitEntity->save();
+
+    }
+
+    public function setCorectiveAction(int $visitId, int $investigatorId, bool $newUpload, bool $newInvestigatorForm, bool $correctiveActionApplyed, string $comment ){
+
+        $visitEntity = $this->visit->find($visitId);
+
+        $visitEntity['state_quality_control'] = Constants::QUALITY_CONTROL_WAIT_DEFINITIVE_CONCLUSION;
+        $visitEntity['corrective_action_user_id'] = $investigatorId;
+        $visitEntity['corrective_action_date'] = Util::now();
+        $visitEntity['corrective_action_new_upload'] = $newUpload;
+        $visitEntity['corrective_action_investigator_form'] = $newInvestigatorForm;
+        $visitEntity['corrective_action_comment'] = $comment;
+        $visitEntity['corrective_action_applyed'] = $correctiveActionApplyed;
 
         $visitEntity->save();
 

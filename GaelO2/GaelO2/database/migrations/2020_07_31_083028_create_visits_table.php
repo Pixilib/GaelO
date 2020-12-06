@@ -36,7 +36,7 @@ class CreateVisitsTable extends Migration
             $table->dateTime('corrective_action_date', 6)->nullable(true)->default(null);
             $table->boolean('corrective_action_new_upload')->nullable(false)->default(false);
             $table->boolean('corrective_action_investigator_form')->nullable(false)->default(false);
-            $table->string('corrective_action_other', 256)->nullable(true)->default(null);
+            $table->string('corrective_action_comment', 256)->nullable(true)->default(null);
             $table->boolean('corrective_action_applyed')->nullable(true)->default(null);
             $table->dateTime('last_reminder_upload', 6)->nullable(true)->default(null);
             $table->softDeletes();

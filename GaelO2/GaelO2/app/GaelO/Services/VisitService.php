@@ -208,4 +208,8 @@ class VisitService
     public function getReviewStatus(int $visitId, string $studyName){
         return $this->reviewStatusRepository->getReviewStatus($visitId, $studyName);
     }
+
+    public function setCorrectiveAction(int $visitId, int $investigatorId, bool $newUpload, bool $newInvestigatorForm, bool $correctiveActionApplyed, string $comment) : void {
+        $this->visitRepository->setCorectiveAction($visitId, $investigatorId, $newUpload, $newInvestigatorForm, $correctiveActionApplyed, $comment );
+    }
 }
