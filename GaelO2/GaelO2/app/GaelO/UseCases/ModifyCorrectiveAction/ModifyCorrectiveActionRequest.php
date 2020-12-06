@@ -1,13 +1,12 @@
 <?php
 
-namespace App\GaelO\UseCases\ModifyQualityControlCorrectiveAction;
+namespace App\GaelO\UseCases\ModifyCorrectiveAction;
 
-class ModifyQualityControlCorrectiveActionRequest{
+class ModifyCorrectiveActionRequest{
     public int $currentUserId;
     public int $visitId;
     public bool $newSeriesUploaded;
     public bool $newInvestigatorForm;
-    public bool $formCorrected;
     public bool $correctiveActionDone;
     public ?string $comment;
 }

@@ -18,10 +18,9 @@ Patient Withdraw : (PATCH)=> OK
 Api Visit (GET, POST, DELETE) => OK
 QC : (PATCH) => OK
 QC Reset : (PATCH) => OK
+Corrective Action (PATCH) => OK
 
 Salim TODO :
-
-- Api Corrective Action (PATCH) => WIP Reste mail + tests
 
 Preparation Investigateur / Monitor / Controller / Reviewer :
 - Ask Unlock (POST)
@@ -74,6 +73,7 @@ Reverse proxy dicomweb => Comment faire venir le role et study depuis ohif ? dep
 TUS est Joignable sur Delete => peut etre gerer le failure/cancel pour vider tus ?
 Deploiement ajouter le login / mdp pour dans orthanc pacs + bloquer delete dans lua script
 table visit : UploadUserId plutot que CreateUserId
+Dans remplissage DTO request, si variable boolean, un input string est interpretée à true.
 
 
 //Les tests ne font pas d'assertion sur

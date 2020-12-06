@@ -11,9 +11,13 @@ use App\GaelO\UseCases\DeleteVisit\DeleteVisitResponse;
 use App\GaelO\UseCases\GetVisit\GetVisit;
 use App\GaelO\UseCases\GetVisit\GetVisitRequest;
 use App\GaelO\UseCases\GetVisit\GetVisitResponse;
+use App\GaelO\UseCases\ModifyCorrectiveAction\ModifyCorrectiveAction;
+use App\GaelO\UseCases\ModifyCorrectiveAction\ModifyCorrectiveActionRequest;
+use App\GaelO\UseCases\ModifyCorrectiveAction\ModifyCorrectiveActionResponse;
 use App\GaelO\UseCases\ModifyQualityControl\ModifyQualityControl;
 use App\GaelO\UseCases\ModifyQualityControl\ModifyQualityControlRequest;
 use App\GaelO\UseCases\ModifyQualityControl\ModifyQualityControlResponse;
+use App\GaelO\UseCases\ModifyQualityControlCorrectiveAction\ModifyQualityControlCorrectiveAction;
 use App\GaelO\UseCases\ModifyQualityControlReset\ModifyQualityControlReset;
 use App\GaelO\UseCases\ModifyQualityControlReset\ModifyQualityControlResetRequest;
 use App\GaelO\UseCases\ModifyQualityControlReset\ModifyQualityControlResetResponse;
@@ -110,6 +114,22 @@ class VisitController extends Controller
 
         return response()->json($modifyQualityControlResetResponse->body)
                 ->setStatusCode($modifyQualityControlResetResponse->status, $modifyQualityControlResetResponse->statusText);
+    }
+
+    public function modifyCorrectiveAction(int $visitId, Request $request, ModifyCorrectiveAction $modifyCorrectiveAction, ModifyCorrectiveActionRequest $modifyCorrectiveActionRequest, ModifyCorrectiveActionResponse $modifyCorrectiveActionResponse){
+        $curentUser = Auth::user();
+        $requestData = $request->all();
+
+        $modifyCorrectiveActionRequest = Util::fillObject($requestData, $modifyCorrectiveActionRequest);
+        //dd($modifyCorrectiveActionRequest);
+        $modifyCorrectiveActionRequest->currentUserId = $curentUser['id'];
+        $modifyCorrectiveActionRequest->visitId = $visitId;
+
+        $modifyCorrectiveAction->execute($modifyCorrectiveActionRequest, $modifyCorrectiveActionResponse);
+
+        return response()->json($modifyCorrectiveActionResponse->body)
+                ->setStatusCode($modifyCorrectiveActionResponse->status, $modifyCorrectiveActionResponse->statusText);
+
     }
 
 

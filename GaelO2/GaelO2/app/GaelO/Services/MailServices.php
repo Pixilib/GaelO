@@ -240,4 +240,29 @@ Class MailServices extends SendEmailAdapter {
 
     }
 
+    public function sendCorrectiveActionMessage(int $currentUserId, string $studyName, bool $correctionApplyed, bool $patientCode, string $visitModality, string $visitType){
+
+
+        $parameters = [
+            'name'=> 'User',
+            'correctionApplyed'=> $correctionApplyed,
+            'study' => $studyName,
+            'patientCode'=> $patientCode,
+            'visitModality'=>$visitModality,
+            'visitType'=> $visitType
+        ];
+
+        $this->mailInterface->setTo( [
+            ...$this->userRepository->getUsersEmailsByRolesInStudy($studyName, Constants::ROLE_SUPERVISOR),
+            ...$this->userRepository->getUsersEmailsByRolesInStudy($studyName, Constants::ROLE_CONTROLER),
+            $this->getUserEmail($currentUserId),
+            ]
+        );
+
+        $this->mailInterface->setReplyTo();
+        $this->mailInterface->setParameters($parameters);
+        $this->mailInterface->sendModel(MailConstants::EMAIL_CORRECTIVE_ACTION);
+
+    }
+
 }
