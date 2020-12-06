@@ -14,6 +14,7 @@ use App\Visit;
 use App\VisitGroup;
 use App\VisitType;
 use App\Review;
+use App\ReviewStatus;
 use Tests\AuthorizationTools;
 
 class QcTest extends TestCase
@@ -193,29 +194,42 @@ class QcTest extends TestCase
 
     public function testResetQc()
     {
-        AuthorizationTools::addRoleToUser(1, Constants::ROLE_CONTROLER, $this->study->name);
+        AuthorizationTools::addRoleToUser(1, Constants::ROLE_SUPERVISOR, $this->study->name);
+
+        $review = factory(ReviewStatus::class)->create([
+            'visit_id' => $this->visit->id,
+            'study_name' => $this->study->name,
+            'review_status' => Constants::REVIEW_STATUS_NOT_DONE
+        ]);
 
         $payload = [];
 
-        //$response = $this->patch('/api/visits/'.$this->visit->id.'/quality-control/reset', $payload);
-        //$response->assertStatus(200);
+        $response = $this->patch('/api/visits/'.$this->visit->id.'/quality-control/reset', $payload);
+        $response->assertStatus(200);
 
     }
 
     public function testResetQcShouldFailNoRole()
     {
-        $payload = [];
 
-        //$this->patch('/api/visits/'.$this->visit->id.'/quality-control/reset', $payload)->assertStatus(403);
+        $payload = [];
+        $this->patch('/api/visits/'.$this->visit->id.'/quality-control/reset', $payload)->assertStatus(403);
 
     }
 
-    public function testResetQcShouldFailReviewStatusNotNotDone()
+    public function testResetQcShouldFailReviewStatusStarted()
     {
-        //SK FAIRE REVIEW STATUS TO "Ongoing" et le test devrait envoyer un forbidden
-        $payload = [];
+        AuthorizationTools::addRoleToUser(1, Constants::ROLE_SUPERVISOR, $this->study->name);
 
-        //$this->patch('/api/visits/'.$this->visit->id.'/quality-control/reset', $payload)->assertStatus(403);
+
+        $review = factory(ReviewStatus::class)->create([
+            'visit_id' => $this->visit->id,
+            'study_name' => $this->study->name,
+            'review_status' => Constants::REVIEW_STATUS_ONGOING
+        ]);
+
+        $payload = [];
+        $this->patch('/api/visits/'.$this->visit->id.'/quality-control/reset', $payload)->assertStatus(400);
 
     }
 }

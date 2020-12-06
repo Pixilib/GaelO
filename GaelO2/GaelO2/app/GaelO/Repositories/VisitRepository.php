@@ -222,7 +222,7 @@ class VisitRepository implements PersistenceInterface {
         $visitEntity = $this->visit->find($visitId);
 
         $visitEntity['state_quality_control'] = Constants::QUALITY_CONTROL_NOT_DONE;
-        $visitEntity['controller_username'] = null;
+        $visitEntity['controller_user_id'] = null;
         $visitEntity['control_date'] = null;
         $visitEntity['image_quality_control'] = false;
         $visitEntity['form_quality_control'] = false;
@@ -231,7 +231,7 @@ class VisitRepository implements PersistenceInterface {
         $visitEntity['corrective_action_user_id'] = null;
         $visitEntity['corrective_action_date'] = null;
         $visitEntity['corrective_action_new_upload'] = false;
-        $visitEntity['corrective_action_investigator_form'] = null;
+        $visitEntity['corrective_action_investigator_form'] = false;
         $visitEntity['corrective_action_other'] = null;
         $visitEntity['corrective_action_applyed'] = null;
 

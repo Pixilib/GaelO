@@ -3,35 +3,41 @@
 namespace App\GaelO\UseCases\ModifyQualityControlReset;
 
 use App\GaelO\Constants\Constants;
+use App\GaelO\Exceptions\GaelOBadRequestException;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\PersistenceInterface;
 use App\GaelO\Services\AuthorizationVisitService;
 use App\GaelO\Services\TrackerService;
+use App\GaelO\Services\VisitService;
 use Exception;
 
 class ModifyQualityControlReset{
 
     private AuthorizationVisitService $authorizationVisitService;
     private TrackerService $trackerService;
+    private VisitService $visitService;
 
-    public function __construct(AuthorizationVisitService $authorizationVisitService, PersistenceInterface $persistenceInterface, TrackerService $trackerService){
+    public function __construct(AuthorizationVisitService $authorizationVisitService, VisitService $visitService, TrackerService $trackerService){
 
         $this->authorizationVisitService = $authorizationVisitService;
-        $this->persistenceInterface = $persistenceInterface;
+        $this->visitService = $visitService;
         $this->trackerService = $trackerService;
     }
 
     public function execute(ModifyQualityControlResetRequest $modifyQualityControlResetRequest, ModifyQualityControlResetResponse $modifyQualityControlResetResponse){
 
         try{
-            //SK Recuperer la study name du princepts de la visit
-            //et récupérer le review status
-            //ResetQC que si review status est not DOne
-            $visitContext = $this->persistenceInterface->getVisitContext($modifyQualityControlResetRequest->visitId);
+            $visitContext = $this->visitService->getVisitContext($modifyQualityControlResetRequest->visitId);
+            $studyName = $visitContext['visit_type']['visit_group']['study_name'];
 
             $this->checkAuthorization($modifyQualityControlResetRequest->currentUserId, $modifyQualityControlResetRequest->visitId);
-            $this->persistenceInterface->resetQc($modifyQualityControlResetRequest->visitId);
+            $this->visitService->resetQc($modifyQualityControlResetRequest->visitId);
+            $reviewStatusEntity = $this->visitService->getReviewStatus($modifyQualityControlResetRequest->visitId, $studyName);
+
+            if( ! in_array($reviewStatusEntity['review_status'], array(Constants::REVIEW_STATUS_NOT_DONE, Constants::REVIEW_STATUS_NOT_NEEDED) )) {
+                throw new GaelOBadRequestException("Can't reset QC with review started");
+            }
 
             $actionDetails = [];
 

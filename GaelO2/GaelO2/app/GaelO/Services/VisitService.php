@@ -6,6 +6,7 @@ use App\GaelO\Constants\Constants;
 use App\GaelO\Repositories\OrthancStudyRepository;
 use App\GaelO\Repositories\PatientRepository;
 use App\GaelO\Repositories\ReviewRepository;
+use App\GaelO\Repositories\ReviewStatusRepository;
 use App\GaelO\Repositories\StudyRepository;
 use App\GaelO\Repositories\VisitTypeRepository;
 use App\GaelO\Repositories\VisitRepository;
@@ -20,12 +21,14 @@ class VisitService
     private VisitTypeRepository $visitTypeRepository;
     private OrthancStudyRepository $orthancStudyRepository;
     private MailServices $mailServices;
+    private ReviewStatusRepository $reviewStatusRepository;
 
     public function __construct(
                             PatientRepository $patientRepository,
                             StudyRepository $studyRepository,
                             VisitRepository $visitRepository,
                             ReviewRepository $reviewRepository,
+                            ReviewStatusRepository $reviewStatusRepository,
                             VisitTypeRepository $visitTypeRepository,
                             OrthancStudyRepository $orthancStudyRepository,
                             MailServices $mailServices)
@@ -36,6 +39,7 @@ class VisitService
         $this->mailServices = $mailServices;
         $this->orthancStudyRepository = $orthancStudyRepository;
         $this->studyRepository = $studyRepository;
+        $this->reviewStatusRepository = $reviewStatusRepository;
         $this->reviewRepository = $reviewRepository;
     }
 
@@ -195,5 +199,13 @@ class VisitService
             $this->reviewRepository->unlockInvestigatorForm($visitId);
             $this->visitRepository->updateInvestigatorForm($visitId, Constants::INVESTIGATOR_FORM_DRAFT);
         }
+    }
+
+    public function resetQc(int $visitId) : void {
+        $this->visitRepository->resetQc($visitId);
+    }
+
+    public function getReviewStatus(int $visitId, string $studyName){
+        return $this->reviewStatusRepository->getReviewStatus($visitId, $studyName);
     }
 }
