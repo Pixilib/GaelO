@@ -19,20 +19,18 @@ Api Visit (GET, POST, DELETE) => OK
 QC : (PATCH) => OK
 QC Reset : (PATCH) => OK
 Corrective Action (PATCH) => OK
+Ask Unlock (POST) => OK
+Creatable-Visits (GET) => OK
 
 Salim TODO :
 
 Preparation Investigateur / Monitor / Controller / Reviewer :
-- Ask Unlock (POST)
+- API Get Possible Upload (get possible import) (pour multiuplad)=> A continuer (finir usecase, exposer route et controller)
 - Api Review (POST, GET, DELETE)
 - API Tree Finir Test Unitaire Service creation tree
 - API Delete Series orthanc
-- API Get Possible Upload (get possible import) (pour multiuplad)
 
-- API Pour avoir les visit "creable" => Fonction faite dans Visit Service et testée
-=> Faire le use case et permission (que investigateur) GET /studies//patients//remaining-visites
-//manque logique d'afficher le n+1 et n+2 si optional (si porté par le front pas finetunable)
-
+Creatable Visit : Manque Study Custom Logic (+dans front skip visites optionnelles)
 
 Service Visit => Continuer test passage en upload Done
 Class d'authorisation revenir a l'heritage?

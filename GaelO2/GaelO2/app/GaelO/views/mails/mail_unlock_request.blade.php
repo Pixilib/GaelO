@@ -5,5 +5,5 @@
     Visit Type : {{$visitType}}<br>
     Patient : {{$patientNum}}<br>
     Study : {{$study}}<br>
-    Reason for request: {{$reason}}<br>
+    Message for request: {{$message}}<br>
 @endsection

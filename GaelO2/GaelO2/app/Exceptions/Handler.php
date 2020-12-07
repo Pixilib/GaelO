@@ -13,6 +13,7 @@ use Exception;
 use Request;
 use Illuminate\Auth\AuthenticationException;
 use Response;
+use Symfony\Component\CssSelector\Exception\InternalErrorException;
 
 class Handler extends ExceptionHandler
 {
@@ -61,6 +62,10 @@ class Handler extends ExceptionHandler
     {
         if ($exception instanceof ModelNotFoundException && $request->wantsJson()) {
             return response()->json(['errorMessage' => 'Not Found!'], 404);
+        }
+
+        if ($exception instanceof InternalErrorException && $request->wantsJson()) {
+            return response()->json(['errorMessage' => $exception->getMessage()], 500);
         }
 
         return parent::render($request, $exception);
