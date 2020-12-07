@@ -19,11 +19,11 @@ Api Visit (GET, POST, DELETE) => OK
 QC : (PATCH) => OK
 QC Reset : (PATCH) => OK
 Corrective Action (PATCH) => OK
+Ask Unlock (POST) => OK
 
 Salim TODO :
 
 Preparation Investigateur / Monitor / Controller / Reviewer :
-- Ask Unlock (POST)
 - Api Review (POST, GET, DELETE)
 
 - API Pour avoir les visit "creable" => Fonction faite dans Visit Service et testée

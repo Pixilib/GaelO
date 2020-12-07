@@ -78,6 +78,9 @@ Route::middleware(['auth:api', 'refresh_token'])->group(function () {
     Route::patch('visits/{id}/corrective-action', 'VisitController@modifyCorrectiveAction');
     Route::delete('visits/{id}', 'VisitController@deleteVisit');
 
+    //Form routes
+    Route::post('studies/{study}/visits/{id}/ask-unlock', 'FormController@askUnlock');
+
     //upload Routes
     Route::any('tus/{filename?}', 'ReverseProxyController@tusUpload');
 
