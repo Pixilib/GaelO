@@ -25,14 +25,16 @@ Salim TODO :
 Preparation Investigateur / Monitor / Controller / Reviewer :
 - Ask Unlock (POST)
 - Api Review (POST, GET, DELETE)
+- API Tree Finir Test Unitaire Service creation tree
+- API Delete Series orthanc
+- API Get Possible Upload (get possible import) (pour multiuplad)
 
 - API Pour avoir les visit "creable" => Fonction faite dans Visit Service et testée
 => Faire le use case et permission (que investigateur) GET /studies//patients//remaining-visites
 //manque logique d'afficher le n+1 et n+2 si optional (si porté par le front pas finetunable)
 
--API Tree :
-Finir Test Unitaire Service creation tree
 
+Service Visit => Continuer test passage en upload Done
 Class d'authorisation revenir a l'heritage?
 Faire un objet specifique pour l'authorisation des Review ?
 
@@ -60,8 +62,6 @@ Doit pouvoir telecharger Dicoms
 Doit pouvoir exporter data de l'étude
 Doit pouvoir set documentation
 Doit pouvoir voir user details
-
-* Service Visit => Continuer test passage en upload Done
 
 
 +Tard :
