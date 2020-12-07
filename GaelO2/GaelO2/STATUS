@@ -25,7 +25,7 @@ Creatable-Visits (GET) => OK
 Salim TODO :
 
 Preparation Investigateur / Monitor / Controller / Reviewer :
-- API Get Possible Upload (get possible import) (pour multiuplad)
+- API Get Possible Upload (get possible import) (pour multiuplad)=> A continuer (finir usecase, exposer route et controller)
 - Api Review (POST, GET, DELETE)
 - API Tree Finir Test Unitaire Service creation tree
 - API Delete Series orthanc
