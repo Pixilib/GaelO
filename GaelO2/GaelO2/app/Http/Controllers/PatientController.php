@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\GaelO\UseCases\CreatePatient\CreatePatient;
 use App\GaelO\UseCases\CreatePatient\CreatePatientRequest;
 use App\GaelO\UseCases\CreatePatient\CreatePatientResponse;
+use App\GaelO\UseCases\GetCreatableVisits\GetCreatableVisits;
+use App\GaelO\UseCases\GetCreatableVisits\GetCreatableVisitsRequest;
+use App\GaelO\UseCases\GetCreatableVisits\GetCreatableVisitsResponse;
 use App\GaelO\UseCases\GetPatient\GetPatient;
 use App\GaelO\UseCases\GetPatient\GetPatientRequest;
 use App\GaelO\UseCases\GetPatient\GetPatientResponse;
@@ -89,6 +92,20 @@ class PatientController extends Controller
 
         return response()->json($modifyPatientWithdrawResponse->body)
                 ->setStatusCode($modifyPatientWithdrawResponse->status, $modifyPatientWithdrawResponse->statusText);
+    }
+
+    public function getCreatableVisits(int $patientCode, GetCreatableVisits $getCreatableVisits, GetCreatableVisitsRequest $getCreatableVisitsRequest, GetCreatableVisitsResponse $getCreatableVisitsResponse){
+
+        $currentUser = Auth::user();
+
+        $getCreatableVisitsRequest->currentUserId = $currentUser['id'];
+        $getCreatableVisitsRequest->patientCode = $patientCode;
+
+        $getCreatableVisits->execute($getCreatableVisitsRequest, $getCreatableVisitsResponse);
+
+        return response()->json($getCreatableVisitsResponse->body)
+                ->setStatusCode($getCreatableVisitsResponse->status, $getCreatableVisitsResponse->statusText);
+
     }
 
 }
