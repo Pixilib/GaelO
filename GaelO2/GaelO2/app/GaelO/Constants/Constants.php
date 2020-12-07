@@ -66,6 +66,12 @@ class Constants {
     const UPLOAD_STATUS_NOT_DONE = "Not Done";
     const UPLOAD_STATUS_PROCESSING = "Processing";
 
+    const REVIEW_STATUS_NOT_DONE = "Not Done";
+    const REVIEW_STATUS_NOT_NEEDED = "Not Needed";
+    const REVIEW_STATUS_ONGOING = "Ongoing";
+    const REVIEW_STATUS_WAIT_ADJUDICATION = 'Wait Adjudication';
+    const REVIEW_STATUS_DONE = "Done";
+
     const ORTHANC_ANON_PROFILE_DEFAULT = "Default";
     const ORTHANC_ANON_PROFILE_FULL = "Full";
     const ORTHANC_PATIENTS_LEVEL="patients";

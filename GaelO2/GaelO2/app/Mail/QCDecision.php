@@ -27,6 +27,7 @@ class QCDecision extends Mailable
             "study" => "",
             "patientCode" => "",
             "visitType" => "",
+            "visitModality"=>"",
             "formDecision" => "",
             "formComment" => "",
             "imageDecision" => "",
@@ -44,7 +45,7 @@ class QCDecision extends Mailable
      */
     public function build()
     {
-        return $this->view('mails.mail.qc_decision')
+        return $this->view('mails.mail_qc_decision')
         ->subject($this->parameters['study']." - Quality Control Patient - ".$this->parameters['patientCode'])
         ->with($this->parameters);
     }

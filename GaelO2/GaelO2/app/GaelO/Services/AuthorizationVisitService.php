@@ -63,7 +63,7 @@ class AuthorizationVisitService {
         } else if ($this->requestedRole === Constants::ROLE_CONTROLER) {
             //For controller controller role should be allows and visit QC status be not done or awaiting definitive conclusion
             $allowedControllerStatus = array(Constants::QUALITY_CONTROL_NOT_DONE, Constants::QUALITY_CONTROL_WAIT_DEFINITIVE_CONCLUSION);
-            if (in_array($this->stateQualityControl, $allowedControllerStatus)) {
+            if (in_array($this->stateQualityControl, $allowedControllerStatus) && $this->visitUploadStatus === Constants::UPLOAD_STATUS_DONE) {
                 return $this->authorizationPatientService->isPatientAllowed();
             } else {
                 return false;

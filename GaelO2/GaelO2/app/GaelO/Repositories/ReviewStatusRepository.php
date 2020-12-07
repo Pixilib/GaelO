@@ -30,6 +30,10 @@ class ReviewStatusRepository implements PersistenceInterface {
         throw new Exception('Not Callable');
     }
 
+    public function getAll() : array {
+        throw new Exception('Not Callable');
+    }
+
     public function getReviewStatus($id, $studyName){
         return $this->reviewStatus->where('visit_id', $id)->where('study_name', $studyName)->firstOrFail()->toArray();
     }

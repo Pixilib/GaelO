@@ -28,8 +28,8 @@ $factory->define(Visit::class, function (Faker $faker) {
         'corrective_action_date'=>now(),
         'corrective_action_new_upload'=>$faker->randomElement([true, false]),
         'corrective_action_investigator_form'=>$faker->randomElement([true, false]),
-        'corrective_action_other'=>$faker->word,
-        'corrective_action_decision'=>$faker->randomElement([true, false]),
+        'corrective_action_comment'=>$faker->word,
+        'corrective_action_applyed'=>$faker->randomElement([true, false]),
         'last_reminder_upload'=>now()
     ];
 });

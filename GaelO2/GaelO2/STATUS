@@ -13,15 +13,18 @@ Export-db : (POST) => OK
 Documentation (GET, POST, DELETE) => OK
 Visit Dicoms (GET) => OK
 Tus : (All) => OK
-Patient : ( GET, POST, PATCH (+withdraw) ) => OK
+Patient : ( GET, POST, PATCH ) => OK
+Patient Withdraw : (PATCH)=> OK
 Api Visit (GET, POST, DELETE) => OK
-
-Preparation Investigateur / Monitor / Controller / Reviewer :
-- Api QC (GET, PATCH + API /reset)
-- Api Corrective Action (GET, PATCH)
-- Api Review (POST, GET, DELETE)
+QC : (PATCH) => OK
+QC Reset : (PATCH) => OK
+Corrective Action (PATCH) => OK
 
 Salim TODO :
+
+Preparation Investigateur / Monitor / Controller / Reviewer :
+- Ask Unlock (POST)
+- Api Review (POST, GET, DELETE)
 
 - API Pour avoir les visit "creable" => Fonction faite dans Visit Service et testée
 => Faire le use case et permission (que investigateur) GET /studies//patients//remaining-visites
@@ -69,6 +72,8 @@ ReverseProxy TUS => On peut ajouter le studyName dans le header dans uppy pour l
 Reverse proxy dicomweb => Comment faire venir le role et study depuis ohif ? depuis header?
 TUS est Joignable sur Delete => peut etre gerer le failure/cancel pour vider tus ?
 Deploiement ajouter le login / mdp pour dans orthanc pacs + bloquer delete dans lua script
+table visit : UploadUserId plutot que CreateUserId
+Dans remplissage DTO request, si variable boolean, un input string est interpretée à true.
 
 
 //Les tests ne font pas d'assertion sur

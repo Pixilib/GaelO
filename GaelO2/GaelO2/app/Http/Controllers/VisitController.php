@@ -8,12 +8,19 @@ use App\GaelO\UseCases\CreateVisit\CreateVisitResponse;
 use App\GaelO\UseCases\DeleteVisit\DeleteVisit;
 use App\GaelO\UseCases\DeleteVisit\DeleteVisitRequest;
 use App\GaelO\UseCases\DeleteVisit\DeleteVisitResponse;
-use App\GaelO\UseCases\GetPatientVisit\GetPatientVisit;
-use App\GaelO\UseCases\GetPatientVisit\GetPatientVisitRequest;
-use App\GaelO\UseCases\GetPatientVisit\GetPatientVisitResponse;
 use App\GaelO\UseCases\GetVisit\GetVisit;
 use App\GaelO\UseCases\GetVisit\GetVisitRequest;
 use App\GaelO\UseCases\GetVisit\GetVisitResponse;
+use App\GaelO\UseCases\ModifyCorrectiveAction\ModifyCorrectiveAction;
+use App\GaelO\UseCases\ModifyCorrectiveAction\ModifyCorrectiveActionRequest;
+use App\GaelO\UseCases\ModifyCorrectiveAction\ModifyCorrectiveActionResponse;
+use App\GaelO\UseCases\ModifyQualityControl\ModifyQualityControl;
+use App\GaelO\UseCases\ModifyQualityControl\ModifyQualityControlRequest;
+use App\GaelO\UseCases\ModifyQualityControl\ModifyQualityControlResponse;
+use App\GaelO\UseCases\ModifyQualityControlCorrectiveAction\ModifyQualityControlCorrectiveAction;
+use App\GaelO\UseCases\ModifyQualityControlReset\ModifyQualityControlReset;
+use App\GaelO\UseCases\ModifyQualityControlReset\ModifyQualityControlResetRequest;
+use App\GaelO\UseCases\ModifyQualityControlReset\ModifyQualityControlResetResponse;
 use App\GaelO\UseCases\ValidateDicomUpload\ValidateDicomUpload;
 use App\GaelO\UseCases\ValidateDicomUpload\ValidateDicomUploadRequest;
 use App\GaelO\UseCases\ValidateDicomUpload\ValidateDicomUploadResponse;
@@ -81,6 +88,48 @@ class VisitController extends Controller
 
         return response()->noContent()
                 ->setStatusCode($deleteVisitResponse->status, $deleteVisitResponse->statusText);
+    }
+
+    public function modifyQualityControl(int $visitId, Request $request, ModifyQualityControl $modifyQualityControl, ModifyQualityControlRequest $modifyQualityControlRequest, ModifyQualityControlResponse $modifyQualityControlResponse){
+        $curentUser = Auth::user();
+        $requestData = $request->all();
+
+        $modifyQualityControlRequest = Util::fillObject($requestData, $modifyQualityControlRequest);
+        $modifyQualityControlRequest->currentUserId = $curentUser['id'];
+        $modifyQualityControlRequest->visitId = $visitId;
+
+        $modifyQualityControl->execute($modifyQualityControlRequest, $modifyQualityControlResponse);
+
+        return response()->json($modifyQualityControlResponse->body)
+                ->setStatusCode($modifyQualityControlResponse->status, $modifyQualityControlResponse->statusText);
+    }
+
+    public function modifyQualityControlReset(int $visitId, ModifyQualityControlReset $modifyQualityControlReset, ModifyQualityControlResetRequest $modifyQualityControlResetRequest, ModifyQualityControlResetResponse $modifyQualityControlResetResponse){
+        $curentUser = Auth::user();
+
+        $modifyQualityControlResetRequest->currentUserId = $curentUser['id'];
+        $modifyQualityControlResetRequest->visitId = $visitId;
+
+        $modifyQualityControlReset->execute($modifyQualityControlResetRequest, $modifyQualityControlResetResponse);
+
+        return response()->json($modifyQualityControlResetResponse->body)
+                ->setStatusCode($modifyQualityControlResetResponse->status, $modifyQualityControlResetResponse->statusText);
+    }
+
+    public function modifyCorrectiveAction(int $visitId, Request $request, ModifyCorrectiveAction $modifyCorrectiveAction, ModifyCorrectiveActionRequest $modifyCorrectiveActionRequest, ModifyCorrectiveActionResponse $modifyCorrectiveActionResponse){
+        $curentUser = Auth::user();
+        $requestData = $request->all();
+
+        $modifyCorrectiveActionRequest = Util::fillObject($requestData, $modifyCorrectiveActionRequest);
+        //dd($modifyCorrectiveActionRequest);
+        $modifyCorrectiveActionRequest->currentUserId = $curentUser['id'];
+        $modifyCorrectiveActionRequest->visitId = $visitId;
+
+        $modifyCorrectiveAction->execute($modifyCorrectiveActionRequest, $modifyCorrectiveActionResponse);
+
+        return response()->json($modifyCorrectiveActionResponse->body)
+                ->setStatusCode($modifyCorrectiveActionResponse->status, $modifyCorrectiveActionResponse->statusText);
+
     }
 
 

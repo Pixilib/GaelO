@@ -50,8 +50,8 @@ class VisitEntity {
         $visitEntity->correctiveActionDate = $array['corrective_action_date'];
         $visitEntity->correctiveActionNewUpload = $array['corrective_action_new_upload'];
         $visitEntity->correctiveActionInvestigatorForm = $array['corrective_action_investigator_form'];
-        $visitEntity->correctiveActionOther = $array['corrective_action_other'];
-        $visitEntity->correctiveActionDecision = $array['corrective_action_decision'];
+        $visitEntity->correctiveActionOther = $array['corrective_action_comment'];
+        $visitEntity->correctiveActionDecision = $array['corrective_action_applyed'];
         $visitEntity->lastReminderUpload = $array['last_reminder_upload'];
         return $visitEntity;
     }

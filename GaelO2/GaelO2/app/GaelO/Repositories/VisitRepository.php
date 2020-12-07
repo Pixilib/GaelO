@@ -203,6 +203,64 @@ class VisitRepository implements PersistenceInterface {
         return $answer->count() === 0 ? false  : true;
     }
 
+    public function editQc(int $visitId, string $stateQc, int $controllerId, bool $imageQc, bool $formQc, ?string $imageQcComment, ?string $formQcComment) : void{
+        $visitEntity = $this->visit->find($visitId);
+        $visitEntity['state_quality_control'] = $stateQc;
+
+        $visitEntity['controller_user_id'] = $controllerId;
+        $visitEntity['control_date'] = Util::now();
+        $visitEntity['image_quality_control'] = $imageQc;
+        $visitEntity['form_quality_control'] = $formQc;
+        $visitEntity['image_quality_comment'] = $imageQcComment;
+        $visitEntity['form_quality_comment'] = $formQcComment;
+
+        $visitEntity->save();
+    }
+
+    public function resetQc(int $visitId) : void {
+
+        $visitEntity = $this->visit->find($visitId);
+
+        $visitEntity['state_quality_control'] = Constants::QUALITY_CONTROL_NOT_DONE;
+        $visitEntity['controller_user_id'] = null;
+        $visitEntity['control_date'] = null;
+        $visitEntity['image_quality_control'] = false;
+        $visitEntity['form_quality_control'] = false;
+        $visitEntity['image_quality_comment'] = null;
+        $visitEntity['form_quality_comment'] = null;
+        $visitEntity['corrective_action_user_id'] = null;
+        $visitEntity['corrective_action_date'] = null;
+        $visitEntity['corrective_action_new_upload'] = false;
+        $visitEntity['corrective_action_investigator_form'] = false;
+        $visitEntity['corrective_action_comment'] = null;
+        $visitEntity['corrective_action_applyed'] = null;
+
+        $visitEntity->save();
+
+    }
+
+    public function setCorectiveAction(int $visitId, int $investigatorId, bool $newUpload, bool $newInvestigatorForm, bool $correctiveActionApplyed, string $comment ){
+
+        $visitEntity = $this->visit->find($visitId);
+
+        $visitEntity['state_quality_control'] = Constants::QUALITY_CONTROL_WAIT_DEFINITIVE_CONCLUSION;
+        $visitEntity['corrective_action_user_id'] = $investigatorId;
+        $visitEntity['corrective_action_date'] = Util::now();
+        $visitEntity['corrective_action_new_upload'] = $newUpload;
+        $visitEntity['corrective_action_investigator_form'] = $newInvestigatorForm;
+        $visitEntity['corrective_action_comment'] = $comment;
+        $visitEntity['corrective_action_applyed'] = $correctiveActionApplyed;
+
+        $visitEntity->save();
+
+    }
+
+    public function updateInvestigatorForm(int $visitId, string $stateInvestigatorForm) : void{
+        $visitEntity = $this->visit->find($visitId);
+        $visitEntity['state_investigator_form'] = $stateInvestigatorForm;
+        $visitEntity->save();
+    }
+
 
 }
 

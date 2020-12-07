@@ -5,6 +5,8 @@ namespace App\GaelO\Services;
 use App\GaelO\Constants\Constants;
 use App\GaelO\Repositories\OrthancStudyRepository;
 use App\GaelO\Repositories\PatientRepository;
+use App\GaelO\Repositories\ReviewRepository;
+use App\GaelO\Repositories\ReviewStatusRepository;
 use App\GaelO\Repositories\StudyRepository;
 use App\GaelO\Repositories\VisitTypeRepository;
 use App\GaelO\Repositories\VisitRepository;
@@ -12,10 +14,21 @@ use App\GaelO\Repositories\VisitRepository;
 class VisitService
 {
 
+    private PatientRepository $patientRepository;
+    private StudyRepository $studyRepository;
+    private VisitRepository $visitRepository;
+    private ReviewRepository $reviewRepository;
+    private VisitTypeRepository $visitTypeRepository;
+    private OrthancStudyRepository $orthancStudyRepository;
+    private MailServices $mailServices;
+    private ReviewStatusRepository $reviewStatusRepository;
+
     public function __construct(
                             PatientRepository $patientRepository,
                             StudyRepository $studyRepository,
                             VisitRepository $visitRepository,
+                            ReviewRepository $reviewRepository,
+                            ReviewStatusRepository $reviewStatusRepository,
                             VisitTypeRepository $visitTypeRepository,
                             OrthancStudyRepository $orthancStudyRepository,
                             MailServices $mailServices)
@@ -26,6 +39,8 @@ class VisitService
         $this->mailServices = $mailServices;
         $this->orthancStudyRepository = $orthancStudyRepository;
         $this->studyRepository = $studyRepository;
+        $this->reviewStatusRepository = $reviewStatusRepository;
+        $this->reviewRepository = $reviewRepository;
     }
 
     public function getVisitContext(int $visitId) : array {
@@ -170,5 +185,31 @@ class VisitService
 
         return $visitToCreateMap;
 
+    }
+
+    public function editQc(int $visitId, string $stateQc, int $controllerId, bool $imageQc, bool $formQc, ?string $imageQcComment, ?string $formQcComment){
+
+        $visitEntity = $this->getVisitContext($visitId);
+        $localFormNeeded = $visitEntity['visit_type']['local_form_needed'];
+
+        $this->visitRepository->editQc($visitId, $stateQc, $controllerId, $imageQc, $formQc, $imageQcComment, $formQcComment);
+
+        if($stateQc === Constants::QUALITY_CONTROL_CORRECTIVE_ACTION_ASKED && $localFormNeeded){
+            //Invalidate invistagator form and set it status as draft in the visit
+            $this->reviewRepository->unlockInvestigatorForm($visitId);
+            $this->visitRepository->updateInvestigatorForm($visitId, Constants::INVESTIGATOR_FORM_DRAFT);
+        }
+    }
+
+    public function resetQc(int $visitId) : void {
+        $this->visitRepository->resetQc($visitId);
+    }
+
+    public function getReviewStatus(int $visitId, string $studyName){
+        return $this->reviewStatusRepository->getReviewStatus($visitId, $studyName);
+    }
+
+    public function setCorrectiveAction(int $visitId, int $investigatorId, bool $newUpload, bool $newInvestigatorForm, bool $correctiveActionApplyed, string $comment) : void {
+        $this->visitRepository->setCorectiveAction($visitId, $investigatorId, $newUpload, $newInvestigatorForm, $correctiveActionApplyed, $comment );
     }
 }
