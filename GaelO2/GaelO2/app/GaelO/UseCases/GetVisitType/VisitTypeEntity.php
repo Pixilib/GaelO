@@ -20,7 +20,7 @@ class VisitTypeEntity {
         $VisitTypeEntity->id = $array['id'];
         $VisitTypeEntity->visitGroupId = $array['visit_group_id'];
         $VisitTypeEntity->name = $array['name'];
-        $VisitTypeEntity->visitOrder = $array['visit_order'];
+        $VisitTypeEntity->visitOrder = $array['order'];
         $VisitTypeEntity->localFormNeeded = $array['local_form_needed'];
         $VisitTypeEntity->qcNeeded = $array['qc_needed'];
         $VisitTypeEntity->reviewNeeded = $array['review_needed'];

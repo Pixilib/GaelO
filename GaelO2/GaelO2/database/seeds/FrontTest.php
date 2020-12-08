@@ -86,28 +86,28 @@ class FrontTest extends Seeder
         DB::table('visit_types')->insert([
             'visit_group_id' => 1,
             'name' => 'Test1',
-            'visit_order' => 1,
+            'order' => 1,
             'limit_low_days' => 1,
             'limit_up_days' => 10,
         ]);
         DB::table('visit_types')->insert([
             'visit_group_id' => 2,
             'name' => 'Test2',
-            'visit_order' => 1,
+            'order' => 1,
             'limit_low_days' => 1,
             'limit_up_days' => 10,
         ]);
         DB::table('visit_types')->insert([
             'visit_group_id' => 2,
             'name' => 'Test3',
-            'visit_order' => 2,
+            'order' => 2,
             'limit_low_days' => 1,
             'limit_up_days' => 10,
         ]);
         DB::table('visit_types')->insert([
             'visit_group_id' => 3,
             'name' => 'Test4',
-            'visit_order' => 1,
+            'order' => 1,
             'limit_low_days' => 1,
             'limit_up_days' => 10,
         ]);
@@ -128,13 +128,19 @@ class FrontTest extends Seeder
             'creator_user_id' => 1,
             'creation_date' => now(),
             'patient_code' => Patient::first()['code'],
+            'status_done' => 'Done',
+            'upload_status' => 'Not Done',
             'visit_type_id' => 3
         ]);
         DB::table('visits')->insert([
             'creator_user_id' => 1,
             'creation_date' => now(),
             'patient_code' => Patient::first()['code'],
-            'visit_type_id' => 4
+            'visit_type_id' => 4,
+            'status_done' => 'Done',
+            'upload_status' => 'Done',
+            'state_investigator_form' => 'Draft',
+            'state_quality_control' => 'Wait Definitive Conclusion'
         ]);
 
         factory(User::class, 50)->create();

@@ -60,7 +60,7 @@ class VisitTreeService
             $patientCode = $visitObject['patient_code'];
             //$visitType = $visitObject['name'];
             $visitModality =  $visitObject['modality'];
-            $visitOrder = $visitObject['visit_order'];
+            $visitOrder = $visitObject['order'];
 
             //SK ICI FILTER LES INFORMATION A FAIRE PASSER AU FRONT
             $resultTree[ $patientCode ] [ $visitModality ] [$visitOrder] = $visitObject;

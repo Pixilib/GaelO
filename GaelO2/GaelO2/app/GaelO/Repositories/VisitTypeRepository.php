@@ -43,7 +43,7 @@ class VisitTypeRepository implements PersistenceInterface {
         $data = [
             'visit_group_id'=> $visitGroupId,
             'name' => $name,
-            'visit_order'=> $visitOrder,
+            'order'=> $visitOrder,
             'local_form_needed'=> $localFormNeeded,
             'qc_needed' => $qcNeeded,
             'review_needed'=>$reviewNeeded,

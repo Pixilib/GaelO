@@ -52,11 +52,6 @@ class PatientRepository implements PersistenceInterface {
 
     }
 
-    public function getPatientsVisits(int $code) : array {
-        $visits = $this->patient->find($code)->visits()->with('visitType')->get();
-        return empty($visits) ? [] : $visits->toArray();
-    }
-
     /**
      * @param $patients expected array of Patient Entity
      */

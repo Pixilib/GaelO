@@ -140,13 +140,13 @@ class VisitService
         }
 
         //Get Created Patient's Visits
-        $createdVisitsArray = $this->patientRepository->getPatientsVisits($patientCode);
+        $createdVisitsArray = $this->visitRepository->getPatientsVisits($patientCode);
 
         $createdVisitMap = [];
 
         //Build array of Created visit Order indexed by visit group modality
         foreach($createdVisitsArray as $createdVisit){
-            $visitOrder = $createdVisit['visit_type']['visit_order'];
+            $visitOrder = $createdVisit['visit_type']['order'];
             $modality = $createdVisit['visit_type']['visit_group']['modality'];
             $createdVisitMap[$modality][]=$visitOrder;
         }
@@ -161,7 +161,7 @@ class VisitService
 
             foreach($visitGroupDetails['visit_types'] as $visitType){
 
-                $studyVisitMap[ $visitGroupDetails['modality'] ] [$visitType['visit_order'] ] = [
+                $studyVisitMap[ $visitGroupDetails['modality'] ] [$visitType['order'] ] = [
                     'groupId' => $visitType['visit_group_id'],
                     'typeId'=>$visitType['id'],
                     'name' => $visitType['name']

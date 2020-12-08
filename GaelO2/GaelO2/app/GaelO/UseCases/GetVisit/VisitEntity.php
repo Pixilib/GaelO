@@ -26,6 +26,11 @@ class VisitEntity {
     public ?string $correctiveActionOther;
     public ?bool $correctiveActionDecision;
     public ?string $lastReminderUpload;
+    public ?string $visitGroupModality;
+    public ?string $visitTypeName;
+    public ?int $visitTypeOrder;
+    public ?bool $visitTypeOptional;
+    public ?int $visitGroupId;
 
     public static function fillFromDBReponseArray(array $array){
         $visitEntity  = new VisitEntity();
@@ -55,4 +60,20 @@ class VisitEntity {
         $visitEntity->lastReminderUpload = $array['last_reminder_upload'];
         return $visitEntity;
     }
+
+    public function setVisitContext(string $visitGroupModality,
+                                string $visitTypeName,
+                                int $visitTypeOrder,
+                                bool $visitTypeOptional,
+                                int $visitGroupId){
+
+        $this->visitGroupModality = $visitGroupModality;
+        $this->visitTypeName = $visitTypeName;
+        $this->visitTypeOrder = $visitTypeOrder;
+        $this->visitTypeOptional = $visitTypeOptional;
+        $this->visitGroupId = $visitGroupId;
+
+
+    }
+
 }

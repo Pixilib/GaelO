@@ -24,7 +24,17 @@ class GetPatientVisit {
 
             $responseArray = [];
             foreach($visitsArray as $data){
-                $responseArray[] = VisitEntity::fillFromDBReponseArray($data);
+
+                $visitTypeName = $data['visit_type']['name'];
+                $visitTypeOrder = $data['visit_type']['order'];
+                $visitTypeOptional = $data['visit_type']['optional'];
+                $visitGroupModality =  $data['visit_type']['visit_group']['modality'];
+                $visitGroupId =  $data['visit_type']['visit_group']['id'];
+
+
+                $visitEntity = VisitEntity::fillFromDBReponseArray($data);
+                $visitEntity->setVisitContext($visitGroupModality, $visitTypeName, $visitTypeOrder, $visitTypeOptional, $visitGroupId);
+                $responseArray[] = $visitEntity;
             }
 
             $getPatientVisitResponse->body = $responseArray;
