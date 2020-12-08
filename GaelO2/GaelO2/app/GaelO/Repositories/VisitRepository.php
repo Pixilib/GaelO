@@ -102,8 +102,8 @@ class VisitRepository implements PersistenceInterface {
     }
 
     public function getPatientsVisits(int $patientCode){
-        $visits = $this->visit->where('patient_code', $patientCode)->get()->toArray();
-        return $visits;
+        $visits = $this->visit->with('visitType')->where('patient_code', $patientCode)->get();
+        return empty($visits) ? [] : $visits->toArray();
     }
 
     public function getPatientVisitsWithContext(int $patientCode){
@@ -111,7 +111,7 @@ class VisitRepository implements PersistenceInterface {
         $answer = $this->visit->join('visit_types', function ($join) {
             $join->on('visits.visit_type_id', '=', 'visit_types.id');
         })->join('visit_groups', function ($join) {
-            $join->on('visit_types.id', '=', 'visit_groups.id');
+            $join->on('visit_types.visit_group_id', '=', 'visit_groups.id');
         })->where('patient_code', $patientCode)->get();
 
         return $answer->count() === 0 ? []  : $answer->toArray();

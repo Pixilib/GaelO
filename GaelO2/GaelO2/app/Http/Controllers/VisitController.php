@@ -121,7 +121,6 @@ class VisitController extends Controller
         $requestData = $request->all();
 
         $modifyCorrectiveActionRequest = Util::fillObject($requestData, $modifyCorrectiveActionRequest);
-        //dd($modifyCorrectiveActionRequest);
         $modifyCorrectiveActionRequest->currentUserId = $curentUser['id'];
         $modifyCorrectiveActionRequest->visitId = $visitId;
 
