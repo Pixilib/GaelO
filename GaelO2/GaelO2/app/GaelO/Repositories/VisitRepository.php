@@ -267,6 +267,29 @@ class VisitRepository implements PersistenceInterface {
         $visitEntity->save();
     }
 
+    /**
+     * Get visits Imaging awaiting upload (visit done and not uploaded)
+     * from centers included in array of user's centers (given in parameters)
+     */
+    public function getImagingVisitsAwaitingUpload(string $studyName, array $centerCode) : array {
+
+        $answer = $this->visit->join('visit_types', function ($join) {
+            $join->on('visits.visit_type_id', '=', 'visit_types.id');
+        })->join('visit_groups', function ($join) {
+            $join->on('visit_types.id', '=', 'visit_groups.id');
+        })->join('patients', function ($join) {
+            $join->on('visits.patient_code', '=', 'patients.code');
+        })
+        ->where('visit_groups.study_name', $studyName)
+        ->where('status_done', Constants::VISIT_STATUS_DONE)
+        ->where('upload_status', Constants::UPLOAD_STATUS_NOT_DONE)
+        ->whereIn('visit_groups.modality', ['PT', 'MR', 'CT', 'US', 'NM', 'RT'])
+        ->whereIn('patients.center_code', $centerCode)
+        ->select(['visits.*', 'patients.*', 'visit_types.name', 'visit_groups.modality'])->get();
+
+        return $answer->count() === 0 ? []  : $answer->toArray();
+    }
+
 
 }
 

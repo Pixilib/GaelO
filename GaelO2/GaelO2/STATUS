@@ -21,14 +21,15 @@ QC Reset : (PATCH) => OK
 Corrective Action (PATCH) => OK
 Ask Unlock (POST) => OK
 Creatable-Visits (GET) => OK
+Possible-Uploads (GET) => OK
 
 Salim TODO :
 
 Preparation Investigateur / Monitor / Controller / Reviewer :
-- API Get Possible Upload (get possible import) (pour multiuplad)=> A continuer (finir usecase, exposer route et controller)
+- API Delete Series orthanc
 - Api Review (POST, GET, DELETE)
 - API Tree Finir Test Unitaire Service creation tree
-- API Delete Series orthanc
+
 
 Creatable Visit : Manque Study Custom Logic (+dans front skip visites optionnelles)
 
@@ -70,7 +71,6 @@ ReverseProxy TUS => On peut ajouter le studyName dans le header dans uppy pour l
 Reverse proxy dicomweb => Comment faire venir le role et study depuis ohif ? depuis header?
 TUS est Joignable sur Delete => peut etre gerer le failure/cancel pour vider tus ?
 Deploiement ajouter le login / mdp pour dans orthanc pacs + bloquer delete dans lua script
-table visit : UploadUserId plutot que CreateUserId
 Dans remplissage DTO request, si variable boolean, un input string est interpretée à true.
 
 
