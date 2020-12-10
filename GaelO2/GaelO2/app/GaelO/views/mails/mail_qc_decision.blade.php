@@ -7,7 +7,7 @@
     Patient Number : {{$patientCode}}<br>
     Visit Modality : {{$visitModality}}<br>
     Visit Name : {{$visitType}}<br>
-    Investigation Form : {{$formDecision}}, Comment : {{$formComment}} <br>
+    Investigation Form : {{$formDecision}}, Comment : {{$formComment}}<br>
     Image Series : {{$imageDecision}}, Comment : {{$imageComment}} <br>
 @endsection
 
