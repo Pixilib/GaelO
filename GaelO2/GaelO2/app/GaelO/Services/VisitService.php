@@ -8,12 +8,13 @@ use App\GaelO\Repositories\PatientRepository;
 use App\GaelO\Repositories\ReviewRepository;
 use App\GaelO\Repositories\ReviewStatusRepository;
 use App\GaelO\Repositories\StudyRepository;
+use App\GaelO\Repositories\UserRepository;
 use App\GaelO\Repositories\VisitTypeRepository;
 use App\GaelO\Repositories\VisitRepository;
 
 class VisitService
 {
-
+    private UserRepository $userRepository;
     private PatientRepository $patientRepository;
     private StudyRepository $studyRepository;
     private VisitRepository $visitRepository;
@@ -24,6 +25,7 @@ class VisitService
     private ReviewStatusRepository $reviewStatusRepository;
 
     public function __construct(
+                            UserRepository $userRepository,
                             PatientRepository $patientRepository,
                             StudyRepository $studyRepository,
                             VisitRepository $visitRepository,
@@ -41,6 +43,7 @@ class VisitService
         $this->studyRepository = $studyRepository;
         $this->reviewStatusRepository = $reviewStatusRepository;
         $this->reviewRepository = $reviewRepository;
+        $this->userRepository = $userRepository;
     }
 
     public function getVisitContext(int $visitId) : array {
@@ -211,5 +214,10 @@ class VisitService
 
     public function setCorrectiveAction(int $visitId, int $investigatorId, bool $newUpload, bool $newInvestigatorForm, bool $correctiveActionApplyed, string $comment) : void {
         $this->visitRepository->setCorectiveAction($visitId, $investigatorId, $newUpload, $newInvestigatorForm, $correctiveActionApplyed, $comment );
+    }
+
+    public function getImagingVisitsAwaitingUploadVisitsForUser(int $userId, string $studyName) : array {
+        $centers = $this->userRepository->getAllUsersCenters($userId);
+        return $this->visitRepository->getImagingVisitsAwaitingUpload($studyName, $centers);
     }
 }

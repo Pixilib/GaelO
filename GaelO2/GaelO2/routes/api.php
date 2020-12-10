@@ -44,6 +44,7 @@ Route::middleware(['auth:api', 'refresh_token'])->group(function () {
     Route::get('studies/{studyName}/visits-tree', 'StudyController@getVisitsTree');
     Route::post('studies/{studyName}/import-patients', 'StudyController@importPatients');
     Route::get('studies/{studyName}/orthanc-study-id/{orthancStudyID}', 'StudyController@isKnownOrthancId');
+    Route::get('studies/{studyName}/possible-uploads', 'StudyController@getPossibleUploads');
 
     //Study Routes
     Route::post('studies', 'StudyController@createStudy');

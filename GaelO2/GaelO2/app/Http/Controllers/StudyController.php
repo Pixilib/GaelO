@@ -12,6 +12,9 @@ use App\GaelO\UseCases\DeleteStudy\DeleteStudyResponse;
 use App\GaelO\UseCases\GetKnownOrthancID\GetKnownOrthancID;
 use App\GaelO\UseCases\GetKnownOrthancID\GetKnownOrthancIDRequest;
 use App\GaelO\UseCases\GetKnownOrthancID\GetKnownOrthancIDResponse;
+use App\GaelO\UseCases\GetPossibleUpload\GetPossibleUpload;
+use App\GaelO\UseCases\GetPossibleUpload\GetPossibleUploadRequest;
+use App\GaelO\UseCases\GetPossibleUpload\GetPossibleUploadResponse;
 use App\GaelO\UseCases\GetStudy\GetStudy;
 use App\GaelO\UseCases\GetStudy\GetStudyRequest;
 use App\GaelO\UseCases\GetStudy\GetStudyResponse;
@@ -119,6 +122,16 @@ class StudyController extends Controller
         $getVisitsTree->execute($getVisitsTreeRequest, $getVisitsTreeResponse);
 
         return response()->json($getVisitsTreeResponse->body)->setStatusCode($getVisitsTreeResponse->status, $getVisitsTreeResponse->statusText);
+    }
+
+    public function getPossibleUploads(string $studyName, GetPossibleUpload $getPossibleUpload, GetPossibleUploadRequest $getPossibleUploadRequest, GetPossibleUploadResponse $getPossibleUploadResponse){
+        $currentUser = Auth::user();
+        $getPossibleUploadRequest->currentUserId = $currentUser['id'];
+        $getPossibleUploadRequest->studyName = $studyName;
+        $getPossibleUpload->execute($getPossibleUploadRequest, $getPossibleUploadResponse);
+
+        return response()->json($getPossibleUploadResponse->body)->setStatusCode($getPossibleUploadResponse->status, $getPossibleUploadResponse->statusText);
+
     }
 
 }
