@@ -95,29 +95,46 @@ class VisitService
         );
     }
 
-    public function updateUploadStatus(int $visitId, string $uploadStatus, int $uploaderUserId)
+    public function updateUploadStatus(int $visitId, string $uploadStatus)
     {
 
         $updatedEntity = $this->visitRepository->updateUploadStatus($visitId, $uploadStatus);
 
-        //If uploaded done and investigator done (Done or Not Needed) send notification message
         if (
-            $uploadStatus === Constants::UPLOAD_STATUS_DONE
+            $updatedEntity['upload_status'] === Constants::UPLOAD_STATUS_DONE
             && $updatedEntity['state_investigator_form'] !== Constants::INVESTIGATOR_FORM_NOT_DONE
         ) {
-            $visitEntity = $this->getVisitContext($visitId);
-            $patientCode = $updatedEntity['patient_code'];
-            $study = $visitEntity['visit_type']['visit_group']['study_name'];
-            $visitType = $visitEntity['visit_type']['name'];
-            $qcNeeded = $visitEntity['visit_type']['qc_needed'];
-
-            $this->mailServices->sendUploadedVisitMessage($uploaderUserId, $study, $patientCode, $visitType, $qcNeeded);
-            //If Qc NotNeeded mark visit as available for review
-            if(!$qcNeeded) {
-                $this->updateReviewAvailability($visitId, true, $study, $patientCode, $visitType);
-            }
-
+            $this->sendUploadEmailAndSkipQcIfNeeded($visitId);
         }
+
+
+
+    }
+
+    public function updateInvestigatorFormStatus(int $visitId, string $stateInvestigatorForm){
+        $updatedEntity = $this->visitRepository->updateInvestigatorForm($visitId, $stateInvestigatorForm);
+        if (
+            $updatedEntity['upload_status'] === Constants::UPLOAD_STATUS_DONE
+            && $updatedEntity['state_investigator_form'] !== Constants::INVESTIGATOR_FORM_NOT_DONE
+        ) {
+            $this->sendUploadEmailAndSkipQcIfNeeded($visitId);
+        }
+    }
+
+    private function sendUploadEmailAndSkipQcIfNeeded(int $visitId){
+        //If uploaded done and investigator done (Done or Not Needed) send notification message
+        $visitEntity = $this->getVisitContext($visitId);
+        $patientCode = $visitEntity['patient_code'];
+        $study = $visitEntity['visit_type']['visit_group']['study_name'];
+        $visitType = $visitEntity['visit_type']['name'];
+        $qcNeeded = $visitEntity['visit_type']['qc_needed'];
+
+        $this->mailServices->sendUploadedVisitMessage($visitEntity['creator_user_id'], $study, $patientCode, $visitType, $qcNeeded);
+        //If Qc NotNeeded mark visit as available for review
+        if(!$qcNeeded) {
+            $this->updateReviewAvailability($visitId, true, $study, $patientCode, $visitType);
+        }
+
 
     }
 

@@ -15,7 +15,7 @@ Visit Dicoms (GET) => OK
 Tus : (All) => OK
 Patient : ( GET, POST, PATCH ) => OK
 Patient Withdraw : (PATCH)=> OK
-Api Visit (GET, POST, DELETE) => OK
+Visit (GET, POST, DELETE) => OK
 QC : (PATCH) => OK
 QC Reset : (PATCH) => OK
 Corrective Action (PATCH) => OK
@@ -26,10 +26,14 @@ Possible-Uploads (GET) => OK
 Salim TODO :
 
 Preparation Investigateur / Monitor / Controller / Reviewer :
-- API Delete Series orthanc
-- Api Review (POST, GET, DELETE)
+- API Delete Series orthanc => Reste Tests + test Unitaire sur SeriesService
+- API Reactivate Series (PATCH)
+- API Reset Upload
+- API Get Dicom Series (incluant les deleted, pour le supervisor)
+- API Review (POST, GET, DELETE) + Review attached files
 - API Tree Finir Test Unitaire Service creation tree
 
+Refactorer Visit Service (visit ID en variable de classe) ++++
 
 Creatable Visit : Manque Study Custom Logic (+dans front skip visites optionnelles)
 
@@ -73,6 +77,19 @@ TUS est Joignable sur Delete => peut etre gerer le failure/cancel pour vider tus
 Deploiement ajouter le login / mdp pour dans orthanc pacs + bloquer delete dans lua script
 Dans remplissage DTO request, si variable boolean, un input string est interpretée à true.
 
+
+Préparation supervisor :
+- Review Manager
+- Upload Manager
+- Statistics
+- tracker
+- Unlock / Delete form
+- Users in Study
+- Export Study Data
+- Reactivate visit
+- Remininder email upload / review
+- Send to peer
++ Messagerie a designer
 
 //Les tests ne font pas d'assertion sur
 - le tracker => Via un spy ?

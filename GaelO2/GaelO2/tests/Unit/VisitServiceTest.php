@@ -89,23 +89,21 @@ class VisitServiceTest extends TestCase
     public function testUpdateUploadStatusQC1InvestForm1Review1()
     {
         $this->createVisit(Constants::INVESTIGATOR_FORM_DONE, true, true, true);
-        $this->visitService->updateUploadStatus($this->visit['id'], 'Done', 1);
+        $this->visitService->updateUploadStatus($this->visit['id'], 'Done');
     }
 
     public function testUpdateUploadStatusQC1InvestForm0Review1()
     {
         $this->createVisit(Constants::INVESTIGATOR_FORM_DONE, true, false, true);
 
-        $this->visitService->updateUploadStatus($this->visit['id'], 'Done', 1);
+        $this->visitService->updateUploadStatus($this->visit['id'], 'Done');
     }
 
     public function testUpdateUploadStatusQC0InvestForm0Review1()
     {
-
-
         $this->createVisit(Constants::INVESTIGATOR_FORM_DONE, false, false, true);
 
-        $this->visitService->updateUploadStatus($this->visit['id'], 'Done', 1);
+        $this->visitService->updateUploadStatus($this->visit['id'], 'Done');
 
         $this->mailServiceSpy->shouldHaveReceived('sendAvailableReviewMessage')->once();
     }
@@ -114,7 +112,7 @@ class VisitServiceTest extends TestCase
     {
         $this->createVisit(Constants::INVESTIGATOR_FORM_DRAFT, false, false, true);
 
-        $this->visitService->updateUploadStatus($this->visit['id'], 'Done', 1);
+        $this->visitService->updateUploadStatus($this->visit['id'], 'Done');
     }
 
 }

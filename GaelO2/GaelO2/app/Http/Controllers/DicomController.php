@@ -2,9 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\GaelO\UseCases\DeleteSeries\DeleteSeries;
+use App\GaelO\UseCases\DeleteSeries\DeleteSeriesRequest;
+use App\GaelO\UseCases\DeleteSeries\DeleteSeriesResponse;
 use App\GaelO\UseCases\GetDicoms\GetDicoms;
 use App\GaelO\UseCases\GetDicoms\GetDicomsRequest;
 use App\GaelO\UseCases\GetDicoms\GetDicomsResponse;
+use App\GaelO\Util;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -31,5 +35,27 @@ class DicomController extends Controller
         }
 
 
+    }
+
+    public function deleteSeries(string $seriesInstanceUID, Request $request, DeleteSeries $deleteSeries, DeleteSeriesRequest $deleteSeriesRequest, DeleteSeriesResponse $deleteSeriesResponse){
+        $currentUser = Auth::user();
+        $queryParam = $request->query();
+        $requestData = $request->all();
+
+        $deleteSeriesRequest->seriesInstanceUID = $seriesInstanceUID;
+        $deleteSeriesRequest->role = $queryParam['role'];
+        $deleteSeriesRequest->currentUserId = $currentUser['id'];
+        $deleteSeriesRequest = Util::fillObject($requestData, $deleteSeriesRequest);
+
+
+        $deleteSeries->execute($deleteSeriesRequest, $deleteSeriesResponse);
+
+        if($deleteSeriesRequest->body === null){
+            return response()->noContent()
+            ->setStatusCode($deleteSeriesRequest->status, $deleteSeriesRequest->statusText);
+        }else{
+            return response()->json($deleteSeriesRequest->body)
+            ->setStatusCode($deleteSeriesRequest->status, $deleteSeriesRequest->statusText);
+        }
     }
 }

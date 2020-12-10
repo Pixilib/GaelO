@@ -261,10 +261,11 @@ class VisitRepository implements PersistenceInterface {
 
     }
 
-    public function updateInvestigatorForm(int $visitId, string $stateInvestigatorForm) : void{
+    public function updateInvestigatorForm(int $visitId, string $stateInvestigatorForm) : array{
         $visitEntity = $this->visit->find($visitId);
         $visitEntity['state_investigator_form'] = $stateInvestigatorForm;
         $visitEntity->save();
+        return $visitEntity->toArray();
     }
 
     /**

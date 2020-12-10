@@ -88,6 +88,9 @@ Route::middleware(['auth:api', 'refresh_token'])->group(function () {
     Route::post('studies/{studyName}/visit-groups/{visitGroupId}/visit-types/{visitTypeId}/visits', 'VisitController@createVisit');
     Route::get('visits/{id}', 'VisitController@getVisit');
 
+    //Dicom Routes
+    Route::delete('visits/{id}/dicom-series/{seriesInstanceUID}', 'DicomController@deleteSeries');
+
     //Form routes
     Route::post('studies/{study}/visits/{id}/ask-unlock', 'FormController@askUnlock');
 

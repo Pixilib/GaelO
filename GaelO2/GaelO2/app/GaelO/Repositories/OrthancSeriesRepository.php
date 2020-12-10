@@ -33,6 +33,10 @@ class OrthancSeriesRepository implements PersistenceInterface{
         $this->orthancSeries->find($orthancSeriesID)->delete();
     }
 
+    public function deletebySeriesInstanceUID(string $seriesInstanceUID) :void {
+        $this->orthancSeries->where('series_uid',$seriesInstanceUID)->firstOrFail()->delete();
+    }
+
     public function getAll() : array {
         throw new \Exception('Not Usable in Orthanc Study Repository');
     }
