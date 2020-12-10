@@ -2,7 +2,7 @@
 
 @section('content')
     Your account is created for the GaelO platform used to exchange
-    imaging data. <br>
+    imaging data.<br>
     Please log in at: {{$webAddress}}<br>
     Username : {{$username}}<br>
     Temporary password : {{$password}}<br>
