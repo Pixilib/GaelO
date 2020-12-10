@@ -29,7 +29,7 @@ Preparation Investigateur / Monitor / Controller / Reviewer :
 - API Delete Series orthanc => Reste Tests + test Unitaire sur SeriesService
 - API Reactivate Series (PATCH)
 - API Reset Upload
-- API Get Dicom Series (incluant les deleted, pour le supervisor)
+- API Get Dicom Series (de base sauf supervisor incluant les deleted)
 - API Review (POST, GET, DELETE) + Review attached files
 - API Tree Finir Test Unitaire Service creation tree
 
