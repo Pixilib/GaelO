@@ -45,10 +45,30 @@ class UserTest extends TestCase
     }
 
     public function testGetUserShouldFailNotAdmin(){
-        AuthorizationTools::actAsAdmin(false);
-        $this->json('GET', '/api/users/1')
+        factory(User::class, 5)->create([
+            'administrator'=> false,
+            'status' => 'Activated'
+        ]);
+
+        Passport::actingAs(
+            User::where('id',3)->first()
+        );
+        $this->json('GET', '/api/users/2')
         ->assertStatus(403);
 
+    }
+
+    public function testGetOwnUser(){
+        factory(User::class, 5)->create([
+            'status' => 'Activated'
+        ]);
+
+        Passport::actingAs(
+            User::where('id',2)->first()
+        );
+
+        $this->json('GET', '/api/users/2')
+        ->assertStatus(200);
     }
 
     public function testGetAllUsers(){
