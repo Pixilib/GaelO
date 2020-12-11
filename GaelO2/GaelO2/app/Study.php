@@ -22,7 +22,7 @@ class Study extends Model
     }
 
     public function visitGroupDetails(){
-    return $this->hasMany('App\VisitGroup')->with('visitTypes');
+    return $this->hasMany('App\VisitGroup', 'study_name')->with('visitTypes');
     }
 
 }
