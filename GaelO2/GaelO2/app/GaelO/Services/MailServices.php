@@ -38,7 +38,7 @@ Class MailServices extends SendEmailAdapter {
      * Parameters in associative array : name, email, center, request
      */
     public function sendRequestMessage(array $parameters) : void {
-        $destinators = [$this->getAdminsEmails(), $parameters['email']];
+        $destinators = [...$this->getAdminsEmails(), $parameters['email']];
         $this->mailInterface->setTo($destinators);
         $this->mailInterface->setReplyTo();
         $this->mailInterface->setParameters($parameters);
