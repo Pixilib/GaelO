@@ -62,11 +62,6 @@ class PatientTest extends TestCase
         $this->json('GET', '/api/patients/12345671234567?role=Supervisor')->assertStatus(403);
     }
 
-    public function testGetIncorrectPatientShouldFail(){
-        AuthorizationTools::addRoleToUser(1, Constants::ROLE_SUPERVISOR, $this->study->name);
-        $this->json('GET', '/api/patients/-1?role=Supervisor') -> assertStatus(404);
-    }
-
     public function testGetPatientFromStudy() {
         AuthorizationTools::addRoleToUser(1, Constants::ROLE_SUPERVISOR, $this->study->name);
         for($i=1; $i<6; $i++){

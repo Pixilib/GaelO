@@ -36,7 +36,7 @@ class UserRepository implements PersistenceInterface {
     }
 
     public function delete($id) : void {
-        $this->user->find($id)->delete();
+        $this->user->findOrFail($id)->delete();
     }
 
     public function getAll() : array {

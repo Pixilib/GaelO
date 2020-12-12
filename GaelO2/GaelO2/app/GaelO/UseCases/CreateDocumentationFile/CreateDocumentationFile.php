@@ -25,7 +25,7 @@ class CreateDocumentationFile{
 
         try{
 
-            $documentationEntity = $this->documentationRepository->getDocumentation($createDocumentationFileRequest->id);
+            $documentationEntity = $this->documentationRepository->find($createDocumentationFileRequest->id);
             $studyName = $documentationEntity['study_name'];
             $this->checkAuthorization($createDocumentationFileRequest->currentUserId, $studyName);
 

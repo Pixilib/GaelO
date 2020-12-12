@@ -36,7 +36,7 @@ class ImportPatientService
     }
 
 	public function import() {
-        $this->studyEntity = $this->studyRepository->getStudy($this->studyName);
+        $studyEntity = $this->studyRepository->find($this->studyName);
         $patientEntities = $this->patientRepository->getPatientsInStudy($this->studyName);
         $this->existingPatientCode = array_map(function ($patientEntity){ return $patientEntity['code']; }, $patientEntities);
         $this->existingCenter = $this->centerRepository->getExistingCenter();
@@ -51,7 +51,7 @@ class ImportPatientService
                 $this->checkNewPatient($patientEntity->code);
                 $this->isCorrectPatientCodeLenght($patientEntity->code);
                 $this->isExistingCenter($patientEntity->centerCode);
-                $this->isCorrectPrefix($patientEntity->code);
+                $this->isCorrectPrefix($studyEntity['patient_code_prefix'],$patientEntity->code);
 
                 //Store the patient result import process in this object
                 $this->patientRepository->addPatientInStudy($patientEntity, $this->studyName);
@@ -108,8 +108,8 @@ class ImportPatientService
 		}
 	}
 
-	private function isCorrectPrefix(int $patientCode) : void {
-		if (!empty($this->studyEntity->patientCodePrefix) && !$this->startsWith((string) $patientCode, $this->studyEntity->patientCodePrefix)) {
+	private function isCorrectPrefix(?int $patientCodePrefix, int $patientCode) : void {
+		if (!empty($patientCodePrefix) && !$this->startsWith((string) $patientCode, $patientCodePrefix)) {
     		throw new GaelOBadRequestException('Wrong Patient Prefix');
         }
 	}

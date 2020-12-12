@@ -37,7 +37,6 @@ class CountryTest extends TestCase
         $this->json('GET', '/api/countries/FR')->assertJson(['code'=>'FR']);
         $response = $this->json('GET', '/api/countries') -> decodeResponseJson();
         $this->assertEquals( 255,  sizeof($response) );
-        $this->json('GET', '/api/countries/WrongCountry') -> assertStatus(404);
     }
 
     public function testGetCountryShouldFailNotAdmin()

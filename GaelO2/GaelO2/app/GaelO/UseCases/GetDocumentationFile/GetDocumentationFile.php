@@ -21,7 +21,7 @@ class GetDocumentationFile{
     public function execute(GetDocumentationFileRequest $getDocumentationFileRequest, GetDocumentationFileResponse $getdocumentationFileReponse){
         try{
 
-            $documentationData = $this->persistenceInterface->getDocumentation($getDocumentationFileRequest->id);
+            $documentationData = $this->persistenceInterface->find($getDocumentationFileRequest->id);
 
             $documentationAllowedRoles = [];
 

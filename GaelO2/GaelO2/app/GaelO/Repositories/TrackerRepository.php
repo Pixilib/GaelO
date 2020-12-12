@@ -3,11 +3,10 @@
 namespace App\GaelO\Repositories;
 
 use App\GaelO\Constants\Constants;
-use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Interfaces\PersistenceInterface;
 use App\Tracker;
 use App\GaelO\Util;
-use Illuminate\Support\Facades\Log;
+use Exception;
 
 class TrackerRepository implements PersistenceInterface {
 
@@ -29,7 +28,7 @@ class TrackerRepository implements PersistenceInterface {
     }
 
     public function find(int $id){
-        return $this->tracker->find($id)->toArray();
+        return $this->tracker->findOrFail($id)->toArray();
     }
 
     public function getAll() :array {
@@ -38,7 +37,7 @@ class TrackerRepository implements PersistenceInterface {
     }
 
     public function delete($id) :void {
-        throw new GaelOException("Tracker Delete Forbidden");
+        throw new Exception("Tracker Delete Forbidden");
     }
 
     public function getTrackerOfRole(string $role) : array {
@@ -56,8 +55,8 @@ class TrackerRepository implements PersistenceInterface {
         return empty($trackerData) ? [] : $trackerData->toArray();
     }
 
-    public function getUsersInternalMessageOfStudy(string $study) : array {
-        $trackerData = $this->tracker->where('study_name', $study)->where("action_type", Constants::TRACKER_SEND_MESSAGE)->get();
+    public function getTrackerOrActionInStudy(string $action, string $study) : array {
+        $trackerData = $this->tracker->where('study_name', $study)->where("action_type", $action)->get();
         return empty($trackerData) ? [] : $trackerData->toArray();
     }
 

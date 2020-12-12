@@ -11,6 +11,7 @@ use App\GaelO\Repositories\StudyRepository;
 use App\GaelO\Repositories\UserRepository;
 use App\GaelO\Repositories\VisitTypeRepository;
 use App\GaelO\Repositories\VisitRepository;
+use App\GaelO\UseCases\GetVisitType\VisitTypeEntity;
 
 class VisitService
 {
@@ -74,7 +75,8 @@ class VisitService
         ?string $reasonForNotDone
     ) {
 
-        $visitTypeEntity = $this->visitTypeRepository->getEntity($visitTypeId);
+        $visitTypeData = $this->visitTypeRepository->find($visitTypeId);
+        $visitTypeEntity = VisitTypeEntity::fillFromDBReponseArray($visitTypeData);
 
         $stateInvestigatorForm = Constants::INVESTIGATOR_FORM_NOT_DONE;
         $stateQualityControl = Constants::QUALITY_CONTROL_NOT_DONE;

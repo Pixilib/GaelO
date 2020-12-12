@@ -11,7 +11,7 @@ Visit Type : (GET), (POST), (DELETE) => OK
 Affiliated Center  : (GET), (POST), (DELETE) =>OK
 Export-db : (POST) => OK
 Documentation (GET, POST, DELETE) => OK
-Visit Dicoms (GET) => OK
+Visit Dicoms File (GET) => OK
 Tus : (All) => OK
 Patient : ( GET, POST, PATCH ) => OK
 Patient Withdraw : (PATCH)=> OK
@@ -22,19 +22,17 @@ Corrective Action (PATCH) => OK
 Ask Unlock (POST) => OK
 Creatable-Visits (GET) => OK
 Possible-Uploads (GET) => OK
-dicom-series (DELETE) => OK, reste PATCH (reactivation)
+dicom-series (DELETE) => OK (Nb pour reset upload, loop depuis front), reste PATCH (reactivation)
 
 Salim TODO :
 
 Preparation Investigateur / Monitor / Controller / Reviewer :
+- API Visits Get Dicom Series (de base sauf supervisor incluant les deleted)
 - API Reactivate Series (PATCH)
-- API Reset Upload=> Looper sur Delete depuis le front?
-- API Get Dicom Series (de base sauf supervisor incluant les deleted)
 - API Review (POST, GET, DELETE) + Review attached files
 - API Tree Finir Test Unitaire Service creation tree
 
 Refactorer Visit Service (visit ID en variable de classe) ++++
-Repository : Privilegier les find quand requette clé primaire (et sans get après)
 
 Creatable Visit : Manque Study Custom Logic (+dans front skip visites optionnelles)
 

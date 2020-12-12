@@ -30,11 +30,11 @@ class VisitRepository implements PersistenceInterface {
     }
 
     public function find($id){
-        return $this->visit->find($id)->toArray();
+        return $this->visit->findOrFail($id)->toArray();
     }
 
     public function delete($id) : void {
-        $this->visit->find($id)->delete();
+        $this->visit->findOrFail($id)->delete();
     }
 
     public function createVisit(string $studyName, int $creatorUserId, int $patientCode, ?string $acquisitionDate, int $visitTypeId,
@@ -210,7 +210,7 @@ class VisitRepository implements PersistenceInterface {
     }
 
     public function editQc(int $visitId, string $stateQc, int $controllerId, bool $imageQc, bool $formQc, ?string $imageQcComment, ?string $formQcComment) : void{
-        $visitEntity = $this->visit->find($visitId);
+        $visitEntity = $this->visit->findOrFail($visitId);
         $visitEntity['state_quality_control'] = $stateQc;
 
         $visitEntity['controller_user_id'] = $controllerId;
@@ -225,7 +225,7 @@ class VisitRepository implements PersistenceInterface {
 
     public function resetQc(int $visitId) : void {
 
-        $visitEntity = $this->visit->find($visitId);
+        $visitEntity = $this->visit->findOrFail($visitId);
 
         $visitEntity['state_quality_control'] = Constants::QUALITY_CONTROL_NOT_DONE;
         $visitEntity['controller_user_id'] = null;
@@ -247,7 +247,7 @@ class VisitRepository implements PersistenceInterface {
 
     public function setCorectiveAction(int $visitId, int $investigatorId, bool $newUpload, bool $newInvestigatorForm, bool $correctiveActionApplyed, string $comment ){
 
-        $visitEntity = $this->visit->find($visitId);
+        $visitEntity = $this->visit->findOrFail($visitId);
 
         $visitEntity['state_quality_control'] = Constants::QUALITY_CONTROL_WAIT_DEFINITIVE_CONCLUSION;
         $visitEntity['corrective_action_user_id'] = $investigatorId;
@@ -262,7 +262,7 @@ class VisitRepository implements PersistenceInterface {
     }
 
     public function updateInvestigatorForm(int $visitId, string $stateInvestigatorForm) : array{
-        $visitEntity = $this->visit->find($visitId);
+        $visitEntity = $this->visit->findOrFail($visitId);
         $visitEntity['state_investigator_form'] = $stateInvestigatorForm;
         $visitEntity->save();
         return $visitEntity->toArray();
