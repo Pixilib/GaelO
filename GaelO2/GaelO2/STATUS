@@ -28,16 +28,14 @@ Salim TODO :
 
 Preparation Investigateur / Monitor / Controller / Reviewer :
 - API Visits Get Dicom Series (de base sauf supervisor incluant les deleted)
-- API Reactivate Series (PATCH)
+- API Reactivate Dicom Series (PATCH)
+- API Reactivate Dicom Study (PATCH)
 - API Review (POST, GET, DELETE) + Review attached files
 - API Tree Finir Test Unitaire Service creation tree
 
-Refactorer Visit Service (visit ID en variable de classe) ++++
-
-Creatable Visit : Manque Study Custom Logic (+dans front skip visites optionnelles)
-
 Service Visit => Continuer test passage en upload Done
 Class d'authorisation revenir a l'heritage?
+Refactorer Visit Service (visit ID en variable de classe) ++++
 Faire un objet specifique pour l'authorisation des Review ?
 
 Pb Authorisation : Un ID Visit peut maintenant a etre attachee a plusieurs etudes ancillaires
@@ -78,6 +76,7 @@ Deploiement ajouter le login / mdp pour dans orthanc pacs + bloquer delete dans 
 Dans remplissage DTO request, si variable boolean, un input string est interpretée à true.
 QC Not Needed => autoriser ou pas remove de series ?
 Delete Series  : Reset du form Investigateur pas géré
+Creatable Visit : Manque Study Custom Logic (+dans front skip visites optionnelles ?)
 
 
 Préparation supervisor :
