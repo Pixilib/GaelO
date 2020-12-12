@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\GaelO\UseCases\DeleteSeries\DeleteSeries;
 use App\GaelO\UseCases\DeleteSeries\DeleteSeriesRequest;
 use App\GaelO\UseCases\DeleteSeries\DeleteSeriesResponse;
+use App\GaelO\UseCases\GetDicoms\GetDicoms;
+use App\GaelO\UseCases\GetDicoms\GetDicomsRequest;
+use App\GaelO\UseCases\GetDicoms\GetDicomsResponse;
 use App\GaelO\UseCases\GetDicomsFile\GetDicomsFile;
 use App\GaelO\UseCases\GetDicomsFile\GetDicomsFileRequest;
 use App\GaelO\UseCases\GetDicomsFile\GetDicomsFileResponse;
@@ -16,7 +19,28 @@ class DicomController extends Controller
 {
 
 
-    public function getVisitDicomsFile(int $visitId = 0, Request $request, GetDicomsFile $getDicoms, GetDicomsFileRequest $getDicomsRequest, GetDicomsFileResponse $getDicomsResponse){
+    public function getVisitDicomsFile(int $visitId = 0, Request $request, GetDicomsFile $getDicomsFile, GetDicomsFileRequest $getDicomsFileRequest, GetDicomsFileResponse $getDicomsFileResponse){
+        $currentUser = Auth::user();
+        $queryParam = $request->query();
+
+        $getDicomsFileRequest->currentUserId = $currentUser['id'];
+        $getDicomsFileRequest->visitId = $visitId;
+        $getDicomsFileRequest->role = $queryParam['role'];
+        $getDicomsFile->execute($getDicomsFileRequest, $getDicomsFileResponse);
+
+        if($getDicomsFileResponse->status === 200) {
+            return response()->streamDownload( function() use( &$getDicoms){
+                $getDicoms->outputStream();
+            }, $getDicomsFileResponse->filename);
+        }else{
+            return response()->json($getDicomsFileResponse->body)
+            ->setStatusCode($getDicomsFileResponse->status, $getDicomsFileResponse->statusText);
+        }
+
+
+    }
+
+    public function getVisitDicoms(int $visitId, Request $request, GetDicoms $getDicoms, GetDicomsRequest $getDicomsRequest, GetDicomsResponse $getDicomsResponse){
         $currentUser = Auth::user();
         $queryParam = $request->query();
 
@@ -25,14 +49,9 @@ class DicomController extends Controller
         $getDicomsRequest->role = $queryParam['role'];
         $getDicoms->execute($getDicomsRequest, $getDicomsResponse);
 
-        if($getDicomsResponse->status === 200) {
-            return response()->streamDownload( function() use( &$getDicoms){
-                $getDicoms->outputStream();
-            }, $getDicomsResponse->filename);
-        }else{
-            return response()->json($getDicomsResponse->body)
-            ->setStatusCode($getDicomsResponse->status, $getDicomsResponse->statusText);
-        }
+        return response()->json($getDicomsResponse->body)
+        ->setStatusCode($getDicomsResponse->status, $getDicomsResponse->statusText);
+
 
 
     }

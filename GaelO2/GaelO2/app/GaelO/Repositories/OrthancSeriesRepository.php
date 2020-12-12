@@ -66,8 +66,8 @@ class OrthancSeriesRepository implements PersistenceInterface{
             'number_of_instances'=>$numberOfInstances,
             'series_uid'=>$seriesUID,
             'series_number'=>$seriesNumber,
-            'series_disk_size'=>$seriesDiskSize,
-            'series_uncompressed_disk_size'=>$seriesUncompressedDiskSize,
+            'disk_size'=>$seriesDiskSize,
+            'uncompressed_disk_size'=>$seriesUncompressedDiskSize,
             'manufacturer'=>$manufacturer,
             'model_name'=>$modelName
 
@@ -101,8 +101,8 @@ class OrthancSeriesRepository implements PersistenceInterface{
         'number_of_instances'=>$numberOfInstances,
         'series_uid'=>$seriesUID,
         'series_number'=>$seriesNumber,
-        'series_disk_size'=>$seriesDiskSize,
-        'series_uncompressed_disk_size'=>$seriesUncompressedDiskSize,
+        'disk_size'=>$seriesDiskSize,
+        'uncompressed_disk_size'=>$seriesUncompressedDiskSize,
         'manufacturer'=>$manufacturer,
         'model_name'=>$modelName
 

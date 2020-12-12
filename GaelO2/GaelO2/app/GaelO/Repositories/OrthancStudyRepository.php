@@ -128,6 +128,17 @@ class OrthancStudyRepository implements PersistenceInterface{
         return $this->orthancStudy->where('visit_id', $visitID)->firstOrFail()->value('orthanc_id');
     }
 
+    public function getDicomsDataFromVisit(int $visitID, bool $withDeleted) : array {
+
+        if($withDeleted){
+            $studies = $this->orthancStudy->withTrashed()->with(['series' => function ($query){ $query->withTrashed(); } ])->where('visit_id', $visitID)->get();
+        }else{
+            $studies = $this->orthancStudy->where('visit_id', $visitID)->with('series')->get();
+        }
+
+        return $studies->count() == 0 ? [] : $studies->toArray();
+    }
+
     public function getOrthancStudyByStudyInstanceUID(string $studyInstanceUID, bool $includeDeleted) : array {
         if($includeDeleted){
             $study = $this->orthancStudy->where('study_uid',$studyInstanceUID)->withTrashed()->firstOrFail()->toArray();

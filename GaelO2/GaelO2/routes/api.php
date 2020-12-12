@@ -87,7 +87,7 @@ Route::middleware(['auth:api', 'refresh_token'])->group(function () {
     Route::delete('visits/{id}', 'VisitController@deleteVisit');
     Route::post('studies/{studyName}/visit-groups/{visitGroupId}/visit-types/{visitTypeId}/visits', 'VisitController@createVisit');
     Route::get('visits/{id}', 'VisitController@getVisit');
-    Route::get('visits/{id}/dicoms/file', 'DicomController@getVisitDicoms');
+    Route::get('visits/{id}/dicoms', 'DicomController@getVisitDicoms');
 
     //Dicom Routes
     Route::delete('dicom-series/{seriesInstanceUID}', 'DicomController@deleteSeries');

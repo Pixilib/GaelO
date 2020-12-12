@@ -14,7 +14,8 @@ class OrthancStudyProvider extends ServiceProvider
     public function register()
     {
         $this->app->when(
-            [\App\GaelO\UseCases\GetKnownOrthancID\GetKnownOrthancID::class])
+            [\App\GaelO\UseCases\GetKnownOrthancID\GetKnownOrthancID::class,
+            \App\GaelO\UseCases\GetDicoms\GetDicoms::class])
         ->needs(\App\GaelO\Interfaces\PersistenceInterface::class)
         ->give(\App\GaelO\Repositories\OrthancStudyRepository::class);
     }

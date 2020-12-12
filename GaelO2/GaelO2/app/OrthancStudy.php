@@ -21,6 +21,7 @@ class OrthancStudy extends Model
         return $this->belongsTo('App\Visit', 'visit_id', 'id');
     }
 
+
     public function uploader(){
         return $this->belongsTo('App\User', 'user_id', 'id');
     }

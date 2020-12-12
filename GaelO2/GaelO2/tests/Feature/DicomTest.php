@@ -29,10 +29,6 @@ class DicomTest extends TestCase
         $this->baseRunDatabaseMigrations();
         $this->artisan('db:seed');
 
-        if (true) {
-            $this->markTestSkipped('Needs Orthanc To Be Tested');
-        }
-
     }
 
     protected function setUp() : void{
@@ -71,6 +67,7 @@ class DicomTest extends TestCase
     }
 
     public function testGetOrthancZip(){
+        $this->markTestSkipped('Needs Orthanc To Be Tested');
         AuthorizationTools::addRoleToUser(1, Constants::ROLE_INVESTIGATOR, $this->study->name);
         $answer = $this->get('api/visits/1/dicoms/file?role=Investigator');
         $answer->assertStatus(200);
@@ -78,7 +75,30 @@ class DicomTest extends TestCase
     }
 
     public function testGetOrthancShouldFailBeacauseNoRole(){
+        $this->markTestSkipped('Needs Orthanc To Be Tested');
         $answer = $this->get('api/visits/1/dicoms/file?role=Investigator');
         $answer->assertStatus(403);
+    }
+
+    public function testGetDicomsDataInvestigator(){
+        AuthorizationTools::addRoleToUser(1, Constants::ROLE_INVESTIGATOR, $this->study->name);
+        $answer = $this->get('api/visits/'.$this->visit->id.'/dicoms?role=Investigator');
+        $response = json_decode($answer->content(), true);
+        $this->assertEquals(1, sizeof($response));
+
+    }
+
+    public function testGetDicomsDataSupervisor(){
+        $this->orthancStudy->delete();
+        AuthorizationTools::addRoleToUser(1, Constants::ROLE_SUPERVISOR, $this->study->name);
+        $answer = $this->get('api/visits/'.$this->visit->id.'/dicoms?role=Supervisor');
+        $response = json_decode($answer->content(), true);
+        $this->assertEquals(1, sizeof($response));
+        $this->assertEquals(true, $response[0]['deleted']);
+
+    }
+
+    public function testGetDicomsDataFailNoRole(){
+        $this->get('api/visits/'.$this->visit->id.'/dicoms?role=Investigator')->assertStatus(403);
     }
 }

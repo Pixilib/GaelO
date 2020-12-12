@@ -12,6 +12,7 @@ Affiliated Center  : (GET), (POST), (DELETE) =>OK
 Export-db : (POST) => OK
 Documentation (GET, POST, DELETE) => OK
 Visit Dicoms File (GET) => OK
+Visit Dicoms (GET) => OK
 Tus : (All) => OK
 Patient : ( GET, POST, PATCH ) => OK
 Patient Withdraw : (PATCH)=> OK
@@ -27,7 +28,6 @@ dicom-series (DELETE) => OK (Nb pour reset upload, loop depuis front), reste PAT
 Salim TODO :
 
 Preparation Investigateur / Monitor / Controller / Reviewer :
-- API Visits Get Dicom Series (de base sauf supervisor incluant les deleted)
 - API Reactivate Dicom Series (PATCH)
 - API Reactivate Dicom Study (PATCH)
 - API Review (POST, GET, DELETE) + Review attached files
