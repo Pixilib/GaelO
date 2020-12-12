@@ -7,7 +7,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
-class BlockedAccount extends Mailable
+class BlockedAccount extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
 

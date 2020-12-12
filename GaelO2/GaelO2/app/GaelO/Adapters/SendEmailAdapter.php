@@ -28,6 +28,8 @@ use App\Mail\ImportPatient;
 
 class SendEmailAdapter implements MailInterface {
 
+    private array $to;
+
     public function setReplyTo( ?String $replyTo = null ){
         if($replyTo == null) $this->replyTo= LaravelFunctionAdapter::getConfig('mailReplyToDefault');
         else $this->replyTo = $replyTo;
@@ -122,7 +124,7 @@ class SendEmailAdapter implements MailInterface {
 
     public function sendEmail(){
         foreach($this->to as $destinator ){
-            Mail::to($destinator)->queue($this->model);
+            Mail::to($destinator)->send($this->model);
         }
     }
 

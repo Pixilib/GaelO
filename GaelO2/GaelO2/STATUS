@@ -80,14 +80,15 @@ Creatable Visit : Manque Study Custom Logic (+dans front skip visites optionnell
 
 
 Préparation supervisor :
+- Users in Study
+- tracker
+- Reactivate visit
+
+- Unlock / Delete form
+- Export Study Data
 - Review Manager
 - Upload Manager
 - Statistics
-- tracker
-- Unlock / Delete form
-- Users in Study
-- Export Study Data
-- Reactivate visit
 - Remininder email upload / review
 - Send to peer
 + Messagerie a designer
