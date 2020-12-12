@@ -28,7 +28,6 @@ class GetCreatableVisits{
             $this->checkAuthorization($getCreatableVisitsRequest->currentUserId, $getCreatableVisitsRequest->patientCode);
 
             $visitToCreate = $this->visitService->getAvailableVisitToCreate($getCreatableVisitsRequest->patientCode);
-
             $getCreatableVisitsResponse->status = 200;
             $getCreatableVisitsResponse->statusText = 'OK';
             $getCreatableVisitsResponse->body = $visitToCreate;

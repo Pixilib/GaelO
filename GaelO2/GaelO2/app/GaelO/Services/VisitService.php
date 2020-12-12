@@ -174,7 +174,6 @@ class VisitService
 
         //Get Possibles visits groups and type from study
         $studyVisitsDetails = $this->studyRepository->getStudyDetails($patientEntity['study_name']);
-
         $studyVisitMap = [];
         //Reindex possibiles visits by modality and order
         foreach( $studyVisitsDetails['visit_group_details'] as $visitGroupDetails){
@@ -189,7 +188,6 @@ class VisitService
             }
 
         }
-
         $visitToCreateMap = [];
 
         //Search for visits that have not been created

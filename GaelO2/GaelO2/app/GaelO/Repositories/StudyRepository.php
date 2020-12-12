@@ -26,7 +26,7 @@ class StudyRepository implements PersistenceInterface {
     }
 
     public function find($name){
-        return $this->study->find($name)->firstOrFail()->toArray();
+        return $this->study->find($name)->toArray();
     }
 
     public function delete($name) : void {
@@ -69,8 +69,8 @@ class StudyRepository implements PersistenceInterface {
     }
 
     public function getStudyDetails(string $name) : array {
-        $studiesDetails = $this->study->find($name)->with(['visitGroupDetails'])->get();
-        return $studiesDetails->first()->toArray();
+        $studiesDetails = $this->study->with('visitGroupDetails')->find($name);
+        return $studiesDetails->toArray();
     }
 
     public function reactivateStudy(string $name) : void {
