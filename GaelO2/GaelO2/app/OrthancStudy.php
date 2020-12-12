@@ -3,9 +3,11 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class OrthancStudy extends Model
 {
+    use SoftDeletes;
 
     protected $primaryKey = 'orthanc_id';
     protected $keyType = 'string';

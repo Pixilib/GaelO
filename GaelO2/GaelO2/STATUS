@@ -22,18 +22,19 @@ Corrective Action (PATCH) => OK
 Ask Unlock (POST) => OK
 Creatable-Visits (GET) => OK
 Possible-Uploads (GET) => OK
+dicom-series (DELETE) => OK, reste PATCH (reactivation)
 
 Salim TODO :
 
 Preparation Investigateur / Monitor / Controller / Reviewer :
-- API Delete Series orthanc => Reste Tests + test Unitaire sur SeriesService
 - API Reactivate Series (PATCH)
-- API Reset Upload
+- API Reset Upload=> Looper sur Delete depuis le front?
 - API Get Dicom Series (de base sauf supervisor incluant les deleted)
 - API Review (POST, GET, DELETE) + Review attached files
 - API Tree Finir Test Unitaire Service creation tree
 
 Refactorer Visit Service (visit ID en variable de classe) ++++
+Repository : Privilegier les find quand requette clé primaire (et sans get après)
 
 Creatable Visit : Manque Study Custom Logic (+dans front skip visites optionnelles)
 
@@ -68,6 +69,7 @@ Doit pouvoir voir user details
 
 
 +Tard :
+
 Faire une condition pour les NoContent dans le controller ? => ou mettre toujours un payload vide pour eviter les errur error->json() dans front?
 Voir dans message d'erreur comment ajouter d'autre info que le message (pour id de login)
 CreateVisitType et CreateVisitGroup => Ajouter un forbidden si l'etude a déjà des visites crées (etude demarrée)
@@ -76,6 +78,8 @@ Reverse proxy dicomweb => Comment faire venir le role et study depuis ohif ? dep
 TUS est Joignable sur Delete => peut etre gerer le failure/cancel pour vider tus ?
 Deploiement ajouter le login / mdp pour dans orthanc pacs + bloquer delete dans lua script
 Dans remplissage DTO request, si variable boolean, un input string est interpretée à true.
+QC Not Needed => autoriser ou pas remove de series ?
+Delete Series  : Reset du form Investigateur pas géré
 
 
 Préparation supervisor :

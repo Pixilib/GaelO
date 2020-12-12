@@ -3,6 +3,7 @@
 namespace App\GaelO\UseCases\DeleteSeries;
 
 use App\GaelO\Constants\Constants;
+use App\GaelO\Exceptions\GaelOBadRequestException;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\PersistenceInterface;
@@ -30,14 +31,19 @@ class DeleteSeries{
 
         try{
 
+            if(empty($deleteSeriesRequest->reason)){
+                throw new GaelOBadRequestException("A reason must be specified");
+            }
+
             $seriesData = $this->dicomSeriesService->getSeriesBySeriesInstanceUID($deleteSeriesRequest->seriesInstanceUID);
-            dd($seriesData);
-            $visitId = $seriesData['orthancStudy']['visit_id'];
-            $this->checkAuthorization($deleteSeriesRequest->currentUserId, $visitId, $deleteSeriesRequest->role);
+            $visitId = $seriesData['orthanc_study']['visit_id'];
+            $visitContext = $this->persistenceInterface->getVisitContext($visitId);
+
+            $this->checkAuthorization($deleteSeriesRequest->currentUserId, $visitId, $deleteSeriesRequest->role, $visitContext['state_quality_control']);
 
             $this->dicomSeriesService->deleteSeries($deleteSeriesRequest->seriesInstanceUID, $deleteSeriesRequest->role);
 
-            $visitContext = $this->persistenceInterface->getVisitContext($visitId);
+
             $studyName = $visitContext['visit_type']['visit_group']['study_name'];
 
             $actionDetails = [
@@ -69,10 +75,15 @@ class DeleteSeries{
 
     }
 
-    public function checkAuthorization(int $userId, int $visitId, string $role) : void{
+    public function checkAuthorization(int $userId, int $visitId, string $role, string $qcStatus) : void{
 
         //Series delete only for Investigator, Controller, Supervisor
         if( !in_array($role, [Constants::ROLE_INVESTIGATOR, Constants::ROLE_CONTROLER, Constants::ROLE_SUPERVISOR]) ){
+            throw new GaelOForbiddenException();
+        }
+
+        //If QC is done, can't remove series
+        if( in_array($qcStatus, [Constants::QUALITY_CONTROL_ACCEPTED, Constants::QUALITY_CONSTROL_REFUSED])){
             throw new GaelOForbiddenException();
         }
 

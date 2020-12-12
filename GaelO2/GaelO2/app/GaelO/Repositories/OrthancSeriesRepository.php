@@ -119,9 +119,9 @@ class OrthancSeriesRepository implements PersistenceInterface{
 
     public function getSeriesBySeriesInstanceUID(string $seriesInstanceUID, bool $includeDeleted) : array {
         if($includeDeleted){
-            $series = $this->orthancSeries->with('orthancStudy')->where('series_uid',$seriesInstanceUID)->firstOrFail()->toArray();
-        }else{
             $series = $this->orthancSeries->with('orthancStudy')->where('series_uid',$seriesInstanceUID)->withTrashed()->firstOrFail()->toArray();
+        }else{
+            $series = $this->orthancSeries->with('orthancStudy')->where('series_uid',$seriesInstanceUID)->firstOrFail()->toArray();
         }
 
         return $series;

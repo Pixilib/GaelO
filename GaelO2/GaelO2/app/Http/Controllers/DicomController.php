@@ -50,12 +50,12 @@ class DicomController extends Controller
 
         $deleteSeries->execute($deleteSeriesRequest, $deleteSeriesResponse);
 
-        if($deleteSeriesRequest->body === null){
+        if($deleteSeriesResponse->body === null){
             return response()->noContent()
-            ->setStatusCode($deleteSeriesRequest->status, $deleteSeriesRequest->statusText);
+            ->setStatusCode($deleteSeriesResponse->status, $deleteSeriesResponse->statusText);
         }else{
-            return response()->json($deleteSeriesRequest->body)
-            ->setStatusCode($deleteSeriesRequest->status, $deleteSeriesRequest->statusText);
+            return response()->json($deleteSeriesResponse->body)
+            ->setStatusCode($deleteSeriesResponse->status, $deleteSeriesResponse->statusText);
         }
     }
 }
