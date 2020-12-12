@@ -1,9 +1,9 @@
 <?php
 
-namespace App\GaelO\UseCases\GetDicoms;
+namespace App\GaelO\UseCases\GetDicomsFile;
 
 
-class GetDicomsRequest{
+class GetDicomsFileRequest{
     public int $currentUserId;
     public int $visitId;
     public string $role;

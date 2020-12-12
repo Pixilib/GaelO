@@ -1,18 +1,15 @@
 <?php
 
-namespace App\GaelO\UseCases\GetDicoms;
+namespace App\GaelO\UseCases\GetDicomsFile;
 
-use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Services\AuthorizationDicomWebService;
-use App\GaelO\Services\AuthorizationService;
-use App\GaelO\Services\AuthorizationVisitService;
 use App\GaelO\Services\OrthancService;
 use App\GaelO\Services\VisitService;
 use Exception;
 
-class GetDicoms{
+class GetDicomsFile{
 
     public function __construct(AuthorizationDicomWebService $authorizationService, VisitService $visitService, OrthancService $orthancService)
     {
@@ -22,7 +19,7 @@ class GetDicoms{
         $this->orthancService->setOrthancServer(false);
     }
 
-    public function execute(GetDicomsRequest $getDicomsRequest, GetDicomsResponse $getDicomsResponse){
+    public function execute(GetDicomsFileRequest $getDicomsRequest, GetDicomsFileResponse $getDicomsResponse){
 
         try{
 

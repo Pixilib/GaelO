@@ -18,7 +18,7 @@ use Laravel\Passport\Passport;
 use Tests\AuthorizationTools;
 use Tests\TestCase;
 
-class DeleteSeriesTest extends TestCase
+class DicomDeleteSeriesTest extends TestCase
 {
 
     use DatabaseMigrations {

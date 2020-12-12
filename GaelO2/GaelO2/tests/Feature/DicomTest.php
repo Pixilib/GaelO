@@ -72,13 +72,13 @@ class DicomTest extends TestCase
 
     public function testGetOrthancZip(){
         AuthorizationTools::addRoleToUser(1, Constants::ROLE_INVESTIGATOR, $this->study->name);
-        $answer = $this->get('api/visits/1/dicoms?role=Investigator');
+        $answer = $this->get('api/visits/1/dicoms/file?role=Investigator');
         $answer->assertStatus(200);
 
     }
 
     public function testGetOrthancShouldFailBeacauseNoRole(){
-        $answer = $this->get('api/visits/1/dicoms?role=Investigator');
+        $answer = $this->get('api/visits/1/dicoms/file?role=Investigator');
         $answer->assertStatus(403);
     }
 }

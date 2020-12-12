@@ -87,6 +87,7 @@ Route::middleware(['auth:api', 'refresh_token'])->group(function () {
     Route::delete('visits/{id}', 'VisitController@deleteVisit');
     Route::post('studies/{studyName}/visit-groups/{visitGroupId}/visit-types/{visitTypeId}/visits', 'VisitController@createVisit');
     Route::get('visits/{id}', 'VisitController@getVisit');
+    Route::get('visits/{id}/dicoms/file', 'DicomController@getVisitDicoms');
 
     //Dicom Routes
     Route::delete('dicom-series/{seriesInstanceUID}', 'DicomController@deleteSeries');
@@ -121,8 +122,8 @@ Route::middleware(['auth:api', 'refresh_token'])->group(function () {
 Route::middleware('auth:api')->post('export-db', 'ExportDBController@exportDB');
 Route::middleware('auth:api')->get('documentations/{id}/file', 'DocumentationController@getDocumentationFile');
 
-//SK AJOUTER FILE SUR CETTE API POUR LIBERER L URI POUR AVOIR LES INFOS JSON
-Route::middleware('auth:api')->get('visits/{id}/dicoms', 'DicomController@getVisitDicoms');
+
+Route::middleware('auth:api')->get('visits/{id}/dicoms/file', 'DicomController@getVisitDicomsFile');
 
 /*
 |--------------------------------------------------------------------------

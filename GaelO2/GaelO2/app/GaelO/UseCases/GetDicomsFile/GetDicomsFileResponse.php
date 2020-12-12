@@ -1,8 +1,8 @@
 <?php
 
-namespace App\GaelO\UseCases\GetDicoms;
+namespace App\GaelO\UseCases\GetDicomsFile;
 
-class GetDicomsResponse{
+class GetDicomsFileResponse{
     public string $filename;
     public $body;
     public int $status;

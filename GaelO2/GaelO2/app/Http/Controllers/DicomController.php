@@ -5,9 +5,9 @@ namespace App\Http\Controllers;
 use App\GaelO\UseCases\DeleteSeries\DeleteSeries;
 use App\GaelO\UseCases\DeleteSeries\DeleteSeriesRequest;
 use App\GaelO\UseCases\DeleteSeries\DeleteSeriesResponse;
-use App\GaelO\UseCases\GetDicoms\GetDicoms;
-use App\GaelO\UseCases\GetDicoms\GetDicomsRequest;
-use App\GaelO\UseCases\GetDicoms\GetDicomsResponse;
+use App\GaelO\UseCases\GetDicomsFile\GetDicomsFile;
+use App\GaelO\UseCases\GetDicomsFile\GetDicomsFileRequest;
+use App\GaelO\UseCases\GetDicomsFile\GetDicomsFileResponse;
 use App\GaelO\Util;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -16,7 +16,7 @@ class DicomController extends Controller
 {
 
 
-    public function getVisitDicoms(int $visitId = 0, Request $request, GetDicoms $getDicoms, GetDicomsRequest $getDicomsRequest, GetDicomsResponse $getDicomsResponse){
+    public function getVisitDicomsFile(int $visitId = 0, Request $request, GetDicomsFile $getDicoms, GetDicomsFileRequest $getDicomsRequest, GetDicomsFileResponse $getDicomsResponse){
         $currentUser = Auth::user();
         $queryParam = $request->query();
 
