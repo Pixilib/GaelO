@@ -2,6 +2,7 @@
 
 namespace App\GaelO\UseCases\CreateVisit;
 
+use App\GaelO\Exceptions\GaelOBadRequestException;
 use App\GaelO\Exceptions\GaelOConflictException;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
@@ -9,6 +10,7 @@ use App\GaelO\Interfaces\PersistenceInterface;
 use App\GaelO\Services\AuthorizationPatientService;
 use App\GaelO\Services\TrackerService;
 use App\GaelO\Services\VisitService;
+use DateTime;
 use Exception;
 
 class CreateVisit {
@@ -37,11 +39,19 @@ class CreateVisit {
 
             }else{
 
+                if($createVisitRequest->visitDate !== null){
+
+                    //Input date should be in SQL FORMAT YYYY-MM-DD
+                    if ( !  $this->validateDate($createVisitRequest->visitDate) ){
+                        throw new GaelOBadRequestException("Visit Date should be in YYYY-MM-DD and valid");
+                    }
+                }
+
                 $this->visitService->createVisit(
                     $createVisitRequest->studyName,
                     $createVisitRequest->creatorUserId,
                     $createVisitRequest->patientCode,
-                    $createVisitRequest->acquisitionDate,
+                    $createVisitRequest->visitDate,
                     $createVisitRequest->visitTypeId,
                     $createVisitRequest->statusDone,
                     $createVisitRequest->reasonForNotDone);
@@ -70,6 +80,11 @@ class CreateVisit {
         }
 
 
+    }
+
+    private function validateDate(string $date, $format = 'Y-m-d'){
+        $d = DateTime::createFromFormat($format, $date);
+        return $d && $d->format($format) === $date;
     }
 
 

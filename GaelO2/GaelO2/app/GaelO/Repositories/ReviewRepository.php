@@ -25,7 +25,7 @@ class ReviewRepository{
     }
 
     public function find($id){
-        return $this->review->find($id)->toArray();
+        return $this->review->findOrFail($id)->toArray();
     }
 
     public function delete($id) : void {

@@ -12,6 +12,10 @@ class TrackerEntity {
     public string $action_type;
     public ?string $action_details;
 
+    public ?string $username;
+    public ?string $lastname;
+    public ?string $firstname;
+
     public static function fillFromDBReponseArray(array $array){
         $trackerEntity  = new TrackerEntity();
         $trackerEntity->id = $array['id'];
@@ -23,6 +27,12 @@ class TrackerEntity {
         $trackerEntity->action_type = $array['action_type'];
         $trackerEntity->action_details = $array['action_details'];
         return $trackerEntity;
+    }
+
+    public function setUserData(array $array){
+        $this->username = $array['username'];
+        $this->lastname = $array['lastname'];
+        $this->firstname = $array['firstname'];
     }
 
 }

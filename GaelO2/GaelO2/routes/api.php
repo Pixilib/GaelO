@@ -86,7 +86,13 @@ Route::middleware(['auth:api', 'refresh_token'])->group(function () {
     Route::patch('visits/{id}/corrective-action', 'VisitController@modifyCorrectiveAction');
     Route::delete('visits/{id}', 'VisitController@deleteVisit');
     Route::post('studies/{studyName}/visit-groups/{visitGroupId}/visit-types/{visitTypeId}/visits', 'VisitController@createVisit');
-    Route::get('visits/{id}', 'VisitController@getVisit');
+    Route::get('studies/{studyName}/visits/{id}', 'VisitController@getVisit');
+    Route::get('visits/{id}/dicoms', 'DicomController@getVisitDicoms');
+
+    //Dicom Routes
+    Route::delete('dicom-series/{seriesInstanceUID}', 'DicomController@deleteSeries');
+    Route::patch('dicom-series/{seriesInstanceUID}', 'DicomController@reactivateSeries');
+    Route::patch('dicom-study/{studyInstanceUID}', 'DicomController@reactivateStudy');
 
     //Form routes
     Route::post('studies/{study}/visits/{id}/ask-unlock', 'FormController@askUnlock');
@@ -117,7 +123,9 @@ Route::middleware(['auth:api', 'refresh_token'])->group(function () {
 */
 Route::middleware('auth:api')->post('export-db', 'ExportDBController@exportDB');
 Route::middleware('auth:api')->get('documentations/{id}/file', 'DocumentationController@getDocumentationFile');
-Route::middleware('auth:api')->get('visits/{id}/dicoms', 'DicomController@getVisitDicoms');
+
+
+Route::middleware('auth:api')->get('visits/{id}/dicoms/file', 'DicomController@getVisitDicomsFile');
 
 /*
 |--------------------------------------------------------------------------

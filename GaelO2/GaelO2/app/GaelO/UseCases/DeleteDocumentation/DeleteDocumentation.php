@@ -23,7 +23,7 @@ class DeleteDocumentation{
 
         try{
 
-            $documentationEntity = $this->documentationRepository->getDocumentation($deleteDocumentationRequest->id);
+            $documentationEntity = $this->documentationRepository->find($deleteDocumentationRequest->id);
             $studyName = $documentationEntity['study_name'];
 
             $this->checkAuthorization($deleteDocumentationRequest->currentUserId, $studyName);

@@ -7,9 +7,8 @@ Interface MailInterface {
     public function setReplyTo(?string $replyTo = null);
     public function setTo(array $to);
     public function setParameters(array $parameters);
-    public function sendModel(int $model);
-    public function setBody(string $body);
-    public function sendEmail();
+    public function setBody($body);
+    public function send();
 
 }
 

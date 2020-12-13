@@ -47,7 +47,7 @@ class AuthorizationDicomWebService
             $seriesEntity = $this->orthancSeriesRepository->getSeriesBySeriesInstanceUID($requestedInstanceUID, $includedDeleted);
             $visitId = $seriesEntity['orthanc_study']['visit_id'];
         } else if ($level === "studies") {
-            $studyEntity = $this->orthancStudyRepository->getStudyByStudyInstanceUID($requestedInstanceUID, $includedDeleted);
+            $studyEntity = $this->orthancStudyRepository->getOrthancStudyByStudyInstanceUID($requestedInstanceUID, $includedDeleted);
             $visitId = $studyEntity['visit_id'];
         }
 

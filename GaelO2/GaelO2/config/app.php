@@ -202,7 +202,8 @@ return [
         App\Providers\PatientRepositoryProvider::class,
         App\Providers\VisitProvider::class,
         App\Providers\DocumentationRepositoryProvider::class,
-        App\Providers\OrthancStudyProvider::class
+        App\Providers\OrthancStudyProvider::class,
+        App\Providers\OrthancSeriesProvider::class
     ],
 
     /*

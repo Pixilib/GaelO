@@ -6,7 +6,7 @@ class VisitEntity {
     public ?int $creatorUserId;
     public ?string $creationDate;
     public int $patientCode;
-    public ?string $acquisitionDate;
+    public ?string $visitDate;
     public int $visitTypeId;
     public string $statusDone;
     public ?string $reasonForNotDone;
@@ -26,11 +26,16 @@ class VisitEntity {
     public ?string $correctiveActionOther;
     public ?bool $correctiveActionDecision;
     public ?string $lastReminderUpload;
+
     public ?string $visitGroupModality;
     public ?string $visitTypeName;
     public ?int $visitTypeOrder;
     public ?bool $visitTypeOptional;
     public ?int $visitGroupId;
+
+    public ?string $reviewStatus;
+    public ?string $reviewConclusionValue;
+    public ?string $reviewConclusionDate;
 
     public static function fillFromDBReponseArray(array $array){
         $visitEntity  = new VisitEntity();
@@ -38,7 +43,7 @@ class VisitEntity {
         $visitEntity->creatorUserId = $array['creator_user_id'];
         $visitEntity->creationDate = $array['creation_date'];
         $visitEntity->patientCode = $array['patient_code'];
-        $visitEntity->acquisitionDate = $array['acquisition_date'];
+        $visitEntity->visitDate = $array['visit_date'];
         $visitEntity->visitTypeId = $array['visit_type_id'];
         $visitEntity->statusDone = $array['status_done'];
         $visitEntity->reasonForNotDone = $array['reason_for_not_done'];
@@ -74,6 +79,12 @@ class VisitEntity {
         $this->visitGroupId = $visitGroupId;
 
 
+    }
+
+    public function setReviewVisitStatus(string $reviewStatus, ?string $reviewConclusionValue, ?string $reviewConclusionDate){
+        $this->reviewStatus = $reviewStatus;
+        $this->reviewConclusionValue = $reviewConclusionValue;
+        $this->reviewConclusionDate = $reviewConclusionDate;
     }
 
 }

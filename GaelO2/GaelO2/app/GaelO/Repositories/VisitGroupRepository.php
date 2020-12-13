@@ -25,11 +25,11 @@ class VisitGroupRepository implements PersistenceInterface {
     }
 
     public function find($id){
-        return $this->visitGroup->find($id)->toArray();
+        return $this->visitGroup->findOrFail($id)->toArray();
     }
 
     public function delete($id) : void {
-        $this->visitGroup->find($id)->delete();
+        $this->visitGroup->findOrFail($id)->delete();
     }
 
     public function getAll() : array {

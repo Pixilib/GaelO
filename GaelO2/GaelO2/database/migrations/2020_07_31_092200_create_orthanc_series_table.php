@@ -30,8 +30,8 @@ class CreateOrthancSeriesTable extends Migration
             $table->integer('number_of_instances')->nullable(false);
             $table->string('series_uid', 256)->nullable(false);
             $table->text('series_number')->nullable(true)->default(null);
-            $table->integer('series_disk_size')->nullable(false);
-            $table->integer('series_uncompressed_disk_size')->nullable(false);
+            $table->integer('disk_size')->nullable(false);
+            $table->integer('uncompressed_disk_size')->nullable(false);
             $table->text('manufacturer')->nullable(true)->default(null);
             $table->text('model_name')->nullable(true)->default(null);
             $table->softDeletes();

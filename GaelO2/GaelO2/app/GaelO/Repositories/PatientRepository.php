@@ -28,7 +28,7 @@ class PatientRepository implements PersistenceInterface {
     }
 
     public function find($code){
-        return $this->patient->where('code', $code)->firstOrFail()->toArray();
+        return $this->patient->findOrFail($code)->toArray();
     }
 
     public function delete($code) :void {

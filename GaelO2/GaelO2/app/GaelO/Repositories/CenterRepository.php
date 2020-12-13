@@ -35,7 +35,7 @@ class CenterRepository implements PersistenceInterface {
     }
 
     public function find($id){
-        return $this->center->find($id);
+        return $this->center->findOrFail($id);
     }
 
     public function delete($id) : void{
@@ -59,7 +59,7 @@ class CenterRepository implements PersistenceInterface {
     }
 
     public function isKnownCenter(int $code) : bool {
-        return empty($this->find($code)) ? false : true;
+        return empty($this->center->find($code)) ? false : true;
     }
 
     public function updateCenter(String $name, int $code, String $countryCode) : void {

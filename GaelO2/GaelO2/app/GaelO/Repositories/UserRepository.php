@@ -9,6 +9,7 @@ use App\GaelO\Interfaces\PersistenceInterface;
 use App\GaelO\Util;
 use App\Role;
 use DateTime;
+use Illuminate\Support\Facades\Log;
 
 class UserRepository implements PersistenceInterface {
 
@@ -36,7 +37,7 @@ class UserRepository implements PersistenceInterface {
     }
 
     public function delete($id) : void {
-        $this->user->find($id)->delete();
+        $this->user->findOrFail($id)->delete();
     }
 
     public function getAll() : array {

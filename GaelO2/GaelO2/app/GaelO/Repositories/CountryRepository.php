@@ -25,7 +25,7 @@ class CountryRepository implements PersistenceInterface {
     }
 
     public function find($code){
-        return $this->country->where('code', $code)->firstOrFail()->toArray();
+        return $this->country->findOrFail($code)->toArray();
     }
 
     public function delete($code) :void {

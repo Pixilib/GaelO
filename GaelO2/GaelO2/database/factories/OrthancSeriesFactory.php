@@ -22,8 +22,8 @@ $factory->define(OrthancSeries::class, function (Faker $faker) {
         'number_of_instances'=>$faker->randomNumber,
         'series_uid'=>$faker->word,
         'series_number'=>$faker->word,
-        'series_disk_size'=>$faker->randomNumber,
-        'series_uncompressed_disk_size'=>$faker->randomNumber,
+        'disk_size'=>$faker->randomNumber,
+        'uncompressed_disk_size'=>$faker->randomNumber,
         'manufacturer'=>$faker->word,
         'model_name'=>$faker->word,
     ];

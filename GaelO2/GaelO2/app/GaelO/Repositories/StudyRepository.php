@@ -26,11 +26,11 @@ class StudyRepository implements PersistenceInterface {
     }
 
     public function find($name){
-        return $this->study->find($name)->toArray();
+        return $this->study->findOrFail($name)->toArray();
     }
 
     public function delete($name) : void {
-        $this->study->find($name)->delete();
+        $this->study->findOrFail($name)->delete();
     }
 
     public function getAll() : array {
@@ -45,7 +45,6 @@ class StudyRepository implements PersistenceInterface {
         ];
 
         $this->create($data);
-
     }
 
     public function isExistingStudy($name) : bool {
@@ -75,11 +74,6 @@ class StudyRepository implements PersistenceInterface {
 
     public function reactivateStudy(string $name) : void {
         $this->study->withTrashed()->find($name)->restore();
-    }
-
-    public function getStudy(string $name) : StudyEntity {
-        $study = $this->study->where('name', $name)->get()->toArray();
-        return StudyEntity::fillFromDBReponseArray($study[0]);
     }
 
 }

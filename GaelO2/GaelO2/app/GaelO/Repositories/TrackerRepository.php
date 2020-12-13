@@ -3,11 +3,10 @@
 namespace App\GaelO\Repositories;
 
 use App\GaelO\Constants\Constants;
-use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Interfaces\PersistenceInterface;
 use App\Tracker;
 use App\GaelO\Util;
-use Illuminate\Support\Facades\Log;
+use Exception;
 
 class TrackerRepository implements PersistenceInterface {
 
@@ -17,9 +16,7 @@ class TrackerRepository implements PersistenceInterface {
     }
 
     public function update($id, array $data) : void {
-        $model = $this->tracker->find($id);
-        $model = Util::fillObject($data, $model);
-        $model->save();
+        throw new Exception('Tracker Not updatable');
     }
 
     public function create(array $data){
@@ -29,35 +26,35 @@ class TrackerRepository implements PersistenceInterface {
     }
 
     public function find(int $id){
-        return $this->tracker->find($id)->toArray();
+        throw new Exception('Tracker Not Accessible by Item');
     }
 
     public function getAll() :array {
-        $trackers = $this->tracker->get();
+        $trackers = $this->tracker->with('user')->get();
         return empty($trackers) ? [] : $trackers->toArray();
     }
 
     public function delete($id) :void {
-        throw new GaelOException("Tracker Delete Forbidden");
+        throw new Exception("Tracker Delete Forbidden");
     }
 
     public function getTrackerOfRole(string $role) : array {
-        $trackerData = $this->tracker->where('role', $role)->get();
+        $trackerData = $this->tracker->with('user')->where('role', $role)->get();
         return empty($trackerData) ? [] : $trackerData->toArray();
     }
 
     public function getTrackerOfRoleAndStudy(string $study, string $role) : array{
-        $trackerData = $this->tracker->where('study_name', $study)->where('role', $role)->get();
+        $trackerData = $this->tracker->with('user')->where('study_name', $study)->where('role', $role)->get();
         return empty($trackerData)  ? [] : $trackerData->toArray();
     }
 
     public function getTrackerOfVisitId(int $visitId) : array {
-        $trackerData = $this->tracker->where('visit_id', $visitId);
+        $trackerData = $this->tracker->with('user')->where('visit_id', $visitId);
         return empty($trackerData) ? [] : $trackerData->toArray();
     }
 
-    public function getUsersInternalMessageOfStudy(string $study) : array {
-        $trackerData = $this->tracker->where('study_name', $study)->where("action_type", Constants::TRACKER_SEND_MESSAGE)->get();
+    public function getTrackerOrActionInStudy(string $action, string $study) : array {
+        $trackerData = $this->tracker->with('user')->where('study_name', $study)->where("action_type", $action)->get();
         return empty($trackerData) ? [] : $trackerData->toArray();
     }
 

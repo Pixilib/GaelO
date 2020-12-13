@@ -11,31 +11,35 @@ Visit Type : (GET), (POST), (DELETE) => OK
 Affiliated Center  : (GET), (POST), (DELETE) =>OK
 Export-db : (POST) => OK
 Documentation (GET, POST, DELETE) => OK
+Visit Dicoms File (GET) => OK
 Visit Dicoms (GET) => OK
 Tus : (All) => OK
 Patient : ( GET, POST, PATCH ) => OK
 Patient Withdraw : (PATCH)=> OK
-Api Visit (GET, POST, DELETE) => OK
+Visit (GET, POST, DELETE) => OK
 QC : (PATCH) => OK
 QC Reset : (PATCH) => OK
 Corrective Action (PATCH) => OK
 Ask Unlock (POST) => OK
 Creatable-Visits (GET) => OK
 Possible-Uploads (GET) => OK
+dicom-series (DELETE, PATCH) => OK (Nb pour reset upload, loop depuis front)
+dicom-study (PATCH) => OK
 
 Salim TODO :
 
 Preparation Investigateur / Monitor / Controller / Reviewer :
-- API Delete Series orthanc
-- Api Review (POST, GET, DELETE)
-- API Tree Finir Test Unitaire Service creation tree
+- API Tree Finir Test Unitaire Service creation tree + filtrer infos inutiles de visites
+- API Review (POST, GET, DELETE) + Review attached files
 
-
-Creatable Visit : Manque Study Custom Logic (+dans front skip visites optionnelles)
-
+Visit Test le cas creation not done avec reason obligatoire n'est pas testé
 Service Visit => Continuer test passage en upload Done
+Dicom Series Service => peut etre evoluer vers un DicomService pour les deux niveaux
 Class d'authorisation revenir a l'heritage?
+Refactorer Visit Service (visit ID en variable de classe) ++++
 Faire un objet specifique pour l'authorisation des Review ?
+Studies / Series DICOM => Passer la clé primaire à Instance UID (le orthancID ne devient qu'une donnée associée)
+
 
 Pb Authorisation : Un ID Visit peut maintenant a etre attachee a plusieurs etudes ancillaires
 => Le scope de la study demandée doit venir du front
@@ -64,6 +68,7 @@ Doit pouvoir voir user details
 
 
 +Tard :
+
 Faire une condition pour les NoContent dans le controller ? => ou mettre toujours un payload vide pour eviter les errur error->json() dans front?
 Voir dans message d'erreur comment ajouter d'autre info que le message (pour id de login)
 CreateVisitType et CreateVisitGroup => Ajouter un forbidden si l'etude a déjà des visites crées (etude demarrée)
@@ -72,7 +77,23 @@ Reverse proxy dicomweb => Comment faire venir le role et study depuis ohif ? dep
 TUS est Joignable sur Delete => peut etre gerer le failure/cancel pour vider tus ?
 Deploiement ajouter le login / mdp pour dans orthanc pacs + bloquer delete dans lua script
 Dans remplissage DTO request, si variable boolean, un input string est interpretée à true.
+QC Not Needed => autoriser ou pas remove de series ?
+Delete Series  : Reset du form Investigateur pas géré
+Creatable Visit : Manque Study Custom Logic (+dans front skip visites optionnelles ?)
 
+Préparation supervisor :
+- Users in Study
+- tracker
+- Reactivate visit
+
+- Unlock / Delete form
+- Export Study Data
+- Review Manager
+- Upload Manager
+- Statistics
+- Remininder email upload / review
+- Send to peer
++ Messagerie a designer
 
 //Les tests ne font pas d'assertion sur
 - le tracker => Via un spy ?

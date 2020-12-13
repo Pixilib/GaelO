@@ -6,7 +6,6 @@ use App\GaelO\Constants\Constants;
 use App\Visit;
 use App\GaelO\Interfaces\PersistenceInterface;
 use App\GaelO\Util;
-use App\Review;
 use App\ReviewStatus;
 use Illuminate\Support\Facades\DB;
 
@@ -30,20 +29,20 @@ class VisitRepository implements PersistenceInterface {
     }
 
     public function find($id){
-        return $this->visit->find($id)->toArray();
+        return $this->visit->findOrFail($id)->toArray();
     }
 
     public function delete($id) : void {
-        $this->visit->find($id)->delete();
+        $this->visit->findOrFail($id)->delete();
     }
 
-    public function createVisit(string $studyName, int $creatorUserId, int $patientCode, ?string $acquisitionDate, int $visitTypeId,
+    public function createVisit(string $studyName, int $creatorUserId, int $patientCode, ?string $visitDate, int $visitTypeId,
         string $statusDone, ?string $reasonForNotDone, string $stateInvestigatorForm, string $stateQualityControl){
 
         $data = [
             'creator_user_id' => $creatorUserId,
             'patient_code' => $patientCode,
-            'acquisition_date' => $acquisitionDate,
+            'visit_date' => $visitDate,
             'visit_type_id' => $visitTypeId,
             'status_done' => $statusDone,
             'reason_for_not_done' => $reasonForNotDone,
@@ -210,7 +209,7 @@ class VisitRepository implements PersistenceInterface {
     }
 
     public function editQc(int $visitId, string $stateQc, int $controllerId, bool $imageQc, bool $formQc, ?string $imageQcComment, ?string $formQcComment) : void{
-        $visitEntity = $this->visit->find($visitId);
+        $visitEntity = $this->visit->findOrFail($visitId);
         $visitEntity['state_quality_control'] = $stateQc;
 
         $visitEntity['controller_user_id'] = $controllerId;
@@ -225,7 +224,7 @@ class VisitRepository implements PersistenceInterface {
 
     public function resetQc(int $visitId) : void {
 
-        $visitEntity = $this->visit->find($visitId);
+        $visitEntity = $this->visit->findOrFail($visitId);
 
         $visitEntity['state_quality_control'] = Constants::QUALITY_CONTROL_NOT_DONE;
         $visitEntity['controller_user_id'] = null;
@@ -247,7 +246,7 @@ class VisitRepository implements PersistenceInterface {
 
     public function setCorectiveAction(int $visitId, int $investigatorId, bool $newUpload, bool $newInvestigatorForm, bool $correctiveActionApplyed, string $comment ){
 
-        $visitEntity = $this->visit->find($visitId);
+        $visitEntity = $this->visit->findOrFail($visitId);
 
         $visitEntity['state_quality_control'] = Constants::QUALITY_CONTROL_WAIT_DEFINITIVE_CONCLUSION;
         $visitEntity['corrective_action_user_id'] = $investigatorId;
@@ -261,10 +260,11 @@ class VisitRepository implements PersistenceInterface {
 
     }
 
-    public function updateInvestigatorForm(int $visitId, string $stateInvestigatorForm) : void{
-        $visitEntity = $this->visit->find($visitId);
+    public function updateInvestigatorForm(int $visitId, string $stateInvestigatorForm) : array{
+        $visitEntity = $this->visit->findOrFail($visitId);
         $visitEntity['state_investigator_form'] = $stateInvestigatorForm;
         $visitEntity->save();
+        return $visitEntity->toArray();
     }
 
     /**

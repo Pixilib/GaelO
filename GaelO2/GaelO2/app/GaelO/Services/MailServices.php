@@ -7,8 +7,12 @@ use App\GaelO\Adapters\SendEmailAdapter;
 use App\GaelO\Constants\Constants;
 use App\GaelO\Repositories\UserRepository;
 use App\GaelO\Constants\MailConstants;
+use Illuminate\Support\Facades\Log;
 
 Class MailServices extends SendEmailAdapter {
+
+    private MailInterface $mailInterface;
+    private UserRepository $userRepository;
 
     public function __construct(MailInterface $mailInterface, UserRepository $userRepository) {
         $this->mailInterface = $mailInterface;
@@ -42,7 +46,8 @@ Class MailServices extends SendEmailAdapter {
         $this->mailInterface->setTo($destinators);
         $this->mailInterface->setReplyTo();
         $this->mailInterface->setParameters($parameters);
-        $this->mailInterface->sendModel(MailConstants::EMAIL_REQUEST);
+        $this->mailInterface->setBody(MailConstants::EMAIL_REQUEST);
+        $this->mailInterface->send();
 
     }
 
@@ -59,7 +64,8 @@ Class MailServices extends SendEmailAdapter {
         $this->mailInterface->setTo([$parameters['email']]);
         $this->mailInterface->setReplyTo();
         $this->mailInterface->setParameters($parameters);
-        $this->mailInterface->sendModel(MailConstants::EMAIL_RESET_PASSWORD);
+        $this->mailInterface->setBody(MailConstants::EMAIL_RESET_PASSWORD);
+        $this->mailInterface->send();
 
     }
 
@@ -72,10 +78,12 @@ Class MailServices extends SendEmailAdapter {
             'studies'=>$studies
         ];
         //Send to user and administrators
+        Log::info([$email, ...$this->getAdminsEmails()]);
         $this->mailInterface->setTo( [$email, ...$this->getAdminsEmails()] );
         $this->mailInterface->setReplyTo();
         $this->mailInterface->setParameters($parameters);
-        $this->mailInterface->sendModel(MailConstants::EMAIL_BLOCKED_ACCOUNT);
+        $this->mailInterface->setBody(MailConstants::EMAIL_BLOCKED_ACCOUNT);
+        $this->mailInterface->send();
 
     }
 
@@ -89,7 +97,8 @@ Class MailServices extends SendEmailAdapter {
         $this->mailInterface->setTo( $this->getAdminsEmails() );
         $this->mailInterface->setReplyTo();
         $this->mailInterface->setParameters($parameters);
-        $this->mailInterface->sendModel(MailConstants::EMAIL_ADMIN_LOGGED);
+        $this->mailInterface->setBody(MailConstants::EMAIL_ADMIN_LOGGED);
+        $this->mailInterface->send();
 
     }
 
@@ -105,7 +114,8 @@ Class MailServices extends SendEmailAdapter {
         $this->mailInterface->setTo( [$userEmail] );
         $this->mailInterface->setReplyTo();
         $this->mailInterface->setParameters($parameters);
-        $this->mailInterface->sendModel(MailConstants::EMAIL_USER_CREATED);
+        $this->mailInterface->setBody(MailConstants::EMAIL_USER_CREATED);
+        $this->mailInterface->send();
 
     }
 
@@ -121,7 +131,8 @@ Class MailServices extends SendEmailAdapter {
         $this->mailInterface->setTo( [$userEmail] );
         $this->mailInterface->setReplyTo();
         $this->mailInterface->setParameters($parameters);
-        $this->mailInterface->sendModel(MailConstants::EMAIL_CHANGE_PASSWORD_DEACTIVATED);
+        $this->mailInterface->setBody(MailConstants::EMAIL_CHANGE_PASSWORD_DEACTIVATED);
+        $this->mailInterface->send();
 
     }
 
@@ -138,7 +149,8 @@ Class MailServices extends SendEmailAdapter {
         $this->mailInterface->setTo( $this->userRepository->getUsersEmailsByRolesInStudy($study, Constants::ROLE_SUPERVISOR) );
         $this->mailInterface->setReplyTo();
         $this->mailInterface->setParameters($parameters);
-        $this->mailInterface->sendModel(MailConstants::EMAIL_IMPORT_PATIENT);
+        $this->mailInterface->setBody(MailConstants::EMAIL_IMPORT_PATIENT);
+        $this->mailInterface->send();
 
     }
 
@@ -168,7 +180,8 @@ Class MailServices extends SendEmailAdapter {
         $this->mailInterface->setTo( $destinators );
         $this->mailInterface->setReplyTo();
         $this->mailInterface->setParameters($parameters);
-        $this->mailInterface->sendModel(MailConstants::EMAIL_UPLOADED_VISIT);
+        $this->mailInterface->setBody(MailConstants::EMAIL_UPLOADED_VISIT);
+        $this->mailInterface->send();
 
     }
 
@@ -183,7 +196,8 @@ Class MailServices extends SendEmailAdapter {
         $this->mailInterface->setTo( $this->userRepository->getUsersEmailsByRolesInStudy($study, Constants::ROLE_REVIEWER) );
         $this->mailInterface->setReplyTo();
         $this->mailInterface->setParameters($parameters);
-        $this->mailInterface->sendModel(MailConstants::EMAIL_REVIEW_READY);
+        $this->mailInterface->setBody(MailConstants::EMAIL_REVIEW_READY);
+        $this->mailInterface->send();
 
     }
 
@@ -204,7 +218,8 @@ Class MailServices extends SendEmailAdapter {
         $this->mailInterface->setTo( $this->userRepository->getAdministratorsEmails() );
         $this->mailInterface->setReplyTo();
         $this->mailInterface->setParameters($parameters);
-        $this->mailInterface->sendModel(MailConstants::EMAIL_UPLOAD_FAILURE);
+        $this->mailInterface->setBody(MailConstants::EMAIL_UPLOAD_FAILURE);
+        $this->mailInterface->send();
     }
 
     public function sendQcDecisionMessage(int $uploaderId, int $controllerId, string $studyName, int $centerCode, string $qcDecision, int $patientCode,
@@ -235,7 +250,8 @@ Class MailServices extends SendEmailAdapter {
 
         $this->mailInterface->setReplyTo();
         $this->mailInterface->setParameters($parameters);
-        $this->mailInterface->sendModel(MailConstants::EMAIL_QC_DECISION);
+        $this->mailInterface->setBody(MailConstants::EMAIL_QC_DECISION);
+        $this->mailInterface->send();
 
 
     }
@@ -261,7 +277,8 @@ Class MailServices extends SendEmailAdapter {
 
         $this->mailInterface->setReplyTo();
         $this->mailInterface->setParameters($parameters);
-        $this->mailInterface->sendModel(MailConstants::EMAIL_CORRECTIVE_ACTION);
+        $this->mailInterface->setBody(MailConstants::EMAIL_CORRECTIVE_ACTION);
+        $this->mailInterface->send();
 
     }
 
@@ -284,7 +301,8 @@ Class MailServices extends SendEmailAdapter {
 
         $this->mailInterface->setReplyTo();
         $this->mailInterface->setParameters($parameters);
-        $this->mailInterface->sendModel(MailConstants::EMAIL_UNLOCK_FORM);
+        $this->mailInterface->setBody(MailConstants::EMAIL_UNLOCK_FORM);
+        $this->mailInterface->send();
 
     }
 

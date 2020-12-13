@@ -13,7 +13,7 @@ class OrthancSeriesRepository implements PersistenceInterface{
         $this->orthancSeries = $orthancSeries;
     }
 
-    public function create(array $data){
+    public function create(array $data) : void {
         $orthancSeries = new OrthancSeries();
         $model = Util::fillObject($data, $orthancSeries);
         $model->save();
@@ -25,12 +25,20 @@ class OrthancSeriesRepository implements PersistenceInterface{
         $model->save();
     }
 
-    public function find($orthancSeriesID){
-        return $this->orthancSeries->where('orthanc_id', $orthancSeriesID)->firstOrFail()->toArray();
+    public function find($orthancSeriesID) : array {
+        return $this->orthancSeries->findOrFail($orthancSeriesID)->toArray();
     }
 
-    public function delete($orthancSeriesID) :void {
+    public function delete($orthancSeriesID) : void {
         $this->orthancSeries->find($orthancSeriesID)->delete();
+    }
+
+    public function deletebySeriesInstanceUID(string $seriesInstanceUID) : void {
+        $this->orthancSeries->where('series_uid',$seriesInstanceUID)->firstOrFail()->delete();
+    }
+
+    public function reactivateBySeriesInstanceUID(string $seriesInstanceUID) : void {
+        $this->orthancSeries->withTrashed()->where('series_uid',$seriesInstanceUID)->firstOrFail()->restore();
     }
 
     public function getAll() : array {
@@ -62,8 +70,8 @@ class OrthancSeriesRepository implements PersistenceInterface{
             'number_of_instances'=>$numberOfInstances,
             'series_uid'=>$seriesUID,
             'series_number'=>$seriesNumber,
-            'series_disk_size'=>$seriesDiskSize,
-            'series_uncompressed_disk_size'=>$seriesUncompressedDiskSize,
+            'disk_size'=>$seriesDiskSize,
+            'uncompressed_disk_size'=>$seriesUncompressedDiskSize,
             'manufacturer'=>$manufacturer,
             'model_name'=>$modelName
 
@@ -97,8 +105,8 @@ class OrthancSeriesRepository implements PersistenceInterface{
         'number_of_instances'=>$numberOfInstances,
         'series_uid'=>$seriesUID,
         'series_number'=>$seriesNumber,
-        'series_disk_size'=>$seriesDiskSize,
-        'series_uncompressed_disk_size'=>$seriesUncompressedDiskSize,
+        'disk_size'=>$seriesDiskSize,
+        'uncompressed_disk_size'=>$seriesUncompressedDiskSize,
         'manufacturer'=>$manufacturer,
         'model_name'=>$modelName
 
@@ -108,19 +116,22 @@ class OrthancSeriesRepository implements PersistenceInterface{
 
     }
 
-    public function isExistingOrthancSeriesID(string $orthancSeriesID){
-        $orthancSeries = $this->orthancSeries->where('orthanc_id', $orthancSeriesID);
-        return $orthancSeries->count()>0 ? true : false;
+    public function isExistingOrthancSeriesID(string $orthancSeriesID) : bool {
+        return empty($this->orthancSeries->find($orthancSeriesID)) ? false : true;
     }
 
     public function getSeriesBySeriesInstanceUID(string $seriesInstanceUID, bool $includeDeleted) : array {
         if($includeDeleted){
-            $series = $this->orthancSeries->with('orthancStudy')->where('series_uid',$seriesInstanceUID)->firstOrFail()->toArray();
-        }else{
             $series = $this->orthancSeries->with('orthancStudy')->where('series_uid',$seriesInstanceUID)->withTrashed()->firstOrFail()->toArray();
+        }else{
+            $series = $this->orthancSeries->with('orthancStudy')->where('series_uid',$seriesInstanceUID)->firstOrFail()->toArray();
         }
 
         return $series;
 
+    }
+
+    public function reactivateSeriesOfOrthancStudyID (string $orthancStudyID) : void {
+        $this->orthancSeries->where('orthanc_study_id',$orthancStudyID)->withTrashed()->restore();
     }
 }

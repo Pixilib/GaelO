@@ -48,13 +48,14 @@ class VisitController extends Controller
                 ->setStatusCode($createVisitResponse->status, $createVisitResponse->statusText);
     }
 
-    public function getVisit(int $visitId, Request $request, GetVisit $getVisit, GetVisitRequest $getVisitRequest, GetVisitResponse $getVisitResponse){
+    public function getVisit(string $studyName, int $visitId, Request $request, GetVisit $getVisit, GetVisitRequest $getVisitRequest, GetVisitResponse $getVisitResponse){
 
         $curentUser = Auth::user();
         $queryParam = $request->query();
 
         $getVisitRequest->currentUserId = $curentUser['id'];
         $getVisitRequest->visitId = $visitId;
+        $getVisitRequest->studyName = $studyName;
         $getVisitRequest->role = $queryParam['role'];
 
         $getVisit->execute($getVisitRequest, $getVisitResponse);

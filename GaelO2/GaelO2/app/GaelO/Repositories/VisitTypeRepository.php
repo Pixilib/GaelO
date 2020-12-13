@@ -4,10 +4,8 @@ namespace App\GaelO\Repositories;
 
 use App\VisitType;
 use App\GaelO\Interfaces\PersistenceInterface;
-use App\GaelO\UseCases\GetVisitType\VisitTypeEntity;
 use App\GaelO\Util;
 use Exception;
-use Illuminate\Support\Facades\Log;
 
 class VisitTypeRepository implements PersistenceInterface {
 
@@ -25,12 +23,12 @@ class VisitTypeRepository implements PersistenceInterface {
         throw new Exception('Not updatable, delete / create a new visit type');
     }
 
-    public function find($id){
-        return $this->visitType->find($id)->toArray();
+    public function find($id) : array {
+        return $this->visitType->findOrFail($id)->toArray();
     }
 
     public function delete($id) : void {
-        $this->visitType->find($id)->delete();
+        $this->visitType->findOrFail($id)->delete();
     }
 
     public function getAll() : array {
@@ -57,14 +55,9 @@ class VisitTypeRepository implements PersistenceInterface {
 
     }
 
-    public function hasVisits(int $visitTypeId){
-        $visits = $this->visitType->find($visitTypeId)->visits()->get();
+    public function hasVisits(int $visitTypeId) : bool {
+        $visits = $this->visitType->find($visitTypeId)->visits();
         return $visits->count()>0 ? true : false;
-    }
-
-    public function getEntity(int $id) : VisitTypeEntity {
-        $entityArray = $this->visitType->find($id)->toArray();
-        return VisitTypeEntity::fillFromDBReponseArray($entityArray);
     }
 
     public function isExistingVisitType(int $visitGroupId, String $name) : bool {

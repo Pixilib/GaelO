@@ -6,12 +6,16 @@ use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\PersistenceInterface;
 use App\GaelO\Services\AuthorizationVisitService;
+use App\GaelO\Services\VisitService;
 use Exception;
 
 class GetVisit {
 
-    public function __construct(PersistenceInterface $persistenceInterface, AuthorizationVisitService $authorizationVisitService){
-        $this->persistenceInterface = $persistenceInterface;
+    private VisitService $visitService;
+    private AuthorizationVisitService $authorizationVisitService;
+
+    public function __construct(VisitService $visitService, AuthorizationVisitService $authorizationVisitService){
+        $this->visitService = $visitService;
         $this->authorizationVisitService = $authorizationVisitService;
     }
 
@@ -22,8 +26,12 @@ class GetVisit {
             $visitId = $getVisitRequest->visitId;
             $this->checkAuthorization($visitId, $getVisitRequest->currentUserId, $getVisitRequest->role);
 
-            $dbData = $this->persistenceInterface->find($visitId);
+            $dbData = $this->visitService->getVisitData($visitId);
+            $reviewStatus = $this->visitService->getReviewStatus($visitId, $getVisitRequest->studyName);
+
             $responseEntity = VisitEntity::fillFromDBReponseArray($dbData);
+            $responseEntity->setReviewVisitStatus($reviewStatus['review_status'], $reviewStatus['review_conclusion_value'] ,$reviewStatus['review_conclusion_date']);
+
             $getVisitResponse->body = $responseEntity;
 
             $getVisitResponse->status = 200;

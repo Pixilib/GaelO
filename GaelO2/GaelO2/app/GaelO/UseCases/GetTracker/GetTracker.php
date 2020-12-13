@@ -28,7 +28,9 @@ class GetTracker {
             else $dbData = $this->persistenceInterface->getTrackerOfRole(Constants::TRACKER_ROLE_USER);
             $responseArray = [];
             foreach($dbData as $data){
-                $responseArray[] = TrackerEntity::fillFromDBReponseArray($data);
+                $trackerEntity = TrackerEntity::fillFromDBReponseArray($data);
+                $trackerEntity->setUserData($data['user']);
+                $responseArray[] = $trackerEntity;
             }
             $getTrackerResponse->body = $responseArray;
             $getTrackerResponse->status = 200;
