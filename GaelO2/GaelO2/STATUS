@@ -29,8 +29,8 @@ Salim TODO :
 
 Preparation Investigateur / Monitor / Controller / Reviewer :
 - API Reactivate Dicom Study (PATCH)
+- API Tree Finir Test Unitaire Service creation tree + filtrer infos inutiles de visites
 - API Review (POST, GET, DELETE) + Review attached files
-- API Tree Finir Test Unitaire Service creation tree
 
 Visit Test le cas creation not done avec reason obligatoire n'est pas testé
 Service Visit => Continuer test passage en upload Done
@@ -77,7 +77,6 @@ Dans remplissage DTO request, si variable boolean, un input string est interpret
 QC Not Needed => autoriser ou pas remove de series ?
 Delete Series  : Reset du form Investigateur pas géré
 Creatable Visit : Manque Study Custom Logic (+dans front skip visites optionnelles ?)
-
 
 Préparation supervisor :
 - Users in Study
