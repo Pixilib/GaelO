@@ -44,17 +44,17 @@ class TrackerRepository implements PersistenceInterface {
     }
 
     public function getTrackerOfRoleAndStudy(string $study, string $role) : array{
-        $trackerData = $this->tracker->where('study_name', $study)->with('user')->where('role', $role)->get();
+        $trackerData = $this->tracker->with('user')->where('study_name', $study)->where('role', $role)->get();
         return empty($trackerData)  ? [] : $trackerData->toArray();
     }
 
     public function getTrackerOfVisitId(int $visitId) : array {
-        $trackerData = $this->tracker->where('visit_id', $visitId)->with('user');
+        $trackerData = $this->tracker->with('user')->where('visit_id', $visitId);
         return empty($trackerData) ? [] : $trackerData->toArray();
     }
 
     public function getTrackerOrActionInStudy(string $action, string $study) : array {
-        $trackerData = $this->tracker->where('study_name', $study)->with('user')->where("action_type", $action)->get();
+        $trackerData = $this->tracker->with('user')->where('study_name', $study)->where("action_type", $action)->get();
         return empty($trackerData) ? [] : $trackerData->toArray();
     }
 
