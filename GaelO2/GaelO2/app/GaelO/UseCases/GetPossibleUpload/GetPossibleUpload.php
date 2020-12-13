@@ -37,7 +37,7 @@ class GetPossibleUpload
                 $item['patientLastname'] = $visit['lastname'];
                 $item['patientSex'] = $visit['gender'];
                 $item['patientDOB'] = $this->formatBirthDateUS($visit['birth_month'], $visit['birth_day'], $visit['birth_year']);
-                $item['visitDate'] = date('m-d-Y', strtotime($visit['acquisition_date']));
+                $item['visitDate'] = date('m-d-Y', strtotime($visit['visit_date']));
                 $item['name'] = $visit['name'];
                 $item['id'] = $visit['id'];
                 $answerArray[$visit['name']][] = $item;

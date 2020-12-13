@@ -69,7 +69,7 @@ class VisitService
         string $studyName,
         int $creatorUserId,
         int $patientCode,
-        ?string $acquisitionDate,
+        ?string $visitDate,
         int $visitTypeId,
         string $statusDone,
         ?string $reasonForNotDone
@@ -88,7 +88,7 @@ class VisitService
             $studyName,
             $creatorUserId,
             $patientCode,
-            $acquisitionDate,
+            $visitDate,
             $visitTypeId,
             $statusDone,
             $reasonForNotDone,

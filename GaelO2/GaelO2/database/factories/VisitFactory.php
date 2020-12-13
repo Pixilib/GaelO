@@ -10,7 +10,7 @@ $factory->define(Visit::class, function (Faker $faker) {
         'creator_user_id' =>$faker->unique()->randomNumber,
         'creation_date'=>now(),
         'patient_code'=>$faker->unique()->randomNumber,
-        'acquisition_date'=>now(),
+        'visit_date'=>now(),
         'visit_type_id'=>$faker->unique()->randomNumber,
         'status_done'=>$faker->randomElement(['Not Done','Done']),
         'reason_for_not_done'=>$faker->word,

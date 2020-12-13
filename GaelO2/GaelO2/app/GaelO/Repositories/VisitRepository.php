@@ -37,13 +37,13 @@ class VisitRepository implements PersistenceInterface {
         $this->visit->findOrFail($id)->delete();
     }
 
-    public function createVisit(string $studyName, int $creatorUserId, int $patientCode, ?string $acquisitionDate, int $visitTypeId,
+    public function createVisit(string $studyName, int $creatorUserId, int $patientCode, ?string $visitDate, int $visitTypeId,
         string $statusDone, ?string $reasonForNotDone, string $stateInvestigatorForm, string $stateQualityControl){
 
         $data = [
             'creator_user_id' => $creatorUserId,
             'patient_code' => $patientCode,
-            'acquisition_date' => $acquisitionDate,
+            'visit_date' => $visitDate,
             'visit_type_id' => $visitTypeId,
             'status_done' => $statusDone,
             'reason_for_not_done' => $reasonForNotDone,
