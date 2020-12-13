@@ -25,6 +25,8 @@ use App\Mail\VisitNotDone;
 
 use App\GaelO\Constants\MailConstants;
 use App\Mail\ImportPatient;
+use Illuminate\Contracts\Mail\Mailable;
+use Illuminate\Support\Facades\Log;
 
 class SendEmailAdapter implements MailInterface {
 
@@ -49,83 +51,84 @@ class SendEmailAdapter implements MailInterface {
 
     }
 
-    public function sendModel(int $model){
+    public function setBody($modelType){
+        $this->modelType = $modelType;
+    }
+
+    public function send(){
+        foreach($this->to as $destinator ){
+            $model = $this->getModel($this->modelType);
+            Mail::to($destinator)->send($model);
+        }
+
+
+    }
+
+    private function getModel(int $model) : Mailable{
 
         switch ($model) {
             case MailConstants::EMAIL_REQUEST:
-                $this->model = new Request($this->parameters);
+                $model = new Request($this->parameters);
                 break;
             case MailConstants::EMAIL_VISIT_NOT_DONE:
-                $this->model = new VisitNotDone($this->parameters);
+                $model = new VisitNotDone($this->parameters);
                 break;
             case MailConstants::EMAIL_USER_CREATED:
-                $this->model = new UserCreated($this->parameters);
+                $model = new UserCreated($this->parameters);
                 break;
             case MailConstants::EMAIL_UPLOAD_FAILURE:
-                $this->model = new UploadFailure($this->parameters);
+                $model = new UploadFailure($this->parameters);
                 break;
             case MailConstants::EMAIL_UPLOADED_VISIT:
-                $this->model = new UploadedVisit($this->parameters);
+                $model = new UploadedVisit($this->parameters);
                 break;
             case MailConstants::EMAIL_UNLOCK_REQUEST:
-                $this->model = new UnlockRequest($this->parameters);
+                $model = new UnlockRequest($this->parameters);
                 break;
             case MailConstants::EMAIL_UNLOCK_FORM:
-                $this->model = new UnlockedForm($this->parameters);
+                $model = new UnlockedForm($this->parameters);
                 break;
             case MailConstants::EMAIL_UNCONFIRMED_ACCOUNT:
-                $this->model = new UnconfirmedAccount($this->parameters);
+                $model = new UnconfirmedAccount($this->parameters);
                 break;
             case MailConstants::EMAIL_REVIEW_READY:
-                $this->model = new ReviewReady($this->parameters);
+                $model = new ReviewReady($this->parameters);
                 break;
             case MailConstants::EMAIL_RESET_PASSWORD:
-                $this->model = new ResetPassword($this->parameters);
+                $model = new ResetPassword($this->parameters);
                 break;
             case MailConstants::EMAIL_QC_DECISION:
-                $this->model = new QCDecision($this->parameters);
+                $model = new QCDecision($this->parameters);
                 break;
             case MailConstants::EMAIL_DELETED_FORM:
-                $this->model = new DeletedForm($this->parameters);
+                $model = new DeletedForm($this->parameters);
                 break;
             case MailConstants::EMAIL_CORRECTIVE_ACTION:
-                $this->model = new CorrectiveAction($this->parameters);
+                $model = new CorrectiveAction($this->parameters);
                 break;
             case MailConstants::EMAIL_CONCLUSION:
-                $this->model = new Conclusion($this->parameters);
+                $model = new Conclusion($this->parameters);
                 break;
             case MailConstants::EMAIL_CHANGE_PASSWORD_DEACTIVATED:
-                $this->model = new ChangePasswordDeactivated($this->parameters);
+                $model = new ChangePasswordDeactivated($this->parameters);
                 break;
             case MailConstants::EMAIL_BLOCKED_ACCOUNT:
-                $this->model = new BlockedAccount($this->parameters);
+                $model = new BlockedAccount($this->parameters);
                 break;
             case MailConstants::EMAIL_ADMIN_LOGGED:
-                $this->model = new AdminLoged($this->parameters);
+                $model = new AdminLoged($this->parameters);
                 break;
             case MailConstants::EMAIL_ADJUDICATION:
-                $this->model = new Adjudication($this->parameters);
+                $model = new Adjudication($this->parameters);
                 break;
             case MailConstants::EMAIL_IMPORT_PATIENT:
-                $this->model = new ImportPatient($this->parameters);
+                $model = new ImportPatient($this->parameters);
                 break;
             break;
         }
-        $this->sendEmail();
 
+        return $model;
 
-    }
-
-
-    public function setBody(string $body){
-        $this->body = $body;
-
-    }
-
-    public function sendEmail(){
-        foreach($this->to as $destinator ){
-            Mail::to($destinator)->send($this->model);
-        }
     }
 
 }

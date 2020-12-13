@@ -9,6 +9,7 @@ use App\GaelO\Interfaces\PersistenceInterface;
 use App\GaelO\Util;
 use App\Role;
 use DateTime;
+use Illuminate\Support\Facades\Log;
 
 class UserRepository implements PersistenceInterface {
 
