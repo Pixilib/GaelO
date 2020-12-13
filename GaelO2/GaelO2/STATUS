@@ -23,12 +23,11 @@ Corrective Action (PATCH) => OK
 Ask Unlock (POST) => OK
 Creatable-Visits (GET) => OK
 Possible-Uploads (GET) => OK
-dicom-series (DELETE) => OK (Nb pour reset upload, loop depuis front), reste PATCH (reactivation)
+dicom-series (DELETE, PATCH) => OK (Nb pour reset upload, loop depuis front)
 
 Salim TODO :
 
 Preparation Investigateur / Monitor / Controller / Reviewer :
-- API Reactivate Dicom Series (PATCH)
 - API Reactivate Dicom Study (PATCH)
 - API Review (POST, GET, DELETE) + Review attached files
 - API Tree Finir Test Unitaire Service creation tree

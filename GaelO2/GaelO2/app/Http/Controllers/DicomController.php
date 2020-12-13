@@ -11,6 +11,9 @@ use App\GaelO\UseCases\GetDicoms\GetDicomsResponse;
 use App\GaelO\UseCases\GetDicomsFile\GetDicomsFile;
 use App\GaelO\UseCases\GetDicomsFile\GetDicomsFileRequest;
 use App\GaelO\UseCases\GetDicomsFile\GetDicomsFileResponse;
+use App\GaelO\UseCases\ReactivateDicomSeries\ReactivateDicomSeries;
+use App\GaelO\UseCases\ReactivateDicomSeries\ReactivateDicomSeriesRequest;
+use App\GaelO\UseCases\ReactivateDicomSeries\ReactivateDicomSeriesResponse;
 use App\GaelO\Util;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -52,8 +55,6 @@ class DicomController extends Controller
         return response()->json($getDicomsResponse->body)
         ->setStatusCode($getDicomsResponse->status, $getDicomsResponse->statusText);
 
-
-
     }
 
     public function deleteSeries(string $seriesInstanceUID, Request $request, DeleteSeries $deleteSeries, DeleteSeriesRequest $deleteSeriesRequest, DeleteSeriesResponse $deleteSeriesResponse){
@@ -75,6 +76,23 @@ class DicomController extends Controller
         }else{
             return response()->json($deleteSeriesResponse->body)
             ->setStatusCode($deleteSeriesResponse->status, $deleteSeriesResponse->statusText);
+        }
+    }
+
+    public function reactivateSeries(string $seriesInstanceUID, ReactivateDicomSeries $reactivateDicomSeries, ReactivateDicomSeriesRequest $reactivateDicomSeriesRequest, ReactivateDicomSeriesResponse $reactivateDicomSeriesResponse){
+        $currentUser = Auth::user();
+
+        $reactivateDicomSeriesRequest->seriesInstanceUID = $seriesInstanceUID;
+        $reactivateDicomSeriesRequest->currentUserId = $currentUser['id'];
+
+        $reactivateDicomSeries->execute($reactivateDicomSeriesRequest, $reactivateDicomSeriesResponse);
+
+        if($reactivateDicomSeriesResponse->body === null){
+            return response()->noContent()
+            ->setStatusCode($reactivateDicomSeriesResponse->status, $reactivateDicomSeriesResponse->statusText);
+        }else{
+            return response()->json($reactivateDicomSeriesResponse->body)
+            ->setStatusCode($reactivateDicomSeriesResponse->status, $reactivateDicomSeriesResponse->statusText);
         }
     }
 }

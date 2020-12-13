@@ -46,8 +46,13 @@ class DicomSeriesService{
 
     }
 
-    public function getSeriesBySeriesInstanceUID(string $seriesInstanceUID){
-        return $this->orthancSeriesRepository->getSeriesBySeriesInstanceUID($seriesInstanceUID, false);
+    public function reactivateBySeriesInstanceUID(string $seriesInstanceUID) : void {
+        $this->orthancSeriesRepository->reactivateBySeriesInstanceUID($seriesInstanceUID);
+
+    }
+
+    public function getSeriesBySeriesInstanceUID(string $seriesInstanceUID, bool $includeDeleted){
+        return $this->orthancSeriesRepository->getSeriesBySeriesInstanceUID($seriesInstanceUID, $includeDeleted);
     }
 
 }

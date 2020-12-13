@@ -37,6 +37,10 @@ class OrthancSeriesRepository implements PersistenceInterface{
         $this->orthancSeries->where('series_uid',$seriesInstanceUID)->firstOrFail()->delete();
     }
 
+    public function reactivateBySeriesInstanceUID(string $seriesInstanceUID) : void {
+        $this->orthancSeries->withTrashed()->where('series_uid',$seriesInstanceUID)->firstOrFail()->restore();
+    }
+
     public function getAll() : array {
         throw new \Exception('Not Usable in Orthanc Study Repository');
     }

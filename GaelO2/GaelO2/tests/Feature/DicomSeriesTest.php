@@ -18,7 +18,7 @@ use Laravel\Passport\Passport;
 use Tests\AuthorizationTools;
 use Tests\TestCase;
 
-class DicomDeleteSeriesTest extends TestCase
+class DicomSeriesTest extends TestCase
 {
 
     use DatabaseMigrations {
@@ -123,5 +123,28 @@ class DicomDeleteSeriesTest extends TestCase
         $payload = ['reason' => 'wrong series'];
         $response = $this->delete('api/dicom-series/' . $this->orthancSeries->series_uid . '?role=Supervisor', $payload);
         $response->assertStatus(403);
+    }
+
+    public function testReactivateSeries(){
+
+        AuthorizationTools::addRoleToUser(1, Constants::ROLE_SUPERVISOR, $this->study->name);
+
+        $this->orthancSeries->delete();
+        $response = $this->patch('api/dicom-series/' . $this->orthancSeries->series_uid, []);
+        $response->assertStatus(200);
+    }
+
+    public function testReactivateSeriesFailNotSupervisor(){
+
+        $this->orthancSeries->delete();
+        $response = $this->patch('api/dicom-series/' . $this->orthancSeries->series_uid, []);
+        $response->assertStatus(403);
+    }
+
+    public function testReactivateSeriesFailParentStudyDeleted(){
+
+        $this->orthancStudy->delete();
+        $response = $this->patch('api/dicom-series/' . $this->orthancSeries->series_uid, []);
+        $response->assertStatus(400);
     }
 }
