@@ -3,6 +3,8 @@
 namespace App\GaelO\Services;
 
 use App\GaelO\Constants\Constants;
+use App\GaelO\Exceptions\GaelOBadRequestException;
+use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Repositories\OrthancSeriesRepository;
 use App\GaelO\Repositories\OrthancStudyRepository;
 
@@ -53,6 +55,29 @@ class DicomSeriesService{
 
     public function getSeriesBySeriesInstanceUID(string $seriesInstanceUID, bool $includeDeleted){
         return $this->orthancSeriesRepository->getSeriesBySeriesInstanceUID($seriesInstanceUID, $includeDeleted);
+    }
+
+    public function getStudyByStudyInstanceUID(string $studyInstanceUID, bool $includeDeleted) : array {
+        return $this->orthancStudyRepository->getOrthancStudyByStudyInstanceUID($studyInstanceUID, $includeDeleted);
+    }
+
+    public function reactivateOrthancStudyByStudyInstanceUID(string $studyInstanceUID) : void {
+
+        //Get data from StudyInstanceUID
+        $studyData = $this->orthancStudyRepository->getOrthancStudyByStudyInstanceUID($studyInstanceUID, true);
+
+        //Check no other activated study for this visit
+        if ($this->orthancStudyRepository->isExistingDicomStudyForVisit($studyData['visit_id'])){
+            throw new GaelOBadRequestException("Already existing Dicom Study for this visit");
+        };
+
+        //reactivate study level
+        $this->orthancStudyRepository->reactivateByStudyInstanceUID($studyInstanceUID);
+        //Reactivate child series
+        $this->orthancSeriesRepository->reactivateSeriesOfOrthancStudyID($studyData['orthanc_id']);
+        //Update upload status to Done
+        $this->visitService->updateUploadStatus($studyData['visit_id'], Constants::UPLOAD_STATUS_DONE);
+
     }
 
 }

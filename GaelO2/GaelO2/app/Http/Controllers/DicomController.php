@@ -14,6 +14,9 @@ use App\GaelO\UseCases\GetDicomsFile\GetDicomsFileResponse;
 use App\GaelO\UseCases\ReactivateDicomSeries\ReactivateDicomSeries;
 use App\GaelO\UseCases\ReactivateDicomSeries\ReactivateDicomSeriesRequest;
 use App\GaelO\UseCases\ReactivateDicomSeries\ReactivateDicomSeriesResponse;
+use App\GaelO\UseCases\ReactivateDicomStudy\ReactivateDicomStudy;
+use App\GaelO\UseCases\ReactivateDicomStudy\ReactivateDicomStudyRequest;
+use App\GaelO\UseCases\ReactivateDicomStudy\ReactivateDicomStudyResponse;
 use App\GaelO\Util;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -94,5 +97,25 @@ class DicomController extends Controller
             return response()->json($reactivateDicomSeriesResponse->body)
             ->setStatusCode($reactivateDicomSeriesResponse->status, $reactivateDicomSeriesResponse->statusText);
         }
+    }
+
+    public function reactivateStudy(string $studyInstanceUID, Request $request, ReactivateDicomStudy $reactivateDicomStudy, ReactivateDicomStudyRequest $reactivateDicomStudyRequest, ReactivateDicomStudyResponse $reactivateDicomStudyResponse){
+
+        $currentUser = Auth::user();
+
+        $reactivateDicomStudyRequest->studyInstanceUID = $studyInstanceUID;
+        $reactivateDicomStudyRequest->currentUserId = $currentUser['id'];
+
+        $reactivateDicomStudy->execute($reactivateDicomStudyRequest, $reactivateDicomStudyResponse);
+
+        if($reactivateDicomStudyResponse->body === null){
+            return response()->noContent()
+            ->setStatusCode($reactivateDicomStudyResponse->status, $reactivateDicomStudyResponse->statusText);
+        }else{
+            return response()->json($reactivateDicomStudyResponse->body)
+            ->setStatusCode($reactivateDicomStudyResponse->status, $reactivateDicomStudyResponse->statusText);
+        }
+
+
     }
 }

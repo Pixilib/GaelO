@@ -92,6 +92,7 @@ Route::middleware(['auth:api', 'refresh_token'])->group(function () {
     //Dicom Routes
     Route::delete('dicom-series/{seriesInstanceUID}', 'DicomController@deleteSeries');
     Route::patch('dicom-series/{seriesInstanceUID}', 'DicomController@reactivateSeries');
+    Route::patch('dicom-study/{studyInstanceUID}', 'DicomController@reactivateStudy');
 
     //Form routes
     Route::post('studies/{study}/visits/{id}/ask-unlock', 'FormController@askUnlock');

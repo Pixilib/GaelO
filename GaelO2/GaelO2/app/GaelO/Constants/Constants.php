@@ -30,6 +30,7 @@ class Constants {
     const TRACKER_REACTIVATE_VISIT = "Reactivate Visit";
     const TRACKER_DELETE_DICOM_SERIES = "Delete DICOM Series";
     const TRACKER_REACTIVATE_DICOM_SERIES = "Reactivate DICOM Series";
+    const TRACKER_REACTIVATE_DICOM_STUDY = "Reactivate DICOM Study";
     const TRACKER_DELETE_VISIT = "Delete Visit";
     const TRACKER_DELETE_FORM = "Delete Form";
     const TRACKER_ACCOUNT_BLOCKED = "Account Blocked";

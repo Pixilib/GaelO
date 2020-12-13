@@ -147,4 +147,34 @@ class DicomSeriesTest extends TestCase
         $response = $this->patch('api/dicom-series/' . $this->orthancSeries->series_uid, []);
         $response->assertStatus(400);
     }
+
+    public function testReactivateStudy(){
+
+        AuthorizationTools::addRoleToUser(1, Constants::ROLE_SUPERVISOR, $this->study->name);
+
+        $this->orthancStudy->delete();
+        $response = $this->patch('api/dicom-study/' . $this->orthancStudy->study_uid, []);
+        $response->assertStatus(200);
+
+    }
+
+
+    public function testReactivateStudyShouldFailNoRole(){
+
+        $this->orthancStudy->delete();
+        $response = $this->patch('api/dicom-study/' . $this->orthancStudy->study_uid, []);
+        $response->assertStatus(403);
+
+    }
+
+
+    public function testReactivateStudyShouldFailExistingAlreadyActivatedStudy(){
+        AuthorizationTools::addRoleToUser(1, Constants::ROLE_SUPERVISOR, $this->study->name);
+
+        $response = $this->patch('api/dicom-study/' . $this->orthancStudy->study_uid, []);
+        $response->assertStatus(400);
+
+    }
+
+
 }

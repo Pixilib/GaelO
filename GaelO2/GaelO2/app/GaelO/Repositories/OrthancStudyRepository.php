@@ -30,7 +30,11 @@ class OrthancStudyRepository implements PersistenceInterface{
     }
 
     public function delete($orthancStudyID) :void {
-        $this->orthancStudy->find($orthancStudyID)->delete();
+        $this->orthancStudy->findOrFail($orthancStudyID)->delete();
+    }
+
+    public function reactivateByStudyInstanceUID(string $studyInstanceUID) :void {
+        $this->orthancStudy->withTrashed()->where('study_uid',$studyInstanceUID)->firstOrFail()->restore();
     }
 
     public function getAll() : array {
@@ -126,6 +130,11 @@ class OrthancStudyRepository implements PersistenceInterface{
 
     public function getStudyOrthancIDFromVisit(int $visitID) : string {
         return $this->orthancStudy->where('visit_id', $visitID)->firstOrFail()->value('orthanc_id');
+    }
+
+    public function isExistingDicomStudyForVisit(int $visitID) : string {
+        $dicomStudies =  $this->orthancStudy->where('visit_id', $visitID)->get();
+        return $dicomStudies->count()>0 ? true : false;
     }
 
     public function getDicomsDataFromVisit(int $visitID, bool $withDeleted) : array {

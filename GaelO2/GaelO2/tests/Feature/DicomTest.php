@@ -101,4 +101,5 @@ class DicomTest extends TestCase
     public function testGetDicomsDataFailNoRole(){
         $this->get('api/visits/'.$this->visit->id.'/dicoms?role=Investigator')->assertStatus(403);
     }
+
 }

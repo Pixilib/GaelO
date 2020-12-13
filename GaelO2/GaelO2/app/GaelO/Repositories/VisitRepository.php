@@ -6,7 +6,6 @@ use App\GaelO\Constants\Constants;
 use App\Visit;
 use App\GaelO\Interfaces\PersistenceInterface;
 use App\GaelO\Util;
-use App\Review;
 use App\ReviewStatus;
 use Illuminate\Support\Facades\DB;
 

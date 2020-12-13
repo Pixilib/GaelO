@@ -24,19 +24,22 @@ Ask Unlock (POST) => OK
 Creatable-Visits (GET) => OK
 Possible-Uploads (GET) => OK
 dicom-series (DELETE, PATCH) => OK (Nb pour reset upload, loop depuis front)
+dicom-study (PATCH) => OK
 
 Salim TODO :
 
 Preparation Investigateur / Monitor / Controller / Reviewer :
-- API Reactivate Dicom Study (PATCH)
 - API Tree Finir Test Unitaire Service creation tree + filtrer infos inutiles de visites
 - API Review (POST, GET, DELETE) + Review attached files
 
 Visit Test le cas creation not done avec reason obligatoire n'est pas testé
 Service Visit => Continuer test passage en upload Done
+Dicom Series Service => peut etre evoluer vers un DicomService pour les deux niveaux
 Class d'authorisation revenir a l'heritage?
 Refactorer Visit Service (visit ID en variable de classe) ++++
 Faire un objet specifique pour l'authorisation des Review ?
+Studies / Series DICOM => Passer la clé primaire à Instance UID (le orthancID ne devient qu'une donnée associée)
+
 
 Pb Authorisation : Un ID Visit peut maintenant a etre attachee a plusieurs etudes ancillaires
 => Le scope de la study demandée doit venir du front

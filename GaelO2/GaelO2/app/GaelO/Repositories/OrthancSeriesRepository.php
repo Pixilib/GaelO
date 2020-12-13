@@ -130,4 +130,8 @@ class OrthancSeriesRepository implements PersistenceInterface{
         return $series;
 
     }
+
+    public function reactivateSeriesOfOrthancStudyID (string $orthancStudyID) : void {
+        $this->orthancSeries->where('orthanc_study_id',$orthancStudyID)->withTrashed()->restore();
+    }
 }
