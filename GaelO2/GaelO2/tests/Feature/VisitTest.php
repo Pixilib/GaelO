@@ -87,7 +87,6 @@ class VisitTest extends TestCase
 
 
     public function testCreateVisit() {
-        $this->markTestSkipped();
         AuthorizationTools::addRoleToUser(1, Constants::ROLE_INVESTIGATOR, 'test');
         $answer = $this->json('POST', 'api/studies/test/visit-groups/'.$this->visitGroup['id'].
         '/visit-types/'.$this->visitType['id'].'/visits?role=Investigator', $this->validPayload)->assertStatus(201);

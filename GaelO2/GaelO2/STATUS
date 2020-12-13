@@ -32,6 +32,7 @@ Preparation Investigateur / Monitor / Controller / Reviewer :
 - API Review (POST, GET, DELETE) + Review attached files
 - API Tree Finir Test Unitaire Service creation tree
 
+Visit Test le cas creation not done avec reason obligatoire n'est pas testé
 Service Visit => Continuer test passage en upload Done
 Class d'authorisation revenir a l'heritage?
 Refactorer Visit Service (visit ID en variable de classe) ++++
