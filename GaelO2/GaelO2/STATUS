@@ -29,7 +29,7 @@ dicom-study (PATCH) => OK
 Salim TODO :
 
 Preparation Investigateur / Monitor / Controller / Reviewer :
-- API Tree Finir Test Unitaire Service creation tree + filtrer infos inutiles de visites
+- API Tree Finir Test Unitaire Service creation tree
 - API Review (POST, GET, DELETE) + Review attached files
 
 Visit Test le cas creation not done avec reason obligatoire n'est pas testé

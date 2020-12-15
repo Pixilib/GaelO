@@ -43,13 +43,14 @@ class VisitRepositoryTest extends TestCase
         $this->visitGroup = factory(VisitGroup::class)->create(['study_name' => $this->study->name]);
         $this->visitType = factory(VisitType::class)->create(['visit_group_id' => $this->visitGroup['id']]);
         $this->patient = factory(Patient::class)->create(['code' => 12341234123412, 'study_name' => $this->study->name, 'center_code' => 0]);
+        $this->patient2 = factory(Patient::class)->create(['code' => 12341234123413, 'study_name' => $this->study->name, 'center_code' => 0]);
 
 
     }
 
-    private function createVisit(bool $reviewAvailable){
+    private function createVisit($patientEntity, bool $reviewAvailable){
         $visit = factory(Visit::class)->create(['creator_user_id' => 1,
-        'patient_code' => $this->patient->code,
+        'patient_code' => $patientEntity->code,
         'visit_type_id' => $this->visitType->id,
         'status_done' => 'Done']);
 
@@ -63,7 +64,7 @@ class VisitRepositoryTest extends TestCase
     }
 
     public function testReviewAvailableForUser(){
-        $visit = $this->createVisit(true);
+        $visit = $this->createVisit($this->patient, true);
         $answer = $this->visitRepository->getVisitsAwaitingReviewForUser($this->study->name, 1);
         $availableForUser = $this->visitRepository->isVisitAvailableForReview($visit->id, $this->study->name, 1);
         $this->assertEquals(true, $availableForUser);
@@ -72,7 +73,7 @@ class VisitRepositoryTest extends TestCase
 
     public function testReviewAvailableForUserEvenDraftStarted(){
 
-        $visit = $this->createVisit(true);
+        $visit = $this->createVisit($this->patient, true);
 
         factory(Review::class)->create([
             'visit_id' => $visit->id,
@@ -89,7 +90,7 @@ class VisitRepositoryTest extends TestCase
     }
 
     public function testReviewNotAvailableForUserWhileVisitReviewStillAvailable(){
-        $visit = $this->createVisit(true);
+        $visit = $this->createVisit($this->patient, true);
 
         factory(Review::class)->create([
             'visit_id' => $visit->id,
@@ -105,12 +106,19 @@ class VisitRepositoryTest extends TestCase
     }
 
     public function testReviewNotAvailableForUserAsNotAvailableForReview(){
-        $visit = $this->createVisit(false);
+        $visit = $this->createVisit($this->patient, false);
         $answer = $this->visitRepository->getVisitsAwaitingReviewForUser($this->study->name, 1);
         $this->assertEquals(0, sizeof($answer));
         $availableForUser = $this->visitRepository->isVisitAvailableForReview($visit->id, $this->study->name, 1);
         $this->assertEquals(false, $availableForUser);
 
+    }
+
+    public function testGetPatientHavingOneAwaitingReview(){
+        $visit = $this->createVisit($this->patient, true);
+        $visit = $this->createVisit($this->patient2, true);
+        $answer = $this->visitRepository->getPatientsHavingAtLeastOneAwaitingReviewForUser($this->study->name, 1);
+        //dd($answer);
     }
 
 }

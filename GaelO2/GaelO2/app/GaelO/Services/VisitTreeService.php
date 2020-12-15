@@ -3,6 +3,7 @@
 namespace App\GaelO\Services;
 
 use App\GaelO\Constants\Constants;
+use App\GaelO\Exceptions\GaelOBadRequestException;
 use App\GaelO\Repositories\PatientRepository;
 use App\GaelO\Repositories\UserRepository;
 use App\GaelO\Repositories\VisitRepository;
@@ -35,21 +36,6 @@ class VisitTreeService
         $this->studyName = $studyName;
     }
 
-
-    /**
-     * Build array of visits of all child visits in patient array
-     */
-    private function getVisitsArrayFromPatientsArray($patientsArray) : array
-    {
-
-        $visitsArray = [];
-        foreach ($patientsArray as $patient) {
-            array_push($visitsArray, ...$this->visitRepository->getPatientVisitsWithContext($patient['code']) );
-        }
-
-        return $visitsArray;
-    }
-
     private function makeTreeFromVisits(array $visitsArray) : array
     {
 
@@ -58,15 +44,38 @@ class VisitTreeService
         foreach ($visitsArray as $visitObject) {
 
             $patientCode = $visitObject['patient_code'];
-            //$visitType = $visitObject['name'];
             $visitModality =  $visitObject['modality'];
             $visitOrder = $visitObject['order'];
 
-            //SK ICI FILTER LES INFORMATION A FAIRE PASSER AU FRONT
-            $resultTree[ $patientCode ] [ $visitModality ] [$visitOrder] = $visitObject;
+            $resultTree[$patientCode] [$visitModality] [$visitOrder] =  $this->filterVisitOutputData($visitObject);
         }
 
         return $resultTree;
+    }
+
+    /**
+     * Create tree from array of patients, used when all visits of a patient should be listed
+     * and not only some specific visits (used for investigators and reviewers)
+     */
+    public function makeTreeFromPatientsArray(array $patientsCodeArray)  : array {
+
+        $resultTree = [];
+
+        $patientVisitsArray =$this->visitRepository->getPatientListVisitsWithContext($patientsCodeArray);
+
+        foreach($patientsCodeArray as $patientCode){
+            $resultTree[ $patientCode ] = [];
+        }
+
+        //Add existing visits in sub keys
+        foreach($patientVisitsArray as $visitObject){
+            $visitModality =  $visitObject['modality'];
+            $visitOrder = $visitObject['order'];
+            $resultTree[ $patientCode ] [ $visitModality ] [$visitOrder] = $this->filterVisitOutputData($visitObject);
+        }
+
+        return $resultTree;
+
     }
 
     /**
@@ -75,27 +84,59 @@ class VisitTreeService
      */
     public function buildTree()
     {
-        $visitsArray = [];
 
         if ($this->role == Constants::ROLE_INVESTIGATOR) {
+
             //retrieve from DB the patient's list of the requested study and included in user's center or affiliated centers
             $userCentersArray = $this->userRepository->getAllUsersCenters($this->userId);
             $patientsArray = $this->patientRepository->getPatientsInStudyInCenters($this->studyName, $userCentersArray);
-            $visitsArray = $this->getVisitsArrayFromPatientsArray($patientsArray);
+            $patientCodeArray = array_map(function($patientEntity){ return $patientEntity['code'];  }, $patientsArray);
+            return $this->makeTreeFromPatientsArray($patientCodeArray);
 
         } else if ($this->role == Constants::ROLE_CONTROLER) {
 
             $visitsArray = $this->visitRepository->getVisitsInStudyAwaitingControllerAction($this->studyName);
+            return  $this->makeTreeFromVisits($visitsArray);
 
         } else if ($this->role == Constants::ROLE_MONITOR) {
             $visitsArray = $this->visitRepository->getVisitsInStudy($this->studyName);
+            return  $this->makeTreeFromVisits($visitsArray);
 
         } else if ($this->role == Constants::ROLE_REVIEWER) {
-            //Get Visits awaiting a review for the current user (visit with review available and review form not validated by user)
-            $visitsArray = $this->visitRepository->getVisitsAwaitingReviewForUser($this->studyName, $this->userId);
+
+            //Get patient with at least an awaiting review visit for the current user (visit with review available and review form not validated by user)
+            $patientCodeArray = $this->visitRepository->getPatientsHavingAtLeastOneAwaitingReviewForUser($this->studyName, $this->userId);
+            return $this->makeTreeFromPatientsArray($patientCodeArray);
+
+        } else {
+            throw new GaelOBadRequestException('Not Authorized role for tree generation');
         }
 
 
-        return  $this->makeTreeFromVisits($visitsArray);
+
+    }
+
+    /**
+     * Return valuable data to be displayed to frondend
+     */
+    private function filterVisitOutputData(array $visitEntity) : array {
+
+        return [
+            'id'=>$visitEntity['id'],
+            'name'=>$visitEntity['name'],
+            'order'=>$visitEntity['order'],
+            'optional'=>$visitEntity['optional'],
+            'modality'=>$visitEntity['modality'],
+            'studyName'=>$visitEntity['study_name'],
+            'stateInvestigatorForm'=>$visitEntity['state_investigator_form'],
+            'stateQualityControl'=>$visitEntity['state_quality_control'],
+            'uploadStatus'=>$visitEntity['upload_status'],
+            'statusDone'=>$visitEntity['status_done'],
+            'visitTypeId'=>$visitEntity['visit_type_id'],
+            'visitGroupId'=>$visitEntity['visit_group_id'],
+            'patientCode'=>$visitEntity['patient_code']
+
+        ];
+
     }
 }
