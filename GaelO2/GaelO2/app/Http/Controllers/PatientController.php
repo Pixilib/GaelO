@@ -53,12 +53,14 @@ class PatientController extends Controller
                 ->setStatusCode($getPatientResponse->status, $getPatientResponse->statusText);
     }
 
-    public function getPatientVisit(int $patientCode, Request $request, GetPatientVisit $getPatientVisit, GetPatientVisitRequest $getPatientVisitRequest, GetPatientVisitResponse $getPatientVisitResponse){
+    public function getPatientVisit(string $studyName, int $patientCode, Request $request, GetPatientVisit $getPatientVisit, GetPatientVisitRequest $getPatientVisitRequest, GetPatientVisitResponse $getPatientVisitResponse){
         $currentUser = Auth::user();
         $queryParam = $request->query();
         $getPatientVisitRequest->role = $queryParam['role'];
         $getPatientVisitRequest->currentUserId = $currentUser['id'];
         $getPatientVisitRequest->patientCode = $patientCode;
+        $getPatientVisitRequest->studyName = $studyName;
+
 
         $getPatientVisit->execute($getPatientVisitRequest, $getPatientVisitResponse);
 
@@ -94,12 +96,13 @@ class PatientController extends Controller
                 ->setStatusCode($modifyPatientWithdrawResponse->status, $modifyPatientWithdrawResponse->statusText);
     }
 
-    public function getCreatableVisits(int $patientCode, GetCreatableVisits $getCreatableVisits, GetCreatableVisitsRequest $getCreatableVisitsRequest, GetCreatableVisitsResponse $getCreatableVisitsResponse){
+    public function getCreatableVisits(string $studyName, int $patientCode, GetCreatableVisits $getCreatableVisits, GetCreatableVisitsRequest $getCreatableVisitsRequest, GetCreatableVisitsResponse $getCreatableVisitsResponse){
 
         $currentUser = Auth::user();
 
         $getCreatableVisitsRequest->currentUserId = $currentUser['id'];
         $getCreatableVisitsRequest->patientCode = $patientCode;
+        $getCreatableVisitsRequest->studyName = $studyName;
 
         $getCreatableVisits->execute($getCreatableVisitsRequest, $getCreatableVisitsResponse);
 

@@ -53,13 +53,13 @@ class CreatableVisitTest extends TestCase
     public function testGetCreatableVisit()
     {
         AuthorizationTools::addRoleToUser(1, Constants::ROLE_INVESTIGATOR, $this->study->name);
-        $response = $this->get('/api/patients/'.$this->patient->code.'/creatable-visits');
+        $response = $this->get('/api/studies/'.$this->study->name.'/patients/'.$this->patient->code.'/creatable-visits');
         $response->assertStatus(200);
     }
 
     public function testGetCreatableVisitShouldFailNoRole()
     {
-        $response = $this->get('/api/patients/'.$this->patient->code.'/creatable-visits');
+        $response = $this->get('/api/studies/'.$this->study->name.'/patients/'.$this->patient->code.'/creatable-visits');
         $response->assertStatus(403);
     }
 }

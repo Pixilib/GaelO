@@ -144,7 +144,16 @@ class VisitTest extends TestCase
         'visit_type_id' => $this->visitType['id'],
         'status_done' => 'Done']);
 
-        $resp = $this->json('GET', 'api/patients/'.$this->patient['code'].'/visits?role=Investigator');
+        $studyName = $this->study->name;
+
+        $visit->each(function ($visit) use ($studyName)  {
+            $reviewStatus = factory(ReviewStatus::class)->create(['visit_id' => $visit->id,
+            'study_name' => $studyName]);
+        });
+
+
+        $resp = $this->json('GET', 'api/studies/'.$this->study->name.'/patients/'.$this->patient['code'].'/visits?role=Investigator');
+
         $resp->assertSuccessful();
         $patientArray = json_decode($resp->content(), true);
         $this->assertEquals(5, sizeof($patientArray));
@@ -162,7 +171,7 @@ class VisitTest extends TestCase
         'visit_type_id' => $this->visitType['id'],
         'status_done' => 'Done']);
 
-        $resp = $this->json('GET', 'api/patients/'.$this->patient['code'].'/visits?role=Investigator');
+        $resp = $this->json('GET', 'api/studies/'.$this->study->name.'/patients/'.$this->patient['code'].'/visits?role=Investigator');
         $resp->assertStatus(403);
 
 
