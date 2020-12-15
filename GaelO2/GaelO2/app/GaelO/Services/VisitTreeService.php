@@ -78,10 +78,29 @@ class VisitTreeService
         $visitsArray = [];
 
         if ($this->role == Constants::ROLE_INVESTIGATOR) {
+
             //retrieve from DB the patient's list of the requested study and included in user's center or affiliated centers
             $userCentersArray = $this->userRepository->getAllUsersCenters($this->userId);
             $patientsArray = $this->patientRepository->getPatientsInStudyInCenters($this->studyName, $userCentersArray);
-            $visitsArray = $this->getVisitsArrayFromPatientsArray($patientsArray);
+
+            $resultTree = [];
+
+            foreach($patientsArray as $patient){
+                //Create a patient key for each patient (even if no visits in it as investigator can create new ones)
+                $patientCode = $patient['code'];
+                $resultTree[ $patient['code'] ] = [];
+
+                $patientVisits = $this->visitRepository->getPatientVisitsWithContext($patient['code']);
+                //Add existing visits in sub keys
+                foreach($patientVisits as $visitObject){
+                    $visitModality =  $visitObject['modality'];
+                    $visitOrder = $visitObject['order'];
+                    $resultTree[ $patientCode ] [ $visitModality ] [$visitOrder] = $visitObject;
+                }
+
+            }
+
+            return $resultTree;
 
         } else if ($this->role == Constants::ROLE_CONTROLER) {
 
