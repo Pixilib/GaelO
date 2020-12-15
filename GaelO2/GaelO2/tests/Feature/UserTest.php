@@ -118,10 +118,16 @@ class UserTest extends TestCase
 
     }
 
-    public function testGetUserRolesShouldBeForbiddenByDifferentUser(){
+    public function testGetUserRolesShouldBeForbiddenByDifferentUserInNotAdmin(){
         AuthorizationTools::actAsAdmin(false);
         $answer = $this->json('GET', '/api/users/1/roles');
         $answer->assertStatus(403);
+    }
+
+    public function testGetUserRolesShouldPassForDifferentUserIfAdmin(){
+        AuthorizationTools::actAsAdmin(true);
+        $answer = $this->json('GET', '/api/users/1/roles');
+        $answer->assertStatus(200);
     }
 
     public function testGetUserRolesInStudy(){

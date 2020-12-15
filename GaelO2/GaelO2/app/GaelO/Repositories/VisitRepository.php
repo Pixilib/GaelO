@@ -120,7 +120,21 @@ class VisitRepository implements PersistenceInterface {
         })->join('visit_groups', function ($join) {
             $join->on('visit_types.visit_group_id', '=', 'visit_groups.id');
         })->where('patient_code', $patientCode)
-        ->select(['visits.*', 'visit_types.name', 'visit_types.order', 'visit_types.optional','visit_groups.modality', 'visit_groups.study_name'])->get();
+        ->select(['visits.*', 'visit_types.name', 'visit_types.visit_group_id', 'visit_types.order', 'visit_types.optional','visit_groups.modality', 'visit_groups.study_name'])->get();
+
+        return $answer->count() === 0 ? []  : $answer->toArray();
+
+    }
+
+    public function getPatientListVisitsWithContext(array $patientCodeArray){
+
+
+        $answer = $this->visit->join('visit_types', function ($join) {
+            $join->on('visits.visit_type_id', '=', 'visit_types.id');
+        })->join('visit_groups', function ($join) {
+            $join->on('visit_types.visit_group_id', '=', 'visit_groups.id');
+        })->whereIn('patient_code', $patientCodeArray)
+        ->select(['visits.*', 'visit_types.name', 'visit_types.visit_group_id', 'visit_types.order', 'visit_types.optional','visit_groups.modality', 'visit_groups.study_name'])->get();
 
         return $answer->count() === 0 ? []  : $answer->toArray();
 
@@ -133,7 +147,7 @@ class VisitRepository implements PersistenceInterface {
         })->join('visit_groups', function ($join) {
             $join->on('visit_types.id', '=', 'visit_groups.id');
         })->where('study_name', $studyName)
-        ->select(['visits.*', 'visit_types.name', 'visit_types.order', 'visit_types.optional','visit_groups.modality', 'visit_groups.study_name'])
+        ->select(['visits.*', 'visit_types.name', 'visit_types.visit_group_id', 'visit_types.order', 'visit_types.optional','visit_groups.modality', 'visit_groups.study_name'])
         ->get();
 
         return $answer->count() === 0 ? []  : $answer->toArray();
@@ -147,7 +161,7 @@ class VisitRepository implements PersistenceInterface {
         })->join('visit_groups', function ($join) {
             $join->on('visit_types.id', '=', 'visit_groups.id');
         })->where('study_name', $studyName)->whereIn('state_quality_control', $controllerActionStatusArray)
-        ->select(['visits.*', 'visit_types.name', 'visit_types.order', 'visit_types.optional','visit_groups.modality', 'visit_groups.study_name'])->get();
+        ->select(['visits.*', 'visit_types.name', 'visit_types.visit_group_id', 'visit_types.order', 'visit_types.optional','visit_groups.modality', 'visit_groups.study_name'])->get();
 
         return $answer->count() === 0 ? []  : $answer->toArray();
     }
@@ -162,7 +176,7 @@ class VisitRepository implements PersistenceInterface {
         })->join('reviews_status', function ($join) {
             $join->on('visits.id', '=', 'reviews_status.visit_id');
         })->where('visit_groups.study_name', $studyName)->where('review_available', true)
-        ->select(['visits.*', 'visit_types.name', 'visit_types.order', 'visit_types.optional','visit_groups.modality', 'visit_groups.study_name'])
+        ->select(['visits.*', 'visit_types.name', 'visit_types.visit_group_id', 'visit_types.order', 'visit_types.optional','visit_groups.modality', 'visit_groups.study_name'])
         ->get();
 
         return $answer->count() === 0 ? []  : $answer->toArray();
@@ -193,6 +207,33 @@ class VisitRepository implements PersistenceInterface {
         ->get();
 
         return $answer->count() === 0 ? []  : $answer->toArray();
+
+    }
+
+    public function getPatientsHavingAtLeastOneAwaitingReviewForUser(string $studyName, int $userId){
+
+        $answer = $this->visit->join('visit_types', function ($join) {
+            $join->on('visits.visit_type_id', '=', 'visit_types.id');
+        })->join('visit_groups', function ($join) {
+            $join->on('visit_types.id', '=', 'visit_groups.id');
+        })->join('reviews_status', function ($join) use ($studyName) {
+            $join->on('visits.id', '=', 'reviews_status.visit_id');
+            $join->on('reviews_status.study_name', '=', $studyName);
+        })
+        ->where(function($query) use ($studyName, $userId)
+            {
+                $query->selectRaw('count(*)')
+                ->from('reviews')
+                ->whereColumn('reviews.visit_id', '=', 'visits.id')
+                ->where('study_name', '=', $studyName)
+                ->where('validated', true )
+                ->where('user_id', $userId);
+            }, '=' , 0)
+        ->where('visit_groups.study_name', $studyName)
+        ->where('review_available', true)
+        ->groupBy('patient_code')->get();
+
+        return $answer->count() === 0 ? []  : $answer->pluck('patient_code')->toArray();
 
     }
 
