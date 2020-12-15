@@ -2,8 +2,12 @@
 
 use App\Center;
 use App\Patient;
+use App\ReviewStatus;
 use App\Study;
 use App\User;
+use App\Visit;
+use App\VisitGroup;
+use App\VisitType;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -41,45 +45,57 @@ class FrontTest extends Seeder
 
         factory(Study::class, 5)->create();
 
-        DB::table('studies')->insert([
-            'name' => 'Study test',
+        $this->study = factory(Study::class)->create([
+            'name' => 'StudyTest',
             'patient_code_prefix' => '123'
         ]);
 
         DB::table('roles')->insert([
             'name' => 'Supervisor',
             'user_id' => '1',
-            'study_name' => 'Study test',
+            'study_name' => 'StudyTest',
         ]);
         DB::table('roles')->insert([
             'name' => 'Monitor',
             'user_id' => '1',
-            'study_name' => 'Study test',
+            'study_name' => 'StudyTest',
         ]);
         DB::table('roles')->insert([
             'name' => 'Investigator',
             'user_id' => '1',
-            'study_name' => 'Study test',
+            'study_name' => 'StudyTest',
         ]);
         DB::table('roles')->insert([
             'name' => 'Controller',
             'user_id' => '1',
-            'study_name' => 'Study test',
+            'study_name' => 'StudyTest',
         ]);
 
 
-        factory(Patient::class, 5)->create(['investigator_name' => 'administrator', 'study_name' => 'Study test', 'center_code' => 0]);
+        factory(Patient::class, 1)->create(['code' => 123000 + rand(0,999), 'inclusion_status' => 'Included', 'investigator_name' => 'administrator', 'study_name' => 'StudyTest', 'center_code' => 0]);
+        factory(Patient::class, 4)->create(['investigator_name' => 'administrator', 'study_name' => 'StudyTest', 'center_code' => 0]);
+        $this->visitGroup = factory(VisitGroup::class)->create(['study_name' => 'StudyTest']);
+        $this->visitType = factory(VisitType::class)->create(['visit_group_id' => $this->visitGroup['id']]);
 
-        DB::table('visit_groups')->insert([
-            'study_name' => 'Study test',
+        $visit = factory(Visit::class)->create(['creator_user_id' => 1,
+        'patient_code' => Patient::first()['code'],
+        'visit_type_id' => $this->visitType['id'],
+        'status_done' => 'Done']);
+
+        factory(ReviewStatus::class)->create([
+        'study_name' => $this->study->name,
+        'visit_id' => $visit->id
+        ]);
+        /*DB::table('visit_groups')->insert([
+            'study_name' => 'StudyTest',
             'modality' => 'PT'
         ]);
         DB::table('visit_groups')->insert([
-            'study_name' => 'Study test',
+            'study_name' => 'StudyTest',
             'modality' => 'CT'
         ]);
         DB::table('visit_groups')->insert([
-            'study_name' => 'Study test',
+            'study_name' => 'StudyTest',
             'modality' => 'MR'
         ]);
 
@@ -141,7 +157,7 @@ class FrontTest extends Seeder
             'upload_status' => 'Done',
             'state_investigator_form' => 'Draft',
             'state_quality_control' => 'Wait Definitive Conclusion'
-        ]);
+        ]);*/
 
         factory(User::class, 50)->create();
     }

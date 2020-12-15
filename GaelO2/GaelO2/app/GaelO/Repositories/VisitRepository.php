@@ -58,8 +58,6 @@ class VisitRepository implements PersistenceInterface {
                 'study_name'=>$studyName
             ]);
         });
-
-        $this->create($data);
     }
 
     public function getAll() : array {
