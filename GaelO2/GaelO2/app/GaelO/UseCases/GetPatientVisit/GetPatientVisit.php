@@ -2,6 +2,7 @@
 
 namespace App\GaelO\UseCases\GetPatientVisit;
 
+use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\PersistenceInterface;
@@ -20,7 +21,7 @@ class GetPatientVisit {
 
         try{
             $this->checkAuthorization($getPatientVisitRequest->currentUserId, $getPatientVisitRequest->patientCode, $getPatientVisitRequest->role);
-            $visitsArray = $this->persistenceInterface->getPatientsVisits($getPatientVisitRequest->patientCode);
+            $visitsArray = $this->persistenceInterface->getPatientsVisitsWithReviewStatus($getPatientVisitRequest->patientCode, $getPatientVisitRequest->studyName);
 
             $responseArray = [];
             foreach($visitsArray as $data){
@@ -31,9 +32,13 @@ class GetPatientVisit {
                 $visitGroupModality =  $data['visit_type']['visit_group']['modality'];
                 $visitGroupId =  $data['visit_type']['visit_group']['id'];
 
+                $reviewStatus =  $data['review_status'];
+                $reviewConclusionValue = $getPatientVisitRequest->role === Constants::ROLE_SUPERVISOR ? $data['review_conclusion_value'] : null;
+                $reviewConclusionDate =  $getPatientVisitRequest->role === Constants::ROLE_SUPERVISOR ? $data['review_conclusion_date'] : null;
 
                 $visitEntity = VisitEntity::fillFromDBReponseArray($data);
                 $visitEntity->setVisitContext($visitGroupModality, $visitTypeName, $visitTypeOrder, $visitTypeOptional, $visitGroupId);
+                $visitEntity->setReviewVisitStatus($reviewStatus, $reviewConclusionValue, $reviewConclusionDate);
                 $responseArray[] = $visitEntity;
             }
 

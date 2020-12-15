@@ -7,7 +7,6 @@ use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\PersistenceInterface;
 use App\GaelO\Services\AuthorizationPatientService;
-use App\GaelO\Services\AuthorizationService;
 use App\GaelO\UseCases\GetPatient\GetPatientRequest;
 use App\GaelO\UseCases\GetPatient\GetPatientResponse;
 use Exception;
@@ -29,6 +28,11 @@ class GetPatient {
             $this->checkAuthorization($getPatientRequest->currentUserId, $getPatientRequest->role, $code );
             $dbData = $this->persistenceInterface->find($code);
             $responseEntity = PatientEntity::fillFromDBReponseArray($dbData);
+
+            //If Reviewer hide patient's center
+            if( $getPatientRequest->role === Constants::ROLE_REVIEWER){
+                $responseEntity->centerCode = null;
+            }
 
             $getPatientResponse->body = $responseEntity;
             $getPatientResponse->status = 200;

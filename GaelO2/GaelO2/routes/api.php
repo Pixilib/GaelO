@@ -76,8 +76,8 @@ Route::middleware(['auth:api', 'refresh_token'])->group(function () {
     Route::get('patients/{code?}', 'PatientController@getPatient');
     Route::patch('patients/{code?}', 'PatientController@modifyPatient');
     Route::patch('patients/{code?}/inclusion-status', 'PatientController@modifyPatientInclusionStatus');
-    Route::get('patients/{patientCode}/visits', 'PatientController@getPatientVisit');
-    Route::get('patients/{patientCode}/creatable-visits', 'PatientController@getCreatableVisits');
+    Route::get('studies/{studyName}/patients/{patientCode}/visits', 'PatientController@getPatientVisit');
+    Route::get('studies/{studyName}/patients/{patientCode}/creatable-visits', 'PatientController@getCreatableVisits');
 
     //Visits Routes
     Route::post('visits/{id}/validate-dicom', 'VisitController@validateDicom');

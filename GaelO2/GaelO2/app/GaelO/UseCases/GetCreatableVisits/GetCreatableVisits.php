@@ -26,7 +26,7 @@ class GetCreatableVisits{
         try{
 
             $this->checkAuthorization($getCreatableVisitsRequest->currentUserId, $getCreatableVisitsRequest->patientCode);
-
+            //SK A AJOUTER SI STUDYNAME EST ANCILLAIRE CETTE API EST FORBIDEN
             $visitToCreate = $this->visitService->getAvailableVisitToCreate($getCreatableVisitsRequest->patientCode);
             $getCreatableVisitsResponse->status = 200;
             $getCreatableVisitsResponse->statusText = 'OK';

@@ -62,6 +62,22 @@ class PatientTest extends TestCase
         $this->json('GET', '/api/patients/12345671234567?role=Supervisor')->assertStatus(403);
     }
 
+
+    public function testGetPatientReviewerShouldNotContainPatientCenter() {
+
+        AuthorizationTools::addRoleToUser(1, Constants::ROLE_REVIEWER, $this->study->name);
+
+        //Test get patient 4
+        $response = $this->json('GET', '/api/patients/12345671234567?role=Reviewer');
+        $response->assertSuccessful();
+
+        $answer = $response->content();
+        $answer = json_decode($answer, true);
+        //centerCode should be hidden
+        $this->assertNull($answer['centerCode']);
+
+    }
+
     public function testGetPatientFromStudy() {
         AuthorizationTools::addRoleToUser(1, Constants::ROLE_SUPERVISOR, $this->study->name);
         for($i=1; $i<6; $i++){

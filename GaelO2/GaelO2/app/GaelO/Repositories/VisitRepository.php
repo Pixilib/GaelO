@@ -103,6 +103,16 @@ class VisitRepository implements PersistenceInterface {
         return empty($visits) ? [] : $visits->toArray();
     }
 
+    public function getPatientsVisitsWithReviewStatus(int $patientCode, string $studyName){
+        $visits = $this->visit->with('visitType')->where('patient_code', $patientCode)
+        ->join('reviews_status', function ($join) {
+            $join->on('reviews_status.visit_id', '=', 'visits.id');
+        })
+        ->where('reviews_status.study_name', $studyName)->get();
+
+        return empty($visits) ? [] : $visits->toArray();
+    }
+
     public function getPatientVisitsWithContext(int $patientCode){
 
         $answer = $this->visit->join('visit_types', function ($join) {
