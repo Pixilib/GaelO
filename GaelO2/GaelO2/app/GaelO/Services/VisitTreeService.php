@@ -71,6 +71,7 @@ class VisitTreeService
         foreach($patientVisitsArray as $visitObject){
             $visitModality =  $visitObject['modality'];
             $visitOrder = $visitObject['order'];
+            $patientCode = $visitObject['patient_code'];
             $resultTree[ $patientCode ] [ $visitModality ] [$visitOrder] = $this->filterVisitOutputData($visitObject);
         }
 
@@ -111,8 +112,6 @@ class VisitTreeService
         } else {
             throw new GaelOBadRequestException('Not Authorized role for tree generation');
         }
-
-
 
     }
 
