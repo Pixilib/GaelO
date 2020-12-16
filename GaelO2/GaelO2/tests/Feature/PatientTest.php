@@ -3,7 +3,6 @@
 namespace Tests\Feature;
 
 use App\GaelO\Constants\Constants;
-use App\GaelO\UseCases\GetPatient\PatientEntity;
 use App\Patient;
 use App\Study;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
@@ -86,8 +85,11 @@ class PatientTest extends TestCase
 
         $answer = $response->content();
         $answer = json_decode($answer, true);
-        //centerCode should be hidden
+
+        //centerCode should be hidden and center details not in payload
         $this->assertNull($answer['centerCode']);
+        $this->assertArrayNotHasKey('centerName',$answer);
+        $this->assertArrayNotHasKey('countryCode', $answer);
 
     }
 

@@ -29,11 +29,12 @@ class GetPatient {
             $dbData = $this->persistenceInterface->getPatientWithCenterDetails($code);
 
             $responseEntity = PatientEntity::fillFromDBReponseArray($dbData);
-            $responseEntity->fillCenterDetails($dbData['center']['name'], $dbData['center']['country_code']);
 
             //If Reviewer hide patient's center
             if( $getPatientRequest->role === Constants::ROLE_REVIEWER){
                 $responseEntity->centerCode = null;
+            }else{
+                $responseEntity->fillCenterDetails($dbData['center']['name'], $dbData['center']['country_code']);
             }
 
             $getPatientResponse->body = $responseEntity;
