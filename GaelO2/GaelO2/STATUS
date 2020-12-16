@@ -82,7 +82,7 @@ Delete Series  : Reset du form Investigateur pas géré
 Creatable Visit : Manque Study Custom Logic (+dans front skip visites optionnelles ?)
 
 Préparation supervisor :
-- Users in Study
+- Users in Study => fait partiellement, meme api qu'admin, Peut etre cacher des informations pour le supervisor a pas besoin de connaitre tous les details de l'user
 - tracker
 - Reactivate visit
 

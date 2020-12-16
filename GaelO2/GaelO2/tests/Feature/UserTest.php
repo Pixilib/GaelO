@@ -235,4 +235,21 @@ class UserTest extends TestCase
         $answer->assertStatus(403);
     }
 
+    public function testGetUserFromStudyAllowedForSupervisor() {
+        //Create a study
+        $study = factory(Study::class)->create();
+        AuthorizationTools::addRoleToUser(1, Constants::ROLE_SUPERVISOR, $study->name);
+
+        //Create 5 users
+        $users = factory(User::class, 5)->create();
+
+        $users->each(function ($user) use ($study)  {
+                factory(Role::class)->create(['user_id'=>$user->id, 'name'=>'Investigator', 'study_name'=>$study->name]);
+                factory(Role::class)->create(['user_id'=>$user->id, 'name'=>'Supervisor', 'study_name'=>$study->name]);
+                factory(Role::class)->create(['user_id'=>$user->id, 'name'=>'Monitor', 'study_name'=>$study->name]);
+        });
+        $answer = $this->json('GET', '/api/studies/'.$study->name.'/users/');
+        $answer->assertStatus(200);
+    }
+
 }

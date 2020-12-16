@@ -20,6 +20,8 @@ class UserEntity {
     public ?String $orthancPassword;
     public ?String $deletedAt;
 
+    public ?array $roles;
+
     public static function fillFromDBReponseArray(array $array){
         $userEntity  = new UserEntity();
         $userEntity->id = $array['id'];
@@ -42,4 +44,7 @@ class UserEntity {
         return $userEntity;
     }
 
+    public function addRoles(array $roles) : void {
+        $this->roles = $roles;
+    }
 }
