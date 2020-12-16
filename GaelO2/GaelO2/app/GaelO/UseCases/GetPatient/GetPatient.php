@@ -26,8 +26,10 @@ class GetPatient {
             if ($code == 0) throw new GaelOForbiddenException();
 
             $this->checkAuthorization($getPatientRequest->currentUserId, $getPatientRequest->role, $code );
-            $dbData = $this->persistenceInterface->find($code);
+            $dbData = $this->persistenceInterface->getPatientWithCenterDetails($code);
+
             $responseEntity = PatientEntity::fillFromDBReponseArray($dbData);
+            $responseEntity->fillCenterDetails($dbData['center']['name'], $dbData['center']['country_code']);
 
             //If Reviewer hide patient's center
             if( $getPatientRequest->role === Constants::ROLE_REVIEWER){

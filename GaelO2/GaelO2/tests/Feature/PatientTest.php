@@ -45,16 +45,29 @@ class PatientTest extends TestCase
         AuthorizationTools::addRoleToUser(1, Constants::ROLE_SUPERVISOR, $this->study->name);
 
         //Test get patient 4
-        $response = $this->json('GET', '/api/patients/12345671234567?role=Supervisor')
-            ->content();
-        $response = json_decode($response, true);
+        $answer = $this->json('GET', '/api/patients/12345671234567?role=Supervisor');
+        $answer->assertStatus(200);
 
-        //Check all Item in patientEntity are present in reponse
-        foreach ( get_class_vars(PatientEntity::class) as $key=>$value ){
-            //Camelize keys
-            $key = str_replace('_', '', lcfirst(ucwords($key, '_')));
-            $this->assertArrayHasKey($key, $response);
-        }
+        $expectedKeys = ["code",
+                        "firstName",
+                        "lastName",
+                        "gender",
+                        "birthDay",
+                        "birthMonth",
+                        "birthYear",
+                        "registrationDate",
+                        "investigatorName",
+                        "centerCode",
+                        "centerName",
+                        "countryCode",
+                        "studyName",
+                        "inclusionStatus",
+                        "withdrawReason",
+                        "withdrawDate"];
+
+        $answer->assertJsonStructure($expectedKeys);
+
+
 
     }
 
