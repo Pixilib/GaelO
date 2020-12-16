@@ -40,6 +40,10 @@ class PatientRepository implements PersistenceInterface {
         return empty($patients) ? []  : $patients->toArray();
     }
 
+    public function getPatientWithCenterDetails(int $code) : array {
+        return $this->patient->with('center')->findOrFail($code)->toArray();
+    }
+
     public function getPatientsInStudy(string $studyName) : array {
         $patients = $this->patient->where('study_name', $studyName)->get();
         return empty($patients) ? [] : $patients->toArray();

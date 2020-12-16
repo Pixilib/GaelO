@@ -14,12 +14,14 @@ class PatientEntity {
     public string $registrationDate;
     public ?string $investigatorName;
     public ?int $centerCode;
+    public ?string $centerName;
+    public ?string $countryCode;
     public string $studyName;
     public string $inclusionStatus;
     public ?string $withdrawReason;
     public ?string $withdrawDate;
 
-    public static function fillFromDBReponseArray(array $array){
+    public static function fillFromDBReponseArray(array $array) : PatientEntity{
         $patientEntity  = new PatientEntity();
         $patientEntity->code = $array['code'];
         $patientEntity->lastName = $array['lastname'];
@@ -38,7 +40,12 @@ class PatientEntity {
         return $patientEntity;
     }
 
-    public static function fillFromRequest(array $array) {
+    public function fillCenterDetails(string $centerName, string $countryCode) : void {
+        $this->centerName = $centerName;
+        $this->countryCode = $countryCode;
+    }
+
+    public static function fillFromRequest(array $array) : PatientEntity{
         $patientEntity = new PatientEntity();
         $patientEntity->code = $array['code'];
         $patientEntity->lastName = $array['lastName'];

@@ -3,7 +3,6 @@
 namespace Tests\Feature;
 
 use App\GaelO\Constants\Constants;
-use App\GaelO\UseCases\GetPatient\PatientEntity;
 use App\Patient;
 use App\Study;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
@@ -45,16 +44,29 @@ class PatientTest extends TestCase
         AuthorizationTools::addRoleToUser(1, Constants::ROLE_SUPERVISOR, $this->study->name);
 
         //Test get patient 4
-        $response = $this->json('GET', '/api/patients/12345671234567?role=Supervisor')
-            ->content();
-        $response = json_decode($response, true);
+        $answer = $this->json('GET', '/api/patients/12345671234567?role=Supervisor');
+        $answer->assertStatus(200);
 
-        //Check all Item in patientEntity are present in reponse
-        foreach ( get_class_vars(PatientEntity::class) as $key=>$value ){
-            //Camelize keys
-            $key = str_replace('_', '', lcfirst(ucwords($key, '_')));
-            $this->assertArrayHasKey($key, $response);
-        }
+        $expectedKeys = ["code",
+                        "firstName",
+                        "lastName",
+                        "gender",
+                        "birthDay",
+                        "birthMonth",
+                        "birthYear",
+                        "registrationDate",
+                        "investigatorName",
+                        "centerCode",
+                        "centerName",
+                        "countryCode",
+                        "studyName",
+                        "inclusionStatus",
+                        "withdrawReason",
+                        "withdrawDate"];
+
+        $answer->assertJsonStructure($expectedKeys);
+
+
 
     }
 
@@ -73,8 +85,11 @@ class PatientTest extends TestCase
 
         $answer = $response->content();
         $answer = json_decode($answer, true);
-        //centerCode should be hidden
+
+        //centerCode should be hidden and center details not in payload
         $this->assertNull($answer['centerCode']);
+        $this->assertArrayNotHasKey('centerName',$answer);
+        $this->assertArrayNotHasKey('countryCode', $answer);
 
     }
 
