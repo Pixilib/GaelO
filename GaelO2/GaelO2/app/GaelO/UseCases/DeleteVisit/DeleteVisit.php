@@ -32,16 +32,17 @@ class DeleteVisit{
 
             $visitContext  = $this->persistenceInterface->getVisitContext($deleteVisitRequest->visitId);
 
-
             $studyName = $visitContext['visit_type']['visit_group']['study_name'];
             $visitTypeName = $visitContext['visit_type']['name'];
             $patientCode = $visitContext['patient']['code'];
             $qcStatus = $visitContext['state_quality_control'];
+            $visitStatusDone = $visitContext['status_done'];
 
             $this->checkAuthorization($deleteVisitRequest->currentUserId,
                                         $deleteVisitRequest->role,
                                         $deleteVisitRequest->visitId,
-                                        $qcStatus);
+                                        $qcStatus,
+                                        $visitStatusDone);
 
             $this->persistenceInterface->delete($deleteVisitRequest->visitId);
 
@@ -63,6 +64,7 @@ class DeleteVisit{
 
         } catch (GaelOException $e){
 
+            $deleteVisitResponse->body = $e->getErrorBody();
             $deleteVisitResponse->status = $e->statusCode;
             $deleteVisitResponse->statusText = $e->statusText;
 
@@ -74,8 +76,7 @@ class DeleteVisit{
 
     }
 
-    public function checkAuthorization(int $userId, string $role, int $visitId, string $qcStatus){
-
+    public function checkAuthorization(int $userId, string $role, int $visitId, string $qcStatus, string $statusDone){
         //This role only allowed for Investigator and Supervisor Roles
         if ( ! in_array($role, [Constants::ROLE_INVESTIGATOR, Constants::ROLE_SUPERVISOR]) ){
             throw new GaelOForbiddenException();
@@ -85,6 +86,11 @@ class DeleteVisit{
         if( $role === Constants::ROLE_INVESTIGATOR && in_array($qcStatus, [Constants::QUALITY_CONSTROL_REFUSED, Constants::QUALITY_CONTROL_ACCEPTED])){
             throw new GaelOForbiddenException();
         }
+
+        if( $role === Constants::ROLE_INVESTIGATOR && $statusDone === Constants::VISIT_STATUS_NOT_DONE ){
+            throw new GaelOForbiddenException();
+        }
+
         $this->authorizationVisitService->setCurrentUserAndRole($userId, $role);
         $this->authorizationVisitService->setVisitId($visitId);
         if ( ! $this->authorizationVisitService->isVisitAllowed()){
