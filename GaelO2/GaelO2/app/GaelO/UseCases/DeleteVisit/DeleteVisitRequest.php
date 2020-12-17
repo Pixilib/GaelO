@@ -6,5 +6,5 @@ class DeleteVisitRequest {
     public int $currentUserId;
     public string $role;
     public int $visitId;
-    public ?string $reason;
+    public string $reason;
 }

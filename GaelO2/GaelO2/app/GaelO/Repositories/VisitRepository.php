@@ -7,6 +7,7 @@ use App\Visit;
 use App\GaelO\Interfaces\PersistenceInterface;
 use App\GaelO\Util;
 use App\ReviewStatus;
+use Exception;
 use Illuminate\Support\Facades\DB;
 
 class VisitRepository implements PersistenceInterface {
@@ -70,17 +71,13 @@ class VisitRepository implements PersistenceInterface {
         return empty($reviews) ? []  : $reviews->toArray();
     }
 
-    public function getReviewStatusInStudy(string $studyName){
-        return $this->visit->reviewStatus()->where([['study_name', '=', $studyName]])->firstOrFail()->toArray();
-    }
-
     public function isExistingVisit(int $patientCode, int $visitTypeId) : bool {
         $visit = $this->visit->where([['patient_code', '=', $patientCode], ['visit_type_id', '=', $visitTypeId]])->get();
         return $visit->count() > 0 ? true : false;
     }
 
     public function updateUploadStatus(int $visitId, string $newUploadStatus) : array {
-        $visitEntity = $this->visit->find($visitId);
+        $visitEntity = $this->visit->findOrFail($visitId);
         $visitEntity['upload_status'] = $newUploadStatus;
         $visitEntity->save();
         return $visitEntity->toArray();
@@ -88,14 +85,18 @@ class VisitRepository implements PersistenceInterface {
 
     public function getVisitContext(int $visitId) : array {
 
-        $dataArray = $this->visit->find($visitId)->with(['visitType', 'patient'])->first()->toArray();
+        $dataArray = $this->visit->with(['visitType', 'patient'])->findOrFail($visitId)->toArray();
         return $dataArray;
     }
 
     public function updateReviewAvailability(int $visitId, string $studyName, bool $available) : void {
-        $reviewStatusEntity = $this->visit->find($visitId)->reviewStatus()->where('study_name', $studyName)->firstOrFail();
-        $reviewStatusEntity['review_available'] = $available;
-        $reviewStatusEntity->save();
+        $reviewStatusEntity = $this->visit->findOrFail($visitId)->reviewStatus()->where('study_name', $studyName)->get();
+        //SK A VOIR SI ON PEUT PAS SECURISER DIFFEREMENT
+        if($reviewStatusEntity->count() !== 1 ){
+            throw new Exception('Should be only one answer');
+        }
+        $reviewStatusEntity[0]['review_available'] = $available;
+        $reviewStatusEntity[0]->save();
     }
 
     public function getPatientsVisits(int $patientCode){
@@ -160,7 +161,10 @@ class VisitRepository implements PersistenceInterface {
             $join->on('visits.visit_type_id', '=', 'visit_types.id');
         })->join('visit_groups', function ($join) {
             $join->on('visit_types.id', '=', 'visit_groups.id');
-        })->where('study_name', $studyName)->whereIn('state_quality_control', $controllerActionStatusArray)
+        })
+        ->where('study_name', $studyName)
+        ->where('status_done', Constants::VISIT_STATUS_DONE)
+        ->whereIn('state_quality_control', $controllerActionStatusArray)
         ->select(['visits.*', 'visit_types.name', 'visit_types.visit_group_id', 'visit_types.order', 'visit_types.optional','visit_groups.modality', 'visit_groups.study_name'])->get();
 
         return $answer->count() === 0 ? []  : $answer->toArray();

@@ -86,8 +86,10 @@ class VisitController extends Controller
         $deleteVisitRequest->role = $queryParam['role'];
 
         $deleteVisit->execute($deleteVisitRequest, $deleteVisitResponse);
-
-        return response()->noContent()
+        if ($deleteVisitResponse->body !== null) {
+            return response()->json($deleteVisitResponse->body)
+                ->setStatusCode($deleteVisitResponse->status, $deleteVisitResponse->statusText);
+        } else return response()->noContent()
                 ->setStatusCode($deleteVisitResponse->status, $deleteVisitResponse->statusText);
     }
 
