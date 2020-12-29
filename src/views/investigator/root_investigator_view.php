@@ -39,21 +39,53 @@
 
 				$("#tree").html('<div id="dicomUploaderv2" style="width:100%"></div>');
 
-				window.Gaelo_Uploader.installUploader({
-					developerMode: false,
-					multiUpload: true,
-					minNbOfInstances: 30,
-					callbackOnStartAction: ()=>{
-						preventAjaxDivLoading()
+				$.ajax({
+					type: "GET",
+					url: '/scripts/get_possible_import.php',
+					dataType: 'json',
+					success: function(visits) {
+
+						window.Gaelo_Uploader.installUploader({
+							minNbOfInstances: 30,
+							availableVisits : visits,
+							onStartUsing: ()=>{
+								preventAjaxDivLoading()
+							},
+							onStudyUploaded : function validateUpload(visitID, sucessIDsUploaded, numberOfFiles, originalStudyOrthancID) {
+								$.ajax({
+									type: "POST",
+									url: '/scripts/validate_dicom_upload_tus.php',
+									//Do not trigger event to avoid conflit with dicomupload listener in parallel
+									global: false,
+									data: {
+										id_visit : visitID,
+										totalDicomFiles : numberOfFiles,
+										sucessIDsUploaded : sucessIDsUploaded,
+										originalOrthancStudyID : originalStudyOrthancID
+									},
+									success: function() {
+										alertifySuccess('Upload Validation Visit '+visitID+' Success')
+									
+								},
+								error : function(){
+										alertifyError('Upload Validation Visit '+visitID+' Error, please contact administrator')
+								}
+								});		
+
+							},
+							onUploadComplete: ()=>{
+								allowAjaxDivLoading()
+								refreshDivContenu()
+							}
+						}, 'dicomUploaderv2')
+
+						checkBrowserSupportDicomUpload('#dicomUploaderv2');
+					
 					},
-					callbackOnUploadComplete: ()=>{
-						//Remove prevent Ajax listener
-						allowAjaxDivLoading()
-						alertifySuccess("Multi Upload Finished")
-						refreshInvestigatorDiv()
+					error : function(){
+						console.log('error');
 					}
-				}, 'dicomUploaderv2')
-				checkBrowserSupportDicomUpload('#dicomUploaderv2');
+				});		
 
 				$("#uploadApp").html("Exit Uploader");
 				$("#uploadApp").removeClass("btn-dark").addClass("btn-warning");

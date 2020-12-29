@@ -37,14 +37,14 @@ use GuzzleHttp\Client;
 Session::checkSession();
 $linkpdo=Session::getLinkpdo();
 
-$timeStamp = $_POST['timeStamp'];
+$timeStamp = time();
 $id_visit = $_POST['id_visit'];
 $nbOfInstances = $_POST['totalDicomFiles'];
 $anonFromOrthancId=$_POST['originalOrthancStudyID'];
 $username=$_SESSION['username'];
 $study=$_SESSION['study'];
 $role=$_SESSION['role'];
-$tusFilesID = json_decode($_POST['sucessIDsUploaded']);
+$tusFilesID = $_POST['sucessIDsUploaded'];
 
 $unzipedPath = $_SERVER['DOCUMENT_ROOT'].'/data/upload/temp/'.$timeStamp.'_'.$id_visit;
 
@@ -137,6 +137,7 @@ if ($accessCheck && $role == User::INVESTIGATOR && $visitObject->uploadStatus ==
 	}catch (Throwable $e1) {
 		error_log($e1->getMessage());
 		handleException($e1);
+		header('HTTP/1.0 500 Internal Server Error');
 	}
 		
 
@@ -234,7 +235,6 @@ function handleException(Throwable $e1) {
 	$answer['errorDetails']=$e1->getMessage();
 	$visitObject->changeUploadStatus(Visit::NOT_DONE);
 	warningAdminError($e1->getMessage(), $linkpdo);
-	die($e1->getMessage());
 }
 /**
  * Warn supervisors and uploader that validation of uploaded DICOM has failed
