@@ -22,15 +22,17 @@
         		<label for="Create Visit">Create Visit</label>
             	<input type="checkbox" class="columnSelect" id="Upload Series" value=3 checked>
             	<label for="Upload Series">Upload Series</label>
-            	<input type="checkbox" class="columnSelect" id="Investigator Form" value=4 checked>
+				<input type="checkbox" class="columnSelect" id="Upload Failure" value=4 checked>
+            	<label for="Upload Failure">Upload Failure</label>
+            	<input type="checkbox" class="columnSelect" id="Investigator Form" value=5 checked>
             	<label for="Investigator Form">Investigator Form</label>
         	</div>
         	<div class="controls span2">
-            	<input type="checkbox" class="columnSelect" id="Corrective Action" value=5 checked>
+            	<input type="checkbox" class="columnSelect" id="Corrective Action" value=6 checked>
             	<label for="Corrective Action">Corrective Action</label>
-            	<input type="checkbox" class="columnSelect" id="Change Serie" value=6 checked>
+            	<input type="checkbox" class="columnSelect" id="Change Serie" value=7 checked>
             	<label for="Change Serie">Change Serie</label>
-            	<input type="checkbox" class="columnSelect" id="Delete Visit" value=7 checked>
+            	<input type="checkbox" class="columnSelect" id="Delete Visit" value=8 checked>
             	<label for="Delete Visit">Delete Visit</label>
         	</div>
 		</div>
@@ -40,7 +42,8 @@
                 <th>Date</th>
                 <th>Username</th>
                 <th>Create Visit</th>
-                <th>Upload Series</th>
+				<th>Upload Series</th>
+				<th>Upload Failure</th>
                 <th>Investigator Form</th>
                 <th>Corrective Action</th>
                 <th>Change Serie</th>
@@ -51,7 +54,8 @@
                 <th><input type="text" placeholder="Search" class="column_search" style="max-width:75px" /></th>
                 <th><input type="text" placeholder="Search" class="column_search" style="max-width:75px" /></th>
                 <th><input type="text" placeholder="Search" class="column_search" style="max-width:75px"/> </th>
-                <th><input type="text" placeholder="Search" class="column_search" style="max-width:75px"/> </th>
+				<th><input type="text" placeholder="Search" class="column_search" style="max-width:75px"/> </th>
+				<th><input type="text" placeholder="Search" class="column_search" style="max-width:75px"/> </th>
                 <th><input type="text" placeholder="Search" class="column_search" style="max-width:75px"/> </th>
                 <th><input type="text" placeholder="Search" class="column_search" style="max-width:75px"/> </th>
                 <th><input type="text" placeholder="Search" class="column_search" style="max-width:75px"/> </th>
@@ -68,6 +72,7 @@
 					<td><?=htmlspecialchars($investigatorEvent['username'])?></td>
 					<td><?php if ($investigatorEvent['action_type'] == "Create Visit") echo('<pre><code>'.json_encode($eventDetails, JSON_PRETTY_PRINT|JSON_HEX_QUOT|JSON_HEX_TAG|JSON_HEX_AMP|JSON_HEX_APOS).'</code></pre>')?></td>
 					<td><?php if ($investigatorEvent['action_type'] == "Upload Series") echo('<pre><code>'.json_encode($eventDetails, JSON_PRETTY_PRINT|JSON_HEX_QUOT|JSON_HEX_TAG|JSON_HEX_AMP|JSON_HEX_APOS).'</code></pre>')?></td>
+					<td><?php if ($investigatorEvent['action_type'] == "Upload Failure") echo('<pre><code>'.json_encode($eventDetails, JSON_PRETTY_PRINT|JSON_HEX_QUOT|JSON_HEX_TAG|JSON_HEX_AMP|JSON_HEX_APOS).'</code></pre>')?></td>
 					<td><?php if ($investigatorEvent['action_type'] == "Save Form") {
 						$specificForm=$eventDetails['raw_data'];
 						unset($eventDetails['raw_data']);
@@ -92,6 +97,7 @@
 					<td><?php if ($investigatorEvent['action_type'] == "Corrective Action") echo('<pre><code>'.json_encode($eventDetails, JSON_PRETTY_PRINT|JSON_HEX_QUOT|JSON_HEX_TAG|JSON_HEX_AMP|JSON_HEX_APOS).'</code></pre>')?></td>
 					<td><?php if ($investigatorEvent['action_type'] == "Change Serie") echo('<pre><code>'.json_encode($eventDetails, JSON_PRETTY_PRINT|JSON_HEX_QUOT|JSON_HEX_TAG|JSON_HEX_AMP|JSON_HEX_APOS).'</code></pre>')?></td>
 					<td><?php if ($investigatorEvent['action_type'] == "Delete Visit") echo('<pre><code>'.json_encode($eventDetails, JSON_PRETTY_PRINT|JSON_HEX_QUOT|JSON_HEX_TAG|JSON_HEX_AMP|JSON_HEX_APOS).'</code></pre>')?></td>
+					
 				</tr>
 			<?php 
 			}

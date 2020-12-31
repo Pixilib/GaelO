@@ -82,7 +82,12 @@ if ($visitObject->statusDone == Visit::NOT_DONE) {
 					error : function(){
 						console.log('error');
 					}
-				});		
+				});	
+
+				$("#dicomUploaderv2").on("remove", function () {
+					let results = window.Gaelo_Uploader.closeUploader('dicomUploaderv2')
+					console.log('Uploader Removed '+results)
+				})	
                
            <?php
 			}
