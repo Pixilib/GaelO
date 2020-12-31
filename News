@@ -1,6 +1,8 @@
 GaelO
 
 --Pending Changes --
+  Upgrade GaelO_Uploader to 1.1.0
+  Upload Validation Failure tracked in Tracker
 
 --GaelO 1.3.4 20/11/20--
   fix authorization now made at visit level to attach review files
