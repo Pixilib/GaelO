@@ -17,6 +17,22 @@
 <script type="text/javascript"> 
     $(document).ready(function () {
 
+		$("#reasonWithdrawSelect").on('change', function(){
+
+			let selectedValue = $("#reasonWithdrawSelect").val()
+			if (selectedValue === 'Other'){
+				$("#reason").val('')
+				$("#reason").show()
+			}else if(selectedValue !== 'N/A'){
+				$("#reason").hide()
+				$("#reason").val(selectedValue)
+			}else if (selectedValue ==='N/A'){
+				$("#reason").val('')
+				$("#reason").hide()
+			}
+
+		})
+
 		$('#datePickerPatient').datepicker({
 			toggleActive: true,
 			format: "yyyy-mm-dd"
@@ -91,8 +107,27 @@
             <input class="form-control" name="withdraw_date" id="withdraw_date" type="hidden" >
         </div>
         <label class="control-label">Reason:</label>
+
         <div class="text-center">
-        	<input type="text" class="form-control" id="reason" placeholder="Reason" name="reason" maxlength="255" required>
+			<?php 
+			if (!$patientObject->patientWithdraw) {
+				?>
+				<SELECT class="form-control" id="reasonWithdrawSelect">
+					<option value="N/A"> Choose </option>
+					<option value="Not Included" >Not Included</option>
+					<option value="Excluded"> Excluded </option>
+					<option value="Other"> Other </option>
+				</SELECT>
+				<input type="text" class="form-control" id="reason" placeholder="Reason" name="reason" maxlength="255" style="display:none">
+				<?php
+			}else{
+				?>
+					<input type="text" class="form-control" id="reason" placeholder="Reason" name="reason" maxlength="255">
+				<?php
+			}
+			?>
+
+        	
         </div>
         <br>
         <input type="hidden" name="patient_num" id="idpatient" value="<?=$patientObject->patientCode?>">
