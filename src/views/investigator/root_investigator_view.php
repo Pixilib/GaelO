@@ -37,7 +37,12 @@
 
 			if($("#uploadApp").text()=="Multi Uploader"){
 
-				$("#tree").html('<div id="dicomUploaderv2" style="width:100%"></div>');
+				$("#tree").html('<div id="dicomMutiUploader" style="width:100%"></div>');
+
+				$("#dicomMutiUploader").on("remove", function () {
+					let results = window.Gaelo_Uploader.closeUploader('dicomMutiUploader')
+					console.log('Uploader Removed '+results)
+				})	
 
 				$.ajax({
 					type: "GET",
@@ -66,10 +71,10 @@
 									success: function() {
 										alertifySuccess('Upload Validation Visit '+visitID+' Success')
 									
-								},
-								error : function(){
-										alertifyError('Upload Validation Visit '+visitID+' Error, please contact administrator')
-								}
+									},
+									error : function(){
+											alertifyError('Upload Validation Visit '+visitID+' Error, please contact administrator')
+									}
 								});		
 
 							},
@@ -77,9 +82,9 @@
 								allowAjaxDivLoading()
 								refreshDivContenu()
 							}
-						}, 'dicomUploaderv2')
+						}, 'dicomMutiUploader')
 
-						checkBrowserSupportDicomUpload('#dicomUploaderv2');
+						checkBrowserSupportDicomUpload('#dicomMutiUploader');
 					
 					},
 					error : function(){
