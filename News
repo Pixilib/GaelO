@@ -1,6 +1,7 @@
 GaelO
 
 --Pending Changes --
+  Select of withdraw reason for declaring patient withdraw
   Upgrade GaelO_Uploader to 1.1.0
   Upload Validation Failure tracked in Tracker
 
