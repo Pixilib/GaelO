@@ -114,8 +114,14 @@
 				?>
 				<SELECT class="form-control" id="reasonWithdrawSelect">
 					<option value="N/A"> Choose </option>
+					<option value="Withdraw Consent" >Withdraw Consent</option>
+					<option value="lost to follow up" >lost to follow up</option>
 					<option value="Not Included" >Not Included</option>
 					<option value="Excluded"> Excluded </option>
+					<option value="Progression" >Progression</option>
+					<option value="Death" >Death</option>
+					<option value="Toxicity" >Toxicity</option>
+					<option value="Investigator Decision" >Investigator Decision</option>
 					<option value="Other"> Other </option>
 				</SELECT>
 				<input type="text" class="form-control" id="reason" placeholder="Reason" name="reason" maxlength="255" style="display:none">
