@@ -137,6 +137,18 @@ class Patient {
         
 	}
 
+	public function editPatientRegistrationDate($registrationDate) {
+		$insertion=$this->linkpdo->prepare("UPDATE patients
+										SET registration_date=:registrationDate
+										WHERE patients.code = :patient");
+		
+		$insertion->execute(array(
+			'registrationDate' => $registrationDate,
+			'patient' => $this->patient));
+   
+			
+	}
+
 	/**
 	 * Return visit Manage to manage patient's visit status
 	 */
