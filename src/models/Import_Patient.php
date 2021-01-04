@@ -94,11 +94,11 @@ class Import_Patient {
 				    
 				}else if (!$isNewPatient) {
 					if( !empty($patientRegistrationDate) ){
-						$updated = $this->tryUpdateRegistrationDate($patientNumber, $patientRegistrationDate);
+						$updated = $this->tryUpdateRegistrationDate($patientNumber, $patientRegistrationDate->format('Y-m-d'));
 						if($updated){
-							$this->sucessList['Registration Date Updated'][]=$patientNumber;
+							$this->sucessList[]=$patientNumber.' - Updated Registration Date';
 						}else{
-							$this->failList['Registration Update Date Error'][]=$patientNumber;
+							$this->failList['Patient already in Database'][]=$patientNumber;
 						}
 					}else{
 						$this->failList['Patient already in Database'][]=$patientNumber;
