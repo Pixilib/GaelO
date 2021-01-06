@@ -69,7 +69,11 @@
 										originalOrthancStudyID : originalStudyOrthancID
 									},
 									success: function() {
-										alertifySuccess('Upload Validation Visit '+visitID+' Success')
+										let uploadedVisit = visits.filter((visit)=>{
+											return visit.visitID == visitID
+										})[0]
+										
+										alertifySuccess('Upload Validation Success Patient : '+uploadedVisit['patientCode']+' Visit : '+uploadedVisit['visitType'])
 									
 									},
 									error : function(){
@@ -79,8 +83,8 @@
 
 							},
 							onUploadComplete: ()=>{
+								alertifySuccess('Upload Finished')
 								allowAjaxDivLoading()
-								refreshDivContenu()
 							}
 						}, 'dicomMutiUploader')
 

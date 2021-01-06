@@ -62,7 +62,11 @@ if ($visitObject->statusDone == Visit::NOT_DONE) {
 										originalOrthancStudyID : originalStudyOrthancID
 									},
 									success: function() {
-										alertifySuccess('Upload Validation Visit '+visitID+' Success')
+										let uploadedVisit = targetVisit.filter((visit)=>{
+											return visit.visitID == visitID
+										})[0]
+										
+										alertifySuccess('Upload Validation Success Patient : '+uploadedVisit['patientCode']+' Visit : '+uploadedVisit['visitType'])
 									
 								},
 								error : function(){
@@ -72,6 +76,7 @@ if ($visitObject->statusDone == Visit::NOT_DONE) {
 
 							},
 							onUploadComplete: ()=>{
+								alertifySuccess('Upload Finished')
 								allowAjaxDivLoading()
 								refreshDivContenu()
 							}
