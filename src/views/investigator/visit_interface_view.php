@@ -32,20 +32,68 @@ if ($visitObject->statusDone == Visit::NOT_DONE) {
             <?php
 			if ($visitObject->uploadStatus == Visit::NOT_DONE && $role === User::INVESTIGATOR) {
 			?>
-                window.Gaelo_Uploader.installUploader({
-					developerMode: false,
-					multiUpload: false,
-					minNbOfInstances: 30,
-					idVisit: <?= $id_visit ?>,
-					callbackOnStartAction: ()=>{
-						preventAjaxDivLoading()
+
+				$.ajax({
+					type: "GET",
+					url: '/scripts/get_possible_import.php',
+					dataType: 'json',
+					success: function(data) {
+
+						let targetVisit = data.filter((visit)=>{
+							return visit.visitID === <?= $id_visit ?>
+						})
+
+						window.Gaelo_Uploader.installUploader({
+							minNbOfInstances: 30,
+							availableVisits : targetVisit,
+							onStartUsing: ()=>{
+								preventAjaxDivLoading()
+							},
+							onStudyUploaded : function validateUpload(visitID, sucessIDsUploaded, numberOfFiles, originalStudyOrthancID) {
+								$.ajax({
+									type: "POST",
+									url: '/scripts/validate_dicom_upload_tus.php',
+									//Do not trigger event to avoid conflit with dicomupload listener in parallel
+									global: false,
+									data: {
+										id_visit : visitID,
+										totalDicomFiles : numberOfFiles,
+										sucessIDsUploaded : sucessIDsUploaded,
+										originalOrthancStudyID : originalStudyOrthancID
+									},
+									success: function() {
+										let uploadedVisit = targetVisit.filter((visit)=>{
+											return visit.visitID == visitID
+										})[0]
+										
+										alertifySuccess('Upload Validation Success Patient : '+uploadedVisit['patientCode']+' Visit : '+uploadedVisit['visitType'])
+									
+								},
+								error : function(){
+										alertifyError('Upload Validation Visit '+visitID+' Error, please contact administrator')
+								}
+								});		
+
+							},
+							onUploadComplete: ()=>{
+								alertifySuccess('Upload Finished')
+								allowAjaxDivLoading()
+								refreshDivContenu()
+							}
+						}, 'dicomUploaderv2')
+						checkBrowserSupportDicomUpload('#dicomUploaderv2');
+					
 					},
-					callbackOnUploadComplete: ()=>{
-						allowAjaxDivLoading()
-						refreshDivContenu()
+					error : function(){
+						console.log('error');
 					}
-				}, 'dicomUploaderv2')
-				checkBrowserSupportDicomUpload('#dicomUploaderv2');
+				});	
+
+				$("#dicomUploaderv2").on("remove", function () {
+					let results = window.Gaelo_Uploader.closeUploader('dicomUploaderv2')
+					console.log('Uploader Removed '+results)
+				})	
+               
            <?php
 			}
 			?>

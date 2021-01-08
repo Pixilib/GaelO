@@ -20,13 +20,9 @@ $userObject=new User($username, $linkpdo);
 $visitId=$_POST['visit_id'];
 $fileKey=$_POST['file_key'];
 
-error_log($visitId);
-error_log($fileKey);
-error_log(print_r($_FILES, true));
-
 //Need to retrieve study before testing permission, can't test visit permissions directly because permission class tests non deleted status
 $visitObject=new Visit($visitId, $linkpdo);
-$accessCheck=$userObject->isRoleAllowed($visitObject->study, User::REVIEWER);
+$accessCheck=$userObject->isVisitAllowed($visitId, User::REVIEWER);
 
 if ( $accessCheck ) {
 	$formProcessor=$visitObject->getFromProcessor(false, $username);
