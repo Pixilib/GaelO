@@ -297,7 +297,7 @@ class VisitRepository implements PersistenceInterface {
 
     }
 
-    public function setCorectiveAction(int $visitId, int $investigatorId, bool $newUpload, bool $newInvestigatorForm, bool $correctiveActionApplyed, string $comment ){
+    public function setCorrectiveAction(int $visitId, int $investigatorId, bool $newUpload, bool $newInvestigatorForm, bool $correctiveActionApplyed, ?string $comment ){
 
         $visitEntity = $this->visit->findOrFail($visitId);
 

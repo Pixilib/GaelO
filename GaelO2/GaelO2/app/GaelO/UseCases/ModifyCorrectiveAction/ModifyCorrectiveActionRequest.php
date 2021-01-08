@@ -8,5 +8,5 @@ class ModifyCorrectiveActionRequest{
     public bool $newSeriesUploaded;
     public bool $newInvestigatorForm;
     public bool $correctiveActionDone;
-    public ?string $comment;
+    public ?string $comment = null;
 }
