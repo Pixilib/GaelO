@@ -37,28 +37,19 @@ use GuzzleHttp\Client;
 Session::checkSession();
 $linkpdo=Session::getLinkpdo();
 
-$timeStamp = $_POST['timeStamp'];
+$timeStamp = time();
 $id_visit = $_POST['id_visit'];
 $nbOfInstances = $_POST['totalDicomFiles'];
 $anonFromOrthancId=$_POST['originalOrthancStudyID'];
 $username=$_SESSION['username'];
 $study=$_SESSION['study'];
 $role=$_SESSION['role'];
-$tusFilesID = json_decode($_POST['sucessIDsUploaded']);
+$tusFilesID = $_POST['sucessIDsUploaded'];
 
 $unzipedPath = $_SERVER['DOCUMENT_ROOT'].'/data/upload/temp/'.$timeStamp.'_'.$id_visit;
 
 $visitObject=new Visit($id_visit, $linkpdo);
 $userObject=new User($username, $linkpdo);
-
-error_log($timeStamp);
-error_log($id_visit);
-error_log($nbOfInstances);
-error_log($anonFromOrthancId);
-error_log($username);
-error_log($study);
-error_log($role);
-error_log(print_r($tusFilesID, true));
 
 $accessCheck=$userObject->isVisitAllowed($id_visit, User::INVESTIGATOR);
 error_log($accessCheck);
@@ -138,7 +129,6 @@ if ($accessCheck && $role == User::INVESTIGATOR && $visitObject->uploadStatus ==
     		
 		//Fill Orthanc Tables in Database and update visit status
 		$fillTable->fillDB($anonFromOrthancId);
-		$answer['receivedConfirmation']=true;
 		$logDetails['uploadedSeries']=$studyDetails['seriesInStudy'];
 		$logDetails['patientNumber']=$visitObject->patientCode;
 		$logDetails['visitType']=$visitObject->visitType;
@@ -147,8 +137,14 @@ if ($accessCheck && $role == User::INVESTIGATOR && $visitObject->uploadStatus ==
 		Tracker::logActivity($username, $role, $study, $visitObject->id_visit, "Upload Series", $logDetails);
 	
 	}catch (Throwable $e1) {
+		$logDetails['patientNumber']=$visitObject->patientCode;
+		$logDetails['visitType']=$visitObject->visitType;
+		$logDetails['modality_visit']=$visitObject->visitGroupObject->groupModality;
+		Tracker::logActivity($username, $role, $study, $visitObject->id_visit, "Upload Failure", $logDetails);
+	
 		error_log($e1->getMessage());
 		handleException($e1);
+		header('HTTP/1.0 500 Internal Server Error');
 	}
 		
 
@@ -189,7 +185,7 @@ function sendFolderToOrthanc(string $unzipedPath, Orthanc $orthancExposedObject)
 	
 	//Import dicom file one by one
 	foreach ($files as $file) {
-		$importAnswer=$orthancExposedObject->importFile($file);
+		$importAnswer=$orthancExposedObject->importFileGuzzle($file);
 		if (!empty($importAnswer)) {
 			$answerdetails=json_decode($importAnswer, true);
 			$importedMap[$answerdetails['ParentStudy']][$answerdetails['ParentSeries']][]=$answerdetails['ID'];
@@ -240,13 +236,10 @@ function recursive_directory_delete(string $directory) {
 function handleException(Throwable $e1) {
 	global $visitObject;
 	global $linkpdo;
-	global $answer;
+
 	//If more than own study uploaded or difference of instance number an exception is thrown
-	$answer['receivedConfirmation']=false;
-	$answer['errorDetails']=$e1->getMessage();
 	$visitObject->changeUploadStatus(Visit::NOT_DONE);
 	warningAdminError($e1->getMessage(), $linkpdo);
-	die($e1->getMessage());
 }
 /**
  * Warn supervisors and uploader that validation of uploaded DICOM has failed
@@ -289,7 +282,6 @@ function get_tus_file($fileName) {
 		'headers' => ['Tus-Resumable' => '1.0.0']
     ]);
 	$downloadedFileName = tempnam(sys_get_temp_dir(), 'dicom');
-	error_log($downloadedFileName);
 
 	$resource  = fopen( $downloadedFileName, 'r+');
 	
@@ -306,12 +298,10 @@ function delete_tus_file($fileName){
 		'headers' => ['Tus-Resumable' => '1.0.0']
     ]);
 
-	$response = $client->request('DELETE', $fileName);
+	$client->request('DELETE', $fileName);
 	
-    $code = $response->getStatusCode(); // 200
-	$reason = $response->getReasonPhrase(); // OK
-	error_log($code);
-	error_log($reason);
+    //$code = $response->getStatusCode(); // 200
+	//$reason = $response->getReasonPhrase(); // OK
 
 }
 

@@ -35,5 +35,6 @@ if ($investigatorAccess && $_SESSION['role'] == User::INVESTIGATOR) {
 	echo(json_encode($answer));
     
 } else {
-	echo(json_encode(array("No Access")));
+	header('HTTP/1.0 403 Forbidden');
+	die('You are not allowed to access this data.');
 }

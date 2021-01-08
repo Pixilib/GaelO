@@ -93,7 +93,17 @@ class Import_Patient {
 					$this->failList['Wrong PatientNumber length'][]=$patientNumber;
 				    
 				}else if (!$isNewPatient) {
-					$this->failList['Patient already in Database'][]=$patientNumber;
+					if( !empty($patientRegistrationDate) ){
+						$updated = $this->tryUpdateRegistrationDate($patientNumber, $patientRegistrationDate->format('Y-m-d'));
+						if($updated){
+							$this->sucessList[]=$patientNumber.' - Updated Registration Date';
+						}else{
+							$this->failList['Patient already in Database'][]=$patientNumber;
+						}
+					}else{
+						$this->failList['Patient already in Database'][]=$patientNumber;
+					}
+					
 				    
 				}else if (empty($patientRegistrationDate)) {
 					$this->failList['Empty Registration Date'][]=$patientNumber;
@@ -105,6 +115,18 @@ class Import_Patient {
 			}
 
 		}
+
+	}
+
+	private function tryUpdateRegistrationDate($patientNumber, $patientRegistrationDate){
+		$patientObject = new Patient($patientNumber, $this->linkpdo);
+		//If patient with default registration date, update to the new one
+		if($patientObject->patientRegistrationDate == '1900-01-01') {
+			$patientObject->editPatientRegistrationDate($patientRegistrationDate);
+			return true;
+		}
+
+		return false;
 
 	}
 	
