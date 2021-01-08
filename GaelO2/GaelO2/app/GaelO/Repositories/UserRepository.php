@@ -288,10 +288,10 @@ class UserRepository implements PersistenceInterface {
     }
 
     public function getUsersFromStudy(string $studyName) : array {
-
+        
         $users = $this->user->join('roles', function ($join) {
             $join->on('users.id', '=', 'roles.user_id');
-        })->where('study_name', $studyName)->groupBy('users.id')->with('roles')->get();
+        })->where('study_name', $studyName)->distinct('users.id')->with('roles')->get();
 
         return empty($users) ? [] : $users->toArray();
     }

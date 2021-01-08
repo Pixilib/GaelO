@@ -229,8 +229,8 @@ class VisitService
         return $this->reviewStatusRepository->getReviewStatus($visitId, $studyName);
     }
 
-    public function setCorrectiveAction(int $visitId, int $investigatorId, bool $newUpload, bool $newInvestigatorForm, bool $correctiveActionApplyed, string $comment) : void {
-        $this->visitRepository->setCorectiveAction($visitId, $investigatorId, $newUpload, $newInvestigatorForm, $correctiveActionApplyed, $comment );
+    public function setCorrectiveAction(int $visitId, int $investigatorId, bool $newUpload, bool $newInvestigatorForm, bool $correctiveActionApplyed, ?string $comment) : void {
+        $this->visitRepository->setCorrectiveAction($visitId, $investigatorId, $newUpload, $newInvestigatorForm, $correctiveActionApplyed, $comment );
     }
 
     public function getImagingVisitsAwaitingUploadVisitsForUser(int $userId, string $studyName) : array {
