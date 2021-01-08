@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature;
+namespace Tests\Unit;
 
 use App\GaelO\Adapters\HttpClientAdapter;
 use App\GaelO\Adapters\Psr7ResponseAdapter;
