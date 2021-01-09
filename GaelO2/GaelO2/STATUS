@@ -28,10 +28,18 @@ dicom-study (PATCH) => OK
 
 Salim TODO :
 
+**** Tests ***
+Test d'integration pour chaque repository (avec les nouvelles factory)
+Mock des interfaces pour les uses cases et les services
+
+//Les tests ne font pas d'assertion sur
+- le tracker => Via un spy ?
+- l'envoi de mails => voir doc laravel
+
 Preparation Investigateur / Monitor / Controller / Reviewer :
-- API Tree Finir Test Unitaire Service creation tree
 - API Review (POST, GET, DELETE) + Review attached files
 
+Modification password / reset devrait passer par userservice et le editUser du repository plus generique (ou dissocié)
 Visit Test le cas creation not done avec reason obligatoire n'est pas testé
 Service Visit => Continuer test passage en upload Done
 Dicom Series Service => peut etre evoluer vers un DicomService pour les deux niveaux
@@ -94,10 +102,6 @@ Préparation supervisor :
 - Remininder email upload / review
 - Send to peer
 + Messagerie a designer
-
-//Les tests ne font pas d'assertion sur
-- le tracker => Via un spy ?
-- l'envoi de mails => voir doc laravel
 
 A executer en post install :
 php artisan db:migrate --seed
