@@ -3,7 +3,7 @@
 namespace App\GaelO\Repositories;
 
 use App\GaelO\Util;
-use App\Model\Review;
+use App\Models\Review;
 
 class ReviewRepository{
 

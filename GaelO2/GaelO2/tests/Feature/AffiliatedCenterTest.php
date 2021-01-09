@@ -6,9 +6,9 @@ use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Support\Facades\Artisan;
 use Laravel\Passport\Passport;
 use Tests\TestCase;
-use App\Model\User;
-use App\Model\Center;
-use App\Model\CenterUser;
+use App\Models\User;
+use App\Models\Center;
+use App\Models\CenterUser;
 use Tests\AuthorizationTools;
 
 class AffiliatedCenterTest extends TestCase

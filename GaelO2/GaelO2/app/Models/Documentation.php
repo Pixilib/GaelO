@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Model;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
 class Documentation extends Model
 {
     public function study(){
-        return $this->belongsTo('App\Model\Study', 'study_name', 'name');
+        return $this->belongsTo('App\Models\Study', 'study_name', 'name');
     }
 }

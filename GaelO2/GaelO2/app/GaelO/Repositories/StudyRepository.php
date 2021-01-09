@@ -2,7 +2,7 @@
 
 namespace App\GaelO\Repositories;
 
-use App\Model\Study;
+use App\Models\Study;
 use App\GaelO\Interfaces\PersistenceInterface;
 use App\GaelO\UseCases\GetStudy\StudyEntity;
 use App\GaelO\Util;

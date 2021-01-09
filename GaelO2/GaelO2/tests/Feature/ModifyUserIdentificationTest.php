@@ -2,7 +2,7 @@
 
 namespace Tests\Feature;
 
-use App\Model\User;
+use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Support\Facades\Artisan;
 use Laravel\Passport\Passport;

@@ -8,9 +8,9 @@ use Illuminate\Support\Facades\Artisan;
 use Laravel\Passport\Passport;
 
 use Tests\TestCase;
-use App\Model\User;
-use App\Model\Study;
-use App\Model\Role;
+use App\Models\User;
+use App\Models\Study;
+use App\Models\Role;
 use Tests\AuthorizationTools;
 
 class UserTest extends TestCase

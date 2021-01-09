@@ -3,13 +3,13 @@
 namespace Tests\Feature;
 
 use App\GaelO\Constants\Constants;
-use App\Model\Patient;
-use App\Model\Study;
+use App\Models\Patient;
+use App\Models\Study;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Support\Facades\Artisan;
 use Laravel\Passport\Passport;
 use Tests\TestCase;
-use App\Model\User;
+use App\Models\User;
 use DateTime;
 use Tests\AuthorizationTools;
 

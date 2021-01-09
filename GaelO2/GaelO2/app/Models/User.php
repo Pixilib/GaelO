@@ -1,15 +1,16 @@
 <?php
 
-namespace App\Model;
+namespace App\Models;
 
 use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Laravel\Passport\HasApiTokens;
 class User extends Authenticatable
 {
-    use Notifiable, SoftDeletes, HasApiTokens;
+    use Notifiable, SoftDeletes, HasApiTokens, HasFactory;
 
     /**
      * The attributes that are mass assignable.
@@ -40,15 +41,15 @@ class User extends Authenticatable
     ];
 
     public function roles() {
-        return $this-> hasMany('App\Model\Role', 'user_id');
+        return $this-> hasMany('App\Models\Role', 'user_id');
     }
 
     public function affiliatedCenters(){
-        return $this->hasManyThrough('App\Model\Center', 'App\Model\CenterUser', 'user_id', 'code', 'id', 'center_code');
+        return $this->hasManyThrough('App\Models\Center', 'App\Models\CenterUser', 'user_id', 'code', 'id', 'center_code');
     }
 
     public function mainCenter(){
-        return $this->belongsTo('App\Model\Center', 'code','center_code');
+        return $this->belongsTo('App\Models\Center', 'code','center_code');
     }
 
 }

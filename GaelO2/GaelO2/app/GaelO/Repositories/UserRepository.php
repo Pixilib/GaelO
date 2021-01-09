@@ -2,12 +2,12 @@
 
 namespace App\GaelO\Repositories;
 
-use App\Model\CenterUser;
+use App\Models\CenterUser;
 use App\GaelO\Constants\Constants;
-use App\Model\User;
+use App\Models\User;
 use App\GaelO\Interfaces\PersistenceInterface;
 use App\GaelO\Util;
-use App\Model\Role;
+use App\Models\Role;
 use DateTime;
 use Illuminate\Support\Facades\Log;
 

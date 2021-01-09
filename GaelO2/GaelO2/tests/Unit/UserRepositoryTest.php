@@ -2,16 +2,17 @@
 
 namespace Tests\Unit;
 
+use App\GaelO\Constants\Constants;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\TestCase;
 
-use App\Model\Study;
-use App\Model\User;
-use App\Model\Center;
-use App\Model\Role;
-use App\Model\CenterUser;
+use App\Models\Study;
+use App\Models\User;
+use App\Models\Center;
+use App\Models\Role;
+use App\Models\CenterUser;
 use App\GaelO\Repositories\UserRepository;
 
 class UserRepositoryTest extends TestCase
@@ -33,13 +34,18 @@ class UserRepositoryTest extends TestCase
      */
     public function testGetInvestigatorStudyEmailsWithJobs(){
         $userRepository = new UserRepository( new User(), new Role(), new CenterUser() );
+
+        $usersCRA = User::factory()->job(Constants::USER_JOB_CRA)->accountState(Constants::USER_STATUS_ACTIVATED)->count(10)->create();
+
+        dd($usersCRA);
+
         //Create 2 random studies
         $studies = factory(Study::class, 2)->create();
         //Create one center '3' and one center '5'
         $center = factory(Center::class)->create(['code'=>3]);
         factory(Center::class)->create(['code'=>5]);
         //Create 10 user job 'CRA' and 15 job 'Supervision'
-        $usersCRA = factory(User::class,10)->create(['job'=>'CRA', 'status'=> 'Activated']);
+
         $userSupervision = factory(User::class,15)->create(['job'=>'Supervision', 'status'=> 'Activated']);
 
         //For CRA users assing center 3 with role investigator in first study

@@ -2,7 +2,7 @@
 
 namespace Database\Factories;
 
-use App\Model\OrthancSeries;
+use App\Models\OrthancSeries;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class OrthancSeriesFactory extends Factory

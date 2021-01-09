@@ -4,7 +4,7 @@ namespace App\GaelO\Repositories;
 
 use App\GaelO\Interfaces\PersistenceInterface;
 use App\GaelO\Util;
-use App\Model\ReviewStatus;
+use App\Models\ReviewStatus;
 use Exception;
 
 class ReviewStatusRepository implements PersistenceInterface {

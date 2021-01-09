@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Model;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -14,6 +14,6 @@ class OrthancSeries extends Model
     public $incrementing = false;
 
     public function orthancStudy(){
-        return $this->belongsTo('App\Model\OrthancStudy', 'orthanc_study_id', 'orthanc_id');
+        return $this->belongsTo('App\Models\OrthancStudy', 'orthanc_study_id', 'orthanc_id');
     }
 }

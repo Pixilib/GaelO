@@ -2,7 +2,7 @@
 
 namespace Database\Factories;
 
-use App\Model\Center;
+use App\Models\Center;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class CenterFactory extends Factory

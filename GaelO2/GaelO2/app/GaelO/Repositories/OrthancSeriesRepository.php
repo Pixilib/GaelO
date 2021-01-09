@@ -4,7 +4,7 @@ namespace App\GaelO\Repositories;
 
 use App\GaelO\Interfaces\PersistenceInterface;
 use App\GaelO\Util;
-use App\Model\OrthancSeries;
+use App\Models\OrthancSeries;
 
 class OrthancSeriesRepository implements PersistenceInterface{
 

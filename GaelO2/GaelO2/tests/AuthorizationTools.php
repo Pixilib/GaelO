@@ -2,9 +2,9 @@
 
 namespace Tests;
 
-use App\Model\Role;
+use App\Models\Role;
 use Laravel\Passport\Passport;
-use App\Model\User;
+use App\Models\User;
 use Illuminate\Support\Carbon;
 
 class AuthorizationTools {

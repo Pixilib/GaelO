@@ -3,13 +3,13 @@
 namespace Tests\Feature;
 
 use App\GaelO\Constants\Constants;
-use App\Model\Patient;
-use App\Model\ReviewStatus;
-use App\Model\Study;
-use App\Model\User;
-use App\Model\Visit;
-use App\Model\VisitGroup;
-use App\Model\VisitType;
+use App\Models\Patient;
+use App\Models\ReviewStatus;
+use App\Models\Study;
+use App\Models\User;
+use App\Models\Visit;
+use App\Models\VisitGroup;
+use App\Models\VisitType;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Support\Facades\Artisan;
 use Laravel\Passport\Passport;

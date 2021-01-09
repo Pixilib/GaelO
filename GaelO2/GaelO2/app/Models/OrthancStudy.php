@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Model;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -14,15 +14,15 @@ class OrthancStudy extends Model
     public $incrementing = false;
 
     public function series(){
-        return $this->hasMany('App\Model\OrthancSeries', 'orthanc_study_id', 'orthanc_id');
+        return $this->hasMany('App\Models\OrthancSeries', 'orthanc_study_id', 'orthanc_id');
     }
 
     public function visit(){
-        return $this->belongsTo('App\Model\Visit', 'visit_id', 'id');
+        return $this->belongsTo('App\Models\Visit', 'visit_id', 'id');
     }
 
 
     public function uploader(){
-        return $this->belongsTo('App\Model\User', 'user_id', 'id');
+        return $this->belongsTo('App\Models\User', 'user_id', 'id');
     }
 }

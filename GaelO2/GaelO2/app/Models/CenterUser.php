@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Model;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -17,7 +17,7 @@ class CenterUser extends Model
     public $incrementing = false;
 
     //SK : Parceque cle composite (cf https://www.nuomiphp.com/eplan/en/28200.html)
-    protected function setKeysForSaveQuery(Builder $query)
+    protected function setKeysForSaveQuery($query)
     {
         $keys = $this->getKeyName();
         if(!is_array($keys)){

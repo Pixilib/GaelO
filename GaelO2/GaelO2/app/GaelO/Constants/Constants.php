@@ -8,6 +8,8 @@ class Constants {
     const USER_STATUS_BLOCKED = "Blocked";
     const USER_STATUS_DEACTIVATED = "Deactivated";
 
+    const USER_JOB_CRA = 'CRA';
+
     const PATIENT_INCLUSION_STATUS_INCLUDED = "Included";
     const PATIENT_INCLUSION_STATUS_WITHDRAWN = "Withdrawn";
 

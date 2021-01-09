@@ -5,7 +5,7 @@ namespace Tests\Feature;
 use App\GaelO\Constants\Constants;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\TestCase;
-use App\Model\User;
+use App\Models\User;
 use Illuminate\Support\Facades\Artisan;
 use Laravel\Passport\Passport;
 use Tests\AuthorizationTools;

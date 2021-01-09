@@ -3,11 +3,11 @@
 namespace Tests\Feature;
 
 use App\GaelO\Constants\Constants;
-use App\Model\Patient;
-use App\Model\Study;
-use App\Model\User;
-use App\Model\VisitGroup;
-use App\Model\VisitType;
+use App\Models\Patient;
+use App\Models\Study;
+use App\Models\User;
+use App\Models\VisitGroup;
+use App\Models\VisitType;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Artisan;

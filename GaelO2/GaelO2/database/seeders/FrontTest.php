@@ -2,14 +2,14 @@
 
 namespace Database\Seeders;
 
-use App\Model\Center;
-use App\Model\Patient;
-use App\Model\ReviewStatus;
-use App\Model\Study;
-use App\Model\User;
-use App\Model\Visit;
-use App\Model\VisitGroup;
-use App\Model\VisitType;
+use App\Models\Center;
+use App\Models\Patient;
+use App\Models\ReviewStatus;
+use App\Models\Study;
+use App\Models\User;
+use App\Models\Visit;
+use App\Models\VisitGroup;
+use App\Models\VisitType;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;

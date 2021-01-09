@@ -3,16 +3,16 @@
 namespace Tests\Unit;
 
 use App\GaelO\Constants\Constants;
-use App\Model\Patient;
-use App\Model\ReviewStatus;
-use App\Model\Study;
-use App\Model\VisitGroup;
-use App\Model\VisitType;
+use App\Models\Patient;
+use App\Models\ReviewStatus;
+use App\Models\Study;
+use App\Models\VisitGroup;
+use App\Models\VisitType;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\App;
 use Tests\TestCase;
-use App\Model\Visit;
+use App\Models\Visit;
 
 class GetVisitToCreateTest extends TestCase
 {

@@ -2,7 +2,7 @@
 
 namespace Database\Factories;
 
-use App\Model\ReviewStatus;
+use App\Models\ReviewStatus;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class ReviewStatusFactory extends Factory
