@@ -26,6 +26,10 @@ Possible-Uploads (GET) => OK
 dicom-series (DELETE, PATCH) => OK (Nb pour reset upload, loop depuis front)
 dicom-study (PATCH) => OK
 
+
+Test Refac done
+ - UserRepository
+
 Salim TODO :
 
 **** Tests ***
