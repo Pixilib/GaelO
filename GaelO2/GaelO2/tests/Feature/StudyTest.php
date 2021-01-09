@@ -3,18 +3,18 @@
 namespace Tests\Feature;
 
 use App\GaelO\Constants\Constants;
-use App\OrthancStudy;
-use App\Patient;
-use App\ReviewStatus;
+use App\Model\OrthancStudy;
+use App\Model\Patient;
+use App\Model\ReviewStatus;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Support\Facades\Artisan;
 use Laravel\Passport\Passport;
 use Tests\TestCase;
-use App\User;
-use App\Study;
-use App\Visit;
-use App\VisitGroup;
-use App\VisitType;
+use App\Model\User;
+use App\Model\Study;
+use App\Model\Visit;
+use App\Model\VisitGroup;
+use App\Model\VisitType;
 use Tests\AuthorizationTools;
 
 class StudyTest extends TestCase

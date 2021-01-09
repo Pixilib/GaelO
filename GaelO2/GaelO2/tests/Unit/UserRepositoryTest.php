@@ -7,11 +7,11 @@ use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\TestCase;
 
-use App\Study;
-use App\User;
-use App\Center;
-use App\Role;
-use App\CenterUser;
+use App\Model\Study;
+use App\Model\User;
+use App\Model\Center;
+use App\Model\Role;
+use App\Model\CenterUser;
 use App\GaelO\Repositories\UserRepository;
 
 class UserRepositoryTest extends TestCase

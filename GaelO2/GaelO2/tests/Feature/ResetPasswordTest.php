@@ -5,7 +5,7 @@ namespace Tests\Feature;
 use App\GaelO\Constants\Constants;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\TestCase;
-use App\User;
+use App\Model\User;
 
 class ResetPasswordTest extends TestCase
 {

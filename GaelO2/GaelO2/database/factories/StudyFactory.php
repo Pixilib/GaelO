@@ -1,13 +1,20 @@
 <?php
 
-/** @var \Illuminate\Database\Eloquent\Factory $factory */
+namespace Database\Factories;
 
-use App\Study;
-use Faker\Generator as Faker;
+use App\Model\Study;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
-$factory->define(Study::class, function (Faker $faker) {
-    return [
-        'name' => $faker->unique()->word,
-        'patient_code_prefix' => $faker->randomNumber(5),
-    ];
-});
+class StudyFactory extends Factory
+{
+
+    protected $model = Study::class;
+
+    public function definition()
+    {
+        return [
+            'name' => $this->faker->unique()->word,
+            'patient_code_prefix' => $this->faker->randomNumber(5),
+        ];
+    }
+}

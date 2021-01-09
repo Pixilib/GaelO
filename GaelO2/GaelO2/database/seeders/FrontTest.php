@@ -1,13 +1,15 @@
 <?php
 
-use App\Center;
-use App\Patient;
-use App\ReviewStatus;
-use App\Study;
-use App\User;
-use App\Visit;
-use App\VisitGroup;
-use App\VisitType;
+namespace Database\Seeders;
+
+use App\Model\Center;
+use App\Model\Patient;
+use App\Model\ReviewStatus;
+use App\Model\Study;
+use App\Model\User;
+use App\Model\Visit;
+use App\Model\VisitGroup;
+use App\Model\VisitType;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;

@@ -1,6 +1,6 @@
 <?php
 
-namespace App;
+namespace App\Model;
 
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -40,15 +40,15 @@ class User extends Authenticatable
     ];
 
     public function roles() {
-        return $this-> hasMany('App\Role', 'user_id');
+        return $this-> hasMany('App\Model\Role', 'user_id');
     }
 
     public function affiliatedCenters(){
-        return $this->hasManyThrough('App\Center', 'App\CenterUser', 'user_id', 'code', 'id', 'center_code');
+        return $this->hasManyThrough('App\Model\Center', 'App\Model\CenterUser', 'user_id', 'code', 'id', 'center_code');
     }
 
     public function mainCenter(){
-        return $this->belongsTo('App\Center', 'code','center_code');
+        return $this->belongsTo('App\Model\Center', 'code','center_code');
     }
 
 }

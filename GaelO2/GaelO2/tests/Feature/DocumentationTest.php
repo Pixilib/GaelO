@@ -2,14 +2,14 @@
 
 namespace Tests\Feature;
 
-use App\Documentation;
+use App\Model\Documentation;
 use App\GaelO\Constants\Constants;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Support\Facades\Artisan;
 use Laravel\Passport\Passport;
 use Tests\TestCase;
-use App\User;
-use App\Study;
+use App\Model\User;
+use App\Model\Study;
 use Tests\AuthorizationTools;
 
 class DocumentationTest extends TestCase

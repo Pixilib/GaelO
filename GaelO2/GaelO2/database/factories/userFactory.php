@@ -1,28 +1,36 @@
 <?php
 
-/** @var \Illuminate\Database\Eloquent\Factory $factory */
+namespace Database\Factories;
 
-use Faker\Generator as Faker;
+use App\Model\User;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
-$factory->define(App\User::class, function (Faker $faker) {
-    return [
-        'lastname' => $faker->lastname,
-        'firstname' => $faker->firstname,
-        'username' => $faker->unique()->userName,
-        'email'=> $faker->unique()->safeEmail,
-        'password' => $faker->password,
-        'password_temporary'=>$faker->password,
-        'password_previous1'=>$faker->password,
-        'password_previous2'=>$faker->password,
-        'phone' => $faker->phoneNumber,
-        'last_password_update' => now(),
-        'creation_date' => now(),
-        'status' => $faker->randomElement(['Unconfirmed', 'Activated', 'Blocked']),
-        'administrator' => $faker->randomElement([true, false]),
-        'center_code' => 0,
-        'job' => $faker->randomElement(['CRA', 'Monitor', 'Nuclearist','PI', 'Radiologist', 'Study nurse', 'Supervision' ]),
-        'orthanc_address' => $faker->domainName,
-        'orthanc_login' => $faker->userName,
-        'orthanc_password' => $faker->password,
-    ];
-});
+class UserFactory extends Factory
+{
+
+    protected $model = User::class;
+
+    public function definition()
+    {
+        return [
+            'lastname' => $this->faker->lastname,
+            'firstname' => $this->faker->firstname,
+            'username' => $this->faker->unique()->userName,
+            'email'=> $this->faker->unique()->safeEmail,
+            'password' => $this->faker->password,
+            'password_temporary'=> $this->faker->password,
+            'password_previous1'=> $this->faker->password,
+            'password_previous2'=> $this->faker->password,
+            'phone' => $this->faker->phoneNumber,
+            'last_password_update' => now(),
+            'creation_date' => now(),
+            'status' => $this->faker->randomElement(['Unconfirmed', 'Activated', 'Blocked']),
+            'administrator' => $this->faker->randomElement([true, false]),
+            'center_code' => 0,
+            'job' => $this->faker->randomElement(['CRA', 'Monitor', 'Nuclearist','PI', 'Radiologist', 'Study nurse', 'Supervision' ]),
+            'orthanc_address' => $this->faker->domainName,
+            'orthanc_login' => $this->faker->userName,
+            'orthanc_password' => $this->faker->password,
+        ];
+    }
+}

@@ -1,14 +1,21 @@
 <?php
 
-/** @var \Illuminate\Database\Eloquent\Factory $factory */
+namespace Database\Factories;
 
-use App\Role;
-use Faker\Generator as Faker;
+use App\Model\Role;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
-$factory->define(Role::class, function (Faker $faker) {
-    return [
-        'name'=> $faker->randomElement(['Investigator', 'Monitor', 'Supervisor', 'Reviewer']),
-        'user_id'=> $faker->unique()->randomNumber,
-        'study_name'=> $faker->word
-    ];
-});
+class RoleFactory extends Factory
+{
+
+    protected $model = Role::class;
+
+    public function definition()
+    {
+        return [
+            'name'=> $this->faker->randomElement(['Investigator', 'Monitor', 'Supervisor', 'Reviewer']),
+            'user_id'=> $this->faker->unique()->randomNumber,
+            'study_name'=> $this->faker->word
+        ];
+    }
+}

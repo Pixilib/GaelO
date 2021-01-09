@@ -1,13 +1,29 @@
 <?php
 
-/** @var \Illuminate\Database\Eloquent\Factory $factory */
+namespace Database\Factories;
 
-use App\CenterUser;
-use Faker\Generator as Faker;
+use App\Model\CenterUser;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
-$factory->define(CenterUser::class, function (Faker $faker) {
-    return [
-        'user_id'=>$faker->randomNumber,
-        'center_code'=>$faker->randomNumber
-    ];
-});
+class CenterUserFactory extends Factory
+{
+    /**
+     * The name of the factory's corresponding model.
+     *
+     * @var string
+     */
+    protected $model = CenterUser::class;
+
+    /**
+     * Define the model's default state.
+     *
+     * @return array
+     */
+    public function definition()
+    {
+        return [
+            'user_id'=>$this->faker->randomNumber,
+            'center_code'=>$this->faker->randomNumber
+        ];
+    }
+}

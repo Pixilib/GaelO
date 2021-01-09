@@ -1,21 +1,27 @@
 <?php
 
-/** @var \Illuminate\Database\Eloquent\Factory $factory */
+namespace Database\Factories;
 
-use App\Review;
-use Faker\Generator as Faker;
+use App\Model\Review;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
-$factory->define(Review::class, function (Faker $faker) {
-    return [
-        'id'=>$faker->unique()->randomNumber,
-        'study_name'=>$faker->word,
-        'visit_id'=>$faker->randomNumber,
-        'user_id'=>$faker->randomNumber,
-        'review_date'=> now(),
-        'validated'=>$faker->randomElement([true, false]),
-        'adjudication'=>$faker->randomElement([true, false]),
-        'sent_files'=>json_encode([]),
-        'review_data'=>json_encode(['item1'=>'a', 'item2'=>5])
-    ];
+class ReviewFactory extends Factory
+{
 
-});
+    protected $model = Review::class;
+
+    public function definition()
+    {
+        return [
+            'id'=>$this->faker->unique()->randomNumber,
+            'study_name'=>$this->faker->word,
+            'visit_id'=>$this->faker->randomNumber,
+            'user_id'=>$this->faker->randomNumber,
+            'review_date'=> now(),
+            'validated'=>$this->faker->randomElement([true, false]),
+            'adjudication'=>$this->faker->randomElement([true, false]),
+            'sent_files'=>json_encode([]),
+            'review_data'=>json_encode(['item1'=>'a', 'item2'=>5])
+        ];
+    }
+}

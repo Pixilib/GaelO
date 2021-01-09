@@ -5,7 +5,7 @@ namespace Tests\Feature;
 use App\GaelO\Constants\Constants;
 use Illuminate\Support\Facades\Hash;
 use Tests\TestCase;
-use App\User;
+use App\Model\User;
 
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 

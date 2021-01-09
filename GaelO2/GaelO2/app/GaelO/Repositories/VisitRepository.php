@@ -3,10 +3,10 @@
 namespace App\GaelO\Repositories;
 
 use App\GaelO\Constants\Constants;
-use App\Visit;
+use App\Model\Visit;
 use App\GaelO\Interfaces\PersistenceInterface;
 use App\GaelO\Util;
-use App\ReviewStatus;
+use App\Model\ReviewStatus;
 use Exception;
 use Illuminate\Support\Facades\DB;
 

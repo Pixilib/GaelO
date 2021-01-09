@@ -1,6 +1,6 @@
 <?php
 
-namespace App;
+namespace App\Model;
 
 use Illuminate\Database\Eloquent\Model;
 
@@ -10,6 +10,6 @@ class Center extends Model
     public $incrementing = false;
 
     public function country(){
-        return $this->belongsTo('App\Country', 'country_code', 'code');
+        return $this->belongsTo('App\Model\Country', 'country_code', 'code');
     }
 }

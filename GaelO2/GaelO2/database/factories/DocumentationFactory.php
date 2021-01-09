@@ -1,21 +1,28 @@
 <?php
 
-/** @var \Illuminate\Database\Eloquent\Factory $factory */
+namespace Database\Factories;
 
-use App\Documentation;
-use Faker\Generator as Faker;
+use App\Model\Documentation;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
-$factory->define(Documentation::class, function (Faker $faker) {
-    return [
-        'id'=>$faker->unique()->randomNumber,
-        'name'=>$faker->unique()->word,
-        'document_date'=>now(),
-        'study_name'=>$faker->word,
-        'version'=>$faker->word,
-        'investigator'=> $faker->randomElement([true, false]),
-        'controller'=> $faker->randomElement([true, false]),
-        'monitor'=> $faker->randomElement([true, false]),
-        'reviewer'=> $faker->randomElement([true, false]),
-        'path'=> $faker->word
-    ];
-});
+class DocumentationFactory extends Factory
+{
+
+    protected $model = Documentation::class;
+
+    public function definition()
+    {
+        return [
+            'id'=>$this->faker->unique()->randomNumber,
+            'name'=>$this->faker->unique()->word,
+            'document_date'=>now(),
+            'study_name'=>$this->faker->word,
+            'version'=>$this->faker->word,
+            'investigator'=> $this->faker->randomElement([true, false]),
+            'controller'=> $this->faker->randomElement([true, false]),
+            'monitor'=> $this->faker->randomElement([true, false]),
+            'reviewer'=> $this->faker->randomElement([true, false]),
+            'path'=> $this->faker->word
+        ];
+    }
+}

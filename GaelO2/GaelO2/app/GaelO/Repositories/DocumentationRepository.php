@@ -2,7 +2,7 @@
 
 namespace App\GaelO\Repositories;
 
-use App\Documentation;
+use App\Model\Documentation;
 use App\GaelO\Interfaces\PersistenceInterface;
 use App\GaelO\Util;
 

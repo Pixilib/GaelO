@@ -2,12 +2,12 @@
 
 namespace Tests\Feature;
 
-use App\Center;
+use App\Model\Center;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Support\Facades\Artisan;
 use Laravel\Passport\Passport;
 use Tests\TestCase;
-use App\User;
+use App\Model\User;
 use Tests\AuthorizationTools;
 
 class CenterTest extends TestCase

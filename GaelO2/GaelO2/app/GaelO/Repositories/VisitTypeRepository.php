@@ -2,7 +2,7 @@
 
 namespace App\GaelO\Repositories;
 
-use App\VisitType;
+use App\Model\VisitType;
 use App\GaelO\Interfaces\PersistenceInterface;
 use App\GaelO\Util;
 use Exception;

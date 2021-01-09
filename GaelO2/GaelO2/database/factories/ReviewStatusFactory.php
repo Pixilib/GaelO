@@ -1,18 +1,24 @@
 <?php
 
-/** @var \Illuminate\Database\Eloquent\Factory $factory */
+namespace Database\Factories;
 
-use App\ReviewStatus;
-use Faker\Generator as Faker;
+use App\Model\ReviewStatus;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
-$factory->define(ReviewStatus::class, function (Faker $faker) {
-    return [
-        'visit_id'=>$faker->randomNumber,
-        'study_name'=>$faker->word,
-        'review_available'=>$faker->randomElement([true, false]),
-        'review_status'=> $faker->randomElement(['Not Done', 'Not Needed', 'Ongoing','Wait Adjudication','Done']),
-        'review_conclusion_value'=>$faker->word,
-        'review_conclusion_date'=>now()
+class ReviewStatusFactory extends Factory
+{
 
-    ];
-});
+    protected $model = ReviewStatus::class;
+
+    public function definition()
+    {
+        return [
+            'visit_id'=>$this->faker->randomNumber,
+            'study_name'=>$this->faker->word,
+            'review_available'=>$this->faker->randomElement([true, false]),
+            'review_status'=> $this->faker->randomElement(['Not Done', 'Not Needed', 'Ongoing','Wait Adjudication','Done']),
+            'review_conclusion_value'=>$this->faker->word,
+            'review_conclusion_date'=>now()
+        ];
+    }
+}

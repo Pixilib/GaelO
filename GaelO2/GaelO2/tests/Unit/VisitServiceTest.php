@@ -10,13 +10,13 @@ use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Artisan;
 use Laravel\Passport\Passport;
 use Tests\TestCase;
-use App\User;
-use App\Study;
-use App\VisitGroup;
-use App\VisitType;
-use App\Patient;
-use App\Visit;
-use App\ReviewStatus;
+use App\Model\User;
+use App\Model\Study;
+use App\Model\VisitGroup;
+use App\Model\VisitType;
+use App\Model\Patient;
+use App\Model\Visit;
+use App\Model\ReviewStatus;
 
 class VisitServiceTest extends TestCase
 {

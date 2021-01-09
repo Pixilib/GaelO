@@ -1,21 +1,28 @@
 <?php
 
-/** @var \Illuminate\Database\Eloquent\Factory $factory */
+namespace Database\Factories;
 
-use App\VisitType;
-use Faker\Generator as Faker;
+use App\Model\VisitType;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
-$factory->define(VisitType::class, function (Faker $faker) {
-    return [
-        'visit_group_id'=>  $faker->unique()->randomNumber,
-        'name'=>  $faker->unique()->word,
-        'order'=>  $faker->unique()->randomNumber,
-        'local_form_needed'=>$faker->randomElement([true, false]),
-        'qc_needed'=>$faker->randomElement([true, false]),
-        'review_needed'=>$faker->randomElement([true, false]),
-        'optional'=>$faker->randomElement([true, false]),
-        'limit_low_days'=>  $faker->randomNumber,
-        'limit_up_days'=> $faker->randomNumber,
-        'anon_profile'=>$faker->randomElement( ['Default', 'Full'])
-    ];
-});
+class VisitTypeFactory extends Factory
+{
+
+    protected $model = VisitType::class;
+
+    public function definition()
+    {
+        return [
+            'visit_group_id'=>  $this->faker->unique()->randomNumber,
+            'name'=>  $this->faker->unique()->word,
+            'order'=>  $this->faker->unique()->randomNumber,
+            'local_form_needed'=>$this->faker->randomElement([true, false]),
+            'qc_needed'=>$this->faker->randomElement([true, false]),
+            'review_needed'=>$this->faker->randomElement([true, false]),
+            'optional'=>$this->faker->randomElement([true, false]),
+            'limit_low_days'=>  $this->faker->randomNumber,
+            'limit_up_days'=> $this->faker->randomNumber,
+            'anon_profile'=> $this->faker->randomElement( ['Default', 'Full'])
+        ];
+    }
+}

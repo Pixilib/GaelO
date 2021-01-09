@@ -2,7 +2,7 @@
 
 namespace App\GaelO\Repositories;
 
-use App\VisitGroup;
+use App\Model\VisitGroup;
 use App\GaelO\Interfaces\PersistenceInterface;
 use App\GaelO\Util;
 

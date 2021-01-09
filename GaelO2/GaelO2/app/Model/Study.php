@@ -1,6 +1,6 @@
 <?php
 
-namespace App;
+namespace App\Model;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -14,15 +14,15 @@ class Study extends Model
     public $incrementing = false;
 
     public function patients(){
-        return $this->hasMany('App\Patient', 'study_name');
+        return $this->hasMany('App\Model\Patient', 'study_name');
     }
 
     public function visitGroups(){
-        return $this->hasMany('App\VisitGroup', 'study_name');
+        return $this->hasMany('App\Model\VisitGroup', 'study_name');
     }
 
     public function visitGroupDetails(){
-    return $this->hasMany('App\VisitGroup', 'study_name')->with('visitTypes');
+    return $this->hasMany('App\Model\VisitGroup', 'study_name')->with('visitTypes');
     }
 
 }

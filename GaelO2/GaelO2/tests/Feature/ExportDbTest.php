@@ -5,7 +5,7 @@ namespace Tests\Feature;
 use Illuminate\Support\Facades\Artisan;
 use Laravel\Passport\Passport;
 use Tests\TestCase;
-use App\User;
+use App\Model\User;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\AuthorizationTools;
 

@@ -7,12 +7,12 @@ use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Support\Facades\Artisan;
 use Laravel\Passport\Passport;
 use Tests\TestCase;
-use App\User;
-use App\VisitGroup;
-use App\Study;
-use App\VisitType;
-use App\Visit;
-use App\Patient;
+use App\Model\User;
+use App\Model\VisitGroup;
+use App\Model\Study;
+use App\Model\VisitType;
+use App\Model\Visit;
+use App\Model\Patient;
 use Tests\AuthorizationTools;
 
 class VisitTypeTest extends TestCase

@@ -4,7 +4,7 @@ namespace App\GaelO\Repositories;
 
 use App\GaelO\Constants\Constants;
 use App\GaelO\Interfaces\PersistenceInterface;
-use App\Tracker;
+use App\Model\Tracker;
 use App\GaelO\Util;
 use Exception;
 

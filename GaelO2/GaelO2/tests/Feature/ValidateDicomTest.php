@@ -3,17 +3,17 @@
 namespace Tests\Feature;
 
 use App\GaelO\Constants\Constants;
-use App\User;
-use App\VisitGroup;
-use App\VisitType;
+use App\Model\User;
+use App\Model\VisitGroup;
+use App\Model\VisitType;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Support\Facades\Artisan;
 use Laravel\Passport\Passport;
-use App\Patient;
-use App\ReviewStatus;
-use App\Study;
+use App\Model\Patient;
+use App\Model\ReviewStatus;
+use App\Model\Study;
 use Tests\TestCase;
-use App\Visit;
+use App\Model\Visit;
 use Tests\AuthorizationTools;
 
 class ValidateDicomTest extends TestCase

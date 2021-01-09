@@ -3,12 +3,12 @@
 namespace Tests\Feature;
 
 use App\GaelO\Constants\Constants;
-use App\Study;
+use App\Model\Study;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Support\Facades\Artisan;
 use Laravel\Passport\Passport;
 use Tests\TestCase;
-use App\User;
+use App\Model\User;
 use Tests\AuthorizationTools;
 
 class ImportPatientTest extends TestCase

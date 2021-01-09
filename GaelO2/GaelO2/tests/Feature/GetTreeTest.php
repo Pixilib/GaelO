@@ -3,18 +3,18 @@
 namespace Tests\Feature;
 
 use App\GaelO\Constants\Constants;
-use App\Patient;
-use App\ReviewStatus;
-use App\Study;
-use App\Visit;
-use App\VisitGroup;
-use App\VisitType;
+use App\Model\Patient;
+use App\Model\ReviewStatus;
+use App\Model\Study;
+use App\Model\Visit;
+use App\Model\VisitGroup;
+use App\Model\VisitType;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Support\Facades\Artisan;
 use Laravel\Passport\Passport;
 use Tests\AuthorizationTools;
 use Tests\TestCase;
-use App\User;
+use App\Model\User;
 
 class GetTreeTest extends TestCase
 {

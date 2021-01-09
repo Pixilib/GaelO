@@ -1,13 +1,23 @@
 <?php
 
-/** @var \Illuminate\Database\Eloquent\Factory $factory */
+namespace Database\Factories;
 
-use App\VisitGroup;
-use Faker\Generator as Faker;
+use App\Model\VisitGroup;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
-$factory->define(VisitGroup::class, function (Faker $faker) {
-    return [
-        'study_name'=> $faker->unique()->word,
-        'modality'=>$faker->randomElement(['CT', 'PT', 'MR']),
-    ];
-});
+class VisitGroupFactory extends Factory
+{
+
+    protected $model = VisitGroup::class;
+
+    public function definition()
+    {
+        return [
+            'study_name'=> $this->faker->unique()->word,
+            'modality'=>$this->faker->randomElement(['CT', 'PT', 'MR']),
+        ];
+    }
+}
+
+
+
