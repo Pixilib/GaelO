@@ -27,10 +27,6 @@ class DeleteUser {
 
             $this->checkAuthorization($deleteRequest->currentUserId);
 
-            if ( ! $this->persistenceInterface->isExistingId($deleteRequest->id)){
-                throw new GaelONotFoundException('Non Exiting User Id');
-            };
-
             $this->persistenceInterface->delete($deleteRequest->id);
 
             $actionsDetails = [

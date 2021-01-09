@@ -64,7 +64,7 @@ class UserFactory extends Factory
 
     }
 
-    public function accountState(string $state){
+    public function status(string $state){
 
         return $this->state(function (array $attributes) use ($state) {
             return [

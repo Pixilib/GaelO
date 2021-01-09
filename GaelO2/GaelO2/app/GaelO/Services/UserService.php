@@ -21,7 +21,6 @@ class UserService
     public function createUser(CreateUserRequest $createUserRequest, string $passwordTemporary) : array {
         $password = null;
         $creationDate = Util::now();
-        $lastPasswordUpdate = null;
         //Check form completion
         $this->checkFormComplete($createUserRequest);
         $this->checkEmailValid($createUserRequest->email);
@@ -44,8 +43,7 @@ class UserService
                             $createUserRequest->orthancPassword,
                             $passwordTemporary,
                             $password,
-                            $creationDate,
-                            $lastPasswordUpdate);
+                            $creationDate);
 
         return $createdUserEntity;
 
@@ -62,11 +60,6 @@ class UserService
 
         //These property can't be modified in user edition
         $passwordTemporary = $temporaryPassword == null ? $user['password_temporary'] : $temporaryPassword;
-        $modifyUserRequest->password = $user['password'];
-        $modifyUserRequest->password_previous1 = $user['password_previous1'];
-        $modifyUserRequest->password_previous2 = $user['password_previous2'];
-        $modifyUserRequest->last_password_update = $user['last_password_update'];
-        $modifyUserRequest->creation_date = $user['creation_date'];
 
         $this->persistenceInterface->updateUser($user['id'], $modifyUserRequest->username,
                                                             $modifyUserRequest->lastname,
@@ -80,10 +73,7 @@ class UserService
                                                             $modifyUserRequest->orthancAddress,
                                                             $modifyUserRequest->orthancLogin,
                                                             $modifyUserRequest->orthancPassword,
-                                                            $passwordTemporary,
-                                                            $modifyUserRequest->password,
-                                                            $modifyUserRequest->creation_date,
-                                                            $modifyUserRequest->last_password_update);
+                                                            $passwordTemporary);
     }
 
     public function patchUser(ModifyUserIdentificationRequest $modifyUserIdentificationRequest) {

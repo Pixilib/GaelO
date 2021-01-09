@@ -9,6 +9,8 @@ class Constants {
     const USER_STATUS_DEACTIVATED = "Deactivated";
 
     const USER_JOB_CRA = 'CRA';
+    const USER_JOB_SUPERVISION = 'Supervision';
+    const USER_JOB_RADIOLOGIST = 'Radiologist';
 
     const PATIENT_INCLUSION_STATUS_INCLUDED = "Included";
     const PATIENT_INCLUSION_STATUS_WITHDRAWN = "Withdrawn";

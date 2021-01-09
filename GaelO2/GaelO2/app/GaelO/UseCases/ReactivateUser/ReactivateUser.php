@@ -47,11 +47,7 @@ class ReactivateUser{
                 $user['job'],
                 $user['orthanc_address'],
                 $user['orthanc_login'],
-                $user['orthanc_password'],
-                $user['password_temporary'],
-                $user['password'],
-                $user['creation_date'],
-                $user['last_password_update']
+                $user['orthanc_password']
             );
 
             $this->mailServices->sendResetPasswordMessage(

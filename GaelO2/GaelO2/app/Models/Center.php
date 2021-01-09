@@ -3,9 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Center extends Model
 {
+    use HasFactory;
+
     protected $primaryKey = 'code';
     public $incrementing = false;
 

@@ -18,4 +18,13 @@ class CenterFactory extends Factory
             'country_code' => 'FR'
         ];
     }
+
+    public function code(int $centerCode){
+
+        return $this->state(function (array $attributes) use ($centerCode) {
+            return [
+                'code' => $centerCode,
+            ];
+        });
+    }
 }

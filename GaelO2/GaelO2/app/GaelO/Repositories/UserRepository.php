@@ -2,16 +2,17 @@
 
 namespace App\GaelO\Repositories;
 
-use App\Models\CenterUser;
-use App\GaelO\Constants\Constants;
-use App\Models\User;
 use App\GaelO\Interfaces\PersistenceInterface;
-use App\GaelO\Util;
-use App\Models\Role;
-use DateTime;
-use Illuminate\Support\Facades\Log;
+use App\GaelO\Interfaces\UserRepositoryInterface;
 
-class UserRepository implements PersistenceInterface {
+use App\Models\CenterUser;
+use App\Models\User;
+use App\Models\Role;
+
+use App\GaelO\Constants\Constants;
+use App\GaelO\Util;
+
+class UserRepository implements PersistenceInterface, UserRepositoryInterface {
 
     public function __construct(User $user, Role $roles, CenterUser $centerUser){
         $this->user = $user;
@@ -27,7 +28,7 @@ class UserRepository implements PersistenceInterface {
     }
 
     public function update($id, array $data) : void{
-        $model = $this->user->find($id);
+        $model = $this->user->findOrFail($id);
         $model = Util::fillObject($data, $model);
         $model->save();
     }
@@ -48,7 +49,7 @@ class UserRepository implements PersistenceInterface {
     public function createUser(String $username, String $lastName, String $firstName, String $status,
                                 String $email, ?String $phone, bool $administrator, int $centerCode, String $job,
                                 ?String $orthancAdress, ?String $orthancLogin, ?String $orthancPassword,
-                                String $passwordTemporary, ?String $password, String $creationDate, ?String $lastPasswordUpdate) : array {
+                                String $passwordTemporary, ?String $password, String $creationDate) : array {
 
         $data= ['username' => $username,
         'lastname' => $lastName,
@@ -65,7 +66,7 @@ class UserRepository implements PersistenceInterface {
         'password_temporary'=> $passwordTemporary,
         'password'=> $password,
         'creation_date'=> $creationDate,
-        'last_password_update'=> $lastPasswordUpdate];
+        'last_password_update'=> null];
 
         return $this->create($data);
 
@@ -74,7 +75,8 @@ class UserRepository implements PersistenceInterface {
     public function updateUser(int $id, String $username, ?String $lastName, ?String $firstName, String $status,
                                 String $email, ?String $phone, bool $administrator, int $centerCode, String $job,
                                 ?String $orthancAdress, ?String $orthancLogin, ?String $orthancPassword,
-                                ?String $passwordTemporary, ?String $password, String $creationDate, ?String $lastPasswordUpdate) : void {
+                                ?String $passwordTemporary) : void {
+
         $data= ['username' => $username,
                 'lastname' => $lastName,
                 'firstname' => $firstName,
@@ -87,16 +89,13 @@ class UserRepository implements PersistenceInterface {
                 'orthanc_address' => $orthancAdress,
                 'orthanc_login' => $orthancLogin,
                 'orthanc_password' => $orthancPassword,
-                'password_temporary'=> $passwordTemporary,
-                'password'=> $password,
-                'creation_date'=> $creationDate,
-                'last_password_update'=> $lastPasswordUpdate];
+                'password_temporary'=> $passwordTemporary];
 
         $this->update($id, $data);
 
     }
 
-    public function getUserByUsername(String $username, bool $withTrashed = false){
+    public function getUserByUsername(String $username, bool $withTrashed = false) : array {
         if($withTrashed){
             $user = $this->user->withTrashed()->where('username', $username)->firstOrFail();
         }else{
@@ -107,29 +106,14 @@ class UserRepository implements PersistenceInterface {
     }
 
     public function isExistingUsername(String $username) : bool {
-        $user = $this->user->where('username', $username);
+        $user = $this->user->withTrashed()->where('username', $username);
         return $user->count() > 0 ? true : false;
     }
 
 
     public function isExistingEmail(String $email) : bool {
-        $user = $this->user->where('email', $email);
+        $user = $this->user->withTrashed()->where('email', $email);
         return $user->count() > 0 ? true : false;
-    }
-
-    public function isExistingId(int $id) : bool {
-        $user = $this->user->where('id', $id);
-        return $user->count() > 0 ? true : false;
-    }
-
-    public function getUserByEmail(String $email) : array {
-        $user = $this->user->where('email', $email)->first();
-        return empty($user) ? [] : $user->toArray();
-    }
-
-    public function getAdministrators() : array {
-        $user = $this->user->where('administrator', true);
-        return empty($user) ? [] : $user->toArray();
     }
 
     public function reactivateUser(int $id) : void {
