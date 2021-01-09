@@ -67,11 +67,9 @@ class ResetPassword {
 
     private function checkNotDeactivatedAccount(array $user){
         if($user['deleted_at'] !== null) {
-            //Get studies with role to prepare Email
-            $studies  = $this->persistenceInterface->getAllStudiesWithRoleForUser($user['username']);
             //Send Email change password failure
             $this->mailServices->sendForbiddenResetPasswordDueToDeactivatedAccount($user['email'],
-                    $user['username'], $studies);
+                    $user['username']);
             throw new GaelOBadRequestException('Deactivated Account');
         }
     }

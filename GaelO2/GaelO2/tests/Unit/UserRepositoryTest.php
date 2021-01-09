@@ -4,7 +4,6 @@ namespace Tests\Unit;
 
 use App\GaelO\Constants\Constants;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\TestCase;
 
@@ -257,5 +256,158 @@ class UserRepositoryTest extends TestCase
 
     public function testGetUsersAffiliatedToCenter(){
 
+        $center3Code = $this->center3->code;
+
+        $usersMainCenter = User::factory()->status(Constants::USER_STATUS_ACTIVATED)->centerCode($center3Code)->count(10)->create();
+        $usersAffiliated = User::factory()->status(Constants::USER_STATUS_ACTIVATED)->count(5)->create();
+        $usersNotAffiliated = User::factory()->status(Constants::USER_STATUS_ACTIVATED)->count(20)->create();
+
+        $usersAffiliated->each(function ($user) use ($center3Code) {
+            CenterUser::factory()->userId($user->id)->centerCode($center3Code)->create();
+        });
+
+        $users = $this->userRepository->getUsersAffiliatedToCenter($center3Code);
+
+        $this->assertEquals(15, sizeof($users));
+
     }
+
+    public function testGetAllStudiesWithRoleForUser(){
+
+        $user = User::factory()->create();
+
+        $study1Name = $this->studies->first()->name;
+        $study2Name = $this->studies->last()->name;
+
+        Role::factory()->userId($user->id)->roleName(Constants::ROLE_INVESTIGATOR)->studyName($study1Name)->create();
+        Role::factory()->userId($user->id)->roleName(Constants::ROLE_INVESTIGATOR)->studyName($study2Name)->create();
+
+        $studies = $this->userRepository->getAllStudiesWithRoleForUser($user->username);
+
+        $this->assertTrue(in_array($study1Name, $studies));
+        $this->assertTrue(in_array($study2Name, $studies));
+    }
+
+    public function testGetUserRoles(){
+
+        $user = User::factory()->create();
+
+        $study1Name = $this->studies->first()->name;
+        $study2Name = $this->studies->last()->name;
+
+        Role::factory()->userId($user->id)->roleName(Constants::ROLE_INVESTIGATOR)->studyName($study1Name)->create();
+        Role::factory()->userId($user->id)->roleName(Constants::ROLE_SUPERVISOR)->studyName($study1Name)->create();
+        Role::factory()->userId($user->id)->roleName(Constants::ROLE_INVESTIGATOR)->studyName($study2Name)->create();
+
+        $rolesAnswer = $this->userRepository->getUsersRoles($user->id);
+        $this->assertEquals(1, sizeof($rolesAnswer[$study2Name]));
+        $this->assertEquals(2, sizeof($rolesAnswer[$study1Name]));
+
+    }
+
+    public function testGetUserRolesInStudy(){
+
+        $user = User::factory()->create();
+
+        $study1Name = $this->studies->first()->name;
+        $study2Name = $this->studies->last()->name;
+
+        Role::factory()->userId($user->id)->roleName(Constants::ROLE_INVESTIGATOR)->studyName($study1Name)->create();
+        Role::factory()->userId($user->id)->roleName(Constants::ROLE_SUPERVISOR)->studyName($study1Name)->create();
+        Role::factory()->userId($user->id)->roleName(Constants::ROLE_INVESTIGATOR)->studyName($study2Name)->create();
+
+        $roles = $this->userRepository->getUsersRolesInStudy($user->id, $study1Name);
+
+        $this->assertTrue(in_array(Constants::ROLE_INVESTIGATOR, $roles));
+        $this->assertTrue(in_array(Constants::ROLE_SUPERVISOR, $roles));
+
+    }
+
+    public function testAddUserRoleInStudy(){
+
+        $user = User::factory()->create();
+        $this->userRepository->addUserRoleInStudy($user->id, $this->studies->first()->name, Constants::ROLE_INVESTIGATOR);
+        $newRolesRecords = User::find($user->id)->roles()->get()->toArray();
+        $this->assertEquals(1, sizeof($newRolesRecords));
+
+        return $user;
+    }
+
+    public function testDeleteRoleForUser(){
+
+        $user = User::factory()->create();
+        Role::factory()->userId($user->id)->roleName(Constants::ROLE_INVESTIGATOR)->studyName($this->studies->first()->name)->create();
+        $this->userRepository->deleteRoleForUser($user->id, $this->studies->first()->name, Constants::ROLE_INVESTIGATOR);
+
+        $newRolesRecords = User::find($user->id)->roles()->get()->toArray();
+        $this->assertEquals(0, sizeof($newRolesRecords));
+    }
+
+    public function testAddAffiliatedCenter(){
+
+        $user = User::factory()->create();
+        $this->userRepository->addAffiliatedCenter($user->id, $this->center3->code);
+
+        $affiliatedCenters = User::find($user->id)->affiliatedCenters()->get()->toArray();
+        $this->assertEquals(3, $affiliatedCenters[0]['code']);
+    }
+
+    public function testDeleteAffiliatedCenter(){
+        $user = User::factory()->create();
+        CenterUser::factory()->centerCode($this->center3->code)->userId($user->id)->create();
+
+        $this->userRepository->deleteAffiliatedCenter($user->id, $this->center3->code);
+
+        $affiliatedCenters = User::find($user->id)->affiliatedCenters()->get()->toArray();
+        $this->assertEquals(0, sizeof($affiliatedCenters));
+
+    }
+
+    public function testGetAffiliatedCenters(){
+
+        $user = User::factory()->create();
+        CenterUser::factory()->centerCode($this->center3->code)->userId($user->id)->create();
+        CenterUser::factory()->centerCode($this->center5->code)->userId($user->id)->create();
+
+        $affiliatedCenters = $this->userRepository->getAffiliatedCenter($user->id);
+
+        $this->assertEquals(2, sizeof($affiliatedCenters));
+        $this->assertNotNull(2, $affiliatedCenters[0]['country_code']);
+
+    }
+
+    public function testGetAllUsersCenters(){
+
+        $user = User::factory()->create();
+        CenterUser::factory()->centerCode($this->center3->code)->userId($user->id)->create();
+
+        $centers = $this->userRepository->getAllUsersCenters($user->id);
+
+        $this->assertTrue(in_array(0, $centers));
+        $this->assertTrue(in_array(3, $centers));
+
+    }
+
+    public function testGetUsersFromStudy(){
+
+        $userStudy1 = User::factory()->count(5)->create();
+        $userStudy2 = User::factory()->count(5)->create();
+        $userNoRole = User::factory()->count(5)->create();
+
+        $study1Name = $this->studies->first()->name;
+        $study2Name = $this->studies->last()->name;
+        $userStudy1->each(function ($user) use($study1Name) {
+            Role::factory()->userId($user->id)->roleName(Constants::ROLE_INVESTIGATOR)->studyName($study1Name)->create();
+            Role::factory()->userId($user->id)->roleName(Constants::ROLE_SUPERVISOR)->studyName($study1Name)->create();
+        });
+
+        $userStudy2->each(function ($user) use($study2Name) {
+            Role::factory()->userId($user->id)->roleName(Constants::ROLE_INVESTIGATOR)->studyName($study2Name)->create();
+        });
+
+        $users = $this->userRepository->getUsersFromStudy($study1Name);
+
+        $this->assertEquals(5, sizeof($users));
+    }
+
 }

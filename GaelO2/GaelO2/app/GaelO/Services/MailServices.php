@@ -119,7 +119,9 @@ Class MailServices extends SendEmailAdapter {
 
     }
 
-    public function sendForbiddenResetPasswordDueToDeactivatedAccount(String $userEmail, String $username, Array $studies) : void{
+    public function sendForbiddenResetPasswordDueToDeactivatedAccount(String $userEmail, String $username) : void{
+
+        $studies = $this->userRepository->getAllStudiesWithRoleForUser($username);
 
         $parameters = [
             'name' => 'user',

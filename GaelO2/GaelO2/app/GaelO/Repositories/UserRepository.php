@@ -177,27 +177,26 @@ class UserRepository implements PersistenceInterface, UserRepositoryInterface {
     public function getUsersAffiliatedToCenter(int $centerCode) : array {
 
         $users = $this->user
-        ->where('status', 'Activated')
-        ->join('center_user', function ($join) {
+        ->leftJoin('center_user', function ($join) {
             $join->on('users.id', '=', 'center_user.user_id');
         })->where(function  ($query) use ($centerCode) {
             $query->where('center_user.center_code', '=', $centerCode)
             ->orWhere('users.center_code', '=', $centerCode);
-        })->get();
+        })
+        ->where('status', 'Activated')
+        ->get();
 
         return empty($users) ? [] : $users->toArray();
     }
 
     public function getAllStudiesWithRoleForUser(string $username) : array {
-        $user = $this->user->withTrashed()->where('username', $username)->first();
-        $studies = $user->roles()->join('studies', function ($join) {
-            $join->on('roles.study_name', '=', 'studies.name');
-        })->distinct('study_name')->get();
-        return empty($studies)===true ?  [] : $studies->toArray();
+        $user = $this->user->withTrashed()->where('username', $username)->firstOrFail();
+        $studies = $user->roles()->distinct('study_name')->get();
+        return $studies->count() === 0 ?  [] : $studies->pluck('study_name')->toArray();
     }
 
     public function getUsersRoles(int $userId) : array {
-        $roles = $this->user->where('id', $userId)->first()->roles()->get(['name', 'study_name']);
+        $roles = $this->user->findOrFail($userId)->roles()->get(['name', 'study_name']);
         $roles = $roles->groupBy(['study_name'])
                 ->map(function ($group) {
                     return $group->map(function ($value) {
@@ -209,14 +208,14 @@ class UserRepository implements PersistenceInterface, UserRepositoryInterface {
     }
 
     public function getUsersRolesInStudy(int $userId, String $study) : array {
-        $user = $this->user->where('id', $userId)->first();
-        $roles = $user->roles()->where('study_name', $study)->get()->pluck('name');
-        return empty($roles) ? [] : $roles->toArray();
+        $user = $this->user->findOrFail($userId);
+        $roles = $user->roles()->where('study_name', $study)->get();
+        return $roles->count() === 0 ? [] : $roles->pluck('name')->toArray();
     }
 
     public function addUserRoleInStudy(int $userId, String $study, string $role) : void {
 
-        $user = $this->user->where('id', $userId)->first();
+        $user = $this->user->findOrFail($userId);
         $insertData =[
             'user_id'=>$user['id'],
             'study_name'=> $study,
@@ -236,7 +235,7 @@ class UserRepository implements PersistenceInterface, UserRepositoryInterface {
 
     public function addAffiliatedCenter(int $userId, int $centerCode) : void {
 
-        $user = $this->user->where('id', $userId)->first();
+        $user = $this->user->findOrFail($userId);
 
         $insertArray = [
             'user_id'=>$user['id'],
