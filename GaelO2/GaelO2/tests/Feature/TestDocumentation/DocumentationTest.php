@@ -1,14 +1,11 @@
 <?php
 
-namespace Tests\Feature;
+namespace Tests\Feature\DocumentationTest;
 
 use App\Models\Documentation;
 use App\GaelO\Constants\Constants;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
-use Illuminate\Support\Facades\Artisan;
-use Laravel\Passport\Passport;
 use Tests\TestCase;
-use App\Models\User;
 use App\Models\Study;
 use Tests\AuthorizationTools;
 

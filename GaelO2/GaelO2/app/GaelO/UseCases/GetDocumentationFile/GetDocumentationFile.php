@@ -34,7 +34,7 @@ class GetDocumentationFile{
 
             $getdocumentationFileReponse->status = 200;
             $getdocumentationFileReponse->statusText = 'OK';
-            $getdocumentationFileReponse->filePath = LaravelFunctionAdapter::getStoragePath().'/'.$documentationData['path'];
+            $getdocumentationFileReponse->filePath = LaravelFunctionAdapter::getStoragePath().$documentationData['path'];
             $getdocumentationFileReponse->filename = $documentationData['name'].'_'.$documentationData['version'].'.pdf';
 
         } catch (GaelOException $e){

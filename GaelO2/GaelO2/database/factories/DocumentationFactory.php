@@ -71,11 +71,11 @@ class DocumentationFactory extends Factory
         });
     }
 
-    public function path(){
+    public function path($path){
 
-        return $this->state(function (array $attributes) {
+        return $this->state(function (array $attributes) use($path) {
             return [
-                'path' => true,
+                'path' => $path,
             ];
         });
     }
