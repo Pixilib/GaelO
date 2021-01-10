@@ -161,6 +161,6 @@ class FrontTest extends Seeder
             'state_quality_control' => 'Wait Definitive Conclusion'
         ]);*/
 
-        factory(User::class, 50)->create();
+        User::factory()->count(50)->create();
     }
 }
