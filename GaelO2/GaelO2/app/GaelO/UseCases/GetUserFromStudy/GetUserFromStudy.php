@@ -23,8 +23,9 @@ class GetUserFromStudy {
     public function execute(GetUserFromStudyRequest $userRequest, GetUserFromStudyResponse $userResponse) : void
     {
         try{
-            $this->checkAuthorization($userRequest->currentUserId);
+
             $studyName = $userRequest->studyName;
+            $this->checkAuthorization($userRequest->currentUserId, $studyName);
 
             $dbData = $this->persistenceInterface->getUsersFromStudy($studyName);
 
@@ -50,9 +51,9 @@ class GetUserFromStudy {
 
     }
 
-    private function checkAuthorization(int $userId)  {
-        $this->authorizationService->setCurrentUserAndRole($userId);
-        if(  ! $this->authorizationService->isRoleAllowed(Constants::ROLE_SUPERVISOR) && ! $this->authorizationService->isAdmin()) {
+    private function checkAuthorization(int $userId, string $studyName)  {
+        $this->authorizationService->setCurrentUserAndRole($userId, Constants::ROLE_SUPERVISOR);
+        if(  ! $this->authorizationService->isRoleAllowed($studyName) && ! $this->authorizationService->isAdmin()) {
             throw new GaelOForbiddenException();
         };
     }
