@@ -1,12 +1,9 @@
 <?php
 
-namespace Tests\Feature;
+namespace Tests\Feature\TestPreference;
 
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
-use Illuminate\Support\Facades\Artisan;
-use Laravel\Passport\Passport;
-use App\Models\User;
 use Tests\AuthorizationTools;
 
 class PreferenceTest extends TestCase
@@ -25,12 +22,6 @@ class PreferenceTest extends TestCase
     {
         $this->baseRunDatabaseMigrations();
         $this->artisan('db:seed');
-    }
-
-
-    protected function setUp() : void{
-        parent::setUp();
-        Artisan::call('passport:install');
     }
 
     public function testGetPreferences()
