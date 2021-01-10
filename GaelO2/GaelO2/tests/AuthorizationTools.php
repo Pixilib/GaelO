@@ -2,27 +2,36 @@
 
 namespace Tests;
 
+use App\GaelO\Constants\Constants;
+use App\Models\CenterUser;
 use App\Models\Role;
 use Laravel\Passport\Passport;
 use App\Models\User;
-use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Artisan;
 
 class AuthorizationTools {
 
     public static function addRoleToUser(int $userId, string $role, string $studyName){
-        factory(Role::class, 1)->create(
-            ['name'=> $role,
-            'user_id' => $userId,
-            'study_name'=> $studyName]
-        );
+        Role::factory()->userId($userId)->studyName($studyName)->roleName($role)->create();
     }
 
     public static function actAsAdmin(bool $admin){
-        $user = factory(User::class)->create(['administrator'=>$admin, 'status'=>'Activated', 'last_password_update'=> Carbon::now()->format('Y-m-d H:i:s')]);
+
+        Artisan::call('passport:install');
+
+        if($admin){
+            $user = User::factory()->administrator()->status(Constants::USER_STATUS_ACTIVATED)->create();
+        }else{
+            $user = User::factory()->status(Constants::USER_STATUS_ACTIVATED)->create();
+        }
 
         Passport::actingAs(
-            User::where('id', $user->id)->first()
+            User::find($user->id)
         );
+        return $user->id;
+    }
 
+    public static function addAffiliatedCenter(int $userId, int $centerCode){
+        CenterUser::factory()->userId($userId)->centerCode($centerCode)->create();
     }
 }

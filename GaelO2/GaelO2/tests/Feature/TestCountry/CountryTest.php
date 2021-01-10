@@ -1,12 +1,10 @@
 <?php
 
-namespace Tests\Feature;
+namespace Tests\Feature\TestCountry;
 
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Support\Facades\Artisan;
-use Laravel\Passport\Passport;
 use Tests\TestCase;
-use App\Models\User;
 use Tests\AuthorizationTools;
 
 class CountryTest extends TestCase

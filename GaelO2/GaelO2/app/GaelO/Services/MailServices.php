@@ -78,7 +78,6 @@ Class MailServices extends SendEmailAdapter {
             'studies'=>$studies
         ];
         //Send to user and administrators
-        Log::info([$email, ...$this->getAdminsEmails()]);
         $this->mailInterface->setTo( [$email, ...$this->getAdminsEmails()] );
         $this->mailInterface->setReplyTo();
         $this->mailInterface->setParameters($parameters);

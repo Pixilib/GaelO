@@ -1,14 +1,12 @@
 <?php
 
-namespace Tests\Feature;
+namespace Tests\Feature\TestUser;
 
 use App\GaelO\Constants\Constants;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\TestCase;
 use App\Models\User;
 use App\Models\Center;
-use Illuminate\Support\Facades\Artisan;
-use Laravel\Passport\Passport;
 use Tests\AuthorizationTools;
 
 class ModifyUserTest extends TestCase
@@ -20,17 +18,9 @@ class ModifyUserTest extends TestCase
 
     protected function setUp() : void{
         parent::setUp();
-        Artisan::call('passport:install');
-        Passport::actingAs(
-            User::where('id',1)->first()
-        );
 
-        $center = factory(Center::class)->create();
-
-        $this->user = factory(User::class)->create(['status'=>'Activated',
-        'administrator'=>false,
-        'job' => 'Supervision',
-        'center_code'=> 0 ]);
+        $center = Center::factory()->create();
+        $this->user = User::factory()->status(Constants::USER_STATUS_ACTIVATED)->job(Constants::USER_JOB_SUPERVISION)->create();
 
         $this->validPayload = [
             'username' => 'username',
@@ -62,6 +52,7 @@ class ModifyUserTest extends TestCase
      */
     public function testValidModify()
     {
+        AuthorizationTools::actAsAdmin(true);
         //Save database state before update
         $beforeChangeUser = User::where('id',$this->user['id'])->get()->first()->toArray();
         //Update with update API, shoud be success

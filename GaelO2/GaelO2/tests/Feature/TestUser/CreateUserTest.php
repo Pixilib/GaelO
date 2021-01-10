@@ -1,13 +1,11 @@
 <?php
 
-namespace Tests\Feature;
+namespace Tests\Feature\CreateUserTest;
 
 use App\GaelO\Constants\Constants;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\TestCase;
 use App\Models\User;
-use Illuminate\Support\Facades\Artisan;
-use Laravel\Passport\Passport;
 use Tests\AuthorizationTools;
 
 class CreateUserTest extends TestCase
@@ -40,8 +38,6 @@ class CreateUserTest extends TestCase
         'orthancAddress' => 'test',
         'orthancLogin' => 'test',
         'orthancPassword' => 'test'];
-        //Fake an authentified user to pass auth security for the tests
-        Artisan::call('passport:install');
 
     }
 
@@ -75,7 +71,7 @@ class CreateUserTest extends TestCase
      */
     public function testCreateAlreadyExistingUser(){
         AuthorizationTools::actAsAdmin(true);
-        $alreadyExistingUser = factory(User::class)->create();
+        $alreadyExistingUser = User::factory()->create();
         $this->validPayload['username'] = $alreadyExistingUser['username'];
         $this->json('POST', '/api/users', $this->validPayload) -> assertStatus(409);
     }
@@ -86,7 +82,7 @@ class CreateUserTest extends TestCase
     public function testCreateAlreadyExistingEmail(){
         AuthorizationTools::actAsAdmin(true);
         //Create an existing user using factory on user table (and store the resulting entity in this class)
-        $alreadyExistingUser = factory(User::class)->create();
+        $alreadyExistingUser =  User::factory()->create();
         $this->validPayload['email'] = $alreadyExistingUser['email'];
         $this->json('POST', '/api/users', $this->validPayload) -> assertStatus(409);
     }
