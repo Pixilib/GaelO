@@ -17,4 +17,13 @@ class StudyFactory extends Factory
             'patient_code_prefix' => $this->faker->randomNumber(5),
         ];
     }
+
+    public function name(){
+
+        return $this->state(function (array $attributes) {
+            return [
+                'name' => true,
+            ];
+        });
+    }
 }

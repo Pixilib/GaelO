@@ -18,11 +18,66 @@ class DocumentationFactory extends Factory
             'document_date'=>now(),
             'study_name'=>$this->faker->word,
             'version'=>$this->faker->word,
-            'investigator'=> $this->faker->randomElement([true, false]),
-            'controller'=> $this->faker->randomElement([true, false]),
-            'monitor'=> $this->faker->randomElement([true, false]),
-            'reviewer'=> $this->faker->randomElement([true, false]),
+            'investigator'=> false,
+            'controller'=> false,
+            'monitor'=> false,
+            'reviewer'=> false,
             'path'=> $this->faker->word
         ];
     }
+
+    public function studyName($studyName){
+
+        return $this->state(function (array $attributes) use ($studyName) {
+            return [
+                'study_name' => $studyName,
+            ];
+        });
+    }
+
+    public function investigator(){
+
+        return $this->state(function (array $attributes) {
+            return [
+                'investigator' => true,
+            ];
+        });
+    }
+
+    public function controller(){
+
+        return $this->state(function (array $attributes) {
+            return [
+                'controller' => true,
+            ];
+        });
+    }
+
+    public function monitor(){
+
+        return $this->state(function (array $attributes) {
+            return [
+                'monitor' => true,
+            ];
+        });
+    }
+
+    public function reviewer(){
+
+        return $this->state(function (array $attributes) {
+            return [
+                'reviewer' => true,
+            ];
+        });
+    }
+
+    public function path(){
+
+        return $this->state(function (array $attributes) {
+            return [
+                'path' => true,
+            ];
+        });
+    }
+
 }

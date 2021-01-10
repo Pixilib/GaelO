@@ -28,6 +28,7 @@ dicom-study (PATCH) => OK
 
 
 Salim TODO :
+Documentation manque le modify (PUT ou PATCH)
 Updater nouvelle syntaxe de routes laravel8
 Mettre les interfaces dediées dans les usescases et les factory
 **** Tests ***

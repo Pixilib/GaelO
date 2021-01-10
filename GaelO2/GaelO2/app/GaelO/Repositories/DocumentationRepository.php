@@ -2,11 +2,13 @@
 
 namespace App\GaelO\Repositories;
 
+use App\GaelO\Interfaces\DocumentationRepositoryInterface;
 use App\Models\Documentation;
 use App\GaelO\Interfaces\PersistenceInterface;
 use App\GaelO\Util;
+use Exception;
 
-class DocumentationRepository implements PersistenceInterface {
+class DocumentationRepository implements PersistenceInterface, DocumentationRepositoryInterface {
 
     public function __construct(Documentation $documentation){
         $this->documentation = $documentation;
@@ -34,8 +36,7 @@ class DocumentationRepository implements PersistenceInterface {
     }
 
     public function getAll() : array {
-        $documentations = $this->documentation->get();
-        return empty($documentations) ? [] : $documentations->toArray();
+        throw new Exception('No call to all documentations');
     }
 
     public function createDocumentation(string $name, string $documentDate, string $studyName, string $version, bool $investigator,
@@ -66,6 +67,20 @@ class DocumentationRepository implements PersistenceInterface {
     public function getDocumentationOfStudyWithRole(string $studyName, string $role) : array {
         $documentations = $this->documentation->where([['study_name', $studyName], [strtolower($role), true]])->get();
         return empty($documentations) ? [] : $documentations->toArray();
+    }
+
+    public function updateDocumentation(
+        int $id,
+        string $name,
+        string $documentDate,
+        string $studyName,
+        string $version,
+        bool $investigator,
+        bool $controller,
+        bool $monitor,
+        bool $reviewer
+    ){
+        //SK TODO
     }
 
 }
