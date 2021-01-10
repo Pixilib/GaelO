@@ -1,11 +1,10 @@
 <?php
 
-namespace Tests\Feature;
+namespace Tests\Feature\TestUser;
 
 use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
-use Illuminate\Support\Facades\Artisan;
-use Laravel\Passport\Passport;
+use Tests\AuthorizationTools;
 use Tests\TestCase;
 
 class ModifyUserIdentificationTest extends TestCase
@@ -13,21 +12,6 @@ class ModifyUserIdentificationTest extends TestCase
 
     use DatabaseMigrations {
         runDatabaseMigrations as baseRunDatabaseMigrations;
-    }
-
-    protected function setUp() : void{
-        parent::setUp();
-        Artisan::call('passport:install');
-
-        Passport::actingAs(
-            User::where('id',1)->first()
-        );
-
-
-        $this->user = factory(User::class)->create([
-        'administrator'=>false,
-        'center_code'=> 0 ]);
-
     }
 
     public function runDatabaseMigrations()
@@ -41,7 +25,8 @@ class ModifyUserIdentificationTest extends TestCase
     {
 
         //Save database state before update
-        $beforeChangeUser = User::where('id',1)->first();
+        $currentUserId = AuthorizationTools::actAsAdmin(false);
+        $beforeChangeUser = User::find($currentUserId);
 
         $validPayload = [
             'username' => 'username',
@@ -52,9 +37,9 @@ class ModifyUserIdentificationTest extends TestCase
         ];
 
         //Update with update API, shoud be success
-        $this->json('PATCH', '/api/users/1', $validPayload)-> assertSuccessful();
+        $this->json('PATCH', '/api/users/'.$currentUserId, $validPayload)-> assertSuccessful();
         //Save after update
-        $afterChangeUser = User::where('id',$this->user['id'])->get()->first()->toArray();
+        $afterChangeUser = User::find($currentUserId)->toArray();
 
          //Value expected to have changed
          $updatedArray = ['username', 'lastname', 'firstname', 'email', 'phone'];
@@ -66,6 +51,7 @@ class ModifyUserIdentificationTest extends TestCase
 
     public function testModifyIdentificationShouldFailNotSameUser(){
 
+        AuthorizationTools::actAsAdmin(false);
 
         $validPayload = [
             'username' => 'username',
@@ -76,16 +62,17 @@ class ModifyUserIdentificationTest extends TestCase
         ];
 
         //Update with update API, shoud be success
-        $this->json('PATCH', '/api/users/2', $validPayload)-> assertStatus(403);
+        $this->json('PATCH', '/api/users/1', $validPayload)-> assertStatus(403);
 
     }
 
     public function testModifyUserIdentificationAlreadyUsedUsername()
     {
-        factory(User::class)->create(['username' => 'Pris']);
+
+        $currentUserId = AuthorizationTools::actAsAdmin(false);
 
         $validPayload = [
-            'username' => 'Pris',
+            'username' => 'administrator',
             'lastname' => 'lastname',
             'firstname' => 'firstname',
             'email' => 'test@test.fr',
@@ -93,22 +80,22 @@ class ModifyUserIdentificationTest extends TestCase
         ];
 
         //Update with update API, shoud be success
-        $this->json('PATCH', '/api/users/1', $validPayload)->assertNoContent(409);
+        $this->json('PATCH', '/api/users/'.$currentUserId, $validPayload)->assertNoContent(409);
     }
 
     public function testModifyUserIdentificationAlreadyUsedEmail()
     {
-        factory(User::class)->create(['email' => 'pris@pris.fr']);
+        $currentUserId = AuthorizationTools::actAsAdmin(false);
 
         $validPayload = [
             'username' => 'administrator',
             'lastname' => 'administrator',
             'firstname' => 'administrator',
-            'email' => 'pris@pris.fr',
+            'email' => 'administrator@gaelo.fr',
             'phone' => '0101010101',
         ];
 
-        $this->json('PATCH', '/api/users/1', $validPayload)->assertStatus(409);
+        $this->json('PATCH', '/api/users/'.$currentUserId, $validPayload)->assertStatus(409);
     }
 
 
