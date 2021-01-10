@@ -10,8 +10,6 @@ use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Tests\AuthorizationTools;
 
-use function GuzzleHttp\json_encode;
-
 class TrackerTest extends TestCase
 {
     use DatabaseMigrations {
