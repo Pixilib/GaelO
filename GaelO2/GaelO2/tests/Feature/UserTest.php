@@ -30,52 +30,30 @@ class UserTest extends TestCase
         $this->artisan('db:seed');
     }
 
-    protected function setUp() : void{
-        parent::setUp();
-
-        Artisan::call('passport:install');
-        Passport::actingAs(
-            User::where('id',1)->first()
-        );
-    }
-
     public function testGetUser() {
+        AuthorizationTools::actAsAdmin(true);
         $this->json('GET', '/api/users/1')
             ->assertStatus(200);
     }
 
     public function testGetUserShouldFailNotAdmin(){
-        factory(User::class, 5)->create([
-            'administrator'=> false,
-            'status' => 'Activated'
-        ]);
-
-        Passport::actingAs(
-            User::where('id',3)->first()
-        );
-        $this->json('GET', '/api/users/2')
+        AuthorizationTools::actAsAdmin(false);
+        $this->json('GET', '/api/users/1')
         ->assertStatus(403);
 
     }
 
     public function testGetOwnUser(){
-        factory(User::class, 5)->create([
-            'status' => 'Activated'
-        ]);
+        $currentUserId = AuthorizationTools::actAsAdmin(false);
 
-        Passport::actingAs(
-            User::where('id',2)->first()
-        );
-
-        $this->json('GET', '/api/users/2')
+        $this->json('GET', '/api/users/'.$currentUserId)
         ->assertStatus(200);
     }
 
     public function testGetAllUsers(){
-        //Fill user table
-        factory(User::class, 5)->create();
-        //Test get all users
-        $this->json('GET', '/api/users')-> assertJsonCount(6);
+        AuthorizationTools::actAsAdmin(true);
+        //Test get all users ( 2 in databat : current user + default user)
+        $this->json('GET', '/api/users')-> assertJsonCount(2);
 
     }
 
@@ -86,36 +64,45 @@ class UserTest extends TestCase
     }
 
     public function testGetNotExistingUser(){
+        AuthorizationTools::actAsAdmin(true);
         //Test get non existing user
         $this->json('GET', '/api/users/3')-> assertStatus(404);
     }
 
     public function testGetUserRoles(){
 
-        //Create 5 users
-        $users = factory(User::class, 5)->create();
-        //Create 2 random studies
-        $studies = factory(Study::class, 2)->create();
+        AuthorizationTools::actAsAdmin(true);
 
-        $users->each(function ($user) use ($studies)  {
-            $studies->each(function ($study) use($user) {
-                factory(Role::class)->create(['user_id'=>$user->id, 'name'=>'Investigator', 'study_name'=>$study->name]);
-                factory(Role::class)->create(['user_id'=>$user->id, 'name'=>'Supervisor', 'study_name'=>$study->name]);
-                factory(Role::class)->create(['user_id'=>$user->id, 'name'=>'Monitor', 'study_name'=>$study->name]);
-
-            });
-
-        });
+        $this->createUserWithRoleInTwoStudies();
 
         $answer = $this->json('GET', '/api/users/4/roles');
         $answer->assertStatus(200);
         $content = json_decode($answer->content(), true);
         $numberofStudies = sizeof(array_keys($content));
-        $firstStudyName = array_keys($content)[0];
-        $numberOfRoleInFirstStudy = sizeof($content[$firstStudyName]);
-        $this->assertEquals(2 , $numberofStudies);
-        $this->assertEquals(3, $numberOfRoleInFirstStudy);
+        $numberOfRoleInstudy = sizeof($content[$this->studyName3Roles]);
+        $this->assertEquals(2 ,$numberofStudies);
+        $this->assertEquals(3, $numberOfRoleInstudy);
 
+    }
+
+    //ICI DOIT ETRE DANS LA CLASS ?
+    private function createUserWithRoleInTwoStudies(){
+        //Create 5 users
+        $users = User::factory()->count(5)->create();
+        //Create 2 random studies
+        $study = Study::factory()->count(2)->create();
+        $studyName1 = $study->first()->name;
+        $studyName2 = $study->last()->name;
+
+        $this->studyName3Roles = $studyName1;
+        $this->studyName1Roles = $studyName1;
+
+        $users->each(function ($user) use ($studyName1, $studyName2)  {
+            AuthorizationTools::addRoleToUser($user->id, Constants::ROLE_INVESTIGATOR, $studyName1);
+            AuthorizationTools::addRoleToUser($user->id, Constants::ROLE_SUPERVISOR, $studyName1);
+            AuthorizationTools::addRoleToUser($user->id, Constants::ROLE_REVIEWER, $studyName1);
+            AuthorizationTools::addRoleToUser($user->id, Constants::ROLE_INVESTIGATOR, $studyName2);
+        });
     }
 
     public function testGetUserRolesShouldBeForbiddenByDifferentUserInNotAdmin(){
@@ -131,17 +118,9 @@ class UserTest extends TestCase
     }
 
     public function testGetUserRolesInStudy(){
-
-        //Create 1 users
-        $user = factory(User::class)->create();
-        //Create 1 study
-        $study = factory(Study::class)->create();
-
-        factory(Role::class)->create(['user_id'=>$user->id, 'name'=>Constants::ROLE_INVESTIGATOR, 'study_name'=>$study->name]);
-        factory(Role::class)->create(['user_id'=>$user->id, 'name'=>Constants::ROLE_SUPERVISOR, 'study_name'=>$study->name]);
-        factory(Role::class)->create(['user_id'=>$user->id, 'name'=>Constants::ROLE_MONITOR, 'study_name'=>$study->name]);
-
-        $content = $this->json('GET', '/api/users/'.$user->id.'/roles/'.$study->name)->content();
+        AuthorizationTools::actAsAdmin(true);
+        $this->createUserWithRoleInTwoStudies();
+        $content = $this->json('GET', '/api/users/4/roles/'.$this->studyName3Roles)->assertStatus(200)->content();
         $content = json_decode($content, true);
         //Expect to find 3 role for this user in this study
         $this->assertEquals(3, sizeof($content));
@@ -149,8 +128,9 @@ class UserTest extends TestCase
     }
 
     public function testCreateRoleForUser(){
+        AuthorizationTools::actAsAdmin(true);
         //Create 2 random studies
-        $study = factory(Study::class)->create();
+        $study = Study::factory()->create();
         $payload = ["role" => "Investigator"];
         //First call should be success
         $this->json('POST', '/api/users/1/roles/'.$study->name, $payload)->assertStatus(201);
@@ -160,7 +140,7 @@ class UserTest extends TestCase
     public function testCreateRoleNotAdmin(){
         AuthorizationTools::actAsAdmin(false);
         //Create 2 random studies
-        $study = factory(Study::class)->create();
+        $study = Study::factory()->create();
         $payload = ["role" => "Investigator"];
         //First call should be success
         $this->json('POST', '/api/users/1/roles/'.$study->name, $payload)->assertStatus(403);
@@ -168,18 +148,20 @@ class UserTest extends TestCase
     }
 
     public function testCreateAlreadyExistingRoleForUser(){
-        $study = factory(Study::class)->create();
-        factory(Role::class)->create(['user_id'=>1, 'name'=>Constants::ROLE_INVESTIGATOR, 'study_name'=>$study->name]);
+        AuthorizationTools::actAsAdmin(true);
+        $study = Study::factory()->create();
+        AuthorizationTools::addRoleToUser(1, Constants::ROLE_INVESTIGATOR, $study->name);
         $payload = ["role" => "Investigator"];
         //Second call should answer no new role with status 400
         $this->json('POST', '/api/users/1/roles/'.$study->name, $payload)->assertStatus(400);
     }
 
     public function testDeleteUserRole(){
-        $study = factory(Study::class)->create();
-        factory(Role::class)->create(['user_id'=>1, 'name'=>'Investigator', 'study_name'=>$study->name]);
-        factory(Role::class)->create(['user_id'=>1, 'name'=>'Supervisor', 'study_name'=>$study->name]);
-        factory(Role::class)->create(['user_id'=>1, 'name'=>'Monitor', 'study_name'=>$study->name]);
+        AuthorizationTools::actAsAdmin(true);
+        $study = Study::factory()->create();
+        AuthorizationTools::addRoleToUser(1, Constants::ROLE_INVESTIGATOR, $study->name);
+        AuthorizationTools::addRoleToUser(1, Constants::ROLE_SUPERVISOR, $study->name);
+        AuthorizationTools::addRoleToUser(1, Constants::ROLE_MONITOR, $study->name);
 
         //Delete Investigator role
         $this->json('DELETE', '/api/users/1/roles/'.$study->name.'/Investigator')->assertNoContent(200);
@@ -190,10 +172,8 @@ class UserTest extends TestCase
 
     public function testDeleteRoleNotAdmin(){
         AuthorizationTools::actAsAdmin(false);
-        $study = factory(Study::class)->create();
-        factory(Role::class)->create(['user_id'=>1, 'name'=>'Investigator', 'study_name'=>$study->name]);
-        factory(Role::class)->create(['user_id'=>1, 'name'=>'Supervisor', 'study_name'=>$study->name]);
-        factory(Role::class)->create(['user_id'=>1, 'name'=>'Monitor', 'study_name'=>$study->name]);
+        $study = Study::factory()->create();
+        AuthorizationTools::addRoleToUser(1, Constants::ROLE_INVESTIGATOR, $study->name);
 
         //Delete Investigator role
         $this->json('DELETE', '/api/users/1/roles/'.$study->name.'/Investigator')->assertNoContent(403);
