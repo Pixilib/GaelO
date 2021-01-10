@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Unit;
+namespace Tests\Unit\TestRepositories;
 
 use App\GaelO\Constants\Constants;
 use Illuminate\Foundation\Testing\RefreshDatabase;
