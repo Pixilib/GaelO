@@ -27,14 +27,13 @@ dicom-series (DELETE, PATCH) => OK (Nb pour reset upload, loop depuis front)
 dicom-study (PATCH) => OK
 
 
-Test Refac done
- - UserRepository
-
 Salim TODO :
-
+Updater nouvelle syntaxe de routes laravel8
+Mettre les interfaces dediées dans les usescases et les factory
 **** Tests ***
 Test d'integration pour chaque repository (avec les nouvelles factory)
 Mock des interfaces pour les uses cases et les services
+
 
 //Les tests ne font pas d'assertion sur
 - le tracker => Via un spy ?

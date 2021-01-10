@@ -13,10 +13,9 @@ class CountryAdapterProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->when(
-            [\App\GaelO\UseCases\GetCountry\GetCountry::class])
-        ->needs(\App\GaelO\Interfaces\PersistenceInterface::class)
-        ->give(\App\GaelO\Repositories\CountryRepository::class);
+        $this->app
+        ->bind(\App\GaelO\Interfaces\CountryRepositoryInterface::class,
+        \App\GaelO\Repositories\CountryRepository::class);
     }
 
     /**

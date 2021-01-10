@@ -2,37 +2,20 @@
 
 namespace App\GaelO\Repositories;
 
+use App\GaelO\Interfaces\CountryRepositoryInterface;
 use App\Models\Country;
-use App\GaelO\Interfaces\PersistenceInterface;
-use App\GaelO\Util;
 
-class CountryRepository implements PersistenceInterface {
+class CountryRepository implements CountryRepositoryInterface {
 
     public function __construct(Country $country){
         $this->country = $country;
     }
 
-    public function create(array $data){
-        $country = new Country();
-        $model = Util::fillObject($data, $country);
-        $model->save();
-    }
-
-    public function update($code, array $data) : void {
-        $model = $this->country->find($code);
-        $model = Util::fillObject($data, $model);
-        $model->save();
-    }
-
-    public function find($code){
+    public function getCountryByCode($code){
         return $this->country->findOrFail($code)->toArray();
     }
 
-    public function delete($code) :void {
-        $this->country->find($code)->delete();
-    }
-
-    public function getAll() : array {
+    public function getAllCountries(){
         $countries = $this->country->get();
         return empty($countries) ? []  : $countries->toArray();
     }
