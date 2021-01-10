@@ -45,7 +45,7 @@ class ModifyCenter {
             if(!empty($modifyCenterRequest->name)) $center['name'] = $modifyCenterRequest->name;
             if(!empty($modifyCenterRequest->countryCode)) $center['country_code'] = $modifyCenterRequest->countryCode;
 
-            $this->persistenceInterface->updateCenter($center['name'], $center['code'], $center['country_code']);
+            $this->persistenceInterface->updateCenter($center['code'], $center['name'], $center['country_code']);
 
             $actionDetails = $center;
 

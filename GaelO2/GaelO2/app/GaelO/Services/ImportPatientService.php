@@ -39,7 +39,12 @@ class ImportPatientService
         $studyEntity = $this->studyRepository->find($this->studyName);
         $patientEntities = $this->patientRepository->getPatientsInStudy($this->studyName);
         $this->existingPatientCode = array_map(function ($patientEntity){ return $patientEntity['code']; }, $patientEntities);
-        $this->existingCenter = $this->centerRepository->getExistingCenter();
+
+        $allCenters = $this->centerRepository->getAll();
+        //Store array of all existing centers code
+        $this->existingCenter = array_map( function($center) {
+            return $center->code;
+        }, $allCenters);
 
         //For each patient from the array list
 		foreach ($this->patientEntities as $patientEntity) {
