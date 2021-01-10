@@ -1,13 +1,12 @@
 <?php
 
-namespace Tests\Feature;
+namespace Tests\Feature\TestUser;
 
 use App\GaelO\Constants\Constants;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\TestCase;
 use App\Models\User;
 use Illuminate\Support\Facades\Artisan;
-use Laravel\Passport\Passport;
 use Tests\AuthorizationTools;
 
 class DeleteUserTest extends TestCase
@@ -27,7 +26,7 @@ class DeleteUserTest extends TestCase
     protected function setUp() : void{
         parent::setUp();
         Artisan::call('passport:install');
-        factory(User::class, 5)->create();
+        User::factory()->count(5)->create();
     }
 
     public function testDeleteUser() {

@@ -1,11 +1,9 @@
 <?php
 
-namespace Tests\Feature;
+namespace Tests\Feature\TestExportDb;
 
 use Illuminate\Support\Facades\Artisan;
-use Laravel\Passport\Passport;
 use Tests\TestCase;
-use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\AuthorizationTools;
 
