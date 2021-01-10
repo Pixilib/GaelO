@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature;
+namespace Tests\Feature\TestUser;
 
 use App\GaelO\Constants\Constants;
 use Illuminate\Support\Facades\Hash;
@@ -26,19 +26,19 @@ class ChangePasswordTest extends TestCase
 
     protected function setUp() : void{
         parent::setUp();
-        $user = factory(User::class)->create(
-            ['password' => Hash::make('password12345'),
-            'status' => 'Activated',
-            'password_temporary'=>Hash::make('temporaryPassword'),
-            'password_previous1' => Hash::make('previousPassword1'),
-            'password_previous2' => Hash::make('previousPassword2')]);
+        $this->user = User::factory()
+            ->status(Constants::USER_STATUS_ACTIVATED)
+            ->password(Hash::make('password12345'))
+            ->passwordTemporary(Hash::make('temporaryPassword'))
+            ->passwordPrevious1(Hash::make('previousPassword1'))
+            ->passwordPrevious2(Hash::make('previousPassword2'))
+            ->create();
 
         $this->validPayload = [
             'previous_password' => 'password12345',
             'password1'=>'newPassword12345',
             'password2'=>'newPassword12345'
         ];
-        $this->user = $user;
 
     }
 

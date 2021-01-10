@@ -1,13 +1,10 @@
 <?php
 
-namespace Tests\Feature;
+namespace Tests\Feature\TestUser;
 
 use App\Models\Center;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
-use Illuminate\Support\Facades\Artisan;
-use Laravel\Passport\Passport;
 use Tests\TestCase;
-use App\Models\User;
 use Tests\AuthorizationTools;
 
 class CenterTest extends TestCase
@@ -29,22 +26,16 @@ class CenterTest extends TestCase
     }
 
 
-    protected function setUp() : void{
-        parent::setUp();
-        Artisan::call('passport:install');
-    }
-
-
-
     public function testGetCenters()
     {
         AuthorizationTools::actAsAdmin(true);
         $response = $this->json('GET', '/api/centers')->content();
         $answer = json_decode($response, true);
-        $this->assertEquals(1,sizeof($answer));
+        $this->assertEquals(1, sizeof($answer));
     }
 
-    public function testGetCentersShouldFailNotAdmin(){
+    public function testGetCentersShouldFailNotAdmin()
+    {
         AuthorizationTools::actAsAdmin(false);
         $this->json('GET', '/api/centers')->assertStatus(403);
     }
@@ -52,18 +43,17 @@ class CenterTest extends TestCase
     public function testGetCenter()
     {
         AuthorizationTools::actAsAdmin(true);
-        $center = factory(Center::class)->create();
-        $response = $this->json('GET', '/api/centers/'.$center->code)->content();
+        $response = $this->json('GET', '/api/centers/0')->assertStatus(200)->content();
         $answer = json_decode($response, true);
         $this->assertArrayHasKey('code', $answer);
         $this->assertArrayHasKey('name', $answer);
         $this->assertArrayHasKey('countryCode', $answer);
     }
 
-    public function testGetCenterShouldFailNotAdmin(){
+    public function testGetCenterShouldFailNotAdmin()
+    {
         AuthorizationTools::actAsAdmin(false);
-        $center = factory(Center::class)->create();
-        $this->json('GET', '/api/centers/'.$center->code)->assertStatus(403);
+        $this->json('GET', '/api/centers/0')->assertStatus(403);
     }
 
 
@@ -73,7 +63,7 @@ class CenterTest extends TestCase
         $payload = [
             'name' => 'Paris',
             'code' => 8,
-            'countryCode'=>'US'
+            'countryCode' => 'US'
 
         ];
         $this->json('POST', '/api/centers', $payload)->assertStatus(201);
@@ -85,7 +75,7 @@ class CenterTest extends TestCase
         $payload = [
             'name' => 'Paris',
             'code' => 8,
-            'countryCode'=>'US'
+            'countryCode' => 'US'
 
         ];
         $this->json('POST', '/api/centers', $payload)->assertStatus(403);
@@ -94,16 +84,12 @@ class CenterTest extends TestCase
     public function testAddCenterExistingCode()
     {
         AuthorizationTools::actAsAdmin(true);
-        factory(Center::class)->create(
-            [
-                'code'=>8
-            ]
-        );
+        Center::factory()->code(8)->create();
 
         $payload = [
             'name' => 'Toulouse',
             'code' => 8,
-            'countryCode'=>'US'
+            'countryCode' => 'US'
         ];
         $answer = $this->json('POST', '/api/centers', $payload);
         $answer->assertStatus(409);
@@ -113,25 +99,20 @@ class CenterTest extends TestCase
     public function testAddCenterExistingName()
     {
         AuthorizationTools::actAsAdmin(true);
-        factory(Center::class)->create(
-            [
-                'code'=>8,
-                'name' => 'Paris',
-                'country_code'=>'US'
-            ]
-        );
+        Center::factory()->code(8)->name('Paris')->create();
 
         $payload = [
             'name' => 'Paris',
             'code' => 9,
-            'countryCode'=>'US'
+            'countryCode' => 'US'
         ];
         $answer = $this->json('POST', '/api/centers', $payload);
         $answer->assertStatus(409);
         $answer->assertJsonStructure(['errorMessage']);
     }
 
-    public function testModifyCenterName(){
+    public function testModifyCenterName()
+    {
         AuthorizationTools::actAsAdmin(true);
         $payload = [
             'name' => 'newCenter',
@@ -140,7 +121,8 @@ class CenterTest extends TestCase
         $answer->assertStatus(200);
     }
 
-    public function testModifyCenterCountryCode(){
+    public function testModifyCenterCountryCode()
+    {
         AuthorizationTools::actAsAdmin(true);
         $payload = [
             'countryCode' => 'US',
@@ -149,46 +131,39 @@ class CenterTest extends TestCase
         $answer->assertStatus(200);
     }
 
-    public function testModifyCenterShouldFailNotAdmin(){
+    public function testModifyCenterShouldFailNotAdmin()
+    {
         AuthorizationTools::actAsAdmin(false);
         $payload = [
             'name' => 'newCenter',
-            'countryCode'=>'FR'
+            'countryCode' => 'FR'
 
         ];
         $answer = $this->json('PATCH', '/api/centers/0', $payload);
         $answer->assertStatus(403);
     }
 
-    public function testModifyCenterNotExisting(){
+    public function testModifyCenterNotExisting()
+    {
         AuthorizationTools::actAsAdmin(true);
         $payload = [
             'name' => 'newCenter',
-            'countryCode'=>'FR'
+            'countryCode' => 'FR'
         ];
         //Non existing center modification should fail
         $this->json('PATCH', '/api/centers/1', $payload)->assertStatus(404);
-
     }
 
     public function testModifyCenterExistingName()
     {
         AuthorizationTools::actAsAdmin(true);
 
-        factory(Center::class)->create([
-            'name' => 'Paris',
-            'code' => 8,
-            'country_code'=>'US'
-        ]);
-        factory(Center::class)->create([
-            'name' => 'Toulouse',
-            'code' => 9,
-            'country_code'=>'US'
-        ]);
+        Center::factory()->code(8)->name('Paris')->create();
+        Center::factory()->code(9)->name('Toulouse')->create();
 
         $payload = [
             'name' => 'Toulouse',
-            'countryCode'=>'US'
+            'countryCode' => 'US'
         ];
         $this->json('PATCH', '/api/centers/8', $payload)->assertStatus(409);
     }

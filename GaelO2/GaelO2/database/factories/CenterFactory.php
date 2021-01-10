@@ -27,4 +27,13 @@ class CenterFactory extends Factory
             ];
         });
     }
+
+    public function name(string $centerName){
+
+        return $this->state(function (array $attributes) use ($centerName) {
+            return [
+                'name' => $centerName,
+            ];
+        });
+    }
 }

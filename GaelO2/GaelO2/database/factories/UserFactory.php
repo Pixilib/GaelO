@@ -84,4 +84,45 @@ class UserFactory extends Factory
 
     }
 
+
+    public function password(string $password){
+
+        return $this->state(function (array $attributes) use ($password) {
+            return [
+                'password' => $password,
+            ];
+        });
+
+    }
+
+    public function passwordTemporary(string $password){
+
+        return $this->state(function (array $attributes) use ($password) {
+            return [
+                'password_temporary' => $password,
+            ];
+        });
+
+    }
+
+    public function passwordPrevious1(string $password){
+
+        return $this->state(function (array $attributes) use ($password) {
+            return [
+                'password_previous1' => $password,
+            ];
+        });
+
+    }
+
+    public function passwordPrevious2(string $password){
+
+        return $this->state(function (array $attributes) use ($password) {
+            return [
+                'password_previous2' => $password,
+            ];
+        });
+
+    }
+
 }
