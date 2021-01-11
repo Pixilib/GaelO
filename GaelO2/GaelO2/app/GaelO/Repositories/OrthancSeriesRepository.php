@@ -2,11 +2,12 @@
 
 namespace App\GaelO\Repositories;
 
+use App\GaelO\Interfaces\OrthancSeriesRepositoryInterface;
 use App\GaelO\Interfaces\PersistenceInterface;
 use App\GaelO\Util;
 use App\Models\OrthancSeries;
 
-class OrthancSeriesRepository implements PersistenceInterface{
+class OrthancSeriesRepository implements PersistenceInterface, OrthancSeriesRepositoryInterface {
 
 
     public function __construct(OrthancSeries $orthancSeries){
@@ -51,7 +52,7 @@ class OrthancSeriesRepository implements PersistenceInterface{
                             ?string $injectedTime,?string $injectedDateTime, ?int $injectedActivity, ?int $patientWeight,
                             int $numberOfInstances, string $seriesUID, ?string $seriesNumber,
                             int $seriesDiskSize, int $seriesUncompressedDiskSize, ?string $manufacturer,
-                            ?string $modelName ){
+                            ?string $modelName ) : void {
 
         $data = [
             'orthanc_id' => $seriesOrthancID,
@@ -87,7 +88,7 @@ class OrthancSeriesRepository implements PersistenceInterface{
             ?string $injectedTime,?string $injectedDateTime, ?int $injectedActivity, ?int $patientWeight,
             int $numberOfInstances, string $seriesUID, ?string $seriesNumber,
             int $seriesDiskSize, int $seriesUncompressedDiskSize, ?string $manufacturer,
-            ?string $modelName ){
+            ?string $modelName ) : void {
 
         $data = [
         'orthanc_study_id' => $orthancStudyID,
@@ -134,4 +135,5 @@ class OrthancSeriesRepository implements PersistenceInterface{
     public function reactivateSeriesOfOrthancStudyID (string $orthancStudyID) : void {
         $this->orthancSeries->where('orthanc_study_id',$orthancStudyID)->withTrashed()->restore();
     }
+
 }

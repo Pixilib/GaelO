@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class OrthancSeries extends Model
 {
-    use SoftDeletes;
+    use SoftDeletes, HasFactory;
 
     protected $primaryKey = 'orthanc_id';
     protected $keyType = 'string';

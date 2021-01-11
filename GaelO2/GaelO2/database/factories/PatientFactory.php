@@ -2,7 +2,9 @@
 
 namespace Database\Factories;
 
+use App\Models\Center;
 use App\Models\Patient;
+use App\Models\Study;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class PatientFactory extends Factory
@@ -22,8 +24,8 @@ class PatientFactory extends Factory
             'birth_year'=>$this->faker->randomNumber,
             'registration_date'=>now(),
             'investigator_name'=>$this->faker->word,
-            'center_code'=>$this->faker->unique()->randomNumber,
-            'study_name'=>$this->faker->word,
+            'center_code'=> Center::factory()->create()->code,
+            'study_name'=> Study::factory()->create()->name,
             'inclusion_status'=>$this->faker->randomElement(['Included', 'Withdrawn']),
             'withdraw_reason'=>$this->faker->word,
             'withdraw_date'=>now()

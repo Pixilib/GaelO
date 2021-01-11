@@ -2,7 +2,10 @@
 
 namespace Database\Factories;
 
+use App\Models\Patient;
+use App\Models\User;
 use App\Models\Visit;
+use App\Models\VisitType;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class VisitFactory extends Factory
@@ -13,18 +16,18 @@ class VisitFactory extends Factory
     public function definition()
     {
         return [
-            'creator_user_id' => $this->faker->unique()->randomNumber,
+            'creator_user_id' => User::factory()->create()->id,
             'creation_date'=> now(),
-            'patient_code'=> $this->faker->unique()->randomNumber,
+            'patient_code'=> Patient::factory()->create()->code,
             'visit_date'=> now(),
-            'visit_type_id'=> $this->faker->unique()->randomNumber,
+            'visit_type_id'=> VisitType::factory()->create()->id,
             'status_done'=> $this->faker->randomElement(['Not Done','Done']),
             'reason_for_not_done'=> $this->faker->word,
             'upload_status'=> $this->faker->randomElement(['Not Done','Processing','Done']),
             'state_investigator_form'=> $this->faker->randomElement(['Not Done', 'Not Needed', 'Draft', 'Done']),
             'state_quality_control'=> $this->faker->randomElement(['Not Done', 'Not Needed', 'Draft', 'Done']),
             'state_quality_control'=> $this->faker->randomElement(['Not Done', 'Not Needed', 'Wait Definitive Conclusion','Corrective Action Asked','Refused','Accepted']),
-            'controller_user_id'=> null,//$faker->randomNumber,
+            'controller_user_id'=> null,
             'control_date'=>now(),
             'image_quality_control'=> $this->faker->randomElement([true, false]),
             'form_quality_control'=> $this->faker->randomElement([true, false]),

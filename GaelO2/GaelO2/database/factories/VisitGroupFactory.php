@@ -2,18 +2,16 @@
 
 namespace Database\Factories;
 
-use App\Models\VisitGroup;
+use App\Models\Study;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class VisitGroupFactory extends Factory
 {
 
-    protected $model = VisitGroup::class;
-
     public function definition()
     {
         return [
-            'study_name'=> $this->faker->unique()->word,
+            'study_name'=> Study::factory()->create()->name,
             'modality'=>$this->faker->randomElement(['CT', 'PT', 'MR']),
         ];
     }

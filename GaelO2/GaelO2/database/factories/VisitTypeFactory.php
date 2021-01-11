@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\VisitGroup;
 use App\Models\VisitType;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -13,7 +14,7 @@ class VisitTypeFactory extends Factory
     public function definition()
     {
         return [
-            'visit_group_id'=>  $this->faker->unique()->randomNumber,
+            'visit_group_id'=>  VisitGroup::factory()->create()->id,
             'name'=>  $this->faker->unique()->word,
             'order'=>  $this->faker->unique()->randomNumber,
             'local_form_needed'=>$this->faker->randomElement([true, false]),

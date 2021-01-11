@@ -6,7 +6,6 @@ use App\Models\Patient;
 use App\GaelO\Interfaces\PersistenceInterface;
 use App\GaelO\UseCases\GetPatient\PatientEntity;
 use App\GaelO\Util;
-use Illuminate\Support\Facades\Log;
 
 class PatientRepository implements PersistenceInterface {
 

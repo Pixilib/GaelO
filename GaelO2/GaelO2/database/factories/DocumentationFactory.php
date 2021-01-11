@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\Documentation;
+use App\Models\Study;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class DocumentationFactory extends Factory
@@ -16,7 +17,7 @@ class DocumentationFactory extends Factory
             'id'=>$this->faker->unique()->randomNumber,
             'name'=>$this->faker->unique()->word,
             'document_date'=>now(),
-            'study_name'=>$this->faker->word,
+            'study_name'=> Study::factory()->create()->name,
             'version'=>$this->faker->word,
             'investigator'=> false,
             'controller'=> false,

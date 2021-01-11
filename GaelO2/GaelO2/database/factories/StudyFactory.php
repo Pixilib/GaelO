@@ -2,13 +2,10 @@
 
 namespace Database\Factories;
 
-use App\Models\Study;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class StudyFactory extends Factory
 {
-
-    protected $model = Study::class;
 
     public function definition()
     {
