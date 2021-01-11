@@ -13,7 +13,7 @@ class CenterFactory extends Factory
     public function definition()
     {
         return [
-            'code' => ($this->faker->unique()->randomNumber()+1),
+            'code' => ($this->faker->unique()->randomNumber()+10),
             'name' => $this->faker->unique()->word,
             'country_code' => 'FR'
         ];

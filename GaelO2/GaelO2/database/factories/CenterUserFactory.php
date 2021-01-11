@@ -2,18 +2,12 @@
 
 namespace Database\Factories;
 
+use App\Models\Center;
 use App\Models\CenterUser;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class CenterUserFactory extends Factory
 {
-    /**
-     * The name of the factory's corresponding model.
-     *
-     * @var string
-     */
-    protected $model = CenterUser::class;
-
     /**
      * Define the model's default state.
      *
@@ -23,7 +17,7 @@ class CenterUserFactory extends Factory
     {
         return [
             'user_id'=>$this->faker->randomNumber,
-            'center_code'=>$this->faker->randomNumber
+            'center_code'=> Center::factory()->create()->code
         ];
     }
 

@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\Role;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class RoleFactory extends Factory
@@ -14,7 +15,7 @@ class RoleFactory extends Factory
     {
         return [
             'name'=> $this->faker->randomElement(['Investigator', 'Monitor', 'Supervisor', 'Reviewer']),
-            'user_id'=> $this->faker->unique()->randomNumber,
+            'user_id'=> User::factory()->create()->id,
             'study_name'=> $this->faker->word
         ];
     }
