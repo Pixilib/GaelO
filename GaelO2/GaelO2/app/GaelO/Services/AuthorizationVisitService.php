@@ -4,6 +4,7 @@ namespace App\GaelO\Services;
 
 use App\GaelO\Constants\Constants;
 use App\GaelO\Repositories\VisitRepository;
+use Illuminate\Support\Facades\Log;
 
 class AuthorizationVisitService {
 
@@ -32,7 +33,7 @@ class AuthorizationVisitService {
         $this->authorizationPatientService->setCurrentUserAndRole($userId, $role);
     }
 
-    public function setVisitId($visitId){
+    public function setVisitId(int $visitId){
         $this->visitId = $visitId;
         $visitContext = $this->visitRepository->getVisitContext($visitId);
 

@@ -68,7 +68,7 @@ class Constants {
     const QUALITY_CONTROL_NOT_NEEDED = "Not Needed";
     const QUALITY_CONTROL_WAIT_DEFINITIVE_CONCLUSION = "Wait Definitive Conclusion";
     const QUALITY_CONTROL_CORRECTIVE_ACTION_ASKED = "Corrective Action Asked";
-    const QUALITY_CONSTROL_REFUSED = "Refused";
+    const QUALITY_CONTROL_REFUSED = "Refused";
     const QUALITY_CONTROL_ACCEPTED = "Accepted";
 
     const UPLOAD_STATUS_DONE = "Done";

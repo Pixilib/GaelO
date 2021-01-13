@@ -13,7 +13,7 @@ class VisitType extends Model
         return $this->hasMany('App\Models\Visit', 'visit_type_id');
     }
 
-    public function visitGroup(){
+    public function visitGroup() {
         return $this->belongsTo('App\Models\VisitGroup', 'visit_group_id' , 'id');
     }
 }

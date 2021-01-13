@@ -31,4 +31,24 @@ class PatientFactory extends Factory
             'withdraw_date'=>now()
         ];
     }
+
+    public function studyName(string $studyName){
+
+        return $this->state(function (array $attributes) use($studyName) {
+            return [
+                'study_name' => $studyName,
+            ];
+        });
+
+    }
+
+    public function centerCode(int $centerCode){
+
+        return $this->state(function (array $attributes) use($centerCode) {
+            return [
+                'center_code' => $centerCode,
+            ];
+        });
+
+    }
 }

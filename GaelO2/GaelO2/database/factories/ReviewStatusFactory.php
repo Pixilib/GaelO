@@ -2,7 +2,6 @@
 
 namespace Database\Factories;
 
-use App\Models\ReviewStatus;
 use App\Models\Study;
 use App\Models\Visit;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -10,17 +9,53 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 class ReviewStatusFactory extends Factory
 {
 
-    protected $model = ReviewStatus::class;
-
     public function definition()
     {
         return [
-            'visit_id'=> Visit::factory()->create()->id,
-            'study_name'=> Study::factory()->create()->name,
-            'review_available'=>$this->faker->randomElement([true, false]),
-            'review_status'=> $this->faker->randomElement(['Not Done', 'Not Needed', 'Ongoing','Wait Adjudication','Done']),
+            'visit_id'=> $this->faker->randomNumber,
+            'study_name'=> $this->faker->word,
+            'review_available'=> false,
+            'review_status'=> 'Not Done',
             'review_conclusion_value'=>$this->faker->word,
             'review_conclusion_date'=>now()
         ];
+    }
+
+    public function visitId( int $visitId){
+
+        return $this->state(function (array $attributes) use($visitId) {
+            return [
+                'visit_id' => $visitId,
+            ];
+        });
+    }
+
+    public function studyName(string $studyName){
+
+        return $this->state(function (array $attributes) use($studyName) {
+            return [
+                'study_name' => $studyName,
+            ];
+        });
+
+    }
+
+    public function review_available(){
+
+        return $this->state(function (array $attributes) {
+            return [
+                'review_available' => true,
+            ];
+        });
+
+    }
+
+    public function review_status(string $reviewStatus)
+    {
+        return $this->state(function (array $attributes) use ($reviewStatus) {
+            return [
+                'review_status' => $reviewStatus,
+            ];
+        });
     }
 }

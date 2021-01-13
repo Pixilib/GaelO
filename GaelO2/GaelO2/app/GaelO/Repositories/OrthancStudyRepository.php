@@ -162,9 +162,9 @@ class OrthancStudyRepository implements PersistenceInterface, OrthancStudyReposi
 
     public function getChildSeries(string $orthancStudyID, bool $deleted) : array {
         if($deleted === false){
-            $series = $this->orthancStudy->where('orthanc_id',$orthancStudyID)->first()->series()->get()->toArray();
+            $series = $this->orthancStudy->where('orthanc_id',$orthancStudyID)->firstOrFail()->series()->get()->toArray();
         }else{
-            $series = $this->orthancStudy->where('orthanc_id',$orthancStudyID)->first()->series()->onlyTrashed()->get()->toArray();
+            $series = $this->orthancStudy->where('orthanc_id',$orthancStudyID)->firstOrFail()->series()->onlyTrashed()->get()->toArray();
         }
 
         return $series;

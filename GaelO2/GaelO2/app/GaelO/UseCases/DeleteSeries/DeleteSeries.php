@@ -11,6 +11,7 @@ use App\GaelO\Services\AuthorizationVisitService;
 use App\GaelO\Services\DicomSeriesService;
 use App\GaelO\Services\TrackerService;
 use Exception;
+use Illuminate\Support\Facades\Log;
 
 class DeleteSeries{
 
@@ -37,6 +38,7 @@ class DeleteSeries{
 
             $seriesData = $this->dicomSeriesService->getSeriesBySeriesInstanceUID($deleteSeriesRequest->seriesInstanceUID, false);
             $visitId = $seriesData['orthanc_study']['visit_id'];
+
             $visitContext = $this->persistenceInterface->getVisitContext($visitId);
 
             $this->checkAuthorization($deleteSeriesRequest->currentUserId, $visitId, $deleteSeriesRequest->role, $visitContext['state_quality_control']);
@@ -83,13 +85,13 @@ class DeleteSeries{
         }
 
         //If QC is done, can't remove series
-        if( in_array($qcStatus, [Constants::QUALITY_CONTROL_ACCEPTED, Constants::QUALITY_CONSTROL_REFUSED])){
+        if( in_array($qcStatus, [Constants::QUALITY_CONTROL_ACCEPTED, Constants::QUALITY_CONTROL_REFUSED])){
             throw new GaelOForbiddenException();
         }
 
         $this->authorizationVisitService->setCurrentUserAndRole($userId, $role);
         $this->authorizationVisitService->setVisitId($visitId);
-
+        ;
         if ( ! $this->authorizationVisitService->isVisitAllowed()){
             throw new GaelOForbiddenException();
         }

@@ -83,7 +83,7 @@ class DeleteVisit{
         }
 
         //If Investigator, only possible to delete Visits with Non finished QC
-        if( $role === Constants::ROLE_INVESTIGATOR && in_array($qcStatus, [Constants::QUALITY_CONSTROL_REFUSED, Constants::QUALITY_CONTROL_ACCEPTED])){
+        if( $role === Constants::ROLE_INVESTIGATOR && in_array($qcStatus, [Constants::QUALITY_CONTROL_REFUSED, Constants::QUALITY_CONTROL_ACCEPTED])){
             throw new GaelOForbiddenException();
         }
 

@@ -2,12 +2,12 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
 class ReviewStatus extends Model
 {
+    use HasFactory;
 
     protected $table = 'reviews_status';
     protected $primaryKey = ['visit_id', 'study_name'];

@@ -80,7 +80,7 @@ class ReactivateDicomSeries{
     private function checkAuthorization(int $userId, int $visitId, string $qcStatus) : void{
 
         //If QC is done, can't reactivate series
-        if( in_array($qcStatus, [Constants::QUALITY_CONTROL_ACCEPTED, Constants::QUALITY_CONSTROL_REFUSED])){
+        if( in_array($qcStatus, [Constants::QUALITY_CONTROL_ACCEPTED, Constants::QUALITY_CONTROL_REFUSED])){
             throw new GaelOForbiddenException();
         }
 

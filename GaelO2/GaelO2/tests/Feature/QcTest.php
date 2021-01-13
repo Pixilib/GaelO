@@ -104,7 +104,7 @@ class QcTest extends TestCase
 
     public function testQcForbiddenQcAlreadyDone(){
 
-        $this->visit->state_quality_control = Constants::QUALITY_CONSTROL_REFUSED;
+        $this->visit->state_quality_control = Constants::QUALITY_CONTROL_REFUSED;
         $this->visit->save();
         AuthorizationTools::addRoleToUser(1, Constants::ROLE_CONTROLER, $this->study->name);
         $payload = [

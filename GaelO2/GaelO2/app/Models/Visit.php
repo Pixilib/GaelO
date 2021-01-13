@@ -28,6 +28,10 @@ class Visit extends Model
         return $this->belongsTo('App\Models\VisitType', 'visit_type_id', 'id')->with('visitGroup');
     }
 
+    public function visitTypeOnly(){
+        return $this->belongsTo('App\Models\VisitType', 'visit_type_id', 'id');
+    }
+
     public function creator(){
         return $this->belongsTo('App\Models\User', 'creator_user_id' , 'id');
     }

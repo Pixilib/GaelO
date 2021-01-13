@@ -15,7 +15,7 @@ class AuthorizationTools {
         Role::factory()->userId($userId)->studyName($studyName)->roleName($role)->create();
     }
 
-    public static function actAsAdmin(bool $admin){
+    public static function actAsAdmin(bool $admin) : int {
 
         Artisan::call('passport:install');
 
