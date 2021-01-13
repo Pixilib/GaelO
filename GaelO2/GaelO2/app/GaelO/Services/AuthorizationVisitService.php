@@ -58,7 +58,7 @@ class AuthorizationVisitService {
     public function isVisitAllowed(): bool {
         //Check that called Role exists for users and visit is not deleted
         if ($this->requestedRole === Constants::ROLE_REVIEWER) {
-            $this->visitRepository->isVisitAvailableForReview($this->visitId, $this->studyName, $this->userId);
+            $this->visitRepository->isVisitAvailableForReview($this->visitId, $this->patientStudy, $this->userId);
 
             return $this->authorizationPatientService->isPatientAllowed();
         } else if ($this->requestedRole === Constants::ROLE_CONTROLER) {

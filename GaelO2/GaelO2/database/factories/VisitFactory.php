@@ -23,10 +23,9 @@ class VisitFactory extends Factory
                 $studyName = $visitType->visitGroup->study->name;
                 return Patient::factory()->studyName($studyName)->create()->code;
             },
-
             'visit_date'=> now(),
             'visit_type_id'=> $visitType->id,
-            'status_done'=> $this->faker->randomElement(['Not Done','Done']),
+            'status_done'=> 'Done',
             'reason_for_not_done'=> $this->faker->word,
             'upload_status'=> $this->faker->randomElement(['Not Done','Processing','Done']),
             'state_investigator_form'=> $this->faker->randomElement(['Not Done', 'Not Needed', 'Draft', 'Done']),
@@ -45,6 +44,42 @@ class VisitFactory extends Factory
             'corrective_action_applyed'=> $this->faker->randomElement([true, false]),
             'last_reminder_upload'=>now()
         ];
+    }
+
+    public function creatorUserId(int $userId){
+
+        return $this->state(function (array $attributes) use ($userId) {
+            return [
+                'creator_user_id' => $userId
+            ];
+        });
+    }
+
+    public function patientCode(int $patientCode){
+
+        return $this->state(function (array $attributes) use ($patientCode) {
+            return [
+                'patient_code' => $patientCode
+            ];
+        });
+    }
+
+    public function visitTypeId(int $visitTypeId){
+
+        return $this->state(function (array $attributes) use ($visitTypeId) {
+            return [
+                'visit_type_id' => $visitTypeId
+            ];
+        });
+    }
+
+    public function notDone(){
+
+        return $this->state(function (array $attributes) {
+            return [
+                'status_done' => 'Not Done'
+            ];
+        });
     }
 
     public function configure()
