@@ -2,12 +2,14 @@
 
 namespace App\GaelO\Repositories;
 
+use App\GaelO\Interfaces\PatientRepositoryInterface;
 use App\Models\Patient;
 use App\GaelO\Interfaces\PersistenceInterface;
 use App\GaelO\UseCases\GetPatient\PatientEntity;
 use App\GaelO\Util;
+use Exception;
 
-class PatientRepository implements PersistenceInterface {
+class PatientRepository implements PersistenceInterface, PatientRepositoryInterface {
 
     public function __construct(Patient $patient){
         $this->patient = $patient;
@@ -17,7 +19,6 @@ class PatientRepository implements PersistenceInterface {
         $patient = new Patient();
         $model = Util::fillObject($data, $patient);
         $model->save();
-
     }
 
     public function update($code, array $data) : void {
@@ -31,12 +32,11 @@ class PatientRepository implements PersistenceInterface {
     }
 
     public function delete($code) :void {
-        $this->patient->find($code)->delete();
+        throw new Exception('Patient cant be deleted');
     }
 
     public function getAll() : array {
-        $patients = $this->patient->get();
-        return empty($patients) ? []  : $patients->toArray();
+        throw new Exception('Patient cant get all');
     }
 
     public function getPatientWithCenterDetails(int $code) : array {
@@ -75,6 +75,24 @@ class PatientRepository implements PersistenceInterface {
         $this->create($arrayPatientEntity);
     }
 
-}
+    public function updatePatient(int $code, string $lastname, string $firstname,
+                            string $gender, int $birthDay, int $birthMonth, int $birthYear,
+                            string $studyName, string $registrationDate, string $investigatorName, int $centerCode) : void {
 
-?>
+        $arrayPatientEntity = array(
+            "lastname" => $lastname,
+            "firstname" => $firstname,
+            "gender" => $gender,
+            "birth_day" => $birthDay,
+            "birth_month" => $birthMonth,
+            "birth_year" => $birthYear,
+            "study_name" => $studyName,
+            "registration_date" => $registrationDate,
+            "investigator_name" => $investigatorName,
+            "center_code" => $centerCode
+        );
+
+        $this->update($code, $arrayPatientEntity);
+    }
+
+}

@@ -23,4 +23,14 @@ class StudyFactory extends Factory
             ];
         });
     }
+
+    public function patientCodePrefix(int $prefix){
+
+        return $this->state(function (array $attributes) use($prefix) {
+            return [
+                'patient_code_prefix' => $prefix,
+            ];
+        });
+
+    }
 }

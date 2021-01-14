@@ -35,5 +35,3 @@ interface OrthancStudyRepositoryInterface {
     public function reactivateByStudyInstanceUID(string $studyInstanceUID) :void ;
 
 }
-
-?>

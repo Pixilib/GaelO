@@ -43,7 +43,7 @@ class ImportPatientService
         $allCenters = $this->centerRepository->getAll();
         //Store array of all existing centers code
         $this->existingCenter = array_map( function($center) {
-            return $center->code;
+            return $center['code'];
         }, $allCenters);
 
         //For each patient from the array list
@@ -56,6 +56,7 @@ class ImportPatientService
                 $this->checkNewPatient($patientEntity->code);
                 $this->isCorrectPatientCodeLenght($patientEntity->code);
                 $this->isExistingCenter($patientEntity->centerCode);
+                $this->checkCurrentStudy($patientEntity->studyName, $this->studyName);
                 $this->isCorrectPrefix($studyEntity['patient_code_prefix'],$patientEntity->code);
 
                 //Store the patient result import process in this object
@@ -88,6 +89,10 @@ class ImportPatientService
 
     public static function checkPatientGender(string $sex){
         if($sex !== "M" && $sex!=="F") throw new GaelOBadRequestException("Incorrect Gender : M or F");
+    }
+
+    public function checkCurrentStudy(string $patientStudy, string $currentStudy){
+        if($patientStudy !== $currentStudy) throw new GaelOBadRequestException("Patient Wrong Study");
     }
 
 	/**
