@@ -8,7 +8,6 @@ use App\GaelO\Repositories\CenterRepository;
 use App\GaelO\Repositories\PatientRepository;
 use App\GaelO\Repositories\StudyRepository;
 use App\GaelO\Util;
-use DateTime;
 use Exception;
 
 class ImportPatientService
