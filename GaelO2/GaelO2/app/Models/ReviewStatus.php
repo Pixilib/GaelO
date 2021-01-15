@@ -19,6 +19,10 @@ class ReviewStatus extends Model
         return $this->belongsTo('App\Models\Visit', 'visit_id', 'id');
     }
 
+    public function study(){
+        return $this->belongsTo('App\Models\Study', 'study_name', 'name');
+    }
+
     //SK : Parceque cle composite (cf https://www.nuomiphp.com/eplan/en/28200.html)
     protected function setKeysForSaveQuery($query)
     {

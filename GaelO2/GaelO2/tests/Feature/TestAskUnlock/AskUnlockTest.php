@@ -65,7 +65,7 @@ class AskUnlockTest extends TestCase
 
     public function testAskUnlockShouldFailNoRole()
     {
-        $userId = AuthorizationTools::actAsAdmin(false);
+        AuthorizationTools::actAsAdmin(false);
 
         $payload = [
             'message' => 'My Message'

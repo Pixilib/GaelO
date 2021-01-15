@@ -2,10 +2,13 @@
 
 namespace App\GaelO\Repositories;
 
+use App\GaelO\Interfaces\PersistenceInterface;
+use App\GaelO\Interfaces\ReviewRepositoryInterface;
 use App\GaelO\Util;
 use App\Models\Review;
+use Exception;
 
-class ReviewRepository{
+class ReviewRepository implements PersistenceInterface, ReviewRepositoryInterface {
 
 
     public function __construct(Review $review){
@@ -32,13 +35,17 @@ class ReviewRepository{
         $this->review->find($id)->delete();
     }
 
+    public function getAll() : array {
+        throw new Exception('Cant query all review');
+    }
+
 
     public function getInvestigatorForm(int $visitId) : array {
-        return $this->review->where('visits.id', '=', $visitId)->where('local', true)->firstOrFail()->toArray();
+        return $this->review->where('visit_id', $visitId)->where('local', true)->firstOrFail()->toArray();
     }
 
     public function unlockInvestigatorForm(int $visitId) : void {
-        $reviewEntity = $this->review->where('visit_id', '=', $visitId)->where('local', true)->firstOrFail();
+        $reviewEntity = $this->review->where('visit_id', $visitId)->where('local', true)->firstOrFail();
         $reviewEntity->validated = false;
         $reviewEntity->save();
     }

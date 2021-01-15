@@ -104,13 +104,15 @@ class OrthancStudyRepositoryTest extends TestCase
 
         $orthancStudy = OrthancStudy::factory()->create();
         //2 study are created when factory of patient and visit type
-        $studyName = Study::get()->first()->name;
-        $studyName2 = Study::get()->last()->name;
+        $studyName = $orthancStudy->visit->visitType->visitGroup->study->name;
+        $studyName2 = Study::factory()->create();
 
         $answer  = $this->orthancStudyRepository->isExistingOriginalOrthancStudyID($orthancStudy->anon_from_orthanc_id, $studyName);
         $answer2  = $this->orthancStudyRepository->isExistingOriginalOrthancStudyID($orthancStudy->anon_from_orthanc_id, $studyName2);
         //One study should be true, the other false
-        $this->assertNotEquals($answer, $answer2);
+        $this->assertTrue($answer);
+        $this->assertFalse($answer2);
+
     }
 
     public function testIsExistingOrthancStudyId()

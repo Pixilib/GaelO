@@ -11,13 +11,14 @@ class ReviewStatusFactory extends Factory
 
     public function definition()
     {
+
         return [
-            'visit_id'=> $this->faker->randomNumber,
-            'study_name'=> $this->faker->word,
+            'visit_id' => Visit::factory()->create(),
+            'study_name' => Study::factory()->create(),
             'review_available'=> false,
             'review_status'=> 'Not Done',
-            'review_conclusion_value'=>$this->faker->word,
-            'review_conclusion_date'=>now()
+            'review_conclusion_value'=> $this->faker->word,
+            'review_conclusion_date'=> now()
         ];
     }
 
