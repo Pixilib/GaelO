@@ -91,7 +91,6 @@ class VisitRepository implements PersistenceInterface {
 
     public function updateReviewAvailability(int $visitId, string $studyName, bool $available) : void {
         $reviewStatusEntity = $this->visit->findOrFail($visitId)->reviewStatus()->where('study_name', $studyName)->get();
-        //SK A VOIR SI ON PEUT PAS SECURISER DIFFEREMENT
         if($reviewStatusEntity->count() !== 1 ){
             throw new Exception('Should be only one answer');
         }

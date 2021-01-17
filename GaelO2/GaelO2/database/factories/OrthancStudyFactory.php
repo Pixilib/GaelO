@@ -43,6 +43,16 @@ class OrthancStudyFactory extends Factory
         });
     }
 
+    public function orthancStudy(string $patientOrthancId){
+
+        return $this->state(function (array $attributes) use ($patientOrthancId) {
+            return [
+                'orthanc_id' => $patientOrthancId,
+            ];
+        });
+
+    }
+
     public function uploaderId(int $uploaderId){
 
         return $this->state(function (array $attributes) use ($uploaderId) {

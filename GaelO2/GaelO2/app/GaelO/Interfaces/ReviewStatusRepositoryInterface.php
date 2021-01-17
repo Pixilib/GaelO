@@ -2,7 +2,7 @@
 
 namespace App\GaelO\Interfaces;
 
-interface ReviewStatusInterface {
+interface ReviewStatusRepositoryInterface {
 
     public function getReviewStatus(int $visitId, string $studyName) : array ;
 

@@ -3,12 +3,12 @@
 namespace App\GaelO\Repositories;
 
 use App\GaelO\Interfaces\PersistenceInterface;
-use App\GaelO\Interfaces\ReviewStatusInterface;
+use App\GaelO\Interfaces\ReviewStatusRepositoryInterface;
 use App\GaelO\Util;
 use App\Models\ReviewStatus;
 use Exception;
 
-class ReviewStatusRepository implements PersistenceInterface, ReviewStatusInterface {
+class ReviewStatusRepository implements PersistenceInterface, ReviewStatusRepositoryInterface {
 
     public function __construct(ReviewStatus $reviewStatus) {
         $this->reviewStatus = $reviewStatus;

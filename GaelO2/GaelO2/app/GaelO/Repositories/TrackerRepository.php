@@ -2,13 +2,13 @@
 
 namespace App\GaelO\Repositories;
 
-use App\GaelO\Constants\Constants;
 use App\GaelO\Interfaces\PersistenceInterface;
+use App\GaelO\Interfaces\TrackerRepositoryInterface;
 use App\Models\Tracker;
 use App\GaelO\Util;
 use Exception;
 
-class TrackerRepository implements PersistenceInterface {
+class TrackerRepository implements PersistenceInterface, TrackerRepositoryInterface {
 
     public function __construct(Tracker $tracker)
     {
@@ -30,8 +30,7 @@ class TrackerRepository implements PersistenceInterface {
     }
 
     public function getAll() :array {
-        $trackers = $this->tracker->with('user')->get();
-        return empty($trackers) ? [] : $trackers->toArray();
+        throw new Exception('Not Allowed for tracker');
     }
 
     public function delete($id) :void {
@@ -49,11 +48,11 @@ class TrackerRepository implements PersistenceInterface {
     }
 
     public function getTrackerOfVisitId(int $visitId) : array {
-        $trackerData = $this->tracker->with('user')->where('visit_id', $visitId);
+        $trackerData = $this->tracker->with('user')->where('visit_id', $visitId)->get();
         return empty($trackerData) ? [] : $trackerData->toArray();
     }
 
-    public function getTrackerOrActionInStudy(string $action, string $study) : array {
+    public function getTrackerOfActionInStudy(string $action, string $study) : array {
         $trackerData = $this->tracker->with('user')->where('study_name', $study)->where("action_type", $action)->get();
         return empty($trackerData) ? [] : $trackerData->toArray();
     }

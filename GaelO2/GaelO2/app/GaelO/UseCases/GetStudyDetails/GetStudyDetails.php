@@ -24,7 +24,7 @@ class GetStudyDetails {
         try{
             $this->checkAuthorization($getStudyDetailsRequest->currentUserId);
 
-            $studyDetails = $this->persistenceInterface->getStudiesDetails($getStudyDetailsRequest->currentUserId);
+            $studyDetails = $this->persistenceInterface->getAllStudiesWithDetails($getStudyDetailsRequest->currentUserId);
 
             $studyDetailResponse = [];
 
