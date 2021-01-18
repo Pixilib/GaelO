@@ -4,9 +4,11 @@ namespace App\GaelO\Repositories;
 
 use App\Models\VisitGroup;
 use App\GaelO\Interfaces\PersistenceInterface;
+use App\GaelO\Interfaces\VisitGroupRepositoryInterface;
 use App\GaelO\Util;
+use Exception;
 
-class VisitGroupRepository implements PersistenceInterface {
+class VisitGroupRepository implements PersistenceInterface, VisitGroupRepositoryInterface {
 
     public function __construct(VisitGroup $visitGroup){
         $this->visitGroup = $visitGroup;
@@ -33,8 +35,7 @@ class VisitGroupRepository implements PersistenceInterface {
     }
 
     public function getAll() : array {
-        $visitGroups = $this->visitGroup->get();
-        return empty($visitGroups) ? []  : $visitGroups->toArray();
+        throw new Exception('Not Needed');
     }
 
     public function createVisitGroup(String $studyName, String $modality)  : void {
@@ -48,7 +49,7 @@ class VisitGroupRepository implements PersistenceInterface {
 
     }
 
-    public function hasVisitTypes(int $visitGroupId){
+    public function hasVisitTypes(int $visitGroupId) : bool {
         $visitTypes = $this->visitGroup->find($visitGroupId)->visitTypes()->get();
         return $visitTypes->count()>0 ? true : false;
     }

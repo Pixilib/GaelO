@@ -4,10 +4,11 @@ namespace App\GaelO\Repositories;
 
 use App\Models\VisitType;
 use App\GaelO\Interfaces\PersistenceInterface;
+use App\GaelO\Interfaces\VisitTypeRepositoryInterface;
 use App\GaelO\Util;
 use Exception;
 
-class VisitTypeRepository implements PersistenceInterface {
+class VisitTypeRepository implements PersistenceInterface, VisitTypeRepositoryInterface {
 
     public function __construct(VisitType $visitType){
         $this->visitType = $visitType;
@@ -36,7 +37,7 @@ class VisitTypeRepository implements PersistenceInterface {
     }
 
     public function createVisitType(int $visitGroupId, String $name, int $visitOrder, bool $localFormNeeded, bool $qcNeeded, bool $reviewNeeded,
-                                    bool $optional, int $limitLowDays, int $limitUpDays, String $anonProfile){
+                                    bool $optional, int $limitLowDays, int $limitUpDays, String $anonProfile) : void {
 
         $data = [
             'visit_group_id'=> $visitGroupId,
@@ -66,5 +67,3 @@ class VisitTypeRepository implements PersistenceInterface {
     }
 
 }
-
-?>
