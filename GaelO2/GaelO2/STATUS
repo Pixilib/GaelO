@@ -29,11 +29,11 @@ dicom-study (PATCH) => OK
 
 Salim TODO :
 Documentation manque le modify (PUT ou PATCH)
-Updater nouvelle syntaxe de routes laravel8
 Mettre les interfaces dediées dans les usescases et les factory
 Repository : getAll est peu utilisé, passer les cas utilisés dans les interfaces spécifiques
 **** Tests ***
-Test d'integration pour chaque repository (avec les nouvelles factory)
+Test d'integration reste VisitRepository
+Tests Services
 Mock des interfaces pour les uses cases et les services
 
 
