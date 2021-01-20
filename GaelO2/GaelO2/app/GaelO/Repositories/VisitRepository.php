@@ -5,12 +5,13 @@ namespace App\GaelO\Repositories;
 use App\GaelO\Constants\Constants;
 use App\Models\Visit;
 use App\GaelO\Interfaces\PersistenceInterface;
+use App\GaelO\Interfaces\VisitRepositoryInterface;
 use App\GaelO\Util;
 use App\Models\ReviewStatus;
 use Exception;
 use Illuminate\Support\Facades\DB;
 
-class VisitRepository implements PersistenceInterface {
+class VisitRepository implements PersistenceInterface, VisitRepositoryInterface {
 
     public function __construct(){
         $this->visit = new Visit();
@@ -66,11 +67,6 @@ class VisitRepository implements PersistenceInterface {
         return empty($visits) ? []  : $visits->toArray();
     }
 
-    public function getReviewsInStudy(string $studyName){
-        $reviews = $this->visit->reviews()->where([['study_name', '=', $studyName]])->get();
-        return empty($reviews) ? []  : $reviews->toArray();
-    }
-
     public function isExistingVisit(int $patientCode, int $visitTypeId) : bool {
         $visit = $this->visit->where([['patient_code', '=', $patientCode], ['visit_type_id', '=', $visitTypeId]])->get();
         return $visit->count() > 0 ? true : false;
@@ -98,12 +94,12 @@ class VisitRepository implements PersistenceInterface {
         $reviewStatusEntity[0]->save();
     }
 
-    public function getPatientsVisits(int $patientCode){
+    public function getPatientsVisits(int $patientCode) : array {
         $visits = $this->visit->with('visitType')->where('patient_code', $patientCode)->get();
         return empty($visits) ? [] : $visits->toArray();
     }
 
-    public function getPatientsVisitsWithReviewStatus(int $patientCode, string $studyName){
+    public function getPatientsVisitsWithReviewStatus(int $patientCode, string $studyName) : array {
         $visits = $this->visit->with('visitType')->where('patient_code', $patientCode)
         ->join('reviews_status', function ($join) {
             $join->on('reviews_status.visit_id', '=', 'visits.id');
@@ -113,7 +109,7 @@ class VisitRepository implements PersistenceInterface {
         return empty($visits) ? [] : $visits->toArray();
     }
 
-    public function getPatientVisitsWithContext(int $patientCode){
+    public function getPatientVisitsWithContext(int $patientCode) : array{
 
         $answer = $this->visit->join('visit_types', function ($join) {
             $join->on('visits.visit_type_id', '=', 'visit_types.id');
@@ -126,7 +122,7 @@ class VisitRepository implements PersistenceInterface {
 
     }
 
-    public function getPatientListVisitsWithContext(array $patientCodeArray){
+    public function getPatientListVisitsWithContext(array $patientCodeArray) : array {
 
 
         $answer = $this->visit->join('visit_types', function ($join) {
@@ -140,7 +136,7 @@ class VisitRepository implements PersistenceInterface {
 
     }
 
-    public function getVisitsInStudy(string $studyName){
+    public function getVisitsInStudy(string $studyName) : array {
 
         $answer = $this->visit->join('visit_types', function ($join) {
             $join->on('visits.visit_type_id', '=', 'visit_types.id');
@@ -153,7 +149,7 @@ class VisitRepository implements PersistenceInterface {
         return $answer->count() === 0 ? []  : $answer->toArray();
     }
 
-    public function getVisitsInStudyAwaitingControllerAction(string $studyName){
+    public function getVisitsAwaitingControllerAction(string $studyName) : array {
         $controllerActionStatusArray = array(Constants::QUALITY_CONTROL_NOT_DONE, Constants::QUALITY_CONTROL_WAIT_DEFINITIVE_CONCLUSION);
 
         $answer = $this->visit->join('visit_types', function ($join) {
@@ -170,7 +166,7 @@ class VisitRepository implements PersistenceInterface {
     }
 
 
-    public function getVisitsAwaitingReviews(string $studyName){
+    public function getVisitsAwaitingReviews(string $studyName) : array{
 
         $answer = $this->visit->join('visit_types', function ($join) {
             $join->on('visits.visit_type_id', '=', 'visit_types.id');
@@ -186,7 +182,7 @@ class VisitRepository implements PersistenceInterface {
 
     }
 
-    public function getVisitsAwaitingReviewForUser(string $studyName, int $userId){
+    public function getVisitsAwaitingReviewForUser(string $studyName, int $userId) : array {
 
         $answer = $this->visit->join('visit_types', function ($join) {
             $join->on('visits.visit_type_id', '=', 'visit_types.id');
@@ -213,7 +209,7 @@ class VisitRepository implements PersistenceInterface {
 
     }
 
-    public function getPatientsHavingAtLeastOneAwaitingReviewForUser(string $studyName, int $userId){
+    public function getPatientsHavingAtLeastOneAwaitingReviewForUser(string $studyName, int $userId) : array {
 
         $answer = $this->visit->join('visit_types', function ($join) {
             $join->on('visits.visit_type_id', '=', 'visit_types.id');
@@ -240,7 +236,7 @@ class VisitRepository implements PersistenceInterface {
 
     }
 
-    public function isVisitAvailableForReview(int $visitId, string $studyName, int $userId){
+    public function isVisitAvailableForReview(int $visitId, string $studyName, int $userId) : bool{
 
         $answer = $this->visit->join('reviews_status', function ($join) use ($studyName, $visitId) {
             $join->on('visits.id', '=', $visitId);
@@ -296,7 +292,7 @@ class VisitRepository implements PersistenceInterface {
 
     }
 
-    public function setCorrectiveAction(int $visitId, int $investigatorId, bool $newUpload, bool $newInvestigatorForm, bool $correctiveActionApplyed, ?string $comment ){
+    public function setCorrectiveAction(int $visitId, int $investigatorId, bool $newUpload, bool $newInvestigatorForm, bool $correctiveActionApplyed, ?string $comment ) : void{
 
         $visitEntity = $this->visit->findOrFail($visitId);
 

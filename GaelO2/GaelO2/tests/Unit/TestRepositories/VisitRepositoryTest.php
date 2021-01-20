@@ -1,16 +1,13 @@
 <?php
 
-namespace Tests\Unit;
+namespace Tests\Unit\TestRepositories;
 
 use App\GaelO\Repositories\VisitRepository;
 use App\Models\Patient;
 use App\Models\Review;
 use App\Models\ReviewStatus;
 
-use Illuminate\Support\Facades\Artisan;
-use Laravel\Passport\Passport;
 use Tests\TestCase;
-use App\Models\User;
 use App\Models\Study;
 use App\Models\Visit;
 use App\Models\VisitGroup;
@@ -19,6 +16,7 @@ use Illuminate\Foundation\Testing\DatabaseMigrations;
 
 class VisitRepositoryTest extends TestCase
 {
+    private VisitRepository $visitRepository;
 
     use DatabaseMigrations {
         runDatabaseMigrations as baseRunDatabaseMigrations;
@@ -33,11 +31,6 @@ class VisitRepositoryTest extends TestCase
     protected function setUp() : void{
         parent::setUp();
         $this->visitRepository = new VisitRepository();
-        Artisan::call('passport:install');
-
-        Passport::actingAs(
-            User::where('id',1)->first()
-        );
 
         $this->study = factory(Study::class, 5)->create([ 'patient_code_prefix' => 1234])->first();
         $this->visitGroup = factory(VisitGroup::class)->create(['study_name' => $this->study->name]);
