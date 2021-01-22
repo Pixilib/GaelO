@@ -634,7 +634,7 @@ class Visit {
 	 */
 	private function sendAvailableReviewMail() {
 		$emailObject=new Send_Email($this->linkpdo);
-		$emailObject->addGroupEmails($this->study, User::REVIEWER);
+		$emailObject->addEmailsReviewerWithNoReview($this->study, $this->id_visit);
 		$emailObject->sendReviewReadyMessage($this->study, $this->patientCode, $this->visitType);    
 	}
     

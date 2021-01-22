@@ -340,6 +340,24 @@ Class Send_Email {
 
 	}
 
+	public function addEmailsReviewerWithNoReview(string $study, int $idVisit) {
+		$connecter=$this->linkpdo->prepare('SELECT users.email FROM roles, users 
+												WHERE roles.study=:study 
+												AND roles.username=users.username 
+												AND roles.name=:role
+												AND users.status!="Deactivated"
+												AND (SELECT COUNT(*) FROM reviews WHERE id_visit=:idVisit AND username=roles.username AND deleted=0 AND validated=1 AND is_local=0) = 0
+												');
+		$connecter->execute(array(
+				'study'=>$study,
+				'role'=>User::REVIEWER,
+				'idVisit' => $idVisit));
+    	
+		$emails=$connecter->fetchAll(PDO::FETCH_COLUMN);
+		$this->addEmails($emails);
+		return $this;
+	}
+
 	public function addEmail(String $email) : Send_Email {
 
 		if (!in_array($email, $this->emailsDestinators))

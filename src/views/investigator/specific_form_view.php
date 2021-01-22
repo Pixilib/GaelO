@@ -129,7 +129,7 @@
 	//If not disable by role add action button
 	if (!$roleDisable) {
         
-		if (!$validatedForm) {
+		if (!$validatedForm && $visitObject->reviewAvailable) {
 			// If investigator Role and form not validated, add Draft and Validate button
 			?>
             	<input class="btn btn-dark" type="button" id="draft" name="draft" value="draft" /> 
