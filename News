@@ -4,6 +4,9 @@ GaelO
   Select of withdraw reason for declaring patient withdraw
   Upgrade GaelO_Uploader to 1.1.0
   Upload Validation Failure tracked in Tracker
+  Email for reviewer notification are now sent only for user with awaiting review
+  Fix button draft/send of specific form was displayer even if the visit was not available anymore
+  
 
 --GaelO 1.3.4 20/11/20--
   fix authorization now made at visit level to attach review files
