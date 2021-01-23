@@ -23,7 +23,7 @@ class VisitFactory extends Factory
             'visit_type_id'=> VisitType::factory()->create()->id,
             'status_done'=> 'Done',
             'reason_for_not_done'=> $this->faker->word,
-            'upload_status'=> $this->faker->randomElement(['Not Done','Processing','Done']),
+            'upload_status'=> 'Not Done',
             'state_investigator_form'=> $this->faker->randomElement(['Not Done', 'Not Needed', 'Draft', 'Done']),
             'state_quality_control'=> $this->faker->randomElement(['Not Done', 'Not Needed', 'Wait Definitive Conclusion','Corrective Action Asked','Refused','Accepted']),
             'controller_user_id'=> null,

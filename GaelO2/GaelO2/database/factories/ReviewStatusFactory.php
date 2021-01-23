@@ -41,7 +41,7 @@ class ReviewStatusFactory extends Factory
 
     }
 
-    public function review_available(){
+    public function reviewAvailable(){
 
         return $this->state(function (array $attributes) {
             return [
@@ -51,7 +51,7 @@ class ReviewStatusFactory extends Factory
 
     }
 
-    public function review_status(string $reviewStatus)
+    public function reviewStatus(string $reviewStatus)
     {
         return $this->state(function (array $attributes) use ($reviewStatus) {
             return [

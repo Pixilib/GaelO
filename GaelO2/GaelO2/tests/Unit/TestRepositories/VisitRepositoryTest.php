@@ -2,13 +2,14 @@
 
 namespace Tests\Unit\TestRepositories;
 
+use App\GaelO\Constants\Constants;
 use App\GaelO\Repositories\VisitRepository;
 use App\Models\Patient;
 use App\Models\Review;
 use App\Models\ReviewStatus;
-
-use Tests\TestCase;
 use App\Models\Study;
+use App\Models\User;
+use Tests\TestCase;
 use App\Models\Visit;
 use App\Models\VisitGroup;
 use App\Models\VisitType;
@@ -25,19 +26,71 @@ class VisitRepositoryTest extends TestCase
     public function runDatabaseMigrations() {
         $this->baseRunDatabaseMigrations();
         $this->artisan('db:seed');
-
     }
 
     protected function setUp() : void{
         parent::setUp();
         $this->visitRepository = new VisitRepository();
+    }
 
-        $this->study = factory(Study::class, 5)->create([ 'patient_code_prefix' => 1234])->first();
-        $this->visitGroup = factory(VisitGroup::class)->create(['study_name' => $this->study->name]);
-        $this->visitType = factory(VisitType::class)->create(['visit_group_id' => $this->visitGroup['id']]);
-        $this->patient = factory(Patient::class)->create(['code' => 12341234123412, 'study_name' => $this->study->name, 'center_code' => 0]);
-        $this->patient2 = factory(Patient::class)->create(['code' => 12341234123413, 'study_name' => $this->study->name, 'center_code' => 0]);
+    public function testCreateVisit(){
+        $study = Study::factory()->create();
+        $patient = Patient::factory()->create();
+        $visitType = VisitType::factory()->create();
+        $user = User::factory()->create();
 
+        $this->visitRepository->createVisit($study->name, $user->id, $patient->code, null, $visitType->id,
+        Constants::VISIT_STATUS_DONE, null, Constants::INVESTIGATOR_FORM_DONE, Constants::QUALITY_CONTROL_NOT_DONE);
+
+        $visits = Visit::get();
+        $this->assertEquals(1, $visits->count());
+    }
+
+    public function testIsExistingVisit(){
+        $visit = Visit::factory()->create();
+        $answerExisting = $this->visitRepository->isExistingVisit($visit->patient_code, $visit->visitType->id);
+        $visitType = VisitType::factory()->create();
+        $answerNotExisting = $this->visitRepository->isExistingVisit($visit->patient_code, $visitType->id);
+        $this->assertTrue($answerExisting);
+        $this->assertFalse($answerNotExisting);
+    }
+
+    public function testUpdateUploadStatus(){
+        $visit = Visit::factory()->create();
+        $this->visitRepository->updateUploadStatus($visit->id, Constants::UPLOAD_STATUS_DONE);
+        $updatedVisit = Visit::find($visit->id);
+        $this->assertEquals(Constants::UPLOAD_STATUS_DONE, $updatedVisit->upload_status);
+    }
+
+    public function testGetVisitContext(){
+
+        $visit = Visit::factory()->create();
+        $visitContext = $this->visitRepository->getVisitContext($visit->id);
+        $this->assertArrayHasKey('visit_type', $visitContext);
+        $this->assertArrayHasKey('visit_group', $visitContext['visit_type']);
+        $this->assertArrayHasKey('patient', $visitContext);
+
+    }
+
+    public function testUpdateReviewAvailability(){
+
+        $visit = Visit::factory()->create();
+        $study = Study::factory()->create();
+        ReviewStatus::factory()->visitId($visit->id)->studyName($study->name)->create();
+        $this->visitRepository->updateReviewAvailability($visit->id, $study->name, true);
+
+        $reviewStatus = ReviewStatus::where('study_name', $study->name)->where('visit_id', $visit->id)->firstOrFail();
+        $this->assertTrue(boolval($reviewStatus->review_available));
+
+    }
+
+    public function testGetPatientVisits(){
+
+        $study = Study::factory()->create();
+        $patient = Patient::factory()->studyName($study->name)->create();
+
+        VisitGroup::factory()->studyName($study->name);
+        $visit = Visit::factory()->patientCode($patient->code)->create();
 
     }
 

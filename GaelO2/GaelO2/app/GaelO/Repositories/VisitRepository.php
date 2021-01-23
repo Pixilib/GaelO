@@ -63,8 +63,7 @@ class VisitRepository implements PersistenceInterface, VisitRepositoryInterface 
     }
 
     public function getAll() : array {
-        $visits = $this->visit->get();
-        return empty($visits) ? []  : $visits->toArray();
+        throw new Exception('Cant Get All Visits');
     }
 
     public function isExistingVisit(int $patientCode, int $visitTypeId) : bool {
