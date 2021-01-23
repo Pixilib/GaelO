@@ -14,6 +14,7 @@ use App\Models\Visit;
 use App\Models\VisitGroup;
 use App\Models\VisitType;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
+use Illuminate\Support\Facades\Log;
 
 class VisitRepositoryTest extends TestCase
 {
@@ -84,13 +85,45 @@ class VisitRepositoryTest extends TestCase
 
     }
 
+    private function populateVisits(){
+        $study = Study::factory()->create();
+        //Create 2 patient in which we will populate of visits
+        $patient = Patient::factory()->studyName($study->name)->create();
+        $patient2 = Patient::factory()->studyName($study->name)->create();
+
+        //Create visitGroup
+        $visitGroupsCT = VisitGroup::factory()->studyName($study->name)->modality('CT')->create();
+        $visitGroupsPT = VisitGroup::factory()->studyName($study->name)->modality('PT')->create();
+
+        $visitGroups = collect([$visitGroupsCT,$visitGroupsPT]);
+
+        //Create VisitType and Visits
+        $visitGroups->each(function($item, $key) use ($patient, $patient2) {
+            $visitTypes = VisitType::factory()->visitGroupId($item->id)->count(3)->create();
+            $visitTypes->each(function ($item, $key) use ($patient, $patient2) {
+                $visit = Visit::factory()->visitTypeId($item->id)->patientCode($patient->code)->create();
+                ReviewStatus::factory()->visitId($visit->id)->studyName($patient->study_name)->create();
+                $visit2 = Visit::factory()->visitTypeId($item->id)->patientCode($patient2->code)->create();
+                ReviewStatus::factory()->visitId($visit2->id)->studyName($patient->study_name)->create();
+            });
+        });
+
+        return $patient;
+    }
+
     public function testGetPatientVisits(){
 
-        $study = Study::factory()->create();
-        $patient = Patient::factory()->studyName($study->name)->create();
+        $patient = $this->populateVisits();
 
-        VisitGroup::factory()->studyName($study->name);
-        $visit = Visit::factory()->patientCode($patient->code)->create();
+        $visits = $this->visitRepository->getPatientsVisits($patient->code);
+        $this->assertEquals(6, sizeof($visits));
+    }
+
+    public function testGetPatientWithReviewStatus(){
+        $patient = $this->populateVisits();
+
+        $visits = $this->visitRepository->getPatientsVisitsWithReviewStatus($patient->code, $patient->study_name);
+
 
     }
 

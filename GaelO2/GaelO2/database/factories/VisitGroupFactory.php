@@ -15,6 +15,24 @@ class VisitGroupFactory extends Factory
             'modality'=>$this->faker->randomElement(['CT', 'PT', 'MR']),
         ];
     }
+
+    public function studyName(string $studyName){
+
+        return $this->state(function (array $attributes) use ($studyName) {
+            return [
+                'study_name' => $studyName
+            ];
+        });
+    }
+
+    public function modality(string $modality){
+
+        return $this->state(function (array $attributes) use ($modality) {
+            return [
+                'modality' => $modality
+            ];
+        });
+    }
 }
 
 

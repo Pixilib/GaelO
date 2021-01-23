@@ -81,12 +81,14 @@ class VisitFactory extends Factory
     public function configure()
     {
         return $this->afterMaking(function (Visit $visit) {
+            /*
             $visitType = VisitType::factory()->create();
             $studyName = $visitType->visitGroup->study->name;
             $patient = Patient::factory()->studyName($studyName)->create();
             //Assign visit to a common study for VisitType and PatientCode
             $visit->patient_code = ($patient->code);
             $visit->visit_type_id = ($visitType->id);
+            */
         })->afterCreating(function (Visit $visit) {
             //SK FAUDRAIT CREER LE REVIEW STATUS MAIS PB CONFLIT FAKER
             //$studyName = $visit->visitTypeOnly->visitGroup->study->name;
