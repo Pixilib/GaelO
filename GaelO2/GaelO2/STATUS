@@ -29,15 +29,12 @@ dicom-study (PATCH) => OK
 
 Salim TODO :
 Documentation manque le modify (PUT ou PATCH)
-Mettre les interfaces dediées dans les usescases et les factory
+Mettre les interfaces dediées dans les usescases et les factory + mettre variable de classe pour les usecases
 Repository : getAll est peu utilisé, passer les cas utilisés dans les interfaces spécifiques
 **** Tests ***
-Test d'integration reste VisitRepository
 Tests Services
 Mock des interfaces pour les uses cases et les services
-
-
-//Les tests ne font pas d'assertion sur
+Les tests ne font pas d'assertion sur
 - le tracker => Via un spy ?
 - l'envoi de mails => voir doc laravel
 

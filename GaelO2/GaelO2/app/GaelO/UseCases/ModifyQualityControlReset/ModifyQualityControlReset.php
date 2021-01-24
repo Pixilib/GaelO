@@ -43,7 +43,7 @@ class ModifyQualityControlReset{
 
             $this->trackerService->writeAction(
                 $modifyQualityControlResetRequest->currentUserId,
-                Constants::ROLE_CONTROLER,
+                Constants::ROLE_CONTROLLER,
                 $studyName,
                 $modifyQualityControlResetRequest->visitId,
                 Constants::TRACKER_QUALITY_CONTROL,

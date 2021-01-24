@@ -26,8 +26,8 @@ class GetDocumentationFile{
             $documentationAllowedRoles = [];
 
             if($documentationData['investigator']) $documentationAllowedRoles[]= Constants::ROLE_INVESTIGATOR;
-            if($documentationData['monitor']) $documentationAllowedRoles[]= Constants::ROLE_CONTROLER;
-            if($documentationData['controller']) $documentationAllowedRoles[]= Constants::ROLE_CONTROLER;
+            if($documentationData['monitor']) $documentationAllowedRoles[]= Constants::ROLE_CONTROLLER;
+            if($documentationData['controller']) $documentationAllowedRoles[]= Constants::ROLE_CONTROLLER;
             if($documentationData['reviewer']) $documentationAllowedRoles[]= Constants::ROLE_REVIEWER;
 
             $this->checkAuthorization($getDocumentationFileRequest->currentUserId, $documentationData['study_name'], $documentationAllowedRoles );

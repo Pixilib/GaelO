@@ -80,7 +80,7 @@ class DeleteSeries{
     public function checkAuthorization(int $userId, int $visitId, string $role, string $qcStatus) : void{
 
         //Series delete only for Investigator, Controller, Supervisor
-        if( !in_array($role, [Constants::ROLE_INVESTIGATOR, Constants::ROLE_CONTROLER, Constants::ROLE_SUPERVISOR]) ){
+        if( !in_array($role, [Constants::ROLE_INVESTIGATOR, Constants::ROLE_CONTROLLER, Constants::ROLE_SUPERVISOR]) ){
             throw new GaelOForbiddenException();
         }
 

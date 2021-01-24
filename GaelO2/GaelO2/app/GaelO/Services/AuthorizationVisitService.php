@@ -61,7 +61,7 @@ class AuthorizationVisitService {
             $this->visitRepository->isVisitAvailableForReview($this->visitId, $this->patientStudy, $this->userId);
 
             return $this->authorizationPatientService->isPatientAllowed();
-        } else if ($this->requestedRole === Constants::ROLE_CONTROLER) {
+        } else if ($this->requestedRole === Constants::ROLE_CONTROLLER) {
             //For controller controller role should be allows and visit QC status be not done or awaiting definitive conclusion
             $allowedControllerStatus = array(Constants::QUALITY_CONTROL_NOT_DONE, Constants::QUALITY_CONTROL_WAIT_DEFINITIVE_CONCLUSION);
             if (in_array($this->stateQualityControl, $allowedControllerStatus) && $this->visitUploadStatus === Constants::UPLOAD_STATUS_DONE) {

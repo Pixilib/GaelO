@@ -80,7 +80,7 @@ class TrackerRepositoryTest extends TestCase
         $visit2 = Visit::factory()->create();
 
         Tracker::factory()->role(Constants::ROLE_INVESTIGATOR)->visitId($visit->id)->actionType(Constants::TRACKER_UPLOAD_SERIES)->count(3)->create();
-        Tracker::factory()->role(Constants::ROLE_CONTROLER)->visitId($visit->id)->actionType(Constants::TRACKER_CORRECTIVE_ACTION)->count(3)->create();
+        Tracker::factory()->role(Constants::ROLE_CONTROLLER)->visitId($visit->id)->actionType(Constants::TRACKER_CORRECTIVE_ACTION)->count(3)->create();
 
         Tracker::factory()->role(Constants::ROLE_INVESTIGATOR)->visitId($visit2->id)->actionType(Constants::TRACKER_UPLOAD_SERIES)->count(3)->create();
 

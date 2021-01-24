@@ -83,7 +83,7 @@ class ModifyQualityControl {
 
             $this->trackerService->writeAction(
                 $modifyQualityControlRequest->currentUserId,
-                Constants::ROLE_CONTROLER,
+                Constants::ROLE_CONTROLLER,
                 $studyName,
                 $modifyQualityControlRequest->visitId,
                 Constants::TRACKER_QUALITY_CONTROL,
@@ -121,7 +121,7 @@ class ModifyQualityControl {
 
     private function checkAuthorization(int $userId, int $visitId) : void {
         //Check user has controller role in the visit
-        $this->authorizationVisitService->setCurrentUserAndRole($userId, Constants::ROLE_CONTROLER);
+        $this->authorizationVisitService->setCurrentUserAndRole($userId, Constants::ROLE_CONTROLLER);
         $this->authorizationVisitService->setVisitId($visitId);
         if ( ! $this->authorizationVisitService->isVisitAllowed() ){
             throw new GaelOForbiddenException();

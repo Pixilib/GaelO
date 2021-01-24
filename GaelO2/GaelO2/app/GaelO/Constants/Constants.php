@@ -17,7 +17,7 @@ class Constants {
 
     const ROLE_INVESTIGATOR = "Investigator";
     const ROLE_MONITOR = "Monitor";
-    const ROLE_CONTROLER = "Controller";
+    const ROLE_CONTROLLER = "Controller";
     const ROLE_SUPERVISOR  = "Supervisor";
     const ROLE_REVIEWER = "Reviewer";
 

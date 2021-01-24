@@ -58,7 +58,7 @@ class QcTest extends TestCase
 
     public function testQc()
     {
-        AuthorizationTools::addRoleToUser(1, Constants::ROLE_CONTROLER, $this->study->name);
+        AuthorizationTools::addRoleToUser(1, Constants::ROLE_CONTROLLER, $this->study->name);
 
         $payload = [
             'stateQc'=>Constants::QUALITY_CONTROL_ACCEPTED,
@@ -88,7 +88,7 @@ class QcTest extends TestCase
     public function testQcForbiddenNotUploaded(){
         $this->visit->upload_status = Constants::UPLOAD_STATUS_NOT_DONE;
         $this->visit->save();
-        AuthorizationTools::addRoleToUser(1, Constants::ROLE_CONTROLER, $this->study->name);
+        AuthorizationTools::addRoleToUser(1, Constants::ROLE_CONTROLLER, $this->study->name);
         $payload = [
             'stateQc'=>Constants::QUALITY_CONTROL_ACCEPTED,
             'imageQc'=>true,
@@ -106,7 +106,7 @@ class QcTest extends TestCase
 
         $this->visit->state_quality_control = Constants::QUALITY_CONTROL_REFUSED;
         $this->visit->save();
-        AuthorizationTools::addRoleToUser(1, Constants::ROLE_CONTROLER, $this->study->name);
+        AuthorizationTools::addRoleToUser(1, Constants::ROLE_CONTROLLER, $this->study->name);
         $payload = [
             'stateQc'=>Constants::QUALITY_CONTROL_ACCEPTED,
             'imageQc'=>true,
@@ -130,7 +130,7 @@ class QcTest extends TestCase
             'validated'=>true
         ]);
 
-        AuthorizationTools::addRoleToUser(1, Constants::ROLE_CONTROLER, $this->study->name);
+        AuthorizationTools::addRoleToUser(1, Constants::ROLE_CONTROLLER, $this->study->name);
         $payload = [
             'stateQc'=> Constants::QUALITY_CONTROL_CORRECTIVE_ACTION_ASKED ,
             'imageQc'=>true,
@@ -146,7 +146,7 @@ class QcTest extends TestCase
     public function testQcAcceptedWithNoAcceptedItemShouldFail(){
 
 
-        AuthorizationTools::addRoleToUser(1, Constants::ROLE_CONTROLER, $this->study->name);
+        AuthorizationTools::addRoleToUser(1, Constants::ROLE_CONTROLLER, $this->study->name);
         $payload = [
             'stateQc'=> Constants::QUALITY_CONTROL_ACCEPTED ,
             'imageQc'=>true,
@@ -162,7 +162,7 @@ class QcTest extends TestCase
 
     public function testQCImageRefusedReasonShouldBeSpecified(){
 
-        AuthorizationTools::addRoleToUser(1, Constants::ROLE_CONTROLER, $this->study->name);
+        AuthorizationTools::addRoleToUser(1, Constants::ROLE_CONTROLLER, $this->study->name);
 
         $payload = [
             'stateQc'=> Constants::QUALITY_CONTROL_ACCEPTED ,
@@ -178,7 +178,7 @@ class QcTest extends TestCase
 
     public function testQCFormRefusedReasonShouldBeSpecified(){
 
-        AuthorizationTools::addRoleToUser(1, Constants::ROLE_CONTROLER, $this->study->name);
+        AuthorizationTools::addRoleToUser(1, Constants::ROLE_CONTROLLER, $this->study->name);
         $payload = [
             'stateQc'=> Constants::QUALITY_CONTROL_ACCEPTED ,
             'imageQc'=>true,
@@ -194,7 +194,7 @@ class QcTest extends TestCase
 
     public function testResetQc()
     {
-        AuthorizationTools::addRoleToUser(1, Constants::ROLE_SUPERVISOR, $this->study->name);
+        AuthorizationTools::addRoleToUser(1, Constants::ROLE_CONTROLLER, $this->study->name);
 
         $review = factory(ReviewStatus::class)->create([
             'visit_id' => $this->visit->id,

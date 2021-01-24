@@ -65,7 +65,7 @@ class BuildTreeTest extends TestCase
     public function testTreeController()
     {
 
-        $this->treeService->setUserAndStudy(1, Constants::ROLE_CONTROLER, $this->study->name);
+        $this->treeService->setUserAndStudy(1, Constants::ROLE_CONTROLLER, $this->study->name);
         //dd($this->treeService->buildTree());
 
     }

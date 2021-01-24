@@ -1,17 +1,11 @@
 <?php
 
-namespace Tests\Feature;
+namespace Tests\Feature\TestVisits;
 
 use App\GaelO\Constants\Constants;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
-use Illuminate\Support\Facades\Artisan;
-use App\Models\Study;
-use App\Models\VisitGroup;
-use App\Models\VisitType;
-use App\Models\Patient;
 use App\Models\User;
 use App\Models\Visit;
-use Laravel\Passport\Passport;
 use Tests\AuthorizationTools;
 use Tests\TestCase;
 
@@ -35,40 +29,32 @@ class CorrectiveActionTest extends TestCase
 
     protected function setUp() : void{
         parent::setUp();
-        Artisan::call('passport:install');
 
-        Passport::actingAs(
-            User::where('id',1)->first()
-        );
+        $this->visit = Visit::factory()
+        ->uploadDone()
+        ->stateQualityControl(Constants::QUALITY_CONTROL_CORRECTIVE_ACTION_ASKED)
+        ->stateInvestigatorForm(Constants::INVESTIGATOR_FORM_DONE)->create();
 
-        $this->study = factory(Study::class)->create(['patient_code_prefix' => 1234]);
-        $this->visitGroup = factory(VisitGroup::class)->create(['study_name' => $this->study->name]);
-        $this->visitType = factory(VisitType::class)->create(['local_form_needed'=> true, 'visit_group_id' => $this->visitGroup->id]);
-        $this->patient = factory(Patient::class)->create(['code' => 12341234123412, 'study_name' => $this->study->name, 'center_code' => 0]);
+        $this->studyName = $this->visit->patient->study_name;
+        $centerCode = $this->visit->patient->center_code;
 
-        $this->visit = factory(Visit::class)->create([
-            'creator_user_id' => 1,
-            'upload_status' => Constants::UPLOAD_STATUS_DONE,
-            'patient_code' => $this->patient->code,
-            'visit_type_id' => $this->visitType->id,
-            'state_quality_control'=> Constants::QUALITY_CONTROL_CORRECTIVE_ACTION_ASKED,
-            'state_investigator_form'=>Constants::INVESTIGATOR_FORM_DONE
-        ]);
-
-
+        $this->currentUserId = AuthorizationTools::actAsAdmin(false);
+        $userEntity = User::find($this->currentUserId);
+        $userEntity->center_code = $centerCode;
+        $userEntity->save();
     }
 
 
     public function testCorrectiveAction()
     {
-        AuthorizationTools::addRoleToUser(1, Constants::ROLE_INVESTIGATOR, $this->study->name);
+        AuthorizationTools::addRoleToUser($this->currentUserId, Constants::ROLE_INVESTIGATOR, $this->studyName);
+
         $payload = [
             'newSeriesUploaded' => true,
             'newInvestigatorForm'=>true,
             'correctiveActionDone'=>true,
             'comment' => "lala"
         ];
-
         $response = $this->patch('/api/visits/'.$this->visit->id.'/corrective-action', $payload);
         $response->assertStatus(200);
     }
@@ -88,7 +74,7 @@ class CorrectiveActionTest extends TestCase
 
     public function testCorrectiveActionShouldFailCorrectiveActionNotAsked()
     {
-        AuthorizationTools::addRoleToUser(1, Constants::ROLE_INVESTIGATOR, $this->study->name);
+        AuthorizationTools::addRoleToUser($this->currentUserId, Constants::ROLE_INVESTIGATOR, $this->studyName);
         $this->visit->state_quality_control = Constants::QUALITY_CONTROL_NOT_DONE;
         $this->visit->save();
         $payload = [
@@ -104,7 +90,7 @@ class CorrectiveActionTest extends TestCase
 
     public function testCorrectiveActionShouldFailFormMissing()
     {
-        AuthorizationTools::addRoleToUser(1, Constants::ROLE_INVESTIGATOR, $this->study->name);
+        AuthorizationTools::addRoleToUser($this->currentUserId, Constants::ROLE_INVESTIGATOR, $this->studyName);
         $this->visit->state_investigator_form = Constants::INVESTIGATOR_FORM_NOT_DONE;
         $this->visit->save();
         $payload = [

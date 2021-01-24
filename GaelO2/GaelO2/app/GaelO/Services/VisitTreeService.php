@@ -94,7 +94,7 @@ class VisitTreeService
             $patientCodeArray = array_map(function($patientEntity){ return $patientEntity['code'];  }, $patientsArray);
             return $this->makeTreeFromPatientsArray($patientCodeArray);
 
-        } else if ($this->role == Constants::ROLE_CONTROLER) {
+        } else if ($this->role == Constants::ROLE_CONTROLLER) {
 
             $visitsArray = $this->visitRepository->getVisitsInStudyAwaitingControllerAction($this->studyName);
             return  $this->makeTreeFromVisits($visitsArray);

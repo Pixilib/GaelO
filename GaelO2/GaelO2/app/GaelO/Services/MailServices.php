@@ -174,7 +174,7 @@ Class MailServices extends SendEmailAdapter {
         if ($qcNeeded)  {
             $destinators = [
                 ...$destinators,
-                ...$this->userRepository->getUsersEmailsByRolesInStudy($study, Constants::ROLE_CONTROLER)
+                ...$this->userRepository->getUsersEmailsByRolesInStudy($study, Constants::ROLE_CONTROLLER)
             ];
         }
 
@@ -271,7 +271,7 @@ Class MailServices extends SendEmailAdapter {
 
         $this->mailInterface->setTo( [
             ...$this->userRepository->getUsersEmailsByRolesInStudy($studyName, Constants::ROLE_SUPERVISOR),
-            ...$this->userRepository->getUsersEmailsByRolesInStudy($studyName, Constants::ROLE_CONTROLER),
+            ...$this->userRepository->getUsersEmailsByRolesInStudy($studyName, Constants::ROLE_CONTROLLER),
             $this->getUserEmail($currentUserId),
             ]
         );
