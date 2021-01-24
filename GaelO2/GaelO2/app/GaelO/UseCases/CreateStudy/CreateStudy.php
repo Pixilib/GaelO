@@ -3,6 +3,7 @@
 namespace App\GaelO\UseCases\CreateStudy;
 
 use App\GaelO\Constants\Constants;
+use App\GaelO\Exceptions\GaelOBadRequestException;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Interfaces\PersistenceInterface;
 use App\GaelO\Services\AuthorizationService;
@@ -27,6 +28,10 @@ class CreateStudy {
 
             $studyName = $createStudyRequest->studyName;
             $patientCodePrefix = $createStudyRequest->patientCodePrefix;
+
+            if(preg_match('/[^A-Z0-9]/', $studyName)){
+                throw new GaelOBadRequestException('Only uppercase alfanumerical name allowed, no space or special characters');
+            }
 
             if( $this->persistenceInterface->isExistingStudy($studyName) ){
                 throw new GaelOConflictException('Already Existing Study');

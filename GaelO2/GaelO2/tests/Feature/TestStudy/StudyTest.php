@@ -32,7 +32,7 @@ class StudyTest extends TestCase
         AuthorizationTools::actAsAdmin(true);
 
         $payload = [
-            'studyName'=>'NewStudy',
+            'studyName'=>'NEWSTUDY',
             'patientCodePrefix'=>'1234'
         ];
 
@@ -40,10 +40,36 @@ class StudyTest extends TestCase
 
     }
 
+    public function testCreateStudyShouldFailBecauseNotAlfaNumerical() {
+        AuthorizationTools::actAsAdmin(true);
+
+        $payload = [
+            'studyName'=>'NEWSTUDy',
+            'patientCodePrefix'=>'1234'
+        ];
+
+        $this->json('POST', '/api/studies', $payload)->assertNoContent(400);
+
+        $payload = [
+            'studyName'=>'NEW STUDY',
+            'patientCodePrefix'=>'1234'
+        ];
+
+        $this->json('POST', '/api/studies', $payload)->assertNoContent(400);
+
+        $payload = [
+            'studyName'=>'NEW.STUDY',
+            'patientCodePrefix'=>'1234'
+        ];
+
+        $this->json('POST', '/api/studies', $payload)->assertNoContent(400);
+
+    }
+
     public function testCreateStudyForbiddenNotAdmin(){
         AuthorizationTools::actAsAdmin(false);
         $payload = [
-            'studyName'=>'NewStudy',
+            'studyName'=>'NEWSTUDY',
             'patientCodePrefix'=>'1234'
         ];
         $this->json('POST', '/api/studies', $payload)->assertStatus(403);

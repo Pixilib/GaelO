@@ -10,7 +10,7 @@ class StudyFactory extends Factory
     public function definition()
     {
         return [
-            'name' => $this->faker->unique()->regexify('[A-Za-z0-9]{20}'),
+            'name' => $this->faker->unique()->regexify('[A-Z0-9]{20}'),
             'patient_code_prefix' => $this->faker->randomNumber(5),
         ];
     }

@@ -7,7 +7,6 @@ use App\GaelO\Adapters\SendEmailAdapter;
 use App\GaelO\Constants\Constants;
 use App\GaelO\Repositories\UserRepository;
 use App\GaelO\Constants\MailConstants;
-use Illuminate\Support\Facades\Log;
 
 Class MailServices extends SendEmailAdapter {
 

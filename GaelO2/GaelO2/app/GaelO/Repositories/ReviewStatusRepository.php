@@ -31,7 +31,10 @@ class ReviewStatusRepository implements PersistenceInterface, ReviewStatusReposi
     }
 
     public function getReviewStatus(int $visitId, string $studyName) : array {
-        return $this->reviewStatus->where('visit_id', $visitId)->where('study_name', $studyName)->firstOrFail()->toArray();
+        return $this->reviewStatus->where('visit_id', $visitId)
+        ->where('study_name', $studyName)
+        ->firstOrFail()
+        ->toArray();
     }
 
     public function delete($id) :void {

@@ -1,18 +1,11 @@
 <?php
 
-namespace Tests\Feature;
+namespace Tests\Feature\TestVisits;
 
 use App\GaelO\Constants\Constants;
-use App\Models\Patient;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
-use Illuminate\Support\Facades\Artisan;
-use Laravel\Passport\Passport;
 use Tests\TestCase;
-use App\Models\User;
-use App\Models\Study;
 use App\Models\Visit;
-use App\Models\VisitGroup;
-use App\Models\VisitType;
 use App\Models\Review;
 use App\Models\ReviewStatus;
 use Tests\AuthorizationTools;
@@ -37,28 +30,21 @@ class QcTest extends TestCase
     protected function setUp() : void {
         parent::setUp();
 
-        Artisan::call('passport:install');
-        Passport::actingAs(
-            User::where('id',1)->first()
-        );
+        $this->visit = Visit::factory()
+        ->forVisitType([
+            'local_form_needed' => true,
+            'review_needed' => true
+        ])
+        ->uploadDone()
+        ->stateQualityControl(Constants::QUALITY_CONTROL_NOT_DONE)->create();
 
-        $this->study = factory(Study::class)->create(['name' => 'test', 'patient_code_prefix' => 1234]);
-        $this->visitGroup = factory(VisitGroup::class)->create(['study_name' => 'test']);
-        $this->visitType = factory(VisitType::class)->create(['local_form_needed'=> true, 'visit_group_id' => $this->visitGroup['id']]);
-        $this->patient = factory(Patient::class)->create(['code' => 12341234123412, 'study_name' => 'test', 'center_code' => 0]);
-
-        $this->visit = factory(Visit::class)->create([
-            'creator_user_id' => 1,
-            'upload_status' => Constants::UPLOAD_STATUS_DONE,
-            'patient_code' => $this->patient->code,
-            'visit_type_id' => $this->visitType->id,
-            'state_quality_control'=> Constants::QUALITY_CONTROL_NOT_DONE
-        ]);
+        $this->studyName = $this->visit->patient->study_name;
     }
 
     public function testQc()
     {
-        AuthorizationTools::addRoleToUser(1, Constants::ROLE_CONTROLLER, $this->study->name);
+        $currentUserId = AuthorizationTools::actAsAdmin(false);
+        AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_CONTROLLER, $this->studyName);
 
         $payload = [
             'stateQc'=>Constants::QUALITY_CONTROL_ACCEPTED,
@@ -72,6 +58,9 @@ class QcTest extends TestCase
     }
 
     public function testQcForbiddenNotRole(){
+
+        $currentUserId = AuthorizationTools::actAsAdmin(false);
+
         $payload = [
             'stateQc'=>Constants::QUALITY_CONTROL_ACCEPTED,
             'imageQc'=>true,
@@ -86,9 +75,13 @@ class QcTest extends TestCase
     }
 
     public function testQcForbiddenNotUploaded(){
+
+        $currentUserId = AuthorizationTools::actAsAdmin(false);
+        AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_CONTROLLER, $this->studyName);
+
         $this->visit->upload_status = Constants::UPLOAD_STATUS_NOT_DONE;
         $this->visit->save();
-        AuthorizationTools::addRoleToUser(1, Constants::ROLE_CONTROLLER, $this->study->name);
+
         $payload = [
             'stateQc'=>Constants::QUALITY_CONTROL_ACCEPTED,
             'imageQc'=>true,
@@ -104,9 +97,12 @@ class QcTest extends TestCase
 
     public function testQcForbiddenQcAlreadyDone(){
 
+        $currentUserId = AuthorizationTools::actAsAdmin(false);
+        AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_CONTROLLER, $this->studyName);
+
         $this->visit->state_quality_control = Constants::QUALITY_CONTROL_REFUSED;
         $this->visit->save();
-        AuthorizationTools::addRoleToUser(1, Constants::ROLE_CONTROLLER, $this->study->name);
+
         $payload = [
             'stateQc'=>Constants::QUALITY_CONTROL_ACCEPTED,
             'imageQc'=>true,
@@ -122,15 +118,16 @@ class QcTest extends TestCase
 
     public function testQcCorrectiveActionUnlockLocalForm(){
 
-        $review = factory(Review::class)->create([
-            'visit_id' => $this->visit->id,
-            'study_name' => $this->study->name,
-            'local'=>true,
-            'user_id'=>1,
-            'validated'=>true
-        ]);
+        $currentUserId = AuthorizationTools::actAsAdmin(false);
+        AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_CONTROLLER, $this->studyName);
 
-        AuthorizationTools::addRoleToUser(1, Constants::ROLE_CONTROLLER, $this->study->name);
+
+        $review = Review::factory()
+        ->validated()
+        ->visitId($this->visit->id)
+        ->studyName($this->studyName)
+        ->create();
+
         $payload = [
             'stateQc'=> Constants::QUALITY_CONTROL_CORRECTIVE_ACTION_ASKED ,
             'imageQc'=>true,
@@ -144,12 +141,12 @@ class QcTest extends TestCase
     }
 
     public function testQcAcceptedWithNoAcceptedItemShouldFail(){
+        $currentUserId = AuthorizationTools::actAsAdmin(false);
+        AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_CONTROLLER, $this->studyName);
 
-
-        AuthorizationTools::addRoleToUser(1, Constants::ROLE_CONTROLLER, $this->study->name);
         $payload = [
             'stateQc'=> Constants::QUALITY_CONTROL_ACCEPTED ,
-            'imageQc'=>true,
+            'imageQc'=>false,
             'formQc'=>false,
             'imageQcComment'=>'OK',
             'formQcComment'=>'non'
@@ -162,7 +159,8 @@ class QcTest extends TestCase
 
     public function testQCImageRefusedReasonShouldBeSpecified(){
 
-        AuthorizationTools::addRoleToUser(1, Constants::ROLE_CONTROLLER, $this->study->name);
+        $currentUserId = AuthorizationTools::actAsAdmin(false);
+        AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_CONTROLLER, $this->studyName);
 
         $payload = [
             'stateQc'=> Constants::QUALITY_CONTROL_ACCEPTED ,
@@ -177,8 +175,9 @@ class QcTest extends TestCase
     }
 
     public function testQCFormRefusedReasonShouldBeSpecified(){
+        $currentUserId = AuthorizationTools::actAsAdmin(false);
+        AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_CONTROLLER, $this->studyName);
 
-        AuthorizationTools::addRoleToUser(1, Constants::ROLE_CONTROLLER, $this->study->name);
         $payload = [
             'stateQc'=> Constants::QUALITY_CONTROL_ACCEPTED ,
             'imageQc'=>true,
@@ -194,24 +193,27 @@ class QcTest extends TestCase
 
     public function testResetQc()
     {
-        AuthorizationTools::addRoleToUser(1, Constants::ROLE_CONTROLLER, $this->study->name);
+        $currentUserId = AuthorizationTools::actAsAdmin(false);
+        AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $this->studyName);
 
-        $review = factory(ReviewStatus::class)->create([
-            'visit_id' => $this->visit->id,
-            'study_name' => $this->study->name,
-            'review_status' => Constants::REVIEW_STATUS_NOT_DONE
-        ]);
+        $review = ReviewStatus::factory()
+        ->visitId($this->visit->id)
+        //Use principal study (will be disalowed for ancilary study)
+        ->studyName($this->visit->visitType->visitGroup->study_name)
+        ->reviewStatus(Constants::REVIEW_STATUS_NOT_DONE)
+        ->create();
 
         $payload = [];
 
         $response = $this->patch('/api/visits/'.$this->visit->id.'/quality-control/reset', $payload);
+
         $response->assertStatus(200);
 
     }
 
     public function testResetQcShouldFailNoRole()
     {
-
+        AuthorizationTools::actAsAdmin(false);
         $payload = [];
         $this->patch('/api/visits/'.$this->visit->id.'/quality-control/reset', $payload)->assertStatus(403);
 
@@ -219,14 +221,16 @@ class QcTest extends TestCase
 
     public function testResetQcShouldFailReviewStatusStarted()
     {
-        AuthorizationTools::addRoleToUser(1, Constants::ROLE_SUPERVISOR, $this->study->name);
+        $currentUserId = AuthorizationTools::actAsAdmin(false);
+        AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $this->studyName);
 
 
-        $review = factory(ReviewStatus::class)->create([
-            'visit_id' => $this->visit->id,
-            'study_name' => $this->study->name,
-            'review_status' => Constants::REVIEW_STATUS_ONGOING
-        ]);
+        $reviewStatus = ReviewStatus::factory()
+        ->visitId($this->visit->id)
+        //Use principal study (will be disalowed for ancilary study)
+        ->studyName($this->visit->visitType->visitGroup->study_name)
+        ->reviewStatus(Constants::REVIEW_STATUS_ONGOING)
+        ->create();
 
         $payload = [];
         $this->patch('/api/visits/'.$this->visit->id.'/quality-control/reset', $payload)->assertStatus(400);
