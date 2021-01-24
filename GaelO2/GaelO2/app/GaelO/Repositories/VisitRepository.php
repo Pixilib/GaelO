@@ -183,11 +183,7 @@ class VisitRepository implements PersistenceInterface, VisitRepositoryInterface 
 
     public function getPatientsHavingAtLeastOneAwaitingReviewForUser(string $studyName, int $userId) : array {
 
-        $answer = $this->visit->join('visit_types', function ($join) {
-            $join->on('visits.visit_type_id', '=', 'visit_types.id');
-        })->join('visit_groups', function ($join) {
-            $join->on('visit_types.id', '=', 'visit_groups.id');
-        })->join('reviews_status', function ($join) use ($studyName) {
+        $answer = $this->visit->join('reviews_status', function ($join) use ($studyName) {
             $join->on('visits.id', '=', 'reviews_status.visit_id');
             $join->on('reviews_status.study_name', '=', $studyName);
         })
@@ -200,11 +196,11 @@ class VisitRepository implements PersistenceInterface, VisitRepositoryInterface 
                 ->where('validated', true )
                 ->where('user_id', $userId);
             }, '=' , 0)
-        ->where('visit_groups.study_name', $studyName)
         ->where('review_available', true)
-        ->groupBy('patient_code')->get();
+        ->distinct('patient_code')
+        ->pluck('patient_code');
 
-        return $answer->count() === 0 ? []  : $answer->pluck('patient_code')->toArray();
+        return $answer->count() === 0 ? []  : $answer->toArray();
 
     }
 
@@ -230,8 +226,8 @@ class VisitRepository implements PersistenceInterface, VisitRepositoryInterface 
 
     public function editQc(int $visitId, string $stateQc, int $controllerId, bool $imageQc, bool $formQc, ?string $imageQcComment, ?string $formQcComment) : void{
         $visitEntity = $this->visit->findOrFail($visitId);
-        $visitEntity['state_quality_control'] = $stateQc;
 
+        $visitEntity['state_quality_control'] = $stateQc;
         $visitEntity['controller_user_id'] = $controllerId;
         $visitEntity['control_date'] = Util::now();
         $visitEntity['image_quality_control'] = $imageQc;
@@ -293,19 +289,20 @@ class VisitRepository implements PersistenceInterface, VisitRepositoryInterface 
      */
     public function getImagingVisitsAwaitingUpload(string $studyName, array $centerCode) : array {
 
-        $answer = $this->visit->join('visit_types', function ($join) {
-            $join->on('visits.visit_type_id', '=', 'visit_types.id');
-        })->join('visit_groups', function ($join) {
-            $join->on('visit_types.id', '=', 'visit_groups.id');
-        })->join('patients', function ($join) {
+        $answer = $this->visit->with('visitType')
+        ->join('patients', function ($join) use ($centerCode) {
             $join->on('visits.patient_code', '=', 'patients.code');
+            $join->whereIn('center_code', $centerCode );
         })
-        ->where('visit_groups.study_name', $studyName)
+        ->whereHas('visitType', function($query) use ($studyName) {
+            $query->whereHas('visitGroup', function($query) use ($studyName){
+                $query->where('study_name', $studyName);
+                $query->whereIn('modality', ['PT', 'MR', 'CT', 'US', 'NM', 'RT']);
+            });
+        })
         ->where('status_done', Constants::VISIT_STATUS_DONE)
         ->where('upload_status', Constants::UPLOAD_STATUS_NOT_DONE)
-        ->whereIn('visit_groups.modality', ['PT', 'MR', 'CT', 'US', 'NM', 'RT'])
-        ->whereIn('patients.center_code', $centerCode)
-        ->select(['visits.*', 'patients.*', 'visit_types.name', 'visit_groups.modality'])->get();
+        ->get();
 
         return $answer->count() === 0 ? []  : $answer->toArray();
     }
