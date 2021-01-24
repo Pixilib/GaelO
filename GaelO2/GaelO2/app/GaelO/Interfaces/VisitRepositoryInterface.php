@@ -30,13 +30,11 @@ interface VisitRepositoryInterface
 
     public function getPatientsVisitsWithReviewStatus(int $patientCode, string $studyName) : array ;
 
-    public function getPatientVisitsWithContext(int $patientCode) : array ;
-
     public function getPatientListVisitsWithContext(array $patientCodeArray) : array ;
 
     public function getVisitsInStudy(string $studyName) : array ;
 
-    public function getVisitsAwaitingControllerAction(string $studyName) : array ;
+    public function getVisitsInStudyAwaitingControllerAction(string $studyName) : array ;
 
     public function getVisitsAwaitingReviews(string $studyName) : array;
 

@@ -44,8 +44,8 @@ class VisitTreeService
         foreach ($visitsArray as $visitObject) {
 
             $patientCode = $visitObject['patient_code'];
-            $visitModality =  $visitObject['modality'];
-            $visitOrder = $visitObject['order'];
+            $visitModality =  $visitObject['visit_type']['visit_group']['modality'];
+            $visitOrder = $visitObject['visit_type']['order'];
 
             $resultTree[$patientCode] [$visitModality] [$visitOrder] =  $this->filterVisitOutputData($visitObject);
         }
@@ -69,8 +69,8 @@ class VisitTreeService
 
         //Add existing visits in sub keys
         foreach($patientVisitsArray as $visitObject){
-            $visitModality =  $visitObject['modality'];
-            $visitOrder = $visitObject['order'];
+            $visitModality =  $visitObject['visit_type']['visit_group']['modality'];
+            $visitOrder = $visitObject['visit_type']['order'];
             $patientCode = $visitObject['patient_code'];
             $resultTree[ $patientCode ] [ $visitModality ] [$visitOrder] = $this->filterVisitOutputData($visitObject);
         }
@@ -96,7 +96,7 @@ class VisitTreeService
 
         } else if ($this->role == Constants::ROLE_CONTROLER) {
 
-            $visitsArray = $this->visitRepository->getVisitsAwaitingControllerAction($this->studyName);
+            $visitsArray = $this->visitRepository->getVisitsInStudyAwaitingControllerAction($this->studyName);
             return  $this->makeTreeFromVisits($visitsArray);
 
         } else if ($this->role == Constants::ROLE_MONITOR) {

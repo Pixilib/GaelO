@@ -25,11 +25,41 @@ class ReviewFactory extends Factory
         ];
     }
 
-    public function review(){
+    public function visitId(int $visitId){
+
+        return $this->state(function (array $attributes) use ($visitId) {
+            return [
+                'visit_id' => $visitId,
+            ];
+        });
+
+    }
+
+    public function userId(int $userId){
+
+        return $this->state(function (array $attributes) use ($userId) {
+            return [
+                'user_id' => $userId,
+            ];
+        });
+
+    }
+
+    public function reviewForm(){
 
         return $this->state(function (array $attributes) {
             return [
                 'local' => false,
+            ];
+        });
+
+    }
+
+    public function studyName(string $studyName){
+
+        return $this->state(function (array $attributes) use ($studyName) {
+            return [
+                'study_name' => $studyName,
             ];
         });
 

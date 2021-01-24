@@ -10,7 +10,7 @@ class StudyFactory extends Factory
     public function definition()
     {
         return [
-            'name' => $this->faker->unique()->word,
+            'name' => $this->faker->unique()->name,
             'patient_code_prefix' => $this->faker->randomNumber(5),
         ];
     }

@@ -108,34 +108,77 @@ class VisitRepositoryTest extends TestCase
             });
         });
 
-        return $patient;
+        return [$patient, $patient2];
     }
 
     public function testGetPatientVisits(){
 
-        $patient = $this->populateVisits();
+        $patient = $this->populateVisits()[0];
 
         $visits = $this->visitRepository->getPatientsVisits($patient->code);
         $this->assertEquals(6, sizeof($visits));
     }
 
     public function testGetPatientWithReviewStatus(){
-        $patient = $this->populateVisits();
+        $patient = $this->populateVisits()[0];
 
         $visits = $this->visitRepository->getPatientsVisitsWithReviewStatus($patient->code, $patient->study_name);
-
+        $this->assertArrayHasKey('review_status', $visits[0]);
+        $this->assertArrayHasKey('review_available' , $visits[0]);
+        $this->assertArrayHasKey('review_conclusion_value', $visits[0]);
+        $this->assertArrayHasKey('review_conclusion_date' , $visits[0]);
 
     }
 
-    private function createVisit($patientEntity, bool $reviewAvailable){
-        $visit = factory(Visit::class)->create(['creator_user_id' => 1,
-        'patient_code' => $patientEntity->code,
-        'visit_type_id' => $this->visitType->id,
-        'status_done' => 'Done']);
+    public function testGetPatientListVisitsWithContext(){
+        $patient = $this->populateVisits();
+        $visits = $this->visitRepository->getPatientListVisitsWithContext([$patient[0]->code, $patient[1]->code]);
 
-        factory(ReviewStatus::class)->create([
+        $this->assertEquals(12, sizeof($visits));
+        $this->assertArrayHasKey('visit_type', $visits[0]);
+        $this->assertArrayHasKey('visit_group' , $visits[0]['visit_type']);
+
+    }
+
+    public function testGetVisitInStudy(){
+        $patient = $this->populateVisits()[0];
+
+        //Generate data of a second study that should not be selected
+        $this->populateVisits()[0];
+
+        $visits = $this->visitRepository->getVisitsInStudy($patient->study_name);
+
+        $this->assertEquals(12, sizeof($visits));
+        $this->assertArrayHasKey('visit_type', $visits[0]);
+        $this->assertArrayHasKey('visit_group' , $visits[0]['visit_type']);
+    }
+
+    public function testGetVisitsInStudyAwaitingControllerAction(){
+        $patient = $this->populateVisits()[0];
+        $visits = $patient->visits;
+        //Set one of these 12 visits as QC Done
+        $visitEntity = $visits->get(0);
+        $visitEntity->state_quality_control = Constants::QUALITY_CONTROL_REFUSED;
+        $visitEntity->save();
+        //Set one of these 12 visits as Awaiting Definitive conclusion (still access for controller)
+        $visitEntity = $visits->get(1);
+        $visitEntity->state_quality_control = Constants::QUALITY_CONTROL_WAIT_DEFINITIVE_CONCLUSION;
+        $visitEntity->save();
+        //Test
+        $visits = $this->visitRepository->getVisitsInStudyAwaitingControllerAction($patient->study_name);
+
+        $this->assertEquals(11, sizeof($visits));
+        $this->assertArrayHasKey('visit_type', $visits[0]);
+        $this->assertArrayHasKey('visit_group' , $visits[0]['visit_type']);
+
+    }
+
+    private function createVisit(bool $reviewAvailable){
+        $visit = Visit::factory()->create();
+
+        ReviewStatus::factory()->create([
             'visit_id' => $visit->id,
-            'study_name'=> $this->study->name,
+            'study_name'=> $visit->visitType->visitGroup->study->name,
             'review_available'=>$reviewAvailable
         ]);
 
@@ -143,23 +186,20 @@ class VisitRepositoryTest extends TestCase
     }
 
     public function testReviewAvailableForUser(){
-        $visit = $this->createVisit($this->patient, true);
-        $answer = $this->visitRepository->getVisitsAwaitingReviewForUser($this->study->name, 1);
-        $availableForUser = $this->visitRepository->isVisitAvailableForReview($visit->id, $this->study->name, 1);
-        $this->assertEquals(true, $availableForUser);
+        $visit = $this->createVisit(true);
+        $studyName = $visit->visitType->visitGroup->study->name;
+        $answer = $this->visitRepository->getVisitsAwaitingReviewForUser($studyName, 1);
+        $availableForUser = $this->visitRepository->isVisitAvailableForReview($visit->id, $studyName, 1);
+        $this->assertTrue($availableForUser);
         $this->assertEquals(1, sizeof($answer));
     }
 
     public function testReviewAvailableForUserEvenDraftStarted(){
 
-        $visit = $this->createVisit($this->patient, true);
+        $visit = $this->createVisit(true);
+        $studyName = $visit->visitType->visitGroup->study->name;
 
-        factory(Review::class)->create([
-            'visit_id' => $visit->id,
-            'study_name' => $this->study->name,
-            'user_id'=>1,
-            'validated'=>false
-        ]);
+        Review::factory()->visitId($visit->id)->reviewForm()->userId(1)->studyName($studyName)->create();
 
         $answer = $this->visitRepository->getVisitsAwaitingReviewForUser($this->study->name, 1);
         $availableForUser = $this->visitRepository->isVisitAvailableForReview($visit->id, $this->study->name, 1);

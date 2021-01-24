@@ -24,8 +24,8 @@ class VisitFactory extends Factory
             'status_done'=> 'Done',
             'reason_for_not_done'=> $this->faker->word,
             'upload_status'=> 'Not Done',
-            'state_investigator_form'=> $this->faker->randomElement(['Not Done', 'Not Needed', 'Draft', 'Done']),
-            'state_quality_control'=> $this->faker->randomElement(['Not Done', 'Not Needed', 'Wait Definitive Conclusion','Corrective Action Asked','Refused','Accepted']),
+            'state_investigator_form'=> 'Not Done',
+            'state_quality_control'=> 'Not Done',
             'controller_user_id'=> null,
             'control_date'=>now(),
             'image_quality_control'=> $this->faker->randomElement([true, false]),
@@ -65,6 +65,24 @@ class VisitFactory extends Factory
         return $this->state(function (array $attributes) use ($visitTypeId) {
             return [
                 'visit_type_id' => $visitTypeId
+            ];
+        });
+    }
+
+    public function stateQualityControl(string $stateQualityControl){
+
+        return $this->state(function (array $attributes) use ($stateQualityControl) {
+            return [
+                'state_quality_control' => $stateQualityControl
+            ];
+        });
+    }
+
+    public function stateInvestigatorForm(string $stateInvestigatorForm){
+
+        return $this->state(function (array $attributes) use ($stateInvestigatorForm) {
+            return [
+                'state_investigator_form' => $stateInvestigatorForm
             ];
         });
     }
