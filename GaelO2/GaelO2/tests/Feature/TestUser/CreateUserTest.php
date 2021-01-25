@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature\CreateUserTest;
+namespace Tests\Feature\TestUser;
 
 use App\GaelO\Constants\Constants;
 use Illuminate\Foundation\Testing\DatabaseMigrations;

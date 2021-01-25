@@ -33,7 +33,7 @@ class ReviewStatusRepository implements PersistenceInterface, ReviewStatusReposi
     public function getReviewStatus(int $visitId, string $studyName) : array {
         return $this->reviewStatus->where('visit_id', $visitId)
         ->where('study_name', $studyName)
-        ->firstOrFail()
+        ->sole()
         ->toArray();
     }
 
@@ -50,7 +50,7 @@ class ReviewStatusRepository implements PersistenceInterface, ReviewStatusReposi
             'review_conclusion_date' => $reviewConclusionDate
         ];
 
-        $model = $this->reviewStatus->where('visit_id', $visitId)->where('study_name', $studyName)->firstOrFail();
+        $model = $this->reviewStatus->where('visit_id', $visitId)->where('study_name', $studyName)->sole();
         $model = Util::fillObject($array, $model);
         $model->save();
 

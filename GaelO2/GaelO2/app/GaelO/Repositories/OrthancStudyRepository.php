@@ -35,7 +35,7 @@ class OrthancStudyRepository implements PersistenceInterface, OrthancStudyReposi
     }
 
     public function reactivateByStudyInstanceUID(string $studyInstanceUID) :void {
-        $this->orthancStudy->withTrashed()->where('study_uid',$studyInstanceUID)->firstOrFail()->restore();
+        $this->orthancStudy->withTrashed()->where('study_uid',$studyInstanceUID)->sole()->restore();
     }
 
     public function getAll() : array {
@@ -130,7 +130,7 @@ class OrthancStudyRepository implements PersistenceInterface, OrthancStudyReposi
     }
 
     public function getStudyOrthancIDFromVisit(int $visitID) : string {
-        return $this->orthancStudy->where('visit_id', $visitID)->firstOrFail()->value('orthanc_id');
+        return $this->orthancStudy->where('visit_id', $visitID)->sole()->value('orthanc_id');
     }
 
     public function isExistingDicomStudyForVisit(int $visitID) : bool {
@@ -151,9 +151,9 @@ class OrthancStudyRepository implements PersistenceInterface, OrthancStudyReposi
 
     public function getOrthancStudyByStudyInstanceUID(string $studyInstanceUID, bool $includeDeleted) : array {
         if($includeDeleted){
-            $study = $this->orthancStudy->where('study_uid',$studyInstanceUID)->withTrashed()->firstOrFail()->toArray();
+            $study = $this->orthancStudy->where('study_uid',$studyInstanceUID)->withTrashed()->sole()->toArray();
         }else{
-            $study = $this->orthancStudy->where('study_uid',$studyInstanceUID)->firstOrFail()->toArray();
+            $study = $this->orthancStudy->where('study_uid',$studyInstanceUID)->sole()->toArray();
         }
 
         return $study;
@@ -162,9 +162,9 @@ class OrthancStudyRepository implements PersistenceInterface, OrthancStudyReposi
 
     public function getChildSeries(string $orthancStudyID, bool $deleted) : array {
         if($deleted === false){
-            $series = $this->orthancStudy->where('orthanc_id',$orthancStudyID)->firstOrFail()->series()->get()->toArray();
+            $series = $this->orthancStudy->findOrFail($orthancStudyID)->series()->get()->toArray();
         }else{
-            $series = $this->orthancStudy->where('orthanc_id',$orthancStudyID)->firstOrFail()->series()->onlyTrashed()->get()->toArray();
+            $series = $this->orthancStudy->findOrFail($orthancStudyID)->series()->onlyTrashed()->get()->toArray();
         }
 
         return $series;

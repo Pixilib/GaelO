@@ -24,7 +24,7 @@ class AskUnlockTest extends TestCase
     {
         parent::setUp();
         $this->visit = Visit::factory()->create();
-        $this->studyName = $this->visit->visitType->visitGroup->study->name;
+        $this->studyName = $this->visit->patient->study->name;
         $this->patientCenter = $this->visit->patient->center->code;
     }
 

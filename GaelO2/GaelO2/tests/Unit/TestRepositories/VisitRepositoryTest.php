@@ -95,7 +95,7 @@ class VisitRepositoryTest extends TestCase
         ReviewStatus::factory()->visitId($visit->id)->studyName($study->name)->create();
         $this->visitRepository->updateReviewAvailability($visit->id, $study->name, true);
 
-        $reviewStatus = ReviewStatus::where('study_name', $study->name)->where('visit_id', $visit->id)->firstOrFail();
+        $reviewStatus = ReviewStatus::where('study_name', $study->name)->where('visit_id', $visit->id)->sole();
         $this->assertTrue(boolval($reviewStatus->review_available));
     }
 

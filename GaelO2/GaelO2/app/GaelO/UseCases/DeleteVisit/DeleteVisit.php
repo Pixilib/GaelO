@@ -87,10 +87,6 @@ class DeleteVisit{
             throw new GaelOForbiddenException();
         }
 
-        if( $role === Constants::ROLE_INVESTIGATOR && $statusDone === Constants::VISIT_STATUS_NOT_DONE ){
-            throw new GaelOForbiddenException();
-        }
-
         $this->authorizationVisitService->setCurrentUserAndRole($userId, $role);
         $this->authorizationVisitService->setVisitId($visitId);
         if ( ! $this->authorizationVisitService->isVisitAllowed()){

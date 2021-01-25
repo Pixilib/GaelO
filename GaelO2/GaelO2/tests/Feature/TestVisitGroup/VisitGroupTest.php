@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature\testVisitGroup;
+namespace Tests\Feature\TestVisitGroup;
 
 use App\GaelO\UseCases\GetVisitGroup\VisitGroupEntity;
 use Illuminate\Foundation\Testing\DatabaseMigrations;

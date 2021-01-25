@@ -97,9 +97,9 @@ class UserRepository implements PersistenceInterface, UserRepositoryInterface {
 
     public function getUserByUsername(String $username, bool $withTrashed = false) : array {
         if($withTrashed){
-            $user = $this->user->withTrashed()->where('username', $username)->firstOrFail();
+            $user = $this->user->withTrashed()->where('username', $username)->sole();
         }else{
-            $user = $this->user->where('username', $username)->firstOrFail();
+            $user = $this->user->where('username', $username)->sole();
         }
 
         return $user->toArray();
@@ -190,7 +190,7 @@ class UserRepository implements PersistenceInterface, UserRepositoryInterface {
     }
 
     public function getAllStudiesWithRoleForUser(string $username) : array {
-        $user = $this->user->withTrashed()->where('username', $username)->firstOrFail();
+        $user = $this->user->withTrashed()->where('username', $username)->sole();
         $studies = $user->roles()->distinct('study_name')->get();
         return $studies->count() === 0 ?  [] : $studies->pluck('study_name')->toArray();
     }
@@ -247,7 +247,7 @@ class UserRepository implements PersistenceInterface, UserRepositoryInterface {
     }
 
     public function deleteAffiliatedCenter(int $userId, int $centerCode) : void {
-        $affiliatedCenter=$this->centerUser->where( ['user_id'=> $userId,'center_code'=>$centerCode] )->firstOrFail();
+        $affiliatedCenter=$this->centerUser->where( ['user_id'=> $userId,'center_code'=>$centerCode] )->sole();
         $affiliatedCenter->delete();
     }
 

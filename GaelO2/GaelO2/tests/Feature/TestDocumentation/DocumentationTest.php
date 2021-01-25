@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature\DocumentationTest;
+namespace Tests\Feature\TestDocumentation;
 
 use App\Models\Documentation;
 use App\GaelO\Constants\Constants;

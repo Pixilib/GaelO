@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature\TrackerTest;
+namespace Tests\Feature\TestTracker;
 
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\TestCase;

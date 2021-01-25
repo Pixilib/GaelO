@@ -2,6 +2,7 @@
 
 namespace App\GaelO\UseCases\CreateVisit;
 
+use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOBadRequestException;
 use App\GaelO\Exceptions\GaelOConflictException;
 use App\GaelO\Exceptions\GaelOException;
@@ -29,14 +30,16 @@ class CreateVisit {
 
             $this->checkAuthorization($createVisitRequest->currentUserId, $createVisitRequest->role, $createVisitRequest->patientCode);
 
+            if ($createVisitRequest->statusDone === Constants::VISIT_STATUS_NOT_DONE && empty($createVisitRequest->reasonForNotDone) ){
+                throw new GaelOBadRequestException('Reason must be specified is visit not done');
+            }
+
             $existingVisit = $this->persistenceInterface->isExistingVisit(
-                                                            $createVisitRequest->patientCode,
-                                                            $createVisitRequest->visitTypeId);
+                            $createVisitRequest->patientCode,
+                            $createVisitRequest->visitTypeId);
 
             if($existingVisit) {
-
                 throw new GaelOConflictException('Visit Already Created');
-
             }else{
 
                 if($createVisitRequest->visitDate !== null){
@@ -49,7 +52,7 @@ class CreateVisit {
 
                 $this->visitService->createVisit(
                     $createVisitRequest->studyName,
-                    $createVisitRequest->creatorUserId,
+                    $createVisitRequest->currentUserId,
                     $createVisitRequest->patientCode,
                     $createVisitRequest->visitDate,
                     $createVisitRequest->visitTypeId,

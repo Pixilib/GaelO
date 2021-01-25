@@ -35,11 +35,11 @@ class OrthancSeriesRepository implements PersistenceInterface, OrthancSeriesRepo
     }
 
     public function deletebySeriesInstanceUID(string $seriesInstanceUID) : void {
-        $this->orthancSeries->where('series_uid',$seriesInstanceUID)->firstOrFail()->delete();
+        $this->orthancSeries->where('series_uid',$seriesInstanceUID)->sole()->delete();
     }
 
     public function reactivateBySeriesInstanceUID(string $seriesInstanceUID) : void {
-        $this->orthancSeries->withTrashed()->where('series_uid',$seriesInstanceUID)->firstOrFail()->restore();
+        $this->orthancSeries->withTrashed()->where('series_uid',$seriesInstanceUID)->sole()->restore();
     }
 
     public function getAll() : array {
@@ -123,9 +123,9 @@ class OrthancSeriesRepository implements PersistenceInterface, OrthancSeriesRepo
 
     public function getSeriesBySeriesInstanceUID(string $seriesInstanceUID, bool $includeDeleted) : array {
         if($includeDeleted){
-            $series = $this->orthancSeries->with('orthancStudy')->where('series_uid',$seriesInstanceUID)->withTrashed()->firstOrFail()->toArray();
+            $series = $this->orthancSeries->with('orthancStudy')->where('series_uid',$seriesInstanceUID)->withTrashed()->sole()->toArray();
         }else{
-            $series = $this->orthancSeries->with('orthancStudy')->where('series_uid',$seriesInstanceUID)->firstOrFail()->toArray();
+            $series = $this->orthancSeries->with('orthancStudy')->where('series_uid',$seriesInstanceUID)->sole()->toArray();
         }
 
         return $series;

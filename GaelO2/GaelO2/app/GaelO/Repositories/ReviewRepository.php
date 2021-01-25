@@ -41,11 +41,11 @@ class ReviewRepository implements PersistenceInterface, ReviewRepositoryInterfac
 
 
     public function getInvestigatorForm(int $visitId) : array {
-        return $this->review->where('visit_id', $visitId)->where('local', true)->firstOrFail()->toArray();
+        return $this->review->where('visit_id', $visitId)->where('local', true)->sole()->toArray();
     }
 
     public function unlockInvestigatorForm(int $visitId) : void {
-        $reviewEntity = $this->review->where('visit_id', $visitId)->where('local', true)->firstOrFail();
+        $reviewEntity = $this->review->where('visit_id', $visitId)->where('local', true)->sole();
         $reviewEntity->validated = false;
         $reviewEntity->save();
     }

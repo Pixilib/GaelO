@@ -12,6 +12,9 @@ use App\GaelO\UseCases\DeleteStudy\DeleteStudyResponse;
 use App\GaelO\UseCases\GetKnownOrthancID\GetKnownOrthancID;
 use App\GaelO\UseCases\GetKnownOrthancID\GetKnownOrthancIDRequest;
 use App\GaelO\UseCases\GetKnownOrthancID\GetKnownOrthancIDResponse;
+use App\GaelO\UseCases\GetPatientFromStudy\GetPatientFromStudy;
+use App\GaelO\UseCases\GetPatientFromStudy\GetPatientFromStudyRequest;
+use App\GaelO\UseCases\GetPatientFromStudy\GetPatientFromStudyResponse;
 use App\GaelO\UseCases\GetPossibleUpload\GetPossibleUpload;
 use App\GaelO\UseCases\GetPossibleUpload\GetPossibleUploadRequest;
 use App\GaelO\UseCases\GetPossibleUpload\GetPossibleUploadResponse;
@@ -30,9 +33,6 @@ use App\GaelO\UseCases\ImportPatients\ImportPatientsResponse;
 use App\GaelO\UseCases\ReactivateStudy\ReactivateStudy;
 use App\GaelO\UseCases\ReactivateStudy\ReactivateStudyRequest;
 use App\GaelO\UseCases\ReactivateStudy\ReactivateStudyResponse;
-use App\GaelO\UseCases\ReverseProxyTus\ReverseProxyTus;
-use App\GaelO\UseCases\ReverseProxyTus\ReverseProxyTusRequest;
-use App\GaelO\UseCases\ReverseProxyTus\ReverseProxyTusResponse;
 use App\GaelO\Util;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -132,6 +132,17 @@ class StudyController extends Controller
 
         return response()->json($getPossibleUploadResponse->body)->setStatusCode($getPossibleUploadResponse->status, $getPossibleUploadResponse->statusText);
 
+    }
+
+    public function getPatientFromStudy(String $studyName, Request $request, GetPatientFromStudyRequest $getPatientRequest, GetPatientFromStudyResponse $getPatientResponse, GetPatientFromStudy $getPatient) {
+        $currentUser = Auth::user();
+        $queryParam = $request->query();
+        $getPatientRequest->role = $queryParam['role'];
+        $getPatientRequest->currentUserId = $currentUser['id'];
+        $getPatientRequest->studyName = $studyName;
+        $getPatient->execute($getPatientRequest, $getPatientResponse);
+        return response()->json($getPatientResponse->body)
+                ->setStatusCode($getPatientResponse->status, $getPatientResponse->statusText);
     }
 
 }

@@ -42,17 +42,6 @@ class PatientController extends Controller
                 ->setStatusCode($getPatientResponse->status, $getPatientResponse->statusText);
     }
 
-    public function getPatientFromStudy(String $studyName, Request $request, GetPatientFromStudyRequest $getPatientRequest, GetPatientFromStudyResponse $getPatientResponse, GetPatientFromStudy $getPatient) {
-        $currentUser = Auth::user();
-        $queryParam = $request->query();
-        $getPatientRequest->role = $queryParam['role'];
-        $getPatientRequest->currentUserId = $currentUser['id'];
-        $getPatientRequest->studyName = $studyName;
-        $getPatient->execute($getPatientRequest, $getPatientResponse);
-        return response()->json($getPatientResponse->body)
-                ->setStatusCode($getPatientResponse->status, $getPatientResponse->statusText);
-    }
-
     public function getPatientVisit(string $studyName, int $patientCode, Request $request, GetPatientVisit $getPatientVisit, GetPatientVisitRequest $getPatientVisitRequest, GetPatientVisitResponse $getPatientVisitResponse){
         $currentUser = Auth::user();
         $queryParam = $request->query();
