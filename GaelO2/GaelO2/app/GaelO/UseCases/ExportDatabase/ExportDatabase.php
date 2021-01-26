@@ -23,9 +23,9 @@ class ExportDatabase{
         try{
             $this->checkAuthorization($exportDatabaseRequest->currentUserId);
 
-            $zip=new ZipArchive;
+            $zip=new ZipArchive();
             $tempZip=tempnam(ini_get('upload_tmp_dir'), 'TMPZIPDB_');
-            $zip->open($tempZip, ZipArchive::CREATE);
+            $zip->open($tempZip, ZipArchive::OVERWRITE);
 
             $databaseDumpedFile = $this->databaseDumper->getDatabaseDumpFile();
 

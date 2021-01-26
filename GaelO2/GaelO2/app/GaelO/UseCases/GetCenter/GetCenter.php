@@ -23,7 +23,7 @@ class GetCenter {
 
             $code = $getCenterRequest->code;
 
-            if ($code == -1) {
+            if ($code === null) {
                 $centers = $this->persistenceInterface->getAll();
                 $response = [];
                 foreach($centers as $center){

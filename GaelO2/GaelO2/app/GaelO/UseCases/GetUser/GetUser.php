@@ -26,7 +26,7 @@ class GetUser {
 
             $this->checkAuthorization($getUserRequest->currentUserId, $id);
 
-            if ($id == 0) {
+            if ($id === null) {
                 $dbData = $this->persistenceInterface->getAll();
                 $responseArray = [];
                 foreach($dbData as $data){
@@ -54,13 +54,17 @@ class GetUser {
 
     }
 
-    private function checkAuthorization(int $userId, int $calledUserId)  {
+    private function checkAuthorization(int $userId, ?int $calledUserId)  {
         $this->authorizationService->setCurrentUserAndRole($userId);
-        if( $calledUserId !== $userId && ! $this->authorizationService->isAdmin()) {
-            throw new GaelOForbiddenException();
+        if( $this->authorizationService->isAdmin() ) {
+            return;
+        }else{
+            if( $calledUserId !== $userId ) {
+                throw new GaelOForbiddenException();
+            };
         };
+
+
     }
 
 }
-
-?>

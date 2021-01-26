@@ -56,7 +56,7 @@ use Illuminate\Support\Facades\Auth;
 class UserController extends Controller
 {
 
-    public function getUser(int $id=0, GetUserRequest $getUserRequest, GetUserResponse $getUserResponse, GetUser $getUser) {
+    public function getUser(int $id = null, GetUserRequest $getUserRequest, GetUserResponse $getUserResponse, GetUser $getUser) {
         $curentUser = Auth::user();
         $getUserRequest->currentUserId = $curentUser['id'];
         $getUserRequest->id = $id;
@@ -123,7 +123,7 @@ class UserController extends Controller
                     ->setStatusCode($deleteUserResponse->status, $deleteUserResponse->statusText);
     }
 
-    public function getRoles(int $id, string $study = '', GetUserRolesRequest $getUserRolesRequest, GetUserRolesResponse $getUserRolesResponse, GetUserRoles $getUserRoles){
+    public function getRoles(int $id, string $study = null, GetUserRolesRequest $getUserRolesRequest, GetUserRolesResponse $getUserRolesResponse, GetUserRoles $getUserRoles){
         $curentUser = Auth::user();
         $getUserRolesRequest->currentUserId = $curentUser['id'];
         $getUserRolesRequest->userId = $id;

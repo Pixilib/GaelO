@@ -19,7 +19,7 @@ RUN npm install
 RUN npm run build
 
 
-FROM php:7.4.9-apache
+FROM php:8.0.1-apache
 
 RUN apt-get update -qy && \
     apt-get install -y --no-install-recommends apt-utils\

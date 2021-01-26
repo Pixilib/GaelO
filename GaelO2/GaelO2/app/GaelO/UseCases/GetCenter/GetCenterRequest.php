@@ -3,6 +3,6 @@
 namespace App\GaelO\UseCases\GetCenter;
 
 class GetCenterRequest {
-    public int $code ;
+    public ?int $code ;
     public int $currentUserId;
 }

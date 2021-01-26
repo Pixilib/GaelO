@@ -20,7 +20,7 @@ class GetUserRoles {
         try{
 
             $this->checkAuthorization($getUserRolesRequest->currentUserId, $getUserRolesRequest->userId, $getUserRolesRequest->study);
-            if( empty($getUserRolesRequest->study) ){
+            if( $getUserRolesRequest->study === null ){
                 $roles = $this->persistenceInterface->getUsersRoles($getUserRolesRequest->userId);
             }else {
                 $roles = $this->persistenceInterface->getUsersRolesInStudy($getUserRolesRequest->userId, $getUserRolesRequest->study);

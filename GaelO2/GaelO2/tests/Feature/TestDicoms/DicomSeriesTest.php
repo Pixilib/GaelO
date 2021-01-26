@@ -32,7 +32,7 @@ class DicomSeriesTest extends TestCase
     {
         parent::setUp();
         $this->orthancSeries = OrthancSeries::factory()->create();
-        $this->studyName = $this->orthancSeries->orthancStudy->visit->visitType->visitGroup->study->name;
+        $this->studyName = $this->orthancSeries->orthancStudy->visit->patient->study_name;
 
         //Set visit QC at Not Done
         $this->orthancSeries->orthancStudy->visit->state_quality_control = Constants::QUALITY_CONTROL_NOT_DONE;

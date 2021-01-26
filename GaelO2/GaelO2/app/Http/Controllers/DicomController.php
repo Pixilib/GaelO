@@ -25,7 +25,7 @@ class DicomController extends Controller
 {
 
 
-    public function getVisitDicomsFile(int $visitId = 0, Request $request, GetDicomsFile $getDicomsFile, GetDicomsFileRequest $getDicomsFileRequest, GetDicomsFileResponse $getDicomsFileResponse){
+    public function getVisitDicomsFile(int $visitId, Request $request, GetDicomsFile $getDicomsFile, GetDicomsFileRequest $getDicomsFileRequest, GetDicomsFileResponse $getDicomsFileResponse){
         $currentUser = Auth::user();
         $queryParam = $request->query();
 
@@ -99,7 +99,7 @@ class DicomController extends Controller
         }
     }
 
-    public function reactivateStudy(string $studyInstanceUID, Request $request, ReactivateDicomStudy $reactivateDicomStudy, ReactivateDicomStudyRequest $reactivateDicomStudyRequest, ReactivateDicomStudyResponse $reactivateDicomStudyResponse){
+    public function reactivateStudy(string $studyInstanceUID, ReactivateDicomStudy $reactivateDicomStudy, ReactivateDicomStudyRequest $reactivateDicomStudyRequest, ReactivateDicomStudyResponse $reactivateDicomStudyResponse){
 
         $currentUser = Auth::user();
 

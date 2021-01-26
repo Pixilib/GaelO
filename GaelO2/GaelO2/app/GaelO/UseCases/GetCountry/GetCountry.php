@@ -28,7 +28,7 @@ class GetCountry {
 
             $this->checkAuthorization($getCountryRequest->currentUserId);
             $code = $getCountryRequest->code;
-            if ($code == '') {
+            if ($code === null) {
                 $responseArray = [];
                 $countries = $this->countryRepositoryInterface->getAllCountries();
                 foreach($countries as $country){

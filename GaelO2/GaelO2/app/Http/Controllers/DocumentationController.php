@@ -23,7 +23,7 @@ use Illuminate\Support\Facades\Auth;
 
 class DocumentationController extends Controller
 {
-    public function createDocumentation(string $studyName='', Request $request, CreateDocumentation $createDocumentation, CreateDocumentationRequest $createDocumentationRequest, CreateDocumentationResponse $createDocumentationResponse) {
+    public function createDocumentation(string $studyName, Request $request, CreateDocumentation $createDocumentation, CreateDocumentationRequest $createDocumentationRequest, CreateDocumentationResponse $createDocumentationResponse) {
         $currentUser = Auth::user();
         $requestData = $request->all();
         $createDocumentationRequest = Util::fillObject($requestData, $createDocumentationRequest);

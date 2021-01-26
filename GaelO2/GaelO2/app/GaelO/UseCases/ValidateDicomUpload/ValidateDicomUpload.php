@@ -72,7 +72,7 @@ class ValidateDicomUpload{
                     throw new GaelOValidateDicomException("Bomb Zip");
                 }
 
-                $zip=new ZipArchive;
+                $zip=new ZipArchive();
                 $zip->open($tusTempZip);
                 $zip->extractTo($unzipedPath);
                 $zip->close();
