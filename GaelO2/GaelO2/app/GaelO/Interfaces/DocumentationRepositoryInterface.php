@@ -5,6 +5,14 @@ namespace App\GaelO\Interfaces;
 interface DocumentationRepositoryInterface
 {
 
+    public function update($id, array $data) : void;
+
+    public function create(array $data);
+
+    public function find(int $id);
+
+    public function delete($id) : void;
+
     public function createDocumentation(
         string $name,
         string $documentDate,

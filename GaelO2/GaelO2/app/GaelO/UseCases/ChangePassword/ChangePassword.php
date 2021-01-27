@@ -16,13 +16,19 @@ use App\GaelO\Services\TrackerService;
 use App\GaelO\Exceptions\GaelOBadRequestException;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
+use App\GaelO\Interfaces\TrackerRepositoryInterface;
+use App\GaelO\Interfaces\UserRepositoryInterface;
+use App\GaelO\Repositories\TrackerRepository;
 use Exception;
 
 class ChangePassword {
 
-    public function __construct(PersistenceInterface $persistenceInterface, TrackerService $trackerService){
-        $this->persistenceInterface = $persistenceInterface;
-        $this->trackerService = $trackerService;
+    private TrackerRepositoryInterface $trackerRepositoryInterface;
+    private UserRepositoryInterface $userRepositoryInterface;
+
+    public function __construct(UserRepositoryInterface $userRepositoryInterface, TrackerRepositoryInterface $trackerRepositoryInterface){
+        $this->userRepositoryInterface = $userRepositoryInterface;
+        $this->trackerRepositoryInterface = $trackerRepositoryInterface;
      }
 
     public function execute(ChangePasswordRequest $changeUserPasswordRequest, ChangePasswordResponse $changeUserPasswordResponse) : void {
@@ -34,7 +40,7 @@ class ChangePassword {
             $password1 = $changeUserPasswordRequest->password1;
             $password2 = $changeUserPasswordRequest->password2;
 
-            $user = $this->persistenceInterface->find($id);
+            $user = $this->userRepositoryInterface->find($id);
 
             if($user['status'] === Constants::USER_STATUS_UNCONFIRMED) {
                 $this->checkMatchHashPasswords($previousPassword, $user['password_temporary']);
@@ -57,8 +63,8 @@ class ChangePassword {
             $data['last_password_update'] = Util::now();
             $data['status'] = Constants::USER_STATUS_ACTIVATED;
 
-            $this->persistenceInterface->update($user['id'], $data);
-            $this->trackerService->writeAction($user['id'], Constants::TRACKER_ROLE_USER, null, null, Constants::TRACKER_CHANGE_PASSWORD, null);
+            $this->userRepositoryInterface->update($user['id'], $data);
+            $this->trackerRepositoryInterface->writeAction($user['id'], Constants::TRACKER_ROLE_USER, null, null, Constants::TRACKER_CHANGE_PASSWORD, null);
 
             $changeUserPasswordResponse->status = 200;
             $changeUserPasswordResponse->statusText = 'OK';

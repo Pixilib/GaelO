@@ -5,19 +5,22 @@ namespace App\GaelO\UseCases\CreateDocumentation;
 use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
-use App\GaelO\Interfaces\PersistenceInterface;
+use App\GaelO\Interfaces\DocumentationRepositoryInterface;
+use App\GaelO\Interfaces\TrackerRepositoryInterface;
 use App\GaelO\Services\AuthorizationService;
-use App\GaelO\Services\TrackerService;
 use App\GaelO\Util;
 use Exception;
 
 class CreateDocumentation {
 
-    public function __construct(PersistenceInterface $documentationRepository, AuthorizationService $authorizationService, TrackerService $trackerService)
+    private DocumentationRepositoryInterface $documentationRepositoryInterface;
+    private TrackerRepositoryInterface $trackerRepositoryInterface;
+
+    public function __construct(DocumentationRepositoryInterface $documentationRepositoryInterface, AuthorizationService $authorizationService, TrackerRepositoryInterface $trackerRepositoryInterface)
     {
-        $this->documentationRepository = $documentationRepository;
+        $this->documentationRepositoryInterface = $documentationRepositoryInterface;
         $this->authorizationService = $authorizationService;
-        $this->trackerService = $trackerService;
+        $this->trackerRepositoryInterface = $trackerRepositoryInterface;
     }
 
     public function execute(CreateDocumentationRequest $createDocumentationRequest, CreateDocumentationResponse $createDocumentationResponse){
@@ -25,7 +28,7 @@ class CreateDocumentation {
         try{
             $this->checkAuthorization($createDocumentationRequest->currentUserId, $createDocumentationRequest->studyName);
 
-            $createdEntity = $this->documentationRepository->createDocumentation(
+            $createdEntity = $this->documentationRepositoryInterface->createDocumentation(
                 $createDocumentationRequest->name,
                 Util::now(),
                 $createDocumentationRequest->studyName,
@@ -46,7 +49,7 @@ class CreateDocumentation {
                 'reviewer'=>$createDocumentationRequest->reviewer
             ];
 
-            $this->trackerService->writeAction(
+            $this->trackerRepositoryInterface->writeAction(
                 $createDocumentationRequest->currentUserId,
                 Constants::ROLE_SUPERVISOR,
                 $createDocumentationRequest->studyName,

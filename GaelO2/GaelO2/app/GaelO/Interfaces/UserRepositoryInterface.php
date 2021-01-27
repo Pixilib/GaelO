@@ -4,6 +4,15 @@ namespace App\GaelO\Interfaces;
 
 interface UserRepositoryInterface {
 
+    public function update($id, array $data) : void;
+
+    public function create(array $data);
+
+    public function find(int $id);
+
+    public function getAll() : array;
+
+    public function delete($id) : void;
 
     public function createUser(String $username, String $lastName, String $firstName, String $status,
                                 String $email, ?String $phone, bool $administrator, int $centerCode, String $job,
