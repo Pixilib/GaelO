@@ -13,9 +13,10 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - uses: shivammathur/setup-php@b7d1d9c9a92d8d8463ce36d7f60da34d461724f8
+    - name: Setup PHP
+      uses: shivammathur/setup-php@b7d1d9c9a92d8d8463ce36d7f60da34d461724f8
       with:
-        php-version: '8.0'
+        php-version: '8.0.1'
     - name: Copy .env
       working-directory: ./GaelO2/GaelO2
       run: php -r "file_exists('.env') || copy('.env.example', '.env');"
