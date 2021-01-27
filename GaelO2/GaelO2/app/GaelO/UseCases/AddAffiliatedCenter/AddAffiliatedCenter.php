@@ -7,15 +7,18 @@ use App\GaelO\Exceptions\GaelOConflictException;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\PersistenceInterface;
+use App\GaelO\Interfaces\TrackerRepositoryInterface;
 use App\GaelO\Services\AuthorizationService;
 use App\GaelO\Services\TrackerService;
 use Exception;
 
 class AddAffiliatedCenter {
 
-    public function __construct(PersistenceInterface $persistenceInterface, AuthorizationService $authorizationService, TrackerService $trackerService){
+    private TrackerRepositoryInterface $trackerRepository;
+
+    public function __construct(PersistenceInterface $persistenceInterface, AuthorizationService $authorizationService, TrackerRepositoryInterface $trackerRepository){
         $this->persistenceInterface = $persistenceInterface;
-        $this->trackerService = $trackerService;
+        $this->trackerRepository = $trackerRepository;
         $this->authorizationService = $authorizationService;
     }
 
@@ -34,7 +37,7 @@ class AddAffiliatedCenter {
                 $actionDetails = [
                     'addAffiliatedCenters' => $addAffiliatedCenterRequest->centerCode
                 ];
-                $this->trackerService->writeAction($addAffiliatedCenterRequest->userId, Constants::TRACKER_ROLE_ADMINISTRATOR, null, null, Constants::TRACKER_EDIT_USER, $actionDetails);
+                $this->trackerRepository->writeAction($addAffiliatedCenterRequest->userId, Constants::TRACKER_ROLE_ADMINISTRATOR, null, null, Constants::TRACKER_EDIT_USER, $actionDetails);
 
                 $addAffiliatedCenterResponse->status = '201';
                 $addAffiliatedCenterResponse->statusText = 'Created';

@@ -37,6 +37,20 @@ class TrackerRepository implements PersistenceInterface, TrackerRepositoryInterf
         throw new Exception("Tracker Delete Forbidden");
     }
 
+    public function writeAction(int $userId, string $role, ?string $study, ?int $id_visit, string $actionType, ?array $actionDetails) : void {
+        $data = [
+            'study_name' => $study,
+            'user_id' => $userId,
+            'date'=> Util::now(),
+            'role' => $role,
+            'visit_id'=> $id_visit,
+            'action_type' => $actionType,
+            'action_details' => json_encode($actionDetails)
+        ];
+
+        $this->create($data);
+    }
+
     public function getTrackerOfRole(string $role) : array {
         $trackerData = $this->tracker->with('user')->where('role', $role)->get();
         return empty($trackerData) ? [] : $trackerData->toArray();

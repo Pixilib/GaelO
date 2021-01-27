@@ -14,7 +14,7 @@ use Tests\TestCase;
 class VisitTreeTest extends TestCase
 {
 
-    protected function setUp() : void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -71,50 +71,72 @@ class VisitTreeTest extends TestCase
             ]
         ]];
 
-        $mock = Mockery::mock(VisitRepository::class);
-        $mock->shouldReceive('getVisitsInStudy')->andReturn($visitArrayMock);
-        $mock->shouldReceive('getVisitsInStudyAwaitingControllerAction')
-        ->andReturn($visitArrayMock);
+        $mockVisitRepository = Mockery::mock(VisitRepository::class);
+        $mockVisitRepository->shouldReceive('getVisitsInStudy')
+            ->andReturn($visitArrayMock);
+        $mockVisitRepository->shouldReceive('getVisitsInStudyAwaitingControllerAction')
+            ->andReturn($visitArrayMock);
+        $mockVisitRepository->shouldReceive('getPatientsHavingAtLeastOneAwaitingReviewForUser')
+            ->andReturn([32]);
 
-        $this->instance(VisitRepository::class, $mock);
+        $mockVisitRepository->shouldReceive('getPatientListVisitsWithContext')
+            ->andReturn($visitArrayMock);
+
+        $mockUserRepository = Mockery::mock(UserRepository::class);
+        $mockUserRepository->shouldReceive('getAllUsersCenters')
+            ->andReturn(['23']);
+
+        $patientRepository = Mockery::mock(PatientRepository::class);
+        $patientRepository->shouldReceive('getPatientsInStudyInCenters')
+            ->andReturn([['code' => 32]]);
+
+        $this->instance(VisitRepository::class, $mockVisitRepository);
+        $this->instance(UserRepository::class, $mockUserRepository);
+        $this->instance(PatientRepository::class, $patientRepository);
         $this->treeService = new VisitTreeService(
             App::make(UserRepository::class),
             App::make(PatientRepository::class),
             App::make(VisitRepository::class),
         );
+    }
 
+    private function doAssertionOnContent($treeAnswer)
+    {
+        $expectedArray = [
+            'id', 'name', 'order', 'optional', 'modality', 'studyName',
+            'stateInvestigatorForm', 'stateQualityControl', 'uploadStatus', 'statusDone', 'visitTypeId', 'visitGroupId', 'patientCode'
+        ];
 
+        foreach ($expectedArray as $key) {
+            $this->assertArrayHasKey($key, $treeAnswer['217735']['PT']['26']);
+        }
     }
 
     public function testTreeMonitor()
     {
-
         $this->treeService->setUserAndStudy(1, Constants::ROLE_MONITOR, 'test');
         $tree = $this->treeService->buildTree();
-        //dd($tree);
+        $this->doAssertionOnContent($tree);
     }
 
     public function testTreeController()
     {
         $this->treeService->setUserAndStudy(1, Constants::ROLE_CONTROLLER, 'test');
-        //dd($this->treeService->buildTree());
-
+        $tree = $this->treeService->buildTree();
+        $this->doAssertionOnContent($tree);
     }
 
     public function testTreeInvestigator()
     {
-
-        //$this->treeService->setUserAndStudy(1, Constants::ROLE_INVESTIGATOR, $this->study->name);
-        //dd($this->treeService->buildTree());
-
+        $this->treeService->setUserAndStudy(1, Constants::ROLE_INVESTIGATOR, 'test');
+        $tree = $this->treeService->buildTree();
+        $this->doAssertionOnContent($tree);
     }
 
     public function testTreeReviewer()
     {
-
-
-
-        //$this->treeService->setUserAndStudy(1, Constants::ROLE_REVIEWER, $this->study->name);
-        //dd($this->treeService->buildTree());
+        $this->treeService->setUserAndStudy(1, Constants::ROLE_REVIEWER, 'test');
+        $tree = $this->treeService->buildTree();
+        $this->doAssertionOnContent($tree);
     }
 }

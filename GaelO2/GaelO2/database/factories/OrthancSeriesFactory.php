@@ -36,11 +36,28 @@ class OrthancSeriesFactory extends Factory
         ];
     }
 
-    public function orthancStudyId($orthancStudyId){
+    public function orthancStudyId(string $orthancStudyId){
 
         return $this->state(function (array $attributes) use($orthancStudyId) {
             return [
                 'orthanc_study_id' => $orthancStudyId,
+            ];
+        });
+    }
+
+    public function orthancId(string $orthancId){
+
+        return $this->state(function (array $attributes) use($orthancId) {
+            return [
+                'orthanc_id' => $orthancId,
+            ];
+        });
+    }
+
+    public function seriesUid(string $seriesInstanceUID){
+        return $this->state(function (array $attributes) use($seriesInstanceUID) {
+            return [
+                'series_uid' => $seriesInstanceUID,
             ];
         });
     }

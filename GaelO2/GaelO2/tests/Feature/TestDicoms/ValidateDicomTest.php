@@ -1,19 +1,11 @@
 <?php
 
-namespace Tests\Feature;
+namespace Tests\Feature\TestDicoms;
 
 use App\GaelO\Constants\Constants;
-use App\Models\User;
-use App\Models\VisitGroup;
-use App\Models\VisitType;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
-use Illuminate\Support\Facades\Artisan;
-use Laravel\Passport\Passport;
-use App\Models\Patient;
 use App\Models\ReviewStatus;
-use App\Models\Study;
 use Tests\TestCase;
-use App\Models\Visit;
 use Tests\AuthorizationTools;
 
 class ValidateDicomTest extends TestCase
@@ -35,25 +27,13 @@ class ValidateDicomTest extends TestCase
     }
 
     protected function setUp() : void{
+
+        $this->markTestSkipped('Ces tests son a revoir et necessitent le reste de la stack technique');
         parent::setUp();
+        $this->reviewStatus = ReviewStatus::factory()->create();
 
-        Artisan::call('passport:install');
-        Passport::actingAs(
-            User::where('id',1)->first()
-        );
-
-        $this->study = factory(Study::class)->create(['patient_code_prefix' => 1234]);
-        $this->visitGroup = factory(VisitGroup::class)->create(['study_name' => $this->study->name]);
-        $this->visitType = factory(VisitType::class)->create(['visit_group_id' => $this->visitGroup['id']]);
-        $this->patient = factory(Patient::class)->create(['code' => 12341234123412, 'study_name' => $this->study->name, 'center_code' => 0]);
-        $this->visit = factory(Visit::class)->create(['creator_user_id' => 1,
-        'patient_code' => $this->patient['code'],
-        'visit_type_id' => $this->visitType['id'],
-        'status_done' => 'Done']);
-        $this->reviewStatus = factory(ReviewStatus::class)->create([
-            'visit_id' => $this->visit->id,
-            'study_name'=> $this->study->name,
-        ]);
+        $this->studyName = $this->reviewStatus->visit->patient->study->name;
+        $this->visitId = $this->reviewStatus->visitId;
 
         if (true) {
             $this->markTestSkipped('all tests in this file are invactive, this is only to check orthanc communication');
@@ -67,7 +47,7 @@ class ValidateDicomTest extends TestCase
 
     public function testValidateDicom()
     {
-        AuthorizationTools::addRoleToUser(1, Constants::ROLE_INVESTIGATOR, $this->study->name);
+        AuthorizationTools::addRoleToUser(1, Constants::ROLE_INVESTIGATOR, $this->studyName);
         $payload = [
             'visitId'=>1,
             'originalOrthancId'=>'7d2804c1-a17e7902-9a04d3fd-03e67d58-5ff3b85f',
@@ -75,7 +55,7 @@ class ValidateDicomTest extends TestCase
             'numberOfInstances'=>$this->numberOfInstances
         ];
 
-        $response = $this->json('POST', 'api/visits/'.$this->visit->id.'/validate-dicom', $payload);
+        $response = $this->json('POST', 'api/visits/'.$this->visitId.'/validate-dicom', $payload);
         $response->assertStatus(200);
 
 
@@ -90,7 +70,7 @@ class ValidateDicomTest extends TestCase
             'numberOfInstances'=>$this->numberOfInstances
         ];
 
-        $this->json('POST', 'api/visits/'.$this->visit->id.'/validate-dicom', $payload)->assertStatus(403);
+        $this->json('POST', 'api/visits/'.$this->visitId.'/validate-dicom', $payload)->assertStatus(403);
 
 
     }

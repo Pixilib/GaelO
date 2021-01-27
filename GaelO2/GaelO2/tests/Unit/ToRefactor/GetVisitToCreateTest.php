@@ -1,5 +1,5 @@
 <?php
-
+/*
 namespace Tests\Unit;
 
 use App\GaelO\Constants\Constants;
@@ -99,8 +99,5 @@ class GetVisitToCreateTest extends TestCase
     }
 
 
-    /*
-
-    */
-
 }
+*/

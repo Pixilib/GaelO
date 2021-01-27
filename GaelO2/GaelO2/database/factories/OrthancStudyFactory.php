@@ -61,4 +61,12 @@ class OrthancStudyFactory extends Factory
             ];
         });
     }
+
+    public function studyUid(string $studyInstanceUID){
+        return $this->state(function (array $attributes) use ($studyInstanceUID) {
+            return [
+                'study_uid' => $studyInstanceUID,
+            ];
+        });
+    }
 }

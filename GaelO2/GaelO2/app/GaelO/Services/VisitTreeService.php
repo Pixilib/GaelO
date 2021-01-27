@@ -70,7 +70,7 @@ class VisitTreeService
 
         //Add existing visits in sub keys
         foreach ($patientVisitsArray as $visitObject) {
-            $visitModality =  $visitObject['visit_type']['visit_group']['modality'];
+            $visitModality = $visitObject['visit_type']['visit_group']['modality'];
             $visitOrder = $visitObject['visit_type']['order'];
             $patientCode = $visitObject['patient_code'];
             $resultTree[$patientCode][$visitModality][$visitOrder] = $this->filterVisitOutputData($visitObject);
