@@ -189,7 +189,7 @@ $(document).ready(function(){
 </div>
 
 
-<div id="review_div" class="visitInfoDiv" style="display:none; overflow-x:auto;">
+<div id="review_div" class="visitInfoDiv" style="display:none;">
 
 	<table class='table table-striped'>
     	<tr>
@@ -219,7 +219,7 @@ function makeHistoryTable($actionGroup, $trackerVisitResponses, bool $formInvest
 		$actionArray=array("Import Series", "Change Serie");
 	}
 	?>
-    <div class="mt-4">
+    <div class="mt-4" style="overflow-x:auto;" >
     	<h3>History</h3>
         <table class="table table-striped visitHistory block" style="width: 100%;">
             <thead>
@@ -624,7 +624,7 @@ function make_interface_tableau_review_supervisor($data_reviews) {
 		return;
 	}
 	?>
-    <div>
+    <div style="overflow-x:auto;">
     	<table class="table table-striped block">
     		<tr>
     			<th></th>

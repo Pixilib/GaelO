@@ -178,9 +178,7 @@ abstract class Form_Processor {
 		if ($reviewStatus == Visit::REVIEW_WAIT_ADJUDICATION) {
 
 			$email=new Send_Email($this->linkpdo);
-			//SK A AMELIORER POUR EVITER DE MAILIER LES REVIEWER QUI ONT DEJA REPONDU
-			//NECESSITE DE FILTER LA LISTE DES REVIEWERS DE L ETUDE
-			$email->addGroupEmails($this->visitObject->study, User::REVIEWER)
+			$email->addEmailsReviewerWithNoReview($this->visitObject->study, $this->id_visit)
 					->addGroupEmails($this->visitObject->study, User::SUPERVISOR);
 			$email->sendAwaitingAdjudicationMessage($this->visitObject->study, $this->visitObject->patientCode, $this->visitObject->visitType);
 

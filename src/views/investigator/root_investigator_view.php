@@ -37,23 +37,64 @@
 
 			if($("#uploadApp").text()=="Multi Uploader"){
 
-				$("#tree").html('<div id="dicomUploaderv2" style="width:100%"></div>');
+				$("#tree").html('<div id="dicomMutiUploader" style="width:100%"></div>');
 
-				window.Gaelo_Uploader.installUploader({
-					developerMode: false,
-					multiUpload: true,
-					minNbOfInstances: 30,
-					callbackOnStartAction: ()=>{
-						preventAjaxDivLoading()
+				$("#dicomMutiUploader").on("remove", function () {
+					let results = window.Gaelo_Uploader.closeUploader('dicomMutiUploader')
+					console.log('Uploader Removed '+results)
+				})	
+
+				$.ajax({
+					type: "GET",
+					url: '/scripts/get_possible_import.php',
+					dataType: 'json',
+					success: function(visits) {
+
+						window.Gaelo_Uploader.installUploader({
+							minNbOfInstances: 30,
+							availableVisits : visits,
+							onStartUsing: ()=>{
+								preventAjaxDivLoading()
+							},
+							onStudyUploaded : function validateUpload(visitID, sucessIDsUploaded, numberOfFiles, originalStudyOrthancID) {
+								$.ajax({
+									type: "POST",
+									url: '/scripts/validate_dicom_upload_tus.php',
+									//Do not trigger event to avoid conflit with dicomupload listener in parallel
+									global: false,
+									data: {
+										id_visit : visitID,
+										totalDicomFiles : numberOfFiles,
+										sucessIDsUploaded : sucessIDsUploaded,
+										originalOrthancStudyID : originalStudyOrthancID
+									},
+									success: function() {
+										let uploadedVisit = visits.filter((visit)=>{
+											return visit.visitID == visitID
+										})[0]
+										
+										alertifySuccess('Upload Validation Success Patient : '+uploadedVisit['patientCode']+' Visit : '+uploadedVisit['visitType'])
+									
+									},
+									error : function(){
+											alertifyError('Upload Validation Visit '+visitID+' Error, please contact administrator')
+									}
+								});		
+
+							},
+							onUploadComplete: ()=>{
+								alertifySuccess('Upload Finished')
+								allowAjaxDivLoading()
+							}
+						}, 'dicomMutiUploader')
+
+						checkBrowserSupportDicomUpload('#dicomMutiUploader');
+					
 					},
-					callbackOnUploadComplete: ()=>{
-						//Remove prevent Ajax listener
-						allowAjaxDivLoading()
-						alertifySuccess("Multi Upload Finished")
-						refreshInvestigatorDiv()
+					error : function(){
+						console.log('error');
 					}
-				}, 'dicomUploaderv2')
-				checkBrowserSupportDicomUpload('#dicomUploaderv2');
+				});		
 
 				$("#uploadApp").html("Exit Uploader");
 				$("#uploadApp").removeClass("btn-dark").addClass("btn-warning");
