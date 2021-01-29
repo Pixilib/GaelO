@@ -48,7 +48,6 @@ Preparation Investigateur / Monitor / Controller / Reviewer :
 - API Review (POST, GET, DELETE) + Review attached files
 
 Modification password / reset devrait passer par userservice et le editUser du repository plus generique (ou dissocié)
-Visit Test le cas creation not done avec reason obligatoire n'est pas testé
 Service Visit => Continuer test passage en upload Done
 Dicom Series Service => peut etre evoluer vers un DicomService pour les deux niveaux
 Class d'authorisation revenir a l'heritage?
