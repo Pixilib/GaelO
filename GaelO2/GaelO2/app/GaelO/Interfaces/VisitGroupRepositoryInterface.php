@@ -5,6 +5,10 @@ namespace App\GaelO\Interfaces;
 interface VisitGroupRepositoryInterface
 {
 
+    public function find($id) ;
+
+    public function delete($id) : void ;
+
     public function createVisitGroup(String $studyName, String $modality)  : void ;
 
     public function hasVisitTypes(int $visitGroupId) : bool ;

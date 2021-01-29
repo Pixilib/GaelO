@@ -6,8 +6,6 @@ use App\GaelO\Adapters\LaravelFunctionAdapter;
 use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
-use App\GaelO\Interfaces\PersistenceInterface;
-
 use App\GaelO\UseCases\CreateUser\CreateUserRequest;
 use App\GaelO\UseCases\CreateUser\CreateUserResponse;
 use App\GaelO\Services\AuthorizationService;
@@ -17,14 +15,12 @@ use App\GaelO\Services\UserService;
 
 class CreateUser {
 
-    /**
-     * Dependency injection that will be provided by the Dependency Injection Container
-     * Persistence Interfate => Will be a instance of User Repository (defined by UserRepositoryProvider)
-     * Tracker Service to be able to write in the Tracker
-     * Mail Service to be able to send email
-     */
-    public function __construct(PersistenceInterface $persistenceInterface, AuthorizationService $authorizationService,  TrackerService $trackerService, MailServices $mailService, UserService $userService){
-        $this->persistenceInterface = $persistenceInterface;
+    private AuthorizationService $authorizationService;
+    private  TrackerService $trackerService;
+    private MailServices $mailService;
+    private UserService $userService;
+
+    public function __construct(AuthorizationService $authorizationService,  TrackerService $trackerService, MailServices $mailService, UserService $userService){
         $this->trackerService = $trackerService;
         $this->mailService = $mailService;
         $this->authorizationService = $authorizationService;

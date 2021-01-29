@@ -127,6 +127,29 @@ class VisitRepository implements PersistenceInterface, VisitRepositoryInterface 
         return $answer->count() === 0 ? []  : $answer->toArray();
     }
 
+
+    public function hasVisitsInStudy(string $studyName) : bool {
+
+        $visits = $this->getVisitsInStudy($studyName);
+
+        return sizeof($visits) === 0 ? false  : true;
+
+    }
+
+    public function getVisitsInVisitGroup(int $visitGroupId) : array {
+
+        $visits = $this->visit->whereHas('visitType', function($query) use ($visitGroupId) {
+            $query->where('visit_group_id', $visitGroupId);
+        })
+        ->get();
+        return $visits->toArray();
+    }
+
+    public function hasVisitsInVisitGroup(int $visitGroupId) : bool {
+        $visits = $this->getVisitsInVisitGroup($visitGroupId);
+        return sizeof($visits) > 0 ? true : false;
+    }
+
     public function getVisitsInStudyAwaitingControllerAction(string $studyName) : array {
         $controllerActionStatusArray = array(Constants::QUALITY_CONTROL_NOT_DONE, Constants::QUALITY_CONTROL_WAIT_DEFINITIVE_CONCLUSION);
 

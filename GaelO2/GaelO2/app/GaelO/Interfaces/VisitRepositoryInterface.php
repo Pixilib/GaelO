@@ -34,6 +34,12 @@ interface VisitRepositoryInterface
 
     public function getVisitsInStudy(string $studyName) : array ;
 
+    public function hasVisitsInStudy(string $studyName) : bool ;
+
+    public function getVisitsInVisitGroup(int $visitGroupId) : array ;
+
+    public function hasVisitsInVisitGroup(int $visitGroupId) : bool ;
+
     public function getVisitsInStudyAwaitingControllerAction(string $studyName) : array ;
 
     public function getVisitsAwaitingReviews(string $studyName) : array;

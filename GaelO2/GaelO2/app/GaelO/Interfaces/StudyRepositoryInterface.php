@@ -15,4 +15,5 @@ interface StudyRepositoryInterface {
     public function getStudyDetails(string $name) : array ;
 
     public function reactivateStudy(string $name) : void ;
+
 }

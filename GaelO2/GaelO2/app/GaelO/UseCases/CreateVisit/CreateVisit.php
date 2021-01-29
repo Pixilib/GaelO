@@ -7,21 +7,22 @@ use App\GaelO\Exceptions\GaelOBadRequestException;
 use App\GaelO\Exceptions\GaelOConflictException;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
-use App\GaelO\Interfaces\PersistenceInterface;
+use App\GaelO\Interfaces\VisitRepositoryInterface;
 use App\GaelO\Services\AuthorizationPatientService;
-use App\GaelO\Services\TrackerService;
 use App\GaelO\Services\VisitService;
 use DateTime;
 use Exception;
 
 class CreateVisit {
 
-    public function __construct(PersistenceInterface $persistenceInterface, AuthorizationPatientService $authorizationService, TrackerService $trackerService, VisitService $visitService){
-        $this->visitService = $visitService;
-        $this->persistenceInterface = $persistenceInterface;
-        $this->trackerService = $trackerService;
-        $this->authorizationService = $authorizationService;
+    private VisitRepositoryInterface $visitRepositoryInterface;
+    private AuthorizationPatientService $authorizationService;
+    private VisitService $visitService;
 
+    public function __construct(VisitRepositoryInterface $visitRepositoryInterface, AuthorizationPatientService $authorizationService, VisitService $visitService){
+        $this->visitService = $visitService;
+        $this->authorizationService = $authorizationService;
+        $this->visitRepositoryInterface = $visitRepositoryInterface;
     }
 
     public function execute(CreateVisitRequest $createVisitRequest, CreateVisitResponse $createVisitResponse) : void {
@@ -34,7 +35,7 @@ class CreateVisit {
                 throw new GaelOBadRequestException('Reason must be specified is visit not done');
             }
 
-            $existingVisit = $this->persistenceInterface->isExistingVisit(
+            $existingVisit = $this->visitRepositoryInterface->isExistingVisit(
                             $createVisitRequest->patientCode,
                             $createVisitRequest->visitTypeId);
 

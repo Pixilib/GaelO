@@ -5,14 +5,18 @@ use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOBadRequestException;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
-use App\GaelO\Interfaces\PersistenceInterface;
+use App\GaelO\Interfaces\UserRepositoryInterface;
 use App\GaelO\Services\AuthorizationService;
 use App\GaelO\Services\TrackerService;
 
 class CreateUserRoles {
 
-    public function __construct(PersistenceInterface $persistenceInterface, AuthorizationService $authorizationService, TrackerService $trackerService){
-        $this->persistenceInterface = $persistenceInterface;
+    private UserRepositoryInterface $userRepositoryInterface;
+    private AuthorizationService $authorizationService;
+    private TrackerService $trackerService;
+
+    public function __construct(UserRepositoryInterface $userRepositoryInterface, AuthorizationService $authorizationService, TrackerService $trackerService){
+        $this->userRepositoryInterface = $userRepositoryInterface;
         $this->trackerService = $trackerService;
         $this->authorizationService = $authorizationService;
     }
@@ -24,7 +28,7 @@ class CreateUserRoles {
             $this->checkAuthorization($createRoleRequest->currentUserId);
 
             //Get current roles in study for users
-            $actualRolesArray = $this->persistenceInterface->getUsersRolesInStudy($createRoleRequest->userId, $createRoleRequest->study);
+            $actualRolesArray = $this->userRepositoryInterface->getUsersRolesInStudy($createRoleRequest->userId, $createRoleRequest->study);
 
 
             if( in_array($createRoleRequest->role, $actualRolesArray) ) {
@@ -32,7 +36,7 @@ class CreateUserRoles {
             }
 
             //Write in database and return sucess response (error will be handled by laravel)
-            $this->persistenceInterface->addUserRoleInStudy($createRoleRequest->userId, $createRoleRequest->study, $createRoleRequest->role);
+            $this->userRepositoryInterface->addUserRoleInStudy($createRoleRequest->userId, $createRoleRequest->study, $createRoleRequest->role);
             $actionDetails = [
                 "Add Roles"=> $createRoleRequest->role
             ];

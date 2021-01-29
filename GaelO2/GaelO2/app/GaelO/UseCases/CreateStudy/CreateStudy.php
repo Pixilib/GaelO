@@ -10,15 +10,23 @@ use App\GaelO\Services\AuthorizationService;
 use App\GaelO\Services\TrackerService;
 use App\GaelO\Exceptions\GaelOConflictException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
+use App\GaelO\Interfaces\StudyRepositoryInterface;
+use App\GaelO\Interfaces\TrackerRepositoryInterface;
 use Exception;
 
 
 class CreateStudy {
 
-    public function __construct(PersistenceInterface $persistenceInterface, AuthorizationService $authorizationService, TrackerService $trackerService){
-        $this->persistenceInterface = $persistenceInterface;
+    private StudyRepositoryInterface $studyRepositoryInterface;
+    private AuthorizationService $authorizationService;
+    private TrackerRepositoryInterface $trackerRepositoryInterface;
+
+
+
+    public function __construct(StudyRepositoryInterface $studyRepositoryInterface, AuthorizationService $authorizationService, TrackerRepositoryInterface $trackerRepositoryInterface){
+        $this->studyRepositoryInterface = $studyRepositoryInterface;
         $this->authorizationService = $authorizationService;
-        $this->trackerService = $trackerService;
+        $this->trackerRepositoryInterface = $trackerRepositoryInterface;
     }
 
     public function execute(CreateStudyRequest $createStudyRequest, CreateStudyResponse $createStudyResponse){
@@ -33,11 +41,11 @@ class CreateStudy {
                 throw new GaelOBadRequestException('Only uppercase alfanumerical name allowed, no space or special characters');
             }
 
-            if( $this->persistenceInterface->isExistingStudy($studyName) ){
+            if( $this->studyRepositoryInterface->isExistingStudy($studyName) ){
                 throw new GaelOConflictException('Already Existing Study');
             }
 
-            $this->persistenceInterface->addStudy($studyName, $patientCodePrefix);
+            $this->studyRepositoryInterface->addStudy($studyName, $patientCodePrefix);
 
             $currentUserId=$createStudyRequest->currentUserId;
             $actionDetails = [
@@ -45,7 +53,7 @@ class CreateStudy {
                 'patientCodePrefix'=> $patientCodePrefix
             ];
 
-            $this->trackerService->writeAction($currentUserId, Constants::TRACKER_ROLE_ADMINISTRATOR, null, null, Constants::TRACKER_CREATE_STUDY, $actionDetails);
+            $this->trackerRepositoryInterface->writeAction($currentUserId, Constants::TRACKER_ROLE_ADMINISTRATOR, null, null, Constants::TRACKER_CREATE_STUDY, $actionDetails);
 
             $createStudyResponse->status = 201;
             $createStudyResponse->statusText = 'Created';

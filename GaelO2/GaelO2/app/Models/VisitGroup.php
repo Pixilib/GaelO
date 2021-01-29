@@ -16,4 +16,5 @@ class VisitGroup extends Model
     public function visitTypes(){
         return $this->hasMany('App\Models\VisitType', 'visit_group_id');
     }
+
 }

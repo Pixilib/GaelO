@@ -30,7 +30,7 @@ dicom-study (PATCH) => OK
 Salim TODO :
 Documentation manque le modify (PUT ou PATCH)
 
-=> Fait jusqu'à createDocFile
+=> Fait jusqu'à DeleteDocumentation + DeleteVisitGroup
 Tracker Service à passer dans repository
 Mettre les interfaces dediées dans les usescases et les factory + mettre variable de classe pour les usecases
 
@@ -87,7 +87,6 @@ Doit pouvoir voir user details
 
 Faire une condition pour les NoContent dans le controller ? => ou mettre toujours un payload vide pour eviter les errur error->json() dans front?
 Voir dans message d'erreur comment ajouter d'autre info que le message (pour id de login)
-CreateVisitType et CreateVisitGroup => Ajouter un forbidden si l'etude a déjà des visites crées (etude demarrée)
 ReverseProxy TUS => On peut ajouter le studyName dans le header dans uppy pour le recupérer dans le use case et checker le role Investigateur
 Reverse proxy dicomweb => Comment faire venir le role et study depuis ohif ? depuis header?
 TUS est Joignable sur Delete => peut etre gerer le failure/cancel pour vider tus ?

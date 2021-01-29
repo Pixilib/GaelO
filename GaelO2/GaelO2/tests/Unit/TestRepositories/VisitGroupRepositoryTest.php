@@ -2,14 +2,13 @@
 
 namespace Tests\Unit\TestRepositories;
 
-use App\GaelO\Constants\Constants;
 use App\GaelO\Repositories\VisitGroupRepository;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\TestCase;
 
-use App\GaelO\Repositories\VisitTypeRepository;
 use App\Models\Study;
+use App\Models\Visit;
 use App\Models\VisitGroup;
 use App\Models\VisitType;
 

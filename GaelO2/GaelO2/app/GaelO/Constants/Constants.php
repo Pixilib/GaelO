@@ -23,6 +23,7 @@ class Constants {
 
     const TRACKER_EDIT_PREFERENCE = "Preference edited";
     const TRACKER_SEND_MESSAGE = "Send Message";
+    const TRACKER_CREATE_VISIT_GROUP  = "Create Visit Group";
     const TRACKER_CREATE_VISIT = "Create Visit";
     const TRACKER_UPLOAD_SERIES = "Upload Series";
     const TRACKER_UPLOAD_VALIDATION_FAILED = "Upload Failed";

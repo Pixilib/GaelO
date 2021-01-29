@@ -7,6 +7,7 @@ use Illuminate\Foundation\Testing\DatabaseMigrations;
 
 use Tests\TestCase;
 use App\Models\Study;
+use App\Models\Visit;
 use App\Models\VisitGroup;
 use App\Models\VisitType;
 use Tests\AuthorizationTools;
@@ -75,6 +76,16 @@ class VisitGroupTest extends TestCase
         AuthorizationTools::actAsAdmin(true);
         $visitType = VisitType::factory()->create();
         $this->json('DELETE', 'api/visit-groups/'.$visitType->visitGroup->id)->assertStatus(400);
+    }
+
+    public function testCreateVisitGroupShouldFailBecauseExistingVisits(){
+        AuthorizationTools::actAsAdmin(true);
+        $visit = Visit::factory()->create();
+        $studyName = $visit->visitType->visitGroup->study->name;
+        $payload = [
+            'modality' => 'PT'
+        ];
+        $this->json('POST', 'api/studies/'.$studyName.'/visit-groups', $payload)->assertStatus(403);
     }
 
     public function testDeleteVisitGroup(){

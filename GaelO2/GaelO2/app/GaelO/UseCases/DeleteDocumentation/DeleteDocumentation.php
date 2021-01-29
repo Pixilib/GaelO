@@ -5,30 +5,34 @@ namespace App\GaelO\UseCases\DeleteDocumentation;
 use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
-use App\GaelO\Interfaces\PersistenceInterface;
+use App\GaelO\Interfaces\DocumentationRepositoryInterface;
+use App\GaelO\Interfaces\TrackerRepositoryInterface;
 use App\GaelO\Services\AuthorizationService;
-use App\GaelO\Services\TrackerService;
 use Exception;
 
 class DeleteDocumentation{
 
-    public function __construct(PersistenceInterface $persistenceInterface, AuthorizationService $authorizationService, TrackerService $trackerService)
+    private DocumentationRepositoryInterface $documentationRepositoryInterface;
+    private AuthorizationService $authorizationService;
+    private TrackerRepositoryInterface $trackerRepositoryInterface;
+
+    public function __construct(DocumentationRepositoryInterface $documentationRepositoryInterface, AuthorizationService $authorizationService, TrackerRepositoryInterface $trackerRepositoryInterface)
     {
-        $this->documentationRepository = $persistenceInterface;
+        $this->documentationRepositoryInterface = $documentationRepositoryInterface;
         $this->authorizationService = $authorizationService;
-        $this->trackerService = $trackerService;
+        $this->trackerRepositoryInterface = $trackerRepositoryInterface;
     }
 
     public function execute(DeleteDocumentationRequest $deleteDocumentationRequest, DeleteDocumentationResponse $deleteDocumentationResponse){
 
         try{
 
-            $documentationEntity = $this->documentationRepository->find($deleteDocumentationRequest->id);
+            $documentationEntity = $this->documentationRepositoryInterface->find($deleteDocumentationRequest->id);
             $studyName = $documentationEntity['study_name'];
 
             $this->checkAuthorization($deleteDocumentationRequest->currentUserId, $studyName);
 
-            $this->documentationRepository->delete($deleteDocumentationRequest->id);
+            $this->documentationRepositoryInterface->delete($deleteDocumentationRequest->id);
 
             $actionDetails = [
                 'documentationId' => $deleteDocumentationRequest->id,
@@ -36,7 +40,7 @@ class DeleteDocumentation{
                 'documenationVersion'=> $documentationEntity['version']
             ];
 
-            $this->trackerService->writeAction(
+            $this->trackerRepositoryInterface->writeAction(
                 $deleteDocumentationRequest->currentUserId,
                 Constants::ROLE_SUPERVISOR,
                 $studyName,

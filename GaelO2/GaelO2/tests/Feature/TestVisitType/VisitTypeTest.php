@@ -67,6 +67,15 @@ class VisitTypeTest extends TestCase
         $this->json('POST', 'api/visit-groups/'.$visitType->visitGroup->id.'/visit-types', $payload)->assertStatus(409);
     }
 
+    public function testCreateVisitTypeShouldFailedBecauseAlreadyExistingVisitsInStudy()
+    {
+        AuthorizationTools::actAsAdmin(true);
+        $visit = Visit::factory()->create();
+
+        $payload = $this->payload;
+        $this->json('POST', 'api/visit-groups/'.$visit->visitType->visitGroup->id.'/visit-types', $payload)->assertStatus(403);
+    }
+
     public function testCreateVisitTypeForbiddenNotAdmin()
     {
         AuthorizationTools::actAsAdmin(false);

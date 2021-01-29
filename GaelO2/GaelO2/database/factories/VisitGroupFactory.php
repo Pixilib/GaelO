@@ -12,7 +12,7 @@ class VisitGroupFactory extends Factory
     {
         return [
             'study_name'=> Study::factory()->create()->name,
-            'modality'=>$this->faker->randomElement(['CT', 'PT', 'MR']),
+            'modality'=>'CT',
         ];
     }
 

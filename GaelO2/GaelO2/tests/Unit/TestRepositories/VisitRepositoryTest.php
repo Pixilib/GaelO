@@ -170,6 +170,44 @@ class VisitRepositoryTest extends TestCase
         $this->assertArrayHasKey('visit_group', $visits[0]['visit_type']);
     }
 
+    public function testHasVisitInStudy()
+    {
+        $study = Study::factory()->create();
+        $answer = $this->visitRepository->hasVisitsInStudy($study->name);
+        $this->assertFalse($answer);
+
+        $patient = $this->populateVisits()[0];
+
+        //Generate data of a second study that should not be selected
+        $this->populateVisits()[0];
+
+        $answer2 = $this->visitRepository->hasVisitsInStudy($patient->study_name);
+        $this->assertTrue($answer2);
+    }
+
+    public function testHasVisitsInVisitGroup(){
+        $visitGroup = VisitGroup::factory()->create();
+
+        $answer = $this->visitRepository->hasVisitsInVisitGroup(
+            $visitGroup->id);
+
+        $this->assertFalse($answer);
+
+        $visit = Visit::factory()->create();
+        $answer2 = $this->visitRepository->hasVisitsInVisitGroup(
+            $visit->visitType->visitGroup->id);
+
+        $this->assertTrue($answer2);
+    }
+
+    public function testGetVisitsInVisitGroup(){
+
+        $visit = Visit::factory()->create();
+        $answer = $this->visitRepository->getVisitsInVisitGroup(
+            $visit->visitType->visitGroup->id);
+        $this->assertEquals(1, sizeof($answer));
+    }
+
     public function testGetVisitsInStudyAwaitingControllerAction()
     {
         $patient = $this->populateVisits()[0];
@@ -356,4 +394,6 @@ class VisitRepositoryTest extends TestCase
         $visits = $this->visitRepository->getImagingVisitsAwaitingUpload($patients[0]->study->name, [$patients[0]->center_code, $patients[1]->center_code]);
         $this->assertEquals(12, sizeof($visits));
     }
+
+
 }

@@ -6,9 +6,8 @@ use App\Models\VisitGroup;
 use App\GaelO\Interfaces\PersistenceInterface;
 use App\GaelO\Interfaces\VisitGroupRepositoryInterface;
 use App\GaelO\Util;
-use Exception;
 
-class VisitGroupRepository implements PersistenceInterface, VisitGroupRepositoryInterface {
+class VisitGroupRepository implements VisitGroupRepositoryInterface {
 
     public function __construct(VisitGroup $visitGroup){
         $this->visitGroup = $visitGroup;
@@ -20,22 +19,12 @@ class VisitGroupRepository implements PersistenceInterface, VisitGroupRepository
         $model->save();
     }
 
-    public function update($id, array $data) : void {
-        $model = $this->visitGroup->find($id);
-        $model = Util::fillObject($data, $model);
-        $model->save();
-    }
-
     public function find($id){
         return $this->visitGroup->findOrFail($id)->toArray();
     }
 
     public function delete($id) : void {
         $this->visitGroup->findOrFail($id)->delete();
-    }
-
-    public function getAll() : array {
-        throw new Exception('Not Needed');
     }
 
     public function createVisitGroup(String $studyName, String $modality)  : void {

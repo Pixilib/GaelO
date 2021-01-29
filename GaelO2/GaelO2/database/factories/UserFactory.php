@@ -24,7 +24,7 @@ class UserFactory extends Factory
             'phone' => $this->faker->phoneNumber,
             'last_password_update' => now(),
             'creation_date' => now(),
-            'status' => $this->faker->randomElement(['Unconfirmed', 'Activated', 'Blocked']),
+            'status' => 'Activated',
             'administrator' => false,
             'center_code' => 0,
             'job' => $this->faker->randomElement(['CRA', 'Monitor', 'Nuclearist','PI', 'Radiologist', 'Study nurse', 'Supervision' ]),
