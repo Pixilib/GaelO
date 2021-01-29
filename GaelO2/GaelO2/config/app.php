@@ -191,6 +191,7 @@ return [
         App\Providers\AuthServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
+        App\Providers\TelescopeProvider::class,
         App\Providers\UserRepositoryProvider::class,
         App\Providers\EmailServiceProvider::class,
         App\Providers\CountryAdapterProvider::class,

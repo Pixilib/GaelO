@@ -113,3 +113,6 @@ Préparation supervisor :
 A executer en post install :
 php artisan db:migrate --seed
 php artisan passport:install
+
+Si dev :
+php artisan telescope:install
