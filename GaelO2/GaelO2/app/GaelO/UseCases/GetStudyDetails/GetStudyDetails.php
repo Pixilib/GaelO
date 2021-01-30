@@ -4,7 +4,6 @@ namespace App\GaelO\UseCases\GetStudyDetails;
 
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
-use App\GaelO\Interfaces\PersistenceInterface;
 use App\GaelO\Interfaces\StudyRepositoryInterface;
 use App\GaelO\Services\AuthorizationService;
 use App\GaelO\UseCases\GetStudy\StudyEntity;

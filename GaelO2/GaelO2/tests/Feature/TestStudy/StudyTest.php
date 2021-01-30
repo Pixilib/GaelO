@@ -85,6 +85,13 @@ class StudyTest extends TestCase
         $this->json('POST', '/api/studies', $payload)->assertNoContent(409);
     }
 
+    public function testDeleteStudy(){
+        AuthorizationTools::actAsAdmin(true);
+        $study = Study::factory()->create();
+        $response = $this->json('DELETE', '/api/studies/'.$study->name)->assertSuccessful();
+
+    }
+
     public function testGetStudiesWithDetails(){
         AuthorizationTools::actAsAdmin(true);
         Study::factory()->count(2)->create();

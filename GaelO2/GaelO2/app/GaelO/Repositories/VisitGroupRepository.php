@@ -3,7 +3,6 @@
 namespace App\GaelO\Repositories;
 
 use App\Models\VisitGroup;
-use App\GaelO\Interfaces\PersistenceInterface;
 use App\GaelO\Interfaces\VisitGroupRepositoryInterface;
 use App\GaelO\Util;
 

@@ -2,8 +2,6 @@
 
 namespace App\GaelO\UseCases\ChangePassword;
 
-use App\GaelO\Interfaces\PersistenceInterface;
-
 use App\GaelO\UseCases\ChangePassword\ChangePasswordRequest;
 use App\GaelO\UseCases\ChangePassword\ChangePasswordResponse;
 use App\GaelO\Adapters\LaravelFunctionAdapter;

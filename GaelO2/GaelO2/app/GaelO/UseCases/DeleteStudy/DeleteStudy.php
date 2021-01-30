@@ -17,7 +17,7 @@ class DeleteStudy {
     private TrackerRepositoryInterface $trackerRepositoryInterface;
 
     public function __construct(StudyRepositoryInterface $studyRepositoryInterface, AuthorizationService $authorizationService, TrackerRepositoryInterface $trackerRepositoryInterface) {
-        $this->persistenceInterface=$studyRepositoryInterface;
+        $this->studyRepositoryInterface=$studyRepositoryInterface;
         $this->trackerRepositoryInterface=$trackerRepositoryInterface;
         $this->authorizationService = $authorizationService;
     }

@@ -3,15 +3,12 @@
 namespace App\GaelO\UseCases\ModifyUserIdentification;
 
 use App\GaelO\Constants\Constants;
-use App\GaelO\Interfaces\PersistenceInterface;
 
 use App\GaelO\UseCases\ModifyUserIdentification\ModifyUserIdentificationRequest;
 use App\GaelO\UseCases\ModifyUserIdentification\ModifyUserIdentificationResponse;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\TrackerRepositoryInterface;
-use App\GaelO\Services\AuthorizationService;
-use App\GaelO\Services\MailServices;
 use App\GaelO\Services\UserService;
 use Exception;
 
