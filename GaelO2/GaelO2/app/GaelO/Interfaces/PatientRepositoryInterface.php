@@ -6,6 +6,10 @@ use App\GaelO\UseCases\GetPatient\PatientEntity;
 
 interface PatientRepositoryInterface {
 
+    public function update($code, array $data) : void ;
+
+    public function find($code) : array ;
+
     public function getPatientWithCenterDetails(int $code) : array ;
 
     public function getPatientsInStudy(string $studyName) : array ;

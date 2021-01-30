@@ -5,16 +5,20 @@ namespace App\GaelO\UseCases\DeleteUserRole;
 use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
-use App\GaelO\Interfaces\PersistenceInterface;
+use App\GaelO\Interfaces\TrackerRepositoryInterface;
+use App\GaelO\Interfaces\UserRepositoryInterface;
 use App\GaelO\Services\AuthorizationService;
-use App\GaelO\Services\TrackerService;
 use Exception;
 
 class DeleteUserRole {
 
-    public function __construct(PersistenceInterface $persistenceInterface, AuthorizationService $authorizationService, TrackerService $trackerService){
-        $this->persistenceInterface = $persistenceInterface;
-        $this->trackerService  = $trackerService;
+    private UserRepositoryInterface $userRepositoryInterface;
+    private AuthorizationService $authorizationService;
+    private TrackerRepositoryInterface $trackerRepositoryInterface;
+
+    public function __construct(UserRepositoryInterface $userRepositoryInterface, AuthorizationService $authorizationService, TrackerRepositoryInterface $trackerRepositoryInterface){
+        $this->userRepositoryInterface = $userRepositoryInterface;
+        $this->trackerRepositoryInterface  = $trackerRepositoryInterface;
         $this->authorizationService = $authorizationService;
     }
 
@@ -28,13 +32,13 @@ class DeleteUserRole {
             $role = $deleteUserRoleRequest->role;
             $userId = $deleteUserRoleRequest->userId;
 
-            $this->persistenceInterface->deleteRoleForUser($userId, $study, $role);
+            $this->userRepositoryInterface->deleteRoleForUser($userId, $study, $role);
 
             $actionDetails = [
                 'deletedRole' => $role
             ];
 
-            $this->trackerService->writeAction($deleteUserRoleRequest->currentUserId, Constants::TRACKER_ROLE_ADMINISTRATOR, $study, null, Constants::TRACKER_EDIT_USER, $actionDetails);
+            $this->trackerRepositoryInterface->writeAction($deleteUserRoleRequest->currentUserId, Constants::TRACKER_ROLE_ADMINISTRATOR, $study, null, Constants::TRACKER_EDIT_USER, $actionDetails);
 
             $deleteUserRoleResponse->status = 200;
             $deleteUserRoleResponse->statusText = 'OK';

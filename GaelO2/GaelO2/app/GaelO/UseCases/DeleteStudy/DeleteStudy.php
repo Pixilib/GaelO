@@ -5,16 +5,20 @@ namespace App\GaelO\UseCases\DeleteStudy;
 use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
-use App\GaelO\Interfaces\PersistenceInterface;
+use App\GaelO\Interfaces\StudyRepositoryInterface;
+use App\GaelO\Interfaces\TrackerRepositoryInterface;
 use App\GaelO\Services\AuthorizationService;
-use App\GaelO\Services\TrackerService;
 use Exception;
 
 class DeleteStudy {
 
-    public function __construct(PersistenceInterface $persistenceInterface, AuthorizationService $authorizationService, TrackerService $trackerService) {
-        $this->persistenceInterface=$persistenceInterface;
-        $this->trackerService=$trackerService;
+    private StudyRepositoryInterface $studyRepositoryInterface;
+    private AuthorizationService $authorizationService;
+    private TrackerRepositoryInterface $trackerRepositoryInterface;
+
+    public function __construct(StudyRepositoryInterface $studyRepositoryInterface, AuthorizationService $authorizationService, TrackerRepositoryInterface $trackerRepositoryInterface) {
+        $this->persistenceInterface=$studyRepositoryInterface;
+        $this->trackerRepositoryInterface=$trackerRepositoryInterface;
         $this->authorizationService = $authorizationService;
     }
 
@@ -24,9 +28,9 @@ class DeleteStudy {
 
             $this->checkAuthorization($deleteStudyRequest->currentUserId);
             $studyName = $deleteStudyRequest->studyName;
-            $this->persistenceInterface->delete($studyName);
+            $this->studyRepositoryInterface->delete($studyName);
 
-            $this->trackerService->writeAction($deleteStudyRequest->currentUserId, Constants::TRACKER_ROLE_ADMINISTRATOR, $studyName, null, Constants::TRACKER_DEACTIVATE_STUDY, []);
+            $this->trackerRepositoryInterface->writeAction($deleteStudyRequest->currentUserId, Constants::TRACKER_ROLE_ADMINISTRATOR, $studyName, null, Constants::TRACKER_DEACTIVATE_STUDY, []);
 
             $deleteStudyResponse->status = 200;
             $deleteStudyResponse->statusText = 'OK';

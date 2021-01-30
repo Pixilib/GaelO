@@ -30,7 +30,7 @@ dicom-study (PATCH) => OK
 Salim TODO :
 Documentation manque le modify (PUT ou PATCH)
 
-=> Fait jusqu'à DeleteDocumentation + DeleteVisitGroup
+=> Fait jusqu'à Request
 Tracker Service à passer dans repository
 Mettre les interfaces dediées dans les usescases et les factory + mettre variable de classe pour les usecases
 

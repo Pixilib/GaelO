@@ -6,27 +6,28 @@ use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOBadRequestException;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
-use App\GaelO\Interfaces\PersistenceInterface;
+use App\GaelO\Interfaces\TrackerRepositoryInterface;
+use App\GaelO\Interfaces\VisitRepositoryInterface;
 use App\GaelO\Services\AuthorizationVisitService;
 use App\GaelO\Services\DicomSeriesService;
-use App\GaelO\Services\TrackerService;
 use Exception;
 
 class ReactivateDicomSeries{
 
     private AuthorizationVisitService $authorizationVisitService;
     private DicomSeriesService $dicomSeriesService;
-    private TrackerService $trackerService;
+    private TrackerRepositoryInterface $trackerRepositoryInterface;
+    private VisitRepositoryInterface $visitRepositoryInterface;
 
-    public function __construct(PersistenceInterface $persistenceInterface,
+    public function __construct(VisitRepositoryInterface $visitRepositoryInterface,
                                 DicomSeriesService $dicomSeriesService,
                                 AuthorizationVisitService $authorizationVisitService,
-                                TrackerService $trackerService)
+                                TrackerRepositoryInterface $trackerRepositoryInterface)
     {
-        $this->persistenceInterface = $persistenceInterface;
+        $this->visitRepositoryInterface = $visitRepositoryInterface;
         $this->authorizationVisitService = $authorizationVisitService;
         $this->dicomSeriesService = $dicomSeriesService;
-        $this->trackerService = $trackerService;
+        $this->trackerRepositoryInterface = $trackerRepositoryInterface;
 
     }
 
@@ -41,7 +42,7 @@ class ReactivateDicomSeries{
             }
 
             $visitId = $seriesData['orthanc_study']['visit_id'];
-            $visitContext = $this->persistenceInterface->getVisitContext($visitId);
+            $visitContext = $this->visitRepositoryInterface->getVisitContext($visitId);
 
             $this->checkAuthorization($reactivateDicomSeriesRequest->currentUserId, $visitId, $visitContext['state_quality_control']);
 
@@ -53,7 +54,7 @@ class ReactivateDicomSeries{
                 'seriesInstanceUID'=>$seriesData['series_uid'],
             ];
 
-            $this->trackerService->writeAction(
+            $this->trackerRepositoryInterface->writeAction(
                 $reactivateDicomSeriesRequest->currentUserId,
                 Constants::ROLE_SUPERVISOR,
                 $studyName,

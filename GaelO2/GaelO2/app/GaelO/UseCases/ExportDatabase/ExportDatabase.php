@@ -13,6 +13,9 @@ use ZipArchive;
 
 class ExportDatabase{
 
+    private DatabaseDumper $databaseDumper;
+    private AuthorizationService $authorizationService;
+
     public function __construct(DatabaseDumper $databaseDumper, AuthorizationService $authorizationService) {
         $this->databaseDumper = $databaseDumper;
         $this->authorizationService = $authorizationService;

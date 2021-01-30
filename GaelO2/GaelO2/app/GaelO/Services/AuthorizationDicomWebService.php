@@ -54,6 +54,10 @@ class AuthorizationDicomWebService
         $this->authorizationVisitService->setVisitId($visitId);
     }
 
+    public function setVisitId($visitId){
+        $this->authorizationVisitService->setVisitId($visitId);
+    }
+
 
 
     /**

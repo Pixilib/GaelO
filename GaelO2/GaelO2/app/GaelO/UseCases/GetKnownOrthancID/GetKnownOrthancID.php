@@ -5,15 +5,19 @@ namespace App\GaelO\UseCases\GetKnownOrthancID;
 use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
-use App\GaelO\Interfaces\PersistenceInterface;
+use App\GaelO\Exceptions\GaelONotFoundException;
+use App\GaelO\Interfaces\OrthancStudyRepositoryInterface;
 use App\GaelO\Services\AuthorizationService;
 use Exception;
 
 class GetKnownOrthancID{
 
-    public function __construct( PersistenceInterface $persistenceInterface, AuthorizationService $authorizationService)
+    private OrthancStudyRepositoryInterface $orthancStudyRepositoryInterface;
+    private AuthorizationService $authorizationService;
+
+    public function __construct( OrthancStudyRepositoryInterface $orthancStudyRepositoryInterface, AuthorizationService $authorizationService)
     {
-        $this->persistenceInterface = $persistenceInterface;
+        $this->orthancStudyRepositoryInterface = $orthancStudyRepositoryInterface;
         $this->authorizationService = $authorizationService;
     }
 
@@ -22,16 +26,14 @@ class GetKnownOrthancID{
 
             $this->checkAuthorization($getKnownOrthancIDRequest->currentUserId, $getKnownOrthancIDRequest->studyName);
 
-            $known = $this->persistenceInterface->isExistingOrthancStudyID($getKnownOrthancIDRequest->orthancStudyID);
+            $known = $this->orthancStudyRepositoryInterface->isExistingOrthancStudyID($getKnownOrthancIDRequest->orthancStudyID);
 
             if($known){
                 $getKnownOrthancIDResponse->body = $known;
                 $getKnownOrthancIDResponse->status = '200';
                 $getKnownOrthancIDResponse->statusText = 'OK';
             } else {
-                $getKnownOrthancIDResponse->body = ['errorMessage'=>'Unknown Orthanc Study ID'];
-                $getKnownOrthancIDResponse->status = '404';
-                $getKnownOrthancIDResponse->statusText = 'Not Found';
+                throw new GaelONotFoundException('Unknown Orthanc Study ID');
             }
 
 

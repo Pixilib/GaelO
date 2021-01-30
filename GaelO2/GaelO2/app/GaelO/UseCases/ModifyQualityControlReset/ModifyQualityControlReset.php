@@ -6,23 +6,22 @@ use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOBadRequestException;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
-use App\GaelO\Interfaces\PersistenceInterface;
+use App\GaelO\Interfaces\TrackerRepositoryInterface;
 use App\GaelO\Services\AuthorizationVisitService;
-use App\GaelO\Services\TrackerService;
 use App\GaelO\Services\VisitService;
 use Exception;
 
 class ModifyQualityControlReset{
 
     private AuthorizationVisitService $authorizationVisitService;
-    private TrackerService $trackerService;
+    private TrackerRepositoryInterface $trackerRepositoryInterface;
     private VisitService $visitService;
 
-    public function __construct(AuthorizationVisitService $authorizationVisitService, VisitService $visitService, TrackerService $trackerService){
+    public function __construct(AuthorizationVisitService $authorizationVisitService, VisitService $visitService, TrackerRepositoryInterface $trackerRepositoryInterface){
 
         $this->authorizationVisitService = $authorizationVisitService;
         $this->visitService = $visitService;
-        $this->trackerService = $trackerService;
+        $this->trackerRepositoryInterface = $trackerRepositoryInterface;
     }
 
     public function execute(ModifyQualityControlResetRequest $modifyQualityControlResetRequest, ModifyQualityControlResetResponse $modifyQualityControlResetResponse){
@@ -41,7 +40,7 @@ class ModifyQualityControlReset{
 
             $actionDetails = [];
 
-            $this->trackerService->writeAction(
+            $this->trackerRepositoryInterface->writeAction(
                 $modifyQualityControlResetRequest->currentUserId,
                 Constants::ROLE_CONTROLLER,
                 $studyName,

@@ -30,7 +30,7 @@ class VisitRepository implements PersistenceInterface, VisitRepositoryInterface 
         $model->save();
     }
 
-    public function find($id){
+    public function find($id) : array {
         return $this->visit->findOrFail($id)->toArray();
     }
 

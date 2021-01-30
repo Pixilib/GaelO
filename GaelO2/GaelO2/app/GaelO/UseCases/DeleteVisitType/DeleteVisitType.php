@@ -2,18 +2,20 @@
 
 namespace App\GaelO\UseCases\DeleteVisitType;
 
-use App\GaelO\Exceptions\GaelOBadRequestException;
 use App\GaelO\Exceptions\GaelOConflictException;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
-use App\GaelO\Interfaces\PersistenceInterface;
+use App\GaelO\Interfaces\VisitTypeRepositoryInterface;
 use App\GaelO\Services\AuthorizationService;
 use Exception;
 
 class DeleteVisitType {
 
-    public function __construct(PersistenceInterface $persistenceInterface, AuthorizationService $authorizationService){
-        $this->persistenceInterface = $persistenceInterface;
+    private VisitTypeRepositoryInterface $visitTypeRepositoryInterface;
+    private AuthorizationService $authorizationService;
+
+    public function __construct(VisitTypeRepositoryInterface $visitTypeRepositoryInterface, AuthorizationService $authorizationService){
+        $this->visitTypeRepositoryInterface = $visitTypeRepositoryInterface;
         $this->authorizationService = $authorizationService;
     }
 
@@ -23,10 +25,10 @@ class DeleteVisitType {
 
             $this->checkAuthorization($deleteVisitTypeRequest->currentUserId);
 
-            $hasVisits = $this->persistenceInterface->hasVisits($deleteVisitTypeRequest->visitTypeId);
+            $hasVisits = $this->visitTypeRepositoryInterface->hasVisits($deleteVisitTypeRequest->visitTypeId);
             if($hasVisits) throw new GaelOConflictException('Existing Child Visits');
 
-            $this->persistenceInterface->delete($deleteVisitTypeRequest->visitTypeId);
+            $this->visitTypeRepositoryInterface->delete($deleteVisitTypeRequest->visitTypeId);
             $deleteVisitTypeResponse->status = 200;
             $deleteVisitTypeResponse->statusText = 'OK';
 

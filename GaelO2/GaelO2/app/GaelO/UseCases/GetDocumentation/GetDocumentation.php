@@ -5,15 +5,18 @@ namespace App\GaelO\UseCases\GetDocumentation;
 use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
-use App\GaelO\Interfaces\PersistenceInterface;
+use App\GaelO\Interfaces\DocumentationRepositoryInterface;
 use App\GaelO\Services\AuthorizationService;
 use Exception;
 
 class GetDocumentation {
 
-    public function __construct(PersistenceInterface $persistenceInterface, AuthorizationService $authorizationService)
+    private DocumentationRepositoryInterface $documentationRepositoryInterface;
+    private AuthorizationService $authorizationService;
+
+    public function __construct(DocumentationRepositoryInterface $documentationRepositoryInterface, AuthorizationService $authorizationService)
     {
-        $this->persistenceInterface = $persistenceInterface;
+        $this->documentationRepositoryInterface = $documentationRepositoryInterface;
         $this->authorizationService = $authorizationService;
 
     }
@@ -26,9 +29,9 @@ class GetDocumentation {
             $answersArray = [] ;
 
             if($getDocumentationRequest->role === Constants::ROLE_SUPERVISOR){
-                $answersArray = $this->persistenceInterface->getDocumentationsOfStudy($getDocumentationRequest->studyName);
+                $answersArray = $this->documentationRepositoryInterface->getDocumentationsOfStudy($getDocumentationRequest->studyName);
             }else{
-                $answersArray = $this->persistenceInterface->getDocumentationOfStudyWithRole($getDocumentationRequest->studyName, $getDocumentationRequest->role);
+                $answersArray = $this->documentationRepositoryInterface->getDocumentationOfStudyWithRole($getDocumentationRequest->studyName, $getDocumentationRequest->role);
             }
 
             $entitiesArray = [];

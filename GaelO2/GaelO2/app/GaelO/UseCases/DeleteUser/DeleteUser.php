@@ -5,19 +5,22 @@ namespace App\GaelO\UseCases\DeleteUser;
 use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
-use App\GaelO\Exceptions\GaelONotFoundException;
-use App\GaelO\Interfaces\PersistenceInterface;
+use App\GaelO\Interfaces\TrackerRepositoryInterface;
+use App\GaelO\Interfaces\UserRepositoryInterface;
 use App\GaelO\Services\AuthorizationService;
-use App\GaelO\Services\TrackerService;
 use App\GaelO\UseCases\DeleteUser\DeleteUserRequest;
 use App\GaelO\UseCases\DeleteUser\DeleteUserResponse;
 use Exception;
 
 class DeleteUser {
 
-    public function __construct(PersistenceInterface $persistenceInterface, AuthorizationService $authorizationService, TrackerService $trackerService){
-        $this->persistenceInterface = $persistenceInterface;
-        $this->trackerService  = $trackerService;
+    private UserRepositoryInterface $userRepositoryInterface;
+    private AuthorizationService $authorizationService;
+    private TrackerRepositoryInterface $trackerRepositoryInterface;
+
+    public function __construct(UserRepositoryInterface $userRepositoryInterface, AuthorizationService $authorizationService, TrackerRepositoryInterface $trackerRepositoryInterface){
+        $this->userRepositoryInterface = $userRepositoryInterface;
+        $this->trackerRepositoryInterface  = $trackerRepositoryInterface;
         $this->authorizationService = $authorizationService;
     }
 
@@ -27,13 +30,13 @@ class DeleteUser {
 
             $this->checkAuthorization($deleteRequest->currentUserId);
 
-            $this->persistenceInterface->delete($deleteRequest->id);
+            $this->userRepositoryInterface->delete($deleteRequest->id);
 
             $actionsDetails = [
                 'deactivated_user'=>$deleteRequest->id
             ];
 
-            $this->trackerService->writeAction($deleteRequest->currentUserId,
+            $this->trackerRepositoryInterface->writeAction($deleteRequest->currentUserId,
                                     Constants::TRACKER_ROLE_USER, null, null,
                                     Constants::TRACKER_EDIT_USER, $actionsDetails);
 

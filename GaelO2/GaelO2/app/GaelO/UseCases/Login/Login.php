@@ -6,18 +6,21 @@ use App\GaelO\Adapters\LaravelFunctionAdapter;
 use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOBadRequestException;
 use App\GaelO\Exceptions\GaelOException;
-use App\GaelO\Interfaces\PersistenceInterface;
+use App\GaelO\Interfaces\TrackerRepositoryInterface;
+use App\GaelO\Interfaces\UserRepositoryInterface;
 use App\GaelO\Services\MailServices;
-use App\GaelO\Services\TrackerService;
 use App\GaelO\Util;
 use Exception;
-use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 
 class Login{
 
-    public function __construct(PersistenceInterface $userRepository, MailServices $mailService, TrackerService $trackerService){
-        $this->userRepository = $userRepository;
-        $this->trackerService = $trackerService;
+    private UserRepositoryInterface $userRepositoryInterface;
+    private MailServices $mailService;
+    private TrackerRepositoryInterface $trackerRepositoryInterface;
+
+    public function __construct( UserRepositoryInterface $userRepositoryInterface, MailServices $mailService, TrackerRepositoryInterface $trackerRepositoryInterface){
+        $this->userRepositoryInterface = $userRepositoryInterface;
+        $this->trackerRepositoryInterface = $trackerRepositoryInterface;
         $this->mailService = $mailService;
     }
 
@@ -25,7 +28,7 @@ class Login{
 
         try{
 
-            $user = $this->userRepository->getUserByUsername($loginRequest->username);
+            $user = $this->userRepositoryInterface->getUserByUsername($loginRequest->username);
 
             $passwordCheck = null;
 
@@ -98,11 +101,11 @@ class Login{
             if ($user['attempts'] == 3) $this->writeBlockedAccountInTracker($user);
             $this->sendBlockedEmail($user);
         }
-        $this->userRepository->update($user['id'], $user);
+        $this->userRepositoryInterface->update($user['id'], $user);
     }
 
     private function writeBlockedAccountInTracker($user){
-        $this->trackerService->writeAction($user['id'], Constants::TRACKER_ROLE_USER, null, null, Constants::TRACKER_ACCOUNT_BLOCKED, ['message'=> 'Account Blocked']);
+        $this->trackerRepositoryInterface->writeAction($user['id'], Constants::TRACKER_ROLE_USER, null, null, Constants::TRACKER_ACCOUNT_BLOCKED, ['message'=> 'Account Blocked']);
     }
 
     private function sendBlockedEmail($user){
@@ -112,7 +115,7 @@ class Login{
     private function updateDbOnSuccess($user, $ip){
         $user['last_connection'] = Util::now();
         $user['attempts'] = 0;
-        $this->userRepository->update($user['id'], $user);
+        $this->userRepositoryInterface->update($user['id'], $user);
         if ($user['administrator']) {
             $this->mailService->sendAdminConnectedMessage($user['username'], $ip);
         }

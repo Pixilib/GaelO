@@ -4,7 +4,6 @@ namespace App\GaelO\UseCases\GetVisit;
 
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
-use App\GaelO\Interfaces\PersistenceInterface;
 use App\GaelO\Services\AuthorizationVisitService;
 use App\GaelO\Services\VisitService;
 use Exception;

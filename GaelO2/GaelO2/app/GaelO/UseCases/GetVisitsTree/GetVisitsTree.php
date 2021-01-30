@@ -10,6 +10,9 @@ use Exception;
 
 class GetVisitsTree {
 
+    private AuthorizationService $authorizationService;
+    private VisitTreeService $visitTreeService;
+
     public function __construct( AuthorizationService $authorizationService, VisitTreeService $visitTreeService )
     {
         $this->authorizationService = $authorizationService;

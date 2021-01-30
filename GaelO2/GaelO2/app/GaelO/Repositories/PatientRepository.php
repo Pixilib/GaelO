@@ -9,13 +9,13 @@ use App\GaelO\UseCases\GetPatient\PatientEntity;
 use App\GaelO\Util;
 use Exception;
 
-class PatientRepository implements PersistenceInterface, PatientRepositoryInterface {
+class PatientRepository implements PatientRepositoryInterface {
 
     public function __construct(Patient $patient){
         $this->patient = $patient;
     }
 
-    public function create(array $data){
+    private function create(array $data){
         $patient = new Patient();
         $model = Util::fillObject($data, $patient);
         $model->save();
@@ -27,16 +27,8 @@ class PatientRepository implements PersistenceInterface, PatientRepositoryInterf
         $model->save();
     }
 
-    public function find($code){
+    public function find($code) : array {
         return $this->patient->findOrFail($code)->toArray();
-    }
-
-    public function delete($code) :void {
-        throw new Exception('Patient cant be deleted');
-    }
-
-    public function getAll() : array {
-        throw new Exception('Patient cant get all');
     }
 
     public function getPatientWithCenterDetails(int $code) : array {

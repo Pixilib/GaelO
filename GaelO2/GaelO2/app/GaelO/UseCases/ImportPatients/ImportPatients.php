@@ -8,18 +8,23 @@ use App\GaelO\UseCases\ImportPatients\ImportPatientsRequest;
 use App\GaelO\UseCases\ImportPatients\ImportPatientsResponse;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
+use App\GaelO\Interfaces\TrackerRepositoryInterface;
 use App\GaelO\Services\AuthorizationService;
 use App\GaelO\Services\MailServices;
-use App\GaelO\Services\TrackerService;
 use App\GaelO\Services\ImportPatientService;
 use App\GaelO\UseCases\GetPatient\PatientEntity;
 use Exception;
 
 class ImportPatients {
 
-    public function __construct(TrackerService $trackerService, MailServices $mailService, ImportPatientService $importPatient, AuthorizationService $authorizationService){
+    private TrackerRepositoryInterface $trackerRepositoryInterface;
+    private MailServices $mailService;
+    private ImportPatientService $importPatient;
+    private AuthorizationService $authorizationService;
+
+    public function __construct(TrackerRepositoryInterface $trackerRepositoryInterface, MailServices $mailService, ImportPatientService $importPatient, AuthorizationService $authorizationService){
         $this->importPatient = $importPatient;
-        $this->trackerService = $trackerService;
+        $this->trackerRepositoryInterface = $trackerRepositoryInterface;
         $this->mailService = $mailService;
         $this->authorizationService = $authorizationService;
      }
@@ -48,7 +53,7 @@ class ImportPatients {
             $importPatientsResponse->status = 200;
             $importPatientsResponse->statusText = 'OK';
 
-            $this->trackerService->writeAction($importPatientsRequest->currentUserId, Constants::TRACKER_IMPORT_PATIENT, null, null, Constants::TRACKER_IMPORT_PATIENT, $actionDetails);
+            $this->trackerRepositoryInterface->writeAction($importPatientsRequest->currentUserId, Constants::TRACKER_IMPORT_PATIENT, null, null, Constants::TRACKER_IMPORT_PATIENT, $actionDetails);
             $this->mailService->sendImportPatientMessage($importPatientsRequest->studyName, $this->importPatient->successList, $this->importPatient->failList);
 
         } catch (GaelOException $e){

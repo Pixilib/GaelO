@@ -8,6 +8,8 @@ use App\GaelO\Services\MailServices;
 
 class SendRequest {
 
+    private MailServices $mailService;
+
     public function __construct(MailServices $mailService)
     {
         $this->mailService = $mailService;

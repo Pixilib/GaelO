@@ -6,21 +6,25 @@ use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOBadRequestException;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
-use App\GaelO\Interfaces\PersistenceInterface;
+use App\GaelO\Interfaces\PatientRepositoryInterface;
+use App\GaelO\Interfaces\TrackerRepositoryInterface;
 use App\GaelO\Services\AuthorizationPatientService;
-use App\GaelO\Services\TrackerService;
 use App\GaelO\Util;
 use Exception;
 
 class ModifyPatientWithdraw {
 
-    public function __construct(PersistenceInterface $persistenceInterface,
+    private PatientRepositoryInterface $patientRepositoryInterface;
+    private AuthorizationPatientService $authorizationPatientService;
+    private TrackerRepositoryInterface $trackerRepositoryInterface;
+
+    public function __construct(PatientRepositoryInterface $patientRepositoryInterface,
                                 AuthorizationPatientService $authorizationPatientService,
-                                TrackerService $trackerService)
+                                TrackerRepositoryInterface $trackerRepositoryInterface)
     {
-        $this->persistenceInterface = $persistenceInterface;
+        $this->patientRepositoryInterface = $patientRepositoryInterface;
         $this->authorizationPatientService = $authorizationPatientService;
-        $this->trackerService = $trackerService;
+        $this->trackerRepositoryInterface = $trackerRepositoryInterface;
     }
 
     public function execute(ModifyPatientWithdrawRequest $modifyPatientWithdrawRequest, ModifyPatientWithdrawResponse $modifyPatientWithdrawResponse){
@@ -29,7 +33,7 @@ class ModifyPatientWithdraw {
 
             $this->checkAuthorization($modifyPatientWithdrawRequest->currentUserId, $modifyPatientWithdrawRequest->patientCode);
 
-            $patientEntity = $this->persistenceInterface->find($modifyPatientWithdrawRequest->patientCode);
+            $patientEntity = $this->patientRepositoryInterface->find($modifyPatientWithdrawRequest->patientCode);
 
             $modifiedData = [];
 
@@ -56,8 +60,8 @@ class ModifyPatientWithdraw {
             $modifiedData['withdraw_reason'] = $patientEntity['withdraw_reason'];
             $modifiedData['withdraw_date'] = $patientEntity['withdraw_date'];
 
-            $this->persistenceInterface->update($modifyPatientWithdrawRequest->patientCode, $patientEntity);
-            $this->trackerService->writeAction($modifyPatientWithdrawRequest->currentUserId, Constants::ROLE_SUPERVISOR, $patientEntity['study_name'], null, Constants::TRACKER_PATIENT_WITHDRAW, $modifiedData);
+            $this->patientRepositoryInterface->update($modifyPatientWithdrawRequest->patientCode, $patientEntity);
+            $this->trackerRepositoryInterface->writeAction($modifyPatientWithdrawRequest->currentUserId, Constants::ROLE_SUPERVISOR, $patientEntity['study_name'], null, Constants::TRACKER_PATIENT_WITHDRAW, $modifiedData);
 
             $modifyPatientWithdrawResponse->status = 200;
             $modifyPatientWithdrawResponse->statusText = 'OK';

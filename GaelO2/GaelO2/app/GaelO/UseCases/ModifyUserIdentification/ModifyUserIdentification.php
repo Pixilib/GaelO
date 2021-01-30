@@ -2,7 +2,6 @@
 
 namespace App\GaelO\UseCases\ModifyUserIdentification;
 
-use App\GaelO\Adapters\LaravelFunctionAdapter;
 use App\GaelO\Constants\Constants;
 use App\GaelO\Interfaces\PersistenceInterface;
 
@@ -64,5 +63,3 @@ class ModifyUserIdentification {
     }
 
 }
-
-?>

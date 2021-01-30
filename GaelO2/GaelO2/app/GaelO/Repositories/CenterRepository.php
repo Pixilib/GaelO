@@ -8,30 +8,26 @@ use App\GaelO\Interfaces\PersistenceInterface;
 use App\Models\Center;
 use App\GaelO\Util;
 
-class CenterRepository implements PersistenceInterface, CenterRepositoryInterface {
+class CenterRepository implements CenterRepositoryInterface {
 
     public function __construct(Center $center){
         $this->center = $center;
     }
 
-    public function create(array $data){
+    private function create(array $data){
         $center = new Center();
         $model = Util::fillObject($data, $center);
         $model->save();
     }
 
-    public function update($code, array $data) : void{
+    private function update($code, array $data) : void{
         $model = $this->center->find($code);
         $model = Util::fillObject($data, $model);
         $model->save();
     }
 
-    public function find($id){
+    public function find($id) : array {
         return $this->center->findOrFail($id);
-    }
-
-    public function delete($id) : void{
-        $this->center->find($id)->delete();
     }
 
     public function getAll() : array {

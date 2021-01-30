@@ -5,8 +5,6 @@ namespace App\GaelO\UseCases\GetCountry;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\CountryRepositoryInterface;
-use App\GaelO\Interfaces\PersistenceInterface;
-use App\GaelO\Repositories\CountryRepository;
 use App\GaelO\Services\AuthorizationService;
 use App\GaelO\UseCases\GetCountry\CountryEntity;
 use App\GaelO\UseCases\GetCountry\GetCountryRequest;
@@ -16,6 +14,7 @@ use Exception;
 class GetCountry {
 
     private CountryRepositoryInterface $countryRepositoryInterface;
+    private AuthorizationService $authorizationService;
 
     public function __construct(CountryRepositoryInterface $countryRepositoryInterface, AuthorizationService $authorizationService){
         $this->countryRepositoryInterface = $countryRepositoryInterface;

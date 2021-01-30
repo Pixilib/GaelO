@@ -11,6 +11,10 @@ use Exception;
 
 class GetDicomsFile{
 
+    private AuthorizationDicomWebService $authorizationService;
+    private VisitService $visitService;
+    private OrthancService $orthancService;
+
     public function __construct(AuthorizationDicomWebService $authorizationService, VisitService $visitService, OrthancService $orthancService)
     {
         $this->orthancService = $orthancService;

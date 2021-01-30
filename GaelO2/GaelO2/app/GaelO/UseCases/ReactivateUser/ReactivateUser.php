@@ -6,17 +6,22 @@ use App\GaelO\Adapters\LaravelFunctionAdapter;
 use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
-use App\GaelO\Interfaces\PersistenceInterface;
+use App\GaelO\Interfaces\TrackerRepositoryInterface;
 use App\GaelO\Services\AuthorizationService;
 use App\GaelO\Services\MailServices;
-use App\GaelO\Services\TrackerService;
 use Exception;
+use App\GaelO\Interfaces\UserRepositoryInterface;
 
 class ReactivateUser{
 
-    public function __construct(PersistenceInterface $persistenceInterface, AuthorizationService $authorizationService, TrackerService $trackerService, MailServices $mailServices){
-        $this->persistenceInterface = $persistenceInterface;
-        $this->trackerService = $trackerService;
+    private UserRepositoryInterface $userRepositoryInterface;
+    private AuthorizationService $authorizationService;
+    private TrackerRepositoryInterface $trackerRepositoryInterface;
+    private MailServices $mailServices;
+
+    public function __construct(UserRepositoryInterface $userRepositoryInterface, AuthorizationService $authorizationService, TrackerRepositoryInterface $trackerRepositoryInterface, MailServices $mailServices){
+        $this->trackerRepositoryInterface = $trackerRepositoryInterface;
+        $this->userRepositoryInterface = $userRepositoryInterface;
         $this->mailServices = $mailServices;
         $this->authorizationService = $authorizationService;
     }
@@ -28,14 +33,14 @@ class ReactivateUser{
             $this->checkAuthorization($reactivateUserRequest->currentUserId);
 
             //Undelete User
-            $this->persistenceInterface->reactivateUser($reactivateUserRequest->userId);
+            $this->userRepositoryInterface->reactivateUser($reactivateUserRequest->userId);
             //Generate new password and set status unconfirmed
-            $user = $this->persistenceInterface->find($reactivateUserRequest->userId);
+            $user = $this->userRepositoryInterface->find($reactivateUserRequest->userId);
             $newPassword = substr(uniqid(), 1, 10);
             $user['password_temporary'] = LaravelFunctionAdapter::hash( $newPassword );
             $user['status'] = Constants::USER_STATUS_UNCONFIRMED;
 
-            $this->persistenceInterface->updateUser($user['id'],
+            $this->userRepositoryInterface->updateUser($user['id'],
                 $user['username'],
                 $user['lastname'],
                 $user['firstname'],
@@ -61,7 +66,7 @@ class ReactivateUser{
             $actionsDetails = [
                 'reactivatedUser' => $reactivateUserRequest->userId
             ];
-            $this->trackerService->writeAction($reactivateUserRequest->currentUserId, Constants::TRACKER_ROLE_ADMINISTRATOR, null, null, Constants::TRACKER_EDIT_USER, $actionsDetails);
+            $this->trackerRepositoryInterface->writeAction($reactivateUserRequest->currentUserId, Constants::TRACKER_ROLE_ADMINISTRATOR, null, null, Constants::TRACKER_EDIT_USER, $actionsDetails);
 
             $reactivateUserResponse->status = 200;
             $reactivateUserResponse->statusText = 'OK';

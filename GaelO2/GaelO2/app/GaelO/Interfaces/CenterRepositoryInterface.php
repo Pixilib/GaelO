@@ -4,6 +4,9 @@ namespace App\GaelO\Interfaces;
 
 interface CenterRepositoryInterface {
 
+    public function find($id) : array ;
+
+    public function getAll() : array ;
 
     public function createCenter(int $code, string $name, string $countryCode) : void ;
 

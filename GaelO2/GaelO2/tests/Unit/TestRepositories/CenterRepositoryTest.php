@@ -45,13 +45,6 @@ class CenterRepositoryTest extends TestCase
 
     }
 
-    public function testDeleteCenter(){
-        $this->centerRepository->delete($this->center3->code);
-        $this->expectException(ModelNotFoundException::class);
-        Center::findOrFail(3)->toArray();
-
-    }
-
     public function testGetCenterByName(){
         $centerEntity = $this->centerRepository->getCenterByName($this->center3->name);
         $this->assertEquals($centerEntity['code'], $this->center3->code);

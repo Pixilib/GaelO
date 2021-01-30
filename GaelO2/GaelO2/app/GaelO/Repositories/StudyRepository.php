@@ -3,30 +3,29 @@
 namespace App\GaelO\Repositories;
 
 use App\Models\Study;
-use App\GaelO\Interfaces\PersistenceInterface;
 use App\GaelO\Interfaces\StudyRepositoryInterface;
 use App\GaelO\Util;
 use Exception;
 
-class StudyRepository implements PersistenceInterface, StudyRepositoryInterface {
+class StudyRepository implements StudyRepositoryInterface {
 
     public function __construct(Study $study){
         $this->study = $study;
     }
 
-    public function create(array $data){
+    public function create(array $data) : void {
         $study = new Study();
         $model = Util::fillObject($data, $study);
         $model->save();
     }
 
-    public function update($name, array $data) : void{
+    public function update($name, array $data) : void {
         $model = $this->study->find($name);
         $model = Util::fillObject($data, $model);
         $model->save();
     }
 
-    public function find($name){
+    public function find($name) : array {
         return $this->study->findOrFail($name)->toArray();
     }
 

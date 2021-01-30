@@ -5,7 +5,7 @@ namespace App\GaelO\UseCases\GetUserFromStudy;
 use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
-use App\GaelO\Interfaces\PersistenceInterface;
+use App\GaelO\Interfaces\UserRepositoryInterface;
 use App\GaelO\Services\AuthorizationService;
 use App\GaelO\UseCases\GetUser\UserEntity;
 use App\GaelO\UseCases\GetUserFromStudy\GetUserFromStudyRequest;
@@ -13,10 +13,12 @@ use App\GaelO\UseCases\GetUserFromStudy\GetUserFromStudyResponse;
 use Exception;
 
 class GetUserFromStudy {
-    private AuthorizationService $authorizationService;
 
-    public function __construct(PersistenceInterface $persistenceInterface, AuthorizationService $authorizationService){
-        $this->persistenceInterface = $persistenceInterface;
+    private AuthorizationService $authorizationService;
+    private UserRepositoryInterface $userRepositoryInterface;
+
+    public function __construct(UserRepositoryInterface $userRepositoryInterface, AuthorizationService $authorizationService){
+        $this->userRepositoryInterface = $userRepositoryInterface;
         $this->authorizationService = $authorizationService;
     }
 
@@ -27,7 +29,7 @@ class GetUserFromStudy {
             $studyName = $userRequest->studyName;
             $this->checkAuthorization($userRequest->currentUserId, $studyName);
 
-            $dbData = $this->persistenceInterface->getUsersFromStudy($studyName);
+            $dbData = $this->userRepositoryInterface->getUsersFromStudy($studyName);
 
             $responseArray = [];
             foreach($dbData as $data){

@@ -5,6 +5,9 @@ namespace App\GaelO\Interfaces;
 interface VisitRepositoryInterface
 {
 
+    public function find($id) : array ;
+
+    public function delete($id) : void ;
 
     public function createVisit(
         string $studyName,

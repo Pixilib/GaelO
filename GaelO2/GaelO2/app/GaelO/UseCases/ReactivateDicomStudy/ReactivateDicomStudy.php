@@ -3,26 +3,26 @@
 namespace App\GaelO\UseCases\ReactivateDicomStudy;
 
 use App\GaelO\Constants\Constants;
-use App\GaelO\Exceptions\GaelOBadRequestException;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
-use App\GaelO\Interfaces\PersistenceInterface;
+use App\GaelO\Interfaces\TrackerRepositoryInterface;
+use App\GaelO\Interfaces\VisitRepositoryInterface;
 use App\GaelO\Services\AuthorizationVisitService;
 use App\GaelO\Services\DicomSeriesService;
-use App\GaelO\Services\TrackerService;
 use Exception;
 
 class ReactivateDicomStudy{
 
+    private VisitRepositoryInterface $visitRepositoryInterface;
     private AuthorizationVisitService $authorizationVisitService;
     private DicomSeriesService $dicomSeriesService;
-    private TrackerService $trackerService;
+    private TrackerRepositoryInterface $trackerRepositoryInterface;
 
-    public function __construct(PersistenceInterface $persistenceInterface, AuthorizationVisitService $authorizationVisitService, DicomSeriesService $dicomSeriesService, TrackerService $trackerService){
+    public function __construct(VisitRepositoryInterface $visitRepositoryInterface, AuthorizationVisitService $authorizationVisitService, DicomSeriesService $dicomSeriesService, TrackerRepositoryInterface $trackerRepositoryInterface){
         $this->authorizationVisitService = $authorizationVisitService;
-        $this->persistenceInterface = $persistenceInterface;
+        $this->visitRepositoryInterface = $visitRepositoryInterface;
         $this->dicomSeriesService = $dicomSeriesService;
-        $this->trackerService = $trackerService;
+        $this->trackerRepositoryInterface = $trackerRepositoryInterface;
     }
 
     public function execute(ReactivateDicomStudyRequest $reactivateDicomStudyRequest, ReactivateDicomStudyResponse $reactivateDicomStudyResponse){
@@ -32,7 +32,7 @@ class ReactivateDicomStudy{
             $studyData = $this->dicomSeriesService->getStudyByStudyInstanceUID($reactivateDicomStudyRequest->studyInstanceUID, true);
             $visitId = $studyData['visit_id'];
 
-            $visitContext = $this->persistenceInterface->getVisitContext($visitId);
+            $visitContext = $this->visitRepositoryInterface->getVisitContext($visitId);
             $studyName = $visitContext['visit_type']['visit_group']['study_name'];
 
             $this->checkAuthorization($reactivateDicomStudyRequest->currentUserId, $visitId, $visitContext['state_quality_control']);
@@ -45,7 +45,7 @@ class ReactivateDicomStudy{
                 'seriesInstanceUID'=>$studyData['study_uid']
             ];
 
-            $this->trackerService->writeAction(
+            $this->trackerRepositoryInterface->writeAction(
                 $reactivateDicomStudyRequest->currentUserId,
                 Constants::ROLE_SUPERVISOR,
                 $studyName,

@@ -5,13 +5,17 @@ namespace App\GaelO\UseCases\GetStudy;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\PersistenceInterface;
+use App\GaelO\Interfaces\StudyRepositoryInterface;
 use App\GaelO\Services\AuthorizationService;
 use Exception;
 
 class GetStudy{
 
-    public function __construct(PersistenceInterface $persistenceInterface, AuthorizationService $authorizationService){
-        $this->persistenceInterface = $persistenceInterface;
+    private StudyRepositoryInterface $studyRepositoryInterface;
+    private AuthorizationService $authorizationService;
+
+    public function __construct(StudyRepositoryInterface $studyRepositoryInterface, AuthorizationService $authorizationService){
+        $this->studyRepositoryInterface = $studyRepositoryInterface;
         $this->authorizationService = $authorizationService;
 
     }
@@ -21,7 +25,7 @@ class GetStudy{
         try{
             $this->checkAuthorization($getStudyRequest->currentUserId);
 
-            $studies = $this->persistenceInterface->getStudies(true);
+            $studies = $this->studyRepositoryInterface->getStudies(true);
 
             $responseArray = [];
             foreach($studies as $study){

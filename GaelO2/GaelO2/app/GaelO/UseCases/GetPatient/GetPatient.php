@@ -5,7 +5,7 @@ namespace App\GaelO\UseCases\GetPatient;
 use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
-use App\GaelO\Interfaces\PersistenceInterface;
+use App\GaelO\Interfaces\PatientRepositoryInterface;
 use App\GaelO\Services\AuthorizationPatientService;
 use App\GaelO\UseCases\GetPatient\GetPatientRequest;
 use App\GaelO\UseCases\GetPatient\GetPatientResponse;
@@ -13,8 +13,11 @@ use Exception;
 
 class GetPatient {
 
-    public function __construct(PersistenceInterface $persistenceInterface, AuthorizationPatientService $authorizationService){
-        $this->persistenceInterface = $persistenceInterface;
+    private PatientRepositoryInterface $patientRepositoryInterface;
+    private AuthorizationPatientService $authorizationService;
+
+    public function __construct(PatientRepositoryInterface $patientRepositoryInterface, AuthorizationPatientService $authorizationService){
+        $this->patientRepositoryInterface = $patientRepositoryInterface;
         $this->authorizationService = $authorizationService;
     }
 
@@ -26,7 +29,7 @@ class GetPatient {
             if ($code == 0) throw new GaelOForbiddenException();
 
             $this->checkAuthorization($getPatientRequest->currentUserId, $getPatientRequest->role, $code );
-            $dbData = $this->persistenceInterface->getPatientWithCenterDetails($code);
+            $dbData = $this->patientRepositoryInterface->getPatientWithCenterDetails($code);
 
             $responseEntity = PatientEntity::fillFromDBReponseArray($dbData);
 
@@ -64,5 +67,3 @@ class GetPatient {
     }
 
 }
-
-?>
