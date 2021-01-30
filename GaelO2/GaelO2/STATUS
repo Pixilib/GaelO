@@ -30,7 +30,7 @@ dicom-study (PATCH) => OK
 Salim TODO :
 Documentation manque le modify (PUT ou PATCH)
 
-PersistenceInterface => Finir de faire disparaitre
+PersistenceInterface => Finir de faire disparaitre + enelver les provider specifiques
 
 **** Tests ***
 Test feature : visit et autres (dicom...)
