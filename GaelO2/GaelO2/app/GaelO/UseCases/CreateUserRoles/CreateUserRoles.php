@@ -5,19 +5,19 @@ use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOBadRequestException;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
+use App\GaelO\Interfaces\TrackerRepositoryInterface;
 use App\GaelO\Interfaces\UserRepositoryInterface;
 use App\GaelO\Services\AuthorizationService;
-use App\GaelO\Services\TrackerService;
 
 class CreateUserRoles {
 
     private UserRepositoryInterface $userRepositoryInterface;
     private AuthorizationService $authorizationService;
-    private TrackerService $trackerService;
+    private TrackerRepositoryInterface $trackerRepositoryInterface;
 
-    public function __construct(UserRepositoryInterface $userRepositoryInterface, AuthorizationService $authorizationService, TrackerService $trackerService){
+    public function __construct(UserRepositoryInterface $userRepositoryInterface, AuthorizationService $authorizationService, TrackerRepositoryInterface $trackerRepositoryInterface){
         $this->userRepositoryInterface = $userRepositoryInterface;
-        $this->trackerService = $trackerService;
+        $this->trackerRepositoryInterface = $trackerRepositoryInterface;
         $this->authorizationService = $authorizationService;
     }
 
@@ -40,7 +40,7 @@ class CreateUserRoles {
             $actionDetails = [
                 "Add Roles"=> $createRoleRequest->role
             ];
-            $this->trackerService->writeAction( $createRoleRequest->currentUserId, Constants::TRACKER_ROLE_ADMINISTRATOR, $createRoleRequest->study, null, Constants::TRACKER_EDIT_USER, $actionDetails);
+            $this->trackerRepositoryInterface->writeAction( $createRoleRequest->currentUserId, Constants::TRACKER_ROLE_ADMINISTRATOR, $createRoleRequest->study, null, Constants::TRACKER_EDIT_USER, $actionDetails);
 
             $createRoleResponse->statusText = "Created";
             $createRoleResponse->status = 201;

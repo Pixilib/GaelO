@@ -8,6 +8,7 @@ use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Services\AuthorizationService;
 use App\GaelO\Services\PathService;
+use App\GaelO\Util;
 use Exception;
 use ZipArchive;
 
@@ -58,7 +59,7 @@ class ExportDatabase{
 
     private function addRecursivelyInZip(ZipArchive $zip, String $path){
 
-        $fileGenerator=PathService::getFileInPathGenerator($path);
+        $fileGenerator=Util::getFileInPathGenerator($path);
 
         foreach ($fileGenerator as $file) {
             $filePath=$file->getRealPath();

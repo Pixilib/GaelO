@@ -4,15 +4,16 @@ namespace App\GaelO\UseCases\ReverseProxyDicomWeb;
 
 use App\GaelO\Adapters\HttpClientAdapter;
 use App\GaelO\Adapters\LaravelFunctionAdapter;
-use App\GaelO\Constants\Constants;
 use App\GaelO\Constants\SettingsConstants;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Services\AuthorizationDicomWebService;
-use App\GaelO\Services\AuthorizationService;
 use Exception;
 
 class ReverseProxyDicomWeb{
+
+    private AuthorizationDicomWebService $authorizationService;
+    private HttpClientAdapter $httpClientAdapter;
 
     public function __construct(AuthorizationDicomWebService $authorizationService,  HttpClientAdapter $httpClientAdapter)
     {

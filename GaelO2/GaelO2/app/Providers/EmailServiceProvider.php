@@ -19,13 +19,6 @@ class EmailServiceProvider extends ServiceProvider
             \App\GaelO\Adapters\SendEmailAdapter::class
         );
 
-        $this->app->when(
-            [\App\GaelO\Services\TrackerService::class])
-        ->needs(\App\GaelO\Interfaces\PersistenceInterface::class)
-        ->give(\App\GaelO\Repositories\TrackerRepository::class);
-
-        $this->app->bind('TrackerService', \App\GaelO\Services\TrackerService::class);
-
     }
 
     /**

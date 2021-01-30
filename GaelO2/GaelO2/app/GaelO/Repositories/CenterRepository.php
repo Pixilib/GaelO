@@ -3,8 +3,6 @@
 namespace App\GaelO\Repositories;
 
 use App\GaelO\Interfaces\CenterRepositoryInterface;
-use App\GaelO\Interfaces\PersistenceInterface;
-
 use App\Models\Center;
 use App\GaelO\Util;
 

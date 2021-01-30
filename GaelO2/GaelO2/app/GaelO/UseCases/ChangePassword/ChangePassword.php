@@ -10,15 +10,10 @@ use App\GaelO\Adapters\LaravelFunctionAdapter;
 use App\GaelO\Util;
 use App\GaelO\Constants\Constants;
 
-
-use App\GaelO\Services\TrackerService;
-
 use App\GaelO\Exceptions\GaelOBadRequestException;
 use App\GaelO\Exceptions\GaelOException;
-use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\TrackerRepositoryInterface;
 use App\GaelO\Interfaces\UserRepositoryInterface;
-use App\GaelO\Repositories\TrackerRepository;
 use Exception;
 
 class ChangePassword {

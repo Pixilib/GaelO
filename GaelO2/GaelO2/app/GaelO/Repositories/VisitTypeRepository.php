@@ -3,10 +3,8 @@
 namespace App\GaelO\Repositories;
 
 use App\Models\VisitType;
-use App\GaelO\Interfaces\PersistenceInterface;
 use App\GaelO\Interfaces\VisitTypeRepositoryInterface;
 use App\GaelO\Util;
-use Exception;
 
 class VisitTypeRepository implements VisitTypeRepositoryInterface {
 

@@ -4,17 +4,15 @@ namespace App\GaelO\Repositories;
 
 use App\GaelO\Interfaces\DocumentationRepositoryInterface;
 use App\Models\Documentation;
-use App\GaelO\Interfaces\PersistenceInterface;
 use App\GaelO\Util;
-use Exception;
 
-class DocumentationRepository implements PersistenceInterface, DocumentationRepositoryInterface {
+class DocumentationRepository implements DocumentationRepositoryInterface {
 
     public function __construct(Documentation $documentation){
         $this->documentation = $documentation;
     }
 
-    public function create(array $data){
+    private function create(array $data){
         $documentation = new Documentation();
         $model = Util::fillObject($data, $documentation);
         $model->save();
@@ -33,10 +31,6 @@ class DocumentationRepository implements PersistenceInterface, DocumentationRepo
 
     public function delete($id) : void{
         $this->documentation->find($id)->delete();
-    }
-
-    public function getAll() : array {
-        throw new Exception('No call to all documentations');
     }
 
     public function createDocumentation(string $name, string $documentDate, string $studyName, string $version, bool $investigator,

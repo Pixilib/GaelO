@@ -32,6 +32,7 @@
 
 require_once($_SERVER['DOCUMENT_ROOT'].'/vendor/autoload.php');
 
+use App\GaelO\Util;
 use GuzzleHttp\Client;
 
 Session::checkSession();
@@ -195,7 +196,7 @@ function sendFolderToOrthanc(string $unzipedPath, Orthanc $orthancExposedObject)
 	}
 	
 	//Delete original file after import
-	recursive_directory_delete($unzipedPath);
+	Util::recursiveDirectoryDelete($unzipedPath);
 	
 	//error_log("Imported ".$importedInstances." files in ".(microtime(true)-$start_time));
 	error_log('Imported Instances :'.$importedInstances);

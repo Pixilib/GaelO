@@ -2,39 +2,21 @@
 
 namespace App\GaelO\Repositories;
 
-use App\GaelO\Interfaces\PersistenceInterface;
 use App\GaelO\Interfaces\TrackerRepositoryInterface;
 use App\Models\Tracker;
 use App\GaelO\Util;
-use Exception;
 
-class TrackerRepository implements PersistenceInterface, TrackerRepositoryInterface {
+class TrackerRepository implements TrackerRepositoryInterface {
 
     public function __construct(Tracker $tracker)
     {
         $this->tracker = $tracker;
     }
 
-    public function update($id, array $data) : void {
-        throw new Exception('Tracker Not updatable');
-    }
-
-    public function create(array $data){
+    private function create(array $data){
         $tracker = new Tracker();
         $model = Util::fillObject($data, $tracker);
         $model->save();
-    }
-
-    public function find(int $id){
-        throw new Exception('Tracker Not Accessible by Item');
-    }
-
-    public function getAll() :array {
-        throw new Exception('Not Allowed for tracker');
-    }
-
-    public function delete($id) :void {
-        throw new Exception("Tracker Delete Forbidden");
     }
 
     public function writeAction(int $userId, string $role, ?string $study, ?int $id_visit, string $actionType, ?array $actionDetails) : void {

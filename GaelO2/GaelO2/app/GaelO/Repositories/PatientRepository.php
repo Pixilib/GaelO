@@ -4,10 +4,8 @@ namespace App\GaelO\Repositories;
 
 use App\GaelO\Interfaces\PatientRepositoryInterface;
 use App\Models\Patient;
-use App\GaelO\Interfaces\PersistenceInterface;
 use App\GaelO\UseCases\GetPatient\PatientEntity;
 use App\GaelO\Util;
-use Exception;
 
 class PatientRepository implements PatientRepositoryInterface {
 

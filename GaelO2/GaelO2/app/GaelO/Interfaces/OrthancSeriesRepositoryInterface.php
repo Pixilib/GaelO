@@ -31,5 +31,3 @@ interface OrthancSeriesRepositoryInterface {
     public function reactivateSeriesOfOrthancStudyID (string $orthancStudyID) : void ;
 
 }
-
-?>

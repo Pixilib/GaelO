@@ -6,22 +6,22 @@ use App\GaelO\Adapters\LaravelFunctionAdapter;
 use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
+use App\GaelO\Interfaces\TrackerRepositoryInterface;
 use App\GaelO\UseCases\CreateUser\CreateUserRequest;
 use App\GaelO\UseCases\CreateUser\CreateUserResponse;
 use App\GaelO\Services\AuthorizationService;
 use App\GaelO\Services\MailServices;
-use App\GaelO\Services\TrackerService;
 use App\GaelO\Services\UserService;
 
 class CreateUser {
 
     private AuthorizationService $authorizationService;
-    private  TrackerService $trackerService;
+    private TrackerRepositoryInterface $trackerRepositoryInterface;
     private MailServices $mailService;
     private UserService $userService;
 
-    public function __construct(AuthorizationService $authorizationService,  TrackerService $trackerService, MailServices $mailService, UserService $userService){
-        $this->trackerService = $trackerService;
+    public function __construct(AuthorizationService $authorizationService, TrackerRepositoryInterface $trackerRepositoryInterface, MailServices $mailService, UserService $userService){
+        $this->trackerRepositoryInterface = $trackerRepositoryInterface;
         $this->mailService = $mailService;
         $this->authorizationService = $authorizationService;
         $this->userService = $userService;
@@ -42,7 +42,7 @@ class CreateUser {
                 'createdUserId'=> $createdUserEntity['id']
             ];
 
-            $this->trackerService->writeAction($createUserRequest->currentUserId,
+            $this->trackerRepositoryInterface->writeAction($createUserRequest->currentUserId,
                 Constants::TRACKER_ROLE_ADMINISTRATOR,
                 null,
                 null,
