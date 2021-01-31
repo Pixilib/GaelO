@@ -28,9 +28,11 @@ dicom-study (PATCH) => OK
 
 
 Salim TODO :
-Documentation manque le modify (PUT ou PATCH)
 
-PersistenceInterface => Finir de faire disparaitre + enelver les provider specifiques
+*** APIs ***
+Documentation manque le modify (PUT ou PATCH)
+Preparation Investigateur / Monitor / Controller / Reviewer :
+- API Review (POST, GET, DELETE) + Review attached files
 
 **** Tests ***
 Test feature : visit et autres (dicom...)
@@ -40,10 +42,8 @@ Les tests ne font pas d'assertion sur
 - le tracker => Via un spy ?
 - l'envoi de mails => voir doc laravel
 
-Preparation Investigateur / Monitor / Controller / Reviewer :
-- API Review (POST, GET, DELETE) + Review attached files
 
-Modification password / reset devrait passer par userservice et le editUser du repository plus generique (ou dissocié)
+
 Service Visit => Continuer test passage en upload Done
 Dicom Series Service => peut etre evoluer vers un DicomService pour les deux niveaux
 Refactorer Visit Service (visit ID en variable de classe) ++++
