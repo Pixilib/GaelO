@@ -27,6 +27,7 @@ class UserFactory extends Factory
             'status' => 'Activated',
             'administrator' => false,
             'center_code' => 0,
+            'attempts' =>0,
             'job' => $this->faker->randomElement(['CRA', 'Monitor', 'Nuclearist','PI', 'Radiologist', 'Study nurse', 'Supervision' ]),
             'orthanc_address' => $this->faker->domainName,
             'orthanc_login' => $this->faker->userName,
@@ -120,6 +121,16 @@ class UserFactory extends Factory
         return $this->state(function (array $attributes) use ($password) {
             return [
                 'password_previous2' => $password,
+            ];
+        });
+
+    }
+
+    public function attempts(int $attempts){
+
+        return $this->state(function (array $attributes) use ($attempts) {
+            return [
+                'attempts' => $attempts,
             ];
         });
 

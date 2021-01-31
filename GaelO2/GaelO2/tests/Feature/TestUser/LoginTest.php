@@ -61,7 +61,7 @@ class LoginTest extends TestCase
         $adminDefaultUser['status'] = Constants::USER_STATUS_UNCONFIRMED;
         $adminDefaultUser['password_temporary'] = Hash::make('tempPassword');
         $adminDefaultUser->save();
-        $this->json('POST', '/api/login', $data)->assertStatus(400);
+        $this->json('POST', '/api/login', $data)->assertStatus(401);
         //Try with correct temporary password, should grant access of unconfirmed status
         $data = ['username'=> 'administrator',
         'password'=> 'tempPassword'];
@@ -104,10 +104,6 @@ class LoginTest extends TestCase
         $this->json('POST', '/api/login', $data)->assertStatus(401);
         $this->json('POST', '/api/login', $data)->assertStatus(401);
 
-        $data = ['username'=> 'administrator',
-        'password'=> 'administrator'];
-        $this->json('POST', '/api/login', $data)->assertStatus(400);
-
         $adminDefaultUser = User::where('id', 1)->first();
         $this->assertEquals($adminDefaultUser['status'], Constants::USER_STATUS_BLOCKED);
         $this->assertEquals($adminDefaultUser['attempts'], 3);
@@ -125,15 +121,11 @@ class LoginTest extends TestCase
         $data = ['username'=> 'administrator',
         'password'=> 'wrongPassword'];
 
-        $this->json('POST', '/api/login', $data)->assertStatus(400);
-        $this->json('POST', '/api/login', $data)->assertStatus(400);
-        $this->json('POST', '/api/login', $data)->assertStatus(400);
+        $this->json('POST', '/api/login', $data)->assertStatus(401);
+        $this->json('POST', '/api/login', $data)->assertStatus(401);
+        $this->json('POST', '/api/login', $data)->assertStatus(401);
+
         $adminDefaultUser = User::where('id', 1)->first();
-
-        $data = ['username'=> 'administrator',
-        'password'=> 'password'];
-        $this->json('POST', '/api/login', $data)->assertStatus(400);
-
         $this->assertEquals($adminDefaultUser['status'], Constants::USER_STATUS_BLOCKED);
         $this->assertEquals($adminDefaultUser['attempts'], 3);
     }

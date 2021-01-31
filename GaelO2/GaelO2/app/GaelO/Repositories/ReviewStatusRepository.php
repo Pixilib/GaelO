@@ -20,10 +20,6 @@ class ReviewStatusRepository implements ReviewStatusRepositoryInterface {
         ->toArray();
     }
 
-    public function delete($id) :void {
-        throw new Exception('Cant Delete Review Status');
-    }
-
     public function updateReviewStatus(int $visitId, string $studyName, bool $reviewAvailable, string $reviewStatus, string $reviewConclusionValue, string $reviewConclusionDate ) : void {
 
         $array = [

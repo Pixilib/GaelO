@@ -2,8 +2,6 @@
 
 namespace App\GaelO\UseCases\ResetPassword;
 
-use App\GaelO\Util;
-use App\GaelO\Adapters\LaravelFunctionAdapter;
 use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOBadRequestException;
 use App\GaelO\Exceptions\GaelOException;
@@ -35,14 +33,14 @@ class ResetPassword {
             $this->checkNotDeactivatedAccount($userEntity);
             $this->checkEmailMatching($email, $userEntity['email']);
 
-            //update properties of user
-            $userEntity['status'] = Constants::USER_STATUS_UNCONFIRMED;
+            //generate new temporary password
             $newPassword = substr(uniqid(), 1, 10);
-            $userEntity['password_temporary'] = LaravelFunctionAdapter::hash( $newPassword );
-            $userEntity['attempts'] = 0;
-            $userEntity['last_password_update'] = Util::now();
-            //update user
-            $this->userRepositoryInterface->update($userEntity['id'], $userEntity);
+
+            //update user data
+            $this->userRepositoryInterface->updateUserTemporaryPassword($userEntity['id'], $newPassword);
+            $this->userRepositoryInterface->updateUserStatus($userEntity['id'], Constants::USER_STATUS_UNCONFIRMED);
+            $this->userRepositoryInterface->updateUserAttempts($userEntity['id'], 0);
+
             //send email
             $this->mailServices->sendResetPasswordMessage(
                 ($userEntity['firstname'].' '.$userEntity['lastname']),

@@ -4,6 +4,10 @@ namespace App\GaelO\Interfaces;
 
 interface OrthancSeriesRepositoryInterface {
 
+    public function find($orthancSeriesID) : array ;
+
+    public function delete($orthancSeriesID) : void ;
+
     public function addSeries(string $seriesOrthancID, string $orthancStudyID, ?string $acquisitionDate,
                             ?string $acquisitionTime, ?string $modality, ?string $seriesDescription,
                             ?int $injectedDose, ?string $radiopharmaceutical, ?int $halfLife,

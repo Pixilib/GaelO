@@ -3,24 +3,23 @@
 namespace App\GaelO\Repositories;
 
 use App\GaelO\Interfaces\OrthancSeriesRepositoryInterface;
-use App\GaelO\Interfaces\PersistenceInterface;
 use App\GaelO\Util;
 use App\Models\OrthancSeries;
 
-class OrthancSeriesRepository implements PersistenceInterface, OrthancSeriesRepositoryInterface {
+class OrthancSeriesRepository implements OrthancSeriesRepositoryInterface {
 
 
     public function __construct(OrthancSeries $orthancSeries){
         $this->orthancSeries = $orthancSeries;
     }
 
-    public function create(array $data) : void {
+    private function create(array $data) : void {
         $orthancSeries = new OrthancSeries();
         $model = Util::fillObject($data, $orthancSeries);
         $model->save();
     }
 
-    public function update($orthancSeriesID, array $data) : void {
+    private function update($orthancSeriesID, array $data) : void {
         $model = $this->orthancSeries->find($orthancSeriesID);
         $model = Util::fillObject($data, $model);
         $model->save();
@@ -40,10 +39,6 @@ class OrthancSeriesRepository implements PersistenceInterface, OrthancSeriesRepo
 
     public function reactivateBySeriesInstanceUID(string $seriesInstanceUID) : void {
         $this->orthancSeries->withTrashed()->where('series_uid',$seriesInstanceUID)->sole()->restore();
-    }
-
-    public function getAll() : array {
-        throw new \Exception('Not Usable in Orthanc Study Repository');
     }
 
     public function addSeries(string $seriesOrthancID, string $orthancStudyID, ?string $acquisitionDate,

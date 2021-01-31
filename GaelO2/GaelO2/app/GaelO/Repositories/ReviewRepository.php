@@ -2,32 +2,31 @@
 
 namespace App\GaelO\Repositories;
 
-use App\GaelO\Interfaces\PersistenceInterface;
 use App\GaelO\Interfaces\ReviewRepositoryInterface;
 use App\GaelO\Util;
 use App\Models\Review;
 use Exception;
 
-class ReviewRepository implements PersistenceInterface, ReviewRepositoryInterface {
+class ReviewRepository implements ReviewRepositoryInterface {
 
 
     public function __construct(Review $review){
         $this->review = $review;
     }
 
-    public function create(array $data){
+    private function create(array $data){
         $review = new Review();
         $model = Util::fillObject($data, $review);
         $model->save();
     }
 
-    public function update($id, array $data) : void {
+    private function update($id, array $data) : void {
         $model = $this->review->find($id);
         $model = Util::fillObject($data, $model);
         $model->save();
     }
 
-    public function find($id){
+    public function find($id) : array {
         return $this->review->findOrFail($id)->toArray();
     }
 

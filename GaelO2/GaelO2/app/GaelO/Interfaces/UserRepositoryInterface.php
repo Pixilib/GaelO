@@ -4,11 +4,7 @@ namespace App\GaelO\Interfaces;
 
 interface UserRepositoryInterface {
 
-    public function update($id, array $data) : void;
-
-    public function create(array $data);
-
-    public function find(int $id);
+    public function find(int $id) : array ;
 
     public function getAll() : array;
 
@@ -23,6 +19,16 @@ interface UserRepositoryInterface {
                                 String $email, ?String $phone, bool $administrator, int $centerCode, String $job,
                                 ?String $orthancAdress, ?String $orthancLogin, ?String $orthancPassword,
                                 ?String $passwordTemporary) : void ;
+
+    public function updateUserPassword(int $userId, ?string $passwordCurrent) : void ;
+
+    public function updateUserStatus(int $userId, string $status ) : void ;
+
+    public function updateUserAttempts(int $userId, int $attempts ) : void ;
+
+    public function resetAttemptsAndUpdateLastConnexion ( int $userId ) : void ;
+
+    public function updateUserTemporaryPassword(int $userId, ?string $passwordTemporary ) : void ;
 
     public function getUserByUsername(String $username, bool $withTrashed = false) : array ;
 

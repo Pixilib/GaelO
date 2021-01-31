@@ -3,30 +3,29 @@
 namespace App\GaelO\Repositories;
 
 use App\GaelO\Interfaces\OrthancStudyRepositoryInterface;
-use App\GaelO\Interfaces\PersistenceInterface;
 use App\GaelO\Util;
 use App\Models\OrthancStudy;
 
-class OrthancStudyRepository implements PersistenceInterface, OrthancStudyRepositoryInterface {
+class OrthancStudyRepository implements OrthancStudyRepositoryInterface {
 
 
     public function __construct(OrthancStudy $orthancStudy){
         $this->orthancStudy = $orthancStudy;
     }
 
-    public function create(array $data){
+    private function create(array $data){
         $orthancStudy = new OrthancStudy();
         $model = Util::fillObject($data, $orthancStudy);
         $model->save();
     }
 
-    public function update($orthancStudyID, array $data) : void {
+    private function update($orthancStudyID, array $data) : void {
         $model = $this->orthancStudy->find($orthancStudyID);
         $model = Util::fillObject($data, $model);
         $model->save();
     }
 
-    public function find($orthancStudyID){
+    public function find($orthancStudyID) : array {
         return $this->orthancStudy->findOrFail($orthancStudyID)->toArray();
     }
 
@@ -36,10 +35,6 @@ class OrthancStudyRepository implements PersistenceInterface, OrthancStudyReposi
 
     public function reactivateByStudyInstanceUID(string $studyInstanceUID) :void {
         $this->orthancStudy->withTrashed()->where('study_uid',$studyInstanceUID)->sole()->restore();
-    }
-
-    public function getAll() : array {
-        throw new \Exception('Not Usable in Orthanc Study Repository');
     }
 
     public function addStudy(string $orthancStudyID, int $visitID, int $uploaderID, string $uploadDate,

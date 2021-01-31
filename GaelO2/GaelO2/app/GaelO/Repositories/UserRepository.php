@@ -2,7 +2,7 @@
 
 namespace App\GaelO\Repositories;
 
-use App\GaelO\Interfaces\PersistenceInterface;
+use App\GaelO\Adapters\LaravelFunctionAdapter;
 use App\GaelO\Interfaces\UserRepositoryInterface;
 
 use App\Models\CenterUser;
@@ -12,7 +12,7 @@ use App\Models\Role;
 use App\GaelO\Constants\Constants;
 use App\GaelO\Util;
 
-class UserRepository implements PersistenceInterface, UserRepositoryInterface {
+class UserRepository implements UserRepositoryInterface {
 
     public function __construct(User $user, Role $roles, CenterUser $centerUser){
         $this->user = $user;
@@ -20,20 +20,20 @@ class UserRepository implements PersistenceInterface, UserRepositoryInterface {
         $this->centerUser = $centerUser;
     }
 
-    public function create(array $data){
+    private function create(array $data) {
         $user = new User();
         $model = Util::fillObject($data, $user);
         $model->save();
         return $model->toArray();
     }
 
-    public function update($id, array $data) : void{
+    private function update($id, array $data) : void {
         $model = $this->user->findOrFail($id);
         $model = Util::fillObject($data, $model);
         $model->save();
     }
 
-    public function find($id){
+    public function find($id) : array {
         return $this->user->findOrFail($id)->toArray();
     }
 
@@ -93,6 +93,41 @@ class UserRepository implements PersistenceInterface, UserRepositoryInterface {
 
         $this->update($id, $data);
 
+    }
+
+    public function updateUserPassword(int $userId, ?string $passwordCurrent ) : void {
+        $data = $this->find($userId);
+        $data['password_previous2'] = $data['password_previous1'];
+        $data['password_previous1'] = $data['password'];
+        $data['password'] = LaravelFunctionAdapter::hash($passwordCurrent);
+        $data['last_password_update'] = Util::now();
+        $this->update($userId, $data);
+    }
+
+    public function updateUserTemporaryPassword(int $userId, ?string $passwordTemporary ) : void {
+        $data = $this->find($userId);
+        $data['password_temporary'] = LaravelFunctionAdapter::hash($passwordTemporary);
+        $data['last_password_update'] = Util::now();
+        $this->update($userId, $data);
+    }
+
+    public function updateUserAttempts(int $userId, int $attempts ) : void {
+        $data = $this->find($userId);
+        $data['attempts'] = $attempts;
+        $this->update($userId, $data);
+    }
+
+    public function updateUserStatus(int $userId, string $status ) : void {
+        $data = $this->find($userId);
+        $data['status'] = $status;
+        $this->update($userId, $data);
+    }
+
+    public function resetAttemptsAndUpdateLastConnexion( int $userId ) : void {
+        $data = $this->find($userId);
+        $data['attempts'] = 0;
+        $data['last_connection'] = Util::now();
+        $this->update($userId, $data);
     }
 
     public function getUserByUsername(String $username, bool $withTrashed = false) : array {

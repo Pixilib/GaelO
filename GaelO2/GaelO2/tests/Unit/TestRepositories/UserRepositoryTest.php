@@ -114,6 +114,63 @@ class UserRepositoryTest extends TestCase
         $this->assertEquals($updatedEntity['password'], $userToModify['password']);
     }
 
+    public function testUpdateUserPassword(){
+
+        $user = User::factory()->create();
+        $this->userRepository->updateUserPassword($user['id'], 'newPassword');
+
+        $updatedUser = User::find($user->id);
+        $this->assertEquals($user->password_previous1, $updatedUser->password_previous2);
+        $this->assertEquals($user->password, $updatedUser->password_previous1);
+        $this->assertNotEquals($user->last_password_update, $updatedUser->last_password_update);
+        $this->assertNotEquals($user->password, $updatedUser->password);
+
+    }
+
+    public function testUpdateUserTemporaryPassword(){
+
+        $user = User::factory()->create();
+        $this->userRepository->updateUserTemporaryPassword($user['id'], 'newPassword');
+
+        $updatedUser = User::find($user->id);
+        $this->assertNotEquals($user->password_temporary, $updatedUser->password_temporary);
+        $this->assertNotEquals($user->last_password_update, $updatedUser->last_password_update);
+
+    }
+
+
+    public function testUpdateUserAttempts(){
+
+        $user = User::factory()->create();
+        $this->userRepository->updateUserAttempts($user['id'], 99);
+
+        $updatedUser = User::find($user->id);
+        $this->assertEquals(99, $updatedUser->attempts);
+
+    }
+
+    public function testUpdateUserStatus(){
+
+        $user = User::factory()->status(Constants::USER_STATUS_BLOCKED)->create();
+        $this->userRepository->updateUserStatus($user['id'], Constants::USER_STATUS_ACTIVATED);
+
+        $updatedUser = User::find($user->id);
+        $this->assertEquals(Constants::USER_STATUS_ACTIVATED, $updatedUser->status);
+
+    }
+
+    public function testResetAttemptsAndUpdateLastConnexion(){
+
+        $user = User::factory()->attempts(5)->create();
+        $this->userRepository->resetAttemptsAndUpdateLastConnexion($user['id']);
+
+        $updatedUser = User::find($user->id);
+        $this->assertEquals(0, $updatedUser->attempts);
+        $this->assertNotEquals($user->last_connection, $updatedUser->last_connection);
+
+
+    }
+
     public function testGetUserByUsername()
     {
         //Test if user is not deleted

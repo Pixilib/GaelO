@@ -9,7 +9,6 @@ use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Interfaces\TrackerRepositoryInterface;
 use App\GaelO\Interfaces\UserRepositoryInterface;
 use App\GaelO\Services\MailServices;
-use App\GaelO\Util;
 use Exception;
 
 class Login{
@@ -46,14 +45,26 @@ class Login{
                     $loginResponse->statusText = "Bad Request";
                 } else {
                     $this->increaseAttemptCount($user);
-                    throw new GaelOBadRequestException('Wrong Temporary Password, remaining '.(3- ++$user['attempts'] ).' attempts');
+                    $remainingAttempts = ( 3 - ++$user['attempts'] );
+                    if($remainingAttempts > 0 ){
+                        $loginResponse->body = ['errorMessage' => 'Wrong Password remaining '.$remainingAttempts.' attempts'];
+                    }else{
+                        $loginResponse->body = ['errorMessage' => 'Account Blocked'];
+                    }
+                    $loginResponse->status = 401;
+                    $loginResponse->statusText = "Unauthorized";
                 }
                 return;
             }
 
             if( $passwordCheck !== null && !$passwordCheck && $user['status'] !== Constants::USER_STATUS_BLOCKED){
                 $this->increaseAttemptCount($user);
-                $loginResponse->body = ['errorMessage' => 'Wrong Password remaining '.(3- ++$user['attempts'] ).' attempts'];
+                $remainingAttempts = ( 3 - ++$user['attempts'] );
+                if($remainingAttempts > 0 ){
+                    $loginResponse->body = ['errorMessage' => 'Wrong Password remaining '.$remainingAttempts.' attempts'];
+                }else{
+                    $loginResponse->body = ['errorMessage' => 'Account Blocked'];
+                }
                 $loginResponse->status = 401;
                 $loginResponse->statusText = "Unauthorized";
 
@@ -94,14 +105,17 @@ class Login{
     }
 
     private function increaseAttemptCount($user){
-        $user['attempts'] = ++$user['attempts'];
+        $attempts = ++$user['attempts'];
 
+        //Update DB
+        $this->userRepositoryInterface->updateUserAttempts($user['id'], $attempts);
+        //Block account if needed
         if( $user['attempts'] >= 3 ){
-            $user['status'] = Constants::USER_STATUS_BLOCKED;
             if ($user['attempts'] == 3) $this->writeBlockedAccountInTracker($user);
+            $this->userRepositoryInterface->updateUserStatus($user['id'], Constants::USER_STATUS_BLOCKED);
             $this->sendBlockedEmail($user);
         }
-        $this->userRepositoryInterface->update($user['id'], $user);
+
     }
 
     private function writeBlockedAccountInTracker($user){
@@ -113,9 +127,7 @@ class Login{
     }
 
     private function updateDbOnSuccess($user, $ip){
-        $user['last_connection'] = Util::now();
-        $user['attempts'] = 0;
-        $this->userRepositoryInterface->update($user['id'], $user);
+        $this->userRepositoryInterface->resetAttemptsAndUpdateLastConnexion($user['id']);
         if ($user['administrator']) {
             $this->mailService->sendAdminConnectedMessage($user['username'], $ip);
         }

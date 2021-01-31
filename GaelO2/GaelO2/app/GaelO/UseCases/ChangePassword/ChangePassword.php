@@ -5,7 +5,6 @@ namespace App\GaelO\UseCases\ChangePassword;
 use App\GaelO\UseCases\ChangePassword\ChangePasswordRequest;
 use App\GaelO\UseCases\ChangePassword\ChangePasswordResponse;
 use App\GaelO\Adapters\LaravelFunctionAdapter;
-use App\GaelO\Util;
 use App\GaelO\Constants\Constants;
 
 use App\GaelO\Exceptions\GaelOBadRequestException;
@@ -50,13 +49,9 @@ class ChangePassword {
             $user['password_previous1'],
             $user['password_previous2']);
 
-            $data['password_previous1'] = $user['password'];
-            $data['password_previous2'] = $user['password_previous1'];
-            $data['password'] = LaravelFunctionAdapter::hash($password1);
-            $data['last_password_update'] = Util::now();
-            $data['status'] = Constants::USER_STATUS_ACTIVATED;
+            $this->userRepositoryInterface->updateUserPassword($user['id'], $password1);
+            $this->userRepositoryInterface->updateUserStatus($user['id'], Constants::USER_STATUS_ACTIVATED);
 
-            $this->userRepositoryInterface->update($user['id'], $data);
             $this->trackerRepositoryInterface->writeAction($user['id'], Constants::TRACKER_ROLE_USER, null, null, Constants::TRACKER_CHANGE_PASSWORD, null);
 
             $changeUserPasswordResponse->status = 200;
@@ -130,5 +125,3 @@ class ChangePassword {
     }
 
 }
-
-?>

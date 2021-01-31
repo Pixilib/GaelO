@@ -4,7 +4,9 @@ namespace App\GaelO\Interfaces;
 
 interface OrthancStudyRepositoryInterface {
 
+    public function find($orthancStudyID) : array ;
 
+    public function delete($orthancStudyID) :void ;
 
     public function addStudy(string $orthancStudyID, int $visitID, int $uploaderID, string $uploadDate,
                     ?string $acquisitionDate, ?string $acquisitionTime, string $anonFromOrthancID,

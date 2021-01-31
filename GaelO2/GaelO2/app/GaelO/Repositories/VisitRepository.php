@@ -4,30 +4,17 @@ namespace App\GaelO\Repositories;
 
 use App\GaelO\Constants\Constants;
 use App\Models\Visit;
-use App\GaelO\Interfaces\PersistenceInterface;
 use App\GaelO\Interfaces\VisitRepositoryInterface;
 use App\GaelO\Util;
 use App\Models\ReviewStatus;
 use Exception;
 use Illuminate\Support\Facades\DB;
 
-class VisitRepository implements PersistenceInterface, VisitRepositoryInterface {
+class VisitRepository implements VisitRepositoryInterface {
 
     public function __construct(){
         $this->visit = new Visit();
         $this->reviewStatus = new ReviewStatus();
-    }
-
-    public function create(array $data){
-        $visit = new Visit();
-        $model = Util::fillObject($data, $visit);
-        $model->save();
-    }
-
-    public function update($id, array $data) : void {
-        $model = $this->visit->find($id);
-        $model = Util::fillObject($data, $model);
-        $model->save();
     }
 
     public function find($id) : array {
@@ -60,10 +47,6 @@ class VisitRepository implements PersistenceInterface, VisitRepositoryInterface 
                 'study_name'=>$studyName
             ]);
         });
-    }
-
-    public function getAll() : array {
-        throw new Exception('Cant Get All Visits');
     }
 
     public function isExistingVisit(int $patientCode, int $visitTypeId) : bool {
