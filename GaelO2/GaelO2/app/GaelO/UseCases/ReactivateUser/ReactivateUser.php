@@ -37,24 +37,10 @@ class ReactivateUser{
             //Generate new password and set status unconfirmed
             $user = $this->userRepositoryInterface->find($reactivateUserRequest->userId);
             $newPassword = substr(uniqid(), 1, 10);
-            $user['password_temporary'] = LaravelFunctionAdapter::hash( $newPassword );
-            $user['status'] = Constants::USER_STATUS_UNCONFIRMED;
 
-            $this->userRepositoryInterface->updateUser($user['id'],
-                $user['username'],
-                $user['lastname'],
-                $user['firstname'],
-                $user['status'],
-                $user['email'],
-                $user['phone'],
-                $user['administrator'],
-                $user['center_code'],
-                $user['job'],
-                $user['orthanc_address'],
-                $user['orthanc_login'],
-                $user['orthanc_password'],
-                $user['password_temporary']
-            );
+            $this->userRepositoryInterface->updateUserTemporaryPassword($user['id'], $newPassword);
+            $this->userRepositoryInterface->updateUserStatus($user['id'], Constants::USER_STATUS_UNCONFIRMED);
+
 
             $this->mailServices->sendResetPasswordMessage(
                 ($user['firstname'].' '.$user['lastname']),

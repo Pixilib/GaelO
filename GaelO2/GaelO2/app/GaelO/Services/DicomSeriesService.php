@@ -4,7 +4,6 @@ namespace App\GaelO\Services;
 
 use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOBadRequestException;
-use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Repositories\OrthancSeriesRepository;
 use App\GaelO\Repositories\OrthancStudyRepository;
 

@@ -34,6 +34,8 @@ Documentation manque le modify (PUT ou PATCH)
 Preparation Investigateur / Monitor / Controller / Reviewer :
 - API Review (POST, GET, DELETE) + Review attached files
 
+**Refac User Service peut disparaitre ou etre simplifie que pour les checks (peut etre en tools)
+
 **** Tests ***
 Test feature : visit et autres (dicom...)
 Tests Services à faire
