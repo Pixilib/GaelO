@@ -48,21 +48,21 @@ class StudyTest extends TestCase
             'patientCodePrefix'=>'1234'
         ];
 
-        $this->json('POST', '/api/studies', $payload)->assertNoContent(400);
+        $this->json('POST', '/api/studies', $payload)->assertStatus(400);
 
         $payload = [
             'studyName'=>'NEW STUDY',
             'patientCodePrefix'=>'1234'
         ];
 
-        $this->json('POST', '/api/studies', $payload)->assertNoContent(400);
+        $this->json('POST', '/api/studies', $payload)->assertStatus(400);
 
         $payload = [
             'studyName'=>'NEW.STUDY',
             'patientCodePrefix'=>'1234'
         ];
 
-        $this->json('POST', '/api/studies', $payload)->assertNoContent(400);
+        $this->json('POST', '/api/studies', $payload)->assertStatus(400);
 
     }
 
@@ -82,7 +82,7 @@ class StudyTest extends TestCase
             'studyName'=>$study->name,
             'patientCodePrefix'=>'1234'
         ];
-        $this->json('POST', '/api/studies', $payload)->assertNoContent(409);
+        $this->json('POST', '/api/studies', $payload)->assertStatus(409);
     }
 
     public function testDeleteStudy(){

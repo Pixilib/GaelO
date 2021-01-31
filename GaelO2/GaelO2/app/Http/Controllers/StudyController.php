@@ -47,8 +47,14 @@ class StudyController extends Controller
 
         $createStudy->execute($createStudyRequest, $createStudyResponse);
 
-        return response()->noContent()
-                ->setStatusCode($createStudyResponse->status, $createStudyResponse->statusText);
+        if($createStudyResponse->body){
+            return response()->json($createStudyResponse->body)
+            ->setStatusCode($createStudyResponse->status, $createStudyResponse->statusText);
+        }else{
+            return response()->noContent()
+            ->setStatusCode($createStudyResponse->status, $createStudyResponse->statusText);
+        }
+
 
     }
 

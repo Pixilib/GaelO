@@ -29,7 +29,7 @@ class CreateVisit {
 
         try{
 
-            $this->checkAuthorization($createVisitRequest->currentUserId, $createVisitRequest->role, $createVisitRequest->patientCode);
+            $this->checkAuthorization($createVisitRequest->currentUserId, $createVisitRequest->patientCode);
 
             if ($createVisitRequest->statusDone === Constants::VISIT_STATUS_NOT_DONE && empty($createVisitRequest->reasonForNotDone) ){
                 throw new GaelOBadRequestException('Reason must be specified is visit not done');
@@ -76,8 +76,8 @@ class CreateVisit {
 
     }
 
-    private function checkAuthorization(int $userId, string $role, int $patientCode) : void{
-        $this->authorizationService->setCurrentUserAndRole($userId, $role);
+    private function checkAuthorization(int $userId, int $patientCode) : void{
+        $this->authorizationService->setCurrentUserAndRole($userId, Constants::ROLE_INVESTIGATOR);
         $this->authorizationService->setPatient($patientCode);
         if (! $this->authorizationService->isPatientAllowed() ){
             throw new GaelOForbiddenException();
