@@ -8,6 +8,8 @@ use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\TestCase;
 
 use App\Models\Review;
+use App\Models\Visit;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class ReviewRepositoryTest extends TestCase
 {
@@ -58,6 +60,39 @@ class ReviewRepositoryTest extends TestCase
         $this->assertFalse(boolval($updatedReview['validated']));
 
 
+    }
+
+    public function testCreateReview(){
+        $visit = Visit::factory()->create();
+        $studyName = $visit->patient->study->name;
+
+        $reviewId = $this->reviewRepository->createReview(true, $visit->id, $studyName, 1, ['lugano'=>'PR'], true);
+
+        $this->assertEquals(1, $reviewId);
+
+        $reviewEntity = Review::find($reviewId)->toArray();
+        $this->assertEquals('PR', $reviewEntity['review_data']['lugano']);
+    }
+
+    public function testUpdateReview(){
+
+        $review = Review::factory()->create();
+
+        $this->reviewRepository->updateReview($review->id, 1, ['lugano'=>'PR'] ,true);
+
+        $reviewEntity = Review::find( $review->id )->toArray();
+
+        $this->assertEquals('PR', $reviewEntity['review_data']['lugano']);
+    }
+
+    public function testDeleteReview(){
+
+        $review = Review::factory()->create();
+
+        $this->reviewRepository->delete($review->id);
+
+        $this->expectException(ModelNotFoundException::class);
+        Review::findOrFail($review->id);
     }
 
 

@@ -5,7 +5,6 @@ namespace App\GaelO\Repositories;
 use App\GaelO\Interfaces\ReviewRepositoryInterface;
 use App\GaelO\Util;
 use App\Models\Review;
-use Exception;
 
 class ReviewRepository implements ReviewRepositoryInterface {
 
@@ -14,10 +13,11 @@ class ReviewRepository implements ReviewRepositoryInterface {
         $this->review = $review;
     }
 
-    private function create(array $data){
+    private function create(array $data) : array {
         $review = new Review();
         $model = Util::fillObject($data, $review);
         $model->save();
+        return $model->toArray();
     }
 
     private function update($id, array $data) : void {
@@ -34,11 +34,6 @@ class ReviewRepository implements ReviewRepositoryInterface {
         $this->review->find($id)->delete();
     }
 
-    public function getAll() : array {
-        throw new Exception('Cant query all review');
-    }
-
-
     public function getInvestigatorForm(int $visitId) : array {
         return $this->review->where('visit_id', $visitId)->where('local', true)->sole()->toArray();
     }
@@ -48,4 +43,55 @@ class ReviewRepository implements ReviewRepositoryInterface {
         $reviewEntity->validated = false;
         $reviewEntity->save();
     }
+
+    public function createReview(bool $local, int $visitId, string $studyName, int $userId, array $reviewData, bool $validated, bool $adjudication = false ) : int {
+
+        $data['local'] = $local;
+        $data['validated'] = $validated;
+        $data['adjudication'] = $adjudication;
+        $data['review_date'] = Util::now();
+        $data['user_id'] =  $userId;
+        $data['visit_id'] =  $visitId;
+        $data['study_name'] = $studyName;
+        $data['review_data'] = $reviewData;
+
+        return $this->create($data)['id'];
+
+    }
+
+    public function updateReview(int $reviewId, int $userId, array $reviewData, bool $validated ) : void {
+
+        $data['validated'] = $validated;
+        $data['review_date'] = Util::now();
+        $data['user_id'] =  $userId;
+        $data['review_data'] = $reviewData;
+
+        $this->update($reviewId, $data);
+
+    }
+
+    //SK A TESTER
+    public function getValidatedReviewsForStudyVisit(string $studyName, int $visitId ) : array {
+        $reviewEntity = $this->review
+            ->where('study_name', $studyName)
+            ->where('visit_id', $visitId)
+            ->where('validated', true)->get();
+
+        return empty($reviewEntity) ? [] : $reviewEntity->toArray();
+
+    }
+
+    //SK A TESTER
+    public function getReviewsForStudyVisitUser(string $studyName, int $visitId, int $userId ) : array {
+        $reviewEntity = $this->review
+            ->where('study_name', $studyName)
+            ->where('visit_id', $visitId)
+            ->where('user_id', $userId)
+            ->get();
+
+        return empty($reviewEntity) ? [] : $reviewEntity->toArray();
+
+    }
+
+    //SK FAIRE UPDATE ASSOCIATED FILE
 }

@@ -10,6 +10,11 @@ class Review extends Model
 {
     use SoftDeletes, HasFactory;
 
+    protected $casts = [
+        'sent_files' => 'array',
+        'review_data' => 'array',
+    ];
+
     public function user(){
         return $this->belongsTo('App\Models\User', 'user_id', 'id');
     }
