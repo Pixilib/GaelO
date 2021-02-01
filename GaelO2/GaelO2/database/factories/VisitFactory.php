@@ -96,6 +96,15 @@ class VisitFactory extends Factory
         });
     }
 
+    public function done(){
+
+        return $this->state(function (array $attributes) {
+            return [
+                'status_done' => 'Done'
+            ];
+        });
+    }
+
     public function uploadDone(){
 
         return $this->state(function (array $attributes) {

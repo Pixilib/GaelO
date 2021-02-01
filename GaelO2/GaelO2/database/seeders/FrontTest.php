@@ -45,121 +45,47 @@ class FrontTest extends Seeder
             'remember_token' => Str::random(10)
         ]);
 
-        factory(Study::class, 5)->create();
+        Study::factory()->count(5)->create();
 
-        $this->study = factory(Study::class)->create([
-            'name' => 'StudyTest',
-            'patient_code_prefix' => '123'
-        ]);
+        $this->study = Study::factory()->name('StudyTest')->patientCodePrefix('123')->create();
 
         DB::table('roles')->insert([
             'name' => 'Supervisor',
             'user_id' => '1',
-            'study_name' => 'StudyTest',
+            'study_name' => $this->study->name,
         ]);
         DB::table('roles')->insert([
             'name' => 'Monitor',
             'user_id' => '1',
-            'study_name' => 'StudyTest',
+            'study_name' => $this->study->name,
         ]);
         DB::table('roles')->insert([
             'name' => 'Investigator',
             'user_id' => '1',
-            'study_name' => 'StudyTest',
+            'study_name' => $this->study->name,
         ]);
         DB::table('roles')->insert([
             'name' => 'Controller',
             'user_id' => '1',
-            'study_name' => 'StudyTest',
+            'study_name' => $this->study->name,
         ]);
 
 
-        factory(Patient::class, 1)->create(['code' => 123000 + rand(0,999), 'inclusion_status' => 'Included', 'investigator_name' => 'administrator', 'study_name' => 'StudyTest', 'center_code' => 0]);
-        factory(Patient::class, 4)->create(['investigator_name' => 'administrator', 'study_name' => 'StudyTest', 'center_code' => 0]);
-        $this->visitGroup = factory(VisitGroup::class)->create(['study_name' => 'StudyTest']);
-        $this->visitType = factory(VisitType::class)->create(['visit_group_id' => $this->visitGroup['id']]);
+        Patient::factory()->code(123000 + rand(0,999))->inclusionStatus('Included')
+            ->investigatorName('administrator')->studyName($this->study->name)->centerCode(0)->create();
+        
+        Patient::factory()->count(4)->investigatorName('administrator')
+            ->studyName($this->study->name)->centerCode(0)->create();
 
-        $visit = factory(Visit::class)->create(['creator_user_id' => 1,
-        'patient_code' => Patient::first()['code'],
-        'visit_type_id' => $this->visitType['id'],
-        'status_done' => 'Done']);
+        $this->visitGroup = VisitGroup::factory()->studyName($this->study->name)->create();
+        VisitType::factory()->count(6)->visitGroupId($this->visitGroup['id'])->create();
 
-        factory(ReviewStatus::class)->create([
-        'study_name' => $this->study->name,
-        'visit_id' => $visit->id
-        ]);
-        /*DB::table('visit_groups')->insert([
-            'study_name' => 'StudyTest',
-            'modality' => 'PT'
-        ]);
-        DB::table('visit_groups')->insert([
-            'study_name' => 'StudyTest',
-            'modality' => 'CT'
-        ]);
-        DB::table('visit_groups')->insert([
-            'study_name' => 'StudyTest',
-            'modality' => 'MR'
-        ]);
+        $this->visitGroup = VisitGroup::factory()->studyName($this->study->name)->modality('PT')->create();
+        $this->visitType = VisitType::factory()->visitGroupId($this->visitGroup['id'])->create();
+        $visit = Visit::factory()->creatorUserId(1)->patientCode(Patient::first()['code'])
+            ->visitTypeId($this->visitType['id'])->done()->create();
 
-        DB::table('visit_types')->insert([
-            'visit_group_id' => 1,
-            'name' => 'Test1',
-            'order' => 1,
-            'limit_low_days' => 1,
-            'limit_up_days' => 10,
-        ]);
-        DB::table('visit_types')->insert([
-            'visit_group_id' => 2,
-            'name' => 'Test2',
-            'order' => 1,
-            'limit_low_days' => 1,
-            'limit_up_days' => 10,
-        ]);
-        DB::table('visit_types')->insert([
-            'visit_group_id' => 2,
-            'name' => 'Test3',
-            'order' => 2,
-            'limit_low_days' => 1,
-            'limit_up_days' => 10,
-        ]);
-        DB::table('visit_types')->insert([
-            'visit_group_id' => 3,
-            'name' => 'Test4',
-            'order' => 1,
-            'limit_low_days' => 1,
-            'limit_up_days' => 10,
-        ]);
-
-        DB::table('visits')->insert([
-            'creator_user_id' => 1,
-            'creation_date' => now(),
-            'patient_code' => Patient::first()['code'],
-            'visit_type_id' => 1
-        ]);
-        DB::table('visits')->insert([
-            'creator_user_id' => 1,
-            'creation_date' => now(),
-            'patient_code' => Patient::first()['code'],
-            'visit_type_id' => 2
-        ]);
-        DB::table('visits')->insert([
-            'creator_user_id' => 1,
-            'creation_date' => now(),
-            'patient_code' => Patient::first()['code'],
-            'status_done' => 'Done',
-            'upload_status' => 'Not Done',
-            'visit_type_id' => 3
-        ]);
-        DB::table('visits')->insert([
-            'creator_user_id' => 1,
-            'creation_date' => now(),
-            'patient_code' => Patient::first()['code'],
-            'visit_type_id' => 4,
-            'status_done' => 'Done',
-            'upload_status' => 'Done',
-            'state_investigator_form' => 'Draft',
-            'state_quality_control' => 'Wait Definitive Conclusion'
-        ]);*/
+        ReviewStatus::factory()->studyName($this->study->name)->visitId($visit->id)->create();
 
         User::factory()->count(50)->create();
     }

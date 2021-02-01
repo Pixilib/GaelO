@@ -15,11 +15,11 @@ class StudyFactory extends Factory
         ];
     }
 
-    public function name(){
+    public function name(String $name){
 
-        return $this->state(function (array $attributes) {
+        return $this->state(function (array $attributes) use($name) {
             return [
-                'name' => true,
+                'name' => $name
             ];
         });
     }
