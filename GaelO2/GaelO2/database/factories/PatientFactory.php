@@ -32,6 +32,16 @@ class PatientFactory extends Factory
         ];
     }
 
+    public function code(int $code){
+
+        return $this->state(function (array $attributes) use($code) {
+            return [
+                'code' => $code,
+            ];
+        });
+
+    }
+
     public function studyName(string $studyName){
 
         return $this->state(function (array $attributes) use($studyName) {
@@ -47,6 +57,26 @@ class PatientFactory extends Factory
         return $this->state(function (array $attributes) use($centerCode) {
             return [
                 'center_code' => $centerCode,
+            ];
+        });
+
+    }
+
+    public function inclusionStatus(string $inclusionStatus){
+
+        return $this->state(function (array $attributes) use($inclusionStatus) {
+            return [
+                'inclusion_status' => $inclusionStatus,
+            ];
+        });
+
+    }
+
+    public function investigatorName(string $investigatorName){
+
+        return $this->state(function (array $attributes) use($investigatorName) {
+            return [
+                'investigator_name' => $investigatorName,
             ];
         });
 
