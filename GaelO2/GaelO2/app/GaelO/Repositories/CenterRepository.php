@@ -2,20 +2,35 @@
 
 namespace App\GaelO\Repositories;
 
-use App\Center;
-use App\GaelO\Interfaces\PersistenceInterface;
+use App\GaelO\Interfaces\CenterRepositoryInterface;
+use App\Models\Center;
 use App\GaelO\Util;
 
-class CenterRepository implements PersistenceInterface {
+class CenterRepository implements CenterRepositoryInterface {
 
     public function __construct(Center $center){
         $this->center = $center;
     }
 
-    public function create(array $data){
+    private function create(array $data){
         $center = new Center();
         $model = Util::fillObject($data, $center);
         $model->save();
+    }
+
+    private function update($code, array $data) : void{
+        $model = $this->center->find($code);
+        $model = Util::fillObject($data, $model);
+        $model->save();
+    }
+
+    public function find($id) : array {
+        return $this->center->findOrFail($id);
+    }
+
+    public function getAll() : array {
+        $centers = $this->center->get();
+        return empty($centers) ? [] : $centers->toArray();
     }
 
     public function createCenter(int $code, string $name, string $countryCode) : void {
@@ -28,29 +43,9 @@ class CenterRepository implements PersistenceInterface {
         $this->create($data);
     }
 
-    public function update($code, array $data) : void{
-        $model = $this->center->find($code);
-        $model = Util::fillObject($data, $model);
-        $model->save();
-    }
-
-    public function find($id){
-        return $this->center->findOrFail($id);
-    }
-
-    public function delete($id) : void{
-        $this->center->find($id)->delete();
-    }
-
-    public function getAll() : array {
-        $centers = $this->center->get();
-        return empty($centers) ? [] : $centers->toArray();
-    }
-
     public function getCenterByName(string $name) : array {
         $center = $this->center->where('name', $name)->get()->first();
         return $center !== null  ? $center->toArray() : [];
-
     }
 
     public function getCenterByCode(int $code) : array {
@@ -62,19 +57,13 @@ class CenterRepository implements PersistenceInterface {
         return empty($this->center->find($code)) ? false : true;
     }
 
-    public function updateCenter(String $name, int $code, String $countryCode) : void {
+    public function updateCenter(int $code, String $name, String $countryCode) : void {
         $data = [
-            'code' => $code,
             'name' => $name,
             'country_code' => $countryCode
         ];
         $this->update($code, $data);
 
-    }
-
-    public function getExistingCenter() : array {
-        $centers = $this->center->get()->pluck('code');
-        return empty($centers) ? [] : $centers->toArray();
     }
 
 }

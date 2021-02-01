@@ -10,7 +10,7 @@ use App\GaelO\Util;
 use App\Mail\UnconfirmedAccount;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\User;
+use App\Models\User;
 use Carbon\Carbon;
 
 class AuthController extends Controller

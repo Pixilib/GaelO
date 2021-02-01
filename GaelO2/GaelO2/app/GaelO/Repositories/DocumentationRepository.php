@@ -2,17 +2,17 @@
 
 namespace App\GaelO\Repositories;
 
-use App\Documentation;
-use App\GaelO\Interfaces\PersistenceInterface;
+use App\GaelO\Interfaces\DocumentationRepositoryInterface;
+use App\Models\Documentation;
 use App\GaelO\Util;
 
-class DocumentationRepository implements PersistenceInterface {
+class DocumentationRepository implements DocumentationRepositoryInterface {
 
     public function __construct(Documentation $documentation){
         $this->documentation = $documentation;
     }
 
-    public function create(array $data){
+    private function create(array $data){
         $documentation = new Documentation();
         $model = Util::fillObject($data, $documentation);
         $model->save();
@@ -31,11 +31,6 @@ class DocumentationRepository implements PersistenceInterface {
 
     public function delete($id) : void{
         $this->documentation->find($id)->delete();
-    }
-
-    public function getAll() : array {
-        $documentations = $this->documentation->get();
-        return empty($documentations) ? [] : $documentations->toArray();
     }
 
     public function createDocumentation(string $name, string $documentDate, string $studyName, string $version, bool $investigator,
@@ -66,6 +61,20 @@ class DocumentationRepository implements PersistenceInterface {
     public function getDocumentationOfStudyWithRole(string $studyName, string $role) : array {
         $documentations = $this->documentation->where([['study_name', $studyName], [strtolower($role), true]])->get();
         return empty($documentations) ? [] : $documentations->toArray();
+    }
+
+    public function updateDocumentation(
+        int $id,
+        string $name,
+        string $documentDate,
+        string $studyName,
+        string $version,
+        bool $investigator,
+        bool $controller,
+        bool $monitor,
+        bool $reviewer
+    ){
+        //SK TODO
     }
 
 }

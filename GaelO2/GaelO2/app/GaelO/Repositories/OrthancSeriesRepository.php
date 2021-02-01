@@ -2,24 +2,24 @@
 
 namespace App\GaelO\Repositories;
 
-use App\GaelO\Interfaces\PersistenceInterface;
+use App\GaelO\Interfaces\OrthancSeriesRepositoryInterface;
 use App\GaelO\Util;
-use App\OrthancSeries;
+use App\Models\OrthancSeries;
 
-class OrthancSeriesRepository implements PersistenceInterface{
+class OrthancSeriesRepository implements OrthancSeriesRepositoryInterface {
 
 
     public function __construct(OrthancSeries $orthancSeries){
         $this->orthancSeries = $orthancSeries;
     }
 
-    public function create(array $data) : void {
+    private function create(array $data) : void {
         $orthancSeries = new OrthancSeries();
         $model = Util::fillObject($data, $orthancSeries);
         $model->save();
     }
 
-    public function update($orthancSeriesID, array $data) : void {
+    private function update($orthancSeriesID, array $data) : void {
         $model = $this->orthancSeries->find($orthancSeriesID);
         $model = Util::fillObject($data, $model);
         $model->save();
@@ -34,15 +34,11 @@ class OrthancSeriesRepository implements PersistenceInterface{
     }
 
     public function deletebySeriesInstanceUID(string $seriesInstanceUID) : void {
-        $this->orthancSeries->where('series_uid',$seriesInstanceUID)->firstOrFail()->delete();
+        $this->orthancSeries->where('series_uid',$seriesInstanceUID)->sole()->delete();
     }
 
     public function reactivateBySeriesInstanceUID(string $seriesInstanceUID) : void {
-        $this->orthancSeries->withTrashed()->where('series_uid',$seriesInstanceUID)->firstOrFail()->restore();
-    }
-
-    public function getAll() : array {
-        throw new \Exception('Not Usable in Orthanc Study Repository');
+        $this->orthancSeries->withTrashed()->where('series_uid',$seriesInstanceUID)->sole()->restore();
     }
 
     public function addSeries(string $seriesOrthancID, string $orthancStudyID, ?string $acquisitionDate,
@@ -51,7 +47,7 @@ class OrthancSeriesRepository implements PersistenceInterface{
                             ?string $injectedTime,?string $injectedDateTime, ?int $injectedActivity, ?int $patientWeight,
                             int $numberOfInstances, string $seriesUID, ?string $seriesNumber,
                             int $seriesDiskSize, int $seriesUncompressedDiskSize, ?string $manufacturer,
-                            ?string $modelName ){
+                            ?string $modelName ) : void {
 
         $data = [
             'orthanc_id' => $seriesOrthancID,
@@ -87,7 +83,7 @@ class OrthancSeriesRepository implements PersistenceInterface{
             ?string $injectedTime,?string $injectedDateTime, ?int $injectedActivity, ?int $patientWeight,
             int $numberOfInstances, string $seriesUID, ?string $seriesNumber,
             int $seriesDiskSize, int $seriesUncompressedDiskSize, ?string $manufacturer,
-            ?string $modelName ){
+            ?string $modelName ) : void {
 
         $data = [
         'orthanc_study_id' => $orthancStudyID,
@@ -122,9 +118,9 @@ class OrthancSeriesRepository implements PersistenceInterface{
 
     public function getSeriesBySeriesInstanceUID(string $seriesInstanceUID, bool $includeDeleted) : array {
         if($includeDeleted){
-            $series = $this->orthancSeries->with('orthancStudy')->where('series_uid',$seriesInstanceUID)->withTrashed()->firstOrFail()->toArray();
+            $series = $this->orthancSeries->with('orthancStudy')->where('series_uid',$seriesInstanceUID)->withTrashed()->sole()->toArray();
         }else{
-            $series = $this->orthancSeries->with('orthancStudy')->where('series_uid',$seriesInstanceUID)->firstOrFail()->toArray();
+            $series = $this->orthancSeries->with('orthancStudy')->where('series_uid',$seriesInstanceUID)->sole()->toArray();
         }
 
         return $series;
@@ -134,4 +130,5 @@ class OrthancSeriesRepository implements PersistenceInterface{
     public function reactivateSeriesOfOrthancStudyID (string $orthancStudyID) : void {
         $this->orthancSeries->where('orthanc_study_id',$orthancStudyID)->withTrashed()->restore();
     }
+
 }

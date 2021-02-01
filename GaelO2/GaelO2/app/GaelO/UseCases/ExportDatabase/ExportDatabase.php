@@ -8,10 +8,14 @@ use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Services\AuthorizationService;
 use App\GaelO\Services\PathService;
+use App\GaelO\Util;
 use Exception;
 use ZipArchive;
 
 class ExportDatabase{
+
+    private DatabaseDumper $databaseDumper;
+    private AuthorizationService $authorizationService;
 
     public function __construct(DatabaseDumper $databaseDumper, AuthorizationService $authorizationService) {
         $this->databaseDumper = $databaseDumper;
@@ -23,9 +27,9 @@ class ExportDatabase{
         try{
             $this->checkAuthorization($exportDatabaseRequest->currentUserId);
 
-            $zip=new ZipArchive;
+            $zip=new ZipArchive();
             $tempZip=tempnam(ini_get('upload_tmp_dir'), 'TMPZIPDB_');
-            $zip->open($tempZip, ZipArchive::CREATE);
+            $zip->open($tempZip, ZipArchive::OVERWRITE);
 
             $databaseDumpedFile = $this->databaseDumper->getDatabaseDumpFile();
 
@@ -55,7 +59,7 @@ class ExportDatabase{
 
     private function addRecursivelyInZip(ZipArchive $zip, String $path){
 
-        $fileGenerator=PathService::getFileInPathGenerator($path);
+        $fileGenerator=Util::getFileInPathGenerator($path);
 
         foreach ($fileGenerator as $file) {
             $filePath=$file->getRealPath();

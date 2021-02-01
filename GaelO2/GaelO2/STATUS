@@ -26,20 +26,31 @@ Possible-Uploads (GET) => OK
 dicom-series (DELETE, PATCH) => OK (Nb pour reset upload, loop depuis front)
 dicom-study (PATCH) => OK
 
+
 Salim TODO :
 
+*** APIs ***
+Documentation manque le modify (PUT ou PATCH)
 Preparation Investigateur / Monitor / Controller / Reviewer :
-- API Tree Finir Test Unitaire Service creation tree
 - API Review (POST, GET, DELETE) + Review attached files
 
-Visit Test le cas creation not done avec reason obligatoire n'est pas testé
+**Refac User Service peut disparaitre ou etre simplifie que pour les checks (peut etre en tools)
+
+**** Tests ***
+Test feature : visit et autres (dicom...)
+Tests Services à faire
+Mock des interfaces pour les uses cases et les services
+Les tests ne font pas d'assertion sur
+- le tracker => Via un spy ?
+- l'envoi de mails => voir doc laravel
+
+
+
 Service Visit => Continuer test passage en upload Done
 Dicom Series Service => peut etre evoluer vers un DicomService pour les deux niveaux
-Class d'authorisation revenir a l'heritage?
 Refactorer Visit Service (visit ID en variable de classe) ++++
 Faire un objet specifique pour l'authorisation des Review ?
 Studies / Series DICOM => Passer la clé primaire à Instance UID (le orthancID ne devient qu'une donnée associée)
-
 
 Pb Authorisation : Un ID Visit peut maintenant a etre attachee a plusieurs etudes ancillaires
 => Le scope de la study demandée doit venir du front
@@ -71,7 +82,6 @@ Doit pouvoir voir user details
 
 Faire une condition pour les NoContent dans le controller ? => ou mettre toujours un payload vide pour eviter les errur error->json() dans front?
 Voir dans message d'erreur comment ajouter d'autre info que le message (pour id de login)
-CreateVisitType et CreateVisitGroup => Ajouter un forbidden si l'etude a déjà des visites crées (etude demarrée)
 ReverseProxy TUS => On peut ajouter le studyName dans le header dans uppy pour le recupérer dans le use case et checker le role Investigateur
 Reverse proxy dicomweb => Comment faire venir le role et study depuis ohif ? depuis header?
 TUS est Joignable sur Delete => peut etre gerer le failure/cancel pour vider tus ?
@@ -95,10 +105,9 @@ Préparation supervisor :
 - Send to peer
 + Messagerie a designer
 
-//Les tests ne font pas d'assertion sur
-- le tracker => Via un spy ?
-- l'envoi de mails => voir doc laravel
-
 A executer en post install :
 php artisan db:migrate --seed
 php artisan passport:install
+
+Si dev :
+php artisan telescope:install

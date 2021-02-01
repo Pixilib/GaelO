@@ -5,15 +5,18 @@ namespace App\GaelO\UseCases\GetPatientVisit;
 use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
-use App\GaelO\Interfaces\PersistenceInterface;
+use App\GaelO\Interfaces\VisitRepositoryInterface;
 use App\GaelO\Services\AuthorizationPatientService;
 use App\GaelO\UseCases\GetVisit\VisitEntity;
 use Exception;
 
 class GetPatientVisit {
 
-    public function __construct(PersistenceInterface $persistenceInterface, AuthorizationPatientService $authorizationPatientService){
-        $this->persistenceInterface = $persistenceInterface;
+    private VisitRepositoryInterface $visitRepositoryInterface;
+    private AuthorizationPatientService $authorizationPatientService;
+
+    public function __construct(VisitRepositoryInterface $visitRepositoryInterface, AuthorizationPatientService $authorizationPatientService){
+        $this->visitRepositoryInterface = $visitRepositoryInterface;
         $this->authorizationPatientService = $authorizationPatientService;
     }
 
@@ -21,7 +24,7 @@ class GetPatientVisit {
 
         try{
             $this->checkAuthorization($getPatientVisitRequest->currentUserId, $getPatientVisitRequest->patientCode, $getPatientVisitRequest->role);
-            $visitsArray = $this->persistenceInterface->getPatientsVisitsWithReviewStatus($getPatientVisitRequest->patientCode, $getPatientVisitRequest->studyName);
+            $visitsArray = $this->visitRepositoryInterface->getPatientsVisitsWithReviewStatus($getPatientVisitRequest->patientCode, $getPatientVisitRequest->studyName);
 
             $responseArray = [];
             foreach($visitsArray as $data){

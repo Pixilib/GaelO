@@ -2,21 +2,29 @@
 
 namespace App\GaelO\UseCases\CreateVisitGroup;
 
+use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOConflictException;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
-use App\GaelO\Interfaces\PersistenceInterface;
+use App\GaelO\Interfaces\TrackerRepositoryInterface;
+use App\GaelO\Interfaces\VisitGroupRepositoryInterface;
+use App\GaelO\Interfaces\VisitRepositoryInterface;
 use App\GaelO\Services\AuthorizationService;
-use App\GaelO\Services\TrackerService;
 use Exception;
 
 class CreateVisitGroup {
 
-    public function __construct(PersistenceInterface $persistenceInterface, AuthorizationService $authorizationService, TrackerService $trackerService){
+    private VisitGroupRepositoryInterface $visitGroupRepositoryInterface;
+    private VisitRepositoryInterface $visitRepositoryInterface;
+    private AuthorizationService $authorizationService;
+    private TrackerRepositoryInterface $trackerRepositoryInterface;
 
-        $this->persistenceInterface = $persistenceInterface;
-        $this->trackerService = $trackerService;
+    public function __construct(VisitGroupRepositoryInterface $visitGroupRepositoryInterface, VisitRepositoryInterface $visitRepositoryInterface, AuthorizationService $authorizationService, TrackerRepositoryInterface $trackerRepositoryInterface){
+
+        $this->visitGroupRepositoryInterface = $visitGroupRepositoryInterface;
+        $this->trackerRepositoryInterface = $trackerRepositoryInterface;
         $this->authorizationService = $authorizationService;
+        $this->visitRepositoryInterface =$visitRepositoryInterface;
 
     }
 
@@ -25,17 +33,26 @@ class CreateVisitGroup {
         try{
             $this->checkAuthorization($createVisitGroupRequest->currentUserId);
 
-            $existingVisitGroup = $this->persistenceInterface->isExistingVisitGroup($createVisitGroupRequest->studyName,
+            $existingVisitGroup = $this->visitGroupRepositoryInterface->isExistingVisitGroup($createVisitGroupRequest->studyName,
                                                             $createVisitGroupRequest->modality);
 
             if($existingVisitGroup) {
                 throw new GaelOConflictException("Already Exisiting Visit Group");
             }
 
-            //SK VERIFIER QUIL N Y A PAS DE VISITE CREE dans la study (etude demarée)
+            $hasVisits = $this->visitRepositoryInterface->hasVisitsInStudy($createVisitGroupRequest->studyName);
 
-            $this->persistenceInterface->createVisitGroup($createVisitGroupRequest->studyName, $createVisitGroupRequest->modality);
+            if($hasVisits) {
+                throw new GaelOForbiddenException("Study already having visits, can't change workflow");
+            }
 
+            $this->visitGroupRepositoryInterface->createVisitGroup($createVisitGroupRequest->studyName, $createVisitGroupRequest->modality);
+
+            $actionDetails = [
+                'modality' => $createVisitGroupRequest->modality
+            ];
+
+            $this->trackerRepositoryInterface->writeAction($createVisitGroupRequest->currentUserId, Constants::TRACKER_ROLE_ADMINISTRATOR, $createVisitGroupRequest->studyName, null, Constants::TRACKER_CREATE_VISIT_GROUP, $actionDetails);
             $createVisitGroupResponse->status = 201;
             $createVisitGroupResponse->statusText = 'Created';
 

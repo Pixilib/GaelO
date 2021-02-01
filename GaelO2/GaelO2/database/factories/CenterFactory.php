@@ -1,14 +1,39 @@
 <?php
 
-/** @var \Illuminate\Database\Eloquent\Factory $factory */
+namespace Database\Factories;
 
-use App\Center;
-use Faker\Generator as Faker;
+use App\Models\Center;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
-$factory->define(Center::class, function (Faker $faker) {
-    return [
-        'code' => ($faker->unique()->randomNumber()+1),
-        'name' => $faker->unique()->word,
-        'country_code' => 'FR'
-    ];
-});
+class CenterFactory extends Factory
+{
+
+    protected $model = Center::class;
+
+    public function definition()
+    {
+        return [
+            'code' => ($this->faker->unique()->randomNumber()+10),
+            'name' => $this->faker->unique()->word,
+            'country_code' => 'FR'
+        ];
+    }
+
+    public function code(int $centerCode){
+
+        return $this->state(function (array $attributes) use ($centerCode) {
+            return [
+                'code' => $centerCode,
+            ];
+        });
+    }
+
+    public function name(string $centerName){
+
+        return $this->state(function (array $attributes) use ($centerName) {
+            return [
+                'name' => $centerName,
+            ];
+        });
+    }
+}

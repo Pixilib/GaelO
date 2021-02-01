@@ -1,13 +1,39 @@
 <?php
 
-/** @var \Illuminate\Database\Eloquent\Factory $factory */
+namespace Database\Factories;
 
-use App\VisitGroup;
-use Faker\Generator as Faker;
+use App\Models\Study;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
-$factory->define(VisitGroup::class, function (Faker $faker) {
-    return [
-        'study_name'=> $faker->unique()->word,
-        'modality'=>$faker->randomElement(['CT', 'PT', 'MR']),
-    ];
-});
+class VisitGroupFactory extends Factory
+{
+
+    public function definition()
+    {
+        return [
+            'study_name'=> Study::factory()->create()->name,
+            'modality'=>'CT',
+        ];
+    }
+
+    public function studyName(string $studyName){
+
+        return $this->state(function (array $attributes) use ($studyName) {
+            return [
+                'study_name' => $studyName
+            ];
+        });
+    }
+
+    public function modality(string $modality){
+
+        return $this->state(function (array $attributes) use ($modality) {
+            return [
+                'modality' => $modality
+            ];
+        });
+    }
+}
+
+
+

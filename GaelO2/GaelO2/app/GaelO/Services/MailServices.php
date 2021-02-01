@@ -7,7 +7,6 @@ use App\GaelO\Adapters\SendEmailAdapter;
 use App\GaelO\Constants\Constants;
 use App\GaelO\Repositories\UserRepository;
 use App\GaelO\Constants\MailConstants;
-use Illuminate\Support\Facades\Log;
 
 Class MailServices extends SendEmailAdapter {
 
@@ -78,7 +77,6 @@ Class MailServices extends SendEmailAdapter {
             'studies'=>$studies
         ];
         //Send to user and administrators
-        Log::info([$email, ...$this->getAdminsEmails()]);
         $this->mailInterface->setTo( [$email, ...$this->getAdminsEmails()] );
         $this->mailInterface->setReplyTo();
         $this->mailInterface->setParameters($parameters);
@@ -119,7 +117,9 @@ Class MailServices extends SendEmailAdapter {
 
     }
 
-    public function sendForbiddenResetPasswordDueToDeactivatedAccount(String $userEmail, String $username, Array $studies) : void{
+    public function sendForbiddenResetPasswordDueToDeactivatedAccount(String $userEmail, String $username) : void{
+
+        $studies = $this->userRepository->getAllStudiesWithRoleForUser($username);
 
         $parameters = [
             'name' => 'user',
@@ -173,7 +173,7 @@ Class MailServices extends SendEmailAdapter {
         if ($qcNeeded)  {
             $destinators = [
                 ...$destinators,
-                ...$this->userRepository->getUsersEmailsByRolesInStudy($study, Constants::ROLE_CONTROLER)
+                ...$this->userRepository->getUsersEmailsByRolesInStudy($study, Constants::ROLE_CONTROLLER)
             ];
         }
 
@@ -270,7 +270,7 @@ Class MailServices extends SendEmailAdapter {
 
         $this->mailInterface->setTo( [
             ...$this->userRepository->getUsersEmailsByRolesInStudy($studyName, Constants::ROLE_SUPERVISOR),
-            ...$this->userRepository->getUsersEmailsByRolesInStudy($studyName, Constants::ROLE_CONTROLER),
+            ...$this->userRepository->getUsersEmailsByRolesInStudy($studyName, Constants::ROLE_CONTROLLER),
             $this->getUserEmail($currentUserId),
             ]
         );

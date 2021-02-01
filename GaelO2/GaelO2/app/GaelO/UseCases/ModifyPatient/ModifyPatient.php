@@ -3,25 +3,28 @@
 namespace App\GaelO\UseCases\ModifyPatient;
 
 use App\GaelO\Constants\Constants;
-use App\GaelO\Exceptions\GaelOBadRequestException;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
-use App\GaelO\Interfaces\PersistenceInterface;
+use App\GaelO\Interfaces\PatientRepositoryInterface;
+use App\GaelO\Interfaces\TrackerRepositoryInterface;
 use App\GaelO\Services\AuthorizationPatientService;
 use App\GaelO\Services\ImportPatientService;
-use App\GaelO\Services\TrackerService;
 use App\GaelO\Util;
 use Exception;
 
 class ModifyPatient {
 
-    public function __construct(PersistenceInterface $persistenceInterface,
+    private PatientRepositoryInterface $patientRepositoryInterface;
+    private AuthorizationPatientService $authorizationPatientService;
+    private TrackerRepositoryInterface $trackerRepositoryInterface;
+
+    public function __construct(PatientRepositoryInterface $patientRepositoryInterface,
                                 AuthorizationPatientService $authorizationPatientService,
-                                TrackerService $trackerService)
+                                TrackerRepositoryInterface $trackerRepositoryInterface)
     {
-        $this->persistenceInterface = $persistenceInterface;
+        $this->patientRepositoryInterface = $patientRepositoryInterface;
         $this->authorizationPatientService = $authorizationPatientService;
-        $this->trackerService = $trackerService;
+        $this->trackerRepositoryInterface = $trackerRepositoryInterface;
     }
 
     public function execute(ModifyPatientRequest $modifyPatientRequest, ModifyPatientResponse $modifyPatientResponse){
@@ -30,7 +33,7 @@ class ModifyPatient {
 
             $this->checkAuthorization($modifyPatientRequest->currentUserId, $modifyPatientRequest->patientCode);
 
-            $patientEntity = $this->persistenceInterface->find($modifyPatientRequest->patientCode);
+            $patientEntity = $this->patientRepositoryInterface->find($modifyPatientRequest->patientCode);
 
             $updatableData = ['firstname', 'lastname', 'gender', 'birthDay', 'birthMonth', 'birthYear',
             'registrationDate', 'investigatorName', 'centerCode'];
@@ -58,8 +61,8 @@ class ModifyPatient {
             }
 
 
-            $this->persistenceInterface->update($modifyPatientRequest->patientCode, $patientEntity);
-            $this->trackerService->writeAction($modifyPatientRequest->currentUserId, Constants::ROLE_SUPERVISOR, $patientEntity['study_name'], null, Constants::TRACKER_EDIT_PATIENT, $modifiedData);
+            $this->patientRepositoryInterface->update($modifyPatientRequest->patientCode, $patientEntity);
+            $this->trackerRepositoryInterface->writeAction($modifyPatientRequest->currentUserId, Constants::ROLE_SUPERVISOR, $patientEntity['study_name'], null, Constants::TRACKER_EDIT_PATIENT, $modifiedData);
 
             $modifyPatientResponse->status = 200;
             $modifyPatientResponse->statusText = 'OK';

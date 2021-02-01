@@ -4,14 +4,17 @@ namespace App\GaelO\UseCases\GetAffiliatedCenter;
 
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
-use App\GaelO\Interfaces\PersistenceInterface;
+use App\GaelO\Interfaces\UserRepositoryInterface;
 use App\GaelO\Services\AuthorizationService;
 use Exception;
 
 class GetAffiliatedCenter {
 
-    public function __construct(PersistenceInterface $persistenceInterface, AuthorizationService $authorizationService){
-        $this->persistenceInterface = $persistenceInterface;
+    private UserRepositoryInterface $userRepositoryInterface;
+    private AuthorizationService $authorizationService;
+
+    public function __construct(UserRepositoryInterface $userRepositoryInterface, AuthorizationService $authorizationService){
+        $this->userRepositoryInterface = $userRepositoryInterface;
         $this->authorizationService = $authorizationService;
     }
 
@@ -20,7 +23,7 @@ class GetAffiliatedCenter {
         try{
 
             $this->checkAuthorization($getAffiliatedCenterRequest->currentUserId);
-            $affiliatedCenters = $this->persistenceInterface->getAffiliatedCenter($getAffiliatedCenterRequest->userId);
+            $affiliatedCenters = $this->userRepositoryInterface->getAffiliatedCenter($getAffiliatedCenterRequest->userId);
             $centerResponseArray = [];
 
             foreach($affiliatedCenters as $center){

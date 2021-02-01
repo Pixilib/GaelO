@@ -2,23 +2,25 @@
 
 namespace App\GaelO\UseCases\ResetPassword;
 
-use App\GaelO\Util;
-use App\GaelO\Adapters\LaravelFunctionAdapter;
 use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOBadRequestException;
 use App\GaelO\Exceptions\GaelOException;
+use App\GaelO\Interfaces\TrackerRepositoryInterface;
 use App\GaelO\UseCases\ResetPassword\ResetPasswordResponse;
-use App\GaelO\Interfaces\PersistenceInterface;
+use App\GaelO\Interfaces\UserRepositoryInterface;
 use App\GaelO\Services\MailServices;
-use App\GaelO\Services\TrackerService;
 use Exception;
 
 class ResetPassword {
 
-    public function __construct(PersistenceInterface $persistenceInterface, MailServices $mailServices, TrackerService $trackerService ){
-        $this->persistenceInterface = $persistenceInterface;
+    private UserRepositoryInterface $userRepositoryInterface;
+    private MailServices $mailServices;
+    private TrackerRepositoryInterface $trackerRepositoryInterface;
+
+    public function __construct(UserRepositoryInterface $userRepositoryInterface, MailServices $mailServices, TrackerRepositoryInterface $trackerRepositoryInterface ){
+        $this->userRepositoryInterface = $userRepositoryInterface;
         $this->mailServices = $mailServices;
-        $this->trackerService = $trackerService;
+        $this->trackerRepositoryInterface = $trackerRepositoryInterface;
      }
 
     public function execute(ResetPasswordRequest $resetPasswordRequest, ResetPasswordResponse $resetPasswordResponse) : void {
@@ -26,19 +28,19 @@ class ResetPassword {
             $username = $resetPasswordRequest->username;
             $email = $resetPasswordRequest->email;
 
-            $userEntity = $this->persistenceInterface->getUserByUsername($username, true);
+            $userEntity = $this->userRepositoryInterface->getUserByUsername($username, true);
 
             $this->checkNotDeactivatedAccount($userEntity);
             $this->checkEmailMatching($email, $userEntity['email']);
 
-            //update properties of user
-            $userEntity['status'] = Constants::USER_STATUS_UNCONFIRMED;
+            //generate new temporary password
             $newPassword = substr(uniqid(), 1, 10);
-            $userEntity['password_temporary'] = LaravelFunctionAdapter::hash( $newPassword );
-            $userEntity['attempts'] = 0;
-            $userEntity['last_password_update'] = Util::now();
-            //update user
-            $this->persistenceInterface->update($userEntity['id'], $userEntity);
+
+            //update user data
+            $this->userRepositoryInterface->updateUserTemporaryPassword($userEntity['id'], $newPassword);
+            $this->userRepositoryInterface->updateUserStatus($userEntity['id'], Constants::USER_STATUS_UNCONFIRMED);
+            $this->userRepositoryInterface->updateUserAttempts($userEntity['id'], 0);
+
             //send email
             $this->mailServices->sendResetPasswordMessage(
                 ($userEntity['firstname'].' '.$userEntity['lastname']),
@@ -46,7 +48,7 @@ class ResetPassword {
                 $newPassword,
                 $userEntity['email']);
             //Write action in tracker
-            $this->trackerService->writeAction($userEntity['id'], Constants::TRACKER_ROLE_USER, null, null, Constants::TRACKER_RESET_PASSWORD, null);
+            $this->trackerRepositoryInterface->writeAction($userEntity['id'], Constants::TRACKER_ROLE_USER, null, null, Constants::TRACKER_RESET_PASSWORD, null);
 
             $resetPasswordResponse->status = 200;
             $resetPasswordResponse->statusText = 'OK';
@@ -67,11 +69,9 @@ class ResetPassword {
 
     private function checkNotDeactivatedAccount(array $user){
         if($user['deleted_at'] !== null) {
-            //Get studies with role to prepare Email
-            $studies  = $this->persistenceInterface->getAllStudiesWithRoleForUser($user['username']);
             //Send Email change password failure
             $this->mailServices->sendForbiddenResetPasswordDueToDeactivatedAccount($user['email'],
-                    $user['username'], $studies);
+                    $user['username']);
             throw new GaelOBadRequestException('Deactivated Account');
         }
     }

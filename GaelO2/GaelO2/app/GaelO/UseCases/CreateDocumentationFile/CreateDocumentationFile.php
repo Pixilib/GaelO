@@ -7,25 +7,28 @@ use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOBadRequestException;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
-use App\GaelO\Interfaces\PersistenceInterface;
+use App\GaelO\Interfaces\DocumentationRepositoryInterface;
+use App\GaelO\Interfaces\TrackerRepositoryInterface;
 use App\GaelO\Services\AuthorizationService;
-use App\GaelO\Services\TrackerService;
 use Exception;
 
 class CreateDocumentationFile{
 
-    public function __construct(PersistenceInterface $documentationRepository, AuthorizationService $authorizationService, TrackerService $trackerService)
+    private DocumentationRepositoryInterface $documentationRepositoryInterface;
+    private TrackerRepositoryInterface $trackerRepositoryInterface;
+
+    public function __construct(DocumentationRepositoryInterface $documentationRepositoryInterface, AuthorizationService $authorizationService, TrackerRepositoryInterface $trackerRepositoryInterface)
     {
-        $this->documentationRepository = $documentationRepository;
+        $this->documentationRepositoryInterface = $documentationRepositoryInterface;
         $this->authorizationService = $authorizationService;
-        $this->trackerService = $trackerService;
+        $this->trackerRepositoryInterface = $trackerRepositoryInterface;
     }
 
     public function execute(CreateDocumentationFileRequest $createDocumentationFileRequest, CreateDocumentationFileResponse $createDocumentationFileResponse){
 
         try{
 
-            $documentationEntity = $this->documentationRepository->find($createDocumentationFileRequest->id);
+            $documentationEntity = $this->documentationRepositoryInterface->find($createDocumentationFileRequest->id);
             $studyName = $documentationEntity['study_name'];
             $this->checkAuthorization($createDocumentationFileRequest->currentUserId, $studyName);
 
@@ -48,13 +51,13 @@ class CreateDocumentationFile{
 
             $documentationEntity['path']= $destinationPath.'/'.$documentationEntity['id'].'.pdf';
 
-            $this->documentationRepository->update($createDocumentationFileRequest->id, $documentationEntity);
+            $this->documentationRepositoryInterface->update($createDocumentationFileRequest->id, $documentationEntity);
 
             $actionDetails =[
                 'documentation_id'=>$createDocumentationFileRequest->currentUserId,
             ];
 
-            $this->trackerService->writeAction(
+            $this->trackerRepositoryInterface->writeAction(
                 $createDocumentationFileRequest->currentUserId,
                 Constants::ROLE_SUPERVISOR,
                 $studyName,

@@ -6,20 +6,24 @@ use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOBadRequestException;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
-use App\GaelO\Interfaces\PersistenceInterface;
+use App\GaelO\Interfaces\TrackerRepositoryInterface;
+use App\GaelO\Interfaces\VisitRepositoryInterface;
 use App\GaelO\Services\AuthorizationVisitService;
-use App\GaelO\Services\TrackerService;
 use Exception;
 
 class DeleteVisit{
 
-    public function __construct(PersistenceInterface $persistenceInterface,
+    private VisitRepositoryInterface $visitRepositoryInterface;
+    private AuthorizationVisitService $authorizationVisitService;
+    private TrackerRepositoryInterface $trackerRepositoryInterface;
+
+    public function __construct(VisitRepositoryInterface $visitRepositoryInterface,
                                 AuthorizationVisitService $authorizationVisitService,
-                                TrackerService $trackerService)
+                                TrackerRepositoryInterface $trackerRepositoryInterface)
     {
         $this->authorizationVisitService = $authorizationVisitService;
-        $this->persistenceInterface = $persistenceInterface;
-        $this->trackerService = $trackerService;
+        $this->visitRepositoryInterface = $visitRepositoryInterface;
+        $this->trackerRepositoryInterface = $trackerRepositoryInterface;
 
     }
 
@@ -30,7 +34,7 @@ class DeleteVisit{
 
             if(empty($deleteVisitRequest->reason)) throw new GaelOBadRequestException('Reason must be specified');
 
-            $visitContext  = $this->persistenceInterface->getVisitContext($deleteVisitRequest->visitId);
+            $visitContext  = $this->visitRepositoryInterface->getVisitContext($deleteVisitRequest->visitId);
 
             $studyName = $visitContext['visit_type']['visit_group']['study_name'];
             $visitTypeName = $visitContext['visit_type']['name'];
@@ -44,7 +48,7 @@ class DeleteVisit{
                                         $qcStatus,
                                         $visitStatusDone);
 
-            $this->persistenceInterface->delete($deleteVisitRequest->visitId);
+            $this->visitRepositoryInterface->delete($deleteVisitRequest->visitId);
 
             $actionDetails  = [
                 'patient_code' => $patientCode,
@@ -52,7 +56,7 @@ class DeleteVisit{
                 'reason' => $deleteVisitRequest->reason
             ];
 
-            $this->trackerService->writeAction($deleteVisitRequest->currentUserId,
+            $this->trackerRepositoryInterface->writeAction($deleteVisitRequest->currentUserId,
                                                 $deleteVisitRequest->role,
                                                 $studyName,
                                                 $deleteVisitRequest->visitId,
@@ -83,11 +87,7 @@ class DeleteVisit{
         }
 
         //If Investigator, only possible to delete Visits with Non finished QC
-        if( $role === Constants::ROLE_INVESTIGATOR && in_array($qcStatus, [Constants::QUALITY_CONSTROL_REFUSED, Constants::QUALITY_CONTROL_ACCEPTED])){
-            throw new GaelOForbiddenException();
-        }
-
-        if( $role === Constants::ROLE_INVESTIGATOR && $statusDone === Constants::VISIT_STATUS_NOT_DONE ){
+        if( $role === Constants::ROLE_INVESTIGATOR && in_array($qcStatus, [Constants::QUALITY_CONTROL_REFUSED, Constants::QUALITY_CONTROL_ACCEPTED])){
             throw new GaelOForbiddenException();
         }
 

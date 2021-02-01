@@ -4,7 +4,7 @@ namespace App\GaelO\UseCases\GetUser;
 
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
-use App\GaelO\Interfaces\PersistenceInterface;
+use App\GaelO\Interfaces\UserRepositoryInterface;
 use App\GaelO\Services\AuthorizationService;
 use App\GaelO\UseCases\GetUser\GetUserRequest;
 use App\GaelO\UseCases\GetUser\GetUserResponse;
@@ -12,8 +12,11 @@ use Exception;
 
 class GetUser {
 
-    public function __construct(PersistenceInterface $persistenceInterface, AuthorizationService $authorizationService){
-        $this->persistenceInterface = $persistenceInterface;
+    private UserRepositoryInterface $userRepositoryInterface;
+    private AuthorizationService $authorizationService;
+
+    public function __construct(UserRepositoryInterface $userRepositoryInterface, AuthorizationService $authorizationService){
+        $this->userRepositoryInterface = $userRepositoryInterface;
         $this->authorizationService = $authorizationService;
     }
 
@@ -26,15 +29,15 @@ class GetUser {
 
             $this->checkAuthorization($getUserRequest->currentUserId, $id);
 
-            if ($id == 0) {
-                $dbData = $this->persistenceInterface->getAll();
+            if ($id === null) {
+                $dbData = $this->userRepositoryInterface->getAll();
                 $responseArray = [];
                 foreach($dbData as $data){
                     $responseArray[] = UserEntity::fillFromDBReponseArray($data);
                 }
                 $getUserResponse->body = $responseArray;
             } else {
-                $dbData = $this->persistenceInterface->find($id);
+                $dbData = $this->userRepositoryInterface->find($id);
                 $responseEntity = UserEntity::fillFromDBReponseArray($dbData);
                 $getUserResponse->body = $responseEntity;
             }
@@ -54,13 +57,17 @@ class GetUser {
 
     }
 
-    private function checkAuthorization(int $userId, int $calledUserId)  {
+    private function checkAuthorization(int $userId, ?int $calledUserId)  {
         $this->authorizationService->setCurrentUserAndRole($userId);
-        if( $calledUserId !== $userId && ! $this->authorizationService->isAdmin()) {
-            throw new GaelOForbiddenException();
+        if( $this->authorizationService->isAdmin() ) {
+            return;
+        }else{
+            if( $calledUserId !== $userId ) {
+                throw new GaelOForbiddenException();
+            };
         };
+
+
     }
 
 }
-
-?>

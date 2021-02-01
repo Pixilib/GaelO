@@ -5,16 +5,20 @@ namespace App\GaelO\UseCases\ReactivateStudy;
 use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
-use App\GaelO\Interfaces\PersistenceInterface;
+use App\GaelO\Interfaces\StudyRepositoryInterface;
+use App\GaelO\Repositories\TrackerRepository;
 use App\GaelO\Services\AuthorizationService;
-use App\GaelO\Services\TrackerService;
 use Exception;
 
 class ReactivateStudy {
 
-    public function __construct(PersistenceInterface $persistenceInterface, AuthorizationService $authorizationService, TrackerService $trackerService){
-        $this->persistenceInterface = $persistenceInterface;
-        $this->trackerService = $trackerService;
+    private StudyRepositoryInterface $studyRepositoryInterface;
+    private AuthorizationService $authorizationService;
+    private TrackerRepository $trackerRepository;
+
+    public function __construct(StudyRepositoryInterface $studyRepositoryInterface, AuthorizationService $authorizationService, TrackerRepository $trackerRepository){
+        $this->studyRepositoryInterface = $studyRepositoryInterface;
+        $this->trackerRepository = $trackerRepository;
         $this->authorizationService = $authorizationService;
     }
 
@@ -24,12 +28,12 @@ class ReactivateStudy {
 
             $this->checkAuthorization($reactivateStudyRequest->currentUserId);
 
-            $this->persistenceInterface->reactivateStudy($reactivateStudyRequest->studyName);
+            $this->studyRepositoryInterface->reactivateStudy($reactivateStudyRequest->studyName);
 
             $actionsDetails = [
                 'reactivatedStudy' => $reactivateStudyRequest->studyName
             ];
-            $this->trackerService->writeAction($reactivateStudyRequest->currentUserId, Constants::TRACKER_ROLE_ADMINISTRATOR, null, null, Constants::TRACKER_REACTIVATE_STUDY, $actionsDetails);
+            $this->trackerRepository->writeAction($reactivateStudyRequest->currentUserId, Constants::TRACKER_ROLE_ADMINISTRATOR, null, null, Constants::TRACKER_REACTIVATE_STUDY, $actionsDetails);
 
             $reactivateStudyResponse->status = 200;
             $reactivateStudyResponse->statusText = 'OK';

@@ -15,6 +15,7 @@ class ReviewsStatus extends Migration
     {
         Schema::create('reviews_status', function (Blueprint $table) {
 
+            $table->id();
             $table->unsignedBigInteger('visit_id');
             $table->string('study_name')->nullable(false);
             $table->boolean('review_available')->nullable(false)->default(false);
@@ -24,7 +25,7 @@ class ReviewsStatus extends Migration
             $table->timestamps();
 
             //A visit ID in a Study have only one status
-            $table->primary(['study_name', 'visit_id']);
+            $table->unique(['study_name', 'visit_id']);
             $table->foreign('visit_id')->references('id')->on('visits');
             $table->foreign('study_name')->references('name')->on('studies');
 

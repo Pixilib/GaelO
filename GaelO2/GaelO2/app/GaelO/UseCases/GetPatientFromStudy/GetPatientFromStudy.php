@@ -5,7 +5,7 @@ namespace App\GaelO\UseCases\GetPatientFromStudy;
 use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
-use App\GaelO\Interfaces\PersistenceInterface;
+use App\GaelO\Interfaces\PatientRepositoryInterface;
 use App\GaelO\Services\AuthorizationService;
 use App\GaelO\UseCases\GetPatientFromStudy\GetPatientFromStudyRequest;
 use App\GaelO\UseCases\GetPatientFromStudy\GetPatientFromStudyResponse;
@@ -14,8 +14,11 @@ use Exception;
 
 class GetPatientFromStudy {
 
-    public function __construct(PersistenceInterface $persistenceInterface, AuthorizationService $authorizationService){
-        $this->persistenceInterface = $persistenceInterface;
+    private PatientRepositoryInterface $patientRepositoryInterface;
+    private AuthorizationService $authorizationService;
+
+    public function __construct(PatientRepositoryInterface $patientRepositoryInterface, AuthorizationService $authorizationService){
+        $this->patientRepositoryInterface = $patientRepositoryInterface;
         $this->authorizationService = $authorizationService;
     }
 
@@ -26,7 +29,7 @@ class GetPatientFromStudy {
             $this->checkAuthorization($patientRequest->currentUserId, $patientRequest->studyName);
 
             $studyName = $patientRequest->studyName;
-            $patientsDbEntities = $this->persistenceInterface->getPatientsInStudy($studyName);
+            $patientsDbEntities = $this->patientRepositoryInterface->getPatientsInStudy($studyName);
             $responseArray = [];
             foreach($patientsDbEntities as $patientEntity){
                 $responseArray[] = PatientEntity::fillFromDBReponseArray($patientEntity);

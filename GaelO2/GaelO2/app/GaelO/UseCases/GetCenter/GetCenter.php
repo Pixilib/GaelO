@@ -4,14 +4,17 @@ namespace App\GaelO\UseCases\GetCenter;
 
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
-use App\GaelO\Interfaces\PersistenceInterface;
+use App\GaelO\Interfaces\CenterRepositoryInterface;
 use App\GaelO\Services\AuthorizationService;
 use Exception;
 
 class GetCenter {
 
-    public function __construct(PersistenceInterface $persistenceInterface, AuthorizationService $authorizationService){
-        $this->persistenceInterface = $persistenceInterface;
+    private CenterRepositoryInterface $centerRepositoryInterface;
+    private AuthorizationService $authorizationService;
+
+    public function __construct(CenterRepositoryInterface $centerRepositoryInterface, AuthorizationService $authorizationService){
+        $this->centerRepositoryInterface = $centerRepositoryInterface;
         $this->authorizationService = $authorizationService;
      }
 
@@ -23,8 +26,8 @@ class GetCenter {
 
             $code = $getCenterRequest->code;
 
-            if ($code == -1) {
-                $centers = $this->persistenceInterface->getAll();
+            if ($code === null) {
+                $centers = $this->centerRepositoryInterface->getAll();
                 $response = [];
                 foreach($centers as $center){
                     $response[] = CenterEntity::fillFromDBReponseArray($center);
@@ -32,7 +35,7 @@ class GetCenter {
                 $getCenterResponse->body = $response;
 
             } else {
-                $center  = $this->persistenceInterface->getCenterByCode($code);
+                $center  = $this->centerRepositoryInterface->getCenterByCode($code);
                 $getCenterResponse->body = CenterEntity::fillFromDBReponseArray($center);
             }
 

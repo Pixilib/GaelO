@@ -32,7 +32,7 @@ class AuthorizationVisitService {
         $this->authorizationPatientService->setCurrentUserAndRole($userId, $role);
     }
 
-    public function setVisitId($visitId){
+    public function setVisitId(int $visitId){
         $this->visitId = $visitId;
         $visitContext = $this->visitRepository->getVisitContext($visitId);
 
@@ -57,10 +57,10 @@ class AuthorizationVisitService {
     public function isVisitAllowed(): bool {
         //Check that called Role exists for users and visit is not deleted
         if ($this->requestedRole === Constants::ROLE_REVIEWER) {
-            $this->visitRepository->isVisitAvailableForReview($this->visitId, $this->studyName, $this->userId);
+            $this->visitRepository->isVisitAvailableForReview($this->visitId, $this->patientStudy, $this->userId);
 
             return $this->authorizationPatientService->isPatientAllowed();
-        } else if ($this->requestedRole === Constants::ROLE_CONTROLER) {
+        } else if ($this->requestedRole === Constants::ROLE_CONTROLLER) {
             //For controller controller role should be allows and visit QC status be not done or awaiting definitive conclusion
             $allowedControllerStatus = array(Constants::QUALITY_CONTROL_NOT_DONE, Constants::QUALITY_CONTROL_WAIT_DEFINITIVE_CONCLUSION);
             if (in_array($this->stateQualityControl, $allowedControllerStatus) && $this->visitUploadStatus === Constants::UPLOAD_STATUS_DONE) {

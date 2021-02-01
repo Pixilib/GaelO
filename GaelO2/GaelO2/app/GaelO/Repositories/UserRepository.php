@@ -2,16 +2,17 @@
 
 namespace App\GaelO\Repositories;
 
-use App\CenterUser;
-use App\GaelO\Constants\Constants;
-use App\User;
-use App\GaelO\Interfaces\PersistenceInterface;
-use App\GaelO\Util;
-use App\Role;
-use DateTime;
-use Illuminate\Support\Facades\Log;
+use App\GaelO\Adapters\LaravelFunctionAdapter;
+use App\GaelO\Interfaces\UserRepositoryInterface;
 
-class UserRepository implements PersistenceInterface {
+use App\Models\CenterUser;
+use App\Models\User;
+use App\Models\Role;
+
+use App\GaelO\Constants\Constants;
+use App\GaelO\Util;
+
+class UserRepository implements UserRepositoryInterface {
 
     public function __construct(User $user, Role $roles, CenterUser $centerUser){
         $this->user = $user;
@@ -19,20 +20,20 @@ class UserRepository implements PersistenceInterface {
         $this->centerUser = $centerUser;
     }
 
-    public function create(array $data){
+    private function create(array $data) {
         $user = new User();
         $model = Util::fillObject($data, $user);
         $model->save();
         return $model->toArray();
     }
 
-    public function update($id, array $data) : void{
-        $model = $this->user->find($id);
+    private function update($id, array $data) : void {
+        $model = $this->user->findOrFail($id);
         $model = Util::fillObject($data, $model);
         $model->save();
     }
 
-    public function find($id){
+    public function find($id) : array {
         return $this->user->findOrFail($id)->toArray();
     }
 
@@ -48,7 +49,7 @@ class UserRepository implements PersistenceInterface {
     public function createUser(String $username, String $lastName, String $firstName, String $status,
                                 String $email, ?String $phone, bool $administrator, int $centerCode, String $job,
                                 ?String $orthancAdress, ?String $orthancLogin, ?String $orthancPassword,
-                                String $passwordTemporary, ?String $password, String $creationDate, ?String $lastPasswordUpdate) : array {
+                                String $passwordTemporary, ?String $password, String $creationDate) : array {
 
         $data= ['username' => $username,
         'lastname' => $lastName,
@@ -65,7 +66,7 @@ class UserRepository implements PersistenceInterface {
         'password_temporary'=> $passwordTemporary,
         'password'=> $password,
         'creation_date'=> $creationDate,
-        'last_password_update'=> $lastPasswordUpdate];
+        'last_password_update'=> null];
 
         return $this->create($data);
 
@@ -74,7 +75,8 @@ class UserRepository implements PersistenceInterface {
     public function updateUser(int $id, String $username, ?String $lastName, ?String $firstName, String $status,
                                 String $email, ?String $phone, bool $administrator, int $centerCode, String $job,
                                 ?String $orthancAdress, ?String $orthancLogin, ?String $orthancPassword,
-                                ?String $passwordTemporary, ?String $password, String $creationDate, ?String $lastPasswordUpdate) : void {
+                                ?String $passwordTemporary) : void {
+
         $data= ['username' => $username,
                 'lastname' => $lastName,
                 'firstname' => $firstName,
@@ -87,49 +89,66 @@ class UserRepository implements PersistenceInterface {
                 'orthanc_address' => $orthancAdress,
                 'orthanc_login' => $orthancLogin,
                 'orthanc_password' => $orthancPassword,
-                'password_temporary'=> $passwordTemporary,
-                'password'=> $password,
-                'creation_date'=> $creationDate,
-                'last_password_update'=> $lastPasswordUpdate];
+                'password_temporary'=> $passwordTemporary];
 
         $this->update($id, $data);
 
     }
 
-    public function getUserByUsername(String $username, bool $withTrashed = false){
+    public function updateUserPassword(int $userId, ?string $passwordCurrent ) : void {
+        $data = $this->find($userId);
+        $data['password_previous2'] = $data['password_previous1'];
+        $data['password_previous1'] = $data['password'];
+        $data['password'] = LaravelFunctionAdapter::hash($passwordCurrent);
+        $data['last_password_update'] = Util::now();
+        $this->update($userId, $data);
+    }
+
+    public function updateUserTemporaryPassword(int $userId, ?string $passwordTemporary ) : void {
+        $data = $this->find($userId);
+        $data['password_temporary'] = LaravelFunctionAdapter::hash($passwordTemporary);
+        $data['last_password_update'] = Util::now();
+        $this->update($userId, $data);
+    }
+
+    public function updateUserAttempts(int $userId, int $attempts ) : void {
+        $data = $this->find($userId);
+        $data['attempts'] = $attempts;
+        $this->update($userId, $data);
+    }
+
+    public function updateUserStatus(int $userId, string $status ) : void {
+        $data = $this->find($userId);
+        $data['status'] = $status;
+        $this->update($userId, $data);
+    }
+
+    public function resetAttemptsAndUpdateLastConnexion( int $userId ) : void {
+        $data = $this->find($userId);
+        $data['attempts'] = 0;
+        $data['last_connection'] = Util::now();
+        $this->update($userId, $data);
+    }
+
+    public function getUserByUsername(String $username, bool $withTrashed = false) : array {
         if($withTrashed){
-            $user = $this->user->withTrashed()->where('username', $username)->firstOrFail();
+            $user = $this->user->withTrashed()->where('username', $username)->sole();
         }else{
-            $user = $this->user->where('username', $username)->firstOrFail();
+            $user = $this->user->where('username', $username)->sole();
         }
 
         return $user->toArray();
     }
 
     public function isExistingUsername(String $username) : bool {
-        $user = $this->user->where('username', $username);
+        $user = $this->user->withTrashed()->where('username', $username);
         return $user->count() > 0 ? true : false;
     }
 
 
     public function isExistingEmail(String $email) : bool {
-        $user = $this->user->where('email', $email);
+        $user = $this->user->withTrashed()->where('email', $email);
         return $user->count() > 0 ? true : false;
-    }
-
-    public function isExistingId(int $id) : bool {
-        $user = $this->user->where('id', $id);
-        return $user->count() > 0 ? true : false;
-    }
-
-    public function getUserByEmail(String $email) : array {
-        $user = $this->user->where('email', $email)->first();
-        return empty($user) ? [] : $user->toArray();
-    }
-
-    public function getAdministrators() : array {
-        $user = $this->user->where('administrator', true);
-        return empty($user) ? [] : $user->toArray();
     }
 
     public function reactivateUser(int $id) : void {
@@ -193,27 +212,26 @@ class UserRepository implements PersistenceInterface {
     public function getUsersAffiliatedToCenter(int $centerCode) : array {
 
         $users = $this->user
-        ->where('status', 'Activated')
-        ->join('center_user', function ($join) {
+        ->leftJoin('center_user', function ($join) {
             $join->on('users.id', '=', 'center_user.user_id');
         })->where(function  ($query) use ($centerCode) {
             $query->where('center_user.center_code', '=', $centerCode)
             ->orWhere('users.center_code', '=', $centerCode);
-        })->get();
+        })
+        ->where('status', 'Activated')
+        ->get();
 
         return empty($users) ? [] : $users->toArray();
     }
 
     public function getAllStudiesWithRoleForUser(string $username) : array {
-        $user = $this->user->withTrashed()->where('username', $username)->first();
-        $studies = $user->roles()->join('studies', function ($join) {
-            $join->on('roles.study_name', '=', 'studies.name');
-        })->distinct('study_name')->get();
-        return empty($studies)===true ?  [] : $studies->toArray();
+        $user = $this->user->withTrashed()->where('username', $username)->sole();
+        $studies = $user->roles()->distinct('study_name')->get();
+        return $studies->count() === 0 ?  [] : $studies->pluck('study_name')->toArray();
     }
 
     public function getUsersRoles(int $userId) : array {
-        $roles = $this->user->where('id', $userId)->first()->roles()->get(['name', 'study_name']);
+        $roles = $this->user->findOrFail($userId)->roles()->get(['name', 'study_name']);
         $roles = $roles->groupBy(['study_name'])
                 ->map(function ($group) {
                     return $group->map(function ($value) {
@@ -225,14 +243,14 @@ class UserRepository implements PersistenceInterface {
     }
 
     public function getUsersRolesInStudy(int $userId, String $study) : array {
-        $user = $this->user->where('id', $userId)->first();
-        $roles = $user->roles()->where('study_name', $study)->get()->pluck('name');
-        return empty($roles) ? [] : $roles->toArray();
+        $user = $this->user->findOrFail($userId);
+        $roles = $user->roles()->where('study_name', $study)->get();
+        return $roles->count() === 0 ? [] : $roles->pluck('name')->toArray();
     }
 
     public function addUserRoleInStudy(int $userId, String $study, string $role) : void {
 
-        $user = $this->user->where('id', $userId)->first();
+        $user = $this->user->findOrFail($userId);
         $insertData =[
             'user_id'=>$user['id'],
             'study_name'=> $study,
@@ -252,7 +270,7 @@ class UserRepository implements PersistenceInterface {
 
     public function addAffiliatedCenter(int $userId, int $centerCode) : void {
 
-        $user = $this->user->where('id', $userId)->first();
+        $user = $this->user->findOrFail($userId);
 
         $insertArray = [
             'user_id'=>$user['id'],
@@ -264,7 +282,7 @@ class UserRepository implements PersistenceInterface {
     }
 
     public function deleteAffiliatedCenter(int $userId, int $centerCode) : void {
-        $affiliatedCenter=$this->centerUser->where( ['user_id'=> $userId,'center_code'=>$centerCode] )->firstOrFail();
+        $affiliatedCenter=$this->centerUser->where( ['user_id'=> $userId,'center_code'=>$centerCode] )->sole();
         $affiliatedCenter->delete();
     }
 
@@ -288,11 +306,10 @@ class UserRepository implements PersistenceInterface {
     }
 
     public function getUsersFromStudy(string $studyName) : array {
-        
-        $users = $this->user->join('roles', function ($join) {
-            $join->on('users.id', '=', 'roles.user_id');
-        })->where('study_name', $studyName)->distinct('users.id')->with('roles')->get();
 
+        $users = $this->user->join('roles', function ($join) {
+            $join->on('roles.user_id', '=', 'users.id');
+        })->where('study_name', $studyName)->groupBy('user_id')->with('roles')->get();
         return empty($users) ? [] : $users->toArray();
     }
 }

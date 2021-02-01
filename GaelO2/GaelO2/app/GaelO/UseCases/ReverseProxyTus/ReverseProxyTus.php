@@ -8,6 +8,8 @@ use App\GaelO\Constants\SettingsConstants;
 
 class ReverseProxyTus{
 
+    private HttpClientAdapter $httpClientAdapter;
+
     public function __construct(HttpClientAdapter $httpClientAdapter )
     {
         $this->httpClientAdapter = $httpClientAdapter;

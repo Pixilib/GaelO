@@ -4,7 +4,7 @@ namespace App\GaelO\UseCases\GetCountry;
 
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
-use App\GaelO\Interfaces\PersistenceInterface;
+use App\GaelO\Interfaces\CountryRepositoryInterface;
 use App\GaelO\Services\AuthorizationService;
 use App\GaelO\UseCases\GetCountry\CountryEntity;
 use App\GaelO\UseCases\GetCountry\GetCountryRequest;
@@ -13,8 +13,11 @@ use Exception;
 
 class GetCountry {
 
-    public function __construct(PersistenceInterface $persistenceInterface, AuthorizationService $authorizationService){
-        $this->persistenceInterface = $persistenceInterface;
+    private CountryRepositoryInterface $countryRepositoryInterface;
+    private AuthorizationService $authorizationService;
+
+    public function __construct(CountryRepositoryInterface $countryRepositoryInterface, AuthorizationService $authorizationService){
+        $this->countryRepositoryInterface = $countryRepositoryInterface;
         $this->authorizationService = $authorizationService;
      }
 
@@ -24,15 +27,15 @@ class GetCountry {
 
             $this->checkAuthorization($getCountryRequest->currentUserId);
             $code = $getCountryRequest->code;
-            if ($code == '') {
+            if ($code === null) {
                 $responseArray = [];
-                $countries = $this->persistenceInterface->getAll();
+                $countries = $this->countryRepositoryInterface->getAllCountries();
                 foreach($countries as $country){
                     $responseArray[] = CountryEntity::fillFromDBReponseArray($country);
                 }
                 $getCountryResponse->body = $responseArray;
             }else {
-                $country = $this->persistenceInterface->find($code);
+                $country = $this->countryRepositoryInterface->getCountryByCode($code);
                 $getCountryResponse->body = CountryEntity::fillFromDBReponseArray($country);
             }
             $getCountryResponse->status = 200;

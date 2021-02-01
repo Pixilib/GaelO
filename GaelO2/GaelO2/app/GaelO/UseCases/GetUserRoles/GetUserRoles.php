@@ -4,14 +4,17 @@ namespace App\GaelO\UseCases\GetUserRoles;
 
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
-use App\GaelO\Interfaces\PersistenceInterface;
+use App\GaelO\Interfaces\UserRepositoryInterface;
 use App\GaelO\Services\AuthorizationService;
 use Exception;
 
 class GetUserRoles {
 
-    public function __construct(PersistenceInterface $persistenceInterface, AuthorizationService $authorizationService){
-        $this->persistenceInterface = $persistenceInterface;
+    private UserRepositoryInterface $userRepositoryInterface;
+    private AuthorizationService $authorizationService;
+
+    public function __construct(UserRepositoryInterface $userRepositoryInterface, AuthorizationService $authorizationService){
+        $this->userRepositoryInterface = $userRepositoryInterface;
         $this->authorizationService = $authorizationService;
     }
 
@@ -20,10 +23,10 @@ class GetUserRoles {
         try{
 
             $this->checkAuthorization($getUserRolesRequest->currentUserId, $getUserRolesRequest->userId, $getUserRolesRequest->study);
-            if( empty($getUserRolesRequest->study) ){
-                $roles = $this->persistenceInterface->getUsersRoles($getUserRolesRequest->userId);
+            if( $getUserRolesRequest->study === null ){
+                $roles = $this->userRepositoryInterface->getUsersRoles($getUserRolesRequest->userId);
             }else {
-                $roles = $this->persistenceInterface->getUsersRolesInStudy($getUserRolesRequest->userId, $getUserRolesRequest->study);
+                $roles = $this->userRepositoryInterface->getUsersRolesInStudy($getUserRolesRequest->userId, $getUserRolesRequest->study);
             }
 
             $getUserRoleResponse->body = $roles;

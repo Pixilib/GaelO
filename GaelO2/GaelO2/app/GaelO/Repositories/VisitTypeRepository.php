@@ -2,25 +2,20 @@
 
 namespace App\GaelO\Repositories;
 
-use App\VisitType;
-use App\GaelO\Interfaces\PersistenceInterface;
+use App\Models\VisitType;
+use App\GaelO\Interfaces\VisitTypeRepositoryInterface;
 use App\GaelO\Util;
-use Exception;
 
-class VisitTypeRepository implements PersistenceInterface {
+class VisitTypeRepository implements VisitTypeRepositoryInterface {
 
     public function __construct(VisitType $visitType){
         $this->visitType = $visitType;
     }
 
-    public function create(array $data){
+    private function create(array $data){
         $visitType = new VisitType();
         $model = Util::fillObject($data, $visitType);
         $model->save();
-    }
-
-    public function update($id, array $data) : void {
-        throw new Exception('Not updatable, delete / create a new visit type');
     }
 
     public function find($id) : array {
@@ -31,12 +26,8 @@ class VisitTypeRepository implements PersistenceInterface {
         $this->visitType->findOrFail($id)->delete();
     }
 
-    public function getAll() : array {
-        throw new Exception('Non Requestable all Visit Types');
-    }
-
     public function createVisitType(int $visitGroupId, String $name, int $visitOrder, bool $localFormNeeded, bool $qcNeeded, bool $reviewNeeded,
-                                    bool $optional, int $limitLowDays, int $limitUpDays, String $anonProfile){
+                                    bool $optional, int $limitLowDays, int $limitUpDays, String $anonProfile) : void {
 
         $data = [
             'visit_group_id'=> $visitGroupId,
@@ -66,5 +57,3 @@ class VisitTypeRepository implements PersistenceInterface {
     }
 
 }
-
-?>

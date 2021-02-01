@@ -6,22 +6,24 @@ use App\GaelO\Adapters\LaravelFunctionAdapter;
 use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
-use App\GaelO\Interfaces\PersistenceInterface;
-
+use App\GaelO\Interfaces\TrackerRepositoryInterface;
 use App\GaelO\UseCases\ModifyUser\ModifyUserRequest;
 use App\GaelO\UseCases\ModifyUser\ModifyUserResponse;
 use App\GaelO\Services\AuthorizationService;
 use App\GaelO\Services\MailServices;
-use App\GaelO\Services\TrackerService;
 use App\GaelO\Services\UserService;
 use Exception;
 
 class ModifyUser {
 
-    public function __construct(PersistenceInterface $persistenceInterface, AuthorizationService $authorizationService, TrackerService $trackerService, MailServices $mailService, UserService $userService){
-        $this->persistenceInterface = $persistenceInterface;
+    private AuthorizationService $authorizationService;
+    private TrackerRepositoryInterface $trackerRepositoryInterface;
+    private MailServices $mailService;
+    private UserService $userService;
+
+    public function __construct(AuthorizationService $authorizationService, TrackerRepositoryInterface $trackerRepositoryInterface, MailServices $mailService, UserService $userService){
         $this->authorizationService = $authorizationService;
-        $this->trackerService = $trackerService;
+        $this->trackerRepositoryInterface = $trackerRepositoryInterface;
         $this->mailService = $mailService;
         $this->userService = $userService;
     }
@@ -49,7 +51,12 @@ class ModifyUser {
                 );
             }
 
-            $this->writeInTracker($modifyUserRequest->userId, $modifyUserRequest->status);
+            $details = [
+                'modified_user_id'=>$modifyUserRequest->userId,
+                'status'=>$modifyUserRequest->status
+            ];
+
+            $this->trackerRepositoryInterface->writeAction($modifyUserRequest->currentUserId, Constants::TRACKER_ROLE_ADMINISTRATOR, null, null, Constants::TRACKER_EDIT_USER, $details);
 
             $modifyUserResponse->status = 200;
             $modifyUserResponse->statusText = 'OK';
@@ -66,15 +73,6 @@ class ModifyUser {
 
     }
 
-    private function writeInTracker($userId, $status){
-        $details = [
-            'modified_user_id'=>$userId,
-            'status'=>$status
-        ];
-        $this->trackerService->writeAction($userId, Constants::TRACKER_ROLE_ADMINISTRATOR, null, null, Constants::TRACKER_EDIT_USER, $details);
-
-    }
-
     private function checkAuthorization($userId)  {
         $this->authorizationService->setCurrentUserAndRole($userId);
         if( ! $this->authorizationService->isAdmin() ) {
@@ -82,5 +80,3 @@ class ModifyUser {
         };
     }
 }
-
-?>

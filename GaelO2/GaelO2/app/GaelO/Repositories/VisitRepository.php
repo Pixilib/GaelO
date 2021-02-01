@@ -3,33 +3,21 @@
 namespace App\GaelO\Repositories;
 
 use App\GaelO\Constants\Constants;
-use App\Visit;
-use App\GaelO\Interfaces\PersistenceInterface;
+use App\Models\Visit;
+use App\GaelO\Interfaces\VisitRepositoryInterface;
 use App\GaelO\Util;
-use App\ReviewStatus;
+use App\Models\ReviewStatus;
 use Exception;
 use Illuminate\Support\Facades\DB;
 
-class VisitRepository implements PersistenceInterface {
+class VisitRepository implements VisitRepositoryInterface {
 
     public function __construct(){
         $this->visit = new Visit();
         $this->reviewStatus = new ReviewStatus();
     }
 
-    public function create(array $data){
-        $visit = new Visit();
-        $model = Util::fillObject($data, $visit);
-        $model->save();
-    }
-
-    public function update($id, array $data) : void {
-        $model = $this->visit->find($id);
-        $model = Util::fillObject($data, $model);
-        $model->save();
-    }
-
-    public function find($id){
+    public function find($id) : array {
         return $this->visit->findOrFail($id)->toArray();
     }
 
@@ -61,16 +49,6 @@ class VisitRepository implements PersistenceInterface {
         });
     }
 
-    public function getAll() : array {
-        $visits = $this->visit->get();
-        return empty($visits) ? []  : $visits->toArray();
-    }
-
-    public function getReviewsInStudy(string $studyName){
-        $reviews = $this->visit->reviews()->where([['study_name', '=', $studyName]])->get();
-        return empty($reviews) ? []  : $reviews->toArray();
-    }
-
     public function isExistingVisit(int $patientCode, int $visitTypeId) : bool {
         $visit = $this->visit->where([['patient_code', '=', $patientCode], ['visit_type_id', '=', $visitTypeId]])->get();
         return $visit->count() > 0 ? true : false;
@@ -91,7 +69,6 @@ class VisitRepository implements PersistenceInterface {
 
     public function updateReviewAvailability(int $visitId, string $studyName, bool $available) : void {
         $reviewStatusEntity = $this->visit->findOrFail($visitId)->reviewStatus()->where('study_name', $studyName)->get();
-        //SK A VOIR SI ON PEUT PAS SECURISER DIFFEREMENT
         if($reviewStatusEntity->count() !== 1 ){
             throw new Exception('Should be only one answer');
         }
@@ -99,12 +76,12 @@ class VisitRepository implements PersistenceInterface {
         $reviewStatusEntity[0]->save();
     }
 
-    public function getPatientsVisits(int $patientCode){
+    public function getPatientsVisits(int $patientCode) : array {
         $visits = $this->visit->with('visitType')->where('patient_code', $patientCode)->get();
         return empty($visits) ? [] : $visits->toArray();
     }
 
-    public function getPatientsVisitsWithReviewStatus(int $patientCode, string $studyName){
+    public function getPatientsVisitsWithReviewStatus(int $patientCode, string $studyName) : array {
         $visits = $this->visit->with('visitType')->where('patient_code', $patientCode)
         ->join('reviews_status', function ($join) {
             $join->on('reviews_status.visit_id', '=', 'visits.id');
@@ -114,86 +91,105 @@ class VisitRepository implements PersistenceInterface {
         return empty($visits) ? [] : $visits->toArray();
     }
 
-    public function getPatientVisitsWithContext(int $patientCode){
+    public function getPatientListVisitsWithContext(array $patientCodeArray) : array {
 
-        $answer = $this->visit->join('visit_types', function ($join) {
-            $join->on('visits.visit_type_id', '=', 'visit_types.id');
-        })->join('visit_groups', function ($join) {
-            $join->on('visit_types.visit_group_id', '=', 'visit_groups.id');
-        })->where('patient_code', $patientCode)
-        ->select(['visits.*', 'visit_types.name', 'visit_types.visit_group_id', 'visit_types.order', 'visit_types.optional','visit_groups.modality', 'visit_groups.study_name'])->get();
-
+        $answer = $this->visit->with('visitType')->whereIn('patient_code', $patientCodeArray)->get();
         return $answer->count() === 0 ? []  : $answer->toArray();
-
     }
 
-    public function getPatientListVisitsWithContext(array $patientCodeArray){
+    public function getVisitsInStudy(string $studyName) : array {
 
-
-        $answer = $this->visit->join('visit_types', function ($join) {
-            $join->on('visits.visit_type_id', '=', 'visit_types.id');
-        })->join('visit_groups', function ($join) {
-            $join->on('visit_types.visit_group_id', '=', 'visit_groups.id');
-        })->whereIn('patient_code', $patientCodeArray)
-        ->select(['visits.*', 'visit_types.name', 'visit_types.visit_group_id', 'visit_types.order', 'visit_types.optional','visit_groups.modality', 'visit_groups.study_name'])->get();
-
-        return $answer->count() === 0 ? []  : $answer->toArray();
-
-    }
-
-    public function getVisitsInStudy(string $studyName){
-
-        $answer = $this->visit->join('visit_types', function ($join) {
-            $join->on('visits.visit_type_id', '=', 'visit_types.id');
-        })->join('visit_groups', function ($join) {
-            $join->on('visit_types.id', '=', 'visit_groups.id');
-        })->where('study_name', $studyName)
-        ->select(['visits.*', 'visit_types.name', 'visit_types.visit_group_id', 'visit_types.order', 'visit_types.optional','visit_groups.modality', 'visit_groups.study_name'])
+        $answer = $this->visit->with('visitType')
+        ->whereHas('visitType', function($query) use ($studyName) {
+            $query->whereHas('visitGroup', function($query) use ($studyName){
+                $query->where('study_name', $studyName);
+            });
+        })
         ->get();
 
         return $answer->count() === 0 ? []  : $answer->toArray();
     }
 
-    public function getVisitsInStudyAwaitingControllerAction(string $studyName){
+
+    public function hasVisitsInStudy(string $studyName) : bool {
+
+        $visits = $this->getVisitsInStudy($studyName);
+
+        return sizeof($visits) === 0 ? false  : true;
+
+    }
+
+    public function getVisitsInVisitGroup(int $visitGroupId) : array {
+
+        $visits = $this->visit->whereHas('visitType', function($query) use ($visitGroupId) {
+            $query->where('visit_group_id', $visitGroupId);
+        })
+        ->get();
+        return $visits->toArray();
+    }
+
+    public function hasVisitsInVisitGroup(int $visitGroupId) : bool {
+        $visits = $this->getVisitsInVisitGroup($visitGroupId);
+        return sizeof($visits) > 0 ? true : false;
+    }
+
+    public function getVisitsInStudyAwaitingControllerAction(string $studyName) : array {
         $controllerActionStatusArray = array(Constants::QUALITY_CONTROL_NOT_DONE, Constants::QUALITY_CONTROL_WAIT_DEFINITIVE_CONCLUSION);
 
-        $answer = $this->visit->join('visit_types', function ($join) {
-            $join->on('visits.visit_type_id', '=', 'visit_types.id');
-        })->join('visit_groups', function ($join) {
-            $join->on('visit_types.id', '=', 'visit_groups.id');
+        $answer = $this->visit->with('visitType')
+        ->whereHas('visitType', function($query) use ($studyName) {
+            $query->whereHas('visitGroup', function($query) use ($studyName){
+                $query->where('study_name', $studyName);
+            });
         })
-        ->where('study_name', $studyName)
         ->where('status_done', Constants::VISIT_STATUS_DONE)
         ->whereIn('state_quality_control', $controllerActionStatusArray)
-        ->select(['visits.*', 'visit_types.name', 'visit_types.visit_group_id', 'visit_types.order', 'visit_types.optional','visit_groups.modality', 'visit_groups.study_name'])->get();
+        ->get();
 
         return $answer->count() === 0 ? []  : $answer->toArray();
     }
 
 
-    public function getVisitsAwaitingReviews(string $studyName){
+    public function getVisitsAwaitingReviews(string $studyName) : array{
 
-        $answer = $this->visit->join('visit_types', function ($join) {
-            $join->on('visits.visit_type_id', '=', 'visit_types.id');
-        })->join('visit_groups', function ($join) {
-            $join->on('visit_types.id', '=', 'visit_groups.id');
-        })->join('reviews_status', function ($join) {
+        $answer = $this->visit->with('visitType')
+        ->join('reviews_status', function ($join) use ($studyName) {
             $join->on('visits.id', '=', 'reviews_status.visit_id');
-        })->where('visit_groups.study_name', $studyName)->where('review_available', true)
-        ->select(['visits.*', 'visit_types.name', 'visit_types.visit_group_id', 'visit_types.order', 'visit_types.optional','visit_groups.modality', 'visit_groups.study_name'])
+            $join->on('reviews_status.study_name', '=', $studyName);
+        })
+        ->where('review_available', true)
         ->get();
 
         return $answer->count() === 0 ? []  : $answer->toArray();
 
     }
 
-    public function getVisitsAwaitingReviewForUser(string $studyName, int $userId){
+    public function getVisitsAwaitingReviewForUser(string $studyName, int $userId) : array {
 
-        $answer = $this->visit->join('visit_types', function ($join) {
-            $join->on('visits.visit_type_id', '=', 'visit_types.id');
-        })->join('visit_groups', function ($join) {
-            $join->on('visit_types.id', '=', 'visit_groups.id');
-        })->join('reviews_status', function ($join) use ($studyName) {
+        $answer = $this->visit->with('visitType')
+        ->join('reviews_status', function ($join) use ($studyName) {
+            $join->on('visits.id', '=', 'reviews_status.visit_id');
+            $join->on('study_name', '=', $studyName);
+        })
+        ->where(function($query) use ($studyName, $userId)
+            {
+                $query->selectRaw('count(*)')
+                ->from('reviews')
+                ->whereColumn('reviews.visit_id', '=', 'visits.id')
+                ->where('study_name', '=', $studyName)
+                ->where('validated', true )
+                ->where('user_id', $userId);
+            }, '=' , 0)
+        ->where('review_available', true)
+        ->get();
+
+        return $answer->count() === 0 ? []  : $answer->toArray();
+
+    }
+
+    public function getPatientsHavingAtLeastOneAwaitingReviewForUser(string $studyName, int $userId) : array {
+
+        $answer = $this->visit->join('reviews_status', function ($join) use ($studyName) {
             $join->on('visits.id', '=', 'reviews_status.visit_id');
             $join->on('reviews_status.study_name', '=', $studyName);
         })
@@ -206,42 +202,15 @@ class VisitRepository implements PersistenceInterface {
                 ->where('validated', true )
                 ->where('user_id', $userId);
             }, '=' , 0)
-        ->where('visit_groups.study_name', $studyName)
         ->where('review_available', true)
-        ->get();
+        ->distinct('patient_code')
+        ->pluck('patient_code');
 
         return $answer->count() === 0 ? []  : $answer->toArray();
 
     }
 
-    public function getPatientsHavingAtLeastOneAwaitingReviewForUser(string $studyName, int $userId){
-
-        $answer = $this->visit->join('visit_types', function ($join) {
-            $join->on('visits.visit_type_id', '=', 'visit_types.id');
-        })->join('visit_groups', function ($join) {
-            $join->on('visit_types.id', '=', 'visit_groups.id');
-        })->join('reviews_status', function ($join) use ($studyName) {
-            $join->on('visits.id', '=', 'reviews_status.visit_id');
-            $join->on('reviews_status.study_name', '=', $studyName);
-        })
-        ->where(function($query) use ($studyName, $userId)
-            {
-                $query->selectRaw('count(*)')
-                ->from('reviews')
-                ->whereColumn('reviews.visit_id', '=', 'visits.id')
-                ->where('study_name', '=', $studyName)
-                ->where('validated', true )
-                ->where('user_id', $userId);
-            }, '=' , 0)
-        ->where('visit_groups.study_name', $studyName)
-        ->where('review_available', true)
-        ->groupBy('patient_code')->get();
-
-        return $answer->count() === 0 ? []  : $answer->pluck('patient_code')->toArray();
-
-    }
-
-    public function isVisitAvailableForReview(int $visitId, string $studyName, int $userId){
+    public function isVisitAvailableForReview(int $visitId, string $studyName, int $userId) : bool{
 
         $answer = $this->visit->join('reviews_status', function ($join) use ($studyName, $visitId) {
             $join->on('visits.id', '=', $visitId);
@@ -263,8 +232,8 @@ class VisitRepository implements PersistenceInterface {
 
     public function editQc(int $visitId, string $stateQc, int $controllerId, bool $imageQc, bool $formQc, ?string $imageQcComment, ?string $formQcComment) : void{
         $visitEntity = $this->visit->findOrFail($visitId);
-        $visitEntity['state_quality_control'] = $stateQc;
 
+        $visitEntity['state_quality_control'] = $stateQc;
         $visitEntity['controller_user_id'] = $controllerId;
         $visitEntity['control_date'] = Util::now();
         $visitEntity['image_quality_control'] = $imageQc;
@@ -297,7 +266,7 @@ class VisitRepository implements PersistenceInterface {
 
     }
 
-    public function setCorrectiveAction(int $visitId, int $investigatorId, bool $newUpload, bool $newInvestigatorForm, bool $correctiveActionApplyed, ?string $comment ){
+    public function setCorrectiveAction(int $visitId, int $investigatorId, bool $newUpload, bool $newInvestigatorForm, bool $correctiveActionApplyed, ?string $comment ) : void{
 
         $visitEntity = $this->visit->findOrFail($visitId);
 
@@ -326,24 +295,23 @@ class VisitRepository implements PersistenceInterface {
      */
     public function getImagingVisitsAwaitingUpload(string $studyName, array $centerCode) : array {
 
-        $answer = $this->visit->join('visit_types', function ($join) {
-            $join->on('visits.visit_type_id', '=', 'visit_types.id');
-        })->join('visit_groups', function ($join) {
-            $join->on('visit_types.id', '=', 'visit_groups.id');
-        })->join('patients', function ($join) {
+        $answer = $this->visit->with('visitType')
+        ->join('patients', function ($join) use ($centerCode) {
             $join->on('visits.patient_code', '=', 'patients.code');
+            $join->whereIn('center_code', $centerCode );
         })
-        ->where('visit_groups.study_name', $studyName)
+        ->whereHas('visitType', function($query) use ($studyName) {
+            $query->whereHas('visitGroup', function($query) use ($studyName){
+                $query->where('study_name', $studyName);
+                $query->whereIn('modality', ['PT', 'MR', 'CT', 'US', 'NM', 'RT']);
+            });
+        })
         ->where('status_done', Constants::VISIT_STATUS_DONE)
         ->where('upload_status', Constants::UPLOAD_STATUS_NOT_DONE)
-        ->whereIn('visit_groups.modality', ['PT', 'MR', 'CT', 'US', 'NM', 'RT'])
-        ->whereIn('patients.center_code', $centerCode)
-        ->select(['visits.*', 'patients.*', 'visit_types.name', 'visit_groups.modality'])->get();
+        ->get();
 
         return $answer->count() === 0 ? []  : $answer->toArray();
     }
 
 
 }
-
-?>

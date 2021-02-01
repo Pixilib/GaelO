@@ -1,14 +1,52 @@
 <?php
 
-/** @var \Illuminate\Database\Eloquent\Factory $factory */
+namespace Database\Factories;
 
-use App\Role;
-use Faker\Generator as Faker;
+use App\Models\Role;
+use App\Models\User;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
-$factory->define(Role::class, function (Faker $faker) {
-    return [
-        'name'=> $faker->randomElement(['Investigator', 'Monitor', 'Supervisor', 'Reviewer']),
-        'user_id'=> $faker->unique()->randomNumber,
-        'study_name'=> $faker->word
-    ];
-});
+class RoleFactory extends Factory
+{
+
+    protected $model = Role::class;
+
+    public function definition()
+    {
+        return [
+            'name'=> null,
+            'user_id'=> null,
+            'study_name'=> null
+        ];
+    }
+
+    public function userId(int $userId){
+
+        return $this->state(function (array $attributes) use ($userId) {
+            return [
+                'user_id' => $userId,
+            ];
+        });
+
+    }
+
+    public function studyName(string $studyName){
+
+        return $this->state(function (array $attributes) use ($studyName) {
+            return [
+                'study_name' => $studyName,
+            ];
+        });
+
+    }
+
+    public function roleName(string $roleName){
+
+        return $this->state(function (array $attributes) use ($roleName) {
+            return [
+                'name' => $roleName,
+            ];
+        });
+
+    }
+}

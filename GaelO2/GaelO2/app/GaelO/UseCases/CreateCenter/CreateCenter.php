@@ -4,19 +4,22 @@ namespace App\GaelO\UseCases\CreateCenter;
 
 use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOException;
-use App\GaelO\Interfaces\PersistenceInterface;
 use App\GaelO\Services\AuthorizationService;
-use App\GaelO\Services\TrackerService;
 use Exception;
 use App\GaelO\Exceptions\GaelOConflictException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
+use App\GaelO\Interfaces\CenterRepositoryInterface;
+use App\GaelO\Interfaces\TrackerRepositoryInterface;
 
 class CreateCenter {
 
-    public function __construct(PersistenceInterface $persistenceInterface, AuthorizationService $authorizationService, TrackerService $trackerService){
+    private CenterRepositoryInterface $centerRepositoryInterface;
+    private TrackerRepositoryInterface $trackerRepositoryInterface;
 
-        $this->persistenceInterface = $persistenceInterface;
-        $this->trackerService = $trackerService;
+    public function __construct(CenterRepositoryInterface $centerRepositoryInterface, AuthorizationService $authorizationService, TrackerRepositoryInterface $trackerRepositoryInterface){
+
+        $this->centerRepositoryInterface = $centerRepositoryInterface;
+        $this->trackerRepositoryInterface = $trackerRepositoryInterface;
         $this->authorizationService = $authorizationService;
 
     }
@@ -30,15 +33,15 @@ class CreateCenter {
             $name = $createCenterRequest->name;
             $countryCode = $createCenterRequest->countryCode;
 
-            if($this->persistenceInterface->isKnownCenter($code)){
+            if($this->centerRepositoryInterface->isKnownCenter($code)){
                 throw new GaelOConflictException("Center Code already used");
             };
 
-            if(!empty($this->persistenceInterface->getCenterByName($createCenterRequest->name))){
+            if(!empty($this->centerRepositoryInterface->getCenterByName($createCenterRequest->name))){
                 throw new GaelOConflictException("Center Name already used.");
             };
 
-            $this->persistenceInterface->createCenter($code, $name, $countryCode);
+            $this->centerRepositoryInterface->createCenter($code, $name, $countryCode);
 
             $actionDetails = [
                 'createdCenterCode'=>$code,
@@ -46,7 +49,7 @@ class CreateCenter {
                 'createdCenterCountryCode'=>$countryCode
             ];
 
-            $this->trackerService->writeAction($createCenterRequest->currentUserId, Constants::TRACKER_ROLE_ADMINISTRATOR, null, null, Constants::TRACKER_EDIT_CENTER, $actionDetails);
+            $this->trackerRepositoryInterface->writeAction($createCenterRequest->currentUserId, Constants::TRACKER_ROLE_ADMINISTRATOR, null, null, Constants::TRACKER_EDIT_CENTER, $actionDetails);
 
             $createCenterResponse->status = 201;
             $createCenterResponse->statusText = 'Created';

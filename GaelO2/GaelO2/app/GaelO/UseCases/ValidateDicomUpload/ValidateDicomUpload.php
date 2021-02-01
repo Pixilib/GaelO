@@ -6,25 +6,34 @@ use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Exceptions\GaelOValidateDicomException;
+use App\GaelO\Interfaces\TrackerRepositoryInterface;
 use App\GaelO\Services\AuthorizationVisitService;
 use App\GaelO\Services\MailServices;
 use App\GaelO\Services\OrthancService;
 use App\GaelO\Services\PathService;
 use App\GaelO\Services\RegisterOrthancStudyService;
-use App\GaelO\Services\TrackerService;
 use App\GaelO\Services\TusService;
 use App\GaelO\Services\VisitService;
+use App\GaelO\Util;
 use Exception;
 use ZipArchive;
 
 class ValidateDicomUpload{
+
+    private AuthorizationVisitService $authorizationService;
+    private TusService $tusService;
+    private OrthancService $orthancService;
+    private RegisterOrthancStudyService $registerOrthancStudyService;
+    private VisitService $visitService;
+    private TrackerRepositoryInterface $trackerRepositoryInterface;
+    private MailServices $mailServices;
 
     public function __construct(AuthorizationVisitService $authorizationService,
                         TusService $tusService,
                         OrthancService $orthancService,
                         RegisterOrthancStudyService $registerOrthancStudyService,
                         VisitService $visitService,
-                        TrackerService $trackerService,
+                        TrackerRepositoryInterface $trackerRepositoryInterface,
                         MailServices $mailServices)
     {
         $this->authorizationService = $authorizationService;
@@ -32,7 +41,7 @@ class ValidateDicomUpload{
         $this->orthancService = $orthancService;
         $this->visitService = $visitService;
         $this->tusService = $tusService;
-        $this->trackerService = $trackerService;
+        $this->trackerRepositoryInterface = $trackerRepositoryInterface;
         $this->mailServices = $mailServices;
     }
 
@@ -67,12 +76,12 @@ class ValidateDicomUpload{
                 $tusTempZip = $this->tusService->getZip($tusFileId);
 
                 $zipSize=filesize($tusTempZip);
-                $uncompressedzipSize=PathService::getZipUncompressedSize($tusTempZip);
+                $uncompressedzipSize= Util::getZipUncompressedSize($tusTempZip);
                 if ($uncompressedzipSize/$zipSize > 50) {
                     throw new GaelOValidateDicomException("Bomb Zip");
                 }
 
-                $zip=new ZipArchive;
+                $zip=new ZipArchive();
                 $zip->open($tusTempZip);
                 $zip->extractTo($unzipedPath);
                 $zip->close();
@@ -133,7 +142,7 @@ class ValidateDicomUpload{
                 'visitGroup'=>$visitGroup
             ];
 
-            $this->trackerService->writeAction($validateDicomUploadRequest->currentUserId,
+            $this->trackerRepositoryInterface->writeAction($validateDicomUploadRequest->currentUserId,
                             Constants::ROLE_INVESTIGATOR,
                             $studyName,
                             $validateDicomUploadRequest->visitId,
@@ -179,7 +188,7 @@ class ValidateDicomUpload{
     private function sendFolderToOrthanc(string $unzipedPath, int $numberOfInstances)  : string {
 
         //Recursive scann of the unzipped folder
-        $filesArray = PathService::getPathAsFileArray($unzipedPath);
+        $filesArray = Util::getPathAsFileArray($unzipedPath);
 
         if(sizeof($filesArray) != $numberOfInstances){
             throw new GaelOValidateDicomException("Number Of Uploaded Files dosen't match expected instance number");
@@ -197,7 +206,7 @@ class ValidateDicomUpload{
         $numberOfImportedInstances = sizeof($uploadSuccessResponseArray);
 
         //Delete original file after import
-        PathService::recursive_directory_delete($unzipedPath);
+        Util::recursiveDirectoryDelete($unzipedPath);
 
         if (count($importedMap) == 1 && $numberOfImportedInstances === $numberOfInstances) {
             return array_key_first ($importedMap);
@@ -225,12 +234,12 @@ class ValidateDicomUpload{
         $actionDetails = [
             'reason'=>$errorMessage
         ];
-        $this->trackerService->writeAction($userId, Constants::ROLE_INVESTIGATOR, $studyName, $visitId, Constants::TRACKER_UPLOAD_VALIDATION_FAILED, $actionDetails);
+        $this->trackerRepositoryInterface->writeAction($userId, Constants::ROLE_INVESTIGATOR, $studyName, $visitId, Constants::TRACKER_UPLOAD_VALIDATION_FAILED, $actionDetails);
 
         $this->mailServices->sendValidationFailMessage($visitId, $patientCode, $visitType,
                 $studyName, $unzipedPath, $userId, $errorMessage);
 
-        PathService::recursive_directory_delete($unzipedPath);
+        Util::recursiveDirectoryDelete($unzipedPath);
     }
 
 }

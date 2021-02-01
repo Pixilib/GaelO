@@ -4,6 +4,7 @@ namespace App\GaelO\Services;
 
 use App\GaelO\Constants\Constants;
 use App\GaelO\Repositories\PatientRepository;
+use Illuminate\Support\Facades\Log;
 
 class AuthorizationPatientService {
 

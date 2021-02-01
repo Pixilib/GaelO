@@ -14,13 +14,14 @@ class CreateCenterUserTable extends Migration
     public function up()
     {
         Schema::create('center_user', function (Blueprint $table) {
+            $table->id();
             $table->unsignedBigInteger('user_id')->nullable(false);
             $table->unsignedInteger('center_code')->nullable(false);
             $table->timestamps();
             //Dependencies
             $table->foreign('center_code')->references('code')->on('centers');
             $table->foreign('user_id')->references('id')->on('users');
-            $table->primary(array('user_id', 'center_code'));
+            $table->unique(['user_id', 'center_code']);
 
         });
     }

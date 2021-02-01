@@ -5,7 +5,7 @@ namespace App\GaelO\Services;
 use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOBadRequestException;
 use App\GaelO\Exceptions\GaelOConflictException;
-use App\GaelO\Repositories\UserRepository;
+use App\GaelO\Interfaces\UserRepositoryInterface;
 use App\GaelO\UseCases\CreateUser\CreateUserRequest;
 use App\GaelO\UseCases\ModifyUser\ModifyUserRequest;
 use App\GaelO\UseCases\ModifyUserIdentification\ModifyUserIdentificationRequest;
@@ -13,15 +13,16 @@ use App\GaelO\Util;
 
 class UserService
 {
-    public function __construct(UserRepository $persistenceInterface)
+    private UserRepositoryInterface $userRepositoryInterface;
+
+    public function __construct(UserRepositoryInterface $userRepositoryInterface)
     {
-        $this->persistenceInterface = $persistenceInterface;
+        $this->userRepositoryInterface = $userRepositoryInterface;
     }
 
     public function createUser(CreateUserRequest $createUserRequest, string $passwordTemporary) : array {
         $password = null;
         $creationDate = Util::now();
-        $lastPasswordUpdate = null;
         //Check form completion
         $this->checkFormComplete($createUserRequest);
         $this->checkEmailValid($createUserRequest->email);
@@ -30,7 +31,7 @@ class UserService
         $this->checkPhoneCorrect($createUserRequest->phone);
 
         //In no Exception thrown by checks methods, user are ok to be written in db
-        $createdUserEntity = $this->persistenceInterface->createUser($createUserRequest->username,
+        $createdUserEntity = $this->userRepositoryInterface->createUser($createUserRequest->username,
                             $createUserRequest->lastname,
                             $createUserRequest->firstname,
                             Constants::USER_STATUS_UNCONFIRMED,
@@ -44,15 +45,14 @@ class UserService
                             $createUserRequest->orthancPassword,
                             $passwordTemporary,
                             $password,
-                            $creationDate,
-                            $lastPasswordUpdate);
+                            $creationDate);
 
         return $createdUserEntity;
 
     }
 
     public function updateUser(ModifyUserRequest $modifyUserRequest, ?string $temporaryPassword) : void {
-        $user = $this->persistenceInterface->find($modifyUserRequest->userId);
+        $user = $this->userRepositoryInterface->find($modifyUserRequest->userId);
 
         $this->checkFormComplete($modifyUserRequest);
         $this->checkEmailValid($modifyUserRequest->email);
@@ -62,13 +62,8 @@ class UserService
 
         //These property can't be modified in user edition
         $passwordTemporary = $temporaryPassword == null ? $user['password_temporary'] : $temporaryPassword;
-        $modifyUserRequest->password = $user['password'];
-        $modifyUserRequest->password_previous1 = $user['password_previous1'];
-        $modifyUserRequest->password_previous2 = $user['password_previous2'];
-        $modifyUserRequest->last_password_update = $user['last_password_update'];
-        $modifyUserRequest->creation_date = $user['creation_date'];
 
-        $this->persistenceInterface->updateUser($user['id'], $modifyUserRequest->username,
+        $this->userRepositoryInterface->updateUser($user['id'], $modifyUserRequest->username,
                                                             $modifyUserRequest->lastname,
                                                             $modifyUserRequest->firstname,
                                                             $modifyUserRequest->status,
@@ -80,14 +75,11 @@ class UserService
                                                             $modifyUserRequest->orthancAddress,
                                                             $modifyUserRequest->orthancLogin,
                                                             $modifyUserRequest->orthancPassword,
-                                                            $passwordTemporary,
-                                                            $modifyUserRequest->password,
-                                                            $modifyUserRequest->creation_date,
-                                                            $modifyUserRequest->last_password_update);
+                                                            $passwordTemporary);
     }
 
     public function patchUser(ModifyUserIdentificationRequest $modifyUserIdentificationRequest) {
-        $user = $this->persistenceInterface->find($modifyUserIdentificationRequest->userId);
+        $user = $this->userRepositoryInterface->find($modifyUserIdentificationRequest->userId);
 
         if($modifyUserIdentificationRequest->email !== $user['email']) {
             $this->checkEmailValid($modifyUserIdentificationRequest->email);
@@ -95,7 +87,7 @@ class UserService
         }
         if($modifyUserIdentificationRequest->username !== $user['username']) $this->checkUsernameUnique($modifyUserIdentificationRequest->username);
 
-        $this->persistenceInterface->updateUser($user['id'], $modifyUserIdentificationRequest->username,
+        $this->userRepositoryInterface->updateUser($user['id'], $modifyUserIdentificationRequest->username,
                                                             $modifyUserIdentificationRequest->lastname,
                                                             $modifyUserIdentificationRequest->firstname,
                                                             $user['status'],
@@ -141,13 +133,13 @@ class UserService
     }
 
     private function checkUsernameUnique(string $username) : void {
-        $knownUsername = $this->persistenceInterface->isExistingUsername($username);
+        $knownUsername = $this->userRepositoryInterface->isExistingUsername($username);
         if($knownUsername) throw new GaelOConflictException("Username Already Used");
 
     }
 
     private function checkEmailUnique(string $email) : void {
-        $knownEmail = $this->persistenceInterface->isExistingEmail($email);
+        $knownEmail = $this->userRepositoryInterface->isExistingEmail($email);
         if($knownEmail) throw new GaelOConflictException("Email Already Known");
 
     }

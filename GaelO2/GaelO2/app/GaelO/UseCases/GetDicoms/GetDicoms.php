@@ -5,17 +5,18 @@ namespace App\GaelO\UseCases\GetDicoms;
 use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
-use App\GaelO\Interfaces\PersistenceInterface;
+use App\GaelO\Interfaces\OrthancStudyRepositoryInterface;
 use App\GaelO\Services\AuthorizationVisitService;
 use Exception;
 
 class GetDicoms{
 
     private AuthorizationVisitService $authorizationVisitService;
+    private OrthancStudyRepositoryInterface $orthancStudyRepositoryInterface;
 
-    public function __construct(PersistenceInterface $persistenceInterface, AuthorizationVisitService $authorizationVisitService){
+    public function __construct(OrthancStudyRepositoryInterface $orthancStudyRepositoryInterface, AuthorizationVisitService $authorizationVisitService){
+        $this->orthancStudyRepositoryInterface = $orthancStudyRepositoryInterface;
         $this->authorizationVisitService = $authorizationVisitService;
-        $this->persistenceInterface = $persistenceInterface;
     }
 
     public function execute(GetDicomsRequest $getDicomsRequest, GetDicomsResponse $getDicomResponse){
@@ -25,7 +26,7 @@ class GetDicoms{
 
             //If Supervisor include deleted studies
             $includeTrashed = $getDicomsRequest->role === Constants::ROLE_SUPERVISOR;
-            $data = $this->persistenceInterface->getDicomsDataFromVisit($getDicomsRequest->visitId, $includeTrashed);
+            $data = $this->orthancStudyRepositoryInterface->getDicomsDataFromVisit($getDicomsRequest->visitId, $includeTrashed);
 
             $responseArray = [];
 

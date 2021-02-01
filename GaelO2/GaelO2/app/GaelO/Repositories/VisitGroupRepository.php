@@ -2,11 +2,11 @@
 
 namespace App\GaelO\Repositories;
 
-use App\VisitGroup;
-use App\GaelO\Interfaces\PersistenceInterface;
+use App\Models\VisitGroup;
+use App\GaelO\Interfaces\VisitGroupRepositoryInterface;
 use App\GaelO\Util;
 
-class VisitGroupRepository implements PersistenceInterface {
+class VisitGroupRepository implements VisitGroupRepositoryInterface {
 
     public function __construct(VisitGroup $visitGroup){
         $this->visitGroup = $visitGroup;
@@ -18,23 +18,12 @@ class VisitGroupRepository implements PersistenceInterface {
         $model->save();
     }
 
-    public function update($id, array $data) : void {
-        $model = $this->visitGroup->find($id);
-        $model = Util::fillObject($data, $model);
-        $model->save();
-    }
-
     public function find($id){
         return $this->visitGroup->findOrFail($id)->toArray();
     }
 
     public function delete($id) : void {
         $this->visitGroup->findOrFail($id)->delete();
-    }
-
-    public function getAll() : array {
-        $visitGroups = $this->visitGroup->get();
-        return empty($visitGroups) ? []  : $visitGroups->toArray();
     }
 
     public function createVisitGroup(String $studyName, String $modality)  : void {
@@ -48,7 +37,7 @@ class VisitGroupRepository implements PersistenceInterface {
 
     }
 
-    public function hasVisitTypes(int $visitGroupId){
+    public function hasVisitTypes(int $visitGroupId) : bool {
         $visitTypes = $this->visitGroup->find($visitGroupId)->visitTypes()->get();
         return $visitTypes->count()>0 ? true : false;
     }

@@ -2,23 +2,21 @@
 
 namespace App\GaelO\Repositories;
 
-use App\Patient;
-use App\GaelO\Interfaces\PersistenceInterface;
+use App\GaelO\Interfaces\PatientRepositoryInterface;
+use App\Models\Patient;
 use App\GaelO\UseCases\GetPatient\PatientEntity;
 use App\GaelO\Util;
-use Illuminate\Support\Facades\Log;
 
-class PatientRepository implements PersistenceInterface {
+class PatientRepository implements PatientRepositoryInterface {
 
     public function __construct(Patient $patient){
         $this->patient = $patient;
     }
 
-    public function create(array $data){
+    private function create(array $data){
         $patient = new Patient();
         $model = Util::fillObject($data, $patient);
         $model->save();
-
     }
 
     public function update($code, array $data) : void {
@@ -27,17 +25,8 @@ class PatientRepository implements PersistenceInterface {
         $model->save();
     }
 
-    public function find($code){
+    public function find($code) : array {
         return $this->patient->findOrFail($code)->toArray();
-    }
-
-    public function delete($code) :void {
-        $this->patient->find($code)->delete();
-    }
-
-    public function getAll() : array {
-        $patients = $this->patient->get();
-        return empty($patients) ? []  : $patients->toArray();
     }
 
     public function getPatientWithCenterDetails(int $code) : array {
@@ -76,6 +65,24 @@ class PatientRepository implements PersistenceInterface {
         $this->create($arrayPatientEntity);
     }
 
-}
+    public function updatePatient(int $code, string $lastname, string $firstname,
+                            string $gender, int $birthDay, int $birthMonth, int $birthYear,
+                            string $studyName, string $registrationDate, string $investigatorName, int $centerCode) : void {
 
-?>
+        $arrayPatientEntity = array(
+            "lastname" => $lastname,
+            "firstname" => $firstname,
+            "gender" => $gender,
+            "birth_day" => $birthDay,
+            "birth_month" => $birthMonth,
+            "birth_year" => $birthYear,
+            "study_name" => $studyName,
+            "registration_date" => $registrationDate,
+            "investigator_name" => $investigatorName,
+            "center_code" => $centerCode
+        );
+
+        $this->update($code, $arrayPatientEntity);
+    }
+
+}

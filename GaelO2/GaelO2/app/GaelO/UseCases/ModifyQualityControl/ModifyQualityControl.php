@@ -6,23 +6,23 @@ use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOBadRequestException;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
+use App\GaelO\Interfaces\TrackerRepositoryInterface;
 use App\GaelO\Services\AuthorizationVisitService;
 use App\GaelO\Services\MailServices;
-use App\GaelO\Services\TrackerService;
 use App\GaelO\Services\VisitService;
 use Exception;
 
 class ModifyQualityControl {
 
-    private AuthorizationVisitService $authorizationService;
+    private AuthorizationVisitService $authorizationVisitService;
     private VisitService $visitService;
-    private TrackerService $trackerService;
+    private TrackerRepositoryInterface $trackerRepositoryInterface;
     private MailServices $mailServices;
 
-    public function __construct(AuthorizationVisitService $authorizationVisitService, VisitService $visitService, TrackerService $trackerService, MailServices $mailServices){
+    public function __construct(AuthorizationVisitService $authorizationVisitService, VisitService $visitService, TrackerRepositoryInterface $trackerRepositoryInterface, MailServices $mailServices){
         $this->authorizationVisitService = $authorizationVisitService;
         $this->visitService = $visitService;
-        $this->trackerService = $trackerService;
+        $this->trackerRepositoryInterface = $trackerRepositoryInterface;
         $this->mailServices = $mailServices;
     }
 
@@ -81,9 +81,9 @@ class ModifyQualityControl {
                 'qc_decision'=>$modifyQualityControlRequest->stateQc
             ];
 
-            $this->trackerService->writeAction(
+            $this->trackerRepositoryInterface->writeAction(
                 $modifyQualityControlRequest->currentUserId,
-                Constants::ROLE_CONTROLER,
+                Constants::ROLE_CONTROLLER,
                 $studyName,
                 $modifyQualityControlRequest->visitId,
                 Constants::TRACKER_QUALITY_CONTROL,
@@ -121,7 +121,7 @@ class ModifyQualityControl {
 
     private function checkAuthorization(int $userId, int $visitId) : void {
         //Check user has controller role in the visit
-        $this->authorizationVisitService->setCurrentUserAndRole($userId, Constants::ROLE_CONTROLER);
+        $this->authorizationVisitService->setCurrentUserAndRole($userId, Constants::ROLE_CONTROLLER);
         $this->authorizationVisitService->setVisitId($visitId);
         if ( ! $this->authorizationVisitService->isVisitAllowed() ){
             throw new GaelOForbiddenException();

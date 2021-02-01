@@ -6,25 +6,26 @@ use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOBadRequestException;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
-use App\GaelO\Interfaces\PersistenceInterface;
+use App\GaelO\Interfaces\TrackerRepositoryInterface;
+use App\GaelO\Interfaces\VisitRepositoryInterface;
 use App\GaelO\Services\AuthorizationVisitService;
 use App\GaelO\Services\DicomSeriesService;
-use App\GaelO\Services\TrackerService;
 use Exception;
 
 class DeleteSeries{
 
-    private AuthorizationVisitService $authorizationVisitService;
+    private VisitRepositoryInterface $visitRepositoryInterface;
     private DicomSeriesService $dicomSeriesService;
-    private TrackerService $trackerService;
+    private AuthorizationVisitService $authorizationVisitService;
+    private TrackerRepositoryInterface $trackerRepositoryInterface;
 
 
-    public function __construct( PersistenceInterface $persistenceInterface, DicomSeriesService $dicomSeriesService, AuthorizationVisitService $authorizationVisitService, TrackerService $trackerService)
+    public function __construct( VisitRepositoryInterface $visitRepositoryInterface, DicomSeriesService $dicomSeriesService, AuthorizationVisitService $authorizationVisitService, TrackerRepositoryInterface $trackerRepositoryInterface)
     {
         $this->authorizationVisitService = $authorizationVisitService;
         $this->dicomSeriesService = $dicomSeriesService;
-        $this->trackerService = $trackerService;
-        $this->persistenceInterface = $persistenceInterface;
+        $this->trackerRepositoryInterface = $trackerRepositoryInterface;
+        $this->visitRepositoryInterface = $visitRepositoryInterface;
     }
 
     public function execute(DeleteSeriesRequest $deleteSeriesRequest, DeleteSeriesResponse $deleteSeriesResponse){
@@ -37,7 +38,8 @@ class DeleteSeries{
 
             $seriesData = $this->dicomSeriesService->getSeriesBySeriesInstanceUID($deleteSeriesRequest->seriesInstanceUID, false);
             $visitId = $seriesData['orthanc_study']['visit_id'];
-            $visitContext = $this->persistenceInterface->getVisitContext($visitId);
+
+            $visitContext = $this->visitRepositoryInterface->getVisitContext($visitId);
 
             $this->checkAuthorization($deleteSeriesRequest->currentUserId, $visitId, $deleteSeriesRequest->role, $visitContext['state_quality_control']);
 
@@ -51,7 +53,7 @@ class DeleteSeries{
                 'reason'=>$deleteSeriesRequest->reason
             ];
 
-            $this->trackerService->writeAction(
+            $this->trackerRepositoryInterface->writeAction(
                 $deleteSeriesRequest->currentUserId,
                 $deleteSeriesRequest->role,
                 $studyName,
@@ -78,18 +80,18 @@ class DeleteSeries{
     public function checkAuthorization(int $userId, int $visitId, string $role, string $qcStatus) : void{
 
         //Series delete only for Investigator, Controller, Supervisor
-        if( !in_array($role, [Constants::ROLE_INVESTIGATOR, Constants::ROLE_CONTROLER, Constants::ROLE_SUPERVISOR]) ){
+        if( !in_array($role, [Constants::ROLE_INVESTIGATOR, Constants::ROLE_CONTROLLER, Constants::ROLE_SUPERVISOR]) ){
             throw new GaelOForbiddenException();
         }
 
         //If QC is done, can't remove series
-        if( in_array($qcStatus, [Constants::QUALITY_CONTROL_ACCEPTED, Constants::QUALITY_CONSTROL_REFUSED])){
+        if( in_array($qcStatus, [Constants::QUALITY_CONTROL_ACCEPTED, Constants::QUALITY_CONTROL_REFUSED])){
             throw new GaelOForbiddenException();
         }
 
         $this->authorizationVisitService->setCurrentUserAndRole($userId, $role);
         $this->authorizationVisitService->setVisitId($visitId);
-
+        ;
         if ( ! $this->authorizationVisitService->isVisitAllowed()){
             throw new GaelOForbiddenException();
         }

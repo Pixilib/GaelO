@@ -5,14 +5,23 @@ namespace App\GaelO\UseCases\CreateVisitType;
 use App\GaelO\Exceptions\GaelOConflictException;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
-use App\GaelO\Interfaces\PersistenceInterface;
+use App\GaelO\Interfaces\VisitGroupRepositoryInterface;
+use App\GaelO\Interfaces\VisitRepositoryInterface;
+use App\GaelO\Interfaces\VisitTypeRepositoryInterface;
 use App\GaelO\Services\AuthorizationService;
 use Exception;
 
 class CreateVisitType {
 
-    public function __construct(PersistenceInterface $persistenceInterface, AuthorizationService $authorizationService) {
-        $this->persistenceInterface = $persistenceInterface;
+    private VisitTypeRepositoryInterface $visitTypeRepositoryInterface;
+    private VisitGroupRepositoryInterface $visitGroupRepositoryInterface;
+    private VisitRepositoryInterface $visitRepositoryInterface;
+    private AuthorizationService $authorizationService;
+
+    public function __construct(VisitTypeRepositoryInterface $visitTypeRepositoryInterface, VisitGroupRepositoryInterface $visitGroupRepositoryInterface, VisitRepositoryInterface $visitRepositoryInterface, AuthorizationService $authorizationService) {
+        $this->visitGroupRepositoryInterface = $visitGroupRepositoryInterface;
+        $this->visitTypeRepositoryInterface = $visitTypeRepositoryInterface;
+        $this->visitRepositoryInterface = $visitRepositoryInterface;
         $this->authorizationService = $authorizationService;
     }
 
@@ -21,13 +30,18 @@ class CreateVisitType {
         try{
             $this->checkAuthorization($createVisitTypeRequest->currentUserId);
 
-            if(  $this->persistenceInterface->isExistingVisitType($createVisitTypeRequest->visitGroupId, $createVisitTypeRequest->name)){
+            if(  $this->visitTypeRepositoryInterface->isExistingVisitType($createVisitTypeRequest->visitGroupId, $createVisitTypeRequest->name)){
                 throw new GaelOConflictException('Already Existing Visit Name in group');
             }
 
-            //SK VERIFIER QUIL N Y A PAS DE VISITE CREE dans la study
+            $visitGroup = $this->visitGroupRepositoryInterface->find($createVisitTypeRequest->visitGroupId);
+            $hasVisits = $this->visitRepositoryInterface->hasVisitsInStudy($visitGroup['study_name']);
 
-            $this->persistenceInterface->createVisitType(
+            if($hasVisits) {
+                throw new GaelOForbiddenException("Study already having visits, can't change workflow");
+            }
+
+            $this->visitTypeRepositoryInterface->createVisitType(
                 $createVisitTypeRequest->visitGroupId,
                 $createVisitTypeRequest->name,
                 $createVisitTypeRequest->visitOrder,

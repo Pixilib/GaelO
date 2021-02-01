@@ -1,21 +1,72 @@
 <?php
 
-/** @var \Illuminate\Database\Eloquent\Factory $factory */
+namespace Database\Factories;
 
-use App\VisitType;
-use Faker\Generator as Faker;
+use App\Models\VisitGroup;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
-$factory->define(VisitType::class, function (Faker $faker) {
-    return [
-        'visit_group_id'=>  $faker->unique()->randomNumber,
-        'name'=>  $faker->unique()->word,
-        'order'=>  $faker->unique()->randomNumber,
-        'local_form_needed'=>$faker->randomElement([true, false]),
-        'qc_needed'=>$faker->randomElement([true, false]),
-        'review_needed'=>$faker->randomElement([true, false]),
-        'optional'=>$faker->randomElement([true, false]),
-        'limit_low_days'=>  $faker->randomNumber,
-        'limit_up_days'=> $faker->randomNumber,
-        'anon_profile'=>$faker->randomElement( ['Default', 'Full'])
-    ];
-});
+class VisitTypeFactory extends Factory
+{
+
+    public function definition()
+    {
+        return [
+            'visit_group_id'=>  VisitGroup::factory()->create()->id,
+            'name'=>  $this->faker->unique()->word,
+            'order'=>  $this->faker->unique()->randomNumber,
+            'local_form_needed'=>false,
+            'qc_needed'=>false,
+            'review_needed'=>false,
+            'optional'=>false,
+            'limit_low_days'=>  $this->faker->randomNumber,
+            'limit_up_days'=> $this->faker->randomNumber,
+            'anon_profile'=> 'Default'
+        ];
+    }
+
+    public function visitGroupId(int $visitGroupId){
+
+        return $this->state(function (array $attributes) use ($visitGroupId) {
+            return [
+                'visit_group_id' => $visitGroupId
+            ];
+        });
+    }
+
+    public function localFormNeeded(){
+
+        return $this->state(function (array $attributes) {
+            return [
+                'local_form_needed' => true
+            ];
+        });
+    }
+
+    public function qcNeeded(){
+
+        return $this->state(function (array $attributes) {
+            return [
+                'qc_needed' => true
+            ];
+        });
+    }
+
+    public function reviewNeeded(){
+
+        return $this->state(function (array $attributes) {
+            return [
+                'review_needed' => true
+            ];
+        });
+    }
+
+    public function optional(){
+
+        return $this->state(function (array $attributes) {
+            return [
+                'optional' => true
+            ];
+        });
+    }
+
+}

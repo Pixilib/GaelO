@@ -4,14 +4,17 @@ namespace App\GaelO\UseCases\GetVisitGroup;
 
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
-use App\GaelO\Interfaces\PersistenceInterface;
+use App\GaelO\Repositories\VisitGroupRepository;
 use App\GaelO\Services\AuthorizationService;
 use Exception;
 
 class GetVisitGroup {
 
-    public function __construct(PersistenceInterface $persistenceInterface, AuthorizationService $authorizationService){
-        $this->persistenceInterface = $persistenceInterface;
+    private VisitGroupRepository $visitGroupRepository;
+    private AuthorizationService $authorizationService;
+
+    public function __construct(VisitGroupRepository $visitGroupRepository, AuthorizationService $authorizationService){
+        $this->visitGroupRepository = $visitGroupRepository;
         $this->authorizationService = $authorizationService;
     }
 
@@ -19,7 +22,7 @@ class GetVisitGroup {
 
         try{
             $this->checkAuthorization($getVisitGroupRequest->currentUserId);
-            $visitGroupData = $this->persistenceInterface->find($getVisitGroupRequest->visitGroupId);
+            $visitGroupData = $this->visitGroupRepository->find($getVisitGroupRequest->visitGroupId);
             $visitGroupEntity = VisitGroupEntity::fillFromDBReponseArray($visitGroupData);
             $getVisitTypeResponse->body = $visitGroupEntity;
             $getVisitTypeResponse->status = 200;

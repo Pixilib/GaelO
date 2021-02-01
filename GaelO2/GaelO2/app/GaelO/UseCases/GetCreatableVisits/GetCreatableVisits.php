@@ -6,7 +6,6 @@ use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Services\AuthorizationPatientService;
-use App\GaelO\Services\AuthorizationService;
 use App\GaelO\Services\VisitService;
 use Exception;
 
@@ -26,7 +25,6 @@ class GetCreatableVisits{
         try{
 
             $this->checkAuthorization($getCreatableVisitsRequest->currentUserId, $getCreatableVisitsRequest->patientCode);
-            //SK A AJOUTER SI STUDYNAME EST ANCILLAIRE CETTE API EST FORBIDEN
             $visitToCreate = $this->visitService->getAvailableVisitToCreate($getCreatableVisitsRequest->patientCode);
             $getCreatableVisitsResponse->status = 200;
             $getCreatableVisitsResponse->statusText = 'OK';

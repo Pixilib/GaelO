@@ -2,44 +2,37 @@
 
 namespace App\GaelO\Repositories;
 
-use App\GaelO\Interfaces\PersistenceInterface;
+use App\GaelO\Interfaces\ReviewStatusRepositoryInterface;
 use App\GaelO\Util;
-use App\ReviewStatus;
+use App\Models\ReviewStatus;
 use Exception;
 
-class ReviewStatusRepository implements PersistenceInterface {
+class ReviewStatusRepository implements ReviewStatusRepositoryInterface {
 
     public function __construct(ReviewStatus $reviewStatus) {
         $this->reviewStatus = $reviewStatus;
     }
 
-    public function create(array $data){
-        $patient = new ReviewStatus();
-        $model = Util::fillObject($data, $patient);
+    public function getReviewStatus(int $visitId, string $studyName) : array {
+        return $this->reviewStatus->where('visit_id', $visitId)
+        ->where('study_name', $studyName)
+        ->sole()
+        ->toArray();
+    }
+
+    public function updateReviewStatus(int $visitId, string $studyName, bool $reviewAvailable, string $reviewStatus, string $reviewConclusionValue, string $reviewConclusionDate ) : void {
+
+        $array = [
+            'review_available' => $reviewAvailable,
+            'review_status' => $reviewStatus,
+            'review_conclusion_value' => $reviewConclusionValue,
+            'review_conclusion_date' => $reviewConclusionDate
+        ];
+
+        $model = $this->reviewStatus->where('visit_id', $visitId)->where('study_name', $studyName)->sole();
+        $model = Util::fillObject($array, $model);
         $model->save();
 
-    }
-
-    public function update($code, array $data) : void {
-        $model = $this->reviewStatus->find($code);
-        $model = Util::fillObject($data, $model);
-        $model->save();
-    }
-
-    public function find($id){
-        throw new Exception('Not Callable');
-    }
-
-    public function getAll() : array {
-        throw new Exception('Not Callable');
-    }
-
-    public function getReviewStatus($id, $studyName){
-        return $this->reviewStatus->where('visit_id', $id)->where('study_name', $studyName)->firstOrFail()->toArray();
-    }
-
-    public function delete($id) :void {
-        $this->reviewStatus->find($id)->delete();
     }
 
 

@@ -4,14 +4,17 @@ namespace App\GaelO\UseCases\GetVisitType;
 
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
-use App\GaelO\Interfaces\PersistenceInterface;
+use App\GaelO\Interfaces\VisitTypeRepositoryInterface;
 use App\GaelO\Services\AuthorizationService;
 use Exception;
 
 class GetVisitType {
 
-    public function __construct(PersistenceInterface $persistenceInterface, AuthorizationService $authorizationService){
-        $this->persistenceInterface = $persistenceInterface;
+    private VisitTypeRepositoryInterface $visitTypeRepositoryInterface;
+    private AuthorizationService $authorizationService;
+
+    public function __construct(VisitTypeRepositoryInterface $visitTypeRepositoryInterface, AuthorizationService $authorizationService){
+        $this->visitTypeRepositoryInterface = $visitTypeRepositoryInterface;
         $this->authorizationService = $authorizationService;
     }
 
@@ -20,7 +23,7 @@ class GetVisitType {
         try{
 
             $this->checkAuthorization($getVisitTypeRequest->currentUserId);
-            $visitType = $this->persistenceInterface->find($getVisitTypeRequest->visitTypeId);
+            $visitType = $this->visitTypeRepositoryInterface->find($getVisitTypeRequest->visitTypeId);
             $visitTypeEntity = VisitTypeEntity::fillFromDBReponseArray($visitType);
             $getVisitTypeResponse->body = $visitTypeEntity;
             $getVisitTypeResponse->status = 200;

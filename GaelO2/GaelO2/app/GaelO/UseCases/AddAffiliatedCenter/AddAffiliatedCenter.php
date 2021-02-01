@@ -6,16 +6,19 @@ use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOConflictException;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
-use App\GaelO\Interfaces\PersistenceInterface;
+use App\GaelO\Interfaces\TrackerRepositoryInterface;
+use App\GaelO\Interfaces\UserRepositoryInterface;
 use App\GaelO\Services\AuthorizationService;
-use App\GaelO\Services\TrackerService;
 use Exception;
 
 class AddAffiliatedCenter {
 
-    public function __construct(PersistenceInterface $persistenceInterface, AuthorizationService $authorizationService, TrackerService $trackerService){
-        $this->persistenceInterface = $persistenceInterface;
-        $this->trackerService = $trackerService;
+    private TrackerRepositoryInterface $trackerRepositoryInterface;
+    private UserRepositoryInterface $userRepositoryInterface;
+
+    public function __construct( UserRepositoryInterface $userRepositoryInterface, AuthorizationService $authorizationService, TrackerRepositoryInterface $trackerRepositoryInterface){
+        $this->userRepositoryInterface = $userRepositoryInterface;
+        $this->trackerRepositoryInterface = $trackerRepositoryInterface;
         $this->authorizationService = $authorizationService;
     }
 
@@ -24,17 +27,17 @@ class AddAffiliatedCenter {
         try{
             $this->checkAuthorization($addAffiliatedCenterRequest->currentUserId);
 
-            $existingCenterCodeArray = $this->persistenceInterface->getAllUsersCenters($addAffiliatedCenterRequest->userId);
+            $existingCenterCodeArray = $this->userRepositoryInterface->getAllUsersCenters($addAffiliatedCenterRequest->userId);
 
             //Check the request creation is not in Main or affiliated centers
             if( ! in_array($addAffiliatedCenterRequest->centerCode, $existingCenterCodeArray) ){
 
-                $this->persistenceInterface->addAffiliatedCenter($addAffiliatedCenterRequest->userId, $addAffiliatedCenterRequest->centerCode);
+                $this->userRepositoryInterface->addAffiliatedCenter($addAffiliatedCenterRequest->userId, $addAffiliatedCenterRequest->centerCode);
 
                 $actionDetails = [
                     'addAffiliatedCenters' => $addAffiliatedCenterRequest->centerCode
                 ];
-                $this->trackerService->writeAction($addAffiliatedCenterRequest->userId, Constants::TRACKER_ROLE_ADMINISTRATOR, null, null, Constants::TRACKER_EDIT_USER, $actionDetails);
+                $this->trackerRepositoryInterface->writeAction($addAffiliatedCenterRequest->userId, Constants::TRACKER_ROLE_ADMINISTRATOR, null, null, Constants::TRACKER_EDIT_USER, $actionDetails);
 
                 $addAffiliatedCenterResponse->status = '201';
                 $addAffiliatedCenterResponse->statusText = 'Created';

@@ -8,17 +8,22 @@ class Constants {
     const USER_STATUS_BLOCKED = "Blocked";
     const USER_STATUS_DEACTIVATED = "Deactivated";
 
+    const USER_JOB_CRA = 'CRA';
+    const USER_JOB_SUPERVISION = 'Supervision';
+    const USER_JOB_RADIOLOGIST = 'Radiologist';
+
     const PATIENT_INCLUSION_STATUS_INCLUDED = "Included";
     const PATIENT_INCLUSION_STATUS_WITHDRAWN = "Withdrawn";
 
     const ROLE_INVESTIGATOR = "Investigator";
     const ROLE_MONITOR = "Monitor";
-    const ROLE_CONTROLER = "Controller";
+    const ROLE_CONTROLLER = "Controller";
     const ROLE_SUPERVISOR  = "Supervisor";
     const ROLE_REVIEWER = "Reviewer";
 
     const TRACKER_EDIT_PREFERENCE = "Preference edited";
     const TRACKER_SEND_MESSAGE = "Send Message";
+    const TRACKER_CREATE_VISIT_GROUP  = "Create Visit Group";
     const TRACKER_CREATE_VISIT = "Create Visit";
     const TRACKER_UPLOAD_SERIES = "Upload Series";
     const TRACKER_UPLOAD_VALIDATION_FAILED = "Upload Failed";
@@ -64,7 +69,7 @@ class Constants {
     const QUALITY_CONTROL_NOT_NEEDED = "Not Needed";
     const QUALITY_CONTROL_WAIT_DEFINITIVE_CONCLUSION = "Wait Definitive Conclusion";
     const QUALITY_CONTROL_CORRECTIVE_ACTION_ASKED = "Corrective Action Asked";
-    const QUALITY_CONSTROL_REFUSED = "Refused";
+    const QUALITY_CONTROL_REFUSED = "Refused";
     const QUALITY_CONTROL_ACCEPTED = "Accepted";
 
     const UPLOAD_STATUS_DONE = "Done";

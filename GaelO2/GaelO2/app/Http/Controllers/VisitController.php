@@ -34,7 +34,6 @@ class VisitController extends Controller
         $curentUser = Auth::user();
         $queryParam = $request->query();
 
-        $createVisitRequest->role = $queryParam['role'];
         $createVisitRequest->currentUserId = $curentUser['id'];
         $createVisitRequest->studyName = $studyName;
         $createVisitRequest->visitGroupId = $visitGroupId;

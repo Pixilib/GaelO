@@ -1,21 +1,84 @@
 <?php
 
-/** @var \Illuminate\Database\Eloquent\Factory $factory */
+namespace Database\Factories;
 
-use App\Documentation;
-use Faker\Generator as Faker;
+use App\Models\Documentation;
+use App\Models\Study;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
-$factory->define(Documentation::class, function (Faker $faker) {
-    return [
-        'id'=>$faker->unique()->randomNumber,
-        'name'=>$faker->unique()->word,
-        'document_date'=>now(),
-        'study_name'=>$faker->word,
-        'version'=>$faker->word,
-        'investigator'=> $faker->randomElement([true, false]),
-        'controller'=> $faker->randomElement([true, false]),
-        'monitor'=> $faker->randomElement([true, false]),
-        'reviewer'=> $faker->randomElement([true, false]),
-        'path'=> $faker->word
-    ];
-});
+class DocumentationFactory extends Factory
+{
+
+    protected $model = Documentation::class;
+
+    public function definition()
+    {
+        return [
+            'id'=>$this->faker->unique()->randomNumber,
+            'name'=>$this->faker->unique()->word,
+            'document_date'=>now(),
+            'study_name'=> Study::factory()->create()->name,
+            'version'=>$this->faker->word,
+            'investigator'=> false,
+            'controller'=> false,
+            'monitor'=> false,
+            'reviewer'=> false,
+            'path'=> $this->faker->word
+        ];
+    }
+
+    public function studyName($studyName){
+
+        return $this->state(function (array $attributes) use ($studyName) {
+            return [
+                'study_name' => $studyName,
+            ];
+        });
+    }
+
+    public function investigator(){
+
+        return $this->state(function (array $attributes) {
+            return [
+                'investigator' => true,
+            ];
+        });
+    }
+
+    public function controller(){
+
+        return $this->state(function (array $attributes) {
+            return [
+                'controller' => true,
+            ];
+        });
+    }
+
+    public function monitor(){
+
+        return $this->state(function (array $attributes) {
+            return [
+                'monitor' => true,
+            ];
+        });
+    }
+
+    public function reviewer(){
+
+        return $this->state(function (array $attributes) {
+            return [
+                'reviewer' => true,
+            ];
+        });
+    }
+
+    public function path($path){
+
+        return $this->state(function (array $attributes) use($path) {
+            return [
+                'path' => $path,
+            ];
+        });
+    }
+
+}

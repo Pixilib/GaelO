@@ -1,21 +1,99 @@
 <?php
 
-/** @var \Illuminate\Database\Eloquent\Factory $factory */
+namespace Database\Factories;
 
-use App\Review;
-use Faker\Generator as Faker;
+use App\Models\Review;
+use App\Models\Study;
+use App\Models\User;
+use App\Models\Visit;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
-$factory->define(Review::class, function (Faker $faker) {
-    return [
-        'id'=>$faker->unique()->randomNumber,
-        'study_name'=>$faker->word,
-        'visit_id'=>$faker->randomNumber,
-        'user_id'=>$faker->randomNumber,
-        'review_date'=> now(),
-        'validated'=>$faker->randomElement([true, false]),
-        'adjudication'=>$faker->randomElement([true, false]),
-        'sent_files'=>json_encode([]),
-        'review_data'=>json_encode(['item1'=>'a', 'item2'=>5])
-    ];
+class ReviewFactory extends Factory
+{
+    public function definition()
+    {
+        return [
+            'study_name' => Study::factory()->create()->name,
+            'visit_id' => Visit::factory()->create()->id,
+            'user_id' => User::factory()->create()->id,
+            'review_date' => now(),
+            'validated' => false,
+            'local' => true,
+            'adjudication' => false,
+            'sent_files' => json_encode([]),
+            'review_data' => json_encode(['item1'=>'a', 'item2'=>5])
+        ];
+    }
 
-});
+    public function visitId(int $visitId){
+
+        return $this->state(function (array $attributes) use ($visitId) {
+            return [
+                'visit_id' => $visitId,
+            ];
+        });
+
+    }
+
+    public function userId(int $userId){
+
+        return $this->state(function (array $attributes) use ($userId) {
+            return [
+                'user_id' => $userId,
+            ];
+        });
+
+    }
+
+    public function reviewForm(){
+
+        return $this->state(function (array $attributes) {
+            return [
+                'local' => false,
+            ];
+        });
+
+    }
+
+    public function studyName(string $studyName){
+
+        return $this->state(function (array $attributes) use ($studyName) {
+            return [
+                'study_name' => $studyName,
+            ];
+        });
+
+    }
+
+    public function validated(){
+
+        return $this->state(function (array $attributes) {
+            return [
+                'validated' => true,
+            ];
+        });
+
+    }
+
+    public function adjudication(){
+
+        return $this->state(function (array $attributes) {
+            return [
+                'adjudication' => true,
+            ];
+        });
+
+    }
+
+    public function centerCode(int $centerCode){
+
+        return $this->state(function (array $attributes) use($centerCode) {
+            return [
+                'center_code' => $centerCode,
+            ];
+        });
+
+    }
+
+
+}
