@@ -14,6 +14,7 @@ class ReviewService {
     private TrackerRepositoryInterface $trackerRepositoryInterface;
 
     private int $currentUserId;
+    private int $visitId;
 
     public function __construct(VisitService $visitService, VisitRepository $visitRepository, ReviewRepository $reviewRepository, TrackerRepositoryInterface $trackerRepositoryInterface)
     {
@@ -27,27 +28,32 @@ class ReviewService {
         $this->currentUserId = $$currentUserId;
     }
 
-    public function saveLocalData(int $visitId, array $data, bool $validated){
-        $visitContext = $this->visitRepository->getVisitContext($visitId);
+    public function setCurrentVisitId(int $visitId){
+        $this->visitId = $visitId;
+        $this->visitService->setVisitId($visitId);
+    }
+
+    public function saveLocalData(array $data, bool $validated){
+        $visitContext = $this->visitRepository->getVisitContext($this->visitId);
         $studyName = $visitContext['visit_type']['visit_group']['study_name'];
         $this->reviewRepository->createReview(true, $visitContext['id'], $studyName, $this->currentUserId, $data, $validated);
         if ($validated) {
-            $this->visitService->updateInvestigatorFormStatus($visitId, Constants::INVESTIGATOR_FORM_DONE);
+            $this->visitService->updateInvestigatorFormStatus(Constants::INVESTIGATOR_FORM_DONE);
         }else {
-            $this->visitService->updateInvestigatorFormStatus($visitId, Constants::INVESTIGATOR_FORM_DRAFT);
+            $this->visitService->updateInvestigatorFormStatus(Constants::INVESTIGATOR_FORM_DRAFT);
         }
 
         $actionDetails = [
             'raw_data'=>json_encode($data)
         ];
 
-        $this->trackerRepositoryInterface->writeAction($visitId, Constants::ROLE_INVESTIGATOR, $studyName, $visitId, Constants::TRACKER_SAVE_INVESTIGATOR_FORM, $actionDetails);
+        $this->trackerRepositoryInterface->writeAction($this->currentUserId, Constants::ROLE_INVESTIGATOR, $studyName, $this->visitId, Constants::TRACKER_SAVE_INVESTIGATOR_FORM, $actionDetails);
 
     }
 
-    public function saveReviewData(int $visitId, string $studyName, array $data, bool $validated, bool $adjudication){
+    public function saveReviewData(string $studyName, array $data, bool $validated, bool $adjudication){
 
-        $this->reviewRepository->createReview(false, $visitId, $studyName, $this->currentUserId, $data, $validated, $adjudication);
+        $this->reviewRepository->createReview(false, $this->visitId, $studyName, $this->currentUserId, $data, $validated, $adjudication);
         if ($validated) {
 			//$this->setVisitValidation();
 		}

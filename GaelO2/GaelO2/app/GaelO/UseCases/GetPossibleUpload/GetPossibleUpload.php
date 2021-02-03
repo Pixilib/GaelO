@@ -5,19 +5,22 @@ namespace App\GaelO\UseCases\GetPossibleUpload;
 use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
+use App\GaelO\Interfaces\UserRepositoryInterface;
+use App\GaelO\Interfaces\VisitRepositoryInterface;
 use App\GaelO\Services\AuthorizationService;
-use App\GaelO\Services\VisitService;
 use Exception;
 
 class GetPossibleUpload
 {
 
-    private VisitService $visitService;
+    private VisitRepositoryInterface $visitRepositoryInterface;
+    private UserRepositoryInterface $userRepositoryInterface;
     private AuthorizationService $authorizationService;
 
-    public function __construct(AuthorizationService $authorizationService,  VisitService $visitService)
+    public function __construct(AuthorizationService $authorizationService,  VisitRepositoryInterface $visitRepositoryInterface, UserRepositoryInterface $userRepositoryInterface)
     {
-        $this->visitService = $visitService;
+        $this->visitRepositoryInterface = $visitRepositoryInterface;
+        $this->userRepositoryInterface = $userRepositoryInterface;
         $this->authorizationService = $authorizationService;
     }
 
@@ -27,7 +30,8 @@ class GetPossibleUpload
 
             $this->checkAuthorization($getPossibleUploadRequest->currentUserId, $getPossibleUploadRequest->studyName);
 
-            $visitsEntities = $this->visitService->getImagingVisitsAwaitingUploadVisitsForUser($getPossibleUploadRequest->currentUserId, $getPossibleUploadRequest->studyName);
+            $centers = $this->userRepositoryInterface->getAllUsersCenters($getPossibleUploadRequest->currentUserId);
+            $visitsEntities = $this->visitRepositoryInterface->getImagingVisitsAwaitingUpload($getPossibleUploadRequest->studyName, $centers);
 
             $answerArray = [];
 

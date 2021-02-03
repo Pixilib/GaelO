@@ -7,6 +7,7 @@ use App\GaelO\Exceptions\GaelOBadRequestException;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\TrackerRepositoryInterface;
+use App\GaelO\Interfaces\VisitRepositoryInterface;
 use App\GaelO\Services\AuthorizationVisitService;
 use App\GaelO\Services\VisitService;
 use Exception;
@@ -20,23 +21,28 @@ class ModifyQualityControlReset{
     public function __construct(AuthorizationVisitService $authorizationVisitService, VisitService $visitService, TrackerRepositoryInterface $trackerRepositoryInterface){
 
         $this->authorizationVisitService = $authorizationVisitService;
-        $this->visitService = $visitService;
         $this->trackerRepositoryInterface = $trackerRepositoryInterface;
+        $this->visitService = $visitService;
     }
 
     public function execute(ModifyQualityControlResetRequest $modifyQualityControlResetRequest, ModifyQualityControlResetResponse $modifyQualityControlResetResponse){
 
         try{
-            $visitContext = $this->visitService->getVisitContext($modifyQualityControlResetRequest->visitId);
+
+            $this->visitService->setVisitId($modifyQualityControlResetRequest->visitId);
+            $visitContext = $this->visitService->getVisitContext();
             $studyName = $visitContext['visit_type']['visit_group']['study_name'];
 
             $this->checkAuthorization($modifyQualityControlResetRequest->currentUserId, $modifyQualityControlResetRequest->visitId);
-            $this->visitService->resetQc($modifyQualityControlResetRequest->visitId);
-            $reviewStatusEntity = $this->visitService->getReviewStatus($modifyQualityControlResetRequest->visitId, $studyName);
+
+
+            $reviewStatusEntity = $this->visitService->getReviewStatus($studyName);
 
             if( ! in_array($reviewStatusEntity['review_status'], array(Constants::REVIEW_STATUS_NOT_DONE, Constants::REVIEW_STATUS_NOT_NEEDED) )) {
                 throw new GaelOBadRequestException("Can't reset QC with review started");
             }
+
+            $this->visitService->resetQc($modifyQualityControlResetRequest->visitId);
 
             $actionDetails = [];
 

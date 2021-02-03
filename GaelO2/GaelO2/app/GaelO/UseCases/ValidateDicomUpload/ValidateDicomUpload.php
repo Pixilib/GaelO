@@ -10,7 +10,6 @@ use App\GaelO\Interfaces\TrackerRepositoryInterface;
 use App\GaelO\Services\AuthorizationVisitService;
 use App\GaelO\Services\MailServices;
 use App\GaelO\Services\OrthancService;
-use App\GaelO\Services\PathService;
 use App\GaelO\Services\RegisterOrthancStudyService;
 use App\GaelO\Services\TusService;
 use App\GaelO\Services\VisitService;
@@ -49,10 +48,10 @@ class ValidateDicomUpload{
 
         try{
             //Retrieve Visit Context
-            $visitData  = $this->visitService->getVisitData($validateDicomUploadRequest->visitId);
-            $patientCode = $visitData['patient_code'];
-            $uploadStatus = $visitData['upload_status'];
-            $visitEntity = $this->visitService->getVisitContext($validateDicomUploadRequest->visitId);
+            $this->visitService->setVisitId($validateDicomUploadRequest->visitId);
+            $visitEntity = $this->visitService->getVisitContext();
+            $patientCode = $visitEntity['patient_code'];
+            $uploadStatus = $visitEntity['upload_status'];
             $studyName = $visitEntity['visit_type']['visit_group']['study_name'];
             $visitType = $visitEntity['visit_type']['name'];
             $visitGroup =  $visitEntity['visit_type']['visit_group']['modality'];
@@ -61,7 +60,7 @@ class ValidateDicomUpload{
             //TODO Authorization : Check Investigator Role, and patient is in affiliated center of user, and status upload not done, and visit status done
             $this->checkAuthorization($validateDicomUploadRequest->currentUserId, $validateDicomUploadRequest->visitId, $uploadStatus);
             //Make Visit as being upload processing
-            $this->visitService->updateUploadStatus($validateDicomUploadRequest->visitId, Constants::UPLOAD_STATUS_PROCESSING);
+            $this->visitService->updateUploadStatus(Constants::UPLOAD_STATUS_PROCESSING);
 
             //Create Temporary folder to work
             $unzipedPath = sys_get_temp_dir().'/GaelO_Upload_'.mt_rand(10000, 99999).'_'.$validateDicomUploadRequest->currentUserId;
@@ -132,7 +131,7 @@ class ValidateDicomUpload{
             $this->registerOrthancStudyService->execute();
 
             //Change Visit status
-            $this->visitService->updateUploadStatus($validateDicomUploadRequest->visitId, Constants::UPLOAD_STATUS_DONE);
+            $this->visitService->updateUploadStatus(Constants::UPLOAD_STATUS_DONE);
 
             //Write success in Tracker
             $actionDetails = [
@@ -229,7 +228,7 @@ class ValidateDicomUpload{
      */
     private function handleImportException(string $errorMessage, int $visitId, string $patientCode, string $visitType,  string $unzipedPath, string $studyName, int $userId) {
 
-        $this->visitService->updateUploadStatus($visitId, Constants::UPLOAD_STATUS_NOT_DONE);
+        $this->visitService->updateUploadStatus(Constants::UPLOAD_STATUS_NOT_DONE);
 
         $actionDetails = [
             'reason'=>$errorMessage

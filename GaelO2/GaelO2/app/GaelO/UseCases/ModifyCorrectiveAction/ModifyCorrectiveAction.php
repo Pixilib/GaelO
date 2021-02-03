@@ -6,22 +6,22 @@ use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\TrackerRepositoryInterface;
+use App\GaelO\Interfaces\VisitRepositoryInterface;
 use App\GaelO\Services\AuthorizationVisitService;
 use App\GaelO\Services\MailServices;
-use App\GaelO\Services\VisitService;
 use Exception;
 
 class ModifyCorrectiveAction{
 
     private AuthorizationVisitService $authorizationVisitService;
-    private VisitService $visitService;
+    private VisitRepositoryInterface $visitRepositoryInterface;
     private TrackerRepositoryInterface $trackerRepositoryInterface;
     private MailServices $mailServices;
 
-    public function __construct( AuthorizationVisitService $authorizationVisitService, VisitService $visitService, TrackerRepositoryInterface $trackerRepositoryInterface, MailServices $mailServices)
+    public function __construct( AuthorizationVisitService $authorizationVisitService, VisitRepositoryInterface $visitRepositoryInterface, TrackerRepositoryInterface $trackerRepositoryInterface, MailServices $mailServices)
     {
         $this->authorizationVisitService = $authorizationVisitService;
-        $this->visitService = $visitService;
+        $this->visitRepositoryInterface = $visitRepositoryInterface;
         $this->trackerRepositoryInterface = $trackerRepositoryInterface;
         $this->mailServices = $mailServices;
     }
@@ -29,7 +29,7 @@ class ModifyCorrectiveAction{
     public function execute(ModifyCorrectiveActionRequest $modifyCorrectiveActionRequest, ModifyCorrectiveActionResponse $modifyCorrectiveActionResponse){
 
         try{
-            $visitContext = $this->visitService->getVisitContext($modifyCorrectiveActionRequest->visitId);
+            $visitContext = $this->visitRepositoryInterface->getVisitContext($modifyCorrectiveActionRequest->visitId);
 
             $studyName = $visitContext['visit_type']['visit_group']['study_name'];
             $patientCode = $visitContext['patient']['center_code'];
@@ -48,7 +48,7 @@ class ModifyCorrectiveAction{
 
             $this->checkAuthorization($modifyCorrectiveActionRequest->currentUserId, $modifyCorrectiveActionRequest->visitId);
 
-            $this->visitService->setCorrectiveAction(
+            $this->visitRepositoryInterface->setCorrectiveAction(
                     $modifyCorrectiveActionRequest->visitId,
                     $modifyCorrectiveActionRequest->currentUserId,
                     $modifyCorrectiveActionRequest->newSeriesUploaded,

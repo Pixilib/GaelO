@@ -48,7 +48,6 @@ Les tests ne font pas d'assertion sur
 
 Service Visit => Continuer test passage en upload Done
 Dicom Series Service => peut etre evoluer vers un DicomService pour les deux niveaux
-Refactorer Visit Service (visit ID en variable de classe) ++++
 Faire un objet specifique pour l'authorisation des Review ?
 Studies / Series DICOM => Passer la clé primaire à Instance UID (le orthancID ne devient qu'une donnée associée)
 

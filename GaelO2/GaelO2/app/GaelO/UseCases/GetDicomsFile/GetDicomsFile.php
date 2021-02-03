@@ -30,7 +30,8 @@ class GetDicomsFile{
             //Checker Authorization
             $this->checkAuthorization($getDicomsRequest->currentUserId, $getDicomsRequest->visitId, $getDicomsRequest->role);
             //Visits data
-            $visitContext = $this->visitService->getVisitContext($getDicomsRequest->visitId);
+            $this->visitService->setVisitId($getDicomsRequest->visitId);
+            $visitContext = $this->visitService->getVisitContext();
             $studyName = $visitContext['visit_type']['visit_group']['study_name'];
             $visitType = $visitContext['visit_type']['name'];
             $visitGroup =  $visitContext['visit_type']['visit_group']['modality'];

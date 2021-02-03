@@ -5,8 +5,10 @@ namespace App\Providers;
 use App\GaelO\Interfaces\CenterRepositoryInterface;
 use App\GaelO\Interfaces\CountryRepositoryInterface;
 use App\GaelO\Interfaces\DocumentationRepositoryInterface;
+use App\GaelO\Interfaces\OrthancSeriesRepositoryInterface;
 use App\GaelO\Interfaces\OrthancStudyRepositoryInterface;
 use App\GaelO\Interfaces\PatientRepositoryInterface;
+use App\GaelO\Interfaces\ReviewStatusRepositoryInterface;
 use App\GaelO\Interfaces\StudyRepositoryInterface;
 use App\GaelO\Interfaces\TrackerRepositoryInterface;
 use App\GaelO\Interfaces\UserRepositoryInterface;
@@ -16,8 +18,10 @@ use App\GaelO\Interfaces\VisitTypeRepositoryInterface;
 use App\GaelO\Repositories\CenterRepository;
 use App\GaelO\Repositories\CountryRepository;
 use App\GaelO\Repositories\DocumentationRepository;
+use App\GaelO\Repositories\OrthancSeriesRepository;
 use App\GaelO\Repositories\OrthancStudyRepository;
 use App\GaelO\Repositories\PatientRepository;
+use App\GaelO\Repositories\ReviewStatusRepository;
 use App\GaelO\Repositories\StudyRepository;
 use App\GaelO\Repositories\TrackerRepository;
 use App\GaelO\Repositories\UserRepository;
@@ -48,6 +52,8 @@ class RepositoryProvider extends ServiceProvider
         $this->app->bind(VisitRepositoryInterface::class, VisitRepository::class);
         $this->app->bind(PatientRepositoryInterface::class, PatientRepository::class);
         $this->app->bind(OrthancStudyRepositoryInterface::class, OrthancStudyRepository::class);
+        $this->app->bind(ReviewStatusRepositoryInterface::class, ReviewStatusRepository::class);
+        $this->app->bind(OrthancSeriesRepositoryInterface::class, OrthancSeriesRepository::class);
     }
 
     /**
