@@ -309,8 +309,8 @@ class UserRepository implements UserRepositoryInterface {
 
         $users = $this->user->join('roles', function ($join) {
             $join->on('roles.user_id', '=', 'users.id');
-        })->where('study_name', $studyName)->groupBy('user_id')->with('roles')->get();
-        return empty($users) ? [] : $users->toArray();
+        })->where('study_name', $studyName)->with('roles')->get();
+        return empty($users) ? [] : $users->unique('id')->toArray();
     }
 }
 
