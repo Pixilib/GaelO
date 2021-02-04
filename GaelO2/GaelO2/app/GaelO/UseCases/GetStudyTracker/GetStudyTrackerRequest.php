@@ -1,9 +1,10 @@
 <?php
 
-namespace App\GaelO\UseCases\getStudyTracker;
+namespace App\GaelO\UseCases\GetStudyTracker;
 
 class GetStudyTrackerRequest {
     public int $currentUserId;
     public string $studyName;
-    public string $requiredTracker;
+    public string $role;
+    public string $actionType;
 }
