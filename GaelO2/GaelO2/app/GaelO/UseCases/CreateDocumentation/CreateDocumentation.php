@@ -4,6 +4,7 @@ namespace App\GaelO\UseCases\CreateDocumentation;
 
 use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOException;
+use App\GaelO\Exceptions\GaelOConflictException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\DocumentationRepositoryInterface;
 use App\GaelO\Interfaces\TrackerRepositoryInterface;
@@ -27,6 +28,10 @@ class CreateDocumentation {
 
         try{
             $this->checkAuthorization($createDocumentationRequest->currentUserId, $createDocumentationRequest->studyName);
+
+            if($this->documentationRepositoryInterface->isKnowndocumentation($createDocumentationRequest->name, $createDocumentationRequest->version)){
+                throw new GaelOConflictException("Documentation already existing under this version");
+            };
 
             $createdEntity = $this->documentationRepositoryInterface->createDocumentation(
                 $createDocumentationRequest->name,

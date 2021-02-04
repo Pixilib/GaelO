@@ -89,7 +89,51 @@ class DocumentationRepositoryTest extends TestCase
         $this->assertEquals(10, sizeof($documenationStudy2Investigator));
     }
 
-    //TODO : Update Documentation
+    public function testUpdateDocumentation() {
+        
+        $documentation = Documentation::factory()->create();
 
+        $this->documentationRepository->updateDocumentation(
+            $documentation->id,
+            $documentation->name,
+            $documentation->document_date,
+            $documentation->study_name,
+            '1.2',
+            $documentation->investigator,
+            $documentation->controller,
+            $documentation->monitor,
+            $documentation->reviewer
+        );
+
+        $updatedDocumentation = Documentation::find($documentation->id);
+
+        $this->assertEquals('1.2', $updatedDocumentation->version);
+        $this->assertEquals($documentation->document_date, $updatedDocumentation->document_date);
+    }
+
+    public function testUpdateDocumentationRoles() {
+        
+        $documentation = Documentation::factory()->create();
+
+        $this->documentationRepository->updateDocumentation(
+            $documentation->id,
+            $documentation->name,
+            $documentation->document_date,
+            $documentation->study_name,
+            $documentation->version,
+            true,
+            true,
+            $documentation->monitor,
+            $documentation->reviewer
+        );
+
+        $updatedDocumentation = Documentation::find($documentation->id);
+
+        $this->assertTrue(filter_var($updatedDocumentation->controller, FILTER_VALIDATE_BOOLEAN));
+        $this->assertTrue(filter_var($updatedDocumentation->investigator, FILTER_VALIDATE_BOOLEAN));
+        $this->assertFalse(filter_var($updatedDocumentation->monitor, FILTER_VALIDATE_BOOLEAN));
+        $this->assertFalse(filter_var($updatedDocumentation->reviewer, FILTER_VALIDATE_BOOLEAN));
+        $this->assertEquals($documentation->document_date, $updatedDocumentation->document_date);
+    }
 
 }

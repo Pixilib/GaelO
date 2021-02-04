@@ -1,12 +1,13 @@
 <?php
 
-namespace App\GaelO\UseCases\CreateDocumentation;
+namespace App\GaelO\UseCases\ModifyDocumentation;
 
-class CreateDocumentationRequest{
+class ModifyDocumentationRequest{
     public int $currentUserId;
-    public string $name;
+    public int $id;
     public string $studyName;
-    public string $version;
+    public ?string $documentDate = null;
+    public ?string $version = null;
     public ?bool $investigator = false;
     public ?bool $controller = false;
     public ?bool $monitor = false;

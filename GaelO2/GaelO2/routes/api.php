@@ -129,6 +129,7 @@ Route::middleware(['auth:api', 'refresh_token'])->group(function () {
     Route::post('studies/{studyName}/documentations', [DocumentationController::class, 'createDocumentation'] );
     Route::post('documentations/{id}/file', [DocumentationController::class, 'uploadDocumentation'] );
     Route::delete('documentations/{id}', [DocumentationController::class, 'deleteDocumentation'] );
+    Route::patch('studies/{studyName}/documentations/{id}', [DocumentationController::class, 'modifyDocumentation'] );
 });
 
 
