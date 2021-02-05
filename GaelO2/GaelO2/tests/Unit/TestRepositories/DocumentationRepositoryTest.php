@@ -134,6 +134,49 @@ class DocumentationRepositoryTest extends TestCase
         $this->assertFalse(filter_var($updatedDocumentation->monitor, FILTER_VALIDATE_BOOLEAN));
         $this->assertFalse(filter_var($updatedDocumentation->reviewer, FILTER_VALIDATE_BOOLEAN));
         $this->assertEquals($documentation->document_date, $updatedDocumentation->document_date);
+
+        $this->documentationRepository->updateDocumentation(
+            $updatedDocumentation->id,
+            $updatedDocumentation->name,
+            $updatedDocumentation->document_date,
+            $updatedDocumentation->study_name,
+            $updatedDocumentation->version,
+            $updatedDocumentation->investigator,
+            $updatedDocumentation->controller,
+            true,
+            $updatedDocumentation->reviewer
+        );
+        
+        $updatedDocumentation = Documentation::find($documentation->id);
+
+        $this->assertTrue(filter_var($updatedDocumentation->controller, FILTER_VALIDATE_BOOLEAN));
+        $this->assertTrue(filter_var($updatedDocumentation->investigator, FILTER_VALIDATE_BOOLEAN));
+        $this->assertTrue(filter_var($updatedDocumentation->monitor, FILTER_VALIDATE_BOOLEAN));
+        $this->assertFalse(filter_var($updatedDocumentation->reviewer, FILTER_VALIDATE_BOOLEAN));
+
+    }
+
+    public function testUpdateDocumentationRolesToFalse() {
+        
+        $documentation = Documentation::factory()->investigator()->create();
+        $this->assertTrue(filter_var($documentation->investigator, FILTER_VALIDATE_BOOLEAN));
+
+        $this->documentationRepository->updateDocumentation(
+            $documentation->id,
+            $documentation->name,
+            $documentation->document_date,
+            $documentation->study_name,
+            $documentation->version,
+            false,
+            $documentation->controller,
+            $documentation->monitor,
+            $documentation->reviewer
+        );
+
+        $updatedDocumentation = Documentation::find($documentation->id);
+
+        $this->assertFalse(filter_var($updatedDocumentation->investigator, FILTER_VALIDATE_BOOLEAN));
+        $this->assertEquals($documentation->document_date, $updatedDocumentation->document_date);
     }
 
 }

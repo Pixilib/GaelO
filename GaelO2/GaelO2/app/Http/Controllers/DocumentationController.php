@@ -91,10 +91,7 @@ class DocumentationController extends Controller
         $currentUser = Auth::user();
         $requestData = $request->all();
         $queryParam = $request->query();
-        Log::info($requestData);    
-        Log::info($modifyDocumentationRequest->investigator);    
         $modifyDocumentationRequest = Util::fillObject($requestData, $modifyDocumentationRequest);
-        Log::info($modifyDocumentationRequest->investigator);    
         $modifyDocumentationRequest->id = $documentationId;
         $modifyDocumentationRequest->studyName = $studyName;
         $modifyDocumentationRequest->currentUserId = $currentUser['id'];
