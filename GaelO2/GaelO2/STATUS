@@ -28,7 +28,7 @@ dicom-study (PATCH) => OK
 
 
 Salim TODO :
-
+Pipeline uploader dans le front
 *** APIs ***
 Preparation Investigateur / Monitor / Controller / Reviewer :
 - API Review (POST, GET, DELETE) + Review attached files
@@ -90,10 +90,7 @@ Delete Series  : Reset du form Investigateur pas géré
 Creatable Visit : Manque Study Custom Logic (+dans front skip visites optionnelles ?)
 
 Préparation supervisor :
-- Users in Study => fait partiellement, meme api qu'admin, Peut etre cacher des informations pour le supervisor a pas besoin de connaitre tous les details de l'user
-- tracker
 - Reactivate visit
-
 - Unlock / Delete form
 - Export Study Data
 - Review Manager
