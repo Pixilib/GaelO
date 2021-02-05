@@ -17,9 +17,13 @@ use App\GaelO\UseCases\GetDocumentation\GetDocumentationResponse;
 use App\GaelO\UseCases\GetDocumentationFile\GetDocumentationFile;
 use App\GaelO\UseCases\GetDocumentationFile\GetDocumentationFileRequest;
 use App\GaelO\UseCases\GetDocumentationFile\GetDocumentationFileResponse;
+use App\GaelO\UseCases\ModifyDocumentation\ModifyDocumentation;
+use App\GaelO\UseCases\ModifyDocumentation\ModifyDocumentationRequest;
+use App\GaelO\UseCases\ModifyDocumentation\ModifyDocumentationResponse;
 use App\GaelO\Util;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Log;
 
 class DocumentationController extends Controller
 {
@@ -81,6 +85,19 @@ class DocumentationController extends Controller
             return response()->json($getDocumentationFileResponse->body)
             ->setStatusCode($getDocumentationFileResponse->status, $getDocumentationFileResponse->statusText);
         }
+    }
 
+    public function modifyDocumentation(string $studyName, int $documentationId, Request $request, ModifyDocumentation $modifyDocumentation, ModifyDocumentationRequest $modifyDocumentationRequest, ModifyDocumentationResponse $modifyDocumentationResponse) {
+        $currentUser = Auth::user();
+        $requestData = $request->all();
+        $queryParam = $request->query();
+        $modifyDocumentationRequest = Util::fillObject($requestData, $modifyDocumentationRequest);
+        $modifyDocumentationRequest->id = $documentationId;
+        $modifyDocumentationRequest->studyName = $studyName;
+        $modifyDocumentationRequest->currentUserId = $currentUser['id'];
+        $modifyDocumentationRequest->role = $queryParam['role'];
+        $modifyDocumentation->execute($modifyDocumentationRequest, $modifyDocumentationResponse);
+        return response()->json($modifyDocumentationResponse->body)
+                ->setStatusCode($modifyDocumentationResponse->status, $modifyDocumentationResponse->statusText);
     }
 }

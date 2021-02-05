@@ -104,7 +104,6 @@ Route::middleware(['auth:api', 'refresh_token'])->group(function () {
     Route::post('studies/{studyName}/visit-groups/{visitGroupId}/visit-types/{visitTypeId}/visits', [VisitController::class, 'createVisit'] );
     Route::get('studies/{studyName}/visits/{id}', [VisitController::class, 'getVisit'] );
 
-
     //Dicom Routes
     Route::delete('dicom-series/{seriesInstanceUID}', [DicomController::class, 'deleteSeries'] );
     Route::patch('dicom-series/{seriesInstanceUID}', [DicomController::class, 'reactivateSeries'] );
@@ -122,12 +121,15 @@ Route::middleware(['auth:api', 'refresh_token'])->group(function () {
 
     //Tracker Routes
     Route::get('tracker', [TrackerController::class, 'getTracker'] );
+    Route::get('studies/{studyName}/tracker', [TrackerController::class, 'getStudyTracker'] );
+
 
     //Documentations routes
     Route::get('studies/{studyName}/documentations', [DocumentationController::class, 'getDocumentationsFromStudy'] );
     Route::post('studies/{studyName}/documentations', [DocumentationController::class, 'createDocumentation'] );
     Route::post('documentations/{id}/file', [DocumentationController::class, 'uploadDocumentation'] );
     Route::delete('documentations/{id}', [DocumentationController::class, 'deleteDocumentation'] );
+    Route::patch('studies/{studyName}/documentations/{id}', [DocumentationController::class, 'modifyDocumentation'] );
 });
 
 

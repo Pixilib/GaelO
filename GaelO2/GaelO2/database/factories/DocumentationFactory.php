@@ -27,11 +27,29 @@ class DocumentationFactory extends Factory
         ];
     }
 
+    public function name($name){
+
+        return $this->state(function (array $attributes) use ($name) {
+            return [
+                'name' => $name,
+            ];
+        });
+    }
+
     public function studyName($studyName){
 
         return $this->state(function (array $attributes) use ($studyName) {
             return [
                 'study_name' => $studyName,
+            ];
+        });
+    }
+
+    public function version($version){
+
+        return $this->state(function (array $attributes) use ($version) {
+            return [
+                'version' => $version,
             ];
         });
     }

@@ -144,6 +144,43 @@ class DocumentationTest extends TestCase
         $documentation = Documentation::factory()->studyName($this->study->name)->path('/documentations/'.$this->study->name.'/test.pdf')->create();
         $response = $this->get('api/documentations/'.$documentation->id.'/file');
         $response->assertStatus(403);
+    }
 
+    public function testModifyDocumentation() {
+        $currentUserId = AuthorizationTools::actAsAdmin(false);
+        AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $this->study->name);
+        $documentation = Documentation::factory()->studyName($this->study->name)->create();
+        $newPayload = [
+            'version'=>'2.0',
+            'controller'=>true,
+            'reviewer'=>true
+        ];
+        $response = $this->patch('api/studies/'.$this->study->name.'/documentations/'.$documentation->id.'?role=Supervisor', $newPayload);
+        $response->assertStatus(200);
+    }
+
+    public function testModifyDocumentationConflict() {
+        $currentUserId = AuthorizationTools::actAsAdmin(false);
+        AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $this->study->name);
+        Documentation::factory()->studyName($this->study->name)->name('newFile')->version('2.0')->create();
+        $documentation = Documentation::factory()->studyName($this->study->name)->name('newFile')->version('1.0')->create();
+        $newPayload = [
+            'version'=>'2.0'
+        ];
+        $response = $this->patch('api/studies/'.$this->study->name.'/documentations/'.$documentation->id.'?role=Supervisor', $newPayload);
+        $response->assertStatus(409);
+    }
+
+    public function testModifyDocumentationShouldFailNotSupervisor() {
+        $currentUserId = AuthorizationTools::actAsAdmin(false);
+        AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_INVESTIGATOR, $this->study->name);
+        $documentation = Documentation::factory()->studyName($this->study->name)->create();
+        $newPayload = [
+            'version'=>'2.0',
+            'controller'=>true,
+            'reviewer'=>true
+        ];
+        $response = $this->patch('api/studies/'.$this->study->name.'/documentations/'.$documentation->id.'?role=Supervisor');
+        $response->assertStatus(403);
     }
 }

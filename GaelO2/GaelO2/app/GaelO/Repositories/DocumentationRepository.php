@@ -74,7 +74,22 @@ class DocumentationRepository implements DocumentationRepositoryInterface {
         bool $monitor,
         bool $reviewer
     ){
-        //SK TODO
+        $data = [
+            'name'=>$name,
+            'document_date'=>$documentDate,
+            'study_name'=>$studyName,
+            'version'=>$version,
+            'investigator'=>$investigator,
+            'controller'=>$controller,
+            'monitor'=>$monitor,
+            'reviewer'=>$reviewer,
+        ];
+
+        $this->update($id, $data);
+    }
+
+    public function isKnownDocumentation(string $name, string $version) : bool {
+        return empty($this->documentation->where('name', $name)->where('version', $version)->get()->first()) ? false : true;
     }
 
 }

@@ -42,8 +42,7 @@ class DicomController extends Controller
             return response()->json($getDicomsFileResponse->body)
             ->setStatusCode($getDicomsFileResponse->status, $getDicomsFileResponse->statusText);
         }
-
-
+        
     }
 
     public function getVisitDicoms(int $visitId, Request $request, GetDicoms $getDicoms, GetDicomsRequest $getDicomsRequest, GetDicomsResponse $getDicomsResponse){

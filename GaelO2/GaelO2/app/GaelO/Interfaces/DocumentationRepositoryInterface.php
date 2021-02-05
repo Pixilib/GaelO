@@ -37,4 +37,6 @@ interface DocumentationRepositoryInterface
         bool $monitor,
         bool $reviewer
     );
+
+    public function isKnownDocumentation(string $name, string $version): bool;
 }
