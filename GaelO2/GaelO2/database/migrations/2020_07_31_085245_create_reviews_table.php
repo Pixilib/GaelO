@@ -22,7 +22,7 @@ class CreateReviewsTable extends Migration
             $table->boolean('validated')->nullable(false);
             $table->boolean('local')->nullable(false);
             $table->boolean('adjudication')->nullable(false);
-            $table->json('sent_files')->nullable(false)->default("{}");
+            $table->json('sent_files')->nullable(false);
             $table->json('review_data')->nullable(false);
             $table->softDeletes();
             $table->timestamps();
