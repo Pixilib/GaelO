@@ -45,7 +45,7 @@ class PatientEntity {
         $this->countryCode = $countryCode;
     }
 
-    public static function fillFromRequest(array $array) : PatientEntity{
+    public static function fillFromRequest(array $array, string $studyName) : PatientEntity{
         $patientEntity = new PatientEntity();
         $patientEntity->code = $array['code'];
         $patientEntity->lastName = $array['lastName'];
@@ -56,7 +56,7 @@ class PatientEntity {
         $patientEntity->gender = $array['gender'];
         $patientEntity->registrationDate = $array['registrationDate'];
         $patientEntity->investigatorName = $array['investigatorName'];
-        $patientEntity->studyName = $array['studyName'];
+        $patientEntity->studyName = $studyName;
         $patientEntity->centerCode = $array['centerCode'];
         return $patientEntity;
     }
