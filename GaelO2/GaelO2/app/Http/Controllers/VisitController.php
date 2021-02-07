@@ -32,7 +32,6 @@ class VisitController extends Controller
 {
     public function createVisit(String $studyName, String $visitGroupId, String $visitTypeId, Request $request, CreateVisit $createVisit, CreateVisitRequest $createVisitRequest, CreateVisitResponse $createVisitResponse) {
         $curentUser = Auth::user();
-        $queryParam = $request->query();
 
         $createVisitRequest->currentUserId = $curentUser['id'];
         $createVisitRequest->studyName = $studyName;

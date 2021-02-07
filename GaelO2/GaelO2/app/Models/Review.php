@@ -10,6 +10,17 @@ class Review extends Model
 {
     use SoftDeletes, HasFactory;
 
+    protected $casts = [
+        'sent_files' => 'array',
+        'review_data' => 'array',
+    ];
+
+    //Default value because db does not accept default value json
+    protected $attributes = [
+        'review_data' => '{}',
+        'sent_files' => '{}'
+    ];
+
     public function user(){
         return $this->belongsTo('App\Models\User', 'user_id', 'id');
     }

@@ -6,18 +6,18 @@ use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Services\AuthorizationPatientService;
-use App\GaelO\Services\VisitService;
+use App\GaelO\Services\PatientService;
 use Exception;
 
 class GetCreatableVisits{
 
     private AuthorizationPatientService $authorizationPatientService;
-    private VisitService $visitService;
+    private PatientService $patientService;
 
-    public function __construct(AuthorizationPatientService $authorizationPatientService, VisitService $visitService)
+    public function __construct(AuthorizationPatientService $authorizationPatientService, PatientService $patientService)
     {
         $this->authorizationPatientService = $authorizationPatientService;
-        $this->visitService = $visitService;
+        $this->patientService = $patientService;
     }
 
     public function execute(GetCreatableVisitsRequest $getCreatableVisitsRequest, GetCreatableVisitsResponse $getCreatableVisitsResponse){
@@ -25,7 +25,8 @@ class GetCreatableVisits{
         try{
 
             $this->checkAuthorization($getCreatableVisitsRequest->currentUserId, $getCreatableVisitsRequest->patientCode);
-            $visitToCreate = $this->visitService->getAvailableVisitToCreate($getCreatableVisitsRequest->patientCode);
+            $this->patientService->setPatientCode($getCreatableVisitsRequest->patientCode);
+            $visitToCreate = $this->patientService->getAvailableVisitToCreate();
             $getCreatableVisitsResponse->status = 200;
             $getCreatableVisitsResponse->statusText = 'OK';
             $getCreatableVisitsResponse->body = $visitToCreate;

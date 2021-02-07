@@ -29,7 +29,8 @@ class ModifyQualityControl {
     public function execute(ModifyQualityControlRequest $modifyQualityControlRequest, ModifyQualityControlResponse $modifyQualityControlResponse){
 
         try{
-            $visitContext = $this->visitService->getVisitContext($modifyQualityControlRequest->visitId);
+            $this->visitService->setVisitId($modifyQualityControlRequest->visitId);
+            $visitContext = $this->visitService->getVisitContext();
 
             $studyName = $visitContext['visit_type']['visit_group']['study_name'];
             $patientCode = $visitContext['patient']['center_code'];
@@ -60,7 +61,6 @@ class ModifyQualityControl {
             }
 
             $this->visitService->editQc(
-                    $modifyQualityControlRequest->visitId,
                     $modifyQualityControlRequest->stateQc,
                     $modifyQualityControlRequest->currentUserId,
                     $modifyQualityControlRequest->imageQc,

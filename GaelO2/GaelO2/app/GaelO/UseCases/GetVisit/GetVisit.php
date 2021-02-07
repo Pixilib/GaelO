@@ -4,18 +4,21 @@ namespace App\GaelO\UseCases\GetVisit;
 
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
+use App\GaelO\Interfaces\ReviewStatusRepositoryInterface;
+use App\GaelO\Interfaces\VisitRepositoryInterface;
 use App\GaelO\Services\AuthorizationVisitService;
-use App\GaelO\Services\VisitService;
 use Exception;
 
 class GetVisit {
 
-    private VisitService $visitService;
+    private VisitRepositoryInterface $visitRepositoryInterface;
+    private ReviewStatusRepositoryInterface $reviewStatusRepositoryInterface;
     private AuthorizationVisitService $authorizationVisitService;
 
-    public function __construct(VisitService $visitService, AuthorizationVisitService $authorizationVisitService){
-        $this->visitService = $visitService;
+    public function __construct(VisitRepositoryInterface $visitRepositoryInterface, ReviewStatusRepositoryInterface $reviewStatusRepositoryInterface, AuthorizationVisitService $authorizationVisitService){
+        $this->visitRepositoryInterface = $visitRepositoryInterface;
         $this->authorizationVisitService = $authorizationVisitService;
+        $this->reviewStatusRepositoryInterface = $reviewStatusRepositoryInterface;
     }
 
     public function execute(GetVisitRequest $getVisitRequest, GetVisitResponse $getVisitResponse){
@@ -25,8 +28,8 @@ class GetVisit {
             $visitId = $getVisitRequest->visitId;
             $this->checkAuthorization($visitId, $getVisitRequest->currentUserId, $getVisitRequest->role);
 
-            $dbData = $this->visitService->getVisitData($visitId);
-            $reviewStatus = $this->visitService->getReviewStatus($visitId, $getVisitRequest->studyName);
+            $dbData = $this->visitRepositoryInterface->find($visitId);
+            $reviewStatus = $this->reviewStatusRepositoryInterface->getReviewStatus($visitId, $getVisitRequest->studyName);
 
             $responseEntity = VisitEntity::fillFromDBReponseArray($dbData);
             $responseEntity->setReviewVisitStatus($reviewStatus['review_status'], $reviewStatus['review_conclusion_value'] ,$reviewStatus['review_conclusion_date']);

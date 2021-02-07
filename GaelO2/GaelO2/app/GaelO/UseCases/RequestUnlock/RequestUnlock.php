@@ -6,9 +6,9 @@ use App\GaelO\Exceptions\GaelOBadRequestException;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\UserRepositoryInterface;
+use App\GaelO\Interfaces\VisitRepositoryInterface;
 use App\GaelO\Services\AuthorizationVisitService;
 use App\GaelO\Services\MailServices;
-use App\GaelO\Services\VisitService;
 use Exception;
 
 class RequestUnlock {
@@ -16,14 +16,14 @@ class RequestUnlock {
     private AuthorizationVisitService $authorizationVisitService;
     private UserRepositoryInterface $userRepositoryInterface;
     private MailServices $mailServices;
-    private VisitService $visitService;
+    private VisitRepositoryInterface $visitRepositoryInterface;
 
-    public function __construct( UserRepositoryInterface $userRepositoryInterface, VisitService $visitService, AuthorizationVisitService $authorizationVisitService, MailServices $mailServices)
+    public function __construct( UserRepositoryInterface $userRepositoryInterface, VisitRepositoryInterface $visitRepositoryInterface, AuthorizationVisitService $authorizationVisitService, MailServices $mailServices)
     {
         $this->userRepositoryInterface = $userRepositoryInterface;
         $this->mailServices = $mailServices;
         $this->authorizationVisitService = $authorizationVisitService;
-        $this->visitService = $visitService;
+        $this->visitRepositoryInterface = $visitRepositoryInterface;
 
     }
 
@@ -38,7 +38,7 @@ class RequestUnlock {
 
             $userEntity = $this->userRepositoryInterface->find($requestUnlockRequest->currentUserId);
 
-            $visitContext = $this->visitService->getVisitContext($requestUnlockRequest->visitId);
+            $visitContext = $this->visitRepositoryInterface->getVisitContext($requestUnlockRequest->visitId);
 
             $patientCode = $visitContext['patient']['center_code'];
             $visitType = $visitContext['visit_type']['name'];

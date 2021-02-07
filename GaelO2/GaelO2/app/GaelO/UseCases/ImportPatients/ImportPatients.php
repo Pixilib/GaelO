@@ -36,7 +36,7 @@ class ImportPatients {
             $this->checkAuthorization($importPatientsRequest->currentUserId, $importPatientsRequest->studyName);
             $arrayPatients = [];
             foreach($importPatientsRequest->patients as $patient) {
-                $arrayPatients[] = PatientEntity::fillFromRequest($patient);
+                $arrayPatients[] = PatientEntity::fillFromRequest($patient, $importPatientsRequest->studyName);
             }
             $importPatientsRequest->patients = $arrayPatients;
             $this->importPatient->setPatientEntities($importPatientsRequest->patients);

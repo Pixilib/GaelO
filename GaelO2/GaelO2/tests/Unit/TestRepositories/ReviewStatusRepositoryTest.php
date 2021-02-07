@@ -2,6 +2,7 @@
 
 namespace Tests\Unit\TestRepositories;
 
+use App\GaelO\Constants\Constants;
 use App\GaelO\Repositories\ReviewStatusRepository;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
@@ -50,14 +51,42 @@ class ReviewStatusRepositoryTest extends TestCase
         $this->reviewStatus->updateReviewStatus(
             $reviewStatus->visit_id,
             $reviewStatus->study_name,
-            true,
-            'Done',
-            'MyConclusionValue',
-            '2020-01-01'
+            Constants::REVIEW_STATUS_DONE,
         );
 
         $review = ReviewStatus::get()->first();
 
-        $this->assertEquals('MyConclusionValue', $review['review_conclusion_value']);
+        $this->assertEquals(Constants::REVIEW_STATUS_DONE, $review['review_status']);
+    }
+
+    public function testUpdateReviewConclusion(){
+
+        $reviewStatus = ReviewStatus::factory()->create();
+        $this->reviewStatus->updateReviewConclusion(
+            $reviewStatus->visit_id,
+            $reviewStatus->study_name,
+            'Progression'
+        );
+
+        $review = ReviewStatus::get()->first();
+
+        $this->assertEquals('Progression', $review['review_conclusion_value']);
+
+    }
+
+    public function testUpdateReviewAvailability(){
+
+        $reviewStatus = ReviewStatus::factory()->create();
+
+        $this->reviewStatus->updateReviewAvailability(
+            $reviewStatus->visit_id,
+            $reviewStatus->study_name,
+            false
+        );
+
+        $review = ReviewStatus::get()->first();
+
+        $this->assertEquals(false, boolval($review['review_available']));
+
     }
 }

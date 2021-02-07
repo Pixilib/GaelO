@@ -9,6 +9,7 @@ use Exception;
 use FilesystemIterator;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
+use ZipArchive;
 
 class Util {
 
@@ -95,11 +96,16 @@ class Util {
 
     public static function getZipUncompressedSize(string $filename) {
         $size=0;
-        $resource=zip_open($filename);
-        while ($dir_resource=zip_read($resource)) {
-            $size+=zip_entry_filesize($dir_resource);
+
+        $zipArchive = new ZipArchive;
+        $zipArchive->open($filename);
+
+        for( $i = 0; $i < $zipArchive->numFiles; $i++ ){
+            $stat = $zipArchive->statIndex( $i );
+            $size+=$stat['size'];
         }
-        zip_close($resource);
+
+        $zipArchive->close();
 
         return $size;
     }

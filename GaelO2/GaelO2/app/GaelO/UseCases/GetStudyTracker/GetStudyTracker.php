@@ -2,11 +2,11 @@
 
 namespace App\GaelO\UseCases\GetStudyTracker;
 
-use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\TrackerRepositoryInterface;
 use App\GaelO\Services\AuthorizationService;
+use App\GaelO\UseCases\GetTracker\TrackerEntity;
 use Exception;
 
 class GetStudyTracker {
@@ -19,7 +19,7 @@ class GetStudyTracker {
         $this->authorizationService = $authorizationService;
     }
 
-    public function execute(getStudyTrackerRequest $getStudyTrackerRequest, getStudyTrackerResponse $getStudyTrackerResponse) : void {
+    public function execute(GetStudyTrackerRequest $getStudyTrackerRequest, GetStudyTrackerResponse $getStudyTrackerResponse) : void {
 
         try{
 

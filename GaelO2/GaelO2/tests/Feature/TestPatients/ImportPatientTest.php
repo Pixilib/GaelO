@@ -32,13 +32,11 @@ class ImportPatientTest extends TestCase
         "birthDay" => 1,
         "birthMonth" => 1,
         "birthYear" => 1998,
-        "studyName" => $this->study->name,
         "registrationDate" => '10/19/2020',
         "investigatorName" => "administrator",
         "centerCode" => 0,
-        "inclusionStatus"  => Constants::PATIENT_INCLUSION_STATUS_INCLUDED,
-        "withdrawReason" => null,
-        "withdrawDate" => null]];
+        "inclusionStatus"  => Constants::PATIENT_INCLUSION_STATUS_INCLUDED
+        ]];
 
     }
 
@@ -56,10 +54,10 @@ class ImportPatientTest extends TestCase
         "birthDay" => 1,
         "birthMonth" => 1,
         "birthYear" => 1998,
-        "studyName" => $this->study->name,
         "registrationDate" => '10/19/2020',
         "investigatorName" => "administrator",
-        "centerCode" => 0],
+        "centerCode" => 0,
+        "inclusionStatus"  => Constants::PATIENT_INCLUSION_STATUS_INCLUDED],
         ["code" => 12341231234124,
         "lastName" => "test",
         "firstName" => "test",
@@ -67,10 +65,10 @@ class ImportPatientTest extends TestCase
         "birthDay" => 1,
         "birthMonth" => 1,
         "birthYear" => 1998,
-        "studyName" => $this->study->name,
         "registrationDate" => '10/19/2020',
         "investigatorName" => "administrator",
-        "centerCode" => 0],
+        "centerCode" => 0,
+        "inclusionStatus"  => Constants::PATIENT_INCLUSION_STATUS_INCLUDED],
         ["code" => 12341231234125,
         "lastName" => "test",
         "firstName" => "test",
@@ -78,10 +76,10 @@ class ImportPatientTest extends TestCase
         "birthDay" => 1,
         "birthMonth" => 1,
         "birthYear" => 1998,
-        "studyName" => $this->study->name,
         "registrationDate" => '10/19/2020',
         "investigatorName" => "administrator",
-        "centerCode" => 0]
+        "centerCode" => 0,
+        "inclusionStatus"  => Constants::PATIENT_INCLUSION_STATUS_INCLUDED]
     ];
         $resp = $this->json('POST', '/api/studies/'.$this->study->name.'/import-patients', $this->validPayload);
         $resp->assertSuccessful();
@@ -196,15 +194,4 @@ class ImportPatientTest extends TestCase
         $this->assertEquals(12431234123412, $resp['fail']['Wrong Patient Prefix'][0]);
     }
 
-    public function testCreateIncorrectStudy(){
-        $currentUserId = AuthorizationTools::actAsAdmin(false);
-        AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $this->study->name);
-
-        $this->validPayload[0]['studyName'] = "otherStudy";
-        $this->json('POST', '/api/studies/'.$this->study->name.'/import-patients', $this->validPayload);
-        $resp = $this->json('POST', '/api/studies/'.$this->study->name.'/import-patients', $this->validPayload);
-        $this->assertEquals(0, count($resp['success']));
-        $this->assertNotEmpty($resp['fail']['Patient Wrong Study']);
-        $this->assertEquals(12341231234123, $resp['fail']['Patient Wrong Study'][0]);
-    }
 }

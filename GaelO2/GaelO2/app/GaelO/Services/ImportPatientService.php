@@ -9,6 +9,7 @@ use App\GaelO\Repositories\PatientRepository;
 use App\GaelO\Repositories\StudyRepository;
 use App\GaelO\Util;
 use Exception;
+use Illuminate\Support\Facades\Log;
 
 class ImportPatientService
 {

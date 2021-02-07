@@ -306,4 +306,16 @@ Class MailServices extends SendEmailAdapter {
 
     }
 
+    public function sendAwaitingAdjudicationMessage(string $studyName, int $patientCode, string $visitType){
+
+        //SK A envoyer a Supervisor + Reviewer qui n'ont pas fait de Review
+        //SK demander / verif Monitor dans le lot ?
+    }
+
+    public function sendVisitConcludedMessage(string $studyName, int $patientCode, string $visitType, string $conclusionValue){
+
+        //SK a faire : Monitor + supervisor + uploader Email
+
+    }
+
 }

@@ -25,17 +25,19 @@ class VisitService
     private MailServices $mailServices;
     private ReviewStatusRepository $reviewStatusRepository;
 
+    private int $visitId;
+
     public function __construct(
-                            UserRepository $userRepository,
-                            PatientRepository $patientRepository,
-                            StudyRepository $studyRepository,
-                            VisitRepository $visitRepository,
-                            ReviewRepository $reviewRepository,
-                            ReviewStatusRepository $reviewStatusRepository,
-                            VisitTypeRepository $visitTypeRepository,
-                            OrthancStudyRepository $orthancStudyRepository,
-                            MailServices $mailServices)
-    {
+        UserRepository $userRepository,
+        PatientRepository $patientRepository,
+        StudyRepository $studyRepository,
+        VisitRepository $visitRepository,
+        ReviewRepository $reviewRepository,
+        ReviewStatusRepository $reviewStatusRepository,
+        VisitTypeRepository $visitTypeRepository,
+        OrthancStudyRepository $orthancStudyRepository,
+        MailServices $mailServices
+    ) {
         $this->patientRepository = $patientRepository;
         $this->visitTypeRepository = $visitTypeRepository;
         $this->visitRepository = $visitRepository;
@@ -47,22 +49,24 @@ class VisitService
         $this->userRepository = $userRepository;
     }
 
-    public function getVisitContext(int $visitId) : array {
-        return $this->visitRepository->getVisitContext($visitId);
+    public function setVisitId(int $visitId)
+    {
+        $this->visitId = $visitId;
     }
 
-    public function getVisitData(int $visitId) : array {
-        return $this->visitRepository->find($visitId);
+    public function getVisitContext(): array
+    {
+        return $this->visitRepository->getVisitContext($this->visitId);
     }
 
-    public function getVisitSeriesIdsDicomArray(int $visitId, bool $deleted){
-        $studyOrthancId = $this->orthancStudyRepository->getStudyOrthancIDFromVisit($visitId);
+    public function getVisitSeriesIdsDicomArray(bool $deleted)
+    {
+        $studyOrthancId = $this->orthancStudyRepository->getStudyOrthancIDFromVisit($this->visitId);
         $seriesEntities = $this->orthancStudyRepository->getChildSeries($studyOrthancId, $deleted);
-        $seriesOrthancIdArray = array_map(function($series){
+        $seriesOrthancIdArray = array_map(function ($series) {
             return $series['orthanc_id'];
         }, $seriesEntities);
         return $seriesOrthancIdArray;
-
     }
 
     public function createVisit(
@@ -97,35 +101,34 @@ class VisitService
         );
     }
 
-    public function updateUploadStatus(int $visitId, string $uploadStatus)
+    public function updateUploadStatus(string $uploadStatus)
     {
 
-        $updatedEntity = $this->visitRepository->updateUploadStatus($visitId, $uploadStatus);
+        $updatedEntity = $this->visitRepository->updateUploadStatus($this->visitId, $uploadStatus);
 
         if (
             $updatedEntity['upload_status'] === Constants::UPLOAD_STATUS_DONE
             && $updatedEntity['state_investigator_form'] !== Constants::INVESTIGATOR_FORM_NOT_DONE
         ) {
-            $this->sendUploadEmailAndSkipQcIfNeeded($visitId);
+            $this->sendUploadEmailAndSkipQcIfNeeded($this->visitId);
         }
-
-
-
     }
 
-    public function updateInvestigatorFormStatus(int $visitId, string $stateInvestigatorForm){
-        $updatedEntity = $this->visitRepository->updateInvestigatorForm($visitId, $stateInvestigatorForm);
+    public function updateInvestigatorFormStatus(string $stateInvestigatorForm)
+    {
+        $updatedEntity = $this->visitRepository->updateInvestigatorForm($this->visitId, $stateInvestigatorForm);
         if (
             $updatedEntity['upload_status'] === Constants::UPLOAD_STATUS_DONE
             && $updatedEntity['state_investigator_form'] !== Constants::INVESTIGATOR_FORM_NOT_DONE
         ) {
-            $this->sendUploadEmailAndSkipQcIfNeeded($visitId);
+            $this->sendUploadEmailAndSkipQcIfNeeded($this->visitId);
         }
     }
 
-    private function sendUploadEmailAndSkipQcIfNeeded(int $visitId){
+    private function sendUploadEmailAndSkipQcIfNeeded()
+    {
         //If uploaded done and investigator done (Done or Not Needed) send notification message
-        $visitEntity = $this->getVisitContext($visitId);
+        $visitEntity = $this->visitRepository->getVisitContext($this->visitId);
         $patientCode = $visitEntity['patient_code'];
         $study = $visitEntity['visit_type']['visit_group']['study_name'];
         $visitType = $visitEntity['visit_type']['name'];
@@ -133,108 +136,52 @@ class VisitService
 
         $this->mailServices->sendUploadedVisitMessage($visitEntity['creator_user_id'], $study, $patientCode, $visitType, $qcNeeded);
         //If Qc NotNeeded mark visit as available for review
-        if(!$qcNeeded) {
-            $this->updateReviewAvailability($visitId, true, $study, $patientCode, $visitType);
+        if (!$qcNeeded) {
+            $this->updateReviewAvailability($this->visitId, true, $study, $patientCode, $visitType);
         }
-
-
     }
 
     /**
      * Update review status of visit
      * if change to available, send notification message to reviewers
      */
-    public function updateReviewAvailability(int $visitId, bool $available, string $study, int $patientCode, string $visitType){
-        $this->visitRepository->updateReviewAvailability($visitId, $study, $available);
-        if($available){
+    public function updateReviewAvailability(bool $available, string $study, int $patientCode, string $visitType)
+    {
+        $this->visitRepository->updateReviewAvailability($this->visitId, $study, $available);
+        if ($available) {
             $this->mailServices->sendAvailableReviewMessage($study, $patientCode, $visitType);
         }
-
     }
 
-    public function getAvailableVisitToCreate(string $patientCode) : array {
 
-        $patientEntity = $this->patientRepository->find($patientCode);
+    public function editQc(string $stateQc, int $controllerId, bool $imageQc, bool $formQc, ?string $imageQcComment, ?string $formQcComment)
+    {
 
-        //If Patient status different from Included, No further visit creation is possible
-        if($patientEntity['inclusion_status'] !== Constants::PATIENT_INCLUSION_STATUS_INCLUDED){
-            return [];
-        }
-
-        //Get Created Patient's Visits
-        $createdVisitsArray = $this->visitRepository->getPatientsVisits($patientCode);
-
-        $createdVisitMap = [];
-
-        //Build array of Created visit Order indexed by visit group modality
-        foreach($createdVisitsArray as $createdVisit){
-            $visitOrder = $createdVisit['visit_type']['order'];
-            $modality = $createdVisit['visit_type']['visit_group']['modality'];
-            $createdVisitMap[$modality][]=$visitOrder;
-        }
-
-
-        //Get Possibles visits groups and type from study
-        $studyVisitsDetails = $this->studyRepository->getStudyDetails($patientEntity['study_name']);
-        $studyVisitMap = [];
-        //Reindex possibiles visits by modality and order
-        foreach( $studyVisitsDetails['visit_group_details'] as $visitGroupDetails){
-
-            foreach($visitGroupDetails['visit_types'] as $visitType){
-
-                $studyVisitMap[ $visitGroupDetails['modality'] ] [$visitType['order'] ] = [
-                    'groupId' => $visitType['visit_group_id'],
-                    'typeId'=>$visitType['id'],
-                    'name' => $visitType['name']
-                ];
-            }
-
-        }
-        $visitToCreateMap = [];
-
-        //Search for visits that have not been created
-        foreach( $studyVisitMap as $modality => $visitsArray){
-
-            foreach($visitsArray as $visitOrder => $visit){
-                if(  ! isset($createdVisitMap[$modality]) || !in_array($visitOrder, $createdVisitMap[$modality]) ){
-                    $visitToCreateMap[$modality][$visitOrder] = $visit;
-                }
-            }
-
-        }
-
-        return $visitToCreateMap;
-
-    }
-
-    public function editQc(int $visitId, string $stateQc, int $controllerId, bool $imageQc, bool $formQc, ?string $imageQcComment, ?string $formQcComment){
-
-        $visitEntity = $this->getVisitContext($visitId);
+        $visitEntity = $this->visitRepository->getVisitContext($this->visitId);
         $localFormNeeded = $visitEntity['visit_type']['local_form_needed'];
 
-        $this->visitRepository->editQc($visitId, $stateQc, $controllerId, $imageQc, $formQc, $imageQcComment, $formQcComment);
+        $this->visitRepository->editQc($this->visitId, $stateQc, $controllerId, $imageQc, $formQc, $imageQcComment, $formQcComment);
 
-        if($stateQc === Constants::QUALITY_CONTROL_CORRECTIVE_ACTION_ASKED && $localFormNeeded){
+        if ($stateQc === Constants::QUALITY_CONTROL_CORRECTIVE_ACTION_ASKED && $localFormNeeded) {
             //Invalidate invistagator form and set it status as draft in the visit
-            $this->reviewRepository->unlockInvestigatorForm($visitId);
-            $this->visitRepository->updateInvestigatorForm($visitId, Constants::INVESTIGATOR_FORM_DRAFT);
+            $this->reviewRepository->unlockInvestigatorForm($this->visitId);
+            $this->visitRepository->updateInvestigatorForm($this->visitId, Constants::INVESTIGATOR_FORM_DRAFT);
         }
     }
 
-    public function resetQc(int $visitId) : void {
-        $this->visitRepository->resetQc($visitId);
+    public function resetQc(): void
+    {
+        $this->visitRepository->resetQc($this->visitId);
     }
 
-    public function getReviewStatus(int $visitId, string $studyName){
-        return $this->reviewStatusRepository->getReviewStatus($visitId, $studyName);
+    public function getReviewStatus(string $studyName)
+    {
+        return $this->reviewStatusRepository->getReviewStatus($this->visitId, $studyName);
     }
 
-    public function setCorrectiveAction(int $visitId, int $investigatorId, bool $newUpload, bool $newInvestigatorForm, bool $correctiveActionApplyed, ?string $comment) : void {
-        $this->visitRepository->setCorrectiveAction($visitId, $investigatorId, $newUpload, $newInvestigatorForm, $correctiveActionApplyed, $comment );
-    }
-
-    public function getImagingVisitsAwaitingUploadVisitsForUser(int $userId, string $studyName) : array {
-        $centers = $this->userRepository->getAllUsersCenters($userId);
+    public function getImagingVisitsAwaitingUploadVisitsForUser(string $studyName): array
+    {
+        $centers = $this->userRepository->getAllUsersCenters($this->userId);
         return $this->visitRepository->getImagingVisitsAwaitingUpload($studyName, $centers);
     }
 }
