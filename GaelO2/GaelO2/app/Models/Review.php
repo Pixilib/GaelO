@@ -15,6 +15,12 @@ class Review extends Model
         'review_data' => 'array',
     ];
 
+    //Default value because db does not accept default value json
+    protected $attributes = [
+        'review_data' => '{}',
+        'sent_files' => '{}'
+    ];
+
     public function user(){
         return $this->belongsTo('App\Models\User', 'user_id', 'id');
     }
