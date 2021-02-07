@@ -9,6 +9,7 @@ use App\GaelO\Repositories\PatientRepository;
 use App\GaelO\Repositories\StudyRepository;
 use App\GaelO\Util;
 use Exception;
+use Illuminate\Support\Facades\Log;
 
 class ImportPatientService
 {
@@ -48,14 +49,22 @@ class ImportPatientService
         //For each patient from the array list
 		foreach ($this->patientEntities as $patientEntity) {
             try {
+                Log::Info('here');
                 $patientEntity->registrationDate = Util::formatUSDateStringToSQLDateFormat($patientEntity->registrationDate);
                 //Check condition before import
+                Log::Info('here');
                 self::checkPatientGender($patientEntity->gender);
+                Log::Info('here');
                 self::checkCorrectBirthDate($patientEntity->birthDay, $patientEntity->birthMonth, $patientEntity->birthYear);
+                Log::Info('here');
                 $this->checkNewPatient($patientEntity->code);
+                Log::Info('here');
                 $this->isCorrectPatientCodeLenght($patientEntity->code);
+                Log::Info('here');
                 $this->isExistingCenter($patientEntity->centerCode);
+                Log::Info('here');
                 $this->checkCurrentStudy($patientEntity->studyName, $this->studyName);
+                Log::Info('here');
                 $this->isCorrectPrefix($studyEntity['patient_code_prefix'],$patientEntity->code);
 
                 //Store the patient result import process in this object
