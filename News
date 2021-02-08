@@ -1,6 +1,7 @@
 GaelO
 
 --Pending Changes --
+  Bug fix : triggering form validation of specific form
 
 --GaelO 1.4.0 28/01/21 --
   Select of withdraw reason for declaring patient withdraw
