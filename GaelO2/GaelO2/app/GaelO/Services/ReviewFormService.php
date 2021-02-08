@@ -4,14 +4,12 @@ use App\GaelO\Constants\Constants;
 use App\GaelO\Interfaces\ReviewRepositoryInterface;
 use App\GaelO\Interfaces\ReviewStatusRepositoryInterface;
 use App\GaelO\Interfaces\TrackerRepositoryInterface;
-use App\GaelO\Repositories\ReviewRepository;
 use App\GaelO\Repositories\VisitRepository;
 use App\GaelO\Services\MailServices;
-use App\GaelO\Services\SpecificStudiesRules\InterfaceStudiesRules;
 use App\GaelO\Services\SpecificStudiesRules\InterfaceStudyRules;
 use App\GaelO\Services\VisitService;
 
-class ReviewService {
+class ReviewFormService {
 
     private VisitService $visitService;
     private VisitRepository $visitRepository;
@@ -24,10 +22,9 @@ class ReviewService {
     private int $currentUserId;
     private int $visitId;
 
-    //SK L UPDATE N EST PAS GERE
-    //SK Les FIles ne sont pas gérés
+    //SK Les Files ne sont pas gérés
     //Tracker a mettre dans tous les cas
-    //Mail a finir
+    //Mail a faire
 
     public function __construct(VisitService $visitService,
         VisitRepository $visitRepository,
@@ -52,42 +49,35 @@ class ReviewService {
     public function setCurrentVisitId(int $visitId){
         $this->visitId = $visitId;
         $this->visitService->setVisitId($visitId);
+        $this->visitContext = $this->visitRepository->getVisitContext($this->visitId);
+        $this->studyName = $this->visitContext['visit_type']['visit_group']['study_name'];
         //SK ICI INSTANCER LA CLASSE SPECIFIQUE QUI IMPLEMENTE L INTERFACE STUDY RULES ?
     }
 
-    public function saveLocalData(array $data, bool $validated){
-        $visitContext = $this->visitRepository->getVisitContext($this->visitId);
-        $studyName = $visitContext['visit_type']['visit_group']['study_name'];
-        $this->reviewRepositoryInterface->createReview(true, $visitContext['id'], $studyName, $this->currentUserId, $data, $validated);
-        if ($validated) {
-            $this->visitService->updateInvestigatorFormStatus(Constants::INVESTIGATOR_FORM_DONE);
-        }else {
-            $this->visitService->updateInvestigatorFormStatus(Constants::INVESTIGATOR_FORM_DRAFT);
-        }
-
-        $actionDetails = [
-            'raw_data'=>json_encode($data)
-        ];
-
-        $this->trackerRepositoryInterface->writeAction($this->currentUserId, Constants::ROLE_INVESTIGATOR, $studyName, $this->visitId, Constants::TRACKER_SAVE_INVESTIGATOR_FORM, $actionDetails);
-
-    }
-
-    public function saveReviewData(string $studyName, array $data, bool $validated, bool $adjudication){
-        $reviewStatusEntity = $this->visitService->getReviewStatus($studyName);
-        $this->reviewRepositoryInterface->createReview(false, $this->visitId, $studyName, $this->currentUserId, $data, $validated, $adjudication);
+    public function saveReviewData(array $data, bool $validated, bool $adjudication){
+        $reviewStatusEntity = $this->visitService->getReviewStatus($this->studyName);
+        $this->reviewRepositoryInterface->createReview(false, $this->visitId, $this->studyName, $this->currentUserId, $data, $validated, $adjudication);
         if ($validated && $reviewStatusEntity['review_status'] !== Constants::REVIEW_STATUS_DONE) {
-            $this->doSpecificReviewDecisions($studyName);
+            $this->doSpecificReviewDecisions($this->studyName);
 		}
     }
 
-    private function doSpecificReviewDecisions($studyName){
+    public function updateReviewData(array $data, bool $validated){
+        $reviewStatusEntity = $this->visitService->getReviewStatus($this->studyName);
+        $reviewEntity = $this->reviewRepositoryInterface->getReviewFromForStudyVisitUser($this->studyName, $this->visitId, $this->currentUserId );
+        $this->reviewRepositoryInterface->updateReview($reviewEntity['id'], $this->currentUserId, $data, $validated);
+        if ($validated && $reviewStatusEntity['review_status'] !== Constants::REVIEW_STATUS_DONE) {
+            $this->doSpecificReviewDecisions($data);
+		}
+    }
+
+    private function doSpecificReviewDecisions(array $data){
         $reviewStatus = $this->interfaceStudyRules->getReviewStatus();
         $availability = $this->interfaceStudyRules->getReviewAvailability($reviewStatus);
         $conclusion = $this->interfaceStudyRules->getReviewConclusion();
-        $this->reviewStatusRepositoryInterface->updateReviewAvailability($this->visitId, $studyName, $availability );
-        $this->reviewStatusRepositoryInterface->updateReviewConclusion($this->visitId, $studyName, $conclusion );
-        $this->reviewStatusRepositoryInterface->updateReviewStatus($this->visitId, $studyName, $reviewStatus );
+        $this->reviewStatusRepositoryInterface->updateReviewAvailability($this->visitId, $this->studyName, $availability );
+        $this->reviewStatusRepositoryInterface->updateReviewConclusion($this->visitId, $this->studyName, $conclusion );
+        $this->reviewStatusRepositoryInterface->updateReviewStatus($this->visitId, $this->studyName, $reviewStatus );
 
         //Send Notification emails
 		if ($reviewStatus === Constants::REVIEW_STATUS_WAIT_ADJUDICATION) {
@@ -100,6 +90,12 @@ class ReviewService {
             //$this->mailServices->sendVisitConcludedMessage();
 
         }
+
+        $actionDetails = [
+            'raw_data' => $data
+        ];
+
+        $this->trackerRepositoryInterface->writeAction($this->currentUserId, Constants::ROLE_REVIEWER, $this->studyName, $this->visitId, Constants::TRACKER_SAVE_REVIEWER_FORM, $actionDetails);
 
     }
 

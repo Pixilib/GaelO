@@ -15,4 +15,6 @@ interface ReviewRepositoryInterface {
     public function createReview(bool $local, int $visitId, string $studyName, int $userId, array $reviewData, bool $validated, bool $adjudication = false ) : int ;
 
     public function updateReview(int $reviewId, int $userId, array $reviewData, bool $validated ) : void ;
+
+    public function getReviewFromForStudyVisitUser(string $studyName, int $visitId, int $userId ) : array ;
 }
