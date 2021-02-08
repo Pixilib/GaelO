@@ -25,8 +25,8 @@ class GetStudyTracker {
 
             $this->checkAuthorization($getStudyTrackerRequest->currentUserId, $getStudyTrackerRequest->studyName, $getStudyTrackerRequest->role);
 
-            $dbData = $this->trackerRepositoryInterface->getTrackerOfActionInStudy(strtoupper($getStudyTrackerRequest->actionType), $getStudyTrackerRequest->studyName);
-
+            $dbData = $this->trackerRepositoryInterface->getTrackerOfRoleAndStudy($getStudyTrackerRequest->studyName, $getStudyTrackerRequest->actionType);
+ 
             $responseArray = [];
             foreach($dbData as $data){
                 $trackerEntity = TrackerEntity::fillFromDBReponseArray($data);
