@@ -26,10 +26,11 @@ class ModifyDocumentation {
     public function execute(ModifyDocumentationRequest $modifyDocumentationRequest, ModifyDocumentationResponse $modifyDocumentationResponse){
         try{
 
-            $this->checkAuthorization($modifyDocumentationRequest->currentUserId, $modifyDocumentationRequest->role, $modifyDocumentationRequest->studyName);
-
-            //Fill missing fields with known info from the database
             $documentation = $this->documentationRepositoryInterface->find($modifyDocumentationRequest->id);
+            $studyName = $documentation['study_name'];
+
+            $this->checkAuthorization($modifyDocumentationRequest->currentUserId, $studyName);
+            //Fill missing fields with known info from the database
             //Change given fields 
             if(!empty($modifyDocumentationRequest->documentDate)) $documentation['document_date'] = $modifyDocumentationRequest->documentDate;
             if(!empty($modifyDocumentationRequest->version)) {
@@ -73,11 +74,10 @@ class ModifyDocumentation {
         }
     }
 
-    private function checkAuthorization(int $currentUserId, string $role, string $studyName){
-        $this->authorizationService->setCurrentUserAndRole($currentUserId, $role);
+    private function checkAuthorization(int $currentUserId, string $studyName){
+        $this->authorizationService->setCurrentUserAndRole($currentUserId, Constants::ROLE_SUPERVISOR);
         if(!$this->authorizationService->isRoleAllowed($studyName)){
             throw new GaelOForbiddenException();
-        };
-
+        }
     }
 }

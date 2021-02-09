@@ -87,13 +87,12 @@ class DocumentationController extends Controller
         }
     }
 
-    public function modifyDocumentation(string $studyName, int $documentationId, Request $request, ModifyDocumentation $modifyDocumentation, ModifyDocumentationRequest $modifyDocumentationRequest, ModifyDocumentationResponse $modifyDocumentationResponse) {
+    public function modifyDocumentation(int $documentationId, Request $request, ModifyDocumentation $modifyDocumentation, ModifyDocumentationRequest $modifyDocumentationRequest, ModifyDocumentationResponse $modifyDocumentationResponse) {
         $currentUser = Auth::user();
         $requestData = $request->all();
         $queryParam = $request->query();
         $modifyDocumentationRequest = Util::fillObject($requestData, $modifyDocumentationRequest);
         $modifyDocumentationRequest->id = $documentationId;
-        $modifyDocumentationRequest->studyName = $studyName;
         $modifyDocumentationRequest->currentUserId = $currentUser['id'];
         $modifyDocumentationRequest->role = $queryParam['role'];
         $modifyDocumentation->execute($modifyDocumentationRequest, $modifyDocumentationResponse);
