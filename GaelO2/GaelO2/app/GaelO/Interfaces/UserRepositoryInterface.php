@@ -42,6 +42,8 @@ interface UserRepositoryInterface {
 
     public function getInvestigatorsStudyFromCenterEmails(string $study, int $centerCode, ?string $job) : array;
 
+    public function getUsersByRolesInStudy(string $study, string $role ) : array;
+
     public function getUsersEmailsByRolesInStudy(string $study, string $role ) : array;
 
     public function getUsersAffiliatedToCenter(int $centerCode) : array;

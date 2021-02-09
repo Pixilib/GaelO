@@ -17,6 +17,8 @@ class LocalFormService {
     private int $currentUserId;
     private int $visitId;
 
+    //SK reste a definir contraintes completion / type data dans le back spe a chaque etude
+
     public function __construct(VisitService $visitService,
         VisitRepository $visitRepository,
         ReviewRepositoryInterface $reviewRepositoryInterface,

@@ -49,7 +49,7 @@ class CreateCenter {
                 'createdCenterCountryCode'=>$countryCode
             ];
 
-            $this->trackerRepositoryInterface->writeAction($createCenterRequest->currentUserId, Constants::TRACKER_ROLE_ADMINISTRATOR, null, null, Constants::TRACKER_EDIT_CENTER, $actionDetails);
+            $this->trackerRepositoryInterface->writeAction($createCenterRequest->currentUserId, Constants::TRACKER_ROLE_ADMINISTRATOR, null, null, Constants::TRACKER_CREATE_CENTER, $actionDetails);
 
             $createCenterResponse->status = 201;
             $createCenterResponse->statusText = 'Created';

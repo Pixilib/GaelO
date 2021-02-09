@@ -21,10 +21,14 @@ class ReviewFormService {
 
     private int $currentUserId;
     private int $visitId;
+    private array $visitContext;
+    private string $studyName;
+    private string $visitType;
+    private int $patientCode;
+    private int $uploaderId;
+
 
     //SK Les Files ne sont pas gérés
-    //Tracker a mettre dans tous les cas
-    //Mail a faire
 
     public function __construct(VisitService $visitService,
         VisitRepository $visitRepository,
@@ -51,6 +55,9 @@ class ReviewFormService {
         $this->visitService->setVisitId($visitId);
         $this->visitContext = $this->visitRepository->getVisitContext($this->visitId);
         $this->studyName = $this->visitContext['visit_type']['visit_group']['study_name'];
+        $this->visitType = $this->visitContext['visit_type']['name'];
+        $this->patientCode = $this->visitContext['patient_code'];
+        $this->uploaderId = $this->visitContext['creator_user_id'];
         //SK ICI INSTANCER LA CLASSE SPECIFIQUE QUI IMPLEMENTE L INTERFACE STUDY RULES ?
     }
 
@@ -58,7 +65,7 @@ class ReviewFormService {
         $reviewStatusEntity = $this->visitService->getReviewStatus($this->studyName);
         $this->reviewRepositoryInterface->createReview(false, $this->visitId, $this->studyName, $this->currentUserId, $data, $validated, $adjudication);
         if ($validated && $reviewStatusEntity['review_status'] !== Constants::REVIEW_STATUS_DONE) {
-            $this->doSpecificReviewDecisions($this->studyName);
+            $this->doSpecificReviewDecisions($data);
 		}
     }
 
@@ -81,14 +88,15 @@ class ReviewFormService {
 
         //Send Notification emails
 		if ($reviewStatus === Constants::REVIEW_STATUS_WAIT_ADJUDICATION) {
-            //SK A FAIRE
-            //$this->mailServices->sendAwaitingAdjudicationMessage()
-
-
+            $this->mailServices->sendAwaitingAdjudicationMessage($this->studyName, $this->patientCode,  $this->visitType, $this->visitId);
 		}else if ($reviewStatus === Constants::REVIEW_STATUS_DONE) {
-            //SK A FAIRE
-            //$this->mailServices->sendVisitConcludedMessage();
-
+            $this->mailServices->sendVisitConcludedMessage(
+                $this->uploaderId,
+                $this->studyName,
+                $this->patientCode,
+                $this->visitType,
+                $conclusion
+            );
         }
 
         $actionDetails = [

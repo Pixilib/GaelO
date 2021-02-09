@@ -155,7 +155,7 @@ class DocumentationTest extends TestCase
             'controller'=>true,
             'reviewer'=>true
         ];
-        $response = $this->patch('api/documentations/'.$documentation->id.'?role=Supervisor', $newPayload);
+        $response = $this->patch('api/documentations/'.$documentation->id, $newPayload);
         $response->assertStatus(200);
     }
 
@@ -167,7 +167,7 @@ class DocumentationTest extends TestCase
         $newPayload = [
             'version'=>'2.0'
         ];
-        $response = $this->patch('api/documentations/'.$documentation->id.'?role=Supervisor', $newPayload);
+        $response = $this->patch('api/documentations/'.$documentation->id, $newPayload);
         $response->assertStatus(409);
     }
 
@@ -180,7 +180,7 @@ class DocumentationTest extends TestCase
             'controller'=>true,
             'reviewer'=>true
         ];
-        $response = $this->patch('api/documentations/'.$documentation->id.'?role=Supervisor');
+        $response = $this->patch('api/documentations/'.$documentation->id);
         $response->assertStatus(403);
     }
 }
