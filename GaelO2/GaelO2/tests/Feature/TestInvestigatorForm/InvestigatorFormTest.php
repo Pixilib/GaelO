@@ -30,8 +30,8 @@ class InvestigatorFormTest extends TestCase
         $review = Review::factory()->create();
         $currentUserId = AuthorizationTools::actAsAdmin(false);
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $review->visit->patient->study_name);
-        $response = $this->get('api/visits/'.$review->visit_id.'/investigator-form?role=Supervisor');
-        dd($response);
+        $response = $this->get('api/visits/'.$review->visit_id.'/investigator-form?role=Supervisor')->assertSuccessful();
+
     }
 
 }
