@@ -11,6 +11,7 @@ use App\Http\Controllers\PatientController;
 use App\Http\Controllers\PreferenceController;
 use App\Http\Controllers\RequestController;
 use App\Http\Controllers\ReverseProxyController;
+use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\StudyController;
 use App\Http\Controllers\ToolsController;
 use App\Http\Controllers\TrackerController;
@@ -102,6 +103,9 @@ Route::middleware(['auth:api', 'refresh_token'])->group(function () {
     Route::delete('visits/{id}', [VisitController::class, 'deleteVisit'] );
     Route::post('studies/{studyName}/visit-groups/{visitGroupId}/visit-types/{visitTypeId}/visits', [VisitController::class, 'createVisit'] );
     Route::get('studies/{studyName}/visits/{id}', [VisitController::class, 'getVisit'] );
+
+    //Local Form Routes
+    Route::get('visits/{id}/investigator-form', [ReviewController::class, 'getInvestigatorForm'] );
 
     //Dicom Routes
     Route::delete('dicom-series/{seriesInstanceUID}', [DicomController::class, 'deleteSeries'] );

@@ -26,12 +26,17 @@ Possible-Uploads (GET) => OK
 dicom-series (DELETE, PATCH) => OK (Nb pour reset upload, loop depuis front)
 dicom-study (PATCH) => OK
 
+investigator-form (GET)
+
 
 Salim TODO :
 Pipeline uploader dans le front
 *** APIs ***
 Preparation Investigateur / Monitor / Controller / Reviewer :
-- API Review (POST, GET, DELETE) + Review attached files
+- API Review
+Investigator form (POST, GET, DELETE)
+Review form (POST, GET, DELETE)
+Review form /file  (POST, GET, DELETE)
 
 **Refac User Service peut disparaitre ou etre simplifie que pour les checks (peut etre en tools)
 
