@@ -7,15 +7,18 @@ use App\GaelO\Adapters\SendEmailAdapter;
 use App\GaelO\Constants\Constants;
 use App\GaelO\Repositories\UserRepository;
 use App\GaelO\Constants\MailConstants;
+use App\GaelO\Repositories\ReviewRepository;
 
 Class MailServices extends SendEmailAdapter {
 
     private MailInterface $mailInterface;
     private UserRepository $userRepository;
+    private ReviewRepository $reviewRepository;
 
-    public function __construct(MailInterface $mailInterface, UserRepository $userRepository) {
+    public function __construct(MailInterface $mailInterface, UserRepository $userRepository, ReviewRepository $reviewRepository) {
         $this->mailInterface = $mailInterface;
         $this->userRepository = $userRepository;
+        $this->reviewRepository = $reviewRepository;
     }
 
     public function getUserEmail(int $userId) : string{
@@ -306,15 +309,69 @@ Class MailServices extends SendEmailAdapter {
 
     }
 
-    public function sendAwaitingAdjudicationMessage(string $studyName, int $patientCode, string $visitType){
+    public function sendAwaitingAdjudicationMessage(string $studyName, int $patientCode, string $visitType, int $visitId){
 
-        //SK A envoyer a Supervisor + Reviewer qui n'ont pas fait de Review
-        //SK demander / verif Monitor dans le lot ?
+        $parameters = [
+            'name'=> 'User',
+            'study' => $studyName,
+            'patientCode' => $patientCode,
+            'visitType' => $visitType
+        ];
+
+        //Get All Users with Reviwers in this study
+        $reviewersUsers = $this->userRepository->getUsersByRolesInStudy($studyName, Constants::ROLE_REVIEWER);
+
+        //Get All Reviews of this visit
+        $reviews = $this->reviewRepository->getValidatedReviewsForStudyVisit($studyName, $visitId);
+        $reviewerDoneUserIdArray = array_map(function($user){
+            return $user['user_id'];
+        }, $reviews);
+
+        //Select users who didn't validate review form of this visit
+        $availableReviewers = array_filter($reviewersUsers, function($user) use ($reviewerDoneUserIdArray) {
+            return !in_array($user['id'], $reviewerDoneUserIdArray);
+        });
+
+        //Build email list
+        $availableReviewersEmails = array_map(function($user){
+            return $user['email'];
+        }, $availableReviewers);
+
+        $this->mailInterface->setTo( [
+            ...$this->userRepository->getUsersEmailsByRolesInStudy($studyName, Constants::ROLE_SUPERVISOR),
+            ...$availableReviewersEmails,
+            ]
+        );
+
+        $this->mailInterface->setReplyTo();
+        $this->mailInterface->setParameters($parameters);
+        $this->mailInterface->setBody(MailConstants::EMAIL_ADJUDICATION);
+        $this->mailInterface->send();
+
     }
 
-    public function sendVisitConcludedMessage(string $studyName, int $patientCode, string $visitType, string $conclusionValue){
+    public function sendVisitConcludedMessage(int $uploaderId, string $studyName, int $patientCode, string $visitType, string $conclusionValue){
 
-        //SK a faire : Monitor + supervisor + uploader Email
+        $parameters = [
+            'name'=> 'User',
+            'study' => $studyName,
+            'patientCode' => $patientCode,
+            'visitType' => $visitType,
+            'conclusionValue' => $conclusionValue
+        ];
+
+        $this->mailInterface->setTo( [
+            ...$this->userRepository->getUsersEmailsByRolesInStudy($studyName, Constants::ROLE_SUPERVISOR),
+            ...$this->userRepository->getUsersEmailsByRolesInStudy($studyName, Constants::ROLE_MONITOR),
+            $this->getUserEmail($uploaderId)
+            ]
+        );
+
+        $this->mailInterface->setReplyTo();
+        $this->mailInterface->setParameters($parameters);
+        $this->mailInterface->setBody(MailConstants::EMAIL_CONCLUSION);
+        $this->mailInterface->send();
+
 
     }
 

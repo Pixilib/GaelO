@@ -191,9 +191,9 @@ class UserRepository implements UserRepositoryInterface {
         return empty($emails) ? [] : $emails->pluck('email')->toArray();
     }
 
-    public function getUsersEmailsByRolesInStudy(string $study, string $role ) : array {
+    public function getUsersByRolesInStudy(string $study, string $role ) : array {
 
-        $emails = $this->user
+        $users = $this->user
         ->where('status', 'Activated')
         ->join('roles', function ($join) {
             $join->on('users.id', '=', 'roles.user_id');
@@ -202,7 +202,18 @@ class UserRepository implements UserRepositoryInterface {
             ->where('roles.study_name', '=', $study);
         })->get();
 
-        return empty($emails) ? [] : $emails->pluck('email')->toArray();
+        return empty($users) ? [] : $users->toArray();
+
+    }
+
+    public function getUsersEmailsByRolesInStudy(string $study, string $role ) : array {
+
+        $users = $this->getUsersByRolesInStudy($study, $role);
+        $emails = array_map(function($user) {
+            return $user['email'];
+        }, $users);
+
+        return $emails;
 
     }
 

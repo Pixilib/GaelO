@@ -276,6 +276,20 @@ class UserRepositoryTest extends TestCase
         $this->assertEquals(0, sizeof($commonEmails));
     }
 
+    public function testGetUserByRoleStudy(){
+
+        $users = User::factory()->count(10)->status(Constants::USER_STATUS_ACTIVATED)->create();
+
+        $study1 = $this->studies->first();
+        $users->each(function ($user) use ($study1) {
+            Role::factory()->userId($user->id)->studyName($study1->name)->roleName(Constants::ROLE_INVESTIGATOR)->create();
+        });
+
+        $users = $this->userRepository->getUsersByRolesInStudy($study1->name, Constants::ROLE_INVESTIGATOR);
+        $this->assertEquals(10, sizeof($users));
+        $this->assertNotNull($users[0]['status']);
+    }
+
     /**
      * Test mail selection acccording to Role in study
      */
