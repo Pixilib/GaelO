@@ -20,12 +20,12 @@ class TrackerEntity {
         $trackerEntity  = new TrackerEntity();
         $trackerEntity->id = $array['id'];
         $trackerEntity->study_name = $array['study_name'];
-        $trackerEntity->user_id = $array['user_id'];
+        $trackerEntity->userId = $array['user_id'];
         $trackerEntity->date = $array['date'];
         $trackerEntity->role = $array['role'];
-        $trackerEntity->visit_id = $array['visit_id'];
-        $trackerEntity->action_type = $array['action_type'];
-        $trackerEntity->action_details = $array['action_details'];
+        $trackerEntity->visitId = $array['visit_id'];
+        $trackerEntity->actionType = $array['action_type'];
+        $trackerEntity->actionDetails = $array['action_details'];
         return $trackerEntity;
     }
 

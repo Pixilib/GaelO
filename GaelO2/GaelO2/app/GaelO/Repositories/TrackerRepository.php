@@ -5,7 +5,7 @@ namespace App\GaelO\Repositories;
 use App\GaelO\Interfaces\TrackerRepositoryInterface;
 use App\Models\Tracker;
 use App\GaelO\Util;
-
+use Log;
 class TrackerRepository implements TrackerRepositoryInterface {
 
     public function __construct(Tracker $tracker)
@@ -49,7 +49,13 @@ class TrackerRepository implements TrackerRepositoryInterface {
     }
 
     public function getTrackerOfActionInStudy(string $action, string $study) : array {
-        $trackerData = $this->tracker->with('user')->where('study_name', $study)->where("action_type", $action)->get();
+        $trackerData = $this->tracker->with('user')->where('study_name', $study)->where('action_type', $action)->get();
+        return empty($trackerData) ? [] : $trackerData->toArray();
+    }
+
+    public function getTrackerOfRoleActionInStudy(string $role, string $action, string $study) : array {
+        Log::info($this->tracker->with('user')->where('study_name', $study)->where('role', $role)->get()->toArray());
+        $trackerData = $this->tracker->with('user')->where('study_name', $study)->where('role', $role)->where('action_type', $action)->get();
         return empty($trackerData) ? [] : $trackerData->toArray();
     }
 
