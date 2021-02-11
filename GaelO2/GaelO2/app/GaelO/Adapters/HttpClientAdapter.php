@@ -160,7 +160,6 @@ class HttpClientAdapter {
         $body = $response->getBody();
         while (!$body->eof()) {
             echo $body->read(1024);
-            ob_flush();
             flush();
         }
 
