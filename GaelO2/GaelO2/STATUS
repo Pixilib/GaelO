@@ -30,12 +30,12 @@ investigator-form (GET)
 
 
 Salim TODO :
-Pipeline uploader dans le front
+Telechargement des DICOMs / OHIF / Stone of Orthanc
 *** APIs ***
 Preparation Investigateur / Monitor / Controller / Reviewer :
 - API Review
-Investigator form (POST, GET, DELETE)
-Review form (POST, GET, DELETE)
+Investigator form (POST, GET, DELETE, PATCH (unlock) )
+Review form (POST, GET, DELETE, PATCH (unlock) )
 Review form /file  (POST, GET, DELETE)
 
 **Refac User Service peut disparaitre ou etre simplifie que pour les checks (peut etre en tools)
@@ -47,8 +47,6 @@ Mock des interfaces pour les uses cases et les services
 Les tests ne font pas d'assertion sur
 - le tracker => Via un spy ?
 - l'envoi de mails => voir doc laravel
-
-
 
 Service Visit => Continuer test passage en upload Done
 Dicom Series Service => peut etre evoluer vers un DicomService pour les deux niveaux
