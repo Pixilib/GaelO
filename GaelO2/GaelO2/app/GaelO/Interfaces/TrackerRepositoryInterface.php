@@ -14,4 +14,6 @@ interface TrackerRepositoryInterface {
 
     public function writeAction(int $userId, string $role, ?string $study, ?int $id_visit, string $actionType, ?array $actionDetails) : void ;
 
+    public function getTrackerOfRoleActionInStudy(string $role, string $action, string $study) : array ;
+
 }

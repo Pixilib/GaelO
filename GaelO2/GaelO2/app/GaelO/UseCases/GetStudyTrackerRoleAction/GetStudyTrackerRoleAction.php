@@ -1,16 +1,15 @@
 <?php
 
-namespace App\GaelO\UseCases\GetStudyTracker;
+namespace App\GaelO\UseCases\GetStudyTrackerRoleAction;
 
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\TrackerRepositoryInterface;
 use App\GaelO\Services\AuthorizationService;
 use App\GaelO\UseCases\GetTracker\TrackerEntity;
-use App\GaelO\Constants;
 use Exception;
 
-class GetStudyTracker {
+class GetStudyTrackerRoleAction {
 
     private TrackerRepositoryInterface $trackerRepositoryInterface;
     private AuthorizationService $authorizationService;
@@ -20,18 +19,13 @@ class GetStudyTracker {
         $this->authorizationService = $authorizationService;
     }
 
-    public function execute(GetStudyTrackerRequest $getStudyTrackerRequest, GetStudyTrackerResponse $getStudyTrackerResponse) : void {
+    public function execute(GetStudyTrackerRoleActionRequest $GetStudyTrackerRoleActionRequest, GetStudyTrackerRoleActionResponse $GetStudyTrackerRoleActionResponse) : void {
 
         try{
 
-            $this->checkAuthorization($getStudyTrackerRequest->currentUserId, $getStudyTrackerRequest->studyName, $getStudyTrackerRequest->role);
+            $this->checkAuthorization($GetStudyTrackerRoleActionRequest->currentUserId, $GetStudyTrackerRoleActionRequest->studyName, $GetStudyTrackerRoleActionRequest->role);
 
-            $actionType = $getStudyTrackerRequest->actionType;
-            if(in_array($actionType, [Constants::ROLE_INVESTIGATOR, Constants::ROLE_CONTROLLER, 
-            Constants::ROLE_SUPERVISOR, Constants::ROLE_REVIEWER])) 
-            $dbData = $this->trackerRepositoryInterface->getTrackerOfRoleAndStudy($getStudyTrackerRequest->studyName, $getStudyTrackerRequest->actionType);
-            else $dbData = $this->trackerRepositoryInterface->getTrackerOfActionInStudy($getStudyTrackerRequest->actionType, $getStudyTrackerRequest->studyName);
-
+            $dbData = $this->trackerRepositoryInterface->getTrackerOfRoleActionInStudy($GetStudyTrackerRoleActionRequest->trackerOfRole, $GetStudyTrackerRoleActionRequest->actionType, $GetStudyTrackerRoleActionRequest->studyName);
  
             $responseArray = [];
             foreach($dbData as $data){
@@ -40,15 +34,15 @@ class GetStudyTracker {
                 $responseArray[] = $trackerEntity;
             }
 
-            $getStudyTrackerResponse->body = $responseArray;
-            $getStudyTrackerResponse->status = 200;
-            $getStudyTrackerResponse->statusText = 'OK';
+            $GetStudyTrackerRoleActionResponse->body = $responseArray;
+            $GetStudyTrackerRoleActionResponse->status = 200;
+            $GetStudyTrackerRoleActionResponse->statusText = 'OK';
 
         } catch (GaelOException $e){
 
-            $getStudyTrackerResponse->body = $e->getErrorBody();
-            $getStudyTrackerResponse->status = $e->statusCode;
-            $getStudyTrackerResponse->statusText = $e->statusText;
+            $GetStudyTrackerRoleActionResponse->body = $e->getErrorBody();
+            $GetStudyTrackerRoleActionResponse->status = $e->statusCode;
+            $GetStudyTrackerRoleActionResponse->statusText = $e->statusText;
 
         } catch (Exception $e){
             throw $e;

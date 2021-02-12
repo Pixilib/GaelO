@@ -103,6 +103,7 @@ Route::middleware(['auth:api', 'refresh_token'])->group(function () {
     Route::delete('visits/{id}', [VisitController::class, 'deleteVisit'] );
     Route::post('studies/{studyName}/visit-groups/{visitGroupId}/visit-types/{visitTypeId}/visits', [VisitController::class, 'createVisit'] );
     Route::get('studies/{studyName}/visits/{id}', [VisitController::class, 'getVisit'] );
+    Route::get('studies/{studyName}/visits', [VisitController::class, 'getVisitFromStudy'] );
 
     //Local Form Routes
     Route::get('visits/{id}/investigator-form', [ReviewController::class, 'getInvestigatorForm'] );
@@ -125,7 +126,7 @@ Route::middleware(['auth:api', 'refresh_token'])->group(function () {
     //Tracker Routes
     Route::get('tracker', [TrackerController::class, 'getTracker'] );
     Route::get('studies/{studyName}/tracker', [TrackerController::class, 'getStudyTracker'] );
-
+    Route::get('studies/{studyName}/tracker/{trackerOfRole}', [TrackerController::class, 'getStudyTrackerRoleAction'] );
 
     //Documentations routes
     Route::get('studies/{studyName}/documentations', [DocumentationController::class, 'getDocumentationsFromStudy'] );
@@ -147,7 +148,7 @@ Route::middleware('auth:api')->post('export-db', [ExportDBController::class, 'ex
 Route::middleware('auth:api')->get('documentations/{id}/file', [DocumentationController::class, 'getDocumentationFile'] );
 
 
-Route::middleware('auth:api')->get('visits/{id}/dicoms/file', [DocumentationController::class, 'getVisitDicomsFile'] );
+Route::middleware('auth:api')->get('visits/{id}/dicoms/file', [DicomController::class, 'getVisitDicomsFile'] );
 
 /*
 |--------------------------------------------------------------------------

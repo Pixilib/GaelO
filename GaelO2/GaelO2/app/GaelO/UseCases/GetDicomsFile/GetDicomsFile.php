@@ -40,7 +40,7 @@ class GetDicomsFile{
             //Get SeriesOrthancID from database to be downloaded
             $this->orthancSeriesIDs = $this->visitService->getVisitSeriesIdsDicomArray($getDicomsRequest->visitId, false);
             //First output the filename, then the controller will call outputStream to get content of orthanc response
-            $getDicomsResponse->filename = 'DICOM_'.$studyName.'_'.$visitGroup.'_'.$visitType.'_'.$patientCode.'zip';
+            $getDicomsResponse->filename = 'DICOM_'.$studyName.'_'.$visitGroup.'_'.$visitType.'_'.$patientCode.'.zip';
 
             $getDicomsResponse->status = 200;
             $getDicomsResponse->statusText = 'OK';

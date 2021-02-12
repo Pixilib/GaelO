@@ -22,7 +22,7 @@ class AuthorizationDicomWebService
     {
 
         $this->orthancStudyRepository=$orthancStudyRepository;
-        $this->$orthancSeriesRepository=$orthancSeriesRepository;
+        $this->orthancSeriesRepository=$orthancSeriesRepository;
         $this->authorizationVisitService = $authorizationVisitService;
 
     }
@@ -70,13 +70,13 @@ class AuthorizationDicomWebService
         $uploadStatus = $this->authorizationVisitService->visitUploadStatus;
 
         //Check Visit Availability of the calling user
-        if (($this->role == Constants::ROLE_INVESTIGATOR && $uploadStatus == Constants::UPLOAD_STATUS_DONE)) {
+        if (($this->requestedRole == Constants::ROLE_INVESTIGATOR && $uploadStatus == Constants::UPLOAD_STATUS_DONE)) {
             $visitCheck = $this->authorizationVisitService->isVisitAllowed();
-        } else if ($this->role == Constants::ROLE_REVIEWER && $this->visitReviewAvailable) {
+        } else if ($this->requestedRole == Constants::ROLE_REVIEWER && $this->visitReviewAvailable) {
             //SK RESTE A CHECKER QUE LE REVIEWER DOIT ENCORE FAIRE UNE REVIEW POUR CE PATIENT?
             //OU PLUTOT DOIT ETRE GERER DANS VISIT ALLOWED
             $visitCheck = $this->authorizationVisitService->isVisitAllowed();
-        } else if ($this->role == Constants::ROLE_SUPERVISOR) {
+        } else if ($this->requestedRole == Constants::ROLE_SUPERVISOR) {
             $visitCheck = $this->authorizationVisitService->isVisitAllowed();
         } else {
             //Other roles (monitor) can't have access to images

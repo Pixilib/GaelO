@@ -35,8 +35,8 @@ class DicomController extends Controller
         $getDicomsFile->execute($getDicomsFileRequest, $getDicomsFileResponse);
 
         if($getDicomsFileResponse->status === 200) {
-            return response()->streamDownload( function() use( &$getDicoms){
-                $getDicoms->outputStream();
+            return response()->streamDownload( function() use( &$getDicomsFile){
+                $getDicomsFile->outputStream();
             }, $getDicomsFileResponse->filename);
         }else{
             return response()->json($getDicomsFileResponse->body)
