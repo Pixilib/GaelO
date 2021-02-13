@@ -3,10 +3,8 @@
 namespace Tests\Feature\TestInvestigatorForm;
 
 use App\GaelO\Constants\Constants;
-use App\GaelO\Services\AuthorizationService;
 use App\Models\Review;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
-use League\OAuth2\Server\AuthorizationServer;
 use Tests\AuthorizationTools;
 use Tests\TestCase;
 
@@ -30,7 +28,42 @@ class InvestigatorFormTest extends TestCase
         $review = Review::factory()->create();
         $currentUserId = AuthorizationTools::actAsAdmin(false);
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $review->visit->patient->study_name);
-        $response = $this->get('api/visits/'.$review->visit_id.'/investigator-form?role=Supervisor')->assertSuccessful();
+        $this->get('api/visits/'.$review->visit_id.'/investigator-form?role=Supervisor')->assertSuccessful();
+
+    }
+
+    public function testDeleteInvestigatorForm(){
+        $review = Review::factory()->create();
+        $currentUserId = AuthorizationTools::actAsAdmin(false);
+        AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $review->visit->patient->study_name);
+        $payload = [
+            'reason' => 'wrong Form'
+        ];
+
+        $this->delete('api/visits/'.$review->visit_id.'/investigator-form',$payload)->assertSuccessful();
+
+    }
+
+    public function testDeleteInvestigatorFormShouldFailNoRole(){
+        $review = Review::factory()->create();
+        AuthorizationTools::actAsAdmin(false);
+        $payload = [
+            'reason' => 'wrong Form'
+        ];
+
+        $this->delete('api/visits/'.$review->visit_id.'/investigator-form',$payload)->assertStatus(403);
+
+    }
+
+    public function testDeleteInvestigatorFormShouldFailNoReason(){
+        $review = Review::factory()->create();
+        $currentUserId = AuthorizationTools::actAsAdmin(false);
+        AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $review->visit->patient->study_name);
+        $payload = [
+            'reason' => ''
+        ];
+
+        $this->delete('api/visits/'.$review->visit_id.'/investigator-form', $payload)->assertStatus(400);
 
     }
 

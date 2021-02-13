@@ -25,8 +25,7 @@ Creatable-Visits (GET) => OK
 Possible-Uploads (GET) => OK
 dicom-series (DELETE, PATCH) => OK (Nb pour reset upload, loop depuis front)
 dicom-study (PATCH) => OK
-
-investigator-form (GET)
+Investigator-form (GET, DELETE)
 
 
 Salim TODO :
@@ -34,7 +33,7 @@ Telechargement des DICOMs / OHIF / Stone of Orthanc
 *** APIs ***
 Preparation Investigateur / Monitor / Controller / Reviewer :
 - API Review
-Investigator form (POST, GET, DELETE, PATCH (unlock) )
+Investigator form (POST, PATCH (unvalidate) )
 Review form (POST, GET, DELETE, PATCH (unlock) )
 Review form /file  (POST, GET, DELETE)
 

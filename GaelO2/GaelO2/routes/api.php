@@ -107,6 +107,7 @@ Route::middleware(['auth:api', 'refresh_token'])->group(function () {
 
     //Local Form Routes
     Route::get('visits/{id}/investigator-form', [ReviewController::class, 'getInvestigatorForm'] );
+    Route::delete('visits/{id}/investigator-form', [ReviewController::class, 'deleteInvestigatorForm'] );
 
     //Dicom Routes
     Route::delete('dicom-series/{seriesInstanceUID}', [DicomController::class, 'deleteSeries'] );

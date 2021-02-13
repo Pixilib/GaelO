@@ -378,9 +378,9 @@ class VisitRepositoryTest extends TestCase
 
     }
 
-    public function testUpdateInvestigatorForm(){
+    public function testUpdateInvestigatorFormStatus(){
         $visit = Visit::factory()->create();
-        $this->visitRepository->updateInvestigatorForm($visit->id, Constants::INVESTIGATOR_FORM_DRAFT);
+        $this->visitRepository->updateInvestigatorFormStatus($visit->id, Constants::INVESTIGATOR_FORM_DRAFT);
         $updatedVisit = Visit::find($visit->id);
         $this->assertEquals(Constants::INVESTIGATOR_FORM_DRAFT , $updatedVisit->state_investigator_form);
 
@@ -389,8 +389,6 @@ class VisitRepositoryTest extends TestCase
     public function testImagingVisitAwaitingUpload(){
 
         $patients = $this->populateVisits();
-
-        //dd(Patient::where('study_name', $patient->study_name)->get());
         $visits = $this->visitRepository->getImagingVisitsAwaitingUpload($patients[0]->study->name, [$patients[0]->center_code, $patients[1]->center_code]);
         $this->assertEquals(12, sizeof($visits));
     }

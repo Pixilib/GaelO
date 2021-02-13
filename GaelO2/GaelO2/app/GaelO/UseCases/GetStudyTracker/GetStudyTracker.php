@@ -7,7 +7,7 @@ use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\TrackerRepositoryInterface;
 use App\GaelO\Services\AuthorizationService;
 use App\GaelO\UseCases\GetTracker\TrackerEntity;
-use App\GaelO\Constants;
+use App\GaelO\Constants\Constants;
 use Exception;
 
 class GetStudyTracker {
@@ -27,12 +27,12 @@ class GetStudyTracker {
             $this->checkAuthorization($getStudyTrackerRequest->currentUserId, $getStudyTrackerRequest->studyName, $getStudyTrackerRequest->role);
 
             $actionType = $getStudyTrackerRequest->actionType;
-            if(in_array($actionType, [Constants::ROLE_INVESTIGATOR, Constants::ROLE_CONTROLLER, 
-            Constants::ROLE_SUPERVISOR, Constants::ROLE_REVIEWER])) 
+            if(in_array($actionType, [Constants::ROLE_INVESTIGATOR, Constants::ROLE_CONTROLLER,
+            Constants::ROLE_SUPERVISOR, Constants::ROLE_REVIEWER]))
             $dbData = $this->trackerRepositoryInterface->getTrackerOfRoleAndStudy($getStudyTrackerRequest->studyName, $getStudyTrackerRequest->actionType);
             else $dbData = $this->trackerRepositoryInterface->getTrackerOfActionInStudy($getStudyTrackerRequest->actionType, $getStudyTrackerRequest->studyName);
 
- 
+
             $responseArray = [];
             foreach($dbData as $data){
                 $trackerEntity = TrackerEntity::fillFromDBReponseArray($data);

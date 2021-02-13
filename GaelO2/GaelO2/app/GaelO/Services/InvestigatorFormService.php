@@ -8,7 +8,7 @@ use App\GaelO\Repositories\VisitRepository;
 use App\GaelO\Services\MailServices;
 use App\GaelO\Services\VisitService;
 
-class LocalFormService {
+class InvestigatorFormService {
 
     private VisitService $visitService;
     private VisitRepository $visitRepository;
