@@ -4,7 +4,7 @@ namespace App\GaelO\Services\SpecificStudiesRules;
 
 use App\GaelO\Constants\Constants;
 
-abstract class InterfaceStudyRules {
+abstract class AbstractStudyRules {
 
     abstract function checkInvestigatorFromValidity(array $data) ;
 

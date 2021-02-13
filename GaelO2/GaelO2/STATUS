@@ -33,7 +33,7 @@ Telechargement des DICOMs / OHIF / Stone of Orthanc
 *** APIs ***
 Preparation Investigateur / Monitor / Controller / Reviewer :
 - API Review
-Investigator form (POST, PUT, PATCH (unvalidate) )
+Investigator form (POST (reste test a etoffer++, abstraction validite form a revoir), PUT, PATCH (unvalidate) )
 Review form (POST, PUT, GET, DELETE, PATCH (unvalidate) )
 Review form /file  (POST, GET, DELETE)
 

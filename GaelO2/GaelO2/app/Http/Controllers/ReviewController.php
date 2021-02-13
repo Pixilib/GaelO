@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\GaelO\UseCases\CreateInvestigatorForm\CreateInvestigatorForm;
+use App\GaelO\UseCases\CreateInvestigatorForm\CreateInvestigatorFormRequest;
+use App\GaelO\UseCases\CreateInvestigatorForm\CreateInvestigatorFormResponse;
 use App\GaelO\UseCases\DeleteInvestigatorForm\DeleteInvestigatorForm;
 use App\GaelO\UseCases\DeleteInvestigatorForm\DeleteInvestigatorFormRequest;
 use App\GaelO\UseCases\DeleteInvestigatorForm\DeleteInvestigatorFormResponse;
@@ -48,6 +51,28 @@ class ReviewController extends Controller
             ->setStatusCode($deleteInvestigatorFormResponse->status, $deleteInvestigatorFormResponse->statusText);
         }
 
+
+    }
+
+    public function createInvestigatorForm(int $visitId, Request $request, CreateInvestigatorForm $createInvestigatorForm, CreateInvestigatorFormRequest $createInvestigatorFormRequest, CreateInvestigatorFormResponse $createInvestigatorFormResponse){
+
+        $curentUser = Auth::user();
+
+        $createInvestigatorFormRequest->currentUserId = $curentUser['id'];
+        $createInvestigatorFormRequest->visitId = $visitId;
+
+        $requestData = $request->all();
+        $deleteInvestigatorFromRequest = Util::fillObject($requestData, $createInvestigatorFormRequest);
+
+        $createInvestigatorForm->execute($deleteInvestigatorFromRequest, $createInvestigatorFormResponse);
+
+        if($createInvestigatorFormResponse->body != null){
+            return response()->json($createInvestigatorFormResponse->body)
+            ->setStatusCode($createInvestigatorFormResponse->status, $createInvestigatorFormResponse->statusText);
+        } else {
+            return response()->noContent()
+            ->setStatusCode($createInvestigatorFormResponse->status, $createInvestigatorFormResponse->statusText);
+        }
 
     }
 }

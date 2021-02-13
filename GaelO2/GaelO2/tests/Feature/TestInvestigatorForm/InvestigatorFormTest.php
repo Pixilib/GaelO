@@ -3,7 +3,12 @@
 namespace Tests\Feature\TestInvestigatorForm;
 
 use App\GaelO\Constants\Constants;
+use App\Models\Patient;
 use App\Models\Review;
+use App\Models\Study;
+use App\Models\Visit;
+use App\Models\VisitGroup;
+use App\Models\VisitType;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\AuthorizationTools;
 use Tests\TestCase;
@@ -64,6 +69,26 @@ class InvestigatorFormTest extends TestCase
         ];
 
         $this->delete('api/visits/'.$review->visit_id.'/investigator-form', $payload)->assertStatus(400);
+
+    }
+
+    public function testCreateInvestigatorForm(){
+        $study = Study::factory()->name('TEST')->create();
+        $patient = Patient::factory()->studyName($study->name)->create();
+        $visitGroup = VisitGroup::factory()->studyName($study->name)->modality('PT')->create();
+        $visitType  = VisitType::factory()->visitGroupId($visitGroup->id)->name('PET0')->localFormNeeded()->create();
+        $visit = Visit::Factory()->patientCode($patient->code)->visitTypeId($visitType->id)->create();
+
+        $currentUserId = AuthorizationTools::actAsAdmin(false);
+        AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_INVESTIGATOR, $study->name);
+        AuthorizationTools::addAffiliatedCenter($currentUserId, $patient->center_code);
+
+        $payload = [
+            'data' => ['lugano' => 'CR'],
+            'validated' => true
+        ];
+
+        $this->post('api/visits/'.$visit->id.'/investigator-form', $payload)->assertStatus(201);
 
     }
 

@@ -1,26 +1,27 @@
 <?php
 
+namespace App\GaelO\Services;
+
+use App\GaelO\Adapters\LaravelFunctionAdapter;
 use App\GaelO\Constants\Constants;
 use App\GaelO\Interfaces\ReviewRepositoryInterface;
 use App\GaelO\Interfaces\ReviewStatusRepositoryInterface;
 use App\GaelO\Interfaces\TrackerRepositoryInterface;
-use App\GaelO\Repositories\VisitRepository;
 use App\GaelO\Services\MailServices;
+use App\GaelO\Services\SpecificStudiesRules\AbstractStudyRules;
 use App\GaelO\Services\VisitService;
 
 class InvestigatorFormService {
 
     private VisitService $visitService;
-    private VisitRepository $visitRepository;
     private ReviewRepositoryInterface $reviewRepositoryInterface;
-    private TrackerRepositoryInterface $trackerRepositoryInterface;
+    private AbstractStudyRules $abstractStudyRules;
     private int $currentUserId;
     private int $visitId;
 
     //SK reste a definir contraintes completion / type data dans le back spe a chaque etude
 
     public function __construct(VisitService $visitService,
-        VisitRepository $visitRepository,
         ReviewRepositoryInterface $reviewRepositoryInterface,
         ReviewStatusRepositoryInterface $reviewStatusRepositoryInterface,
         TrackerRepositoryInterface $trackerRepositoryInterface,
@@ -28,7 +29,6 @@ class InvestigatorFormService {
         )
     {
         $this->visitService = $visitService;
-        $this->visitRepository = $visitRepository;
         $this->reviewRepositoryInterface = $reviewRepositoryInterface;
         $this->reviewStatusRepositoryInterface = $reviewStatusRepositoryInterface;
         $this->trackerRepositoryInterface = $trackerRepositoryInterface;
@@ -36,42 +36,41 @@ class InvestigatorFormService {
     }
 
     public function setCurrentUserId(int $currentUserId){
-        $this->currentUserId = $$currentUserId;
+        $this->currentUserId = $currentUserId;
     }
 
-    public function setCurrentVisitId(int $visitId){
-        $this->visitId = $visitId;
-        $this->visitService->setVisitId($visitId);
-        $this->visitContext = $this->visitRepository->getVisitContext($this->visitId);
-        $this->studyName = $this->visitContext['visit_type']['visit_group']['study_name'];
+    public function setVisitContext(array $visitContext){
+        $this->visitId = $visitContext['id'];
+        $this->visitService->setVisitId($visitContext['id']);
+        $modality = $visitContext['visit_type']['visit_group']['modality'];
+        $this->visitType = $visitContext['visit_type']['name'];
+        $this->studyName = $visitContext['visit_type']['visit_group']['study_name'];
+        $this->abstractStudyRules = LaravelFunctionAdapter::make('\App\GaelO\Services\SpecificStudiesRules\\'.$this->studyName.'_'.$modality.'_'.$this->visitType);
+
     }
 
 
-    public function saveLocalData(array $data, bool $validated){
-
+    public function saveInvestigatorForm(array $data, bool $validated){
+        if($validated) $this->abstractStudyRules->checkInvestigatorFromValidity($data);
         $this->reviewRepositoryInterface->createReview(true, $this->visitId, $this->studyName, $this->currentUserId, $data, $validated);
-        $this->sendEmailAndWriteTracker($validated, $data);
+        $this->updateVisitInvestigatorFormStatus($validated);
 
     }
 
-    public function updateLocalData(array $data, bool $validated){
+    public function updateInvestigatorForm(array $data, bool $validated){
+        if($validated) $this->abstractStudyRules->checkInvestigatorFromValidity($data);
         $localReviewEntitity = $this->reviewRepositoryInterface->getInvestigatorForm($this->visitId);
         $this->reviewRepositoryInterface->updateReview($localReviewEntitity['id'], $this->currentUserId, $data, $validated);
-        $this->sendEmailAndWriteTracker($validated, $data);
+        $this->updateVisitInvestigatorFormStatus($validated);
     }
 
-    private function sendEmailAndWriteTracker($validated, $data){
+    private function updateVisitInvestigatorFormStatus($validated){
         if ($validated) {
             $this->visitService->updateInvestigatorFormStatus(Constants::INVESTIGATOR_FORM_DONE);
         }else {
             $this->visitService->updateInvestigatorFormStatus(Constants::INVESTIGATOR_FORM_DRAFT);
         }
 
-        $actionDetails = [
-            'raw_data' => $data
-        ];
-
-        $this->trackerRepositoryInterface->writeAction($this->currentUserId, Constants::ROLE_INVESTIGATOR, $this->studyName, $this->visitId, Constants::TRACKER_SAVE_INVESTIGATOR_FORM, $actionDetails);
     }
 
 }

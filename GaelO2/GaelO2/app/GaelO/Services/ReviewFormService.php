@@ -1,12 +1,15 @@
 <?php
 
+namespace App\GaelO\Services;
+
+use App\GaelO\Adapters\LaravelFunctionAdapter;
 use App\GaelO\Constants\Constants;
 use App\GaelO\Interfaces\ReviewRepositoryInterface;
 use App\GaelO\Interfaces\ReviewStatusRepositoryInterface;
 use App\GaelO\Interfaces\TrackerRepositoryInterface;
 use App\GaelO\Repositories\VisitRepository;
 use App\GaelO\Services\MailServices;
-use App\GaelO\Interfaces\InterfaceStudyRules;
+use App\GaelO\Services\SpecificStudiesRules\AbstractStudyRules;
 use App\GaelO\Services\VisitService;
 use Illuminate\Support\Facades\App;
 
@@ -17,7 +20,7 @@ class ReviewFormService {
     private ReviewRepositoryInterface $reviewRepositoryInterface;
     private ReviewStatusRepositoryInterface $reviewStatusRepositoryInterface;
     private TrackerRepositoryInterface $trackerRepositoryInterface;
-    private InterfaceStudyRules $interfaceStudyRules;
+    private AbstractStudyRules $abstractStudyRules;
     private MailServices $mailServices;
 
     private int $currentUserId;
@@ -60,7 +63,7 @@ class ReviewFormService {
         $this->visitType = $this->visitContext['visit_type']['name'];
         $this->patientCode = $this->visitContext['patient_code'];
         $this->uploaderId = $this->visitContext['creator_user_id'];
-        $this->interfaceStudyRules = App::make('\App\GaelO\Visits\VisitsRules\\'.$this->studyName.'_'.$modality.'_'.$this->visitType);
+        $this->abstractStudyRules = LaravelFunctionAdapter::make('\App\GaelO\Services\SpecificStudiesRules\\'.$this->studyName.'_'.$modality.'_'.$this->visitType);
         //SK ICI INSTANCER LA CLASSE SPECIFIQUE QUI IMPLEMENTE L INTERFACE STUDY RULES ?
     }
 
@@ -82,9 +85,9 @@ class ReviewFormService {
     }
 
     private function doSpecificReviewDecisions(array $data){
-        $reviewStatus = $this->interfaceStudyRules->getReviewStatus();
-        $availability = $this->interfaceStudyRules->getReviewAvailability($reviewStatus);
-        $conclusion = $this->interfaceStudyRules->getReviewConclusion();
+        $reviewStatus = $this->abstractStudyRules->getReviewStatus();
+        $availability = $this->abstractStudyRules->getReviewAvailability($reviewStatus);
+        $conclusion = $this->abstractStudyRules->getReviewConclusion();
         $this->reviewStatusRepositoryInterface->updateReviewAvailability($this->visitId, $this->studyName, $availability );
         $this->reviewStatusRepositoryInterface->updateReviewConclusion($this->visitId, $this->studyName, $conclusion );
         $this->reviewStatusRepositoryInterface->updateReviewStatus($this->visitId, $this->studyName, $reviewStatus );
