@@ -6,8 +6,9 @@ use App\GaelO\Interfaces\ReviewStatusRepositoryInterface;
 use App\GaelO\Interfaces\TrackerRepositoryInterface;
 use App\GaelO\Repositories\VisitRepository;
 use App\GaelO\Services\MailServices;
-use App\GaelO\Services\SpecificStudiesRules\InterfaceStudyRules;
+use App\GaelO\Interfaces\InterfaceStudyRules;
 use App\GaelO\Services\VisitService;
+use Illuminate\Support\Facades\App;
 
 class ReviewFormService {
 
@@ -54,10 +55,12 @@ class ReviewFormService {
         $this->visitId = $visitId;
         $this->visitService->setVisitId($visitId);
         $this->visitContext = $this->visitRepository->getVisitContext($this->visitId);
+        $modality = $this->visitContext['visit_type']['visit_group']['modality'];
         $this->studyName = $this->visitContext['visit_type']['visit_group']['study_name'];
         $this->visitType = $this->visitContext['visit_type']['name'];
         $this->patientCode = $this->visitContext['patient_code'];
         $this->uploaderId = $this->visitContext['creator_user_id'];
+        $this->interfaceStudyRules = App::make('\App\GaelO\Visits\VisitsRules\\'.$this->studyName.'_'.$modality.'_'.$this->visitType);
         //SK ICI INSTANCER LA CLASSE SPECIFIQUE QUI IMPLEMENTE L INTERFACE STUDY RULES ?
     }
 

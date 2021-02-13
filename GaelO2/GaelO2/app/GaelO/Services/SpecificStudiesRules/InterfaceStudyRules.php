@@ -3,16 +3,12 @@
 namespace App\GaelO\Services\SpecificStudiesRules;
 
 use App\GaelO\Constants\Constants;
-use ReviewService;
 
 abstract class InterfaceStudyRules {
 
-    private ReviewService $reviewService;
+    abstract function checkInvestigatorFromValidity(array $data) ;
 
-    public function __construct(ReviewService $reviewService)
-    {
-        $this->reviewService = $reviewService;
-    }
+    abstract function checkReviewFromValidity(array $data) ;
 
     abstract function getReviewStatus() : string ;
 

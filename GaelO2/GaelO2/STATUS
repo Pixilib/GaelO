@@ -33,8 +33,8 @@ Telechargement des DICOMs / OHIF / Stone of Orthanc
 *** APIs ***
 Preparation Investigateur / Monitor / Controller / Reviewer :
 - API Review
-Investigator form (POST, PATCH (unvalidate) )
-Review form (POST, GET, DELETE, PATCH (unlock) )
+Investigator form (POST, PUT, PATCH (unvalidate) )
+Review form (POST, PUT, GET, DELETE, PATCH (unvalidate) )
 Review form /file  (POST, GET, DELETE)
 
 **Refac User Service peut disparaitre ou etre simplifie que pour les checks (peut etre en tools)
