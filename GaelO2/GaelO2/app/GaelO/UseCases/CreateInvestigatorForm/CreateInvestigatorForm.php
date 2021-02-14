@@ -41,12 +41,8 @@ class CreateInvestigatorForm {
             }
 
             $visitContext = $this->visitRepositoryInterface->getVisitContext($createInvestigatorFormRequest->visitId);
-            $modality = $visitContext['visit_type']['visit_group']['modality'];
             $studyName = $visitContext['visit_type']['visit_group']['study_name'];
-            $visitType = $visitContext['visit_type']['name'];
             $isLocalFormNeeded = $visitContext['visit_type']['local_form_needed'];
-            $patientCode = $visitContext['patient_code'];
-            $uploaderId = $visitContext['creator_user_id'];
 
             $this->checkAuthorization(
                 $createInvestigatorFormRequest->currentUserId,

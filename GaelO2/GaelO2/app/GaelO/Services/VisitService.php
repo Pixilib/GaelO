@@ -137,7 +137,7 @@ class VisitService
         $this->mailServices->sendUploadedVisitMessage($visitEntity['creator_user_id'], $study, $patientCode, $visitType, $qcNeeded);
         //If Qc NotNeeded mark visit as available for review
         if (!$qcNeeded) {
-            $this->updateReviewAvailability($this->visitId, true, $study, $patientCode, $visitType);
+            $this->updateReviewAvailability(true, $study, $patientCode, $visitType);
         }
     }
 

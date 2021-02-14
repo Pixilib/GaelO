@@ -25,7 +25,7 @@ Creatable-Visits (GET) => OK
 Possible-Uploads (GET) => OK
 dicom-series (DELETE, PATCH) => OK (Nb pour reset upload, loop depuis front)
 dicom-study (PATCH) => OK
-Investigator-form (GET, DELETE)
+Investigator-form (GET, POST, DELETE)
 
 
 Salim TODO :
@@ -33,9 +33,10 @@ Telechargement des DICOMs / OHIF / Stone of Orthanc
 *** APIs ***
 Preparation Investigateur / Monitor / Controller / Reviewer :
 - API Review
-Investigator form (POST (reste test a etoffer++, abstraction validite form a revoir), PUT, PATCH (unvalidate) )
+Investigator form (PUT, PATCH (unvalidate) )
 Review form (POST, PUT, GET, DELETE, PATCH (unvalidate) )
 Review form /file  (POST, GET, DELETE)
+=> Contrainte Form a continuer
 
 **Refac User Service peut disparaitre ou etre simplifie que pour les checks (peut etre en tools)
 

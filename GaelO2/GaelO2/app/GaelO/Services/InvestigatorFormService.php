@@ -19,8 +19,6 @@ class InvestigatorFormService {
     private int $currentUserId;
     private int $visitId;
 
-    //SK reste a definir contraintes completion / type data dans le back spe a chaque etude
-
     public function __construct(VisitService $visitService,
         ReviewRepositoryInterface $reviewRepositoryInterface,
         ReviewStatusRepositoryInterface $reviewStatusRepositoryInterface,
@@ -35,11 +33,11 @@ class InvestigatorFormService {
         $this->mailServices = $mailServices;
     }
 
-    public function setCurrentUserId(int $currentUserId){
+    public function setCurrentUserId(int $currentUserId) : void {
         $this->currentUserId = $currentUserId;
     }
 
-    public function setVisitContext(array $visitContext){
+    public function setVisitContext(array $visitContext) : void {
         $this->visitId = $visitContext['id'];
         $this->visitService->setVisitId($visitContext['id']);
         $modality = $visitContext['visit_type']['visit_group']['modality'];
@@ -50,21 +48,21 @@ class InvestigatorFormService {
     }
 
 
-    public function saveInvestigatorForm(array $data, bool $validated){
+    public function saveInvestigatorForm(array $data, bool $validated) : void {
         if($validated) $this->abstractStudyRules->checkInvestigatorFromValidity($data);
         $this->reviewRepositoryInterface->createReview(true, $this->visitId, $this->studyName, $this->currentUserId, $data, $validated);
         $this->updateVisitInvestigatorFormStatus($validated);
 
     }
 
-    public function updateInvestigatorForm(array $data, bool $validated){
+    public function updateInvestigatorForm(array $data, bool $validated) : void {
         if($validated) $this->abstractStudyRules->checkInvestigatorFromValidity($data);
         $localReviewEntitity = $this->reviewRepositoryInterface->getInvestigatorForm($this->visitId);
         $this->reviewRepositoryInterface->updateReview($localReviewEntitity['id'], $this->currentUserId, $data, $validated);
         $this->updateVisitInvestigatorFormStatus($validated);
     }
 
-    private function updateVisitInvestigatorFormStatus($validated){
+    private function updateVisitInvestigatorFormStatus(bool $validated) : void {
         if ($validated) {
             $this->visitService->updateInvestigatorFormStatus(Constants::INVESTIGATOR_FORM_DONE);
         }else {

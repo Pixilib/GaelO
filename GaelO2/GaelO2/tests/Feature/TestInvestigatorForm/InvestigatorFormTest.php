@@ -90,6 +90,75 @@ class InvestigatorFormTest extends TestCase
 
         $this->post('api/visits/'.$visit->id.'/investigator-form', $payload)->assertStatus(201);
 
+
+
     }
+
+
+    public function testCreateInvestigatorFormShouldFailNoRole(){
+        $study = Study::factory()->name('TEST')->create();
+        $patient = Patient::factory()->studyName($study->name)->create();
+        $visitGroup = VisitGroup::factory()->studyName($study->name)->modality('PT')->create();
+        $visitType  = VisitType::factory()->visitGroupId($visitGroup->id)->name('PET0')->localFormNeeded()->create();
+        $visit = Visit::Factory()->patientCode($patient->code)->visitTypeId($visitType->id)->create();
+
+        AuthorizationTools::actAsAdmin(false);
+
+        $payload = [
+            'data' => ['lugano' => 'CR'],
+            'validated' => true
+        ];
+
+        $this->post('api/visits/'.$visit->id.'/investigator-form', $payload)->assertStatus(403);
+
+
+
+    }
+
+    public function testCreateInvestigatorFormShouldFailInvestigatorFormNotNeeded(){
+        $study = Study::factory()->name('TEST')->create();
+        $patient = Patient::factory()->studyName($study->name)->create();
+        $visitGroup = VisitGroup::factory()->studyName($study->name)->modality('PT')->create();
+        $visitType  = VisitType::factory()->visitGroupId($visitGroup->id)->name('PET0')->create();
+        $visit = Visit::Factory()->patientCode($patient->code)->visitTypeId($visitType->id)->create();
+
+        $currentUserId = AuthorizationTools::actAsAdmin(false);
+        AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_INVESTIGATOR, $study->name);
+        AuthorizationTools::addAffiliatedCenter($currentUserId, $patient->center_code);
+
+        $payload = [
+            'data' => ['lugano' => 'CR'],
+            'validated' => true
+        ];
+
+        $this->post('api/visits/'.$visit->id.'/investigator-form', $payload)->assertStatus(403);
+
+
+
+    }
+
+    public function testCreateInvestigatorFormShouldFailInvestigatorFormAlreadyExisting(){
+        $study = Study::factory()->name('TEST')->create();
+        $patient = Patient::factory()->studyName($study->name)->create();
+        $visitGroup = VisitGroup::factory()->studyName($study->name)->modality('PT')->create();
+        $visitType  = VisitType::factory()->visitGroupId($visitGroup->id)->name('PET0')->localFormNeeded()->create();
+        $visit = Visit::Factory()->patientCode($patient->code)->visitTypeId($visitType->id)->stateInvestigatorForm(Constants::INVESTIGATOR_FORM_DRAFT)->create();
+
+        $currentUserId = AuthorizationTools::actAsAdmin(false);
+        AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_INVESTIGATOR, $study->name);
+        AuthorizationTools::addAffiliatedCenter($currentUserId, $patient->center_code);
+
+        $payload = [
+            'data' => ['lugano' => 'CR'],
+            'validated' => true
+        ];
+
+        $this->post('api/visits/'.$visit->id.'/investigator-form', $payload)->assertStatus(403);
+
+
+
+    }
+
+
 
 }
