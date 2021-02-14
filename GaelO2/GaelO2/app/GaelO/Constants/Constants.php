@@ -41,6 +41,7 @@ class Constants {
     const TRACKER_DELETE_REVIEW_FORM = "Delete Review Form";
     const TRACKER_ACCOUNT_BLOCKED = "Account Blocked";
     const TRACKER_SAVE_INVESTIGATOR_FORM = "Save Investigator Form";
+    const TRACKER_MODIFY_INVESTIGATOR_FORM = "Modify Investigator Form";
     const TRACKER_SAVE_REVIEWER_FORM = "Save Reviewer Form";
     const TRACKER_EDIT_PATIENT = "Edit Patient";
     const TRACKER_IMPORT_PATIENT = "Import Patients";

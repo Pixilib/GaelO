@@ -109,7 +109,7 @@ Route::middleware(['auth:api', 'refresh_token'])->group(function () {
     Route::get('visits/{id}/investigator-form', [ReviewController::class, 'getInvestigatorForm'] );
     Route::delete('visits/{id}/investigator-form', [ReviewController::class, 'deleteInvestigatorForm'] );
     Route::post('visits/{id}/investigator-form', [ReviewController::class, 'createInvestigatorForm'] );
-
+    Route::put('visits/{id}/investigator-form', [ReviewController::class, 'modifyInvestigatorForm'] );
     //Dicom Routes
     Route::delete('dicom-series/{seriesInstanceUID}', [DicomController::class, 'deleteSeries'] );
     Route::patch('dicom-series/{seriesInstanceUID}', [DicomController::class, 'reactivateSeries'] );

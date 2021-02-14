@@ -11,6 +11,9 @@ use App\GaelO\UseCases\DeleteInvestigatorForm\DeleteInvestigatorFormResponse;
 use App\GaelO\UseCases\GetInvestigatorForm\GetInvestigatorForm;
 use App\GaelO\UseCases\GetInvestigatorForm\GetInvestigatorFormRequest;
 use App\GaelO\UseCases\GetInvestigatorForm\GetInvestigatorFormResponse;
+use App\GaelO\UseCases\ModifyInvestigatorForm\ModifyInvestigatorForm;
+use App\GaelO\UseCases\ModifyInvestigatorForm\ModifyInvestigatorFormRequest;
+use App\GaelO\UseCases\ModifyInvestigatorForm\ModifyInvestigatorFormResponse;
 use App\GaelO\Util;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -75,4 +78,28 @@ class ReviewController extends Controller
         }
 
     }
+
+    public function modifyInvestigatorForm(int $visitId, Request $request, ModifyInvestigatorForm $modifyInvestigatorForm, ModifyInvestigatorFormRequest $modifyInvestigatorFormRequest, ModifyInvestigatorFormResponse $modifyInvestigatorFormResponse){
+
+        $curentUser = Auth::user();
+
+        $modifyInvestigatorFormRequest->currentUserId = $curentUser['id'];
+        $modifyInvestigatorFormRequest->visitId = $visitId;
+
+        $requestData = $request->all();
+        $deleteInvestigatorFromRequest = Util::fillObject($requestData, $modifyInvestigatorFormRequest);
+
+        $modifyInvestigatorForm->execute($deleteInvestigatorFromRequest, $modifyInvestigatorFormResponse);
+
+        if($modifyInvestigatorFormResponse->body != null){
+            return response()->json($modifyInvestigatorFormResponse->body)
+            ->setStatusCode($modifyInvestigatorFormResponse->status, $modifyInvestigatorFormResponse->statusText);
+        } else {
+            return response()->noContent()
+            ->setStatusCode($modifyInvestigatorFormResponse->status, $modifyInvestigatorFormResponse->statusText);
+        }
+
+    }
+
+
 }
