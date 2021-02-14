@@ -146,7 +146,7 @@ Route::middleware(['auth:api', 'refresh_token'])->group(function () {
 |--------------------------------------------------------------------------
 |
 */
-Route::middleware('auth:api')->post('export-db', [ExportDBController::class, 'exportDB'] );
+Route::middleware('auth:api')->get('export-db', [ExportDBController::class, 'exportDB'] );
 Route::middleware('auth:api')->get('documentations/{id}/file', [DocumentationController::class, 'getDocumentationFile'] );
 
 
