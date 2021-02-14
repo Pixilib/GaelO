@@ -20,7 +20,7 @@ class GetDicomsFile{
         $this->orthancService = $orthancService;
         $this->visitService = $visitService;
         $this->authorizationService = $authorizationService;
-        $this->orthancService->setOrthancServer(false);
+        $this->orthancService->setOrthancServer(true);
     }
 
     public function execute(GetDicomsFileRequest $getDicomsRequest, GetDicomsFileResponse $getDicomsResponse){
@@ -38,7 +38,7 @@ class GetDicomsFile{
             $patientCode = $visitContext['patient']['code'];
 
             //Get SeriesOrthancID from database to be downloaded
-            $this->orthancSeriesIDs = $this->visitService->getVisitSeriesIdsDicomArray($getDicomsRequest->visitId, false);
+            $this->orthancSeriesIDs = $this->visitService->getVisitSeriesIdsDicomArray(false);
             //First output the filename, then the controller will call outputStream to get content of orthanc response
             $getDicomsResponse->filename = 'DICOM_'.$studyName.'_'.$visitGroup.'_'.$visitType.'_'.$patientCode.'.zip';
 

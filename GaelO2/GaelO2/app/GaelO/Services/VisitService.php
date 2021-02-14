@@ -66,6 +66,7 @@ class VisitService
         $seriesOrthancIdArray = array_map(function ($series) {
             return $series['orthanc_id'];
         }, $seriesEntities);
+
         return $seriesOrthancIdArray;
     }
 
