@@ -30,10 +30,7 @@ class ReverseProxyDicomWeb{
              //Remove our GaelO Prefix to match the orthanc route
             $calledUrl = str_replace("/api/orthanc", "", $reverseProxyDicomWebRequest->url);
 
-            //SK : PROBLEME COMMENT FAIRE VENIR LE ROLE DEPUIS OHIF, Via HEADER PEUT ETRE ?
-            //SK CHECKER QUE UN DES ROLE AUTORISE EXISTE POUR LA LECTURE DU DICOM
-            $role = 'Investigator';
-            //$this->checkAuthorization($reverseProxyDicomWebRequest->currentUserId, $calledUrl, $role );
+            $this->checkAuthorization($reverseProxyDicomWebRequest->currentUserId, $calledUrl );
 
             //Connect to Orthanc Pacs
             $this->httpClientAdapter->setAddress(
@@ -74,11 +71,16 @@ class ReverseProxyDicomWeb{
 
     }
 
-    private function checkAuthorization(int $currentUserId, string $requestedURI, string $role){
-        $this->authorizationService->setCurrentUserAndRole($currentUserId, $role);
-        $this->authorizationService->setRequestedUri($requestedURI);
+    private function checkAuthorization(int $currentUserId, string $requestedURI){
+
+        if( ! str_starts_with ( $requestedURI , "/dicom-web/" ) ){
+            throw new GaelOForbiddenException;
+        }
+        /*
+        $this->authorizationService->setUserIdAndRequestedUri($currentUserId, $requestedURI);
         if(!$this->authorizationService->isDicomAllowed() ){
             throw new GaelOForbiddenException();
         };
+        */
     }
 }
