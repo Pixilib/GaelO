@@ -72,6 +72,53 @@ class InvestigatorFormTest extends TestCase
 
     }
 
+    public function testUnlockInvestigatorForm(){
+        $review = Review::factory()->validated()->create();
+        $currentUserId = AuthorizationTools::actAsAdmin(false);
+        AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $review->visit->patient->study_name);
+        $payload = [
+            'reason' => 'wrong Form'
+        ];
+
+        $this->patch('api/visits/'.$review->visit_id.'/investigator-form/unlock',$payload)->assertStatus(200);
+
+    }
+
+    public function testUnlockInvestigatorFormShouldFailedAlreadyUnlocked(){
+        $review = Review::factory()->create();
+        $currentUserId = AuthorizationTools::actAsAdmin(false);
+        AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $review->visit->patient->study_name);
+        $payload = [
+            'reason' => 'wrong Form'
+        ];
+
+        $this->patch('api/visits/'.$review->visit_id.'/investigator-form/unlock',$payload)->assertStatus(400);
+
+    }
+
+    public function testUnlockInvestigatorFormShouldFailedNoReason(){
+        $review = Review::factory()->validated()->create();
+        $currentUserId = AuthorizationTools::actAsAdmin(false);
+        AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $review->visit->patient->study_name);
+        $payload = [
+            'reason' => ''
+        ];
+
+        $this->patch('api/visits/'.$review->visit_id.'/investigator-form/unlock',$payload)->assertStatus(400);
+
+    }
+
+    public function testUnlockInvestigatorFormShouldFailNoRole(){
+        $review = Review::factory()->validated()->create();
+        AuthorizationTools::actAsAdmin(false);
+        $payload = [
+            'reason' => 'wrong Form'
+        ];
+
+        $this->patch('api/visits/'.$review->visit_id.'/investigator-form/unlock',$payload)->assertStatus(403);
+
+    }
+
     public function testCreateInvestigatorForm(){
         $study = Study::factory()->name('TEST')->create();
         $patient = Patient::factory()->studyName($study->name)->create();

@@ -397,4 +397,26 @@ Class MailServices extends SendEmailAdapter {
 
     }
 
+    public function sendUnlockFormMessage(bool $investigatorForm, int $formOwnerId, string $studyName, int $patientCode, string $visitType){
+
+        $parameters = [
+            'name' => $this->getUserName($formOwnerId),
+            'study' => $studyName,
+            'patientCode' => $patientCode,
+            'visitType' => $visitType,
+            'formType' => $investigatorForm ? 'Investigator' : 'Review'
+        ];
+
+        $this->mailInterface->setTo( [
+            $this->getUserEmail($formOwnerId)
+            ]
+        );
+
+        $this->mailInterface->setReplyTo();
+        $this->mailInterface->setParameters($parameters);
+        $this->mailInterface->setBody(MailConstants::EMAIL_UNLOCK_FORM);
+        $this->mailInterface->send();
+
+    }
+
 }

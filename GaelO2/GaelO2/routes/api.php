@@ -110,6 +110,7 @@ Route::middleware(['auth:api', 'refresh_token'])->group(function () {
     Route::delete('visits/{id}/investigator-form', [ReviewController::class, 'deleteInvestigatorForm'] );
     Route::post('visits/{id}/investigator-form', [ReviewController::class, 'createInvestigatorForm'] );
     Route::put('visits/{id}/investigator-form', [ReviewController::class, 'modifyInvestigatorForm'] );
+    Route::patch('visits/{id}/investigator-form/unlock', [ReviewController::class, 'unlockInvestigatorForm'] );
     //Dicom Routes
     Route::delete('dicom-series/{seriesInstanceUID}', [DicomController::class, 'deleteSeries'] );
     Route::patch('dicom-series/{seriesInstanceUID}', [DicomController::class, 'reactivateSeries'] );
@@ -148,8 +149,6 @@ Route::middleware(['auth:api', 'refresh_token'])->group(function () {
 */
 Route::middleware('auth:api')->get('export-db', [ExportDBController::class, 'exportDB'] );
 Route::middleware('auth:api')->get('documentations/{id}/file', [DocumentationController::class, 'getDocumentationFile'] );
-
-
 Route::middleware('auth:api')->get('visits/{id}/dicoms/file', [DicomController::class, 'getVisitDicomsFile'] );
 
 /*

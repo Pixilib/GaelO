@@ -14,6 +14,9 @@ use App\GaelO\UseCases\GetInvestigatorForm\GetInvestigatorFormResponse;
 use App\GaelO\UseCases\ModifyInvestigatorForm\ModifyInvestigatorForm;
 use App\GaelO\UseCases\ModifyInvestigatorForm\ModifyInvestigatorFormRequest;
 use App\GaelO\UseCases\ModifyInvestigatorForm\ModifyInvestigatorFormResponse;
+use App\GaelO\UseCases\UnlockInvestigatorForm\UnlockInvestigatorForm;
+use App\GaelO\UseCases\UnlockInvestigatorForm\UnlockInvestigatorFormRequest;
+use App\GaelO\UseCases\UnlockInvestigatorForm\UnlockInvestigatorFormResponse;
 use App\GaelO\Util;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -52,6 +55,28 @@ class ReviewController extends Controller
         } else {
             return response()->noContent()
             ->setStatusCode($deleteInvestigatorFormResponse->status, $deleteInvestigatorFormResponse->statusText);
+        }
+
+
+    }
+
+    public function unlockInvestigatorForm(int $visitId, Request $request, UnlockInvestigatorForm $unlockInvestigatorForm, UnlockInvestigatorFormRequest $unlockInvestigatorFormRequest, UnlockInvestigatorFormResponse $unlockInvestigatorFormResponse){
+        $curentUser = Auth::user();
+
+        $unlockInvestigatorFormRequest->currentUserId = $curentUser['id'];
+        $unlockInvestigatorFormRequest->visitId = $visitId;
+
+        $requestData = $request->all();
+        $unlockInvestigatorFormRequest = Util::fillObject($requestData, $unlockInvestigatorFormRequest);
+
+        $unlockInvestigatorForm->execute($unlockInvestigatorFormRequest, $unlockInvestigatorFormResponse);
+
+        if($unlockInvestigatorFormResponse->body != null){
+            return response()->json($unlockInvestigatorFormResponse->body)
+            ->setStatusCode($unlockInvestigatorFormResponse->status, $unlockInvestigatorFormResponse->statusText);
+        } else {
+            return response()->noContent()
+            ->setStatusCode($unlockInvestigatorFormResponse->status, $unlockInvestigatorFormResponse->statusText);
         }
 
 
@@ -100,6 +125,8 @@ class ReviewController extends Controller
         }
 
     }
+
+
 
 
 }
