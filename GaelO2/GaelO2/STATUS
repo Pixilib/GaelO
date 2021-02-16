@@ -36,6 +36,8 @@ Preparation Investigateur / Monitor / Controller / Reviewer :
 Review form (POST, PUT, GET, DELETE, PATCH (unvalidate) )
 Review form /file  (POST, GET, DELETE)
 => Contrainte Form a continuer
+***API Supervisor ***
+Tools get dicom batch => Recevra un array de seriesInstanceUID a telecharger depuis Orthand (pour download dicom)
 
 **Refac User Service peut disparaitre ou etre simplifie que pour les checks (peut etre en tools)
 
