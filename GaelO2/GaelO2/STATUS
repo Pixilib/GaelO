@@ -25,19 +25,21 @@ Creatable-Visits (GET) => OK
 Possible-Uploads (GET) => OK
 dicom-series (DELETE, PATCH) => OK (Nb pour reset upload, loop depuis front)
 dicom-study (PATCH) => OK
-Investigator-form (GET, PUT, POST, DELETE, PATCH (unlock))
+Investigator-form (GET, PUT, POST, DELETE, PATCH (unlock)) =>OK
 
 
 Salim TODO :
 Telechargement des DICOMs / OHIF / Stone of Orthanc
 *** APIs ***
-Preparation Investigateur / Monitor / Controller / Reviewer :
 - API Review
-Review form (POST, PUT, GET, DELETE, PATCH (unvalidate) )
+Review form (POST, PUT, GET (par id + list des review d'une visit/studyname pour supervisor), DELETE, PATCH (unlock) )
 Review form /file  (POST, GET, DELETE)
 => Contrainte Form a continuer
-***API Supervisor ***
-Tools get dicom batch => Recevra un array de seriesInstanceUID a telecharger depuis Orthand (pour download dicom)
+
+- API Supervisor
+Tools get dicom batch => Recevra un array de seriesInstanceUID a telecharger depuis Orthanc (pour download dicom)
+Reactivate Visit
+Tools Send Dicom to peer
 
 **Refac User Service peut disparaitre ou etre simplifie que pour les checks (peut etre en tools)
 
