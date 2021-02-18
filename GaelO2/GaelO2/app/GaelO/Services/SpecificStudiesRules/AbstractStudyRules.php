@@ -6,9 +6,9 @@ use App\GaelO\Constants\Constants;
 
 abstract class AbstractStudyRules {
 
-    abstract function checkInvestigatorFromValidity(array $data) ;
+    abstract function checkInvestigatorFormValidity(array $data) ;
 
-    abstract function checkReviewFromValidity(array $data) ;
+    abstract function checkReviewFormValidity(array $data) ;
 
     abstract function getReviewStatus() : string ;
 

@@ -45,9 +45,9 @@ class ReviewController extends Controller
         $deleteInvestigatorFormRequest->visitId = $visitId;
 
         $requestData = $request->all();
-        $deleteInvestigatorFromRequest = Util::fillObject($requestData, $deleteInvestigatorFormRequest);
+        $deleteInvestigatorFormRequest = Util::fillObject($requestData, $deleteInvestigatorFormRequest);
 
-        $deleteInvestigatorForm->execute($deleteInvestigatorFromRequest, $deleteInvestigatorFormResponse);
+        $deleteInvestigatorForm->execute($deleteInvestigatorFormRequest, $deleteInvestigatorFormResponse);
 
         if($deleteInvestigatorFormResponse->body != null){
             return response()->json($deleteInvestigatorFormResponse->body)
@@ -90,9 +90,9 @@ class ReviewController extends Controller
         $createInvestigatorFormRequest->visitId = $visitId;
 
         $requestData = $request->all();
-        $deleteInvestigatorFromRequest = Util::fillObject($requestData, $createInvestigatorFormRequest);
+        $deleteInvestigatorFormRequest = Util::fillObject($requestData, $createInvestigatorFormRequest);
 
-        $createInvestigatorForm->execute($deleteInvestigatorFromRequest, $createInvestigatorFormResponse);
+        $createInvestigatorForm->execute($deleteInvestigatorFormRequest, $createInvestigatorFormResponse);
 
         if($createInvestigatorFormResponse->body != null){
             return response()->json($createInvestigatorFormResponse->body)
@@ -112,9 +112,9 @@ class ReviewController extends Controller
         $modifyInvestigatorFormRequest->visitId = $visitId;
 
         $requestData = $request->all();
-        $deleteInvestigatorFromRequest = Util::fillObject($requestData, $modifyInvestigatorFormRequest);
+        $deleteInvestigatorFormRequest = Util::fillObject($requestData, $modifyInvestigatorFormRequest);
 
-        $modifyInvestigatorForm->execute($deleteInvestigatorFromRequest, $modifyInvestigatorFormResponse);
+        $modifyInvestigatorForm->execute($deleteInvestigatorFormRequest, $modifyInvestigatorFormResponse);
 
         if($modifyInvestigatorFormResponse->body != null){
             return response()->json($modifyInvestigatorFormResponse->body)

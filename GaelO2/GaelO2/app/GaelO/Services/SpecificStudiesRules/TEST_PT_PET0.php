@@ -7,11 +7,11 @@ use Illuminate\Support\Facades\Log;
 
 class TEST_PT_PET0 extends AbstractStudyRules {
 
-    public function checkInvestigatorFromValidity(array $data) {
+    public function checkInvestigatorFormValidity(array $data) {
         Log::info('checkInvestigatorFormValidity');
     }
 
-    public function checkReviewFromValidity(array $data) {
+    public function checkReviewFormValidity(array $data) {
         Log::info('checkReviewerFormValidity');
     }
 

@@ -8,7 +8,7 @@ class CreateReview {
 
     }
 
-    public function execute(CreateReviewFormRequest $createReviewFromRequest, CreateReviewFormResponse $createReviewFormResponse){
+    public function execute(CreateReviewFormRequest $createReviewFormRequest, CreateReviewFormResponse $createReviewFormResponse){
 
     }
 

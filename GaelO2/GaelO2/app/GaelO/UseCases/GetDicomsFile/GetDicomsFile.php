@@ -4,18 +4,18 @@ namespace App\GaelO\UseCases\GetDicomsFile;
 
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
-use App\GaelO\Services\AuthorizationDicomWebService;
+use App\GaelO\Services\AuthorizationVisitService;
 use App\GaelO\Services\OrthancService;
 use App\GaelO\Services\VisitService;
 use Exception;
 
 class GetDicomsFile{
 
-    private AuthorizationDicomWebService $authorizationService;
+    private AuthorizationVisitService $authorizationService;
     private VisitService $visitService;
     private OrthancService $orthancService;
 
-    public function __construct(AuthorizationDicomWebService $authorizationService, VisitService $visitService, OrthancService $orthancService)
+    public function __construct(AuthorizationVisitService $authorizationService, VisitService $visitService, OrthancService $orthancService)
     {
         $this->orthancService = $orthancService;
         $this->visitService = $visitService;
@@ -58,7 +58,7 @@ class GetDicomsFile{
     private function checkAuthorization(int $currentUserId, int $visitId, string $role){
         $this->authorizationService->setCurrentUserAndRole($currentUserId, $role);
         $this->authorizationService->setVisitId($visitId);
-        if( ! $this->authorizationService->isDicomAllowed()){
+        if( ! $this->authorizationService->isVisitAllowed()){
             throw new GaelOForbiddenException();
         }
     }
