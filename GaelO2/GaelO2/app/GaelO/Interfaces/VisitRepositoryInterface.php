@@ -25,7 +25,7 @@ interface VisitRepositoryInterface
 
     public function updateUploadStatus(int $visitId, string $newUploadStatus): array ;
 
-    public function getVisitContext(int $visitId): array ;
+    public function getVisitContext(int $visitId, bool $withTrashed = false): array ;
 
     public function updateReviewAvailability(int $visitId, string $studyName, bool $available): void ;
 
@@ -62,4 +62,6 @@ interface VisitRepositoryInterface
     public function updateInvestigatorFormStatus(int $visitId, string $stateInvestigatorForm): array ;
 
     public function getImagingVisitsAwaitingUpload(string $studyName, array $centerCode): array ;
+
+    public function reactivateVisit(int $visitId) : void ;
 }

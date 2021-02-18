@@ -13,6 +13,7 @@ use Tests\TestCase;
 use App\Models\Visit;
 use App\Models\VisitGroup;
 use App\Models\VisitType;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Support\Facades\Log;
 
@@ -394,6 +395,25 @@ class VisitRepositoryTest extends TestCase
         $patients = $this->populateVisits();
         $visits = $this->visitRepository->getImagingVisitsAwaitingUpload($patients[0]->study->name, [$patients[0]->center_code, $patients[1]->center_code]);
         $this->assertEquals(12, sizeof($visits));
+    }
+
+    public function testDeleteVisit(){
+        $visit = Visit::factory()->create();
+
+        $this->visitRepository->delete($visit->id);
+
+        $this->expectException(ModelNotFoundException::class);
+        Visit::findOrFail($visit->id);
+    }
+
+    public function testReactivateVisit(){
+        $visit = Visit::factory()->create();
+        $visit->delete();
+
+        $this->visitRepository->reactivateVisit($visit->id);
+
+        $updatedVisit = Visit::findOrFail($visit->id);
+        $this->assertEquals(1, $updatedVisit->count());
     }
 
 

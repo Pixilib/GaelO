@@ -51,7 +51,8 @@ class VisitRepository implements VisitRepositoryInterface {
     }
 
     public function isExistingVisit(int $patientCode, int $visitTypeId) : bool {
-        $visit = $this->visit->where([['patient_code', '=', $patientCode], ['visit_type_id', '=', $visitTypeId]])->get();
+        $builder = $this->visit->where([['patient_code', '=', $patientCode], ['visit_type_id', '=', $visitTypeId]]);
+        $visit = $builder->get();
         return $visit->count() > 0 ? true : false;
     }
 
@@ -62,9 +63,13 @@ class VisitRepository implements VisitRepositoryInterface {
         return $visitEntity->toArray();
     }
 
-    public function getVisitContext(int $visitId) : array {
+    public function getVisitContext(int $visitId, bool $withTrashed = false) : array {
 
-        $dataArray = $this->visit->with(['visitType', 'patient'])->findOrFail($visitId)->toArray();
+        $builder = $this->visit->with(['visitType', 'patient']);
+        if($withTrashed){
+            $builder->withTrashed();
+        }
+        $dataArray = $builder->findOrFail($visitId)->toArray();
         return $dataArray;
     }
 
@@ -321,6 +326,10 @@ class VisitRepository implements VisitRepositoryInterface {
         ->get();
 
         return $answer->count() === 0 ? []  : $answer->toArray();
+    }
+
+    public function reactivateVisit(int $visitId) : void {
+        $this->visit->withTrashed()->findOrFail($visitId)->restore();
     }
 
 
