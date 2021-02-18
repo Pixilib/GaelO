@@ -11,6 +11,9 @@ use App\GaelO\UseCases\DeleteVisit\DeleteVisitResponse;
 use App\GaelO\UseCases\GetVisit\GetVisit;
 use App\GaelO\UseCases\GetVisit\GetVisitRequest;
 use App\GaelO\UseCases\GetVisit\GetVisitResponse;
+use App\GaelO\UseCases\GetVisitsFromStudy\GetVisitsFromStudy;
+use App\GaelO\UseCases\GetVisitsFromStudy\GetVisitsFromStudyRequest;
+use App\GaelO\UseCases\GetVisitsFromStudy\GetVisitsFromStudyResponse;
 use App\GaelO\UseCases\ModifyCorrectiveAction\ModifyCorrectiveAction;
 use App\GaelO\UseCases\ModifyCorrectiveAction\ModifyCorrectiveActionRequest;
 use App\GaelO\UseCases\ModifyCorrectiveAction\ModifyCorrectiveActionResponse;
@@ -60,6 +63,22 @@ class VisitController extends Controller
 
         return response()->json($getVisitResponse->body)
                 ->setStatusCode($getVisitResponse->status, $getVisitResponse->statusText);
+
+    }
+
+    public function GetVisitsFromStudy(string $studyName, Request $request, GetVisitsFromStudy $GetVisitsFromStudy, GetVisitsFromStudyRequest $GetVisitsFromStudyRequest, GetVisitsFromStudyResponse $GetVisitsFromStudyResponse){
+
+        $curentUser = Auth::user();
+        $queryParam = $request->query();
+
+        $GetVisitsFromStudyRequest->currentUserId = $curentUser['id'];
+        $GetVisitsFromStudyRequest->studyName = $studyName;
+        $GetVisitsFromStudyRequest->role = $queryParam['role'];
+
+        $GetVisitsFromStudy->execute($GetVisitsFromStudyRequest, $GetVisitsFromStudyResponse);
+
+        return response()->json($GetVisitsFromStudyResponse->body)
+                ->setStatusCode($GetVisitsFromStudyResponse->status, $GetVisitsFromStudyResponse->statusText);
 
     }
 

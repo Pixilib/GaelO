@@ -91,7 +91,6 @@ class GetVisitTest extends TestCase
 
     }
 
-
     public function testGetPatientVisitsForbiddenNoRole() {
 
         $patient = Patient::factory()->create();
@@ -106,6 +105,22 @@ class GetVisitTest extends TestCase
 
         $resp = $this->json('GET', 'api/studies/'.$studyName.'/patients/'.$patient->code.'/visits?role=Investigator');
         $resp->assertStatus(403);
+    }
+
+    public function testGetVisitsFromStudy() {
+        $visit= $this->createVisitInDb();
+        $studyName = $visit->patient->study->name;
+        $centerCode = $visit->patient->center->code;
+
+        $currentUserId = AuthorizationTools::actAsAdmin(false);
+        //change current user center to match patient center to pass authorization access
+        $userEntity = User::find($currentUserId);
+        $userEntity->center_code = $centerCode;
+        $userEntity->save();
+
+        AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $studyName);
+
+        $this->json('GET', 'api/studies/'.$studyName.'/visits/'.$visit->id.'?role=Supervisor&action='.$studyName)->assertStatus(200);
 
     }
 
