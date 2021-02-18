@@ -285,7 +285,7 @@ Class MailServices extends SendEmailAdapter {
 
     }
 
-    public function sendUnlockMessage(int $currentUserId, string $role, string $username, string $studyName, int $patientCode, string $message, string $visitType){
+    public function sendUnlockMessage(int $currentUserId, string $role, string $username, string $studyName, int $patientCode, string $messages, string $visitType){
 
         $parameters = [
             'name'=> 'Supervisor',
@@ -293,7 +293,7 @@ Class MailServices extends SendEmailAdapter {
             'username'=> $username,
             'study' => $studyName,
             'patientCode'=> $patientCode,
-            'message'=>$message,
+            'messages'=>$messages,
             'visitType'=> $visitType
         ];
 
@@ -304,7 +304,7 @@ Class MailServices extends SendEmailAdapter {
 
         $this->mailInterface->setReplyTo();
         $this->mailInterface->setParameters($parameters);
-        $this->mailInterface->setBody(MailConstants::EMAIL_UNLOCK_FORM);
+        $this->mailInterface->setBody(MailConstants::EMAIL_UNLOCK_REQUEST);
         $this->mailInterface->send();
 
     }
@@ -372,6 +372,50 @@ Class MailServices extends SendEmailAdapter {
         $this->mailInterface->setBody(MailConstants::EMAIL_CONCLUSION);
         $this->mailInterface->send();
 
+
+    }
+
+    public function sendDeleteFormMessage(bool $investigatorForm, int $formOwnerId, string $studyName, int $patientCode, string $visitType){
+
+        $parameters = [
+            'name' => $this->getUserName($formOwnerId),
+            'study' => $studyName,
+            'patientCode' => $patientCode,
+            'visitType' => $visitType,
+            'formType' => $investigatorForm ? 'Investigator' : 'Review'
+        ];
+
+        $this->mailInterface->setTo( [
+            $this->getUserEmail($formOwnerId)
+            ]
+        );
+
+        $this->mailInterface->setReplyTo();
+        $this->mailInterface->setParameters($parameters);
+        $this->mailInterface->setBody(MailConstants::EMAIL_DELETED_FORM);
+        $this->mailInterface->send();
+
+    }
+
+    public function sendUnlockFormMessage(bool $investigatorForm, int $formOwnerId, string $studyName, int $patientCode, string $visitType){
+
+        $parameters = [
+            'name' => $this->getUserName($formOwnerId),
+            'study' => $studyName,
+            'patientCode' => $patientCode,
+            'visitType' => $visitType,
+            'formType' => $investigatorForm ? 'Investigator' : 'Review'
+        ];
+
+        $this->mailInterface->setTo( [
+            $this->getUserEmail($formOwnerId)
+            ]
+        );
+
+        $this->mailInterface->setReplyTo();
+        $this->mailInterface->setParameters($parameters);
+        $this->mailInterface->setBody(MailConstants::EMAIL_UNLOCK_FORM);
+        $this->mailInterface->send();
 
     }
 

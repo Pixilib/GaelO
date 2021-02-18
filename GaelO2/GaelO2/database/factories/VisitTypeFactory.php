@@ -24,6 +24,15 @@ class VisitTypeFactory extends Factory
         ];
     }
 
+    public function name(string $name){
+
+        return $this->state(function (array $attributes) use ($name) {
+            return [
+                'name' => $name
+            ];
+        });
+    }
+
     public function visitGroupId(int $visitGroupId){
 
         return $this->state(function (array $attributes) use ($visitGroupId) {

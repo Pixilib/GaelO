@@ -22,7 +22,9 @@ class DeletedForm extends Mailable implements ShouldQueue
     {
         $this->parameters = $parameters;
         /*
-        array('study'=>'',
+        array(
+        'formType' => ''
+        'study'=>'',
         'patientCode'=>'',
         'visitType'=>'')
         */

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\GaelO\UseCases\CreateReview;
+namespace App\GaelO\UseCases\CreateReviewForm;
 
 class CreateReview {
 
@@ -8,7 +8,7 @@ class CreateReview {
 
     }
 
-    public function execute(CreateReviewRequest $createReviewRequest, CreateReviewResponse $createReviewResponse){
+    public function execute(CreateReviewFormRequest $createReviewFromRequest, CreateReviewFormResponse $createReviewFormResponse){
 
     }
 

@@ -282,9 +282,9 @@ class VisitRepository implements VisitRepositoryInterface {
 
     }
 
-    public function updateInvestigatorForm(int $visitId, string $stateInvestigatorForm) : array{
+    public function updateInvestigatorFormStatus(int $visitId, string $stateInvestigatorFormStatus) : array{
         $visitEntity = $this->visit->findOrFail($visitId);
-        $visitEntity['state_investigator_form'] = $stateInvestigatorForm;
+        $visitEntity['state_investigator_form'] = $stateInvestigatorFormStatus;
         $visitEntity->save();
         return $visitEntity->toArray();
     }

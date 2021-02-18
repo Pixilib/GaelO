@@ -3,33 +3,48 @@
 namespace App\GaelO\Services;
 
 use App\GaelO\Constants\Constants;
+use App\GaelO\Interfaces\ReviewRepositoryInterface;
 
 class AuthorizationReviewService
 {
 
-    private AuthorizationVisitService $authorizationVisitService;
+    private AuthorizationService $authorizationService;
+    private ReviewRepositoryInterface $reviewRepositoryInterface;
 
-    public function __construct(AuthorizationVisitService $authorizationVisitService)
+    public function __construct(AuthorizationService $authorizationService,
+            ReviewRepositoryInterface $reviewRepositoryInterface)
     {
 
-        $this->authorizationVisitService = $authorizationVisitService;
+        $this->authorizationService = $authorizationService;
+        $this->reviewRepositoryInterface = $reviewRepositoryInterface;
     }
 
     public function setCurrentUserAndRole(int $userId, string $role)
     {
+        $this->currentUserId = $userId;
         $this->requestedRole = $role;
         $this->authorizationVisitService->setCurrentUserAndRole($userId, $role);
     }
 
     public function setReviewId($reviewId)
     {
-        //SK AVOIR LES DATA SUR la VISIT ET injecter visit ID DANS LE MANAGER DE VISIT
-        //$this->authorizationVisitService->setVisitId();
+        $reviewEntity = $this->reviewRepositoryInterface->find($reviewId);
+        $this->reviewStudy = $reviewEntity['study_name'];
+        $this->reviewOwner = $reviewEntity['user_id'];
     }
 
     public function isReviewAllowed(): bool
     {
-        //SK Si boolean de entity authorize acces a reivew ?
-        return $this->authorizationVisitService->isVisitAllowed();
+
+        if ($this->requestedRole === Constants::ROLE_REVIEWER) {
+            //Role should be allowed and current user be the review owner
+            return $this->authorizationService->isRoleAllowed($this->reviewStudy) && $this->reviewOwner === $this->currentUserId;
+        } else if ($this->requestedRole === Constants::ROLE_SUPERVISOR) {
+            //Allow Review of the study with supervisor roles
+           return $this->authorizationService->isRoleAllowed($this->reviewStudy);
+        } else {
+            return false;
+        }
+
     }
 }

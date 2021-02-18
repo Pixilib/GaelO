@@ -88,5 +88,18 @@ class TrackerRepositoryTest extends TestCase
         $this->assertEquals(6, sizeof($answer));
     }
 
+    public function testGetTrackerStudyAction(){
+
+        $visit = Visit::factory()->create();
+        $studyName = $visit->patient->study_name;
+        Tracker::factory()->role(Constants::ROLE_INVESTIGATOR)->studyName($studyName)->visitId($visit->id)->actionType(Constants::TRACKER_SAVE_REVIEWER_FORM)->count(5)->create();
+        Tracker::factory()->role(Constants::ROLE_CONTROLLER)->studyName($studyName)->visitId($visit->id)->actionType(Constants::TRACKER_CORRECTIVE_ACTION)->count(3)->create();
+        Tracker::factory()->role(Constants::ROLE_INVESTIGATOR)->visitId($visit->id)->actionType(Constants::TRACKER_SAVE_REVIEWER_FORM)->count(3)->create();
+
+
+        $trackerEntities = $this->trackerRepository->getTrackerOfRoleActionInStudy(Constants::ROLE_INVESTIGATOR, Constants::TRACKER_SAVE_REVIEWER_FORM, $studyName );
+        $this->assertEquals(5, sizeof($trackerEntities));
+    }
+
 
 }

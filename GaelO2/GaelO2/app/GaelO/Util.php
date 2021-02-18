@@ -7,6 +7,7 @@ use Carbon\Carbon;
 use DateTime;
 use Exception;
 use FilesystemIterator;
+use Illuminate\Support\Facades\Log;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use ZipArchive;
@@ -15,8 +16,7 @@ class Util {
 
     public static function fillObject (array $dataToExtract, object $dataToFill) {
         foreach($dataToExtract as $property => $value) {
-            if (isset($value)) $dataToFill->$property = $dataToExtract[$property];
-            else $dataToFill->$property = null;
+            $dataToFill->$property = $value;
         }
         return $dataToFill;
     }

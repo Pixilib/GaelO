@@ -66,6 +66,7 @@ class VisitService
         $seriesOrthancIdArray = array_map(function ($series) {
             return $series['orthanc_id'];
         }, $seriesEntities);
+
         return $seriesOrthancIdArray;
     }
 
@@ -116,7 +117,7 @@ class VisitService
 
     public function updateInvestigatorFormStatus(string $stateInvestigatorForm)
     {
-        $updatedEntity = $this->visitRepository->updateInvestigatorForm($this->visitId, $stateInvestigatorForm);
+        $updatedEntity = $this->visitRepository->updateInvestigatorFormStatus($this->visitId, $stateInvestigatorForm);
         if (
             $updatedEntity['upload_status'] === Constants::UPLOAD_STATUS_DONE
             && $updatedEntity['state_investigator_form'] !== Constants::INVESTIGATOR_FORM_NOT_DONE
@@ -137,7 +138,7 @@ class VisitService
         $this->mailServices->sendUploadedVisitMessage($visitEntity['creator_user_id'], $study, $patientCode, $visitType, $qcNeeded);
         //If Qc NotNeeded mark visit as available for review
         if (!$qcNeeded) {
-            $this->updateReviewAvailability($this->visitId, true, $study, $patientCode, $visitType);
+            $this->updateReviewAvailability(true, $study, $patientCode, $visitType);
         }
     }
 
@@ -165,7 +166,7 @@ class VisitService
         if ($stateQc === Constants::QUALITY_CONTROL_CORRECTIVE_ACTION_ASKED && $localFormNeeded) {
             //Invalidate invistagator form and set it status as draft in the visit
             $this->reviewRepository->unlockInvestigatorForm($this->visitId);
-            $this->visitRepository->updateInvestigatorForm($this->visitId, Constants::INVESTIGATOR_FORM_DRAFT);
+            $this->visitRepository->updateInvestigatorFormStatus($this->visitId, Constants::INVESTIGATOR_FORM_DRAFT);
         }
     }
 

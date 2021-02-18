@@ -156,7 +156,7 @@ class OrthancStudyRepository implements OrthancStudyRepositoryInterface {
     }
 
     public function getChildSeries(string $orthancStudyID, bool $deleted) : array {
-        if($deleted === false){
+        if( ! $deleted ){
             $series = $this->orthancStudy->findOrFail($orthancStudyID)->series()->get()->toArray();
         }else{
             $series = $this->orthancStudy->findOrFail($orthancStudyID)->series()->onlyTrashed()->get()->toArray();
