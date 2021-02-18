@@ -163,11 +163,14 @@ class VisitRepositoryTest extends TestCase
         //Generate data of a second study that should not be selected
         $this->populateVisits()[0];
 
-        $visits = $this->visitRepository->getVisitsInStudy($patient->study_name);
-
+        $visits = $this->visitRepository->getVisitsInStudy($patient->study_name, false);
         $this->assertEquals(12, sizeof($visits));
         $this->assertArrayHasKey('visit_type', $visits[0]);
         $this->assertArrayHasKey('visit_group', $visits[0]['visit_type']);
+
+        $visitsWithReview = $this->visitRepository->getVisitsInStudy($patient->study_name, true);
+        $this->assertEquals(12, sizeof($visitsWithReview));
+        $this->assertArrayHasKey('review_status', $visitsWithReview[0]);
     }
 
     public function testHasVisitInStudy()

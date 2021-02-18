@@ -9,6 +9,7 @@ use App\GaelO\Util;
 use App\Models\ReviewStatus;
 use Exception;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class VisitRepository implements VisitRepositoryInterface {
 
@@ -97,15 +98,24 @@ class VisitRepository implements VisitRepositoryInterface {
         return $answer->count() === 0 ? []  : $answer->toArray();
     }
 
-    public function getVisitsInStudy(string $studyName) : array {
+    public function getVisitsInStudy(string $studyName, bool $withReviewStatus) : array {
 
-        $answer = $this->visit->with('visitType')
+        $queryBuilder = $this->visit->with('visitType')
         ->whereHas('visitType', function($query) use ($studyName) {
             $query->whereHas('visitGroup', function($query) use ($studyName){
                 $query->where('study_name', $studyName);
             });
-        })
-        ->get();
+        });
+
+        if($withReviewStatus){
+
+            $queryBuilder->join('reviews_status', function ($join) use ($studyName) {
+                $join->on('visits.id','=', 'visit_id');
+                $join->on('study_name', '=', $studyName);
+            });
+        }
+
+        $answer = $queryBuilder->get();
 
         return $answer->count() === 0 ? []  : $answer->toArray();
     }
@@ -113,7 +123,7 @@ class VisitRepository implements VisitRepositoryInterface {
 
     public function hasVisitsInStudy(string $studyName) : bool {
 
-        $visits = $this->getVisitsInStudy($studyName);
+        $visits = $this->getVisitsInStudy($studyName, false);
 
         return sizeof($visits) === 0 ? false  : true;
 

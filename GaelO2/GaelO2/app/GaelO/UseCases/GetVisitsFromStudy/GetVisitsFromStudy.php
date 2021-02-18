@@ -2,19 +2,19 @@
 
 namespace App\GaelO\UseCases\GetVisitsFromStudy;
 
+use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\ReviewStatusRepositoryInterface;
 use App\GaelO\Interfaces\VisitRepositoryInterface;
-use App\GaelO\Services\AuthorizationVisitService;
 use App\GaelO\Services\AuthorizationService;
+use App\GaelO\UseCases\GetVisit\VisitEntity;
 use Exception;
-use Log;
 class GetVisitsFromStudy {
 
     private VisitRepositoryInterface $visitRepositoryInterface;
     private ReviewStatusRepositoryInterface $reviewStatusRepositoryInterface;
-    private AuthorizationVisitService $authorizationVisitService;
+    private AuthorizationService $authorizationService;
 
     public function __construct(VisitRepositoryInterface $visitRepositoryInterface, ReviewStatusRepositoryInterface $reviewStatusRepositoryInterface, AuthorizationService $authorizationService){
         $this->visitRepositoryInterface = $visitRepositoryInterface;
@@ -22,44 +22,31 @@ class GetVisitsFromStudy {
         $this->reviewStatusRepositoryInterface = $reviewStatusRepositoryInterface;
     }
 
-    public function execute(GetVisitsFromStudyRequest $GetVisitsFromStudyRequest, GetVisitsFromStudyResponse $GetVisitsFromStudyResponse){
+    public function execute(GetVisitsFromStudyRequest $getVisitsFromStudyRequest, GetVisitsFromStudyResponse $getVisitsFromStudyResponse){
 
         try{
 
-            $studyName = $GetVisitsFromStudyRequest->studyName;
+            $studyName = $getVisitsFromStudyRequest->studyName;
 
-            $this->checkAuthorization($GetVisitsFromStudyRequest->currentUserId, $GetVisitsFromStudyRequest->role, $GetVisitsFromStudyRequest->studyName);
-            
-            Log::info('ici');
-            $dbData = $this->visitRepositoryInterface->GetVisitsInStudy($studyName);
+            $this->checkAuthorization($getVisitsFromStudyRequest->currentUserId, $getVisitsFromStudyRequest->role, $getVisitsFromStudyRequest->studyName);
+
+            $dbData = $this->visitRepositoryInterface->getVisitsInStudy($studyName, true);
             $responseArray = [];
             foreach($dbData as $data){
-                Log::info($data);
-                $visitId = $data['visit_type']['visit_group']['id'];
-                $reviewStatus = $this->reviewStatusRepositoryInterface->getReviewStatus($visitId, $GetVisitsFromStudyRequest->studyName);
-
-                $responseEntity = VisitEntity::fillFromDBReponseArray($dbData);
-                $responseEntity->setReviewVisitStatus($reviewStatus['review_status'], $reviewStatus['review_conclusion_value'] ,$reviewStatus['review_conclusion_date']);
+                $responseEntity = VisitEntity::fillFromDBReponseArray($data);
+                $responseEntity->setReviewVisitStatus($data['review_status'], $data['review_conclusion_value'] ,$data['review_conclusion_date']);
                 $responseArray[] = $responseEntity;
             }
 
-            $getUserResponse->body = $responseArray;    
-            $dbData = $this->visitRepositoryInterface->find($visitId);
-            $reviewStatus = $this->reviewStatusRepositoryInterface->getReviewStatus($visitId, $GetVisitsFromStudyRequest->studyName);
-
-            $responseEntity = VisitEntity::fillFromDBReponseArray($dbData);
-            $responseEntity->setReviewVisitStatus($reviewStatus['review_status'], $reviewStatus['review_conclusion_value'] ,$reviewStatus['review_conclusion_date']);
-
-            $GetVisitsFromStudyResponse->body = $responseEntity;
-
-            $GetVisitsFromStudyResponse->status = 200;
-            $GetVisitsFromStudyResponse->statusText = 'OK';
+            $getVisitsFromStudyResponse->body = $responseArray;
+            $getVisitsFromStudyResponse->status = 200;
+            $getVisitsFromStudyResponse->statusText = 'OK';
 
         } catch( GaelOException $e){
 
-            $GetVisitsFromStudyResponse->body = $e->getErrorBody();
-            $GetVisitsFromStudyResponse->status  = $e->statusCode;
-            $GetVisitsFromStudyResponse->statusText = $e->statusText;
+            $getVisitsFromStudyResponse->body = $e->getErrorBody();
+            $getVisitsFromStudyResponse->status  = $e->statusCode;
+            $getVisitsFromStudyResponse->statusText = $e->statusText;
 
         } catch (Exception $e){
 
@@ -69,8 +56,8 @@ class GetVisitsFromStudy {
 
     }
 
-    private function checkAuthorization(int $userId, string $role, String $studyName){
-        $this->authorizationService->setCurrentUserAndRole($userId, $role);
+    private function checkAuthorization(int $userId, String $studyName){
+        $this->authorizationService->setCurrentUserAndRole($userId, Constants::ROLE_SUPERVISOR);
         if ( ! $this->authorizationService->isRoleAllowed($studyName)){
             throw new GaelOForbiddenException();
         }
