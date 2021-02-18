@@ -17,7 +17,6 @@ class AuthorizationVisitService {
     protected string $studyName;
 
     public string $visitUploadStatus;
-    public bool $visitReviewAvailable;
 
     public function __construct(AuthorizationPatientService $authorizationPatientService, VisitRepository $visitRepository)
     {
@@ -40,23 +39,16 @@ class AuthorizationVisitService {
         $this->patientStudy = $visitContext['visit_type']['visit_group']['study_name'];
         $this->patientCenter = $visitContext['patient']['center_code'];
         $this->patientCode = $visitContext['patient']['code'];
-
-
         $this->visitUploadStatus = $visitContext['upload_status'];
 
         $this->authorizationPatientService->setPatientEntity($visitContext['patient']);
-        //$this->visitReviewAvailable = $visitContext['review_available'];
-        //SK ICI PROBLEME IL FAUT FAIRE VENIR LA STUDY DEMANDEE DEPUIS LE FRONT VU
-        // QUN VISIT ID VA ETRE ASSOCIEE A PLUSIEURS ETUDE ANCILLAIRE
-        //DANS LE CHECK PATIENT IL FAUT CHECK QUE LA STUDY APPELEE SOIT UNE ETUDE ANCILLAIRE
-        //DE L ETUDE PRINCEPS AUQUEL EST ATTACHE LE PATIENT
-        $this->visitReviewAvailable = true;
 
     }
 
     public function isVisitAllowed(): bool {
         //Check that called Role exists for users and visit is not deleted
         if ($this->requestedRole === Constants::ROLE_REVIEWER) {
+            //SK Ici pb d'acces va se poser pour les etude ancillaire, le review aviaible va dependre du scope d'etude
             $this->visitRepository->isVisitAvailableForReview($this->visitId, $this->patientStudy, $this->userId);
 
             return $this->authorizationPatientService->isPatientAllowed();

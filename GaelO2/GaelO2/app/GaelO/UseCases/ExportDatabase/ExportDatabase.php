@@ -43,7 +43,7 @@ class ExportDatabase{
             $exportDatabaseResponse->status = 200;
             $exportDatabaseResponse->statusText = 'OK';
             $exportDatabaseResponse->zipFile = $tempZip;
-            $exportDatabaseResponse->fileName = "export_database_".$date."zip";
+            $exportDatabaseResponse->fileName = "export_database_".$date.".zip";
 
         }catch(GaelOException $e){
             $exportDatabaseResponse->status = $e->statusCode;

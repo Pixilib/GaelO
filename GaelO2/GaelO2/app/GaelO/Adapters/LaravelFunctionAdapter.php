@@ -16,6 +16,10 @@ class LaravelFunctionAdapter {
         return Hash::check($plainValue, $hash);
     }
 
+    public static function make(string $className){
+        return App::make($className);
+    }
+
     /**
      * Config Available Keys are defined in SettingsConstants
      */

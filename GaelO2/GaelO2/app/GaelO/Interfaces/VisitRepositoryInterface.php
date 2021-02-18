@@ -59,7 +59,7 @@ interface VisitRepositoryInterface
 
     public function setCorrectiveAction(int $visitId, int $investigatorId, bool $newUpload, bool $newInvestigatorForm, bool $correctiveActionApplyed, ?string $comment) : void ;
 
-    public function updateInvestigatorForm(int $visitId, string $stateInvestigatorForm): array ;
+    public function updateInvestigatorFormStatus(int $visitId, string $stateInvestigatorForm): array ;
 
     public function getImagingVisitsAwaitingUpload(string $studyName, array $centerCode): array ;
 }

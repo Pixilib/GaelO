@@ -7,15 +7,17 @@ use App\GaelO\Adapters\LaravelFunctionAdapter;
 use App\GaelO\Constants\SettingsConstants;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
+use App\GaelO\Interfaces\UserRepositoryInterface;
 use App\GaelO\Services\AuthorizationDicomWebService;
 use Exception;
+use Illuminate\Support\Facades\Log;
 
 class ReverseProxyDicomWeb{
 
     private AuthorizationDicomWebService $authorizationService;
     private HttpClientAdapter $httpClientAdapter;
 
-    public function __construct(AuthorizationDicomWebService $authorizationService,  HttpClientAdapter $httpClientAdapter)
+    public function __construct( AuthorizationDicomWebService $authorizationService,  HttpClientAdapter $httpClientAdapter)
     {
         $this->httpClientAdapter = $httpClientAdapter;
         $this->authorizationService = $authorizationService;
@@ -28,9 +30,7 @@ class ReverseProxyDicomWeb{
              //Remove our GaelO Prefix to match the orthanc route
             $calledUrl = str_replace("/api/orthanc", "", $reverseProxyDicomWebRequest->url);
 
-            //Sk : PROBLEME COMMENT FAIRE VENIR LE ROLE DEPUIS OHIF, Via HEADER PEUT ETRE ?
-            $role = $reverseProxyDicomWebRequest->header['gaelorole'][0];
-            $this->checkAuthorization($reverseProxyDicomWebRequest->currentUserId, $calledUrl, $role );
+            $this->checkAuthorization($reverseProxyDicomWebRequest->currentUserId, $calledUrl );
 
             //Connect to Orthanc Pacs
             $this->httpClientAdapter->setAddress(
@@ -49,6 +49,7 @@ class ReverseProxyDicomWeb{
             $headers= $reverseProxyDicomWebRequest->header;
             $headers['Forwarded'] = ['by=localhost;for=localhost;host='.$gaelOUrl.':'.$gaelOPort.'/api/orthanc'.';proto='.$gaelOProtocol];
 
+            Log::info($calledUrl);
             $response = $this->httpClientAdapter->rowRequest('GET', $calledUrl, null ,$headers);
 
             //Output response
@@ -70,11 +71,16 @@ class ReverseProxyDicomWeb{
 
     }
 
-    private function checkAuthorization(int $currentUserId, string $requestedURI, string $role){
-        $this->authorizationService->setCurrentUserAndRole($currentUserId, $role);
-        $this->authorizationService->setRequestedUri($requestedURI);
+    private function checkAuthorization(int $currentUserId, string $requestedURI){
+
+        if( ! str_starts_with ( $requestedURI , "/dicom-web/" ) ){
+            throw new GaelOForbiddenException;
+        }
+        /*
+        $this->authorizationService->setUserIdAndRequestedUri($currentUserId, $requestedURI);
         if(!$this->authorizationService->isDicomAllowed() ){
             throw new GaelOForbiddenException();
         };
+        */
     }
 }

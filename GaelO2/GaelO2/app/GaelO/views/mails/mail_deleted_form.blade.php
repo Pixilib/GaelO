@@ -1,7 +1,7 @@
 @extends('mails.mail_template')
 
 @section('content')
-    Your form sent for study : {{$study}}<br>
+    Your {{$formType}} form sent for study : {{$study}}<br>
     Patient : {{$patientCode}}<br>
     Visit  : {{$visitType}}<br>
     Have been deleted. <br>

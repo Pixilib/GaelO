@@ -11,6 +11,7 @@ use App\Http\Controllers\PatientController;
 use App\Http\Controllers\PreferenceController;
 use App\Http\Controllers\RequestController;
 use App\Http\Controllers\ReverseProxyController;
+use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\StudyController;
 use App\Http\Controllers\ToolsController;
 use App\Http\Controllers\TrackerController;
@@ -104,6 +105,12 @@ Route::middleware(['auth:api', 'refresh_token'])->group(function () {
     Route::get('studies/{studyName}/visits/{id}', [VisitController::class, 'getVisit'] );
     Route::get('studies/{studyName}/visits', [VisitController::class, 'getVisitFromStudy'] );
 
+    //Local Form Routes
+    Route::get('visits/{id}/investigator-form', [ReviewController::class, 'getInvestigatorForm'] );
+    Route::delete('visits/{id}/investigator-form', [ReviewController::class, 'deleteInvestigatorForm'] );
+    Route::post('visits/{id}/investigator-form', [ReviewController::class, 'createInvestigatorForm'] );
+    Route::put('visits/{id}/investigator-form', [ReviewController::class, 'modifyInvestigatorForm'] );
+    Route::patch('visits/{id}/investigator-form/unlock', [ReviewController::class, 'unlockInvestigatorForm'] );
     //Dicom Routes
     Route::delete('dicom-series/{seriesInstanceUID}', [DicomController::class, 'deleteSeries'] );
     Route::patch('dicom-series/{seriesInstanceUID}', [DicomController::class, 'reactivateSeries'] );
@@ -140,10 +147,8 @@ Route::middleware(['auth:api', 'refresh_token'])->group(function () {
 |--------------------------------------------------------------------------
 |
 */
-Route::middleware('auth:api')->post('export-db', [ExportDBController::class, 'exportDB'] );
+Route::middleware('auth:api')->get('export-db', [ExportDBController::class, 'exportDB'] );
 Route::middleware('auth:api')->get('documentations/{id}/file', [DocumentationController::class, 'getDocumentationFile'] );
-
-
 Route::middleware('auth:api')->get('visits/{id}/dicoms/file', [DicomController::class, 'getVisitDicomsFile'] );
 
 /*

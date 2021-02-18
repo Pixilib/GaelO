@@ -23,6 +23,7 @@ class UnlockedForm extends Mailable implements ShouldQueue
         $this->parameters = $parameters;
         /*
         array(
+            'formType'=>'',
             'study'=>'',
             'patientCode'=>'',
             'visitType'=>''

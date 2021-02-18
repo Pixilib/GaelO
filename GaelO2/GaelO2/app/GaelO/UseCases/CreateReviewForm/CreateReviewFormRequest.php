@@ -1,8 +1,8 @@
 <?php
 
-namespace App\GaelO\UseCases\CreateReview;
+namespace App\GaelO\UseCases\CreateReviewForm;
 
-class CreateReviewRequest {
+class CreateReviewFormRequest {
 
     public int $currentUserId;
     public string $studyName;

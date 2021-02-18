@@ -29,7 +29,7 @@ class ExportDbTest extends TestCase
     public function testExportDb()
     {
         AuthorizationTools::actAsAdmin(true);
-        $response = $this->post('/api/export-db', []);
+        $response = $this->get('/api/export-db', []);
         $response->assertStatus(200);
         $response->assertHeader('content-type', 'application/zip');
     }
@@ -37,7 +37,7 @@ class ExportDbTest extends TestCase
     public function testExportDbShouldBeForbiddenNotAdmin()
     {
         AuthorizationTools::actAsAdmin(false);
-        $response = $this->post('/api/export-db', []);
+        $response = $this->get('/api/export-db', []);
         $response->assertStatus(403);
     }
 }
