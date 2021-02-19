@@ -90,9 +90,9 @@ class ReviewController extends Controller
         $createInvestigatorFormRequest->visitId = $visitId;
 
         $requestData = $request->all();
-        $deleteInvestigatorFormRequest = Util::fillObject($requestData, $createInvestigatorFormRequest);
+        $createInvestigatorFormRequest = Util::fillObject($requestData, $createInvestigatorFormRequest);
 
-        $createInvestigatorForm->execute($deleteInvestigatorFormRequest, $createInvestigatorFormResponse);
+        $createInvestigatorForm->execute($createInvestigatorFormRequest, $createInvestigatorFormResponse);
 
         if($createInvestigatorFormResponse->body != null){
             return response()->json($createInvestigatorFormResponse->body)
