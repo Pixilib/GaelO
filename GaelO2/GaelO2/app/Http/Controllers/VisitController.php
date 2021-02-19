@@ -20,10 +20,12 @@ use App\GaelO\UseCases\ModifyCorrectiveAction\ModifyCorrectiveActionResponse;
 use App\GaelO\UseCases\ModifyQualityControl\ModifyQualityControl;
 use App\GaelO\UseCases\ModifyQualityControl\ModifyQualityControlRequest;
 use App\GaelO\UseCases\ModifyQualityControl\ModifyQualityControlResponse;
-use App\GaelO\UseCases\ModifyQualityControlCorrectiveAction\ModifyQualityControlCorrectiveAction;
 use App\GaelO\UseCases\ModifyQualityControlReset\ModifyQualityControlReset;
 use App\GaelO\UseCases\ModifyQualityControlReset\ModifyQualityControlResetRequest;
 use App\GaelO\UseCases\ModifyQualityControlReset\ModifyQualityControlResetResponse;
+use App\GaelO\UseCases\ReactivateVisit\ReactivateVisit;
+use App\GaelO\UseCases\ReactivateVisit\ReactivateVisitRequest;
+use App\GaelO\UseCases\ReactivateVisit\ReactivateVisitResponse;
 use App\GaelO\UseCases\ValidateDicomUpload\ValidateDicomUpload;
 use App\GaelO\UseCases\ValidateDicomUpload\ValidateDicomUploadRequest;
 use App\GaelO\UseCases\ValidateDicomUpload\ValidateDicomUploadResponse;
@@ -148,6 +150,22 @@ class VisitController extends Controller
 
         return response()->json($modifyCorrectiveActionResponse->body)
                 ->setStatusCode($modifyCorrectiveActionResponse->status, $modifyCorrectiveActionResponse->statusText);
+
+    }
+
+    public function reactivateVisit(int $visitId, ReactivateVisit $reactivateVisit, ReactivateVisitRequest $reactivateVisitRequest, ReactivateVisitResponse $reactivateVisitResponse){
+        $curentUser = Auth::user();
+
+        $reactivateVisitRequest->currentUserId = $curentUser['id'];
+        $reactivateVisitRequest->visitId = $visitId;
+
+        $reactivateVisit->execute($reactivateVisitRequest, $reactivateVisitResponse);
+
+        if ($reactivateVisitResponse->body !== null) {
+            return response()->json($reactivateVisitResponse->body)
+                ->setStatusCode($reactivateVisitResponse->status, $reactivateVisitResponse->statusText);
+        } else return response()->noContent()
+                ->setStatusCode($reactivateVisitResponse->status, $reactivateVisitResponse->statusText);
 
     }
 

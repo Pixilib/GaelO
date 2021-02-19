@@ -13,6 +13,7 @@ use Tests\TestCase;
 use App\Models\Visit;
 use App\Models\VisitGroup;
 use App\Models\VisitType;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Support\Facades\Log;
 
@@ -163,11 +164,14 @@ class VisitRepositoryTest extends TestCase
         //Generate data of a second study that should not be selected
         $this->populateVisits()[0];
 
-        $visits = $this->visitRepository->getVisitsInStudy($patient->study_name);
-
+        $visits = $this->visitRepository->getVisitsInStudy($patient->study_name, false);
         $this->assertEquals(12, sizeof($visits));
         $this->assertArrayHasKey('visit_type', $visits[0]);
         $this->assertArrayHasKey('visit_group', $visits[0]['visit_type']);
+
+        $visitsWithReview = $this->visitRepository->getVisitsInStudy($patient->study_name, true);
+        $this->assertEquals(12, sizeof($visitsWithReview));
+        $this->assertArrayHasKey('review_status', $visitsWithReview[0]);
     }
 
     public function testHasVisitInStudy()
@@ -391,6 +395,25 @@ class VisitRepositoryTest extends TestCase
         $patients = $this->populateVisits();
         $visits = $this->visitRepository->getImagingVisitsAwaitingUpload($patients[0]->study->name, [$patients[0]->center_code, $patients[1]->center_code]);
         $this->assertEquals(12, sizeof($visits));
+    }
+
+    public function testDeleteVisit(){
+        $visit = Visit::factory()->create();
+
+        $this->visitRepository->delete($visit->id);
+
+        $this->expectException(ModelNotFoundException::class);
+        Visit::findOrFail($visit->id);
+    }
+
+    public function testReactivateVisit(){
+        $visit = Visit::factory()->create();
+        $visit->delete();
+
+        $this->visitRepository->reactivateVisit($visit->id);
+
+        $updatedVisit = Visit::findOrFail($visit->id);
+        $this->assertEquals(1, $updatedVisit->count());
     }
 
 
