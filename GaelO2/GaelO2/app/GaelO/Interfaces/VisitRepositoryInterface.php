@@ -27,8 +27,6 @@ interface VisitRepositoryInterface
 
     public function getVisitContext(int $visitId, bool $withTrashed = false): array ;
 
-    public function updateReviewAvailability(int $visitId, string $studyName, bool $available): void ;
-
     public function getPatientsVisits(int $patientCode) :array ;
 
     public function getPatientsVisitsWithReviewStatus(int $patientCode, string $studyName) : array ;

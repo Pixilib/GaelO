@@ -148,7 +148,7 @@ class VisitService
      */
     public function updateReviewAvailability(bool $available, string $study, int $patientCode, string $visitType)
     {
-        $this->visitRepository->updateReviewAvailability($this->visitId, $study, $available);
+        $this->reviewStatusRepository->updateReviewAvailability($this->visitId, $study, $available);
         if ($available) {
             $this->mailServices->sendAvailableReviewMessage($study, $patientCode, $visitType);
         }

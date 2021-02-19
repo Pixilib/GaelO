@@ -88,18 +88,6 @@ class VisitRepositoryTest extends TestCase
         $this->assertArrayHasKey('patient', $visitContext);
     }
 
-    public function testUpdateReviewAvailability()
-    {
-
-        $visit = Visit::factory()->create();
-        $study = Study::factory()->create();
-        ReviewStatus::factory()->visitId($visit->id)->studyName($study->name)->create();
-        $this->visitRepository->updateReviewAvailability($visit->id, $study->name, true);
-
-        $reviewStatus = ReviewStatus::where('study_name', $study->name)->where('visit_id', $visit->id)->sole();
-        $this->assertTrue(boolval($reviewStatus->review_available));
-    }
-
     private function populateVisits()
     {
         $study = Study::factory()->create();
@@ -141,10 +129,10 @@ class VisitRepositoryTest extends TestCase
         $patient = $this->populateVisits()[0];
 
         $visits = $this->visitRepository->getPatientsVisitsWithReviewStatus($patient->code, $patient->study_name);
-        $this->assertArrayHasKey('review_status', $visits[0]);
-        $this->assertArrayHasKey('review_available', $visits[0]);
-        $this->assertArrayHasKey('review_conclusion_value', $visits[0]);
-        $this->assertArrayHasKey('review_conclusion_date', $visits[0]);
+        $this->assertArrayHasKey('review_status', $visits[0]['review_status']);
+        $this->assertArrayHasKey('review_available', $visits[0]['review_status']);
+        $this->assertArrayHasKey('review_conclusion_value', $visits[0]['review_status']);
+        $this->assertArrayHasKey('review_conclusion_date', $visits[0]['review_status']);
     }
 
     public function testGetPatientListVisitsWithContext()
@@ -224,10 +212,16 @@ class VisitRepositoryTest extends TestCase
         $visitEntity = $visits->get(1);
         $visitEntity->state_quality_control = Constants::QUALITY_CONTROL_WAIT_DEFINITIVE_CONCLUSION;
         $visitEntity->save();
+
+        $visits->each(function ($item, $key) {
+            $item->upload_status = Constants::UPLOAD_STATUS_DONE;
+            $item->save();
+        });
+
         //Test
         $visits = $this->visitRepository->getVisitsInStudyAwaitingControllerAction($patient->study_name);
 
-        $this->assertEquals(11, sizeof($visits));
+        $this->assertEquals(5, sizeof($visits));
         $this->assertArrayHasKey('visit_type', $visits[0]);
         $this->assertArrayHasKey('visit_group', $visits[0]['visit_type']);
     }
