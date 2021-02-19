@@ -49,14 +49,14 @@ class InvestigatorFormService {
 
 
     public function saveInvestigatorForm(array $data, bool $validated) : void {
-        if($validated) $this->abstractStudyRules->checkInvestigatorFromValidity($data);
+        if($validated) $this->abstractStudyRules->checkInvestigatorFormValidity($data);
         $this->reviewRepositoryInterface->createReview(true, $this->visitId, $this->studyName, $this->currentUserId, $data, $validated);
         $this->updateVisitInvestigatorFormStatus($validated);
 
     }
 
     public function updateInvestigatorForm(array $data, bool $validated) : void {
-        if($validated) $this->abstractStudyRules->checkInvestigatorFromValidity($data);
+        if($validated) $this->abstractStudyRules->checkInvestigatorFormValidity($data);
         $localReviewEntitity = $this->reviewRepositoryInterface->getInvestigatorForm($this->visitId);
         $this->reviewRepositoryInterface->updateReview($localReviewEntitity['id'], $this->currentUserId, $data, $validated);
         $this->updateVisitInvestigatorFormStatus($validated);

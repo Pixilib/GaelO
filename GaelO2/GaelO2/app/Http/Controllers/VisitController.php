@@ -68,19 +68,18 @@ class VisitController extends Controller
 
     }
 
-    public function GetVisitsFromStudy(string $studyName, Request $request, GetVisitsFromStudy $GetVisitsFromStudy, GetVisitsFromStudyRequest $GetVisitsFromStudyRequest, GetVisitsFromStudyResponse $GetVisitsFromStudyResponse){
-
+    public function getVisitsFromStudy(string $studyName, Request $request, GetVisitsFromStudy $getVisitsFromStudy, GetVisitsFromStudyRequest $getVisitsFromStudyRequest, GetVisitsFromStudyResponse $getVisitsFromStudyResponse){
         $curentUser = Auth::user();
         $queryParam = $request->query();
 
-        $GetVisitsFromStudyRequest->currentUserId = $curentUser['id'];
-        $GetVisitsFromStudyRequest->studyName = $studyName;
-        $GetVisitsFromStudyRequest->role = $queryParam['role'];
+        $getVisitsFromStudyRequest->currentUserId = $curentUser['id'];
+        $getVisitsFromStudyRequest->studyName = $studyName;
+        $getVisitsFromStudyRequest->role = $queryParam['role'];
 
-        $GetVisitsFromStudy->execute($GetVisitsFromStudyRequest, $GetVisitsFromStudyResponse);
+        $getVisitsFromStudy->execute($getVisitsFromStudyRequest, $getVisitsFromStudyResponse);
 
-        return response()->json($GetVisitsFromStudyResponse->body)
-                ->setStatusCode($GetVisitsFromStudyResponse->status, $GetVisitsFromStudyResponse->statusText);
+        return response()->json($getVisitsFromStudyResponse->body)
+                ->setStatusCode($getVisitsFromStudyResponse->status, $getVisitsFromStudyResponse->statusText);
 
     }
 

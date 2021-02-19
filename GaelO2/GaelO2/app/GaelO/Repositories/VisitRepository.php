@@ -83,6 +83,7 @@ class VisitRepository implements VisitRepositoryInterface {
     }
 
     public function getPatientsVisits(int $patientCode) : array {
+        //Add withTrashed if bool true
         $visits = $this->visit->with('visitType')->where('patient_code', $patientCode)->get();
         return empty($visits) ? [] : $visits->toArray();
     }
@@ -158,6 +159,7 @@ class VisitRepository implements VisitRepositoryInterface {
             });
         })
         ->where('status_done', Constants::VISIT_STATUS_DONE)
+        ->where('upload_status', Constants::UPLOAD_STATUS_DONE)
         ->whereIn('state_quality_control', $controllerActionStatusArray)
         ->get();
 

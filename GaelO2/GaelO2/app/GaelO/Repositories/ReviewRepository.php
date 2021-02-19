@@ -82,7 +82,7 @@ class ReviewRepository implements ReviewRepositoryInterface {
     }
 
     //SK A TESTER
-    public function getReviewFromForStudyVisitUser(string $studyName, int $visitId, int $userId ) : array {
+    public function getReviewFormForStudyVisitUser(string $studyName, int $visitId, int $userId ) : array {
         $reviewEntity = $this->review
             ->where('study_name', $studyName)
             ->where('visit_id', $visitId)
