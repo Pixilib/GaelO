@@ -103,7 +103,7 @@ class VisitTreeService
 
         } else if ($this->role == Constants::ROLE_MONITOR) {
 
-            $visitsArray = $this->visitRepository->getVisitsInStudy($this->studyName);
+            $visitsArray = $this->visitRepository->getVisitsInStudy($this->studyName, false);
             return  $this->makeTreeFromVisits($visitsArray);
 
         } else if ($this->role == Constants::ROLE_REVIEWER) {

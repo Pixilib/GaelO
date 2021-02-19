@@ -9,6 +9,7 @@ use App\GaelO\Util;
 use App\Models\ReviewStatus;
 use Exception;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class VisitRepository implements VisitRepositoryInterface {
 
@@ -50,7 +51,8 @@ class VisitRepository implements VisitRepositoryInterface {
     }
 
     public function isExistingVisit(int $patientCode, int $visitTypeId) : bool {
-        $visit = $this->visit->where([['patient_code', '=', $patientCode], ['visit_type_id', '=', $visitTypeId]])->get();
+        $builder = $this->visit->where([['patient_code', '=', $patientCode], ['visit_type_id', '=', $visitTypeId]]);
+        $visit = $builder->get();
         return $visit->count() > 0 ? true : false;
     }
 
@@ -61,9 +63,13 @@ class VisitRepository implements VisitRepositoryInterface {
         return $visitEntity->toArray();
     }
 
-    public function getVisitContext(int $visitId) : array {
+    public function getVisitContext(int $visitId, bool $withTrashed = false) : array {
 
-        $dataArray = $this->visit->with(['visitType', 'patient'])->findOrFail($visitId)->toArray();
+        $builder = $this->visit->with(['visitType', 'patient']);
+        if($withTrashed){
+            $builder->withTrashed();
+        }
+        $dataArray = $builder->findOrFail($visitId)->toArray();
         return $dataArray;
     }
 
@@ -98,15 +104,24 @@ class VisitRepository implements VisitRepositoryInterface {
         return $answer->count() === 0 ? []  : $answer->toArray();
     }
 
-    public function getVisitsInStudy(string $studyName) : array {
+    public function getVisitsInStudy(string $studyName, bool $withReviewStatus) : array {
 
-        $answer = $this->visit->with('visitType')
+        $queryBuilder = $this->visit->with('visitType')
         ->whereHas('visitType', function($query) use ($studyName) {
             $query->whereHas('visitGroup', function($query) use ($studyName){
                 $query->where('study_name', $studyName);
             });
-        })
-        ->get();
+        });
+
+        if($withReviewStatus){
+
+            $queryBuilder->join('reviews_status', function ($join) use ($studyName) {
+                $join->on('visits.id','=', 'visit_id');
+                $join->on('study_name', '=', $studyName);
+            });
+        }
+
+        $answer = $queryBuilder->get();
 
         return $answer->count() === 0 ? []  : $answer->toArray();
     }
@@ -114,7 +129,7 @@ class VisitRepository implements VisitRepositoryInterface {
 
     public function hasVisitsInStudy(string $studyName) : bool {
 
-        $visits = $this->getVisitsInStudy($studyName);
+        $visits = $this->getVisitsInStudy($studyName, false);
 
         return sizeof($visits) === 0 ? false  : true;
 
@@ -313,6 +328,10 @@ class VisitRepository implements VisitRepositoryInterface {
         ->get();
 
         return $answer->count() === 0 ? []  : $answer->toArray();
+    }
+
+    public function reactivateVisit(int $visitId) : void {
+        $this->visit->withTrashed()->findOrFail($visitId)->restore();
     }
 
 
