@@ -38,7 +38,6 @@ Review form /file  (POST, GET, DELETE)
 
 - API Supervisor
 Tools get dicom batch => Recevra un array de seriesInstanceUID a telecharger depuis Orthanc (pour download dicom)
-Reactivate Visit
 Tools Send Dicom to peer
 
 **Refac User Service peut disparaitre ou etre simplifie que pour les checks (peut etre en tools)
@@ -96,7 +95,6 @@ Delete Series  : Reset du form Investigateur pas géré
 Creatable Visit : Manque Study Custom Logic (+dans front skip visites optionnelles ?)
 
 Préparation supervisor :
-- Reactivate visit
 - Unlock / Delete form
 - Export Study Data
 - Review Manager
