@@ -36,8 +36,8 @@ class CreateReview {
         $this->reviewFormService = $reviewFormService;
         $this->visitRepositoryInterface = $visitRepositoryInterface;
         $this->reviewStatusRepositoryInterface = $reviewStatusRepositoryInterface;
-        $this->$reviewRepositoryInterface = $reviewRepositoryInterface;
-        $this->authorizationVisitService = $$authorizationVisitService;
+        $this->reviewRepositoryInterface = $reviewRepositoryInterface;
+        $this->authorizationVisitService = $authorizationVisitService;
 
     }
 
@@ -56,11 +56,17 @@ class CreateReview {
             $visitContext = $this->visitRepositoryInterface->getVisitContext($createReviewFormRequest->visitId);
             $reviewStatus = $this->reviewStatusRepositoryInterface->getReviewStatus($createReviewFormRequest->visitId, $createReviewFormRequest->studyName);
 
+            if( $createReviewFormRequest->adjudication &&  $reviewStatus['review_status'] !== Constants::REVIEW_STATUS_WAIT_ADJUDICATION ){
+                throw new GaelOBadRequestException('Review Not Awaiting Adjudication');
+            };
+
             $this->checkAuthorization($createReviewFormRequest->visitId, $createReviewFormRequest->currentUserId, $reviewStatus['review_available'], $createReviewFormRequest->studyName);
 
             //Call service to register form
+            $this->reviewFormService->setCurrentUserId($createReviewFormRequest->currentUserId);
+            $this->reviewFormService->setReviewStatus($reviewStatus);
             $this->reviewFormService->setVisitContextAndStudy($visitContext, $createReviewFormRequest->studyName );
-            $createdReviewId = $this->investigatorFormService->saveInvestigatorForm($createReviewFormRequest->data, $createReviewFormRequest->validated);
+            $createdReviewId = $this->reviewFormService->saveReview($createReviewFormRequest->data, $createReviewFormRequest->validated, $createReviewFormRequest->adjudication);
 
             //Write in Tracker
             $actionDetails = [

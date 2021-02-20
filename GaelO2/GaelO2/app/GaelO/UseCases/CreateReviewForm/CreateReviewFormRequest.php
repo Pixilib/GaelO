@@ -10,5 +10,6 @@ class CreateReviewFormRequest {
     public string $role;
     public array $data;
     public bool $validated;
+    public bool $adjudication;
 
 }

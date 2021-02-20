@@ -42,7 +42,7 @@ class ReviewFormService {
     }
 
     public function setCurrentUserId(int $currentUserId){
-        $this->currentUserId = $$currentUserId;
+        $this->currentUserId = $currentUserId;
     }
 
     public function setVisitContextAndStudy(array $visitContext, string $studyName){
@@ -59,11 +59,11 @@ class ReviewFormService {
 
     }
 
-    public function setReviewStatus(int $reviewStatusEntity){
+    public function setReviewStatus(array $reviewStatusEntity){
         $this->reviewStatusEntity = $reviewStatusEntity;
     }
 
-    public function saveReviewData(array $data, bool $validated, bool $adjudication) : int {
+    public function saveReview(array $data, bool $validated, bool $adjudication) : int {
         $createdReviewId = $this->reviewRepositoryInterface->createReview(false, $this->visitId, $this->studyName, $this->currentUserId, $data, $validated, $adjudication);
         if ($validated && $this->reviewStatusEntity['review_status'] !== Constants::REVIEW_STATUS_DONE) {
             $this->doSpecificReviewDecisions($data);
@@ -71,7 +71,7 @@ class ReviewFormService {
         return $createdReviewId;
     }
 
-    public function updateReviewData(array $data, bool $validated) : void {
+    public function updateReview(array $data, bool $validated) : void {
         if($validated) $this->abstractStudyRules->checkReviewFormValidity($data);
         $reviewEntity = $this->reviewRepositoryInterface->getReviewFormForStudyVisitUser($this->studyName, $this->visitId, $this->currentUserId );
         $this->reviewRepositoryInterface->updateReview($reviewEntity['id'], $this->currentUserId, $data, $validated);
