@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\GaelO\UseCases\CreateInvestigatorForm\CreateInvestigatorForm;
 use App\GaelO\UseCases\CreateInvestigatorForm\CreateInvestigatorFormRequest;
 use App\GaelO\UseCases\CreateInvestigatorForm\CreateInvestigatorFormResponse;
+use App\GaelO\UseCases\CreateReviewForm\CreateReview;
+use App\GaelO\UseCases\CreateReviewForm\CreateReviewFormRequest;
+use App\GaelO\UseCases\CreateReviewForm\CreateReviewFormResponse;
 use App\GaelO\UseCases\DeleteInvestigatorForm\DeleteInvestigatorForm;
 use App\GaelO\UseCases\DeleteInvestigatorForm\DeleteInvestigatorFormRequest;
 use App\GaelO\UseCases\DeleteInvestigatorForm\DeleteInvestigatorFormResponse;
@@ -122,6 +125,28 @@ class ReviewController extends Controller
         } else {
             return response()->noContent()
             ->setStatusCode($modifyInvestigatorFormResponse->status, $modifyInvestigatorFormResponse->statusText);
+        }
+
+    }
+
+    public function createReviewForm(string $studyName, int $visitId, Request $request, CreateReview $createReview, CreateReviewFormRequest $createReviewFormRequest, CreateReviewFormResponse $createReviewFormResponse){
+        $curentUser = Auth::user();
+        $requestData = $request->all();
+
+        $createReviewFormRequest->studyName = $studyName;
+        $createReviewFormRequest->visitId = $visitId;
+        $createReviewFormRequest->currentUserId = $curentUser['id'];
+
+        $createReviewFormRequest = Util::fillObject($requestData, $createReviewFormRequest);
+
+        $createReview->execute($createReviewFormRequest, $createReviewFormResponse);
+
+        if($createReviewFormResponse->body != null){
+            return response()->json($createReviewFormResponse->body)
+            ->setStatusCode($createReviewFormResponse->status, $createReviewFormResponse->statusText);
+        } else {
+            return response()->noContent()
+            ->setStatusCode($createReviewFormResponse->status, $createReviewFormResponse->statusText);
         }
 
     }

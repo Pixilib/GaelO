@@ -112,13 +112,17 @@ Route::middleware(['auth:api', 'refresh_token'])->group(function () {
     Route::post('visits/{id}/investigator-form', [ReviewController::class, 'createInvestigatorForm'] );
     Route::put('visits/{id}/investigator-form', [ReviewController::class, 'modifyInvestigatorForm'] );
     Route::patch('visits/{id}/investigator-form/unlock', [ReviewController::class, 'unlockInvestigatorForm'] );
+
+    //Review routes
+    Route::post('studies/{studyName}/visits/{id}/reviews', [ReviewController::class, 'createReviewForm']);
+
     //Dicom Routes
     Route::delete('dicom-series/{seriesInstanceUID}', [DicomController::class, 'deleteSeries'] );
     Route::patch('dicom-series/{seriesInstanceUID}', [DicomController::class, 'reactivateSeries'] );
     Route::patch('dicom-study/{studyInstanceUID}', [DicomController::class, 'reactivateStudy'] );
     Route::get('visits/{id}/dicoms', [DicomController::class, 'getVisitDicoms'] );
 
-    //Form routes
+    //Ask Unlock route
     Route::post('studies/{study}/visits/{id}/ask-unlock', [FormController::class, 'askUnlock'] );
 
     //upload Routes
