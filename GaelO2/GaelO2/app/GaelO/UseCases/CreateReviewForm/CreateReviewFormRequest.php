@@ -8,6 +8,7 @@ class CreateReviewFormRequest {
     public string $studyName;
     public int $visitId;
     public string $role;
-    public array $dataForm;
+    public array $data;
+    public bool $validated;
 
 }

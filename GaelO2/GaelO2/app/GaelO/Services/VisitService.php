@@ -16,8 +16,6 @@ use App\GaelO\UseCases\GetVisitType\VisitTypeEntity;
 class VisitService
 {
     private UserRepository $userRepository;
-    private PatientRepository $patientRepository;
-    private StudyRepository $studyRepository;
     private VisitRepository $visitRepository;
     private ReviewRepository $reviewRepository;
     private VisitTypeRepository $visitTypeRepository;
@@ -29,8 +27,6 @@ class VisitService
 
     public function __construct(
         UserRepository $userRepository,
-        PatientRepository $patientRepository,
-        StudyRepository $studyRepository,
         VisitRepository $visitRepository,
         ReviewRepository $reviewRepository,
         ReviewStatusRepository $reviewStatusRepository,
@@ -38,12 +34,10 @@ class VisitService
         OrthancStudyRepository $orthancStudyRepository,
         MailServices $mailServices
     ) {
-        $this->patientRepository = $patientRepository;
         $this->visitTypeRepository = $visitTypeRepository;
         $this->visitRepository = $visitRepository;
         $this->mailServices = $mailServices;
         $this->orthancStudyRepository = $orthancStudyRepository;
-        $this->studyRepository = $studyRepository;
         $this->reviewStatusRepository = $reviewStatusRepository;
         $this->reviewRepository = $reviewRepository;
         $this->userRepository = $userRepository;

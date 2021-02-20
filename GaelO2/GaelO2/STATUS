@@ -29,12 +29,12 @@ Investigator-form (GET, PUT, POST, DELETE, PATCH (unlock)) =>OK
 
 
 Salim TODO :
-Telechargement des DICOMs / OHIF / Stone of Orthanc
+FrontEnd : OHIF / Stone of Orthanc
 *** APIs ***
 - API Review
 Review form (POST, PUT, GET (par id + list des review d'une visit/studyname pour supervisor), DELETE, PATCH (unlock) )
 Review form /file  (POST, GET, DELETE)
-=> Contrainte Form a continuer
+=> Contrainte Form a continuer => Voir librairy Respect/Validation
 
 - API Supervisor
 Tools get dicom batch => Recevra un array de seriesInstanceUID a telecharger depuis Orthanc (pour download dicom)
