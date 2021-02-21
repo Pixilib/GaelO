@@ -115,6 +115,7 @@ Route::middleware(['auth:api', 'refresh_token'])->group(function () {
 
     //Review routes
     Route::post('studies/{studyName}/visits/{id}/reviews', [ReviewController::class, 'createReviewForm']);
+    Route::put('reviews/{id}', [ReviewController::class, 'modifyReviewForm']);
 
     //Dicom Routes
     Route::delete('dicom-series/{seriesInstanceUID}', [DicomController::class, 'deleteSeries'] );

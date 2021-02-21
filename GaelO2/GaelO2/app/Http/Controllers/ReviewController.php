@@ -17,6 +17,9 @@ use App\GaelO\UseCases\GetInvestigatorForm\GetInvestigatorFormResponse;
 use App\GaelO\UseCases\ModifyInvestigatorForm\ModifyInvestigatorForm;
 use App\GaelO\UseCases\ModifyInvestigatorForm\ModifyInvestigatorFormRequest;
 use App\GaelO\UseCases\ModifyInvestigatorForm\ModifyInvestigatorFormResponse;
+use App\GaelO\UseCases\ModifyReviewForm\ModifyReviewForm;
+use App\GaelO\UseCases\ModifyReviewForm\ModifyReviewFormRequest;
+use App\GaelO\UseCases\ModifyReviewForm\ModifyReviewFormResponse;
 use App\GaelO\UseCases\UnlockInvestigatorForm\UnlockInvestigatorForm;
 use App\GaelO\UseCases\UnlockInvestigatorForm\UnlockInvestigatorFormRequest;
 use App\GaelO\UseCases\UnlockInvestigatorForm\UnlockInvestigatorFormResponse;
@@ -147,6 +150,27 @@ class ReviewController extends Controller
         } else {
             return response()->noContent()
             ->setStatusCode($createReviewFormResponse->status, $createReviewFormResponse->statusText);
+        }
+
+    }
+
+    public function modifyReviewForm(int $reviewId, Request $request, ModifyReviewForm $modifyReviewForm, ModifyReviewFormRequest $modifyReviewFormRequest, ModifyReviewFormResponse $modifyReviewFormResponse ){
+
+        $curentUser = Auth::user();
+        $requestData = $request->all();
+
+        $modifyReviewFormRequest->reviewId = $reviewId;
+        $modifyReviewFormRequest->currentUserId = $curentUser['id'];
+        $modifyReviewFormRequest = Util::fillObject($requestData, $modifyReviewFormRequest);
+
+        $modifyReviewForm->execute($modifyReviewFormRequest, $modifyReviewFormResponse);
+
+        if($modifyReviewFormResponse->body != null){
+            return response()->json($modifyReviewFormResponse->body)
+            ->setStatusCode($modifyReviewFormResponse->status, $modifyReviewFormResponse->statusText);
+        } else {
+            return response()->noContent()
+            ->setStatusCode($modifyReviewFormResponse->status, $modifyReviewFormResponse->statusText);
         }
 
     }

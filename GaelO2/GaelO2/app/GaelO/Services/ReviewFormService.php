@@ -71,10 +71,9 @@ class ReviewFormService {
         return $createdReviewId;
     }
 
-    public function updateReview(array $data, bool $validated) : void {
+    public function updateReview(int $reviewId, array $data, bool $validated) : void {
         if($validated) $this->abstractStudyRules->checkReviewFormValidity($data);
-        $reviewEntity = $this->reviewRepositoryInterface->getReviewFormForStudyVisitUser($this->studyName, $this->visitId, $this->currentUserId );
-        $this->reviewRepositoryInterface->updateReview($reviewEntity['id'], $this->currentUserId, $data, $validated);
+        $this->reviewRepositoryInterface->updateReview($reviewId, $this->currentUserId, $data, $validated);
         if ($validated && $this->reviewStatusEntity['review_status'] !== Constants::REVIEW_STATUS_DONE) {
             $this->doSpecificReviewDecisions($data);
 		}

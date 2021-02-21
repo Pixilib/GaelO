@@ -60,7 +60,7 @@ class CreateReview {
                 throw new GaelOBadRequestException('Review Not Awaiting Adjudication');
             };
 
-            $this->checkAuthorization($createReviewFormRequest->visitId, $createReviewFormRequest->currentUserId, $reviewStatus['review_available'], $createReviewFormRequest->studyName);
+            $this->checkAuthorization($createReviewFormRequest->visitId, $createReviewFormRequest->currentUserId, $reviewStatus['review_available']);
 
             //Call service to register form
             $this->reviewFormService->setCurrentUserId($createReviewFormRequest->currentUserId);
@@ -93,7 +93,7 @@ class CreateReview {
 
     }
 
-    private function checkAuthorization(int $visitId, int $currentUserId, bool $reviewAvailability, string $studyName){
+    private function checkAuthorization(int $visitId, int $currentUserId, bool $reviewAvailability){
         if(!$reviewAvailability){
             throw new GaelOForbiddenException();
         }
