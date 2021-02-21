@@ -27,13 +27,14 @@ dicom-series (DELETE, PATCH) => OK (Nb pour reset upload, loop depuis front)
 dicom-study (PATCH) => OK
 Investigator-form (GET, PUT, POST, DELETE, PATCH (unlock)) =>OK
 Reviews (GET, POST, PUT)
+Reviews From Visits (GET)
 
 
 Salim TODO :
 FrontEnd : OHIF / Stone of Orthanc
 *** APIs ***
 - API Review
-Review form ( GET (list des review d'une visit/studyname pour supervisor), DELETE, PATCH (unlock) )
+Review form ( DELETE, PATCH (unlock) )
 Review form /file  (POST, GET, DELETE)
 => Contrainte Form a continuer => Voir librairy Respect/Validation
 

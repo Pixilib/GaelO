@@ -5,38 +5,39 @@ namespace App\GaelO\Services;
 use App\GaelO\Interfaces\MailInterface;
 use App\GaelO\Adapters\SendEmailAdapter;
 use App\GaelO\Constants\Constants;
-use App\GaelO\Repositories\UserRepository;
 use App\GaelO\Constants\MailConstants;
+use App\GaelO\Interfaces\ReviewRepositoryInterface;
+use App\GaelO\Interfaces\UserRepositoryInterface;
 use App\GaelO\Repositories\ReviewRepository;
 
 Class MailServices extends SendEmailAdapter {
 
     private MailInterface $mailInterface;
-    private UserRepository $userRepository;
-    private ReviewRepository $reviewRepository;
+    private UserRepositoryInterface $userRepositoryInterface;
+    private ReviewRepository $reviewRepositoryInterface;
 
-    public function __construct(MailInterface $mailInterface, UserRepository $userRepository, ReviewRepository $reviewRepository) {
+    public function __construct(MailInterface $mailInterface, UserRepositoryInterface $userRepositoryInterface, ReviewRepositoryInterface $reviewRepositoryInterface) {
         $this->mailInterface = $mailInterface;
-        $this->userRepository = $userRepository;
-        $this->reviewRepository = $reviewRepository;
+        $this->userRepositoryInterface = $userRepositoryInterface;
+        $this->reviewRepositoryInterface = $reviewRepositoryInterface;
     }
 
     public function getUserEmail(int $userId) : string{
-        return $this->userRepository->find($userId)['email'];
+        return $this->userRepositoryInterface->find($userId)['email'];
     }
 
     public function getUserName(int $userId){
-        $userEntity = $this->userRepository->find($userId);
+        $userEntity = $this->userRepositoryInterface->find($userId);
         return $userEntity['firstname'].' '.$userEntity['lastname'];
     }
 
     public function getAdminsEmails() : array {
-        $adminsEmails = $this->userRepository->getAdministratorsEmails();
+        $adminsEmails = $this->userRepositoryInterface->getAdministratorsEmails();
         return $adminsEmails;
     }
 
     public function getInvestigatorOfCenterInStudy(String $study, String $center, ?String $job=null) : array {
-        $emails = $this->userRepository->getInvestigatorsStudyFromCenterEmails($study, $center, $job);
+        $emails = $this->userRepositoryInterface->getInvestigatorsStudyFromCenterEmails($study, $center, $job);
         return $emails;
     }
 
@@ -73,7 +74,7 @@ Class MailServices extends SendEmailAdapter {
 
     public function sendAccountBlockedMessage(String $username, String $email) : void {
         //Get all studies with role for the user
-        $studies = $this->userRepository->getAllStudiesWithRoleForUser($username);
+        $studies = $this->userRepositoryInterface->getAllStudiesWithRoleForUser($username);
         $parameters = [
             'name'=>'user',
             'username'=>$username,
@@ -122,7 +123,7 @@ Class MailServices extends SendEmailAdapter {
 
     public function sendForbiddenResetPasswordDueToDeactivatedAccount(String $userEmail, String $username) : void{
 
-        $studies = $this->userRepository->getAllStudiesWithRoleForUser($username);
+        $studies = $this->userRepositoryInterface->getAllStudiesWithRoleForUser($username);
 
         $parameters = [
             'name' => 'user',
@@ -149,7 +150,7 @@ Class MailServices extends SendEmailAdapter {
         ];
 
         //Send to supervisors of the study
-        $this->mailInterface->setTo( $this->userRepository->getUsersEmailsByRolesInStudy($study, Constants::ROLE_SUPERVISOR) );
+        $this->mailInterface->setTo( $this->userRepositoryInterface->getUsersEmailsByRolesInStudy($study, Constants::ROLE_SUPERVISOR) );
         $this->mailInterface->setReplyTo();
         $this->mailInterface->setParameters($parameters);
         $this->mailInterface->setBody(MailConstants::EMAIL_IMPORT_PATIENT);
@@ -169,14 +170,14 @@ Class MailServices extends SendEmailAdapter {
         //Send to supervisors and monitors of the study
         $destinators = [
             $this->getUserEmail($uploadUserId),
-            ...$this->userRepository->getUsersEmailsByRolesInStudy($study, Constants::ROLE_SUPERVISOR),
-            ...$this->userRepository->getUsersEmailsByRolesInStudy($study, Constants::ROLE_MONITOR)
+            ...$this->userRepositoryInterface->getUsersEmailsByRolesInStudy($study, Constants::ROLE_SUPERVISOR),
+            ...$this->userRepositoryInterface->getUsersEmailsByRolesInStudy($study, Constants::ROLE_MONITOR)
         ];
         //If QC is awaiting add controllers
         if ($qcNeeded)  {
             $destinators = [
                 ...$destinators,
-                ...$this->userRepository->getUsersEmailsByRolesInStudy($study, Constants::ROLE_CONTROLLER)
+                ...$this->userRepositoryInterface->getUsersEmailsByRolesInStudy($study, Constants::ROLE_CONTROLLER)
             ];
         }
 
@@ -196,7 +197,7 @@ Class MailServices extends SendEmailAdapter {
             'visitType'=>$visitType
         ];
 
-        $this->mailInterface->setTo( $this->userRepository->getUsersEmailsByRolesInStudy($study, Constants::ROLE_REVIEWER) );
+        $this->mailInterface->setTo( $this->userRepositoryInterface->getUsersEmailsByRolesInStudy($study, Constants::ROLE_REVIEWER) );
         $this->mailInterface->setReplyTo();
         $this->mailInterface->setParameters($parameters);
         $this->mailInterface->setBody(MailConstants::EMAIL_REVIEW_READY);
@@ -218,7 +219,7 @@ Class MailServices extends SendEmailAdapter {
             'errorMessage'=>$errorMessage
         ];
 
-        $this->mailInterface->setTo( $this->userRepository->getAdministratorsEmails() );
+        $this->mailInterface->setTo( $this->userRepositoryInterface->getAdministratorsEmails() );
         $this->mailInterface->setReplyTo();
         $this->mailInterface->setParameters($parameters);
         $this->mailInterface->setBody(MailConstants::EMAIL_UPLOAD_FAILURE);
@@ -243,8 +244,8 @@ Class MailServices extends SendEmailAdapter {
 
 
         $this->mailInterface->setTo( [
-            ...$this->userRepository->getUsersEmailsByRolesInStudy($studyName, Constants::ROLE_SUPERVISOR),
-            ...$this->userRepository->getUsersEmailsByRolesInStudy($studyName, Constants::ROLE_MONITOR),
+            ...$this->userRepositoryInterface->getUsersEmailsByRolesInStudy($studyName, Constants::ROLE_SUPERVISOR),
+            ...$this->userRepositoryInterface->getUsersEmailsByRolesInStudy($studyName, Constants::ROLE_MONITOR),
             $this->getUserEmail($uploaderId),
             $this->getUserEmail($controllerId),
             ...$this->getInvestigatorOfCenterInStudy($studyName, $centerCode)
@@ -272,8 +273,8 @@ Class MailServices extends SendEmailAdapter {
         ];
 
         $this->mailInterface->setTo( [
-            ...$this->userRepository->getUsersEmailsByRolesInStudy($studyName, Constants::ROLE_SUPERVISOR),
-            ...$this->userRepository->getUsersEmailsByRolesInStudy($studyName, Constants::ROLE_CONTROLLER),
+            ...$this->userRepositoryInterface->getUsersEmailsByRolesInStudy($studyName, Constants::ROLE_SUPERVISOR),
+            ...$this->userRepositoryInterface->getUsersEmailsByRolesInStudy($studyName, Constants::ROLE_CONTROLLER),
             $this->getUserEmail($currentUserId),
             ]
         );
@@ -299,7 +300,7 @@ Class MailServices extends SendEmailAdapter {
 
         $this->mailInterface->setTo([
             $this->getUserEmail($currentUserId),
-            ...$this->userRepository->getUsersEmailsByRolesInStudy($studyName, Constants::ROLE_SUPERVISOR)
+            ...$this->userRepositoryInterface->getUsersEmailsByRolesInStudy($studyName, Constants::ROLE_SUPERVISOR)
         ]);
 
         $this->mailInterface->setReplyTo();
@@ -319,10 +320,10 @@ Class MailServices extends SendEmailAdapter {
         ];
 
         //Get All Users with Reviwers in this study
-        $reviewersUsers = $this->userRepository->getUsersByRolesInStudy($studyName, Constants::ROLE_REVIEWER);
+        $reviewersUsers = $this->userRepositoryInterface->getUsersByRolesInStudy($studyName, Constants::ROLE_REVIEWER);
 
         //Get All Reviews of this visit
-        $reviews = $this->reviewRepository->getValidatedReviewsForStudyVisit($studyName, $visitId);
+        $reviews = $this->reviewRepositoryInterface->getReviewsForStudyVisit($studyName, $visitId, true);
         $reviewerDoneUserIdArray = array_map(function($user){
             return $user['user_id'];
         }, $reviews);
@@ -338,7 +339,7 @@ Class MailServices extends SendEmailAdapter {
         }, $availableReviewers);
 
         $this->mailInterface->setTo( [
-            ...$this->userRepository->getUsersEmailsByRolesInStudy($studyName, Constants::ROLE_SUPERVISOR),
+            ...$this->userRepositoryInterface->getUsersEmailsByRolesInStudy($studyName, Constants::ROLE_SUPERVISOR),
             ...$availableReviewersEmails,
             ]
         );
@@ -361,8 +362,8 @@ Class MailServices extends SendEmailAdapter {
         ];
 
         $this->mailInterface->setTo( [
-            ...$this->userRepository->getUsersEmailsByRolesInStudy($studyName, Constants::ROLE_SUPERVISOR),
-            ...$this->userRepository->getUsersEmailsByRolesInStudy($studyName, Constants::ROLE_MONITOR),
+            ...$this->userRepositoryInterface->getUsersEmailsByRolesInStudy($studyName, Constants::ROLE_SUPERVISOR),
+            ...$this->userRepositoryInterface->getUsersEmailsByRolesInStudy($studyName, Constants::ROLE_MONITOR),
             $this->getUserEmail($uploaderId)
             ]
         );

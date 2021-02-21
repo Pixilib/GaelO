@@ -19,4 +19,6 @@ interface ReviewRepositoryInterface {
     public function getReviewFormForStudyVisitUser(string $studyName, int $visitId, int $userId ) : array ;
 
     public function isExistingFormForStudyVisitUser(string $studyName, int $visitId, int $userId) : bool ;
+
+    public function getReviewsForStudyVisit(string $studyName, int $visitId, bool $onlyValidated ) : array ;
 }

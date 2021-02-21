@@ -17,6 +17,9 @@ use App\GaelO\UseCases\GetInvestigatorForm\GetInvestigatorFormResponse;
 use App\GaelO\UseCases\GetReviewForm\GetReviewForm;
 use App\GaelO\UseCases\GetReviewForm\GetReviewFormRequest;
 use App\GaelO\UseCases\GetReviewForm\GetReviewFormResponse;
+use App\GaelO\UseCases\GetReviewFormFromVisit\GetReviewFormFromVisit;
+use App\GaelO\UseCases\GetReviewFormFromVisit\GetReviewFormFromVisitRequest;
+use App\GaelO\UseCases\GetReviewFormFromVisit\GetReviewFormFromVisitResponse;
 use App\GaelO\UseCases\ModifyInvestigatorForm\ModifyInvestigatorForm;
 use App\GaelO\UseCases\ModifyInvestigatorForm\ModifyInvestigatorFormRequest;
 use App\GaelO\UseCases\ModifyInvestigatorForm\ModifyInvestigatorFormResponse;
@@ -189,6 +192,19 @@ class ReviewController extends Controller
         return response()->json($getReviewFormResponse->body)
             ->setStatusCode($getReviewFormResponse->status, $getReviewFormResponse->statusText);
 
+    }
+
+    public function getReviewsFromVisit(string $studyName, int $visitId, GetReviewFormFromVisit $getReviewFormFromVisit, GetReviewFormFromVisitRequest $getReviewFormFromVisitRequest, GetReviewFormFromVisitResponse $getReviewFormFromVisitResponse){
+        $curentUser = Auth::user();
+
+        $getReviewFormFromVisitRequest->currentUserId = $curentUser['id'];
+        $getReviewFormFromVisitRequest->studyName = $studyName;
+        $getReviewFormFromVisitRequest->visitId = $visitId;
+
+        $getReviewFormFromVisit->execute($getReviewFormFromVisitRequest, $getReviewFormFromVisitResponse);
+
+        return response()->json($getReviewFormFromVisitResponse->body)
+        ->setStatusCode($getReviewFormFromVisitResponse->status, $getReviewFormFromVisitResponse->statusText);
     }
 
 

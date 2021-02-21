@@ -64,4 +64,26 @@ class GetReviewFormTest extends TestCase
         $this->get('api/reviews/' . $this->review->id)->assertStatus(403);
     }
 
+    public function testGetReviewFromVisit(){
+
+        $currentUserId = AuthorizationTools::actAsAdmin(false);
+        AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $this->studyName);
+        $visitId = $this->review->visit->id;
+        $request = $this->get('api/studies/'.$this->studyName.'/visits/'.$visitId.'/reviews');
+        $request->assertStatus(200);
+        $response = json_decode($request->content());
+        $this->assertEquals(1, sizeof($response));
+
+    }
+
+    public function testGetReviewFromVisitShouldFailNoReviewer(){
+
+        $currentUserId = AuthorizationTools::actAsAdmin(false);
+        AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_INVESTIGATOR, $this->studyName);
+        $visitId = $this->review->visit->id;
+        $request = $this->get('api/studies/'.$this->studyName.'/visits/'.$visitId.'/reviews');
+        $request->assertStatus(403);
+
+    }
+
 }
