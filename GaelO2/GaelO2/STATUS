@@ -94,6 +94,7 @@ Dans remplissage DTO request, si variable boolean, un input string est interpret
 QC Not Needed => autoriser ou pas remove de series ?
 Delete Series  : Reset du form Investigateur pas géré
 Creatable Visit : Manque Study Custom Logic (+dans front skip visites optionnelles ?)
+Autoriser les fichier pour les form investigateurs ?
 
 Préparation supervisor :
 - Unlock / Delete form
@@ -102,7 +103,7 @@ Préparation supervisor :
 - Upload Manager
 - Statistics
 - Remininder email upload / review
-- Send to peer
+- Orthanc Send to peer
 + Messagerie a designer
 
 A executer en post install :
