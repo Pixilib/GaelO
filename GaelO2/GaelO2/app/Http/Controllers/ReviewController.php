@@ -14,6 +14,9 @@ use App\GaelO\UseCases\DeleteInvestigatorForm\DeleteInvestigatorFormResponse;
 use App\GaelO\UseCases\GetInvestigatorForm\GetInvestigatorForm;
 use App\GaelO\UseCases\GetInvestigatorForm\GetInvestigatorFormRequest;
 use App\GaelO\UseCases\GetInvestigatorForm\GetInvestigatorFormResponse;
+use App\GaelO\UseCases\GetReviewForm\GetReviewForm;
+use App\GaelO\UseCases\GetReviewForm\GetReviewFormRequest;
+use App\GaelO\UseCases\GetReviewForm\GetReviewFormResponse;
 use App\GaelO\UseCases\ModifyInvestigatorForm\ModifyInvestigatorForm;
 use App\GaelO\UseCases\ModifyInvestigatorForm\ModifyInvestigatorFormRequest;
 use App\GaelO\UseCases\ModifyInvestigatorForm\ModifyInvestigatorFormResponse;
@@ -172,6 +175,19 @@ class ReviewController extends Controller
             return response()->noContent()
             ->setStatusCode($modifyReviewFormResponse->status, $modifyReviewFormResponse->statusText);
         }
+
+    }
+
+    public function getReviewForm(int $reviewId, GetReviewForm $getReviewForm, GetReviewFormRequest $getReviewFormRequest, GetReviewFormResponse $getReviewFormResponse){
+
+        $curentUser = Auth::user();
+        $getReviewFormRequest->currentUserId = $curentUser['id'];
+        $getReviewFormRequest->reviewId = $reviewId;
+
+        $getReviewForm->execute($getReviewFormRequest, $getReviewFormResponse);
+
+        return response()->json($getReviewFormResponse->body)
+            ->setStatusCode($getReviewFormResponse->status, $getReviewFormResponse->statusText);
 
     }
 

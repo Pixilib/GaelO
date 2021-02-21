@@ -2,7 +2,9 @@
 
 namespace App\GaelO\UseCases\GetReviewForm;
 
+use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOException;
+use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\ReviewRepositoryInterface;
 use App\GaelO\Services\AuthorizationReviewService;
 use Exception;
@@ -25,7 +27,7 @@ class GetReviewForm {
 
         try{
 
-            //$this->checkAuthorization();
+            $this->checkAuthorization($getReviewFormRequest->currentUserId, $getReviewFormRequest->reviewId);
 
             $reviewEntity = $this->reviewRepositoryInterface->find($getReviewFormRequest->reviewId);
             $review = ReviewFormEntity::fillFromDBReponseArray($reviewEntity);
@@ -47,7 +49,11 @@ class GetReviewForm {
     }
 
     private function checkAuthorization(int $currentUserId, int $reviewId){
-        //$this->authorizationReviewService->set
+        $this->authorizationReviewService->setCurrentUserAndRole($currentUserId, Constants::ROLE_REVIEWER);
+        $this->authorizationReviewService->setReviewId($reviewId);
+        if ( ! $this->authorizationReviewService->isReviewAllowed()){
+            throw new GaelOForbiddenException();
+        }
 
     }
 
