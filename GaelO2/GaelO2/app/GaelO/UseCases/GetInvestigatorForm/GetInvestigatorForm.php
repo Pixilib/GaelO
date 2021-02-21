@@ -25,9 +25,10 @@ class GetInvestigatorForm{
         try{
 
             $this->checkAuthorization($getInvestigatorFormRequest->visitId, $getInvestigatorFormRequest->currentUserId, $getInvestigatorFormRequest->role);
-            $reviewEntity = $this->reviewRepositoryInterface->getInvestigatorForm($getInvestigatorFormRequest->visitId);
+            $investigatorFormEntity = $this->reviewRepositoryInterface->getInvestigatorForm($getInvestigatorFormRequest->visitId);
 
-            $getInvestigatorFormResponse->body = $reviewEntity;
+            $investigatorForm = InvestigatorFormEntity::fillFromDBReponseArray($investigatorFormEntity);
+            $getInvestigatorFormResponse->body = $investigatorForm;
             $getInvestigatorFormResponse->status = 200;
             $getInvestigatorFormResponse->statusText = 'OK';
 

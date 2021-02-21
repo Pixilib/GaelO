@@ -20,8 +20,8 @@ class ReviewFactory extends Factory
             'validated' => false,
             'local' => true,
             'adjudication' => false,
-            'sent_files' => json_encode([]),
-            'review_data' => json_encode(['item1'=>'a', 'item2'=>5])
+            'sent_files' => [],
+            'review_data' => ['item1'=>'a', 'item2'=>5]
         ];
     }
 
