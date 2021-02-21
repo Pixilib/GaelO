@@ -4,10 +4,8 @@ namespace App\GaelO\Services;
 
 use App\GaelO\Constants\Constants;
 use App\GaelO\Repositories\OrthancStudyRepository;
-use App\GaelO\Repositories\PatientRepository;
 use App\GaelO\Repositories\ReviewRepository;
 use App\GaelO\Repositories\ReviewStatusRepository;
-use App\GaelO\Repositories\StudyRepository;
 use App\GaelO\Repositories\UserRepository;
 use App\GaelO\Repositories\VisitTypeRepository;
 use App\GaelO\Repositories\VisitRepository;
@@ -99,11 +97,20 @@ class VisitService
     public function updateUploadStatus(string $uploadStatus)
     {
 
+        if($uploadStatus === Constants::UPLOAD_STATUS_NOT_DONE){
+            $visitContext = $this->visitRepository->getVisitContext($this->visitId);
+            if($visitContext['state_investigator_form'] === Constants::INVESTIGATOR_FORM_DONE) {
+                $this->reviewRepository->unlockInvestigatorForm($this->visitId);
+                $this->updateInvestigatorFormStatus(Constants::INVESTIGATOR_FORM_DRAFT);
+            }
+
+        }
+
         $updatedEntity = $this->visitRepository->updateUploadStatus($this->visitId, $uploadStatus);
 
         if (
             $updatedEntity['upload_status'] === Constants::UPLOAD_STATUS_DONE
-            && $updatedEntity['state_investigator_form'] !== Constants::INVESTIGATOR_FORM_NOT_DONE
+            && ($updatedEntity['state_investigator_form'] === Constants::INVESTIGATOR_FORM_NOT_NEEDED || $updatedEntity['state_investigator_form'] === Constants::INVESTIGATOR_FORM_DONE)
         ) {
             $this->sendUploadEmailAndSkipQcIfNeeded($this->visitId);
         }
