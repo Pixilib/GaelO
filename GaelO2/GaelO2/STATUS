@@ -34,7 +34,7 @@ Salim TODO :
 FrontEnd : OHIF / Stone of Orthanc
 *** APIs ***
 - API Review
-Review form ( DELETE, PATCH (unlock) )
+Review form ( DELETE - WIP, PATCH (unlock) )
 Review form /file  (POST, GET, DELETE)
 => Contrainte Form a continuer => Voir librairy Respect/Validation
 
