@@ -9,7 +9,6 @@ use App\GaelO\Util;
 use App\Models\ReviewStatus;
 use Exception;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 
 class VisitRepository implements VisitRepositoryInterface
 {
@@ -136,7 +135,6 @@ class VisitRepository implements VisitRepositoryInterface
         }
 
         $answer = $queryBuilder->get();
-        Log::info($answer->toArray());
         return $answer->count() === 0 ? []  : $answer->toArray();
     }
 

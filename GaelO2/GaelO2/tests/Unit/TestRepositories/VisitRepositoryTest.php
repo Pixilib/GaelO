@@ -127,13 +127,22 @@ class VisitRepositoryTest extends TestCase
     {
         $patient = $this->populateVisits()[0];
 
-        $visits = $this->visitRepository->getAllPatientsVisitsWithReviewStatus($patient->code, $patient->study_name);
+        $visits = $this->visitRepository->getAllPatientsVisitsWithReviewStatus($patient->code, $patient->study_name, false);
         $this->assertArrayHasKey('review_status', $visits[0]['review_status']);
         $this->assertArrayHasKey('review_available', $visits[0]['review_status']);
         $this->assertArrayHasKey('review_conclusion_value', $visits[0]['review_status']);
         $this->assertArrayHasKey('review_conclusion_date', $visits[0]['review_status']);
         $this->assertEquals($visits[0]['id'], $visits[0]['review_status']['visit_id'] );
         $this->assertEquals($patient->study_name, $visits[0]['review_status']['study_name'] );
+    }
+
+    public function testGetPatientVisitsWithReviewStatusWithTrashed()
+    {
+        $patient = $this->populateVisits()[0];
+
+        $patient->visits->first()->delete();
+        $visits = $this->visitRepository->getAllPatientsVisitsWithReviewStatus($patient->code, $patient->study_name, true);
+        $this->assertNotNull($visits[0]['deleted_at']);
     }
 
     public function testGetPatientListVisitsWithContext()

@@ -34,19 +34,23 @@ class ModifyCorrectiveAction{
             $studyName = $visitContext['visit_type']['visit_group']['study_name'];
             $patientCode = $visitContext['patient']['center_code'];
             $visitType = $visitContext['visit_type']['name'];
+            $localFormNeeded = $visitContext['visit_type']['local_form_needed'];
             $visitModality = $visitContext['visit_type']['visit_group']['modality'];
             $stateInvestigatorForm = $visitContext['state_investigator_form'];
             $currentQcStatus = $visitContext['state_quality_control'];
+            $uploadStatus = $visitContext['upload_status'];
 
-            if($currentQcStatus !== Constants::QUALITY_CONTROL_CORRECTIVE_ACTION_ASKED){
+            //If form Needed, form need to be sent before making corrective action
+            if($localFormNeeded  && $stateInvestigatorForm !== Constants::INVESTIGATOR_FORM_DONE ){
                 throw new GaelOForbiddenException();
             }
 
-            if(in_array($stateInvestigatorForm, array(Constants::INVESTIGATOR_FORM_DONE, Constants::INVESTIGATOR_FORM_NOT_NEEDED) ) ){
+            //If not Uploaded images can't perform Corrective action
+            if( $uploadStatus !== Constants::UPLOAD_STATUS_DONE ){
                 throw new GaelOForbiddenException();
             }
 
-            $this->checkAuthorization($modifyCorrectiveActionRequest->currentUserId, $modifyCorrectiveActionRequest->visitId);
+            $this->checkAuthorization($modifyCorrectiveActionRequest->currentUserId, $modifyCorrectiveActionRequest->visitId, $currentQcStatus);
 
             $this->visitRepositoryInterface->setCorrectiveAction(
                     $modifyCorrectiveActionRequest->visitId,
@@ -100,7 +104,12 @@ class ModifyCorrectiveAction{
         }
     }
 
-    private function checkAuthorization(int $userId, int $visitId) : void {
+    private function checkAuthorization(int $userId, int $visitId, string $currentQcStatus) : void {
+
+        if($currentQcStatus !== Constants::QUALITY_CONTROL_CORRECTIVE_ACTION_ASKED){
+            throw new GaelOForbiddenException();
+        }
+
         //Check user has controller role in the visit
         $this->authorizationVisitService->setCurrentUserAndRole($userId, Constants::ROLE_INVESTIGATOR);
         $this->authorizationVisitService->setVisitId($visitId);

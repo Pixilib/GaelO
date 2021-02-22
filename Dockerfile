@@ -61,10 +61,14 @@ ENV APP_HOME /var/www/html
 ENV COMPOSER_ALLOW_SUPERUSER=1
 
 WORKDIR $APP_HOME
-RUN mkdir ./public/viewer-ohif && mkdir ./public/viewer-stone
+
 
 COPY docker_start.sh /usr/local/bin/start
 COPY --chown=www-data:www-data GaelO2/GaelO2 .
+
+RUN ls
+RUN mkdir $APP_HOME/public/viewer-ohif && mkdir $APP_HOME/public/viewer-stone
+
 COPY --from=react /FrontEnd/build $APP_HOME/public
 COPY --from=ohif /ohif/Viewers/platform/viewer/dist $APP_HOME/public/viewer-ohif/
 COPY --from=stone /stone/wasm-binaries/StoneWebViewer $APP_HOME/public/viewer-stone/
