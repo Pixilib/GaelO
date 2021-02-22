@@ -72,8 +72,8 @@ RUN mkdir $APP_HOME/public/viewer-ohif && mkdir $APP_HOME/public/viewer-stone
 COPY --from=react /FrontEnd/build $APP_HOME/public
 COPY --from=ohif /ohif/Viewers/platform/viewer/dist $APP_HOME/public/viewer-ohif/
 COPY --from=stone /stone/wasm-binaries/StoneWebViewer $APP_HOME/public/viewer-stone/
-COPY --from=react /FrontEnd/build/OHIF/app-config.js $APP_HOME/public/viewer-ohif/
-COPY --from=react /FrontEnd/build/Stone/configuration.json $APP_HOME/public/viewer-stone/
+COPY --from=react /FrontEnd/build/viewers/OHIF/app-config.js $APP_HOME/public/viewer-ohif/
+COPY --from=react /FrontEnd/build/viewers/Stone/configuration.json $APP_HOME/public/viewer-stone/
 RUN mv .env.example .env
 
 RUN composer install --optimize-autoloader --no-dev --no-interaction

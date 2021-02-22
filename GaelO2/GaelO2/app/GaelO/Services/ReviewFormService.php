@@ -66,7 +66,7 @@ class ReviewFormService {
     public function saveReview(array $data, bool $validated, bool $adjudication) : int {
         $createdReviewId = $this->reviewRepositoryInterface->createReview(false, $this->visitId, $this->studyName, $this->currentUserId, $data, $validated, $adjudication);
         if ($validated && $this->reviewStatusEntity['review_status'] !== Constants::REVIEW_STATUS_DONE) {
-            $this->doSpecificReviewDecisions($data);
+            $this->doSpecificReviewDecisions();
         }
         return $createdReviewId;
     }
@@ -75,11 +75,17 @@ class ReviewFormService {
         if($validated) $this->abstractStudyRules->checkReviewFormValidity($data);
         $this->reviewRepositoryInterface->updateReview($reviewId, $this->currentUserId, $data, $validated);
         if ($validated && $this->reviewStatusEntity['review_status'] !== Constants::REVIEW_STATUS_DONE) {
-            $this->doSpecificReviewDecisions($data);
+            $this->doSpecificReviewDecisions();
 		}
     }
 
-    private function doSpecificReviewDecisions(array $data){
+    public function deleteReview(int $reviewId) : void {
+        $this->reviewRepositoryInterface->delete($reviewId);
+        $this->doSpecificReviewDecisions();
+
+    }
+
+    private function doSpecificReviewDecisions(){
         $reviewStatus = $this->abstractStudyRules->getReviewStatus();
         $availability = $this->abstractStudyRules->getReviewAvailability($reviewStatus);
         $conclusion = $this->abstractStudyRules->getReviewConclusion();
