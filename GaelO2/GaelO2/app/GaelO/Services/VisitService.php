@@ -4,10 +4,8 @@ namespace App\GaelO\Services;
 
 use App\GaelO\Constants\Constants;
 use App\GaelO\Repositories\OrthancStudyRepository;
-use App\GaelO\Repositories\PatientRepository;
 use App\GaelO\Repositories\ReviewRepository;
 use App\GaelO\Repositories\ReviewStatusRepository;
-use App\GaelO\Repositories\StudyRepository;
 use App\GaelO\Repositories\UserRepository;
 use App\GaelO\Repositories\VisitTypeRepository;
 use App\GaelO\Repositories\VisitRepository;
@@ -16,8 +14,6 @@ use App\GaelO\UseCases\GetVisitType\VisitTypeEntity;
 class VisitService
 {
     private UserRepository $userRepository;
-    private PatientRepository $patientRepository;
-    private StudyRepository $studyRepository;
     private VisitRepository $visitRepository;
     private ReviewRepository $reviewRepository;
     private VisitTypeRepository $visitTypeRepository;
@@ -29,8 +25,6 @@ class VisitService
 
     public function __construct(
         UserRepository $userRepository,
-        PatientRepository $patientRepository,
-        StudyRepository $studyRepository,
         VisitRepository $visitRepository,
         ReviewRepository $reviewRepository,
         ReviewStatusRepository $reviewStatusRepository,
@@ -38,12 +32,10 @@ class VisitService
         OrthancStudyRepository $orthancStudyRepository,
         MailServices $mailServices
     ) {
-        $this->patientRepository = $patientRepository;
         $this->visitTypeRepository = $visitTypeRepository;
         $this->visitRepository = $visitRepository;
         $this->mailServices = $mailServices;
         $this->orthancStudyRepository = $orthancStudyRepository;
-        $this->studyRepository = $studyRepository;
         $this->reviewStatusRepository = $reviewStatusRepository;
         $this->reviewRepository = $reviewRepository;
         $this->userRepository = $userRepository;
@@ -105,11 +97,20 @@ class VisitService
     public function updateUploadStatus(string $uploadStatus)
     {
 
+        if($uploadStatus === Constants::UPLOAD_STATUS_NOT_DONE){
+            $visitContext = $this->visitRepository->getVisitContext($this->visitId);
+            if($visitContext['state_investigator_form'] === Constants::INVESTIGATOR_FORM_DONE) {
+                $this->reviewRepository->unlockInvestigatorForm($this->visitId);
+                $this->updateInvestigatorFormStatus(Constants::INVESTIGATOR_FORM_DRAFT);
+            }
+
+        }
+
         $updatedEntity = $this->visitRepository->updateUploadStatus($this->visitId, $uploadStatus);
 
         if (
             $updatedEntity['upload_status'] === Constants::UPLOAD_STATUS_DONE
-            && $updatedEntity['state_investigator_form'] !== Constants::INVESTIGATOR_FORM_NOT_DONE
+            && ($updatedEntity['state_investigator_form'] === Constants::INVESTIGATOR_FORM_NOT_NEEDED || $updatedEntity['state_investigator_form'] === Constants::INVESTIGATOR_FORM_DONE)
         ) {
             $this->sendUploadEmailAndSkipQcIfNeeded($this->visitId);
         }
@@ -148,7 +149,7 @@ class VisitService
      */
     public function updateReviewAvailability(bool $available, string $study, int $patientCode, string $visitType)
     {
-        $this->visitRepository->updateReviewAvailability($this->visitId, $study, $available);
+        $this->reviewStatusRepository->updateReviewAvailability($this->visitId, $study, $available);
         if ($available) {
             $this->mailServices->sendAvailableReviewMessage($study, $patientCode, $visitType);
         }

@@ -4,6 +4,7 @@ namespace App\GaelO\Services;
 
 use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOBadRequestException;
+use App\GaelO\Interfaces\ReviewRepositoryInterface;
 use App\GaelO\Repositories\OrthancSeriesRepository;
 use App\GaelO\Repositories\OrthancStudyRepository;
 
@@ -17,12 +18,14 @@ class DicomSeriesService
     public function __construct(
         OrthancSeriesRepository $orthancSeriesRepository,
         OrthancStudyRepository $orthancStudyRepository,
+        ReviewRepositoryInterface $reviewRepositoryInterface,
         VisitService $visitService
     ) {
 
         $this->orthancSeriesRepository = $orthancSeriesRepository;
         $this->orthancStudyRepository = $orthancStudyRepository;
         $this->visitService = $visitService;
+        $this->reviewRepositoryInterface = $reviewRepositoryInterface;
     }
 
     public function deleteSeries(string $seriesInstanceUID, string $role)
@@ -44,10 +47,7 @@ class DicomSeriesService
             if ($role === Constants::ROLE_SUPERVISOR) {
                 $this->visitService->resetQc();
             }
-            //SK ICI IL FAUT AVOIR L ENTITY REVIEW ET METTRE EN NON VALIDE LE FORM INVESTIGATOR
-            //SK ICI QUE SI ON EST en invesigator form needed dans visit type ?
-            //SK Logique a encapsuler dans VisitService
-            $this->visitService->updateInvestigatorFormStatus(Constants::INVESTIGATOR_FORM_DRAFT);
+
         }
     }
 

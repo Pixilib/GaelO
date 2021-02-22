@@ -47,13 +47,10 @@ class ReviewStatusRepository implements ReviewStatusRepositoryInterface {
 
     public function updateReviewAvailability(int $visitId, string $studyName, bool $reviewAvailable): void
     {
-        $array = [
-            'review_available' => $reviewAvailable
-        ];
+        $reviewStatusEntity = $this->reviewStatus->where('visit_id', $visitId)->where('study_name', $studyName)->sole();
+        $reviewStatusEntity['review_available'] = $reviewAvailable;
+        $reviewStatusEntity->save();
 
-        $model = $this->reviewStatus->where('visit_id', $visitId)->where('study_name', $studyName)->sole();
-        $model = Util::fillObject($array, $model);
-        $model->save();
     }
 
 

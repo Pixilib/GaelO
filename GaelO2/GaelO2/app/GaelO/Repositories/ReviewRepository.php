@@ -71,11 +71,17 @@ class ReviewRepository implements ReviewRepositoryInterface {
     }
 
     //SK A TESTER
-    public function getValidatedReviewsForStudyVisit(string $studyName, int $visitId ) : array {
-        $reviewEntity = $this->review
+    public function getReviewsForStudyVisit(string $studyName, int $visitId, bool $onlyValidated ) : array {
+
+        $reviewQuery = $this->review
             ->where('study_name', $studyName)
-            ->where('visit_id', $visitId)
-            ->where('validated', true)->get();
+            ->where('visit_id', $visitId);
+
+        if($onlyValidated){
+            $reviewQuery->where('validated', true);
+        }
+
+        $reviewEntity = $reviewQuery->get();
 
         return empty($reviewEntity) ? [] : $reviewEntity->toArray();
 
@@ -91,6 +97,18 @@ class ReviewRepository implements ReviewRepositoryInterface {
 
         return $reviewEntity->toArray();
 
+    }
+
+    //SK A tester
+    public function isExistingFormForStudyVisitUser(string $studyName, int $visitId, int $userId) : bool{
+
+        $reviewEntity = $this->review
+            ->where('study_name', $studyName)
+            ->where('visit_id', $visitId)
+            ->where('user_id', $userId)
+            ->get();
+
+        return $reviewEntity->count() > 0 ? true : false;
     }
 
     //SK FAIRE UPDATE ASSOCIATED FILE

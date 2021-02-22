@@ -17,7 +17,7 @@ class Visit extends Model
     }
 
     public function reviewStatus(){
-        return $this->hasMany('App\Models\ReviewStatus', 'visit_id');
+        return $this->hasOne('App\Models\ReviewStatus', 'visit_id');
     }
 
     public function patient(){

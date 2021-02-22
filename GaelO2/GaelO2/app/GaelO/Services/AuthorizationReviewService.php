@@ -23,14 +23,14 @@ class AuthorizationReviewService
     {
         $this->currentUserId = $userId;
         $this->requestedRole = $role;
-        $this->authorizationVisitService->setCurrentUserAndRole($userId, $role);
+        $this->authorizationService->setCurrentUserAndRole($userId, $role);
     }
 
     public function setReviewId($reviewId)
     {
         $reviewEntity = $this->reviewRepositoryInterface->find($reviewId);
         $this->reviewStudy = $reviewEntity['study_name'];
-        $this->reviewOwner = $reviewEntity['user_id'];
+        $this->reviewOwner = intval($reviewEntity['user_id']);
     }
 
     public function isReviewAllowed(): bool
