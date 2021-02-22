@@ -28,7 +28,7 @@ class GetVisitsFromStudy {
 
             $studyName = $getVisitsFromStudyRequest->studyName;
 
-            $this->checkAuthorization($getVisitsFromStudyRequest->currentUserId, $getVisitsFromStudyRequest->role, $getVisitsFromStudyRequest->studyName);
+            $this->checkAuthorization($getVisitsFromStudyRequest->currentUserId, $getVisitsFromStudyRequest->studyName);
 
             $dbData = $this->visitRepositoryInterface->getVisitsInStudy($studyName, true);
             $responseArray = [];

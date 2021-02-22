@@ -70,11 +70,9 @@ class VisitController extends Controller
 
     public function getVisitsFromStudy(string $studyName, Request $request, GetVisitsFromStudy $getVisitsFromStudy, GetVisitsFromStudyRequest $getVisitsFromStudyRequest, GetVisitsFromStudyResponse $getVisitsFromStudyResponse){
         $curentUser = Auth::user();
-        $queryParam = $request->query();
 
         $getVisitsFromStudyRequest->currentUserId = $curentUser['id'];
         $getVisitsFromStudyRequest->studyName = $studyName;
-        $getVisitsFromStudyRequest->role = $queryParam['role'];
 
         $getVisitsFromStudy->execute($getVisitsFromStudyRequest, $getVisitsFromStudyResponse);
 
