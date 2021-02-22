@@ -26,6 +26,7 @@ class VisitEntity {
     public ?string $correctiveActionOther;
     public ?bool $correctiveActionDecision;
     public ?string $lastReminderUpload;
+    public ?string $deletedAt;
 
     public ?string $visitGroupModality;
     public ?string $visitTypeName;
@@ -36,6 +37,9 @@ class VisitEntity {
     public ?string $reviewStatus;
     public ?string $reviewConclusionValue;
     public ?string $reviewConclusionDate;
+
+    public ?string $patientStatus;
+    public ?int $centerCode;
 
     public static function fillFromDBReponseArray(array $array){
         $visitEntity  = new VisitEntity();
@@ -63,6 +67,7 @@ class VisitEntity {
         $visitEntity->correctiveActionOther = $array['corrective_action_comment'];
         $visitEntity->correctiveActionDecision = $array['corrective_action_applyed'];
         $visitEntity->lastReminderUpload = $array['last_reminder_upload'];
+        $visitEntity->deletedAt = $array['deleted_at'];
         return $visitEntity;
     }
 
@@ -77,8 +82,11 @@ class VisitEntity {
         $this->visitTypeOrder = $visitTypeOrder;
         $this->visitTypeOptional = $visitTypeOptional;
         $this->visitGroupId = $visitGroupId;
+    }
 
-
+    public function setPatientStatus(string $inclusionStatus, int $centerCode) {
+        $this->patientStatus = $inclusionStatus;
+        $this->centerCode = $centerCode;
     }
 
     public function setReviewVisitStatus(string $reviewStatus, ?string $reviewConclusionValue, ?string $reviewConclusionDate){

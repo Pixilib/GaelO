@@ -10,6 +10,7 @@ use App\GaelO\Interfaces\VisitRepositoryInterface;
 use App\GaelO\Services\AuthorizationService;
 use App\GaelO\UseCases\GetVisit\VisitEntity;
 use Exception;
+
 class GetVisitsFromStudy {
 
     private VisitRepositoryInterface $visitRepositoryInterface;
@@ -34,6 +35,12 @@ class GetVisitsFromStudy {
             $responseArray = [];
             foreach($dbData as $data){
                 $responseEntity = VisitEntity::fillFromDBReponseArray($data);
+                $responseEntity->setPatientStatus($data['patient']['inclusion_status'], $data['patient']['center_code']);
+                $responseEntity->setVisitContext($data['visit_type']['visit_group']['modality'],
+                $data['visit_type']['name'],
+                $data['visit_type']['order'],
+                $data['visit_type']['optional'],
+                $data['visit_type']['visit_group']['id']);
                 $responseEntity->setReviewVisitStatus($data['review_status']['review_status'], $data['review_status']['review_conclusion_value'], $data['review_status']['review_conclusion_date']);
                 $responseArray[] = $responseEntity;
             }

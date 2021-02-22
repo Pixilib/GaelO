@@ -29,7 +29,7 @@ interface VisitRepositoryInterface
 
     public function getPatientsVisits(int $patientCode) :array ;
 
-    public function getPatientsVisitsWithReviewStatus(int $patientCode, string $studyName) : array ;
+    public function getAllPatientsVisitsWithReviewStatus(int $patientCode, string $studyName, bool $withTrashed) : array ;
 
     public function getPatientListVisitsWithContext(array $patientCodeArray) : array ;
 

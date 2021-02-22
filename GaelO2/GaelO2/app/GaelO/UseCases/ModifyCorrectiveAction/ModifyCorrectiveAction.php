@@ -42,7 +42,7 @@ class ModifyCorrectiveAction{
                 throw new GaelOForbiddenException();
             }
 
-            if(  ! in_array($stateInvestigatorForm, array(Constants::INVESTIGATOR_FORM_DONE, Constants::INVESTIGATOR_FORM_NOT_NEEDED) ) ){
+            if(in_array($stateInvestigatorForm, array(Constants::INVESTIGATOR_FORM_DONE, Constants::INVESTIGATOR_FORM_NOT_NEEDED) ) ){
                 throw new GaelOForbiddenException();
             }
 

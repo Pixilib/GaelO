@@ -151,9 +151,9 @@ class VisitController extends Controller
     }
 
     public function reactivateVisit(int $visitId, ReactivateVisit $reactivateVisit, ReactivateVisitRequest $reactivateVisitRequest, ReactivateVisitResponse $reactivateVisitResponse){
-        $curentUser = Auth::user();
+        $currentUser = Auth::user();
 
-        $reactivateVisitRequest->currentUserId = $curentUser['id'];
+        $reactivateVisitRequest->currentUserId = $currentUser['id'];
         $reactivateVisitRequest->visitId = $visitId;
 
         $reactivateVisit->execute($reactivateVisitRequest, $reactivateVisitResponse);
