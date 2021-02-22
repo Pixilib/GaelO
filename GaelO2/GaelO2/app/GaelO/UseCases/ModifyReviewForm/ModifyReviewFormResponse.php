@@ -1,8 +1,8 @@
 <?php
 
-namespace App\GaelO\UseCases\CreateReviewForm;
+namespace App\GaelO\UseCases\ModifyReviewForm;
 
-class CreateReviewFormResponse{
+class ModifyReviewFormResponse{
     public int $status;
     public string $statusText;
     public $body;

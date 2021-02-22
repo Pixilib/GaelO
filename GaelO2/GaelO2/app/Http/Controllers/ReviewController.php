@@ -5,15 +5,27 @@ namespace App\Http\Controllers;
 use App\GaelO\UseCases\CreateInvestigatorForm\CreateInvestigatorForm;
 use App\GaelO\UseCases\CreateInvestigatorForm\CreateInvestigatorFormRequest;
 use App\GaelO\UseCases\CreateInvestigatorForm\CreateInvestigatorFormResponse;
+use App\GaelO\UseCases\CreateReviewForm\CreateReview;
+use App\GaelO\UseCases\CreateReviewForm\CreateReviewFormRequest;
+use App\GaelO\UseCases\CreateReviewForm\CreateReviewFormResponse;
 use App\GaelO\UseCases\DeleteInvestigatorForm\DeleteInvestigatorForm;
 use App\GaelO\UseCases\DeleteInvestigatorForm\DeleteInvestigatorFormRequest;
 use App\GaelO\UseCases\DeleteInvestigatorForm\DeleteInvestigatorFormResponse;
 use App\GaelO\UseCases\GetInvestigatorForm\GetInvestigatorForm;
 use App\GaelO\UseCases\GetInvestigatorForm\GetInvestigatorFormRequest;
 use App\GaelO\UseCases\GetInvestigatorForm\GetInvestigatorFormResponse;
+use App\GaelO\UseCases\GetReviewForm\GetReviewForm;
+use App\GaelO\UseCases\GetReviewForm\GetReviewFormRequest;
+use App\GaelO\UseCases\GetReviewForm\GetReviewFormResponse;
+use App\GaelO\UseCases\GetReviewFormFromVisit\GetReviewFormFromVisit;
+use App\GaelO\UseCases\GetReviewFormFromVisit\GetReviewFormFromVisitRequest;
+use App\GaelO\UseCases\GetReviewFormFromVisit\GetReviewFormFromVisitResponse;
 use App\GaelO\UseCases\ModifyInvestigatorForm\ModifyInvestigatorForm;
 use App\GaelO\UseCases\ModifyInvestigatorForm\ModifyInvestigatorFormRequest;
 use App\GaelO\UseCases\ModifyInvestigatorForm\ModifyInvestigatorFormResponse;
+use App\GaelO\UseCases\ModifyReviewForm\ModifyReviewForm;
+use App\GaelO\UseCases\ModifyReviewForm\ModifyReviewFormRequest;
+use App\GaelO\UseCases\ModifyReviewForm\ModifyReviewFormResponse;
 use App\GaelO\UseCases\UnlockInvestigatorForm\UnlockInvestigatorForm;
 use App\GaelO\UseCases\UnlockInvestigatorForm\UnlockInvestigatorFormRequest;
 use App\GaelO\UseCases\UnlockInvestigatorForm\UnlockInvestigatorFormResponse;
@@ -124,6 +136,75 @@ class ReviewController extends Controller
             ->setStatusCode($modifyInvestigatorFormResponse->status, $modifyInvestigatorFormResponse->statusText);
         }
 
+    }
+
+    public function createReviewForm(string $studyName, int $visitId, Request $request, CreateReview $createReview, CreateReviewFormRequest $createReviewFormRequest, CreateReviewFormResponse $createReviewFormResponse){
+        $curentUser = Auth::user();
+        $requestData = $request->all();
+
+        $createReviewFormRequest->studyName = $studyName;
+        $createReviewFormRequest->visitId = $visitId;
+        $createReviewFormRequest->currentUserId = $curentUser['id'];
+
+        $createReviewFormRequest = Util::fillObject($requestData, $createReviewFormRequest);
+
+        $createReview->execute($createReviewFormRequest, $createReviewFormResponse);
+
+        if($createReviewFormResponse->body != null){
+            return response()->json($createReviewFormResponse->body)
+            ->setStatusCode($createReviewFormResponse->status, $createReviewFormResponse->statusText);
+        } else {
+            return response()->noContent()
+            ->setStatusCode($createReviewFormResponse->status, $createReviewFormResponse->statusText);
+        }
+
+    }
+
+    public function modifyReviewForm(int $reviewId, Request $request, ModifyReviewForm $modifyReviewForm, ModifyReviewFormRequest $modifyReviewFormRequest, ModifyReviewFormResponse $modifyReviewFormResponse ){
+
+        $curentUser = Auth::user();
+        $requestData = $request->all();
+
+        $modifyReviewFormRequest->reviewId = $reviewId;
+        $modifyReviewFormRequest->currentUserId = $curentUser['id'];
+        $modifyReviewFormRequest = Util::fillObject($requestData, $modifyReviewFormRequest);
+
+        $modifyReviewForm->execute($modifyReviewFormRequest, $modifyReviewFormResponse);
+
+        if($modifyReviewFormResponse->body != null){
+            return response()->json($modifyReviewFormResponse->body)
+            ->setStatusCode($modifyReviewFormResponse->status, $modifyReviewFormResponse->statusText);
+        } else {
+            return response()->noContent()
+            ->setStatusCode($modifyReviewFormResponse->status, $modifyReviewFormResponse->statusText);
+        }
+
+    }
+
+    public function getReviewForm(int $reviewId, GetReviewForm $getReviewForm, GetReviewFormRequest $getReviewFormRequest, GetReviewFormResponse $getReviewFormResponse){
+
+        $curentUser = Auth::user();
+        $getReviewFormRequest->currentUserId = $curentUser['id'];
+        $getReviewFormRequest->reviewId = $reviewId;
+
+        $getReviewForm->execute($getReviewFormRequest, $getReviewFormResponse);
+
+        return response()->json($getReviewFormResponse->body)
+            ->setStatusCode($getReviewFormResponse->status, $getReviewFormResponse->statusText);
+
+    }
+
+    public function getReviewsFromVisit(string $studyName, int $visitId, GetReviewFormFromVisit $getReviewFormFromVisit, GetReviewFormFromVisitRequest $getReviewFormFromVisitRequest, GetReviewFormFromVisitResponse $getReviewFormFromVisitResponse){
+        $curentUser = Auth::user();
+
+        $getReviewFormFromVisitRequest->currentUserId = $curentUser['id'];
+        $getReviewFormFromVisitRequest->studyName = $studyName;
+        $getReviewFormFromVisitRequest->visitId = $visitId;
+
+        $getReviewFormFromVisit->execute($getReviewFormFromVisitRequest, $getReviewFormFromVisitResponse);
+
+        return response()->json($getReviewFormFromVisitResponse->body)
+        ->setStatusCode($getReviewFormFromVisitResponse->status, $getReviewFormFromVisitResponse->statusText);
     }
 
 
