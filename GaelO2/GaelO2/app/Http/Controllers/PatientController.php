@@ -46,6 +46,7 @@ class PatientController extends Controller
         $currentUser = Auth::user();
         $queryParam = $request->query();
         $getPatientVisitRequest->role = $queryParam['role'];
+        $getPatientVisitRequest->withTrashed = filter_var($queryParam['withTrashed'], FILTER_VALIDATE_BOOLEAN);
         $getPatientVisitRequest->currentUserId = $currentUser['id'];
         $getPatientVisitRequest->patientCode = $patientCode;
         $getPatientVisitRequest->studyName = $studyName;

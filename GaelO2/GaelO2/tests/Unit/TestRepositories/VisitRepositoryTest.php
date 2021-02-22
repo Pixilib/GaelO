@@ -127,7 +127,7 @@ class VisitRepositoryTest extends TestCase
     {
         $patient = $this->populateVisits()[0];
 
-        $visits = $this->visitRepository->getPatientsVisitsWithReviewStatus($patient->code, $patient->study_name);
+        $visits = $this->visitRepository->getAllPatientsVisitsWithReviewStatus($patient->code, $patient->study_name);
         $this->assertArrayHasKey('review_status', $visits[0]['review_status']);
         $this->assertArrayHasKey('review_available', $visits[0]['review_status']);
         $this->assertArrayHasKey('review_conclusion_value', $visits[0]['review_status']);

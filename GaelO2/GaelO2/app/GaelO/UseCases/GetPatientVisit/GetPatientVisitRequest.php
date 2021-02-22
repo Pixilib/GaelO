@@ -7,4 +7,5 @@ class GetPatientVisitRequest {
     public string $studyName;
     public int $patientCode;
     public string $role;
+    public bool $withTrashed;
 }

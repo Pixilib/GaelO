@@ -24,7 +24,7 @@ class GetPatientVisit {
 
         try{
             $this->checkAuthorization($getPatientVisitRequest->currentUserId, $getPatientVisitRequest->patientCode, $getPatientVisitRequest->role);
-            $visitsArray = $this->visitRepositoryInterface->getPatientsVisitsWithReviewStatus($getPatientVisitRequest->patientCode, $getPatientVisitRequest->studyName);
+            $visitsArray = $this->visitRepositoryInterface->getAllPatientsVisitsWithReviewStatus($getPatientVisitRequest->patientCode, $getPatientVisitRequest->studyName, $getPatientVisitRequest->withTrashed);
 
             $responseArray = [];
             foreach($visitsArray as $data){

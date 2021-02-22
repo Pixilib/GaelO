@@ -96,9 +96,13 @@ class VisitRepository implements VisitRepositoryInterface
         return empty($visits) ? [] : $visits->toArray();
     }
 
-    public function getPatientsVisitsWithReviewStatus(int $patientCode, string $studyName): array
+    public function getAllPatientsVisitsWithReviewStatus(int $patientCode, string $studyName, bool $withTrashed): array
     {
-        $visits = $this->visit->with('visitType')->where('patient_code', $patientCode)
+        $builder = $this->visit;
+        if ($withTrashed) {
+            $builder = $builder->withTrashed();
+        }
+        $visits = $builder->with('visitType')->where('patient_code', $patientCode)
             ->with(['reviewStatus' => function ($q) use ($studyName) {
                 $q->where('study_name', $studyName);
             }])
@@ -117,7 +121,7 @@ class VisitRepository implements VisitRepositoryInterface
     public function getVisitsInStudy(string $studyName, bool $withReviewStatus): array
     {
 
-        $queryBuilder = $this->visit->with('visitType')
+        $queryBuilder = $this->visit->with(['visitType', 'patient'])
             ->whereHas('visitType', function ($query) use ($studyName) {
                 $query->whereHas('visitGroup', function ($query) use ($studyName) {
                     $query->where('study_name', $studyName);
@@ -132,7 +136,7 @@ class VisitRepository implements VisitRepositoryInterface
         }
 
         $answer = $queryBuilder->get();
-
+        Log::info($answer->toArray());
         return $answer->count() === 0 ? []  : $answer->toArray();
     }
 

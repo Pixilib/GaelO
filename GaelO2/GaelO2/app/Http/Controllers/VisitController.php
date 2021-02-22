@@ -70,11 +70,9 @@ class VisitController extends Controller
 
     public function getVisitsFromStudy(string $studyName, Request $request, GetVisitsFromStudy $getVisitsFromStudy, GetVisitsFromStudyRequest $getVisitsFromStudyRequest, GetVisitsFromStudyResponse $getVisitsFromStudyResponse){
         $curentUser = Auth::user();
-        $queryParam = $request->query();
 
         $getVisitsFromStudyRequest->currentUserId = $curentUser['id'];
         $getVisitsFromStudyRequest->studyName = $studyName;
-        $getVisitsFromStudyRequest->role = $queryParam['role'];
 
         $getVisitsFromStudy->execute($getVisitsFromStudyRequest, $getVisitsFromStudyResponse);
 
@@ -153,9 +151,9 @@ class VisitController extends Controller
     }
 
     public function reactivateVisit(int $visitId, ReactivateVisit $reactivateVisit, ReactivateVisitRequest $reactivateVisitRequest, ReactivateVisitResponse $reactivateVisitResponse){
-        $curentUser = Auth::user();
+        $currentUser = Auth::user();
 
-        $reactivateVisitRequest->currentUserId = $curentUser['id'];
+        $reactivateVisitRequest->currentUserId = $currentUser['id'];
         $reactivateVisitRequest->visitId = $visitId;
 
         $reactivateVisit->execute($reactivateVisitRequest, $reactivateVisitResponse);
