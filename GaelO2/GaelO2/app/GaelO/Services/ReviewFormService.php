@@ -85,6 +85,11 @@ class ReviewFormService {
 
     }
 
+    public function unlockReview(int $reviewId) : void {
+        $this->reviewRepositoryInterface->unlockReviewForm($reviewId);
+        $this->doSpecificReviewDecisions();
+    }
+
     private function doSpecificReviewDecisions(){
         $reviewStatus = $this->abstractStudyRules->getReviewStatus();
         $availability = $this->abstractStudyRules->getReviewAvailability($reviewStatus);

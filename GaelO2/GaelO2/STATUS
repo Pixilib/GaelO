@@ -26,15 +26,16 @@ Possible-Uploads (GET) => OK
 dicom-series (DELETE, PATCH) => OK (Nb pour reset upload, loop depuis front)
 dicom-study (PATCH) => OK
 Investigator-form (GET, PUT, POST, DELETE, PATCH (unlock)) =>OK
-Reviews (GET, POST, PUT)
+Reviews (GET, POST, PUT, DELETE)
 Reviews From Visits (GET)
 
 
 Salim TODO :
-FrontEnd : OHIF / Stone of Orthanc
+FrontEnd : OHIF / Stone of Orthanc => A Checker
+FrontEnd : Uploader fetch des data + checker safety lien patient/Usr - uploader
 *** APIs ***
 - API Review
-Review form ( DELETE - WIP, PATCH (unlock) )
+Review form ( PATCH (unlock) - WIP - Faire Tests)
 Review form /file  (POST, GET, DELETE)
 => Contrainte Form a continuer => Voir librairy Respect/Validation
 
@@ -55,7 +56,7 @@ Les tests ne font pas d'assertion sur
 Service Visit => Continuer test passage en upload Done
 Dicom Series Service => peut etre evoluer vers un DicomService pour les deux niveaux
 Studies / Series DICOM => Passer la clé primaire à Instance UID (le orthancID ne devient qu'une donnée associée)
-
+Review => tester un scenario de custom conclusion / adjudication
 
 +Tard :
 

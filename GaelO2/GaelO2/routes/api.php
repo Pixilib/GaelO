@@ -118,6 +118,7 @@ Route::middleware(['auth:api', 'refresh_token'])->group(function () {
     Route::put('reviews/{id}', [ReviewController::class, 'modifyReviewForm']);
     Route::get('reviews/{id}', [ReviewController::class, 'getReviewForm']);
     Route::delete('reviews/{id}', [ReviewController::class, 'deleteReviewForm']);
+    Route::patch('reviews/{id}/unlock', [ReviewController::class, 'unlockReviewForm']);
     Route::get('studies/{studyName}/visits/{visitId}/reviews', [ReviewController::class, 'getReviewsFromVisit']);
 
     //Dicom Routes

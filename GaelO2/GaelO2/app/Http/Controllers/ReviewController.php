@@ -32,6 +32,9 @@ use App\GaelO\UseCases\ModifyReviewForm\ModifyReviewFormResponse;
 use App\GaelO\UseCases\UnlockInvestigatorForm\UnlockInvestigatorForm;
 use App\GaelO\UseCases\UnlockInvestigatorForm\UnlockInvestigatorFormRequest;
 use App\GaelO\UseCases\UnlockInvestigatorForm\UnlockInvestigatorFormResponse;
+use App\GaelO\UseCases\UnlockReviewForm\UnlockReviewForm;
+use App\GaelO\UseCases\UnlockReviewForm\UnlockReviewFormRequest;
+use App\GaelO\UseCases\UnlockReviewForm\UnlockReviewFormResponse;
 use App\GaelO\Util;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -227,6 +230,27 @@ class ReviewController extends Controller
         } else {
             return response()->noContent()
             ->setStatusCode($deleteReviewFormResponse->status, $deleteReviewFormResponse->statusText);
+        }
+
+    }
+
+    public function unlockReviewForm(int $reviewId, Request $request, UnlockReviewForm $unlockReviewForm, UnlockReviewFormRequest $unlockReviewFormRequest, UnlockReviewFormResponse $unlockReviewFormResponse){
+        $curentUser = Auth::user();
+        $requestData = $request->all();
+
+        $unlockReviewFormRequest->currentUserId = $curentUser['id'];
+        $unlockReviewFormRequest->reviewId = $reviewId;
+
+        $deleteReviewFormRequest = Util::fillObject($requestData, $unlockReviewFormRequest);
+
+        $unlockReviewForm->execute($deleteReviewFormRequest, $unlockReviewFormResponse);
+
+        if($unlockReviewFormResponse->body != null){
+            return response()->json($unlockReviewFormResponse->body)
+            ->setStatusCode($unlockReviewFormResponse->status, $unlockReviewFormResponse->statusText);
+        } else {
+            return response()->noContent()
+            ->setStatusCode($unlockReviewFormResponse->status, $unlockReviewFormResponse->statusText);
         }
 
     }
