@@ -11,6 +11,9 @@ use App\GaelO\UseCases\CreateReviewForm\CreateReviewFormResponse;
 use App\GaelO\UseCases\DeleteInvestigatorForm\DeleteInvestigatorForm;
 use App\GaelO\UseCases\DeleteInvestigatorForm\DeleteInvestigatorFormRequest;
 use App\GaelO\UseCases\DeleteInvestigatorForm\DeleteInvestigatorFormResponse;
+use App\GaelO\UseCases\DeleteReviewForm\DeleteReviewForm;
+use App\GaelO\UseCases\DeleteReviewForm\DeleteReviewFormRequest;
+use App\GaelO\UseCases\DeleteReviewForm\DeleteReviewFormResponse;
 use App\GaelO\UseCases\GetInvestigatorForm\GetInvestigatorForm;
 use App\GaelO\UseCases\GetInvestigatorForm\GetInvestigatorFormRequest;
 use App\GaelO\UseCases\GetInvestigatorForm\GetInvestigatorFormResponse;
@@ -205,6 +208,27 @@ class ReviewController extends Controller
 
         return response()->json($getReviewFormFromVisitResponse->body)
         ->setStatusCode($getReviewFormFromVisitResponse->status, $getReviewFormFromVisitResponse->statusText);
+    }
+
+    public function deleteReviewForm(int $reviewId, Request $request, DeleteReviewForm $deleteReviewForm, DeleteReviewFormRequest $deleteReviewFormRequest, DeleteReviewFormResponse $deleteReviewFormResponse){
+        $curentUser = Auth::user();
+        $requestData = $request->all();
+
+        $deleteReviewFormRequest->currentUserId = $curentUser['id'];
+        $deleteReviewFormRequest->reviewId = $reviewId;
+
+        $deleteReviewFormRequest = Util::fillObject($requestData, $deleteReviewFormRequest);
+
+        $deleteReviewForm->execute($deleteReviewFormRequest, $deleteReviewFormResponse);
+
+        if($deleteReviewFormResponse->body != null){
+            return response()->json($deleteReviewFormResponse->body)
+            ->setStatusCode($deleteReviewFormResponse->status, $deleteReviewFormResponse->statusText);
+        } else {
+            return response()->noContent()
+            ->setStatusCode($deleteReviewFormResponse->status, $deleteReviewFormResponse->statusText);
+        }
+
     }
 
 
