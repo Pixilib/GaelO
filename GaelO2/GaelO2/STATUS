@@ -33,6 +33,7 @@ Reviews From Visits (GET)
 Salim TODO :
 FrontEnd : OHIF / Stone of Orthanc => A Checker
 FrontEnd : Uploader fetch des data + checker safety lien patient/Usr - uploader
+Interdire Role Contoller si l'etude n'a pas besoin de QC ?
 *** APIs ***
 - API Review
 Review form /file  (POST, GET, DELETE)

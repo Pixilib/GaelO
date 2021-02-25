@@ -235,6 +235,7 @@ class VisitRepositoryTest extends TestCase
         $visitEntity->save();
 
         $visits->each(function ($item, $key) {
+            $item->state_investigator_form = Constants::INVESTIGATOR_FORM_DONE;
             $item->upload_status = Constants::UPLOAD_STATUS_DONE;
             $item->save();
         });

@@ -40,6 +40,7 @@ class AuthorizationVisitService {
         $this->patientCenter = $visitContext['patient']['center_code'];
         $this->patientCode = $visitContext['patient']['code'];
         $this->visitUploadStatus = $visitContext['upload_status'];
+        $this->stateInvestigatorForm = $visitContext['state_investigator_form'];
 
         $this->authorizationPatientService->setPatientEntity($visitContext['patient']);
 
@@ -55,7 +56,8 @@ class AuthorizationVisitService {
         } else if ($this->requestedRole === Constants::ROLE_CONTROLLER) {
             //For controller controller role should be allows and visit QC status be not done or awaiting definitive conclusion
             $allowedControllerStatus = array(Constants::QUALITY_CONTROL_NOT_DONE, Constants::QUALITY_CONTROL_WAIT_DEFINITIVE_CONCLUSION);
-            if (in_array($this->stateQualityControl, $allowedControllerStatus) && $this->visitUploadStatus === Constants::UPLOAD_STATUS_DONE) {
+            $allowedInvestigatorFormStatus = array(Constants::INVESTIGATOR_FORM_DONE, Constants::INVESTIGATOR_FORM_NOT_NEEDED);
+            if (in_array($this->stateQualityControl, $allowedControllerStatus) && $this->visitUploadStatus === Constants::UPLOAD_STATUS_DONE && in_array($this->stateInvestigatorForm, $allowedInvestigatorFormStatus) ) {
                 return $this->authorizationPatientService->isPatientAllowed();
             } else {
                 return false;

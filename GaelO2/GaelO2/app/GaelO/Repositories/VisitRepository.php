@@ -187,6 +187,7 @@ class VisitRepository implements VisitRepositoryInterface
             })
             ->where('status_done', Constants::VISIT_STATUS_DONE)
             ->where('upload_status', Constants::UPLOAD_STATUS_DONE)
+            ->whereIn('state_investigator_form', [Constants::INVESTIGATOR_FORM_NOT_NEEDED, Constants::INVESTIGATOR_FORM_DONE] )
             ->whereIn('state_quality_control', $controllerActionStatusArray)
             ->get();
 
