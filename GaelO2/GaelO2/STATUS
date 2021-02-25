@@ -26,7 +26,7 @@ Possible-Uploads (GET) => OK
 dicom-series (DELETE, PATCH) => OK (Nb pour reset upload, loop depuis front)
 dicom-study (PATCH) => OK
 Investigator-form (GET, PUT, POST, DELETE, PATCH (unlock)) =>OK
-Reviews (GET, POST, PUT, DELETE)
+Reviews (GET, POST, PUT, DELETE, PATCH (unlock))
 Reviews From Visits (GET)
 
 
@@ -35,7 +35,6 @@ FrontEnd : OHIF / Stone of Orthanc => A Checker
 FrontEnd : Uploader fetch des data + checker safety lien patient/Usr - uploader
 *** APIs ***
 - API Review
-Review form ( PATCH (unlock) - WIP - Faire Tests)
 Review form /file  (POST, GET, DELETE)
 => Contrainte Form a continuer => Voir librairy Respect/Validation
 
