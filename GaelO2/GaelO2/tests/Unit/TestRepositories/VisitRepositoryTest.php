@@ -154,6 +154,16 @@ class VisitRepositoryTest extends TestCase
         $this->assertArrayHasKey('visit_group', $visits[0]['visit_type']);
     }
 
+    public function testGetPatientListVisitWithContextAndReviewStatus()
+
+    {
+        $patient = $this->populateVisits();
+        $visits = $this->visitRepository->getPatientListVisitWithContextAndReviewStatus([$patient[0]->code, $patient[1]->code], $patient[0]->study_name);
+        $this->assertEquals(12, sizeof($visits));
+        $this->assertArrayHasKey('review_status', $visits[0]);
+
+    }
+
     public function testGetVisitInStudy()
     {
         $patient = $this->populateVisits()[0];

@@ -62,7 +62,11 @@ class VisitTreeService
 
         $resultTree = [];
 
-        $patientVisitsArray = $this->visitRepository->getPatientListVisitsWithContext($patientsCodeArray);
+        $patientVisitsArray = [];
+
+        //If Reviewer need to add review status for tree selections
+        if ($this->role === Constants::ROLE_REVIEWER) $patientVisitsArray = $this->visitRepository->getPatientListVisitWithContextAndReviewStatus($patientsCodeArray, $this->studyName);
+        else $patientVisitsArray = $this->visitRepository->getPatientListVisitsWithContext($patientsCodeArray);
 
         foreach ($patientsCodeArray as $patientCode) {
             $resultTree[$patientCode] = [];
@@ -137,8 +141,8 @@ class VisitTreeService
             'statusDone' => $visitEntity['status_done'],
             'visitTypeId' => $visitEntity['visit_type']['id'],
             'visitGroupId' => $visitEntity['visit_type']['visit_group']['id'],
-            'patientCode' => $visitEntity['patient_code']
-
+            'patientCode' => $visitEntity['patient_code'],
+            'reviewStatus' => array_key_exists('review_status', $visitEntity) ? $visitEntity['review_status']['review_status'] : null
         ];
     }
 }

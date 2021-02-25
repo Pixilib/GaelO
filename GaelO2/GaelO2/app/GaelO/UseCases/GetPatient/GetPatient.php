@@ -26,8 +26,6 @@ class GetPatient {
         try{
             $code = $getPatientRequest->code;
 
-            if ($code == 0) throw new GaelOForbiddenException();
-
             $this->checkAuthorization($getPatientRequest->currentUserId, $getPatientRequest->role, $code );
             $dbData = $this->patientRepositoryInterface->getPatientWithCenterDetails($code);
 
