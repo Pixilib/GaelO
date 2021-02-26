@@ -29,15 +29,17 @@ Investigator-form (GET, PUT, POST, DELETE, PATCH (unlock)) =>OK
 Reviews (GET, POST, PUT, DELETE, PATCH (unlock))
 Reviews From Visits (GET)
 
-
 Salim TODO :
-FrontEnd : OHIF / Stone of Orthanc => A Checker
 FrontEnd : Uploader fetch des data + checker safety lien patient/Usr - uploader
-Interdire Role Contoller si l'etude n'a pas besoin de QC ?
+Studies / Series DICOM => Passer la clé primaire à Instance UID (le orthancID ne devient qu'une donnée associée)
+Revoir DicowWeb Authorisation Service
+Creatable Visit : Manque Study Custom Logic (+dans front skip visites optionnelles ?)
+
 *** APIs ***
 - API Review
 Review form /file  (POST, GET, DELETE)
 => Contrainte Form a continuer => Voir librairy Respect/Validation
+Api Export data study (+ ajouter override pour customisation etude)
 
 - API Supervisor
 Tools get dicom batch => Recevra un array de seriesInstanceUID a telecharger depuis Orthanc (pour download dicom)
@@ -53,22 +55,17 @@ Les tests ne font pas d'assertion sur
 - le tracker => Via un spy ?
 - l'envoi de mails => voir doc laravel
 
-Service Visit => Continuer test passage en upload Done
 Dicom Series Service => peut etre evoluer vers un DicomService pour les deux niveaux
-Studies / Series DICOM => Passer la clé primaire à Instance UID (le orthancID ne devient qu'une donnée associée)
 Review => tester un scenario de custom conclusion / adjudication
 
 +Tard :
-
 Faire une condition pour les NoContent dans le controller ? => ou mettre toujours un payload vide pour eviter les errur error->json() dans front?
 Voir dans message d'erreur comment ajouter d'autre info que le message (pour id de login)
 ReverseProxy TUS => On peut ajouter le studyName dans le header dans uppy pour le recupérer dans le use case et checker le role Investigateur
-Reverse proxy dicomweb => Comment faire venir le role et study depuis ohif ? depuis header?
 TUS est Joignable sur Delete => peut etre gerer le failure/cancel pour vider tus ?
 Deploiement ajouter le login / mdp pour dans orthanc pacs + bloquer delete dans lua script
 Dans remplissage DTO request, si variable boolean, un input string est interpretée à true.
 QC Not Needed => autoriser ou pas remove de series ?
-Creatable Visit : Manque Study Custom Logic (+dans front skip visites optionnelles ?)
 Autoriser les fichier pour les form investigateurs ?
 
 *** Etudes ancillaires ***
@@ -98,7 +95,6 @@ Doit pouvoir voir user details
 *** /Etudes ancillaires ***
 
 Préparation supervisor :
-- Unlock / Delete form
 - Export Study Data
 - Review Manager
 - Upload Manager
