@@ -350,6 +350,35 @@ class VisitRepositoryTest extends TestCase
         $this->assertEquals(2, sizeof($answer));
     }
 
+    public function testIsParentPatientHavingOneVisitAwaitingReview(){
+        //create patient with 2 visits
+        $patient = Patient::factory()->create();
+        $visits = Visit::factory()->patientCode($patient->code)->count(2)->create();
+        //create review status being available for review
+        $visits->each(function ($visit, $key) use ($patient) {
+            ReviewStatus::factory()->visitId($visit->id)->reviewAvailable()->studyName($patient->study_name)->create();
+        });
+
+        //create one form for user for one visit (patient still has one visit awaiting review for user)
+
+        Review::factory()->visitId($visits->first()->id)->reviewForm()->userId(1)->validated()->studyName($patient->study_name)->create();
+        $answer1 = $this->visitRepository->isParentPatientHavingOneVisitAwaitingReview($visits->first()->id, $patient->study_name, 1);
+
+        $this->assertTrue($answer1);
+        //create the second form for user as draft (still available)
+        $secondReview = Review::factory()->visitId($visits->last()->id)->reviewForm()->userId(1)->studyName($patient->study_name)->create();
+
+        $answer2 = $this->visitRepository->isParentPatientHavingOneVisitAwaitingReview($visits->first()->id, $patient->study_name, 1);
+        $this->assertTrue($answer2);
+
+        //Validate the second draft (should be unavailable)
+        $secondReview->validated = true;
+        $secondReview->save();
+        $answer3 = $this->visitRepository->isParentPatientHavingOneVisitAwaitingReview($visits->first()->id, $patient->study_name, 1);
+        $this->assertFalse($answer3);
+
+    }
+
     public function testEditQC(){
         $visit = Visit::factory()->create();
         $this->visitRepository->editQc($visit->id, Constants::QUALITY_CONTROL_ACCEPTED, 1, true, true, 'OK', 'OK');

@@ -25,15 +25,14 @@ class AuthorizationDicomWebService
         DicomSeriesRepositoryInterface $dicomSeriesRepositoryInterface,
         UserRepositoryInterface $userRepositoryInterface,
         VisitRepositoryInterface $visitRepositoryInterface,
-        AuthorizationVisitService $authorizationVisitService)
-    {
+        AuthorizationVisitService $authorizationVisitService
+    ) {
 
-        $this->dicomStudyRepositoryInterface=$dicomStudyRepositoryInterface;
-        $this->dicomSeriesRepositoryInterface=$dicomSeriesRepositoryInterface;
+        $this->dicomStudyRepositoryInterface = $dicomStudyRepositoryInterface;
+        $this->dicomSeriesRepositoryInterface = $dicomSeriesRepositoryInterface;
         $this->visitRepositoryInterface = $visitRepositoryInterface;
-        $this->userRepositoryInterface=$userRepositoryInterface;
+        $this->userRepositoryInterface = $userRepositoryInterface;
         $this->authorizationVisitService = $authorizationVisitService;
-
     }
 
     public function setUserIdAndRequestedUri(int $userId, string $requestedURI): void
@@ -73,18 +72,23 @@ class AuthorizationDicomWebService
         $availableRoles = array_intersect($this->availableRoles, $candidatesRoles);
 
         //If series requested and has been softdeleted, refuse access except supervisor is in available roles
-        if( !in_array(Constants::ROLE_SUPERVISOR, $availableRoles) && $this->level == "series" && $this->seriesEntity['deleted_at'] != null ){
+        if (!in_array(Constants::ROLE_SUPERVISOR, $availableRoles) && $this->level == "series" && $this->seriesEntity['deleted_at'] != null) {
             return false;
         }
 
-        foreach($availableRoles as $role){
+        foreach ($availableRoles as $role) {
 
-            //SK ON REDUPLIQUE BEACOUP DE REQUETTE SQL A REFLECHIR SI FAUT PAS DISSOCIER DE AUTHORIZATION VISIT SERVICE
-            $this->authorizationVisitService->setCurrentUserAndRole($this->userId, $role);
-            if( $this->authorizationVisitService->isVisitAllowed() ){
-                return true;
+            if (in_array($role, [Constants::ROLE_SUPERVISOR, Constants::ROLE_CONTROLLER, Constants::ROLE_INVESTIGATOR])) {
+                $this->authorizationVisitService->setCurrentUserAndRole($this->userId, $role);
+                if ($this->authorizationVisitService->isVisitAllowed()) {
+                    return true;
+                };
             };
 
+            if ($role === Constants::ROLE_REVIEWER) {
+                //Une des visites du patients doit etre en attente de review
+                return true;
+            }
         }
 
         return false;
@@ -96,21 +100,17 @@ class AuthorizationDicomWebService
      */
     private function getUID(string $requestedURI, string $level): string
     {
-
         $studySubString = strstr($requestedURI, "/" . $level . "/");
         $studySubString = str_replace("/" . $level . "/", "", $studySubString);
 
         $endStudyUIDPosition = strpos($studySubString, "/");
 
-        if($endStudyUIDPosition){
+        if ($endStudyUIDPosition) {
             $studyUID = substr($studySubString, 0, $endStudyUIDPosition);
-        }else{
+        } else {
             $studyUID = $studySubString;
         };
 
         return $studyUID;
     }
-
-
-
 }

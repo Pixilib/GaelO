@@ -49,10 +49,10 @@ class AuthorizationVisitService {
     public function isVisitAllowed(): bool {
         //Check that called Role exists for users and visit is not deleted
         if ($this->requestedRole === Constants::ROLE_REVIEWER) {
-            //SK Ici pb d'acces va se poser pour les etude ancillaire, le review aviaible va dependre du scope d'etude
-            $this->visitRepository->isVisitAvailableForReview($this->visitId, $this->patientStudy, $this->userId);
-
-            return $this->authorizationPatientService->isPatientAllowed();
+            //SK ICI DEVRAIT ETRE LIMITE AUX PATIENT QUI ONT UNE VISIT QUI ATTEND UNE REVIEW DANS L EDUTE
+            //NECESSITE D INJECTER LE STUDYNAME ICI POUR LES ETUDES ANCILLAIRES
+            //Check Role exist and parent patient has one awaiting visit
+            return $this->authorizationPatientService->isPatientAllowed() && $this->visitRepository->isParentPatientHavingOneVisitAwaitingReview($this->visitId, $this->patientStudy, $this->userId);
         } else if ($this->requestedRole === Constants::ROLE_CONTROLLER) {
             //For controller controller role should be allows and visit QC status be not done or awaiting definitive conclusion
             $allowedControllerStatus = array(Constants::QUALITY_CONTROL_NOT_DONE, Constants::QUALITY_CONTROL_WAIT_DEFINITIVE_CONCLUSION);
