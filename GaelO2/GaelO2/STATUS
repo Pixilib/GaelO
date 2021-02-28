@@ -31,7 +31,6 @@ Reviews From Visits (GET)
 
 Salim TODO :
 FrontEnd : checker safety lien patient/Usr - uploader
-Studies / Series DICOM => Passer la clé primaire à Instance UID (le orthancID ne devient qu'une donnée associée)
 Revoir DicowWeb Authorisation Service
 Creatable Visit : Manque Study Custom Logic (+dans front skip visites optionnelles ?)
 

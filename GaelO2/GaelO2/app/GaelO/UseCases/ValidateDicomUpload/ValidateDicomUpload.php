@@ -10,7 +10,7 @@ use App\GaelO\Interfaces\TrackerRepositoryInterface;
 use App\GaelO\Services\AuthorizationVisitService;
 use App\GaelO\Services\MailServices;
 use App\GaelO\Services\OrthancService;
-use App\GaelO\Services\RegisterOrthancStudyService;
+use App\GaelO\Services\RegisterDicomStudyService;
 use App\GaelO\Services\TusService;
 use App\GaelO\Services\VisitService;
 use App\GaelO\Util;
@@ -22,7 +22,7 @@ class ValidateDicomUpload{
     private AuthorizationVisitService $authorizationService;
     private TusService $tusService;
     private OrthancService $orthancService;
-    private RegisterOrthancStudyService $registerOrthancStudyService;
+    private RegisterDicomStudyService $registerDicomStudyService;
     private VisitService $visitService;
     private TrackerRepositoryInterface $trackerRepositoryInterface;
     private MailServices $mailServices;
@@ -30,13 +30,13 @@ class ValidateDicomUpload{
     public function __construct(AuthorizationVisitService $authorizationService,
                         TusService $tusService,
                         OrthancService $orthancService,
-                        RegisterOrthancStudyService $registerOrthancStudyService,
+                        RegisterDicomStudyService $registerDicomStudyService,
                         VisitService $visitService,
                         TrackerRepositoryInterface $trackerRepositoryInterface,
                         MailServices $mailServices)
     {
         $this->authorizationService = $authorizationService;
-        $this->registerOrthancStudyService = $registerOrthancStudyService;
+        $this->registerDicomStudyService = $registerDicomStudyService;
         $this->orthancService = $orthancService;
         $this->visitService = $visitService;
         $this->tusService = $tusService;
@@ -120,7 +120,7 @@ class ValidateDicomUpload{
             }
 
             //Fill DB with studies /series information
-            $this->registerOrthancStudyService->setData(
+            $this->registerDicomStudyService->setData(
                 $validateDicomUploadRequest->visitId,
                 $studyName,
                 $validateDicomUploadRequest->currentUserId,
@@ -128,7 +128,7 @@ class ValidateDicomUpload{
                 $validateDicomUploadRequest->originalOrthancId
             );
 
-            $this->registerOrthancStudyService->execute();
+            $this->registerDicomStudyService->execute();
 
             //Change Visit status
             $this->visitService->updateUploadStatus(Constants::UPLOAD_STATUS_DONE);

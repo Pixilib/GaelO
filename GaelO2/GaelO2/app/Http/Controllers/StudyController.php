@@ -6,7 +6,6 @@ use App\GaelO\UseCases\CreateStudy\CreateStudy;
 use App\GaelO\UseCases\CreateStudy\CreateStudyRequest;
 use App\GaelO\UseCases\CreateStudy\CreateStudyResponse;
 use App\GaelO\UseCases\DeleteStudy\DeleteStudy;
-use App\GaelO\UseCases\DeleteStudy\DeleteStudyQuery;
 use App\GaelO\UseCases\DeleteStudy\DeleteStudyRequest;
 use App\GaelO\UseCases\DeleteStudy\DeleteStudyResponse;
 use App\GaelO\UseCases\GetKnownOrthancID\GetKnownOrthancID;

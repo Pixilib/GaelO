@@ -36,7 +36,7 @@ class DeleteSeries{
                 throw new GaelOBadRequestException("A reason must be specified");
             }
 
-            $seriesData = $this->dicomSeriesService->getSeriesBySeriesInstanceUID($deleteSeriesRequest->seriesInstanceUID, false);
+            $seriesData = $this->dicomSeriesService->getDicomSeries($deleteSeriesRequest->seriesInstanceUID, false);
             $visitId = $seriesData['dicom_study']['visit_id'];
 
             $visitContext = $this->visitRepositoryInterface->getVisitContext($visitId);

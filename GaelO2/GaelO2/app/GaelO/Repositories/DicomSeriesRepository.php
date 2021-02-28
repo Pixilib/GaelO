@@ -2,43 +2,35 @@
 
 namespace App\GaelO\Repositories;
 
-use App\GaelO\Interfaces\OrthancSeriesRepositoryInterface;
+use App\GaelO\Interfaces\DicomSeriesRepositoryInterface;
 use App\GaelO\Util;
 use App\Models\DicomSeries;
 
-class OrthancSeriesRepository implements OrthancSeriesRepositoryInterface {
+class DicomSeriesRepository implements DicomSeriesRepositoryInterface {
 
 
-    public function __construct(DicomSeries $orthancSeries){
-        $this->orthancSeries = $orthancSeries;
+    public function __construct(DicomSeries $dicomSeries){
+        $this->dicomSeries = $dicomSeries;
     }
 
     private function create(array $data) : void {
-        $orthancSeries = new DicomSeries();
-        $model = Util::fillObject($data, $orthancSeries);
+        $dicomSeries = new DicomSeries();
+        $model = Util::fillObject($data, $dicomSeries);
         $model->save();
     }
 
-    private function update($orthancSeriesID, array $data) : void {
-        $model = $this->orthancSeries->find($orthancSeriesID);
+    private function update($seriesInstanceUID, array $data) : void {
+        $model = $this->dicomSeries->find($seriesInstanceUID);
         $model = Util::fillObject($data, $model);
         $model->save();
     }
 
-    public function find($orthancSeriesID) : array {
-        return $this->orthancSeries->findOrFail($orthancSeriesID)->toArray();
+    public function deleteSeries(string $seriesInstanceUID) : void {
+        $this->dicomSeries->where('series_uid',$seriesInstanceUID)->sole()->delete();
     }
 
-    public function delete($orthancSeriesID) : void {
-        $this->orthancSeries->find($orthancSeriesID)->delete();
-    }
-
-    public function deletebySeriesInstanceUID(string $seriesInstanceUID) : void {
-        $this->orthancSeries->where('series_uid',$seriesInstanceUID)->sole()->delete();
-    }
-
-    public function reactivateBySeriesInstanceUID(string $seriesInstanceUID) : void {
-        $this->orthancSeries->withTrashed()->where('series_uid',$seriesInstanceUID)->sole()->restore();
+    public function reactivateSeries(string $seriesInstanceUID) : void {
+        $this->dicomSeries->withTrashed()->where('series_uid',$seriesInstanceUID)->sole()->restore();
     }
 
     public function addSeries(string $seriesOrthancID, string $studyInstanceUID, ?string $acquisitionDate,
@@ -112,14 +104,14 @@ class OrthancSeriesRepository implements OrthancSeriesRepositoryInterface {
     }
 
     public function isExistingSeriesInstanceUID(string $seriesInstanceUID) : bool {
-        return empty($this->orthancSeries->find($seriesInstanceUID)) ? false : true;
+        return empty($this->dicomSeries->find($seriesInstanceUID)) ? false : true;
     }
 
-    public function getSeriesBySeriesInstanceUID(string $seriesInstanceUID, bool $includeDeleted) : array {
+    public function getSeries(string $seriesInstanceUID, bool $includeDeleted) : array {
         if($includeDeleted){
-            $series = $this->orthancSeries->with('dicomStudy')->where('series_uid',$seriesInstanceUID)->withTrashed()->sole()->toArray();
+            $series = $this->dicomSeries->with('dicomStudy')->where('series_uid',$seriesInstanceUID)->withTrashed()->sole()->toArray();
         }else{
-            $series = $this->orthancSeries->with('dicomStudy')->where('series_uid',$seriesInstanceUID)->sole()->toArray();
+            $series = $this->dicomSeries->with('dicomStudy')->where('series_uid',$seriesInstanceUID)->sole()->toArray();
         }
 
         return $series;
@@ -127,7 +119,7 @@ class OrthancSeriesRepository implements OrthancSeriesRepositoryInterface {
     }
 
     public function reactivateSeriesOfStudyInstanceUID (string $studyInstanceUID) : void {
-        $this->orthancSeries->where('study_uid',$studyInstanceUID)->withTrashed()->restore();
+        $this->dicomSeries->where('study_uid',$studyInstanceUID)->withTrashed()->restore();
     }
 
 }

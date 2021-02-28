@@ -20,7 +20,7 @@ interface DicomStudyRepositoryInterface {
 
     public function isExistingOriginalOrthancStudyID(string $orthancStudyID, string $studyName) : bool ;
 
-    public function isExistingStudyInstantUID(string $orthancStudyID) : bool ;
+    public function isExistingStudyInstanceUID(string $studyInstanceUID) : bool ;
 
     public function getStudyInstanceUidFromVisit(int $visitID) : string ;
 
@@ -28,7 +28,7 @@ interface DicomStudyRepositoryInterface {
 
     public function getDicomsDataFromVisit(int $visitID, bool $withDeleted) : array ;
 
-    public function getOrthancStudyByStudyInstanceUID(string $studyInstanceUID, bool $includeDeleted) : array ;
+    public function getDicomStudy(string $studyInstanceUID, bool $includeDeleted) : array ;
 
     public function getChildSeries(string $studyInstanceUID, bool $deleted) : array ;
 

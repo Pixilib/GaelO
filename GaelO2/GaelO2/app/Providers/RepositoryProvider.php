@@ -5,7 +5,7 @@ namespace App\Providers;
 use App\GaelO\Interfaces\CenterRepositoryInterface;
 use App\GaelO\Interfaces\CountryRepositoryInterface;
 use App\GaelO\Interfaces\DocumentationRepositoryInterface;
-use App\GaelO\Interfaces\OrthancSeriesRepositoryInterface;
+use App\GaelO\Interfaces\DicomSeriesRepositoryInterface;
 use App\GaelO\Interfaces\DicomStudyRepositoryInterface;
 use App\GaelO\Interfaces\PatientRepositoryInterface;
 use App\GaelO\Interfaces\ReviewRepositoryInterface;
@@ -19,7 +19,7 @@ use App\GaelO\Interfaces\VisitTypeRepositoryInterface;
 use App\GaelO\Repositories\CenterRepository;
 use App\GaelO\Repositories\CountryRepository;
 use App\GaelO\Repositories\DocumentationRepository;
-use App\GaelO\Repositories\OrthancSeriesRepository;
+use App\GaelO\Repositories\DicomSeriesRepository;
 use App\GaelO\Repositories\DicomStudyRepository;
 use App\GaelO\Repositories\PatientRepository;
 use App\GaelO\Repositories\ReviewRepository;
@@ -55,7 +55,7 @@ class RepositoryProvider extends ServiceProvider
         $this->app->bind(PatientRepositoryInterface::class, PatientRepository::class);
         $this->app->bind(DicomStudyRepositoryInterface::class, DicomStudyRepository::class);
         $this->app->bind(ReviewStatusRepositoryInterface::class, ReviewStatusRepository::class);
-        $this->app->bind(OrthancSeriesRepositoryInterface::class, OrthancSeriesRepository::class);
+        $this->app->bind(DicomSeriesRepositoryInterface::class, DicomSeriesRepository::class);
         $this->app->bind(ReviewRepositoryInterface::class, ReviewRepository::class);
     }
 

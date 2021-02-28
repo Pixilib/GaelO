@@ -2,11 +2,7 @@
 
 namespace App\GaelO\Interfaces;
 
-interface OrthancSeriesRepositoryInterface {
-
-    public function find($orthancSeriesID) : array ;
-
-    public function delete($orthancSeriesID) : void ;
+interface DicomSeriesRepositoryInterface {
 
     public function addSeries(string $seriesOrthancID, string $studyInstanceUID, ?string $acquisitionDate,
                             ?string $acquisitionTime, ?string $modality, ?string $seriesDescription,
@@ -24,13 +20,13 @@ interface OrthancSeriesRepositoryInterface {
             int $seriesDiskSize, int $seriesUncompressedDiskSize, ?string $manufacturer,
             ?string $modelName ) :void ;
 
-    public function deletebySeriesInstanceUID(string $seriesInstanceUID) : void ;
+    public function deleteSeries(string $seriesInstanceUID) : void ;
 
-    public function reactivateBySeriesInstanceUID(string $seriesInstanceUID) : void ;
+    public function reactivateSeries(string $seriesInstanceUID) : void ;
 
     public function isExistingSeriesInstanceUID(string $seriesInstanceUID) : bool ;
 
-    public function getSeriesBySeriesInstanceUID(string $seriesInstanceUID, bool $includeDeleted) : array ;
+    public function getSeries(string $seriesInstanceUID, bool $includeDeleted) : array ;
 
     public function reactivateSeriesOfStudyInstanceUID (string $studyInstanceUID) : void ;
 

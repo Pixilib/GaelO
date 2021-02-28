@@ -5,24 +5,24 @@ namespace App\GaelO\Services;
 use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOBadRequestException;
 use App\GaelO\Interfaces\DicomStudyRepositoryInterface;
-use App\GaelO\Interfaces\OrthancSeriesRepositoryInterface;
+use App\GaelO\Interfaces\DicomSeriesRepositoryInterface;
 use App\GaelO\Interfaces\ReviewRepositoryInterface;
 
 class DicomSeriesService
 {
 
-    private OrthancSeriesRepositoryInterface $orthancSeriesRepositoryInterface;
+    private DicomSeriesRepositoryInterface $dicomSeriesRepositoryInterface;
     private DicomStudyRepositoryInterface $dicomStudyRepositoryInterface;
     private VisitService $visitService;
 
     public function __construct(
-        OrthancSeriesRepositoryInterface $orthancSeriesRepositoryInterface,
+        DicomSeriesRepositoryInterface $dicomSeriesRepositoryInterface,
         DicomStudyRepositoryInterface $dicomStudyRepositoryInterface,
         ReviewRepositoryInterface $reviewRepositoryInterface,
         VisitService $visitService
     ) {
 
-        $this->orthancSeriesRepositoryInterface = $orthancSeriesRepositoryInterface;
+        $this->dicomSeriesRepositoryInterface = $dicomSeriesRepositoryInterface;
         $this->dicomStudyRepositoryInterface = $dicomStudyRepositoryInterface;
         $this->visitService = $visitService;
         $this->reviewRepositoryInterface = $reviewRepositoryInterface;
@@ -31,11 +31,11 @@ class DicomSeriesService
     public function deleteSeries(string $seriesInstanceUID, string $role)
     {
 
-        $seriesData = $this->orthancSeriesRepositoryInterface->getSeriesBySeriesInstanceUID($seriesInstanceUID, false);
+        $seriesData = $this->dicomSeriesRepositoryInterface->getSeries($seriesInstanceUID, false);
         $studyInstanceUID = $seriesData['dicom_study']['study_uid'];
         $visitId = $seriesData['dicom_study']['visit_id'];
 
-        $this->orthancSeriesRepositoryInterface->deletebySeriesInstanceUID($seriesInstanceUID);
+        $this->dicomSeriesRepositoryInterface->deleteSeries($seriesInstanceUID);
 
         $remainingSeries = $this->dicomStudyRepositoryInterface->getChildSeries($studyInstanceUID, false);
 
@@ -53,21 +53,21 @@ class DicomSeriesService
 
 
 
-    public function getSeriesBySeriesInstanceUID(string $seriesInstanceUID, bool $includeDeleted)
+    public function getDicomSeries(string $seriesInstanceUID, bool $includeDeleted)
     {
-        return $this->orthancSeriesRepositoryInterface->getSeriesBySeriesInstanceUID($seriesInstanceUID, $includeDeleted);
+        return $this->dicomSeriesRepositoryInterface->getSeries($seriesInstanceUID, $includeDeleted);
     }
 
-    public function getStudyByStudyInstanceUID(string $studyInstanceUID, bool $includeDeleted): array
+    public function getDicomStudy(string $studyInstanceUID, bool $includeDeleted): array
     {
-        return $this->dicomStudyRepositoryInterface->getOrthancStudyByStudyInstanceUID($studyInstanceUID, $includeDeleted);
+        return $this->dicomStudyRepositoryInterface->getDicomStudy($studyInstanceUID, $includeDeleted);
     }
 
-    public function reactivateOrthancStudyByStudyInstanceUID(string $studyInstanceUID): void
+    public function reactivateDicomStudy(string $studyInstanceUID): void
     {
 
         //Get data from StudyInstanceUID
-        $studyData = $this->dicomStudyRepositoryInterface->getOrthancStudyByStudyInstanceUID($studyInstanceUID, true);
+        $studyData = $this->dicomStudyRepositoryInterface->getDicomStudy($studyInstanceUID, true);
 
         //Check no other activated study for this visit
         if ($this->dicomStudyRepositoryInterface->isExistingDicomStudyForVisit($studyData['visit_id'])) {
@@ -77,7 +77,7 @@ class DicomSeriesService
         //reactivate study level
         $this->dicomStudyRepositoryInterface->reactivateByStudyInstanceUID($studyInstanceUID);
         //Reactivate child series
-        $this->orthancSeriesRepositoryInterface->reactivateSeriesOfStudyInstanceUID($studyData['study_uid']);
+        $this->dicomSeriesRepositoryInterface->reactivateSeriesOfStudyInstanceUID($studyData['study_uid']);
         //Update upload status to Done
         $this->visitService->setVisitId($studyData['visit_id']);
         $this->visitService->updateUploadStatus(Constants::UPLOAD_STATUS_DONE);

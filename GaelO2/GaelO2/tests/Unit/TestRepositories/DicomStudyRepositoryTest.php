@@ -119,11 +119,11 @@ class DicomStudyRepositoryTest extends TestCase
     {
         $orthancStudy = DicomStudy::factory()->create();
 
-        $existing = $this->dicomStudyRepository->isExistingStudyInstantUID($orthancStudy->study_uid);
+        $existing = $this->dicomStudyRepository->isExistingStudyInstanceUID($orthancStudy->study_uid);
         $this->assertTrue($existing);
 
         $orthancStudy->delete();
-        $existing = $this->dicomStudyRepository->isExistingStudyInstantUID($orthancStudy->study_uid);
+        $existing = $this->dicomStudyRepository->isExistingStudyInstanceUID($orthancStudy->study_uid);
         $this->assertFalse($existing);
     }
 
@@ -168,14 +168,14 @@ class DicomStudyRepositoryTest extends TestCase
         $orthancStudies = DicomStudy::factory()->count(5)->create();
         $orthancStudies->get(3)->delete();
 
-        $answer = $this->dicomStudyRepository->getOrthancStudyByStudyInstanceUID($orthancStudies->get(4)->study_uid, false);
+        $answer = $this->dicomStudyRepository->getDicomStudy($orthancStudies->get(4)->study_uid, false);
         $this->assertEquals($orthancStudies->get(4)->orthanc_id, $answer['orthanc_id']);
 
-        $answer = $this->dicomStudyRepository->getOrthancStudyByStudyInstanceUID($orthancStudies->get(3)->study_uid, true);
+        $answer = $this->dicomStudyRepository->getDicomStudy($orthancStudies->get(3)->study_uid, true);
         $this->assertEquals($orthancStudies->get(3)->orthanc_id, $answer['orthanc_id']);
 
         $this->expectException(ModelNotFoundException::class);
-        $answer = $this->dicomStudyRepository->getOrthancStudyByStudyInstanceUID($orthancStudies->get(3)->study_uid, false);
+        $answer = $this->dicomStudyRepository->getDicomStudy($orthancStudies->get(3)->study_uid, false);
     }
 
     public function testGetChildSeries()

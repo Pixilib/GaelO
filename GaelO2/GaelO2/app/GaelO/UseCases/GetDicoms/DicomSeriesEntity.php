@@ -2,7 +2,7 @@
 
 namespace App\GaelO\UseCases\GetDicoms;
 
-class OrthancSeriesEntity {
+class DicomSeriesEntity {
     public string $seriesInstanceUID;
     public bool $deleted;
     public ?string $acquisitionDate;
@@ -24,7 +24,7 @@ class OrthancSeriesEntity {
     public int $diskSize;
 
     public static function fillFromDBReponseArray(array $array){
-        $orthancSeries  = new OrthancSeriesEntity();
+        $orthancSeries  = new DicomSeriesEntity();
         $orthancSeries->seriesInstanceUID = $array['series_uid'];
         $orthancSeries->deleted = $array['deleted_at'] !== null;
         $orthancSeries->acquisitionDate = $array['acquisition_date'];

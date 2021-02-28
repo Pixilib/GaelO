@@ -31,9 +31,9 @@ class GetDicoms{
             $responseArray = [];
 
             foreach($data as $study){
-                $studyEntity = OrthancStudyEntity::fillFromDBReponseArray($study);
+                $studyEntity = DicomStudyEntity::fillFromDBReponseArray($study);
                 foreach($study['dicom_series'] as $series){
-                    $seriesEntity = OrthancSeriesEntity::fillFromDBReponseArray($series);
+                    $seriesEntity = DicomSeriesEntity::fillFromDBReponseArray($series);
                     $studyEntity->series[] = $seriesEntity;
                 }
 

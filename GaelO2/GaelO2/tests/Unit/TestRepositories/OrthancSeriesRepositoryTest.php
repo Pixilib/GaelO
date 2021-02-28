@@ -2,7 +2,7 @@
 
 namespace Tests\Unit\TestRepositories;
 
-use App\GaelO\Repositories\OrthancSeriesRepository;
+use App\GaelO\Repositories\DicomSeriesRepository;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\TestCase;
@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class OrthancSeriesRepositoryTest extends TestCase
 {
-    private OrthancSeriesRepository $orthancSeriesRepository;
+    private DicomSeriesRepository $orthancSeriesRepository;
 
     use DatabaseMigrations {
         runDatabaseMigrations as baseRunDatabaseMigrations;
@@ -31,7 +31,7 @@ class OrthancSeriesRepositoryTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->orthancSeriesRepository = new OrthancSeriesRepository(new DicomSeries());
+        $this->orthancSeriesRepository = new DicomSeriesRepository(new DicomSeries());
         $this->orthancStudy = DicomStudy::factory()->create();
     }
 
@@ -81,15 +81,15 @@ class OrthancSeriesRepositoryTest extends TestCase
 
         $orthancSeries = DicomSeries::factory()->create();
 
-        $seriesEntity = $this->orthancSeriesRepository->getSeriesBySeriesInstanceUID($orthancSeries->series_uid, false);
+        $seriesEntity = $this->orthancSeriesRepository->getSeries($orthancSeries->series_uid, false);
         $this->assertNotNull($seriesEntity);
 
         $orthancSeries->delete();
-        $seriesEntity2 = $this->orthancSeriesRepository->getSeriesBySeriesInstanceUID($orthancSeries->series_uid, true);
+        $seriesEntity2 = $this->orthancSeriesRepository->getSeries($orthancSeries->series_uid, true);
         $this->assertNotNull($seriesEntity2);
 
         $this->expectException(ModelNotFoundException::class);
-        $seriesEntity2 = $this->orthancSeriesRepository->getSeriesBySeriesInstanceUID($orthancSeries->series_uid, false);
+        $seriesEntity2 = $this->orthancSeriesRepository->getSeries($orthancSeries->series_uid, false);
     }
 
     public function testReactivateSeriesOfOrthancStudyId(){

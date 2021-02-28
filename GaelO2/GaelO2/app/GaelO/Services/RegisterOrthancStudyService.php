@@ -17,7 +17,7 @@
 namespace App\GaelO\Services;
 
 use App\GaelO\Exceptions\GaelOBadRequestException;
-use App\GaelO\Interfaces\OrthancSeriesRepositoryInterface;
+use App\GaelO\Interfaces\DicomSeriesRepositoryInterface;
 use App\GaelO\Interfaces\DicomStudyRepositoryInterface;
 use App\GaelO\Services\OrthancService;
 use App\GaelO\Services\StoreObjects\OrthancSeries;
@@ -30,12 +30,12 @@ use DateTime;
  * Used in the validation process of the upload
  */
 
-class RegisterOrthancStudyService
+class RegisterDicomStudyService
 {
 
     private OrthancService $orthancService;
     private DicomStudyRepositoryInterface $dicomStudyRepositoryInterface;
-    private OrthancSeriesRepositoryInterface $orthancSeriesRepositoryInterface;
+    private DicomSeriesRepositoryInterface $dicomSeriesRepositoryInterface;
 
     private int $visitId;
     private int $userId;
@@ -43,11 +43,11 @@ class RegisterOrthancStudyService
     private string $studyName;
 
 
-    public function __construct(OrthancService $orthancService, DicomStudyRepositoryInterface $dicomStudyRepositoryInterface, OrthancSeriesRepositoryInterface $orthancSeriesRepositoryInterface)
+    public function __construct(OrthancService $orthancService, DicomStudyRepositoryInterface $dicomStudyRepositoryInterface, DicomSeriesRepositoryInterface $dicomSeriesRepositoryInterface)
     {
         $this->orthancService = $orthancService;
         $this->dicomStudyRepositoryInterface = $dicomStudyRepositoryInterface;
-        $this->orthancSeriesRepositoryInterface = $orthancSeriesRepositoryInterface;
+        $this->dicomSeriesRepositoryInterface = $dicomSeriesRepositoryInterface;
     }
 
     public function setData(int $visitId, string $studyName, string $userId, string $studyOrthancId, string $originalStudyOrthancId)
@@ -96,7 +96,7 @@ class RegisterOrthancStudyService
         $studyAcquisitionDate = $this->parseDateTime($studyOrthancObject->studyDate, 1);
         $studyAcquisitionTime = $this->parseDateTime($studyOrthancObject->studyTime, 2);
 
-        if ($this->dicomStudyRepositoryInterface->isExistingStudyInstantUID($studyOrthancObject->studyInstanceUID)) {
+        if ($this->dicomStudyRepositoryInterface->isExistingStudyInstanceUID($studyOrthancObject->studyInstanceUID)) {
 
             $this->dicomStudyRepositoryInterface->updateStudy(
                 $studyOrthancObject->studyOrthancId,
@@ -150,9 +150,9 @@ class RegisterOrthancStudyService
         $serieAcquisitionTime = $this->parseDateTime($series->seriesTime, 2);
         $injectedDateTime =$this->parseDateTime($series->injectedDateTime, 0);
 
-        if ($this->orthancSeriesRepositoryInterface->isExistingSeriesInstanceUID($series->seriesInstanceUID)) {
+        if ($this->dicomSeriesRepositoryInterface->isExistingSeriesInstanceUID($series->seriesInstanceUID)) {
 
-            $this->orthancSeriesRepositoryInterface->updateSeries(
+            $this->dicomSeriesRepositoryInterface->updateSeries(
                 $series->serieOrthancID,
                 $serieAcquisitionDate,
                 $serieAcquisitionTime,
@@ -174,7 +174,7 @@ class RegisterOrthancStudyService
                 $series->modelName
             );
         } else {
-            $this->orthancSeriesRepositoryInterface->addSeries(
+            $this->dicomSeriesRepositoryInterface->addSeries(
                 $series->serieOrthancID,
                 $studyInstanceUID,
                 $serieAcquisitionDate,
