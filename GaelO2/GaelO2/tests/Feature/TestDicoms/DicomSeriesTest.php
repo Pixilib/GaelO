@@ -3,8 +3,8 @@
 namespace Tests\Feature\TestDicoms;
 
 use App\GaelO\Constants\Constants;
-use App\Models\OrthancSeries;
-use App\Models\OrthancStudy;
+use App\Models\DicomSeries;
+use App\Models\DicomStudy;
 use App\Models\Review;
 use App\Models\Visit;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
@@ -32,9 +32,9 @@ class DicomSeriesTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->orthancSeries = OrthancSeries::factory()->create();
-        $this->studyName = $this->orthancSeries->orthancStudy->visit->patient->study_name;
-        $visit = $this->orthancSeries->orthancStudy->visit;
+        $this->dicomSeries = DicomSeries::factory()->create();
+        $this->studyName = $this->dicomSeries->dicomStudy->visit->patient->study_name;
+        $visit = $this->dicomSeries->dicomStudy->visit;
 
         //Fill investigator Form
         $this->investigatorForm = Review::factory()->studyName($this->studyName)->visitId($visit->id)->validated()->create();
@@ -42,8 +42,8 @@ class DicomSeriesTest extends TestCase
         $visit->save();
 
         //Set visit QC at Not Done
-        $this->orthancSeries->orthancStudy->visit->state_quality_control = Constants::QUALITY_CONTROL_NOT_DONE;
-        $this->orthancSeries->orthancStudy->visit->save();
+        $this->dicomSeries->dicomStudy->visit->state_quality_control = Constants::QUALITY_CONTROL_NOT_DONE;
+        $this->dicomSeries->dicomStudy->visit->save();
     }
 
     public function testDeleteSeries()
@@ -51,7 +51,7 @@ class DicomSeriesTest extends TestCase
         $userId = AuthorizationTools::actAsAdmin(false);
         AuthorizationTools::addRoleToUser($userId, Constants::ROLE_SUPERVISOR, $this->studyName);
         $payload = ['reason' => 'wrong series'];
-        $response = $this->delete('api/dicom-series/' . $this->orthancSeries->series_uid . '?role=Supervisor', $payload);
+        $response = $this->delete('api/dicom-series/' . $this->dicomSeries->series_uid . '?role=Supervisor', $payload);
         $response->assertStatus(200);
     }
 
@@ -62,19 +62,19 @@ class DicomSeriesTest extends TestCase
         AuthorizationTools::addRoleToUser($userId, Constants::ROLE_SUPERVISOR, $this->studyName);
 
         $payload = ['reason' => 'wrong series'];
-        $this->delete('api/dicom-series/' . $this->orthancSeries->series_uid . '?role=Supervisor', $payload)->assertStatus(200);
-        $orthancStudyEntity = OrthancStudy::withTrashed()->find($this->orthancSeries->orthancStudy->orthanc_id);
-        $visitEntity = Visit::find($this->orthancSeries->orthancStudy->visit->id);
+        $this->delete('api/dicom-series/' . $this->dicomSeries->series_uid . '?role=Supervisor', $payload)->assertStatus(200);
+        $dicomStudyEntity = DicomStudy::withTrashed()->find($this->dicomSeries->dicomStudy->study_uid);
+        $visitEntity = Visit::find($this->dicomSeries->dicomStudy->visit->id);
 
 
 
         //Expect study to be deleted
-        $this->assertNotNull($orthancStudyEntity['deleted_at']);
+        $this->assertNotNull($dicomStudyEntity['deleted_at']);
         $this->assertEquals(Constants::INVESTIGATOR_FORM_DRAFT, $visitEntity['state_investigator_form']);
         $this->assertEquals(Constants::UPLOAD_STATUS_NOT_DONE, $visitEntity['upload_status']);
 
         //Check Investigator form has been unlocked
-        $localForm = Review::where('study_name', $this->studyName)->where('visit_id', $this->orthancSeries->orthancStudy->visit->id)->where('local', true)->sole();
+        $localForm = Review::where('study_name', $this->studyName)->where('visit_id', $this->dicomSeries->dicomStudy->visit->id)->where('local', true)->sole();
         $this->assertFalse(boolval($localForm['validated']));
     }
 
@@ -83,7 +83,7 @@ class DicomSeriesTest extends TestCase
         AuthorizationTools::actAsAdmin(false);
 
         $payload = ['reason' => 'wrong series'];
-        $response = $this->delete('api/dicom-series/' . $this->orthancSeries->series_uid . '?role=Supervisor', $payload);
+        $response = $this->delete('api/dicom-series/' . $this->dicomSeries->series_uid . '?role=Supervisor', $payload);
         $response->assertStatus(403);
     }
 
@@ -93,7 +93,7 @@ class DicomSeriesTest extends TestCase
         AuthorizationTools::addRoleToUser($userId, Constants::ROLE_SUPERVISOR, $this->studyName);
 
         $payload = [];
-        $response = $this->delete('api/dicom-series/' . $this->orthancSeries->series_uid . '?role=Supervisor', $payload);
+        $response = $this->delete('api/dicom-series/' . $this->dicomSeries->series_uid . '?role=Supervisor', $payload);
         $response->assertStatus(400);
     }
 
@@ -103,11 +103,11 @@ class DicomSeriesTest extends TestCase
         AuthorizationTools::addRoleToUser($userId, Constants::ROLE_SUPERVISOR, $this->studyName);
 
         //Set visit QC at Accepted
-        $this->orthancSeries->orthancStudy->visit->state_quality_control = Constants::QUALITY_CONTROL_ACCEPTED;
-        $this->orthancSeries->orthancStudy->visit->save();
+        $this->dicomSeries->dicomStudy->visit->state_quality_control = Constants::QUALITY_CONTROL_ACCEPTED;
+        $this->dicomSeries->dicomStudy->visit->save();
 
         $payload = ['reason' => 'wrong series'];
-        $response = $this->delete('api/dicom-series/' . $this->orthancSeries->series_uid . '?role=Supervisor', $payload);
+        $response = $this->delete('api/dicom-series/' . $this->dicomSeries->series_uid . '?role=Supervisor', $payload);
         $response->assertStatus(403);
     }
 
@@ -116,8 +116,8 @@ class DicomSeriesTest extends TestCase
         $userId = AuthorizationTools::actAsAdmin(false);
         AuthorizationTools::addRoleToUser($userId, Constants::ROLE_SUPERVISOR, $this->studyName);
 
-        $this->orthancSeries->delete();
-        $response = $this->patch('api/dicom-series/' . $this->orthancSeries->series_uid, []);
+        $this->dicomSeries->delete();
+        $response = $this->patch('api/dicom-series/' . $this->dicomSeries->series_uid, []);
         $response->assertStatus(200);
     }
 
@@ -125,8 +125,8 @@ class DicomSeriesTest extends TestCase
     {
         AuthorizationTools::actAsAdmin(false);
 
-        $this->orthancSeries->delete();
-        $response = $this->patch('api/dicom-series/' . $this->orthancSeries->series_uid, []);
+        $this->dicomSeries->delete();
+        $response = $this->patch('api/dicom-series/' . $this->dicomSeries->series_uid, []);
         $response->assertStatus(403);
     }
 
@@ -135,8 +135,8 @@ class DicomSeriesTest extends TestCase
         $userId = AuthorizationTools::actAsAdmin(false);
         AuthorizationTools::addRoleToUser($userId, Constants::ROLE_SUPERVISOR, $this->studyName);
 
-        $this->orthancSeries->orthancStudy->delete();
-        $response = $this->patch('api/dicom-series/' . $this->orthancSeries->series_uid, []);
+        $this->dicomSeries->dicomStudy->delete();
+        $response = $this->patch('api/dicom-series/' . $this->dicomSeries->series_uid, []);
         $response->assertStatus(400);
     }
 
@@ -146,12 +146,12 @@ class DicomSeriesTest extends TestCase
         $userId = AuthorizationTools::actAsAdmin(false);
         AuthorizationTools::addRoleToUser($userId, Constants::ROLE_SUPERVISOR, $this->studyName);
 
-        $this->orthancSeries->orthancStudy->delete();
+        $this->dicomSeries->dicomStudy->delete();
         //At study deletion the investigator form is Draft or Not Done
-        $this->orthancSeries->orthancStudy->visit->state_investigator_form = Constants::INVESTIGATOR_FORM_DRAFT;
-        $this->orthancSeries->orthancStudy->visit->save();
+        $this->dicomSeries->dicomStudy->visit->state_investigator_form = Constants::INVESTIGATOR_FORM_DRAFT;
+        $this->dicomSeries->dicomStudy->visit->save();
 
-        $response = $this->patch('api/dicom-study/' . $this->orthancSeries->orthancStudy->study_uid);
+        $response = $this->patch('api/dicom-study/' . $this->dicomSeries->dicomStudy->study_uid);
         $response->assertStatus(200);
     }
 
@@ -161,8 +161,8 @@ class DicomSeriesTest extends TestCase
 
         AuthorizationTools::actAsAdmin(false);
 
-        $this->orthancSeries->orthancStudy->delete();
-        $response = $this->patch('api/dicom-study/' . $this->orthancSeries->orthancStudy->study_uid, []);
+        $this->dicomSeries->dicomStudy->delete();
+        $response = $this->patch('api/dicom-study/' . $this->dicomSeries->dicomStudy->study_uid, []);
         $response->assertStatus(403);
     }
 
@@ -173,7 +173,7 @@ class DicomSeriesTest extends TestCase
         $userId = AuthorizationTools::actAsAdmin(false);
         AuthorizationTools::addRoleToUser($userId, Constants::ROLE_SUPERVISOR, $this->studyName);
 
-        $response = $this->patch('api/dicom-study/' . $this->orthancSeries->orthancStudy->study_uid, []);
+        $response = $this->patch('api/dicom-study/' . $this->dicomSeries->dicomStudy->study_uid, []);
         $response->assertStatus(400);
     }
 }

@@ -38,11 +38,11 @@ class ReactivateDicomSeries{
 
             $seriesData = $this->orthancSeriesRepositoryInterface->getSeriesBySeriesInstanceUID($reactivateDicomSeriesRequest->seriesInstanceUID, true);
 
-            if($seriesData['orthanc_study'] === null){
+            if($seriesData['dicom_study'] === null){
                 throw new GaelOBadRequestException("Parent study is deactivated can't act on child series");
             }
 
-            $visitId = $seriesData['orthanc_study']['visit_id'];
+            $visitId = $seriesData['dicom_study']['visit_id'];
             $visitContext = $this->visitRepositoryInterface->getVisitContext($visitId);
 
             $this->checkAuthorization($reactivateDicomSeriesRequest->currentUserId, $visitId, $visitContext['state_quality_control']);

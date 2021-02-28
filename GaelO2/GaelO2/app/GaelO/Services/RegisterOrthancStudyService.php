@@ -16,10 +16,9 @@
 
 namespace App\GaelO\Services;
 
-use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOBadRequestException;
-use App\GaelO\Repositories\OrthancSeriesRepository;
-use App\GaelO\Repositories\OrthancStudyRepository;
+use App\GaelO\Interfaces\OrthancSeriesRepositoryInterface;
+use App\GaelO\Interfaces\DicomStudyRepositoryInterface;
 use App\GaelO\Services\OrthancService;
 use App\GaelO\Services\StoreObjects\OrthancSeries;
 use App\GaelO\Services\StoreObjects\OrthancStudy;
@@ -35,8 +34,8 @@ class RegisterOrthancStudyService
 {
 
     private OrthancService $orthancService;
-    private OrthancStudyRepository $orthancStudyRepository;
-    private OrthancSeriesRepository $orthancSeriesRepository;
+    private DicomStudyRepositoryInterface $dicomStudyRepositoryInterface;
+    private OrthancSeriesRepositoryInterface $orthancSeriesRepositoryInterface;
 
     private int $visitId;
     private int $userId;
@@ -44,11 +43,11 @@ class RegisterOrthancStudyService
     private string $studyName;
 
 
-    public function __construct(OrthancService $orthancService, OrthancStudyRepository $orthancStudyRepository, OrthancSeriesRepository $orthancSeriesRepository)
+    public function __construct(OrthancService $orthancService, DicomStudyRepositoryInterface $dicomStudyRepositoryInterface, OrthancSeriesRepositoryInterface $orthancSeriesRepositoryInterface)
     {
         $this->orthancService = $orthancService;
-        $this->orthancStudyRepository = $orthancStudyRepository;
-        $this->orthancSeriesRepository = $orthancSeriesRepository;
+        $this->dicomStudyRepositoryInterface = $dicomStudyRepositoryInterface;
+        $this->orthancSeriesRepositoryInterface = $orthancSeriesRepositoryInterface;
     }
 
     public function setData(int $visitId, string $studyName, string $userId, string $studyOrthancId, string $originalStudyOrthancId)
@@ -73,14 +72,14 @@ class RegisterOrthancStudyService
         $studyOrthancObject->retrieveStudyData();
 
         //Check that original OrthancID is unknown for this study
-        if ( ! $this->orthancStudyRepository->isExistingOriginalOrthancStudyID($this->originalStudyOrthancId, $this->studyName)) {
+        if ( ! $this->dicomStudyRepositoryInterface->isExistingOriginalOrthancStudyID($this->originalStudyOrthancId, $this->studyName)) {
 
             //Fill la database
             $this->addToDbStudy($studyOrthancObject);
 
             foreach ($studyOrthancObject->orthancSeries as $serie) {
                 //Fill each series in database
-                $this->addtoDbSerie($serie);
+                $this->addtoDbSerie($serie, $studyOrthancObject->studyInstanceUID);
             }
 
         } else {
@@ -97,9 +96,9 @@ class RegisterOrthancStudyService
         $studyAcquisitionDate = $this->parseDateTime($studyOrthancObject->studyDate, 1);
         $studyAcquisitionTime = $this->parseDateTime($studyOrthancObject->studyTime, 2);
 
-        if ($this->orthancStudyRepository->isExistingOrthancStudyID($studyOrthancObject->studyOrthancID)) {
+        if ($this->dicomStudyRepositoryInterface->isExistingStudyInstantUID($studyOrthancObject->studyInstanceUID)) {
 
-            $this->orthancStudyRepository->updateStudy(
+            $this->dicomStudyRepositoryInterface->updateStudy(
                 $studyOrthancObject->studyOrthancId,
                 $this->visitId,
                 $this->userId,
@@ -119,7 +118,7 @@ class RegisterOrthancStudyService
             );
         } else {
 
-            $this->orthancStudyRepository->addStudy(
+            $this->dicomStudyRepositoryInterface->addStudy(
                 $studyOrthancObject->studyOrthancID,
                 $this->visitId,
                 $this->userId,
@@ -144,18 +143,17 @@ class RegisterOrthancStudyService
      * Private function to write into the Orthanc_Series DB
      * @param Orthanc_Serie $serie
      */
-    private function addtoDbSerie(OrthancSeries $series)
+    private function addtoDbSerie(OrthancSeries $series, string $studyInstanceUID)
     {
 
         $serieAcquisitionDate = $this->parseDateTime($series->seriesDate, 1);
         $serieAcquisitionTime = $this->parseDateTime($series->seriesTime, 2);
         $injectedDateTime =$this->parseDateTime($series->injectedDateTime, 0);
 
-        if ($this->orthancSeriesRepository->isExistingOrthancSeriesID($series->serieOrthancID)) {
+        if ($this->orthancSeriesRepositoryInterface->isExistingSeriesInstanceUID($series->seriesInstanceUID)) {
 
-            $this->orthancSeriesRepository->updateSeries(
+            $this->orthancSeriesRepositoryInterface->updateSeries(
                 $series->serieOrthancID,
-                $series->parentStudyOrthancID,
                 $serieAcquisitionDate,
                 $serieAcquisitionTime,
                 $series->modality,
@@ -176,9 +174,9 @@ class RegisterOrthancStudyService
                 $series->modelName
             );
         } else {
-            $this->orthancSeriesRepository->addSeries(
+            $this->orthancSeriesRepositoryInterface->addSeries(
                 $series->serieOrthancID,
-                $series->parentStudyOrthancID,
+                $studyInstanceUID,
                 $serieAcquisitionDate,
                 $serieAcquisitionTime,
                 $series->modality,

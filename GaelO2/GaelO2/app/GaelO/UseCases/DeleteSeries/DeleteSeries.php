@@ -37,7 +37,7 @@ class DeleteSeries{
             }
 
             $seriesData = $this->dicomSeriesService->getSeriesBySeriesInstanceUID($deleteSeriesRequest->seriesInstanceUID, false);
-            $visitId = $seriesData['orthanc_study']['visit_id'];
+            $visitId = $seriesData['dicom_study']['visit_id'];
 
             $visitContext = $this->visitRepositoryInterface->getVisitContext($visitId);
 

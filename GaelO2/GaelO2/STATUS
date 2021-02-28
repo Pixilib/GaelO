@@ -30,7 +30,7 @@ Reviews (GET, POST, PUT, DELETE, PATCH (unlock))
 Reviews From Visits (GET)
 
 Salim TODO :
-FrontEnd : Uploader fetch des data + checker safety lien patient/Usr - uploader
+FrontEnd : checker safety lien patient/Usr - uploader
 Studies / Series DICOM => Passer la clé primaire à Instance UID (le orthancID ne devient qu'une donnée associée)
 Revoir DicowWeb Authorisation Service
 Creatable Visit : Manque Study Custom Logic (+dans front skip visites optionnelles ?)
@@ -39,11 +39,12 @@ Creatable Visit : Manque Study Custom Logic (+dans front skip visites optionnell
 - API Review
 Review form /file  (POST, GET, DELETE)
 => Contrainte Form a continuer => Voir librairy Respect/Validation
-Api Export data study (+ ajouter override pour customisation etude)
+Quid de adjudication ou il faut faire remonter des info custom au front ?
 
 - API Supervisor
 Tools get dicom batch => Recevra un array de seriesInstanceUID a telecharger depuis Orthanc (pour download dicom)
 Tools Send Dicom to peer
+Export data  + custom study export
 
 **Refac User Service peut disparaitre ou etre simplifie que pour les checks (peut etre en tools)
 

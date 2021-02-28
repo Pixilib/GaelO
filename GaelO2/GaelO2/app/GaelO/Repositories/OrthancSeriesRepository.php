@@ -4,17 +4,17 @@ namespace App\GaelO\Repositories;
 
 use App\GaelO\Interfaces\OrthancSeriesRepositoryInterface;
 use App\GaelO\Util;
-use App\Models\OrthancSeries;
+use App\Models\DicomSeries;
 
 class OrthancSeriesRepository implements OrthancSeriesRepositoryInterface {
 
 
-    public function __construct(OrthancSeries $orthancSeries){
+    public function __construct(DicomSeries $orthancSeries){
         $this->orthancSeries = $orthancSeries;
     }
 
     private function create(array $data) : void {
-        $orthancSeries = new OrthancSeries();
+        $orthancSeries = new DicomSeries();
         $model = Util::fillObject($data, $orthancSeries);
         $model->save();
     }
@@ -41,7 +41,7 @@ class OrthancSeriesRepository implements OrthancSeriesRepositoryInterface {
         $this->orthancSeries->withTrashed()->where('series_uid',$seriesInstanceUID)->sole()->restore();
     }
 
-    public function addSeries(string $seriesOrthancID, string $orthancStudyID, ?string $acquisitionDate,
+    public function addSeries(string $seriesOrthancID, string $studyInstanceUID, ?string $acquisitionDate,
                             ?string $acquisitionTime, ?string $modality, ?string $seriesDescription,
                             ?int $injectedDose, ?string $radiopharmaceutical, ?int $halfLife,
                             ?string $injectedTime,?string $injectedDateTime, ?int $injectedActivity, ?int $patientWeight,
@@ -51,7 +51,7 @@ class OrthancSeriesRepository implements OrthancSeriesRepositoryInterface {
 
         $data = [
             'orthanc_id' => $seriesOrthancID,
-            'orthanc_study_id' => $orthancStudyID,
+            'study_uid' => $studyInstanceUID,
             'acquisition_date' => $acquisitionDate,
             'acquisition_time' => $acquisitionTime,
             'modality' => $modality,
@@ -77,7 +77,7 @@ class OrthancSeriesRepository implements OrthancSeriesRepositoryInterface {
 
     }
 
-    public function updateSeries(string $seriesOrthancID, string $orthancStudyID, ?string $acquisitionDate,
+    public function updateSeries(string $seriesOrthancID, ?string $acquisitionDate,
             ?string $acquisitionTime, ?string $modality, ?string $seriesDescription,
             ?int $injectedDose, ?string $radiopharmaceutical, ?int $halfLife,
             ?string $injectedTime,?string $injectedDateTime, ?int $injectedActivity, ?int $patientWeight,
@@ -86,7 +86,6 @@ class OrthancSeriesRepository implements OrthancSeriesRepositoryInterface {
             ?string $modelName ) : void {
 
         $data = [
-        'orthanc_study_id' => $orthancStudyID,
         'acquisition_date' => $acquisitionDate,
         'acquisition_time' => $acquisitionTime,
         'modality' => $modality,
@@ -108,27 +107,27 @@ class OrthancSeriesRepository implements OrthancSeriesRepositoryInterface {
 
         ];
 
-        $this->update($seriesOrthancID, $data);
+        $this->update($seriesUID, $data);
 
     }
 
-    public function isExistingOrthancSeriesID(string $orthancSeriesID) : bool {
-        return empty($this->orthancSeries->find($orthancSeriesID)) ? false : true;
+    public function isExistingSeriesInstanceUID(string $seriesInstanceUID) : bool {
+        return empty($this->orthancSeries->find($seriesInstanceUID)) ? false : true;
     }
 
     public function getSeriesBySeriesInstanceUID(string $seriesInstanceUID, bool $includeDeleted) : array {
         if($includeDeleted){
-            $series = $this->orthancSeries->with('orthancStudy')->where('series_uid',$seriesInstanceUID)->withTrashed()->sole()->toArray();
+            $series = $this->orthancSeries->with('dicomStudy')->where('series_uid',$seriesInstanceUID)->withTrashed()->sole()->toArray();
         }else{
-            $series = $this->orthancSeries->with('orthancStudy')->where('series_uid',$seriesInstanceUID)->sole()->toArray();
+            $series = $this->orthancSeries->with('dicomStudy')->where('series_uid',$seriesInstanceUID)->sole()->toArray();
         }
 
         return $series;
 
     }
 
-    public function reactivateSeriesOfOrthancStudyID (string $orthancStudyID) : void {
-        $this->orthancSeries->where('orthanc_study_id',$orthancStudyID)->withTrashed()->restore();
+    public function reactivateSeriesOfStudyInstanceUID (string $studyInstanceUID) : void {
+        $this->orthancSeries->where('study_uid',$studyInstanceUID)->withTrashed()->restore();
     }
 
 }

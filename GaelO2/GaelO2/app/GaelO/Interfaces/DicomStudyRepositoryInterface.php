@@ -2,11 +2,9 @@
 
 namespace App\GaelO\Interfaces;
 
-interface OrthancStudyRepositoryInterface {
+interface DicomStudyRepositoryInterface {
 
-    public function find($orthancStudyID) : array ;
-
-    public function delete($orthancStudyID) :void ;
+    public function delete($studyInstanceUID) :void ;
 
     public function addStudy(string $orthancStudyID, int $visitID, int $uploaderID, string $uploadDate,
                     ?string $acquisitionDate, ?string $acquisitionTime, string $anonFromOrthancID,
@@ -22,9 +20,9 @@ interface OrthancStudyRepositoryInterface {
 
     public function isExistingOriginalOrthancStudyID(string $orthancStudyID, string $studyName) : bool ;
 
-    public function isExistingOrthancStudyID(string $orthancStudyID) : bool ;
+    public function isExistingStudyInstantUID(string $orthancStudyID) : bool ;
 
-    public function getStudyOrthancIDFromVisit(int $visitID) : string ;
+    public function getStudyInstanceUidFromVisit(int $visitID) : string ;
 
     public function isExistingDicomStudyForVisit(int $visitID) : bool ;
 
@@ -32,7 +30,7 @@ interface OrthancStudyRepositoryInterface {
 
     public function getOrthancStudyByStudyInstanceUID(string $studyInstanceUID, bool $includeDeleted) : array ;
 
-    public function getChildSeries(string $orthancStudyID, bool $deleted) : array ;
+    public function getChildSeries(string $studyInstanceUID, bool $deleted) : array ;
 
     public function reactivateByStudyInstanceUID(string $studyInstanceUID) :void ;
 

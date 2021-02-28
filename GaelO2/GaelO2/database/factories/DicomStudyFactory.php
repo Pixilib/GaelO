@@ -2,15 +2,15 @@
 
 namespace Database\Factories;
 
-use App\Models\OrthancStudy;
+use App\Models\DicomStudy;
 use App\Models\User;
 use App\Models\Visit;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-class OrthancStudyFactory extends Factory
+class DicomStudyFactory extends Factory
 {
 
-    protected $model = OrthancStudy::class;
+    protected $model = DicomStudy::class;
 
     public function definition()
     {

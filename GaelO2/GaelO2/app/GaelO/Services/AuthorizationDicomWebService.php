@@ -4,7 +4,7 @@ namespace App\GaelO\Services;
 
 use App\GaelO\Constants\Constants;
 use App\GaelO\Interfaces\OrthancSeriesRepositoryInterface;
-use App\GaelO\Interfaces\OrthancStudyRepositoryInterface;
+use App\GaelO\Interfaces\DicomStudyRepositoryInterface;
 use App\GaelO\Interfaces\UserRepositoryInterface;
 use App\GaelO\Interfaces\VisitRepositoryInterface;
 use App\GaelO\Util;
@@ -12,7 +12,7 @@ use App\GaelO\Util;
 class AuthorizationDicomWebService
 {
 
-    private OrthancStudyRepositoryInterface $orthancStudyRepository;
+    private DicomStudyRepositoryInterface $dicomStudyRepositoryInterface;
     private OrthancSeriesRepositoryInterface $orthancSeriesRepository;
     private UserRepositoryInterface $userRepositoryInterface;
     private VisitRepositoryInterface $visitRepositoryInterface;
@@ -21,14 +21,14 @@ class AuthorizationDicomWebService
     private int $userId;
 
     public function __construct(
-        OrthancStudyRepositoryInterface $orthancStudyRepositoryInterface,
+        DicomStudyRepositoryInterface $dicomStudyRepositoryInterface,
         OrthancSeriesRepositoryInterface $orthancSeriesRepositoryInterface,
         UserRepositoryInterface $userRepositoryInterface,
         VisitRepositoryInterface $visitRepositoryInterface,
         AuthorizationVisitService $authorizationVisitService)
     {
 
-        $this->orthancStudyRepository=$orthancStudyRepositoryInterface;
+        $this->dicomStudyRepositoryInterface=$dicomStudyRepositoryInterface;
         $this->orthancSeriesRepository=$orthancSeriesRepositoryInterface;
         $this->visitRepositoryInterface = $visitRepositoryInterface;
         $this->userRepositoryInterface=$userRepositoryInterface;
@@ -49,7 +49,7 @@ class AuthorizationDicomWebService
             $this->seriesEntity = $this->orthancSeriesRepository->getSeriesBySeriesInstanceUID($requestedInstanceUID, true);
             $visitId = $this->seriesEntity['orthanc_study']['visit_id'];
         } else if ($this->level === "studies") {
-            $studyEntity = $this->orthancStudyRepository->getOrthancStudyByStudyInstanceUID($requestedInstanceUID, true);
+            $studyEntity = $this->dicomStudyRepositoryInterface->getOrthancStudyByStudyInstanceUID($requestedInstanceUID, true);
             $visitId = $studyEntity['visit_id'];
         }
 

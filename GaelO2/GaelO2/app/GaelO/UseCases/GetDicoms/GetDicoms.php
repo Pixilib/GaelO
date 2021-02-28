@@ -5,17 +5,17 @@ namespace App\GaelO\UseCases\GetDicoms;
 use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
-use App\GaelO\Interfaces\OrthancStudyRepositoryInterface;
+use App\GaelO\Interfaces\DicomStudyRepositoryInterface;
 use App\GaelO\Services\AuthorizationVisitService;
 use Exception;
 
 class GetDicoms{
 
     private AuthorizationVisitService $authorizationVisitService;
-    private OrthancStudyRepositoryInterface $orthancStudyRepositoryInterface;
+    private DicomStudyRepositoryInterface $dicomStudyRepositoryInterface;
 
-    public function __construct(OrthancStudyRepositoryInterface $orthancStudyRepositoryInterface, AuthorizationVisitService $authorizationVisitService){
-        $this->orthancStudyRepositoryInterface = $orthancStudyRepositoryInterface;
+    public function __construct(DicomStudyRepositoryInterface $dicomStudyRepositoryInterface, AuthorizationVisitService $authorizationVisitService){
+        $this->dicomStudyRepositoryInterface = $dicomStudyRepositoryInterface;
         $this->authorizationVisitService = $authorizationVisitService;
     }
 
@@ -26,13 +26,13 @@ class GetDicoms{
 
             //If Supervisor include deleted studies
             $includeTrashed = $getDicomsRequest->role === Constants::ROLE_SUPERVISOR;
-            $data = $this->orthancStudyRepositoryInterface->getDicomsDataFromVisit($getDicomsRequest->visitId, $includeTrashed);
+            $data = $this->dicomStudyRepositoryInterface->getDicomsDataFromVisit($getDicomsRequest->visitId, $includeTrashed);
 
             $responseArray = [];
 
             foreach($data as $study){
                 $studyEntity = OrthancStudyEntity::fillFromDBReponseArray($study);
-                foreach($study['series'] as $series){
+                foreach($study['dicom_series'] as $series){
                     $seriesEntity = OrthancSeriesEntity::fillFromDBReponseArray($series);
                     $studyEntity->series[] = $seriesEntity;
                 }

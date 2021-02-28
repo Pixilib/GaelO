@@ -5,7 +5,7 @@ namespace Tests\Feature\TestDicoms;
 use App\GaelO\Constants\Constants;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\TestCase;
-use App\Models\OrthancSeries;
+use App\Models\DicomSeries;
 use Tests\AuthorizationTools;
 
 class DicomTest extends TestCase
@@ -23,9 +23,9 @@ class DicomTest extends TestCase
 
     protected function setUp() : void{
         parent::setUp();
-        $this->orthancSeries = OrthancSeries::factory()->create();
-        $this->visitId = $this->orthancSeries->orthancStudy->visit->id;
-        $this->studyName = $this->orthancSeries->orthancStudy->visit->patient->study->name;
+        $this->dicomSeries = DicomSeries::factory()->create();
+        $this->visitId = $this->dicomSeries->dicomStudy->visit->id;
+        $this->studyName = $this->dicomSeries->dicomStudy->visit->patient->study->name;
 
     }
 
@@ -53,7 +53,7 @@ class DicomTest extends TestCase
     }
 
     public function testGetDicomsDataSupervisor(){
-        $this->orthancSeries->orthancStudy->delete();
+        $this->dicomSeries->dicomStudy->delete();
         $currentUserId = AuthorizationTools::actAsAdmin(false);
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $this->studyName);
         $answer = $this->get('api/visits/'.$this->visitId.'/dicoms?role=Supervisor');
