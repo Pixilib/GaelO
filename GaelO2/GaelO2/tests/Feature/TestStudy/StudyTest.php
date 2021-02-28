@@ -147,7 +147,7 @@ class StudyTest extends TestCase
         $this->json('GET', '/api/studies/'.$studyName.'/orthanc-study-id/WrongOrthancID')->assertStatus(403);
     }
 
-    public function testIsKnownOrthancStudyIDYes(){
+    public function testIsKnownOriginalOrthancStudyIDYes(){
 
         $visit = Visit::factory()->create();
         $studyName = $visit->visitType->visitGroup->study->name;
@@ -157,13 +157,12 @@ class StudyTest extends TestCase
 
         $dicomStudyInstance = DicomStudy::factory()
             ->visitId($visit->id)
-            ->orthancStudy('7d2804c1-a17e7902-9a04d3fd-03e67d58-5ff3b85f')
             ->create();
 
         AuthorizationTools::addRoleToUser(1, Constants::ROLE_INVESTIGATOR, $studyName);
-        $this->json('GET', '/api/studies/'.$studyName.'/orthanc-study-id/7d2804c1-a17e7902-9a04d3fd-03e67d58-5ff3b85f')->assertStatus(200);
+        $this->json('GET', '/api/studies/'.$studyName.'/orthanc-study-id/'.$dicomStudyInstance->anon_from_orthanc_id)->assertStatus(200);
         $dicomStudyInstance->delete();
-        $this->json('GET', '/api/studies/'.$studyName.'/orthanc-study-id/7d2804c1-a17e7902-9a04d3fd-03e67d58-5ff3b85g')->assertStatus(404);
+        $this->json('GET', '/api/studies/'.$studyName.'/orthanc-study-id/'.$dicomStudyInstance->anon_from_orthanc_id)->assertStatus(404);
     }
 
 

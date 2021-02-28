@@ -95,17 +95,18 @@ class DicomStudyRepository implements DicomStudyRepositoryInterface {
      * Check that for a study the original Orthanc Id (StudyUID Hash) is not existing
      * This is done per study as a imaging procedure can be included in different trial
      */
-    public function isExistingOriginalOrthancStudyID(string $orthancStudyID, string $studyName) : bool {
-        $orthancStudies = $this->dicomStudy->where('anon_from_orthanc_id', $orthancStudyID)
+    public function isExistingOriginalOrthancStudyID(string $originalOrthancStudyID, string $studyName) : bool {
+        $orthancStudies = $this->dicomStudy->where('anon_from_orthanc_id', $originalOrthancStudyID)
                                                         ->join('visits', function ($join) {
                                                             $join->on('dicom_studies.visit_id', '=', 'visits.id');
                                                         })->join('visit_types', function ($join) {
                                                             $join->on('visit_types.id', '=', 'visits.visit_type_id');
                                                         })->join('visit_groups', function ($join) {
                                                             $join->on('visit_groups.id', '=', 'visit_types.visit_group_id');
-                                                        })->where(function ($query) use ($studyName) {
-                                                            $query->where('visit_groups.study_name', '=', $studyName);
-                                                        })->get();
+                                                        })
+                                                        ->where('study_name', '=', $studyName)
+                                                        ->get();
+
         return $orthancStudies->count()>0 ? true : false;
     }
 

@@ -38,7 +38,7 @@ class DicomStudyFactory extends Factory
 
         return $this->state(function (array $attributes) use ($visitId) {
             return [
-                'uploader_id' => $visitId,
+                'visit_id' => $visitId,
             ];
         });
     }
@@ -57,7 +57,7 @@ class DicomStudyFactory extends Factory
 
         return $this->state(function (array $attributes) use ($uploaderId) {
             return [
-                'visit_id' => $uploaderId,
+                'uploader_id' => $uploaderId,
             ];
         });
     }

@@ -60,6 +60,7 @@ Dicom Series Service => peut etre evoluer vers un DicomService pour les deux niv
 Review => tester un scenario de custom conclusion / adjudication
 
 +Tard :
+studies/{studyName}/orthanc-study-id/{orthancStudyID} => A renomer à original-orthanc-study-id (test le hash d'origine pas le courant)
 Faire une condition pour les NoContent dans le controller ? => ou mettre toujours un payload vide pour eviter les errur error->json() dans front?
 Voir dans message d'erreur comment ajouter d'autre info que le message (pour id de login)
 ReverseProxy TUS => On peut ajouter le studyName dans le header dans uppy pour le recupérer dans le use case et checker le role Investigateur
