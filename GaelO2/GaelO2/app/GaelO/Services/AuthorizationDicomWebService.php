@@ -55,7 +55,7 @@ class AuthorizationDicomWebService
         $this->visitContext = $this->visitRepositoryInterface->getVisitContext($visitId);
         $studyName = $this->visitContext['visit_type']['visit_group']['study_name'];
         $this->availableRoles = $this->userRepositoryInterface->getUsersRolesInStudy($userId, $studyName);
-        $this->authorizationVisitService->setVisitId($visitId);
+        $this->visitId = $visitId;
         $this->userId = $userId;
     }
 
@@ -80,6 +80,7 @@ class AuthorizationDicomWebService
 
             if (in_array($role, [Constants::ROLE_SUPERVISOR, Constants::ROLE_CONTROLLER, Constants::ROLE_INVESTIGATOR])) {
                 $this->authorizationVisitService->setCurrentUserAndRole($this->userId, $role);
+                $this->authorizationVisitService->setVisitId($this->visitId);
                 if ($this->authorizationVisitService->isVisitAllowed()) {
                     return true;
                 };
