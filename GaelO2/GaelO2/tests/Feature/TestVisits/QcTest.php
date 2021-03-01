@@ -36,7 +36,9 @@ class QcTest extends TestCase
             'review_needed' => true
         ])
         ->uploadDone()
-        ->stateQualityControl(Constants::QUALITY_CONTROL_NOT_DONE)->create();
+        ->stateQualityControl(Constants::QUALITY_CONTROL_NOT_DONE)
+        ->stateInvestigatorForm(Constants::INVESTIGATOR_FORM_DONE)
+        ->create();
 
         $this->studyName = $this->visit->patient->study_name;
     }

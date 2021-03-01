@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateOrthancStudiesTable extends Migration
+class CreateDicomStudiesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,15 +13,15 @@ class CreateOrthancStudiesTable extends Migration
      */
     public function up()
     {
-        Schema::create('orthanc_studies', function (Blueprint $table) {
-            $table->string('orthanc_id', 44)->primary();
+        Schema::create('dicom_studies', function (Blueprint $table) {
+            $table->string('study_uid', 256)->primary();
+            $table->string('orthanc_id', 44)->nullable(false);
             $table->unsignedBigInteger('visit_id')->nullable(false);
             $table->unsignedBigInteger('uploader_id')->nullable(false);
             $table->dateTime('upload_date', 6)->nullable(false);
             $table->date('acquisition_date')->nullable(true);
             $table->time('acquisition_time')->nullable(true);
             $table->string('anon_from_orthanc_id', 44)->nullable(false);
-            $table->string('study_uid', 256)->nullable(false);
             $table->text('study_description')->nullable(true);
             $table->string('patient_orthanc_id', 44)->nullable(false);
             $table->text('patient_name')->nullable(true);
@@ -35,7 +35,7 @@ class CreateOrthancStudiesTable extends Migration
             //Dependencies
             $table->foreign('visit_id')->references('id')->on('visits');
             $table->foreign('uploader_id')->references('id')->on('users');
-            $table->unique('study_uid');
+            $table->unique('orthanc_id');
         });
     }
 
@@ -46,6 +46,6 @@ class CreateOrthancStudiesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('orthanc_studies');
+        Schema::dropIfExists('dicom_studies');
     }
 }

@@ -118,6 +118,20 @@ class VisitRepository implements VisitRepositoryInterface
         return $answer->count() === 0 ? []  : $answer->toArray();
     }
 
+    public function getPatientListVisitWithContextAndReviewStatus(array $patientCodeArray, string $studyName): array
+    {
+
+        $answer = $this->visit
+            ->with('visitType')
+            ->with(['reviewStatus' => function ($query) use ($studyName) {
+                $query->where('study_name', $studyName);
+            }])
+            ->whereIn('patient_code', $patientCodeArray)
+            ->get();
+
+        return $answer->count() === 0 ? []  : $answer->toArray();
+    }
+
     public function getVisitsInStudy(string $studyName, bool $withReviewStatus): array
     {
 
@@ -136,7 +150,6 @@ class VisitRepository implements VisitRepositoryInterface
         }
 
         $answer = $queryBuilder->get();
-        Log::info($answer->toArray());
         return $answer->count() === 0 ? []  : $answer->toArray();
     }
 
@@ -176,6 +189,7 @@ class VisitRepository implements VisitRepositoryInterface
             })
             ->where('status_done', Constants::VISIT_STATUS_DONE)
             ->where('upload_status', Constants::UPLOAD_STATUS_DONE)
+            ->whereIn('state_investigator_form', [Constants::INVESTIGATOR_FORM_NOT_NEEDED, Constants::INVESTIGATOR_FORM_DONE])
             ->whereIn('state_quality_control', $controllerActionStatusArray)
             ->get();
 
@@ -249,9 +263,6 @@ class VisitRepository implements VisitRepositoryInterface
         $visitIdAwaitingReview = $this->reviewStatus->where('study_name', $studyName)->where('review_available', true)->select('visit_id')->get()->toArray();
 
         $answer = $this->visit
-            ->with(['reviewStatus' => function ($query) use ($studyName) {
-                $query->where('study_name', $studyName);
-            }])
             ->where(function ($query) use ($studyName, $userId) {
                 $query->selectRaw('count(*)')
                     ->from('reviews')
@@ -263,6 +274,36 @@ class VisitRepository implements VisitRepositoryInterface
             ->whereIn('id', $visitIdAwaitingReview)->get();
 
         return $answer->count() === 0 ? false  : true;
+    }
+
+    public function isParentPatientHavingOneVisitAwaitingReview(int $visitId, string $studyName, int $userId)
+    {
+        //Get parent patient
+        $patient = $this->visit->findOrFail($visitId)->patient()->sole();
+
+        //Select visits available for review in this patient
+        $patientVisitsIdAvailableForReview = $this->visit
+            ->where('patient_code', $patient->code)
+            ->whereHas('reviewStatus', function ($query) use ($studyName) {
+                $query->where('study_name', $studyName);
+                $query->where('review_available', true);
+            })
+            ->select('id')->get()->toArray();
+
+        //In these review select visit in which current user didn't validated his review form
+        $answer = $this->visit
+            ->where(function ($query) use ($studyName, $userId) {
+                $query->selectRaw('count(*)')
+                    ->from('reviews')
+                    ->whereColumn('reviews.visit_id', '=', 'visits.id')
+                    ->where('study_name', '=', $studyName)
+                    ->where('validated', true)
+                    ->where('user_id', $userId);
+            }, '=', 0)
+            ->whereIn('id', $patientVisitsIdAvailableForReview)->get();
+
+        return $answer->count() === 0 ? false  : true;
+
     }
 
     public function editQc(int $visitId, string $stateQc, int $controllerId, bool $imageQc, bool $formQc, ?string $imageQcComment, ?string $formQcComment): void

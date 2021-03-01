@@ -6,16 +6,16 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class OrthancStudy extends Model
+class DicomStudy extends Model
 {
     use SoftDeletes, HasFactory;
 
-    protected $primaryKey = 'orthanc_id';
+    protected $primaryKey = 'study_uid';
     protected $keyType = 'string';
     public $incrementing = false;
 
-    public function series(){
-        return $this->hasMany('App\Models\OrthancSeries', 'orthanc_study_id', 'orthanc_id');
+    public function dicomSeries(){
+        return $this->hasMany('App\Models\DicomSeries', 'study_uid', 'study_uid');
     }
 
     public function visit(){

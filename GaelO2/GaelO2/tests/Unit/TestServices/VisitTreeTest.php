@@ -82,6 +82,15 @@ class VisitTreeTest extends TestCase
         $mockVisitRepository->shouldReceive('getPatientListVisitsWithContext')
             ->andReturn($visitArrayMock);
 
+        $arrayMockWithReviewStatus = array_map(function($visit){
+            $visit['review_status']['review_status'] = Constants::REVIEW_STATUS_DONE;
+            return $visit;
+        }, $visitArrayMock);
+
+        $mockVisitRepository
+        ->shouldReceive('getPatientListVisitWithContextAndReviewStatus')
+        ->andReturn($arrayMockWithReviewStatus);
+
         $mockUserRepository = Mockery::mock(UserRepository::class);
         $mockUserRepository->shouldReceive('getAllUsersCenters')
             ->andReturn(['23']);
@@ -100,12 +109,14 @@ class VisitTreeTest extends TestCase
         );
     }
 
-    private function doAssertionOnContent($treeAnswer)
+    private function doAssertionOnContent($treeAnswer, bool $withReviewStatus)
     {
         $expectedArray = [
             'id', 'name', 'order', 'optional', 'modality', 'studyName',
             'stateInvestigatorForm', 'stateQualityControl', 'uploadStatus', 'statusDone', 'visitTypeId', 'visitGroupId', 'patientCode'
         ];
+
+        if($withReviewStatus) $expectedArray = ['reviewStatus'];
 
         foreach ($expectedArray as $key) {
             $this->assertArrayHasKey($key, $treeAnswer['217735']['PT']['26']);
@@ -116,27 +127,27 @@ class VisitTreeTest extends TestCase
     {
         $this->treeService->setUserAndStudy(1, Constants::ROLE_MONITOR, 'test');
         $tree = $this->treeService->buildTree();
-        $this->doAssertionOnContent($tree);
+        $this->doAssertionOnContent($tree, false);
     }
 
     public function testTreeController()
     {
         $this->treeService->setUserAndStudy(1, Constants::ROLE_CONTROLLER, 'test');
         $tree = $this->treeService->buildTree();
-        $this->doAssertionOnContent($tree);
+        $this->doAssertionOnContent($tree, false);
     }
 
     public function testTreeInvestigator()
     {
         $this->treeService->setUserAndStudy(1, Constants::ROLE_INVESTIGATOR, 'test');
         $tree = $this->treeService->buildTree();
-        $this->doAssertionOnContent($tree);
+        $this->doAssertionOnContent($tree, false);
     }
 
     public function testTreeReviewer()
     {
         $this->treeService->setUserAndStudy(1, Constants::ROLE_REVIEWER, 'test');
         $tree = $this->treeService->buildTree();
-        $this->doAssertionOnContent($tree);
+        $this->doAssertionOnContent($tree, true);
     }
 }

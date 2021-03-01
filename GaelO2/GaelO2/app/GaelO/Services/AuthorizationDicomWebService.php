@@ -3,8 +3,8 @@
 namespace App\GaelO\Services;
 
 use App\GaelO\Constants\Constants;
-use App\GaelO\Interfaces\OrthancSeriesRepositoryInterface;
-use App\GaelO\Interfaces\OrthancStudyRepositoryInterface;
+use App\GaelO\Interfaces\DicomSeriesRepositoryInterface;
+use App\GaelO\Interfaces\DicomStudyRepositoryInterface;
 use App\GaelO\Interfaces\UserRepositoryInterface;
 use App\GaelO\Interfaces\VisitRepositoryInterface;
 use App\GaelO\Util;
@@ -12,8 +12,8 @@ use App\GaelO\Util;
 class AuthorizationDicomWebService
 {
 
-    private OrthancStudyRepositoryInterface $orthancStudyRepository;
-    private OrthancSeriesRepositoryInterface $orthancSeriesRepository;
+    private DicomStudyRepositoryInterface $dicomStudyRepositoryInterface;
+    private DicomSeriesRepositoryInterface $dicomSeriesRepositoryInterface;
     private UserRepositoryInterface $userRepositoryInterface;
     private VisitRepositoryInterface $visitRepositoryInterface;
     private AuthorizationVisitService $authorizationVisitService;
@@ -21,19 +21,18 @@ class AuthorizationDicomWebService
     private int $userId;
 
     public function __construct(
-        OrthancStudyRepositoryInterface $orthancStudyRepositoryInterface,
-        OrthancSeriesRepositoryInterface $orthancSeriesRepositoryInterface,
+        DicomStudyRepositoryInterface $dicomStudyRepositoryInterface,
+        DicomSeriesRepositoryInterface $dicomSeriesRepositoryInterface,
         UserRepositoryInterface $userRepositoryInterface,
         VisitRepositoryInterface $visitRepositoryInterface,
-        AuthorizationVisitService $authorizationVisitService)
-    {
+        AuthorizationVisitService $authorizationVisitService
+    ) {
 
-        $this->orthancStudyRepository=$orthancStudyRepositoryInterface;
-        $this->orthancSeriesRepository=$orthancSeriesRepositoryInterface;
+        $this->dicomStudyRepositoryInterface = $dicomStudyRepositoryInterface;
+        $this->dicomSeriesRepositoryInterface = $dicomSeriesRepositoryInterface;
         $this->visitRepositoryInterface = $visitRepositoryInterface;
-        $this->userRepositoryInterface=$userRepositoryInterface;
+        $this->userRepositoryInterface = $userRepositoryInterface;
         $this->authorizationVisitService = $authorizationVisitService;
-
     }
 
     public function setUserIdAndRequestedUri(int $userId, string $requestedURI): void
@@ -46,17 +45,17 @@ class AuthorizationDicomWebService
         $requestedInstanceUID = $this->getUID($requestedURI, $this->level);
 
         if ($this->level === "series") {
-            $this->seriesEntity = $this->orthancSeriesRepository->getSeriesBySeriesInstanceUID($requestedInstanceUID, true);
-            $visitId = $this->seriesEntity['orthanc_study']['visit_id'];
+            $this->seriesEntity = $this->dicomSeriesRepositoryInterface->getSeries($requestedInstanceUID, true);
+            $visitId = $this->seriesEntity['dicom_study']['visit_id'];
         } else if ($this->level === "studies") {
-            $studyEntity = $this->orthancStudyRepository->getOrthancStudyByStudyInstanceUID($requestedInstanceUID, true);
+            $studyEntity = $this->dicomStudyRepositoryInterface->getDicomStudy($requestedInstanceUID, true);
             $visitId = $studyEntity['visit_id'];
         }
 
         $this->visitContext = $this->visitRepositoryInterface->getVisitContext($visitId);
         $studyName = $this->visitContext['visit_type']['visit_group']['study_name'];
         $this->availableRoles = $this->userRepositoryInterface->getUsersRolesInStudy($userId, $studyName);
-        $this->authorizationVisitService->setVisitId($visitId);
+        $this->visitId = $visitId;
         $this->userId = $userId;
     }
 
@@ -73,18 +72,24 @@ class AuthorizationDicomWebService
         $availableRoles = array_intersect($this->availableRoles, $candidatesRoles);
 
         //If series requested and has been softdeleted, refuse access except supervisor is in available roles
-        if( !in_array(Constants::ROLE_SUPERVISOR, $availableRoles) && $this->level == "series" && $this->seriesEntity['deleted_at'] != null ){
+        if (!in_array(Constants::ROLE_SUPERVISOR, $availableRoles) && $this->level == "series" && $this->seriesEntity['deleted_at'] != null) {
             return false;
         }
 
-        foreach($availableRoles as $role){
+        foreach ($availableRoles as $role) {
 
-            //SK ON REDUPLIQUE BEACOUP DE REQUETTE SQL A REFLECHIR SI FAUT PAS DISSOCIER DE AUTHORIZATION VISIT SERVICE
-            $this->authorizationVisitService->setCurrentUserAndRole($this->userId, $role);
-            if( $this->authorizationVisitService->isVisitAllowed() ){
-                return true;
+            if (in_array($role, [Constants::ROLE_SUPERVISOR, Constants::ROLE_CONTROLLER, Constants::ROLE_INVESTIGATOR])) {
+                $this->authorizationVisitService->setCurrentUserAndRole($this->userId, $role);
+                $this->authorizationVisitService->setVisitId($this->visitId);
+                if ($this->authorizationVisitService->isVisitAllowed()) {
+                    return true;
+                };
             };
 
+            if ($role === Constants::ROLE_REVIEWER) {
+                //Une des visites du patients doit etre en attente de review
+                return true;
+            }
         }
 
         return false;
@@ -96,21 +101,17 @@ class AuthorizationDicomWebService
      */
     private function getUID(string $requestedURI, string $level): string
     {
-
         $studySubString = strstr($requestedURI, "/" . $level . "/");
         $studySubString = str_replace("/" . $level . "/", "", $studySubString);
 
         $endStudyUIDPosition = strpos($studySubString, "/");
 
-        if($endStudyUIDPosition){
+        if ($endStudyUIDPosition) {
             $studyUID = substr($studySubString, 0, $endStudyUIDPosition);
-        }else{
+        } else {
             $studyUID = $studySubString;
         };
 
         return $studyUID;
     }
-
-
-
 }

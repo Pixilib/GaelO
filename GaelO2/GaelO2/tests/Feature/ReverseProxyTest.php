@@ -3,8 +3,8 @@
 namespace Tests\Feature;
 
 use App\GaelO\Constants\Constants;
-use App\Models\OrthancSeries;
-use App\Models\OrthancStudy;
+use App\Models\DicomSeries;
+use App\Models\DicomStudy;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\AuthorizationTools;
@@ -29,13 +29,13 @@ class ReverseProxyTest extends TestCase
         $this->seriesInstanceUID = '1.2.826.0.1.3680043.5.2014.6.4.10.27.08.20160309120853.168.11009';
         $this->studyInstanceUID = '1.2.826.0.1.3680043.5.2014.6.4.10.27.08.20160309120853.168.11008';
 
-        $this->orthancStudy = OrthancStudy::factory()
+        $this->orthancStudy = DicomStudy::factory()
             ->studyUid($this->studyInstanceUID)
             ->create();
 
-        $this->orthancSeries = OrthancSeries::factory()
+        $this->orthancSeries = DicomSeries::factory()
             ->seriesUid($this->seriesInstanceUID)
-            ->orthancStudyId($this->orthancStudy->orthanc_id)
+            ->studyInstanceUID($this->orthancStudy->study_uid)
             ->create();
 
         $this->studyName = $this->orthancStudy->visit->patient->study->name;

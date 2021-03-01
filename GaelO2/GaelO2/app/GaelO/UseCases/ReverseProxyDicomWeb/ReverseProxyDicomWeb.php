@@ -76,11 +76,13 @@ class ReverseProxyDicomWeb{
         if( ! str_starts_with ( $requestedURI , "/dicom-web/" ) ){
             throw new GaelOForbiddenException;
         }
+        //Pb ORTHANC N A PAS LES MEME ROUTES
         /*
         $this->authorizationService->setUserIdAndRequestedUri($currentUserId, $requestedURI);
         if(!$this->authorizationService->isDicomAllowed() ){
             throw new GaelOForbiddenException();
         };
         */
+
     }
 }

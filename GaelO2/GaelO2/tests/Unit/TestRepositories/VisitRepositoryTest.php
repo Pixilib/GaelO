@@ -127,13 +127,22 @@ class VisitRepositoryTest extends TestCase
     {
         $patient = $this->populateVisits()[0];
 
-        $visits = $this->visitRepository->getAllPatientsVisitsWithReviewStatus($patient->code, $patient->study_name);
+        $visits = $this->visitRepository->getAllPatientsVisitsWithReviewStatus($patient->code, $patient->study_name, false);
         $this->assertArrayHasKey('review_status', $visits[0]['review_status']);
         $this->assertArrayHasKey('review_available', $visits[0]['review_status']);
         $this->assertArrayHasKey('review_conclusion_value', $visits[0]['review_status']);
         $this->assertArrayHasKey('review_conclusion_date', $visits[0]['review_status']);
         $this->assertEquals($visits[0]['id'], $visits[0]['review_status']['visit_id'] );
         $this->assertEquals($patient->study_name, $visits[0]['review_status']['study_name'] );
+    }
+
+    public function testGetPatientVisitsWithReviewStatusWithTrashed()
+    {
+        $patient = $this->populateVisits()[0];
+
+        $patient->visits->first()->delete();
+        $visits = $this->visitRepository->getAllPatientsVisitsWithReviewStatus($patient->code, $patient->study_name, true);
+        $this->assertNotNull($visits[0]['deleted_at']);
     }
 
     public function testGetPatientListVisitsWithContext()
@@ -143,6 +152,16 @@ class VisitRepositoryTest extends TestCase
         $this->assertEquals(12, sizeof($visits));
         $this->assertArrayHasKey('visit_type', $visits[0]);
         $this->assertArrayHasKey('visit_group', $visits[0]['visit_type']);
+    }
+
+    public function testGetPatientListVisitWithContextAndReviewStatus()
+
+    {
+        $patient = $this->populateVisits();
+        $visits = $this->visitRepository->getPatientListVisitWithContextAndReviewStatus([$patient[0]->code, $patient[1]->code], $patient[0]->study_name);
+        $this->assertEquals(12, sizeof($visits));
+        $this->assertArrayHasKey('review_status', $visits[0]);
+
     }
 
     public function testGetVisitInStudy()
@@ -216,6 +235,7 @@ class VisitRepositoryTest extends TestCase
         $visitEntity->save();
 
         $visits->each(function ($item, $key) {
+            $item->state_investigator_form = Constants::INVESTIGATOR_FORM_DONE;
             $item->upload_status = Constants::UPLOAD_STATUS_DONE;
             $item->save();
         });
@@ -328,6 +348,35 @@ class VisitRepositoryTest extends TestCase
         $studyName = $patient->study->name;
         $answer = $this->visitRepository->getPatientsHavingAtLeastOneAwaitingReviewForUser($studyName, 1);
         $this->assertEquals(2, sizeof($answer));
+    }
+
+    public function testIsParentPatientHavingOneVisitAwaitingReview(){
+        //create patient with 2 visits
+        $patient = Patient::factory()->create();
+        $visits = Visit::factory()->patientCode($patient->code)->count(2)->create();
+        //create review status being available for review
+        $visits->each(function ($visit, $key) use ($patient) {
+            ReviewStatus::factory()->visitId($visit->id)->reviewAvailable()->studyName($patient->study_name)->create();
+        });
+
+        //create one form for user for one visit (patient still has one visit awaiting review for user)
+
+        Review::factory()->visitId($visits->first()->id)->reviewForm()->userId(1)->validated()->studyName($patient->study_name)->create();
+        $answer1 = $this->visitRepository->isParentPatientHavingOneVisitAwaitingReview($visits->first()->id, $patient->study_name, 1);
+
+        $this->assertTrue($answer1);
+        //create the second form for user as draft (still available)
+        $secondReview = Review::factory()->visitId($visits->last()->id)->reviewForm()->userId(1)->studyName($patient->study_name)->create();
+
+        $answer2 = $this->visitRepository->isParentPatientHavingOneVisitAwaitingReview($visits->first()->id, $patient->study_name, 1);
+        $this->assertTrue($answer2);
+
+        //Validate the second draft (should be unavailable)
+        $secondReview->validated = true;
+        $secondReview->save();
+        $answer3 = $this->visitRepository->isParentPatientHavingOneVisitAwaitingReview($visits->first()->id, $patient->study_name, 1);
+        $this->assertFalse($answer3);
+
     }
 
     public function testEditQC(){

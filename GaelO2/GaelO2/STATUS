@@ -26,21 +26,28 @@ Possible-Uploads (GET) => OK
 dicom-series (DELETE, PATCH) => OK (Nb pour reset upload, loop depuis front)
 dicom-study (PATCH) => OK
 Investigator-form (GET, PUT, POST, DELETE, PATCH (unlock)) =>OK
-Reviews (GET, POST, PUT)
+Reviews (GET, POST, PUT, DELETE, PATCH (unlock))
 Reviews From Visits (GET)
 
-
 Salim TODO :
-FrontEnd : OHIF / Stone of Orthanc
+FrontEnd : checker safety lien patient/Usr - uploader
+Revoir DicowWeb Authorization Service => Pb route orthanc differentes
+
+Creatable Visit : Manque Study Custom Logic (+dans front skip visites optionnelles ?)
+Ajouter un reviewNotNeeded dans Visit Type + Si review Not Needed interdiction de creer un role review dans cette study
+Si QC not needed impossible d'ajouter un controller dans cette study
+GetVisitContexte des service surement a faire passer a initialisation pour eviter requettes redondantes
+
 *** APIs ***
 - API Review
-Review form ( DELETE, PATCH (unlock) )
 Review form /file  (POST, GET, DELETE)
 => Contrainte Form a continuer => Voir librairy Respect/Validation
+Quid de adjudication ou il faut faire remonter des info custom au front ?
 
 - API Supervisor
 Tools get dicom batch => Recevra un array de seriesInstanceUID a telecharger depuis Orthanc (pour download dicom)
 Tools Send Dicom to peer
+Export data  + custom study export
 
 **Refac User Service peut disparaitre ou etre simplifie que pour les checks (peut etre en tools)
 
@@ -52,22 +59,18 @@ Les tests ne font pas d'assertion sur
 - le tracker => Via un spy ?
 - l'envoi de mails => voir doc laravel
 
-Service Visit => Continuer test passage en upload Done
 Dicom Series Service => peut etre evoluer vers un DicomService pour les deux niveaux
-Studies / Series DICOM => Passer la clé primaire à Instance UID (le orthancID ne devient qu'une donnée associée)
-
+Review => tester un scenario de custom conclusion / adjudication
 
 +Tard :
-
+studies/{studyName}/orthanc-study-id/{orthancStudyID} => A renomer à original-orthanc-study-id (test le hash d'origine pas le courant)
 Faire une condition pour les NoContent dans le controller ? => ou mettre toujours un payload vide pour eviter les errur error->json() dans front?
 Voir dans message d'erreur comment ajouter d'autre info que le message (pour id de login)
 ReverseProxy TUS => On peut ajouter le studyName dans le header dans uppy pour le recupérer dans le use case et checker le role Investigateur
-Reverse proxy dicomweb => Comment faire venir le role et study depuis ohif ? depuis header?
 TUS est Joignable sur Delete => peut etre gerer le failure/cancel pour vider tus ?
 Deploiement ajouter le login / mdp pour dans orthanc pacs + bloquer delete dans lua script
 Dans remplissage DTO request, si variable boolean, un input string est interpretée à true.
 QC Not Needed => autoriser ou pas remove de series ?
-Creatable Visit : Manque Study Custom Logic (+dans front skip visites optionnelles ?)
 Autoriser les fichier pour les form investigateurs ?
 
 *** Etudes ancillaires ***
@@ -97,7 +100,6 @@ Doit pouvoir voir user details
 *** /Etudes ancillaires ***
 
 Préparation supervisor :
-- Unlock / Delete form
 - Export Study Data
 - Review Manager
 - Upload Manager

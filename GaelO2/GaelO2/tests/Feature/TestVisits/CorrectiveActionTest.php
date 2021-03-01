@@ -6,6 +6,7 @@ use App\GaelO\Constants\Constants;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use App\Models\User;
 use App\Models\Visit;
+use App\Models\VisitType;
 use Tests\AuthorizationTools;
 use Tests\TestCase;
 
@@ -30,7 +31,10 @@ class CorrectiveActionTest extends TestCase
     protected function setUp() : void{
         parent::setUp();
 
+        $visitType = VisitType::factory()->localFormNeeded()->create();
+
         $this->visit = Visit::factory()
+        ->visitTypeId($visitType->id)
         ->uploadDone()
         ->stateQualityControl(Constants::QUALITY_CONTROL_CORRECTIVE_ACTION_ASKED)
         ->stateInvestigatorForm(Constants::INVESTIGATOR_FORM_DONE)->create();

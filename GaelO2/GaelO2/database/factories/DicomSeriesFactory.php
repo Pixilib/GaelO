@@ -2,20 +2,20 @@
 
 namespace Database\Factories;
 
-use App\Models\OrthancSeries;
-use App\Models\OrthancStudy;
+use App\Models\DicomSeries;
+use App\Models\DicomStudy;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-class OrthancSeriesFactory extends Factory
+class DicomSeriesFactory extends Factory
 {
 
-    protected $model = OrthancSeries::class;
+    protected $model = DicomSeries::class;
 
     public function definition()
     {
         return [
             'orthanc_id' =>$this->faker->regexify('[A-Za-z0-9]{44}'),
-            'orthanc_study_id' => OrthancStudy::factory()->create()->orthanc_id,
+            'study_uid' => DicomStudy::factory()->create()->study_uid,
             'acquisition_date'=>$this->faker->date(),
             'acquisition_time'=>$this->faker->time(),
             'modality'=>$this->faker->word,
@@ -36,11 +36,11 @@ class OrthancSeriesFactory extends Factory
         ];
     }
 
-    public function orthancStudyId(string $orthancStudyId){
+    public function studyInstanceUID(string $studyInstanceUID){
 
-        return $this->state(function (array $attributes) use($orthancStudyId) {
+        return $this->state(function (array $attributes) use($studyInstanceUID) {
             return [
-                'orthanc_study_id' => $orthancStudyId,
+                'study_uid' => $studyInstanceUID,
             ];
         });
     }

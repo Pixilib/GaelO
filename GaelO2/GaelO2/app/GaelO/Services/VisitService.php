@@ -3,7 +3,7 @@
 namespace App\GaelO\Services;
 
 use App\GaelO\Constants\Constants;
-use App\GaelO\Repositories\OrthancStudyRepository;
+use App\GaelO\Interfaces\DicomStudyRepositoryInterface;
 use App\GaelO\Repositories\ReviewRepository;
 use App\GaelO\Repositories\ReviewStatusRepository;
 use App\GaelO\Repositories\UserRepository;
@@ -17,7 +17,7 @@ class VisitService
     private VisitRepository $visitRepository;
     private ReviewRepository $reviewRepository;
     private VisitTypeRepository $visitTypeRepository;
-    private OrthancStudyRepository $orthancStudyRepository;
+    private DicomStudyRepositoryInterface $dicomStudyRepositoryInterface;
     private MailServices $mailServices;
     private ReviewStatusRepository $reviewStatusRepository;
 
@@ -29,13 +29,13 @@ class VisitService
         ReviewRepository $reviewRepository,
         ReviewStatusRepository $reviewStatusRepository,
         VisitTypeRepository $visitTypeRepository,
-        OrthancStudyRepository $orthancStudyRepository,
+        DicomStudyRepositoryInterface $dicomStudyRepositoryInterface,
         MailServices $mailServices
     ) {
         $this->visitTypeRepository = $visitTypeRepository;
         $this->visitRepository = $visitRepository;
         $this->mailServices = $mailServices;
-        $this->orthancStudyRepository = $orthancStudyRepository;
+        $this->dicomStudyRepositoryInterface = $dicomStudyRepositoryInterface;
         $this->reviewStatusRepository = $reviewStatusRepository;
         $this->reviewRepository = $reviewRepository;
         $this->userRepository = $userRepository;
@@ -53,8 +53,8 @@ class VisitService
 
     public function getVisitSeriesIdsDicomArray(bool $deleted)
     {
-        $studyOrthancId = $this->orthancStudyRepository->getStudyOrthancIDFromVisit($this->visitId);
-        $seriesEntities = $this->orthancStudyRepository->getChildSeries($studyOrthancId, $deleted);
+        $studyInstanceUid = $this->dicomStudyRepositoryInterface->getStudyInstanceUidFromVisit($this->visitId);
+        $seriesEntities = $this->dicomStudyRepositoryInterface->getChildSeries($studyInstanceUid, $deleted);
         $seriesOrthancIdArray = array_map(function ($series) {
             return $series['orthanc_id'];
         }, $seriesEntities);

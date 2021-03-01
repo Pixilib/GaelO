@@ -40,6 +40,7 @@ class AuthorizationVisitService {
         $this->patientCenter = $visitContext['patient']['center_code'];
         $this->patientCode = $visitContext['patient']['code'];
         $this->visitUploadStatus = $visitContext['upload_status'];
+        $this->stateInvestigatorForm = $visitContext['state_investigator_form'];
 
         $this->authorizationPatientService->setPatientEntity($visitContext['patient']);
 
@@ -48,14 +49,15 @@ class AuthorizationVisitService {
     public function isVisitAllowed(): bool {
         //Check that called Role exists for users and visit is not deleted
         if ($this->requestedRole === Constants::ROLE_REVIEWER) {
-            //SK Ici pb d'acces va se poser pour les etude ancillaire, le review aviaible va dependre du scope d'etude
-            $this->visitRepository->isVisitAvailableForReview($this->visitId, $this->patientStudy, $this->userId);
-
-            return $this->authorizationPatientService->isPatientAllowed();
+            //SK ICI DEVRAIT ETRE LIMITE AUX PATIENT QUI ONT UNE VISIT QUI ATTEND UNE REVIEW DANS L EDUTE
+            //NECESSITE D INJECTER LE STUDYNAME ICI POUR LES ETUDES ANCILLAIRES
+            //Check Role exist and parent patient has one awaiting visit
+            return $this->authorizationPatientService->isPatientAllowed() && $this->visitRepository->isParentPatientHavingOneVisitAwaitingReview($this->visitId, $this->patientStudy, $this->userId);
         } else if ($this->requestedRole === Constants::ROLE_CONTROLLER) {
             //For controller controller role should be allows and visit QC status be not done or awaiting definitive conclusion
             $allowedControllerStatus = array(Constants::QUALITY_CONTROL_NOT_DONE, Constants::QUALITY_CONTROL_WAIT_DEFINITIVE_CONCLUSION);
-            if (in_array($this->stateQualityControl, $allowedControllerStatus) && $this->visitUploadStatus === Constants::UPLOAD_STATUS_DONE) {
+            $allowedInvestigatorFormStatus = array(Constants::INVESTIGATOR_FORM_DONE, Constants::INVESTIGATOR_FORM_NOT_NEEDED);
+            if (in_array($this->stateQualityControl, $allowedControllerStatus) && $this->visitUploadStatus === Constants::UPLOAD_STATUS_DONE && in_array($this->stateInvestigatorForm, $allowedInvestigatorFormStatus) ) {
                 return $this->authorizationPatientService->isPatientAllowed();
             } else {
                 return false;

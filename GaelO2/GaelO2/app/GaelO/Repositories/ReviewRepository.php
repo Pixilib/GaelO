@@ -21,7 +21,7 @@ class ReviewRepository implements ReviewRepositoryInterface {
     }
 
     private function update($id, array $data) : void {
-        $model = $this->review->find($id);
+        $model = $this->review->findOrFail($id);
         $model = Util::fillObject($data, $model);
         $model->save();
     }
@@ -31,7 +31,7 @@ class ReviewRepository implements ReviewRepositoryInterface {
     }
 
     public function delete($id) : void {
-        $this->review->find($id)->delete();
+        $this->review->findOrFail($id)->delete();
     }
 
     public function getInvestigatorForm(int $visitId) : array {
@@ -109,6 +109,13 @@ class ReviewRepository implements ReviewRepositoryInterface {
             ->get();
 
         return $reviewEntity->count() > 0 ? true : false;
+    }
+
+    //SK A tester
+    public function unlockReviewForm(int $reviewId) : void {
+        $reviewEntity = $this->review->findOrFail($reviewId);
+        $reviewEntity->validated = false;
+        $reviewEntity->save();
     }
 
     //SK FAIRE UPDATE ASSOCIATED FILE

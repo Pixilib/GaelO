@@ -33,6 +33,8 @@ interface VisitRepositoryInterface
 
     public function getPatientListVisitsWithContext(array $patientCodeArray) : array ;
 
+    public function getPatientListVisitWithContextAndReviewStatus(array $patientCodeArray, string $studyName) : array;
+
     public function getVisitsInStudy(string $studyName, bool $withReviewStatus) : array ;
 
     public function hasVisitsInStudy(string $studyName) : bool ;

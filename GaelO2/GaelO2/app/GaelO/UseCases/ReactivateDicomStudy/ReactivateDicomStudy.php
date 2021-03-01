@@ -29,7 +29,7 @@ class ReactivateDicomStudy{
 
         try{
 
-            $studyData = $this->dicomSeriesService->getStudyByStudyInstanceUID($reactivateDicomStudyRequest->studyInstanceUID, true);
+            $studyData = $this->dicomSeriesService->getDicomStudy($reactivateDicomStudyRequest->studyInstanceUID, true);
             $visitId = $studyData['visit_id'];
 
             $visitContext = $this->visitRepositoryInterface->getVisitContext($visitId);
@@ -38,7 +38,7 @@ class ReactivateDicomStudy{
             $this->checkAuthorization($reactivateDicomStudyRequest->currentUserId, $visitId, $visitContext['state_quality_control']);
 
             //Change dicom study Activation
-            $this->dicomSeriesService->reactivateOrthancStudyByStudyInstanceUID($reactivateDicomStudyRequest->studyInstanceUID);
+            $this->dicomSeriesService->reactivateDicomStudy($reactivateDicomStudyRequest->studyInstanceUID);
 
             //Tracker
             $actionDetails = [

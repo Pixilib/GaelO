@@ -2,18 +2,18 @@
 
 namespace Tests\Unit\TestRepositories;
 
-use App\GaelO\Repositories\OrthancSeriesRepository;
+use App\GaelO\Repositories\DicomSeriesRepository;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\TestCase;
 
-use App\Models\OrthancSeries;
-use App\Models\OrthancStudy;
+use App\Models\DicomSeries;
+use App\Models\DicomStudy;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class OrthancSeriesRepositoryTest extends TestCase
 {
-    private OrthancSeriesRepository $orthancSeriesRepository;
+    private DicomSeriesRepository $orthancSeriesRepository;
 
     use DatabaseMigrations {
         runDatabaseMigrations as baseRunDatabaseMigrations;
@@ -31,15 +31,15 @@ class OrthancSeriesRepositoryTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->orthancSeriesRepository = new OrthancSeriesRepository(new OrthancSeries());
-        $this->orthancStudy = OrthancStudy::factory()->create();
+        $this->orthancSeriesRepository = new DicomSeriesRepository(new DicomSeries());
+        $this->orthancStudy = DicomStudy::factory()->create();
     }
 
     public function testAddSeries(){
 
         $this->orthancSeriesRepository->addSeries(
                 '6b9e19d9-62094390-5f9ddb01-4a191ae7-9766b715',
-                $this->orthancStudy->orthanc_id, null,
+                $this->orthancStudy->study_uid, null,
                 null, null, null,
                 null, null, null,
                 null, null, null, null,
@@ -48,57 +48,57 @@ class OrthancSeriesRepositoryTest extends TestCase
                 null
             );
 
-        $orthancSeries = OrthancSeries::find('6b9e19d9-62094390-5f9ddb01-4a191ae7-9766b715');
+        $orthancSeries = DicomSeries::find('123456789');
         $this->assertEquals('6b9e19d9-62094390-5f9ddb01-4a191ae7-9766b715', $orthancSeries->orthanc_id);
         $this->assertEquals(30, $orthancSeries->disk_size);
     }
 
     public function testUpdateSeries(){
-        $orthancSeries = OrthancSeries::factory()->create();
+        $orthancSeries = DicomSeries::factory()->create();
 
         $this->orthancSeriesRepository->updateSeries(
-            $orthancSeries->orthanc_id, $orthancSeries->orthanc_study_id, null,
+            $orthancSeries->orthanc_id, null,
             null, null, 'newSeriesDescription',
             null, null, null,
             null, null, null, null,
-            50, '12345698.654.65', null,
+            50, $orthancSeries->series_uid, null,
             50, 50, null,
             null
         );
 
-        $orthancSeries2 = OrthancSeries::find($orthancSeries->orthanc_id);
+        $orthancSeries2 = DicomSeries::find($orthancSeries->series_uid);
         $this->assertEquals('newSeriesDescription', $orthancSeries2->series_description);
         $this->assertEquals(50, $orthancSeries2->disk_size);
     }
 
     public function testIsExistingSeriesId(){
-        $orthancSeries = OrthancSeries::factory()->create();
-        $existing = $this->orthancSeriesRepository->isExistingOrthancSeriesID($orthancSeries->orthanc_id);
+        $orthancSeries = DicomSeries::factory()->create();
+        $existing = $this->orthancSeriesRepository->isExistingSeriesInstanceUID($orthancSeries->series_uid);
         $this->assertTrue($existing);
     }
 
     public function testGetSeriesBySeriesInstanceUid(){
 
-        $orthancSeries = OrthancSeries::factory()->create();
+        $orthancSeries = DicomSeries::factory()->create();
 
-        $seriesEntity = $this->orthancSeriesRepository->getSeriesBySeriesInstanceUID($orthancSeries->series_uid, false);
+        $seriesEntity = $this->orthancSeriesRepository->getSeries($orthancSeries->series_uid, false);
         $this->assertNotNull($seriesEntity);
 
         $orthancSeries->delete();
-        $seriesEntity2 = $this->orthancSeriesRepository->getSeriesBySeriesInstanceUID($orthancSeries->series_uid, true);
+        $seriesEntity2 = $this->orthancSeriesRepository->getSeries($orthancSeries->series_uid, true);
         $this->assertNotNull($seriesEntity2);
 
         $this->expectException(ModelNotFoundException::class);
-        $seriesEntity2 = $this->orthancSeriesRepository->getSeriesBySeriesInstanceUID($orthancSeries->series_uid, false);
+        $seriesEntity2 = $this->orthancSeriesRepository->getSeries($orthancSeries->series_uid, false);
     }
 
     public function testReactivateSeriesOfOrthancStudyId(){
-        $orthancSeries = OrthancSeries::factory()->orthancStudyId($this->orthancStudy->orthanc_id)->count(5)->create();
+        $orthancSeries = DicomSeries::factory()->studyInstanceUID($this->orthancStudy->study_uid)->count(5)->create();
         $orthancSeries->each( function($item, $key){ $item->delete(); } );
-        $this->assertEquals(0, OrthancSeries::get()->count());
+        $this->assertEquals(0, DicomSeries::get()->count());
 
-        $this->orthancSeriesRepository->reactivateSeriesOfOrthancStudyID($this->orthancStudy->orthanc_id);
-        $this->assertEquals(5, OrthancSeries::get()->count());
+        $this->orthancSeriesRepository->reactivateSeriesOfStudyInstanceUID($this->orthancStudy->study_uid);
+        $this->assertEquals(5, DicomSeries::get()->count());
     }
 
 

@@ -2,7 +2,7 @@
 
 namespace App\GaelO\UseCases\GetDicoms;
 
-class OrthancStudyEntity {
+class DicomStudyEntity {
     public string $studyInstanceUID;
     public int $uploaderId;
     public string $uploadDate;
@@ -17,7 +17,7 @@ class OrthancStudyEntity {
     public array $series = [];
 
     public static function fillFromDBReponseArray(array $array){
-        $orthancStudy  = new OrthancStudyEntity();
+        $orthancStudy  = new DicomStudyEntity();
         $orthancStudy->studyInstanceUID = $array['study_uid'];
         $orthancStudy->uploaderId = $array['uploader_id'];
         $orthancStudy->uploadDate = $array['upload_date'];

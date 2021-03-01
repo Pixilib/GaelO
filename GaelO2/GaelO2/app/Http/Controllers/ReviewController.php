@@ -11,6 +11,9 @@ use App\GaelO\UseCases\CreateReviewForm\CreateReviewFormResponse;
 use App\GaelO\UseCases\DeleteInvestigatorForm\DeleteInvestigatorForm;
 use App\GaelO\UseCases\DeleteInvestigatorForm\DeleteInvestigatorFormRequest;
 use App\GaelO\UseCases\DeleteInvestigatorForm\DeleteInvestigatorFormResponse;
+use App\GaelO\UseCases\DeleteReviewForm\DeleteReviewForm;
+use App\GaelO\UseCases\DeleteReviewForm\DeleteReviewFormRequest;
+use App\GaelO\UseCases\DeleteReviewForm\DeleteReviewFormResponse;
 use App\GaelO\UseCases\GetInvestigatorForm\GetInvestigatorForm;
 use App\GaelO\UseCases\GetInvestigatorForm\GetInvestigatorFormRequest;
 use App\GaelO\UseCases\GetInvestigatorForm\GetInvestigatorFormResponse;
@@ -29,6 +32,9 @@ use App\GaelO\UseCases\ModifyReviewForm\ModifyReviewFormResponse;
 use App\GaelO\UseCases\UnlockInvestigatorForm\UnlockInvestigatorForm;
 use App\GaelO\UseCases\UnlockInvestigatorForm\UnlockInvestigatorFormRequest;
 use App\GaelO\UseCases\UnlockInvestigatorForm\UnlockInvestigatorFormResponse;
+use App\GaelO\UseCases\UnlockReviewForm\UnlockReviewForm;
+use App\GaelO\UseCases\UnlockReviewForm\UnlockReviewFormRequest;
+use App\GaelO\UseCases\UnlockReviewForm\UnlockReviewFormResponse;
 use App\GaelO\Util;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -205,6 +211,48 @@ class ReviewController extends Controller
 
         return response()->json($getReviewFormFromVisitResponse->body)
         ->setStatusCode($getReviewFormFromVisitResponse->status, $getReviewFormFromVisitResponse->statusText);
+    }
+
+    public function deleteReviewForm(int $reviewId, Request $request, DeleteReviewForm $deleteReviewForm, DeleteReviewFormRequest $deleteReviewFormRequest, DeleteReviewFormResponse $deleteReviewFormResponse){
+        $curentUser = Auth::user();
+        $requestData = $request->all();
+
+        $deleteReviewFormRequest->currentUserId = $curentUser['id'];
+        $deleteReviewFormRequest->reviewId = $reviewId;
+
+        $deleteReviewFormRequest = Util::fillObject($requestData, $deleteReviewFormRequest);
+
+        $deleteReviewForm->execute($deleteReviewFormRequest, $deleteReviewFormResponse);
+
+        if($deleteReviewFormResponse->body != null){
+            return response()->json($deleteReviewFormResponse->body)
+            ->setStatusCode($deleteReviewFormResponse->status, $deleteReviewFormResponse->statusText);
+        } else {
+            return response()->noContent()
+            ->setStatusCode($deleteReviewFormResponse->status, $deleteReviewFormResponse->statusText);
+        }
+
+    }
+
+    public function unlockReviewForm(int $reviewId, Request $request, UnlockReviewForm $unlockReviewForm, UnlockReviewFormRequest $unlockReviewFormRequest, UnlockReviewFormResponse $unlockReviewFormResponse){
+        $curentUser = Auth::user();
+        $requestData = $request->all();
+
+        $unlockReviewFormRequest->currentUserId = $curentUser['id'];
+        $unlockReviewFormRequest->reviewId = $reviewId;
+
+        $deleteReviewFormRequest = Util::fillObject($requestData, $unlockReviewFormRequest);
+
+        $unlockReviewForm->execute($deleteReviewFormRequest, $unlockReviewFormResponse);
+
+        if($unlockReviewFormResponse->body != null){
+            return response()->json($unlockReviewFormResponse->body)
+            ->setStatusCode($unlockReviewFormResponse->status, $unlockReviewFormResponse->statusText);
+        } else {
+            return response()->noContent()
+            ->setStatusCode($unlockReviewFormResponse->status, $unlockReviewFormResponse->statusText);
+        }
+
     }
 
 

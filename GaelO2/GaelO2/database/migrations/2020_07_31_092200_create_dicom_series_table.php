@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateOrthancSeriesTable extends Migration
+class CreateDicomSeriesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,9 +13,10 @@ class CreateOrthancSeriesTable extends Migration
      */
     public function up()
     {
-        Schema::create('orthanc_series', function (Blueprint $table) {
-            $table->string('orthanc_id', 44)->primary();
-            $table->string('orthanc_study_id', 44)->nullable(false);
+        Schema::create('dicom_series', function (Blueprint $table) {
+            $table->string('series_uid', 256)->primary();
+            $table->string('study_uid', 256)->nullable(false);
+            $table->string('orthanc_id', 44)->nullable(false);
             $table->date('acquisition_date')->nullable(true)->default(null);
             $table->time('acquisition_time')->nullable(true)->default(null);
             $table->text('modality')->nullable(true)->default(null);
@@ -28,7 +29,6 @@ class CreateOrthancSeriesTable extends Migration
             $table->bigInteger('injected_activity')->nullable(true)->default(null);
             $table->integer('patient_weight')->nullable(true)->default(null);
             $table->integer('number_of_instances')->nullable(false);
-            $table->string('series_uid', 256)->nullable(false);
             $table->text('series_number')->nullable(true)->default(null);
             $table->integer('disk_size')->nullable(false);
             $table->integer('uncompressed_disk_size')->nullable(false);
@@ -37,7 +37,7 @@ class CreateOrthancSeriesTable extends Migration
             $table->softDeletes();
             $table->timestamps();
             //Dependencies
-            $table->foreign('orthanc_study_id')->references('orthanc_id')->on('orthanc_studies');
+            $table->foreign('study_uid')->references('study_uid')->on('dicom_studies');
             $table->unique('series_uid');
         });
     }
@@ -49,6 +49,6 @@ class CreateOrthancSeriesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('orthanc_series');
+        Schema::dropIfExists('dicom_series');
     }
 }

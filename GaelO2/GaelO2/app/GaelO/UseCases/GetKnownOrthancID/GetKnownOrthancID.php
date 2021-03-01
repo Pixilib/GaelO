@@ -6,18 +6,19 @@ use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Exceptions\GaelONotFoundException;
-use App\GaelO\Interfaces\OrthancStudyRepositoryInterface;
+use App\GaelO\Interfaces\DicomStudyRepositoryInterface;
 use App\GaelO\Services\AuthorizationService;
 use Exception;
+use Illuminate\Support\Facades\Log;
 
 class GetKnownOrthancID{
 
-    private OrthancStudyRepositoryInterface $orthancStudyRepositoryInterface;
+    private DicomStudyRepositoryInterface $dicomStudyRepositoryInterface;
     private AuthorizationService $authorizationService;
 
-    public function __construct( OrthancStudyRepositoryInterface $orthancStudyRepositoryInterface, AuthorizationService $authorizationService)
+    public function __construct( DicomStudyRepositoryInterface $dicomStudyRepositoryInterface, AuthorizationService $authorizationService)
     {
-        $this->orthancStudyRepositoryInterface = $orthancStudyRepositoryInterface;
+        $this->dicomStudyRepositoryInterface = $dicomStudyRepositoryInterface;
         $this->authorizationService = $authorizationService;
     }
 
@@ -26,7 +27,7 @@ class GetKnownOrthancID{
 
             $this->checkAuthorization($getKnownOrthancIDRequest->currentUserId, $getKnownOrthancIDRequest->studyName);
 
-            $known = $this->orthancStudyRepositoryInterface->isExistingOrthancStudyID($getKnownOrthancIDRequest->orthancStudyID);
+            $known = $this->dicomStudyRepositoryInterface->isExistingOriginalOrthancStudyID($getKnownOrthancIDRequest->orthancStudyID, $getKnownOrthancIDRequest->studyName);
 
             if($known){
                 $getKnownOrthancIDResponse->body = $known;

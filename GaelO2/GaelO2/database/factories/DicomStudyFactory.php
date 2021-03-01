@@ -2,15 +2,15 @@
 
 namespace Database\Factories;
 
-use App\Models\OrthancStudy;
+use App\Models\DicomStudy;
 use App\Models\User;
 use App\Models\Visit;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-class OrthancStudyFactory extends Factory
+class DicomStudyFactory extends Factory
 {
 
-    protected $model = OrthancStudy::class;
+    protected $model = DicomStudy::class;
 
     public function definition()
     {
@@ -38,7 +38,7 @@ class OrthancStudyFactory extends Factory
 
         return $this->state(function (array $attributes) use ($visitId) {
             return [
-                'uploader_id' => $visitId,
+                'visit_id' => $visitId,
             ];
         });
     }
@@ -57,7 +57,7 @@ class OrthancStudyFactory extends Factory
 
         return $this->state(function (array $attributes) use ($uploaderId) {
             return [
-                'visit_id' => $uploaderId,
+                'uploader_id' => $uploaderId,
             ];
         });
     }

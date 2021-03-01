@@ -3,6 +3,7 @@
 namespace Tests\Feature\TestAskUnlock;
 
 use App\GaelO\Constants\Constants;
+use App\Models\ReviewStatus;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\TestCase;
 use App\Models\Visit;
@@ -24,6 +25,7 @@ class AskUnlockTest extends TestCase
     {
         parent::setUp();
         $this->visit = Visit::factory()->create();
+        ReviewStatus::factory()->visitId($this->visit->id)->studyName($this->visit->visitType->visitGroup->study_name)->reviewAvailable()->create();
         $this->studyName = $this->visit->patient->study->name;
         $this->patientCenter = $this->visit->patient->center->code;
     }
@@ -45,7 +47,7 @@ class AskUnlockTest extends TestCase
     {
         $userId = AuthorizationTools::actAsAdmin(false);
         AuthorizationTools::addRoleToUser($userId, Constants::ROLE_REVIEWER, $this->studyName);
-
+        //dd($this->studyName, Visit::get()->toArray(), ReviewStatus::get()->toArray());
         $payload = [
             'message' => 'My Message'
         ];

@@ -1,6 +1,5 @@
 <?php
 
-use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -15,3 +14,5 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', 'IndexController@getIndex');
+Route::get('viewer-ohif/viewer/{studyInstanceUID}', 'IndexController@getOhif');
+

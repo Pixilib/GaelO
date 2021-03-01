@@ -10,6 +10,7 @@ use App\GaelO\Interfaces\VisitRepositoryInterface;
 use App\GaelO\Services\AuthorizationVisitService;
 use App\GaelO\Services\MailServices;
 use Exception;
+use Illuminate\Support\Facades\Log;
 
 class RequestUnlock {
 

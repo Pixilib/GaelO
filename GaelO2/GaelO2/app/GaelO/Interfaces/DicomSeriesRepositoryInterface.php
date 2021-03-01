@@ -2,13 +2,9 @@
 
 namespace App\GaelO\Interfaces;
 
-interface OrthancSeriesRepositoryInterface {
+interface DicomSeriesRepositoryInterface {
 
-    public function find($orthancSeriesID) : array ;
-
-    public function delete($orthancSeriesID) : void ;
-
-    public function addSeries(string $seriesOrthancID, string $orthancStudyID, ?string $acquisitionDate,
+    public function addSeries(string $seriesOrthancID, string $studyInstanceUID, ?string $acquisitionDate,
                             ?string $acquisitionTime, ?string $modality, ?string $seriesDescription,
                             ?int $injectedDose, ?string $radiopharmaceutical, ?int $halfLife,
                             ?string $injectedTime,?string $injectedDateTime, ?int $injectedActivity, ?int $patientWeight,
@@ -16,7 +12,7 @@ interface OrthancSeriesRepositoryInterface {
                             int $seriesDiskSize, int $seriesUncompressedDiskSize, ?string $manufacturer,
                             ?string $modelName ) : void ;
 
-    public function updateSeries(string $seriesOrthancID, string $orthancStudyID, ?string $acquisitionDate,
+    public function updateSeries(string $seriesOrthancID, ?string $acquisitionDate,
             ?string $acquisitionTime, ?string $modality, ?string $seriesDescription,
             ?int $injectedDose, ?string $radiopharmaceutical, ?int $halfLife,
             ?string $injectedTime,?string $injectedDateTime, ?int $injectedActivity, ?int $patientWeight,
@@ -24,14 +20,14 @@ interface OrthancSeriesRepositoryInterface {
             int $seriesDiskSize, int $seriesUncompressedDiskSize, ?string $manufacturer,
             ?string $modelName ) :void ;
 
-    public function deletebySeriesInstanceUID(string $seriesInstanceUID) : void ;
+    public function deleteSeries(string $seriesInstanceUID) : void ;
 
-    public function reactivateBySeriesInstanceUID(string $seriesInstanceUID) : void ;
+    public function reactivateSeries(string $seriesInstanceUID) : void ;
 
-    public function isExistingOrthancSeriesID(string $orthancSeriesID) : bool ;
+    public function isExistingSeriesInstanceUID(string $seriesInstanceUID) : bool ;
 
-    public function getSeriesBySeriesInstanceUID(string $seriesInstanceUID, bool $includeDeleted) : array ;
+    public function getSeries(string $seriesInstanceUID, bool $includeDeleted) : array ;
 
-    public function reactivateSeriesOfOrthancStudyID (string $orthancStudyID) : void ;
+    public function reactivateSeriesOfStudyInstanceUID (string $studyInstanceUID) : void ;
 
 }

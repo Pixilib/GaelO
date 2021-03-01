@@ -6,28 +6,27 @@ use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOBadRequestException;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
-use App\GaelO\Interfaces\OrthancSeriesRepositoryInterface;
+use App\GaelO\Interfaces\DicomSeriesRepositoryInterface;
 use App\GaelO\Interfaces\TrackerRepositoryInterface;
 use App\GaelO\Interfaces\VisitRepositoryInterface;
 use App\GaelO\Services\AuthorizationVisitService;
-use App\GaelO\Services\DicomSeriesService;
 use Exception;
 
 class ReactivateDicomSeries{
 
     private AuthorizationVisitService $authorizationVisitService;
-    private OrthancSeriesRepositoryInterface $orthancSeriesRepositoryInterface;
+    private DicomSeriesRepositoryInterface $dicomSeriesRepositoryInterface;
     private TrackerRepositoryInterface $trackerRepositoryInterface;
     private VisitRepositoryInterface $visitRepositoryInterface;
 
     public function __construct(VisitRepositoryInterface $visitRepositoryInterface,
-                                OrthancSeriesRepositoryInterface $orthancSeriesRepositoryInterface,
+                                DicomSeriesRepositoryInterface $dicomSeriesRepositoryInterface,
                                 AuthorizationVisitService $authorizationVisitService,
                                 TrackerRepositoryInterface $trackerRepositoryInterface)
     {
         $this->visitRepositoryInterface = $visitRepositoryInterface;
         $this->authorizationVisitService = $authorizationVisitService;
-        $this->orthancSeriesRepositoryInterface = $orthancSeriesRepositoryInterface;
+        $this->dicomSeriesRepositoryInterface = $dicomSeriesRepositoryInterface;
         $this->trackerRepositoryInterface = $trackerRepositoryInterface;
 
     }
@@ -36,18 +35,18 @@ class ReactivateDicomSeries{
 
         try{
 
-            $seriesData = $this->orthancSeriesRepositoryInterface->getSeriesBySeriesInstanceUID($reactivateDicomSeriesRequest->seriesInstanceUID, true);
+            $seriesData = $this->dicomSeriesRepositoryInterface->getSeries($reactivateDicomSeriesRequest->seriesInstanceUID, true);
 
-            if($seriesData['orthanc_study'] === null){
+            if($seriesData['dicom_study'] === null){
                 throw new GaelOBadRequestException("Parent study is deactivated can't act on child series");
             }
 
-            $visitId = $seriesData['orthanc_study']['visit_id'];
+            $visitId = $seriesData['dicom_study']['visit_id'];
             $visitContext = $this->visitRepositoryInterface->getVisitContext($visitId);
 
             $this->checkAuthorization($reactivateDicomSeriesRequest->currentUserId, $visitId, $visitContext['state_quality_control']);
 
-            $this->orthancSeriesRepositoryInterface->reactivateBySeriesInstanceUID($reactivateDicomSeriesRequest->seriesInstanceUID);
+            $this->dicomSeriesRepositoryInterface->reactivateSeries($reactivateDicomSeriesRequest->seriesInstanceUID);
 
             $studyName = $visitContext['visit_type']['visit_group']['study_name'];
 
