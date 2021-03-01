@@ -119,8 +119,9 @@ class VisitTreeTest extends TestCase
         if($withReviewStatus) $expectedArray = ['reviewStatus'];
 
         foreach ($expectedArray as $key) {
-            $this->assertArrayHasKey($key, $treeAnswer['217735']['PT']['26']);
+            $this->assertArrayHasKey($key, $treeAnswer['visits'][0]);
         }
+
     }
 
     public function testTreeMonitor()
@@ -141,6 +142,7 @@ class VisitTreeTest extends TestCase
     {
         $this->treeService->setUserAndStudy(1, Constants::ROLE_INVESTIGATOR, 'test');
         $tree = $this->treeService->buildTree();
+        $this->assertArrayHasKey('patients', $tree);
         $this->doAssertionOnContent($tree, false);
     }
 
