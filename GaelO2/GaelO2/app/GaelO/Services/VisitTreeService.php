@@ -39,18 +39,17 @@ class VisitTreeService
     private function makeTreeFromVisits(array $visitsArray): array
     {
 
-        $resultTree = [];
+        $responseArray = [];
+        $responseArray['visits'] = [];
+        $responseArray['patients'] = [];
 
         foreach ($visitsArray as $visitObject) {
-
-            $patientCode = $visitObject['patient_code'];
-            $visitModality =  $visitObject['visit_type']['visit_group']['modality'];
-            $visitOrder = $visitObject['visit_type']['order'];
-
-            $resultTree[$patientCode][$visitModality][$visitOrder] =  $this->filterVisitOutputData($visitObject);
+            $visitsFormattedData = $this->filterVisitOutputData($visitObject);
+            $responseArray['visits'][] = $visitsFormattedData;
+            if(!in_array($visitsFormattedData['patientCode'], $responseArray['patients'])) $responseArray['patients'][] = $visitsFormattedData['patientCode'];
         }
 
-        return $resultTree;
+        return $responseArray;
     }
 
     /**
@@ -60,27 +59,26 @@ class VisitTreeService
     private function makeTreeFromPatientsArray(array $patientsCodeArray): array
     {
 
-        $resultTree = [];
 
         $patientVisitsArray = [];
 
         //If Reviewer need to add review status for tree selections
         if ($this->role === Constants::ROLE_REVIEWER) $patientVisitsArray = $this->visitRepository->getPatientListVisitWithContextAndReviewStatus($patientsCodeArray, $this->studyName);
         else $patientVisitsArray = $this->visitRepository->getPatientListVisitsWithContext($patientsCodeArray);
+ 
+        $responseArray = [];
+        $responseArray['visits'] = [];
+        $responseArray['patients'] = [];
+        //format visits data
+        foreach ($patientVisitsArray as $visitObject) {
+            $responseArray['visits'][] = $this->filterVisitOutputData($visitObject);
+        }
 
         foreach ($patientsCodeArray as $patientCode) {
-            $resultTree[$patientCode] = [];
+            $responseArray['patients'][] = $patientCode;
         }
 
-        //Add existing visits in sub keys
-        foreach ($patientVisitsArray as $visitObject) {
-            $visitModality = $visitObject['visit_type']['visit_group']['modality'];
-            $visitOrder = $visitObject['visit_type']['order'];
-            $patientCode = $visitObject['patient_code'];
-            $resultTree[$patientCode][$visitModality][$visitOrder] = $this->filterVisitOutputData($visitObject);
-        }
-
-        return $resultTree;
+        return $responseArray;
     }
 
     /**
