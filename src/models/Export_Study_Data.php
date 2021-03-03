@@ -36,8 +36,9 @@ class Export_Study_Data
 		foreach ($visitGroupArray as $visitGroup) {
 
 			try {
-				$modalityCreatedVisit=$this->studyObject->getStudySpecificGroupManager($visitGroup->groupModality)->getCreatedVisits();
-				array_push($this->allcreatedVisits, ...$modalityCreatedVisit);
+				$modalityCreatedVisits=$this->studyObject->getStudySpecificGroupManager($visitGroup->groupModality)->getCreatedVisits();
+				$modalityDeletedVisits=$this->studyObject->getStudySpecificGroupManager($visitGroup->groupModality)->getCreatedVisits(true);
+				array_push($this->allcreatedVisits, ...$modalityCreatedVisits, ...$modalityDeletedVisits);
 			}catch (Exception $e) { }
 		}
 	}
@@ -190,7 +191,7 @@ class Export_Study_Data
 				$csv=[];
 
 				//Export Reviews
-				$genericHeader=array('Patient Code', 'ID Visit', 'ID review', 'Reviewer', 'Review Date', 'Validated', 'Local Form', 'Adjudcation_form', 'Review Deleted');
+				$genericHeader=array('Patient Code', 'Visit Type', 'ID Visit', 'ID review', 'Reviewer', 'Review Date', 'Validated', 'Local Form', 'Adjudcation form', 'Review Deleted');
 
 				$visitTypeObject=$groupObject->getVisitType($visitType);
 				$specificFormTable=$visitTypeObject->getSpecificFormColumn();
@@ -240,8 +241,9 @@ class Export_Study_Data
 		$csv=[];
 		foreach ($reviewObjects as $reviewObject) {
 			$patientCode=$visitObject->patientCode;
+			$visitType=$visitObject->visitType;
 			$reviewData=$this->getReviewDatas($reviewObject);
-			$csv[]=[$patientCode, ...$reviewData];
+			$csv[]=[$patientCode, $visitType, ...$reviewData];
 		}
 
 		return $csv;
