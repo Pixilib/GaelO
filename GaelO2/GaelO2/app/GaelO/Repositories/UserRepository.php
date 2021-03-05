@@ -46,10 +46,10 @@ class UserRepository implements UserRepositoryInterface {
         return empty($users) ? [] : $users->toArray();
     }
 
-    public function createUser(String $username, String $lastName, String $firstName, String $status,
+    public function createUser( String $username, String $lastName, String $firstName, String $status,
                                 String $email, ?String $phone, bool $administrator, int $centerCode, String $job,
                                 ?String $orthancAdress, ?String $orthancLogin, ?String $orthancPassword,
-                                String $passwordTemporary, ?String $password, String $creationDate) : array {
+                                String $passwordTemporary ) : array {
 
         $data= ['username' => $username,
         'lastname' => $lastName,
@@ -64,8 +64,8 @@ class UserRepository implements UserRepositoryInterface {
         'orthanc_login' => $orthancLogin,
         'orthanc_password' => $orthancPassword,
         'password_temporary'=> $passwordTemporary,
-        'password'=> $password,
-        'creation_date'=> $creationDate,
+        'password'=> null,
+        'creation_date'=> Util::now(),
         'last_password_update'=> null];
 
         return $this->create($data);
@@ -324,5 +324,3 @@ class UserRepository implements UserRepositoryInterface {
         return empty($users) ? [] : $users->unique('id')->toArray();
     }
 }
-
-?>

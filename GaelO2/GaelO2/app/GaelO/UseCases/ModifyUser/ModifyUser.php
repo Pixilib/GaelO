@@ -4,47 +4,82 @@ namespace App\GaelO\UseCases\ModifyUser;
 
 use App\GaelO\Adapters\LaravelFunctionAdapter;
 use App\GaelO\Constants\Constants;
+use App\GaelO\Exceptions\GaelOConflictException;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\TrackerRepositoryInterface;
+use App\GaelO\Interfaces\UserRepositoryInterface;
 use App\GaelO\UseCases\ModifyUser\ModifyUserRequest;
 use App\GaelO\UseCases\ModifyUser\ModifyUserResponse;
 use App\GaelO\Services\AuthorizationService;
 use App\GaelO\Services\MailServices;
-use App\GaelO\Services\UserService;
+use App\GaelO\UseCases\CreateUser\CreateUser;
 use Exception;
 
-class ModifyUser {
+class ModifyUser
+{
 
     private AuthorizationService $authorizationService;
+    private UserRepositoryInterface $userRepositoryInterface;
     private TrackerRepositoryInterface $trackerRepositoryInterface;
     private MailServices $mailService;
-    private UserService $userService;
 
-    public function __construct(AuthorizationService $authorizationService, TrackerRepositoryInterface $trackerRepositoryInterface, MailServices $mailService, UserService $userService){
+    public function __construct(AuthorizationService $authorizationService, UserRepositoryInterface $userRepositoryInterface, TrackerRepositoryInterface $trackerRepositoryInterface, MailServices $mailService)
+    {
         $this->authorizationService = $authorizationService;
         $this->trackerRepositoryInterface = $trackerRepositoryInterface;
+        $this->userRepositoryInterface = $userRepositoryInterface;
         $this->mailService = $mailService;
-        $this->userService = $userService;
     }
 
-    public function execute(ModifyUserRequest $modifyUserRequest, ModifyUserResponse $modifyUserResponse) : void {
+    public function execute(ModifyUserRequest $modifyUserRequest, ModifyUserResponse $modifyUserResponse): void
+    {
 
-         try{
+        try {
 
             $this->checkAuthorization($modifyUserRequest->currentUserId);
 
-            $temporaryPassword = null;
-            if($modifyUserRequest->status === Constants::USER_STATUS_UNCONFIRMED) {
+            $user = $this->userRepositoryInterface->find($modifyUserRequest->userId);
+
+            if ($modifyUserRequest->status === Constants::USER_STATUS_UNCONFIRMED) {
+                //If unconfirmed generate a new temporary password
                 $newPassword = substr(uniqid(), 1, 10);
-                $temporaryPassword = LaravelFunctionAdapter::hash( $newPassword );
+                $temporaryPassword = LaravelFunctionAdapter::hash($newPassword);
+            } else {
+                //Do not modify the current temporary password otherwise
+                $temporaryPassword = $user['password_temporary'];
             }
 
-            $this->userService->updateUser($modifyUserRequest, $temporaryPassword);
+            CreateUser::checkFormComplete($modifyUserRequest);
+            CreateUser::checkEmailValid($modifyUserRequest->email);
 
-            if($modifyUserRequest->status === Constants::USER_STATUS_UNCONFIRMED) {
+            $knownUsername = $this->userRepositoryInterface->isExistingUsername($modifyUserRequest->username);
+            if ($knownUsername) throw new GaelOConflictException("Username Already Used");
+
+            $knownEmail = $this->userRepositoryInterface->isExistingEmail($modifyUserRequest->email);
+            if ($knownEmail) throw new GaelOConflictException("Email Already Known");
+
+            $this->userRepositoryInterface->updateUser(
+                $user['id'],
+                $modifyUserRequest->username,
+                $modifyUserRequest->lastname,
+                $modifyUserRequest->firstname,
+                $modifyUserRequest->status,
+                $modifyUserRequest->email,
+                $modifyUserRequest->phone,
+                $modifyUserRequest->administrator,
+                $modifyUserRequest->centerCode,
+                $modifyUserRequest->job,
+                $modifyUserRequest->orthancAddress,
+                $modifyUserRequest->orthancLogin,
+                $modifyUserRequest->orthancPassword,
+                $temporaryPassword
+            );
+
+
+            if ($modifyUserRequest->status === Constants::USER_STATUS_UNCONFIRMED) {
                 $this->mailService->sendResetPasswordMessage(
-                    ($modifyUserRequest->firstname.' '.$modifyUserRequest->lastname),
+                    ($modifyUserRequest->firstname . ' ' . $modifyUserRequest->lastname),
                     $modifyUserRequest->username,
                     $newPassword,
                     $modifyUserRequest->email
@@ -52,8 +87,8 @@ class ModifyUser {
             }
 
             $details = [
-                'modified_user_id'=>$modifyUserRequest->userId,
-                'status'=>$modifyUserRequest->status
+                'modified_user_id' => $modifyUserRequest->userId,
+                'status' => $modifyUserRequest->status
             ];
 
             $this->trackerRepositoryInterface->writeAction($modifyUserRequest->currentUserId, Constants::TRACKER_ROLE_ADMINISTRATOR, null, null, Constants::TRACKER_EDIT_USER, $details);
@@ -66,16 +101,15 @@ class ModifyUser {
             $modifyUserResponse->status = $e->statusCode;
             $modifyUserResponse->statusText = $e->statusText;
 
-        } catch (Exception $e){
+        } catch (Exception $e) {
             throw $e;
         };
-
-
     }
 
-    private function checkAuthorization($userId)  {
+    private function checkAuthorization($userId)
+    {
         $this->authorizationService->setCurrentUserAndRole($userId);
-        if( ! $this->authorizationService->isAdmin() ) {
+        if (!$this->authorizationService->isAdmin()) {
             throw new GaelOForbiddenException();
         };
     }

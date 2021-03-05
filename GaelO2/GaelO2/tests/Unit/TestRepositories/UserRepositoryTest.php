@@ -59,9 +59,7 @@ class UserRepositoryTest extends TestCase
             null,
             null,
             null,
-            'testPassword',
-            null,
-            now()
+            'testPassword'
         );
 
         $this->assertIsArray($createdEntity);
