@@ -34,7 +34,11 @@ class GetUserFromStudy {
             $responseArray = [];
             foreach($dbData as $data){
                 $userEntity = UserEntity::fillFromDBReponseArray($data);
-                $rolesArray = array_map(function($roleData){return $roleData['name'];}, $data ['roles']);
+                $rolesArray = array_map(function($roleData) use ($studyName){
+                    if($roleData['study_name'] == $studyName) return $roleData['name'];
+                    else return false;
+                }, $data ['roles']);
+                $rolesArray = array_filter($rolesArray, function($role) { return $role; });
                 $userEntity->addRoles($rolesArray);
                 $responseArray[] = $userEntity;
             }
