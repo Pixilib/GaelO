@@ -33,11 +33,12 @@ Salim TODO :
 FrontEnd : checker safety lien patient/Usr - uploader
 Revoir DicowWeb Authorization Service => Pb route orthanc differentes
 
+GetVisitContexte des service surement a faire passer a initialisation pour eviter requettes redondantes
 Creatable Visit : Manque Study Custom Logic (+dans front skip visites optionnelles ?)
 Si review Not Needed interdiction de creer un role review dans cette study
 Si QC not needed impossible d'ajouter un controller dans cette study
 Review  : faire une propriete dans visit pour savoir si review disponible a un user en plus de status reviewAvailable ?
-GetVisitContexte des service surement a faire passer a initialisation pour eviter requettes redondantes
+
 
 *** APIs ***
 - API Review
