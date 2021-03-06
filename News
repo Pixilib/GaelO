@@ -1,6 +1,9 @@
 GaelO
 
 --Pending Changes --
+
+--GaelO 1.4.1 **/**/** --
+  Upgrade GaelO_Uploader to 1.1.0
   Bug fix : triggering form validation of specific form
   Export : Add deleted visit and add visit type column for review export
 
