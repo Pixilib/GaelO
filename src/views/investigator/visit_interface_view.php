@@ -46,7 +46,7 @@ if ($visitObject->statusDone == Visit::NOT_DONE) {
 						window.Gaelo_Uploader.installUploader({
 							minNbOfInstances: 30,
 							availableVisits : targetVisit,
-							tusEndpoint : '/api/tus',
+							tusEndpoint : '/tus',
 							isNewStudy : async (originalOrthancID) => {
 								return new Promise( (resolve, reject) => {
 										$.ajax({
