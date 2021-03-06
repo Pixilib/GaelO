@@ -49,10 +49,29 @@
 					url: '/scripts/get_possible_import.php',
 					dataType: 'json',
 					success: function(visits) {
-
 						window.Gaelo_Uploader.installUploader({
 							minNbOfInstances: 30,
 							availableVisits : visits,
+							tusEndpoint : '/api/tus',
+							isNewStudy : async (originalOrthancID) => {
+								return new Promise( (resolve, reject) => {
+										$.ajax({
+										type: "POST",
+										url: '/scripts/is_new_study.php',
+										//Do not trigger event to avoid conflit with dicomupload listener in parallel
+										global: false,
+										data: {
+											originalOrthancID : originalOrthancID
+										},										
+										success: function(data) {
+											resolve( (data === 'true') )
+										},
+										error : function(){
+											resolve(false)
+										}
+									});
+								})	
+							},
 							onStartUsing: ()=>{
 								preventAjaxDivLoading()
 							},
