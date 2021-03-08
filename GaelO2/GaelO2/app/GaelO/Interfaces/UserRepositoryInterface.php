@@ -13,7 +13,7 @@ interface UserRepositoryInterface {
     public function createUser(String $username, String $lastName, String $firstName, String $status,
                                 String $email, ?String $phone, bool $administrator, int $centerCode, String $job,
                                 ?String $orthancAdress, ?String $orthancLogin, ?String $orthancPassword,
-                                String $passwordTemporary, ?String $password, String $creationDate) :array ;
+                                String $passwordTemporary) :array ;
 
     public function updateUser(int $id, String $username, ?String $lastName, ?String $firstName, String $status,
                                 String $email, ?String $phone, bool $administrator, int $centerCode, String $job,

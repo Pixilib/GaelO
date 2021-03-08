@@ -33,10 +33,12 @@ Salim TODO :
 FrontEnd : checker safety lien patient/Usr - uploader
 Revoir DicowWeb Authorization Service => Pb route orthanc differentes
 
-Creatable Visit : Manque Study Custom Logic (+dans front skip visites optionnelles ?)
-Ajouter un reviewNotNeeded dans Visit Type + Si review Not Needed interdiction de creer un role review dans cette study
-Si QC not needed impossible d'ajouter un controller dans cette study
 GetVisitContexte des service surement a faire passer a initialisation pour eviter requettes redondantes
+Creatable Visit : Manque Study Custom Logic (+dans front skip visites optionnelles ?)
+Si review Not Needed interdiction de creer un role review dans cette study
+Si QC not needed impossible d'ajouter un controller dans cette study
+Review  : faire une propriete dans visit pour savoir si review disponible a un user en plus de status reviewAvailable ?
+
 
 *** APIs ***
 - API Review
@@ -49,7 +51,6 @@ Tools get dicom batch => Recevra un array de seriesInstanceUID a telecharger dep
 Tools Send Dicom to peer
 Export data  + custom study export
 
-**Refac User Service peut disparaitre ou etre simplifie que pour les checks (peut etre en tools)
 
 **** Tests ***
 Test feature : visit et autres (dicom...)
