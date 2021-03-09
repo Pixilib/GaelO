@@ -31,6 +31,8 @@ class CreatableVisitTest extends TestCase
         $visitType = VisitType::factory()->create();
         $this->studyName = $visitType->visitGroup->study->name;
         $this->patient = Patient::factory()->studyName($this->studyName)->create();
+        $this->patient->inclusion_status = Constants::PATIENT_INCLUSION_STATUS_INCLUDED;
+        $this->patient->save();
         $this->patientCode = $this->patient->code;
     }
 
@@ -44,6 +46,8 @@ class CreatableVisitTest extends TestCase
 
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_INVESTIGATOR, $this->studyName);
         $response = $this->get('/api/studies/' . $this->studyName . '/patients/' . $this->patientCode . '/creatable-visits');
+        $responseArray = json_decode( $response->content() );
+        $this->assertEquals(1, sizeof($responseArray));
         $response->assertStatus(200);
     }
 
