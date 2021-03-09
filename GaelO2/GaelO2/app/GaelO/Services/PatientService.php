@@ -74,7 +74,9 @@ class PatientService
 
             foreach ($visitsArray as $visitOrder => $visit) {
                 if (!isset($createdVisitMap[$modality]) || !in_array($visitOrder, $createdVisitMap[$modality])) {
-                    $visitToCreateMap[$modality][$visitOrder] = $visit;
+                    $visit['modality'] = $modality;
+                    $visit['order'] = $visitOrder;
+                    $visitToCreateMap[] = $visit;
                 }
             }
         }
