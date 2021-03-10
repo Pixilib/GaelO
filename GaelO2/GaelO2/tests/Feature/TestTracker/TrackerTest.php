@@ -23,6 +23,7 @@ class TrackerTest extends TestCase
     protected function setUp() : void{
         parent::setUp();
         $this->study = Study::factory()->create();
+        $this->visit = Visit::factory()->create();
     }
 
 
@@ -49,6 +50,18 @@ class TrackerTest extends TestCase
         $currentUserId = AuthorizationTools::actAsAdmin(false);
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_INVESTIGATOR, $this->study->name);
         $response = $this->json('GET', '/api/studies/'.$this->study->name.'/tracker?role=Supervisor&action=Create Visit')->assertStatus(403);
+    }
+
+    public function testGetStudyTrackerByVisit () {
+        $currentUserId = AuthorizationTools::actAsAdmin(false);
+        AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $this->study->name);
+        $response = $this->json('GET', '/api/studies/'.$this->study->name.'/visits/'.$this->visit->id.'/tracker')->assertSuccessful();
+    }
+
+    public function testGetStudyTrackerByVisitShouldFailNotSupervisor () {
+        $currentUserId = AuthorizationTools::actAsAdmin(false);
+        AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_INVESTIGATOR, $this->study->name);
+        $response = $this->json('GET', '/api/studies/'.$this->study->name.'/visits/'.$this->visit->id.'/tracker')->assertStatus(403);
     }
 
 }
