@@ -121,7 +121,7 @@ class Import_Patient {
 	private function tryUpdateRegistrationDate($patientNumber, $patientRegistrationDate){
 		$patientObject = new Patient($patientNumber, $this->linkpdo);
 		//If patient with default registration date, update to the new one
-		if($patientObject->patientRegistrationDate == '1900-01-01') {
+		if($patientObject->patientRegistrationDate == '1900-01-01' && $patientRegistrationDate !== $patientObject->patientRegistrationDate ) {
 			$patientObject->editPatientRegistrationDate($patientRegistrationDate);
 			return true;
 		}
