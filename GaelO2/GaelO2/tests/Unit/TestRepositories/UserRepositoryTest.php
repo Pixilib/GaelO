@@ -349,10 +349,11 @@ class UserRepositoryTest extends TestCase
         $study2Name = $this->studies->last()->name;
 
         Role::factory()->userId($user->id)->roleName(Constants::ROLE_INVESTIGATOR)->studyName($study1Name)->create();
+        Role::factory()->userId($user->id)->roleName(Constants::ROLE_SUPERVISOR)->studyName($study1Name)->create();
         Role::factory()->userId($user->id)->roleName(Constants::ROLE_INVESTIGATOR)->studyName($study2Name)->create();
 
         $studies = $this->userRepository->getAllStudiesWithRoleForUser($user->username);
-
+        $this->assertEquals(2, sizeof($studies));
         $this->assertTrue(in_array($study1Name, $studies));
         $this->assertTrue(in_array($study2Name, $studies));
     }
