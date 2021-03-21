@@ -50,7 +50,7 @@
     <header class="main-header" id="header">
         <img id="logo-gaelo" src="<?= $message->embed(public_path('static/media/gaelo-logo-square.png')); ?>" alt="Banner Image" >
     </header>
-    <h1><a href="http://{{$webAddress}}">{{$platformName}}</a></h1>
+    <h1><a href="{{$webAddress}}">{{$platformName}}</a></h1>
     <div id="message">
         <b>Dear {{$name}},</b><br>
         @yield('content')
@@ -64,7 +64,7 @@
             This is an automatic e-mail. Please do not reply.<br>
         </p>
         <p id="footer-link">
-            <a href="http://{{$webAddress}}">{{$webAddress}}</a>
+            <a href="{{$webAddress}}">{{$webAddress}}</a>
         </p>
     </div>
 </body>
