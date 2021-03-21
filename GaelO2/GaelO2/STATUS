@@ -30,7 +30,9 @@ Reviews (GET, POST, PUT, DELETE, PATCH (unlock))
 Reviews From Visits (GET)
 
 Salim TODO :
-FrontEnd : checker safety lien patient/Usr - uploader
+Interface : Faire sous repertoire pour les interface repository et les interface adapter (et faire les interface des adapters qui manquent)
+
+FrontEnd : checker safety lien patient/Usr - uploader=> Normalement OK
 Revoir DicowWeb Authorization Service => Pb route orthanc differentes
 
 GetVisitContexte des service surement a faire passer a initialisation pour eviter requettes redondantes
@@ -43,7 +45,6 @@ Review  : faire une propriete dans visit pour savoir si review disponible a un u
 *** APIs ***
 - API Review
 Review form /file  (POST, GET, DELETE)
-Respect/Validation => Interface à faire pour l'adapter
 Quid de adjudication ou il faut faire remonter des info custom au front ?
 
 - API Supervisor

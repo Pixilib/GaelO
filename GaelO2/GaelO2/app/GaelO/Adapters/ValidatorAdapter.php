@@ -3,8 +3,6 @@
 namespace App\GaelO\Adapters;
 
 use Respect\Validation\Validator;
-use Respect\Validation\Rules;
-use Respect\Validation\Rules\Attribute;
 use Respect\Validation\Rules\In;
 use Respect\Validation\Rules\Key;
 
