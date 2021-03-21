@@ -2,13 +2,14 @@
 
 namespace App\GaelO\Services\SpecificStudiesRules;
 
+use App\GaelO\Adapters\ValidatorAdapter;
 use App\GaelO\Constants\Constants;
 
 abstract class AbstractStudyRules {
 
-    abstract function checkInvestigatorFormValidity(array $data) ;
+    abstract function checkInvestigatorFormValidity(array $data, bool $validated) : bool ;
 
-    abstract function checkReviewFormValidity(array $data) ;
+    abstract function checkReviewFormValidity(array $data, bool $validated) : bool ;
 
     abstract function getReviewStatus() : string ;
 

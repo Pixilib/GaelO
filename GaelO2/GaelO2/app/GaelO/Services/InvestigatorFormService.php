@@ -4,6 +4,7 @@ namespace App\GaelO\Services;
 
 use App\GaelO\Adapters\LaravelFunctionAdapter;
 use App\GaelO\Constants\Constants;
+use App\GaelO\Exceptions\GaelOBadRequestException;
 use App\GaelO\Interfaces\ReviewRepositoryInterface;
 use App\GaelO\Interfaces\ReviewStatusRepositoryInterface;
 use App\GaelO\Interfaces\TrackerRepositoryInterface;
@@ -49,14 +50,14 @@ class InvestigatorFormService {
 
 
     public function saveInvestigatorForm(array $data, bool $validated) : void {
-        if($validated) $this->abstractStudyRules->checkInvestigatorFormValidity($data);
+        if( ! $this->abstractStudyRules->checkInvestigatorFormValidity($data, $validated)) throw new GaelOBadRequestException('Form Contraints Failed');
         $this->reviewRepositoryInterface->createReview(true, $this->visitId, $this->studyName, $this->currentUserId, $data, $validated);
         $this->updateVisitInvestigatorFormStatus($validated);
 
     }
 
     public function updateInvestigatorForm(array $data, bool $validated) : void {
-        if($validated) $this->abstractStudyRules->checkInvestigatorFormValidity($data);
+        if( ! $this->abstractStudyRules->checkInvestigatorFormValidity($data, $validated) ) throw new GaelOBadRequestException('Form Contraints Failed');;
         $localReviewEntitity = $this->reviewRepositoryInterface->getInvestigatorForm($this->visitId);
         $this->reviewRepositoryInterface->updateReview($localReviewEntitity['id'], $this->currentUserId, $data, $validated);
         $this->updateVisitInvestigatorFormStatus($validated);

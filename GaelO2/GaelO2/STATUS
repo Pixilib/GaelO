@@ -43,7 +43,7 @@ Review  : faire une propriete dans visit pour savoir si review disponible a un u
 *** APIs ***
 - API Review
 Review form /file  (POST, GET, DELETE)
-=> Contrainte Form a continuer => Voir librairy Respect/Validation
+Respect/Validation => Interface à faire pour l'adapter
 Quid de adjudication ou il faut faire remonter des info custom au front ?
 
 - API Supervisor
