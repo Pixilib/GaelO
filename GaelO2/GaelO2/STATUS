@@ -32,9 +32,7 @@ Reviews From Visits (GET)
 Salim TODO :
 Interface : Faire sous repertoire pour les interface repository et les interface adapter (et faire les interface des adapters qui manquent)
 
-FrontEnd : checker safety lien patient/Usr - uploader=> Normalement OK
 Revoir DicowWeb Authorization Service => Pb route orthanc differentes
-
 GetVisitContexte des service surement a faire passer a initialisation pour eviter requettes redondantes
 Creatable Visit : Manque Study Custom Logic (+dans front skip visites optionnelles ?)
 Si review Not Needed interdiction de creer un role review dans cette study
