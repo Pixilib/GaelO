@@ -49,7 +49,7 @@ class ModifyReviewFormTest extends TestCase
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_REVIEWER, $this->studyName);
 
         $payload = [
-            'data' => ['lugano' => 'CR'],
+            'data' => ['comment' => 'CR'],
             'adjudication' => false,
             'validated' => true
         ];
@@ -65,7 +65,7 @@ class ModifyReviewFormTest extends TestCase
         $this->review->save();
 
         $payload = [
-            'data' => ['lugano' => 'CR'],
+            'data' => ['comment' => 'CR'],
             'adjudication' => false,
             'validated' => true
         ];
@@ -80,7 +80,7 @@ class ModifyReviewFormTest extends TestCase
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_REVIEWER, $this->studyName);
 
         $payload = [
-            'data' => ['lugano' => 'CR'],
+            'data' => ['comment' => 'CR'],
             'adjudication' => false,
             'validated' => true
         ];
@@ -98,7 +98,7 @@ class ModifyReviewFormTest extends TestCase
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_REVIEWER, $this->studyName);
 
         $payload = [
-            'data' => ['lugano' => 'CR'],
+            'data' => ['comment' => 'CR'],
             'adjudication' => false,
             'validated' => true
         ];
@@ -118,7 +118,7 @@ class ModifyReviewFormTest extends TestCase
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_REVIEWER, $this->studyName);
 
         $payload = [
-            'data' => ['lugano' => 'CR'],
+            'data' => ['comment' => 'CR'],
             'adjudication' => false,
             'validated' => true
         ];
@@ -135,7 +135,7 @@ class ModifyReviewFormTest extends TestCase
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_REVIEWER, $this->studyName);
 
         $payload = [
-            'data' => ['lugano' => 'CR'],
+            'data' => ['comment' => 'CR'],
             'adjudication' => false
         ];
 

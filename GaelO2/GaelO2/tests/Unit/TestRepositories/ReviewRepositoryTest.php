@@ -66,23 +66,23 @@ class ReviewRepositoryTest extends TestCase
         $visit = Visit::factory()->create();
         $studyName = $visit->patient->study->name;
 
-        $reviewId = $this->reviewRepository->createReview(true, $visit->id, $studyName, 1, ['lugano'=>'PR'], true);
+        $reviewId = $this->reviewRepository->createReview(true, $visit->id, $studyName, 1, ['comment'=>'PR'], true);
 
         $this->assertEquals(1, $reviewId);
 
         $reviewEntity = Review::find($reviewId)->toArray();
-        $this->assertEquals('PR', $reviewEntity['review_data']['lugano']);
+        $this->assertEquals('PR', $reviewEntity['review_data']['comment']);
     }
 
     public function testUpdateReview(){
 
         $review = Review::factory()->create();
 
-        $this->reviewRepository->updateReview($review->id, 1, ['lugano'=>'PR'] ,true);
+        $this->reviewRepository->updateReview($review->id, 1, ['comment'=>'PR'] ,true);
 
         $reviewEntity = Review::find( $review->id )->toArray();
 
-        $this->assertEquals('PR', $reviewEntity['review_data']['lugano']);
+        $this->assertEquals('PR', $reviewEntity['review_data']['comment']);
     }
 
     public function testDeleteReview(){

@@ -51,7 +51,7 @@ class CreateReviewFormTest extends TestCase
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_REVIEWER, $studyName);
 
         $payload = [
-            'data' => ['lugano' => 'CR'],
+            'data' => ['comment' => 'CR'],
             'adjudication' => false,
             'validated' => true
         ];
@@ -68,7 +68,7 @@ class CreateReviewFormTest extends TestCase
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_REVIEWER, $studyName);
 
         $payload = [
-            'data' => ['lugano' => 'CR'],
+            'data' => ['comment' => 'CR'],
             'adjudication' => true,
             'validated' => true
         ];
@@ -84,7 +84,7 @@ class CreateReviewFormTest extends TestCase
         AuthorizationTools::actAsAdmin(false);
 
         $payload = [
-            'data' => ['lugano' => 'CR'],
+            'data' => ['comment' => 'CR'],
             'adjudication' => false,
             'validated' => true
         ];
@@ -101,7 +101,7 @@ class CreateReviewFormTest extends TestCase
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_REVIEWER, $studyName);
 
         $payload = [
-            'data' => ['lugano' => 'CR'],
+            'data' => ['comment' => 'CR'],
             'adjudication' => false,
         ];
 
@@ -120,7 +120,7 @@ class CreateReviewFormTest extends TestCase
         Review::factory()->userId($currentUserId)->studyName($studyName)->visitId($visitId)->create();
 
         $payload = [
-            'data' => ['lugano' => 'CR'],
+            'data' => ['comment' => 'CR'],
             'adjudication' => false,
             'validated' => true
         ];
@@ -142,7 +142,7 @@ class CreateReviewFormTest extends TestCase
         $reviewStatusEntity->save();
 
         $payload = [
-            'data' => ['lugano' => 'CR'],
+            'data' => ['comment' => 'CR'],
             'adjudication' => false,
             'validated' => true
         ];
