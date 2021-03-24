@@ -5,7 +5,7 @@ use App\GaelO\Adapters\ValidatorAdapter;
 use App\GaelO\Constants\Constants;
 use App\GaelO\Services\SpecificStudiesRules\AbstractStudyRules;
 
-class TEST_PT_PET0 extends AbstractStudyRules {
+class TEST_CT_CT0 extends AbstractStudyRules {
 
     public function checkInvestigatorFormValidity(array $data, bool $validated)  : bool {
 
