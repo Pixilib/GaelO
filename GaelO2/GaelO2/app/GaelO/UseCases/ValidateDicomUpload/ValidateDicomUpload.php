@@ -128,17 +128,14 @@ class ValidateDicomUpload{
                 $validateDicomUploadRequest->originalOrthancId
             );
 
-            $this->registerDicomStudyService->execute();
+            $studyInstanceUID = $this->registerDicomStudyService->execute();
 
             //Change Visit status
             $this->visitService->updateUploadStatus(Constants::UPLOAD_STATUS_DONE);
 
             //Write success in Tracker
             $actionDetails = [
-                'uploadedSeries'=>$studyOrthancDetails['Series'],
-                'patientCode'=> $patientCode,
-                'visitType'=>$visitType,
-                'visitGroup'=>$visitGroup
+                'studyInstanceUID'=>$studyInstanceUID
             ];
 
             $this->trackerRepositoryInterface->writeAction($validateDicomUploadRequest->currentUserId,
