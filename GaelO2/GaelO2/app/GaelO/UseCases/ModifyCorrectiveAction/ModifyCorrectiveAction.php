@@ -42,12 +42,12 @@ class ModifyCorrectiveAction{
 
             //If form Needed, form need to be sent before making corrective action
             if($localFormNeeded  && $stateInvestigatorForm !== Constants::INVESTIGATOR_FORM_DONE ){
-                throw new GaelOForbiddenException();
+                throw new GaelOForbiddenException('You need to send the Investigator Form first!');
             }
 
             //If not Uploaded images can't perform Corrective action
             if( $uploadStatus !== Constants::UPLOAD_STATUS_DONE ){
-                throw new GaelOForbiddenException();
+                throw new GaelOForbiddenException('You need to upload DICOMs first!');
             }
 
             $this->checkAuthorization($modifyCorrectiveActionRequest->currentUserId, $modifyCorrectiveActionRequest->visitId, $currentQcStatus);
@@ -107,14 +107,14 @@ class ModifyCorrectiveAction{
     private function checkAuthorization(int $userId, int $visitId, string $currentQcStatus) : void {
 
         if($currentQcStatus !== Constants::QUALITY_CONTROL_CORRECTIVE_ACTION_ASKED){
-            throw new GaelOForbiddenException();
+            throw new GaelOForbiddenException('ici');
         }
 
         //Check user has controller role in the visit
         $this->authorizationVisitService->setCurrentUserAndRole($userId, Constants::ROLE_INVESTIGATOR);
         $this->authorizationVisitService->setVisitId($visitId);
         if ( ! $this->authorizationVisitService->isVisitAllowed() ){
-            throw new GaelOForbiddenException();
+            throw new GaelOForbiddenException('Not allowed');
         }
 
     }

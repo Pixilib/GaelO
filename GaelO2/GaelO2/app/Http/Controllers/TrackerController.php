@@ -11,6 +11,9 @@ use App\GaelO\UseCases\GetStudyTracker\GetStudyTrackerResponse;
 use App\GaelO\UseCases\GetStudyTrackerRoleAction\GetStudyTrackerRoleAction;
 use App\GaelO\UseCases\GetStudyTrackerRoleAction\GetStudyTrackerRoleActionRequest;
 use App\GaelO\UseCases\GetStudyTrackerRoleAction\GetStudyTrackerRoleActionResponse;
+use App\GaelO\UseCases\GetStudyTrackerByVisit\GetStudyTrackerByVisit;
+use App\GaelO\UseCases\GetStudyTrackerByVisit\GetStudyTrackerByVisitRequest;
+use App\GaelO\UseCases\GetStudyTrackerByVisit\GetStudyTrackerByVisitResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -26,7 +29,7 @@ class TrackerController extends Controller
             ->setStatusCode($getTrackerResponse->status, $getTrackerResponse->statusText);
     }
 
-    public function getStudyTracker(string $studyName, Request $request, getStudyTrackerRequest $getStudyTrackerRequest, getStudyTrackerResponse $getStudyTrackerResponse, getStudyTracker $getStudyTracker) {
+    public function getStudyTracker(string $studyName, Request $request, GetStudyTrackerRequest $getStudyTrackerRequest, GetStudyTrackerResponse $getStudyTrackerResponse, getStudyTracker $getStudyTracker) {
         $currentUser = Auth::user();
         $getStudyTrackerRequest->currentUserId = $currentUser['id'];
         $queryParam = $request->query();
@@ -38,7 +41,7 @@ class TrackerController extends Controller
             ->setStatusCode($getStudyTrackerResponse->status, $getStudyTrackerResponse->statusText);
     }
 
-    public function GetStudyTrackerRoleAction(string $studyName, string $role, Request $request, GetStudyTrackerRoleActionRequest $getStudyTrackerRoleActionRequest, GetStudyTrackerRoleActionResponse $getStudyTrackerRoleActionResponse, GetStudyTrackerRoleAction $getStudyTrackerRoleAction) {
+    public function getStudyTrackerRoleAction(string $studyName, string $role, Request $request, GetStudyTrackerRoleActionRequest $getStudyTrackerRoleActionRequest, GetStudyTrackerRoleActionResponse $getStudyTrackerRoleActionResponse, GetStudyTrackerRoleAction $getStudyTrackerRoleAction) {
         $currentUser = Auth::user();
         $getStudyTrackerRoleActionRequest->currentUserId = $currentUser['id'];
         $queryParam = $request->query();
@@ -51,4 +54,14 @@ class TrackerController extends Controller
             ->setStatusCode($getStudyTrackerRoleActionResponse->status, $getStudyTrackerRoleActionResponse->statusText);
     }
     
+    public function getStudyTrackerByVisit(string $studyName, string $visitId, Request $request, GetStudyTrackerByVisitRequest $getStudyTrackerByVisitRequest, GetStudyTrackerByVisitResponse $getStudyTrackerByVisitResponse, GetStudyTrackerByVisit $getStudyTrackerByVisit) {
+        $currentUser = Auth::user();
+        $getStudyTrackerByVisitRequest->currentUserId = $currentUser['id'];
+        $queryParam = $request->query();
+        $getStudyTrackerByVisitRequest->visitId = $visitId;
+        $getStudyTrackerByVisitRequest->studyName = $studyName;
+        $getStudyTrackerByVisit->execute($getStudyTrackerByVisitRequest, $getStudyTrackerByVisitResponse);
+        return response()->json($getStudyTrackerByVisitResponse->body)
+            ->setStatusCode($getStudyTrackerByVisitResponse->status, $getStudyTrackerByVisitResponse->statusText);
+    }
 }

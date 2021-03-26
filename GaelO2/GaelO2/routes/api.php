@@ -140,6 +140,7 @@ Route::middleware(['auth:api', 'refresh_token'])->group(function () {
     Route::get('tracker', [TrackerController::class, 'getTracker'] );
     Route::get('studies/{studyName}/tracker', [TrackerController::class, 'getStudyTracker'] );
     Route::get('studies/{studyName}/tracker/{trackerOfRole}', [TrackerController::class, 'getStudyTrackerRoleAction'] );
+    Route::get('studies/{studyName}/visits/{visitId}/tracker', [TrackerController::class, 'getStudyTrackerByVisit'] );
 
     //Documentations routes
     Route::get('studies/{studyName}/documentations', [DocumentationController::class, 'getDocumentationsFromStudy'] );
