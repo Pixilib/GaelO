@@ -51,7 +51,6 @@ class PatientController extends Controller
         $getPatientVisitRequest->patientCode = $patientCode;
         $getPatientVisitRequest->studyName = $studyName;
 
-
         $getPatientVisit->execute($getPatientVisitRequest, $getPatientVisitResponse);
 
         return response()->json($getPatientVisitResponse->body)
