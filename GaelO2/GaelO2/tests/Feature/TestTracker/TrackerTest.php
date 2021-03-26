@@ -6,6 +6,7 @@ use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\TestCase;
 use App\Models\Study;
 use App\GaelO\Constants\Constants;
+use App\Models\Visit;
 use Tests\AuthorizationTools;
 
 class TrackerTest extends TestCase
