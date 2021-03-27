@@ -237,8 +237,8 @@ class UserRepository implements UserRepositoryInterface {
 
     public function getAllStudiesWithRoleForUser(string $username) : array {
         $user = $this->user->withTrashed()->where('username', $username)->sole();
-        $studies = $user->roles()->groupBy('study_name')->groupBy('role')->get();
-        return $studies->count() === 0 ?  [] : $studies->pluck('study_name')->toArray();
+        $studies = $user->roles()->get();
+        return $studies->count() === 0 ?  [] : $studies->pluck('study_name')->unique()->toArray();
     }
 
     public function getUsersRoles(int $userId) : array {
