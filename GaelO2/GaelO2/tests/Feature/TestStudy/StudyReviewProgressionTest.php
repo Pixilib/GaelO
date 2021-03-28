@@ -27,7 +27,7 @@ class StudyReviewProgressionTest extends TestCase
         $this->artisan('db:seed');
     }
 
-    public function testCreateStudy() {
+    public function testGetReviewProgression() {
 
         $review = Review::factory()->reviewForm()->validated()->create();
 
@@ -35,7 +35,7 @@ class StudyReviewProgressionTest extends TestCase
 
         AuthorizationTools::actAsAdmin(false);
 
-        $answer = $this->json('GET', '/api/studies/'.$review->study_name.'/visit-types/'.$review->visit->visitType->id.'/review-progression');
+        //$answer = $this->json('GET', '/api/studies/'.$review->study_name.'/visit-types/'.$review->visit->visitType->id.'/review-progression');
         //dd($answer);
 
     }
