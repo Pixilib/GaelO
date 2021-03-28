@@ -44,6 +44,13 @@ class UserEntity {
         return $userEntity;
     }
 
+    public static function fillMinimalFromDBReponseArray(array $array){
+        $userEntity  = new UserEntity();
+        $userEntity->id = $array['id'];
+        $userEntity->username = $array['username'];
+        return $userEntity;
+    }
+
     public function addRoles(array $roles) : void {
         $this->roles = $roles;
     }

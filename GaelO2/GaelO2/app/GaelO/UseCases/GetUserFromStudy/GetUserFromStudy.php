@@ -33,7 +33,7 @@ class GetUserFromStudy {
 
             $responseArray = [];
             foreach($dbData as $data){
-                $userEntity = UserEntity::fillFromDBReponseArray($data);
+                $userEntity = UserEntity::fillMinimalFromDBReponseArray($data);
                 $rolesArray = array_map(function($roleData) use ($studyName){
                     if($roleData['study_name'] == $studyName) return $roleData['name'];
                     else return null;
