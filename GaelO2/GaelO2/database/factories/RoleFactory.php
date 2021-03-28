@@ -15,7 +15,7 @@ class RoleFactory extends Factory
     {
         return [
             'name'=> null,
-            'user_id'=> null,
+            'user_id'=> User::factory()->create()->id,
             'study_name'=> null
         ];
     }

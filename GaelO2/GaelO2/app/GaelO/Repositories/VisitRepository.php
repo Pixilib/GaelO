@@ -7,9 +7,7 @@ use App\Models\Visit;
 use App\GaelO\Interfaces\VisitRepositoryInterface;
 use App\GaelO\Util;
 use App\Models\ReviewStatus;
-use Exception;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 
 class VisitRepository implements VisitRepositoryInterface
 {
@@ -169,6 +167,23 @@ class VisitRepository implements VisitRepositoryInterface
             $query->where('visit_group_id', $visitGroupId);
         })->get();
         return $visits->toArray();
+    }
+
+    public function getVisitsInVisitType(int $visitTypeId, bool $withReviewStatus = false, string $studyName = null ) : array{
+
+        $visits = $this->visit->whereHas('visitType', function ($query) use ($visitTypeId) {
+            $query->where('id', $visitTypeId);
+        });
+
+        if($withReviewStatus){
+            $visits->with(['reviewStatus' => function ($q) use ($studyName) {
+                $q->where('study_name', $studyName);
+            }]);
+        }
+
+        return $visits->get()->toArray();
+
+
     }
 
     public function hasVisitsInVisitGroup(int $visitGroupId): bool

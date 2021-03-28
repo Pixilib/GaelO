@@ -17,6 +17,9 @@ use App\GaelO\UseCases\GetPatientFromStudy\GetPatientFromStudyResponse;
 use App\GaelO\UseCases\GetPossibleUpload\GetPossibleUpload;
 use App\GaelO\UseCases\GetPossibleUpload\GetPossibleUploadRequest;
 use App\GaelO\UseCases\GetPossibleUpload\GetPossibleUploadResponse;
+use App\GaelO\UseCases\GetReviewProgression\GetReviewProgression;
+use App\GaelO\UseCases\GetReviewProgression\GetReviewProgressionRequest;
+use App\GaelO\UseCases\GetReviewProgression\GetReviewProgressionResponse;
 use App\GaelO\UseCases\GetStudy\GetStudy;
 use App\GaelO\UseCases\GetStudy\GetStudyRequest;
 use App\GaelO\UseCases\GetStudy\GetStudyResponse;
@@ -148,6 +151,24 @@ class StudyController extends Controller
         $getPatient->execute($getPatientRequest, $getPatientResponse);
         return response()->json($getPatientResponse->body)
                 ->setStatusCode($getPatientResponse->status, $getPatientResponse->statusText);
+    }
+
+    public function getReviewProgression(String $studyName, int $visitTypeId, GetReviewProgression $getReviewProgression, GetReviewProgressionRequest $getReviewProgressionRequest, GetReviewProgressionResponse $getReviewProgressionResponse){
+        $currentUser = Auth::user();
+
+        $getReviewProgressionRequest->visitTypeId = $visitTypeId;
+        $getReviewProgressionRequest->currentUserId = $currentUser['id'];
+        $getReviewProgressionRequest->studyName = $studyName;
+
+        $getReviewProgression->execute($getReviewProgressionRequest, $getReviewProgressionResponse);
+
+        if($getReviewProgressionResponse->body){
+            return response()->json($getReviewProgressionResponse->body)
+            ->setStatusCode($getReviewProgressionResponse->status, $getReviewProgressionResponse->statusText);
+        }else{
+            return response()->noContent()
+            ->setStatusCode($getReviewProgressionResponse->status, $getReviewProgressionResponse->statusText);
+        }
     }
 
 }

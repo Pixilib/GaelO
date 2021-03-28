@@ -64,4 +64,7 @@ interface VisitRepositoryInterface
     public function getImagingVisitsAwaitingUpload(string $studyName, array $centerCode): array ;
 
     public function reactivateVisit(int $visitId) : void ;
+
+    public function getVisitsInVisitType(int $visitTypeId, bool $withReviewStatus = false, string $studyName = null ) : array;
+
 }

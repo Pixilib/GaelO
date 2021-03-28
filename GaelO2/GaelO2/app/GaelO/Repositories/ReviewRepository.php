@@ -70,7 +70,6 @@ class ReviewRepository implements ReviewRepositoryInterface {
 
     }
 
-    //SK A TESTER
     public function getReviewsForStudyVisit(string $studyName, int $visitId, bool $onlyValidated ) : array {
 
         $reviewQuery = $this->review
@@ -87,7 +86,6 @@ class ReviewRepository implements ReviewRepositoryInterface {
 
     }
 
-    //SK A TESTER
     public function getReviewFormForStudyVisitUser(string $studyName, int $visitId, int $userId ) : array {
         $reviewEntity = $this->review
             ->where('study_name', $studyName)
@@ -99,7 +97,28 @@ class ReviewRepository implements ReviewRepositoryInterface {
 
     }
 
-    //SK A tester
+    /**
+     * Return for each visit ID of the targeted visitType, the array of users having validated the review form
+     */
+    public function getUsersHavingReviewedForStudyVisitType(string $studyName, int $visitTypeId): array
+    {
+
+        $answer = $this->review
+            ->with('user:id,username')
+            ->whereHas('visit', function ($query) use ($visitTypeId) {
+                $query->whereHas('visitType', function ($query) use ($visitTypeId) {
+                    $query->where('id', $visitTypeId);
+                });
+            })
+            ->where('study_name', $studyName)
+            ->where('local', false)
+            ->where('validated', true)
+            ->select('visit_id','user_id')
+            ->get();
+
+        return $answer->count() === 0 ? []  : $answer->groupBy(['visit_id', 'user_id'])->toArray();
+    }
+
     public function isExistingFormForStudyVisitUser(string $studyName, int $visitId, int $userId) : bool{
 
         $reviewEntity = $this->review
@@ -111,7 +130,6 @@ class ReviewRepository implements ReviewRepositoryInterface {
         return $reviewEntity->count() > 0 ? true : false;
     }
 
-    //SK A tester
     public function unlockReviewForm(int $reviewId) : void {
         $reviewEntity = $this->review->findOrFail($reviewId);
         $reviewEntity->validated = false;

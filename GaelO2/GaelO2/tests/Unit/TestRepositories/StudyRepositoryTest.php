@@ -3,6 +3,7 @@
 namespace Tests\Unit\TestRepositories;
 
 use App\GaelO\Repositories\StudyRepository;
+use App\Models\Role;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\TestCase;

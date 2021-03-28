@@ -221,6 +221,28 @@ class VisitRepositoryTest extends TestCase
         $this->assertEquals(1, sizeof($answer));
     }
 
+    public function testGetVisitsInVisitType(){
+        $visit = Visit::factory()->count(5)->create();
+        $answer = $this->visitRepository->getVisitsInVisitType( $visit->first()->visitType->id );
+        $this->assertEquals(1, sizeof($answer));
+    }
+
+    public function testGetVisitsInVisitTypeWithReviewStatus(){
+        $visit = Visit::factory()->count(5)->create();
+        $study = Study::factory()->create();
+        ReviewStatus::factory()->create([
+            'visit_id' => $visit->first()->id,
+            'study_name' => $study->name,
+            'review_available' => true
+        ]);
+
+        $answer = $this->visitRepository->getVisitsInVisitType( $visit->first()->visitType->id, true, $study->name );
+        $this->assertEquals(1, sizeof($answer));
+        $this->assertArrayHasKey('review_status', $answer[0]);
+    }
+
+
+
     public function testGetVisitsInStudyAwaitingControllerAction()
     {
         $patient = $this->populateVisits()[0];
