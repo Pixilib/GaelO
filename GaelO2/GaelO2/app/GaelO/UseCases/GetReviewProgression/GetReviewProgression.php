@@ -35,6 +35,9 @@ class GetReviewProgression {
 
             //Get Reviewers in the asked study
             $reviewers = $this->userRepositoryInterface->getUsersByRolesInStudy($getReviewProgressionRequest->studyName, Constants::ROLE_REVIEWER);
+            $reviewersId = array_map(function ($reviewer) {
+                return $reviewer['id'];
+            }, $reviewers);
 
             //Get Visits in the asked visitTypeId and Study (with review status)
             $visits = $this->visitRepositoryInterface->getVisitsInVisitType($getReviewProgressionRequest->visitTypeId, true, $getReviewProgressionRequest->studyName);
@@ -42,7 +45,22 @@ class GetReviewProgression {
             //Get Validated review for VisitType and Study
             $validatedReview = $this->reviewRepositoryInterface->getUsersHavingReviewedForStudyVisitType($getReviewProgressionRequest->studyName, $getReviewProgressionRequest->visitTypeId);
 
-            dd($reviewers, $visits, $validatedReview);
+            $answer = [];
+
+            foreach ($visits as $visit){
+
+                $userIdHavingReviewed = array_keys($validatedReview[$visit['id']]);
+                $userIdNotHavingReviewed = array_diff($reviewersId, $userIdHavingReviewed);
+                $answer[] = [
+                    'id' => $visit['id'],
+                    'patientCode' => $visit['patient_code'],
+                    'reviewStatus' => $visit['review_status'],
+                    'visitDate' =>$visit['visit_date'],
+                    'reviewDoneBy'=>$userIdHavingReviewed,
+                    'reviewNotDoneBy'=>$userIdNotHavingReviewed
+                ];
+            }
+            dd($reviewers, $visits, $validatedReview, $answer);
 
             //Compute missing reviewer and outputresults
             //SK A FAIRE
