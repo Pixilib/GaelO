@@ -1,7 +1,6 @@
 @extends('mails.mail_template')
 
 @section('content')
-
     Quality Control of the following visit has been set to : {{$controlDecision}}<br>
     Study : {{$study}}<br>
     Patient Number : {{$patientCode}}<br>

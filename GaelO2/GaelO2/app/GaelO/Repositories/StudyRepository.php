@@ -76,5 +76,3 @@ class StudyRepository implements StudyRepositoryInterface {
     }
 
 }
-
-?>

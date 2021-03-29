@@ -93,5 +93,3 @@ class DocumentationRepository implements DocumentationRepositoryInterface {
     }
 
 }
-
-?>
