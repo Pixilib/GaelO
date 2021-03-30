@@ -28,6 +28,7 @@ dicom-study (PATCH) => OK
 Investigator-form (GET, PUT, POST, DELETE, PATCH (unlock)) =>OK
 Reviews (GET, POST, PUT, DELETE, PATCH (unlock))
 Reviews From Visits (GET)
+review-progression (GET)
 
 Salim TODO :
 Interface : Faire sous repertoire pour les interface repository et les interface adapter (et faire les interface des adapters qui manquent)

@@ -4,9 +4,11 @@ namespace App\GaelO\UseCases\GetReviewProgression;
 
 use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOException;
+use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\ReviewRepositoryInterface;
 use App\GaelO\Interfaces\UserRepositoryInterface;
 use App\GaelO\Interfaces\VisitRepositoryInterface;
+use App\GaelO\Services\AuthorizationService;
 use Exception;
 
 /**
@@ -14,14 +16,17 @@ use Exception;
  */
 class GetReviewProgression {
 
+    private AuthorizationService $authorizationService;
     private VisitRepositoryInterface $visitRepositoryInterface;
     private UserRepositoryInterface $userRepositoryInterface;
     private ReviewRepositoryInterface $reviewRepositoryInterface;
 
-    public function __construct(VisitRepositoryInterface $visitRepositoryInterface,
+    public function __construct(AuthorizationService $authorizationService,
+                                VisitRepositoryInterface $visitRepositoryInterface,
                                 UserRepositoryInterface $userRepositoryInterface,
                                 ReviewRepositoryInterface $reviewRepositoryInterface){
 
+        $this->authorizationService = $authorizationService;
         $this->visitRepositoryInterface = $visitRepositoryInterface;
         $this->userRepositoryInterface = $userRepositoryInterface;
         $this->reviewRepositoryInterface = $reviewRepositoryInterface;
@@ -31,13 +36,19 @@ class GetReviewProgression {
     public function execute(GetReviewProgressionRequest $getReviewProgressionRequest, GetReviewProgressionResponse $getReviewProgressionResponse){
         try{
 
-            //SK CHECK AUORIZATION A FAIRE
+            $this->checkAuthorization($getReviewProgressionRequest->currentUserId, $getReviewProgressionRequest->studyName);
 
             //Get Reviewers in the asked study
             $reviewers = $this->userRepositoryInterface->getUsersByRolesInStudy($getReviewProgressionRequest->studyName, Constants::ROLE_REVIEWER);
-            $reviewersId = array_map(function ($reviewer) {
-                return $reviewer['id'];
-            }, $reviewers);
+
+            $reviewersById = [];
+            foreach ( $reviewers as $reviewer ) {
+                $reviewersById[$reviewer['id']] = [
+                    'username' => $reviewer['username'],
+                    'lastname' => $reviewer['lastname'],
+                    'firstname' => $reviewer['firstname']
+                ];
+            }
 
             //Get Visits in the asked visitTypeId and Study (with review status)
             $visits = $this->visitRepositoryInterface->getVisitsInVisitType($getReviewProgressionRequest->visitTypeId, true, $getReviewProgressionRequest->studyName);
@@ -49,23 +60,24 @@ class GetReviewProgression {
 
             foreach ($visits as $visit){
 
+                //Listing users having done a review of this visit
                 $userIdHavingReviewed = array_keys($validatedReview[$visit['id']]);
-                $userIdNotHavingReviewed = array_diff($reviewersId, $userIdHavingReviewed);
+
+                //Listing users not having done review of this visit
+                $userIdNotHavingReviewed = array_diff(array_keys($reviewersById), $userIdHavingReviewed);
+
+
                 $answer[] = [
                     'id' => $visit['id'],
                     'patientCode' => $visit['patient_code'],
                     'reviewStatus' => $visit['review_status'],
                     'visitDate' =>$visit['visit_date'],
-                    'reviewDoneBy'=>$userIdHavingReviewed,
-                    'reviewNotDoneBy'=>$userIdNotHavingReviewed
+                    'reviewDoneBy'=> $this->getUsersDetails($userIdHavingReviewed, $reviewersById),
+                    'reviewNotDoneBy'=>$this->getUsersDetails($userIdNotHavingReviewed, $reviewersById)
                 ];
             }
-            dd($reviewers, $visits, $validatedReview, $answer);
 
-            //Compute missing reviewer and outputresults
-            //SK A FAIRE
-
-            $getReviewProgressionResponse->body = 'SA';
+            $getReviewProgressionResponse->body = $answer;
             $getReviewProgressionResponse->status = 200;
             $getReviewProgressionResponse->statusText = 'OK';
 
@@ -80,9 +92,23 @@ class GetReviewProgression {
         }
     }
 
-    private function checkAuthorization() {
-        //Check user is supervisor in the called Study
+    private function checkAuthorization(int $userId, string $studyName){
+        $this->authorizationService->setCurrentUserAndRole($userId, Constants::ROLE_SUPERVISOR);
+        if(! $this->authorizationService->isRoleAllowed($studyName)){
+            throw new GaelOForbiddenException();
+        };
+    }
 
+    /**
+     * Pickup users details from userId array
+     */
+    private function getUsersDetails(array $usersId, array $usersDetails) : array {
+        $answer=[];
+        foreach($usersId as $userId){
+            $answer[$userId]= $usersDetails[$userId];
+        }
+
+        return $answer;
     }
 
 }
