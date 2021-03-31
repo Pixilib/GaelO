@@ -61,7 +61,8 @@ class GetReviewProgression {
             foreach ($visits as $visit){
 
                 //Listing users having done a review of this visit
-                $userIdHavingReviewed = array_keys($validatedReview[$visit['id']]);
+                if(key_exists($visit['id'], $validatedReview)) $userIdHavingReviewed = array_keys($validatedReview[$visit['id']]);
+                else $userIdHavingReviewed = [];
 
                 //Listing users not having done review of this visit
                 $userIdNotHavingReviewed = array_diff(array_keys($reviewersById), $userIdHavingReviewed);
@@ -70,7 +71,7 @@ class GetReviewProgression {
                 $answer[] = [
                     'id' => $visit['id'],
                     'patientCode' => $visit['patient_code'],
-                    'reviewStatus' => $visit['review_status'],
+                    'reviewStatus' => $visit['review_status']['review_status'],
                     'visitDate' =>$visit['visit_date'],
                     'reviewDoneBy'=> $this->getUsersDetails($userIdHavingReviewed, $reviewersById),
                     'reviewNotDoneBy'=>$this->getUsersDetails($userIdNotHavingReviewed, $reviewersById)

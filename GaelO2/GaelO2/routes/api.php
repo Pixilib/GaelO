@@ -55,7 +55,8 @@ Route::middleware(['auth:api', 'refresh_token'])->group(function () {
     Route::get('studies/{studyName}/users', [UserController::class, 'getUserFromStudy'] );
 
     //Study Routes
-    Route::get('studies', [StudyController::class, 'getStudy'] );
+    Route::get('studies', [StudyController::class, 'getStudies'] );
+    Route::get('studies/{studyName}/visit-types', [StudyController::class, 'getStudyDetails'] );
     Route::delete('studies/{studyName}', [StudyController::class, 'deleteStudy'] );
     Route::patch('studies/{studyName}/reactivate', [StudyController::class, 'reactivateStudy'] );
     Route::get('studies/{studyName}/patients', [StudyController::class, 'getPatientFromStudy'] );

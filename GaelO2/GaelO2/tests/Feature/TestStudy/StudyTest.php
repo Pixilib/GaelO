@@ -8,6 +8,7 @@ use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\TestCase;
 use App\Models\Study;
 use App\Models\Visit;
+use App\Models\VisitType;
 use Tests\AuthorizationTools;
 
 class StudyTest extends TestCase
@@ -111,6 +112,24 @@ class StudyTest extends TestCase
         Study::factory()->create();
         $this->json('GET', '/api/studies')->assertStatus(403);
     }
+
+    public function testGetStudyDetails(){
+        $userId = AuthorizationTools::actAsAdmin(true);
+        $visitType = VisitType::factory()->create();
+        AuthorizationTools::addRoleToUser($userId, Constants::ROLE_SUPERVISOR, $visitType->visitGroup->study->name);
+        $answer = $this->json('GET', '/api/studies/'.$visitType->visitGroup->study->name.'/visit-types');
+        $this->assertArrayHasKey('visitGroupId', $answer[0]);
+        $this->assertArrayHasKey('visitGroupModality', $answer[0]);
+        $this->assertArrayHasKey('visitTypeId', $answer[0]);
+        $this->assertArrayHasKey('visitTypeName', $answer[0]);
+    }
+
+    public function testGetStudyDetailsShouldFailNotSupervisor(){
+        AuthorizationTools::actAsAdmin(true);
+        $visitType = VisitType::factory()->create();
+        $this->json('GET', '/api/studies/'.$visitType->visitGroup->study->name.'/visit-types')->assertStatus(403);
+    }
+
 
     public function testGetDeletedStudies(){
         AuthorizationTools::actAsAdmin(true);

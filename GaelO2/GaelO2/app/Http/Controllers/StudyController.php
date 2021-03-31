@@ -26,6 +26,9 @@ use App\GaelO\UseCases\GetStudy\GetStudyResponse;
 use App\GaelO\UseCases\GetStudyDetails\GetStudyDetails;
 use App\GaelO\UseCases\GetStudyDetails\GetStudyDetailsRequest;
 use App\GaelO\UseCases\GetStudyDetails\GetStudyDetailsResponse;
+use App\GaelO\UseCases\GetStudyDetailsSupervisor\GetStudyDetailsSupervisor;
+use App\GaelO\UseCases\GetStudyDetailsSupervisor\GetStudyDetailsSupervisorRequest;
+use App\GaelO\UseCases\GetStudyDetailsSupervisor\GetStudyDetailsSupervisorResponse;
 use App\GaelO\UseCases\GetVisitsTree\GetVisitsTree;
 use App\GaelO\UseCases\GetVisitsTree\GetVisitsTreeRequest;
 use App\GaelO\UseCases\GetVisitsTree\GetVisitsTreeResponse;
@@ -60,7 +63,7 @@ class StudyController extends Controller
 
     }
 
-    public function getStudy(Request $request, GetStudy $getStudy, GetStudyRequest $getStudyRequest, GetStudyResponse $getStudyResponse, GetStudyDetails $getStudyDetails, GetStudyDetailsRequest $getStudyDetailsRequest, GetStudyDetailsResponse $getStudyDetailsResponse){
+    public function getStudies(Request $request, GetStudy $getStudy, GetStudyRequest $getStudyRequest, GetStudyResponse $getStudyResponse, GetStudyDetails $getStudyDetails, GetStudyDetailsRequest $getStudyDetailsRequest, GetStudyDetailsResponse $getStudyDetailsResponse){
         $currentUser = Auth::user();
         $queryParam = $request->query();
         if(array_key_exists('expand', $queryParam) ){
@@ -74,6 +77,17 @@ class StudyController extends Controller
             return response()->json($getStudyResponse->body)
             ->setStatusCode($getStudyResponse->status, $getStudyResponse->statusText);
         }
+
+    }
+
+    public function getStudyDetails(string $studyName, GetStudyDetailsSupervisor $getStudyDetailsSupervisor, GetStudyDetailsSupervisorRequest $getStudyDetailsSupervisorRequest, GetStudyDetailsSupervisorResponse $getStudyDetailsSupervisorResponse){
+        $currentUser = Auth::user();
+        $getStudyDetailsSupervisorRequest->currentUserId = $currentUser['id'];
+        $getStudyDetailsSupervisorRequest->studyName = $studyName;
+        $getStudyDetailsSupervisor->execute($getStudyDetailsSupervisorRequest, $getStudyDetailsSupervisorResponse);
+        return response()
+            ->json($getStudyDetailsSupervisorResponse->body)
+            ->setStatusCode($getStudyDetailsSupervisorResponse->status, $getStudyDetailsSupervisorResponse->statusText);
 
     }
 

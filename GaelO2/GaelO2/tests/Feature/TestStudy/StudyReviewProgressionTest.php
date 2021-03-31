@@ -41,6 +41,7 @@ class StudyReviewProgressionTest extends TestCase
         $answer = $this->json('GET', '/api/studies/'.$review->study_name.'/visit-types/'.$review->visit->visitType->id.'/review-progression');
         $answer->assertStatus(200);
         $answerArray = json_decode($answer->content(), true);
+        //dd($answerArray);
         $this->assertEquals(1, sizeof($answerArray[0]['reviewDoneBy']));
         $this->assertEquals(5, sizeof($answerArray[0]['reviewNotDoneBy']));
 
