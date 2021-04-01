@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\TestDicoms;
 
+use App\GaelO\Constants\Constants;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\TestCase;
 use App\Models\DicomStudy;
@@ -29,7 +30,24 @@ class DicomsStudyFromStudyTest extends TestCase
 
     public function testGetDicomStudy()
     {
+        $userId = AuthorizationTools::actAsAdmin(false);
+        AuthorizationTools::addRoleToUser($userId, Constants::ROLE_SUPERVISOR, $this->studyName);
+        $this->json('GET', 'api/studies/' . $this->studyName . '/dicom-studies')->assertStatus(200);
+    }
+
+
+    public function testGetDicomStudyWithTrashed()
+    {
+        $userId = AuthorizationTools::actAsAdmin(false);
+        $this->dicomStudy->delete();
+        $this->dicomStudy->save();
+        AuthorizationTools::addRoleToUser($userId, Constants::ROLE_SUPERVISOR, $this->studyName);
+        $this->json('GET', 'api/studies/' . $this->studyName . '/dicom-studies?withTrashed')->assertStatus(200);
+    }
+
+    public function testGetDicomStudyShouldFailNotSupervisor()
+    {
         AuthorizationTools::actAsAdmin(false);
-        dd($this->json('GET', 'api/studies/' . $this->studyName . '/dicom-studies?expand'));
+        $this->json('GET', 'api/studies/' . $this->studyName . '/dicom-studies?withTrashed')->assertStatus(403);
     }
 }

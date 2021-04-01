@@ -216,14 +216,11 @@ class DicomStudyRepository implements DicomStudyRepositoryInterface
                 if($withDeleted) $query->withTrashed();
             }])
             ->select(
-                'dicom_studies.study_uid',
-                'dicom_studies.number_of_series',
-                'dicom_studies.number_of_instances',
-                'dicom_studies.deleted_at',
+                'dicom_studies.*',
                 'patients.code',
                 'patients.center_code',
                 'patients.inclusion_status',
-                'visit_groups.modality as visitGroupModality',
+                'visit_groups.modality',
                 'visit_types.name as visitTypeName',
                 'visits.visit_date',
                 'visits.state_investigator_form',

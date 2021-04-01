@@ -125,7 +125,7 @@ class DicomController extends Controller
         $currentUser = Auth::user();
         $queryParam = $request->query();
         $getDicomsStudyRequest->studyName = $studyName;
-        $getDicomsStudyRequest->expand = $queryParam['expand'];
+        $getDicomsStudyRequest->withTrashed = key_exists('withTrashed', $queryParam);
         $getDicomsStudyRequest->currentUserId = $currentUser['id'];
 
         $getDicomsStudy->execute($getDicomsStudyRequest, $getDicomsStudyResponse);

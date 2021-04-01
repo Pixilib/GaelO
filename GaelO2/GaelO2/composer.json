@@ -6,7 +6,7 @@
         "framework",
         "laravel"
     ],
-    "license": "AGPLv3",
+    "license": "AGPL-3.0-only",
     "require": {
         "php": "^8.0.1",
         "fideloper/proxy": "^4.4.1",
