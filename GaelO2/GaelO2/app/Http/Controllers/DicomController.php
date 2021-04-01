@@ -11,6 +11,9 @@ use App\GaelO\UseCases\GetDicoms\GetDicomsResponse;
 use App\GaelO\UseCases\GetDicomsFile\GetDicomsFile;
 use App\GaelO\UseCases\GetDicomsFile\GetDicomsFileRequest;
 use App\GaelO\UseCases\GetDicomsFile\GetDicomsFileResponse;
+use App\GaelO\UseCases\GetDicomsStudy\GetDicomsStudy;
+use App\GaelO\UseCases\GetDicomsStudy\GetDicomsStudyRequest;
+use App\GaelO\UseCases\GetDicomsStudy\GetDicomsStudyResponse;
 use App\GaelO\UseCases\ReactivateDicomSeries\ReactivateDicomSeries;
 use App\GaelO\UseCases\ReactivateDicomSeries\ReactivateDicomSeriesRequest;
 use App\GaelO\UseCases\ReactivateDicomSeries\ReactivateDicomSeriesResponse;
@@ -42,7 +45,7 @@ class DicomController extends Controller
             return response()->json($getDicomsFileResponse->body)
             ->setStatusCode($getDicomsFileResponse->status, $getDicomsFileResponse->statusText);
         }
-        
+
     }
 
     public function getVisitDicoms(int $visitId, Request $request, GetDicoms $getDicoms, GetDicomsRequest $getDicomsRequest, GetDicomsResponse $getDicomsResponse){
@@ -113,6 +116,26 @@ class DicomController extends Controller
         }else{
             return response()->json($reactivateDicomStudyResponse->body)
             ->setStatusCode($reactivateDicomStudyResponse->status, $reactivateDicomStudyResponse->statusText);
+        }
+
+
+    }
+
+    public function getStudyDicomStudies(string $studyName, Request $request, GetDicomsStudy $getDicomsStudy, GetDicomsStudyRequest $getDicomsStudyRequest, GetDicomsStudyResponse $getDicomsStudyResponse){
+        $currentUser = Auth::user();
+        $queryParam = $request->query();
+        $getDicomsStudyRequest->studyName = $studyName;
+        $getDicomsStudyRequest->expand = $queryParam['expand'];
+        $getDicomsStudyRequest->currentUserId = $currentUser['id'];
+
+        $getDicomsStudy->execute($getDicomsStudyRequest, $getDicomsStudyResponse);
+
+        if($getDicomsStudyResponse->body === null){
+            return response()->noContent()
+            ->setStatusCode($getDicomsStudyResponse->status, $getDicomsStudyResponse->statusText);
+        }else{
+            return response()->json($getDicomsStudyResponse->body)
+            ->setStatusCode($getDicomsStudyResponse->status, $getDicomsStudyResponse->statusText);
         }
 
 

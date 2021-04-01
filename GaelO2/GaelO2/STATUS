@@ -31,6 +31,15 @@ Reviews From Visits (GET)
 review-progression (GET)
 
 Salim TODO :
+
+Download Dicom :
+Finir GetDicomStudyFromStudy
+Faire FrontEnd
+Faire API qui recoit array de SeriesInstanceUID pour le telechargement
+Api pour envoi vers OrthancPeer ?
+
+Export Dicom : A faire
+
 Interface : Faire sous repertoire pour les interface repository et les interface adapter (et faire les interface des adapters qui manquent)
 
 Revoir DicowWeb Authorization Service => Pb route orthanc differentes

@@ -65,7 +65,7 @@ Route::middleware(['auth:api', 'refresh_token'])->group(function () {
     Route::get('studies/{studyName}/orthanc-study-id/{orthancStudyID}', [StudyController::class, 'isKnownOrthancId'] );
     Route::get('studies/{studyName}/possible-uploads', [StudyController::class, 'getPossibleUploads'] );
     Route::get('studies/{studyName}/visit-types/{visitTypeId}/review-progression', [StudyController::class, 'getReviewProgression'] );
-
+    Route::get('studies/{studyName}/dicom-studies', [DicomController::class, 'getStudyDicomStudies'] );
     //Study Routes
     Route::post('studies', [StudyController::class, 'createStudy'] );
 
