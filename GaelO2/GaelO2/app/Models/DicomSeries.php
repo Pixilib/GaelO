@@ -17,4 +17,9 @@ class DicomSeries extends Model
     public function dicomStudy(){
         return $this->belongsTo('App\Models\DicomStudy', 'study_uid', 'study_uid');
     }
+
+    public function visit()
+    {
+        return $this->hasOneThrough(Visit::class, DicomStudy::class);
+    }
 }

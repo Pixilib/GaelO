@@ -25,6 +25,10 @@ class GetDicomsFileSupervisor {
             //Checker Authorization
             $this->checkAuthorization($getDicomsFileSupervisorRequest->currentUserId, $getDicomsFileSupervisorRequest->studyName);
 
+            //Lister les visites correspondant a l'array de seriesInstanceUID
+            //Checker que ces visites correspondent à 1 seule etude qui est soit l'etude principale ou a une ancillaire de l'étude principale
+            //Lister les OrthancID
+            //Appeler Orthanc pour l'output du fichier et stream de la réponse
 
             //First output the filename, then the controller will call outputStream to get content of orthanc response
             //$getDicomsResponse->filename = 'DICOM_'.$studyName.'_'.$visitGroup.'_'.$visitType.'_'.$patientCode.'.zip';

@@ -9,6 +9,8 @@ use App\Models\DicomSeries;
 class DicomSeriesRepository implements DicomSeriesRepositoryInterface {
 
 
+    private DicomSeries $dicomSeries;
+
     public function __construct(DicomSeries $dicomSeries){
         $this->dicomSeries = $dicomSeries;
     }
@@ -120,6 +122,12 @@ class DicomSeriesRepository implements DicomSeriesRepositoryInterface {
 
     public function reactivateSeriesOfStudyInstanceUID (string $studyInstanceUID) : void {
         $this->dicomSeries->where('study_uid',$studyInstanceUID)->withTrashed()->restore();
+    }
+
+    //SK A etudier
+    public function getRelatedVisitIdFromSeriesInstanceUID(array $seriesInstanceUID) : array {
+        $query = $this->dicomSeries->with('visit')->whereIn('series_uid', $seriesInstanceUID)->withTrashed();
+        return $query->get()->toArray();
     }
 
 }
