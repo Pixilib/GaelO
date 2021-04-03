@@ -124,10 +124,24 @@ class DicomSeriesRepository implements DicomSeriesRepositoryInterface {
         $this->dicomSeries->where('study_uid',$studyInstanceUID)->withTrashed()->restore();
     }
 
-    //SK A etudier
     public function getRelatedVisitIdFromSeriesInstanceUID(array $seriesInstanceUID) : array {
-        $query = $this->dicomSeries->with('visit')->whereIn('series_uid', $seriesInstanceUID)->withTrashed();
-        return $query->get()->toArray();
+        $query = $this->dicomSeries
+            ->join('dicom_studies', function ($join) {
+                $join->on('dicom_series.study_uid', '=', 'dicom_studies.study_uid');
+            })
+            ->whereIn('series_uid', $seriesInstanceUID)
+            ->select('visit_id')
+            ->withTrashed();
+        return $query->get()->pluck('visit_id')->unique()->toArray();
+    }
+
+    //SK A TESTER
+    public function getSeriesOrthancIDOfSeriesInstanceUID(array $seriesInstanceUID) : array {
+        $query = $this->dicomSeries
+            ->whereIn('series_uid', $seriesInstanceUID)
+            ->select('orthanc_id')
+            ->withTrashed();
+        return $query->get()->pluck('orthanc_id')->toArray();
     }
 
 }

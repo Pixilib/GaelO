@@ -30,4 +30,8 @@ interface DicomSeriesRepositoryInterface {
 
     public function reactivateSeriesOfStudyInstanceUID (string $studyInstanceUID) : void ;
 
+    public function getRelatedVisitIdFromSeriesInstanceUID(array $seriesInstanceUID) : array ;
+
+    public function getSeriesOrthancIDOfSeriesInstanceUID(array $seriesInstanceUID) : array ;
+
 }

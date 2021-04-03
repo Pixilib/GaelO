@@ -5,16 +5,22 @@ namespace App\GaelO\UseCases\GetDicomsFileSupervisor;
 use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
+use App\GaelO\Interfaces\DicomSeriesRepositoryInterface;
 use App\GaelO\Services\AuthorizationService;
+use App\GaelO\Services\OrthancService;
 use Exception;
 
 class GetDicomsFileSupervisor {
 
     private AuthorizationService $authorizationService;
+    private DicomSeriesRepositoryInterface $dicomSeriesRepositoryInterface;
+    private OrthancService $orthancService;
 
-    public function __construct( AuthorizationService $authorizationService)
+    public function __construct( OrthancService $orthancService, AuthorizationService $authorizationService, DicomSeriesRepositoryInterface $dicomSeriesRepositoryInterface)
     {
         $this->authorizationService = $authorizationService;
+        $this->dicomSeriesRepositoryInterface = $dicomSeriesRepositoryInterface;
+        $this->orthancService = $orthancService;
 
     }
 
@@ -23,15 +29,22 @@ class GetDicomsFileSupervisor {
         try{
 
             //Checker Authorization
-            $this->checkAuthorization($getDicomsFileSupervisorRequest->currentUserId, $getDicomsFileSupervisorRequest->studyName);
+            //$this->checkAuthorization($getDicomsFileSupervisorRequest->currentUserId, $getDicomsFileSupervisorRequest->studyName);
 
-            //Lister les visites correspondant a l'array de seriesInstanceUID
-            //Checker que ces visites correspondent à 1 seule etude qui est soit l'etude principale ou a une ancillaire de l'étude principale
-            //Lister les OrthancID
-            //Appeler Orthanc pour l'output du fichier et stream de la réponse
+            //Get Related visit ID of requested seriesInstanceUID
+            $visitIds = $this->dicomSeriesRepositoryInterface->getRelatedVisitIdFromSeriesInstanceUID($getDicomsFileSupervisorRequest->seriesInstanceUID);
+
+            //Check that this visitId are allowed for the currentUser
+            //SK Essyaer de lister tout les visitContext
+            //Verfiier que appartiennent à la meme etude
+            // Verifier que cette etude est propriete de l'utilsateur supervisor
+
+
+            //getOrthancSeriesIdArray
+            $this->orthancSeriesIDs = $this->dicomSeriesRepositoryInterface->getSeriesOrthancIDOfSeriesInstanceUID($getDicomsFileSupervisorRequest->seriesInstanceUID);
 
             //First output the filename, then the controller will call outputStream to get content of orthanc response
-            //$getDicomsResponse->filename = 'DICOM_'.$studyName.'_'.$visitGroup.'_'.$visitType.'_'.$patientCode.'.zip';
+            $getDicomsFileSupervisorResponse->filename = 'DICOM_'.$getDicomsFileSupervisorRequest->studyName.'.zip';
 
             $getDicomsFileSupervisorResponse->status = 200;
             $getDicomsFileSupervisorResponse->statusText = 'OK';
@@ -54,6 +67,10 @@ class GetDicomsFileSupervisor {
             throw new GaelOForbiddenException();
         }
 
+    }
+
+    public function outputStream(){
+        $this->orthancService->getOrthancZipStream($this->orthancSeriesIDs);
     }
 
 }

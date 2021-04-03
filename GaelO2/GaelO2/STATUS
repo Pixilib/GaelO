@@ -29,7 +29,7 @@ Investigator-form (GET, PUT, POST, DELETE, PATCH (unlock)) =>OK
 Reviews (GET, POST, PUT, DELETE, PATCH (unlock))
 Reviews From Visits (GET)
 review-progression (GET)
-studies//dicom-studies (GET)
+studies/{studyName}/dicom-studies (GET)
 
 Salim TODO :
 
@@ -38,7 +38,7 @@ Faire FrontEnd
 Faire API qui recoit array de SeriesInstanceUID pour le telechargement
 Api pour envoi vers OrthancPeer ?
 
-Export Dicom : A faire
+Export Data Etude : A faire
 
 Interface : Faire sous repertoire pour les interface repository et les interface adapter (et faire les interface des adapters qui manquent)
 

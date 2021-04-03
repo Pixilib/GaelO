@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Log;
 
 class DicomSeries extends Model
 {
@@ -18,8 +19,4 @@ class DicomSeries extends Model
         return $this->belongsTo('App\Models\DicomStudy', 'study_uid', 'study_uid');
     }
 
-    public function visit()
-    {
-        return $this->hasOneThrough(Visit::class, DicomStudy::class);
-    }
 }
