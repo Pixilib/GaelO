@@ -485,5 +485,12 @@ class VisitRepositoryTest extends TestCase
         $this->assertEquals(1, $updatedVisit->count());
     }
 
+    public function testGtVisitContextByVisitIdArray(){
+        $visits = Visit::factory()->count(5)->create();
+        $visitIdArray = $visits->pluck('id');
+        $results = $this->visitRepository->getVisitContextByVisitIdArray($visitIdArray->toArray());
+        $this->assertEquals(5, sizeof($results));
+    }
+
 
 }

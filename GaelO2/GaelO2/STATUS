@@ -35,10 +35,9 @@ Salim TODO :
 
 Download Dicom :
 Faire FrontEnd
-Faire API qui recoit array de SeriesInstanceUID pour le telechargement
-Api pour envoi vers OrthancPeer ?
+Faire API qui recoit array de SeriesInstanceUID pour le telechargement => Reste a exposer l'API + 1 test e2e
 
-Export Data Etude : A faire
+Export Data Etude : A faire + Personalisation au niveau study
 
 Interface : Faire sous repertoire pour les interface repository et les interface adapter (et faire les interface des adapters qui manquent)
 
@@ -56,10 +55,7 @@ Review form /file  (POST, GET, DELETE)
 Quid de adjudication ou il faut faire remonter des info custom au front ?
 
 - API Supervisor
-Tools get dicom batch => Recevra un array de seriesInstanceUID a telecharger depuis Orthanc (pour download dicom)
-Tools Send Dicom to peer
 Export data  + custom study export
-
 
 **** Tests ***
 Test feature : visit et autres (dicom...)
@@ -109,14 +105,12 @@ Doit pouvoir voir user details
 
 *** /Etudes ancillaires ***
 
-Préparation supervisor :
+Reste Supervisor :
 - Export Study Data
-- Review Manager
 - Upload Manager
 - Statistics
-- Remininder email upload / review
+- Remininder email upload / review / Communication mail inter membre (utiliser tinyMCE React)
 - Orthanc Send to peer
-+ Messagerie a designer
 
 A executer en post install :
 php artisan db:migrate --seed

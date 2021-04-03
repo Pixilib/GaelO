@@ -67,4 +67,5 @@ interface VisitRepositoryInterface
 
     public function getVisitsInVisitType(int $visitTypeId, bool $withReviewStatus = false, string $studyName = null ) : array;
 
+    public function getVisitContextByVisitIdArray(array $visitIdArray)  : array ;
 }
