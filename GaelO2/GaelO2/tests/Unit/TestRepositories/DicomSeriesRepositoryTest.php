@@ -12,7 +12,7 @@ use App\Models\DicomSeries;
 use App\Models\DicomStudy;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
-class OrthancSeriesRepositoryTest extends TestCase
+class DicomSeriesRepositoryTest extends TestCase
 {
     private DicomSeriesRepository $orthancSeriesRepository;
 
@@ -125,6 +125,19 @@ class OrthancSeriesRepositoryTest extends TestCase
         $answer = $this->orthancSeriesRepository->getSeriesOrthancIDOfSeriesInstanceUID($seriesInstanceUID);
         $this->assertEquals(5, sizeof($answer));
 
+    }
+
+    public function testGetSeriesByStudyInstanceUidArray(){
+
+        $dicomSeries = DicomSeries::factory()->count(10)->create();
+        $studyInstanceUID1  = $dicomSeries->first()->study_uid;
+        $studyInstanceUID2 = $dicomSeries->last()->study_uid;
+
+        $dicomSeries->first->delete();
+        $series = $this->orthancSeriesRepository->getDicomSeriesOfStudyInstanceUIDArray([$studyInstanceUID1, $studyInstanceUID2], false);
+        $this->assertEquals(1, sizeof($series));
+        $series = $this->orthancSeriesRepository->getDicomSeriesOfStudyInstanceUIDArray([$studyInstanceUID1, $studyInstanceUID2], true);
+        $this->assertEquals(2, sizeof($series));
     }
 
 

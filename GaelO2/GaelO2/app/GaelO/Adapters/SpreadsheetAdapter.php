@@ -24,7 +24,8 @@ class SpreadsheetAdapter {
     }
 
     public function fillData(string $spreadsheetName, array $data) : void {
-        $inputArray = $this->generateArrayForSpreadSheet($data);
+        $inputArray = [];
+        if(sizeof($data)>0) $inputArray = $this->generateArrayForSpreadSheet($data);
         $this->spreadsheet->getSheetByName($spreadsheetName)->fromArray($inputArray);
     }
 

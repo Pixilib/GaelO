@@ -135,13 +135,25 @@ class DicomSeriesRepository implements DicomSeriesRepositoryInterface {
         return $query->get()->pluck('visit_id')->unique()->toArray();
     }
 
-    //SK A TESTER
     public function getSeriesOrthancIDOfSeriesInstanceUID(array $seriesInstanceUID) : array {
         $query = $this->dicomSeries
             ->whereIn('series_uid', $seriesInstanceUID)
             ->select('orthanc_id')
             ->withTrashed();
         return $query->get()->pluck('orthanc_id')->toArray();
+    }
+
+    public function getDicomSeriesOfStudyInstanceUIDArray(array $studyInstanceUID, bool $withTrashed) : array {
+
+        $query = $this->dicomSeries->whereIn('study_uid', $studyInstanceUID);
+
+        if($withTrashed){
+            $query->withTrashed();
+        }
+
+        $answer = $query->get();
+
+        return $answer->count() === 0 ? []  : $answer->toArray();
     }
 
 }

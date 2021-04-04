@@ -2,12 +2,9 @@
 
 namespace Tests\Feature\TestExportService;
 
-use App\GaelO\Constants\Constants;
-use App\GaelO\Repositories\PatientRepository;
-use App\GaelO\Repositories\UserRepository;
-use App\GaelO\Repositories\VisitRepository;
 use App\GaelO\Services\ExportDataService;
-use App\GaelO\Services\VisitTreeService;
+use App\Models\DicomSeries;
+use App\Models\DicomStudy;
 use App\Models\Patient;
 use App\Models\ReviewStatus;
 use App\Models\Study;
@@ -15,7 +12,6 @@ use App\Models\Visit;
 use App\Models\VisitType;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Support\Facades\App;
-use Mockery;
 use Tests\TestCase;
 
 class ExportDataServiceTest extends TestCase
@@ -58,5 +54,20 @@ class ExportDataServiceTest extends TestCase
         });
         $this->exportServiceData->setStudyName($studyName);
         $this->exportServiceData->exportVisitTable();
+    }
+
+    public function testExportDicom(){
+        $visitType = VisitType::factory()->create();
+        $studyName = $visitType->visitGroup->study->name;
+        $visits = Visit::factory()->visitTypeId($visitType->id)->count(10)->create();
+
+        $visits->each(function($visit) {
+            $dicomStudy = DicomStudy::factory()->visitId($visit->id)->create();
+            DicomSeries::factory()->studyInstanceUID($dicomStudy->study_uid)->create();
+        });
+
+        $this->exportServiceData->setStudyName($studyName);
+        $this->exportServiceData->exportDicomsTable();
+
     }
 }

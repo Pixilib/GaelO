@@ -34,4 +34,6 @@ interface DicomSeriesRepositoryInterface {
 
     public function getSeriesOrthancIDOfSeriesInstanceUID(array $seriesInstanceUID) : array ;
 
+    public function getDicomSeriesOfStudyInstanceUIDArray(array $studyInstanceUID, bool $withTrashed) : array ;
+
 }

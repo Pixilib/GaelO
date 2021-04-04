@@ -113,7 +113,6 @@ class DicomStudyRepositoryTest extends TestCase
         //One study should be true, the other false
         $this->assertTrue($answer);
         $this->assertFalse($answer2);
-
     }
 
     public function testIsExistingOrthancStudyId()
@@ -199,7 +198,8 @@ class DicomStudyRepositoryTest extends TestCase
     }
 
 
-    public function testGetDicomStudyFromStudy(){
+    public function testGetDicomStudyFromStudy()
+    {
 
         $orthancStudies = DicomStudy::factory()->count(2)->create();
 
@@ -217,5 +217,27 @@ class DicomStudyRepositoryTest extends TestCase
         $this->assertEquals(0, sizeof($results));
         $results = $this->dicomStudyRepository->getDicomStudyFromStudy($studyName, true);
         $this->assertEquals(1, sizeof($results));
+    }
+
+    public function testGetDicomStudyFromVisitIdArray()
+    {
+
+        $visit = Visit::factory()->count(2)->create();
+
+        DicomStudy::factory()->count(5)->create();
+
+        $dicomStudy1 = DicomStudy::factory()->visitId($visit->first()->id)->create();
+        $dicomStudy2 = DicomStudy::factory()->visitId($visit->last()->id)->create();
+
+        $answer = $this->dicomStudyRepository->getDicomStudyFromVisitIdArray([$visit->first()->id, $visit->last()->id], false);
+        $this->assertEquals(2, sizeof($answer));
+
+        $dicomStudy1->delete();
+        $answer = $this->dicomStudyRepository->getDicomStudyFromVisitIdArray([$visit->first()->id, $visit->last()->id], false);
+        $this->assertEquals(1, sizeof($answer));
+
+        //Should Include the deleted one
+        $answer = $this->dicomStudyRepository->getDicomStudyFromVisitIdArray([$visit->first()->id, $visit->last()->id], true);
+        $this->assertEquals(2, sizeof($answer));
     }
 }

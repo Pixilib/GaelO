@@ -139,7 +139,7 @@ class VisitRepository implements VisitRepositoryInterface
         return $answer->count() === 0 ? []  : $answer->toArray();
     }
 
-    public function getVisitsInStudy(string $studyName, bool $withReviewStatus): array
+    public function getVisitsInStudy(string $studyName, bool $withReviewStatus, bool $withTrashed): array
     {
 
         $queryBuilder = $this->visit->with(['visitType', 'patient'])
@@ -156,6 +156,10 @@ class VisitRepository implements VisitRepositoryInterface
             }]);
         }
 
+        if($withTrashed) {
+            $queryBuilder->withTrashed();
+        }
+
         $answer = $queryBuilder->get();
         return $answer->count() === 0 ? []  : $answer->toArray();
     }
@@ -164,7 +168,7 @@ class VisitRepository implements VisitRepositoryInterface
     public function hasVisitsInStudy(string $studyName): bool
     {
 
-        $visits = $this->getVisitsInStudy($studyName, false);
+        $visits = $this->getVisitsInStudy($studyName, false, true);
 
         return sizeof($visits) === 0 ? false  : true;
     }

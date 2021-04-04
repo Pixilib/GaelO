@@ -36,4 +36,6 @@ interface DicomStudyRepositoryInterface {
 
     public function getDicomStudyFromStudy(string $studyName, bool $withDeleted) : array ;
 
+    public function getDicomStudyFromVisitIdArray(array $visitId, bool $withTrashed) : array ;
+
 }

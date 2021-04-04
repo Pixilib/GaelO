@@ -65,7 +65,7 @@ class VisitTreeService
         //If Reviewer need to add review status for tree selections
         if ($this->role === Constants::ROLE_REVIEWER) $patientVisitsArray = $this->visitRepository->getPatientListVisitWithContextAndReviewStatus($patientsCodeArray, $this->studyName);
         else $patientVisitsArray = $this->visitRepository->getPatientListVisitsWithContext($patientsCodeArray);
- 
+
         $responseArray = [];
         $responseArray['visits'] = [];
         $responseArray['patients'] = [];
@@ -105,7 +105,7 @@ class VisitTreeService
 
         } else if ($this->role == Constants::ROLE_MONITOR) {
 
-            $visitsArray = $this->visitRepository->getVisitsInStudy($this->studyName, false);
+            $visitsArray = $this->visitRepository->getVisitsInStudy($this->studyName, false, false);
             return  $this->makeTreeFromVisits($visitsArray);
 
         } else if ($this->role == Constants::ROLE_REVIEWER) {

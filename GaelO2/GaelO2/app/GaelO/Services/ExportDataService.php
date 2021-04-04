@@ -3,32 +3,41 @@
 namespace App\GaelO\Services;
 
 use App\GaelO\Adapters\SpreadsheetAdapter;
-use App\GaelO\Constants\Constants;
+use App\GaelO\Interfaces\DicomSeriesRepositoryInterface;
+use App\GaelO\Interfaces\DicomStudyRepositoryInterface;
 use App\GaelO\Interfaces\PatientRepositoryInterface;
 use App\GaelO\Interfaces\StudyRepositoryInterface;
 use App\GaelO\Interfaces\VisitRepositoryInterface;
 
 //SK TO BE EXPORTED with deleted rows
 //VisitTable (1 spreedsheet by visitType  => Reste A ajouter VisitStatus du Lysarc=> A faire a part das une couche d'abstraction car suivra par les evolution de la plateforme)
-//DicomTable (Studies and Series) => SK A FAIRE Un fichier avec 2 sheet
 //ReviewTable (local and Review separated) => un fichier avec 2 sheet
 //Associated file to review => SK TODO
+
+//SK ENLEVER LA 1ERE SHEET PAR DEFAUT
+//REFACTORISER EN COMMENCANT PAR LISTER LES VISIT ID dans cet object ET PRENDRE LES INFOMATION FILES ? (DICOM / Review)
 
 class ExportDataService {
     private PatientRepositoryInterface $patientRepositoryInterface;
     private StudyRepositoryInterface $studyRepositoryInterface;
     private VisitRepositoryInterface $visitRepositoryInterface;
+    private DicomStudyRepositoryInterface $dicomStudyRepositoryInterface;
+    private DicomSeriesRepositoryInterface $dicomSeriesRepositoryInterface;
 
     private String $studyName;
 
     public function __construct(
         PatientRepositoryInterface $patientRepositoryInterface,
         StudyRepositoryInterface $studyRepositoryInterface,
-        VisitRepositoryInterface $visitRepositoryInterface)
+        VisitRepositoryInterface $visitRepositoryInterface,
+        DicomStudyRepositoryInterface $dicomStudyRepositoryInterface,
+        DicomSeriesRepositoryInterface $dicomSeriesRepositoryInterface)
     {
         $this->patientRepositoryInterface = $patientRepositoryInterface;
         $this->studyRepositoryInterface = $studyRepositoryInterface;
         $this->visitRepositoryInterface = $visitRepositoryInterface;
+        $this->dicomStudyRepositoryInterface = $dicomStudyRepositoryInterface;
+        $this->dicomSeriesRepositoryInterface = $dicomSeriesRepositoryInterface;
     }
 
     public function setStudyName(string $studyName){
@@ -78,8 +87,32 @@ class ExportDataService {
         return $tempFileName;
     }
 
-
     public function exportDicomsTable(){
+
+        $spreadsheetAdapter = new SpreadsheetAdapter();
+
+        //List all visits of this study
+        $availableVisits = $this->visitRepositoryInterface->getVisitsInStudy($this->studyName, false, true);
+        $visitIdArray = array_map(function($visit){
+            return $visit['id'];
+        }, $availableVisits);
+
+        $dicomStudyData = $this->dicomStudyRepositoryInterface->getDicomStudyFromVisitIdArray($visitIdArray, true);
+        $spreadsheetAdapter->addSheet('DicomStudies');
+        $spreadsheetAdapter->fillData('DicomStudies', $dicomStudyData);
+
+        $studyInstanceUIDArray = array_map(function ($studyEntity){
+            return $studyEntity['study_uid'];
+        }, $dicomStudyData);
+        //Get Series data for series spreadsheet
+        $dicomSeriesData = $this->dicomSeriesRepositoryInterface->getDicomSeriesOfStudyInstanceUIDArray($studyInstanceUIDArray, true);
+        $spreadsheetAdapter->addSheet('DicomSeries');
+        $spreadsheetAdapter->fillData('DicomSeries', $dicomSeriesData);
+
+        //Export created file
+        $tempFileName = $this->createTempFile();
+        $spreadsheetAdapter->writeToExcel($tempFileName);
+        return $tempFileName;
 
     }
 
