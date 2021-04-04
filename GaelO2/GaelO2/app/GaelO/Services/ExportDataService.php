@@ -9,7 +9,7 @@ use App\GaelO\Interfaces\StudyRepositoryInterface;
 use App\GaelO\Interfaces\VisitRepositoryInterface;
 
 //SK TO BE EXPORTED with deleted rows
-//VisitTable (1 spreedsheet by visitType  => Reste A ajouter VisitStatus du Lysarc=> A faire a part car suivra par les evolution de la plateforme)
+//VisitTable (1 spreedsheet by visitType  => Reste A ajouter VisitStatus du Lysarc=> A faire a part das une couche d'abstraction car suivra par les evolution de la plateforme)
 //DicomTable (Studies and Series) => SK A FAIRE Un fichier avec 2 sheet
 //ReviewTable (local and Review separated) => un fichier avec 2 sheet
 //Associated file to review => SK TODO
@@ -76,6 +76,11 @@ class ExportDataService {
         $tempFileName = $this->createTempFile();
         $spreadsheetAdapter->writeToExcel($tempFileName);
         return $tempFileName;
+    }
+
+
+    public function exportDicomsTable(){
+
     }
 
     private function createTempFile(){
