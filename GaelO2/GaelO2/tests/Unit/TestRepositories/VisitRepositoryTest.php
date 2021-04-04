@@ -227,6 +227,15 @@ class VisitRepositoryTest extends TestCase
         $this->assertEquals(1, sizeof($answer));
     }
 
+    public function testGetVisitsInVisitTypeWithTrashed(){
+        $visit = Visit::factory()->count(5)->create();
+        $visit->first()->delete();
+        $answer = $this->visitRepository->getVisitsInVisitType( $visit->first()->visitType->id, true, '', true );
+        $this->assertEquals(1, sizeof($answer));
+        $answer = $this->visitRepository->getVisitsInVisitType( $visit->first()->visitType->id, true, '', false );
+        $this->assertEquals(0, sizeof($answer));
+    }
+
     public function testGetVisitsInVisitTypeWithReviewStatus(){
         $visit = Visit::factory()->count(5)->create();
         $study = Study::factory()->create();

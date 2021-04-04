@@ -8,10 +8,8 @@ use App\GaelO\Interfaces\PatientRepositoryInterface;
 use App\GaelO\Interfaces\StudyRepositoryInterface;
 use App\GaelO\Interfaces\VisitRepositoryInterface;
 
-
-
 //SK TO BE EXPORTED with deleted rows
-//VisitTable (1 spreedsheet by visitType  => Reste A ajouter VisitStatus du Lysarc)
+//VisitTable (1 spreedsheet by visitType  => Reste A ajouter VisitStatus du Lysarc=> A faire a part car suivra par les evolution de la plateforme)
 //DicomTable (Studies and Series) => SK A FAIRE Un fichier avec 2 sheet
 //ReviewTable (local and Review separated) => un fichier avec 2 sheet
 //Associated file to review => SK TODO
@@ -61,7 +59,7 @@ class ExportDataService {
                 //Determine Sheet Name
                 $sheetName = $visitGroup['modality'].'_'.$visitType['name'];
                 $spreadsheetAdapter->addSheet($sheetName);
-                $visitsData = $this->visitRepositoryInterface->getVisitsInVisitType($visitType['id'], true, $this->studyName);
+                $visitsData = $this->visitRepositoryInterface->getVisitsInVisitType($visitType['id'], true, $this->studyName, true);
                 //Flatten the nested review status
                 $flattenedData = array_map(function($visitData){
                     $reviewStatus = $visitData['review_status'];
