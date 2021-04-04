@@ -136,5 +136,16 @@ class ReviewRepository implements ReviewRepositoryInterface {
         $reviewEntity->save();
     }
 
+    public function getReviewFromVisitIdArrayStudyName(array $visitId, string $studyName, bool $withTrashed) : array {
+
+        $query = $this->review->whereIn('visit_id', $visitId)->where('study_name', $studyName);
+        if($withTrashed){
+            $query->withTrashed();
+        }
+        $answer = $query->get();
+
+        return $answer->count() === 0 ? [] : $answer->toArray();
+    }
+
     //SK FAIRE UPDATE ASSOCIATED FILE
 }

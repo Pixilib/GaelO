@@ -25,4 +25,6 @@ interface ReviewRepositoryInterface {
     public function unlockReviewForm(int $reviewId) : void ;
 
     public function getUsersHavingReviewedForStudyVisitType(string $studyName, int $visitTypeId): array ;
+
+    public function getReviewFromVisitIdArrayStudyName(array $visitId, string $studyName, bool $withTrashed) : array ;
 }

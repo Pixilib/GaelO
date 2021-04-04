@@ -6,16 +6,18 @@ use App\GaelO\Adapters\SpreadsheetAdapter;
 use App\GaelO\Interfaces\DicomSeriesRepositoryInterface;
 use App\GaelO\Interfaces\DicomStudyRepositoryInterface;
 use App\GaelO\Interfaces\PatientRepositoryInterface;
+use App\GaelO\Interfaces\ReviewRepositoryInterface;
 use App\GaelO\Interfaces\StudyRepositoryInterface;
 use App\GaelO\Interfaces\VisitRepositoryInterface;
 
 //SK TO BE EXPORTED with deleted rows
 //VisitTable (1 spreedsheet by visitType  => Reste A ajouter VisitStatus du Lysarc=> A faire a part das une couche d'abstraction car suivra par les evolution de la plateforme)
-//ReviewTable (local and Review separated) => un fichier avec 2 sheet
+//ReviewTable (local and Review separated) => un fichier avec 2 sheet => A continuer SK
 //Associated file to review => SK TODO
 
 //SK ENLEVER LA 1ERE SHEET PAR DEFAUT
 //REFACTORISER EN COMMENCANT PAR LISTER LES VISIT ID dans cet object ET PRENDRE LES INFOMATION FILES ? (DICOM / Review)
+//Voir les dupliqué qui ont ete fait dans la v1 (rappel des visitType ? )
 
 class ExportDataService {
     private PatientRepositoryInterface $patientRepositoryInterface;
@@ -23,6 +25,7 @@ class ExportDataService {
     private VisitRepositoryInterface $visitRepositoryInterface;
     private DicomStudyRepositoryInterface $dicomStudyRepositoryInterface;
     private DicomSeriesRepositoryInterface $dicomSeriesRepositoryInterface;
+    private ReviewRepositoryInterface $reviewRepositoryInterface;
 
     private String $studyName;
 
@@ -31,13 +34,15 @@ class ExportDataService {
         StudyRepositoryInterface $studyRepositoryInterface,
         VisitRepositoryInterface $visitRepositoryInterface,
         DicomStudyRepositoryInterface $dicomStudyRepositoryInterface,
-        DicomSeriesRepositoryInterface $dicomSeriesRepositoryInterface)
+        DicomSeriesRepositoryInterface $dicomSeriesRepositoryInterface,
+        ReviewRepositoryInterface $reviewRepositoryInterface)
     {
         $this->patientRepositoryInterface = $patientRepositoryInterface;
         $this->studyRepositoryInterface = $studyRepositoryInterface;
         $this->visitRepositoryInterface = $visitRepositoryInterface;
         $this->dicomStudyRepositoryInterface = $dicomStudyRepositoryInterface;
         $this->dicomSeriesRepositoryInterface = $dicomSeriesRepositoryInterface;
+        $this->reviewRepositoryInterface = $reviewRepositoryInterface;
     }
 
     public function setStudyName(string $studyName){
@@ -113,6 +118,32 @@ class ExportDataService {
         $tempFileName = $this->createTempFile();
         $spreadsheetAdapter->writeToExcel($tempFileName);
         return $tempFileName;
+
+    }
+
+    public function exportReviewTable(){
+
+        $spreadsheetAdapter = new SpreadsheetAdapter();
+
+        //SK To refactor peut etre fait dans la classe
+        $availableVisits = $this->visitRepositoryInterface->getVisitsInStudy($this->studyName, false, true);
+        $visitIdArray = array_map(function($visit){
+            return $visit['id'];
+        }, $availableVisits);
+
+        $reviewData = $this->reviewRepositoryInterface->getReviewFromVisitIdArrayStudyName($visitIdArray, $this->studyName, true);
+
+        //Flatten the nested review status
+        $flattenedData = array_map(function($review){
+            $reviewData = $review['review_data'];
+            unset($visitData['review_data']);
+            return array_merge($review, $reviewData);
+        }, $reviewData);
+
+        $spreadsheetAdapter->addSheet('LocalForm');
+        $spreadsheetAdapter->addSheet('ReviewForm');
+
+        //SK TODO Spliter les data dans les deux feuillets et enregister
 
     }
 

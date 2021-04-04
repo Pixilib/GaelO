@@ -3,6 +3,7 @@
 namespace Tests\Unit\TestRepositories;
 
 use App\GaelO\Repositories\ReviewRepository;
+use App\Http\Controllers\ReviewController;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\TestCase;
@@ -10,7 +11,6 @@ use Tests\TestCase;
 use App\Models\Review;
 use App\Models\Study;
 use App\Models\Visit;
-use App\Models\VisitType;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class ReviewRepositoryTest extends TestCase
@@ -156,6 +156,21 @@ class ReviewRepositoryTest extends TestCase
         $this->assertArrayHasKey($visit->first()->visitType->id, $results);
         $this->assertEquals(10, sizeof($results[$visit->first()->visitType->id]) );
 
+    }
+
+    public function testGetReviewFromVisitIdArrayAndStudyName(){
+
+        $study = Study::factory()->create();
+        $visit = Visit::factory()->count(2)->create();
+
+        $reviews = Review::factory()->studyName($study->name)->visitId($visit->first()->id)->reviewForm()->validated()->count(7)->create();
+        Review::factory()->studyName($study->name)->visitId($visit->last()->id)->validated()->count(3)->create();
+
+        $reviews->first()->delete();
+
+        $reviewData = $this->reviewRepository->getReviewFromVisitIdArrayStudyName([$visit->first()->id, $visit->last()->id], $study->name, true);
+
+        $this->assertEquals(10, sizeof($reviewData));
     }
 
 
