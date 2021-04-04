@@ -9,7 +9,10 @@ use App\GaelO\Repositories\VisitRepository;
 use App\GaelO\Services\ExportDataService;
 use App\GaelO\Services\VisitTreeService;
 use App\Models\Patient;
+use App\Models\ReviewStatus;
 use App\Models\Study;
+use App\Models\Visit;
+use App\Models\VisitType;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Support\Facades\App;
 use Mockery;
@@ -43,5 +46,17 @@ class ExportDataServiceTest extends TestCase
         Patient::factory()->studyName($study->name)->count(50)->create();
         $this->exportServiceData->setStudyName($study->name);
         $this->exportServiceData->exportPatientTable();
+    }
+
+    public function testExportVisit(){
+        $visitType = VisitType::factory()->create();
+        $studyName = $visitType->visitGroup->study->name;
+        $visits = Visit::factory()->visitTypeId($visitType->id)->count(10)->create();
+
+        $visits->each(function($visit) use ($studyName) {
+            ReviewStatus::factory()->visitId($visit->id)->studyName($studyName)->create();
+        });
+        $this->exportServiceData->setStudyName($studyName);
+        $this->exportServiceData->exportVisitTable();
     }
 }
