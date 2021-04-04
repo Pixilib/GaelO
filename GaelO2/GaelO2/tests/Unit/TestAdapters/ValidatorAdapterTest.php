@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Unit\TestRepositories;
+namespace Tests\Unit\TestAdapters;
 
 use App\GaelO\Adapters\ValidatorAdapter;
 use Tests\TestCase;
