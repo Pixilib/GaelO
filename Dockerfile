@@ -6,8 +6,8 @@ RUN apt-get update -qy && \
     git
 WORKDIR /FrontEnd
 ARG GITHUB_TOKEN
-RUN echo ${GITHUB_TOKEN}
-RUN git clone -b dev https://${GITHUB_TOKEN}@github.com/salimkanoun/GaelO_Frontend.git .
+RUN echo $GITHUB_TOKEN
+RUN git clone -b dev https://$GITHUB_TOKEN@github.com/salimkanoun/GaelO_Frontend.git .
 RUN npm install
 RUN npm run build
 
