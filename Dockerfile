@@ -1,11 +1,3 @@
-FROM node:14.15.4 as ohif
-RUN apt-get update -qy && \
-    apt-get install -y --no-install-recommends apt-utils\
-    git
-WORKDIR /ohif
-RUN git clone https://github.com/OHIF/Viewers.git
-RUN cd Viewers && yarn install && QUICK_BUILD=true PUBLIC_URL=/viewer-ohif/ yarn run build
-
 FROM node:14.15.4 as react
 RUN apt-get update -qy && \
     apt-get install -y --no-install-recommends apt-utils\
@@ -14,6 +6,16 @@ WORKDIR /FrontEnd
 RUN git clone -b dev git@github.com:salimkanoun/GaelO_Frontend.git .
 RUN npm install
 RUN npm run build
+
+FROM node:14.15.4 as ohif
+RUN apt-get update -qy && \
+    apt-get install -y --no-install-recommends apt-utils\
+    git
+WORKDIR /ohif
+RUN git clone https://github.com/OHIF/Viewers.git
+RUN cd Viewers && yarn install && QUICK_BUILD=true PUBLIC_URL=/viewer-ohif/ yarn run build
+
+
 
 FROM alpine as stone
 RUN apk --no-cache add wget
