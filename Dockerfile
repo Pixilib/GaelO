@@ -1,3 +1,5 @@
+ARG GITHUB_TOKEN
+
 FROM node:14.15.4 as react
 RUN apt-get update -qy && \
     apt-get install -y --no-install-recommends apt-utils\
@@ -16,7 +18,6 @@ RUN apt-get update -qy && \
 WORKDIR /ohif
 RUN git clone https://github.com/OHIF/Viewers.git
 RUN cd Viewers && yarn install && QUICK_BUILD=true PUBLIC_URL=/viewer-ohif/ yarn run build
-
 
 
 FROM alpine as stone
