@@ -6,6 +6,7 @@ use App\GaelO\Services\ExportDataService;
 use App\Models\DicomSeries;
 use App\Models\DicomStudy;
 use App\Models\Patient;
+use App\Models\Review;
 use App\Models\ReviewStatus;
 use App\Models\Study;
 use App\Models\Visit;
@@ -68,6 +69,22 @@ class ExportDataServiceTest extends TestCase
 
         $this->exportServiceData->setStudyName($studyName);
         $this->exportServiceData->exportDicomsTable();
+
+    }
+
+    public function testExportReview(){
+
+        $visitType = VisitType::factory()->create();
+        $studyName = $visitType->visitGroup->study->name;
+        $visits = Visit::factory()->visitTypeId($visitType->id)->count(3)->create();
+
+        $visits->each(function($visit) use ($studyName) {
+            Review::factory()->visitId($visit->id)->studyName($studyName)->count(5)->create();
+            Review::factory()->visitId($visit->id)->studyName($studyName)->reviewForm()->count(5)->create();
+        });
+
+        $this->exportServiceData->setStudyName($studyName);
+        $this->exportServiceData->exportReviewTable();
 
     }
 }

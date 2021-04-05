@@ -12,8 +12,7 @@ use App\GaelO\Interfaces\VisitRepositoryInterface;
 
 //SK TO BE EXPORTED with deleted rows
 //VisitTable (1 spreedsheet by visitType  => Reste A ajouter VisitStatus du Lysarc=> A faire a part das une couche d'abstraction car suivra par les evolution de la plateforme)
-//ReviewTable (local and Review separated) => un fichier avec 2 sheet => A continuer SK
-//Associated file to review => SK TODO
+//Associated file to review => SK TODO dans un zip
 
 //SK ENLEVER LA 1ERE SHEET PAR DEFAUT
 //REFACTORISER EN COMMENCANT PAR LISTER LES VISIT ID dans cet object ET PRENDRE LES INFOMATION FILES ? (DICOM / Review)
@@ -136,14 +135,26 @@ class ExportDataService {
         //Flatten the nested review status
         $flattenedData = array_map(function($review){
             $reviewData = $review['review_data'];
-            unset($visitData['review_data']);
+            unset($review['review_data']);
             return array_merge($review, $reviewData);
         }, $reviewData);
 
-        $spreadsheetAdapter->addSheet('LocalForm');
-        $spreadsheetAdapter->addSheet('ReviewForm');
+        $spreadsheetAdapter->addSheet('InvestigatorsForms');
+        $spreadsheetAdapter->addSheet('ReviewersForms');
 
-        //SK TODO Spliter les data dans les deux feuillets et enregister
+        $investigatorsForms = [];
+        $reviewersForms = [];
+
+        foreach($flattenedData as $review){
+            if ($review['local']) $investigatorsForms[] = $review;
+            else $reviewersForms[] = $review;
+        }
+        $spreadsheetAdapter->fillData('InvestigatorsForms', $investigatorsForms);
+        $spreadsheetAdapter->fillData('ReviewersForms', $reviewersForms);
+
+        $tempFileName = $this->createTempFile();
+        $spreadsheetAdapter->writeToExcel($tempFileName);
+        return $tempFileName;
 
     }
 
