@@ -1,4 +1,4 @@
-ARG GITHUB_TOKEN=salim
+ARG GITHUB_TOKEN=$GITHUB_TOKEN
 
 FROM node:14.15.4 as react
 RUN apt-get update -qy && \
