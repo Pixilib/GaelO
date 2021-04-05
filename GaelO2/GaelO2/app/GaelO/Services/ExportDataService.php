@@ -10,13 +10,15 @@ use App\GaelO\Interfaces\ReviewRepositoryInterface;
 use App\GaelO\Interfaces\StudyRepositoryInterface;
 use App\GaelO\Interfaces\VisitRepositoryInterface;
 
-//SK TO BE EXPORTED with deleted rows
-//VisitTable (1 spreedsheet by visitType  => Reste A ajouter VisitStatus du Lysarc=> A faire a part das une couche d'abstraction car suivra par les evolution de la plateforme)
+//SK
+//VisitTable  => Reste A ajouter VisitStatus du Lysarc=> A faire a part das une couche d'abstraction car suivra par les evolution de la plateforme)
 //Associated file to review => SK TODO dans un zip
 
 //SK ENLEVER LA 1ERE SHEET PAR DEFAUT
 //REFACTORISER EN COMMENCANT PAR LISTER LES VISIT ID dans cet object ET PRENDRE LES INFOMATION FILES ? (DICOM / Review)
-//Voir les dupliqué qui ont ete fait dans la v1 (rappel des visitType ? )
+//Dans Review => Ajouter PatientCode et VisitType
+//Dans Visit => Ajouter en colonne VisitGroup et VisitType
+//Fusionner dicom study / series en duplicant les colonne study ?
 
 class ExportDataService {
     private PatientRepositoryInterface $patientRepositoryInterface;
@@ -77,8 +79,6 @@ class ExportDataService {
                 $flattenedData = array_map(function($visitData){
                     $reviewStatus = $visitData['review_status'];
                     unset($visitData['review_status']);
-                    unset($visitData['updated_at']);
-                    //SK RESTE A AJOUTER VISIT STATUS=> A sortir dans un post processing lysarc ?
                     return array_merge($visitData, $reviewStatus);
                 }, $visitsData);
 

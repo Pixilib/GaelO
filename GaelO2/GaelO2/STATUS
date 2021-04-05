@@ -39,6 +39,7 @@ Faire API qui recoit array de SeriesInstanceUID pour le telechargement => Reste 
 
 Export Data Etude : A faire avec librairie spreadsheet php + Personalisation au niveau study
 
+Model : Type de variable a caster
 Interface : Faire sous repertoire pour les interface repository et les interface adapter (et faire les interface des adapters qui manquent)
 
 Revoir DicowWeb Authorization Service => Pb route orthanc differentes
