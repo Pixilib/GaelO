@@ -3,7 +3,7 @@ RUN apt-get update -qy && \
     apt-get install -y --no-install-recommends apt-utils\
     git
 WORKDIR /FrontEnd
-RUN git clone -b dev git@github.com:salimkanoun/GaelO_Frontend.git .
+RUN git clone -b dev https://salimkanoun:${GITHUB_TOKEN}/GaelO_Frontend.git .
 RUN npm install
 RUN npm run build
 
