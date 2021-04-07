@@ -12,10 +12,7 @@ class SpreadsheetAdapter {
     public function __construct()
     {
         $this->spreadsheet = new Spreadsheet();
-    }
-
-    public function setDefaultWorksheetTitle($title) : void {
-        $this->spreadsheet->getSheet(0)->setTitle($title);
+        $this->spreadsheet->removeSheetByIndex(0);
     }
 
     public function addSheet(String $title) : void {

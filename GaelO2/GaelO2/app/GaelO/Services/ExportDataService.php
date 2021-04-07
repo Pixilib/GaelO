@@ -14,11 +14,10 @@ use App\GaelO\Interfaces\VisitRepositoryInterface;
 //VisitTable  => Reste A ajouter VisitStatus du Lysarc=> A faire a part das une couche d'abstraction car suivra par les evolution de la plateforme)
 //Associated file to review => SK TODO dans un zip
 
-//SK ENLEVER LA 1ERE SHEET PAR DEFAUT
-//REFACTORISER EN COMMENCANT PAR LISTER LES VISIT ID dans cet object ET PRENDRE LES INFOMATION FILES ? (DICOM / Review)
 //Dans Review => Ajouter PatientCode et VisitType
 //Dans Visit => Ajouter en colonne VisitGroup et VisitType
 //Fusionner dicom study / series en duplicant les colonne study ?
+//Referencer les fichiers résultats dans cet object ?
 
 class ExportDataService {
     private PatientRepositoryInterface $patientRepositoryInterface;
@@ -28,7 +27,7 @@ class ExportDataService {
     private DicomSeriesRepositoryInterface $dicomSeriesRepositoryInterface;
     private ReviewRepositoryInterface $reviewRepositoryInterface;
 
-    private String $studyName;
+    private string $studyName;
 
     public function __construct(
         PatientRepositoryInterface $patientRepositoryInterface,
@@ -48,12 +47,35 @@ class ExportDataService {
 
     public function setStudyName(string $studyName){
         $this->studyName = $studyName;
+
+        //List Visit Type of this study
+        $studyDetails = $this->studyRepositoryInterface->getStudyDetails($this->studyName);
+
+        $visitTypeArray = [];
+
+        foreach ( $studyDetails['visit_group_details'] as $visitGroup) {
+            foreach($visitGroup['visit_types'] as $visitType){
+                $visitTypeArray[ $visitType['id'] ] = [
+                    'modality'=>$visitGroup['modality'],
+                    'name'=>$visitType['name']
+                ];
+            }
+        }
+
+        $this->visitTypeArray = $visitTypeArray;
+
+        //Store Id of visits of this study
+        $availableVisits = $this->visitRepositoryInterface->getVisitsInStudy($this->studyName, false, true);
+        $this->visitIdArray = array_map(function($visit){
+            return $visit['id'];
+        }, $availableVisits);
+
     }
 
     public function exportPatientTable(){
         $patientData = $this->patientRepositoryInterface->getPatientsInStudy($this->studyName);
         $spreadsheetAdapter = new SpreadsheetAdapter();
-        $spreadsheetAdapter->setDefaultWorksheetTitle('Patients');
+        $spreadsheetAdapter->addSheet('Patients');
         $spreadsheetAdapter->fillData('Patients', $patientData);
         $tempFileName = $this->createTempFile();
         $spreadsheetAdapter->writeToExcel($tempFileName);
@@ -61,29 +83,22 @@ class ExportDataService {
     }
 
     public function exportVisitTable(){
-        //List all visitType
-        $studyDetails = $this->studyRepositoryInterface->getStudyDetails($this->studyName);
 
         $spreadsheetAdapter = new SpreadsheetAdapter();
-        $spreadsheetAdapter->setDefaultWorksheetTitle('dummy');
 
         //Loop each visitType and export data for each one
-        foreach ( $studyDetails['visit_group_details'] as $visitGroup) {
-
-            foreach($visitGroup['visit_types'] as $visitType){
-                //Determine Sheet Name
-                $sheetName = $visitGroup['modality'].'_'.$visitType['name'];
-                $spreadsheetAdapter->addSheet($sheetName);
-                $visitsData = $this->visitRepositoryInterface->getVisitsInVisitType($visitType['id'], true, $this->studyName, true);
-                //Flatten the nested review status
-                $flattenedData = array_map(function($visitData){
-                    $reviewStatus = $visitData['review_status'];
-                    unset($visitData['review_status']);
-                    return array_merge($visitData, $reviewStatus);
-                }, $visitsData);
-
-                $spreadsheetAdapter->fillData($sheetName, $flattenedData);
-            }
+        foreach($this->visitTypeArray as $id => $visitGroupDetails){
+            //Determine Sheet Name
+            $sheetName = $visitGroupDetails['modality'].'_'.$visitGroupDetails['name'];
+            $visitsData = $this->visitRepositoryInterface->getVisitsInVisitType($id, true, $this->studyName, true);
+            //Flatten the nested review status
+            $flattenedData = array_map(function($visitData){
+                $reviewStatus = $visitData['review_status'];
+                unset($visitData['review_status']);
+                return array_merge($visitData, $reviewStatus);
+            }, $visitsData);
+            $spreadsheetAdapter->addSheet($sheetName);
+            $spreadsheetAdapter->fillData($sheetName, $flattenedData);
         }
         //Export created file
         $tempFileName = $this->createTempFile();
@@ -95,13 +110,7 @@ class ExportDataService {
 
         $spreadsheetAdapter = new SpreadsheetAdapter();
 
-        //List all visits of this study
-        $availableVisits = $this->visitRepositoryInterface->getVisitsInStudy($this->studyName, false, true);
-        $visitIdArray = array_map(function($visit){
-            return $visit['id'];
-        }, $availableVisits);
-
-        $dicomStudyData = $this->dicomStudyRepositoryInterface->getDicomStudyFromVisitIdArray($visitIdArray, true);
+        $dicomStudyData = $this->dicomStudyRepositoryInterface->getDicomStudyFromVisitIdArray($this->visitIdArray, true);
         $spreadsheetAdapter->addSheet('DicomStudies');
         $spreadsheetAdapter->fillData('DicomStudies', $dicomStudyData);
 
@@ -124,13 +133,7 @@ class ExportDataService {
 
         $spreadsheetAdapter = new SpreadsheetAdapter();
 
-        //SK To refactor peut etre fait dans la classe
-        $availableVisits = $this->visitRepositoryInterface->getVisitsInStudy($this->studyName, false, true);
-        $visitIdArray = array_map(function($visit){
-            return $visit['id'];
-        }, $availableVisits);
-
-        $reviewData = $this->reviewRepositoryInterface->getReviewFromVisitIdArrayStudyName($visitIdArray, $this->studyName, true);
+        $reviewData = $this->reviewRepositoryInterface->getReviewFromVisitIdArrayStudyName($this->visitIdArray, $this->studyName, true);
 
         //Flatten the nested review status
         $flattenedData = array_map(function($review){
@@ -139,9 +142,6 @@ class ExportDataService {
             return array_merge($review, $reviewData);
         }, $reviewData);
 
-        $spreadsheetAdapter->addSheet('InvestigatorsForms');
-        $spreadsheetAdapter->addSheet('ReviewersForms');
-
         $investigatorsForms = [];
         $reviewersForms = [];
 
@@ -149,7 +149,10 @@ class ExportDataService {
             if ($review['local']) $investigatorsForms[] = $review;
             else $reviewersForms[] = $review;
         }
+
+        $spreadsheetAdapter->addSheet('InvestigatorsForms');
         $spreadsheetAdapter->fillData('InvestigatorsForms', $investigatorsForms);
+        $spreadsheetAdapter->addSheet('ReviewersForms');
         $spreadsheetAdapter->fillData('ReviewersForms', $reviewersForms);
 
         $tempFileName = $this->createTempFile();
