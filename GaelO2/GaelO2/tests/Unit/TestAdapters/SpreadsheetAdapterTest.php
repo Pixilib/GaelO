@@ -19,8 +19,6 @@ class SpreadsheetAdapterTest extends TestCase
 
     public function testSpreadSheetCreation()
     {
-
-        $this->spreadsheetAdapter->setDefaultWorksheetTitle('Sassa');
         $this->spreadsheetAdapter->addSheet('TestSalim');
 
         $data = [
