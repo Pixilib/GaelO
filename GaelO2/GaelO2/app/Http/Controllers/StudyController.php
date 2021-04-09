@@ -8,6 +8,9 @@ use App\GaelO\UseCases\CreateStudy\CreateStudyResponse;
 use App\GaelO\UseCases\DeleteStudy\DeleteStudy;
 use App\GaelO\UseCases\DeleteStudy\DeleteStudyRequest;
 use App\GaelO\UseCases\DeleteStudy\DeleteStudyResponse;
+use App\GaelO\UseCases\ExportStudyData\ExportStudyData;
+use App\GaelO\UseCases\ExportStudyData\ExportStudyDataRequest;
+use App\GaelO\UseCases\ExportStudyData\ExportStudyDataResponse;
 use App\GaelO\UseCases\GetKnownOrthancID\GetKnownOrthancID;
 use App\GaelO\UseCases\GetKnownOrthancID\GetKnownOrthancIDRequest;
 use App\GaelO\UseCases\GetKnownOrthancID\GetKnownOrthancIDResponse;
@@ -182,6 +185,23 @@ class StudyController extends Controller
         }else{
             return response()->noContent()
             ->setStatusCode($getReviewProgressionResponse->status, $getReviewProgressionResponse->statusText);
+        }
+    }
+
+    public function exportStudyData(string $studyName, ExportStudyData $exportStudyData, ExportStudyDataRequest $exportStudyDataRequest, ExportStudyDataResponse $exportStudyDataResponse){
+        $currentUser = Auth::user();
+        $exportStudyDataRequest->currentUserId = $currentUser['id'];
+        $exportStudyDataRequest->studyName = $studyName;
+
+        $exportStudyData->execute($exportStudyDataRequest, $exportStudyDataResponse);
+
+        if($exportStudyDataResponse->status === 200){
+            return response()->download($exportStudyDataResponse->zipFile, $exportStudyDataResponse->fileName,
+                                            array('Content-Type: application/zip','Content-Length: '. filesize($exportStudyDataResponse->zipFile)))
+                            ->deleteFileAfterSend(true);
+        }else{
+            return response()->noContent()
+            ->setStatusCode($exportStudyDataResponse->status, $exportStudyDataResponse->statusText);
         }
     }
 

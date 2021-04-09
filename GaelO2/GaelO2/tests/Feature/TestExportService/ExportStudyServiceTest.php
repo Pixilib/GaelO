@@ -2,7 +2,7 @@
 
 namespace Tests\Feature\TestExportService;
 
-use App\GaelO\Services\ExportDataService;
+use App\GaelO\Services\ExportStudyService;
 use App\Models\DicomSeries;
 use App\Models\DicomStudy;
 use App\Models\Patient;
@@ -15,7 +15,7 @@ use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Support\Facades\App;
 use Tests\TestCase;
 
-class ExportDataServiceTest extends TestCase
+class ExportStudyServiceTest extends TestCase
 {
     use DatabaseMigrations {
         runDatabaseMigrations as baseRunDatabaseMigrations;
@@ -28,13 +28,13 @@ class ExportDataServiceTest extends TestCase
 
     }
 
-    private ExportDataService $exportServiceData;
+    private ExportStudyService $exportServiceData;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->exportServiceData = App::make(ExportDataService::class);
+        $this->exportServiceData = App::make(ExportStudyService::class);
     }
 
     public function testExportPatient()

@@ -15,8 +15,9 @@ use App\GaelO\Interfaces\VisitRepositoryInterface;
 //Associated file to review => SK TODO dans un zip
 
 //Dans Review => Ajouter PatientCode et VisitType (faire un loop dans l'array de visits ?)
+//Export en CSV
 
-class ExportDataService {
+class ExportStudyService {
 
     private PatientRepositoryInterface $patientRepositoryInterface;
     private StudyRepositoryInterface $studyRepositoryInterface;

@@ -163,6 +163,7 @@ Route::middleware(['auth:api', 'refresh_token'])->group(function () {
 Route::middleware('auth:api')->get('export-db', [ExportDBController::class, 'exportDB'] );
 Route::middleware('auth:api')->get('documentations/{id}/file', [DocumentationController::class, 'getDocumentationFile'] );
 Route::middleware('auth:api')->get('visits/{id}/dicoms/file', [DicomController::class, 'getVisitDicomsFile'] );
+Route::middleware('auth:api')->get('studies/{studyName}/export', [StudyController::class, 'exportStudyData'] );
 
 /*
 |--------------------------------------------------------------------------
