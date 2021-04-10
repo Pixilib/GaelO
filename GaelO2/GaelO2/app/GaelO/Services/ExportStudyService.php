@@ -13,7 +13,6 @@ use App\GaelO\Interfaces\VisitRepositoryInterface;
 //SK
 //VisitTable  => Reste A ajouter VisitStatus du Lysarc=> A faire a part das une couche d'abstraction car suivra par les evolution de la plateforme)
 //Associated file to review => SK TODO dans un zip
-
 //Dans Review => Ajouter PatientCode et VisitType (faire un loop dans l'array de visits ?)
 //Export en CSV
 
@@ -77,8 +76,8 @@ class ExportStudyService {
         $spreadsheetAdapter = new SpreadsheetAdapter();
         $spreadsheetAdapter->addSheet('Patients');
         $spreadsheetAdapter->fillData('Patients', $patientData);
-        $tempFileName = $this->createTempFile();
-        $spreadsheetAdapter->writeToExcel($tempFileName);
+
+        $tempFileName = $spreadsheetAdapter->writeToExcel();
         return $tempFileName;
     }
 
@@ -107,8 +106,7 @@ class ExportStudyService {
         }
 
         //Export created file
-        $tempFileName = $this->createTempFile();
-        $spreadsheetAdapter->writeToExcel($tempFileName);
+        $tempFileName = $spreadsheetAdapter->writeToExcel();
         return $tempFileName;
     }
 
@@ -129,8 +127,7 @@ class ExportStudyService {
         $spreadsheetAdapter->fillData('DicomSeries', $dicomSeriesData);
 
         //Export created file
-        $tempFileName = $this->createTempFile();
-        $spreadsheetAdapter->writeToExcel($tempFileName);
+        $tempFileName = $spreadsheetAdapter->writeToExcel();
         return $tempFileName;
 
     }
@@ -161,16 +158,11 @@ class ExportStudyService {
         $spreadsheetAdapter->addSheet('ReviewersForms');
         $spreadsheetAdapter->fillData('ReviewersForms', $reviewersForms);
 
-        $tempFileName = $this->createTempFile();
-        $spreadsheetAdapter->writeToExcel($tempFileName);
+        $tempFileName = $spreadsheetAdapter->writeToExcel();
         return $tempFileName;
 
     }
 
-    private function createTempFile(){
-        $tempFile = tmpfile();
-        $tempFileMetadata = stream_get_meta_data($tempFile);
-        return $tempFileMetadata["uri"];
-    }
+
 
 }

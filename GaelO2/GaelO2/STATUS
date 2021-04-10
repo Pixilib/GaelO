@@ -37,8 +37,7 @@ Download Dicom :
 Faire FrontEnd (tout lister au niveau series?)
 Faire API qui recoit array de SeriesInstanceUID pour le telechargement => Reste a exposer l'API + 1 test e2e
 
-Export Data Etude : A faire avec librairie spreadsheet php + Personalisation au niveau study
-=> API a finir (route + test) + Personalisation a designer
+Export Data Etude : A finir (CSV) + Personalisation au niveau study
 
 Model : Type de variable a caster
 Interface : Faire sous repertoire pour les interface repository et les interface adapter (et faire les interface des adapters qui manquent)

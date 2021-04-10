@@ -3,6 +3,7 @@
 namespace App\GaelO\Adapters;
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Csv;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 class SpreadsheetAdapter {
@@ -29,9 +30,27 @@ class SpreadsheetAdapter {
     /**
      * Path should contains filename finishing by .xlsx
      */
-    public function writeToExcel(string $path) : void {
+    public function writeToExcel() : string {
+        $path = $this->createTempFile();
         $writer = new Xlsx($this->spreadsheet);
         $writer->save($path);
+        return $path;
+    }
+
+    //SK A VOIR
+    public function writeToCsv() : array {
+        //$workseetIterator = $this->spreadsheet->getWorksheetIterator();
+        $path = $this->createTempFile();
+        $writer = new CSV($this->spreadsheet);
+        $writer->save($path);
+        /*
+        foreach($workseetIterator as $workSheet){
+            $path = $this->createTempFile();
+            $writer = new Csv($this->spreadsheet);
+            $writer->save($path);
+        }*/
+
+        return[''];
     }
 
     private function generateArrayForSpreadSheet(array $data) : array {
@@ -55,6 +74,12 @@ class SpreadsheetAdapter {
         }
 
         return $resultArray;
+    }
+
+    private function createTempFile(){
+        $tempFile = tmpfile();
+        $tempFileMetadata = stream_get_meta_data($tempFile);
+        return $tempFileMetadata["uri"];
     }
 
 }
