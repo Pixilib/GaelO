@@ -50,4 +50,10 @@ class DicomsStudyFromStudyTest extends TestCase
         AuthorizationTools::actAsAdmin(false);
         $this->json('GET', 'api/studies/' . $this->studyName . '/dicom-studies?withTrashed')->assertStatus(403);
     }
+
+    public function testGetDicomsSupervisorFile()
+    {
+        AuthorizationTools::actAsAdmin(false);
+        $this->post('api/studies/' . $this->studyName . '/dicom-series/file', [ 'seriesInstanceUID'=>['125.156'] ])->assertStatus(400);
+    }
 }

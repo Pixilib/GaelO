@@ -35,6 +35,10 @@ class GetDicomsFileSupervisor {
 
         try{
 
+            if(empty($getDicomsFileSupervisorRequest->seriesInstanceUID) ){
+                throw new GaelOBadRequestException('Missing Series Instance UID');
+            }
+
             //Get Related visit ID of requested seriesInstanceUID
             $visitIds = $this->dicomSeriesRepositoryInterface->getRelatedVisitIdFromSeriesInstanceUID($getDicomsFileSupervisorRequest->seriesInstanceUID);
 

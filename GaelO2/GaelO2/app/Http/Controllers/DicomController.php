@@ -11,6 +11,9 @@ use App\GaelO\UseCases\GetDicoms\GetDicomsResponse;
 use App\GaelO\UseCases\GetDicomsFile\GetDicomsFile;
 use App\GaelO\UseCases\GetDicomsFile\GetDicomsFileRequest;
 use App\GaelO\UseCases\GetDicomsFile\GetDicomsFileResponse;
+use App\GaelO\UseCases\GetDicomsFileSupervisor\GetDicomsFileSupervisor;
+use App\GaelO\UseCases\GetDicomsFileSupervisor\GetDicomsFileSupervisorRequest;
+use App\GaelO\UseCases\GetDicomsFileSupervisor\GetDicomsFileSupervisorResponse;
 use App\GaelO\UseCases\GetDicomsStudy\GetDicomsStudy;
 use App\GaelO\UseCases\GetDicomsStudy\GetDicomsStudyRequest;
 use App\GaelO\UseCases\GetDicomsStudy\GetDicomsStudyResponse;
@@ -138,6 +141,27 @@ class DicomController extends Controller
             ->setStatusCode($getDicomsStudyResponse->status, $getDicomsStudyResponse->statusText);
         }
 
+
+    }
+
+    public function getSupervisorDicomsFile(string $studyName, Request $request, GetDicomsFileSupervisor $getDicomsFileSupervisor, GetDicomsFileSupervisorRequest $getDicomsFileSupervisorRequest, GetDicomsFileSupervisorResponse $getDicomsFileSupervisorResponse){
+        $currentUser = Auth::user();
+        $requestData = $request->all();
+
+        $getDicomsFileSupervisorRequest->currentUserId = $currentUser['id'];
+        $getDicomsFileSupervisorRequest->studyName = $studyName;
+        $getDicomsFileSupervisorRequest = Util::fillObject($requestData, $getDicomsFileSupervisorRequest);
+
+        $getDicomsFileSupervisor->execute($getDicomsFileSupervisorRequest, $getDicomsFileSupervisorResponse);
+
+        if($getDicomsFileSupervisorResponse->status === 200) {
+            return response()->streamDownload( function() use( &$getDicomsFileSupervisor){
+                $getDicomsFileSupervisor->outputStream();
+            }, $getDicomsFileSupervisorResponse->filename);
+        }else{
+            return response()->json($getDicomsFileSupervisorResponse->body)
+            ->setStatusCode($getDicomsFileSupervisorResponse->status, $getDicomsFileSupervisorResponse->statusText);
+        }
 
     }
 }

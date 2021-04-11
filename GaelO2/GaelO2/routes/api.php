@@ -164,6 +164,7 @@ Route::middleware('auth:api')->get('export-db', [ExportDBController::class, 'exp
 Route::middleware('auth:api')->get('documentations/{id}/file', [DocumentationController::class, 'getDocumentationFile'] );
 Route::middleware('auth:api')->get('visits/{id}/dicoms/file', [DicomController::class, 'getVisitDicomsFile'] );
 Route::middleware('auth:api')->get('studies/{studyName}/export', [StudyController::class, 'exportStudyData'] );
+Route::middleware('auth:api')->post('studies/{studyName}/dicom-series/file', [DicomController::class, 'getSupervisorDicomsFile'] );
 
 /*
 |--------------------------------------------------------------------------
