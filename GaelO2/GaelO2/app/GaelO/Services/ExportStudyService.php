@@ -9,12 +9,12 @@ use App\GaelO\Interfaces\PatientRepositoryInterface;
 use App\GaelO\Interfaces\ReviewRepositoryInterface;
 use App\GaelO\Interfaces\StudyRepositoryInterface;
 use App\GaelO\Interfaces\VisitRepositoryInterface;
-
-//SK
-//VisitTable  => Reste A ajouter VisitStatus du Lysarc=> A faire a part das une couche d'abstraction car suivra par les evolution de la plateforme)
-//Associated file to review => SK TODO dans un zip
-//Dans Review => Ajouter PatientCode et VisitType (faire un loop dans l'array de visits ?)
-//Export en CSV
+use App\GaelO\Services\StoreObjects\Export\ExportDataResults;
+use App\GaelO\Services\StoreObjects\Export\ExportDicomResults;
+use App\GaelO\Services\StoreObjects\Export\ExportPatientResults;
+use App\GaelO\Services\StoreObjects\Export\ExportReviewResults;
+use App\GaelO\Services\StoreObjects\Export\ExportStudyResults;
+use App\GaelO\Services\StoreObjects\Export\ExportVisitsResults;
 
 class ExportStudyService {
 
@@ -24,6 +24,7 @@ class ExportStudyService {
     private DicomStudyRepositoryInterface $dicomStudyRepositoryInterface;
     private DicomSeriesRepositoryInterface $dicomSeriesRepositoryInterface;
     private ReviewRepositoryInterface $reviewRepositoryInterface;
+    private ExportStudyResults $exportStudyResults;
 
     private string $studyName;
 
@@ -33,7 +34,8 @@ class ExportStudyService {
         VisitRepositoryInterface $visitRepositoryInterface,
         DicomStudyRepositoryInterface $dicomStudyRepositoryInterface,
         DicomSeriesRepositoryInterface $dicomSeriesRepositoryInterface,
-        ReviewRepositoryInterface $reviewRepositoryInterface)
+        ReviewRepositoryInterface $reviewRepositoryInterface,
+        ExportStudyResults $exportStudyResults)
     {
         $this->patientRepositoryInterface = $patientRepositoryInterface;
         $this->studyRepositoryInterface = $studyRepositoryInterface;
@@ -41,6 +43,7 @@ class ExportStudyService {
         $this->dicomStudyRepositoryInterface = $dicomStudyRepositoryInterface;
         $this->dicomSeriesRepositoryInterface = $dicomSeriesRepositoryInterface;
         $this->reviewRepositoryInterface = $reviewRepositoryInterface;
+        $this->exportStudyResults = $exportStudyResults;
     }
 
     public function setStudyName(string $studyName){
@@ -71,17 +74,22 @@ class ExportStudyService {
 
     }
 
-    public function exportPatientTable(){
+    public function exportPatientTable() : void {
         $patientData = $this->patientRepositoryInterface->getPatientsInStudy($this->studyName);
         $spreadsheetAdapter = new SpreadsheetAdapter();
         $spreadsheetAdapter->addSheet('Patients');
         $spreadsheetAdapter->fillData('Patients', $patientData);
 
-        $tempFileName = $spreadsheetAdapter->writeToExcel();
-        return $tempFileName;
+        $tempFileNameXls = $spreadsheetAdapter->writeToExcel();
+        $tempFileNameCsv = $spreadsheetAdapter->writeToCsv('Patients');
+
+        $exportPatientResults = new ExportPatientResults();
+        $exportPatientResults->addExportFile(ExportDataResults::EXPORT_TYPE_XLS, $tempFileNameXls);
+        $exportPatientResults->addExportFile(ExportDataResults::EXPORT_TYPE_CSV, $tempFileNameCsv);
+        $this->exportStudyResults->setExportPatientResults($exportPatientResults);
     }
 
-    public function exportVisitTable(){
+    public function exportVisitTable() : void {
 
         $spreadsheetAdapter = new SpreadsheetAdapter();
 
@@ -92,10 +100,8 @@ class ExportStudyService {
             //Determine Sheet Name
             $visitTypeDetails = $this->visitTypeArray[ $visit['visit_type']['id'] ];
             $sheetName = $visitTypeDetails['modality'].'_'.$visitTypeDetails['name'];
-
             unset($visit['visit_type']);
             unset($visit['patient']);
-
             $resultsData[$sheetName][]=array_merge( [ 'modality'=> $visitTypeDetails['modality'], 'visit_type' => $visitTypeDetails['name']] , $visit, $visit['review_status'] );
 
         }
@@ -106,11 +112,21 @@ class ExportStudyService {
         }
 
         //Export created file
-        $tempFileName = $spreadsheetAdapter->writeToExcel();
-        return $tempFileName;
+        $tempFileNameXls = $spreadsheetAdapter->writeToExcel();
+
+        $exportVisitResults = new ExportVisitsResults();
+        $exportVisitResults->addExportFile(ExportDataResults::EXPORT_TYPE_XLS, $tempFileNameXls);
+
+        foreach($resultsData as $sheetName => $value){
+            $tempCsvFileName = $spreadsheetAdapter->writeToCsv($sheetName);
+            $exportVisitResults->addExportFile(ExportDataResults::EXPORT_TYPE_CSV, $tempCsvFileName, $sheetName);
+        }
+
+        $this->exportStudyResults->setExportVisitResults($exportVisitResults);
+
     }
 
-    public function exportDicomsTable(){
+    public function exportDicomsTable() : void {
 
         $spreadsheetAdapter = new SpreadsheetAdapter();
 
@@ -121,18 +137,29 @@ class ExportStudyService {
         $studyInstanceUIDArray = array_map(function ($studyEntity){
             return $studyEntity['study_uid'];
         }, $dicomStudyData);
+
         //Get Series data for series spreadsheet
         $dicomSeriesData = $this->dicomSeriesRepositoryInterface->getDicomSeriesOfStudyInstanceUIDArray($studyInstanceUIDArray, true);
         $spreadsheetAdapter->addSheet('DicomSeries');
         $spreadsheetAdapter->fillData('DicomSeries', $dicomSeriesData);
 
         //Export created file
-        $tempFileName = $spreadsheetAdapter->writeToExcel();
-        return $tempFileName;
+        $tempFileNameXls = $spreadsheetAdapter->writeToExcel();
+
+        $exportDicomResults = new ExportDicomResults();
+        $exportDicomResults->addExportFile(ExportDataResults::EXPORT_TYPE_XLS, $tempFileNameXls);
+
+        $sheets = ['DicomStudies', 'DicomSeries'];
+        foreach($sheets as $sheet){
+            $tempFileNameCsv = $spreadsheetAdapter->writeToCsv($sheet);
+            $exportDicomResults->addExportFile(ExportDataResults::EXPORT_TYPE_CSV, $tempFileNameCsv, $sheet);
+        }
+
+        $this->exportStudyResults->setExportDicomResults($exportDicomResults);
 
     }
 
-    public function exportReviewTable(){
+    public function exportReviewTable() : void {
 
         $spreadsheetAdapter = new SpreadsheetAdapter();
 
@@ -158,9 +185,23 @@ class ExportStudyService {
         $spreadsheetAdapter->addSheet('ReviewersForms');
         $spreadsheetAdapter->fillData('ReviewersForms', $reviewersForms);
 
-        $tempFileName = $spreadsheetAdapter->writeToExcel();
-        return $tempFileName;
+        $tempFileNameXls = $spreadsheetAdapter->writeToExcel();
 
+        $exportReviewResults = new ExportReviewResults();
+        $exportReviewResults->addExportFile(ExportDataResults::EXPORT_TYPE_XLS, $tempFileNameXls);
+
+        $sheets = ['InvestigatorsForms', 'ReviewersForms'];
+        foreach($sheets as $sheet){
+            $tempFileNameCsv = $spreadsheetAdapter->writeToCsv($sheet);
+            $exportReviewResults->addExportFile(ExportDataResults::EXPORT_TYPE_CSV, $tempFileNameCsv, $sheet);
+        }
+
+        $this->exportStudyResults->setExportReviewResults($exportReviewResults);
+
+    }
+
+    public function getExportStudyResult () : ExportStudyResults {
+        return $this->exportStudyResults;
     }
 
 

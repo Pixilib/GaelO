@@ -37,7 +37,10 @@ Download Dicom :
 Faire FrontEnd (tout lister au niveau series?)
 Faire API qui recoit array de SeriesInstanceUID pour le telechargement => Reste a exposer l'API + 1 test e2e
 
-Export Data Etude : A finir (CSV) + Personalisation au niveau study
+Export Data Etude :
+- Personalisation au niveau study -> Couche d'abstration notamment pour injecter le lysarc code
+- Review Ajout Patient Code et Visit Type ?
+- Associated File To Review => A faire dans un zip
 
 Model : Type de variable a caster
 Interface : Faire sous repertoire pour les interface repository et les interface adapter (et faire les interface des adapters qui manquent)

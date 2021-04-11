@@ -37,20 +37,18 @@ class SpreadsheetAdapter {
         return $path;
     }
 
-    //SK A VOIR
-    public function writeToCsv() : array {
-        //$workseetIterator = $this->spreadsheet->getWorksheetIterator();
-        $path = $this->createTempFile();
+    public function writeToCsv(string $sheetName) : string {
         $writer = new CSV($this->spreadsheet);
-        $writer->save($path);
-        /*
-        foreach($workseetIterator as $workSheet){
-            $path = $this->createTempFile();
-            $writer = new Csv($this->spreadsheet);
-            $writer->save($path);
-        }*/
+        $index = $this->getSheetIndexByName($sheetName);
+        $path = $this->createTempFile();
 
-        return[''];
+        $writer->setSheetIndex($index);
+        $writer->setDelimiter(';');
+        $writer->setEnclosure('"');
+        $writer->setLineEnding("\r\n");
+
+        $writer->save($path);
+        return $path;
     }
 
     private function generateArrayForSpreadSheet(array $data) : array {
@@ -76,10 +74,16 @@ class SpreadsheetAdapter {
         return $resultArray;
     }
 
-    private function createTempFile(){
+    private function createTempFile() : string {
         $tempFile = tmpfile();
         $tempFileMetadata = stream_get_meta_data($tempFile);
         return $tempFileMetadata["uri"];
+    }
+
+    private function getSheetIndexByName( string $sheetName ) : int {
+        $workSheet = $this->spreadsheet->getSheetByName( $sheetName );
+        $index = $this->spreadsheet->getIndex($workSheet);
+        return $index;
     }
 
 }

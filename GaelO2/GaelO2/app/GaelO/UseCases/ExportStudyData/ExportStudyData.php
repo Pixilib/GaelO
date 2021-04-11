@@ -8,7 +8,6 @@ use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Services\AuthorizationService;
 use App\GaelO\Services\ExportStudyService;
 use Exception;
-use ZipArchive;
 
 class ExportStudyData{
 
@@ -27,27 +26,19 @@ class ExportStudyData{
 
             $this->checkAuthorization($exportStudyDataRequest->currentUserId, $exportStudyDataRequest->studyName);
 
-            $zip=new ZipArchive();
-            $tempZip=tempnam(ini_get('upload_tmp_dir'), 'TMP_ZIP_EXPORT_');
-            $zip->open($tempZip, ZipArchive::OVERWRITE);
-            $date=Date('Ymd_his');
-
             $this->exportStudyService->setStudyName($exportStudyDataRequest->studyName);
-            $patientExportFileName = $this->exportStudyService->exportPatientTable();
-            $visitTypeFileName = $this->exportStudyService->exportVisitTable();
-            $dicomFileName= $this->exportStudyService->exportDicomsTable();
-            $reviewFileName = $this->exportStudyService->exportReviewTable();
 
-            $zip->addFile($patientExportFileName, "export_patients.xlsx");
-            $zip->addFile($visitTypeFileName, "export_visits.xlsx");
-            $zip->addFile($dicomFileName, "export_dicoms.xlsx");
-            $zip->addFile($reviewFileName, "export_reviews.xlsx");
-            $zip->close();
+            $this->exportStudyService->exportPatientTable();
+            $this->exportStudyService->exportVisitTable();
+            $this->exportStudyService->exportDicomsTable();
+            $this->exportStudyService->exportReviewTable();
 
+            $exportResults = $this->exportStudyService->getExportStudyResult();
+
+            $exportStudyDataResponse->zipFile = $exportResults->getResultsAsZip();
             $exportStudyDataResponse->status = 200;
             $exportStudyDataResponse->statusText = 'OK';
-            $exportStudyDataResponse->zipFile = $tempZip;
-            $exportStudyDataResponse->fileName = "export_".$exportStudyDataRequest->studyName."_".$date.".zip";
+            $exportStudyDataResponse->fileName = "export_".$exportStudyDataRequest->studyName.".zip";
 
         }catch(GaelOException $e){
 
