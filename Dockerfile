@@ -1,3 +1,16 @@
+ARG GITHUB_TOKEN
+
+FROM node:14.15.4 as react
+RUN apt-get update -qy && \
+    apt-get install -y --no-install-recommends apt-utils\
+    git
+WORKDIR /FrontEnd
+ARG GITHUB_TOKEN
+RUN echo $GITHUB_TOKEN
+RUN git clone -b dev https://$GITHUB_TOKEN@github.com/salimkanoun/GaelO_Frontend.git .
+RUN npm install
+RUN npm run build
+
 FROM node:14.15.4 as ohif
 RUN apt-get update -qy && \
     apt-get install -y --no-install-recommends apt-utils\
@@ -6,14 +19,6 @@ WORKDIR /ohif
 RUN git clone https://github.com/OHIF/Viewers.git
 RUN cd Viewers && yarn install && QUICK_BUILD=true PUBLIC_URL=/viewer-ohif/ yarn run build
 
-FROM node:14.15.4 as react
-RUN apt-get update -qy && \
-    apt-get install -y --no-install-recommends apt-utils\
-    git
-WORKDIR /FrontEnd
-RUN git clone -b dev https://github.com/salimkanoun/GaelO_Frontend.git .
-RUN npm install
-RUN npm run build
 
 FROM alpine as stone
 RUN apk --no-cache add wget
@@ -41,10 +46,11 @@ RUN apt-get update -qy && \
     openssl \
     sqlite3 \
     zip \
+    libpng-dev \
     mariadb-client && \
     apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-RUN docker-php-ext-install zip pdo pdo_mysql pdo_pgsql mbstring bcmath ctype fileinfo tokenizer xml bz2
+RUN docker-php-ext-install gd zip pdo pdo_mysql pdo_pgsql mbstring bcmath ctype fileinfo tokenizer xml bz2
 COPY php.ini /usr/local/etc/php/conf.d/app.ini
 
 RUN curl -s https://getcomposer.org/installer | php -- --install-dir=/usr/bin/ --filename=composer

@@ -82,9 +82,12 @@ class RegisterDicomStudyService
                 $this->addtoDbSerie($serie, $studyOrthancObject->studyInstanceUID);
             }
 
+            return $studyOrthancObject->studyInstanceUID;
+
         } else {
             throw new GaelOBadRequestException("Error during import Study Already Known");
         }
+
     }
 
     /**

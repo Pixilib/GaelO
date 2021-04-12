@@ -3,6 +3,7 @@
 namespace Tests\Unit\TestRepositories;
 
 use App\GaelO\Repositories\DicomStudyRepository;
+use App\GaelO\Services\StoreObjects\OrthancStudy;
 use App\Models\DicomSeries;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
@@ -112,7 +113,6 @@ class DicomStudyRepositoryTest extends TestCase
         //One study should be true, the other false
         $this->assertTrue($answer);
         $this->assertFalse($answer2);
-
     }
 
     public function testIsExistingOrthancStudyId()
@@ -195,5 +195,49 @@ class DicomStudyRepositoryTest extends TestCase
 
         $series = $this->dicomStudyRepository->getChildSeries($orthancStudies->study_uid, true);
         $this->assertEquals(1, sizeof($series));
+    }
+
+
+    public function testGetDicomStudyFromStudy()
+    {
+
+        $orthancStudies = DicomStudy::factory()->count(2)->create();
+
+        DicomSeries::factory()->studyInstanceUID($orthancStudies->first()->study_uid)->create();
+
+        $studyName = $orthancStudies->first()->visit->visitType->visitGroup->study_name;
+
+        $results = $this->dicomStudyRepository->getDicomStudyFromStudy($studyName, false);
+        $this->assertEquals(1, sizeof($results));
+
+        //Test if deleted
+        $orthancStudies->first()->delete();
+        $orthancStudies->first()->save();
+        $results = $this->dicomStudyRepository->getDicomStudyFromStudy($studyName, false);
+        $this->assertEquals(0, sizeof($results));
+        $results = $this->dicomStudyRepository->getDicomStudyFromStudy($studyName, true);
+        $this->assertEquals(1, sizeof($results));
+    }
+
+    public function testGetDicomStudyFromVisitIdArray()
+    {
+
+        $visit = Visit::factory()->count(2)->create();
+
+        DicomStudy::factory()->count(5)->create();
+
+        $dicomStudy1 = DicomStudy::factory()->visitId($visit->first()->id)->create();
+        $dicomStudy2 = DicomStudy::factory()->visitId($visit->last()->id)->create();
+
+        $answer = $this->dicomStudyRepository->getDicomStudyFromVisitIdArray([$visit->first()->id, $visit->last()->id], false);
+        $this->assertEquals(2, sizeof($answer));
+
+        $dicomStudy1->delete();
+        $answer = $this->dicomStudyRepository->getDicomStudyFromVisitIdArray([$visit->first()->id, $visit->last()->id], false);
+        $this->assertEquals(1, sizeof($answer));
+
+        //Should Include the deleted one
+        $answer = $this->dicomStudyRepository->getDicomStudyFromVisitIdArray([$visit->first()->id, $visit->last()->id], true);
+        $this->assertEquals(2, sizeof($answer));
     }
 }

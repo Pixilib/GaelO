@@ -9,7 +9,7 @@ class DicomSeriesEntity {
     public ?string $acquisitionTime;
     public ?string $seriesDescription;
     public ?string $modality;
-    public ?string $injectedDose;
+    public ?int $injectedDose;
     public ?string $radiopharmaceutical;
     public ?int $half_life;
     public ?string $injectedTime;

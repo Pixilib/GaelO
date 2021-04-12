@@ -131,7 +131,7 @@ class InvestigatorFormTest extends TestCase
         AuthorizationTools::addAffiliatedCenter($currentUserId, $patient->center_code);
 
         $payload = [
-            'data' => ['lugano' => 'CR'],
+            'data' => ['comment' => 'CR'],
             'validated' => true
         ];
 
@@ -152,7 +152,7 @@ class InvestigatorFormTest extends TestCase
         AuthorizationTools::actAsAdmin(false);
 
         $payload = [
-            'data' => ['lugano' => 'CR'],
+            'data' => ['comment' => 'CR'],
             'validated' => true
         ];
 
@@ -174,7 +174,7 @@ class InvestigatorFormTest extends TestCase
         AuthorizationTools::addAffiliatedCenter($currentUserId, $patient->center_code);
 
         $payload = [
-            'data' => ['lugano' => 'CR'],
+            'data' => ['comment' => 'CR'],
             'validated' => true
         ];
 
@@ -196,7 +196,7 @@ class InvestigatorFormTest extends TestCase
         AuthorizationTools::addAffiliatedCenter($currentUserId, $patient->center_code);
 
         $payload = [
-            'data' => ['lugano' => 'CR'],
+            'data' => ['comment' => 'CR'],
             'validated' => true
         ];
 
@@ -221,7 +221,7 @@ class InvestigatorFormTest extends TestCase
         AuthorizationTools::addAffiliatedCenter($currentUserId, $patient->center_code);
 
         $payload = [
-            'data' => ['lugano' => 'CR'],
+            'data' => ['comment' => 'CR'],
             'validated' => true
         ];
 
@@ -243,7 +243,7 @@ class InvestigatorFormTest extends TestCase
         AuthorizationTools::addAffiliatedCenter($currentUserId, $patient->center_code);
 
         $payload = [
-            'data' => ['lugano' => 'CR'],
+            'data' => ['comment' => 'CR'],
             'validated' => true
         ];
 
@@ -265,7 +265,7 @@ class InvestigatorFormTest extends TestCase
         AuthorizationTools::addAffiliatedCenter($currentUserId, $patient->center_code);
 
         $payload = [
-            'data' => ['lugano' => 'CR'],
+            'data' => ['comment' => 'CR'],
             'validated' => true
         ];
 
@@ -287,7 +287,7 @@ class InvestigatorFormTest extends TestCase
         AuthorizationTools::addAffiliatedCenter($currentUserId, $patient->center_code);
 
         $payload = [
-            'data' => ['lugano' => 'CR'],
+            'data' => ['comment' => 'CR'],
             'validated' => true
         ];
 
@@ -307,7 +307,7 @@ class InvestigatorFormTest extends TestCase
         AuthorizationTools::addAffiliatedCenter($currentUserId, $patient->center_code);
 
         $payload = [
-            'data' => ['lugano' => 'CR'],
+            'data' => ['comment' => 'CR'],
             'validated' => true
         ];
 

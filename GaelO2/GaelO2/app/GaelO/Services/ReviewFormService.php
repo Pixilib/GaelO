@@ -4,6 +4,7 @@ namespace App\GaelO\Services;
 
 use App\GaelO\Adapters\LaravelFunctionAdapter;
 use App\GaelO\Constants\Constants;
+use App\GaelO\Exceptions\GaelOBadRequestException;
 use App\GaelO\Interfaces\ReviewRepositoryInterface;
 use App\GaelO\Interfaces\ReviewStatusRepositoryInterface;
 use App\GaelO\Services\MailServices;
@@ -64,6 +65,10 @@ class ReviewFormService {
     }
 
     public function saveReview(array $data, bool $validated, bool $adjudication) : int {
+        $validity = $this->abstractStudyRules->checkReviewFormValidity($data, $validated, $adjudication);
+        if(!$validity){
+            throw new GaelOBadRequestException('Review Form Validation Failed');
+        }
         $createdReviewId = $this->reviewRepositoryInterface->createReview(false, $this->visitId, $this->studyName, $this->currentUserId, $data, $validated, $adjudication);
         if ($validated && $this->reviewStatusEntity['review_status'] !== Constants::REVIEW_STATUS_DONE) {
             $this->doSpecificReviewDecisions();
@@ -72,7 +77,14 @@ class ReviewFormService {
     }
 
     public function updateReview(int $reviewId, array $data, bool $validated) : void {
-        if($validated) $this->abstractStudyRules->checkReviewFormValidity($data);
+        //Get current Entity to know if adjudication form
+        $reviewEntity = $this->reviewRepositoryInterface->find($reviewId);
+        //Pass validation
+        $validity = $this->abstractStudyRules->checkReviewFormValidity($data, $validated, $reviewEntity['adjudication']);
+        if(!$validity){
+            throw new GaelOBadRequestException('Review Form Validation Failed');
+        }
+        //Update DB
         $this->reviewRepositoryInterface->updateReview($reviewId, $this->currentUserId, $data, $validated);
         if ($validated && $this->reviewStatusEntity['review_status'] !== Constants::REVIEW_STATUS_DONE) {
             $this->doSpecificReviewDecisions();

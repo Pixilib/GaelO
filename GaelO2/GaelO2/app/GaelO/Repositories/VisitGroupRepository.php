@@ -48,5 +48,3 @@ class VisitGroupRepository implements VisitGroupRepositoryInterface {
     }
 
 }
-
-?>

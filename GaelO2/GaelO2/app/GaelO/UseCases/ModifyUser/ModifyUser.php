@@ -53,11 +53,16 @@ class ModifyUser
             CreateUser::checkFormComplete($modifyUserRequest);
             CreateUser::checkEmailValid($modifyUserRequest->email);
 
-            $knownUsername = $this->userRepositoryInterface->isExistingUsername($modifyUserRequest->username);
-            if ($knownUsername) throw new GaelOConflictException("Username Already Used");
+            if($user['username'] !== $modifyUserRequest->username){
+                $knownUsername = $this->userRepositoryInterface->isExistingUsername($modifyUserRequest->username);
+                if ($knownUsername) throw new GaelOConflictException("Username Already Used");
+            }
 
-            $knownEmail = $this->userRepositoryInterface->isExistingEmail($modifyUserRequest->email);
-            if ($knownEmail) throw new GaelOConflictException("Email Already Known");
+            if($user['email'] !== $modifyUserRequest->email){
+                $knownEmail = $this->userRepositoryInterface->isExistingEmail($modifyUserRequest->email);
+                if ($knownEmail) throw new GaelOConflictException("Email Already Known");
+            }
+
 
             $this->userRepositoryInterface->updateUser(
                 $user['id'],

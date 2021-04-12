@@ -34,4 +34,8 @@ interface DicomStudyRepositoryInterface {
 
     public function reactivateByStudyInstanceUID(string $studyInstanceUID) :void ;
 
+    public function getDicomStudyFromStudy(string $studyName, bool $withDeleted) : array ;
+
+    public function getDicomStudyFromVisitIdArray(array $visitId, bool $withTrashed) : array ;
+
 }

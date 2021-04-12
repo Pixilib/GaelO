@@ -31,7 +31,7 @@ class GetVisitsFromStudy {
 
             $this->checkAuthorization($getVisitsFromStudyRequest->currentUserId, $getVisitsFromStudyRequest->studyName);
 
-            $dbData = $this->visitRepositoryInterface->getVisitsInStudy($studyName, true);
+            $dbData = $this->visitRepositoryInterface->getVisitsInStudy($studyName, true, false);
             $responseArray = [];
             foreach($dbData as $data){
                 $responseEntity = VisitEntity::fillFromDBReponseArray($data);

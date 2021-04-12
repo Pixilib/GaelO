@@ -17,9 +17,7 @@ class CountryRepository implements CountryRepositoryInterface {
 
     public function getAllCountries(){
         $countries = $this->country->get();
-        return empty($countries) ? []  : $countries->toArray();
+        return empty($countries) ? []  : $countries->sortBy('country_us')->toArray();
     }
 
 }
-
-?>

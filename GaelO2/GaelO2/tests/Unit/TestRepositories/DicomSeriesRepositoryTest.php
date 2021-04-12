@@ -3,6 +3,7 @@
 namespace Tests\Unit\TestRepositories;
 
 use App\GaelO\Repositories\DicomSeriesRepository;
+use App\GaelO\Services\StoreObjects\OrthancSeries;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\TestCase;
@@ -11,7 +12,7 @@ use App\Models\DicomSeries;
 use App\Models\DicomStudy;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
-class OrthancSeriesRepositoryTest extends TestCase
+class DicomSeriesRepositoryTest extends TestCase
 {
     private DicomSeriesRepository $orthancSeriesRepository;
 
@@ -99,6 +100,44 @@ class OrthancSeriesRepositoryTest extends TestCase
 
         $this->orthancSeriesRepository->reactivateSeriesOfStudyInstanceUID($this->orthancStudy->study_uid);
         $this->assertEquals(5, DicomSeries::get()->count());
+    }
+
+    public function testGetRelatedVisitIdFromSeriesInstanceUid(){
+
+        $dicomSeries = DicomSeries::factory()->count(5)->create();
+        //Should work even for deleted series / studies
+        $dicomSeries->first()->delete();
+        $dicomSeries->first()->dicomStudy->delete();
+
+        $seriesInstanceUID = $dicomSeries->pluck('series_uid')->toArray();
+        $answer = $this->orthancSeriesRepository->getRelatedVisitIdFromSeriesInstanceUID($seriesInstanceUID);
+        $this->assertEquals(5, sizeof($answer));
+    }
+
+    public function testGetSeriesOrthancIdOfSeriesInstanceUid(){
+
+        $dicomSeries = DicomSeries::factory()->count(5)->create();
+        //Should work even for deleted series / studies
+        $dicomSeries->first()->delete();
+        $dicomSeries->first()->dicomStudy->delete();
+
+        $seriesInstanceUID = $dicomSeries->pluck('series_uid')->toArray();
+        $answer = $this->orthancSeriesRepository->getSeriesOrthancIDOfSeriesInstanceUID($seriesInstanceUID);
+        $this->assertEquals(5, sizeof($answer));
+
+    }
+
+    public function testGetSeriesByStudyInstanceUidArray(){
+
+        $dicomSeries = DicomSeries::factory()->count(10)->create();
+        $studyInstanceUID1  = $dicomSeries->first()->study_uid;
+        $studyInstanceUID2 = $dicomSeries->last()->study_uid;
+
+        $dicomSeries->first->delete();
+        $series = $this->orthancSeriesRepository->getDicomSeriesOfStudyInstanceUIDArray([$studyInstanceUID1, $studyInstanceUID2], false);
+        $this->assertEquals(1, sizeof($series));
+        $series = $this->orthancSeriesRepository->getDicomSeriesOfStudyInstanceUIDArray([$studyInstanceUID1, $studyInstanceUID2], true);
+        $this->assertEquals(2, sizeof($series));
     }
 
 

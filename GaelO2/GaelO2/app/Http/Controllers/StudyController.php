@@ -8,6 +8,9 @@ use App\GaelO\UseCases\CreateStudy\CreateStudyResponse;
 use App\GaelO\UseCases\DeleteStudy\DeleteStudy;
 use App\GaelO\UseCases\DeleteStudy\DeleteStudyRequest;
 use App\GaelO\UseCases\DeleteStudy\DeleteStudyResponse;
+use App\GaelO\UseCases\ExportStudyData\ExportStudyData;
+use App\GaelO\UseCases\ExportStudyData\ExportStudyDataRequest;
+use App\GaelO\UseCases\ExportStudyData\ExportStudyDataResponse;
 use App\GaelO\UseCases\GetKnownOrthancID\GetKnownOrthancID;
 use App\GaelO\UseCases\GetKnownOrthancID\GetKnownOrthancIDRequest;
 use App\GaelO\UseCases\GetKnownOrthancID\GetKnownOrthancIDResponse;
@@ -17,12 +20,18 @@ use App\GaelO\UseCases\GetPatientFromStudy\GetPatientFromStudyResponse;
 use App\GaelO\UseCases\GetPossibleUpload\GetPossibleUpload;
 use App\GaelO\UseCases\GetPossibleUpload\GetPossibleUploadRequest;
 use App\GaelO\UseCases\GetPossibleUpload\GetPossibleUploadResponse;
+use App\GaelO\UseCases\GetReviewProgression\GetReviewProgression;
+use App\GaelO\UseCases\GetReviewProgression\GetReviewProgressionRequest;
+use App\GaelO\UseCases\GetReviewProgression\GetReviewProgressionResponse;
 use App\GaelO\UseCases\GetStudy\GetStudy;
 use App\GaelO\UseCases\GetStudy\GetStudyRequest;
 use App\GaelO\UseCases\GetStudy\GetStudyResponse;
 use App\GaelO\UseCases\GetStudyDetails\GetStudyDetails;
 use App\GaelO\UseCases\GetStudyDetails\GetStudyDetailsRequest;
 use App\GaelO\UseCases\GetStudyDetails\GetStudyDetailsResponse;
+use App\GaelO\UseCases\GetStudyDetailsSupervisor\GetStudyDetailsSupervisor;
+use App\GaelO\UseCases\GetStudyDetailsSupervisor\GetStudyDetailsSupervisorRequest;
+use App\GaelO\UseCases\GetStudyDetailsSupervisor\GetStudyDetailsSupervisorResponse;
 use App\GaelO\UseCases\GetVisitsTree\GetVisitsTree;
 use App\GaelO\UseCases\GetVisitsTree\GetVisitsTreeRequest;
 use App\GaelO\UseCases\GetVisitsTree\GetVisitsTreeResponse;
@@ -57,7 +66,7 @@ class StudyController extends Controller
 
     }
 
-    public function getStudy(Request $request, GetStudy $getStudy, GetStudyRequest $getStudyRequest, GetStudyResponse $getStudyResponse, GetStudyDetails $getStudyDetails, GetStudyDetailsRequest $getStudyDetailsRequest, GetStudyDetailsResponse $getStudyDetailsResponse){
+    public function getStudies(Request $request, GetStudy $getStudy, GetStudyRequest $getStudyRequest, GetStudyResponse $getStudyResponse, GetStudyDetails $getStudyDetails, GetStudyDetailsRequest $getStudyDetailsRequest, GetStudyDetailsResponse $getStudyDetailsResponse){
         $currentUser = Auth::user();
         $queryParam = $request->query();
         if(array_key_exists('expand', $queryParam) ){
@@ -71,6 +80,17 @@ class StudyController extends Controller
             return response()->json($getStudyResponse->body)
             ->setStatusCode($getStudyResponse->status, $getStudyResponse->statusText);
         }
+
+    }
+
+    public function getStudyDetails(string $studyName, GetStudyDetailsSupervisor $getStudyDetailsSupervisor, GetStudyDetailsSupervisorRequest $getStudyDetailsSupervisorRequest, GetStudyDetailsSupervisorResponse $getStudyDetailsSupervisorResponse){
+        $currentUser = Auth::user();
+        $getStudyDetailsSupervisorRequest->currentUserId = $currentUser['id'];
+        $getStudyDetailsSupervisorRequest->studyName = $studyName;
+        $getStudyDetailsSupervisor->execute($getStudyDetailsSupervisorRequest, $getStudyDetailsSupervisorResponse);
+        return response()
+            ->json($getStudyDetailsSupervisorResponse->body)
+            ->setStatusCode($getStudyDetailsSupervisorResponse->status, $getStudyDetailsSupervisorResponse->statusText);
 
     }
 
@@ -148,6 +168,41 @@ class StudyController extends Controller
         $getPatient->execute($getPatientRequest, $getPatientResponse);
         return response()->json($getPatientResponse->body)
                 ->setStatusCode($getPatientResponse->status, $getPatientResponse->statusText);
+    }
+
+    public function getReviewProgression(String $studyName, int $visitTypeId, GetReviewProgression $getReviewProgression, GetReviewProgressionRequest $getReviewProgressionRequest, GetReviewProgressionResponse $getReviewProgressionResponse){
+        $currentUser = Auth::user();
+
+        $getReviewProgressionRequest->visitTypeId = $visitTypeId;
+        $getReviewProgressionRequest->currentUserId = $currentUser['id'];
+        $getReviewProgressionRequest->studyName = $studyName;
+
+        $getReviewProgression->execute($getReviewProgressionRequest, $getReviewProgressionResponse);
+
+        if($getReviewProgressionResponse->body){
+            return response()->json($getReviewProgressionResponse->body)
+            ->setStatusCode($getReviewProgressionResponse->status, $getReviewProgressionResponse->statusText);
+        }else{
+            return response()->noContent()
+            ->setStatusCode($getReviewProgressionResponse->status, $getReviewProgressionResponse->statusText);
+        }
+    }
+
+    public function exportStudyData(string $studyName, ExportStudyData $exportStudyData, ExportStudyDataRequest $exportStudyDataRequest, ExportStudyDataResponse $exportStudyDataResponse){
+        $currentUser = Auth::user();
+        $exportStudyDataRequest->currentUserId = $currentUser['id'];
+        $exportStudyDataRequest->studyName = $studyName;
+
+        $exportStudyData->execute($exportStudyDataRequest, $exportStudyDataResponse);
+
+        if($exportStudyDataResponse->status === 200){
+            return response()->download($exportStudyDataResponse->zipFile, $exportStudyDataResponse->fileName,
+                                            array('Content-Type: application/zip','Content-Length: '. filesize($exportStudyDataResponse->zipFile)))
+                            ->deleteFileAfterSend(true);
+        }else{
+            return response()->noContent()
+            ->setStatusCode($exportStudyDataResponse->status, $exportStudyDataResponse->statusText);
+        }
     }
 
 }

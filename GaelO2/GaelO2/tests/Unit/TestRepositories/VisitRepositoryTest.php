@@ -171,12 +171,12 @@ class VisitRepositoryTest extends TestCase
         //Generate data of a second study that should not be selected
         $this->populateVisits()[0];
 
-        $visits = $this->visitRepository->getVisitsInStudy($patient->study_name, false);
+        $visits = $this->visitRepository->getVisitsInStudy($patient->study_name, false, false);
         $this->assertEquals(12, sizeof($visits));
         $this->assertArrayHasKey('visit_type', $visits[0]);
         $this->assertArrayHasKey('visit_group', $visits[0]['visit_type']);
 
-        $visitsWithReview = $this->visitRepository->getVisitsInStudy($patient->study_name, true);
+        $visitsWithReview = $this->visitRepository->getVisitsInStudy($patient->study_name, true, false);
         $this->assertEquals(12, sizeof($visitsWithReview));
         $this->assertArrayHasKey('review_status', $visitsWithReview[0]);
         $this->assertEquals($visitsWithReview[0]['id'], $visitsWithReview[0]['review_status']['visit_id'] );
@@ -220,6 +220,37 @@ class VisitRepositoryTest extends TestCase
             $visit->visitType->visitGroup->id);
         $this->assertEquals(1, sizeof($answer));
     }
+
+    public function testGetVisitsInVisitType(){
+        $visit = Visit::factory()->count(5)->create();
+        $answer = $this->visitRepository->getVisitsInVisitType( $visit->first()->visitType->id );
+        $this->assertEquals(1, sizeof($answer));
+    }
+
+    public function testGetVisitsInVisitTypeWithTrashed(){
+        $visit = Visit::factory()->count(5)->create();
+        $visit->first()->delete();
+        $answer = $this->visitRepository->getVisitsInVisitType( $visit->first()->visitType->id, true, '', true );
+        $this->assertEquals(1, sizeof($answer));
+        $answer = $this->visitRepository->getVisitsInVisitType( $visit->first()->visitType->id, true, '', false );
+        $this->assertEquals(0, sizeof($answer));
+    }
+
+    public function testGetVisitsInVisitTypeWithReviewStatus(){
+        $visit = Visit::factory()->count(5)->create();
+        $study = Study::factory()->create();
+        ReviewStatus::factory()->create([
+            'visit_id' => $visit->first()->id,
+            'study_name' => $study->name,
+            'review_available' => true
+        ]);
+
+        $answer = $this->visitRepository->getVisitsInVisitType( $visit->first()->visitType->id, true, $study->name );
+        $this->assertEquals(1, sizeof($answer));
+        $this->assertArrayHasKey('review_status', $answer[0]);
+    }
+
+
 
     public function testGetVisitsInStudyAwaitingControllerAction()
     {
@@ -461,6 +492,13 @@ class VisitRepositoryTest extends TestCase
 
         $updatedVisit = Visit::findOrFail($visit->id);
         $this->assertEquals(1, $updatedVisit->count());
+    }
+
+    public function testGtVisitContextByVisitIdArray(){
+        $visits = Visit::factory()->count(5)->create();
+        $visitIdArray = $visits->pluck('id');
+        $results = $this->visitRepository->getVisitContextByVisitIdArray($visitIdArray->toArray());
+        $this->assertEquals(5, sizeof($results));
     }
 
 

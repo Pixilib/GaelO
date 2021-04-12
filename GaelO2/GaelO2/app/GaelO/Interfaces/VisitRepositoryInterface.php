@@ -35,7 +35,7 @@ interface VisitRepositoryInterface
 
     public function getPatientListVisitWithContextAndReviewStatus(array $patientCodeArray, string $studyName) : array;
 
-    public function getVisitsInStudy(string $studyName, bool $withReviewStatus) : array ;
+    public function getVisitsInStudy(string $studyName, bool $withReviewStatus, bool $withTrashed) : array ;
 
     public function hasVisitsInStudy(string $studyName) : bool ;
 
@@ -64,4 +64,8 @@ interface VisitRepositoryInterface
     public function getImagingVisitsAwaitingUpload(string $studyName, array $centerCode): array ;
 
     public function reactivateVisit(int $visitId) : void ;
+
+    public function getVisitsInVisitType(int $visitTypeId, bool $withReviewStatus = false, string $studyName = null, bool $withTrashed = false ) : array;
+
+    public function getVisitContextByVisitIdArray(array $visitIdArray)  : array ;
 }

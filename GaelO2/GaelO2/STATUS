@@ -28,29 +28,32 @@ dicom-study (PATCH) => OK
 Investigator-form (GET, PUT, POST, DELETE, PATCH (unlock)) =>OK
 Reviews (GET, POST, PUT, DELETE, PATCH (unlock))
 Reviews From Visits (GET)
+review-progression (GET)
+studies/{studyName}/dicom-studies (GET)
+studies/{studyName}/dicom-series/file (POST)
 
 Salim TODO :
-FrontEnd : checker safety lien patient/Usr - uploader
-Revoir DicowWeb Authorization Service => Pb route orthanc differentes
 
+Download Dicom :
+Faire FrontEnd (tout lister au niveau series?)
+
+Export Data Etude :
+- Personalisation au niveau study -> Couche d'abstration notamment pour injecter le lysarc code
+- Review Ajout Patient Code et Visit Type ?
+- Associated File To Review => A faire dans un zip
+
+Model : Type de variable a caster
+Interface : Faire sous repertoire pour les interface repository et les interface adapter (et faire les interface des adapters qui manquent)
+Revoir DicowWeb Authorization Service => Pb route orthanc differentes
 GetVisitContexte des service surement a faire passer a initialisation pour eviter requettes redondantes
 Creatable Visit : Manque Study Custom Logic (+dans front skip visites optionnelles ?)
-Si review Not Needed interdiction de creer un role review dans cette study
-Si QC not needed impossible d'ajouter un controller dans cette study
 Review  : faire une propriete dans visit pour savoir si review disponible a un user en plus de status reviewAvailable ?
-
+Dicom Series Service => peut etre evoluer vers un DicomService pour les deux niveaux
 
 *** APIs ***
 - API Review
 Review form /file  (POST, GET, DELETE)
-=> Contrainte Form a continuer => Voir librairy Respect/Validation
 Quid de adjudication ou il faut faire remonter des info custom au front ?
-
-- API Supervisor
-Tools get dicom batch => Recevra un array de seriesInstanceUID a telecharger depuis Orthanc (pour download dicom)
-Tools Send Dicom to peer
-Export data  + custom study export
-
 
 **** Tests ***
 Test feature : visit et autres (dicom...)
@@ -59,8 +62,6 @@ Mock des interfaces pour les uses cases et les services
 Les tests ne font pas d'assertion sur
 - le tracker => Via un spy ?
 - l'envoi de mails => voir doc laravel
-
-Dicom Series Service => peut etre evoluer vers un DicomService pour les deux niveaux
 Review => tester un scenario de custom conclusion / adjudication
 
 +Tard :
@@ -100,17 +101,14 @@ Doit pouvoir voir user details
 
 *** /Etudes ancillaires ***
 
-Préparation supervisor :
-- Export Study Data
-- Review Manager
+Reste Supervisor :
 - Upload Manager
 - Statistics
-- Remininder email upload / review
+- Remininder email upload / review / Communication mail inter membre (utiliser tinyMCE React)
 - Orthanc Send to peer
-+ Messagerie a designer
 
 A executer en post install :
-php artisan db:migrate --seed
+docker-compose run gaelo2 php artisan migrate --seed **ou** php artisan db:migrate --seed
 php artisan passport:install
 
 Si dev :

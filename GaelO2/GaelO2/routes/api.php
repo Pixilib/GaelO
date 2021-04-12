@@ -55,7 +55,8 @@ Route::middleware(['auth:api', 'refresh_token'])->group(function () {
     Route::get('studies/{studyName}/users', [UserController::class, 'getUserFromStudy'] );
 
     //Study Routes
-    Route::get('studies', [StudyController::class, 'getStudy'] );
+    Route::get('studies', [StudyController::class, 'getStudies'] );
+    Route::get('studies/{studyName}/visit-types', [StudyController::class, 'getStudyDetails'] );
     Route::delete('studies/{studyName}', [StudyController::class, 'deleteStudy'] );
     Route::patch('studies/{studyName}/reactivate', [StudyController::class, 'reactivateStudy'] );
     Route::get('studies/{studyName}/patients', [StudyController::class, 'getPatientFromStudy'] );
@@ -63,7 +64,8 @@ Route::middleware(['auth:api', 'refresh_token'])->group(function () {
     Route::post('studies/{studyName}/import-patients', [StudyController::class, 'importPatients'] );
     Route::get('studies/{studyName}/orthanc-study-id/{orthancStudyID}', [StudyController::class, 'isKnownOrthancId'] );
     Route::get('studies/{studyName}/possible-uploads', [StudyController::class, 'getPossibleUploads'] );
-
+    Route::get('studies/{studyName}/visit-types/{visitTypeId}/review-progression', [StudyController::class, 'getReviewProgression'] );
+    Route::get('studies/{studyName}/dicom-studies', [DicomController::class, 'getStudyDicomStudies'] );
     //Study Routes
     Route::post('studies', [StudyController::class, 'createStudy'] );
 
@@ -161,6 +163,8 @@ Route::middleware(['auth:api', 'refresh_token'])->group(function () {
 Route::middleware('auth:api')->get('export-db', [ExportDBController::class, 'exportDB'] );
 Route::middleware('auth:api')->get('documentations/{id}/file', [DocumentationController::class, 'getDocumentationFile'] );
 Route::middleware('auth:api')->get('visits/{id}/dicoms/file', [DicomController::class, 'getVisitDicomsFile'] );
+Route::middleware('auth:api')->get('studies/{studyName}/export', [StudyController::class, 'exportStudyData'] );
+Route::middleware('auth:api')->post('studies/{studyName}/dicom-series/file', [DicomController::class, 'getSupervisorDicomsFile'] );
 
 /*
 |--------------------------------------------------------------------------

@@ -38,7 +38,8 @@ class SendEmailAdapter implements MailInterface {
     }
 
     public function setTo(array $to){
-        $this->to = $to;
+        //get only unique emails
+        $this->to = array_values(array_unique($to));
 
     }
 

@@ -33,12 +33,18 @@ class GetUserFromStudy {
 
             $responseArray = [];
             foreach($dbData as $data){
-                $userEntity = UserEntity::fillFromDBReponseArray($data);
+                $userEntity = UserEntity::fillMinimalFromDBReponseArray($data);
                 $rolesArray = array_map(function($roleData) use ($studyName){
                     if($roleData['study_name'] == $studyName) return $roleData['name'];
-                    else return false;
+                    else return null;
                 }, $data ['roles']);
-                $rolesArray = array_filter($rolesArray, function($role) { return $role; });
+                //filter empty location
+                $rolesArray = array_filter($rolesArray, function($role) {
+                    if($role === null) return false;
+                    else return true;
+                } );
+                //Rearange array to start as 0 without associative keys
+                $rolesArray = array_values($rolesArray);
                 $userEntity->addRoles($rolesArray);
                 $responseArray[] = $userEntity;
             }

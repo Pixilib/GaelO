@@ -67,5 +67,3 @@ class CenterRepository implements CenterRepositoryInterface {
     }
 
 }
-
-?>

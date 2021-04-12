@@ -20,7 +20,7 @@ class GetStudyTrackerByVisit {
         $this->authorizationService = $authorizationService;
     }
 
-    public function execute(GetStudyTrackerByVisitRequest $getStudyTrackerByVisitRequest, GetStudyTrackerByVisitResponse $getStudyTrackerByVisitResponse) : void {        
+    public function execute(GetStudyTrackerByVisitRequest $getStudyTrackerByVisitRequest, GetStudyTrackerByVisitResponse $getStudyTrackerByVisitResponse) : void {
         try{
 
             $this->checkAuthorization($getStudyTrackerByVisitRequest->currentUserId, $getStudyTrackerByVisitRequest->studyName);

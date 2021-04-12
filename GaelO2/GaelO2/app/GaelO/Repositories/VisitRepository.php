@@ -7,9 +7,7 @@ use App\Models\Visit;
 use App\GaelO\Interfaces\VisitRepositoryInterface;
 use App\GaelO\Util;
 use App\Models\ReviewStatus;
-use Exception;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 
 class VisitRepository implements VisitRepositoryInterface
 {
@@ -89,6 +87,15 @@ class VisitRepository implements VisitRepositoryInterface
         return $dataArray;
     }
 
+    public function getVisitContextByVisitIdArray(array $visitIdArray)  : array {
+
+        $query = $this->visit->with('visitType')->withTrashed()->whereIn('id', $visitIdArray);
+        $visits = $query->get();
+
+        return empty($visits) ? [] : $visits->toArray();
+
+    }
+
     public function getPatientsVisits(int $patientCode): array
     {
         //Add withTrashed if bool true
@@ -132,7 +139,7 @@ class VisitRepository implements VisitRepositoryInterface
         return $answer->count() === 0 ? []  : $answer->toArray();
     }
 
-    public function getVisitsInStudy(string $studyName, bool $withReviewStatus): array
+    public function getVisitsInStudy(string $studyName, bool $withReviewStatus, bool $withTrashed): array
     {
 
         $queryBuilder = $this->visit->with(['visitType', 'patient'])
@@ -149,6 +156,10 @@ class VisitRepository implements VisitRepositoryInterface
             }]);
         }
 
+        if($withTrashed) {
+            $queryBuilder->withTrashed();
+        }
+
         $answer = $queryBuilder->get();
         return $answer->count() === 0 ? []  : $answer->toArray();
     }
@@ -157,7 +168,7 @@ class VisitRepository implements VisitRepositoryInterface
     public function hasVisitsInStudy(string $studyName): bool
     {
 
-        $visits = $this->getVisitsInStudy($studyName, false);
+        $visits = $this->getVisitsInStudy($studyName, false, true);
 
         return sizeof($visits) === 0 ? false  : true;
     }
@@ -169,6 +180,27 @@ class VisitRepository implements VisitRepositoryInterface
             $query->where('visit_group_id', $visitGroupId);
         })->get();
         return $visits->toArray();
+    }
+
+    public function getVisitsInVisitType(int $visitTypeId, bool $withReviewStatus = false, string $studyName = null, bool $withTrashed = false ) : array{
+
+        $visits = $this->visit->whereHas('visitType', function ($query) use ($visitTypeId) {
+            $query->where('id', $visitTypeId);
+        });
+
+        if($withReviewStatus){
+            $visits->with(['reviewStatus' => function ($q) use ($studyName) {
+                $q->where('study_name', $studyName);
+            }]);
+        }
+
+        if($withTrashed){
+            $visits->withTrashed();
+        }
+
+        return $visits->get()->toArray();
+
+
     }
 
     public function hasVisitsInVisitGroup(int $visitGroupId): bool

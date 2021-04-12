@@ -28,10 +28,17 @@ class GetVisit {
             $visitId = $getVisitRequest->visitId;
             $this->checkAuthorization($visitId, $getVisitRequest->currentUserId, $getVisitRequest->role);
 
-            $dbData = $this->visitRepositoryInterface->find($visitId);
+            $visitEntity = $this->visitRepositoryInterface->getVisitContext($visitId);
             $reviewStatus = $this->reviewStatusRepositoryInterface->getReviewStatus($visitId, $getVisitRequest->studyName);
 
-            $responseEntity = VisitEntity::fillFromDBReponseArray($dbData);
+            $responseEntity = VisitEntity::fillFromDBReponseArray($visitEntity);
+            $responseEntity->setVisitContext(
+                $visitEntity['visit_type']['visit_group']['modality'],
+                $visitEntity['visit_type']['name'],
+                $visitEntity['visit_type']['order'],
+                $visitEntity['visit_type']['optional'],
+                $visitEntity['visit_type']['visit_group']['id']
+            );
             $responseEntity->setReviewVisitStatus($reviewStatus['review_status'], $reviewStatus['review_conclusion_value'] ,$reviewStatus['review_conclusion_date']);
 
             $getVisitResponse->body = $responseEntity;
