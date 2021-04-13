@@ -52,8 +52,6 @@ Route::middleware(['auth:api', 'refresh_token'])->group(function () {
     Route::get('users/{id}/studies/{studyName}/roles', [UserController::class, 'getRoles'] );
     Route::post('users/{id}/studies/{studyName}/roles', [UserController::class, 'createRole'] );
     Route::delete('users/{id}/studies/{studyName}/roles/{roleName}', [UserController::class, 'deleteRole'] );
-
-
     Route::get('studies/{studyName}/users', [UserController::class, 'getUserFromStudy'] );
 
     //Study Routes
