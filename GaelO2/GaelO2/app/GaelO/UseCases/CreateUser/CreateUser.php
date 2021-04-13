@@ -93,6 +93,7 @@ class CreateUser
                 $password
             );
 
+            $createUserResponse->body = ['id' => $createdUserEntity['id']];
             $createUserResponse->status = 201;
             $createUserResponse->statusText = 'Created';
         } catch (GaelOException $e) {
