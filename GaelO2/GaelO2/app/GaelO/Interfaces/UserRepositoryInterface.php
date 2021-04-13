@@ -48,7 +48,7 @@ interface UserRepositoryInterface {
 
     public function getUsersAffiliatedToCenter(int $centerCode) : array;
 
-    public function getAllStudiesWithRoleForUser(string $username) : array;
+    public function getStudiesOfUser(int $userId) : array;
 
     public function getUsersRoles(int $userId) : array;
 

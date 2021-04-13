@@ -12,6 +12,10 @@ class Role extends Model
     protected $guarded = [];
 
     public function user(){
-        return $this->belongsTo('App\Models\User', 'user_id' , 'id');
+        return $this->belongsTo(User::class, 'user_id' , 'id');
+    }
+
+    public function study(){
+        return $this->belongsTo(Study::class, 'study_name', 'name');
     }
 }

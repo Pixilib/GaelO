@@ -41,15 +41,15 @@ class User extends Authenticatable
     ];
 
     public function roles() {
-        return $this-> hasMany('App\Models\Role', 'user_id');
+        return $this-> hasMany(Role::class, 'user_id');
     }
 
     public function affiliatedCenters(){
-        return $this->hasManyThrough('App\Models\Center', 'App\Models\CenterUser', 'user_id', 'code', 'id', 'center_code');
+        return $this->hasManyThrough(Center::class, CenterUser::class, 'user_id', 'code', 'id', 'center_code');
     }
 
     public function mainCenter(){
-        return $this->belongsTo('App\Models\Center', 'code','center_code');
+        return $this->belongsTo(Center::class, 'code','center_code');
     }
 
 }

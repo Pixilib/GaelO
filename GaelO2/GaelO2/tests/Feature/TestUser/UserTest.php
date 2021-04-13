@@ -70,22 +70,6 @@ class UserTest extends TestCase
         $this->json('GET', '/api/users/3')->assertStatus(404);
     }
 
-    public function testGetUserRoles()
-    {
-
-        AuthorizationTools::actAsAdmin(true);
-
-        $this->createUserWithRoleInTwoStudies();
-
-        $answer = $this->json('GET', '/api/users/4/roles');
-        $answer->assertStatus(200);
-        $content = json_decode($answer->content(), true);
-        $numberofStudies = sizeof(array_keys($content));
-        $numberOfRoleInstudy = sizeof($content[$this->studyName3Roles]);
-        $this->assertEquals(2, $numberofStudies);
-        $this->assertEquals(3, $numberOfRoleInstudy);
-    }
-
     //ICI DOIT ETRE DANS LA CLASS ?
     private function createUserWithRoleInTwoStudies()
     {
@@ -107,28 +91,32 @@ class UserTest extends TestCase
         });
     }
 
-    public function testGetUserRolesShouldBeForbiddenByDifferentUserInNotAdmin()
-    {
-        AuthorizationTools::actAsAdmin(false);
-        $answer = $this->json('GET', '/api/users/1/roles');
-        $answer->assertStatus(403);
-    }
-
-    public function testGetUserRolesShouldPassForDifferentUserIfAdmin()
-    {
-        AuthorizationTools::actAsAdmin(true);
-        $answer = $this->json('GET', '/api/users/1/roles');
-        $answer->assertStatus(200);
-    }
-
     public function testGetUserRolesInStudy()
     {
-        AuthorizationTools::actAsAdmin(true);
-        $this->createUserWithRoleInTwoStudies();
-        $content = $this->json('GET', '/api/users/4/roles/' . $this->studyName3Roles)->assertStatus(200)->content();
-        $content = json_decode($content, true);
+        $currentUserId = AuthorizationTools::actAsAdmin(true);
+        $study = Study::factory()->create();
+        $study2 = Study::factory()->create();
+
+        //Add Role for testing user
+        AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_INVESTIGATOR, $study->name);
+        AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $study->name);
+        AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_REVIEWER, $study->name);
+        AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_INVESTIGATOR, $study2->name);
+
+        $content = $this->json('GET', '/api/users/'.$currentUserId.'/studies/'.$study->name.'/roles')->assertStatus(200)->content();
+        $content = json_decode($content);
+
         //Expect to find 3 role for this user in this study
         $this->assertEquals(3, sizeof($content));
+    }
+
+
+    public function testGetUserRolesInStudyShouldFailNoSameUser()
+    {
+        $currentUserId = AuthorizationTools::actAsAdmin(true);
+        $this->createUserWithRoleInTwoStudies();
+        $content = $this->json('GET', '/api/users/'.($currentUserId+1).'/studies/'.$this->studyName3Roles.'/roles');
+        $content->assertStatus(403);
     }
 
     public function testCreateRoleForUser()
@@ -138,7 +126,7 @@ class UserTest extends TestCase
         $study = Study::factory()->create();
         $payload = ["role" => "Investigator"];
         //First call should be success
-        $this->json('POST', '/api/users/1/roles/' . $study->name, $payload)->assertStatus(201);
+        $this->json('POST', '/api/users/1/studies/'.$study->name.'/roles/', $payload)->assertStatus(201);
     }
 
     public function testCreateRoleNotAdmin()
@@ -148,7 +136,7 @@ class UserTest extends TestCase
         $study = Study::factory()->create();
         $payload = ["role" => "Investigator"];
         //First call should be success
-        $this->json('POST', '/api/users/1/roles/' . $study->name, $payload)->assertStatus(403);
+        $this->json('POST', '/api/users/1/studies/'.$study->name.'/roles/', $payload)->assertStatus(403);
     }
 
     public function testCreateAlreadyExistingRoleForUser()
@@ -158,7 +146,7 @@ class UserTest extends TestCase
         AuthorizationTools::addRoleToUser(1, Constants::ROLE_INVESTIGATOR, $study->name);
         $payload = ["role" => "Investigator"];
         //Second call should answer no new role with status 400
-        $this->json('POST', '/api/users/1/roles/' . $study->name, $payload)->assertStatus(400);
+        $this->json('POST', '/api/users/1/studies/'.$study->name.'/roles/', $payload)->assertStatus(400);
     }
 
     public function testDeleteUserRole()
@@ -170,7 +158,7 @@ class UserTest extends TestCase
         AuthorizationTools::addRoleToUser(1, Constants::ROLE_MONITOR, $study->name);
 
         //Delete Investigator role
-        $this->json('DELETE', '/api/users/1/roles/' . $study->name . '/Investigator')->assertNoContent(200);
+        $this->json('DELETE', '/api/users/1/studies/'.$study->name.'/roles/Investigator')->assertNoContent(200);
         //Check the user still have only 2 remaining roles
         $remainingroles = User::where('id', 1)->first()->roles()->get();
         $this->assertEquals(2, sizeof($remainingroles->toArray()));
@@ -183,7 +171,7 @@ class UserTest extends TestCase
         AuthorizationTools::addRoleToUser(1, Constants::ROLE_INVESTIGATOR, $study->name);
 
         //Delete Investigator role
-        $this->json('DELETE', '/api/users/1/roles/' . $study->name . '/Investigator')->assertNoContent(403);
+        $this->json('DELETE', '/api/users/1/studies/'.$study->name.'/roles/Investigator')->assertNoContent(403);
     }
 
     public function testGetUserFromStudy()
@@ -242,5 +230,32 @@ class UserTest extends TestCase
         });
         $answer = $this->json('GET', '/api/studies/' . $study->name . '/users/');
         $answer->assertStatus(200);
+    }
+
+    public function testGetStudiesFromUser(){
+
+        $currentUserId = AuthorizationTools::actAsAdmin(false);
+        $study = Study::factory()->count(2)->create();
+        AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $study->first()->name);
+        AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_INVESTIGATOR, $study->last()->name);
+
+        //Delete one study that should'nt appear in results
+        $study->first()->delete();
+
+        $answer = $this->json('GET', '/api/users/' . $currentUserId . '/studies/');
+        $answer->assertStatus(200);
+        $data = json_decode($answer->content());
+        $this->assertEquals(1, sizeof( $data));
+
+    }
+
+    public function testGetStudiesFromUserShouldFailNotCurrentUser(){
+
+        $currentUserId = AuthorizationTools::actAsAdmin(false);
+        $study = Study::factory()->create();
+        AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $study->name);
+        $answer = $this->json('GET', '/api/users/' . ($currentUserId+1) . '/studies/');
+        $answer->assertStatus(403);
+
     }
 }

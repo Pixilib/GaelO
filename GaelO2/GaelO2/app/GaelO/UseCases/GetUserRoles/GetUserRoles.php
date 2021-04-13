@@ -22,12 +22,8 @@ class GetUserRoles {
 
         try{
 
-            $this->checkAuthorization($getUserRolesRequest->currentUserId, $getUserRolesRequest->userId, $getUserRolesRequest->study);
-            if( $getUserRolesRequest->study === null ){
-                $roles = $this->userRepositoryInterface->getUsersRoles($getUserRolesRequest->userId);
-            }else {
-                $roles = $this->userRepositoryInterface->getUsersRolesInStudy($getUserRolesRequest->userId, $getUserRolesRequest->study);
-            }
+            $this->checkAuthorization($getUserRolesRequest->currentUserId);
+            $roles = $this->userRepositoryInterface->getUsersRoles($getUserRolesRequest->userId);
 
             $getUserRoleResponse->body = $roles;
             $getUserRoleResponse->status = 200;
@@ -46,12 +42,10 @@ class GetUserRoles {
 
     }
 
-    private function checkAuthorization(int $currentUserId, int $userId){
+    private function checkAuthorization(int $currentUserId){
         $this->authorizationService->setCurrentUserAndRole($currentUserId);
         $admin = $this->authorizationService->isAdmin();
-
-        //If not same userID and not admin privilege
-        if( $currentUserId !== $userId && !$admin ) {
+        if( !$admin ) {
             throw new GaelOForbiddenException();
         }
 

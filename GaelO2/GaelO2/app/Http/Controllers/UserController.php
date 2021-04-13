@@ -38,6 +38,12 @@ use App\GaelO\UseCases\DeleteUserRole\DeleteUserRoleResponse;
 use App\GaelO\UseCases\GetAffiliatedCenter\GetAffiliatedCenter;
 use App\GaelO\UseCases\GetAffiliatedCenter\GetAffiliatedCenterRequest;
 use App\GaelO\UseCases\GetAffiliatedCenter\GetAffiliatedCenterResponse;
+use App\GaelO\UseCases\GetRolesInStudyFromUser\GetRolesInStudyFromUser;
+use App\GaelO\UseCases\GetRolesInStudyFromUser\GetRolesInStudyFromUserRequest;
+use App\GaelO\UseCases\GetRolesInStudyFromUser\GetRolesInStudyFromUserResponse;
+use App\GaelO\UseCases\GetStudiesFromUser\GetStudiesFromUser;
+use App\GaelO\UseCases\GetStudiesFromUser\GetStudiesFromUserRequest;
+use App\GaelO\UseCases\GetStudiesFromUser\GetStudiesFromUserResponse;
 use App\GaelO\UseCases\GetUserRoles\GetUserRoles;
 use App\GaelO\UseCases\GetUserRoles\GetUserRolesRequest;
 use App\GaelO\UseCases\GetUserRoles\GetUserRolesResponse;
@@ -123,14 +129,31 @@ class UserController extends Controller
                     ->setStatusCode($deleteUserResponse->status, $deleteUserResponse->statusText);
     }
 
-    public function getRoles(int $id, string $study = null, GetUserRolesRequest $getUserRolesRequest, GetUserRolesResponse $getUserRolesResponse, GetUserRoles $getUserRoles){
+    public function getRoles(int $id, string $studyName, GetRolesInStudyFromUser $getRolesInStudyFromUser, GetRolesInStudyFromUserRequest $getRolesInStudyFromUserRequest, GetRolesInStudyFromUserResponse $getRolesInStudyFromUserResponse){
         $curentUser = Auth::user();
-        $getUserRolesRequest->currentUserId = $curentUser['id'];
-        $getUserRolesRequest->userId = $id;
-        $getUserRolesRequest->study = $study;
-        $getUserRoles->execute($getUserRolesRequest, $getUserRolesResponse);
-        return response()->json($getUserRolesResponse->body)
-                ->setStatusCode($getUserRolesResponse->status, $getUserRolesResponse->statusText);
+        $getRolesInStudyFromUserRequest->currentUserId = $curentUser['id'];
+        $getRolesInStudyFromUserRequest->userId = $id;
+        $getRolesInStudyFromUserRequest->studyName = $studyName;
+
+        $getRolesInStudyFromUser->execute($getRolesInStudyFromUserRequest, $getRolesInStudyFromUserResponse);
+        return response()->json($getRolesInStudyFromUserResponse->body)
+                ->setStatusCode($getRolesInStudyFromUserResponse->status, $getRolesInStudyFromUserResponse->statusText);
+    }
+
+    public function getStudiesFromUser(int $userId, GetStudiesFromUser $getStudiesFromUser, GetStudiesFromUserRequest $getStudiesFromUserRequest, GetStudiesFromUserResponse $getStudiesFromUserResponse){
+        $curentUser = Auth::user();
+        $getStudiesFromUserRequest->currentUserId = $curentUser['id'];
+        $getStudiesFromUserRequest->userId = $userId;
+        $getStudiesFromUser->execute($getStudiesFromUserRequest, $getStudiesFromUserResponse);
+
+        if($getStudiesFromUserResponse->body != null ){
+            return response()->json($getStudiesFromUserResponse->body)
+            ->setStatusCode($getStudiesFromUserResponse->status, $getStudiesFromUserResponse->statusText);
+        }else{
+            return response()->noContent()
+            ->setStatusCode($getStudiesFromUserResponse->status, $getStudiesFromUserResponse->statusText);
+        }
+
     }
 
     public function createRole(int $id, string $study, Request $request, CreateUserRoles $createUserRole, CreateUserRolesRequest $createUserRoleRequest, CreateUserRolesResponse $createUserRoleResponse){

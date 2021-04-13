@@ -11,13 +11,20 @@ use App\Models\Role;
 
 use App\GaelO\Constants\Constants;
 use App\GaelO\Util;
+use App\Models\Study;
 
 class UserRepository implements UserRepositoryInterface {
 
-    public function __construct(User $user, Role $roles, CenterUser $centerUser){
+    private User $user;
+    private Role $roles;
+    private CenterUser $centerUser;
+    private Study $study;
+
+    public function __construct(User $user, Role $roles, CenterUser $centerUser, Study $study){
         $this->user = $user;
         $this->roles = $roles;
         $this->centerUser = $centerUser;
+        $this->study = $study;
     }
 
     private function create(array $data) {
@@ -235,10 +242,11 @@ class UserRepository implements UserRepositoryInterface {
         return empty($users) ? [] : $users->toArray();
     }
 
-    public function getAllStudiesWithRoleForUser(string $username) : array {
-        $user = $this->user->withTrashed()->where('username', $username)->sole();
-        $studies = $user->roles()->get();
-        return $studies->count() === 0 ?  [] : $studies->pluck('study_name')->unique()->toArray();
+    public function getStudiesOfUser(int $userId) : array {
+        $studiesInRole = $this->user->findOrFail($userId)->roles()->get()->pluck('study_name')->toArray();
+        //2nd call needed to get only non deleted studies
+        $studies = $this->study->whereIn('name', $studiesInRole)->get();
+        return $studies->count() === 0 ?  [] : $studies->toArray();
     }
 
     public function getUsersRoles(int $userId) : array {
@@ -253,9 +261,14 @@ class UserRepository implements UserRepositoryInterface {
         return empty($roles) ? [] : $roles->toArray();
     }
 
-    public function getUsersRolesInStudy(int $userId, String $study) : array {
+    public function getUsersRolesInStudy(int $userId, String $studyName) : array {
+        //Check that called study and user are existing entities (not deleted)
+        $study = $this->study->findOrFail($studyName);
         $user = $this->user->findOrFail($userId);
-        $roles = $user->roles()->where('study_name', $study)->get();
+        $roles = $this->roles
+            ->where('user_id', $user->id)
+            ->where('study_name', $study->name)
+            ->get();
         return $roles->count() === 0 ? [] : $roles->pluck('name')->toArray();
     }
 

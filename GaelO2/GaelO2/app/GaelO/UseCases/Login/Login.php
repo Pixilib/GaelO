@@ -118,12 +118,12 @@ class Login{
 
     }
 
-    private function writeBlockedAccountInTracker($user){
+    private function writeBlockedAccountInTracker(array $user){
         $this->trackerRepositoryInterface->writeAction($user['id'], Constants::TRACKER_ROLE_USER, null, null, Constants::TRACKER_ACCOUNT_BLOCKED, ['message'=> 'Account Blocked']);
     }
 
-    private function sendBlockedEmail($user){
-        $this->mailService->sendAccountBlockedMessage($user['username'], $user['email']);
+    private function sendBlockedEmail(array $user){
+        $this->mailService->sendAccountBlockedMessage($user['username'], $user['email'], $user['id']);
     }
 
     private function updateDbOnSuccess($user, $ip){
