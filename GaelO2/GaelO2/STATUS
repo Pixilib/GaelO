@@ -2,7 +2,8 @@ User (GET), (POST), (PUT), (DELETE), (PATCH) => OK
 Request (POST) => OK
 Login / Logout (POST) (DELETE) => OK
 ChangePassword (POST) => OK
-User's Roles : (GET), (POST), (DELETE)=>OK
+User's studies (GET) => OK
+User's Roles In study : (GET), (POST), (DELETE)=>OK
 Study : (GET), (GET Expand), (POST), (DELETE), (PATCH) => OK
 Preference : (GET), (PUT) =>OK
 Center : (GET), (POST), (PUT) => OK
@@ -49,6 +50,7 @@ GetVisitContexte des service surement a faire passer a initialisation pour evite
 Creatable Visit : Manque Study Custom Logic (+dans front skip visites optionnelles ?)
 Review  : faire une propriete dans visit pour savoir si review disponible a un user en plus de status reviewAvailable ?
 Dicom Series Service => peut etre evoluer vers un DicomService pour les deux niveaux
+Verifier que quand on appelle un child si le parent est pas delete (cf probleme de role et study)
 
 *** APIs ***
 - API Review

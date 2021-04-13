@@ -14,11 +14,11 @@ class ReviewStatus extends Model
     protected $guarded = [];
 
     public function visit(){
-        return $this->belongsTo('App\Models\Visit', 'visit_id', 'id');
+        return $this->belongsTo(Visit::class, 'visit_id', 'id');
     }
 
     public function study(){
-        return $this->belongsTo('App\Models\Study', 'study_name', 'name');
+        return $this->belongsTo(Study::class, 'study_name', 'name');
     }
 
 }

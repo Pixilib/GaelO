@@ -13,6 +13,6 @@ class Center extends Model
     public $incrementing = false;
 
     public function country(){
-        return $this->belongsTo('App\Models\Country', 'country_code', 'code');
+        return $this->belongsTo(Country::class, 'country_code', 'code');
     }
 }

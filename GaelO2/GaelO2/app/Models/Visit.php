@@ -13,34 +13,34 @@ class Visit extends Model
     protected $guarded = [];
 
     public function reviews(){
-        return $this->hasMany('App\Models\Review', 'visit_id');
+        return $this->hasMany(Review::class, 'visit_id');
     }
 
     public function reviewStatus(){
-        return $this->hasOne('App\Models\ReviewStatus', 'visit_id');
+        return $this->hasOne(ReviewStatus::class, 'visit_id');
     }
 
     public function patient(){
-        return $this->belongsTo('App\Models\Patient', 'patient_code', 'code');
+        return $this->belongsTo(Patient::class, 'patient_code', 'code');
     }
 
     public function visitType(){
-        return $this->belongsTo('App\Models\VisitType', 'visit_type_id', 'id')->with('visitGroup');
+        return $this->belongsTo(VisitType::class, 'visit_type_id', 'id')->with('visitGroup');
     }
 
     public function visitTypeOnly(){
-        return $this->belongsTo('App\Models\VisitType', 'visit_type_id', 'id');
+        return $this->belongsTo(VisitType::class, 'visit_type_id', 'id');
     }
 
     public function creator(){
-        return $this->belongsTo('App\Models\User', 'creator_user_id' , 'id');
+        return $this->belongsTo(User::class, 'creator_user_id' , 'id');
     }
 
     public function controller(){
-        return $this->belongsTo('App\Models\User', 'controller_user_id' , 'id');
+        return $this->belongsTo(User::class, 'controller_user_id' , 'id');
     }
 
     public function correctiveActionUser(){
-        return $this->belongsTo('App\Models\User', 'corrective_action_user_id' , 'id');
+        return $this->belongsTo(User::class, 'corrective_action_user_id' , 'id');
     }
 }

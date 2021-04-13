@@ -15,7 +15,7 @@ class DicomStudy extends Model
     public $incrementing = false;
 
     public function dicomSeries(){
-        return $this->hasMany('App\Models\DicomSeries', 'study_uid', 'study_uid');
+        return $this->hasMany(DicomSeries::class, 'study_uid', 'study_uid');
     }
 
     public function visit(){
