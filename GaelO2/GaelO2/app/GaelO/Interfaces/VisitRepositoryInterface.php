@@ -19,7 +19,7 @@ interface VisitRepositoryInterface
         ?string $reasonForNotDone,
         string $stateInvestigatorForm,
         string $stateQualityControl
-    );
+    ) : int;
 
     public function isExistingVisit(int $patientCode, int $visitTypeId): bool ;
 

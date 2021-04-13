@@ -70,7 +70,7 @@ class VisitService
         int $visitTypeId,
         string $statusDone,
         ?string $reasonForNotDone
-    ) {
+    ) : int {
 
         $visitTypeData = $this->visitTypeRepository->find($visitTypeId);
         $visitTypeEntity = VisitTypeEntity::fillFromDBReponseArray($visitTypeData);
@@ -81,7 +81,7 @@ class VisitService
         if (!$visitTypeEntity->localFormNeeded) $stateInvestigatorForm = Constants::INVESTIGATOR_FORM_NOT_NEEDED;
         if (!$visitTypeEntity->qcNeeded) $stateQualityControl = Constants::QUALITY_CONTROL_NOT_NEEDED;
 
-        $this->visitRepository->createVisit(
+        $visitId = $this->visitRepository->createVisit(
             $studyName,
             $creatorUserId,
             $patientCode,
@@ -92,6 +92,8 @@ class VisitService
             $stateInvestigatorForm,
             $stateQualityControl
         );
+
+        return $visitId;
     }
 
     public function updateUploadStatus(string $uploadStatus)
