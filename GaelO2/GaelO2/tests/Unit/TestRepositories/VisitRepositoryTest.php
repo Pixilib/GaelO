@@ -43,7 +43,7 @@ class VisitRepositoryTest extends TestCase
         $visitType = VisitType::factory()->create();
         $user = User::factory()->create();
 
-        $this->visitRepository->createVisit(
+        $visitId = $this->visitRepository->createVisit(
             $study->name,
             $user->id,
             $patient->code,
@@ -55,7 +55,7 @@ class VisitRepositoryTest extends TestCase
             Constants::QUALITY_CONTROL_NOT_DONE
         );
 
-        $visits = Visit::get();
+        $visits = Visit::findOrFail($visitId);
         $this->assertEquals(1, $visits->count());
     }
 

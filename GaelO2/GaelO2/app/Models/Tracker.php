@@ -10,10 +10,10 @@ class Tracker extends Model
     use HasFactory;
 
     public function user(){
-        return $this->belongsTo('App\Models\User', 'user_id', 'id');
+        return $this->belongsTo(User::class, 'user_id', 'id');
     }
 
     public function study(){
-        return $this->belongsTo('App\Models\Study', 'study_name', 'name');
+        return $this->belongsTo(Study::class, 'study_name', 'name');
     }
 }

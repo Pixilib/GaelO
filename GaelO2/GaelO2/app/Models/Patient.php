@@ -13,14 +13,14 @@ class Patient extends Model
     public $incrementing = false;
 
     public function center(){
-        return $this->belongsTo('App\Models\Center', 'center_code', 'code');
+        return $this->belongsTo(Center::class, 'center_code', 'code');
     }
 
     public function study(){
-        return $this->belongsTo('App\Models\Study', 'study_name', 'name');
+        return $this->belongsTo(Study::class, 'study_name', 'name');
     }
 
     public function visits(){
-        return $this->hasMany('App\Models\Visit', 'patient_code', 'code');
+        return $this->hasMany(Visit::class, 'patient_code', 'code');
     }
 }

@@ -7,6 +7,7 @@ use App\GaelO\Exceptions\GaelOBadRequestException;
 use App\GaelO\Exceptions\GaelOConflictException;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
+use App\GaelO\Interfaces\TrackerRepositoryInterface;
 use App\GaelO\Interfaces\VisitRepositoryInterface;
 use App\GaelO\Services\AuthorizationPatientService;
 use App\GaelO\Services\VisitService;
@@ -18,11 +19,13 @@ class CreateVisit {
     private VisitRepositoryInterface $visitRepositoryInterface;
     private AuthorizationPatientService $authorizationService;
     private VisitService $visitService;
+    private TrackerRepositoryInterface $trackerRepositoryInterface;
 
-    public function __construct(VisitRepositoryInterface $visitRepositoryInterface, AuthorizationPatientService $authorizationService, VisitService $visitService){
+    public function __construct(VisitRepositoryInterface $visitRepositoryInterface, AuthorizationPatientService $authorizationService, VisitService $visitService, TrackerRepositoryInterface $trackerRepositoryInterface){
         $this->visitService = $visitService;
         $this->authorizationService = $authorizationService;
         $this->visitRepositoryInterface = $visitRepositoryInterface;
+        $this->trackerRepositoryInterface = $trackerRepositoryInterface;
     }
 
     public function execute(CreateVisitRequest $createVisitRequest, CreateVisitResponse $createVisitResponse) : void {
@@ -51,7 +54,7 @@ class CreateVisit {
                     }
                 }
 
-                $this->visitService->createVisit(
+                $visitId = $this->visitService->createVisit(
                     $createVisitRequest->studyName,
                     $createVisitRequest->currentUserId,
                     $createVisitRequest->patientCode,
@@ -59,6 +62,15 @@ class CreateVisit {
                     $createVisitRequest->visitTypeId,
                     $createVisitRequest->statusDone,
                     $createVisitRequest->reasonForNotDone);
+
+
+                $this->trackerRepositoryInterface->writeAction(
+                    $createVisitRequest->currentUserId,
+                    Constants::ROLE_INVESTIGATOR,
+                    $createVisitRequest->studyName,
+                    $visitId,
+                    Constants::TRACKER_CREATE_VISIT,
+                    null);
 
                 $createVisitResponse->status = 201;
                 $createVisitResponse->statusText = 'Created';

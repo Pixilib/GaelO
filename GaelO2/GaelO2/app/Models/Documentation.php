@@ -10,6 +10,6 @@ class Documentation extends Model
     use HasFactory;
 
     public function study(){
-        return $this->belongsTo('App\Models\Study', 'study_name', 'name');
+        return $this->belongsTo(Study::class, 'study_name', 'name');
     }
 }

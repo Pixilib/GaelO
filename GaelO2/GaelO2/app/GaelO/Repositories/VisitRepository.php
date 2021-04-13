@@ -38,7 +38,7 @@ class VisitRepository implements VisitRepositoryInterface
         ?string $reasonForNotDone,
         string $stateInvestigatorForm,
         string $stateQualityControl
-    ) {
+    ) : int {
 
         $data = [
             'creator_user_id' => $creatorUserId,
@@ -52,13 +52,17 @@ class VisitRepository implements VisitRepositoryInterface
             'state_quality_control' => $stateQualityControl
         ];
 
-        DB::transaction(function () use ($data, $studyName) {
+        $visitId = DB::transaction(function () use ($data, $studyName) {
             $newVisit = $this->visit->create($data);
             $this->reviewStatus->create([
                 'visit_id' => $newVisit->id,
                 'study_name' => $studyName
             ]);
+
+            return $newVisit->id;
         });
+
+        return $visitId;
     }
 
     public function isExistingVisit(int $patientCode, int $visitTypeId): bool

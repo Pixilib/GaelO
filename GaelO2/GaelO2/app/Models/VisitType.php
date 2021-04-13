@@ -10,10 +10,10 @@ class VisitType extends Model
     use HasFactory;
 
     public function visits(){
-        return $this->hasMany('App\Models\Visit', 'visit_type_id');
+        return $this->hasMany(Visit::class, 'visit_type_id');
     }
 
     public function visitGroup() {
-        return $this->belongsTo('App\Models\VisitGroup', 'visit_group_id' , 'id');
+        return $this->belongsTo(VisitGroup::class, 'visit_group_id' , 'id');
     }
 }

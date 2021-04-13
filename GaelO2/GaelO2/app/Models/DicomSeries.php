@@ -16,7 +16,7 @@ class DicomSeries extends Model
     public $incrementing = false;
 
     public function dicomStudy(){
-        return $this->belongsTo('App\Models\DicomStudy', 'study_uid', 'study_uid');
+        return $this->belongsTo(DicomStudy::class, 'study_uid', 'study_uid');
     }
 
 }
