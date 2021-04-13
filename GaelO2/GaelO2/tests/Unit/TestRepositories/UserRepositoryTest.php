@@ -13,6 +13,7 @@ use App\Models\Center;
 use App\Models\Role;
 use App\Models\CenterUser;
 use App\GaelO\Repositories\UserRepository;
+use Illuminate\Support\Facades\App;
 
 class UserRepositoryTest extends TestCase
 {
@@ -34,7 +35,7 @@ class UserRepositoryTest extends TestCase
     {
         parent::setUp();
 
-        $this->userRepository = new UserRepository(new User(), new Role(), new CenterUser());
+        $this->userRepository = App::make(UserRepository::class);
 
         //Create 2 random studies
         $this->studies = Study::factory()->count(2)->create();
@@ -341,7 +342,7 @@ class UserRepositoryTest extends TestCase
 
     }
 
-    public function testGetAllStudiesWithRoleForUser(){
+    public function testGetStudiesWithRoleForUser(){
 
         $user = User::factory()->create();
 
@@ -352,10 +353,13 @@ class UserRepositoryTest extends TestCase
         Role::factory()->userId($user->id)->roleName(Constants::ROLE_SUPERVISOR)->studyName($study1Name)->create();
         Role::factory()->userId($user->id)->roleName(Constants::ROLE_INVESTIGATOR)->studyName($study2Name)->create();
 
-        $studies = $this->userRepository->getAllStudiesWithRoleForUser($user->username);
+        $studies = $this->userRepository->getStudiesOfUser($user->id);
         $this->assertEquals(2, sizeof($studies));
-        $this->assertTrue(in_array($study1Name, $studies));
-        $this->assertTrue(in_array($study2Name, $studies));
+
+        $this->studies->first()->delete();
+        //Deleted study should not appear anymore
+        $studies = $this->userRepository->getStudiesOfUser($user->id);
+        $this->assertEquals(1, sizeof($studies));
     }
 
     public function testGetUserRoles(){

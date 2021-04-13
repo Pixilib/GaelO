@@ -41,17 +41,19 @@ Route::middleware(['auth:api', 'refresh_token'])->group(function () {
     //User related Routes
     Route::get('users/{id?}',  [UserController::class, 'getUser']);
     Route::post('users', [UserController::class, 'createUser']);
-    Route::delete('users/{id}', [UserController::class, 'deleteUser'] );
-    Route::post('users/{id}/affiliated-centers', [UserController::class, 'addAffiliatedCenter'] );
     Route::put('users/{id}', [UserController::class, 'modifyUser'] );
     Route::patch('users/{id}', [UserController::class, 'modifyUserIdentification'] );
+    Route::delete('users/{id}', [UserController::class, 'deleteUser'] );
     Route::patch('users/{id}/reactivate', [UserController::class, 'reactivateUser'] );
-    Route::get('users/{id}/roles/{study?}', [UserController::class, 'getRoles'] );
-    Route::post('users/{id}/roles/{study}', [UserController::class, 'createRole'] );
-    Route::delete('users/{id}/roles/{study}/{roleName}', [UserController::class, 'deleteRole'] );
-
     Route::get('users/{id}/affiliated-centers', [UserController::class, 'getAffiliatedCenter'] );
+    Route::post('users/{id}/affiliated-centers', [UserController::class, 'addAffiliatedCenter'] );
     Route::delete('users/{id}/affiliated-centers/{centerCode}', [UserController::class, 'deleteAffiliatedCenter'] );
+    Route::get('users/{id}/studies',  [UserController::class, 'getStudiesFromUser']);
+    Route::get('users/{id}/studies/{studyName}/roles', [UserController::class, 'getRoles'] );
+    Route::post('users/{id}/studies/{studyName}/roles', [UserController::class, 'createRole'] );
+    Route::delete('users/{id}/studies/{studyName}/roles/{roleName}', [UserController::class, 'deleteRole'] );
+
+
     Route::get('studies/{studyName}/users', [UserController::class, 'getUserFromStudy'] );
 
     //Study Routes

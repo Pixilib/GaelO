@@ -71,7 +71,7 @@ class ResetPassword {
         if($user['deleted_at'] !== null) {
             //Send Email change password failure
             $this->mailServices->sendForbiddenResetPasswordDueToDeactivatedAccount($user['email'],
-                    $user['username']);
+                    $user['username'], $user['id']);
             throw new GaelOBadRequestException('Deactivated Account');
         }
     }
