@@ -3,6 +3,7 @@
 namespace App\GaelO\UseCases\ReactivateDicomStudy;
 
 use App\GaelO\Constants\Constants;
+use App\GaelO\Exceptions\GaelOBadRequestException;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\TrackerRepositoryInterface;
@@ -29,6 +30,8 @@ class ReactivateDicomStudy{
 
         try{
 
+            if(empty($reactivateDicomStudyRequest->reason)) throw new GaelOBadRequestException('Reason must be specified');
+
             $studyData = $this->dicomSeriesService->getDicomStudy($reactivateDicomStudyRequest->studyInstanceUID, true);
             $visitId = $studyData['visit_id'];
 
@@ -42,7 +45,8 @@ class ReactivateDicomStudy{
 
             //Tracker
             $actionDetails = [
-                'seriesInstanceUID'=>$studyData['study_uid']
+                'seriesInstanceUID'=>$studyData['study_uid'],
+                'reason' => $reactivateDicomStudyRequest->reason
             ];
 
             $this->trackerRepositoryInterface->writeAction(

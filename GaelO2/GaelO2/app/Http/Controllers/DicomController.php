@@ -87,11 +87,13 @@ class DicomController extends Controller
         }
     }
 
-    public function reactivateSeries(string $seriesInstanceUID, ReactivateDicomSeries $reactivateDicomSeries, ReactivateDicomSeriesRequest $reactivateDicomSeriesRequest, ReactivateDicomSeriesResponse $reactivateDicomSeriesResponse){
+    public function reactivateSeries(string $seriesInstanceUID, Request $request, ReactivateDicomSeries $reactivateDicomSeries, ReactivateDicomSeriesRequest $reactivateDicomSeriesRequest, ReactivateDicomSeriesResponse $reactivateDicomSeriesResponse){
         $currentUser = Auth::user();
+        $requestData = $request->all();
 
         $reactivateDicomSeriesRequest->seriesInstanceUID = $seriesInstanceUID;
         $reactivateDicomSeriesRequest->currentUserId = $currentUser['id'];
+        $reactivateDicomSeriesRequest = Util::fillObject($requestData, $reactivateDicomSeriesRequest);
 
         $reactivateDicomSeries->execute($reactivateDicomSeriesRequest, $reactivateDicomSeriesResponse);
 
@@ -104,12 +106,15 @@ class DicomController extends Controller
         }
     }
 
-    public function reactivateStudy(string $studyInstanceUID, ReactivateDicomStudy $reactivateDicomStudy, ReactivateDicomStudyRequest $reactivateDicomStudyRequest, ReactivateDicomStudyResponse $reactivateDicomStudyResponse){
+    public function reactivateStudy(string $studyInstanceUID, Request $request, ReactivateDicomStudy $reactivateDicomStudy, ReactivateDicomStudyRequest $reactivateDicomStudyRequest, ReactivateDicomStudyResponse $reactivateDicomStudyResponse){
 
         $currentUser = Auth::user();
+        $requestData = $request->all();
 
         $reactivateDicomStudyRequest->studyInstanceUID = $studyInstanceUID;
         $reactivateDicomStudyRequest->currentUserId = $currentUser['id'];
+        $reactivateDicomStudyRequest = Util::fillObject($requestData, $reactivateDicomStudyRequest);
+
 
         $reactivateDicomStudy->execute($reactivateDicomStudyRequest, $reactivateDicomStudyResponse);
 

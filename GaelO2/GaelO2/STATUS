@@ -38,10 +38,14 @@ Salim TODO :
 Download Dicom :
 Faire FrontEnd (tout lister au niveau series?)
 
+Send Email
+
 Export Data Etude :
 - Personalisation au niveau study -> Couche d'abstration notamment pour injecter le lysarc code
 - Review Ajout Patient Code et Visit Type ?
 - Associated File To Review => A faire dans un zip
+- Export SQL https://stackoverflow.com/questions/26261670/mysqldump-with-where-clause-is-not-working/26261717
+existe pas pour Postgres mais possibilité via sql COPY?
 
 Model : Type de variable a caster
 Interface : Faire sous repertoire pour les interface repository et les interface adapter (et faire les interface des adapters qui manquent)
@@ -108,6 +112,10 @@ Reste Supervisor :
 - Statistics
 - Remininder email upload / review / Communication mail inter membre (utiliser tinyMCE React)
 - Orthanc Send to peer
+
+Reste Autres :
+- Connecteur FTP/SFTP
+- Cron job
 
 A executer en post install :
 docker-compose run gaelo2 php artisan migrate --seed **ou** php artisan db:migrate --seed

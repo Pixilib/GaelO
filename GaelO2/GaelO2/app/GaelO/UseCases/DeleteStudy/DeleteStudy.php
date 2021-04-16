@@ -3,6 +3,7 @@
 namespace App\GaelO\UseCases\DeleteStudy;
 
 use App\GaelO\Constants\Constants;
+use App\GaelO\Exceptions\GaelOBadRequestException;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\StudyRepositoryInterface;
@@ -26,11 +27,17 @@ class DeleteStudy {
 
         try{
 
+            if(empty($deleteStudyRequest->reason)) throw new GaelOBadRequestException('reason must be specified');
+
             $this->checkAuthorization($deleteStudyRequest->currentUserId);
             $studyName = $deleteStudyRequest->studyName;
             $this->studyRepositoryInterface->delete($studyName);
 
-            $this->trackerRepositoryInterface->writeAction($deleteStudyRequest->currentUserId, Constants::TRACKER_ROLE_ADMINISTRATOR, $studyName, null, Constants::TRACKER_DEACTIVATE_STUDY, []);
+            $details = [
+                'reason' => $deleteStudyRequest->reason
+            ];
+
+            $this->trackerRepositoryInterface->writeAction($deleteStudyRequest->currentUserId, Constants::TRACKER_ROLE_ADMINISTRATOR, $studyName, null, Constants::TRACKER_DEACTIVATE_STUDY, $details);
 
             $deleteStudyResponse->status = 200;
             $deleteStudyResponse->statusText = 'OK';

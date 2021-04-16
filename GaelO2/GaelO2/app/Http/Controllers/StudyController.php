@@ -94,10 +94,15 @@ class StudyController extends Controller
 
     }
 
-    public function deleteStudy(String $studyName, DeleteStudy $deleteStudy,  DeleteStudyRequest $deleteStudyRequest, DeleteStudyResponse $deleteStudyResponse){
+    public function deleteStudy(String $studyName, Request $request, DeleteStudy $deleteStudy,  DeleteStudyRequest $deleteStudyRequest, DeleteStudyResponse $deleteStudyResponse){
         $currentUser = Auth::user();
+
+        $requestData = $request->all();
+
         $deleteStudyRequest->currentUserId = $currentUser['id'];
         $deleteStudyRequest->studyName = $studyName;
+        $deleteStudyRequest = Util::fillObject($requestData, $deleteStudyRequest);
+
         $deleteStudy->execute($deleteStudyRequest, $deleteStudyResponse);
 
         return response()->noContent()
@@ -105,10 +110,14 @@ class StudyController extends Controller
 
     }
 
-    public function reactivateStudy(string $studyName, ReactivateStudy $reactivateStudy, ReactivateStudyRequest $reactivateStudyRequest, ReactivateStudyResponse $reactivateStudyResponse){
+    public function reactivateStudy(string $studyName, Request $request, ReactivateStudy $reactivateStudy, ReactivateStudyRequest $reactivateStudyRequest, ReactivateStudyResponse $reactivateStudyResponse){
         $currentUser = Auth::user();
+        $requestData = $request->all();
+
+
         $reactivateStudyRequest->currentUserId = $currentUser['id'];
         $reactivateStudyRequest->studyName = $studyName;
+        $reactivateStudyRequest = Util::fillObject($requestData, $reactivateStudyRequest);
         $reactivateStudy->execute($reactivateStudyRequest, $reactivateStudyResponse);
         return response()->noContent()
                 ->setStatusCode($reactivateStudyResponse->status, $reactivateStudyResponse->statusText);

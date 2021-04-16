@@ -111,7 +111,8 @@ class PatientTest extends TestCase
             'birthYear' => 1955,
             'registrationDate' => '12/31/2020',
             'investigatorName' => 'salim',
-            'centerCode' => 0
+            'centerCode' => 0,
+            'reason' => 'wrong patient data'
         ];
 
         $this->json('PATCH', '/api/patients/' . $this->patient->code, $payload)->assertStatus(200);
@@ -132,7 +133,14 @@ class PatientTest extends TestCase
     public function testModifyPatientForbidenNotSupervisor()
     {
         AuthorizationTools::actAsAdmin(false);
-        $this->json('PATCH', '/api/patients/' . $this->patient->code, ['gender' => 'M'])->assertStatus(403);
+        $this->json('PATCH', '/api/patients/' . $this->patient->code, ['reason' => 'wrong patient data'])->assertStatus(403);
+    }
+
+    public function testModifyPatientBadRequestMissingReason()
+    {
+        $currentUserId = AuthorizationTools::actAsAdmin(false);
+        AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $this->study->name);
+        $this->json('PATCH', '/api/patients/' . $this->patient->code, ['gender' => 'M'])->assertStatus(400);
     }
 
     public function testModifyPatientInclusionStatus()
