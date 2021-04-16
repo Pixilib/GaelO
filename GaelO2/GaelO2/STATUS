@@ -38,7 +38,7 @@ Salim TODO :
 Download Dicom :
 Faire FrontEnd (tout lister au niveau series?)
 
-Send Email
+Messagerie à designer
 
 Export Data Etude :
 - Personalisation au niveau study -> Couche d'abstration notamment pour injecter le lysarc code
@@ -82,6 +82,17 @@ Dans remplissage DTO request, si variable boolean, un input string est interpret
 QC Not Needed => autoriser ou pas remove de series ?
 Autoriser les fichier pour les form investigateurs ?
 
+
+Reste Supervisor :
+- Upload Manager
+- Statistics
+- Remininder email upload / review / Communication mail inter membre (utiliser tinyMCE React)
+- Orthanc Send to peer
+
+Reste Autres :
+- Connecteur FTP/SFTP
+- Cron job
+
 *** Etudes ancillaires ***
 Pb Authorisation : Un ID Visit peut maintenant a etre attachee a plusieurs etudes ancillaires
 => Le scope de la study demandée doit venir du front
@@ -108,15 +119,8 @@ Doit pouvoir voir user details
 
 *** /Etudes ancillaires ***
 
-Reste Supervisor :
-- Upload Manager
-- Statistics
-- Remininder email upload / review / Communication mail inter membre (utiliser tinyMCE React)
-- Orthanc Send to peer
 
-Reste Autres :
-- Connecteur FTP/SFTP
-- Cron job
+*** Maintenance Tips ***
 
 A executer en post install :
 docker-compose run gaelo2 php artisan migrate --seed **ou** php artisan db:migrate --seed
@@ -124,3 +128,5 @@ php artisan passport:install
 
 Si dev :
 php artisan telescope:install
+
+*** /Maintenance Tips ***
