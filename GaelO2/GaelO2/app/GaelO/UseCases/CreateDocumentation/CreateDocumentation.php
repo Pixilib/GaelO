@@ -35,7 +35,6 @@ class CreateDocumentation {
 
             $createdEntity = $this->documentationRepositoryInterface->createDocumentation(
                 $createDocumentationRequest->name,
-                Util::now(),
                 $createDocumentationRequest->studyName,
                 $createDocumentationRequest->version,
                 $createDocumentationRequest->investigator,

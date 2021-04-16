@@ -5,10 +5,9 @@ namespace App\GaelO\UseCases\ModifyDocumentation;
 class ModifyDocumentationRequest{
     public int $currentUserId;
     public int $id;
-    public ?string $documentDate = null;
-    public ?string $version = null;
-    public ?bool $investigator = null;
-    public ?bool $controller = null;
-    public ?bool $monitor = null;
-    public ?bool $reviewer = null;
+    public string $version;
+    public bool $investigator;
+    public bool $controller;
+    public bool $monitor;
+    public bool $reviewer;
 }

@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\GaelO\Util;
 use App\Models\Review;
 use App\Models\Study;
 use App\Models\User;
@@ -16,7 +17,7 @@ class ReviewFactory extends Factory
             'study_name' => Study::factory()->create()->name,
             'visit_id' => Visit::factory()->create()->id,
             'user_id' => User::factory()->create()->id,
-            'review_date' => now(),
+            'review_date' => Util::now(),
             'validated' => false,
             'local' => true,
             'adjudication' => false,

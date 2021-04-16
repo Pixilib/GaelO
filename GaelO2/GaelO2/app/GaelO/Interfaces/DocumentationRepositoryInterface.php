@@ -13,7 +13,6 @@ interface DocumentationRepositoryInterface
 
     public function createDocumentation(
         string $name,
-        string $documentDate,
         string $studyName,
         string $version,
         bool $investigator,
@@ -29,7 +28,6 @@ interface DocumentationRepositoryInterface
     public function updateDocumentation(
         int $id,
         string $name,
-        string $documentDate,
         string $studyName,
         string $version,
         bool $investigator,

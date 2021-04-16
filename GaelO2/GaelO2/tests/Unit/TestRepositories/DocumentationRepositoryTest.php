@@ -39,7 +39,7 @@ class DocumentationRepositoryTest extends TestCase
 
     public function testCreateDocumentation(){
 
-        $documenationEntity = $this->documentationRepository->createDocumentation('documentation', '2020-01-01', $this->study->name , '1.0', true,
+        $documenationEntity = $this->documentationRepository->createDocumentation('documentation', $this->study->name , '1.0', true,
                 true, true, true);
 
         $documentation = Documentation::find($documenationEntity['id'])->toArray();
@@ -90,13 +90,12 @@ class DocumentationRepositoryTest extends TestCase
     }
 
     public function testUpdateDocumentation() {
-        
+
         $documentation = Documentation::factory()->create();
 
         $this->documentationRepository->updateDocumentation(
             $documentation->id,
             $documentation->name,
-            $documentation->document_date,
             $documentation->study_name,
             '1.2',
             $documentation->investigator,
@@ -108,17 +107,16 @@ class DocumentationRepositoryTest extends TestCase
         $updatedDocumentation = Documentation::find($documentation->id);
 
         $this->assertEquals('1.2', $updatedDocumentation->version);
-        $this->assertEquals($documentation->document_date, $updatedDocumentation->document_date);
+        $this->assertNotEquals($documentation->document_date, $updatedDocumentation->document_date);
     }
 
     public function testUpdateDocumentationRoles() {
-        
+
         $documentation = Documentation::factory()->create();
 
         $this->documentationRepository->updateDocumentation(
             $documentation->id,
             $documentation->name,
-            $documentation->document_date,
             $documentation->study_name,
             $documentation->version,
             true,
@@ -133,12 +131,11 @@ class DocumentationRepositoryTest extends TestCase
         $this->assertTrue(filter_var($updatedDocumentation->investigator, FILTER_VALIDATE_BOOLEAN));
         $this->assertFalse(filter_var($updatedDocumentation->monitor, FILTER_VALIDATE_BOOLEAN));
         $this->assertFalse(filter_var($updatedDocumentation->reviewer, FILTER_VALIDATE_BOOLEAN));
-        $this->assertEquals($documentation->document_date, $updatedDocumentation->document_date);
+        $this->assertNotEquals($documentation->document_date, $updatedDocumentation->document_date);
 
         $this->documentationRepository->updateDocumentation(
             $updatedDocumentation->id,
             $updatedDocumentation->name,
-            $updatedDocumentation->document_date,
             $updatedDocumentation->study_name,
             $updatedDocumentation->version,
             $updatedDocumentation->investigator,
@@ -146,7 +143,7 @@ class DocumentationRepositoryTest extends TestCase
             true,
             $updatedDocumentation->reviewer
         );
-        
+
         $updatedDocumentation = Documentation::find($documentation->id);
 
         $this->assertTrue(filter_var($updatedDocumentation->controller, FILTER_VALIDATE_BOOLEAN));
@@ -157,14 +154,13 @@ class DocumentationRepositoryTest extends TestCase
     }
 
     public function testUpdateDocumentationRolesToFalse() {
-        
+
         $documentation = Documentation::factory()->investigator()->create();
         $this->assertTrue(filter_var($documentation->investigator, FILTER_VALIDATE_BOOLEAN));
 
         $this->documentationRepository->updateDocumentation(
             $documentation->id,
             $documentation->name,
-            $documentation->document_date,
             $documentation->study_name,
             $documentation->version,
             false,
@@ -176,7 +172,7 @@ class DocumentationRepositoryTest extends TestCase
         $updatedDocumentation = Documentation::find($documentation->id);
 
         $this->assertFalse(filter_var($updatedDocumentation->investigator, FILTER_VALIDATE_BOOLEAN));
-        $this->assertEquals($documentation->document_date, $updatedDocumentation->document_date);
+        $this->assertNotEquals($documentation->document_date, $updatedDocumentation->document_date);
     }
 
 }

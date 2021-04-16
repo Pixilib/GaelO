@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\GaelO\Util;
 use App\Models\Center;
 use App\Models\Patient;
 use App\Models\Study;
@@ -22,13 +23,13 @@ class PatientFactory extends Factory
             'birth_day'=>$this->faker->numberBetween(1,30),
             'birth_month'=>$this->faker->numberBetween(1,12),
             'birth_year'=>$this->faker->numberBetween(1900, 2020),
-            'registration_date'=>now(),
+            'registration_date'=>Util::now(),
             'investigator_name'=>$this->faker->word,
             'center_code'=> Center::factory()->create()->code,
             'study_name'=> Study::factory()->create()->name,
             'inclusion_status'=>$this->faker->randomElement(['Included', 'Withdrawn']),
             'withdraw_reason'=>$this->faker->word,
-            'withdraw_date'=>now()
+            'withdraw_date'=>Util::now()
         ];
     }
 

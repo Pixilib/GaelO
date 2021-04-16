@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\GaelO\Util;
 use App\Models\Documentation;
 use App\Models\Study;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -16,7 +17,7 @@ class DocumentationFactory extends Factory
         return [
             'id'=>$this->faker->unique()->randomNumber,
             'name'=>$this->faker->unique()->word,
-            'document_date'=>now(),
+            'document_date'=> Util::now(),
             'study_name'=> Study::factory()->create()->name,
             'version'=>$this->faker->word,
             'investigator'=> false,

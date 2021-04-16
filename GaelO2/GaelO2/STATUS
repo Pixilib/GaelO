@@ -55,6 +55,7 @@ Creatable Visit : Manque Study Custom Logic (+dans front skip visites optionnell
 Review  : faire une propriete dans visit pour savoir si review disponible a un user en plus de status reviewAvailable ?
 Dicom Series Service => peut etre evoluer vers un DicomService pour les deux niveaux
 Verifier que quand on appelle un child si le parent est pas delete (cf probleme de role et study)
+Documentation Date double emploi avec updated at / created at
 
 *** APIs ***
 - API Review

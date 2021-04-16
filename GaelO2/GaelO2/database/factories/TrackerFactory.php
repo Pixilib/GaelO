@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\GaelO\Util;
 use App\Models\Study;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -14,7 +15,7 @@ class TrackerFactory extends Factory
         return [
             'study_name' => Study::factory()->create()->name,
             'user_id' => User::factory()->create()->id,
-            'date' => now(),
+            'date' => Util::now(),
             'role' => null,
             'visit_id'=>null,
             'action_type'=>null,

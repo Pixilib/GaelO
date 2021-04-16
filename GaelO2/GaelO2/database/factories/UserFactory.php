@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\GaelO\Util;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -22,8 +23,8 @@ class UserFactory extends Factory
             'password_previous1'=> $this->faker->password,
             'password_previous2'=> $this->faker->password,
             'phone' => $this->faker->phoneNumber,
-            'last_password_update' => now(),
-            'creation_date' => now(),
+            'last_password_update' => Util::now(),
+            'creation_date' => Util::now(),
             'status' => 'Activated',
             'administrator' => false,
             'center_code' => 0,
