@@ -3,6 +3,7 @@
 namespace App\GaelO\UseCases\ModifyPatient;
 
 use App\GaelO\Constants\Constants;
+use App\GaelO\Exceptions\GaelOBadRequestException;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\PatientRepositoryInterface;
@@ -30,6 +31,8 @@ class ModifyPatient {
     public function execute(ModifyPatientRequest $modifyPatientRequest, ModifyPatientResponse $modifyPatientResponse){
 
         try{
+
+            if (empty($modifyPatientRequest->reason)) throw new GaelOBadRequestException('Reason for patient edition must be sepecified');
 
             $this->checkAuthorization($modifyPatientRequest->currentUserId, $modifyPatientRequest->patientCode);
 
@@ -60,6 +63,7 @@ class ModifyPatient {
                 }
             }
 
+            $modifiedData['reason'] = $modifyPatientRequest->reason;
 
             $this->patientRepositoryInterface->update($modifyPatientRequest->patientCode, $patientEntity);
             $this->trackerRepositoryInterface->writeAction($modifyPatientRequest->currentUserId, Constants::ROLE_SUPERVISOR, $patientEntity['study_name'], null, Constants::TRACKER_EDIT_PATIENT, $modifiedData);

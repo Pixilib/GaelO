@@ -30,30 +30,29 @@ class ModifyDocumentation {
             $studyName = $documentation['study_name'];
 
             $this->checkAuthorization($modifyDocumentationRequest->currentUserId, $studyName);
-            //Fill missing fields with known info from the database
-            //Change given fields 
-            if(!empty($modifyDocumentationRequest->documentDate)) $documentation['document_date'] = $modifyDocumentationRequest->documentDate;
-            if(!empty($modifyDocumentationRequest->version)) {
-                $documentation['version'] = $modifyDocumentationRequest->version;
+
+            //Update data according to request
+            $documentation['investigator'] = $modifyDocumentationRequest->investigator;
+            $documentation['controller'] = $modifyDocumentationRequest->controller;
+            $documentation['monitor'] = $modifyDocumentationRequest->monitor;
+            $documentation['reviewer'] = $modifyDocumentationRequest->reviewer;
+
+            //In case of version change, check for conflicts
+            if($modifyDocumentationRequest->version !==  $documentation['version']) {
                 if($this->documentationRepositoryInterface->isKnowndocumentation($documentation['name'], $modifyDocumentationRequest->version)){
                     throw new GaelOConflictException("Documentation already existing under this version");
                 };
+                $documentation['version'] = $modifyDocumentationRequest->version;
             }
 
-            if($modifyDocumentationRequest->investigator !== null) $documentation['investigator'] = $modifyDocumentationRequest->investigator;
-            if($modifyDocumentationRequest->controller !== null) $documentation['controller'] = $modifyDocumentationRequest->controller;
-            if($modifyDocumentationRequest->monitor !== null) $documentation['monitor'] = $modifyDocumentationRequest->monitor;
-            if($modifyDocumentationRequest->reviewer !== null) $documentation['reviewer'] = $modifyDocumentationRequest->reviewer;
-
             $this->documentationRepositoryInterface->updateDocumentation(
-                $documentation['id'], 
-                $documentation['name'], 
-                $documentation['document_date'], 
-                $documentation['study_name'], 
-                $documentation['version'], 
+                $documentation['id'],
+                $documentation['name'],
+                $documentation['study_name'],
+                $documentation['version'],
                 $documentation['investigator'],
-                $documentation['controller'], 
-                $documentation['monitor'], 
+                $documentation['controller'],
+                $documentation['monitor'],
                 $documentation['reviewer']);
 
             $actionDetails = $documentation;

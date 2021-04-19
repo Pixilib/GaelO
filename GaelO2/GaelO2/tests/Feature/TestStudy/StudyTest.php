@@ -89,7 +89,14 @@ class StudyTest extends TestCase
     public function testDeleteStudy(){
         AuthorizationTools::actAsAdmin(true);
         $study = Study::factory()->create();
-        $response = $this->json('DELETE', '/api/studies/'.$study->name)->assertSuccessful();
+        $this->json('DELETE', '/api/studies/'.$study->name, ['reason'=> 'study finished'])->assertSuccessful();
+
+    }
+
+    public function testDeleteStudyShouldFailNoReason(){
+        AuthorizationTools::actAsAdmin(true);
+        $study = Study::factory()->create();
+        $this->json('DELETE', '/api/studies/'.$study->name)->assertStatus(400);
 
     }
 
@@ -145,8 +152,18 @@ class StudyTest extends TestCase
         $study =  Study::factory()->create();
         $studyName = $study->name;
         $study->delete();
-        $payload = [];
+        $payload = ['reason' => 'need new analysis'];
         $this->json('PATCH', '/api/studies/'.$studyName.'/reactivate', $payload)->assertNoContent(200);
+
+    }
+
+    public function testReactivateStudyShouldFailNoReason(){
+        AuthorizationTools::actAsAdmin(true);
+        $study =  Study::factory()->create();
+        $studyName = $study->name;
+        $study->delete();
+        $payload = [];
+        $this->json('PATCH', '/api/studies/'.$studyName.'/reactivate', $payload)->assertNoContent(400);
 
     }
 
@@ -154,7 +171,7 @@ class StudyTest extends TestCase
         AuthorizationTools::actAsAdmin(false);
         $study = Study::factory()->create();
         $study->delete();
-        $payload = [];
+        $payload = ['reason'=> 'need new analysis'];
         $this->json('PATCH', '/api/studies/'.$study->name.'/reactivate', $payload)->assertStatus(403);
     }
 

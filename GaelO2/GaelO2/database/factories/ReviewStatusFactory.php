@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\GaelO\Util;
 use App\Models\Study;
 use App\Models\Visit;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -18,7 +19,7 @@ class ReviewStatusFactory extends Factory
             'review_available'=> false,
             'review_status'=> 'Not Done',
             'review_conclusion_value'=> $this->faker->word,
-            'review_conclusion_date'=> now()
+            'review_conclusion_date'=> Util::now()
         ];
     }
 

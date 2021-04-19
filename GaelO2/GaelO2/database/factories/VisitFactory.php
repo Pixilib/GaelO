@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\GaelO\Util;
 use App\Models\Patient;
 use App\Models\ReviewStatus;
 use App\Models\User;
@@ -17,9 +18,9 @@ class VisitFactory extends Factory
 
         return [
             'creator_user_id' => User::factory()->create()->id,
-            'creation_date'=> now(),
+            'creation_date'=> Util::now(),
             'patient_code'=> Patient::factory()->create()->code,
-            'visit_date'=> now(),
+            'visit_date'=> Util::now(),
             'visit_type_id'=> VisitType::factory()->create()->id,
             'status_done'=> 'Done',
             'reason_for_not_done'=> $this->faker->word,
@@ -27,18 +28,18 @@ class VisitFactory extends Factory
             'state_investigator_form'=> 'Not Done',
             'state_quality_control'=> 'Not Done',
             'controller_user_id'=> null,
-            'control_date'=>now(),
+            'control_date'=>Util::now(),
             'image_quality_control'=> $this->faker->randomElement([true, false]),
             'form_quality_control'=> $this->faker->randomElement([true, false]),
             'image_quality_comment'=> $this->faker->word,
             'form_quality_comment'=> $this->faker->word,
             'corrective_action_user_id'=> null,
-            'corrective_action_date'=>now(),
+            'corrective_action_date'=>Util::now(),
             'corrective_action_new_upload'=> $this->faker->randomElement([true, false]),
             'corrective_action_investigator_form'=> $this->faker->randomElement([true, false]),
             'corrective_action_comment'=> $this->faker->word,
             'corrective_action_applyed'=> $this->faker->randomElement([true, false]),
-            'last_reminder_upload'=>now()
+            'last_reminder_upload'=>Util::now()
         ];
     }
 

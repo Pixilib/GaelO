@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\GaelO\Util;
 use App\Models\DicomStudy;
 use App\Models\User;
 use App\Models\Visit;
@@ -18,7 +19,7 @@ class DicomStudyFactory extends Factory
             'orthanc_id' =>$this->faker->regexify('[A-Za-z0-9]{44}'),
             'visit_id'=> Visit::factory()->create()->id,
             'uploader_id'=> User::factory()->create()->id,
-            'upload_date'=>now(),
+            'upload_date'=> Util::now(),
             'acquisition_date'=>$this->faker->date(),
             'acquisition_time'=>$this->faker->time(),
             'anon_from_orthanc_id'=>$this->faker->regexify('[A-Za-z0-9]{44}'),

@@ -153,8 +153,11 @@ class DocumentationTest extends TestCase
         $newPayload = [
             'version'=>'2.0',
             'controller'=>true,
+            'investigator'=>true,
+            'monitor'=>true,
             'reviewer'=>true
         ];
+
         $response = $this->patch('api/documentations/'.$documentation->id, $newPayload);
         $response->assertStatus(200);
     }
@@ -165,7 +168,11 @@ class DocumentationTest extends TestCase
         Documentation::factory()->studyName($this->study->name)->name('newFile')->version('2.0')->create();
         $documentation = Documentation::factory()->studyName($this->study->name)->name('newFile')->version('1.0')->create();
         $newPayload = [
-            'version'=>'2.0'
+            'version'=>'2.0',
+            'controller'=>true,
+            'investigator'=>true,
+            'monitor'=>true,
+            'reviewer'=>true
         ];
         $response = $this->patch('api/documentations/'.$documentation->id, $newPayload);
         $response->assertStatus(409);
@@ -178,9 +185,11 @@ class DocumentationTest extends TestCase
         $newPayload = [
             'version'=>'2.0',
             'controller'=>true,
+            'investigator'=>true,
+            'monitor'=>true,
             'reviewer'=>true
         ];
-        $response = $this->patch('api/documentations/'.$documentation->id);
+        $response = $this->patch('api/documentations/'.$documentation->id, $newPayload);
         $response->assertStatus(403);
     }
 }

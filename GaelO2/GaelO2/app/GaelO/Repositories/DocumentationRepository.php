@@ -33,12 +33,12 @@ class DocumentationRepository implements DocumentationRepositoryInterface {
         $this->documentation->find($id)->delete();
     }
 
-    public function createDocumentation(string $name, string $documentDate, string $studyName, string $version, bool $investigator,
+    public function createDocumentation(string $name, string $studyName, string $version, bool $investigator,
                 bool $controller, bool $monitor, bool $reviewer) : array {
 
         $data = [
             'name'=>$name,
-            'document_date'=>$documentDate,
+            'document_date'=>Util::now(),
             'study_name'=>$studyName,
             'version'=>$version,
             'investigator'=>$investigator,
@@ -66,7 +66,6 @@ class DocumentationRepository implements DocumentationRepositoryInterface {
     public function updateDocumentation(
         int $id,
         string $name,
-        string $documentDate,
         string $studyName,
         string $version,
         bool $investigator,
@@ -76,7 +75,7 @@ class DocumentationRepository implements DocumentationRepositoryInterface {
     ){
         $data = [
             'name'=>$name,
-            'document_date'=>$documentDate,
+            'document_date'=>Util::now(),
             'study_name'=>$studyName,
             'version'=>$version,
             'investigator'=>$investigator,

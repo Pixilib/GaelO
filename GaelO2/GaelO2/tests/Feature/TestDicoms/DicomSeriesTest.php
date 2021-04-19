@@ -117,7 +117,7 @@ class DicomSeriesTest extends TestCase
         AuthorizationTools::addRoleToUser($userId, Constants::ROLE_SUPERVISOR, $this->studyName);
 
         $this->dicomSeries->delete();
-        $response = $this->patch('api/dicom-series/' . $this->dicomSeries->series_uid, []);
+        $response = $this->patch('api/dicom-series/' . $this->dicomSeries->series_uid, ['reason' => 'good series']);
         $response->assertStatus(200);
     }
 
@@ -126,7 +126,7 @@ class DicomSeriesTest extends TestCase
         AuthorizationTools::actAsAdmin(false);
 
         $this->dicomSeries->delete();
-        $response = $this->patch('api/dicom-series/' . $this->dicomSeries->series_uid, []);
+        $response = $this->patch('api/dicom-series/' . $this->dicomSeries->series_uid, ['reason' => 'good series']);
         $response->assertStatus(403);
     }
 
@@ -151,8 +151,24 @@ class DicomSeriesTest extends TestCase
         $this->dicomSeries->dicomStudy->visit->state_investigator_form = Constants::INVESTIGATOR_FORM_DRAFT;
         $this->dicomSeries->dicomStudy->visit->save();
 
-        $response = $this->patch('api/dicom-study/' . $this->dicomSeries->dicomStudy->study_uid);
+        $response = $this->patch('api/dicom-study/' . $this->dicomSeries->dicomStudy->study_uid, ['reason' => 'correct study']);
         $response->assertStatus(200);
+    }
+
+
+    public function testReactivateStudyShouldFailNoReason()
+    {
+
+        $userId = AuthorizationTools::actAsAdmin(false);
+        AuthorizationTools::addRoleToUser($userId, Constants::ROLE_SUPERVISOR, $this->studyName);
+
+        $this->dicomSeries->dicomStudy->delete();
+        //At study deletion the investigator form is Draft or Not Done
+        $this->dicomSeries->dicomStudy->visit->state_investigator_form = Constants::INVESTIGATOR_FORM_DRAFT;
+        $this->dicomSeries->dicomStudy->visit->save();
+
+        $response = $this->patch('api/dicom-study/' . $this->dicomSeries->dicomStudy->study_uid);
+        $response->assertStatus(400);
     }
 
 
@@ -162,7 +178,7 @@ class DicomSeriesTest extends TestCase
         AuthorizationTools::actAsAdmin(false);
 
         $this->dicomSeries->dicomStudy->delete();
-        $response = $this->patch('api/dicom-study/' . $this->dicomSeries->dicomStudy->study_uid, []);
+        $response = $this->patch('api/dicom-study/' . $this->dicomSeries->dicomStudy->study_uid, ['reason' => 'correct study']);
         $response->assertStatus(403);
     }
 
@@ -173,7 +189,7 @@ class DicomSeriesTest extends TestCase
         $userId = AuthorizationTools::actAsAdmin(false);
         AuthorizationTools::addRoleToUser($userId, Constants::ROLE_SUPERVISOR, $this->studyName);
 
-        $response = $this->patch('api/dicom-study/' . $this->dicomSeries->dicomStudy->study_uid, []);
+        $response = $this->patch('api/dicom-study/' . $this->dicomSeries->dicomStudy->study_uid, ['reason' => 'correct study']);
         $response->assertStatus(400);
     }
 }

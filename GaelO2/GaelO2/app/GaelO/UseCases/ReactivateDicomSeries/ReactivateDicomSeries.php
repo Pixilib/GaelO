@@ -35,6 +35,8 @@ class ReactivateDicomSeries{
 
         try{
 
+            if( empty($reactivateDicomSeriesRequest->reason) ) throw new GaelOBadRequestException('Reason must be specified');
+
             $seriesData = $this->dicomSeriesRepositoryInterface->getSeries($reactivateDicomSeriesRequest->seriesInstanceUID, true);
 
             if($seriesData['dicom_study'] === null){
@@ -52,6 +54,7 @@ class ReactivateDicomSeries{
 
             $actionDetails = [
                 'seriesInstanceUID'=>$seriesData['series_uid'],
+                'reason' => $reactivateDicomSeriesRequest->reason
             ];
 
             $this->trackerRepositoryInterface->writeAction(

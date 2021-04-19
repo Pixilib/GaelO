@@ -3,6 +3,7 @@
 namespace App\GaelO\UseCases\ReactivateStudy;
 
 use App\GaelO\Constants\Constants;
+use App\GaelO\Exceptions\GaelOBadRequestException;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\StudyRepositoryInterface;
@@ -26,12 +27,15 @@ class ReactivateStudy {
 
         try {
 
+            if( empty($reactivateStudyRequest->reason) ) throw new GaelOBadRequestException('Reason must be specified');
+
             $this->checkAuthorization($reactivateStudyRequest->currentUserId);
 
             $this->studyRepositoryInterface->reactivateStudy($reactivateStudyRequest->studyName);
 
             $actionsDetails = [
-                'reactivatedStudy' => $reactivateStudyRequest->studyName
+                'reactivatedStudy' => $reactivateStudyRequest->studyName,
+                'reason' => $reactivateStudyRequest->reason
             ];
             $this->trackerRepository->writeAction($reactivateStudyRequest->currentUserId, Constants::TRACKER_ROLE_ADMINISTRATOR, null, null, Constants::TRACKER_REACTIVATE_STUDY, $actionsDetails);
 
