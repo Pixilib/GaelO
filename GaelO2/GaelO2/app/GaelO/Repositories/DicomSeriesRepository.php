@@ -120,10 +120,6 @@ class DicomSeriesRepository implements DicomSeriesRepositoryInterface {
 
     }
 
-    public function reactivateSeriesOfStudyInstanceUID (string $studyInstanceUID) : void {
-        $this->dicomSeries->where('study_uid',$studyInstanceUID)->withTrashed()->restore();
-    }
-
     public function getRelatedVisitIdFromSeriesInstanceUID(array $seriesInstanceUID) : array {
         $query = $this->dicomSeries
             ->join('dicom_studies', function ($join) {

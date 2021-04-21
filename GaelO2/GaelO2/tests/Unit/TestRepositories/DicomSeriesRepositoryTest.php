@@ -93,15 +93,6 @@ class DicomSeriesRepositoryTest extends TestCase
         $seriesEntity2 = $this->orthancSeriesRepository->getSeries($orthancSeries->series_uid, false);
     }
 
-    public function testReactivateSeriesOfOrthancStudyId(){
-        $orthancSeries = DicomSeries::factory()->studyInstanceUID($this->orthancStudy->study_uid)->count(5)->create();
-        $orthancSeries->each( function($item, $key){ $item->delete(); } );
-        $this->assertEquals(0, DicomSeries::get()->count());
-
-        $this->orthancSeriesRepository->reactivateSeriesOfStudyInstanceUID($this->orthancStudy->study_uid);
-        $this->assertEquals(5, DicomSeries::get()->count());
-    }
-
     public function testGetRelatedVisitIdFromSeriesInstanceUid(){
 
         $dicomSeries = DicomSeries::factory()->count(5)->create();
