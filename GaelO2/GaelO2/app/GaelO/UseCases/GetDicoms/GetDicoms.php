@@ -6,6 +6,7 @@ use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\DicomStudyRepositoryInterface;
+use App\GaelO\Interfaces\UserRepositoryInterface;
 use App\GaelO\Services\AuthorizationVisitService;
 use Exception;
 
@@ -13,10 +14,12 @@ class GetDicoms{
 
     private AuthorizationVisitService $authorizationVisitService;
     private DicomStudyRepositoryInterface $dicomStudyRepositoryInterface;
+    private UserRepositoryInterface $userRepositoryInterface;
 
-    public function __construct(DicomStudyRepositoryInterface $dicomStudyRepositoryInterface, AuthorizationVisitService $authorizationVisitService){
+    public function __construct(DicomStudyRepositoryInterface $dicomStudyRepositoryInterface, AuthorizationVisitService $authorizationVisitService, UserRepositoryInterface $userRepositoryInterface){
         $this->dicomStudyRepositoryInterface = $dicomStudyRepositoryInterface;
         $this->authorizationVisitService = $authorizationVisitService;
+        $this->userRepositoryInterface = $userRepositoryInterface;
     }
 
     public function execute(GetDicomsRequest $getDicomsRequest, GetDicomsResponse $getDicomResponse){
@@ -28,9 +31,11 @@ class GetDicoms{
             $includeTrashed = $getDicomsRequest->role === Constants::ROLE_SUPERVISOR;
             $data = $this->dicomStudyRepositoryInterface->getDicomsDataFromVisit($getDicomsRequest->visitId, $includeTrashed);
 
+            $user = $this->userRepositoryInterface->find($data[0]['uploader_id']);
             $responseArray = [];
 
             foreach($data as $study){
+                $study['uploader_username'] = $user['username'];
                 $studyEntity = DicomStudyEntity::fillFromDBReponseArray($study);
                 foreach($study['dicom_series'] as $series){
                     $seriesEntity = DicomSeriesEntity::fillFromDBReponseArray($series);

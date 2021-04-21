@@ -5,6 +5,7 @@ namespace App\GaelO\UseCases\GetDicoms;
 class DicomStudyEntity {
     public string $studyInstanceUID;
     public int $uploaderId;
+    public string $uploaderUsername;
     public string $uploadDate;
     public int $visitId;
     public bool $deleted;
@@ -20,6 +21,7 @@ class DicomStudyEntity {
         $orthancStudy  = new DicomStudyEntity();
         $orthancStudy->studyInstanceUID = $array['study_uid'];
         $orthancStudy->uploaderId = $array['uploader_id'];
+        $orthancStudy->uploaderUsername = $array['uploader_username'];
         $orthancStudy->uploadDate = $array['upload_date'];
         $orthancStudy->visitId = $array['visit_id'];
         $orthancStudy->deleted = $array['deleted_at'] !== null;
