@@ -33,6 +33,7 @@ class GetDicomsStudy
                 $getDicomsStudyRequest->studyName,
             );
 
+            //SK REVOIR ICI POUR PASSER A UNE ENTITY CLASSIQUE AVEC INFO EN PLUS
             $data = $this->dicomStudyRepositoryInterface->getDicomStudyFromStudy($getDicomsStudyRequest->studyName, $getDicomsStudyRequest->withTrashed);
 
             $answer = [];

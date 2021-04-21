@@ -6,7 +6,6 @@ use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\DicomStudyRepositoryInterface;
-use App\GaelO\Interfaces\UserRepositoryInterface;
 use App\GaelO\Services\AuthorizationVisitService;
 use Exception;
 
@@ -14,12 +13,10 @@ class GetDicoms{
 
     private AuthorizationVisitService $authorizationVisitService;
     private DicomStudyRepositoryInterface $dicomStudyRepositoryInterface;
-    private UserRepositoryInterface $userRepositoryInterface;
 
-    public function __construct(DicomStudyRepositoryInterface $dicomStudyRepositoryInterface, AuthorizationVisitService $authorizationVisitService, UserRepositoryInterface $userRepositoryInterface){
+    public function __construct(DicomStudyRepositoryInterface $dicomStudyRepositoryInterface, AuthorizationVisitService $authorizationVisitService){
         $this->dicomStudyRepositoryInterface = $dicomStudyRepositoryInterface;
         $this->authorizationVisitService = $authorizationVisitService;
-        $this->userRepositoryInterface = $userRepositoryInterface;
     }
 
     public function execute(GetDicomsRequest $getDicomsRequest, GetDicomsResponse $getDicomResponse){
@@ -29,14 +26,20 @@ class GetDicoms{
 
             //If Supervisor include deleted studies
             $includeTrashed = $getDicomsRequest->role === Constants::ROLE_SUPERVISOR;
-            $data = $this->dicomStudyRepositoryInterface->getDicomsDataFromVisit($getDicomsRequest->visitId, $includeTrashed);
 
-            $user = $this->userRepositoryInterface->find($data[0]['uploader_id']);
+            $data = [];
+
+            if($includeTrashed){
+                $data = $this->dicomStudyRepositoryInterface->getDicomsDataFromVisit($getDicomsRequest->visitId, $includeTrashed);
+            }else{
+                $data[] = $this->dicomStudyRepositoryInterface->getDicomsDataFromVisit($getDicomsRequest->visitId, $includeTrashed);
+            }
+
             $responseArray = [];
 
             foreach($data as $study){
-                $study['uploader_username'] = $user['username'];
                 $studyEntity = DicomStudyEntity::fillFromDBReponseArray($study);
+                $studyEntity->addUploaderDetails($study['uploader']);
                 foreach($study['dicom_series'] as $series){
                     $seriesEntity = DicomSeriesEntity::fillFromDBReponseArray($series);
                     $studyEntity->series[] = $seriesEntity;

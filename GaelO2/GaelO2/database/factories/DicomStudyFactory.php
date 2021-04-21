@@ -18,7 +18,7 @@ class DicomStudyFactory extends Factory
         return [
             'orthanc_id' =>$this->faker->regexify('[A-Za-z0-9]{44}'),
             'visit_id'=> Visit::factory()->create()->id,
-            'uploader_id'=> User::factory()->create()->id,
+            'user_id'=> User::factory()->create()->id,
             'upload_date'=> Util::now(),
             'acquisition_date'=>$this->faker->date(),
             'acquisition_time'=>$this->faker->time(),
@@ -58,7 +58,7 @@ class DicomStudyFactory extends Factory
 
         return $this->state(function (array $attributes) use ($uploaderId) {
             return [
-                'uploader_id' => $uploaderId,
+                'user_id' => $uploaderId,
             ];
         });
     }

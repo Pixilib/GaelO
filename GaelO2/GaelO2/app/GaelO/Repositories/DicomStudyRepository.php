@@ -60,7 +60,7 @@ class DicomStudyRepository implements DicomStudyRepositoryInterface
         $data = [
             'orthanc_id' => $orthancStudyID,
             'visit_id' => $visitID,
-            'uploader_id' => $uploaderID,
+            'user_id' => $uploaderID,
             'upload_date' => $uploadDate,
             'acquisition_date' => $acquisitionDate,
             'acquisition_time' => $acquisitionTime,
@@ -102,7 +102,7 @@ class DicomStudyRepository implements DicomStudyRepositoryInterface
         $data = [
             'orthanc_id' => $orthancStudyID,
             'visit_id' => $visitID,
-            'uploader_id' => $uploaderID,
+            'user_id' => $uploaderID,
             'upload_date' => $uploadDate,
             'acquisition_date' => $acquisitionDate,
             'acquisition_time' => $acquisitionTime,
@@ -168,9 +168,9 @@ class DicomStudyRepository implements DicomStudyRepositoryInterface
         if ($withDeleted) {
             $studies = $this->dicomStudy->withTrashed()->with(['dicomSeries' => function ($query) {
                 $query->withTrashed();
-            }])->where('visit_id', $visitID)->get();
+            }, 'uploader'])->where('visit_id', $visitID)->get();
         } else {
-            $studies = $this->dicomStudy->where('visit_id', $visitID)->with('dicomSeries')->get();
+            $studies = $this->dicomStudy->where('visit_id', $visitID)->with(['dicomSeries', 'uploader'])->sole();
         }
 
         return $studies->count() == 0 ? [] : $studies->toArray();
