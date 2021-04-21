@@ -65,7 +65,7 @@ class ReactivateVisit {
                 Constants::ROLE_SUPERVISOR,
                 $studyName,
                 $reactivateVisitRequest->visitId,
-                Constants::TRACKER_REACTIVATE_DICOM_STUDY,
+                Constants::TRACKER_REACTIVATE_VISIT,
                 $actionDetails
             );
 
