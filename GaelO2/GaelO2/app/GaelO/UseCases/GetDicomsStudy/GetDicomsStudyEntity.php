@@ -2,6 +2,7 @@
 
 namespace App\GaelO\UseCases\GetDicomsStudy;
 
+//SK CETTE CLASSE DOIT DISPARAITRE AU PROFIT D UN APPEL A DICOMSTUDYENTITY AVEC DETAILS
 class GetDicomsStudyEntity {
 
     public string $studyInstanceUID;

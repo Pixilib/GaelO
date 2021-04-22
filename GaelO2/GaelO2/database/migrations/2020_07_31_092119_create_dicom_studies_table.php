@@ -17,7 +17,7 @@ class CreateDicomStudiesTable extends Migration
             $table->string('study_uid', 256)->primary();
             $table->string('orthanc_id', 44)->nullable(false);
             $table->unsignedBigInteger('visit_id')->nullable(false);
-            $table->unsignedBigInteger('uploader_id')->nullable(false);
+            $table->unsignedBigInteger('user_id')->nullable(false);
             $table->dateTime('upload_date', 6)->nullable(false);
             $table->date('acquisition_date')->nullable(true);
             $table->time('acquisition_time')->nullable(true);
@@ -34,7 +34,7 @@ class CreateDicomStudiesTable extends Migration
             $table->timestamps();
             //Dependencies
             $table->foreign('visit_id')->references('id')->on('visits');
-            $table->foreign('uploader_id')->references('id')->on('users');
+            $table->foreign('user_id')->references('id')->on('users');
             $table->unique('orthanc_id');
         });
     }
