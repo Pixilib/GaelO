@@ -36,6 +36,7 @@ studies/{studyName}/dicom-series/file (POST)
 Salim TODO :
 
 Download Dicom :
+Eliminer l'entity custom au profit de l'entity generique
 Faire FrontEnd (tout lister au niveau series?)
 
 Messagerie à designer
@@ -47,15 +48,18 @@ Export Data Etude :
 - Export SQL https://stackoverflow.com/questions/26261670/mysqldump-with-where-clause-is-not-working/26261717
 existe pas pour Postgres mais possibilité via sql COPY?
 
-Model : Type de variable a caster
+Isoler les entity de reponse dans un repertoire à part
 Interface : Faire sous repertoire pour les interface repository et les interface adapter (et faire les interface des adapters qui manquent)
+Model : Type de variable a caster
+Clé etrangere DicomStudy et DicomSeries non conventionnelle
+Harmoniser le passage par des entity de table pour les réponses
+
 Revoir DicowWeb Authorization Service => Pb route orthanc differentes
 GetVisitContexte des service surement a faire passer a initialisation pour eviter requettes redondantes
 Creatable Visit : Manque Study Custom Logic (+dans front skip visites optionnelles ?)
 Review  : faire une propriete dans visit pour savoir si review disponible a un user en plus de status reviewAvailable ?
 Dicom Series Service => peut etre evoluer vers un DicomService pour les deux niveaux
 Verifier que quand on appelle un child si le parent est pas delete (cf probleme de role et study)
-Documentation Date double emploi avec updated at / created at
 
 *** APIs ***
 - API Review

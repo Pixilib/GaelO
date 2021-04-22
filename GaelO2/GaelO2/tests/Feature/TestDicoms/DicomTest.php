@@ -58,7 +58,6 @@ class DicomTest extends TestCase
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $this->studyName);
         $answer = $this->get('api/visits/'.$this->visitId.'/dicoms?role=Supervisor');
         $response = json_decode($answer->content(), true);
-        $this->assertEquals(1, sizeof($response));
         $this->assertEquals(true, $response[0]['deleted']);
 
     }
