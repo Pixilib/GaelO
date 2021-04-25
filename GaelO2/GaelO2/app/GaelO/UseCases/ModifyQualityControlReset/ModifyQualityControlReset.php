@@ -51,7 +51,7 @@ class ModifyQualityControlReset{
                 Constants::ROLE_CONTROLLER,
                 $studyName,
                 $modifyQualityControlResetRequest->visitId,
-                Constants::TRACKER_QUALITY_CONTROL,
+                Constants::TRACKER_RESET_QC,
                 $actionDetails
             );
 
