@@ -53,6 +53,10 @@
 								<option value=\"Full\">Full</option> \
 							</select> \
 						</td> \
+						<td contenteditable=true> "+ JSON.stringify(
+							{ "seriesDescriptionConstraints" : [],
+							"structureSetConstraints": [] }
+						)+"</td> \
 						<td><input type=\"button\" value=\"Remove\" class=\"btn btn-danger\" onClick=\"removeRow(this)\"/></td> \
 					</tr>"
 
@@ -78,6 +82,7 @@
 				let dayMin=$(this).find("td:eq(7)  > input[type='number']").val();
 				let dayMax=$(this).find("td:eq(8)  > input[type='number']").val();
 				let anonProfile=$(this).find("td:eq(9)  > select").find(":selected").val();
+				let dicomConstraints=JSON.parse( $(this).find("td:eq(10)").text());
 
 				let visitObject = {
 					name : visitName,
@@ -88,7 +93,8 @@
 					optional : optional,
 					dayMin : dayMin,
 					dayMax : dayMax,
-					anonProfile : anonProfile
+					anonProfile : anonProfile,
+					dicomConstraints : dicomConstraints
 				}
 				//add visit in a modality property
 				//if modality not found intialize and array to recieve visit objects
@@ -197,6 +203,9 @@
 						</td>
 						<td>
 							Anon Profile
+						</td>
+						<td>
+							Dicom Constraints
 						</td>
 					</tr>
 				</thead>
