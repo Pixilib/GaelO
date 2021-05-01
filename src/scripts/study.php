@@ -58,7 +58,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 				$qc=$visit['qc'] === 'true';
 				$review=$visit['review'] === 'true';
 				$optional=$visit['optional'] === 'true';
-				$dicomConstraints = $visit['dicomConstraints'];
+				$dicomConstraints = $visit['dicomConstraints'] ;
 				//Create Visit Type
 				Visit_Type::createVisitType($studyName, $visitGroup, $visit['name'], $visit['order'], $visit['dayMin'], $visit['dayMax'], $localForm,
 				$qc, $review, $optional, $visit['anonProfile'], $dicomConstraints , $linkpdo);
