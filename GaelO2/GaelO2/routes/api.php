@@ -66,6 +66,15 @@ Route::middleware(['auth:api', 'refresh_token'])->group(function () {
     Route::get('studies/{studyName}/possible-uploads', [StudyController::class, 'getPossibleUploads'] );
     Route::get('studies/{studyName}/visit-types/{visitTypeId}/review-progression', [StudyController::class, 'getReviewProgression'] );
     Route::get('studies/{studyName}/dicom-studies', [DicomController::class, 'getStudyDicomStudies'] );
+    Route::get('studies/{studyName}/visits', [VisitController::class, 'getVisitsFromStudy'] );
+    Route::get('studies/{studyName}/visit-types/{visitTypeId}/visits', [StudyController::class, 'getVisitsFromVisitType'] );
+    Route::get('studies/{studyName}/visit-types/{visitTypeId}/reviews', [StudyController::class, 'getReviewsFromVisitType'] );
+
+    //SK ROUTE STATISTIQUES A FAIRE
+    Route::get('studies/{studyName}/visit-types/{visitTypeId}/investigator-forms', [StudyController::class, 'getReviewsFromVisitType'] );
+    Route::get('studies/{studyName}/visit-types/{visitTypeId}/dicom-studies', [StudyController::class, 'getReviewProgression'] );
+
+
     //Study Routes
     Route::post('studies', [StudyController::class, 'createStudy'] );
 
@@ -106,7 +115,7 @@ Route::middleware(['auth:api', 'refresh_token'])->group(function () {
     Route::patch('visits/{id}/reactivate', [VisitController::class, 'reactivateVisit'] );
     Route::post('studies/{studyName}/visit-groups/{visitGroupId}/visit-types/{visitTypeId}/visits', [VisitController::class, 'createVisit'] );
     Route::get('studies/{studyName}/visits/{id}', [VisitController::class, 'getVisit'] );
-    Route::get('studies/{studyName}/visits', [VisitController::class, 'getVisitsFromStudy'] );
+
 
     //Local Form Routes
     Route::get('visits/{id}/investigator-form', [ReviewController::class, 'getInvestigatorForm'] );

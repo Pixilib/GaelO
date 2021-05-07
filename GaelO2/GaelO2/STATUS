@@ -39,6 +39,9 @@ Download Dicom :
 Eliminer l'entity custom au profit de l'entity generique
 Faire FrontEnd (tout lister au niveau series?)
 
+Statistics :
+Reste Investigateur form et DicomStudies (+- dicomseries)
+
 Messagerie à designer
 
 Export Data Etude :
@@ -89,7 +92,6 @@ Autoriser les fichier pour les form investigateurs ?
 
 Reste Supervisor :
 - Upload Manager
-- Statistics
 - Remininder email upload / review / Communication mail inter membre (utiliser tinyMCE React)
 - Orthanc Send to peer
 

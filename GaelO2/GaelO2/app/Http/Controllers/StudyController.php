@@ -23,6 +23,9 @@ use App\GaelO\UseCases\GetPossibleUpload\GetPossibleUploadResponse;
 use App\GaelO\UseCases\GetReviewProgression\GetReviewProgression;
 use App\GaelO\UseCases\GetReviewProgression\GetReviewProgressionRequest;
 use App\GaelO\UseCases\GetReviewProgression\GetReviewProgressionResponse;
+use App\GaelO\UseCases\GetReviewsFromVisitType\GetReviewsFromVisitType;
+use App\GaelO\UseCases\GetReviewsFromVisitType\GetReviewsFromVisitTypeRequest;
+use App\GaelO\UseCases\GetReviewsFromVisitType\GetReviewsFromVisitTypeResponse;
 use App\GaelO\UseCases\GetStudy\GetStudy;
 use App\GaelO\UseCases\GetStudy\GetStudyRequest;
 use App\GaelO\UseCases\GetStudy\GetStudyResponse;
@@ -32,6 +35,9 @@ use App\GaelO\UseCases\GetStudyDetails\GetStudyDetailsResponse;
 use App\GaelO\UseCases\GetStudyDetailsSupervisor\GetStudyDetailsSupervisor;
 use App\GaelO\UseCases\GetStudyDetailsSupervisor\GetStudyDetailsSupervisorRequest;
 use App\GaelO\UseCases\GetStudyDetailsSupervisor\GetStudyDetailsSupervisorResponse;
+use App\GaelO\UseCases\GetVisitsFromVisitType\GetVisitsFromVisitType;
+use App\GaelO\UseCases\GetVisitsFromVisitType\GetVisitsFromVisitTypeRequest;
+use App\GaelO\UseCases\GetVisitsFromVisitType\GetVisitsFromVisitTypeResponse;
 use App\GaelO\UseCases\GetVisitsTree\GetVisitsTree;
 use App\GaelO\UseCases\GetVisitsTree\GetVisitsTreeRequest;
 use App\GaelO\UseCases\GetVisitsTree\GetVisitsTreeResponse;
@@ -213,5 +219,42 @@ class StudyController extends Controller
             ->setStatusCode($exportStudyDataResponse->status, $exportStudyDataResponse->statusText);
         }
     }
+
+    public function getVisitsFromVisitType(string $studyName, int $visitTypeId, GetVisitsFromVisitType $getVisitsFromVisitType, GetVisitsFromVisitTypeRequest $getVisitsFromVisitTypeRequest, GetVisitsFromVisitTypeResponse $getVisitsFromVisitTypeResponse){
+        $currentUser = Auth::user();
+        $getVisitsFromVisitTypeRequest->currentUserId = $currentUser['id'];
+        $getVisitsFromVisitTypeRequest->studyName = $studyName;
+        $getVisitsFromVisitTypeRequest->visitTypeId = $visitTypeId;
+
+        $getVisitsFromVisitType->execute($getVisitsFromVisitTypeRequest, $getVisitsFromVisitTypeResponse);
+
+        if($getVisitsFromVisitTypeResponse->body){
+            return response()->json($getVisitsFromVisitTypeResponse->body)
+            ->setStatusCode($getVisitsFromVisitTypeResponse->status, $getVisitsFromVisitTypeResponse->statusText);
+        }else{
+            return response()->noContent()
+            ->setStatusCode($getVisitsFromVisitTypeResponse->status, $getVisitsFromVisitTypeResponse->statusText);
+        }
+    }
+
+
+    public function getReviewsFromVisitType(string $studyName, int $visitTypeId, GetReviewsFromVisitType $getReviewsFromVisitType, GetReviewsFromVisitTypeRequest $getReviewsFromVisitTypeRequest, GetReviewsFromVisitTypeResponse $getReviewsFromVisitTypeResponse){
+        $currentUser = Auth::user();
+        $getReviewsFromVisitTypeRequest->currentUserId = $currentUser['id'];
+        $getReviewsFromVisitTypeRequest->studyName = $studyName;
+        $getReviewsFromVisitTypeRequest->visitTypeId = $visitTypeId;
+
+        $getReviewsFromVisitType->execute($getReviewsFromVisitTypeRequest, $getReviewsFromVisitTypeResponse);
+
+        if($getReviewsFromVisitTypeResponse->body){
+            return response()->json($getReviewsFromVisitTypeResponse->body)
+            ->setStatusCode($getReviewsFromVisitTypeResponse->status, $getReviewsFromVisitTypeResponse->statusText);
+        }else{
+            return response()->noContent()
+            ->setStatusCode($getReviewsFromVisitTypeResponse->status, $getReviewsFromVisitTypeResponse->statusText);
+        }
+    }
+
+
 
 }
