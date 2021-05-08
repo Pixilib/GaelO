@@ -38,4 +38,6 @@ interface DicomStudyRepositoryInterface {
 
     public function getDicomStudyFromVisitIdArray(array $visitId, bool $withTrashed) : array ;
 
+    public function getDicomStudyFromVisitIdArrayWithSeries(array $visitId, bool $withTrashed) : array ;
+
 }

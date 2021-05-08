@@ -31,16 +31,17 @@ Reviews (GET, POST, PUT, DELETE, PATCH (unlock))
 Reviews From Visits (GET)
 review-progression (GET)
 studies/{studyName}/dicom-studies (GET)
-studies/{studyName}/dicom-series/file (POST)
+studies/{studyName}/dicom-series/file (GET)
+studies/{studyName}/visit-types/{visitTypeId}/visits (GET)
+studies/{studyName}/visit-types/{visitTypeId}/reviews (GET)
+studies/{studyName}/visit-types/{visitTypeId}/investigator-forms (GET)
+studies/{studyName}/visit-types/{visitTypeId}/dicom-studies (GET)
 
 Salim TODO :
 
 Download Dicom :
 Eliminer l'entity custom au profit de l'entity generique
 Faire FrontEnd (tout lister au niveau series?)
-
-Statistics :
-Reste DicomStudies (+- dicomseries)
 
 Messagerie à designer
 

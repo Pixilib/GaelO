@@ -11,6 +11,9 @@ use App\GaelO\UseCases\DeleteStudy\DeleteStudyResponse;
 use App\GaelO\UseCases\ExportStudyData\ExportStudyData;
 use App\GaelO\UseCases\ExportStudyData\ExportStudyDataRequest;
 use App\GaelO\UseCases\ExportStudyData\ExportStudyDataResponse;
+use App\GaelO\UseCases\GetDicomsStudiesFromVisitType\GetDicomsStudiesFromVisitType;
+use App\GaelO\UseCases\GetDicomsStudiesFromVisitType\GetDicomsStudiesFromVisitTypeRequest;
+use App\GaelO\UseCases\GetDicomsStudiesFromVisitType\GetDicomsStudiesFromVisitTypeResponse;
 use App\GaelO\UseCases\GetInvestigatorFormsFromVisitType\GetInvestigatorFormsFromVisitType;
 use App\GaelO\UseCases\GetInvestigatorFormsFromVisitType\GetInvestigatorFormsFromVisitTypeRequest;
 use App\GaelO\UseCases\GetInvestigatorFormsFromVisitType\GetInvestigatorFormsFromVisitTypeResponse;
@@ -53,6 +56,8 @@ use App\GaelO\UseCases\ReactivateStudy\ReactivateStudyResponse;
 use App\GaelO\Util;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Tests\Feature\TestVisits\GetDicomsStudiesFromVisitTypeTest;
+
 class StudyController extends Controller
 {
     public function createStudy(Request $request, CreateStudy $createStudy, CreateStudyRequest $createStudyRequest, CreateStudyResponse $createStudyResponse){
@@ -258,7 +263,7 @@ class StudyController extends Controller
         }
     }
 
-    public function getInvestigatorFromsFromVisitType(string $studyName, int $visitTypeId, GetInvestigatorFormsFromVisitType $getInvestigatorFormsFromVisitType, GetInvestigatorFormsFromVisitTypeRequest $getInvestigatorFormsFromVisitTypeRequest, GetInvestigatorFormsFromVisitTypeResponse $getInvestigatorFormsFromVisitTypeResponse){
+    public function getInvestigatorFormsFromVisitType(string $studyName, int $visitTypeId, GetInvestigatorFormsFromVisitType $getInvestigatorFormsFromVisitType, GetInvestigatorFormsFromVisitTypeRequest $getInvestigatorFormsFromVisitTypeRequest, GetInvestigatorFormsFromVisitTypeResponse $getInvestigatorFormsFromVisitTypeResponse){
         $currentUser = Auth::user();
         $getInvestigatorFormsFromVisitTypeRequest->currentUserId = $currentUser['id'];
         $getInvestigatorFormsFromVisitTypeRequest->studyName = $studyName;
@@ -275,8 +280,22 @@ class StudyController extends Controller
         }
     }
 
+    public function getDicomStudiesFromVisitType(string $studyName, int $visitTypeId, GetDicomsStudiesFromVisitType $getDicomsStudiesFromVisitType, GetDicomsStudiesFromVisitTypeRequest $getDicomsStudiesFromVisitTypeRequest, GetDicomsStudiesFromVisitTypeResponse $getDicomsStudiesFromVisitTypeResponse){
 
+        $currentUser = Auth::user();
+        $getDicomsStudiesFromVisitTypeRequest->currentUserId = $currentUser['id'];
+        $getDicomsStudiesFromVisitTypeRequest->studyName = $studyName;
+        $getDicomsStudiesFromVisitTypeRequest->visitTypeId = $visitTypeId;
 
+        $getDicomsStudiesFromVisitType->execute($getDicomsStudiesFromVisitTypeRequest, $getDicomsStudiesFromVisitTypeResponse);
 
+        if($getDicomsStudiesFromVisitTypeResponse->body){
+            return response()->json($getDicomsStudiesFromVisitTypeResponse->body)
+            ->setStatusCode($getDicomsStudiesFromVisitTypeResponse->status, $getDicomsStudiesFromVisitTypeResponse->statusText);
+        }else{
+            return response()->noContent()
+            ->setStatusCode($getDicomsStudiesFromVisitTypeResponse->status, $getDicomsStudiesFromVisitTypeResponse->statusText);
+        }
+    }
 
 }

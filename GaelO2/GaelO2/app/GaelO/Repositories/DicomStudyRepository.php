@@ -250,4 +250,18 @@ class DicomStudyRepository implements DicomStudyRepositoryInterface
         return $answer->count() === 0 ? []  : $answer->toArray();
 
     }
+
+    public function getDicomStudyFromVisitIdArrayWithSeries(array $visitId, bool $withTrashed) : array {
+
+        $queryBuilder = $this->dicomStudy->whereIn('visit_id', $visitId)->with('dicomSeries');
+
+        if($withTrashed){
+            $queryBuilder->withTrashed();
+        }
+
+        $answer = $queryBuilder->get();
+
+        return $answer->count() === 0 ? []  : $answer->toArray();
+
+    }
 }
