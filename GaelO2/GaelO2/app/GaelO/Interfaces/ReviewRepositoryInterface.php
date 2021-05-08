@@ -18,13 +18,15 @@ interface ReviewRepositoryInterface {
 
     public function getReviewFormForStudyVisitUser(string $studyName, int $visitId, int $userId ) : array ;
 
-    public function isExistingFormForStudyVisitUser(string $studyName, int $visitId, int $userId) : bool ;
+    public function isExistingReviewForStudyVisitUser(string $studyName, int $visitId, int $userId) : bool ;
 
     public function getReviewsForStudyVisit(string $studyName, int $visitId, bool $onlyValidated ) : array ;
 
-    public function unlockReviewForm(int $reviewId) : void ;
+    public function unlockReview(int $reviewId) : void ;
 
     public function getUsersHavingReviewedForStudyVisitType(string $studyName, int $visitTypeId): array ;
 
-    public function getReviewFromVisitIdArrayStudyName(array $visitId, string $studyName, bool $withTrashed) : array ;
+    public function getReviewsFromVisitIdArrayStudyName(array $visitId, string $studyName, bool $withTrashed) : array ;
+
+    public function getInvestigatorsFormsFromVisitIdArrayStudyName(array $visitId, string $studyName, bool $withTrashed) : array;
 }

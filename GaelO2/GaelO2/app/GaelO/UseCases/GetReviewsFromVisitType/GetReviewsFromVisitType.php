@@ -40,7 +40,7 @@ class GetReviewsFromVisitType
             $visitsId = array_map(function($visit){ return $visit['id']; }, $visits);
 
             //Get Validated review for these visits
-            $reviews = $this->reviewRepositoryInterface->getReviewFromVisitIdArrayStudyName($visitsId, $studyName, false);
+            $reviews = $this->reviewRepositoryInterface->getReviewsFromVisitIdArrayStudyName($visitsId, $studyName, false);
 
             $answer = [];
 

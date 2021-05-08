@@ -49,7 +49,7 @@ class CreateReview {
                 throw new GaelOBadRequestException('VisitID and Validated Status are mandatory');
             }
 
-            if($this->reviewRepositoryInterface->isExistingFormForStudyVisitUser( $createReviewFormRequest->studyName, $createReviewFormRequest->visitId, $createReviewFormRequest->currentUserId) ){
+            if($this->reviewRepositoryInterface->isExistingReviewForStudyVisitUser( $createReviewFormRequest->studyName, $createReviewFormRequest->visitId, $createReviewFormRequest->currentUserId) ){
                 throw new GaelOConflictException('Review Already Created');
             };
 

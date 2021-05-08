@@ -117,7 +117,7 @@ class CreateReviewFormTest extends TestCase
         $currentUserId = AuthorizationTools::actAsAdmin(false);
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_REVIEWER, $studyName);
 
-        Review::factory()->userId($currentUserId)->studyName($studyName)->visitId($visitId)->create();
+        Review::factory()->userId($currentUserId)->studyName($studyName)->visitId($visitId)->reviewForm()->create();
 
         $payload = [
             'data' => ['comment' => 'CR'],

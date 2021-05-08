@@ -163,22 +163,22 @@ class ExportStudyService {
 
         $spreadsheetAdapter = new SpreadsheetAdapter();
 
-        $reviewData = $this->reviewRepositoryInterface->getReviewFromVisitIdArrayStudyName($this->visitIdArray, $this->studyName, true);
+        $reviewData = $this->reviewRepositoryInterface->getReviewsFromVisitIdArrayStudyName($this->visitIdArray, $this->studyName, true);
+
+        $localForms = $this->reviewRepositoryInterface->getInvestigatorsFormsFromVisitIdArrayStudyName($this->visitIdArray, $this->studyName, true);
 
         //Flatten the nested review status
-        $flattenedData = array_map(function($review){
+        $reviewersForms = array_map(function($review){
             $reviewData = $review['review_data'];
             unset($review['review_data']);
             return array_merge($review, $reviewData);
         }, $reviewData);
 
-        $investigatorsForms = [];
-        $reviewersForms = [];
-
-        foreach($flattenedData as $review){
-            if ($review['local']) $investigatorsForms[] = $review;
-            else $reviewersForms[] = $review;
-        }
+        $investigatorsForms = array_map(function($review){
+            $reviewData = $review['review_data'];
+            unset($review['review_data']);
+            return array_merge($review, $reviewData);
+        }, $localForms);
 
         $spreadsheetAdapter->addSheet('InvestigatorsForms');
         $spreadsheetAdapter->fillData('InvestigatorsForms', $investigatorsForms);

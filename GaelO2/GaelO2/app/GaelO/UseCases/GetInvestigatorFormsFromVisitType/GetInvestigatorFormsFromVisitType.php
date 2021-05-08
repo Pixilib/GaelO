@@ -7,6 +7,7 @@ use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\VisitRepositoryInterface;
 use App\GaelO\Services\AuthorizationService;
+use App\GaelO\UseCases\GetReviewForm\ReviewFormEntity;
 use Exception;
 
 class GetInvestigatorFormsFromVisitType {
@@ -26,6 +27,7 @@ class GetInvestigatorFormsFromVisitType {
         try {
 
             $studyName = $getInvestigatorFormsFromVisitTypeRequest->studyName;
+            //SK ICI VERIFIER QUE VISIT TYPE EST BIEN DANS UNE STUDY PERMISE
             $this->checkAuthorization($getInvestigatorFormsFromVisitTypeRequest->currentUserId, $studyName);
 
             //Get Visits in the asked visitTypeId
@@ -34,7 +36,7 @@ class GetInvestigatorFormsFromVisitType {
             $visitsId = array_map(function($visit){ return $visit['id']; }, $visits);
 
             //Get Validated review for these visits
-            $reviews = $this->reviewRepositoryInterface->getReviewFromVisitIdArrayStudyName($visitsId, $studyName, false);
+            $reviews = $this->reviewRepositoryInterface->getInvestigatorsFormsFromVisitIdArrayStudyName($visitsId, $studyName, false);
 
             $answer = [];
 

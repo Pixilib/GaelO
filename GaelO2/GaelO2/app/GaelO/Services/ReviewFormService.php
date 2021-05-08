@@ -98,7 +98,7 @@ class ReviewFormService {
     }
 
     public function unlockReview(int $reviewId) : void {
-        $this->reviewRepositoryInterface->unlockReviewForm($reviewId);
+        $this->reviewRepositoryInterface->unlockReview($reviewId);
         $this->doSpecificReviewDecisions();
     }
 
