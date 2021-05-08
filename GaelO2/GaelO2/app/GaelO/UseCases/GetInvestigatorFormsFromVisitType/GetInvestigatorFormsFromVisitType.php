@@ -5,20 +5,23 @@ namespace App\GaelO\UseCases\GetInvestigatorFormsFromVisitType;
 use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
+use App\GaelO\Interfaces\ReviewRepositoryInterface;
 use App\GaelO\Interfaces\VisitRepositoryInterface;
 use App\GaelO\Services\AuthorizationService;
-use App\GaelO\UseCases\GetReviewForm\ReviewFormEntity;
+use App\GaelO\UseCases\GetInvestigatorForm\InvestigatorFormEntity;
 use Exception;
 
 class GetInvestigatorFormsFromVisitType {
 
     private AuthorizationService $authorizationService;
     private VisitRepositoryInterface $visitRepositoryInterface;
+    private ReviewRepositoryInterface $reviewRepositoryInterface;
 
-    public function __construct(AuthorizationService $authorizationService, VisitRepositoryInterface $visitRepositoryInterface)
+    public function __construct(AuthorizationService $authorizationService, VisitRepositoryInterface $visitRepositoryInterface, ReviewRepositoryInterface $reviewRepositoryInterface)
     {
         $this->authorizationService = $authorizationService;
         $this->visitRepositoryInterface = $visitRepositoryInterface;
+        $this->reviewRepositoryInterface = $reviewRepositoryInterface;
 
     }
 
@@ -42,7 +45,7 @@ class GetInvestigatorFormsFromVisitType {
 
             foreach ($reviews as $review) {
 
-                $reviewEntity = ReviewFormEntity::fillFromDBReponseArray($review);
+                $reviewEntity = InvestigatorFormEntity::fillFromDBReponseArray($review);
                 $answer[] = $reviewEntity;
 
             }

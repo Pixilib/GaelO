@@ -11,6 +11,9 @@ use App\GaelO\UseCases\DeleteStudy\DeleteStudyResponse;
 use App\GaelO\UseCases\ExportStudyData\ExportStudyData;
 use App\GaelO\UseCases\ExportStudyData\ExportStudyDataRequest;
 use App\GaelO\UseCases\ExportStudyData\ExportStudyDataResponse;
+use App\GaelO\UseCases\GetInvestigatorFormsFromVisitType\GetInvestigatorFormsFromVisitType;
+use App\GaelO\UseCases\GetInvestigatorFormsFromVisitType\GetInvestigatorFormsFromVisitTypeRequest;
+use App\GaelO\UseCases\GetInvestigatorFormsFromVisitType\GetInvestigatorFormsFromVisitTypeResponse;
 use App\GaelO\UseCases\GetKnownOrthancID\GetKnownOrthancID;
 use App\GaelO\UseCases\GetKnownOrthancID\GetKnownOrthancIDRequest;
 use App\GaelO\UseCases\GetKnownOrthancID\GetKnownOrthancIDResponse;
@@ -254,6 +257,25 @@ class StudyController extends Controller
             ->setStatusCode($getReviewsFromVisitTypeResponse->status, $getReviewsFromVisitTypeResponse->statusText);
         }
     }
+
+    public function getInvestigatorFromsFromVisitType(string $studyName, int $visitTypeId, GetInvestigatorFormsFromVisitType $getInvestigatorFormsFromVisitType, GetInvestigatorFormsFromVisitTypeRequest $getInvestigatorFormsFromVisitTypeRequest, GetInvestigatorFormsFromVisitTypeResponse $getInvestigatorFormsFromVisitTypeResponse){
+        $currentUser = Auth::user();
+        $getInvestigatorFormsFromVisitTypeRequest->currentUserId = $currentUser['id'];
+        $getInvestigatorFormsFromVisitTypeRequest->studyName = $studyName;
+        $getInvestigatorFormsFromVisitTypeRequest->visitTypeId = $visitTypeId;
+
+        $getInvestigatorFormsFromVisitType->execute($getInvestigatorFormsFromVisitTypeRequest, $getInvestigatorFormsFromVisitTypeResponse);
+
+        if($getInvestigatorFormsFromVisitTypeResponse->body){
+            return response()->json($getInvestigatorFormsFromVisitTypeResponse->body)
+            ->setStatusCode($getInvestigatorFormsFromVisitTypeResponse->status, $getInvestigatorFormsFromVisitTypeResponse->statusText);
+        }else{
+            return response()->noContent()
+            ->setStatusCode($getInvestigatorFormsFromVisitTypeResponse->status, $getInvestigatorFormsFromVisitTypeResponse->statusText);
+        }
+    }
+
+
 
 
 

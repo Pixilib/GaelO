@@ -41,6 +41,7 @@ class GetReviewsFromVisitTypeTest extends TestCase
 
         $visitType->each(function ($visitType, $key) use ($study) {
             $visit = Visit::factory()->visitTypeId($visitType->id)->create();
+            Review::factory()->visitId($visit->id)->reviewForm()->studyName($study->name)->create();
             Review::factory()->visitId($visit->id)->studyName($study->name)->create();
             ReviewStatus::factory()->studyName($study->name)->visitId($visit->id)->create();
         });
@@ -66,4 +67,24 @@ class GetReviewsFromVisitTypeTest extends TestCase
         $answer = $this->json('GET', 'api/studies/' . $this->studyName . '/visit-types/' . $this->visitTypeId . '/visits');
         $answer->assertStatus(403);
     }
+
+
+    public function testGetInvestigatorFormsFromVisitType()
+    {
+
+        $currentUserId = AuthorizationTools::actAsAdmin(false);
+        AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $this->studyName);
+        $answer = $this->json('GET', 'api/studies/' . $this->studyName . '/visit-types/' . $this->visitTypeId . '/investigator-forms');
+        $answer->assertStatus(200);
+    }
+
+    public function testGetInvestigatorFormsFromVisitTypeShouldFailNotSupervisor()
+    {
+
+        AuthorizationTools::actAsAdmin(false);
+        $answer = $this->json('GET', 'api/studies/' . $this->studyName . '/visit-types/' . $this->visitTypeId . '/investigator-forms');
+        $answer->assertStatus(403);
+    }
+
+
 }

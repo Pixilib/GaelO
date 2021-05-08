@@ -69,9 +69,9 @@ Route::middleware(['auth:api', 'refresh_token'])->group(function () {
     Route::get('studies/{studyName}/visits', [VisitController::class, 'getVisitsFromStudy'] );
     Route::get('studies/{studyName}/visit-types/{visitTypeId}/visits', [StudyController::class, 'getVisitsFromVisitType'] );
     Route::get('studies/{studyName}/visit-types/{visitTypeId}/reviews', [StudyController::class, 'getReviewsFromVisitType'] );
+    Route::get('studies/{studyName}/visit-types/{visitTypeId}/investigator-forms', [StudyController::class, 'getInvestigatorFromsFromVisitType'] );
 
     //SK ROUTE STATISTIQUES A FAIRE
-    Route::get('studies/{studyName}/visit-types/{visitTypeId}/investigator-forms', [StudyController::class, 'getReviewsFromVisitType'] );
     Route::get('studies/{studyName}/visit-types/{visitTypeId}/dicom-studies', [StudyController::class, 'getReviewProgression'] );
 
 

@@ -40,8 +40,7 @@ Eliminer l'entity custom au profit de l'entity generique
 Faire FrontEnd (tout lister au niveau series?)
 
 Statistics :
-Reste Investigateur form et DicomStudies (+- dicomseries)
-Attention Repository review diffentie mal les review des investigator forms
+Reste DicomStudies (+- dicomseries)
 
 Messagerie à designer
 
@@ -68,6 +67,7 @@ Verifier que quand on appelle un child si le parent est pas delete (cf probleme 
 *** APIs ***
 - API Review
 Review form /file  (POST, GET, DELETE)
+Investigator form /file  (POST, GET, DELETE)
 Quid de adjudication ou il faut faire remonter des info custom au front ?
 
 **** Tests ***
@@ -88,8 +88,6 @@ TUS est Joignable sur Delete => peut etre gerer le failure/cancel pour vider tus
 Deploiement ajouter le login / mdp pour dans orthanc pacs + bloquer delete dans lua script
 Dans remplissage DTO request, si variable boolean, un input string est interpretée à true.
 QC Not Needed => autoriser ou pas remove de series ?
-Autoriser les fichier pour les form investigateurs ?
-
 
 Reste Supervisor :
 - Upload Manager

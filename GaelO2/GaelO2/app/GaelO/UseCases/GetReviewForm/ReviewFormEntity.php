@@ -12,6 +12,7 @@ class ReviewFormEntity {
     public bool $adjudication;
     public array $data;
     public array $files;
+    public ?string $username = null;
 
     public static function fillFromDBReponseArray(array $array){
         $reviewFormEntity  = new ReviewFormEntity();
@@ -25,6 +26,10 @@ class ReviewFormEntity {
         $reviewFormEntity->data = $array['review_data'];
         $reviewFormEntity->files = $array['sent_files'];
         return $reviewFormEntity;
+    }
+
+    public function setInvestigatorDetails(string $username){
+        $this->username = $username;
     }
 
 }
