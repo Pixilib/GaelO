@@ -671,7 +671,7 @@ CREATE TABLE `visits` (
 CREATE TABLE `visit_group` (
   `id` int(11) NOT NULL,
   `study` varchar(32) NOT NULL,
-  `group_modality` set('PT','MR','CT') NOT NULL
+  `group_modality` set('PT','MR','CT', 'RTSTRUCT') NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------

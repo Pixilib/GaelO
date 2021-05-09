@@ -37,6 +37,7 @@
 								<option value=\"PT\">PT</option> \
 								<option value=\"CT\">CT</option> \
 								<option value=\"MR\">MR</option> \
+								<option value=\"RTSTRUCT\">RTSTRUCT</option> \
 							</select> \
 						</td> \
 						<td contenteditable=true>Name</td> \
@@ -55,7 +56,8 @@
 						</td> \
 						<td contenteditable=true> "+ JSON.stringify(
 							{ "seriesDescriptionConstraints" : [],
-							"structureSetConstraints": [] }
+							"structureSetConstraints": { "optional" : [], "mandatory" : []} }
+
 						)+"</td> \
 						<td><input type=\"button\" value=\"Remove\" class=\"btn btn-danger\" onClick=\"removeRow(this)\"/></td> \
 					</tr>"
@@ -82,7 +84,11 @@
 				let dayMin=$(this).find("td:eq(7)  > input[type='number']").val();
 				let dayMax=$(this).find("td:eq(8)  > input[type='number']").val();
 				let anonProfile=$(this).find("td:eq(9)  > select").find(":selected").val();
-				let dicomConstraints=JSON.parse( $(this).find("td:eq(10)").text());
+				let dicomConstraints = undefined
+				try{
+					dicomConstraints=JSON.parse( $(this).find("td:eq(10)").text());
+				} catch (error){ }
+				
 
 				let visitObject = {
 					name : visitName,
@@ -93,9 +99,11 @@
 					optional : optional,
 					dayMin : dayMin,
 					dayMax : dayMax,
-					anonProfile : anonProfile,
-					dicomConstraints : dicomConstraints
+					anonProfile : anonProfile
 				}
+
+				if(dicomConstraints != null )visitObject['dicomConstraints'] = dicomConstraints
+				
 				//add visit in a modality property
 				//if modality not found intialize and array to recieve visit objects
 				if( "undefined" === typeof(dataArray[visitModality]) ){
