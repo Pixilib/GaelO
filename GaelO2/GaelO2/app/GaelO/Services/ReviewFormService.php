@@ -10,6 +10,7 @@ use App\GaelO\Interfaces\ReviewStatusRepositoryInterface;
 use App\GaelO\Services\MailServices;
 use App\GaelO\Services\SpecificStudiesRules\AbstractStudyRules;
 use App\GaelO\Services\VisitService;
+use App\GaelO\Util;
 
 class ReviewFormService {
 
@@ -124,6 +125,34 @@ class ReviewFormService {
                 $conclusion
             );
         }
+
+    }
+
+    public function attachFile(string $filename, string $mimeType, $binaryData) {
+
+        if($mimeType !== 'application/pdf'){
+            throw new GaelOBadRequestException("File Extension Not Allowed");
+        }
+
+        if( ! Util::is_base64_encoded($binaryData)){
+            throw new GaelOBadRequestException("Payload should be base64 encoded");
+        }
+
+        $storagePath = LaravelFunctionAdapter::getStoragePath();
+
+        $destinationPath = '/attached_review_file/'.$this->studyName;
+        if (!is_dir($storagePath.'/'.$destinationPath)) {
+            mkdir($storagePath.'/'.$destinationPath, 0755, true);
+        }
+
+        file_put_contents ( $storagePath.'/'.$destinationPath.'/'.$filename, base64_decode($binaryData) );
+
+        $documentationEntity['path']= $destinationPath.'/'.$filename;
+
+        //SK A Continuer ici
+       // $this->documentationRepositoryInterface->update($this->reviewStatusEntity->id, "attached_review_file");
+
+
 
     }
 

@@ -10,6 +10,7 @@ use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\DocumentationRepositoryInterface;
 use App\GaelO\Interfaces\TrackerRepositoryInterface;
 use App\GaelO\Services\AuthorizationService;
+use App\GaelO\Util;
 use Exception;
 
 class CreateDocumentationFile{
@@ -36,7 +37,7 @@ class CreateDocumentationFile{
                 throw new GaelOBadRequestException("Only application/pdf content accepted");
             }
 
-            if( ! $this->is_base64_encoded($createDocumentationFileRequest->binaryData)){
+            if( ! Util ::is_base64_encoded($createDocumentationFileRequest->binaryData)){
                 throw new GaelOBadRequestException("Payload should be base64 encoded");
             }
 
@@ -88,11 +89,5 @@ class CreateDocumentationFile{
         }
     }
 
-    private function is_base64_encoded($data) : bool {
-        if (preg_match('%^[a-zA-Z0-9/+]*={0,2}$%', $data)) {
-        return true;
-        } else {
-        return false;
-        }
-    }
+
 }

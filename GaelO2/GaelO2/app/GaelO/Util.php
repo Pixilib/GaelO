@@ -125,4 +125,12 @@ class Util {
         return $files;
 
     }
+
+    public static function is_base64_encoded($data) : bool {
+        if (preg_match('%^[a-zA-Z0-9/+]*={0,2}$%', $data)) {
+        return true;
+        } else {
+        return false;
+        }
+    }
 }
