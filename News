@@ -1,6 +1,8 @@
 GaelO
 
 --Pending Changes --
+  Upgrade Uploader to
+  DicomTag constraints for upload
 
 --GaelO 1.4.1 16/03/21 --
   Upgrade GaelO_Uploader to 1.1.0
