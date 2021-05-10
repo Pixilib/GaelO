@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\GaelO\UseCases\CreateFileToForm\CreateFileToForm;
+use App\GaelO\UseCases\CreateFileToForm\CreateFileToFormRequest;
+use App\GaelO\UseCases\CreateFileToForm\CreateFileToFormResponse;
 use App\GaelO\UseCases\CreateInvestigatorForm\CreateInvestigatorForm;
 use App\GaelO\UseCases\CreateInvestigatorForm\CreateInvestigatorFormRequest;
 use App\GaelO\UseCases\CreateInvestigatorForm\CreateInvestigatorFormResponse;
@@ -253,6 +256,28 @@ class ReviewController extends Controller
             ->setStatusCode($unlockReviewFormResponse->status, $unlockReviewFormResponse->statusText);
         }
 
+    }
+
+    public function createReviewFile(int $reviewId, string $key, Request $request, CreateFileToForm $createFileToForm, CreateFileToFormRequest $createFileToFormRequest, CreateFileToFormResponse $createFileToFormResponse){
+
+        $currentUser = Auth::user();
+        $requestData = $request->input();
+
+        $createFileToFormRequest->currentUserId = $currentUser['id'];
+        $createFileToFormRequest->id = $reviewId;
+        $createFileToFormRequest->key = $key;
+        $createFileToFormRequest->contentType = $request->headers->get('Content-Type');
+        $createFileToFormRequest->binaryData = $requestData[0];
+
+        $createFileToForm->execute($createFileToFormRequest, $createFileToFormResponse);
+
+        if($createFileToFormResponse->body != null){
+            return response()->json($createFileToFormResponse->body)
+            ->setStatusCode($createFileToFormResponse->status, $createFileToFormResponse->statusText);
+        } else {
+            return response()->noContent()
+            ->setStatusCode($createFileToFormResponse->status, $createFileToFormResponse->statusText);
+        }
     }
 
 

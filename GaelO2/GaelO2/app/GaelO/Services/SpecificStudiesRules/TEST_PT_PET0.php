@@ -29,4 +29,12 @@ class TEST_PT_PET0 extends AbstractStudyRules {
         return 'CR';
     }
 
+    public function getAllowedKeyAndMimeTypeInvestigator() : array {
+        return [];
+    }
+
+    public function getAllowedKeyAndMimeTypeReviewer() : array {
+        return [];
+    }
+
 }

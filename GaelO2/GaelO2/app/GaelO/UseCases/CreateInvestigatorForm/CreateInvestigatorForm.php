@@ -52,7 +52,7 @@ class CreateInvestigatorForm {
             );
 
             $this->investigatorFormService->setCurrentUserId($createInvestigatorFormRequest->currentUserId);
-            $this->investigatorFormService->setVisitContext($visitContext);
+            $this->investigatorFormService->setVisitContextAndStudy($visitContext, $studyName);
             $this->investigatorFormService->saveInvestigatorForm($createInvestigatorFormRequest->data, $createInvestigatorFormRequest->validated);
 
             $actionDetails = [

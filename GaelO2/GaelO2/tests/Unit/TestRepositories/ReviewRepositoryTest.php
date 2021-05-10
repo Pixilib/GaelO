@@ -194,5 +194,12 @@ class ReviewRepositoryTest extends TestCase
         $this->assertEquals(10, sizeof($reviewData));
     }
 
+    public function testUpdateReviewFiles(){
+        $review = Review::factory()->create();
+        $this->reviewRepository->updateReviewFile($review->id, ['myKey' => 'myFile.pdf'] );
+        $updatedReview = Review::find($review->id);
+        $this->assertArrayHasKey('myKey', $updatedReview['sent_files']);
+    }
+
 
 }

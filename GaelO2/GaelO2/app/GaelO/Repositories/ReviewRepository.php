@@ -70,6 +70,13 @@ class ReviewRepository implements ReviewRepositoryInterface {
 
     }
 
+    public function updateReviewFile(int $reviewId, array $associatedFile ) : void {
+
+        $data['sent_files'] = $associatedFile;
+        $this->update($reviewId, $data);
+
+    }
+
     public function unlockReview(int $reviewId) : void {
         $reviewEntity = $this->review->findOrFail($reviewId);
         $reviewEntity->validated = false;

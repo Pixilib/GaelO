@@ -14,6 +14,10 @@ abstract class AbstractStudyRules {
 
     abstract function getReviewConclusion() : string ;
 
+    abstract function getAllowedKeyAndMimeTypeInvestigator() : array ;
+
+    abstract function getAllowedKeyAndMimeTypeReviewer() : array ;
+
     public function getReviewAvailability(string $reviewStatus)  : bool {
 		if ( $reviewStatus === Constants::REVIEW_STATUS_DONE ) {
             //If Done reached make the review unavailable for review

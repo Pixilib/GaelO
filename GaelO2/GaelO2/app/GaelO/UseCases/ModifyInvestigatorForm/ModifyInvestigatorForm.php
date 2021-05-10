@@ -47,7 +47,7 @@ class ModifyInvestigatorForm {
             );
 
             $this->investigatorFormService->setCurrentUserId($modifyInvestigatorFormRequest->currentUserId);
-            $this->investigatorFormService->setVisitContext($visitContext);
+            $this->investigatorFormService->setVisitContextAndStudy($visitContext, $studyName);
             $this->investigatorFormService->updateInvestigatorForm($modifyInvestigatorFormRequest->data, $modifyInvestigatorFormRequest->validated);
 
             $actionDetails = [

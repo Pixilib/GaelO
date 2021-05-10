@@ -1,8 +1,8 @@
 <?php
 
-namespace App\GaelO\UseCases\CreateFileToReview;
+namespace App\GaelO\UseCases\CreateFileToForm;
 
-class CreateFileToReviewResponse{
+class CreateFileToFormResponse{
     public int $status;
     public string $statusText;
     public $body;

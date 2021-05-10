@@ -16,6 +16,8 @@ interface ReviewRepositoryInterface {
 
     public function updateReview(int $reviewId, int $userId, array $reviewData, bool $validated ) : void ;
 
+    public function updateReviewFile(int $reviewId, array $associatedFile ) : void ;
+
     public function getReviewFormForStudyVisitUser(string $studyName, int $visitId, int $userId ) : array ;
 
     public function isExistingReviewForStudyVisitUser(string $studyName, int $visitId, int $userId) : bool ;
