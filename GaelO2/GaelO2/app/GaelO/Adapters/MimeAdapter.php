@@ -7,14 +7,14 @@ use Mimey\MimeTypes;
 class MimeAdapter
 {
 
-    public static function getExtensionFromMime(string $mime)
+    public static function getExtensionFromMime(string $mime) : string
     {
         $mimes = new MimeTypes();
-        return $mimes->getMimeType($mime);
+        return $mimes->getExtension($mime);
     }
 
-    public static function getMimeFromExtension(string $extension){
+    public static function getMimeFromExtension(string $extension) : string {
         $mimes = new MimeTypes();
-        $mimes->getMimeType($extension);
+        return $mimes->getMimeType($extension);
     }
 }

@@ -1,6 +1,7 @@
 <?php
 namespace App\GaelO\Services\SpecificStudiesRules;
 
+use App\GaelO\Adapters\MimeAdapter;
 use App\GaelO\Adapters\ValidatorAdapter;
 use App\GaelO\Constants\Constants;
 use App\GaelO\Services\SpecificStudiesRules\AbstractStudyRules;
@@ -34,7 +35,7 @@ class TEST_PT_PET0 extends AbstractStudyRules {
     }
 
     public function getAllowedKeyAndMimeTypeReviewer() : array {
-        return [];
+        return ['41' => MimeAdapter::getMimeFromExtension('csv')];
     }
 
 }

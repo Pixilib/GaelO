@@ -9,7 +9,8 @@ use App\GaelO\Interfaces\ReviewStatusRepositoryInterface;
 use App\GaelO\Services\SpecificStudiesRules\AbstractStudyRules;
 use App\GaelO\Util;
 
-class FormService {
+class FormService
+{
 
     protected VisitService $visitService;
     protected ReviewRepositoryInterface $reviewRepositoryInterface;
@@ -25,12 +26,12 @@ class FormService {
     protected int $patientCode;
     protected int $uploaderId;
 
-    public function __construct(VisitService $visitService,
+    public function __construct(
+        VisitService $visitService,
         ReviewRepositoryInterface $reviewRepositoryInterface,
         ReviewStatusRepositoryInterface $reviewStatusRepositoryInterface,
         MailServices $mailServices
-        )
-    {
+    ) {
         $this->visitService = $visitService;
         $this->reviewRepositoryInterface = $reviewRepositoryInterface;
         $this->reviewStatusRepositoryInterface = $reviewStatusRepositoryInterface;
@@ -38,11 +39,13 @@ class FormService {
     }
 
 
-    public function setCurrentUserId(int $currentUserId){
+    public function setCurrentUserId(int $currentUserId)
+    {
         $this->currentUserId = $currentUserId;
     }
 
-    public function setVisitContextAndStudy(array $visitContext, string $studyName){
+    public function setVisitContextAndStudy(array $visitContext, string $studyName)
+    {
 
         $this->visitId = $visitContext['id'];
         $this->visitService->setVisitId($visitContext['id']);
@@ -52,15 +55,15 @@ class FormService {
         $this->uploaderId = $this->visitContext['creator_user_id'];
         $this->studyName = $studyName;
         $modality = $this->visitContext['visit_type']['visit_group']['modality'];
-        $this->abstractStudyRules = LaravelFunctionAdapter::make('\App\GaelO\Services\SpecificStudiesRules\\'.$this->studyName.'_'.$modality.'_'.$this->visitType);
-
+        $this->abstractStudyRules = LaravelFunctionAdapter::make('\App\GaelO\Services\SpecificStudiesRules\\' . $this->studyName . '_' . $modality . '_' . $this->visitType);
     }
 
-    public function attachFile(array $reviewEntity, string $key, string $filename, string $mimeType, $binaryData) {
+    public function attachFile(array $reviewEntity, string $key, string $filename, string $mimeType, $binaryData)
+    {
 
         $keyMimeArray = [];
 
-        if($reviewEntity['local']){
+        if ($reviewEntity['local']) {
             $keyMimeArray = $this->abstractStudyRules->getAllowedKeyAndMimeTypeInvestigator();
         } else {
             $keyMimeArray = $this->abstractStudyRules->getAllowedKeyAndMimeTypeReviewer();
@@ -68,27 +71,34 @@ class FormService {
 
         $expectedMime = $keyMimeArray[$key];
 
-        if ( $mimeType !== $expectedMime ){
+        if ($mimeType !== $expectedMime) {
             throw new GaelOBadRequestException("File Key or Mime Not Allowed");
         }
 
-        if( !Util::is_base64_encoded($binaryData) ){
+        if (!Util::is_base64_encoded($binaryData)) {
             throw new GaelOBadRequestException("Payload should be base64 encoded");
         }
 
         $storagePath = LaravelFunctionAdapter::getStoragePath();
 
-        $destinationPath = '/attached_review_file/'.$this->studyName;
-        if (!is_dir($storagePath.'/'.$destinationPath)) {
-            mkdir($storagePath.'/'.$destinationPath, 0755, true);
+        $destinationPath = '/attached_review_file/' . $this->studyName;
+        if (!is_dir($storagePath . '/' . $destinationPath)) {
+            mkdir($storagePath . '/' . $destinationPath, 0755, true);
         }
 
-        $destinationFileName = $storagePath.'/'.$destinationPath.'/'.$filename;
-        file_put_contents ( $destinationFileName , base64_decode($binaryData) );
+        $destinationFileName = $storagePath . '/' . $destinationPath . '/' . $filename;
+        file_put_contents($destinationFileName, base64_decode($binaryData));
 
-        $reviewEntity[$key] = $destinationFileName;
+        $reviewEntity['sent_files'][$key] = $destinationFileName;
 
         $this->reviewRepositoryInterface->updateReviewFile($reviewEntity['id'], $reviewEntity);
+    }
 
+    public function removeFile(array $reviewEntity, string $key)
+    {
+        $fileName = $reviewEntity['sent_files'][$key];
+        unlink($fileName);
+        unset($reviewEntity['sent_files'][$key]);
+        $this->reviewRepositoryInterface->updateReviewFile($reviewEntity['id'], $reviewEntity);
     }
 }

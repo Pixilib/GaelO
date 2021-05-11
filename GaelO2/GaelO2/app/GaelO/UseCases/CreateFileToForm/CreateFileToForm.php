@@ -8,18 +8,24 @@ use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\ReviewRepositoryInterface;
 use App\GaelO\Interfaces\TrackerRepositoryInterface;
+use App\GaelO\Interfaces\VisitRepositoryInterface;
+use App\GaelO\Services\AuthorizationVisitService;
 use App\GaelO\Services\FormService;
 use Exception;
 
 class CreateFileToForm {
 
+    private AuthorizationVisitService $authorizationVisitService;
     private ReviewRepositoryInterface $reviewRepositoryInterface;
     private TrackerRepositoryInterface $trackerRepositoryInterface;
+    private VisitRepositoryInterface $visitRepositoryInterface;
     private FormService $formService;
 
-    public function __construct(ReviewRepositoryInterface $reviewRepositoryInterface, FormService $formService, TrackerRepositoryInterface $trackerRepositoryInterface)
+    public function __construct(AuthorizationVisitService $authorizationVisitService, VisitRepositoryInterface $visitRepositoryInterface, ReviewRepositoryInterface $reviewRepositoryInterface, FormService $formService, TrackerRepositoryInterface $trackerRepositoryInterface)
     {
+        $this->authorizationVisitService = $authorizationVisitService;
         $this->reviewRepositoryInterface = $reviewRepositoryInterface;
+        $this->visitRepositoryInterface = $visitRepositoryInterface;
         $this->formService = $formService;
         $this->trackerRepositoryInterface = $trackerRepositoryInterface;
     }
@@ -32,12 +38,17 @@ class CreateFileToForm {
 
             $studyName = $reviewEntity['study_name'];
             $userId = $reviewEntity['user_id'];
+            $local = $reviewEntity['local'];
+            $visitId = $reviewEntity['visit_id'];
             $key = $createFileToReviewRequest->key;
-            $this->checkAuthorization($reviewEntity['validated'], $userId, $createFileToReviewRequest->currentUserId);
+            $this->checkAuthorization($local, $reviewEntity['validated'], $userId, $visitId, $createFileToReviewRequest->currentUserId);
 
             $extension = MimeAdapter::getExtensionFromMime($createFileToReviewRequest->contentType);
 
             $fileName = 'review_'.$reviewEntity['id'].'_'.$key.'.'.$extension ;
+
+            $visitContext = $this->visitRepositoryInterface->getVisitContext($reviewEntity['visit_id']);
+            $this->formService->setVisitContextAndStudy($visitContext, $studyName);
             $this->formService->attachFile($reviewEntity, $key, $fileName, $createFileToReviewRequest->contentType, $createFileToReviewRequest->binaryData);
 
             $actionDetails = [
@@ -48,13 +59,13 @@ class CreateFileToForm {
 
             $this->trackerRepositoryInterface->writeAction(
                 $createFileToReviewRequest->currentUserId,
-                Constants::ROLE_INVESTIGATOR,
+                $reviewEntity['local'] ? Constants::ROLE_INVESTIGATOR : Constants::ROLE_SUPERVISOR,
                 $studyName,
                 $reviewEntity['visit_id'],
-                Constants::TRACKER_SAVE_REVIEWER_FORM,
-                $actionDetails);
+                $reviewEntity['local'] ? Constants::TRACKER_SAVE_INVESTIGATOR_FORM : Constants::TRACKER_SAVE_REVIEWER_FORM,
+                $actionDetails
+            );
 
-            //Return created documentation ID to help front end to send file data
             $createFileToReviewResponse->status = 201;
             $createFileToReviewResponse->statusText =  'Created';
 
@@ -70,12 +81,18 @@ class CreateFileToForm {
 
     }
 
-    //SK A REVOIR si investigator form checker authorisation role
-    //si reviewer check authorizaton  + son propre formulaire
-    //et non validé dans tous les cas
-    private function checkAuthorization(bool $validated, int $reviewOwner, int $currentUserId) : void {
+    private function checkAuthorization(bool $local, bool $validated, int $reviewOwner, int $visitId, int $currentUserId) : void {
         if($validated) throw new GaelOForbiddenException("Form Already Validated");
-        if($reviewOwner !== $currentUserId) throw new GaelOForbiddenException("Only form owner can add files");
+        $this->authorizationVisitService->setVisitId($visitId);
+        if($local){
+            $this->authorizationVisitService->setCurrentUserAndRole($currentUserId, Constants::ROLE_INVESTIGATOR);
+            if(!$this->authorizationVisitService->isVisitAllowed()) throw new GaelOForbiddenException();
+        }else{
+            $this->authorizationVisitService->setCurrentUserAndRole($currentUserId, Constants::ROLE_SUPERVISOR);
+            if(!$this->authorizationVisitService->isVisitAllowed()) throw new GaelOForbiddenException();
+            if($reviewOwner !== $currentUserId) throw new GaelOForbiddenException("Only form owner can add files");
+        }
+
     }
 
 }

@@ -36,13 +36,13 @@ studies/{studyName}/visit-types/{visitTypeId}/visits (GET)
 studies/{studyName}/visit-types/{visitTypeId}/reviews (GET)
 studies/{studyName}/visit-types/{visitTypeId}/investigator-forms (GET)
 studies/{studyName}/visit-types/{visitTypeId}/dicom-studies (GET)
+reviews/{id}/file (POST)
 
 Salim TODO :
 
 - API Review
-Review form /file  (POST, GET, DELETE)
-Investigator form /file  (POST, GET, DELETE)
-Quid de adjudication ou il faut faire remonter des info custom au front ?
+Review /file  (GET, DELETE)
+=> Delete WIP, faire test
 
 Download Dicom :
 Eliminer l'entity custom au profit de l'entity generique

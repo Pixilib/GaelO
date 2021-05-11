@@ -11,6 +11,9 @@ use App\GaelO\UseCases\CreateInvestigatorForm\CreateInvestigatorFormResponse;
 use App\GaelO\UseCases\CreateReviewForm\CreateReview;
 use App\GaelO\UseCases\CreateReviewForm\CreateReviewFormRequest;
 use App\GaelO\UseCases\CreateReviewForm\CreateReviewFormResponse;
+use App\GaelO\UseCases\DeleteFileOfForm\DeleteFileOfForm;
+use App\GaelO\UseCases\DeleteFileOfForm\DeleteFileOfFormRequest;
+use App\GaelO\UseCases\DeleteFileOfForm\DeleteFileOfFormResponse;
 use App\GaelO\UseCases\DeleteInvestigatorForm\DeleteInvestigatorForm;
 use App\GaelO\UseCases\DeleteInvestigatorForm\DeleteInvestigatorFormRequest;
 use App\GaelO\UseCases\DeleteInvestigatorForm\DeleteInvestigatorFormResponse;
@@ -277,6 +280,25 @@ class ReviewController extends Controller
         } else {
             return response()->noContent()
             ->setStatusCode($createFileToFormResponse->status, $createFileToFormResponse->statusText);
+        }
+    }
+
+    public function deleteReviewFile(int $reviewId, string $key, DeleteFileOfForm $deleteFileOfForm, DeleteFileOfFormRequest $deleteFileOfFormRequest, DeleteFileOfFormResponse $deleteFileOfFormResponse){
+
+        $currentUser = Auth::user();
+
+        $deleteFileOfFormRequest->currentUserId = $currentUser['id'];
+        $deleteFileOfFormRequest->key = $key;
+        $deleteFileOfFormRequest->id = $reviewId;
+
+        $deleteFileOfForm->execute($deleteFileOfFormRequest, $deleteFileOfFormResponse);
+
+        if($deleteFileOfFormResponse->body != null){
+            return response()->json($deleteFileOfFormResponse->body)
+            ->setStatusCode($deleteFileOfFormResponse->status, $deleteFileOfFormResponse->statusText);
+        } else {
+            return response()->noContent()
+            ->setStatusCode($deleteFileOfFormResponse->status, $deleteFileOfFormResponse->statusText);
         }
     }
 
