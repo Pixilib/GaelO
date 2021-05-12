@@ -36,13 +36,12 @@ studies/{studyName}/visit-types/{visitTypeId}/visits (GET)
 studies/{studyName}/visit-types/{visitTypeId}/reviews (GET)
 studies/{studyName}/visit-types/{visitTypeId}/investigator-forms (GET)
 studies/{studyName}/visit-types/{visitTypeId}/dicom-studies (GET)
-reviews/{id}/file (POST)
+reviews/{id}/file (POST, DELETE)
 
 Salim TODO :
 
 - API Review
-Review /file  (GET, DELETE)
-=> Delete WIP, faire test
+Review /file  (GET)
 
 Download Dicom :
 Eliminer l'entity custom au profit de l'entity generique

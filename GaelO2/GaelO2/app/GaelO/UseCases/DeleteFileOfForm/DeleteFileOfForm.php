@@ -5,7 +5,9 @@ namespace App\GaelO\UseCases\DeleteFileOfForm;
 use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
+use App\GaelO\Interfaces\ReviewRepositoryInterface;
 use App\GaelO\Interfaces\TrackerRepositoryInterface;
+use App\GaelO\Interfaces\VisitRepositoryInterface;
 use App\GaelO\Services\AuthorizationVisitService;
 use App\GaelO\Services\FormService;
 use Exception;
@@ -15,12 +17,20 @@ class DeleteFileOfForm
 
     private AuthorizationVisitService $authorizationVisitService;
     private TrackerRepositoryInterface $trackerRepositoryInterface;
+    private ReviewRepositoryInterface $reviewRepositoryInterface;
+    private VisitRepositoryInterface $visitRepositoryInterface;
     private FormService $formService;
 
-    public function __construct(AuthorizationVisitService $authorizationVisitService, FormService $formService, TrackerRepositoryInterface $trackerRepositoryInterface)
+    public function __construct(AuthorizationVisitService $authorizationVisitService,
+        FormService $formService,
+        ReviewRepositoryInterface $reviewRepositoryInterface,
+        TrackerRepositoryInterface $trackerRepositoryInterface,
+        VisitRepositoryInterface $visitRepositoryInterface)
     {
         $this->authorizationVisitService = $authorizationVisitService;
         $this->trackerRepositoryInterface = $trackerRepositoryInterface;
+        $this->reviewRepositoryInterface = $reviewRepositoryInterface;
+        $this->visitRepositoryInterface = $visitRepositoryInterface;
         $this->formService = $formService;
     }
 

@@ -71,6 +71,10 @@ class FormService
 
         $expectedMime = $keyMimeArray[$key];
 
+        if(!empty($reviewEntity['sent_files'][$key])){
+            throw new GaelOBadRequestException("Already Existing File for this review");
+        }
+
         if ($mimeType !== $expectedMime) {
             throw new GaelOBadRequestException("File Key or Mime Not Allowed");
         }
@@ -81,7 +85,7 @@ class FormService
 
         $storagePath = LaravelFunctionAdapter::getStoragePath();
 
-        $destinationPath = '/attached_review_file/' . $this->studyName;
+        $destinationPath = 'attached_review_file'.'/' . $this->studyName;
         if (!is_dir($storagePath . '/' . $destinationPath)) {
             mkdir($storagePath . '/' . $destinationPath, 0755, true);
         }
@@ -89,15 +93,19 @@ class FormService
         $destinationFileName = $storagePath . '/' . $destinationPath . '/' . $filename;
         file_put_contents($destinationFileName, base64_decode($binaryData));
 
-        $reviewEntity['sent_files'][$key] = $destinationFileName;
+        $reviewEntity['sent_files'][$key] = $destinationPath . '/' . $filename;
 
         $this->reviewRepositoryInterface->updateReviewFile($reviewEntity['id'], $reviewEntity);
     }
 
     public function removeFile(array $reviewEntity, string $key)
     {
-        $fileName = $reviewEntity['sent_files'][$key];
-        unlink($fileName);
+        if(empty($reviewEntity['sent_files'][$key])){
+            throw new GaelOBadRequestException('Non exisiting key file in review');
+        }
+        $storagePath = LaravelFunctionAdapter::getStoragePath();
+        $targetedFile = $storagePath.'/'.$reviewEntity['sent_files'][$key];
+        unlink($targetedFile);
         unset($reviewEntity['sent_files'][$key]);
         $this->reviewRepositoryInterface->updateReviewFile($reviewEntity['id'], $reviewEntity);
     }
