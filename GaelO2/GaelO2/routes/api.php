@@ -173,6 +173,7 @@ Route::middleware('auth:api')->get('documentations/{id}/file', [DocumentationCon
 Route::middleware('auth:api')->get('visits/{id}/dicoms/file', [DicomController::class, 'getVisitDicomsFile'] );
 Route::middleware('auth:api')->get('studies/{studyName}/export', [StudyController::class, 'exportStudyData'] );
 Route::middleware('auth:api')->post('studies/{studyName}/dicom-series/file', [DicomController::class, 'getSupervisorDicomsFile'] );
+Route::middleware('auth:api')->get('reviews/{id}/file/{key}', [ReviewController::class, 'getReviewFile']);
 
 /*
 |--------------------------------------------------------------------------

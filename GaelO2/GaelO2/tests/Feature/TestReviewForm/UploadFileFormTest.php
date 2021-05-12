@@ -72,6 +72,27 @@ class UploadFileFormTest extends TestCase
         $response->assertStatus(400);
     }
 
+    public function testGetFileOfForm(){
+        $currentVisit = $this->createVisit();
+        $currentUserId = AuthorizationTools::actAsAdmin(false);
+        $review = Review::factory()->reviewForm()->userId($currentUserId)->visitId($currentVisit['visitId'])->studyName($currentVisit['studyName'])->create();
+        $review->sent_files = ['41' => 'attached_review_file'.'/' .$currentVisit['studyName'].'/review_1_41.csv'];
+        $review->save();
+        AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $currentVisit['studyName'] );
+        $response = $this->get('api/reviews/' . $review->id . '/file/41');
+        $response->assertSuccessful();
+    }
+
+    public function testGetFileOfFormShouldFailNoRole(){
+        $currentVisit = $this->createVisit();
+        $currentUserId = AuthorizationTools::actAsAdmin(false);
+        $review = Review::factory()->reviewForm()->userId($currentUserId)->visitId($currentVisit['visitId'])->studyName($currentVisit['studyName'])->create();
+        $review->sent_files = ['41' => 'attached_review_file'.'/' .$currentVisit['studyName'].'/review_1_41.csv'];
+        $review->save();
+        $response = $this->get('api/reviews/' . $review->id . '/file/41');
+        $response->assertStatus(403);
+    }
+
     public function testDeleteFileOfForm(){
         $currentVisit = $this->createVisit();
         $currentUserId = AuthorizationTools::actAsAdmin(false);
@@ -92,4 +113,6 @@ class UploadFileFormTest extends TestCase
         $response = $this->delete('api/reviews/' . $review->id . '/file/41');
         $response->assertStatus(403);
     }
+
+
 }

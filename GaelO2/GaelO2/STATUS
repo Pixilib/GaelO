@@ -36,12 +36,9 @@ studies/{studyName}/visit-types/{visitTypeId}/visits (GET)
 studies/{studyName}/visit-types/{visitTypeId}/reviews (GET)
 studies/{studyName}/visit-types/{visitTypeId}/investigator-forms (GET)
 studies/{studyName}/visit-types/{visitTypeId}/dicom-studies (GET)
-reviews/{id}/file (POST, DELETE)
+reviews/{id}/file (GET, POST, DELETE)
 
 Salim TODO :
-
-- API Review
-Review /file  (GET)
 
 Download Dicom :
 Eliminer l'entity custom au profit de l'entity generique
@@ -53,8 +50,6 @@ Export Data Etude :
 - Personalisation au niveau study -> Couche d'abstration notamment pour injecter le lysarc code
 - Review Ajout Patient Code et Visit Type ?
 - Associated File To Review => A faire dans un zip
-- Export SQL https://stackoverflow.com/questions/26261670/mysqldump-with-where-clause-is-not-working/26261717
-existe pas pour Postgres mais possibilité via sql COPY?
 
 Isoler les entity de reponse dans un repertoire à part
 Interface : Faire sous repertoire pour les interface repository et les interface adapter (et faire les interface des adapters qui manquent)
