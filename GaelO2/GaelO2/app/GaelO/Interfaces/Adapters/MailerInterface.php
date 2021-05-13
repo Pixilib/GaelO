@@ -2,7 +2,7 @@
 
 namespace App\GaelO\Interfaces\Adapters;
 
-Interface MailInterface {
+Interface MailerInterface {
 
     public function setReplyTo(?string $replyTo = null);
     public function setTo(array $to);

@@ -2,9 +2,9 @@
 
 namespace App\GaelO\Services;
 
-use App\GaelO\Interfaces\Adapters\MailInterface;
 use App\GaelO\Constants\Constants;
 use App\GaelO\Constants\MailConstants;
+use App\GaelO\Interfaces\Adapters\MailerInterface;
 use App\GaelO\Interfaces\Repositories\ReviewRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\UserRepositoryInterface;
 use App\GaelO\Repositories\ReviewRepository;
@@ -12,11 +12,11 @@ use App\GaelO\Repositories\ReviewRepository;
 class MailServices
 {
 
-    private MailInterface $mailInterface;
+    private MailerInterface $mailInterface;
     private UserRepositoryInterface $userRepositoryInterface;
     private ReviewRepository $reviewRepositoryInterface;
 
-    public function __construct(MailInterface $mailInterface, UserRepositoryInterface $userRepositoryInterface, ReviewRepositoryInterface $reviewRepositoryInterface)
+    public function __construct(MailerInterface $mailInterface, UserRepositoryInterface $userRepositoryInterface, ReviewRepositoryInterface $reviewRepositoryInterface)
     {
         $this->mailInterface = $mailInterface;
         $this->userRepositoryInterface = $userRepositoryInterface;

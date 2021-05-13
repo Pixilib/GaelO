@@ -2,11 +2,12 @@
 
 namespace App\GaelO\Adapters;
 
+use App\GaelO\Interfaces\Adapters\ValidatorInterface;
 use Respect\Validation\Validator;
 use Respect\Validation\Rules\In;
 use Respect\Validation\Rules\Key;
 
-class ValidatorAdapter {
+class ValidatorAdapter implements ValidatorInterface{
 
     public const TYPE_STRING = "String";
     public const TYPE_NUMBER = "Number";
@@ -21,12 +22,12 @@ class ValidatorAdapter {
         $this->validator = new Validator();
     }
 
-    public function addValidatorString(string $key, bool $optional){
+    public function addValidatorString(string $key, bool $optional) : void {
         $validatorKey = new Key($key, Validator::stringType() , ($this->validatedForm && !$optional) );
         $this->validator->addRule($validatorKey);
     }
 
-    public function addValidatorInt(string $key, bool $optional, ?int $min, ?int $max){
+    public function addValidatorInt(string $key, bool $optional, ?int $min, ?int $max) : void{
         $validatable = Validator::intType();
 
         if($min != null){
@@ -43,7 +44,7 @@ class ValidatorAdapter {
 
     }
 
-    public function addValidatorFloat(string $key, bool $optional, ?float $min, ?float $max){
+    public function addValidatorFloat(string $key, bool $optional, ?float $min, ?float $max) : void {
         $validatable = Validator::floatType();
 
         if($min != null){
@@ -60,7 +61,7 @@ class ValidatorAdapter {
 
     }
 
-    public function addSetValidator(string $key, array $acceptedValues, bool $optional){
+    public function addSetValidator(string $key, array $acceptedValues, bool $optional) : void{
         $validatorKey = new Key($key, new In($acceptedValues, true) , ($this->validatedForm && !$optional) );
         $this->validator->addRule($validatorKey);
     }

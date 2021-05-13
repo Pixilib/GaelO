@@ -51,11 +51,7 @@ Export Data Etude :
 - Review Ajout Patient Code et Visit Type ?
 - Associated File To Review => A faire dans un zip
 
-Interface :
-- Finir les Interface Adapters => Reste SpreadSheet, Validator
-- Renommer MailInterface en MailerInterface
-
-Enitity :
+Entity :
 - Isoler les entity de reponse dans un repertoire à part
 - Pluger les reponses "data" sur ces entity response
 
