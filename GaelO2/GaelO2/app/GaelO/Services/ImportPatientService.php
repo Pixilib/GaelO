@@ -2,17 +2,21 @@
 
 namespace App\GaelO\Services;
 
-use App\GaelO\Adapters\LaravelFunctionAdapter;
 use App\GaelO\Exceptions\GaelOBadRequestException;
-use App\GaelO\Repositories\CenterRepository;
-use App\GaelO\Repositories\PatientRepository;
-use App\GaelO\Repositories\StudyRepository;
+use App\GaelO\Interfaces\Adapters\FrameworkInterface;
+use App\GaelO\Interfaces\Repositories\CenterRepositoryInterface;
+use App\GaelO\Interfaces\Repositories\PatientRepositoryInterface;
+use App\GaelO\Interfaces\Repositories\StudyRepositoryInterface;
 use App\GaelO\Util;
 use Exception;
-use Illuminate\Support\Facades\Log;
 
 class ImportPatientService
 {
+
+    private int $patientCodeLength;
+    private PatientRepositoryInterface $patientRepository;
+    private CenterRepositoryInterface $centerRepository;
+    private StudyRepositoryInterface $studyRepository;
     /**
      * Import patient in study
      */
@@ -20,8 +24,8 @@ class ImportPatientService
 	public array $successList = [];
 	public array $failList = [];
 
-	public function __construct(StudyRepository $studyRepository, PatientRepository $patientRepository, CenterRepository $centerRepository) {
-        $this->patientCodeLength = LaravelFunctionAdapter::getConfig('patientCodeLength');
+	public function __construct(StudyRepositoryInterface $studyRepository, PatientRepositoryInterface $patientRepository, CenterRepositoryInterface $centerRepository, FrameworkInterface $frameworkInterface) {
+        $this->patientCodeLength = $frameworkInterface::getConfig('patientCodeLength');
         $this->patientRepository = $patientRepository;
         $this->centerRepository = $centerRepository;
         $this->studyRepository = $studyRepository;

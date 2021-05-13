@@ -2,10 +2,10 @@
 
 namespace App\GaelO\UseCases\GetFileOfForm;
 
-use App\GaelO\Adapters\LaravelFunctionAdapter;
 use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
+use App\GaelO\Interfaces\Adapters\FrameworkInterface;
 use App\GaelO\Interfaces\Repositories\ReviewRepositoryInterface;
 use App\GaelO\Services\AuthorizationVisitService;
 use Exception;
@@ -14,11 +14,13 @@ class GetFileOfForm {
 
     private AuthorizationVisitService $authorizationVisitService;
     private ReviewRepositoryInterface $reviewRepositoryInterface;
+    private FrameworkInterface $frameworkInterface;
 
-    public function __construct(AuthorizationVisitService $authorizationVisitService, ReviewRepositoryInterface $reviewRepositoryInterface)
+    public function __construct(AuthorizationVisitService $authorizationVisitService, ReviewRepositoryInterface $reviewRepositoryInterface, FrameworkInterface $frameworkInterface)
     {
         $this->authorizationVisitService = $authorizationVisitService;
         $this->reviewRepositoryInterface = $reviewRepositoryInterface;
+        $this->frameworkInterface = $frameworkInterface;
     }
 
     public function execute(GetFileOfFormRequest $getFileOfFormRequest, GetFileOfFormResponse $getFileOfFormResponse){
@@ -34,7 +36,7 @@ class GetFileOfForm {
 
             $getFileOfFormResponse->status = 200;
             $getFileOfFormResponse->statusText = 'OK';
-            $getFileOfFormResponse->filePath = LaravelFunctionAdapter::getStoragePath().'/'.$reviewEntity['sent_files'][$getFileOfFormRequest->key];
+            $getFileOfFormResponse->filePath = $this->frameworkInterface::getStoragePath().'/'.$reviewEntity['sent_files'][$getFileOfFormRequest->key];
             $getFileOfFormResponse->filename = basename($reviewEntity['sent_files'][$getFileOfFormRequest->key]);
 
         } catch (GaelOException $e){

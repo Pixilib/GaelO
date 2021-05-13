@@ -52,7 +52,7 @@ Export Data Etude :
 - Associated File To Review => A faire dans un zip
 
 Interface :
-- Finir les Interface Adapters => Reste LaravelFunction (a splitter), MimeAdapter, SpreadSheet, Validator
+- Finir les Interface Adapters => Reste MimeAdapter, SpreadSheet, Validator
 - Renommer MailInterface en MailerInterface
 
 Enitity :

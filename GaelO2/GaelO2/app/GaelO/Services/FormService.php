@@ -2,8 +2,8 @@
 
 namespace App\GaelO\Services;
 
-use App\GaelO\Adapters\LaravelFunctionAdapter;
 use App\GaelO\Exceptions\GaelOBadRequestException;
+use App\GaelO\Interfaces\Adapters\FrameworkInterface;
 use App\GaelO\Interfaces\Repositories\ReviewRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\ReviewStatusRepositoryInterface;
 use App\GaelO\Services\SpecificStudiesRules\AbstractStudyRules;
@@ -17,6 +17,7 @@ class FormService
     protected ReviewStatusRepositoryInterface $reviewStatusRepositoryInterface;
     protected AbstractStudyRules $abstractStudyRules;
     protected MailServices $mailServices;
+    protected FrameworkInterface $frameworkInterface;
 
     protected int $currentUserId;
     protected int $visitId;
@@ -30,12 +31,14 @@ class FormService
         VisitService $visitService,
         ReviewRepositoryInterface $reviewRepositoryInterface,
         ReviewStatusRepositoryInterface $reviewStatusRepositoryInterface,
-        MailServices $mailServices
+        MailServices $mailServices,
+        FrameworkInterface $frameworkInterface
     ) {
         $this->visitService = $visitService;
         $this->reviewRepositoryInterface = $reviewRepositoryInterface;
         $this->reviewStatusRepositoryInterface = $reviewStatusRepositoryInterface;
         $this->mailServices = $mailServices;
+        $this->frameworkInterface = $frameworkInterface;
     }
 
 
@@ -55,7 +58,7 @@ class FormService
         $this->uploaderId = $this->visitContext['creator_user_id'];
         $this->studyName = $studyName;
         $modality = $this->visitContext['visit_type']['visit_group']['modality'];
-        $this->abstractStudyRules = LaravelFunctionAdapter::make('\App\GaelO\Services\SpecificStudiesRules\\' . $this->studyName . '_' . $modality . '_' . $this->visitType);
+        $this->abstractStudyRules = $this->frameworkInterface::make('\App\GaelO\Services\SpecificStudiesRules\\' . $this->studyName . '_' . $modality . '_' . $this->visitType);
     }
 
     public function attachFile(array $reviewEntity, string $key, string $filename, string $mimeType, $binaryData)
@@ -83,7 +86,7 @@ class FormService
             throw new GaelOBadRequestException("Payload should be base64 encoded");
         }
 
-        $storagePath = LaravelFunctionAdapter::getStoragePath();
+        $storagePath = $this->frameworkInterface::getStoragePath();
 
         $destinationPath = 'attached_review_file'.'/' . $this->studyName;
         if (!is_dir($storagePath . '/' . $destinationPath)) {
@@ -103,7 +106,7 @@ class FormService
         if(empty($reviewEntity['sent_files'][$key])){
             throw new GaelOBadRequestException('Non exisiting key file in review');
         }
-        $storagePath = LaravelFunctionAdapter::getStoragePath();
+        $storagePath = $this->frameworkInterface::getStoragePath();
         $targetedFile = $storagePath.'/'.$reviewEntity['sent_files'][$key];
         unlink($targetedFile);
         unset($reviewEntity['sent_files'][$key]);

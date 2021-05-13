@@ -4,11 +4,11 @@ namespace App\GaelO\UseCases\ChangePassword;
 
 use App\GaelO\UseCases\ChangePassword\ChangePasswordRequest;
 use App\GaelO\UseCases\ChangePassword\ChangePasswordResponse;
-use App\GaelO\Adapters\LaravelFunctionAdapter;
 use App\GaelO\Constants\Constants;
 
 use App\GaelO\Exceptions\GaelOBadRequestException;
 use App\GaelO\Exceptions\GaelOException;
+use App\GaelO\Interfaces\Adapters\HashInterface;
 use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\UserRepositoryInterface;
 use Exception;
@@ -17,10 +17,12 @@ class ChangePassword {
 
     private TrackerRepositoryInterface $trackerRepositoryInterface;
     private UserRepositoryInterface $userRepositoryInterface;
+    private HashInterface $hashInterface;
 
-    public function __construct(UserRepositoryInterface $userRepositoryInterface, TrackerRepositoryInterface $trackerRepositoryInterface){
+    public function __construct(UserRepositoryInterface $userRepositoryInterface, TrackerRepositoryInterface $trackerRepositoryInterface, HashInterface $hashInterface){
         $this->userRepositoryInterface = $userRepositoryInterface;
         $this->trackerRepositoryInterface = $trackerRepositoryInterface;
+        $this->hashInterface = $hashInterface;
      }
 
     public function execute(ChangePasswordRequest $changeUserPasswordRequest, ChangePasswordResponse $changeUserPasswordResponse) : void {
@@ -71,13 +73,13 @@ class ChangePassword {
       * Check that candidate password is not in the 3 last used passwords
       */
     private function checkNewPassword($passwordCandidate, $temporaryPassword, $currentPassword, $previousPassword1, $previousPassword2) : void {
-        if ($temporaryPassword !==null) $checkTemporary = LaravelFunctionAdapter::checkHash($passwordCandidate, $temporaryPassword);
+        if ($temporaryPassword !==null) $checkTemporary = $this->hashInterface->checkHash($passwordCandidate, $temporaryPassword);
         else $checkTemporary = false;
-        if ($currentPassword !== null) $checkCurrent = LaravelFunctionAdapter::checkHash($passwordCandidate, $currentPassword);
+        if ($currentPassword !== null) $checkCurrent = $this->hashInterface->checkHash($passwordCandidate, $currentPassword);
         else $checkCurrent = false;
-        if ($previousPassword1 !== null) $checkPrevious1 = LaravelFunctionAdapter::checkHash($passwordCandidate, $previousPassword1);
+        if ($previousPassword1 !== null) $checkPrevious1 = $this->hashInterface->checkHash($passwordCandidate, $previousPassword1);
         else $checkPrevious1 = false;
-        if ($previousPassword2) $checkPrevious2 = LaravelFunctionAdapter::checkHash($passwordCandidate, $previousPassword2);
+        if ($previousPassword2) $checkPrevious2 = $this->hashInterface->checkHash($passwordCandidate, $previousPassword2);
         else $checkPrevious2 = false;
 
         if( $checkTemporary ||
@@ -119,7 +121,7 @@ class ChangePassword {
     }
 
     private function checkMatchHashPasswords(string $plainTextPassword, string $hashComparator) : void {
-        if( !LaravelFunctionAdapter::checkHash($plainTextPassword, $hashComparator) ) {
+        if( !$this->hashInterface->checkHash($plainTextPassword, $hashComparator) ) {
             throw new GaelOBadRequestException('Wrong Previous Password');
         }
     }

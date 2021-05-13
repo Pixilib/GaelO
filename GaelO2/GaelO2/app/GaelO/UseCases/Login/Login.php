@@ -2,10 +2,10 @@
 
 namespace App\GaelO\UseCases\Login;
 
-use App\GaelO\Adapters\LaravelFunctionAdapter;
 use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOBadRequestException;
 use App\GaelO\Exceptions\GaelOException;
+use App\GaelO\Interfaces\Adapters\HashInterface;
 use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\UserRepositoryInterface;
 use App\GaelO\Services\MailServices;
@@ -16,11 +16,13 @@ class Login{
     private UserRepositoryInterface $userRepositoryInterface;
     private MailServices $mailService;
     private TrackerRepositoryInterface $trackerRepositoryInterface;
+    private HashInterface $hashInterface;
 
-    public function __construct( UserRepositoryInterface $userRepositoryInterface, MailServices $mailService, TrackerRepositoryInterface $trackerRepositoryInterface){
+    public function __construct( UserRepositoryInterface $userRepositoryInterface, MailServices $mailService, TrackerRepositoryInterface $trackerRepositoryInterface, HashInterface $hashInterface){
         $this->userRepositoryInterface = $userRepositoryInterface;
         $this->trackerRepositoryInterface = $trackerRepositoryInterface;
         $this->mailService = $mailService;
+        $this->hashInterface = $hashInterface;
     }
 
     public function execute(LoginRequest $loginRequest, LoginResponse $loginResponse){
@@ -31,14 +33,14 @@ class Login{
 
             $passwordCheck = null;
 
-            if($user['status'] !== Constants::USER_STATUS_UNCONFIRMED && $user['password'] !== null) $passwordCheck = LaravelFunctionAdapter::checkHash($loginRequest->password, $user['password']);
+            if($user['status'] !== Constants::USER_STATUS_UNCONFIRMED && $user['password'] !== null) $passwordCheck = $this->hashInterface->checkHash($loginRequest->password, $user['password']);
             $dateNow = new \DateTime();
             $dateUpdatePassword= new \DateTime($user['last_password_update']);
             $attempts = $user['attempts'];
             $delayDay=$dateUpdatePassword->diff($dateNow)->format("%a");
 
             if($user['status'] === Constants::USER_STATUS_UNCONFIRMED ){
-                $tempPasswordCheck = LaravelFunctionAdapter::checkHash($loginRequest->password, $user['password_temporary']);
+                $tempPasswordCheck = $this->hashInterface->checkHash($loginRequest->password, $user['password_temporary']);
                 if($tempPasswordCheck){
                     $loginResponse->body = ['id' => $user['id'], 'errorMessage' => 'Unconfirmed'];
                     $loginResponse->status = 400;

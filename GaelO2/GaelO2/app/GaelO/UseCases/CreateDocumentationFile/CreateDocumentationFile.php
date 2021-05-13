@@ -2,11 +2,11 @@
 
 namespace App\GaelO\UseCases\CreateDocumentationFile;
 
-use App\GaelO\Adapters\LaravelFunctionAdapter;
 use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOBadRequestException;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
+use App\GaelO\Interfaces\Adapters\FrameworkInterface;
 use App\GaelO\Interfaces\Repositories\DocumentationRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
 use App\GaelO\Services\AuthorizationService;
@@ -17,12 +17,14 @@ class CreateDocumentationFile{
 
     private DocumentationRepositoryInterface $documentationRepositoryInterface;
     private TrackerRepositoryInterface $trackerRepositoryInterface;
+    private FrameworkInterface $frameworkInterface;
 
-    public function __construct(DocumentationRepositoryInterface $documentationRepositoryInterface, AuthorizationService $authorizationService, TrackerRepositoryInterface $trackerRepositoryInterface)
+    public function __construct(DocumentationRepositoryInterface $documentationRepositoryInterface, AuthorizationService $authorizationService, TrackerRepositoryInterface $trackerRepositoryInterface, FrameworkInterface $frameworkInterface)
     {
         $this->documentationRepositoryInterface = $documentationRepositoryInterface;
         $this->authorizationService = $authorizationService;
         $this->trackerRepositoryInterface = $trackerRepositoryInterface;
+        $this->frameworkInterface = $frameworkInterface;
     }
 
     public function execute(CreateDocumentationFileRequest $createDocumentationFileRequest, CreateDocumentationFileResponse $createDocumentationFileResponse){
@@ -41,7 +43,7 @@ class CreateDocumentationFile{
                 throw new GaelOBadRequestException("Payload should be base64 encoded");
             }
 
-            $storagePath = LaravelFunctionAdapter::getStoragePath();
+            $storagePath = $this->frameworkInterface::getStoragePath();
 
             $destinationPath = '/documentations/'.$studyName;
             if (!is_dir($storagePath.'/'.$destinationPath)) {

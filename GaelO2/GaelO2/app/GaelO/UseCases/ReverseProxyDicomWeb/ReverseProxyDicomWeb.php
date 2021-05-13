@@ -2,10 +2,10 @@
 
 namespace App\GaelO\UseCases\ReverseProxyDicomWeb;
 
-use App\GaelO\Adapters\LaravelFunctionAdapter;
 use App\GaelO\Constants\SettingsConstants;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
+use App\GaelO\Interfaces\Adapters\FrameworkInterface;
 use App\GaelO\Interfaces\Adapters\HttpClientInterface;
 use App\GaelO\Services\AuthorizationDicomWebService;
 use Exception;
@@ -15,11 +15,13 @@ class ReverseProxyDicomWeb{
 
     private AuthorizationDicomWebService $authorizationService;
     private HttpClientInterface $httpClientInterface;
+    private FrameworkInterface $frameworkInterface;
 
-    public function __construct( AuthorizationDicomWebService $authorizationService,  HttpClientInterface $httpClientInterface)
+    public function __construct( AuthorizationDicomWebService $authorizationService,  HttpClientInterface $httpClientInterface, FrameworkInterface $frameworkInterface)
     {
         $this->httpClientInterface = $httpClientInterface;
         $this->authorizationService = $authorizationService;
+        $this->frameworkInterface = $frameworkInterface;
     }
 
     public function execute(ReverseProxyDicomWebRequest $reverseProxyDicomWebRequest, ReverseProxyDicomWebResponse $reverseProxyDicomWebResponse){
@@ -33,18 +35,18 @@ class ReverseProxyDicomWeb{
 
             //Connect to Orthanc Pacs
             $this->httpClientInterface->setAddress(
-                LaravelFunctionAdapter::getConfig(SettingsConstants::ORTHANC_STORAGE_ADDRESS),
-                LaravelFunctionAdapter::getConfig(SettingsConstants::ORTHANC_STORAGE_PORT)
+                $this->frameworkInterface::getConfig(SettingsConstants::ORTHANC_STORAGE_ADDRESS),
+                $this->frameworkInterface::getConfig(SettingsConstants::ORTHANC_STORAGE_PORT)
             );
             $this->httpClientInterface->setBasicAuthentication(
-                LaravelFunctionAdapter::getConfig(SettingsConstants::ORTHANC_STORAGE_LOGIN),
-                LaravelFunctionAdapter::getConfig(SettingsConstants::ORTHANC_STORAGE_PASSWORD)
+                $this->frameworkInterface::getConfig(SettingsConstants::ORTHANC_STORAGE_LOGIN),
+                $this->frameworkInterface::getConfig(SettingsConstants::ORTHANC_STORAGE_PASSWORD)
             );
 
 
-            $gaelOProtocol = LaravelFunctionAdapter::getConfig(SettingsConstants::APP_PROTOCOL);
-            $gaelOUrl = LaravelFunctionAdapter::getConfig(SettingsConstants::APP_DOMAIN);
-            $gaelOPort = LaravelFunctionAdapter::getConfig(SettingsConstants::APP_PORT);
+            $gaelOProtocol = $this->frameworkInterface::getConfig(SettingsConstants::APP_PROTOCOL);
+            $gaelOUrl = $this->frameworkInterface::getConfig(SettingsConstants::APP_DOMAIN);
+            $gaelOPort = $this->frameworkInterface::getConfig(SettingsConstants::APP_PORT);
             $headers= $reverseProxyDicomWebRequest->header;
             $headers['Forwarded'] = ['by=localhost;for=localhost;host='.$gaelOUrl.':'.$gaelOPort.'/api/orthanc'.';proto='.$gaelOProtocol];
 

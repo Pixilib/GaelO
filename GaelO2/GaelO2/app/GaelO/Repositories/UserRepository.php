@@ -2,7 +2,6 @@
 
 namespace App\GaelO\Repositories;
 
-use App\GaelO\Adapters\LaravelFunctionAdapter;
 use App\GaelO\Interfaces\Repositories\UserRepositoryInterface;
 
 use App\Models\CenterUser;
@@ -10,6 +9,7 @@ use App\Models\User;
 use App\Models\Role;
 
 use App\GaelO\Constants\Constants;
+use App\GaelO\Interfaces\Adapters\HashInterface;
 use App\GaelO\Util;
 use App\Models\Study;
 
@@ -19,12 +19,14 @@ class UserRepository implements UserRepositoryInterface {
     private Role $roles;
     private CenterUser $centerUser;
     private Study $study;
+    private HashInterface $hashInterface;
 
-    public function __construct(User $user, Role $roles, CenterUser $centerUser, Study $study){
+    public function __construct(User $user, Role $roles, CenterUser $centerUser, Study $study, HashInterface $hashInterface){
         $this->user = $user;
         $this->roles = $roles;
         $this->centerUser = $centerUser;
         $this->study = $study;
+        $this->hashInterface = $hashInterface;
     }
 
     private function create(array $data) {
@@ -106,14 +108,14 @@ class UserRepository implements UserRepositoryInterface {
         $data = $this->find($userId);
         $data['password_previous2'] = $data['password_previous1'];
         $data['password_previous1'] = $data['password'];
-        $data['password'] = LaravelFunctionAdapter::hash($passwordCurrent);
+        $data['password'] = $this->hashInterface->hash($passwordCurrent);
         $data['last_password_update'] = Util::now();
         $this->update($userId, $data);
     }
 
     public function updateUserTemporaryPassword(int $userId, ?string $passwordTemporary ) : void {
         $data = $this->find($userId);
-        $data['password_temporary'] = LaravelFunctionAdapter::hash($passwordTemporary);
+        $data['password_temporary'] = $this->hashInterface->hash($passwordTemporary);
         $data['last_password_update'] = Util::now();
         $this->update($userId, $data);
     }

@@ -2,17 +2,20 @@
 
 namespace App\GaelO\UseCases\GetPreference;
 
-use App\GaelO\Adapters\LaravelFunctionAdapter;
 use App\GaelO\Constants\SettingsConstants;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
+use App\GaelO\Interfaces\Adapters\FrameworkInterface;
 use App\GaelO\Services\AuthorizationService;
 use Exception;
 
 class GetPreferences {
 
-    public function __construct(AuthorizationService $authorizationService) {
+    private FrameworkInterface $frameworkInterface;
+
+    public function __construct(AuthorizationService $authorizationService, FrameworkInterface $frameworkInterface) {
         $this->authorizationService = $authorizationService;
+        $this->frameworkInterface = $frameworkInterface;
 
     }
 
@@ -23,12 +26,12 @@ class GetPreferences {
             $this->checkAuthorization($getPreferencesRequest->currentUserId);
 
             //Add preference defined in env file (read only)
-            $preferences['platformName'] =LaravelFunctionAdapter::getConfig(SettingsConstants::PLATFORM_NAME);
-            $preferences['adminEmail'] = LaravelFunctionAdapter::getConfig(SettingsConstants::MAIL_FROM_ADDRESS);
-            $preferences['emailReplyTo'] = LaravelFunctionAdapter::getConfig(SettingsConstants::MAIL_REPLY_TO_DEFAULT);
-            $preferences['corporation'] = LaravelFunctionAdapter::getConfig(SettingsConstants::CORPORATION);
-            $preferences['url'] = LaravelFunctionAdapter::getConfig(SettingsConstants::URL);
-            $preferences['patientCodeLength'] =  LaravelFunctionAdapter::getConfig(SettingsConstants::PATIENT_CODE_LENGTH);
+            $preferences['platformName'] = $this->frameworkInterface::getConfig(SettingsConstants::PLATFORM_NAME);
+            $preferences['adminEmail'] = $this->frameworkInterface::getConfig(SettingsConstants::MAIL_FROM_ADDRESS);
+            $preferences['emailReplyTo'] = $this->frameworkInterface::getConfig(SettingsConstants::MAIL_REPLY_TO_DEFAULT);
+            $preferences['corporation'] = $this->frameworkInterface::getConfig(SettingsConstants::CORPORATION);
+            $preferences['url'] = $this->frameworkInterface::getConfig(SettingsConstants::URL);
+            $preferences['patientCodeLength'] =  $this->frameworkInterface::getConfig(SettingsConstants::PATIENT_CODE_LENGTH);
 
 
             $getPreferencesResponse->body = $preferences;

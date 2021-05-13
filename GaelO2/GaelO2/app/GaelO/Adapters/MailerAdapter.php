@@ -24,15 +24,23 @@ use App\Mail\UserCreated;
 use App\Mail\VisitNotDone;
 
 use App\GaelO\Constants\MailConstants;
+use App\GaelO\Interfaces\Adapters\FrameworkInterface;
 use App\Mail\ImportPatient;
 use Illuminate\Contracts\Mail\Mailable;
 
 class MailerAdapter implements MailInterface {
 
+    private FrameworkInterface $frameworkInterface;
+
+    public function __construct(FrameworkInterface $frameworkInterface)
+    {
+        $this->frameworkInterface = $frameworkInterface;
+    }
+
     private array $to;
 
     public function setReplyTo( ?String $replyTo = null ){
-        if($replyTo == null) $this->replyTo= LaravelFunctionAdapter::getConfig('mailReplyToDefault');
+        if($replyTo == null) $this->replyTo= $this->frameworkInterface::getConfig('mailReplyToDefault');
         else $this->replyTo = $replyTo;
     }
 
@@ -44,10 +52,10 @@ class MailerAdapter implements MailInterface {
 
     public function setParameters(array $parameters){
         $this->parameters = $parameters;
-        $this->parameters['platformName'] = LaravelFunctionAdapter::getConfig('name');
-        $this->parameters['webAddress'] = LaravelFunctionAdapter::getConfig('url');
-        $this->parameters['corporation'] = LaravelFunctionAdapter::getConfig('corporation');
-        $this->parameters['adminEmail']= LaravelFunctionAdapter::getConfig('mailFromAddress');
+        $this->parameters['platformName'] = $this->frameworkInterface::getConfig('name');
+        $this->parameters['webAddress'] = $this->frameworkInterface::getConfig('url');
+        $this->parameters['corporation'] = $this->frameworkInterface::getConfig('corporation');
+        $this->parameters['adminEmail']= $this->frameworkInterface::getConfig('mailFromAddress');
 
     }
 

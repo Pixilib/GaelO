@@ -2,12 +2,12 @@
 
 namespace App\GaelO\UseCases\CreateUser;
 
-use App\GaelO\Adapters\LaravelFunctionAdapter;
 use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOBadRequestException;
 use App\GaelO\Exceptions\GaelOConflictException;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
+use App\GaelO\Interfaces\Adapters\HashInterface;
 use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\UserRepositoryInterface;
 use App\GaelO\UseCases\CreateUser\CreateUserRequest;
@@ -15,7 +15,6 @@ use App\GaelO\UseCases\CreateUser\CreateUserResponse;
 use App\GaelO\Services\AuthorizationService;
 use App\GaelO\Services\MailServices;
 use App\GaelO\UseCases\ModifyUser\ModifyUserRequest;
-use Illuminate\Support\Facades\Log;
 
 class CreateUser
 {
@@ -24,13 +23,15 @@ class CreateUser
     private TrackerRepositoryInterface $trackerRepositoryInterface;
     private UserRepositoryInterface $userRepositoryInterface;
     private MailServices $mailService;
+    private HashInterface $hashInterface;
 
-    public function __construct(AuthorizationService $authorizationService, UserRepositoryInterface $userRepositoryInterface, TrackerRepositoryInterface $trackerRepositoryInterface, MailServices $mailService)
+    public function __construct(AuthorizationService $authorizationService, UserRepositoryInterface $userRepositoryInterface, TrackerRepositoryInterface $trackerRepositoryInterface, MailServices $mailService, HashInterface $hashInterface)
     {
         $this->trackerRepositoryInterface = $trackerRepositoryInterface;
         $this->mailService = $mailService;
         $this->authorizationService = $authorizationService;
         $this->userRepositoryInterface = $userRepositoryInterface;
+        $this->hashInterface = $hashInterface;
 
     }
 
@@ -41,7 +42,7 @@ class CreateUser
             $this->checkAuthorization($createUserRequest->currentUserId);
             //Generate password
             $password = substr(uniqid(), 1, 10);
-            $passwordTemporary = LaravelFunctionAdapter::Hash($password);
+            $passwordTemporary = $this->hashInterface->hash($password);
 
             self::checkFormComplete($createUserRequest);
             self::checkEmailValid($createUserRequest->email);

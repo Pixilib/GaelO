@@ -2,18 +2,20 @@
 
 namespace App\GaelO\UseCases\ReverseProxyTus;
 
-use App\GaelO\Adapters\LaravelFunctionAdapter;
 use App\GaelO\Constants\SettingsConstants;
+use App\GaelO\Interfaces\Adapters\FrameworkInterface;
 use App\GaelO\Interfaces\Adapters\HttpClientInterface;
 
 class ReverseProxyTus
 {
 
     private HttpClientInterface $httpClientInterface;
+    private FrameworkInterface $frameworkInterface;
 
-    public function __construct(HttpClientInterface $httpClientInterface)
+    public function __construct(HttpClientInterface $httpClientInterface, FrameworkInterface $frameworkInterface)
     {
         $this->httpClientInterface = $httpClientInterface;
+        $this->frameworkInterface = $frameworkInterface;
     }
 
     public function execute(ReverseProxyTusRequest $reverseProxyTusRequest, ReverseProxyTusResponse $reverseProxyTusResponse)
@@ -24,12 +26,12 @@ class ReverseProxyTus
         //Get Headers from Request
         $headers  = $reverseProxyTusRequest->header;
         //Set server information to make TUS able to send the correct server location for client
-        $headers['X-Forwarded-Proto'] = LaravelFunctionAdapter::getConfig(SettingsConstants::APP_PROTOCOL);
-        $headers['X-Forwarded-Host'] = LaravelFunctionAdapter::getConfig(SettingsConstants::APP_DOMAIN) . ':' . LaravelFunctionAdapter::getConfig(SettingsConstants::APP_PORT);
+        $headers['X-Forwarded-Proto'] = $this->frameworkInterface::getConfig(SettingsConstants::APP_PROTOCOL);
+        $headers['X-Forwarded-Host'] = $this->frameworkInterface::getConfig(SettingsConstants::APP_DOMAIN) . ':' . FrameworkInterface::getConfig(SettingsConstants::APP_PORT);
 
         //Get TUS address
-        $address = LaravelFunctionAdapter::getConfig(SettingsConstants::TUS_ADDRESS);
-        $port = LaravelFunctionAdapter::getConfig(SettingsConstants::TUS_PORT);
+        $address = $this->frameworkInterface::getConfig(SettingsConstants::TUS_ADDRESS);
+        $port = $this->frameworkInterface::getConfig(SettingsConstants::TUS_PORT);
 
         //Make query of TUS
         $this->httpClientInterface->setAddress($address, $port);

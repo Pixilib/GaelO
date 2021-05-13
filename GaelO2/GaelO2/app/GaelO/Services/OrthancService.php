@@ -2,23 +2,22 @@
 
 namespace App\GaelO\Services;
 
-use App\GaelO\Adapters\LaravelFunctionAdapter;
 use App\GaelO\Constants\Constants;
 use App\GaelO\Constants\SettingsConstants;
+use App\GaelO\Interfaces\Adapters\FrameworkInterface;
 use App\GaelO\Interfaces\Adapters\HttpClientInterface;
 use App\GaelO\Services\StoreObjects\TagAnon;
 use App\GaelO\Services\StoreObjects\OrthancStudy;
 
 class OrthancService
 {
-
     private HttpClientInterface $httpClientInterface;
-    private LaravelFunctionAdapter $laravelFunctionAdapter;
+    private FrameworkInterface $frameworkInterface;
 
-    public function __construct(HttpClientInterface $httpClientInterface, LaravelFunctionAdapter $laravelFunctionAdapter)
+    public function __construct(HttpClientInterface $httpClientInterface, FrameworkInterface $frameworkInterface)
     {
         $this->httpClientInterface = $httpClientInterface;
-        $this->laravelFunctionAdapter = $laravelFunctionAdapter;
+        $this->frameworkInterface = $frameworkInterface;
     }
 
     public function setOrthancServer(bool $storage) : void
@@ -27,15 +26,15 @@ class OrthancService
         set_time_limit(10800);
         //Set address of Orthanc server
         if ($storage) {
-            $address = $this->laravelFunctionAdapter->getConfig(SettingsConstants::ORTHANC_STORAGE_ADDRESS);
-            $port = $this->laravelFunctionAdapter->getConfig(SettingsConstants::ORTHANC_STORAGE_PORT);
-            $login = $this->laravelFunctionAdapter->getConfig(SettingsConstants::ORTHANC_STORAGE_LOGIN);
-            $password = $this->laravelFunctionAdapter->getConfig(SettingsConstants::ORTHANC_STORAGE_PASSWORD);
+            $address = $this->frameworkInterface::getConfig(SettingsConstants::ORTHANC_STORAGE_ADDRESS);
+            $port = $this->frameworkInterface::getConfig(SettingsConstants::ORTHANC_STORAGE_PORT);
+            $login = $this->frameworkInterface::getConfig(SettingsConstants::ORTHANC_STORAGE_LOGIN);
+            $password = $this->frameworkInterface::getConfig(SettingsConstants::ORTHANC_STORAGE_PASSWORD);
         } else {
-            $address = $this->laravelFunctionAdapter->getConfig(SettingsConstants::ORTHANC_TEMPORARY_ADDRESS);
-            $port = $this->laravelFunctionAdapter->getConfig(SettingsConstants::ORTHANC_TEMPORARY_PORT);
-            $login = $this->laravelFunctionAdapter->getConfig(SettingsConstants::ORTHANC_TEMPORARY_LOGIN);
-            $password = $this->laravelFunctionAdapter->getConfig(SettingsConstants::ORTHANC_TEMPORARY_PASSWORD);
+            $address = $this->frameworkInterface::getConfig(SettingsConstants::ORTHANC_TEMPORARY_ADDRESS);
+            $port = $this->frameworkInterface::getConfig(SettingsConstants::ORTHANC_TEMPORARY_PORT);
+            $login = $this->frameworkInterface::getConfig(SettingsConstants::ORTHANC_TEMPORARY_LOGIN);
+            $password = $this->frameworkInterface::getConfig(SettingsConstants::ORTHANC_TEMPORARY_PASSWORD);
         }
 
         $this->httpClientInterface->setAddress($address, $port);

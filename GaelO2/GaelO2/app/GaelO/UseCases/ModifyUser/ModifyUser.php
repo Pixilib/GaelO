@@ -2,11 +2,11 @@
 
 namespace App\GaelO\UseCases\ModifyUser;
 
-use App\GaelO\Adapters\LaravelFunctionAdapter;
 use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOConflictException;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
+use App\GaelO\Interfaces\Adapters\HashInterface;
 use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\UserRepositoryInterface;
 use App\GaelO\UseCases\ModifyUser\ModifyUserRequest;
@@ -23,13 +23,19 @@ class ModifyUser
     private UserRepositoryInterface $userRepositoryInterface;
     private TrackerRepositoryInterface $trackerRepositoryInterface;
     private MailServices $mailService;
+    private HashInterface $hashInterface;
 
-    public function __construct(AuthorizationService $authorizationService, UserRepositoryInterface $userRepositoryInterface, TrackerRepositoryInterface $trackerRepositoryInterface, MailServices $mailService)
+    public function __construct(AuthorizationService $authorizationService,
+                            UserRepositoryInterface $userRepositoryInterface,
+                            TrackerRepositoryInterface $trackerRepositoryInterface,
+                            MailServices $mailService,
+                            HashInterface $hashInterface)
     {
         $this->authorizationService = $authorizationService;
         $this->trackerRepositoryInterface = $trackerRepositoryInterface;
         $this->userRepositoryInterface = $userRepositoryInterface;
         $this->mailService = $mailService;
+        $this->hashInterface = $hashInterface;
     }
 
     public function execute(ModifyUserRequest $modifyUserRequest, ModifyUserResponse $modifyUserResponse): void
@@ -44,7 +50,7 @@ class ModifyUser
             if ($modifyUserRequest->status === Constants::USER_STATUS_UNCONFIRMED) {
                 //If unconfirmed generate a new temporary password
                 $newPassword = substr(uniqid(), 1, 10);
-                $temporaryPassword = LaravelFunctionAdapter::hash($newPassword);
+                $temporaryPassword = $this->hashInterface->hash($newPassword);
             } else {
                 //Do not modify the current temporary password otherwise
                 $temporaryPassword = $user['password_temporary'];

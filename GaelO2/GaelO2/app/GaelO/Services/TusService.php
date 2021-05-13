@@ -2,8 +2,8 @@
 
 namespace App\GaelO\Services;
 
-use App\GaelO\Adapters\LaravelFunctionAdapter;
 use App\GaelO\Constants\SettingsConstants;
+use App\GaelO\Interfaces\Adapters\FrameworkInterface;
 use App\GaelO\Interfaces\Adapters\HttpClientInterface;
 
 /**
@@ -13,11 +13,11 @@ class TusService{
 
     private HttpClientInterface $httpClientInterface;
 
-    public function __construct(HttpClientInterface $httpClientInterface){
+    public function __construct(HttpClientInterface $httpClientInterface, FrameworkInterface $frameworkInterface){
         $this->httpClientInterface = $httpClientInterface;
 
-        $address = LaravelFunctionAdapter::getConfig(SettingsConstants::TUS_ADDRESS);
-        $port = LaravelFunctionAdapter::getConfig(SettingsConstants::TUS_PORT);
+        $address = $frameworkInterface::getConfig(SettingsConstants::TUS_ADDRESS);
+        $port = $frameworkInterface::getConfig(SettingsConstants::TUS_PORT);
         $this->httpClientInterface->setAddress($address, $port);
     }
 
