@@ -45,6 +45,7 @@ Eliminer l'entity custom au profit de l'entity generique
 Faire FrontEnd (tout lister au niveau series?)
 
 Messagerie à designer
+Ajouter dicom contstrainte dans definition visittype et upgrade de l'uploader
 
 Export Data Etude :
 - Personalisation au niveau study -> Couche d'abstration notamment pour injecter le lysarc code
@@ -65,7 +66,7 @@ Creatable Visit : Manque Study Custom Logic (+dans front skip visites optionnell
 Review  : faire une propriete dans visit pour savoir si review disponible a un user en plus de status reviewAvailable ?
 Dicom Series Service => peut etre evoluer vers un DicomService pour les deux niveaux
 Verifier que quand on appelle un child si le parent est pas delete (cf probleme de role et study)
-download dicom : se reposer sur l'assynchronisme d'orthanc
+download dicom : se reposer sur l'assynchronisme d'orthanc depuis le front
 
 **** Tests ***
 Test feature : visit et autres (dicom...)
