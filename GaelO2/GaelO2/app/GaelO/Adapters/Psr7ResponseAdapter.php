@@ -2,9 +2,10 @@
 
 namespace App\GaelO\Adapters;
 
+use App\GaelO\Interfaces\Adapters\Psr7ResponseInterface;
 use Psr\Http\Message\ResponseInterface;
 
-class Psr7ResponseAdapter {
+class Psr7ResponseAdapter implements Psr7ResponseInterface {
 
 
     public function __construct(ResponseInterface $response)

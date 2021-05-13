@@ -2,9 +2,10 @@
 
 namespace App\GaelO\Adapters;
 
+use App\GaelO\Interfaces\Adapters\MimeInterface;
 use Mimey\MimeTypes;
 
-class MimeAdapter
+class MimeAdapter implements MimeInterface
 {
 
     public static function getExtensionFromMime(string $mime) : string

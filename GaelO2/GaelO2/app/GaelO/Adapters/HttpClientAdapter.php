@@ -3,6 +3,7 @@
 namespace App\GaelO\Adapters;
 
 use App\GaelO\Interfaces\Adapters\HttpClientInterface;
+use App\GaelO\Interfaces\Adapters\Psr7ResponseInterface;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Pool;
@@ -70,7 +71,7 @@ class HttpClientAdapter implements HttpClientInterface
         return $responseArray;
     }
 
-    public function requestJson(string $method, string $uri, array $body = []): Psr7ResponseAdapter
+    public function requestJson(string $method, string $uri, array $body = []): Psr7ResponseInterface
     {
         $authenticationOption = ['auth' => [$this->login, $this->password]];
         $bodyOption = ['json' => $body];
@@ -97,13 +98,13 @@ class HttpClientAdapter implements HttpClientInterface
         }
     }
 
-    public function requestStreamResponseToFile(string $method, string $uri, $ressource, array $headers): Psr7ResponseAdapter
+    public function requestStreamResponseToFile(string $method, string $uri, $ressource, array $headers): Psr7ResponseInterface
     {
         $response = $this->client->request($method, $this->address . $uri, ['sink' => $ressource, 'auth' => [$this->login, $this->password], 'headers' => $headers]);
         return new Psr7ResponseAdapter($response);
     }
 
-    public function rowRequest(string $method, string $uri, $body, ?array $headers): Psr7ResponseAdapter
+    public function rowRequest(string $method, string $uri, $body, ?array $headers): Psr7ResponseInterface
     {
         $options = [];
 

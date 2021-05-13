@@ -2,10 +2,10 @@
 
 namespace App\GaelO\UseCases\CreateFileToForm;
 
-use App\GaelO\Adapters\MimeAdapter;
 use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
+use App\GaelO\Interfaces\Adapters\MimeInterface;
 use App\GaelO\Interfaces\Repositories\ReviewRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
@@ -20,14 +20,21 @@ class CreateFileToForm {
     private TrackerRepositoryInterface $trackerRepositoryInterface;
     private VisitRepositoryInterface $visitRepositoryInterface;
     private FormService $formService;
+    private MimeInterface $mimeInterface;
 
-    public function __construct(AuthorizationVisitService $authorizationVisitService, VisitRepositoryInterface $visitRepositoryInterface, ReviewRepositoryInterface $reviewRepositoryInterface, FormService $formService, TrackerRepositoryInterface $trackerRepositoryInterface)
+    public function __construct(AuthorizationVisitService $authorizationVisitService,
+                                VisitRepositoryInterface $visitRepositoryInterface,
+                                ReviewRepositoryInterface $reviewRepositoryInterface,
+                                FormService $formService,
+                                TrackerRepositoryInterface $trackerRepositoryInterface,
+                                MimeInterface $mimeInterface)
     {
         $this->authorizationVisitService = $authorizationVisitService;
         $this->reviewRepositoryInterface = $reviewRepositoryInterface;
         $this->visitRepositoryInterface = $visitRepositoryInterface;
         $this->formService = $formService;
         $this->trackerRepositoryInterface = $trackerRepositoryInterface;
+        $this->mimeInterface = $mimeInterface;
     }
 
     public function execute(CreateFileToFormRequest $createFileToReviewRequest, CreateFileToFormResponse $createFileToReviewResponse) {
@@ -43,7 +50,7 @@ class CreateFileToForm {
             $key = $createFileToReviewRequest->key;
             $this->checkAuthorization($local, $reviewEntity['validated'], $userId, $visitId, $createFileToReviewRequest->currentUserId);
 
-            $extension = MimeAdapter::getExtensionFromMime($createFileToReviewRequest->contentType);
+            $extension = $this->mimeInterface::getExtensionFromMime($createFileToReviewRequest->contentType);
 
             $fileName = 'review_'.$reviewEntity['id'].'_'.$key.'.'.$extension ;
 

@@ -6,10 +6,12 @@ use App\GaelO\Adapters\DatabaseDumperAdapter;
 use App\GaelO\Adapters\FrameworkAdapter;
 use App\GaelO\Adapters\HashAdapter;
 use App\GaelO\Adapters\HttpClientAdapter;
+use App\GaelO\Adapters\MimeAdapter;
 use App\GaelO\Interfaces\Adapters\DatabaseDumperInterface;
 use App\GaelO\Interfaces\Adapters\FrameworkInterface;
 use App\GaelO\Interfaces\Adapters\HashInterface;
 use App\GaelO\Interfaces\Adapters\HttpClientInterface;
+use App\GaelO\Interfaces\Adapters\MimeInterface;
 use Illuminate\Support\ServiceProvider;
 
 class AdapterProvider extends ServiceProvider
@@ -25,6 +27,7 @@ class AdapterProvider extends ServiceProvider
         $this->app->bind(HttpClientInterface::class, HttpClientAdapter::class);
         $this->app->bind(HashInterface::class, HashAdapter::class);
         $this->app->bind(FrameworkInterface::class, FrameworkAdapter::class);
+        $this->app->bind(MimeInterface::class, MimeAdapter::class);
     }
 
     /**
