@@ -4,9 +4,9 @@ namespace App\GaelO\Services;
 
 use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOBadRequestException;
-use App\GaelO\Interfaces\DicomStudyRepositoryInterface;
-use App\GaelO\Interfaces\DicomSeriesRepositoryInterface;
-use App\GaelO\Interfaces\ReviewRepositoryInterface;
+use App\GaelO\Interfaces\Repositories\DicomStudyRepositoryInterface;
+use App\GaelO\Interfaces\Repositories\DicomSeriesRepositoryInterface;
+use App\GaelO\Interfaces\Repositories\ReviewRepositoryInterface;
 
 class DicomSeriesService
 {

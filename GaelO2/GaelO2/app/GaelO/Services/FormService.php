@@ -4,8 +4,8 @@ namespace App\GaelO\Services;
 
 use App\GaelO\Adapters\LaravelFunctionAdapter;
 use App\GaelO\Exceptions\GaelOBadRequestException;
-use App\GaelO\Interfaces\ReviewRepositoryInterface;
-use App\GaelO\Interfaces\ReviewStatusRepositoryInterface;
+use App\GaelO\Interfaces\Repositories\ReviewRepositoryInterface;
+use App\GaelO\Interfaces\Repositories\ReviewStatusRepositoryInterface;
 use App\GaelO\Services\SpecificStudiesRules\AbstractStudyRules;
 use App\GaelO\Util;
 

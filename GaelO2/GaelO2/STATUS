@@ -51,8 +51,13 @@ Export Data Etude :
 - Review Ajout Patient Code et Visit Type ?
 - Associated File To Review => A faire dans un zip
 
-Isoler les entity de reponse dans un repertoire à part
-Interface : Faire sous repertoire pour les interface repository et les interface adapter (et faire les interface des adapters qui manquent)
+Interface :
+- Finir les Interface Adapters => Reste LaravelFunction (a splitter), MimeAdapter, SpreadSheet, Validator
+- Renommer MailInterface en MailerInterface
+
+Enitity :
+- Isoler les entity de reponse dans un repertoire à part
+
 Model : Type de variable a caster
 Clé etrangere DicomStudy et DicomSeries non conventionnelle
 Harmoniser le passage par des entity de table pour les réponses

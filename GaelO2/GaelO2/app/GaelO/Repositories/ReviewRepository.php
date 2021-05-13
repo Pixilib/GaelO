@@ -2,7 +2,7 @@
 
 namespace App\GaelO\Repositories;
 
-use App\GaelO\Interfaces\ReviewRepositoryInterface;
+use App\GaelO\Interfaces\Repositories\ReviewRepositoryInterface;
 use App\GaelO\Util;
 use App\Models\Review;
 

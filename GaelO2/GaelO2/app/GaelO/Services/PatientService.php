@@ -3,9 +3,9 @@
 namespace App\GaelO\Services;
 
 use App\GaelO\Constants\Constants;
-use App\GaelO\Interfaces\PatientRepositoryInterface;
-use App\GaelO\Interfaces\StudyRepositoryInterface;
-use App\GaelO\Interfaces\VisitRepositoryInterface;
+use App\GaelO\Interfaces\Repositories\PatientRepositoryInterface;
+use App\GaelO\Interfaces\Repositories\StudyRepositoryInterface;
+use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
 
 class PatientService
 {

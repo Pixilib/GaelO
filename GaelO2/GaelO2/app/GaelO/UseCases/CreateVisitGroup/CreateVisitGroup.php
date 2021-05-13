@@ -6,9 +6,9 @@ use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOConflictException;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
-use App\GaelO\Interfaces\TrackerRepositoryInterface;
-use App\GaelO\Interfaces\VisitGroupRepositoryInterface;
-use App\GaelO\Interfaces\VisitRepositoryInterface;
+use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
+use App\GaelO\Interfaces\Repositories\VisitGroupRepositoryInterface;
+use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
 use App\GaelO\Services\AuthorizationService;
 use Exception;
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\GaelO\Interfaces;
+namespace App\GaelO\Interfaces\Adapters;
 
 Interface MailInterface {
 
@@ -11,5 +11,3 @@ Interface MailInterface {
     public function send();
 
 }
-
-?>

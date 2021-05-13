@@ -2,7 +2,7 @@
 
 namespace Tests\Unit\TestUseCase;
 
-use App\GaelO\Interfaces\DicomSeriesRepositoryInterface;
+use App\GaelO\Interfaces\Repositories\DicomSeriesRepositoryInterface;
 use App\GaelO\Repositories\VisitRepository;
 use App\GaelO\Services\AuthorizationService;
 use App\GaelO\Services\OrthancService;

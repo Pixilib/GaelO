@@ -2,23 +2,22 @@
 
 namespace App\GaelO\UseCases\ExportDatabase;
 
-use App\GaelO\Adapters\DatabaseDumper;
 use App\GaelO\Adapters\LaravelFunctionAdapter;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
+use App\GaelO\Interfaces\Adapters\DatabaseDumperInterface;
 use App\GaelO\Services\AuthorizationService;
-use App\GaelO\Services\PathService;
 use App\GaelO\Util;
 use Exception;
 use ZipArchive;
 
 class ExportDatabase{
 
-    private DatabaseDumper $databaseDumper;
+    private DatabaseDumperInterface $databaseDumperInterface;
     private AuthorizationService $authorizationService;
 
-    public function __construct(DatabaseDumper $databaseDumper, AuthorizationService $authorizationService) {
-        $this->databaseDumper = $databaseDumper;
+    public function __construct(DatabaseDumperInterface $databaseDumperInterface, AuthorizationService $authorizationService) {
+        $this->databaseDumperInterface = $databaseDumperInterface;
         $this->authorizationService = $authorizationService;
     }
 
@@ -31,7 +30,7 @@ class ExportDatabase{
             $tempZip=tempnam(ini_get('upload_tmp_dir'), 'TMPZIPDB_');
             $zip->open($tempZip, ZipArchive::OVERWRITE);
 
-            $databaseDumpedFile = $this->databaseDumper->getDatabaseDumpFile();
+            $databaseDumpedFile = $this->databaseDumperInterface->getDatabaseDumpFile();
 
             $date=Date('Ymd_his');
             $zip->addFile($databaseDumpedFile, "export_database_$date.sql");

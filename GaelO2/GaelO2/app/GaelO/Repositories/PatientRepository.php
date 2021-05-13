@@ -2,7 +2,7 @@
 
 namespace App\GaelO\Repositories;
 
-use App\GaelO\Interfaces\PatientRepositoryInterface;
+use App\GaelO\Interfaces\Repositories\PatientRepositoryInterface;
 use App\Models\Patient;
 use App\GaelO\UseCases\GetPatient\PatientEntity;
 use App\GaelO\Util;

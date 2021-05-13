@@ -13,7 +13,8 @@ class MimeAdapter
         return $mimes->getExtension($mime);
     }
 
-    public static function getMimeFromExtension(string $extension) : string {
+    public static function getMimeFromExtension(string $extension) : string
+    {
         $mimes = new MimeTypes();
         return $mimes->getMimeType($extension);
     }

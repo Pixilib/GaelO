@@ -8,8 +8,8 @@ use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Services\AuthorizationService;
 use App\GaelO\Exceptions\GaelOConflictException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
-use App\GaelO\Interfaces\StudyRepositoryInterface;
-use App\GaelO\Interfaces\TrackerRepositoryInterface;
+use App\GaelO\Interfaces\Repositories\StudyRepositoryInterface;
+use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
 use Exception;
 
 

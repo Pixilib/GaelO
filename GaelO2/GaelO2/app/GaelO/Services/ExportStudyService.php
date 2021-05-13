@@ -3,12 +3,12 @@
 namespace App\GaelO\Services;
 
 use App\GaelO\Adapters\SpreadsheetAdapter;
-use App\GaelO\Interfaces\DicomSeriesRepositoryInterface;
-use App\GaelO\Interfaces\DicomStudyRepositoryInterface;
-use App\GaelO\Interfaces\PatientRepositoryInterface;
-use App\GaelO\Interfaces\ReviewRepositoryInterface;
-use App\GaelO\Interfaces\StudyRepositoryInterface;
-use App\GaelO\Interfaces\VisitRepositoryInterface;
+use App\GaelO\Interfaces\Repositories\DicomSeriesRepositoryInterface;
+use App\GaelO\Interfaces\Repositories\DicomStudyRepositoryInterface;
+use App\GaelO\Interfaces\Repositories\PatientRepositoryInterface;
+use App\GaelO\Interfaces\Repositories\ReviewRepositoryInterface;
+use App\GaelO\Interfaces\Repositories\StudyRepositoryInterface;
+use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
 use App\GaelO\Services\StoreObjects\Export\ExportDataResults;
 use App\GaelO\Services\StoreObjects\Export\ExportDicomResults;
 use App\GaelO\Services\StoreObjects\Export\ExportPatientResults;

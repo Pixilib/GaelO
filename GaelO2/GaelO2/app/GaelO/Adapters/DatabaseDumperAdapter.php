@@ -2,11 +2,12 @@
 
 namespace App\GaelO\Adapters;
 
+use App\GaelO\Interfaces\Adapters\DatabaseDumperInterface;
 use Illuminate\Support\Facades\Config;
 use Spatie\DbDumper\Databases\MySql;
 use Spatie\DbDumper\Databases\PostgreSql;
 
-class DatabaseDumper {
+class DatabaseDumperAdapter implements DatabaseDumperInterface {
 
     const DB_MYSQL = "mysql";
     const DB_PGSQL = "pgsql";

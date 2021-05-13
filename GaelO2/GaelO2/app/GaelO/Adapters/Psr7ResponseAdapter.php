@@ -17,11 +17,20 @@ class Psr7ResponseAdapter {
     }
 
     public function getBody() : string {
-        return $this->response->getBody();
+        return $this->response->getBody()->getContents();
+    }
+
+    public function getReasonPhrase() :string {
+        return $this->response->getReasonPhrase();
+    }
+
+    public function getHeaders()  : array {
+        return $this->response->getHeaders();
     }
 
     public function getJsonBody() : array {
         $body = $this->response->getBody();
         return json_decode($body, true);
     }
+
 }

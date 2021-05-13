@@ -2,12 +2,11 @@
 
 namespace App\GaelO\UseCases\ReverseProxyDicomWeb;
 
-use App\GaelO\Adapters\HttpClientAdapter;
 use App\GaelO\Adapters\LaravelFunctionAdapter;
 use App\GaelO\Constants\SettingsConstants;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
-use App\GaelO\Interfaces\UserRepositoryInterface;
+use App\GaelO\Interfaces\Adapters\HttpClientInterface;
 use App\GaelO\Services\AuthorizationDicomWebService;
 use Exception;
 use Illuminate\Support\Facades\Log;
@@ -15,11 +14,11 @@ use Illuminate\Support\Facades\Log;
 class ReverseProxyDicomWeb{
 
     private AuthorizationDicomWebService $authorizationService;
-    private HttpClientAdapter $httpClientAdapter;
+    private HttpClientInterface $httpClientInterface;
 
-    public function __construct( AuthorizationDicomWebService $authorizationService,  HttpClientAdapter $httpClientAdapter)
+    public function __construct( AuthorizationDicomWebService $authorizationService,  HttpClientInterface $httpClientInterface)
     {
-        $this->httpClientAdapter = $httpClientAdapter;
+        $this->httpClientInterface = $httpClientInterface;
         $this->authorizationService = $authorizationService;
     }
 
@@ -33,11 +32,11 @@ class ReverseProxyDicomWeb{
             $this->checkAuthorization($reverseProxyDicomWebRequest->currentUserId, $calledUrl );
 
             //Connect to Orthanc Pacs
-            $this->httpClientAdapter->setAddress(
+            $this->httpClientInterface->setAddress(
                 LaravelFunctionAdapter::getConfig(SettingsConstants::ORTHANC_STORAGE_ADDRESS),
                 LaravelFunctionAdapter::getConfig(SettingsConstants::ORTHANC_STORAGE_PORT)
             );
-            $this->httpClientAdapter->setBasicAuthentication(
+            $this->httpClientInterface->setBasicAuthentication(
                 LaravelFunctionAdapter::getConfig(SettingsConstants::ORTHANC_STORAGE_LOGIN),
                 LaravelFunctionAdapter::getConfig(SettingsConstants::ORTHANC_STORAGE_PASSWORD)
             );
@@ -50,7 +49,7 @@ class ReverseProxyDicomWeb{
             $headers['Forwarded'] = ['by=localhost;for=localhost;host='.$gaelOUrl.':'.$gaelOPort.'/api/orthanc'.';proto='.$gaelOProtocol];
 
             Log::info($calledUrl);
-            $response = $this->httpClientAdapter->rowRequest('GET', $calledUrl, null ,$headers);
+            $response = $this->httpClientInterface->rowRequest('GET', $calledUrl, null ,$headers);
 
             //Output response
             $reverseProxyDicomWebResponse->status = $response->getStatusCode();

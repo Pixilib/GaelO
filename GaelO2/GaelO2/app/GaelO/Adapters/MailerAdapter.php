@@ -3,7 +3,7 @@
 namespace App\GaelO\Adapters;
 
 use Illuminate\Support\Facades\Mail;
-use App\GaelO\Interfaces\MailInterface;
+use App\GaelO\Interfaces\Adapters\MailInterface;
 use App\Mail\Adjudication;
 use App\Mail\AdminLoged;
 use App\Mail\BlockedAccount;
@@ -26,9 +26,8 @@ use App\Mail\VisitNotDone;
 use App\GaelO\Constants\MailConstants;
 use App\Mail\ImportPatient;
 use Illuminate\Contracts\Mail\Mailable;
-use Illuminate\Support\Facades\Log;
 
-class SendEmailAdapter implements MailInterface {
+class MailerAdapter implements MailInterface {
 
     private array $to;
 

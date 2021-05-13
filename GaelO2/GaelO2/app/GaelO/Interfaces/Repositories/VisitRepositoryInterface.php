@@ -1,6 +1,6 @@
 <?php
 
-namespace App\GaelO\Interfaces;
+namespace App\GaelO\Interfaces\Repositories;
 
 interface VisitRepositoryInterface
 {

@@ -2,11 +2,8 @@
 
 namespace Tests\Unit;
 
-use App\GaelO\Adapters\HttpClientAdapter;
-use App\GaelO\Adapters\Psr7ResponseAdapter;
 use App\GaelO\Constants\Constants;
 use App\GaelO\Services\OrthancService;
-use GuzzleHttp\Psr7\Response;
 use Illuminate\Support\Facades\App;
 use Tests\TestCase;
 
@@ -64,14 +61,6 @@ class OrthancServiceTest extends TestCase
         ];
         $answer = $this->orthancService->importFiles($array);
         $this->assertEquals(2, sizeof($answer));
-    }
-
-    public function testSendDicomFile()
-    {
-        $path = "/home/salim/11009101406003/VR/1.2.840.113704.1.111.2496.1287397130.8/CT_001_0ac8ec19aadc48f698ec8b1eadeecf04.dcm";
-        $answer = $this->orthancService->importFile($path);
-        $this->assertArrayHasKey("ParentStudy", $answer);
-        return $answer['ParentStudy'];
     }
 
     /**

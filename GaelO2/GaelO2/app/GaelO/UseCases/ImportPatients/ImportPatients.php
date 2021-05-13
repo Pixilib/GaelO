@@ -8,7 +8,7 @@ use App\GaelO\UseCases\ImportPatients\ImportPatientsRequest;
 use App\GaelO\UseCases\ImportPatients\ImportPatientsResponse;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
-use App\GaelO\Interfaces\TrackerRepositoryInterface;
+use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
 use App\GaelO\Services\AuthorizationService;
 use App\GaelO\Services\MailServices;
 use App\GaelO\Services\ImportPatientService;

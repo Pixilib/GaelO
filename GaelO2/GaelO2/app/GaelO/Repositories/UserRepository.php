@@ -3,7 +3,7 @@
 namespace App\GaelO\Repositories;
 
 use App\GaelO\Adapters\LaravelFunctionAdapter;
-use App\GaelO\Interfaces\UserRepositoryInterface;
+use App\GaelO\Interfaces\Repositories\UserRepositoryInterface;
 
 use App\Models\CenterUser;
 use App\Models\User;

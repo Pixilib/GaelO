@@ -4,7 +4,7 @@ namespace App\GaelO\UseCases\GetCenter;
 
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
-use App\GaelO\Interfaces\CenterRepositoryInterface;
+use App\GaelO\Interfaces\Repositories\CenterRepositoryInterface;
 use App\GaelO\Services\AuthorizationService;
 use Exception;
 
