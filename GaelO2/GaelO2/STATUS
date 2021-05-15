@@ -40,6 +40,10 @@ reviews/{id}/file (GET, POST, DELETE)
 
 Salim TODO :
 
+Entity :
+- Fusionner Investigator et review form ? (ne different que par l'adjudication)
+- Pluger toutes les reponses "data" sur ces entity response
+
 Download Dicom :
 Mieux organiser la reponse entity (dissocier les sous niveaux et refusionner dans le front)
 Re faire FrontEnd (tout lister au niveau series?)
@@ -52,10 +56,6 @@ Export Data Etude :
 - Personalisation au niveau study -> Couche d'abstration notamment pour injecter le lysarc code
 - Review Ajout Patient Code et Visit Type ?
 - Associated File To Review => A faire dans un zip
-
-Entity :
-- Fusionner Investigator et review form ? (ne different que par l'adjudication)
-- Pluger toutes les reponses "data" sur ces entity response
 
 Model et db :
 - Type de variable a caster
