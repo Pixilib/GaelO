@@ -53,11 +53,10 @@ class TrackerController extends Controller
         return response()->json($getStudyTrackerRoleActionResponse->body)
             ->setStatusCode($getStudyTrackerRoleActionResponse->status, $getStudyTrackerRoleActionResponse->statusText);
     }
-    
-    public function getStudyTrackerByVisit(string $studyName, string $visitId, Request $request, GetStudyTrackerByVisitRequest $getStudyTrackerByVisitRequest, GetStudyTrackerByVisitResponse $getStudyTrackerByVisitResponse, GetStudyTrackerByVisit $getStudyTrackerByVisit) {
+
+    public function getStudyTrackerByVisit(string $studyName, string $visitId, GetStudyTrackerByVisitRequest $getStudyTrackerByVisitRequest, GetStudyTrackerByVisitResponse $getStudyTrackerByVisitResponse, GetStudyTrackerByVisit $getStudyTrackerByVisit) {
         $currentUser = Auth::user();
         $getStudyTrackerByVisitRequest->currentUserId = $currentUser['id'];
-        $queryParam = $request->query();
         $getStudyTrackerByVisitRequest->visitId = $visitId;
         $getStudyTrackerByVisitRequest->studyName = $studyName;
         $getStudyTrackerByVisit->execute($getStudyTrackerByVisitRequest, $getStudyTrackerByVisitResponse);

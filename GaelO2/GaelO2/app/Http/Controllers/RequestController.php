@@ -11,11 +11,11 @@ use Illuminate\Http\Request;
 
 class RequestController extends Controller
 {
-    public function sendRequest(Request $request, RequestRequest $requestRequest, RequestResponse $requestResponse, SendRequest $sendRequest){
+    public function sendRequest(Request $request, RequestRequest $requestRequest, RequestResponse $requestResponse, SendRequest $sendRequest)
+    {
         $requestData = $request->all();
         $requestRequest = Util::fillObject($requestData, $requestRequest);
         $sendRequest->execute($requestRequest, $requestResponse);
-        return response()->json($requestResponse->body)
-                ->setStatusCode($requestResponse->status, $requestResponse->statusText);
+        return $this->getJsonResponse($requestResponse->body, $requestResponse->status, $requestResponse->statusText);
     }
 }
