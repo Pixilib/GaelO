@@ -9,7 +9,7 @@ use App\GaelO\Interfaces\Repositories\PatientRepositoryInterface;
 use App\GaelO\Services\AuthorizationService;
 use App\GaelO\UseCases\GetPatientFromStudy\GetPatientFromStudyRequest;
 use App\GaelO\UseCases\GetPatientFromStudy\GetPatientFromStudyResponse;
-use App\GaelO\UseCases\GetPatient\PatientEntity;
+use App\GaelO\Entities\PatientEntity;
 use Exception;
 
 class GetPatientFromStudy {

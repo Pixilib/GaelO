@@ -1,6 +1,6 @@
 <?php
 
-namespace App\GaelO\UseCases\GetPatient;
+namespace App\GaelO\Entities;
 
 
 class PatientEntity {

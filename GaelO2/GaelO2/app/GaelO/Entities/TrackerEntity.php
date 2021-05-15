@@ -1,6 +1,6 @@
 <?php
 
-namespace App\GaelO\UseCases\GetTracker;
+namespace App\GaelO\Entities;
 
 class TrackerEntity {
     public int $id;

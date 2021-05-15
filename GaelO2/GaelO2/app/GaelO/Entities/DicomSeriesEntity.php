@@ -1,6 +1,6 @@
 <?php
 
-namespace App\GaelO\UseCases\GetDicoms;
+namespace App\GaelO\Entities;
 
 class DicomSeriesEntity {
     public string $seriesInstanceUID;

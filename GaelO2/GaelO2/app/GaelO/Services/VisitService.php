@@ -9,7 +9,7 @@ use App\GaelO\Repositories\ReviewStatusRepository;
 use App\GaelO\Repositories\UserRepository;
 use App\GaelO\Repositories\VisitTypeRepository;
 use App\GaelO\Repositories\VisitRepository;
-use App\GaelO\UseCases\GetVisitType\VisitTypeEntity;
+use App\GaelO\Entities\VisitTypeEntity;
 
 class VisitService
 {

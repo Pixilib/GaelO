@@ -3,6 +3,7 @@
 namespace App\GaelO\UseCases\GetDocumentation;
 
 use App\GaelO\Constants\Constants;
+use App\GaelO\Entities\DocumentationEntity;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\DocumentationRepositoryInterface;

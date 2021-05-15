@@ -2,6 +2,7 @@
 
 namespace App\GaelO\UseCases\GetVisitGroup;
 
+use App\GaelO\Entities\VisitGroupEntity;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Repositories\VisitGroupRepository;

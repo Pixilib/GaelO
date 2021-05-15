@@ -22,6 +22,7 @@ class GetUserRoles {
 
         try{
 
+            //SK A faire passer par l'entity
             $this->checkAuthorization($getUserRolesRequest->currentUserId);
             $roles = $this->userRepositoryInterface->getUsersRoles($getUserRolesRequest->userId);
 

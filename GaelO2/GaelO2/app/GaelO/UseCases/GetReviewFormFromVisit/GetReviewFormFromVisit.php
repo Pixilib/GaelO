@@ -7,7 +7,7 @@ use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\ReviewRepositoryInterface;
 use App\GaelO\Services\AuthorizationVisitService;
-use App\GaelO\UseCases\GetReviewForm\ReviewFormEntity;
+use App\GaelO\Entities\ReviewFormEntity;
 use Exception;
 
 class GetReviewFormFromVisit

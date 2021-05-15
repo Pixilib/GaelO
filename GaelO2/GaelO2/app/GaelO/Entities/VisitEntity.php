@@ -1,6 +1,6 @@
 <?php
 
-namespace App\GaelO\UseCases\GetVisit;
+namespace App\GaelO\Entities;
 
 class VisitEntity {
     public ?int $creatorUserId;

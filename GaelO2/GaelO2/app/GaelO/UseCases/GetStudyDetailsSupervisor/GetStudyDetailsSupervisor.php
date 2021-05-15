@@ -7,9 +7,8 @@ use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\StudyRepositoryInterface;
 use App\GaelO\Services\AuthorizationService;
-use App\GaelO\UseCases\GetStudy\StudyEntity;
-use App\GaelO\UseCases\GetVisitGroup\VisitGroupEntity;
-use App\GaelO\UseCases\GetVisitType\VisitTypeEntity;
+use App\GaelO\Entities\VisitGroupEntity;
+use App\GaelO\Entities\VisitTypeEntity;
 use Exception;
 
 class GetStudyDetailsSupervisor {

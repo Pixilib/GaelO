@@ -45,6 +45,7 @@ Eliminer l'entity custom au profit de l'entity generique
 Faire FrontEnd (tout lister au niveau series?)
 
 Messagerie à designer
+
 Ajouter dicom contstrainte dans definition visittype et upgrade de l'uploader
 
 Export Data Etude :
@@ -53,8 +54,8 @@ Export Data Etude :
 - Associated File To Review => A faire dans un zip
 
 Entity :
-- Isoler les entity de reponse dans un repertoire à part
-- Pluger les reponses "data" sur ces entity response
+- Fusionner Investigator et review form ? (ne different que par l'adjudication)
+- Pluger toutes les reponses "data" sur ces entity response
 
 Model et db :
 - Type de variable a caster

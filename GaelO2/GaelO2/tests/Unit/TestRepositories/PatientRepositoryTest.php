@@ -3,7 +3,7 @@
 namespace Tests\Unit\TestRepositories;
 
 use App\GaelO\Repositories\PatientRepository;
-use App\GaelO\UseCases\GetPatient\PatientEntity;
+use App\GaelO\Entities\PatientEntity;
 use App\Models\Center;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\DatabaseMigrations;

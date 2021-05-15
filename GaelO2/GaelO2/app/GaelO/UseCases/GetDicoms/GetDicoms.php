@@ -3,6 +3,8 @@
 namespace App\GaelO\UseCases\GetDicoms;
 
 use App\GaelO\Constants\Constants;
+use App\GaelO\Entities\DicomSeriesEntity;
+use App\GaelO\Entities\DicomStudyEntity;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\DicomStudyRepositoryInterface;

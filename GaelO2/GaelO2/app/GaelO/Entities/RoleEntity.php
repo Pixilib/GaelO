@@ -1,6 +1,6 @@
 <?php
 
-namespace App\GaelO\UseCases\GetUserRoles;
+namespace App\GaelO\Entities;
 
 class RoleEntity {
     public string $name;

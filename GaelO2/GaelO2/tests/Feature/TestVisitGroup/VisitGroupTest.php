@@ -2,7 +2,7 @@
 
 namespace Tests\Feature\TestVisitGroup;
 
-use App\GaelO\UseCases\GetVisitGroup\VisitGroupEntity;
+use App\GaelO\Entities\VisitGroupEntity;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 
 use Tests\TestCase;

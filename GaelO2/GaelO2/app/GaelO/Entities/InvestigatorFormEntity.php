@@ -1,6 +1,6 @@
 <?php
 
-namespace App\GaelO\UseCases\GetInvestigatorForm;
+namespace App\GaelO\Entities;
 
 class InvestigatorFormEntity {
     public int $id;
@@ -11,6 +11,7 @@ class InvestigatorFormEntity {
     public int $visitId;
     public bool $validated;
     public array $data;
+    public array $files;
 
     public static function fillFromDBReponseArray(array $array){
         $investigatorFormEntity  = new InvestigatorFormEntity();
@@ -21,6 +22,7 @@ class InvestigatorFormEntity {
         $investigatorFormEntity->visitId = $array['visit_id'];
         $investigatorFormEntity->validated = $array['validated'];
         $investigatorFormEntity->data = $array['review_data'];
+        $investigatorFormEntity->files = $array['sent_files'];
         return $investigatorFormEntity;
     }
 

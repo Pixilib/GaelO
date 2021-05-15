@@ -1,6 +1,6 @@
 <?php
 
-namespace App\GaelO\UseCases\GetDocumentation;
+namespace App\GaelO\Entities;
 
 class DocumentationEntity{
 

@@ -23,7 +23,7 @@ class GetCreatableVisits{
     public function execute(GetCreatableVisitsRequest $getCreatableVisitsRequest, GetCreatableVisitsResponse $getCreatableVisitsResponse){
 
         try{
-
+            //SK A PASSER VIA ENTITY
             $this->checkAuthorization($getCreatableVisitsRequest->currentUserId, $getCreatableVisitsRequest->patientCode);
             $this->patientService->setPatientCode($getCreatableVisitsRequest->patientCode);
             $visitToCreate = $this->patientService->getAvailableVisitToCreate();

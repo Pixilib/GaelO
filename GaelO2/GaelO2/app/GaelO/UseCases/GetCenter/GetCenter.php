@@ -2,6 +2,7 @@
 
 namespace App\GaelO\UseCases\GetCenter;
 
+use App\GaelO\Entities\CenterEntity;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\CenterRepositoryInterface;

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\GaelO\UseCases\GetUser;
+namespace App\GaelO\Entities;
 
 class UserEntity {
     public int $id;

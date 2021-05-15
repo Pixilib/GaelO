@@ -1,6 +1,6 @@
 <?php
 
-namespace App\GaelO\UseCases\GetReviewForm;
+namespace App\GaelO\Entities;
 
 class ReviewFormEntity {
     public int $id;

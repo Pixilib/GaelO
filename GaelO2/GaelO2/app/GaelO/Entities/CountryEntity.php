@@ -1,6 +1,6 @@
 <?php
 
-namespace App\GaelO\UseCases\GetCountry;
+namespace App\GaelO\Entities;
 
 class CountryEntity {
     public string $code;

@@ -6,7 +6,7 @@ use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
 use App\GaelO\Services\AuthorizationService;
-use App\GaelO\UseCases\GetTracker\TrackerEntity;
+use App\GaelO\Entities\TrackerEntity;
 use Exception;
 
 class GetStudyTrackerRoleAction {

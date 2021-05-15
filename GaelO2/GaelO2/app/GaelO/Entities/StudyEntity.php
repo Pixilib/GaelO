@@ -1,6 +1,6 @@
 <?php
 
-namespace App\GaelO\UseCases\GetStudy;
+namespace App\GaelO\Entities;
 
 class StudyEntity {
     public string $name;

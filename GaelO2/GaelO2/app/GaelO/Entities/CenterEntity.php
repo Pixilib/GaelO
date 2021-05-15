@@ -1,6 +1,6 @@
 <?php
 
-namespace App\GaelO\UseCases\GetAffiliatedCenter;
+namespace App\GaelO\Entities;
 
 class CenterEntity {
     public int $code;

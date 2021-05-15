@@ -12,7 +12,7 @@ use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
 use App\GaelO\Services\AuthorizationService;
 use App\GaelO\Services\MailServices;
 use App\GaelO\Services\ImportPatientService;
-use App\GaelO\UseCases\GetPatient\PatientEntity;
+use App\GaelO\Entities\PatientEntity;
 use Exception;
 
 class ImportPatients {

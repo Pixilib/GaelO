@@ -8,7 +8,7 @@ use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\ReviewRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
 use App\GaelO\Services\AuthorizationService;
-use App\GaelO\UseCases\GetInvestigatorForm\InvestigatorFormEntity;
+use App\GaelO\Entities\InvestigatorFormEntity;
 use Exception;
 
 class GetInvestigatorFormsFromVisitType {

@@ -7,7 +7,7 @@ use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
 use App\GaelO\Services\AuthorizationService;
-use App\GaelO\UseCases\GetVisit\VisitEntity;
+use App\GaelO\Entities\VisitEntity;
 use Exception;
 
 class GetVisitsFromStudy

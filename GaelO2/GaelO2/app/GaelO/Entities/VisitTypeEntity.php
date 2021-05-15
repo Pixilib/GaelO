@@ -1,6 +1,6 @@
 <?php
 
-namespace App\GaelO\UseCases\GetVisitType;
+namespace App\GaelO\Entities;
 
 class VisitTypeEntity {
     public int $id;

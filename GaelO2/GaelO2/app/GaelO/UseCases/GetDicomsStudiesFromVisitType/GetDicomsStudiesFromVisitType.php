@@ -8,8 +8,8 @@ use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\DicomStudyRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
 use App\GaelO\Services\AuthorizationService;
-use App\GaelO\UseCases\GetDicoms\DicomSeriesEntity;
-use App\GaelO\UseCases\GetDicoms\DicomStudyEntity;
+use App\GaelO\Entities\DicomSeriesEntity;
+use App\GaelO\Entities\DicomStudyEntity;
 use Exception;
 
 class GetDicomsStudiesFromVisitType

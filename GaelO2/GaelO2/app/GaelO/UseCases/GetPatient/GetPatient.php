@@ -3,6 +3,7 @@
 namespace App\GaelO\UseCases\GetPatient;
 
 use App\GaelO\Constants\Constants;
+use App\GaelO\Entities\PatientEntity;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\PatientRepositoryInterface;
