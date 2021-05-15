@@ -44,6 +44,7 @@ class DeleteUserRole {
             $deleteUserRoleResponse->statusText = 'OK';
 
         }catch(GaelOException $e){
+            $deleteUserRoleResponse->body = $e->getErrorBody();
             $deleteUserRoleResponse->status = $e->statusCode;
             $deleteUserRoleResponse->statusText = $e->statusText;
 

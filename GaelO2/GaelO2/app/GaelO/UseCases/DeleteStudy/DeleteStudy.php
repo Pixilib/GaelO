@@ -43,7 +43,7 @@ class DeleteStudy {
             $deleteStudyResponse->statusText = 'OK';
 
         } catch(GaelOException $e){
-            $deleteStudyResponse->body = $e->getMessage();
+            $deleteStudyResponse->body = $e->getErrorBody();
             $deleteStudyResponse->status = $e->statusCode;
             $deleteStudyResponse->statusText = $e->statusText;
 

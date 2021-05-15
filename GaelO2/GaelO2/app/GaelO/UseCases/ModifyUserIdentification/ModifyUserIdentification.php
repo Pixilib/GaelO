@@ -78,7 +78,7 @@ class ModifyUserIdentification {
             $modifyUserIdentificationResponse->statusText = 'OK';
 
         } catch (GaelOException $e){
-
+            $modifyUserIdentificationResponse->body = $e->getErrorBody();
             $modifyUserIdentificationResponse->status = $e->statusCode;
             $modifyUserIdentificationResponse->statusText = $e->statusText;
 

@@ -171,7 +171,7 @@ class UserTest extends TestCase
         AuthorizationTools::addRoleToUser(1, Constants::ROLE_INVESTIGATOR, $study->name);
 
         //Delete Investigator role
-        $this->json('DELETE', '/api/users/1/studies/'.$study->name.'/roles/Investigator')->assertNoContent(403);
+        $this->json('DELETE', '/api/users/1/studies/'.$study->name.'/roles/Investigator')->assertStatus(403);
     }
 
     public function testGetUserFromStudy()

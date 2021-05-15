@@ -58,6 +58,7 @@ class ReactivateUser{
 
         } catch( GaelOException $e){
 
+            $reactivateUserResponse->body = $e->getErrorBody();
             $reactivateUserResponse->status = $e->statusCode;
             $reactivateUserResponse->statusText = $e->statusText;
 

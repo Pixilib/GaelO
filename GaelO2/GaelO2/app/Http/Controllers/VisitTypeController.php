@@ -28,10 +28,7 @@ class VisitTypeController extends Controller
         $createVisitTypeRequest = Util::fillObject($requestData, $createVisitTypeRequest);
 
         $createVisitType->execute($createVisitTypeRequest, $createVisitTypeResponse);
-
-        return response()->noContent()
-                ->setStatusCode($createVisitTypeResponse->status, $createVisitTypeResponse->statusText);
-
+        return $this->getJsonResponse($createVisitTypeResponse->body, $createVisitTypeResponse->status, $createVisitTypeResponse->statusText);
     }
 
     public function getVisitType(int $visitTypeId, GetVisitType $getVisitType, GetVisitTypeRequest $getVisitTypeRequest, GetVisitTypeResponse $getVisitTypeResponse){
@@ -39,8 +36,7 @@ class VisitTypeController extends Controller
         $getVisitTypeRequest->currentUserId = $curentUser['id'];
         $getVisitTypeRequest->visitTypeId = $visitTypeId;
         $getVisitType->execute($getVisitTypeRequest, $getVisitTypeResponse);
-        return response()->json($getVisitTypeResponse->body)
-            ->setStatusCode($getVisitTypeResponse->status, $getVisitTypeResponse->statusText);
+        return $this->getJsonResponse($getVisitTypeResponse->body, $getVisitTypeResponse->status, $getVisitTypeResponse->statusText);
     }
 
     public function deleteVisitType(int $visitTypeId, DeleteVisitType $deleteVisitType, DeleteVisitTypeRequest $deleteVisitTypeRequest, DeleteVisitTypeResponse $deleteVisitTypeResponse){
@@ -48,8 +44,6 @@ class VisitTypeController extends Controller
         $deleteVisitTypeRequest->currentUserId = $curentUser['id'];
         $deleteVisitTypeRequest->visitTypeId = $visitTypeId;
         $deleteVisitType->execute($deleteVisitTypeRequest, $deleteVisitTypeResponse);
-
-        return response()->json($deleteVisitTypeResponse->body)
-        ->setStatusCode($deleteVisitTypeResponse->status, $deleteVisitTypeResponse->statusText);
+        return $this->getJsonResponse($deleteVisitTypeResponse->body, $deleteVisitTypeResponse->status, $deleteVisitTypeResponse->statusText);
     }
 }

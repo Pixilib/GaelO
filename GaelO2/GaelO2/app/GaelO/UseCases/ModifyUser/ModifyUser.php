@@ -108,7 +108,7 @@ class ModifyUser
             $modifyUserResponse->statusText = 'OK';
 
         } catch (GaelOException $e) {
-
+            $modifyUserResponse->body = $e->getErrorBody();
             $modifyUserResponse->status = $e->statusCode;
             $modifyUserResponse->statusText = $e->statusText;
 

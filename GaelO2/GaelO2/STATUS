@@ -50,8 +50,9 @@ Entity :
 => GetVisitTree => ?
 
 Controller :
-Faire formatter de response -> Continuer a partir de TrackerController
+Faire formatter de response -> Reste VisitController
 formController => Renommer en askunlock controller
+Dans les DTO response initaliser le body a null pour eviter les accession avant initalisation
 
 Download Dicom :
 Mieux organiser la reponse entity (dissocier les sous niveaux et refusionner dans le front)
