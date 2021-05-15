@@ -53,11 +53,22 @@ use App\GaelO\UseCases\GetUserFromStudy\GetUserFromStudyResponse;
 use App\GaelO\UseCases\ModifyUserIdentification\ModifyUserIdentification;
 use App\GaelO\UseCases\ModifyUserIdentification\ModifyUserIdentificationRequest;
 use App\GaelO\UseCases\ModifyUserIdentification\ModifyUserIdentificationResponse;
+use App\GaelO\UseCases\ResetPassword\ResetPassword;
+use App\GaelO\UseCases\ResetPassword\ResetPasswordRequest;
+use App\GaelO\UseCases\ResetPassword\ResetPasswordResponse;
 use App\GaelO\Util;
 use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
+
+    public function resetPassword(Request $request, ResetPasswordRequest $resetPasswordRequest, ResetPasswordResponse $resetPasswordResponse, ResetPassword $resetPassword){
+        $requestData = $request->all();
+        $requestRequest = Util::fillObject($requestData, $resetPasswordRequest);
+        $resetPassword->execute($requestRequest, $resetPasswordResponse);
+        return response()->json($resetPasswordResponse->body)
+                    ->setStatusCode($resetPasswordResponse->status, $resetPasswordResponse->statusText);
+    }
 
     public function getUser(int $id = null, GetUserRequest $getUserRequest, GetUserResponse $getUserResponse, GetUser $getUser) {
         $curentUser = Auth::user();

@@ -44,6 +44,7 @@ class ReactivateStudy {
 
         } catch (GaelOException $e){
 
+            $reactivateStudyResponse->body = $e->getMessage();
             $reactivateStudyResponse->status = $e->statusCode;
             $reactivateStudyResponse->statusText = $e->statusText;
 

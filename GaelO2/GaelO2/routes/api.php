@@ -188,4 +188,4 @@ Route::post('request', [RequestController::class, 'sendRequest'] );
 //Login and password Route
 Route::post('login', [AuthController::class, 'login'] )->name('login');
 Route::put('users/{id}/password', [UserController::class, 'changeUserPassword'] );
-Route::post('tools/reset-password', [ToolsController::class, 'resetPassword'] );
+Route::post('tools/reset-password', [UserController::class, 'resetPassword'] );

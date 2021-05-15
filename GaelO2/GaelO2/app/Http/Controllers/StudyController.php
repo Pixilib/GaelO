@@ -56,11 +56,11 @@ use App\GaelO\UseCases\ReactivateStudy\ReactivateStudyResponse;
 use App\GaelO\Util;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Tests\Feature\TestVisits\GetDicomsStudiesFromVisitTypeTest;
 
 class StudyController extends Controller
 {
-    public function createStudy(Request $request, CreateStudy $createStudy, CreateStudyRequest $createStudyRequest, CreateStudyResponse $createStudyResponse){
+    public function createStudy(Request $request, CreateStudy $createStudy, CreateStudyRequest $createStudyRequest, CreateStudyResponse $createStudyResponse)
+    {
 
         $currentUser = Auth::user();
         $createStudyRequest->currentUserId = $currentUser['id'];
@@ -69,46 +69,35 @@ class StudyController extends Controller
 
         $createStudy->execute($createStudyRequest, $createStudyResponse);
 
-        if($createStudyResponse->body){
-            return response()->json($createStudyResponse->body)
-            ->setStatusCode($createStudyResponse->status, $createStudyResponse->statusText);
-        }else{
-            return response()->noContent()
-            ->setStatusCode($createStudyResponse->status, $createStudyResponse->statusText);
-        }
-
-
+        return $this->getJsonResponse($createStudyResponse->body, $createStudyResponse->status, $createStudyResponse->statusText);
     }
 
-    public function getStudies(Request $request, GetStudy $getStudy, GetStudyRequest $getStudyRequest, GetStudyResponse $getStudyResponse, GetStudyDetails $getStudyDetails, GetStudyDetailsRequest $getStudyDetailsRequest, GetStudyDetailsResponse $getStudyDetailsResponse){
+    public function getStudies(Request $request, GetStudy $getStudy, GetStudyRequest $getStudyRequest, GetStudyResponse $getStudyResponse, GetStudyDetails $getStudyDetails, GetStudyDetailsRequest $getStudyDetailsRequest, GetStudyDetailsResponse $getStudyDetailsResponse)
+    {
         $currentUser = Auth::user();
         $queryParam = $request->query();
-        if(array_key_exists('expand', $queryParam) ){
+        if (array_key_exists('expand', $queryParam)) {
             $getStudyDetailsRequest->currentUserId = $currentUser['id'];
             $getStudyDetails->execute($getStudyDetailsRequest, $getStudyDetailsResponse);
-            return response()->json($getStudyDetailsResponse->body)
-            ->setStatusCode($getStudyDetailsResponse->status, $getStudyDetailsResponse->statusText);
-        }else {
+            return $this->getJsonResponse($getStudyDetailsResponse->body, $getStudyDetailsResponse->status, $getStudyDetailsResponse->statusText);
+        } else {
             $getStudyRequest->currentUserId = $currentUser['id'];
             $getStudy->execute($getStudyRequest, $getStudyResponse);
-            return response()->json($getStudyResponse->body)
-            ->setStatusCode($getStudyResponse->status, $getStudyResponse->statusText);
+            return $this->getJsonResponse($getStudyResponse->body, $getStudyResponse->status, $getStudyResponse->statusText);
         }
-
     }
 
-    public function getStudyDetails(string $studyName, GetStudyDetailsSupervisor $getStudyDetailsSupervisor, GetStudyDetailsSupervisorRequest $getStudyDetailsSupervisorRequest, GetStudyDetailsSupervisorResponse $getStudyDetailsSupervisorResponse){
+    public function getStudyDetails(string $studyName, GetStudyDetailsSupervisor $getStudyDetailsSupervisor, GetStudyDetailsSupervisorRequest $getStudyDetailsSupervisorRequest, GetStudyDetailsSupervisorResponse $getStudyDetailsSupervisorResponse)
+    {
         $currentUser = Auth::user();
         $getStudyDetailsSupervisorRequest->currentUserId = $currentUser['id'];
         $getStudyDetailsSupervisorRequest->studyName = $studyName;
         $getStudyDetailsSupervisor->execute($getStudyDetailsSupervisorRequest, $getStudyDetailsSupervisorResponse);
-        return response()
-            ->json($getStudyDetailsSupervisorResponse->body)
-            ->setStatusCode($getStudyDetailsSupervisorResponse->status, $getStudyDetailsSupervisorResponse->statusText);
-
+        return $this->getJsonResponse($getStudyDetailsSupervisorResponse->body, $getStudyDetailsSupervisorResponse->status, $getStudyDetailsSupervisorResponse->statusText);
     }
 
-    public function deleteStudy(String $studyName, Request $request, DeleteStudy $deleteStudy,  DeleteStudyRequest $deleteStudyRequest, DeleteStudyResponse $deleteStudyResponse){
+    public function deleteStudy(String $studyName, Request $request, DeleteStudy $deleteStudy,  DeleteStudyRequest $deleteStudyRequest, DeleteStudyResponse $deleteStudyResponse)
+    {
         $currentUser = Auth::user();
 
         $requestData = $request->all();
@@ -119,12 +108,11 @@ class StudyController extends Controller
 
         $deleteStudy->execute($deleteStudyRequest, $deleteStudyResponse);
 
-        return response()->noContent()
-                ->setStatusCode($deleteStudyResponse->status, $deleteStudyResponse->statusText);
-
+        return $this->getJsonResponse($deleteStudyResponse->body, $deleteStudyResponse->status, $deleteStudyResponse->statusText);
     }
 
-    public function reactivateStudy(string $studyName, Request $request, ReactivateStudy $reactivateStudy, ReactivateStudyRequest $reactivateStudyRequest, ReactivateStudyResponse $reactivateStudyResponse){
+    public function reactivateStudy(string $studyName, Request $request, ReactivateStudy $reactivateStudy, ReactivateStudyRequest $reactivateStudyRequest, ReactivateStudyResponse $reactivateStudyResponse)
+    {
         $currentUser = Auth::user();
         $requestData = $request->all();
 
@@ -133,22 +121,22 @@ class StudyController extends Controller
         $reactivateStudyRequest->studyName = $studyName;
         $reactivateStudyRequest = Util::fillObject($requestData, $reactivateStudyRequest);
         $reactivateStudy->execute($reactivateStudyRequest, $reactivateStudyResponse);
-        return response()->noContent()
-                ->setStatusCode($reactivateStudyResponse->status, $reactivateStudyResponse->statusText);
+        return $this->getJsonResponse($reactivateStudyResponse->body, $reactivateStudyResponse->status, $reactivateStudyResponse->statusText);
     }
 
-    public function importPatients(string $studyName, Request $request, ImportPatients $importPatients, ImportPatientsRequest $importPatientsRequest, ImportPatientsResponse $importPatientsResponse){
+    public function importPatients(string $studyName, Request $request, ImportPatients $importPatients, ImportPatientsRequest $importPatientsRequest, ImportPatientsResponse $importPatientsResponse)
+    {
 
         $currentUser = Auth::user();
-        $importPatientsRequest->patients = $request->all() ;
+        $importPatientsRequest->patients = $request->all();
         $importPatientsRequest->studyName = $studyName;
         $importPatientsRequest->currentUserId = $currentUser['id'];
         $importPatients->execute($importPatientsRequest, $importPatientsResponse);
-
-        return response()->json($importPatientsResponse->body)->setStatusCode($importPatientsResponse->status, $importPatientsResponse->statusText);
+        return $this->getJsonResponse($importPatientsResponse->body, $importPatientsResponse->status, $importPatientsResponse->statusText);
     }
 
-    public function isKnownOrthancId(string $studyName, string $orthancStudyID, GetKnownOrthancID $getKnownOrthancID, GetKnownOrthancIDRequest $getKnownOrthancIDRequest, GetKnownOrthancIDResponse $getKnownOrthancIDResponse){
+    public function isKnownOrthancId(string $studyName, string $orthancStudyID, GetKnownOrthancID $getKnownOrthancID, GetKnownOrthancIDRequest $getKnownOrthancIDRequest, GetKnownOrthancIDResponse $getKnownOrthancIDResponse)
+    {
 
         $currentUser = Auth::user();
         $getKnownOrthancIDRequest->currentUserId = $currentUser['id'];
@@ -156,11 +144,12 @@ class StudyController extends Controller
         $getKnownOrthancIDRequest->orthancStudyID = $orthancStudyID;
 
         $getKnownOrthancID->execute($getKnownOrthancIDRequest, $getKnownOrthancIDResponse);
-        return response()->json($getKnownOrthancIDResponse->body)->setStatusCode($getKnownOrthancIDResponse->status, $getKnownOrthancIDResponse->statusText);
 
+        return $this->getJsonResponse($getKnownOrthancIDResponse->body, $getKnownOrthancIDResponse->status, $getKnownOrthancIDResponse->statusText);
     }
 
-    public function getVisitsTree(string $studyName, Request $request, GetVisitsTree $getVisitsTree, GetVisitsTreeRequest $getVisitsTreeRequest, GetVisitsTreeResponse $getVisitsTreeResponse){
+    public function getVisitsTree(string $studyName, Request $request, GetVisitsTree $getVisitsTree, GetVisitsTreeRequest $getVisitsTreeRequest, GetVisitsTreeResponse $getVisitsTreeResponse)
+    {
         $currentUser = Auth::user();
         $queryParam = $request->query();
         $getVisitsTreeRequest->currentUserId = $currentUser['id'];
@@ -169,31 +158,31 @@ class StudyController extends Controller
 
         $getVisitsTree->execute($getVisitsTreeRequest, $getVisitsTreeResponse);
 
-        return response()->json($getVisitsTreeResponse->body)->setStatusCode($getVisitsTreeResponse->status, $getVisitsTreeResponse->statusText);
+        return $this->getJsonResponse($getVisitsTreeResponse->body, $getVisitsTreeResponse->status, $getVisitsTreeResponse->statusText);
     }
 
-    public function getPossibleUploads(string $studyName, GetPossibleUpload $getPossibleUpload, GetPossibleUploadRequest $getPossibleUploadRequest, GetPossibleUploadResponse $getPossibleUploadResponse){
+    public function getPossibleUploads(string $studyName, GetPossibleUpload $getPossibleUpload, GetPossibleUploadRequest $getPossibleUploadRequest, GetPossibleUploadResponse $getPossibleUploadResponse)
+    {
         $currentUser = Auth::user();
         $getPossibleUploadRequest->currentUserId = $currentUser['id'];
         $getPossibleUploadRequest->studyName = $studyName;
         $getPossibleUpload->execute($getPossibleUploadRequest, $getPossibleUploadResponse);
-
-        return response()->json($getPossibleUploadResponse->body)->setStatusCode($getPossibleUploadResponse->status, $getPossibleUploadResponse->statusText);
-
+        return $this->getJsonResponse($getPossibleUploadResponse->body, $getPossibleUploadResponse->status, $getPossibleUploadResponse->statusText);
     }
 
-    public function getPatientFromStudy(String $studyName, Request $request, GetPatientFromStudyRequest $getPatientRequest, GetPatientFromStudyResponse $getPatientResponse, GetPatientFromStudy $getPatient) {
+    public function getPatientFromStudy(String $studyName, Request $request, GetPatientFromStudyRequest $getPatientRequest, GetPatientFromStudyResponse $getPatientResponse, GetPatientFromStudy $getPatient)
+    {
         $currentUser = Auth::user();
         $queryParam = $request->query();
         $getPatientRequest->role = $queryParam['role'];
         $getPatientRequest->currentUserId = $currentUser['id'];
         $getPatientRequest->studyName = $studyName;
         $getPatient->execute($getPatientRequest, $getPatientResponse);
-        return response()->json($getPatientResponse->body)
-                ->setStatusCode($getPatientResponse->status, $getPatientResponse->statusText);
+        return $this->getJsonResponse($getPatientResponse->body, $getPatientResponse->status, $getPatientResponse->statusText);
     }
 
-    public function getReviewProgression(String $studyName, int $visitTypeId, GetReviewProgression $getReviewProgression, GetReviewProgressionRequest $getReviewProgressionRequest, GetReviewProgressionResponse $getReviewProgressionResponse){
+    public function getReviewProgression(String $studyName, int $visitTypeId, GetReviewProgression $getReviewProgression, GetReviewProgressionRequest $getReviewProgressionRequest, GetReviewProgressionResponse $getReviewProgressionResponse)
+    {
         $currentUser = Auth::user();
 
         $getReviewProgressionRequest->visitTypeId = $visitTypeId;
@@ -202,51 +191,44 @@ class StudyController extends Controller
 
         $getReviewProgression->execute($getReviewProgressionRequest, $getReviewProgressionResponse);
 
-        if($getReviewProgressionResponse->body){
-            return response()->json($getReviewProgressionResponse->body)
-            ->setStatusCode($getReviewProgressionResponse->status, $getReviewProgressionResponse->statusText);
-        }else{
-            return response()->noContent()
-            ->setStatusCode($getReviewProgressionResponse->status, $getReviewProgressionResponse->statusText);
-        }
+        return $this->getJsonResponse($getReviewProgressionResponse->body, $getReviewProgressionResponse->status, $getReviewProgressionResponse->statusText);
     }
 
-    public function exportStudyData(string $studyName, ExportStudyData $exportStudyData, ExportStudyDataRequest $exportStudyDataRequest, ExportStudyDataResponse $exportStudyDataResponse){
+    public function exportStudyData(string $studyName, ExportStudyData $exportStudyData, ExportStudyDataRequest $exportStudyDataRequest, ExportStudyDataResponse $exportStudyDataResponse)
+    {
         $currentUser = Auth::user();
         $exportStudyDataRequest->currentUserId = $currentUser['id'];
         $exportStudyDataRequest->studyName = $studyName;
 
         $exportStudyData->execute($exportStudyDataRequest, $exportStudyDataResponse);
 
-        if($exportStudyDataResponse->status === 200){
-            return response()->download($exportStudyDataResponse->zipFile, $exportStudyDataResponse->fileName,
-                                            array('Content-Type: application/zip','Content-Length: '. filesize($exportStudyDataResponse->zipFile)))
-                            ->deleteFileAfterSend(true);
-        }else{
+        if ($exportStudyDataResponse->status === 200) {
+            return response()->download(
+                $exportStudyDataResponse->zipFile,
+                $exportStudyDataResponse->fileName,
+                array('Content-Type: application/zip', 'Content-Length: ' . filesize($exportStudyDataResponse->zipFile))
+            )
+                ->deleteFileAfterSend(true);
+        } else {
             return response()->noContent()
-            ->setStatusCode($exportStudyDataResponse->status, $exportStudyDataResponse->statusText);
+                ->setStatusCode($exportStudyDataResponse->status, $exportStudyDataResponse->statusText);
         }
     }
 
-    public function getVisitsFromVisitType(string $studyName, int $visitTypeId, GetVisitsFromVisitType $getVisitsFromVisitType, GetVisitsFromVisitTypeRequest $getVisitsFromVisitTypeRequest, GetVisitsFromVisitTypeResponse $getVisitsFromVisitTypeResponse){
+    public function getVisitsFromVisitType(string $studyName, int $visitTypeId, GetVisitsFromVisitType $getVisitsFromVisitType, GetVisitsFromVisitTypeRequest $getVisitsFromVisitTypeRequest, GetVisitsFromVisitTypeResponse $getVisitsFromVisitTypeResponse)
+    {
         $currentUser = Auth::user();
         $getVisitsFromVisitTypeRequest->currentUserId = $currentUser['id'];
         $getVisitsFromVisitTypeRequest->studyName = $studyName;
         $getVisitsFromVisitTypeRequest->visitTypeId = $visitTypeId;
 
         $getVisitsFromVisitType->execute($getVisitsFromVisitTypeRequest, $getVisitsFromVisitTypeResponse);
-
-        if($getVisitsFromVisitTypeResponse->body){
-            return response()->json($getVisitsFromVisitTypeResponse->body)
-            ->setStatusCode($getVisitsFromVisitTypeResponse->status, $getVisitsFromVisitTypeResponse->statusText);
-        }else{
-            return response()->noContent()
-            ->setStatusCode($getVisitsFromVisitTypeResponse->status, $getVisitsFromVisitTypeResponse->statusText);
-        }
+        return $this->getJsonResponse($getVisitsFromVisitTypeResponse->body, $getVisitsFromVisitTypeResponse->status, $getVisitsFromVisitTypeResponse->statusText);
     }
 
 
-    public function getReviewsFromVisitType(string $studyName, int $visitTypeId, GetReviewsFromVisitType $getReviewsFromVisitType, GetReviewsFromVisitTypeRequest $getReviewsFromVisitTypeRequest, GetReviewsFromVisitTypeResponse $getReviewsFromVisitTypeResponse){
+    public function getReviewsFromVisitType(string $studyName, int $visitTypeId, GetReviewsFromVisitType $getReviewsFromVisitType, GetReviewsFromVisitTypeRequest $getReviewsFromVisitTypeRequest, GetReviewsFromVisitTypeResponse $getReviewsFromVisitTypeResponse)
+    {
         $currentUser = Auth::user();
         $getReviewsFromVisitTypeRequest->currentUserId = $currentUser['id'];
         $getReviewsFromVisitTypeRequest->studyName = $studyName;
@@ -254,16 +236,11 @@ class StudyController extends Controller
 
         $getReviewsFromVisitType->execute($getReviewsFromVisitTypeRequest, $getReviewsFromVisitTypeResponse);
 
-        if($getReviewsFromVisitTypeResponse->body){
-            return response()->json($getReviewsFromVisitTypeResponse->body)
-            ->setStatusCode($getReviewsFromVisitTypeResponse->status, $getReviewsFromVisitTypeResponse->statusText);
-        }else{
-            return response()->noContent()
-            ->setStatusCode($getReviewsFromVisitTypeResponse->status, $getReviewsFromVisitTypeResponse->statusText);
-        }
+        return $this->getJsonResponse($getReviewsFromVisitTypeResponse->body, $getReviewsFromVisitTypeResponse->status, $getReviewsFromVisitTypeResponse->statusText);
     }
 
-    public function getInvestigatorFormsFromVisitType(string $studyName, int $visitTypeId, GetInvestigatorFormsFromVisitType $getInvestigatorFormsFromVisitType, GetInvestigatorFormsFromVisitTypeRequest $getInvestigatorFormsFromVisitTypeRequest, GetInvestigatorFormsFromVisitTypeResponse $getInvestigatorFormsFromVisitTypeResponse){
+    public function getInvestigatorFormsFromVisitType(string $studyName, int $visitTypeId, GetInvestigatorFormsFromVisitType $getInvestigatorFormsFromVisitType, GetInvestigatorFormsFromVisitTypeRequest $getInvestigatorFormsFromVisitTypeRequest, GetInvestigatorFormsFromVisitTypeResponse $getInvestigatorFormsFromVisitTypeResponse)
+    {
         $currentUser = Auth::user();
         $getInvestigatorFormsFromVisitTypeRequest->currentUserId = $currentUser['id'];
         $getInvestigatorFormsFromVisitTypeRequest->studyName = $studyName;
@@ -271,16 +248,11 @@ class StudyController extends Controller
 
         $getInvestigatorFormsFromVisitType->execute($getInvestigatorFormsFromVisitTypeRequest, $getInvestigatorFormsFromVisitTypeResponse);
 
-        if($getInvestigatorFormsFromVisitTypeResponse->body){
-            return response()->json($getInvestigatorFormsFromVisitTypeResponse->body)
-            ->setStatusCode($getInvestigatorFormsFromVisitTypeResponse->status, $getInvestigatorFormsFromVisitTypeResponse->statusText);
-        }else{
-            return response()->noContent()
-            ->setStatusCode($getInvestigatorFormsFromVisitTypeResponse->status, $getInvestigatorFormsFromVisitTypeResponse->statusText);
-        }
+        return $this->getJsonResponse($getInvestigatorFormsFromVisitTypeResponse->body, $getInvestigatorFormsFromVisitTypeResponse->status, $getInvestigatorFormsFromVisitTypeResponse->statusText);
     }
 
-    public function getDicomStudiesFromVisitType(string $studyName, int $visitTypeId, GetDicomsStudiesFromVisitType $getDicomsStudiesFromVisitType, GetDicomsStudiesFromVisitTypeRequest $getDicomsStudiesFromVisitTypeRequest, GetDicomsStudiesFromVisitTypeResponse $getDicomsStudiesFromVisitTypeResponse){
+    public function getDicomStudiesFromVisitType(string $studyName, int $visitTypeId, GetDicomsStudiesFromVisitType $getDicomsStudiesFromVisitType, GetDicomsStudiesFromVisitTypeRequest $getDicomsStudiesFromVisitTypeRequest, GetDicomsStudiesFromVisitTypeResponse $getDicomsStudiesFromVisitTypeResponse)
+    {
 
         $currentUser = Auth::user();
         $getDicomsStudiesFromVisitTypeRequest->currentUserId = $currentUser['id'];
@@ -289,13 +261,6 @@ class StudyController extends Controller
 
         $getDicomsStudiesFromVisitType->execute($getDicomsStudiesFromVisitTypeRequest, $getDicomsStudiesFromVisitTypeResponse);
 
-        if($getDicomsStudiesFromVisitTypeResponse->body){
-            return response()->json($getDicomsStudiesFromVisitTypeResponse->body)
-            ->setStatusCode($getDicomsStudiesFromVisitTypeResponse->status, $getDicomsStudiesFromVisitTypeResponse->statusText);
-        }else{
-            return response()->noContent()
-            ->setStatusCode($getDicomsStudiesFromVisitTypeResponse->status, $getDicomsStudiesFromVisitTypeResponse->statusText);
-        }
+        return $this->getJsonResponse($getDicomsStudiesFromVisitTypeResponse->body, $getDicomsStudiesFromVisitTypeResponse->status, $getDicomsStudiesFromVisitTypeResponse->statusText);
     }
-
 }
