@@ -43,6 +43,12 @@ Salim TODO :
 Entity :
 - Fusionner Investigator et review form ? (ne different que par l'adjudication)
 - Pluger toutes les reponses "data" sur ces entity response
+=> GetPossibleUpload => PossibleUploadEntity ?
+=> GetReviewProgression => Review + Progression entity?
+=> GetUserRoleInStudy => RoleEntity ?
+=> GetUserRole => RoleEntity ?
+=> GetVisitTree => ?
+A continuer a chercher apres les GET
 
 Download Dicom :
 Mieux organiser la reponse entity (dissocier les sous niveaux et refusionner dans le front)
