@@ -2,18 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\GaelO\UseCases\CreatePatient\CreatePatient;
-use App\GaelO\UseCases\CreatePatient\CreatePatientRequest;
-use App\GaelO\UseCases\CreatePatient\CreatePatientResponse;
 use App\GaelO\UseCases\GetCreatableVisits\GetCreatableVisits;
 use App\GaelO\UseCases\GetCreatableVisits\GetCreatableVisitsRequest;
 use App\GaelO\UseCases\GetCreatableVisits\GetCreatableVisitsResponse;
 use App\GaelO\UseCases\GetPatient\GetPatient;
 use App\GaelO\UseCases\GetPatient\GetPatientRequest;
 use App\GaelO\UseCases\GetPatient\GetPatientResponse;
-use App\GaelO\UseCases\GetPatientFromStudy\GetPatientFromStudy;
-use App\GaelO\UseCases\GetPatientFromStudy\GetPatientFromStudyRequest;
-use App\GaelO\UseCases\GetPatientFromStudy\GetPatientFromStudyResponse;
 use App\GaelO\UseCases\GetPatientVisit\GetPatientVisit;
 use App\GaelO\UseCases\GetPatientVisit\GetPatientVisitRequest;
 use App\GaelO\UseCases\GetPatientVisit\GetPatientVisitResponse;

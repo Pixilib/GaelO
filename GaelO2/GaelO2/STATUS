@@ -48,7 +48,9 @@ Entity :
 => GetUserRoleInStudy => RoleEntity ?
 => GetUserRole => RoleEntity ?
 => GetVisitTree => ?
-A continuer a chercher apres les GET
+
+Controller :
+Faire formatter de response -> Continuer a partir de patientController
 
 Download Dicom :
 Mieux organiser la reponse entity (dissocier les sous niveaux et refusionner dans le front)
@@ -56,9 +58,11 @@ Re faire FrontEnd (tout lister au niveau series?)
 
 Messagerie à designer
 
-Ajouter dicom contstrainte dans definition visittype et upgrade de l'uploader
+Creatable Visit : Manque Study Custom Logic (+dans front skip visites optionnelles ?)
+Ajouter dicom contstraint dans definition Visittype et upgrader de l'uploader
+Checker gestion statut patient (à voir avec test bicar)
 
-Export Data Etude :
+Export Data study :
 - Personalisation au niveau study -> Couche d'abstration notamment pour injecter le lysarc code
 - Review Ajout Patient Code et Visit Type ?
 - Associated File To Review => A faire dans un zip
@@ -69,11 +73,10 @@ Model et db :
 
 Revoir DicowWeb Authorization Service => Pb route orthanc differentes
 GetVisitContexte des service surement a faire passer a initialisation pour eviter requettes redondantes
-Creatable Visit : Manque Study Custom Logic (+dans front skip visites optionnelles ?)
 Review  : faire une propriete dans visit pour savoir si review disponible a un user en plus de status reviewAvailable ?
 Dicom Series Service => peut etre evoluer vers un DicomService pour les deux niveaux
 Verifier que quand on appelle un child si le parent est pas delete (cf probleme de role et study)
-download dicom : se reposer sur l'assynchronisme d'orthanc depuis le front
+download dicom : se reposer sur l'assynchronisme d'orthanc depuis le front (ou generation d'un lien unique pour le dl?)
 
 **** Tests ***
 Test feature : visit et autres (dicom...)

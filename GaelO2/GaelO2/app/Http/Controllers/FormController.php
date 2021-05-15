@@ -11,7 +11,8 @@ use Illuminate\Support\Facades\Auth;
 
 class FormController extends Controller
 {
-    public function askUnlock(string $studyName, int $visitId, Request $request, RequestUnlock $requestUnlock, RequestUnlockRequest $requestUnlockRequest, RequestUnlockResponse $requestUnlockResponse){
+    public function askUnlock(string $studyName, int $visitId, Request $request, RequestUnlock $requestUnlock, RequestUnlockRequest $requestUnlockRequest, RequestUnlockResponse $requestUnlockResponse)
+    {
         $currentUser = Auth::user();
         $queryParam = $request->query();
 
@@ -24,13 +25,6 @@ class FormController extends Controller
         $requestUnlockRequest->role = $queryParam['role'];
 
         $requestUnlock->execute($requestUnlockRequest, $requestUnlockResponse);
-        if($requestUnlockResponse->body === null){
-            return response()->noContent()
-                ->setStatusCode($requestUnlockResponse->status, $requestUnlockResponse->statusText);
-
-        }else{
-            return response()->json($requestUnlockResponse->body)
-                ->setStatusCode($requestUnlockResponse->status, $requestUnlockResponse->statusText);
-        }
+        return $this->getJsonResponse($requestUnlockResponse->body, $requestUnlockResponse->status, $requestUnlockResponse->statusText);
     }
 }

@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App;
 use App\GaelO\UseCases\CreateCenter\CreateCenter;
 use App\GaelO\UseCases\CreateCenter\CreateCenterRequest;
 use App\GaelO\UseCases\CreateCenter\CreateCenterResponse;
@@ -23,8 +22,7 @@ class CenterController extends Controller
         $getCenterRequest->currentUserId = $currentUser['id'];
         $getCenterRequest->code = $code;
         $getCenter->execute($getCenterRequest, $getCenterResponse);
-        return response()->json($getCenterResponse->body)
-                ->setStatusCode($getCenterResponse->status, $getCenterResponse->statusText);
+        return $this->getJsonResponse($getCenterResponse->body, $getCenterResponse->status, $getCenterResponse->statusText);
     }
 
     public function modifyCenter(int $code, Request $request, ModifyCenterRequest $modifyCenterRequest, ModifyCenterResponse $modifyCenterResponse, ModifyCenter $modifyCenter) {
@@ -35,8 +33,7 @@ class CenterController extends Controller
         $requestData = $request->all();
         $modifyCenterRequest = Util::fillObject($requestData, $modifyCenterRequest);
         $modifyCenter->execute($modifyCenterRequest, $modifyCenterResponse);
-        return response()->json($modifyCenterResponse->body)
-                ->setStatusCode($modifyCenterResponse->status, $modifyCenterResponse->statusText);
+        return $this->getJsonResponse($modifyCenterResponse->body, $modifyCenterResponse->status, $modifyCenterResponse->statusText);
     }
 
     public function createCenter(Request $request, CreateCenter $createCenter, CreateCenterRequest $createCenterRequest, CreateCenterResponse $createCenterResponse){
@@ -48,7 +45,6 @@ class CenterController extends Controller
         $createCenterRequest = Util::fillObject($requestData, $createCenterRequest);
 
         $createCenter->execute($createCenterRequest, $createCenterResponse);
-        return response()->json($createCenterResponse->body)
-                ->setStatusCode($createCenterResponse->status, $createCenterResponse->statusText);
+        return $this->getJsonResponse($createCenterResponse->body, $createCenterResponse->status, $createCenterResponse->statusText);
     }
 }
