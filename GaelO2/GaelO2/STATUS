@@ -55,6 +55,7 @@ Export Data Etude :
 
 Entity :
 - Fusionner Investigator et review form ? (ne different que par l'adjudication)
+- Get Dicom Study entity restante a fusionner
 - Pluger toutes les reponses "data" sur ces entity response
 
 Model et db :
