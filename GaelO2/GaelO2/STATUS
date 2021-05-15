@@ -41,8 +41,8 @@ reviews/{id}/file (GET, POST, DELETE)
 Salim TODO :
 
 Download Dicom :
-Eliminer l'entity custom au profit de l'entity generique
-Faire FrontEnd (tout lister au niveau series?)
+Mieux organiser la reponse entity (dissocier les sous niveaux et refusionner dans le front)
+Re faire FrontEnd (tout lister au niveau series?)
 
 Messagerie à designer
 
@@ -55,7 +55,6 @@ Export Data Etude :
 
 Entity :
 - Fusionner Investigator et review form ? (ne different que par l'adjudication)
-- Get Dicom Study entity restante a fusionner
 - Pluger toutes les reponses "data" sur ces entity response
 
 Model et db :

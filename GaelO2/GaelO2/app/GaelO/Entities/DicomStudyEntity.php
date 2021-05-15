@@ -56,8 +56,8 @@ class DicomStudyEntity
     public function addVisitDetails(array $visitDetails): void
     {
         $this->parentVisit = [
-            'modality' => $visitDetails['modality'],
-            'visitTypeName' => $visitDetails['visitTypeName'],
+            'modality' => $visitDetails['visit_type']['visit_group']['modality'],
+            'visitTypeName' => $visitDetails['visit_type']['name'],
             'visitDate' => $visitDetails['visit_date'],
             'stateInvestigatorForm' => $visitDetails['state_investigator_form'],
             'stateQualityControl' => $visitDetails['state_quality_control']
