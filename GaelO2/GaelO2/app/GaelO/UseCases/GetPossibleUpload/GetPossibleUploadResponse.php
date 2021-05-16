@@ -3,7 +3,7 @@
 namespace App\GaelO\UseCases\GetPossibleUpload;
 
 class GetPossibleUploadResponse{
-    public $body;
+    public $body = null;
     public int $status;
     public string $statusText;
 }

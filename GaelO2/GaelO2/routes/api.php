@@ -1,19 +1,18 @@
 <?php
 
+use App\Http\Controllers\AskUnlockController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CenterController;
 use App\Http\Controllers\CountryController;
 use App\Http\Controllers\DicomController;
 use App\Http\Controllers\DocumentationController;
 use App\Http\Controllers\ExportDBController;
-use App\Http\Controllers\FormController;
 use App\Http\Controllers\PatientController;
 use App\Http\Controllers\PreferenceController;
 use App\Http\Controllers\RequestController;
 use App\Http\Controllers\ReverseProxyController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\StudyController;
-use App\Http\Controllers\ToolsController;
 use App\Http\Controllers\TrackerController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\VisitController;
@@ -138,7 +137,7 @@ Route::middleware(['auth:api', 'refresh_token'])->group(function () {
     Route::get('visits/{id}/dicoms', [DicomController::class, 'getVisitDicoms'] );
 
     //Ask Unlock route
-    Route::post('studies/{study}/visits/{id}/ask-unlock', [FormController::class, 'askUnlock'] );
+    Route::post('studies/{study}/visits/{id}/ask-unlock', [AskUnlockController::class, 'askUnlock'] );
 
     //upload Routes
     Route::any('tus/{filename?}', [ReverseProxyController::class, 'tusUpload'] );

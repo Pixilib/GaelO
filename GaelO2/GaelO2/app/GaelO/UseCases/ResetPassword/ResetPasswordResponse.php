@@ -5,5 +5,5 @@ namespace App\GaelO\UseCases\ResetPassword;
 class ResetPasswordResponse {
     public int $status;
     public string $statusText;
-    public $body;
+    public $body = null;
 }

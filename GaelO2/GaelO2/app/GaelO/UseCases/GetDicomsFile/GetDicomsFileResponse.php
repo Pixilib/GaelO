@@ -4,7 +4,7 @@ namespace App\GaelO\UseCases\GetDicomsFile;
 
 class GetDicomsFileResponse{
     public string $filename;
-    public $body;
+    public $body = null;
     public int $status;
     public string $statusText;
 }

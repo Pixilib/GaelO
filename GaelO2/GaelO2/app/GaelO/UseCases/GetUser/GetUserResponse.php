@@ -3,7 +3,7 @@
 namespace App\GaelO\UseCases\GetUser;
 
 class GetUserResponse {
-    public $body;
+    public $body = null;
     public int $status;
     public string $statusText;
 }

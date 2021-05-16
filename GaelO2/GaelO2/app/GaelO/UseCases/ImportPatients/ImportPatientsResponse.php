@@ -3,7 +3,7 @@
 namespace App\GaelO\UseCases\ImportPatients;
 
 class ImportPatientsResponse {
-    public array $body;
+    public $body = null;
     public int $status;
     public string $statusText;
 }

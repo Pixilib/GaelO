@@ -49,11 +49,6 @@ Entity :
 => GetUserRole => RoleEntity ?
 => GetVisitTree => ?
 
-Controller :
-Faire formatter de response -> Reste VisitController
-formController => Renommer en askunlock controller
-Dans les DTO response initaliser le body a null pour eviter les accession avant initalisation
-
 Download Dicom :
 Mieux organiser la reponse entity (dissocier les sous niveaux et refusionner dans le front)
 Re faire FrontEnd (tout lister au niveau series?)
@@ -61,7 +56,7 @@ Re faire FrontEnd (tout lister au niveau series?)
 Messagerie à designer
 
 Creatable Visit : Manque Study Custom Logic (+dans front skip visites optionnelles ?)
-Ajouter dicom contstraint dans definition Visittype et upgrader de l'uploader
+Ajouter dicom contstraint dans definition VisitType et upgrader de l'uploader
 Checker gestion statut patient (à voir avec test bicar)
 
 Export Data study :
@@ -72,6 +67,8 @@ Export Data study :
 Model et db :
 - Type de variable a caster
 - Clé etrangere DicomStudy et DicomSeries non conventionnelle
+
+AskUnlock basé sur le VisitId ? => passer a review id ?
 
 Revoir DicowWeb Authorization Service => Pb route orthanc differentes
 GetVisitContexte des service surement a faire passer a initialisation pour eviter requettes redondantes
@@ -91,9 +88,6 @@ Review => tester un scenario de custom conclusion / adjudication
 
 +Tard :
 studies/{studyName}/orthanc-study-id/{orthancStudyID} => A renomer à original-orthanc-study-id (test le hash d'origine pas le courant)
-Faire une condition pour les NoContent dans le controller ? => ou mettre toujours un payload vide pour eviter les errur error->json() dans front?
-Voir dans message d'erreur comment ajouter d'autre info que le message (pour id de login)
-ReverseProxy TUS => On peut ajouter le studyName dans le header dans uppy pour le recupérer dans le use case et checker le role Investigateur
 TUS est Joignable sur Delete => peut etre gerer le failure/cancel pour vider tus ?
 Deploiement ajouter le login / mdp pour dans orthanc pacs + bloquer delete dans lua script
 Dans remplissage DTO request, si variable boolean, un input string est interpretée à true.

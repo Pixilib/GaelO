@@ -9,7 +9,7 @@ use App\GaelO\Util;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-class FormController extends Controller
+class AskUnlockController extends Controller
 {
     public function askUnlock(string $studyName, int $visitId, Request $request, RequestUnlock $requestUnlock, RequestUnlockRequest $requestUnlockRequest, RequestUnlockResponse $requestUnlockResponse)
     {
