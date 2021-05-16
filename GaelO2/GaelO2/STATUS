@@ -58,6 +58,7 @@ Messagerie à designer
 Creatable Visit : Manque Study Custom Logic (+dans front skip visites optionnelles ?)
 Ajouter dicom contstraint dans definition VisitType et upgrader de l'uploader
 Checker gestion statut patient (à voir avec test bicar)
+AskUnlock basé sur le VisitId ? => passer a review id ?
 
 Export Data study :
 - Personalisation au niveau study -> Couche d'abstration notamment pour injecter le lysarc code
@@ -67,8 +68,6 @@ Export Data study :
 Model et db :
 - Type de variable a caster
 - Clé etrangere DicomStudy et DicomSeries non conventionnelle
-
-AskUnlock basé sur le VisitId ? => passer a review id ?
 
 Revoir DicowWeb Authorization Service => Pb route orthanc differentes
 GetVisitContexte des service surement a faire passer a initialisation pour eviter requettes redondantes
