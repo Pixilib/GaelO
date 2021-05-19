@@ -2,52 +2,10 @@
 
 namespace App\GaelO\Services;
 
-use App\GaelO\Adapters\LaravelFunctionAdapter;
 use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOBadRequestException;
-use App\GaelO\Interfaces\ReviewRepositoryInterface;
-use App\GaelO\Interfaces\ReviewStatusRepositoryInterface;
-use App\GaelO\Interfaces\TrackerRepositoryInterface;
-use App\GaelO\Services\MailServices;
-use App\GaelO\Services\SpecificStudiesRules\AbstractStudyRules;
-use App\GaelO\Services\VisitService;
 
-class InvestigatorFormService {
-
-    private VisitService $visitService;
-    private ReviewRepositoryInterface $reviewRepositoryInterface;
-    private AbstractStudyRules $abstractStudyRules;
-    private int $currentUserId;
-    private int $visitId;
-
-    public function __construct(VisitService $visitService,
-        ReviewRepositoryInterface $reviewRepositoryInterface,
-        ReviewStatusRepositoryInterface $reviewStatusRepositoryInterface,
-        TrackerRepositoryInterface $trackerRepositoryInterface,
-        MailServices $mailServices
-        )
-    {
-        $this->visitService = $visitService;
-        $this->reviewRepositoryInterface = $reviewRepositoryInterface;
-        $this->reviewStatusRepositoryInterface = $reviewStatusRepositoryInterface;
-        $this->trackerRepositoryInterface = $trackerRepositoryInterface;
-        $this->mailServices = $mailServices;
-    }
-
-    public function setCurrentUserId(int $currentUserId) : void {
-        $this->currentUserId = $currentUserId;
-    }
-
-    public function setVisitContext(array $visitContext) : void {
-        $this->visitId = $visitContext['id'];
-        $this->visitService->setVisitId($visitContext['id']);
-        $modality = $visitContext['visit_type']['visit_group']['modality'];
-        $this->visitType = $visitContext['visit_type']['name'];
-        $this->studyName = $visitContext['visit_type']['visit_group']['study_name'];
-        $this->abstractStudyRules = LaravelFunctionAdapter::make('\App\GaelO\Services\SpecificStudiesRules\\'.$this->studyName.'_'.$modality.'_'.$this->visitType);
-
-    }
-
+class InvestigatorFormService extends FormService {
 
     public function saveInvestigatorForm(array $data, bool $validated) : void {
         if( ! $this->abstractStudyRules->checkInvestigatorFormValidity($data, $validated)) throw new GaelOBadRequestException('Form Contraints Failed');

@@ -3,10 +3,10 @@
 namespace App\GaelO\Services;
 
 use App\GaelO\Constants\Constants;
-use App\GaelO\Interfaces\DicomSeriesRepositoryInterface;
-use App\GaelO\Interfaces\DicomStudyRepositoryInterface;
-use App\GaelO\Interfaces\UserRepositoryInterface;
-use App\GaelO\Interfaces\VisitRepositoryInterface;
+use App\GaelO\Interfaces\Repositories\DicomSeriesRepositoryInterface;
+use App\GaelO\Interfaces\Repositories\DicomStudyRepositoryInterface;
+use App\GaelO\Interfaces\Repositories\UserRepositoryInterface;
+use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
 use App\GaelO\Util;
 
 class AuthorizationDicomWebService

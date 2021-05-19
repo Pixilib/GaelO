@@ -7,10 +7,10 @@ use App\GaelO\Exceptions\GaelOBadRequestException;
 use App\GaelO\Exceptions\GaelOConflictException;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
-use App\GaelO\Interfaces\ReviewRepositoryInterface;
-use App\GaelO\Interfaces\ReviewStatusRepositoryInterface;
-use App\GaelO\Interfaces\TrackerRepositoryInterface;
-use App\GaelO\Interfaces\VisitRepositoryInterface;
+use App\GaelO\Interfaces\Repositories\ReviewRepositoryInterface;
+use App\GaelO\Interfaces\Repositories\ReviewStatusRepositoryInterface;
+use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
+use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
 use App\GaelO\Services\AuthorizationVisitService;
 use App\GaelO\Services\ReviewFormService;
 use Exception;
@@ -49,7 +49,7 @@ class CreateReview {
                 throw new GaelOBadRequestException('VisitID and Validated Status are mandatory');
             }
 
-            if($this->reviewRepositoryInterface->isExistingFormForStudyVisitUser( $createReviewFormRequest->studyName, $createReviewFormRequest->visitId, $createReviewFormRequest->currentUserId) ){
+            if($this->reviewRepositoryInterface->isExistingReviewForStudyVisitUser( $createReviewFormRequest->studyName, $createReviewFormRequest->visitId, $createReviewFormRequest->currentUserId) ){
                 throw new GaelOConflictException('Review Already Created');
             };
 

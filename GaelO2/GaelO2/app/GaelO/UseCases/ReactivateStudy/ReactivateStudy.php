@@ -6,7 +6,7 @@ use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOBadRequestException;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
-use App\GaelO\Interfaces\StudyRepositoryInterface;
+use App\GaelO\Interfaces\Repositories\StudyRepositoryInterface;
 use App\GaelO\Repositories\TrackerRepository;
 use App\GaelO\Services\AuthorizationService;
 use Exception;
@@ -44,6 +44,7 @@ class ReactivateStudy {
 
         } catch (GaelOException $e){
 
+            $reactivateStudyResponse->body = $e->getErrorBody();
             $reactivateStudyResponse->status = $e->statusCode;
             $reactivateStudyResponse->statusText = $e->statusText;
 

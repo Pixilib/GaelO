@@ -15,8 +15,8 @@ class EmailServiceProvider extends ServiceProvider
     {
 
         $this->app->bind(
-            \App\GaelO\Interfaces\MailInterface::class,
-            \App\GaelO\Adapters\SendEmailAdapter::class
+            \App\GaelO\Interfaces\Adapters\MailerInterface::class,
+            \App\GaelO\Adapters\MailerAdapter::class
         );
 
     }

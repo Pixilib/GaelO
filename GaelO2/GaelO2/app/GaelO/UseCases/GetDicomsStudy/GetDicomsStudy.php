@@ -3,10 +3,13 @@
 namespace App\GaelO\UseCases\GetDicomsStudy;
 
 use App\GaelO\Constants\Constants;
+use App\GaelO\Entities\DicomSeriesEntity;
+use App\GaelO\Entities\DicomStudyEntity;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
-use App\GaelO\Interfaces\DicomStudyRepositoryInterface;
+use App\GaelO\Interfaces\Repositories\DicomStudyRepositoryInterface;
 use App\GaelO\Services\AuthorizationService;
+
 use Exception;
 
 class GetDicomsStudy
@@ -33,13 +36,23 @@ class GetDicomsStudy
                 $getDicomsStudyRequest->studyName,
             );
 
-            //SK REVOIR ICI POUR PASSER A UNE ENTITY CLASSIQUE AVEC INFO EN PLUS
             $data = $this->dicomStudyRepositoryInterface->getDicomStudyFromStudy($getDicomsStudyRequest->studyName, $getDicomsStudyRequest->withTrashed);
+
 
             $answer = [];
 
             foreach ($data as $study) {
-                $answer[] = GetDicomsStudyEntity::fillFromDBReponseArray($study);
+                $dicomStudy = DicomStudyEntity::fillFromDBReponseArray($study);
+                $seriesObjectArray = [];
+
+                foreach($study['dicom_series'] as $series){
+                    $dicomSeries[] = DicomSeriesEntity::fillFromDBReponseArray($series);
+                }
+
+                $dicomStudy->addPatientDetails($study['visit']['patient']);
+                $dicomStudy->addVisitDetails($study['visit']);
+                $dicomStudy->addDicomSeries($seriesObjectArray);
+                $answer[] = $dicomStudy;
             }
 
             $getDicomsStudyResponse->status = 200;

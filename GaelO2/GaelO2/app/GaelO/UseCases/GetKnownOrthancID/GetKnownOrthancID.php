@@ -6,7 +6,7 @@ use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Exceptions\GaelONotFoundException;
-use App\GaelO\Interfaces\DicomStudyRepositoryInterface;
+use App\GaelO\Interfaces\Repositories\DicomStudyRepositoryInterface;
 use App\GaelO\Services\AuthorizationService;
 use Exception;
 use Illuminate\Support\Facades\Log;

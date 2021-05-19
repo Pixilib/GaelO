@@ -2,7 +2,7 @@
 
 namespace App\GaelO\Repositories;
 
-use App\GaelO\Interfaces\DicomSeriesRepositoryInterface;
+use App\GaelO\Interfaces\Repositories\DicomSeriesRepositoryInterface;
 use App\GaelO\Util;
 use App\Models\DicomSeries;
 

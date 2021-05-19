@@ -2,9 +2,10 @@
 
 namespace App\GaelO\UseCases\GetUser;
 
+use App\GaelO\Entities\UserEntity;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
-use App\GaelO\Interfaces\UserRepositoryInterface;
+use App\GaelO\Interfaces\Repositories\UserRepositoryInterface;
 use App\GaelO\Services\AuthorizationService;
 use App\GaelO\UseCases\GetUser\GetUserRequest;
 use App\GaelO\UseCases\GetUser\GetUserResponse;

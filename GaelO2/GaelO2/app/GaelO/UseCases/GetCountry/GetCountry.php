@@ -4,9 +4,9 @@ namespace App\GaelO\UseCases\GetCountry;
 
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
-use App\GaelO\Interfaces\CountryRepositoryInterface;
+use App\GaelO\Interfaces\Repositories\CountryRepositoryInterface;
 use App\GaelO\Services\AuthorizationService;
-use App\GaelO\UseCases\GetCountry\CountryEntity;
+use App\GaelO\Entities\CountryEntity;
 use App\GaelO\UseCases\GetCountry\GetCountryRequest;
 use App\GaelO\UseCases\GetCountry\GetCountryResponse;
 use Exception;
@@ -61,5 +61,3 @@ class GetCountry {
     }
 
 }
-
-?>

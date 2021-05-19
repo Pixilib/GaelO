@@ -163,7 +163,7 @@ class StudyTest extends TestCase
         $studyName = $study->name;
         $study->delete();
         $payload = [];
-        $this->json('PATCH', '/api/studies/'.$studyName.'/reactivate', $payload)->assertNoContent(400);
+        $this->json('PATCH', '/api/studies/'.$studyName.'/reactivate', $payload)->assertStatus(400);
 
     }
 

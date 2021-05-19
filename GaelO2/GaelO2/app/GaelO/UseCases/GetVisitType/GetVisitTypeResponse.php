@@ -3,7 +3,7 @@
 namespace App\GaelO\UseCases\GetVisitType;
 
 class GetVisitTypeResponse {
-    public $body;
+    public $body = null;
     public int $status;
     public string $statusText;
 }

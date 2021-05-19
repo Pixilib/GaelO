@@ -25,8 +25,7 @@ class TrackerController extends Controller
         $queryParam = $request->query();
         $getTrackerRequest->admin = $queryParam['admin'];
         $getTracker->execute($getTrackerRequest, $getTrackerResponse);
-        return response()->json($getTrackerResponse->body)
-            ->setStatusCode($getTrackerResponse->status, $getTrackerResponse->statusText);
+        return $this->getJsonResponse($getTrackerResponse->body, $getTrackerResponse->status, $getTrackerResponse->statusText);
     }
 
     public function getStudyTracker(string $studyName, Request $request, GetStudyTrackerRequest $getStudyTrackerRequest, GetStudyTrackerResponse $getStudyTrackerResponse, getStudyTracker $getStudyTracker) {
@@ -37,8 +36,7 @@ class TrackerController extends Controller
         $getStudyTrackerRequest->role = $queryParam['role'];
         $getStudyTrackerRequest->studyName = $studyName;
         $getStudyTracker->execute($getStudyTrackerRequest, $getStudyTrackerResponse);
-        return response()->json($getStudyTrackerResponse->body)
-            ->setStatusCode($getStudyTrackerResponse->status, $getStudyTrackerResponse->statusText);
+        return $this->getJsonResponse($getStudyTrackerResponse->body, $getStudyTrackerResponse->status, $getStudyTrackerResponse->statusText);
     }
 
     public function getStudyTrackerRoleAction(string $studyName, string $role, Request $request, GetStudyTrackerRoleActionRequest $getStudyTrackerRoleActionRequest, GetStudyTrackerRoleActionResponse $getStudyTrackerRoleActionResponse, GetStudyTrackerRoleAction $getStudyTrackerRoleAction) {
@@ -50,18 +48,15 @@ class TrackerController extends Controller
         $getStudyTrackerRoleActionRequest->trackerOfRole = $role;
         $getStudyTrackerRoleActionRequest->studyName = $studyName;
         $getStudyTrackerRoleAction->execute($getStudyTrackerRoleActionRequest, $getStudyTrackerRoleActionResponse);
-        return response()->json($getStudyTrackerRoleActionResponse->body)
-            ->setStatusCode($getStudyTrackerRoleActionResponse->status, $getStudyTrackerRoleActionResponse->statusText);
+        return $this->getJsonResponse($getStudyTrackerRoleActionResponse->body, $getStudyTrackerRoleActionResponse->status, $getStudyTrackerRoleActionResponse->statusText);
     }
-    
-    public function getStudyTrackerByVisit(string $studyName, string $visitId, Request $request, GetStudyTrackerByVisitRequest $getStudyTrackerByVisitRequest, GetStudyTrackerByVisitResponse $getStudyTrackerByVisitResponse, GetStudyTrackerByVisit $getStudyTrackerByVisit) {
+
+    public function getStudyTrackerByVisit(string $studyName, string $visitId, GetStudyTrackerByVisitRequest $getStudyTrackerByVisitRequest, GetStudyTrackerByVisitResponse $getStudyTrackerByVisitResponse, GetStudyTrackerByVisit $getStudyTrackerByVisit) {
         $currentUser = Auth::user();
         $getStudyTrackerByVisitRequest->currentUserId = $currentUser['id'];
-        $queryParam = $request->query();
         $getStudyTrackerByVisitRequest->visitId = $visitId;
         $getStudyTrackerByVisitRequest->studyName = $studyName;
         $getStudyTrackerByVisit->execute($getStudyTrackerByVisitRequest, $getStudyTrackerByVisitResponse);
-        return response()->json($getStudyTrackerByVisitResponse->body)
-            ->setStatusCode($getStudyTrackerByVisitResponse->status, $getStudyTrackerByVisitResponse->statusText);
+        return $this->getJsonResponse($getStudyTrackerByVisitResponse->body, $getStudyTrackerByVisitResponse->status, $getStudyTrackerByVisitResponse->statusText);
     }
 }

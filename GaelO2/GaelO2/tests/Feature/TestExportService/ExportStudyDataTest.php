@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature\TestExportDb;
+namespace Tests\Feature\TestExportService;
 
 use App\GaelO\Constants\Constants;
 use App\Models\Study;

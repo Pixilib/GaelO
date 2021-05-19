@@ -2,20 +2,22 @@
 
 namespace App\GaelO\Services;
 
-use App\GaelO\Adapters\HttpClientAdapter;
-use App\GaelO\Adapters\LaravelFunctionAdapter;
 use App\GaelO\Constants\Constants;
 use App\GaelO\Constants\SettingsConstants;
+use App\GaelO\Interfaces\Adapters\FrameworkInterface;
+use App\GaelO\Interfaces\Adapters\HttpClientInterface;
 use App\GaelO\Services\StoreObjects\TagAnon;
 use App\GaelO\Services\StoreObjects\OrthancStudy;
 
 class OrthancService
 {
+    private HttpClientInterface $httpClientInterface;
+    private FrameworkInterface $frameworkInterface;
 
-    public function __construct(HttpClientAdapter $httpClientAdapter, LaravelFunctionAdapter $laravelFunctionAdapter)
+    public function __construct(HttpClientInterface $httpClientInterface, FrameworkInterface $frameworkInterface)
     {
-        $this->httpClientAdapter = $httpClientAdapter;
-        $this->laravelFunctionAdapter = $laravelFunctionAdapter;
+        $this->httpClientInterface = $httpClientInterface;
+        $this->frameworkInterface = $frameworkInterface;
     }
 
     public function setOrthancServer(bool $storage) : void
@@ -24,36 +26,36 @@ class OrthancService
         set_time_limit(10800);
         //Set address of Orthanc server
         if ($storage) {
-            $address = $this->laravelFunctionAdapter->getConfig(SettingsConstants::ORTHANC_STORAGE_ADDRESS);
-            $port = $this->laravelFunctionAdapter->getConfig(SettingsConstants::ORTHANC_STORAGE_PORT);
-            $login = $this->laravelFunctionAdapter->getConfig(SettingsConstants::ORTHANC_STORAGE_LOGIN);
-            $password = $this->laravelFunctionAdapter->getConfig(SettingsConstants::ORTHANC_STORAGE_PASSWORD);
+            $address = $this->frameworkInterface::getConfig(SettingsConstants::ORTHANC_STORAGE_ADDRESS);
+            $port = $this->frameworkInterface::getConfig(SettingsConstants::ORTHANC_STORAGE_PORT);
+            $login = $this->frameworkInterface::getConfig(SettingsConstants::ORTHANC_STORAGE_LOGIN);
+            $password = $this->frameworkInterface::getConfig(SettingsConstants::ORTHANC_STORAGE_PASSWORD);
         } else {
-            $address = $this->laravelFunctionAdapter->getConfig(SettingsConstants::ORTHANC_TEMPORARY_ADDRESS);
-            $port = $this->laravelFunctionAdapter->getConfig(SettingsConstants::ORTHANC_TEMPORARY_PORT);
-            $login = $this->laravelFunctionAdapter->getConfig(SettingsConstants::ORTHANC_TEMPORARY_LOGIN);
-            $password = $this->laravelFunctionAdapter->getConfig(SettingsConstants::ORTHANC_TEMPORARY_PASSWORD);
+            $address = $this->frameworkInterface::getConfig(SettingsConstants::ORTHANC_TEMPORARY_ADDRESS);
+            $port = $this->frameworkInterface::getConfig(SettingsConstants::ORTHANC_TEMPORARY_PORT);
+            $login = $this->frameworkInterface::getConfig(SettingsConstants::ORTHANC_TEMPORARY_LOGIN);
+            $password = $this->frameworkInterface::getConfig(SettingsConstants::ORTHANC_TEMPORARY_PASSWORD);
         }
 
-        $this->httpClientAdapter->setAddress($address, $port);
-        $this->httpClientAdapter->setBasicAuthentication($login, $password);
+        $this->httpClientInterface->setAddress($address, $port);
+        $this->httpClientInterface->setBasicAuthentication($login, $password);
     }
 
     public function getOrthancRessourcesDetails(string $level, string $orthancID) : array {
-        return $this->httpClientAdapter->requestJson('GET', '/'.$level.'/'.$orthancID)->getJsonBody();
+        return $this->httpClientInterface->requestJson('GET', '/'.$level.'/'.$orthancID)->getJsonBody();
     }
 
     public function getOrthancRessourcesStatistics(string $level, string $orthancID) : array {
-        return $this->httpClientAdapter->requestJson('GET', '/'.$level.'/'.$orthancID.'/statistics/')->getJsonBody();
+        return $this->httpClientInterface->requestJson('GET', '/'.$level.'/'.$orthancID.'/statistics/')->getJsonBody();
     }
 
     public function getInstanceTags(string $orthancInstanceID) : array {
-        return $this->httpClientAdapter->requestJson('GET', '/instances/'.$orthancInstanceID.'/tags/')->getJsonBody();
+        return $this->httpClientInterface->requestJson('GET', '/instances/'.$orthancInstanceID.'/tags/')->getJsonBody();
     }
 
     public function getOrthancPeers() : array
     {
-        return $this->httpClientAdapter->requestJson('GET', '/peers')->getJsonBody();
+        return $this->httpClientInterface->requestJson('GET', '/peers')->getJsonBody();
     }
 
     public function addPeer(string $name, string $url, string $username, string $password)
@@ -65,7 +67,7 @@ class OrthancService
             'Url' => $url
         );
 
-        $this->httpClientAdapter->requestJson('PUT', '/peers/' . $name, $data);
+        $this->httpClientInterface->requestJson('PUT', '/peers/' . $name, $data);
     }
 
     /**
@@ -74,7 +76,7 @@ class OrthancService
      */
     public function deletePeer(string $name)
     {
-        $this->httpClientAdapter->request('DELETE', '/peers/' . $name);
+        $this->httpClientInterface->rowRequest('DELETE', '/peers/' . $name, null, null);
     }
 
     /**
@@ -115,18 +117,18 @@ class OrthancService
 
         );
 
-        return $this->httpClientAdapter->requestJson('POST', '/tools/find', $query)->getJsonBody();
+        return $this->httpClientInterface->requestJson('POST', '/tools/find', $query)->getJsonBody();
     }
 
     public function deleteFromOrthanc(string $level, string $uid)
     {
-        $this->httpClientAdapter->request('DELETE', '/' . $level . '/' . $uid);
+        $this->httpClientInterface->rowRequest('DELETE', '/' . $level . '/' . $uid, null, null);
     }
 
     public function isPeerAccelerated(string $peer) : bool
     {
 
-        $peers = $this->httpClientAdapter->request('GET', '/transfers/peers/')->getJsonBody();
+        $peers = $this->httpClientInterface->rowRequest('GET', '/transfers/peers/', null, null)->getJsonBody();
 
         if ($peers[$peer] == "installed") {
             return true;
@@ -142,7 +144,7 @@ class OrthancService
             'Resources' => $ids
         ];
 
-        return $this->httpClientAdapter->requestJson('POST', '/peers/' . $peer . '/store', $data);
+        return $this->httpClientInterface->requestJson('POST', '/peers/' . $peer . '/store', $data);
     }
 
     public function sendToPeerAsyncWithAccelerator(string $peer, array $ids, bool $gzip)
@@ -167,23 +169,15 @@ class OrthancService
             );
         }
 
-        return $this->httpClientAdapter->requestJson('POST', '/transfers/send', $data);
-    }
-
-    public function importFile(string $file) : array
-    {
-        $data = fopen($file, 'r');
-        try {
-            $results = $this->httpClientAdapter->requestUploadDicom('POST', '/instances', $data);
-        } catch (\Exception $e1) {
-            error_log("Error during import Dcm " . $e1->getMessage());
-        }
-        return $results->getJsonBody();
+        return $this->httpClientInterface->requestJson('POST', '/transfers/send', $data);
     }
 
     public function importFiles(array $files) : array
     {
-        $arrayAnswer = $this->httpClientAdapter->requestUploadArrayDicom('POST', '/instances', $files);
+        $psr7ResponseAdapterArray = $this->httpClientInterface->requestUploadArrayDicom('POST', '/instances', $files);
+        $arrayAnswer = array_map( function ($response){
+            return json_decode($response->getBody(), true);
+        }, $psr7ResponseAdapterArray);
         return $arrayAnswer;
     }
 
@@ -204,7 +198,7 @@ class OrthancService
 
         $jsonAnonQuery = $this->buildAnonQuery($profile, $patientCode, $patientCode, $visitType, $studyName);
 
-        $answer = $this->httpClientAdapter->requestJson('POST', "/studies/" . $studyID . "/anonymize", $jsonAnonQuery);
+        $answer = $this->httpClientInterface->requestJson('POST', "/studies/" . $studyID . "/anonymize", $jsonAnonQuery);
 
         //get the resulting Anonymized study Orthanc ID
         $anonAnswer = $answer->getJsonBody();
@@ -341,7 +335,7 @@ class OrthancService
      * @return mixed
      */
     public function getJobDetails(String $jobId) {
-        return $this->httpClientAdapter->requestJson('GET', '/jobs/'.$jobId)->getJsonBody();
+        return $this->httpClientInterface->requestJson('GET', '/jobs/'.$jobId)->getJsonBody();
     }
 
     public function getStudyOrthancDetails(string $orthancStudyID){
@@ -353,7 +347,7 @@ class OrthancService
 
     public function getOrthancZipStream(array $seriesOrthancIDs){
         $payload = array('Transcode'=>'1.2.840.10008.1.2.1', 'Resources' => $seriesOrthancIDs);
-        $this->httpClientAdapter->streamResponse('POST', '/tools/create-archive', $payload);
+        $this->httpClientInterface->streamResponse('POST', '/tools/create-archive', $payload);
     }
 
 }

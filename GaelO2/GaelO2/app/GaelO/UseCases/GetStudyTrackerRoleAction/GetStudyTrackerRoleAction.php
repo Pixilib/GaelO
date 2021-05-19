@@ -4,9 +4,9 @@ namespace App\GaelO\UseCases\GetStudyTrackerRoleAction;
 
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
-use App\GaelO\Interfaces\TrackerRepositoryInterface;
+use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
 use App\GaelO\Services\AuthorizationService;
-use App\GaelO\UseCases\GetTracker\TrackerEntity;
+use App\GaelO\Entities\TrackerEntity;
 use Exception;
 
 class GetStudyTrackerRoleAction {
@@ -26,7 +26,7 @@ class GetStudyTrackerRoleAction {
             $this->checkAuthorization($GetStudyTrackerRoleActionRequest->currentUserId, $GetStudyTrackerRoleActionRequest->studyName, $GetStudyTrackerRoleActionRequest->role);
 
             $dbData = $this->trackerRepositoryInterface->getTrackerOfRoleActionInStudy($GetStudyTrackerRoleActionRequest->trackerOfRole, $GetStudyTrackerRoleActionRequest->actionType, $GetStudyTrackerRoleActionRequest->studyName);
- 
+
             $responseArray = [];
             foreach($dbData as $data){
                 $trackerEntity = TrackerEntity::fillFromDBReponseArray($data);

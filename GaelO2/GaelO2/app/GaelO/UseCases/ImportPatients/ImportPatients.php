@@ -8,11 +8,11 @@ use App\GaelO\UseCases\ImportPatients\ImportPatientsRequest;
 use App\GaelO\UseCases\ImportPatients\ImportPatientsResponse;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
-use App\GaelO\Interfaces\TrackerRepositoryInterface;
+use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
 use App\GaelO\Services\AuthorizationService;
 use App\GaelO\Services\MailServices;
 use App\GaelO\Services\ImportPatientService;
-use App\GaelO\UseCases\GetPatient\PatientEntity;
+use App\GaelO\Entities\PatientEntity;
 use Exception;
 
 class ImportPatients {
@@ -54,6 +54,7 @@ class ImportPatients {
             $importPatientsResponse->statusText = 'OK';
 
             $this->trackerRepositoryInterface->writeAction($importPatientsRequest->currentUserId, Constants::TRACKER_IMPORT_PATIENT, $importPatientsRequest->studyName, null, Constants::TRACKER_IMPORT_PATIENT, $actionDetails);
+          
             $this->mailService->sendImportPatientMessage($importPatientsRequest->studyName, $this->importPatient->successList, $this->importPatient->failList);
 
         } catch (GaelOException $e){

@@ -35,7 +35,8 @@ use Illuminate\Support\Facades\Auth;
 
 class VisitController extends Controller
 {
-    public function createVisit(String $studyName, String $visitGroupId, String $visitTypeId, Request $request, CreateVisit $createVisit, CreateVisitRequest $createVisitRequest, CreateVisitResponse $createVisitResponse) {
+    public function createVisit(String $studyName, String $visitGroupId, String $visitTypeId, Request $request, CreateVisit $createVisit, CreateVisitRequest $createVisitRequest, CreateVisitResponse $createVisitResponse)
+    {
         $curentUser = Auth::user();
 
         $createVisitRequest->currentUserId = $curentUser['id'];
@@ -46,12 +47,11 @@ class VisitController extends Controller
         $requestData = $request->all();
         $createVisitRequest = Util::fillObject($requestData, $createVisitRequest);
         $createVisit->execute($createVisitRequest, $createVisitResponse);
-
-        return response()->noContent()
-                ->setStatusCode($createVisitResponse->status, $createVisitResponse->statusText);
+        return $this->getJsonResponse($createVisitResponse->body, $createVisitResponse->status, $createVisitResponse->statusText);
     }
 
-    public function getVisit(string $studyName, int $visitId, Request $request, GetVisit $getVisit, GetVisitRequest $getVisitRequest, GetVisitResponse $getVisitResponse){
+    public function getVisit(string $studyName, int $visitId, Request $request, GetVisit $getVisit, GetVisitRequest $getVisitRequest, GetVisitResponse $getVisitResponse)
+    {
 
         $curentUser = Auth::user();
         $queryParam = $request->query();
@@ -63,12 +63,11 @@ class VisitController extends Controller
 
         $getVisit->execute($getVisitRequest, $getVisitResponse);
 
-        return response()->json($getVisitResponse->body)
-                ->setStatusCode($getVisitResponse->status, $getVisitResponse->statusText);
-
+        return $this->getJsonResponse($getVisitResponse->body, $getVisitResponse->status, $getVisitResponse->statusText);
     }
 
-    public function getVisitsFromStudy(string $studyName, Request $request, GetVisitsFromStudy $getVisitsFromStudy, GetVisitsFromStudyRequest $getVisitsFromStudyRequest, GetVisitsFromStudyResponse $getVisitsFromStudyResponse){
+    public function getVisitsFromStudy(string $studyName, Request $request, GetVisitsFromStudy $getVisitsFromStudy, GetVisitsFromStudyRequest $getVisitsFromStudyRequest, GetVisitsFromStudyResponse $getVisitsFromStudyResponse)
+    {
         $curentUser = Auth::user();
 
         $getVisitsFromStudyRequest->currentUserId = $curentUser['id'];
@@ -76,12 +75,11 @@ class VisitController extends Controller
 
         $getVisitsFromStudy->execute($getVisitsFromStudyRequest, $getVisitsFromStudyResponse);
 
-        return response()->json($getVisitsFromStudyResponse->body)
-                ->setStatusCode($getVisitsFromStudyResponse->status, $getVisitsFromStudyResponse->statusText);
-
+        return $this->getJsonResponse($getVisitsFromStudyResponse->body, $getVisitsFromStudyResponse->status, $getVisitsFromStudyResponse->statusText);
     }
 
-    public function validateDicom(int $visitId, Request $request, ValidateDicomUpload $validateDicomUpload, ValidateDicomUploadRequest $validateDicomUploadRequest, ValidateDicomUploadResponse $validateDicomUploadResponse){
+    public function validateDicom(int $visitId, Request $request, ValidateDicomUpload $validateDicomUpload, ValidateDicomUploadRequest $validateDicomUploadRequest, ValidateDicomUploadResponse $validateDicomUploadResponse)
+    {
 
         $curentUser = Auth::user();
         $validateDicomUploadRequest->currentUserId = $curentUser['id'];
@@ -90,9 +88,11 @@ class VisitController extends Controller
         $validateDicomUploadRequest = Util::fillObject($requestData, $validateDicomUploadRequest);
         $validateDicomUpload->execute($validateDicomUploadRequest, $validateDicomUploadResponse);
 
+        return $this->getJsonResponse($validateDicomUploadResponse->body, $validateDicomUploadResponse->status, $validateDicomUploadResponse->statusText);
     }
 
-    public function deleteVisit(int $visitId, Request $request, DeleteVisit $deleteVisit, DeleteVisitRequest $deleteVisitRequest, DeleteVisitResponse $deleteVisitResponse){
+    public function deleteVisit(int $visitId, Request $request, DeleteVisit $deleteVisit, DeleteVisitRequest $deleteVisitRequest, DeleteVisitResponse $deleteVisitResponse)
+    {
         $curentUser = Auth::user();
         $requestData = $request->all();
         $queryParam = $request->query();
@@ -102,14 +102,12 @@ class VisitController extends Controller
         $deleteVisitRequest->role = $queryParam['role'];
 
         $deleteVisit->execute($deleteVisitRequest, $deleteVisitResponse);
-        if ($deleteVisitResponse->body !== null) {
-            return response()->json($deleteVisitResponse->body)
-                ->setStatusCode($deleteVisitResponse->status, $deleteVisitResponse->statusText);
-        } else return response()->noContent()
-                ->setStatusCode($deleteVisitResponse->status, $deleteVisitResponse->statusText);
+
+        return $this->getJsonResponse($deleteVisitResponse->body, $deleteVisitResponse->status, $deleteVisitResponse->statusText);
     }
 
-    public function modifyQualityControl(int $visitId, Request $request, ModifyQualityControl $modifyQualityControl, ModifyQualityControlRequest $modifyQualityControlRequest, ModifyQualityControlResponse $modifyQualityControlResponse){
+    public function modifyQualityControl(int $visitId, Request $request, ModifyQualityControl $modifyQualityControl, ModifyQualityControlRequest $modifyQualityControlRequest, ModifyQualityControlResponse $modifyQualityControlResponse)
+    {
         $curentUser = Auth::user();
         $requestData = $request->all();
 
@@ -119,11 +117,11 @@ class VisitController extends Controller
 
         $modifyQualityControl->execute($modifyQualityControlRequest, $modifyQualityControlResponse);
 
-        return response()->json($modifyQualityControlResponse->body)
-                ->setStatusCode($modifyQualityControlResponse->status, $modifyQualityControlResponse->statusText);
+        return $this->getJsonResponse($modifyQualityControlResponse->body, $modifyQualityControlResponse->status, $modifyQualityControlResponse->statusText);
     }
 
-    public function modifyQualityControlReset(int $visitId, ModifyQualityControlReset $modifyQualityControlReset, ModifyQualityControlResetRequest $modifyQualityControlResetRequest, ModifyQualityControlResetResponse $modifyQualityControlResetResponse){
+    public function modifyQualityControlReset(int $visitId, ModifyQualityControlReset $modifyQualityControlReset, ModifyQualityControlResetRequest $modifyQualityControlResetRequest, ModifyQualityControlResetResponse $modifyQualityControlResetResponse)
+    {
         $curentUser = Auth::user();
 
         $modifyQualityControlResetRequest->currentUserId = $curentUser['id'];
@@ -131,11 +129,11 @@ class VisitController extends Controller
 
         $modifyQualityControlReset->execute($modifyQualityControlResetRequest, $modifyQualityControlResetResponse);
 
-        return response()->json($modifyQualityControlResetResponse->body)
-                ->setStatusCode($modifyQualityControlResetResponse->status, $modifyQualityControlResetResponse->statusText);
+        return $this->getJsonResponse($modifyQualityControlResetResponse->body, $modifyQualityControlResetResponse->status, $modifyQualityControlResetResponse->statusText);
     }
 
-    public function modifyCorrectiveAction(int $visitId, Request $request, ModifyCorrectiveAction $modifyCorrectiveAction, ModifyCorrectiveActionRequest $modifyCorrectiveActionRequest, ModifyCorrectiveActionResponse $modifyCorrectiveActionResponse){
+    public function modifyCorrectiveAction(int $visitId, Request $request, ModifyCorrectiveAction $modifyCorrectiveAction, ModifyCorrectiveActionRequest $modifyCorrectiveActionRequest, ModifyCorrectiveActionResponse $modifyCorrectiveActionResponse)
+    {
         $curentUser = Auth::user();
         $requestData = $request->all();
 
@@ -145,12 +143,11 @@ class VisitController extends Controller
 
         $modifyCorrectiveAction->execute($modifyCorrectiveActionRequest, $modifyCorrectiveActionResponse);
 
-        return response()->json($modifyCorrectiveActionResponse->body)
-                ->setStatusCode($modifyCorrectiveActionResponse->status, $modifyCorrectiveActionResponse->statusText);
-
+        return $this->getJsonResponse($modifyCorrectiveActionResponse->body, $modifyCorrectiveActionResponse->status, $modifyCorrectiveActionResponse->statusText);
     }
 
-    public function reactivateVisit(int $visitId, ReactivateVisit $reactivateVisit, ReactivateVisitRequest $reactivateVisitRequest, ReactivateVisitResponse $reactivateVisitResponse){
+    public function reactivateVisit(int $visitId, ReactivateVisit $reactivateVisit, ReactivateVisitRequest $reactivateVisitRequest, ReactivateVisitResponse $reactivateVisitResponse)
+    {
         $currentUser = Auth::user();
 
         $reactivateVisitRequest->currentUserId = $currentUser['id'];
@@ -158,13 +155,6 @@ class VisitController extends Controller
 
         $reactivateVisit->execute($reactivateVisitRequest, $reactivateVisitResponse);
 
-        if ($reactivateVisitResponse->body !== null) {
-            return response()->json($reactivateVisitResponse->body)
-                ->setStatusCode($reactivateVisitResponse->status, $reactivateVisitResponse->statusText);
-        } else return response()->noContent()
-                ->setStatusCode($reactivateVisitResponse->status, $reactivateVisitResponse->statusText);
-
+        return $this->getJsonResponse($reactivateVisitResponse->body, $reactivateVisitResponse->status, $reactivateVisitResponse->statusText);
     }
-
-
 }

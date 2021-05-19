@@ -6,8 +6,8 @@ use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOBadRequestException;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
-use App\GaelO\Interfaces\TrackerRepositoryInterface;
-use App\GaelO\Interfaces\VisitRepositoryInterface;
+use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
+use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
 use App\GaelO\Services\AuthorizationVisitService;
 use App\GaelO\Services\InvestigatorFormService;
 use Exception;
@@ -47,7 +47,7 @@ class ModifyInvestigatorForm {
             );
 
             $this->investigatorFormService->setCurrentUserId($modifyInvestigatorFormRequest->currentUserId);
-            $this->investigatorFormService->setVisitContext($visitContext);
+            $this->investigatorFormService->setVisitContextAndStudy($visitContext, $studyName);
             $this->investigatorFormService->updateInvestigatorForm($modifyInvestigatorFormRequest->data, $modifyInvestigatorFormRequest->validated);
 
             $actionDetails = [

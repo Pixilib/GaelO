@@ -25,8 +25,7 @@ class VisitGroupController extends Controller
         $createVisitGroupRequest = Util::fillObject($requestData, $createVisitGroupRequest);
         $createVisitGroup->execute($createVisitGroupRequest, $createVisitGroupResponse);
 
-        return response()->noContent()
-                ->setStatusCode($createVisitGroupResponse->status, $createVisitGroupResponse->statusText);
+        return $this->getJsonResponse($createVisitGroupResponse->body, $createVisitGroupResponse->status, $createVisitGroupResponse->statusText);
     }
 
     public function getVisitGroup(int $visitGroupId, GetVisitGroup $getVisitGroup, GetVisitGroupRequest $getVisitGroupRequest, GetVisitGroupResponse $getVisitGroupResponse){
@@ -36,8 +35,7 @@ class VisitGroupController extends Controller
 
         $getVisitGroup->execute($getVisitGroupRequest, $getVisitGroupResponse);
 
-        return response()->json($getVisitGroupResponse->body)
-                ->setStatusCode($getVisitGroupResponse->status, $getVisitGroupResponse->statusText);
+        return $this->getJsonResponse($getVisitGroupResponse->body, $getVisitGroupResponse->status, $getVisitGroupResponse->statusText);
 
     }
 
@@ -46,8 +44,7 @@ class VisitGroupController extends Controller
         $deleteVisitGroupRequest->currentUserId = $curentUser['id'];
         $deleteVisitGroupRequest->visitGroupId = $visitGroupId;
         $deleteVisitGroup->execute($deleteVisitGroupRequest, $deleteVisitGroupResponse);
-        return response()->json($deleteVisitGroupResponse->body)
-                ->setStatusCode($deleteVisitGroupResponse->status, $deleteVisitGroupResponse->statusText);
+        return $this->getJsonResponse($deleteVisitGroupResponse->body, $deleteVisitGroupResponse->status, $deleteVisitGroupResponse->statusText);
 
     }
 }

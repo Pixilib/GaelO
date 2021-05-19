@@ -5,9 +5,9 @@ namespace App\GaelO\UseCases\GetReviewProgression;
 use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
-use App\GaelO\Interfaces\ReviewRepositoryInterface;
-use App\GaelO\Interfaces\UserRepositoryInterface;
-use App\GaelO\Interfaces\VisitRepositoryInterface;
+use App\GaelO\Interfaces\Repositories\ReviewRepositoryInterface;
+use App\GaelO\Interfaces\Repositories\UserRepositoryInterface;
+use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
 use App\GaelO\Services\AuthorizationService;
 use Exception;
 

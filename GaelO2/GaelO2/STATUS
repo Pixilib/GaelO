@@ -31,40 +31,50 @@ Reviews (GET, POST, PUT, DELETE, PATCH (unlock))
 Reviews From Visits (GET)
 review-progression (GET)
 studies/{studyName}/dicom-studies (GET)
-studies/{studyName}/dicom-series/file (POST)
+studies/{studyName}/dicom-series/file (GET)
+studies/{studyName}/visit-types/{visitTypeId}/visits (GET)
+studies/{studyName}/visit-types/{visitTypeId}/reviews (GET)
+studies/{studyName}/visit-types/{visitTypeId}/investigator-forms (GET)
+studies/{studyName}/visit-types/{visitTypeId}/dicom-studies (GET)
+reviews/{id}/file (GET, POST, DELETE)
 
 Salim TODO :
 
+Entity :
+- Fusionner Investigator et review form ? (ne different que par l'adjudication)
+- Pluger toutes les reponses "data" sur ces entity response
+=> GetPossibleUpload => PossibleUploadEntity ?
+=> GetReviewProgression => Review + Progression entity?
+=> GetUserRoleInStudy => RoleEntity ?
+=> GetUserRole => RoleEntity ?
+=> GetVisitTree => ?
+
 Download Dicom :
-Eliminer l'entity custom au profit de l'entity generique
-Faire FrontEnd (tout lister au niveau series?)
+Mieux organiser la reponse entity (dissocier les sous niveaux et refusionner dans le front)
+Re faire FrontEnd (tout lister au niveau series?)
 
 Messagerie à designer
 
-Export Data Etude :
+Creatable Visit : Manque Study Custom Logic (+dans front skip visites optionnelles ?)
+Ajouter dicom contstraint dans definition VisitType et upgrader de l'uploader
+Checker gestion statut patient (à voir avec test bicar)
+AskUnlock basé sur le VisitId ? => passer a review id ?
+
+Export Data study :
 - Personalisation au niveau study -> Couche d'abstration notamment pour injecter le lysarc code
 - Review Ajout Patient Code et Visit Type ?
 - Associated File To Review => A faire dans un zip
-- Export SQL https://stackoverflow.com/questions/26261670/mysqldump-with-where-clause-is-not-working/26261717
-existe pas pour Postgres mais possibilité via sql COPY?
 
-Isoler les entity de reponse dans un repertoire à part
-Interface : Faire sous repertoire pour les interface repository et les interface adapter (et faire les interface des adapters qui manquent)
-Model : Type de variable a caster
-Clé etrangere DicomStudy et DicomSeries non conventionnelle
-Harmoniser le passage par des entity de table pour les réponses
+Model et db :
+- Type de variable a caster
+- Clé etrangere DicomStudy et DicomSeries non conventionnelle
 
 Revoir DicowWeb Authorization Service => Pb route orthanc differentes
 GetVisitContexte des service surement a faire passer a initialisation pour eviter requettes redondantes
-Creatable Visit : Manque Study Custom Logic (+dans front skip visites optionnelles ?)
 Review  : faire une propriete dans visit pour savoir si review disponible a un user en plus de status reviewAvailable ?
 Dicom Series Service => peut etre evoluer vers un DicomService pour les deux niveaux
 Verifier que quand on appelle un child si le parent est pas delete (cf probleme de role et study)
-
-*** APIs ***
-- API Review
-Review form /file  (POST, GET, DELETE)
-Quid de adjudication ou il faut faire remonter des info custom au front ?
+download dicom : se reposer sur l'assynchronisme d'orthanc depuis le front (ou generation d'un lien unique pour le dl?)
 
 **** Tests ***
 Test feature : visit et autres (dicom...)
@@ -77,19 +87,13 @@ Review => tester un scenario de custom conclusion / adjudication
 
 +Tard :
 studies/{studyName}/orthanc-study-id/{orthancStudyID} => A renomer à original-orthanc-study-id (test le hash d'origine pas le courant)
-Faire une condition pour les NoContent dans le controller ? => ou mettre toujours un payload vide pour eviter les errur error->json() dans front?
-Voir dans message d'erreur comment ajouter d'autre info que le message (pour id de login)
-ReverseProxy TUS => On peut ajouter le studyName dans le header dans uppy pour le recupérer dans le use case et checker le role Investigateur
 TUS est Joignable sur Delete => peut etre gerer le failure/cancel pour vider tus ?
 Deploiement ajouter le login / mdp pour dans orthanc pacs + bloquer delete dans lua script
 Dans remplissage DTO request, si variable boolean, un input string est interpretée à true.
 QC Not Needed => autoriser ou pas remove de series ?
-Autoriser les fichier pour les form investigateurs ?
-
 
 Reste Supervisor :
 - Upload Manager
-- Statistics
 - Remininder email upload / review / Communication mail inter membre (utiliser tinyMCE React)
 - Orthanc Send to peer
 

@@ -2,9 +2,10 @@
 
 namespace App\GaelO\UseCases\GetAffiliatedCenter;
 
+use App\GaelO\Entities\CenterEntity;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
-use App\GaelO\Interfaces\UserRepositoryInterface;
+use App\GaelO\Interfaces\Repositories\UserRepositoryInterface;
 use App\GaelO\Services\AuthorizationService;
 use Exception;
 

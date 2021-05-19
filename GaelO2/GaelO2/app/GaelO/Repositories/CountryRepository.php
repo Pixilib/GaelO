@@ -2,7 +2,7 @@
 
 namespace App\GaelO\Repositories;
 
-use App\GaelO\Interfaces\CountryRepositoryInterface;
+use App\GaelO\Interfaces\Repositories\CountryRepositoryInterface;
 use App\Models\Country;
 
 class CountryRepository implements CountryRepositoryInterface {

@@ -99,7 +99,7 @@ class ReviewRepositoryTest extends TestCase
 
     public function testUnlockReview(){
         $review = Review::factory()->validated()->create();
-        $this->reviewRepository->unlockReviewForm($review->id);
+        $this->reviewRepository->unlockReview($review->id);
         $updatedReview = Review::find($review->id);
         $this->assertFalse(boolval($updatedReview->validated));
     }
@@ -110,11 +110,11 @@ class ReviewRepositoryTest extends TestCase
         $this->assertEquals($review->first()->review_date, $reviewAnswer['review_date']);
     }
 
-    public function testIsExistingFormForStudyVisitUser(){
-        $review = Review::factory()->count(5)->create();
-        $reviewAnswer = $this->reviewRepository->isExistingFormForStudyVisitUser($review->first()->study_name, $review->first()->visit_id, $review->first()->user_id);
+    public function testIsExistingReviewForStudyVisitUser(){
+        $review = Review::factory()->reviewForm()->count(5)->create();
+        $reviewAnswer = $this->reviewRepository->isExistingReviewForStudyVisitUser($review->first()->study_name, $review->first()->visit_id, $review->first()->user_id);
         //Ask the wrong study
-        $reviewAnswer2 = $this->reviewRepository->isExistingFormForStudyVisitUser($review->last()->study_name, $review->first()->visit_id, $review->first()->user_id);
+        $reviewAnswer2 = $this->reviewRepository->isExistingReviewForStudyVisitUser($review->last()->study_name, $review->first()->visit_id, $review->first()->user_id);
         $this->assertTrue($reviewAnswer);
         $this->assertFalse($reviewAnswer2);
     }
@@ -164,13 +164,41 @@ class ReviewRepositoryTest extends TestCase
         $visit = Visit::factory()->count(2)->create();
 
         $reviews = Review::factory()->studyName($study->name)->visitId($visit->first()->id)->reviewForm()->validated()->count(7)->create();
+        Review::factory()->studyName($study->name)->visitId($visit->last()->id)->reviewForm()->validated()->count(3)->create();
+
+        //Add localform that should not be selected
         Review::factory()->studyName($study->name)->visitId($visit->last()->id)->validated()->count(3)->create();
 
         $reviews->first()->delete();
 
-        $reviewData = $this->reviewRepository->getReviewFromVisitIdArrayStudyName([$visit->first()->id, $visit->last()->id], $study->name, true);
+        $reviewData = $this->reviewRepository->getReviewsFromVisitIdArrayStudyName([$visit->first()->id, $visit->last()->id], $study->name, true);
 
         $this->assertEquals(10, sizeof($reviewData));
+    }
+
+    public function testGetInvestigatorsFormsFromVisitIdArrayAndStudyName(){
+
+        $study = Study::factory()->create();
+        $visit = Visit::factory()->count(2)->create();
+
+        $reviews = Review::factory()->studyName($study->name)->visitId($visit->first()->id)->validated()->count(7)->create();
+        Review::factory()->studyName($study->name)->visitId($visit->last()->id)->validated()->count(3)->create();
+
+        //Add review form that should be not selected
+        Review::factory()->studyName($study->name)->visitId($visit->last()->id)->reviewForm()->validated()->count(3)->create();
+
+        $reviews->first()->delete();
+
+        $reviewData = $this->reviewRepository->getInvestigatorsFormsFromVisitIdArrayStudyName([$visit->first()->id, $visit->last()->id], $study->name, true);
+
+        $this->assertEquals(10, sizeof($reviewData));
+    }
+
+    public function testUpdateReviewFiles(){
+        $review = Review::factory()->create();
+        $this->reviewRepository->updateReviewFile($review->id, ['myKey' => 'myFile.pdf'] );
+        $updatedReview = Review::find($review->id);
+        $this->assertArrayHasKey('myKey', $updatedReview['sent_files']);
     }
 
 

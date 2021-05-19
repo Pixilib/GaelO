@@ -2,7 +2,7 @@
 
 namespace App\GaelO\Repositories;
 
-use App\GaelO\Interfaces\TrackerRepositoryInterface;
+use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
 use App\Models\Tracker;
 use App\GaelO\Util;
 

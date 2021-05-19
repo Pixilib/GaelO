@@ -2,7 +2,7 @@
 
 namespace App\GaelO\Repositories;
 
-use App\GaelO\Interfaces\DicomStudyRepositoryInterface;
+use App\GaelO\Interfaces\Repositories\DicomStudyRepositoryInterface;
 use App\GaelO\Util;
 use App\Models\DicomStudy;
 
@@ -202,30 +202,19 @@ class DicomStudyRepository implements DicomStudyRepositoryInterface
     {
 
         $query = $this->dicomStudy
-            ->join('visits', function ($join) {
-                $join->on('dicom_studies.visit_id', '=', 'visits.id');
-            })->join('visit_types', function ($join) {
-                $join->on('visit_types.id', '=', 'visits.visit_type_id');
-            })->join('patients', function ($join) {
-                $join->on('patients.code', '=', 'visits.patient_code');
-            })->join('visit_groups', function ($join) {
-                $join->on('visit_groups.id', '=', 'visit_types.visit_group_id');
+            ->with(['visit' => function ($query) use ($withDeleted) {
+                $query->with(['visitType', 'patient']);
+            }])
+            ->whereHas('visit', function ($query) use ($studyName) {
+                $query->whereHas('visitType', function ($query) use ($studyName) {
+                    $query->whereHas('visitGroup', function ($query) use ($studyName) {
+                        $query->where('study_name', $studyName);
+                    });
+                });
             })
-            ->where('visit_groups.study_name', '=', $studyName)
             ->with(['dicomSeries' => function ($query) use ($withDeleted) {
                 if($withDeleted) $query->withTrashed();
-            }])
-            ->select(
-                'dicom_studies.*',
-                'patients.code',
-                'patients.center_code',
-                'patients.inclusion_status',
-                'visit_groups.modality',
-                'visit_types.name as visitTypeName',
-                'visits.visit_date',
-                'visits.state_investigator_form',
-                'visits.state_quality_control'
-            );
+            }]);
 
         if ($withDeleted) {
             $query->withTrashed();
@@ -240,6 +229,20 @@ class DicomStudyRepository implements DicomStudyRepositoryInterface
     public function getDicomStudyFromVisitIdArray(array $visitId, bool $withTrashed) : array {
 
         $queryBuilder = $this->dicomStudy->whereIn('visit_id', $visitId);
+
+        if($withTrashed){
+            $queryBuilder->withTrashed();
+        }
+
+        $answer = $queryBuilder->get();
+
+        return $answer->count() === 0 ? []  : $answer->toArray();
+
+    }
+
+    public function getDicomStudyFromVisitIdArrayWithSeries(array $visitId, bool $withTrashed) : array {
+
+        $queryBuilder = $this->dicomStudy->whereIn('visit_id', $visitId)->with('dicomSeries');
 
         if($withTrashed){
             $queryBuilder->withTrashed();

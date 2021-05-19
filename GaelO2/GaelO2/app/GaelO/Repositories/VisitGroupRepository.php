@@ -3,7 +3,7 @@
 namespace App\GaelO\Repositories;
 
 use App\Models\VisitGroup;
-use App\GaelO\Interfaces\VisitGroupRepositoryInterface;
+use App\GaelO\Interfaces\Repositories\VisitGroupRepositoryInterface;
 use App\GaelO\Util;
 
 class VisitGroupRepository implements VisitGroupRepositoryInterface {

@@ -5,9 +5,9 @@ namespace App\GaelO\UseCases\CreateVisitType;
 use App\GaelO\Exceptions\GaelOConflictException;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
-use App\GaelO\Interfaces\VisitGroupRepositoryInterface;
-use App\GaelO\Interfaces\VisitRepositoryInterface;
-use App\GaelO\Interfaces\VisitTypeRepositoryInterface;
+use App\GaelO\Interfaces\Repositories\VisitGroupRepositoryInterface;
+use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
+use App\GaelO\Interfaces\Repositories\VisitTypeRepositoryInterface;
 use App\GaelO\Services\AuthorizationService;
 use Exception;
 

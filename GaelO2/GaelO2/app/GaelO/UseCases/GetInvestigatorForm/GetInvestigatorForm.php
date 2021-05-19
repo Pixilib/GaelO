@@ -2,10 +2,11 @@
 
 namespace App\GaelO\UseCases\GetInvestigatorForm;
 
+use App\GaelO\Entities\InvestigatorFormEntity;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
-use App\GaelO\Interfaces\ReviewRepositoryInterface;
-use App\GaelO\Interfaces\UserRepositoryInterface;
+use App\GaelO\Interfaces\Repositories\ReviewRepositoryInterface;
+use App\GaelO\Interfaces\Repositories\UserRepositoryInterface;
 use App\GaelO\Services\AuthorizationVisitService;
 use Exception;
 

@@ -3,7 +3,7 @@
 namespace App\GaelO\Repositories;
 
 use App\Models\Study;
-use App\GaelO\Interfaces\StudyRepositoryInterface;
+use App\GaelO\Interfaces\Repositories\StudyRepositoryInterface;
 use App\GaelO\Util;
 use Exception;
 

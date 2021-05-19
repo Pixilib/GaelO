@@ -8,8 +8,8 @@ use App\GaelO\Services\AuthorizationService;
 use Exception;
 use App\GaelO\Exceptions\GaelOConflictException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
-use App\GaelO\Interfaces\CenterRepositoryInterface;
-use App\GaelO\Interfaces\TrackerRepositoryInterface;
+use App\GaelO\Interfaces\Repositories\CenterRepositoryInterface;
+use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
 
 class CreateCenter {
 

@@ -3,9 +3,10 @@
 namespace App\GaelO\UseCases\GetReviewForm;
 
 use App\GaelO\Constants\Constants;
+use App\GaelO\Entities\ReviewFormEntity;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
-use App\GaelO\Interfaces\ReviewRepositoryInterface;
+use App\GaelO\Interfaces\Repositories\ReviewRepositoryInterface;
 use App\GaelO\Services\AuthorizationReviewService;
 use Exception;
 

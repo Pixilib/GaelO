@@ -4,7 +4,7 @@ namespace App\GaelO\UseCases\GetUserRoles;
 
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
-use App\GaelO\Interfaces\UserRepositoryInterface;
+use App\GaelO\Interfaces\Repositories\UserRepositoryInterface;
 use App\GaelO\Services\AuthorizationService;
 use Exception;
 
@@ -22,6 +22,7 @@ class GetUserRoles {
 
         try{
 
+            //SK A faire passer par l'entity
             $this->checkAuthorization($getUserRolesRequest->currentUserId);
             $roles = $this->userRepositoryInterface->getUsersRoles($getUserRolesRequest->userId);
 

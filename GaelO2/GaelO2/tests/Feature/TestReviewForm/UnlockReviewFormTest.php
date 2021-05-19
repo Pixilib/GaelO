@@ -45,7 +45,7 @@ class UnlockReviewFormTest extends TestCase
         ];
     }
 
-    public function testUnlockReviewForm(){
+    public function testUnlockReview(){
         $visitData = $this->createVisit();
         $studyName = $visitData['studyName'];
         $currentUserId = AuthorizationTools::actAsAdmin(false);

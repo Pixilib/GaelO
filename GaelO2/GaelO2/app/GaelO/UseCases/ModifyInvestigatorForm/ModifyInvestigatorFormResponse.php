@@ -3,7 +3,7 @@
 namespace App\GaelO\UseCases\ModifyInvestigatorForm;
 
 class ModifyInvestigatorFormResponse {
-    public $body;
+    public $body = null;
     public int $status;
     public string $statusText;
 }

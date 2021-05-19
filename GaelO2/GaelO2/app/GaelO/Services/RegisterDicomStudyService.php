@@ -17,8 +17,8 @@
 namespace App\GaelO\Services;
 
 use App\GaelO\Exceptions\GaelOBadRequestException;
-use App\GaelO\Interfaces\DicomSeriesRepositoryInterface;
-use App\GaelO\Interfaces\DicomStudyRepositoryInterface;
+use App\GaelO\Interfaces\Repositories\DicomSeriesRepositoryInterface;
+use App\GaelO\Interfaces\Repositories\DicomStudyRepositoryInterface;
 use App\GaelO\Services\OrthancService;
 use App\GaelO\Services\StoreObjects\OrthancSeries;
 use App\GaelO\Services\StoreObjects\OrthancStudy;

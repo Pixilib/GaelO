@@ -4,7 +4,7 @@ namespace App\GaelO\Repositories;
 
 use App\GaelO\Constants\Constants;
 use App\Models\Visit;
-use App\GaelO\Interfaces\VisitRepositoryInterface;
+use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
 use App\GaelO\Util;
 use App\Models\ReviewStatus;
 use Illuminate\Support\Facades\DB;

@@ -80,7 +80,7 @@ class ModifyUserIdentificationTest extends TestCase
         ];
 
         //Update with update API, shoud be success
-        $this->json('PATCH', '/api/users/'.$currentUserId, $validPayload)->assertNoContent(409);
+        $this->json('PATCH', '/api/users/'.$currentUserId, $validPayload)->assertStatus(409);
     }
 
     public function testModifyUserIdentificationAlreadyUsedEmail()

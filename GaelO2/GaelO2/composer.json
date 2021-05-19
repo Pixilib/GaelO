@@ -16,6 +16,7 @@
         "laravel/passport": "^10.0",
         "laravel/tinker": "^2.0",
         "phpoffice/phpspreadsheet": "^1.17",
+        "ralouphie/mimey": "^1.0",
         "respect/validation": "^2.2",
         "spatie/db-dumper": "^2.17"
     },

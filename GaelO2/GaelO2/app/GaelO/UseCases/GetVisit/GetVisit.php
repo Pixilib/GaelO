@@ -2,10 +2,11 @@
 
 namespace App\GaelO\UseCases\GetVisit;
 
+use App\GaelO\Entities\VisitEntity;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
-use App\GaelO\Interfaces\ReviewStatusRepositoryInterface;
-use App\GaelO\Interfaces\VisitRepositoryInterface;
+use App\GaelO\Interfaces\Repositories\ReviewStatusRepositoryInterface;
+use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
 use App\GaelO\Services\AuthorizationVisitService;
 use Exception;
 

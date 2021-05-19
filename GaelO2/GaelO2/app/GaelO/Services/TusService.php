@@ -2,22 +2,23 @@
 
 namespace App\GaelO\Services;
 
-use App\GaelO\Adapters\HttpClientAdapter;
-use App\GaelO\Adapters\LaravelFunctionAdapter;
 use App\GaelO\Constants\SettingsConstants;
+use App\GaelO\Interfaces\Adapters\FrameworkInterface;
+use App\GaelO\Interfaces\Adapters\HttpClientInterface;
 
 /**
  * Service class to retrieve and remove upload ZIP from Tus microservice
  */
 class TusService{
 
+    private HttpClientInterface $httpClientInterface;
 
-    public function __construct(HttpClientAdapter $httpClientAdapter){
-        $this->httpClientAdapter = $httpClientAdapter;
+    public function __construct(HttpClientInterface $httpClientInterface, FrameworkInterface $frameworkInterface){
+        $this->httpClientInterface = $httpClientInterface;
 
-        $address = LaravelFunctionAdapter::getConfig(SettingsConstants::TUS_ADDRESS);
-        $port = LaravelFunctionAdapter::getConfig(SettingsConstants::TUS_PORT);
-        $this->httpClientAdapter->setAddress($address, $port);
+        $address = $frameworkInterface::getConfig(SettingsConstants::TUS_ADDRESS);
+        $port = $frameworkInterface::getConfig(SettingsConstants::TUS_PORT);
+        $this->httpClientInterface->setAddress($address, $port);
     }
 
     public function getZip(string $tusFileId) : string {
@@ -26,14 +27,14 @@ class TusService{
 
         $resource  = fopen( $downloadedFileName, 'r+');
 
-        $this->httpClientAdapter->requestStreamResponseToFile('GET', '/api/tus/'.$tusFileId,  $resource, ['Tus-Resumable' => '1.0.0'] );
+        $this->httpClientInterface->requestStreamResponseToFile('GET', '/api/tus/'.$tusFileId,  $resource, ['Tus-Resumable' => '1.0.0'] );
 
         return $downloadedFileName;
 
     }
 
     public function deleteZip(string $tusFileId) : void {
-        $this->httpClientAdapter->rowRequest('DELETE', '/api/tus/'.$tusFileId, null, ['Tus-Resumable' => '1.0.0'] );
+        $this->httpClientInterface->rowRequest('DELETE', '/api/tus/'.$tusFileId, null, ['Tus-Resumable' => '1.0.0'] );
     }
 
 }

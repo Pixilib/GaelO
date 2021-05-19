@@ -3,7 +3,7 @@
 namespace App\GaelO\UseCases\GetStudyDetails;
 
 class GetStudyDetailsResponse {
-    public array $body;
+    public $body = null;
     public int $status;
     public string $statusText;
 }

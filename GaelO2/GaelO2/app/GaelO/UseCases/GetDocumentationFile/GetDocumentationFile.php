@@ -2,11 +2,11 @@
 
 namespace App\GaelO\UseCases\GetDocumentationFile;
 
-use App\GaelO\Adapters\LaravelFunctionAdapter;
 use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
-use App\GaelO\Interfaces\DocumentationRepositoryInterface;
+use App\GaelO\Interfaces\Adapters\FrameworkInterface;
+use App\GaelO\Interfaces\Repositories\DocumentationRepositoryInterface;
 use App\GaelO\Services\AuthorizationService;
 use Exception;
 
@@ -14,11 +14,13 @@ class GetDocumentationFile{
 
     private DocumentationRepositoryInterface $documentationRepositoryInterface;
     private AuthorizationService $authorizationService;
+    private FrameworkInterface $frameworkInterface;
 
-    public function __construct(DocumentationRepositoryInterface $documentationRepositoryInterface, AuthorizationService $authorizationService)
+    public function __construct(DocumentationRepositoryInterface $documentationRepositoryInterface, AuthorizationService $authorizationService, FrameworkInterface $frameworkInterface)
     {
         $this->documentationRepositoryInterface = $documentationRepositoryInterface;
         $this->authorizationService = $authorizationService;
+        $this->frameworkInterface = $frameworkInterface;
     }
 
     public function execute(GetDocumentationFileRequest $getDocumentationFileRequest, GetDocumentationFileResponse $getdocumentationFileReponse){
@@ -37,7 +39,7 @@ class GetDocumentationFile{
 
             $getdocumentationFileReponse->status = 200;
             $getdocumentationFileReponse->statusText = 'OK';
-            $getdocumentationFileReponse->filePath = LaravelFunctionAdapter::getStoragePath().$documentationData['path'];
+            $getdocumentationFileReponse->filePath = $this->frameworkInterface::getStoragePath().$documentationData['path'];
             $getdocumentationFileReponse->filename = $documentationData['name'].'_'.$documentationData['version'].'.pdf';
 
         } catch (GaelOException $e){

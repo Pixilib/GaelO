@@ -3,7 +3,7 @@
 namespace App\GaelO\UseCases\GetDicomsStudy;
 
 class GetDicomsStudyResponse {
-    public $body;
+    public $body = null;
     public int $status;
     public string $statusText;
 }

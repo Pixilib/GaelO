@@ -3,7 +3,7 @@
 namespace App\GaelO\Services;
 
 use App\GaelO\Constants\Constants;
-use App\GaelO\Interfaces\ReviewRepositoryInterface;
+use App\GaelO\Interfaces\Repositories\ReviewRepositoryInterface;
 
 class AuthorizationReviewService
 {

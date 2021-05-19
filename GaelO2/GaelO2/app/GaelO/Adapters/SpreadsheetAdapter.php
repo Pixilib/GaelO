@@ -2,11 +2,12 @@
 
 namespace App\GaelO\Adapters;
 
+use App\GaelO\Interfaces\Adapters\SpreadsheetInterface;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Csv;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
-class SpreadsheetAdapter {
+class SpreadsheetAdapter implements SpreadsheetInterface {
 
     private Spreadsheet $spreadsheet;
 

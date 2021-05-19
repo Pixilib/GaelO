@@ -3,13 +3,13 @@
 namespace App\GaelO\Services;
 
 use App\GaelO\Constants\Constants;
-use App\GaelO\Interfaces\DicomStudyRepositoryInterface;
+use App\GaelO\Interfaces\Repositories\DicomStudyRepositoryInterface;
 use App\GaelO\Repositories\ReviewRepository;
 use App\GaelO\Repositories\ReviewStatusRepository;
 use App\GaelO\Repositories\UserRepository;
 use App\GaelO\Repositories\VisitTypeRepository;
 use App\GaelO\Repositories\VisitRepository;
-use App\GaelO\UseCases\GetVisitType\VisitTypeEntity;
+use App\GaelO\Entities\VisitTypeEntity;
 
 class VisitService
 {

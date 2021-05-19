@@ -2,63 +2,10 @@
 
 namespace App\GaelO\Services;
 
-use App\GaelO\Adapters\LaravelFunctionAdapter;
 use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOBadRequestException;
-use App\GaelO\Interfaces\ReviewRepositoryInterface;
-use App\GaelO\Interfaces\ReviewStatusRepositoryInterface;
-use App\GaelO\Services\MailServices;
-use App\GaelO\Services\SpecificStudiesRules\AbstractStudyRules;
-use App\GaelO\Services\VisitService;
 
-class ReviewFormService {
-
-    private VisitService $visitService;
-    private ReviewRepositoryInterface $reviewRepositoryInterface;
-    private ReviewStatusRepositoryInterface $reviewStatusRepositoryInterface;
-    private AbstractStudyRules $abstractStudyRules;
-    private MailServices $mailServices;
-
-    private int $currentUserId;
-    private int $visitId;
-    private array $visitContext;
-    private string $studyName;
-    private string $visitType;
-    private int $patientCode;
-    private int $uploaderId;
-
-
-    //SK Reste à gérer les Files
-
-    public function __construct(VisitService $visitService,
-        ReviewRepositoryInterface $reviewRepositoryInterface,
-        ReviewStatusRepositoryInterface $reviewStatusRepositoryInterface,
-        MailServices $mailServices
-        )
-    {
-        $this->visitService = $visitService;
-        $this->reviewRepositoryInterface = $reviewRepositoryInterface;
-        $this->reviewStatusRepositoryInterface = $reviewStatusRepositoryInterface;
-        $this->mailServices = $mailServices;
-    }
-
-    public function setCurrentUserId(int $currentUserId){
-        $this->currentUserId = $currentUserId;
-    }
-
-    public function setVisitContextAndStudy(array $visitContext, string $studyName){
-
-        $this->visitId = $visitContext['id'];
-        $this->visitService->setVisitId($visitContext['id']);
-        $this->visitContext = $visitContext;
-        $this->visitType = $this->visitContext['visit_type']['name'];
-        $this->patientCode = $this->visitContext['patient_code'];
-        $this->uploaderId = $this->visitContext['creator_user_id'];
-        $this->studyName = $studyName;
-        $modality = $this->visitContext['visit_type']['visit_group']['modality'];
-        $this->abstractStudyRules = LaravelFunctionAdapter::make('\App\GaelO\Services\SpecificStudiesRules\\'.$this->studyName.'_'.$modality.'_'.$this->visitType);
-
-    }
+class ReviewFormService extends FormService {
 
     public function setReviewStatus(array $reviewStatusEntity){
         $this->reviewStatusEntity = $reviewStatusEntity;
@@ -94,11 +41,10 @@ class ReviewFormService {
     public function deleteReview(int $reviewId) : void {
         $this->reviewRepositoryInterface->delete($reviewId);
         $this->doSpecificReviewDecisions();
-
     }
 
     public function unlockReview(int $reviewId) : void {
-        $this->reviewRepositoryInterface->unlockReviewForm($reviewId);
+        $this->reviewRepositoryInterface->unlockReview($reviewId);
         $this->doSpecificReviewDecisions();
     }
 
@@ -126,6 +72,8 @@ class ReviewFormService {
         }
 
     }
+
+
 
 
 

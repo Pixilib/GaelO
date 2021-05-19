@@ -2,20 +2,20 @@
 
 namespace App\Providers;
 
-use App\GaelO\Interfaces\CenterRepositoryInterface;
-use App\GaelO\Interfaces\CountryRepositoryInterface;
-use App\GaelO\Interfaces\DocumentationRepositoryInterface;
-use App\GaelO\Interfaces\DicomSeriesRepositoryInterface;
-use App\GaelO\Interfaces\DicomStudyRepositoryInterface;
-use App\GaelO\Interfaces\PatientRepositoryInterface;
-use App\GaelO\Interfaces\ReviewRepositoryInterface;
-use App\GaelO\Interfaces\ReviewStatusRepositoryInterface;
-use App\GaelO\Interfaces\StudyRepositoryInterface;
-use App\GaelO\Interfaces\TrackerRepositoryInterface;
-use App\GaelO\Interfaces\UserRepositoryInterface;
-use App\GaelO\Interfaces\VisitGroupRepositoryInterface;
-use App\GaelO\Interfaces\VisitRepositoryInterface;
-use App\GaelO\Interfaces\VisitTypeRepositoryInterface;
+use App\GaelO\Interfaces\Repositories\CenterRepositoryInterface;
+use App\GaelO\Interfaces\Repositories\CountryRepositoryInterface;
+use App\GaelO\Interfaces\Repositories\DocumentationRepositoryInterface;
+use App\GaelO\Interfaces\Repositories\DicomSeriesRepositoryInterface;
+use App\GaelO\Interfaces\Repositories\DicomStudyRepositoryInterface;
+use App\GaelO\Interfaces\Repositories\PatientRepositoryInterface;
+use App\GaelO\Interfaces\Repositories\ReviewRepositoryInterface;
+use App\GaelO\Interfaces\Repositories\ReviewStatusRepositoryInterface;
+use App\GaelO\Interfaces\Repositories\StudyRepositoryInterface;
+use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
+use App\GaelO\Interfaces\Repositories\UserRepositoryInterface;
+use App\GaelO\Interfaces\Repositories\VisitGroupRepositoryInterface;
+use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
+use App\GaelO\Interfaces\Repositories\VisitTypeRepositoryInterface;
 use App\GaelO\Repositories\CenterRepository;
 use App\GaelO\Repositories\CountryRepository;
 use App\GaelO\Repositories\DocumentationRepository;

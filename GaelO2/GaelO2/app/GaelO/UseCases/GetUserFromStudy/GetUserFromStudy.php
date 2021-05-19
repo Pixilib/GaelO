@@ -5,9 +5,9 @@ namespace App\GaelO\UseCases\GetUserFromStudy;
 use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
-use App\GaelO\Interfaces\UserRepositoryInterface;
+use App\GaelO\Interfaces\Repositories\UserRepositoryInterface;
 use App\GaelO\Services\AuthorizationService;
-use App\GaelO\UseCases\GetUser\UserEntity;
+use App\GaelO\Entities\UserEntity;
 use App\GaelO\UseCases\GetUserFromStudy\GetUserFromStudyRequest;
 use App\GaelO\UseCases\GetUserFromStudy\GetUserFromStudyResponse;
 use Exception;
@@ -71,5 +71,3 @@ class GetUserFromStudy {
     }
 
 }
-
-?>

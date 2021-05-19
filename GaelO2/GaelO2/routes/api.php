@@ -1,19 +1,18 @@
 <?php
 
+use App\Http\Controllers\AskUnlockController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CenterController;
 use App\Http\Controllers\CountryController;
 use App\Http\Controllers\DicomController;
 use App\Http\Controllers\DocumentationController;
 use App\Http\Controllers\ExportDBController;
-use App\Http\Controllers\FormController;
 use App\Http\Controllers\PatientController;
 use App\Http\Controllers\PreferenceController;
 use App\Http\Controllers\RequestController;
 use App\Http\Controllers\ReverseProxyController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\StudyController;
-use App\Http\Controllers\ToolsController;
 use App\Http\Controllers\TrackerController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\VisitController;
@@ -66,6 +65,12 @@ Route::middleware(['auth:api', 'refresh_token'])->group(function () {
     Route::get('studies/{studyName}/possible-uploads', [StudyController::class, 'getPossibleUploads'] );
     Route::get('studies/{studyName}/visit-types/{visitTypeId}/review-progression', [StudyController::class, 'getReviewProgression'] );
     Route::get('studies/{studyName}/dicom-studies', [DicomController::class, 'getStudyDicomStudies'] );
+    Route::get('studies/{studyName}/visits', [VisitController::class, 'getVisitsFromStudy'] );
+    Route::get('studies/{studyName}/visit-types/{visitTypeId}/visits', [StudyController::class, 'getVisitsFromVisitType'] );
+    Route::get('studies/{studyName}/visit-types/{visitTypeId}/reviews', [StudyController::class, 'getReviewsFromVisitType'] );
+    Route::get('studies/{studyName}/visit-types/{visitTypeId}/investigator-forms', [StudyController::class, 'getInvestigatorFormsFromVisitType'] );
+    Route::get('studies/{studyName}/visit-types/{visitTypeId}/dicom-studies', [StudyController::class, 'getDicomStudiesFromVisitType'] );
+
     //Study Routes
     Route::post('studies', [StudyController::class, 'createStudy'] );
 
@@ -106,7 +111,7 @@ Route::middleware(['auth:api', 'refresh_token'])->group(function () {
     Route::patch('visits/{id}/reactivate', [VisitController::class, 'reactivateVisit'] );
     Route::post('studies/{studyName}/visit-groups/{visitGroupId}/visit-types/{visitTypeId}/visits', [VisitController::class, 'createVisit'] );
     Route::get('studies/{studyName}/visits/{id}', [VisitController::class, 'getVisit'] );
-    Route::get('studies/{studyName}/visits', [VisitController::class, 'getVisitsFromStudy'] );
+
 
     //Local Form Routes
     Route::get('visits/{id}/investigator-form', [ReviewController::class, 'getInvestigatorForm'] );
@@ -121,6 +126,8 @@ Route::middleware(['auth:api', 'refresh_token'])->group(function () {
     Route::get('reviews/{id}', [ReviewController::class, 'getReviewForm']);
     Route::delete('reviews/{id}', [ReviewController::class, 'deleteReviewForm']);
     Route::patch('reviews/{id}/unlock', [ReviewController::class, 'unlockReviewForm']);
+    Route::post('reviews/{id}/file/{key}', [ReviewController::class, 'createReviewFile']);
+    Route::delete('reviews/{id}/file/{key}', [ReviewController::class, 'deleteReviewFile']);
     Route::get('studies/{studyName}/visits/{visitId}/reviews', [ReviewController::class, 'getReviewsFromVisit']);
 
     //Dicom Routes
@@ -130,7 +137,7 @@ Route::middleware(['auth:api', 'refresh_token'])->group(function () {
     Route::get('visits/{id}/dicoms', [DicomController::class, 'getVisitDicoms'] );
 
     //Ask Unlock route
-    Route::post('studies/{study}/visits/{id}/ask-unlock', [FormController::class, 'askUnlock'] );
+    Route::post('studies/{study}/visits/{id}/ask-unlock', [AskUnlockController::class, 'askUnlock'] );
 
     //upload Routes
     Route::any('tus/{filename?}', [ReverseProxyController::class, 'tusUpload'] );
@@ -165,6 +172,7 @@ Route::middleware('auth:api')->get('documentations/{id}/file', [DocumentationCon
 Route::middleware('auth:api')->get('visits/{id}/dicoms/file', [DicomController::class, 'getVisitDicomsFile'] );
 Route::middleware('auth:api')->get('studies/{studyName}/export', [StudyController::class, 'exportStudyData'] );
 Route::middleware('auth:api')->post('studies/{studyName}/dicom-series/file', [DicomController::class, 'getSupervisorDicomsFile'] );
+Route::middleware('auth:api')->get('reviews/{id}/file/{key}', [ReviewController::class, 'getReviewFile']);
 
 /*
 |--------------------------------------------------------------------------
@@ -179,4 +187,4 @@ Route::post('request', [RequestController::class, 'sendRequest'] );
 //Login and password Route
 Route::post('login', [AuthController::class, 'login'] )->name('login');
 Route::put('users/{id}/password', [UserController::class, 'changeUserPassword'] );
-Route::post('tools/reset-password', [ToolsController::class, 'resetPassword'] );
+Route::post('tools/reset-password', [UserController::class, 'resetPassword'] );

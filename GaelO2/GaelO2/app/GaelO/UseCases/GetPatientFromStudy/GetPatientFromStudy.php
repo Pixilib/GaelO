@@ -5,11 +5,11 @@ namespace App\GaelO\UseCases\GetPatientFromStudy;
 use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
-use App\GaelO\Interfaces\PatientRepositoryInterface;
+use App\GaelO\Interfaces\Repositories\PatientRepositoryInterface;
 use App\GaelO\Services\AuthorizationService;
 use App\GaelO\UseCases\GetPatientFromStudy\GetPatientFromStudyRequest;
 use App\GaelO\UseCases\GetPatientFromStudy\GetPatientFromStudyResponse;
-use App\GaelO\UseCases\GetPatient\PatientEntity;
+use App\GaelO\Entities\PatientEntity;
 use Exception;
 
 class GetPatientFromStudy {

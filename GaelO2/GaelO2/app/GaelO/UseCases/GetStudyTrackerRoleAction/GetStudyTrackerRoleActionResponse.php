@@ -3,7 +3,7 @@
 namespace App\GaelO\UseCases\GetStudyTrackerRoleAction;
 
 class GetStudyTrackerRoleActionResponse {
-    public array $body;
+    public $body = null;
     public int $status;
     public string $statusText;
 }

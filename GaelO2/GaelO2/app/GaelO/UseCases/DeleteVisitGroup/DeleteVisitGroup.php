@@ -5,7 +5,7 @@ namespace App\GaelO\UseCases\DeleteVisitGroup;
 use App\GaelO\Exceptions\GaelOBadRequestException;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
-use App\GaelO\Interfaces\VisitGroupRepositoryInterface;
+use App\GaelO\Interfaces\Repositories\VisitGroupRepositoryInterface;
 use App\GaelO\Services\AuthorizationService;
 use Exception;
 

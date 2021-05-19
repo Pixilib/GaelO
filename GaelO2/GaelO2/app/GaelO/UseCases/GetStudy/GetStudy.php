@@ -2,9 +2,10 @@
 
 namespace App\GaelO\UseCases\GetStudy;
 
+use App\GaelO\Entities\StudyEntity;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
-use App\GaelO\Interfaces\StudyRepositoryInterface;
+use App\GaelO\Interfaces\Repositories\StudyRepositoryInterface;
 use App\GaelO\Services\AuthorizationService;
 use Exception;
 

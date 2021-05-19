@@ -5,27 +5,27 @@ namespace App\GaelO\UseCases\GetVisitsFromStudy;
 use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
-use App\GaelO\Interfaces\ReviewStatusRepositoryInterface;
-use App\GaelO\Interfaces\VisitRepositoryInterface;
+use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
 use App\GaelO\Services\AuthorizationService;
-use App\GaelO\UseCases\GetVisit\VisitEntity;
+use App\GaelO\Entities\VisitEntity;
 use Exception;
 
-class GetVisitsFromStudy {
+class GetVisitsFromStudy
+{
 
     private VisitRepositoryInterface $visitRepositoryInterface;
-    private ReviewStatusRepositoryInterface $reviewStatusRepositoryInterface;
     private AuthorizationService $authorizationService;
 
-    public function __construct(VisitRepositoryInterface $visitRepositoryInterface, ReviewStatusRepositoryInterface $reviewStatusRepositoryInterface, AuthorizationService $authorizationService){
+    public function __construct(VisitRepositoryInterface $visitRepositoryInterface, AuthorizationService $authorizationService)
+    {
         $this->visitRepositoryInterface = $visitRepositoryInterface;
         $this->authorizationService = $authorizationService;
-        $this->reviewStatusRepositoryInterface = $reviewStatusRepositoryInterface;
     }
 
-    public function execute(GetVisitsFromStudyRequest $getVisitsFromStudyRequest, GetVisitsFromStudyResponse $getVisitsFromStudyResponse){
+    public function execute(GetVisitsFromStudyRequest $getVisitsFromStudyRequest, GetVisitsFromStudyResponse $getVisitsFromStudyResponse)
+    {
 
-        try{
+        try {
 
             $studyName = $getVisitsFromStudyRequest->studyName;
 
@@ -33,14 +33,16 @@ class GetVisitsFromStudy {
 
             $dbData = $this->visitRepositoryInterface->getVisitsInStudy($studyName, true, false);
             $responseArray = [];
-            foreach($dbData as $data){
+            foreach ($dbData as $data) {
                 $responseEntity = VisitEntity::fillFromDBReponseArray($data);
                 $responseEntity->setPatientStatus($data['patient']['inclusion_status'], $data['patient']['center_code']);
-                $responseEntity->setVisitContext($data['visit_type']['visit_group']['modality'],
-                $data['visit_type']['name'],
-                $data['visit_type']['order'],
-                $data['visit_type']['optional'],
-                $data['visit_type']['visit_group']['id']);
+                $responseEntity->setVisitContext(
+                    $data['visit_type']['visit_group']['modality'],
+                    $data['visit_type']['name'],
+                    $data['visit_type']['order'],
+                    $data['visit_type']['optional'],
+                    $data['visit_type']['visit_group']['id']
+                );
                 $responseEntity->setReviewVisitStatus($data['review_status']['review_status'], $data['review_status']['review_conclusion_value'], $data['review_status']['review_conclusion_date']);
                 $responseArray[] = $responseEntity;
             }
@@ -48,24 +50,21 @@ class GetVisitsFromStudy {
             $getVisitsFromStudyResponse->body = $responseArray;
             $getVisitsFromStudyResponse->status = 200;
             $getVisitsFromStudyResponse->statusText = 'OK';
-
-        } catch( GaelOException $e){
+        } catch (GaelOException $e) {
 
             $getVisitsFromStudyResponse->body = $e->getErrorBody();
             $getVisitsFromStudyResponse->status  = $e->statusCode;
             $getVisitsFromStudyResponse->statusText = $e->statusText;
-
-        } catch (Exception $e){
+        } catch (Exception $e) {
 
             throw $e;
-
         }
-
     }
 
-    private function checkAuthorization(int $userId, String $studyName){
+    private function checkAuthorization(int $userId, String $studyName)
+    {
         $this->authorizationService->setCurrentUserAndRole($userId, Constants::ROLE_SUPERVISOR);
-        if ( ! $this->authorizationService->isRoleAllowed($studyName)){
+        if (!$this->authorizationService->isRoleAllowed($studyName)) {
             throw new GaelOForbiddenException();
         }
     }

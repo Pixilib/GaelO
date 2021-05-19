@@ -2,15 +2,14 @@
 
 namespace App\GaelO\UseCases\ReactivateUser;
 
-use App\GaelO\Adapters\LaravelFunctionAdapter;
 use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
-use App\GaelO\Interfaces\TrackerRepositoryInterface;
+use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
 use App\GaelO\Services\AuthorizationService;
 use App\GaelO\Services\MailServices;
 use Exception;
-use App\GaelO\Interfaces\UserRepositoryInterface;
+use App\GaelO\Interfaces\Repositories\UserRepositoryInterface;
 
 class ReactivateUser{
 
@@ -59,6 +58,7 @@ class ReactivateUser{
 
         } catch( GaelOException $e){
 
+            $reactivateUserResponse->body = $e->getErrorBody();
             $reactivateUserResponse->status = $e->statusCode;
             $reactivateUserResponse->statusText = $e->statusText;
 

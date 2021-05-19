@@ -3,9 +3,10 @@
 namespace App\GaelO\UseCases\GetPatient;
 
 use App\GaelO\Constants\Constants;
+use App\GaelO\Entities\PatientEntity;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
-use App\GaelO\Interfaces\PatientRepositoryInterface;
+use App\GaelO\Interfaces\Repositories\PatientRepositoryInterface;
 use App\GaelO\Services\AuthorizationPatientService;
 use App\GaelO\UseCases\GetPatient\GetPatientRequest;
 use App\GaelO\UseCases\GetPatient\GetPatientResponse;
