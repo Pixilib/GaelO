@@ -110,10 +110,17 @@ class UserTest extends TestCase
         $this->assertEquals(3, sizeof($content));
     }
 
-
-    public function testGetUserRolesInStudyShouldFailNoSameUser()
+    public function testGetUserRolesInStudyShouldFailNoSameUserButAdmin()
     {
         $currentUserId = AuthorizationTools::actAsAdmin(true);
+        $this->createUserWithRoleInTwoStudies();
+        $content = $this->json('GET', '/api/users/'.($currentUserId+1).'/studies/'.$this->studyName3Roles.'/roles');
+        $content->assertStatus(200);
+    }
+
+    public function testGetUserRolesInStudyShouldFailNoSameUserNoAdmin()
+    {
+        $currentUserId = AuthorizationTools::actAsAdmin(false);
         $this->createUserWithRoleInTwoStudies();
         $content = $this->json('GET', '/api/users/'.($currentUserId+1).'/studies/'.$this->studyName3Roles.'/roles');
         $content->assertStatus(403);
