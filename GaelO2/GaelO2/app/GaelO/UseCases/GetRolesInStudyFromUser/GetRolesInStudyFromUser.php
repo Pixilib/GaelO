@@ -24,7 +24,7 @@ class GetRolesInStudyFromUser{
         try{
             $this->checkAuthorization($getRolesInStudyFromUserRequest->currentUserId, $getRolesInStudyFromUserRequest->userId);
 
-            $roles = $this->userRepositoryInterface->getUsersRolesInStudy($getRolesInStudyFromUserRequest->currentUserId, $getRolesInStudyFromUserRequest->studyName);
+            $roles = $this->userRepositoryInterface->getUsersRolesInStudy($getRolesInStudyFromUserRequest->userId, $getRolesInStudyFromUserRequest->studyName);
 
             $getRolesInStudyFromUserResponse->body = $roles;
             $getRolesInStudyFromUserResponse->status = 200;
