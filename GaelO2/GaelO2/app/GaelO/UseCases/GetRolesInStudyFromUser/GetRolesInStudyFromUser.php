@@ -5,15 +5,18 @@ namespace App\GaelO\UseCases\GetRolesInStudyFromUser;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\UserRepositoryInterface;
+use App\GaelO\Services\AuthorizationService;
 use Exception;
 
 class GetRolesInStudyFromUser{
 
     private UserRepositoryInterface $userRepositoryInterface;
+    private AuthorizationService $authorizationService;
 
-    public function __construct(UserRepositoryInterface $userRepositoryInterface)
+    public function __construct(UserRepositoryInterface $userRepositoryInterface, AuthorizationService $authorizationService)
     {
         $this->userRepositoryInterface = $userRepositoryInterface;
+        $this->authorizationService = $authorizationService;
     }
 
     public function execute(GetRolesInStudyFromUserRequest $getRolesInStudyFromUserRequest, GetRolesInStudyFromUserResponse $getRolesInStudyFromUserResponse){
@@ -41,6 +44,7 @@ class GetRolesInStudyFromUser{
 
     private function checkAuthorization(int $currentUserId, int $userId) : void
     {
-        if($currentUserId !== $userId) throw new GaelOForbiddenException();
+        $this->authorizationService->setCurrentUserAndRole($currentUserId);
+        if($currentUserId !== $userId && !$this->authorizationService->isAdmin()) throw new GaelOForbiddenException();
     }
 }
