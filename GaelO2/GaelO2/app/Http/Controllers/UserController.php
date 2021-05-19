@@ -5,15 +5,21 @@ namespace App\Http\Controllers;
 use App\GaelO\UseCases\AddAffiliatedCenter\AddAffiliatedCenter;
 use App\GaelO\UseCases\AddAffiliatedCenter\AddAffiliatedCenterRequest;
 use App\GaelO\UseCases\AddAffiliatedCenter\AddAffiliatedCenterResponse;
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+
 use App\GaelO\UseCases\CreateUser\CreateUser;
 use App\GaelO\UseCases\CreateUser\CreateUserRequest;
 use App\GaelO\UseCases\CreateUser\CreateUserResponse;
+
 use App\GaelO\UseCases\ModifyUser\ModifyUser;
 use App\GaelO\UseCases\ModifyUser\ModifyUserRequest;
 use App\GaelO\UseCases\ModifyUser\ModifyUserResponse;
+
 use App\GaelO\UseCases\GetUser\GetUser;
 use App\GaelO\UseCases\GetUser\GetUserRequest;
 use App\GaelO\UseCases\GetUser\GetUserResponse;
+
 use App\GaelO\UseCases\ChangePassword\ChangePassword;
 use App\GaelO\UseCases\ChangePassword\ChangePasswordRequest;
 use App\GaelO\UseCases\ChangePassword\ChangePasswordResponse;
@@ -38,6 +44,9 @@ use App\GaelO\UseCases\GetRolesInStudyFromUser\GetRolesInStudyFromUserResponse;
 use App\GaelO\UseCases\GetStudiesFromUser\GetStudiesFromUser;
 use App\GaelO\UseCases\GetStudiesFromUser\GetStudiesFromUserRequest;
 use App\GaelO\UseCases\GetStudiesFromUser\GetStudiesFromUserResponse;
+use App\GaelO\UseCases\GetUserRoles\GetUserRoles;
+use App\GaelO\UseCases\GetUserRoles\GetUserRolesRequest;
+use App\GaelO\UseCases\GetUserRoles\GetUserRolesResponse;
 use App\GaelO\UseCases\ReactivateUser\ReactivateUser;
 use App\GaelO\UseCases\ReactivateUser\ReactivateUserRequest;
 use App\GaelO\UseCases\ReactivateUser\ReactivateUserResponse;
@@ -47,36 +56,24 @@ use App\GaelO\UseCases\GetUserFromStudy\GetUserFromStudyResponse;
 use App\GaelO\UseCases\ModifyUserIdentification\ModifyUserIdentification;
 use App\GaelO\UseCases\ModifyUserIdentification\ModifyUserIdentificationRequest;
 use App\GaelO\UseCases\ModifyUserIdentification\ModifyUserIdentificationResponse;
-use App\GaelO\UseCases\ResetPassword\ResetPassword;
-use App\GaelO\UseCases\ResetPassword\ResetPasswordRequest;
-use App\GaelO\UseCases\ResetPassword\ResetPasswordResponse;
 use App\GaelO\Util;
 use Illuminate\Support\Facades\Auth;
-use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+
+use Log;
 
 class UserController extends Controller
 {
 
-    public function resetPassword(Request $request, ResetPasswordRequest $resetPasswordRequest, ResetPasswordResponse $resetPasswordResponse, ResetPassword $resetPassword)
-    {
-        $requestData = $request->all();
-        $requestRequest = Util::fillObject($requestData, $resetPasswordRequest);
-        $resetPassword->execute($requestRequest, $resetPasswordResponse);
-        return $this->getJsonResponse($resetPasswordResponse->body, $resetPasswordResponse->status, $resetPasswordResponse->statusText);
-    }
-
-    public function getUser(int $id = null, GetUserRequest $getUserRequest, GetUserResponse $getUserResponse, GetUser $getUser)
-    {
+    public function getUser(int $id = null, GetUserRequest $getUserRequest, GetUserResponse $getUserResponse, GetUser $getUser) {
         $curentUser = Auth::user();
         $getUserRequest->currentUserId = $curentUser['id'];
         $getUserRequest->id = $id;
         $getUser->execute($getUserRequest, $getUserResponse);
-        return $this->getJsonResponse($getUserResponse->body, $getUserResponse->status, $getUserResponse->statusText);
+        return response()->json($getUserResponse->body)
+                ->setStatusCode($getUserResponse->status, $getUserResponse->statusText);
     }
 
-    public function createUser(Request $request, CreateUserRequest $createUserRequest, CreateUserResponse $createUserResponse, CreateUser $createUser)
-    {
+    public function createUser(Request $request, CreateUserRequest $createUserRequest, CreateUserResponse $createUserResponse, CreateUser $createUser) {
         //Get current user requesting the API
         $curentUser = Auth::user();
         //Add current user ID in Request DTO
@@ -87,42 +84,42 @@ class UserController extends Controller
         //Execute use case
         $createUser->execute($createUserRequest, $createUserResponse);
         //Output result comming from usecase, here no content has to be shown (only http status code and text)
-        return $this->getJsonResponse($createUserResponse->body, $createUserResponse->status, $createUserResponse->statusText);
+        return response()->json($createUserResponse->body)
+                ->setStatusCode($createUserResponse->status, $createUserResponse->statusText);
     }
 
-    public function modifyUser(int $id, Request $request, ModifyUserRequest $modifyUserRequest, ModifyUserResponse $modifyUserResponse, ModifyUser $modifyUser)
-    {
+    public function modifyUser(int $id, Request $request, ModifyUserRequest $modifyUserRequest, ModifyUserResponse $modifyUserResponse, ModifyUser $modifyUser) {
         $curentUser = Auth::user();
         $modifyUserRequest->currentUserId = $curentUser['id'];
         $requestData = $request->all();
         $requestData['userId'] = $id;
         $modifyUserRequest = Util::fillObject($requestData, $modifyUserRequest);
         $modifyUser->execute($modifyUserRequest, $modifyUserResponse);
-        return $this->getJsonResponse($modifyUserResponse->body, $modifyUserResponse->status, $modifyUserResponse->statusText);
+        return response()->noContent()
+                ->setStatusCode($modifyUserResponse->status, $modifyUserResponse->statusText);
     }
 
-    public function modifyUserIdentification(int $id, Request $request, ModifyUserIdentificationRequest $modifyUserRequest, ModifyUserIdentificationResponse $modifyUserResponse, ModifyUserIdentification $modifyUser)
-    {
+    public function modifyUserIdentification(int $id, Request $request, ModifyUserIdentificationRequest $modifyUserRequest, ModifyUserIdentificationResponse $modifyUserResponse, ModifyUserIdentification $modifyUser) {
         $curentUser = Auth::user();
         $modifyUserRequest->currentUserId = $curentUser['id'];
         $requestData = $request->all();
         $requestData['userId'] = $id;
         $modifyUserRequest = Util::fillObject($requestData, $modifyUserRequest);
         $modifyUser->execute($modifyUserRequest, $modifyUserResponse);
-        return $this->getJsonResponse($modifyUserResponse->body, $modifyUserResponse->status, $modifyUserResponse->statusText);
+        return response()->noContent()
+                ->setStatusCode($modifyUserResponse->status, $modifyUserResponse->statusText);
     }
 
-    public function changeUserPassword(int $id, Request $request, ChangePasswordRequest $changePasswordRequest, ChangePasswordResponse $changePasswordResponse, ChangePassword $changePassword)
-    {
+    public function changeUserPassword(int $id, Request $request, ChangePasswordRequest $changePasswordRequest, ChangePasswordResponse $changePasswordResponse, ChangePassword $changePassword) {
         $requestData = $request->all();
         $requestData['id'] = $id;
         $changePasswordRequest = Util::fillObject($requestData, $changePasswordRequest);
         $changePassword->execute($changePasswordRequest, $changePasswordResponse);
-        return $this->getJsonResponse($changePasswordResponse->body, $changePasswordResponse->status, $changePasswordResponse->statusText);
+        return response()->json($changePasswordResponse->body)
+                ->setStatusCode($changePasswordResponse->status, $changePasswordResponse->statusText);
     }
 
-    public function deleteUser(int $id, Request $request, DeleteUserRequest $deleteUserRequest, DeleteUserResponse $deleteUserResponse, DeleteUser $deleteUser)
-    {
+    public function deleteUser(int $id, Request $request, DeleteUserRequest $deleteUserRequest, DeleteUserResponse $deleteUserResponse, DeleteUser $deleteUser) {
         $user = Auth::user();
 
         $requestData = get_object_vars($request);
@@ -130,32 +127,38 @@ class UserController extends Controller
         $deleteUserRequest->currentUserId = $user['id'];
         $deleteUserRequest = Util::fillObject($requestData, $deleteUserRequest);
         $deleteUser->execute($deleteUserRequest, $deleteUserResponse);
-        return $this->getJsonResponse($deleteUserResponse->body, $deleteUserResponse->status, $deleteUserResponse->statusText);
+        return response()->noContent()
+                    ->setStatusCode($deleteUserResponse->status, $deleteUserResponse->statusText);
     }
 
-    public function getRoles(int $id, string $studyName, GetRolesInStudyFromUser $getRolesInStudyFromUser, GetRolesInStudyFromUserRequest $getRolesInStudyFromUserRequest, GetRolesInStudyFromUserResponse $getRolesInStudyFromUserResponse)
-    {
+    public function getRoles(int $id, string $studyName, GetRolesInStudyFromUser $getRolesInStudyFromUser, GetRolesInStudyFromUserRequest $getRolesInStudyFromUserRequest, GetRolesInStudyFromUserResponse $getRolesInStudyFromUserResponse){
         $curentUser = Auth::user();
         $getRolesInStudyFromUserRequest->currentUserId = $curentUser['id'];
         $getRolesInStudyFromUserRequest->userId = $id;
         $getRolesInStudyFromUserRequest->studyName = $studyName;
 
         $getRolesInStudyFromUser->execute($getRolesInStudyFromUserRequest, $getRolesInStudyFromUserResponse);
-        return $this->getJsonResponse($getRolesInStudyFromUserResponse->body, $getRolesInStudyFromUserResponse->status, $getRolesInStudyFromUserResponse->statusText);
+        return response()->json($getRolesInStudyFromUserResponse->body)
+                ->setStatusCode($getRolesInStudyFromUserResponse->status, $getRolesInStudyFromUserResponse->statusText);
     }
 
-    public function getStudiesFromUser(int $userId, GetStudiesFromUser $getStudiesFromUser, GetStudiesFromUserRequest $getStudiesFromUserRequest, GetStudiesFromUserResponse $getStudiesFromUserResponse)
-    {
+    public function getStudiesFromUser(int $userId, GetStudiesFromUser $getStudiesFromUser, GetStudiesFromUserRequest $getStudiesFromUserRequest, GetStudiesFromUserResponse $getStudiesFromUserResponse){
         $curentUser = Auth::user();
         $getStudiesFromUserRequest->currentUserId = $curentUser['id'];
         $getStudiesFromUserRequest->userId = $userId;
         $getStudiesFromUser->execute($getStudiesFromUserRequest, $getStudiesFromUserResponse);
 
-        return $this->getJsonResponse($getStudiesFromUserResponse->body, $getStudiesFromUserResponse->status, $getStudiesFromUserResponse->statusText);
+        if($getStudiesFromUserResponse->body != null ){
+            return response()->json($getStudiesFromUserResponse->body)
+            ->setStatusCode($getStudiesFromUserResponse->status, $getStudiesFromUserResponse->statusText);
+        }else{
+            return response()->noContent()
+            ->setStatusCode($getStudiesFromUserResponse->status, $getStudiesFromUserResponse->statusText);
+        }
+
     }
 
-    public function createRole(int $id, string $study, Request $request, CreateUserRoles $createUserRole, CreateUserRolesRequest $createUserRoleRequest, CreateUserRolesResponse $createUserRoleResponse)
-    {
+    public function createRole(int $id, string $study, Request $request, CreateUserRoles $createUserRole, CreateUserRolesRequest $createUserRoleRequest, CreateUserRolesResponse $createUserRoleResponse){
         $curentUser = Auth::user();
         $requestData = $request->all();
         $createUserRoleRequest->userId = $id;
@@ -163,22 +166,23 @@ class UserController extends Controller
         $createUserRoleRequest->currentUserId = $curentUser['id'];
         $createUserRoleRequest = Util::fillObject($requestData, $createUserRoleRequest);
         $createUserRole->execute($createUserRoleRequest, $createUserRoleResponse);
-        return $this->getJsonResponse($createUserRoleResponse->body, $createUserRoleResponse->status, $createUserRoleResponse->statusText);
+        return response()->json($createUserRoleResponse->body)
+        ->setStatusCode($createUserRoleResponse->status, $createUserRoleResponse->statusText);
     }
 
-    public function deleteRole(int $id, String $study, String $roleName, DeleteUserRole $deleteUserRole, DeleteUserRoleRequest $deleteUserRoleRequest, DeleteUserRoleResponse $deleteUserRoleResponse)
-    {
+    public function deleteRole(int $id, String $study, String $roleName, DeleteUserRole $deleteUserRole, DeleteUserRoleRequest $deleteUserRoleRequest, DeleteUserRoleResponse $deleteUserRoleResponse) {
         $curentUser = Auth::user();
         $deleteUserRoleRequest->currentUserId = $curentUser['id'];
         $deleteUserRoleRequest->userId = $id;
         $deleteUserRoleRequest->study = $study;
         $deleteUserRoleRequest->role = $roleName;
         $deleteUserRole->execute($deleteUserRoleRequest, $deleteUserRoleResponse);
-        return $this->getJsonResponse($deleteUserRoleResponse->body, $deleteUserRoleResponse->status, $deleteUserRoleResponse->statusText);
+
+        return response()->noContent()
+        ->setStatusCode($deleteUserRoleResponse->status, $deleteUserRoleResponse->statusText);
     }
 
-    public function addAffiliatedCenter(int $userId, Request $request, AddAffiliatedCenter $addAffiliatedCenter, AddAffiliatedCenterRequest $addAffiliatedCenterRequest, AddAffiliatedCenterResponse $addAffiliatedCenterResponse)
-    {
+    public function addAffiliatedCenter(int $userId, Request $request, AddAffiliatedCenter $addAffiliatedCenter, AddAffiliatedCenterRequest $addAffiliatedCenterRequest, AddAffiliatedCenterResponse $addAffiliatedCenterResponse){
         $requestData = $request->all();
         $addAffiliatedCenterRequest = Util::fillObject($requestData, $addAffiliatedCenterRequest);
         $curentUser = Auth::user();
@@ -187,43 +191,49 @@ class UserController extends Controller
 
         $addAffiliatedCenter->execute($addAffiliatedCenterRequest, $addAffiliatedCenterResponse);
 
-        return $this->getJsonResponse($addAffiliatedCenterResponse->body, $addAffiliatedCenterResponse->status, $addAffiliatedCenterResponse->statusText);
+        return response()->json($addAffiliatedCenterResponse->body)
+        ->setStatusCode($addAffiliatedCenterResponse->status, $addAffiliatedCenterResponse->statusText);
     }
 
-    public function getAffiliatedCenter(int $userId, GetAffiliatedCenter $getAffiliatedCenter, GetAffiliatedCenterRequest $getAffiliatedCenterRequest, GetAffiliatedCenterResponse $getAffiliatedCenterResponse)
-    {
+    public function getAffiliatedCenter(int $userId, GetAffiliatedCenter $getAffiliatedCenter, GetAffiliatedCenterRequest $getAffiliatedCenterRequest, GetAffiliatedCenterResponse $getAffiliatedCenterResponse){
         $curentUser = Auth::user();
         $getAffiliatedCenterRequest->currentUserId = $curentUser['id'];
         $getAffiliatedCenterRequest->userId = $userId;
         $getAffiliatedCenter->execute($getAffiliatedCenterRequest, $getAffiliatedCenterResponse);
-        return $this->getJsonResponse($getAffiliatedCenterResponse->body, $getAffiliatedCenterResponse->status, $getAffiliatedCenterResponse->statusText);
+
+        return response()->json($getAffiliatedCenterResponse->body)
+        ->setStatusCode($getAffiliatedCenterResponse->status, $getAffiliatedCenterResponse->statusText);
+
     }
 
-    public function deleteAffiliatedCenter(int $userId, int $centerCode, DeleteAffiliatedCenter $deleteAffiliatedCenter, DeleteAffiliatedCenterRequest $deleteAffiliatedCenterRequest, DeleteAffiliatedCenterResponse $deleteAffiliatedCenterResponse)
-    {
+    public function deleteAffiliatedCenter(int $userId, int $centerCode, DeleteAffiliatedCenter $deleteAffiliatedCenter, DeleteAffiliatedCenterRequest $deleteAffiliatedCenterRequest, DeleteAffiliatedCenterResponse $deleteAffiliatedCenterResponse){
         $curentUser = Auth::user();
         $deleteAffiliatedCenterRequest->currentUserId = $curentUser['id'];
         $deleteAffiliatedCenterRequest->userId = $userId;
         $deleteAffiliatedCenterRequest->centerCode = $centerCode;
         $deleteAffiliatedCenter->execute($deleteAffiliatedCenterRequest, $deleteAffiliatedCenterResponse);
-        return $this->getJsonResponse($deleteAffiliatedCenterResponse->body, $deleteAffiliatedCenterResponse->status, $deleteAffiliatedCenterResponse->statusText);
+
+        return response()->noContent()
+        ->setStatusCode($deleteAffiliatedCenterResponse->status, $deleteAffiliatedCenterResponse->statusText);
+
     }
 
-    public function reactivateUser(int $userId, ReactivateUser $reactivateUser, ReactivateUserRequest $reactivateUserRequest, ReactivateUserResponse $reactivateUserResponse)
-    {
+    public function reactivateUser(int $userId, ReactivateUser $reactivateUser, ReactivateUserRequest $reactivateUserRequest, ReactivateUserResponse $reactivateUserResponse){
         $curentUser = Auth::user();
         $reactivateUserRequest->currentUserId = $curentUser['id'];
         $reactivateUserRequest->userId = $userId;
         $reactivateUser->execute($reactivateUserRequest, $reactivateUserResponse);
-        return $this->getJsonResponse($reactivateUserResponse->body, $reactivateUserResponse->status, $reactivateUserResponse->statusText);
+
+        return response()->noContent()
+        ->setStatusCode($reactivateUserResponse->status, $reactivateUserResponse->statusText);
     }
 
-    public function getUserFromStudy(string $studyName, GetUserFromStudyRequest $getUserFromStudyRequest, GetUserFromStudyResponse $getUserFromStudyResponse, GetUserFromStudy $getUserFromStudy)
-    {
+    public function getUserFromStudy(string $studyName, GetUserFromStudyRequest $getUserFromStudyRequest, GetUserFromStudyResponse $getUserFromStudyResponse, GetUserFromStudy $getUserFromStudy){
         $curentUser = Auth::user();
         $getUserFromStudyRequest->currentUserId = $curentUser['id'];
         $getUserFromStudyRequest->studyName = $studyName;
         $getUserFromStudy->execute($getUserFromStudyRequest, $getUserFromStudyResponse);
-        return $this->getJsonResponse($getUserFromStudyResponse->body, $getUserFromStudyResponse->status, $getUserFromStudyResponse->statusText);
+        return response()->json($getUserFromStudyResponse->body)
+                ->setStatusCode($getUserFromStudyResponse->status, $getUserFromStudyResponse->statusText);
     }
 }
