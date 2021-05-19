@@ -235,7 +235,7 @@ class ValidateDicomUpload{
         $this->mailServices->sendValidationFailMessage($visitId, $patientCode, $visitType,
                 $studyName, $unzipedPath, $userId, $errorMessage);
 
-        Util::recursiveDirectoryDelete($unzipedPath);
+        if(is_dir($unzipedPath)) Util::recursiveDirectoryDelete($unzipedPath);
     }
 
 }

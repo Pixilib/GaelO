@@ -27,7 +27,7 @@ class ReverseProxyTus
         $headers  = $reverseProxyTusRequest->header;
         //Set server information to make TUS able to send the correct server location for client
         $headers['X-Forwarded-Proto'] = $this->frameworkInterface::getConfig(SettingsConstants::APP_PROTOCOL);
-        $headers['X-Forwarded-Host'] = $this->frameworkInterface::getConfig(SettingsConstants::APP_DOMAIN) . ':' . FrameworkInterface::getConfig(SettingsConstants::APP_PORT);
+        $headers['X-Forwarded-Host'] = $this->frameworkInterface::getConfig(SettingsConstants::APP_DOMAIN) . ':' . $this->frameworkInterface->getConfig(SettingsConstants::APP_PORT);
 
         //Get TUS address
         $address = $this->frameworkInterface::getConfig(SettingsConstants::TUS_ADDRESS);
