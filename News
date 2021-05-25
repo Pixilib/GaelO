@@ -3,6 +3,7 @@ GaelO
 --Pending Changes --
   Upgrade Uploader to
   DicomTag constraints for upload
+  Fix : QC form comment mendatory for each refused item
 
 --GaelO 1.4.1 16/03/21 --
   Upgrade GaelO_Uploader to 1.1.0
