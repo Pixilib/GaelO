@@ -4,6 +4,7 @@ GaelO
   Upgrade Uploader to
   DicomTag constraints for upload
   Fix : QC form comment mendatory for each refused item
+  Fix : Remaining reason value when visit creation interface switched from not done to done
 
 --GaelO 1.4.1 16/03/21 --
   Upgrade GaelO_Uploader to 1.1.0
