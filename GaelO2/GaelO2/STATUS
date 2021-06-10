@@ -50,7 +50,6 @@ Entity :
 => GetVisitTree => ?
 
 Download Dicom :
-Mieux organiser la reponse entity (dissocier les sous niveaux et refusionner dans le front)
 Re faire FrontEnd (tout lister au niveau series?)
 
 Messagerie à designer
