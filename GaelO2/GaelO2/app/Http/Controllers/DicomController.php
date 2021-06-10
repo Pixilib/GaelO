@@ -82,9 +82,11 @@ class DicomController extends Controller
     {
         $currentUser = Auth::user();
         $requestData = $request->all();
+        $queryParam = $request->query();
 
         $reactivateDicomSeriesRequest->seriesInstanceUID = $seriesInstanceUID;
         $reactivateDicomSeriesRequest->currentUserId = $currentUser['id'];
+        $reactivateDicomSeriesRequest->role = $queryParam['role'];
         $reactivateDicomSeriesRequest = Util::fillObject($requestData, $reactivateDicomSeriesRequest);
 
         $reactivateDicomSeries->execute($reactivateDicomSeriesRequest, $reactivateDicomSeriesResponse);

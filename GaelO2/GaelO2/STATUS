@@ -90,7 +90,6 @@ studies/{studyName}/orthanc-study-id/{orthancStudyID} => A renomer à original-o
 TUS est Joignable sur Delete => peut etre gerer le failure/cancel pour vider tus ?
 Deploiement ajouter le login / mdp pour dans orthanc pacs + bloquer delete dans lua script
 Dans remplissage DTO request, si variable boolean, un input string est interpretée à true.
-QC Not Needed => autoriser ou pas remove de series ?
 
 Reste Supervisor :
 - Upload Manager

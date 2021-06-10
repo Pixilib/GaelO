@@ -111,13 +111,25 @@ class DicomSeriesTest extends TestCase
         $response->assertStatus(403);
     }
 
-    public function testReactivateSeries()
+    public function testReactivateSeriesInvestigator()
+    {
+        $userId = AuthorizationTools::actAsAdmin(false);
+        $patientCenterCode = $this->dicomSeries->dicomStudy->visit->patient->center_code;
+        AuthorizationTools::addRoleToUser($userId, Constants::ROLE_INVESTIGATOR, $this->studyName);
+        AuthorizationTools::addAffiliatedCenter($userId, $patientCenterCode);
+
+        $this->dicomSeries->delete();
+        $response = $this->patch('api/dicom-series/' . $this->dicomSeries->series_uid.'?role=Investigator', ['reason' => 'good series']);
+        $response->assertStatus(200);
+    }
+
+    public function testReactivateSeriesSupervisor()
     {
         $userId = AuthorizationTools::actAsAdmin(false);
         AuthorizationTools::addRoleToUser($userId, Constants::ROLE_SUPERVISOR, $this->studyName);
 
         $this->dicomSeries->delete();
-        $response = $this->patch('api/dicom-series/' . $this->dicomSeries->series_uid, ['reason' => 'good series']);
+        $response = $this->patch('api/dicom-series/' . $this->dicomSeries->series_uid.'?role=Supervisor', ['reason' => 'good series']);
         $response->assertStatus(200);
     }
 
@@ -126,7 +138,7 @@ class DicomSeriesTest extends TestCase
         AuthorizationTools::actAsAdmin(false);
 
         $this->dicomSeries->delete();
-        $response = $this->patch('api/dicom-series/' . $this->dicomSeries->series_uid, ['reason' => 'good series']);
+        $response = $this->patch('api/dicom-series/' . $this->dicomSeries->series_uid.'?role=Supervisor', ['reason' => 'good series']);
         $response->assertStatus(403);
     }
 
@@ -136,7 +148,8 @@ class DicomSeriesTest extends TestCase
         AuthorizationTools::addRoleToUser($userId, Constants::ROLE_SUPERVISOR, $this->studyName);
 
         $this->dicomSeries->dicomStudy->delete();
-        $response = $this->patch('api/dicom-series/' . $this->dicomSeries->series_uid, []);
+        $response = $this->patch('api/dicom-series/' . $this->dicomSeries->series_uid.'?role=Supervisor', []);
+
         $response->assertStatus(400);
     }
 

@@ -2,7 +2,6 @@
 
 namespace App\GaelO\UseCases\GetDicoms;
 
-use App\GaelO\Constants\Constants;
 use App\GaelO\Entities\DicomSeriesEntity;
 use App\GaelO\Entities\DicomStudyEntity;
 use App\GaelO\Exceptions\GaelOException;
@@ -26,16 +25,8 @@ class GetDicoms{
 
             $this->checkAuthorization($getDicomsRequest->visitId, $getDicomsRequest->currentUserId, $getDicomsRequest->role);
 
-            //If Supervisor include deleted studies
-            $includeTrashed = $getDicomsRequest->role === Constants::ROLE_SUPERVISOR;
-
-            $data = [];
-
-            if($includeTrashed){
-                $data = $this->dicomStudyRepositoryInterface->getDicomsDataFromVisit($getDicomsRequest->visitId, $includeTrashed);
-            }else{
-                $data[] = $this->dicomStudyRepositoryInterface->getDicomsDataFromVisit($getDicomsRequest->visitId, $includeTrashed);
-            }
+            //get series details with trashed
+            $data = $this->dicomStudyRepositoryInterface->getDicomsDataFromVisit($getDicomsRequest->visitId, true);
 
             $responseArray = [];
 
