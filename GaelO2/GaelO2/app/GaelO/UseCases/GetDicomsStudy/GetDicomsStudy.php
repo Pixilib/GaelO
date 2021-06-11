@@ -46,7 +46,7 @@ class GetDicomsStudy
                 $seriesObjectArray = [];
 
                 foreach($study['dicom_series'] as $series){
-                    $dicomSeries[] = DicomSeriesEntity::fillFromDBReponseArray($series);
+                    $seriesObjectArray[] = DicomSeriesEntity::fillFromDBReponseArray($series);
                 }
 
                 $dicomStudy->addPatientDetails($study['visit']['patient']);
