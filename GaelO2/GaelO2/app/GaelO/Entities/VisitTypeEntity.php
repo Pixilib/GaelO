@@ -5,7 +5,7 @@ namespace App\GaelO\Entities;
 class VisitTypeEntity {
     public int $id;
     public int $visitGroupId;
-    public String $name;
+    public string $name;
     public int $visitOrder;
     public bool $localFormNeeded;
     public bool $qcNeeded;
@@ -13,22 +13,24 @@ class VisitTypeEntity {
     public bool $optional;
     public int $limitLowDays;
     public int $limitUpDays;
-    public String $anonProfile;
+    public string $anonProfile;
+    public array $dicomConstraints;
 
     public static function fillFromDBReponseArray(array $array){
-        $VisitTypeEntity  = new VisitTypeEntity();
-        $VisitTypeEntity->id = $array['id'];
-        $VisitTypeEntity->visitGroupId = $array['visit_group_id'];
-        $VisitTypeEntity->name = $array['name'];
-        $VisitTypeEntity->visitOrder = $array['order'];
-        $VisitTypeEntity->localFormNeeded = $array['local_form_needed'];
-        $VisitTypeEntity->qcNeeded = $array['qc_needed'];
-        $VisitTypeEntity->reviewNeeded = $array['review_needed'];
-        $VisitTypeEntity->optional = $array['optional'];
-        $VisitTypeEntity->limitLowDays = $array['limit_low_days'];
-        $VisitTypeEntity->limitUpDays = $array['limit_up_days'];
-        $VisitTypeEntity->anonProfile = $array['anon_profile'];
+        $visitTypeEntity  = new VisitTypeEntity();
+        $visitTypeEntity->id = $array['id'];
+        $visitTypeEntity->visitGroupId = $array['visit_group_id'];
+        $visitTypeEntity->name = $array['name'];
+        $visitTypeEntity->visitOrder = $array['order'];
+        $visitTypeEntity->localFormNeeded = $array['local_form_needed'];
+        $visitTypeEntity->qcNeeded = $array['qc_needed'];
+        $visitTypeEntity->reviewNeeded = $array['review_needed'];
+        $visitTypeEntity->optional = $array['optional'];
+        $visitTypeEntity->limitLowDays = $array['limit_low_days'];
+        $visitTypeEntity->limitUpDays = $array['limit_up_days'];
+        $visitTypeEntity->anonProfile = $array['anon_profile'];
+        $visitTypeEntity->dicomConstraints = $array['dicom_constraints'];
 
-        return $VisitTypeEntity;
+        return $visitTypeEntity;
     }
 }

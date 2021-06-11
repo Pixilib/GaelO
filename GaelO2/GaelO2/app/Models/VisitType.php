@@ -9,6 +9,10 @@ class VisitType extends Model
 {
     use HasFactory;
 
+    protected $casts = [
+        'dicom_constraints' => 'array',
+    ];
+
     public function visits(){
         return $this->hasMany(Visit::class, 'visit_type_id');
     }

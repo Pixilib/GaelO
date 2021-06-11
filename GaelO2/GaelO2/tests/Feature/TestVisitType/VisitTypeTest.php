@@ -42,7 +42,8 @@ class VisitTypeTest extends TestCase
             'optional'=>true,
             'limitLowDays'=>5,
             'limitUpDays'=>50,
-            'anonProfile'=>'Default'
+            'anonProfile'=>'Default',
+            'dicomConstraints'=>[]
         ];
 
     }
@@ -53,7 +54,7 @@ class VisitTypeTest extends TestCase
         $id = $this->visitGroup->id;
         $this->json('POST', 'api/visit-groups/'.$id.'/visit-types', $this->payload)->assertNoContent(201);
         $visitGroup = VisitType::where('name', 'Baseline')->get()->first()->toArray();
-        $this->assertEquals(13, sizeOf($visitGroup));
+        $this->assertEquals(14, sizeOf($visitGroup));
     }
 
     public function testCreateVisitTypeShouldFailedBecauseAlreadyExistingName()

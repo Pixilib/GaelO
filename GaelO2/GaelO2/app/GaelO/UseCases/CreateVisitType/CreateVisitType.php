@@ -51,7 +51,8 @@ class CreateVisitType {
                 $createVisitTypeRequest->optional,
                 $createVisitTypeRequest->limitLowDays,
                 $createVisitTypeRequest->limitUpDays,
-                $createVisitTypeRequest->anonProfile
+                $createVisitTypeRequest->anonProfile,
+                $createVisitTypeRequest->dicomConstraints
             );
 
             $createVisitTypeResponse->status = 201;
