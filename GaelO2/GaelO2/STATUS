@@ -50,6 +50,7 @@ Entity :
 => GetVisitTree => ?
 
 Download Dicom :
+Admin create visit a debeuger (visit contraintes et feeback form)
 Re faire FrontEnd (tout lister au niveau series?)
 
 Messagerie à designer
