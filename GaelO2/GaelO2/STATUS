@@ -40,10 +40,10 @@ reviews/{id}/file (GET, POST, DELETE)
 
 Salim TODO :
 
-Ajouter dicom contstraint dans definition VisitType et upgrader de l'uploader
 Admin create visit a debeuger (visit contraintes et feedback form)
-Checker gestion statut patient (à voir avec test bicar)
+Checker gestion statut patient (à voir avec test bicar) => Verif Front avec Emilie
 AskUnlock basé sur le VisitId ? => passer a review id
+FrontEnd Download Dicom => Selection des lignes et API de telechargement (finaliser avec la nouvelle version d'orthanc)
 
 Entity :
 - Fusionner Investigator et review form ? (ne different que par l'adjudication)
@@ -54,8 +54,9 @@ Entity :
 => GetUserRole => RoleEntity ?
 => GetVisitTree => ?
 
-Download Dicom :
-FrontEnd => Selection des lignes et API de telechargement (finaliser avec la nouvelle version d'orthanc)
+Model et db :
+- Type de variable a caster
+- Clé etrangere DicomStudy et DicomSeries non conventionnelle
 
 Messagerie à designer
 Creatable Visit : Manque Study Custom Logic (+dans front skip visites optionnelles ?)
@@ -63,13 +64,11 @@ Export Data study :
 - Personalisation au niveau study -> Couche d'abstration notamment pour injecter le lysarc code
 - Review Ajout Patient Code et Visit Type ?
 - Associated File To Review => A faire dans un zip
-
-Model et db :
-- Type de variable a caster
-- Clé etrangere DicomStudy et DicomSeries non conventionnelle
+- Export du tracker
+- Export liste utilisateurs avec lien etude
 
 Revoir DicowWeb Authorization Service => Pb route orthanc differentes
-GetVisitContexte des service surement a faire passer a initialisation pour eviter requettes redondantes
+GetVisitContext des services surement a faire passer a initialisation pour eviter requettes redondantes
 Review  : faire une propriete dans visit pour savoir si review disponible a un user en plus de status reviewAvailable ?
 Dicom Series Service => peut etre evoluer vers un DicomService pour les deux niveaux
 Verifier que quand on appelle un child si le parent est pas delete (cf probleme de role et study)
