@@ -46,7 +46,7 @@ class GetPossibleUpload
                 $item['visitType'] = $visit['visit_type']['name'];
                 $item['visitTypeID'] = $visit['visit_type']['id'];
                 $item['visitID'] = $visit['id'];
-                $item['dicomConstraints'] = $visit['dicom_constraints'];
+                $item['dicomConstraints'] = $visit['visit_type']['dicom_constraints'];
                 $answerArray[] = $item;
             }
 
