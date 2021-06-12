@@ -40,6 +40,11 @@ reviews/{id}/file (GET, POST, DELETE)
 
 Salim TODO :
 
+Ajouter dicom contstraint dans definition VisitType et upgrader de l'uploader
+Admin create visit a debeuger (visit contraintes et feedback form)
+Checker gestion statut patient (à voir avec test bicar)
+AskUnlock basé sur le VisitId ? => passer a review id
+
 Entity :
 - Fusionner Investigator et review form ? (ne different que par l'adjudication)
 - Pluger toutes les reponses "data" sur ces entity response
@@ -50,16 +55,10 @@ Entity :
 => GetVisitTree => ?
 
 Download Dicom :
-Admin create visit a debeuger (visit contraintes et feeback form)
-Re faire FrontEnd (tout lister au niveau series?)
+FrontEnd => Selection des lignes et API de telechargement (finaliser avec la nouvelle version d'orthanc)
 
 Messagerie à designer
-
 Creatable Visit : Manque Study Custom Logic (+dans front skip visites optionnelles ?)
-Ajouter dicom contstraint dans definition VisitType et upgrader de l'uploader
-Checker gestion statut patient (à voir avec test bicar)
-AskUnlock basé sur le VisitId ? => passer a review id ?
-
 Export Data study :
 - Personalisation au niveau study -> Couche d'abstration notamment pour injecter le lysarc code
 - Review Ajout Patient Code et Visit Type ?
@@ -74,7 +73,6 @@ GetVisitContexte des service surement a faire passer a initialisation pour evite
 Review  : faire une propriete dans visit pour savoir si review disponible a un user en plus de status reviewAvailable ?
 Dicom Series Service => peut etre evoluer vers un DicomService pour les deux niveaux
 Verifier que quand on appelle un child si le parent est pas delete (cf probleme de role et study)
-download dicom : se reposer sur l'assynchronisme d'orthanc depuis le front (ou generation d'un lien unique pour le dl?)
 
 **** Tests ***
 Test feature : visit et autres (dicom...)
@@ -94,11 +92,11 @@ Dans remplissage DTO request, si variable boolean, un input string est interpret
 Reste Supervisor :
 - Upload Manager
 - Remininder email upload / review / Communication mail inter membre (utiliser tinyMCE React)
-- Orthanc Send to peer
 
 Reste Autres :
+- Orthanc Send to peer
 - Connecteur FTP/SFTP
-- Cron job
+- Cron job (etudier Jobs de laravel)
 
 *** Etudes ancillaires ***
 Pb Authorisation : Un ID Visit peut maintenant a etre attachee a plusieurs etudes ancillaires
