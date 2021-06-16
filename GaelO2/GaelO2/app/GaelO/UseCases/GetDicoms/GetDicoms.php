@@ -27,7 +27,7 @@ class GetDicoms{
             $this->checkAuthorization($getDicomsRequest->visitId, $getDicomsRequest->currentUserId, $getDicomsRequest->role);
 
             //If Supervisor include deleted studies
-            $includeTrashed = $getDicomsRequest->role === Constants::ROLE_SUPERVISOR;
+            $includeTrashed = $getDicomsRequest->role === Constants::ROLE_SUPERVISOR || $getDicomsRequest->role === Constants::ROLE_INVESTIGATOR;
 
             $data = [];
 
