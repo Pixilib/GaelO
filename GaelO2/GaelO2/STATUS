@@ -45,7 +45,6 @@ Stat avec Visit ajouter les clé patient (pour le filtre avec center) +- center 
 Admin create visit a debeuger (visit contraintes et feedback form)
 Checker gestion statut patient (à voir avec test bicar) => Verif Front avec Emilie
 AskUnlock basé sur le VisitId ? => passer a review id
-FrontEnd Download Dicom => Selection des lignes et API de telechargement (finaliser avec la nouvelle version d'orthanc)
 
 Entity :
 - Fusionner Investigator et review form ? (ne different que par l'adjudication)

@@ -93,6 +93,7 @@ class GetDicomsFileSupervisor {
     }
 
     public function outputStream(){
+        $this->orthancService->setOrthancServer(true);
         $this->orthancService->getOrthancZipStream($this->orthancSeriesIDs);
     }
 
