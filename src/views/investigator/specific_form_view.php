@@ -51,11 +51,12 @@
 		  var confirmResult=false;
 		  var formCheck=false;
 		  if(idButton=="validate"){
+			  let formValidity = document.getElementById("<?=$study.'_'.$type_visit?>").reportValidity()
 			  formCheck=validateForm();
-			  if (formCheck) {
+			  if (formCheck && formValidity) {
 				  alertify.confirm('Validate?','Are you sure you want to validate this form ? \n\nIt will no longer be possible to modify the data entered by you.', function(){ sendForm(idButton); }, function(){});
 			  }else {
-				  alertifyError("Fill mandatory fields")
+				  if(!formCheck) alertifyError("Fill mandatory fields")
 			  }
 		  }
 		  else{
@@ -129,7 +130,7 @@
 	//If not disable by role add action button
 	if (!$roleDisable) {
         
-		if (!$validatedForm) {
+		if ( ($local && !$validatedForm) || (!$local && $visitObject->reviewAvailable && !$validatedForm) ) {
 			// If investigator Role and form not validated, add Draft and Validate button
 			?>
             	<input class="btn btn-dark" type="button" id="draft" name="draft" value="draft" /> 

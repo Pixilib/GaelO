@@ -82,6 +82,8 @@
     	$(".visitStatusSelect").on('change', function (){
         	if($("#Done").is(':checked')){
         		$("#dateDiv").show();
+				$("#reasonNotDoneSelect").val('')
+				$("#reason").val('')
         		$("#reasonNotDonDiv").hide();
         	}else{
         		$("#dateDiv").hide();

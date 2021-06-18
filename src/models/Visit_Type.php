@@ -30,6 +30,7 @@ Class Visit_Type {
 	public $limitLowDays;
 	public $limitUpDays;
 	public $anonProfile;
+	public $dicomConstraints;
 
 	public $linkpdo;
     
@@ -52,6 +53,7 @@ Class Visit_Type {
 		$this->limitLowDays=$visitType['limit_low_days'];
 		$this->limitUpDays=$visitType['limit_up_days'];
 		$this->anonProfile=$visitType['anon_profile'];
+		$this->dicomConstraints = $visitType['dicom_constraints'];
         
 	}
 
@@ -61,6 +63,10 @@ Class Visit_Type {
 		$visitTypeId=$visitTypeQuery->fetch(PDO::FETCH_COLUMN);
 		return new Visit_Type($linkpdo, $visitTypeId);
 
+	}
+
+	public function getDicomContraintsArray(){
+		return $this->dicomConstraints !=null ? json_decode($this->dicomConstraints) : null;
 	}
     
 	/**
@@ -94,10 +100,10 @@ Class Visit_Type {
 		return new Visit_Group($this->linkpdo, $this->groupId);
 	}
     
-	public static function createVisitType(string $studyName, Visit_Group $visitGroup, String $visitName, int $order, int $limitLowDays, int $limitUpDays, bool $localFormNeed, bool $qcNeeded, bool $reviewNeeded, bool $optional, String $anonProfile, PDO $linkpdo) {
+	public static function createVisitType(string $studyName, Visit_Group $visitGroup, String $visitName, int $order, int $limitLowDays, int $limitUpDays, bool $localFormNeed, bool $qcNeeded, bool $reviewNeeded, bool $optional, String $anonProfile, ?array $dicomConstraints, PDO $linkpdo) {
         
-		$req=$linkpdo->prepare('INSERT INTO visit_type (group_id, name, table_review_specific, visit_order, local_form_needed, qc_needed, review_needed, optional, limit_low_days, limit_up_days, anon_profile)
-                                      VALUES(:groupId, :visitName, :tableSpecific, :order, :localFormNeeded, :qcNeeded, :reviewNeeded, :optional, :limitLowDays, :limitUpDays, :anonProfile)');
+		$req=$linkpdo->prepare('INSERT INTO visit_type (group_id, name, table_review_specific, visit_order, local_form_needed, qc_needed, review_needed, optional, limit_low_days, limit_up_days, anon_profile, dicom_constraints)
+                                      VALUES(:groupId, :visitName, :tableSpecific, :order, :localFormNeeded, :qcNeeded, :reviewNeeded, :optional, :limitLowDays, :limitUpDays, :anonProfile, :dicomConstraints)');
         
 		$tableSpecificName=$visitGroup->groupModality."_".$studyName."_".$visitName;
 
@@ -111,7 +117,8 @@ Class Visit_Type {
 			'optional'=>intval($optional),
 			'limitLowDays'=>intval($limitLowDays),
 			'limitUpDays'=>intval($limitUpDays),
-			'anonProfile'=>$anonProfile
+			'anonProfile'=>$anonProfile,
+			'dicomConstraints'=>json_encode($dicomConstraints)
 		));
         
 		//Create specific table of the visit for form with relation with the review table
