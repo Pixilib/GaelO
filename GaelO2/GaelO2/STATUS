@@ -46,6 +46,7 @@ Admin create visit a debeuger (visit contraintes et feedback form)
 Checker gestion statut patient (à voir avec test bicar) => Verif Front avec Emilie
 AskUnlock basé sur le VisitId ? => passer a review id
 
+
 Entity :
 - Fusionner Investigator et review form ? (ne different que par l'adjudication)
 - Pluger toutes les reponses "data" sur ces entity response
