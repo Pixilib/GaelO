@@ -40,6 +40,8 @@ reviews/{id}/file (GET, POST, DELETE)
 
 Salim TODO :
 
+Stat avec Visit ajouter les clé patient (pour le filtre avec center) +- center name ?
+
 Admin create visit a debeuger (visit contraintes et feedback form)
 Checker gestion statut patient (à voir avec test bicar) => Verif Front avec Emilie
 AskUnlock basé sur le VisitId ? => passer a review id
