@@ -42,6 +42,7 @@ Salim TODO :
 
 Stat avec Visit ajouter les clé patient (pour le filtre avec center) +- center name ?
 Checker gestion statut patient (à voir avec test bicar) => Verif Front avec Emilie
+Verif que possibilite de creer les visit du patient check bien le statut included / pre included
 AskUnlock basé sur le VisitId ? => passer a review id
 
 Entity :
