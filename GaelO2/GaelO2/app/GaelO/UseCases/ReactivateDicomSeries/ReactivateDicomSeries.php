@@ -45,8 +45,9 @@ class ReactivateDicomSeries{
 
             $visitId = $seriesData['dicom_study']['visit_id'];
             $visitContext = $this->visitRepositoryInterface->getVisitContext($visitId);
+            $role = $reactivateDicomSeriesRequest->role;
 
-            $this->checkAuthorization($reactivateDicomSeriesRequest->currentUserId, $visitId, $visitContext['state_quality_control']);
+            $this->checkAuthorization($reactivateDicomSeriesRequest->currentUserId, $visitId, $visitContext['state_quality_control'], $role);
 
             $this->dicomSeriesRepositoryInterface->reactivateSeries($reactivateDicomSeriesRequest->seriesInstanceUID);
 
@@ -59,7 +60,7 @@ class ReactivateDicomSeries{
 
             $this->trackerRepositoryInterface->writeAction(
                 $reactivateDicomSeriesRequest->currentUserId,
-                Constants::ROLE_SUPERVISOR,
+                $role,
                 $studyName,
                 $visitId,
                 Constants::TRACKER_REACTIVATE_DICOM_SERIES,
@@ -81,17 +82,21 @@ class ReactivateDicomSeries{
         }
     }
 
-    private function checkAuthorization(int $userId, int $visitId, string $qcStatus) : void{
+    private function checkAuthorization(int $userId, int $visitId, string $qcStatus, string $role) : void{
 
         //If QC is done, can't reactivate series
-        if( in_array($qcStatus, [Constants::QUALITY_CONTROL_ACCEPTED, Constants::QUALITY_CONTROL_REFUSED])){
+        if( in_array($qcStatus, [Constants::QUALITY_CONTROL_ACCEPTED, Constants::QUALITY_CONTROL_REFUSED, Constants::QUALITY_CONTROL_NOT_NEEDED])){
             throw new GaelOForbiddenException();
         }
 
-        $this->authorizationVisitService->setCurrentUserAndRole($userId, Constants::ROLE_SUPERVISOR);
+        if( !in_array($role, [Constants::ROLE_INVESTIGATOR, Constants::ROLE_SUPERVISOR]) ){
+            throw new GaelOForbiddenException();
+        }
+
+        $this->authorizationVisitService->setCurrentUserAndRole($userId, $role);
         $this->authorizationVisitService->setVisitId($visitId);
 
-        if ( ! $this->authorizationVisitService->isVisitAllowed()){
+        if ( !$this->authorizationVisitService->isVisitAllowed() ){
             throw new GaelOForbiddenException();
         }
 

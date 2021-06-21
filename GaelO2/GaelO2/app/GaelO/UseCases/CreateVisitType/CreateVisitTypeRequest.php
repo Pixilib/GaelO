@@ -13,5 +13,6 @@ class CreateVisitTypeRequest {
     public bool $optional;
     public int $limitLowDays;
     public int $limitUpDays;
-    public String $anonProfile;
+    public string $anonProfile;
+    public array $dicomConstraints;
 }

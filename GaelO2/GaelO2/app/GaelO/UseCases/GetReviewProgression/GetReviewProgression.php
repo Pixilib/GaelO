@@ -106,7 +106,7 @@ class GetReviewProgression {
     private function getUsersDetails(array $usersId, array $usersDetails) : array {
         $answer=[];
         foreach($usersId as $userId){
-            $answer[$userId]= $usersDetails[$userId];
+            $answer[]=$usersDetails[$userId];
         }
 
         return $answer;

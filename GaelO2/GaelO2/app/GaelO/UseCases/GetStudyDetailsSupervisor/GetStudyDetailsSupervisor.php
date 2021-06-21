@@ -45,7 +45,6 @@ class GetStudyDetailsSupervisor {
 
             }
 
-
             $etStudyDetailsSupervisorResponse->body = $studyDetailResponse;
             $etStudyDetailsSupervisorResponse->status = 200;
             $etStudyDetailsSupervisorResponse->statusText = 'OK';

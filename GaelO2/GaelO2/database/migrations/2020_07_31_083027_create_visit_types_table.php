@@ -25,6 +25,7 @@ class CreateVisitTypesTable extends Migration
             $table->integer('limit_low_days')->nullable(false);
             $table->integer('limit_up_days')->nullable(false);
             $table->enum('anon_profile', ['Default', 'Full'])->default('Default')->nullable(false);
+            $table->json('dicom_constraints')->nullable(false);
             $table->timestamps();
 
             $table->unique(['order', 'visit_group_id']);

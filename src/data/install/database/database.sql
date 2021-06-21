@@ -671,7 +671,7 @@ CREATE TABLE `visits` (
 CREATE TABLE `visit_group` (
   `id` int(11) NOT NULL,
   `study` varchar(32) NOT NULL,
-  `group_modality` set('PT','MR','CT') NOT NULL
+  `group_modality` set('PT','MR','CT', 'RTSTRUCT') NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -692,7 +692,8 @@ CREATE TABLE `visit_type` (
   `optional` tinyint(1) NOT NULL,
   `limit_low_days` int(11) NOT NULL,
   `limit_up_days` int(11) NOT NULL,
-  `anon_profile` set('Default','Full') NOT NULL
+  `anon_profile` set('Default','Full') NOT NULL,
+  `dicom_constraints` text
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --

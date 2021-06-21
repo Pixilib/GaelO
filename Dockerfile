@@ -28,7 +28,7 @@ RUN mkdir /stone
 RUN unzip wasm-binaries.zip -d /stone
 
 
-FROM php:8.0.1-apache
+FROM php:8.0.7-apache
 
 RUN apt-get update -qy && \
     apt-get install -y --no-install-recommends apt-utils\
@@ -48,9 +48,10 @@ RUN apt-get update -qy && \
     zip \
     libpng-dev \
     mariadb-client && \
+    postgresql-client && \
     apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-RUN docker-php-ext-install gd zip pdo pdo_mysql pdo_pgsql mbstring bcmath ctype fileinfo tokenizer xml bz2
+RUN docker-php-ext-install gd zip pdo pdo_mysql pdo_pgsql mbstring bcmath ctype fileinfo tokenizer xml bz2 opcache
 COPY php.ini /usr/local/etc/php/conf.d/app.ini
 
 RUN curl -s https://getcomposer.org/installer | php -- --install-dir=/usr/bin/ --filename=composer

@@ -27,7 +27,7 @@ class VisitTypeRepository implements VisitTypeRepositoryInterface {
     }
 
     public function createVisitType(int $visitGroupId, String $name, int $visitOrder, bool $localFormNeeded, bool $qcNeeded, bool $reviewNeeded,
-                                    bool $optional, int $limitLowDays, int $limitUpDays, String $anonProfile) : void {
+                                    bool $optional, int $limitLowDays, int $limitUpDays, String $anonProfile, array $dicomContraints) : void {
 
         $data = [
             'visit_group_id'=> $visitGroupId,
@@ -39,7 +39,8 @@ class VisitTypeRepository implements VisitTypeRepositoryInterface {
             'optional'=>$optional,
             'limit_low_days'=>$limitLowDays,
             'limit_up_days'=>$limitUpDays,
-            'anon_profile'=>$anonProfile
+            'anon_profile'=>$anonProfile,
+            'dicom_constraints'=> $dicomContraints
         ];
 
         $this->create($data);

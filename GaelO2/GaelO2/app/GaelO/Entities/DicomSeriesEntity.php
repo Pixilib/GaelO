@@ -43,8 +43,6 @@ class DicomSeriesEntity {
         $orthancSeries->manufacturer = $array['manufacturer'];
         $orthancSeries->modelName = $array['model_name'];
         $orthancSeries->diskSize = $array['disk_size'];
-
-
         return $orthancSeries;
     }
 

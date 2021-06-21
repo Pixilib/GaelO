@@ -20,7 +20,8 @@ class VisitTypeFactory extends Factory
             'optional'=>false,
             'limit_low_days'=>  $this->faker->randomNumber,
             'limit_up_days'=> $this->faker->randomNumber,
-            'anon_profile'=> 'Default'
+            'anon_profile'=> 'Default',
+            'dicom_constraints' => []
         ];
     }
 

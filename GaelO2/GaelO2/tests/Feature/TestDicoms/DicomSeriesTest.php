@@ -6,6 +6,7 @@ use App\GaelO\Constants\Constants;
 use App\Models\DicomSeries;
 use App\Models\DicomStudy;
 use App\Models\Review;
+use App\Models\ReviewStatus;
 use App\Models\Visit;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\AuthorizationTools;
@@ -35,6 +36,8 @@ class DicomSeriesTest extends TestCase
         $this->dicomSeries = DicomSeries::factory()->create();
         $this->studyName = $this->dicomSeries->dicomStudy->visit->patient->study_name;
         $visit = $this->dicomSeries->dicomStudy->visit;
+
+        ReviewStatus::factory()->studyName($visit->visitType->visitGroup->study_name)->visitId($visit->id)->create();
 
         //Fill investigator Form
         $this->investigatorForm = Review::factory()->studyName($this->studyName)->visitId($visit->id)->validated()->create();
@@ -111,13 +114,25 @@ class DicomSeriesTest extends TestCase
         $response->assertStatus(403);
     }
 
-    public function testReactivateSeries()
+    public function testReactivateSeriesInvestigator()
+    {
+        $userId = AuthorizationTools::actAsAdmin(false);
+        $patientCenterCode = $this->dicomSeries->dicomStudy->visit->patient->center_code;
+        AuthorizationTools::addRoleToUser($userId, Constants::ROLE_INVESTIGATOR, $this->studyName);
+        AuthorizationTools::addAffiliatedCenter($userId, $patientCenterCode);
+
+        $this->dicomSeries->delete();
+        $response = $this->patch('api/dicom-series/' . $this->dicomSeries->series_uid.'?role=Investigator', ['reason' => 'good series']);
+        $response->assertStatus(200);
+    }
+
+    public function testReactivateSeriesSupervisor()
     {
         $userId = AuthorizationTools::actAsAdmin(false);
         AuthorizationTools::addRoleToUser($userId, Constants::ROLE_SUPERVISOR, $this->studyName);
 
         $this->dicomSeries->delete();
-        $response = $this->patch('api/dicom-series/' . $this->dicomSeries->series_uid, ['reason' => 'good series']);
+        $response = $this->patch('api/dicom-series/' . $this->dicomSeries->series_uid.'?role=Supervisor', ['reason' => 'good series']);
         $response->assertStatus(200);
     }
 
@@ -126,7 +141,7 @@ class DicomSeriesTest extends TestCase
         AuthorizationTools::actAsAdmin(false);
 
         $this->dicomSeries->delete();
-        $response = $this->patch('api/dicom-series/' . $this->dicomSeries->series_uid, ['reason' => 'good series']);
+        $response = $this->patch('api/dicom-series/' . $this->dicomSeries->series_uid.'?role=Supervisor', ['reason' => 'good series']);
         $response->assertStatus(403);
     }
 
@@ -136,7 +151,8 @@ class DicomSeriesTest extends TestCase
         AuthorizationTools::addRoleToUser($userId, Constants::ROLE_SUPERVISOR, $this->studyName);
 
         $this->dicomSeries->dicomStudy->delete();
-        $response = $this->patch('api/dicom-series/' . $this->dicomSeries->series_uid, []);
+        $response = $this->patch('api/dicom-series/' . $this->dicomSeries->series_uid.'?role=Supervisor', []);
+
         $response->assertStatus(400);
     }
 

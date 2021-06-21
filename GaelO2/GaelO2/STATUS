@@ -40,6 +40,11 @@ reviews/{id}/file (GET, POST, DELETE)
 
 Salim TODO :
 
+Stat avec Visit ajouter les clé patient (pour le filtre avec center) +- center name ?
+Checker gestion statut patient (à voir avec test bicar) => Verif Front avec Emilie
+Verif que possibilite de creer les visit du patient check bien le statut included / pre included
+AskUnlock basé sur le VisitId ? => passer a review id
+
 Entity :
 - Fusionner Investigator et review form ? (ne different que par l'adjudication)
 - Pluger toutes les reponses "data" sur ces entity response
@@ -49,32 +54,24 @@ Entity :
 => GetUserRole => RoleEntity ?
 => GetVisitTree => ?
 
-Download Dicom :
-Mieux organiser la reponse entity (dissocier les sous niveaux et refusionner dans le front)
-Re faire FrontEnd (tout lister au niveau series?)
-
-Messagerie à designer
-
-Creatable Visit : Manque Study Custom Logic (+dans front skip visites optionnelles ?)
-Ajouter dicom contstraint dans definition VisitType et upgrader de l'uploader
-Checker gestion statut patient (à voir avec test bicar)
-AskUnlock basé sur le VisitId ? => passer a review id ?
-
-Export Data study :
-- Personalisation au niveau study -> Couche d'abstration notamment pour injecter le lysarc code
-- Review Ajout Patient Code et Visit Type ?
-- Associated File To Review => A faire dans un zip
-
 Model et db :
 - Type de variable a caster
 - Clé etrangere DicomStudy et DicomSeries non conventionnelle
 
+Messagerie à designer
+Creatable Visit : Manque Study Custom Logic (+dans front skip visites optionnelles ?)
+Export Data study :
+- Personalisation au niveau study -> Couche d'abstration notamment pour injecter le lysarc code
+- Review Ajout Patient Code et Visit Type ?
+- Associated File To Review => A faire dans un zip
+- Export du tracker
+- Export liste utilisateurs avec lien etude
+
 Revoir DicowWeb Authorization Service => Pb route orthanc differentes
-GetVisitContexte des service surement a faire passer a initialisation pour eviter requettes redondantes
+GetVisitContext des services surement a faire passer a initialisation pour eviter requettes redondantes
 Review  : faire une propriete dans visit pour savoir si review disponible a un user en plus de status reviewAvailable ?
 Dicom Series Service => peut etre evoluer vers un DicomService pour les deux niveaux
 Verifier que quand on appelle un child si le parent est pas delete (cf probleme de role et study)
-download dicom : se reposer sur l'assynchronisme d'orthanc depuis le front (ou generation d'un lien unique pour le dl?)
 
 **** Tests ***
 Test feature : visit et autres (dicom...)
@@ -90,16 +87,15 @@ studies/{studyName}/orthanc-study-id/{orthancStudyID} => A renomer à original-o
 TUS est Joignable sur Delete => peut etre gerer le failure/cancel pour vider tus ?
 Deploiement ajouter le login / mdp pour dans orthanc pacs + bloquer delete dans lua script
 Dans remplissage DTO request, si variable boolean, un input string est interpretée à true.
-QC Not Needed => autoriser ou pas remove de series ?
 
 Reste Supervisor :
 - Upload Manager
 - Remininder email upload / review / Communication mail inter membre (utiliser tinyMCE React)
-- Orthanc Send to peer
 
 Reste Autres :
+- Orthanc Send to peer
 - Connecteur FTP/SFTP
-- Cron job
+- Cron job (etudier Jobs de laravel)
 
 *** Etudes ancillaires ***
 Pb Authorisation : Un ID Visit peut maintenant a etre attachee a plusieurs etudes ancillaires

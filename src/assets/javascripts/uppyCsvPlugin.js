@@ -31,9 +31,8 @@
   }
 
   checkCSV(filesIDs){
-      console.log(filesIDs)
+
       let file = this.uppy.getFile(filesIDs[0])
-      console.log(file)
 
       let csvParser = new PetCtCSVParser(file.data)
 
@@ -41,19 +40,23 @@
 
         let checkPatientIdentity = csvParser.checkAcquisition(this.patientId, this.studyDate)
         let checkThreshold = csvParser.checkTMTVThreshold(this.suvLo)
+
         this.notify({
           Tmtv : csvParser.getTmtvValue(),
           suvLo : csvParser.getSuvLow(),
           checkPatientIdentity : checkPatientIdentity,
           checkThreshold : checkThreshold
         })
-        console.log(checkPatientIdentity)
-        console.log(checkThreshold)
+
         return (checkPatientIdentity && checkThreshold)
       }).then((resultCheck)=> {
         if(!resultCheck) this.uppy.removeFile(file.id)
         else this.uppy.emit('preprocess-complete', file.id)
-
+      }).catch( () => {
+        this.notify({
+          otherError : 'Error Reading CSV'
+        })
+        this.uppy.removeFile(file.id)
       })
 
   }

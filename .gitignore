@@ -21,6 +21,7 @@
 !/src/data/upload/from_ftp/.htaccess
 !/src/data/upload/attached_review_file/.htaccess
 
+
 composer-setup.php
 composer.phar
 .VSCodeCounter/*
