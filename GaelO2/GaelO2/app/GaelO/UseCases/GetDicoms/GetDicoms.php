@@ -25,8 +25,16 @@ class GetDicoms{
 
             $this->checkAuthorization($getDicomsRequest->visitId, $getDicomsRequest->currentUserId, $getDicomsRequest->role);
 
-            //get series details with trashed
-            $data = $this->dicomStudyRepositoryInterface->getDicomsDataFromVisit($getDicomsRequest->visitId, true);
+            //If Supervisor include deleted studies
+            $includeTrashed = $getDicomsRequest->role === Constants::ROLE_SUPERVISOR || $getDicomsRequest->role === Constants::ROLE_INVESTIGATOR;
+
+            $data = [];
+
+            if($includeTrashed){
+                $data = $this->dicomStudyRepositoryInterface->getDicomsDataFromVisit($getDicomsRequest->visitId, $includeTrashed);
+            }else{
+                $data[] = $this->dicomStudyRepositoryInterface->getDicomsDataFromVisit($getDicomsRequest->visitId, $includeTrashed);
+            }
 
             $responseArray = [];
 
