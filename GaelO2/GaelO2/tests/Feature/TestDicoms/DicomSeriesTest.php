@@ -6,6 +6,7 @@ use App\GaelO\Constants\Constants;
 use App\Models\DicomSeries;
 use App\Models\DicomStudy;
 use App\Models\Review;
+use App\Models\ReviewStatus;
 use App\Models\Visit;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\AuthorizationTools;
@@ -35,6 +36,8 @@ class DicomSeriesTest extends TestCase
         $this->dicomSeries = DicomSeries::factory()->create();
         $this->studyName = $this->dicomSeries->dicomStudy->visit->patient->study_name;
         $visit = $this->dicomSeries->dicomStudy->visit;
+
+        ReviewStatus::factory()->studyName($visit->visitType->visitGroup->study_name)->visitId($visit->id)->create();
 
         //Fill investigator Form
         $this->investigatorForm = Review::factory()->studyName($this->studyName)->visitId($visit->id)->validated()->create();

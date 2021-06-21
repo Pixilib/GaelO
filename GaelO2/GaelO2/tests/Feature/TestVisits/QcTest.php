@@ -3,11 +3,14 @@
 namespace Tests\Feature\TestVisits;
 
 use App\GaelO\Constants\Constants;
+use App\Models\Patient;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\TestCase;
 use App\Models\Visit;
 use App\Models\Review;
 use App\Models\ReviewStatus;
+use App\Models\VisitGroup;
+use App\Models\VisitType;
 use Tests\AuthorizationTools;
 
 class QcTest extends TestCase
@@ -30,17 +33,26 @@ class QcTest extends TestCase
     protected function setUp() : void {
         parent::setUp();
 
+        $this->patient = Patient::factory()->create();
+        $this->visitGroup = VisitGroup::factory()->studyName($this->patient->study_name)->create();
+
         $this->visit = Visit::factory()
         ->forVisitType([
+            'visit_group_id'=>$this->visitGroup->id,
             'local_form_needed' => true,
             'review_needed' => true
         ])
+        ->patientCode($this->patient->code)
         ->uploadDone()
         ->stateQualityControl(Constants::QUALITY_CONTROL_NOT_DONE)
         ->stateInvestigatorForm(Constants::INVESTIGATOR_FORM_DONE)
         ->create();
 
         $this->studyName = $this->visit->patient->study_name;
+
+        $this->reviewStatus = ReviewStatus::factory()->visitId($this->visit->id)->studyName($this->studyName)->create();
+
+
     }
 
     public function testQc()
@@ -56,6 +68,9 @@ class QcTest extends TestCase
 
         $response = $this->patch('/api/visits/'.$this->visit->id.'/quality-control', $payload);
         $response->assertStatus(200);
+
+        $reviewStatus = ReviewStatus::where('visit_id', $this->visit->id)->where('study_name', $this->studyName)->sole();
+        $this->assertEquals(1, $reviewStatus->review_available);
 
     }
 
@@ -198,13 +213,6 @@ class QcTest extends TestCase
         $currentUserId = AuthorizationTools::actAsAdmin(false);
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $this->studyName);
 
-        $review = ReviewStatus::factory()
-        ->visitId($this->visit->id)
-        //Use principal study (will be disalowed for ancilary study)
-        ->studyName($this->visit->visitType->visitGroup->study_name)
-        ->reviewStatus(Constants::REVIEW_STATUS_NOT_DONE)
-        ->create();
-
         $payload = [];
 
         $response = $this->patch('/api/visits/'.$this->visit->id.'/quality-control/reset', $payload);
@@ -227,12 +235,8 @@ class QcTest extends TestCase
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $this->studyName);
 
 
-        $reviewStatus = ReviewStatus::factory()
-        ->visitId($this->visit->id)
-        //Use principal study (will be disalowed for ancilary study)
-        ->studyName($this->visit->visitType->visitGroup->study_name)
-        ->reviewStatus(Constants::REVIEW_STATUS_ONGOING)
-        ->create();
+        $this->reviewStatus->review_status = Constants::REVIEW_STATUS_ONGOING;
+        $this->reviewStatus->save();
 
         $payload = [];
         $this->patch('/api/visits/'.$this->visit->id.'/quality-control/reset', $payload)->assertStatus(400);

@@ -163,6 +163,8 @@ class VisitService
 
         $visitEntity = $this->visitRepository->getVisitContext($this->visitId);
         $localFormNeeded = $visitEntity['visit_type']['local_form_needed'];
+        $reviewNeeded = $visitEntity['visit_type']['review_needed'];
+        $studyName = $visitEntity['visit_type']['visit_group']['study_name'];
 
         $this->visitRepository->editQc($this->visitId, $stateQc, $controllerId, $imageQc, $formQc, $imageQcComment, $formQcComment);
 
@@ -171,11 +173,19 @@ class VisitService
             $this->reviewRepository->unlockInvestigatorForm($this->visitId);
             $this->visitRepository->updateInvestigatorFormStatus($this->visitId, Constants::INVESTIGATOR_FORM_DRAFT);
         }
+
+        if ($stateQc === Constants::QUALITY_CONTROL_ACCEPTED && $reviewNeeded) {
+            //Invalidate invistagator form and set it status as draft in the visit
+            $this->reviewStatusRepository->updateReviewAvailability($this->visitId, $studyName , true);
+        }
     }
 
     public function resetQc(): void
     {
+        $visitEntity = $this->visitRepository->getVisitContext($this->visitId);
+        $studyName = $visitEntity['visit_type']['visit_group']['study_name'];
         $this->visitRepository->resetQc($this->visitId);
+        $this->reviewStatusRepository->updateReviewAvailability($this->visitId, $studyName , false);
     }
 
     public function getReviewStatus(string $studyName)

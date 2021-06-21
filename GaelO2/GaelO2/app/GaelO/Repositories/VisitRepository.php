@@ -263,6 +263,7 @@ class VisitRepository implements VisitRepositoryInterface
                     ->whereColumn('reviews.visit_id', '=', 'visits.id')
                     ->where('study_name', '=', $studyName)
                     ->where('validated', true)
+                    ->where('local', false)
                     ->where('user_id', $userId);
             }, '=', 0)
             ->whereIn('id', $visitIdAwaitingReview)
@@ -285,6 +286,7 @@ class VisitRepository implements VisitRepositoryInterface
                     ->whereColumn('reviews.visit_id', '=', 'visits.id')
                     ->where('study_name', '=', $studyName)
                     ->where('validated', true)
+                    ->where('local', false)
                     ->where('user_id', $userId);
             }, '=', 0)
             ->whereIn('id', $visitIdAwaitingReview)
@@ -305,6 +307,7 @@ class VisitRepository implements VisitRepositoryInterface
                     ->whereColumn('reviews.visit_id', '=', 'visits.id')
                     ->where('study_name', '=', $studyName)
                     ->where('validated', true)
+                    ->where('local', false)
                     ->where('user_id', $userId);
             }, '=', 0)
             ->whereIn('id', $visitIdAwaitingReview)->get();
@@ -334,6 +337,7 @@ class VisitRepository implements VisitRepositoryInterface
                     ->whereColumn('reviews.visit_id', '=', 'visits.id')
                     ->where('study_name', '=', $studyName)
                     ->where('validated', true)
+                    ->where('local', false)
                     ->where('user_id', $userId);
             }, '=', 0)
             ->whereIn('id', $patientVisitsIdAvailableForReview)->get();
