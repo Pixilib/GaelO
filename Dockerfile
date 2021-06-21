@@ -47,7 +47,7 @@ RUN apt-get update -qy && \
     sqlite3 \
     zip \
     libpng-dev \
-    mariadb-client && \
+    mariadb-client \
     postgresql-client && \
     apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
