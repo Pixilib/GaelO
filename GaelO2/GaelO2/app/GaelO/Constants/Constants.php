@@ -13,6 +13,8 @@ class Constants {
     const USER_JOB_RADIOLOGIST = 'Radiologist';
 
     const PATIENT_INCLUSION_STATUS_INCLUDED = "Included";
+    const PATIENT_INCLUSION_STATUS_NOT_INCLUDED = "Not Included";
+    const PATIENT_INCLUSION_STATUS_EXCLUDED = "Excluded";
     const PATIENT_INCLUSION_STATUS_WITHDRAWN = "Withdrawn";
 
     const ROLE_INVESTIGATOR = "Investigator";

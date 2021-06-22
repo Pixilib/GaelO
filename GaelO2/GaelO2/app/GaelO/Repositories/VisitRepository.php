@@ -12,6 +12,9 @@ use Illuminate\Support\Facades\DB;
 class VisitRepository implements VisitRepositoryInterface
 {
 
+    private Visit $visit;
+    private ReviewStatus $reviewStatus;
+
     public function __construct()
     {
         $this->visit = new Visit();

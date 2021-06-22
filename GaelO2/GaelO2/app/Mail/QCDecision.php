@@ -27,6 +27,7 @@ class QCDecision extends Mailable implements ShouldQueue
             "study" => "",
             "patientCode" => "",
             "visitType" => "",
+            "visitId"=>"",
             "visitModality"=>"",
             "formDecision" => "",
             "formComment" => "",

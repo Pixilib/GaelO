@@ -25,6 +25,7 @@ class CorrectiveAction extends Mailable implements ShouldQueue
         array('done'=>'',
         'study'=> '',
         'patientCode'=>'',
+        'visitId'=>'',
         'visitType'=>'')
         */
     }

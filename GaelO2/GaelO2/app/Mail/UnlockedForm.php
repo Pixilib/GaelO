@@ -26,7 +26,8 @@ class UnlockedForm extends Mailable implements ShouldQueue
             'formType'=>'',
             'study'=>'',
             'patientCode'=>'',
-            'visitType'=>''
+            'visitType'=>'',
+            'visitId'=>''
         )
         */
     }

@@ -74,7 +74,9 @@ class DeleteInvestigatorForm{
                 $actionDetails);
 
             //send Email notification to review owner
-            $this->mailServices->sendDeleteFormMessage(true,
+            $this->mailServices->sendDeleteFormMessage(
+                $deleteInvestigatorFormRequest->visitId,
+                true,
                 $investigatorFormEntity['user_id'],
                 $studyName,
                 $visitContext['patient_code'],

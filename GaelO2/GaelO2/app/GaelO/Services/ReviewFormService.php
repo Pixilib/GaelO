@@ -63,6 +63,7 @@ class ReviewFormService extends FormService {
 		}else if ($reviewStatus === Constants::REVIEW_STATUS_DONE) {
             //Si ANCIllaire pas besoin d'embetter l'uploader du princepts ...
             $this->mailServices->sendVisitConcludedMessage(
+                $this->visitId,
                 $this->uploaderId,
                 $this->studyName,
                 $this->patientCode,

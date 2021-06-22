@@ -25,6 +25,7 @@ class Conclusion extends Mailable implements ShouldQueue
         array('study'=>'',
         'patientCode'=>'',
         'visitType'=> '',
+        'visitId'=>'',
         'conclusionValue'=>'')
         */
     }

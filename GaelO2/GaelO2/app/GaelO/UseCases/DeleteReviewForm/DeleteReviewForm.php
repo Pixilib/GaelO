@@ -81,7 +81,9 @@ class DeleteReviewForm {
                 $actionDetails);
 
             //send Email notification to review owner
-            $this->mailServices->sendDeleteFormMessage(false,
+            $this->mailServices->sendDeleteFormMessage(
+                $reviewEntity['visit_id'],
+                false,
                 $reviewEntity['user_id'],
                 $reviewEntity['study_name'],
                 $visitContext['patient_code'],

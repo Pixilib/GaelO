@@ -10,6 +10,7 @@ use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
 use App\GaelO\Services\AuthorizationPatientService;
+use App\GaelO\Services\MailServices;
 use App\GaelO\Services\VisitService;
 use DateTime;
 use Exception;
@@ -20,12 +21,14 @@ class CreateVisit {
     private AuthorizationPatientService $authorizationService;
     private VisitService $visitService;
     private TrackerRepositoryInterface $trackerRepositoryInterface;
+    private MailServices $mailServices;
 
-    public function __construct(VisitRepositoryInterface $visitRepositoryInterface, AuthorizationPatientService $authorizationService, VisitService $visitService, TrackerRepositoryInterface $trackerRepositoryInterface){
+    public function __construct(VisitRepositoryInterface $visitRepositoryInterface, AuthorizationPatientService $authorizationService, VisitService $visitService, TrackerRepositoryInterface $trackerRepositoryInterface, MailServices $mailServices){
         $this->visitService = $visitService;
         $this->authorizationService = $authorizationService;
         $this->visitRepositoryInterface = $visitRepositoryInterface;
         $this->trackerRepositoryInterface = $trackerRepositoryInterface;
+        $this->mailServices = $mailServices;
     }
 
     public function execute(CreateVisitRequest $createVisitRequest, CreateVisitResponse $createVisitResponse) : void {
@@ -43,7 +46,9 @@ class CreateVisit {
                             $createVisitRequest->visitTypeId);
 
             if($existingVisit) {
+
                 throw new GaelOConflictException('Visit Already Created');
+
             }else{
 
                 if($createVisitRequest->visitDate !== null){
@@ -63,6 +68,27 @@ class CreateVisit {
                     $createVisitRequest->statusDone,
                     $createVisitRequest->reasonForNotDone);
 
+                $details = [
+                    'visit_date' =>  $createVisitRequest->visitDate,
+                    'status_done' => $createVisitRequest->statusDone,
+                    'reason_for_not_done' => $createVisitRequest->reasonForNotDone
+                ];
+
+                if($createVisitRequest->statusDone === Constants::VISIT_STATUS_NOT_DONE){
+                    $visitContext = $this->visitRepositoryInterface->getVisitContext($visitId);
+
+                    $visitType = $visitContext['visit_type']['name'];
+
+                    $this->mailServices->sendVisitNotDoneMessage(
+                        $visitId,
+                        $createVisitRequest->studyName,
+                        $createVisitRequest->patientCode,
+                        $visitType,
+                        $createVisitRequest->reasonForNotDone,
+                        $createVisitRequest->currentUserId
+                    );
+                }
+
 
                 $this->trackerRepositoryInterface->writeAction(
                     $createVisitRequest->currentUserId,
@@ -70,7 +96,7 @@ class CreateVisit {
                     $createVisitRequest->studyName,
                     $visitId,
                     Constants::TRACKER_CREATE_VISIT,
-                    null);
+                    $details);
 
                 $createVisitResponse->status = 201;
                 $createVisitResponse->statusText = 'Created';

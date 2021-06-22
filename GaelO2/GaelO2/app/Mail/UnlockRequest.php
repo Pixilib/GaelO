@@ -26,6 +26,7 @@ class UnlockRequest extends Mailable implements ShouldQueue
             'role'=>'',
             'visitType'=>'',
             'patientNum'=>'',
+            'visitId'=>'',
             'study'=>'',
             'reason'=>''
         );

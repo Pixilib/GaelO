@@ -25,6 +25,7 @@ class VisitNotDone extends Mailable implements ShouldQueue
         array('patientCode'=>'',
         'study'=>'',
         'visitType'=>'',
+        'visitId'=>'',
         'creatorUser'=>'');
         */
     }

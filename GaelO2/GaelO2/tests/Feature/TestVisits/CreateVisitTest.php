@@ -62,6 +62,19 @@ class CreateVisitTest extends TestCase
         '/visit-types/'.$this->visitTypeId.'/visits?role=Investigator', $validPayload)->assertStatus(201);
     }
 
+    public function testCreateVisitNotDone() {
+
+        $validPayload = [
+            'patientCode' => $this->patient->code,
+            'visitDate' => '2020-01-01',
+            'statusDone' => Constants::VISIT_STATUS_NOT_DONE,
+            'reasonForNotDone'=> 'unavailable'
+        ];
+
+        $this->json('POST', 'api/studies/'.$this->studyName.'/visit-groups/'.$this->visitGroupId.
+        '/visit-types/'.$this->visitTypeId.'/visits?role=Investigator', $validPayload)->assertStatus(201);
+    }
+
     public function testCreateVisitForbiddenNoRole(){
 
         AuthorizationTools::actAsAdmin(false);

@@ -25,7 +25,8 @@ class Adjudication extends Mailable implements ShouldQueue
         array(
             'study'=>'',
             'patientCode'=>'',
-            'visitType'=>''
+            'visitType'=>'',
+            'visitId' => ''
         )
         */
     }
