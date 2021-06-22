@@ -41,7 +41,7 @@ reviews/{id}/file (GET, POST, DELETE)
 Salim TODO :
 
 Updater mail avec multi-lien vers ressource (1 lien par role) => A checker
-Stat avec Visit ajouter les clé patient (pour le filtre avec center) +- center name ? => fait, reste à Autoriser API get Center pour supervisor
+Stat avec Visit ajouter les clé patient (pour le filtre avec center) +- center name ? => fait, reste a ajouter nom des centres dans reponse
 
 Stat Dicom study a reflechir pour pouvoir filter par centre (necessite de requeter visit + patient)
 AskUnlock basé sur le VisitId ? => passer a review id
