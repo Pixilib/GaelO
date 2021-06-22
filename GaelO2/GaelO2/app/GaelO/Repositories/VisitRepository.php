@@ -198,7 +198,7 @@ class VisitRepository implements VisitRepositoryInterface
         if($withReviewStatus){
             $visits->with(['reviewStatus' => function ($q) use ($studyName) {
                 $q->where('study_name', $studyName);
-            }]);
+            }, 'patient']);
         }
 
         if($withTrashed){

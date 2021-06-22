@@ -36,6 +36,7 @@ class GetVisitsFromVisitType
             foreach ($dbData as $data) {
                 $responseEntity = VisitEntity::fillFromDBReponseArray($data);
                 $responseEntity->setReviewVisitStatus($data['review_status']['review_status'], $data['review_status']['review_conclusion_value'], $data['review_status']['review_conclusion_date']);
+                $responseEntity->setPatientEntity($data['patient']);
                 $responseArray[] = $responseEntity;
             }
 
