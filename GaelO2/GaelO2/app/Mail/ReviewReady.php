@@ -23,6 +23,7 @@ class ReviewReady extends Mailable implements ShouldQueue
         $this->parameters = $parameters;
         /*
         array('study'=>'',
+        'visitId=>'',
         'patientCode'=>'',
         'visitType'=>'')
         */

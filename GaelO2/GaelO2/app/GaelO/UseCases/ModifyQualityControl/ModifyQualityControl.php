@@ -91,6 +91,7 @@ class ModifyQualityControl {
             );
 
             $this->mailServices->sendQcDecisionMessage(
+                $modifyQualityControlRequest->visitId,
                 $creatorId,
                 $modifyQualityControlRequest->currentUserId,
                 $studyName,

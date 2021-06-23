@@ -55,6 +55,20 @@
         <b>Dear {{$name}},</b><br>
         @yield('content')
     </div>
+    <div id="visit-link">
+        @if(!empty($visitId) && !empty($study))
+            Acces Visit as
+            <a href="{{$webAddress}}/study/{{$study}}/role/Investigator/visit/{{$visitId}}">Investigator</a>
+            -
+            <a href="{{$webAddress}}/study/{{$study}}/role/Monitor/visit/{{$visitId}}">Monitor</a>
+            -
+            <a href="{{$webAddress}}/study/{{$study}}/role/Controller/visit/{{$visitId}}">Controller</a>
+            -
+            <a href="{{$webAddress}}/study/{{$study}}/role/Reviewer/visit/{{$visitId}}">Reviewer</a>
+            -
+            <a href="{{$webAddress}}/study/{{$study}}/role/Supervisor/visit/{{$visitId}}">Supervisor</a>
+        @endif
+    </div>
     <div class="footer">
         <p id="footer-contact">Please contact the Imaging Department of {{$corporation}} for any questions (<a HREF="mailto:{{$adminEmail}}">{{$adminEmail}}</a>)<br>
             Kind regards, <br>

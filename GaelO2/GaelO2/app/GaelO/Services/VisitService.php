@@ -138,7 +138,7 @@ class VisitService
         $visitType = $visitEntity['visit_type']['name'];
         $qcNeeded = $visitEntity['visit_type']['qc_needed'];
 
-        $this->mailServices->sendUploadedVisitMessage($visitEntity['creator_user_id'], $study, $patientCode, $visitType, $qcNeeded);
+        $this->mailServices->sendUploadedVisitMessage($this->visitId, $visitEntity['creator_user_id'], $study, $patientCode, $visitType, $qcNeeded);
         //If Qc NotNeeded mark visit as available for review
         if (!$qcNeeded) {
             $this->updateReviewAvailability(true, $study, $patientCode, $visitType);
@@ -153,7 +153,7 @@ class VisitService
     {
         $this->reviewStatusRepository->updateReviewAvailability($this->visitId, $study, $available);
         if ($available) {
-            $this->mailServices->sendAvailableReviewMessage($study, $patientCode, $visitType);
+            $this->mailServices->sendAvailableReviewMessage($this->visitId, $study, $patientCode, $visitType);
         }
     }
 

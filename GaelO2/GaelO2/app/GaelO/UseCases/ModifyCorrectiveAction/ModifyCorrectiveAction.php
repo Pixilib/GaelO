@@ -82,6 +82,7 @@ class ModifyCorrectiveAction{
 
             //Send Email
             $this->mailServices->sendCorrectiveActionMessage(
+                $modifyCorrectiveActionRequest->visitId,
                 $modifyCorrectiveActionRequest->currentUserId,
                 $studyName,
                 $modifyCorrectiveActionRequest->correctiveActionDone,

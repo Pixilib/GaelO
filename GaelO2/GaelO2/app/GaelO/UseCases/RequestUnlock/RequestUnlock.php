@@ -49,6 +49,7 @@ class RequestUnlock {
             }
 
             $this->mailServices->sendUnlockMessage(
+                $requestUnlockRequest->visitId,
                 $requestUnlockRequest->currentUserId,
                 $requestUnlockRequest->role,
                 $userEntity['username'],

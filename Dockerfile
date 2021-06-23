@@ -47,8 +47,8 @@ RUN apt-get update -qy && \
     sqlite3 \
     zip \
     libpng-dev \
-    mariadb-client && \
-    postgresql-client && \
+    mariadb-client \
+    postgresql-client-13 && \
     apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 RUN docker-php-ext-install gd zip pdo pdo_mysql pdo_pgsql mbstring bcmath ctype fileinfo tokenizer xml bz2 opcache

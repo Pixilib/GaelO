@@ -41,6 +41,8 @@ class VisitEntity {
     public ?string $patientStatus;
     public ?int $centerCode;
 
+    public PatientEntity $patient;
+
     public static function fillFromDBReponseArray(array $array){
         $visitEntity  = new VisitEntity();
         $visitEntity->id = $array['id'];
@@ -87,6 +89,10 @@ class VisitEntity {
     public function setPatientStatus(string $inclusionStatus, int $centerCode) {
         $this->patientStatus = $inclusionStatus;
         $this->centerCode = $centerCode;
+    }
+
+    public function setPatientEntity(array $patientEntity){
+        $this->patient = PatientEntity::fillFromDBReponseArray($patientEntity);
     }
 
     public function setReviewVisitStatus(string $reviewStatus, ?string $reviewConclusionValue, ?string $reviewConclusionDate){

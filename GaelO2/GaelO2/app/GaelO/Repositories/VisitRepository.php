@@ -12,6 +12,9 @@ use Illuminate\Support\Facades\DB;
 class VisitRepository implements VisitRepositoryInterface
 {
 
+    private Visit $visit;
+    private ReviewStatus $reviewStatus;
+
     public function __construct()
     {
         $this->visit = new Visit();
@@ -195,7 +198,7 @@ class VisitRepository implements VisitRepositoryInterface
         if($withReviewStatus){
             $visits->with(['reviewStatus' => function ($q) use ($studyName) {
                 $q->where('study_name', $studyName);
-            }]);
+            }, 'patient']);
         }
 
         if($withTrashed){

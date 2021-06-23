@@ -84,6 +84,7 @@ class UnlockInvestigatorForm
 
             //send unlock form notification to form owner
             $this->mailServices->sendUnlockFormMessage(
+                $unlockInvestigatorFormRequest->visitId,
                 true,
                 $investigatorFormEntity['user_id'],
                 $studyName,
