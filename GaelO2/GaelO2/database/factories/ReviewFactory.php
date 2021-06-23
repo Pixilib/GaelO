@@ -50,7 +50,7 @@ class ReviewFactory extends Factory
 
         return $this->state(function (array $attributes) {
             return [
-                'local' => false,
+                'local' => true,
             ];
         });
 

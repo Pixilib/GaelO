@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use App\GaelO\Util;
 use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class UserFactory extends Factory
@@ -34,6 +35,16 @@ class UserFactory extends Factory
             'orthanc_login' => $this->faker->userName,
             'orthanc_password' => $this->faker->password,
         ];
+    }
+
+    public function username(string $username){
+
+        return $this->state(function (array $attributes) use ($username) {
+            return [
+                'username' => $username
+            ];
+        });
+
     }
 
     public function administrator(){
@@ -91,7 +102,7 @@ class UserFactory extends Factory
 
         return $this->state(function (array $attributes) use ($password) {
             return [
-                'password' => $password,
+                'password' => Hash::make($password),
             ];
         });
 

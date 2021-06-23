@@ -10,6 +10,8 @@ use App\Models\User;
 use App\Models\Visit;
 use App\Models\VisitGroup;
 use App\Models\VisitType;
+use App\Models\Review;
+use App\Models\Role;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -29,47 +31,18 @@ class FrontTest extends Seeder
             CenterSeeder::class
         ]);
 
-        //Make Admin default password valid
-        DB::table('users')->insert([
-            'username' => 'administrator',
-            'lastname' => 'administrator',
-            'firstname' => 'administrator',
-            'email' => 'administrator@gaelo.fr',
-            'last_password_update' => now(),
-            'creation_date'=> now(),
-            'status' => 'Activated',
-            'password' => Hash::make('administrator'), // password
-            'center_code' => 0,
-            'job' => 'Monitor',
-            'administrator' => true,
-            'remember_token' => Str::random(10)
-        ]);
-
+        $this->user = User::factory()->administrator()->username('administrator')->password('administrator')
+            ->centerCode(0)->create();
+        
         Study::factory()->count(5)->create();
 
-        $this->study = Study::factory()->name('StudyTest')->patientCodePrefix('123')->create();
+        $this->study = Study::factory()->name('TEST')->patientCodePrefix('123')->create();
 
-        DB::table('roles')->insert([
-            'name' => 'Supervisor',
-            'user_id' => '1',
-            'study_name' => $this->study->name,
-        ]);
-        DB::table('roles')->insert([
-            'name' => 'Monitor',
-            'user_id' => '1',
-            'study_name' => $this->study->name,
-        ]);
-        DB::table('roles')->insert([
-            'name' => 'Investigator',
-            'user_id' => '1',
-            'study_name' => $this->study->name,
-        ]);
-        DB::table('roles')->insert([
-            'name' => 'Controller',
-            'user_id' => '1',
-            'study_name' => $this->study->name,
-        ]);
-
+        Role::factory()->userId($this->user->id)->studyName($this->study->name)->roleName('Supervisor')->create();
+        Role::factory()->userId($this->user->id)->studyName($this->study->name)->roleName('Monitor')->create();
+        Role::factory()->userId($this->user->id)->studyName($this->study->name)->roleName('Investigator')->create();
+        Role::factory()->userId($this->user->id)->studyName($this->study->name)->roleName('Reviewer')->create();
+        Role::factory()->userId($this->user->id)->studyName($this->study->name)->roleName('Controller')->create();
 
         Patient::factory()->code(123000 + rand(0,999))->inclusionStatus('Included')
             ->investigatorName('administrator')->studyName($this->study->name)->centerCode(0)->create();
@@ -81,12 +54,17 @@ class FrontTest extends Seeder
         VisitType::factory()->count(6)->visitGroupId($this->visitGroup['id'])->create();
 
         $this->visitGroup = VisitGroup::factory()->studyName($this->study->name)->modality('PT')->create();
-        $this->visitType = VisitType::factory()->visitGroupId($this->visitGroup['id'])->create();
-        $visit = Visit::factory()->creatorUserId(1)->patientCode(Patient::first()['code'])
+
+        $this->visitType = VisitType::factory()->name('PET0')->visitGroupId($this->visitGroup['id'])
+            ->localFormNeeded()->qcNeeded()->reviewNeeded()->create();
+
+        $this->visit = Visit::factory()->creatorUserId(1)->patientCode(Patient::first()['code'])
             ->visitTypeId($this->visitType['id'])->done()->create();
 
-        ReviewStatus::factory()->studyName($this->study->name)->visitId($visit->id)->create();
+        ReviewStatus::factory()->studyName($this->study->name)->visitId($this->visit->id)
+            ->reviewAvailable()->reviewStatus('Done')->create();
+        Review::factory()->studyName($this->study->name)->visitId($this->visit->id)->reviewForm()->create();
 
-        User::factory()->count(50)->create();
+        User::factory()->count(20)->create();
     }
 }
