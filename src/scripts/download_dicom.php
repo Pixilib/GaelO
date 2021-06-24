@@ -66,12 +66,9 @@ if ($permissionCheck && count($ids) > 0) {
 	$orthanc=new Orthanc();
 	
 	$zipStream=$orthanc->getZipStream($ids);
-	$fstat = fstat($zipStream);
 	
 	header("Content-Type: application/zip");
 	header("Content-Transfer-Encoding: Binary");
-	header("Cache-Control: no-cache");
-	header("Content-Length: ".$fstat['size']);
 	
 	//For supervisor generic file name as the zip can merge visits
 	if ($_SESSION['role'] == User::SUPERVISOR) {
@@ -82,21 +79,10 @@ if ($permissionCheck && count($ids) > 0) {
 		$name=$_SESSION['study'].$visitObject->visitType;
 		header('Content-Disposition: attachment; filename="Dicom'.$name.'.zip"');
 	}
-	
-	header("Cache-Control: no-store, no-cache, must-revalidate");
-	header("Cache-Control: post-check=0, pre-check=0", false);
-	header("Pragma: no-cache");
-	header("Expires: 0");
-	
-	rewind($zipStream);
-	if(!$zipStream) exit('no file to stream');
 
-	while (!feof($zipStream)) {
-		print(@fread($zipStream, 1024*1024));
-		flush();
+	while (!$zipStream->eof()) {
+		echo $zipStream->read(512);
 	}
-	
-	fclose($zipStream);
 
 }else {
 	header('HTTP/1.0 403 Forbidden');

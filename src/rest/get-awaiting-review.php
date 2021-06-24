@@ -49,6 +49,7 @@ foreach ($possibleStudyList as $study => $roles) {
 				$dicomDetailsObject=$visitObject->getStudyDicomDetails();
 				$visitDetails['studyDate']=$dicomDetailsObject->studyAcquisitionDate;
 				$visitDetails['studyUID']=$dicomDetailsObject->studyUID;
+				$visitDetails['dicomSize']=$dicomDetailsObject->diskSize;
 
 				$visitsResults[$study][]=$visitDetails;
 			}
