@@ -47,12 +47,10 @@ Stat Dicom study a reflechir pour pouvoir filter par centre (necessite de requet
 AskUnlock basé sur le VisitId ? => passer a review id
 
 Entity :
-- Fusionner Investigator et review form ? (ne different que par l'adjudication)
 - Pluger toutes les reponses "data" sur ces entity response
 => GetPossibleUpload => PossibleUploadEntity ?
 => GetReviewProgression => Review + Progression entity?
-=> GetUserRoleInStudy => RoleEntity ?
-=> GetVisitTree => ?
+=> GetVisitTree => ?, visit ?
 
 Model et db :
 - Type de variable a caster
