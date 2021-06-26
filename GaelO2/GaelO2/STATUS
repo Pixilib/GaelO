@@ -52,7 +52,6 @@ Entity :
 => GetPossibleUpload => PossibleUploadEntity ?
 => GetReviewProgression => Review + Progression entity?
 => GetUserRoleInStudy => RoleEntity ?
-=> GetUserRole => RoleEntity ?
 => GetVisitTree => ?
 
 Model et db :

@@ -112,7 +112,7 @@ class UserFactory extends Factory
 
         return $this->state(function (array $attributes) use ($password) {
             return [
-                'password_temporary' => $password,
+                'password_temporary' => Hash::make($password),
             ];
         });
 
@@ -122,7 +122,7 @@ class UserFactory extends Factory
 
         return $this->state(function (array $attributes) use ($password) {
             return [
-                'password_previous1' => $password,
+                'password_previous1' => Hash::make($password),
             ];
         });
 
@@ -132,7 +132,7 @@ class UserFactory extends Factory
 
         return $this->state(function (array $attributes) use ($password) {
             return [
-                'password_previous2' => $password,
+                'password_previous2' => Hash::make($password),
             ];
         });
 
