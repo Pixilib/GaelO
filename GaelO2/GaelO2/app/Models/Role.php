@@ -11,6 +11,9 @@ class Role extends Model
 
     protected $guarded = [];
 
+    protected $primaryKey = ['name', 'user_id', 'study_name'];
+    public $incrementing = false;
+
     public function user(){
         return $this->belongsTo(User::class, 'user_id' , 'id');
     }

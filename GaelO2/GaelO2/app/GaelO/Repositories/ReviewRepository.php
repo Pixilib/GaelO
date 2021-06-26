@@ -88,7 +88,7 @@ class ReviewRepository implements ReviewRepositoryInterface {
         $reviewQuery = $this->review
             ->where('study_name', $studyName)
             ->where('visit_id', $visitId)
-            ->where('local', true);
+            ->where('local', false);
 
         if($onlyValidated){
             $reviewQuery->where('validated', true);
