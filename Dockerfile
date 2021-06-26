@@ -33,7 +33,7 @@ FROM php:8.0.7-apache
 RUN apt-get update -qy
 
 #Add Postgres repository as postgres client will be available only in the next major release of debian
-RUN apt -y install vim bash-completion wget \
+RUN apt -y install vim bash-completion wget gnupg2 \
     wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add -
 
 RUN echo "deb http://apt.postgresql.org/pub/repos/apt/ `lsb_release -cs`-pgdg main" |tee  /etc/apt/sources.list.d/pgdg.list
