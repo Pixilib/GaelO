@@ -48,8 +48,8 @@ AskUnlock basé sur le VisitId ? => passer a review id
 
 Entity :
 - Pluger toutes les reponses "data" sur ces entity response
-=> GetPossibleUpload => PossibleUploadEntity ?
-=> GetReviewProgression => Review + Progression entity?
+=> GetPossibleUpload => VisitEntity ?
+=> GetReviewProgression => Visit + Review_status + Progression entity?
 => GetVisitTree => ?, visit ?
 
 Model et db :

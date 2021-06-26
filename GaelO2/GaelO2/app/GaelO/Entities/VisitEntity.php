@@ -86,11 +86,6 @@ class VisitEntity {
         $this->visitGroupId = $visitGroupId;
     }
 
-    public function setPatientStatus(string $inclusionStatus, int $centerCode) {
-        $this->patientStatus = $inclusionStatus;
-        $this->centerCode = $centerCode;
-    }
-
     public function setPatientEntity(array $patientEntity){
         $this->patient = PatientEntity::fillFromDBReponseArray($patientEntity);
     }
