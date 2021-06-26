@@ -46,6 +46,7 @@ Stat avec Visit ajouter les clé patient (pour le filtre avec center) +- center 
 Stat Dicom study a reflechir pour pouvoir filter par centre (necessite de requeter visit + patient)
 AskUnlock basé sur le VisitId ? => passer a review id
 Etudier refresh du token
+Passer Telechargement en syncrone en stream
 
 Entity :
 - Pluger toutes les reponses "data" sur ces entity response
