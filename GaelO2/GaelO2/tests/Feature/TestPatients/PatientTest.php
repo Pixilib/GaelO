@@ -43,8 +43,8 @@ class PatientTest extends TestCase
 
         $expectedKeys = [
             "code",
-            "firstName",
-            "lastName",
+            "firstname",
+            "lastname",
             "gender",
             "birthDay",
             "birthMonth",

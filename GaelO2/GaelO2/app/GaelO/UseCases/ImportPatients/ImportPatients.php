@@ -13,6 +13,7 @@ use App\GaelO\Services\AuthorizationService;
 use App\GaelO\Services\MailServices;
 use App\GaelO\Services\ImportPatientService;
 use App\GaelO\Entities\PatientEntity;
+use App\GaelO\Util;
 use Exception;
 
 class ImportPatients {
@@ -36,6 +37,13 @@ class ImportPatients {
             $this->checkAuthorization($importPatientsRequest->currentUserId, $importPatientsRequest->studyName);
             $arrayPatients = [];
             foreach($importPatientsRequest->patients as $patient) {
+
+                foreach($patient as $key => $value){
+                    $patient[Util::camelCaseToSnakeCase($key)] = $value;
+                    $patient['study_name'] = $importPatientsRequest->studyName;
+                    $patient['withdraw_reason'] = null;
+                    $patient['withdraw_date'] = null;
+                }
                 $arrayPatients[] = PatientEntity::fillFromDBReponseArray($patient);
             }
             $importPatientsRequest->patients = $arrayPatients;

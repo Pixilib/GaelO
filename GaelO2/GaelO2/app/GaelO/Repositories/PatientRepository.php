@@ -51,8 +51,8 @@ class PatientRepository implements PatientRepositoryInterface {
     public function addPatientInStudy(PatientEntity $patientEntity, String $studyName) : void {
         $arrayPatientEntity = [
             "code" => $patientEntity->code,
-            "lastname" => $patientEntity->lastName,
-            "firstname" => $patientEntity->firstName,
+            "lastname" => $patientEntity->lastname,
+            "firstname" => $patientEntity->firstname,
             "gender" => $patientEntity->gender,
             "birth_day" => $patientEntity->birthDay,
             "birth_month" => $patientEntity->birthMonth,

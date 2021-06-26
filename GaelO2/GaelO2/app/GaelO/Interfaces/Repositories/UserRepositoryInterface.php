@@ -10,12 +10,12 @@ interface UserRepositoryInterface {
 
     public function delete($id) : void;
 
-    public function createUser(String $username, String $lastName, String $firstName, String $status,
+    public function createUser(String $username, String $lastname, String $firstname, String $status,
                                 String $email, ?String $phone, bool $administrator, int $centerCode, String $job,
                                 ?String $orthancAdress, ?String $orthancLogin, ?String $orthancPassword,
                                 String $passwordTemporary) :array ;
 
-    public function updateUser(int $id, String $username, ?String $lastName, ?String $firstName, String $status,
+    public function updateUser(int $id, String $username, ?String $lastname, ?String $firstname, String $status,
                                 String $email, ?String $phone, bool $administrator, int $centerCode, String $job,
                                 ?String $orthancAdress, ?String $orthancLogin, ?String $orthancPassword,
                                 ?String $passwordTemporary) : void ;

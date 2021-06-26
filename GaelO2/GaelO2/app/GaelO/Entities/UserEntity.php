@@ -5,7 +5,7 @@ namespace App\GaelO\Entities;
 class UserEntity {
     public int $id;
     public ?String $lastname;
-    public ?String $firstName;
+    public ?String $firstname;
     public String $username;
     public String $email;
     public ?String $phone;
