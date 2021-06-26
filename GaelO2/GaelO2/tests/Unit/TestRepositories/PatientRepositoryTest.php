@@ -105,6 +105,13 @@ class PatientRepositoryTest extends TestCase
         $this->assertEquals(6, sizeof($patients));
     }
 
+    public function testGetAllPatientCode()
+    {
+        Patient::factory()->count(30)->create();
+        $patientCodes = $this->patientRepository->getAllPatientsCode();
+        $this->assertEquals(30, sizeof($patientCodes));
+    }
+
     public function testGetPatientInStudyInCenters()
     {
         $study = Study::factory()->count(2)->create();

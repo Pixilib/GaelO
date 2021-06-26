@@ -29,6 +29,10 @@ class PatientRepository implements PatientRepositoryInterface {
         return $this->patient->findOrFail($code)->toArray();
     }
 
+    public function getAllPatientsCode() : array {
+        return $this->patient->select('code')->get()->pluck('code')->toArray();
+    }
+
     public function getPatientWithCenterDetails(int $code) : array {
         return $this->patient->with('center')->findOrFail($code)->toArray();
     }
