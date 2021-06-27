@@ -39,6 +39,10 @@ studies/{studyName}/visit-types/{visitTypeId}/dicom-studies (GET)
 reviews/{id}/file (GET, POST, DELETE)
 
 Salim TODO :
+
+GET DICOM FILE A VOIR CE QU IL SE PASSE SUR LE serveur
+POUR LES GET PASSER PAR LES REPOSITORY PLUTOT QUE PAR SERVICE ?
+
 Passer Telechargement en syncrone en stream => A priori OK verifier que absence de content lenght ne fait pas planter
 Upgrader Orthanc serveur de test
 Updater mail avec multi-lien vers ressource (1 lien par role) => A checker
