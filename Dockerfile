@@ -28,7 +28,7 @@ RUN mkdir /stone
 RUN unzip wasm-binaries.zip -d /stone
 
 
-FROM php:8.0.7-apache
+FROM php:8.0.7-apache-buster
 
 RUN apt-get update -qy
 
