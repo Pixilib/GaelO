@@ -62,6 +62,8 @@ Model et db :
 - Clé etrangere DicomStudy et DicomSeries non conventionnelle
 - Type de variable a caster
 
+Ajouter passeport purge pour vider la table periodiquement
+
 Messagerie à designer
 Creatable Visit : Manque Study Custom Logic (+dans front skip visites optionnelles ?)
 Export Data study :
