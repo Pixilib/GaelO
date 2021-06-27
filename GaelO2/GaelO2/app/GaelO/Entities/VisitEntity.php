@@ -42,6 +42,7 @@ class VisitEntity {
     public ?int $centerCode;
 
     public PatientEntity $patient;
+    public UserEntity $creatorUser;
 
     public static function fillFromDBReponseArray(array $array){
         $visitEntity  = new VisitEntity();
@@ -94,6 +95,15 @@ class VisitEntity {
         $this->reviewStatus = $reviewStatus;
         $this->reviewConclusionValue = $reviewConclusionValue;
         $this->reviewConclusionDate = $reviewConclusionDate;
+    }
+
+    public function setCreatorDetails(string $username, string $firstname, string $lastname) : void {
+        $userEntity = new UserEntity();
+        $userEntity->username = $username;
+        $userEntity->firstname = $firstname;
+        $userEntity->lastname = $lastname;
+        $this->creatorUser = $userEntity;
+
     }
 
 }
