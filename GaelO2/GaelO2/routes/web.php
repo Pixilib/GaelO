@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', 'IndexController@getIndex');
-Route::get('/study/*', 'IndexController@getIndex');
-Route::get('/administrator/*', 'IndexController@getIndex');
+Route::get('study/{any?}', 'IndexController@getIndex')->where(['any' => '.*']);
+Route::get('administrator/{any?}', 'IndexController@getIndex')->where(['any' => '.*']);
 Route::get('viewer-ohif/viewer/{studyInstanceUID}', 'IndexController@getOhif');
 
