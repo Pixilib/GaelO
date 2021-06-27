@@ -55,11 +55,12 @@ Entity :
 => GetPossibleUpload => VisitEntity ?
 => GetReviewProgression => Visit + Review_status + Progression entity?
 => GetVisitTree => ?, visit ?
+Revoir les nested data des entity
 
 Model et db :
 - Patient => InclusionStatus à passer à status
-- Type de variable a caster
 - Clé etrangere DicomStudy et DicomSeries non conventionnelle
+- Type de variable a caster
 
 Messagerie à designer
 Creatable Visit : Manque Study Custom Logic (+dans front skip visites optionnelles ?)
@@ -92,7 +93,7 @@ Deploiement ajouter le login / mdp pour dans orthanc pacs + bloquer delete dans 
 Dans remplissage DTO request, si variable boolean, un input string est interpretée à true.
 
 Reste Supervisor :
-- Upload Manager
+- Upload Manager (reprendre cdc de clara)
 - Remininder email upload / review / Communication mail inter membre (utiliser tinyMCE React)
 
 Reste Autres :
@@ -101,6 +102,7 @@ Reste Autres :
 - Cron job (etudier Jobs de laravel)
 
 *** Dummy Run *** => Impact sur la db a designer
+*** Dicom liée aux review *** => Impacte sur la db a designer
 
 *** Etudes ancillaires ***
 Pb Authorisation : Un ID Visit peut maintenant a etre attachee a plusieurs etudes ancillaires

@@ -136,8 +136,8 @@ class ImportPatientService
 	 * Check that patient's center is one of known center in the plateform
 	 * @param $patientNumCenter
 	 */
-	private function isExistingCenter($patientNumCenter) : void {
-        if (!in_array($patientNumCenter, $this->existingCenter)) {
+	private function isExistingCenter(?int $patientNumCenter) : void {
+        if ($patientNumCenter == null ||!in_array($patientNumCenter, $this->existingCenter)) {
             throw new GaelOBadRequestException('Unknown Center');
         }
 	}
