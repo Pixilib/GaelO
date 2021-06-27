@@ -33,7 +33,7 @@ FROM php:8.0.7-apache-buster
 RUN apt-get update -qy
 
 #Add Postgres repository as postgres client will be available only in the next major release of debian
-RUN apt -y install gnupg gnupg2
+RUN apt -y install gnupg gnupg2 wget
 
 RUN wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add -
 
