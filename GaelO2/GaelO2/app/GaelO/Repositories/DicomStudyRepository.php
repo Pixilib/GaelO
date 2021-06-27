@@ -80,46 +80,6 @@ class DicomStudyRepository implements DicomStudyRepositoryInterface
         $this->create($data);
     }
 
-    public function updateStudy(
-        string $orthancStudyID,
-        int $visitID,
-        int $uploaderID,
-        string $uploadDate,
-        ?string $acquisitionDate,
-        ?string $acquisitionTime,
-        string $anonFromOrthancID,
-        string $studyInstanceUID,
-        ?string $studyDescription,
-        string $patientOrthancID,
-        ?string $patientName,
-        ?string $patientID,
-        int $numberOfSeries,
-        int $numberOfInstance,
-        int $diskSize,
-        int $uncompressedDisksize
-    ): void {
-
-        $data = [
-            'orthanc_id' => $orthancStudyID,
-            'visit_id' => $visitID,
-            'user_id' => $uploaderID,
-            'upload_date' => $uploadDate,
-            'acquisition_date' => $acquisitionDate,
-            'acquisition_time' => $acquisitionTime,
-            'anon_from_orthanc_id' => $anonFromOrthancID,
-            'study_description' => $studyDescription,
-            'patient_orthanc_id' => $patientOrthancID,
-            'patient_name' => $patientName,
-            'patient_id' => $patientID,
-            'number_of_series' => $numberOfSeries,
-            'number_of_instances' => $numberOfInstance,
-            'disk_size' => $diskSize,
-            'uncompressed_disk_size' => $uncompressedDisksize
-        ];
-
-        $this->update($studyInstanceUID, $data);
-    }
-
     /**
      * Check that for a study the original Orthanc Id (StudyUID Hash) is not existing
      * This is done per study as a imaging procedure can be included in different trial
@@ -168,9 +128,9 @@ class DicomStudyRepository implements DicomStudyRepositoryInterface
     public function getDicomStudy(string $studyInstanceUID, bool $includeDeleted): array
     {
         if ($includeDeleted) {
-            $study = $this->dicomStudy->where('study_uid', $studyInstanceUID)->withTrashed()->sole()->toArray();
+            $study = $this->dicomStudy->withTrashed()->findOrFail($studyInstanceUID)->toArray();
         } else {
-            $study = $this->dicomStudy->where('study_uid', $studyInstanceUID)->sole()->toArray();
+            $study = $this->dicomStudy->findOrFail($studyInstanceUID)->toArray();
         }
 
         return $study;

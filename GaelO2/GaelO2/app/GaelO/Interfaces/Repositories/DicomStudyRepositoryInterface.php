@@ -12,12 +12,6 @@ interface DicomStudyRepositoryInterface {
                     ?string $patientName, ?string $patientID, int $numberOfSeries, int $numberOfInstance,
                     int $diskSize, int $uncompressedDisksize  ) : void ;
 
-    public function updateStudy(string $orthancStudyID, int $visitID, int $uploaderID, string $uploadDate,
-                                ?string $acquisitionDate, ?string $acquisitionTime, string $anonFromOrthancID,
-                                string $studyUID, ?string $studyDescription, string $patientOrthancID,
-                                ?string $patientName, ?string $patientID, int $numberOfSeries, int $numberOfInstance,
-                                int $diskSize, int $uncompressedDisksize ) : void ;
-
     public function isExistingOriginalOrthancStudyID(string $orthancStudyID, string $studyName) : bool ;
 
     public function getStudyInstanceUidFromVisit(int $visitID) : string ;

@@ -41,11 +41,11 @@ class ReactivateDicomStudy{
             $this->checkAuthorization($reactivateDicomStudyRequest->currentUserId, $visitId, $visitContext['state_quality_control']);
 
             //Change dicom study Activation
-            $this->dicomSeriesService->reactivateDicomStudy($reactivateDicomStudyRequest->studyInstanceUID);
+            $this->dicomSeriesService->reactivateDicomStudy($studyData['study_uid']);
 
             //Tracker
             $actionDetails = [
-                'seriesInstanceUID'=>$studyData['study_uid'],
+                'studyInstanceUID'=>$studyData['study_uid'],
                 'reason' => $reactivateDicomStudyRequest->reason
             ];
 

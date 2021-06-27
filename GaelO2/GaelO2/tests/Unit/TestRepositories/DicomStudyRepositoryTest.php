@@ -74,32 +74,6 @@ class DicomStudyRepositoryTest extends TestCase
         $this->assertEquals(3, $orthancStudyEntity->number_of_series);
     }
 
-    public function testModifyStudy()
-    {
-        $orthancStudy = DicomStudy::factory()->create();
-        $this->dicomStudyRepository->updateStudy(
-            $orthancStudy->orthanc_id,
-            Visit::factory()->create()->id,
-            User::factory()->create()->id,
-            '2020-01-01',
-            null,
-            null,
-            '6b9e19d9-62094390-5f9ddb01-4a191ae7-9766b716',
-            $orthancStudy->study_uid,
-            'newStudyDescription',
-            '6b9e19d9-62094390-5f9ddb01-4a191ae7-9766b717',
-            null,
-            null,
-            5,
-            1500,
-            500,
-            1000
-        );
-
-        $orthancStudyEntity = DicomStudy::find($orthancStudy->study_uid);
-        $this->assertEquals(5, $orthancStudyEntity->number_of_series);
-    }
-
     public function testIsExistingOriginalOrthancStudyId()
     {
 
@@ -117,10 +91,12 @@ class DicomStudyRepositoryTest extends TestCase
 
     public function testGetStudyOrthancIdFromVisit()
     {
-        $orthancStudy = DicomStudy::factory()->create();
-        $visitId = Visit::get()->first()->id;
-        $studyOrthancId = $this->dicomStudyRepository->getStudyInstanceUidFromVisit($visitId);
-        $this->assertEquals($orthancStudy->study_uid, $studyOrthancId);
+        Visit::factory()->count(5)->create();
+        $orthancStudy = DicomStudy::factory()->count(5)->create();
+
+        $studyOrthancId = $this->dicomStudyRepository->getStudyInstanceUidFromVisit($orthancStudy->first()->visit_id);
+
+        $this->assertEquals($orthancStudy->first()->study_uid, $studyOrthancId);
     }
 
     public function testIsExisitingDicomStudyForVisit()
@@ -166,19 +142,19 @@ class DicomStudyRepositoryTest extends TestCase
     public function testGetChildSeries()
     {
 
-        $orthancStudies = DicomStudy::factory()->create();
+        $orthancStudies = DicomStudy::factory()->count(5)->create();
 
         $orthancSeries = DicomSeries::factory()
             ->count(3)
-            ->for($orthancStudies)
+            ->for($orthancStudies->first())
             ->create();
 
         $orthancSeries->get(1)->delete();
 
-        $series = $this->dicomStudyRepository->getChildSeries($orthancStudies->study_uid, false);
+        $series = $this->dicomStudyRepository->getChildSeries($orthancStudies->first()->study_uid, false);
         $this->assertEquals(2, sizeof($series));
 
-        $series = $this->dicomStudyRepository->getChildSeries($orthancStudies->study_uid, true);
+        $series = $this->dicomStudyRepository->getChildSeries($orthancStudies->first()->study_uid, true);
         $this->assertEquals(1, sizeof($series));
     }
 
