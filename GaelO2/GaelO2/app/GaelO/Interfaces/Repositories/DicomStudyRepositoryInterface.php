@@ -20,8 +20,6 @@ interface DicomStudyRepositoryInterface {
 
     public function isExistingOriginalOrthancStudyID(string $orthancStudyID, string $studyName) : bool ;
 
-    public function isExistingStudyInstanceUID(string $studyInstanceUID) : bool ;
-
     public function getStudyInstanceUidFromVisit(int $visitID) : string ;
 
     public function isExistingDicomStudyForVisit(int $visitID) : bool ;

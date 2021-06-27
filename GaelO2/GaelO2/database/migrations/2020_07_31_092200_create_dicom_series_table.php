@@ -38,7 +38,7 @@ class CreateDicomSeriesTable extends Migration
             $table->timestamps();
             //Dependencies
             $table->foreign('study_uid')->references('study_uid')->on('dicom_studies');
-            $table->unique('series_uid');
+            $table->unique('orthanc_id');
         });
     }
 

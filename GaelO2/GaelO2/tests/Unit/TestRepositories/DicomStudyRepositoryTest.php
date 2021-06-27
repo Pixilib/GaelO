@@ -115,18 +115,6 @@ class DicomStudyRepositoryTest extends TestCase
         $this->assertFalse($answer2);
     }
 
-    public function testIsExistingOrthancStudyId()
-    {
-        $orthancStudy = DicomStudy::factory()->create();
-
-        $existing = $this->dicomStudyRepository->isExistingStudyInstanceUID($orthancStudy->study_uid);
-        $this->assertTrue($existing);
-
-        $orthancStudy->delete();
-        $existing = $this->dicomStudyRepository->isExistingStudyInstanceUID($orthancStudy->study_uid);
-        $this->assertFalse($existing);
-    }
-
     public function testGetStudyOrthancIdFromVisit()
     {
         $orthancStudy = DicomStudy::factory()->create();
