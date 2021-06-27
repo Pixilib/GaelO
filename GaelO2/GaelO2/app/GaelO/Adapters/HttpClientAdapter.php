@@ -85,11 +85,16 @@ class HttpClientAdapter implements HttpClientInterface
 
         $response = $this->client->request($method, $this->address . $uri, ['stream' => true, 'json' => $body, 'auth' => [$this->login, $this->password]]);
 
-        $contentLength = $response->getHeader('content-Length')[0];
-        $contentType = $response->getHeader('content-Type')[0];
+        if($response->getHeader('content-Length') != null) {
+            $contentLength = $response->getHeader('content-Length')[0];
+            header("Content-Length: " . $contentLength);
+        }
 
-        header("Content-Length: " . $contentLength);
-        header("Content-Type: " . $contentType);
+        if($response->getHeader('content-Type') != null){
+            $contentType = $response->getHeader('content-Type')[0];
+            header("Content-Type: " . $contentType);
+
+        }
 
         $body = $response->getBody();
         while (!$body->eof()) {
