@@ -137,7 +137,7 @@ class ImportPatientService
 	 * @param $patientNumCenter
 	 */
 	private function isExistingCenter(?int $patientNumCenter) : void {
-        if ($patientNumCenter == null ||!in_array($patientNumCenter, $this->existingCenter)) {
+        if ($patientNumCenter === null ||!in_array($patientNumCenter, $this->existingCenter)) {
             throw new GaelOBadRequestException('Unknown Center');
         }
 	}

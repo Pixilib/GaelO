@@ -12,8 +12,6 @@ use App\GaelO\Repositories\TrackerRepository;
 use App\GaelO\Services\AuthorizationVisitService;
 use App\GaelO\Services\MailServices;
 use Exception;
-use Illuminate\Support\Facades\Log;
-use PHPUnit\TextUI\XmlConfiguration\Constant;
 
 class RequestUnlock
 {

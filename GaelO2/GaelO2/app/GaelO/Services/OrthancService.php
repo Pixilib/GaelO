@@ -8,7 +8,6 @@ use App\GaelO\Interfaces\Adapters\FrameworkInterface;
 use App\GaelO\Interfaces\Adapters\HttpClientInterface;
 use App\GaelO\Services\StoreObjects\TagAnon;
 use App\GaelO\Services\StoreObjects\OrthancStudy;
-use Illuminate\Support\Facades\Log;
 
 class OrthancService
 {
@@ -347,7 +346,6 @@ class OrthancService
     }
 
     public function getOrthancZipStream(array $seriesOrthancIDs){
-        Log::Info($seriesOrthancIDs);
         $payload = array('Transcode'=>'1.2.840.10008.1.2.1', 'Resources' => $seriesOrthancIDs);
         $this->httpClientInterface->streamResponse('POST', '/tools/create-archive', $payload);
     }

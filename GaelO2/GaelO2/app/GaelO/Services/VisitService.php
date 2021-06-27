@@ -10,7 +10,6 @@ use App\GaelO\Repositories\UserRepository;
 use App\GaelO\Repositories\VisitTypeRepository;
 use App\GaelO\Repositories\VisitRepository;
 use App\GaelO\Entities\VisitTypeEntity;
-use Illuminate\Support\Facades\Log;
 
 class VisitService
 {
@@ -59,11 +58,6 @@ class VisitService
         $seriesOrthancIdArray = array_map(function ($series) {
             return $series['orthanc_id'];
         }, $seriesEntities);
-
-        Log::info($this->visitId);
-        Log::info($studyInstanceUid);
-        Log::info($seriesEntities);
-        Log::info($seriesOrthancIdArray);
 
         return $seriesOrthancIdArray;
     }

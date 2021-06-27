@@ -9,7 +9,6 @@ use App\GaelO\Interfaces\Adapters\FrameworkInterface;
 use App\GaelO\Interfaces\Adapters\HttpClientInterface;
 use App\GaelO\Services\AuthorizationDicomWebService;
 use Exception;
-use Illuminate\Support\Facades\Log;
 
 class ReverseProxyDicomWeb{
 
@@ -50,7 +49,6 @@ class ReverseProxyDicomWeb{
             $headers= $reverseProxyDicomWebRequest->header;
             $headers['Forwarded'] = ['by=localhost;for=localhost;host='.$gaelOUrl.':'.$gaelOPort.'/api/orthanc'.';proto='.$gaelOProtocol];
 
-            Log::info($calledUrl);
             $response = $this->httpClientInterface->rowRequest('GET', $calledUrl, null ,$headers);
 
             //Output response

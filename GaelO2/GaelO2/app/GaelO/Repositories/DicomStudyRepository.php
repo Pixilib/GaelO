@@ -102,7 +102,8 @@ class DicomStudyRepository implements DicomStudyRepositoryInterface
 
     public function getStudyInstanceUidFromVisit(int $visitID): string
     {
-        return $this->dicomStudy->where('visit_id', $visitID)->sole()->value('study_uid');
+        $studyEntity = $this->dicomStudy->where('visit_id','=', $visitID)->sole();
+        return $studyEntity->study_uid;
     }
 
     public function isExistingDicomStudyForVisit(int $visitID): bool

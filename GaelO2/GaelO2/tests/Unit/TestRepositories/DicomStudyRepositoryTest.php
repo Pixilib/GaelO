@@ -93,10 +93,9 @@ class DicomStudyRepositoryTest extends TestCase
     {
         Visit::factory()->count(5)->create();
         $orthancStudy = DicomStudy::factory()->count(5)->create();
+        $studyOrthancId = $this->dicomStudyRepository->getStudyInstanceUidFromVisit($orthancStudy->last()->visit_id);
 
-        $studyOrthancId = $this->dicomStudyRepository->getStudyInstanceUidFromVisit($orthancStudy->first()->visit_id);
-
-        $this->assertEquals($orthancStudy->first()->study_uid, $studyOrthancId);
+        $this->assertEquals($orthancStudy->last()->study_uid, $studyOrthancId);
     }
 
     public function testIsExisitingDicomStudyForVisit()

@@ -12,7 +12,6 @@ use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\UserRepositoryInterface;
 use App\GaelO\UseCases\CreateUser\CreateUser;
 use Exception;
-use Illuminate\Support\Facades\Log;
 
 class ModifyUserIdentification {
 
