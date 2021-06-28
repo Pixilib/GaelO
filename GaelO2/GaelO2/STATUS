@@ -40,15 +40,12 @@ reviews/{id}/file (GET, POST, DELETE)
 
 Salim TODO :
 
-GET DICOM FILE A VOIR CE QU IL SE PASSE SUR LE serveur
-POUR LES GET PASSER PAR LES REPOSITORY PLUTOT QUE PAR SERVICE ?
-
-Updater mail avec multi-lien vers ressource (1 lien par role) => A checker
-
 Stat avec Visit ajouter les clé patient (pour le filtre avec center) +- center name ? => fait, reste a ajouter nom des centres dans reponse
 Stat Dicom study a reflechir pour pouvoir filter par centre (necessite de requeter visit + patient)
 AskUnlock basé sur le VisitId ? => passer a review id
 Etudier refresh du token (evaluer impact avec telescope)
+Ajouter passeport purge pour vider la table periodiquement
+Refac pour la lecture eviter de passer par des services pour laisser les services à l'ecriture ?
 
 Entity :
 - Pluger toutes les reponses "data" sur ces entity response
@@ -62,7 +59,6 @@ Model et db :
 - Clé etrangere DicomStudy et DicomSeries non conventionnelle
 - Type de variable a caster
 
-Ajouter passeport purge pour vider la table periodiquement
 
 Messagerie à designer
 Creatable Visit : Manque Study Custom Logic (+dans front skip visites optionnelles ?)
