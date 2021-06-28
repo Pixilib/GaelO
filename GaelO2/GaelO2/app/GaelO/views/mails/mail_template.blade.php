@@ -42,6 +42,12 @@
 
         #message {
             text-align: left;
+            margin: 5% 0;
+        }
+
+        #visit-link {
+            text-align: left;
+            margin: 5% 0;
         }
     </style>
 </head>
@@ -57,7 +63,7 @@
     </div>
     <div id="visit-link">
         @if(!empty($visitId) && !empty($study))
-            Acces Visit as
+            Access Visit as
             <a href="{{$webAddress}}/study/{{$study}}/role/Investigator/visit/{{$visitId}}">Investigator</a>
             -
             <a href="{{$webAddress}}/study/{{$study}}/role/Monitor/visit/{{$visitId}}">Monitor</a>

@@ -33,7 +33,7 @@ class ModifyQualityControl {
             $visitContext = $this->visitService->getVisitContext();
 
             $studyName = $visitContext['visit_type']['visit_group']['study_name'];
-            $patientCode = $visitContext['patient']['center_code'];
+            $patientCode = $visitContext['patient']['code'];
             $visitType = $visitContext['visit_type']['name'];
             $visitModality = $visitContext['visit_type']['visit_group']['modality'];
             $centerCode = $visitContext['patient']['center_code'];
