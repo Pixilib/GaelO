@@ -29,6 +29,10 @@ class PatientRepository implements PatientRepositoryInterface {
         return $this->patient->findOrFail($code)->toArray();
     }
 
+    public function getAllPatientsCode() : array {
+        return $this->patient->select('code')->get()->pluck('code')->toArray();
+    }
+
     public function getPatientWithCenterDetails(int $code) : array {
         return $this->patient->with('center')->findOrFail($code)->toArray();
     }
@@ -51,8 +55,8 @@ class PatientRepository implements PatientRepositoryInterface {
     public function addPatientInStudy(PatientEntity $patientEntity, String $studyName) : void {
         $arrayPatientEntity = [
             "code" => $patientEntity->code,
-            "lastname" => $patientEntity->lastName,
-            "firstname" => $patientEntity->firstName,
+            "lastname" => $patientEntity->lastname,
+            "firstname" => $patientEntity->firstname,
             "gender" => $patientEntity->gender,
             "birth_day" => $patientEntity->birthDay,
             "birth_month" => $patientEntity->birthMonth,

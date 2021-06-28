@@ -51,7 +51,7 @@ class VisitService
         return $this->visitRepository->getVisitContext($this->visitId);
     }
 
-    public function getVisitSeriesIdsDicomArray(bool $deleted)
+    public function getVisitSeriesIdsDicomArray(bool $deleted) : array
     {
         $studyInstanceUid = $this->dicomStudyRepositoryInterface->getStudyInstanceUidFromVisit($this->visitId);
         $seriesEntities = $this->dicomStudyRepositoryInterface->getChildSeries($studyInstanceUid, $deleted);

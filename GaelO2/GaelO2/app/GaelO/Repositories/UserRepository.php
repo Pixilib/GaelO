@@ -55,14 +55,14 @@ class UserRepository implements UserRepositoryInterface {
         return empty($users) ? [] : $users->toArray();
     }
 
-    public function createUser( String $username, String $lastName, String $firstName, String $status,
+    public function createUser( String $username, String $lastname, String $firstname, String $status,
                                 String $email, ?String $phone, bool $administrator, int $centerCode, String $job,
                                 ?String $orthancAdress, ?String $orthancLogin, ?String $orthancPassword,
                                 String $passwordTemporary ) : array {
 
         $data= ['username' => $username,
-        'lastname' => $lastName,
-        'firstname' => $firstName,
+        'lastname' => $lastname,
+        'firstname' => $firstname,
         'status' => $status,
         'email' => $email,
         'phone' => $phone,
@@ -81,14 +81,14 @@ class UserRepository implements UserRepositoryInterface {
 
     }
 
-    public function updateUser(int $id, String $username, ?String $lastName, ?String $firstName, String $status,
+    public function updateUser(int $id, String $username, ?String $lastname, ?String $firstname, String $status,
                                 String $email, ?String $phone, bool $administrator, int $centerCode, String $job,
                                 ?String $orthancAdress, ?String $orthancLogin, ?String $orthancPassword,
                                 ?String $passwordTemporary) : void {
 
         $data= ['username' => $username,
-                'lastname' => $lastName,
-                'firstname' => $firstName,
+                'lastname' => $lastname,
+                'firstname' => $firstname,
                 'status' => $status,
                 'email' => $email,
                 'phone' => $phone,

@@ -13,6 +13,7 @@ use App\GaelO\Services\AuthorizationService;
 use App\GaelO\Services\MailServices;
 use App\GaelO\Services\ImportPatientService;
 use App\GaelO\Entities\PatientEntity;
+use App\GaelO\Util;
 use Exception;
 
 class ImportPatients {
@@ -36,7 +37,14 @@ class ImportPatients {
             $this->checkAuthorization($importPatientsRequest->currentUserId, $importPatientsRequest->studyName);
             $arrayPatients = [];
             foreach($importPatientsRequest->patients as $patient) {
-                $arrayPatients[] = PatientEntity::fillFromRequest($patient, $importPatientsRequest->studyName);
+
+                foreach($patient as $key => $value){
+                    $patient[Util::camelCaseToSnakeCase($key)] = $value;
+                    $patient['study_name'] = $importPatientsRequest->studyName;
+                    $patient['withdraw_reason'] = null;
+                    $patient['withdraw_date'] = null;
+                }
+                $arrayPatients[] = PatientEntity::fillFromDBReponseArray($patient);
             }
             $importPatientsRequest->patients = $arrayPatients;
             $this->importPatient->setPatientEntities($importPatientsRequest->patients);
@@ -54,7 +62,7 @@ class ImportPatients {
             $importPatientsResponse->statusText = 'OK';
 
             $this->trackerRepositoryInterface->writeAction($importPatientsRequest->currentUserId, Constants::TRACKER_IMPORT_PATIENT, $importPatientsRequest->studyName, null, Constants::TRACKER_IMPORT_PATIENT, $actionDetails);
-          
+
             $this->mailService->sendImportPatientMessage($importPatientsRequest->studyName, $this->importPatient->successList, $this->importPatient->failList);
 
         } catch (GaelOException $e){

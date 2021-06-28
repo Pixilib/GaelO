@@ -35,7 +35,7 @@ class GetVisitsFromStudy
             $responseArray = [];
             foreach ($dbData as $data) {
                 $responseEntity = VisitEntity::fillFromDBReponseArray($data);
-                $responseEntity->setPatientStatus($data['patient']['inclusion_status'], $data['patient']['center_code']);
+                $responseEntity->setPatientEntity($data['patient']);
                 $responseEntity->setVisitContext(
                     $data['visit_type']['visit_group']['modality'],
                     $data['visit_type']['name'],

@@ -12,14 +12,6 @@ interface DicomSeriesRepositoryInterface {
                             int $seriesDiskSize, int $seriesUncompressedDiskSize, ?string $manufacturer,
                             ?string $modelName ) : void ;
 
-    public function updateSeries(string $seriesOrthancID, ?string $acquisitionDate,
-            ?string $acquisitionTime, ?string $modality, ?string $seriesDescription,
-            ?int $injectedDose, ?string $radiopharmaceutical, ?int $halfLife,
-            ?string $injectedTime,?string $injectedDateTime, ?int $injectedActivity, ?int $patientWeight,
-            int $numberOfInstances, string $seriesUID, ?string $seriesNumber,
-            int $seriesDiskSize, int $seriesUncompressedDiskSize, ?string $manufacturer,
-            ?string $modelName ) :void ;
-
     public function deleteSeries(string $seriesInstanceUID) : void ;
 
     public function reactivateSeries(string $seriesInstanceUID) : void ;

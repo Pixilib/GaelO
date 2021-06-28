@@ -26,8 +26,8 @@ class ImportPatientTest extends TestCase
         $this->study = Study::factory()->patientCodePrefix('123')->create();
 
         $this->validPayload = [ ["code" => 12341231234123,
-        "lastName" => "test",
-        "firstName" => "test",
+        "lastname" => "test",
+        "firstname" => "test",
         "gender" => "M",
         "birthDay" => 1,
         "birthMonth" => 1,
@@ -48,8 +48,8 @@ class ImportPatientTest extends TestCase
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $this->study->name);
 
         $this->validPayload = [ ["code" => 12341231234123,
-        "lastName" => "test",
-        "firstName" => "test",
+        "lastname" => "test",
+        "firstname" => "test",
         "gender" => "M",
         "birthDay" => 1,
         "birthMonth" => 1,
@@ -59,8 +59,8 @@ class ImportPatientTest extends TestCase
         "centerCode" => 0,
         "inclusionStatus"  => Constants::PATIENT_INCLUSION_STATUS_INCLUDED],
         ["code" => 12341231234124,
-        "lastName" => "test",
-        "firstName" => "test",
+        "lastname" => "test",
+        "firstname" => "test",
         "gender" => "M",
         "birthDay" => 1,
         "birthMonth" => 1,
@@ -70,8 +70,8 @@ class ImportPatientTest extends TestCase
         "centerCode" => 0,
         "inclusionStatus"  => Constants::PATIENT_INCLUSION_STATUS_INCLUDED],
         ["code" => 12341231234125,
-        "lastName" => "test",
-        "firstName" => "test",
+        "lastname" => "test",
+        "firstname" => "test",
         "gender" => "M",
         "birthDay" => 1,
         "birthMonth" => 1,

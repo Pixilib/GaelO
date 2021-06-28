@@ -40,24 +40,29 @@ reviews/{id}/file (GET, POST, DELETE)
 
 Salim TODO :
 
-Updater mail avec multi-lien vers ressource (1 lien par role) => A checker
-Stat avec Visit ajouter les clé patient (pour le filtre avec center) +- center name ? => fait, reste a ajouter nom des centres dans reponse
+GET DICOM FILE A VOIR CE QU IL SE PASSE SUR LE serveur
+POUR LES GET PASSER PAR LES REPOSITORY PLUTOT QUE PAR SERVICE ?
 
+Updater mail avec multi-lien vers ressource (1 lien par role) => A checker
+
+Stat avec Visit ajouter les clé patient (pour le filtre avec center) +- center name ? => fait, reste a ajouter nom des centres dans reponse
 Stat Dicom study a reflechir pour pouvoir filter par centre (necessite de requeter visit + patient)
 AskUnlock basé sur le VisitId ? => passer a review id
+Etudier refresh du token (evaluer impact avec telescope)
 
 Entity :
-- Fusionner Investigator et review form ? (ne different que par l'adjudication)
 - Pluger toutes les reponses "data" sur ces entity response
-=> GetPossibleUpload => PossibleUploadEntity ?
-=> GetReviewProgression => Review + Progression entity?
-=> GetUserRoleInStudy => RoleEntity ?
-=> GetUserRole => RoleEntity ?
-=> GetVisitTree => ?
+=> GetPossibleUpload => VisitEntity ?
+=> GetReviewProgression => Visit + Review_status + Progression entity?
+=> GetVisitTree => ?, visit ?
+Revoir les nested data des entity
 
 Model et db :
-- Type de variable a caster
+- Patient => InclusionStatus à passer à status
 - Clé etrangere DicomStudy et DicomSeries non conventionnelle
+- Type de variable a caster
+
+Ajouter passeport purge pour vider la table periodiquement
 
 Messagerie à designer
 Creatable Visit : Manque Study Custom Logic (+dans front skip visites optionnelles ?)
@@ -90,13 +95,16 @@ Deploiement ajouter le login / mdp pour dans orthanc pacs + bloquer delete dans 
 Dans remplissage DTO request, si variable boolean, un input string est interpretée à true.
 
 Reste Supervisor :
-- Upload Manager
+- Upload Manager (reprendre cdc de clara)
 - Remininder email upload / review / Communication mail inter membre (utiliser tinyMCE React)
 
 Reste Autres :
 - Orthanc Send to peer
 - Connecteur FTP/SFTP
 - Cron job (etudier Jobs de laravel)
+
+*** Dummy Run *** => Impact sur la db a designer
+*** Dicom liée aux review *** => Impacte sur la db a designer
 
 *** Etudes ancillaires ***
 Pb Authorisation : Un ID Visit peut maintenant a etre attachee a plusieurs etudes ancillaires

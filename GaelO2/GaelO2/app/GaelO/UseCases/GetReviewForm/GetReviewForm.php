@@ -3,7 +3,7 @@
 namespace App\GaelO\UseCases\GetReviewForm;
 
 use App\GaelO\Constants\Constants;
-use App\GaelO\Entities\ReviewFormEntity;
+use App\GaelO\Entities\ReviewEntity;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\ReviewRepositoryInterface;
@@ -31,7 +31,7 @@ class GetReviewForm {
             $this->checkAuthorization($getReviewFormRequest->currentUserId, $getReviewFormRequest->reviewId);
 
             $reviewEntity = $this->reviewRepositoryInterface->find($getReviewFormRequest->reviewId);
-            $review = ReviewFormEntity::fillFromDBReponseArray($reviewEntity);
+            $review = ReviewEntity::fillFromDBReponseArray($reviewEntity);
 
             $getReviewFormResponse->body = $review;
             $getReviewFormResponse->status = 200;

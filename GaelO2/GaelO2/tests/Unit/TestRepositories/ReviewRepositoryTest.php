@@ -124,11 +124,11 @@ class ReviewRepositoryTest extends TestCase
         $visit = Visit::factory()->count(2)->create();
 
         //Add review to a study that should not be selected
-        Review::factory()->studyName($studies->last()->name)->visitId($visit->first()->id)->validated()->count(8)->create();
-        Review::factory()->studyName($studies->last()->name)->visitId($visit->first()->id)->validated()->count(10)->create();
+        Review::factory()->studyName($studies->last()->name)->visitId($visit->first()->id)->reviewForm()->validated()->count(8)->create();
+        Review::factory()->studyName($studies->last()->name)->visitId($visit->first()->id)->reviewForm()->validated()->count(10)->create();
         //Add review potentially selected (good study and validated or not)
-        Review::factory()->studyName($studies->first()->name)->visitId($visit->first()->id)->count(3)->create();
-        Review::factory()->studyName($studies->first()->name)->visitId($visit->first()->id)->validated()->count(7)->create();
+        Review::factory()->studyName($studies->first()->name)->visitId($visit->first()->id)->reviewForm()->count(3)->create();
+        Review::factory()->studyName($studies->first()->name)->visitId($visit->first()->id)->reviewForm()->validated()->count(7)->create();
 
         $results = $this->reviewRepository->getReviewsForStudyVisit($studies->first()->name, $visit->first()->id, false);
         $results2 = $this->reviewRepository->getReviewsForStudyVisit($studies->first()->name, $visit->first()->id, true);

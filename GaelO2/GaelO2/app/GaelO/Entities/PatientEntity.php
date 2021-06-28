@@ -5,8 +5,8 @@ namespace App\GaelO\Entities;
 
 class PatientEntity {
     public int $code;
-    public ?string $firstName;
-    public ?string $lastName;
+    public ?string $firstname;
+    public ?string $lastname;
     public ?string $gender;
     public ?int $birthDay;
     public ?int $birthMonth;
@@ -24,8 +24,8 @@ class PatientEntity {
     public static function fillFromDBReponseArray(array $array) : PatientEntity{
         $patientEntity  = new PatientEntity();
         $patientEntity->code = $array['code'];
-        $patientEntity->lastName = $array['lastname'];
-        $patientEntity->firstName = $array['firstname'];
+        $patientEntity->lastname = $array['lastname'];
+        $patientEntity->firstname = $array['firstname'];
         $patientEntity->birthDay = $array['birth_day'];
         $patientEntity->birthMonth = $array['birth_month'];
         $patientEntity->birthYear = $array['birth_year'];
@@ -43,22 +43,6 @@ class PatientEntity {
     public function fillCenterDetails(string $centerName, string $countryCode) : void {
         $this->centerName = $centerName;
         $this->countryCode = $countryCode;
-    }
-
-    public static function fillFromRequest(array $array, string $studyName) : PatientEntity{
-        $patientEntity = new PatientEntity();
-        $patientEntity->code = $array['code'];
-        $patientEntity->lastName = $array['lastName'];
-        $patientEntity->firstName = $array['firstName'];
-        $patientEntity->birthDay = $array['birthDay'];
-        $patientEntity->birthMonth = $array['birthMonth'];
-        $patientEntity->birthYear = $array['birthYear'];
-        $patientEntity->gender = $array['gender'];
-        $patientEntity->registrationDate = $array['registrationDate'];
-        $patientEntity->investigatorName = $array['investigatorName'];
-        $patientEntity->studyName = $studyName;
-        $patientEntity->centerCode = $array['centerCode'];
-        return $patientEntity;
     }
 
 }

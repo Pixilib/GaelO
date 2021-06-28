@@ -9,7 +9,6 @@ use App\GaelO\Exceptions\GaelONotFoundException;
 use App\GaelO\Interfaces\Repositories\DicomStudyRepositoryInterface;
 use App\GaelO\Services\AuthorizationService;
 use Exception;
-use Illuminate\Support\Facades\Log;
 
 class GetKnownOrthancID{
 

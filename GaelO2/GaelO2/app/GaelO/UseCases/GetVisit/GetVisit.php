@@ -6,6 +6,7 @@ use App\GaelO\Entities\VisitEntity;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\ReviewStatusRepositoryInterface;
+use App\GaelO\Interfaces\Repositories\UserRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
 use App\GaelO\Services\AuthorizationVisitService;
 use Exception;
@@ -15,11 +16,13 @@ class GetVisit {
     private VisitRepositoryInterface $visitRepositoryInterface;
     private ReviewStatusRepositoryInterface $reviewStatusRepositoryInterface;
     private AuthorizationVisitService $authorizationVisitService;
+    private UserRepositoryInterface $userRepositoryInterface;
 
-    public function __construct(VisitRepositoryInterface $visitRepositoryInterface, ReviewStatusRepositoryInterface $reviewStatusRepositoryInterface, AuthorizationVisitService $authorizationVisitService){
+    public function __construct(VisitRepositoryInterface $visitRepositoryInterface, ReviewStatusRepositoryInterface $reviewStatusRepositoryInterface, UserRepositoryInterface $userRepositoryInterface, AuthorizationVisitService $authorizationVisitService){
         $this->visitRepositoryInterface = $visitRepositoryInterface;
         $this->authorizationVisitService = $authorizationVisitService;
         $this->reviewStatusRepositoryInterface = $reviewStatusRepositoryInterface;
+        $this->userRepositoryInterface =  $userRepositoryInterface;
     }
 
     public function execute(GetVisitRequest $getVisitRequest, GetVisitResponse $getVisitResponse){
@@ -31,6 +34,7 @@ class GetVisit {
 
             $visitEntity = $this->visitRepositoryInterface->getVisitContext($visitId);
             $reviewStatus = $this->reviewStatusRepositoryInterface->getReviewStatus($visitId, $getVisitRequest->studyName);
+            $userEntity  = $this->userRepositoryInterface->find($visitEntity['creator_user_id']);
 
             $responseEntity = VisitEntity::fillFromDBReponseArray($visitEntity);
             $responseEntity->setVisitContext(
@@ -41,9 +45,9 @@ class GetVisit {
                 $visitEntity['visit_type']['visit_group']['id']
             );
             $responseEntity->setReviewVisitStatus($reviewStatus['review_status'], $reviewStatus['review_conclusion_value'] ,$reviewStatus['review_conclusion_date']);
+            $responseEntity->setCreatorDetails($userEntity['username'], $userEntity['firstname'], $userEntity['lastname']);
 
             $getVisitResponse->body = $responseEntity;
-
             $getVisitResponse->status = 200;
             $getVisitResponse->statusText = 'OK';
 
