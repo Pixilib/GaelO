@@ -7,7 +7,7 @@ use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\ReviewRepositoryInterface;
 use App\GaelO\Services\AuthorizationVisitService;
-use App\GaelO\Entities\ReviewFormEntity;
+use App\GaelO\Entities\ReviewEntity;
 use Exception;
 
 class GetReviewFormFromVisit
@@ -36,7 +36,7 @@ class GetReviewFormFromVisit
             $reviews = [];
 
             foreach ($reviewEntity as $review) {
-                $reviews[] = ReviewFormEntity::fillFromDBReponseArray($review);
+                $reviews[] = ReviewEntity::fillFromDBReponseArray($review);
             }
 
             $getReviewFormFromVisitResponse->body = $reviews;

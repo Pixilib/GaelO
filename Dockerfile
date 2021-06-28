@@ -28,7 +28,18 @@ RUN mkdir /stone
 RUN unzip wasm-binaries.zip -d /stone
 
 
-FROM php:8.0.7-apache
+FROM php:8.0.7-apache-buster
+
+RUN apt-get update -qy
+
+#Add Postgres repository as postgres client will be available only in the next major release of debian
+RUN apt -y install gnupg gnupg2 wget
+
+RUN wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add -
+
+RUN echo "deb http://apt.postgresql.org/pub/repos/apt/ buster-pgdg main" |tee  /etc/apt/sources.list.d/pgdg.list
+
+RUN cat /etc/apt/sources.list.d/pgdg.list
 
 RUN apt-get update -qy && \
     apt-get install -y --no-install-recommends apt-utils\

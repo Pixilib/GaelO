@@ -50,7 +50,7 @@ class RegisterDicomStudyService
         $this->dicomSeriesRepositoryInterface = $dicomSeriesRepositoryInterface;
     }
 
-    public function setData(int $visitId, string $studyName, string $userId, string $studyOrthancId, string $originalStudyOrthancId)
+    public function setData(int $visitId, string $studyName, int $userId, string $studyOrthancId, string $originalStudyOrthancId)
     {
         $this->orthancService->setOrthancServer(true);
         $this->visitId = $visitId;
@@ -72,7 +72,7 @@ class RegisterDicomStudyService
         $studyOrthancObject->retrieveStudyData();
 
         //Check that original OrthancID is unknown for this study
-        if ( ! $this->dicomStudyRepositoryInterface->isExistingOriginalOrthancStudyID($this->originalStudyOrthancId, $this->studyName)) {
+        if (!$this->dicomStudyRepositoryInterface->isExistingOriginalOrthancStudyID($this->originalStudyOrthancId, $this->studyName)) {
 
             //Fill la database
             $this->addToDbStudy($studyOrthancObject);
@@ -83,11 +83,9 @@ class RegisterDicomStudyService
             }
 
             return $studyOrthancObject->studyInstanceUID;
-
         } else {
             throw new GaelOBadRequestException("Error during import Study Already Known");
         }
-
     }
 
     /**
@@ -99,47 +97,24 @@ class RegisterDicomStudyService
         $studyAcquisitionDate = $this->parseDateTime($studyOrthancObject->studyDate, 1);
         $studyAcquisitionTime = $this->parseDateTime($studyOrthancObject->studyTime, 2);
 
-        if ($this->dicomStudyRepositoryInterface->isExistingStudyInstanceUID($studyOrthancObject->studyInstanceUID)) {
-
-            $this->dicomStudyRepositoryInterface->updateStudy(
-                $studyOrthancObject->studyOrthancId,
-                $this->visitId,
-                $this->userId,
-                Util::now(),
-                $studyAcquisitionDate,
-                $studyAcquisitionTime,
-                $this->originalStudyOrthancId,
-                $studyOrthancObject->studyInstanceUID,
-                $studyOrthancObject->studyDescription,
-                $studyOrthancObject->parentPartientOrthancID,
-                $studyOrthancObject->parentPatientName,
-                $studyOrthancObject->parentPatientID,
-                $studyOrthancObject->numberOfSeriesInStudy,
-                $studyOrthancObject->countInstances,
-                $studyOrthancObject->diskSizeMb,
-                $studyOrthancObject->uncompressedSizeMb
-            );
-        } else {
-
-            $this->dicomStudyRepositoryInterface->addStudy(
-                $studyOrthancObject->studyOrthancID,
-                $this->visitId,
-                $this->userId,
-                Util::now(),
-                $studyAcquisitionDate,
-                $studyAcquisitionTime,
-                $this->originalStudyOrthancId,
-                $studyOrthancObject->studyInstanceUID,
-                $studyOrthancObject->studyDescription,
-                $studyOrthancObject->parentPartientOrthancID,
-                $studyOrthancObject->parentPatientName,
-                $studyOrthancObject->parentPatientID,
-                $studyOrthancObject->numberOfSeriesInStudy,
-                $studyOrthancObject->countInstances,
-                $studyOrthancObject->diskSizeMb,
-                $studyOrthancObject->uncompressedSizeMb
-            );
-        }
+        $this->dicomStudyRepositoryInterface->addStudy(
+            $studyOrthancObject->studyOrthancID,
+            $this->visitId,
+            $this->userId,
+            Util::now(),
+            $studyAcquisitionDate,
+            $studyAcquisitionTime,
+            $this->originalStudyOrthancId,
+            $studyOrthancObject->studyInstanceUID,
+            $studyOrthancObject->studyDescription,
+            $studyOrthancObject->parentPartientOrthancID,
+            $studyOrthancObject->parentPatientName,
+            $studyOrthancObject->parentPatientID,
+            $studyOrthancObject->numberOfSeriesInStudy,
+            $studyOrthancObject->countInstances,
+            $studyOrthancObject->diskSizeMb,
+            $studyOrthancObject->uncompressedSizeMb
+        );
     }
 
     /**
@@ -151,55 +126,30 @@ class RegisterDicomStudyService
 
         $serieAcquisitionDate = $this->parseDateTime($series->seriesDate, 1);
         $serieAcquisitionTime = $this->parseDateTime($series->seriesTime, 2);
-        $injectedDateTime =$this->parseDateTime($series->injectedDateTime, 0);
+        $injectedDateTime = $this->parseDateTime($series->injectedDateTime, 0);
 
-        if ($this->dicomSeriesRepositoryInterface->isExistingSeriesInstanceUID($series->seriesInstanceUID)) {
-
-            $this->dicomSeriesRepositoryInterface->updateSeries(
-                $series->serieOrthancID,
-                $serieAcquisitionDate,
-                $serieAcquisitionTime,
-                $series->modality,
-                $series->seriesDescription,
-                $series->injectedDose,
-                $series->radiopharmaceutical,
-                $series->halfLife,
-                $series->injectedTime,
-                $injectedDateTime,
-                $series->injectedActivity,
-                $series->patientWeight,
-                $series->numberOfInstanceInOrthanc,
-                $series->seriesInstanceUID,
-                $series->seriesNumber,
-                $series->diskSizeMb,
-                $series->uncompressedSizeMb,
-                $series->manufacturer,
-                $series->modelName
-            );
-        } else {
-            $this->dicomSeriesRepositoryInterface->addSeries(
-                $series->serieOrthancID,
-                $studyInstanceUID,
-                $serieAcquisitionDate,
-                $serieAcquisitionTime,
-                $series->modality,
-                $series->seriesDescription,
-                $series->injectedDose,
-                $series->radiopharmaceutical,
-                $series->halfLife,
-                $series->injectedTime,
-                $injectedDateTime,
-                $series->injectedActivity,
-                $series->patientWeight,
-                $series->numberOfInstanceInOrthanc,
-                $series->seriesInstanceUID,
-                $series->seriesNumber,
-                $series->diskSizeMb,
-                $series->uncompressedSizeMb,
-                $series->manufacturer,
-                $series->modelName
-            );
-        }
+        $this->dicomSeriesRepositoryInterface->addSeries(
+            $series->serieOrthancID,
+            $studyInstanceUID,
+            $serieAcquisitionDate,
+            $serieAcquisitionTime,
+            $series->modality,
+            $series->seriesDescription,
+            $series->injectedDose,
+            $series->radiopharmaceutical,
+            $series->halfLife,
+            $series->injectedTime,
+            $injectedDateTime,
+            $series->injectedActivity,
+            $series->patientWeight,
+            $series->numberOfInstanceInOrthanc,
+            $series->seriesInstanceUID,
+            $series->seriesNumber,
+            $series->diskSizeMb,
+            $series->uncompressedSizeMb,
+            $series->manufacturer,
+            $series->modelName
+        );
 
     }
 

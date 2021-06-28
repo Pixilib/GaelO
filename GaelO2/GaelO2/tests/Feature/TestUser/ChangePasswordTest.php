@@ -28,10 +28,10 @@ class ChangePasswordTest extends TestCase
         parent::setUp();
         $this->user = User::factory()
             ->status(Constants::USER_STATUS_ACTIVATED)
-            ->password(Hash::make('password12345'))
-            ->passwordTemporary(Hash::make('temporaryPassword'))
-            ->passwordPrevious1(Hash::make('previousPassword1'))
-            ->passwordPrevious2(Hash::make('previousPassword2'))
+            ->password('password12345')
+            ->passwordTemporary('temporaryPassword')
+            ->passwordPrevious1('previousPassword1')
+            ->passwordPrevious2('previousPassword2')
             ->create();
 
         $this->validPayload = [

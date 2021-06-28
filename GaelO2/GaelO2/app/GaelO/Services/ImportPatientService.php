@@ -41,8 +41,7 @@ class ImportPatientService
 
 	public function import() {
         $studyEntity = $this->studyRepository->find($this->studyName);
-        $patientEntities = $this->patientRepository->getPatientsInStudy($this->studyName);
-        $this->existingPatientCode = array_map(function ($patientEntity){ return $patientEntity['code']; }, $patientEntities);
+        $this->existingPatientCode = $this->patientRepository->getAllPatientsCode();
 
         $allCenters = $this->centerRepository->getAll();
         //Store array of all existing centers code
@@ -137,8 +136,8 @@ class ImportPatientService
 	 * Check that patient's center is one of known center in the plateform
 	 * @param $patientNumCenter
 	 */
-	private function isExistingCenter($patientNumCenter) : void {
-        if (!in_array($patientNumCenter, $this->existingCenter)) {
+	private function isExistingCenter(?int $patientNumCenter) : void {
+        if ($patientNumCenter === null ||!in_array($patientNumCenter, $this->existingCenter)) {
             throw new GaelOBadRequestException('Unknown Center');
         }
 	}

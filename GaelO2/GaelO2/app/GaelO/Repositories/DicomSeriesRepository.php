@@ -71,40 +71,6 @@ class DicomSeriesRepository implements DicomSeriesRepositoryInterface {
 
     }
 
-    public function updateSeries(string $seriesOrthancID, ?string $acquisitionDate,
-            ?string $acquisitionTime, ?string $modality, ?string $seriesDescription,
-            ?int $injectedDose, ?string $radiopharmaceutical, ?int $halfLife,
-            ?string $injectedTime,?string $injectedDateTime, ?int $injectedActivity, ?int $patientWeight,
-            int $numberOfInstances, string $seriesUID, ?string $seriesNumber,
-            int $seriesDiskSize, int $seriesUncompressedDiskSize, ?string $manufacturer,
-            ?string $modelName ) : void {
-
-        $data = [
-        'acquisition_date' => $acquisitionDate,
-        'acquisition_time' => $acquisitionTime,
-        'modality' => $modality,
-        'series_description'=> $seriesDescription,
-        'injected_dose'=>$injectedDose,
-        'radiopharmaceutical'=>$radiopharmaceutical,
-        'half_life'=>$halfLife,
-        'injected_time'=>$injectedTime,
-        'injected_datetime'=>$injectedDateTime,
-        'injected_activity'=>$injectedActivity,
-        'patient_weight'=>$patientWeight,
-        'number_of_instances'=>$numberOfInstances,
-        'series_uid'=>$seriesUID,
-        'series_number'=>$seriesNumber,
-        'disk_size'=>$seriesDiskSize,
-        'uncompressed_disk_size'=>$seriesUncompressedDiskSize,
-        'manufacturer'=>$manufacturer,
-        'model_name'=>$modelName
-
-        ];
-
-        $this->update($seriesUID, $data);
-
-    }
-
     public function isExistingSeriesInstanceUID(string $seriesInstanceUID) : bool {
         return empty($this->dicomSeries->find($seriesInstanceUID)) ? false : true;
     }

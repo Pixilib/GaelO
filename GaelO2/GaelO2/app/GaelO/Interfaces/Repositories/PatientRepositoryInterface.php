@@ -10,6 +10,8 @@ interface PatientRepositoryInterface {
 
     public function find($code) : array ;
 
+    public function getAllPatientsCode() : array ;
+
     public function getPatientWithCenterDetails(int $code) : array ;
 
     public function getPatientsInStudy(string $studyName) : array ;

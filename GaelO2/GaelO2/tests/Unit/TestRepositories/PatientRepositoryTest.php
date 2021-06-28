@@ -43,8 +43,8 @@ class PatientRepositoryTest extends TestCase
         $patientEntity = new PatientEntity();
 
         $patientEntity->code = 123456789123456;
-        $patientEntity->lastName = 'S';
-        $patientEntity->firstName = 'K';
+        $patientEntity->lastname = 'S';
+        $patientEntity->firstname = 'K';
         $patientEntity->birthDay = 25;
         $patientEntity->birthMonth = 05;
         $patientEntity->birthYear = 1900;
@@ -103,6 +103,13 @@ class PatientRepositoryTest extends TestCase
 
         $patients = $this->patientRepository->getPatientsInStudy($study->first()->name);
         $this->assertEquals(6, sizeof($patients));
+    }
+
+    public function testGetAllPatientCode()
+    {
+        Patient::factory()->count(30)->create();
+        $patientCodes = $this->patientRepository->getAllPatientsCode();
+        $this->assertEquals(30, sizeof($patientCodes));
     }
 
     public function testGetPatientInStudyInCenters()
