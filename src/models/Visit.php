@@ -198,7 +198,7 @@ class Visit {
         
 		$visitType=$this->getVisitCharacteristics();
         
-		if (!$visitType->localFormNeeded || $visitType->qcNeeded) {
+		if (!$visitType->localFormNeeded || !$visitType->qcNeeded) {
 
 			//If QC Not needed validate it
 			if (!$visitType->qcNeeded) {
