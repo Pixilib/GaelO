@@ -582,7 +582,7 @@ class Visit {
 	 */
 	public function changeReviewTargetLesions(?array $targetLesions) : void {
 		$dbStatus=$this->linkpdo->prepare('UPDATE visits SET 
-                                            review_target_lesions = :reviewTargetLesions, 
+                                            review_target_lesions = :reviewTargetLesions
                                             WHERE visits.id_visit = :id_visit');
 		$dbStatus->execute(array(
 			'id_visit' => $this->id_visit,
@@ -596,7 +596,7 @@ class Visit {
 	 * Get the final target lesion for this visit
 	 */
 	public function getReviewTargetLesionsArray() {
-		return $this->reviewTargetLesions !=null ? json_decode($this->reviewTargetLesions) : null;
+		return $this->reviewTargetLesions !=null ? json_decode($this->reviewTargetLesions, true) : null;
 	}
     
 	/**
