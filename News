@@ -3,6 +3,7 @@ GaelO
 --Pending Changes --
   Upgrade Uploader to
   DicomTag constraints for upload
+  Target Lesion for Visits
   Fix : QC form comment mendatory for each refused item
   Fix : Remaining reason value when visit creation interface switched from not done to done
 
