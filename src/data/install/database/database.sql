@@ -658,6 +658,7 @@ CREATE TABLE `visits` (
   `review_status` set('Not Done','Ongoing','Wait Adjudication','Done') NOT NULL DEFAULT 'Not Done',
   `review_conclusion_value` tinytext,
   `review_conclusion_date` datetime DEFAULT NULL,
+  `review_target_lesions` text,
   `last_reminder_upload` datetime DEFAULT NULL,
   `deleted` tinyint(1) NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

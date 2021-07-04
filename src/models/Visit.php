@@ -52,6 +52,7 @@ class Visit {
 	public $reviewAvailable;
 	public $reviewConclusionDate;
 	public $reviewConclusion;
+	public $reviewTargetLesions;
 	public $lastReminderUpload;
 	public $deleted;
     
@@ -125,6 +126,7 @@ class Visit {
 		$this->reviewAvailable=$visitDbData['review_available'];
 		$this->reviewStatus=$visitDbData['review_status'];
 		$this->reviewConclusionDate=$visitDbData['review_conclusion_date'];
+		$this->reviewTargetLesions=$visitDbData['review_target_lesions'];
 		$this->reviewConclusion=$visitDbData['review_conclusion_value'];
 		$this->correctiveActionUsername=$visitDbData['corrective_action_username'];
 		$this->correctiveActionDate=$visitDbData['corrective_action_date'];
@@ -573,6 +575,28 @@ class Visit {
         
 		$this->refreshVisitData();
         
+	}
+
+	/**
+	 * Store final target lesions in database
+	 */
+	public function changeReviewTargetLesions(?array $targetLesions) : void {
+		$dbStatus=$this->linkpdo->prepare('UPDATE visits SET 
+                                            review_target_lesions = :reviewTargetLesions, 
+                                            WHERE visits.id_visit = :id_visit');
+		$dbStatus->execute(array(
+			'id_visit' => $this->id_visit,
+			'reviewTargetLesions'=> json_encode($targetLesions),
+		));
+        
+		$this->refreshVisitData();
+	}
+
+	/**
+	 * Get the final target lesion for this visit
+	 */
+	public function getReviewTargetLesionsArray() {
+		return $this->reviewTargetLesions !=null ? json_decode($this->reviewTargetLesions) : null;
 	}
     
 	/**
