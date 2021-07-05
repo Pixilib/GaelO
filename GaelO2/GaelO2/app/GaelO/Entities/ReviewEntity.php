@@ -8,6 +8,8 @@ class ReviewEntity {
     public string $studyName;
     public int $userId;
     public ?string $username = null;
+    public ?string $lastname = null;
+    public ?string $firstname = null;
     public string $date;
     public int $visitId;
     public bool $validated;
@@ -30,8 +32,10 @@ class ReviewEntity {
         return $reviewEntity;
     }
 
-    public function setInvestigatorDetails(string $username) : void {
+    public function setUserDetails(string $username, string $lastname, string $firstname) : void {
         $this->username = $username;
+        $this->lastname = $lastname;
+        $this->firstname = $firstname;
     }
 
 }
