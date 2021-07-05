@@ -19,6 +19,7 @@ class DicomStudyEntity
     public array $parentVisit;
     public array $childSeries;
     public array $uploaderDetails;
+    public array $series = [];
 
     public static function fillFromDBReponseArray(array $array)
     {
