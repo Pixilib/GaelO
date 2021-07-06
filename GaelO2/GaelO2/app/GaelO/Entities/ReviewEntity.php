@@ -7,9 +7,7 @@ class ReviewEntity {
     public int $id;
     public string $studyName;
     public int $userId;
-    public ?string $username = null;
-    public ?string $lastname = null;
-    public ?string $firstname = null;
+    public UserEntity $user;
     public string $date;
     public int $visitId;
     public bool $validated;
@@ -33,9 +31,10 @@ class ReviewEntity {
     }
 
     public function setUserDetails(string $username, string $lastname, string $firstname) : void {
-        $this->username = $username;
-        $this->lastname = $lastname;
-        $this->firstname = $firstname;
+        $this->user = new UserEntity();
+        $this->user->username = $username;
+        $this->user->lastname = $lastname;
+        $this->user->firstname = $firstname;
     }
 
 }

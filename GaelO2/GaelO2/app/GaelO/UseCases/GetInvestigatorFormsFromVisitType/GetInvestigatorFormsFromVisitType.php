@@ -17,12 +17,15 @@ class GetInvestigatorFormsFromVisitType {
     private VisitRepositoryInterface $visitRepositoryInterface;
     private ReviewRepositoryInterface $reviewRepositoryInterface;
 
-    public function __construct(AuthorizationService $authorizationService, VisitRepositoryInterface $visitRepositoryInterface, ReviewRepositoryInterface $reviewRepositoryInterface)
+    public function __construct(
+        AuthorizationService $authorizationService, 
+        VisitRepositoryInterface $visitRepositoryInterface, 
+        ReviewRepositoryInterface $reviewRepositoryInterface,
+        )
     {
         $this->authorizationService = $authorizationService;
         $this->visitRepositoryInterface = $visitRepositoryInterface;
         $this->reviewRepositoryInterface = $reviewRepositoryInterface;
-
     }
 
     public function execute(GetInvestigatorFormsFromVisitTypeRequest $getInvestigatorFormsFromVisitTypeRequest, GetInvestigatorFormsFromVisitTypeResponse $getInvestigatorFormsFromVisitTypeResponse){
@@ -44,10 +47,9 @@ class GetInvestigatorFormsFromVisitType {
             $answer = [];
 
             foreach ($reviews as $review) {
-
                 $reviewEntity = ReviewEntity::fillFromDBReponseArray($review);
+                $reviewEntity->setUserDetails($review['user']['username'], $review['user']['lastname'], $review['user']['firstname']);
                 $answer[] = $reviewEntity;
-
             }
 
             $getInvestigatorFormsFromVisitTypeResponse->body = $answer;
