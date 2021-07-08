@@ -45,6 +45,7 @@ if ($accessCheck && in_array($_SESSION['role'], array(User::INVESTIGATOR, User::
 		$formProcessor->storeAssociatedFile($fileKey, $fileMime, $fileSize, $tempFileLocation);
 		echo( json_encode((true)) );
 	}catch (Throwable $t){
+		error_log($t->getMessage());
 		echo (json_encode((false)) );
 	}
 
