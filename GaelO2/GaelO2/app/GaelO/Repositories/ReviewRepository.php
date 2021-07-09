@@ -160,7 +160,7 @@ class ReviewRepository implements ReviewRepositoryInterface {
 
     public function getInvestigatorsFormsFromVisitIdArrayStudyName(array $visitId, string $studyName, bool $withTrashed) : array {
 
-        $query = $this->review->whereIn('visit_id', $visitId)->where('study_name', $studyName)->where('local', true);
+        $query = $this->review->whereIn('visit_id', $visitId)->where('study_name', $studyName)->where('local', true)->with('user');
         if($withTrashed){
             $query->withTrashed();
         }
