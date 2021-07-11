@@ -34,7 +34,7 @@ class GetInvestigatorForm{
             $user = $this->userRepositoryInterface->find($investigatorFormEntity['user_id']);
 
             $investigatorForm = ReviewEntity::fillFromDBReponseArray($investigatorFormEntity);
-            $investigatorForm->setInvestigatorDetails($user['username']);
+            $investigatorForm->setUserDetails($user['username'], $user['lastname'], $user['firstname']);
 
             $getInvestigatorFormResponse->body = $investigatorForm;
             $getInvestigatorFormResponse->status = 200;

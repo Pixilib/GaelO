@@ -18,7 +18,7 @@ class GetReviewFormFromVisit
 
     public function __construct(
         AuthorizationVisitService $authorizationVisitService,
-        ReviewRepositoryInterface $reviewRepositoryInterface
+        ReviewRepositoryInterface $reviewRepositoryInterface,
     ) {
         $this->authorizationVisitService = $authorizationVisitService;
         $this->reviewRepositoryInterface = $reviewRepositoryInterface;
@@ -36,9 +36,10 @@ class GetReviewFormFromVisit
             $reviews = [];
 
             foreach ($reviewEntity as $review) {
-                $reviews[] = ReviewEntity::fillFromDBReponseArray($review);
+                $detailedReview = ReviewEntity::fillFromDBReponseArray($review);
+                $detailedReview->setUserDetails($review['user']['username'], $review['user']['lastname'], $review['user']['firstname']);
+                $reviews[] = $detailedReview;
             }
-
             $getReviewFormFromVisitResponse->body = $reviews;
             $getReviewFormFromVisitResponse->status = 200;
             $getReviewFormFromVisitResponse->statusText = 'OK';

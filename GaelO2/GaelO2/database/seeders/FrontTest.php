@@ -33,6 +33,9 @@ class FrontTest extends Seeder
 
         $this->user = User::factory()->administrator()->username('administrator')->password('administrator')
             ->centerCode(0)->create();
+
+        User::factory()->username('testPassword')->status('Unconfirmed')->password('password', 'password_temporary')
+            ->centerCode(0)->create();
         
         Study::factory()->count(5)->create();
 

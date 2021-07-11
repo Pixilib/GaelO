@@ -98,11 +98,14 @@ class UserFactory extends Factory
     }
 
 
-    public function password(string $password){
+    /**
+     * PasswordType should be password, password_temporary, password_previous1 or password_previous2
+     */
+    public function password(string $password, string $passwordType = 'password'){
 
-        return $this->state(function (array $attributes) use ($password) {
+        return $this->state(function (array $attributes) use ($password, $passwordType) {
             return [
-                'password' => Hash::make($password),
+                $passwordType => Hash::make($password),
             ];
         });
 
