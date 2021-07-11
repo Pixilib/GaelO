@@ -189,7 +189,7 @@ class VisitRepository implements VisitRepositoryInterface
         return $visits->toArray();
     }
 
-    public function getVisitsInVisitType(int $visitTypeId, bool $withReviewStatus = false, string $studyName = null, bool $withTrashed = false ) : array{
+    public function getVisitsInVisitType(int $visitTypeId, bool $withReviewStatus = false, string $studyName = null, bool $withTrashed = false, bool $withCenter = false ) : array{
 
         $visits = $this->visit->whereHas('visitType', function ($query) use ($visitTypeId) {
             $query->where('id', $visitTypeId);
@@ -199,6 +199,10 @@ class VisitRepository implements VisitRepositoryInterface
             $visits->with(['reviewStatus' => function ($q) use ($studyName) {
                 $q->where('study_name', $studyName);
             }, 'patient']);
+        }
+
+        if($withCenter){
+            $visits->with('patient.center');
         }
 
         if($withTrashed){

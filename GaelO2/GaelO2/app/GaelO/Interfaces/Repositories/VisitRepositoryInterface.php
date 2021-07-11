@@ -65,7 +65,7 @@ interface VisitRepositoryInterface
 
     public function reactivateVisit(int $visitId) : void ;
 
-    public function getVisitsInVisitType(int $visitTypeId, bool $withReviewStatus = false, string $studyName = null, bool $withTrashed = false ) : array;
+    public function getVisitsInVisitType(int $visitTypeId, bool $withReviewStatus = false, string $studyName = null, bool $withTrashed = false, bool $withCenter = false ) : array;
 
     public function getVisitContextByVisitIdArray(array $visitIdArray)  : array ;
 }

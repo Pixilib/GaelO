@@ -316,5 +316,31 @@ class InvestigatorFormTest extends TestCase
     }
 
 
+    public function testGetInvestigatorFormMetadata(){
+        $study = Study::factory()->name('TEST')->create();
+        $visitGroup = VisitGroup::factory()->studyName($study->name)->modality('PT')->create();
+        $visitType  = VisitType::factory()->visitGroupId($visitGroup->id)->name('PET0')->localFormNeeded()->create();
+
+        $currentUserId = AuthorizationTools::actAsAdmin(false);
+        AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $study->name);
+
+        $answer = $this->get('api/studies/'.$study->name.'/visit-types/'.$visitType->id.'/investigator-forms/metadata');
+        $answer->assertStatus(200);
+
+    }
+
+    public function testGetInvestigatorFormMetadataShouldFailNotSupervisor(){
+        $study = Study::factory()->name('TEST')->create();
+        $visitGroup = VisitGroup::factory()->studyName($study->name)->modality('PT')->create();
+        $visitType  = VisitType::factory()->visitGroupId($visitGroup->id)->name('PET0')->localFormNeeded()->create();
+
+        AuthorizationTools::actAsAdmin(false);
+
+        $answer = $this->get('api/studies/'.$study->name.'/visit-types/'.$visitType->id.'/investigator-forms/metadata');
+        $answer->assertStatus(403);
+
+    }
+
+
 
 }

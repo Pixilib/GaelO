@@ -14,12 +14,11 @@ class PatientEntity {
     public string $registrationDate;
     public ?string $investigatorName;
     public ?int $centerCode;
-    public ?string $centerName;
-    public ?string $countryCode;
     public string $studyName;
     public string $inclusionStatus;
     public ?string $withdrawReason;
     public ?string $withdrawDate;
+    public CenterEntity $center;
 
     public static function fillFromDBReponseArray(array $array) : PatientEntity{
         $patientEntity  = new PatientEntity();
@@ -41,8 +40,9 @@ class PatientEntity {
     }
 
     public function fillCenterDetails(string $centerName, string $countryCode) : void {
-        $this->centerName = $centerName;
-        $this->countryCode = $countryCode;
+        $this->center = new CenterEntity();
+        $this->center->name = $centerName;
+        $this->center->countryCode = $countryCode;
     }
 
 }
