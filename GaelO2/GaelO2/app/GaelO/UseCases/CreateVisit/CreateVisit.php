@@ -38,7 +38,9 @@ class CreateVisit {
             $this->checkAuthorization($createVisitRequest->currentUserId, $createVisitRequest->patientCode);
 
             //If visit was not done, force visitDate to null
-            if ($createVisitRequest->statusDone === Constants::VISIT_STATUS_NOT_DONE) $createVisitRequest->visitDate = null;
+            if ($createVisitRequest->statusDone === Constants::VISIT_STATUS_NOT_DONE && !empty($createVisitRequest->visitDate)) {
+                throw new GaelOBadRequestException('Visit Date should not be specified for visit status done');
+            }
 
             if ($createVisitRequest->statusDone === Constants::VISIT_STATUS_NOT_DONE && empty($createVisitRequest->reasonForNotDone) ){
                 throw new GaelOBadRequestException('Reason must be specified is visit not done');
