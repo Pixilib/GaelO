@@ -739,5 +739,36 @@ class Visit {
         
 		return new Visit($createdId, $linkpdo);
 	}
+
+
+	public function getPetDetailsFromVisit() : array{
+
+        $seriesDetails = $this->getSeriesDetails();
+        $resultObject = [];
+        $postInjectionDelay = 0;
+        foreach ($seriesDetails as $seriesObject) {
+            if ($seriesObject->modality == 'PT') {
+
+                
+                if (!empty($seriesObject->acquisitionDateTime) && !empty($seriesObject->injectedDateTime)) {
+                    $timeAcquisition = new DateTimeImmutable($seriesObject->acquisitionDateTime);
+                    $timeAcquisitionTimeStamp = $timeAcquisition->getTimestamp();
+                    $timeInjection = new DateTimeImmutable($seriesObject->injectedDateTime);
+                    $timeInjectionTimeStamp = $timeInjection->getTimestamp();
+                    $postInjectionDelay = ($timeAcquisitionTimeStamp - $timeInjectionTimeStamp) / (60);
+				}
+                break;
+            }
+        }
+
+        $resultObject= [
+            'postInjectionDelay' => $postInjectionDelay,
+            'modelName' => $seriesObject->modelName,
+            'manufacturer' =>$seriesObject->manufacturer,
+            'injectedDose' => $seriesObject->injectedDose / 10**6 
+        ];
+
+        return $resultObject;
+    }
     
 }
