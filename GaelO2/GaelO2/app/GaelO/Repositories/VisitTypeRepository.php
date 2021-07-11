@@ -26,13 +26,13 @@ class VisitTypeRepository implements VisitTypeRepositoryInterface {
         $this->visitType->findOrFail($id)->delete();
     }
 
-    public function createVisitType(int $visitGroupId, String $name, int $visitOrder, bool $localFormNeeded, bool $qcNeeded, bool $reviewNeeded,
+    public function createVisitType(int $visitGroupId, String $name, int $order, bool $localFormNeeded, bool $qcNeeded, bool $reviewNeeded,
                                     bool $optional, int $limitLowDays, int $limitUpDays, String $anonProfile, array $dicomContraints) : void {
 
         $data = [
             'visit_group_id'=> $visitGroupId,
             'name' => $name,
-            'order'=> $visitOrder,
+            'order'=> $order,
             'local_form_needed'=> $localFormNeeded,
             'qc_needed' => $qcNeeded,
             'review_needed'=>$reviewNeeded,

@@ -36,6 +36,8 @@ studies/{studyName}/visit-types/{visitTypeId}/visits (GET)
 studies/{studyName}/visit-types/{visitTypeId}/reviews (GET)
 studies/{studyName}/visit-types/{visitTypeId}/investigator-forms (GET)
 studies/{studyName}/visit-types/{visitTypeId}/dicom-studies (GET)
+studies/{studyName}/visit-types/{visitTypeId}/reviews/metadata (GET)
+studies/{studyName}/visit-types/{visitTypeId}/investigator-forms/metadata (GET)
 reviews/{id}/file (GET, POST, DELETE)
 
 Salim TODO :
@@ -52,11 +54,11 @@ Entity :
 => GetPossibleUpload => VisitEntity ?
 => GetReviewProgression => Visit + Review_status + Progression entity?
 => GetVisitTree => ?, visit ?
-Revoir les nested data des entity
 
 Model et db :
 - Patient => InclusionStatus à passer à status
 - Clé etrangere DicomStudy et DicomSeries non conventionnelle
+- Visit : Ajouter targetLesions
 - Type de variable a caster
 
 

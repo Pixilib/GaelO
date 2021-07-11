@@ -12,9 +12,7 @@ class TrackerEntity {
     public string $action_type;
     public ?string $action_details;
 
-    public ?string $username;
-    public ?string $lastname;
-    public ?string $firstname;
+    public UserEntity $user;
 
     public static function fillFromDBReponseArray(array $array){
         $trackerEntity  = new TrackerEntity();
@@ -30,9 +28,10 @@ class TrackerEntity {
     }
 
     public function setUserData(array $array){
-        $this->username = $array['username'];
-        $this->lastname = $array['lastname'];
-        $this->firstname = $array['firstname'];
+        $this->user = new UserEntity();
+        $this->user->username = $array['username'];
+        $this->user->lastname = $array['lastname'];
+        $this->user->firstname = $array['firstname'];
     }
 
 }
