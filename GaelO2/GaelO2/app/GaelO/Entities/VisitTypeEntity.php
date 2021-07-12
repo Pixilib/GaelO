@@ -6,7 +6,7 @@ class VisitTypeEntity {
     public int $id;
     public int $visitGroupId;
     public string $name;
-    public int $visitOrder;
+    public int $order;
     public bool $localFormNeeded;
     public bool $qcNeeded;
     public bool $reviewNeeded;
@@ -21,7 +21,7 @@ class VisitTypeEntity {
         $visitTypeEntity->id = $array['id'];
         $visitTypeEntity->visitGroupId = $array['visit_group_id'];
         $visitTypeEntity->name = $array['name'];
-        $visitTypeEntity->visitOrder = $array['order'];
+        $visitTypeEntity->order = $array['order'];
         $visitTypeEntity->localFormNeeded = $array['local_form_needed'];
         $visitTypeEntity->qcNeeded = $array['qc_needed'];
         $visitTypeEntity->reviewNeeded = $array['review_needed'];

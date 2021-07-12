@@ -66,7 +66,6 @@ class CreateVisitTest extends TestCase
 
         $validPayload = [
             'patientCode' => $this->patient->code,
-            'visitDate' => '2020-01-01',
             'statusDone' => Constants::VISIT_STATUS_NOT_DONE,
             'reasonForNotDone'=> 'unavailable'
         ];

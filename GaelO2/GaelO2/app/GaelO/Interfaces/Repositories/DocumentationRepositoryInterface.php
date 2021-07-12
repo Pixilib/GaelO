@@ -21,7 +21,7 @@ interface DocumentationRepositoryInterface
         bool $reviewer
     ): array ;
 
-    public function getDocumentationsOfStudy(string $studyName): array ;
+    public function getDocumentationsOfStudy(string $studyName, bool $withTrashed = false): array ;
 
     public function getDocumentationOfStudyWithRole(string $studyName, string $role): array;
 
@@ -37,4 +37,6 @@ interface DocumentationRepositoryInterface
     );
 
     public function isKnownDocumentation(string $name, string $version): bool;
+
+    public function reactivateDocumentation(int $documentationId): void;
 }

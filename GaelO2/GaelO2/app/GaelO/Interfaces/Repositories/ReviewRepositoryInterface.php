@@ -31,5 +31,5 @@ interface ReviewRepositoryInterface
 
     public function getReviewsFromVisitIdArrayStudyName(array $visitId, string $studyName, bool $withTrashed): array;
 
-    public function getInvestigatorsFormsFromVisitIdArrayStudyName(array $visitId, string $studyName, bool $withTrashed): array;
+    public function getInvestigatorsFormsFromVisitIdArrayStudyName(array $visitId, string $studyName, bool $withTrashed, bool $withUser = false): array;
 }

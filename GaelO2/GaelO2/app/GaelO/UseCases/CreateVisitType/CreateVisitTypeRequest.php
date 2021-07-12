@@ -6,7 +6,7 @@ class CreateVisitTypeRequest {
     public int $currentUserId;
     public String $visitGroupId;
     public String $name;
-    public int $visitOrder;
+    public int $order;
     public bool $localFormNeeded;
     public bool $qcNeeded;
     public bool $reviewNeeded;

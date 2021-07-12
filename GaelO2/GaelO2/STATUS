@@ -11,7 +11,7 @@ Visit Group : (GET), (POST), (DELETE) => OK
 Visit Type : (GET), (POST), (DELETE) => OK
 Affiliated Center  : (GET), (POST), (DELETE) =>OK
 Export-db : (POST) => OK
-Documentation (GET, POST, PATCH, DELETE) => OK
+Documentation (GET, POST, PATCH (Modify + Reactivate), DELETE) => OK
 Visit Dicoms File (GET) => OK
 Visit Dicoms (GET) => OK
 Tus : (All) => OK
@@ -36,33 +36,31 @@ studies/{studyName}/visit-types/{visitTypeId}/visits (GET)
 studies/{studyName}/visit-types/{visitTypeId}/reviews (GET)
 studies/{studyName}/visit-types/{visitTypeId}/investigator-forms (GET)
 studies/{studyName}/visit-types/{visitTypeId}/dicom-studies (GET)
+studies/{studyName}/visit-types/{visitTypeId}/reviews/metadata (GET)
+studies/{studyName}/visit-types/{visitTypeId}/investigator-forms/metadata (GET)
 reviews/{id}/file (GET, POST, DELETE)
 
 Salim TODO :
-
-GET DICOM FILE A VOIR CE QU IL SE PASSE SUR LE serveur
-POUR LES GET PASSER PAR LES REPOSITORY PLUTOT QUE PAR SERVICE ?
-
-Updater mail avec multi-lien vers ressource (1 lien par role) => A checker
 
 Stat avec Visit ajouter les clé patient (pour le filtre avec center) +- center name ? => fait, reste a ajouter nom des centres dans reponse
 Stat Dicom study a reflechir pour pouvoir filter par centre (necessite de requeter visit + patient)
 AskUnlock basé sur le VisitId ? => passer a review id
 Etudier refresh du token (evaluer impact avec telescope)
+Ajouter passeport purge pour vider la table periodiquement
+Refac pour la lecture eviter de passer par des services pour laisser les services à l'ecriture ?
 
 Entity :
 - Pluger toutes les reponses "data" sur ces entity response
 => GetPossibleUpload => VisitEntity ?
 => GetReviewProgression => Visit + Review_status + Progression entity?
 => GetVisitTree => ?, visit ?
-Revoir les nested data des entity
 
 Model et db :
 - Patient => InclusionStatus à passer à status
 - Clé etrangere DicomStudy et DicomSeries non conventionnelle
+- Visit : Ajouter targetLesions
 - Type de variable a caster
 
-Ajouter passeport purge pour vider la table periodiquement
 
 Messagerie à designer
 Creatable Visit : Manque Study Custom Logic (+dans front skip visites optionnelles ?)

@@ -30,13 +30,14 @@ class GetVisitsFromVisitType
             //SK ICI IL FAUT CHECKER QUE LE VISITTYPE EST BIEN LIE A UNE STUDY AVEC AUTORISATON POUR LE USER
             $this->checkAuthorization($getVisitsFromVisitTypeRequest->currentUserId, $studyName);
 
-            $dbData = $this->visitRepositoryInterface->getVisitsInVisitType($getVisitsFromVisitTypeRequest->visitTypeId, true, $studyName);
+            $dbData = $this->visitRepositoryInterface->getVisitsInVisitType($getVisitsFromVisitTypeRequest->visitTypeId, true, $studyName, false, true );
 
             $responseArray = [];
             foreach ($dbData as $data) {
                 $responseEntity = VisitEntity::fillFromDBReponseArray($data);
                 $responseEntity->setReviewVisitStatus($data['review_status']['review_status'], $data['review_status']['review_conclusion_value'], $data['review_status']['review_conclusion_date']);
                 $responseEntity->setPatientEntity($data['patient']);
+                $responseEntity->patient->fillCenterDetails($data['patient']['center']['name'], $data['patient']['center']['country_code']);
                 $responseArray[] = $responseEntity;
             }
 

@@ -13,6 +13,7 @@ class DocumentationEntity{
     public bool $controller;
     public bool $monitor;
     public bool $reviewer;
+    public ?string $deletedAt;
 
     public static function fillFromDBReponseArray(array $array){
         $documentationEntity  = new DocumentationEntity();
@@ -25,6 +26,7 @@ class DocumentationEntity{
         $documentationEntity->controller = $array['controller'];
         $documentationEntity->monitor = $array['monitor'];
         $documentationEntity->reviewer = $array['reviewer'];
+        $documentationEntity->deletedAt = $array['deleted_at'];
 
         return $documentationEntity;
     }

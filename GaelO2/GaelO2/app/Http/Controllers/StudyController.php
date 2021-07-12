@@ -17,6 +17,9 @@ use App\GaelO\UseCases\GetDicomsStudiesFromVisitType\GetDicomsStudiesFromVisitTy
 use App\GaelO\UseCases\GetInvestigatorFormsFromVisitType\GetInvestigatorFormsFromVisitType;
 use App\GaelO\UseCases\GetInvestigatorFormsFromVisitType\GetInvestigatorFormsFromVisitTypeRequest;
 use App\GaelO\UseCases\GetInvestigatorFormsFromVisitType\GetInvestigatorFormsFromVisitTypeResponse;
+use App\GaelO\UseCases\GetInvestigatorFormsMetadataFromVisitType\GetInvestigatorFormsMetadataFromVisitType;
+use App\GaelO\UseCases\GetInvestigatorFormsMetadataFromVisitType\GetInvestigatorFormsMetadataFromVisitTypeRequest;
+use App\GaelO\UseCases\GetInvestigatorFormsMetadataFromVisitType\GetInvestigatorFormsMetadataFromVisitTypeResponse;
 use App\GaelO\UseCases\GetKnownOrthancID\GetKnownOrthancID;
 use App\GaelO\UseCases\GetKnownOrthancID\GetKnownOrthancIDRequest;
 use App\GaelO\UseCases\GetKnownOrthancID\GetKnownOrthancIDResponse;
@@ -32,6 +35,9 @@ use App\GaelO\UseCases\GetReviewProgression\GetReviewProgressionResponse;
 use App\GaelO\UseCases\GetReviewsFromVisitType\GetReviewsFromVisitType;
 use App\GaelO\UseCases\GetReviewsFromVisitType\GetReviewsFromVisitTypeRequest;
 use App\GaelO\UseCases\GetReviewsFromVisitType\GetReviewsFromVisitTypeResponse;
+use App\GaelO\UseCases\GetReviewsMetadataFromVisitType\GetReviewsMetadataFromVisitType;
+use App\GaelO\UseCases\GetReviewsMetadataFromVisitType\GetReviewsMetadataFromVisitTypeRequest;
+use App\GaelO\UseCases\GetReviewsMetadataFromVisitType\GetReviewsMetadataFromVisitTypeResponse;
 use App\GaelO\UseCases\GetStudy\GetStudy;
 use App\GaelO\UseCases\GetStudy\GetStudyRequest;
 use App\GaelO\UseCases\GetStudy\GetStudyResponse;
@@ -239,6 +245,19 @@ class StudyController extends Controller
         return $this->getJsonResponse($getReviewsFromVisitTypeResponse->body, $getReviewsFromVisitTypeResponse->status, $getReviewsFromVisitTypeResponse->statusText);
     }
 
+    public function getReviewsMetadataFromVisitType(string $studyName, int $visitTypeId, GetReviewsMetadataFromVisitType $getReviewsMetadataFromVisitType, GetReviewsMetadataFromVisitTypeRequest $getReviewsMetadataFromVisitTypeRequest, GetReviewsMetadataFromVisitTypeResponse $getReviewsMetadataFromVisitTypeResponse){
+
+        $currentUser = Auth::user();
+        $getReviewsMetadataFromVisitTypeRequest->currentUserId = $currentUser['id'];
+        $getReviewsMetadataFromVisitTypeRequest->studyName = $studyName;
+        $getReviewsMetadataFromVisitTypeRequest->visitTypeId = $visitTypeId;
+
+        $getReviewsMetadataFromVisitType->execute($getReviewsMetadataFromVisitTypeRequest, $getReviewsMetadataFromVisitTypeResponse);
+
+        return $this->getJsonResponse($getReviewsMetadataFromVisitTypeResponse->body, $getReviewsMetadataFromVisitTypeResponse->status, $getReviewsMetadataFromVisitTypeResponse->statusText);
+
+    }
+
     public function getInvestigatorFormsFromVisitType(string $studyName, int $visitTypeId, GetInvestigatorFormsFromVisitType $getInvestigatorFormsFromVisitType, GetInvestigatorFormsFromVisitTypeRequest $getInvestigatorFormsFromVisitTypeRequest, GetInvestigatorFormsFromVisitTypeResponse $getInvestigatorFormsFromVisitTypeResponse)
     {
         $currentUser = Auth::user();
@@ -249,6 +268,17 @@ class StudyController extends Controller
         $getInvestigatorFormsFromVisitType->execute($getInvestigatorFormsFromVisitTypeRequest, $getInvestigatorFormsFromVisitTypeResponse);
 
         return $this->getJsonResponse($getInvestigatorFormsFromVisitTypeResponse->body, $getInvestigatorFormsFromVisitTypeResponse->status, $getInvestigatorFormsFromVisitTypeResponse->statusText);
+    }
+
+    public function getInvestigatorFormsMetadataFromVisitType(string $studyName, int $visitTypeId, GetInvestigatorFormsMetadataFromVisitType $getInvestigatorFormsMetadataFromVisitType, GetInvestigatorFormsMetadataFromVisitTypeRequest $getInvestigatorFormsMetadataFromVisitTypeRequest, GetInvestigatorFormsMetadataFromVisitTypeResponse $getInvestigatorFormsMetadataFromVisitTypeResponse){
+        $currentUser = Auth::user();
+        $getInvestigatorFormsMetadataFromVisitTypeRequest->currentUserId = $currentUser['id'];
+        $getInvestigatorFormsMetadataFromVisitTypeRequest->studyName = $studyName;
+        $getInvestigatorFormsMetadataFromVisitTypeRequest->visitTypeId = $visitTypeId;
+
+        $getInvestigatorFormsMetadataFromVisitType->execute($getInvestigatorFormsMetadataFromVisitTypeRequest, $getInvestigatorFormsMetadataFromVisitTypeResponse);
+
+        return $this->getJsonResponse($getInvestigatorFormsMetadataFromVisitTypeResponse->body, $getInvestigatorFormsMetadataFromVisitTypeResponse->status, $getInvestigatorFormsMetadataFromVisitTypeResponse->statusText);
     }
 
     public function getDicomStudiesFromVisitType(string $studyName, int $visitTypeId, GetDicomsStudiesFromVisitType $getDicomsStudiesFromVisitType, GetDicomsStudiesFromVisitTypeRequest $getDicomsStudiesFromVisitTypeRequest, GetDicomsStudiesFromVisitTypeResponse $getDicomsStudiesFromVisitTypeResponse)

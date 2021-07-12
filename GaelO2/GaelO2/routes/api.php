@@ -68,7 +68,9 @@ Route::middleware(['auth:api', 'refresh_token'])->group(function () {
     Route::get('studies/{studyName}/visits', [VisitController::class, 'getVisitsFromStudy'] );
     Route::get('studies/{studyName}/visit-types/{visitTypeId}/visits', [StudyController::class, 'getVisitsFromVisitType'] );
     Route::get('studies/{studyName}/visit-types/{visitTypeId}/reviews', [StudyController::class, 'getReviewsFromVisitType'] );
+    Route::get('studies/{studyName}/visit-types/{visitTypeId}/reviews/metadata', [StudyController::class, 'getReviewsMetadataFromVisitType'] );
     Route::get('studies/{studyName}/visit-types/{visitTypeId}/investigator-forms', [StudyController::class, 'getInvestigatorFormsFromVisitType'] );
+    Route::get('studies/{studyName}/visit-types/{visitTypeId}/investigator-forms/metadata', [StudyController::class, 'getInvestigatorFormsMetadataFromVisitType'] );
     Route::get('studies/{studyName}/visit-types/{visitTypeId}/dicom-studies', [StudyController::class, 'getDicomStudiesFromVisitType'] );
 
     //Study Routes
@@ -157,6 +159,7 @@ Route::middleware(['auth:api', 'refresh_token'])->group(function () {
     Route::post('documentations/{id}/file', [DocumentationController::class, 'uploadDocumentation'] );
     Route::delete('documentations/{id}', [DocumentationController::class, 'deleteDocumentation'] );
     Route::patch('documentations/{id}', [DocumentationController::class, 'modifyDocumentation'] );
+    Route::patch('documentations/{id}/reactivate', [DocumentationController::class, 'reactivateDocumentation'] );
 });
 
 

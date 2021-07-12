@@ -86,4 +86,29 @@ class GetReviewFormTest extends TestCase
 
     }
 
+
+    public function testGetReviewFormMetadata(){
+        $visitTypeId = $this->review->visit->visitType->id;
+        $studyName = $this->review->visit->visitType->visitGroup->study->name;
+
+        $currentUserId = AuthorizationTools::actAsAdmin(false);
+        AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $studyName);
+
+        $answer = $this->get('api/studies/'.$studyName.'/visit-types/'.$visitTypeId.'/reviews/metadata');
+        $answer->assertStatus(200);
+
+    }
+
+    public function testGetReviewFormMetadataShouldFailNotSupervisor(){
+
+        $visitTypeId = $this->review->visit->visitType->id;
+        $studyName = $this->review->visit->visitType->visitGroup->study->name;
+
+        AuthorizationTools::actAsAdmin(false);
+
+        $answer = $this->get('api/studies/'.$studyName.'/visit-types/'.$visitTypeId.'/reviews/metadata');
+        $answer->assertStatus(403);
+
+    }
+
 }

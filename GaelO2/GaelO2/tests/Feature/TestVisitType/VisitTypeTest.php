@@ -35,7 +35,7 @@ class VisitTypeTest extends TestCase
 
         $this->payload = [
             'name'=>'Baseline',
-            'visitOrder'=>0,
+            'order'=>0,
             'localFormNeeded'=>true,
             'qcNeeded'=>true,
             'reviewNeeded'=>true,
