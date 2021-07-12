@@ -30,7 +30,7 @@ class GetDocumentation {
             $answersArray = [] ;
 
             if($getDocumentationRequest->role === Constants::ROLE_SUPERVISOR){
-                $answersArray = $this->documentationRepositoryInterface->getDocumentationsOfStudy($getDocumentationRequest->studyName);
+                $answersArray = $this->documentationRepositoryInterface->getDocumentationsOfStudy($getDocumentationRequest->studyName, true);
             }else{
                 $answersArray = $this->documentationRepositoryInterface->getDocumentationOfStudyWithRole($getDocumentationRequest->studyName, $getDocumentationRequest->role);
             }

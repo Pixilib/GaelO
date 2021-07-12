@@ -20,6 +20,9 @@ use App\GaelO\UseCases\GetDocumentationFile\GetDocumentationFileResponse;
 use App\GaelO\UseCases\ModifyDocumentation\ModifyDocumentation;
 use App\GaelO\UseCases\ModifyDocumentation\ModifyDocumentationRequest;
 use App\GaelO\UseCases\ModifyDocumentation\ModifyDocumentationResponse;
+use App\GaelO\UseCases\ReactivateDocumentation\ReactivateDocumentation;
+use App\GaelO\UseCases\ReactivateDocumentation\ReactivateDocumentationRequest;
+use App\GaelO\UseCases\ReactivateDocumentation\ReactivateDocumentationResponse;
 use App\GaelO\Util;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -93,5 +96,15 @@ class DocumentationController extends Controller
         $modifyDocumentationRequest->currentUserId = $currentUser['id'];
         $modifyDocumentation->execute($modifyDocumentationRequest, $modifyDocumentationResponse);
         return $this->getJsonResponse($modifyDocumentationResponse->body, $modifyDocumentationResponse->status, $modifyDocumentationResponse->statusText);
+    }
+
+    public function reactivateDocumentation(int $documentationId, ReactivateDocumentation $reactivateDocumentation, ReactivateDocumentationRequest $reactivateDocumentationRequest, ReactivateDocumentationResponse $reactivateDocumentationResponse){
+        $currentUser = Auth::user();
+        $reactivateDocumentationRequest->currentUserId = $currentUser['id'];
+        $reactivateDocumentationRequest->documentationId = $documentationId;
+
+        $reactivateDocumentation->execute($reactivateDocumentationRequest, $reactivateDocumentationResponse);
+
+        return $this->getJsonResponse($reactivateDocumentationResponse->body, $reactivateDocumentationResponse->status, $reactivateDocumentationResponse->statusText);
     }
 }

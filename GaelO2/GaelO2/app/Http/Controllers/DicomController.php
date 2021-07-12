@@ -142,4 +142,5 @@ class DicomController extends Controller
                 ->setStatusCode($getDicomsFileSupervisorResponse->status, $getDicomsFileSupervisorResponse->statusText);
         }
     }
+
 }

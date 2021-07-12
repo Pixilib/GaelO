@@ -159,6 +159,7 @@ Route::middleware(['auth:api', 'refresh_token'])->group(function () {
     Route::post('documentations/{id}/file', [DocumentationController::class, 'uploadDocumentation'] );
     Route::delete('documentations/{id}', [DocumentationController::class, 'deleteDocumentation'] );
     Route::patch('documentations/{id}', [DocumentationController::class, 'modifyDocumentation'] );
+    Route::patch('documentations/{id}/reactivate', [DocumentationController::class, 'reactivateDocumentation'] );
 });
 
 
