@@ -22,24 +22,25 @@ class DocumentationTest extends TestCase
         $this->artisan('db:seed');
     }
 
-    protected function setUp() : void{
+    protected function setUp(): void
+    {
         parent::setUp();
         $this->study = Study::factory()->create();
 
         $this->validPayload = [
-            'name'=>'documentationTest',
-            'version'=>'1.1.0',
-            'investigator'=>true,
-            'monitor'=>true,
-            'controller'=>false,
-            'reviewer'=>false
+            'name' => 'documentationTest',
+            'version' => '1.1.0',
+            'investigator' => true,
+            'monitor' => true,
+            'controller' => false,
+            'reviewer' => false
         ];
-
     }
 
-    public function testForbiddenWhenNotSupervisor(){
+    public function testForbiddenWhenNotSupervisor()
+    {
         AuthorizationTools::actAsAdmin(false);
-        $response = $this->post('api/studies/'.$this->study->name.'/documentations', $this->validPayload);
+        $response = $this->post('api/studies/' . $this->study->name . '/documentations', $this->validPayload);
         $response->assertStatus(403);
     }
 
@@ -48,148 +49,177 @@ class DocumentationTest extends TestCase
     {
         $currentUserId = AuthorizationTools::actAsAdmin(false);
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $this->study->name);
-        $response = $this->post('api/studies/'.$this->study->name.'/documentations', $this->validPayload);
+        $response = $this->post('api/studies/' . $this->study->name . '/documentations', $this->validPayload);
         $response->assertStatus(201);
         $response->assertJsonStructure(['id']);
     }
 
-    public function testUploadDocumentation(){
+    public function testUploadDocumentation()
+    {
         $currentUserId = AuthorizationTools::actAsAdmin(false);
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $this->study->name);
-        $documentation =Documentation::factory()->studyName($this->study->name)->create();
-        $response = $this->post('api/documentations/'.$documentation['id'].'/file', ["binaryData"=>base64_encode ("testFileContent"  ) ], ['CONTENT_TYPE'=>'application/pdf']);
+        $documentation = Documentation::factory()->studyName($this->study->name)->create();
+        $response = $this->post('api/documentations/' . $documentation['id'] . '/file', ["binaryData" => base64_encode("testFileContent")], ['CONTENT_TYPE' => 'application/pdf']);
         $response->assertStatus(201);
-
     }
 
-    public function testUploadDocumentationShouldFailBecauseWrongMime(){
+    public function testUploadDocumentationShouldFailBecauseWrongMime()
+    {
         $currentUserId = AuthorizationTools::actAsAdmin(false);
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $this->study->name);
         $documentation = Documentation::factory()->studyName($this->study->name)->create();
-        $response = $this->post('api/documentations/'.$documentation['id'].'/file', ["binaryData"=>base64_encode ("testFileContent"  ) ]);
+        $response = $this->post('api/documentations/' . $documentation['id'] . '/file', ["binaryData" => base64_encode("testFileContent")]);
         $response->assertStatus(400);
-
     }
 
-    public function testUploadDocumentationShouldFailBecauseNotBase64Encoded(){
+    public function testUploadDocumentationShouldFailBecauseNotBase64Encoded()
+    {
         $currentUserId = AuthorizationTools::actAsAdmin(false);
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $this->study->name);
         $documentation = Documentation::factory()->studyName($this->study->name)->create();
-        $response = $this->post('api/documentations/'.$documentation['id'].'/file', ["binaryData"=>"testFileContent"]);
+        $response = $this->post('api/documentations/' . $documentation['id'] . '/file', ["binaryData" => "testFileContent"]);
         $response->assertStatus(400);
     }
 
-    public function testDeleteDocumentationShouldFailBecauseNotSupervisor(){
+    public function testDeleteDocumentationShouldFailBecauseNotSupervisor()
+    {
         AuthorizationTools::actAsAdmin(false);
         $documentation = Documentation::factory()->studyName($this->study->name)->create();
-        $response = $this->delete('api/documentations/'.$documentation['id']);
+        $response = $this->delete('api/documentations/' . $documentation['id']);
         $response->assertStatus(403);
-
     }
 
-    public function testDeleteDocumentation(){
+    public function testDeleteDocumentation()
+    {
         $currentUserId = AuthorizationTools::actAsAdmin(false);
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $this->study->name);
         $documentation = Documentation::factory()->studyName($this->study->name)->create();
-        $response = $this->delete('api/documentations/'.$documentation['id']);
+        $response = $this->delete('api/documentations/' . $documentation['id']);
         $response->assertStatus(200);
-
     }
 
-    public function testGetDocumentation(){
+    public function testGetDocumentation()
+    {
         $currentUserId = AuthorizationTools::actAsAdmin(false);
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $this->study->name);
         Documentation::factory()->studyName($this->study->name)->count(3)->create();
-        $response = $this->get('api/studies/'.$this->study->name.'/documentations?role=Supervisor');
+        $response = $this->get('api/studies/' . $this->study->name . '/documentations?role=Supervisor');
         $answerArray = json_decode($response->content(), true);
         $response->assertStatus(200);
         $this->assertEquals(3, sizeof($answerArray));
     }
 
-    public function testGetDocumentationFailBecauseNotHavingRole(){
+    public function testGetDocumentationFailBecauseNotHavingRole()
+    {
         AuthorizationTools::actAsAdmin(false);
         Documentation::factory()->studyName($this->study->name)->count(3)->create();
-        $response = $this->get('api/studies/'.$this->study->name.'/documentations?role=Supervisor');
+        $response = $this->get('api/studies/' . $this->study->name . '/documentations?role=Supervisor');
         $response->assertStatus(403);
-
     }
 
-    public function testGetDocumentationOnlyInvestigator(){
+    public function testGetDocumentationOnlyInvestigator()
+    {
         $currentUserId = AuthorizationTools::actAsAdmin(false);
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_INVESTIGATOR, $this->study->name);
         Documentation::factory()->studyName($this->study->name)->investigator()->count(2)->create();
         Documentation::factory()->studyName($this->study->name)->count(5)->create();
 
-        $response = $this->get('api/studies/'.$this->study->name.'/documentations?role=Investigator');
+        $response = $this->get('api/studies/' . $this->study->name . '/documentations?role=Investigator');
         $answerArray = json_decode($response->content(), true);
         $response->assertStatus(200);
         $this->assertEquals(2, sizeof($answerArray));
     }
 
-    public function testGetDocumentationFile(){
+    public function testGetDocumentationFile()
+    {
         $currentUserId = AuthorizationTools::actAsAdmin(false);
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_INVESTIGATOR, $this->study->name);
-        $filename = storage_path().'/documentations/'.$this->study->name.'/test.pdf';
-        if(!file_exists(dirname($filename))) mkdir(dirname($filename), 0777, true);
-        file_put_contents ( $filename , 'content' );
-        $documentation = Documentation::factory()->studyName($this->study->name)->investigator()->path('/documentations/'.$this->study->name.'/test.pdf')->create();
-        $response = $this->get('api/documentations/'.$documentation->id.'/file');
+        $filename = storage_path() . '/documentations/' . $this->study->name . '/test.pdf';
+        if (!file_exists(dirname($filename))) mkdir(dirname($filename), 0777, true);
+        file_put_contents($filename, 'content');
+        $documentation = Documentation::factory()->studyName($this->study->name)->investigator()->path('/documentations/' . $this->study->name . '/test.pdf')->create();
+        $response = $this->get('api/documentations/' . $documentation->id . '/file');
         $response->assertStatus(200);
-
     }
 
-    public function testGetDocumentationFileShouldFailedBecauseNotAllowed(){
+    public function testGetDocumentationFileShouldFailedBecauseNotAllowed()
+    {
         $currentUserId = AuthorizationTools::actAsAdmin(false);
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_INVESTIGATOR, $this->study->name);
-        $documentation = Documentation::factory()->studyName($this->study->name)->path('/documentations/'.$this->study->name.'/test.pdf')->create();
-        $response = $this->get('api/documentations/'.$documentation->id.'/file');
+        $documentation = Documentation::factory()->studyName($this->study->name)->path('/documentations/' . $this->study->name . '/test.pdf')->create();
+        $response = $this->get('api/documentations/' . $documentation->id . '/file');
         $response->assertStatus(403);
     }
 
-    public function testModifyDocumentation() {
+    public function testModifyDocumentation()
+    {
         $currentUserId = AuthorizationTools::actAsAdmin(false);
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $this->study->name);
         $documentation = Documentation::factory()->studyName($this->study->name)->create();
         $newPayload = [
-            'version'=>'2.0',
-            'controller'=>true,
-            'investigator'=>true,
-            'monitor'=>true,
-            'reviewer'=>true
+            'version' => '2.0',
+            'controller' => true,
+            'investigator' => true,
+            'monitor' => true,
+            'reviewer' => true
         ];
 
-        $response = $this->patch('api/documentations/'.$documentation->id, $newPayload);
+        $response = $this->patch('api/documentations/' . $documentation->id, $newPayload);
         $response->assertStatus(200);
     }
 
-    public function testModifyDocumentationConflict() {
+    public function testModifyDocumentationConflict()
+    {
         $currentUserId = AuthorizationTools::actAsAdmin(false);
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $this->study->name);
         Documentation::factory()->studyName($this->study->name)->name('newFile')->version('2.0')->create();
         $documentation = Documentation::factory()->studyName($this->study->name)->name('newFile')->version('1.0')->create();
         $newPayload = [
-            'version'=>'2.0',
-            'controller'=>true,
-            'investigator'=>true,
-            'monitor'=>true,
-            'reviewer'=>true
+            'version' => '2.0',
+            'controller' => true,
+            'investigator' => true,
+            'monitor' => true,
+            'reviewer' => true
         ];
-        $response = $this->patch('api/documentations/'.$documentation->id, $newPayload);
+        $response = $this->patch('api/documentations/' . $documentation->id, $newPayload);
         $response->assertStatus(409);
     }
 
-    public function testModifyDocumentationShouldFailNotSupervisor() {
+    public function testModifyDocumentationShouldFailNotSupervisor()
+    {
         $currentUserId = AuthorizationTools::actAsAdmin(false);
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_INVESTIGATOR, $this->study->name);
         $documentation = Documentation::factory()->studyName($this->study->name)->create();
         $newPayload = [
-            'version'=>'2.0',
-            'controller'=>true,
-            'investigator'=>true,
-            'monitor'=>true,
-            'reviewer'=>true
+            'version' => '2.0',
+            'controller' => true,
+            'investigator' => true,
+            'monitor' => true,
+            'reviewer' => true
         ];
-        $response = $this->patch('api/documentations/'.$documentation->id, $newPayload);
+        $response = $this->patch('api/documentations/' . $documentation->id, $newPayload);
+        $response->assertStatus(403);
+    }
+
+    public function testReactivateDocumentation()
+    {
+
+        $currentUserId = AuthorizationTools::actAsAdmin(false);
+        AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $this->study->name);
+        $documentation = Documentation::factory()->studyName($this->study->name)->create();
+
+        $response = $this->patch('api/documentations/' . $documentation->id . '/reactivate');
+        $response->assertStatus(200);
+    }
+
+    public function testReactivateDocumentationShouldFailNoSupervisor()
+    {
+
+        $currentUserId = AuthorizationTools::actAsAdmin(false);
+        AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_INVESTIGATOR, $this->study->name);
+        $documentation = Documentation::factory()->studyName($this->study->name)->create();
+
+        $response = $this->patch('api/documentations/' . $documentation->id . '/reactivate');
         $response->assertStatus(403);
     }
 }

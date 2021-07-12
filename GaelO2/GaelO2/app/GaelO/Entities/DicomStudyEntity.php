@@ -8,18 +8,17 @@ class DicomStudyEntity
     public int $uploaderId;
     public string $uploadDate;
     public int $visitId;
-    public bool $deleted;
     public ?string $acquisitionDate;
     public ?string $acquisitionTime;
     public ?string $studyDescription;
     public ?string $patientName;
     public ?string $patientId;
     public int $diskSize;
-    public array $parentPatient;
-    public array $parentVisit;
-    public array $childSeries;
-    public array $uploaderDetails;
-    public array $series = [];
+    public bool $deleted;
+    public array $series;
+    public UserEntity $uploader;
+    public PatientEntity $patient;
+    public VisitEntity $visit;
 
     public static function fillFromDBReponseArray(array $array)
     {
@@ -42,33 +41,35 @@ class DicomStudyEntity
 
     public function addDicomSeries(array $dicomSeriesObjects): void
     {
-        $this->childSeries = $dicomSeriesObjects;
+        $this->series = $dicomSeriesObjects;
     }
 
     public function addPatientDetails(array $patientData): void
     {
-        $this->parentPatient = [
-            'code' => $patientData['code'],
-            'centerCode' => $patientData['center_code'],
-            'inclusionStatus' => $patientData['inclusion_status'],
-        ];
+        $this->patient = new PatientEntity();
+        $this->patient->code = $patientData['code'];
+        $this->patient->centerCode = $patientData['center_code'];
+        $this->patient->inclusionStatus = $patientData['inclusion_status'];
     }
 
     public function addVisitDetails(array $visitDetails): void
     {
-        $this->parentVisit = [
-            'modality' => $visitDetails['visit_type']['visit_group']['modality'],
-            'visitTypeName' => $visitDetails['visit_type']['name'],
-            'visitDate' => $visitDetails['visit_date'],
-            'stateInvestigatorForm' => $visitDetails['state_investigator_form'],
-            'stateQualityControl' => $visitDetails['state_quality_control']
-        ];
+        $this->visit = new VisitEntity();
+        $this->visit->setVisitContext(
+            $visitDetails['visit_type']['visit_group']['modality'],
+            $visitDetails['visit_type']['name'],
+            $visitDetails['visit_type']['order'],
+            $visitDetails['visit_type']['optional'],
+            $visitDetails['visit_type']['visit_group']['id']
+        );
+        $this->visit->visitDate = $visitDetails['visit_date'];
+        $this->visit->stateInvestigatorForm = $visitDetails['state_investigator_form'];
+        $this->visit->stateQualityControl = $visitDetails['state_quality_control'];
     }
 
-    public function addUploaderDetails(array $userDetails) : void
+    public function addUploaderDetails(array $userDetails): void
     {
-        $this->uploaderDetails = [
-            'username' => $userDetails['username']
-        ];
+        $this->uploader = new UserEntity();
+        $this->uploader->username = $userDetails['username'];
     }
 }

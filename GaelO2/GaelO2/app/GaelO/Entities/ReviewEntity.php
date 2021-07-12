@@ -3,17 +3,17 @@
 namespace App\GaelO\Entities;
 
 class ReviewEntity {
-    public bool $local;
     public int $id;
+    public bool $local;
     public string $studyName;
     public int $userId;
-    public UserEntity $user;
     public string $date;
     public int $visitId;
     public bool $validated;
     public array $data;
     public array $files;
     public bool $adjudication;
+    public UserEntity $user;
 
     public static function fillFromDBReponseArray(array $array) : ReviewEntity {
         $reviewEntity  = new ReviewEntity();

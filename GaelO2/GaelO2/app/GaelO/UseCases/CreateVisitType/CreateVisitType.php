@@ -44,7 +44,7 @@ class CreateVisitType {
             $this->visitTypeRepositoryInterface->createVisitType(
                 $createVisitTypeRequest->visitGroupId,
                 $createVisitTypeRequest->name,
-                $createVisitTypeRequest->visitOrder,
+                $createVisitTypeRequest->order,
                 $createVisitTypeRequest->localFormNeeded,
                 $createVisitTypeRequest->qcNeeded,
                 $createVisitTypeRequest->reviewNeeded,

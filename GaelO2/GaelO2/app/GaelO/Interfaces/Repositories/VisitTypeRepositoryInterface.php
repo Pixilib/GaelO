@@ -12,7 +12,7 @@ interface VisitTypeRepositoryInterface
     public function createVisitType(
         int $visitGroupId,
         string $name,
-        int $visitOrder,
+        int $order,
         bool $localFormNeeded,
         bool $qcNeeded,
         bool $reviewNeeded,

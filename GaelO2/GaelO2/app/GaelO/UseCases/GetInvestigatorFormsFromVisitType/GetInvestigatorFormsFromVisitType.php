@@ -18,8 +18,8 @@ class GetInvestigatorFormsFromVisitType {
     private ReviewRepositoryInterface $reviewRepositoryInterface;
 
     public function __construct(
-        AuthorizationService $authorizationService, 
-        VisitRepositoryInterface $visitRepositoryInterface, 
+        AuthorizationService $authorizationService,
+        VisitRepositoryInterface $visitRepositoryInterface,
         ReviewRepositoryInterface $reviewRepositoryInterface,
         )
     {
@@ -42,7 +42,7 @@ class GetInvestigatorFormsFromVisitType {
             $visitsId = array_map(function($visit){ return $visit['id']; }, $visits);
 
             //Get Validated review for these visits
-            $reviews = $this->reviewRepositoryInterface->getInvestigatorsFormsFromVisitIdArrayStudyName($visitsId, $studyName, false);
+            $reviews = $this->reviewRepositoryInterface->getInvestigatorsFormsFromVisitIdArrayStudyName($visitsId, $studyName, false, true);
 
             $answer = [];
 

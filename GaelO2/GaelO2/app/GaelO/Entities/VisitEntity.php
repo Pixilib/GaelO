@@ -28,18 +28,12 @@ class VisitEntity {
     public ?string $lastReminderUpload;
     public ?string $deletedAt;
 
-    public ?string $visitGroupModality;
-    public ?string $visitTypeName;
-    public ?int $visitTypeOrder;
-    public ?bool $visitTypeOptional;
-    public ?int $visitGroupId;
+    public VisitGroupEntity $visitGroup;
+    public VisitTypeEntity $visitType;
 
     public ?string $reviewStatus;
     public ?string $reviewConclusionValue;
     public ?string $reviewConclusionDate;
-
-    public ?string $patientStatus;
-    public ?int $centerCode;
 
     public PatientEntity $patient;
     public UserEntity $creatorUser;
@@ -80,11 +74,14 @@ class VisitEntity {
                                 bool $visitTypeOptional,
                                 int $visitGroupId){
 
-        $this->visitGroupModality = $visitGroupModality;
-        $this->visitTypeName = $visitTypeName;
-        $this->visitTypeOrder = $visitTypeOrder;
-        $this->visitTypeOptional = $visitTypeOptional;
-        $this->visitGroupId = $visitGroupId;
+        $this->visitGroup = new VisitGroupEntity();
+        $this->visitGroup->modality = $visitGroupModality;
+        $this->visitGroup->id = $visitGroupId;
+
+        $this->visitType = new VisitTypeEntity();
+        $this->visitType->name = $visitTypeName;
+        $this->visitType->order = $visitTypeOrder;
+        $this->visitType->optional = $visitTypeOptional;
     }
 
     public function setPatientEntity(array $patientEntity){
