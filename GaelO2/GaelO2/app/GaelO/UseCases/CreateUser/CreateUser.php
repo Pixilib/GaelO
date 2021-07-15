@@ -2,12 +2,14 @@
 
 namespace App\GaelO\UseCases\CreateUser;
 
+use App\GaelO\Adapters\FrameworkAdapter;
 use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOBadRequestException;
 use App\GaelO\Exceptions\GaelOConflictException;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Adapters\HashInterface;
+use App\GaelO\Interfaces\Adapters\PhoneNumberInterface;
 use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\UserRepositoryInterface;
 use App\GaelO\UseCases\CreateUser\CreateUserRequest;
@@ -33,7 +35,6 @@ class CreateUser
         $this->authorizationService = $authorizationService;
         $this->userRepositoryInterface = $userRepositoryInterface;
         $this->hashInterface = $hashInterface;
-
     }
 
     public function execute(CreateUserRequest $createUserRequest, CreateUserResponse $createUserResponse): void
@@ -129,7 +130,7 @@ class CreateUser
 
     public static function checkEmailValid(string $email): void
     {
-        if (!preg_match('/^[a-z0-9\-_.]+@[a-z0-9\-_.]+\.[a-z]{2,4}$/i', $email)) {
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
             throw new GaelOBadRequestException('Not a valid email format');
         }
     }
@@ -137,7 +138,7 @@ class CreateUser
     public static function checkPhoneCorrect(?string $phone): void
     {
         //If contains non number caracters throw error
-        if ($phone != null && preg_match('/[^0-9]/', $phone)) {
+        if ($phone != null && !FrameworkAdapter::make(PhoneNumberInterface::class)::isValidPhoneNumber($phone) ) {
             throw new GaelOBadRequestException('Not a valid email phone number');
         }
     }

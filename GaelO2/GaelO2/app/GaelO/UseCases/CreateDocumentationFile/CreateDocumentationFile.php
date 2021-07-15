@@ -57,7 +57,7 @@ class CreateDocumentationFile{
             $this->documentationRepositoryInterface->updateDocumentationPath($createDocumentationFileRequest->id, $newPath);
 
             $actionDetails =[
-                'documentation_id'=>$createDocumentationFileRequest->currentUserId,
+                'documentation_id'=>$createDocumentationFileRequest->id,
             ];
 
             $this->trackerRepositoryInterface->writeAction(
