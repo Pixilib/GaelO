@@ -48,7 +48,7 @@ class GetInvestigatorFormsFromVisitType {
 
             foreach ($reviews as $review) {
                 $reviewEntity = ReviewEntity::fillFromDBReponseArray($review);
-                $reviewEntity->setUserDetails($review['user']['username'], $review['user']['lastname'], $review['user']['firstname']);
+                $reviewEntity->setUserDetails($review['user']['username'], $review['user']['lastname'], $review['user']['firstname'], $review['user']['center_code']);
                 $answer[] = $reviewEntity;
             }
 
