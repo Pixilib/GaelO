@@ -138,9 +138,12 @@ class ReviewRepository implements ReviewRepositoryInterface {
         return $reviewEntity->count() > 0 ? true : false;
     }
 
-    public function getReviewsFromVisitIdArrayStudyName(array $visitId, string $studyName, bool $withTrashed) : array {
+    public function getReviewsFromVisitIdArrayStudyName(array $visitId, string $studyName, bool $withTrashed, bool $withUser = false) : array {
 
         $query = $this->review->whereIn('visit_id', $visitId)->where('study_name', $studyName)->where('local', false);
+        if($withUser){
+            $query->with('user');
+        }
         if($withTrashed){
             $query->withTrashed();
         }

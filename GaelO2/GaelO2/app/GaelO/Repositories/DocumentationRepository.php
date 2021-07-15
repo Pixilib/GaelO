@@ -16,7 +16,7 @@ class DocumentationRepository implements DocumentationRepositoryInterface
 
     public function find($id): array
     {
-        return $this->documentation->findOrFail($id)->toArray();
+        return $this->documentation->withTrashed()->findOrFail($id)->toArray();
     }
 
     public function delete($id): void

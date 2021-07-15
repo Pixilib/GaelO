@@ -40,15 +40,14 @@ class GetReviewsFromVisitType
             $visitsId = array_map(function($visit){ return $visit['id']; }, $visits);
 
             //Get Validated review for these visits
-            $reviews = $this->reviewRepositoryInterface->getReviewsFromVisitIdArrayStudyName($visitsId, $studyName, false);
+            $reviews = $this->reviewRepositoryInterface->getReviewsFromVisitIdArrayStudyName($visitsId, $studyName, false, true);
 
             $answer = [];
 
             foreach ($reviews as $review) {
-
                 $reviewEntity = ReviewEntity::fillFromDBReponseArray($review);
+                $reviewEntity->setUserDetails($review['user']['username'], $review['user']['lastname'], $review['user']['firstname'], $review['user']['center_code']);
                 $answer[] = $reviewEntity;
-
             }
 
             $getReviewsFromVisitTypeResponse->body = $answer;
