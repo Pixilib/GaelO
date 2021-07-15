@@ -181,7 +181,7 @@ class UserTest extends TestCase
         $this->json('DELETE', '/api/users/1/studies/'.$study->name.'/roles/Investigator')->assertStatus(403);
     }
 
-    public function testGetUserFromStudy()
+    public function testGetUserFromStudyAdministrator()
     {
 
         AuthorizationTools::actAsAdmin(true);
@@ -196,31 +196,16 @@ class UserTest extends TestCase
             AuthorizationTools::addRoleToUser($user->id, Constants::ROLE_MONITOR, $study->name);;
         });
 
-        $answer = $this->json('GET', '/api/studies/' . $study->name . '/users/');
+        $answer = $this->json('GET', '/api/studies/' . $study->name . '/users?role=Administrator');
         $answer->assertStatus(200);
         $responseArray = json_decode($answer->content(), true);
         //Expect to have 5 users in the list
         $this->assertEquals(5, sizeof($responseArray));
+        //Each User has full details
+        $this->assertEquals(18, sizeof( array_keys($responseArray[0]) ));
     }
 
-    public function testGetUserFromStudyForbiddenNotAdmin()
-    {
-        AuthorizationTools::actAsAdmin(false);
-        //Create 5 users
-        $users = User::factory()->count(5)->create();
-        $study = Study::factory()->create();
-
-        $users->each(function ($user) use ($study) {
-            AuthorizationTools::addRoleToUser($user->id, Constants::ROLE_INVESTIGATOR, $study->name);
-            AuthorizationTools::addRoleToUser($user->id, Constants::ROLE_SUPERVISOR, $study->name);
-            AuthorizationTools::addRoleToUser($user->id, Constants::ROLE_MONITOR, $study->name);
-        });
-
-        $answer = $this->json('GET', '/api/studies/' . $study->name . '/users/');
-        $answer->assertStatus(403);
-    }
-
-    public function testGetUserFromStudyAllowedForSupervisor()
+    public function testGetUserFromStudySupervisor()
     {
         $currentUserId = AuthorizationTools::actAsAdmin(false);
 
@@ -235,8 +220,30 @@ class UserTest extends TestCase
             AuthorizationTools::addRoleToUser($user->id, Constants::ROLE_SUPERVISOR, $study->name);
             AuthorizationTools::addRoleToUser($user->id, Constants::ROLE_MONITOR, $study->name);
         });
-        $answer = $this->json('GET', '/api/studies/' . $study->name . '/users/');
+        $answer = $this->json('GET', '/api/studies/' . $study->name . '/users?role=Supervisor');
         $answer->assertStatus(200);
+        $responseArray = json_decode($answer->content(), true);
+        //Expect to have 5 users in the list
+        $this->assertEquals(6, sizeof($responseArray));
+        //Each User has limited details
+        $this->assertEquals(3, sizeof( array_keys($responseArray[0]) ));
+    }
+
+    public function testGetUserFromStudyForbiddenNotAdminOrSupervisor()
+    {
+        AuthorizationTools::actAsAdmin(false);
+        //Create 5 users
+        $users = User::factory()->count(5)->create();
+        $study = Study::factory()->create();
+
+        $users->each(function ($user) use ($study) {
+            AuthorizationTools::addRoleToUser($user->id, Constants::ROLE_INVESTIGATOR, $study->name);
+            AuthorizationTools::addRoleToUser($user->id, Constants::ROLE_SUPERVISOR, $study->name);
+            AuthorizationTools::addRoleToUser($user->id, Constants::ROLE_MONITOR, $study->name);
+        });
+
+        $answer = $this->json('GET', '/api/studies/' . $study->name . '/users?role=Supervisor');
+        $answer->assertStatus(403);
     }
 
     public function testGetStudiesFromUser(){

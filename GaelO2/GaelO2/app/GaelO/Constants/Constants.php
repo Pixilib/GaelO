@@ -22,6 +22,7 @@ class Constants {
     const ROLE_CONTROLLER = "Controller";
     const ROLE_SUPERVISOR  = "Supervisor";
     const ROLE_REVIEWER = "Reviewer";
+    const ROLE_ADMINISTRATOR = "Administrator";
 
     const TRACKER_EDIT_PREFERENCE = "Preference edited";
     const TRACKER_SEND_MESSAGE = "Send Message";
