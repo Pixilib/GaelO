@@ -29,7 +29,7 @@ class GetUserFromStudy
         try {
 
             $studyName = $userRequest->studyName;
-            $this->checkAuthorization($userRequest->currentUserId, $studyName);
+            $this->checkAuthorization($userRequest->currentUserId, $userRequest->role, $studyName);
 
             $dbData = $this->userRepositoryInterface->getUsersFromStudy($studyName);
 
@@ -68,11 +68,18 @@ class GetUserFromStudy
         }
     }
 
-    private function checkAuthorization(int $userId, string $studyName)
+    private function checkAuthorization(int $userId, string $askedRole, string $studyName)
     {
         $this->authorizationService->setCurrentUserAndRole($userId, Constants::ROLE_SUPERVISOR);
-        if (!$this->authorizationService->isRoleAllowed($studyName) && !$this->authorizationService->isAdmin()) {
-            throw new GaelOForbiddenException();
-        };
+
+        if ($askedRole === Constants::ROLE_SUPERVISOR) {
+            if (!$this->authorizationService->isRoleAllowed($studyName)) {
+                throw new GaelOForbiddenException();
+            };
+        } else if ($askedRole === CONSTANTS::ROLE_ADMINISTRATOR) {
+            if (!$this->authorizationService->isAdmin()) {
+                throw new GaelOForbiddenException();
+            };
+        }
     }
 }
