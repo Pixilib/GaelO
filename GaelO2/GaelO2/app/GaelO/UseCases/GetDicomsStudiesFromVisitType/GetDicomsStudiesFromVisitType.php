@@ -58,6 +58,8 @@ class GetDicomsStudiesFromVisitType
                 }, $dicomSeries);
 
                 $dicomStudyEntity->addDicomSeries($dicomSeriesEntities);
+                $dicomStudyEntity->addPatientDetails($dicomStudy['visit']['patient']);
+                $dicomStudyEntity->addVisitDetails($dicomStudy['visit']);
 
                 $answer[] = $dicomStudyEntity;
             }
@@ -65,11 +67,13 @@ class GetDicomsStudiesFromVisitType
             $getDicomsStudiesFromVisitTypeResponse->body = $answer;
             $getDicomsStudiesFromVisitTypeResponse->status = 200;
             $getDicomsStudiesFromVisitTypeResponse->statusText = 'OK';
+
         } catch (GaelOException $e) {
 
             $getDicomsStudiesFromVisitTypeResponse->body = $e->getErrorBody();
             $getDicomsStudiesFromVisitTypeResponse->status = $e->statusCode;
             $getDicomsStudiesFromVisitTypeResponse->statusText = $e->statusText;
+
         } catch (Exception $e) {
             throw $e;
         }

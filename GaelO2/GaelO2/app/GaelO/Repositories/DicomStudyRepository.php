@@ -88,7 +88,7 @@ class DicomStudyRepository implements DicomStudyRepositoryInterface
 
     public function getStudyInstanceUidFromVisit(int $visitID): string
     {
-        $studyEntity = $this->dicomStudy->where('visit_id','=', $visitID)->sole();
+        $studyEntity = $this->dicomStudy->where('visit_id', '=', $visitID)->sole();
         return $studyEntity->study_uid;
     }
 
@@ -134,59 +134,38 @@ class DicomStudyRepository implements DicomStudyRepositoryInterface
         return $series;
     }
 
-    public function getDicomStudyFromStudy(string $studyName, bool $withDeleted): array
+    public function getDicomStudyFromVisitIdArray(array $visitId, bool $withTrashed): array
     {
-
-        $query = $this->dicomStudy
-            ->with(['visit' => function ($query) use ($withDeleted) {
-                $query->with(['visitType', 'patient']);
-            }])
-            ->whereHas('visit', function ($query) use ($studyName) {
-                $query->whereHas('visitType', function ($query) use ($studyName) {
-                    $query->whereHas('visitGroup', function ($query) use ($studyName) {
-                        $query->where('study_name', $studyName);
-                    });
-                });
-            })
-            ->with(['dicomSeries' => function ($query) use ($withDeleted) {
-                if($withDeleted) $query->withTrashed();
-            }]);
-
-        if ($withDeleted) {
-            $query->withTrashed();
-        }
-
-        $answer = $query->get();
-
-        return $answer->count() === 0 ? []  : $answer->toArray();
-    }
-
-
-    public function getDicomStudyFromVisitIdArray(array $visitId, bool $withTrashed) : array {
 
         $queryBuilder = $this->dicomStudy->whereIn('visit_id', $visitId);
 
-        if($withTrashed){
+        if ($withTrashed) {
             $queryBuilder->withTrashed();
         }
 
         $answer = $queryBuilder->get();
 
         return $answer->count() === 0 ? []  : $answer->toArray();
-
     }
 
-    public function getDicomStudyFromVisitIdArrayWithSeries(array $visitId, bool $withTrashed) : array {
+    public function getDicomStudyFromVisitIdArrayWithSeries(array $visitId, bool $withTrashed): array
+    {
 
-        $queryBuilder = $this->dicomStudy->whereIn('visit_id', $visitId)->with('dicomSeries');
+        $queryBuilder = $this->dicomStudy
+            ->with(['visit' => function ($query) {
+                $query->with(['visitType', 'patient']);
+            }])
+            ->with(['dicomSeries' => function ($query) use ($withTrashed) {
+                if ($withTrashed) $query->withTrashed();
+            }])
+            ->whereIn('visit_id', $visitId)->with('dicomSeries');
 
-        if($withTrashed){
+        if ($withTrashed) {
             $queryBuilder->withTrashed();
         }
 
         $answer = $queryBuilder->get();
 
         return $answer->count() === 0 ? []  : $answer->toArray();
-
     }
 }
