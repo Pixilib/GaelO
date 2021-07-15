@@ -13,19 +13,6 @@ class ReviewRepository implements ReviewRepositoryInterface {
         $this->review = $review;
     }
 
-    private function create(array $data) : array {
-        $review = new Review();
-        $model = Util::fillObject($data, $review);
-        $model->save();
-        return $model->toArray();
-    }
-
-    private function update($id, array $data) : void {
-        $model = $this->review->findOrFail($id);
-        $model = Util::fillObject($data, $model);
-        $model->save();
-    }
-
     public function find($id) : array {
         return $this->review->findOrFail($id)->toArray();
     }
@@ -46,34 +33,38 @@ class ReviewRepository implements ReviewRepositoryInterface {
 
     public function createReview(bool $local, int $visitId, string $studyName, int $userId, array $reviewData, bool $validated, bool $adjudication = false ) : int {
 
-        $data['local'] = $local;
-        $data['validated'] = $validated;
-        $data['adjudication'] = $adjudication;
-        $data['review_date'] = Util::now();
-        $data['user_id'] =  $userId;
-        $data['visit_id'] =  $visitId;
-        $data['study_name'] = $studyName;
-        $data['review_data'] = $reviewData;
+        $review = new Review();
 
-        return $this->create($data)['id'];
+        $review->local = $local;
+        $review->validated = $validated;
+        $review->adjudication = $adjudication;
+        $review->review_date = Util::now();
+        $review->user_id =  $userId;
+        $review->visit_id =  $visitId;
+        $review->study_name = $studyName;
+        $review->review_data = $reviewData;
+
+        $review->save();
+        return $review->toArray()['id'];
 
     }
 
     public function updateReview(int $reviewId, int $userId, array $reviewData, bool $validated ) : void {
 
-        $data['validated'] = $validated;
-        $data['review_date'] = Util::now();
-        $data['user_id'] =  $userId;
-        $data['review_data'] = $reviewData;
-
-        $this->update($reviewId, $data);
+        $review = $this->review->findOrFail($reviewId);
+        $review->validated = $validated;
+        $review->review_date = Util::now();
+        $review->user_id =  $userId;
+        $review->review_data = $reviewData;
+        $review->save();
 
     }
 
     public function updateReviewFile(int $reviewId, array $associatedFile ) : void {
 
-        $data['sent_files'] = $associatedFile;
-        $this->update($reviewId, $data);
+        $review = $this->review->findOrFail($reviewId);
+        $review->sent_files = $associatedFile;
+        $review->save();
 
     }
 

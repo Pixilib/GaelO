@@ -15,6 +15,7 @@ use App\GaelO\UseCases\CreateUser\CreateUserResponse;
 use App\GaelO\Services\AuthorizationService;
 use App\GaelO\Services\MailServices;
 use App\GaelO\UseCases\ModifyUser\ModifyUserRequest;
+use App\GaelO\Util;
 
 class CreateUser
 {
@@ -41,7 +42,7 @@ class CreateUser
         try {
             $this->checkAuthorization($createUserRequest->currentUserId);
             //Generate password
-            $password = substr(uniqid(), 1, 10);
+            $password = Util::generateNewTempPassword();
             $passwordTemporary = $this->hashInterface->hash($password);
 
             self::checkFormComplete($createUserRequest);

@@ -13,24 +13,18 @@ class TrackerRepository implements TrackerRepositoryInterface {
         $this->tracker = $tracker;
     }
 
-    private function create(array $data){
-        $tracker = new Tracker();
-        $model = Util::fillObject($data, $tracker);
-        $model->save();
-    }
-
     public function writeAction(int $userId, string $role, ?string $study, ?int $id_visit, string $actionType, ?array $actionDetails) : void {
-        $data = [
-            'study_name' => $study,
-            'user_id' => $userId,
-            'date'=> Util::now(),
-            'role' => $role,
-            'visit_id'=> $id_visit,
-            'action_type' => $actionType,
-            'action_details' => json_encode($actionDetails)
-        ];
+        $tracker = new Tracker();
 
-        $this->create($data);
+        $tracker->study_name = $study;
+        $tracker->user_id = $userId;
+        $tracker->date= Util::now();
+        $tracker->role = $role;
+        $tracker->visit_id= $id_visit;
+        $tracker->action_type = $actionType;
+        $tracker->action_details = json_encode($actionDetails);
+
+        $tracker->save();
     }
 
     public function getTrackerOfRole(string $role) : array {

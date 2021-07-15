@@ -15,20 +15,6 @@ class DicomStudyRepository implements DicomStudyRepositoryInterface
         $this->dicomStudy = $dicomStudy;
     }
 
-    private function create(array $data)
-    {
-        $dicomStudy = new DicomStudy();
-        $model = Util::fillObject($data, $dicomStudy);
-        $model->save();
-    }
-
-    private function update($studyInstanceUID, array $data): void
-    {
-        $model = $this->dicomStudy->find($studyInstanceUID);
-        $model = Util::fillObject($data, $model);
-        $model->save();
-    }
-
     public function delete($studyInstanceUID): void
     {
         $this->dicomStudy->findOrFail($studyInstanceUID)->delete();
@@ -57,27 +43,27 @@ class DicomStudyRepository implements DicomStudyRepositoryInterface
         int $diskSize,
         int $uncompressedDisksize
     ): void {
-        $data = [
-            'orthanc_id' => $orthancStudyID,
-            'visit_id' => $visitID,
-            'user_id' => $uploaderID,
-            'upload_date' => $uploadDate,
-            'acquisition_date' => $acquisitionDate,
-            'acquisition_time' => $acquisitionTime,
-            'anon_from_orthanc_id' => $anonFromOrthancID,
-            'study_uid' => $studyUID,
-            'study_description' => $studyDescription,
-            'patient_orthanc_id' => $patientOrthancID,
-            'patient_name' => $patientName,
-            'patient_id' => $patientID,
-            'number_of_series' => $numberOfSeries,
-            'number_of_instances' => $numberOfInstance,
-            'disk_size' => $diskSize,
-            'uncompressed_disk_size' => $uncompressedDisksize
 
-        ];
+        $dicomStudy = new DicomStudy();
 
-        $this->create($data);
+        $dicomStudy->orthanc_id = $orthancStudyID;
+        $dicomStudy->visit_id = $visitID;
+        $dicomStudy->user_id = $uploaderID;
+        $dicomStudy->upload_date = $uploadDate;
+        $dicomStudy->acquisition_date = $acquisitionDate;
+        $dicomStudy->acquisition_time = $acquisitionTime;
+        $dicomStudy->anon_from_orthanc_id = $anonFromOrthancID;
+        $dicomStudy->study_uid = $studyUID;
+        $dicomStudy->study_description = $studyDescription;
+        $dicomStudy->patient_orthanc_id = $patientOrthancID;
+        $dicomStudy->patient_name = $patientName;
+        $dicomStudy->patient_id = $patientID;
+        $dicomStudy->number_of_series = $numberOfSeries;
+        $dicomStudy->number_of_instances = $numberOfInstance;
+        $dicomStudy->disk_size = $diskSize;
+        $dicomStudy->uncompressed_disk_size = $uncompressedDisksize;
+
+        $dicomStudy->save();
     }
 
     /**

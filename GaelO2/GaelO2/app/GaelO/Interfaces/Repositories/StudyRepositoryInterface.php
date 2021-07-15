@@ -4,10 +4,6 @@ namespace App\GaelO\Interfaces\Repositories;
 
 interface StudyRepositoryInterface {
 
-    public function create(array $data) : void ;
-
-    public function update($name, array $data) : void ;
-
     public function find($name) : array ;
 
     public function delete($name) : void ;

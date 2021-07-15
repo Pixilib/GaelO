@@ -5,7 +5,7 @@ namespace App\GaelO\Repositories;
 use App\GaelO\Interfaces\Repositories\PatientRepositoryInterface;
 use App\Models\Patient;
 use App\GaelO\Entities\PatientEntity;
-use App\GaelO\Util;
+use Illuminate\Support\Facades\Log;
 
 class PatientRepository implements PatientRepositoryInterface {
 
@@ -13,16 +13,13 @@ class PatientRepository implements PatientRepositoryInterface {
         $this->patient = $patient;
     }
 
-    private function create(array $data){
-        $patient = new Patient();
-        $model = Util::fillObject($data, $patient);
-        $model->save();
-    }
-
+    //SK APPELEE A L EXTERIEUR A ENELEVER
     public function update($code, array $data) : void {
-        $model = $this->patient->find($code);
-        $model = Util::fillObject($data, $model);
-        $model->save();
+        $patient = $this->patient->findOrFail($code);
+        foreach($patient->getAttributes() as $property => $value){
+            $patient->$property = $data[$property];
+        }
+        $patient->save();
     }
 
     public function find($code) : array {
@@ -53,40 +50,40 @@ class PatientRepository implements PatientRepositoryInterface {
      * @param $patients expected array of Patient Entity
      */
     public function addPatientInStudy(PatientEntity $patientEntity, String $studyName) : void {
-        $arrayPatientEntity = [
-            "code" => $patientEntity->code,
-            "lastname" => $patientEntity->lastname,
-            "firstname" => $patientEntity->firstname,
-            "gender" => $patientEntity->gender,
-            "birth_day" => $patientEntity->birthDay,
-            "birth_month" => $patientEntity->birthMonth,
-            "birth_year" => $patientEntity->birthYear,
-            "study_name" => $studyName,
-            "registration_date" => $patientEntity->registrationDate,
-            "investigator_name" => $patientEntity->investigatorName,
-            "center_code" => $patientEntity->centerCode
-        ];
-        $this->create($arrayPatientEntity);
+
+        $patient = new Patient();
+        $patient->code = $patientEntity->code;
+        $patient->lastname = $patientEntity->lastname;
+        $patient->firstname = $patientEntity->firstname;
+        $patient->gender = $patientEntity->gender;
+        $patient->birth_day = $patientEntity->birthDay;
+        $patient->birth_month = $patientEntity->birthMonth;
+        $patient->birth_year = $patientEntity->birthYear;
+        $patient->study_name = $studyName;
+        $patient->registration_date = $patientEntity->registrationDate;
+        $patient->investigator_name = $patientEntity->investigatorName;
+        $patient->center_code = $patientEntity->centerCode;
+        $patient->save();
     }
 
     public function updatePatient(int $code, string $lastname, string $firstname,
                             string $gender, int $birthDay, int $birthMonth, int $birthYear,
                             string $studyName, string $registrationDate, string $investigatorName, int $centerCode) : void {
 
-        $arrayPatientEntity = array(
-            "lastname" => $lastname,
-            "firstname" => $firstname,
-            "gender" => $gender,
-            "birth_day" => $birthDay,
-            "birth_month" => $birthMonth,
-            "birth_year" => $birthYear,
-            "study_name" => $studyName,
-            "registration_date" => $registrationDate,
-            "investigator_name" => $investigatorName,
-            "center_code" => $centerCode
-        );
+        $patient = $this->patient->findOrFail($code);
 
-        $this->update($code, $arrayPatientEntity);
+        $patient->lastname = $lastname;
+        $patient->firstname = $firstname;
+        $patient->gender = $gender;
+        $patient->birth_day = $birthDay;
+        $patient->birth_month = $birthMonth;
+        $patient->birth_year = $birthYear;
+        $patient->study_name = $studyName;
+        $patient->registration_date = $registrationDate;
+        $patient->investigator_name = $investigatorName;
+        $patient->center_code = $centerCode;
+
+        $patient->save();
     }
 
 }

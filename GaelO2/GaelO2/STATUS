@@ -42,6 +42,8 @@ reviews/{id}/file (GET, POST, DELETE)
 
 Salim TODO :
 
+- Enlever le update public de patient Repository
+
 Stat avec Visit ajouter les clé patient (pour le filtre avec center) +- center name ? => fait, reste a ajouter nom des centres dans reponse
 Stat Dicom study a reflechir pour pouvoir filter par centre (necessite de requeter visit + patient)
 AskUnlock basé sur le VisitId ? => passer a review id

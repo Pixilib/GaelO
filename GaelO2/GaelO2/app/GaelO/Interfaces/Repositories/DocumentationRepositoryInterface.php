@@ -5,11 +5,9 @@ namespace App\GaelO\Interfaces\Repositories;
 interface DocumentationRepositoryInterface
 {
 
-    public function update($id, array $data) : void;
-
     public function find(int $id);
 
-    public function delete($id) : void;
+    public function delete($id): void;
 
     public function createDocumentation(
         string $name,
@@ -19,9 +17,9 @@ interface DocumentationRepositoryInterface
         bool $controller,
         bool $monitor,
         bool $reviewer
-    ): array ;
+    ): array;
 
-    public function getDocumentationsOfStudy(string $studyName, bool $withTrashed = false): array ;
+    public function getDocumentationsOfStudy(string $studyName, bool $withTrashed = false): array;
 
     public function getDocumentationOfStudyWithRole(string $studyName, string $role): array;
 
@@ -35,6 +33,8 @@ interface DocumentationRepositoryInterface
         bool $monitor,
         bool $reviewer
     );
+
+    public function updateDocumentationPath(int $id, string $path);
 
     public function isKnownDocumentation(string $name, string $version): bool;
 

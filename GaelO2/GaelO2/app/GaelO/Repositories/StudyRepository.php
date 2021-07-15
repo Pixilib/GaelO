@@ -4,25 +4,12 @@ namespace App\GaelO\Repositories;
 
 use App\Models\Study;
 use App\GaelO\Interfaces\Repositories\StudyRepositoryInterface;
-use App\GaelO\Util;
 use Exception;
 
 class StudyRepository implements StudyRepositoryInterface {
 
     public function __construct(Study $study){
         $this->study = $study;
-    }
-
-    public function create(array $data) : void {
-        $study = new Study();
-        $model = Util::fillObject($data, $study);
-        $model->save();
-    }
-
-    public function update($name, array $data) : void {
-        $model = $this->study->find($name);
-        $model = Util::fillObject($data, $model);
-        $model->save();
     }
 
     public function find($name) : array {
@@ -38,12 +25,11 @@ class StudyRepository implements StudyRepositoryInterface {
     }
 
     public function addStudy(String $name, String $patientCodePrefix) : void {
-        $data = [
-            'name'=>$name,
-            'patient_code_prefix'=>$patientCodePrefix
-        ];
 
-        $this->create($data);
+        $study = new Study();
+        $study->name = $name;
+        $study->patient_code_prefix = $patientCodePrefix;
+        $study->save();
     }
 
     public function isExistingStudy($name) : bool {

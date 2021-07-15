@@ -29,19 +29,6 @@ class UserRepository implements UserRepositoryInterface {
         $this->hashInterface = $hashInterface;
     }
 
-    private function create(array $data) {
-        $user = new User();
-        $model = Util::fillObject($data, $user);
-        $model->save();
-        return $model->toArray();
-    }
-
-    private function update($id, array $data) : void {
-        $model = $this->user->findOrFail($id);
-        $model = Util::fillObject($data, $model);
-        $model->save();
-    }
-
     public function find($id) : array {
         return $this->user->findOrFail($id)->toArray();
     }
@@ -60,24 +47,25 @@ class UserRepository implements UserRepositoryInterface {
                                 ?String $orthancAdress, ?String $orthancLogin, ?String $orthancPassword,
                                 String $passwordTemporary ) : array {
 
-        $data= ['username' => $username,
-        'lastname' => $lastname,
-        'firstname' => $firstname,
-        'status' => $status,
-        'email' => $email,
-        'phone' => $phone,
-        'administrator' => $administrator,
-        'center_code' => $centerCode,
-        'job' => $job,
-        'orthanc_address' => $orthancAdress,
-        'orthanc_login' => $orthancLogin,
-        'orthanc_password' => $orthancPassword,
-        'password_temporary'=> $passwordTemporary,
-        'password'=> null,
-        'creation_date'=> Util::now(),
-        'last_password_update'=> null];
-
-        return $this->create($data);
+        $user = new User();
+        $user->username = $username;
+        $user->lastname = $lastname;
+        $user->firstname = $firstname;
+        $user->status = $status;
+        $user->email = $email;
+        $user->phone = $phone;
+        $user->administrator = $administrator;
+        $user->center_code = $centerCode;
+        $user->job = $job;
+        $user->orthanc_address = $orthancAdress;
+        $user->orthanc_login = $orthancLogin;
+        $user->orthanc_password = $orthancPassword;
+        $user->password_temporary = $passwordTemporary;
+        $user->password = null;
+        $user->creation_date = Util::now();
+        $user->last_password_update = null;
+        $user->save();
+        return $user->toArray();
 
     }
 
@@ -86,57 +74,57 @@ class UserRepository implements UserRepositoryInterface {
                                 ?String $orthancAdress, ?String $orthancLogin, ?String $orthancPassword,
                                 ?String $passwordTemporary) : void {
 
-        $data= ['username' => $username,
-                'lastname' => $lastname,
-                'firstname' => $firstname,
-                'status' => $status,
-                'email' => $email,
-                'phone' => $phone,
-                'administrator' => $administrator,
-                'center_code' => $centerCode,
-                'job' => $job,
-                'orthanc_address' => $orthancAdress,
-                'orthanc_login' => $orthancLogin,
-                'orthanc_password' => $orthancPassword,
-                'password_temporary'=> $passwordTemporary];
-
-        $this->update($id, $data);
+        $user = $this->user->findOrFail($id);
+        $user->username = $username;
+        $user->lastname = $lastname;
+        $user->firstname = $firstname;
+        $user->status = $status;
+        $user->email = $email;
+        $user->phone = $phone;
+        $user->administrator = $administrator;
+        $user->center_code = $centerCode;
+        $user->job = $job;
+        $user->orthanc_address = $orthancAdress;
+        $user->orthanc_login = $orthancLogin;
+        $user->orthanc_password = $orthancPassword;
+        $user->password_temporary = $passwordTemporary;
+        $user->save();
 
     }
 
     public function updateUserPassword(int $userId, ?string $passwordCurrent ) : void {
-        $data = $this->find($userId);
-        $data['password_previous2'] = $data['password_previous1'];
-        $data['password_previous1'] = $data['password'];
-        $data['password'] = $this->hashInterface->hash($passwordCurrent);
-        $data['last_password_update'] = Util::now();
-        $this->update($userId, $data);
+        $user = $this->user->findOrFail($userId);
+        $user->password_previous2 = $user->password_previous1;
+        $user->password_previous1 = $user->password;
+        $user->password = $this->hashInterface->hash($passwordCurrent);
+        $user->last_password_update = Util::now();
+        $user->save();
     }
 
     public function updateUserTemporaryPassword(int $userId, ?string $passwordTemporary ) : void {
-        $data = $this->find($userId);
-        $data['password_temporary'] = $this->hashInterface->hash($passwordTemporary);
-        $data['last_password_update'] = Util::now();
-        $this->update($userId, $data);
+        $user = $this->user->findOrFail($userId);
+        $user->password_temporary = $this->hashInterface->hash($passwordTemporary);
+        $user->last_password_update = Util::now();
+        $user->save();
     }
 
     public function updateUserAttempts(int $userId, int $attempts ) : void {
-        $data = $this->find($userId);
-        $data['attempts'] = $attempts;
-        $this->update($userId, $data);
+        $user = $this->user->findOrFail($userId);
+        $user->attempts = $attempts;
+        $user->save();
     }
 
     public function updateUserStatus(int $userId, string $status ) : void {
-        $data = $this->find($userId);
-        $data['status'] = $status;
-        $this->update($userId, $data);
+        $user = $this->user->findOrFail($userId);
+        $user->status = $status;
+        $user->save();
     }
 
     public function resetAttemptsAndUpdateLastConnexion( int $userId ) : void {
-        $data = $this->find($userId);
-        $data['attempts'] = 0;
-        $data['last_connection'] = Util::now();
-        $this->update($userId, $data);
+        $user = $this->user->findOrFail($userId);
+        $user->attempts = 0;
+        $user->last_connection = Util::now();
+        $user->save();
     }
 
     public function getUserByUsername(String $username, bool $withTrashed = false) : array {

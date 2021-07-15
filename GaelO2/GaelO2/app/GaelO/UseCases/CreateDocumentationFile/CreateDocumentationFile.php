@@ -52,9 +52,9 @@ class CreateDocumentationFile{
 
             file_put_contents ( $storagePath.'/'.$destinationPath.'/'.$documentationEntity['id'].'.pdf', base64_decode($createDocumentationFileRequest->binaryData) );
 
-            $documentationEntity['path']= $destinationPath.'/'.$documentationEntity['id'].'.pdf';
+            $newPath= $destinationPath.'/'.$documentationEntity['id'].'.pdf';
 
-            $this->documentationRepositoryInterface->update($createDocumentationFileRequest->id, $documentationEntity);
+            $this->documentationRepositoryInterface->updateDocumentationPath($createDocumentationFileRequest->id, $newPath);
 
             $actionDetails =[
                 'documentation_id'=>$createDocumentationFileRequest->currentUserId,
