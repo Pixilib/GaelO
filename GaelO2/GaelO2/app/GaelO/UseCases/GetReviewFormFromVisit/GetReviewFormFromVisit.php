@@ -37,7 +37,7 @@ class GetReviewFormFromVisit
 
             foreach ($reviewEntity as $review) {
                 $detailedReview = ReviewEntity::fillFromDBReponseArray($review);
-                $detailedReview->setUserDetails($review['user']['username'], $review['user']['lastname'], $review['user']['firstname']);
+                $detailedReview->setUserDetails($review['user']['username'], $review['user']['lastname'], $review['user']['firstname'], $review['user']['center_code']);
                 $reviews[] = $detailedReview;
             }
             $getReviewFormFromVisitResponse->body = $reviews;
