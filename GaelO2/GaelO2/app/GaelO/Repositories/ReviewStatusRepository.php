@@ -21,13 +21,9 @@ class ReviewStatusRepository implements ReviewStatusRepositoryInterface {
 
     public function updateReviewConclusion(int $visitId, string $studyName, string $reviewConclusionValue ) : void {
 
-        $array = [
-            'review_conclusion_value' => $reviewConclusionValue,
-            'review_conclusion_date' => Util::now()
-        ];
-
         $model = $this->reviewStatus->where('visit_id', $visitId)->where('study_name', $studyName)->sole();
-        $model = Util::fillObject($array, $model);
+        $model->review_conclusion_value = $reviewConclusionValue;
+        $model->review_conclusion_date = Util::now();
         $model->save();
 
     }
@@ -35,12 +31,8 @@ class ReviewStatusRepository implements ReviewStatusRepositoryInterface {
     public function updateReviewStatus(int $visitId, string $studyName, string $reviewStatus): void
     {
 
-        $array = [
-            'review_status' => $reviewStatus
-        ];
-
         $model = $this->reviewStatus->where('visit_id', $visitId)->where('study_name', $studyName)->sole();
-        $model = Util::fillObject($array, $model);
+        $model->review_status = $reviewStatus;
         $model->save();
 
     }

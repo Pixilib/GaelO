@@ -109,19 +109,6 @@ class DicomController extends Controller
         return $this->getJsonResponse($reactivateDicomStudyResponse->body, $reactivateDicomStudyResponse->status, $reactivateDicomStudyResponse->statusText);
     }
 
-    public function getStudyDicomStudies(string $studyName, Request $request, GetDicomsStudy $getDicomsStudy, GetDicomsStudyRequest $getDicomsStudyRequest, GetDicomsStudyResponse $getDicomsStudyResponse)
-    {
-        $currentUser = Auth::user();
-        $queryParam = $request->query();
-        $getDicomsStudyRequest->studyName = $studyName;
-        $getDicomsStudyRequest->withTrashed = key_exists('withTrashed', $queryParam);
-        $getDicomsStudyRequest->currentUserId = $currentUser['id'];
-
-        $getDicomsStudy->execute($getDicomsStudyRequest, $getDicomsStudyResponse);
-
-        return $this->getJsonResponse($getDicomsStudyResponse->body, $getDicomsStudyResponse->status, $getDicomsStudyResponse->statusText);
-    }
-
     public function getSupervisorDicomsFile(string $studyName, Request $request, GetDicomsFileSupervisor $getDicomsFileSupervisor, GetDicomsFileSupervisorRequest $getDicomsFileSupervisorRequest, GetDicomsFileSupervisorResponse $getDicomsFileSupervisorResponse)
     {
         $currentUser = Auth::user();

@@ -14,6 +14,7 @@ use App\GaelO\UseCases\ModifyUser\ModifyUserResponse;
 use App\GaelO\Services\AuthorizationService;
 use App\GaelO\Services\MailServices;
 use App\GaelO\UseCases\CreateUser\CreateUser;
+use App\GaelO\Util;
 use Exception;
 
 class ModifyUser
@@ -49,7 +50,7 @@ class ModifyUser
 
             if ($modifyUserRequest->status === Constants::USER_STATUS_UNCONFIRMED) {
                 //If unconfirmed generate a new temporary password
-                $newPassword = substr(uniqid(), 1, 10);
+                $newPassword = Util::generateNewTempPassword();
                 $temporaryPassword = $this->hashInterface->hash($newPassword);
             } else {
                 //Do not modify the current temporary password otherwise

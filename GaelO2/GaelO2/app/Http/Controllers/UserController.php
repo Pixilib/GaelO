@@ -218,11 +218,13 @@ class UserController extends Controller
         return $this->getJsonResponse($reactivateUserResponse->body, $reactivateUserResponse->status, $reactivateUserResponse->statusText);
     }
 
-    public function getUserFromStudy(string $studyName, GetUserFromStudyRequest $getUserFromStudyRequest, GetUserFromStudyResponse $getUserFromStudyResponse, GetUserFromStudy $getUserFromStudy)
+    public function getUserFromStudy(string $studyName, Request $request, GetUserFromStudyRequest $getUserFromStudyRequest, GetUserFromStudyResponse $getUserFromStudyResponse, GetUserFromStudy $getUserFromStudy)
     {
         $curentUser = Auth::user();
+        $queryParam = $request->query();
         $getUserFromStudyRequest->currentUserId = $curentUser['id'];
         $getUserFromStudyRequest->studyName = $studyName;
+        $getUserFromStudyRequest->role = $queryParam['role'];
         $getUserFromStudy->execute($getUserFromStudyRequest, $getUserFromStudyResponse);
         return $this->getJsonResponse($getUserFromStudyResponse->body, $getUserFromStudyResponse->status, $getUserFromStudyResponse->statusText);
     }

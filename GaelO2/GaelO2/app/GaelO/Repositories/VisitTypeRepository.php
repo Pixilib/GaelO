@@ -4,18 +4,11 @@ namespace App\GaelO\Repositories;
 
 use App\Models\VisitType;
 use App\GaelO\Interfaces\Repositories\VisitTypeRepositoryInterface;
-use App\GaelO\Util;
 
 class VisitTypeRepository implements VisitTypeRepositoryInterface {
 
     public function __construct(VisitType $visitType){
         $this->visitType = $visitType;
-    }
-
-    private function create(array $data){
-        $visitType = new VisitType();
-        $model = Util::fillObject($data, $visitType);
-        $model->save();
     }
 
     public function find($id) : array {
@@ -29,21 +22,21 @@ class VisitTypeRepository implements VisitTypeRepositoryInterface {
     public function createVisitType(int $visitGroupId, String $name, int $order, bool $localFormNeeded, bool $qcNeeded, bool $reviewNeeded,
                                     bool $optional, int $limitLowDays, int $limitUpDays, String $anonProfile, array $dicomContraints) : void {
 
-        $data = [
-            'visit_group_id'=> $visitGroupId,
-            'name' => $name,
-            'order'=> $order,
-            'local_form_needed'=> $localFormNeeded,
-            'qc_needed' => $qcNeeded,
-            'review_needed'=>$reviewNeeded,
-            'optional'=>$optional,
-            'limit_low_days'=>$limitLowDays,
-            'limit_up_days'=>$limitUpDays,
-            'anon_profile'=>$anonProfile,
-            'dicom_constraints'=> $dicomContraints
-        ];
+        $visitType = new VisitType();
 
-        $this->create($data);
+        $visitType->visit_group_id = $visitGroupId;
+        $visitType->name = $name;
+        $visitType->order = $order;
+        $visitType->local_form_needed = $localFormNeeded;
+        $visitType->qc_needed = $qcNeeded;
+        $visitType->review_needed = $reviewNeeded;
+        $visitType->optional = $optional;
+        $visitType->limit_low_days = $limitLowDays;
+        $visitType->limit_up_days = $limitUpDays;
+        $visitType->anon_profile = $anonProfile;
+        $visitType->dicom_constraints = $dicomContraints;
+
+        $visitType->save();
 
     }
 

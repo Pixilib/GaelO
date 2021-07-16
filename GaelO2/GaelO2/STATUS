@@ -42,12 +42,14 @@ reviews/{id}/file (GET, POST, DELETE)
 
 Salim TODO :
 
+Reparer module telechargement dicom (ajout selection visit id et updater l'api)
+
 Stat avec Visit ajouter les clé patient (pour le filtre avec center) +- center name ? => fait, reste a ajouter nom des centres dans reponse
-Stat Dicom study a reflechir pour pouvoir filter par centre (necessite de requeter visit + patient)
 AskUnlock basé sur le VisitId ? => passer a review id
 Etudier refresh du token (evaluer impact avec telescope)
 Ajouter passeport purge pour vider la table periodiquement
 Refac pour la lecture eviter de passer par des services pour laisser les services à l'ecriture ?
+Enlever le update public de patient Repository
 
 Entity :
 - Pluger toutes les reponses "data" sur ces entity response

@@ -157,28 +157,6 @@ class DicomStudyRepositoryTest extends TestCase
         $this->assertEquals(1, sizeof($series));
     }
 
-
-    public function testGetDicomStudyFromStudy()
-    {
-
-        $orthancStudies = DicomStudy::factory()->count(2)->create();
-
-        DicomSeries::factory()->studyInstanceUID($orthancStudies->first()->study_uid)->create();
-
-        $studyName = $orthancStudies->first()->visit->visitType->visitGroup->study_name;
-
-        $results = $this->dicomStudyRepository->getDicomStudyFromStudy($studyName, false);
-        $this->assertEquals(1, sizeof($results));
-
-        //Test if deleted
-        $orthancStudies->first()->delete();
-        $orthancStudies->first()->save();
-        $results = $this->dicomStudyRepository->getDicomStudyFromStudy($studyName, false);
-        $this->assertEquals(0, sizeof($results));
-        $results = $this->dicomStudyRepository->getDicomStudyFromStudy($studyName, true);
-        $this->assertEquals(1, sizeof($results));
-    }
-
     public function testGetDicomStudyFromVisitIdArray()
     {
 

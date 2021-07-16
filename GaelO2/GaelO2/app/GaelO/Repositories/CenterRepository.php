@@ -4,24 +4,11 @@ namespace App\GaelO\Repositories;
 
 use App\GaelO\Interfaces\Repositories\CenterRepositoryInterface;
 use App\Models\Center;
-use App\GaelO\Util;
 
 class CenterRepository implements CenterRepositoryInterface {
 
     public function __construct(Center $center){
         $this->center = $center;
-    }
-
-    private function create(array $data){
-        $center = new Center();
-        $model = Util::fillObject($data, $center);
-        $model->save();
-    }
-
-    private function update($code, array $data) : void{
-        $model = $this->center->find($code);
-        $model = Util::fillObject($data, $model);
-        $model->save();
     }
 
     public function find($id) : array {
@@ -34,13 +21,11 @@ class CenterRepository implements CenterRepositoryInterface {
     }
 
     public function createCenter(int $code, string $name, string $countryCode) : void {
-        $data = [
-            'code' => $code,
-            'name' => $name,
-            'country_code' => $countryCode
-        ];
-
-        $this->create($data);
+        $center = new Center();
+        $center->code = $code;
+        $center->name = $name;
+        $center->country_code = $countryCode;
+        $center->save();
     }
 
     public function getCenterByName(string $name) : array {
@@ -58,12 +43,10 @@ class CenterRepository implements CenterRepositoryInterface {
     }
 
     public function updateCenter(int $code, String $name, String $countryCode) : void {
-        $data = [
-            'name' => $name,
-            'country_code' => $countryCode
-        ];
-        $this->update($code, $data);
-
+        $center = $this->center->findOrFail($code);
+        $center->name = $name;
+        $center->country_code = $countryCode;
+        $center->save();
     }
 
 }

@@ -281,13 +281,15 @@ class StudyController extends Controller
         return $this->getJsonResponse($getInvestigatorFormsMetadataFromVisitTypeResponse->body, $getInvestigatorFormsMetadataFromVisitTypeResponse->status, $getInvestigatorFormsMetadataFromVisitTypeResponse->statusText);
     }
 
-    public function getDicomStudiesFromVisitType(string $studyName, int $visitTypeId, GetDicomsStudiesFromVisitType $getDicomsStudiesFromVisitType, GetDicomsStudiesFromVisitTypeRequest $getDicomsStudiesFromVisitTypeRequest, GetDicomsStudiesFromVisitTypeResponse $getDicomsStudiesFromVisitTypeResponse)
+    public function getDicomStudiesFromVisitType(string $studyName, Request $request, int $visitTypeId, GetDicomsStudiesFromVisitType $getDicomsStudiesFromVisitType, GetDicomsStudiesFromVisitTypeRequest $getDicomsStudiesFromVisitTypeRequest, GetDicomsStudiesFromVisitTypeResponse $getDicomsStudiesFromVisitTypeResponse)
     {
 
         $currentUser = Auth::user();
+        $queryParam = $request->query();
         $getDicomsStudiesFromVisitTypeRequest->currentUserId = $currentUser['id'];
         $getDicomsStudiesFromVisitTypeRequest->studyName = $studyName;
         $getDicomsStudiesFromVisitTypeRequest->visitTypeId = $visitTypeId;
+        $getDicomsStudiesFromVisitTypeRequest->withTrashed = key_exists('withTrashed', $queryParam);
 
         $getDicomsStudiesFromVisitType->execute($getDicomsStudiesFromVisitTypeRequest, $getDicomsStudiesFromVisitTypeResponse);
 

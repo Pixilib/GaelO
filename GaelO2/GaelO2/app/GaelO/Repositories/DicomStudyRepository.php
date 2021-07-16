@@ -15,20 +15,6 @@ class DicomStudyRepository implements DicomStudyRepositoryInterface
         $this->dicomStudy = $dicomStudy;
     }
 
-    private function create(array $data)
-    {
-        $dicomStudy = new DicomStudy();
-        $model = Util::fillObject($data, $dicomStudy);
-        $model->save();
-    }
-
-    private function update($studyInstanceUID, array $data): void
-    {
-        $model = $this->dicomStudy->find($studyInstanceUID);
-        $model = Util::fillObject($data, $model);
-        $model->save();
-    }
-
     public function delete($studyInstanceUID): void
     {
         $this->dicomStudy->findOrFail($studyInstanceUID)->delete();
@@ -57,27 +43,27 @@ class DicomStudyRepository implements DicomStudyRepositoryInterface
         int $diskSize,
         int $uncompressedDisksize
     ): void {
-        $data = [
-            'orthanc_id' => $orthancStudyID,
-            'visit_id' => $visitID,
-            'user_id' => $uploaderID,
-            'upload_date' => $uploadDate,
-            'acquisition_date' => $acquisitionDate,
-            'acquisition_time' => $acquisitionTime,
-            'anon_from_orthanc_id' => $anonFromOrthancID,
-            'study_uid' => $studyUID,
-            'study_description' => $studyDescription,
-            'patient_orthanc_id' => $patientOrthancID,
-            'patient_name' => $patientName,
-            'patient_id' => $patientID,
-            'number_of_series' => $numberOfSeries,
-            'number_of_instances' => $numberOfInstance,
-            'disk_size' => $diskSize,
-            'uncompressed_disk_size' => $uncompressedDisksize
 
-        ];
+        $dicomStudy = new DicomStudy();
 
-        $this->create($data);
+        $dicomStudy->orthanc_id = $orthancStudyID;
+        $dicomStudy->visit_id = $visitID;
+        $dicomStudy->user_id = $uploaderID;
+        $dicomStudy->upload_date = $uploadDate;
+        $dicomStudy->acquisition_date = $acquisitionDate;
+        $dicomStudy->acquisition_time = $acquisitionTime;
+        $dicomStudy->anon_from_orthanc_id = $anonFromOrthancID;
+        $dicomStudy->study_uid = $studyUID;
+        $dicomStudy->study_description = $studyDescription;
+        $dicomStudy->patient_orthanc_id = $patientOrthancID;
+        $dicomStudy->patient_name = $patientName;
+        $dicomStudy->patient_id = $patientID;
+        $dicomStudy->number_of_series = $numberOfSeries;
+        $dicomStudy->number_of_instances = $numberOfInstance;
+        $dicomStudy->disk_size = $diskSize;
+        $dicomStudy->uncompressed_disk_size = $uncompressedDisksize;
+
+        $dicomStudy->save();
     }
 
     /**
@@ -102,7 +88,7 @@ class DicomStudyRepository implements DicomStudyRepositoryInterface
 
     public function getStudyInstanceUidFromVisit(int $visitID): string
     {
-        $studyEntity = $this->dicomStudy->where('visit_id','=', $visitID)->sole();
+        $studyEntity = $this->dicomStudy->where('visit_id', '=', $visitID)->sole();
         return $studyEntity->study_uid;
     }
 
@@ -148,59 +134,38 @@ class DicomStudyRepository implements DicomStudyRepositoryInterface
         return $series;
     }
 
-    public function getDicomStudyFromStudy(string $studyName, bool $withDeleted): array
+    public function getDicomStudyFromVisitIdArray(array $visitId, bool $withTrashed): array
     {
-
-        $query = $this->dicomStudy
-            ->with(['visit' => function ($query) use ($withDeleted) {
-                $query->with(['visitType', 'patient']);
-            }])
-            ->whereHas('visit', function ($query) use ($studyName) {
-                $query->whereHas('visitType', function ($query) use ($studyName) {
-                    $query->whereHas('visitGroup', function ($query) use ($studyName) {
-                        $query->where('study_name', $studyName);
-                    });
-                });
-            })
-            ->with(['dicomSeries' => function ($query) use ($withDeleted) {
-                if($withDeleted) $query->withTrashed();
-            }]);
-
-        if ($withDeleted) {
-            $query->withTrashed();
-        }
-
-        $answer = $query->get();
-
-        return $answer->count() === 0 ? []  : $answer->toArray();
-    }
-
-
-    public function getDicomStudyFromVisitIdArray(array $visitId, bool $withTrashed) : array {
 
         $queryBuilder = $this->dicomStudy->whereIn('visit_id', $visitId);
 
-        if($withTrashed){
+        if ($withTrashed) {
             $queryBuilder->withTrashed();
         }
 
         $answer = $queryBuilder->get();
 
         return $answer->count() === 0 ? []  : $answer->toArray();
-
     }
 
-    public function getDicomStudyFromVisitIdArrayWithSeries(array $visitId, bool $withTrashed) : array {
+    public function getDicomStudyFromVisitIdArrayWithSeries(array $visitId, bool $withTrashed): array
+    {
 
-        $queryBuilder = $this->dicomStudy->whereIn('visit_id', $visitId)->with('dicomSeries');
+        $queryBuilder = $this->dicomStudy
+            ->with(['visit' => function ($query) {
+                $query->with(['visitType', 'patient']);
+            }])
+            ->with(['dicomSeries' => function ($query) use ($withTrashed) {
+                if ($withTrashed) $query->withTrashed();
+            }])
+            ->whereIn('visit_id', $visitId)->with('dicomSeries');
 
-        if($withTrashed){
+        if ($withTrashed) {
             $queryBuilder->withTrashed();
         }
 
         $answer = $queryBuilder->get();
 
         return $answer->count() === 0 ? []  : $answer->toArray();
-
     }
 }

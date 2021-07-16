@@ -7,15 +7,23 @@ use Carbon\Carbon;
 use DateTime;
 use Exception;
 use FilesystemIterator;
+use Illuminate\Support\Facades\Log;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
+use ReflectionClass;
 use ZipArchive;
 
 class Util {
 
     public static function fillObject (array $dataToExtract, object $dataToFill) {
-        foreach($dataToExtract as $property => $value) {
-            $dataToFill->$property = $value;
+        //Get Expected properties awaited in DTO Request
+        $reflect = new ReflectionClass($dataToFill);
+        $awaitedProperties = $reflect->getProperties();
+
+        //Loop these properties and fill it with incoming data is present
+        foreach($awaitedProperties as $property) {
+            $propertyName = $property->getName();
+            if(array_key_exists($propertyName, $dataToExtract)) $dataToFill->$propertyName = $dataToExtract[$propertyName];
         }
         return $dataToFill;
     }
@@ -131,5 +139,9 @@ class Util {
         } else {
         return false;
         }
+    }
+
+    public static function generateNewTempPassword() : string {
+        return bin2hex(random_bytes(5));
     }
 }

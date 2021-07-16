@@ -31,7 +31,7 @@ class CreateUserTest extends TestCase
         'lastname' => 'truc',
         'firstname' => 'truc',
         'email' => 'truc@truc.fr',
-        'phone' => '0600000000',
+        'phone' => '+33598653256',
         'administrator' => true,
         'centerCode' => 0,
         'job' => 'Monitor',
@@ -113,7 +113,7 @@ class CreateUserTest extends TestCase
      */
     public function testCreateInvalidPhone(){
         AuthorizationTools::actAsAdmin(true);
-        $this->validPayload['phone'] = "05G05";
+        $this->validPayload['phone'] = "05'é('('5487956";
         $this->json('POST', '/api/users', $this->validPayload) -> assertStatus(400);
     }
 

@@ -12,12 +12,6 @@ class VisitGroupRepository implements VisitGroupRepositoryInterface {
         $this->visitGroup = $visitGroup;
     }
 
-    public function create(array $data){
-        $visitGroup = new VisitGroup();
-        $model = Util::fillObject($data, $visitGroup);
-        $model->save();
-    }
-
     public function find($id){
         return $this->visitGroup->findOrFail($id)->toArray();
     }
@@ -28,13 +22,10 @@ class VisitGroupRepository implements VisitGroupRepositoryInterface {
 
     public function createVisitGroup(String $studyName, String $modality)  : void {
 
-        $data = [
-            'study_name'=> $studyName,
-            'modality' => $modality
-        ];
-
-        $this->create($data);
-
+        $visitGroup = new VisitGroup();
+        $visitGroup->study_name = $studyName;
+        $visitGroup->modality = $modality;
+        $visitGroup->save();
     }
 
     public function hasVisitTypes(int $visitGroupId) : bool {

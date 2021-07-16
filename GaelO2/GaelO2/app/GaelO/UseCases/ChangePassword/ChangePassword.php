@@ -115,7 +115,7 @@ class ChangePassword {
      * Check password equality, used to check current password and new candidate password
      */
     private function checkMatchPasswords(string $pass1, string $pass2) : void {
-        if( $pass1 != $pass2 ) {
+        if( $pass1 !== $pass2 ) {
             throw new GaelOBadRequestException('New Passwords Do Not Match');
         }
     }

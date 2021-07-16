@@ -10,6 +10,7 @@ use App\GaelO\Services\AuthorizationService;
 use App\GaelO\Services\MailServices;
 use Exception;
 use App\GaelO\Interfaces\Repositories\UserRepositoryInterface;
+use App\GaelO\Util;
 
 class ReactivateUser{
 
@@ -35,7 +36,7 @@ class ReactivateUser{
             $this->userRepositoryInterface->reactivateUser($reactivateUserRequest->userId);
             //Generate new password and set status unconfirmed
             $user = $this->userRepositoryInterface->find($reactivateUserRequest->userId);
-            $newPassword = substr(uniqid(), 1, 10);
+            $newPassword = Util::generateNewTempPassword();
 
             $this->userRepositoryInterface->updateUserTemporaryPassword($user['id'], $newPassword);
             $this->userRepositoryInterface->updateUserStatus($user['id'], Constants::USER_STATUS_UNCONFIRMED);

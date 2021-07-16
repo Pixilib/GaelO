@@ -14,21 +14,6 @@ class DocumentationRepository implements DocumentationRepositoryInterface
         $this->documentation = $documentation;
     }
 
-    private function create(array $data)
-    {
-        $documentation = new Documentation();
-        $model = Util::fillObject($data, $documentation);
-        $model->save();
-        return $model->toArray();
-    }
-
-    public function update($id, array $data): void
-    {
-        $model = $this->documentation->find($id);
-        $model = Util::fillObject($data, $model);
-        $model->save();
-    }
-
     public function find($id): array
     {
         return $this->documentation->withTrashed()->findOrFail($id)->toArray();
@@ -36,7 +21,7 @@ class DocumentationRepository implements DocumentationRepositoryInterface
 
     public function delete($id): void
     {
-        $this->documentation->find($id)->delete();
+        $this->documentation->findOrFail($id)->delete();
     }
 
     public function createDocumentation(
@@ -49,18 +34,18 @@ class DocumentationRepository implements DocumentationRepositoryInterface
         bool $reviewer
     ): array {
 
-        $data = [
-            'name' => $name,
-            'document_date' => Util::now(),
-            'study_name' => $studyName,
-            'version' => $version,
-            'investigator' => $investigator,
-            'controller' => $controller,
-            'monitor' => $monitor,
-            'reviewer' => $reviewer,
-        ];
+        $documentation = new Documentation();
+        $documentation->name = $name;
+        $documentation->document_date = Util::now();
+        $documentation->study_name = $studyName;
+        $documentation->version = $version;
+        $documentation->investigator = $investigator;
+        $documentation->controller = $controller;
+        $documentation->monitor = $monitor;
+        $documentation->reviewer = $reviewer;
 
-        return $this->create($data);
+        $documentation->save();
+        return $documentation->toArray();
     }
 
     public function getDocumentationsOfStudy(string $studyName, bool $withTrashed = false): array
@@ -90,18 +75,29 @@ class DocumentationRepository implements DocumentationRepositoryInterface
         bool $monitor,
         bool $reviewer
     ) {
-        $data = [
-            'name' => $name,
-            'document_date' => Util::now(),
-            'study_name' => $studyName,
-            'version' => $version,
-            'investigator' => $investigator,
-            'controller' => $controller,
-            'monitor' => $monitor,
-            'reviewer' => $reviewer,
-        ];
 
-        $this->update($id, $data);
+        $documentation = $this->documentation->findOrFail($id);
+        $documentation->name = $name;
+        $documentation->document_date = Util::now();
+        $documentation->study_name = $studyName;
+        $documentation->version = $version;
+        $documentation->investigator = $investigator;
+        $documentation->controller = $controller;
+        $documentation->monitor = $monitor;
+        $documentation->reviewer = $reviewer;
+        $documentation->save();
+
+    }
+
+    public function updateDocumentationPath(
+        int $id,
+        string $path
+    ) {
+
+        $documentation = $this->documentation->findOrFail($id);
+        $documentation->path = $path;
+        $documentation->save();
+
     }
 
     public function isKnownDocumentation(string $name, string $version): bool

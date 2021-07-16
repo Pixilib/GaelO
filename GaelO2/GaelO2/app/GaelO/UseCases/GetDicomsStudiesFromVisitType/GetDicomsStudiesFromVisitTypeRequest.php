@@ -6,4 +6,5 @@ class GetDicomsStudiesFromVisitTypeRequest {
     public int $currentUserId;
     public string $studyName;
     public int $visitTypeId;
+    public bool $withTrashed = false;
 }
