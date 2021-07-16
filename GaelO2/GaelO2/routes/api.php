@@ -163,7 +163,8 @@ Route::middleware(['auth:api', 'refresh_token'])->group(function () {
 
     //Tools routes
     Route::get('tools/studies/{studyName}/centers', [ToolsController::class, 'getCentersFromStudy']);
-    Route::get('tools/studies/{studyName}/centers/{centerCode}/patients/{patientArray}', [ToolsController::class, 'getPatientsInStudyFromCenter']);
+    Route::post('tools/studies/{studyName}/centers/patients', [ToolsController::class, 'getPatientsInStudyFromCenters']);
+    Route::post('tools/studies/{studyName}/patients/visits', [ToolsController::class, 'getPatientsVisitsInStudy']);
 });
 
 

@@ -19,6 +19,7 @@ class PatientEntity {
     public ?string $withdrawReason;
     public ?string $withdrawDate;
     public CenterEntity $center;
+    public array $visits = [];
 
     public static function fillFromDBReponseArray(array $array) : PatientEntity{
         $patientEntity  = new PatientEntity();
@@ -43,6 +44,10 @@ class PatientEntity {
         $this->center = new CenterEntity();
         $this->center->name = $centerName;
         $this->center->countryCode = $countryCode;
+    }
+
+    public function setVisitsDetails(array $visits) : void {
+        $this->visits = $visits;
     }
 
 }
