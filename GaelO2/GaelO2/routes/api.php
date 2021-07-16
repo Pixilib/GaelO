@@ -14,6 +14,7 @@ use App\Http\Controllers\ReverseProxyController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\StudyController;
 use App\Http\Controllers\TrackerController;
+use App\Http\Controllers\ToolsController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\VisitController;
 use App\Http\Controllers\VisitGroupController;
@@ -160,6 +161,10 @@ Route::middleware(['auth:api', 'refresh_token'])->group(function () {
     Route::delete('documentations/{id}', [DocumentationController::class, 'deleteDocumentation'] );
     Route::patch('documentations/{id}', [DocumentationController::class, 'modifyDocumentation'] );
     Route::patch('documentations/{id}/reactivate', [DocumentationController::class, 'reactivateDocumentation'] );
+
+    //Tools routes
+    Route::get('tools/studies/{studyName}/centers', [ToolsController::class, 'getCentersFromStudy']);
+    Route::get('tools/studies/{studyName}/centers/{centerCode}/patients/{patientArray}', [ToolsController::class, 'getPatientsInStudyFromCenter']);
 });
 
 
