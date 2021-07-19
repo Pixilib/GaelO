@@ -13,7 +13,6 @@
  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-header('content-type: application/json; charset=utf-8');
 require_once($_SERVER['DOCUMENT_ROOT'].'/vendor/autoload.php');
 
 Session::checkSession();
@@ -21,32 +20,35 @@ $linkpdo=Session::getLinkpdo();
 
 $userObject=new User($_SESSION['username'], $linkpdo);
 
-$visitId=$_POST['visit_id'];
-$fileKey=$_POST['file_key'];
-$local=$_SESSION['role'] == User::INVESTIGATOR ? true : false; 
+$idVisit=$_GET['id_visit'];
+$fileKey=$_GET['file_key'];
+$local=true;
 
 //Need to retrieve study before testing permission, can't test visit permissions directly because permission class tests non deleted status
-$visitObject=new Visit($visitId, $linkpdo);
-$accessCheck=$userObject->isVisitAllowed($visitId, $_SESSION['role']);
+$visitObject=new Visit($idVisit, $linkpdo);
+$accessCheck=$userObject->isRoleAllowed($visitObject->study, $_SESSION['role']);
 
 if ($accessCheck && in_array($_SESSION['role'], array(User::INVESTIGATOR, User::REVIEWER))) {
-	$formProcessor=$visitObject->getFromProcessor($local, $_SESSION['username']);
+    
+	$reviewObject=$visitObject->getReviewsObject(true);
 
-	if (!$formProcessor instanceof Form_Processor_File) {
-		throw new Exception('Wrong From Processor type');
-		return json_encode((false));
-	}
-
-	$filename=$_FILES['files']['name'][0];
-	$fileMime=$_FILES['files']['type'][0];
-	$tempFileLocation=$_FILES['files']['tmp_name'][0];
-	$fileSize=$_FILES['files']['size'][0];
-	try{
-		$formProcessor->storeAssociatedFile($fileKey, $fileMime, $fileSize, $tempFileLocation);
-		echo( json_encode((true)) );
-	}catch (Throwable $t){
-		error_log($t->getMessage());
-		echo (json_encode((false)) );
+	$filePath=$reviewObject->getAssociatedFilePath($fileKey);
+    
+	header('Content-type: application/octet-stream; charset=utf-8');
+	header("Content-Transfer-Encoding: Binary");
+	header("Cache-Control: no-cache");
+	header("Content-Length: ".filesize($filePath));
+	header('Content-Disposition: attachment; filename="'.basename($filePath).'"');
+	$file=@fopen($filePath, "rb");
+	if ($file) {
+		while (!feof($file))
+		{
+			print(@fread($file, 1024*1024));
+			flush();
+		}
+		fclose($file);
+	}else {
+		throw new Exception("Can't Find Attached File");
 	}
 
 }else {

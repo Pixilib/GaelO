@@ -14,6 +14,7 @@
  */
 
 use GuzzleHttp\Client;
+use Psr\Http\Message\StreamInterface;
 
 /**
  * Main class for Orthanc communication, serve usefull APIs (get dicom tags, send to peer, download zip...)
@@ -121,27 +122,24 @@ Class Orthanc {
 	 * @param array $uidList
 	 * @return resource temporary file path
 	 */
-	public function getZipStream(array $uidList) {
+	public function getZipStream(array $uidList) : StreamInterface {
 	   
 		if (!is_array($uidList)) {
 			$uidList=array($uidList);
 		}
-	    
-		$opts=array('http' =>
-			array(
-				'method'  => 'POST',
-				'content' => json_encode(array('Transcode'=>'1.2.840.10008.1.2.1', 'Resources' => $uidList)),
-				'timeout' => 3600,
-				'header'=>  ['Content-Type: application/json', 'Accept: application/zip', $this->context['http']['header']]
-			)
-		);
-	    
-		$context=stream_context_create($opts);
 
-		$tempFile = tmpfile();
-		stream_copy_to_stream ( fopen($this->url.'/tools/create-archive', 'rb', false, $context) , $tempFile);
-	    
-		return $tempFile;
+		$options = [
+			'auth' => [$this->login, $this->password],
+			'headers'  => ['content-type' => 'application/json', 'Accept' => 'application/zip'],
+			'body' => json_encode(array('Transcode'=>'1.2.840.10008.1.2.1', 'Resources' => $uidList)),
+			'stream' => true
+		];
+
+		$response = $this->client->request('POST', $this->url.'/tools/create-archive' , $options);
+
+		$zipStream = $response->getBody();
+		
+		return $zipStream;
 	}
 	
 	

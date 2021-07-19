@@ -116,7 +116,8 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.1.0/papaparse.min.js"></script>
 
 <!-- GaelO Uploader -->
-<script src="https://unpkg.com/gaelo-uploader@1.1.0/dist/bundle.js"></script>
+<script src="https://unpkg.com/gaelo-uploader@3.1.2/dist/bundle.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/gaelo-uploader@3.1.2/dist/main.css">
 
 <!-- GaelO CSS -->
 <?php $uploaderVersion="3.7"?>
@@ -126,7 +127,7 @@
 <link rel="stylesheet" href="assets/css/gaelO-static.css">
 <link rel="stylesheet" href="assets/css/gaelO-fonts.css">
 <link rel="stylesheet" href="assets/css/gaelO.css">
-<link rel="stylesheet" href="assets/css/gaelO-uploader.css">
+
 
 <script type="text/javascript" src="assets/javascripts/PetCtCSVParser.js" ></script>
 <script type="text/javascript" src="assets/javascripts/uppyCsvPlugin.js" ></script>

@@ -58,9 +58,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 				$qc=$visit['qc'] === 'true';
 				$review=$visit['review'] === 'true';
 				$optional=$visit['optional'] === 'true';
+				$dicomConstraints = $visit['dicomConstraints'] ;
 				//Create Visit Type
 				Visit_Type::createVisitType($studyName, $visitGroup, $visit['name'], $visit['order'], $visit['dayMin'], $visit['dayMax'], $localForm,
-				$qc, $review, $optional, $visit['anonProfile'], $linkpdo);
+				$qc, $review, $optional, $visit['anonProfile'], $dicomConstraints , $linkpdo);
                 
 				$rootSpecificModelsFolder=$_SERVER["DOCUMENT_ROOT"].'/data/form/'.$studyName.'/Poo';
 				$rootSpecificScriptFolder=$_SERVER["DOCUMENT_ROOT"].'/data/form/'.$studyName.'/scripts';

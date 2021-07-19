@@ -111,7 +111,7 @@ class Export_Study_Data
 		$visitCSV[]=array(
 			'Patient Code', 'Visit Group', 'ID Visit', 'Code Status', 'Creator Name', 'Creator Date',
 			'Type', 'Status', 'Reason For Not Done', 'Acquisition Date', 'Upload Status', 'Uploader',
-			'Upload Date', 'State Investigator Form', 'State QC', 'QC done by', 'QC date', 'Review Status', 'Review Date', 'Review Conclusion', 'visit deleted'
+			'Upload Date', 'State Investigator Form', 'State QC', 'QC done by', 'QC date', 'Review Status', 'Review Date'/*, 'Review Target Lesions'*/, 'Review Conclusion', 'visit deleted'
 		);
 
 		foreach ($this->allcreatedVisits as $visit) {
@@ -120,7 +120,7 @@ class Export_Study_Data
 				$visit->patientCode, $visit->visitGroupObject->groupModality, $visit->id_visit, $codeStatus, $visit->creatorName, $visit->creationDate,
 				$visit->visitType, $visit->statusDone, $visit->reasonForNotDone, $visit->acquisitionDate, $visit->uploadStatus, $visit->uploaderUsername,
 				$visit->uploadDate, $visit->stateInvestigatorForm, $visit->stateQualityControl, $visit->controllerUsername, $visit->controlDate,
-				$visit->reviewStatus, $visit->reviewConclusionDate, $visit->reviewConclusion, $visit->deleted
+				$visit->reviewStatus, $visit->reviewConclusionDate/*, $visit->reviewTargetLesions*/, $visit->reviewConclusion, $visit->deleted
 			);
 		}
 
@@ -145,7 +145,7 @@ class Export_Study_Data
 		$imagingVisit=array_filter($this->allcreatedVisits, function(Visit $visitObject) {
 			$inArrayBool=in_array(
 				$visitObject->visitGroupObject->groupModality,
-				array(Visit_Group::GROUP_MODALITY_CT, Visit_Group::GROUP_MODALITY_PET, Visit_Group::GROUP_MODALITY_MR)
+				array(Visit_Group::GROUP_MODALITY_CT, Visit_Group::GROUP_MODALITY_PET, Visit_Group::GROUP_MODALITY_MR, Visit_Group::GROUP_MODALITY_RTSTRUCT)
 			);
 			return ($inArrayBool);
 		});
@@ -191,7 +191,7 @@ class Export_Study_Data
 				$csv=[];
 
 				//Export Reviews
-				$genericHeader=array('Patient Code', 'Visit Type', 'ID Visit', 'ID review', 'Reviewer', 'Review Date', 'Validated', 'Local Form', 'Adjudcation form', 'Review Deleted');
+				$genericHeader=array('Patient Code', 'Visit Type', 'ID Visit', 'ID review', 'Reviewer', 'Review Date', 'Validated', 'Local Form', 'Adjudication form', 'Review Deleted');
 
 				$visitTypeObject=$groupObject->getVisitType($visitType);
 				$specificFormTable=$visitTypeObject->getSpecificFormColumn();

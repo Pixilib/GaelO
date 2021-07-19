@@ -166,7 +166,7 @@ class Patient {
 
 	}
 
-	private function getAllPossibleVisitGroup() : Array { 
+	public function getAllPossibleVisitGroup() : Array { 
 
 		$patientStudy=$this->getPatientStudy();
 		$possibleStudyGroups=$patientStudy->getAllPossibleVisitGroups();
