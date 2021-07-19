@@ -111,7 +111,7 @@ class Export_Study_Data
 		$visitCSV[]=array(
 			'Patient Code', 'Visit Group', 'ID Visit', 'Code Status', 'Creator Name', 'Creator Date',
 			'Type', 'Status', 'Reason For Not Done', 'Acquisition Date', 'Upload Status', 'Uploader',
-			'Upload Date', 'State Investigator Form', 'State QC', 'QC done by', 'QC date', 'Review Status', 'Review Date', 'Review Target Lesions', 'Review Conclusion', 'visit deleted'
+			'Upload Date', 'State Investigator Form', 'State QC', 'QC done by', 'QC date', 'Review Status', 'Review Date'/*, 'Review Target Lesions'*/, 'Review Conclusion', 'visit deleted'
 		);
 
 		foreach ($this->allcreatedVisits as $visit) {
@@ -120,7 +120,7 @@ class Export_Study_Data
 				$visit->patientCode, $visit->visitGroupObject->groupModality, $visit->id_visit, $codeStatus, $visit->creatorName, $visit->creationDate,
 				$visit->visitType, $visit->statusDone, $visit->reasonForNotDone, $visit->acquisitionDate, $visit->uploadStatus, $visit->uploaderUsername,
 				$visit->uploadDate, $visit->stateInvestigatorForm, $visit->stateQualityControl, $visit->controllerUsername, $visit->controlDate,
-				$visit->reviewStatus, $visit->reviewConclusionDate, $visit->reviewTargetLesions, $visit->reviewConclusion, $visit->deleted
+				$visit->reviewStatus, $visit->reviewConclusionDate/*, $visit->reviewTargetLesions*/, $visit->reviewConclusion, $visit->deleted
 			);
 		}
 
