@@ -10,7 +10,6 @@ use App\GaelO\Interfaces\Repositories\CenterRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\PatientRepositoryInterface;
 use App\GaelO\Services\AuthorizationService;
 use Exception;
-use Log;
 
 class GetCentersFromStudy {
 
@@ -40,7 +39,7 @@ class GetCentersFromStudy {
             foreach($patients as $patient) {
                 if(!in_array($patient['center_code'], $centerCodes)) {
                     $center = $this->centerRepositoryInterface->getCenterByCode($patient['center_code']);
-                    $centerCodes[] = CenterEntity::fillFromDBReponseArray($center);    
+                    $centerCodes[] = $center['code'];    
                 }
             }
 
