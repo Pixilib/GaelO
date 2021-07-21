@@ -59,7 +59,7 @@ if ($_SESSION['admin']) {
 			// If OK write in the user database
 		}else {
 			try {
-				$mdp=substr(uniqid(), 1, 10);
+				$mdp=bin2hex(random_bytes(5));
 				User::createUser($username, $last_name, $first_name, $email,
 					$telephone, $mdp, $job, $mainCenter, $administrator, $orthancAddress, $orthancLogin, $orthancPassword, $linkpdo);
                 
