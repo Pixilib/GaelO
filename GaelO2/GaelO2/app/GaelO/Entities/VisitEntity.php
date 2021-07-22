@@ -38,6 +38,8 @@ class VisitEntity {
     public PatientEntity $patient;
     public UserEntity $creatorUser;
 
+    public ?string $acquisitionDate;
+
     public static function fillFromDBReponseArray(array $array){
         $visitEntity  = new VisitEntity();
         $visitEntity->id = $array['id'];
@@ -72,7 +74,9 @@ class VisitEntity {
                                 string $visitTypeName,
                                 int $visitTypeOrder,
                                 bool $visitTypeOptional,
-                                int $visitGroupId){
+                                int $visitGroupId,
+                                ?int $limitLowDays = null,
+                                ?int $limitUpDays = null){
 
         $this->visitGroup = new VisitGroupEntity();
         $this->visitGroup->modality = $visitGroupModality;
@@ -82,6 +86,8 @@ class VisitEntity {
         $this->visitType->name = $visitTypeName;
         $this->visitType->order = $visitTypeOrder;
         $this->visitType->optional = $visitTypeOptional;
+        if($limitLowDays) $this->visitType->limitLowDays = $limitLowDays;
+        if($limitUpDays) $this->visitType->limitUpDays = $limitUpDays;
     }
 
     public function setPatientEntity(array $patientEntity){
@@ -103,4 +109,7 @@ class VisitEntity {
 
     }
 
+    public function setAcquisitionDate(string $acquisitionDate) {
+        $this->acquisitionDate = $acquisitionDate;
+    }
 }

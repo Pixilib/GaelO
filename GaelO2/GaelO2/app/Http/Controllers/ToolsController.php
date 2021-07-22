@@ -42,7 +42,7 @@ class ToolsController extends Controller
         $getPatientsInStudyFromCentersRequest->currentUserId = $curentUser['id'];
         $getPatientsInStudyFromCentersRequest->studyName = $studyName;
 
-        $getPatientsInStudyFromCentersRequest->centerCodes = $request->all();
+        $getPatientsInStudyFromCentersRequest->centerCodes = $request->centerCodes;
     
         $getPatientsInStudyFromCenters->execute($getPatientsInStudyFromCentersRequest, $getPatientsInStudyFromCentersResponse);
         return $this->getJsonResponse($getPatientsInStudyFromCentersResponse->body, $getPatientsInStudyFromCentersResponse->status, $getPatientsInStudyFromCentersResponse->statusText);
@@ -58,7 +58,7 @@ class ToolsController extends Controller
         $getPatientsVisitsInStudyRequest->currentUserId = $curentUser['id'];
         $getPatientsVisitsInStudyRequest->studyName = $studyName;
         
-        $getPatientsVisitsInStudyRequest->patientCodes = $request->all();
+        $getPatientsVisitsInStudyRequest->patientCodes = $request->patientCodes;
 
         $getPatientsVisitsInStudy->execute($getPatientsVisitsInStudyRequest, $getPatientsVisitsInStudyResponse);
         return $this->getJsonResponse($getPatientsVisitsInStudyResponse->body, $getPatientsVisitsInStudyResponse->status, $getPatientsVisitsInStudyResponse->statusText);
