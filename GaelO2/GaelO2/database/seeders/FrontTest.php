@@ -3,6 +3,9 @@
 namespace Database\Seeders;
 
 use App\Models\Center;
+use App\Models\InvestigatorForm;
+use App\Models\DicomStudy;
+use App\Models\DicomSeries;
 use App\Models\Patient;
 use App\Models\ReviewStatus;
 use App\Models\Study;
@@ -16,6 +19,7 @@ use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use App\GaelO\Constants\Constants;
 
 class FrontTest extends Seeder
 {
@@ -50,7 +54,9 @@ class FrontTest extends Seeder
         Patient::factory()->code(123000 + rand(0,999))->inclusionStatus('Included')
             ->investigatorName('administrator')->studyName($this->study->name)->centerCode(0)->create();
         
-        Patient::factory()->count(4)->investigatorName('administrator')
+        Patient::factory()->code(123000 + rand(0,999))->investigatorName('administrator')
+            ->studyName($this->study->name)->centerCode(0)->create();
+        Patient::factory()->code(123000 + rand(0,999))->investigatorName('administrator')
             ->studyName($this->study->name)->centerCode(0)->create();
 
         $this->visitGroup = VisitGroup::factory()->studyName($this->study->name)->create();
@@ -62,7 +68,14 @@ class FrontTest extends Seeder
             ->localFormNeeded()->qcNeeded()->reviewNeeded()->create();
 
         $this->visit = Visit::factory()->creatorUserId(1)->patientCode(Patient::first()['code'])
+            ->uploadDone()->stateQualityControl(Constants::QUALITY_CONTROL_NOT_NEEDED)
+            ->stateInvestigatorForm(Constants::INVESTIGATOR_FORM_DONE)
             ->visitTypeId($this->visitType['id'])->done()->create();
+
+        $this->dicomStudy = DicomStudy::factory()->visitId($this->visit->id)->create();
+        DicomSeries::factory()->studyInstanceUID($this->dicomStudy['study_uid'])->create();
+
+        Review::factory()->studyName($this->study->name)->visitId($this->visit->id)->create();
 
         ReviewStatus::factory()->studyName($this->study->name)->visitId($this->visit->id)
             ->reviewAvailable()->reviewStatus('Done')->create();

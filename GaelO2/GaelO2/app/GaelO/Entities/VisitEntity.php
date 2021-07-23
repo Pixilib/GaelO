@@ -68,20 +68,9 @@ class VisitEntity {
         return $visitEntity;
     }
 
-    public function setVisitContext(string $visitGroupModality,
-                                string $visitTypeName,
-                                int $visitTypeOrder,
-                                bool $visitTypeOptional,
-                                int $visitGroupId){
-
-        $this->visitGroup = new VisitGroupEntity();
-        $this->visitGroup->modality = $visitGroupModality;
-        $this->visitGroup->id = $visitGroupId;
-
-        $this->visitType = new VisitTypeEntity();
-        $this->visitType->name = $visitTypeName;
-        $this->visitType->order = $visitTypeOrder;
-        $this->visitType->optional = $visitTypeOptional;
+    public function setVisitContext(array $visitGroupEntity ,array $visitTypeEntity){
+        $this->visitGroup = VisitGroupEntity::fillFromDBReponseArray($visitGroupEntity);
+        $this->visitType = VisitTypeEntity::fillFromDBReponseArray($visitTypeEntity);
     }
 
     public function setPatientEntity(array $patientEntity){
@@ -102,5 +91,4 @@ class VisitEntity {
         $this->creatorUser = $userEntity;
 
     }
-
 }

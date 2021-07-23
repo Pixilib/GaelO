@@ -29,18 +29,12 @@ class GetPatientVisit {
             $responseArray = [];
             foreach($visitsArray as $data){
 
-                $visitTypeName = $data['visit_type']['name'];
-                $visitTypeOrder = $data['visit_type']['order'];
-                $visitTypeOptional = $data['visit_type']['optional'];
-                $visitGroupModality =  $data['visit_type']['visit_group']['modality'];
-                $visitGroupId =  $data['visit_type']['visit_group']['id'];
-
                 $reviewStatus =  $data['review_status']['review_status'];
                 $reviewConclusionValue = $getPatientVisitRequest->role === Constants::ROLE_SUPERVISOR ? $data['review_status']['review_conclusion_value'] : null;
                 $reviewConclusionDate =  $getPatientVisitRequest->role === Constants::ROLE_SUPERVISOR ? $data['review_status']['review_conclusion_date'] : null;
 
                 $visitEntity = VisitEntity::fillFromDBReponseArray($data);
-                $visitEntity->setVisitContext($visitGroupModality, $visitTypeName, $visitTypeOrder, $visitTypeOptional, $visitGroupId);
+                $visitEntity->setVisitContext($data['visit_type']['visit_group'], $data['visit_type']);
                 $visitEntity->setReviewVisitStatus($reviewStatus, $reviewConclusionValue, $reviewConclusionDate);
                 $responseArray[] = $visitEntity;
             }
