@@ -3,7 +3,7 @@
 namespace App\GaelO\UseCases\GetPatientsInStudyFromCenters;
 
 class GetPatientsInStudyFromCentersResponse {
-    public $body = null;
+    public $body;
     public int $status;
     public string $statusText;
 }

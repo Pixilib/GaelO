@@ -1,8 +1,6 @@
 <?php
 
 namespace App\GaelO\UseCases\GetCentersFromStudy;
-
-use App\GaelO\Entities\CenterEntity;
 use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
@@ -13,11 +11,12 @@ use Exception;
 
 class GetCentersFromStudy {
 
-    private CenterRepositoryInterface $centerRepositoryInterface;
-    
     private AuthorizationService $authorizationService;
+    private PatientRepositoryInterface $patientRepositoryInterface;
+    private CenterRepositoryInterface $centerRepositoryInterface;
 
-    public function __construct(CenterRepositoryInterface $centerRepositoryInterface, 
+
+    public function __construct(CenterRepositoryInterface $centerRepositoryInterface,
         AuthorizationService $authorizationService,
         PatientRepositoryInterface $patientRepositoryInterface){
         $this->centerRepositoryInterface = $centerRepositoryInterface;
@@ -38,8 +37,9 @@ class GetCentersFromStudy {
 
             foreach($patients as $patient) {
                 if(!in_array($patient['center_code'], $centerCodes)) {
+                    //SK Appel Iteratif a la DB A supprimer
                     $center = $this->centerRepositoryInterface->getCenterByCode($patient['center_code']);
-                    $centerCodes[] = $center['code'];    
+                    $centerCodes[] = $center['code'];
                 }
             }
 

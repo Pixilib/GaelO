@@ -13,7 +13,6 @@ use App\GaelO\UseCases\GetPatientsVisitsInStudy\GetPatientsVisitsInStudyRequest;
 use App\GaelO\UseCases\GetPatientsVisitsInStudy\GetPatientsVisitsInStudyResponse;
 use App\GaelO\Entities\PatientEntity;
 use App\GaelO\Entities\VisitEntity;
-use App\GaelO\Entities\DicomStudyEntity;
 use Exception;
 
 class GetPatientsVisitsInStudy {
@@ -22,15 +21,13 @@ class GetPatientsVisitsInStudy {
     private VisitRepositoryInterface $visitRepositoryInterface;
     private AuthorizationService $authorizationService;
 
-    public function __construct(PatientRepositoryInterface $patientRepositoryInterface, 
-        AuthorizationService $authorizationService, 
-        VisitRepositoryInterface $visitRepositoryInterface,
-        DicomStudyRepositoryInterface $dicomStudyRepositoryInterface)
+    public function __construct(PatientRepositoryInterface $patientRepositoryInterface,
+        AuthorizationService $authorizationService,
+        VisitRepositoryInterface $visitRepositoryInterface)
     {
         $this->patientRepositoryInterface = $patientRepositoryInterface;
         $this->authorizationService = $authorizationService;
         $this->visitRepositoryInterface = $visitRepositoryInterface;
-        $this->dicomStudyRepositoryInterface = $dicomStudyRepositoryInterface;
     }
 
     public function execute(GetPatientsVisitsInStudyRequest $getPatientsVisitsInStudyRequest, GetPatientsVisitsInStudyResponse $getPatientsVisitsInStudyResponse) : void
@@ -41,31 +38,20 @@ class GetPatientsVisitsInStudy {
 
             $studyName = $getPatientsVisitsInStudyRequest->studyName;
             $patientCodes = $getPatientsVisitsInStudyRequest->patientCodes;
-            
+
             $responseArray = [];
             $patientEntities = $this->patientRepositoryInterface->find($patientCodes);
-            
+
             foreach($patientEntities as $patientEntity) {
                 $patientVisits = [];
+                //SK Appel Iteratif a enlever
                 $visitsArray = $this->visitRepositoryInterface->getAllPatientsVisitsWithReviewStatus($patientEntity['code'], $studyName, false);
-                
-                foreach($visitsArray as $data){    
 
-                    $visitTypeName = $data['visit_type']['name'];
-                    $visitTypeOrder = $data['visit_type']['order'];
-                    $visitTypeOptional = $data['visit_type']['optional'];
-                    $visitTypeLimitLowDays = $data['visit_type']['limit_low_days'];
-                    $visitTypeLimitUpDays = $data['visit_type']['limit_up_days'];
-                    $visitGroupModality =  $data['visit_type']['visit_group']['modality'];
-                    $visitGroupId =  $data['visit_type']['visit_group']['id'];
+                foreach($visitsArray as $data){
                     $visitEntity = VisitEntity::fillFromDBReponseArray($data);
-                    if($data['upload_status'] === Constants::UPLOAD_STATUS_DONE) {
-                        $dicomStudy = $this->dicomStudyRepositoryInterface->getDicomsDataFromVisit($data['id'], false);
-                        $visitEntity->setAcquisitionDate($dicomStudy['acquisition_date']);
-                    }
-                    $visitEntity->setVisitContext($visitGroupModality, $visitTypeName, $visitTypeOrder, $visitTypeOptional, $visitGroupId, $visitTypeLimitLowDays, $visitTypeLimitUpDays);
+                    $visitEntity->setVisitContext($data['visit_type']['visit_group'], $data['visit_type'] );
                     $patientVisits[] = $visitEntity;
-                }    
+                }
 
                 $patientEntity = PatientEntity::fillFromDBReponseArray($patientEntity);
                 $patientEntity->setVisitsDetails($patientVisits);
@@ -99,5 +85,3 @@ class GetPatientsVisitsInStudy {
 
 
 }
-
-?>

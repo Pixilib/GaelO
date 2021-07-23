@@ -6,7 +6,6 @@ use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\PatientRepositoryInterface;
-use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
 use App\GaelO\Services\AuthorizationService;
 use App\GaelO\UseCases\GetPatientsInStudyFromCenters\GetPatientsInStudyFromCentersRequest;
 use App\GaelO\UseCases\GetPatientsInStudyFromCenters\GetPatientsInStudyFromCentersResponse;
@@ -16,13 +15,11 @@ use Exception;
 class GetPatientsInStudyFromCenters {
 
     private PatientRepositoryInterface $patientRepositoryInterface;
-    private VisitRepositoryInterface $visitRepositoryInterface;
     private AuthorizationService $authorizationService;
 
-    public function __construct(PatientRepositoryInterface $patientRepositoryInterface, AuthorizationService $authorizationService, VisitRepositoryInterface $visitRepositoryInterface){
+    public function __construct(PatientRepositoryInterface $patientRepositoryInterface, AuthorizationService $authorizationService){
         $this->patientRepositoryInterface = $patientRepositoryInterface;
         $this->authorizationService = $authorizationService;
-        $this->visitRepositoryInterface = $visitRepositoryInterface;
     }
 
     public function execute(GetPatientsInStudyFromCentersRequest $getPatientsInStudyFromCentersRequest, GetPatientsInStudyFromCentersResponse $getPatientsInStudyFromCentersResponse) : void
@@ -33,11 +30,11 @@ class GetPatientsInStudyFromCenters {
 
             $studyName = $getPatientsInStudyFromCentersRequest->studyName;
             $centerCodes = $getPatientsInStudyFromCentersRequest->centerCodes;
-            
+
             $responseArray = [];
             $patientsDbEntities = $this->patientRepositoryInterface->getPatientsInStudyInCenters($studyName, $centerCodes);
-            
-            foreach($patientsDbEntities as $patientEntity){   
+
+            foreach($patientsDbEntities as $patientEntity){
                 $patientEntity = PatientEntity::fillFromDBReponseArray($patientEntity);
                 $responseArray[] = $patientEntity;
             }
@@ -68,5 +65,3 @@ class GetPatientsInStudyFromCenters {
 
 
 }
-
-?>
