@@ -136,7 +136,7 @@
 			</thead>
 			<tbody>
 				<tr>
-					<td class="pt-3-half" contenteditable="true">Patient Number</td>
+					<td class="pt-3-half" contenteditable="true"><?=$study->patientCodePrefix?></td>
 					<td class="pt-3-half" contenteditable="true">Last Name</td>
 					<td class="pt-3-half" contenteditable="true">First Name</td>
 					<td class="pt-3-half" contenteditable="true"><?= $importFormat?></td>
