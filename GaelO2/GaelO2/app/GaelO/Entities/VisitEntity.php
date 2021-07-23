@@ -30,13 +30,14 @@ class VisitEntity {
 
     public VisitGroupEntity $visitGroup;
     public VisitTypeEntity $visitType;
+    public PatientEntity $patient;
+    public UserEntity $creatorUser;
 
     public ?string $reviewStatus;
     public ?string $reviewConclusionValue;
     public ?string $reviewConclusionDate;
 
-    public PatientEntity $patient;
-    public UserEntity $creatorUser;
+
 
     public static function fillFromDBReponseArray(array $array){
         $visitEntity  = new VisitEntity();
