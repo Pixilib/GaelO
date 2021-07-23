@@ -47,7 +47,7 @@ class AskUnlockTest extends TestCase
     {
         $userId = AuthorizationTools::actAsAdmin(false);
         AuthorizationTools::addRoleToUser($userId, Constants::ROLE_REVIEWER, $this->studyName);
-        //dd($this->studyName, Visit::get()->toArray(), ReviewStatus::get()->toArray());
+
         $payload = [
             'message' => 'My Message'
         ];
