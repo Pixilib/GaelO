@@ -1,6 +1,8 @@
 GaelO
 
 --Pending Changes --
+
+--GaelO 1.5.1 25/07/21 --
   Upgrade Uploader to 3.1.5
   Import Patient: Automatically start patientcode by studyprefix
   Security : Fix predictability of generated password
