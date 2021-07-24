@@ -29,10 +29,10 @@ class ReverseProxyTus
         $url = $this->frameworkInterface::getConfig(SettingsConstants::APP_URL);
         $parsedUrl = parse_url($url);
         $gaelOProtocol = $parsedUrl['scheme'];
-        $gaelOUrl = $parsedUrl['host'];
+        $gaelOHost = $parsedUrl['host'];
         $gaelOPort = $parsedUrl['port'];
-        $headers['X-Forwarded-Proto'] = $this->frameworkInterface::getConfig($gaelOProtocol);
-        $headers['X-Forwarded-Host'] = $this->frameworkInterface::getConfig($gaelOUrl) . ':' . $this->frameworkInterface->getConfig($gaelOPort);
+        $headers['X-Forwarded-Proto'] = $gaelOProtocol;
+        $headers['X-Forwarded-Host'] = $gaelOHost . ':' . $gaelOPort;
 
         //Make query of TUS
         $this->httpClientInterface->setUrl( $this->frameworkInterface::getConfig(SettingsConstants::TUS_URL) );
