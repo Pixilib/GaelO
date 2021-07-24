@@ -31,7 +31,7 @@ if (isset($_POST['send'])) {
 	    
 		if ($userObject->userStatus == User::ACTIVATED || $userObject->userStatus == User::UNCONFIRMED || $userObject->userStatus == User::BLOCKED) {
 	        
-		$new_mdp=substr(uniqid(), 1, 10);
+		$new_mdp=bin2hex(random_bytes(5));
 		$userObject->setUnconfirmedAccount($new_mdp);
 		
 		//Log reset password event

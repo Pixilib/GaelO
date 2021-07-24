@@ -64,7 +64,7 @@
 		});
 
 		$('.table-add').click(function() {
-			$TABLE.find('table').append('<tr><td contenteditable="true">Patient Number</td><td contenteditable="true">Last Name</td><td contenteditable="true">First Name</td><td contenteditable="true"><?= $importFormat?></td><td contenteditable="true">M/F</td><td contenteditable="true"><?= $importFormat?></td><td>Investigator Name</td><td>Investigator Center Number</td><td><span class="table-remove"><button type="button" class="btn btn-danger btn-rounded btn-sm my-0">Remove</button></span></td></tr>');
+			$TABLE.find('table').append('<tr><td contenteditable="true"><?=$study->patientCodePrefix?></td><td contenteditable="true">Last Name</td><td contenteditable="true">First Name</td><td contenteditable="true"><?= $importFormat?></td><td contenteditable="true">M/F</td><td contenteditable="true"><?= $importFormat?></td><td>Investigator Name</td><td>Investigator Center Number</td><td><span class="table-remove"><button type="button" class="btn btn-danger btn-rounded btn-sm my-0">Remove</button></span></td></tr>');
 		});
 
 
@@ -136,7 +136,7 @@
 			</thead>
 			<tbody>
 				<tr>
-					<td class="pt-3-half" contenteditable="true">Patient Number</td>
+					<td class="pt-3-half" contenteditable="true"><?=$study->patientCodePrefix?></td>
 					<td class="pt-3-half" contenteditable="true">Last Name</td>
 					<td class="pt-3-half" contenteditable="true">First Name</td>
 					<td class="pt-3-half" contenteditable="true"><?= $importFormat?></td>

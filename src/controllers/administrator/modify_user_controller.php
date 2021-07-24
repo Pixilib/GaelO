@@ -151,7 +151,7 @@ if (isset($_SESSION['admin'])) {
             
 			//If new account status is unconfirmed (passord reset) , send the new password by email
 			if ($status == USER::UNCONFIRMED) {
-				$new_mdp=substr(uniqid(), 1, 10);
+				$new_mdp=bin2hex(random_bytes(5));
 				$userObject->setUnconfirmedAccount($new_mdp);
                 
 				$mail=new Send_Email($linkpdo);
