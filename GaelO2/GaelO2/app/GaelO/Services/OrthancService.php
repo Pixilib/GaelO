@@ -25,6 +25,9 @@ class OrthancService
         //Set Time Limit at 3H as operation could be really long
         set_time_limit(10800);
         //Set address of Orthanc server
+        $url = null;
+        $login = null;
+        $password = null;
         if ($storage) {
             $url = $this->frameworkInterface::getConfig(SettingsConstants::ORTHANC_STORAGE_URL);
             $login = $this->frameworkInterface::getConfig(SettingsConstants::ORTHANC_STORAGE_LOGIN);
