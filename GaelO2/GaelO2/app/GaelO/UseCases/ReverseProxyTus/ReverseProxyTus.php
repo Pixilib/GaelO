@@ -26,15 +26,16 @@ class ReverseProxyTus
         //Get Headers from Request
         $headers  = $reverseProxyTusRequest->header;
         //Set server information to make TUS able to send the correct server location for client
-        $headers['X-Forwarded-Proto'] = $this->frameworkInterface::getConfig(SettingsConstants::APP_PROTOCOL);
-        $headers['X-Forwarded-Host'] = $this->frameworkInterface::getConfig(SettingsConstants::APP_DOMAIN) . ':' . $this->frameworkInterface->getConfig(SettingsConstants::APP_PORT);
-
-        //Get TUS address
-        $address = $this->frameworkInterface::getConfig(SettingsConstants::TUS_ADDRESS);
-        $port = $this->frameworkInterface::getConfig(SettingsConstants::TUS_PORT);
+        $url = $this->frameworkInterface::getConfig(SettingsConstants::APP_URL);
+        $parsedUrl = parse_url($url);
+        $gaelOProtocol = $parsedUrl['scheme'];
+        $gaelOUrl = $parsedUrl['host'];
+        $gaelOPort = $parsedUrl['port'];
+        $headers['X-Forwarded-Proto'] = $this->frameworkInterface::getConfig($gaelOProtocol);
+        $headers['X-Forwarded-Host'] = $this->frameworkInterface::getConfig($gaelOUrl) . ':' . $this->frameworkInterface->getConfig($gaelOPort);
 
         //Make query of TUS
-        $this->httpClientInterface->setAddress($address, $port);
+        $this->httpClientInterface->setUrl( $this->frameworkInterface::getConfig(SettingsConstants::TUS_URL) );
         $response = $this->httpClientInterface->rowRequest($reverseProxyTusRequest->method, $reverseProxyTusRequest->url, $reverseProxyTusRequest->body, $headers);
 
         //Output response

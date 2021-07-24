@@ -28,6 +28,11 @@ class HttpClientAdapter implements HttpClientInterface
         $this->address = $address . ':' . $port;
     }
 
+    public function setUrl(string $url): void
+    {
+        $this->address = $url;
+    }
+
     public function setBasicAuthentication(string $login, string $password): void
     {
         $this->login = $login;

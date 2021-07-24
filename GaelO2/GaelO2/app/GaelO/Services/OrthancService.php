@@ -26,18 +26,16 @@ class OrthancService
         set_time_limit(10800);
         //Set address of Orthanc server
         if ($storage) {
-            $address = $this->frameworkInterface::getConfig(SettingsConstants::ORTHANC_STORAGE_ADDRESS);
-            $port = $this->frameworkInterface::getConfig(SettingsConstants::ORTHANC_STORAGE_PORT);
+            $url = $this->frameworkInterface::getConfig(SettingsConstants::ORTHANC_STORAGE_URL);
             $login = $this->frameworkInterface::getConfig(SettingsConstants::ORTHANC_STORAGE_LOGIN);
             $password = $this->frameworkInterface::getConfig(SettingsConstants::ORTHANC_STORAGE_PASSWORD);
         } else {
-            $address = $this->frameworkInterface::getConfig(SettingsConstants::ORTHANC_TEMPORARY_ADDRESS);
-            $port = $this->frameworkInterface::getConfig(SettingsConstants::ORTHANC_TEMPORARY_PORT);
+            $url = $this->frameworkInterface::getConfig(SettingsConstants::ORTHANC_TEMPORARY_URL);
             $login = $this->frameworkInterface::getConfig(SettingsConstants::ORTHANC_TEMPORARY_LOGIN);
             $password = $this->frameworkInterface::getConfig(SettingsConstants::ORTHANC_TEMPORARY_PASSWORD);
         }
 
-        $this->httpClientInterface->setAddress($address, $port);
+        $this->httpClientInterface->setUrl($url);
         $this->httpClientInterface->setBasicAuthentication($login, $password);
     }
 

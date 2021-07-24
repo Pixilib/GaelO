@@ -133,24 +133,17 @@ return [
     | this array to grant expanded functionality to your applications.
     |
     */
-    'url'=>env('APP_URL'),
     'corporation' => env('APP_CORPORATION'),
-    'mailFromAddress'=>env('MAIL_FROM_ADDRESS'),
-    'mailReplyToDefault'=>env('MAIL_REPLY_TO_DEFAULT'),
-    'patientCodeLength'=>env('GAELO_PATIENT_CODE_LENGTH'),
-    'orthancTemporaryAddress'=>env('ORTHANC_TEMPORARY_ADDRESS'),
-    'orthancTemporaryPort'=>env('ORTHANC_TEMPORARY_PORT'),
-    'orthancTemporaryLogin'=>env('ORTHANC_TEMPORARY_LOGIN'),
-    'orthancTemporaryPassword'=>env('ORTHANC_TEMPORARY_PASSWORD'),
-    'orthancStorageAddress'=>env('ORTHANC_STORAGE_ADDRESS'),
-    'orthancStoragePort'=>env('ORTHANC_STORAGE_PORT'),
-    'orthancStorageLogin'=>env('ORTHANC_STORAGE_LOGIN'),
-    'orthancStoragePassword'=>env('ORTHANC_STORAGE_PASSWORD'),
-    'tusAddress'=>env('TUS_ADDRESS'),
-    'tusPort'=>env('TUS_PORT'),
-    'appPort'=>env('APP_PORT'),
-    'appProtocol'=>env('APP_PROTOCOL'),
-    'appDomain'=>env('APP_DOMAIN'),
+    'mail_from_address'=>env('MAIL_FROM_ADDRESS'),
+    'mail_reply_to_default'=>env('MAIL_REPLY_TO_DEFAULT'),
+    'patient_code_length'=>env('GAELO_PATIENT_CODE_LENGTH'),
+    'orthanc_temporary_url'=>env('ORTHANC_TEMPORARY_URL'),
+    'orthanc_temporary_login'=>env('ORTHANC_TEMPORARY_LOGIN'),
+    'orthanc_temporary_password'=>env('ORTHANC_TEMPORARY_PASSWORD'),
+    'orthanc_storage_url'=>env('ORTHANC_STORAGE_URL'),
+    'orthanc_storage_login'=>env('ORTHANC_STORAGE_LOGIN'),
+    'orthanc_storage_password'=>env('ORTHANC_STORAGE_PASSWORD'),
+    'tus_url'=>env('TUS_URL'),
 
 
     'providers' => [
