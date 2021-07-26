@@ -24,6 +24,10 @@ class Visit extends Model
         return $this->belongsTo(Patient::class, 'patient_code', 'code');
     }
 
+    public function visitGroup(){
+        return $this->belongsTo(VisitGroup::class, "visit_group_id");
+    }
+
     public function visitType(){
         return $this->belongsTo(VisitType::class, 'visit_type_id', 'id')->with('visitGroup');
     }
@@ -42,5 +46,9 @@ class Visit extends Model
 
     public function correctiveActionUser(){
         return $this->belongsTo(User::class, 'corrective_action_user_id' , 'id');
+    }
+
+    public function dicomStudies(){
+        return $this->hasMany(DicomStudy::class, 'visit_id', 'id');
     }
 }
