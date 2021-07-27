@@ -3,12 +3,22 @@
 namespace App\Console\Commands;
 
 use App\GaelO\Interfaces\Repositories\StudyRepositoryInterface;
+use App\Models\Documentation;
+use App\Models\Role;
 use App\Models\Study;
 use App\Models\Tracker;
+use App\Models\Visit;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Log;
 
 class DeleteStudy extends Command
 {
+
+    private Study $study;
+    private Visit $visit;
+    private Tracker $tracker;
+    private Documentation $documentation;
+    private Role $role;
     /**
      * The name and signature of the console command.
      *
@@ -28,9 +38,15 @@ class DeleteStudy extends Command
      *
      * @return void
      */
-    public function __construct()
+    public function __construct(Study $study, Visit $visit, Role $role, Tracker $tracker, Documentation $documentation)
     {
         parent::__construct();
+        $this->study = $study;
+        $this->visit = $visit;
+        $this->tracker = $tracker;
+        $this->documentation = $documentation;
+        $this->role = $role;
+
     }
 
     /**
@@ -38,17 +54,17 @@ class DeleteStudy extends Command
      *
      * @return int
      */
-    public function handle(Study $study, Tracker $tracker)
+    public function handle()
     {
 
         $studyName = $this->argument('studyName');
         $studyNameConfirmation = $this->ask('Warning : Please confirm study Name');
-        if($studyName !== $studyNameConfirmation) {
+        if ($studyName !== $studyNameConfirmation) {
             $this->error('Wrong study name!');
             return 0;
         }
 
-        $studyEntity = $study->findOrFail($studyName);
+        $studyEntity = $this->study->findOrFail($studyName);
 
         /*
         if( ! $studyEntity->deleted ){
@@ -60,7 +76,14 @@ class DeleteStudy extends Command
         if ($this->confirm('Warning : This CANNOT be undone, do you wish to continue?')) {
 
 
-            $dicomSeries = $studyEntity->visitGroups->visitTypes->visits->withTrashed()->dicomStudies->withTrashed()->dicomSeries->withTrashed()->get()->pluck('series_uid');
+
+            $dicomSeries = [];
+
+
+            $this->deleteDocumentation($studyEntity->name);
+            $this->deleteRoles($studyEntity->name);
+            $this->deleteTracker($studyEntity->name);
+            $visits = $this->getVisitsOfStudy($studyEntity->name);
 
             $this->table(
 
@@ -68,10 +91,8 @@ class DeleteStudy extends Command
                 $dicomSeries
             );
 
-            return
-            $tracker->where('study_name', '=' ,  $studyName)->withTrashed()->forceDelete();
-            $studyEntity->documentations()->withTrashed()->forceDelete();
-            $studyEntity->roles()->withTrashed()->forceDelete();
+
+            /*
             $studyEntity->visitGroups()->visitTypes()->withTrashed()->visits()->withTrashed()->dicomStudies()->withTrashed()->dicomSeries()->withTrashed()->forceDelete();
             $studyEntity->visitGroups()->visitTypes()->withTrashed()->visits()->withTrashed()->dicomStudies()->withTrashed()->forceDelete();
             $studyEntity->visitGroups()->visitTypes()->withTrashed()->visits()->withTrashed()->reviews()->forceDelete();
@@ -81,9 +102,33 @@ class DeleteStudy extends Command
             $studyEntity->visitGroups()->forceDelete();
             $studyEntity->patients()->forceDelete();
             $studyEntity->forceDelete();
+            */
             $this->info('The command was successful!');
         }
 
         return 0;
+    }
+
+    private function getVisitsOfStudy(string $studyName)
+    {
+
+        return $this->visit->withTrashed()->with(['visitType', 'patient'])
+            ->whereHas('visitType', function ($query) use ($studyName) {
+                $query->whereHas('visitGroup', function ($query) use ($studyName) {
+                    $query->where('study_name', $studyName);
+                });
+            })->get();
+    }
+
+    private function deleteDocumentation(string $studyName){
+        $this->documentation->where('study_name', $studyName)->withTrashed()->forceDelete();
+    }
+
+    private function deleteRoles(string $studyName){
+        $this->role->where('study_name', $studyName )->delete();
+    }
+
+    private function deleteTracker(string $studyName){
+        $this->tracker->where('study_name', $studyName )->delete();
     }
 }
