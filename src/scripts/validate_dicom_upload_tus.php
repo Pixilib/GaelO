@@ -173,6 +173,8 @@ function sendFolderToOrthanc(string $unzipedPath, Orthanc $orthancExposedObject)
     }
     
     if(sizeof($files) != $nbOfInstances){
+		error_log('Files :'.sizeof($files));
+		error_log('Announced number of Instances :'.$nbOfInstances);
         throw new Exception("Number Of Uploaded Files dosen't match expected instance number");
     }
 	
