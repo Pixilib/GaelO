@@ -3,6 +3,8 @@
 namespace App\Console\Commands;
 
 use App\GaelO\Interfaces\Repositories\StudyRepositoryInterface;
+use App\Models\DicomSeries;
+use App\Models\DicomStudy;
 use App\Models\Documentation;
 use App\Models\Role;
 use App\Models\Study;
@@ -16,6 +18,8 @@ class DeleteStudy extends Command
 
     private Study $study;
     private Visit $visit;
+    private DicomStudy $dicomStudy;
+    private DicomSeries $dicomSeries;
     private Tracker $tracker;
     private Documentation $documentation;
     private Role $role;
@@ -38,11 +42,13 @@ class DeleteStudy extends Command
      *
      * @return void
      */
-    public function __construct(Study $study, Visit $visit, Role $role, Tracker $tracker, Documentation $documentation)
+    public function __construct(Study $study, Visit $visit, DicomStudy $dicomStudy, DicomSeries $dicomSeries, Role $role, Tracker $tracker, Documentation $documentation)
     {
         parent::__construct();
         $this->study = $study;
         $this->visit = $visit;
+        $this->dicomStudy = $dicomStudy;
+        $this->dicomSeries = $dicomSeries;
         $this->tracker = $tracker;
         $this->documentation = $documentation;
         $this->role = $role;
@@ -77,32 +83,43 @@ class DeleteStudy extends Command
 
 
 
-            $dicomSeries = [];
 
+
+            //SK ATTENTION ETUDES ANCILLAIRES DOIVENT AVOIR ETE SUPPRIMEES AVANT
 
             $this->deleteDocumentation($studyEntity->name);
             $this->deleteRoles($studyEntity->name);
             $this->deleteTracker($studyEntity->name);
             $visits = $this->getVisitsOfStudy($studyEntity->name);
 
-            $this->table(
+            $visitIds= array_map(function($visit){return $visit['id']; }, $visits->toArray());
 
+            $dicomStudies = $this->dicomStudy->whereIn('visit_id', $visitIds)->withTrashed()->get();
+
+            $studyUids = array_map(function($study){return $study['study_uid']; }, $dicomStudies->toArray());
+
+            $dicomSeries = [];
+            $dicomSeries = $this->dicomSeries->whereIn('study_uid', $studyUids)->get()->pluck('orthanc_id');
+
+            $this->table(
                 ['seriesOrthancID'],
                 $dicomSeries
             );
 
+            $this->dicomSeries->whereIn('study_uid', $studyUids)->withTrashed()->forceDelete();
+            $this->dicomStudy->whereIn('visit_id', $visitIds)->withTrashed()->forceDelete();
+
+
+            //SK Reste: supprimer review et review status
+            //Sk Reste : supprimer VisitType
+            //Sk Reste : supprimer VisitGroup
+            //Sk Reste : supprimer Patients
+            //Sk Reste : supprimer Study Entity
+
 
             /*
-            $studyEntity->visitGroups()->visitTypes()->withTrashed()->visits()->withTrashed()->dicomStudies()->withTrashed()->dicomSeries()->withTrashed()->forceDelete();
-            $studyEntity->visitGroups()->visitTypes()->withTrashed()->visits()->withTrashed()->dicomStudies()->withTrashed()->forceDelete();
-            $studyEntity->visitGroups()->visitTypes()->withTrashed()->visits()->withTrashed()->reviews()->forceDelete();
-            $studyEntity->visitGroups()->visitTypes()->withTrashed()->visits()->withTrashed()->reviewStatus()->forceDelete();
-            $studyEntity->visitGroups()->visitTypes()->withTrashed()->visits()->forceDelete();
-            $studyEntity->visitGroups()->visitTypes()->forceDelete();
-            $studyEntity->visitGroups()->forceDelete();
-            $studyEntity->patients()->forceDelete();
-            $studyEntity->forceDelete();
-            */
+
+            //SK TODO : Delete associated files
             $this->info('The command was successful!');
         }
 
@@ -111,7 +128,6 @@ class DeleteStudy extends Command
 
     private function getVisitsOfStudy(string $studyName)
     {
-
         return $this->visit->withTrashed()->with(['visitType', 'patient'])
             ->whereHas('visitType', function ($query) use ($studyName) {
                 $query->whereHas('visitGroup', function ($query) use ($studyName) {
@@ -130,5 +146,9 @@ class DeleteStudy extends Command
 
     private function deleteTracker(string $studyName){
         $this->tracker->where('study_name', $studyName )->delete();
+    }
+
+    private function deleteDicoms(array $visitId){
+        return $this->dicomStudy->whereIn('visit_id', $visitId);
     }
 }
