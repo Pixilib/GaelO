@@ -2,6 +2,9 @@ GaelO
 
 --Pending Changes --
 
+--GaelO 1.5.2 28/07/21 --
+  Upgrade Uploader to 3.1.9
+
 --GaelO 1.5.1 25/07/21 --
   Upgrade Uploader to 3.1.5
   Import Patient: Automatically start patientcode by studyprefix
