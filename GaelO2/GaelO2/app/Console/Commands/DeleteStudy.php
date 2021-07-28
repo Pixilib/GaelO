@@ -52,7 +52,6 @@ class DeleteStudy extends Command
         $this->tracker = $tracker;
         $this->documentation = $documentation;
         $this->role = $role;
-
     }
 
     /**
@@ -92,11 +91,15 @@ class DeleteStudy extends Command
             $this->deleteTracker($studyEntity->name);
             $visits = $this->getVisitsOfStudy($studyEntity->name);
 
-            $visitIds= array_map(function($visit){return $visit['id']; }, $visits->toArray());
+            $visitIds = array_map(function ($visit) {
+                return $visit['id'];
+            }, $visits->toArray());
 
             $dicomStudies = $this->dicomStudy->whereIn('visit_id', $visitIds)->withTrashed()->get();
 
-            $studyUids = array_map(function($study){return $study['study_uid']; }, $dicomStudies->toArray());
+            $studyUids = array_map(function ($study) {
+                return $study['study_uid'];
+            }, $dicomStudies->toArray());
 
             $dicomSeries = [];
             $dicomSeries = $this->dicomSeries->whereIn('study_uid', $studyUids)->get()->pluck('orthanc_id');
@@ -106,9 +109,8 @@ class DeleteStudy extends Command
                 $dicomSeries
             );
 
-            $this->dicomSeries->whereIn('study_uid', $studyUids)->withTrashed()->forceDelete();
-            $this->dicomStudy->whereIn('visit_id', $visitIds)->withTrashed()->forceDelete();
-
+            $this->deleteDicomsSeries($visitIds);
+            $this->deleteDicomsStudies($visitIds);
 
             //SK Reste: supprimer review et review status
             //Sk Reste : supprimer VisitType
@@ -133,19 +135,30 @@ class DeleteStudy extends Command
             })->get();
     }
 
-    private function deleteDocumentation(string $studyName){
+    private function deleteDocumentation(string $studyName)
+    {
         $this->documentation->where('study_name', $studyName)->withTrashed()->forceDelete();
     }
 
-    private function deleteRoles(string $studyName){
-        $this->role->where('study_name', $studyName )->delete();
+    private function deleteRoles(string $studyName)
+    {
+        $this->role->where('study_name', $studyName)->delete();
     }
 
-    private function deleteTracker(string $studyName){
-        $this->tracker->where('study_name', $studyName )->delete();
+    private function deleteTracker(string $studyName)
+    {
+        $this->tracker->where('study_name', $studyName)->delete();
     }
 
-    private function deleteDicoms(array $visitId){
-        return $this->dicomStudy->whereIn('visit_id', $visitId);
+    private function deleteDicomsStudies(array $visitId)
+    {
+        return $this->dicomStudy->whereIn('visit_id', $visitId)->withTrashed()->forceDelete();
+    }
+
+    private function deleteDicomsSeries(array $visitId)
+    {
+        return $this->dicomSeries->whereHas('dicomStudy', function ($query) use ($visitId) {
+            $query->whereIn('visit_id', $visitId)->withTrashed();
+        })->withTrashed()->forceDelete();
     }
 }
