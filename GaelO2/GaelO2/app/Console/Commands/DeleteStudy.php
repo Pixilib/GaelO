@@ -116,9 +116,6 @@ class DeleteStudy extends Command
             //Sk Reste : supprimer Patients
             //Sk Reste : supprimer Study Entity
 
-
-            /*
-
             //SK TODO : Delete associated files
             $this->info('The command was successful!');
         }
