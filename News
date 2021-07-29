@@ -2,6 +2,11 @@ GaelO
 
 --Pending Changes --
 
+--GaelO 1.5.4 30/07/21 --
+  Upgrade Uploader to 3.1.10
+  Upgrade OHIF to 4.9.21
+  Fix bug when adding patient in the import patient table
+
 --GaelO 1.5.3 28/07/21 --
   Upgrade Uploader to 3.1.9
 
