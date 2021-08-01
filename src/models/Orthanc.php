@@ -422,22 +422,14 @@ Class Orthanc {
 	private function buildAnonQuery(string $profile, string $newPatientName, string $newPatientID, string $newStudyDescription, string $clinicalStudy) {
     	    
 		$tagsObjects=[];
+
 		if ($profile == "Default") {
 			$date=TagAnon::KEEP;
 			$body=TagAnon::KEEP;
-            
-			$tagsObjects[]=new TagAnon("0010,0030", TagAnon::REPLACE, "19000101"); // BirthDay
-			$tagsObjects[]=new TagAnon("0008,1030", TagAnon::REPLACE, $newStudyDescription); //studyDescription
-			$tagsObjects[]=new TagAnon("0008,103E", TagAnon::KEEP); //series Description
-           
     
 		}else if ($profile == "Full") {
 			$date=TagAnon::CLEAR;
 			$body=TagAnon::CLEAR;
-            
-			$tagsObjects[]=new TagAnon("0010,0030", TagAnon::REPLACE, "19000101"); // BirthDay
-			$tagsObjects[]=new TagAnon("0008,1030", TagAnon::CLEAR); // studyDescription
-			$tagsObjects[]=new TagAnon("0008,103E", TagAnon::CLEAR); //series Description
 		}
         
 		//List tags releted to Date
@@ -452,13 +444,12 @@ Class Orthanc {
 		$tagsObjects[]=new TagAnon("0008,0033", $date); // Content Time
 		$tagsObjects[]=new TagAnon("0008,0024", $date); // Overlay Date
 		$tagsObjects[]=new TagAnon("0008,0034", $date); // Overlay Time
-		$tagsObjects[]=new TagAnon("0040,0244", $date); // ...Start Date
-		$tagsObjects[]=new TagAnon("0040,0245", $date); // ...Start Time
+		$tagsObjects[]=new TagAnon("0040,0244", $date); // Performed Procedure Step Start Date
+		$tagsObjects[]=new TagAnon("0040,0245", $date); // Performed Procedure Step Start Start Time
 		$tagsObjects[]=new TagAnon("0008,0021", $date); // Series Date
 		$tagsObjects[]=new TagAnon("0008,0031", $date); // Series Time
 		$tagsObjects[]=new TagAnon("0008,0020", $date); // Study Date
 		$tagsObjects[]=new TagAnon("0008,0030", $date); // Study Time
-		$tagsObjects[]=new TagAnon("0010,21D0", $date); // Last menstrual date
 		$tagsObjects[]=new TagAnon("0008,0201", $date); // Timezone offset from UTC
 		$tagsObjects[]=new TagAnon("0040,0002", $date); // Scheduled procedure step start date
 		$tagsObjects[]=new TagAnon("0040,0003", $date); // Scheduled procedure step start time
@@ -466,12 +457,7 @@ Class Orthanc {
 		$tagsObjects[]=new TagAnon("0040,0005", $date); // Scheduled procedure step end time
     	
 		// same for Body characteristics
-		$tagsObjects[]=new TagAnon("0010,2160", $body); // Patient's ethnic group
-		$tagsObjects[]=new TagAnon("0010,21A0", $body); // Patient's smoking status
 		$tagsObjects[]=new TagAnon("0010,0040", $body); // Patient's sex
-		$tagsObjects[]=new TagAnon("0010,2203", $body); // Patient's sex neutered
-		$tagsObjects[]=new TagAnon("0010,1010", $body); // Patient's age
-		$tagsObjects[]=new TagAnon("0010,21C0", $body); // Patient's pregnancy status
 		$tagsObjects[]=new TagAnon("0010,1020", $body); // Patient's size
 		$tagsObjects[]=new TagAnon("0010,1030", $body); // Patient's weight
     
@@ -479,7 +465,12 @@ Class Orthanc {
 		$tagsObjects[]=new TagAnon("0008,0050", TagAnon::REPLACE, $clinicalStudy); // Accession Number contains study name
 		$tagsObjects[]=new TagAnon("0010,0020", TagAnon::REPLACE, $newPatientID); //new Patient Name
 		$tagsObjects[]=new TagAnon("0010,0010", TagAnon::REPLACE, $newPatientName); //new Patient Name
-    	
+		$tagsObjects[]=new TagAnon("0008,1030", TagAnon::REPLACE, $newStudyDescription); //studyDescription
+		$tagsObjects[]=new TagAnon("0010,0030", TagAnon::REPLACE, "19000101"); // BirthDay
+		
+		//Keep series descriptions
+		$tagsObjects[]=new TagAnon("0008,103E", TagAnon::KEEP); //series Description
+
 		// Keep some Private tags usefull for PET/CT or Scintigraphy
 		$tagsObjects[]=new TagAnon("7053,1000", TagAnon::KEEP); //Phillips
 		$tagsObjects[]=new TagAnon("7053,1009", TagAnon::KEEP); //Phillips
