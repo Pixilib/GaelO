@@ -56,8 +56,12 @@ RUN mv .env.example .env
 
 RUN composer install --optimize-autoloader --no-dev --no-interaction
 
+# docker_start.sh
+COPY docker_start.sh /usr/local/bin/start
+RUN chmod u+x /usr/local/bin/start
+
 EXPOSE 80
 
 RUN service apache2 restart
 
-
+ENTRYPOINT ["/usr/local/bin/start"]
