@@ -41,14 +41,22 @@ studies/{studyName}/visit-types/{visitTypeId}/investigator-forms/metadata (GET)
 reviews/{id}/file (GET, POST, DELETE)
 
 Salim TODO :
-Debug Antonin
-Reparer module telechargement dicom (ajout selection visit id et updater l'api)
+Debug Antonin=> Ok sur Linux, tester sur windows / mac os ?
 
-AskUnlock basé sur le VisitId ? => passer a review id
 Etudier refresh du token (evaluer impact avec telescope)
+
+--- Deployment -----
+Faire marcher conteneur cron
 Ajouter passeport purge pour vider la table periodiquement
+Purge de TUS automatique
+ajouter le login / mdp pour dans orthanc pacs + bloquer delete dans lua script=> conteneur derivé de OrthancPro
+--- /Deployment -----
+
+---- Refactoring Backend ----
+Dans remplissage DTO request, si variable boolean, un input string est interpretée à true.
 Refac pour la lecture eviter de passer par des services pour laisser les services à l'ecriture ?
 Enlever le update public de patient Repository
+studies/{studyName}/orthanc-study-id/{orthancStudyID} => A renomer à original-orthanc-study-id (test le hash d'origine pas le courant)
 
 Entity :
 - Pluger toutes les reponses "data" sur ces entity response
@@ -62,6 +70,7 @@ Model et db :
 - Visit : Ajouter targetLesions
 - Type de variable a caster
 
+---- /Refactoring Backend ------
 
 Messagerie à designer
 Creatable Visit : Manque Study Custom Logic (+dans front skip visites optionnelles ?)
@@ -87,11 +96,6 @@ Les tests ne font pas d'assertion sur
 - l'envoi de mails => voir doc laravel
 Review => tester un scenario de custom conclusion / adjudication
 
-+Tard :
-studies/{studyName}/orthanc-study-id/{orthancStudyID} => A renomer à original-orthanc-study-id (test le hash d'origine pas le courant)
-TUS est Joignable sur Delete => peut etre gerer le failure/cancel pour vider tus ?
-Deploiement ajouter le login / mdp pour dans orthanc pacs + bloquer delete dans lua script
-Dans remplissage DTO request, si variable boolean, un input string est interpretée à true.
 
 Reste Supervisor :
 - Upload Manager (reprendre cdc de clara)
@@ -100,7 +104,6 @@ Reste Supervisor :
 Reste Autres :
 - Orthanc Send to peer
 - Connecteur FTP/SFTP
-- Cron job (etudier Jobs de laravel)
 
 *** Dummy Run *** => Impact sur la db a designer
 *** Dicom liée aux review *** => Impacte sur la db a designer
