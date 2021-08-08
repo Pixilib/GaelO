@@ -1,0 +1,23 @@
+name: 'publish'
+
+on:
+  push:
+    branches:
+      - GaelO2
+
+jobs:
+  build:
+    name: 'Build and publish'
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'Build checkout'
+        uses: actions/checkout@v2
+
+      - name: 'Push image'
+        uses: docker/build-push-action@v1
+        with:
+          registry: ghcr.io
+          username: 'salimkanoun'
+          password: ${{ secrets.REGISTRY_TOKEN }}
+          repository: pixilib/gaelo
+          tags: v2-latest
