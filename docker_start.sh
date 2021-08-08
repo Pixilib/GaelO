@@ -3,12 +3,12 @@ set -e
 
 role=${CONTAINER_ROLE:-app}
 env=${APP_ENV:-production}
+migrate=${MIGRATE:-false}
 
-#SK ICI Probleme d interaction si production (warning) potentiel, a faire à la main ?
-#if [ "$env" != "local" ]; then
-#    echo "Caching configuration..."
-#    (cd /var/www/html && php artisan migrate --force && php artisan passport:install && php artisan config:cache && php artisan route:cache && php artisan view:cache)
-#fi
+if [ "$migrate" = "true" ]; then
+    echo "Caching configuration..."
+    (cd /var/www/html && php artisan migrate --force && php artisan passport:install && php artisan config:cache && php artisan route:cache && php artisan view:cache)
+fi
 
 if [ "$role" = "app" ]; then
     echo "App started"
