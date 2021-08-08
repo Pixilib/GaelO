@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature\TestInvestigatorForm;
+namespace Tests\Feature\TestTools;
 
 use App\GaelO\Constants\Constants;
 use App\Models\Center;
@@ -61,8 +61,8 @@ class ToolsTest extends TestCase
 
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $this->studyName);
 
-        $this->validPayload = [ $this->centerCode ]; 
-        $answer = $this->json('POST', 'api/tools/studies/'.$this->studyName.'/centers/patients', $this->validPayload); 
+        $this->validPayload = [ $this->centerCode ];
+        $answer = $this->json('POST', 'api/tools/studies/'.$this->studyName.'/centers/patients', $this->validPayload);
         $answer->assertSuccessful();
         $content = json_decode($answer->content(), true);
         $this->assertEquals(10, sizeof($content));
@@ -73,8 +73,8 @@ class ToolsTest extends TestCase
 
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $this->studyName);
 
-        $this->validPayload = [ $this->patientCode ]; 
-        $answer = $this->json('POST', 'api/tools/studies/'.$this->studyName.'/patients/visits', $this->validPayload); 
+        $this->validPayload = [ $this->patientCode ];
+        $answer = $this->json('POST', 'api/tools/studies/'.$this->studyName.'/patients/visits', $this->validPayload);
         $answer->assertSuccessful();
         $content = json_decode($answer->content(), true);
 
