@@ -2,17 +2,12 @@
 
 namespace App\Exceptions;
 
-use App\GaelO\Exceptions\GaelOAuthorizationException;
-use App\GaelO\Exceptions\GaelOException;
-use App\GaelO\Exceptions\GaelOForbiddenException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Throwable;
 
 use Exception;
-use Request;
 use Illuminate\Auth\AuthenticationException;
-use Response;
 use Symfony\Component\CssSelector\Exception\InternalErrorException;
 
 class Handler extends ExceptionHandler
