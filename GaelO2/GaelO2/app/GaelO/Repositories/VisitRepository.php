@@ -385,12 +385,12 @@ class VisitRepository implements VisitRepositoryInterface
         $visitEntity['corrective_action_new_upload'] = false;
         $visitEntity['corrective_action_investigator_form'] = false;
         $visitEntity['corrective_action_comment'] = null;
-        $visitEntity['corrective_action_applyed'] = null;
+        $visitEntity['corrective_action_applied'] = null;
 
         $visitEntity->save();
     }
 
-    public function setCorrectiveAction(int $visitId, int $investigatorId, bool $newUpload, bool $newInvestigatorForm, bool $correctiveActionApplyed, ?string $comment): void
+    public function setCorrectiveAction(int $visitId, int $investigatorId, bool $newUpload, bool $newInvestigatorForm, bool $correctiveActionApplied, ?string $comment): void
     {
 
         $visitEntity = $this->visit->findOrFail($visitId);
@@ -401,7 +401,7 @@ class VisitRepository implements VisitRepositoryInterface
         $visitEntity['corrective_action_new_upload'] = $newUpload;
         $visitEntity['corrective_action_investigator_form'] = $newInvestigatorForm;
         $visitEntity['corrective_action_comment'] = $comment;
-        $visitEntity['corrective_action_applyed'] = $correctiveActionApplyed;
+        $visitEntity['corrective_action_applied'] = $correctiveActionApplied;
 
         $visitEntity->save();
     }

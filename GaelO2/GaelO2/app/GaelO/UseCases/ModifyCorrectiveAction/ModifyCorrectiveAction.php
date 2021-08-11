@@ -68,7 +68,7 @@ class ModifyCorrectiveAction{
                 'new_series'=>$modifyCorrectiveActionRequest->newSeriesUploaded,
                 'new_investigator_form'=>$modifyCorrectiveActionRequest->newInvestigatorForm,
                 'comment'=>$modifyCorrectiveActionRequest->comment,
-                'corrective_action_applyed'=>$modifyCorrectiveActionRequest->correctiveActionDone,
+                'corrective_action_applied'=>$modifyCorrectiveActionRequest->correctiveActionDone,
             ];
 
             $this->trackerRepositoryInterface->writeAction(
