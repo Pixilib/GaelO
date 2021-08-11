@@ -12,53 +12,49 @@ use App\GaelO\UseCases\GetCentersFromStudy\GetCentersFromStudy;
 use App\GaelO\UseCases\GetCentersFromStudy\GetCentersFromStudyRequest;
 use App\GaelO\UseCases\GetCentersFromStudy\GetCentersFromStudyResponse;
 
-use App\GaelO\Util;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Log;
 
 class ToolsController extends Controller
 {
 
     public function getCentersFromStudy(String $studyName,
         GetCentersFromStudy $getCentersFromStudy,
-        GetCentersFromStudyRequest $getCentersFromStudyRequest, 
+        GetCentersFromStudyRequest $getCentersFromStudyRequest,
         GetCentersFromStudyResponse $getCentersFromStudyResponse) {
-            
+
         $curentUser = Auth::user();
         $getCentersFromStudyRequest->currentUserId = $curentUser['id'];
         $getCentersFromStudyRequest->studyName = $studyName;
 
         $getCentersFromStudy->execute($getCentersFromStudyRequest, $getCentersFromStudyResponse);
         return $this->getJsonResponse($getCentersFromStudyResponse->body, $getCentersFromStudyResponse->status, $getCentersFromStudyResponse->statusText);
-    } 
+    }
 
     public function getPatientsInStudyFromCenters(String $studyName, Request $request,
         GetPatientsInStudyFromCenters $getPatientsInStudyFromCenters,
-        GetPatientsInStudyFromCentersRequest $getPatientsInStudyFromCentersRequest, 
+        GetPatientsInStudyFromCentersRequest $getPatientsInStudyFromCentersRequest,
         GetPatientsInStudyFromCentersResponse $getPatientsInStudyFromCentersResponse) {
 
         $curentUser = Auth::user();
         $getPatientsInStudyFromCentersRequest->currentUserId = $curentUser['id'];
         $getPatientsInStudyFromCentersRequest->studyName = $studyName;
+        $getPatientsInStudyFromCentersRequest->centerCodes = $request->all();
 
-        $getPatientsInStudyFromCentersRequest->centerCodes = $request->centerCodes;
-    
         $getPatientsInStudyFromCenters->execute($getPatientsInStudyFromCentersRequest, $getPatientsInStudyFromCentersResponse);
         return $this->getJsonResponse($getPatientsInStudyFromCentersResponse->body, $getPatientsInStudyFromCentersResponse->status, $getPatientsInStudyFromCentersResponse->statusText);
     }
 
     public function getPatientsVisitsInStudy(String $studyName, Request $request,
         GetPatientsVisitsInStudy $getPatientsVisitsInStudy,
-        GetPatientsVisitsInStudyRequest $getPatientsVisitsInStudyRequest, 
+        GetPatientsVisitsInStudyRequest $getPatientsVisitsInStudyRequest,
         GetPatientsVisitsInStudyResponse $getPatientsVisitsInStudyResponse) {
 
         $curentUser = Auth::user();
 
         $getPatientsVisitsInStudyRequest->currentUserId = $curentUser['id'];
         $getPatientsVisitsInStudyRequest->studyName = $studyName;
-        
-        $getPatientsVisitsInStudyRequest->patientCodes = $request->patientCodes;
+        $getPatientsVisitsInStudyRequest->patientCodes = $request->all();
 
         $getPatientsVisitsInStudy->execute($getPatientsVisitsInStudyRequest, $getPatientsVisitsInStudyResponse);
         return $this->getJsonResponse($getPatientsVisitsInStudyResponse->body, $getPatientsVisitsInStudyResponse->status, $getPatientsVisitsInStudyResponse->statusText);

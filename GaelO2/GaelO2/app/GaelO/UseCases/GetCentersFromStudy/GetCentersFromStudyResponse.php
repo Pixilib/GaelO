@@ -3,7 +3,7 @@
 namespace App\GaelO\UseCases\GetCentersFromStudy;
 
 class GetCentersFromStudyResponse {
-    public $body = null;
+    public $body;
     public int $status;
     public string $statusText;
 }

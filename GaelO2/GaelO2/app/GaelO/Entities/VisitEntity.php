@@ -38,8 +38,6 @@ class VisitEntity {
     public PatientEntity $patient;
     public UserEntity $creatorUser;
 
-    public ?string $acquisitionDate;
-
     public static function fillFromDBReponseArray(array $array){
         $visitEntity  = new VisitEntity();
         $visitEntity->id = $array['id'];
@@ -70,24 +68,9 @@ class VisitEntity {
         return $visitEntity;
     }
 
-    public function setVisitContext(string $visitGroupModality,
-                                string $visitTypeName,
-                                int $visitTypeOrder,
-                                bool $visitTypeOptional,
-                                int $visitGroupId,
-                                ?int $limitLowDays = null,
-                                ?int $limitUpDays = null){
-
-        $this->visitGroup = new VisitGroupEntity();
-        $this->visitGroup->modality = $visitGroupModality;
-        $this->visitGroup->id = $visitGroupId;
-
-        $this->visitType = new VisitTypeEntity();
-        $this->visitType->name = $visitTypeName;
-        $this->visitType->order = $visitTypeOrder;
-        $this->visitType->optional = $visitTypeOptional;
-        if($limitLowDays) $this->visitType->limitLowDays = $limitLowDays;
-        if($limitUpDays) $this->visitType->limitUpDays = $limitUpDays;
+    public function setVisitContext(array $visitGroupEntity ,array $visitTypeEntity){
+        $this->visitGroup = VisitGroupEntity::fillFromDBReponseArray($visitGroupEntity);
+        $this->visitType = VisitTypeEntity::fillFromDBReponseArray($visitTypeEntity);
     }
 
     public function setPatientEntity(array $patientEntity){
@@ -107,9 +90,5 @@ class VisitEntity {
         $userEntity->lastname = $lastname;
         $this->creatorUser = $userEntity;
 
-    }
-
-    public function setAcquisitionDate(string $acquisitionDate) {
-        $this->acquisitionDate = $acquisitionDate;
     }
 }

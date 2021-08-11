@@ -38,11 +38,8 @@ class GetVisit {
 
             $responseEntity = VisitEntity::fillFromDBReponseArray($visitEntity);
             $responseEntity->setVisitContext(
-                $visitEntity['visit_type']['visit_group']['modality'],
-                $visitEntity['visit_type']['name'],
-                $visitEntity['visit_type']['order'],
-                $visitEntity['visit_type']['optional'],
-                $visitEntity['visit_type']['visit_group']['id']
+                $visitEntity['visit_type']['visit_group'],
+                $visitEntity['visit_type']
             );
             $responseEntity->setReviewVisitStatus($reviewStatus['review_status'], $reviewStatus['review_conclusion_value'] ,$reviewStatus['review_conclusion_date']);
             $responseEntity->setCreatorDetails($userEntity['username'], $userEntity['firstname'], $userEntity['lastname']);

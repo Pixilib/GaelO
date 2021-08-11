@@ -37,11 +37,8 @@ class GetVisitsFromStudy
                 $responseEntity = VisitEntity::fillFromDBReponseArray($data);
                 $responseEntity->setPatientEntity($data['patient']);
                 $responseEntity->setVisitContext(
-                    $data['visit_type']['visit_group']['modality'],
-                    $data['visit_type']['name'],
-                    $data['visit_type']['order'],
-                    $data['visit_type']['optional'],
-                    $data['visit_type']['visit_group']['id']
+                    $data['visit_type']['visit_group'],
+                    $data['visit_type']
                 );
                 $responseEntity->setReviewVisitStatus($data['review_status']['review_status'], $data['review_status']['review_conclusion_value'], $data['review_status']['review_conclusion_date']);
                 $responseArray[] = $responseEntity;

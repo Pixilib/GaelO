@@ -56,11 +56,8 @@ class DicomStudyEntity
     {
         $this->visit = new VisitEntity();
         $this->visit->setVisitContext(
-            $visitDetails['visit_type']['visit_group']['modality'],
-            $visitDetails['visit_type']['name'],
-            $visitDetails['visit_type']['order'],
-            $visitDetails['visit_type']['optional'],
-            $visitDetails['visit_type']['visit_group']['id']
+            $visitDetails['visit_type']['visit_group'],
+            $visitDetails['visit_type']
         );
         $this->visit->visitDate = $visitDetails['visit_date'];
         $this->visit->stateInvestigatorForm = $visitDetails['state_investigator_form'];
