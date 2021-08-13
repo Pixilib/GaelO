@@ -37,7 +37,7 @@ class GetPatientsVisitsInStudy {
             $this->checkAuthorization($getPatientsVisitsInStudyRequest->currentUserId, $getPatientsVisitsInStudyRequest->studyName);
 
             $studyName = $getPatientsVisitsInStudyRequest->studyName;
-            $patientCodes = $getPatientsVisitsInStudyRequest->patientCodes['patientCodes'];
+            $patientCodes = $getPatientsVisitsInStudyRequest->patientCodes;
 
             $responseArray = [];
             $visitsArray = $this->visitRepositoryInterface->getPatientListVisitWithContextAndReviewStatus($patientCodes, $studyName);
