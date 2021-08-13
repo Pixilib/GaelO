@@ -77,7 +77,10 @@ class PatientRepositoryTest extends TestCase
             $patient->study_name,
             $patient->registration_date,
             'New Investigator',
-            $patient->center_code
+            $patient->center_code,
+            $patient->inclusion_status,
+            $patient->withdraw_reason,
+            $patient->withdraw_date
         );
 
         $updatedPatient = Patient::find($patient->code);

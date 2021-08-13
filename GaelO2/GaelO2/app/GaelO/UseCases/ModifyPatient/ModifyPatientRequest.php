@@ -15,4 +15,7 @@ class ModifyPatientRequest {
     public ?string $registrationDate=null;
     public ?string $investigatorName=null;
     public ?int $centerCode=null;
+    public ?string $inclusionStatus=null;
+    public ?string $withdrawReason=null;
+    public ?string $withdrawDate=null;
 }

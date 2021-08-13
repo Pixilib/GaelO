@@ -100,7 +100,6 @@ Route::middleware(['auth:api', 'refresh_token'])->group(function () {
     //Patients Routes
     Route::get('patients/{code?}', [PatientController::class, 'getPatient'] );
     Route::patch('patients/{code?}', [PatientController::class, 'modifyPatient'] );
-    Route::patch('patients/{code?}/inclusion-status', [PatientController::class, 'modifyPatientInclusionStatus'] );
     Route::get('studies/{studyName}/patients/{patientCode}/visits', [PatientController::class, 'getPatientVisit'] );
     Route::get('studies/{studyName}/patients/{patientCode}/creatable-visits', [PatientController::class, 'getCreatableVisits'] );
 
