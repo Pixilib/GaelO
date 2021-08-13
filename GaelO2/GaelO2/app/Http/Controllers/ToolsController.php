@@ -8,9 +8,6 @@ use App\GaelO\UseCases\GetPatientsInStudyFromCenters\GetPatientsInStudyFromCente
 use App\GaelO\UseCases\GetPatientsVisitsInStudy\GetPatientsVisitsInStudy;
 use App\GaelO\UseCases\GetPatientsVisitsInStudy\GetPatientsVisitsInStudyRequest;
 use App\GaelO\UseCases\GetPatientsVisitsInStudy\GetPatientsVisitsInStudyResponse;
-use App\GaelO\UseCases\GetCentersFromStudy\GetCentersFromStudy;
-use App\GaelO\UseCases\GetCentersFromStudy\GetCentersFromStudyRequest;
-use App\GaelO\UseCases\GetCentersFromStudy\GetCentersFromStudyResponse;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -18,18 +15,7 @@ use Illuminate\Support\Facades\Auth;
 class ToolsController extends Controller
 {
 
-    public function getCentersFromStudy(String $studyName,
-        GetCentersFromStudy $getCentersFromStudy,
-        GetCentersFromStudyRequest $getCentersFromStudyRequest,
-        GetCentersFromStudyResponse $getCentersFromStudyResponse) {
 
-        $curentUser = Auth::user();
-        $getCentersFromStudyRequest->currentUserId = $curentUser['id'];
-        $getCentersFromStudyRequest->studyName = $studyName;
-
-        $getCentersFromStudy->execute($getCentersFromStudyRequest, $getCentersFromStudyResponse);
-        return $this->getJsonResponse($getCentersFromStudyResponse->body, $getCentersFromStudyResponse->status, $getCentersFromStudyResponse->statusText);
-    }
 
     public function getPatientsInStudyFromCenters(String $studyName, Request $request,
         GetPatientsInStudyFromCenters $getPatientsInStudyFromCenters,

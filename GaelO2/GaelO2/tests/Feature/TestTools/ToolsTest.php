@@ -43,17 +43,10 @@ class ToolsTest extends TestCase
         $this->patientCode = $patient->code;
     }
 
-    public function testGetCentersFromStudy(){
-        $currentUserId = AuthorizationTools::actAsAdmin(false);
-
-        AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $this->studyName);
-
-        $this->get('api/tools/studies/'.$this->studyName.'/centers')->assertSuccessful();
-
-    }
-
     public function testGetPatientsInStudyFromCenters() {
+        $center = Center::factory()->code(2)->create();
         Patient::factory()->studyName($this->studyName)->centerCode($this->centerCode)->count(9)->create();
+        Patient::factory()->studyName($this->studyName)->centerCode($center->code)->count(10)->create();
         Patient::factory()->studyName($this->studyName)->count(10)->create();
         Patient::factory()->studyName($this->studyName)->count(10)->create();
 
@@ -61,11 +54,11 @@ class ToolsTest extends TestCase
 
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $this->studyName);
 
-        $this->validPayload = [ $this->centerCode ]; 
-        $answer = $this->json('POST', 'api/tools/studies/'.$this->studyName.'/centers/patients', $this->validPayload); 
+        $this->validPayload = [ $this->centerCode, $center->code ]; 
+        $answer = $this->json('POST', 'api/studies/'.$this->studyName.'/tools/centers/patients-from-centers', $this->validPayload); 
         $answer->assertSuccessful();
         $content = json_decode($answer->content(), true);
-        $this->assertEquals(10, sizeof($content));
+        $this->assertEquals(20, sizeof($content));
     }
 
     public function testGetPatientsVisitsInStudy() {
@@ -74,7 +67,7 @@ class ToolsTest extends TestCase
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $this->studyName);
 
         $this->validPayload = [ $this->patientCode ]; 
-        $answer = $this->json('POST', 'api/tools/studies/'.$this->studyName.'/patients/visits', $this->validPayload); 
+        $answer = $this->json('POST', 'api/studies/'.$this->studyName.'/tools/patients/visits-from-patients', $this->validPayload); 
         $answer->assertSuccessful();
         $content = json_decode($answer->content(), true);
 

@@ -80,6 +80,7 @@ Route::middleware(['auth:api', 'refresh_token'])->group(function () {
     Route::post('centers', [CenterController::class, 'createCenter'] );
     Route::get('centers/{code?}', [CenterController::class, 'getCenter'] );
     Route::patch('centers/{code}', [CenterController::class, 'modifyCenter'] );
+    Route::get('studies/{studyName}/centers', [CenterController::class, 'getCentersFromStudy']);
 
     //Countries Routes
     Route::get('countries/{code?}', [CountryController::class, 'getCountry'] );
@@ -161,9 +162,8 @@ Route::middleware(['auth:api', 'refresh_token'])->group(function () {
     Route::patch('documentations/{id}/reactivate', [DocumentationController::class, 'reactivateDocumentation'] );
 
     //Tools routes
-    Route::get('tools/studies/{studyName}/centers', [ToolsController::class, 'getCentersFromStudy']);
-    Route::post('tools/studies/{studyName}/centers/patients', [ToolsController::class, 'getPatientsInStudyFromCenters']);
-    Route::post('tools/studies/{studyName}/patients/visits', [ToolsController::class, 'getPatientsVisitsInStudy']);
+    Route::post('studies/{studyName}/tools/centers/patients-from-centers', [ToolsController::class, 'getPatientsInStudyFromCenters']);
+    Route::post('studies/{studyName}/tools/patients/visits-from-patients', [ToolsController::class, 'getPatientsVisitsInStudy']);
 });
 
 

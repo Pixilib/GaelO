@@ -2,7 +2,10 @@
 
 namespace Tests\Feature\TestUser;
 
+use App\GaelO\Constants\Constants;
 use App\Models\Center;
+use App\Models\Patient;
+use App\Models\Study;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\TestCase;
 use Tests\AuthorizationTools;
@@ -166,5 +169,29 @@ class CenterTest extends TestCase
             'countryCode' => 'US'
         ];
         $this->json('PATCH', '/api/centers/8', $payload)->assertStatus(409);
+    }
+
+    public function testGetCentersFromStudy(){
+        $study = Study::factory()->name('TEST')->create();
+        $center = Center::factory()->code(1)->create();
+        $patient = Patient::factory()->studyName($study->name)->centerCode($center->code)->create();
+
+        $currentUserId = AuthorizationTools::actAsAdmin(false);
+
+        AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $study->name);
+
+        $this->get('api/studies/'.$study->name.'/centers')->assertSuccessful();
+    }
+
+    public function testGetCentersFromStudyShouldFailNotSupervisor(){
+        $study = Study::factory()->name('TEST')->create();
+        $center = Center::factory()->code(1)->create();
+        $patient = Patient::factory()->studyName($study->name)->centerCode($center->code)->create();
+
+        $currentUserId = AuthorizationTools::actAsAdmin(false);
+
+        AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_INVESTIGATOR, $study->name);
+
+        $this->get('api/studies/'.$study->name.'/centers')->assertStatus(403);
     }
 }
