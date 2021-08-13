@@ -16,7 +16,9 @@ interface PatientRepositoryInterface {
 
     public function getPatientsInStudy(string $studyName) : array ;
 
-    public function getPatientsInStudyInCenters(string $studyName, array $centersCode) : array ;
+    public function getPatientsInStudyInCenters(string $studyName, array $centerCodes) : array ;
+
+    public function getPatientsFromCodeArray(array $codes) : array ;
 
     public function addPatientInStudy(PatientEntity $patientEntity, String $studyName) : void ;
 

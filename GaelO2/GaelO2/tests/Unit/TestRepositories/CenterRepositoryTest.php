@@ -71,7 +71,10 @@ class CenterRepositoryTest extends TestCase
 
     }
 
-
-
-
+    public function testGetCentersFromCodeArray() {
+        $centerCodesArray = [$this->center3->code, $this->center5->code];
+        $centerEntitiesArray = $this->centerRepository->getCentersFromCodeArray($centerCodesArray);
+        $fetchedCentersCodes = array_column($centerEntitiesArray, 'code');
+        $this->assertTrue(!array_diff($fetchedCentersCodes, $centerCodesArray));
+    }
 }

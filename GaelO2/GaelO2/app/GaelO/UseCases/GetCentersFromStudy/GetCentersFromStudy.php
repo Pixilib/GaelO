@@ -33,17 +33,11 @@ class GetCentersFromStudy {
             $studyName = $getCentersFromStudyRequest->studyName;
 
             $patients = $this->patientRepositoryInterface->getPatientsInStudy($studyName);
-            $centerCodes = [];
+            $centerCodes = array_column($patients, 'center_code');
 
-            foreach($patients as $patient) {
-                if(!in_array($patient['center_code'], $centerCodes)) {
-                    //SK Appel Iteratif a la DB A supprimer
-                    $center = $this->centerRepositoryInterface->getCenterByCode($patient['center_code']);
-                    $centerCodes[] = $center['code'];
-                }
-            }
+            $centers = $this->centerRepositoryInterface->getCentersFromCodeArray($centerCodes);
 
-            $getCentersFromStudyResponse->body = $centerCodes;
+            $getCentersFromStudyResponse->body = $centers;
             $getCentersFromStudyResponse->status = 200;
             $getCentersFromStudyResponse->statusText = 'OK';
 
