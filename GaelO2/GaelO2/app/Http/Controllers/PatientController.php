@@ -14,9 +14,6 @@ use App\GaelO\UseCases\GetPatientVisit\GetPatientVisitResponse;
 use App\GaelO\UseCases\ModifyPatient\ModifyPatient;
 use App\GaelO\UseCases\ModifyPatient\ModifyPatientRequest;
 use App\GaelO\UseCases\ModifyPatient\ModifyPatientResponse;
-use App\GaelO\UseCases\ModifyPatientWithdraw\ModifyPatientWithdraw;
-use App\GaelO\UseCases\ModifyPatientWithdraw\ModifyPatientWithdrawRequest;
-use App\GaelO\UseCases\ModifyPatientWithdraw\ModifyPatientWithdrawResponse;
 
 use App\GaelO\Util;
 use Illuminate\Http\Request;
@@ -62,19 +59,6 @@ class PatientController extends Controller
         $modifyPatient->execute($modifyPatientRequest, $modifyPatientResponse);
 
         return $this->getJsonResponse($modifyPatientResponse->body, $modifyPatientResponse->status, $modifyPatientResponse->statusText);
-    }
-
-    public function modifyPatientInclusionStatus(int $patientCode, Request $request, ModifyPatientWithdraw $modifyPatientWithdraw, ModifyPatientWithdrawRequest $modifyPatientWithdrawRequest, ModifyPatientWithdrawResponse $modifyPatientWithdrawResponse)
-    {
-        $currentUser = Auth::user();
-        $requestData = $request->all();
-
-        $modifyPatientWithdrawRequest = Util::fillObject($requestData, $modifyPatientWithdrawRequest);
-        $modifyPatientWithdrawRequest->currentUserId = $currentUser['id'];
-        $modifyPatientWithdrawRequest->patientCode = $patientCode;
-        $modifyPatientWithdraw->execute($modifyPatientWithdrawRequest, $modifyPatientWithdrawResponse);
-
-        return $this->getJsonResponse($modifyPatientWithdrawResponse->body, $modifyPatientWithdrawResponse->status, $modifyPatientWithdrawResponse->statusText);
     }
 
     public function getCreatableVisits(string $studyName, int $patientCode, GetCreatableVisits $getCreatableVisits, GetCreatableVisitsRequest $getCreatableVisitsRequest, GetCreatableVisitsResponse $getCreatableVisitsResponse)

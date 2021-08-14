@@ -39,11 +39,14 @@ class PatientRepository implements PatientRepositoryInterface {
         return empty($patients) ? [] : $patients->toArray();
     }
 
-    public function getPatientsInStudyInCenters(string $studyName, array $centersCode) : array {
-
-        $patients = $this->patient->where('study_name', $studyName)->whereIn('center_code', $centersCode)->get();
+    public function getPatientsInStudyInCenters(string $studyName, array $centerCodes) : array {
+        $patients = $this->patient->where('study_name', $studyName)->whereIn('center_code', $centerCodes)->get();
         return empty($patients) ? [] : $patients->toArray();
+    }
 
+    public function getPatientsFromCodeArray(array $codes) : array {
+        $patients = $this->patient->whereIn('code', $codes)->get();
+        return $patients !== null  ? $patients->toArray() : [];
     }
 
     /**
@@ -68,7 +71,8 @@ class PatientRepository implements PatientRepositoryInterface {
 
     public function updatePatient(int $code, string $lastname, string $firstname,
                             string $gender, int $birthDay, int $birthMonth, int $birthYear,
-                            string $studyName, string $registrationDate, string $investigatorName, int $centerCode) : void {
+                            string $studyName, string $registrationDate, string $investigatorName, int $centerCode,
+                            string $inclusionStatus, string $withdrawReason, string $withdrawDate) : void {
 
         $patient = $this->patient->findOrFail($code);
 
@@ -82,6 +86,9 @@ class PatientRepository implements PatientRepositoryInterface {
         $patient->registration_date = $registrationDate;
         $patient->investigator_name = $investigatorName;
         $patient->center_code = $centerCode;
+        $patient->inclusion_status = $inclusionStatus;
+        $patient->withdraw_reason = $withdrawReason;
+        $patient->withdraw_date = $withdrawDate;
 
         $patient->save();
     }

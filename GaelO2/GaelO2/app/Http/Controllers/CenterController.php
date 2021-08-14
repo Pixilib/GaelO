@@ -5,14 +5,18 @@ namespace App\Http\Controllers;
 use App\GaelO\UseCases\CreateCenter\CreateCenter;
 use App\GaelO\UseCases\CreateCenter\CreateCenterRequest;
 use App\GaelO\UseCases\CreateCenter\CreateCenterResponse;
-use App\GaelO\UseCases\GetCenter\GetCenter;
+use App\GaelO\UseCases\ModifyCenter\ModifyCenter;
 use App\GaelO\UseCases\ModifyCenter\ModifyCenterRequest;
 use App\GaelO\UseCases\ModifyCenter\ModifyCenterResponse;
-use Illuminate\Http\Request;
+use App\GaelO\UseCases\GetCenter\GetCenter;
 use App\GaelO\UseCases\GetCenter\GetCenterRequest;
 use App\GaelO\UseCases\GetCenter\GetCenterResponse;
-use App\GaelO\UseCases\ModifyCenter\ModifyCenter;
+use App\GaelO\UseCases\GetCentersFromStudy\GetCentersFromStudy;
+use App\GaelO\UseCases\GetCentersFromStudy\GetCentersFromStudyRequest;
+use App\GaelO\UseCases\GetCentersFromStudy\GetCentersFromStudyResponse;
+
 use App\GaelO\Util;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class CenterController extends Controller
@@ -46,5 +50,18 @@ class CenterController extends Controller
 
         $createCenter->execute($createCenterRequest, $createCenterResponse);
         return $this->getJsonResponse($createCenterResponse->body, $createCenterResponse->status, $createCenterResponse->statusText);
+    }
+
+    public function getCentersFromStudy(String $studyName,
+        GetCentersFromStudy $getCentersFromStudy,
+        GetCentersFromStudyRequest $getCentersFromStudyRequest,
+        GetCentersFromStudyResponse $getCentersFromStudyResponse) {
+
+        $curentUser = Auth::user();
+        $getCentersFromStudyRequest->currentUserId = $curentUser['id'];
+        $getCentersFromStudyRequest->studyName = $studyName;
+
+        $getCentersFromStudy->execute($getCentersFromStudyRequest, $getCentersFromStudyResponse);
+        return $this->getJsonResponse($getCentersFromStudyResponse->body, $getCentersFromStudyResponse->status, $getCentersFromStudyResponse->statusText);
     }
 }

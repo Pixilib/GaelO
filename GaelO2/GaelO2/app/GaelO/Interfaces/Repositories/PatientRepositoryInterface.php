@@ -16,13 +16,16 @@ interface PatientRepositoryInterface {
 
     public function getPatientsInStudy(string $studyName) : array ;
 
-    public function getPatientsInStudyInCenters(string $studyName, array $centersCode) : array ;
+    public function getPatientsInStudyInCenters(string $studyName, array $centerCodes) : array ;
+
+    public function getPatientsFromCodeArray(array $codes) : array ;
 
     public function addPatientInStudy(PatientEntity $patientEntity, String $studyName) : void ;
 
     public function updatePatient(int $code, string $lastname, string $firstname,
                     string $gender, int $birthDay, int $birthMonth, int $birthYear,
-                    string $studyName, string $registrationDate, string $investigatorName, int $centerCode) : void ;
+                    string $studyName, string $registrationDate, string $investigatorName, int $centerCode,
+                    string $inclusionStatus, string $withdrawReason, string $withdrawDate) : void ;
 
 }
 

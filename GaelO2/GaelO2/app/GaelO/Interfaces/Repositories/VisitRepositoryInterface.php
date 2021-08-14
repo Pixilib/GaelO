@@ -57,7 +57,7 @@ interface VisitRepositoryInterface
 
     public function resetQc(int $visitId): void ;
 
-    public function setCorrectiveAction(int $visitId, int $investigatorId, bool $newUpload, bool $newInvestigatorForm, bool $correctiveActionApplyed, ?string $comment) : void ;
+    public function setCorrectiveAction(int $visitId, int $investigatorId, bool $newUpload, bool $newInvestigatorForm, bool $correctiveActionApplied, ?string $comment) : void ;
 
     public function updateInvestigatorFormStatus(int $visitId, string $stateInvestigatorForm): array ;
 

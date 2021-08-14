@@ -1,7 +1,7 @@
 @extends('mails.mail_template')
 
 @section('content')
-    @if ($correctionApplyed == true)
+    @if ($correctionApplied == true)
     A Corrective action has be applied on the following visit:<br>
     @else
     No corrective action could be applied on the following visit:<br>

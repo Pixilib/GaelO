@@ -437,7 +437,7 @@ class VisitRepositoryTest extends TestCase
         $this->assertFalse(boolval($updatedVisit->corrective_action_new_upload) );
         $this->assertFalse(boolval($updatedVisit->corrective_action_investigator_form) );
         $this->assertNull($updatedVisit->corrective_action_comment );
-        $this->assertFalse(boolval($updatedVisit->corrective_action_applyed) );
+        $this->assertFalse(boolval($updatedVisit->corrective_action_applied) );
 
     }
 

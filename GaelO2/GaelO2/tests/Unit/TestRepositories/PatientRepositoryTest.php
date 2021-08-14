@@ -77,7 +77,10 @@ class PatientRepositoryTest extends TestCase
             $patient->study_name,
             $patient->registration_date,
             'New Investigator',
-            $patient->center_code
+            $patient->center_code,
+            $patient->inclusion_status,
+            $patient->withdraw_reason,
+            $patient->withdraw_date
         );
 
         $updatedPatient = Patient::find($patient->code);
@@ -124,5 +127,14 @@ class PatientRepositoryTest extends TestCase
 
         $selectedPatients = $this->patientRepository->getPatientsInStudyInCenters($study->first()->name, [$centers->get(0)->code, $centers->get(1)->code]);
         $this->assertEquals(11, sizeof($selectedPatients));
+    }
+
+    public function testGetPatientsFromCodeArray() {
+        $patient1 = Patient::factory()->create();
+        $patient2 = Patient::factory()->create();
+        $patientCodesArray = [strval($patient1->code), strval($patient2->code)];
+        $patientEntitiesArray = $this->patientRepository->getPatientsFromCodeArray($patientCodesArray);
+        $fetchedPatientsCodes = array_column($patientEntitiesArray, 'code');
+        $this->assertTrue(!array_diff($fetchedPatientsCodes, $patientCodesArray));
     }
 }

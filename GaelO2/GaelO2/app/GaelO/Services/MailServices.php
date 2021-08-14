@@ -289,13 +289,13 @@ class MailServices
         $this->mailInterface->send();
     }
 
-    public function sendCorrectiveActionMessage(int $visitId, int $currentUserId, string $studyName, bool $correctionApplyed, bool $patientCode, string $visitModality, string $visitType)
+    public function sendCorrectiveActionMessage(int $visitId, int $currentUserId, string $studyName, bool $correctionApplied, bool $patientCode, string $visitModality, string $visitType)
     {
 
 
         $parameters = [
             'name' => 'User',
-            'correctionApplyed' => $correctionApplyed,
+            'correctionApplied' => $correctionApplied,
             'study' => $studyName,
             'patientCode' => $patientCode,
             'visitModality' => $visitModality,

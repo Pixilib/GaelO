@@ -40,25 +40,25 @@ class GetPatientsVisitsInStudy {
             $patientCodes = $getPatientsVisitsInStudyRequest->patientCodes;
 
             $responseArray = [];
+            $visitsArray = $this->visitRepositoryInterface->getPatientListVisitWithContextAndReviewStatus($patientCodes, $studyName);
             $patientEntities = $this->patientRepositoryInterface->find($patientCodes);
 
             foreach($patientEntities as $patientEntity) {
                 $patientVisits = [];
-                //SK Appel Iteratif a enlever
-                $visitsArray = $this->visitRepositoryInterface->getAllPatientsVisitsWithReviewStatus($patientEntity['code'], $studyName, false);
+                $patientVisitsArray = array_filter($visitsArray, function($var) use ($patientEntity){
+                    return $var['patient_code'] == $patientEntity['code'];
+                });
 
-                foreach($visitsArray as $data){
+                foreach($patientVisitsArray as $data){
                     $visitEntity = VisitEntity::fillFromDBReponseArray($data);
                     $visitEntity->setVisitContext($data['visit_type']['visit_group'], $data['visit_type'] );
                     $patientVisits[] = $visitEntity;
                 }
-
+                
                 $patientEntity = PatientEntity::fillFromDBReponseArray($patientEntity);
                 $patientEntity->setVisitsDetails($patientVisits);
                 $responseArray[] = $patientEntity;
-
             }
-
             $getPatientsVisitsInStudyResponse->body = $responseArray;
             $getPatientsVisitsInStudyResponse->status = 200;
             $getPatientsVisitsInStudyResponse->statusText = 'OK';

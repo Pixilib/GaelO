@@ -38,6 +38,11 @@ class CenterRepository implements CenterRepositoryInterface {
         return $center;
     }
 
+    public function getCentersFromCodeArray(array $centerCodes) : array {
+        $centers = $this->center->whereIn('code', $centerCodes)->get();
+        return $centers !== null  ? $centers->toArray() : [];
+    }
+
     public function isKnownCenter(int $code) : bool {
         return empty($this->center->find($code)) ? false : true;
     }

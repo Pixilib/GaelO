@@ -14,6 +14,8 @@ interface CenterRepositoryInterface {
 
     public function getCenterByCode(int $code) : array ;
 
+    public function getCentersFromCodeArray(array $centerCodes) : array ;
+
     public function isKnownCenter(int $code) : bool ;
 
     public function updateCenter(int $code, String $name, String $countryCode) : void ;
