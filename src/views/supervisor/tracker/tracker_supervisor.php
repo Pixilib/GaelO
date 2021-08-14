@@ -42,6 +42,9 @@
         	<label for="Update Documentation">Update Documentation</label>
         	<input type="checkbox" class="columnSelect" id="Reactivate Visit" value=13 checked>
         	<label for="Reactivate Visit">Reactivate Visit</label>
+			<input type="checkbox" class="columnSelect" id="Update Visit Date" value=14 checked>
+        	<label for="Update Visit Date">Update Visit Date</label>
+			
     	</div>
 	</div>
 	
@@ -62,7 +65,7 @@
             <th>Add Documentation</th>
             <th>Update Documentation</th>
             <th>Reactivate Visit</th>
-            
+            <th>Update Visit Date</th>
             </tr>
             <tr>
             <th><input type="text" placeholder="Search" class="column_search" style="max-width:75px" /></th>
@@ -79,6 +82,7 @@
             <th><input type="text" placeholder="Search" class="column_search" style="max-width:75px" /></th>
             <th><input type="text" placeholder="Search" class="column_search" style="max-width:75px" /></th>
             <th><input type="text" placeholder="Search" class="column_search" style="max-width:75px" /></th>
+			<th><input type="text" placeholder="Search" class="column_search" style="max-width:75px" /></th>
             </tr>
         
         </thead>
@@ -170,6 +174,11 @@
 				<td>
 					<?php 
 					if ($supervisorEvent['action_type'] == "Reactivate Visit") echo('<pre><code>'.json_encode($eventDetails, JSON_PRETTY_PRINT|JSON_HEX_QUOT|JSON_HEX_TAG|JSON_HEX_AMP|JSON_HEX_APOS).'</code></pre>');
+					?>
+				</td>
+				<td>
+					<?php 
+					if ($supervisorEvent['action_type'] == "Update Visit Date") echo('<pre><code>'.json_encode($eventDetails, JSON_PRETTY_PRINT|JSON_HEX_QUOT|JSON_HEX_TAG|JSON_HEX_AMP|JSON_HEX_APOS).'</code></pre>');
 					?>
 				</td>
 

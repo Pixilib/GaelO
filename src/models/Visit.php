@@ -191,6 +191,22 @@ class Visit
 		}
 	}
 
+	public function updateVisitAcquisitionDate(string $acquisitionDate)
+	{
+
+		$updateAcquisitionDate = $this->linkpdo->prepare('UPDATE visits SET acquisition_date= :acquisitionDate WHERE id_visit = :idvisit');
+		$updateAcquisitionDate->execute(
+			array(
+				'acquisitionDate' => $acquisitionDate,
+				'idvisit' => $this->id_visit
+			)
+		);
+
+		//Update status in this object
+		$this->refreshVisitData();
+
+	}
+
 	public function updateLastReminderUpload()
 	{
 
