@@ -1,6 +1,8 @@
 GaelO
 
 --Pending Changes --
+  Add Edition of visit acquisition date for supervisor
+  Add export of target lesions
 
 --GaelO 1.5.4 30/07/21 --
   Upgrade Uploader to 3.1.10
