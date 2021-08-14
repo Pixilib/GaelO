@@ -39,6 +39,7 @@ studies/{studyName}/visit-types/{visitTypeId}/dicom-studies (GET)
 studies/{studyName}/visit-types/{visitTypeId}/reviews/metadata (GET)
 studies/{studyName}/visit-types/{visitTypeId}/investigator-forms/metadata (GET)
 reviews/{id}/file (GET, POST, DELETE)
+visit-date (PATCH)
 
 Salim TODO :
 Debug Antonin=> Ok sur Linux, tester sur windows / mac os ?
@@ -52,10 +53,10 @@ ajouter le login / mdp pour dans orthanc pacs + bloquer delete dans lua script=>
 --- /Deployment -----
 
 ---- Refactoring Backend ----
-Dans remplissage DTO request, si variable boolean, un input string est interpretée à true.
 Refac pour la lecture eviter de passer par des services pour laisser les services à l'ecriture ?
-Enlever le update public de patient Repository
 studies/{studyName}/orthanc-study-id/{orthancStudyID} => A renomer à original-orthanc-study-id (test le hash d'origine pas le courant)
+Dicom Series Service => peut etre evoluer vers un DicomService pour les deux niveaux
+GetVisitContext des services surement a faire passer a initialisation pour eviter requettes redondantes
 
 Entity :
 - Pluger toutes les reponses "data" sur ces entity response
@@ -78,17 +79,15 @@ Export Data study :
 - Export liste utilisateurs avec lien etude
 
 Revoir DicowWeb Authorization Service => Pb route orthanc differentes
-GetVisitContext des services surement a faire passer a initialisation pour eviter requettes redondantes
 Review  : faire une propriete dans visit pour savoir si review disponible a un user en plus de status reviewAvailable ?
-Dicom Series Service => peut etre evoluer vers un DicomService pour les deux niveaux
 Verifier que quand on appelle un child si le parent est pas delete (cf probleme de role et study)
 
 Reste Autres :
 - Orthanc Send to peer
 - Connecteur FTP/SFTP
-*** Dummy Run *** => Impact sur la db a designer
-*** Dicom liée aux review *** => Impacte sur la db a designer
-*** QC items Details *** => Impact sur la db a designer
+- Dummy Run => Impact sur la db a designer
+- Dicom liée aux review  => Impacte sur la db a designer
+- QC items Details => Impact sur la db a designer
 
 **** Tests ***
 Test feature : visit et autres (dicom...)
