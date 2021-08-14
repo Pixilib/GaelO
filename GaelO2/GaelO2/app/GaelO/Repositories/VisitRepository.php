@@ -41,7 +41,7 @@ class VisitRepository implements VisitRepositoryInterface
         ?string $reasonForNotDone,
         string $stateInvestigatorForm,
         string $stateQualityControl
-    ) : int {
+    ): int {
 
         $data = [
             'creator_user_id' => $creatorUserId,
@@ -83,6 +83,13 @@ class VisitRepository implements VisitRepositoryInterface
         return $visitEntity->toArray();
     }
 
+    public function updateVisitDate(int $visitId, string $visitDate): void
+    {
+        $visitEntity = $this->visit->findOrFail($visitId);
+        $visitEntity['visit_date'] = $visitDate;
+        $visitEntity->save();
+    }
+
     public function getVisitContext(int $visitId, bool $withTrashed = false): array
     {
 
@@ -94,13 +101,13 @@ class VisitRepository implements VisitRepositoryInterface
         return $dataArray;
     }
 
-    public function getVisitContextByVisitIdArray(array $visitIdArray)  : array {
+    public function getVisitContextByVisitIdArray(array $visitIdArray): array
+    {
 
         $query = $this->visit->with('visitType')->withTrashed()->whereIn('id', $visitIdArray);
         $visits = $query->get();
 
         return empty($visits) ? [] : $visits->toArray();
-
     }
 
     public function getPatientsVisits(int $patientCode): array
@@ -163,7 +170,7 @@ class VisitRepository implements VisitRepositoryInterface
             }]);
         }
 
-        if($withTrashed) {
+        if ($withTrashed) {
             $queryBuilder->withTrashed();
         }
 
@@ -189,29 +196,28 @@ class VisitRepository implements VisitRepositoryInterface
         return $visits->toArray();
     }
 
-    public function getVisitsInVisitType(int $visitTypeId, bool $withReviewStatus = false, string $studyName = null, bool $withTrashed = false, bool $withCenter = false ) : array{
+    public function getVisitsInVisitType(int $visitTypeId, bool $withReviewStatus = false, string $studyName = null, bool $withTrashed = false, bool $withCenter = false): array
+    {
 
         $visits = $this->visit->whereHas('visitType', function ($query) use ($visitTypeId) {
             $query->where('id', $visitTypeId);
         });
 
-        if($withReviewStatus){
+        if ($withReviewStatus) {
             $visits->with(['reviewStatus' => function ($q) use ($studyName) {
                 $q->where('study_name', $studyName);
             }, 'patient']);
         }
 
-        if($withCenter){
+        if ($withCenter) {
             $visits->with('patient.center');
         }
 
-        if($withTrashed){
+        if ($withTrashed) {
             $visits->withTrashed();
         }
 
         return $visits->get()->toArray();
-
-
     }
 
     public function hasVisitsInVisitGroup(int $visitGroupId): bool
@@ -350,7 +356,6 @@ class VisitRepository implements VisitRepositoryInterface
             ->whereIn('id', $patientVisitsIdAvailableForReview)->get();
 
         return $answer->count() === 0 ? false  : true;
-
     }
 
     public function editQc(int $visitId, string $stateQc, int $controllerId, bool $imageQc, bool $formQc, ?string $imageQcComment, ?string $formQcComment): void

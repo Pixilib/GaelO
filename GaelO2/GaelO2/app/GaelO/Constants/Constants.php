@@ -29,6 +29,7 @@ class Constants {
     const TRACKER_CREATE_VISIT_GROUP  = "Create Visit Group";
     const TRACKER_CREATE_VISIT = "Create Visit";
     const TRACKER_UPLOAD_SERIES = "Upload Series";
+    const TRACKER_UPDATE_VISIT_DATE = "Update Visit Date";
     const TRACKER_UPLOAD_VALIDATION_FAILED = "Upload Failed";
     const TRACKER_ASK_UNLOCK = "Ask Unlock Form";
     const TRACKER_UNLOCK_INVESTIGATOR_FORM = "Unlock Investigator Form";
