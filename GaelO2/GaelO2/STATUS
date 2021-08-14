@@ -42,7 +42,6 @@ reviews/{id}/file (GET, POST, DELETE)
 
 Salim TODO :
 Debug Antonin=> Ok sur Linux, tester sur windows / mac os ?
-
 Etudier refresh du token (evaluer impact avec telescope)
 
 --- Deployment -----
@@ -65,8 +64,6 @@ Entity :
 => GetVisitTree => ?, visit ?
 
 Model et db :
-- Patient => InclusionStatus à passer à status
-- Clé etrangere DicomStudy et DicomSeries non conventionnelle
 - Visit : Ajouter targetLesions
 - Type de variable a caster
 

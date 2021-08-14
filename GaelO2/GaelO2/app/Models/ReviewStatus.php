@@ -11,6 +11,15 @@ class ReviewStatus extends Model
 
     protected $table = 'reviews_status';
 
+    protected $casts = [
+        'target_lesions' => 'array',
+    ];
+
+    //Default value because db does not accept default value json
+    protected $attributes = [
+        'target_lesions' => '{}',
+    ];
+
     protected $guarded = [];
 
     public function visit(){

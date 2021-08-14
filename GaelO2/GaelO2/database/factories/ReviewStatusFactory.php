@@ -19,6 +19,7 @@ class ReviewStatusFactory extends Factory
             'review_available'=> false,
             'review_status'=> 'Not Done',
             'review_conclusion_value'=> $this->faker->word,
+            'target_lesions' => ['prostate'=>'a', 'liver'=>5],
             'review_conclusion_date'=> Util::now()
         ];
     }

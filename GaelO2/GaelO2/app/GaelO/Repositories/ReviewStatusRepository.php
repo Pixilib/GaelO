@@ -19,10 +19,11 @@ class ReviewStatusRepository implements ReviewStatusRepositoryInterface {
         ->toArray();
     }
 
-    public function updateReviewConclusion(int $visitId, string $studyName, string $reviewConclusionValue ) : void {
+    public function updateReviewConclusion(int $visitId, string $studyName, string $reviewConclusionValue, ?array $targetLesions = null) : void {
 
         $model = $this->reviewStatus->where('visit_id', $visitId)->where('study_name', $studyName)->sole();
         $model->review_conclusion_value = $reviewConclusionValue;
+        $model->target_lesions = $targetLesions;
         $model->review_conclusion_date = Util::now();
         $model->save();
 

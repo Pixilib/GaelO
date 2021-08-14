@@ -40,7 +40,7 @@ class GetVisitsFromStudy
                     $data['visit_type']['visit_group'],
                     $data['visit_type']
                 );
-                $responseEntity->setReviewVisitStatus($data['review_status']['review_status'], $data['review_status']['review_conclusion_value'], $data['review_status']['review_conclusion_date']);
+                $responseEntity->setReviewVisitStatus($data['review_status']['review_status'], $data['review_status']['review_conclusion_value'], $data['review_status']['review_conclusion_date'], null);
                 $responseArray[] = $responseEntity;
             }
 
