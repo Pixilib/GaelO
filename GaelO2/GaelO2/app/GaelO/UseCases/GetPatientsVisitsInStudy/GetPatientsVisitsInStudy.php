@@ -45,8 +45,8 @@ class GetPatientsVisitsInStudy {
 
             foreach($patientEntities as $patientEntity) {
                 $patientVisits = [];
-                $patientVisitsArray = array_filter($visitsArray, function($var) use ($patientEntity){
-                    return $var['patient_code'] == $patientEntity['code'];
+                $patientVisitsArray = array_filter($visitsArray, function($visit) use ($patientEntity){
+                    return $visit['patient_code'] === $patientEntity['code'];
                 });
 
                 foreach($patientVisitsArray as $data){
@@ -54,7 +54,7 @@ class GetPatientsVisitsInStudy {
                     $visitEntity->setVisitContext($data['visit_type']['visit_group'], $data['visit_type'] );
                     $patientVisits[] = $visitEntity;
                 }
-                
+
                 $patientEntity = PatientEntity::fillFromDBReponseArray($patientEntity);
                 $patientEntity->setVisitsDetails($patientVisits);
                 $responseArray[] = $patientEntity;
