@@ -91,8 +91,6 @@ class ModifyPatient {
 
 
         }catch(GaelOException $e){
-
-            //Chec
             $modifyPatientResponse->body = $e->getErrorBody();
             $modifyPatientResponse->status = $e->statusCode;
             $modifyPatientResponse->statusText = $e->statusText;

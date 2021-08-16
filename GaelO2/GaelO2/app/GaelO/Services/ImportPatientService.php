@@ -2,6 +2,7 @@
 
 namespace App\GaelO\Services;
 
+use App\GaelO\Constants\SettingsConstants;
 use App\GaelO\Exceptions\GaelOBadRequestException;
 use App\GaelO\Interfaces\Adapters\FrameworkInterface;
 use App\GaelO\Interfaces\Repositories\CenterRepositoryInterface;
@@ -25,7 +26,7 @@ class ImportPatientService
 	public array $failList = [];
 
 	public function __construct(StudyRepositoryInterface $studyRepository, PatientRepositoryInterface $patientRepository, CenterRepositoryInterface $centerRepository, FrameworkInterface $frameworkInterface) {
-        $this->patientCodeLength = $frameworkInterface::getConfig('patientCodeLength');
+        $this->patientCodeLength = $frameworkInterface::getConfig(SettingsConstants::PATIENT_CODE_LENGTH);
         $this->patientRepository = $patientRepository;
         $this->centerRepository = $centerRepository;
         $this->studyRepository = $studyRepository;

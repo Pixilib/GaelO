@@ -14,16 +14,28 @@ class Study extends Model
     protected $keyType = 'string';
     public $incrementing = false;
 
-    public function patients(){
+    public function patients()
+    {
         return $this->hasMany(Patient::class, 'study_name');
     }
 
-    public function visitGroups(){
+    public function visitGroups()
+    {
         return $this->hasMany(VisitGroup::class, 'study_name');
     }
 
-    public function visitGroupDetails(){
-    return $this->hasMany(VisitGroup::class, 'study_name')->with('visitTypes');
+    public function visitGroupDetails()
+    {
+        return $this->hasMany(VisitGroup::class, 'study_name')->with('visitTypes');
     }
 
+    public function documentations()
+    {
+        return $this->hasMany(Documentation::class, 'study_name');
+    }
+
+    public function roles()
+    {
+        return $this->hasMany(Role::class, 'study_name');
+    }
 }

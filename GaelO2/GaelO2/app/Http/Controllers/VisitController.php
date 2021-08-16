@@ -23,6 +23,9 @@ use App\GaelO\UseCases\ModifyQualityControl\ModifyQualityControlResponse;
 use App\GaelO\UseCases\ModifyQualityControlReset\ModifyQualityControlReset;
 use App\GaelO\UseCases\ModifyQualityControlReset\ModifyQualityControlResetRequest;
 use App\GaelO\UseCases\ModifyQualityControlReset\ModifyQualityControlResetResponse;
+use App\GaelO\UseCases\ModifyVisitDate\ModifyVisitDate;
+use App\GaelO\UseCases\ModifyVisitDate\ModifyVisitDateRequest;
+use App\GaelO\UseCases\ModifyVisitDate\ModifyVisitDateResponse;
 use App\GaelO\UseCases\ReactivateVisit\ReactivateVisit;
 use App\GaelO\UseCases\ReactivateVisit\ReactivateVisitRequest;
 use App\GaelO\UseCases\ReactivateVisit\ReactivateVisitResponse;
@@ -144,6 +147,19 @@ class VisitController extends Controller
         $modifyCorrectiveAction->execute($modifyCorrectiveActionRequest, $modifyCorrectiveActionResponse);
 
         return $this->getJsonResponse($modifyCorrectiveActionResponse->body, $modifyCorrectiveActionResponse->status, $modifyCorrectiveActionResponse->statusText);
+    }
+
+    public function modifyVisitDate(int $visitId,  Request $request, ModifyVisitDate $modifyVisitDate, ModifyVisitDateRequest $modifyVisitDateRequest, ModifyVisitDateResponse $modifyVisitDateResponse){
+        $curentUser = Auth::user();
+        $requestData = $request->all();
+
+        $modifyCorrectiveActionRequest = Util::fillObject($requestData, $modifyVisitDateRequest);
+        $modifyCorrectiveActionRequest->currentUserId = $curentUser['id'];
+        $modifyCorrectiveActionRequest->visitId = $visitId;
+
+        $modifyVisitDate->execute($modifyVisitDateRequest, $modifyVisitDateResponse);
+
+        return $this->getJsonResponse($modifyVisitDateResponse->body, $modifyVisitDateResponse->status, $modifyVisitDateResponse->statusText);
     }
 
     public function reactivateVisit(int $visitId, ReactivateVisit $reactivateVisit, ReactivateVisitRequest $reactivateVisitRequest, ReactivateVisitResponse $reactivateVisitResponse)

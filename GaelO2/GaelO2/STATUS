@@ -39,17 +39,24 @@ studies/{studyName}/visit-types/{visitTypeId}/dicom-studies (GET)
 studies/{studyName}/visit-types/{visitTypeId}/reviews/metadata (GET)
 studies/{studyName}/visit-types/{visitTypeId}/investigator-forms/metadata (GET)
 reviews/{id}/file (GET, POST, DELETE)
+visit-date (PATCH)
 
 Salim TODO :
-
-Reparer module telechargement dicom (ajout selection visit id et updater l'api)
-
-Stat avec Visit ajouter les clé patient (pour le filtre avec center) +- center name ? => fait, reste a ajouter nom des centres dans reponse
-AskUnlock basé sur le VisitId ? => passer a review id
+Debug Antonin=> Ok sur Linux, tester sur windows / mac os ?
 Etudier refresh du token (evaluer impact avec telescope)
-Ajouter passeport purge pour vider la table periodiquement
+
+--- Deployment -----
+Faire marcher conteneur cron
+Ajouter passeport purge pour vider la table periodiquement => Via cron de laravel
+Purge de TUS automatique => Via purge du bucket ?
+ajouter le login / mdp pour dans orthanc pacs + bloquer delete dans lua script=> conteneur derivé de OrthancPro
+--- /Deployment -----
+
+---- Refactoring Backend ----
 Refac pour la lecture eviter de passer par des services pour laisser les services à l'ecriture ?
-Enlever le update public de patient Repository
+studies/{studyName}/orthanc-study-id/{orthancStudyID} => A renomer à original-orthanc-study-id (test le hash d'origine pas le courant)
+Dicom Series Service => peut etre evoluer vers un DicomService pour les deux niveaux
+GetVisitContext des services surement a faire passer a initialisation pour eviter requettes redondantes
 
 Entity :
 - Pluger toutes les reponses "data" sur ces entity response
@@ -58,13 +65,11 @@ Entity :
 => GetVisitTree => ?, visit ?
 
 Model et db :
-- Patient => InclusionStatus à passer à status
-- Clé etrangere DicomStudy et DicomSeries non conventionnelle
-- Visit : Ajouter targetLesions
 - Type de variable a caster
 
+---- /Refactoring Backend ------
 
-Messagerie à designer
+Messagerie à designer (communication intermembre, front avec tinymce)
 Creatable Visit : Manque Study Custom Logic (+dans front skip visites optionnelles ?)
 Export Data study :
 - Personalisation au niveau study -> Couche d'abstration notamment pour injecter le lysarc code
@@ -74,10 +79,15 @@ Export Data study :
 - Export liste utilisateurs avec lien etude
 
 Revoir DicowWeb Authorization Service => Pb route orthanc differentes
-GetVisitContext des services surement a faire passer a initialisation pour eviter requettes redondantes
 Review  : faire une propriete dans visit pour savoir si review disponible a un user en plus de status reviewAvailable ?
-Dicom Series Service => peut etre evoluer vers un DicomService pour les deux niveaux
 Verifier que quand on appelle un child si le parent est pas delete (cf probleme de role et study)
+
+Reste Autres :
+- Orthanc Send to peer
+- Connecteur FTP/SFTP
+- Dummy Run => Impact sur la db a designer
+- Dicom liée aux review  => Impacte sur la db a designer
+- QC items Details => Impact sur la db a designer
 
 **** Tests ***
 Test feature : visit et autres (dicom...)
@@ -87,24 +97,6 @@ Les tests ne font pas d'assertion sur
 - le tracker => Via un spy ?
 - l'envoi de mails => voir doc laravel
 Review => tester un scenario de custom conclusion / adjudication
-
-+Tard :
-studies/{studyName}/orthanc-study-id/{orthancStudyID} => A renomer à original-orthanc-study-id (test le hash d'origine pas le courant)
-TUS est Joignable sur Delete => peut etre gerer le failure/cancel pour vider tus ?
-Deploiement ajouter le login / mdp pour dans orthanc pacs + bloquer delete dans lua script
-Dans remplissage DTO request, si variable boolean, un input string est interpretée à true.
-
-Reste Supervisor :
-- Upload Manager (reprendre cdc de clara)
-- Remininder email upload / review / Communication mail inter membre (utiliser tinyMCE React)
-
-Reste Autres :
-- Orthanc Send to peer
-- Connecteur FTP/SFTP
-- Cron job (etudier Jobs de laravel)
-
-*** Dummy Run *** => Impact sur la db a designer
-*** Dicom liée aux review *** => Impacte sur la db a designer
 
 *** Etudes ancillaires ***
 Pb Authorisation : Un ID Visit peut maintenant a etre attachee a plusieurs etudes ancillaires

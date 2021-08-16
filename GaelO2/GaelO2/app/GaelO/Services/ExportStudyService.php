@@ -102,6 +102,9 @@ class ExportStudyService {
             $sheetName = $visitTypeDetails['modality'].'_'.$visitTypeDetails['name'];
             unset($visit['visit_type']);
             unset($visit['patient']);
+            //transform target_lesions as json string
+            $visit['review_status']['target_lesions'] = json_encode($visit['review_status']['target_lesions']);
+
             $resultsData[$sheetName][]=array_merge( [ 'modality'=> $visitTypeDetails['modality'], 'visit_type' => $visitTypeDetails['name']] , $visit, $visit['review_status'] );
 
         }

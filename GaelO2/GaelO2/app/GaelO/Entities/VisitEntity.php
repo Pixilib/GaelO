@@ -30,13 +30,15 @@ class VisitEntity {
 
     public VisitGroupEntity $visitGroup;
     public VisitTypeEntity $visitType;
+    public PatientEntity $patient;
+    public UserEntity $creatorUser;
 
     public ?string $reviewStatus;
     public ?string $reviewConclusionValue;
     public ?string $reviewConclusionDate;
+    public ?array $targetLesions;
 
-    public PatientEntity $patient;
-    public UserEntity $creatorUser;
+
 
     public static function fillFromDBReponseArray(array $array){
         $visitEntity  = new VisitEntity();
@@ -77,10 +79,11 @@ class VisitEntity {
         $this->patient = PatientEntity::fillFromDBReponseArray($patientEntity);
     }
 
-    public function setReviewVisitStatus(string $reviewStatus, ?string $reviewConclusionValue, ?string $reviewConclusionDate){
+    public function setReviewVisitStatus(string $reviewStatus, ?string $reviewConclusionValue, ?string $reviewConclusionDate, ?array $targetLesions){
         $this->reviewStatus = $reviewStatus;
         $this->reviewConclusionValue = $reviewConclusionValue;
         $this->reviewConclusionDate = $reviewConclusionDate;
+        $this->targetLesions  = $targetLesions;
     }
 
     public function setCreatorDetails(string $username, string $firstname, string $lastname) : void {

@@ -23,6 +23,7 @@ use App\Mail\UserCreated;
 use App\Mail\VisitNotDone;
 
 use App\GaelO\Constants\MailConstants;
+use App\GaelO\Constants\SettingsConstants;
 use App\GaelO\Interfaces\Adapters\FrameworkInterface;
 use App\GaelO\Interfaces\Adapters\MailerInterface;
 use App\Mail\ImportPatient;
@@ -40,7 +41,7 @@ class MailerAdapter implements MailerInterface {
     private array $to;
 
     public function setReplyTo( ?String $replyTo = null ){
-        if($replyTo == null) $this->replyTo= $this->frameworkInterface::getConfig('mailReplyToDefault');
+        if($replyTo == null) $this->replyTo= $this->frameworkInterface::getConfig('mail_reply_to_default');
         else $this->replyTo = $replyTo;
     }
 
@@ -52,10 +53,10 @@ class MailerAdapter implements MailerInterface {
 
     public function setParameters(array $parameters){
         $this->parameters = $parameters;
-        $this->parameters['platformName'] = $this->frameworkInterface::getConfig('name');
-        $this->parameters['webAddress'] = $this->frameworkInterface::getConfig('url');
-        $this->parameters['corporation'] = $this->frameworkInterface::getConfig('corporation');
-        $this->parameters['adminEmail']= $this->frameworkInterface::getConfig('mailFromAddress');
+        $this->parameters['platformName'] = $this->frameworkInterface::getConfig(SettingsConstants::PLATFORM_NAME);
+        $this->parameters['webAddress'] = $this->frameworkInterface::getConfig(SettingsConstants::APP_URL);
+        $this->parameters['corporation'] = $this->frameworkInterface::getConfig(SettingsConstants::CORPORATION);
+        $this->parameters['adminEmail']= $this->frameworkInterface::getConfig(SettingsConstants::MAIL_FROM_ADDRESS);
 
     }
 

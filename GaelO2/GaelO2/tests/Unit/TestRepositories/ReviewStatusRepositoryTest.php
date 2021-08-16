@@ -65,12 +65,14 @@ class ReviewStatusRepositoryTest extends TestCase
         $this->reviewStatus->updateReviewConclusion(
             $reviewStatus->visit_id,
             $reviewStatus->study_name,
-            'Progression'
+            'Progression',
+            ['liver'=> 3.54]
         );
 
         $review = ReviewStatus::get()->first();
 
         $this->assertEquals('Progression', $review['review_conclusion_value']);
+        $this->assertIsArray($review['target_lesions']);
 
     }
 

@@ -15,10 +15,8 @@ class TusService{
 
     public function __construct(HttpClientInterface $httpClientInterface, FrameworkInterface $frameworkInterface){
         $this->httpClientInterface = $httpClientInterface;
-
-        $address = $frameworkInterface::getConfig(SettingsConstants::TUS_ADDRESS);
-        $port = $frameworkInterface::getConfig(SettingsConstants::TUS_PORT);
-        $this->httpClientInterface->setAddress($address, $port);
+        $url = $frameworkInterface::getConfig(SettingsConstants::TUS_URL);
+        $this->httpClientInterface->setUrl($url);
     }
 
     public function getZip(string $tusFileId) : string {

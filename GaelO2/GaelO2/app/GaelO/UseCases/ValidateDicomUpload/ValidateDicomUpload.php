@@ -113,7 +113,6 @@ class ValidateDicomUpload{
             //Switch to Orthanc PACS to check images and fill database
             $this->orthancService->setOrthancServer(true);
 
-            $studyOrthancDetails = $this->orthancService->getOrthancRessourcesDetails('studies', $anonymizedOrthancStudyID);
             $statistics = $this->orthancService->getOrthancRessourcesStatistics('studies', $anonymizedOrthancStudyID);
             if($statistics['CountInstances'] !== $validateDicomUploadRequest->numberOfInstances){
                 throw new GaelOValidateDicomException("Error during Peer transfers");

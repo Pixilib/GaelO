@@ -109,6 +109,7 @@ Route::middleware(['auth:api', 'refresh_token'])->group(function () {
     Route::patch('visits/{id}/quality-control', [VisitController::class, 'modifyQualityControl'] );
     Route::patch('visits/{id}/quality-control/reset', [VisitController::class, 'modifyQualityControlReset'] );
     Route::patch('visits/{id}/corrective-action', [VisitController::class, 'modifyCorrectiveAction'] );
+    Route::patch('visits/{id}/visit-date', [VisitController::class, 'modifyVisitDate'] );
     Route::delete('visits/{id}', [VisitController::class, 'deleteVisit'] );
     Route::patch('visits/{id}/reactivate', [VisitController::class, 'reactivateVisit'] );
     Route::post('studies/{studyName}/visit-groups/{visitGroupId}/visit-types/{visitTypeId}/visits', [VisitController::class, 'createVisit'] );

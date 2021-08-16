@@ -33,9 +33,8 @@ class ReverseProxyDicomWeb{
             $this->checkAuthorization($reverseProxyDicomWebRequest->currentUserId, $calledUrl );
 
             //Connect to Orthanc Pacs
-            $this->httpClientInterface->setAddress(
-                $this->frameworkInterface::getConfig(SettingsConstants::ORTHANC_STORAGE_ADDRESS),
-                $this->frameworkInterface::getConfig(SettingsConstants::ORTHANC_STORAGE_PORT)
+            $this->httpClientInterface->setUrl(
+                $this->frameworkInterface::getConfig(SettingsConstants::ORTHANC_STORAGE_URL)
             );
             $this->httpClientInterface->setBasicAuthentication(
                 $this->frameworkInterface::getConfig(SettingsConstants::ORTHANC_STORAGE_LOGIN),
@@ -43,9 +42,12 @@ class ReverseProxyDicomWeb{
             );
 
 
-            $gaelOProtocol = $this->frameworkInterface::getConfig(SettingsConstants::APP_PROTOCOL);
-            $gaelOUrl = $this->frameworkInterface::getConfig(SettingsConstants::APP_DOMAIN);
-            $gaelOPort = $this->frameworkInterface::getConfig(SettingsConstants::APP_PORT);
+            $gaelOAppURL = $this->frameworkInterface::getConfig(SettingsConstants::APP_URL);
+            $parsedUrl = parse_url($gaelOAppURL);
+            $gaelOProtocol = $parsedUrl['scheme'];
+            $gaelOUrl = $parsedUrl['host'];
+            $gaelOPort = $parsedUrl['port'];
+
             $headers= $reverseProxyDicomWebRequest->header;
             $headers['Forwarded'] = ['by=localhost;for=localhost;host='.$gaelOUrl.':'.$gaelOPort.'/api/orthanc'.';proto='.$gaelOProtocol];
 
