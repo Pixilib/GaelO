@@ -62,7 +62,7 @@ class HttpClientAdapter implements HttpClientInterface
             'fulfilled' => function (Response $response, $index) use (&$responseArray) {
                 $responseArray[] = new Psr7ResponseAdapter($response);
             },
-            'rejected' => function (RequestException $reason, $index) {
+            'rejected' => function ($reason, $index) {
                 // this is delivered each failed request
             },
         ]);
