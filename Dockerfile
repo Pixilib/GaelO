@@ -52,6 +52,8 @@ WORKDIR $APP_HOME
 
 COPY docker_start.sh /usr/local/bin/start
 COPY --chown=www-data:www-data GaelO2/GaelO2 .
+RUN find . -type f -exec chmod 664 {} \;   
+RUN find . -type d -exec chmod 775 {} \;
 
 RUN mv .env.example .env
 
