@@ -8,30 +8,31 @@ use App\GaelO\UseCases\GetPatientsInStudyFromCenters\GetPatientsInStudyFromCente
 use App\GaelO\UseCases\GetPatientsVisitsInStudy\GetPatientsVisitsInStudy;
 use App\GaelO\UseCases\GetPatientsVisitsInStudy\GetPatientsVisitsInStudyRequest;
 use App\GaelO\UseCases\GetPatientsVisitsInStudy\GetPatientsVisitsInStudyResponse;
-
+use App\GaelO\UseCases\GetVisitTypesDetails\GetVisitTypesDetails;
+use App\GaelO\UseCases\GetVisitTypesDetails\GetVisitTypesDetailsRequest;
+use App\GaelO\UseCases\GetVisitTypesDetails\GetVisitTypesDetailsResponse;
+use App\GaelO\Util;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class ToolsController extends Controller
 {
 
-
-
-    public function getPatientsInStudyFromCenters(String $studyName, Request $request,
+    public function getPatientsInStudyFromCenters(Request $request,
         GetPatientsInStudyFromCenters $getPatientsInStudyFromCenters,
         GetPatientsInStudyFromCentersRequest $getPatientsInStudyFromCentersRequest,
         GetPatientsInStudyFromCentersResponse $getPatientsInStudyFromCentersResponse) {
 
         $curentUser = Auth::user();
         $getPatientsInStudyFromCentersRequest->currentUserId = $curentUser['id'];
-        $getPatientsInStudyFromCentersRequest->studyName = $studyName;
-        $getPatientsInStudyFromCentersRequest->centerCodes = $request->all();
+        $requestData = $request->all();
+        $getPatientsInStudyFromCentersRequest = Util::fillObject($requestData, $getPatientsInStudyFromCentersRequest);
 
         $getPatientsInStudyFromCenters->execute($getPatientsInStudyFromCentersRequest, $getPatientsInStudyFromCentersResponse);
         return $this->getJsonResponse($getPatientsInStudyFromCentersResponse->body, $getPatientsInStudyFromCentersResponse->status, $getPatientsInStudyFromCentersResponse->statusText);
     }
 
-    public function getPatientsVisitsInStudy(String $studyName, Request $request,
+    public function getPatientsVisitsInStudy(Request $request,
         GetPatientsVisitsInStudy $getPatientsVisitsInStudy,
         GetPatientsVisitsInStudyRequest $getPatientsVisitsInStudyRequest,
         GetPatientsVisitsInStudyResponse $getPatientsVisitsInStudyResponse) {
@@ -39,10 +40,26 @@ class ToolsController extends Controller
         $curentUser = Auth::user();
 
         $getPatientsVisitsInStudyRequest->currentUserId = $curentUser['id'];
-        $getPatientsVisitsInStudyRequest->studyName = $studyName;
-        $getPatientsVisitsInStudyRequest->patientCodes = $request->all();
+        $requestData = $request->all();
+        $getPatientsVisitsInStudyRequest = Util::fillObject($requestData, $getPatientsVisitsInStudyRequest);
 
         $getPatientsVisitsInStudy->execute($getPatientsVisitsInStudyRequest, $getPatientsVisitsInStudyResponse);
         return $this->getJsonResponse($getPatientsVisitsInStudyResponse->body, $getPatientsVisitsInStudyResponse->status, $getPatientsVisitsInStudyResponse->statusText);
     }
+
+    public function getVisitTypesDetails(Request $request,
+        GetVisitTypesDetails $getVisitTypesDetails,
+        GetVisitTypesDetailsRequest $getVisitTypesDetailsRequest,
+        GetVisitTypesDetailsResponse $getVisitTypesDetailsResponse) {
+
+        $curentUser = Auth::user();
+
+        $getVisitTypesDetailsRequest->currentUserId = $curentUser['id'];
+        $requestData = $request->all();
+        $getVisitTypesDetailsRequest = Util::fillObject($requestData, $getVisitTypesDetailsRequest);
+
+        $getVisitTypesDetails->execute($getVisitTypesDetailsRequest, $getVisitTypesDetailsResponse);
+        return $this->getJsonResponse($getVisitTypesDetailsResponse->body, $getVisitTypesDetailsResponse->status, $getVisitTypesDetailsResponse->statusText);
+    }
+
 }

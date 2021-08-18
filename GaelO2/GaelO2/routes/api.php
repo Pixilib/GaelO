@@ -163,8 +163,9 @@ Route::middleware(['auth:api', 'refresh_token'])->group(function () {
     Route::patch('documentations/{id}/reactivate', [DocumentationController::class, 'reactivateDocumentation'] );
 
     //Tools routes
-    Route::post('studies/{studyName}/tools/centers/patients-from-centers', [ToolsController::class, 'getPatientsInStudyFromCenters']);
-    Route::post('studies/{studyName}/tools/patients/visits-from-patients', [ToolsController::class, 'getPatientsVisitsInStudy']);
+    Route::post('tools/centers/patients-from-centers', [ToolsController::class, 'getPatientsInStudyFromCenters']);
+    Route::post('tools/patients/visits-from-patients', [ToolsController::class, 'getPatientsVisitsInStudy']);
+    
 });
 
 
