@@ -165,7 +165,7 @@ Route::middleware(['auth:api', 'refresh_token'])->group(function () {
     //Tools routes
     Route::post('tools/centers/patients-from-centers', [ToolsController::class, 'getPatientsInStudyFromCenters']);
     Route::post('tools/patients/visits-from-patients', [ToolsController::class, 'getPatientsVisitsInStudy']);
-    
+
 });
 
 
@@ -197,8 +197,3 @@ Route::post('request', [RequestController::class, 'sendRequest'] );
 Route::post('login', [AuthController::class, 'login'] )->name('login');
 Route::put('users/{id}/password', [UserController::class, 'changeUserPassword'] );
 Route::post('tools/reset-password', [UserController::class, 'resetPassword'] );
-
-
-Route::get('/', function () {
-    return 'Welcome to GaelO';
-});
