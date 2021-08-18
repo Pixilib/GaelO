@@ -2,6 +2,7 @@
 
 namespace App\GaelO\UseCases\GetCentersFromStudy;
 use App\GaelO\Constants\Constants;
+use App\GaelO\Entities\CenterEntity;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\CenterRepositoryInterface;
@@ -36,8 +37,11 @@ class GetCentersFromStudy {
             $centerCodes = array_column($patients, 'center_code');
 
             $centers = $this->centerRepositoryInterface->getCentersFromCodeArray($centerCodes);
-
-            $getCentersFromStudyResponse->body = $centers;
+            $responseArray = [];
+            foreach($centers as $centerEntity) {
+                $responseArray[] = CenterEntity::fillFromDBReponseArray($centerEntity);
+            }
+            $getCentersFromStudyResponse->body = $responseArray;
             $getCentersFromStudyResponse->status = 200;
             $getCentersFromStudyResponse->statusText = 'OK';
 

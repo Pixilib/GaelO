@@ -55,7 +55,7 @@ COPY --chown=www-data:www-data GaelO2/GaelO2 .
 
 RUN mv .env.example .env
 
-RUN composer install --optimize-autoloader --no-dev --no-interaction
+RUN composer install --optimize-autoloader --no-interaction
 
 # docker_start.sh
 COPY docker_start.sh /usr/local/bin/start

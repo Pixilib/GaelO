@@ -50,4 +50,9 @@ class VisitTypeRepository implements VisitTypeRepositoryInterface {
         return sizeof($visitGroup)>0;
     }
 
+    public function getVisitTypesFromIdArray(array $visitTypeIds) : array {
+        $visitTypes = $this->visitType->whereIn('id', $visitTypeIds)->get();
+        return $visitTypes !== null  ? $visitTypes->toArray() : [];
+    }
+    
 }

@@ -41,6 +41,8 @@ class ToolsTest extends TestCase
         $this->studyName = $study->name;
         $this->centerCode = $center->code;
         $this->patientCode = $patient->code;
+        $this->visitTypeId = $visitType->id;
+
         $this->validPayload = [
             'studyName' => $study->name
         ];
@@ -76,4 +78,14 @@ class ToolsTest extends TestCase
 
     }
 
+    public function testGetVisitTypesDetails() {
+        $currentUserId = AuthorizationTools::actAsAdmin(false);
+
+        AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $this->studyName);
+
+        $this->validPayload['visitTypesIds'] = [ $this->visitTypeId ];
+        $answer = $this->json('POST', 'api/tools/visit-types/visit-types-details', $this->validPayload);
+        $answer->assertSuccessful();
+        $content = json_decode($answer->content(), true);
+    }
 }
