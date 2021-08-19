@@ -134,7 +134,7 @@ class DocumentationTest extends TestCase
     {
         $currentUserId = AuthorizationTools::actAsAdmin(false);
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_INVESTIGATOR, $this->study->name);
-        $filename = storage_path() . '/GaelO/documentations/' . $this->study->name . '/test.pdf';
+        $filename = storage_path() . '/gaelo/documentations/' . $this->study->name . '/test.pdf';
         if (!file_exists(dirname($filename))) mkdir(dirname($filename), 0777, true);
         file_put_contents($filename, 'content');
         $documentation = Documentation::factory()->studyName($this->study->name)->investigator()->path('/documentations/' . $this->study->name . '/test.pdf')->create();

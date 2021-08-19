@@ -17,6 +17,6 @@ class FrameworkAdapter implements FrameworkInterface {
     }
 
     public static function getStoragePath() : string{
-        return storage_path().'/GaelO';
+        return storage_path().'/gaelo';
     }
 }
