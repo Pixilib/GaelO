@@ -51,9 +51,8 @@ class FrontTest extends Seeder
         Role::factory()->userId($this->user->id)->studyName($this->study->name)->roleName('Reviewer')->create();
         Role::factory()->userId($this->user->id)->studyName($this->study->name)->roleName('Controller')->create();
 
-        Patient::factory()->code(123000 + rand(0,999))->inclusionStatus('Included')
-            ->investigatorName('administrator')->studyName($this->study->name)->centerCode(0)->create();
-        
+        Patient::factory()->code(123000 + rand(0,999))->inclusionStatus('Included')->investigatorName('administrator')
+            ->studyName($this->study->name)->centerCode(0)->create();
         Patient::factory()->code(123000 + rand(0,999))->investigatorName('administrator')
             ->studyName($this->study->name)->centerCode(0)->create();
         Patient::factory()->code(123000 + rand(0,999))->investigatorName('administrator')
