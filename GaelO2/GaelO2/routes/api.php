@@ -165,7 +165,7 @@ Route::middleware(['auth:api', 'refresh_token'])->group(function () {
     //Tools routes
     Route::post('tools/centers/patients-from-centers', [ToolsController::class, 'getPatientsInStudyFromCenters']);
     Route::post('tools/patients/visits-from-patients', [ToolsController::class, 'getPatientsVisitsInStudy']);
-
+    Route::post('tools/visit-types/visit-types-details', [ToolsController::class, 'getVisitTypesDetails']);
 });
 
 
