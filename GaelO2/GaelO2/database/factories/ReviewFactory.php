@@ -22,7 +22,7 @@ class ReviewFactory extends Factory
             'local' => true,
             'adjudication' => false,
             'sent_files' => [],
-            'review_data' => ['item1'=>'a', 'item2'=>5]
+            'review_data' => ['comment'=>'a']
         ];
     }
 
@@ -96,5 +96,12 @@ class ReviewFactory extends Factory
 
     }
 
+    public function reviewData(array $reviewData) {
+        return $this->state(function (array $attributes) use($centerCode) {
+            return [
+                'review_data' => $reviewData,
+            ];
+        });
+    }
 
 }
