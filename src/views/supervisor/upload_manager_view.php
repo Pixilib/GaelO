@@ -279,7 +279,7 @@
     </table>
 </div>
 
-<div class="text-center">
+<div class="text-center" hidden>
     <span class="">Send Reminders : </span>
     <input type="button" class="btn btn-primary reminderBtn" value="Upload" />
     <input type="button" class="btn btn-primary reminderBtn" value="Investigator Form" />

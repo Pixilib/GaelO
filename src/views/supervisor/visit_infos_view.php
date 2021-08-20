@@ -18,19 +18,11 @@
 <script>
 	$(document).ready(function() {
 
-		//Dialog to set patient withdrawn
-		$("#update_visit_date").dialog({
-			autoOpen: false,
-			width: 'auto',
-			height: 'auto',
-			title: "Visit Date Edition"
-		});
-
 		$("#editDateButton").on('click', function() {
-			$("#update_visit_date").dialog('open');
-		});
+			$("#update_visit_date").removeAttr('hidden');
+		})
 
-
+		//Dialog to set patient withdrawn
 		$("#update_visit_date_btn").on('click', function() {
 
 			if ($('#visit_date').val() == "") {
@@ -52,11 +44,9 @@
 					reason: $('#visit_date_reason').val()
 				},
 				success: function(data) {
-					$("#update_visit_date").dialog('close');
 					$('#visit_date_reason').val('')
-					$("#supervisorDiv").load('/visit_infos', {
-						id_visit: <?= $id_visit ?>
-					});
+					alertifySuccess('Update Done')
+					linkVisitInfos(<?= $id_visit ?>)
 				},
 				error: function(jqXHR, textStatus, errorThrown) {
 					console.log("Error:" + jqXHR);
@@ -143,17 +133,6 @@
 </div>
 
 
-<div id="update_visit_date">
-	<div id="datePickerVisitDate"></div>
-	<input class="form-control" name="visit_date" id="visit_date" type="hidden">
-	<div class="text-center">
-		<input class="form-control" name="visit_date_reason" id="visit_date_reason" type="text">
-	</div>
-	<div class="text-center">
-		<input class="btn btn-warning" name="update_visit_date_btn" id="update_visit_date_btn" type="button" value="update">
-	</div>
-</div>
-
 <div>
 	<?= make_interface_tableau_visites_supervisor($visitObject) ?>
 </div>
@@ -178,6 +157,13 @@
 		</tr>
 	</table>
 	<input class='btn btn-warning' id="editDateButton" type="button" value='Edit Acquisition Date'><br>
+
+	<div id="update_visit_date" hidden>
+			<div id="datePickerVisitDate"></div>
+			<input name="visit_date" id="visit_date" type="hidden">
+			Reason : <input  name="visit_date_reason" id="visit_date_reason" type="text">
+			<input class="btn btn-warning" name="update_visit_date_btn" id="update_visit_date_btn" type="button" value="update">
+	</div>
 	<a href=scripts/delete_visit.php?id_visit=<?= $id_visit ?> class="ajaxLinkConfirm refreshVisitSupervisor"><input class='btn btn-danger' type="button" value='Delete Visit'></a><br>
 	<?php makeHistoryTable("Visit", $trackerVisitResponses); ?>
 </div>
