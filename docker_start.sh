@@ -6,8 +6,13 @@ env=${APP_ENV:-production}
 migrate=${MIGRATE:-false}
 
 if [ "$migrate" = "true" ]; then
+    echo "Migration..."
+    (cd /var/www/html && php artisan migrate --force)
+fi
+
+if [ "$env" = "production" ]; then
     echo "Caching configuration..."
-    (cd /var/www/html && php artisan migrate --force && php artisan passport:install && php artisan config:cache && php artisan route:cache && php artisan view:cache)
+    (cd /var/www/html && php artisan config:cache && php artisan route:cache && php artisan view:cache)
 fi
 
 if [ "$role" = "app" ]; then
