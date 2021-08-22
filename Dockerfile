@@ -28,6 +28,7 @@ RUN apt-get update -qy && \
     sqlite3 \
     zip \
     libpng-dev \
+    libmemcached-dev \
     mariadb-client \
     postgresql-client-13 && \
     apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
