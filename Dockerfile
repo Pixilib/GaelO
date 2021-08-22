@@ -27,15 +27,12 @@ RUN apt-get update -qy && \
     openssl \
     sqlite3 \
     zip \
-    memcached \
     libpng-dev \
     mariadb-client \
     postgresql-client-13 && \
     apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 RUN docker-php-ext-install gd zip pdo pdo_mysql pdo_pgsql mbstring bcmath ctype fileinfo tokenizer xml bz2 opcache
-RUN pecl install memcached \
-    && docker-php-ext-enable memcached
 COPY php.ini /usr/local/etc/php/conf.d/app.ini
 
 RUN curl -s https://getcomposer.org/installer | php -- --install-dir=/usr/bin/ --filename=composer
