@@ -32,7 +32,8 @@ RUN apt-get update -qy && \
     postgresql-client-13 && \
     apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-RUN pecl install redis && docker-php-ext-enable redis
+RUN pecl install redis && pecl install memcached-3.1.5
+RUN docker-php-ext-enable redis memcached 
 RUN docker-php-ext-install gd zip pdo pdo_mysql pdo_pgsql mbstring bcmath ctype fileinfo tokenizer xml bz2 opcache
 COPY php.ini /usr/local/etc/php/conf.d/app.ini
 
