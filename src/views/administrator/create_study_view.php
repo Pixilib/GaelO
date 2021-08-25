@@ -23,8 +23,6 @@
 			let existingStudies = await fetch('scripts/study.php').then((answer)=>{
 				return answer.json()
 			})
-
-			console.log(existingStudies)
 			
 			return existingStudies;
 		}
@@ -38,6 +36,7 @@
 								<option value=\"CT\">CT</option> \
 								<option value=\"MR\">MR</option> \
 								<option value=\"RTSTRUCT\">RTSTRUCT</option> \
+								<option value=\"OP\">OP</option> \
 							</select> \
 						</td> \
 						<td contenteditable=true>Name</td> \

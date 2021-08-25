@@ -31,6 +31,7 @@ class Visit_Group
 	const GROUP_MODALITY_CT="CT";
 	const GROUP_MODALITY_MR="MR";
 	const GROUP_MODALITY_RTSTRUCT = "RTSTRUCT";
+	const GROUP_MODALITY_OP = "OP";
 
 	public function __construct(PDO $linkpdo, int $groupId)
 	{
