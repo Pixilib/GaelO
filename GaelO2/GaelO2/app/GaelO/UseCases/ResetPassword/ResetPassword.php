@@ -9,6 +9,7 @@ use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
 use App\GaelO\UseCases\ResetPassword\ResetPasswordResponse;
 use App\GaelO\Interfaces\Repositories\UserRepositoryInterface;
 use App\GaelO\Services\MailServices;
+use App\GaelO\Util;
 use Exception;
 
 class ResetPassword {
@@ -34,7 +35,7 @@ class ResetPassword {
             $this->checkEmailMatching($email, $userEntity['email']);
 
             //generate new temporary password
-            $newPassword = substr(uniqid(), 1, 10);
+            $newPassword = Util::generateNewTempPassword();
 
             //update user data
             $this->userRepositoryInterface->updateUserTemporaryPassword($userEntity['id'], $newPassword);

@@ -8,7 +8,6 @@ use App\GaelO\Exceptions\GaelOBadRequestException;
 use App\GaelO\Exceptions\GaelOConflictException;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
-use App\GaelO\Interfaces\Adapters\HashInterface;
 use App\GaelO\Interfaces\Adapters\PhoneNumberInterface;
 use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\UserRepositoryInterface;
@@ -26,15 +25,13 @@ class CreateUser
     private TrackerRepositoryInterface $trackerRepositoryInterface;
     private UserRepositoryInterface $userRepositoryInterface;
     private MailServices $mailService;
-    private HashInterface $hashInterface;
 
-    public function __construct(AuthorizationService $authorizationService, UserRepositoryInterface $userRepositoryInterface, TrackerRepositoryInterface $trackerRepositoryInterface, MailServices $mailService, HashInterface $hashInterface)
+    public function __construct(AuthorizationService $authorizationService, UserRepositoryInterface $userRepositoryInterface, TrackerRepositoryInterface $trackerRepositoryInterface, MailServices $mailService)
     {
         $this->trackerRepositoryInterface = $trackerRepositoryInterface;
         $this->mailService = $mailService;
         $this->authorizationService = $authorizationService;
         $this->userRepositoryInterface = $userRepositoryInterface;
-        $this->hashInterface = $hashInterface;
     }
 
     public function execute(CreateUserRequest $createUserRequest, CreateUserResponse $createUserResponse): void
@@ -43,8 +40,7 @@ class CreateUser
         try {
             $this->checkAuthorization($createUserRequest->currentUserId);
             //Generate password
-            $password = Util::generateNewTempPassword();
-            $passwordTemporary = $this->hashInterface->hash($password);
+            $passwordTemporary = Util::generateNewTempPassword();
 
             self::checkFormComplete($createUserRequest);
             self::checkEmailValid($createUserRequest->email);
@@ -93,7 +89,7 @@ class CreateUser
                 $createdUserEntity['email'],
                 $createdUserEntity['firstname'] . ' ' . $createdUserEntity['lastname'],
                 $createdUserEntity['username'],
-                $password
+                $passwordTemporary
             );
 
             $createUserResponse->body = ['id' => $createdUserEntity['id']];
