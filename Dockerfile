@@ -49,6 +49,7 @@ COPY apache.conf /etc/apache2/conf-available/gaelo-app.conf
 RUN a2enmod rewrite
 RUN a2enmod headers
 RUN a2enmod remoteip
+RUN a2enmod deflate
 RUN a2enconf gaelo-app
 
 ENV APP_HOME /var/www/html
