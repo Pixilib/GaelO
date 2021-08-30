@@ -1,5 +1,8 @@
 FROM php:8.0.7-apache-buster
 
+ENV PHP_OPCACHE_VALIDATE_TIMESTAMPS="0" \
+    PHP_OPCACHE_MEMORY_CONSUMPTION="256" 
+
 RUN apt-get update -qy
 
 # Add Postgres repository as postgres client will be available only in the next major release of debian
