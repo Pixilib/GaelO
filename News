@@ -3,7 +3,9 @@ GaelO
 --Pending Changes --
 
 --GaelO 1.6.0 31/08/21 --
+  Add OP Modality
   Upgrade Uploader to 3.2.4 (Dicom Creation)
+  Enhanced Anonymization rules
   Add Edition of visit acquisition date for supervisor
   Add export of target lesions
 
