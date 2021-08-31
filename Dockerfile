@@ -1,5 +1,8 @@
 FROM php:8.0.7-apache-buster
 
+ENV PHP_OPCACHE_VALIDATE_TIMESTAMPS="0" \
+    PHP_OPCACHE_MEMORY_CONSUMPTION="256" 
+
 RUN apt-get update -qy
 
 # Add Postgres repository as postgres client will be available only in the next major release of debian
@@ -28,10 +31,13 @@ RUN apt-get update -qy && \
     sqlite3 \
     zip \
     libpng-dev \
+    libmemcached-dev \
     mariadb-client \
     postgresql-client-13 && \
     apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
+RUN pecl install redis && pecl install memcached-3.1.5
+RUN docker-php-ext-enable redis memcached 
 RUN docker-php-ext-install gd zip pdo pdo_mysql pdo_pgsql mbstring bcmath ctype fileinfo tokenizer xml bz2 opcache
 COPY php.ini /usr/local/etc/php/conf.d/app.ini
 
@@ -43,6 +49,7 @@ COPY apache.conf /etc/apache2/conf-available/gaelo-app.conf
 RUN a2enmod rewrite
 RUN a2enmod headers
 RUN a2enmod remoteip
+RUN a2enmod deflate
 RUN a2enconf gaelo-app
 
 ENV APP_HOME /var/www/html

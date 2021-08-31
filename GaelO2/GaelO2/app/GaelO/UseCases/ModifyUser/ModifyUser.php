@@ -50,8 +50,7 @@ class ModifyUser
 
             if ($modifyUserRequest->status === Constants::USER_STATUS_UNCONFIRMED) {
                 //If unconfirmed generate a new temporary password
-                $newPassword = Util::generateNewTempPassword();
-                $temporaryPassword = $this->hashInterface->hash($newPassword);
+                $temporaryPassword = Util::generateNewTempPassword();
             } else {
                 //Do not modify the current temporary password otherwise
                 $temporaryPassword = $user['password_temporary'];
@@ -93,7 +92,7 @@ class ModifyUser
                 $this->mailService->sendResetPasswordMessage(
                     ($modifyUserRequest->firstname . ' ' . $modifyUserRequest->lastname),
                     $modifyUserRequest->username,
-                    $newPassword,
+                    $temporaryPassword,
                     $modifyUserRequest->email
                 );
             }

@@ -87,7 +87,7 @@ class UserRepository implements UserRepositoryInterface {
         $user->orthanc_address = $orthancAdress;
         $user->orthanc_login = $orthancLogin;
         $user->orthanc_password = $orthancPassword;
-        $user->password_temporary = $passwordTemporary;
+        $user->password_temporary = $passwordTemporary ? $this->hashInterface->hash($passwordTemporary) : null;
         $user->save();
 
     }

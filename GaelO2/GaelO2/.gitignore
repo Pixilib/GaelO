@@ -3,6 +3,7 @@
 /public/storage
 !/public/storage/api-docs/*
 /storage/*.key
+!/storage/gaelo/README
 /vendor
 .env
 .env.backup
