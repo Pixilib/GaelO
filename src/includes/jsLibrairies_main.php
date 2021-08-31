@@ -116,8 +116,8 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.1.0/papaparse.min.js"></script>
 
 <!-- GaelO Uploader -->
-<script src="https://unpkg.com/gaelo-uploader@3.1.10/dist/bundle.js"></script>
-<link rel="stylesheet" href="https://unpkg.com/gaelo-uploader@3.1.10/dist/main.css">
+<script src="https://unpkg.com/gaelo-uploader@3.2.4/dist/bundle.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/gaelo-uploader@3.2.4/dist/main.css">
 
 <!-- GaelO CSS -->
 <?php $uploaderVersion="3.7"?>

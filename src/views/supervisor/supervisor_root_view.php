@@ -514,6 +514,5 @@
     		</thead>
     	</table>
 	</div>
-	<div id="documentation"> </div>
-
 </div>
+<div id="documentation"> </div>
