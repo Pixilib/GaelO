@@ -135,7 +135,7 @@ class CreateUser
     {
         //If contains non number caracters throw error
         if ($phone != null && !FrameworkAdapter::make(PhoneNumberInterface::class)::isValidPhoneNumber($phone) ) {
-            throw new GaelOBadRequestException('Not a valid email phone number');
+            throw new GaelOBadRequestException('Not a valid phone number');
         }
     }
 }
