@@ -284,7 +284,6 @@ class OrthancService
         $tagsObjects[] = new TagAnon("7053,1009", TagAnon::KEEP); //Phillips
         $tagsObjects[] = new TagAnon("0009,103B", TagAnon::KEEP); //GE
         $tagsObjects[] = new TagAnon("0009,100D", TagAnon::KEEP); //GE
-        $tagsObjects[] = new TagAnon("0011,1012", TagAnon::KEEP); //Other
 
         $jsonArrayAnon = [];
         $jsonArrayAnon['KeepPrivateTags'] = false;
