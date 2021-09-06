@@ -27,7 +27,7 @@ class ModifyUserTest extends TestCase
             'lastname' => 'lastname',
             'firstname' => 'firstname',
             'email' => 'test@test.fr',
-            'phone' => '0101010101',
+            'phone' => '+33685969895',
             'status' => 'Blocked',
             'administrator' => true,
             'centerCode' => $center->code,
