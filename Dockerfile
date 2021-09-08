@@ -52,7 +52,6 @@ RUN a2enmod rewrite
 RUN a2enmod headers
 RUN a2enmod remoteip
 RUN a2enmod deflate
-RUN a2enconf gaelo-app
 
 ENV APP_HOME /var/www/html
 ENV COMPOSER_ALLOW_SUPERUSER=1
