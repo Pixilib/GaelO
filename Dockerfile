@@ -1,7 +1,6 @@
 FROM php:8.0.7-apache-buster
 
-ENV PHP_OPCACHE_VALIDATE_TIMESTAMPS="0" \
-    PHP_OPCACHE_MEMORY_CONSUMPTION="256" 
+ENV PHP_OPCACHE_VALIDATE_TIMESTAMPS="0"
 
 RUN apt-get update -qy
 
@@ -42,12 +41,12 @@ RUN docker-php-ext-configure opcache --enable-opcache \
     && docker-php-ext-install opcache
 
 RUN docker-php-ext-enable redis memcached
-RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
+
+COPY php.ini "$PHP_INI_DIR/php.ini"
 
 RUN curl -s https://getcomposer.org/installer | php -- --install-dir=/usr/bin/ --filename=composer
 
 COPY vhost.conf /etc/apache2/sites-available/000-default.conf
-COPY apache.conf /etc/apache2/conf-available/gaelo-app.conf
 
 RUN a2enmod rewrite
 RUN a2enmod headers
