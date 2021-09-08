@@ -17,7 +17,3 @@ Route::get('/', function () {
     return 'Welcome to GaelO';
 });
 
-Route::get('/php', function () {
-    return phpinfo();
-});
-
