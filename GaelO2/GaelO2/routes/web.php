@@ -11,9 +11,11 @@
 |
 */
 
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    return 'Welcome to GaelO';
+    Log::info(request()->ip());
+    return getallheaders();
 });
 
