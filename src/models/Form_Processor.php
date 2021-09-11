@@ -228,6 +228,20 @@ abstract class Form_Processor {
 		return $datas;
 	}
 
+		/**
+	 * return all reviews (local and reviewer) of the current visit
+	 * Usefull to determine visit conclusion status
+	 */
+	public function getValidatedReviewsFormsOfVisit() {
+	    
+		$query=$this->linkpdo->prepare('SELECT * FROM reviews,'.$this->specificTable.' WHERE id_visit=:idVisit AND validated=1 AND is_local=0 AND deleted=0');
+		$query->execute(array(
+			'idVisit'=>$this->id_visit
+		));
+		$datas=$query->fetchAll(PDO::FETCH_ASSOC);
+		return $datas;
+	}
+
 	/**
 	 * Return of validated review object (no local form)
 	 */
