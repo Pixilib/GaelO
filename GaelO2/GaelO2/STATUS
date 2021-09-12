@@ -42,7 +42,6 @@ reviews/{id}/file (GET, POST, DELETE)
 visit-date (PATCH)
 
 Salim TODO :
-Debug Antonin=> Ok sur Linux, tester sur windows / mac os ?
 Etudier refresh du token (evaluer impact avec telescope)
 
 --- Deployment -----
