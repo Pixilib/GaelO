@@ -234,7 +234,7 @@ abstract class Form_Processor {
 	 */
 	public function getValidatedReviewsFormsOfVisit() {
 	    
-		$query=$this->linkpdo->prepare('SELECT * FROM reviews,'.$this->specificTable.' WHERE reviews.id_review='.$this->specificTable.'.id_review AND id_visit=:idVisit AND validated=1 AND is_local=0 AND deleted=0');
+		$query=$this->linkpdo->prepare('SELECT * FROM reviews,'.$this->specificTable.' WHERE reviews.id_review='.$this->specificTable.'.id_review AND reviews.id_visit=:idVisit AND reviews.validated=1 AND reviews.is_local=0 AND reviews.deleted=0');
 		$query->execute(array(
 			'idVisit'=>$this->id_visit
 		));
