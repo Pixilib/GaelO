@@ -58,7 +58,10 @@ if ($accessCheck && $_SESSION['role'] == User::SUPERVISOR) {
 		}else if (GAELO_DATE_FORMAT == 'm.d.Y') {
 			$importFormat="MM/DD/YYYY";
 		}
+
         $study = new Study($_SESSION['study'], $linkpdo);
+		$centersObjects = Global_Data::getAllCentersObjects($linkpdo);
+
 		require 'views/supervisor/import_patients_view.php';
 	}
     
