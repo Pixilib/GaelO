@@ -180,6 +180,18 @@
 							filterVisitByClassName("WaitAdjudication")
 						}
 
+					},
+					"Only PT" : {
+						"label" : "Only PT",
+						"action" : function(object){
+							filterVisitByModality("PT")
+						}
+					},
+					"Only CT" : {
+						"label" : "Only CT",
+						"action" : function(object){
+							filterVisitByModality("CT")
+						}
 					}
 				}
 			)
@@ -228,9 +240,24 @@
 
 		}
 
+		function filterVisitByModality(modality) {
+			let treeJson = $('#containerTree').jstree(true).get_json('#', {'flat': true})
+			let nodeToRemove = treeJson.filter (function(item) {
+				console.log(item.data.modality)
+				console.log(modality)
+				console.log(item.data.modality != modality)
+				if( item.data.modality != modality ){
+					return true
+				}
+
+			}) 
+			console.log(nodeToRemove)
+			$('#containerTree').jstree(true).delete_node(nodeToRemove)
+			removeParentsIfNoChild()
+		}
+
 		function filterVisitByClassName(className) {
 			let treeJson = $('#containerTree').jstree(true).get_json('#', {'flat': true})
-			console.log(treeJson)
 			let ongoingItems = treeJson.filter (function(item) {
 				if( item.icon == "/assets/images/report-icon.png" && item.li_attr.class !== className){
 					return true

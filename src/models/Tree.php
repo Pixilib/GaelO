@@ -73,6 +73,7 @@ class Tree
   {
 
 	$jsonVisitLevel['id']=$visitObject->id_visit;
+	$jsonVisitLevel['data']['modality']=$visitObject->visitGroupObject->groupModality;
 	$jsonVisitLevel['parent']=$visitObject->patientCode.'_'.$visitObject->visitGroupObject->groupModality;
 	$jsonVisitLevel['icon']='/assets/images/report-icon.png';
 	$jsonVisitLevel['text']=$visitObject->visitType;
