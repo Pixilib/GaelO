@@ -1,6 +1,9 @@
 GaelO
 
 --Pending Changes --
+  Small enhancment in display
+  Add Modality filter for reviewer
+  Add Center code reminder in patient import
 
 --GaelO 1.6.0 31/08/21 --
   Add OP Modality
