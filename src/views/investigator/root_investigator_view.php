@@ -243,15 +243,11 @@
 		function filterVisitByModality(modality) {
 			let treeJson = $('#containerTree').jstree(true).get_json('#', {'flat': true})
 			let nodeToRemove = treeJson.filter (function(item) {
-				console.log(item.data.modality)
-				console.log(modality)
-				console.log(item.data.modality != modality)
-				if( item.data.modality != modality ){
+				if( item.icon == "/assets/images/report-icon.png" && item.data.modality != modality ){
 					return true
 				}
-
-			}) 
-			console.log(nodeToRemove)
+			})
+			
 			$('#containerTree').jstree(true).delete_node(nodeToRemove)
 			removeParentsIfNoChild()
 		}
