@@ -33,7 +33,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 //Routes that need authentication
-Route::middleware(['auth:api', 'refresh_token'])->group(function () {
+Route::middleware(['auth:api'])->group(function () {
 
     //Logout Route
     Route::delete('login', [AuthController::class, 'logout']);
