@@ -34,7 +34,7 @@ class AuthController extends Controller
                 'access_token' => $tokenResult->accessToken,
                 'token_type' => 'Bearer',
                 'expires_at' => Carbon::parse($tokenResult->token->expires_at)->toDateTimeString()
-            ], 200)->cookie('gaeloCookie', $tokenResult->accessToken);
+            ], 200);
         } else {
             return $this->getJsonResponse($loginResponse->body, $loginResponse->status, $loginResponse->statusText);
         }

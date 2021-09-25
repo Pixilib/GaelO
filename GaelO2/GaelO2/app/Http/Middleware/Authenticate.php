@@ -2,10 +2,9 @@
 
 namespace App\Http\Middleware;
 
-use Closure;
-use Illuminate\Auth\Middleware\Authenticate as Middleware;
+use Illuminate\Auth\Middleware\Authenticate as LaravelAuthenticate;
 
-class Authenticate extends Middleware
+class Authenticate extends LaravelAuthenticate
 {
     /**
      * Get the path the user should be redirected to when they are not authenticated.
@@ -20,12 +19,4 @@ class Authenticate extends Middleware
         }
     }
 
-    public function handle($request, Closure $next, ... $guards) {
-        if($request->cookie('gaeloCookie')) {
-            $value = $request->cookie('gaeloCookie');
-            $request->headers->set('Authorization', 'Bearer '.$value);
-        }
-        $this->authenticate($request, $guards);
-        return $next($request);
-    }
 }
