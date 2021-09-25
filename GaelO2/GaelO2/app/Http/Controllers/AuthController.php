@@ -23,11 +23,8 @@ class AuthController extends Controller
 
         if ($loginResponse->status === 200) {
 
-            $user = User::where('username', $request->username)->first();
+            $user = User::where('username', $request->username)->sole();
             $tokenResult = $user->createToken('Personal Access Token');
-            $token = $tokenResult->token;
-
-            $token->save();
 
             return response()->json([
                 'id' => $user->id,

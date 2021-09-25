@@ -167,8 +167,7 @@ Route::middleware(['auth:api'])->group(function () {
     Route::post('tools/patients/visits-from-patients', [ToolsController::class, 'getPatientsVisitsInStudy']);
     Route::post('tools/visit-types/visit-types-details', [ToolsController::class, 'getVisitTypesDetails']);
 
-    /* Binary routes
-    */
+    // Binary routes
     Route::get('export-db', [ExportDBController::class, 'exportDB']);
     Route::get('documentations/{id}/file', [DocumentationController::class, 'getDocumentationFile']);
     Route::get('visits/{id}/dicoms/file', [DicomController::class, 'getVisitDicomsFile']);
