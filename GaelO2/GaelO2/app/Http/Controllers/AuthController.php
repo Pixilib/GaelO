@@ -8,7 +8,6 @@ use App\GaelO\UseCases\Login\LoginResponse;
 use App\GaelO\Util;
 use Illuminate\Http\Request;
 use App\Models\User;
-use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
 
 class AuthController extends Controller
@@ -32,8 +31,7 @@ class AuthController extends Controller
             return response()->json([
                 'id' => $user->id,
                 'access_token' => $tokenResult->plainTextToken,
-                'token_type' => 'Bearer',
-                'expires_at' => 'test'/*Carbon::parse($tokenResult->token->expires_at)->toDateTimeString()*/
+                'token_type' => 'Bearer'
             ], 200);
         } else {
             return $this->getJsonResponse($loginResponse->body, $loginResponse->status, $loginResponse->statusText);
@@ -42,7 +40,7 @@ class AuthController extends Controller
 
     public function logout(Request $request)
     {
-        $request->user()->token()->revoke();
+        $request->user()->tokens()->delete();
         return response()->json();
     }
 }
