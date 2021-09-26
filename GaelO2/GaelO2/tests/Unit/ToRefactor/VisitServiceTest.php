@@ -38,7 +38,6 @@ class VisitServiceTest extends TestCase
     {
         parent::setUp();
 
-        Artisan::call('passport:install');
         Passport::actingAs(
             User::where('id', 1)->first()
         );

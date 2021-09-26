@@ -20,12 +20,6 @@ class ExportDbTest extends TestCase
 
     }
 
-    protected function setUp() : void{
-        parent::setUp();
-        Artisan::call('passport:install');
-
-    }
-
     public function testExportDb()
     {
         AuthorizationTools::actAsAdmin(true);

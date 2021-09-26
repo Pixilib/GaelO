@@ -21,12 +21,6 @@ class LoginTest extends TestCase
         $this->artisan('db:seed');
     }
 
-    protected function setUp() : void{
-        parent::setUp();
-        Artisan::call('passport:install');
-    }
-
-
     /**
      * Test login with correct username password and valid account (password up to date)
      */

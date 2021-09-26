@@ -24,7 +24,6 @@ class ExportStudyDataTest extends TestCase
 
     protected function setUp() : void {
         parent::setUp();
-        Artisan::call('passport:install');
         $this->study = Study::factory()->create();
 
     }

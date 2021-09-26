@@ -33,7 +33,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 //Routes that need authentication
-Route::middleware(['auth:api'])->group(function () {
+Route::middleware(['auth:sanctum'])->group(function () {
 
     //Logout Route
     Route::delete('login', [AuthController::class, 'logout']);

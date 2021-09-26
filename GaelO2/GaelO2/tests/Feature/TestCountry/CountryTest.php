@@ -24,11 +24,6 @@ class CountryTest extends TestCase
         $this->artisan('db:seed');
     }
 
-    protected function setUp() : void{
-        parent::setUp();
-        Artisan::call('passport:install');
-    }
-
     public function testGetCountry()
     {
         AuthorizationTools::actAsAdmin(true);
