@@ -23,6 +23,6 @@ class DicomStudy extends Model
     }
 
     public function uploader(){
-        return $this->belongsTo(User::class, 'user_id', 'id');
+        return $this->belongsTo(User::class, 'user_id', 'id')->withTrashed();
     }
 }

@@ -49,8 +49,9 @@ class Login
                     $loginResponse->status = 400;
                     $loginResponse->statusText = "Bad Request";
                 } else {
-                    $remainingAttempts = $this->increaseAttemptCount($user);
-                    if ($remainingAttempts) {
+                    $newAttemptCount = $this->increaseAttemptCount($user);
+                    $remainingAttempts = $this->getRemainingAttempts($newAttemptCount) ;
+                    if ( $remainingAttempts > 0 ) {
                         $loginResponse->body = ['errorMessage' => 'Wrong Password remaining ' . $remainingAttempts . ' attempts'];
                     } else {
                         $loginResponse->body = ['errorMessage' => 'Account Blocked'];
@@ -62,8 +63,9 @@ class Login
             }
 
             if ($passwordCheck !== null && !$passwordCheck && $user['status'] !== Constants::USER_STATUS_BLOCKED) {
-                $remainingAttempts = $this->increaseAttemptCount($user);
-                if ($remainingAttempts) {
+                $newAttemptCount = $this->increaseAttemptCount($user);
+                $remainingAttempts = $this->getRemainingAttempts($newAttemptCount) ;
+                if ( $remainingAttempts > 0 ) {
                     $loginResponse->body = ['errorMessage' => 'Wrong Password remaining ' . $remainingAttempts . ' attempts'];
                 } else {
                     $loginResponse->body = ['errorMessage' => 'Account Blocked'];
@@ -103,7 +105,7 @@ class Login
     /**
      * Return if still remaining attempts
      */
-    private function increaseAttemptCount($user): bool
+    private function increaseAttemptCount($user): int
     {
         $attempts = ++$user['attempts'];
 
@@ -116,7 +118,13 @@ class Login
             $this->sendBlockedEmail($user);
         }
 
-        return ($attempts < 3);
+        return $attempts;
+    }
+
+    private function getRemainingAttempts($attemptCount) : int
+    {
+        if ( $attemptCount < 3 ) return $remainingAttempts = (3 - $attemptCount) ;
+        else return 0;
     }
 
     private function writeBlockedAccountInTracker(array $user)

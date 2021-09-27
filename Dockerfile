@@ -1,7 +1,6 @@
 FROM php:8.0.7-apache-buster
 
-ENV PHP_OPCACHE_VALIDATE_TIMESTAMPS="0" \
-    PHP_OPCACHE_MEMORY_CONSUMPTION="256" 
+ENV PHP_OPCACHE_VALIDATE_TIMESTAMPS="0"
 
 RUN apt-get update -qy
 
@@ -37,20 +36,25 @@ RUN apt-get update -qy && \
     apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 RUN pecl install redis && pecl install memcached-3.1.5
-RUN docker-php-ext-enable redis memcached 
-RUN docker-php-ext-install gd zip pdo pdo_mysql pdo_pgsql mbstring bcmath ctype fileinfo tokenizer xml bz2 opcache
-COPY php.ini /usr/local/etc/php/conf.d/app.ini
+RUN docker-php-ext-install gd zip pdo pdo_mysql pdo_pgsql mbstring bcmath ctype fileinfo tokenizer xml bz2
+RUN docker-php-ext-configure opcache --enable-opcache \
+    && docker-php-ext-install opcache
+
+RUN docker-php-ext-enable redis memcached
+
+COPY php.ini "$PHP_INI_DIR/php.ini"
 
 RUN curl -s https://getcomposer.org/installer | php -- --install-dir=/usr/bin/ --filename=composer
 
 COPY vhost.conf /etc/apache2/sites-available/000-default.conf
-COPY apache.conf /etc/apache2/conf-available/gaelo-app.conf
+COPY apache.conf /etc/apache2/conf-available/zgaelo.conf
 
 RUN a2enmod rewrite
 RUN a2enmod headers
 RUN a2enmod remoteip
 RUN a2enmod deflate
-RUN a2enconf gaelo-app
+
+RUN a2enconf zgaelo
 
 ENV APP_HOME /var/www/html
 ENV COMPOSER_ALLOW_SUPERUSER=1

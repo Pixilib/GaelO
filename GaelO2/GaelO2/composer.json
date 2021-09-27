@@ -14,7 +14,7 @@
         "giggsey/libphonenumber-for-php": "^8.12",
         "guzzlehttp/guzzle": "^7.0.1",
         "laravel/framework": "^8.0",
-        "laravel/passport": "^10.0",
+        "laravel/sanctum": "^2.11",
         "laravel/tinker": "^2.0",
         "phpoffice/phpspreadsheet": "^1.17",
         "ralouphie/mimey": "^1.0",

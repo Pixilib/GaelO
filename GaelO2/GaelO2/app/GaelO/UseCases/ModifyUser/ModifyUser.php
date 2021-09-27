@@ -58,6 +58,7 @@ class ModifyUser
 
             CreateUser::checkFormComplete($modifyUserRequest);
             CreateUser::checkEmailValid($modifyUserRequest->email);
+            CreateUser::checkPhoneCorrect($modifyUserRequest->phone);
 
             if($user['username'] !== $modifyUserRequest->username){
                 $knownUsername = $this->userRepositoryInterface->isExistingUsername($modifyUserRequest->username);

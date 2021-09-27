@@ -25,7 +25,6 @@ class DeleteUserTest extends TestCase
 
     protected function setUp() : void{
         parent::setUp();
-        Artisan::call('passport:install');
         User::factory()->count(5)->create();
     }
 
