@@ -30,7 +30,7 @@ class ReverseProxyTus
         $parsedUrl = parse_url($url);
         $gaelOProtocol = $parsedUrl['scheme'];
         $gaelOHost = $parsedUrl['host'];
-        $gaelOPort = $parsedUrl['port'];
+        $gaelOPort = array_key_exists('port', $parsedUrl) ? $parsedUrl['port'] : null ;
 
         $headers['X-Forwarded-Proto'] = $gaelOProtocol;
         $headers['X-Forwarded-Host'] = $gaelOPort ? $gaelOHost.':'.$gaelOPort : $gaelOHost;
