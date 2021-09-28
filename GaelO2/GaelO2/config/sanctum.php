@@ -14,7 +14,7 @@ return [
     */
 
     'stateful' => [],
-    
+
     /*
     explode(',', env('SANCTUM_STATEFUL_DOMAINS', sprintf(
         '%s%s',
@@ -52,6 +52,9 @@ return [
         'encrypt_cookies' => App\Http\Middleware\EncryptCookies::class,
     ],
 
+    //Ici peut entrainer conflit entre le csrf de sanctum et celui de API
+    //Si remet en statefull l'adresse du get csrf a faire revenir sur l'adresse
+    //par defaut sanctum/csrf-token
     'prefix' => 'api'
 
 ];
