@@ -12,6 +12,7 @@ class VisitGroupFactory extends Factory
     {
         return [
             'study_name'=> Study::factory()->create()->name,
+            'name' => $this->faker->word,
             'modality'=>'CT',
         ];
     }
@@ -21,6 +22,14 @@ class VisitGroupFactory extends Factory
         return $this->state(function (array $attributes) use ($studyName) {
             return [
                 'study_name' => $studyName
+            ];
+        });
+    }
+
+    public function name(string $name){
+        return $this->state(function (array $attributes) use ($name) {
+            return [
+                'name' => $name
             ];
         });
     }

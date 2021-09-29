@@ -34,7 +34,7 @@ class CreateVisitGroup {
             $this->checkAuthorization($createVisitGroupRequest->currentUserId);
 
             $existingVisitGroup = $this->visitGroupRepositoryInterface->isExistingVisitGroup($createVisitGroupRequest->studyName,
-                                                            $createVisitGroupRequest->modality);
+                                                            $createVisitGroupRequest->name);
 
             if($existingVisitGroup) {
                 throw new GaelOConflictException("Already Exisiting Visit Group");
@@ -46,7 +46,7 @@ class CreateVisitGroup {
                 throw new GaelOForbiddenException("Study already having visits, can't change workflow");
             }
 
-            $this->visitGroupRepositoryInterface->createVisitGroup($createVisitGroupRequest->studyName, $createVisitGroupRequest->modality);
+            $this->visitGroupRepositoryInterface->createVisitGroup($createVisitGroupRequest->studyName, $createVisitGroupRequest->name, $createVisitGroupRequest->modality);
 
             $actionDetails = [
                 'modality' => $createVisitGroupRequest->modality

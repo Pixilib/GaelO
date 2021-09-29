@@ -20,9 +20,10 @@ class VisitGroupRepository implements VisitGroupRepositoryInterface {
         $this->visitGroup->findOrFail($id)->delete();
     }
 
-    public function createVisitGroup(String $studyName, String $modality)  : void {
+    public function createVisitGroup(String $studyName, String $name, String $modality)  : void {
 
         $visitGroup = new VisitGroup();
+        $visitGroup->name = $name;
         $visitGroup->study_name = $studyName;
         $visitGroup->modality = $modality;
         $visitGroup->save();
@@ -33,8 +34,8 @@ class VisitGroupRepository implements VisitGroupRepositoryInterface {
         return $visitTypes->count()>0 ? true : false;
     }
 
-    public function isExistingVisitGroup(String $studyName, String $modality) : bool {
-        $visitGroup = $this->visitGroup->where([['study_name', '=', $studyName], ['modality', '=', $modality]])->get();
+    public function isExistingVisitGroup(String $studyName, String $name) : bool {
+        $visitGroup = $this->visitGroup->where([['study_name', '=', $studyName], ['name', '=', $name]])->get();
         return sizeof($visitGroup)>0;
     }
 

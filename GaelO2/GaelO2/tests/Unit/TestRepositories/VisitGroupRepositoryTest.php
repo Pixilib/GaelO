@@ -37,7 +37,7 @@ class VisitGroupRepositoryTest extends TestCase
 
     public function testCreateRepositoryGroup(){
         $study = Study::factory()->create();
-        $this->visitGroupRepository->createVisitGroup($study->name, 'CT');
+        $this->visitGroupRepository->createVisitGroup($study->name, 'wb', 'CT');
 
         $visitGroup = VisitGroup::get();
         $this->assertEquals(1, $visitGroup->count());
@@ -56,7 +56,7 @@ class VisitGroupRepositoryTest extends TestCase
 
     public function testIsExistingVisitGroup(){
         $visitGroup = VisitGroup::factory()->create();
-        $answer = $this->visitGroupRepository->isExistingVisitGroup($visitGroup->study->name, $visitGroup->modality);
+        $answer = $this->visitGroupRepository->isExistingVisitGroup($visitGroup->study->name, $visitGroup->name);
         $this->assertTrue($answer);
     }
 
