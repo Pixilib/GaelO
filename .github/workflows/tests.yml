@@ -3,15 +3,11 @@ name: 'tests'
 on:
   push:
     branches:
-      - Gaelo2
-      - GaelO2-Emilie
-      - deployment
+      - '*'
 
   pull_request:
     branches:
-      - Gaelo2
-      - GaelO2-Emilie
-      - deployment
+      - '*'
 
 jobs:
   tests:
