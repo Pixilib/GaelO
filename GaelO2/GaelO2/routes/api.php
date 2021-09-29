@@ -182,7 +182,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
 |--------------------------------------------------------------------------
 |
 */
-
 //Request Route
 Route::post('request', [RequestController::class, 'sendRequest']);
 
