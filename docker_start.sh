@@ -11,7 +11,7 @@ if [ "$migrate" = "true" ]; then
 fi
 
 #only the app container with production settings will set the cache (ideally in redis)
-if [ "$env" = "production"] && ["$role" = "app" ]; then
+if [ "$env" = "production" ] && [ "$role" = "app" ]; then
     echo "Caching configuration..."
     (cd /var/www/html && php artisan config:cache && php artisan route:cache && php artisan view:cache)
 fi
