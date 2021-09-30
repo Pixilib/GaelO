@@ -46,7 +46,7 @@ class DeleteInvestigatorForm{
 
             $studyName = $visitContext['visit_type']['visit_group']['study_name'];
 
-            $investigatorFormEntity = $this->reviewRepositoryInterface->getInvestigatorForm($deleteInvestigatorFormRequest->visitId);
+            $investigatorFormEntity = $this->reviewRepositoryInterface->getInvestigatorForm($deleteInvestigatorFormRequest->visitId, false);
 
             $this->checkAuthorization($deleteInvestigatorFormRequest->currentUserId, $deleteInvestigatorFormRequest->visitId, $visitContext['state_quality_control'], $investigatorFormEntity['local']);
 

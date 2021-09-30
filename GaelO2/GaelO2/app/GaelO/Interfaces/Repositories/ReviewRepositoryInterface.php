@@ -9,7 +9,7 @@ interface ReviewRepositoryInterface
 
     public function delete($id): void;
 
-    public function getInvestigatorForm(int $visitId): array;
+    public function getInvestigatorForm(int $visitId, bool $withUser): array;
 
     public function unlockInvestigatorForm(int $visitId): void;
 

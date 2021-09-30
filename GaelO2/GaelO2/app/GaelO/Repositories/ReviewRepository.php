@@ -21,8 +21,9 @@ class ReviewRepository implements ReviewRepositoryInterface {
         $this->review->findOrFail($id)->delete();
     }
 
-    public function getInvestigatorForm(int $visitId) : array {
-        return $this->review->where('visit_id', $visitId)->where('local', true)->sole()->toArray();
+    public function getInvestigatorForm(int $visitId, bool $withUser) : array {
+        if($withUser) return $this->review ->with('user')->where('visit_id', $visitId)->where('local', true)->sole()->toArray();
+        else return $this->review->where('visit_id', $visitId)->where('local', true)->sole()->toArray();
     }
 
     public function unlockInvestigatorForm(int $visitId) : void {

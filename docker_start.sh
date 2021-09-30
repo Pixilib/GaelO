@@ -10,7 +10,8 @@ if [ "$migrate" = "true" ]; then
     (cd /var/www/html && php artisan migrate --force)
 fi
 
-if [ "$env" = "production" ]; then
+#only the app container with production settings will set the cache (ideally in redis)
+if [ "$env" = "production"] && ["$role" = "app" ]; then
     echo "Caching configuration..."
     (cd /var/www/html && php artisan config:cache && php artisan route:cache && php artisan view:cache)
 fi
@@ -20,12 +21,10 @@ if [ "$role" = "app" ]; then
     apache2-foreground
 
 elif [ "$role" = "queue" ]; then
-
     echo "Queue role"
     php artisan queue:work --verbose --tries=3 --timeout=90
 
 elif [ "$role" = "scheduler" ]; then
-
     echo "Scheduler role"
     while [ true ]
     do
