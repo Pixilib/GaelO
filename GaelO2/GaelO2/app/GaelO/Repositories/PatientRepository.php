@@ -5,7 +5,6 @@ namespace App\GaelO\Repositories;
 use App\GaelO\Interfaces\Repositories\PatientRepositoryInterface;
 use App\Models\Patient;
 use App\GaelO\Entities\PatientEntity;
-use Illuminate\Support\Facades\Log;
 
 class PatientRepository implements PatientRepositoryInterface {
 
