@@ -42,11 +42,10 @@ reviews/{id}/file (GET, POST, DELETE)
 visit-date (PATCH)
 
 Salim TODO :
-Etudier refresh du token (evaluer impact avec telescope)
 
 --- Deployment -----
 Faire marcher conteneur cron
-Ajouter passeport purge pour vider la table periodiquement => Via cron de laravel
+Ajouter redis et s'en servir comme cache
 Purge de TUS automatique => Via purge du bucket ?
 ajouter le login / mdp pour dans orthanc pacs + bloquer delete dans lua script=> conteneur derivé de OrthancPro
 --- /Deployment -----
@@ -128,7 +127,9 @@ Doit pouvoir voir user details
 
 A executer en post install :
 docker-compose run gaelo2 php artisan migrate --seed **ou** php artisan db:migrate --seed
-php artisan passport:install
+
+Afficher une nouvelle APP_KEY : (sert a cryptage/decryptage mais pas pour hash)
+php artisan key:generate --show
 
 Si dev :
 php artisan telescope:install

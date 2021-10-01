@@ -50,7 +50,7 @@ class UnlockInvestigatorForm
 
             $this->checkAuthorization($unlockInvestigatorFormRequest->currentUserId, $unlockInvestigatorFormRequest->visitId, $visitContext['state_quality_control']);
 
-            $investigatorFormEntity = $this->reviewRepositoryInterface->getInvestigatorForm($unlockInvestigatorFormRequest->visitId);
+            $investigatorFormEntity = $this->reviewRepositoryInterface->getInvestigatorForm($unlockInvestigatorFormRequest->visitId, false);
 
             if (!$investigatorFormEntity['validated']) {
                 throw new GaelOBadRequestException('Form Already Unlocked');

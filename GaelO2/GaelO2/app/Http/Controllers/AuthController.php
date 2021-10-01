@@ -26,8 +26,6 @@ class AuthController extends Controller
             $user = User::where('username', $request->username)->sole();
             $tokenResult = $user->createToken('GaelO');
 
-            Log::Info($tokenResult);
-
             return response()->json([
                 'id' => $user->id,
                 'access_token' => $tokenResult->plainTextToken,

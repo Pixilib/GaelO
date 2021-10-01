@@ -29,12 +29,10 @@ class GetInvestigatorForm{
         try{
 
             $this->checkAuthorization($getInvestigatorFormRequest->visitId, $getInvestigatorFormRequest->currentUserId, $getInvestigatorFormRequest->role);
-            $investigatorFormEntity = $this->reviewRepositoryInterface->getInvestigatorForm($getInvestigatorFormRequest->visitId);
-
-            $user = $this->userRepositoryInterface->find($investigatorFormEntity['user_id']);
+            $investigatorFormEntity = $this->reviewRepositoryInterface->getInvestigatorForm($getInvestigatorFormRequest->visitId, true);
 
             $investigatorForm = ReviewEntity::fillFromDBReponseArray($investigatorFormEntity);
-            $investigatorForm->setUserDetails($user['username'], $user['lastname'], $user['firstname'], $user['center_code']);
+            $investigatorForm->setUserDetails($investigatorFormEntity['user']['username'], $investigatorFormEntity['user']['lastname'], $investigatorFormEntity['user']['firstname'], $investigatorFormEntity['user']['center_code']);
 
             $getInvestigatorFormResponse->body = $investigatorForm;
             $getInvestigatorFormResponse->status = 200;

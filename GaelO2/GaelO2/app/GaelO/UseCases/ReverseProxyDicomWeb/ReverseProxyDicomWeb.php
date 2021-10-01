@@ -46,8 +46,8 @@ class ReverseProxyDicomWeb{
             $parsedUrl = parse_url($gaelOAppURL);
             $gaelOProtocol = $parsedUrl['scheme'];
             $gaelOUrl = $parsedUrl['host'];
-            $gaelOPort = $parsedUrl['port'];
-            
+            $gaelOPort = array_key_exists('port', $parsedUrl) ? $parsedUrl['port'] : null ;
+
 
             $headers= $reverseProxyDicomWebRequest->header;
             if ($gaelOPort){
@@ -55,7 +55,7 @@ class ReverseProxyDicomWeb{
             }else {
                 $forwardedRule = 'by=localhost;for=localhost;host='.$gaelOUrl.'/api/orthanc'.';proto='.$gaelOProtocol;
             }
-            
+
             $headers['Forwarded'] = [$forwardedRule];
 
             $response = $this->httpClientInterface->rowRequest('GET', $calledUrl, null ,$headers);

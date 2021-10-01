@@ -185,8 +185,7 @@ return [
         App\Providers\RouteServiceProvider::class,
         App\Providers\EmailServiceProvider::class,
         App\Providers\RepositoryProvider::class,
-        App\Providers\AdapterProvider::class,
-        App\Providers\TelescopeProvider::class
+        App\Providers\AdapterProvider::class
     ],
 
     /*

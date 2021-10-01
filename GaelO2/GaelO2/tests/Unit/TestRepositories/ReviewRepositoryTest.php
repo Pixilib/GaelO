@@ -43,9 +43,20 @@ class ReviewRepositoryTest extends TestCase
         $review= Review::factory()->create();
         $visit = $review->visit;
 
-        $investigatorForm = $this->reviewRepository->getInvestigatorForm($visit->id);
+        $investigatorForm = $this->reviewRepository->getInvestigatorForm($visit->id, false);
 
         $this->assertArrayHasKey('review_data', $investigatorForm);
+
+    }
+
+    public function testGetInvestigatorFormWithUser(){
+
+        $review= Review::factory()->create();
+        $visit = $review->visit;
+
+        $investigatorForm = $this->reviewRepository->getInvestigatorForm($visit->id, true);
+
+        $this->assertArrayHasKey('user', $investigatorForm);
 
     }
 
