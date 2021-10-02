@@ -38,6 +38,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
     //Logout Route
     Route::delete('login', [AuthController::class, 'logout']);
 
+    Route::get('login/refreshToken', [AuthController::class, 'refreshToken']);
+
     //User related Routes
     Route::get('users/{id?}',  [UserController::class, 'getUser']);
     Route::post('users', [UserController::class, 'createUser']);
