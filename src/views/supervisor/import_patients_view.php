@@ -16,13 +16,14 @@
 ?>
 
 <script type="text/javascript">
-
 	$(document).ready(function() {
 
 		var $TABLE = $('#table');
 		var $BTN = $('#export-btn');
 
-		$('[data-toggle="popover"]').popover({container: 'body'})
+		$('[data-toggle="popover"]').popover({
+			container: 'body'
+		})
 
 		$('#sendJson').on('click', function() {
 			let fr = new FileReader();
@@ -128,7 +129,7 @@
 	<div id="table" class="table-editable" style="overflow-x:auto">
 		<span class="table-add float-right mb-3 mr-2"><button type="button" class="btn btn-success btn-rounded btn-sm my-0">Add</button>
 		</span>
-			
+
 		<table class="table table-striped">
 			<thead>
 				<tr>
@@ -162,34 +163,39 @@
 		</table>
 		<button id="export-btn" class="btn btn-primary">Add Patient List</button>
 
-		<div class="accordion mt-3 text-right" id="centerAccordion">
-			<button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#centerDetails" aria-expanded="true" aria-controls="collapseOne">
-					Center Code Reminder
-			</button>
 
-			<div id="centerDetails" class="mt-3 collapse text-center" aria-labelledby="headingOne" data-parent="#centerAccordion">
-				<table class="table table-striped">
-					<thead>
-						<tr>
-							<th class="text-center">Name</th>
-							<th class="text-center">Code</th>
-						</tr>
-					</thead>
-					<tbody>
-					<?php 
-						usort($centersObjects, function($a, $b) {return strcmp($a->name, $b->name);});
-						foreach($centersObjects as $center) {
-							?>
-							<tr>
-								<td><?= $center->name ?> </td>
-								<td><?= $center->code ?> </td>
-							</tr>
-							<?php
-						} 
+	</div>
+
+	<div class="accordion mt-3 text-right" id="centerAccordion">
+		<button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#centerDetails" aria-expanded="true" aria-controls="collapseOne">
+			Center Code Reminder
+		</button>
+
+		<div id="centerDetails" class="mt-3 collapse text-center" aria-labelledby="headingOne" data-parent="#centerAccordion">
+			<table class="table table-striped">
+				<thead>
+					<tr>
+						<th class="text-center">Name</th>
+						<th class="text-center">Code</th>
+					</tr>
+				</thead>
+				<tbody>
+					<?php
+					usort($centersObjects, function ($a, $b) {
+						return strcmp($a->name, $b->name);
+					});
+					foreach ($centersObjects as $center) {
 					?>
-					</tbody>
-				</table>
-			</div>
+						<tr>
+							<td><?= $center->name ?> </td>
+							<td><?= $center->code ?> </td>
+						</tr>
+					<?php
+					}
+					?>
+				</tbody>
+			</table>
 		</div>
 	</div>
+
 </div>
