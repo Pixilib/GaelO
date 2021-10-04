@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\GaelO\Constants\Constants;
 use App\GaelO\Util;
 use App\Models\Study;
 use App\Models\User;
@@ -18,7 +19,7 @@ class TrackerFactory extends Factory
             'date' => Util::now(),
             'role' => null,
             'visit_id'=>null,
-            'action_type'=>null,
+            'action_type'=>$this->faker->randomElement([Constants::TRACKER_UNLOCK_INVESTIGATOR_FORM, Constants::TRACKER_CREATE_USER]),
             'action_details'=>json_encode([])
         ];
     }

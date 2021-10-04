@@ -43,6 +43,12 @@ visit-date (PATCH)
 
 Salim TODO :
 
+Export Data study :
+- Export du tracker=> A tester
+- Associated File To Review => A faire dans un zip
+- Export liste utilisateurs avec lien etude
+- Review Ajout Patient Code et Visit Type ?
+
 --- Etudes ancillaires ---
 Pb Authorisation : Un ID Visit peut maintenant a etre attachee a plusieurs etudes ancillaires
 => Le scope de la study demandée doit venir du front
@@ -93,12 +99,7 @@ Model et db :
 
 Messagerie à designer (communication intermembre, front avec tinymce)
 Creatable Visit : Manque Study Custom Logic (+dans front skip visites optionnelles ?)
-Export Data study :
-- Personalisation au niveau study -> Couche d'abstration notamment pour injecter le lysarc code
-- Review Ajout Patient Code et Visit Type ?
-- Associated File To Review => A faire dans un zip
-- Export du tracker
-- Export liste utilisateurs avec lien etude
+
 
 Revoir DicowWeb Authorization Service => Pb route orthanc differentes
 Review  : faire une propriete dans visit pour savoir si review disponible a un user en plus de status reviewAvailable ?
@@ -119,8 +120,6 @@ Les tests ne font pas d'assertion sur
 - le tracker => Via un spy ?
 - l'envoi de mails => voir doc laravel
 Review => tester un scenario de custom conclusion / adjudication
-
-
 
 
 --- Maintenance Tips ---

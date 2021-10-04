@@ -6,7 +6,7 @@ interface TrackerRepositoryInterface {
 
     public function getTrackerOfRole(string $role) : array ;
 
-    public function getTrackerOfRoleAndStudy(string $study, string $role) : array ;
+    public function getTrackerOfRoleAndStudy(string $study, string $role, bool $withUser) : array ;
 
     public function getTrackerOfVisitId(int $visitId) : array ;
 

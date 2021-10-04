@@ -3,17 +3,20 @@
 namespace App\GaelO\Services;
 
 use App\GaelO\Adapters\SpreadsheetAdapter;
+use App\GaelO\Constants\Constants;
 use App\GaelO\Interfaces\Repositories\DicomSeriesRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\DicomStudyRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\PatientRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\ReviewRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\StudyRepositoryInterface;
+use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
 use App\GaelO\Services\StoreObjects\Export\ExportDataResults;
 use App\GaelO\Services\StoreObjects\Export\ExportDicomResults;
 use App\GaelO\Services\StoreObjects\Export\ExportPatientResults;
 use App\GaelO\Services\StoreObjects\Export\ExportReviewResults;
 use App\GaelO\Services\StoreObjects\Export\ExportStudyResults;
+use App\GaelO\Services\StoreObjects\Export\ExportTrackerResults;
 use App\GaelO\Services\StoreObjects\Export\ExportVisitsResults;
 
 class ExportStudyService {
@@ -25,6 +28,7 @@ class ExportStudyService {
     private DicomSeriesRepositoryInterface $dicomSeriesRepositoryInterface;
     private ReviewRepositoryInterface $reviewRepositoryInterface;
     private ExportStudyResults $exportStudyResults;
+    private TrackerRepositoryInterface $trackerRepositoryInterface;
 
     private string $studyName;
 
@@ -35,6 +39,7 @@ class ExportStudyService {
         DicomStudyRepositoryInterface $dicomStudyRepositoryInterface,
         DicomSeriesRepositoryInterface $dicomSeriesRepositoryInterface,
         ReviewRepositoryInterface $reviewRepositoryInterface,
+        TrackerRepositoryInterface $trackerRepositoryInterface,
         ExportStudyResults $exportStudyResults)
     {
         $this->patientRepositoryInterface = $patientRepositoryInterface;
@@ -44,6 +49,7 @@ class ExportStudyService {
         $this->dicomSeriesRepositoryInterface = $dicomSeriesRepositoryInterface;
         $this->reviewRepositoryInterface = $reviewRepositoryInterface;
         $this->exportStudyResults = $exportStudyResults;
+        $this->trackerRepositoryInterface = $trackerRepositoryInterface;
     }
 
     public function setStudyName(string $studyName){
@@ -200,6 +206,28 @@ class ExportStudyService {
         }
 
         $this->exportStudyResults->setExportReviewResults($exportReviewResults);
+
+    }
+
+    public function exportTrackerTable() : void {
+
+        $spreadsheetAdapter = new SpreadsheetAdapter();
+
+        $roleArray = [Constants::ROLE_INVESTIGATOR, Constants::ROLE_CONTROLLER, Constants::ROLE_REVIEWER, Constants::ROLE_SUPERVISOR];
+
+        foreach($roleArray as $role){
+            $trackerData = $this->trackerRepositoryInterface->getTrackerOfRoleAndStudy($this->studyName, $role, false);
+            $spreadsheetAdapter->addSheet($role);
+            $spreadsheetAdapter->fillData($role, $trackerData);
+        }
+
+        $tempFileNameXls = $spreadsheetAdapter->writeToExcel();
+
+        $exportTrackerResult = new ExportTrackerResults();
+        $exportTrackerResult->addExportFile(ExportDataResults::EXPORT_TYPE_XLS, $tempFileNameXls);
+
+        $this->exportStudyResults->setTrackerReviewResults($exportTrackerResult);
+
 
     }
 

@@ -12,6 +12,7 @@ abstract class ExportDataResults
     const EXPORT_TYPE_PATIENTS = 'patients';
     const EXPORT_TYPE_REVIEWS = 'reviews';
     const EXPORT_TYPE_VISITS = 'visits';
+    const EXPORT_TYPE_TRACKER = 'tracker';
 
     private string $exportDataType;
 

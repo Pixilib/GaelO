@@ -29,7 +29,7 @@ class GetStudyTracker {
             $actionType = $getStudyTrackerRequest->actionType;
             if(in_array($actionType, [Constants::ROLE_INVESTIGATOR, Constants::ROLE_CONTROLLER,
             Constants::ROLE_SUPERVISOR, Constants::ROLE_REVIEWER]))
-            $dbData = $this->trackerRepositoryInterface->getTrackerOfRoleAndStudy($getStudyTrackerRequest->studyName, $getStudyTrackerRequest->actionType);
+            $dbData = $this->trackerRepositoryInterface->getTrackerOfRoleAndStudy($getStudyTrackerRequest->studyName, $getStudyTrackerRequest->actionType, true);
             else $dbData = $this->trackerRepositoryInterface->getTrackerOfActionInStudy($getStudyTrackerRequest->actionType, $getStudyTrackerRequest->studyName);
 
 
