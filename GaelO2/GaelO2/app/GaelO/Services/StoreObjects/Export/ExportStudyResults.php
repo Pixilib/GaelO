@@ -10,6 +10,7 @@ class ExportStudyResults {
     private ExportVisitsResults $exportVisitResults;
     private ExportDicomResults $exportDicomResults;
     private ExportReviewResults $exportReviewResults;
+    private ExportTrackerResults $exportTrackerResults;
 
     public function setExportPatientResults(ExportPatientResults $exportPatientResults){
         $this->exportPatientResults = $exportPatientResults;
@@ -25,6 +26,10 @@ class ExportStudyResults {
 
     public function setExportReviewResults(ExportReviewResults $exportReviewResults){
         $this->exportReviewResults = $exportReviewResults;
+    }
+
+    public function setTrackerReviewResults(ExportTrackerResults $exportTrackerResults){
+        $this->exportTrackerResults = $exportTrackerResults;
     }
 
     public function getPatientExportResults(){
@@ -43,11 +48,17 @@ class ExportStudyResults {
         return $this->exportReviewResults;
     }
 
-    public function getExportResultsObjects() : array {
-        return [$this->exportPatientResults,
-        $this->exportDicomResults,
-        $this->exportReviewResults,
-        $this->exportVisitResults
+    public function getTrackerExportResults(){
+        return $this->exportTrackerResults;
+    }
+
+    private function getExportResultsObjects() : array {
+        return [
+            $this->exportPatientResults,
+            $this->exportDicomResults,
+            $this->exportReviewResults,
+            $this->exportVisitResults,
+            $this->exportTrackerResults,
         ];
     }
 

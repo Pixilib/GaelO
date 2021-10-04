@@ -54,7 +54,7 @@ class TrackerRepositoryTest extends TestCase
         Tracker::factory()->role(Constants::ROLE_INVESTIGATOR)->studyName($study2->name)->actionType(Constants::TRACKER_UPLOAD_SERIES)->count(7)->create();
         Tracker::factory()->role(Constants::ROLE_SUPERVISOR)->studyName($study2->name)->actionType(Constants::TRACKER_DELETE_VISIT)->count(9)->create();
 
-        $answer = $this->trackerRepository->getTrackerOfRoleAndStudy($study1->name, Constants::ROLE_INVESTIGATOR);
+        $answer = $this->trackerRepository->getTrackerOfRoleAndStudy($study1->name, Constants::ROLE_INVESTIGATOR, true);
         $this->assertEquals(3, sizeof($answer));
 
     }

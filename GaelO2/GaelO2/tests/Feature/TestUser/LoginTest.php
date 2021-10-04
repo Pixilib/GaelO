@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Hash;
 use Tests\TestCase;
 use App\Models\User;
 use App\GaelO\Constants\Constants;
-use Illuminate\Support\Facades\Artisan;
+use Tests\AuthorizationTools;
 
 class LoginTest extends TestCase
 {
@@ -122,5 +122,15 @@ class LoginTest extends TestCase
         $adminDefaultUser = User::where('id', 1)->first();
         $this->assertEquals($adminDefaultUser['status'], Constants::USER_STATUS_BLOCKED);
         $this->assertEquals($adminDefaultUser['attempts'], 3);
+    }
+
+    public function testRefreshToken(){
+        AuthorizationTools::actAsAdmin(false);
+        $answer = $this->json('GET', '/api/login/refreshToken');
+        $this->assertArrayHasKey('access_token', json_decode($answer->content(), true) );
+    }
+
+    public function testRefreshTokenShouldFailNotIdentified(){
+        $this->json('GET', '/api/login/refreshToken')->assertStatus(401);
     }
 }

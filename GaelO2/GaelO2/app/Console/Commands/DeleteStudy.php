@@ -11,7 +11,6 @@ use App\Models\Study;
 use App\Models\Tracker;
 use App\Models\Visit;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Log;
 
 class DeleteStudy extends Command
 {

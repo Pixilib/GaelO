@@ -8,7 +8,6 @@ use App\GaelO\UseCases\Login\LoginResponse;
 use App\GaelO\Util;
 use Illuminate\Http\Request;
 use App\Models\User;
-use Illuminate\Support\Facades\Log;
 
 class AuthController extends Controller
 {
@@ -24,6 +23,11 @@ class AuthController extends Controller
         if ($loginResponse->status === 200) {
 
             $user = User::where('username', $request->username)->sole();
+
+            //SK Si on veut une seule session par user decomenter cette ligne pour supprimer tous les tokens de l'user
+            //avant d'en creer un nouveau
+            //$user->tokens()->delete();
+
             $tokenResult = $user->createToken('GaelO');
 
             return response()->json([
@@ -38,7 +42,19 @@ class AuthController extends Controller
 
     public function logout(Request $request)
     {
-        $request->user()->tokens()->delete();
+        $request->user()->currentAccessToken()->delete();
         return response()->json();
+    }
+
+    public function refreshToken(Request $request)
+    {
+        $user = $request->user();
+        $user->currentAccessToken()->delete();
+        $tokenResult = $user->createToken('GaelO');
+        return response()->json([
+            'id' => $user->id,
+            'access_token' => $tokenResult->plainTextToken,
+            'token_type' => 'Bearer'
+        ], 200);
     }
 }

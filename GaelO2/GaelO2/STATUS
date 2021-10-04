@@ -43,60 +43,13 @@ visit-date (PATCH)
 
 Salim TODO :
 
---- Deployment -----
-Faire marcher conteneur cron
-Ajouter redis et s'en servir comme cache
-Purge de TUS automatique => Via purge du bucket ?
-ajouter le login / mdp pour dans orthanc pacs + bloquer delete dans lua script=> conteneur derivé de OrthancPro
---- /Deployment -----
-
----- Refactoring Backend ----
-Refac pour la lecture eviter de passer par des services pour laisser les services à l'ecriture ?
-studies/{studyName}/orthanc-study-id/{orthancStudyID} => A renomer à original-orthanc-study-id (test le hash d'origine pas le courant)
-Dicom Series Service => peut etre evoluer vers un DicomService pour les deux niveaux
-GetVisitContext des services surement a faire passer a initialisation pour eviter requettes redondantes
-
-Entity :
-- Pluger toutes les reponses "data" sur ces entity response
-=> GetPossibleUpload => VisitEntity ?
-=> GetReviewProgression => Visit + Review_status + Progression entity?
-=> GetVisitTree => ?, visit ?
-
-Model et db :
-- Type de variable a caster
-
----- /Refactoring Backend ------
-
-Messagerie à designer (communication intermembre, front avec tinymce)
-Creatable Visit : Manque Study Custom Logic (+dans front skip visites optionnelles ?)
 Export Data study :
-- Personalisation au niveau study -> Couche d'abstration notamment pour injecter le lysarc code
-- Review Ajout Patient Code et Visit Type ?
+- Export du tracker=> A tester
 - Associated File To Review => A faire dans un zip
-- Export du tracker
 - Export liste utilisateurs avec lien etude
+- Review Ajout Patient Code et Visit Type ?
 
-Revoir DicowWeb Authorization Service => Pb route orthanc differentes
-Review  : faire une propriete dans visit pour savoir si review disponible a un user en plus de status reviewAvailable ?
-Verifier que quand on appelle un child si le parent est pas delete (cf probleme de role et study)
-
-Reste Autres :
-- Orthanc Send to peer
-- Connecteur FTP/SFTP
-- Dummy Run => Impact sur la db a designer
-- Dicom liée aux review  => Impacte sur la db a designer
-- QC items Details => Impact sur la db a designer
-
-**** Tests ***
-Test feature : visit et autres (dicom...)
-Tests Services à faire
-Mock des interfaces pour les uses cases et les services
-Les tests ne font pas d'assertion sur
-- le tracker => Via un spy ?
-- l'envoi de mails => voir doc laravel
-Review => tester un scenario de custom conclusion / adjudication
-
-*** Etudes ancillaires ***
+--- Etudes ancillaires ---
 Pb Authorisation : Un ID Visit peut maintenant a etre attachee a plusieurs etudes ancillaires
 => Le scope de la study demandée doit venir du front
 => Dans authorization on doit verifier que le visit ID a bien une etude === a celle demandee et que l'utilisateur a les droits dessus
@@ -120,10 +73,56 @@ Doit pouvoir exporter data de l'étude
 Doit pouvoir set documentation
 Doit pouvoir voir user details
 
-*** /Etudes ancillaires ***
+--- /Etudes ancillaires ---
+
+--- Deployment -----
+Purge de TUS automatique => Via purge du bucket ?
+ajouter le login / mdp pour dans orthanc pacs + bloquer delete dans lua script=> conteneur derivé de OrthancPro
+--- /Deployment -----
+
+---- Refactoring Backend ----
+Refac pour la lecture eviter de passer par des services pour laisser les services à l'ecriture ?
+studies/{studyName}/orthanc-study-id/{orthancStudyID} => A renomer à original-orthanc-study-id (test le hash d'origine pas le courant)
+Dicom Series Service => peut etre evoluer vers un DicomService pour les deux niveaux
+GetVisitContext des services surement a faire passer a initialisation pour eviter requettes redondantes
+
+Entity :
+- Pluger toutes les reponses "data" sur ces entity response
+=> GetPossibleUpload => VisitEntity ?
+=> GetReviewProgression => Visit + Review_status + Progression entity?
+=> GetVisitTree => ?, visit ?
+
+Model et db :
+- Type de variable a caster
+
+---- /Refactoring Backend ------
+
+Messagerie à designer (communication intermembre, front avec tinymce)
+Creatable Visit : Manque Study Custom Logic (+dans front skip visites optionnelles ?)
 
 
-*** Maintenance Tips ***
+Revoir DicowWeb Authorization Service => Pb route orthanc differentes
+Review  : faire une propriete dans visit pour savoir si review disponible a un user en plus de status reviewAvailable ?
+Verifier que quand on appelle un child si le parent est pas delete (cf probleme de role et study)
+
+Reste Autres :
+- Orthanc Send to peer
+- Connecteur FTP/SFTP
+- Dummy Run => Impact sur la db a designer
+- Dicom liée aux review  => Impacte sur la db a designer
+- QC items Details => Impact sur la db a designer
+
+**** Tests ***
+Test feature : visit et autres (dicom...)
+Tests Services à faire
+Mock des interfaces pour les uses cases et les services
+Les tests ne font pas d'assertion sur
+- le tracker => Via un spy ?
+- l'envoi de mails => voir doc laravel
+Review => tester un scenario de custom conclusion / adjudication
+
+
+--- Maintenance Tips ---
 
 A executer en post install :
 docker-compose run gaelo2 php artisan migrate --seed **ou** php artisan db:migrate --seed
@@ -134,4 +133,4 @@ php artisan key:generate --show
 Si dev :
 php artisan telescope:install
 
-*** /Maintenance Tips ***
+--- /Maintenance Tips ---
