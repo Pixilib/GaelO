@@ -10,6 +10,7 @@ use App\GaelO\Interfaces\Repositories\PatientRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\ReviewRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\StudyRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
+use App\GaelO\Interfaces\Repositories\UserRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
 use App\GaelO\Services\StoreObjects\Export\ExportDataResults;
 use App\GaelO\Services\StoreObjects\Export\ExportDicomResults;
@@ -17,10 +18,12 @@ use App\GaelO\Services\StoreObjects\Export\ExportPatientResults;
 use App\GaelO\Services\StoreObjects\Export\ExportReviewResults;
 use App\GaelO\Services\StoreObjects\Export\ExportStudyResults;
 use App\GaelO\Services\StoreObjects\Export\ExportTrackerResults;
+use App\GaelO\Services\StoreObjects\Export\ExportUserResults;
 use App\GaelO\Services\StoreObjects\Export\ExportVisitsResults;
 
 class ExportStudyService {
 
+    private UserRepositoryInterface $userRepositoryInterface;
     private PatientRepositoryInterface $patientRepositoryInterface;
     private StudyRepositoryInterface $studyRepositoryInterface;
     private VisitRepositoryInterface $visitRepositoryInterface;
@@ -33,6 +36,7 @@ class ExportStudyService {
     private string $studyName;
 
     public function __construct(
+        UserRepositoryInterface $userRepositoryInterface,
         PatientRepositoryInterface $patientRepositoryInterface,
         StudyRepositoryInterface $studyRepositoryInterface,
         VisitRepositoryInterface $visitRepositoryInterface,
@@ -42,6 +46,7 @@ class ExportStudyService {
         TrackerRepositoryInterface $trackerRepositoryInterface,
         ExportStudyResults $exportStudyResults)
     {
+        $this->userRepositoryInterface = $userRepositoryInterface;
         $this->patientRepositoryInterface = $patientRepositoryInterface;
         $this->studyRepositoryInterface = $studyRepositoryInterface;
         $this->visitRepositoryInterface = $visitRepositoryInterface;
@@ -78,6 +83,35 @@ class ExportStudyService {
             return $visit['id'];
         }, $this->availableVisits);
 
+    }
+
+    public function exportUsersOfStudy() : void {
+        $users = $this->userRepositoryInterface->getUsersFromStudy($this->studyName);
+
+        $usersData = [];
+        //Select only needed info and concatenate roles in a string
+        foreach($users as $user){
+            $roles = array_map(function($role){return $role['name'];}, $user['roles']);
+            $usersData[] = [
+                'id' => $user['id'],
+                'lastname' => $user['lastname'],
+                'firstname' => $user['firstname'],
+                'username' => $user['username'],
+                'roles' => implode("/", $roles)
+            ];
+        }
+
+        $spreadsheetAdapter = new SpreadsheetAdapter();
+        $spreadsheetAdapter->addSheet('Users');
+        $spreadsheetAdapter->fillData('Users', $usersData);
+
+        $tempFileNameXls = $spreadsheetAdapter->writeToExcel();
+        $tempFileNameCsv = $spreadsheetAdapter->writeToCsv('Users');
+
+        $exportPatientResults = new ExportUserResults();
+        $exportPatientResults->addExportFile(ExportDataResults::EXPORT_TYPE_XLS, $tempFileNameXls);
+        $exportPatientResults->addExportFile(ExportDataResults::EXPORT_TYPE_CSV, $tempFileNameCsv);
+        $this->exportStudyResults->setUserResults($exportPatientResults);
     }
 
     public function exportPatientTable() : void {

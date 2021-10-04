@@ -13,6 +13,7 @@ abstract class ExportDataResults
     const EXPORT_TYPE_REVIEWS = 'reviews';
     const EXPORT_TYPE_VISITS = 'visits';
     const EXPORT_TYPE_TRACKER = 'tracker';
+    const EXPORT_TYPE_USERS = 'users';
 
     private string $exportDataType;
 
