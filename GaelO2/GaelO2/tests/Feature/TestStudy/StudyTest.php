@@ -127,8 +127,7 @@ class StudyTest extends TestCase
         $answer = $this->json('GET', '/api/studies/'.$visitType->visitGroup->study->name.'/visit-types');
         $this->assertArrayHasKey('visitGroupId', $answer[0]);
         $this->assertArrayHasKey('visitGroupModality', $answer[0]);
-        $this->assertArrayHasKey('visitTypeId', $answer[0]);
-        $this->assertArrayHasKey('visitTypeName', $answer[0]);
+        $this->assertArrayHasKey('visitType', $answer[0]);
     }
 
     public function testGetStudyDetailsShouldFailNotSupervisor(){
