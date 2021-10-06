@@ -41,20 +41,11 @@ class ModifyPatient {
             $updatableData = ['firstname', 'lastname', 'gender', 'birthDay', 'birthMonth', 'birthYear',
             'registrationDate', 'investigatorName', 'centerCode', 'inclusionStatus', 'withdrawReason', 'withdrawDate'];
 
-            //Format registration date
-            if($modifyPatientRequest->registrationDate !== null) {
-                $modifyPatientRequest->registrationDate = Util::formatUSDateStringToSQLDateFormat($modifyPatientRequest->registrationDate);
-            }
-
             if($modifyPatientRequest->inclusionStatus === Constants::PATIENT_INCLUSION_STATUS_WITHDRAWN){
                 if(empty($modifyPatientRequest->withdrawDate) ||
                     empty($modifyPatientRequest->withdrawReason)
                 ){
                     throw new GaelOBadRequestException('Withdraw Date and Reason must be specified for withdraw declaration');
-                }
-                //Format withdraw date
-                if($modifyPatientRequest->withdrawDate !== null) {
-                    $modifyPatientRequest->withdrawDate = Util::formatUSDateStringToSQLDateFormat($modifyPatientRequest->withdrawDate);
                 }
             } else {
                 $patientEntity['withdraw_reason'] = null;
