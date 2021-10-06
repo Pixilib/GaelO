@@ -38,8 +38,7 @@ class GetStudyDetailsSupervisor {
                     $studyDetailResponse[] = [
                         'visitGroupId'=>$visitGroupEntity->id,
                         'visitGroupModality'=>$visitGroupEntity->modality,
-                        'visitTypeId'=>$visitTypeEntity->id,
-                        'visitTypeName'=>$visitTypeEntity->name
+                        'visitType'=>$visitTypeEntity
                     ];
                 }
 
