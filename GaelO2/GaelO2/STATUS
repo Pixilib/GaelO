@@ -44,9 +44,7 @@ visit-date (PATCH)
 Salim TODO :
 
 Export Data study :
-- Export du tracker=> A tester
 - Associated File To Review => A faire dans un zip
-- Export liste utilisateurs avec lien etude
 - Review Ajout Patient Code et Visit Type ?
 
 --- Etudes ancillaires ---
@@ -72,7 +70,6 @@ Doit pouvoir telecharger Dicoms
 Doit pouvoir exporter data de l'étude
 Doit pouvoir set documentation
 Doit pouvoir voir user details
-
 --- /Etudes ancillaires ---
 
 --- Deployment -----
@@ -99,7 +96,6 @@ Model et db :
 
 Messagerie à designer (communication intermembre, front avec tinymce)
 Creatable Visit : Manque Study Custom Logic (+dans front skip visites optionnelles ?)
-
 
 Revoir DicowWeb Authorization Service => Pb route orthanc differentes
 Review  : faire une propriete dans visit pour savoir si review disponible a un user en plus de status reviewAvailable ?

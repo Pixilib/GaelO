@@ -9,6 +9,7 @@ use App\Models\DicomStudy;
 use App\Models\Patient;
 use App\Models\Review;
 use App\Models\ReviewStatus;
+use App\Models\Role;
 use App\Models\Study;
 use App\Models\Visit;
 use App\Models\VisitType;
@@ -38,6 +39,14 @@ class ExportStudyServiceTest extends TestCase
         parent::setUp();
 
         $this->exportServiceData = App::make(ExportStudyService::class);
+    }
+
+    public function testExportUser()
+    {
+        $study = Study::factory()->create();
+        Role::factory()->studyName($study->name)->roleName(Constants::ROLE_INVESTIGATOR)->create();
+        $this->exportServiceData->setStudyName($study->name);
+        $this->exportServiceData->exportUsersOfStudy();
     }
 
     public function testExportPatient()
