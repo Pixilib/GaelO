@@ -124,13 +124,4 @@ class LoginTest extends TestCase
         $this->assertEquals($adminDefaultUser['attempts'], 3);
     }
 
-    public function testRefreshToken(){
-        AuthorizationTools::actAsAdmin(false);
-        $answer = $this->json('GET', '/api/login/refreshToken');
-        $this->assertArrayHasKey('access_token', json_decode($answer->content(), true) );
-    }
-
-    public function testRefreshTokenShouldFailNotIdentified(){
-        $this->json('GET', '/api/login/refreshToken')->assertStatus(401);
-    }
 }

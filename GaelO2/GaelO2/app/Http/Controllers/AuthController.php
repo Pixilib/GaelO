@@ -46,15 +46,4 @@ class AuthController extends Controller
         return response()->json();
     }
 
-    public function refreshToken(Request $request)
-    {
-        $user = $request->user();
-        $user->currentAccessToken()->delete();
-        $tokenResult = $user->createToken('GaelO');
-        return response()->json([
-            'id' => $user->id,
-            'access_token' => $tokenResult->plainTextToken,
-            'token_type' => 'Bearer'
-        ], 200);
-    }
 }
