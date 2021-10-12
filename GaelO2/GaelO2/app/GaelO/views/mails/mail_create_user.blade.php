@@ -9,10 +9,10 @@
         Temporary password : {{$password}}<br>
         You will be asked to change this password at your first log in attempt
         on the platform.
+        <b style="color:red"> Please do not use Internet Explorer to connect.</b>
     </div>
     <div>
-        <a href="https://www.gaelo.fr/documentation">Read GaelO Documentation</a><br>
-        <b style="color:red"> Please do not use Internet Explorer to connect.</b>
+        For further informations read our <a href="https://www.gaelo.fr/documentation">documentation</a><br>
     </div>
 
 @endsection
