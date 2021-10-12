@@ -8,7 +8,7 @@
         Temporary password : {{$newPassword}}<br>
         You will be asked to change this password at your first connection.
     </div>
-    <div style="text-align: center">
+    <div>
         <a href="https://www.gaelo.fr/documentation">Read GaelO Documentation</a><br>
         <b style="color:red"> Please do not use Internet Explorer to connect.</b>
     </div>
