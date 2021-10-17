@@ -29,11 +29,6 @@ Doit pouvoir set documentation
 Doit pouvoir voir user details
 --- /Etudes ancillaires ---
 
---- Deployment -----
-Purge de TUS automatique => Via purge du bucket ?
-ajouter le login / mdp pour dans orthanc pacs + bloquer delete dans lua script=> conteneur derivé de OrthancPro
---- /Deployment -----
-
 ---- Refactoring Backend ----
 Refac pour la lecture eviter de passer par des services pour laisser les services à l'ecriture ?
 studies/{studyName}/orthanc-study-id/{orthancStudyID} => A renomer à original-orthanc-study-id (test le hash d'origine pas le courant)
