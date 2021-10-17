@@ -405,7 +405,7 @@ Class Send_Email {
 		$message="This automatic e-mail contains your new temporary password for your
           user account.<br>
           Username : ".$username." <br>
-          Temporary password : ".$password." <br>
+          Temporary password : ".$password."<br>
           You will be asked to change this password at your first connection.<br><br>
 		  <b style=\"color:red\">Please do not use Internet Explorer to connect</b>
 		  <br>";
