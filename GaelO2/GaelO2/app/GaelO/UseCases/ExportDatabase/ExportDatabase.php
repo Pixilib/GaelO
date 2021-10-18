@@ -58,7 +58,7 @@ class ExportDatabase{
 
     }
 
-    private function addRecursivelyInZip(ZipArchive $zip, String $path){
+    public static function addRecursivelyInZip(ZipArchive $zip, String $path){
 
         $fileGenerator=Util::getFileInPathGenerator($path);
 

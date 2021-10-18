@@ -23,13 +23,16 @@ class ExportTrackerResults extends ExportDataResults{
 
     }
 
-    public function getXlsExportFile() : ExportFile{
-        return $this->xlsExport;
+    public function getXlsExportFiles() : array {
+        return [$this->xlsExport];
 
     }
     public function getCsvExportFiles() : array {
         return [];
+    }
 
+    public function getZipExportFiles(): array {
+        return [];
     }
 
 

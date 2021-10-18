@@ -4,6 +4,7 @@ namespace App\GaelO\Services;
 
 use App\GaelO\Adapters\SpreadsheetAdapter;
 use App\GaelO\Constants\Constants;
+use App\GaelO\Interfaces\Adapters\FrameworkInterface;
 use App\GaelO\Interfaces\Repositories\DicomSeriesRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\DicomStudyRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\PatientRepositoryInterface;
@@ -14,12 +15,15 @@ use App\GaelO\Interfaces\Repositories\UserRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
 use App\GaelO\Services\StoreObjects\Export\ExportDataResults;
 use App\GaelO\Services\StoreObjects\Export\ExportDicomResults;
+use App\GaelO\Services\StoreObjects\Export\ExportFileResults;
 use App\GaelO\Services\StoreObjects\Export\ExportPatientResults;
 use App\GaelO\Services\StoreObjects\Export\ExportReviewResults;
 use App\GaelO\Services\StoreObjects\Export\ExportStudyResults;
 use App\GaelO\Services\StoreObjects\Export\ExportTrackerResults;
 use App\GaelO\Services\StoreObjects\Export\ExportUserResults;
 use App\GaelO\Services\StoreObjects\Export\ExportVisitsResults;
+use App\GaelO\UseCases\ExportDatabase\ExportDatabase;
+use ZipArchive;
 
 class ExportStudyService {
 
@@ -32,6 +36,7 @@ class ExportStudyService {
     private ReviewRepositoryInterface $reviewRepositoryInterface;
     private ExportStudyResults $exportStudyResults;
     private TrackerRepositoryInterface $trackerRepositoryInterface;
+    private FrameworkInterface $frameworkInterface;
 
     private string $studyName;
 
@@ -44,7 +49,8 @@ class ExportStudyService {
         DicomSeriesRepositoryInterface $dicomSeriesRepositoryInterface,
         ReviewRepositoryInterface $reviewRepositoryInterface,
         TrackerRepositoryInterface $trackerRepositoryInterface,
-        ExportStudyResults $exportStudyResults)
+        ExportStudyResults $exportStudyResults,
+        FrameworkInterface $frameworkInterface)
     {
         $this->userRepositoryInterface = $userRepositoryInterface;
         $this->patientRepositoryInterface = $patientRepositoryInterface;
@@ -55,6 +61,7 @@ class ExportStudyService {
         $this->reviewRepositoryInterface = $reviewRepositoryInterface;
         $this->exportStudyResults = $exportStudyResults;
         $this->trackerRepositoryInterface = $trackerRepositoryInterface;
+        $this->frameworkInterface = $frameworkInterface;
     }
 
     public function setStudyName(string $studyName){
@@ -263,6 +270,27 @@ class ExportStudyService {
         $this->exportStudyResults->setTrackerReviewResults($exportTrackerResult);
 
 
+    }
+
+    public function exportAssociatedFiles() : void {
+        $storagePath = $this->frameworkInterface::getStoragePath();
+
+        $destinationPath = $storagePath . '/' . $this->studyName;
+
+        $zip=new ZipArchive();
+        $tempZip=tempnam(ini_get('upload_tmp_dir'), 'TMPZIP_'.$this->studyName.'_');
+        $zip->open($tempZip, ZipArchive::OVERWRITE);
+        //Add a file to create zip
+        $zip->addFromString('Readme', 'Folder Containing associated files to study');
+        //If path send file to zip
+        if ( !is_dir($storagePath . '/' . $this->studyName) ) {
+            ExportDatabase::addRecursivelyInZip($zip, $destinationPath);
+        }
+        $zip->close();
+
+        $exporFileResult = new ExportFileResults();
+        $exporFileResult->addExportFile(ExportDataResults::EXPORT_TYPE_ZIP, $tempZip);
+        $this->exportStudyResults->setExportFileResults($exporFileResult);
     }
 
     public function getExportStudyResult () : ExportStudyResults {
