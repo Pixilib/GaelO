@@ -11,22 +11,25 @@ use App\GaelO\Services\AuthorizationVisitService;
 use App\GaelO\Services\VisitService;
 use Exception;
 
-class ModifyQualityControlReset{
+class ModifyQualityControlReset
+{
 
     private AuthorizationVisitService $authorizationVisitService;
     private TrackerRepositoryInterface $trackerRepositoryInterface;
     private VisitService $visitService;
 
-    public function __construct(AuthorizationVisitService $authorizationVisitService, VisitService $visitService, TrackerRepositoryInterface $trackerRepositoryInterface){
+    public function __construct(AuthorizationVisitService $authorizationVisitService, VisitService $visitService, TrackerRepositoryInterface $trackerRepositoryInterface)
+    {
 
         $this->authorizationVisitService = $authorizationVisitService;
         $this->trackerRepositoryInterface = $trackerRepositoryInterface;
         $this->visitService = $visitService;
     }
 
-    public function execute(ModifyQualityControlResetRequest $modifyQualityControlResetRequest, ModifyQualityControlResetResponse $modifyQualityControlResetResponse){
+    public function execute(ModifyQualityControlResetRequest $modifyQualityControlResetRequest, ModifyQualityControlResetResponse $modifyQualityControlResetResponse)
+    {
 
-        try{
+        try {
 
             $this->visitService->setVisitId($modifyQualityControlResetRequest->visitId);
             $visitContext = $this->visitService->getVisitContext();
@@ -34,16 +37,21 @@ class ModifyQualityControlReset{
 
             $this->checkAuthorization($modifyQualityControlResetRequest->currentUserId, $modifyQualityControlResetRequest->visitId);
 
+            if (empty($modifyQualityControlResetRequest->reason)) {
+                throw new GaelOBadRequestException("Can't reset QC without reason");
+            }
 
             $reviewStatusEntity = $this->visitService->getReviewStatus($studyName);
 
-            if( ! in_array($reviewStatusEntity['review_status'], array(Constants::REVIEW_STATUS_NOT_DONE, Constants::REVIEW_STATUS_NOT_NEEDED) )) {
+            if (!in_array($reviewStatusEntity['review_status'], array(Constants::REVIEW_STATUS_NOT_DONE, Constants::REVIEW_STATUS_NOT_NEEDED))) {
                 throw new GaelOBadRequestException("Can't reset QC with review started");
             }
 
             $this->visitService->resetQc($modifyQualityControlResetRequest->visitId);
 
-            $actionDetails = [];
+            $actionDetails = [
+                'reason' => $modifyQualityControlResetRequest->reason
+            ];
 
             $this->trackerRepositoryInterface->writeAction(
                 $modifyQualityControlResetRequest->currentUserId,
@@ -57,24 +65,21 @@ class ModifyQualityControlReset{
             $modifyQualityControlResetResponse->status = 200;
             $modifyQualityControlResetResponse->statusText = 'OK';
 
-        } catch (GaelOException $e){
-
+        } catch (GaelOException $e) {
             $modifyQualityControlResetResponse->body = $e->getErrorBody();
             $modifyQualityControlResetResponse->status = $e->statusCode;
             $modifyQualityControlResetResponse->statusText = $e->statusText;
-
-        } catch (Exception $e){
+        } catch (Exception $e) {
             throw $e;
         }
-
     }
 
-    public function checkAuthorization(int $userId, int $visitId){
+    public function checkAuthorization(int $userId, int $visitId)
+    {
         $this->authorizationVisitService->setCurrentUserAndRole($userId, Constants::ROLE_SUPERVISOR);
         $this->authorizationVisitService->setVisitId($visitId);
-        if ( ! $this->authorizationVisitService->isVisitAllowed()){
+        if (!$this->authorizationVisitService->isVisitAllowed()) {
             throw new GaelOForbiddenException();
         }
-
     }
 }

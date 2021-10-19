@@ -34,6 +34,7 @@ class ExportStudyData{
             $this->exportStudyService->exportReviewTable();
             $this->exportStudyService->exportTrackerTable();
             $this->exportStudyService->exportUsersOfStudy();
+            $this->exportStudyService->exportAssociatedFiles();
 
             $exportResults = $this->exportStudyService->getExportStudyResult();
 

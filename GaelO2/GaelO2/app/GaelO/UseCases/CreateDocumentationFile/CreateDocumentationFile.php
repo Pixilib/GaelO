@@ -45,7 +45,7 @@ class CreateDocumentationFile{
 
             $storagePath = $this->frameworkInterface::getStoragePath();
 
-            $destinationPath = '/documentations/'.$studyName;
+            $destinationPath = $studyName.'/documentations';
             if (!is_dir($storagePath.'/'.$destinationPath)) {
                 mkdir($storagePath.'/'.$destinationPath, 0755, true);
             }

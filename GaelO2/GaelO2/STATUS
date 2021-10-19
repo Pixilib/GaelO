@@ -1,51 +1,7 @@
-User (GET), (POST), (PUT), (DELETE), (PATCH) => OK
-Request (POST) => OK
-Login / Logout (POST) (DELETE) => OK
-ChangePassword (POST) => OK
-User's studies (GET) => OK
-User's Roles In study : (GET), (POST), (DELETE)=>OK
-Study : (GET), (GET Expand), (POST), (DELETE), (PATCH) => OK
-Preference : (GET), (PUT) =>OK
-Center : (GET), (POST), (PUT) => OK
-Visit Group : (GET), (POST), (DELETE) => OK
-Visit Type : (GET), (POST), (DELETE) => OK
-Affiliated Center  : (GET), (POST), (DELETE) =>OK
-Export-db : (POST) => OK
-Documentation (GET, POST, PATCH (Modify + Reactivate), DELETE) => OK
-Visit Dicoms File (GET) => OK
-Visit Dicoms (GET) => OK
-Tus : (All) => OK
-Patient : ( GET, POST, PATCH ) => OK
-Patient Withdraw : (PATCH)=> OK
-Visit (GET, POST, DELETE, PATCH (reactivate)) => OK
-QC : (PATCH) => OK
-QC Reset : (PATCH) => OK
-Corrective Action (PATCH) => OK
-Ask Unlock (POST) => OK
-Creatable-Visits (GET) => OK
-Possible-Uploads (GET) => OK
-dicom-series (DELETE, PATCH) => OK (Nb pour reset upload, loop depuis front)
-dicom-study (PATCH) => OK
-Investigator-form (GET, PUT, POST, DELETE, PATCH (unlock)) =>OK
-Reviews (GET, POST, PUT, DELETE, PATCH (unlock))
-Reviews From Visits (GET)
-review-progression (GET)
-studies/{studyName}/dicom-studies (GET)
-studies/{studyName}/dicom-series/file (GET)
-studies/{studyName}/visit-types/{visitTypeId}/visits (GET)
-studies/{studyName}/visit-types/{visitTypeId}/reviews (GET)
-studies/{studyName}/visit-types/{visitTypeId}/investigator-forms (GET)
-studies/{studyName}/visit-types/{visitTypeId}/dicom-studies (GET)
-studies/{studyName}/visit-types/{visitTypeId}/reviews/metadata (GET)
-studies/{studyName}/visit-types/{visitTypeId}/investigator-forms/metadata (GET)
-reviews/{id}/file (GET, POST, DELETE)
-visit-date (PATCH)
-
 Salim TODO :
 
 Export Data study :
-- Associated File To Review => A faire dans un zip
-- Review Ajout Patient Code et Visit Type ?
+- Associated File To Review => fait à tester
 
 --- Etudes ancillaires ---
 Pb Authorisation : Un ID Visit peut maintenant a etre attachee a plusieurs etudes ancillaires
@@ -72,11 +28,6 @@ Doit pouvoir set documentation
 Doit pouvoir voir user details
 --- /Etudes ancillaires ---
 
---- Deployment -----
-Purge de TUS automatique => Via purge du bucket ?
-ajouter le login / mdp pour dans orthanc pacs + bloquer delete dans lua script=> conteneur derivé de OrthancPro
---- /Deployment -----
-
 ---- Refactoring Backend ----
 Refac pour la lecture eviter de passer par des services pour laisser les services à l'ecriture ?
 studies/{studyName}/orthanc-study-id/{orthancStudyID} => A renomer à original-orthanc-study-id (test le hash d'origine pas le courant)
@@ -99,7 +50,6 @@ Creatable Visit : Manque Study Custom Logic (+dans front skip visites optionnell
 
 Revoir DicowWeb Authorization Service => Pb route orthanc differentes
 Review  : faire une propriete dans visit pour savoir si review disponible a un user en plus de status reviewAvailable ?
-Verifier que quand on appelle un child si le parent est pas delete (cf probleme de role et study)
 
 Reste Autres :
 - Orthanc Send to peer

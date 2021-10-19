@@ -24,9 +24,8 @@ class AuthController extends Controller
 
             $user = User::where('username', $request->username)->sole();
 
-            //SK Si on veut une seule session par user decomenter cette ligne pour supprimer tous les tokens de l'user
-            //avant d'en creer un nouveau
-            //$user->tokens()->delete();
+            //remove all tokens of current user before creating one other
+            $user->tokens()->delete();
 
             $tokenResult = $user->createToken('GaelO');
 
@@ -46,15 +45,4 @@ class AuthController extends Controller
         return response()->json();
     }
 
-    public function refreshToken(Request $request)
-    {
-        $user = $request->user();
-        $user->currentAccessToken()->delete();
-        $tokenResult = $user->createToken('GaelO');
-        return response()->json([
-            'id' => $user->id,
-            'access_token' => $tokenResult->plainTextToken,
-            'token_type' => 'Bearer'
-        ], 200);
-    }
 }

@@ -2,6 +2,8 @@
 
 namespace App\GaelO\Services\StoreObjects\Export;
 
+use Illuminate\Log\Logger;
+use Illuminate\Support\Facades\Log;
 use ZipArchive;
 
 class ExportStudyResults {
@@ -12,6 +14,7 @@ class ExportStudyResults {
     private ExportReviewResults $exportReviewResults;
     private ExportTrackerResults $exportTrackerResults;
     private ExportUserResults $exportUserResults;
+    private ExportFileResults $exportFileResults;
 
     public function setExportPatientResults(ExportPatientResults $exportPatientResults){
         $this->exportPatientResults = $exportPatientResults;
@@ -35,6 +38,10 @@ class ExportStudyResults {
 
     public function setUserResults(ExportUserResults $exportUserResults){
         $this->exportUserResults = $exportUserResults;
+    }
+
+    public function setExportFileResults(ExportFileResults $exportFileResults){
+        $this->exportFileResults = $exportFileResults;
     }
 
     public function getPatientExportResults(){
@@ -68,7 +75,8 @@ class ExportStudyResults {
             $this->exportReviewResults,
             $this->exportVisitResults,
             $this->exportTrackerResults,
-            $this->exportUserResults
+            $this->exportUserResults,
+            $this->exportFileResults
         ];
     }
 
@@ -83,12 +91,20 @@ class ExportStudyResults {
         foreach($exportResultsObject as $exportObject){
 
             $dataType = $exportObject->getExportDataType();
-            $exportFileXls = $exportObject->getXlsExportFile();
-            $zip->addFile($exportFileXls->getPath(), $dataType .'/xls/'.$exportFileXls->getFilename());
+            $exportFilesXls = $exportObject->getXlsExportFiles();
+            foreach($exportFilesXls as $exportFileXls){
+                $zip->addFile($exportFileXls->getPath(), $dataType .'/xls/'.$exportFileXls->getFilename());
+            }
+
 
             $exportFileCsv = $exportObject->getCsvExportFiles();
             foreach($exportFileCsv as $exportCsv){
                 $zip->addFile($exportCsv->getPath(), $dataType .'/csv/'.$exportCsv->getFilename());
+            }
+
+            $exportFilesZip = $exportObject->getZipExportFiles();
+            foreach($exportFilesZip as $exportZip){
+                $zip->addFile($exportZip->getPath(), $dataType .'/zip/'.$exportZip->getFilename());
             }
 
         }
