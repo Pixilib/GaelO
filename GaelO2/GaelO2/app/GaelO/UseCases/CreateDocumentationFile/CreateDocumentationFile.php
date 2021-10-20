@@ -46,15 +46,15 @@ class CreateDocumentationFile{
             $storagePath = $this->frameworkInterface::getStoragePath();
 
             $destinationPath = $storagePath.'/'.$studyName.'/documentations';
-            if (!is_dir($storagePath.'/'.$destinationPath)) {
-                mkdir($storagePath.'/'.$destinationPath, 0755, true);
+            if (!is_dir($destinationPath)) {
+                mkdir($destinationPath, 0755, true);
             }
 
             file_put_contents ( $destinationPath.'/'.$documentationEntity['id'].'.pdf', base64_decode($createDocumentationFileRequest->binaryData) );
 
-            $newPath= $destinationPath.'/'.$documentationEntity['id'].'.pdf';
+            $relativePath= '/'.$studyName.'/documentations/'.$documentationEntity['id'].'.pdf';
 
-            $this->documentationRepositoryInterface->updateDocumentationPath($createDocumentationFileRequest->id, $newPath);
+            $this->documentationRepositoryInterface->updateDocumentationPath($createDocumentationFileRequest->id, $relativePath);
 
             $actionDetails =[
                 'documentation_id'=>$createDocumentationFileRequest->id,
