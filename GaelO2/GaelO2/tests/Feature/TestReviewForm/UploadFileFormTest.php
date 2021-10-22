@@ -76,7 +76,7 @@ class UploadFileFormTest extends TestCase
         $currentVisit = $this->createVisit();
         $currentUserId = AuthorizationTools::actAsAdmin(false);
         $review = Review::factory()->reviewForm()->userId($currentUserId)->visitId($currentVisit['visitId'])->studyName($currentVisit['studyName'])->create();
-        $review->sent_files = ['41' => 'attached_review_file'.'/' .$currentVisit['studyName'].'/review_1_41.csv'];
+        $review->sent_files = ['41' => $currentVisit['studyName'].'/'.'attached_review_file'.'/'.'review_1_41.csv'];
         $review->save();
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $currentVisit['studyName'] );
         $response = $this->get('api/reviews/' . $review->id . '/file/41');
@@ -87,7 +87,7 @@ class UploadFileFormTest extends TestCase
         $currentVisit = $this->createVisit();
         $currentUserId = AuthorizationTools::actAsAdmin(false);
         $review = Review::factory()->reviewForm()->userId($currentUserId)->visitId($currentVisit['visitId'])->studyName($currentVisit['studyName'])->create();
-        $review->sent_files = ['41' => 'attached_review_file'.'/' .$currentVisit['studyName'].'/review_1_41.csv'];
+        $review->sent_files = ['41' => $currentVisit['studyName'].'/'.'attached_review_file'.'/'.'review_1_41.csv'];
         $review->save();
         $response = $this->get('api/reviews/' . $review->id . '/file/41');
         $response->assertStatus(403);
@@ -97,7 +97,7 @@ class UploadFileFormTest extends TestCase
         $currentVisit = $this->createVisit();
         $currentUserId = AuthorizationTools::actAsAdmin(false);
         $review = Review::factory()->reviewForm()->userId($currentUserId)->visitId($currentVisit['visitId'])->studyName($currentVisit['studyName'])->create();
-        $review->sent_files = ['41' => 'attached_review_file'.'/' .$currentVisit['studyName'].'/review_1_41.csv'];
+        $review->sent_files = ['41' => $currentVisit['studyName'].'/'.'attached_review_file'.'/'.'review_1_41.csv'];
         $review->save();
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $currentVisit['studyName'] );
         $response = $this->delete('api/reviews/' . $review->id . '/file/41');
@@ -108,7 +108,7 @@ class UploadFileFormTest extends TestCase
         $currentVisit = $this->createVisit();
         $currentUserId = AuthorizationTools::actAsAdmin(false);
         $review = Review::factory()->reviewForm()->userId($currentUserId)->visitId($currentVisit['visitId'])->studyName($currentVisit['studyName'])->create();
-        $review->sent_files = ['41' => 'attached_review_file'.'/' .$currentVisit['studyName'].'/review_1_41.csv'];
+        $review->sent_files = ['41' => $currentVisit['studyName'].'/'.'attached_review_file'.'/'.'review_1_41.csv'];
         $review->save();
         $response = $this->delete('api/reviews/' . $review->id . '/file/41');
         $response->assertStatus(403);

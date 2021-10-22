@@ -32,8 +32,9 @@ class TrackerRepository implements TrackerRepositoryInterface {
         return empty($trackerData) ? [] : $trackerData->toArray();
     }
 
-    public function getTrackerOfRoleAndStudy(string $study, string $role) : array{
-        $trackerData = $this->tracker->with('user')->where('study_name', $study)->where('role', $role)->get();
+    public function getTrackerOfRoleAndStudy(string $study, string $role, bool $withUser) : array{
+        if($withUser) $trackerData = $this->tracker->with('user')->where('study_name', $study)->where('role', $role)->get();
+        else $trackerData = $this->tracker->where('study_name', $study)->where('role', $role)->get();
         return empty($trackerData)  ? [] : $trackerData->toArray();
     }
 

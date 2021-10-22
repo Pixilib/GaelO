@@ -38,6 +38,5 @@ class Request extends Mailable implements ShouldQueue
         return $this->view('mails.mail_request')
         ->subject("GaelO - Request")
         ->with($this->parameters);
-        //->embed(public_path('media/gaelo-logo-square.png'));
     }
 }

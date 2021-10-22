@@ -123,12 +123,14 @@ class VisitController extends Controller
         return $this->getJsonResponse($modifyQualityControlResponse->body, $modifyQualityControlResponse->status, $modifyQualityControlResponse->statusText);
     }
 
-    public function modifyQualityControlReset(int $visitId, ModifyQualityControlReset $modifyQualityControlReset, ModifyQualityControlResetRequest $modifyQualityControlResetRequest, ModifyQualityControlResetResponse $modifyQualityControlResetResponse)
+    public function modifyQualityControlReset(int $visitId, Request $request, ModifyQualityControlReset $modifyQualityControlReset, ModifyQualityControlResetRequest $modifyQualityControlResetRequest, ModifyQualityControlResetResponse $modifyQualityControlResetResponse)
     {
         $curentUser = Auth::user();
+        $requestData = $request->all();
 
         $modifyQualityControlResetRequest->currentUserId = $curentUser['id'];
         $modifyQualityControlResetRequest->visitId = $visitId;
+        $modifyQualityControlResetRequest = Util::fillObject($requestData, $modifyQualityControlResetRequest);
 
         $modifyQualityControlReset->execute($modifyQualityControlResetRequest, $modifyQualityControlResetResponse);
 

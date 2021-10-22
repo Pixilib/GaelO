@@ -2,18 +2,22 @@
 
 namespace Tests\Feature\TestExportService;
 
+use App\GaelO\Constants\Constants;
 use App\GaelO\Services\ExportStudyService;
 use App\Models\DicomSeries;
 use App\Models\DicomStudy;
 use App\Models\Patient;
 use App\Models\Review;
 use App\Models\ReviewStatus;
+use App\Models\Role;
 use App\Models\Study;
 use App\Models\Visit;
 use App\Models\VisitType;
+use App\Models\Tracker;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Support\Facades\App;
 use Tests\TestCase;
+
 
 class ExportStudyServiceTest extends TestCase
 {
@@ -35,6 +39,14 @@ class ExportStudyServiceTest extends TestCase
         parent::setUp();
 
         $this->exportServiceData = App::make(ExportStudyService::class);
+    }
+
+    public function testExportUser()
+    {
+        $study = Study::factory()->create();
+        Role::factory()->studyName($study->name)->roleName(Constants::ROLE_INVESTIGATOR)->create();
+        $this->exportServiceData->setStudyName($study->name);
+        $this->exportServiceData->exportUsersOfStudy();
     }
 
     public function testExportPatient()
@@ -85,6 +97,19 @@ class ExportStudyServiceTest extends TestCase
 
         $this->exportServiceData->setStudyName($studyName);
         $this->exportServiceData->exportReviewTable();
+
+    }
+
+    public function testExportTracker(){
+
+        $visitType = VisitType::factory()->create();
+        $studyName = $visitType->visitGroup->study->name;
+
+        Tracker::factory()->studyName($studyName)->role(Constants::ROLE_INVESTIGATOR)->create();
+        Tracker::factory()->studyName($studyName)->role(Constants::ROLE_SUPERVISOR)->create();
+
+        $this->exportServiceData->setStudyName($studyName);
+        $this->exportServiceData->exportTrackerTable();
 
     }
 }

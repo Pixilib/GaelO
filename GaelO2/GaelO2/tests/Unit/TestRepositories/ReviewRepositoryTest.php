@@ -3,7 +3,6 @@
 namespace Tests\Unit\TestRepositories;
 
 use App\GaelO\Repositories\ReviewRepository;
-use App\Http\Controllers\ReviewController;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\TestCase;
@@ -43,9 +42,32 @@ class ReviewRepositoryTest extends TestCase
         $review= Review::factory()->create();
         $visit = $review->visit;
 
-        $investigatorForm = $this->reviewRepository->getInvestigatorForm($visit->id);
+        $investigatorForm = $this->reviewRepository->getInvestigatorForm($visit->id, false);
 
         $this->assertArrayHasKey('review_data', $investigatorForm);
+
+    }
+
+    public function testGetInvestigatorFormWithUser(){
+
+        $review= Review::factory()->create();
+        $visit = $review->visit;
+
+        $investigatorForm = $this->reviewRepository->getInvestigatorForm($visit->id, true);
+
+        $this->assertArrayHasKey('user', $investigatorForm);
+
+    }
+
+    public function testGetInvestigatorFormWithUserEvenDeleted(){
+
+        $review= Review::factory()->create();
+        $review->user->delete();
+
+        $visit = $review->visit;
+        $investigatorForm = $this->reviewRepository->getInvestigatorForm($visit->id, true);
+
+        $this->assertArrayHasKey('user', $investigatorForm);
 
     }
 

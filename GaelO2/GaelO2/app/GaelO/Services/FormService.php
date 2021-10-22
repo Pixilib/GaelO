@@ -88,7 +88,7 @@ class FormService
 
         $storagePath = $this->frameworkInterface::getStoragePath();
 
-        $destinationPath = 'attached_review_file'.'/' . $this->studyName;
+        $destinationPath = $this->studyName.'/'.'attached_review_file';
         if (!is_dir($storagePath . '/' . $destinationPath)) {
             mkdir($storagePath . '/' . $destinationPath, 0755, true);
         }

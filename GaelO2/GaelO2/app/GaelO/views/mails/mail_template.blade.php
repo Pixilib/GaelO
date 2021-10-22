@@ -54,9 +54,8 @@
 
 <body>
     <header class="main-header" id="header">
-        <img id="logo-gaelo" src="<?= $message->embed(public_path('static/media/gaelo-logo-square.png')); ?>" alt="Banner Image" >
+        <img id="logo-gaelo" src="<?= $message->embed(public_path('static/media/gaelo-logo.png')); ?>" alt="Banner Image" >
     </header>
-    <h1><a href="{{$webAddress}}">{{$platformName}}</a></h1>
     <div id="message">
         <b>Dear {{$name}},</b><br>
         @yield('content')

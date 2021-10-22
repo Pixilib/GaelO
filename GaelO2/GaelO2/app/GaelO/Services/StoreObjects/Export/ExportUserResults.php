@@ -4,37 +4,38 @@ namespace App\GaelO\Services\StoreObjects\Export;
 
 use Exception;
 
-class ExportVisitsResults extends ExportDataResults{
+class ExportUserResults extends ExportDataResults{
 
     private ExportFile $xlsExport;
-    private array $csvVisitsExport = [];
+    private ExportFile $csvExport;
 
     public function __construct()
     {
-        parent::__construct(parent::EXPORT_TYPE_VISITS);
+        parent::__construct(parent::EXPORT_TYPE_USERS);
     }
 
-    public function addExportFile(string $type, string $path, string $key = null ){
+    public function addExportFile(string $type, string $path ){
 
         if($type === ExportDataResults::EXPORT_TYPE_XLS) {
-            $this->xlsExport = new ExportFile('export_visits.xlsx', $path);
+            $this->xlsExport = new ExportFile('export_users.xlsx', $path);
         }else if ($type === ExportDataResults::EXPORT_TYPE_CSV) {
-           $this->csvVisitsExport[] = new ExportFile('export_visits_'.$key.'.csv', $path);
+            $this->csvExport = new ExportFile('export_users.csv', $path);
         }else{
             throw new Exception('Unknown File Type');
         }
 
     }
 
-    public function getXlsExportFiles() : array{
+    public function getXlsExportFiles() : array {
         return [$this->xlsExport];
     }
 
     public function getCsvExportFiles() : array {
-        return [...$this->csvVisitsExport];
+        return [$this->csvExport];
     }
 
     public function getZipExportFiles(): array {
         return [];
     }
+
 }

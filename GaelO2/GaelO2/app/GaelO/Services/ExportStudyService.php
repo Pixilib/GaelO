@@ -3,21 +3,31 @@
 namespace App\GaelO\Services;
 
 use App\GaelO\Adapters\SpreadsheetAdapter;
+use App\GaelO\Constants\Constants;
+use App\GaelO\Interfaces\Adapters\FrameworkInterface;
 use App\GaelO\Interfaces\Repositories\DicomSeriesRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\DicomStudyRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\PatientRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\ReviewRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\StudyRepositoryInterface;
+use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
+use App\GaelO\Interfaces\Repositories\UserRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
 use App\GaelO\Services\StoreObjects\Export\ExportDataResults;
 use App\GaelO\Services\StoreObjects\Export\ExportDicomResults;
+use App\GaelO\Services\StoreObjects\Export\ExportFileResults;
 use App\GaelO\Services\StoreObjects\Export\ExportPatientResults;
 use App\GaelO\Services\StoreObjects\Export\ExportReviewResults;
 use App\GaelO\Services\StoreObjects\Export\ExportStudyResults;
+use App\GaelO\Services\StoreObjects\Export\ExportTrackerResults;
+use App\GaelO\Services\StoreObjects\Export\ExportUserResults;
 use App\GaelO\Services\StoreObjects\Export\ExportVisitsResults;
+use App\GaelO\UseCases\ExportDatabase\ExportDatabase;
+use ZipArchive;
 
 class ExportStudyService {
 
+    private UserRepositoryInterface $userRepositoryInterface;
     private PatientRepositoryInterface $patientRepositoryInterface;
     private StudyRepositoryInterface $studyRepositoryInterface;
     private VisitRepositoryInterface $visitRepositoryInterface;
@@ -25,18 +35,24 @@ class ExportStudyService {
     private DicomSeriesRepositoryInterface $dicomSeriesRepositoryInterface;
     private ReviewRepositoryInterface $reviewRepositoryInterface;
     private ExportStudyResults $exportStudyResults;
+    private TrackerRepositoryInterface $trackerRepositoryInterface;
+    private FrameworkInterface $frameworkInterface;
 
     private string $studyName;
 
     public function __construct(
+        UserRepositoryInterface $userRepositoryInterface,
         PatientRepositoryInterface $patientRepositoryInterface,
         StudyRepositoryInterface $studyRepositoryInterface,
         VisitRepositoryInterface $visitRepositoryInterface,
         DicomStudyRepositoryInterface $dicomStudyRepositoryInterface,
         DicomSeriesRepositoryInterface $dicomSeriesRepositoryInterface,
         ReviewRepositoryInterface $reviewRepositoryInterface,
-        ExportStudyResults $exportStudyResults)
+        TrackerRepositoryInterface $trackerRepositoryInterface,
+        ExportStudyResults $exportStudyResults,
+        FrameworkInterface $frameworkInterface)
     {
+        $this->userRepositoryInterface = $userRepositoryInterface;
         $this->patientRepositoryInterface = $patientRepositoryInterface;
         $this->studyRepositoryInterface = $studyRepositoryInterface;
         $this->visitRepositoryInterface = $visitRepositoryInterface;
@@ -44,6 +60,8 @@ class ExportStudyService {
         $this->dicomSeriesRepositoryInterface = $dicomSeriesRepositoryInterface;
         $this->reviewRepositoryInterface = $reviewRepositoryInterface;
         $this->exportStudyResults = $exportStudyResults;
+        $this->trackerRepositoryInterface = $trackerRepositoryInterface;
+        $this->frameworkInterface = $frameworkInterface;
     }
 
     public function setStudyName(string $studyName){
@@ -72,6 +90,35 @@ class ExportStudyService {
             return $visit['id'];
         }, $this->availableVisits);
 
+    }
+
+    public function exportUsersOfStudy() : void {
+        $users = $this->userRepositoryInterface->getUsersFromStudy($this->studyName);
+
+        $usersData = [];
+        //Select only needed info and concatenate roles in a string
+        foreach($users as $user){
+            $roles = array_map(function($role){return $role['name'];}, $user['roles']);
+            $usersData[] = [
+                'id' => $user['id'],
+                'lastname' => $user['lastname'],
+                'firstname' => $user['firstname'],
+                'username' => $user['username'],
+                'roles' => implode("/", $roles)
+            ];
+        }
+
+        $spreadsheetAdapter = new SpreadsheetAdapter();
+        $spreadsheetAdapter->addSheet('Users');
+        $spreadsheetAdapter->fillData('Users', $usersData);
+
+        $tempFileNameXls = $spreadsheetAdapter->writeToExcel();
+        $tempFileNameCsv = $spreadsheetAdapter->writeToCsv('Users');
+
+        $exportPatientResults = new ExportUserResults();
+        $exportPatientResults->addExportFile(ExportDataResults::EXPORT_TYPE_XLS, $tempFileNameXls);
+        $exportPatientResults->addExportFile(ExportDataResults::EXPORT_TYPE_CSV, $tempFileNameCsv);
+        $this->exportStudyResults->setUserResults($exportPatientResults);
     }
 
     public function exportPatientTable() : void {
@@ -201,6 +248,49 @@ class ExportStudyService {
 
         $this->exportStudyResults->setExportReviewResults($exportReviewResults);
 
+    }
+
+    public function exportTrackerTable() : void {
+
+        $spreadsheetAdapter = new SpreadsheetAdapter();
+
+        $roleArray = [Constants::ROLE_INVESTIGATOR, Constants::ROLE_CONTROLLER, Constants::ROLE_REVIEWER, Constants::ROLE_SUPERVISOR];
+
+        foreach($roleArray as $role){
+            $trackerData = $this->trackerRepositoryInterface->getTrackerOfRoleAndStudy($this->studyName, $role, false);
+            $spreadsheetAdapter->addSheet($role);
+            $spreadsheetAdapter->fillData($role, $trackerData);
+        }
+
+        $tempFileNameXls = $spreadsheetAdapter->writeToExcel();
+
+        $exportTrackerResult = new ExportTrackerResults();
+        $exportTrackerResult->addExportFile(ExportDataResults::EXPORT_TYPE_XLS, $tempFileNameXls);
+
+        $this->exportStudyResults->setTrackerReviewResults($exportTrackerResult);
+
+
+    }
+
+    public function exportAssociatedFiles() : void {
+        $storagePath = $this->frameworkInterface::getStoragePath();
+
+        $destinationPath = $storagePath . '/' . $this->studyName;
+
+        $zip=new ZipArchive();
+        $tempZip=tempnam(ini_get('upload_tmp_dir'), 'TMPZIP_'.$this->studyName.'_');
+        $zip->open($tempZip, ZipArchive::OVERWRITE);
+        //Add a file to create zip
+        $zip->addFromString('Readme', 'Folder Containing associated files to study');
+        //If path send file to zip
+        if ( !is_dir($storagePath . '/' . $this->studyName) ) {
+            ExportDatabase::addRecursivelyInZip($zip, $destinationPath);
+        }
+        $zip->close();
+
+        $exporFileResult = new ExportFileResults();
+        $exporFileResult->addExportFile(ExportDataResults::EXPORT_TYPE_ZIP, $tempZip);
+        $this->exportStudyResults->setExportFileResults($exporFileResult);
     }
 
     public function getExportStudyResult () : ExportStudyResults {

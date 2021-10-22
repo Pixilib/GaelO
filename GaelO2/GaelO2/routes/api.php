@@ -165,7 +165,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
     //Tools routes
     Route::post('tools/centers/patients-from-centers', [ToolsController::class, 'getPatientsInStudyFromCenters']);
     Route::post('tools/patients/visits-from-patients', [ToolsController::class, 'getPatientsVisitsInStudy']);
-    Route::post('tools/visit-types/visit-types-details', [ToolsController::class, 'getVisitTypesDetails']);
 
     // Binary routes
     Route::get('export-db', [ExportDBController::class, 'exportDB']);
@@ -182,7 +181,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
 |--------------------------------------------------------------------------
 |
 */
-
 //Request Route
 Route::post('request', [RequestController::class, 'sendRequest']);
 

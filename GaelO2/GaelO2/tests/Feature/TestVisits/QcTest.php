@@ -10,7 +10,6 @@ use App\Models\Visit;
 use App\Models\Review;
 use App\Models\ReviewStatus;
 use App\Models\VisitGroup;
-use App\Models\VisitType;
 use Tests\AuthorizationTools;
 
 class QcTest extends TestCase
@@ -213,7 +212,9 @@ class QcTest extends TestCase
         $currentUserId = AuthorizationTools::actAsAdmin(false);
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $this->studyName);
 
-        $payload = [];
+        $payload = [
+            'reason' => 'error filling qc'
+        ];
 
         $response = $this->patch('/api/visits/'.$this->visit->id.'/quality-control/reset', $payload);
 
@@ -221,10 +222,25 @@ class QcTest extends TestCase
 
     }
 
+    public function testResetQcMissingReason()
+    {
+        $currentUserId = AuthorizationTools::actAsAdmin(false);
+        AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $this->studyName);
+
+        $payload = [];
+
+        $response = $this->patch('/api/visits/'.$this->visit->id.'/quality-control/reset', $payload);
+
+        $response->assertStatus(400);
+
+    }
+
     public function testResetQcShouldFailNoRole()
     {
         AuthorizationTools::actAsAdmin(false);
-        $payload = [];
+        $payload = [
+            'reason' => 'error filling qc'
+        ];
         $this->patch('/api/visits/'.$this->visit->id.'/quality-control/reset', $payload)->assertStatus(403);
 
     }
@@ -238,7 +254,9 @@ class QcTest extends TestCase
         $this->reviewStatus->review_status = Constants::REVIEW_STATUS_ONGOING;
         $this->reviewStatus->save();
 
-        $payload = [];
+        $payload = [
+            'reason' => 'error filling qc'
+        ];
         $this->patch('/api/visits/'.$this->visit->id.'/quality-control/reset', $payload)->assertStatus(400);
 
     }

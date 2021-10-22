@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Hash;
 use Tests\TestCase;
 use App\Models\User;
 use App\GaelO\Constants\Constants;
-use Illuminate\Support\Facades\Artisan;
+use Tests\AuthorizationTools;
 
 class LoginTest extends TestCase
 {
@@ -123,4 +123,5 @@ class LoginTest extends TestCase
         $this->assertEquals($adminDefaultUser['status'], Constants::USER_STATUS_BLOCKED);
         $this->assertEquals($adminDefaultUser['attempts'], 3);
     }
+
 }

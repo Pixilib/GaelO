@@ -7,7 +7,6 @@ use Carbon\Carbon;
 use DateTime;
 use Exception;
 use FilesystemIterator;
-use Illuminate\Support\Facades\Log;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use ReflectionClass;

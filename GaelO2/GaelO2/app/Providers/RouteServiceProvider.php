@@ -84,10 +84,17 @@ class RouteServiceProvider extends ServiceProvider
     protected function configureRateLimiting()
     {
         RateLimiter::for('api', function (Request $request) {
+
             if( str_starts_with($request->getRequestUri(), '/api/orthanc/dicom-web') ) {
                 return Limit::none();
             };
-            return Limit::perMinute(300);
+
+            if( str_starts_with($request->getRequestUri(), '/api/request') ) {
+                return Limit::perMinute(10)->by($request->ip());
+            };
+
+            return Limit::perMinute(300)->by($request->ip());
         });
+
     }
 }

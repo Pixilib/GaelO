@@ -2,6 +2,8 @@
 
 namespace App\GaelO\Services\StoreObjects\Export;
 
+use Illuminate\Log\Logger;
+use Illuminate\Support\Facades\Log;
 use ZipArchive;
 
 class ExportStudyResults {
@@ -10,6 +12,9 @@ class ExportStudyResults {
     private ExportVisitsResults $exportVisitResults;
     private ExportDicomResults $exportDicomResults;
     private ExportReviewResults $exportReviewResults;
+    private ExportTrackerResults $exportTrackerResults;
+    private ExportUserResults $exportUserResults;
+    private ExportFileResults $exportFileResults;
 
     public function setExportPatientResults(ExportPatientResults $exportPatientResults){
         $this->exportPatientResults = $exportPatientResults;
@@ -25,6 +30,18 @@ class ExportStudyResults {
 
     public function setExportReviewResults(ExportReviewResults $exportReviewResults){
         $this->exportReviewResults = $exportReviewResults;
+    }
+
+    public function setTrackerReviewResults(ExportTrackerResults $exportTrackerResults){
+        $this->exportTrackerResults = $exportTrackerResults;
+    }
+
+    public function setUserResults(ExportUserResults $exportUserResults){
+        $this->exportUserResults = $exportUserResults;
+    }
+
+    public function setExportFileResults(ExportFileResults $exportFileResults){
+        $this->exportFileResults = $exportFileResults;
     }
 
     public function getPatientExportResults(){
@@ -43,11 +60,23 @@ class ExportStudyResults {
         return $this->exportReviewResults;
     }
 
-    public function getExportResultsObjects() : array {
-        return [$this->exportPatientResults,
-        $this->exportDicomResults,
-        $this->exportReviewResults,
-        $this->exportVisitResults
+    public function getTrackerExportResults(){
+        return $this->exportTrackerResults;
+    }
+
+    public function getUserResults(){
+        return $this->exportUserResults;
+    }
+
+    private function getExportResultsObjects() : array {
+        return [
+            $this->exportPatientResults,
+            $this->exportDicomResults,
+            $this->exportReviewResults,
+            $this->exportVisitResults,
+            $this->exportTrackerResults,
+            $this->exportUserResults,
+            $this->exportFileResults
         ];
     }
 
@@ -62,12 +91,20 @@ class ExportStudyResults {
         foreach($exportResultsObject as $exportObject){
 
             $dataType = $exportObject->getExportDataType();
-            $exportFileXls = $exportObject->getXlsExportFile();
-            $zip->addFile($exportFileXls->getPath(), $dataType .'/xls/'.$exportFileXls->getFilename());
+            $exportFilesXls = $exportObject->getXlsExportFiles();
+            foreach($exportFilesXls as $exportFileXls){
+                $zip->addFile($exportFileXls->getPath(), $dataType .'/xls/'.$exportFileXls->getFilename());
+            }
+
 
             $exportFileCsv = $exportObject->getCsvExportFiles();
             foreach($exportFileCsv as $exportCsv){
                 $zip->addFile($exportCsv->getPath(), $dataType .'/csv/'.$exportCsv->getFilename());
+            }
+
+            $exportFilesZip = $exportObject->getZipExportFiles();
+            foreach($exportFilesZip as $exportZip){
+                $zip->addFile($exportZip->getPath(), $dataType .'/zip/'.$exportZip->getFilename());
             }
 
         }

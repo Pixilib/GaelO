@@ -16,7 +16,7 @@ class InvestigatorFormService extends FormService {
 
     public function updateInvestigatorForm(array $data, bool $validated) : void {
         if( ! $this->abstractStudyRules->checkInvestigatorFormValidity($data, $validated) ) throw new GaelOBadRequestException('Form Contraints Failed');;
-        $localReviewEntitity = $this->reviewRepositoryInterface->getInvestigatorForm($this->visitId);
+        $localReviewEntitity = $this->reviewRepositoryInterface->getInvestigatorForm($this->visitId, false);
         $this->reviewRepositoryInterface->updateReview($localReviewEntitity['id'], $this->currentUserId, $data, $validated);
         $this->updateVisitInvestigatorFormStatus($validated);
     }
