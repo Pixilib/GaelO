@@ -28,9 +28,9 @@ class CenterRepository implements CenterRepositoryInterface {
         $center->save();
     }
 
-    public function getCenterByName(string $name) : array {
-        $center = $this->center->where('name', $name)->get()->first();
-        return $center !== null  ? $center->toArray() : [];
+    public function isExistingCenterName(string $name) : bool {
+        $center = $this->center->where('name', $name)->get();
+        return $center->count() > 0  ? true : false;
     }
 
     public function getCenterByCode(int $code) : array {

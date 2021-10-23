@@ -102,7 +102,8 @@ class DocumentationRepository implements DocumentationRepositoryInterface
 
     public function isKnownDocumentation(string $name, string $version): bool
     {
-        return empty($this->documentation->where('name', $name)->where('version', $version)->get()->first()) ? false : true;
+        $documentations = $this->documentation->where('name', $name)->where('version', $version)->get();
+        return $documentations->count() == 0 ? false : true;
     }
 
     public function reactivateDocumentation(int $documentationId): void

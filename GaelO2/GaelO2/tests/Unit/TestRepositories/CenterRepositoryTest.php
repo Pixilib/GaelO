@@ -45,9 +45,9 @@ class CenterRepositoryTest extends TestCase
 
     }
 
-    public function testGetCenterByName(){
-        $centerEntity = $this->centerRepository->getCenterByName($this->center3->name);
-        $this->assertEquals($centerEntity['code'], $this->center3->code);
+    public function testIsExistingCenterName(){
+        $answer = $this->centerRepository->isExistingCenterName($this->center3->name);
+        $this->assertTrue($answer);
     }
 
     public function testGetCenterByCode(){

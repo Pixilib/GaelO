@@ -10,7 +10,7 @@ interface CenterRepositoryInterface {
 
     public function createCenter(int $code, string $name, string $countryCode) : void ;
 
-    public function getCenterByName(string $name) : array ;
+    public function isExistingCenterName(string $name) : bool ;
 
     public function getCenterByCode(int $code) : array ;
 

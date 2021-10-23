@@ -281,7 +281,7 @@ class UserRepository implements UserRepositoryInterface {
     }
 
     public function getAffiliatedCenter(int $userId) : array {
-        $user = $this->user->where('id', $userId)->first();
+        $user = $this->user->findOrFail($userId);
         $centers = $user->affiliatedCenters()->get();
         return empty($centers) ? [] : $centers->toArray();
     }
