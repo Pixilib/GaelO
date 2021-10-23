@@ -165,11 +165,8 @@ class UserRepository implements UserRepositoryInterface {
 
         $emails = $this->user
         ->where('status', 'Activated')
-        ->join('roles', function ($join) {
-            $join->on('users.id', '=', 'roles.user_id');
-        })->join('center_user', function ($join) {
-            $join->on('users.id', '=', 'center_user.user_id');
-        })->where(function ($query) use ($study, $job) {
+        ->with('affiliatedCenters')
+        ->whereHas('roles', function ($query) use ($study, $job) {
             if($job !== null){
                 $query->where('roles.name', '=', Constants::ROLE_INVESTIGATOR)
                 ->where('roles.study_name', '=', $study)
@@ -178,9 +175,11 @@ class UserRepository implements UserRepositoryInterface {
                 $query->where('roles.name', '=', Constants::ROLE_INVESTIGATOR)
                 ->where('roles.study_name', '=', $study);
             }
-
-        })->where(function  ($query) use ($centerCode) {
-            $query->where('center_user.center_code', '=', $centerCode)
+        })
+        ->where(function  ($query) use ($centerCode) {
+            $query->whereHas('affiliatedCenters', function ($query) use ($centerCode) {
+                $query->where('center_code', '=', $centerCode);
+            })
             ->orWhere('users.center_code', '=', $centerCode);
         })
         ->get();
@@ -192,12 +191,11 @@ class UserRepository implements UserRepositoryInterface {
 
         $users = $this->user
         ->where('status', 'Activated')
-        ->join('roles', function ($join) {
-            $join->on('users.id', '=', 'roles.user_id');
-        })->where(function ($query) use ($study, $role) {
-            $query->where('roles.name', '=', $role)
-            ->where('roles.study_name', '=', $study);
-        })->get();
+        ->whereHas('roles', function ($query) use ($study, $role) {
+            $query->where('name', '=', $role)
+            ->where('study_name', '=', $study);
+        })
+        ->get();
 
         return empty($users) ? [] : $users->toArray();
 
@@ -212,24 +210,6 @@ class UserRepository implements UserRepositoryInterface {
 
         return $emails;
 
-    }
-
-    /**
-     * Return users data of users affiliated (main or affiliated) to a center
-     */
-    public function getUsersAffiliatedToCenter(int $centerCode) : array {
-
-        $users = $this->user
-        ->leftJoin('center_user', function ($join) {
-            $join->on('users.id', '=', 'center_user.user_id');
-        })->where(function  ($query) use ($centerCode) {
-            $query->where('center_user.center_code', '=', $centerCode)
-            ->orWhere('users.center_code', '=', $centerCode);
-        })
-        ->where('status', 'Activated')
-        ->get();
-
-        return empty($users) ? [] : $users->toArray();
     }
 
     public function getStudiesOfUser(int $userId) : array {
@@ -321,9 +301,12 @@ class UserRepository implements UserRepositoryInterface {
 
     public function getUsersFromStudy(string $studyName) : array {
 
-        $users = $this->user->join('roles', function ($join) {
-            $join->on('roles.user_id', '=', 'users.id');
-        })->where('study_name', $studyName)->with('roles')->get();
+        $users = $this->user
+        ->whereHas('roles', function ($query) use ($studyName) {
+            $query->where('study_name', '=', $studyName);
+        })
+        ->with('roles')
+        ->get();
         return empty($users) ? [] : $users->unique('id')->toArray();
     }
 }

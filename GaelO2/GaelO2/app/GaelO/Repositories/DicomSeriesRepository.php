@@ -73,13 +73,10 @@ class DicomSeriesRepository implements DicomSeriesRepositoryInterface {
 
     public function getRelatedVisitIdFromSeriesInstanceUID(array $seriesInstanceUID) : array {
         $query = $this->dicomSeries
-            ->join('dicom_studies', function ($join) {
-                $join->on('dicom_series.study_uid', '=', 'dicom_studies.study_uid');
-            })
+            ->with('dicomStudy')
             ->whereIn('series_uid', $seriesInstanceUID)
-            ->select('visit_id')
             ->withTrashed();
-        return $query->get()->pluck('visit_id')->unique()->toArray();
+        return $query->get()->pluck('dicomStudy.visit_id')->unique()->toArray();
     }
 
     public function getSeriesOrthancIDOfSeriesInstanceUID(array $seriesInstanceUID) : array {

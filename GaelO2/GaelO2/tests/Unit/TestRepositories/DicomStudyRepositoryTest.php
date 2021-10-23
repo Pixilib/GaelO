@@ -89,6 +89,21 @@ class DicomStudyRepositoryTest extends TestCase
         $this->assertFalse($answer2);
     }
 
+    public function testIsExistingOriginalOrthancStudyIdShouldNotIncludeDeleteVisit()
+    {
+
+        $orthancStudy = DicomStudy::factory()->create();
+        //2 study are created when factory of patient and visit type
+        $studyName = $orthancStudy->visit->visitType->visitGroup->study->name;
+
+        //Delete Parent Visit
+        $orthancStudy->visit->delete();
+
+        $answer  = $this->dicomStudyRepository->isExistingOriginalOrthancStudyID($orthancStudy->anon_from_orthanc_id, $studyName);
+        //One study should be true, the other false
+        $this->assertFalse($answer);
+    }
+
     public function testGetStudyOrthancIdFromVisit()
     {
         Visit::factory()->count(5)->create();

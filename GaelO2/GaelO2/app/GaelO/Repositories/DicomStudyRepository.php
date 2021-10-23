@@ -73,14 +73,13 @@ class DicomStudyRepository implements DicomStudyRepositoryInterface
     public function isExistingOriginalOrthancStudyID(string $originalOrthancStudyID, string $studyName): bool
     {
         $dicomStudies = $this->dicomStudy->where('anon_from_orthanc_id', $originalOrthancStudyID)
-            ->join('visits', function ($join) {
-                $join->on('dicom_studies.visit_id', '=', 'visits.id');
-            })->join('visit_types', function ($join) {
-                $join->on('visit_types.id', '=', 'visits.visit_type_id');
-            })->join('visit_groups', function ($join) {
-                $join->on('visit_groups.id', '=', 'visit_types.visit_group_id');
+            ->whereHas('visit', function ($query) use ($studyName) {
+                $query->whereHas('visitType', function ($query) use ($studyName) {
+                    $query->whereHas('visitGroup', function ($query) use ($studyName) {
+                        $query->where('study_name', $studyName);
+                    });
+                });
             })
-            ->where('study_name', '=', $studyName)
             ->get();
 
         return $dicomStudies->count() > 0 ? true : false;
