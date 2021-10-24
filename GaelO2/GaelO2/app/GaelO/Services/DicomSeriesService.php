@@ -79,11 +79,6 @@ class DicomSeriesService
         //reactivate study level
         $this->dicomStudyRepositoryInterface->reactivateByStudyInstanceUID($studyInstanceUID);
 
-        $deletedSeries = $this->dicomStudyRepositoryInterface->getChildSeries($studyInstanceUID, true);
-        foreach($deletedSeries as $series){
-            $this->dicomSeriesRepositoryInterface->reactivateSeries($series['series_uid']);
-        }
-
         //Update upload status to Done
         $this->visitService->setVisitId($visitId);
         $this->visitService->updateUploadStatus(Constants::UPLOAD_STATUS_DONE);
