@@ -127,13 +127,35 @@ class DicomStudyRepositoryTest extends TestCase
 
     public function testGetDicomsDataFromVisit()
     {
-        $orthancSeries = DicomSeries::factory()->create();
-        $visitId = Visit::get()->first()->id;
-        $studyDetails = $this->dicomStudyRepository->getDicomsDataFromVisit($visitId, false);
-        $this->assertEquals(1, sizeof($studyDetails['dicom_series']));
+        $dicomSeries = DicomSeries::factory()->create();
+        $visitId = $dicomSeries->dicomStudy->visit_id;
 
-        $orthancSeries->dicomStudy()->delete();
-        $studyDetails = $this->dicomStudyRepository->getDicomsDataFromVisit($visitId, true);
+        $studyDetails = $this->dicomStudyRepository->getDicomsDataFromVisit($visitId, false, false);
+        $this->assertEquals(1, sizeof($studyDetails));
+        $this->assertEquals(1, sizeof($studyDetails[0]['dicom_series']));
+
+        $dicomSeries->dicomStudy()->delete();
+        $studyDetails = $this->dicomStudyRepository->getDicomsDataFromVisit($visitId, false, false);
+        $this->assertEquals(0, sizeof($studyDetails));
+    }
+
+    public function testGetDicomsDataFromVisitIncludingDeleteStudies()
+    {
+        $dicomSeries = DicomSeries::factory()->create();
+        $visitId = $dicomSeries->dicomStudy->visit_id;
+
+        $dicomSeries->dicomStudy()->delete();
+        $studyDetails = $this->dicomStudyRepository->getDicomsDataFromVisit($visitId, true, false);
+        $this->assertEquals(1, sizeof($studyDetails[0]['dicom_series']));
+    }
+
+    public function testGetDicomsDataFromVisitIncludingDeleteSeries()
+    {
+        $dicomSeries = DicomSeries::factory()->create();
+        $visitId = $dicomSeries->dicomStudy->visit_id;
+
+        $dicomSeries->delete();
+        $studyDetails = $this->dicomStudyRepository->getDicomsDataFromVisit($visitId, false, true);
         $this->assertEquals(1, sizeof($studyDetails[0]['dicom_series']));
     }
 

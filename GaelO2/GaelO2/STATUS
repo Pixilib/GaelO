@@ -1,8 +1,5 @@
 Salim TODO :
 
-Export Data study :
-- Associated File To Review => fait à tester
-
 --- Etudes ancillaires ---
 Pb Authorisation : Un ID Visit peut maintenant a etre attachee a plusieurs etudes ancillaires
 => Le scope de la study demandée doit venir du front
@@ -30,7 +27,6 @@ Doit pouvoir voir user details
 
 ---- Refactoring Backend ----
 Refac pour la lecture eviter de passer par des services pour laisser les services à l'ecriture ?
-studies/{studyName}/orthanc-study-id/{orthancStudyID} => A renomer à original-orthanc-study-id (test le hash d'origine pas le courant)
 Dicom Series Service => peut etre evoluer vers un DicomService pour les deux niveaux
 GetVisitContext des services surement a faire passer a initialisation pour eviter requettes redondantes
 
@@ -47,7 +43,6 @@ Model et db :
 
 Messagerie à designer (communication intermembre, front avec tinymce)
 Creatable Visit : Manque Study Custom Logic (+dans front skip visites optionnelles ?)
-
 Revoir DicowWeb Authorization Service => Pb route orthanc differentes
 Review  : faire une propriete dans visit pour savoir si review disponible a un user en plus de status reviewAvailable ?
 

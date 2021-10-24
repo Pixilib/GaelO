@@ -6,6 +6,7 @@ use App\GaelO\Constants\Constants;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\TestCase;
 use App\Models\DicomSeries;
+use App\Models\User;
 use Tests\AuthorizationTools;
 
 class DicomTest extends TestCase
@@ -45,10 +46,33 @@ class DicomTest extends TestCase
 
     public function testGetDicomsDataInvestigator(){
         $currentUserId = AuthorizationTools::actAsAdmin(false);
+        //Testing investigator so need to be linked with same center
+        $userModel = User::find($currentUserId);
+        $userModel->center_code = $this->dicomSeries->dicomStudy->visit->patient->center_code;
+        $userModel->save();
+
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_INVESTIGATOR, $this->studyName);
         $answer = $this->get('api/visits/'.$this->visitId.'/dicoms?role=Investigator');
+        $answer->assertStatus(200);
         $response = json_decode($answer->content(), true);
         $this->assertEquals(1, sizeof($response));
+
+    }
+
+    public function testGetDicomsDataInvestigatorDeletedStudy(){
+        $currentUserId = AuthorizationTools::actAsAdmin(false);
+        $this->dicomSeries->dicomStudy->delete();
+
+        //Testing investigator so need to be linked with same center
+        $userModel = User::find($currentUserId);
+        $userModel->center_code = $this->dicomSeries->dicomStudy->visit->patient->center_code;
+        $userModel->save();
+
+        AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_INVESTIGATOR, $this->studyName);
+        $answer = $this->get('api/visits/'.$this->visitId.'/dicoms?role=Investigator');
+        $answer->assertStatus(200);
+        $response = json_decode($answer->content(), true);
+        $this->assertEquals(0, sizeof($response));
 
     }
 
@@ -57,6 +81,7 @@ class DicomTest extends TestCase
         $currentUserId = AuthorizationTools::actAsAdmin(false);
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $this->studyName);
         $answer = $this->get('api/visits/'.$this->visitId.'/dicoms?role=Supervisor');
+        $answer->assertStatus(200);
         $response = json_decode($answer->content(), true);
         $this->assertEquals(true, $response[0]['deleted']);
 

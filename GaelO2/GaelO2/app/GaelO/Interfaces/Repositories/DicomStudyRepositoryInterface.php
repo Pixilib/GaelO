@@ -18,7 +18,7 @@ interface DicomStudyRepositoryInterface {
 
     public function isExistingDicomStudyForVisit(int $visitID) : bool ;
 
-    public function getDicomsDataFromVisit(int $visitID, bool $withDeleted) : array ;
+    public function getDicomsDataFromVisit(int $visitID, bool $withDeletedStudy, bool $withDeletedSeries) : array ;
 
     public function getDicomStudy(string $studyInstanceUID, bool $includeDeleted) : array ;
 

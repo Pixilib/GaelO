@@ -97,16 +97,26 @@ class DicomStudyRepository implements DicomStudyRepositoryInterface
         return $dicomStudies->count() > 0 ? true : false;
     }
 
-    public function getDicomsDataFromVisit(int $visitID, bool $withDeleted): array
+    public function getDicomsDataFromVisit(int $visitID, bool $withDeletedStudy, bool $withDeletedSeries): array
     {
 
-        if ($withDeleted) {
-            $studies = $this->dicomStudy->withTrashed()->with(['dicomSeries' => function ($query) {
-                $query->withTrashed();
-            }, 'uploader'])->where('visit_id', $visitID)->get();
-        } else {
-            $studies = $this->dicomStudy->where('visit_id', $visitID)->with(['dicomSeries', 'uploader'])->sole();
+        $query = $this->dicomStudy;
+
+        if($withDeletedStudy){
+            $query = $query->withTrashed();
         }
+
+
+        if ($withDeletedSeries) {
+            $query = $query->with(['dicomSeries' => function ($query) {
+                $query->withTrashed();
+            }]);
+        }else{
+            $query = $query->with('dicomSeries');
+        }
+
+        $studies = $query->where('visit_id', $visitID)->with('uploader')->get();
+
 
         return $studies->count() == 0 ? [] : $studies->toArray();
     }
