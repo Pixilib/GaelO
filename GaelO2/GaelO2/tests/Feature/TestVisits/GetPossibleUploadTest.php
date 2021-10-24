@@ -3,11 +3,11 @@
 namespace Tests\Feature\TestVisits;
 
 use App\GaelO\Constants\Constants;
-use App\Models\ReviewStatus;
+use App\Models\User;
+use App\Models\Visit;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\AuthorizationTools;
 use Tests\TestCase;
-
 class GetPossibleUploadTest extends TestCase
 {
 
@@ -29,13 +29,19 @@ class GetPossibleUploadTest extends TestCase
 
     protected function setUp() : void{
         parent::setUp();
-        $reviewStatus = ReviewStatus::factory()->create();
-        $this->studyName = $reviewStatus->visit->patient->study_name;
+        $visit = Visit::factory()->create();
+        $this->patient = $visit->patient;
+        $this->studyName = $visit->visitType->visitGroup->study_name;
     }
 
     public function testGetPossibleUpload()
     {
         $currentUserId = AuthorizationTools::actAsAdmin(false);
+
+        $userModel = User::find($currentUserId);
+        $userModel->center_code = $this->patient->center_code;
+        $userModel->save();
+
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_INVESTIGATOR, $this->studyName);
 
         $response = $this->get('api/studies/'.$this->studyName.'/possible-uploads');

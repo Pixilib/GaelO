@@ -37,10 +37,10 @@ class GetPossibleUpload
 
             foreach ($visitsEntities as $visit) {
                 $item['patientCode'] = $visit['patient_code'];
-                $item['patientFirstname'] = $visit['firstname'];
-                $item['patientLastname'] = $visit['lastname'];
-                $item['patientSex'] = $visit['gender'];
-                $item['patientDOB'] = $this->formatBirthDateUS($visit['birth_month'], $visit['birth_day'], $visit['birth_year']);
+                $item['patientFirstname'] = $visit['patient']['firstname'];
+                $item['patientLastname'] = $visit['patient']['lastname'];
+                $item['patientSex'] = $visit['patient']['gender'];
+                $item['patientDOB'] = $this->formatBirthDateUS($visit['patient']['birth_month'], $visit['patient']['birth_day'], $visit['patient']['birth_year']);
                 $item['visitDate'] = date('m-d-Y', strtotime($visit['visit_date']));
                 $item['visitModality'] = $visit['visit_type']['visit_group']['modality'];
                 $item['visitType'] = $visit['visit_type']['name'];

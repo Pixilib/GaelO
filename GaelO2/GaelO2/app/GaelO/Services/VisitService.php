@@ -6,14 +6,12 @@ use App\GaelO\Constants\Constants;
 use App\GaelO\Interfaces\Repositories\DicomStudyRepositoryInterface;
 use App\GaelO\Repositories\ReviewRepository;
 use App\GaelO\Repositories\ReviewStatusRepository;
-use App\GaelO\Repositories\UserRepository;
 use App\GaelO\Repositories\VisitTypeRepository;
 use App\GaelO\Repositories\VisitRepository;
 use App\GaelO\Entities\VisitTypeEntity;
 
 class VisitService
 {
-    private UserRepository $userRepository;
     private VisitRepository $visitRepository;
     private ReviewRepository $reviewRepository;
     private VisitTypeRepository $visitTypeRepository;
@@ -24,7 +22,6 @@ class VisitService
     private int $visitId;
 
     public function __construct(
-        UserRepository $userRepository,
         VisitRepository $visitRepository,
         ReviewRepository $reviewRepository,
         ReviewStatusRepository $reviewStatusRepository,
@@ -38,7 +35,6 @@ class VisitService
         $this->dicomStudyRepositoryInterface = $dicomStudyRepositoryInterface;
         $this->reviewStatusRepository = $reviewStatusRepository;
         $this->reviewRepository = $reviewRepository;
-        $this->userRepository = $userRepository;
     }
 
     public function setVisitId(int $visitId)
@@ -191,11 +187,5 @@ class VisitService
     public function getReviewStatus(string $studyName)
     {
         return $this->reviewStatusRepository->getReviewStatus($this->visitId, $studyName);
-    }
-
-    public function getImagingVisitsAwaitingUploadVisitsForUser(string $studyName): array
-    {
-        $centers = $this->userRepository->getAllUsersCenters($this->userId);
-        return $this->visitRepository->getImagingVisitsAwaitingUpload($studyName, $centers);
     }
 }

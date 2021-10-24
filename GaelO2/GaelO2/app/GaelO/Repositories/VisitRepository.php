@@ -426,7 +426,7 @@ class VisitRepository implements VisitRepositoryInterface
     public function getImagingVisitsAwaitingUpload(string $studyName, array $centerCode): array
     {
 
-        $answer = $this->visit->with('visitType')
+        $answer = $this->visit->with('visitType', 'patient')
             ->whereHas('patient', function ($query) use ($centerCode) {
                 $query->whereIn('center_code', $centerCode);
             })
