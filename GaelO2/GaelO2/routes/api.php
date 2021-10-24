@@ -62,7 +62,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('studies/{studyName}/patients', [StudyController::class, 'getPatientFromStudy']);
     Route::get('studies/{studyName}/visits-tree', [StudyController::class, 'getVisitsTree']);
     Route::post('studies/{studyName}/import-patients', [StudyController::class, 'importPatients']);
-    Route::get('studies/{studyName}/orthanc-study-id/{orthancStudyID}', [StudyController::class, 'isKnownOrthancId']);
+    Route::get('studies/{studyName}/original-orthanc-study-id/{orthancStudyID}', [StudyController::class, 'isKnownOrthancId']);
     Route::get('studies/{studyName}/possible-uploads', [StudyController::class, 'getPossibleUploads']);
     Route::get('studies/{studyName}/visit-types/{visitTypeId}/review-progression', [StudyController::class, 'getReviewProgression']);
     Route::get('studies/{studyName}/visits', [VisitController::class, 'getVisitsFromStudy']);

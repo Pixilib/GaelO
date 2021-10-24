@@ -179,7 +179,7 @@ class StudyTest extends TestCase
         $study = Study::factory()->create();
         $studyName = $study->name;
 
-        $this->json('GET', '/api/studies/'.$studyName.'/orthanc-study-id/WrongOrthancID')->assertStatus(403);
+        $this->json('GET', '/api/studies/'.$studyName.'/original-orthanc-study-id/WrongOrthancID')->assertStatus(403);
     }
 
     public function testIsKnownOriginalOrthancStudyIDYes(){
@@ -195,9 +195,9 @@ class StudyTest extends TestCase
             ->create();
 
         AuthorizationTools::addRoleToUser(1, Constants::ROLE_INVESTIGATOR, $studyName);
-        $this->json('GET', '/api/studies/'.$studyName.'/orthanc-study-id/'.$dicomStudyInstance->anon_from_orthanc_id)->assertStatus(200);
+        $this->json('GET', '/api/studies/'.$studyName.'/original-orthanc-study-id/'.$dicomStudyInstance->anon_from_orthanc_id)->assertStatus(200);
         $dicomStudyInstance->delete();
-        $this->json('GET', '/api/studies/'.$studyName.'/orthanc-study-id/'.$dicomStudyInstance->anon_from_orthanc_id)->assertStatus(404);
+        $this->json('GET', '/api/studies/'.$studyName.'/original-orthanc-study-id/'.$dicomStudyInstance->anon_from_orthanc_id)->assertStatus(404);
     }
 
 

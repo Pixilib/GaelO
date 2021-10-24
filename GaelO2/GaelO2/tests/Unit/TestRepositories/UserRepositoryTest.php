@@ -324,24 +324,6 @@ class UserRepositoryTest extends TestCase
         $this->assertEquals(0, sizeof($commonEmails));
     }
 
-    public function testGetUsersAffiliatedToCenter(){
-
-        $center3Code = $this->center3->code;
-
-        $usersMainCenter = User::factory()->status(Constants::USER_STATUS_ACTIVATED)->centerCode($center3Code)->count(10)->create();
-        $usersAffiliated = User::factory()->status(Constants::USER_STATUS_ACTIVATED)->count(5)->create();
-        $usersNotAffiliated = User::factory()->status(Constants::USER_STATUS_ACTIVATED)->count(20)->create();
-
-        $usersAffiliated->each(function ($user) use ($center3Code) {
-            CenterUser::factory()->userId($user->id)->centerCode($center3Code)->create();
-        });
-
-        $users = $this->userRepository->getUsersAffiliatedToCenter($center3Code);
-
-        $this->assertEquals(15, sizeof($users));
-
-    }
-
     public function testGetStudiesWithRoleForUser(){
 
         $user = User::factory()->create();

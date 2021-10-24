@@ -5,7 +5,6 @@ namespace App\GaelO\Adapters;
 use App\GaelO\Interfaces\Adapters\HttpClientInterface;
 use App\GaelO\Interfaces\Adapters\Psr7ResponseInterface;
 use GuzzleHttp\Client;
-use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Pool;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
@@ -58,7 +57,7 @@ class HttpClientAdapter implements HttpClientInterface
         $responseArray = [];
 
         $pool = new Pool($this->client, $requests($files), [
-            'concurrency' => 1,
+            'concurrency' => 5,
             'fulfilled' => function (Response $response, $index) use (&$responseArray) {
                 $responseArray[] = new Psr7ResponseAdapter($response);
             },

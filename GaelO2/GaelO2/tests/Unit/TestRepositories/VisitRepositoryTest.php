@@ -473,6 +473,7 @@ class VisitRepositoryTest extends TestCase
         $patients = $this->populateVisits();
         $visits = $this->visitRepository->getImagingVisitsAwaitingUpload($patients[0]->study->name, [$patients[0]->center_code, $patients[1]->center_code]);
         $this->assertEquals(12, sizeof($visits));
+        $this->assertArrayHasKey('patient', $visits[0]);
     }
 
     public function testDeleteVisit(){

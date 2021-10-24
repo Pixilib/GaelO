@@ -69,22 +69,18 @@ class DicomSeriesService
         //Get data from StudyInstanceUID
         $studyData = $this->dicomStudyRepositoryInterface->getDicomStudy($studyInstanceUID, true);
 
+        $visitId = $studyData['visit_id'];
+
         //Check no other activated study for this visit
-        if ($this->dicomStudyRepositoryInterface->isExistingDicomStudyForVisit($studyData['visit_id'])) {
+        if ($this->dicomStudyRepositoryInterface->isExistingDicomStudyForVisit($visitId) ) {
             throw new GaelOBadRequestException("Already existing Dicom Study for this visit");
         };
 
         //reactivate study level
         $this->dicomStudyRepositoryInterface->reactivateByStudyInstanceUID($studyInstanceUID);
 
-        $deletedSeries = $this->dicomStudyRepositoryInterface->getChildSeries($studyInstanceUID, true);
-        foreach($deletedSeries as $series){
-            $this->dicomSeriesRepositoryInterface->reactivateSeries($series['series_uid']);
-        }
-
-
         //Update upload status to Done
-        $this->visitService->setVisitId($studyData['visit_id']);
+        $this->visitService->setVisitId($visitId);
         $this->visitService->updateUploadStatus(Constants::UPLOAD_STATUS_DONE);
     }
 }

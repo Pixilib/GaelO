@@ -8,6 +8,7 @@ use App\GaelO\Entities\DicomStudyEntity;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\DicomStudyRepositoryInterface;
+use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
 use App\GaelO\Services\AuthorizationVisitService;
 use Exception;
 
@@ -15,10 +16,12 @@ class GetDicoms{
 
     private AuthorizationVisitService $authorizationVisitService;
     private DicomStudyRepositoryInterface $dicomStudyRepositoryInterface;
+    private VisitRepositoryInterface $visitRepositoryInterface;
 
-    public function __construct(DicomStudyRepositoryInterface $dicomStudyRepositoryInterface, AuthorizationVisitService $authorizationVisitService){
+    public function __construct(DicomStudyRepositoryInterface $dicomStudyRepositoryInterface, VisitRepositoryInterface $visitRepositoryInterface, AuthorizationVisitService $authorizationVisitService){
         $this->dicomStudyRepositoryInterface = $dicomStudyRepositoryInterface;
         $this->authorizationVisitService = $authorizationVisitService;
+        $this->visitRepositoryInterface = $visitRepositoryInterface;
     }
 
     public function execute(GetDicomsRequest $getDicomsRequest, GetDicomsResponse $getDicomResponse){
@@ -26,16 +29,15 @@ class GetDicoms{
 
             $this->checkAuthorization($getDicomsRequest->visitId, $getDicomsRequest->currentUserId, $getDicomsRequest->role);
 
+            $visitContext = $this->visitRepositoryInterface->getVisitContext($getDicomsRequest->visitId, false);
             //If Supervisor include deleted studies
-            $includeTrashed = $getDicomsRequest->role === Constants::ROLE_SUPERVISOR || $getDicomsRequest->role === Constants::ROLE_INVESTIGATOR;
+            $includeTrashedStudies = $getDicomsRequest->role === Constants::ROLE_SUPERVISOR;
+            //Include Trashed Series if Supervisor OR (Investigator and QC pending)
+            $includedTrashedSeries = ( $getDicomsRequest->role === Constants::ROLE_INVESTIGATOR
+                                        && in_array($visitContext['state_quality_control'], [Constants::QUALITY_CONTROL_CORRECTIVE_ACTION_ASKED, Constants::QUALITY_CONTROL_NOT_DONE]) )
+                                        || ($getDicomsRequest->role === Constants::ROLE_SUPERVISOR);
 
-            $data = [];
-
-            if($includeTrashed){
-                $data = $this->dicomStudyRepositoryInterface->getDicomsDataFromVisit($getDicomsRequest->visitId, $includeTrashed);
-            }else{
-                $data[] = $this->dicomStudyRepositoryInterface->getDicomsDataFromVisit($getDicomsRequest->visitId, $includeTrashed);
-            }
+            $data = $this->dicomStudyRepositoryInterface->getDicomsDataFromVisit($getDicomsRequest->visitId, $includeTrashedStudies, $includedTrashedSeries);
 
             $responseArray = [];
 

@@ -73,14 +73,13 @@ class DicomStudyRepository implements DicomStudyRepositoryInterface
     public function isExistingOriginalOrthancStudyID(string $originalOrthancStudyID, string $studyName): bool
     {
         $dicomStudies = $this->dicomStudy->where('anon_from_orthanc_id', $originalOrthancStudyID)
-            ->join('visits', function ($join) {
-                $join->on('dicom_studies.visit_id', '=', 'visits.id');
-            })->join('visit_types', function ($join) {
-                $join->on('visit_types.id', '=', 'visits.visit_type_id');
-            })->join('visit_groups', function ($join) {
-                $join->on('visit_groups.id', '=', 'visit_types.visit_group_id');
+            ->whereHas('visit', function ($query) use ($studyName) {
+                $query->whereHas('visitType', function ($query) use ($studyName) {
+                    $query->whereHas('visitGroup', function ($query) use ($studyName) {
+                        $query->where('study_name', $studyName);
+                    });
+                });
             })
-            ->where('study_name', '=', $studyName)
             ->get();
 
         return $dicomStudies->count() > 0 ? true : false;
@@ -98,16 +97,26 @@ class DicomStudyRepository implements DicomStudyRepositoryInterface
         return $dicomStudies->count() > 0 ? true : false;
     }
 
-    public function getDicomsDataFromVisit(int $visitID, bool $withDeleted): array
+    public function getDicomsDataFromVisit(int $visitID, bool $withDeletedStudy, bool $withDeletedSeries): array
     {
 
-        if ($withDeleted) {
-            $studies = $this->dicomStudy->withTrashed()->with(['dicomSeries' => function ($query) {
-                $query->withTrashed();
-            }, 'uploader'])->where('visit_id', $visitID)->get();
-        } else {
-            $studies = $this->dicomStudy->where('visit_id', $visitID)->with(['dicomSeries', 'uploader'])->sole();
+        $query = $this->dicomStudy;
+
+        if($withDeletedStudy){
+            $query = $query->withTrashed();
         }
+
+
+        if ($withDeletedSeries) {
+            $query = $query->with(['dicomSeries' => function ($query) {
+                $query->withTrashed();
+            }]);
+        }else{
+            $query = $query->with('dicomSeries');
+        }
+
+        $studies = $query->where('visit_id', $visitID)->with('uploader')->get();
+
 
         return $studies->count() == 0 ? [] : $studies->toArray();
     }

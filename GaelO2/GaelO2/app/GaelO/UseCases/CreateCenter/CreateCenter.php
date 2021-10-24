@@ -37,7 +37,7 @@ class CreateCenter {
                 throw new GaelOConflictException("Center Code already used");
             };
 
-            if(!empty($this->centerRepositoryInterface->getCenterByName($createCenterRequest->name))){
+            if( $this->centerRepositoryInterface->isExistingCenterName($createCenterRequest->name) ){
                 throw new GaelOConflictException("Center Name already used.");
             };
 

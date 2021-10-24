@@ -38,7 +38,7 @@ class ModifyCenter {
             };
 
             //If center name has been changed, check that name isn't already used
-            if(!empty($modifyCenterRequest->name) && !empty($this->centerRepositoryInterface->getCenterByName($modifyCenterRequest->name))){
+            if(!empty($modifyCenterRequest->name) && $this->centerRepositoryInterface->isExistingCenterName($modifyCenterRequest->name) ){
                 throw new GaelOConflictException('Center Name already used');
             };
 
