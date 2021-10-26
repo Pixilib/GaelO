@@ -90,12 +90,25 @@ class VisitTypeTest extends TestCase
         AuthorizationTools::actAsAdmin(true);
         $visitType = VisitType::factory()->create();
 
-        $response = $this->json('GET', 'api/visit-types/'.$visitType->id)->content();
-        $response = json_decode($response, true);
-        //Check that all value in output entity is in response
-        foreach ( get_class_vars(VisitTypeEntity::class) as $key=>$value ){
-            $this->assertArrayHasKey($key, $response);
-        }
+        $answer = $this->json('GET', 'api/visit-types/'.$visitType->id);
+        $answer->assertStatus(200);
+        
+        $expectedKeys = [
+            "id",
+            "visitGroupId",
+            "name",
+            "order",
+            "localFormNeeded",
+            "qcNeeded",
+            "reviewNeeded",
+            "optional",
+            "limitLowDays",
+            "limitUpDays",
+            "anonProfile",
+            "dicomConstraints"
+        ];
+
+        $answer->assertJsonStructure($expectedKeys);
 
     }
 
