@@ -35,11 +35,19 @@ class GetReviewFormFromVisit
 
             $reviews = [];
 
-            foreach ($reviewEntity as $review) {
-                $detailedReview = ReviewEntity::fillFromDBReponseArray($review);
-                $detailedReview->setUserDetails($review['user']['username'], $review['user']['lastname'], $review['user']['firstname'], $review['user']['center_code']);
-                $reviews[] = $detailedReview;
+            if( ! $getReviewFormFromVisitRequest->userId){
+                $reviewEntity = $this->reviewRepositoryInterface->getReviewFormForStudyVisitUser($getReviewFormFromVisitRequest->studyName, $getReviewFormFromVisitRequest->visitId, $getReviewFormFromVisitRequest->userId);
+                foreach ($reviewEntity as $review) {
+                    $detailedReview = ReviewEntity::fillFromDBReponseArray($review);
+                    $detailedReview->setUserDetails($review['user']['username'], $review['user']['lastname'], $review['user']['firstname'], $review['user']['center_code']);
+                    $reviews[] = $detailedReview;
+                }
+            }else{
+                $reviewEntity = $this->reviewRepositoryInterface->getReviewsForStudyVisit($getReviewFormFromVisitRequest->studyName, $getReviewFormFromVisitRequest->visitId, false);
+                $detailedReview = ReviewEntity::fillFromDBReponseArray($reviewEntity);
+                $reviews = $detailedReview;
             }
+
             $getReviewFormFromVisitResponse->body = $reviews;
             $getReviewFormFromVisitResponse->status = 200;
             $getReviewFormFromVisitResponse->statusText = 'OK';
@@ -62,5 +70,12 @@ class GetReviewFormFromVisit
         if (!$this->authorizationVisitService->isVisitAllowed()) {
             throw new GaelOForbiddenException();
         }
+
+        //SK reprendre ici
+        //Check that user is asking own review
+        /*
+        if ($currentUserId === $visitId) {
+            throw new GaelOForbiddenException();
+        }*/
     }
 }
