@@ -114,17 +114,16 @@ class GetReviewFormTest extends TestCase
     public function testGetReviewFormFromUser(){
 
         $visitId = $this->review->visit->id;
-        $studyName = $this->review->visit->visitType->visitGroup->study->name;
 
         $userId = AuthorizationTools::actAsAdmin(false);
         $this->review->user_id = $userId;
         $this->review->save();
 
-        AuthorizationTools::addRoleToUser($userId, Constants::ROLE_REVIEWER, $studyName);
+        AuthorizationTools::addRoleToUser($userId, Constants::ROLE_REVIEWER, $this->studyName);
 
-        $answer = $this->get('api/studies/'.$studyName.'/visits/'.$visitId.'/reviews?userId='.$userId);
-
+        $answer = $this->get('api/studies/'.$this->studyName.'/visits/'.$visitId.'/reviews?userId='.$userId);
         dd($answer);
+
 
     }
 

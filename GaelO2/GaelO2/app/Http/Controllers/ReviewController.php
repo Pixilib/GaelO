@@ -160,26 +160,26 @@ class ReviewController extends Controller
 
     public function getReviewForm(Request $request, int $reviewId, GetReviewForm $getReviewForm, GetReviewFormRequest $getReviewFormRequest, GetReviewFormResponse $getReviewFormResponse)
     {
-
         $curentUser = Auth::user();
         $getReviewFormRequest->currentUserId = $curentUser['id'];
         $getReviewFormRequest->reviewId = $reviewId;
-
-        $queryParam = $request->query();
-        $getReviewFormRequest = $queryParam['userId'];
 
         $getReviewForm->execute($getReviewFormRequest, $getReviewFormResponse);
 
         return $this->getJsonResponse($getReviewFormResponse->body, $getReviewFormResponse->status, $getReviewFormResponse->statusText);
     }
 
-    public function getReviewsFromVisit(string $studyName, int $visitId, GetReviewFormFromVisit $getReviewFormFromVisit, GetReviewFormFromVisitRequest $getReviewFormFromVisitRequest, GetReviewFormFromVisitResponse $getReviewFormFromVisitResponse)
+    public function getReviewsFromVisit(Request $request, string $studyName, int $visitId, GetReviewFormFromVisit $getReviewFormFromVisit, GetReviewFormFromVisitRequest $getReviewFormFromVisitRequest, GetReviewFormFromVisitResponse $getReviewFormFromVisitResponse)
     {
         $curentUser = Auth::user();
 
         $getReviewFormFromVisitRequest->currentUserId = $curentUser['id'];
         $getReviewFormFromVisitRequest->studyName = $studyName;
         $getReviewFormFromVisitRequest->visitId = $visitId;
+
+        $queryParam = $request->query();
+
+        if( array_key_exists('userId', $queryParam) ) $getReviewFormFromVisitRequest->userId = $queryParam['userId'];
 
         $getReviewFormFromVisit->execute($getReviewFormFromVisitRequest, $getReviewFormFromVisitResponse);
 
