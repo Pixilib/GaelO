@@ -158,7 +158,7 @@ class ReviewController extends Controller
         return $this->getJsonResponse($modifyReviewFormResponse->body, $modifyReviewFormResponse->status, $modifyReviewFormResponse->statusText);
     }
 
-    public function getReviewForm(Request $request, int $reviewId, GetReviewForm $getReviewForm, GetReviewFormRequest $getReviewFormRequest, GetReviewFormResponse $getReviewFormResponse)
+    public function getReviewForm(int $reviewId, GetReviewForm $getReviewForm, GetReviewFormRequest $getReviewFormRequest, GetReviewFormResponse $getReviewFormResponse)
     {
         $curentUser = Auth::user();
         $getReviewFormRequest->currentUserId = $curentUser['id'];

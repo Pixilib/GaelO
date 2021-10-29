@@ -98,7 +98,7 @@ class ReviewRepository implements ReviewRepositoryInterface {
             ->where('study_name', $studyName)
             ->where('visit_id', $visitId)
             ->where('user_id', $userId)
-            ->where('local', true)
+            ->where('local', false)
             ->sole();
 
         return $reviewEntity->toArray();

@@ -65,7 +65,6 @@ class GetReviewFormFromVisit
     private function checkAuthorization(int $currentUserId, int $visitId, ?int $reviewerId)
     {
         if ($currentUserId === $reviewerId) {
-
             return true;
         }
 

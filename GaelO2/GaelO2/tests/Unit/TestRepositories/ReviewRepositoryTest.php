@@ -127,7 +127,7 @@ class ReviewRepositoryTest extends TestCase
     }
 
     public function testGetReviewFormForStudyVisitUser(){
-        $review = Review::factory()->count(5)->create();
+        $review = Review::factory()->reviewForm()->count(5)->create();
         $reviewAnswer = $this->reviewRepository->getReviewFormForStudyVisitUser($review->first()->study_name, $review->first()->visit_id, $review->first()->user_id);
         $this->assertEquals($review->first()->review_date, $reviewAnswer['review_date']);
     }
