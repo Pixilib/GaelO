@@ -65,6 +65,7 @@ class VisitTreeTest extends TestCase
                     "id" => 2,
                     "study_name" => "FTF46YRWEZIZB9R9JPON",
                     "modality" => "PT",
+                    "name" => "wb",
                     "created_at" => "2021-01-26T23:23:36.000000Z",
                     "updated_at" => "2021-01-26T23:23:36.000000Z",
                 ]

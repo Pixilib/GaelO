@@ -16,10 +16,11 @@ class CreateVisitGroupsTable extends Migration
         Schema::create('visit_groups', function (Blueprint $table) {
             $table->id();
             $table->string('study_name')->nullable(false);
+            $table->string('name')->nullable(false);
             $table->enum('modality', ['PT', 'MR', 'CT', 'US', 'NM', 'RT'])->nullable(false);
             $table->timestamps();
 
-            $table->unique(['study_name', 'modality']);
+            $table->unique(['study_name', 'name']);
             $table->foreign('study_name')->references('name')->on('studies');
         });
     }

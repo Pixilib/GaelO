@@ -53,6 +53,7 @@ class VisitGroupTest extends TestCase
     public function testCreateVisitGroup() {
         AuthorizationTools::actAsAdmin(true);
         $payload = [
+            'name' => 'wb',
             'modality' => 'CT'
         ];
         $study = Study::factory()->create();
@@ -65,6 +66,7 @@ class VisitGroupTest extends TestCase
     public function testCreateVisitGroupForbiddenNotAdmin(){
         AuthorizationTools::actAsAdmin(false);
         $payload = [
+            'name' => 'wb',
             'modality' => 'CT'
         ];
         $study = Study::factory()->create();
@@ -83,6 +85,7 @@ class VisitGroupTest extends TestCase
         $visit = Visit::factory()->create();
         $studyName = $visit->visitType->visitGroup->study->name;
         $payload = [
+            'name' => 'wb',
             'modality' => 'PT'
         ];
         $this->json('POST', 'api/studies/'.$studyName.'/visit-groups', $payload)->assertStatus(403);

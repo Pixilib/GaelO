@@ -16,6 +16,8 @@ class VisitTypeEntity {
     public string $anonProfile;
     public array $dicomConstraints;
 
+    public VisitGroupEntity $visitGroup;
+
     public static function fillFromDBReponseArray(array $array){
         $visitTypeEntity  = new VisitTypeEntity();
         $visitTypeEntity->id = $array['id'];
@@ -33,4 +35,9 @@ class VisitTypeEntity {
 
         return $visitTypeEntity;
     }
+
+    public function setVisitGroupContext(array $visitGroupEntity){
+        $this->visitGroup = VisitGroupEntity::fillFromDBReponseArray($visitGroupEntity);
+    }
+
 }

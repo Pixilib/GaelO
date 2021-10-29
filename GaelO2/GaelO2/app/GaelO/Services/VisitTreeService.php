@@ -115,7 +115,6 @@ class VisitTreeService
             return $this->makeTreeFromPatientsArray($patientCodeArray);
 
         } else {
-
             throw new GaelOBadRequestException('Not Authorized role for tree generation');
         }
     }
@@ -125,13 +124,13 @@ class VisitTreeService
      */
     private function filterVisitOutputData(array $visitEntity): array
     {
-
         return [
             'id' => $visitEntity['id'],
             'name' => $visitEntity['visit_type']['name'],
             'order' => $visitEntity['visit_type']['order'],
             'optional' => $visitEntity['visit_type']['optional'],
             'modality' => $visitEntity['visit_type']['visit_group']['modality'],
+            'modalityName' => $visitEntity['visit_type']['visit_group']['name'],
             'studyName' => $visitEntity['visit_type']['visit_group']['study_name'],
             'stateInvestigatorForm' => $visitEntity['state_investigator_form'],
             'stateQualityControl' => $visitEntity['state_quality_control'],

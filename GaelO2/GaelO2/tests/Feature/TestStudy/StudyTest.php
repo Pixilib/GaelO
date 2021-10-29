@@ -125,9 +125,25 @@ class StudyTest extends TestCase
         $visitType = VisitType::factory()->create();
         AuthorizationTools::addRoleToUser($userId, Constants::ROLE_SUPERVISOR, $visitType->visitGroup->study->name);
         $answer = $this->json('GET', '/api/studies/'.$visitType->visitGroup->study->name.'/visit-types');
-        $this->assertArrayHasKey('visitGroupId', $answer[0]);
-        $this->assertArrayHasKey('visitGroupModality', $answer[0]);
-        $this->assertArrayHasKey('visitType', $answer[0]);
+        $answer->assertStatus(200);
+        $expectedKeys = [
+            "id",
+            "visitGroupId",
+            "name",
+            "order",
+            "localFormNeeded",
+            "qcNeeded",
+            "reviewNeeded",
+            "optional",
+            "limitLowDays",
+            "limitUpDays",
+            "anonProfile",
+            "dicomConstraints",
+            "visitGroup"
+        ];
+        foreach($expectedKeys as $key) {
+            $this->assertArrayHasKey($key, $answer[0]);
+        }
     }
 
     public function testGetStudyDetailsShouldFailNotSupervisor(){

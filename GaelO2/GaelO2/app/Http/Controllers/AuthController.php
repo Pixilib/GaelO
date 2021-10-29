@@ -29,7 +29,7 @@ class AuthController extends Controller
 
             $tokenResult = $user->createToken('GaelO');
 
-            return response()->json([
+          return response()->json([
                 'id' => $user->id,
                 'access_token' => $tokenResult->plainTextToken,
                 'token_type' => 'Bearer'

@@ -92,6 +92,5 @@ class VisitEntity {
         $userEntity->firstname = $firstname;
         $userEntity->lastname = $lastname;
         $this->creatorUser = $userEntity;
-
     }
 }

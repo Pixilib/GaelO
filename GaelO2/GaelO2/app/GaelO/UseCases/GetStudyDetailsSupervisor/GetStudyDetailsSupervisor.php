@@ -31,17 +31,11 @@ class GetStudyDetailsSupervisor {
             $studyDetailResponse = [];
 
             foreach($studyDetails['visit_group_details'] as $visitGroupDetails){
-                $visitGroupEntity = VisitGroupEntity::fillFromDBReponseArray($visitGroupDetails);
-
                 foreach($visitGroupDetails['visit_types'] as $visitType){
                     $visitTypeEntity = VisitTypeEntity::fillFromDBReponseArray($visitType);
-                    $studyDetailResponse[] = [
-                        'visitGroupId'=>$visitGroupEntity->id,
-                        'visitGroupModality'=>$visitGroupEntity->modality,
-                        'visitType'=>$visitTypeEntity
-                    ];
+                    $visitTypeEntity->setVisitGroupContext($visitGroupDetails);
+                    $studyDetailResponse[] = $visitTypeEntity;
                 }
-
             }
 
             $etStudyDetailsSupervisorResponse->body = $studyDetailResponse;
