@@ -127,7 +127,7 @@ class GetReviewFormTest extends TestCase
 
         $visitId = $this->review->visit->id;
 
-        $userId = AuthorizationTools::actAsAdmin(false);
+        AuthorizationTools::actAsAdmin(false);
 
         $answer = $this->get('api/studies/'.$this->studyName.'/visits/'.$visitId.'/reviews?userId='.$this->review->user_id);
         $answer->assertStatus(403);
