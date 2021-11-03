@@ -21,6 +21,7 @@ use App\Mail\UploadedVisit;
 use App\Mail\UploadFailure;
 use App\Mail\UserCreated;
 use App\Mail\VisitNotDone;
+use App\Mail\Reminder;
 
 use App\GaelO\Constants\MailConstants;
 use App\GaelO\Constants\SettingsConstants;
@@ -69,8 +70,6 @@ class MailerAdapter implements MailerInterface {
             $model = $this->getModel($this->modelType);
             Mail::to($destinator)->send($model);
         }
-
-
     }
 
     private function getModel(int $model) : Mailable{
@@ -133,7 +132,9 @@ class MailerAdapter implements MailerInterface {
             case MailConstants::EMAIL_IMPORT_PATIENT:
                 $model = new ImportPatient($this->parameters);
                 break;
-            break;
+            case MailConstants::EMAIL_REMINDER:
+                $model = new Reminder($this->parameters);
+                break;
         }
 
         return $model;

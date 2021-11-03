@@ -480,4 +480,48 @@ class MailServices
         $this->mailInterface->setBody(MailConstants::EMAIL_VISIT_NOT_DONE);
         $this->mailInterface->send();
     }
+
+    /**
+     * Parameters in associative array: study, subject, content, centers
+     */
+    public function sendReminderToInvestigators(array $parameters)
+    {
+        $centerCode = $parameters['centerCode'];
+
+        $parameters = [
+            'study' => $parameters['study'],
+            'subject' => $parameters['subject'],
+            'content' => $parameters['content']
+        ];
+
+        $this->mailInterface->setTo($this->getInvestigatorOfCenterInStudy($parameters['study'], $centerCode));
+        $this->mailInterface->setReplyTo();
+        $this->mailInterface->setParameters($parameters);
+        $this->mailInterface->setBody(MailConstants::EMAIL_REMINDER);
+        $this->mailInterface->send();
+    }
+
+
+    /**
+     * Parameters in associative array: study, subject, content, role
+     */
+    public function sendReminder(array $parameters)
+    {
+        $role = $parameters['role'];
+     
+        $parameters = [
+            'study' => $parameters['study'],
+            'subject' => $parameters['subject'],
+            'content' => $parameters['content']
+        ];
+
+        $this->mailInterface->setTo(
+            $this->userRepositoryInterface->getUsersEmailsByRolesInStudy($parameters['study'], $role)
+        );
+        $this->mailInterface->setReplyTo();
+        $this->mailInterface->setParameters($parameters);
+        $this->mailInterface->setBody(MailConstants::EMAIL_REMINDER);
+        $this->mailInterface->send();
+    }
+
 }

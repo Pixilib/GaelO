@@ -59,6 +59,9 @@ use App\GaelO\UseCases\ImportPatients\ImportPatientsResponse;
 use App\GaelO\UseCases\ReactivateStudy\ReactivateStudy;
 use App\GaelO\UseCases\ReactivateStudy\ReactivateStudyRequest;
 use App\GaelO\UseCases\ReactivateStudy\ReactivateStudyResponse;
+use App\GaelO\UseCases\Reminder\SendReminder;
+use App\GaelO\UseCases\Reminder\ReminderRequest;
+use App\GaelO\UseCases\Reminder\ReminderResponse;
 use App\GaelO\Util;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -294,5 +297,17 @@ class StudyController extends Controller
         $getDicomsStudiesFromVisitType->execute($getDicomsStudiesFromVisitTypeRequest, $getDicomsStudiesFromVisitTypeResponse);
 
         return $this->getJsonResponse($getDicomsStudiesFromVisitTypeResponse->body, $getDicomsStudiesFromVisitTypeResponse->status, $getDicomsStudiesFromVisitTypeResponse->statusText);
+    }
+
+    public function sendReminder(string $studyName, Request $request, SendReminder $sendReminder, ReminderRequest $reminderRequest, ReminderResponse $reminderResponse) {
+        $currentUser = Auth::user();
+        $requestData = $request->all();
+        $reminderRequest->currentUserId = $currentUser['id'];
+        $reminderRequest->study = $studyName;
+        $reminderRequest = Util::fillObject($requestData, $reminderRequest);
+        //dd($reminderRequest);
+        $sendReminder->execute($reminderRequest, $reminderResponse);
+        return $this->getJsonResponse($reminderResponse->body, $reminderResponse->status, $reminderResponse->statusText);
+
     }
 }
