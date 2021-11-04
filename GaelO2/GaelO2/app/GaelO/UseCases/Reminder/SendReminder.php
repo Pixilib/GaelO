@@ -32,8 +32,8 @@ class SendReminder {
 
             switch($reminderRequest->role) {
                 case Constants::ROLE_INVESTIGATOR:
-                    //EO Ne marche pas pour centre 0: checkEmpty(0) renvoie faux
-                    //$this->checkEmpty($reminderRequest->centerCode, 'centerCode');
+                    //EO checkEmpty() ne passe pas pour centre 0 (renvoie faux)
+                    isset($reminderRequest->centerCode);
                     $this->mailService->sendReminderToInvestigators( get_object_vars ($reminderRequest) );
                     break;
                 case Constants::ROLE_CONTROLLER:
