@@ -3,15 +3,13 @@
 namespace Tests\Feature\TestStudy;
 
 use App\GaelO\Constants\Constants;
-use App\Models\DicomStudy;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\TestCase;
 use App\Models\Study;
-use App\Models\Visit;
-use App\Models\VisitType;
+use App\Models\User;
 use Tests\AuthorizationTools;
 
-class SendReminderTest extends TestCase
+class SendMailTest extends TestCase
 {
 
     use DatabaseMigrations {
@@ -33,20 +31,13 @@ class SendReminderTest extends TestCase
         parent::setUp();
 
         $this->study = Study::factory()->patientCodePrefix('123')->create();
-
-        $this->validPayload = [ ["code" => 12341231234123,
-        "lastname" => "test",
-        "firstname" => "test",
-        "gender" => "M",
-        "birthDay" => 1,
-        "birthMonth" => 1,
-        "birthYear" => 1998,
-        "registrationDate" => '10/19/2020',
-        "investigatorName" => "administrator",
-        "centerCode" => 0,
-        "inclusionStatus"  => Constants::PATIENT_INCLUSION_STATUS_INCLUDED
-        ]];
-
+        for($i = 0; $i < 10; $i++) {
+            $user = User::factory()->centerCode(0)->create();
+            AuthorizationTools::addRoleToUser($user->id, Constants::ROLE_SUPERVISOR, $this->study->name);
+            AuthorizationTools::addRoleToUser($user->id, Constants::ROLE_INVESTIGATOR, $this->study->name);
+            AuthorizationTools::addRoleToUser($user->id, Constants::ROLE_REVIEWER, $this->study->name);
+            AuthorizationTools::addRoleToUser($user->id, Constants::ROLE_CONTROLLER, $this->study->name);
+        }
     }
 
 
@@ -127,7 +118,30 @@ class SendReminderTest extends TestCase
         $response = $this->json('POST', '/api/studies/'.$this->study->name.'/send-reminder?role='.Constants::ROLE_REVIEWER, $payload)->assertNoContent(200);
     }
 
+    public function testSendMailToSupervisors() {
+        $currentUserId = AuthorizationTools::actAsAdmin(false);
+        AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_INVESTIGATOR, $this->study->name);
+        AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $this->study->name);
 
+        $payload = [
+            'subject' => 'Question',
+            'content' => '<p>Something</p>',
+        ];
 
+        $response = $this->json('POST', '/api/studies/'.$this->study->name.'/send-mail?role='.Constants::ROLE_INVESTIGATOR, $payload)->assertNoContent(200);
+    }
+
+    public function testSendMailToUser() {
+        $currentUserId = AuthorizationTools::actAsAdmin(false);
+        AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $this->study->name);
+        
+        $payload = [
+            'userId' => $currentUserId,
+            'subject' => 'Question',
+            'content' => '<p>Something</p>',
+        ];
+
+        $response = $this->json('POST', '/api/studies/'.$this->study->name.'/send-mail?role='.Constants::ROLE_SUPERVISOR, $payload)->assertNoContent(200);
+    }
 
 }

@@ -62,6 +62,9 @@ use App\GaelO\UseCases\ReactivateStudy\ReactivateStudyResponse;
 use App\GaelO\UseCases\Reminder\SendReminder;
 use App\GaelO\UseCases\Reminder\ReminderRequest;
 use App\GaelO\UseCases\Reminder\ReminderResponse;
+use App\GaelO\UseCases\SendMail\SendMail;
+use App\GaelO\UseCases\SendMail\SendMailRequest;
+use App\GaelO\UseCases\SendMail\SendMailResponse;
 use App\GaelO\Util;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -305,9 +308,17 @@ class StudyController extends Controller
         $reminderRequest->currentUserId = $currentUser['id'];
         $reminderRequest->study = $studyName;
         $reminderRequest = Util::fillObject($requestData, $reminderRequest);
-        //dd($reminderRequest);
         $sendReminder->execute($reminderRequest, $reminderResponse);
         return $this->getJsonResponse($reminderResponse->body, $reminderResponse->status, $reminderResponse->statusText);
+    }
 
+    public function sendMail(string $studyName, Request $request, SendMail $sendMail, SendMailRequest $sendMailRequest, SendMailResponse $sendMailResponse) {
+        $currentUser = Auth::user();
+        $requestData = $request->all();
+        $sendMailRequest->currentUserId = $currentUser['id'];
+        $sendMailRequest->study = $studyName;
+        $sendMailRequest = Util::fillObject($requestData, $sendMailRequest);
+        $sendMail->execute($sendMailRequest, $sendMailResponse);
+        return $this->getJsonResponse($sendMailResponse->body, $sendMailResponse->status, $sendMailResponse->statusText);
     }
 }

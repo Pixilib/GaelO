@@ -489,6 +489,7 @@ class MailServices
         $centerCode = $parameters['centerCode'];
 
         $parameters = [
+            'name' => 'Investigator',
             'study' => $parameters['study'],
             'subject' => $parameters['subject'],
             'content' => $parameters['content']
@@ -510,6 +511,7 @@ class MailServices
         $role = $parameters['role'];
      
         $parameters = [
+            'name' => $role,
             'study' => $parameters['study'],
             'subject' => $parameters['subject'],
             'content' => $parameters['content']
@@ -521,6 +523,52 @@ class MailServices
         $this->mailInterface->setReplyTo();
         $this->mailInterface->setParameters($parameters);
         $this->mailInterface->setBody(MailConstants::EMAIL_REMINDER);
+        $this->mailInterface->send();
+    }
+
+    /**
+     * Parameters in associative array: study, subject, content, role
+     */
+    public function sendMailToSupervisors(array $parameters)
+    {
+     
+        $parameters = [
+            'name' => 'Supervisor',
+            'study' => $parameters['study'],
+            'subject' => $parameters['subject'],
+            'content' => $parameters['content']
+        ];
+
+        $this->mailInterface->setTo(
+            $this->userRepositoryInterface->getUsersEmailsByRolesInStudy($parameters['study'], Constants::ROLE_SUPERVISOR)
+        );
+        $this->mailInterface->setReplyTo();
+        $this->mailInterface->setParameters($parameters);
+        $this->mailInterface->setBody(MailConstants::EMAIL_USER);
+        $this->mailInterface->send();
+    }
+
+    /**
+     * Parameters in associative array: study, subject, content, userId
+     */
+    public function sendMailToUser(array $parameters)
+    {
+        $userId = $parameters['userId'];
+        $parameters = [
+            'name' => $this->getUserName($userId),
+            'study' => $parameters['study'],
+            'subject' => $parameters['subject'],
+            'content' => $parameters['content']
+        ];
+
+        $this->mailInterface->setTo(
+            [
+                $this->getUserEmail($userId)
+            ]
+        );
+        $this->mailInterface->setReplyTo();
+        $this->mailInterface->setParameters($parameters);
+        $this->mailInterface->setBody(MailConstants::EMAIL_USER);
         $this->mailInterface->send();
     }
 

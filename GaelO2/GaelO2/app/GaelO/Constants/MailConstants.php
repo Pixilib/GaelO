@@ -24,4 +24,5 @@ class MailConstants {
     const EMAIL_ADJUDICATION=17;
     const EMAIL_IMPORT_PATIENT=18;
     const EMAIL_REMINDER=19;
+    const EMAIL_USER=20;
 }

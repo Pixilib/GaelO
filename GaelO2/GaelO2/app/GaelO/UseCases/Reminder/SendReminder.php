@@ -19,7 +19,7 @@ class SendReminder {
         $this->authorizationService = $authorizationService;
     }
 
-    public function execute(reminderRequest $reminderRequest, reminderResponse $reminderResponse){
+    public function execute(ReminderRequest $reminderRequest, ReminderResponse $reminderResponse){
 
         try{
 
@@ -30,18 +30,12 @@ class SendReminder {
             $this->checkEmpty($reminderRequest->subject, 'subject');
             $this->checkEmpty($reminderRequest->content, 'content');
 
-            switch($reminderRequest->role) {
-                case Constants::ROLE_INVESTIGATOR:
-                    //EO checkEmpty() ne passe pas pour centre 0 (renvoie faux)
-                    isset($reminderRequest->centerCode);
-                    $this->mailService->sendReminderToInvestigators( get_object_vars ($reminderRequest) );
-                    break;
-                case Constants::ROLE_CONTROLLER:
-                    $this->mailService->sendReminder( get_object_vars($reminderRequest) );    
-                    break;
-                case Constants::ROLE_REVIEWER:
-                    $this->mailService->sendReminder( get_object_vars($reminderRequest) );    
-                    break;
+            if($reminderRequest->role === Constants::ROLE_INVESTIGATOR) {
+                //EO checkEmpty() ne passe pas pour centre 0 (renvoie faux)
+                isset($reminderRequest->centerCode);
+                $this->mailService->sendReminderToInvestigators( get_object_vars ($reminderRequest) );
+            } else {
+                $this->mailService->sendReminder( get_object_vars($reminderRequest) );    
             }
 
             $reminderResponse->status = 200;

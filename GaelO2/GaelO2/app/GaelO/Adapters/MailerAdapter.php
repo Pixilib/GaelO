@@ -22,6 +22,7 @@ use App\Mail\UploadFailure;
 use App\Mail\UserCreated;
 use App\Mail\VisitNotDone;
 use App\Mail\Reminder;
+use App\Mail\MailUser;
 
 use App\GaelO\Constants\MailConstants;
 use App\GaelO\Constants\SettingsConstants;
@@ -134,6 +135,9 @@ class MailerAdapter implements MailerInterface {
                 break;
             case MailConstants::EMAIL_REMINDER:
                 $model = new Reminder($this->parameters);
+                break;
+            case MailConstants::EMAIL_USER:
+                $model = new MailUser($this->parameters);
                 break;
         }
 
