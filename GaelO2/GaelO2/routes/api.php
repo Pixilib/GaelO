@@ -55,6 +55,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('studies/{studyName}/users', [UserController::class, 'getUserFromStudy']);
 
     //Study Routes
+    Route::post('studies', [StudyController::class, 'createStudy']);
     Route::get('studies', [StudyController::class, 'getStudies']);
     Route::get('studies/{studyName}/visit-types', [StudyController::class, 'getStudyDetails']);
     Route::delete('studies/{studyName}', [StudyController::class, 'deleteStudy']);
@@ -72,9 +73,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('studies/{studyName}/visit-types/{visitTypeId}/investigator-forms', [StudyController::class, 'getInvestigatorFormsFromVisitType']);
     Route::get('studies/{studyName}/visit-types/{visitTypeId}/investigator-forms/metadata', [StudyController::class, 'getInvestigatorFormsMetadataFromVisitType']);
     Route::get('studies/{studyName}/visit-types/{visitTypeId}/dicom-studies', [StudyController::class, 'getDicomStudiesFromVisitType']);
-
-    //Study Routes
-    Route::post('studies', [StudyController::class, 'createStudy']);
+    Route::post('studies/{studyName}/send-reminder', [StudyController::class, 'sendReminder']);
+    Route::post('studies/{studyName}/send-mail', [StudyController::class, 'sendMail']);
 
     //Centers Routes
     Route::post('centers', [CenterController::class, 'createCenter']);
@@ -114,7 +114,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::patch('visits/{id}/reactivate', [VisitController::class, 'reactivateVisit']);
     Route::post('studies/{studyName}/visit-groups/{visitGroupId}/visit-types/{visitTypeId}/visits', [VisitController::class, 'createVisit']);
     Route::get('studies/{studyName}/visits/{id}', [VisitController::class, 'getVisit']);
-
 
     //Local Form Routes
     Route::get('visits/{id}/investigator-form', [ReviewController::class, 'getInvestigatorForm']);
