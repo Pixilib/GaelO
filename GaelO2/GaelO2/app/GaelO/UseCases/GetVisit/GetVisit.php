@@ -42,7 +42,7 @@ class GetVisit {
                 $visitEntity['visit_type']
             );
             $responseEntity->setReviewVisitStatus($reviewStatus['review_status'], $reviewStatus['review_conclusion_value'] ,$reviewStatus['review_conclusion_date'], $reviewStatus['target_lesions']);
-            $responseEntity->setCreatorDetails($userEntity['username'], $userEntity['firstname'], $userEntity['lastname']);
+            $responseEntity->setCreatorDetails($userEntity['firstname'], $userEntity['lastname']);
 
             $getVisitResponse->body = $responseEntity;
             $getVisitResponse->status = 200;

@@ -8,6 +8,5 @@ class ModifyUserIdentificationRequest {
     public ?string $lastname = null;
     public ?string $firstname = null;
     public ?string $phone = null;
-    public string $username;
     public string $email;
 }

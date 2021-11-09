@@ -21,11 +21,6 @@ class UnconfirmedAccount extends Mailable implements ShouldQueue
     public function __construct(array $parameters)
     {
         $this->parameters = $parameters;
-        /*
-        array('webAddress'=>'',
-        'username' => '',
-        'newPassword' =>'');
-        */
     }
 
     /**

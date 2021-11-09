@@ -86,9 +86,8 @@ class VisitEntity {
         $this->targetLesions  = $targetLesions;
     }
 
-    public function setCreatorDetails(string $username, string $firstname, string $lastname) : void {
+    public function setCreatorDetails(string $firstname, string $lastname) : void {
         $userEntity = new UserEntity();
-        $userEntity->username = $username;
         $userEntity->firstname = $firstname;
         $userEntity->lastname = $lastname;
         $this->creatorUser = $userEntity;

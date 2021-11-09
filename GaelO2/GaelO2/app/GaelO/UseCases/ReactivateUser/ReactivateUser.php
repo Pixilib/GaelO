@@ -44,7 +44,6 @@ class ReactivateUser{
 
             $this->mailServices->sendResetPasswordMessage(
                 ($user['firstname'].' '.$user['lastname']),
-                $user['username'],
                 $newPassword,
                 $user['email']
             );

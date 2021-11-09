@@ -17,7 +17,6 @@ class UserFactory extends Factory
         return [
             'lastname' => $this->faker->lastname,
             'firstname' => $this->faker->firstname,
-            'username' => $this->faker->unique()->userName,
             'email'=> $this->faker->unique()->safeEmail,
             'password' => $this->faker->password,
             'password_temporary'=> $this->faker->password,
@@ -37,11 +36,11 @@ class UserFactory extends Factory
         ];
     }
 
-    public function username(string $username){
+    public function email(string $email){
 
-        return $this->state(function (array $attributes) use ($username) {
+        return $this->state(function (array $attributes) use ($email) {
             return [
-                'username' => $username
+                'email' => $email
             ];
         });
 

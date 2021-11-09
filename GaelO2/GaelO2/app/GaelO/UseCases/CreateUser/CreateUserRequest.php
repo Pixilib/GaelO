@@ -6,7 +6,6 @@ class CreateUserRequest {
     public int $currentUserId;
     public ?string $lastname = null;
     public ?string $firstname = null;
-    public string $username;
     public string $email;
     public ?string $phone = null;
     public bool $administrator;

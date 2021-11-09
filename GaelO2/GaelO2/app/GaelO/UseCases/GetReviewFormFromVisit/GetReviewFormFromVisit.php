@@ -38,7 +38,7 @@ class GetReviewFormFromVisit
                 $reviewEntities = $this->reviewRepositoryInterface->getReviewsForStudyVisit($getReviewFormFromVisitRequest->studyName, $getReviewFormFromVisitRequest->visitId, false);
                 foreach ($reviewEntities as $review) {
                     $detailedReview = ReviewEntity::fillFromDBReponseArray($review);
-                    $detailedReview->setUserDetails($review['user']['username'], $review['user']['lastname'], $review['user']['firstname'], $review['user']['center_code']);
+                    $detailedReview->setUserDetails($review['user']['lastname'], $review['user']['firstname'], $review['user']['center_code']);
                     $reviews[] = $detailedReview;
                 }
             }else{

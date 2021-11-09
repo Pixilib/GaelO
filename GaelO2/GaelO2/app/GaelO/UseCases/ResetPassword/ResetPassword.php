@@ -26,10 +26,9 @@ class ResetPassword {
 
     public function execute(ResetPasswordRequest $resetPasswordRequest, ResetPasswordResponse $resetPasswordResponse) : void {
         try {
-            $username = $resetPasswordRequest->username;
             $email = $resetPasswordRequest->email;
 
-            $userEntity = $this->userRepositoryInterface->getUserByUsername($username, true);
+            $userEntity = $this->userRepositoryInterface->getUserByEmail($email, true);
 
             $this->checkNotDeactivatedAccount($userEntity);
             $this->checkEmailMatching($email, $userEntity['email']);
@@ -45,7 +44,6 @@ class ResetPassword {
             //send email
             $this->mailServices->sendResetPasswordMessage(
                 ($userEntity['firstname'].' '.$userEntity['lastname']),
-                $userEntity['username'],
                 $newPassword,
                 $userEntity['email']);
             //Write action in tracker
@@ -72,7 +70,7 @@ class ResetPassword {
         if($user['deleted_at'] !== null) {
             //Send Email change password failure
             $this->mailServices->sendForbiddenResetPasswordDueToDeactivatedAccount($user['email'],
-                    $user['username'], $user['id']);
+                    $user['lastname'], $user['firstname']);
             throw new GaelOBadRequestException('Deactivated Account');
         }
     }

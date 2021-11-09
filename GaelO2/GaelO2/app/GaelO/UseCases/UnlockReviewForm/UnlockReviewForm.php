@@ -84,7 +84,7 @@ class UnlockReviewForm {
             $this->mailServices->sendUnlockFormMessage(
                 $reviewEntity['visit_id'],
                 false,
-                $reviewEntity['user_id'],
+                $unlockReviewFormRequest->currentUserId,
                 $reviewEntity['study_name'],
                 $visitContext['patient_code'],
                 $visitContext['visit_type']['name'] );

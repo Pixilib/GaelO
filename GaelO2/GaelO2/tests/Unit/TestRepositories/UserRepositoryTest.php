@@ -48,7 +48,6 @@ class UserRepositoryTest extends TestCase
     {
 
         $createdEntity = $this->userRepository->createUser(
-            'salimKanoun',
             'Kanoun',
             'Salim',
             Constants::USER_STATUS_UNCONFIRMED,
@@ -79,7 +78,6 @@ class UserRepositoryTest extends TestCase
 
         $this->userRepository->updateUser(
             $userToModify->id,
-            'newUsername',
             'newLastName',
             'newFirstName',
             Constants::USER_STATUS_UNCONFIRMED,
@@ -96,7 +94,6 @@ class UserRepositoryTest extends TestCase
 
         $updatedEntity = $this->userRepository->find($existingEntity['id']);
 
-        $this->assertNotEquals($updatedEntity['username'], $userToModify['username']);
         $this->assertNotEquals($updatedEntity['firstname'], $userToModify['firstname']);
         $this->assertNotEquals($updatedEntity['lastname'], $userToModify['lastname']);
         $this->assertNotEquals($updatedEntity['email'], $userToModify['email']);
@@ -174,29 +171,15 @@ class UserRepositoryTest extends TestCase
     {
         //Test if user is not deleted
         $user = User::factory()->status(Constants::USER_STATUS_ACTIVATED)->job(Constants::USER_JOB_SUPERVISION)->create();
-        $userEntity = $this->userRepository->getUserByUsername($user->username, false);
+        $userEntity = $this->userRepository->getUserByEmail($user->email, false);
         $this->assertIsArray($userEntity);
         $this->assertNull($userEntity['deleted_at']);
 
         //Test if user is softdeleted
         $user->delete();
-        $userEntity = $this->userRepository->getUserByUsername($user->username, true);
+        $userEntity = $this->userRepository->getUserByEmail($user->email, true);
         $this->assertIsArray($userEntity);
         $this->assertNotNull($userEntity['deleted_at']);
-    }
-
-    public function testIsExistingUsername()
-    {
-
-        $user = User::factory()->create();
-        //Username test even if soft deleted user
-        $user->delete();
-
-        $testExisting = $this->userRepository->isExistingUsername($user->username);
-        $testNotExisting = $this->userRepository->isExistingUsername('randomUsername');
-
-        $this->assertTrue($testExisting);
-        $this->assertFalse($testNotExisting);
     }
 
     public function testIsExistingEmail()

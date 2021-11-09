@@ -22,11 +22,11 @@ class LoginTest extends TestCase
     }
 
     /**
-     * Test login with correct username password and valid account (password up to date)
+     * Test login with correct email password and valid account (password up to date)
      */
     public function testLogin()
     {
-        $data = ['username'=> 'administrator',
+        $data = ['email'=> 'administrator@gaelo.fr',
         'password'=> 'administrator'];
         $adminDefaultUser = User::where('id', 1)->first();
         $adminDefaultUser['last_password_update'] = now();
@@ -38,7 +38,7 @@ class LoginTest extends TestCase
 
     public function testLoginWrongPassword()
     {
-        $data = ['username'=> 'administrator',
+        $data = ['email'=> 'administrator@gaelo.fr',
         'password'=> 'wrongPassword'];
         $adminDefaultUser = User::where('id', 1)->first();
         $adminDefaultUser['last_password_update'] = now();
@@ -49,7 +49,7 @@ class LoginTest extends TestCase
     public function testLoginShouldFailBecauseUnconfirmedAccound()
     {
         //Try with correct main password but user in unconfirmed status, should fail
-        $data = ['username'=> 'administrator',
+        $data = ['email'=> 'administrator@gaelo.fr',
         'password'=> 'administrator'];
         $adminDefaultUser = User::where('id', 1)->first();
         $adminDefaultUser['status'] = Constants::USER_STATUS_UNCONFIRMED;
@@ -57,7 +57,7 @@ class LoginTest extends TestCase
         $adminDefaultUser->save();
         $this->json('POST', '/api/login', $data)->assertStatus(401);
         //Try with correct temporary password, should grant access of unconfirmed status
-        $data = ['username'=> 'administrator',
+        $data = ['email'=> 'administrator@gaelo.fr',
         'password'=> 'tempPassword'];
         $response = $this->json('POST', '/api/login', $data)->assertStatus(400);
         $content = $response->content();
@@ -70,7 +70,7 @@ class LoginTest extends TestCase
         $adminDefaultUser = User::where('id', 1)->first();
         $adminDefaultUser['last_password_update'] = date_create('10 June 2020');
         $adminDefaultUser->save();
-        $data = ['username'=> 'administrator',
+        $data = ['email'=> 'administrator@gaelo.fr',
         'password'=> 'administrator'];
         $response = $this->json('POST', '/api/login', $data)->assertStatus(400);
         $content = $response->content();
@@ -80,7 +80,7 @@ class LoginTest extends TestCase
 
     public function testAccountBlocked(){
         //Access should be forbidden even if credential correct because of blocker status
-        $data = ['username'=> 'administrator',
+        $data = ['email'=> 'administrator@gaelo.fr',
         'password'=> 'administrator'];
         $adminDefaultUser = User::where('id', 1)->first();
         $adminDefaultUser['status'] = Constants::USER_STATUS_BLOCKED;
@@ -91,7 +91,7 @@ class LoginTest extends TestCase
 
     public function testBlokingAccount(){
         // Three wrong attempts to login should block account
-        $data = ['username'=> 'administrator',
+        $data = ['email'=> 'administrator@gaelo.fr',
         'password'=> 'wrongPassword'];
 
         $this->json('POST', '/api/login', $data)->assertStatus(401);
@@ -112,7 +112,7 @@ class LoginTest extends TestCase
         $adminDefaultUser['password_temporary'] = 'password';
         $adminDefaultUser->save();
 
-        $data = ['username'=> 'administrator',
+        $data = ['email'=> 'administrator@gaelo.fr',
         'password'=> 'wrongPassword'];
 
         $this->json('POST', '/api/login', $data)->assertStatus(401);

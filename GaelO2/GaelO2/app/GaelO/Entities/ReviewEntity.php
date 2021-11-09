@@ -30,9 +30,8 @@ class ReviewEntity {
         return $reviewEntity;
     }
 
-    public function setUserDetails(string $username, string $lastname, string $firstname, int $centerCode) : void {
+    public function setUserDetails(string $lastname, string $firstname, int $centerCode) : void {
         $this->user = new UserEntity();
-        $this->user->username = $username;
         $this->user->lastname = $lastname;
         $this->user->firstname = $firstname;
         $this->user->centerCode = $centerCode;

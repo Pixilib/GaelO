@@ -7,7 +7,6 @@ class ModifyUserRequest {
     public int $userId;
     public ?string $lastname = null;
     public ?string $firstname = null;
-    public string $username;
     public string $email;
     public ?string $phone = null;
     public string $status;

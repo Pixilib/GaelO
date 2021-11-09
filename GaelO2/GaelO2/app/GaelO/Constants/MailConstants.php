@@ -11,7 +11,6 @@ class MailConstants {
     const EMAIL_UPLOADED_VISIT=4;
     const EMAIL_UNLOCK_REQUEST=5;
     const EMAIL_UNLOCK_FORM=6;
-    const EMAIL_UNCONFIRMED_ACCOUNT=7;
     const EMAIL_REVIEW_READY=8;
     const EMAIL_RESET_PASSWORD=9;
     const EMAIL_QC_DECISION=10;

@@ -32,7 +32,7 @@ class GetInvestigatorForm{
             $investigatorFormEntity = $this->reviewRepositoryInterface->getInvestigatorForm($getInvestigatorFormRequest->visitId, true);
 
             $investigatorForm = ReviewEntity::fillFromDBReponseArray($investigatorFormEntity);
-            $investigatorForm->setUserDetails($investigatorFormEntity['user']['username'], $investigatorFormEntity['user']['lastname'], $investigatorFormEntity['user']['firstname'], $investigatorFormEntity['user']['center_code']);
+            $investigatorForm->setUserDetails($investigatorFormEntity['user']['lastname'], $investigatorFormEntity['user']['firstname'], $investigatorFormEntity['user']['center_code']);
 
             $getInvestigatorFormResponse->body = $investigatorForm;
             $getInvestigatorFormResponse->status = 200;

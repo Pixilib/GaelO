@@ -86,7 +86,7 @@ class UnlockInvestigatorForm
             $this->mailServices->sendUnlockFormMessage(
                 $unlockInvestigatorFormRequest->visitId,
                 true,
-                $investigatorFormEntity['user_id'],
+                $unlockInvestigatorFormRequest->currentUserId,
                 $studyName,
                 $visitContext['patient_code'],
                 $visitContext['visit_type']['name']

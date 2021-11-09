@@ -32,7 +32,7 @@ class Login
 
         try {
 
-            $user = $this->userRepositoryInterface->getUserByUsername($loginRequest->username);
+            $user = $this->userRepositoryInterface->getUserByEmail($loginRequest->email);
 
             $passwordCheck = null;
 
@@ -123,7 +123,7 @@ class Login
 
     private function getRemainingAttempts($attemptCount) : int
     {
-        if ( $attemptCount < 3 ) return $remainingAttempts = (3 - $attemptCount) ;
+        if ( $attemptCount < 3 ) return (3 - $attemptCount) ;
         else return 0;
     }
 
@@ -134,14 +134,14 @@ class Login
 
     private function sendBlockedEmail(array $user)
     {
-        $this->mailService->sendAccountBlockedMessage($user['username'], $user['email'], $user['id']);
+        $this->mailService->sendAccountBlockedMessage($user['email'], $user['id']);
     }
 
     private function updateDbOnSuccess($user, $ip)
     {
         $this->userRepositoryInterface->resetAttemptsAndUpdateLastConnexion($user['id']);
         if ($user['administrator']) {
-            $this->mailService->sendAdminConnectedMessage($user['username'], $ip);
+            $this->mailService->sendAdminConnectedMessage($user['email'], $ip);
         }
     }
 }

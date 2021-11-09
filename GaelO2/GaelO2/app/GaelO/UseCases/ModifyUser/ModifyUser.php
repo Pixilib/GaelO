@@ -60,11 +60,6 @@ class ModifyUser
             CreateUser::checkEmailValid($modifyUserRequest->email);
             CreateUser::checkPhoneCorrect($modifyUserRequest->phone);
 
-            if($user['username'] !== $modifyUserRequest->username){
-                $knownUsername = $this->userRepositoryInterface->isExistingUsername($modifyUserRequest->username);
-                if ($knownUsername) throw new GaelOConflictException("Username Already Used");
-            }
-
             if($user['email'] !== $modifyUserRequest->email){
                 $knownEmail = $this->userRepositoryInterface->isExistingEmail($modifyUserRequest->email);
                 if ($knownEmail) throw new GaelOConflictException("Email Already Known");
@@ -73,7 +68,6 @@ class ModifyUser
 
             $this->userRepositoryInterface->updateUser(
                 $user['id'],
-                $modifyUserRequest->username,
                 $modifyUserRequest->lastname,
                 $modifyUserRequest->firstname,
                 $modifyUserRequest->status,
@@ -92,7 +86,6 @@ class ModifyUser
             if ($modifyUserRequest->status === Constants::USER_STATUS_UNCONFIRMED) {
                 $this->mailService->sendResetPasswordMessage(
                     ($modifyUserRequest->firstname . ' ' . $modifyUserRequest->lastname),
-                    $modifyUserRequest->username,
                     $temporaryPassword,
                     $modifyUserRequest->email
                 );

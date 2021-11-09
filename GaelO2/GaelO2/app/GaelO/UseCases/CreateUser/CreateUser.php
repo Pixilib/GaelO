@@ -46,16 +46,12 @@ class CreateUser
             self::checkEmailValid($createUserRequest->email);
             self::checkPhoneCorrect($createUserRequest->phone);
 
-            $knownUsername = $this->userRepositoryInterface->isExistingUsername($createUserRequest->username);
-            if ($knownUsername) throw new GaelOConflictException("Username Already Used");
-
             $knownEmail = $this->userRepositoryInterface->isExistingEmail($createUserRequest->email);
             if ($knownEmail) throw new GaelOConflictException("Email Already Known");
 
 
             //In no Exception thrown by checks methods, user are ok to be written in db
             $createdUserEntity = $this->userRepositoryInterface->createUser(
-                $createUserRequest->username,
                 $createUserRequest->lastname,
                 $createUserRequest->firstname,
                 Constants::USER_STATUS_UNCONFIRMED,
@@ -88,7 +84,6 @@ class CreateUser
             $this->mailService->sendCreatedAccountMessage(
                 $createdUserEntity['email'],
                 $createdUserEntity['firstname'] . ' ' . $createdUserEntity['lastname'],
-                $createdUserEntity['username'],
                 $passwordTemporary
             );
 
@@ -113,9 +108,7 @@ class CreateUser
 
     public static function checkFormComplete(CreateUserRequest|ModifyUserRequest $userRequest): void
     {
-        if (
-            !isset($userRequest->username)
-            || !isset($userRequest->job)
+        if ( !isset($userRequest->job)
             || !isset($userRequest->email)
             || !is_numeric($userRequest->centerCode)
             || !isset($userRequest->administrator)

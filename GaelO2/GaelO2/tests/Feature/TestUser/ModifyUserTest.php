@@ -23,7 +23,6 @@ class ModifyUserTest extends TestCase
         $this->user = User::factory()->status(Constants::USER_STATUS_ACTIVATED)->job(Constants::USER_JOB_SUPERVISION)->create();
 
         $this->validPayload = [
-            'username' => 'username',
             'lastname' => 'lastname',
             'firstname' => 'firstname',
             'email' => 'test@test.fr',
@@ -61,7 +60,7 @@ class ModifyUserTest extends TestCase
         $afterChangeUser = User::where('id',$this->user['id'])->get()->first()->toArray();
 
          //Value expected to have changed
-         $updatedArray = ['username', 'lastname', 'firstname', 'email', 'phone', 'status',
+         $updatedArray = ['lastname', 'firstname', 'email', 'phone', 'status',
          'administrator', 'center_code', 'job', 'orthanc_address', 'orthanc_login', 'orthanc_password'];
         //Check that key needed to be updated has been updated in database
         foreach($updatedArray as $key){
@@ -90,18 +89,11 @@ class ModifyUserTest extends TestCase
 
     public function testUncompleteRequest(){
         AuthorizationTools::actAsAdmin(true);
-        $mandatoryTags = ['username', 'email', 'job', 'centerCode', 'administrator'];
+        $mandatoryTags = ['email', 'job', 'centerCode', 'administrator'];
         foreach($mandatoryTags as $tag) {
             unset($this->validPayload[$tag]);
             $this->json('PUT', '/api/users/'.$this->user['id'], $this->validPayload)-> assertStatus(400);
         }
-    }
-
-    public function testUsingAlreadyUsedUsername(){
-        AuthorizationTools::actAsAdmin(true);
-        $this->validPayload['username']='administrator';
-        $this->json('PUT', '/api/users/'.$this->user['id'], $this->validPayload)
-        -> assertStatus(409);
     }
 
     public function testUsingAlreadyUsedEmail(){

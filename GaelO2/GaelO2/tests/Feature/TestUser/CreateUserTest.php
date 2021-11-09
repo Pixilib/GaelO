@@ -27,8 +27,7 @@ class CreateUserTest extends TestCase
 
         //Define the valid payload the user creation should success
         $this->validPayload =
-        ['username' => 'truc',
-        'lastname' => 'truc',
+        ['lastname' => 'truc',
         'firstname' => 'truc',
         'email' => 'truc@truc.fr',
         'phone' => '+33598653256',
@@ -67,16 +66,6 @@ class CreateUserTest extends TestCase
     }
 
     /**
-     * Test that creating an existing user should fail
-     */
-    public function testCreateAlreadyExistingUser(){
-        AuthorizationTools::actAsAdmin(true);
-        $alreadyExistingUser = User::factory()->create();
-        $this->validPayload['username'] = $alreadyExistingUser['username'];
-        $this->json('POST', '/api/users', $this->validPayload) -> assertStatus(409);
-    }
-
-    /**
      * Test that creating user with an already used email should fail
      */
     public function testCreateAlreadyExistingEmail(){
@@ -92,7 +81,7 @@ class CreateUserTest extends TestCase
      */
     public function testCreateIncompleteData(){
         AuthorizationTools::actAsAdmin(true);
-        $mandatoryTags = ['username', 'email', 'job', 'centerCode', 'administrator'];
+        $mandatoryTags = ['email', 'job', 'centerCode', 'administrator'];
         foreach($mandatoryTags as $tag) {
             unset($this->validPayload[$tag]);
             $this->json('POST', '/api/users/', $this->validPayload)-> assertStatus(400);

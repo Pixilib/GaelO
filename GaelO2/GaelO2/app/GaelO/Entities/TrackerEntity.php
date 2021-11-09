@@ -29,7 +29,6 @@ class TrackerEntity {
 
     public function setUserData(array $array){
         $this->user = new UserEntity();
-        $this->user->username = $array['username'];
         $this->user->lastname = $array['lastname'];
         $this->user->firstname = $array['firstname'];
     }

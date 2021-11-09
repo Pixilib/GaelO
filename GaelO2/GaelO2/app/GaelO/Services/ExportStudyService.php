@@ -103,7 +103,6 @@ class ExportStudyService {
                 'id' => $user['id'],
                 'lastname' => $user['lastname'],
                 'firstname' => $user['firstname'],
-                'username' => $user['username'],
                 'roles' => implode("/", $roles)
             ];
         }

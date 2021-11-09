@@ -6,7 +6,6 @@ class UserEntity {
     public int $id;
     public ?String $lastname;
     public ?String $firstname;
-    public String $username;
     public String $email;
     public ?String $phone;
     public ?String $lastPasswordUpdate;
@@ -27,7 +26,6 @@ class UserEntity {
         $userEntity->id = $array['id'];
         $userEntity->lastname = $array['lastname'];
         $userEntity->firstname = $array['firstname'];
-        $userEntity->username = $array['username'];
         $userEntity->email = $array['email'];
         $userEntity->phone = $array['phone'];
         $userEntity->lastPasswordUpdate = $array['last_password_update'];
@@ -47,7 +45,8 @@ class UserEntity {
     public static function fillMinimalFromDBReponseArray(array $array){
         $userEntity  = new UserEntity();
         $userEntity->id = $array['id'];
-        $userEntity->username = $array['username'];
+        $userEntity->firstname = $array['firstname'];
+        $userEntity->lastname = $array['lastname'];
         return $userEntity;
     }
 

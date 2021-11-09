@@ -22,7 +22,7 @@ class ResetPassword extends Mailable implements ShouldQueue
     {
         $this->parameters = $parameters;
         /*
-        array('username'=> '',
+        array('email'=> '',
         'newPassword' => '')
         */
     }

@@ -202,7 +202,7 @@ class UserTest extends TestCase
         //Expect to have 5 users in the list
         $this->assertEquals(5, sizeof($responseArray));
         //Each User has full details
-        $this->assertEquals(18, sizeof( array_keys($responseArray[0]) ));
+        $this->assertEquals(17, sizeof( array_keys($responseArray[0]) ));
     }
 
     public function testGetUserFromStudySupervisor()
@@ -226,7 +226,7 @@ class UserTest extends TestCase
         //Expect to have 5 users in the list
         $this->assertEquals(6, sizeof($responseArray));
         //Each User has limited details
-        $this->assertEquals(3, sizeof( array_keys($responseArray[0]) ));
+        $this->assertEquals(4, sizeof( array_keys($responseArray[0]) ));
     }
 
     public function testGetUserFromStudyForbiddenNotAdminOrSupervisor()

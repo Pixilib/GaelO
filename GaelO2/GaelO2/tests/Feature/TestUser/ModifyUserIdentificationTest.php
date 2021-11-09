@@ -29,7 +29,6 @@ class ModifyUserIdentificationTest extends TestCase
         $beforeChangeUser = User::find($currentUserId);
 
         $validPayload = [
-            'username' => 'username',
             'lastname' => 'lastname',
             'firstname' => 'firstname',
             'email' => 'test@test.fr',
@@ -42,7 +41,7 @@ class ModifyUserIdentificationTest extends TestCase
         $afterChangeUser = User::find($currentUserId)->toArray();
 
          //Value expected to have changed
-         $updatedArray = ['username', 'lastname', 'firstname', 'email', 'phone'];
+         $updatedArray = ['email', 'lastname', 'firstname', 'email', 'phone'];
         //Check that key needed to be updated has been updated in database
         foreach($updatedArray as $key){
             $this->assertNotEquals($beforeChangeUser[$key], $afterChangeUser[$key]);
@@ -54,7 +53,6 @@ class ModifyUserIdentificationTest extends TestCase
         AuthorizationTools::actAsAdmin(false);
 
         $validPayload = [
-            'username' => 'username',
             'lastname' => 'lastname',
             'firstname' => 'firstname',
             'email' => 'test@test.fr',
@@ -66,29 +64,11 @@ class ModifyUserIdentificationTest extends TestCase
 
     }
 
-    public function testModifyUserIdentificationAlreadyUsedUsername()
-    {
-
-        $currentUserId = AuthorizationTools::actAsAdmin(false);
-
-        $validPayload = [
-            'username' => 'administrator',
-            'lastname' => 'lastname',
-            'firstname' => 'firstname',
-            'email' => 'test@test.fr',
-            'phone' => '0101010101',
-        ];
-
-        //Update with update API, shoud be success
-        $this->json('PATCH', '/api/users/'.$currentUserId, $validPayload)->assertStatus(409);
-    }
-
     public function testModifyUserIdentificationAlreadyUsedEmail()
     {
         $currentUserId = AuthorizationTools::actAsAdmin(false);
 
         $validPayload = [
-            'username' => 'administrator',
             'lastname' => 'administrator',
             'firstname' => 'administrator',
             'email' => 'administrator@gaelo.fr',

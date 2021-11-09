@@ -67,6 +67,7 @@ class DicomStudyEntity
     public function addUploaderDetails(array $userDetails): void
     {
         $this->uploader = new UserEntity();
-        $this->uploader->username = $userDetails['username'];
+        $this->uploader->lastname = $userDetails['lastname'];
+        $this->uploader->firstname = $userDetails['firstname'];
     }
 }
