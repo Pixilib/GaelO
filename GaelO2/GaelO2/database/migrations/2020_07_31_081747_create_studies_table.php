@@ -16,6 +16,7 @@ class CreateStudiesTable extends Migration
         Schema::create('studies', function (Blueprint $table) {
             $table->string('name')->primary();
             $table->unsignedBigInteger('code')->nullable(false);
+            $table->integer('patient_number_length')->nullable(false);
             $table->string('ancillary_of')->default(null)->nullable(true);
 
             $table->unique('code');

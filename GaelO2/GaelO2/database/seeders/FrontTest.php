@@ -43,7 +43,7 @@ class FrontTest extends Seeder
 
         Study::factory()->count(5)->create();
 
-        $this->study = Study::factory()->name('TEST')->patientCodePrefix('123')->create();
+        $this->study = Study::factory()->name('TEST')->code('123')->create();
 
         Role::factory()->userId($this->user->id)->studyName($this->study->name)->roleName('Supervisor')->create();
         Role::factory()->userId($this->user->id)->studyName($this->study->name)->roleName('Monitor')->create();

@@ -33,8 +33,9 @@ class StudyTest extends TestCase
         AuthorizationTools::actAsAdmin(true);
 
         $payload = [
-            'studyName'=>'NEWSTUDY',
-            'patientCodePrefix'=>'1234'
+            'name'=>'NEWSTUDY',
+            'code'=>'1234',
+            'patientNumberLength' => 5
         ];
 
         $this->json('POST', '/api/studies', $payload)->assertNoContent(201);
@@ -45,22 +46,25 @@ class StudyTest extends TestCase
         AuthorizationTools::actAsAdmin(true);
 
         $payload = [
-            'studyName'=>'NEWSTUDy',
-            'patientCodePrefix'=>'1234'
+            'name'=>'NEWSTUDy',
+            'code'=>'1234',
+            'patientNumberLength' => 5
         ];
 
         $this->json('POST', '/api/studies', $payload)->assertStatus(400);
 
         $payload = [
-            'studyName'=>'NEW STUDY',
-            'patientCodePrefix'=>'1234'
+            'name'=>'NEW STUDY',
+            'code'=>'1234',
+            'patientNumberLength' => 5
         ];
 
         $this->json('POST', '/api/studies', $payload)->assertStatus(400);
 
         $payload = [
-            'studyName'=>'NEW.STUDY',
-            'patientCodePrefix'=>'1234'
+            'name'=>'NEW.STUDY',
+            'code'=>'1234',
+            'patientNumberLength' => 5
         ];
 
         $this->json('POST', '/api/studies', $payload)->assertStatus(400);
@@ -70,8 +74,9 @@ class StudyTest extends TestCase
     public function testCreateStudyForbiddenNotAdmin(){
         AuthorizationTools::actAsAdmin(false);
         $payload = [
-            'studyName'=>'NEWSTUDY',
-            'patientCodePrefix'=>'1234'
+            'name'=>'NEWSTUDY',
+            'code'=>'1234',
+            'patientNumberLength' => 5
         ];
         $this->json('POST', '/api/studies', $payload)->assertStatus(403);
     }
@@ -80,10 +85,21 @@ class StudyTest extends TestCase
         AuthorizationTools::actAsAdmin(true);
         $study = Study::factory()->count(2)->create()->first();
         $payload = [
-            'studyName'=>$study->name,
-            'patientCodePrefix'=>'1234'
+            'name'=>$study->name,
+            'code'=>'1234',
+            'patientNumberLength' => 5
         ];
         $this->json('POST', '/api/studies', $payload)->assertStatus(409);
+    }
+
+    public function testCreateStudyWith0Length(){
+        AuthorizationTools::actAsAdmin(true);
+        $payload = [
+            'name'=>'NEWSTUDY',
+            'code'=>'1234',
+            'patientNumberLength' => 0
+        ];
+        $this->json('POST', '/api/studies', $payload)->assertStatus(400);
     }
 
     public function testDeleteStudy(){

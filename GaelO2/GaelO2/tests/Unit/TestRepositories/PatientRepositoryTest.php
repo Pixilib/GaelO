@@ -43,6 +43,7 @@ class PatientRepositoryTest extends TestCase
         $patientEntity = new PatientEntity();
 
         $patientEntity->code = 123456789123456;
+        $patientEntity->number = 3;
         $patientEntity->lastname = 'S';
         $patientEntity->firstname = 'K';
         $patientEntity->birthDay = 25;

@@ -55,6 +55,7 @@ class PatientRepository implements PatientRepositoryInterface {
 
         $patient = new Patient();
         $patient->code = $patientEntity->code;
+        $patient->number = $patientEntity->number;
         $patient->lastname = $patientEntity->lastname;
         $patient->firstname = $patientEntity->firstname;
         $patient->gender = $patientEntity->gender;

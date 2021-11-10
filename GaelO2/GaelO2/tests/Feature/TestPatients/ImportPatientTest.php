@@ -23,9 +23,10 @@ class ImportPatientTest extends TestCase
     protected function setUp() : void{
         parent::setUp();
 
-        $this->study = Study::factory()->patientCodePrefix('123')->create();
+        $this->study = Study::factory()->code('123')->create();
 
         $this->validPayload = [ ["code" => 12341231234123,
+        'number' => 3,
         "lastname" => "test",
         "firstname" => "test",
         "gender" => "M",
@@ -48,6 +49,7 @@ class ImportPatientTest extends TestCase
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $this->study->name);
 
         $this->validPayload = [ ["code" => 12341231234123,
+        "number" => 1,
         "lastname" => "test",
         "firstname" => "test",
         "gender" => "M",
@@ -59,6 +61,7 @@ class ImportPatientTest extends TestCase
         "centerCode" => 0,
         "inclusionStatus"  => Constants::PATIENT_INCLUSION_STATUS_INCLUDED],
         ["code" => 12341231234124,
+        "number" => 2,
         "lastname" => "test",
         "firstname" => "test",
         "gender" => "M",
@@ -70,6 +73,7 @@ class ImportPatientTest extends TestCase
         "centerCode" => 0,
         "inclusionStatus"  => Constants::PATIENT_INCLUSION_STATUS_INCLUDED],
         ["code" => 12341231234125,
+        "number" => 3,
         "lastname" => "test",
         "firstname" => "test",
         "gender" => "M",

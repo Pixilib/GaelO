@@ -6,4 +6,5 @@ class CreateStudyRequest {
     public int $currentUserId;
     public String $name;
     public int $code;
+    public int $patientNumberLength;
 }
