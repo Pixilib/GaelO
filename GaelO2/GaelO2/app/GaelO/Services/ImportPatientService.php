@@ -61,7 +61,7 @@ class ImportPatientService
                 $this->isCorrectPatientCodeLenght($patientEntity->code);
                 $this->isExistingCenter($patientEntity->centerCode);
                 $this->checkCurrentStudy($patientEntity->studyName, $this->studyName);
-                $this->isCorrectPrefix($studyEntity['patient_code_prefix'],$patientEntity->code);
+                $this->isCorrectPrefix($studyEntity['code'],$patientEntity->code);
 
                 //Store the patient result import process in this object
                 $this->patientRepository->addPatientInStudy($patientEntity, $this->studyName);

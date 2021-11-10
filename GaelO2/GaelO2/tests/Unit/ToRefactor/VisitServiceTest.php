@@ -42,7 +42,7 @@ class VisitServiceTest extends TestCase
             User::where('id', 1)->first()
         );
 
-        $this->study = factory(Study::class)->create(['name' => 'test', 'patient_code_prefix' => 1234]);
+        $this->study = factory(Study::class)->create(['name' => 'test', 'code' => 1234]);
         $this->patient = factory(Patient::class)->create(['code' => 12341234123412, 'study_name' => 'test', 'center_code' => 0]);
         $this->visitGroup = factory(VisitGroup::class)->create(['study_name' => 'test']);
 

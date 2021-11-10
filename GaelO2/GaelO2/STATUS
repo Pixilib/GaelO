@@ -36,9 +36,6 @@ Entity :
 => GetReviewProgression => Visit + Review_status + Progression entity?
 => GetVisitTree => ?, visit ?
 
-Model et db :
-- Type de variable a caster
-
 ---- /Refactoring Backend ------
 
 Messagerie à designer (communication intermembre, front avec tinymce)

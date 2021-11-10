@@ -38,7 +38,7 @@ class StudyRepositoryTest extends TestCase
         $studyEntity  = Study::find('myStudy');
 
         $this->assertEquals('myStudy', $studyEntity->name);
-        $this->assertEquals('12345', $studyEntity->patient_code_prefix);
+        $this->assertEquals('12345', $studyEntity->code);
     }
 
     public function testIsExistingStudy(){

@@ -32,8 +32,8 @@ class CreateStudy {
         try{
             $this->checkAuthorization($createStudyRequest->currentUserId);
 
-            $studyName = $createStudyRequest->studyName;
-            $patientCodePrefix = $createStudyRequest->patientCodePrefix;
+            $studyName = $createStudyRequest->name;
+            $studyCode = $createStudyRequest->code;
 
             if(preg_match('/[^A-Z0-9]/', $studyName)){
                 throw new GaelOBadRequestException('Only uppercase alfanumerical name allowed, no space or special characters');
@@ -43,12 +43,12 @@ class CreateStudy {
                 throw new GaelOConflictException('Already Existing Study');
             }
 
-            $this->studyRepositoryInterface->addStudy($studyName, $patientCodePrefix);
+            $this->studyRepositoryInterface->addStudy($studyName, $studyCode);
 
             $currentUserId=$createStudyRequest->currentUserId;
             $actionDetails = [
-                'studyName'=>$studyName,
-                'patientCodePrefix'=> $patientCodePrefix
+                'studyName' => $studyName,
+                'studyCode' => $studyCode
             ];
 
             $this->trackerRepositoryInterface->writeAction($currentUserId, Constants::TRACKER_ROLE_ADMINISTRATOR, null, null, Constants::TRACKER_CREATE_STUDY, $actionDetails);
