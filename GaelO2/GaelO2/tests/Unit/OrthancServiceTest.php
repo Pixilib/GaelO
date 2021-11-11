@@ -98,7 +98,8 @@ class OrthancServiceTest extends TestCase
             Constants::ORTHANC_ANON_PROFILE_DEFAULT,
             "code",
             "visit",
-            "study"
+            "study",
+            123
         );
         //orthanc ID have 44 character lenght
         $this->assertEquals(44, strlen($anonymized));

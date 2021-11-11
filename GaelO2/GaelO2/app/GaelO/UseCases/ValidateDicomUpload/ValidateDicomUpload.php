@@ -6,6 +6,7 @@ use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Exceptions\GaelOValidateDicomException;
+use App\GaelO\Interfaces\Repositories\StudyRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
 use App\GaelO\Services\AuthorizationVisitService;
 use App\GaelO\Services\MailServices;
@@ -24,6 +25,7 @@ class ValidateDicomUpload{
     private OrthancService $orthancService;
     private RegisterDicomStudyService $registerDicomStudyService;
     private VisitService $visitService;
+    private StudyRepositoryInterface $studyRepositoryInterface;
     private TrackerRepositoryInterface $trackerRepositoryInterface;
     private MailServices $mailServices;
 
@@ -32,6 +34,7 @@ class ValidateDicomUpload{
                         OrthancService $orthancService,
                         RegisterDicomStudyService $registerDicomStudyService,
                         VisitService $visitService,
+                        StudyRepositoryInterface $studyRepositoryInterface,
                         TrackerRepositoryInterface $trackerRepositoryInterface,
                         MailServices $mailServices)
     {
@@ -40,6 +43,7 @@ class ValidateDicomUpload{
         $this->orthancService = $orthancService;
         $this->visitService = $visitService;
         $this->tusService = $tusService;
+        $this->studyRepositoryInterface = $studyRepositoryInterface;
         $this->trackerRepositoryInterface = $trackerRepositoryInterface;
         $this->mailServices = $mailServices;
     }
@@ -56,6 +60,8 @@ class ValidateDicomUpload{
             $visitType = $visitEntity['visit_type']['name'];
             $visitGroup =  $visitEntity['visit_type']['visit_group']['modality'];
             $anonProfile = $visitEntity['visit_type']['anon_profile'];
+
+            $studyDetails = $this->studyRepositoryInterface->getStudyDetails($studyName);
 
             //TODO Authorization : Check Investigator Role, and patient is in affiliated center of user, and status upload not done, and visit status done
             $this->checkAuthorization($validateDicomUploadRequest->currentUserId, $validateDicomUploadRequest->visitId, $uploadStatus);
@@ -99,7 +105,8 @@ class ValidateDicomUpload{
                                         $anonProfile,
                                         $patientCode,
                                         $visitType,
-                                        $studyName);
+                                        $studyName,
+                                        $studyDetails['code']);
 
             //Delete original import
             $this->orthancService->deleteFromOrthanc("studies", $importedOrthancStudyID);
