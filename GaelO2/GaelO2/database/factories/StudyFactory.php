@@ -11,7 +11,7 @@ class StudyFactory extends Factory
     {
         return [
             'name' => $this->faker->unique()->regexify('[A-Z0-9]{20}'),
-            'code' => $this->faker->randomNumber(5),
+            'code' => $this->faker->unique()->randomNumber(5),
             'patient_number_length' => $this->faker->randomNumber(5)
         ];
     }

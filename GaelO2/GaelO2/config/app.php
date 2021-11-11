@@ -136,7 +136,6 @@ return [
     'corporation' => env('APP_CORPORATION'),
     'mail_from_address'=>env('MAIL_FROM_ADDRESS'),
     'mail_reply_to_default'=>env('MAIL_REPLY_TO_DEFAULT'),
-    'patient_code_length'=>env('GAELO_PATIENT_CODE_LENGTH'),
     'orthanc_temporary_url'=>env('ORTHANC_TEMPORARY_URL'),
     'orthanc_temporary_login'=>env('ORTHANC_TEMPORARY_LOGIN'),
     'orthanc_temporary_password'=>env('ORTHANC_TEMPORARY_PASSWORD'),

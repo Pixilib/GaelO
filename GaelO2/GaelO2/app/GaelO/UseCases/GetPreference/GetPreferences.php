@@ -31,8 +31,6 @@ class GetPreferences {
             $preferences['emailReplyTo'] = $this->frameworkInterface::getConfig(SettingsConstants::MAIL_REPLY_TO_DEFAULT);
             $preferences['corporation'] = $this->frameworkInterface::getConfig(SettingsConstants::CORPORATION);
             $preferences['url'] = $this->frameworkInterface::getConfig(SettingsConstants::APP_URL);
-            $preferences['patientCodeLength'] =  $this->frameworkInterface::getConfig(SettingsConstants::PATIENT_CODE_LENGTH);
-
 
             $getPreferencesResponse->body = $preferences;
             $getPreferencesResponse->status = 200;

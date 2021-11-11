@@ -30,7 +30,7 @@ class PreferenceTest extends TestCase
         $answer = $this->json('GET', 'api/preferences');
         $answer->assertStatus(200);
         $answer->assertJsonStructure(['platformName', 'adminEmail', 'emailReplyTo', 'corporation',
-         'url', 'patientCodeLength']);
+         'url']);
 
     }
 

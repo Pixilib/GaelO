@@ -10,8 +10,6 @@ class SettingsConstants {
     const MAIL_REPLY_TO_DEFAULT = 'mail_reply_to_default';
     const CORPORATION = 'corporation';
 
-    const PATIENT_CODE_LENGTH = 'patient_code_length';
-
     const TUS_URL = 'tus_url';
 
     const ORTHANC_TEMPORARY_URL = 'orthanc_temporary_url';

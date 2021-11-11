@@ -10,6 +10,7 @@ use App\GaelO\Interfaces\Repositories\PatientRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\StudyRepositoryInterface;
 use App\GaelO\Util;
 use Exception;
+use Hamcrest\Type\IsNumeric;
 
 class ImportPatientService
 {
@@ -25,8 +26,7 @@ class ImportPatientService
 	public array $successList = [];
 	public array $failList = [];
 
-	public function __construct(StudyRepositoryInterface $studyRepository, PatientRepositoryInterface $patientRepository, CenterRepositoryInterface $centerRepository, FrameworkInterface $frameworkInterface) {
-        $this->patientCodeLength = $frameworkInterface::getConfig(SettingsConstants::PATIENT_CODE_LENGTH);
+	public function __construct(StudyRepositoryInterface $studyRepository, PatientRepositoryInterface $patientRepository, CenterRepositoryInterface $centerRepository) {
         $this->patientRepository = $patientRepository;
         $this->centerRepository = $centerRepository;
         $this->studyRepository = $studyRepository;
@@ -42,6 +42,7 @@ class ImportPatientService
 
 	public function import() {
         $studyEntity = $this->studyRepository->find($this->studyName);
+        $this->patientCodeLength = $studyEntity['patient_number_length'];
         $this->existingPatientCode = $this->patientRepository->getAllPatientsCode();
 
         $allCenters = $this->centerRepository->getAll();
@@ -58,10 +59,9 @@ class ImportPatientService
                 self::checkPatientGender($patientEntity->gender);
                 self::checkCorrectBirthDate($patientEntity->birthDay, $patientEntity->birthMonth, $patientEntity->birthYear);
                 $this->checkNewPatient($patientEntity->code);
-                $this->isCorrectPatientCodeLenght($patientEntity->code);
+                $this->isCorrectPatientCode($patientEntity->code);
                 $this->isExistingCenter($patientEntity->centerCode);
                 $this->checkCurrentStudy($patientEntity->studyName, $this->studyName);
-                $this->isCorrectPrefix($studyEntity['code'],$patientEntity->code);
 
                 //Store the patient result import process in this object
                 $this->patientRepository->addPatientInStudy($patientEntity, $this->studyName);
@@ -114,18 +114,17 @@ class ImportPatientService
 	 * Check that patient number has the correct lenght
 	 * @param $patientCode
 	 */
-	private function isCorrectPatientCodeLenght(int $patientCode) : void {
+	private function isCorrectPatientCode(int $patientCode) : void {
+
+        if ( !is_numeric($patientCode) ) {
+			throw new GaelOBadRequestException('Patient Code accept only numbers');
+		}
+
 		$lenghtImport=strlen((string) $patientCode);
 
 		if ($lenghtImport != $this->patientCodeLength) {
 			throw new GaelOBadRequestException('Incorrect Patient Code Length');
 		}
-	}
-
-	private function isCorrectPrefix(?int $patientCodePrefix, int $patientCode) : void {
-		if (!empty($patientCodePrefix) && !$this->startsWith((string) $patientCode, $patientCodePrefix)) {
-    		throw new GaelOBadRequestException('Wrong Patient Prefix');
-        }
 	}
 
 	private function startsWith(string $string, string $startString) : bool {

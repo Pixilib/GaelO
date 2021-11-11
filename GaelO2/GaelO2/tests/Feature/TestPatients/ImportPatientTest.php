@@ -23,7 +23,7 @@ class ImportPatientTest extends TestCase
     protected function setUp() : void{
         parent::setUp();
 
-        $this->study = Study::factory()->code('123')->create();
+        $this->study = Study::factory()->patientNumberLength(14)->code('123')->create();
 
         $this->validPayload = [ ["code" => 12341231234123,
         'number' => 3,
@@ -185,17 +185,6 @@ class ImportPatientTest extends TestCase
         $this->assertEquals(0, count($resp['success']));
         $this->assertNotEmpty($resp['fail']['Incorrect Patient Code Length']);
         $this->assertEquals(123, $resp['fail']['Incorrect Patient Code Length'][0]);
-    }
-
-    public function testIncorrectPatientPrefix(){
-        $currentUserId = AuthorizationTools::actAsAdmin(false);
-        AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $this->study->name);
-
-        $this->validPayload[0]['code'] = 12431234123412;
-        $resp = $this->json('POST', '/api/studies/'.$this->study->name.'/import-patients', $this->validPayload);
-        $this->assertEquals(0, count($resp['success']));
-        $this->assertNotEmpty($resp['fail']['Wrong Patient Prefix']);
-        $this->assertEquals(12431234123412, $resp['fail']['Wrong Patient Prefix'][0]);
     }
 
 }
