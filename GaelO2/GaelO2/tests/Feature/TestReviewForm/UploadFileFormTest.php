@@ -35,7 +35,7 @@ class UploadFileFormTest extends TestCase
         $patient = Patient::factory()->studyName($study->name)->create();
         $visitGroup = VisitGroup::factory()->studyName($study->name)->modality('PT')->create();
         $visitType  = VisitType::factory()->visitGroupId($visitGroup->id)->name('PET0')->localFormNeeded()->create();
-        $visit = Visit::factory()->patientCode($patient->code)->visitTypeId($visitType->id)->create();
+        $visit = Visit::factory()->patientId($patient->id)->visitTypeId($visitType->id)->create();
         ReviewStatus::factory()->studyName($study->name)->visitId($visit->id)->reviewAvailable()->create();
         return [
             'studyName'=>$study->name,

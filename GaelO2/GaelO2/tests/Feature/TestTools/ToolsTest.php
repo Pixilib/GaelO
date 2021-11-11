@@ -35,12 +35,12 @@ class ToolsTest extends TestCase
         $patient = Patient::factory()->studyName($study->name)->centerCode($center->code)->create();
         $visitGroup = VisitGroup::factory()->studyName($study->name)->modality('PT')->create();
         $visitType  = VisitType::factory()->visitGroupId($visitGroup->id)->name('PET0')->localFormNeeded()->create();
-        $visit = Visit::factory()->patientCode($patient->code)->visitTypeId($visitType->id)->create();
+        $visit = Visit::factory()->patientId($patient->id)->visitTypeId($visitType->id)->create();
         ReviewStatus::factory()->studyName($study->name)->visitId($visit->id)->reviewAvailable()->create();
         $this->review = Review::factory()->studyName($study->name)->visitId($visit->id)->reviewForm()->create();
         $this->studyName = $study->name;
         $this->centerCode = $center->code;
-        $this->patientCode = $patient->code;
+        $this->patientId = $patient->id;
         $this->visitTypeId = $visitType->id;
 
         $this->validPayload = [
@@ -71,7 +71,7 @@ class ToolsTest extends TestCase
 
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $this->studyName);
 
-        $this->validPayload['patientCodes'] = [ $this->patientCode ];
+        $this->validPayload['patientId'] = [ $this->patientId ];
         $answer = $this->json('POST', 'api/tools/patients/visits-from-patients', $this->validPayload);
         $answer->assertSuccessful();
         $content = json_decode($answer->content(), true);

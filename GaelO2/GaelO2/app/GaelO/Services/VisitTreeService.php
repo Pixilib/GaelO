@@ -46,7 +46,7 @@ class VisitTreeService
         foreach ($visitsArray as $visitObject) {
             $visitsFormattedData = $this->filterVisitOutputData($visitObject);
             $responseArray['visits'][] = $visitsFormattedData;
-            if(!in_array($visitsFormattedData['patientCode'], $responseArray['patients'])) $responseArray['patients'][] = $visitsFormattedData['patientCode'];
+            if(!in_array($visitsFormattedData['patientId'], $responseArray['patients'])) $responseArray['patients'][] = $visitsFormattedData['patientId'];
         }
 
         return $responseArray;
@@ -74,8 +74,8 @@ class VisitTreeService
             $responseArray['visits'][] = $this->filterVisitOutputData($visitObject);
         }
 
-        foreach ($patientsCodeArray as $patientCode) {
-            $responseArray['patients'][] = $patientCode;
+        foreach ($patientsCodeArray as $patientId) {
+            $responseArray['patients'][] = $patientId;
         }
 
         return $responseArray;
@@ -93,10 +93,10 @@ class VisitTreeService
             //retrieve from DB the patient's list of the requested study and included in user's center or affiliated centers
             $userCentersArray = $this->userRepository->getAllUsersCenters($this->userId);
             $patientsArray = $this->patientRepository->getPatientsInStudyInCenters($this->studyName, $userCentersArray);
-            $patientCodeArray = array_map(function ($patientEntity) {
-                return $patientEntity['code'];
+            $patientIdArray = array_map(function ($patientEntity) {
+                return $patientEntity['id'];
             }, $patientsArray);
-            return $this->makeTreeFromPatientsArray($patientCodeArray);
+            return $this->makeTreeFromPatientsArray($patientIdArray);
 
         } else if ($this->role == Constants::ROLE_CONTROLLER) {
 
@@ -111,8 +111,8 @@ class VisitTreeService
         } else if ($this->role == Constants::ROLE_REVIEWER) {
 
             //Get patient with at least an awaiting review visit for the current user (visit with review available and review form not validated by user)
-            $patientCodeArray = $this->visitRepository->getPatientsHavingAtLeastOneAwaitingReviewForUser($this->studyName, $this->userId);
-            return $this->makeTreeFromPatientsArray($patientCodeArray);
+            $patientIdArray = $this->visitRepository->getPatientsHavingAtLeastOneAwaitingReviewForUser($this->studyName, $this->userId);
+            return $this->makeTreeFromPatientsArray($patientIdArray);
 
         } else {
             throw new GaelOBadRequestException('Not Authorized role for tree generation');
@@ -138,7 +138,7 @@ class VisitTreeService
             'statusDone' => $visitEntity['status_done'],
             'visitTypeId' => $visitEntity['visit_type']['id'],
             'visitGroupId' => $visitEntity['visit_type']['visit_group']['id'],
-            'patientCode' => $visitEntity['patient_code'],
+            'patientId' => $visitEntity['patient_id'],
             'reviewStatus' => array_key_exists('review_status', $visitEntity) ? $visitEntity['review_status']['review_status'] : null
         ];
     }

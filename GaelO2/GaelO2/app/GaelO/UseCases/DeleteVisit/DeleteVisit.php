@@ -38,7 +38,7 @@ class DeleteVisit{
 
             $studyName = $visitContext['visit_type']['visit_group']['study_name'];
             $visitTypeName = $visitContext['visit_type']['name'];
-            $patientCode = $visitContext['patient']['code'];
+            $patientId = $visitContext['patient']['id'];
             $qcStatus = $visitContext['state_quality_control'];
             $visitStatusDone = $visitContext['status_done'];
 
@@ -51,7 +51,7 @@ class DeleteVisit{
             $this->visitRepositoryInterface->delete($deleteVisitRequest->visitId);
 
             $actionDetails  = [
-                'patient_code' => $patientCode,
+                'patient_id' => $patientId,
                 'type_visit' => $visitTypeName,
                 'reason' => $deleteVisitRequest->reason
             ];

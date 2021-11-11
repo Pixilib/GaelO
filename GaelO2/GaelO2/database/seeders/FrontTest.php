@@ -51,11 +51,11 @@ class FrontTest extends Seeder
         Role::factory()->userId($this->user->id)->studyName($this->study->name)->roleName('Reviewer')->create();
         Role::factory()->userId($this->user->id)->studyName($this->study->name)->roleName('Controller')->create();
 
-        Patient::factory()->code(123000 + rand(0,999))->inclusionStatus('Included')->investigatorName('administrator')
+        Patient::factory()->id(123000 + rand(0,999))->inclusionStatus('Included')->investigatorName('administrator')
             ->studyName($this->study->name)->centerCode(0)->create();
-        Patient::factory()->code(123000 + rand(0,999))->investigatorName('administrator')
+        Patient::factory()->id(123000 + rand(0,999))->investigatorName('administrator')
             ->studyName($this->study->name)->centerCode(0)->create();
-        Patient::factory()->code(123000 + rand(0,999))->investigatorName('administrator')
+        Patient::factory()->id(123000 + rand(0,999))->investigatorName('administrator')
             ->studyName($this->study->name)->centerCode(0)->create();
 
         $this->visitGroup = VisitGroup::factory()->studyName($this->study->name)->create();
@@ -66,7 +66,7 @@ class FrontTest extends Seeder
         $this->visitType = VisitType::factory()->name('PET0')->visitGroupId($this->visitGroup['id'])
             ->localFormNeeded()->qcNeeded()->reviewNeeded()->create();
 
-        $this->visit = Visit::factory()->creatorUserId(1)->patientCode(Patient::first()['code'])
+        $this->visit = Visit::factory()->creatorUserId(1)->patientId(Patient::first()['id'])
             ->uploadDone()->stateQualityControl(Constants::QUALITY_CONTROL_NOT_NEEDED)
             ->stateInvestigatorForm(Constants::INVESTIGATOR_FORM_DONE)
             ->visitTypeId($this->visitType['id'])->done()->create();

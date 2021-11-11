@@ -36,7 +36,7 @@ class GetPossibleUpload
             $answerArray = [];
 
             foreach ($visitsEntities as $visit) {
-                $item['patientCode'] = $visit['patient_code'];
+                $item['patientId'] = $visit['patient_id'];
                 $item['patientFirstname'] = $visit['patient']['firstname'];
                 $item['patientLastname'] = $visit['patient']['lastname'];
                 $item['patientSex'] = $visit['patient']['gender'];

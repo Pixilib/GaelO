@@ -4,7 +4,7 @@ namespace App\GaelO\Entities;
 
 
 class PatientEntity {
-    public int $code;
+    public int $id;
     public int $number;
     public ?string $firstname;
     public ?string $lastname;
@@ -24,7 +24,7 @@ class PatientEntity {
 
     public static function fillFromDBReponseArray(array $array) : PatientEntity{
         $patientEntity  = new PatientEntity();
-        $patientEntity->code = $array['code'];
+        $patientEntity->id = $array['id'];
         $patientEntity->number = $array['number'];
         $patientEntity->lastname = $array['lastname'];
         $patientEntity->firstname = $array['firstname'];

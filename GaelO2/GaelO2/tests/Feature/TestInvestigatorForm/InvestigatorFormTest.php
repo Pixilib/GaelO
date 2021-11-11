@@ -124,7 +124,7 @@ class InvestigatorFormTest extends TestCase
         $patient = Patient::factory()->studyName($study->name)->create();
         $visitGroup = VisitGroup::factory()->studyName($study->name)->modality('PT')->create();
         $visitType  = VisitType::factory()->visitGroupId($visitGroup->id)->name('PET0')->localFormNeeded()->create();
-        $visit = Visit::Factory()->patientCode($patient->code)->visitTypeId($visitType->id)->create();
+        $visit = Visit::Factory()->patientId($patient->id)->visitTypeId($visitType->id)->create();
 
         $currentUserId = AuthorizationTools::actAsAdmin(false);
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_INVESTIGATOR, $study->name);
@@ -147,7 +147,7 @@ class InvestigatorFormTest extends TestCase
         $patient = Patient::factory()->studyName($study->name)->create();
         $visitGroup = VisitGroup::factory()->studyName($study->name)->modality('PT')->create();
         $visitType  = VisitType::factory()->visitGroupId($visitGroup->id)->name('PET0')->localFormNeeded()->create();
-        $visit = Visit::Factory()->patientCode($patient->code)->visitTypeId($visitType->id)->create();
+        $visit = Visit::Factory()->patientId($patient->id)->visitTypeId($visitType->id)->create();
 
         AuthorizationTools::actAsAdmin(false);
 
@@ -167,7 +167,7 @@ class InvestigatorFormTest extends TestCase
         $patient = Patient::factory()->studyName($study->name)->create();
         $visitGroup = VisitGroup::factory()->studyName($study->name)->modality('PT')->create();
         $visitType  = VisitType::factory()->visitGroupId($visitGroup->id)->name('PET0')->create();
-        $visit = Visit::Factory()->patientCode($patient->code)->visitTypeId($visitType->id)->create();
+        $visit = Visit::Factory()->patientId($patient->id)->visitTypeId($visitType->id)->create();
 
         $currentUserId = AuthorizationTools::actAsAdmin(false);
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_INVESTIGATOR, $study->name);
@@ -189,7 +189,7 @@ class InvestigatorFormTest extends TestCase
         $patient = Patient::factory()->studyName($study->name)->create();
         $visitGroup = VisitGroup::factory()->studyName($study->name)->modality('PT')->create();
         $visitType  = VisitType::factory()->visitGroupId($visitGroup->id)->name('PET0')->localFormNeeded()->create();
-        $visit = Visit::Factory()->patientCode($patient->code)->visitTypeId($visitType->id)->stateInvestigatorForm(Constants::INVESTIGATOR_FORM_DRAFT)->create();
+        $visit = Visit::Factory()->patientId($patient->id)->visitTypeId($visitType->id)->stateInvestigatorForm(Constants::INVESTIGATOR_FORM_DRAFT)->create();
 
         $currentUserId = AuthorizationTools::actAsAdmin(false);
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_INVESTIGATOR, $study->name);
@@ -212,7 +212,7 @@ class InvestigatorFormTest extends TestCase
         $patient = Patient::factory()->studyName($study->name)->create();
         $visitGroup = VisitGroup::factory()->studyName($study->name)->modality('PT')->create();
         $visitType  = VisitType::factory()->visitGroupId($visitGroup->id)->name('PET0')->localFormNeeded()->create();
-        $visit = Visit::Factory()->patientCode($patient->code)->visitTypeId($visitType->id)->create();
+        $visit = Visit::Factory()->patientId($patient->id)->visitTypeId($visitType->id)->create();
 
         Review::factory()->visitId($visit->id)->studyName($study->name)->create();
 
@@ -234,7 +234,7 @@ class InvestigatorFormTest extends TestCase
         $patient = Patient::factory()->studyName($study->name)->create();
         $visitGroup = VisitGroup::factory()->studyName($study->name)->modality('PT')->create();
         $visitType  = VisitType::factory()->visitGroupId($visitGroup->id)->name('PET0')->localFormNeeded()->create();
-        $visit = Visit::Factory()->patientCode($patient->code)->visitTypeId($visitType->id)->create();
+        $visit = Visit::Factory()->patientId($patient->id)->visitTypeId($visitType->id)->create();
 
         Review::factory()->visitId($visit->id)->studyName($study->name)->create();
 
@@ -256,7 +256,7 @@ class InvestigatorFormTest extends TestCase
         $patient = Patient::factory()->studyName($study->name)->create();
         $visitGroup = VisitGroup::factory()->studyName($study->name)->modality('PT')->create();
         $visitType  = VisitType::factory()->visitGroupId($visitGroup->id)->name('PET0')->localFormNeeded()->create();
-        $visit = Visit::Factory()->patientCode($patient->code)->stateInvestigatorForm(Constants::INVESTIGATOR_FORM_DONE)->visitTypeId($visitType->id)->create();
+        $visit = Visit::Factory()->patientId($patient->id)->stateInvestigatorForm(Constants::INVESTIGATOR_FORM_DONE)->visitTypeId($visitType->id)->create();
 
         Review::factory()->visitId($visit->id)->studyName($study->name)->create();
 
@@ -278,7 +278,7 @@ class InvestigatorFormTest extends TestCase
         $patient = Patient::factory()->studyName($study->name)->create();
         $visitGroup = VisitGroup::factory()->studyName($study->name)->modality('PT')->create();
         $visitType  = VisitType::factory()->visitGroupId($visitGroup->id)->name('PET0')->create();
-        $visit = Visit::Factory()->patientCode($patient->code)->visitTypeId($visitType->id)->create();
+        $visit = Visit::Factory()->patientId($patient->id)->visitTypeId($visitType->id)->create();
 
         Review::factory()->visitId($visit->id)->studyName($study->name)->create();
 
@@ -300,7 +300,7 @@ class InvestigatorFormTest extends TestCase
         $patient = Patient::factory()->studyName($study->name)->create();
         $visitGroup = VisitGroup::factory()->studyName($study->name)->modality('PT')->create();
         $visitType  = VisitType::factory()->visitGroupId($visitGroup->id)->name('PET0')->localFormNeeded()->create();
-        $visit = Visit::Factory()->patientCode($patient->code)->visitTypeId($visitType->id)->create();
+        $visit = Visit::Factory()->patientId($patient->id)->visitTypeId($visitType->id)->create();
 
         $currentUserId = AuthorizationTools::actAsAdmin(false);
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_INVESTIGATOR, $study->name);

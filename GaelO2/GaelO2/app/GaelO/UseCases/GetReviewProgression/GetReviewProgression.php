@@ -69,7 +69,7 @@ class GetReviewProgression {
 
                 $answer[] = [
                     'id' => $visit['id'],
-                    'patientCode' => $visit['patient_code'],
+                    'patientId' => $visit['patient_id'],
                     'reviewStatus' => $visit['review_status']['review_status'],
                     'visitDate' =>$visit['visit_date'],
                     'reviewDoneBy'=> $this->getUsersDetails($userIdHavingReviewed, $reviewersById),

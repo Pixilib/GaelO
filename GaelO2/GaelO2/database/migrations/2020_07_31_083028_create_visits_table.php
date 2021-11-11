@@ -18,7 +18,7 @@ class CreateVisitsTable extends Migration
             $table->id();
             $table->unsignedBigInteger('creator_user_id')->nullable(false);
             $table->dateTime('creation_date', 6)->nullable(false);
-            $table->unsignedBigInteger('patient_code')->nullable(false);
+            $table->unsignedBigInteger('patient_id')->nullable(false);
             $table->date('visit_date')->nullable(true)->default(null);
             $table->unsignedBigInteger('visit_type_id')->nullable(false);
             $table->enum('status_done', ['Not Done','Done'])->nullable(false)->default('Not Done');
@@ -42,7 +42,7 @@ class CreateVisitsTable extends Migration
             $table->softDeletes();
             $table->timestamps();
             //Dependencies
-            $table->foreign('patient_code')->references('code')->on('patients');
+            $table->foreign('patient_id')->references('id')->on('patients');
             $table->foreign('visit_type_id')->references('id')->on('visit_types');
             $table->foreign('creator_user_id')->references('id')->on('users');
             $table->foreign('controller_user_id')->references('id')->on('users');

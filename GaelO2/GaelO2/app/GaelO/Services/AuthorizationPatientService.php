@@ -26,8 +26,8 @@ class AuthorizationPatientService {
         $this->authorizationService->setCurrentUserAndRole($userId, $role);
     }
 
-    public function setPatient(int $patientCode){
-        $patientDetails = $this->patientRepository->find($patientCode);
+    public function setPatient(string $patientId){
+        $patientDetails = $this->patientRepository->find($patientId);
         $this->patientStudy = $patientDetails['study_name'];
         $this->patientCenter = $patientDetails['center_code'];
     }

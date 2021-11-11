@@ -60,7 +60,7 @@ class DeleteInvestigatorForm{
             $actionDetails = [
                 'modality' => $visitContext['visit_type']['visit_group']['modality'],
                 'visit_type' => $visitContext['visit_type']['name'],
-                'patient_code' => $visitContext['patient_code'],
+                'patient_id' => $visitContext['patient_id'],
                 'id_review' => $investigatorFormEntity['id'],
                 'reason' => $deleteInvestigatorFormRequest->reason
             ];
@@ -79,7 +79,7 @@ class DeleteInvestigatorForm{
                 true,
                 $investigatorFormEntity['user_id'],
                 $studyName,
-                $visitContext['patient_code'],
+                $visitContext['patient_id'],
                 $visitContext['visit_type']['name'] );
 
             $DeleteInvestigatorFormResponse->status = 200;

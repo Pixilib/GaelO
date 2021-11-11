@@ -24,7 +24,7 @@ class FormService
     protected array $visitContext;
     protected string $studyName;
     protected string $visitType;
-    protected int $patientCode;
+    protected string $patientId;
     protected int $uploaderId;
 
     public function __construct(
@@ -54,7 +54,7 @@ class FormService
         $this->visitService->setVisitId($visitContext['id']);
         $this->visitContext = $visitContext;
         $this->visitType = $this->visitContext['visit_type']['name'];
-        $this->patientCode = $this->visitContext['patient_code'];
+        $this->patientId = $this->visitContext['patient_id'];
         $this->uploaderId = $this->visitContext['creator_user_id'];
         $this->studyName = $studyName;
         $modality = $this->visitContext['visit_type']['visit_group']['modality'];

@@ -43,10 +43,8 @@ class ImportPatients
                 foreach ($patient as $key => $value) {
                     $patient[Util::camelCaseToSnakeCase($key)] = $value;
                 }
-                $patient['study_name'] = $importPatientsRequest->studyName;
-                $patient['withdraw_reason'] = null;
-                $patient['withdraw_date'] = null;
-                $arrayPatients[] = PatientEntity::fillFromDBReponseArray($patient);
+                $patient['studyName'] = $importPatientsRequest->studyName;
+                $arrayPatients[] = $patient;
             }
             $importPatientsRequest->patients = $arrayPatients;
             $this->importPatient->setPatientEntities($importPatientsRequest->patients);

@@ -24,8 +24,8 @@ class GetCreatableVisits{
 
         try{
             //SK A PASSER VIA ENTITY
-            $this->checkAuthorization($getCreatableVisitsRequest->currentUserId, $getCreatableVisitsRequest->patientCode);
-            $this->patientService->setPatientCode($getCreatableVisitsRequest->patientCode);
+            $this->checkAuthorization($getCreatableVisitsRequest->currentUserId, $getCreatableVisitsRequest->patientId);
+            $this->patientService->setPatientCode($getCreatableVisitsRequest->patientId);
             $visitToCreate = $this->patientService->getAvailableVisitToCreate();
             $getCreatableVisitsResponse->status = 200;
             $getCreatableVisitsResponse->statusText = 'OK';
@@ -42,9 +42,9 @@ class GetCreatableVisits{
         }
     }
 
-    private function checkAuthorization(int $userId, int $patientCode){
+    private function checkAuthorization(int $userId, string $patientId){
         $this->authorizationPatientService->setCurrentUserAndRole($userId, Constants::ROLE_INVESTIGATOR);
-        $this->authorizationPatientService->setPatient($patientCode);
+        $this->authorizationPatientService->setPatient($patientId);
         if ( ! $this->authorizationPatientService->isPatientAllowed() ){
             throw new GaelOForbiddenException();
         }

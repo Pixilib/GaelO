@@ -23,8 +23,8 @@ class GetPatientVisit {
     public function execute(GetPatientVisitRequest $getPatientVisitRequest, GetPatientVisitResponse $getPatientVisitResponse){
 
         try{
-            $this->checkAuthorization($getPatientVisitRequest->currentUserId, $getPatientVisitRequest->patientCode, $getPatientVisitRequest->role);
-            $visitsArray = $this->visitRepositoryInterface->getAllPatientsVisitsWithReviewStatus($getPatientVisitRequest->patientCode, $getPatientVisitRequest->studyName, $getPatientVisitRequest->withTrashed);
+            $this->checkAuthorization($getPatientVisitRequest->currentUserId, $getPatientVisitRequest->patientId, $getPatientVisitRequest->role);
+            $visitsArray = $this->visitRepositoryInterface->getAllPatientsVisitsWithReviewStatus($getPatientVisitRequest->patientId, $getPatientVisitRequest->studyName, $getPatientVisitRequest->withTrashed);
 
             $responseArray = [];
             foreach($visitsArray as $data){
@@ -58,9 +58,9 @@ class GetPatientVisit {
 
     }
 
-    private function checkAuthorization(int $userId, int $patientCode, string $role){
+    private function checkAuthorization(int $userId, string $patientId, string $role){
         $this->authorizationPatientService->setCurrentUserAndRole($userId, $role);
-        $this->authorizationPatientService->setPatient($patientCode);
+        $this->authorizationPatientService->setPatient($patientId);
         if( ! $this->authorizationPatientService->isPatientAllowed()){
             throw new GaelOForbiddenException();
         }

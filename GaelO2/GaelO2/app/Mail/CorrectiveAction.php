@@ -24,7 +24,7 @@ class CorrectiveAction extends Mailable implements ShouldQueue
         /*
         array('done'=>'',
         'study'=> '',
-        'patientCode'=>'',
+        'patientId'=>'',
         'visitId'=>'',
         'visitType'=>'')
         */
@@ -38,7 +38,7 @@ class CorrectiveAction extends Mailable implements ShouldQueue
     public function build()
     {
         return $this->view('mails.mail_corrective_action')
-        ->subject($this->parameters['study']." - Corrective Action Patient - ".$this->parameters['patientCode'])
+        ->subject($this->parameters['study']." - Corrective Action Patient - ".$this->parameters['patientId'])
         ->with($this->parameters);
     }
 }

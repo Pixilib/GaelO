@@ -46,7 +46,7 @@ class VisitRepositoryTest extends TestCase
         $visitId = $this->visitRepository->createVisit(
             $study->name,
             $user->id,
-            $patient->code,
+            $patient->id,
             null,
             $visitType->id,
             Constants::VISIT_STATUS_DONE,
@@ -62,9 +62,9 @@ class VisitRepositoryTest extends TestCase
     public function testIsExistingVisit()
     {
         $visit = Visit::factory()->create();
-        $answerExisting = $this->visitRepository->isExistingVisit($visit->patient_code, $visit->visitType->id);
+        $answerExisting = $this->visitRepository->isExistingVisit($visit->patient_id, $visit->visitType->id);
         $visitType = VisitType::factory()->create();
-        $answerNotExisting = $this->visitRepository->isExistingVisit($visit->patient_code, $visitType->id);
+        $answerNotExisting = $this->visitRepository->isExistingVisit($visit->patient_id, $visitType->id);
         $this->assertTrue($answerExisting);
         $this->assertFalse($answerNotExisting);
     }
@@ -104,9 +104,9 @@ class VisitRepositoryTest extends TestCase
         $visitGroups->each(function ($item, $key) use ($patient, $patient2) {
             $visitTypes = VisitType::factory()->visitGroupId($item->id)->count(3)->create();
             $visitTypes->each(function ($item, $key) use ($patient, $patient2) {
-                $visit = Visit::factory()->visitTypeId($item->id)->patientCode($patient->code)->create();
+                $visit = Visit::factory()->visitTypeId($item->id)->patientId($patient->id)->create();
                 ReviewStatus::factory()->visitId($visit->id)->reviewAvailable()->studyName($patient->study_name)->create();
-                $visit2 = Visit::factory()->visitTypeId($item->id)->patientCode($patient2->code)->create();
+                $visit2 = Visit::factory()->visitTypeId($item->id)->patientId($patient2->id)->create();
                 ReviewStatus::factory()->visitId($visit2->id)->reviewAvailable()->studyName($patient->study_name)->create();
             });
         });
@@ -119,7 +119,7 @@ class VisitRepositoryTest extends TestCase
 
         $patient = $this->populateVisits()[0];
 
-        $visits = $this->visitRepository->getPatientsVisits($patient->code);
+        $visits = $this->visitRepository->getPatientsVisits($patient->id);
         $this->assertEquals(6, sizeof($visits));
     }
 
@@ -127,7 +127,7 @@ class VisitRepositoryTest extends TestCase
     {
         $patient = $this->populateVisits()[0];
 
-        $visits = $this->visitRepository->getAllPatientsVisitsWithReviewStatus($patient->code, $patient->study_name, false);
+        $visits = $this->visitRepository->getAllPatientsVisitsWithReviewStatus($patient->id, $patient->study_name, false);
         $this->assertArrayHasKey('review_status', $visits[0]['review_status']);
         $this->assertArrayHasKey('review_available', $visits[0]['review_status']);
         $this->assertArrayHasKey('review_conclusion_value', $visits[0]['review_status']);
@@ -139,16 +139,15 @@ class VisitRepositoryTest extends TestCase
     public function testGetPatientVisitsWithReviewStatusWithTrashed()
     {
         $patient = $this->populateVisits()[0];
-
         $patient->visits->first()->delete();
-        $visits = $this->visitRepository->getAllPatientsVisitsWithReviewStatus($patient->code, $patient->study_name, true);
+        $visits = $this->visitRepository->getAllPatientsVisitsWithReviewStatus($patient->id, $patient->study_name, true);
         $this->assertNotNull($visits[0]['deleted_at']);
     }
 
     public function testGetPatientListVisitsWithContext()
     {
         $patient = $this->populateVisits();
-        $visits = $this->visitRepository->getPatientListVisitsWithContext([$patient[0]->code, $patient[1]->code]);
+        $visits = $this->visitRepository->getPatientListVisitsWithContext([$patient[0]->id, $patient[1]->id]);
         $this->assertEquals(12, sizeof($visits));
         $this->assertArrayHasKey('visit_type', $visits[0]);
         $this->assertArrayHasKey('visit_group', $visits[0]['visit_type']);
@@ -158,7 +157,7 @@ class VisitRepositoryTest extends TestCase
 
     {
         $patient = $this->populateVisits();
-        $visits = $this->visitRepository->getPatientListVisitWithContextAndReviewStatus([$patient[0]->code, $patient[1]->code], $patient[0]->study_name);
+        $visits = $this->visitRepository->getPatientListVisitWithContextAndReviewStatus([$patient[0]->id, $patient[1]->id], $patient[0]->study_name);
         $this->assertEquals(12, sizeof($visits));
         $this->assertArrayHasKey('review_status', $visits[0]);
 
@@ -320,9 +319,9 @@ class VisitRepositoryTest extends TestCase
         $visitGroups->each(function ($item, $key) use ($patient, $patient2) {
             $visitTypes = VisitType::factory()->visitGroupId($item->id)->count(3)->create();
             $visitTypes->each(function ($item, $key) use ($patient, $patient2) {
-                $visit = Visit::factory()->visitTypeId($item->id)->patientCode($patient->code)->create();
+                $visit = Visit::factory()->visitTypeId($item->id)->patientId($patient->id)->create();
                 ReviewStatus::factory()->visitId($visit->id)->reviewAvailable()->studyName($patient->study_name)->create();
-                $visit2 = Visit::factory()->visitTypeId($item->id)->patientCode($patient2->code)->create();
+                $visit2 = Visit::factory()->visitTypeId($item->id)->patientId($patient2->id)->create();
                 ReviewStatus::factory()->visitId($visit2->id)->studyName($patient->study_name)->create();
             });
         });
@@ -384,7 +383,7 @@ class VisitRepositoryTest extends TestCase
     public function testIsParentPatientHavingOneVisitAwaitingReview(){
         //create patient with 2 visits
         $patient = Patient::factory()->create();
-        $visits = Visit::factory()->patientCode($patient->code)->count(2)->create();
+        $visits = Visit::factory()->patientId($patient->id)->count(2)->create();
         //create review status being available for review
         $visits->each(function ($visit, $key) use ($patient) {
             ReviewStatus::factory()->visitId($visit->id)->reviewAvailable()->studyName($patient->study_name)->create();

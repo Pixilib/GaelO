@@ -37,12 +37,12 @@ class ReactivateVisit {
             $studyName = $visitContext['visit_type']['visit_group']['study_name'];
             $visitType = $visitContext['visit_type']['name'];
             $modality = $visitContext['visit_type']['visit_group']['modality'];
-            $patientCode = $visitContext['patient_code'];
+            $patientId = $visitContext['patient_id'];
 
 
             $this->checkAuthorization($reactivateVisitRequest->currentUserId, $studyName);
 
-            $isExisitingVisit = $this->visitRepositoryInterface->isExistingVisit($patientCode, $visitContext['visit_type']['id']);
+            $isExisitingVisit = $this->visitRepositoryInterface->isExistingVisit($patientId, $visitContext['visit_type']['id']);
 
             if( $visitContext['deleted_at'] == null ){
                 throw new GaelOConflictException("Visit Not Deleted, can't reactivate it");
@@ -57,7 +57,7 @@ class ReactivateVisit {
             $actionDetails = [
                 'Visit Type' => $visitType,
                 'Modality' => $modality,
-                'Patient Code' => $patientCode
+                'Patient ID' => $patientId
             ];
 
             $this->trackerRepositoryInterface->writeAction(

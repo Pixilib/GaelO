@@ -12,7 +12,7 @@ interface VisitRepositoryInterface
     public function createVisit(
         string $studyName,
         int $creatorUserId,
-        int $patientCode,
+        string $patientId,
         ?string $visitDate,
         int $visitTypeId,
         string $statusDone,
@@ -21,7 +21,7 @@ interface VisitRepositoryInterface
         string $stateQualityControl
     ): int;
 
-    public function isExistingVisit(int $patientCode, int $visitTypeId): bool;
+    public function isExistingVisit(string $patientId, int $visitTypeId): bool;
 
     public function updateUploadStatus(int $visitId, string $newUploadStatus): array;
 
@@ -29,13 +29,13 @@ interface VisitRepositoryInterface
 
     public function getVisitContext(int $visitId, bool $withTrashed = false): array;
 
-    public function getPatientsVisits(int $patientCode): array;
+    public function getPatientsVisits(string $patientId): array;
 
-    public function getAllPatientsVisitsWithReviewStatus(int $patientCode, string $studyName, bool $withTrashed): array;
+    public function getAllPatientsVisitsWithReviewStatus(string $patientId, string $studyName, bool $withTrashed): array;
 
-    public function getPatientListVisitsWithContext(array $patientCodeArray): array;
+    public function getPatientListVisitsWithContext(array $patientIdArray): array;
 
-    public function getPatientListVisitWithContextAndReviewStatus(array $patientCodeArray, string $studyName): array;
+    public function getPatientListVisitWithContextAndReviewStatus(array $patientIdArray, string $studyName): array;
 
     public function getVisitsInStudy(string $studyName, bool $withReviewStatus, bool $withTrashed): array;
 

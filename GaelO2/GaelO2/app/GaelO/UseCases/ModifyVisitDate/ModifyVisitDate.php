@@ -40,7 +40,7 @@ class ModifyVisitDate {
             $this->visitRepositoryInterface->updateVisitDate($visitId, $newVisitDate);
 
             $actionsDetails = [
-                'patientCode'=>$visitContext['patient_code'],
+                'patientId'=>$visitContext['patient_id'],
                 'modality' => $visitContext['visit_type']['visit_group']['modality'],
                 'visitType' => $visitContext['visit_type']['name'],
                 'previousDate' =>$visitContext['visit_date'],

@@ -10,7 +10,7 @@ interface PatientRepositoryInterface {
 
     public function find($code) : array ;
 
-    public function getAllPatientsCode() : array ;
+    public function getAllPatientsNumberInStudy(string $studyName) : array ;
 
     public function getPatientWithCenterDetails(int $code) : array ;
 
@@ -20,7 +20,11 @@ interface PatientRepositoryInterface {
 
     public function getPatientsFromCodeArray(array $codes) : array ;
 
-    public function addPatientInStudy(PatientEntity $patientEntity, String $studyName) : void ;
+    public function addPatientInStudy(string $id,
+                    string $number, string $lastname, string $firstname,
+                    string $gender, int $birthDay, int $birthMonth, int $birthYear,
+                    string $registrationDate, string $investigatorName, int $centerCode,
+                    String $studyName) : void ;
 
     public function updatePatient(int $code, string $lastname, string $firstname,
                     string $gender, int $birthDay, int $birthMonth, int $birthYear,

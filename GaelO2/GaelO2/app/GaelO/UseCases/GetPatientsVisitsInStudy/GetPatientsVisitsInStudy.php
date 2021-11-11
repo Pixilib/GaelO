@@ -37,16 +37,16 @@ class GetPatientsVisitsInStudy {
             $this->checkAuthorization($getPatientsVisitsInStudyRequest->currentUserId, $getPatientsVisitsInStudyRequest->studyName);
 
             $studyName = $getPatientsVisitsInStudyRequest->studyName;
-            $patientCodes = $getPatientsVisitsInStudyRequest->patientCodes;
+            $patientId = $getPatientsVisitsInStudyRequest->patientId;
 
             $responseArray = [];
-            $visitsArray = $this->visitRepositoryInterface->getPatientListVisitWithContextAndReviewStatus($patientCodes, $studyName);
-            $patientEntities = $this->patientRepositoryInterface->find($patientCodes);
+            $visitsArray = $this->visitRepositoryInterface->getPatientListVisitWithContextAndReviewStatus($patientId, $studyName);
+            $patientEntities = $this->patientRepositoryInterface->find($patientId);
 
             foreach($patientEntities as $patientEntity) {
                 $patientVisits = [];
                 $patientVisitsArray = array_filter($visitsArray, function($visit) use ($patientEntity){
-                    return $visit['patient_code'] === $patientEntity['code'];
+                    return $visit['patient_id'] === $patientEntity['id'];
                 });
 
                 foreach($patientVisitsArray as $data){

@@ -33,7 +33,7 @@ class CreatableVisitTest extends TestCase
         $this->patient = Patient::factory()->studyName($this->studyName)->create();
         $this->patient->inclusion_status = Constants::PATIENT_INCLUSION_STATUS_INCLUDED;
         $this->patient->save();
-        $this->patientCode = $this->patient->code;
+        $this->patientId = $this->patient->id;
     }
 
     public function testGetCreatableVisit()
@@ -45,7 +45,7 @@ class CreatableVisitTest extends TestCase
         $userEntity->save();
 
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_INVESTIGATOR, $this->studyName);
-        $response = $this->get('/api/studies/' . $this->studyName . '/patients/' . $this->patientCode . '/creatable-visits');
+        $response = $this->get('/api/studies/' . $this->studyName . '/patients/' . $this->patientId . '/creatable-visits');
         $responseArray = json_decode( $response->content() );
         $this->assertEquals(1, sizeof($responseArray));
         $response->assertStatus(200);
@@ -54,7 +54,7 @@ class CreatableVisitTest extends TestCase
     public function testGetCreatableVisitShouldFailNoRole()
     {
         AuthorizationTools::actAsAdmin(false);
-        $response = $this->get('/api/studies/' . $this->studyName . '/patients/' . $this->patientCode . '/creatable-visits');
+        $response = $this->get('/api/studies/' . $this->studyName . '/patients/' . $this->patientId . '/creatable-visits');
         $response->assertStatus(403);
     }
 }

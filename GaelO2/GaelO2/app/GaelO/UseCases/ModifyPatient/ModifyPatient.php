@@ -34,9 +34,9 @@ class ModifyPatient {
 
             if (empty($modifyPatientRequest->reason)) throw new GaelOBadRequestException('Reason for patient edition must be sepecified');
 
-            $this->checkAuthorization($modifyPatientRequest->currentUserId, $modifyPatientRequest->patientCode);
+            $this->checkAuthorization($modifyPatientRequest->currentUserId, $modifyPatientRequest->patientId);
 
-            $patientEntity = $this->patientRepositoryInterface->find($modifyPatientRequest->patientCode);
+            $patientEntity = $this->patientRepositoryInterface->find($modifyPatientRequest->patientId);
 
             $updatableData = ['firstname', 'lastname', 'gender', 'birthDay', 'birthMonth', 'birthYear',
             'registrationDate', 'investigatorName', 'centerCode', 'inclusionStatus', 'withdrawReason', 'withdrawDate'];
@@ -73,7 +73,7 @@ class ModifyPatient {
 
             $modifiedData['reason'] = $modifyPatientRequest->reason;
 
-            $this->patientRepositoryInterface->update($modifyPatientRequest->patientCode, $patientEntity);
+            $this->patientRepositoryInterface->update($modifyPatientRequest->patientId, $patientEntity);
             $this->trackerRepositoryInterface->writeAction($modifyPatientRequest->currentUserId, Constants::ROLE_SUPERVISOR, $patientEntity['study_name'], null, Constants::TRACKER_EDIT_PATIENT, $modifiedData);
 
             $modifyPatientResponse->status = 200;
@@ -91,9 +91,9 @@ class ModifyPatient {
         }
     }
 
-    private function checkAuthorization(int $userId, int $patientCode){
+    private function checkAuthorization(int $userId, string $patientId){
         $this->authorizationPatientService->setCurrentUserAndRole($userId, Constants::ROLE_SUPERVISOR);
-        $this->authorizationPatientService->setPatient($patientCode);
+        $this->authorizationPatientService->setPatient($patientId);
         if( ! $this->authorizationPatientService->isPatientAllowed()){
             throw new GaelOForbiddenException();
         };

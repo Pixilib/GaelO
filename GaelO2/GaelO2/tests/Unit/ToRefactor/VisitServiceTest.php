@@ -66,7 +66,7 @@ class VisitServiceTest extends TestCase
         $this->visit = factory(Visit::class)->create(
             [
                 'creator_user_id' => 1,
-                'patient_code' => $this->patient['code'],
+                'patient_id' => $this->patient['id'],
                 'visit_type_id' => $this->visitType['id'],
                 'status_done' => 'Done',
                 'state_investigator_form'=> $stateInvestigatorForm

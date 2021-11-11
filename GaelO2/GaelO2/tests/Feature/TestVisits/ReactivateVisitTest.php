@@ -52,7 +52,7 @@ class ReactivateVisitTest extends TestCase
 
     public function testReactivateTestShouldFailAlreadyExistingVisit(){
 
-        Visit::factory()->visitTypeId($this->visit->visit_type_id)->patientCode($this->visit->patient_code)->create();
+        Visit::factory()->visitTypeId($this->visit->visit_type_id)->patientId($this->visit->patient_id)->create();
 
         $currentUserId = AuthorizationTools::actAsAdmin(false);
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $this->visit->visitType->visitGroup->study->name);

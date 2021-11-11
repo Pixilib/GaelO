@@ -35,7 +35,7 @@ class CreateVisit {
 
         try{
 
-            $this->checkAuthorization($createVisitRequest->currentUserId, $createVisitRequest->patientCode);
+            $this->checkAuthorization($createVisitRequest->currentUserId, $createVisitRequest->patientId);
 
             //If visit was not done, force visitDate to null
             if ($createVisitRequest->statusDone === Constants::VISIT_STATUS_NOT_DONE && !empty($createVisitRequest->visitDate)) {
@@ -47,7 +47,7 @@ class CreateVisit {
             }
 
             $existingVisit = $this->visitRepositoryInterface->isExistingVisit(
-                            $createVisitRequest->patientCode,
+                            $createVisitRequest->patientId,
                             $createVisitRequest->visitTypeId);
 
             if($existingVisit) {
@@ -67,7 +67,7 @@ class CreateVisit {
                 $visitId = $this->visitService->createVisit(
                     $createVisitRequest->studyName,
                     $createVisitRequest->currentUserId,
-                    $createVisitRequest->patientCode,
+                    $createVisitRequest->patientId,
                     $createVisitRequest->visitDate,
                     $createVisitRequest->visitTypeId,
                     $createVisitRequest->statusDone,
@@ -87,7 +87,7 @@ class CreateVisit {
                     $this->mailServices->sendVisitNotDoneMessage(
                         $visitId,
                         $createVisitRequest->studyName,
-                        $createVisitRequest->patientCode,
+                        $createVisitRequest->patientId,
                         $visitType,
                         $createVisitRequest->reasonForNotDone,
                         $createVisitRequest->currentUserId
@@ -119,9 +119,9 @@ class CreateVisit {
 
     }
 
-    private function checkAuthorization(int $userId, int $patientCode) : void{
+    private function checkAuthorization(int $userId, string $patientId) : void{
         $this->authorizationService->setCurrentUserAndRole($userId, Constants::ROLE_INVESTIGATOR);
-        $this->authorizationService->setPatient($patientCode);
+        $this->authorizationService->setPatient($patientId);
         if (! $this->authorizationService->isPatientAllowed() ){
             throw new GaelOForbiddenException();
         }

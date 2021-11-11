@@ -32,7 +32,7 @@ class ModifyCorrectiveAction{
             $visitContext = $this->visitRepositoryInterface->getVisitContext($modifyCorrectiveActionRequest->visitId);
 
             $studyName = $visitContext['visit_type']['visit_group']['study_name'];
-            $patientCode = $visitContext['patient']['center_code'];
+            $patientId = $visitContext['patient']['id'];
             $visitType = $visitContext['visit_type']['name'];
             $localFormNeeded = $visitContext['visit_type']['local_form_needed'];
             $visitModality = $visitContext['visit_type']['visit_group']['modality'];
@@ -62,7 +62,7 @@ class ModifyCorrectiveAction{
             );
 
             $actionDetails = [
-                'patient_code'=>$patientCode,
+                'patient_id'=>$patientId,
                 'visit_type'=>$visitType,
                 'vist_group_modality'=>$visitModality,
                 'new_series'=>$modifyCorrectiveActionRequest->newSeriesUploaded,
@@ -86,7 +86,7 @@ class ModifyCorrectiveAction{
                 $modifyCorrectiveActionRequest->currentUserId,
                 $studyName,
                 $modifyCorrectiveActionRequest->correctiveActionDone,
-                $patientCode,
+                $patientId,
                 $visitModality,
                 $visitType
             );

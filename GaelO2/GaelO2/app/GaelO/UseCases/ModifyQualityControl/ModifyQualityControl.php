@@ -33,7 +33,7 @@ class ModifyQualityControl {
             $visitContext = $this->visitService->getVisitContext();
 
             $studyName = $visitContext['visit_type']['visit_group']['study_name'];
-            $patientCode = $visitContext['patient']['code'];
+            $patientId = $visitContext['patient']['id'];
             $visitType = $visitContext['visit_type']['name'];
             $visitModality = $visitContext['visit_type']['visit_group']['modality'];
             $centerCode = $visitContext['patient']['center_code'];
@@ -71,7 +71,7 @@ class ModifyQualityControl {
 
 
             $actionDetails = [
-                'patient_code'=>$patientCode,
+                'patient_id'=>$patientId,
                 'visit_type'=>$visitType,
                 'vist_group_modality'=>$visitModality,
                 'form_accepted'=>$modifyQualityControlRequest->formQc,
@@ -97,7 +97,7 @@ class ModifyQualityControl {
                 $studyName,
                 $centerCode,
                 $modifyQualityControlRequest->stateQc,
-                $patientCode,
+                $patientId,
                 $visitModality,
                 $visitType,
                 $modifyQualityControlRequest->formQc ? 'Accepted ' : 'Refused',

@@ -67,7 +67,7 @@ class DeleteReviewForm {
             $actionDetails = [
                 'modality' => $visitContext['visit_type']['visit_group']['modality'],
                 'visit_type' => $visitContext['visit_type']['name'],
-                'patient_code' => $visitContext['patient_code'],
+                'patient_id' => $visitContext['patient_id'],
                 'id_review' => $deleteReviewFormRequest->reviewId,
                 'reason' => $deleteReviewFormRequest->reason
             ];
@@ -86,7 +86,7 @@ class DeleteReviewForm {
                 false,
                 $reviewEntity['user_id'],
                 $reviewEntity['study_name'],
-                $visitContext['patient_code'],
+                $visitContext['patient_id'],
                 $visitContext['visit_type']['name'] );
 
             $deleteReviewFormResponse->status = 200;

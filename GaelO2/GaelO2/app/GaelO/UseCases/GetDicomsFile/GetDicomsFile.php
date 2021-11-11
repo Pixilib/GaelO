@@ -35,13 +35,13 @@ class GetDicomsFile{
             $studyName = $visitContext['visit_type']['visit_group']['study_name'];
             $visitType = $visitContext['visit_type']['name'];
             $visitGroup =  $visitContext['visit_type']['visit_group']['modality'];
-            $patientCode = $visitContext['patient']['code'];
+            $patientId = $visitContext['patient']['id'];
 
             //Get SeriesOrthancID from database to be downloaded
             //SK ICI PASSER DIRECTEMENT PAR LE REPOSITORY
             $this->orthancSeriesIDs = $this->visitService->getVisitSeriesIdsDicomArray(false);
             //First output the filename, then the controller will call outputStream to get content of orthanc response
-            $getDicomsResponse->filename = 'DICOM_'.$studyName.'_'.$visitGroup.'_'.$visitType.'_'.$patientCode.'.zip';
+            $getDicomsResponse->filename = 'DICOM_'.$studyName.'_'.$visitGroup.'_'.$visitType.'_'.$patientId.'.zip';
 
             $getDicomsResponse->status = 200;
             $getDicomsResponse->statusText = 'OK';

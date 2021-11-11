@@ -3,7 +3,7 @@
 @section('content')
     Quality Control of the following visit has been set to : {{$controlDecision}}<br>
     Study : {{$study}}<br>
-    Patient Number : {{$patientCode}}<br>
+    Patient Number : {{$patientId}}<br>
     Visit Modality : {{$visitModality}}<br>
     Visit Name : {{$visitType}}<br>
     Investigation Form : {{$formDecision}}, Comment : {{$formComment}}<br>

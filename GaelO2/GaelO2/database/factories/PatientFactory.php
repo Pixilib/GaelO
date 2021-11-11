@@ -16,7 +16,7 @@ class PatientFactory extends Factory
     public function definition()
     {
         return [
-            'code'=>$this->faker->unique()->randomNumber,
+            'id'=>$this->faker->unique()->randomNumber,
             'number'=>$this->faker->randomNumber,
             'firstname'=>strtoupper($this->faker->lexify('?')),
             'lastname'=>strtoupper($this->faker->lexify('?')),
@@ -34,11 +34,11 @@ class PatientFactory extends Factory
         ];
     }
 
-    public function code(int $code){
+    public function id(int $code){
 
         return $this->state(function (array $attributes) use($code) {
             return [
-                'code' => $code,
+                'id' => $code,
             ];
         });
 

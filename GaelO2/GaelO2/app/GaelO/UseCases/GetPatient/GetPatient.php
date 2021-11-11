@@ -25,7 +25,7 @@ class GetPatient {
     public function execute(GetPatientRequest $getPatientRequest, GetPatientResponse $getPatientResponse) : void
     {
         try{
-            $code = $getPatientRequest->code;
+            $code = $getPatientRequest->id;
 
             $this->checkAuthorization($getPatientRequest->currentUserId, $getPatientRequest->role, $code );
             $dbData = $this->patientRepositoryInterface->getPatientWithCenterDetails($code);
@@ -56,9 +56,9 @@ class GetPatient {
 
     }
 
-    private function checkAuthorization(int $currentUserid, string $role, int $patientCode ){
+    private function checkAuthorization(int $currentUserid, string $role, string $patientId ){
         $this->authorizationService->setCurrentUserAndRole($currentUserid, $role);
-        $this->authorizationService->setPatient($patientCode);
+        $this->authorizationService->setPatient($patientId);
         if( ! $this->authorizationService->isPatientAllowed() ){
             throw new GaelOForbiddenException();
         };

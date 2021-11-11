@@ -24,7 +24,7 @@ class Adjudication extends Mailable implements ShouldQueue
         /*
         array(
             'study'=>'',
-            'patientCode'=>'',
+            'patientId'=>'',
             'visitType'=>'',
             'visitId' => ''
         )
@@ -39,7 +39,7 @@ class Adjudication extends Mailable implements ShouldQueue
     public function build()
     {
         return $this->view('mails.adjudication')
-        ->subject($this->parameters['study']." - Awaiting Adjudication Patient - ".$this->parameters['patientCode'])
+        ->subject($this->parameters['study']." - Awaiting Adjudication Patient - ".$this->parameters['patientId'])
         ->with($this->parameters);
     }
 }

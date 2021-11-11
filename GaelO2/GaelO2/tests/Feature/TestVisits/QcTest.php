@@ -41,7 +41,7 @@ class QcTest extends TestCase
             'local_form_needed' => true,
             'review_needed' => true
         ])
-        ->patientCode($this->patient->code)
+        ->patientId($this->patient->id)
         ->uploadDone()
         ->stateQualityControl(Constants::QUALITY_CONTROL_NOT_DONE)
         ->stateInvestigatorForm(Constants::INVESTIGATOR_FORM_DONE)

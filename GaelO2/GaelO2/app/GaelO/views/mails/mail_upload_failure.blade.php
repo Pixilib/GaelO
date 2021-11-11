@@ -3,7 +3,7 @@
 @section('content')
     An Import Error occured during validation of upload.<br>
     Visit ID : {{$idVisit}}<br>
-    Patient Code : {{$patientCode}}<br>
+    Patient ID : {{$patientId}}<br>
     Visit Type : {{$visitType}}<br>
     Study : {{$study}}<br>
     zipPath : {{$zipPath}}<br>

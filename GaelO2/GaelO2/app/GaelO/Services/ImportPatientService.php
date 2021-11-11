@@ -11,11 +11,13 @@ use App\GaelO\Interfaces\Repositories\StudyRepositoryInterface;
 use App\GaelO\Util;
 use Exception;
 use Hamcrest\Type\IsNumeric;
+use Illuminate\Support\Facades\Log;
 
 class ImportPatientService
 {
 
     private int $patientCodeLength;
+    private array $existingPatientNumber;
     private PatientRepositoryInterface $patientRepository;
     private CenterRepositoryInterface $centerRepository;
     private StudyRepositoryInterface $studyRepository;
@@ -43,7 +45,7 @@ class ImportPatientService
 	public function import() {
         $studyEntity = $this->studyRepository->find($this->studyName);
         $this->patientCodeLength = $studyEntity['patient_code_length'];
-        $this->existingPatientCode = $this->patientRepository->getAllPatientsCode();
+        $this->existingPatientNumber = $this->patientRepository->getAllPatientsNumberInStudy($studyEntity['name']);
 
         $allCenters = $this->centerRepository->getAll();
         //Store array of all existing centers code
@@ -54,23 +56,26 @@ class ImportPatientService
         //For each patient from the array list
 		foreach ($this->patientEntities as $patientEntity) {
             try {
-                $patientEntity->registrationDate = Util::formatUSDateStringToSQLDateFormat($patientEntity->registrationDate);
+                $patientEntity['registrationDate'] = Util::formatUSDateStringToSQLDateFormat($patientEntity['registrationDate']);
                 //Check condition before import
-                self::checkPatientGender($patientEntity->gender);
-                self::checkCorrectBirthDate($patientEntity->birthDay, $patientEntity->birthMonth, $patientEntity->birthYear);
-                $this->checkNewPatient($patientEntity->code);
-                $this->isCorrectPatientCode($patientEntity->code);
-                $this->isExistingCenter($patientEntity->centerCode);
-                $this->checkCurrentStudy($patientEntity->studyName, $this->studyName);
+                self::checkPatientGender($patientEntity['gender']);
+                self::checkCorrectBirthDate($patientEntity['birthDay'], $patientEntity['birthMonth'], $patientEntity['birthYear']);
+                $this->checkNewPatient($patientEntity['number']);
+                $this->isCorrectPatientNumber($patientEntity['number']);
+                $this->isExistingCenter($patientEntity['centerCode']);
+                $this->checkCurrentStudy($patientEntity['studyName'], $this->studyName);
 
                 //Store the patient result import process in this object
-                $this->patientRepository->addPatientInStudy($patientEntity, $this->studyName);
+                $this->patientRepository->addPatientInStudy($this->patientCodeLength.$patientEntity['number'], $patientEntity['number'],
+                    $patientEntity['lastname'], $patientEntity['firstname'], $patientEntity['gender'],
+                    $patientEntity['birthDay'], $patientEntity['birthMonth'], $patientEntity['birthYear'],$patientEntity['registrationDate'],$patientEntity['investigatorName'], $patientEntity['centerCode'], $this->studyName
+                );
 
-				$this->successList[]=$patientEntity->code;
+				$this->successList[]=$patientEntity['number'];
 
 			//If conditions not met, add to the fail list with the respective error reason
             } catch(Exception $error) {
-                $this->failList[$error->getMessage()][]=$patientEntity->code;
+                $this->failList[$error->getMessage()][]=$patientEntity['number'];
             }
 
 		}
@@ -102,34 +107,29 @@ class ImportPatientService
 	/**
 	 * Check that the importing patient is not already known in the system
 	 * NB : Each patient code should be unique (across study), patient number should include a study identifier
-	 * @param $patientCode
+	 * @param $patientId
 	 */
-	private function checkNewPatient(int $patientCode) : void {
-        if (in_array($patientCode, $this->existingPatientCode)) {
+	private function checkNewPatient(string $patientNumber) : void {
+        if (in_array($patientNumber, $this->existingPatientNumber)) {
             throw new GaelOBadRequestException('Existing Patient Code');
         }
 	}
 
 	/**
 	 * Check that patient number has the correct lenght
-	 * @param $patientCode
+	 * @param $patientId
 	 */
-	private function isCorrectPatientCode(int $patientCode) : void {
+	private function isCorrectPatientNumber(string $patientNumber) : void {
 
-        if ( !is_numeric($patientCode) ) {
+        if ( !is_numeric($patientNumber) ) {
 			throw new GaelOBadRequestException('Patient Code accept only numbers');
 		}
 
-		$lenghtImport=strlen((string) $patientCode);
+		$lenghtImport=strlen((string) $patientNumber);
 
 		if ($lenghtImport != $this->patientCodeLength) {
 			throw new GaelOBadRequestException('Incorrect Patient Code Length');
 		}
-	}
-
-	private function startsWith(string $string, string $startString) : bool {
-		$len=strlen($startString);
-		return (substr($string, 0, $len) === $startString);
 	}
 
 	/**
