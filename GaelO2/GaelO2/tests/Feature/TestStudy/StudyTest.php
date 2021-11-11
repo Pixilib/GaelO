@@ -35,7 +35,7 @@ class StudyTest extends TestCase
         $payload = [
             'name'=>'NEWSTUDY',
             'code'=>'1234',
-            'patientNumberLength' => 5
+            'patientCodeLength' => 5
         ];
 
         $this->json('POST', '/api/studies', $payload)->assertNoContent(201);
@@ -48,7 +48,7 @@ class StudyTest extends TestCase
         $payload = [
             'name'=>'NEWSTUDy',
             'code'=>'1234',
-            'patientNumberLength' => 5
+            'patientCodeLength' => 5
         ];
 
         $this->json('POST', '/api/studies', $payload)->assertStatus(400);
@@ -56,7 +56,7 @@ class StudyTest extends TestCase
         $payload = [
             'name'=>'NEW STUDY',
             'code'=>'1234',
-            'patientNumberLength' => 5
+            'patientCodeLength' => 5
         ];
 
         $this->json('POST', '/api/studies', $payload)->assertStatus(400);
@@ -64,7 +64,7 @@ class StudyTest extends TestCase
         $payload = [
             'name'=>'NEW.STUDY',
             'code'=>'1234',
-            'patientNumberLength' => 5
+            'patientCodeLength' => 5
         ];
 
         $this->json('POST', '/api/studies', $payload)->assertStatus(400);
@@ -76,7 +76,7 @@ class StudyTest extends TestCase
         $payload = [
             'name'=>'NEWSTUDY',
             'code'=>'1234',
-            'patientNumberLength' => 5
+            'patientCodeLength' => 5
         ];
         $this->json('POST', '/api/studies', $payload)->assertStatus(403);
     }
@@ -87,7 +87,7 @@ class StudyTest extends TestCase
         $payload = [
             'name'=>$study->name,
             'code'=>'1234',
-            'patientNumberLength' => 5
+            'patientCodeLength' => 5
         ];
         $this->json('POST', '/api/studies', $payload)->assertStatus(409);
     }
@@ -97,7 +97,7 @@ class StudyTest extends TestCase
         $payload = [
             'name'=>'NEWSTUDY',
             'code'=>'1234',
-            'patientNumberLength' => 0
+            'patientCodeLength' => 0
         ];
         $this->json('POST', '/api/studies', $payload)->assertStatus(400);
     }

@@ -24,12 +24,12 @@ class StudyRepository implements StudyRepositoryInterface {
         throw new Exception('Use Get Studies instead');
     }
 
-    public function addStudy(String $name, int $code, int $patientNumberLength) : void {
+    public function addStudy(String $name, int $code, int $patientCodeLength) : void {
 
         $study = new Study();
         $study->name = $name;
         $study->code = $code;
-        $study->patient_number_length = $patientNumberLength;
+        $study->patient_code_length = $patientCodeLength;
         $study->save();
     }
 

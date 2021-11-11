@@ -42,7 +42,7 @@ class ImportPatientService
 
 	public function import() {
         $studyEntity = $this->studyRepository->find($this->studyName);
-        $this->patientCodeLength = $studyEntity['patient_number_length'];
+        $this->patientCodeLength = $studyEntity['patient_code_length'];
         $this->existingPatientCode = $this->patientRepository->getAllPatientsCode();
 
         $allCenters = $this->centerRepository->getAll();

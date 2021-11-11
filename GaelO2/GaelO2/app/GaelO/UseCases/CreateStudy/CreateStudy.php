@@ -34,7 +34,7 @@ class CreateStudy {
 
             $studyName = $createStudyRequest->name;
             $studyCode = $createStudyRequest->code;
-            $patientNumberLength = $createStudyRequest->patientNumberLength;
+            $patientCodeLength = $createStudyRequest->patientCodeLength;
 
             if(preg_match('/[^A-Z0-9]/', $studyName)){
                 throw new GaelOBadRequestException('Only uppercase alfanumerical name allowed, no space or special characters');
@@ -44,11 +44,11 @@ class CreateStudy {
                 throw new GaelOConflictException('Already Existing Study');
             }
 
-            if( empty($patientNumberLength) ){
+            if( empty($patientCodeLength) ){
                 throw new GaelOBadRequestException('Missing Patient Code Lenght');
             }
 
-            $this->studyRepositoryInterface->addStudy($studyName, $studyCode, $patientNumberLength);
+            $this->studyRepositoryInterface->addStudy($studyName, $studyCode, $patientCodeLength);
 
             $currentUserId=$createStudyRequest->currentUserId;
             $actionDetails = [

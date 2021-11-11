@@ -23,7 +23,7 @@ class ImportPatientTest extends TestCase
     protected function setUp() : void{
         parent::setUp();
 
-        $this->study = Study::factory()->patientNumberLength(14)->code('123')->create();
+        $this->study = Study::factory()->patientCodeLength(14)->code('123')->create();
 
         $this->validPayload = [ ["code" => 12341231234123,
         'number' => 3,
