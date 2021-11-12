@@ -18,7 +18,7 @@ class CreateVisitsTable extends Migration
             $table->id();
             $table->unsignedBigInteger('creator_user_id')->nullable(false);
             $table->dateTime('creation_date', 6)->nullable(false);
-            $table->unsignedBigInteger('patient_id')->nullable(false);
+            $table->string('patient_id')->nullable(false);
             $table->date('visit_date')->nullable(true)->default(null);
             $table->unsignedBigInteger('visit_type_id')->nullable(false);
             $table->enum('status_done', ['Not Done','Done'])->nullable(false)->default('Not Done');
