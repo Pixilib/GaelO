@@ -19,6 +19,7 @@ class CreateStudiesTable extends Migration
             $table->integer('patient_code_length')->nullable(false);
             $table->string('ancillary_of')->default(null)->nullable(true);
 
+            $table->unique('name');
             $table->foreign('ancillary_of')->references('name')->on('studies');
             $table->softDeletes();
             $table->timestamps();
