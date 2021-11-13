@@ -60,22 +60,22 @@ class ImportPatientService
                 //Check condition before import
                 self::checkPatientGender($patientEntity['gender']);
                 self::checkCorrectBirthDate($patientEntity['birthDay'], $patientEntity['birthMonth'], $patientEntity['birthYear']);
-                $this->checkNewPatient($patientEntity['number']);
-                $this->isCorrectPatientNumber($patientEntity['number']);
+                $this->checkNewPatient($patientEntity['code']);
+                $this->isCorrectPatientNumber($patientEntity['code']);
                 $this->isExistingCenter($patientEntity['centerCode']);
                 $this->checkCurrentStudy($patientEntity['studyName'], $this->studyName);
 
                 //Store the patient result import process in this object
-                $this->patientRepository->addPatientInStudy($studyEntity['code'].$patientEntity['number'], $patientEntity['number'],
+                $this->patientRepository->addPatientInStudy($studyEntity['code'].$patientEntity['code'], $patientEntity['code'],
                     $patientEntity['lastname'], $patientEntity['firstname'], $patientEntity['gender'],
                     $patientEntity['birthDay'], $patientEntity['birthMonth'], $patientEntity['birthYear'],$patientEntity['registrationDate'],$patientEntity['investigatorName'], $patientEntity['centerCode'], $this->studyName
                 );
 
-				$this->successList[]=$patientEntity['number'];
+				$this->successList[]=$patientEntity['code'];
 
 			//If conditions not met, add to the fail list with the respective error reason
             } catch(Exception $error) {
-                $this->failList[$error->getMessage()][]=$patientEntity['number'];
+                $this->failList[$error->getMessage()][]=$patientEntity['code'];
             }
 
 		}
@@ -106,7 +106,7 @@ class ImportPatientService
 
 	/**
 	 * Check that the importing patient is not already known in the system
-	 * NB : Each patient code should be unique (across study), patient number should include a study identifier
+	 * NB : Each patient code should be unique (across study), patient code should include a study identifier
 	 * @param $patientId
 	 */
 	private function checkNewPatient(string $patientNumber) : void {
@@ -116,7 +116,7 @@ class ImportPatientService
 	}
 
 	/**
-	 * Check that patient number has the correct lenght
+	 * Check that patient code has the correct lenght
 	 * @param $patientId
 	 */
 	private function isCorrectPatientNumber(string $patientNumber) : void {

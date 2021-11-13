@@ -26,7 +26,7 @@ class PatientRepository implements PatientRepositoryInterface {
     }
 
     public function getAllPatientsNumberInStudy(string $studyName) : array {
-        return $this->patient->where('study_name', $studyName)->select('number')->get()->pluck('number')->toArray();
+        return $this->patient->where('study_name', $studyName)->select('code')->get()->pluck('code')->toArray();
     }
 
     public function getPatientWithCenterDetails(int $code) : array {
@@ -51,11 +51,11 @@ class PatientRepository implements PatientRepositoryInterface {
     /**
      * @param $patients expected array of Patient Entity
      */
-    public function addPatientInStudy(string $id, string $number, string $lastname, string $firstname, string $gender, int $birthDay, int $birthMonth, int $birthYear, string $registrationDate, string $investigatorName, int $centerCode, String $studyName) : void {
+    public function addPatientInStudy(string $id, string $code, string $lastname, string $firstname, string $gender, int $birthDay, int $birthMonth, int $birthYear, string $registrationDate, string $investigatorName, int $centerCode, String $studyName) : void {
 
         $patient = new Patient();
         $patient->id = $id;
-        $patient->number = $number;
+        $patient->code = $code;
         $patient->lastname = $lastname;
         $patient->firstname = $firstname;
         $patient->gender = $gender;

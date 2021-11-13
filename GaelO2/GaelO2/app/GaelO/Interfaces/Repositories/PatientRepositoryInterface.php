@@ -21,7 +21,7 @@ interface PatientRepositoryInterface {
     public function getPatientsFromCodeArray(array $codes) : array ;
 
     public function addPatientInStudy(string $id,
-                    string $number, string $lastname, string $firstname,
+                    string $code, string $lastname, string $firstname,
                     string $gender, int $birthDay, int $birthMonth, int $birthYear,
                     string $registrationDate, string $investigatorName, int $centerCode,
                     String $studyName) : void ;

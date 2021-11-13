@@ -58,7 +58,7 @@ class ValidateDicomUpload{
             $visitEntity = $this->visitService->getVisitContext();
             $patientId = $visitEntity['patient_id'];
             $patientEntity = $this->patientRepositoryInterface->find($patientId);
-            $patientCode = $patientEntity['number'];
+            $patientCode = $patientEntity['code'];
             //$patientCode = $visitEntity['patient_id'];
             $uploadStatus = $visitEntity['upload_status'];
             $studyName = $visitEntity['visit_type']['visit_group']['study_name'];
