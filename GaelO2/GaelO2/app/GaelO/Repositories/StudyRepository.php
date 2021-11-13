@@ -24,7 +24,7 @@ class StudyRepository implements StudyRepositoryInterface {
         throw new Exception('Use Get Studies instead');
     }
 
-    public function addStudy(String $name, int $code, int $patientCodeLength) : void {
+    public function addStudy(String $name, string $code, int $patientCodeLength) : void {
 
         $study = new Study();
         $study->name = $name;

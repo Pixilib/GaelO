@@ -34,7 +34,7 @@ class StudyFactory extends Factory
         });
     }
 
-    public function code(int $code){
+    public function code(string $code){
 
         return $this->state(function (array $attributes) use($code) {
             return [

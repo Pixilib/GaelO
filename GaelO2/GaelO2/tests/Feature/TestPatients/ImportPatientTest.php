@@ -25,7 +25,7 @@ class ImportPatientTest extends TestCase
 
         $this->study = Study::factory()->patientCodeLength(14)->code('123')->create();
 
-        $this->validPayload = [ ["code" => 12341231234123,
+        $this->validPayload = [ ["code" => '12341231234123',
         "lastname" => "test",
         "firstname" => "test",
         "gender" => "M",
@@ -47,7 +47,7 @@ class ImportPatientTest extends TestCase
         $currentUserId = AuthorizationTools::actAsAdmin(false);
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $this->study->name);
 
-        $this->validPayload = [ ["code" => 12341231234123,
+        $this->validPayload = [ ["code" => '12341231234123',
         "lastname" => "test",
         "firstname" => "test",
         "gender" => "M",
@@ -58,7 +58,7 @@ class ImportPatientTest extends TestCase
         "investigatorName" => "administrator",
         "centerCode" => 0,
         "inclusionStatus"  => Constants::PATIENT_INCLUSION_STATUS_INCLUDED],
-        ["code" => 12341231234124,
+        ["code" => '12341231234124',
         "lastname" => "test",
         "firstname" => "test",
         "gender" => "M",
@@ -69,7 +69,7 @@ class ImportPatientTest extends TestCase
         "investigatorName" => "administrator",
         "centerCode" => 0,
         "inclusionStatus"  => Constants::PATIENT_INCLUSION_STATUS_INCLUDED],
-        ["code" => 12341231234125,
+        ["code" => '12341231234125',
         "lastname" => "test",
         "firstname" => "test",
         "gender" => "M",
@@ -176,7 +176,7 @@ class ImportPatientTest extends TestCase
         $currentUserId = AuthorizationTools::actAsAdmin(false);
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $this->study->name);
 
-        $this->validPayload[0]['code'] = 123;
+        $this->validPayload[0]['code'] = '123';
         $resp = $this->json('POST', '/api/studies/'.$this->study->name.'/import-patients', $this->validPayload);
         $this->assertEquals(0, count($resp['success']));
         $this->assertNotEmpty($resp['fail']['Incorrect Patient Code Length']);

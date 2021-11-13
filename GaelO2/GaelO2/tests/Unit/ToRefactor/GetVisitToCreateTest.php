@@ -33,7 +33,7 @@ class GetVisitToCreateTest extends TestCase
     {
         parent::setUp();
 
-        $this->study = factory(Study::class)->create(['code' => 1234]);
+        $this->study = factory(Study::class)->create(['code' => '1234']);
 
         $this->patient = factory(Patient::class)->create(['study_name' => $this->study->name, 'inclusion_status'=>Constants::PATIENT_INCLUSION_STATUS_INCLUDED, 'center_code' => 0]);
 
