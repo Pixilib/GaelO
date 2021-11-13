@@ -197,10 +197,10 @@ class OrthancService
      * @param string $studyName
      * @return string anonymizedOrthancStudyID
      */
-    public function anonymize(string $studyID, string $profile, string $patientId, string $visitType, string $studyName, int $studyCode): string
+    public function anonymize(string $studyID, string $profile, string $patientCode, string $patientId, string $visitType, string $studyName): string
     {
 
-        $jsonAnonQuery = $this->buildAnonQuery($profile, $patientId, $studyCode.$patientId, $visitType, $studyName);
+        $jsonAnonQuery = $this->buildAnonQuery($profile, $patientCode, $patientId, $visitType, $studyName);
 
         $answer = $this->httpClientInterface->requestJson('POST', "/studies/" . $studyID . "/anonymize", $jsonAnonQuery);
 

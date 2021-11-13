@@ -21,8 +21,8 @@ class PatientRepository implements PatientRepositoryInterface {
         $patient->save();
     }
 
-    public function find($code) : array {
-        return $this->patient->findOrFail($code)->toArray();
+    public function find($id) : array {
+        return $this->patient->findOrFail($id)->toArray();
     }
 
     public function getAllPatientsNumberInStudy(string $studyName) : array {

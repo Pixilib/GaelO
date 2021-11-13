@@ -6,8 +6,10 @@ use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Exceptions\GaelOValidateDicomException;
+use App\GaelO\Interfaces\Repositories\PatientRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\StudyRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
+use App\GaelO\Repositories\PatientRepository;
 use App\GaelO\Services\AuthorizationVisitService;
 use App\GaelO\Services\MailServices;
 use App\GaelO\Services\OrthancService;
@@ -25,7 +27,7 @@ class ValidateDicomUpload{
     private OrthancService $orthancService;
     private RegisterDicomStudyService $registerDicomStudyService;
     private VisitService $visitService;
-    private StudyRepositoryInterface $studyRepositoryInterface;
+    private PatientRepositoryInterface $patientRepositoryInterface;
     private TrackerRepositoryInterface $trackerRepositoryInterface;
     private MailServices $mailServices;
 
@@ -34,7 +36,7 @@ class ValidateDicomUpload{
                         OrthancService $orthancService,
                         RegisterDicomStudyService $registerDicomStudyService,
                         VisitService $visitService,
-                        StudyRepositoryInterface $studyRepositoryInterface,
+                        PatientRepositoryInterface $patientRepositoryInterface,
                         TrackerRepositoryInterface $trackerRepositoryInterface,
                         MailServices $mailServices)
     {
@@ -43,7 +45,7 @@ class ValidateDicomUpload{
         $this->orthancService = $orthancService;
         $this->visitService = $visitService;
         $this->tusService = $tusService;
-        $this->studyRepositoryInterface = $studyRepositoryInterface;
+        $this->patientRepositoryInterface = $patientRepositoryInterface;
         $this->trackerRepositoryInterface = $trackerRepositoryInterface;
         $this->mailServices = $mailServices;
     }
@@ -55,13 +57,14 @@ class ValidateDicomUpload{
             $this->visitService->setVisitId($validateDicomUploadRequest->visitId);
             $visitEntity = $this->visitService->getVisitContext();
             $patientId = $visitEntity['patient_id'];
+            $patientEntity = $this->patientRepositoryInterface->find($patientId);
+            $patientCode = $patientEntity['number'];
+            //$patientCode = $visitEntity['patient_id'];
             $uploadStatus = $visitEntity['upload_status'];
             $studyName = $visitEntity['visit_type']['visit_group']['study_name'];
             $visitType = $visitEntity['visit_type']['name'];
             $visitGroup =  $visitEntity['visit_type']['visit_group']['modality'];
             $anonProfile = $visitEntity['visit_type']['anon_profile'];
-
-            $studyDetails = $this->studyRepositoryInterface->getStudyDetails($studyName);
 
             //TODO Authorization : Check Investigator Role, and patient is in affiliated center of user, and status upload not done, and visit status done
             $this->checkAuthorization($validateDicomUploadRequest->currentUserId, $validateDicomUploadRequest->visitId, $uploadStatus);
@@ -103,10 +106,10 @@ class ValidateDicomUpload{
             //Anonymize and store new anonymized study Orthanc ID
             $anonymizedOrthancStudyID=$this->orthancService->anonymize($importedOrthancStudyID,
                                         $anonProfile,
+                                        $patientCode,
                                         $patientId,
                                         $visitType,
-                                        $studyName,
-                                        $studyDetails['code']);
+                                        $studyName);
 
             //Delete original import
             $this->orthancService->deleteFromOrthanc("studies", $importedOrthancStudyID);

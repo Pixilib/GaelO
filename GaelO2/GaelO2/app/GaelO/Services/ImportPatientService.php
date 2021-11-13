@@ -66,7 +66,7 @@ class ImportPatientService
                 $this->checkCurrentStudy($patientEntity['studyName'], $this->studyName);
 
                 //Store the patient result import process in this object
-                $this->patientRepository->addPatientInStudy($this->patientCodeLength.$patientEntity['number'], $patientEntity['number'],
+                $this->patientRepository->addPatientInStudy($studyEntity['code'].$patientEntity['number'], $patientEntity['number'],
                     $patientEntity['lastname'], $patientEntity['firstname'], $patientEntity['gender'],
                     $patientEntity['birthDay'], $patientEntity['birthMonth'], $patientEntity['birthYear'],$patientEntity['registrationDate'],$patientEntity['investigatorName'], $patientEntity['centerCode'], $this->studyName
                 );

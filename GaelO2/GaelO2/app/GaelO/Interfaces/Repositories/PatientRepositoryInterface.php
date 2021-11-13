@@ -8,7 +8,7 @@ interface PatientRepositoryInterface {
 
     public function update($code, array $data) : void ;
 
-    public function find($code) : array ;
+    public function find($id) : array ;
 
     public function getAllPatientsNumberInStudy(string $studyName) : array ;
 
