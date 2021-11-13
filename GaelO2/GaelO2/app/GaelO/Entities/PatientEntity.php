@@ -4,8 +4,8 @@ namespace App\GaelO\Entities;
 
 
 class PatientEntity {
-    public int $id;
-    public int $number;
+    public string $id;
+    public string $number;
     public ?string $firstname;
     public ?string $lastname;
     public ?string $gender;
