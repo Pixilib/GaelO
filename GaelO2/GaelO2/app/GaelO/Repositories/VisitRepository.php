@@ -328,7 +328,7 @@ class VisitRepository implements VisitRepositoryInterface
         return $answer->count() === 0 ? false  : true;
     }
 
-    public function isParentPatientHavingOneVisitAwaitingReview(int $visitId, string $studyName, int $userId)
+    public function isParentPatientHavingOneVisitAwaitingReview(int $visitId, string $studyName, int $userId) : bool
     {
         //Get parent patient
         $patient = $this->visit->findOrFail($visitId)->patient()->sole();

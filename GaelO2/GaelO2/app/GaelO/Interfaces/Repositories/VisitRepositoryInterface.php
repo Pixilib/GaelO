@@ -55,6 +55,8 @@ interface VisitRepositoryInterface
 
     public function isVisitAvailableForReview(int $visitId, string $studyName, int $userId): bool;
 
+    public function isParentPatientHavingOneVisitAwaitingReview(int $visitId, string $studyName, int $userId) : bool;
+
     public function editQc(int $visitId, string $stateQc, int $controllerId, bool $imageQc, bool $formQc, ?string $imageQcComment, ?string $formQcComment): void;
 
     public function resetQc(int $visitId): void;
@@ -70,4 +72,5 @@ interface VisitRepositoryInterface
     public function getVisitsInVisitType(int $visitTypeId, bool $withReviewStatus = false, string $studyName = null, bool $withTrashed = false, bool $withCenter = false): array;
 
     public function getVisitContextByVisitIdArray(array $visitIdArray): array;
+
 }

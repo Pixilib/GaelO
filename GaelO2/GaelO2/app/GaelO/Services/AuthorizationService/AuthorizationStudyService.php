@@ -47,8 +47,6 @@ class AuthorizationStudyService
         if ( $this->isAncillaryStudy() ) {
             //For Ancillaries studies only Reviewer and Supervisor role are allowed
             if( ! in_array($requestedRole, array(Constants::ROLE_REVIEWER, Constants::ROLE_SUPERVISOR))) return false;
-            //Reject if requested ancillary study is not ancillary of the orginal patient study
-            if( ! $this->isAncillaryStudyOf($studyName) ) return false;
         }
 
         //For all other cases access granted if role exists in the patient's study

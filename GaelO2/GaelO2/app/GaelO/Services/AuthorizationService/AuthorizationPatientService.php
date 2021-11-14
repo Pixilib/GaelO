@@ -52,7 +52,7 @@ class AuthorizationPatientService {
         }
 
         //For all other cases access granted if role exists in the patient's study
-        return $this->authorizationStudyService->isAllowedStudy($userId, $requestedRole, $this->patientStudy);
+        return $this->authorizationStudyService->isAllowedStudy($userId, $requestedRole, $studyName);
 
 
     }
