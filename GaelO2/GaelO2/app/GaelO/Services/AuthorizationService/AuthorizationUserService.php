@@ -2,6 +2,7 @@
 
 namespace App\GaelO\Services\AuthorizationService;
 
+use App\GaelO\Interfaces\Repositories\UserRepositoryInterface;
 use App\GaelO\Repositories\UserRepository;
 
 class AuthorizationUserService
@@ -10,19 +11,19 @@ class AuthorizationUserService
     private array $userData;
     private array $userCenters;
 
-    private UserRepository $userRepository;
+    private UserRepositoryInterface $userRepositoryInterface;
 
-    public function __construct( UserRepository $userRepository ) {
-        $this->userRepository = $userRepository;
+    public function __construct( UserRepositoryInterface $userRepositoryInterface ) {
+        $this->userRepositoryInterface = $userRepositoryInterface;
     }
 
     private function fillUserData(){
-        if($this->userData == null ) $this->userData = $this->userRepository->find($this->userId);
+        if($this->userData == null ) $this->userData = $this->userRepositoryInterface->find($this->userId);
     }
 
     private function fillUserCenters(){
         $this->fillUserData();
-        if(!$this->userCenters == null ) $this->userCenters = $this->userRepository->getAllUsersCenters($this->userId);
+        if(!$this->userCenters == null ) $this->userCenters = $this->userRepositoryInterface->getAllUsersCenters($this->userId);
     }
 
     public function setUserId(int $userId)
@@ -43,7 +44,7 @@ class AuthorizationUserService
 
     public function isRoleAllowed(string|array $requestedRole, string $studyName)
     {
-        $existingRoles = $this->userRepository->getUsersRolesInStudy($this->userId, $studyName);
+        $existingRoles = $this->userRepositoryInterface->getUsersRolesInStudy($this->userId, $studyName);
         return in_array($requestedRole, $existingRoles);
     }
 

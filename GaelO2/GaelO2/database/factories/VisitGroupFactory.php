@@ -12,7 +12,7 @@ class VisitGroupFactory extends Factory
     {
         return [
             'study_name'=> Study::factory()->create()->name,
-            'name' => $this->faker->word,
+            'name' => $this->faker->unique()->word,
             'modality'=>'CT',
         ];
     }
