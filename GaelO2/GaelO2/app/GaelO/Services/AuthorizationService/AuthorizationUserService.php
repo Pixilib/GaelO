@@ -3,7 +3,6 @@
 namespace App\GaelO\Services\AuthorizationService;
 
 use App\GaelO\Interfaces\Repositories\UserRepositoryInterface;
-use App\GaelO\Repositories\UserRepository;
 
 class AuthorizationUserService
 {

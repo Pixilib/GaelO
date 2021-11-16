@@ -2,7 +2,6 @@
 
 namespace App\GaelO\Services\AuthorizationService;
 
-use App\GaelO\Adapters\FrameworkAdapter;
 use App\GaelO\Constants\Constants;
 use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
 use App\GaelO\Services\AuthorizationService\AuthorizationPatientService;
@@ -10,12 +9,14 @@ use App\GaelO\Services\AuthorizationService\AuthorizationPatientService;
 class AuthorizationVisitService {
 
     private VisitRepositoryInterface $visitRepositoryInterface;
+    private AuthorizationPatientService $authorizationPatientService;
     private int $visitId;
     private array $visitData;
 
-    public function __construct(VisitRepositoryInterface $visitRepositoryInterface)
+    public function __construct(VisitRepositoryInterface $visitRepositoryInterface, AuthorizationPatientService $authorizationPatientService)
     {
         $this->visitRepositoryInterface = $visitRepositoryInterface;
+        $this->authorizationPatientService = $authorizationPatientService;
     }
 
     public function setVisitId(int $visitId){
@@ -51,12 +52,11 @@ class AuthorizationVisitService {
 
         $this->fillVisitData();
 
-        $authorizationPatientService = FrameworkAdapter::make(AuthorizationPatientService::class);
-        $authorizationPatientService->setPatientEntity($this->visitData['patient']);
+        $this->authorizationPatientService->setPatientEntity($this->visitData['patient']);
 
         if ($requestedRole === Constants::ROLE_REVIEWER) {
             //Check parent patient allowed and has one awaiting review visit
-            return $this->authorizationPatientService->isPatientAllowed() && $this->visitRepositoryInterface->isParentPatientHavingOneVisitAwaitingReview($this->visitId, $this->patientStudy, $this->userId);
+            return $this->authorizationPatientService->isPatientAllowed($userId, $requestedRole, $studyName) && $this->visitRepositoryInterface->isParentPatientHavingOneVisitAwaitingReview($this->visitId, $this->patientStudy, $this->userId);
 
         } else if ($requestedRole === Constants::ROLE_CONTROLLER) {
             //For controller visit QC status be not done or awaiting definitive conclusion, Investigator Form should be Done or Not Needed and Upload status should be done

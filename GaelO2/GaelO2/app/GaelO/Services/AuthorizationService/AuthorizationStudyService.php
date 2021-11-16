@@ -2,19 +2,18 @@
 
 namespace App\GaelO\Services\AuthorizationService;
 
-use App\GaelO\Adapters\FrameworkAdapter;
 use App\GaelO\Constants\Constants;
 use App\GaelO\Interfaces\Repositories\StudyRepositoryInterface;
-use App\GaelO\Repositories\StudyRepository;
-
 class AuthorizationStudyService
 {
     private int $studyName;
     private array $studyData;
     private StudyRepositoryInterface $studyRepositoryInterface;
+    private AuthorizationUserService $authorizationUserService;
 
-    public function __construct(StudyRepositoryInterface $studyRepositoryInterface ) {
+    public function __construct(StudyRepositoryInterface $studyRepositoryInterface, AuthorizationUserService $authorizationUserService ) {
         $this->studyRepositoryInterface = $studyRepositoryInterface;
+        $this->authorizationUserService = $authorizationUserService;
     }
 
     public function setStudyName(string $studyName)
@@ -41,8 +40,7 @@ class AuthorizationStudyService
 
     public function isAllowedStudy(int $userId, string $requestedRole, string $studyName) : bool {
 
-        $authorizationUserService = FrameworkAdapter::make(AuthorizationUserService::class);
-        $authorizationUserService->setUserId($userId);
+        $this->authorizationUserService->setUserId($userId);
 
         if ( $this->isAncillaryStudy() ) {
             //For Ancillaries studies only Reviewer and Supervisor role are allowed

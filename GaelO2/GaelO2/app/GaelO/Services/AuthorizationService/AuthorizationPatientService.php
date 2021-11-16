@@ -2,20 +2,22 @@
 
 namespace App\GaelO\Services\AuthorizationService;
 
-use App\GaelO\Adapters\FrameworkAdapter;
 use App\GaelO\Constants\Constants;
 use App\GaelO\Interfaces\Repositories\PatientRepositoryInterface;
 
 class AuthorizationPatientService {
 
     private PatientRepositoryInterface $patientRepositoryInterface;
-    private string $requestedRole;
+    private AuthorizationStudyService $authorizationStudyService;
+    private AuthorizationUserService $authorizationUserService;
     private int $patientId;
     private array $patientData;
 
-    public function __construct(PatientRepositoryInterface $patientRepositoryInterface)
+    public function __construct(PatientRepositoryInterface $patientRepositoryInterface, AuthorizationStudyService $authorizationStudyService, AuthorizationUserService $authorizationUserService )
     {
         $this->patientRepositoryInterface = $patientRepositoryInterface;
+        $this->authorizationStudyService = $authorizationStudyService;
+        $this->authorizationUserService = $authorizationUserService;
     }
 
     private function fillPatientData(){
@@ -35,20 +37,18 @@ class AuthorizationPatientService {
     public function isPatientAllowed(int $userId, string $requestedRole, string $studyName): bool
     {
         $this->fillPatientData();
-        $authorizationStudyService = FrameworkAdapter::make(AuthorizationStudyService::class);
-        $authorizationStudyService->setStudyName($studyName);
 
-        $authorizationUserService = FrameworkAdapter::make(AuthorizationUserService::class);
-        $authorizationUserService->setUserId($userId);
+        $this->authorizationStudyService->setStudyName($studyName);
+        $this->authorizationUserService->setUserId($userId);
 
-        if (  $authorizationStudyService->isAncillaryStudy() ) {
+        if (  $this->authorizationStudyService->isAncillaryStudy() ) {
             //Reject if requested ancillary study is not ancillary of the orginal patient study
-            if( ! $authorizationStudyService->isAncillaryStudyOf($this->patientStudy) ) return false;
+            if( ! $this->authorizationStudyService->isAncillaryStudyOf($this->patientStudy) ) return false;
         }
 
         if ($requestedRole === Constants::ROLE_INVESTIGATOR) {
             //Investigator should not access patient outside their centers
-            if (  !$authorizationUserService->isCenterAffiliatedToUser($this->patientCenter) ) return false;
+            if (  !$this->authorizationUserService->isCenterAffiliatedToUser($this->patientCenter) ) return false;
         }
 
         //For all other cases access granted if role exists in the patient's study
