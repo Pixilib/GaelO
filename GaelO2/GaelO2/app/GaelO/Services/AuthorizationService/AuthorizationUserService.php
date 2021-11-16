@@ -17,12 +17,12 @@ class AuthorizationUserService
     }
 
     private function fillUserData(){
-        if($this->userData == null ) $this->userData = $this->userRepositoryInterface->find($this->userId);
+        if( !isset($this->userData) ) $this->userData = $this->userRepositoryInterface->find($this->userId);
     }
 
     private function fillUserCenters(){
         $this->fillUserData();
-        if(!$this->userCenters == null ) $this->userCenters = $this->userRepositoryInterface->getAllUsersCenters($this->userId);
+        if( !isset($this->userCenters) ) $this->userCenters = $this->userRepositoryInterface->getAllUsersCenters($this->userId);
     }
 
     public function setUserId(int $userId)

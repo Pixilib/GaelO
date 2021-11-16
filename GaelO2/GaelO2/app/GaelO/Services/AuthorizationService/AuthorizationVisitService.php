@@ -28,7 +28,7 @@ class AuthorizationVisitService {
     }
 
     private function fillVisitData(){
-        if($this->visitData == null) $this->visitData = $this->visitRepositoryInterface->getVisitContext($this->visitId);
+        if( !isset($this->visitData) ) $this->visitData = $this->visitRepositoryInterface->getVisitContext($this->visitId);
 
         $this->stateQualityControl = $this->visitData['state_quality_control'];
         $this->patientStudy = $this->visitData['visit_type']['visit_group']['study_name'];

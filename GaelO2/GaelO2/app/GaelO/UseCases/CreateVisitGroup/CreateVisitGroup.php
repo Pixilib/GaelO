@@ -9,21 +9,21 @@ use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\VisitGroupRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
-use App\GaelO\Services\AuthorizationService;
+use App\GaelO\Services\AuthorizationService\AuthorizationUserService;
 use Exception;
 
 class CreateVisitGroup {
 
     private VisitGroupRepositoryInterface $visitGroupRepositoryInterface;
     private VisitRepositoryInterface $visitRepositoryInterface;
-    private AuthorizationService $authorizationService;
+    private AuthorizationUserService $authorizationUserService;
     private TrackerRepositoryInterface $trackerRepositoryInterface;
 
-    public function __construct(VisitGroupRepositoryInterface $visitGroupRepositoryInterface, VisitRepositoryInterface $visitRepositoryInterface, AuthorizationService $authorizationService, TrackerRepositoryInterface $trackerRepositoryInterface){
+    public function __construct(VisitGroupRepositoryInterface $visitGroupRepositoryInterface, VisitRepositoryInterface $visitRepositoryInterface, AuthorizationUserService $authorizationUserService, TrackerRepositoryInterface $trackerRepositoryInterface){
 
         $this->visitGroupRepositoryInterface = $visitGroupRepositoryInterface;
         $this->trackerRepositoryInterface = $trackerRepositoryInterface;
-        $this->authorizationService = $authorizationService;
+        $this->authorizationUserService = $authorizationUserService;
         $this->visitRepositoryInterface =$visitRepositoryInterface;
 
     }
@@ -69,12 +69,10 @@ class CreateVisitGroup {
     }
 
     private function checkAuthorization(int $userId){
-        $this->authorizationService->setCurrentUserAndRole($userId);
-        if(! $this->authorizationService->isAdmin() ){
+        $this->authorizationUserService->setUserId($userId);
+        if(! $this->authorizationUserService->isAdmin() ){
             throw new GaelOForbiddenException();
         }
-
-
     }
 
 

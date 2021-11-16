@@ -9,17 +9,19 @@ use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\UserRepositoryInterface;
 use App\GaelO\Services\AuthorizationService;
+use App\GaelO\Services\AuthorizationService\AuthorizationUserService;
 use Exception;
 
 class AddAffiliatedCenter {
 
+    private AuthorizationUserService $authorizationUserService;
     private TrackerRepositoryInterface $trackerRepositoryInterface;
     private UserRepositoryInterface $userRepositoryInterface;
 
-    public function __construct( UserRepositoryInterface $userRepositoryInterface, AuthorizationService $authorizationService, TrackerRepositoryInterface $trackerRepositoryInterface){
+    public function __construct( UserRepositoryInterface $userRepositoryInterface, AuthorizationUserService $authorizationUserService, TrackerRepositoryInterface $trackerRepositoryInterface){
         $this->userRepositoryInterface = $userRepositoryInterface;
         $this->trackerRepositoryInterface = $trackerRepositoryInterface;
-        $this->authorizationService = $authorizationService;
+        $this->authorizationUserService = $authorizationUserService;
     }
 
     public function execute(AddAffiliatedCenterRequest $addAffiliatedCenterRequest, AddAffiliatedCenterResponse $addAffiliatedCenterResponse){
@@ -57,8 +59,8 @@ class AddAffiliatedCenter {
     }
 
     private function checkAuthorization(int $userId){
-        $this->authorizationService->setCurrentUserAndRole($userId);
-        if( ! $this->authorizationService->isAdmin()){
+        $this->authorizationUserService->setUserId($userId);
+        if( ! $this->authorizationUserService->isAdmin()){
             throw new GaelOForbiddenException();
         };
     }

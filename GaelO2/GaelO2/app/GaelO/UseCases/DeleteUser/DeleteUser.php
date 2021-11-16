@@ -7,7 +7,7 @@ use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\UserRepositoryInterface;
-use App\GaelO\Services\AuthorizationService;
+use App\GaelO\Services\AuthorizationService\AuthorizationUserService;
 use App\GaelO\UseCases\DeleteUser\DeleteUserRequest;
 use App\GaelO\UseCases\DeleteUser\DeleteUserResponse;
 use Exception;
@@ -15,13 +15,13 @@ use Exception;
 class DeleteUser {
 
     private UserRepositoryInterface $userRepositoryInterface;
-    private AuthorizationService $authorizationService;
+    private AuthorizationUserService $authorizationUserService;
     private TrackerRepositoryInterface $trackerRepositoryInterface;
 
-    public function __construct(UserRepositoryInterface $userRepositoryInterface, AuthorizationService $authorizationService, TrackerRepositoryInterface $trackerRepositoryInterface){
+    public function __construct(UserRepositoryInterface $userRepositoryInterface, AuthorizationUserService $authorizationUserService, TrackerRepositoryInterface $trackerRepositoryInterface){
         $this->userRepositoryInterface = $userRepositoryInterface;
         $this->trackerRepositoryInterface  = $trackerRepositoryInterface;
-        $this->authorizationService = $authorizationService;
+        $this->authorizationUserService = $authorizationUserService;
     }
 
     public function execute(DeleteUserRequest $deleteRequest, DeleteUserResponse $deleteResponse) : void {
@@ -55,8 +55,8 @@ class DeleteUser {
     }
 
     private function checkAuthorization(int $userId) : void {
-        $this->authorizationService->setCurrentUserAndRole($userId);
-        if( ! $this->authorizationService->isAdmin()) {
+        $this->authorizationUserService->setUserId($userId);
+        if( ! $this->authorizationUserService->isAdmin()) {
             throw new GaelOForbiddenException();
         };
     }

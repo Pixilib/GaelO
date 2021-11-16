@@ -22,7 +22,7 @@ class AuthorizationStudyService
     }
 
     private function fillStudyData(){
-        if($this->studyData == null) $this->studyData = $this->studyRepositoryInterface->find($this->studyName);
+        if( isset($this->studyData) ) $this->studyData = $this->studyRepositoryInterface->find($this->studyName);
     }
 
 
@@ -38,7 +38,7 @@ class AuthorizationStudyService
         return $this->studyData['ancillary_of'] === $studyName ? true : false;
     }
 
-    public function isAllowedStudy(int $userId, string $requestedRole, string $studyName) : bool {
+    public function isAllowedStudy(int $userId, string $requestedRole) : bool {
 
         $this->authorizationUserService->setUserId($userId);
 
@@ -48,7 +48,7 @@ class AuthorizationStudyService
         }
 
         //For all other cases access granted if role exists in the patient's study
-        return $studyName === $this->studyName && $this->authorizationUserService->isRoleAllowed($requestedRole, $studyName);
+        return $this->authorizationUserService->isRoleAllowed($requestedRole, $this->studyName);
 
     }
 
