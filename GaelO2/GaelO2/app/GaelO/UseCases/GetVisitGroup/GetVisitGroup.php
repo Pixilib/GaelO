@@ -6,17 +6,17 @@ use App\GaelO\Entities\VisitGroupEntity;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Repositories\VisitGroupRepository;
-use App\GaelO\Services\AuthorizationService;
+use App\GaelO\Services\AuthorizationService\AuthorizationUserService;
 use Exception;
 
 class GetVisitGroup {
 
     private VisitGroupRepository $visitGroupRepository;
-    private AuthorizationService $authorizationService;
+    private AuthorizationUserService $authorizationUserService;
 
-    public function __construct(VisitGroupRepository $visitGroupRepository, AuthorizationService $authorizationService){
+    public function __construct(VisitGroupRepository $visitGroupRepository, AuthorizationUserService $authorizationUserService){
         $this->visitGroupRepository = $visitGroupRepository;
-        $this->authorizationService = $authorizationService;
+        $this->authorizationUserService = $authorizationUserService;
     }
 
     public function execute(GetVisitGroupRequest $getVisitGroupRequest, GetVisitGroupResponse $getVisitTypeResponse){
@@ -43,8 +43,8 @@ class GetVisitGroup {
     }
 
     private function checkAuthorization(int $userId){
-        $this->authorizationService->setCurrentUserAndRole($userId);
-        if( ! $this->authorizationService->isAdmin() ) {
+        $this->authorizationUserService->setUserId($userId);
+        if( ! $this->authorizationUserService->isAdmin() ) {
             throw new GaelOForbiddenException();
         }
 

@@ -6,12 +6,11 @@ use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOConflictException;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
-use App\GaelO\Interfaces\Adapters\HashInterface;
 use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\UserRepositoryInterface;
 use App\GaelO\UseCases\ModifyUser\ModifyUserRequest;
 use App\GaelO\UseCases\ModifyUser\ModifyUserResponse;
-use App\GaelO\Services\AuthorizationService;
+use App\GaelO\Services\AuthorizationService\AuthorizationUserService;
 use App\GaelO\Services\MailServices;
 use App\GaelO\UseCases\CreateUser\CreateUser;
 use App\GaelO\Util;
@@ -20,23 +19,20 @@ use Exception;
 class ModifyUser
 {
 
-    private AuthorizationService $authorizationService;
+    private AuthorizationUserService $authorizationUserService;
     private UserRepositoryInterface $userRepositoryInterface;
     private TrackerRepositoryInterface $trackerRepositoryInterface;
     private MailServices $mailService;
-    private HashInterface $hashInterface;
 
-    public function __construct(AuthorizationService $authorizationService,
+    public function __construct(AuthorizationUserService $authorizationUserService,
                             UserRepositoryInterface $userRepositoryInterface,
                             TrackerRepositoryInterface $trackerRepositoryInterface,
-                            MailServices $mailService,
-                            HashInterface $hashInterface)
+                            MailServices $mailService)
     {
-        $this->authorizationService = $authorizationService;
+        $this->authorizationUserService = $authorizationUserService;
         $this->trackerRepositoryInterface = $trackerRepositoryInterface;
         $this->userRepositoryInterface = $userRepositoryInterface;
         $this->mailService = $mailService;
-        $this->hashInterface = $hashInterface;
     }
 
     public function execute(ModifyUserRequest $modifyUserRequest, ModifyUserResponse $modifyUserResponse): void
@@ -113,8 +109,8 @@ class ModifyUser
 
     private function checkAuthorization($userId)
     {
-        $this->authorizationService->setCurrentUserAndRole($userId);
-        if (!$this->authorizationService->isAdmin()) {
+        $this->authorizationUserService->setUserId($userId);
+        if (!$this->authorizationUserService->isAdmin()) {
             throw new GaelOForbiddenException();
         };
     }
