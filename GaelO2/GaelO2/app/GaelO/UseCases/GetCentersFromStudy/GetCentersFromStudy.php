@@ -7,22 +7,22 @@ use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\CenterRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\PatientRepositoryInterface;
-use App\GaelO\Services\AuthorizationService;
+use App\GaelO\Services\AuthorizationService\AuthorizationUserService;
 use Exception;
 
 class GetCentersFromStudy {
 
-    private AuthorizationService $authorizationService;
+    private AuthorizationUserService $authorizationUserService;
     private PatientRepositoryInterface $patientRepositoryInterface;
     private CenterRepositoryInterface $centerRepositoryInterface;
 
 
     public function __construct(CenterRepositoryInterface $centerRepositoryInterface,
-        AuthorizationService $authorizationService,
+        AuthorizationUserService $authorizationUserService,
         PatientRepositoryInterface $patientRepositoryInterface){
         $this->centerRepositoryInterface = $centerRepositoryInterface;
         $this->patientRepositoryInterface = $patientRepositoryInterface;
-        $this->authorizationService = $authorizationService;
+        $this->authorizationUserService = $authorizationUserService;
      }
 
     public function execute(GetCentersFromStudyRequest $getCentersFromStudyRequest, GetCentersFromStudyResponse $getCentersFromStudyResponse) : void
@@ -57,8 +57,8 @@ class GetCentersFromStudy {
     }
 
     private function checkAuthorization(int $currentUserId, string $studyName){
-        $this->authorizationService->setCurrentUserAndRole($currentUserId, Constants::ROLE_SUPERVISOR);
-        if ( ! $this->authorizationService->isRoleAllowed($studyName)){
+        $this->authorizationUserService->setUserId($currentUserId);
+        if ( ! $this->authorizationUserService->isRoleAllowed(Constants::ROLE_SUPERVISOR, $studyName)){
             throw new GaelOForbiddenException();
         };
     }

@@ -7,19 +7,19 @@ use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\DocumentationRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
-use App\GaelO\Services\AuthorizationService;
+use App\GaelO\Services\AuthorizationService\AuthorizationUserService;
 use Exception;
 
 class DeleteDocumentation{
 
     private DocumentationRepositoryInterface $documentationRepositoryInterface;
-    private AuthorizationService $authorizationService;
+    private AuthorizationUserService $authorizationUserService;
     private TrackerRepositoryInterface $trackerRepositoryInterface;
 
-    public function __construct(DocumentationRepositoryInterface $documentationRepositoryInterface, AuthorizationService $authorizationService, TrackerRepositoryInterface $trackerRepositoryInterface)
+    public function __construct(DocumentationRepositoryInterface $documentationRepositoryInterface, authorizationUserService $authorizationUserService, TrackerRepositoryInterface $trackerRepositoryInterface)
     {
         $this->documentationRepositoryInterface = $documentationRepositoryInterface;
-        $this->authorizationService = $authorizationService;
+        $this->authorizationUserService = $authorizationUserService;
         $this->trackerRepositoryInterface = $trackerRepositoryInterface;
     }
 
@@ -64,8 +64,8 @@ class DeleteDocumentation{
     }
 
     private function checkAuthorization(int $currentUserId, string $studyName){
-        $this->authorizationService->setCurrentUserAndRole($currentUserId, Constants::ROLE_SUPERVISOR);
-        if( !$this->authorizationService->isRoleAllowed($studyName)){
+        $this->authorizationUserService->setUserId($currentUserId);
+        if( !$this->authorizationUserService->isRoleAllowed(Constants::ROLE_SUPERVISOR, $studyName)){
             throw new GaelOForbiddenException();
         }
     }

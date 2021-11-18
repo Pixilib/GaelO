@@ -8,23 +8,23 @@ use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\DicomSeriesRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
-use App\GaelO\Services\AuthorizationService;
+use App\GaelO\Services\AuthorizationService\AuthorizationUserService;
 use App\GaelO\Services\OrthancService;
 use Exception;
 
 class GetDicomsFileSupervisor {
 
-    private AuthorizationService $authorizationService;
+    private AuthorizationUserService $authorizationUserService;
     private DicomSeriesRepositoryInterface $dicomSeriesRepositoryInterface;
     private OrthancService $orthancService;
     private VisitRepositoryInterface $visitRepositoryInterface;
 
     public function __construct(OrthancService $orthancService,
-                                AuthorizationService $authorizationService,
+                                AuthorizationUserService $authorizationUserService,
                                 DicomSeriesRepositoryInterface $dicomSeriesRepositoryInterface,
                                 VisitRepositoryInterface $visitRepositoryInterface)
     {
-        $this->authorizationService = $authorizationService;
+        $this->authorizationUserService = $authorizationUserService;
         $this->dicomSeriesRepositoryInterface = $dicomSeriesRepositoryInterface;
         $this->orthancService = $orthancService;
         $this->visitRepositoryInterface = $visitRepositoryInterface;
@@ -85,8 +85,8 @@ class GetDicomsFileSupervisor {
 
     private function checkAuthorization(int $currentUserId, string $studyName){
 
-        $this->authorizationService->setCurrentUserAndRole($currentUserId, Constants::ROLE_SUPERVISOR);
-        if( ! $this->authorizationService->isRoleAllowed($studyName)){
+        $this->authorizationUserService->setUserId($currentUserId);
+        if( ! $this->authorizationUserService->isRoleAllowed( Constants::ROLE_SUPERVISOR, $studyName)){
             throw new GaelOForbiddenException();
         }
 

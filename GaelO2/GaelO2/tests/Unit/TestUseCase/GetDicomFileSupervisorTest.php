@@ -5,6 +5,7 @@ namespace Tests\Unit\TestUseCase;
 use App\GaelO\Interfaces\Repositories\DicomSeriesRepositoryInterface;
 use App\GaelO\Repositories\VisitRepository;
 use App\GaelO\Services\AuthorizationService;
+use App\GaelO\Services\AuthorizationService\AuthorizationUserService;
 use App\GaelO\Services\OrthancService;
 use App\GaelO\UseCases\GetDicomsFileSupervisor\GetDicomsFileSupervisor;
 use App\GaelO\UseCases\GetDicomsFileSupervisor\GetDicomsFileSupervisorRequest;
@@ -27,7 +28,7 @@ class GetDicomFileSupervisorTest extends TestCase
         $orthancServiceMock->shouldReceive('getOrthancZipStream')
             ->andReturn('FileTest');
 
-        $authorizationServiceMock = $this->partialMock(AuthorizationService::class, function (MockInterface $mock) {
+        $authorizationServiceMock = $this->partialMock(AuthorizationUserService::class, function (MockInterface $mock) {
             $mock->shouldReceive('isRoleAllowed')->andReturn(true);
         });
 
@@ -50,7 +51,7 @@ class GetDicomFileSupervisorTest extends TestCase
 
 
 
-        $this->instance(AuthorizationService::class, $authorizationServiceMock);
+        $this->instance(AuthorizationUserService::class, $authorizationServiceMock);
         $this->instance(DicomSeriesRepositoryInterface::class, $dicomRepositoryMock);
         $this->instance(OrthancService::class, $orthancServiceMock);
         $this->instance(VisitRepository::class, $visitRepositoryMock);
@@ -58,7 +59,7 @@ class GetDicomFileSupervisorTest extends TestCase
 
         $this->getDicomsFileSupervisor = new GetDicomsFileSupervisor(
             App::make(OrthancService::class),
-            App::make(AuthorizationService::class),
+            App::make(AuthorizationUserService::class),
             App::make(DicomSeriesRepositoryInterface::class),
             App::make(VisitRepository::class),
         );

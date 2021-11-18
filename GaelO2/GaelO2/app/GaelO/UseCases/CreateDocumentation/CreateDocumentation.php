@@ -8,19 +8,19 @@ use App\GaelO\Exceptions\GaelOConflictException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\DocumentationRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
-use App\GaelO\Services\AuthorizationService;
-use App\GaelO\Util;
+use App\GaelO\Services\AuthorizationService\AuthorizationUserService;
 use Exception;
 
 class CreateDocumentation {
 
+    private AuthorizationUserService $authorizationUserService;
     private DocumentationRepositoryInterface $documentationRepositoryInterface;
     private TrackerRepositoryInterface $trackerRepositoryInterface;
 
-    public function __construct(DocumentationRepositoryInterface $documentationRepositoryInterface, AuthorizationService $authorizationService, TrackerRepositoryInterface $trackerRepositoryInterface)
+    public function __construct(DocumentationRepositoryInterface $documentationRepositoryInterface, AuthorizationUserService $authorizationUserService, TrackerRepositoryInterface $trackerRepositoryInterface)
     {
         $this->documentationRepositoryInterface = $documentationRepositoryInterface;
-        $this->authorizationService = $authorizationService;
+        $this->authorizationUserService = $authorizationUserService;
         $this->trackerRepositoryInterface = $trackerRepositoryInterface;
     }
 
@@ -79,8 +79,8 @@ class CreateDocumentation {
     }
 
     public function checkAuthorization(int $currentUserId, string $studyName){
-        $this->authorizationService->setCurrentUserAndRole($currentUserId, Constants::ROLE_SUPERVISOR);
-        if( !$this->authorizationService->isRoleAllowed($studyName)){
+        $this->authorizationUserService->setUserId($currentUserId);
+        if( !$this->authorizationUserService->isRoleAllowed(Constants::ROLE_SUPERVISOR, $studyName)){
             throw new GaelOForbiddenException();
         }
 

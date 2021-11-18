@@ -9,20 +9,21 @@ use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Adapters\FrameworkInterface;
 use App\GaelO\Interfaces\Repositories\DocumentationRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
-use App\GaelO\Services\AuthorizationService;
+use App\GaelO\Services\AuthorizationService\AuthorizationUserService;
 use App\GaelO\Util;
 use Exception;
 
 class CreateDocumentationFile{
 
+    private AuthorizationUserService $authorizationUserService;
     private DocumentationRepositoryInterface $documentationRepositoryInterface;
     private TrackerRepositoryInterface $trackerRepositoryInterface;
     private FrameworkInterface $frameworkInterface;
 
-    public function __construct(DocumentationRepositoryInterface $documentationRepositoryInterface, AuthorizationService $authorizationService, TrackerRepositoryInterface $trackerRepositoryInterface, FrameworkInterface $frameworkInterface)
+    public function __construct(DocumentationRepositoryInterface $documentationRepositoryInterface, AuthorizationUserService $authorizationUserService, TrackerRepositoryInterface $trackerRepositoryInterface, FrameworkInterface $frameworkInterface)
     {
         $this->documentationRepositoryInterface = $documentationRepositoryInterface;
-        $this->authorizationService = $authorizationService;
+        $this->authorizationUserService = $authorizationUserService;
         $this->trackerRepositoryInterface = $trackerRepositoryInterface;
         $this->frameworkInterface = $frameworkInterface;
     }
@@ -85,8 +86,8 @@ class CreateDocumentationFile{
     }
 
     private function checkAuthorization(int $currentUserId, string $studyName){
-        $this->authorizationService->setCurrentUserAndRole($currentUserId, Constants::ROLE_SUPERVISOR);
-        if( !$this->authorizationService->isRoleAllowed($studyName)){
+        $this->authorizationUserService->setUserId($currentUserId);
+        if( !$this->authorizationUserService->isRoleAllowed(Constants::ROLE_SUPERVISOR, $studyName)){
             throw new GaelOForbiddenException();
         }
     }
