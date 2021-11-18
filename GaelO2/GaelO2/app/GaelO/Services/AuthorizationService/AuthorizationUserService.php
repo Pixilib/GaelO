@@ -41,10 +41,16 @@ class AuthorizationUserService
         return in_array($center, $this->userCenters);
     }
 
-    public function isRoleAllowed(string|array $requestedRole, string $studyName)
+    public function isRoleAllowed(string $requestedRole, string $studyName)
     {
-        $existingRoles = $this->userRepositoryInterface->getUsersRolesInStudy($this->userId, $studyName);
-        return in_array($requestedRole, $existingRoles);
+        $availableRoles = $this->userRepositoryInterface->getUsersRolesInStudy($this->userId, $studyName);
+        return in_array($requestedRole, $availableRoles);
+    }
+
+    public function isOneOfRoleAllowed(array $requestedRole, string $studyName)
+    {
+        $availableRoles = $this->userRepositoryInterface->getUsersRolesInStudy($this->userId, $studyName);
+        return sizeof( array_intersect($requestedRole, $availableRoles) ) > 0 ? true : false ;
     }
 
 }
