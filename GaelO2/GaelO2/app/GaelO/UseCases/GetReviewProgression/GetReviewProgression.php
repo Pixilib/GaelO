@@ -9,6 +9,7 @@ use App\GaelO\Interfaces\Repositories\ReviewRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\UserRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
 use App\GaelO\Services\AuthorizationService;
+use App\GaelO\Services\AuthorizationService\AuthorizationUserService;
 use Exception;
 
 /**
@@ -16,17 +17,17 @@ use Exception;
  */
 class GetReviewProgression {
 
-    private AuthorizationService $authorizationService;
+    private AuthorizationUserService $authorizationUserService;
     private VisitRepositoryInterface $visitRepositoryInterface;
     private UserRepositoryInterface $userRepositoryInterface;
     private ReviewRepositoryInterface $reviewRepositoryInterface;
 
-    public function __construct(AuthorizationService $authorizationService,
+    public function __construct(AuthorizationUserService $authorizationUserService,
                                 VisitRepositoryInterface $visitRepositoryInterface,
                                 UserRepositoryInterface $userRepositoryInterface,
                                 ReviewRepositoryInterface $reviewRepositoryInterface){
 
-        $this->authorizationService = $authorizationService;
+        $this->authorizationUserService = $authorizationUserService;
         $this->visitRepositoryInterface = $visitRepositoryInterface;
         $this->userRepositoryInterface = $userRepositoryInterface;
         $this->reviewRepositoryInterface = $reviewRepositoryInterface;
@@ -93,8 +94,8 @@ class GetReviewProgression {
     }
 
     private function checkAuthorization(int $userId, string $studyName){
-        $this->authorizationService->setCurrentUserAndRole($userId, Constants::ROLE_SUPERVISOR);
-        if(! $this->authorizationService->isRoleAllowed($studyName)){
+        $this->authorizationUserService->setUserId($userId);
+        if(! $this->authorizationUserService->isRoleAllowed(Constants::ROLE_SUPERVISOR, $studyName)){
             throw new GaelOForbiddenException();
         };
     }

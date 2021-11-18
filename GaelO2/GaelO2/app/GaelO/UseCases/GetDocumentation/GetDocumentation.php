@@ -7,18 +7,18 @@ use App\GaelO\Entities\DocumentationEntity;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\DocumentationRepositoryInterface;
-use App\GaelO\Services\AuthorizationService;
+use App\GaelO\Services\AuthorizationService\AuthorizationUserService;
 use Exception;
 
 class GetDocumentation {
 
     private DocumentationRepositoryInterface $documentationRepositoryInterface;
-    private AuthorizationService $authorizationService;
+    private AuthorizationUserService $authorizationUserService;
 
-    public function __construct(DocumentationRepositoryInterface $documentationRepositoryInterface, AuthorizationService $authorizationService)
+    public function __construct(DocumentationRepositoryInterface $documentationRepositoryInterface, AuthorizationUserService $authorizationUserService)
     {
         $this->documentationRepositoryInterface = $documentationRepositoryInterface;
-        $this->authorizationService = $authorizationService;
+        $this->authorizationUserService = $authorizationUserService;
 
     }
 
@@ -57,8 +57,8 @@ class GetDocumentation {
     }
 
     private function checkAuthorization(int $currentUserId, string $role, string $studyName){
-        $this->authorizationService->setCurrentUserAndRole($currentUserId, $role);
-        if(!$this->authorizationService->isRoleAllowed($studyName)){
+        $this->authorizationUserService->setUserId($currentUserId);
+        if(!$this->authorizationUserService->isRoleAllowed($role, $studyName)){
             throw new GaelOForbiddenException();
         };
 

@@ -5,19 +5,19 @@ namespace App\GaelO\UseCases\GetStudyTracker;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
-use App\GaelO\Services\AuthorizationService;
 use App\GaelO\Entities\TrackerEntity;
 use App\GaelO\Constants\Constants;
+use App\GaelO\Services\AuthorizationService\AuthorizationUserService;
 use Exception;
 
 class GetStudyTracker {
 
     private TrackerRepositoryInterface $trackerRepositoryInterface;
-    private AuthorizationService $authorizationService;
+    private AuthorizationUserService $authorizationUserService;
 
-    public function __construct(TrackerRepositoryInterface $trackerRepositoryInterface, AuthorizationService $authorizationService){
+    public function __construct(TrackerRepositoryInterface $trackerRepositoryInterface, AuthorizationUserService $authorizationUserService){
         $this->trackerRepositoryInterface = $trackerRepositoryInterface;
-        $this->authorizationService = $authorizationService;
+        $this->authorizationUserService = $authorizationUserService;
     }
 
     public function execute(GetStudyTrackerRequest $getStudyTrackerRequest, GetStudyTrackerResponse $getStudyTrackerResponse) : void {
@@ -57,8 +57,8 @@ class GetStudyTracker {
     }
 
     private function checkAuthorization(int $currentUserId, string $studyName, string $role){
-        $this->authorizationService->setCurrentUserAndRole($currentUserId, $role);
-        if ( ! $this->authorizationService->isRoleAllowed($studyName)){
+        $this->authorizationUserService->setUserId($currentUserId);
+        if ( ! $this->authorizationUserService->isRoleAllowed($role, $studyName)){
             throw new GaelOForbiddenException();
         }
     }
