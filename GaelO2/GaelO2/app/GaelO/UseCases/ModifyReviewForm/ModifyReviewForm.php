@@ -13,7 +13,6 @@ use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
 use App\GaelO\Services\AuthorizationService;
 use App\GaelO\Services\ReviewFormService;
 use Exception;
-use League\OAuth2\Server\AuthorizationServer;
 
 class ModifyReviewForm {
 

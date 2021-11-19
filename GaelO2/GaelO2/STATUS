@@ -1,5 +1,7 @@
 Salim TODO :
 
+-New RBAC ne pas appeler la methode de isRoleAllowed de userAuthorisation => Plutot passer par studyAuth
+
 --- Etudes ancillaires ---
 => Ne peut etre creer les roles que de Reviewer et supervisor
 =>Supervisor :

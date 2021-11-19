@@ -24,7 +24,7 @@ class AuthorizationReviewService {
     }
 
     private function fillVisitData(){
-        if( isset($this->reviewData) ) $this->reviewData = $this->reviewRepositoryInterface->find($this->reviewId);
+        if( !isset($this->reviewData) ) $this->reviewData = $this->reviewRepositoryInterface->find($this->reviewId);
         $this->reviewStudyName = $this->reviewData['study_name'];
         $this->reviewOwnerId = $this->reviewData['user_id'];
     }

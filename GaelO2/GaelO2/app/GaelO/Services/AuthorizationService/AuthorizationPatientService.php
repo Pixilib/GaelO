@@ -21,7 +21,7 @@ class AuthorizationPatientService {
     }
 
     private function fillPatientData(){
-        if( isset($this->patientData) ) $this->patientData = $this->patientRepositoryInterface->find($this->patientId);
+        if( !isset($this->patientData) ) $this->patientData = $this->patientRepositoryInterface->find($this->patientId);
         $this->patientStudy = $this->patientData['study_name'];
         $this->patientCenter = $this->patientData['center_code'];
     }

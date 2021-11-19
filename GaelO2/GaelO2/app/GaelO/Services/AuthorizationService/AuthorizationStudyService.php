@@ -6,7 +6,7 @@ use App\GaelO\Constants\Constants;
 use App\GaelO\Interfaces\Repositories\StudyRepositoryInterface;
 class AuthorizationStudyService
 {
-    private int $studyName;
+    private string $studyName;
     private array $studyData;
     private StudyRepositoryInterface $studyRepositoryInterface;
     private AuthorizationUserService $authorizationUserService;
@@ -21,8 +21,12 @@ class AuthorizationStudyService
         $this->studyName = $studyName;
     }
 
+    public function setUserId(int $userId){
+        $this->authorizationUserService->setUserId($userId);
+    }
+
     private function fillStudyData(){
-        if( isset($this->studyData) ) $this->studyData = $this->studyRepositoryInterface->find($this->studyName);
+        if( ! isset($this->studyData) ) $this->studyData = $this->studyRepositoryInterface->find($this->studyName);
     }
 
 
@@ -38,9 +42,9 @@ class AuthorizationStudyService
         return $this->studyData['ancillary_of'] === $studyName ? true : false;
     }
 
-    public function isAllowedStudy(int $userId, string $requestedRole) : bool {
+    public function isAllowedStudy(string $requestedRole) : bool {
 
-        $this->authorizationUserService->setUserId($userId);
+
 
         if ( $this->isAncillaryStudy() ) {
             //For Ancillaries studies only Reviewer and Supervisor role are allowed
@@ -50,6 +54,10 @@ class AuthorizationStudyService
         //For all other cases access granted if role exists in the patient's study
         return $this->authorizationUserService->isRoleAllowed($requestedRole, $this->studyName);
 
+    }
+
+    public function getAuthorizationUserService() : AuthorizationUserService {
+        return $this->authorizationUserService;
     }
 
 

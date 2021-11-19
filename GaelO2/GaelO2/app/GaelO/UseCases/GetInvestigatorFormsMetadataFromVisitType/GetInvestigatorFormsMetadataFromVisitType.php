@@ -8,19 +8,19 @@ use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Adapters\FrameworkInterface;
 use App\GaelO\Repositories\VisitGroupRepository;
 use App\GaelO\Repositories\VisitTypeRepository;
-use App\GaelO\Services\AuthorizationService;
+use App\GaelO\Services\AuthorizationService\AuthorizationUserService;
 use Exception;
 
 class GetInvestigatorFormsMetadataFromVisitType
 {
-    private AuthorizationService $authorizationService;
     private VisitTypeRepository $visitTypeRepository;
     private VisitGroupRepository $visitGroupRepository;
     private FrameworkInterface $frameworkInterface;
+    private AuthorizationUserService $authorizationUserService;
 
-    public function __construct(AuthorizationService $authorizationService, VisitTypeRepository $visitTypeRepository, VisitGroupRepository $visitGroupRepository, FrameworkInterface $frameworkInterface)
+    public function __construct(AuthorizationUserService $authorizationUserService, VisitTypeRepository $visitTypeRepository, VisitGroupRepository $visitGroupRepository, FrameworkInterface $frameworkInterface)
     {
-        $this->authorizationService = $authorizationService;
+        $this->authorizationUserService = $authorizationUserService;
         $this->visitTypeRepository = $visitTypeRepository;
         $this->visitGroupRepository = $visitGroupRepository;
         $this->frameworkInterface = $frameworkInterface;
@@ -59,8 +59,8 @@ class GetInvestigatorFormsMetadataFromVisitType
 
     private function checkAuthorization(int $userId, string $studyName)
     {
-        $this->authorizationService->setCurrentUserAndRole($userId, Constants::ROLE_SUPERVISOR);
-        if (!$this->authorizationService->isRoleAllowed($studyName)) {
+        $this->authorizationUserService->setUserId($userId);
+        if (!$this->authorizationUserService->isRoleAllowed(Constants::ROLE_SUPERVISOR, $studyName)) {
             throw new GaelOForbiddenException();
         };
     }

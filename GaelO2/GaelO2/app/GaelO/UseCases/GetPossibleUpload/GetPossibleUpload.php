@@ -7,7 +7,7 @@ use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\UserRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
-use App\GaelO\Services\AuthorizationService;
+use App\GaelO\Services\AuthorizationService\AuthorizationUserService;
 use Exception;
 
 class GetPossibleUpload
@@ -15,13 +15,13 @@ class GetPossibleUpload
 
     private VisitRepositoryInterface $visitRepositoryInterface;
     private UserRepositoryInterface $userRepositoryInterface;
-    private AuthorizationService $authorizationService;
+    private AuthorizationUserService $authorizationUserService;
 
-    public function __construct(AuthorizationService $authorizationService,  VisitRepositoryInterface $visitRepositoryInterface, UserRepositoryInterface $userRepositoryInterface)
+    public function __construct(AuthorizationUserService $authorizationUserService,  VisitRepositoryInterface $visitRepositoryInterface, UserRepositoryInterface $userRepositoryInterface)
     {
         $this->visitRepositoryInterface = $visitRepositoryInterface;
         $this->userRepositoryInterface = $userRepositoryInterface;
-        $this->authorizationService = $authorizationService;
+        $this->authorizationUserService = $authorizationUserService;
     }
 
     public function execute(GetPossibleUploadRequest $getPossibleUploadRequest, GetPossibleUploadResponse $getPossibleUploadResponse)
@@ -69,8 +69,8 @@ class GetPossibleUpload
 
     private function checkAuthorization(int $userId, string $studyName) : void
     {
-        $this->authorizationService->setCurrentUserAndRole($userId, Constants::ROLE_INVESTIGATOR);
-        if( ! $this->authorizationService->isRoleAllowed($studyName) ){
+        $this->authorizationUserService->setUserId($userId);
+        if( ! $this->authorizationUserService->isRoleAllowed(Constants::ROLE_INVESTIGATOR, $studyName) ){
             throw new GaelOForbiddenException();
         };
     }

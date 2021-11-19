@@ -6,8 +6,8 @@ use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\UserRepositoryInterface;
-use App\GaelO\Services\AuthorizationService;
 use App\GaelO\Entities\UserEntity;
+use App\GaelO\Services\AuthorizationService\AuthorizationStudyService;
 use App\GaelO\UseCases\GetUserFromStudy\GetUserFromStudyRequest;
 use App\GaelO\UseCases\GetUserFromStudy\GetUserFromStudyResponse;
 use Exception;
@@ -15,13 +15,13 @@ use Exception;
 class GetUserFromStudy
 {
 
-    private AuthorizationService $authorizationService;
+    private AuthorizationStudyService $authorizationStudyService;
     private UserRepositoryInterface $userRepositoryInterface;
 
-    public function __construct(UserRepositoryInterface $userRepositoryInterface, AuthorizationService $authorizationService)
+    public function __construct(UserRepositoryInterface $userRepositoryInterface, AuthorizationStudyService $authorizationStudyService)
     {
         $this->userRepositoryInterface = $userRepositoryInterface;
-        $this->authorizationService = $authorizationService;
+        $this->authorizationStudyService = $authorizationStudyService;
     }
 
     public function execute(GetUserFromStudyRequest $userRequest, GetUserFromStudyResponse $userResponse): void
@@ -70,14 +70,15 @@ class GetUserFromStudy
 
     private function checkAuthorization(int $userId, string $askedRole, string $studyName)
     {
-        $this->authorizationService->setCurrentUserAndRole($userId, Constants::ROLE_SUPERVISOR);
+        $this->authorizationStudyService->setStudyName($studyName);
+        $this->authorizationStudyService->setUserId($userId);
 
         if ($askedRole === Constants::ROLE_SUPERVISOR) {
-            if (!$this->authorizationService->isRoleAllowed($studyName)) {
+            if (!$this->authorizationStudyService->isAllowedStudy(Constants::ROLE_SUPERVISOR)) {
                 throw new GaelOForbiddenException();
             };
         } else if ($askedRole === CONSTANTS::ROLE_ADMINISTRATOR) {
-            if (!$this->authorizationService->isAdmin()) {
+            if (!$this->authorizationStudyService->getAuthorizationUserService()->isAdmin()) {
                 throw new GaelOForbiddenException();
             };
         }
