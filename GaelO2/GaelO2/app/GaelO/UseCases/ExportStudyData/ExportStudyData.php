@@ -5,18 +5,18 @@ namespace App\GaelO\UseCases\ExportStudyData;
 use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
-use App\GaelO\Services\AuthorizationService\AuthorizationUserService;
+use App\GaelO\Services\AuthorizationService\AuthorizationStudyService;
 use App\GaelO\Services\ExportStudyService;
 use Exception;
 
 class ExportStudyData{
 
-    private AuthorizationUserService $authorizationUserService;
+    private AuthorizationStudyService $authorizationStudyService;
     private ExportStudyService $exportStudyService;
 
-    public function __construct(AuthorizationUserService $authorizationUserService, ExportStudyService $exportStudyService)
+    public function __construct(AuthorizationStudyService $authorizationStudyService, ExportStudyService $exportStudyService)
     {
-        $this->authorizationUserService = $authorizationUserService;
+        $this->authorizationStudyService = $authorizationStudyService;
         $this->exportStudyService = $exportStudyService;
     }
 
@@ -56,8 +56,9 @@ class ExportStudyData{
 
     private function checkAuthorization(int $currentUserId, string $studyName){
 
-        $this->authorizationUserService->setUserId($currentUserId);
-        if( ! $this->authorizationUserService->isRoleAllowed(Constants::ROLE_SUPERVISOR, $studyName)){
+        $this->authorizationStudyService->setStudyName($studyName);
+        $this->authorizationStudyService->setUserId($currentUserId);
+        if( ! $this->authorizationStudyService->isAllowedStudy(Constants::ROLE_SUPERVISOR)){
             throw new GaelOForbiddenException();
         }
 

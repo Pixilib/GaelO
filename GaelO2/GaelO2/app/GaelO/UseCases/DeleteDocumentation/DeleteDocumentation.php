@@ -7,19 +7,19 @@ use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\DocumentationRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
-use App\GaelO\Services\AuthorizationService\AuthorizationUserService;
+use App\GaelO\Services\AuthorizationService\AuthorizationStudyService;
 use Exception;
 
 class DeleteDocumentation{
 
     private DocumentationRepositoryInterface $documentationRepositoryInterface;
-    private AuthorizationUserService $authorizationUserService;
+    private AuthorizationStudyService $authorizationStudyService;
     private TrackerRepositoryInterface $trackerRepositoryInterface;
 
-    public function __construct(DocumentationRepositoryInterface $documentationRepositoryInterface, authorizationUserService $authorizationUserService, TrackerRepositoryInterface $trackerRepositoryInterface)
+    public function __construct(DocumentationRepositoryInterface $documentationRepositoryInterface, AuthorizationStudyService $authorizationStudyService, TrackerRepositoryInterface $trackerRepositoryInterface)
     {
         $this->documentationRepositoryInterface = $documentationRepositoryInterface;
-        $this->authorizationUserService = $authorizationUserService;
+        $this->authorizationStudyService = $authorizationStudyService;
         $this->trackerRepositoryInterface = $trackerRepositoryInterface;
     }
 
@@ -64,8 +64,9 @@ class DeleteDocumentation{
     }
 
     private function checkAuthorization(int $currentUserId, string $studyName){
-        $this->authorizationUserService->setUserId($currentUserId);
-        if( !$this->authorizationUserService->isRoleAllowed(Constants::ROLE_SUPERVISOR, $studyName)){
+        $this->authorizationStudyService->setStudyName($studyName);
+        $this->authorizationStudyService->setUserId($currentUserId);
+        if( !$this->authorizationStudyService->isAllowedStudy(Constants::ROLE_SUPERVISOR)){
             throw new GaelOForbiddenException();
         }
     }
