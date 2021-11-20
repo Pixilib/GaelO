@@ -8,19 +8,20 @@ use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Adapters\FrameworkInterface;
 use App\GaelO\Repositories\VisitGroupRepository;
 use App\GaelO\Repositories\VisitTypeRepository;
+use App\GaelO\Services\AuthorizationService\AuthorizationStudyService;
 use App\GaelO\Services\AuthorizationService\AuthorizationUserService;
 use Exception;
 
 class GetReviewsMetadataFromVisitType {
 
-    private AuthorizationUserService $authorizationUserService;
+    private AuthorizationStudyService $authorizationStudyService;
     private VisitTypeRepository $visitTypeRepository;
     private VisitGroupRepository $visitGroupRepository;
     private FrameworkInterface $frameworkInterface;
 
-    public function __construct(AuthorizationUserService $authorizationUserService, VisitTypeRepository $visitTypeRepository, VisitGroupRepository $visitGroupRepository, FrameworkInterface $frameworkInterface)
+    public function __construct(AuthorizationStudyService $authorizationStudyService, VisitTypeRepository $visitTypeRepository, VisitGroupRepository $visitGroupRepository, FrameworkInterface $frameworkInterface)
     {
-        $this->authorizationUserService = $authorizationUserService;
+        $this->authorizationStudyService = $authorizationStudyService;
         $this->visitTypeRepository = $visitTypeRepository;
         $this->visitGroupRepository = $visitGroupRepository;
         $this->frameworkInterface = $frameworkInterface;
@@ -32,7 +33,6 @@ class GetReviewsMetadataFromVisitType {
 
             $studyName = $getReviewsMetadataFromVisitTypeRequest->studyName;
 
-            //SK ICI VERIFIER QUE VISIT TYPE EST BIEN DANS UNE STUDY PERMISE
             $this->checkAuthorization($getReviewsMetadataFromVisitTypeRequest->currentUserId, $studyName);
 
             $visitTypeEntity = $this->visitTypeRepository->find($getReviewsMetadataFromVisitTypeRequest->visitTypeId);
@@ -63,8 +63,9 @@ class GetReviewsMetadataFromVisitType {
 
     private function checkAuthorization(int $userId, string $studyName)
     {
-        $this->authorizationUserService->setUserId($userId);
-        if (!$this->authorizationUserService->isRoleAllowed(Constants::ROLE_SUPERVISOR, $studyName)) {
+        $this->authorizationStudyService->setUserId($userId);
+        $this->authorizationStudyService->setStudyName($studyName);
+        if (!$this->authorizationStudyService->isAllowedStudy(Constants::ROLE_SUPERVISOR)) {
             throw new GaelOForbiddenException();
         };
     }

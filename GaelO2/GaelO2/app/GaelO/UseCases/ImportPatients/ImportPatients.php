@@ -9,7 +9,7 @@ use App\GaelO\UseCases\ImportPatients\ImportPatientsResponse;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
-use App\GaelO\Services\AuthorizationService\AuthorizationUserService;
+use App\GaelO\Services\AuthorizationService\AuthorizationStudyService;
 use App\GaelO\Services\MailServices;
 use App\GaelO\Services\ImportPatientService;
 use App\GaelO\Util;
@@ -21,14 +21,14 @@ class ImportPatients
     private TrackerRepositoryInterface $trackerRepositoryInterface;
     private MailServices $mailService;
     private ImportPatientService $importPatient;
-    private AuthorizationUserService $authorizationUserService;
+    private AuthorizationStudyService $authorizationStudyService;
 
-    public function __construct(TrackerRepositoryInterface $trackerRepositoryInterface, MailServices $mailService, ImportPatientService $importPatient, AuthorizationUserService $authorizationUserService)
+    public function __construct(TrackerRepositoryInterface $trackerRepositoryInterface, MailServices $mailService, ImportPatientService $importPatient, AuthorizationStudyService $authorizationStudyService)
     {
         $this->importPatient = $importPatient;
         $this->trackerRepositoryInterface = $trackerRepositoryInterface;
         $this->mailService = $mailService;
-        $this->authorizationUserService = $authorizationUserService;
+        $this->authorizationStudyService = $authorizationStudyService;
     }
 
     public function execute(ImportPatientsRequest $importPatientsRequest, ImportPatientsResponse $importPatientsResponse): void
@@ -75,8 +75,9 @@ class ImportPatients
 
     private function checkAuthorization(int $userId, string $studyName)
     {
-        $this->authorizationUserService->setUserId($userId);
-        if (!$this->authorizationUserService->isRoleAllowed(Constants::ROLE_SUPERVISOR, $studyName)) {
+        $this->authorizationStudyService->setUserId($userId);
+        $this->authorizationStudyService->setStudyName($studyName);
+        if (!$this->authorizationStudyService->isAllowedStudy(Constants::ROLE_SUPERVISOR)) {
             throw new GaelOForbiddenException();
         };
     }

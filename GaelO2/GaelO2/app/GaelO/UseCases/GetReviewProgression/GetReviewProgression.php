@@ -8,7 +8,7 @@ use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\ReviewRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\UserRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
-use App\GaelO\Services\AuthorizationService\AuthorizationUserService;
+use App\GaelO\Services\AuthorizationService\AuthorizationStudyService;
 use Exception;
 
 /**
@@ -16,17 +16,17 @@ use Exception;
  */
 class GetReviewProgression {
 
-    private AuthorizationUserService $authorizationUserService;
+    private AuthorizationStudyService $authorizationStudyService;
     private VisitRepositoryInterface $visitRepositoryInterface;
     private UserRepositoryInterface $userRepositoryInterface;
     private ReviewRepositoryInterface $reviewRepositoryInterface;
 
-    public function __construct(AuthorizationUserService $authorizationUserService,
+    public function __construct(AuthorizationStudyService $authorizationStudyService,
                                 VisitRepositoryInterface $visitRepositoryInterface,
                                 UserRepositoryInterface $userRepositoryInterface,
                                 ReviewRepositoryInterface $reviewRepositoryInterface){
 
-        $this->authorizationUserService = $authorizationUserService;
+        $this->authorizationStudyService = $authorizationStudyService;
         $this->visitRepositoryInterface = $visitRepositoryInterface;
         $this->userRepositoryInterface = $userRepositoryInterface;
         $this->reviewRepositoryInterface = $reviewRepositoryInterface;
@@ -93,8 +93,9 @@ class GetReviewProgression {
     }
 
     private function checkAuthorization(int $userId, string $studyName){
-        $this->authorizationUserService->setUserId($userId);
-        if(! $this->authorizationUserService->isRoleAllowed(Constants::ROLE_SUPERVISOR, $studyName)){
+        $this->authorizationStudyService->setUserId($userId);
+        $this->authorizationStudyService->setStudyName($studyName);
+        if(! $this->authorizationStudyService->isAllowedStudy(Constants::ROLE_SUPERVISOR)){
             throw new GaelOForbiddenException();
         };
     }

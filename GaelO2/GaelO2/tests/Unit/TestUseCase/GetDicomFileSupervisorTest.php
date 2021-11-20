@@ -4,7 +4,7 @@ namespace Tests\Unit\TestUseCase;
 
 use App\GaelO\Interfaces\Repositories\DicomSeriesRepositoryInterface;
 use App\GaelO\Repositories\VisitRepository;
-use App\GaelO\Services\AuthorizationService;
+use App\GaelO\Services\AuthorizationService\AuthorizationStudyService;
 use App\GaelO\Services\AuthorizationService\AuthorizationUserService;
 use App\GaelO\Services\OrthancService;
 use App\GaelO\UseCases\GetDicomsFileSupervisor\GetDicomsFileSupervisor;
@@ -59,7 +59,7 @@ class GetDicomFileSupervisorTest extends TestCase
 
         $this->getDicomsFileSupervisor = new GetDicomsFileSupervisor(
             App::make(OrthancService::class),
-            App::make(AuthorizationUserService::class),
+            App::make(AuthorizationStudyService::class),
             App::make(DicomSeriesRepositoryInterface::class),
             App::make(VisitRepository::class),
         );

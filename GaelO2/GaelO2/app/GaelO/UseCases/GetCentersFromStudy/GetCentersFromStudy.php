@@ -7,22 +7,22 @@ use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\CenterRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\PatientRepositoryInterface;
-use App\GaelO\Services\AuthorizationService\AuthorizationUserService;
+use App\GaelO\Services\AuthorizationService\AuthorizationStudyService;
 use Exception;
 
 class GetCentersFromStudy {
 
-    private AuthorizationUserService $authorizationUserService;
+    private AuthorizationStudyService $authorizationStudyService;
     private PatientRepositoryInterface $patientRepositoryInterface;
     private CenterRepositoryInterface $centerRepositoryInterface;
 
 
     public function __construct(CenterRepositoryInterface $centerRepositoryInterface,
-        AuthorizationUserService $authorizationUserService,
+        AuthorizationStudyService $authorizationStudyService,
         PatientRepositoryInterface $patientRepositoryInterface){
         $this->centerRepositoryInterface = $centerRepositoryInterface;
         $this->patientRepositoryInterface = $patientRepositoryInterface;
-        $this->authorizationUserService = $authorizationUserService;
+        $this->authorizationStudyService = $authorizationStudyService;
      }
 
     public function execute(GetCentersFromStudyRequest $getCentersFromStudyRequest, GetCentersFromStudyResponse $getCentersFromStudyResponse) : void
@@ -57,12 +57,11 @@ class GetCentersFromStudy {
     }
 
     private function checkAuthorization(int $currentUserId, string $studyName){
-        $this->authorizationUserService->setUserId($currentUserId);
-        if ( ! $this->authorizationUserService->isRoleAllowed(Constants::ROLE_SUPERVISOR, $studyName)){
+        $this->authorizationStudyService->setUserId($currentUserId);
+        $this->authorizationStudyService->setStudyName($studyName);
+        if ( ! $this->authorizationStudyService->isAllowedStudy(Constants::ROLE_SUPERVISOR)){
             throw new GaelOForbiddenException();
         };
     }
 
 }
-
-?>

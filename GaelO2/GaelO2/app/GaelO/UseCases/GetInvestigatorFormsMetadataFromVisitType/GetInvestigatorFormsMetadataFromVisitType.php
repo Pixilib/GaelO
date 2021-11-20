@@ -8,7 +8,7 @@ use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Adapters\FrameworkInterface;
 use App\GaelO\Repositories\VisitGroupRepository;
 use App\GaelO\Repositories\VisitTypeRepository;
-use App\GaelO\Services\AuthorizationService\AuthorizationUserService;
+use App\GaelO\Services\AuthorizationService\AuthorizationStudyService;
 use Exception;
 
 class GetInvestigatorFormsMetadataFromVisitType
@@ -16,11 +16,11 @@ class GetInvestigatorFormsMetadataFromVisitType
     private VisitTypeRepository $visitTypeRepository;
     private VisitGroupRepository $visitGroupRepository;
     private FrameworkInterface $frameworkInterface;
-    private AuthorizationUserService $authorizationUserService;
+    private AuthorizationStudyService $authorizationStudyService;
 
-    public function __construct(AuthorizationUserService $authorizationUserService, VisitTypeRepository $visitTypeRepository, VisitGroupRepository $visitGroupRepository, FrameworkInterface $frameworkInterface)
+    public function __construct(AuthorizationStudyService $authorizationStudyService, VisitTypeRepository $visitTypeRepository, VisitGroupRepository $visitGroupRepository, FrameworkInterface $frameworkInterface)
     {
-        $this->authorizationUserService = $authorizationUserService;
+        $this->authorizationStudyService = $authorizationStudyService;
         $this->visitTypeRepository = $visitTypeRepository;
         $this->visitGroupRepository = $visitGroupRepository;
         $this->frameworkInterface = $frameworkInterface;
@@ -59,8 +59,9 @@ class GetInvestigatorFormsMetadataFromVisitType
 
     private function checkAuthorization(int $userId, string $studyName)
     {
-        $this->authorizationUserService->setUserId($userId);
-        if (!$this->authorizationUserService->isRoleAllowed(Constants::ROLE_SUPERVISOR, $studyName)) {
+        $this->authorizationStudyService->setUserId($userId);
+        $this->authorizationStudyService->setStudyName($studyName);
+        if (!$this->authorizationStudyService->isAllowedStudy(Constants::ROLE_SUPERVISOR)) {
             throw new GaelOForbiddenException();
         };
     }

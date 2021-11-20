@@ -8,23 +8,23 @@ use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\DicomSeriesRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
-use App\GaelO\Services\AuthorizationService\AuthorizationUserService;
+use App\GaelO\Services\AuthorizationService\AuthorizationStudyService;
 use App\GaelO\Services\OrthancService;
 use Exception;
 
 class GetDicomsFileSupervisor {
 
-    private AuthorizationUserService $authorizationUserService;
+    private AuthorizationStudyService $authorizationStudyService;
     private DicomSeriesRepositoryInterface $dicomSeriesRepositoryInterface;
     private OrthancService $orthancService;
     private VisitRepositoryInterface $visitRepositoryInterface;
 
     public function __construct(OrthancService $orthancService,
-                                AuthorizationUserService $authorizationUserService,
+                                AuthorizationStudyService $authorizationStudyService,
                                 DicomSeriesRepositoryInterface $dicomSeriesRepositoryInterface,
                                 VisitRepositoryInterface $visitRepositoryInterface)
     {
-        $this->authorizationUserService = $authorizationUserService;
+        $this->authorizationStudyService = $authorizationStudyService;
         $this->dicomSeriesRepositoryInterface = $dicomSeriesRepositoryInterface;
         $this->orthancService = $orthancService;
         $this->visitRepositoryInterface = $visitRepositoryInterface;
@@ -85,8 +85,9 @@ class GetDicomsFileSupervisor {
 
     private function checkAuthorization(int $currentUserId, string $studyName){
 
-        $this->authorizationUserService->setUserId($currentUserId);
-        if( ! $this->authorizationUserService->isRoleAllowed( Constants::ROLE_SUPERVISOR, $studyName)){
+        $this->authorizationStudyService->setUserId($currentUserId);
+        $this->authorizationStudyService->setStudyName($studyName);
+        if( ! $this->authorizationStudyService->isAllowedStudy( Constants::ROLE_SUPERVISOR )){
             throw new GaelOForbiddenException();
         }
 
