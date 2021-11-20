@@ -28,8 +28,9 @@ class GetDicomFileSupervisorTest extends TestCase
         $orthancServiceMock->shouldReceive('getOrthancZipStream')
             ->andReturn('FileTest');
 
-        $authorizationServiceMock = $this->partialMock(AuthorizationUserService::class, function (MockInterface $mock) {
-            $mock->shouldReceive('isRoleAllowed')->andReturn(true);
+        $authorizationServiceMock = $this->partialMock(AuthorizationStudyService::class, function (MockInterface $mock) {
+            $mock->shouldReceive('setUserId')->andReturn(null);
+            $mock->shouldReceive('isAllowedStudy')->andReturn(true);
         });
 
         $dicomRepositoryMock = Mockery::mock(DicomSeriesRepositoryInterface::class);
@@ -70,7 +71,7 @@ class GetDicomFileSupervisorTest extends TestCase
         $getDicomsFilesSupervisorRequest = new GetDicomsFileSupervisorRequest();
         $getDicomsFilesSupervisorRequest->currentUserId = 1;
         $getDicomsFilesSupervisorRequest->seriesInstanceUID = ['1234'];
-        $getDicomsFilesSupervisorRequest->studyName = 'name';
+        $getDicomsFilesSupervisorRequest->studyName = 'test';
 
         $getDicomFilesSupervisorResponse = new GetDicomsFileSupervisorResponse();
         $this->getDicomsFileSupervisor->execute($getDicomsFilesSupervisorRequest, $getDicomFilesSupervisorResponse);
