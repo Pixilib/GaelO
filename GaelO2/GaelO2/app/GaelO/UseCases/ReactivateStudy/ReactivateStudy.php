@@ -8,19 +8,19 @@ use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\StudyRepositoryInterface;
 use App\GaelO\Repositories\TrackerRepository;
-use App\GaelO\Services\AuthorizationService;
+use App\GaelO\Services\AuthorizationService\AuthorizationUserService;
 use Exception;
 
 class ReactivateStudy {
 
     private StudyRepositoryInterface $studyRepositoryInterface;
-    private AuthorizationService $authorizationService;
+    private AuthorizationUserService $authorizationUserService;
     private TrackerRepository $trackerRepository;
 
-    public function __construct(StudyRepositoryInterface $studyRepositoryInterface, AuthorizationService $authorizationService, TrackerRepository $trackerRepository){
+    public function __construct(StudyRepositoryInterface $studyRepositoryInterface, AuthorizationUserService $authorizationUserService, TrackerRepository $trackerRepository){
         $this->studyRepositoryInterface = $studyRepositoryInterface;
         $this->trackerRepository = $trackerRepository;
-        $this->authorizationService = $authorizationService;
+        $this->authorizationUserService = $authorizationUserService;
     }
 
     public function execute(ReactivateStudyRequest $reactivateStudyRequest, ReactivateStudyResponse $reactivateStudyResponse){
@@ -55,8 +55,8 @@ class ReactivateStudy {
     }
 
     private function checkAuthorization($userId)  {
-        $this->authorizationService->setCurrentUserAndRole($userId);
-        if( ! $this->authorizationService->isAdmin() ) {
+        $this->authorizationUserService->setUserId($userId);
+        if( ! $this->authorizationUserService->isAdmin() ) {
             throw new GaelOForbiddenException();
         };
     }

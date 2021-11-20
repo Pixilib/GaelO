@@ -1,11 +1,8 @@
 Salim TODO :
 
---- Etudes ancillaires ---
-Pb Authorisation : Un ID Visit peut maintenant a etre attachee a plusieurs etudes ancillaires
-=> Dans authorization on doit verifier que le visit ID a bien une etude === a celle demandee et que l'utilisateur a les droits dessus
-=> Le review status doit venir avec les info de la visit dans le repository (partie de code commentée)
+-New RBAC ne pas appeler la methode de isRoleAllowed de userAuthorisation => Plutot passer par studyAuth
 
-=> Crée dans les etudes comme étant acillaires De
+--- Etudes ancillaires ---
 => Ne peut etre creer les roles que de Reviewer et supervisor
 =>Supervisor :
 Ne doit pas pouvoir modifier les patients
@@ -20,12 +17,11 @@ Doit pouvoir telecharger Dicoms
 Doit pouvoir exporter data de l'étude
 Doit pouvoir set documentation
 Doit pouvoir voir user details
-
-Dans RBAC faire une methode isAncillaryStudy pour verifier ces droits?
-Faire en sorte que les services aient les data injecté par les controlleur pour eviter les appels doublons à la db ?
 --- /Etudes ancillaires ---
 
 ---- Refactoring Backend ----
+RBAC => Voir si on injecte les donnée depuis le usecase pour diminuer les appel SQL ?
+RBAC => Revoir DicowWeb Authorization Service
 Refac pour la lecture eviter de passer par des services pour laisser les services à l'ecriture ?
 Dicom Series Service => peut etre evoluer vers un DicomService pour les deux niveaux
 GetVisitContext des services surement a faire passer a initialisation pour eviter requettes redondantes
@@ -38,9 +34,7 @@ Entity :
 
 ---- /Refactoring Backend ------
 
-Messagerie à designer (communication intermembre, front avec tinymce)
 Creatable Visit : Manque Study Custom Logic (+dans front skip visites optionnelles ?)
-Revoir DicowWeb Authorization Service => Pb route orthanc differentes
 Review  : faire une propriete dans visit pour savoir si review disponible a un user en plus de status reviewAvailable ?
 
 Reste Autres :

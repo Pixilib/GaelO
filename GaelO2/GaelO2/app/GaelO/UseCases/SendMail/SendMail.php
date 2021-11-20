@@ -5,18 +5,18 @@ namespace App\GaelO\UseCases\SendMail;
 use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOBadRequestException;
 use App\GaelO\Exceptions\GaelOException;
+use App\GaelO\Services\AuthorizationService\AuthorizationStudyService;
 use App\GaelO\Services\MailServices;
-use App\GaelO\Services\AuthorizationService;
 
 class SendMail {
 
     private MailServices $mailService;
-    private AuthorizationService $authorizationService;
+    private AuthorizationStudyService $authorizationStudyService;
 
-    public function __construct(MailServices $mailService, AuthorizationService $authorizationService)
+    public function __construct(MailServices $mailService, AuthorizationStudyService $authorizationStudyService)
     {
         $this->mailService = $mailService;
-        $this->authorizationService = $authorizationService;
+        $this->authorizationStudyService = $authorizationStudyService;
     }
 
     public function execute(SendMailRequest $sendMailRequest, SendMailResponse $sendMailResponse){
@@ -35,7 +35,7 @@ class SendMail {
                 isset($sendMailRequest->userId);
                 $this->mailService->sendMailToUser( get_object_vars ($sendMailRequest) );
             } else {
-                $this->mailService->sendMailToSupervisors( get_object_vars($sendMailRequest) );    
+                $this->mailService->sendMailToSupervisors( get_object_vars($sendMailRequest) );
             }
 
             $sendMailResponse->status = 200;
@@ -59,8 +59,9 @@ class SendMail {
 
     private function checkAuthorization(int $userId, string $studyName, string $role)
     {
-        $this->authorizationService->setCurrentUserAndRole($userId, $role);
-        if (!$this->authorizationService->isRoleAllowed($studyName)) {
+        $this->authorizationStudyService->setUserId($userId);
+        $this->authorizationStudyService->setStudyName($studyName);
+        if (!$this->authorizationStudyService->isAllowedStudy($role)) {
             throw new GaelOForbiddenException();
         };
     }

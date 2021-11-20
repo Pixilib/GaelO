@@ -13,7 +13,7 @@ use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\UserRepositoryInterface;
 use App\GaelO\UseCases\CreateUser\CreateUserRequest;
 use App\GaelO\UseCases\CreateUser\CreateUserResponse;
-use App\GaelO\Services\AuthorizationService;
+use App\GaelO\Services\AuthorizationService\AuthorizationUserService;
 use App\GaelO\Services\MailServices;
 use App\GaelO\UseCases\ModifyUser\ModifyUserRequest;
 use App\GaelO\Util;
@@ -21,16 +21,16 @@ use App\GaelO\Util;
 class CreateUser
 {
 
-    private AuthorizationService $authorizationService;
+    private AuthorizationUserService $authorizationUserService;
     private TrackerRepositoryInterface $trackerRepositoryInterface;
     private UserRepositoryInterface $userRepositoryInterface;
     private MailServices $mailService;
 
-    public function __construct(AuthorizationService $authorizationService, UserRepositoryInterface $userRepositoryInterface, TrackerRepositoryInterface $trackerRepositoryInterface, MailServices $mailService)
+    public function __construct(AuthorizationUserService $authorizationUserService, UserRepositoryInterface $userRepositoryInterface, TrackerRepositoryInterface $trackerRepositoryInterface, MailServices $mailService)
     {
         $this->trackerRepositoryInterface = $trackerRepositoryInterface;
         $this->mailService = $mailService;
-        $this->authorizationService = $authorizationService;
+        $this->authorizationUserService = $authorizationUserService;
         $this->userRepositoryInterface = $userRepositoryInterface;
     }
 
@@ -100,8 +100,8 @@ class CreateUser
 
     private function checkAuthorization(int $userId): void
     {
-        $this->authorizationService->setCurrentUserAndRole($userId);
-        if (!$this->authorizationService->isAdmin($userId)) {
+        $this->authorizationUserService->setUserId($userId);
+        if (!$this->authorizationUserService->isAdmin($userId)) {
             throw new GaelOForbiddenException();
         };
     }

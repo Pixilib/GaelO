@@ -8,20 +8,20 @@ use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
-use App\GaelO\Services\AuthorizationService;
+use App\GaelO\Services\AuthorizationService\AuthorizationStudyService;
 use Exception;
 
 class ReactivateVisit {
 
-    private AuthorizationService $authorizationService;
+    private AuthorizationStudyService $authorizationStudyService;
     private VisitRepositoryInterface $visitRepositoryInterface;
     private TrackerRepositoryInterface $trackerRepositoryInterface;
 
-    public function __construct(AuthorizationService $authorizationService,
+    public function __construct(AuthorizationStudyService $authorizationStudyService,
         VisitRepositoryInterface $visitRepositoryInterface,
         TrackerRepositoryInterface $trackerRepositoryInterface)
     {
-        $this->authorizationService = $authorizationService;
+        $this->authorizationStudyService = $authorizationStudyService;
         $this->visitRepositoryInterface = $visitRepositoryInterface;
         $this->trackerRepositoryInterface = $trackerRepositoryInterface;
 
@@ -86,8 +86,9 @@ class ReactivateVisit {
     }
 
     private function checkAuthorization(int $currentUserId, string $studyName){
-        $this->authorizationService->setCurrentUserAndRole($currentUserId, Constants::ROLE_SUPERVISOR);
-        if ( ! $this->authorizationService->isRoleAllowed($studyName)){
+        $this->authorizationStudyService->setUserId($currentUserId);
+        $this->authorizationStudyService->setStudyName($studyName);
+        if ( ! $this->authorizationStudyService->isAllowedStudy(Constants::ROLE_SUPERVISOR)){
             throw new GaelOForbiddenException();
         }
 

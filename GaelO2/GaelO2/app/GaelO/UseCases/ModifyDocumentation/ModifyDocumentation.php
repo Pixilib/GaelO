@@ -8,19 +8,19 @@ use App\GaelO\Exceptions\GaelOConflictException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\DocumentationRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
-use App\GaelO\Services\AuthorizationService;
+use App\GaelO\Services\AuthorizationService\AuthorizationStudyService;
 use Exception;
 
 class ModifyDocumentation {
 
     private DocumentationRepositoryInterface $documentationRepositoryInterface;
-    private AuthorizationService $authorizationService;
+    private AuthorizationStudyService $authorizationStudyService;
     private TrackerRepositoryInterface $trackerRepositoryInterface;
 
-    public function __construct(DocumentationRepositoryInterface $documentationRepositoryInterface, AuthorizationService $authorizationService, TrackerRepositoryInterface $trackerRepositoryInterface){
+    public function __construct(DocumentationRepositoryInterface $documentationRepositoryInterface, AuthorizationStudyService $authorizationStudyService, TrackerRepositoryInterface $trackerRepositoryInterface){
         $this->documentationRepositoryInterface = $documentationRepositoryInterface;
         $this->trackerRepositoryInterface = $trackerRepositoryInterface;
-        $this->authorizationService = $authorizationService;
+        $this->authorizationStudyService = $authorizationStudyService;
      }
 
     public function execute(ModifyDocumentationRequest $modifyDocumentationRequest, ModifyDocumentationResponse $modifyDocumentationResponse){
@@ -74,8 +74,9 @@ class ModifyDocumentation {
     }
 
     private function checkAuthorization(int $currentUserId, string $studyName){
-        $this->authorizationService->setCurrentUserAndRole($currentUserId, Constants::ROLE_SUPERVISOR);
-        if(!$this->authorizationService->isRoleAllowed($studyName)){
+        $this->authorizationStudyService->setStudyName($studyName);
+        $this->authorizationStudyService->setUserId($currentUserId);
+        if(!$this->authorizationStudyService->isAllowedStudy(Constants::ROLE_SUPERVISOR)){
             throw new GaelOForbiddenException();
         }
     }

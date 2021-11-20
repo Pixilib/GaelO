@@ -9,7 +9,7 @@ use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Exceptions\GaelONotFoundException;
 use App\GaelO\Interfaces\Repositories\CenterRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
-use App\GaelO\Services\AuthorizationService;
+use App\GaelO\Services\AuthorizationService\AuthorizationUserService;
 use App\GaelO\UseCases\ModifyCenter\ModifyCenterRequest;
 use App\GaelO\UseCases\ModifyCenter\ModifyCenterResponse;
 use Exception;
@@ -17,13 +17,13 @@ use Exception;
 class ModifyCenter {
 
     private CenterRepositoryInterface $centerRepositoryInterface;
-    private AuthorizationService $authorizationService;
+    private AuthorizationUserService $authorizationUserService;
     private TrackerRepositoryInterface $trackerRepositoryInterface;
 
-    public function __construct(CenterRepositoryInterface $centerRepositoryInterface, AuthorizationService $authorizationService, TrackerRepositoryInterface $trackerRepositoryInterface){
+    public function __construct(CenterRepositoryInterface $centerRepositoryInterface, AuthorizationUserService $authorizationUserService, TrackerRepositoryInterface $trackerRepositoryInterface){
         $this->centerRepositoryInterface = $centerRepositoryInterface;
         $this->trackerRepositoryInterface = $trackerRepositoryInterface;
-        $this->authorizationService = $authorizationService;
+        $this->authorizationUserService = $authorizationUserService;
      }
 
 
@@ -69,8 +69,8 @@ class ModifyCenter {
     }
 
     private function checkAuthorization($userId)  {
-        $this->authorizationService->setCurrentUserAndRole($userId);
-        if( ! $this->authorizationService->isAdmin() ) {
+        $this->authorizationUserService->setUserId($userId);
+        if( ! $this->authorizationUserService->isAdmin() ) {
             throw new GaelOForbiddenException();
         };
     }

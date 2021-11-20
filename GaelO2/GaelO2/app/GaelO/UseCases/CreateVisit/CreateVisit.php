@@ -9,7 +9,7 @@ use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
-use App\GaelO\Services\AuthorizationPatientService;
+use App\GaelO\Services\AuthorizationService\AuthorizationPatientService;
 use App\GaelO\Services\MailServices;
 use App\GaelO\Services\VisitService;
 use DateTime;
@@ -18,14 +18,14 @@ use Exception;
 class CreateVisit {
 
     private VisitRepositoryInterface $visitRepositoryInterface;
-    private AuthorizationPatientService $authorizationService;
+    private AuthorizationPatientService $authorizationPatientService;
     private VisitService $visitService;
     private TrackerRepositoryInterface $trackerRepositoryInterface;
     private MailServices $mailServices;
 
-    public function __construct(VisitRepositoryInterface $visitRepositoryInterface, AuthorizationPatientService $authorizationService, VisitService $visitService, TrackerRepositoryInterface $trackerRepositoryInterface, MailServices $mailServices){
+    public function __construct(VisitRepositoryInterface $visitRepositoryInterface, AuthorizationPatientService $authorizationPatientService, VisitService $visitService, TrackerRepositoryInterface $trackerRepositoryInterface, MailServices $mailServices){
         $this->visitService = $visitService;
-        $this->authorizationService = $authorizationService;
+        $this->authorizationPatientService = $authorizationPatientService;
         $this->visitRepositoryInterface = $visitRepositoryInterface;
         $this->trackerRepositoryInterface = $trackerRepositoryInterface;
         $this->mailServices = $mailServices;
@@ -35,7 +35,7 @@ class CreateVisit {
 
         try{
 
-            $this->checkAuthorization($createVisitRequest->currentUserId, $createVisitRequest->patientId);
+            $this->checkAuthorization($createVisitRequest->currentUserId, $createVisitRequest->patientId, $createVisitRequest->studyName);
 
             //If visit was not done, force visitDate to null
             if ($createVisitRequest->statusDone === Constants::VISIT_STATUS_NOT_DONE && !empty($createVisitRequest->visitDate)) {
@@ -119,10 +119,11 @@ class CreateVisit {
 
     }
 
-    private function checkAuthorization(int $userId, string $patientId) : void{
-        $this->authorizationService->setCurrentUserAndRole($userId, Constants::ROLE_INVESTIGATOR);
-        $this->authorizationService->setPatient($patientId);
-        if (! $this->authorizationService->isPatientAllowed() ){
+    private function checkAuthorization(int $userId, string $patientId, string $studyName) : void{
+        $this->authorizationPatientService->setUserId($userId);
+        $this->authorizationPatientService->setStudyName($studyName);
+        $this->authorizationPatientService->setPatientId($patientId);
+        if (! $this->authorizationPatientService->isPatientAllowed(Constants::ROLE_INVESTIGATOR) ){
             throw new GaelOForbiddenException();
         }
 

@@ -38,7 +38,7 @@ class PatientTest extends TestCase
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $this->study->name);
 
         //Test get patient 4
-        $answer = $this->json('GET', '/api/patients/' . $this->patient->id . '?role=Supervisor');
+        $answer = $this->json('GET', '/api/studies/'.$this->study->name.'/patients/' . $this->patient->id . '?role=Supervisor');
         $answer->assertStatus(200);
 
         $expectedKeys = [
@@ -64,7 +64,7 @@ class PatientTest extends TestCase
     public function testGetPatientFailNotSupervisor()
     {
         AuthorizationTools::actAsAdmin(false);
-        $this->json('GET', '/api/patients/' . $this->patient->id . '?role=Supervisor')->assertStatus(403);
+        $this->json('GET', '/api/studies/'.$this->study->name.'/patients/' . $this->patient->id . '?role=Supervisor')->assertStatus(403);
     }
 
 
@@ -75,7 +75,7 @@ class PatientTest extends TestCase
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_REVIEWER, $this->study->name);
 
         //Test get patient 4
-        $response = $this->json('GET', '/api/patients/' . $this->patient->id . '?role=Reviewer');
+        $response = $this->json('GET', '/api/studies/'.$this->study->name.'/patients/' . $this->patient->id . '?role=Reviewer');
         $response->assertSuccessful();
 
         $answer = $response->content();
@@ -113,7 +113,7 @@ class PatientTest extends TestCase
             'reason' => 'wrong patient data'
         ];
 
-        $this->json('PATCH', '/api/patients/' . $this->patient->id, $payload)->assertStatus(200);
+        $this->json('PATCH', '/api/studies/'.$this->study->name.'/patients/' . $this->patient->id, $payload)->assertStatus(200);
     }
 
     public function testModifyPatientWrongData()
@@ -121,24 +121,24 @@ class PatientTest extends TestCase
         $currentUserId = AuthorizationTools::actAsAdmin(false);
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $this->study->name);
 
-        $this->json('PATCH', '/api/patients/' . $this->patient->id, ['gender' => 'G'])->assertStatus(400);
-        $this->json('PATCH', '/api/patients/' . $this->patient->id, ['birthDay' => 32])->assertStatus(400);
-        $this->json('PATCH', '/api/patients/' . $this->patient->id, ['birthMonth' => 13])->assertStatus(400);
-        $this->json('PATCH', '/api/patients/' . $this->patient->id, ['birthYear' => 5000])->assertStatus(400);
-        $this->json('PATCH', '/api/patients/' . $this->patient->id, ['registrationDate' => '31/01/2020'])->assertStatus(400);
+        $this->json('PATCH', '/api/studies/'.$this->study->name.'/patients/' . $this->patient->id, ['gender' => 'G'])->assertStatus(400);
+        $this->json('PATCH', '/api/studies/'.$this->study->name.'/patients/' . $this->patient->id, ['birthDay' => 32])->assertStatus(400);
+        $this->json('PATCH', '/api/studies/'.$this->study->name.'/patients/' . $this->patient->id, ['birthMonth' => 13])->assertStatus(400);
+        $this->json('PATCH', '/api/studies/'.$this->study->name.'/patients/' . $this->patient->id, ['birthYear' => 5000])->assertStatus(400);
+        $this->json('PATCH', '/api/studies/'.$this->study->name.'/patients/' . $this->patient->id, ['registrationDate' => '31/01/2020'])->assertStatus(400);
     }
 
     public function testModifyPatientForbidenNotSupervisor()
     {
         AuthorizationTools::actAsAdmin(false);
-        $this->json('PATCH', '/api/patients/' . $this->patient->id, ['reason' => 'wrong patient data'])->assertStatus(403);
+        $this->json('PATCH', '/api/studies/'.$this->study->name.'/patients/' . $this->patient->id, ['reason' => 'wrong patient data'])->assertStatus(403);
     }
 
     public function testModifyPatientBadRequestMissingReason()
     {
         $currentUserId = AuthorizationTools::actAsAdmin(false);
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $this->study->name);
-        $this->json('PATCH', '/api/patients/' . $this->patient->id, ['gender' => 'M'])->assertStatus(400);
+        $this->json('PATCH', '/api/studies/'.$this->study->name.'/patients/' . $this->patient->id, ['gender' => 'M'])->assertStatus(400);
     }
 
     public function testModifyPatientInclusionStatus()
@@ -153,7 +153,7 @@ class PatientTest extends TestCase
             'reason' => 'inclusion status changed'
         ];
 
-        $this->json('PATCH', '/api/patients/' . $this->patient->id, $payload)->assertStatus(200);
+        $this->json('PATCH', '/api/studies/'.$this->study->name.'/patients/' . $this->patient->id, $payload)->assertStatus(200);
         $updatedPatientEntity = Patient::find($this->patient->id)->toArray();
         $this->assertEquals(Constants::PATIENT_INCLUSION_STATUS_WITHDRAWN, $updatedPatientEntity['inclusion_status']);
         $this->assertEquals(new DateTime($payload['withdrawDate']), new DateTime($updatedPatientEntity['withdraw_date']));
@@ -171,7 +171,7 @@ class PatientTest extends TestCase
             'reason' => 'inclusion status changed'
         ];
 
-        $this->json('PATCH', '/api/patients/' . $this->patient->id, $payload)->assertStatus(403);
+        $this->json('PATCH', '/api/studies/'.$this->study->name.'/patients/' . $this->patient->id, $payload)->assertStatus(403);
     }
 
     public function testModifyPatientRemoveWithdraw()
@@ -184,7 +184,7 @@ class PatientTest extends TestCase
             'reason' => 'inclusion status changed'
         ];
 
-        $this->json('PATCH', '/api/patients/' . $this->patient->id, $payload)->assertStatus(200);
+        $this->json('PATCH', '/api/studies/'.$this->study->name.'/patients/' . $this->patient->id, $payload)->assertStatus(200);
         $updatedPatientEntity = Patient::find($this->patient->id)->toArray();
         $this->assertEquals(Constants::PATIENT_INCLUSION_STATUS_INCLUDED, $updatedPatientEntity['inclusion_status']);
         $this->assertNull($updatedPatientEntity['withdraw_date']);

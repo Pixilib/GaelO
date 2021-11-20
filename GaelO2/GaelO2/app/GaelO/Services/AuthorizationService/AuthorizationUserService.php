@@ -2,7 +2,8 @@
 
 namespace App\GaelO\Services\AuthorizationService;
 
-use App\GaelO\Repositories\UserRepository;
+use App\GaelO\Interfaces\Repositories\UserRepositoryInterface;
+use Illuminate\Support\Facades\Log;
 
 class AuthorizationUserService
 {
@@ -10,19 +11,18 @@ class AuthorizationUserService
     private array $userData;
     private array $userCenters;
 
-    private UserRepository $userRepository;
+    private UserRepositoryInterface $userRepositoryInterface;
 
-    public function __construct( UserRepository $userRepository ) {
-        $this->userRepository = $userRepository;
+    public function __construct( UserRepositoryInterface $userRepositoryInterface ) {
+        $this->userRepositoryInterface = $userRepositoryInterface;
     }
 
     private function fillUserData(){
-        if($this->userData == null ) $this->userData = $this->userRepository->find($this->userId);
+        if( !isset($this->userData) ) $this->userData = $this->userRepositoryInterface->find($this->userId);
     }
 
     private function fillUserCenters(){
-        $this->fillUserData();
-        if(!$this->userCenters == null ) $this->userCenters = $this->userRepository->getAllUsersCenters($this->userId);
+        if( !isset($this->userCenters) ) $this->userCenters = $this->userRepositoryInterface->getAllUsersCenters($this->userId);
     }
 
     public function setUserId(int $userId)
@@ -41,10 +41,16 @@ class AuthorizationUserService
         return in_array($center, $this->userCenters);
     }
 
-    public function isRoleAllowed(string|array $requestedRole, string $studyName)
+    public function isRoleAllowed(string $requestedRole, string $studyName)
     {
-        $existingRoles = $this->userRepository->getUsersRolesInStudy($this->userId, $studyName);
-        return in_array($requestedRole, $existingRoles);
+        $availableRoles = $this->userRepositoryInterface->getUsersRolesInStudy($this->userId, $studyName);
+        return in_array($requestedRole, $availableRoles);
+    }
+
+    public function isOneOfRoleAllowed(array $requestedRole, string $studyName)
+    {
+        $availableRoles = $this->userRepositoryInterface->getUsersRolesInStudy($this->userId, $studyName);
+        return sizeof( array_intersect($requestedRole, $availableRoles) ) > 0 ? true : false ;
     }
 
 }

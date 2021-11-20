@@ -99,8 +99,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::delete('visit-types/{visitTypeId}', [VisitTypeController::class, 'deleteVisitType']);
 
     //Patients Routes
-    Route::get('patients/{code?}', [PatientController::class, 'getPatient']);
-    Route::patch('patients/{code?}', [PatientController::class, 'modifyPatient']);
+    Route::get('studies/{studyName}/patients/{code}', [PatientController::class, 'getPatient']);
+    Route::patch('studies/{studyName}/patients/{code}', [PatientController::class, 'modifyPatient']);
     Route::get('studies/{studyName}/patients/{patientId}/visits', [PatientController::class, 'getPatientVisit']);
     Route::get('studies/{studyName}/patients/{patientId}/creatable-visits', [PatientController::class, 'getCreatableVisits']);
 

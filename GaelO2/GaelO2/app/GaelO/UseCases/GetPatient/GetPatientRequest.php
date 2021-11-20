@@ -3,7 +3,8 @@
 namespace App\GaelO\UseCases\GetPatient;
 
 class GetPatientRequest {
-    public int $id ;
+    public string $id ;
+    public string $studyName;
     public int $currentUserId;
     public string $role;
 }

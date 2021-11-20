@@ -22,13 +22,14 @@ use Illuminate\Support\Facades\Auth;
 class PatientController extends Controller
 {
 
-    public function getPatient(int $id = null, Request $request, GetPatientRequest $getPatientRequest, GetPatientResponse $getPatientResponse, GetPatient $getPatient)
+    public function getPatient(String $studyName, string $id, Request $request, GetPatientRequest $getPatientRequest, GetPatientResponse $getPatientResponse, GetPatient $getPatient)
     {
         $currentUser = Auth::user();
         $queryParam = $request->query();
         $getPatientRequest->role = $queryParam['role'];
         $getPatientRequest->currentUserId = $currentUser['id'];
         $getPatientRequest->id = $id;
+        $getPatientRequest->studyName = $studyName;
         $getPatient->execute($getPatientRequest, $getPatientResponse);
         return $this->getJsonResponse($getPatientResponse->body, $getPatientResponse->status, $getPatientResponse->statusText);
     }
@@ -48,13 +49,14 @@ class PatientController extends Controller
         return $this->getJsonResponse($getPatientVisitResponse->body, $getPatientVisitResponse->status, $getPatientVisitResponse->statusText);
     }
 
-    public function modifyPatient(string $patientId, Request $request, ModifyPatient $modifyPatient, ModifyPatientRequest $modifyPatientRequest, ModifyPatientResponse $modifyPatientResponse)
+    public function modifyPatient(string $studyName, string $patientId, Request $request, ModifyPatient $modifyPatient, ModifyPatientRequest $modifyPatientRequest, ModifyPatientResponse $modifyPatientResponse)
     {
         $currentUser = Auth::user();
         $requestData = $request->all();
 
         $modifyPatientRequest = Util::fillObject($requestData, $modifyPatientRequest);
         $modifyPatientRequest->patientId = $patientId;
+        $modifyPatientRequest->studyName = $studyName;
         $modifyPatientRequest->currentUserId = $currentUser['id'];
         $modifyPatient->execute($modifyPatientRequest, $modifyPatientResponse);
 

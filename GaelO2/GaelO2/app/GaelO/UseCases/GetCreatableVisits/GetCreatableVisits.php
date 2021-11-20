@@ -5,7 +5,7 @@ namespace App\GaelO\UseCases\GetCreatableVisits;
 use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
-use App\GaelO\Services\AuthorizationPatientService;
+use App\GaelO\Services\AuthorizationService\AuthorizationPatientService;
 use App\GaelO\Services\PatientService;
 use Exception;
 
@@ -24,7 +24,7 @@ class GetCreatableVisits{
 
         try{
             //SK A PASSER VIA ENTITY
-            $this->checkAuthorization($getCreatableVisitsRequest->currentUserId, $getCreatableVisitsRequest->patientId);
+            $this->checkAuthorization($getCreatableVisitsRequest->currentUserId, $getCreatableVisitsRequest->patientId, $getCreatableVisitsRequest->studyName);
             $this->patientService->setPatientCode($getCreatableVisitsRequest->patientId);
             $visitToCreate = $this->patientService->getAvailableVisitToCreate();
             $getCreatableVisitsResponse->status = 200;
@@ -42,10 +42,11 @@ class GetCreatableVisits{
         }
     }
 
-    private function checkAuthorization(int $userId, string $patientId){
-        $this->authorizationPatientService->setCurrentUserAndRole($userId, Constants::ROLE_INVESTIGATOR);
-        $this->authorizationPatientService->setPatient($patientId);
-        if ( ! $this->authorizationPatientService->isPatientAllowed() ){
+    private function checkAuthorization(int $userId, string $patientId, string $studyName){
+        $this->authorizationPatientService->setUserId($userId);
+        $this->authorizationPatientService->setStudyName($studyName);
+        $this->authorizationPatientService->setPatientId($patientId);
+        if ( ! $this->authorizationPatientService->isPatientAllowed(Constants::ROLE_INVESTIGATOR) ){
             throw new GaelOForbiddenException();
         }
 

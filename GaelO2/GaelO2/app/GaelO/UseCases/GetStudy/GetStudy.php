@@ -6,17 +6,17 @@ use App\GaelO\Entities\StudyEntity;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\StudyRepositoryInterface;
-use App\GaelO\Services\AuthorizationService;
+use App\GaelO\Services\AuthorizationService\AuthorizationUserService;
 use Exception;
 
 class GetStudy{
 
     private StudyRepositoryInterface $studyRepositoryInterface;
-    private AuthorizationService $authorizationService;
+    private AuthorizationUserService $authorizationUserService;
 
-    public function __construct(StudyRepositoryInterface $studyRepositoryInterface, AuthorizationService $authorizationService){
+    public function __construct(StudyRepositoryInterface $studyRepositoryInterface, AuthorizationUserService $authorizationUserService){
         $this->studyRepositoryInterface = $studyRepositoryInterface;
-        $this->authorizationService = $authorizationService;
+        $this->authorizationUserService = $authorizationUserService;
 
     }
 
@@ -50,8 +50,8 @@ class GetStudy{
     }
 
     private function checkAuthorization(int $userId) : void {
-        $this->authorizationService->setCurrentUserAndRole($userId);
-        if( ! $this->authorizationService->isAdmin()) {
+        $this->authorizationUserService->setUserId($userId);
+        if( ! $this->authorizationUserService->isAdmin()) {
             throw new GaelOForbiddenException();
         };
     }

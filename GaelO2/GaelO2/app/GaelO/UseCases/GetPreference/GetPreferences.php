@@ -6,15 +6,16 @@ use App\GaelO\Constants\SettingsConstants;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Adapters\FrameworkInterface;
-use App\GaelO\Services\AuthorizationService;
+use App\GaelO\Services\AuthorizationService\AuthorizationUserService;
 use Exception;
 
 class GetPreferences {
 
     private FrameworkInterface $frameworkInterface;
+    private AuthorizationUserService $authorizationUserService;
 
-    public function __construct(AuthorizationService $authorizationService, FrameworkInterface $frameworkInterface) {
-        $this->authorizationService = $authorizationService;
+    public function __construct(AuthorizationUserService $authorizationUserService, FrameworkInterface $frameworkInterface) {
+        $this->authorizationUserService = $authorizationUserService;
         $this->frameworkInterface = $frameworkInterface;
 
     }
@@ -49,8 +50,8 @@ class GetPreferences {
     }
 
     private function checkAuthorization(int $userId) : void {
-        $this->authorizationService->setCurrentUserAndRole($userId);
-        if( ! $this->authorizationService->isAdmin()) {
+        $this->authorizationUserService->setUserId($userId);
+        if( ! $this->authorizationUserService->isAdmin()) {
             throw new GaelOForbiddenException();
         };
     }

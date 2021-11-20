@@ -7,26 +7,25 @@ use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\PatientRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
-use App\GaelO\Interfaces\Repositories\DicomStudyRepositoryInterface;
-use App\GaelO\Services\AuthorizationService;
 use App\GaelO\UseCases\GetPatientsVisitsInStudy\GetPatientsVisitsInStudyRequest;
 use App\GaelO\UseCases\GetPatientsVisitsInStudy\GetPatientsVisitsInStudyResponse;
 use App\GaelO\Entities\PatientEntity;
 use App\GaelO\Entities\VisitEntity;
+use App\GaelO\Services\AuthorizationService\AuthorizationStudyService;
 use Exception;
 
 class GetPatientsVisitsInStudy {
 
     private PatientRepositoryInterface $patientRepositoryInterface;
     private VisitRepositoryInterface $visitRepositoryInterface;
-    private AuthorizationService $authorizationService;
+    private AuthorizationStudyService $authorizationStudyService;
 
     public function __construct(PatientRepositoryInterface $patientRepositoryInterface,
-        AuthorizationService $authorizationService,
+        AuthorizationStudyService $authorizationStudyService,
         VisitRepositoryInterface $visitRepositoryInterface)
     {
         $this->patientRepositoryInterface = $patientRepositoryInterface;
-        $this->authorizationService = $authorizationService;
+        $this->authorizationStudyService = $authorizationStudyService;
         $this->visitRepositoryInterface = $visitRepositoryInterface;
     }
 
@@ -77,8 +76,9 @@ class GetPatientsVisitsInStudy {
     }
 
     private function checkAuthorization(int $currentUserId, string $studyName){
-        $this->authorizationService->setCurrentUserAndRole($currentUserId, Constants::ROLE_SUPERVISOR);
-        if ( ! $this->authorizationService->isRoleAllowed($studyName)){
+        $this->authorizationStudyService->setUserId($currentUserId);
+        $this->authorizationStudyService->setStudyName($studyName);
+        if ( ! $this->authorizationStudyService->isAllowedStudy(Constants::ROLE_SUPERVISOR)){
             throw new GaelOForbiddenException();
         };
     }
