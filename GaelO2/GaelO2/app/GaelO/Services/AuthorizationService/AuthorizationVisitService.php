@@ -11,6 +11,7 @@ class AuthorizationVisitService {
     private VisitRepositoryInterface $visitRepositoryInterface;
     private AuthorizationPatientService $authorizationPatientService;
     private int $visitId;
+    private int $userId;
     private array $visitData;
 
     public function __construct(VisitRepositoryInterface $visitRepositoryInterface, AuthorizationPatientService $authorizationPatientService)
@@ -19,8 +20,17 @@ class AuthorizationVisitService {
         $this->authorizationPatientService = $authorizationPatientService;
     }
 
+    public function setUserId(int $userId){
+        $this->authorizationPatientService->setUserId($userId);
+        $this->userId = $userId;
+    }
+
     public function setVisitId(int $visitId){
         $this->visitId = $visitId;
+    }
+
+    public function setStudyName(string $studyName){
+        $this->authorizationPatientService->setStudyName($studyName);
     }
 
     public function setVisitContext(array $visitContext){
@@ -48,7 +58,7 @@ class AuthorizationVisitService {
     }
 
 
-    public function isVisitAllowed(int $userId, string $requestedRole, string $studyName): bool {
+    public function isVisitAllowed(string $requestedRole): bool {
 
         $this->fillVisitData();
 
@@ -56,7 +66,7 @@ class AuthorizationVisitService {
 
         if ($requestedRole === Constants::ROLE_REVIEWER) {
             //Check parent patient allowed and has one awaiting review visit
-            return $this->authorizationPatientService->isPatientAllowed($userId, $requestedRole, $studyName) && $this->visitRepositoryInterface->isParentPatientHavingOneVisitAwaitingReview($this->visitId, $this->patientStudy, $this->userId);
+            return $this->authorizationPatientService->isPatientAllowed($requestedRole) && $this->visitRepositoryInterface->isParentPatientHavingOneVisitAwaitingReview($this->visitId, $this->patientStudy, $this->userId);
 
         } else if ($requestedRole === Constants::ROLE_CONTROLLER) {
             //For controller visit QC status be not done or awaiting definitive conclusion, Investigator Form should be Done or Not Needed and Upload status should be done
@@ -66,7 +76,7 @@ class AuthorizationVisitService {
         }
 
         //For all other role access depend on patient access
-        return $this->authorizationPatientService->isPatientAllowed($userId, $requestedRole, $studyName);
+        return $this->authorizationPatientService->isPatientAllowed($requestedRole);
 
     }
 

@@ -9,7 +9,6 @@ class AuthorizationPatientService {
 
     private PatientRepositoryInterface $patientRepositoryInterface;
     private AuthorizationStudyService $authorizationStudyService;
-    private AuthorizationUserService $authorizationUserService;
     private int $patientId;
     private array $patientData;
 
@@ -17,7 +16,6 @@ class AuthorizationPatientService {
     {
         $this->patientRepositoryInterface = $patientRepositoryInterface;
         $this->authorizationStudyService = $authorizationStudyService;
-        $this->authorizationUserService = $authorizationUserService;
     }
 
     private function fillPatientData(){
@@ -30,16 +28,21 @@ class AuthorizationPatientService {
         $this->patientId = $patientId;
     }
 
+    public function setUserId(int $userId){
+        $this->authorizationStudyService->setUserId($userId);
+    }
+
+    public function setStudyName(string $studyName){
+        $this->authorizationStudyService->setStudyName($studyName);
+    }
+
     public function setPatientEntity(array $patientEntity){
         $this->patientData = $patientEntity;
     }
 
-    public function isPatientAllowed(int $userId, string $requestedRole, string $studyName): bool
+    public function isPatientAllowed(string $requestedRole): bool
     {
         $this->fillPatientData();
-
-        $this->authorizationStudyService->setStudyName($studyName);
-        $this->authorizationUserService->setUserId($userId);
 
         if (  $this->authorizationStudyService->isAncillaryStudy() ) {
             //Reject if requested ancillary study is not ancillary of the orginal patient study
@@ -48,11 +51,11 @@ class AuthorizationPatientService {
 
         if ($requestedRole === Constants::ROLE_INVESTIGATOR) {
             //Investigator should not access patient outside their centers
-            if (  !$this->authorizationUserService->isCenterAffiliatedToUser($this->patientCenter) ) return false;
+            if (  !$this->authorizationStudyService->getAuthorizationUserService()->isCenterAffiliatedToUser($this->patientCenter) ) return false;
         }
 
         //For all other cases access granted if role exists in the patient's study
-        return $this->authorizationStudyService->isAllowedStudy($userId, $requestedRole, $studyName);
+        return $this->authorizationStudyService->isAllowedStudy($requestedRole);
 
 
     }

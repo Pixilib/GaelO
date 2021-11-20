@@ -10,7 +10,7 @@ use App\GaelO\Interfaces\Repositories\ReviewRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\ReviewStatusRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
-use App\GaelO\Services\AuthorizationService;
+use App\GaelO\Services\AuthorizationService\AuthorizationVisitService;
 use App\GaelO\Services\ReviewFormService;
 use Exception;
 
@@ -21,10 +21,10 @@ class ModifyReviewForm {
     private ReviewStatusRepositoryInterface $reviewStatusRepositoryInterface;
     private TrackerRepositoryInterface $trackerRepositoryInterface;
     private ReviewFormService $reviewFormService;
-    private AuthorizationService $authorizationService;
+    private AuthorizationVisitService $authorizationVisitService;
 
     public function __construct(
-                                AuthorizationService $authorizationService,
+                                AuthorizationVisitService $authorizationVisitService,
                                 ReviewRepositoryInterface $reviewRepositoryInterface,
                                 VisitRepositoryInterface $visitRepositoryInterface,
                                 ReviewStatusRepositoryInterface $reviewStatusRepositoryInterface,
@@ -36,7 +36,7 @@ class ModifyReviewForm {
         $this->reviewStatusRepositoryInterface = $reviewStatusRepositoryInterface;
         $this->reviewFormService = $reviewFormService;
         $this->trackerRepositoryInterface = $trackerRepositoryInterface;
-        $this->authorizationService = $authorizationService;
+        $this->authorizationVisitService = $authorizationVisitService;
     }
 
     public function execute(ModifyReviewFormRequest $modifyReviewFormRequest, ModifyReviewFormResponse $modifyReviewFormResponse){
@@ -53,7 +53,7 @@ class ModifyReviewForm {
             $reviewStatus = $this->reviewStatusRepositoryInterface->getReviewStatus($reviewEntity['visit_id'], $reviewEntity['study_name']);
 
 
-            $this->checkAuthorization($modifyReviewFormRequest->currentUserId, $reviewEntity['user_id'], $reviewEntity['validated'], $reviewStatus['review_available'], $reviewEntity['study_name']);
+            $this->checkAuthorization($modifyReviewFormRequest->currentUserId, $reviewEntity['user_id'], $reviewEntity['validated'], $reviewStatus['review_available'], $reviewEntity['visit_id'],  $reviewEntity['study_name']);
 
             //Call service to update form
             $this->reviewFormService->setCurrentUserId($modifyReviewFormRequest->currentUserId);
@@ -86,14 +86,16 @@ class ModifyReviewForm {
 
     }
 
-    private function checkAuthorization(int $currentUserId, int $formOwner, bool $formValidated, bool $reviewAvailability, string $studyName ){
+    private function checkAuthorization(int $currentUserId, int $formOwner, bool $formValidated, bool $reviewAvailability, int $visitId, string $studyName ){
         //Asked edition review should be owned by current user, not yet validated and in a visit still allowing review
         if($currentUserId !== $formOwner || $formValidated || !$reviewAvailability ){
             throw new GaelOForbiddenException();
         }
         //Check role reviewer is still available for this user (even if it own the form, his role could have been removed)
-        $this->authorizationService->setCurrentUserAndRole($currentUserId, Constants::ROLE_REVIEWER);
-        if( ! $this->authorizationService->isRoleAllowed($studyName)){
+        $this->authorizationVisitService->setUserId($currentUserId);
+        $this->authorizationVisitService->setVisitId($visitId);
+        $this->authorizationVisitService->setStudyName($studyName);
+        if( ! $this->authorizationVisitService->isVisitAllowed(Constants::ROLE_REVIEWER)){
             throw new GaelOForbiddenException();
         };
     }

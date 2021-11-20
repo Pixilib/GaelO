@@ -16,12 +16,12 @@ class AuthorizationStudyService
         $this->authorizationUserService = $authorizationUserService;
     }
 
-    public function setStudyName(string $studyName)
+    public function setStudyName(string $studyName) : void
     {
         $this->studyName = $studyName;
     }
 
-    public function setUserId(int $userId){
+    public function setUserId(int $userId) : void {
         $this->authorizationUserService->setUserId($userId);
     }
 
@@ -43,8 +43,6 @@ class AuthorizationStudyService
     }
 
     public function isAllowedStudy(string $requestedRole) : bool {
-
-
 
         if ( $this->isAncillaryStudy() ) {
             //For Ancillaries studies only Reviewer and Supervisor role are allowed

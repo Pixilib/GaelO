@@ -3,6 +3,7 @@
 namespace App\GaelO\Services\AuthorizationService;
 
 use App\GaelO\Interfaces\Repositories\UserRepositoryInterface;
+use Illuminate\Support\Facades\Log;
 
 class AuthorizationUserService
 {
@@ -21,7 +22,6 @@ class AuthorizationUserService
     }
 
     private function fillUserCenters(){
-        $this->fillUserData();
         if( !isset($this->userCenters) ) $this->userCenters = $this->userRepositoryInterface->getAllUsersCenters($this->userId);
     }
 

@@ -5,25 +5,25 @@ namespace App\GaelO\UseCases\GetStudyTrackerByVisit;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
-use App\GaelO\Services\AuthorizationService;
 use App\GaelO\Entities\TrackerEntity;
 use App\GaelO\Constants\Constants;
+use App\GaelO\Services\AuthorizationService\AuthorizationVisitService;
 use Exception;
 
 class GetStudyTrackerByVisit {
 
     private TrackerRepositoryInterface $trackerRepositoryInterface;
-    private AuthorizationService $authorizationService;
+    private AuthorizationVisitService $authorizationVisitService;
 
-    public function __construct(TrackerRepositoryInterface $trackerRepositoryInterface, AuthorizationService $authorizationService){
+    public function __construct(TrackerRepositoryInterface $trackerRepositoryInterface, AuthorizationVisitService $authorizationVisitService){
         $this->trackerRepositoryInterface = $trackerRepositoryInterface;
-        $this->authorizationService = $authorizationService;
+        $this->authorizationVisitService = $authorizationVisitService;
     }
 
     public function execute(GetStudyTrackerByVisitRequest $getStudyTrackerByVisitRequest, GetStudyTrackerByVisitResponse $getStudyTrackerByVisitResponse) : void {
         try{
 
-            $this->checkAuthorization($getStudyTrackerByVisitRequest->currentUserId, $getStudyTrackerByVisitRequest->studyName);
+            $this->checkAuthorization($getStudyTrackerByVisitRequest->currentUserId, $getStudyTrackerByVisitRequest->visitId, $getStudyTrackerByVisitRequest->studyName);
 
             $dbData = $this->trackerRepositoryInterface->getTrackerOfVisitId($getStudyTrackerByVisitRequest->visitId);
 
@@ -49,9 +49,11 @@ class GetStudyTrackerByVisit {
         }
     }
 
-    private function checkAuthorization(int $userId, string $studyName){
-        $this->authorizationService->setCurrentUserAndRole($userId, Constants::ROLE_SUPERVISOR);
-        if(! $this->authorizationService->isRoleAllowed($studyName)){
+    private function checkAuthorization(int $userId, int $visitId, string $studyName){
+        $this->authorizationVisitService->setUserId($userId);
+        $this->authorizationVisitService->setVisitId($visitId);
+        $this->authorizationVisitService->setStudyName($studyName);
+        if(! $this->authorizationVisitService->isVisitAllowed(Constants::ROLE_SUPERVISOR)){
             throw new GaelOForbiddenException();
         };
     }
