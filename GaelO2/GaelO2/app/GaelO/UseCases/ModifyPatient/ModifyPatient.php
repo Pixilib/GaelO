@@ -8,7 +8,7 @@ use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\PatientRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
-use App\GaelO\Services\AuthorizationPatientService;
+use App\GaelO\Services\AuthorizationService\AuthorizationPatientService;
 use App\GaelO\Services\ImportPatientService;
 use App\GaelO\Util;
 use Exception;
@@ -34,7 +34,7 @@ class ModifyPatient {
 
             if (empty($modifyPatientRequest->reason)) throw new GaelOBadRequestException('Reason for patient edition must be sepecified');
 
-            $this->checkAuthorization($modifyPatientRequest->currentUserId, $modifyPatientRequest->patientId);
+            $this->checkAuthorization($modifyPatientRequest->currentUserId, $modifyPatientRequest->patientId, $modifyPatientRequest->studyName);
 
             $patientEntity = $this->patientRepositoryInterface->find($modifyPatientRequest->patientId);
 
@@ -91,10 +91,11 @@ class ModifyPatient {
         }
     }
 
-    private function checkAuthorization(int $userId, string $patientId){
-        $this->authorizationPatientService->setCurrentUserAndRole($userId, Constants::ROLE_SUPERVISOR);
-        $this->authorizationPatientService->setPatient($patientId);
-        if( ! $this->authorizationPatientService->isPatientAllowed()){
+    private function checkAuthorization(int $userId, string $patientId, string $studyName){
+        $this->authorizationPatientService->setUserId($userId);
+        $this->authorizationPatientService->setPatientId($patientId);
+        $this->authorizationPatientService->setStudyName($studyName);
+        if( ! $this->authorizationPatientService->isPatientAllowed(Constants::ROLE_SUPERVISOR)){
             throw new GaelOForbiddenException();
         };
     }
