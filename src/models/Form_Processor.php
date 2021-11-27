@@ -289,5 +289,12 @@ abstract class Form_Processor {
 			$this->visitObject->changeReviewAvailability(true);
 		}
 	}
+
+	//Check if form data is empty (except for "0" value)
+	public function isEmpty($value) : bool {
+		if ( $value === "0" ) return false;
+		return empty($value);
+
+	}
 	
 }
