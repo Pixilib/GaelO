@@ -1,8 +1,8 @@
 Salim TODO :
 
+- Refaire DicowWeb Authorization Service
 - Passer le studyName en query tag ??
 - Optimiser l'utilisation des authorization service en injectant les data depuis le usecase (ou les rendre stateless)
-- Revoir DicowWeb Authorization Service
 
 --- Etudes ancillaires ---
 => Ne peut etre creer les roles que de Reviewer et supervisor

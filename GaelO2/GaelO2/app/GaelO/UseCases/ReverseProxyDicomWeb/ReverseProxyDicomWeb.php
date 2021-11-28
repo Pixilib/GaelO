@@ -7,7 +7,7 @@ use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Adapters\FrameworkInterface;
 use App\GaelO\Interfaces\Adapters\HttpClientInterface;
-use App\GaelO\Services\AuthorizationDicomWebService;
+use App\GaelO\Services\AuthorizationService\AuthorizationDicomWebService;
 use Exception;
 
 class ReverseProxyDicomWeb{
