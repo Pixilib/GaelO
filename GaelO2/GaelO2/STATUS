@@ -1,6 +1,5 @@
 Salim TODO :
 
-- Appel visite a scoper par studyName
 - Passer le studyName en query tag ??
 - Optimiser l'utilisation des authorization service en injectant les data depuis le usecase (ou les rendre stateless)
 - Revoir DicowWeb Authorization Service
