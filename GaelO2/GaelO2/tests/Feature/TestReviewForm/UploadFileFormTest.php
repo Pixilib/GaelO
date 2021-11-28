@@ -67,7 +67,7 @@ class UploadFileFormTest extends TestCase
         $currentVisit = $this->createVisit();
         $currentUserId = AuthorizationTools::actAsAdmin(false);
         $review = Review::factory()->reviewForm()->userId($currentUserId)->visitId($currentVisit['visitId'])->studyName($currentVisit['studyName'])->create();
-        AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $currentVisit['studyName'] );
+        AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_REVIEWER, $currentVisit['studyName'] );
         $response = $this->post('api/reviews/' . $review->id . '/file/41', [base64_encode("testFileContent")], ['CONTENT_TYPE' => MimeAdapter::getMimeFromExtension('png')]);
         $response->assertStatus(400);
     }

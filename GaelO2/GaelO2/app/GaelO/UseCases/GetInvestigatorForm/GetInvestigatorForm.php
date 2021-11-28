@@ -6,7 +6,6 @@ use App\GaelO\Entities\ReviewEntity;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\ReviewRepositoryInterface;
-use App\GaelO\Interfaces\Repositories\UserRepositoryInterface;
 use App\GaelO\Services\AuthorizationVisitService;
 use Exception;
 
@@ -14,14 +13,12 @@ class GetInvestigatorForm{
 
     private AuthorizationVisitService $authorizationVisitService;
     private ReviewRepositoryInterface $reviewRepositoryInterface;
-    private UserRepositoryInterface $userRepositoryInterface;
 
     //SK AJOUTER LA POSSIBILITE DE VOIR LES REVIEW DELETED PAR LE SUPERVISOR ?
-    public function __construct(ReviewRepositoryInterface $reviewRepositoryInterface, AuthorizationVisitService $authorizationVisitService, UserRepositoryInterface $userRepositoryInterface)
+    public function __construct(ReviewRepositoryInterface $reviewRepositoryInterface, AuthorizationVisitService $authorizationVisitService)
     {
         $this->reviewRepositoryInterface = $reviewRepositoryInterface;
         $this->authorizationVisitService = $authorizationVisitService;
-        $this->userRepositoryInterface = $userRepositoryInterface;
     }
 
     public function execute(GetInvestigatorFormRequest $getInvestigatorFormRequest, GetInvestigatorFormResponse $getInvestigatorFormResponse){

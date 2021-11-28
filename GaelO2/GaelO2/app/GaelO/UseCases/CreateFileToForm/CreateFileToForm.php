@@ -95,7 +95,7 @@ class CreateFileToForm {
             $this->authorizationVisitService->setCurrentUserAndRole($currentUserId, Constants::ROLE_INVESTIGATOR);
             if(!$this->authorizationVisitService->isVisitAllowed()) throw new GaelOForbiddenException();
         }else{
-            $this->authorizationVisitService->setCurrentUserAndRole($currentUserId, Constants::ROLE_SUPERVISOR);
+            $this->authorizationVisitService->setCurrentUserAndRole($currentUserId, Constants::ROLE_REVIEWER);
             if(!$this->authorizationVisitService->isVisitAllowed()) throw new GaelOForbiddenException();
             if($reviewOwner !== $currentUserId) throw new GaelOForbiddenException("Only form owner can add files");
         }
