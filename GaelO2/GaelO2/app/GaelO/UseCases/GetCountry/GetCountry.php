@@ -5,8 +5,8 @@ namespace App\GaelO\UseCases\GetCountry;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\CountryRepositoryInterface;
-use App\GaelO\Services\AuthorizationService;
 use App\GaelO\Entities\CountryEntity;
+use App\GaelO\Services\AuthorizationService\AuthorizationUserService;
 use App\GaelO\UseCases\GetCountry\GetCountryRequest;
 use App\GaelO\UseCases\GetCountry\GetCountryResponse;
 use Exception;
@@ -14,11 +14,11 @@ use Exception;
 class GetCountry {
 
     private CountryRepositoryInterface $countryRepositoryInterface;
-    private AuthorizationService $authorizationService;
+    private AuthorizationUserService $authorizationUserService;
 
-    public function __construct(CountryRepositoryInterface $countryRepositoryInterface, AuthorizationService $authorizationService){
+    public function __construct(CountryRepositoryInterface $countryRepositoryInterface, AuthorizationUserService $authorizationUserService){
         $this->countryRepositoryInterface = $countryRepositoryInterface;
-        $this->authorizationService = $authorizationService;
+        $this->authorizationUserService = $authorizationUserService;
      }
 
     public function execute(GetCountryRequest $getCountryRequest, GetCountryResponse $getCountryResponse) : void
@@ -54,8 +54,8 @@ class GetCountry {
     }
 
     private function checkAuthorization(int $userId){
-        $this->authorizationService->setCurrentUserAndRole($userId);
-        if(!$this->authorizationService->isAdmin()){
+        $this->authorizationUserService->setUserId($userId);
+        if(!$this->authorizationUserService->isAdmin()){
             throw new GaelOForbiddenException();
         };
     }

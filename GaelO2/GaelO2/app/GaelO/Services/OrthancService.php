@@ -192,15 +192,15 @@ class OrthancService
      * Return the Anonymized Orthanc ID
      * @param string $studyID
      * @param string $profile
-     * @param string $patientCode
+     * @param string $patientId
      * @param string $visitType
      * @param string $studyName
      * @return string anonymizedOrthancStudyID
      */
-    public function anonymize(string $studyID, string $profile, string $patientCode, string $visitType, string $studyName): string
+    public function anonymize(string $studyID, string $profile, string $patientCode, string $patientId, string $visitType, string $studyName): string
     {
 
-        $jsonAnonQuery = $this->buildAnonQuery($profile, $patientCode, $patientCode, $visitType, $studyName);
+        $jsonAnonQuery = $this->buildAnonQuery($profile, $patientCode, $patientId, $visitType, $studyName);
 
         $answer = $this->httpClientInterface->requestJson('POST', "/studies/" . $studyID . "/anonymize", $jsonAnonQuery);
 
@@ -227,7 +227,7 @@ class OrthancService
         string $newPatientName,
         string $newPatientID,
         string $newStudyDescription,
-        string $clinicalStudy
+        string $studyName,
     ): array {
 
         $tagsObjects = [];
@@ -270,7 +270,7 @@ class OrthancService
         $tagsObjects[] = new TagAnon("0010,1030", $body); // Patient's weight
 
         //Others
-        $tagsObjects[] = new TagAnon("0008,0050", TagAnon::REPLACE, $clinicalStudy); // Accession Number contains study name
+        $tagsObjects[] = new TagAnon("0008,0050", TagAnon::REPLACE, $studyName); // Accession Number contains study name
         $tagsObjects[] = new TagAnon("0010,0020", TagAnon::REPLACE, $newPatientID); //new Patient Name
         $tagsObjects[] = new TagAnon("0010,0010", TagAnon::REPLACE, $newPatientName); //new Patient Name
         $tagsObjects[] = new TagAnon("0008,1030", TagAnon::REPLACE, $newStudyDescription); //studyDescription

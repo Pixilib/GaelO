@@ -21,7 +21,7 @@ class Visit extends Model
     }
 
     public function patient(){
-        return $this->belongsTo(Patient::class, 'patient_code', 'code');
+        return $this->belongsTo(Patient::class, 'patient_id', 'id');
     }
 
     public function visitGroup(){

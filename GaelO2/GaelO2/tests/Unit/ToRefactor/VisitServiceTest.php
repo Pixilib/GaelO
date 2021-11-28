@@ -42,8 +42,8 @@ class VisitServiceTest extends TestCase
             User::where('id', 1)->first()
         );
 
-        $this->study = factory(Study::class)->create(['name' => 'test', 'patient_code_prefix' => 1234]);
-        $this->patient = factory(Patient::class)->create(['code' => 12341234123412, 'study_name' => 'test', 'center_code' => 0]);
+        $this->study = factory(Study::class)->create(['name' => 'test', 'code' => 1234]);
+        $this->patient = factory(Patient::class)->create(['code' => '12341234123412', 'study_name' => 'test', 'center_code' => 0]);
         $this->visitGroup = factory(VisitGroup::class)->create(['study_name' => 'test']);
 
         $this->mailServiceSpy = $this->spy(MailServices::class);
@@ -66,7 +66,7 @@ class VisitServiceTest extends TestCase
         $this->visit = factory(Visit::class)->create(
             [
                 'creator_user_id' => 1,
-                'patient_code' => $this->patient['code'],
+                'patient_id' => $this->patient['id'],
                 'visit_type_id' => $this->visitType['id'],
                 'status_done' => 'Done',
                 'state_investigator_form'=> $stateInvestigatorForm

@@ -23,7 +23,7 @@ class UploadFailure extends Mailable implements ShouldQueue
         $this->parameters = $parameters;
         /*
         array('idVisit' =>'',
-        'patientCode' => '',
+        'patientId' => '',
         'visitType'=> '',
         'study'=>'',
         'zipPath'=>'',
@@ -40,7 +40,7 @@ class UploadFailure extends Mailable implements ShouldQueue
     public function build()
     {
         return $this->view('mails.mail_upload_failure')
-            ->subject($this->parameters['study']." - Error During Import Patient - ".$this->parameters['patientCode'])
+            ->subject($this->parameters['study']." - Error During Import Patient - ".$this->parameters['patientId'])
             ->with($this->parameters);
     }
 }

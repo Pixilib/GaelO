@@ -6,24 +6,24 @@ use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
-use App\GaelO\Services\AuthorizationService;
 use App\GaelO\Services\MailServices;
 use Exception;
 use App\GaelO\Interfaces\Repositories\UserRepositoryInterface;
+use App\GaelO\Services\AuthorizationService\AuthorizationUserService;
 use App\GaelO\Util;
 
 class ReactivateUser{
 
     private UserRepositoryInterface $userRepositoryInterface;
-    private AuthorizationService $authorizationService;
+    private AuthorizationUserService $authorizationUserService;
     private TrackerRepositoryInterface $trackerRepositoryInterface;
     private MailServices $mailServices;
 
-    public function __construct(UserRepositoryInterface $userRepositoryInterface, AuthorizationService $authorizationService, TrackerRepositoryInterface $trackerRepositoryInterface, MailServices $mailServices){
+    public function __construct(UserRepositoryInterface $userRepositoryInterface, AuthorizationUserService $authorizationUserService, TrackerRepositoryInterface $trackerRepositoryInterface, MailServices $mailServices){
         $this->trackerRepositoryInterface = $trackerRepositoryInterface;
         $this->userRepositoryInterface = $userRepositoryInterface;
         $this->mailServices = $mailServices;
-        $this->authorizationService = $authorizationService;
+        $this->authorizationUserService = $authorizationUserService;
     }
 
     public function execute(ReactivateUserRequest $reactivateUserRequest, ReactivateUserResponse $reactivateUserResponse){
@@ -44,7 +44,6 @@ class ReactivateUser{
 
             $this->mailServices->sendResetPasswordMessage(
                 ($user['firstname'].' '.$user['lastname']),
-                $user['username'],
                 $newPassword,
                 $user['email']
             );
@@ -70,8 +69,8 @@ class ReactivateUser{
     }
 
     private function checkAuthorization($userId)  {
-        $this->authorizationService->setCurrentUserAndRole($userId);
-        if( ! $this->authorizationService->isAdmin() ) {
+        $this->authorizationUserService->setUserId($userId);
+        if( ! $this->authorizationUserService->isAdmin() ) {
             throw new GaelOForbiddenException();
         };
     }

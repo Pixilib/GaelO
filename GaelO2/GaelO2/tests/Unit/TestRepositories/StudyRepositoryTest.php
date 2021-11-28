@@ -3,7 +3,6 @@
 namespace Tests\Unit\TestRepositories;
 
 use App\GaelO\Repositories\StudyRepository;
-use App\Models\Role;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\TestCase;
@@ -34,11 +33,12 @@ class StudyRepositoryTest extends TestCase
     }
 
     public function testCreateStudy(){
-        $this->studyRepository->addStudy('myStudy', '12345');
+        $this->studyRepository->addStudy('myStudy', '12345', 5);
         $studyEntity  = Study::find('myStudy');
 
         $this->assertEquals('myStudy', $studyEntity->name);
-        $this->assertEquals('12345', $studyEntity->patient_code_prefix);
+        $this->assertEquals('12345', $studyEntity->code);
+        $this->assertEquals( 5 , $studyEntity->patient_code_length);
     }
 
     public function testIsExistingStudy(){

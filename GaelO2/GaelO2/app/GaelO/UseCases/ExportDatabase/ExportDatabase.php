@@ -6,7 +6,7 @@ use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Adapters\DatabaseDumperInterface;
 use App\GaelO\Interfaces\Adapters\FrameworkInterface;
-use App\GaelO\Services\AuthorizationService;
+use App\GaelO\Services\AuthorizationService\AuthorizationUserService;
 use App\GaelO\Util;
 use Exception;
 use ZipArchive;
@@ -14,12 +14,12 @@ use ZipArchive;
 class ExportDatabase{
 
     private DatabaseDumperInterface $databaseDumperInterface;
-    private AuthorizationService $authorizationService;
+    private AuthorizationUserService $authorizationUserService;
     private FrameworkInterface $frameworkInterface;
 
-    public function __construct(DatabaseDumperInterface $databaseDumperInterface, AuthorizationService $authorizationService, FrameworkInterface $frameworkInterface) {
+    public function __construct(DatabaseDumperInterface $databaseDumperInterface, AuthorizationUserService $authorizationUserService, FrameworkInterface $frameworkInterface) {
         $this->databaseDumperInterface = $databaseDumperInterface;
-        $this->authorizationService = $authorizationService;
+        $this->authorizationUserService = $authorizationUserService;
         $this->frameworkInterface = $frameworkInterface;
     }
 
@@ -73,8 +73,8 @@ class ExportDatabase{
     }
 
     private function checkAuthorization(int $userId) : void {
-        $this->authorizationService->setCurrentUserAndRole($userId);
-        if( ! $this->authorizationService->isAdmin($userId)) {
+        $this->authorizationUserService->setUserId($userId);
+        if( ! $this->authorizationUserService->isAdmin($userId)) {
             throw new GaelOForbiddenException();
         };
     }

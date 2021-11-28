@@ -8,23 +8,23 @@ use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\DicomSeriesRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
-use App\GaelO\Services\AuthorizationService;
+use App\GaelO\Services\AuthorizationService\AuthorizationStudyService;
 use App\GaelO\Services\OrthancService;
 use Exception;
 
 class GetDicomsFileSupervisor {
 
-    private AuthorizationService $authorizationService;
+    private AuthorizationStudyService $authorizationStudyService;
     private DicomSeriesRepositoryInterface $dicomSeriesRepositoryInterface;
     private OrthancService $orthancService;
     private VisitRepositoryInterface $visitRepositoryInterface;
 
     public function __construct(OrthancService $orthancService,
-                                AuthorizationService $authorizationService,
+                                AuthorizationStudyService $authorizationStudyService,
                                 DicomSeriesRepositoryInterface $dicomSeriesRepositoryInterface,
                                 VisitRepositoryInterface $visitRepositoryInterface)
     {
-        $this->authorizationService = $authorizationService;
+        $this->authorizationStudyService = $authorizationStudyService;
         $this->dicomSeriesRepositoryInterface = $dicomSeriesRepositoryInterface;
         $this->orthancService = $orthancService;
         $this->visitRepositoryInterface = $visitRepositoryInterface;
@@ -48,7 +48,7 @@ class GetDicomsFileSupervisor {
             //Extract parent StudyName
             $studyNames = [];
             foreach($contexts as $context){
-                $studyNames[] = $context['visit_type']['visit_group']['study_name'];
+                $studyNames[] = $context['patient']['study_name'];
             }
 
             $uniqueStudyName = array_values(array_unique($studyNames));
@@ -85,8 +85,9 @@ class GetDicomsFileSupervisor {
 
     private function checkAuthorization(int $currentUserId, string $studyName){
 
-        $this->authorizationService->setCurrentUserAndRole($currentUserId, Constants::ROLE_SUPERVISOR);
-        if( ! $this->authorizationService->isRoleAllowed($studyName)){
+        $this->authorizationStudyService->setUserId($currentUserId);
+        $this->authorizationStudyService->setStudyName($studyName);
+        if( ! $this->authorizationStudyService->isAllowedStudy( Constants::ROLE_SUPERVISOR )){
             throw new GaelOForbiddenException();
         }
 

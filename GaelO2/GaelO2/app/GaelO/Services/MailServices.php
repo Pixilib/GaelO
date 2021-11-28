@@ -60,24 +60,22 @@ class MailServices
     }
 
     /**
-     * Parameter in associative array : name, username, newPassword, email
+     * Parameter in associative array : name, email, newPassword, email
      */
-    public function sendResetPasswordMessage(string $name, string $username, string $newPassword, string $email): void
+    public function sendResetPasswordMessage(string $name, string $newPassword, string $email): void
     {
         $parameters = [
             'name' => $name,
-            'username' => $username,
             'newPassword' => $newPassword,
-            'email' => $email
         ];
-        $this->mailInterface->setTo([$parameters['email']]);
+        $this->mailInterface->setTo([$email]);
         $this->mailInterface->setReplyTo();
         $this->mailInterface->setParameters($parameters);
         $this->mailInterface->setBody(MailConstants::EMAIL_RESET_PASSWORD);
         $this->mailInterface->send();
     }
 
-    public function sendAccountBlockedMessage(String $username, String $email, int $userId): void
+    public function sendAccountBlockedMessage(String $email, int $userId): void
     {
         //Get all studies with role for the user
         $studiesEntities = $this->userRepositoryInterface->getStudiesOfUser($userId);
@@ -88,7 +86,7 @@ class MailServices
 
         $parameters = [
             'name' => 'user',
-            'username' => $username,
+            'email' => $email,
             'studies' => $studies
         ];
         //Send to user and administrators
@@ -99,11 +97,11 @@ class MailServices
         $this->mailInterface->send();
     }
 
-    public function sendAdminConnectedMessage(String $username, String $remoteAddress): void
+    public function sendAdminConnectedMessage(String $email, String $remoteAddress): void
     {
         $parameters = [
             'name' => 'Administrator',
-            'username' => $username,
+            'email' => $email,
             'remoteAddress' => $remoteAddress
         ];
         //Send to administrators
@@ -114,12 +112,12 @@ class MailServices
         $this->mailInterface->send();
     }
 
-    public function sendCreatedAccountMessage(string $userEmail, String $name, String $username, String $password): void
+    public function sendCreatedAccountMessage(string $userEmail, String $name, String $password): void
     {
 
         $parameters = [
             'name' => $name,
-            'username' => $username,
+            'email' => $userEmail,
             'password' => $password
         ];
 
@@ -131,12 +129,14 @@ class MailServices
         $this->mailInterface->send();
     }
 
-    public function sendForbiddenResetPasswordDueToDeactivatedAccount(String $userEmail, String $username, int $userId): void
+    public function sendForbiddenResetPasswordDueToDeactivatedAccount(String $userEmail, String $lastname, string $firstname): void
     {
 
         $parameters = [
             'name' => 'user',
-            'username' => $username
+            'email' => $userEmail,
+            'lastname' => $lastname,
+            'firstname' => $firstname
         ];
 
         //Send to administrators
@@ -165,13 +165,13 @@ class MailServices
         $this->mailInterface->send();
     }
 
-    public function sendUploadedVisitMessage(int $visitId, int $uploadUserId, string $study, int $patientCode, string $visitType, bool $qcNeeded)
+    public function sendUploadedVisitMessage(int $visitId, int $uploadUserId, string $study, string $patientId, string $visitType, bool $qcNeeded)
     {
 
         $parameters = [
             'name' => $this->getUserName($uploadUserId),
             'study' => $study,
-            'patientCode' => $patientCode,
+            'patientId' => $patientId,
             'visitType' => $visitType,
             'visitId' => $visitId
         ];
@@ -197,12 +197,12 @@ class MailServices
         $this->mailInterface->send();
     }
 
-    public function sendAvailableReviewMessage(int $visitId, string $study, int $patientCode, string $visitType)
+    public function sendAvailableReviewMessage(int $visitId, string $study, string $patientId, string $visitType)
     {
 
         $parameters = [
             'study' => $study,
-            'patientCode' => $patientCode,
+            'patientId' => $patientId,
             'visitType' => $visitType,
             'visitId' => $visitId
         ];
@@ -216,7 +216,7 @@ class MailServices
 
     public function sendValidationFailMessage(
         int $visitId,
-        string $patientCode,
+        string $patientId,
         string $visitType,
         string $studyName,
         string $zipPath,
@@ -227,7 +227,7 @@ class MailServices
         $parameters = [
             'name' => 'User',
             'idVisit' => $visitId,
-            'patientCode' => $patientCode,
+            'patientId' => $patientId,
             'visitType' => $visitType,
             'study' => $studyName,
             'zipPath' => $zipPath,
@@ -249,7 +249,7 @@ class MailServices
         string $studyName,
         int $centerCode,
         string $qcDecision,
-        int $patientCode,
+        string $patientId,
         string $visitModality,
         string $visitType,
         string $formDecision,
@@ -262,7 +262,7 @@ class MailServices
             'name' => 'User',
             'controlDecision' => $qcDecision,
             'study' => $studyName,
-            'patientCode' => $patientCode,
+            'patientId' => $patientId,
             'visitModality' => $visitModality,
             'visitType' => $visitType,
             'visitId' => $visitId,
@@ -289,7 +289,7 @@ class MailServices
         $this->mailInterface->send();
     }
 
-    public function sendCorrectiveActionMessage(int $visitId, int $currentUserId, string $studyName, bool $correctionApplied, bool $patientCode, string $visitModality, string $visitType)
+    public function sendCorrectiveActionMessage(int $visitId, int $currentUserId, string $studyName, bool $correctionApplied, string $patientId, string $visitModality, string $visitType)
     {
 
 
@@ -297,7 +297,7 @@ class MailServices
             'name' => 'User',
             'correctionApplied' => $correctionApplied,
             'study' => $studyName,
-            'patientCode' => $patientCode,
+            'patientId' => $patientId,
             'visitModality' => $visitModality,
             'visitType' => $visitType,
             'visitId' => $visitId
@@ -317,15 +317,16 @@ class MailServices
         $this->mailInterface->send();
     }
 
-    public function sendUnlockMessage(int $visitId, int $currentUserId, string $role, string $username, string $studyName, int $patientCode, string $messages, string $visitType)
+    public function sendUnlockMessage(int $visitId, int $currentUserId, string $role, string $firstname, string $lastname, string $studyName, string $patientId, string $messages, string $visitType)
     {
 
         $parameters = [
             'name' => 'Supervisor',
             'role' => $role,
-            'username' => $username,
+            'firstname' => $firstname,
+            'lastname' => $lastname,
             'study' => $studyName,
-            'patientCode' => $patientCode,
+            'patientId' => $patientId,
             'messages' => $messages,
             'visitType' => $visitType,
             'visitId' => $visitId
@@ -342,13 +343,13 @@ class MailServices
         $this->mailInterface->send();
     }
 
-    public function sendAwaitingAdjudicationMessage(string $studyName, int $patientCode, string $visitType, int $visitId)
+    public function sendAwaitingAdjudicationMessage(string $studyName, string $patientId, string $visitType, int $visitId)
     {
 
         $parameters = [
             'name' => 'User',
             'study' => $studyName,
-            'patientCode' => $patientCode,
+            'patientId' => $patientId,
             'visitType' => $visitType,
             'visitId' => $visitId
         ];
@@ -385,13 +386,13 @@ class MailServices
         $this->mailInterface->send();
     }
 
-    public function sendVisitConcludedMessage(int $visitId, int $uploaderId, string $studyName, int $patientCode, string $visitType, string $conclusionValue)
+    public function sendVisitConcludedMessage(int $visitId, int $uploaderId, string $studyName, string $patientId, string $visitType, string $conclusionValue)
     {
 
         $parameters = [
             'name' => 'User',
             'study' => $studyName,
-            'patientCode' => $patientCode,
+            'patientId' => $patientId,
             'visitType' => $visitType,
             'visitId' => $visitId,
             'conclusionValue' => $conclusionValue
@@ -411,13 +412,13 @@ class MailServices
         $this->mailInterface->send();
     }
 
-    public function sendDeleteFormMessage( int $visitId, bool $investigatorForm, int $formOwnerId, string $studyName, int $patientCode, string $visitType)
+    public function sendDeleteFormMessage( int $visitId, bool $investigatorForm, int $formOwnerId, string $studyName, string $patientId, string $visitType)
     {
 
         $parameters = [
             'name' => $this->getUserName($formOwnerId),
             'study' => $studyName,
-            'patientCode' => $patientCode,
+            'patientId' => $patientId,
             'visitType' => $visitType,
             'visitId' => $visitId,
             'formType' => $investigatorForm ? 'Investigator' : 'Review'
@@ -435,13 +436,13 @@ class MailServices
         $this->mailInterface->send();
     }
 
-    public function sendUnlockFormMessage(int $visitId, bool $investigatorForm, int $formOwnerId, string $studyName, int $patientCode, string $visitType)
+    public function sendUnlockFormMessage(int $visitId, bool $investigatorForm, int $requestingUserId, string $studyName, string $patientId, string $visitType)
     {
 
         $parameters = [
-            'name' => $this->getUserName($formOwnerId),
+            'name' => $this->getUserName($requestingUserId),
             'study' => $studyName,
-            'patientCode' => $patientCode,
+            'patientId' => $patientId,
             'visitType' => $visitType,
             'visitId' => $visitId,
             'formType' => $investigatorForm ? 'Investigator' : 'Review'
@@ -449,7 +450,7 @@ class MailServices
 
         $this->mailInterface->setTo(
             [
-                $this->getUserEmail($formOwnerId)
+                ...$this->userRepositoryInterface->getUsersEmailsByRolesInStudy($studyName, Constants::ROLE_SUPERVISOR)
             ]
         );
 
@@ -460,11 +461,11 @@ class MailServices
     }
 
 
-    public function sendVisitNotDoneMessage(int $visitId, string $studyName, int $patientCode, string $visitType, string $reasonNotDone, int $userId)
+    public function sendVisitNotDoneMessage(int $visitId, string $studyName, string $patientId, string $visitType, string $reasonNotDone, int $userId)
     {
 
         $parameters = [
-            'patientCode' => $patientCode,
+            'patientId' => $patientId,
             'study' => $studyName,
             'visitType' => $visitType,
             'visitId' => $visitId,
@@ -509,7 +510,7 @@ class MailServices
     public function sendReminder(array $parameters)
     {
         $role = $parameters['role'];
-     
+
         $parameters = [
             'name' => $role,
             'study' => $parameters['study'],
@@ -531,7 +532,7 @@ class MailServices
      */
     public function sendMailToSupervisors(array $parameters)
     {
-     
+
         $parameters = [
             'name' => 'Supervisor',
             'study' => $parameters['study'],

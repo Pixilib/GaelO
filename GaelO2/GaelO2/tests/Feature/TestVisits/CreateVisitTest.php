@@ -35,7 +35,7 @@ class CreateVisitTest extends TestCase
         $visitType=VisitType::factory()->create();
         $this->visitTypeId = $visitType->id;
         $this->visitGroupId = $visitType->visitGroup->id;
-        $this->studyName = $visitType->visitGroup->study->name;
+        $this->studyName = $visitType->visitGroup->study_name;
 
         $this->patient = Patient::factory()->studyName($this->studyName)->create();
         $centerCode = $this->patient->center_code;
@@ -53,7 +53,7 @@ class CreateVisitTest extends TestCase
     public function testCreateVisit() {
 
         $validPayload = [
-            'patientCode' => $this->patient->code,
+            'patientId' => $this->patient->id,
             'visitDate' => '2020-01-01',
             'statusDone' => 'Done',
         ];
@@ -65,7 +65,7 @@ class CreateVisitTest extends TestCase
     public function testCreateVisitNotDone() {
 
         $validPayload = [
-            'patientCode' => $this->patient->code,
+            'patientId' => $this->patient->id,
             'statusDone' => Constants::VISIT_STATUS_NOT_DONE,
             'reasonForNotDone'=> 'unavailable'
         ];
@@ -79,7 +79,7 @@ class CreateVisitTest extends TestCase
         AuthorizationTools::actAsAdmin(false);
 
         $validPayload = [
-            'patientCode' => $this->patient->code,
+            'patientId' => $this->patient->id,
             'visitDate' => '2020-01-01',
             'statusDone' => 'Done',
         ];
@@ -91,7 +91,7 @@ class CreateVisitTest extends TestCase
     public function testCreateVisitWrongDate(){
 
         $validPayload = [
-            'patientCode' => $this->patient->code,
+            'patientId' => $this->patient->id,
             'visitDate' => '2020-13-12',
             'statusDone' => 'Done',
         ];
@@ -103,7 +103,7 @@ class CreateVisitTest extends TestCase
     public function testCreateVisitNotDoneWithNoReasonShouldFail(){
 
         $validPayload = [
-            'patientCode' => $this->patient->code,
+            'patientId' => $this->patient->id,
             'visitDate' => '2020-01-01',
             'statusDone' => Constants::VISIT_STATUS_NOT_DONE,
         ];
@@ -116,7 +116,7 @@ class CreateVisitTest extends TestCase
     public function testCreateAlreadyCreatedVisit(){
 
         $patient = Patient::factory()->create();
-        $visit=Visit::factory()->patientCode($patient->code)->create();
+        $visit=Visit::factory()->patientId($patient->id)->create();
 
         $studyName = $patient->study->name;
         $centerCode = $patient->center_code;
@@ -127,7 +127,7 @@ class CreateVisitTest extends TestCase
         $userEntity->save();
 
         $validPayload = [
-            'patientCode' => $patient->code,
+            'patientId' => $patient->id,
             'visitDate' => '2020-01-01',
             'statusDone' => Constants::VISIT_STATUS_DONE,
         ];

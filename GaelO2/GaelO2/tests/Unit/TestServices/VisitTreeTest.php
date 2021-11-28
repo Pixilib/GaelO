@@ -23,7 +23,7 @@ class VisitTreeTest extends TestCase
             "id" => 23,
             "creator_user_id" => 24,
             "creation_date" => "2021-01-26 23:23:36",
-            "patient_code" => 217735,
+            "patient_id" => 217735,
             "visit_date" => "2021-01-26 23:23:36",
             "visit_type_id" => 18,
             "status_done" => "Done",
@@ -98,7 +98,7 @@ class VisitTreeTest extends TestCase
 
         $patientRepository = Mockery::mock(PatientRepository::class);
         $patientRepository->shouldReceive('getPatientsInStudyInCenters')
-            ->andReturn([['code' => 32]]);
+            ->andReturn([['id' => 32]]);
 
         $this->instance(VisitRepository::class, $mockVisitRepository);
         $this->instance(UserRepository::class, $mockUserRepository);
@@ -114,7 +114,7 @@ class VisitTreeTest extends TestCase
     {
         $expectedArray = [
             'id', 'name', 'order', 'optional', 'modality', 'studyName',
-            'stateInvestigatorForm', 'stateQualityControl', 'uploadStatus', 'statusDone', 'visitTypeId', 'visitGroupId', 'patientCode'
+            'stateInvestigatorForm', 'stateQualityControl', 'uploadStatus', 'statusDone', 'visitTypeId', 'visitGroupId', 'patientId'
         ];
 
         if($withReviewStatus) $expectedArray = ['reviewStatus'];

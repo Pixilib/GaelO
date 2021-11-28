@@ -9,13 +9,15 @@ use App\GaelO\Interfaces\Adapters\MimeInterface;
 use App\GaelO\Interfaces\Repositories\ReviewRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
-use App\GaelO\Services\AuthorizationVisitService;
+use App\GaelO\Services\AuthorizationService\AuthorizationReviewService;
+use App\GaelO\Services\AuthorizationService\AuthorizationVisitService;
 use App\GaelO\Services\FormService;
 use Exception;
 
 class CreateFileToForm {
 
     private AuthorizationVisitService $authorizationVisitService;
+    private AuthorizationReviewService $authorizationReviewService;
     private ReviewRepositoryInterface $reviewRepositoryInterface;
     private TrackerRepositoryInterface $trackerRepositoryInterface;
     private VisitRepositoryInterface $visitRepositoryInterface;
@@ -23,6 +25,7 @@ class CreateFileToForm {
     private MimeInterface $mimeInterface;
 
     public function __construct(AuthorizationVisitService $authorizationVisitService,
+                                AuthorizationReviewService $authorizationReviewService,
                                 VisitRepositoryInterface $visitRepositoryInterface,
                                 ReviewRepositoryInterface $reviewRepositoryInterface,
                                 FormService $formService,
@@ -30,6 +33,7 @@ class CreateFileToForm {
                                 MimeInterface $mimeInterface)
     {
         $this->authorizationVisitService = $authorizationVisitService;
+        $this->authorizationReviewService = $authorizationReviewService;
         $this->reviewRepositoryInterface = $reviewRepositoryInterface;
         $this->visitRepositoryInterface = $visitRepositoryInterface;
         $this->formService = $formService;
@@ -48,7 +52,7 @@ class CreateFileToForm {
             $local = $reviewEntity['local'];
             $visitId = $reviewEntity['visit_id'];
             $key = $createFileToReviewRequest->key;
-            $this->checkAuthorization($local, $reviewEntity['validated'], $userId, $visitId, $createFileToReviewRequest->currentUserId);
+            $this->checkAuthorization($local, $reviewEntity['validated'], $createFileToReviewRequest->id , $visitId, $createFileToReviewRequest->currentUserId, $studyName);
 
             $extension = $this->mimeInterface::getExtensionFromMime($createFileToReviewRequest->contentType);
 
@@ -88,16 +92,18 @@ class CreateFileToForm {
 
     }
 
-    private function checkAuthorization(bool $local, bool $validated, int $reviewOwner, int $visitId, int $currentUserId) : void {
+    private function checkAuthorization(bool $local, bool $validated, int $reviewId, int $visitId, int $currentUserId, string $studyName) : void {
         if($validated) throw new GaelOForbiddenException("Form Already Validated");
-        $this->authorizationVisitService->setVisitId($visitId);
+
         if($local){
-            $this->authorizationVisitService->setCurrentUserAndRole($currentUserId, Constants::ROLE_INVESTIGATOR);
-            if(!$this->authorizationVisitService->isVisitAllowed()) throw new GaelOForbiddenException();
+            $this->authorizationVisitService->setVisitId($visitId);
+            $this->authorizationVisitService->setUserId($currentUserId);
+            $this->authorizationVisitService->setStudyName($studyName);
+            if(!$this->authorizationVisitService->isVisitAllowed(Constants::ROLE_INVESTIGATOR)) throw new GaelOForbiddenException();
         }else{
-            $this->authorizationVisitService->setCurrentUserAndRole($currentUserId, Constants::ROLE_SUPERVISOR);
-            if(!$this->authorizationVisitService->isVisitAllowed()) throw new GaelOForbiddenException();
-            if($reviewOwner !== $currentUserId) throw new GaelOForbiddenException("Only form owner can add files");
+            $this->authorizationReviewService->setUserId($currentUserId);
+            $this->authorizationReviewService->setReviewId($reviewId);
+            if(!$this->authorizationReviewService->isReviewAllowed( Constants::ROLE_REVIEWER )) throw new GaelOForbiddenException();
         }
 
     }

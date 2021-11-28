@@ -5,7 +5,7 @@ namespace App\GaelO\Entities;
 class VisitEntity {
     public ?int $creatorUserId;
     public ?string $creationDate;
-    public int $patientCode;
+    public string $patientId;
     public ?string $visitDate;
     public int $visitTypeId;
     public string $statusDone;
@@ -45,7 +45,7 @@ class VisitEntity {
         $visitEntity->id = $array['id'];
         $visitEntity->creatorUserId = $array['creator_user_id'];
         $visitEntity->creationDate = $array['creation_date'];
-        $visitEntity->patientCode = $array['patient_code'];
+        $visitEntity->patientId = $array['patient_id'];
         $visitEntity->visitDate = $array['visit_date'];
         $visitEntity->visitTypeId = $array['visit_type_id'];
         $visitEntity->statusDone = $array['status_done'];
@@ -86,9 +86,8 @@ class VisitEntity {
         $this->targetLesions  = $targetLesions;
     }
 
-    public function setCreatorDetails(string $username, string $firstname, string $lastname) : void {
+    public function setCreatorDetails(string $firstname, string $lastname) : void {
         $userEntity = new UserEntity();
-        $userEntity->username = $username;
         $userEntity->firstname = $firstname;
         $userEntity->lastname = $lastname;
         $this->creatorUser = $userEntity;

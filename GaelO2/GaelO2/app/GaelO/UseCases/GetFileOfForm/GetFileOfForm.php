@@ -7,18 +7,21 @@ use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Adapters\FrameworkInterface;
 use App\GaelO\Interfaces\Repositories\ReviewRepositoryInterface;
-use App\GaelO\Services\AuthorizationVisitService;
+use App\GaelO\Services\AuthorizationService\AuthorizationReviewService;
+use App\GaelO\Services\AuthorizationService\AuthorizationVisitService;
 use Exception;
 
 class GetFileOfForm {
 
     private AuthorizationVisitService $authorizationVisitService;
+    private AuthorizationReviewService $authorizationReviewService;
     private ReviewRepositoryInterface $reviewRepositoryInterface;
     private FrameworkInterface $frameworkInterface;
 
-    public function __construct(AuthorizationVisitService $authorizationVisitService, ReviewRepositoryInterface $reviewRepositoryInterface, FrameworkInterface $frameworkInterface)
+    public function __construct(AuthorizationVisitService $authorizationVisitService, AuthorizationReviewService $authorizationReviewService, ReviewRepositoryInterface $reviewRepositoryInterface, FrameworkInterface $frameworkInterface)
     {
         $this->authorizationVisitService = $authorizationVisitService;
+        $this->authorizationReviewService = $authorizationReviewService;
         $this->reviewRepositoryInterface = $reviewRepositoryInterface;
         $this->frameworkInterface = $frameworkInterface;
     }
@@ -29,10 +32,9 @@ class GetFileOfForm {
 
             $reviewEntity = $this->reviewRepositoryInterface->find($getFileOfFormRequest->id);
 
-            $userId = $reviewEntity['user_id'];
             $local = $reviewEntity['local'];
             $visitId = $reviewEntity['visit_id'];
-            $this->checkAuthorization($local, $userId, $visitId, $getFileOfFormRequest->currentUserId);
+            $this->checkAuthorization($local, $getFileOfFormRequest->id, $visitId, $getFileOfFormRequest->currentUserId);
 
             $getFileOfFormResponse->status = 200;
             $getFileOfFormResponse->statusText = 'OK';
@@ -53,16 +55,17 @@ class GetFileOfForm {
 
     }
 
-    private function checkAuthorization(bool $local, int $reviewOwner, int $visitId, int $currentUserId): void
+    private function checkAuthorization(bool $local, int $reviewId, int $visitId, int $currentUserId): void
     {
-        $this->authorizationVisitService->setVisitId($visitId);
+
         if ($local) {
-            $this->authorizationVisitService->setCurrentUserAndRole($currentUserId, Constants::ROLE_INVESTIGATOR);
-            if (!$this->authorizationVisitService->isVisitAllowed()) throw new GaelOForbiddenException();
+            $this->authorizationVisitService->setVisitId($visitId);
+            $this->authorizationVisitService->setUserId($currentUserId);
+            if ( !$this->authorizationVisitService->isVisitAllowed(Constants::ROLE_INVESTIGATOR) ) throw new GaelOForbiddenException();
         } else {
-            $this->authorizationVisitService->setCurrentUserAndRole($currentUserId, Constants::ROLE_SUPERVISOR);
-            if (!$this->authorizationVisitService->isVisitAllowed()) throw new GaelOForbiddenException();
-            if ($reviewOwner !== $currentUserId) throw new GaelOForbiddenException("Only form owner can add files");
+            $this->authorizationReviewService->setReviewId($reviewId);
+            $this->authorizationReviewService->setUserId($currentUserId);
+            if (!$this->authorizationReviewService->isReviewAllowed(Constants::ROLE_SUPERVISOR)) throw new GaelOForbiddenException();
         }
     }
 }

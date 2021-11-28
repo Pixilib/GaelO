@@ -22,7 +22,7 @@ class VisitNotDone extends Mailable implements ShouldQueue
     {
         $this->parameters = $parameters;
         /*
-        array('patientCode'=>'',
+        array('patientId'=>'',
         'study'=>'',
         'visitType'=>'',
         'visitId'=>'',
@@ -38,7 +38,7 @@ class VisitNotDone extends Mailable implements ShouldQueue
     public function build()
     {
         return $this->view('mails.mail_visit_not_done')
-            ->subject($this->parameters['study']." - Visit Not Done - Patient ".$this->parameters['patientCode'])
+            ->subject($this->parameters['study']." - Visit Not Done - Patient ".$this->parameters['patientId'])
             ->with($this->parameters);
     }
 }

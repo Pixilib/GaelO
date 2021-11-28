@@ -4,23 +4,25 @@ namespace App\GaelO\UseCases\CreateCenter;
 
 use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOException;
-use App\GaelO\Services\AuthorizationService;
 use Exception;
 use App\GaelO\Exceptions\GaelOConflictException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\CenterRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
+use App\GaelO\Services\AuthorizationService\AuthorizationUserService;
 
 class CreateCenter {
 
+    private AuthorizationUserService $authorizationUserService;
     private CenterRepositoryInterface $centerRepositoryInterface;
     private TrackerRepositoryInterface $trackerRepositoryInterface;
 
-    public function __construct(CenterRepositoryInterface $centerRepositoryInterface, AuthorizationService $authorizationService, TrackerRepositoryInterface $trackerRepositoryInterface){
+    public function __construct(CenterRepositoryInterface $centerRepositoryInterface, AuthorizationUserService $authorizationUserService, TrackerRepositoryInterface $trackerRepositoryInterface){
 
+        $this->authorizationUserService = $authorizationUserService;
         $this->centerRepositoryInterface = $centerRepositoryInterface;
         $this->trackerRepositoryInterface = $trackerRepositoryInterface;
-        $this->authorizationService = $authorizationService;
+        $this->authorizationService = $authorizationUserService;
 
     }
 
@@ -66,8 +68,8 @@ class CreateCenter {
     }
 
     private function checkAuthorization(int $currentUserId){
-        $this->authorizationService->setCurrentUserAndRole($currentUserId);
-        if( ! $this->authorizationService->isAdmin() ) {
+        $this->authorizationUserService->setUserId($currentUserId);
+        if( ! $this->authorizationUserService->isAdmin() ) {
             throw new GaelOForbiddenException();
         };
     }

@@ -37,14 +37,8 @@ class ModifyUserIdentification {
                 if ($knownEmail) throw new GaelOConflictException("Email Already Known");
             }
 
-            if($modifyUserIdentificationRequest->username !== $user['username']) {
-                $knownUsername = $this->userRepositoryInterface->isExistingUsername($modifyUserIdentificationRequest->username);
-                if ($knownUsername) throw new GaelOConflictException("Username Already Used");
-            }
-
             $this->userRepositoryInterface->updateUser(
                 $user['id'],
-                $modifyUserIdentificationRequest->username,
                 $modifyUserIdentificationRequest->lastname,
                 $modifyUserIdentificationRequest->firstname,
                 $user['status'],
@@ -64,7 +58,6 @@ class ModifyUserIdentification {
 
             $details = [
                 'modified_user_id'=>$modifyUserIdentificationRequest->userId,
-                'username'=>$modifyUserIdentificationRequest->username,
                 'lastname'=>$modifyUserIdentificationRequest->lastname,
                 'firstname'=>$modifyUserIdentificationRequest->firstname,
                 'email'=>$modifyUserIdentificationRequest->email,

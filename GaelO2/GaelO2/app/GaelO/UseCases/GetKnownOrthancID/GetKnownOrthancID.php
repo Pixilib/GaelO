@@ -7,18 +7,18 @@ use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Exceptions\GaelONotFoundException;
 use App\GaelO\Interfaces\Repositories\DicomStudyRepositoryInterface;
-use App\GaelO\Services\AuthorizationService;
+use App\GaelO\Services\AuthorizationService\AuthorizationStudyService;
 use Exception;
 
 class GetKnownOrthancID{
 
     private DicomStudyRepositoryInterface $dicomStudyRepositoryInterface;
-    private AuthorizationService $authorizationService;
+    private AuthorizationStudyService $authorizationStudyService;
 
-    public function __construct( DicomStudyRepositoryInterface $dicomStudyRepositoryInterface, AuthorizationService $authorizationService)
+    public function __construct( DicomStudyRepositoryInterface $dicomStudyRepositoryInterface, AuthorizationStudyService $authorizationStudyService)
     {
         $this->dicomStudyRepositoryInterface = $dicomStudyRepositoryInterface;
-        $this->authorizationService = $authorizationService;
+        $this->authorizationStudyService = $authorizationStudyService;
     }
 
     public function execute(GetKnownOrthancIDRequest $getKnownOrthancIDRequest, GetKnownOrthancIDResponse $getKnownOrthancIDResponse){
@@ -50,8 +50,9 @@ class GetKnownOrthancID{
     }
 
     private function checkAuthorization(int $currentUserId, string $studyName){
-        $this->authorizationService->setCurrentUserAndRole($currentUserId, Constants::ROLE_INVESTIGATOR);
-        if( ! $this->authorizationService->isRoleAllowed($studyName)){
+        $this->authorizationStudyService->setStudyName($studyName);
+        $this->authorizationStudyService->setUserId($currentUserId);
+        if( ! $this->authorizationStudyService->isAllowedStudy(Constants::ROLE_INVESTIGATOR) ){
             throw new GaelOForbiddenException();
         };
 

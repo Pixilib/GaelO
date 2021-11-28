@@ -40,23 +40,9 @@ class PatientRepositoryTest extends TestCase
 
         $studyName = Study::factory()->create()->name;
 
-        $patientEntity = new PatientEntity();
+        $this->patientRepository->addPatientInStudy('123456789123456', '3', 'S', 'K', 'M', 25, 05, 1900, '2020-01-01', 'salim', 0 , $studyName);
 
-        $patientEntity->code = 123456789123456;
-        $patientEntity->lastname = 'S';
-        $patientEntity->firstname = 'K';
-        $patientEntity->birthDay = 25;
-        $patientEntity->birthMonth = 05;
-        $patientEntity->birthYear = 1900;
-        $patientEntity->gender = 'M';
-        $patientEntity->registrationDate = '2020-01-01';
-        $patientEntity->investigatorName = 'salim';
-        $patientEntity->studyName = $studyName;
-        $patientEntity->centerCode = 0;
-
-        $this->patientRepository->addPatientInStudy($patientEntity, $studyName);
-
-        $patientRecord = Patient::findOrFail($patientEntity->code);
+        $patientRecord = Patient::findOrFail('123456789123456');
 
         $this->assertEquals(1900, $patientRecord->birth_year);
     }
@@ -67,7 +53,7 @@ class PatientRepositoryTest extends TestCase
         $patient = Patient::factory()->create();
 
         $this->patientRepository->updatePatient(
-            $patient->code,
+            $patient->id,
             $patient->lastname,
             $patient->firstname,
             $patient->gender,
@@ -83,7 +69,7 @@ class PatientRepositoryTest extends TestCase
             $patient->withdraw_date
         );
 
-        $updatedPatient = Patient::find($patient->code);
+        $updatedPatient = Patient::find($patient->id);
         $this->assertEquals('New Investigator', $updatedPatient->investigator_name);
         $this->assertEquals($patient->birth_year, $updatedPatient->birth_year);
     }
@@ -91,7 +77,7 @@ class PatientRepositoryTest extends TestCase
     public function testGetPatientWithCenterDetails()
     {
         $patient = Patient::factory()->create();
-        $patientEntity = $this->patientRepository->getPatientWithCenterDetails($patient->code);
+        $patientEntity = $this->patientRepository->getPatientWithCenterDetails($patient->id);
 
         $this->assertArrayHasKey('center', $patientEntity);
         $this->assertArrayHasKey('inclusion_status', $patientEntity);
@@ -108,11 +94,14 @@ class PatientRepositoryTest extends TestCase
         $this->assertEquals(6, sizeof($patients));
     }
 
-    public function testGetAllPatientCode()
+    public function testGetAllPatientNumberOfStudy()
     {
+
         Patient::factory()->count(30)->create();
-        $patientCodes = $this->patientRepository->getAllPatientsCode();
-        $this->assertEquals(30, sizeof($patientCodes));
+        $study = Study::factory()->create();
+        Patient::factory()->studyName($study->name)->count(5)->create();
+        $patientIds = $this->patientRepository->getAllPatientsNumberInStudy($study->name);
+        $this->assertEquals(5, sizeof($patientIds));
     }
 
     public function testGetPatientInStudyInCenters()
@@ -132,9 +121,9 @@ class PatientRepositoryTest extends TestCase
     public function testGetPatientsFromCodeArray() {
         $patient1 = Patient::factory()->create();
         $patient2 = Patient::factory()->create();
-        $patientCodesArray = [strval($patient1->code), strval($patient2->code)];
-        $patientEntitiesArray = $this->patientRepository->getPatientsFromCodeArray($patientCodesArray);
-        $fetchedPatientsCodes = array_column($patientEntitiesArray, 'code');
-        $this->assertTrue(!array_diff($fetchedPatientsCodes, $patientCodesArray));
+        $patientIdArray = [strval($patient1->id), strval($patient2->id)];
+        $patientEntitiesArray = $this->patientRepository->getPatientsFromCodeArray($patientIdArray);
+        $fetchedPatientsCodes = array_column($patientEntitiesArray, 'id');
+        $this->assertTrue(!array_diff($fetchedPatientsCodes, $patientIdArray));
     }
 }

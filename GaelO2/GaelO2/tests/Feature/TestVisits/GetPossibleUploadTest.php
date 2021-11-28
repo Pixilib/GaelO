@@ -31,7 +31,7 @@ class GetPossibleUploadTest extends TestCase
         parent::setUp();
         $visit = Visit::factory()->create();
         $this->patient = $visit->patient;
-        $this->studyName = $visit->visitType->visitGroup->study_name;
+        $this->studyName = $visit->patient->study_name;
     }
 
     public function testGetPossibleUpload()

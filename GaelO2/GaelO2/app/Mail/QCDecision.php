@@ -25,7 +25,7 @@ class QCDecision extends Mailable implements ShouldQueue
         array(
             "controlDecision"=> "",
             "study" => "",
-            "patientCode" => "",
+            "patientId" => "",
             "visitType" => "",
             "visitId"=>"",
             "visitModality"=>"",
@@ -47,7 +47,7 @@ class QCDecision extends Mailable implements ShouldQueue
     public function build()
     {
         return $this->view('mails.mail_qc_decision')
-        ->subject($this->parameters['study']." - Quality Control Patient - ".$this->parameters['patientCode'])
+        ->subject($this->parameters['study']." - Quality Control Patient - ".$this->parameters['patientId'])
         ->with($this->parameters);
     }
 }

@@ -8,7 +8,7 @@ use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\VisitGroupRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\VisitTypeRepositoryInterface;
-use App\GaelO\Services\AuthorizationService;
+use App\GaelO\Services\AuthorizationService\AuthorizationUserService;
 use Exception;
 
 class CreateVisitType {
@@ -16,13 +16,13 @@ class CreateVisitType {
     private VisitTypeRepositoryInterface $visitTypeRepositoryInterface;
     private VisitGroupRepositoryInterface $visitGroupRepositoryInterface;
     private VisitRepositoryInterface $visitRepositoryInterface;
-    private AuthorizationService $authorizationService;
+    private AuthorizationUserService $authorizationUserService;
 
-    public function __construct(VisitTypeRepositoryInterface $visitTypeRepositoryInterface, VisitGroupRepositoryInterface $visitGroupRepositoryInterface, VisitRepositoryInterface $visitRepositoryInterface, AuthorizationService $authorizationService) {
+    public function __construct(VisitTypeRepositoryInterface $visitTypeRepositoryInterface, VisitGroupRepositoryInterface $visitGroupRepositoryInterface, VisitRepositoryInterface $visitRepositoryInterface, AuthorizationUserService $authorizationUserService) {
         $this->visitGroupRepositoryInterface = $visitGroupRepositoryInterface;
         $this->visitTypeRepositoryInterface = $visitTypeRepositoryInterface;
         $this->visitRepositoryInterface = $visitRepositoryInterface;
-        $this->authorizationService = $authorizationService;
+        $this->authorizationUserService = $authorizationUserService;
     }
 
     public function execute( CreateVisitTypeRequest $createVisitTypeRequest, CreateVisitTypeResponse $createVisitTypeResponse ){
@@ -72,8 +72,8 @@ class CreateVisitType {
 
 
     private function checkAuthorization(int $userId){
-        $this->authorizationService->setCurrentUserAndRole($userId);
-        if( ! $this->authorizationService->isAdmin()){
+        $this->authorizationUserService->setUserId($userId);
+        if( ! $this->authorizationUserService->isAdmin()){
             throw new GaelOForbiddenException();
         }
 

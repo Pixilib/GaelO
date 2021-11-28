@@ -23,7 +23,7 @@ class UploadedVisit extends Mailable implements ShouldQueue
         $this->parameters = $parameters;
         /*
         array('study'=>'',
-        'patientCode' => '',
+        'patientId' => '',
         'visitType' => '',
         'visitId' => '');
         */
@@ -37,7 +37,7 @@ class UploadedVisit extends Mailable implements ShouldQueue
     public function build()
     {
         return $this->view('mails.mail_uploaded_visit')
-            ->subject($this->parameters['study']." - New Upload Patient - ".$this->parameters['patientCode'])
+            ->subject($this->parameters['study']." - New Upload Patient - ".$this->parameters['patientId'])
             ->with($this->parameters);
     }
 }

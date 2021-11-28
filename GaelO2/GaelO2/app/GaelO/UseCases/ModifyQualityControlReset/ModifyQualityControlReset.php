@@ -7,7 +7,7 @@ use App\GaelO\Exceptions\GaelOBadRequestException;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
-use App\GaelO\Services\AuthorizationVisitService;
+use App\GaelO\Services\AuthorizationService\AuthorizationVisitService;
 use App\GaelO\Services\VisitService;
 use Exception;
 
@@ -33,9 +33,9 @@ class ModifyQualityControlReset
 
             $this->visitService->setVisitId($modifyQualityControlResetRequest->visitId);
             $visitContext = $this->visitService->getVisitContext();
-            $studyName = $visitContext['visit_type']['visit_group']['study_name'];
+            $studyName = $visitContext['patient']['study_name'];
 
-            $this->checkAuthorization($modifyQualityControlResetRequest->currentUserId, $modifyQualityControlResetRequest->visitId);
+            $this->checkAuthorization($modifyQualityControlResetRequest->currentUserId, $modifyQualityControlResetRequest->visitId, $studyName);
 
             if (empty($modifyQualityControlResetRequest->reason)) {
                 throw new GaelOBadRequestException("Can't reset QC without reason");
@@ -74,11 +74,13 @@ class ModifyQualityControlReset
         }
     }
 
-    public function checkAuthorization(int $userId, int $visitId)
+    public function checkAuthorization(int $userId, int $visitId, string $studyName)
     {
-        $this->authorizationVisitService->setCurrentUserAndRole($userId, Constants::ROLE_SUPERVISOR);
+        $this->authorizationVisitService->setUserId($userId);
+        $this->authorizationVisitService->setStudyName($studyName);
         $this->authorizationVisitService->setVisitId($visitId);
-        if (!$this->authorizationVisitService->isVisitAllowed()) {
+
+        if ( !$this->authorizationVisitService->isVisitAllowed(Constants::ROLE_SUPERVISOR) ) {
             throw new GaelOForbiddenException();
         }
     }

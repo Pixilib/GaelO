@@ -9,7 +9,7 @@ use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\UserRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
 use App\GaelO\Repositories\TrackerRepository;
-use App\GaelO\Services\AuthorizationVisitService;
+use App\GaelO\Services\AuthorizationService\AuthorizationVisitService;
 use App\GaelO\Services\MailServices;
 use Exception;
 
@@ -39,14 +39,15 @@ class RequestUnlock
             $this->checkAuthorization(
                 $requestUnlockRequest->currentUserId,
                 $requestUnlockRequest->role,
-                $requestUnlockRequest->visitId
+                $requestUnlockRequest->visitId,
+                $requestUnlockRequest->studyName
             );
 
             $userEntity = $this->userRepositoryInterface->find($requestUnlockRequest->currentUserId);
 
             $visitContext = $this->visitRepositoryInterface->getVisitContext($requestUnlockRequest->visitId);
 
-            $patientCode = $visitContext['patient']['code'];
+            $patientId = $visitContext['patient']['id'];
             $visitType = $visitContext['visit_type']['name'];
 
             if (empty($requestUnlockRequest->message)) {
@@ -57,9 +58,10 @@ class RequestUnlock
                 $requestUnlockRequest->visitId,
                 $requestUnlockRequest->currentUserId,
                 $requestUnlockRequest->role,
-                $userEntity['username'],
+                $userEntity['firstname'],
+                $userEntity['lastname'],
                 $requestUnlockRequest->studyName,
-                $patientCode,
+                $patientId,
                 $requestUnlockRequest->message,
                 $visitType
             );
@@ -69,7 +71,7 @@ class RequestUnlock
             if($requestUnlockRequest->role === Constants::ROLE_INVESTIGATOR){
                 $formType = 'Investigator';
             }else if ($requestUnlockRequest->role === Constants::ROLE_REVIEWER){
-                $formType = 'Supervisor';
+                $formType = 'Reviewer';
             }
 
             $details = [
@@ -99,12 +101,13 @@ class RequestUnlock
         }
     }
 
-    private function checkAuthorization(int $userId, string $role, int $visitId)
+    private function checkAuthorization(int $userId, string $role, int $visitId, string $studyName)
     {
 
-        $this->authorizationVisitService->setCurrentUserAndRole($userId, $role);
+        $this->authorizationVisitService->setUserId($userId);
         $this->authorizationVisitService->setVisitId($visitId);
-        if (!$this->authorizationVisitService->isVisitAllowed()) {
+        $this->authorizationVisitService->setStudyName($studyName);
+        if (!$this->authorizationVisitService->isVisitAllowed($role)) {
             throw new GaelOForbiddenException();
         }
     }

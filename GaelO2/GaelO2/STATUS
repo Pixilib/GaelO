@@ -1,16 +1,12 @@
 Salim TODO :
 
---- Etudes ancillaires ---
-Pb Authorisation : Un ID Visit peut maintenant a etre attachee a plusieurs etudes ancillaires
-=> Le scope de la study demandée doit venir du front
-=> Dans authorization on doit verifier que le visit ID a bien une etude === a celle demandee et que l'utilisateur a les droits dessus
-=> Le review status doit venir avec les info de la visit dans le repository (partie de code commentée)
-=> Creer une table d'ancillaries studies ? => Non juste limiter les roles des etudes ancillaires
-=> Quid des roles dans contexte d etude ancillaire (notament supervisor qui doit etre limité)
+- Refaire DicowWeb Authorization Service
+- Passer le studyName en query tag ??
+- Optimiser l'utilisation des authorization service en injectant les data depuis le usecase (ou les rendre stateless)
 
-=> Crée dans les etudes comme étant acillaires De (patient code prefix reste a null)
-=> Ne peut etre crér les roles que de Reviewer et supervisor
-=>Supervisor :
+--- Etudes ancillaires ---
+=> Ne peut etre creer les roles que de Reviewer et supervisor
+=> Supervisor : Les taches non permise sont bloquée par le usecase en reprenant la study princeps de la ressource ou en verifiant statut ancillary ou pas pour le niveau study
 Ne doit pas pouvoir modifier les patients
 Ne doit pas pouvoir importer des patients
 Ne doit pas pouvoir modifier / delete Visites, QC, Upload, local form
@@ -28,7 +24,6 @@ Doit pouvoir voir user details
 ---- Refactoring Backend ----
 Refac pour la lecture eviter de passer par des services pour laisser les services à l'ecriture ?
 Dicom Series Service => peut etre evoluer vers un DicomService pour les deux niveaux
-GetVisitContext des services surement a faire passer a initialisation pour eviter requettes redondantes
 
 Entity :
 - Pluger toutes les reponses "data" sur ces entity response
@@ -36,14 +31,9 @@ Entity :
 => GetReviewProgression => Visit + Review_status + Progression entity?
 => GetVisitTree => ?, visit ?
 
-Model et db :
-- Type de variable a caster
-
 ---- /Refactoring Backend ------
 
-Messagerie à designer (communication intermembre, front avec tinymce)
 Creatable Visit : Manque Study Custom Logic (+dans front skip visites optionnelles ?)
-Revoir DicowWeb Authorization Service => Pb route orthanc differentes
 Review  : faire une propriete dans visit pour savoir si review disponible a un user en plus de status reviewAvailable ?
 
 Reste Autres :

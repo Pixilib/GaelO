@@ -30,7 +30,7 @@ class SendMailTest extends TestCase
     protected function setUp() : void{
         parent::setUp();
 
-        $this->study = Study::factory()->patientCodePrefix('123')->create();
+        $this->study = Study::factory()->code('123')->create();
         for($i = 0; $i < 10; $i++) {
             $user = User::factory()->centerCode(0)->create();
             AuthorizationTools::addRoleToUser($user->id, Constants::ROLE_SUPERVISOR, $this->study->name);
@@ -44,7 +44,7 @@ class SendMailTest extends TestCase
     public function testSendReminderInvestigator() {
         $currentUserId = AuthorizationTools::actAsAdmin(false);
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $this->study->name);
-        
+
         $subject = 'Upload';
         $payload = [
             'centerCode' => 0,
@@ -134,7 +134,7 @@ class SendMailTest extends TestCase
     public function testSendMailToUser() {
         $currentUserId = AuthorizationTools::actAsAdmin(false);
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $this->study->name);
-        
+
         $payload = [
             'userId' => $currentUserId,
             'subject' => 'Question',

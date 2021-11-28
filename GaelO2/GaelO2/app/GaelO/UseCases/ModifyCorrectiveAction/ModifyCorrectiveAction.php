@@ -7,7 +7,7 @@ use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
-use App\GaelO\Services\AuthorizationVisitService;
+use App\GaelO\Services\AuthorizationService\AuthorizationVisitService;
 use App\GaelO\Services\MailServices;
 use Exception;
 
@@ -31,8 +31,8 @@ class ModifyCorrectiveAction{
         try{
             $visitContext = $this->visitRepositoryInterface->getVisitContext($modifyCorrectiveActionRequest->visitId);
 
-            $studyName = $visitContext['visit_type']['visit_group']['study_name'];
-            $patientCode = $visitContext['patient']['center_code'];
+            $studyName = $visitContext['patient']['study_name'];
+            $patientId = $visitContext['patient']['id'];
             $visitType = $visitContext['visit_type']['name'];
             $localFormNeeded = $visitContext['visit_type']['local_form_needed'];
             $visitModality = $visitContext['visit_type']['visit_group']['modality'];
@@ -50,7 +50,7 @@ class ModifyCorrectiveAction{
                 throw new GaelOForbiddenException('You need to upload DICOMs first!');
             }
 
-            $this->checkAuthorization($modifyCorrectiveActionRequest->currentUserId, $modifyCorrectiveActionRequest->visitId, $currentQcStatus);
+            $this->checkAuthorization($modifyCorrectiveActionRequest->currentUserId, $modifyCorrectiveActionRequest->visitId, $currentQcStatus, $studyName);
 
             $this->visitRepositoryInterface->setCorrectiveAction(
                     $modifyCorrectiveActionRequest->visitId,
@@ -62,7 +62,7 @@ class ModifyCorrectiveAction{
             );
 
             $actionDetails = [
-                'patient_code'=>$patientCode,
+                'patient_id'=>$patientId,
                 'visit_type'=>$visitType,
                 'vist_group_modality'=>$visitModality,
                 'new_series'=>$modifyCorrectiveActionRequest->newSeriesUploaded,
@@ -86,7 +86,7 @@ class ModifyCorrectiveAction{
                 $modifyCorrectiveActionRequest->currentUserId,
                 $studyName,
                 $modifyCorrectiveActionRequest->correctiveActionDone,
-                $patientCode,
+                $patientId,
                 $visitModality,
                 $visitType
             );
@@ -105,16 +105,18 @@ class ModifyCorrectiveAction{
         }
     }
 
-    private function checkAuthorization(int $userId, int $visitId, string $currentQcStatus) : void {
+    private function checkAuthorization(int $userId, int $visitId, string $currentQcStatus, string $studyName) : void {
 
         if($currentQcStatus !== Constants::QUALITY_CONTROL_CORRECTIVE_ACTION_ASKED){
-            throw new GaelOForbiddenException('ici');
+            throw new GaelOForbiddenException('Visit Not Awaiting Corrective Action');
         }
 
         //Check user has controller role in the visit
-        $this->authorizationVisitService->setCurrentUserAndRole($userId, Constants::ROLE_INVESTIGATOR);
+        $this->authorizationVisitService->setUserId($userId);
         $this->authorizationVisitService->setVisitId($visitId);
-        if ( ! $this->authorizationVisitService->isVisitAllowed() ){
+        $this->authorizationVisitService->setStudyName($studyName);
+
+        if ( ! $this->authorizationVisitService->isVisitAllowed(Constants::ROLE_INVESTIGATOR) ){
             throw new GaelOForbiddenException('Not allowed');
         }
 

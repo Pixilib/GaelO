@@ -9,7 +9,7 @@ use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\DicomStudyRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
-use App\GaelO\Services\AuthorizationVisitService;
+use App\GaelO\Services\AuthorizationService\AuthorizationVisitService;
 use Exception;
 
 class GetDicoms{
@@ -27,7 +27,7 @@ class GetDicoms{
     public function execute(GetDicomsRequest $getDicomsRequest, GetDicomsResponse $getDicomResponse){
         try{
 
-            $this->checkAuthorization($getDicomsRequest->visitId, $getDicomsRequest->currentUserId, $getDicomsRequest->role);
+            $this->checkAuthorization($getDicomsRequest->visitId, $getDicomsRequest->currentUserId, $getDicomsRequest->role, $getDicomsRequest->studyName);
 
             $visitContext = $this->visitRepositoryInterface->getVisitContext($getDicomsRequest->visitId, false);
             //If Supervisor include deleted studies
@@ -67,10 +67,13 @@ class GetDicoms{
         }
     }
 
-    private function checkAuthorization(int $visitId, int $userId, string $role) : void {
-        $this->authorizationVisitService->setCurrentUserAndRole($userId, $role);
+    private function checkAuthorization(int $visitId, int $userId, string $role, string $studyName) : void {
+
+        $this->authorizationVisitService->setUserId($userId);
         $this->authorizationVisitService->setVisitId($visitId);
-        if ( ! $this->authorizationVisitService->isVisitAllowed() ){
+        $this->authorizationVisitService->setStudyName($studyName);
+
+        if ( !$this->authorizationVisitService->isVisitAllowed($role) ){
             throw new GaelOForbiddenException();
         }
 

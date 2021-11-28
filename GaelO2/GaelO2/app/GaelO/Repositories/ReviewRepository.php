@@ -98,7 +98,7 @@ class ReviewRepository implements ReviewRepositoryInterface {
             ->where('study_name', $studyName)
             ->where('visit_id', $visitId)
             ->where('user_id', $userId)
-            ->where('local', true)
+            ->where('local', false)
             ->sole();
 
         return $reviewEntity->toArray();
@@ -112,7 +112,7 @@ class ReviewRepository implements ReviewRepositoryInterface {
     {
 
         $answer = $this->review
-            ->with('user:id,username')
+            ->with('user:id')
             ->whereHas('visit', function ($query) use ($visitTypeId) {
                 $query->whereHas('visitType', function ($query) use ($visitTypeId) {
                     $query->where('id', $visitTypeId);

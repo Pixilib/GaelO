@@ -4,18 +4,18 @@ namespace App\GaelO\UseCases\GetVisitsTree;
 
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
-use App\GaelO\Services\AuthorizationService;
+use App\GaelO\Services\AuthorizationService\AuthorizationStudyService;
 use App\GaelO\Services\VisitTreeService;
 use Exception;
 
 class GetVisitsTree {
 
-    private AuthorizationService $authorizationService;
+    private AuthorizationStudyService $authorizationStudyService;
     private VisitTreeService $visitTreeService;
 
-    public function __construct( AuthorizationService $authorizationService, VisitTreeService $visitTreeService )
+    public function __construct( AuthorizationStudyService $authorizationStudyService, VisitTreeService $visitTreeService )
     {
-        $this->authorizationService = $authorizationService;
+        $this->authorizationStudyService = $authorizationStudyService;
         $this->visitTreeService = $visitTreeService;
     }
 
@@ -46,8 +46,9 @@ class GetVisitsTree {
     }
 
     private function checkAuthorization(int $userId, string $studyName, string $role){
-        $this->authorizationService->setCurrentUserAndRole($userId, $role);
-        if ( ! $this->authorizationService->isRoleAllowed($studyName)){
+        $this->authorizationStudyService->setStudyName($studyName);
+        $this->authorizationStudyService->setUserId($userId);
+        if ( ! $this->authorizationStudyService->isAllowedStudy($role)){
             throw new GaelOForbiddenException();
         }
     }

@@ -13,7 +13,7 @@ use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\UserRepositoryInterface;
 use App\GaelO\UseCases\CreateUser\CreateUserRequest;
 use App\GaelO\UseCases\CreateUser\CreateUserResponse;
-use App\GaelO\Services\AuthorizationService;
+use App\GaelO\Services\AuthorizationService\AuthorizationUserService;
 use App\GaelO\Services\MailServices;
 use App\GaelO\UseCases\ModifyUser\ModifyUserRequest;
 use App\GaelO\Util;
@@ -21,16 +21,16 @@ use App\GaelO\Util;
 class CreateUser
 {
 
-    private AuthorizationService $authorizationService;
+    private AuthorizationUserService $authorizationUserService;
     private TrackerRepositoryInterface $trackerRepositoryInterface;
     private UserRepositoryInterface $userRepositoryInterface;
     private MailServices $mailService;
 
-    public function __construct(AuthorizationService $authorizationService, UserRepositoryInterface $userRepositoryInterface, TrackerRepositoryInterface $trackerRepositoryInterface, MailServices $mailService)
+    public function __construct(AuthorizationUserService $authorizationUserService, UserRepositoryInterface $userRepositoryInterface, TrackerRepositoryInterface $trackerRepositoryInterface, MailServices $mailService)
     {
         $this->trackerRepositoryInterface = $trackerRepositoryInterface;
         $this->mailService = $mailService;
-        $this->authorizationService = $authorizationService;
+        $this->authorizationUserService = $authorizationUserService;
         $this->userRepositoryInterface = $userRepositoryInterface;
     }
 
@@ -46,16 +46,12 @@ class CreateUser
             self::checkEmailValid($createUserRequest->email);
             self::checkPhoneCorrect($createUserRequest->phone);
 
-            $knownUsername = $this->userRepositoryInterface->isExistingUsername($createUserRequest->username);
-            if ($knownUsername) throw new GaelOConflictException("Username Already Used");
-
             $knownEmail = $this->userRepositoryInterface->isExistingEmail($createUserRequest->email);
             if ($knownEmail) throw new GaelOConflictException("Email Already Known");
 
 
             //In no Exception thrown by checks methods, user are ok to be written in db
             $createdUserEntity = $this->userRepositoryInterface->createUser(
-                $createUserRequest->username,
                 $createUserRequest->lastname,
                 $createUserRequest->firstname,
                 Constants::USER_STATUS_UNCONFIRMED,
@@ -88,7 +84,6 @@ class CreateUser
             $this->mailService->sendCreatedAccountMessage(
                 $createdUserEntity['email'],
                 $createdUserEntity['firstname'] . ' ' . $createdUserEntity['lastname'],
-                $createdUserEntity['username'],
                 $passwordTemporary
             );
 
@@ -105,17 +100,15 @@ class CreateUser
 
     private function checkAuthorization(int $userId): void
     {
-        $this->authorizationService->setCurrentUserAndRole($userId);
-        if (!$this->authorizationService->isAdmin($userId)) {
+        $this->authorizationUserService->setUserId($userId);
+        if (!$this->authorizationUserService->isAdmin($userId)) {
             throw new GaelOForbiddenException();
         };
     }
 
     public static function checkFormComplete(CreateUserRequest|ModifyUserRequest $userRequest): void
     {
-        if (
-            !isset($userRequest->username)
-            || !isset($userRequest->job)
+        if ( !isset($userRequest->job)
             || !isset($userRequest->email)
             || !is_numeric($userRequest->centerCode)
             || !isset($userRequest->administrator)

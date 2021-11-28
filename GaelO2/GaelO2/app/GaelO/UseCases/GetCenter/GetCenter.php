@@ -6,17 +6,17 @@ use App\GaelO\Entities\CenterEntity;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\CenterRepositoryInterface;
-use App\GaelO\Services\AuthorizationService;
+use App\GaelO\Services\AuthorizationService\AuthorizationUserService;
 use Exception;
 
 class GetCenter {
 
     private CenterRepositoryInterface $centerRepositoryInterface;
-    private AuthorizationService $authorizationService;
+    private AuthorizationUserService $authorizationUserService;
 
-    public function __construct(CenterRepositoryInterface $centerRepositoryInterface, AuthorizationService $authorizationService){
+    public function __construct(CenterRepositoryInterface $centerRepositoryInterface, AuthorizationUserService $authorizationUserService){
         $this->centerRepositoryInterface = $centerRepositoryInterface;
-        $this->authorizationService = $authorizationService;
+        $this->authorizationUserService = $authorizationUserService;
      }
 
     public function execute(GetCenterRequest $getCenterRequest, GetCenterResponse $getCenterResponse) : void
@@ -55,8 +55,8 @@ class GetCenter {
     }
 
     private function checkAuthorization(int $userId){
-        $this->authorizationService->setCurrentUserAndRole($userId);
-        if( ! $this->authorizationService->isAdmin()) {
+        $this->authorizationUserService->setUserId($userId);
+        if( ! $this->authorizationUserService->isAdmin()) {
             throw new GaelOForbiddenException();
         };
     }

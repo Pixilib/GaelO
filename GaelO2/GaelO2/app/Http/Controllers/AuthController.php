@@ -22,7 +22,7 @@ class AuthController extends Controller
 
         if ($loginResponse->status === 200) {
 
-            $user = User::where('username', $request->username)->sole();
+            $user = User::where('email', $request->email)->sole();
 
             //remove all tokens of current user before creating one other
             $user->tokens()->delete();

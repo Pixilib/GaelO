@@ -8,7 +8,7 @@ use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\ReviewRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\UserRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
-use App\GaelO\Services\AuthorizationService;
+use App\GaelO\Services\AuthorizationService\AuthorizationStudyService;
 use Exception;
 
 /**
@@ -16,17 +16,17 @@ use Exception;
  */
 class GetReviewProgression {
 
-    private AuthorizationService $authorizationService;
+    private AuthorizationStudyService $authorizationStudyService;
     private VisitRepositoryInterface $visitRepositoryInterface;
     private UserRepositoryInterface $userRepositoryInterface;
     private ReviewRepositoryInterface $reviewRepositoryInterface;
 
-    public function __construct(AuthorizationService $authorizationService,
+    public function __construct(AuthorizationStudyService $authorizationStudyService,
                                 VisitRepositoryInterface $visitRepositoryInterface,
                                 UserRepositoryInterface $userRepositoryInterface,
                                 ReviewRepositoryInterface $reviewRepositoryInterface){
 
-        $this->authorizationService = $authorizationService;
+        $this->authorizationStudyService = $authorizationStudyService;
         $this->visitRepositoryInterface = $visitRepositoryInterface;
         $this->userRepositoryInterface = $userRepositoryInterface;
         $this->reviewRepositoryInterface = $reviewRepositoryInterface;
@@ -44,7 +44,6 @@ class GetReviewProgression {
             $reviewersById = [];
             foreach ( $reviewers as $reviewer ) {
                 $reviewersById[$reviewer['id']] = [
-                    'username' => $reviewer['username'],
                     'lastname' => $reviewer['lastname'],
                     'firstname' => $reviewer['firstname']
                 ];
@@ -70,7 +69,7 @@ class GetReviewProgression {
 
                 $answer[] = [
                     'id' => $visit['id'],
-                    'patientCode' => $visit['patient_code'],
+                    'patientId' => $visit['patient_id'],
                     'reviewStatus' => $visit['review_status']['review_status'],
                     'visitDate' =>$visit['visit_date'],
                     'reviewDoneBy'=> $this->getUsersDetails($userIdHavingReviewed, $reviewersById),
@@ -94,8 +93,9 @@ class GetReviewProgression {
     }
 
     private function checkAuthorization(int $userId, string $studyName){
-        $this->authorizationService->setCurrentUserAndRole($userId, Constants::ROLE_SUPERVISOR);
-        if(! $this->authorizationService->isRoleAllowed($studyName)){
+        $this->authorizationStudyService->setUserId($userId);
+        $this->authorizationStudyService->setStudyName($studyName);
+        if(! $this->authorizationStudyService->isAllowedStudy(Constants::ROLE_SUPERVISOR)){
             throw new GaelOForbiddenException();
         };
     }

@@ -35,7 +35,7 @@ class UploadFileFormTest extends TestCase
         $patient = Patient::factory()->studyName($study->name)->create();
         $visitGroup = VisitGroup::factory()->studyName($study->name)->modality('PT')->create();
         $visitType  = VisitType::factory()->visitGroupId($visitGroup->id)->name('PET0')->localFormNeeded()->create();
-        $visit = Visit::factory()->patientCode($patient->code)->visitTypeId($visitType->id)->create();
+        $visit = Visit::factory()->patientId($patient->id)->visitTypeId($visitType->id)->create();
         ReviewStatus::factory()->studyName($study->name)->visitId($visit->id)->reviewAvailable()->create();
         return [
             'studyName'=>$study->name,
@@ -48,7 +48,7 @@ class UploadFileFormTest extends TestCase
         $currentVisit = $this->createVisit();
         $currentUserId = AuthorizationTools::actAsAdmin(false);
         $review = Review::factory()->reviewForm()->userId($currentUserId)->visitId($currentVisit['visitId'])->studyName($currentVisit['studyName'])->create();
-        AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $currentVisit['studyName'] );
+        AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_REVIEWER, $currentVisit['studyName'] );
         $response = $this->post('api/reviews/' . $review->id . '/file/41', [base64_encode("testFileContent")], ['CONTENT_TYPE' => MimeAdapter::getMimeFromExtension('csv')]);
         $response->assertSuccessful();
     }
@@ -67,7 +67,7 @@ class UploadFileFormTest extends TestCase
         $currentVisit = $this->createVisit();
         $currentUserId = AuthorizationTools::actAsAdmin(false);
         $review = Review::factory()->reviewForm()->userId($currentUserId)->visitId($currentVisit['visitId'])->studyName($currentVisit['studyName'])->create();
-        AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $currentVisit['studyName'] );
+        AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_REVIEWER, $currentVisit['studyName'] );
         $response = $this->post('api/reviews/' . $review->id . '/file/41', [base64_encode("testFileContent")], ['CONTENT_TYPE' => MimeAdapter::getMimeFromExtension('png')]);
         $response->assertStatus(400);
     }
@@ -99,7 +99,7 @@ class UploadFileFormTest extends TestCase
         $review = Review::factory()->reviewForm()->userId($currentUserId)->visitId($currentVisit['visitId'])->studyName($currentVisit['studyName'])->create();
         $review->sent_files = ['41' => $currentVisit['studyName'].'/'.'attached_review_file'.'/'.'review_1_41.csv'];
         $review->save();
-        AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $currentVisit['studyName'] );
+        AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_REVIEWER, $currentVisit['studyName'] );
         $response = $this->delete('api/reviews/' . $review->id . '/file/41');
         $response->assertSuccessful();
     }

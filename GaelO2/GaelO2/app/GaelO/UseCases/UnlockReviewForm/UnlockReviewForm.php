@@ -10,7 +10,7 @@ use App\GaelO\Interfaces\Repositories\ReviewRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\ReviewStatusRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
-use App\GaelO\Services\AuthorizationReviewService;
+use App\GaelO\Services\AuthorizationService\AuthorizationReviewService;
 use App\GaelO\Services\MailServices;
 use App\GaelO\Services\ReviewFormService;
 use Exception;
@@ -67,7 +67,7 @@ class UnlockReviewForm {
             $actionDetails = [
                 'modality' => $visitContext['visit_type']['visit_group']['modality'],
                 'visit_type' => $visitContext['visit_type']['name'],
-                'patient_code' => $visitContext['patient_code'],
+                'patient_id' => $visitContext['patient_id'],
                 'id_review' => $unlockReviewFormRequest->reviewId,
                 'reason' => $unlockReviewFormRequest->reason
             ];
@@ -84,9 +84,9 @@ class UnlockReviewForm {
             $this->mailServices->sendUnlockFormMessage(
                 $reviewEntity['visit_id'],
                 false,
-                $reviewEntity['user_id'],
+                $unlockReviewFormRequest->currentUserId,
                 $reviewEntity['study_name'],
-                $visitContext['patient_code'],
+                $visitContext['patient_id'],
                 $visitContext['visit_type']['name'] );
 
             $unlockReviewFormResponse->status = 200;
@@ -108,9 +108,9 @@ class UnlockReviewForm {
         if($local){
             throw new GaelOForbiddenException();
         }
-        $this->authorizationReviewService->setCurrentUserAndRole($currentUserId, Constants::ROLE_SUPERVISOR);
+        $this->authorizationReviewService->setUserId($currentUserId);
         $this->authorizationReviewService->setReviewId($reviewId);
-        if( !$this->authorizationReviewService->isReviewAllowed() ) {
+        if( !$this->authorizationReviewService->isReviewAllowed(Constants::ROLE_SUPERVISOR) ) {
             throw new GaelOForbiddenException();
         }
     }

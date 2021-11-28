@@ -6,17 +6,17 @@ use App\GaelO\Exceptions\GaelOBadRequestException;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\VisitGroupRepositoryInterface;
-use App\GaelO\Services\AuthorizationService;
+use App\GaelO\Services\AuthorizationService\AuthorizationUserService;
 use Exception;
 
 class DeleteVisitGroup {
 
     private VisitGroupRepositoryInterface $visitGroupRepositoryInterface;
-    private AuthorizationService $authorizationService;
+    private AuthorizationUserService $authorizationUserService;
 
-    public function __construct(VisitGroupRepositoryInterface $visitGroupRepositoryInterface, AuthorizationService $authorizationService){
+    public function __construct(VisitGroupRepositoryInterface $visitGroupRepositoryInterface, AuthorizationUserService $authorizationUserService){
         $this->visitGroupRepositoryInterface = $visitGroupRepositoryInterface;
-        $this->authorizationService = $authorizationService;
+        $this->authorizationUserService = $authorizationUserService;
     }
 
     public function execute(DeleteVisitGroupRequest $deleteVisitGroupRequest, DeleteVisitGroupResponse $deleteVisitGroupResponse){
@@ -46,8 +46,8 @@ class DeleteVisitGroup {
     }
 
     public function checkAuthorization(int $userId) : void {
-        $this->authorizationService->setCurrentUserAndRole($userId);
-        if( ! $this->authorizationService->isAdmin()) {
+        $this->authorizationUserService->setUserId($userId);
+        if( ! $this->authorizationUserService->isAdmin()) {
             throw new GaelOForbiddenException();
         };
     }

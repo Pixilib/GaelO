@@ -7,10 +7,10 @@
     <li>{{$success}}</li>
     @endforeach
 
-    @foreach ($failList as $reason => $patientCodeArray)
+    @foreach ($failList as $reason => $patientIdArray)
     <li>{{$reason}} :</li>
-        @foreach ($patientCodeArray as $patientCode)
-        <li>{{$patientCode}}</li>
+        @foreach ($patientIdArray as $patientId)
+        <li>{{$patientId}}</li>
         @endforeach
     @endforeach
 

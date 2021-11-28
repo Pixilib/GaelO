@@ -26,7 +26,7 @@ class DicomsStudyFromVisitIdTest extends TestCase
         parent::setUp();
         $this->dicomStudy = DicomStudy::factory()->create();
         $this->visitTypeId = $this->dicomStudy->visit->visitType->id;
-        $this->studyName = $this->dicomStudy->visit->visitType->visitGroup->study_name;
+        $this->studyName = $this->dicomStudy->visit->patient->study_name;
     }
 
     public function testGetDicomStudy()

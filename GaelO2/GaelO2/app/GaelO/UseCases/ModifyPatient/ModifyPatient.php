@@ -8,7 +8,7 @@ use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\PatientRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
-use App\GaelO\Services\AuthorizationPatientService;
+use App\GaelO\Services\AuthorizationService\AuthorizationPatientService;
 use App\GaelO\Services\ImportPatientService;
 use App\GaelO\Util;
 use Exception;
@@ -34,9 +34,11 @@ class ModifyPatient {
 
             if (empty($modifyPatientRequest->reason)) throw new GaelOBadRequestException('Reason for patient edition must be sepecified');
 
-            $this->checkAuthorization($modifyPatientRequest->currentUserId, $modifyPatientRequest->patientCode);
+            $patientEntity = $this->patientRepositoryInterface->find($modifyPatientRequest->patientId);
+            $studyName = $patientEntity['study_name'];
+            $this->checkAuthorization($modifyPatientRequest->currentUserId, $modifyPatientRequest->patientId, $studyName);
 
-            $patientEntity = $this->patientRepositoryInterface->find($modifyPatientRequest->patientCode);
+
 
             $updatableData = ['firstname', 'lastname', 'gender', 'birthDay', 'birthMonth', 'birthYear',
             'registrationDate', 'investigatorName', 'centerCode', 'inclusionStatus', 'withdrawReason', 'withdrawDate'];
@@ -73,7 +75,7 @@ class ModifyPatient {
 
             $modifiedData['reason'] = $modifyPatientRequest->reason;
 
-            $this->patientRepositoryInterface->update($modifyPatientRequest->patientCode, $patientEntity);
+            $this->patientRepositoryInterface->update($modifyPatientRequest->patientId, $patientEntity);
             $this->trackerRepositoryInterface->writeAction($modifyPatientRequest->currentUserId, Constants::ROLE_SUPERVISOR, $patientEntity['study_name'], null, Constants::TRACKER_EDIT_PATIENT, $modifiedData);
 
             $modifyPatientResponse->status = 200;
@@ -91,10 +93,11 @@ class ModifyPatient {
         }
     }
 
-    private function checkAuthorization(int $userId, int $patientCode){
-        $this->authorizationPatientService->setCurrentUserAndRole($userId, Constants::ROLE_SUPERVISOR);
-        $this->authorizationPatientService->setPatient($patientCode);
-        if( ! $this->authorizationPatientService->isPatientAllowed()){
+    private function checkAuthorization(int $userId, string $patientId, string $studyName){
+        $this->authorizationPatientService->setUserId($userId);
+        $this->authorizationPatientService->setPatientId($patientId);
+        $this->authorizationPatientService->setStudyName($studyName);
+        if( ! $this->authorizationPatientService->isPatientAllowed(Constants::ROLE_SUPERVISOR)){
             throw new GaelOForbiddenException();
         };
     }

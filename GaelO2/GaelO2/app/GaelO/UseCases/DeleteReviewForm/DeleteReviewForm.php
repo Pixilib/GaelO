@@ -10,7 +10,7 @@ use App\GaelO\Interfaces\Repositories\ReviewRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\ReviewStatusRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
-use App\GaelO\Services\AuthorizationReviewService;
+use App\GaelO\Services\AuthorizationService\AuthorizationReviewService;
 use App\GaelO\Services\MailServices;
 use App\GaelO\Services\ReviewFormService;
 use Exception;
@@ -52,22 +52,26 @@ class DeleteReviewForm {
 
             $reviewEntity = $this->reviewRepositoryInterface->find($deleteReviewFormRequest->reviewId);
 
-            $this->checkAuthorization($deleteReviewFormRequest->currentUserId, $deleteReviewFormRequest->reviewId, $reviewEntity['local']);
+            $studyName = $reviewEntity['study_name'];
+            $local = $reviewEntity['local'];
+            $visitId = $reviewEntity['visit_id'];
 
-            $visitContext = $this->visitRepositoryInterface->getVisitContext($reviewEntity['visit_id']);
+            $this->checkAuthorization($deleteReviewFormRequest->currentUserId, $deleteReviewFormRequest->reviewId, $local);
 
-            $reviewStatus = $this->reviewStatusRepositoryInterface->getReviewStatus($reviewEntity['visit_id'], $reviewEntity['study_name']);
+            $visitContext = $this->visitRepositoryInterface->getVisitContext($visitId);
+
+            $reviewStatus = $this->reviewStatusRepositoryInterface->getReviewStatus($visitId, $studyName);
 
             //Delete review via service review
             $this->reviewFormService->setCurrentUserId($deleteReviewFormRequest->currentUserId);
-            $this->reviewFormService->setVisitContextAndStudy($visitContext, $reviewEntity['study_name']);
+            $this->reviewFormService->setVisitContextAndStudy($visitContext, $studyName);
             $this->reviewFormService->setReviewStatus($reviewStatus);
             $this->reviewFormService->deleteReview($deleteReviewFormRequest->reviewId);
 
             $actionDetails = [
                 'modality' => $visitContext['visit_type']['visit_group']['modality'],
                 'visit_type' => $visitContext['visit_type']['name'],
-                'patient_code' => $visitContext['patient_code'],
+                'patient_id' => $visitContext['patient_id'],
                 'id_review' => $deleteReviewFormRequest->reviewId,
                 'reason' => $deleteReviewFormRequest->reason
             ];
@@ -75,18 +79,18 @@ class DeleteReviewForm {
             $this->trackerRepositoryInterface->writeAction(
                 $deleteReviewFormRequest->currentUserId,
                 Constants::ROLE_SUPERVISOR,
-                $reviewEntity['study_name'],
-                $reviewEntity['visit_id'],
+                $studyName,
+                $visitId,
                 Constants::TRACKER_DELETE_REVIEW_FORM,
                 $actionDetails);
 
             //send Email notification to review owner
             $this->mailServices->sendDeleteFormMessage(
-                $reviewEntity['visit_id'],
+                $visitId,
                 false,
                 $reviewEntity['user_id'],
-                $reviewEntity['study_name'],
-                $visitContext['patient_code'],
+                $studyName,
+                $visitContext['patient_id'],
                 $visitContext['visit_type']['name'] );
 
             $deleteReviewFormResponse->status = 200;
@@ -108,9 +112,9 @@ class DeleteReviewForm {
         if($local){
             throw new GaelOForbiddenException();
         }
-        $this->authorizationReviewService->setCurrentUserAndRole($currentUserId, Constants::ROLE_SUPERVISOR);
+        $this->authorizationReviewService->setUserId($currentUserId);
         $this->authorizationReviewService->setReviewId($reviewId);
-        if( !$this->authorizationReviewService->isReviewAllowed() ) {
+        if( !$this->authorizationReviewService->isReviewAllowed(Constants::ROLE_SUPERVISOR) ) {
             throw new GaelOForbiddenException();
         }
     }

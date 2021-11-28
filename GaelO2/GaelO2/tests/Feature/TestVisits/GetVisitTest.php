@@ -35,7 +35,7 @@ class GetVisitTest extends TestCase
 
     private function createVisitInDb(){
         $patient = Patient::factory()->create();
-        $visit = Visit::factory()->patientCode($patient->code)->create();
+        $visit = Visit::factory()->patientId($patient->id)->create();
         ReviewStatus::factory()->studyName($patient->study_name)->visitId($visit->id)->create();
         return $visit;
     }
@@ -60,7 +60,7 @@ class GetVisitTest extends TestCase
     public function testGetVisitForbiddenNoRole(){
 
         $visit= $this->createVisitInDb();
-        $studyName = $visit->visitType->visitGroup->study_name;
+        $studyName = $visit->patient->study_name;
 
         AuthorizationTools::actAsAdmin(false);
         $this->json('GET', 'api/studies/'.$studyName.'/visits/'.$visit->id.'?role=Investigator')->assertStatus(403);
@@ -70,7 +70,7 @@ class GetVisitTest extends TestCase
 
         $patient = Patient::factory()->create();
         $studyName = $patient->study->name;
-        $visit = Visit::factory()->patientCode($patient->code)->count(5)->create();
+        $visit = Visit::factory()->patientId($patient->id)->count(5)->create();
 
         $currentUserId = AuthorizationTools::actAsAdmin(false);
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_INVESTIGATOR, $studyName);
@@ -82,7 +82,7 @@ class GetVisitTest extends TestCase
             ReviewStatus::factory()->visitId($visit->id)->studyName($studyName)->create();
         });
 
-        $resp = $this->json('GET', 'api/studies/'.$studyName.'/patients/'.$patient->code.'/visits?role=Investigator');
+        $resp = $this->json('GET', 'api/studies/'.$studyName.'/patients/'.$patient->id.'/visits?role=Investigator');
 
         $resp->assertStatus(200);
         $patientArray = json_decode($resp->content(), true);
@@ -95,7 +95,7 @@ class GetVisitTest extends TestCase
 
         $patient = Patient::factory()->create();
         $studyName = $patient->study->name;
-        $visit = Visit::factory()->patientCode($patient->code)->count(5)->create();
+        $visit = Visit::factory()->patientId($patient->id)->count(5)->create();
 
         AuthorizationTools::actAsAdmin(false);
 
@@ -103,7 +103,7 @@ class GetVisitTest extends TestCase
             ReviewStatus::factory()->visitId($visit->id)->studyName($studyName)->create();
         });
 
-        $resp = $this->json('GET', 'api/studies/'.$studyName.'/patients/'.$patient->code.'/visits?role=Investigator');
+        $resp = $this->json('GET', 'api/studies/'.$studyName.'/patients/'.$patient->id.'/visits?role=Investigator');
         $resp->assertStatus(403);
     }
 

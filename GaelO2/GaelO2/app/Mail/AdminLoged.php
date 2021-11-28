@@ -21,10 +21,6 @@ class AdminLoged extends Mailable implements ShouldQueue
     public function __construct(array $parameters)
     {
         $this->parameters = $parameters;
-        /*
-        array('username'=> '',
-        'remoteAddress'=> '')
-        */
     }
 
     /**

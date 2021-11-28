@@ -7,7 +7,7 @@ use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
-use App\GaelO\Services\AuthorizationVisitService;
+use App\GaelO\Services\AuthorizationService\AuthorizationVisitService;
 use Exception;
 
 class ModifyVisitDate {
@@ -31,16 +31,16 @@ class ModifyVisitDate {
             $currentUserId = $modifyVisitDateRequest->currentUserId;
             $newVisitDate = $modifyVisitDateRequest->visitDate;
 
-            $this->checkAuthorization($currentUserId, $visitId);
-
             $visitContext = $this->visitRepositoryInterface->getVisitContext($visitId);
-            $studyName = $visitContext['visit_type']['visit_group']['study_name'];
+            $studyName = $visitContext['patient']['study_name'];
+          
+            $this->checkAuthorization($currentUserId, $visitId, $studyName);
 
             //update visit Date in db
             $this->visitRepositoryInterface->updateVisitDate($visitId, $newVisitDate);
 
             $actionsDetails = [
-                'patientCode'=>$visitContext['patient_code'],
+                'patientId'=>$visitContext['patient_id'],
                 'modality' => $visitContext['visit_type']['visit_group']['modality'],
                 'visitType' => $visitContext['visit_type']['name'],
                 'previousDate' =>$visitContext['visit_date'],
@@ -71,11 +71,13 @@ class ModifyVisitDate {
         };
     }
 
-    private function checkAuthorization(int $userId, int $visitId){
+    private function checkAuthorization(int $userId, int $visitId, string $studyName){
 
-        $this->authorizationVisitService->setCurrentUserAndRole($userId, Constants::ROLE_SUPERVISOR);
+        $this->authorizationVisitService->setUserId($userId);
         $this->authorizationVisitService->setVisitId($visitId);
-        if(!$this->authorizationVisitService->isVisitAllowed()){
+        $this->authorizationVisitService->setStudyName($studyName);
+
+        if(!$this->authorizationVisitService->isVisitAllowed(Constants::ROLE_SUPERVISOR)){
             throw new GaelOForbiddenException();
         }
 

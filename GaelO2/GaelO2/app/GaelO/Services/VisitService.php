@@ -61,7 +61,7 @@ class VisitService
     public function createVisit(
         string $studyName,
         int $creatorUserId,
-        int $patientCode,
+        string $patientId,
         ?string $visitDate,
         int $visitTypeId,
         string $statusDone,
@@ -80,7 +80,7 @@ class VisitService
         $visitId = $this->visitRepository->createVisit(
             $studyName,
             $creatorUserId,
-            $patientCode,
+            $patientId,
             $visitDate,
             $visitTypeId,
             $statusDone,
@@ -129,15 +129,15 @@ class VisitService
     {
         //If uploaded done and investigator done (Done or Not Needed) send notification message
         $visitEntity = $this->visitRepository->getVisitContext($this->visitId);
-        $patientCode = $visitEntity['patient_code'];
-        $study = $visitEntity['visit_type']['visit_group']['study_name'];
+        $patientId = $visitEntity['patient_id'];
+        $study = $visitEntity['patient']['study_name'];
         $visitType = $visitEntity['visit_type']['name'];
         $qcNeeded = $visitEntity['visit_type']['qc_needed'];
 
-        $this->mailServices->sendUploadedVisitMessage($this->visitId, $visitEntity['creator_user_id'], $study, $patientCode, $visitType, $qcNeeded);
+        $this->mailServices->sendUploadedVisitMessage($this->visitId, $visitEntity['creator_user_id'], $study, $patientId, $visitType, $qcNeeded);
         //If Qc NotNeeded mark visit as available for review
         if (!$qcNeeded) {
-            $this->updateReviewAvailability(true, $study, $patientCode, $visitType);
+            $this->updateReviewAvailability(true, $study, $patientId, $visitType);
         }
     }
 
@@ -145,11 +145,11 @@ class VisitService
      * Update review status of visit
      * if change to available, send notification message to reviewers
      */
-    public function updateReviewAvailability(bool $available, string $study, int $patientCode, string $visitType)
+    public function updateReviewAvailability(bool $available, string $study, string $patientId, string $visitType)
     {
         $this->reviewStatusRepository->updateReviewAvailability($this->visitId, $study, $available);
         if ($available) {
-            $this->mailServices->sendAvailableReviewMessage($this->visitId, $study, $patientCode, $visitType);
+            $this->mailServices->sendAvailableReviewMessage($this->visitId, $study, $patientId, $visitType);
         }
     }
 
@@ -160,7 +160,7 @@ class VisitService
         $visitEntity = $this->visitRepository->getVisitContext($this->visitId);
         $localFormNeeded = $visitEntity['visit_type']['local_form_needed'];
         $reviewNeeded = $visitEntity['visit_type']['review_needed'];
-        $studyName = $visitEntity['visit_type']['visit_group']['study_name'];
+        $studyName = $visitEntity['patient']['study_name'];
 
         $this->visitRepository->editQc($this->visitId, $stateQc, $controllerId, $imageQc, $formQc, $imageQcComment, $formQcComment);
 
@@ -179,7 +179,7 @@ class VisitService
     public function resetQc(): void
     {
         $visitEntity = $this->visitRepository->getVisitContext($this->visitId);
-        $studyName = $visitEntity['visit_type']['visit_group']['study_name'];
+        $studyName = $visitEntity['patient']['study_name'];
         $this->visitRepository->resetQc($this->visitId);
         $this->reviewStatusRepository->updateReviewAvailability($this->visitId, $studyName , false);
     }

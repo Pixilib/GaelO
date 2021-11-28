@@ -9,7 +9,8 @@ class Patient extends Model
 {
     use HasFactory;
 
-    protected $primaryKey = 'code';
+    protected $primaryKey = 'id';
+    protected $keyType = 'string';
     public $incrementing = false;
 
     public function center(){
@@ -21,6 +22,6 @@ class Patient extends Model
     }
 
     public function visits(){
-        return $this->hasMany(Visit::class, 'patient_code', 'code');
+        return $this->hasMany(Visit::class, 'patient_id', 'id');
     }
 }

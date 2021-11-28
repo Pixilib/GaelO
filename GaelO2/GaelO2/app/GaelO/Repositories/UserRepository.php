@@ -42,13 +42,12 @@ class UserRepository implements UserRepositoryInterface {
         return empty($users) ? [] : $users->toArray();
     }
 
-    public function createUser( String $username, String $lastname, String $firstname, String $status,
+    public function createUser( String $lastname, String $firstname, String $status,
                                 String $email, ?String $phone, bool $administrator, int $centerCode, String $job,
                                 ?String $orthancAdress, ?String $orthancLogin, ?String $orthancPassword,
                                 String $passwordTemporary ) : array {
 
         $user = new User();
-        $user->username = $username;
         $user->lastname = $lastname;
         $user->firstname = $firstname;
         $user->status = $status;
@@ -69,13 +68,12 @@ class UserRepository implements UserRepositoryInterface {
 
     }
 
-    public function updateUser(int $id, String $username, ?String $lastname, ?String $firstname, String $status,
+    public function updateUser(int $id, ?String $lastname, ?String $firstname, String $status,
                                 String $email, ?String $phone, bool $administrator, int $centerCode, String $job,
                                 ?String $orthancAdress, ?String $orthancLogin, ?String $orthancPassword,
                                 ?String $passwordTemporary) : void {
 
         $user = $this->user->findOrFail($id);
-        $user->username = $username;
         $user->lastname = $lastname;
         $user->firstname = $firstname;
         $user->status = $status;
@@ -127,21 +125,15 @@ class UserRepository implements UserRepositoryInterface {
         $user->save();
     }
 
-    public function getUserByUsername(String $username, bool $withTrashed = false) : array {
+    public function getUserByEmail(String $email, bool $withTrashed = false) : array {
         if($withTrashed){
-            $user = $this->user->withTrashed()->where('username', $username)->sole();
+            $user = $this->user->withTrashed()->where('email', $email)->sole();
         }else{
-            $user = $this->user->where('username', $username)->sole();
+            $user = $this->user->where('email', $email)->sole();
         }
 
         return $user->toArray();
     }
-
-    public function isExistingUsername(String $username) : bool {
-        $user = $this->user->withTrashed()->where('username', $username);
-        return $user->count() > 0 ? true : false;
-    }
-
 
     public function isExistingEmail(String $email) : bool {
         $user = $this->user->withTrashed()->where('email', $email);

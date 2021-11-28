@@ -33,7 +33,7 @@ class GetVisitToCreateTest extends TestCase
     {
         parent::setUp();
 
-        $this->study = factory(Study::class)->create(['patient_code_prefix' => 1234]);
+        $this->study = factory(Study::class)->create(['code' => '1234']);
 
         $this->patient = factory(Patient::class)->create(['study_name' => $this->study->name, 'inclusion_status'=>Constants::PATIENT_INCLUSION_STATUS_INCLUDED, 'center_code' => 0]);
 
@@ -61,7 +61,7 @@ class GetVisitToCreateTest extends TestCase
 
 
         //$this->createVisit(Constants::INVESTIGATOR_FORM_DONE, true, true, true);
-        $visitToCreate = $this->visitService->getAvailableVisitToCreate($this->patient->code );
+        $visitToCreate = $this->visitService->getAvailableVisitToCreate($this->patient->id );
         $this->assertEquals(2, sizeof($visitToCreate['CT']));
         $this->assertEquals(3, sizeof($visitToCreate['PT']));
     }
@@ -69,7 +69,7 @@ class GetVisitToCreateTest extends TestCase
     public function testGetVisitToCreateEmptyBecauseNotIncluded(){
         $this->patient['inclusion_status'] = Constants::PATIENT_INCLUSION_STATUS_WITHDRAWN;
         $this->patient->save();
-        $visitToCreate = $this->visitService->getAvailableVisitToCreate($this->patient->code );
+        $visitToCreate = $this->visitService->getAvailableVisitToCreate($this->patient->id );
         $this->assertEquals(0, sizeof($visitToCreate));
     }
 
@@ -79,7 +79,7 @@ class GetVisitToCreateTest extends TestCase
         $visit = factory(Visit::class)->create(
             [
                 'creator_user_id' => 1,
-                'patient_code' => $this->patient->code,
+                'patient_id' => $this->patient->id,
                 'visit_type_id' => $this->visitType->first()->id,
             ]
         );
@@ -91,7 +91,7 @@ class GetVisitToCreateTest extends TestCase
             ]
         );
 
-        $visitToCreate = $this->visitService->getAvailableVisitToCreate($this->patient->code );
+        $visitToCreate = $this->visitService->getAvailableVisitToCreate($this->patient->id );
         $this->assertEquals(1, sizeof($visitToCreate['CT']));
         $this->assertEquals(3, sizeof($visitToCreate['PT']));
 

@@ -47,7 +47,7 @@ class DicomStudyEntity
     public function addPatientDetails(array $patientData): void
     {
         $this->patient = new PatientEntity();
-        $this->patient->code = $patientData['code'];
+        $this->patient->id = $patientData['id'];
         $this->patient->centerCode = $patientData['center_code'];
         $this->patient->inclusionStatus = $patientData['inclusion_status'];
     }
@@ -67,6 +67,7 @@ class DicomStudyEntity
     public function addUploaderDetails(array $userDetails): void
     {
         $this->uploader = new UserEntity();
-        $this->uploader->username = $userDetails['username'];
+        $this->uploader->lastname = $userDetails['lastname'];
+        $this->uploader->firstname = $userDetails['firstname'];
     }
 }

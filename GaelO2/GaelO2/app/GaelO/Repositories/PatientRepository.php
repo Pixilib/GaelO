@@ -21,12 +21,12 @@ class PatientRepository implements PatientRepositoryInterface {
         $patient->save();
     }
 
-    public function find($code) : array {
-        return $this->patient->findOrFail($code)->toArray();
+    public function find($id) : array {
+        return $this->patient->findOrFail($id)->toArray();
     }
 
-    public function getAllPatientsCode() : array {
-        return $this->patient->select('code')->get()->pluck('code')->toArray();
+    public function getAllPatientsNumberInStudy(string $studyName) : array {
+        return $this->patient->where('study_name', $studyName)->select('code')->get()->pluck('code')->toArray();
     }
 
     public function getPatientWithCenterDetails(int $code) : array {
@@ -51,20 +51,21 @@ class PatientRepository implements PatientRepositoryInterface {
     /**
      * @param $patients expected array of Patient Entity
      */
-    public function addPatientInStudy(PatientEntity $patientEntity, String $studyName) : void {
+    public function addPatientInStudy(string $id, string $code, string $lastname, string $firstname, string $gender, int $birthDay, int $birthMonth, int $birthYear, string $registrationDate, string $investigatorName, int $centerCode, String $studyName) : void {
 
         $patient = new Patient();
-        $patient->code = $patientEntity->code;
-        $patient->lastname = $patientEntity->lastname;
-        $patient->firstname = $patientEntity->firstname;
-        $patient->gender = $patientEntity->gender;
-        $patient->birth_day = $patientEntity->birthDay;
-        $patient->birth_month = $patientEntity->birthMonth;
-        $patient->birth_year = $patientEntity->birthYear;
+        $patient->id = $id;
+        $patient->code = $code;
+        $patient->lastname = $lastname;
+        $patient->firstname = $firstname;
+        $patient->gender = $gender;
+        $patient->birth_day = $birthDay;
+        $patient->birth_month = $birthMonth;
+        $patient->birth_year = $birthYear;
         $patient->study_name = $studyName;
-        $patient->registration_date = $patientEntity->registrationDate;
-        $patient->investigator_name = $patientEntity->investigatorName;
-        $patient->center_code = $patientEntity->centerCode;
+        $patient->registration_date = $registrationDate;
+        $patient->investigator_name = $investigatorName;
+        $patient->center_code = $centerCode;
         $patient->save();
     }
 

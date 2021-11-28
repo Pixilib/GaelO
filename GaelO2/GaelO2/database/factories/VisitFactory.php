@@ -19,7 +19,7 @@ class VisitFactory extends Factory
         return [
             'creator_user_id' => User::factory()->create()->id,
             'creation_date'=> Util::now(),
-            'patient_code'=> Patient::factory()->create()->code,
+            'patient_id'=> Patient::factory()->create()->id,
             'visit_date'=> Util::now(),
             'visit_type_id'=> VisitType::factory()->create()->id,
             'status_done'=> 'Done',
@@ -52,11 +52,11 @@ class VisitFactory extends Factory
         });
     }
 
-    public function patientCode(int $patientCode){
+    public function patientId(string $patientId){
 
-        return $this->state(function (array $attributes) use ($patientCode) {
+        return $this->state(function (array $attributes) use ($patientId) {
             return [
-                'patient_code' => $patientCode
+                'patient_id' => $patientId
             ];
         });
     }
@@ -123,7 +123,7 @@ class VisitFactory extends Factory
             $studyName = $visitType->visitGroup->study->name;
             $patient = Patient::factory()->studyName($studyName)->create();
             //Assign visit to a common study for VisitType and PatientCode
-            $visit->patient_code = ($patient->code);
+            $visit->patient_id = ($patient->id);
             $visit->visit_type_id = ($visitType->id);
             */
         })->afterCreating(function (Visit $visit) {

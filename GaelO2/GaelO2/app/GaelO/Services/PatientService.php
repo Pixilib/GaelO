@@ -13,7 +13,7 @@ class PatientService
     private VisitRepositoryInterface $visitRepositoryInterface;
     private StudyRepositoryInterface $studyRepositoryInterface;
 
-    private int $patientCode;
+    private string $patientId;
 
     public function __construct(PatientRepositoryInterface $patientRepositoryInterface, VisitRepositoryInterface $visitRepositoryInterface, StudyRepositoryInterface $studyRepositoryInterface)
     {
@@ -22,16 +22,16 @@ class PatientService
         $this->studyRepositoryInterface = $studyRepositoryInterface;
     }
 
-    public function setPatientCode(int $patientCode): void
+    public function setPatientCode(string $patientId): void
     {
-        $this->patientCode = $patientCode;
+        $this->patientId = $patientId;
     }
 
 
     public function getAvailableVisitToCreate(): array
     {
 
-        $patientEntity = $this->patientRepositoryInterface->find($this->patientCode);
+        $patientEntity = $this->patientRepositoryInterface->find($this->patientId);
 
         //If Patient status different from Included, No further visit creation is possible
         if ($patientEntity['inclusion_status'] !== Constants::PATIENT_INCLUSION_STATUS_INCLUDED) {
@@ -39,14 +39,13 @@ class PatientService
         }
 
         //Get Created Patients Visits
-        $createdVisitsArray = $this->visitRepositoryInterface->getPatientsVisits($this->patientCode);
+        $createdVisitsArray = $this->visitRepositoryInterface->getPatientsVisits($this->patientId);
 
         $createdVisitMap = [];
 
         //Build array of Created visit Order indexed by visit group name
         foreach ($createdVisitsArray as $createdVisit) {
             $visitOrder = $createdVisit['visit_type']['order'];
-            $modality = $createdVisit['visit_type']['visit_group']['modality'];
             $visitGroupName = $createdVisit['visit_type']['visit_group']['name'];
             $createdVisitMap[$visitGroupName][] = $visitOrder;
         }

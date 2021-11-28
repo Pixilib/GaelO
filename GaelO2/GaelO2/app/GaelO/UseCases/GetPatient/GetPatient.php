@@ -7,7 +7,7 @@ use App\GaelO\Entities\PatientEntity;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\PatientRepositoryInterface;
-use App\GaelO\Services\AuthorizationPatientService;
+use App\GaelO\Services\AuthorizationService\AuthorizationPatientService;
 use App\GaelO\UseCases\GetPatient\GetPatientRequest;
 use App\GaelO\UseCases\GetPatient\GetPatientResponse;
 use Exception;
@@ -15,19 +15,19 @@ use Exception;
 class GetPatient {
 
     private PatientRepositoryInterface $patientRepositoryInterface;
-    private AuthorizationPatientService $authorizationService;
+    private AuthorizationPatientService $authorizationPatientService;
 
-    public function __construct(PatientRepositoryInterface $patientRepositoryInterface, AuthorizationPatientService $authorizationService){
+    public function __construct(PatientRepositoryInterface $patientRepositoryInterface, AuthorizationPatientService $authorizationPatientService){
         $this->patientRepositoryInterface = $patientRepositoryInterface;
-        $this->authorizationService = $authorizationService;
+        $this->authorizationPatientService = $authorizationPatientService;
     }
 
     public function execute(GetPatientRequest $getPatientRequest, GetPatientResponse $getPatientResponse) : void
     {
         try{
-            $code = $getPatientRequest->code;
+            $code = $getPatientRequest->id;
 
-            $this->checkAuthorization($getPatientRequest->currentUserId, $getPatientRequest->role, $code );
+            $this->checkAuthorization($getPatientRequest->currentUserId, $getPatientRequest->role, $code, $getPatientRequest->studyName );
             $dbData = $this->patientRepositoryInterface->getPatientWithCenterDetails($code);
 
             $responseEntity = PatientEntity::fillFromDBReponseArray($dbData);
@@ -56,10 +56,11 @@ class GetPatient {
 
     }
 
-    private function checkAuthorization(int $currentUserid, string $role, int $patientCode ){
-        $this->authorizationService->setCurrentUserAndRole($currentUserid, $role);
-        $this->authorizationService->setPatient($patientCode);
-        if( ! $this->authorizationService->isPatientAllowed() ){
+    private function checkAuthorization(int $currentUserid, string $role, string $patientId, string $studyName ){
+        $this->authorizationPatientService->setUserId($currentUserid);
+        $this->authorizationPatientService->setPatientId($patientId);
+        $this->authorizationPatientService->setStudyName($studyName);
+        if( ! $this->authorizationPatientService->isPatientAllowed($role) ){
             throw new GaelOForbiddenException();
         };
 

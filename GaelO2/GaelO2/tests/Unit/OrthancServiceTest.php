@@ -9,6 +9,7 @@ use Tests\TestCase;
 
 class OrthancServiceTest extends TestCase
 {
+    private OrthancService $orthancService;
 
     protected function setUp(): void
     {
@@ -97,6 +98,7 @@ class OrthancServiceTest extends TestCase
             $testingOrthancStudyID,
             Constants::ORTHANC_ANON_PROFILE_DEFAULT,
             "code",
+            "id",
             "visit",
             "study"
         );

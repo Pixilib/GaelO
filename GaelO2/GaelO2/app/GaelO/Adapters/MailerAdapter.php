@@ -97,9 +97,6 @@ class MailerAdapter implements MailerInterface {
             case MailConstants::EMAIL_UNLOCK_FORM:
                 $model = new UnlockedForm($this->parameters);
                 break;
-            case MailConstants::EMAIL_UNCONFIRMED_ACCOUNT:
-                $model = new UnconfirmedAccount($this->parameters);
-                break;
             case MailConstants::EMAIL_REVIEW_READY:
                 $model = new ReviewReady($this->parameters);
                 break;

@@ -4,7 +4,7 @@ namespace App\GaelO\UseCases\ModifyPatient;
 
 class ModifyPatientRequest {
     public int $currentUserId;
-    public int $patientCode;
+    public string $patientId;
     public string $reason;
     public ?string $firstname=null;
     public ?string $lastname=null;

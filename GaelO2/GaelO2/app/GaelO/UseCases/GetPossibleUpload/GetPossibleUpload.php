@@ -7,7 +7,7 @@ use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\UserRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
-use App\GaelO\Services\AuthorizationService;
+use App\GaelO\Services\AuthorizationService\AuthorizationStudyService;
 use Exception;
 
 class GetPossibleUpload
@@ -15,13 +15,13 @@ class GetPossibleUpload
 
     private VisitRepositoryInterface $visitRepositoryInterface;
     private UserRepositoryInterface $userRepositoryInterface;
-    private AuthorizationService $authorizationService;
+    private AuthorizationStudyService $authorizationStudyService;
 
-    public function __construct(AuthorizationService $authorizationService,  VisitRepositoryInterface $visitRepositoryInterface, UserRepositoryInterface $userRepositoryInterface)
+    public function __construct(AuthorizationStudyService $authorizationStudyService,  VisitRepositoryInterface $visitRepositoryInterface, UserRepositoryInterface $userRepositoryInterface)
     {
         $this->visitRepositoryInterface = $visitRepositoryInterface;
         $this->userRepositoryInterface = $userRepositoryInterface;
-        $this->authorizationService = $authorizationService;
+        $this->authorizationStudyService = $authorizationStudyService;
     }
 
     public function execute(GetPossibleUploadRequest $getPossibleUploadRequest, GetPossibleUploadResponse $getPossibleUploadResponse)
@@ -36,7 +36,7 @@ class GetPossibleUpload
             $answerArray = [];
 
             foreach ($visitsEntities as $visit) {
-                $item['patientCode'] = $visit['patient_code'];
+                $item['patientId'] = $visit['patient_id'];
                 $item['patientFirstname'] = $visit['patient']['firstname'];
                 $item['patientLastname'] = $visit['patient']['lastname'];
                 $item['patientSex'] = $visit['patient']['gender'];
@@ -69,8 +69,9 @@ class GetPossibleUpload
 
     private function checkAuthorization(int $userId, string $studyName) : void
     {
-        $this->authorizationService->setCurrentUserAndRole($userId, Constants::ROLE_INVESTIGATOR);
-        if( ! $this->authorizationService->isRoleAllowed($studyName) ){
+        $this->authorizationStudyService->setUserId($userId);
+        $this->authorizationStudyService->setStudyName($studyName);
+        if( ! $this->authorizationStudyService->isAllowedStudy(Constants::ROLE_INVESTIGATOR) ){
             throw new GaelOForbiddenException();
         };
     }

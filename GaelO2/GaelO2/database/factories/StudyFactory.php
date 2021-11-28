@@ -11,7 +11,8 @@ class StudyFactory extends Factory
     {
         return [
             'name' => $this->faker->unique()->regexify('[A-Z0-9]{20}'),
-            'patient_code_prefix' => $this->faker->randomNumber(5),
+            'code' => $this->faker->unique()->randomNumber(5),
+            'patient_code_length' => $this->faker->randomNumber(5)
         ];
     }
 
@@ -24,11 +25,20 @@ class StudyFactory extends Factory
         });
     }
 
-    public function patientCodePrefix(int $prefix){
+    public function patientCodeLength(int $length){
 
-        return $this->state(function (array $attributes) use($prefix) {
+        return $this->state(function (array $attributes) use($length) {
             return [
-                'patient_code_prefix' => $prefix,
+                'patient_code_length' => $length
+            ];
+        });
+    }
+
+    public function code(string $code){
+
+        return $this->state(function (array $attributes) use($code) {
+            return [
+                'code' => $code,
             ];
         });
 

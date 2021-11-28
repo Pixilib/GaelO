@@ -15,10 +15,11 @@ class CreateStudiesTable extends Migration
     {
         Schema::create('studies', function (Blueprint $table) {
             $table->string('name')->primary();
+            $table->string('code')->unique()->nullable(false);
+            $table->integer('patient_code_length')->nullable(false);
             $table->string('ancillary_of')->default(null)->nullable(true);
-            $table->string('patient_code_prefix')->default(null);
 
-            $table->unique(['name']);
+            $table->unique('name');
             $table->foreign('ancillary_of')->references('name')->on('studies');
             $table->softDeletes();
             $table->timestamps();

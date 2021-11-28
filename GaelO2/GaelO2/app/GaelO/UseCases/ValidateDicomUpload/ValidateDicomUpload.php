@@ -6,8 +6,9 @@ use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Exceptions\GaelOValidateDicomException;
+use App\GaelO\Interfaces\Repositories\PatientRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
-use App\GaelO\Services\AuthorizationVisitService;
+use App\GaelO\Services\AuthorizationService\AuthorizationVisitService;
 use App\GaelO\Services\MailServices;
 use App\GaelO\Services\OrthancService;
 use App\GaelO\Services\RegisterDicomStudyService;
@@ -24,6 +25,7 @@ class ValidateDicomUpload{
     private OrthancService $orthancService;
     private RegisterDicomStudyService $registerDicomStudyService;
     private VisitService $visitService;
+    private PatientRepositoryInterface $patientRepositoryInterface;
     private TrackerRepositoryInterface $trackerRepositoryInterface;
     private MailServices $mailServices;
 
@@ -32,6 +34,7 @@ class ValidateDicomUpload{
                         OrthancService $orthancService,
                         RegisterDicomStudyService $registerDicomStudyService,
                         VisitService $visitService,
+                        PatientRepositoryInterface $patientRepositoryInterface,
                         TrackerRepositoryInterface $trackerRepositoryInterface,
                         MailServices $mailServices)
     {
@@ -40,6 +43,7 @@ class ValidateDicomUpload{
         $this->orthancService = $orthancService;
         $this->visitService = $visitService;
         $this->tusService = $tusService;
+        $this->patientRepositoryInterface = $patientRepositoryInterface;
         $this->trackerRepositoryInterface = $trackerRepositoryInterface;
         $this->mailServices = $mailServices;
     }
@@ -50,15 +54,17 @@ class ValidateDicomUpload{
             //Retrieve Visit Context
             $this->visitService->setVisitId($validateDicomUploadRequest->visitId);
             $visitEntity = $this->visitService->getVisitContext();
-            $patientCode = $visitEntity['patient_code'];
+            $patientId = $visitEntity['patient_id'];
+            $patientEntity = $this->patientRepositoryInterface->find($patientId);
+            $patientCode = $patientEntity['code'];
+            //$patientCode = $visitEntity['patient_id'];
             $uploadStatus = $visitEntity['upload_status'];
-            $studyName = $visitEntity['visit_type']['visit_group']['study_name'];
+            $studyName = $visitEntity['patient']['study_name'];
             $visitType = $visitEntity['visit_type']['name'];
-            $visitGroup =  $visitEntity['visit_type']['visit_group']['modality'];
             $anonProfile = $visitEntity['visit_type']['anon_profile'];
 
             //TODO Authorization : Check Investigator Role, and patient is in affiliated center of user, and status upload not done, and visit status done
-            $this->checkAuthorization($validateDicomUploadRequest->currentUserId, $validateDicomUploadRequest->visitId, $uploadStatus);
+            $this->checkAuthorization($validateDicomUploadRequest->currentUserId, $validateDicomUploadRequest->visitId, $uploadStatus, $studyName);
             //Make Visit as being upload processing
             $this->visitService->updateUploadStatus(Constants::UPLOAD_STATUS_PROCESSING);
 
@@ -98,6 +104,7 @@ class ValidateDicomUpload{
             $anonymizedOrthancStudyID=$this->orthancService->anonymize($importedOrthancStudyID,
                                         $anonProfile,
                                         $patientCode,
+                                        $patientId,
                                         $visitType,
                                         $studyName);
 
@@ -149,7 +156,7 @@ class ValidateDicomUpload{
 
         } catch (GaelOException $e){
             $this->handleImportException($e->getMessage(), $validateDicomUploadRequest->visitId,
-                        $patientCode, $visitType, $unzipedPath, $studyName, $validateDicomUploadRequest->currentUserId);
+                        $patientId, $visitType, $unzipedPath, $studyName, $validateDicomUploadRequest->currentUserId);
 
             $validateDicomUploadResponse->status = $e->statusCode;
             $validateDicomUploadResponse->statusText = $e->statusText;
@@ -158,18 +165,20 @@ class ValidateDicomUpload{
         } catch (Exception $e){
 
             $this->handleImportException($e->getMessage(), $validateDicomUploadRequest->visitId,
-                        $patientCode, $visitType, $unzipedPath, $studyName, $validateDicomUploadRequest->currentUserId);
+                        $patientId, $visitType, $unzipedPath, $studyName, $validateDicomUploadRequest->currentUserId);
 
             throw $e;
         }
 
     }
 
-    private function checkAuthorization(int $currentUserId, int $visitId, string $uploadStatus ) : void {
+    private function checkAuthorization(int $currentUserId, int $visitId, string $uploadStatus, string $studyName ) : void {
 
-        $this->authorizationService->setCurrentUserAndRole($currentUserId, Constants::ROLE_INVESTIGATOR );
+        $this->authorizationService->setUserId($currentUserId);
+
+        $this->authorizationService->setStudyName($studyName);
         $this->authorizationService->setVisitId($visitId);
-        if( ! $this->authorizationService->isVisitAllowed() || $uploadStatus !== Constants::UPLOAD_STATUS_NOT_DONE){
+        if( ! $this->authorizationService->isVisitAllowed( Constants::ROLE_INVESTIGATOR ) || $uploadStatus !== Constants::UPLOAD_STATUS_NOT_DONE){
             throw new GaelOForbiddenException();
         };
 
@@ -222,7 +231,7 @@ class ValidateDicomUpload{
      * Write Failure in Tracker
      * Send warning emails to administrators
      */
-    private function handleImportException(string $errorMessage, int $visitId, string $patientCode, string $visitType,  string $unzipedPath, string $studyName, int $userId) {
+    private function handleImportException(string $errorMessage, int $visitId, string $patientId, string $visitType,  string $unzipedPath, string $studyName, int $userId) {
 
         $this->visitService->updateUploadStatus(Constants::UPLOAD_STATUS_NOT_DONE);
 
@@ -231,7 +240,7 @@ class ValidateDicomUpload{
         ];
         $this->trackerRepositoryInterface->writeAction($userId, Constants::ROLE_INVESTIGATOR, $studyName, $visitId, Constants::TRACKER_UPLOAD_VALIDATION_FAILED, $actionDetails);
 
-        $this->mailServices->sendValidationFailMessage($visitId, $patientCode, $visitType,
+        $this->mailServices->sendValidationFailMessage($visitId, $patientId, $visitType,
                 $studyName, $unzipedPath, $userId, $errorMessage);
 
         if(is_dir($unzipedPath)) Util::recursiveDirectoryDelete($unzipedPath);

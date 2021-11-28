@@ -50,12 +50,13 @@ use Illuminate\Support\Facades\Auth;
 
 class ReviewController extends Controller
 {
-    public function getInvestigatorForm(int $visitId, Request $request, GetInvestigatorForm $getInvestigatorForm, GetInvestigatorFormRequest $getInvestigatorFormRequest, GetInvestigatorFormResponse $getInvestigatorFormResponse)
+    public function getInvestigatorForm(string $studyName, int $visitId, Request $request, GetInvestigatorForm $getInvestigatorForm, GetInvestigatorFormRequest $getInvestigatorFormRequest, GetInvestigatorFormResponse $getInvestigatorFormResponse)
     {
 
         $curentUser = Auth::user();
         $getInvestigatorFormRequest->currentUserId = $curentUser['id'];
         $getInvestigatorFormRequest->visitId = $visitId;
+        $getInvestigatorFormRequest->studyName = $studyName;
 
         $queryParam = $request->query();
         $getInvestigatorFormRequest->role = $queryParam['role'];
@@ -160,7 +161,6 @@ class ReviewController extends Controller
 
     public function getReviewForm(int $reviewId, GetReviewForm $getReviewForm, GetReviewFormRequest $getReviewFormRequest, GetReviewFormResponse $getReviewFormResponse)
     {
-
         $curentUser = Auth::user();
         $getReviewFormRequest->currentUserId = $curentUser['id'];
         $getReviewFormRequest->reviewId = $reviewId;
@@ -170,13 +170,17 @@ class ReviewController extends Controller
         return $this->getJsonResponse($getReviewFormResponse->body, $getReviewFormResponse->status, $getReviewFormResponse->statusText);
     }
 
-    public function getReviewsFromVisit(string $studyName, int $visitId, GetReviewFormFromVisit $getReviewFormFromVisit, GetReviewFormFromVisitRequest $getReviewFormFromVisitRequest, GetReviewFormFromVisitResponse $getReviewFormFromVisitResponse)
+    public function getReviewsFromVisit(Request $request, string $studyName, int $visitId, GetReviewFormFromVisit $getReviewFormFromVisit, GetReviewFormFromVisitRequest $getReviewFormFromVisitRequest, GetReviewFormFromVisitResponse $getReviewFormFromVisitResponse)
     {
         $curentUser = Auth::user();
 
         $getReviewFormFromVisitRequest->currentUserId = $curentUser['id'];
         $getReviewFormFromVisitRequest->studyName = $studyName;
         $getReviewFormFromVisitRequest->visitId = $visitId;
+
+        $queryParam = $request->query();
+
+        if( array_key_exists('userId', $queryParam) ) $getReviewFormFromVisitRequest->userId = $queryParam['userId'];
 
         $getReviewFormFromVisit->execute($getReviewFormFromVisitRequest, $getReviewFormFromVisitResponse);
 

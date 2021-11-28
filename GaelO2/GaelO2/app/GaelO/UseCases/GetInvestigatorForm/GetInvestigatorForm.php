@@ -6,33 +6,29 @@ use App\GaelO\Entities\ReviewEntity;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\ReviewRepositoryInterface;
-use App\GaelO\Interfaces\Repositories\UserRepositoryInterface;
-use App\GaelO\Services\AuthorizationVisitService;
+use App\GaelO\Services\AuthorizationService\AuthorizationVisitService;
 use Exception;
 
 class GetInvestigatorForm{
 
     private AuthorizationVisitService $authorizationVisitService;
     private ReviewRepositoryInterface $reviewRepositoryInterface;
-    private UserRepositoryInterface $userRepositoryInterface;
 
-    //SK AJOUTER LA POSSIBILITE DE VOIR LES REVIEW DELETED PAR LE SUPERVISOR ?
-    public function __construct(ReviewRepositoryInterface $reviewRepositoryInterface, AuthorizationVisitService $authorizationVisitService, UserRepositoryInterface $userRepositoryInterface)
+    public function __construct(ReviewRepositoryInterface $reviewRepositoryInterface, AuthorizationVisitService $authorizationVisitService)
     {
         $this->reviewRepositoryInterface = $reviewRepositoryInterface;
         $this->authorizationVisitService = $authorizationVisitService;
-        $this->userRepositoryInterface = $userRepositoryInterface;
     }
 
     public function execute(GetInvestigatorFormRequest $getInvestigatorFormRequest, GetInvestigatorFormResponse $getInvestigatorFormResponse){
 
         try{
 
-            $this->checkAuthorization($getInvestigatorFormRequest->visitId, $getInvestigatorFormRequest->currentUserId, $getInvestigatorFormRequest->role);
+            $this->checkAuthorization($getInvestigatorFormRequest->visitId, $getInvestigatorFormRequest->currentUserId, $getInvestigatorFormRequest->role, $getInvestigatorFormRequest->studyName);
             $investigatorFormEntity = $this->reviewRepositoryInterface->getInvestigatorForm($getInvestigatorFormRequest->visitId, true);
 
             $investigatorForm = ReviewEntity::fillFromDBReponseArray($investigatorFormEntity);
-            $investigatorForm->setUserDetails($investigatorFormEntity['user']['username'], $investigatorFormEntity['user']['lastname'], $investigatorFormEntity['user']['firstname'], $investigatorFormEntity['user']['center_code']);
+            $investigatorForm->setUserDetails($investigatorFormEntity['user']['lastname'], $investigatorFormEntity['user']['firstname'], $investigatorFormEntity['user']['center_code']);
 
             $getInvestigatorFormResponse->body = $investigatorForm;
             $getInvestigatorFormResponse->status = 200;
@@ -49,10 +45,13 @@ class GetInvestigatorForm{
         }
     }
 
-    private function checkAuthorization(int $visitId, int $currentUserId, string $role){
-        $this->authorizationVisitService->setCurrentUserAndRole($currentUserId, $role);
+    private function checkAuthorization(int $visitId, int $currentUserId, string $role, string $studyName){
+
+        $this->authorizationVisitService->setUserId($currentUserId);
         $this->authorizationVisitService->setVisitId($visitId);
-        if ( ! $this->authorizationVisitService->isVisitAllowed() ){
+        $this->authorizationVisitService->setStudyName($studyName);
+
+        if ( ! $this->authorizationVisitService->isVisitAllowed($role) ){
             throw new GaelOForbiddenException();
         }
 

@@ -21,14 +21,6 @@ class ChangePasswordDeactivated extends Mailable implements ShouldQueue
     public function __construct(array $parameters)
     {
         $this->parameters = $parameters;
-        /*
-        array('studies'=>array(),
-        'adminEmail'=> '',
-        'username'=>'',
-        'corporation')
-        */
-
-
     }
 
     /**

@@ -6,8 +6,8 @@ use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
-use App\GaelO\Services\AuthorizationPatientService;
 use App\GaelO\Entities\VisitEntity;
+use App\GaelO\Services\AuthorizationService\AuthorizationPatientService;
 use Exception;
 
 class GetPatientVisit {
@@ -23,8 +23,8 @@ class GetPatientVisit {
     public function execute(GetPatientVisitRequest $getPatientVisitRequest, GetPatientVisitResponse $getPatientVisitResponse){
 
         try{
-            $this->checkAuthorization($getPatientVisitRequest->currentUserId, $getPatientVisitRequest->patientCode, $getPatientVisitRequest->role);
-            $visitsArray = $this->visitRepositoryInterface->getAllPatientsVisitsWithReviewStatus($getPatientVisitRequest->patientCode, $getPatientVisitRequest->studyName, $getPatientVisitRequest->withTrashed);
+            $this->checkAuthorization($getPatientVisitRequest->currentUserId, $getPatientVisitRequest->patientId, $getPatientVisitRequest->studyName, $getPatientVisitRequest->role);
+            $visitsArray = $this->visitRepositoryInterface->getAllPatientsVisitsWithReviewStatus($getPatientVisitRequest->patientId, $getPatientVisitRequest->studyName, $getPatientVisitRequest->withTrashed);
 
             $responseArray = [];
             foreach($visitsArray as $data){
@@ -58,10 +58,11 @@ class GetPatientVisit {
 
     }
 
-    private function checkAuthorization(int $userId, int $patientCode, string $role){
-        $this->authorizationPatientService->setCurrentUserAndRole($userId, $role);
-        $this->authorizationPatientService->setPatient($patientCode);
-        if( ! $this->authorizationPatientService->isPatientAllowed()){
+    private function checkAuthorization(int $userId, string $patientId, string $studyName, string $role){
+        $this->authorizationPatientService->setUserId($userId);
+        $this->authorizationPatientService->setPatientId($patientId);
+        $this->authorizationPatientService->setStudyName($studyName);
+        if( ! $this->authorizationPatientService->isPatientAllowed($role)){
             throw new GaelOForbiddenException();
         }
     }

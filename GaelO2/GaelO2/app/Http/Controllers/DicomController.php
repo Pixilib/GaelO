@@ -29,13 +29,14 @@ use Illuminate\Support\Facades\Auth;
 
 class DicomController extends Controller
 {
-    public function getVisitDicomsFile(int $visitId, Request $request, GetDicomsFile $getDicomsFile, GetDicomsFileRequest $getDicomsFileRequest, GetDicomsFileResponse $getDicomsFileResponse)
+    public function getVisitDicomsFile(string $studyName, int $visitId, Request $request, GetDicomsFile $getDicomsFile, GetDicomsFileRequest $getDicomsFileRequest, GetDicomsFileResponse $getDicomsFileResponse)
     {
         $currentUser = Auth::user();
         $queryParam = $request->query();
 
         $getDicomsFileRequest->currentUserId = $currentUser['id'];
         $getDicomsFileRequest->visitId = $visitId;
+        $getDicomsFileRequest->studyName = $studyName;
         $getDicomsFileRequest->role = $queryParam['role'];
         $getDicomsFile->execute($getDicomsFileRequest, $getDicomsFileResponse);
 
@@ -49,12 +50,13 @@ class DicomController extends Controller
         }
     }
 
-    public function getVisitDicoms(int $visitId, Request $request, GetDicoms $getDicoms, GetDicomsRequest $getDicomsRequest, GetDicomsResponse $getDicomsResponse)
+    public function getVisitDicoms(string $studyName, int $visitId, Request $request, GetDicoms $getDicoms, GetDicomsRequest $getDicomsRequest, GetDicomsResponse $getDicomsResponse)
     {
         $currentUser = Auth::user();
         $queryParam = $request->query();
 
         $getDicomsRequest->currentUserId = $currentUser['id'];
+        $getDicomsRequest->studyName = $studyName;
         $getDicomsRequest->visitId = $visitId;
         $getDicomsRequest->role = $queryParam['role'];
         $getDicoms->execute($getDicomsRequest, $getDicomsResponse);

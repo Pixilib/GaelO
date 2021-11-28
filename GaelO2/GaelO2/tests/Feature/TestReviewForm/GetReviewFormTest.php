@@ -34,7 +34,7 @@ class GetReviewFormTest extends TestCase
         $patient = Patient::factory()->studyName($study->name)->create();
         $visitGroup = VisitGroup::factory()->studyName($study->name)->modality('PT')->create();
         $visitType  = VisitType::factory()->visitGroupId($visitGroup->id)->name('PET0')->localFormNeeded()->create();
-        $visit = Visit::factory()->patientCode($patient->code)->visitTypeId($visitType->id)->create();
+        $visit = Visit::factory()->patientId($patient->id)->visitTypeId($visitType->id)->create();
         ReviewStatus::factory()->studyName($study->name)->visitId($visit->id)->reviewAvailable()->create();
         $this->review = Review::factory()->studyName($study->name)->visitId($visit->id)->reviewForm()->create();
         $this->studyName = $study->name;
@@ -89,7 +89,7 @@ class GetReviewFormTest extends TestCase
 
     public function testGetReviewFormMetadata(){
         $visitTypeId = $this->review->visit->visitType->id;
-        $studyName = $this->review->visit->visitType->visitGroup->study->name;
+        $studyName = $this->review->visit->patient->study->name;
 
         $currentUserId = AuthorizationTools::actAsAdmin(false);
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $studyName);
@@ -102,13 +102,35 @@ class GetReviewFormTest extends TestCase
     public function testGetReviewFormMetadataShouldFailNotSupervisor(){
 
         $visitTypeId = $this->review->visit->visitType->id;
-        $studyName = $this->review->visit->visitType->visitGroup->study->name;
+        $studyName = $this->review->visit->patient->study->name;
 
         AuthorizationTools::actAsAdmin(false);
 
         $answer = $this->get('api/studies/'.$studyName.'/visit-types/'.$visitTypeId.'/reviews/metadata');
         $answer->assertStatus(403);
 
+    }
+
+    public function testGetReviewFormFromUser(){
+
+        $visitId = $this->review->visit->id;
+
+        $userId = AuthorizationTools::actAsAdmin(false);
+        $this->review->user_id = $userId;
+        $this->review->save();
+
+        $answer = $this->get('api/studies/'.$this->studyName.'/visits/'.$visitId.'/reviews?userId='.$userId);
+        $answer->assertSuccessful();
+    }
+
+    public function testGetReviewFormFromUserNotSameUser(){
+
+        $visitId = $this->review->visit->id;
+
+        AuthorizationTools::actAsAdmin(false);
+
+        $answer = $this->get('api/studies/'.$this->studyName.'/visits/'.$visitId.'/reviews?userId='.$this->review->user_id);
+        $answer->assertStatus(403);
     }
 
 }

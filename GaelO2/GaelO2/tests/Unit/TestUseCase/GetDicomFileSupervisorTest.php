@@ -4,7 +4,8 @@ namespace Tests\Unit\TestUseCase;
 
 use App\GaelO\Interfaces\Repositories\DicomSeriesRepositoryInterface;
 use App\GaelO\Repositories\VisitRepository;
-use App\GaelO\Services\AuthorizationService;
+use App\GaelO\Services\AuthorizationService\AuthorizationStudyService;
+use App\GaelO\Services\AuthorizationService\AuthorizationUserService;
 use App\GaelO\Services\OrthancService;
 use App\GaelO\UseCases\GetDicomsFileSupervisor\GetDicomsFileSupervisor;
 use App\GaelO\UseCases\GetDicomsFileSupervisor\GetDicomsFileSupervisorRequest;
@@ -27,8 +28,9 @@ class GetDicomFileSupervisorTest extends TestCase
         $orthancServiceMock->shouldReceive('getOrthancZipStream')
             ->andReturn('FileTest');
 
-        $authorizationServiceMock = $this->partialMock(AuthorizationService::class, function (MockInterface $mock) {
-            $mock->shouldReceive('isRoleAllowed')->andReturn(true);
+        $authorizationServiceMock = $this->partialMock(AuthorizationStudyService::class, function (MockInterface $mock) {
+            $mock->shouldReceive('setUserId')->andReturn(null);
+            $mock->shouldReceive('isAllowedStudy')->andReturn(true);
         });
 
         $dicomRepositoryMock = Mockery::mock(DicomSeriesRepositoryInterface::class);
@@ -40,9 +42,9 @@ class GetDicomFileSupervisorTest extends TestCase
 
         $visitRepositoryMock = Mockery::mock(VisitRepository::class);
         $context1 = [];
-        $context1['visit_type']['visit_group']['study_name'] = 'test';
+        $context1['patient']['study_name'] = 'test';
         $context2 = [];
-        $context2['visit_type']['visit_group']['study_name'] = 'test';
+        $context2['patient']['study_name'] = 'test';
 
         $visitRepositoryMock->shouldReceive('getVisitContextByVisitIdArray')
 
@@ -50,7 +52,7 @@ class GetDicomFileSupervisorTest extends TestCase
 
 
 
-        $this->instance(AuthorizationService::class, $authorizationServiceMock);
+        $this->instance(AuthorizationUserService::class, $authorizationServiceMock);
         $this->instance(DicomSeriesRepositoryInterface::class, $dicomRepositoryMock);
         $this->instance(OrthancService::class, $orthancServiceMock);
         $this->instance(VisitRepository::class, $visitRepositoryMock);
@@ -58,7 +60,7 @@ class GetDicomFileSupervisorTest extends TestCase
 
         $this->getDicomsFileSupervisor = new GetDicomsFileSupervisor(
             App::make(OrthancService::class),
-            App::make(AuthorizationService::class),
+            App::make(AuthorizationStudyService::class),
             App::make(DicomSeriesRepositoryInterface::class),
             App::make(VisitRepository::class),
         );
@@ -69,7 +71,7 @@ class GetDicomFileSupervisorTest extends TestCase
         $getDicomsFilesSupervisorRequest = new GetDicomsFileSupervisorRequest();
         $getDicomsFilesSupervisorRequest->currentUserId = 1;
         $getDicomsFilesSupervisorRequest->seriesInstanceUID = ['1234'];
-        $getDicomsFilesSupervisorRequest->studyName = 'name';
+        $getDicomsFilesSupervisorRequest->studyName = 'test';
 
         $getDicomFilesSupervisorResponse = new GetDicomsFileSupervisorResponse();
         $this->getDicomsFileSupervisor->execute($getDicomsFilesSupervisorRequest, $getDicomFilesSupervisorResponse);

@@ -10,11 +10,14 @@ use App\GaelO\Interfaces\Repositories\PatientRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\StudyRepositoryInterface;
 use App\GaelO\Util;
 use Exception;
+use Hamcrest\Type\IsNumeric;
+use Illuminate\Support\Facades\Log;
 
 class ImportPatientService
 {
 
     private int $patientCodeLength;
+    private array $existingPatientNumber;
     private PatientRepositoryInterface $patientRepository;
     private CenterRepositoryInterface $centerRepository;
     private StudyRepositoryInterface $studyRepository;
@@ -25,8 +28,7 @@ class ImportPatientService
 	public array $successList = [];
 	public array $failList = [];
 
-	public function __construct(StudyRepositoryInterface $studyRepository, PatientRepositoryInterface $patientRepository, CenterRepositoryInterface $centerRepository, FrameworkInterface $frameworkInterface) {
-        $this->patientCodeLength = $frameworkInterface::getConfig(SettingsConstants::PATIENT_CODE_LENGTH);
+	public function __construct(StudyRepositoryInterface $studyRepository, PatientRepositoryInterface $patientRepository, CenterRepositoryInterface $centerRepository) {
         $this->patientRepository = $patientRepository;
         $this->centerRepository = $centerRepository;
         $this->studyRepository = $studyRepository;
@@ -42,7 +44,8 @@ class ImportPatientService
 
 	public function import() {
         $studyEntity = $this->studyRepository->find($this->studyName);
-        $this->existingPatientCode = $this->patientRepository->getAllPatientsCode();
+        $this->patientCodeLength = $studyEntity['patient_code_length'];
+        $this->existingPatientNumber = $this->patientRepository->getAllPatientsNumberInStudy($studyEntity['name']);
 
         $allCenters = $this->centerRepository->getAll();
         //Store array of all existing centers code
@@ -53,24 +56,26 @@ class ImportPatientService
         //For each patient from the array list
 		foreach ($this->patientEntities as $patientEntity) {
             try {
-                $patientEntity->registrationDate = Util::formatUSDateStringToSQLDateFormat($patientEntity->registrationDate);
+                $patientEntity['registrationDate'] = Util::formatUSDateStringToSQLDateFormat($patientEntity['registrationDate']);
                 //Check condition before import
-                self::checkPatientGender($patientEntity->gender);
-                self::checkCorrectBirthDate($patientEntity->birthDay, $patientEntity->birthMonth, $patientEntity->birthYear);
-                $this->checkNewPatient($patientEntity->code);
-                $this->isCorrectPatientCodeLenght($patientEntity->code);
-                $this->isExistingCenter($patientEntity->centerCode);
-                $this->checkCurrentStudy($patientEntity->studyName, $this->studyName);
-                $this->isCorrectPrefix($studyEntity['patient_code_prefix'],$patientEntity->code);
+                self::checkPatientGender($patientEntity['gender']);
+                self::checkCorrectBirthDate($patientEntity['birthDay'], $patientEntity['birthMonth'], $patientEntity['birthYear']);
+                $this->checkNewPatient($patientEntity['code']);
+                $this->isCorrectPatientNumber($patientEntity['code']);
+                $this->isExistingCenter($patientEntity['centerCode']);
+                $this->checkCurrentStudy($patientEntity['studyName'], $this->studyName);
 
                 //Store the patient result import process in this object
-                $this->patientRepository->addPatientInStudy($patientEntity, $this->studyName);
+                $this->patientRepository->addPatientInStudy($studyEntity['code'].$patientEntity['code'], $patientEntity['code'],
+                    $patientEntity['lastname'], $patientEntity['firstname'], $patientEntity['gender'],
+                    $patientEntity['birthDay'], $patientEntity['birthMonth'], $patientEntity['birthYear'],$patientEntity['registrationDate'],$patientEntity['investigatorName'], $patientEntity['centerCode'], $this->studyName
+                );
 
-				$this->successList[]=$patientEntity->code;
+				$this->successList[]=$patientEntity['code'];
 
 			//If conditions not met, add to the fail list with the respective error reason
             } catch(Exception $error) {
-                $this->failList[$error->getMessage()][]=$patientEntity->code;
+                $this->failList[$error->getMessage()][]=$patientEntity['code'];
             }
 
 		}
@@ -101,36 +106,30 @@ class ImportPatientService
 
 	/**
 	 * Check that the importing patient is not already known in the system
-	 * NB : Each patient code should be unique (across study), patient number should include a study identifier
-	 * @param $patientCode
+	 * NB : Each patient code should be unique (across study), patient code should include a study identifier
+	 * @param $patientId
 	 */
-	private function checkNewPatient(int $patientCode) : void {
-        if (in_array($patientCode, $this->existingPatientCode)) {
+	private function checkNewPatient(string $patientNumber) : void {
+        if (in_array($patientNumber, $this->existingPatientNumber)) {
             throw new GaelOBadRequestException('Existing Patient Code');
         }
 	}
 
 	/**
-	 * Check that patient number has the correct lenght
-	 * @param $patientCode
+	 * Check that patient code has the correct lenght
+	 * @param $patientId
 	 */
-	private function isCorrectPatientCodeLenght(int $patientCode) : void {
-		$lenghtImport=strlen((string) $patientCode);
+	private function isCorrectPatientNumber(string $patientNumber) : void {
+
+        if ( !is_numeric($patientNumber) ) {
+			throw new GaelOBadRequestException('Patient Code accept only numbers');
+		}
+
+		$lenghtImport=strlen((string) $patientNumber);
 
 		if ($lenghtImport != $this->patientCodeLength) {
 			throw new GaelOBadRequestException('Incorrect Patient Code Length');
 		}
-	}
-
-	private function isCorrectPrefix(?int $patientCodePrefix, int $patientCode) : void {
-		if (!empty($patientCodePrefix) && !$this->startsWith((string) $patientCode, $patientCodePrefix)) {
-    		throw new GaelOBadRequestException('Wrong Patient Prefix');
-        }
-	}
-
-	private function startsWith(string $string, string $startString) : bool {
-		$len=strlen($startString);
-		return (substr($string, 0, $len) === $startString);
 	}
 
 	/**
