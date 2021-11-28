@@ -50,12 +50,13 @@ use Illuminate\Support\Facades\Auth;
 
 class ReviewController extends Controller
 {
-    public function getInvestigatorForm(int $visitId, Request $request, GetInvestigatorForm $getInvestigatorForm, GetInvestigatorFormRequest $getInvestigatorFormRequest, GetInvestigatorFormResponse $getInvestigatorFormResponse)
+    public function getInvestigatorForm(string $studyName, int $visitId, Request $request, GetInvestigatorForm $getInvestigatorForm, GetInvestigatorFormRequest $getInvestigatorFormRequest, GetInvestigatorFormResponse $getInvestigatorFormResponse)
     {
 
         $curentUser = Auth::user();
         $getInvestigatorFormRequest->currentUserId = $curentUser['id'];
         $getInvestigatorFormRequest->visitId = $visitId;
+        $getInvestigatorFormRequest->studyName = $studyName;
 
         $queryParam = $request->query();
         $getInvestigatorFormRequest->role = $queryParam['role'];

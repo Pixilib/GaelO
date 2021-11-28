@@ -60,7 +60,7 @@ class GetVisitTest extends TestCase
     public function testGetVisitForbiddenNoRole(){
 
         $visit= $this->createVisitInDb();
-        $studyName = $visit->visitType->visitGroup->study_name;
+        $studyName = $visit->patient->study_name;
 
         AuthorizationTools::actAsAdmin(false);
         $this->json('GET', 'api/studies/'.$studyName.'/visits/'.$visit->id.'?role=Investigator')->assertStatus(403);

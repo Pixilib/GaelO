@@ -217,7 +217,7 @@ class StudyTest extends TestCase
     public function testIsKnownOriginalOrthancStudyIDYes(){
 
         $visit = Visit::factory()->create();
-        $studyName = $visit->visitType->visitGroup->study->name;
+        $studyName = $visit->patient->study_name;
 
         $currentUserId = AuthorizationTools::actAsAdmin(false);
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_INVESTIGATOR, $studyName);

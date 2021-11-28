@@ -35,7 +35,7 @@ class CreateVisitTest extends TestCase
         $visitType=VisitType::factory()->create();
         $this->visitTypeId = $visitType->id;
         $this->visitGroupId = $visitType->visitGroup->id;
-        $this->studyName = $visitType->visitGroup->study->name;
+        $this->studyName = $visitType->visitGroup->study_name;
 
         $this->patient = Patient::factory()->studyName($this->studyName)->create();
         $centerCode = $this->patient->center_code;

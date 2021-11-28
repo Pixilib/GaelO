@@ -40,15 +40,12 @@ class DeleteSeries{
             $visitId = $seriesData['dicom_study']['visit_id'];
 
             $visitContext = $this->visitRepositoryInterface->getVisitContext($visitId);
-
+            $stateQc = $visitContext['state_quality_control'];
             $studyName = $visitContext['patient']['study_name'];
 
-            $this->checkAuthorization($deleteSeriesRequest->currentUserId, $visitId, $deleteSeriesRequest->role, $visitContext['state_quality_control'], $studyName);
+            $this->checkAuthorization($deleteSeriesRequest->currentUserId, $visitId, $deleteSeriesRequest->role, $stateQc, $studyName);
 
             $this->dicomSeriesService->deleteSeries($deleteSeriesRequest->seriesInstanceUID, $deleteSeriesRequest->role);
-
-
-
 
             $actionDetails = [
                 'seriesInstanceUID'=>$seriesData['series_uid'],

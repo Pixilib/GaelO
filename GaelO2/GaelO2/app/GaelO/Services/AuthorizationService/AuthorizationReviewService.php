@@ -10,13 +10,20 @@ class AuthorizationReviewService {
 
     private ReviewRepositoryInterface $reviewRepositoryInterface;
     private AuthorizationVisitService $authorizationVisitService;
+    private int $userId;
     private int $reviewId;
+    private int $reviewOwnerId;
     private array $reviewData;
 
     public function __construct(ReviewRepositoryInterface $reviewRepositoryInterface, AuthorizationVisitService $authorizationVisitService)
     {
         $this->reviewRepositoryInterface = $reviewRepositoryInterface;
         $this->authorizationVisitService = $authorizationVisitService;
+    }
+
+    public function setUserId(int $userId) {
+        $this->userId = $userId;
+        $this->authorizationVisitService->setUserId($userId);
     }
 
     public function setReviewId(int $reviewId){
@@ -29,18 +36,19 @@ class AuthorizationReviewService {
         $this->reviewOwnerId = $this->reviewData['user_id'];
     }
 
-    public function isReviewAllowed(int $userId, string $requestedRole): bool {
+    public function isReviewAllowed(string $requestedRole): bool {
 
         $this->fillVisitData();
 
         $this->authorizationVisitService->setVisitId($this->reviewData['visit_id']);
+        $this->authorizationVisitService->setStudyName($this->reviewStudyName);
 
         if ($requestedRole === Constants::ROLE_REVIEWER) {
             //Role should be allowed and current user be the review owner
-            return $this->authorizationVisitService->isVisitAllowed($userId, $requestedRole, $this->reviewStudyName) && $this->reviewOwnerId === $userId;
+            return $this->authorizationVisitService->isVisitAllowed($requestedRole) && ($this->reviewOwnerId === $this->userId);
         } else if ($requestedRole === Constants::ROLE_SUPERVISOR) {
             //Allow Review of the study with supervisor roles
-           return $this->authorizationVisitService->isVisitAllowed($userId, $requestedRole, $this->reviewStudyName);
+           return $this->authorizationVisitService->isVisitAllowed($requestedRole);
         } else {
             //other roles not allowed to access review data
             return false;

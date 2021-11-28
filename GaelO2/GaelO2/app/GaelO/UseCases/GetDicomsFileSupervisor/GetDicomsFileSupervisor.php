@@ -48,7 +48,7 @@ class GetDicomsFileSupervisor {
             //Extract parent StudyName
             $studyNames = [];
             foreach($contexts as $context){
-                $studyNames[] = $context['visit_type']['visit_group']['study_name'];
+                $studyNames[] = $context['patient']['study_name'];
             }
 
             $uniqueStudyName = array_values(array_unique($studyNames));

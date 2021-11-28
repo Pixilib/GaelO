@@ -48,8 +48,8 @@ class DeleteInvestigatorForm{
 
             $investigatorFormEntity = $this->reviewRepositoryInterface->getInvestigatorForm($deleteInvestigatorFormRequest->visitId, false);
 
-            $this->checkAuthorization($deleteInvestigatorFormRequest->currentUserId, $deleteInvestigatorFormRequest->visitId, $visitContext['state_quality_control'], $investigatorFormEntity['local'], $studyName);
-
+            $this->checkAuthorization($deleteInvestigatorFormRequest->currentUserId, $deleteInvestigatorFormRequest->visitId, $visitContext['state_quality_control'], $studyName);
+          
             //Delete review
             $this->reviewRepositoryInterface->delete($investigatorFormEntity['id']);
             //Make investigator form not done
@@ -98,14 +98,12 @@ class DeleteInvestigatorForm{
 
     }
 
-    private function checkAuthorization(int $currentUserId, int $visitId, string $visitQcStatus, bool $isLocal, string $studyName){
+    private function checkAuthorization(int $currentUserId, int $visitId, string $visitQcStatus, string $studyName){
 
-        if(!$isLocal){
-            throw new GaelOForbiddenException();
-        }
         $this->authorizationVisitService->setUserId($currentUserId);
         $this->authorizationVisitService->setVisitId($visitId);
         $this->authorizationVisitService->setStudyName($studyName);
+
         if ( ! $this->authorizationVisitService->isVisitAllowed(Constants::ROLE_SUPERVISOR) || in_array($visitQcStatus , [Constants::QUALITY_CONTROL_ACCEPTED, Constants::QUALITY_CONTROL_REFUSED])){
             throw new GaelOForbiddenException();
         }

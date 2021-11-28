@@ -79,7 +79,7 @@ class DicomStudyRepositoryTest extends TestCase
 
         $orthancStudy = DicomStudy::factory()->create();
         //2 study are created when factory of patient and visit type
-        $studyName = $orthancStudy->visit->visitType->visitGroup->study->name;
+        $studyName = $orthancStudy->visit->patient->study_name;
         $studyName2 = Study::factory()->create();
 
         $answer  = $this->dicomStudyRepository->isExistingOriginalOrthancStudyID($orthancStudy->anon_from_orthanc_id, $studyName);
@@ -94,7 +94,7 @@ class DicomStudyRepositoryTest extends TestCase
 
         $orthancStudy = DicomStudy::factory()->create();
         //2 study are created when factory of patient and visit type
-        $studyName = $orthancStudy->visit->visitType->visitGroup->study->name;
+        $studyName = $orthancStudy->visit->patient->study_name;
 
         //Delete Parent Visit
         $orthancStudy->visit->delete();

@@ -108,7 +108,7 @@ class ModifyCorrectiveAction{
     private function checkAuthorization(int $userId, int $visitId, string $currentQcStatus, string $studyName) : void {
 
         if($currentQcStatus !== Constants::QUALITY_CONTROL_CORRECTIVE_ACTION_ASKED){
-            throw new GaelOForbiddenException('ici');
+            throw new GaelOForbiddenException('Visit Not Awaiting Corrective Action');
         }
 
         //Check user has controller role in the visit

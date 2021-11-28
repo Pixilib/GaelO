@@ -9,7 +9,7 @@ use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\DicomSeriesRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
-use App\GaelO\Services\AuthorizationVisitService;
+use App\GaelO\Services\AuthorizationService\AuthorizationVisitService;
 use Exception;
 
 class ReactivateDicomSeries{
@@ -46,12 +46,11 @@ class ReactivateDicomSeries{
             $visitId = $seriesData['dicom_study']['visit_id'];
             $visitContext = $this->visitRepositoryInterface->getVisitContext($visitId);
             $role = $reactivateDicomSeriesRequest->role;
+            $studyName = $visitContext['patient']['study_name'];
 
-            $this->checkAuthorization($reactivateDicomSeriesRequest->currentUserId, $visitId, $visitContext['state_quality_control'], $role);
+            $this->checkAuthorization($reactivateDicomSeriesRequest->currentUserId, $visitId, $visitContext['state_quality_control'], $role, $studyName);
 
             $this->dicomSeriesRepositoryInterface->reactivateSeries($reactivateDicomSeriesRequest->seriesInstanceUID);
-
-            $studyName = $visitContext['visit_type']['visit_group']['study_name'];
 
             $actionDetails = [
                 'seriesInstanceUID'=>$seriesData['series_uid'],
@@ -82,7 +81,7 @@ class ReactivateDicomSeries{
         }
     }
 
-    private function checkAuthorization(int $userId, int $visitId, string $qcStatus, string $role) : void{
+    private function checkAuthorization(int $userId, int $visitId, string $qcStatus, string $role, string $studyName) : void{
 
         //If QC is done, can't reactivate series
         if( in_array($qcStatus, [Constants::QUALITY_CONTROL_ACCEPTED, Constants::QUALITY_CONTROL_REFUSED, Constants::QUALITY_CONTROL_NOT_NEEDED])){
@@ -93,10 +92,11 @@ class ReactivateDicomSeries{
             throw new GaelOForbiddenException();
         }
 
-        $this->authorizationVisitService->setCurrentUserAndRole($userId, $role);
+        $this->authorizationVisitService->setUserId($userId);
         $this->authorizationVisitService->setVisitId($visitId);
+        $this->authorizationVisitService->setStudyName($studyName);
 
-        if ( !$this->authorizationVisitService->isVisitAllowed() ){
+        if ( !$this->authorizationVisitService->isVisitAllowed($role) ){
             throw new GaelOForbiddenException();
         }
 

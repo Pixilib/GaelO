@@ -157,10 +157,8 @@ class VisitRepository implements VisitRepositoryInterface
     {
 
         $queryBuilder = $this->visit->with(['visitType', 'patient'])
-            ->whereHas('visitType', function ($query) use ($studyName) {
-                $query->whereHas('visitGroup', function ($query) use ($studyName) {
-                    $query->where('study_name', $studyName);
-                });
+            ->whereHas('patient', function ($query) use ($studyName) {
+                $query->where('study_name', $studyName);
             });
 
         if ($withReviewStatus) {
@@ -231,10 +229,8 @@ class VisitRepository implements VisitRepositoryInterface
         $controllerActionStatusArray = array(Constants::QUALITY_CONTROL_NOT_DONE, Constants::QUALITY_CONTROL_WAIT_DEFINITIVE_CONCLUSION);
 
         $answer = $this->visit->with('visitType')
-            ->whereHas('visitType', function ($query) use ($studyName) {
-                $query->whereHas('visitGroup', function ($query) use ($studyName) {
-                    $query->where('study_name', $studyName);
-                });
+            ->whereHas('patient', function ($query) use ($studyName) {
+                $query->where('study_name', $studyName);
             })
             ->where('status_done', Constants::VISIT_STATUS_DONE)
             ->where('upload_status', Constants::UPLOAD_STATUS_DONE)

@@ -125,7 +125,8 @@ class ModifyQualityControl {
         $this->authorizationVisitService->setUserId($userId);
         $this->authorizationVisitService->setVisitId($visitId);
         $this->authorizationVisitService->setStudyName($studyName);
-        if ( ! $this->authorizationVisitService->isVisitAllowed(Constants::ROLE_CONTROLLER) ){
+
+        if ( ! $this->authorizationVisitService->isVisitAllowed( Constants::ROLE_CONTROLLER ) ){
             throw new GaelOForbiddenException();
         }
 

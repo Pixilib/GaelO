@@ -46,7 +46,6 @@ class PatientService
         //Build array of Created visit Order indexed by visit group name
         foreach ($createdVisitsArray as $createdVisit) {
             $visitOrder = $createdVisit['visit_type']['order'];
-            $modality = $createdVisit['visit_type']['visit_group']['modality'];
             $visitGroupName = $createdVisit['visit_type']['visit_group']['name'];
             $createdVisitMap[$visitGroupName][] = $visitOrder;
         }

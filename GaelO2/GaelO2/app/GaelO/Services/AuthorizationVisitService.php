@@ -36,7 +36,7 @@ class AuthorizationVisitService {
         $visitContext = $this->visitRepository->getVisitContext($visitId);
 
         $this->stateQualityControl = $visitContext['state_quality_control'];
-        $this->patientStudy = $visitContext['visit_type']['visit_group']['study_name'];
+        $this->patientStudy = $visitContext['patient']['study_name'];
         $this->patientCenter = $visitContext['patient']['center_code'];
         $this->id = $visitContext['patient']['id'];
         $this->visitUploadStatus = $visitContext['upload_status'];

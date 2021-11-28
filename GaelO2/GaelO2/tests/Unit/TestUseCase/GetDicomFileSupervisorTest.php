@@ -42,9 +42,9 @@ class GetDicomFileSupervisorTest extends TestCase
 
         $visitRepositoryMock = Mockery::mock(VisitRepository::class);
         $context1 = [];
-        $context1['visit_type']['visit_group']['study_name'] = 'test';
+        $context1['patient']['study_name'] = 'test';
         $context2 = [];
-        $context2['visit_type']['visit_group']['study_name'] = 'test';
+        $context2['patient']['study_name'] = 'test';
 
         $visitRepositoryMock->shouldReceive('getVisitContextByVisitIdArray')
 

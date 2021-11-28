@@ -33,9 +33,8 @@ class ModifyVisitDate {
 
             $visitContext = $this->visitRepositoryInterface->getVisitContext($visitId);
             $studyName = $visitContext['patient']['study_name'];
-
+          
             $this->checkAuthorization($currentUserId, $visitId, $studyName);
-
 
             //update visit Date in db
             $this->visitRepositoryInterface->updateVisitDate($visitId, $newVisitDate);
@@ -77,6 +76,7 @@ class ModifyVisitDate {
         $this->authorizationVisitService->setUserId($userId);
         $this->authorizationVisitService->setVisitId($visitId);
         $this->authorizationVisitService->setStudyName($studyName);
+
         if(!$this->authorizationVisitService->isVisitAllowed(Constants::ROLE_SUPERVISOR)){
             throw new GaelOForbiddenException();
         }

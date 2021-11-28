@@ -1,10 +1,13 @@
 Salim TODO :
 
-- Pour limiter l'acces des API aux etude princeps utiliser le studyname du patient (et pas celui venant du front)
+- Appel visite a scoper par studyName
+- Passer le studyName en query tag ??
+- Optimiser l'utilisation des authorization service en injectant les data depuis le usecase (ou les rendre stateless)
+- Revoir DicowWeb Authorization Service
 
 --- Etudes ancillaires ---
 => Ne peut etre creer les roles que de Reviewer et supervisor
-=>Supervisor :
+=> Supervisor : Les taches non permise sont bloquée par le usecase en reprenant la study princeps de la ressource ou en verifiant statut ancillary ou pas pour le niveau study
 Ne doit pas pouvoir modifier les patients
 Ne doit pas pouvoir importer des patients
 Ne doit pas pouvoir modifier / delete Visites, QC, Upload, local form
@@ -20,11 +23,8 @@ Doit pouvoir voir user details
 --- /Etudes ancillaires ---
 
 ---- Refactoring Backend ----
-RBAC => Voir si on injecte les donnée depuis le usecase pour diminuer les appel SQL ?
-RBAC => Revoir DicowWeb Authorization Service
 Refac pour la lecture eviter de passer par des services pour laisser les services à l'ecriture ?
 Dicom Series Service => peut etre evoluer vers un DicomService pour les deux niveaux
-GetVisitContext des services surement a faire passer a initialisation pour eviter requettes redondantes
 
 Entity :
 - Pluger toutes les reponses "data" sur ces entity response

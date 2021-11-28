@@ -77,10 +77,10 @@ class ModifyQualityControlReset
     public function checkAuthorization(int $userId, int $visitId, string $studyName)
     {
         $this->authorizationVisitService->setUserId($userId);
-        $this->authorizationVisitService->setVisitId($visitId);
         $this->authorizationVisitService->setStudyName($studyName);
+        $this->authorizationVisitService->setVisitId($visitId);
 
-        if (!$this->authorizationVisitService->isVisitAllowed(Constants::ROLE_SUPERVISOR)) {
+        if ( !$this->authorizationVisitService->isVisitAllowed(Constants::ROLE_SUPERVISOR) ) {
             throw new GaelOForbiddenException();
         }
     }

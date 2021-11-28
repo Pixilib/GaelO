@@ -74,10 +74,8 @@ class DicomStudyRepository implements DicomStudyRepositoryInterface
     {
         $dicomStudies = $this->dicomStudy->where('anon_from_orthanc_id', $originalOrthancStudyID)
             ->whereHas('visit', function ($query) use ($studyName) {
-                $query->whereHas('visitType', function ($query) use ($studyName) {
-                    $query->whereHas('visitGroup', function ($query) use ($studyName) {
-                        $query->where('study_name', $studyName);
-                    });
+                $query->whereHas('patient', function ($query) use ($studyName) {
+                    $query->where('study_name', $studyName);
                 });
             })
             ->get();

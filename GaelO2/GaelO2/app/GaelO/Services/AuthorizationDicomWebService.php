@@ -53,7 +53,7 @@ class AuthorizationDicomWebService
         }
 
         $this->visitContext = $this->visitRepositoryInterface->getVisitContext($visitId);
-        $studyName = $this->visitContext['visit_type']['visit_group']['study_name'];
+        $studyName = $this->visitContext['patient']['study_name'];
         $this->availableRoles = $this->userRepositoryInterface->getUsersRolesInStudy($userId, $studyName);
         $this->visitId = $visitId;
         $this->userId = $userId;
