@@ -6,10 +6,9 @@ use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\ReviewRepositoryInterface;
-use App\GaelO\Services\AuthorizationVisitService;
 use App\GaelO\Entities\ReviewEntity;
+use App\GaelO\Services\AuthorizationService\AuthorizationVisitService;
 use Exception;
-use Illuminate\Support\Facades\Log;
 
 class GetReviewFormFromVisit
 {
@@ -30,7 +29,7 @@ class GetReviewFormFromVisit
 
         try {
 
-            $this->checkAuthorization($getReviewFormFromVisitRequest->currentUserId, $getReviewFormFromVisitRequest->visitId, $getReviewFormFromVisitRequest->userId);
+            $this->checkAuthorization($getReviewFormFromVisitRequest->currentUserId, $getReviewFormFromVisitRequest->visitId, $getReviewFormFromVisitRequest->userId, $getReviewFormFromVisitRequest->studyName);
 
             $reviews = [];
 
@@ -62,15 +61,16 @@ class GetReviewFormFromVisit
         }
     }
 
-    private function checkAuthorization(int $currentUserId, int $visitId, ?int $reviewerId)
+    private function checkAuthorization(int $currentUserId, int $visitId, ?int $reviewerId, string $studyName)
     {
         if ($currentUserId === $reviewerId) {
             return true;
         }
 
-        $this->authorizationVisitService->setCurrentUserAndRole($currentUserId, Constants::ROLE_SUPERVISOR);
+        $this->authorizationVisitService->setUserId($currentUserId);
+        $this->authorizationVisitService->setStudyName($studyName);
         $this->authorizationVisitService->setVisitId($visitId);
-        if (!$this->authorizationVisitService->isVisitAllowed()) {
+        if ( !$this->authorizationVisitService->isVisitAllowed(Constants::ROLE_SUPERVISOR) ) {
             throw new GaelOForbiddenException();
         }
 
