@@ -284,7 +284,7 @@ class VisitRepositoryTest extends TestCase
 
         ReviewStatus::factory()->create([
             'visit_id' => $visit->id,
-            'study_name' => $visit->visitType->visitGroup->study->name,
+            'study_name' => $visit->patient->study_name,
             'review_available' => $reviewAvailable
         ]);
 
@@ -294,7 +294,7 @@ class VisitRepositoryTest extends TestCase
     public function testReviewAvailableForUser()
     {
         $visit = $this->createVisit(true);
-        $studyName = $visit->visitType->visitGroup->study->name;
+        $studyName = $visit->patient->study_name;
         $answer = $this->visitRepository->getVisitsAwaitingReviewForUser($studyName, 1);
         $availableForUser = $this->visitRepository->isVisitAvailableForReview($visit->id, $studyName, 1);
         $this->assertTrue($availableForUser);
@@ -338,7 +338,7 @@ class VisitRepositoryTest extends TestCase
     {
 
         $visit = $this->createVisit(true);
-        $studyName = $visit->visitType->visitGroup->study->name;
+        $studyName = $visit->patient->study_name;
 
         Review::factory()->visitId($visit->id)->reviewForm()->userId(1)->studyName($studyName)->create();
 
@@ -352,7 +352,7 @@ class VisitRepositoryTest extends TestCase
     {
 
         $visit = $this->createVisit(true);
-        $studyName = $visit->visitType->visitGroup->study->name;
+        $studyName = $visit->patient->study_name;
 
         Review::factory()->visitId($visit->id)->reviewForm()->userId(1)->validated()->studyName($studyName)->create();
 
@@ -365,7 +365,7 @@ class VisitRepositoryTest extends TestCase
     public function testReviewNotAvailableForUserAsNotAvailableForReview()
     {
         $visit = $this->createVisit(false);
-        $studyName = $visit->visitType->visitGroup->study->name;
+        $studyName = $visit->patient->study->name;
         $answer = $this->visitRepository->getVisitsAwaitingReviewForUser($studyName, 1);
         $this->assertEquals(0, sizeof($answer));
         $availableForUser = $this->visitRepository->isVisitAvailableForReview($visit->id, $studyName, 1);

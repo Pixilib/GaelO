@@ -3,6 +3,8 @@
 namespace Tests\Feature\TestVisitType;
 
 use App\GaelO\Entities\VisitTypeEntity;
+use App\Models\Patient;
+use App\Models\Study;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\TestCase;
 use App\Models\VisitGroup;
@@ -71,7 +73,11 @@ class VisitTypeTest extends TestCase
     public function testCreateVisitTypeShouldFailedBecauseAlreadyExistingVisitsInStudy()
     {
         AuthorizationTools::actAsAdmin(true);
-        $visit = Visit::factory()->create();
+        $study = Study::factory()->create();
+        $patient = Patient::factory()->studyName($study->name)->create();
+        $visitGroup = VisitGroup::factory()->studyName($study->name)->create();
+        $visitType = VisitType::factory()->visitGroupId($visitGroup->id)->create();
+        $visit = Visit::factory()->patientId($patient->id)->visitTypeId($visitType->id)->create();
 
         $payload = $this->payload;
         $this->json('POST', 'api/visit-groups/'.$visit->visitType->visitGroup->id.'/visit-types', $payload)->assertStatus(403);
@@ -92,7 +98,7 @@ class VisitTypeTest extends TestCase
 
         $answer = $this->json('GET', 'api/visit-types/'.$visitType->id);
         $answer->assertStatus(200);
-        
+
         $expectedKeys = [
             "id",
             "visitGroupId",

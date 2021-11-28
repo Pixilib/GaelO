@@ -3,7 +3,6 @@
 namespace App\GaelO\UseCases\ModifyPatient;
 
 class ModifyPatientRequest {
-    public string $studyName;
     public int $currentUserId;
     public string $patientId;
     public string $reason;

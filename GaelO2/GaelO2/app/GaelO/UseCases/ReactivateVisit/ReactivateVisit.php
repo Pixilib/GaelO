@@ -34,7 +34,7 @@ class ReactivateVisit {
 
             $visitContext = $this->visitRepositoryInterface->getVisitContext($reactivateVisitRequest->visitId, true);
 
-            $studyName = $visitContext['visit_type']['visit_group']['study_name'];
+            $studyName = $visitContext['patient']['study_name'];
             $visitType = $visitContext['visit_type']['name'];
             $modality = $visitContext['visit_type']['visit_group']['modality'];
             $patientId = $visitContext['patient_id'];

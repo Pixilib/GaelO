@@ -3,6 +3,7 @@
 namespace Tests\Feature\TestVisitGroup;
 
 use App\GaelO\Entities\VisitGroupEntity;
+use App\Models\Patient;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 
 use Tests\TestCase;
@@ -82,13 +83,14 @@ class VisitGroupTest extends TestCase
 
     public function testCreateVisitGroupShouldFailBecauseExistingVisits(){
         AuthorizationTools::actAsAdmin(true);
-        $visit = Visit::factory()->create();
-        $studyName = $visit->visitType->visitGroup->study->name;
+        $study = Study::factory()->create();
+        $patient = Patient::factory()->studyName($study->name)->create();
+        Visit::factory()->patientId($patient->id)->create();
         $payload = [
             'name' => 'wb',
             'modality' => 'PT'
         ];
-        $this->json('POST', 'api/studies/'.$studyName.'/visit-groups', $payload)->assertStatus(403);
+        $this->json('POST', 'api/studies/'.$study->name.'/visit-groups', $payload)->assertStatus(403);
     }
 
     public function testDeleteVisitGroup(){

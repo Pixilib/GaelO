@@ -34,9 +34,11 @@ class ModifyPatient {
 
             if (empty($modifyPatientRequest->reason)) throw new GaelOBadRequestException('Reason for patient edition must be sepecified');
 
-            $this->checkAuthorization($modifyPatientRequest->currentUserId, $modifyPatientRequest->patientId, $modifyPatientRequest->studyName);
-
             $patientEntity = $this->patientRepositoryInterface->find($modifyPatientRequest->patientId);
+            $studyName = $patientEntity['study_name'];
+            $this->checkAuthorization($modifyPatientRequest->currentUserId, $modifyPatientRequest->patientId, $studyName);
+
+
 
             $updatableData = ['firstname', 'lastname', 'gender', 'birthDay', 'birthMonth', 'birthYear',
             'registrationDate', 'investigatorName', 'centerCode', 'inclusionStatus', 'withdrawReason', 'withdrawDate'];

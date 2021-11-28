@@ -89,7 +89,7 @@ class GetReviewFormTest extends TestCase
 
     public function testGetReviewFormMetadata(){
         $visitTypeId = $this->review->visit->visitType->id;
-        $studyName = $this->review->visit->visitType->visitGroup->study->name;
+        $studyName = $this->review->visit->patient->study->name;
 
         $currentUserId = AuthorizationTools::actAsAdmin(false);
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $studyName);
@@ -102,7 +102,7 @@ class GetReviewFormTest extends TestCase
     public function testGetReviewFormMetadataShouldFailNotSupervisor(){
 
         $visitTypeId = $this->review->visit->visitType->id;
-        $studyName = $this->review->visit->visitType->visitGroup->study->name;
+        $studyName = $this->review->visit->patient->study->name;
 
         AuthorizationTools::actAsAdmin(false);
 

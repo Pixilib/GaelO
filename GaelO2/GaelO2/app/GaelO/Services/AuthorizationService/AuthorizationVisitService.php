@@ -41,7 +41,7 @@ class AuthorizationVisitService {
         if( !isset($this->visitData) ) $this->visitData = $this->visitRepositoryInterface->getVisitContext($this->visitId);
 
         $this->stateQualityControl = $this->visitData['state_quality_control'];
-        $this->patientStudy = $this->visitData['visit_type']['visit_group']['study_name'];
+        $this->patientStudy = $this->visitData['patient']['study_name'];
         $this->patientCenter = $this->visitData['patient']['center_code'];
         $this->patientId = $this->visitData['patient']['id'];
         $this->visitUploadStatus = $this->visitData['upload_status'];

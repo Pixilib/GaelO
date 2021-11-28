@@ -49,14 +49,13 @@ class PatientController extends Controller
         return $this->getJsonResponse($getPatientVisitResponse->body, $getPatientVisitResponse->status, $getPatientVisitResponse->statusText);
     }
 
-    public function modifyPatient(string $studyName, string $patientId, Request $request, ModifyPatient $modifyPatient, ModifyPatientRequest $modifyPatientRequest, ModifyPatientResponse $modifyPatientResponse)
+    public function modifyPatient(string $patientId, Request $request, ModifyPatient $modifyPatient, ModifyPatientRequest $modifyPatientRequest, ModifyPatientResponse $modifyPatientResponse)
     {
         $currentUser = Auth::user();
         $requestData = $request->all();
 
         $modifyPatientRequest = Util::fillObject($requestData, $modifyPatientRequest);
         $modifyPatientRequest->patientId = $patientId;
-        $modifyPatientRequest->studyName = $studyName;
         $modifyPatientRequest->currentUserId = $currentUser['id'];
         $modifyPatient->execute($modifyPatientRequest, $modifyPatientResponse);
 

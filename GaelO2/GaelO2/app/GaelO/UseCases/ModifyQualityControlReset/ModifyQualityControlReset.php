@@ -33,7 +33,7 @@ class ModifyQualityControlReset
 
             $this->visitService->setVisitId($modifyQualityControlResetRequest->visitId);
             $visitContext = $this->visitService->getVisitContext();
-            $studyName = $visitContext['visit_type']['visit_group']['study_name'];
+            $studyName = $visitContext['patient']['study_name'];
 
             $this->checkAuthorization($modifyQualityControlResetRequest->currentUserId, $modifyQualityControlResetRequest->visitId, $studyName);
 

@@ -130,7 +130,7 @@ class VisitService
         //If uploaded done and investigator done (Done or Not Needed) send notification message
         $visitEntity = $this->visitRepository->getVisitContext($this->visitId);
         $patientId = $visitEntity['patient_id'];
-        $study = $visitEntity['visit_type']['visit_group']['study_name'];
+        $study = $visitEntity['patient']['study_name'];
         $visitType = $visitEntity['visit_type']['name'];
         $qcNeeded = $visitEntity['visit_type']['qc_needed'];
 
@@ -160,7 +160,7 @@ class VisitService
         $visitEntity = $this->visitRepository->getVisitContext($this->visitId);
         $localFormNeeded = $visitEntity['visit_type']['local_form_needed'];
         $reviewNeeded = $visitEntity['visit_type']['review_needed'];
-        $studyName = $visitEntity['visit_type']['visit_group']['study_name'];
+        $studyName = $visitEntity['patient']['study_name'];
 
         $this->visitRepository->editQc($this->visitId, $stateQc, $controllerId, $imageQc, $formQc, $imageQcComment, $formQcComment);
 
@@ -179,7 +179,7 @@ class VisitService
     public function resetQc(): void
     {
         $visitEntity = $this->visitRepository->getVisitContext($this->visitId);
-        $studyName = $visitEntity['visit_type']['visit_group']['study_name'];
+        $studyName = $visitEntity['patient']['study_name'];
         $this->visitRepository->resetQc($this->visitId);
         $this->reviewStatusRepository->updateReviewAvailability($this->visitId, $studyName , false);
     }

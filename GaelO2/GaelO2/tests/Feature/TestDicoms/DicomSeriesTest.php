@@ -37,7 +37,7 @@ class DicomSeriesTest extends TestCase
         $this->studyName = $this->dicomSeries->dicomStudy->visit->patient->study_name;
         $visit = $this->dicomSeries->dicomStudy->visit;
 
-        ReviewStatus::factory()->studyName($visit->visitType->visitGroup->study_name)->visitId($visit->id)->create();
+        ReviewStatus::factory()->studyName($visit->patient->study_name)->visitId($visit->id)->create();
 
         //Fill investigator Form
         $this->investigatorForm = Review::factory()->studyName($this->studyName)->visitId($visit->id)->validated()->create();

@@ -59,7 +59,7 @@ class ExportStudyServiceTest extends TestCase
 
     public function testExportVisit(){
         $visitType = VisitType::factory()->create();
-        $studyName = $visitType->visitGroup->study->name;
+        $studyName = $visitType->visitGroup->study_name;
         $visits = Visit::factory()->visitTypeId($visitType->id)->count(10)->create();
 
         $visits->each(function($visit) use ($studyName) {
@@ -71,7 +71,7 @@ class ExportStudyServiceTest extends TestCase
 
     public function testExportDicom(){
         $visitType = VisitType::factory()->create();
-        $studyName = $visitType->visitGroup->study->name;
+        $studyName = $visitType->visitGroup->study_name;
         $visits = Visit::factory()->visitTypeId($visitType->id)->count(10)->create();
 
         $visits->each(function($visit) {
@@ -87,7 +87,7 @@ class ExportStudyServiceTest extends TestCase
     public function testExportReview(){
 
         $visitType = VisitType::factory()->create();
-        $studyName = $visitType->visitGroup->study->name;
+        $studyName = $visitType->visitGroup->study_name;
         $visits = Visit::factory()->visitTypeId($visitType->id)->count(3)->create();
 
         $visits->each(function($visit) use ($studyName) {
@@ -103,7 +103,7 @@ class ExportStudyServiceTest extends TestCase
     public function testExportTracker(){
 
         $visitType = VisitType::factory()->create();
-        $studyName = $visitType->visitGroup->study->name;
+        $studyName = $visitType->visitGroup->study_name;
 
         Tracker::factory()->studyName($studyName)->role(Constants::ROLE_INVESTIGATOR)->create();
         Tracker::factory()->studyName($studyName)->role(Constants::ROLE_SUPERVISOR)->create();

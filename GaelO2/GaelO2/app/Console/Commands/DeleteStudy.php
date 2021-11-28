@@ -127,10 +127,8 @@ class DeleteStudy extends Command
     private function getVisitsOfStudy(string $studyName)
     {
         return $this->visit->withTrashed()->with(['visitType', 'patient'])
-            ->whereHas('visitType', function ($query) use ($studyName) {
-                $query->whereHas('visitGroup', function ($query) use ($studyName) {
-                    $query->where('study_name', $studyName);
-                });
+            ->whereHas('patient', function ($query) use ($studyName) {
+                $query->where('study_name', $studyName);
             })->get();
     }
 

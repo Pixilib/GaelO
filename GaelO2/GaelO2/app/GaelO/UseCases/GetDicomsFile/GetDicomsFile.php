@@ -32,7 +32,7 @@ class GetDicomsFile{
             //Visits data
             $this->visitService->setVisitId($getDicomsRequest->visitId);
             $visitContext = $this->visitService->getVisitContext();
-            $studyName = $visitContext['visit_type']['visit_group']['study_name'];
+            $studyName = $visitContext['patient']['study_name'];
             $visitType = $visitContext['visit_type']['name'];
             $visitGroup =  $visitContext['visit_type']['visit_group']['modality'];
             $patientId = $visitContext['patient']['id'];
