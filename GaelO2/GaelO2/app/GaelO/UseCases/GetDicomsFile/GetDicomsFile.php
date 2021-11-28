@@ -4,7 +4,7 @@ namespace App\GaelO\UseCases\GetDicomsFile;
 
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
-use App\GaelO\Services\AuthorizationVisitService;
+use App\GaelO\Services\AuthorizationService\AuthorizationVisitService;
 use App\GaelO\Services\OrthancService;
 use App\GaelO\Services\VisitService;
 use Exception;
@@ -27,12 +27,13 @@ class GetDicomsFile{
 
         try{
 
-            //Checker Authorization
-            $this->checkAuthorization($getDicomsRequest->currentUserId, $getDicomsRequest->visitId, $getDicomsRequest->role);
+            $studyName = $getDicomsRequest->studyName;
+            //Authorization Check
+            $this->checkAuthorization($getDicomsRequest->currentUserId, $getDicomsRequest->visitId, $getDicomsRequest->role, $studyName);
             //Visits data
             $this->visitService->setVisitId($getDicomsRequest->visitId);
             $visitContext = $this->visitService->getVisitContext();
-            $studyName = $visitContext['patient']['study_name'];
+
             $visitType = $visitContext['visit_type']['name'];
             $visitGroup =  $visitContext['visit_type']['visit_group']['modality'];
             $patientId = $visitContext['patient']['id'];
@@ -56,10 +57,11 @@ class GetDicomsFile{
 
     }
 
-    private function checkAuthorization(int $currentUserId, int $visitId, string $role){
-        $this->authorizationService->setCurrentUserAndRole($currentUserId, $role);
+    private function checkAuthorization(int $currentUserId, int $visitId, string $role, string $studyName){
+        $this->authorizationService->setUserId($currentUserId);
         $this->authorizationService->setVisitId($visitId);
-        if( ! $this->authorizationService->isVisitAllowed()){
+        $this->authorizationService->setStudyName($studyName);
+        if( !$this->authorizationService->isVisitAllowed($role) ){
             throw new GaelOForbiddenException();
         }
     }

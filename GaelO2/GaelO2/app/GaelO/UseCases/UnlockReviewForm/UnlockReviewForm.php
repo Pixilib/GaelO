@@ -10,7 +10,7 @@ use App\GaelO\Interfaces\Repositories\ReviewRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\ReviewStatusRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
-use App\GaelO\Services\AuthorizationReviewService;
+use App\GaelO\Services\AuthorizationService\AuthorizationReviewService;
 use App\GaelO\Services\MailServices;
 use App\GaelO\Services\ReviewFormService;
 use Exception;
@@ -108,9 +108,9 @@ class UnlockReviewForm {
         if($local){
             throw new GaelOForbiddenException();
         }
-        $this->authorizationReviewService->setCurrentUserAndRole($currentUserId, Constants::ROLE_SUPERVISOR);
+        $this->authorizationReviewService->setUserId($currentUserId);
         $this->authorizationReviewService->setReviewId($reviewId);
-        if( !$this->authorizationReviewService->isReviewAllowed() ) {
+        if( !$this->authorizationReviewService->isReviewAllowed(Constants::ROLE_SUPERVISOR) ) {
             throw new GaelOForbiddenException();
         }
     }

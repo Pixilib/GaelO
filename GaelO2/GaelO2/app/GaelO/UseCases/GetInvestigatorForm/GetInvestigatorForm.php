@@ -6,7 +6,7 @@ use App\GaelO\Entities\ReviewEntity;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\ReviewRepositoryInterface;
-use App\GaelO\Services\AuthorizationVisitService;
+use App\GaelO\Services\AuthorizationService\AuthorizationVisitService;
 use Exception;
 
 class GetInvestigatorForm{
@@ -14,7 +14,6 @@ class GetInvestigatorForm{
     private AuthorizationVisitService $authorizationVisitService;
     private ReviewRepositoryInterface $reviewRepositoryInterface;
 
-    //SK AJOUTER LA POSSIBILITE DE VOIR LES REVIEW DELETED PAR LE SUPERVISOR ?
     public function __construct(ReviewRepositoryInterface $reviewRepositoryInterface, AuthorizationVisitService $authorizationVisitService)
     {
         $this->reviewRepositoryInterface = $reviewRepositoryInterface;
@@ -25,7 +24,7 @@ class GetInvestigatorForm{
 
         try{
 
-            $this->checkAuthorization($getInvestigatorFormRequest->visitId, $getInvestigatorFormRequest->currentUserId, $getInvestigatorFormRequest->role);
+            $this->checkAuthorization($getInvestigatorFormRequest->visitId, $getInvestigatorFormRequest->currentUserId, $getInvestigatorFormRequest->role, $getInvestigatorFormRequest->studyName);
             $investigatorFormEntity = $this->reviewRepositoryInterface->getInvestigatorForm($getInvestigatorFormRequest->visitId, true);
 
             $investigatorForm = ReviewEntity::fillFromDBReponseArray($investigatorFormEntity);
@@ -46,10 +45,13 @@ class GetInvestigatorForm{
         }
     }
 
-    private function checkAuthorization(int $visitId, int $currentUserId, string $role){
-        $this->authorizationVisitService->setCurrentUserAndRole($currentUserId, $role);
+    private function checkAuthorization(int $visitId, int $currentUserId, string $role, string $studyName){
+
+        $this->authorizationVisitService->setUserId($currentUserId);
         $this->authorizationVisitService->setVisitId($visitId);
-        if ( ! $this->authorizationVisitService->isVisitAllowed() ){
+        $this->authorizationVisitService->setStudyName($studyName);
+
+        if ( ! $this->authorizationVisitService->isVisitAllowed($role) ){
             throw new GaelOForbiddenException();
         }
 

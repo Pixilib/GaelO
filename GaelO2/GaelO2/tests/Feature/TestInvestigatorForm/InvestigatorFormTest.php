@@ -32,8 +32,9 @@ class InvestigatorFormTest extends TestCase
     public function testGetInvestigatorForm(){
         $review = Review::factory()->create();
         $currentUserId = AuthorizationTools::actAsAdmin(false);
-        AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $review->visit->patient->study_name);
-        $this->get('api/visits/'.$review->visit_id.'/investigator-form?role=Supervisor')->assertSuccessful();
+        $studyName = $review->visit->patient->study_name;
+        AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $studyName );
+        $this->get('api/studies/'.$studyName.'/visits/'.$review->visit_id.'/investigator-form?role=Supervisor')->assertSuccessful();
 
     }
 

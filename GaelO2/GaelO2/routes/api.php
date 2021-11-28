@@ -116,7 +116,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('studies/{studyName}/visits/{id}', [VisitController::class, 'getVisit']);
 
     //Local Form Routes
-    Route::get('visits/{id}/investigator-form', [ReviewController::class, 'getInvestigatorForm']);
+    Route::get('studies/{studyName}/visits/{id}/investigator-form', [ReviewController::class, 'getInvestigatorForm']);
     Route::delete('visits/{id}/investigator-form', [ReviewController::class, 'deleteInvestigatorForm']);
     Route::post('visits/{id}/investigator-form', [ReviewController::class, 'createInvestigatorForm']);
     Route::put('visits/{id}/investigator-form', [ReviewController::class, 'modifyInvestigatorForm']);
@@ -136,7 +136,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::delete('dicom-series/{seriesInstanceUID}', [DicomController::class, 'deleteSeries']);
     Route::patch('dicom-series/{seriesInstanceUID}', [DicomController::class, 'reactivateSeries']);
     Route::patch('dicom-study/{studyInstanceUID}', [DicomController::class, 'reactivateStudy']);
-    Route::get('visits/{id}/dicoms', [DicomController::class, 'getVisitDicoms']);
+    Route::get('studies/{studyName}/visits/{id}/dicoms', [DicomController::class, 'getVisitDicoms']);
 
     //Ask Unlock route
     Route::post('studies/{study}/visits/{id}/ask-unlock', [AskUnlockController::class, 'askUnlock']);
@@ -168,7 +168,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     // Binary routes
     Route::get('export-db', [ExportDBController::class, 'exportDB']);
     Route::get('documentations/{id}/file', [DocumentationController::class, 'getDocumentationFile']);
-    Route::get('visits/{id}/dicoms/file', [DicomController::class, 'getVisitDicomsFile']);
+    Route::get('studies/{studyName}/visits/{id}/dicoms/file', [DicomController::class, 'getVisitDicomsFile']);
     Route::get('studies/{studyName}/export', [StudyController::class, 'exportStudyData']);
     Route::post('studies/{studyName}/dicom-series/file', [DicomController::class, 'getSupervisorDicomsFile']);
     Route::get('reviews/{id}/file/{key}', [ReviewController::class, 'getReviewFile']);
