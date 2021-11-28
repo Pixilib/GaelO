@@ -8,26 +8,26 @@ use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\ReviewRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
-use App\GaelO\Services\AuthorizationVisitService;
+use App\GaelO\Services\AuthorizationService\AuthorizationReviewService;
 use App\GaelO\Services\FormService;
 use Exception;
 
 class DeleteFileOfForm
 {
 
-    private AuthorizationVisitService $authorizationVisitService;
+    private AuthorizationReviewService $authorizationReviewService;
     private TrackerRepositoryInterface $trackerRepositoryInterface;
     private ReviewRepositoryInterface $reviewRepositoryInterface;
     private VisitRepositoryInterface $visitRepositoryInterface;
     private FormService $formService;
 
-    public function __construct(AuthorizationVisitService $authorizationVisitService,
+    public function __construct(AuthorizationReviewService $authorizationReviewService,
         FormService $formService,
         ReviewRepositoryInterface $reviewRepositoryInterface,
         TrackerRepositoryInterface $trackerRepositoryInterface,
         VisitRepositoryInterface $visitRepositoryInterface)
     {
-        $this->authorizationVisitService = $authorizationVisitService;
+        $this->authorizationReviewService = $authorizationReviewService;
         $this->trackerRepositoryInterface = $trackerRepositoryInterface;
         $this->reviewRepositoryInterface = $reviewRepositoryInterface;
         $this->visitRepositoryInterface = $visitRepositoryInterface;
@@ -41,10 +41,8 @@ class DeleteFileOfForm
             $reviewEntity = $this->reviewRepositoryInterface->find($deleteFileOfFormRequest->id);
 
             $studyName = $reviewEntity['study_name'];
-            $userId = $reviewEntity['user_id'];
             $local = $reviewEntity['local'];
-            $visitId = $reviewEntity['visit_id'];
-            $this->checkAuthorization($local, $reviewEntity['validated'], $userId, $visitId, $deleteFileOfFormRequest->currentUserId);
+            $this->checkAuthorization($local, $reviewEntity['validated'], $deleteFileOfFormRequest->id, $deleteFileOfFormRequest->currentUserId);
 
             $visitContext = $this->visitRepositoryInterface->getVisitContext($reviewEntity['visit_id']);
             $this->formService->setVisitContextAndStudy($visitContext, $studyName);
@@ -78,17 +76,15 @@ class DeleteFileOfForm
         }
     }
 
-    private function checkAuthorization(bool $local, bool $validated, int $reviewOwner, int $visitId, int $currentUserId): void
+    private function checkAuthorization(bool $local, bool $validated, int $reviewId, int $currentUserId): void
     {
         if ($validated) throw new GaelOForbiddenException("Form Already Validated");
-        $this->authorizationVisitService->setVisitId($visitId);
-        if ($local) {
-            $this->authorizationVisitService->setCurrentUserAndRole($currentUserId, Constants::ROLE_INVESTIGATOR);
-            if (!$this->authorizationVisitService->isVisitAllowed()) throw new GaelOForbiddenException();
-        } else {
-            $this->authorizationVisitService->setCurrentUserAndRole($currentUserId, Constants::ROLE_SUPERVISOR);
-            if (!$this->authorizationVisitService->isVisitAllowed()) throw new GaelOForbiddenException();
-            if ($reviewOwner !== $currentUserId) throw new GaelOForbiddenException("Only form owner can add files");
-        }
+        $this->authorizationReviewService->setUserId($currentUserId);
+        $this->authorizationReviewService->setReviewId($reviewId);
+
+        //Required role depends on local or review form
+        $role = $local ? Constants::ROLE_INVESTIGATOR : Constants::ROLE_REVIEWER;
+        if ( !$this->authorizationReviewService->isReviewAllowed($role) ) throw new GaelOForbiddenException();
+
     }
 }
