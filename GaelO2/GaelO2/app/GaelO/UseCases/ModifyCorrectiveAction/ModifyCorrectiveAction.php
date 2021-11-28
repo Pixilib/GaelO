@@ -115,6 +115,7 @@ class ModifyCorrectiveAction{
         $this->authorizationVisitService->setUserId($userId);
         $this->authorizationVisitService->setVisitId($visitId);
         $this->authorizationVisitService->setStudyName($studyName);
+
         if ( ! $this->authorizationVisitService->isVisitAllowed(Constants::ROLE_INVESTIGATOR) ){
             throw new GaelOForbiddenException('Not allowed');
         }

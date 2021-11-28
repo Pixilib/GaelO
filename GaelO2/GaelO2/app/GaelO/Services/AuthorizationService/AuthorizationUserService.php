@@ -3,7 +3,6 @@
 namespace App\GaelO\Services\AuthorizationService;
 
 use App\GaelO\Interfaces\Repositories\UserRepositoryInterface;
-use Illuminate\Support\Facades\Log;
 
 class AuthorizationUserService
 {

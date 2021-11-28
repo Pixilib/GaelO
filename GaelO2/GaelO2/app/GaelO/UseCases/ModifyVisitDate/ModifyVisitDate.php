@@ -33,9 +33,7 @@ class ModifyVisitDate {
 
             $visitContext = $this->visitRepositoryInterface->getVisitContext($visitId);
             $studyName = $visitContext['patient']['study_name'];
-
-
-
+          
             $this->checkAuthorization($currentUserId, $visitId, $studyName);
 
             //update visit Date in db

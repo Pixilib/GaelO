@@ -16,8 +16,8 @@ class DeleteSeries{
 
     private VisitRepositoryInterface $visitRepositoryInterface;
     private DicomSeriesService $dicomSeriesService;
-    private AuthorizationVisitService $authorizationVisitService;
     private TrackerRepositoryInterface $trackerRepositoryInterface;
+    private AuthorizationVisitService $authorizationVisitService;
 
 
     public function __construct( VisitRepositoryInterface $visitRepositoryInterface, DicomSeriesService $dicomSeriesService, AuthorizationVisitService $authorizationVisitService, TrackerRepositoryInterface $trackerRepositoryInterface)
@@ -46,8 +46,6 @@ class DeleteSeries{
             $this->checkAuthorization($deleteSeriesRequest->currentUserId, $visitId, $deleteSeriesRequest->role, $stateQc, $studyName);
 
             $this->dicomSeriesService->deleteSeries($deleteSeriesRequest->seriesInstanceUID, $deleteSeriesRequest->role);
-
-
 
             $actionDetails = [
                 'seriesInstanceUID'=>$seriesData['series_uid'],

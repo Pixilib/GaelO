@@ -73,8 +73,9 @@ class ModifyInvestigatorForm {
 
     }
 
-    private function checkAuthorization(int $currentUserId, int $visitId, string $visitInvestigatorFormStatus, bool $investigatorFormNeeded, string $studyName){
 
+    private function checkAuthorization(int $currentUserId, int $visitId, string $visitInvestigatorFormStatus, bool $investigatorFormNeeded, string $studyName){
+        
         if(in_array($visitInvestigatorFormStatus, [Constants::INVESTIGATOR_FORM_DONE])){
             throw new GaelOForbiddenException();
         };

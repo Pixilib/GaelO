@@ -49,7 +49,7 @@ class DeleteInvestigatorForm{
             $investigatorFormEntity = $this->reviewRepositoryInterface->getInvestigatorForm($deleteInvestigatorFormRequest->visitId, false);
 
             $this->checkAuthorization($deleteInvestigatorFormRequest->currentUserId, $deleteInvestigatorFormRequest->visitId, $visitContext['state_quality_control'], $studyName);
-
+          
             //Delete review
             $this->reviewRepositoryInterface->delete($investigatorFormEntity['id']);
             //Make investigator form not done
@@ -58,6 +58,7 @@ class DeleteInvestigatorForm{
             if($visitContext['visit_type']['qc_needed']) $this->visitRepositoryInterface->resetQc($deleteInvestigatorFormRequest->currentUserId);
 
             $actionDetails = [
+                'Visit Group Name' => $visitContext['visit_type']['visit_group']['name'],
                 'modality' => $visitContext['visit_type']['visit_group']['modality'],
                 'visit_type' => $visitContext['visit_type']['name'],
                 'patient_id' => $visitContext['patient_id'],

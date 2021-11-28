@@ -175,6 +175,7 @@ class ValidateDicomUpload{
     private function checkAuthorization(int $currentUserId, int $visitId, string $uploadStatus, string $studyName ) : void {
 
         $this->authorizationService->setUserId($currentUserId);
+
         $this->authorizationService->setStudyName($studyName);
         $this->authorizationService->setVisitId($visitId);
         if( ! $this->authorizationService->isVisitAllowed( Constants::ROLE_INVESTIGATOR ) || $uploadStatus !== Constants::UPLOAD_STATUS_NOT_DONE){

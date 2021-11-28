@@ -38,7 +38,9 @@ class DeleteVisit{
 
             $studyName = $visitContext['patient']['study_name'];
             $visitTypeName = $visitContext['visit_type']['name'];
+          
             $patientId = $visitContext['patient']['id'];
+            $visitTypeName = $visitContext['visit_type']['name'];
             $qcStatus = $visitContext['state_quality_control'];
 
             $this->checkAuthorization($deleteVisitRequest->currentUserId,
@@ -79,7 +81,9 @@ class DeleteVisit{
 
     }
 
+
     public function checkAuthorization(int $userId, string $role, int $visitId, string $qcStatus, string $studyName){
+      
         //This role only allowed for Investigator and Supervisor Roles
         if ( ! in_array($role, [Constants::ROLE_INVESTIGATOR, Constants::ROLE_SUPERVISOR]) ){
             throw new GaelOForbiddenException();
