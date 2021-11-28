@@ -8,7 +8,7 @@ use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\ReviewStatusRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\UserRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
-use App\GaelO\Services\AuthorizationVisitService;
+use App\GaelO\Services\AuthorizationService\AuthorizationVisitService;
 use Exception;
 
 class GetVisit {
@@ -30,7 +30,7 @@ class GetVisit {
         try{
 
             $visitId = $getVisitRequest->visitId;
-            $this->checkAuthorization($visitId, $getVisitRequest->currentUserId, $getVisitRequest->role);
+            $this->checkAuthorization($visitId, $getVisitRequest->currentUserId, $getVisitRequest->role, $getVisitRequest->studyName);
 
             $visitEntity = $this->visitRepositoryInterface->getVisitContext($visitId);
             $reviewStatus = $this->reviewStatusRepositoryInterface->getReviewStatus($visitId, $getVisitRequest->studyName);
@@ -62,10 +62,12 @@ class GetVisit {
 
     }
 
-    private function checkAuthorization(int $visitId, int $userId, string $role){
-        $this->authorizationVisitService->setCurrentUserAndRole($userId, $role);
+    private function checkAuthorization(int $visitId, int $userId, string $role, string $studyName){
+        $this->authorizationVisitService->setUserId($userId);
+        $this->authorizationVisitService->setStudyName($studyName);
         $this->authorizationVisitService->setVisitId($visitId);
-        if( ! $this->authorizationVisitService->isVisitAllowed()){
+
+        if( ! $this->authorizationVisitService->isVisitAllowed($role)){
             throw new GaelOForbiddenException();
         }
     }

@@ -8,7 +8,7 @@ use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
-use App\GaelO\Services\AuthorizationVisitService;
+use App\GaelO\Services\AuthorizationService\AuthorizationVisitService;
 use Exception;
 
 class DeleteVisit{
@@ -36,17 +36,16 @@ class DeleteVisit{
 
             $visitContext  = $this->visitRepositoryInterface->getVisitContext($deleteVisitRequest->visitId);
 
-            $studyName = $visitContext['visit_type']['visit_group']['study_name'];
+            $studyName = $visitContext['patient']['study_name'];
             $visitTypeName = $visitContext['visit_type']['name'];
             $patientId = $visitContext['patient']['id'];
             $qcStatus = $visitContext['state_quality_control'];
-            $visitStatusDone = $visitContext['status_done'];
 
             $this->checkAuthorization($deleteVisitRequest->currentUserId,
                                         $deleteVisitRequest->role,
                                         $deleteVisitRequest->visitId,
                                         $qcStatus,
-                                        $visitStatusDone);
+                                        $studyName);
 
             $this->visitRepositoryInterface->delete($deleteVisitRequest->visitId);
 
@@ -80,7 +79,7 @@ class DeleteVisit{
 
     }
 
-    public function checkAuthorization(int $userId, string $role, int $visitId, string $qcStatus, string $statusDone){
+    public function checkAuthorization(int $userId, string $role, int $visitId, string $qcStatus, string $studyName){
         //This role only allowed for Investigator and Supervisor Roles
         if ( ! in_array($role, [Constants::ROLE_INVESTIGATOR, Constants::ROLE_SUPERVISOR]) ){
             throw new GaelOForbiddenException();
@@ -91,9 +90,11 @@ class DeleteVisit{
             throw new GaelOForbiddenException();
         }
 
-        $this->authorizationVisitService->setCurrentUserAndRole($userId, $role);
+        $this->authorizationVisitService->setUserId($userId);
         $this->authorizationVisitService->setVisitId($visitId);
-        if ( ! $this->authorizationVisitService->isVisitAllowed()){
+        $this->authorizationVisitService->setStudyName($studyName);
+
+        if ( ! $this->authorizationVisitService->isVisitAllowed($role)){
             throw new GaelOForbiddenException();
         }
 

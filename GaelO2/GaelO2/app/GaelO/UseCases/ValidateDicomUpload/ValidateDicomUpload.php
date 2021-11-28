@@ -7,10 +7,8 @@ use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Exceptions\GaelOValidateDicomException;
 use App\GaelO\Interfaces\Repositories\PatientRepositoryInterface;
-use App\GaelO\Interfaces\Repositories\StudyRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
-use App\GaelO\Repositories\PatientRepository;
-use App\GaelO\Services\AuthorizationVisitService;
+use App\GaelO\Services\AuthorizationService\AuthorizationVisitService;
 use App\GaelO\Services\MailServices;
 use App\GaelO\Services\OrthancService;
 use App\GaelO\Services\RegisterDicomStudyService;
@@ -61,13 +59,12 @@ class ValidateDicomUpload{
             $patientCode = $patientEntity['code'];
             //$patientCode = $visitEntity['patient_id'];
             $uploadStatus = $visitEntity['upload_status'];
-            $studyName = $visitEntity['visit_type']['visit_group']['study_name'];
+            $studyName = $visitEntity['patient']['study_name'];
             $visitType = $visitEntity['visit_type']['name'];
-            $visitGroup =  $visitEntity['visit_type']['visit_group']['modality'];
             $anonProfile = $visitEntity['visit_type']['anon_profile'];
 
             //TODO Authorization : Check Investigator Role, and patient is in affiliated center of user, and status upload not done, and visit status done
-            $this->checkAuthorization($validateDicomUploadRequest->currentUserId, $validateDicomUploadRequest->visitId, $uploadStatus);
+            $this->checkAuthorization($validateDicomUploadRequest->currentUserId, $validateDicomUploadRequest->visitId, $uploadStatus, $studyName);
             //Make Visit as being upload processing
             $this->visitService->updateUploadStatus(Constants::UPLOAD_STATUS_PROCESSING);
 
@@ -175,11 +172,12 @@ class ValidateDicomUpload{
 
     }
 
-    private function checkAuthorization(int $currentUserId, int $visitId, string $uploadStatus ) : void {
+    private function checkAuthorization(int $currentUserId, int $visitId, string $uploadStatus, string $studyName ) : void {
 
-        $this->authorizationService->setCurrentUserAndRole($currentUserId, Constants::ROLE_INVESTIGATOR );
+        $this->authorizationService->setUserId($currentUserId);
+        $this->authorizationService->setStudyName($studyName);
         $this->authorizationService->setVisitId($visitId);
-        if( ! $this->authorizationService->isVisitAllowed() || $uploadStatus !== Constants::UPLOAD_STATUS_NOT_DONE){
+        if( ! $this->authorizationService->isVisitAllowed( Constants::ROLE_INVESTIGATOR ) || $uploadStatus !== Constants::UPLOAD_STATUS_NOT_DONE){
             throw new GaelOForbiddenException();
         };
 

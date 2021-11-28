@@ -7,7 +7,7 @@ use App\GaelO\Exceptions\GaelOBadRequestException;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
-use App\GaelO\Services\AuthorizationVisitService;
+use App\GaelO\Services\AuthorizationService\AuthorizationVisitService;
 use App\GaelO\Services\MailServices;
 use App\GaelO\Services\VisitService;
 use Exception;
@@ -40,7 +40,7 @@ class ModifyQualityControl {
             $creatorId = $visitContext['creator_user_id'];
             $localFormNeeded = $visitContext['visit_type']['local_form_needed'];
 
-            $this->checkAuthorization($modifyQualityControlRequest->currentUserId, $modifyQualityControlRequest->visitId);
+            $this->checkAuthorization($modifyQualityControlRequest->currentUserId, $modifyQualityControlRequest->visitId, $studyName);
 
             if($modifyQualityControlRequest->stateQc === Constants::QUALITY_CONTROL_ACCEPTED){
                 if($localFormNeeded && ! $modifyQualityControlRequest->formQc){
@@ -120,11 +120,13 @@ class ModifyQualityControl {
         }
     }
 
-    private function checkAuthorization(int $userId, int $visitId) : void {
+    private function checkAuthorization(int $userId, int $visitId, string $studyName) : void {
         //Check user has controller role in the visit
-        $this->authorizationVisitService->setCurrentUserAndRole($userId, Constants::ROLE_CONTROLLER);
+        $this->authorizationVisitService->setUserId($userId);
         $this->authorizationVisitService->setVisitId($visitId);
-        if ( ! $this->authorizationVisitService->isVisitAllowed() ){
+        $this->authorizationVisitService->setStudyName($studyName);
+
+        if ( ! $this->authorizationVisitService->isVisitAllowed( Constants::ROLE_CONTROLLER ) ){
             throw new GaelOForbiddenException();
         }
 
