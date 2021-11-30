@@ -56,7 +56,7 @@ class ImportPatientService
         //For each patient from the array list
 		foreach ($this->patientEntities as $patientEntity) {
             try {
-                $patientEntity['registrationDate'] = Util::formatUSDateStringToSQLDateFormat($patientEntity['registrationDate']);
+                if($patientEntity['registrationDate']) $patientEntity['registrationDate'] = Util::formatUSDateStringToSQLDateFormat($patientEntity['registrationDate']);
                 //Check condition before import
                 self::checkPatientGender($patientEntity['gender']);
                 self::checkCorrectBirthDate($patientEntity['birthDay'], $patientEntity['birthMonth'], $patientEntity['birthYear']);
@@ -96,8 +96,8 @@ class ImportPatientService
 
 
 
-    public static function checkPatientGender(string $sex){
-        if($sex !== "M" && $sex!=="F") throw new GaelOBadRequestException("Incorrect Gender : M or F");
+    public static function checkPatientGender(?string $sex){
+        if($sex !== "M" && $sex!=="F" && $sex != null) throw new GaelOBadRequestException("Incorrect Gender : M or F");
     }
 
     public function checkCurrentStudy(string $patientStudy, string $currentStudy){
