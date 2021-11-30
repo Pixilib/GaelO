@@ -12,7 +12,7 @@ class PatientEntity {
     public ?int $birthDay;
     public ?int $birthMonth;
     public ?int $birthYear;
-    public string $registrationDate;
+    public ?string $registrationDate;
     public ?string $investigatorName;
     public ?int $centerCode;
     public string $studyName;

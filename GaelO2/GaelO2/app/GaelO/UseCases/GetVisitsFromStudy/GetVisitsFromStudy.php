@@ -62,7 +62,7 @@ class GetVisitsFromStudy
     {
         $this->authorizationStudyService->setUserId($userId);
         $this->authorizationStudyService->setStudyName($studyName);
-        if (!$this->authorizationService->isRoleAllowed(Constants::ROLE_SUPERVISOR)) {
+        if (!$this->authorizationStudyService->isAllowedStudy(Constants::ROLE_SUPERVISOR)) {
             throw new GaelOForbiddenException();
         }
     }
