@@ -9,17 +9,18 @@ use App\GaelO\Interfaces\Adapters\FrameworkInterface;
 use App\GaelO\Interfaces\Adapters\HttpClientInterface;
 use App\GaelO\Services\AuthorizationService\AuthorizationDicomWebService;
 use Exception;
+use Illuminate\Support\Facades\Log;
 
 class ReverseProxyDicomWeb{
 
-    private AuthorizationDicomWebService $authorizationService;
+    private AuthorizationDicomWebService $authorizationDicomWebService;
     private HttpClientInterface $httpClientInterface;
     private FrameworkInterface $frameworkInterface;
 
-    public function __construct( AuthorizationDicomWebService $authorizationService,  HttpClientInterface $httpClientInterface, FrameworkInterface $frameworkInterface)
+    public function __construct( AuthorizationDicomWebService $authorizationDicomWebService,  HttpClientInterface $httpClientInterface, FrameworkInterface $frameworkInterface)
     {
         $this->httpClientInterface = $httpClientInterface;
-        $this->authorizationService = $authorizationService;
+        $this->authorizationDicomWebService = $authorizationDicomWebService;
         $this->frameworkInterface = $frameworkInterface;
     }
 
@@ -79,18 +80,18 @@ class ReverseProxyDicomWeb{
 
     }
 
-    private function checkAuthorization(int $currentUserId, string $requestedURI){
+    private function checkAuthorization(int $userId, string $requestedURI){
 
+        Log::info($requestedURI);
         if( ! str_starts_with ( $requestedURI , "/dicom-web/" ) ){
             throw new GaelOForbiddenException;
         }
-        //Pb ORTHANC N A PAS LES MEME ROUTES
-        /*
-        $this->authorizationService->setUserIdAndRequestedUri($currentUserId, $requestedURI);
-        if(!$this->authorizationService->isDicomAllowed() ){
-            throw new GaelOForbiddenException();
-        };
-        */
+
+        $this->authorizationDicomWebService->setRequestedUri($requestedURI);
+        $this->authorizationDicomWebService->setUserId($userId);
+        if( ! $this->authorizationDicomWebService->isDicomAllowed()){
+            throw new GaelOForbiddenException("No Access to Dicom Web ressource");
+        }
 
     }
 }

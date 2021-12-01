@@ -2,17 +2,36 @@
 
 namespace App\GaelO\Services\AuthorizationService;
 
-use App\GaelO\Constants\Constants;
+use App\GaelO\Interfaces\Repositories\DicomSeriesRepositoryInterface;
+use App\GaelO\Interfaces\Repositories\DicomStudyRepositoryInterface;
+use App\GaelO\Interfaces\Repositories\StudyRepositoryInterface;
+use App\GaelO\Interfaces\Repositories\UserRepositoryInterface;
+use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
 use App\GaelO\Util;
+use Illuminate\Support\Facades\Log;
 
 class AuthorizationDicomWebService {
 
-    private int $userId;
-    private AuthorizationVisitService $authorizationVisitService;
+    private string $originalStudyName;
+    private DicomSeriesRepositoryInterface $dicomSeriesRepositoryInterface;
+    private DicomStudyRepositoryInterface $dicomStudyRepositoryInterface;
+    private VisitRepositoryInterface $visitRepositoryInterface;
+    private StudyRepositoryInterface $studyRepositoryInterface;
+    private UserRepositoryInterface $userRepositoryInterface;
 
-    public function __construct(AuthorizationVisitService $authorizationVisitService)
+    public function __construct(
+        DicomSeriesRepositoryInterface $dicomSeriesRepositoryInterface,
+        DicomStudyRepositoryInterface $dicomStudyRepositoryInterface,
+        VisitRepositoryInterface $visitRepositoryInterface,
+        StudyRepositoryInterface $studyRepositoryInterface,
+        UserRepositoryInterface $userRepositoryInterface
+        )
     {
-        $this->authorizationVisitService = $authorizationVisitService;
+        $this->dicomStudyRepositoryInterface = $dicomStudyRepositoryInterface;
+        $this->dicomSeriesRepositoryInterface = $dicomSeriesRepositoryInterface;
+        $this->visitRepositoryInterface = $visitRepositoryInterface;
+        $this->studyRepositoryInterface = $studyRepositoryInterface;
+        $this->userRepositoryInterface = $userRepositoryInterface;
     }
 
     public function setUserId(int $userId){
@@ -22,30 +41,46 @@ class AuthorizationDicomWebService {
 
     public function setRequestedUri(string $requestedURI): void
     {
+        $url = parse_url($requestedURI);
+        if($this->isStoneOfOrthanc($url)){
+            Log::info($url['path']);
+            if (Util::endsWith($url['path'], "/series"))  $this->level = "studies";
+            else $this->level = "series";
+            Log::info($this->level);
+            $queryParams = [];
+            parse_str($url['query'], $queryParams);
+            $requestedInstanceUID = $queryParams['0020000D'];
+            Log::info($queryParams);
 
-        if (Util::endsWith($requestedURI, "/series"))  $this->level = "studies";
-        else $this->level = "series";
-
-        //Extract StudyInstanceUID from requested URI
-        $requestedInstanceUID = $this->getUID($requestedURI, $this->level);
+        }else{
+            if (Util::endsWith($requestedURI, "/series"))  $this->level = "studies";
+            else $this->level = "series";
+            //Extract StudyInstanceUID from requested URI
+            $requestedInstanceUID = $this->getUIDOHIF($requestedURI, $this->level);
+        }
 
         if ($this->level === "series") {
-            $this->seriesEntity = $this->dicomSeriesRepositoryInterface->getSeries($requestedInstanceUID, true);
+            $this->seriesEntity = $this->dicomSeriesRepositoryInterface->getSeries($requestedInstanceUID, false);
             $visitId = $this->seriesEntity['dicom_study']['visit_id'];
         } else if ($this->level === "studies") {
-            $studyEntity = $this->dicomStudyRepositoryInterface->getDicomStudy($requestedInstanceUID, true);
+            $studyEntity = $this->dicomStudyRepositoryInterface->getDicomStudy($requestedInstanceUID, false);
             $visitId = $studyEntity['visit_id'];
         }
 
-        $this->visitId = $visitId;
+        $visitContext = $this->visitRepositoryInterface->getVisitContext($visitId);
+        $this->originalStudyName = $visitContext['patient']['study_name'];
 
+    }
+
+    private function isStoneOfOrthanc(array $url) : bool {
+        return str_contains('0020000D=',  $url['query']) ;
     }
 
     /**
      * Isolate the called Study or Series Instance UID
      * @return string
      */
-    private function getUID(string $requestedURI, string $level): string
+    private function getUIDOHIF(string $requestedURI, string $level): string
     {
         $studySubString = strstr($requestedURI, "/" . $level . "/");
         $studySubString = str_replace("/" . $level . "/", "", $studySubString);
@@ -61,28 +96,23 @@ class AuthorizationDicomWebService {
         return $studyUID;
     }
 
-    public function isDicomAllowed(string $role): bool
+    /**
+     * As URI are defined by DicomWeb syntax we can't know what is the study scope
+     * So we are cheking that the requested dicom are linked to a primary or ancillary study
+     * in which the user has a role
+     */
+    public function isDicomAllowed(): bool
     {
 
-        $candidatesRoles  = [Constants::ROLE_SUPERVISOR, Constants::ROLE_CONTROLLER, Constants::ROLE_REVIEWER,  Constants::ROLE_INVESTIGATOR];
+        //Get Ancilaries study of the original studyName
+        $studies = $this->studyRepositoryInterface->getAncillariesStudyOfStudy($this->originalStudyName);
+        $studies[] = $this->originalStudyName;
 
-        //SK Ici charger les role de l'utilisateur dans l'étude (en passant par authorization user service)
-        $availableRoles = array_intersect($this->availableRoles, $candidatesRoles);
+        //Get User's Role
+        $availableRoles = $this->userRepositoryInterface->getUsersRoles($this->userId);
+        $userStudies = array_keys($availableRoles);
 
-        //If series requested and has been softdeleted, refuse access except supervisor is in available roles
-        if (!in_array(Constants::ROLE_SUPERVISOR, $availableRoles) && $this->level == "series" && $this->seriesEntity['deleted_at'] != null) {
-            return false;
-        }
-
-        foreach ($availableRoles as $role) {
-            $this->authorizationVisitService->setUserId($this->userId);
-            $this->authorizationVisitService->setVisitId($this->visitId);
-            if ($this->authorizationVisitService->isVisitAllowed($role)) {
-                return true;
-            };
-        }
-
-        return false;
+        return sizeOf( array_intersect($studies, $userStudies) ) > 0 ;
     }
 
 }
