@@ -51,7 +51,7 @@ class PatientRepository implements PatientRepositoryInterface {
     /**
      * @param $patients expected array of Patient Entity
      */
-    public function addPatientInStudy(string $id, string $code, string $lastname, string $firstname, string $gender, int $birthDay, int $birthMonth, int $birthYear, string $registrationDate, string $investigatorName, int $centerCode, String $studyName) : void {
+    public function addPatientInStudy(string $id, string $code, ?string $lastname, ?string $firstname, ?string $gender, ?int $birthDay, ?int $birthMonth, ?int $birthYear, ?string $registrationDate, ?string $investigatorName, int $centerCode, String $studyName) : void {
 
         $patient = new Patient();
         $patient->id = $id;

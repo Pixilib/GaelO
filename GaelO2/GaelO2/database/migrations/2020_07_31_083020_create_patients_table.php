@@ -23,7 +23,7 @@ class CreatePatientsTable extends Migration
             $table->integer('birth_month')->nullable(true)->default(null);
             $table->integer('birth_year')->nullable(true)->default(null);
             $table->date('registration_date')->nullable(true);
-            $table->string('investigator_name')->default(null);
+            $table->string('investigator_name')->nullable(true)->default(null);
             $table->unsignedInteger('center_code')->default(null);
             $table->string('study_name')->default(null);
             $table->enum('inclusion_status', ['Included', 'Not Included', 'Excluded', 'Withdrawn'])->default('Included')->nullable(false);
