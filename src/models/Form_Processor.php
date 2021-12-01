@@ -292,7 +292,7 @@ abstract class Form_Processor {
 
 	//Check if form data is empty (except for "0" value)
 	public function isEmpty($value) : bool {
-		if ( $value === "0" ) return false;
+		if ( $value === "0" || $value === 0 ) return false;
 		return empty($value);
 
 	}
