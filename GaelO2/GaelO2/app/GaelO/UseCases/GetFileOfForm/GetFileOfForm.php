@@ -33,8 +33,9 @@ class GetFileOfForm {
             $reviewEntity = $this->reviewRepositoryInterface->find($getFileOfFormRequest->id);
 
             $local = $reviewEntity['local'];
+            $studyName = $reviewEntity['study_name'];
             $visitId = $reviewEntity['visit_id'];
-            $this->checkAuthorization($local, $getFileOfFormRequest->id, $visitId, $getFileOfFormRequest->currentUserId);
+            $this->checkAuthorization($local, $getFileOfFormRequest->id, $visitId, $getFileOfFormRequest->currentUserId, $studyName);
 
             $getFileOfFormResponse->status = 200;
             $getFileOfFormResponse->statusText = 'OK';
@@ -55,12 +56,13 @@ class GetFileOfForm {
 
     }
 
-    private function checkAuthorization(bool $local, int $reviewId, int $visitId, int $currentUserId): void
+    private function checkAuthorization(bool $local, int $reviewId, int $visitId, int $currentUserId, string $studyName): void
     {
 
         if ($local) {
             $this->authorizationVisitService->setVisitId($visitId);
             $this->authorizationVisitService->setUserId($currentUserId);
+            $this->authorizationVisitService->setStudyName($studyName);
             if ( !$this->authorizationVisitService->isVisitAllowed(Constants::ROLE_INVESTIGATOR) ) throw new GaelOForbiddenException();
         } else {
             $this->authorizationReviewService->setReviewId($reviewId);
