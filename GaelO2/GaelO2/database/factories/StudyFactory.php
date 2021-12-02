@@ -12,7 +12,8 @@ class StudyFactory extends Factory
         return [
             'name' => $this->faker->unique()->regexify('[A-Z0-9]{20}'),
             'code' => $this->faker->unique()->randomNumber(5),
-            'patient_code_length' => $this->faker->randomNumber(5)
+            'patient_code_length' => $this->faker->randomNumber(5),
+            'ancillary_of' => null
         ];
     }
 
@@ -39,6 +40,16 @@ class StudyFactory extends Factory
         return $this->state(function (array $attributes) use($code) {
             return [
                 'code' => $code,
+            ];
+        });
+
+    }
+
+    public function ancillaryOf(string $studyName){
+
+        return $this->state(function (array $attributes) use($studyName) {
+            return [
+                'ancillary_of' => $studyName,
             ];
         });
 

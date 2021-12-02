@@ -25,7 +25,6 @@ class StudyRepository implements StudyRepositoryInterface {
     }
 
     public function addStudy(String $name, string $code, int $patientCodeLength) : void {
-
         $study = new Study();
         $study->name = $name;
         $study->code = $code;
@@ -33,10 +32,9 @@ class StudyRepository implements StudyRepositoryInterface {
         $study->save();
     }
 
-    public function isExistingStudy($name) : bool {
+    public function isExistingStudy(string $name) : bool {
         $studies = $this->study->withTrashed()->where('name', $name)->get();
         return $studies->count()> 0 ? true : false ;
-
     }
 
     public function getStudies(bool $withTrashed = false) : array {
@@ -46,6 +44,11 @@ class StudyRepository implements StudyRepositoryInterface {
             $studies = $this->study->get();
         }
         return $studies->count() == 0 ? [] : $studies->toArray() ;
+    }
+
+    public function getAncillariesStudyOfStudy(string $studyName) : array {
+        $ancilariesStudies = $this->study->where('ancillary_of', $studyName)->get();
+        return $ancilariesStudies->count() == 0 ? [] : $ancilariesStudies->pluck('name')->toArray() ;
     }
 
     public function getAllStudiesWithDetails() : array {
