@@ -3,6 +3,7 @@
 namespace App\GaelO\UseCases\GetCenter;
 
 use App\GaelO\Entities\CenterEntity;
+use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\CenterRepositoryInterface;
@@ -23,7 +24,10 @@ class GetCenter {
     {
         try{
 
-            $this->checkAuthorization($getCenterRequest->currentUserId);
+            $studyName = null;
+            if(isset($getCenterRequest->studyName)) $studyName = $getCenterRequest->studyName;
+
+            $this->checkAuthorization($getCenterRequest->currentUserId, $studyName);
 
             $code = $getCenterRequest->code;
 
@@ -54,9 +58,9 @@ class GetCenter {
 
     }
 
-    private function checkAuthorization(int $userId){
+    private function checkAuthorization(int $userId, ?string $studyName){
         $this->authorizationUserService->setUserId($userId);
-        if( ! $this->authorizationUserService->isAdmin()) {
+        if( ! $this->authorizationUserService->isAdmin() && $studyName != null && ! $this->authorizationUserService->isRoleAllowed(Constants::ROLE_SUPERVISOR, $studyName)) {
             throw new GaelOForbiddenException();
         };
     }
