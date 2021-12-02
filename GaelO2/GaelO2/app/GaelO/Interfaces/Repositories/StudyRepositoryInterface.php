@@ -10,7 +10,9 @@ interface StudyRepositoryInterface {
 
     public function addStudy(String $name, string $code, int $patientCodeLength) : void ;
 
-    public function isExistingStudy($name) : bool ;
+    public function isExistingStudy(string $name) : bool ;
+
+    public function getAncillariesStudyOfStudy(string $name) : array ;
 
     public function getStudies(bool $withTrashed = false) : array ;
 

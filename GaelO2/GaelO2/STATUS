@@ -1,11 +1,12 @@
 Salim TODO :
 
 - Refaire DicowWeb Authorization Service
-- Passer le studyName en query tag ??
+
+- Passer le studyName en query tag
 - Optimiser l'utilisation des authorization service en injectant les data depuis le usecase (ou les rendre stateless)
 
 --- Etudes ancillaires ---
-=> Ne peut etre creer les roles que de Reviewer et supervisor
+=> Ne peut etre creer que les roles que de Reviewer et supervisor
 => Supervisor : Les taches non permise sont bloquée par le usecase en reprenant la study princeps de la ressource ou en verifiant statut ancillary ou pas pour le niveau study
 Ne doit pas pouvoir modifier les patients
 Ne doit pas pouvoir importer des patients
@@ -19,6 +20,9 @@ Doit pouvoir telecharger Dicoms
 Doit pouvoir exporter data de l'étude
 Doit pouvoir set documentation
 Doit pouvoir voir user details
+
+=> Reste avoir Patient et Study Service pour limiter les fonctionalité des etudes ancillaires
+
 --- /Etudes ancillaires ---
 
 ---- Refactoring Backend ----

@@ -48,7 +48,6 @@ class CreateFileToForm {
             $reviewEntity = $this->reviewRepositoryInterface->find($createFileToReviewRequest->id);
 
             $studyName = $reviewEntity['study_name'];
-            $userId = $reviewEntity['user_id'];
             $local = $reviewEntity['local'];
             $visitId = $reviewEntity['visit_id'];
             $key = $createFileToReviewRequest->key;

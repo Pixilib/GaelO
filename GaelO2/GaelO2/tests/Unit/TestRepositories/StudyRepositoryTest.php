@@ -93,5 +93,13 @@ class StudyRepositoryTest extends TestCase
         $this->assertNull($updatedStudy['deleted_at']);
     }
 
+    public function testGetAncilariesStudies(){
+        $study = Study::factory()->create();
+
+        Study::factory()->ancillaryOf($study->name)->count(5)->create();
+        $ancilarriesStudies = $this->studyRepository->getAncillariesStudyOfStudy($study->name);
+        $this->assertEquals(5, sizeof($ancilarriesStudies));
+    }
+
 
 }
