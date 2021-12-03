@@ -262,9 +262,11 @@ class ExportStudyService {
         }
 
         $tempFileNameXls = $spreadsheetAdapter->writeToExcel();
-
+        $tempFileNameCsv = $spreadsheetAdapter->writeToCsv('Tracker');
+        
         $exportTrackerResult = new ExportTrackerResults();
         $exportTrackerResult->addExportFile(ExportDataResults::EXPORT_TYPE_XLS, $tempFileNameXls);
+        $exportTrackerResults->addExportFile(ExportDataResults::EXPORT_TYPE_CSV, $tempFileNameCsv);
 
         $this->exportStudyResults->setTrackerReviewResults($exportTrackerResult);
 
