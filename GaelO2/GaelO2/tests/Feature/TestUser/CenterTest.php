@@ -64,8 +64,7 @@ class CenterTest extends TestCase
     public function testGetCenterShouldFailNotAdmin()
     {
         AuthorizationTools::actAsAdmin(false);
-        ($this->json('GET', '/api/centers/0')); //->assertStatus(403);
-        
+        $this->json('GET', '/api/centers/0')->assertStatus(403);
     }
 
     public function testGetCenterShouldFailNotSupervisor()
