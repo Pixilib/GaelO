@@ -7,6 +7,7 @@ use Exception;
 class ExportTrackerResults extends ExportDataResults{
 
     private ExportFile $xlsExport;
+    private array $csvExport = [];
 
     public function __construct()
     {
@@ -17,6 +18,8 @@ class ExportTrackerResults extends ExportDataResults{
 
         if($type === ExportDataResults::EXPORT_TYPE_XLS) {
             $this->xlsExport = new ExportFile('export_tracker.xlsx', $path);
+        }else if ($type === ExportDataResults::EXPORT_TYPE_CSV) {
+            $this->csvExport[] = new ExportFile('export_tracker_'.$key.'.csv', $path);
         }else{
             throw new Exception('Unknown File Type');
         }
@@ -28,7 +31,7 @@ class ExportTrackerResults extends ExportDataResults{
 
     }
     public function getCsvExportFiles() : array {
-        return [];
+        return [...$this->csvExport];
     }
 
     public function getZipExportFiles(): array {

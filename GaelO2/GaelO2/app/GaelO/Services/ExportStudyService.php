@@ -257,17 +257,21 @@ class ExportStudyService {
 
         foreach($roleArray as $role){
             $trackerData = $this->trackerRepositoryInterface->getTrackerOfRoleAndStudy($this->studyName, $role, false);
+            $sheets[] = $role;
             $spreadsheetAdapter->addSheet($role);
             $spreadsheetAdapter->fillData($role, $trackerData);
         }
 
-        $tempFileNameXls = $spreadsheetAdapter->writeToExcel();
-        $tempFileNameCsv = $spreadsheetAdapter->writeToCsv('Tracker');
-        
         $exportTrackerResult = new ExportTrackerResults();
-        $exportTrackerResult->addExportFile(ExportDataResults::EXPORT_TYPE_XLS, $tempFileNameXls);
-        $exportTrackerResults->addExportFile(ExportDataResults::EXPORT_TYPE_CSV, $tempFileNameCsv);
 
+        $tempFileNameXls = $spreadsheetAdapter->writeToExcel();
+        $exportTrackerResult->addExportFile(ExportDataResults::EXPORT_TYPE_XLS, $tempFileNameXls);
+
+        foreach($sheets as $sheet){
+            $tempFileNameCsv = $spreadsheetAdapter->writeToCsv($sheet);
+            $exportTrackerResult->addExportFile(ExportDataResults::EXPORT_TYPE_CSV, $tempFileNameCsv, $sheet);
+        }
+        
         $this->exportStudyResults->setTrackerReviewResults($exportTrackerResult);
 
 
