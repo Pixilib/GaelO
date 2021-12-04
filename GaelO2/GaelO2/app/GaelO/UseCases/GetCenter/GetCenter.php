@@ -60,11 +60,16 @@ class GetCenter {
 
     private function checkAuthorization(int $userId, ?string $studyName){
         $this->authorizationUserService->setUserId($userId);
-        if( ! $this->authorizationUserService->isAdmin() || ($studyName != null && ! $this->authorizationUserService->isRoleAllowed(Constants::ROLE_SUPERVISOR, $studyName))) {
+        //If no study name specified user shall be admin
+        if( $studyName == null && ! $this->authorizationUserService->isAdmin() ) {
             throw new GaelOForbiddenException();
-        };
+        }
+        //Else shall be supervisor in the study
+        else if ( !$this->authorizationUserService->isRoleAllowed(Constants::ROLE_SUPERVISOR, $studyName) ) {
+            throw new GaelOForbiddenException();
+        }
+
+
     }
 
 }
-
-?>
