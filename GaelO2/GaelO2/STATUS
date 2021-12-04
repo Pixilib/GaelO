@@ -2,7 +2,7 @@ Salim TODO :
 
 - Refaire DicowWeb Authorization Service
 
-- Passer le studyName en query tag
+- Passer le studyName en query tag => emilie
 - Optimiser l'utilisation des authorization service en injectant les data depuis le usecase (ou les rendre stateless)
 
 --- Etudes ancillaires ---
