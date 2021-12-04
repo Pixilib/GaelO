@@ -43,6 +43,14 @@ class CenterTest extends TestCase
         $this->json('GET', '/api/centers')->assertStatus(403);
     }
 
+    public function testGetCentersShouldFailNotSupervisor()
+    {
+        $this->study = Study::factory()->patientCodeLength(14)->code('123')->create();
+        $currentUserId = AuthorizationTools::actAsAdmin(false);
+        AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_INVESTIGATOR, $this->study->name);
+        $this->json('GET', '/api/centers?studyName='.$this->study->name)->assertStatus(403);
+    }
+
     public function testGetCenter()
     {
         AuthorizationTools::actAsAdmin(true);
@@ -59,6 +67,13 @@ class CenterTest extends TestCase
         $this->json('GET', '/api/centers/0')->assertStatus(403);
     }
 
+    public function testGetCenterShouldFailNotSupervisor()
+    {
+        $this->study = Study::factory()->patientCodeLength(14)->code('123')->create();
+        $currentUserId = AuthorizationTools::actAsAdmin(false);
+        AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_INVESTIGATOR, $this->study->name);
+        $this->json('GET', '/api/centers/0?studyName='.$this->study->name)->assertStatus(403);
+    }
 
     public function testAddCenter()
     {
