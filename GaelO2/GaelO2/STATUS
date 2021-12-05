@@ -4,6 +4,24 @@ Salim TODO :
 - Passer le studyName en query tag => emilie
 
 
+Creatable Visit : Manque Study Custom Logic => Passer dans frontend
+Review  : faire une propriete dans visit pour savoir si review disponible a un user en plus de status reviewAvailable ?
+
+Reste Autres :
+- Monitoring etude (espace / patient ...)
+- Mise en place scheduler
+- Monitoring scheduler via tracker
+- Orthanc Send to peer
+- Connecteur FTP/SFTP
+- Dummy Run => Impact sur la db a designer
+- Dicom liée aux review  => Impacte sur la db a designer
+- QC items Details => Impact sur la db a designer
+
+- OHIF essayer de faire passer le role dans les requetes => Faire un GaelO plugin dans OHIF
+pourra modifier cornerstoneWADOImageLoader pour injecter l'etude courante
+et devrait pouvoir recuperer des info soit via le useQuery soit via un localstorage
+
+
 --- Etudes ancillaires ---
 => Ne peut etre creer que les roles que de Reviewer et supervisor
 => Supervisor : Les taches non permise sont bloquée par le usecase en reprenant la study princeps de la ressource ou en verifiant statut ancillary ou pas pour le niveau study
@@ -36,19 +54,6 @@ Entity :
 
 ---- /Refactoring Backend ------
 
-Creatable Visit : Manque Study Custom Logic (+dans front skip visites optionnelles ?)
-Review  : faire une propriete dans visit pour savoir si review disponible a un user en plus de status reviewAvailable ?
-
-Reste Autres :
-- Orthanc Send to peer
-- Connecteur FTP/SFTP
-- Dummy Run => Impact sur la db a designer
-- Dicom liée aux review  => Impacte sur la db a designer
-- QC items Details => Impact sur la db a designer
-
-- OHIF essayer de faire passer le role dans les requetes => Faire un GaelO plugin dans OHIF
-pourra modifier cornerstoneWADOImageLoader pour injecter l'etude courante
-et devrait pouvoir recuperer des info soit via le useQuery soit via un localstorage
 
 **** Tests ***
 Test feature : visit et autres (dicom...)
