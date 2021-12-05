@@ -1,9 +1,11 @@
 Salim TODO :
 
-- Refaire DicowWeb Authorization Service
+- Refaire DicowWeb Authorization Service => A continuer
+
+- Optimiser l'utilisation des authorization service en injectant les data depuis le usecase (ou les rendre stateless)
 
 - Passer le studyName en query tag => emilie
-- Optimiser l'utilisation des authorization service en injectant les data depuis le usecase (ou les rendre stateless)
+
 
 --- Etudes ancillaires ---
 => Ne peut etre creer que les roles que de Reviewer et supervisor
@@ -46,6 +48,10 @@ Reste Autres :
 - Dummy Run => Impact sur la db a designer
 - Dicom liée aux review  => Impacte sur la db a designer
 - QC items Details => Impact sur la db a designer
+
+- OHIF essayer de faire passer le role dans les requetes => Faire un GaelO plugin dans OHIF
+pourra modifier cornerstoneWADOImageLoader pour injecter l'etude courante
+et devrait pouvoir recuperer des info soit via le useQuery soit via un localstorage
 
 **** Tests ***
 Test feature : visit et autres (dicom...)

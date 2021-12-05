@@ -8,11 +8,11 @@ use App\GaelO\Interfaces\Repositories\StudyRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\UserRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
 use App\GaelO\Util;
-use Illuminate\Support\Facades\Log;
 
 class AuthorizationDicomWebService {
 
     private string $originalStudyName;
+    private string $level;
     private DicomSeriesRepositoryInterface $dicomSeriesRepositoryInterface;
     private DicomStudyRepositoryInterface $dicomStudyRepositoryInterface;
     private VisitRepositoryInterface $visitRepositoryInterface;
@@ -42,29 +42,21 @@ class AuthorizationDicomWebService {
     public function setRequestedUri(string $requestedURI): void
     {
         $url = parse_url($requestedURI);
-        if($this->isStoneOfOrthanc($url)){
-            Log::info($url['path']);
-            if (Util::endsWith($url['path'], "/series"))  $this->level = "studies";
-            else $this->level = "series";
-            Log::info($this->level);
-            $queryParams = [];
-            parse_str($url['query'], $queryParams);
-            $requestedInstanceUID = $queryParams['0020000D'];
-            Log::info($queryParams);
+        $this->setLevel($url);
 
-        }else{
-            if (Util::endsWith($requestedURI, "/series"))  $this->level = "studies";
-            else $this->level = "series";
-            //Extract StudyInstanceUID from requested URI
-            $requestedInstanceUID = $this->getUIDOHIF($requestedURI, $this->level);
-        }
+        //Determine parent Visit ID depending of requested UID
+        if($this->level === "studies"){
 
-        if ($this->level === "series") {
-            $this->seriesEntity = $this->dicomSeriesRepositoryInterface->getSeries($requestedInstanceUID, false);
-            $visitId = $this->seriesEntity['dicom_study']['visit_id'];
-        } else if ($this->level === "studies") {
-            $studyEntity = $this->dicomStudyRepositoryInterface->getDicomStudy($requestedInstanceUID, false);
+            $requestedStudyInstanceUID = $this->getStudyInstanceUID($url);
+            $studyEntity = $this->dicomStudyRepositoryInterface->getDicomStudy($requestedStudyInstanceUID, false);
             $visitId = $studyEntity['visit_id'];
+
+        }else if ($this->level === "series"){
+
+            $requestedSeriesInstanceUID = $this->getSeriesInstanceUID($url);
+            $this->seriesEntity = $this->dicomSeriesRepositoryInterface->getSeries($requestedSeriesInstanceUID, false);
+            $visitId = $this->seriesEntity['dicom_study']['visit_id'];
+
         }
 
         $visitContext = $this->visitRepositoryInterface->getVisitContext($visitId);
@@ -72,15 +64,41 @@ class AuthorizationDicomWebService {
 
     }
 
-    private function isStoneOfOrthanc(array $url) : bool {
-        return str_contains('0020000D=',  $url['query']) ;
+    private function getStudyInstanceUID(array $url) : string {
+        if( key_exists('query',  $url) ){
+            $params = [];
+            parse_str($url['query'], $params);
+            if(key_exists('0020000D',  $params)) return $params['0020000D'];
+        }
+        return $this->getUID($url['path'], "studies");
+    }
+
+    private function getSeriesInstanceUID(array $url)  : string {
+        return $this->getUID($url['path'], "series");
+    }
+
+
+    private function setLevel(array $url){
+
+        if( key_exists('query',  $url) ){
+            $params = [];
+            parse_str($url['query'], $params);
+            if(key_exists('0020000D',  $params)) {
+                $this->level = "studies";
+                return;
+            };
+        }
+
+        if (Util::endsWith($url['path'], "/series"))  $this->level = "studies";
+        else $this->level = "series";
+
     }
 
     /**
      * Isolate the called Study or Series Instance UID
      * @return string
      */
-    private function getUIDOHIF(string $requestedURI, string $level): string
+    private function getUID(string $requestedURI, string $level): string
     {
         $studySubString = strstr($requestedURI, "/" . $level . "/");
         $studySubString = str_replace("/" . $level . "/", "", $studySubString);
@@ -96,11 +114,13 @@ class AuthorizationDicomWebService {
         return $studyUID;
     }
 
+
     /**
      * As URI are defined by DicomWeb syntax we can't know what is the study scope
      * So we are cheking that the requested dicom are linked to a primary or ancillary study
      * in which the user has a role
      */
+    //SK ICI A AMELIORER EN FAISANT QUE LE VIEWER ENVOI L ETUDE COURANTE
     public function isDicomAllowed(): bool
     {
 
