@@ -36,9 +36,8 @@ class ModifyPatient {
 
             $patientEntity = $this->patientRepositoryInterface->find($modifyPatientRequest->patientId);
             $studyName = $patientEntity['study_name'];
+
             $this->checkAuthorization($modifyPatientRequest->currentUserId, $modifyPatientRequest->patientId, $studyName);
-
-
 
             $updatableData = ['firstname', 'lastname', 'gender', 'birthDay', 'birthMonth', 'birthYear',
             'registrationDate', 'investigatorName', 'centerCode', 'inclusionStatus', 'withdrawReason', 'withdrawDate'];

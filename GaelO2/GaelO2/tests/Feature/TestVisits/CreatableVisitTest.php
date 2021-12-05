@@ -5,6 +5,7 @@ namespace Tests\Feature\TestVisits;
 use App\GaelO\Constants\Constants;
 use App\Models\Patient;
 use App\Models\User;
+use App\Models\VisitGroup;
 use App\Models\VisitType;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -28,12 +29,12 @@ class CreatableVisitTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $visitType = VisitType::factory()->create();
-        $this->studyName = $visitType->visitGroup->study->name;
-        $this->patient = Patient::factory()->studyName($this->studyName)->create();
-        $this->patient->inclusion_status = Constants::PATIENT_INCLUSION_STATUS_INCLUDED;
-        $this->patient->save();
+        $this->patient = Patient::factory()->inclusionStatus(Constants::PATIENT_INCLUSION_STATUS_INCLUDED)->create();
+        $this->studyName = $this->patient->study_name;
         $this->patientId = $this->patient->id;
+        //Create a Visit Type to have one creatable visit
+        $visitGroup = VisitGroup::factory()->studyName($this->studyName)->create();
+        VisitType::factory()->visitGroupId($visitGroup->id)->create();
     }
 
     public function testGetCreatableVisit()
@@ -45,7 +46,7 @@ class CreatableVisitTest extends TestCase
         $userEntity->save();
 
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_INVESTIGATOR, $this->studyName);
-        $response = $this->get('/api/studies/' . $this->studyName . '/patients/' . $this->patientId . '/creatable-visits');
+        $response = $this->get('/api/patients/' . $this->patientId . '/creatable-visits');
         $responseArray = json_decode( $response->content() );
         $this->assertEquals(1, sizeof($responseArray));
         $response->assertStatus(200);
@@ -54,7 +55,7 @@ class CreatableVisitTest extends TestCase
     public function testGetCreatableVisitShouldFailNoRole()
     {
         AuthorizationTools::actAsAdmin(false);
-        $response = $this->get('/api/studies/' . $this->studyName . '/patients/' . $this->patientId . '/creatable-visits');
+        $response = $this->get('/api/patients/' . $this->patientId . '/creatable-visits');
         $response->assertStatus(403);
     }
 }

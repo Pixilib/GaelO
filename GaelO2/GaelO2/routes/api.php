@@ -102,7 +102,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::patch('patients/{code}', [PatientController::class, 'modifyPatient']);
     Route::get('studies/{studyName}/patients/{code}', [PatientController::class, 'getPatient']);
     Route::get('studies/{studyName}/patients/{patientId}/visits', [PatientController::class, 'getPatientVisit']);
-    Route::get('studies/{studyName}/patients/{patientId}/creatable-visits', [PatientController::class, 'getCreatableVisits']);
+    Route::get('patients/{patientId}/creatable-visits', [PatientController::class, 'getCreatableVisits']);
 
     //Visits Routes
     Route::post('visits/{id}/validate-dicom', [VisitController::class, 'validateDicom']);
