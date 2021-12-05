@@ -40,6 +40,10 @@ class AuthorizationPatientService {
         $this->patientData = $patientEntity;
     }
 
+    public function getAuthorizationStudyService() : AuthorizationStudyService {
+        return $this->authorizationStudyService;
+    }
+
     public function isPatientAllowed(string $requestedRole): bool
     {
         $this->fillPatientData();

@@ -7,6 +7,7 @@ use App\GaelO\Exceptions\GaelOBadRequestException;
 use App\GaelO\Exceptions\GaelOConflictException;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
+use App\GaelO\Interfaces\Repositories\PatientRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
 use App\GaelO\Services\AuthorizationService\AuthorizationPatientService;
@@ -17,16 +18,18 @@ use Exception;
 
 class CreateVisit {
 
+    private PatientRepositoryInterface $patientRepositoryInterface;
     private VisitRepositoryInterface $visitRepositoryInterface;
     private AuthorizationPatientService $authorizationPatientService;
     private VisitService $visitService;
     private TrackerRepositoryInterface $trackerRepositoryInterface;
     private MailServices $mailServices;
 
-    public function __construct(VisitRepositoryInterface $visitRepositoryInterface, AuthorizationPatientService $authorizationPatientService, VisitService $visitService, TrackerRepositoryInterface $trackerRepositoryInterface, MailServices $mailServices){
+    public function __construct(VisitRepositoryInterface $visitRepositoryInterface, PatientRepositoryInterface $patientRepositoryInterface, AuthorizationPatientService $authorizationPatientService, VisitService $visitService, TrackerRepositoryInterface $trackerRepositoryInterface, MailServices $mailServices){
         $this->visitService = $visitService;
         $this->authorizationPatientService = $authorizationPatientService;
         $this->visitRepositoryInterface = $visitRepositoryInterface;
+        $this->patientRepositoryInterface = $patientRepositoryInterface;
         $this->trackerRepositoryInterface = $trackerRepositoryInterface;
         $this->mailServices = $mailServices;
     }
@@ -35,7 +38,13 @@ class CreateVisit {
 
         try{
 
-            $this->checkAuthorization($createVisitRequest->currentUserId, $createVisitRequest->patientId, $createVisitRequest->studyName);
+            $patientId = $createVisitRequest->patientId;
+            $currentUserId = $createVisitRequest->currentUserId;
+
+            $patientEntity = $this->patientRepositoryInterface->find($patientId);
+
+            $studyName = $patientEntity['study_name'];
+            $this->checkAuthorization($currentUserId, $patientId, $studyName);
 
             //If visit was not done, force visitDate to null
             if ($createVisitRequest->statusDone === Constants::VISIT_STATUS_NOT_DONE && !empty($createVisitRequest->visitDate)) {
@@ -47,65 +56,63 @@ class CreateVisit {
             }
 
             $existingVisit = $this->visitRepositoryInterface->isExistingVisit(
-                            $createVisitRequest->patientId,
+                            $patientId,
                             $createVisitRequest->visitTypeId);
 
             if($existingVisit) {
-
                 throw new GaelOConflictException('Visit Already Created');
-
-            }else{
-
-                if($createVisitRequest->visitDate !== null){
-
-                    //Input date should be in SQL FORMAT YYYY-MM-DD
-                    if ( !  $this->validateDate($createVisitRequest->visitDate) ){
-                        throw new GaelOBadRequestException("Visit Date should be in YYYY-MM-DD and valid");
-                    }
-                }
-
-                $visitId = $this->visitService->createVisit(
-                    $createVisitRequest->studyName,
-                    $createVisitRequest->currentUserId,
-                    $createVisitRequest->patientId,
-                    $createVisitRequest->visitDate,
-                    $createVisitRequest->visitTypeId,
-                    $createVisitRequest->statusDone,
-                    $createVisitRequest->reasonForNotDone);
-
-                $details = [
-                    'visit_date' =>  $createVisitRequest->visitDate,
-                    'status_done' => $createVisitRequest->statusDone,
-                    'reason_for_not_done' => $createVisitRequest->reasonForNotDone
-                ];
-
-                if($createVisitRequest->statusDone === Constants::VISIT_STATUS_NOT_DONE){
-                    $visitContext = $this->visitRepositoryInterface->getVisitContext($visitId);
-
-                    $visitType = $visitContext['visit_type']['name'];
-
-                    $this->mailServices->sendVisitNotDoneMessage(
-                        $visitId,
-                        $createVisitRequest->studyName,
-                        $createVisitRequest->patientId,
-                        $visitType,
-                        $createVisitRequest->reasonForNotDone,
-                        $createVisitRequest->currentUserId
-                    );
-                }
-
-
-                $this->trackerRepositoryInterface->writeAction(
-                    $createVisitRequest->currentUserId,
-                    Constants::ROLE_INVESTIGATOR,
-                    $createVisitRequest->studyName,
-                    $visitId,
-                    Constants::TRACKER_CREATE_VISIT,
-                    $details);
-
-                $createVisitResponse->status = 201;
-                $createVisitResponse->statusText = 'Created';
             }
+
+            if($createVisitRequest->visitDate !== null){
+
+                //Input date should be in SQL FORMAT YYYY-MM-DD
+                if ( !  $this->validateDate($createVisitRequest->visitDate) ){
+                    throw new GaelOBadRequestException("Visit Date should be in YYYY-MM-DD and valid");
+                }
+            }
+
+            $visitId = $this->visitService->createVisit(
+                $studyName,
+                $currentUserId,
+                $patientId,
+                $createVisitRequest->visitDate,
+                $createVisitRequest->visitTypeId,
+                $createVisitRequest->statusDone,
+                $createVisitRequest->reasonForNotDone
+            );
+
+            if($createVisitRequest->statusDone === Constants::VISIT_STATUS_NOT_DONE){
+                $visitContext = $this->visitRepositoryInterface->getVisitContext($visitId);
+
+                $visitType = $visitContext['visit_type']['name'];
+
+                $this->mailServices->sendVisitNotDoneMessage(
+                    $visitId,
+                    $studyName,
+                    $patientId,
+                    $visitType,
+                    $createVisitRequest->reasonForNotDone,
+                    $currentUserId
+                );
+            }
+
+            $details = [
+                'visit_date' =>  $createVisitRequest->visitDate,
+                'status_done' => $createVisitRequest->statusDone,
+                'reason_for_not_done' => $createVisitRequest->reasonForNotDone
+            ];
+
+            $this->trackerRepositoryInterface->writeAction(
+                $currentUserId,
+                Constants::ROLE_INVESTIGATOR,
+                $studyName,
+                $visitId,
+                Constants::TRACKER_CREATE_VISIT,
+                $details);
+
+            $createVisitResponse->status = 201;
+            $createVisitResponse->statusText = 'Created';
+
         } catch (GaelOException $e){
 
             $createVisitResponse->status = $e->statusCode;
@@ -123,6 +130,7 @@ class CreateVisit {
         $this->authorizationPatientService->setUserId($userId);
         $this->authorizationPatientService->setStudyName($studyName);
         $this->authorizationPatientService->setPatientId($patientId);
+
         if (! $this->authorizationPatientService->isPatientAllowed(Constants::ROLE_INVESTIGATOR) ){
             throw new GaelOForbiddenException();
         }

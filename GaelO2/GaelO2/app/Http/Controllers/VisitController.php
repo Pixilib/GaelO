@@ -38,13 +38,11 @@ use Illuminate\Support\Facades\Auth;
 
 class VisitController extends Controller
 {
-    public function createVisit(String $studyName, String $visitGroupId, String $visitTypeId, Request $request, CreateVisit $createVisit, CreateVisitRequest $createVisitRequest, CreateVisitResponse $createVisitResponse)
+    public function createVisit(String $visitTypeId, Request $request, CreateVisit $createVisit, CreateVisitRequest $createVisitRequest, CreateVisitResponse $createVisitResponse)
     {
         $curentUser = Auth::user();
 
         $createVisitRequest->currentUserId = $curentUser['id'];
-        $createVisitRequest->studyName = $studyName;
-        $createVisitRequest->visitGroupId = $visitGroupId;
         $createVisitRequest->visitTypeId = $visitTypeId;
 
         $requestData = $request->all();

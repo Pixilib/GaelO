@@ -112,7 +112,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::patch('visits/{id}/visit-date', [VisitController::class, 'modifyVisitDate']);
     Route::delete('visits/{id}', [VisitController::class, 'deleteVisit']);
     Route::patch('visits/{id}/reactivate', [VisitController::class, 'reactivateVisit']);
-    Route::post('studies/{studyName}/visit-groups/{visitGroupId}/visit-types/{visitTypeId}/visits', [VisitController::class, 'createVisit']);
+    Route::post('visit-types/{visitTypeId}/visits', [VisitController::class, 'createVisit']);
     Route::get('studies/{studyName}/visits/{id}', [VisitController::class, 'getVisit']);
 
     //Local Form Routes

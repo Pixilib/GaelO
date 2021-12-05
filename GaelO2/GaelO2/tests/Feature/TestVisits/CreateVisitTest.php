@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Models\Visit;
 use App\Models\VisitType;
 use App\Models\Patient;
+use App\Models\Study;
 use Tests\AuthorizationTools;
 
 class CreateVisitTest extends TestCase
@@ -58,8 +59,7 @@ class CreateVisitTest extends TestCase
             'statusDone' => 'Done',
         ];
 
-        $this->json('POST', 'api/studies/'.$this->studyName.'/visit-groups/'.$this->visitGroupId.
-        '/visit-types/'.$this->visitTypeId.'/visits?role=Investigator', $validPayload)->assertStatus(201);
+        $this->json('POST', 'api/visit-types/'.$this->visitTypeId.'/visits?role=Investigator', $validPayload)->assertStatus(201);
     }
 
     public function testCreateVisitNotDone() {
@@ -70,8 +70,7 @@ class CreateVisitTest extends TestCase
             'reasonForNotDone'=> 'unavailable'
         ];
 
-        $this->json('POST', 'api/studies/'.$this->studyName.'/visit-groups/'.$this->visitGroupId.
-        '/visit-types/'.$this->visitTypeId.'/visits?role=Investigator', $validPayload)->assertStatus(201);
+        $this->json('POST', 'api/visit-types/'.$this->visitTypeId.'/visits?role=Investigator', $validPayload)->assertStatus(201);
     }
 
     public function testCreateVisitForbiddenNoRole(){
@@ -84,8 +83,7 @@ class CreateVisitTest extends TestCase
             'statusDone' => 'Done',
         ];
 
-        $this->json('POST', 'api/studies/'.$this->studyName.'/visit-groups/'.$this->visitGroupId.
-        '/visit-types/'.$this->visitTypeId.'/visits?role=Investigator', $validPayload)->assertStatus(403);
+        $this->json('POST', 'api/visit-types/'.$this->visitTypeId.'/visits?role=Investigator', $validPayload)->assertStatus(403);
     }
 
     public function testCreateVisitWrongDate(){
@@ -96,8 +94,7 @@ class CreateVisitTest extends TestCase
             'statusDone' => 'Done',
         ];
 
-        $this->json('POST', 'api/studies/'.$this->studyName.'/visit-groups/'.$this->visitGroupId.
-        '/visit-types/'.$this->visitTypeId.'/visits?role=Investigator', $validPayload)->assertStatus(400);
+        $this->json('POST', 'api/visit-types/'.$this->visitTypeId.'/visits?role=Investigator', $validPayload)->assertStatus(400);
     }
 
     public function testCreateVisitNotDoneWithNoReasonShouldFail(){
@@ -108,8 +105,7 @@ class CreateVisitTest extends TestCase
             'statusDone' => Constants::VISIT_STATUS_NOT_DONE,
         ];
 
-        $this->json('POST', 'api/studies/'.$this->studyName.'/visit-groups/'.$this->visitGroupId.
-        '/visit-types/'.$this->visitTypeId.'/visits?role=Investigator', $validPayload)->assertStatus(400);
+        $this->json('POST', 'api/visit-types/'.$this->visitTypeId.'/visits?role=Investigator', $validPayload)->assertStatus(400);
     }
 
 
@@ -135,17 +131,9 @@ class CreateVisitTest extends TestCase
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_INVESTIGATOR, $studyName);
 
         //create request should return conflict
-        $this->json('POST', 'api/studies/'.$studyName.'/visit-groups/'.$visit->visitType->visitGroup->id.
-        '/visit-types/'.$visit->visitType->id.'/visits'.'?role=Investigator', $validPayload)
+        $this->json('POST', 'api/visit-types/'.$visit->visitType->id.'/visits'.'?role=Investigator', $validPayload)
         ->assertStatus(409);
 
     }
-
-
-
-
-
-
-
 
 }
