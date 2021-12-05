@@ -38,7 +38,7 @@ Doit pouvoir exporter data de l'étude
 Doit pouvoir set documentation
 Doit pouvoir voir user details
 
-=> Reste avoir Patient et Study Service pour limiter les fonctionalité des etudes ancillaires
+=> Reste avoir Study Service pour limiter les fonctionalité des etudes ancillaires
 
 --- /Etudes ancillaires ---
 
