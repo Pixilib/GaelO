@@ -62,14 +62,13 @@ class PatientController extends Controller
         return $this->getJsonResponse($modifyPatientResponse->body, $modifyPatientResponse->status, $modifyPatientResponse->statusText);
     }
 
-    public function getCreatableVisits(string $studyName, string $patientId, GetCreatableVisits $getCreatableVisits, GetCreatableVisitsRequest $getCreatableVisitsRequest, GetCreatableVisitsResponse $getCreatableVisitsResponse)
+    public function getCreatableVisits(string $patientId, GetCreatableVisits $getCreatableVisits, GetCreatableVisitsRequest $getCreatableVisitsRequest, GetCreatableVisitsResponse $getCreatableVisitsResponse)
     {
 
         $currentUser = Auth::user();
 
         $getCreatableVisitsRequest->currentUserId = $currentUser['id'];
         $getCreatableVisitsRequest->patientId = $patientId;
-        $getCreatableVisitsRequest->studyName = $studyName;
 
         $getCreatableVisits->execute($getCreatableVisitsRequest, $getCreatableVisitsResponse);
 

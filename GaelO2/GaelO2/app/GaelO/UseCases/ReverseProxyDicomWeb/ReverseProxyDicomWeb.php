@@ -81,8 +81,6 @@ class ReverseProxyDicomWeb{
     }
 
     private function checkAuthorization(int $userId, string $requestedURI){
-
-        Log::info($requestedURI);
         if( ! str_starts_with ( $requestedURI , "/dicom-web/" ) ){
             throw new GaelOForbiddenException;
         }

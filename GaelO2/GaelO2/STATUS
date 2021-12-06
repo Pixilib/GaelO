@@ -1,12 +1,29 @@
 Salim TODO :
 
-- Refaire DicowWeb Authorization Service
-
-- Passer le studyName en query tag
 - Optimiser l'utilisation des authorization service en injectant les data depuis le usecase (ou les rendre stateless)
+- Passer le studyName en query tag => emilie
+
+
+Creatable Visit : Manque Study Custom Logic => Passer dans frontend
+Review  : faire une propriete dans visit pour savoir si review disponible a un user en plus de status reviewAvailable ?
+
+Reste Autres :
+- Monitoring etude (espace / patient ...)
+- Mise en place scheduler
+- Monitoring scheduler via tracker
+- Orthanc Send to peer
+- Connecteur FTP/SFTP
+- Dummy Run => Impact sur la db a designer => peut etre ne rien faire et passer par une etude de challenge
+- Dicom liée aux review  => Impacte sur la db a designer => probablement privilegier les associated file des reviews
+- QC items Details => Impact sur la db a designer
+
+- OHIF essayer de faire passer le role dans les requetes => Faire un GaelO plugin dans OHIF
+pourra modifier cornerstoneWADOImageLoader pour injecter l'etude courante
+et devrait pouvoir recuperer des info soit via le useQuery soit via un localstorage
+
 
 --- Etudes ancillaires ---
-=> Ne peut etre creer que les roles que de Reviewer et supervisor
+=> TODO  : Ne peut etre creer que les roles que de Reviewer et supervisor
 => Supervisor : Les taches non permise sont bloquée par le usecase en reprenant la study princeps de la ressource ou en verifiant statut ancillary ou pas pour le niveau study
 Ne doit pas pouvoir modifier les patients
 Ne doit pas pouvoir importer des patients
@@ -21,7 +38,7 @@ Doit pouvoir exporter data de l'étude
 Doit pouvoir set documentation
 Doit pouvoir voir user details
 
-=> Reste avoir Patient et Study Service pour limiter les fonctionalité des etudes ancillaires
+=> Reste avoir Study Service pour limiter les fonctionalité des etudes ancillaires
 
 --- /Etudes ancillaires ---
 
@@ -37,15 +54,6 @@ Entity :
 
 ---- /Refactoring Backend ------
 
-Creatable Visit : Manque Study Custom Logic (+dans front skip visites optionnelles ?)
-Review  : faire une propriete dans visit pour savoir si review disponible a un user en plus de status reviewAvailable ?
-
-Reste Autres :
-- Orthanc Send to peer
-- Connecteur FTP/SFTP
-- Dummy Run => Impact sur la db a designer
-- Dicom liée aux review  => Impacte sur la db a designer
-- QC items Details => Impact sur la db a designer
 
 **** Tests ***
 Test feature : visit et autres (dicom...)

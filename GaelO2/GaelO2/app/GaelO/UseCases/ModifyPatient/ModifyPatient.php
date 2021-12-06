@@ -36,9 +36,8 @@ class ModifyPatient {
 
             $patientEntity = $this->patientRepositoryInterface->find($modifyPatientRequest->patientId);
             $studyName = $patientEntity['study_name'];
+
             $this->checkAuthorization($modifyPatientRequest->currentUserId, $modifyPatientRequest->patientId, $studyName);
-
-
 
             $updatableData = ['firstname', 'lastname', 'gender', 'birthDay', 'birthMonth', 'birthYear',
             'registrationDate', 'investigatorName', 'centerCode', 'inclusionStatus', 'withdrawReason', 'withdrawDate'];
@@ -51,9 +50,7 @@ class ModifyPatient {
                 }
             } else {
                 $patientEntity['withdraw_reason'] = null;
-                $modifiedData['withdraw_reason'] = null;
                 $patientEntity['withdraw_date'] = null;
-                $modifiedData['withdraw_date'] = null;
             }
 
             //Check Gender Validity
@@ -63,20 +60,15 @@ class ModifyPatient {
             //Check BirthDate Validity
             ImportPatientService::checkCorrectBirthDate($modifyPatientRequest->birthDay, $modifyPatientRequest->birthMonth, $modifyPatientRequest->birthYear);
 
-            $modifiedData = [];
-
             //Update each updatable data if specified in request
             foreach($updatableData as $data){
                 if($modifyPatientRequest->$data !== null){
                     $patientEntity[Util::camelCaseToSnakeCase($data)] = $modifyPatientRequest->$data;
-                    $modifiedData[Util::camelCaseToSnakeCase($data)] = $modifyPatientRequest->$data;
                 }
             }
 
-            $modifiedData['reason'] = $modifyPatientRequest->reason;
-
             $this->patientRepositoryInterface->update($modifyPatientRequest->patientId, $patientEntity);
-            $this->trackerRepositoryInterface->writeAction($modifyPatientRequest->currentUserId, Constants::ROLE_SUPERVISOR, $patientEntity['study_name'], null, Constants::TRACKER_EDIT_PATIENT, $modifiedData);
+            $this->trackerRepositoryInterface->writeAction($modifyPatientRequest->currentUserId, Constants::ROLE_SUPERVISOR, $patientEntity['study_name'], null, Constants::TRACKER_EDIT_PATIENT, (array) $modifyPatientRequest);
 
             $modifyPatientResponse->status = 200;
             $modifyPatientResponse->statusText = 'OK';
