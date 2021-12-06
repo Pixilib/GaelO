@@ -71,6 +71,18 @@ class StudyTest extends TestCase
 
     }
 
+    public function testCreateAncillaryStudy(){
+        AuthorizationTools::actAsAdmin(true);
+        $study = Study::factory()->create();
+        $payload = [
+            'name'=>'NEWSTUDY',
+            'code'=>'1234',
+            'patientCodeLength' => 5,
+            'ancillaryOf'=> $study->name
+        ];
+        $this->json('POST', '/api/studies', $payload)->assertStatus(201);
+    }
+
     public function testCreateStudyForbiddenNotAdmin(){
         AuthorizationTools::actAsAdmin(false);
         $payload = [

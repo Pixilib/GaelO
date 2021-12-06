@@ -107,6 +107,14 @@ class ImportPatientTest extends TestCase
         $this->json('POST', '/api/studies/'.$this->study->name.'/import-patients', $this->validPayload)->assertStatus(403);
     }
 
+    public function testImportPatientForbiddenForAncillaryStudy(){
+        $currentUserId = AuthorizationTools::actAsAdmin(false);
+        $ancillaryStudies = Study::factory()->ancillaryOf($this->study->name)->create();
+        AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $ancillaryStudies->name);
+        $answer = $this->json('POST', '/api/studies/'.$ancillaryStudies->name.'/import-patients', $this->validPayload);
+        $answer->assertStatus(403);
+    }
+
     public function testCreateWrongDayOfBirth() {
         $currentUserId = AuthorizationTools::actAsAdmin(false);
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $this->study->name);
