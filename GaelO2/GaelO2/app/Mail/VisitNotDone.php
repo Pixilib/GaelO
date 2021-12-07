@@ -38,7 +38,7 @@ class VisitNotDone extends Mailable implements ShouldQueue
     public function build()
     {
         return $this->view('mails.mail_visit_not_done')
-            ->subject($this->parameters['study']." - Visit Not Done - Patient ".$this->parameters['patientId'])
+            ->subject($this->parameters['study']." - Visit Not Done - Patient - ".$this->parameters['patientId']." - Visit - ".$this->parameters['visitType'])
             ->with($this->parameters);
     }
 }

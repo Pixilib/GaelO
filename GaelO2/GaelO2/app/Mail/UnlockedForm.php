@@ -40,7 +40,7 @@ class UnlockedForm extends Mailable implements ShouldQueue
     public function build()
     {
         return $this->view('mails.mail_unlocked_form')
-        ->subject($this->parameters['study']." - Form Unlocked Patient - ".$this->parameters['patientId'])
+        ->subject($this->parameters['study']." - Form Unlocked Patient - ".$this->parameters['patientId']." - Visit - ".$this->parameters['visitType'])
         ->with($this->parameters);
     }
 }

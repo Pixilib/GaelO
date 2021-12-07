@@ -37,7 +37,7 @@ class ReviewReady extends Mailable implements ShouldQueue
     public function build()
     {
         return $this->view('mails.mail_review_ready')
-        ->subject($this->parameters['study']." - Awaiting Review Patient - ".$this->parameters['patientId'])
+        ->subject($this->parameters['study']." - Awaiting Review Patient - ".$this->parameters['patientId']." - Visit - ".$this->parameters['visitType'])
         ->with($this->parameters);
     }
 }

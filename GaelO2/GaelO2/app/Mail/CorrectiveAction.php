@@ -38,7 +38,7 @@ class CorrectiveAction extends Mailable implements ShouldQueue
     public function build()
     {
         return $this->view('mails.mail_corrective_action')
-        ->subject($this->parameters['study']." - Corrective Action Patient - ".$this->parameters['patientId'])
+        ->subject($this->parameters['study']." - Corrective Action Patient - ".$this->parameters['patientId']." - Visit - ".$this->parameters['visitType'])
         ->with($this->parameters);
     }
 }
