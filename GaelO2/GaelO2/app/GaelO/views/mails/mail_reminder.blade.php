@@ -1,5 +1,5 @@
-@extends('mails.mail_template')
+@extends('mails.mail_minimal_template')
 
 @section('content')
-    {{$content}}
+    {!!$content!!}
 @endsection
