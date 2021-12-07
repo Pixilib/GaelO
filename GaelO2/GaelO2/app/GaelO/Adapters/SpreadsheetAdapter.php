@@ -25,7 +25,8 @@ class SpreadsheetAdapter implements SpreadsheetInterface {
     public function fillData(string $spreadsheetName, array $data) : void {
         $inputArray = [];
         if(sizeof($data)>0) $inputArray = $this->generateArrayForSpreadSheet($data);
-        $this->spreadsheet->getSheetByName($spreadsheetName)->fromArray($inputArray);
+        //Strict null comparison is set to interpret 0 (bool val in db) as not null value
+        $this->spreadsheet->getSheetByName($spreadsheetName)->fromArray($inputArray, null, 'A1', true);
     }
 
     /**
