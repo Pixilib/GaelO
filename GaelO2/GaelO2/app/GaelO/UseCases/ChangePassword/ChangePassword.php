@@ -12,6 +12,7 @@ use App\GaelO\Interfaces\Adapters\HashInterface;
 use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\UserRepositoryInterface;
 use Exception;
+use Log;
 
 class ChangePassword {
 
@@ -92,21 +93,19 @@ class ChangePassword {
 
     /**
      * Check Password constraints :
-     * Should have length at least 8 carachters
-     * Should not have carachters different from alfa numerical
-     * Should have at least a differente case (so strlower should not be equal to original string)
+     * Should have length at least 8 characters
+     * Should have at least a different case 
+     * Can have special characters like !@#$%^&*()\[]{}-_+=~`|:;'<>,./?
      */
     private function checkPasswordFormatCorrect(string $password) {
-        $checkLetterAndNumber =  preg_match('/(?i)([a-z])/', $password) && preg_match('/([0-9])/', $password);
-        $checkOnlyAlphaNumerical = !preg_match('/(?i)([^a-z0-9])/', $password);
-        $checkNotAllSameCase = (strtolower($password) !== $password);
-        $checkLength= strlen($password) >= 8;
-
-        if ( $checkLength === false ||
-                $checkLetterAndNumber === false  ||
-                $checkOnlyAlphaNumerical === false  ||
-                $checkNotAllSameCase === false
-            ){
+        $checkOneDigit = "(?=.*\d)";
+        $checkOneLowerCase = "(?=.*[a-z])";
+        $checkOneUpperCase = "(?=.*[A-Z])";
+        $checkStrContent = "[0-9A-Za-z\!@#$%^&*()\\[\]{}\-_+=~`|:;'<>,.\/?]"; //Allow for special char
+        $checkLength = "{8,}";
+        $wholeStringCheck = $checkOneDigit.$checkOneLowerCase.$checkOneUpperCase.$checkStrContent.$checkLength;
+        $checkPasswordFormat = preg_match('/^'.$wholeStringCheck.'$/', $password);
+        if ($checkPasswordFormat == FALSE){
             throw new GaelOBadRequestException('Password Contraints Failure');
         }
     }

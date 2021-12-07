@@ -48,6 +48,11 @@ class PatientRepository implements PatientRepositoryInterface {
         return $patients !== null  ? $patients->toArray() : [];
     }
 
+    public function getPatientsFromIdArray(array $ids) : array {
+        $patients = $this->patient->whereIn('id', $ids)->get();
+        return $patients !== null  ? $patients->toArray() : [];
+    }
+
     /**
      * @param $patients expected array of Patient Entity
      */
