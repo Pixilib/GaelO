@@ -44,7 +44,7 @@ class SpreadsheetAdapter implements SpreadsheetInterface {
         $path = $this->createTempFile();
 
         $writer->setSheetIndex($index);
-        $writer->setDelimiter(';');
+        $writer->setDelimiter(',');
         $writer->setEnclosure('"');
         $writer->setLineEnding("\r\n");
 
