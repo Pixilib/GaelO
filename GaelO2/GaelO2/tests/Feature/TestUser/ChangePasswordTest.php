@@ -36,8 +36,8 @@ class ChangePasswordTest extends TestCase
 
         $this->validPayload = [
             'previous_password' => 'password12345',
-            'password1'=>'newPassword12345',
-            'password2'=>'newPassword12345'
+            'password1'=>'newPassword12345!',
+            'password2'=>'newPassword12345!'
         ];
 
     }
@@ -95,15 +95,6 @@ class ChangePasswordTest extends TestCase
     {
         $this->validPayload['password1']='azertyuio';
         $this->validPayload['password2']='azertyuio';
-        $response = $this->json('PUT', '/api/users/'.$this->user['id'].'/password', $this->validPayload);
-        $response->assertStatus(400);
-
-    }
-
-    public function testChangePasswordNotAllowedCharacter()
-    {
-        $this->validPayload['password1']='newPassword12345.';
-        $this->validPayload['password2']='newPassword12345.';
         $response = $this->json('PUT', '/api/users/'.$this->user['id'].'/password', $this->validPayload);
         $response->assertStatus(400);
 
