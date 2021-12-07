@@ -20,6 +20,8 @@ interface PatientRepositoryInterface {
 
     public function getPatientsFromCodeArray(array $codes) : array ;
 
+    public function getPatientsFromIdArray(array $ids) : array ;
+
     public function addPatientInStudy(string $id,
                     string $code, string $lastname, string $firstname,
                     string $gender, int $birthDay, int $birthMonth, int $birthYear,

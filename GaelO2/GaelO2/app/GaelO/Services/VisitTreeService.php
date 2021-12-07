@@ -7,6 +7,7 @@ use App\GaelO\Exceptions\GaelOBadRequestException;
 use App\GaelO\Repositories\PatientRepository;
 use App\GaelO\Repositories\UserRepository;
 use App\GaelO\Repositories\VisitRepository;
+use Log;
 
 /**
  * Build JSON for JSTree with patient's / visit's data
@@ -43,10 +44,18 @@ class VisitTreeService
         $responseArray['visits'] = [];
         $responseArray['patients'] = [];
 
+        $patientIdsArray = array_unique(array_map(function ($visit) {
+            return $visit['patient_id'];
+        }, $visitsArray));
+
+        $patientsArray = $this->patientRepository->getPatientsFromIdArray($patientIdsArray);
+        foreach($patientsArray as $patientEntity) {
+            $responseArray['patients'][$patientEntity['id']] = $patientEntity['code'];
+        }
+
         foreach ($visitsArray as $visitObject) {
             $visitsFormattedData = $this->filterVisitOutputData($visitObject);
             $responseArray['visits'][] = $visitsFormattedData;
-            if(!in_array($visitsFormattedData['patientId'], $responseArray['patients'])) $responseArray['patients'][] = $visitsFormattedData['patientId'];
         }
 
         return $responseArray;
@@ -56,15 +65,16 @@ class VisitTreeService
      * Create tree from array of patients, used when all visits of a patient should be listed
      * and not only some specific visits (used for investigators and reviewers)
      */
-    private function makeTreeFromPatientsArray(array $patientsCodeArray): array
+    private function makeTreeFromPatientsArray(array $patientsIdCodeArray): array
     {
 
-
+        $patientsIdArray = array_keys($patientsIdCodeArray);
+        $patientsCodeArray = array_values($patientsIdCodeArray);
         $patientVisitsArray = [];
 
         //If Reviewer need to add review status for tree selections
-        if ($this->role === Constants::ROLE_REVIEWER) $patientVisitsArray = $this->visitRepository->getPatientListVisitWithContextAndReviewStatus($patientsCodeArray, $this->studyName);
-        else $patientVisitsArray = $this->visitRepository->getPatientListVisitsWithContext($patientsCodeArray);
+        if ($this->role === Constants::ROLE_REVIEWER) $patientVisitsArray = $this->visitRepository->getPatientListVisitWithContextAndReviewStatus($patientsIdArray, $this->studyName);
+        else $patientVisitsArray = $this->visitRepository->getPatientListVisitsWithContext($patientsIdArray);
 
         $responseArray = [];
         $responseArray['visits'] = [];
@@ -74,8 +84,8 @@ class VisitTreeService
             $responseArray['visits'][] = $this->filterVisitOutputData($visitObject);
         }
 
-        foreach ($patientsCodeArray as $patientId) {
-            $responseArray['patients'][] = $patientId;
+        foreach ($patientsIdCodeArray as $id=>$code) {
+            $responseArray['patients'][$id] = $code;
         }
 
         return $responseArray;
@@ -93,9 +103,12 @@ class VisitTreeService
             //retrieve from DB the patient's list of the requested study and included in user's center or affiliated centers
             $userCentersArray = $this->userRepository->getAllUsersCenters($this->userId);
             $patientsArray = $this->patientRepository->getPatientsInStudyInCenters($this->studyName, $userCentersArray);
-            $patientIdArray = array_map(function ($patientEntity) {
-                return $patientEntity['id'];
-            }, $patientsArray);
+            Log::info($patientsArray);
+            $patientIdArray = [];
+            foreach($patientsArray as $patientEntity) {
+                
+                $patientIdArray[$patientEntity['id']] = $patientEntity['code'];
+            }
             return $this->makeTreeFromPatientsArray($patientIdArray);
 
         } else if ($this->role == Constants::ROLE_CONTROLLER) {
@@ -111,8 +124,13 @@ class VisitTreeService
         } else if ($this->role == Constants::ROLE_REVIEWER) {
 
             //Get patient with at least an awaiting review visit for the current user (visit with review available and review form not validated by user)
-            $patientIdArray = $this->visitRepository->getPatientsHavingAtLeastOneAwaitingReviewForUser($this->studyName, $this->userId);
-            return $this->makeTreeFromPatientsArray($patientIdArray);
+            $patientIdsArray = $this->visitRepository->getPatientsHavingAtLeastOneAwaitingReviewForUser($this->studyName, $this->userId);
+            $patientsArray = $this->patientRepository->getPatientsFromIdArray($patientIdsArray);
+            $patientIdCodeArray = [];
+            foreach($patientsArray as $patientEntity) {
+                $patientIdCodeArray[$patientEntity['id']] = $patientEntity['code'];
+            }
+            return $this->makeTreeFromPatientsArray($patientIdCodeArray);
 
         } else {
             throw new GaelOBadRequestException('Not Authorized role for tree generation');

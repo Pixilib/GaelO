@@ -121,8 +121,17 @@ class PatientRepositoryTest extends TestCase
     public function testGetPatientsFromCodeArray() {
         $patient1 = Patient::factory()->create();
         $patient2 = Patient::factory()->create();
+        $patientCodeArray = [strval($patient1->code), strval($patient2->code)];
+        $patientEntitiesArray = $this->patientRepository->getPatientsFromCodeArray($patientCodeArray);
+        $fetchedPatientsCodes = array_column($patientEntitiesArray, 'code');
+        $this->assertTrue(!array_diff($fetchedPatientsCodes, $patientCodeArray));
+    }
+
+    public function testGetPatientsFromIdArray() {
+        $patient1 = Patient::factory()->create();
+        $patient2 = Patient::factory()->create();
         $patientIdArray = [strval($patient1->id), strval($patient2->id)];
-        $patientEntitiesArray = $this->patientRepository->getPatientsFromCodeArray($patientIdArray);
+        $patientEntitiesArray = $this->patientRepository->getPatientsFromIdArray($patientIdArray);
         $fetchedPatientsCodes = array_column($patientEntitiesArray, 'id');
         $this->assertTrue(!array_diff($fetchedPatientsCodes, $patientIdArray));
     }

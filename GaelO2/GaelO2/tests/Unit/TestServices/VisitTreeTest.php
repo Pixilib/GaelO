@@ -98,7 +98,8 @@ class VisitTreeTest extends TestCase
 
         $patientRepository = Mockery::mock(PatientRepository::class);
         $patientRepository->shouldReceive('getPatientsInStudyInCenters')
-            ->andReturn([['id' => 32]]);
+            ->andReturn([['id' => 32, 'code' => 54]]);
+        $patientRepository->shouldReceive('getPatientsFromIdArray'); 
 
         $this->instance(VisitRepository::class, $mockVisitRepository);
         $this->instance(UserRepository::class, $mockUserRepository);
