@@ -32,10 +32,10 @@ class SendReminder {
 
             if($reminderRequest->role === Constants::ROLE_INVESTIGATOR) {
                 //EO checkEmpty() ne passe pas pour centre 0 (renvoie faux)
-                isset($reminderRequest->centerCode);
-                $this->mailService->sendReminderToInvestigators( get_object_vars ($reminderRequest) );
+                if(!isset($reminderRequest->centerCode)) throw new GaelOBadRequestException('Request Missing center');
+                $this->mailService->sendReminderToInvestigators($reminderRequest->centerCode, $reminderRequest->study, $reminderRequest->subject, $reminderRequest->content);
             } else {
-                $this->mailService->sendReminder( get_object_vars($reminderRequest) );
+                $this->mailService->sendReminder($reminderRequest->role, $reminderRequest->study, $reminderRequest->subject, $reminderRequest->content);
             }
 
             $reminderResponse->status = 200;

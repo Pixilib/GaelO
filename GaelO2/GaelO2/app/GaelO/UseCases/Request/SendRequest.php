@@ -23,7 +23,7 @@ class SendRequest {
             $this->checkEmpty($requestRequest->center, 'center');
             $this->checkEmpty($requestRequest->request, 'request');
 
-            $this->mailService->sendRequestMessage( get_object_vars ($requestRequest) );
+            $this->mailService->sendRequestMessage($requestRequest->name, $requestRequest->email, $requestRequest->center, $requestRequest->request);
 
             $requestResponse->status = 200;
             $requestResponse->statusText = 'OK';

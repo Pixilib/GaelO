@@ -46,12 +46,16 @@ class MailServices
         return $emails;
     }
 
-    /**
-     * Parameters in associative array : name, email, center, request
-     */
-    public function sendRequestMessage(array $parameters): void
+    public function sendRequestMessage(string $name, string $email, string $center, string $request): void
     {
-        $destinators = [...$this->getAdminsEmails(), $parameters['email']];
+        $parameters = [
+            'name' => $name,
+            'email' => $email,
+            'center' => $center,
+            'request' => $request
+        ];
+
+        $destinators = [...$this->getAdminsEmails(), $email];
         $this->mailInterface->setTo($destinators);
         $this->mailInterface->setReplyTo();
         $this->mailInterface->setParameters($parameters);
@@ -482,44 +486,37 @@ class MailServices
         $this->mailInterface->send();
     }
 
-    /**
-     * Parameters in associative array: study, subject, content, centers
-     */
-    public function sendReminderToInvestigators(array $parameters)
+    public function sendReminderToInvestigators(int $centerCode, string $study, string $subject, string $content)
     {
-        $centerCode = $parameters['centerCode'];
+        $centerCode = $centerCode;
 
         $parameters = [
             'name' => 'Investigator',
-            'study' => $parameters['study'],
-            'subject' => $parameters['subject'],
-            'content' => $parameters['content']
+            'study' => $study,
+            'subject' => $subject,
+            'content' => $content
         ];
 
-        $this->mailInterface->setTo($this->getInvestigatorOfCenterInStudy($parameters['study'], $centerCode));
+        $this->mailInterface->setTo($this->getInvestigatorOfCenterInStudy($study, $centerCode));
         $this->mailInterface->setReplyTo();
         $this->mailInterface->setParameters($parameters);
         $this->mailInterface->setBody(MailConstants::EMAIL_REMINDER);
         $this->mailInterface->send();
     }
 
-
-    /**
-     * Parameters in associative array: study, subject, content, role
-     */
-    public function sendReminder(array $parameters)
+    public function sendReminder(string $role, string $study, string $subject, string $content)
     {
-        $role = $parameters['role'];
+        $role = $role;
 
         $parameters = [
             'name' => $role,
-            'study' => $parameters['study'],
-            'subject' => $parameters['subject'],
-            'content' => $parameters['content']
+            'study' => $study,
+            'subject' => $subject,
+            'content' => $content
         ];
 
         $this->mailInterface->setTo(
-            $this->userRepositoryInterface->getUsersEmailsByRolesInStudy($parameters['study'], $role)
+            $this->userRepositoryInterface->getUsersEmailsByRolesInStudy($study, $role)
         );
         $this->mailInterface->setReplyTo();
         $this->mailInterface->setParameters($parameters);
