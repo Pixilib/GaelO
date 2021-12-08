@@ -32,10 +32,10 @@ class SendMail {
 
             if($sendMailRequest->role === Constants::ROLE_SUPERVISOR){
                 //EO checkEmpty() ne passe pas pour id 0 (renvoie faux)
-                isset($sendMailRequest->userId);
-                $this->mailService->sendMailToUser( get_object_vars ($sendMailRequest) );
+                if(!isset($sendMailRequest->userId)) throw new GaelOBadRequestException('Request Missing recipient');
+                $this->mailService->sendMailToUser($sendMailRequest->userId, $sendMailRequest->study, $sendMailRequest->subject, $sendMailRequest->content);
             } else {
-                $this->mailService->sendMailToSupervisors( get_object_vars($sendMailRequest) );
+                $this->mailService->sendMailToSupervisors($sendMailRequest->study, $sendMailRequest->subject, $sendMailRequest->content);
             }
 
             $sendMailResponse->status = 200;

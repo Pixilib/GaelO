@@ -527,21 +527,18 @@ class MailServices
         $this->mailInterface->send();
     }
 
-    /**
-     * Parameters in associative array: study, subject, content, role
-     */
-    public function sendMailToSupervisors(array $parameters)
+    public function sendMailToSupervisors(string $study, string $subject, string $content)
     {
 
         $parameters = [
             'name' => 'Supervisor',
-            'study' => $parameters['study'],
-            'subject' => $parameters['subject'],
-            'content' => $parameters['content']
+            'study' => $study,
+            'subject' => $subject,
+            'content' => $content
         ];
 
         $this->mailInterface->setTo(
-            $this->userRepositoryInterface->getUsersEmailsByRolesInStudy($parameters['study'], Constants::ROLE_SUPERVISOR)
+            $this->userRepositoryInterface->getUsersEmailsByRolesInStudy($study, Constants::ROLE_SUPERVISOR)
         );
         $this->mailInterface->setReplyTo();
         $this->mailInterface->setParameters($parameters);
@@ -549,17 +546,14 @@ class MailServices
         $this->mailInterface->send();
     }
 
-    /**
-     * Parameters in associative array: study, subject, content, userId
-     */
-    public function sendMailToUser(array $parameters)
+    public function sendMailToUser(int $userId, string $study, string $subject, string $content)
     {
-        $userId = $parameters['userId'];
+        $userId = $userId;
         $parameters = [
             'name' => $this->getUserName($userId),
-            'study' => $parameters['study'],
-            'subject' => $parameters['subject'],
-            'content' => $parameters['content']
+            'study' => $study,
+            'subject' => $subject,
+            'content' => $content
         ];
 
         $this->mailInterface->setTo(
