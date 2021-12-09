@@ -62,9 +62,10 @@ class CreateUser
                 $createUserRequest->job,
                 $createUserRequest->orthancAddress,
                 $createUserRequest->orthancLogin,
-                $createUserRequest->orthancPassword,
-                $passwordTemporary
+                $createUserRequest->orthancPassword
             );
+
+            FrameworkAdapter::sendRegisteredEventForEmailVerification($createdUserEntity['id']);
 
             //Save action in Tracker
             $detailsTracker = [
@@ -90,6 +91,7 @@ class CreateUser
             $createUserResponse->body = ['id' => $createdUserEntity['id']];
             $createUserResponse->status = 201;
             $createUserResponse->statusText = 'Created';
+
         } catch (GaelOException $e) {
 
             $createUserResponse->body = $e->getErrorBody();

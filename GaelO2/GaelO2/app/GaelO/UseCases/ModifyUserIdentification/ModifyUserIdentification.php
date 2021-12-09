@@ -31,10 +31,12 @@ class ModifyUserIdentification {
 
             $user = $this->userRepositoryInterface->find($modifyUserIdentificationRequest->userId);
 
+            $resetEmailValidation = false;
             if($modifyUserIdentificationRequest->email !== $user['email']) {
                 CreateUser::checkEmailValid($modifyUserIdentificationRequest->email);
                 $knownEmail = $this->userRepositoryInterface->isExistingEmail($modifyUserIdentificationRequest->email);
                 if ($knownEmail) throw new GaelOConflictException("Email Already Known");
+                $resetEmailValidation = true;
             }
 
             $this->userRepositoryInterface->updateUser(
@@ -50,10 +52,10 @@ class ModifyUserIdentification {
                 $user['orthanc_address'],
                 $user['orthanc_login'],
                 $user['orthanc_password'],
-                $user['password_temporary'],
                 $user['password'],
                 $user['creation_date'],
-                $user['last_password_update']
+                $user['last_password_update'],
+                $resetEmailValidation
             );
 
             $details = [

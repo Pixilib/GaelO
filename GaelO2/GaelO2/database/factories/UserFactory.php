@@ -19,7 +19,6 @@ class UserFactory extends Factory
             'firstname' => $this->faker->firstname,
             'email'=> $this->faker->unique()->safeEmail,
             'password' => $this->faker->password,
-            'password_temporary'=> $this->faker->password,
             'password_previous1'=> $this->faker->password,
             'password_previous2'=> $this->faker->password,
             'phone' => $this->faker->phoneNumber,
@@ -98,23 +97,13 @@ class UserFactory extends Factory
 
 
     /**
-     * PasswordType should be password, password_temporary, password_previous1 or password_previous2
+     * PasswordType should be password, password_previous1 or password_previous2
      */
     public function password(string $password, string $passwordType = 'password'){
 
         return $this->state(function (array $attributes) use ($password, $passwordType) {
             return [
                 $passwordType => Hash::make($password),
-            ];
-        });
-
-    }
-
-    public function passwordTemporary(string $password){
-
-        return $this->state(function (array $attributes) use ($password) {
-            return [
-                'password_temporary' => Hash::make($password),
             ];
         });
 

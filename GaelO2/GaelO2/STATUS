@@ -1,5 +1,13 @@
 Salim TODO :
 
+Passer email verification
+customiser email => reetuliser email created
+refaire le reset password (renvoi un lien de verification)
+update du front (si unconfirmed pas besoin de previous password)
+bypass du frond vers validation email
+test a debeuger
+enlever le statut unconfirmed en base? bof
+
 - Optimiser l'utilisation des authorization service en injectant les data depuis le usecase (ou les rendre stateless)
 - Passer le studyName en query tag => emilie
 

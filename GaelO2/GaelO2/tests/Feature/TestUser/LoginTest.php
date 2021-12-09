@@ -53,7 +53,6 @@ class LoginTest extends TestCase
         'password'=> 'administrator'];
         $adminDefaultUser = User::where('id', 1)->first();
         $adminDefaultUser['status'] = Constants::USER_STATUS_UNCONFIRMED;
-        $adminDefaultUser['password_temporary'] = Hash::make('tempPassword');
         $adminDefaultUser->save();
         $this->json('POST', '/api/login', $data)->assertStatus(401);
         //Try with correct temporary password, should grant access of unconfirmed status
@@ -109,7 +108,6 @@ class LoginTest extends TestCase
         $adminDefaultUser = User::where('id', 1)->first();
         $adminDefaultUser['status'] = Constants::USER_STATUS_UNCONFIRMED;
         $adminDefaultUser['password'] = null;
-        $adminDefaultUser['password_temporary'] = 'password';
         $adminDefaultUser->save();
 
         $data = ['email'=> 'administrator@gaelo.fr',

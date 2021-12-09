@@ -2,6 +2,7 @@
 
 namespace App\GaelO\UseCases\ResetPassword;
 
+use App\GaelO\Adapters\FrameworkAdapter;
 use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOBadRequestException;
 use App\GaelO\Exceptions\GaelOException;
@@ -33,19 +34,11 @@ class ResetPassword {
             $this->checkNotDeactivatedAccount($userEntity);
             $this->checkEmailMatching($email, $userEntity['email']);
 
-            //generate new temporary password
-            $newPassword = Util::generateNewTempPassword();
-
             //update user data
-            $this->userRepositoryInterface->updateUserTemporaryPassword($userEntity['id'], $newPassword);
             $this->userRepositoryInterface->updateUserStatus($userEntity['id'], Constants::USER_STATUS_UNCONFIRMED);
+            FrameworkAdapter::resendVerificationEmail($userEntity['id']);
             $this->userRepositoryInterface->updateUserAttempts($userEntity['id'], 0);
 
-            //send email
-            $this->mailServices->sendResetPasswordMessage(
-                ($userEntity['firstname'].' '.$userEntity['lastname']),
-                $newPassword,
-                $userEntity['email']);
             //Write action in tracker
             $this->trackerRepositoryInterface->writeAction($userEntity['id'], Constants::TRACKER_ROLE_USER, null, null, Constants::TRACKER_RESET_PASSWORD, null);
 

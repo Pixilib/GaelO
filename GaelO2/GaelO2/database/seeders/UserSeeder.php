@@ -27,7 +27,8 @@ class UserSeeder extends Seeder
             'center_code' => 0,
             'job' => 'Monitor',
             'administrator' => true,
-            'remember_token' => Str::random(10)
+            'remember_token' => Str::random(10),
+            'email_verified_at' => now(),
         ]);
     }
 }

@@ -58,8 +58,7 @@ class UserRepositoryTest extends TestCase
             Constants::USER_JOB_SUPERVISION,
             null,
             null,
-            null,
-            'testPassword'
+            null
         );
 
         $this->assertIsArray($createdEntity);
@@ -103,8 +102,6 @@ class UserRepositoryTest extends TestCase
         $this->assertNotEquals($updatedEntity['center_code'], $userToModify['center_code']);
         $this->assertNotEquals($updatedEntity['job'], $userToModify['job']);
         $this->assertNotEquals($updatedEntity['updated_at'], $userToModify['updated_at']);
-        $this->assertNotEquals($updatedEntity['password_temporary'], $userToModify['password_temporary']);
-
         //SK ICI PROBLEME CAR LE USECASE ACCEDE DIRECTREMENT AU MODIFY
         //AJOUTER LES FONCTION D UPDATE POUR TOUS LES CHAMP POUR LE REPOSITORY
         $this->assertEquals($updatedEntity['password'], $userToModify['password']);
@@ -120,17 +117,6 @@ class UserRepositoryTest extends TestCase
         $this->assertEquals($user->password, $updatedUser->password_previous1);
         $this->assertNotEquals($user->last_password_update, $updatedUser->last_password_update);
         $this->assertNotEquals($user->password, $updatedUser->password);
-
-    }
-
-    public function testUpdateUserTemporaryPassword(){
-
-        $user = User::factory()->create();
-        $this->userRepository->updateUserTemporaryPassword($user['id'], 'newPassword');
-
-        $updatedUser = User::find($user->id);
-        $this->assertNotEquals($user->password_temporary, $updatedUser->password_temporary);
-        $this->assertNotEquals($user->last_password_update, $updatedUser->last_password_update);
 
     }
 
