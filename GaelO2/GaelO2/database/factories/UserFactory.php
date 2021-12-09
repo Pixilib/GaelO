@@ -32,6 +32,7 @@ class UserFactory extends Factory
             'orthanc_address' => $this->faker->domainName,
             'orthanc_login' => $this->faker->userName,
             'orthanc_password' => $this->faker->password,
+            'email_verified_at' => now()
         ];
     }
 
