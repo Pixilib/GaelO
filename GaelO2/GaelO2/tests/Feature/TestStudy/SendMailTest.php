@@ -128,7 +128,7 @@ class SendMailTest extends TestCase
             'content' => '<p>Something</p>',
         ];
 
-        $response = $this->json('POST', '/api/studies/'.$this->study->name.'/send-mail?role='.Constants::ROLE_INVESTIGATOR, $payload)->assertNoContent(200);
+        $response = $this->json('POST', '/api/send-mail?role='.Constants::ROLE_INVESTIGATOR.'&study='.$this->study->name, $payload)->assertNoContent(200);
     }
 
     public function testSendMailToUser() {
@@ -141,7 +141,7 @@ class SendMailTest extends TestCase
             'content' => '<p>Something</p>',
         ];
 
-        $response = $this->json('POST', '/api/studies/'.$this->study->name.'/send-mail?role='.Constants::ROLE_SUPERVISOR, $payload)->assertNoContent(200);
+        $response = $this->json('POST', '/api/send-mail?role='.Constants::ROLE_SUPERVISOR.'&study='.$this->study->name, $payload)->assertNoContent(200);
     }
 
 }

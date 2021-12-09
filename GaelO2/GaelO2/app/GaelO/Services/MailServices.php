@@ -524,14 +524,16 @@ class MailServices
         $this->mailInterface->send();
     }
 
-    public function sendMailToSupervisors(string $study, string $subject, string $content)
+    public function sendMailToSupervisors(string $study, string $subject, string $content, ?string $patientId, ?int $visitId)
     {
 
         $parameters = [
             'name' => 'Supervisor',
             'study' => $study,
             'subject' => $subject,
-            'content' => $content
+            'content' => $content,
+            'patientId' => $patientId,
+            'visitId' => $visitId
         ];
 
         $this->mailInterface->setTo(
@@ -557,6 +559,24 @@ class MailServices
             [
                 $this->getUserEmail($userId)
             ]
+        );
+        $this->mailInterface->setReplyTo();
+        $this->mailInterface->setParameters($parameters);
+        $this->mailInterface->setBody(MailConstants::EMAIL_USER);
+        $this->mailInterface->send();
+    }
+
+    public function sendMailToAdministrators(string $study, string $subject, string $content)
+    {
+
+        $parameters = [
+            'study' => $study,
+            'subject' => $subject,
+            'content' => $content,
+        ];
+
+        $this->mailInterface->setTo(
+            $this->userRepositoryInterface->getAdministratorsEmails()
         );
         $this->mailInterface->setReplyTo();
         $this->mailInterface->setParameters($parameters);

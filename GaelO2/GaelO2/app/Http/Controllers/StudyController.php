@@ -312,11 +312,10 @@ class StudyController extends Controller
         return $this->getJsonResponse($reminderResponse->body, $reminderResponse->status, $reminderResponse->statusText);
     }
 
-    public function sendMail(string $studyName, Request $request, SendMail $sendMail, SendMailRequest $sendMailRequest, SendMailResponse $sendMailResponse) {
+    public function sendMail(Request $request, SendMail $sendMail, SendMailRequest $sendMailRequest, SendMailResponse $sendMailResponse) {
         $currentUser = Auth::user();
         $requestData = $request->all();
         $sendMailRequest->currentUserId = $currentUser['id'];
-        $sendMailRequest->study = $studyName;
         $sendMailRequest = Util::fillObject($requestData, $sendMailRequest);
         $sendMail->execute($sendMailRequest, $sendMailResponse);
         return $this->getJsonResponse($sendMailResponse->body, $sendMailResponse->status, $sendMailResponse->statusText);
