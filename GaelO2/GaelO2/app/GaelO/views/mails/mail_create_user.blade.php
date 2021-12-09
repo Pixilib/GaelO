@@ -4,7 +4,7 @@
     <div>
         Your account is created for the GaelO platform used to exchange
         imaging data.<br>
-        Validate your email following <a href={{$url}}> this link</a> <br>
+        Validate your email following <a href={{$url}}> this link</a> (72h validity) <br>
         You will be asked to define your password on the platform.<br>
         <b style="color:red"> Please do not use Internet Explorer to connect.</b>
     </div>

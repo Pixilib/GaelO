@@ -63,22 +63,6 @@ class MailServices
         $this->mailInterface->send();
     }
 
-    /**
-     * Parameter in associative array : name, email, newPassword, email
-     */
-    public function sendResetPasswordMessage(string $name, string $newPassword, string $email): void
-    {
-        $parameters = [
-            'name' => $name,
-            'newPassword' => $newPassword,
-        ];
-        $this->mailInterface->setTo([$email]);
-        $this->mailInterface->setReplyTo();
-        $this->mailInterface->setParameters($parameters);
-        $this->mailInterface->setBody(MailConstants::EMAIL_RESET_PASSWORD);
-        $this->mailInterface->send();
-    }
-
     public function sendAccountBlockedMessage(String $email, int $userId): void
     {
         //Get all studies with role for the user
@@ -113,23 +97,6 @@ class MailServices
         $this->mailInterface->setReplyTo();
         $this->mailInterface->setParameters($parameters);
         $this->mailInterface->setBody(MailConstants::EMAIL_ADMIN_LOGGED);
-        $this->mailInterface->send();
-    }
-
-    public function sendCreatedAccountMessage(string $userEmail, String $name, String $password): void
-    {
-
-        $parameters = [
-            'name' => $name,
-            'email' => $userEmail,
-            'password' => $password
-        ];
-
-        //Send to administrators
-        $this->mailInterface->setTo([$userEmail]);
-        $this->mailInterface->setReplyTo();
-        $this->mailInterface->setParameters($parameters);
-        $this->mailInterface->setBody(MailConstants::EMAIL_USER_CREATED);
         $this->mailInterface->send();
     }
 

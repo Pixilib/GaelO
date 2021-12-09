@@ -10,22 +10,24 @@ use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
 use App\GaelO\UseCases\ResetPassword\ResetPasswordResponse;
 use App\GaelO\Interfaces\Repositories\UserRepositoryInterface;
 use App\GaelO\Services\MailServices;
-use App\GaelO\Util;
 use Exception;
 
-class ResetPassword {
+class ResetPassword
+{
 
     private UserRepositoryInterface $userRepositoryInterface;
     private MailServices $mailServices;
     private TrackerRepositoryInterface $trackerRepositoryInterface;
 
-    public function __construct(UserRepositoryInterface $userRepositoryInterface, MailServices $mailServices, TrackerRepositoryInterface $trackerRepositoryInterface ){
+    public function __construct(UserRepositoryInterface $userRepositoryInterface, MailServices $mailServices, TrackerRepositoryInterface $trackerRepositoryInterface)
+    {
         $this->userRepositoryInterface = $userRepositoryInterface;
         $this->mailServices = $mailServices;
         $this->trackerRepositoryInterface = $trackerRepositoryInterface;
-     }
+    }
 
-    public function execute(ResetPasswordRequest $resetPasswordRequest, ResetPasswordResponse $resetPasswordResponse) : void {
+    public function execute(ResetPasswordRequest $resetPasswordRequest, ResetPasswordResponse $resetPasswordResponse): void
+    {
         try {
             $email = $resetPasswordRequest->email;
 
@@ -35,35 +37,53 @@ class ResetPassword {
             $this->checkEmailMatching($email, $userEntity['email']);
 
             //update user data
-            $this->userRepositoryInterface->updateUserStatus($userEntity['id'], Constants::USER_STATUS_UNCONFIRMED);
-            FrameworkAdapter::resendVerificationEmail($userEntity['id']);
+            $this->userRepositoryInterface->updateUser(
+                $userEntity['id'],
+                $userEntity['lastname'],
+                $userEntity['firstname'],
+                Constants::USER_STATUS_UNCONFIRMED,
+                $userEntity['email'],
+                $userEntity['phone'],
+                $userEntity['administrator'],
+                $userEntity['center_code'],
+                $userEntity['job'],
+                $userEntity['orthanc_address'],
+                $userEntity['orthanc_login'],
+                $userEntity['orthanc_password'],
+                true
+            );
             $this->userRepositoryInterface->updateUserAttempts($userEntity['id'], 0);
+            FrameworkAdapter::resendVerificationEmail($userEntity['id']);
 
             //Write action in tracker
             $this->trackerRepositoryInterface->writeAction($userEntity['id'], Constants::TRACKER_ROLE_USER, null, null, Constants::TRACKER_RESET_PASSWORD, null);
 
             $resetPasswordResponse->status = 200;
             $resetPasswordResponse->statusText = 'OK';
+
         } catch (GaelOException $e) {
             $resetPasswordResponse->status = $e->statusCode;
             $resetPasswordResponse->statusText = $e->statusText;
             $resetPasswordResponse->body = $e->getErrorBody();
-
-        } catch (Exception $e){
+        } catch (Exception $e) {
             throw $e;
         }
-
     }
 
-    private function checkEmailMatching($inputEmail, $databaseEmail){
-        if($inputEmail !== $databaseEmail) throw new GaelOBadRequestException('Incorrect Email');
+    private function checkEmailMatching($inputEmail, $databaseEmail)
+    {
+        if ($inputEmail !== $databaseEmail) throw new GaelOBadRequestException('Incorrect Email');
     }
 
-    private function checkNotDeactivatedAccount(array $user){
-        if($user['deleted_at'] !== null) {
+    private function checkNotDeactivatedAccount(array $user)
+    {
+        if ($user['deleted_at'] !== null) {
             //Send Email change password failure
-            $this->mailServices->sendForbiddenResetPasswordDueToDeactivatedAccount($user['email'],
-                    $user['lastname'], $user['firstname']);
+            $this->mailServices->sendForbiddenResetPasswordDueToDeactivatedAccount(
+                $user['email'],
+                $user['lastname'],
+                $user['firstname']
+            );
             throw new GaelOBadRequestException('Deactivated Account');
         }
     }

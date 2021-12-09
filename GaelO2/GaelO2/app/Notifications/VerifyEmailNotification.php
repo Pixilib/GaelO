@@ -2,8 +2,10 @@
 
 namespace App\Notifications;
 
+use App\GaelO\Adapters\FrameworkAdapter;
+use App\GaelO\Constants\SettingsConstants;
+use App\Mail\UserCreated;
 use Illuminate\Auth\Notifications\VerifyEmail;
-use Illuminate\Notifications\Messages\MailMessage;
 
 class VerifyEmailNotification extends VerifyEmail
 {
@@ -19,7 +21,20 @@ class VerifyEmailNotification extends VerifyEmail
 
         $verificationUrl = $this->verificationUrl($notifiable);
 
-        return (new MailMessage)->view('mails.mail_create_user', ['url' => $verificationUrl, 'platformName'=> 'test', 'corporation'=> 'd', 'webAddress'=>'a', 'adminEmail'=> '', 'name'=>"GaelO"]);
+        $platformName = FrameworkAdapter::getConfig(SettingsConstants::PLATFORM_NAME);
+        $webAddress = FrameworkAdapter::getConfig(SettingsConstants::APP_URL);
+        $corporation = FrameworkAdapter::getConfig(SettingsConstants::CORPORATION);
+        $adminEmail = FrameworkAdapter::getConfig(SettingsConstants::MAIL_FROM_ADDRESS);
+
+        return ( new UserCreated(
+            ['url' => $verificationUrl,
+            'platformName'=> $platformName,
+            'corporation'=> $corporation,
+            'webAddress'=>$webAddress,
+            'adminEmail'=> $adminEmail,
+            'name'=>"user"]
+            )
+        );
 
     }
 

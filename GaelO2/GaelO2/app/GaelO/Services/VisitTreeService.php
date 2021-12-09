@@ -103,10 +103,9 @@ class VisitTreeService
             //retrieve from DB the patient's list of the requested study and included in user's center or affiliated centers
             $userCentersArray = $this->userRepository->getAllUsersCenters($this->userId);
             $patientsArray = $this->patientRepository->getPatientsInStudyInCenters($this->studyName, $userCentersArray);
-            Log::info($patientsArray);
             $patientIdArray = [];
             foreach($patientsArray as $patientEntity) {
-                
+
                 $patientIdArray[$patientEntity['id']] = $patientEntity['code'];
             }
             return $this->makeTreeFromPatientsArray($patientIdArray);

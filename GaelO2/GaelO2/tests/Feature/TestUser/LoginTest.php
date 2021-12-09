@@ -55,13 +55,6 @@ class LoginTest extends TestCase
         $adminDefaultUser['status'] = Constants::USER_STATUS_UNCONFIRMED;
         $adminDefaultUser->save();
         $this->json('POST', '/api/login', $data)->assertStatus(401);
-        //Try with correct temporary password, should grant access of unconfirmed status
-        $data = ['email'=> 'administrator@gaelo.fr',
-        'password'=> 'tempPassword'];
-        $response = $this->json('POST', '/api/login', $data)->assertStatus(400);
-        $content = $response->content();
-        $responseArray = json_decode($content, true);
-        $this->assertEquals(1, $responseArray['id']);
     }
 
     public function testLoginPasswordPerished()
@@ -101,25 +94,6 @@ class LoginTest extends TestCase
         $this->assertEquals($adminDefaultUser['status'], Constants::USER_STATUS_BLOCKED);
         $this->assertEquals($adminDefaultUser['attempts'], 3);
 
-    }
-
-    public function testBlockingUnconfirmedAccount(){
-        // Three wrong attempts to login should block unconfirmed account
-        $adminDefaultUser = User::where('id', 1)->first();
-        $adminDefaultUser['status'] = Constants::USER_STATUS_UNCONFIRMED;
-        $adminDefaultUser['password'] = null;
-        $adminDefaultUser->save();
-
-        $data = ['email'=> 'administrator@gaelo.fr',
-        'password'=> 'wrongPassword'];
-
-        $this->json('POST', '/api/login', $data)->assertStatus(401);
-        $this->json('POST', '/api/login', $data)->assertStatus(401);
-        $this->json('POST', '/api/login', $data)->assertStatus(401);
-
-        $adminDefaultUser = User::where('id', 1)->first();
-        $this->assertEquals($adminDefaultUser['status'], Constants::USER_STATUS_BLOCKED);
-        $this->assertEquals($adminDefaultUser['attempts'], 3);
     }
 
 }

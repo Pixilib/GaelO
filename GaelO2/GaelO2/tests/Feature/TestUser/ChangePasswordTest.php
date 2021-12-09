@@ -29,7 +29,6 @@ class ChangePasswordTest extends TestCase
         $this->user = User::factory()
             ->status(Constants::USER_STATUS_ACTIVATED)
             ->password('password12345')
-            ->passwordTemporary('temporaryPassword')
             ->passwordPrevious1('previousPassword1')
             ->passwordPrevious2('previousPassword2')
             ->create();

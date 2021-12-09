@@ -88,7 +88,7 @@ class UserRepositoryTest extends TestCase
             'a',
             'b',
             'c',
-            null
+            false
         );
 
         $updatedEntity = $this->userRepository->find($existingEntity['id']);

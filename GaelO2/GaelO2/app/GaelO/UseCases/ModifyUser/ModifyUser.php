@@ -49,17 +49,13 @@ class ModifyUser
                 $resetEmailValidation = true;
             }
 
-            if ( $modifyUserRequest->email !== $user['email'] ) {
-                //If email changed needs to be reverified
-                $modifyUserRequest->status = Constants::USER_STATUS_UNCONFIRMED;
-                $resetEmailValidation = true;
-            }
-
             CreateUser::checkFormComplete($modifyUserRequest);
             CreateUser::checkEmailValid($modifyUserRequest->email);
             CreateUser::checkPhoneCorrect($modifyUserRequest->phone);
 
             if($user['email'] !== $modifyUserRequest->email){
+                $modifyUserRequest->status = Constants::USER_STATUS_UNCONFIRMED;
+                $resetEmailValidation = true;
                 $knownEmail = $this->userRepositoryInterface->isExistingEmail($modifyUserRequest->email);
                 if ($knownEmail) throw new GaelOConflictException("Email Already Known");
             }
