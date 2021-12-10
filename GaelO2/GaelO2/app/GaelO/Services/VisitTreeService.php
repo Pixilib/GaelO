@@ -7,7 +7,6 @@ use App\GaelO\Exceptions\GaelOBadRequestException;
 use App\GaelO\Repositories\PatientRepository;
 use App\GaelO\Repositories\UserRepository;
 use App\GaelO\Repositories\VisitRepository;
-use Log;
 
 /**
  * Build JSON for JSTree with patient's / visit's data
@@ -103,7 +102,7 @@ class VisitTreeService
             //retrieve from DB the patient's list of the requested study and included in user's center or affiliated centers
             $userCentersArray = $this->userRepository->getAllUsersCenters($this->userId);
             $patientsArray = $this->patientRepository->getPatientsInStudyInCenters($this->studyName, $userCentersArray);
-            Log::info($patientsArray);
+
             $patientIdArray = [];
             foreach($patientsArray as $patientEntity) {
                 

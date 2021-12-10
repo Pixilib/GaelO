@@ -38,12 +38,12 @@ class FrontTest extends Seeder
         $this->user = User::factory()->administrator()->email('administrator@gaelo.fr')->password('administrator')
             ->centerCode(0)->create();
 
-        User::factory()->email('administrator@gaelo.fr')->status('Unconfirmed')->password('password', 'password_temporary')
+        User::factory()->email('test@gaelo.fr')->status('Unconfirmed')->password('password', 'password_temporary')
             ->centerCode(0)->create();
 
         Study::factory()->count(5)->create();
 
-        $this->study = Study::factory()->name('TEST')->code('123')->create();
+        $this->study = Study::factory()->name('TEST')->code('123')->patientCodeLength(5)->create();
 
         Role::factory()->userId($this->user->id)->studyName($this->study->name)->roleName('Supervisor')->create();
         Role::factory()->userId($this->user->id)->studyName($this->study->name)->roleName('Monitor')->create();
