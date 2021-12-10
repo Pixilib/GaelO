@@ -140,7 +140,4 @@ class Util {
         }
     }
 
-    public static function generateNewTempPassword() : string {
-        return bin2hex(random_bytes(5));
-    }
 }

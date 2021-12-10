@@ -19,8 +19,6 @@ class CreateStudy {
     private AuthorizationUserService $authorizationUserService;
     private TrackerRepositoryInterface $trackerRepositoryInterface;
 
-
-
     public function __construct(StudyRepositoryInterface $studyRepositoryInterface, AuthorizationUserService $authorizationUserService, TrackerRepositoryInterface $trackerRepositoryInterface){
         $this->studyRepositoryInterface = $studyRepositoryInterface;
         $this->authorizationUserService = $authorizationUserService;
@@ -35,6 +33,7 @@ class CreateStudy {
             $studyName = $createStudyRequest->name;
             $studyCode = $createStudyRequest->code;
             $patientCodeLength = $createStudyRequest->patientCodeLength;
+            $ancillaryOf = $createStudyRequest->ancillaryOf;
 
             if(preg_match('/[^A-Z0-9]/', $studyName)){
                 throw new GaelOBadRequestException('Only uppercase alfanumerical name allowed, no space or special characters');
@@ -48,12 +47,13 @@ class CreateStudy {
                 throw new GaelOBadRequestException('Missing Patient Code Lenght');
             }
 
-            $this->studyRepositoryInterface->addStudy($studyName, $studyCode, $patientCodeLength);
+            $this->studyRepositoryInterface->addStudy($studyName, $studyCode, $patientCodeLength, $ancillaryOf);
 
             $currentUserId=$createStudyRequest->currentUserId;
             $actionDetails = [
                 'studyName' => $studyName,
-                'studyCode' => $studyCode
+                'studyCode' => $studyCode,
+                'ancillaryOf' => $ancillaryOf
             ];
 
             $this->trackerRepositoryInterface->writeAction($currentUserId, Constants::TRACKER_ROLE_ADMINISTRATOR, null, null, Constants::TRACKER_CREATE_STUDY, $actionDetails);

@@ -77,6 +77,9 @@ class ImportPatients
     {
         $this->authorizationStudyService->setUserId($userId);
         $this->authorizationStudyService->setStudyName($studyName);
+        if ($this->authorizationStudyService->isAncillaryStudy() ) {
+            throw new GaelOForbiddenException("Forbidden for ancillaries study");
+        };
         if (!$this->authorizationStudyService->isAllowedStudy(Constants::ROLE_SUPERVISOR)) {
             throw new GaelOForbiddenException();
         };

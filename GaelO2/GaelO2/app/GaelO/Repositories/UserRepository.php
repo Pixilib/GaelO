@@ -44,8 +44,7 @@ class UserRepository implements UserRepositoryInterface {
 
     public function createUser( String $lastname, String $firstname, String $status,
                                 String $email, ?String $phone, bool $administrator, int $centerCode, String $job,
-                                ?String $orthancAdress, ?String $orthancLogin, ?String $orthancPassword,
-                                String $passwordTemporary ) : array {
+                                ?String $orthancAdress, ?String $orthancLogin, ?String $orthancPassword ) : array {
 
         $user = new User();
         $user->lastname = $lastname;
@@ -59,7 +58,6 @@ class UserRepository implements UserRepositoryInterface {
         $user->orthanc_address = $orthancAdress;
         $user->orthanc_login = $orthancLogin;
         $user->orthanc_password = $orthancPassword;
-        $user->password_temporary = $passwordTemporary;
         $user->password = null;
         $user->creation_date = Util::now();
         $user->last_password_update = null;
@@ -71,7 +69,7 @@ class UserRepository implements UserRepositoryInterface {
     public function updateUser(int $id, ?String $lastname, ?String $firstname, String $status,
                                 String $email, ?String $phone, bool $administrator, int $centerCode, String $job,
                                 ?String $orthancAdress, ?String $orthancLogin, ?String $orthancPassword,
-                                ?String $passwordTemporary) : void {
+                                bool $resetEmailVerification) : void {
 
         $user = $this->user->findOrFail($id);
         $user->lastname = $lastname;
@@ -85,7 +83,7 @@ class UserRepository implements UserRepositoryInterface {
         $user->orthanc_address = $orthancAdress;
         $user->orthanc_login = $orthancLogin;
         $user->orthanc_password = $orthancPassword;
-        $user->password_temporary = $passwordTemporary ? $this->hashInterface->hash($passwordTemporary) : null;
+        if($resetEmailVerification) $user->email_verified_at = null;
         $user->save();
 
     }
@@ -95,13 +93,6 @@ class UserRepository implements UserRepositoryInterface {
         $user->password_previous2 = $user->password_previous1;
         $user->password_previous1 = $user->password;
         $user->password = $this->hashInterface->hash($passwordCurrent);
-        $user->last_password_update = Util::now();
-        $user->save();
-    }
-
-    public function updateUserTemporaryPassword(int $userId, ?string $passwordTemporary ) : void {
-        $user = $this->user->findOrFail($userId);
-        $user->password_temporary = $this->hashInterface->hash($passwordTemporary);
         $user->last_password_update = Util::now();
         $user->save();
     }

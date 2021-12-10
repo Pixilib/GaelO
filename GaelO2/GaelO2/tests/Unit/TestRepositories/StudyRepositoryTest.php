@@ -33,12 +33,13 @@ class StudyRepositoryTest extends TestCase
     }
 
     public function testCreateStudy(){
-        $this->studyRepository->addStudy('myStudy', '12345', 5);
+        $this->studyRepository->addStudy('myStudy', '12345', 5, null);
         $studyEntity  = Study::find('myStudy');
 
         $this->assertEquals('myStudy', $studyEntity->name);
         $this->assertEquals('12345', $studyEntity->code);
         $this->assertEquals( 5 , $studyEntity->patient_code_length);
+        $this->assertEquals( null , $studyEntity->ancillary_of);
     }
 
     public function testIsExistingStudy(){

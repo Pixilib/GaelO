@@ -36,16 +36,21 @@ class ReactivateUser{
             $this->userRepositoryInterface->reactivateUser($reactivateUserRequest->userId);
             //Generate new password and set status unconfirmed
             $user = $this->userRepositoryInterface->find($reactivateUserRequest->userId);
-            $newPassword = Util::generateNewTempPassword();
 
-            $this->userRepositoryInterface->updateUserTemporaryPassword($user['id'], $newPassword);
-            $this->userRepositoryInterface->updateUserStatus($user['id'], Constants::USER_STATUS_UNCONFIRMED);
-
-
-            $this->mailServices->sendResetPasswordMessage(
-                ($user['firstname'].' '.$user['lastname']),
-                $newPassword,
-                $user['email']
+            $this->userRepositoryInterface->updateUser(
+                $user['id'],
+                $user['lastname'],
+                $user['firstname'],
+                Constants::USER_STATUS_UNCONFIRMED,
+                $user['email'],
+                $user['phone'],
+                $user['administrator'],
+                $user['center_code'],
+                $user['job'],
+                $user['orthanc_address'],
+                $user['orthanc_login'],
+                $user['orthanc_password'],
+                true
             );
 
             $actionsDetails = [

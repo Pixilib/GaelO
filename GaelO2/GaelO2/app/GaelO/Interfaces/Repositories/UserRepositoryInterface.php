@@ -12,13 +12,12 @@ interface UserRepositoryInterface {
 
     public function createUser(String $lastname, String $firstname, String $status,
                                 String $email, ?String $phone, bool $administrator, int $centerCode, String $job,
-                                ?String $orthancAdress, ?String $orthancLogin, ?String $orthancPassword,
-                                String $passwordTemporary) :array ;
+                                ?String $orthancAdress, ?String $orthancLogin, ?String $orthancPassword) :array ;
 
     public function updateUser(int $id, ?String $lastname, ?String $firstname, String $status,
                                 String $email, ?String $phone, bool $administrator, int $centerCode, String $job,
                                 ?String $orthancAdress, ?String $orthancLogin, ?String $orthancPassword,
-                                ?String $passwordTemporary) : void ;
+                                bool $resetEmailVerify) : void ;
 
     public function updateUserPassword(int $userId, ?string $passwordCurrent) : void ;
 
@@ -27,8 +26,6 @@ interface UserRepositoryInterface {
     public function updateUserAttempts(int $userId, int $attempts ) : void ;
 
     public function resetAttemptsAndUpdateLastConnexion ( int $userId ) : void ;
-
-    public function updateUserTemporaryPassword(int $userId, ?string $passwordTemporary ) : void ;
 
     public function getUserByEmail(String $email, bool $withTrashed = false) : array ;
 

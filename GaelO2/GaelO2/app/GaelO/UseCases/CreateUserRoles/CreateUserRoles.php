@@ -3,8 +3,10 @@ namespace App\GaelO\UseCases\CreateUserRoles;
 
 use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOBadRequestException;
+use App\GaelO\Exceptions\GaelOConflictException;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
+use App\GaelO\Interfaces\Repositories\StudyRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\UserRepositoryInterface;
 use App\GaelO\Services\AuthorizationService\AuthorizationUserService;
@@ -12,11 +14,13 @@ use App\GaelO\Services\AuthorizationService\AuthorizationUserService;
 class CreateUserRoles {
 
     private UserRepositoryInterface $userRepositoryInterface;
+    private StudyRepositoryInterface $studyRepositoryInterface;
     private AuthorizationUserService $authorizationUserService;
     private TrackerRepositoryInterface $trackerRepositoryInterface;
 
-    public function __construct(UserRepositoryInterface $userRepositoryInterface, AuthorizationUserService $authorizationUserService, TrackerRepositoryInterface $trackerRepositoryInterface){
+    public function __construct(UserRepositoryInterface $userRepositoryInterface, StudyRepositoryInterface $studyRepositoryInterface, AuthorizationUserService $authorizationUserService, TrackerRepositoryInterface $trackerRepositoryInterface){
         $this->userRepositoryInterface = $userRepositoryInterface;
+        $this->studyRepositoryInterface = $studyRepositoryInterface;
         $this->trackerRepositoryInterface = $trackerRepositoryInterface;
         $this->authorizationUserService = $authorizationUserService;
     }
@@ -29,10 +33,14 @@ class CreateUserRoles {
 
             //Get current roles in study for users
             $actualRolesArray = $this->userRepositoryInterface->getUsersRolesInStudy($createRoleRequest->userId, $createRoleRequest->study);
+            $studyEntity = $this->studyRepositoryInterface->find($createRoleRequest->study);
 
+            if( $studyEntity['ancillary_of'] && ! in_array($createRoleRequest->role, [Constants::ROLE_SUPERVISOR, Constants::ROLE_REVIEWER]) ){
+                throw new GaelOForbiddenException("For an ancillary study only reviewer and supervisor role are allowed");
+            }
 
             if( in_array($createRoleRequest->role, $actualRolesArray) ) {
-                throw new GaelOBadRequestException("Already Existing Role");
+                throw new GaelOConflictException("Already Existing Role");
             }
 
             //Write in database and return sucess response (error will be handled by laravel)

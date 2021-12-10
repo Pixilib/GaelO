@@ -12,14 +12,11 @@ use App\Mail\CorrectiveAction;
 use App\Mail\DeletedForm;
 use App\Mail\QCDecision;
 use App\Mail\Request;
-use App\Mail\ResetPassword;
 use App\Mail\ReviewReady;
-use App\Mail\UnconfirmedAccount;
 use App\Mail\UnlockedForm;
 use App\Mail\UnlockRequest;
 use App\Mail\UploadedVisit;
 use App\Mail\UploadFailure;
-use App\Mail\UserCreated;
 use App\Mail\VisitNotDone;
 use App\Mail\Reminder;
 use App\Mail\MailUser;
@@ -82,9 +79,6 @@ class MailerAdapter implements MailerInterface {
             case MailConstants::EMAIL_VISIT_NOT_DONE:
                 $model = new VisitNotDone($this->parameters);
                 break;
-            case MailConstants::EMAIL_USER_CREATED:
-                $model = new UserCreated($this->parameters);
-                break;
             case MailConstants::EMAIL_UPLOAD_FAILURE:
                 $model = new UploadFailure($this->parameters);
                 break;
@@ -99,9 +93,6 @@ class MailerAdapter implements MailerInterface {
                 break;
             case MailConstants::EMAIL_REVIEW_READY:
                 $model = new ReviewReady($this->parameters);
-                break;
-            case MailConstants::EMAIL_RESET_PASSWORD:
-                $model = new ResetPassword($this->parameters);
                 break;
             case MailConstants::EMAIL_QC_DECISION:
                 $model = new QCDecision($this->parameters);
