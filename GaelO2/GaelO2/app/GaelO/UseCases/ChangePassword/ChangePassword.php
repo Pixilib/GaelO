@@ -37,9 +37,7 @@ class ChangePassword {
 
             $user = $this->userRepositoryInterface->find($id);
 
-            if($user['status'] === Constants::USER_STATUS_UNCONFIRMED) {
-                $this->checkMatchHashPasswords($previousPassword, $user['password_temporary']);
-            } else {
+            if($user['status'] !== Constants::USER_STATUS_UNCONFIRMED) {
                 $this->checkMatchHashPasswords($previousPassword, $user['password']);
             }
 
@@ -47,7 +45,6 @@ class ChangePassword {
             $this->checkMatchPasswords($password1, $password2);
             $this->checkNewPassword(
             $password1,
-            $user['password_temporary'] ,
             $user['password'],
             $user['password_previous1'],
             $user['password_previous2']);
@@ -73,18 +70,15 @@ class ChangePassword {
      /**
       * Check that candidate password is not in the 3 last used passwords
       */
-    private function checkNewPassword($passwordCandidate, $temporaryPassword, $currentPassword, $previousPassword1, $previousPassword2) : void {
-        if ($temporaryPassword !==null) $checkTemporary = $this->hashInterface->checkHash($passwordCandidate, $temporaryPassword);
-        else $checkTemporary = false;
-        if ($currentPassword !== null) $checkCurrent = $this->hashInterface->checkHash($passwordCandidate, $currentPassword);
+    private function checkNewPassword($passwordCandidate, $currentPassword, $previousPassword1, $previousPassword2) : void {
+        if ($currentPassword) $checkCurrent = $this->hashInterface->checkHash($passwordCandidate, $currentPassword);
         else $checkCurrent = false;
-        if ($previousPassword1 !== null) $checkPrevious1 = $this->hashInterface->checkHash($passwordCandidate, $previousPassword1);
+        if ($previousPassword1) $checkPrevious1 = $this->hashInterface->checkHash($passwordCandidate, $previousPassword1);
         else $checkPrevious1 = false;
         if ($previousPassword2) $checkPrevious2 = $this->hashInterface->checkHash($passwordCandidate, $previousPassword2);
         else $checkPrevious2 = false;
 
-        if( $checkTemporary ||
-            $checkCurrent ||
+        if( $checkCurrent ||
             $checkPrevious1 ||
             $checkPrevious2 ) {
             throw new GaelOBadRequestException('Already Previously Used Password');
@@ -94,7 +88,7 @@ class ChangePassword {
     /**
      * Check Password constraints :
      * Should have length at least 8 characters
-     * Should have at least a different case 
+     * Should have at least a different case
      * Can have special characters like !@#$%^&*()\[]{}-_+=~`|:;'<>,./?
      */
     private function checkPasswordFormatCorrect(string $password) {

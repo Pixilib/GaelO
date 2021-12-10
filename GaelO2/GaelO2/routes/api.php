@@ -19,6 +19,11 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\VisitController;
 use App\Http\Controllers\VisitGroupController;
 use App\Http\Controllers\VisitTypeController;
+use App\Models\User;
+use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Auth\Events\Verified;
+use Illuminate\Foundation\Auth\EmailVerificationRequest;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -33,7 +38,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 //Routes that need authentication
-Route::middleware(['auth:sanctum'])->group(function () {
+Route::middleware(['auth:sanctum', 'verified'])->group(function () {
 
     //Logout Route
     Route::delete('login', [AuthController::class, 'logout']);
@@ -187,3 +192,18 @@ Route::post('request', [RequestController::class, 'sendRequest']);
 Route::post('login', [AuthController::class, 'login'])->name('login');
 Route::put('users/{id}/password', [UserController::class, 'changeUserPassword']);
 Route::post('tools/reset-password', [UserController::class, 'resetPassword']);
+
+//Route to validate email
+Route::get('email/verify/{id}/{hash}', function (Request $request) {
+
+    $user = User::find($request->route('id'));
+
+    if (!hash_equals((string) $request->route('hash'), sha1($user->getEmailForVerification()))) {
+        throw new AuthorizationException();
+    }
+
+    if ($user->markEmailAsVerified())
+        event(new Verified($user));
+
+    return redirect('/');
+})->middleware(['signed'])->name('verification.verify');

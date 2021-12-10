@@ -2,13 +2,15 @@
 
 namespace App\Models;
 
+use App\Notifications\VerifyEmailNotification;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Laravel\Sanctum\HasApiTokens;
 
-class User extends Authenticatable
+class User extends Authenticatable implements MustVerifyEmail
 {
     use Notifiable, SoftDeletes, HasApiTokens, HasFactory;
 
@@ -27,7 +29,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $hidden = [
-        'remember_token', //'password', 'password_previous1', 'password_previous2', 'password_temporary'
+        'remember_token', //'password', 'password_previous1', 'password_previous2'
     ];
 
     /**
@@ -50,6 +52,11 @@ class User extends Authenticatable
 
     public function mainCenter(){
         return $this->belongsTo(Center::class, 'code','center_code');
+    }
+
+    //Override by custom notification
+    public function sendEmailVerificationNotification() {
+        $this->notify(new VerifyEmailNotification());
     }
 
 }

@@ -153,7 +153,17 @@ class UserTest extends TestCase
         AuthorizationTools::addRoleToUser(1, Constants::ROLE_INVESTIGATOR, $study->name);
         $payload = ["role" => "Investigator"];
         //Second call should answer no new role with status 400
-        $this->json('POST', '/api/users/1/studies/'.$study->name.'/roles/', $payload)->assertStatus(400);
+        $this->json('POST', '/api/users/1/studies/'.$study->name.'/roles/', $payload)->assertStatus(409);
+    }
+
+    public function testCreateNonAllowedRoleForAncillaryStudy()
+    {
+        AuthorizationTools::actAsAdmin(true);
+        $study = Study::factory()->create();
+        $ancillaryStudy = Study::factory()->ancillaryOf($study->name)->create();
+        $payload = ["role" => "Investigator"];
+        //should be forbiden
+        $this->json('POST', '/api/users/1/studies/'.$ancillaryStudy->name.'/roles/', $payload)->assertStatus(403);
     }
 
     public function testDeleteUserRole()

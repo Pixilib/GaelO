@@ -19,7 +19,6 @@ class CreateUsersTable extends Migration
             $table->string('lastname')->nullable(true);
             $table->string('firstname')->nullable(true);
             $table->string('email')->unique()->nullable(false);
-            $table->string('password_temporary')->nullable(true);
             $table->string('password')->nullable(true);
             $table->string('password_previous1')->nullable(true);
             $table->string('password_previous2')->nullable(true);
@@ -36,6 +35,7 @@ class CreateUsersTable extends Migration
             $table->string('orthanc_login')->nullable(true);
             $table->string('orthanc_password')->nullable(true);
             $table->string('api_token', 80) ->unique()->nullable()->default(null);
+            $table->dateTime('email_verified_at')->nullable()->default(null);
             $table->softDeletes();
             //SK rememberToken sert a CSRF, peut etre pas utile si JWT a documenter
             $table->rememberToken();

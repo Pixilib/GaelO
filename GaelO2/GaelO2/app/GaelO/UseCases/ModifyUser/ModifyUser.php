@@ -2,6 +2,7 @@
 
 namespace App\GaelO\UseCases\ModifyUser;
 
+use App\GaelO\Adapters\FrameworkAdapter;
 use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOConflictException;
 use App\GaelO\Exceptions\GaelOException;
@@ -13,7 +14,6 @@ use App\GaelO\UseCases\ModifyUser\ModifyUserResponse;
 use App\GaelO\Services\AuthorizationService\AuthorizationUserService;
 use App\GaelO\Services\MailServices;
 use App\GaelO\UseCases\CreateUser\CreateUser;
-use App\GaelO\Util;
 use Exception;
 
 class ModifyUser
@@ -44,12 +44,9 @@ class ModifyUser
 
             $user = $this->userRepositoryInterface->find($modifyUserRequest->userId);
 
+            $resetEmailValidation = false;
             if ($modifyUserRequest->status === Constants::USER_STATUS_UNCONFIRMED) {
-                //If unconfirmed generate a new temporary password
-                $temporaryPassword = Util::generateNewTempPassword();
-            } else {
-                //Do not modify the current temporary password otherwise
-                $temporaryPassword = $user['password_temporary'];
+                $resetEmailValidation = true;
             }
 
             CreateUser::checkFormComplete($modifyUserRequest);
@@ -57,6 +54,8 @@ class ModifyUser
             CreateUser::checkPhoneCorrect($modifyUserRequest->phone);
 
             if($user['email'] !== $modifyUserRequest->email){
+                $modifyUserRequest->status = Constants::USER_STATUS_UNCONFIRMED;
+                $resetEmailValidation = true;
                 $knownEmail = $this->userRepositoryInterface->isExistingEmail($modifyUserRequest->email);
                 if ($knownEmail) throw new GaelOConflictException("Email Already Known");
             }
@@ -75,16 +74,12 @@ class ModifyUser
                 $modifyUserRequest->orthancAddress,
                 $modifyUserRequest->orthancLogin,
                 $modifyUserRequest->orthancPassword,
-                $temporaryPassword
+                $resetEmailValidation
             );
 
 
-            if ($modifyUserRequest->status === Constants::USER_STATUS_UNCONFIRMED) {
-                $this->mailService->sendResetPasswordMessage(
-                    ($modifyUserRequest->firstname . ' ' . $modifyUserRequest->lastname),
-                    $temporaryPassword,
-                    $modifyUserRequest->email
-                );
+            if ($resetEmailValidation) {
+                FrameworkAdapter::sendRegisteredEventForEmailVerification($user['id']);
             }
 
             $details = [

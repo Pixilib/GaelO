@@ -43,22 +43,10 @@ class Login
             $delayDay = $dateUpdatePassword->diff($dateNow)->format("%a");
 
             if ($user['status'] === Constants::USER_STATUS_UNCONFIRMED) {
-                $tempPasswordCheck = $this->hashInterface->checkHash($loginRequest->password, $user['password_temporary']);
-                if ($tempPasswordCheck) {
-                    $loginResponse->body = ['id' => $user['id'], 'errorMessage' => 'Unconfirmed'];
-                    $loginResponse->status = 400;
-                    $loginResponse->statusText = "Bad Request";
-                } else {
-                    $newAttemptCount = $this->increaseAttemptCount($user);
-                    $remainingAttempts = $this->getRemainingAttempts($newAttemptCount) ;
-                    if ( $remainingAttempts > 0 ) {
-                        $loginResponse->body = ['errorMessage' => 'Wrong Password remaining ' . $remainingAttempts . ' attempts'];
-                    } else {
-                        $loginResponse->body = ['errorMessage' => 'Account Blocked'];
-                    }
-                    $loginResponse->status = 401;
-                    $loginResponse->statusText = "Unauthorized";
-                }
+                $loginResponse->body = ['id' => $user['id'], 'errorMessage' => 'Unconfirmed'];
+                $loginResponse->status = 401;
+                $loginResponse->statusText = "Unauthorized";
+
                 return;
             }
 

@@ -6,13 +6,11 @@ class MailConstants {
 
     const EMAIL_REQUEST = 0;
     const EMAIL_VISIT_NOT_DONE=1;
-    Const EMAIL_USER_CREATED=2;
     const EMAIL_UPLOAD_FAILURE=3;
     const EMAIL_UPLOADED_VISIT=4;
     const EMAIL_UNLOCK_REQUEST=5;
     const EMAIL_UNLOCK_FORM=6;
     const EMAIL_REVIEW_READY=8;
-    const EMAIL_RESET_PASSWORD=9;
     const EMAIL_QC_DECISION=10;
     const EMAIL_DELETED_FORM=11;
     const EMAIL_CORRECTIVE_ACTION=12;

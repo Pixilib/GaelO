@@ -7,4 +7,5 @@ class CreateStudyRequest {
     public String $name;
     public String $code;
     public int $patientCodeLength;
+    public ?string $ancillaryOf = null;
 }

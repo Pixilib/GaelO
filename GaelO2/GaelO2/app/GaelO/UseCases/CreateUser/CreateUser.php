@@ -24,12 +24,10 @@ class CreateUser
     private AuthorizationUserService $authorizationUserService;
     private TrackerRepositoryInterface $trackerRepositoryInterface;
     private UserRepositoryInterface $userRepositoryInterface;
-    private MailServices $mailService;
 
-    public function __construct(AuthorizationUserService $authorizationUserService, UserRepositoryInterface $userRepositoryInterface, TrackerRepositoryInterface $trackerRepositoryInterface, MailServices $mailService)
+    public function __construct(AuthorizationUserService $authorizationUserService, UserRepositoryInterface $userRepositoryInterface, TrackerRepositoryInterface $trackerRepositoryInterface)
     {
         $this->trackerRepositoryInterface = $trackerRepositoryInterface;
-        $this->mailService = $mailService;
         $this->authorizationUserService = $authorizationUserService;
         $this->userRepositoryInterface = $userRepositoryInterface;
     }
@@ -39,8 +37,6 @@ class CreateUser
 
         try {
             $this->checkAuthorization($createUserRequest->currentUserId);
-            //Generate password
-            $passwordTemporary = Util::generateNewTempPassword();
 
             self::checkFormComplete($createUserRequest);
             self::checkEmailValid($createUserRequest->email);
@@ -62,9 +58,11 @@ class CreateUser
                 $createUserRequest->job,
                 $createUserRequest->orthancAddress,
                 $createUserRequest->orthancLogin,
-                $createUserRequest->orthancPassword,
-                $passwordTemporary
+                $createUserRequest->orthancPassword
             );
+
+            //Send Welcom Email to give the plain password to new user.
+            FrameworkAdapter::sendRegisteredEventForEmailVerification($createdUserEntity['id']);
 
             //Save action in Tracker
             $detailsTracker = [
@@ -80,16 +78,10 @@ class CreateUser
                 $detailsTracker
             );
 
-            //Send Welcom Email to give the plain password to new user.
-            $this->mailService->sendCreatedAccountMessage(
-                $createdUserEntity['email'],
-                $createdUserEntity['firstname'] . ' ' . $createdUserEntity['lastname'],
-                $passwordTemporary
-            );
-
             $createUserResponse->body = ['id' => $createdUserEntity['id']];
             $createUserResponse->status = 201;
             $createUserResponse->statusText = 'Created';
+
         } catch (GaelOException $e) {
 
             $createUserResponse->body = $e->getErrorBody();

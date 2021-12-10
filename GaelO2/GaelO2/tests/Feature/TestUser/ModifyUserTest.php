@@ -110,7 +110,7 @@ class ModifyUserTest extends TestCase
         -> assertStatus(200);
         $updatedUser = User::where('id', $this->user['id'])->first();
         $this->assertEquals(Constants::USER_STATUS_UNCONFIRMED, $updatedUser['status']);
-        $this->assertNotSame($updatedUser['password_temporary'], $this->user['password_temporary']);
+        $this->assertEquals(null, $updatedUser['email_verified_at']);
 
     }
 
