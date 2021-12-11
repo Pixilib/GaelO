@@ -1,11 +1,7 @@
 Salim TODO :
 
-Passer email verification
-Verifier expiration du lien de validation
-
 - Optimiser l'utilisation des authorization service en injectant les data depuis le usecase (ou les rendre stateless)
 - Passer le studyName en query tag => emilie
-
 
 Creatable Visit : Manque Study Custom Logic => Passer dans frontend
 Review  : faire une propriete dans visit pour savoir si review disponible a un user en plus de status reviewAvailable ?

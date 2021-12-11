@@ -25,6 +25,7 @@ use Illuminate\Auth\Events\Verified;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\URL;
 
 /*
 |--------------------------------------------------------------------------
@@ -207,3 +208,33 @@ Route::get('email/verify/{id}/{hash}', function (Request $request) {
 
     return redirect('/');
 })->middleware(['signed'])->name('verification.verify');
+
+Route::post('user/{id}/magic-link', function (int $userId, Request $request) {
+
+    $url = URL::temporarySignedRoute(
+        'magic-link', now()->addDay(1), ['userId' => $userId]
+    );
+
+    //SK ICI LE MAGIC LINK A SAUVER EN DB
+    //Enovyer un email avec le magic link
+    return response($url);
+
+});
+
+Route::get('user/magic-link/{userId}', function (int $userId, Request $request) {
+
+    if (!$request->hasValidSignature()) {
+        abort(401);
+    }
+
+    $user = User::findOrFail($userId);
+    //SK ICI A VERIF BDD ET vider cette colonne POUR S ASSURER QU UNE UTILISATION
+
+    //remove all tokens of current user before creating one other
+    $user->tokens()->delete();
+
+    $tokenResult = $user->createToken('GaelO');
+
+    return redirect('/?userId='.$user->id.'&token='.$tokenResult->plainTextToken);
+
+})->name('magic-link');
