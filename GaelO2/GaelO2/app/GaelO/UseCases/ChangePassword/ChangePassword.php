@@ -8,9 +8,11 @@ use App\GaelO\Constants\Constants;
 
 use App\GaelO\Exceptions\GaelOBadRequestException;
 use App\GaelO\Exceptions\GaelOException;
+use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Adapters\HashInterface;
 use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\UserRepositoryInterface;
+use Carbon\Carbon;
 use Exception;
 use Log;
 
@@ -36,6 +38,13 @@ class ChangePassword {
             $password2 = $changeUserPasswordRequest->password2;
 
             $user = $this->userRepositoryInterface->find($id);
+
+            $dateNow = new \DateTime();
+            $validationDate = new \DateTime($user['email_verified_at']);
+
+            if( ( $dateNow->getTimestamp() - $validationDate->getTimestamp() ) > 20*60*1000 ) {
+                throw new GaelOForbiddenException('Validation made more that 20 min');
+            }
 
             if($user['status'] !== Constants::USER_STATUS_UNCONFIRMED) {
                 $this->checkMatchHashPasswords($previousPassword, $user['password']);

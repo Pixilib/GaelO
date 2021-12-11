@@ -34,23 +34,32 @@ class Login
 
             $user = $this->userRepositoryInterface->getUserByEmail($loginRequest->email);
 
-            $passwordCheck = null;
+            //If unconfirmed user can't login
+            if ($user['status'] === Constants::USER_STATUS_UNCONFIRMED) {
+                $loginResponse->body = ['id' => $user['id'], 'errorMessage' => 'Unconfirmed'];
+                $loginResponse->status = 401;
+                $loginResponse->statusText = "Unauthorized";
+                return;
+            }
 
-            if ($user['status'] !== Constants::USER_STATUS_UNCONFIRMED && $user['password'] !== null) $passwordCheck = $this->hashInterface->checkHash($loginRequest->password, $user['password']);
+            //If Blocked user can't login
+            if ($user['status'] === Constants::USER_STATUS_BLOCKED) {
+                $this->sendBlockedEmail($user);
+                throw new GaelOBadRequestException('Account Blocked');
+                return;
+            }
+
+            $passwordCheck = false;
+
+            if ($user['password'] !== null) $passwordCheck = $this->hashInterface->checkHash($loginRequest->password, $user['password']);
+
             $dateNow = new \DateTime();
             $dateUpdatePassword = new \DateTime($user['last_password_update']);
             $attempts = $user['attempts'];
             $delayDay = $dateUpdatePassword->diff($dateNow)->format("%a");
 
-            if ($user['status'] === Constants::USER_STATUS_UNCONFIRMED) {
-                $loginResponse->body = ['id' => $user['id'], 'errorMessage' => 'Unconfirmed'];
-                $loginResponse->status = 401;
-                $loginResponse->statusText = "Unauthorized";
-
-                return;
-            }
-
-            if ($passwordCheck !== null && !$passwordCheck && $user['status'] !== Constants::USER_STATUS_BLOCKED) {
+            //If wrong password increase attempt count and refuse connexion
+            if ( !$passwordCheck ) {
                 $newAttemptCount = $this->increaseAttemptCount($user);
                 $remainingAttempts = $this->getRemainingAttempts($newAttemptCount) ;
                 if ( $remainingAttempts > 0 ) {
@@ -60,21 +69,22 @@ class Login
                 }
                 $loginResponse->status = 401;
                 $loginResponse->statusText = "Unauthorized";
-
                 return;
             }
 
-            if ($user['status'] === Constants::USER_STATUS_BLOCKED) {
-                $this->sendBlockedEmail($user);
-                throw new GaelOBadRequestException('Account Blocked');
-            } else if ($user['status'] === Constants::USER_STATUS_ACTIVATED && $delayDay > 90) {
+            //If too old password refuse as need to be updated
+            if ($user['status'] === Constants::USER_STATUS_ACTIVATED && $delayDay > 90) {
                 $loginResponse->body = ['id' => $user['id'], 'errorMessage' => 'Password Expired'];
                 $loginResponse->status = 400;
                 $loginResponse->statusText = "Bad Request";
+
+            //if everything OK => Login
             } else if ($user['status'] === Constants::USER_STATUS_ACTIVATED && $delayDay < 90 && $attempts < 3) {
                 $this->updateDbOnSuccess($user, $loginRequest->ip);
                 $loginResponse->status = 200;
                 $loginResponse->statusText = "OK";
+
+            //should not happen
             } else {
                 throw new Exception("Unkown Login Failure");
             }
