@@ -79,7 +79,7 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     Route::get('studies/{studyName}/visit-types/{visitTypeId}/investigator-forms/metadata', [StudyController::class, 'getInvestigatorFormsMetadataFromVisitType']);
     Route::get('studies/{studyName}/visit-types/{visitTypeId}/dicom-studies', [StudyController::class, 'getDicomStudiesFromVisitType']);
     Route::post('studies/{studyName}/send-reminder', [StudyController::class, 'sendReminder']);
-    Route::post('studies/{studyName}/send-mail', [StudyController::class, 'sendMail']);
+    Route::post('send-mail', [StudyController::class, 'sendMail']);
 
     //Centers Routes
     Route::post('centers', [CenterController::class, 'createCenter']);

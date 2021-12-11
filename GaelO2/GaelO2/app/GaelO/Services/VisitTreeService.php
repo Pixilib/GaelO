@@ -7,7 +7,6 @@ use App\GaelO\Exceptions\GaelOBadRequestException;
 use App\GaelO\Repositories\PatientRepository;
 use App\GaelO\Repositories\UserRepository;
 use App\GaelO\Repositories\VisitRepository;
-use Log;
 
 /**
  * Build JSON for JSTree with patient's / visit's data
@@ -105,7 +104,6 @@ class VisitTreeService
             $patientsArray = $this->patientRepository->getPatientsInStudyInCenters($this->studyName, $userCentersArray);
             $patientIdArray = [];
             foreach($patientsArray as $patientEntity) {
-
                 $patientIdArray[$patientEntity['id']] = $patientEntity['code'];
             }
             return $this->makeTreeFromPatientsArray($patientIdArray);

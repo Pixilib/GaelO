@@ -30,12 +30,33 @@ class SendMail {
             $this->checkEmpty($sendMailRequest->subject, 'subject');
             $this->checkEmpty($sendMailRequest->content, 'content');
 
+            //EO split 1 use case par role ? 
             if($sendMailRequest->role === Constants::ROLE_SUPERVISOR){
-                //EO checkEmpty() ne passe pas pour id 0 (renvoie faux)
                 if(!isset($sendMailRequest->userId)) throw new GaelOBadRequestException('Request Missing recipient');
-                $this->mailService->sendMailToUser($sendMailRequest->userId, $sendMailRequest->study, $sendMailRequest->subject, $sendMailRequest->content);
+
+                //EO Identifier les admins par 0 ? Rajouter un paramètre bool toAdministrators ?
+                if($sendMailRequest->userId === 0) $this->mailService->sendMailToAdministrators(
+                    $sendMailRequest->study, 
+                    $sendMailRequest->subject, 
+                    $sendMailRequest->content
+                );
+                else {
+                    //EO checkEmpty() ne passe pas pour id 0 (renvoie faux)
+                    $this->mailService->sendMailToUser(
+                        $sendMailRequest->userId, 
+                        $sendMailRequest->study, 
+                        $sendMailRequest->subject, 
+                        $sendMailRequest->content
+                    );
+                }
             } else {
-                $this->mailService->sendMailToSupervisors($sendMailRequest->study, $sendMailRequest->subject, $sendMailRequest->content);
+                $this->mailService->sendMailToSupervisors(
+                    $sendMailRequest->study, 
+                    $sendMailRequest->subject, 
+                    $sendMailRequest->content, 
+                    $sendMailRequest->patientId, 
+                    $sendMailRequest->visitId
+                );
             }
 
             $sendMailResponse->status = 200;
@@ -57,10 +78,10 @@ class SendMail {
         }
     }
 
-    private function checkAuthorization(int $userId, string $studyName, string $role)
+    private function checkAuthorization(int $userId, string $study, string $role)
     {
         $this->authorizationStudyService->setUserId($userId);
-        $this->authorizationStudyService->setStudyName($studyName);
+        $this->authorizationStudyService->setStudyName($study);
         if (!$this->authorizationStudyService->isAllowedStudy($role)) {
             throw new GaelOForbiddenException();
         };
