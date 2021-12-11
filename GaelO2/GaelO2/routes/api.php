@@ -22,7 +22,6 @@ use App\Http\Controllers\VisitTypeController;
 use App\Models\User;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\Events\Verified;
-use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\URL;
@@ -39,7 +38,7 @@ use Illuminate\Support\Facades\URL;
 */
 
 //Routes that need authentication
-Route::middleware(['auth:sanctum', 'verified'])->group(function () {
+Route::middleware(['auth:sanctum', 'verified', 'activated'])->group(function () {
 
     //Logout Route
     Route::delete('login', [AuthController::class, 'logout']);
@@ -191,8 +190,12 @@ Route::post('request', [RequestController::class, 'sendRequest']);
 
 //Login and password Route
 Route::post('login', [AuthController::class, 'login'])->name('login');
-Route::put('users/{id}/password', [UserController::class, 'changeUserPassword']);
 Route::post('tools/reset-password', [UserController::class, 'resetPassword']);
+
+//Change Password Route
+Route::middleware(['auth:sanctum', 'verified'])->group(function () {
+    Route::put('users/{id}/password', [UserController::class, 'changeUserPassword']);
+});
 
 //Route to validate email
 Route::get('email/verify/{id}/{hash}', function (Request $request) {

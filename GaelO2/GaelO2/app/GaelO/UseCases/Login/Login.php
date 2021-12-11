@@ -34,21 +34,6 @@ class Login
 
             $user = $this->userRepositoryInterface->getUserByEmail($loginRequest->email);
 
-            //If unconfirmed user can't login
-            if ($user['status'] === Constants::USER_STATUS_UNCONFIRMED) {
-                $loginResponse->body = ['id' => $user['id'], 'errorMessage' => 'Unconfirmed'];
-                $loginResponse->status = 401;
-                $loginResponse->statusText = "Unauthorized";
-                return;
-            }
-
-            //If Blocked user can't login
-            if ($user['status'] === Constants::USER_STATUS_BLOCKED) {
-                $this->sendBlockedEmail($user);
-                throw new GaelOBadRequestException('Account Blocked');
-                return;
-            }
-
             $passwordCheck = false;
 
             if ($user['password'] !== null) $passwordCheck = $this->hashInterface->checkHash($loginRequest->password, $user['password']);
@@ -65,6 +50,7 @@ class Login
                 if ( $remainingAttempts > 0 ) {
                     $loginResponse->body = ['errorMessage' => 'Wrong Password remaining ' . $remainingAttempts . ' attempts'];
                 } else {
+                    $this->sendBlockedEmail($user);
                     $loginResponse->body = ['errorMessage' => 'Account Blocked'];
                 }
                 $loginResponse->status = 401;
