@@ -1,8 +1,8 @@
 <?php
 
-namespace App\GaelO\UseCases\ResetPassword;
+namespace App\GaelO\UseCases\ForgotPassword;
 
-class ResetPasswordResponse {
+class ForgotPasswordResponse {
     public int $status;
     public string $statusText;
     public $body = null;

@@ -29,6 +29,9 @@ use App\GaelO\UseCases\DeleteUser\DeleteUserResponse;
 use App\GaelO\UseCases\DeleteUserRole\DeleteUserRole;
 use App\GaelO\UseCases\DeleteUserRole\DeleteUserRoleRequest;
 use App\GaelO\UseCases\DeleteUserRole\DeleteUserRoleResponse;
+use App\GaelO\UseCases\ForgotPassword\ForgotPassword;
+use App\GaelO\UseCases\ForgotPassword\ForgotPasswordRequest;
+use App\GaelO\UseCases\ForgotPassword\ForgotPasswordResponse;
 use App\GaelO\UseCases\GetAffiliatedCenter\GetAffiliatedCenter;
 use App\GaelO\UseCases\GetAffiliatedCenter\GetAffiliatedCenterRequest;
 use App\GaelO\UseCases\GetAffiliatedCenter\GetAffiliatedCenterResponse;
@@ -47,9 +50,6 @@ use App\GaelO\UseCases\GetUserFromStudy\GetUserFromStudyResponse;
 use App\GaelO\UseCases\ModifyUserIdentification\ModifyUserIdentification;
 use App\GaelO\UseCases\ModifyUserIdentification\ModifyUserIdentificationRequest;
 use App\GaelO\UseCases\ModifyUserIdentification\ModifyUserIdentificationResponse;
-use App\GaelO\UseCases\ResetPassword\ResetPassword;
-use App\GaelO\UseCases\ResetPassword\ResetPasswordRequest;
-use App\GaelO\UseCases\ResetPassword\ResetPasswordResponse;
 use App\GaelO\Util;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
@@ -58,12 +58,12 @@ use Illuminate\Http\Request;
 class UserController extends Controller
 {
 
-    public function resetPassword(Request $request, ResetPasswordRequest $resetPasswordRequest, ResetPasswordResponse $resetPasswordResponse, ResetPassword $resetPassword)
+    public function forgotPassword(Request $request, ForgotPasswordRequest $forgotPasswordRequest, ForgotPasswordResponse $forgotPasswordResponse, ForgotPassword $resetPassword)
     {
         $requestData = $request->all();
-        $requestRequest = Util::fillObject($requestData, $resetPasswordRequest);
-        $resetPassword->execute($requestRequest, $resetPasswordResponse);
-        return $this->getJsonResponse($resetPasswordResponse->body, $resetPasswordResponse->status, $resetPasswordResponse->statusText);
+        $requestRequest = Util::fillObject($requestData, $forgotPasswordRequest);
+        $resetPassword->execute($requestRequest, $forgotPasswordResponse);
+        return $this->getJsonResponse($forgotPasswordResponse->body, $forgotPasswordResponse->status, $forgotPasswordResponse->statusText);
     }
 
     public function getUser(int $id = null, GetUserRequest $getUserRequest, GetUserResponse $getUserResponse, GetUser $getUser)

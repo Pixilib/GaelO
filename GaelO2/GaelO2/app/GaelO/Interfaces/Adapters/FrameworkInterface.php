@@ -19,4 +19,6 @@ interface FrameworkInterface {
      */
     public static function getStoragePath() : string ;
 
+    public static function sendResetPasswordLink(string $email) : bool;
+
 }
