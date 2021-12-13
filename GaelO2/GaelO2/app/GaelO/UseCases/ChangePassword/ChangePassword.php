@@ -7,12 +7,12 @@ use App\GaelO\UseCases\ChangePassword\ChangePasswordResponse;
 use App\GaelO\Constants\Constants;
 
 use App\GaelO\Exceptions\GaelOBadRequestException;
+use App\GaelO\Exceptions\GaelOUnauthorizedException;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Interfaces\Adapters\HashInterface;
 use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\UserRepositoryInterface;
 use Exception;
-use Log;
 
 class ChangePassword {
 
@@ -36,6 +36,9 @@ class ChangePassword {
             $password2 = $changeUserPasswordRequest->password2;
 
             $user = $this->userRepositoryInterface->find($id);
+
+            if($user['email_verified_at'] == null) throw new GaelOUnauthorizedException('Email not verified');
+            else if ($user['email_verified_at'] < now()->subMinutes(1)) throw new GaelOUnauthorizedException('Email not verified');
 
             if($user['status'] !== Constants::USER_STATUS_UNCONFIRMED) {
                 $this->checkMatchHashPasswords($previousPassword, $user['password']);
