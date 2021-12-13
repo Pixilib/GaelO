@@ -22,9 +22,11 @@ use App\Http\Controllers\VisitTypeController;
 use App\Models\User;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\Events\Verified;
-use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\URL;
 
 /*
 |--------------------------------------------------------------------------
@@ -38,7 +40,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 //Routes that need authentication
-Route::middleware(['auth:sanctum', 'verified'])->group(function () {
+Route::middleware(['auth:sanctum', 'verified', 'activated'])->group(function () {
 
     //Logout Route
     Route::delete('login', [AuthController::class, 'logout']);
@@ -179,6 +181,12 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     Route::get('reviews/{id}/file/{key}', [ReviewController::class, 'getReviewFile']);
 });
 
+//Change Password Route
+Route::middleware(['auth:sanctum', 'verified'])->group(function () {
+    Route::put('users/{id}/password', [UserController::class, 'changeUserPassword']);
+});
+
+
 /*
 |--------------------------------------------------------------------------
 | Public Routes
@@ -190,8 +198,35 @@ Route::post('request', [RequestController::class, 'sendRequest']);
 
 //Login and password Route
 Route::post('login', [AuthController::class, 'login'])->name('login');
-Route::put('users/{id}/password', [UserController::class, 'changeUserPassword']);
-Route::post('tools/reset-password', [UserController::class, 'resetPassword']);
+
+//SK USE CASE A DISSOCIER DU FRAMEWORK
+Route::post('tools/forgot-password', [UserController::class, 'forgotPassword'])->name('password.email');
+
+Route::get('tools/reset-password/{token}', function ($token) {
+    return redirect('/reset-password?token='.$token);
+})->name('password.reset');
+
+Route::post('tools/reset-password', function (Request $request) {
+    $request->validate([
+        'token' => 'required',
+        'email' => 'required|email',
+        'password' => 'required|confirmed',
+    ]);
+
+    $status = Password::reset(
+        $request->only('email', 'password', 'password_confirmation', 'token'),
+        function ($user, $password) {
+            $user->forceFill([
+                'password' => Hash::make($password)
+            ]);
+
+            $user->save();
+        }
+    );
+
+    if($status === Password::PASSWORD_RESET) redirect('/');
+
+})->name('password.update');
 
 //Route to validate email
 Route::get('email/verify/{id}/{hash}', function (Request $request) {
@@ -207,3 +242,33 @@ Route::get('email/verify/{id}/{hash}', function (Request $request) {
 
     return redirect('/change-password');
 })->middleware(['signed'])->name('verification.verify');
+
+Route::post('user/{id}/magic-link', function (int $userId, Request $request) {
+
+    $url = URL::temporarySignedRoute(
+        'magic-link', now()->addDay(1), ['userId' => $userId]
+    );
+
+    //SK ICI LE MAGIC LINK A SAUVER EN DB
+    //Enovyer un email avec le magic link
+    return response($url);
+
+});
+
+Route::get('user/magic-link/{userId}', function (int $userId, Request $request) {
+
+    if (!$request->hasValidSignature()) {
+        abort(401);
+    }
+
+    $user = User::findOrFail($userId);
+    //SK ICI A VERIF BDD ET vider cette colonne POUR S ASSURER QU UNE UTILISATION
+
+    //remove all tokens of current user before creating one other
+    $user->tokens()->delete();
+
+    $tokenResult = $user->createToken('GaelO');
+
+    return redirect('/?userId='.$user->id.'&token='.$tokenResult->plainTextToken);
+
+})->name('magic-link');

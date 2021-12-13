@@ -2,7 +2,10 @@
 
 namespace App\Models;
 
+use App\Notifications\ResetPasswordNotification;
 use App\Notifications\VerifyEmailNotification;
+use Illuminate\Auth\Passwords\CanResetPassword as PasswordsCanResetPassword;
+use Illuminate\Contracts\Auth\CanResetPassword;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -10,9 +13,9 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Laravel\Sanctum\HasApiTokens;
 
-class User extends Authenticatable implements MustVerifyEmail
+class User extends Authenticatable implements CanResetPassword, MustVerifyEmail
 {
-    use Notifiable, SoftDeletes, HasApiTokens, HasFactory;
+    use Notifiable, SoftDeletes, HasApiTokens, HasFactory, PasswordsCanResetPassword;
 
     /**
      * The attributes that are mass assignable.
@@ -57,6 +60,10 @@ class User extends Authenticatable implements MustVerifyEmail
     //Override by custom notification
     public function sendEmailVerificationNotification() {
         $this->notify(new VerifyEmailNotification());
+    }
+
+    public function sendPasswordResetNotification($token) {
+        $this->notify(new ResetPasswordNotification($token));
     }
 
 }

@@ -31,6 +31,8 @@ class Psr7ResponseAdapter implements Psr7ResponseInterface {
 
     public function getJsonBody() : array {
         $body = $this->response->getBody();
+        //SK : A Verifier pb de caractere accentue
+        //$utf8_body = mb_convert_encoding($body, 'UTF-8');
         return json_decode($body, true);
     }
 

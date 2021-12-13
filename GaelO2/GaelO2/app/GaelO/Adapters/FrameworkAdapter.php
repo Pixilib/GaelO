@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Password;
 
 class FrameworkAdapter implements FrameworkInterface {
 
@@ -30,5 +31,13 @@ class FrameworkAdapter implements FrameworkInterface {
     public static function resendVerificationEmail(int $userId){
         $user = User::findOrFail($userId);
         $user->sendEmailVerificationNotification();
+    }
+
+    public static function sendResetPasswordLink(string $email) : bool {
+        $status = Password::sendResetLink(
+            ['email'=> $email]
+        );
+
+        return $status === Password::RESET_LINK_SENT;
     }
 }
