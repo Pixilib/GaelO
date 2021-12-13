@@ -38,6 +38,11 @@ class StudyRepository implements StudyRepositoryInterface {
         return $studies->count()> 0 ? true : false ;
     }
 
+    public function isExistingCode(string $code) : bool {
+        $studies = $this->study->withTrashed()->where('code', $code)->get();
+        return $studies->count()> 0 ? true : false ;
+    }
+
     public function getStudies(bool $withTrashed = false) : array {
         if($withTrashed){
             $studies = $this->study->withTrashed()->get();
