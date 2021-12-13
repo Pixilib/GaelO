@@ -240,7 +240,7 @@ Route::get('email/verify/{id}/{hash}', function (Request $request) {
     if ($user->markEmailAsVerified())
         event(new Verified($user));
 
-    return redirect('/');
+    return redirect('/change-password');
 })->middleware(['signed'])->name('verification.verify');
 
 Route::post('user/{id}/magic-link', function (int $userId, Request $request) {
