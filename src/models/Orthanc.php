@@ -252,7 +252,7 @@ Class Orthanc {
 		$opts=array('http' =>
 				array(
 						'method'  => 'POST',
-						"timeout" => 300, 
+						"timeout" => 1200, 
 						'content' => json_encode($ids),
 						'header'=>  ['Content-Type: application/json Accept: application/json', $this->context['http']['header']]
 				)
@@ -390,7 +390,7 @@ Class Orthanc {
 		$opts=array('http' =>
 			array(
 				'method'  => 'POST',
-				"timeout" => 300,
+				"timeout" => 1200,
 				'content' => json_encode($jsonAnonQuery),
 				'header'=>  ['Content-Type: application/json Accept: application/json', $this->context['http']['header']]
 			)
