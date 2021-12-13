@@ -36,11 +36,15 @@ class CreateStudy {
             $ancillaryOf = $createStudyRequest->ancillaryOf;
 
             if(preg_match('/[^A-Z0-9]/', $studyName)){
-                throw new GaelOBadRequestException('Only uppercase alfanumerical name allowed, no space or special characters');
+                throw new GaelOBadRequestException('Only uppercase alphanumerical name allowed, no space or special characters');
             }
 
             if( $this->studyRepositoryInterface->isExistingStudy($studyName) ){
                 throw new GaelOConflictException('Already Existing Study');
+            }
+
+            if( $this->studyRepositoryInterface->isExistingCode($studyCode) ){
+                throw new GaelOConflictException('Already used study code');
             }
 
             if( empty($patientCodeLength) ){
