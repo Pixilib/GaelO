@@ -4,23 +4,24 @@ namespace App\Notifications;
 
 use App\GaelO\Adapters\FrameworkAdapter;
 use App\GaelO\Constants\SettingsConstants;
-use App\Mail\ResetPassword;
+use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
-use Illuminate\Support\Facades\Log;
 
 class ResetPasswordNotification extends Notification
 {
 
     private string $token;
+    private array $user;
 
     /**
      * Create a new notification instance.
      *
      * @return void
      */
-    public function __construct(string $token)
+    public function __construct(string $token, array $user)
     {
         $this->token = $token;
+        $this->user = $user;
     }
 
     /**
@@ -42,22 +43,23 @@ class ResetPasswordNotification extends Notification
      */
     public function toMail($notifiable)
     {
-        $resetUrl = url('password/reset', $this->token);
-
+        $resetUrl = url('api/tools/reset-password', $this->token);
+        //If user password is set, mail is meant to reset password 
+        if($this->user['password'] !== null) $template = 'mails.mail_reset_password';
+        //If not, mail is meant to set password upon user creation
+        else $template = 'mails.mail_create_user';
         $platformName = FrameworkAdapter::getConfig(SettingsConstants::PLATFORM_NAME);
         $webAddress = FrameworkAdapter::getConfig(SettingsConstants::APP_URL);
         $corporation = FrameworkAdapter::getConfig(SettingsConstants::CORPORATION);
         $adminEmail = FrameworkAdapter::getConfig(SettingsConstants::MAIL_FROM_ADDRESS);
 
-        return ( new ResetPassword(
-            ['url' => $resetUrl,
+        return (new MailMessage)
+            ->view('mails.mail_reset_password', ['url' => $resetUrl,
             'platformName'=> $platformName,
             'corporation'=> $corporation,
             'webAddress'=>$webAddress,
             'adminEmail'=> $adminEmail,
-            'name'=>"user"]
-            )
-        );
+            'name'=>$this->user['name']]);
     }
 
     /**

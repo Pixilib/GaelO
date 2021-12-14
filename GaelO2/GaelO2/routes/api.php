@@ -224,14 +224,14 @@ Route::post('tools/reset-password', function (Request $request) {
         }
     );
 
-    if($status === Password::PASSWORD_RESET) redirect('/');
+    if($status === Password::PASSWORD_RESET) return redirect('/');
 
 })->name('password.update');
 
 //Route to validate email
 Route::get('email/verify/{id}/{hash}', function (Request $request) {
 
-    $user = User::find($request->route('id'));
+    $user = User::findOrFail($request->route('id'));
 
     if (!hash_equals((string) $request->route('hash'), sha1($user->getEmailForVerification()))) {
         throw new AuthorizationException();
@@ -240,7 +240,7 @@ Route::get('email/verify/{id}/{hash}', function (Request $request) {
     if ($user->markEmailAsVerified())
         event(new Verified($user));
 
-    return redirect('/change-password');
+    return redirect('/change-password?userId='.$user->id);
 })->middleware(['signed'])->name('verification.verify');
 
 Route::post('user/{id}/magic-link', function (int $userId, Request $request) {
