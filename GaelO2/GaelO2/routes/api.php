@@ -224,7 +224,7 @@ Route::post('tools/reset-password', function (Request $request) {
         }
     );
 
-    if($status === Password::PASSWORD_RESET) redirect('/');
+    if($status === Password::PASSWORD_RESET) return redirect('/');
 
 })->name('password.update');
 

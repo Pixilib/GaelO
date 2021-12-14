@@ -11,15 +11,17 @@ class ResetPasswordNotification extends Notification
 {
 
     private string $token;
+    private array $user;
 
     /**
      * Create a new notification instance.
      *
      * @return void
      */
-    public function __construct(string $token)
+    public function __construct(string $token, array $user)
     {
         $this->token = $token;
+        $this->user = $user;
     }
 
     /**
@@ -42,7 +44,10 @@ class ResetPasswordNotification extends Notification
     public function toMail($notifiable)
     {
         $resetUrl = url('api/tools/reset-password', $this->token);
-
+        //If user password is set, mail is meant to reset password 
+        if($this->user['password'] !== null) $template = 'mails.mail_reset_password';
+        //If not, mail is meant to set password upon user creation
+        else $template = 'mails.mail_create_user';
         $platformName = FrameworkAdapter::getConfig(SettingsConstants::PLATFORM_NAME);
         $webAddress = FrameworkAdapter::getConfig(SettingsConstants::APP_URL);
         $corporation = FrameworkAdapter::getConfig(SettingsConstants::CORPORATION);
@@ -54,7 +59,7 @@ class ResetPasswordNotification extends Notification
             'corporation'=> $corporation,
             'webAddress'=>$webAddress,
             'adminEmail'=> $adminEmail,
-            'name'=>"user"]);
+            'name'=>$this->user['name']]);
     }
 
     /**
