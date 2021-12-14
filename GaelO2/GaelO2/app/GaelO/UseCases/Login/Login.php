@@ -3,7 +3,6 @@
 namespace App\GaelO\UseCases\Login;
 
 use App\GaelO\Constants\Constants;
-use App\GaelO\Exceptions\GaelOBadRequestException;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Interfaces\Adapters\HashInterface;
 use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
@@ -31,17 +30,12 @@ class Login
     {
 
         try {
-
             $user = $this->userRepositoryInterface->getUserByEmail($loginRequest->email);
 
             $passwordCheck = false;
-
             if ($user['password'] !== null) $passwordCheck = $this->hashInterface->checkHash($loginRequest->password, $user['password']);
 
-            $dateNow = new \DateTime();
-            $dateUpdatePassword = new \DateTime($user['last_password_update']);
             $attempts = $user['attempts'];
-            $delayDay = $dateUpdatePassword->diff($dateNow)->format("%a");
 
             //If wrong password increase attempt count and refuse connexion
             if ( !$passwordCheck ) {
@@ -58,29 +52,20 @@ class Login
                 return;
             }
 
-            //If too old password refuse as need to be updated
-            if ($user['status'] === Constants::USER_STATUS_ACTIVATED && $delayDay > 90) {
-                $loginResponse->body = ['id' => $user['id'], 'errorMessage' => 'Password Expired'];
-                $loginResponse->status = 400;
-                $loginResponse->statusText = "Bad Request";
-
             //if everything OK => Login
-            } else if ($user['status'] === Constants::USER_STATUS_ACTIVATED && $delayDay < 90 && $attempts < 3) {
+            if ($user['status'] === Constants::USER_STATUS_ACTIVATED && $attempts < 3) {
                 $this->updateDbOnSuccess($user, $loginRequest->ip);
                 $loginResponse->status = 200;
                 $loginResponse->statusText = "OK";
-
             //should not happen
             } else {
                 throw new Exception("Unkown Login Failure");
             }
 
         } catch (GaelOException $e) {
-
             $loginResponse->body = $e->getErrorBody();
             $loginResponse->status = $e->statusCode;
             $loginResponse->statusText = $e->statusText;
-
         } catch (Exception $e) {
             throw $e;
         }

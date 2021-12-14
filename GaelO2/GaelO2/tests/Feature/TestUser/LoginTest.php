@@ -29,7 +29,6 @@ class LoginTest extends TestCase
         $data = ['email'=> 'administrator@gaelo.fr',
         'password'=> 'administrator'];
         $adminDefaultUser = User::where('id', 1)->first();
-        $adminDefaultUser['last_password_update'] = now();
         $adminDefaultUser->save();
         $response = $this->json('POST', '/api/login', $data)-> assertSuccessful();
         $content= json_decode($response->content(), true);
@@ -41,7 +40,6 @@ class LoginTest extends TestCase
         $data = ['email'=> 'administrator@gaelo.fr',
         'password'=> 'wrongPassword'];
         $adminDefaultUser = User::where('id', 1)->first();
-        $adminDefaultUser['last_password_update'] = now();
         $adminDefaultUser->save();
         $this->json('POST', '/api/login', $data)->assertStatus(401);
     }
@@ -60,7 +58,6 @@ class LoginTest extends TestCase
     public function testLoginPasswordPerished()
     {
         $adminDefaultUser = User::where('id', 1)->first();
-        $adminDefaultUser['last_password_update'] = date_create('10 June 2020');
         $adminDefaultUser->save();
         $data = ['email'=> 'administrator@gaelo.fr',
         'password'=> 'administrator'];

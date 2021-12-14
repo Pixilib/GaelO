@@ -196,10 +196,8 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
 //Request Route
 Route::post('request', [RequestController::class, 'sendRequest']);
 
-//Login and password Route
+//Login and forgot password Route
 Route::post('login', [AuthController::class, 'login'])->name('login');
-
-//SK USE CASE A DISSOCIER DU FRAMEWORK
 Route::post('tools/forgot-password', [UserController::class, 'forgotPassword'])->name('password.email');
 
 Route::get('tools/reset-password/{token}', function ($token) {
@@ -225,6 +223,7 @@ Route::post('tools/reset-password', function (Request $request) {
     );
 
     if($status === Password::PASSWORD_RESET) return redirect('/');
+    else return response()->noContent(400);
 
 })->name('password.update');
 

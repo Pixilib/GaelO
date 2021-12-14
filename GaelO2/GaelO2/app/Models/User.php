@@ -11,7 +11,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Facades\DB;
 use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable implements CanResetPassword, MustVerifyEmail
@@ -33,7 +32,7 @@ class User extends Authenticatable implements CanResetPassword, MustVerifyEmail
      * @var array
      */
     protected $hidden = [
-        'remember_token', //'password', 'password_previous1', 'password_previous2'
+        'remember_token'
     ];
 
     /**
@@ -64,9 +63,7 @@ class User extends Authenticatable implements CanResetPassword, MustVerifyEmail
     }
 
     public function sendPasswordResetNotification($token) {
-        //Fetch user corresponding to token in DB
-        $user = DB::table('password_resets')->where('token',$token)->sole();
-        $this->notify(new ResetPasswordNotification($token, $user->toArray()));
+        $this->notify(new ResetPasswordNotification($token));
     }
 
 }

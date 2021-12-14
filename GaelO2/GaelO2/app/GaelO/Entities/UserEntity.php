@@ -28,7 +28,6 @@ class UserEntity {
         $userEntity->firstname = $array['firstname'];
         $userEntity->email = $array['email'];
         $userEntity->phone = $array['phone'];
-        $userEntity->lastPasswordUpdate = $array['last_password_update'];
         $userEntity->status = $array['status'];
         $userEntity->attempts = $array['attempts'];
         $userEntity->administrator = $array['administrator'];

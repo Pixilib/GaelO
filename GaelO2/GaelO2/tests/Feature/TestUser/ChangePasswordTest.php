@@ -29,8 +29,6 @@ class ChangePasswordTest extends TestCase
         $this->user = User::factory()
             ->status(Constants::USER_STATUS_ACTIVATED)
             ->password('password12345')
-            ->passwordPrevious1('previousPassword1')
-            ->passwordPrevious2('previousPassword2')
             ->create();
 
         $this->validPayload = [
@@ -127,17 +125,12 @@ class ChangePasswordTest extends TestCase
     }
 
     public function testChangePasswordNoPreviousPassword(){
-        $this->user['password_previous1'] = null;
-        $this->user['password_previous2'] = null;
-        $this->user['last_password_update'] = now()->subDays(100);
         $this->user->save();
         $this->json('PUT', '/api/users/'.$this->user['id'].'/password', $this->validPayload)->assertStatus(200);
     }
 
     public function testChangePasswordNoCurrentPassword(){
         $this->user['password'] = null;
-        $this->user['password_previous1'] = null;
-        $this->user['password_previous2'] = null;
         $this->user['status'] = Constants::USER_STATUS_UNCONFIRMED;
         $this->user->save();
         $this->validPayload['previous_password']='temporaryPassword';

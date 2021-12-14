@@ -71,6 +71,23 @@ class Util {
 
     }
 
+
+    /**
+     * Check Password constraints :
+     * Should have length at least 8 characters
+     * Should have at least a different case
+     * Can have special characters like !@#$%^&*()\[]{}-_+=~`|:;'<>,./?
+     */
+    public static function checkPasswordFormatCorrect(string $password) {
+        $checkOneDigit = "(?=.*\d)";
+        $checkOneLowerCase = "(?=.*[a-z])";
+        $checkOneUpperCase = "(?=.*[A-Z])";
+        $checkStrContent = "[0-9A-Za-z\!@#$%^&*()\\[\]{}\-_+=~`|:;'<>,.\/?]"; //Allow for special char
+        $checkLength = "{8,}";
+        $wholeStringCheck = $checkOneDigit.$checkOneLowerCase.$checkOneUpperCase.$checkStrContent.$checkLength;
+        return preg_match('/^'.$wholeStringCheck.'$/', $password);
+    }
+
     public static function getFileInPathGenerator(String $path) {
 
 		if (is_dir($path)) {

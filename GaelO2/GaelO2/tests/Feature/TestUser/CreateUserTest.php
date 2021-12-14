@@ -55,7 +55,6 @@ class CreateUserTest extends TestCase
         //Check defaut value at user creation
         $this->assertEquals($createdUser['status'], Constants::USER_STATUS_UNCONFIRMED);
         $this->assertEquals($createdUser['phone'],  $this->validPayload['phone']);
-        $this->assertNull($createdUser['last_password_update']);
     }
 
     public function testCreateCorrectPayloadShouldFailNotAdmin()
