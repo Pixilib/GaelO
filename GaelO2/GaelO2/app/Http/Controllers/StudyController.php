@@ -193,13 +193,14 @@ class StudyController extends Controller
         return $this->getJsonResponse($getPatientResponse->body, $getPatientResponse->status, $getPatientResponse->statusText);
     }
 
-    public function getReviewProgression(String $studyName, int $visitTypeId, GetReviewProgression $getReviewProgression, GetReviewProgressionRequest $getReviewProgressionRequest, GetReviewProgressionResponse $getReviewProgressionResponse)
+    public function getReviewProgression(int $visitTypeId, Request $request, GetReviewProgression $getReviewProgression, GetReviewProgressionRequest $getReviewProgressionRequest, GetReviewProgressionResponse $getReviewProgressionResponse)
     {
         $currentUser = Auth::user();
 
+        $queryParam = $request->query();
+        $getReviewProgressionRequest->studyName = $queryParam['studyName'];
         $getReviewProgressionRequest->visitTypeId = $visitTypeId;
         $getReviewProgressionRequest->currentUserId = $currentUser['id'];
-        $getReviewProgressionRequest->studyName = $studyName;
 
         $getReviewProgression->execute($getReviewProgressionRequest, $getReviewProgressionResponse);
 
@@ -227,11 +228,12 @@ class StudyController extends Controller
         }
     }
 
-    public function getVisitsFromVisitType(string $studyName, int $visitTypeId, GetVisitsFromVisitType $getVisitsFromVisitType, GetVisitsFromVisitTypeRequest $getVisitsFromVisitTypeRequest, GetVisitsFromVisitTypeResponse $getVisitsFromVisitTypeResponse)
+    public function getVisitsFromVisitType(int $visitTypeId, Request $request, GetVisitsFromVisitType $getVisitsFromVisitType, GetVisitsFromVisitTypeRequest $getVisitsFromVisitTypeRequest, GetVisitsFromVisitTypeResponse $getVisitsFromVisitTypeResponse)
     {
         $currentUser = Auth::user();
+        $queryParam = $request->query();
+        $getVisitsFromVisitTypeRequest->studyName = $queryParam['studyName'];
         $getVisitsFromVisitTypeRequest->currentUserId = $currentUser['id'];
-        $getVisitsFromVisitTypeRequest->studyName = $studyName;
         $getVisitsFromVisitTypeRequest->visitTypeId = $visitTypeId;
 
         $getVisitsFromVisitType->execute($getVisitsFromVisitTypeRequest, $getVisitsFromVisitTypeResponse);
@@ -239,11 +241,12 @@ class StudyController extends Controller
     }
 
 
-    public function getReviewsFromVisitType(string $studyName, int $visitTypeId, GetReviewsFromVisitType $getReviewsFromVisitType, GetReviewsFromVisitTypeRequest $getReviewsFromVisitTypeRequest, GetReviewsFromVisitTypeResponse $getReviewsFromVisitTypeResponse)
+    public function getReviewsFromVisitType(int $visitTypeId, Request $request, GetReviewsFromVisitType $getReviewsFromVisitType, GetReviewsFromVisitTypeRequest $getReviewsFromVisitTypeRequest, GetReviewsFromVisitTypeResponse $getReviewsFromVisitTypeResponse)
     {
         $currentUser = Auth::user();
+        $queryParam = $request->query();
+        $getReviewsFromVisitTypeRequest->studyName = $queryParam['studyName'];
         $getReviewsFromVisitTypeRequest->currentUserId = $currentUser['id'];
-        $getReviewsFromVisitTypeRequest->studyName = $studyName;
         $getReviewsFromVisitTypeRequest->visitTypeId = $visitTypeId;
 
         $getReviewsFromVisitType->execute($getReviewsFromVisitTypeRequest, $getReviewsFromVisitTypeResponse);
@@ -251,11 +254,12 @@ class StudyController extends Controller
         return $this->getJsonResponse($getReviewsFromVisitTypeResponse->body, $getReviewsFromVisitTypeResponse->status, $getReviewsFromVisitTypeResponse->statusText);
     }
 
-    public function getReviewsMetadataFromVisitType(string $studyName, int $visitTypeId, GetReviewsMetadataFromVisitType $getReviewsMetadataFromVisitType, GetReviewsMetadataFromVisitTypeRequest $getReviewsMetadataFromVisitTypeRequest, GetReviewsMetadataFromVisitTypeResponse $getReviewsMetadataFromVisitTypeResponse){
+    public function getReviewsMetadataFromVisitType(int $visitTypeId, Request $request, GetReviewsMetadataFromVisitType $getReviewsMetadataFromVisitType, GetReviewsMetadataFromVisitTypeRequest $getReviewsMetadataFromVisitTypeRequest, GetReviewsMetadataFromVisitTypeResponse $getReviewsMetadataFromVisitTypeResponse){
 
         $currentUser = Auth::user();
+        $queryParam = $request->query();
+        $getReviewsMetadataFromVisitTypeRequest->studyName = $queryParam['studyName'];
         $getReviewsMetadataFromVisitTypeRequest->currentUserId = $currentUser['id'];
-        $getReviewsMetadataFromVisitTypeRequest->studyName = $studyName;
         $getReviewsMetadataFromVisitTypeRequest->visitTypeId = $visitTypeId;
 
         $getReviewsMetadataFromVisitType->execute($getReviewsMetadataFromVisitTypeRequest, $getReviewsMetadataFromVisitTypeResponse);
@@ -264,11 +268,12 @@ class StudyController extends Controller
 
     }
 
-    public function getInvestigatorFormsFromVisitType(string $studyName, int $visitTypeId, GetInvestigatorFormsFromVisitType $getInvestigatorFormsFromVisitType, GetInvestigatorFormsFromVisitTypeRequest $getInvestigatorFormsFromVisitTypeRequest, GetInvestigatorFormsFromVisitTypeResponse $getInvestigatorFormsFromVisitTypeResponse)
+    public function getInvestigatorFormsFromVisitType(int $visitTypeId, Request $request, GetInvestigatorFormsFromVisitType $getInvestigatorFormsFromVisitType, GetInvestigatorFormsFromVisitTypeRequest $getInvestigatorFormsFromVisitTypeRequest, GetInvestigatorFormsFromVisitTypeResponse $getInvestigatorFormsFromVisitTypeResponse)
     {
         $currentUser = Auth::user();
+        $queryParam = $request->query();
+        $getInvestigatorFormsFromVisitTypeRequest->studyName = $queryParam['studyName'];
         $getInvestigatorFormsFromVisitTypeRequest->currentUserId = $currentUser['id'];
-        $getInvestigatorFormsFromVisitTypeRequest->studyName = $studyName;
         $getInvestigatorFormsFromVisitTypeRequest->visitTypeId = $visitTypeId;
 
         $getInvestigatorFormsFromVisitType->execute($getInvestigatorFormsFromVisitTypeRequest, $getInvestigatorFormsFromVisitTypeResponse);
@@ -276,10 +281,11 @@ class StudyController extends Controller
         return $this->getJsonResponse($getInvestigatorFormsFromVisitTypeResponse->body, $getInvestigatorFormsFromVisitTypeResponse->status, $getInvestigatorFormsFromVisitTypeResponse->statusText);
     }
 
-    public function getInvestigatorFormsMetadataFromVisitType(string $studyName, int $visitTypeId, GetInvestigatorFormsMetadataFromVisitType $getInvestigatorFormsMetadataFromVisitType, GetInvestigatorFormsMetadataFromVisitTypeRequest $getInvestigatorFormsMetadataFromVisitTypeRequest, GetInvestigatorFormsMetadataFromVisitTypeResponse $getInvestigatorFormsMetadataFromVisitTypeResponse){
+    public function getInvestigatorFormsMetadataFromVisitType(int $visitTypeId, Request $request, GetInvestigatorFormsMetadataFromVisitType $getInvestigatorFormsMetadataFromVisitType, GetInvestigatorFormsMetadataFromVisitTypeRequest $getInvestigatorFormsMetadataFromVisitTypeRequest, GetInvestigatorFormsMetadataFromVisitTypeResponse $getInvestigatorFormsMetadataFromVisitTypeResponse){
         $currentUser = Auth::user();
+        $queryParam = $request->query();
+        $getInvestigatorFormsMetadataFromVisitTypeRequest->studyName = $queryParam['studyName'];
         $getInvestigatorFormsMetadataFromVisitTypeRequest->currentUserId = $currentUser['id'];
-        $getInvestigatorFormsMetadataFromVisitTypeRequest->studyName = $studyName;
         $getInvestigatorFormsMetadataFromVisitTypeRequest->visitTypeId = $visitTypeId;
 
         $getInvestigatorFormsMetadataFromVisitType->execute($getInvestigatorFormsMetadataFromVisitTypeRequest, $getInvestigatorFormsMetadataFromVisitTypeResponse);
@@ -287,13 +293,13 @@ class StudyController extends Controller
         return $this->getJsonResponse($getInvestigatorFormsMetadataFromVisitTypeResponse->body, $getInvestigatorFormsMetadataFromVisitTypeResponse->status, $getInvestigatorFormsMetadataFromVisitTypeResponse->statusText);
     }
 
-    public function getDicomStudiesFromVisitType(string $studyName, Request $request, int $visitTypeId, GetDicomsStudiesFromVisitType $getDicomsStudiesFromVisitType, GetDicomsStudiesFromVisitTypeRequest $getDicomsStudiesFromVisitTypeRequest, GetDicomsStudiesFromVisitTypeResponse $getDicomsStudiesFromVisitTypeResponse)
+    public function getDicomStudiesFromVisitType(Request $request, int $visitTypeId, GetDicomsStudiesFromVisitType $getDicomsStudiesFromVisitType, GetDicomsStudiesFromVisitTypeRequest $getDicomsStudiesFromVisitTypeRequest, GetDicomsStudiesFromVisitTypeResponse $getDicomsStudiesFromVisitTypeResponse)
     {
 
         $currentUser = Auth::user();
         $queryParam = $request->query();
         $getDicomsStudiesFromVisitTypeRequest->currentUserId = $currentUser['id'];
-        $getDicomsStudiesFromVisitTypeRequest->studyName = $studyName;
+        $getDicomsStudiesFromVisitTypeRequest->studyName = $queryParam['studyName'];
         $getDicomsStudiesFromVisitTypeRequest->visitTypeId = $visitTypeId;
         $getDicomsStudiesFromVisitTypeRequest->withTrashed = key_exists('withTrashed', $queryParam);
 

@@ -40,7 +40,7 @@ class StudyReviewProgressionTest extends TestCase
         $currentUserId = AuthorizationTools::actAsAdmin(false);
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $review->study_name);
 
-        $answer = $this->json('GET', '/api/studies/'.$review->study_name.'/visit-types/'.$review->visit->visitType->id.'/review-progression');
+        $answer = $this->json('GET', '/api/visit-types/'.$review->visit->visitType->id.'/review-progression?studyName='.$review->study_name);
 
         $answer->assertStatus(200);
         $answerArray = json_decode($answer->content(), true);
@@ -54,7 +54,7 @@ class StudyReviewProgressionTest extends TestCase
 
         AuthorizationTools::actAsAdmin(false);
 
-        $answer = $this->json('GET', '/api/studies/'.$review->study_name.'/visit-types/'.$review->visit->visitType->id.'/review-progression');
+        $answer = $this->json('GET', '/api/visit-types/'.$review->visit->visitType->id.'/review-progression?studyName='.$review->study_name);
         $answer->assertStatus(403);
 
     }

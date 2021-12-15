@@ -56,7 +56,7 @@ class CreateReviewFormTest extends TestCase
             'validated' => true
         ];
 
-        $this->post('api/studies/'.$studyName.'/visits/'.$visitId.'/reviews', $payload)->assertStatus(201);
+        $this->post('api/visits/'.$visitId.'/reviews?studyName='.$studyName, $payload)->assertStatus(201);
 
     }
 
@@ -73,7 +73,7 @@ class CreateReviewFormTest extends TestCase
             'validated' => true
         ];
 
-        $this->post('api/studies/'.$studyName.'/visits/'.$visitId.'/reviews', $payload)->assertStatus(400);
+        $this->post('api/visits/'.$visitId.'/reviews?studyName='.$studyName, $payload)->assertStatus(400);
 
     }
 
@@ -89,7 +89,7 @@ class CreateReviewFormTest extends TestCase
             'validated' => true
         ];
 
-        $this->post('api/studies/'.$studyName.'/visits/'.$visitId.'/reviews', $payload)->assertStatus(403);
+        $this->post('api/visits/'.$visitId.'/reviews?studyName='.$studyName, $payload)->assertStatus(403);
 
     }
 
@@ -105,7 +105,7 @@ class CreateReviewFormTest extends TestCase
             'adjudication' => false,
         ];
 
-        $this->post('api/studies/'.$studyName.'/visits/'.$visitId.'/reviews', $payload)->assertStatus(400);
+        $this->post('api/visits/'.$visitId.'/reviews?studyName='.$studyName, $payload)->assertStatus(400);
 
     }
 
@@ -125,7 +125,7 @@ class CreateReviewFormTest extends TestCase
             'validated' => true
         ];
 
-        $this->post('api/studies/'.$studyName.'/visits/'.$visitId.'/reviews', $payload)->assertStatus(409);
+        $this->post('api/visits/'.$visitId.'/reviews?studyName='.$studyName, $payload)->assertStatus(409);
 
     }
 
@@ -147,7 +147,7 @@ class CreateReviewFormTest extends TestCase
             'validated' => true
         ];
 
-        $this->post('api/studies/'.$studyName.'/visits/'.$visitId.'/reviews', $payload)->assertStatus(403);
+        $this->post('api/visits/'.$visitId.'/reviews?studyName='.$studyName, $payload)->assertStatus(403);
 
     }
 

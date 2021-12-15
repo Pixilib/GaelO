@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Auth;
 
 class AskUnlockController extends Controller
 {
-    public function askUnlock(string $studyName, int $visitId, Request $request, RequestUnlock $requestUnlock, RequestUnlockRequest $requestUnlockRequest, RequestUnlockResponse $requestUnlockResponse)
+    public function askUnlock(int $visitId, Request $request, RequestUnlock $requestUnlock, RequestUnlockRequest $requestUnlockRequest, RequestUnlockResponse $requestUnlockResponse)
     {
         $currentUser = Auth::user();
         $queryParam = $request->query();
@@ -19,7 +19,7 @@ class AskUnlockController extends Controller
         $requestData = $request->all();
         $requestUnlockRequest = Util::fillObject($requestData, $requestUnlockRequest);
 
-        $requestUnlockRequest->studyName = $studyName;
+        $requestUnlockRequest->studyName = $queryParam['studyName'];
         $requestUnlockRequest->currentUserId = $currentUser['id'];
         $requestUnlockRequest->visitId = $visitId;
         $requestUnlockRequest->role = $queryParam['role'];

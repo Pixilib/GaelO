@@ -50,16 +50,16 @@ use Illuminate\Support\Facades\Auth;
 
 class ReviewController extends Controller
 {
-    public function getInvestigatorForm(string $studyName, int $visitId, Request $request, GetInvestigatorForm $getInvestigatorForm, GetInvestigatorFormRequest $getInvestigatorFormRequest, GetInvestigatorFormResponse $getInvestigatorFormResponse)
+    public function getInvestigatorForm(int $visitId, Request $request, GetInvestigatorForm $getInvestigatorForm, GetInvestigatorFormRequest $getInvestigatorFormRequest, GetInvestigatorFormResponse $getInvestigatorFormResponse)
     {
 
         $curentUser = Auth::user();
         $getInvestigatorFormRequest->currentUserId = $curentUser['id'];
         $getInvestigatorFormRequest->visitId = $visitId;
-        $getInvestigatorFormRequest->studyName = $studyName;
 
         $queryParam = $request->query();
         $getInvestigatorFormRequest->role = $queryParam['role'];
+        $getInvestigatorFormRequest->studyName = $queryParam['studyName'];
 
         $getInvestigatorForm->execute($getInvestigatorFormRequest, $getInvestigatorFormResponse);
 
@@ -128,12 +128,13 @@ class ReviewController extends Controller
         return $this->getJsonResponse($modifyInvestigatorFormResponse->body, $modifyInvestigatorFormResponse->status, $modifyInvestigatorFormResponse->statusText);
     }
 
-    public function createReviewForm(string $studyName, int $visitId, Request $request, CreateReview $createReview, CreateReviewFormRequest $createReviewFormRequest, CreateReviewFormResponse $createReviewFormResponse)
+    public function createReviewForm(int $visitId, Request $request, CreateReview $createReview, CreateReviewFormRequest $createReviewFormRequest, CreateReviewFormResponse $createReviewFormResponse)
     {
         $curentUser = Auth::user();
         $requestData = $request->all();
+        $queryParam = $request->query();
+        $createReviewFormRequest->studyName = $queryParam['studyName'];
 
-        $createReviewFormRequest->studyName = $studyName;
         $createReviewFormRequest->visitId = $visitId;
         $createReviewFormRequest->currentUserId = $curentUser['id'];
 
@@ -170,15 +171,15 @@ class ReviewController extends Controller
         return $this->getJsonResponse($getReviewFormResponse->body, $getReviewFormResponse->status, $getReviewFormResponse->statusText);
     }
 
-    public function getReviewsFromVisit(Request $request, string $studyName, int $visitId, GetReviewFormFromVisit $getReviewFormFromVisit, GetReviewFormFromVisitRequest $getReviewFormFromVisitRequest, GetReviewFormFromVisitResponse $getReviewFormFromVisitResponse)
+    public function getReviewsFromVisit(Request $request, int $visitId, GetReviewFormFromVisit $getReviewFormFromVisit, GetReviewFormFromVisitRequest $getReviewFormFromVisitRequest, GetReviewFormFromVisitResponse $getReviewFormFromVisitResponse)
     {
         $curentUser = Auth::user();
 
         $getReviewFormFromVisitRequest->currentUserId = $curentUser['id'];
-        $getReviewFormFromVisitRequest->studyName = $studyName;
         $getReviewFormFromVisitRequest->visitId = $visitId;
 
         $queryParam = $request->query();
+        $getReviewFormFromVisitRequest->studyName = $queryParam['studyName'];
 
         if( array_key_exists('userId', $queryParam) ) $getReviewFormFromVisitRequest->userId = $queryParam['userId'];
 

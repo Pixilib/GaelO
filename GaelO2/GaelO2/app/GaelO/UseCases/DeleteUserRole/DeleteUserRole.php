@@ -28,7 +28,7 @@ class DeleteUserRole {
 
             $this->checkAuthorization($deleteUserRoleRequest->currentUserId);
 
-            $study = $deleteUserRoleRequest->study;
+            $study = $deleteUserRoleRequest->studyName;
             $role = $deleteUserRoleRequest->role;
             $userId = $deleteUserRoleRequest->userId;
 

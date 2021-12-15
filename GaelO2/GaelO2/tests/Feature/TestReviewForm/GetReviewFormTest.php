@@ -69,7 +69,7 @@ class GetReviewFormTest extends TestCase
         $currentUserId = AuthorizationTools::actAsAdmin(false);
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $this->studyName);
         $visitId = $this->review->visit->id;
-        $request = $this->get('api/studies/'.$this->studyName.'/visits/'.$visitId.'/reviews');
+        $request = $this->get('api/visits/'.$visitId.'/reviews?studyName='.$this->studyName);
         $request->assertStatus(200);
         $response = json_decode($request->content());
         $this->assertEquals(1, sizeof($response));
@@ -81,7 +81,7 @@ class GetReviewFormTest extends TestCase
         $currentUserId = AuthorizationTools::actAsAdmin(false);
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_INVESTIGATOR, $this->studyName);
         $visitId = $this->review->visit->id;
-        $request = $this->get('api/studies/'.$this->studyName.'/visits/'.$visitId.'/reviews');
+        $request = $this->get('api/visits/'.$visitId.'/reviews?studyName='.$this->studyName);
         $request->assertStatus(403);
 
     }
@@ -94,7 +94,7 @@ class GetReviewFormTest extends TestCase
         $currentUserId = AuthorizationTools::actAsAdmin(false);
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $studyName);
 
-        $answer = $this->get('api/studies/'.$studyName.'/visit-types/'.$visitTypeId.'/reviews/metadata');
+        $answer = $this->get('api/visit-types/'.$visitTypeId.'/reviews/metadata?studyName='.$studyName);
         $answer->assertStatus(200);
 
     }
@@ -106,7 +106,7 @@ class GetReviewFormTest extends TestCase
 
         AuthorizationTools::actAsAdmin(false);
 
-        $answer = $this->get('api/studies/'.$studyName.'/visit-types/'.$visitTypeId.'/reviews/metadata');
+        $answer = $this->get('api/visit-types/'.$visitTypeId.'/reviews/metadata?studyName='.$studyName);
         $answer->assertStatus(403);
 
     }
@@ -119,7 +119,7 @@ class GetReviewFormTest extends TestCase
         $this->review->user_id = $userId;
         $this->review->save();
 
-        $answer = $this->get('api/studies/'.$this->studyName.'/visits/'.$visitId.'/reviews?userId='.$userId);
+        $answer = $this->get('api/visits/'.$visitId.'/reviews?userId='.$userId.'&studyName='.$this->studyName);
         $answer->assertSuccessful();
     }
 
@@ -129,7 +129,7 @@ class GetReviewFormTest extends TestCase
 
         AuthorizationTools::actAsAdmin(false);
 
-        $answer = $this->get('api/studies/'.$this->studyName.'/visits/'.$visitId.'/reviews?userId='.$this->review->user_id);
+        $answer = $this->get('api/visits/'.$visitId.'/reviews?userId='.$this->review->user_id.'&studyName='.$this->studyName);
         $answer->assertStatus(403);
     }
 

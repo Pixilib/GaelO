@@ -22,19 +22,19 @@ use Illuminate\Support\Facades\Auth;
 class PatientController extends Controller
 {
 
-    public function getPatient(String $studyName, string $id, Request $request, GetPatientRequest $getPatientRequest, GetPatientResponse $getPatientResponse, GetPatient $getPatient)
+    public function getPatient(string $id, Request $request, GetPatientRequest $getPatientRequest, GetPatientResponse $getPatientResponse, GetPatient $getPatient)
     {
         $currentUser = Auth::user();
         $queryParam = $request->query();
         $getPatientRequest->role = $queryParam['role'];
         $getPatientRequest->currentUserId = $currentUser['id'];
         $getPatientRequest->id = $id;
-        $getPatientRequest->studyName = $studyName;
+        $getPatientRequest->studyName = $queryParam['studyName'];
         $getPatient->execute($getPatientRequest, $getPatientResponse);
         return $this->getJsonResponse($getPatientResponse->body, $getPatientResponse->status, $getPatientResponse->statusText);
     }
 
-    public function getPatientVisit(string $studyName, string $patientId, Request $request, GetPatientVisit $getPatientVisit, GetPatientVisitRequest $getPatientVisitRequest, GetPatientVisitResponse $getPatientVisitResponse)
+    public function getPatientVisit(string $patientId, Request $request, GetPatientVisit $getPatientVisit, GetPatientVisitRequest $getPatientVisitRequest, GetPatientVisitResponse $getPatientVisitResponse)
     {
         $currentUser = Auth::user();
         $queryParam = $request->query();
@@ -42,7 +42,7 @@ class PatientController extends Controller
         $getPatientVisitRequest->withTrashed =  array_key_exists('withTrashed', $queryParam);
         $getPatientVisitRequest->currentUserId = $currentUser['id'];
         $getPatientVisitRequest->patientId = $patientId;
-        $getPatientVisitRequest->studyName = $studyName;
+        $getPatientVisitRequest->studyName = $queryParam['studyName'];
 
         $getPatientVisit->execute($getPatientVisitRequest, $getPatientVisitResponse);
 
