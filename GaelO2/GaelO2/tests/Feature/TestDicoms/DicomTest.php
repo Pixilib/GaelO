@@ -33,14 +33,14 @@ class DicomTest extends TestCase
     public function testGetOrthancZip(){
         $this->markTestSkipped('Needs Orthanc To Be Tested');
         AuthorizationTools::addRoleToUser(1, Constants::ROLE_INVESTIGATOR, $this->study->name);
-        $answer = $this->get('api/studies/'.$this->studyName.'/visits/1/dicoms/file?role=Investigator');
+        $answer = $this->get('api/visits/1/dicoms/file?role=Investigator&studyName='.$this->studyName);
         $answer->assertStatus(200);
 
     }
 
     public function testGetOrthancShouldFailBeacauseNoRole(){
         $this->markTestSkipped('Needs Orthanc To Be Tested');
-        $answer = $this->get('api/studies/'.$this->studyName.'/visits/1/dicoms/file?role=Investigator');
+        $answer = $this->get('api/visits/1/dicoms/file?role=Investigator&studyName='.$this->studyName);
         $answer->assertStatus(403);
     }
 
@@ -52,7 +52,7 @@ class DicomTest extends TestCase
         $userModel->save();
 
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_INVESTIGATOR, $this->studyName);
-        $answer = $this->get('api/studies/'.$this->studyName.'/visits/'.$this->visitId.'/dicoms?role=Investigator');
+        $answer = $this->get('api/visits/'.$this->visitId.'/dicoms?role=Investigator&studyName='.$this->studyName);
         $answer->assertStatus(200);
         $response = json_decode($answer->content(), true);
         $this->assertEquals(1, sizeof($response));
@@ -69,7 +69,7 @@ class DicomTest extends TestCase
         $userModel->save();
 
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_INVESTIGATOR, $this->studyName);
-        $answer = $this->get('api/studies/'.$this->studyName.'/visits/'.$this->visitId.'/dicoms?role=Investigator');
+        $answer = $this->get('api/visits/'.$this->visitId.'/dicoms?role=Investigator&studyName='.$this->studyName);
         $answer->assertStatus(200);
         $response = json_decode($answer->content(), true);
         $this->assertEquals(0, sizeof($response));
@@ -80,7 +80,7 @@ class DicomTest extends TestCase
         $this->dicomSeries->dicomStudy->delete();
         $currentUserId = AuthorizationTools::actAsAdmin(false);
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $this->studyName);
-        $answer = $this->get('api/studies/'.$this->studyName.'/visits/'.$this->visitId.'/dicoms?role=Supervisor');
+        $answer = $this->get('api/visits/'.$this->visitId.'/dicoms?role=Supervisor&studyName='.$this->studyName);
         $answer->assertStatus(200);
         $response = json_decode($answer->content(), true);
         $this->assertEquals(true, $response[0]['deleted']);
@@ -89,7 +89,7 @@ class DicomTest extends TestCase
 
     public function testGetDicomsDataFailNoRole(){
         AuthorizationTools::actAsAdmin(false);
-        $this->get('api/studies/'.$this->studyName.'/visits/'.$this->visitId.'/dicoms?role=Investigator')->assertStatus(403);
+        $this->get('api/visits/'.$this->visitId.'/dicoms?role=Investigator&studyName='.$this->studyName)->assertStatus(403);
     }
 
 }

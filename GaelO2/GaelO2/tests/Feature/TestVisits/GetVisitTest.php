@@ -54,7 +54,7 @@ class GetVisitTest extends TestCase
 
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_INVESTIGATOR, $studyName);
 
-        $this->json('GET', 'api/studies/'.$studyName.'/visits/'.$visit->id.'?role=Investigator')->assertStatus(200);
+        $this->json('GET', 'api/visits/'.$visit->id.'?role=Investigator&studyName='.$studyName)->assertStatus(200);
     }
 
     public function testGetVisitForbiddenNoRole(){
@@ -63,7 +63,7 @@ class GetVisitTest extends TestCase
         $studyName = $visit->patient->study_name;
 
         AuthorizationTools::actAsAdmin(false);
-        $this->json('GET', 'api/studies/'.$studyName.'/visits/'.$visit->id.'?role=Investigator')->assertStatus(403);
+        $this->json('GET', 'api/visits/'.$visit->id.'?role=Investigator&studyName='.$studyName)->assertStatus(403);
     }
 
     public function testGetPatientVisits() {
@@ -82,7 +82,7 @@ class GetVisitTest extends TestCase
             ReviewStatus::factory()->visitId($visit->id)->studyName($studyName)->create();
         });
 
-        $resp = $this->json('GET', 'api/studies/'.$studyName.'/patients/'.$patient->id.'/visits?role=Investigator');
+        $resp = $this->json('GET', 'api/patients/'.$patient->id.'/visits?role=Investigator&studyName='.$studyName);
 
         $resp->assertStatus(200);
         $patientArray = json_decode($resp->content(), true);
@@ -103,7 +103,7 @@ class GetVisitTest extends TestCase
             ReviewStatus::factory()->visitId($visit->id)->studyName($studyName)->create();
         });
 
-        $resp = $this->json('GET', 'api/studies/'.$studyName.'/patients/'.$patient->id.'/visits?role=Investigator');
+        $resp = $this->json('GET', 'api/patients/'.$patient->id.'/visits?role=Investigator&studyName='.$studyName);
         $resp->assertStatus(403);
     }
 
@@ -114,7 +114,7 @@ class GetVisitTest extends TestCase
         $currentUserId = AuthorizationTools::actAsAdmin(false);
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $studyName);
 
-        $answer = $this->json('GET', 'api/studies/'.$studyName.'/visits/'.$visit->id.'?role=Supervisor&action='.$studyName);
+        $answer = $this->json('GET', 'api/visits/'.$visit->id.'?role=Supervisor&action='.$studyName.'&studyName='.$studyName);
         $answer->assertStatus(200);
     }
 
@@ -124,7 +124,7 @@ class GetVisitTest extends TestCase
 
         AuthorizationTools::actAsAdmin(false);
 
-        $answer = $this->json('GET', 'api/studies/'.$studyName.'/visits/'.$visit->id.'?role=Supervisor&action='.$studyName);
+        $answer = $this->json('GET', 'api/visits/'.$visit->id.'?role=Supervisor&action='.$studyName.'&studyName='.$studyName);
         $answer->assertStatus(403);
     }
 

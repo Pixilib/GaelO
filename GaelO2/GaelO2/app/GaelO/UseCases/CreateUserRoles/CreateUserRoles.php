@@ -32,8 +32,8 @@ class CreateUserRoles {
             $this->checkAuthorization($createRoleRequest->currentUserId);
 
             //Get current roles in study for users
-            $actualRolesArray = $this->userRepositoryInterface->getUsersRolesInStudy($createRoleRequest->userId, $createRoleRequest->study);
-            $studyEntity = $this->studyRepositoryInterface->find($createRoleRequest->study);
+            $actualRolesArray = $this->userRepositoryInterface->getUsersRolesInStudy($createRoleRequest->userId, $createRoleRequest->studyName);
+            $studyEntity = $this->studyRepositoryInterface->find($createRoleRequest->studyName);
 
             if( $studyEntity['ancillary_of'] && ! in_array($createRoleRequest->role, [Constants::ROLE_SUPERVISOR, Constants::ROLE_REVIEWER]) ){
                 throw new GaelOForbiddenException("For an ancillary study only reviewer and supervisor role are allowed");
@@ -44,11 +44,11 @@ class CreateUserRoles {
             }
 
             //Write in database and return sucess response (error will be handled by laravel)
-            $this->userRepositoryInterface->addUserRoleInStudy($createRoleRequest->userId, $createRoleRequest->study, $createRoleRequest->role);
+            $this->userRepositoryInterface->addUserRoleInStudy($createRoleRequest->userId, $createRoleRequest->studyName, $createRoleRequest->role);
             $actionDetails = [
                 "Add Roles"=> $createRoleRequest->role
             ];
-            $this->trackerRepositoryInterface->writeAction( $createRoleRequest->currentUserId, Constants::TRACKER_ROLE_ADMINISTRATOR, $createRoleRequest->study, null, Constants::TRACKER_EDIT_USER, $actionDetails);
+            $this->trackerRepositoryInterface->writeAction( $createRoleRequest->currentUserId, Constants::TRACKER_ROLE_ADMINISTRATOR, $createRoleRequest->studyName, null, Constants::TRACKER_EDIT_USER, $actionDetails);
 
             $createRoleResponse->statusText = "Created";
             $createRoleResponse->status = 201;

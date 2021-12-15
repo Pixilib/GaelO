@@ -39,7 +39,7 @@ class AskUnlockTest extends TestCase
         $payload = [
             'message' => 'My Message'
         ];
-        $response = $this->post('api/studies/' . $this->studyName . '/visits/' . $this->visit->id . '/ask-unlock?role=Investigator', $payload);
+        $response = $this->post('api/visits/' . $this->visit->id . '/ask-unlock?role=Investigator&studyName='.$this->studyName, $payload);
         $response->assertStatus(200);
     }
 
@@ -51,7 +51,7 @@ class AskUnlockTest extends TestCase
         $payload = [
             'message' => 'My Message'
         ];
-        $response = $this->post('api/studies/' . $this->studyName . '/visits/' . $this->visit->id . '/ask-unlock?role=Reviewer', $payload);
+        $response = $this->post('api/visits/' . $this->visit->id . '/ask-unlock?role=Reviewer&studyName='.$this->studyName, $payload);
         $response->assertStatus(200);
     }
 
@@ -61,7 +61,7 @@ class AskUnlockTest extends TestCase
         AuthorizationTools::addRoleToUser($userId, Constants::ROLE_INVESTIGATOR, $this->studyName);
         AuthorizationTools::addAffiliatedCenter($userId, $this->patientCenter);
 
-        $response = $this->post('api/studies/' . $this->studyName . '/visits/' . $this->visit->id . '/ask-unlock?role=Investigator', []);
+        $response = $this->post('api/visits/' . $this->visit->id . '/ask-unlock?role=Investigator&studyName='.$this->studyName, []);
         $response->assertStatus(400);
     }
 
@@ -72,7 +72,7 @@ class AskUnlockTest extends TestCase
         $payload = [
             'message' => 'My Message'
         ];
-        $response = $this->post('api/studies/' . $this->studyName . '/visits/' . $this->visit->id . '/ask-unlock?role=Investigator', $payload);
+        $response = $this->post('api/visits/' . $this->visit->id . '/ask-unlock?role=Investigator&studyName='.$this->studyName, $payload);
         $response->assertStatus(403);
     }
 }

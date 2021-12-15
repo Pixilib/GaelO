@@ -42,10 +42,6 @@ class ToolsTest extends TestCase
         $this->centerCode = $center->code;
         $this->patientId = $patient->id;
         $this->visitTypeId = $visitType->id;
-
-        $this->validPayload = [
-            'studyName' => $study->name
-        ];
     }
 
     public function testGetPatientsInStudyFromCenters() {
@@ -59,8 +55,10 @@ class ToolsTest extends TestCase
 
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $this->studyName);
 
-        $this->validPayload['centerCodes']  = [ $this->centerCode, $center->code ];
-        $answer = $this->json('POST', 'api/tools/centers/patients-from-centers', $this->validPayload);
+        $validPayload['centerCodes']  = [ $this->centerCode, $center->code ];
+        $validPayload['studyName'] = $this->studyName;
+
+        $answer = $this->json('POST', 'api/tools/centers/patients-from-centers', $validPayload);
         $answer->assertSuccessful();
         $content = json_decode($answer->content(), true);
         $this->assertEquals(20, sizeof($content));
@@ -71,8 +69,8 @@ class ToolsTest extends TestCase
 
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $this->studyName);
 
-        $this->validPayload['patientId'] = [ $this->patientId ];
-        $answer = $this->json('POST', 'api/tools/patients/visits-from-patients', $this->validPayload);
+        $validPayload['patientId'] = [ $this->patientId ];
+        $answer = $this->json('POST', 'api/tools/patients/visits-from-patients?studyName=' + $this->studyName, $validPayload);
         $answer->assertSuccessful();
         $content = json_decode($answer->content(), true);
 

@@ -74,7 +74,8 @@ class UserController extends Controller
         $request->validate([
             'token' => 'required',
             'email' => 'required|email',
-            'password' => 'required|confirmed',
+            'password' => 'required|confirmed|min:8',
+            'password_confirmation' => 'required_with:password|same:password'
         ]);
 
         $status = Password::reset(
@@ -160,12 +161,13 @@ class UserController extends Controller
         return $this->getJsonResponse($deleteUserResponse->body, $deleteUserResponse->status, $deleteUserResponse->statusText);
     }
 
-    public function getRoles(int $id, string $studyName, GetRolesInStudyFromUser $getRolesInStudyFromUser, GetRolesInStudyFromUserRequest $getRolesInStudyFromUserRequest, GetRolesInStudyFromUserResponse $getRolesInStudyFromUserResponse)
+    public function getRoles(int $id, Request $request, GetRolesInStudyFromUser $getRolesInStudyFromUser, GetRolesInStudyFromUserRequest $getRolesInStudyFromUserRequest, GetRolesInStudyFromUserResponse $getRolesInStudyFromUserResponse)
     {
         $curentUser = Auth::user();
+        $queryParam = $request->query();
+        $getRolesInStudyFromUserRequest->studyName = $queryParam['studyName'];
         $getRolesInStudyFromUserRequest->currentUserId = $curentUser['id'];
         $getRolesInStudyFromUserRequest->userId = $id;
-        $getRolesInStudyFromUserRequest->studyName = $studyName;
 
         $getRolesInStudyFromUser->execute($getRolesInStudyFromUserRequest, $getRolesInStudyFromUserResponse);
         return $this->getJsonResponse($getRolesInStudyFromUserResponse->body, $getRolesInStudyFromUserResponse->status, $getRolesInStudyFromUserResponse->statusText);
@@ -181,24 +183,26 @@ class UserController extends Controller
         return $this->getJsonResponse($getStudiesFromUserResponse->body, $getStudiesFromUserResponse->status, $getStudiesFromUserResponse->statusText);
     }
 
-    public function createRole(int $id, string $study, Request $request, CreateUserRoles $createUserRole, CreateUserRolesRequest $createUserRoleRequest, CreateUserRolesResponse $createUserRoleResponse)
+    public function createRole(int $id, Request $request, CreateUserRoles $createUserRole, CreateUserRolesRequest $createUserRoleRequest, CreateUserRolesResponse $createUserRoleResponse)
     {
         $curentUser = Auth::user();
         $requestData = $request->all();
+        $queryParam = $request->query();
+        $createUserRoleRequest->studyName = $queryParam['studyName'];
         $createUserRoleRequest->userId = $id;
-        $createUserRoleRequest->study = $study;
         $createUserRoleRequest->currentUserId = $curentUser['id'];
         $createUserRoleRequest = Util::fillObject($requestData, $createUserRoleRequest);
         $createUserRole->execute($createUserRoleRequest, $createUserRoleResponse);
         return $this->getJsonResponse($createUserRoleResponse->body, $createUserRoleResponse->status, $createUserRoleResponse->statusText);
     }
 
-    public function deleteRole(int $id, String $study, String $roleName, DeleteUserRole $deleteUserRole, DeleteUserRoleRequest $deleteUserRoleRequest, DeleteUserRoleResponse $deleteUserRoleResponse)
+    public function deleteRole(int $id, Request $request, String $roleName, DeleteUserRole $deleteUserRole, DeleteUserRoleRequest $deleteUserRoleRequest, DeleteUserRoleResponse $deleteUserRoleResponse)
     {
         $curentUser = Auth::user();
+        $queryParam = $request->query();
+        $deleteUserRoleRequest->studyName = $queryParam['studyName'];
         $deleteUserRoleRequest->currentUserId = $curentUser['id'];
         $deleteUserRoleRequest->userId = $id;
-        $deleteUserRoleRequest->study = $study;
         $deleteUserRoleRequest->role = $roleName;
         $deleteUserRole->execute($deleteUserRoleRequest, $deleteUserRoleResponse);
         return $this->getJsonResponse($deleteUserRoleResponse->body, $deleteUserRoleResponse->status, $deleteUserRoleResponse->statusText);

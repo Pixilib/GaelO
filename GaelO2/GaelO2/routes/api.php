@@ -54,9 +54,9 @@ Route::middleware(['auth:sanctum', 'verified', 'activated'])->group(function () 
     Route::post('users/{id}/affiliated-centers', [UserController::class, 'addAffiliatedCenter']);
     Route::delete('users/{id}/affiliated-centers/{centerCode}', [UserController::class, 'deleteAffiliatedCenter']);
     Route::get('users/{id}/studies',  [UserController::class, 'getStudiesFromUser']);
-    Route::get('users/{id}/studies/{studyName}/roles', [UserController::class, 'getRoles']);
-    Route::post('users/{id}/studies/{studyName}/roles', [UserController::class, 'createRole']);
-    Route::delete('users/{id}/studies/{studyName}/roles/{roleName}', [UserController::class, 'deleteRole']);
+    Route::get('users/{id}/roles', [UserController::class, 'getRoles']);
+    Route::post('users/{id}/roles', [UserController::class, 'createRole']);
+    Route::delete('users/{id}/roles/{roleName}', [UserController::class, 'deleteRole']);
     Route::get('studies/{studyName}/users', [UserController::class, 'getUserFromStudy']);
 
     //Study Routes
@@ -70,14 +70,14 @@ Route::middleware(['auth:sanctum', 'verified', 'activated'])->group(function () 
     Route::post('studies/{studyName}/import-patients', [StudyController::class, 'importPatients']);
     Route::get('studies/{studyName}/original-orthanc-study-id/{orthancStudyID}', [StudyController::class, 'isKnownOrthancId']);
     Route::get('studies/{studyName}/possible-uploads', [StudyController::class, 'getPossibleUploads']);
-    Route::get('studies/{studyName}/visit-types/{visitTypeId}/review-progression', [StudyController::class, 'getReviewProgression']);
+    Route::get('visit-types/{visitTypeId}/review-progression', [StudyController::class, 'getReviewProgression']);
     Route::get('studies/{studyName}/visits', [VisitController::class, 'getVisitsFromStudy']);
-    Route::get('studies/{studyName}/visit-types/{visitTypeId}/visits', [StudyController::class, 'getVisitsFromVisitType']);
-    Route::get('studies/{studyName}/visit-types/{visitTypeId}/reviews', [StudyController::class, 'getReviewsFromVisitType']);
-    Route::get('studies/{studyName}/visit-types/{visitTypeId}/reviews/metadata', [StudyController::class, 'getReviewsMetadataFromVisitType']);
-    Route::get('studies/{studyName}/visit-types/{visitTypeId}/investigator-forms', [StudyController::class, 'getInvestigatorFormsFromVisitType']);
-    Route::get('studies/{studyName}/visit-types/{visitTypeId}/investigator-forms/metadata', [StudyController::class, 'getInvestigatorFormsMetadataFromVisitType']);
-    Route::get('studies/{studyName}/visit-types/{visitTypeId}/dicom-studies', [StudyController::class, 'getDicomStudiesFromVisitType']);
+    Route::get('visit-types/{visitTypeId}/visits', [StudyController::class, 'getVisitsFromVisitType']);
+    Route::get('visit-types/{visitTypeId}/reviews', [StudyController::class, 'getReviewsFromVisitType']);
+    Route::get('visit-types/{visitTypeId}/reviews/metadata', [StudyController::class, 'getReviewsMetadataFromVisitType']);
+    Route::get('visit-types/{visitTypeId}/investigator-forms', [StudyController::class, 'getInvestigatorFormsFromVisitType']);
+    Route::get('visit-types/{visitTypeId}/investigator-forms/metadata', [StudyController::class, 'getInvestigatorFormsMetadataFromVisitType']);
+    Route::get('visit-types/{visitTypeId}/dicom-studies', [StudyController::class, 'getDicomStudiesFromVisitType']);
     Route::post('studies/{studyName}/send-reminder', [StudyController::class, 'sendReminder']);
     Route::post('send-mail', [StudyController::class, 'sendMail']);
 
@@ -105,8 +105,8 @@ Route::middleware(['auth:sanctum', 'verified', 'activated'])->group(function () 
 
     //Patients Routes
     Route::patch('patients/{code}', [PatientController::class, 'modifyPatient']);
-    Route::get('studies/{studyName}/patients/{code}', [PatientController::class, 'getPatient']);
-    Route::get('studies/{studyName}/patients/{patientId}/visits', [PatientController::class, 'getPatientVisit']);
+    Route::get('patients/{code}', [PatientController::class, 'getPatient']);
+    Route::get('patients/{patientId}/visits', [PatientController::class, 'getPatientVisit']);
     Route::get('patients/{patientId}/creatable-visits', [PatientController::class, 'getCreatableVisits']);
 
     //Visits Routes
@@ -118,33 +118,33 @@ Route::middleware(['auth:sanctum', 'verified', 'activated'])->group(function () 
     Route::delete('visits/{id}', [VisitController::class, 'deleteVisit']);
     Route::patch('visits/{id}/reactivate', [VisitController::class, 'reactivateVisit']);
     Route::post('visit-types/{visitTypeId}/visits', [VisitController::class, 'createVisit']);
-    Route::get('studies/{studyName}/visits/{id}', [VisitController::class, 'getVisit']);
+    Route::get('visits/{id}', [VisitController::class, 'getVisit']);
 
     //Local Form Routes
-    Route::get('studies/{studyName}/visits/{id}/investigator-form', [ReviewController::class, 'getInvestigatorForm']);
+    Route::get('visits/{id}/investigator-form', [ReviewController::class, 'getInvestigatorForm']);
     Route::delete('visits/{id}/investigator-form', [ReviewController::class, 'deleteInvestigatorForm']);
     Route::post('visits/{id}/investigator-form', [ReviewController::class, 'createInvestigatorForm']);
     Route::put('visits/{id}/investigator-form', [ReviewController::class, 'modifyInvestigatorForm']);
     Route::patch('visits/{id}/investigator-form/unlock', [ReviewController::class, 'unlockInvestigatorForm']);
 
     //Review routes
-    Route::post('studies/{studyName}/visits/{visitId}/reviews', [ReviewController::class, 'createReviewForm']);
+    Route::post('visits/{visitId}/reviews', [ReviewController::class, 'createReviewForm']);
     Route::put('reviews/{id}', [ReviewController::class, 'modifyReviewForm']);
     Route::get('reviews/{id}', [ReviewController::class, 'getReviewForm']);
     Route::delete('reviews/{id}', [ReviewController::class, 'deleteReviewForm']);
     Route::patch('reviews/{id}/unlock', [ReviewController::class, 'unlockReviewForm']);
     Route::post('reviews/{id}/file/{key}', [ReviewController::class, 'createReviewFile']);
     Route::delete('reviews/{id}/file/{key}', [ReviewController::class, 'deleteReviewFile']);
-    Route::get('studies/{studyName}/visits/{visitId}/reviews', [ReviewController::class, 'getReviewsFromVisit']);
+    Route::get('visits/{visitId}/reviews', [ReviewController::class, 'getReviewsFromVisit']);
 
     //Dicom Routes
     Route::delete('dicom-series/{seriesInstanceUID}', [DicomController::class, 'deleteSeries']);
     Route::patch('dicom-series/{seriesInstanceUID}', [DicomController::class, 'reactivateSeries']);
     Route::patch('dicom-study/{studyInstanceUID}', [DicomController::class, 'reactivateStudy']);
-    Route::get('studies/{studyName}/visits/{id}/dicoms', [DicomController::class, 'getVisitDicoms']);
+    Route::get('visits/{id}/dicoms', [DicomController::class, 'getVisitDicoms']);
 
     //Ask Unlock route
-    Route::post('studies/{study}/visits/{id}/ask-unlock', [AskUnlockController::class, 'askUnlock']);
+    Route::post('visits/{id}/ask-unlock', [AskUnlockController::class, 'askUnlock']);
 
     //upload Routes
     Route::any('tus/{filename?}', [ReverseProxyController::class, 'tusUpload']);
@@ -173,7 +173,7 @@ Route::middleware(['auth:sanctum', 'verified', 'activated'])->group(function () 
     // Binary routes
     Route::get('export-db', [ExportDBController::class, 'exportDB']);
     Route::get('documentations/{id}/file', [DocumentationController::class, 'getDocumentationFile']);
-    Route::get('studies/{studyName}/visits/{id}/dicoms/file', [DicomController::class, 'getVisitDicomsFile']);
+    Route::get('visits/{id}/dicoms/file', [DicomController::class, 'getVisitDicomsFile']);
     Route::get('studies/{studyName}/export', [StudyController::class, 'exportStudyData']);
     Route::post('studies/{studyName}/dicom-series/file', [DicomController::class, 'getSupervisorDicomsFile']);
     Route::get('reviews/{id}/file/{key}', [ReviewController::class, 'getReviewFile']);

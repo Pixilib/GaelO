@@ -38,7 +38,7 @@ class PatientTest extends TestCase
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $this->study->name);
 
         //Test get patient 4
-        $answer = $this->json('GET', '/api/studies/'.$this->study->name.'/patients/' . $this->patient->id . '?role=Supervisor');
+        $answer = $this->json('GET', '/api/patients/' . $this->patient->id . '?role=Supervisor&studyName='.$this->study->name);
         $answer->assertStatus(200);
 
         $expectedKeys = [
@@ -64,7 +64,7 @@ class PatientTest extends TestCase
     public function testGetPatientFailNotSupervisor()
     {
         AuthorizationTools::actAsAdmin(false);
-        $this->json('GET', '/api/studies/'.$this->study->name.'/patients/' . $this->patient->id . '?role=Supervisor')->assertStatus(403);
+        $this->json('GET', '/api/patients/' . $this->patient->id . '?role=Supervisor&studyName='.$this->study->name)->assertStatus(403);
     }
 
 
@@ -75,7 +75,7 @@ class PatientTest extends TestCase
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_REVIEWER, $this->study->name);
 
         //Test get patient 4
-        $response = $this->json('GET', '/api/studies/'.$this->study->name.'/patients/' . $this->patient->id . '?role=Reviewer');
+        $response = $this->json('GET', '/api/patients/' . $this->patient->id . '?role=Reviewer&studyName='.$this->study->name);
         $response->assertSuccessful();
 
         $answer = $response->content();

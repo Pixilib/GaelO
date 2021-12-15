@@ -5,6 +5,7 @@ namespace Database\Factories;
 use App\GaelO\Util;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Facades\Hash;
 
 class UserFactory extends Factory
 {
@@ -62,6 +63,16 @@ class UserFactory extends Factory
 
     }
 
+    public function password(string $password){
+
+        return $this->state(function (array $attributes) use ($password) {
+            return [
+                'password' => Hash::make($password),
+            ];
+        });
+
+    }
+    
     public function passwordExpired(){
 
         return $this->state(function (array $attributes) {

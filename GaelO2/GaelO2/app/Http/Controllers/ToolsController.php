@@ -39,7 +39,9 @@ class ToolsController extends Controller
         $getPatientsVisitsInStudyRequest->currentUserId = $curentUser['id'];
         $requestData = $request->all();
         $getPatientsVisitsInStudyRequest = Util::fillObject($requestData, $getPatientsVisitsInStudyRequest);
-
+        $queryParam = $request->query();
+        $getPatientsVisitsInStudyRequest->studyName = $queryParam['studyName'];
+        
         $getPatientsVisitsInStudy->execute($getPatientsVisitsInStudyRequest, $getPatientsVisitsInStudyResponse);
         return $this->getJsonResponse($getPatientsVisitsInStudyResponse->body, $getPatientsVisitsInStudyResponse->status, $getPatientsVisitsInStudyResponse->statusText);
     }

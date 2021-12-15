@@ -56,7 +56,7 @@ class GetReviewsFromVisitTypeTest extends TestCase
 
         $currentUserId = AuthorizationTools::actAsAdmin(false);
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $this->studyName);
-        $answer = $this->json('GET', 'api/studies/' . $this->studyName . '/visit-types/' . $this->visitTypeId . '/reviews');
+        $answer = $this->json('GET', 'api/visit-types/' . $this->visitTypeId . '/reviews?studyName='.$this->studyName);
         $answer->assertStatus(200);
     }
 
@@ -64,7 +64,7 @@ class GetReviewsFromVisitTypeTest extends TestCase
     {
 
         AuthorizationTools::actAsAdmin(false);
-        $answer = $this->json('GET', 'api/studies/' . $this->studyName . '/visit-types/' . $this->visitTypeId . '/visits');
+        $answer = $this->json('GET', 'api/visit-types/' . $this->visitTypeId . '/visits?studyName='.$this->studyName);
         $answer->assertStatus(403);
     }
 
@@ -74,7 +74,7 @@ class GetReviewsFromVisitTypeTest extends TestCase
 
         $currentUserId = AuthorizationTools::actAsAdmin(false);
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $this->studyName);
-        $answer = $this->json('GET', 'api/studies/' . $this->studyName . '/visit-types/' . $this->visitTypeId . '/investigator-forms');
+        $answer = $this->json('GET', 'api/visit-types/' . $this->visitTypeId . '/investigator-forms?studyName='.$this->studyName);
         $answer->assertStatus(200);
     }
 
@@ -82,7 +82,7 @@ class GetReviewsFromVisitTypeTest extends TestCase
     {
 
         AuthorizationTools::actAsAdmin(false);
-        $answer = $this->json('GET', 'api/studies/' . $this->studyName . '/visit-types/' . $this->visitTypeId . '/investigator-forms');
+        $answer = $this->json('GET', 'api/visit-types/' . $this->visitTypeId . '/investigator-forms?studyName='.$this->studyName);
         $answer->assertStatus(403);
     }
 

@@ -51,7 +51,7 @@ class VisitController extends Controller
         return $this->getJsonResponse($createVisitResponse->body, $createVisitResponse->status, $createVisitResponse->statusText);
     }
 
-    public function getVisit(string $studyName, int $visitId, Request $request, GetVisit $getVisit, GetVisitRequest $getVisitRequest, GetVisitResponse $getVisitResponse)
+    public function getVisit(int $visitId, Request $request, GetVisit $getVisit, GetVisitRequest $getVisitRequest, GetVisitResponse $getVisitResponse)
     {
 
         $curentUser = Auth::user();
@@ -59,7 +59,7 @@ class VisitController extends Controller
 
         $getVisitRequest->currentUserId = $curentUser['id'];
         $getVisitRequest->visitId = $visitId;
-        $getVisitRequest->studyName = $studyName;
+        $getVisitRequest->studyName = $queryParam['studyName'];
         $getVisitRequest->role = $queryParam['role'];
 
         $getVisit->execute($getVisitRequest, $getVisitResponse);

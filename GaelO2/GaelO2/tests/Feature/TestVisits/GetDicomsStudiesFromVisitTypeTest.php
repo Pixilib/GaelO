@@ -58,7 +58,7 @@ class GetDicomsStudiesFromVisitTypeTest extends TestCase
 
         $currentUserId = AuthorizationTools::actAsAdmin(false);
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $this->studyName);
-        $answer = $this->json('GET', 'api/studies/' . $this->studyName . '/visit-types/' . $this->visitTypeId . '/dicom-studies');
+        $answer = $this->json('GET', 'api/visit-types/' . $this->visitTypeId . '/dicom-studies?studyName='.$this->studyName);
         $answer->assertStatus(200);
     }
 
@@ -66,7 +66,7 @@ class GetDicomsStudiesFromVisitTypeTest extends TestCase
     {
 
         AuthorizationTools::actAsAdmin(false);
-        $answer = $this->json('GET', 'api/studies/' . $this->studyName . '/visit-types/' . $this->visitTypeId . '/dicom-studies');
+        $answer = $this->json('GET', 'api/visit-types/' . $this->visitTypeId . '/dicom-studies?studyName='.$this->studyName);
         $answer->assertStatus(403);
     }
 

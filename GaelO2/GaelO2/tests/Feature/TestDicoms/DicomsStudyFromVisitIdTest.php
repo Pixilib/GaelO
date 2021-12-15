@@ -33,7 +33,7 @@ class DicomsStudyFromVisitIdTest extends TestCase
     {
         $userId = AuthorizationTools::actAsAdmin(false);
         AuthorizationTools::addRoleToUser($userId, Constants::ROLE_SUPERVISOR, $this->studyName);
-        $this->json('GET', 'api/studies/' . $this->studyName . '/visit-types/'.$this->visitTypeId.'/dicom-studies')->assertStatus(200);
+        $this->json('GET', 'api/visit-types/'.$this->visitTypeId.'/dicom-studies?studyName='.$this->studyName)->assertStatus(200);
     }
 
 
@@ -43,13 +43,13 @@ class DicomsStudyFromVisitIdTest extends TestCase
         $this->dicomStudy->delete();
         $this->dicomStudy->save();
         AuthorizationTools::addRoleToUser($userId, Constants::ROLE_SUPERVISOR, $this->studyName);
-        $this->json('GET', 'api/studies/'.$this->studyName .'/visit-types/'.$this->visitTypeId.'/dicom-studies?withTrashed')->assertStatus(200);
+        $this->json('GET', 'api/visit-types/'.$this->visitTypeId.'/dicom-studies?withTrashed&studyName='.$this->studyName)->assertStatus(200);
     }
 
     public function testGetDicomStudyShouldFailNotSupervisor()
     {
         AuthorizationTools::actAsAdmin(false);
-        $this->json('GET', 'api/studies/' . $this->studyName .'/visit-types/'.$this->visitTypeId.'/dicom-studies?withTrashed')->assertStatus(403);
+        $this->json('GET', 'api/visit-types/'.$this->visitTypeId.'/dicom-studies?withTrashed&studyName='.$this->studyName)->assertStatus(403);
     }
 
     public function testGetDicomsSupervisorFile()
