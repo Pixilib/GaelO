@@ -46,6 +46,7 @@ class UserEntity {
         $userEntity->id = $array['id'];
         $userEntity->firstname = $array['firstname'];
         $userEntity->lastname = $array['lastname'];
+        $userEntity->centerCode = $array['center_code'];
         return $userEntity;
     }
 

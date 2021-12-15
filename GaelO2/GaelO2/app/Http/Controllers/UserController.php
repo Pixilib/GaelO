@@ -74,7 +74,8 @@ class UserController extends Controller
         $request->validate([
             'token' => 'required',
             'email' => 'required|email',
-            'password' => 'required|confirmed',
+            'password' => 'required|confirmed|min:8',
+            'password_confirmation' => 'required_with:password|same:password'
         ]);
 
         $status = Password::reset(
