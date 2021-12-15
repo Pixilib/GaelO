@@ -62,7 +62,6 @@ class UserRepositoryTest extends TestCase
         );
 
         $this->assertIsArray($createdEntity);
-        $this->assertNull($createdEntity['last_password_update']);
 
         return $createdEntity;
     }
@@ -113,9 +112,6 @@ class UserRepositoryTest extends TestCase
         $this->userRepository->updateUserPassword($user['id'], 'newPassword');
 
         $updatedUser = User::find($user->id);
-        $this->assertEquals($user->password_previous1, $updatedUser->password_previous2);
-        $this->assertEquals($user->password, $updatedUser->password_previous1);
-        $this->assertNotEquals($user->last_password_update, $updatedUser->last_password_update);
         $this->assertNotEquals($user->password, $updatedUser->password);
 
     }

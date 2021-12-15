@@ -60,7 +60,6 @@ class UserRepository implements UserRepositoryInterface {
         $user->orthanc_password = $orthancPassword;
         $user->password = null;
         $user->creation_date = Util::now();
-        $user->last_password_update = null;
         $user->save();
         return $user->toArray();
 
@@ -90,10 +89,7 @@ class UserRepository implements UserRepositoryInterface {
 
     public function updateUserPassword(int $userId, ?string $passwordCurrent ) : void {
         $user = $this->user->findOrFail($userId);
-        $user->password_previous2 = $user->password_previous1;
-        $user->password_previous1 = $user->password;
         $user->password = $this->hashInterface->hash($passwordCurrent);
-        $user->last_password_update = Util::now();
         $user->save();
     }
 

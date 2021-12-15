@@ -54,7 +54,6 @@ class ModifyUserIdentification {
                 $user['orthanc_password'],
                 $user['password'],
                 $user['creation_date'],
-                $user['last_password_update'],
                 $resetEmailValidation
             );
 

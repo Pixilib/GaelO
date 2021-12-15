@@ -54,6 +54,8 @@ use App\GaelO\Util;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Password;
 
 class UserController extends Controller
 {
@@ -64,6 +66,31 @@ class UserController extends Controller
         $requestRequest = Util::fillObject($requestData, $forgotPasswordRequest);
         $resetPassword->execute($requestRequest, $forgotPasswordResponse);
         return $this->getJsonResponse($forgotPasswordResponse->body, $forgotPasswordResponse->status, $forgotPasswordResponse->statusText);
+    }
+
+    public function resetPassword(Request $request)
+    {
+
+        $request->validate([
+            'token' => 'required',
+            'email' => 'required|email',
+            'password' => 'required|confirmed',
+        ]);
+
+        $status = Password::reset(
+            $request->only('email', 'password', 'password_confirmation', 'token'),
+            function ($user, $password) {
+                $user->forceFill([
+                    'password' => Hash::make($password)
+                ]);
+
+                $user->save();
+            }
+        );
+
+        if($status === Password::PASSWORD_RESET) return redirect('/');
+        else return response()->noContent(400);
+
     }
 
     public function getUser(int $id = null, GetUserRequest $getUserRequest, GetUserResponse $getUserResponse, GetUser $getUser)

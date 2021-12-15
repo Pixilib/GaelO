@@ -67,7 +67,7 @@ class ModifyUserTest extends TestCase
             $this->assertNotEquals($beforeChangeUser[$key], $afterChangeUser[$key]);
         }
         //Check value not supposed to change by edition
-        $notUpdatedArray = ['password', 'password_previous1', 'password_previous2', 'last_password_update',
+        $notUpdatedArray = ['password',
         'creation_date'];
         foreach($notUpdatedArray as $key){
             $this->assertEquals($beforeChangeUser[$key], $afterChangeUser[$key]);

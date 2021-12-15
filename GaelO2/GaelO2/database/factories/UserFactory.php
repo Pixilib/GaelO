@@ -4,7 +4,6 @@ namespace Database\Factories;
 
 use App\GaelO\Util;
 use App\Models\User;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class UserFactory extends Factory
@@ -19,10 +18,7 @@ class UserFactory extends Factory
             'firstname' => $this->faker->firstname,
             'email'=> $this->faker->unique()->safeEmail,
             'password' => $this->faker->password,
-            'password_previous1'=> $this->faker->password,
-            'password_previous2'=> $this->faker->password,
             'phone' => $this->faker->phoneNumber,
-            'last_password_update' => Util::now(),
             'creation_date' => Util::now(),
             'status' => 'Activated',
             'administrator' => false,
@@ -91,40 +87,6 @@ class UserFactory extends Factory
         return $this->state(function (array $attributes) use ($centerCode) {
             return [
                 'center_code' => $centerCode,
-            ];
-        });
-
-    }
-
-
-    /**
-     * PasswordType should be password, password_previous1 or password_previous2
-     */
-    public function password(string $password, string $passwordType = 'password'){
-
-        return $this->state(function (array $attributes) use ($password, $passwordType) {
-            return [
-                $passwordType => Hash::make($password),
-            ];
-        });
-
-    }
-
-    public function passwordPrevious1(string $password){
-
-        return $this->state(function (array $attributes) use ($password) {
-            return [
-                'password_previous1' => Hash::make($password),
-            ];
-        });
-
-    }
-
-    public function passwordPrevious2(string $password){
-
-        return $this->state(function (array $attributes) use ($password) {
-            return [
-                'password_previous2' => Hash::make($password),
             ];
         });
 
