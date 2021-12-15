@@ -4,6 +4,7 @@ namespace App\GaelO\UseCases\Login;
 
 use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOException;
+use App\GaelO\Exceptions\GaelOUnauthorizedException;
 use App\GaelO\Interfaces\Adapters\HashInterface;
 use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\UserRepositoryInterface;
@@ -42,13 +43,11 @@ class Login
                 $newAttemptCount = $this->increaseAttemptCount($user);
                 $remainingAttempts = $this->getRemainingAttempts($newAttemptCount) ;
                 if ( $remainingAttempts > 0 ) {
-                    $loginResponse->body = ['errorMessage' => 'Wrong Password remaining ' . $remainingAttempts . ' attempts'];
+                    throw new GaelOUnauthorizedException('Wrong Password remaining ' . $remainingAttempts . ' attempts');
                 } else {
                     $this->sendBlockedEmail($user);
-                    $loginResponse->body = ['errorMessage' => 'Account Blocked'];
+                    throw new GaelOUnauthorizedException('Account Blocked');
                 }
-                $loginResponse->status = 401;
-                $loginResponse->statusText = "Unauthorized";
                 return;
             }
 
@@ -58,7 +57,11 @@ class Login
                 $loginResponse->status = 200;
                 $loginResponse->statusText = "OK";
             //should not happen
-            } else {
+            } else if($user['status'] === Constants::USER_STATUS_BLOCKED ) {
+                throw new GaelOUnauthorizedException("Blocked Account");
+            } else if($user['status'] === Constants::USER_STATUS_UNCONFIRMED ) {
+                throw new GaelOUnauthorizedException("Unconfirmed Account");
+            }else{
                 throw new Exception("Unkown Login Failure");
             }
 

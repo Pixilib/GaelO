@@ -7,7 +7,6 @@ use Illuminate\Support\Facades\Hash;
 use Tests\TestCase;
 use App\Models\User;
 use App\GaelO\Constants\Constants;
-use Tests\AuthorizationTools;
 
 class LoginTest extends TestCase
 {
@@ -55,18 +54,6 @@ class LoginTest extends TestCase
         $this->json('POST', '/api/login', $data)->assertStatus(401);
     }
 
-    public function testLoginPasswordPerished()
-    {
-        $adminDefaultUser = User::where('id', 1)->first();
-        $adminDefaultUser->save();
-        $data = ['email'=> 'administrator@gaelo.fr',
-        'password'=> 'administrator'];
-        $response = $this->json('POST', '/api/login', $data)->assertStatus(400);
-        $content = $response->content();
-        $responseArray = json_decode($content, true);
-        $this->assertEquals(1, $responseArray['id']);
-    }
-
     public function testAccountBlocked(){
         //Access should be forbidden even if credential correct because of blocker status
         $data = ['email'=> 'administrator@gaelo.fr',
@@ -74,7 +61,7 @@ class LoginTest extends TestCase
         $adminDefaultUser = User::where('id', 1)->first();
         $adminDefaultUser['status'] = Constants::USER_STATUS_BLOCKED;
         $adminDefaultUser->save();
-        $this->json('POST', '/api/login', $data)->assertStatus(400);
+        $this->json('POST', '/api/login', $data)->assertStatus(401);
 
     }
 

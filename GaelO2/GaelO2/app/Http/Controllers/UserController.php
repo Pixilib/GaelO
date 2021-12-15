@@ -60,15 +60,15 @@ use Illuminate\Support\Facades\Password;
 class UserController extends Controller
 {
 
-    public function forgotPassword(Request $request, ForgotPasswordRequest $forgotPasswordRequest, ForgotPasswordResponse $forgotPasswordResponse, ForgotPassword $resetPassword)
+    public function forgotPassword(Request $request, ForgotPasswordRequest $forgotPasswordRequest, ForgotPasswordResponse $forgotPasswordResponse, ForgotPassword $forgotPassword)
     {
         $requestData = $request->all();
         $requestRequest = Util::fillObject($requestData, $forgotPasswordRequest);
-        $resetPassword->execute($requestRequest, $forgotPasswordResponse);
+        $forgotPassword->execute($requestRequest, $forgotPasswordResponse);
         return $this->getJsonResponse($forgotPasswordResponse->body, $forgotPasswordResponse->status, $forgotPasswordResponse->statusText);
     }
 
-    public function resetPassword(Request $request)
+    public function updatePassword(Request $request)
     {
 
         $request->validate([
@@ -138,15 +138,6 @@ class UserController extends Controller
         $modifyUserRequest = Util::fillObject($requestData, $modifyUserRequest);
         $modifyUser->execute($modifyUserRequest, $modifyUserResponse);
         return $this->getJsonResponse($modifyUserResponse->body, $modifyUserResponse->status, $modifyUserResponse->statusText);
-    }
-
-    public function changeUserPassword(int $id, Request $request, ChangePasswordRequest $changePasswordRequest, ChangePasswordResponse $changePasswordResponse, ChangePassword $changePassword)
-    {
-        $requestData = $request->all();
-        $requestData['id'] = $id;
-        $changePasswordRequest = Util::fillObject($requestData, $changePasswordRequest);
-        $changePassword->execute($changePasswordRequest, $changePasswordResponse);
-        return $this->getJsonResponse($changePasswordResponse->body, $changePasswordResponse->status, $changePasswordResponse->statusText);
     }
 
     public function deleteUser(int $id, Request $request, DeleteUserRequest $deleteUserRequest, DeleteUserResponse $deleteUserResponse, DeleteUser $deleteUser)
