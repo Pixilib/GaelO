@@ -23,8 +23,6 @@ use App\Models\User;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\Events\Verified;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\URL;
 
@@ -196,37 +194,16 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
 //Request Route
 Route::post('request', [RequestController::class, 'sendRequest']);
 
-//Login and password Route
+//Login and forgot password Route
 Route::post('login', [AuthController::class, 'login'])->name('login');
-
-//SK USE CASE A DISSOCIER DU FRAMEWORK
 Route::post('tools/forgot-password', [UserController::class, 'forgotPassword'])->name('password.email');
 
+//Forgot password routes
 Route::get('tools/reset-password/{token}', function ($token) {
     return redirect('/reset-password?token='.$token);
 })->name('password.reset');
 
-Route::post('tools/reset-password', function (Request $request) {
-    $request->validate([
-        'token' => 'required',
-        'email' => 'required|email',
-        'password' => 'required|confirmed',
-    ]);
-
-    $status = Password::reset(
-        $request->only('email', 'password', 'password_confirmation', 'token'),
-        function ($user, $password) {
-            $user->forceFill([
-                'password' => Hash::make($password)
-            ]);
-
-            $user->save();
-        }
-    );
-
-    if($status === Password::PASSWORD_RESET) return redirect('/');
-
-})->name('password.update');
+Route::post('tools/reset-password', [UserController::class, 'resetPassword'] )->name('password.update');
 
 //Route to validate email
 Route::get('email/verify/{id}/{hash}', function (Request $request) {

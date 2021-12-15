@@ -20,10 +20,7 @@ class CreateUsersTable extends Migration
             $table->string('firstname')->nullable(true);
             $table->string('email')->unique()->nullable(false);
             $table->string('password')->nullable(true);
-            $table->string('password_previous1')->nullable(true);
-            $table->string('password_previous2')->nullable(true);
             $table->string('phone')->nullable(true);
-            $table->dateTime('last_password_update', 6)->nullable(true);
             $table->dateTime('creation_date', 6)->nullable(false);
             $table->dateTime('last_connection', 6)->nullable(true);
             $table->enum('status', ['Unconfirmed', 'Activated', 'Blocked'])->default('Unconfirmed')->nullable(false);
