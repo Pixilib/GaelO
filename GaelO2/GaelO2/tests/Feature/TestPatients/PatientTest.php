@@ -99,20 +99,17 @@ class PatientTest extends TestCase
     {
         $currentUserId = AuthorizationTools::actAsAdmin(false);
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $this->study->name);
-
-        $payload = [
-            'firstname' => 'a',
-            'lastname' => 'b',
-            'gender' => 'M',
-            'birthDay' => 5,
-            'birthMonth' => 12,
-            'birthYear' => 1955,
-            'registrationDate' => '12/31/2020',
-            'investigatorName' => 'salim',
-            'centerCode' => 0,
-            'reason' => 'wrong patient data'
-        ];
-
+        $payload = $this->patient->toArray();
+        $payload['firstname'] = 'a';
+        $payload['lastname'] = 'b';
+        $payload['gender'] = 'M';
+        $payload['birthDay'] = 5;
+        $payload['birthMonth'] = 12;
+        $payload['birthYear'] = 1955;
+        $payload['registrationDate'] = '12/31/2020';
+        $payload['investigatorName'] = 'salim';
+        $payload['centerCode'] = 0;
+        $payload['reason'] = 'wrong patient data';
         $this->json('PATCH', '/api/patients/' . $this->patient->id, $payload)->assertStatus(200);
     }
 
@@ -146,12 +143,11 @@ class PatientTest extends TestCase
         $currentUserId = AuthorizationTools::actAsAdmin(false);
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $this->study->name);
 
-        $payload = [
-            'inclusionStatus' => Constants::PATIENT_INCLUSION_STATUS_WITHDRAWN,
-            'withdrawDate' => '12/31/2020',
-            'withdrawReason' => 'fed-up',
-            'reason' => 'inclusion status changed'
-        ];
+        $payload = $this->patient->toArray();
+        $payload['inclusionStatus'] = Constants::PATIENT_INCLUSION_STATUS_WITHDRAWN;
+        $payload['withdrawDate'] = '12/31/2020';
+        $payload['withdrawReason'] = 'fed-up';
+        $payload['reason'] = 'inclusion status changed';
 
         $this->json('PATCH', '/api/patients/' . $this->patient->id, $payload)->assertStatus(200);
         $updatedPatientEntity = Patient::find($this->patient->id)->toArray();
@@ -179,10 +175,9 @@ class PatientTest extends TestCase
         $currentUserId = AuthorizationTools::actAsAdmin(false);
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $this->study->name);
 
-        $payload = [
-            'inclusionStatus' => Constants::PATIENT_INCLUSION_STATUS_INCLUDED,
-            'reason' => 'inclusion status changed'
-        ];
+        $payload = $this->patient->toArray();
+        $payload['inclusionStatus'] = Constants::PATIENT_INCLUSION_STATUS_INCLUDED;
+        $payload['reason'] = 'inclusion status changed';
 
         $this->json('PATCH', '/api/patients/' . $this->patient->id, $payload)->assertStatus(200);
         $updatedPatientEntity = Patient::find($this->patient->id)->toArray();
