@@ -69,7 +69,7 @@ class ToolsTest extends TestCase
 
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $this->studyName);
 
-        $validPayload['patientId'] = [ $this->patientId ];
+        $validPayload['patientIds'] = [ $this->patientId ];
         $answer = $this->json('POST', 'api/tools/patients/visits-from-patients?studyName='.$this->studyName, $validPayload);
         $answer->assertSuccessful();
         $content = json_decode($answer->content(), true);

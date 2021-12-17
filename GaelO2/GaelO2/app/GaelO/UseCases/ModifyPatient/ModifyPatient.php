@@ -60,11 +60,9 @@ class ModifyPatient {
             //Check BirthDate Validity
             ImportPatientService::checkCorrectBirthDate($modifyPatientRequest->birthDay, $modifyPatientRequest->birthMonth, $modifyPatientRequest->birthYear);
 
-            //Update each updatable data if specified in request
+            //Update each updatable data
             foreach($updatableData as $data){
-                if($modifyPatientRequest->$data !== null){
-                    $patientEntity[Util::camelCaseToSnakeCase($data)] = $modifyPatientRequest->$data;
-                }
+                $patientEntity[Util::camelCaseToSnakeCase($data)] = $modifyPatientRequest->$data;
             }
 
             $this->patientRepositoryInterface->update($modifyPatientRequest->patientId, $patientEntity);
