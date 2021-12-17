@@ -8,15 +8,15 @@ use App\GaelO\Exceptions\GaelOBadRequestException;
 use App\GaelO\Exceptions\GaelOConflictException;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
+use App\GaelO\Interfaces\Adapters\FrameworkInterface;
 use App\GaelO\Interfaces\Adapters\PhoneNumberInterface;
 use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\UserRepositoryInterface;
 use App\GaelO\UseCases\CreateUser\CreateUserRequest;
 use App\GaelO\UseCases\CreateUser\CreateUserResponse;
 use App\GaelO\Services\AuthorizationService\AuthorizationUserService;
-use App\GaelO\Services\MailServices;
 use App\GaelO\UseCases\ModifyUser\ModifyUserRequest;
-use App\GaelO\Util;
+use Exception;
 
 class CreateUser
 {
@@ -25,11 +25,12 @@ class CreateUser
     private TrackerRepositoryInterface $trackerRepositoryInterface;
     private UserRepositoryInterface $userRepositoryInterface;
 
-    public function __construct(AuthorizationUserService $authorizationUserService, UserRepositoryInterface $userRepositoryInterface, TrackerRepositoryInterface $trackerRepositoryInterface)
+    public function __construct(AuthorizationUserService $authorizationUserService, UserRepositoryInterface $userRepositoryInterface, TrackerRepositoryInterface $trackerRepositoryInterface, FrameworkInterface $frameworkInterface)
     {
         $this->trackerRepositoryInterface = $trackerRepositoryInterface;
         $this->authorizationUserService = $authorizationUserService;
         $this->userRepositoryInterface = $userRepositoryInterface;
+        $this->frameworkInterface = $frameworkInterface;
     }
 
     public function execute(CreateUserRequest $createUserRequest, CreateUserResponse $createUserResponse): void
@@ -63,6 +64,10 @@ class CreateUser
 
             //Send Welcom Email to give the plain password to new user.
             FrameworkAdapter::sendRegisteredEventForEmailVerification($createdUserEntity['id']);
+            $emailSendSuccess = $this->frameworkInterface->sendResetPasswordLink($createUserRequest->email);
+
+            if (! $emailSendSuccess) throw new Exception('Error Sending Reset Email');
+
 
             //Save action in Tracker
             $detailsTracker = [

@@ -6,5 +6,5 @@ class GetPatientsVisitsInStudyRequest {
     public int $currentUserId;
     public string $role;
     public string $studyName;
-    public array $patientId;
+    public array $patientIds;
 }

@@ -20,8 +20,8 @@ class ToolsController extends Controller
         GetPatientsInStudyFromCentersRequest $getPatientsInStudyFromCentersRequest,
         GetPatientsInStudyFromCentersResponse $getPatientsInStudyFromCentersResponse) {
 
-        $curentUser = Auth::user();
-        $getPatientsInStudyFromCentersRequest->currentUserId = $curentUser['id'];
+        $currentUser = Auth::user();
+        $getPatientsInStudyFromCentersRequest->currentUserId = $currentUser['id'];
         $requestData = $request->all();
         $getPatientsInStudyFromCentersRequest = Util::fillObject($requestData, $getPatientsInStudyFromCentersRequest);
 
@@ -34,14 +34,13 @@ class ToolsController extends Controller
         GetPatientsVisitsInStudyRequest $getPatientsVisitsInStudyRequest,
         GetPatientsVisitsInStudyResponse $getPatientsVisitsInStudyResponse) {
 
-        $curentUser = Auth::user();
+        $currentUser = Auth::user();
 
-        $getPatientsVisitsInStudyRequest->currentUserId = $curentUser['id'];
+        $getPatientsVisitsInStudyRequest->currentUserId = $currentUser['id'];
         $requestData = $request->all();
         $getPatientsVisitsInStudyRequest = Util::fillObject($requestData, $getPatientsVisitsInStudyRequest);
         $queryParam = $request->query();
         $getPatientsVisitsInStudyRequest->studyName = $queryParam['studyName'];
-        
         $getPatientsVisitsInStudy->execute($getPatientsVisitsInStudyRequest, $getPatientsVisitsInStudyResponse);
         return $this->getJsonResponse($getPatientsVisitsInStudyResponse->body, $getPatientsVisitsInStudyResponse->status, $getPatientsVisitsInStudyResponse->statusText);
     }

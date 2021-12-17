@@ -5,6 +5,7 @@ namespace App\GaelO\UseCases\SendMail;
 use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOBadRequestException;
 use App\GaelO\Exceptions\GaelOException;
+use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Services\AuthorizationService\AuthorizationStudyService;
 use App\GaelO\Services\MailServices;
 
@@ -22,10 +23,9 @@ class SendMail {
     public function execute(SendMailRequest $sendMailRequest, SendMailResponse $sendMailResponse){
 
         try{
-            $this->checkEmpty($sendMailRequest->study, 'study');
             $this->checkEmpty($sendMailRequest->role, 'role');
 
-            $this->checkAuthorization($sendMailRequest->currentUserId, $sendMailRequest->study, $sendMailRequest->role);
+            if($sendMailRequest->role !== Constants::ROLE_ADMINISTRATOR) $this->checkAuthorization($sendMailRequest->currentUserId, $sendMailRequest->study, $sendMailRequest->role);
 
             $this->checkEmpty($sendMailRequest->subject, 'subject');
             $this->checkEmpty($sendMailRequest->content, 'content');
