@@ -179,11 +179,6 @@ Route::middleware(['auth:sanctum', 'verified', 'activated'])->group(function () 
     Route::get('reviews/{id}/file/{key}', [ReviewController::class, 'getReviewFile']);
 });
 
-//Change Password Route
-Route::middleware(['auth:sanctum', 'verified'])->group(function () {
-    Route::put('users/{id}/password', [UserController::class, 'changeUserPassword']);
-});
-
 
 /*
 |--------------------------------------------------------------------------
@@ -203,7 +198,7 @@ Route::get('tools/reset-password/{token}', function ($token) {
     return redirect('/reset-password?token='.$token);
 })->name('password.reset');
 
-Route::post('tools/reset-password', [UserController::class, 'resetPassword'] )->name('password.update');
+Route::post('tools/reset-password', [UserController::class, 'updatePassword'] )->name('password.update');
 
 //Route to validate email
 Route::get('email/verify/{id}/{hash}', function (Request $request) {

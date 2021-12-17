@@ -1,12 +1,6 @@
 Salim TODO :
 
--Workflow identification
-Faire passer statut compte dans middelware
-Fare passer check password modifié dans middelware
-le lien d'activation doit renvoyer vers le change password
-
 - Optimiser l'utilisation des authorization service en injectant les data depuis le usecase (ou les rendre stateless)
-- Passer le studyName en query tag => emilie
 
 Creatable Visit : Manque Study Custom Logic => Passer dans frontend
 Review  : faire une propriete dans visit pour savoir si review disponible a un user en plus de status reviewAvailable ?
@@ -19,7 +13,6 @@ Reste Autres :
 - Connecteur FTP/SFTP
 - Dummy Run => Impact sur la db a designer => peut etre ne rien faire et passer par une etude de challenge
 - Dicom liée aux review  => Impacte sur la db a designer => probablement privilegier les associated file des reviews
-- QC items Details => Impact sur la db a designer
 
 - OHIF essayer de faire passer le role dans les requetes => Faire un GaelO plugin dans OHIF
 pourra modifier cornerstoneWADOImageLoader pour injecter l'etude courante
