@@ -29,6 +29,25 @@ class PatientTest extends TestCase
         //Fill patient table
         $this->study = Study::factory()->create();
         $this->patient = Patient::factory()->studyName($this->study->name)->create();
+
+        $this->validPayload = [
+            "id" => $this->patient['id'],
+            "code" => $this->patient['code'],
+            "firstname" => "a",
+            "lastname" => "b",
+            "gender" => "M",
+            "birthDay" => 23,
+            "birthMonth" => 1,
+            "birthYear" => 1985,
+            "registrationDate" => "2021-12-17 10:25:57.966076",
+            "investigatorName" => "voluptas",
+            "centerCode" => $this->patient['center_code'],
+            "studyName" => $this->patient['study_name'],
+            "inclusionStatus" => "Included",
+            "birthDay" => 5,
+            "birthMonth" => 12,
+            "birthYear" => 1955
+        ];
     }
 
     public function testGetPatient()
@@ -99,17 +118,21 @@ class PatientTest extends TestCase
     {
         $currentUserId = AuthorizationTools::actAsAdmin(false);
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $this->study->name);
-        $payload = $this->patient->toArray();
-        $payload['firstname'] = 'a';
-        $payload['lastname'] = 'b';
-        $payload['gender'] = 'M';
-        $payload['birthDay'] = 5;
-        $payload['birthMonth'] = 12;
-        $payload['birthYear'] = 1955;
-        $payload['registrationDate'] = '12/31/2020';
-        $payload['investigatorName'] = 'salim';
-        $payload['centerCode'] = 0;
-        $payload['reason'] = 'wrong patient data';
+
+        $payload = $this->validPayload;
+        $payload = array_merge($payload, [
+            'firstname' => 'a',
+            'lastname' => 'b',
+            'gender' => 'M',
+            'birthDay' => 5,
+            'birthMonth' => 12,
+            'birthYear' => 1955,
+            'registrationDate' => '12/31/2020',
+            'investigatorName' => 'salim',
+            'centerCode' => 0,
+            'reason' => 'wrong patient data'
+        ]);
+
         $this->json('PATCH', '/api/patients/' . $this->patient->id, $payload)->assertStatus(200);
     }
 
@@ -143,12 +166,13 @@ class PatientTest extends TestCase
         $currentUserId = AuthorizationTools::actAsAdmin(false);
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $this->study->name);
 
-        $payload = $this->patient->toArray();
-        $payload['inclusionStatus'] = Constants::PATIENT_INCLUSION_STATUS_WITHDRAWN;
-        $payload['withdrawDate'] = '12/31/2020';
-        $payload['withdrawReason'] = 'fed-up';
-        $payload['reason'] = 'inclusion status changed';
-
+        $payload = $this->validPayload;
+        $payload = array_merge($payload, [
+            'inclusionStatus' => Constants::PATIENT_INCLUSION_STATUS_WITHDRAWN,
+            'withdrawDate' => '12/31/2020',
+            'withdrawReason' => 'fed-up',
+            'reason' => 'inclusion status changed'
+        ]);
         $this->json('PATCH', '/api/patients/' . $this->patient->id, $payload)->assertStatus(200);
         $updatedPatientEntity = Patient::find($this->patient->id)->toArray();
         $this->assertEquals(Constants::PATIENT_INCLUSION_STATUS_WITHDRAWN, $updatedPatientEntity['inclusion_status']);
@@ -160,12 +184,13 @@ class PatientTest extends TestCase
     {
         AuthorizationTools::actAsAdmin(false);
 
-        $payload = [
+        $payload = $this->validPayload;
+        $payload = array_merge($payload, [
             'inclusionStatus' => Constants::PATIENT_INCLUSION_STATUS_INCLUDED,
             'withdrawDate' => '12/31/2020',
             'withdrawReason' => 'fed-up',
             'reason' => 'inclusion status changed'
-        ];
+        ]);
 
         $this->json('PATCH', '/api/patients/' . $this->patient->id, $payload)->assertStatus(403);
     }
@@ -175,7 +200,7 @@ class PatientTest extends TestCase
         $currentUserId = AuthorizationTools::actAsAdmin(false);
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $this->study->name);
 
-        $payload = $this->patient->toArray();
+        $payload = $this->validPayload;
         $payload['inclusionStatus'] = Constants::PATIENT_INCLUSION_STATUS_INCLUDED;
         $payload['reason'] = 'inclusion status changed';
 

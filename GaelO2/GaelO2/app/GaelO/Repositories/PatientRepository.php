@@ -76,7 +76,7 @@ class PatientRepository implements PatientRepositoryInterface {
 
     public function updatePatient(int $code, ?string $lastname, ?string $firstname, 
         ?string $gender, ?int $birthDay, ?int $birthMonth, ?int $birthYear, 
-        string $studyName, string $registrationDate, ?string $investigatorName, int $centerCode, 
+        string $studyName, ?string $registrationDate, ?string $investigatorName, int $centerCode, 
         string $inclusionStatus, string $withdrawReason, string $withdrawDate) : void {
 
         $patient = $this->patient->findOrFail($code);

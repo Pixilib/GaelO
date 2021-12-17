@@ -14,8 +14,8 @@ class ModifyPatientRequest {
     public ?int $birthYear=null;
     public ?string $registrationDate=null;
     public ?string $investigatorName=null;
-    public ?int $centerCode=null;
-    public ?string $inclusionStatus=null;
+    public int $centerCode;
+    public string $inclusionStatus;
     public ?string $withdrawReason=null;
     public ?string $withdrawDate=null;
 }
