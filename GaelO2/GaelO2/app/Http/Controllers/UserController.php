@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\GaelO\Constants\Constants;
 use App\GaelO\UseCases\AddAffiliatedCenter\AddAffiliatedCenter;
 use App\GaelO\UseCases\AddAffiliatedCenter\AddAffiliatedCenterRequest;
 use App\GaelO\UseCases\AddAffiliatedCenter\AddAffiliatedCenterResponse;
@@ -15,9 +14,6 @@ use App\GaelO\UseCases\ModifyUser\ModifyUserResponse;
 use App\GaelO\UseCases\GetUser\GetUser;
 use App\GaelO\UseCases\GetUser\GetUserRequest;
 use App\GaelO\UseCases\GetUser\GetUserResponse;
-use App\GaelO\UseCases\ChangePassword\ChangePassword;
-use App\GaelO\UseCases\ChangePassword\ChangePasswordRequest;
-use App\GaelO\UseCases\ChangePassword\ChangePasswordResponse;
 use App\GaelO\UseCases\CreateUserRoles\CreateUserRoles;
 use App\GaelO\UseCases\CreateUserRoles\CreateUserRolesRequest;
 use App\GaelO\UseCases\CreateUserRoles\CreateUserRolesResponse;
