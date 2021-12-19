@@ -7,7 +7,7 @@ use App\GaelO\Constants\SettingsConstants;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Auth\Notifications\VerifyEmail;
 
-class VerifyEmailNotification extends VerifyEmail 
+class VerifyEmailNotification extends VerifyEmail
 {
 
     /**
@@ -26,8 +26,8 @@ class VerifyEmailNotification extends VerifyEmail
         $corporation = FrameworkAdapter::getConfig(SettingsConstants::CORPORATION);
         $adminEmail = FrameworkAdapter::getConfig(SettingsConstants::MAIL_FROM_ADDRESS);
 
-        return (new MailMessage)->subject('GaelO - User Created')
-            ->view('mails.mail_create_user', ['url' => $verificationUrl,
+        return (new MailMessage)->subject('GaelO - Verify Email')
+            ->view('mails.mail_verify_email', ['url' => $verificationUrl,
             'platformName'=> $platformName,
             'corporation'=> $corporation,
             'webAddress'=>$webAddress,

@@ -6,6 +6,7 @@ class MailConstants {
 
     const EMAIL_REQUEST = 0;
     const EMAIL_VISIT_NOT_DONE=1;
+    const EMAIL_USER_CREATED=2;
     const EMAIL_UPLOAD_FAILURE=3;
     const EMAIL_UPLOADED_VISIT=4;
     const EMAIL_UNLOCK_REQUEST=5;

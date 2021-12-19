@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\GaelO\Constants\Constants;
 use App\GaelO\UseCases\AddAffiliatedCenter\AddAffiliatedCenter;
 use App\GaelO\UseCases\AddAffiliatedCenter\AddAffiliatedCenterRequest;
 use App\GaelO\UseCases\AddAffiliatedCenter\AddAffiliatedCenterResponse;
@@ -53,6 +54,7 @@ use App\GaelO\UseCases\ModifyUserIdentification\ModifyUserIdentificationResponse
 use App\GaelO\Util;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
+use Illuminate\Auth\Events\Verified;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
@@ -85,6 +87,18 @@ class UserController extends Controller
                     'password' => Hash::make($password)
                 ]);
 
+                //If unconfirmed, validate email as this reset password is made using email link (first password definition)
+                if($user->status === Constants::USER_STATUS_UNCONFIRMED){
+                    if ($user->markEmailAsVerified()) event(new Verified($user));
+                    $user->status = Constants::USER_STATUS_ACTIVATED;
+                }
+
+                //if blocked, restaure activated status
+                if($user->status === Constants::USER_STATUS_BLOCKED){
+                    $user->status = Constants::USER_STATUS_ACTIVATED;
+                }
+
+                $user->attempts = 0;
                 $user->save();
             }
         );

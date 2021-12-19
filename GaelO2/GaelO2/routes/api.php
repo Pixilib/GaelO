@@ -189,7 +189,7 @@ Route::middleware(['auth:sanctum', 'verified', 'activated'])->group(function () 
 //Request Route
 Route::post('request', [RequestController::class, 'sendRequest']);
 
-//Login and forgot password Route
+//Login Route
 Route::post('login', [AuthController::class, 'login'])->name('login');
 Route::post('tools/forgot-password', [UserController::class, 'forgotPassword'])->name('password.email');
 
@@ -209,16 +209,15 @@ Route::get('email/verify/{id}/{hash}', function (Request $request) {
         throw new AuthorizationException();
     }
 
-    if ($user->markEmailAsVerified())
-        event(new Verified($user));
+    if ($user->markEmailAsVerified()) event(new Verified($user));
 
     return redirect('/email-verified');
 })->middleware(['signed'])->name('verification.verify');
 
-Route::post('user/{id}/magic-link', function (int $userId, Request $request) {
+Route::post('user/{id}/magic-link', function (int $userId ) {
 
     $url = URL::temporarySignedRoute(
-        'magic-link', now()->addDay(1), ['userId' => $userId]
+        'magic-link', now()->addDay(1), ['id' => $userId]
     );
 
     //SK ICI LE MAGIC LINK A SAUVER EN DB
@@ -227,13 +226,9 @@ Route::post('user/{id}/magic-link', function (int $userId, Request $request) {
 
 });
 
-Route::get('user/magic-link/{userId}', function (int $userId, Request $request) {
+Route::get('user/{id}/magic-link', function (int $id, Request $request) {
 
-    if (!$request->hasValidSignature()) {
-        abort(401);
-    }
-
-    $user = User::findOrFail($userId);
+    $user = User::findOrFail($id);
     //SK ICI A VERIF BDD ET vider cette colonne POUR S ASSURER QU UNE UTILISATION
 
     //remove all tokens of current user before creating one other
@@ -243,4 +238,4 @@ Route::get('user/magic-link/{userId}', function (int $userId, Request $request) 
 
     return redirect('/?userId='.$user->id.'&token='.$tokenResult->plainTextToken);
 
-})->name('magic-link');
+})->middleware(['signed'])->name('magic-link');

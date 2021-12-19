@@ -15,6 +15,7 @@ use App\GaelO\Interfaces\Repositories\UserRepositoryInterface;
 use App\GaelO\UseCases\CreateUser\CreateUserRequest;
 use App\GaelO\UseCases\CreateUser\CreateUserResponse;
 use App\GaelO\Services\AuthorizationService\AuthorizationUserService;
+use App\GaelO\Services\MailServices;
 use App\GaelO\UseCases\ModifyUser\ModifyUserRequest;
 use Exception;
 
@@ -24,13 +25,15 @@ class CreateUser
     private AuthorizationUserService $authorizationUserService;
     private TrackerRepositoryInterface $trackerRepositoryInterface;
     private UserRepositoryInterface $userRepositoryInterface;
+    private MailServices $mailService;
 
-    public function __construct(AuthorizationUserService $authorizationUserService, UserRepositoryInterface $userRepositoryInterface, TrackerRepositoryInterface $trackerRepositoryInterface, FrameworkInterface $frameworkInterface)
+    public function __construct(AuthorizationUserService $authorizationUserService, UserRepositoryInterface $userRepositoryInterface, TrackerRepositoryInterface $trackerRepositoryInterface, FrameworkInterface $frameworkInterface, MailServices $mailService)
     {
         $this->trackerRepositoryInterface = $trackerRepositoryInterface;
         $this->authorizationUserService = $authorizationUserService;
         $this->userRepositoryInterface = $userRepositoryInterface;
         $this->frameworkInterface = $frameworkInterface;
+        $this->mailService = $mailService;
     }
 
     public function execute(CreateUserRequest $createUserRequest, CreateUserResponse $createUserResponse): void
@@ -62,11 +65,11 @@ class CreateUser
                 $createUserRequest->orthancPassword
             );
 
-            //Send Welcom Email to give the plain password to new user.
-            FrameworkAdapter::sendRegisteredEventForEmailVerification($createdUserEntity['id']);
+            //Send reset password link.
             $emailSendSuccess = $this->frameworkInterface->sendResetPasswordLink($createUserRequest->email);
-
             if (! $emailSendSuccess) throw new Exception('Error Sending Reset Email');
+
+            $this->mailService->sendCreatedUserMessage($createUserRequest->email);
 
 
             //Save action in Tracker

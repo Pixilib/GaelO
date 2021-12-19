@@ -2,17 +2,16 @@
 
 namespace App\GaelO\UseCases\ModifyUser;
 
-use App\GaelO\Adapters\FrameworkAdapter;
 use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOConflictException;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
+use App\GaelO\Interfaces\Adapters\FrameworkInterface;
 use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\UserRepositoryInterface;
 use App\GaelO\UseCases\ModifyUser\ModifyUserRequest;
 use App\GaelO\UseCases\ModifyUser\ModifyUserResponse;
 use App\GaelO\Services\AuthorizationService\AuthorizationUserService;
-use App\GaelO\Services\MailServices;
 use App\GaelO\UseCases\CreateUser\CreateUser;
 use Exception;
 
@@ -22,17 +21,17 @@ class ModifyUser
     private AuthorizationUserService $authorizationUserService;
     private UserRepositoryInterface $userRepositoryInterface;
     private TrackerRepositoryInterface $trackerRepositoryInterface;
-    private MailServices $mailService;
+    private FrameworkInterface $frameworkInterface;
 
     public function __construct(AuthorizationUserService $authorizationUserService,
                             UserRepositoryInterface $userRepositoryInterface,
                             TrackerRepositoryInterface $trackerRepositoryInterface,
-                            MailServices $mailService)
+                            FrameworkInterface $frameworkInterface)
     {
         $this->authorizationUserService = $authorizationUserService;
         $this->trackerRepositoryInterface = $trackerRepositoryInterface;
         $this->userRepositoryInterface = $userRepositoryInterface;
-        $this->mailService = $mailService;
+        $this->frameworkInterface = $frameworkInterface;
     }
 
     public function execute(ModifyUserRequest $modifyUserRequest, ModifyUserResponse $modifyUserResponse): void
@@ -79,7 +78,7 @@ class ModifyUser
 
 
             if ($resetEmailValidation) {
-                FrameworkAdapter::sendRegisteredEventForEmailVerification($user['id']);
+                $this->frameworkInterface->sendRegisteredEventForEmailVerification($user['id']);
             }
 
             $details = [

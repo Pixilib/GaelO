@@ -551,4 +551,14 @@ class MailServices
         $this->mailInterface->send();
     }
 
+    public function sendCreatedUserMessage(string $email){
+        $parameters = ['name' => 'user'];
+
+        $this->mailInterface->setTo([$email]);
+        $this->mailInterface->setReplyTo();
+        $this->mailInterface->setParameters($parameters);
+        $this->mailInterface->setBody(MailConstants::EMAIL_USER_CREATED);
+        $this->mailInterface->send();
+    }
+
 }

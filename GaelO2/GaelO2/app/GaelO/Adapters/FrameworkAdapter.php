@@ -19,18 +19,13 @@ class FrameworkAdapter implements FrameworkInterface {
         return Config::get('app.'.$key);
     }
 
-    public static function getStoragePath() : string{
+    public static function getStoragePath() : string {
         return storage_path().'/gaelo';
     }
 
-    public static function sendRegisteredEventForEmailVerification(int $userId) {
+    public static function sendRegisteredEventForEmailVerification(int $userId) : void {
         $user = User::findOrFail($userId);
         event(new Registered($user));
-    }
-
-    public static function resendVerificationEmail(int $userId){
-        $user = User::findOrFail($userId);
-        $user->sendEmailVerificationNotification();
     }
 
     public static function sendResetPasswordLink(string $email) : bool {
