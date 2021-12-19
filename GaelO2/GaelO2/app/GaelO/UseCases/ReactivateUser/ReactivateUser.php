@@ -7,11 +7,9 @@ use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Adapters\FrameworkInterface;
 use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
-use App\GaelO\Services\MailServices;
 use Exception;
 use App\GaelO\Interfaces\Repositories\UserRepositoryInterface;
 use App\GaelO\Services\AuthorizationService\AuthorizationUserService;
-use App\GaelO\Util;
 
 class ReactivateUser{
 
@@ -42,7 +40,6 @@ class ReactivateUser{
                 $user['id'],
                 $user['lastname'],
                 $user['firstname'],
-                Constants::USER_STATUS_UNCONFIRMED,
                 $user['email'],
                 $user['phone'],
                 $user['administrator'],

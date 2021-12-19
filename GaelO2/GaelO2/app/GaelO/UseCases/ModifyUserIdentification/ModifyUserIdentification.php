@@ -43,7 +43,6 @@ class ModifyUserIdentification {
                 $user['id'],
                 $modifyUserIdentificationRequest->lastname,
                 $modifyUserIdentificationRequest->firstname,
-                $user['status'],
                 $modifyUserIdentificationRequest->email,
                 $modifyUserIdentificationRequest->phone,
                 $user['administrator'],

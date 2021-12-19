@@ -54,7 +54,6 @@ class CreateUser
             $createdUserEntity = $this->userRepositoryInterface->createUser(
                 $createUserRequest->lastname,
                 $createUserRequest->firstname,
-                Constants::USER_STATUS_UNCONFIRMED,
                 $createUserRequest->email,
                 $createUserRequest->phone,
                 $createUserRequest->administrator,

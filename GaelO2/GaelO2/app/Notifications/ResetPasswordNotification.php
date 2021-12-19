@@ -47,6 +47,7 @@ class ResetPasswordNotification extends Notification
         $adminEmail = FrameworkAdapter::getConfig(SettingsConstants::MAIL_FROM_ADDRESS);
 
         return (new MailMessage)
+            ->subject('GaelO - Set New Password')
             ->view('mails.mail_reset_password', ['url' => $resetUrl,
             'platformName'=> $platformName,
             'corporation'=> $corporation,

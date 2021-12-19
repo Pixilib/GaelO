@@ -43,17 +43,15 @@ class ModifyUser
 
             $user = $this->userRepositoryInterface->find($modifyUserRequest->userId);
 
-            $resetEmailValidation = false;
-            if ($modifyUserRequest->status === Constants::USER_STATUS_UNCONFIRMED) {
-                $resetEmailValidation = true;
-            }
+
 
             CreateUser::checkFormComplete($modifyUserRequest);
             CreateUser::checkEmailValid($modifyUserRequest->email);
             CreateUser::checkPhoneCorrect($modifyUserRequest->phone);
 
+            $resetEmailValidation = false;
+
             if($user['email'] !== $modifyUserRequest->email){
-                $modifyUserRequest->status = Constants::USER_STATUS_UNCONFIRMED;
                 $resetEmailValidation = true;
                 $knownEmail = $this->userRepositoryInterface->isExistingEmail($modifyUserRequest->email);
                 if ($knownEmail) throw new GaelOConflictException("Email Already Known");
@@ -64,7 +62,6 @@ class ModifyUser
                 $user['id'],
                 $modifyUserRequest->lastname,
                 $modifyUserRequest->firstname,
-                $modifyUserRequest->status,
                 $modifyUserRequest->email,
                 $modifyUserRequest->phone,
                 $modifyUserRequest->administrator,
@@ -82,8 +79,7 @@ class ModifyUser
             }
 
             $details = [
-                'modified_user_id' => $modifyUserRequest->userId,
-                'status' => $modifyUserRequest->status
+                'modified_user_id' => $modifyUserRequest->userId
             ];
 
             $this->trackerRepositoryInterface->writeAction($modifyUserRequest->currentUserId, Constants::TRACKER_ROLE_ADMINISTRATOR, null, null, Constants::TRACKER_EDIT_USER, $details);

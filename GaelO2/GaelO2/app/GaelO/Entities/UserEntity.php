@@ -9,7 +9,6 @@ class UserEntity {
     public String $email;
     public ?String $phone;
     public ?String $lastPasswordUpdate;
-    public String $status;
     public String $attempts;
     public bool $administrator;
     public int $centerCode;
@@ -18,6 +17,7 @@ class UserEntity {
     public ?String $orthancLogin;
     public ?String $orthancPassword;
     public ?String $deletedAt;
+    public ?string $emailVerifiedAt;
 
     public ?array $roles;
 
@@ -28,7 +28,6 @@ class UserEntity {
         $userEntity->firstname = $array['firstname'];
         $userEntity->email = $array['email'];
         $userEntity->phone = $array['phone'];
-        $userEntity->status = $array['status'];
         $userEntity->attempts = $array['attempts'];
         $userEntity->administrator = $array['administrator'];
         $userEntity->centerCode = $array['center_code'];
@@ -37,6 +36,7 @@ class UserEntity {
         $userEntity->orthancLogin = $array['orthanc_login'];
         $userEntity->orthancPassword = $array['orthanc_password'];
         $userEntity->deletedAt = $array['deleted_at'];
+        $userEntity->emailVerifiedAt = $array['email_verified_at'];
         $userEntity->lastConnection = $array['last_connection'];
         return $userEntity;
     }

@@ -49,7 +49,7 @@ class LoginTest extends TestCase
         $data = ['email'=> 'administrator@gaelo.fr',
         'password'=> 'administrator'];
         $adminDefaultUser = User::where('id', 1)->first();
-        $adminDefaultUser['status'] = Constants::USER_STATUS_UNCONFIRMED;
+        $adminDefaultUser['email_verified_at'] = null;
         $adminDefaultUser->save();
         $this->json('POST', '/api/login', $data)->assertStatus(401);
     }
@@ -59,7 +59,7 @@ class LoginTest extends TestCase
         $data = ['email'=> 'administrator@gaelo.fr',
         'password'=> 'administrator'];
         $adminDefaultUser = User::where('id', 1)->first();
-        $adminDefaultUser['status'] = Constants::USER_STATUS_BLOCKED;
+        $adminDefaultUser['attempts'] = 3;
         $adminDefaultUser->save();
         $this->json('POST', '/api/login', $data)->assertStatus(401);
 
@@ -75,7 +75,6 @@ class LoginTest extends TestCase
         $this->json('POST', '/api/login', $data)->assertStatus(401);
 
         $adminDefaultUser = User::where('id', 1)->first();
-        $this->assertEquals($adminDefaultUser['status'], Constants::USER_STATUS_BLOCKED);
         $this->assertEquals($adminDefaultUser['attempts'], 3);
 
     }

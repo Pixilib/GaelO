@@ -42,14 +42,13 @@ class UserRepository implements UserRepositoryInterface {
         return empty($users) ? [] : $users->toArray();
     }
 
-    public function createUser( String $lastname, String $firstname, String $status,
+    public function createUser( String $lastname, String $firstname,
                                 String $email, ?String $phone, bool $administrator, int $centerCode, String $job,
                                 ?String $orthancAdress, ?String $orthancLogin, ?String $orthancPassword ) : array {
 
         $user = new User();
         $user->lastname = $lastname;
         $user->firstname = $firstname;
-        $user->status = $status;
         $user->email = $email;
         $user->phone = $phone;
         $user->administrator = $administrator;
@@ -65,7 +64,7 @@ class UserRepository implements UserRepositoryInterface {
 
     }
 
-    public function updateUser(int $id, ?String $lastname, ?String $firstname, String $status,
+    public function updateUser(int $id, ?String $lastname, ?String $firstname,
                                 String $email, ?String $phone, bool $administrator, int $centerCode, String $job,
                                 ?String $orthancAdress, ?String $orthancLogin, ?String $orthancPassword,
                                 bool $resetEmailVerification) : void {
@@ -73,7 +72,6 @@ class UserRepository implements UserRepositoryInterface {
         $user = $this->user->findOrFail($id);
         $user->lastname = $lastname;
         $user->firstname = $firstname;
-        $user->status = $status;
         $user->email = $email;
         $user->phone = $phone;
         $user->administrator = $administrator;
@@ -96,12 +94,6 @@ class UserRepository implements UserRepositoryInterface {
     public function updateUserAttempts(int $userId, int $attempts ) : void {
         $user = $this->user->findOrFail($userId);
         $user->attempts = $attempts;
-        $user->save();
-    }
-
-    public function updateUserStatus(int $userId, string $status ) : void {
-        $user = $this->user->findOrFail($userId);
-        $user->status = $status;
         $user->save();
     }
 
@@ -132,7 +124,7 @@ class UserRepository implements UserRepositoryInterface {
     }
 
     public function getAdministratorsEmails() : array {
-        $emails = $this->user->where([['administrator', true], ['status', 'Activated']])->get();
+        $emails = $this->user->where('administrator', true)->get();
         return empty($emails) ? [] : $emails->pluck('email')->toArray();
     }
 
@@ -143,7 +135,6 @@ class UserRepository implements UserRepositoryInterface {
     public function getInvestigatorsStudyFromCenterEmails(string $study, int $centerCode, ?string $job) : array {
 
         $emails = $this->user
-        ->where('status', 'Activated')
         ->with('affiliatedCenters')
         ->whereHas('roles', function ($query) use ($study, $job) {
             if($job !== null){
@@ -169,7 +160,6 @@ class UserRepository implements UserRepositoryInterface {
     public function getUsersByRolesInStudy(string $study, string $role ) : array {
 
         $users = $this->user
-        ->where('status', 'Activated')
         ->whereHas('roles', function ($query) use ($study, $role) {
             $query->where('name', '=', $role)
             ->where('study_name', '=', $study);

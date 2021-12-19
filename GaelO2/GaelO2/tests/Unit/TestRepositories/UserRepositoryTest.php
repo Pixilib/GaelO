@@ -50,7 +50,6 @@ class UserRepositoryTest extends TestCase
         $createdEntity = $this->userRepository->createUser(
             'Kanoun',
             'Salim',
-            Constants::USER_STATUS_UNCONFIRMED,
             'salim.kanoun@gmail.com',
             '0600000000',
             false,
@@ -72,13 +71,12 @@ class UserRepositoryTest extends TestCase
     public function testUpdateUser(array $existingEntity)
     {
 
-        $userToModify = User::factory()->status(Constants::USER_STATUS_ACTIVATED)->job(Constants::USER_JOB_SUPERVISION)->create();
+        $userToModify = User::factory()->job(Constants::USER_JOB_SUPERVISION)->create();
 
         $this->userRepository->updateUser(
             $userToModify->id,
             'newLastName',
             'newFirstName',
-            Constants::USER_STATUS_UNCONFIRMED,
             'new@email.com',
             null,
             !$userToModify->administrator,
@@ -96,7 +94,6 @@ class UserRepositoryTest extends TestCase
         $this->assertNotEquals($updatedEntity['lastname'], $userToModify['lastname']);
         $this->assertNotEquals($updatedEntity['email'], $userToModify['email']);
         $this->assertNotEquals($updatedEntity['phone'], $userToModify['phone']);
-        $this->assertNotEquals($updatedEntity['status'], $userToModify['status']);
         $this->assertNotEquals($updatedEntity['administrator'], $userToModify['administrator']);
         $this->assertNotEquals($updatedEntity['center_code'], $userToModify['center_code']);
         $this->assertNotEquals($updatedEntity['job'], $userToModify['job']);
@@ -127,16 +124,6 @@ class UserRepositoryTest extends TestCase
 
     }
 
-    public function testUpdateUserStatus(){
-
-        $user = User::factory()->status(Constants::USER_STATUS_BLOCKED)->create();
-        $this->userRepository->updateUserStatus($user['id'], Constants::USER_STATUS_ACTIVATED);
-
-        $updatedUser = User::find($user->id);
-        $this->assertEquals(Constants::USER_STATUS_ACTIVATED, $updatedUser->status);
-
-    }
-
     public function testResetAttemptsAndUpdateLastConnexion(){
 
         $user = User::factory()->attempts(5)->create();
@@ -152,7 +139,7 @@ class UserRepositoryTest extends TestCase
     public function testGetUserByUsername()
     {
         //Test if user is not deleted
-        $user = User::factory()->status(Constants::USER_STATUS_ACTIVATED)->job(Constants::USER_JOB_SUPERVISION)->create();
+        $user = User::factory()->job(Constants::USER_JOB_SUPERVISION)->create();
         $userEntity = $this->userRepository->getUserByEmail($user->email, false);
         $this->assertIsArray($userEntity);
         $this->assertNull($userEntity['deleted_at']);
@@ -181,7 +168,7 @@ class UserRepositoryTest extends TestCase
     public function testGetAdministratorsEmails()
     {
 
-        $userAdmin = User::factory()->status(Constants::USER_STATUS_ACTIVATED)->administrator()->count(4)->create();
+        $userAdmin = User::factory()->administrator()->count(4)->create();
         User::factory()->count(8)->create();
 
         //Deleted user should not outputed
@@ -198,9 +185,9 @@ class UserRepositoryTest extends TestCase
      */
     public function testGetInvestigatorStudyEmails()
     {
-        $usersCRA = User::factory()->job(Constants::USER_JOB_CRA)->status(Constants::USER_STATUS_ACTIVATED)->count(10)->create();
+        $usersCRA = User::factory()->job(Constants::USER_JOB_CRA)->count(10)->create();
 
-        $userSupervision = User::factory()->job(Constants::USER_JOB_SUPERVISION)->status(Constants::USER_STATUS_ACTIVATED)->count(15)->create();
+        $userSupervision = User::factory()->job(Constants::USER_JOB_SUPERVISION)->count(15)->create();
 
         $study1 = $this->studies->first();
         $center3 = $this->center3;
@@ -242,7 +229,7 @@ class UserRepositoryTest extends TestCase
 
     public function testGetUserByRoleStudy(){
 
-        $users = User::factory()->count(10)->status(Constants::USER_STATUS_ACTIVATED)->create();
+        $users = User::factory()->count(10)->create();
 
         $study1 = $this->studies->first();
         $users->each(function ($user) use ($study1) {
@@ -251,7 +238,6 @@ class UserRepositoryTest extends TestCase
 
         $users = $this->userRepository->getUsersByRolesInStudy($study1->name, Constants::ROLE_INVESTIGATOR);
         $this->assertEquals(10, sizeof($users));
-        $this->assertNotNull($users[0]['status']);
     }
 
     /**
@@ -259,8 +245,8 @@ class UserRepositoryTest extends TestCase
      */
     public function testGetMailsByRoleStudy()
     {
-        $users = User::factory()->count(10)->status(Constants::USER_STATUS_ACTIVATED)->create();
-        $users2 = User::factory()->count(20)->status(Constants::USER_STATUS_ACTIVATED)->create();
+        $users = User::factory()->count(10)->create();
+        $users2 = User::factory()->count(20)->create();
 
         $study1 = $this->studies->first();
         $study2 = $this->studies->last();

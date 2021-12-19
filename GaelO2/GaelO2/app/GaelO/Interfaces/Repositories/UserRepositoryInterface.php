@@ -10,18 +10,16 @@ interface UserRepositoryInterface {
 
     public function delete($id) : void;
 
-    public function createUser(String $lastname, String $firstname, String $status,
+    public function createUser(String $lastname, String $firstname,
                                 String $email, ?String $phone, bool $administrator, int $centerCode, String $job,
                                 ?String $orthancAdress, ?String $orthancLogin, ?String $orthancPassword) :array ;
 
-    public function updateUser(int $id, ?String $lastname, ?String $firstname, String $status,
+    public function updateUser(int $id, ?String $lastname, ?String $firstname,
                                 String $email, ?String $phone, bool $administrator, int $centerCode, String $job,
                                 ?String $orthancAdress, ?String $orthancLogin, ?String $orthancPassword,
                                 bool $resetEmailVerify) : void ;
 
     public function updateUserPassword(int $userId, ?string $passwordCurrent) : void ;
-
-    public function updateUserStatus(int $userId, string $status ) : void ;
 
     public function updateUserAttempts(int $userId, int $attempts ) : void ;
 

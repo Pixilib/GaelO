@@ -87,17 +87,12 @@ class UserController extends Controller
                     'password' => Hash::make($password)
                 ]);
 
-                //If unconfirmed, validate email as this reset password is made using email link (first password definition)
-                if($user->status === Constants::USER_STATUS_UNCONFIRMED){
+                //If password is null, it is the first password definition so we validate email as this reset password is made using email link
+                if($user->password === null ){
                     if ($user->markEmailAsVerified()) event(new Verified($user));
-                    $user->status = Constants::USER_STATUS_ACTIVATED;
                 }
 
-                //if blocked, restaure activated status
-                if($user->status === Constants::USER_STATUS_BLOCKED){
-                    $user->status = Constants::USER_STATUS_ACTIVATED;
-                }
-
+                //Reset number of attempts (unblock if blocked)
                 $user->attempts = 0;
                 $user->save();
             }

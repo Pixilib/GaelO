@@ -21,7 +21,6 @@ class UserFactory extends Factory
             'password' => $this->faker->password,
             'phone' => $this->faker->phoneNumber,
             'creation_date' => Util::now(),
-            'status' => 'Activated',
             'administrator' => false,
             'center_code' => 0,
             'attempts' =>0,
@@ -72,7 +71,7 @@ class UserFactory extends Factory
         });
 
     }
-    
+
     public function passwordExpired(){
 
         return $this->state(function (array $attributes) {
@@ -83,11 +82,11 @@ class UserFactory extends Factory
 
     }
 
-    public function status(string $state){
+    public function notVerified(){
 
-        return $this->state(function (array $attributes) use ($state) {
+        return $this->state(function (array $attributes) {
             return [
-                'status' => $state,
+                'email_verified_at' => null,
             ];
         });
 

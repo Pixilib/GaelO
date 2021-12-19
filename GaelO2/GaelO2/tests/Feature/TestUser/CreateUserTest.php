@@ -53,7 +53,7 @@ class CreateUserTest extends TestCase
         $createdUser = User::where(['id'=>3])->get()->first()->toArray();
 
         //Check defaut value at user creation
-        $this->assertEquals($createdUser['status'], Constants::USER_STATUS_UNCONFIRMED);
+        $this->assertNull($createdUser['email_verified_at']);
         $this->assertEquals($createdUser['phone'],  $this->validPayload['phone']);
     }
 
