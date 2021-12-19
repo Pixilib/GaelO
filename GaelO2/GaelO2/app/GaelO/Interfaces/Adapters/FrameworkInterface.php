@@ -22,4 +22,6 @@ interface FrameworkInterface {
     public static function sendResetPasswordLink(string $email) : bool;
 
     public static function sendRegisteredEventForEmailVerification(int $userId) : void ;
+
+    public static function generateMagicLink(int $userId, string $destination): string ;
 }

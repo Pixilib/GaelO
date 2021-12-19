@@ -58,6 +58,7 @@ Route::middleware(['auth:sanctum', 'verified', 'activated'])->group(function () 
     Route::post('users/{id}/roles', [UserController::class, 'createRole']);
     Route::delete('users/{id}/roles/{roleName}', [UserController::class, 'deleteRole']);
     Route::get('studies/{studyName}/users', [UserController::class, 'getUserFromStudy']);
+    Route::post('user/{id}/magic-link', [UserController::class, 'createMagicLink']);
 
     //Study Routes
     Route::post('studies', [StudyController::class, 'createStudy']);
@@ -212,44 +213,3 @@ Route::get('email/verify/{id}/{hash}', function (Request $request) {
 
     return redirect('/email-verified');
 })->middleware(['signed'])->name('verification.verify');
-
-Route::post('user/{id}/magic-link/{ressource}/{id}', function (int $userId, string $ressource, int $id ) {
-
-    if (in_array($ressource, ['patients', 'visits'])) return response('wrong ressource', 400);
-    $url = URL::temporarySignedRoute(
-        'magic-link'.$ressource, now()->addDay(1), ['userId' => $userId, 'id'=> $id ]
-    );
-
-    //SK ICI LE MAGIC LINK A SAUVER EN DB
-    //Enovyer un email avec le magic link
-    return response($url);
-
-});
-
-Route::get('user/{id}/magic-link', function (int $id, Request $request) {
-
-    $user = User::findOrFail($id);
-    //SK ICI A VERIF BDD ET vider cette colonne POUR S ASSURER QU UNE UTILISATION
-
-    //remove all tokens of current user before creating one other
-    $user->tokens()->delete();
-
-    $tokenResult = $user->createToken('GaelO');
-
-    return redirect('/?userId='.$user->id.'&token='.$tokenResult->plainTextToken);
-
-})->middleware(['signed'])->name('magic-link.visit');
-
-Route::get('user/{id}/magic-link', function (int $id, Request $request) {
-
-    $user = User::findOrFail($id);
-    //SK ICI A VERIF BDD ET vider cette colonne POUR S ASSURER QU UNE UTILISATION
-
-    //remove all tokens of current user before creating one other
-    $user->tokens()->delete();
-
-    $tokenResult = $user->createToken('GaelO');
-
-    return redirect('/?userId='.$user->id.'&token='.$tokenResult->plainTextToken);
-
-})->middleware(['signed'])->name('magic-link.patient');

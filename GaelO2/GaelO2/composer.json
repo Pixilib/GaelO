@@ -12,6 +12,7 @@
         "fideloper/proxy": "^4.4.1",
         "fruitcake/laravel-cors": "^2.0",
         "giggsey/libphonenumber-for-php": "^8.12",
+        "grosv/laravel-passwordless-login": "^1.6",
         "guzzlehttp/guzzle": "^7.0.1",
         "laravel/framework": "^8.0",
         "laravel/sanctum": "^2.11",

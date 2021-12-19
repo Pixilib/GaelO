@@ -561,4 +561,16 @@ class MailServices
         $this->mailInterface->send();
     }
 
+    public function sendMagicLink(int $targetedUserId, string $level, int $ressourceId, string $url){
+
+        $parameters = ['name' => 'user', 'url' => $url];
+
+        $this->mailInterface->setTo([$this->getUserEmail($targetedUserId)]);
+        $this->mailInterface->setReplyTo();
+        $this->mailInterface->setParameters($parameters);
+        $this->mailInterface->setBody(MailConstants::EMAIL_MAGIC_LINK);
+        $this->mailInterface->send();
+
+    }
+
 }

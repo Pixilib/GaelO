@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\GaelO\UseCases\AddAffiliatedCenter\AddAffiliatedCenter;
 use App\GaelO\UseCases\AddAffiliatedCenter\AddAffiliatedCenterRequest;
 use App\GaelO\UseCases\AddAffiliatedCenter\AddAffiliatedCenterResponse;
+use App\GaelO\UseCases\CreateMagicLink\CreateMagicLink;
+use App\GaelO\UseCases\CreateMagicLink\CreateMagicLinkRequest ;
+use App\GaelO\UseCases\CreateMagicLink\CreateMagicLinkResponse ;
 use App\GaelO\UseCases\CreateUser\CreateUser;
 use App\GaelO\UseCases\CreateUser\CreateUserRequest;
 use App\GaelO\UseCases\CreateUser\CreateUserResponse;
@@ -254,5 +257,21 @@ class UserController extends Controller
         $getUserFromStudyRequest->role = $queryParam['role'];
         $getUserFromStudy->execute($getUserFromStudyRequest, $getUserFromStudyResponse);
         return $this->getJsonResponse($getUserFromStudyResponse->body, $getUserFromStudyResponse->status, $getUserFromStudyResponse->statusText);
+    }
+
+    public function createMagicLink(int $userId, Request $request, CreateMagicLink $createMagicLink, CreateMagicLinkRequest $createMagicLinkRequest, CreateMagicLinkResponse $createMagicLinkResponse) {
+
+        $curentUser = Auth::user();
+        $requestData = $request->all();
+
+        $createMagicLinkRequest->targetUser = $userId;
+        $createMagicLinkRequest->currentUserId = $curentUser['id'];
+
+        $createMagicLinkRequest = Util::fillObject($requestData, $createMagicLinkResponse);
+;
+        $createMagicLink->execute($createMagicLinkRequest, $createMagicLinkResponse);
+
+        return $this->getJsonResponse($createMagicLinkResponse->body, $createMagicLinkResponse->status, $createMagicLinkResponse->statusText);
+
     }
 }

@@ -23,4 +23,5 @@ class MailConstants {
     const EMAIL_IMPORT_PATIENT=18;
     const EMAIL_REMINDER=19;
     const EMAIL_USER=20;
+    const EMAIL_MAGIC_LINK=21;
 }
