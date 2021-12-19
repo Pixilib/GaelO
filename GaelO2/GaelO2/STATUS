@@ -1,6 +1,5 @@
 Salim TODO :
 
-- Finir de tester debeuger la creation / verify email / change password
 - Test et debeug magic link
 - API Statistics Study (nombre de patients, de dicom study-series-instance et taille disque, nombre de visistes )
 - Passer status QC / Review au niveau visite et plus au niveau study
