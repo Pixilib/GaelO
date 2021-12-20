@@ -18,12 +18,12 @@ class EnsureUserActivated
     public function handle(Request $request, Closure $next)
     {
         $user = $request->user();
-        if ($user->status === Constants::USER_STATUS_UNCONFIRMED) {
-            return response('Unconfirmed Account', 403);
-        }else if ($user->status === Constants::USER_STATUS_DEACTIVATED) {
-            return response('', 403);
-        }else if ($user->status === Constants::USER_STATUS_BLOCKED) {
-            return response('Account Blocked', 403);
+        if ($user->email_verified_at === null) {
+            return response(Constants::USER_EMAIL_NOT_VERIFIED, 403);
+        }else if ($user->deleted_at !== null ) {
+            return response(Constants::USER_DELETED, 403);
+        }else if ($user->attempts >= 3 ) {
+            return response(Constants::USER_BLOCKED, 403);
         }
 
         return $next($request);

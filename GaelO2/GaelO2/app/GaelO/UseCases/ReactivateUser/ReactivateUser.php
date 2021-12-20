@@ -5,24 +5,23 @@ namespace App\GaelO\UseCases\ReactivateUser;
 use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
+use App\GaelO\Interfaces\Adapters\FrameworkInterface;
 use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
-use App\GaelO\Services\MailServices;
 use Exception;
 use App\GaelO\Interfaces\Repositories\UserRepositoryInterface;
 use App\GaelO\Services\AuthorizationService\AuthorizationUserService;
-use App\GaelO\Util;
 
 class ReactivateUser{
 
     private UserRepositoryInterface $userRepositoryInterface;
     private AuthorizationUserService $authorizationUserService;
     private TrackerRepositoryInterface $trackerRepositoryInterface;
-    private MailServices $mailServices;
+    private FrameworkInterface $frameworkInterface;
 
-    public function __construct(UserRepositoryInterface $userRepositoryInterface, AuthorizationUserService $authorizationUserService, TrackerRepositoryInterface $trackerRepositoryInterface, MailServices $mailServices){
+    public function __construct(UserRepositoryInterface $userRepositoryInterface, AuthorizationUserService $authorizationUserService, TrackerRepositoryInterface $trackerRepositoryInterface, FrameworkInterface $frameworkInterface){
         $this->trackerRepositoryInterface = $trackerRepositoryInterface;
         $this->userRepositoryInterface = $userRepositoryInterface;
-        $this->mailServices = $mailServices;
+        $this->frameworkInterface = $frameworkInterface;
         $this->authorizationUserService = $authorizationUserService;
     }
 
@@ -41,7 +40,6 @@ class ReactivateUser{
                 $user['id'],
                 $user['lastname'],
                 $user['firstname'],
-                Constants::USER_STATUS_UNCONFIRMED,
                 $user['email'],
                 $user['phone'],
                 $user['administrator'],
@@ -52,6 +50,10 @@ class ReactivateUser{
                 $user['orthanc_password'],
                 true
             );
+
+            //Send reset password link.
+            $emailSendSuccess = $this->frameworkInterface->sendResetPasswordLink($user['email']);
+            if (! $emailSendSuccess) throw new Exception('Error Sending Reset Email');
 
             $actionsDetails = [
                 'reactivatedUser' => $reactivateUserRequest->userId

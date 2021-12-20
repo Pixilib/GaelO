@@ -3,10 +3,9 @@
 namespace App\GaelO\Constants;
 class Constants {
 
-    const USER_STATUS_UNCONFIRMED = "Unconfirmed";
-    const USER_STATUS_ACTIVATED = "Activated";
-    const USER_STATUS_BLOCKED = "Blocked";
-    const USER_STATUS_DEACTIVATED = "Deactivated";
+    const USER_EMAIL_NOT_VERIFIED = 'Email Not Verified';
+    const USER_DELETED = 'User Deleted';
+    const USER_BLOCKED = 'User Blocked';
 
     const USER_JOB_CRA = 'CRA';
     const USER_JOB_SUPERVISION = 'Supervision';

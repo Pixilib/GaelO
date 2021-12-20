@@ -20,14 +20,13 @@ class ModifyUserTest extends TestCase
         parent::setUp();
 
         $center = Center::factory()->create();
-        $this->user = User::factory()->status(Constants::USER_STATUS_ACTIVATED)->job(Constants::USER_JOB_SUPERVISION)->create();
+        $this->user = User::factory()->job(Constants::USER_JOB_SUPERVISION)->create();
 
         $this->validPayload = [
             'lastname' => 'lastname',
             'firstname' => 'firstname',
             'email' => 'test@test.fr',
             'phone' => '+33685969895',
-            'status' => 'Blocked',
             'administrator' => true,
             'centerCode' => $center->code,
             'job' => 'CRA',
@@ -60,7 +59,7 @@ class ModifyUserTest extends TestCase
         $afterChangeUser = User::where('id',$this->user['id'])->get()->first()->toArray();
 
          //Value expected to have changed
-         $updatedArray = ['lastname', 'firstname', 'email', 'phone', 'status',
+         $updatedArray = ['lastname', 'firstname', 'email', 'phone',
          'administrator', 'center_code', 'job', 'orthanc_address', 'orthanc_login', 'orthanc_password'];
         //Check that key needed to be updated has been updated in database
         foreach($updatedArray as $key){
@@ -105,12 +104,10 @@ class ModifyUserTest extends TestCase
 
     public function testMakeAccountUnconfirmed(){
         AuthorizationTools::actAsAdmin(true);
-        $this->validPayload['status'] = Constants::USER_STATUS_UNCONFIRMED;
         $this->json('PUT', '/api/users/'.$this->user['id'], $this->validPayload)
         -> assertStatus(200);
         $updatedUser = User::where('id', $this->user['id'])->first();
-        $this->assertEquals(Constants::USER_STATUS_UNCONFIRMED, $updatedUser['status']);
-        $this->assertEquals(null, $updatedUser['email_verified_at']);
+        $this->assertNull($updatedUser['email_verified_at']);
 
     }
 

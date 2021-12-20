@@ -26,6 +26,8 @@ use App\GaelO\Constants\SettingsConstants;
 use App\GaelO\Interfaces\Adapters\FrameworkInterface;
 use App\GaelO\Interfaces\Adapters\MailerInterface;
 use App\Mail\ImportPatient;
+use App\Mail\MagicLink;
+use App\Mail\UserCreated;
 use Illuminate\Contracts\Mail\Mailable;
 
 class MailerAdapter implements MailerInterface {
@@ -126,6 +128,12 @@ class MailerAdapter implements MailerInterface {
                 break;
             case MailConstants::EMAIL_USER:
                 $model = new MailUser($this->parameters);
+                break;
+            case MailConstants::EMAIL_USER_CREATED:
+                $model = new UserCreated($this->parameters);
+                break;
+            case MailConstants::EMAIL_MAGIC_LINK:
+                $model = new MagicLink($this->parameters);
                 break;
         }
 

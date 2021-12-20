@@ -58,6 +58,7 @@ Route::middleware(['auth:sanctum', 'verified', 'activated'])->group(function () 
     Route::post('users/{id}/roles', [UserController::class, 'createRole']);
     Route::delete('users/{id}/roles/{roleName}', [UserController::class, 'deleteRole']);
     Route::get('studies/{studyName}/users', [UserController::class, 'getUserFromStudy']);
+    Route::post('user/{id}/magic-link', [UserController::class, 'createMagicLink']);
 
     //Study Routes
     Route::post('studies', [StudyController::class, 'createStudy']);
@@ -189,7 +190,7 @@ Route::middleware(['auth:sanctum', 'verified', 'activated'])->group(function () 
 //Request Route
 Route::post('request', [RequestController::class, 'sendRequest']);
 
-//Login and forgot password Route
+//Login Route
 Route::post('login', [AuthController::class, 'login'])->name('login');
 Route::post('tools/forgot-password', [UserController::class, 'forgotPassword'])->name('password.email');
 
@@ -204,43 +205,11 @@ Route::post('tools/reset-password', [UserController::class, 'updatePassword'] )-
 Route::get('email/verify/{id}/{hash}', function (Request $request) {
 
     $user = User::findOrFail($request->route('id'));
-
     if (!hash_equals((string) $request->route('hash'), sha1($user->getEmailForVerification()))) {
         throw new AuthorizationException();
     }
 
-    if ($user->markEmailAsVerified())
-        event(new Verified($user));
+    if ($user->markEmailAsVerified()) event(new Verified($user));
 
     return redirect('/email-verified');
 })->middleware(['signed'])->name('verification.verify');
-
-Route::post('user/{id}/magic-link', function (int $userId, Request $request) {
-
-    $url = URL::temporarySignedRoute(
-        'magic-link', now()->addDay(1), ['userId' => $userId]
-    );
-
-    //SK ICI LE MAGIC LINK A SAUVER EN DB
-    //Enovyer un email avec le magic link
-    return response($url);
-
-});
-
-Route::get('user/magic-link/{userId}', function (int $userId, Request $request) {
-
-    if (!$request->hasValidSignature()) {
-        abort(401);
-    }
-
-    $user = User::findOrFail($userId);
-    //SK ICI A VERIF BDD ET vider cette colonne POUR S ASSURER QU UNE UTILISATION
-
-    //remove all tokens of current user before creating one other
-    $user->tokens()->delete();
-
-    $tokenResult = $user->createToken('GaelO');
-
-    return redirect('/?userId='.$user->id.'&token='.$tokenResult->plainTextToken);
-
-})->name('magic-link');

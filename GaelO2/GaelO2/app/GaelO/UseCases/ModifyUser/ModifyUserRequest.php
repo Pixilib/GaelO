@@ -9,7 +9,6 @@ class ModifyUserRequest {
     public ?string $firstname = null;
     public string $email;
     public ?string $phone = null;
-    public string $status;
     public bool $administrator;
     public int $centerCode;
     public string $job;
