@@ -29,9 +29,6 @@ class AuthController extends Controller
 
             $user = User::where('email', $request->email)->sole();
 
-            //remove all tokens of current user before creating one other
-            $user->tokens()->delete();
-
             $tokenResult = $user->createToken('GaelO');
 
           return response()->json([
