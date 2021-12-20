@@ -23,5 +23,6 @@ interface FrameworkInterface {
 
     public static function sendRegisteredEventForEmailVerification(int $userId) : void ;
 
-    public static function createMagicLink(int $userId, string $redirectUrl): string
+    public static function createMagicLink(int $userId, string $redirectUrl): string;
+
 }
