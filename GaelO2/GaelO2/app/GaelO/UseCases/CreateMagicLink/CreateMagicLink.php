@@ -64,7 +64,10 @@ class CreateMagicLink{
             $urlLink = $this->magicLinkService->generate();
 
             //Send the magic link to destinators
-            $this->mailServices->sendMagicLink($createMagicLinkRequest->targetUser, $level, $ressourceId, $urlLink);
+            $this->mailServices->sendMagicLink($createMagicLinkRequest->targetUser, $level, $ressourceId, $studyName, $urlLink);
+
+            $createMagicLinkResponse->status = 200;
+            $createMagicLinkResponse->statusText =  'OK';
 
         } catch (GaelOException $e){
 

@@ -75,8 +75,8 @@ class AuthController extends Controller
         $createMagicLinkRequest->targetUser = $userId;
         $createMagicLinkRequest->currentUserId = $curentUser['id'];
 
-        $createMagicLinkRequest = Util::fillObject($requestData, $createMagicLinkResponse);
-;
+        $createMagicLinkRequest = Util::fillObject($requestData, $createMagicLinkRequest);
+
         $createMagicLink->execute($createMagicLinkRequest, $createMagicLinkResponse);
 
         return $this->getJsonResponse($createMagicLinkResponse->body, $createMagicLinkResponse->status, $createMagicLinkResponse->statusText);
