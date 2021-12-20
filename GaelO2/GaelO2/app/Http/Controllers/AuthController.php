@@ -57,13 +57,9 @@ class AuthController extends Controller
             }
 
             $user = User::findOrFail($request->id);
+            $token = $user->createToken('api')->plainTextToken;
 
-            return response()->json([
-                'token' => $user->createToken('api')->plainTextToken,
-                'userId' => $user->id,
-                'user' => $user,
-                'redirect_to' => $request->redirect_to
-            ], 200);
+            return response()->redirectTo($request->redirect_to."?token=".$token);
 
     }
 

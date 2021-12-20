@@ -60,10 +60,6 @@ Route::middleware(['auth:sanctum', 'verified', 'activated'])->group(function () 
     Route::get('studies/{studyName}/users', [UserController::class, 'getUserFromStudy']);
     Route::post('user/{id}/magic-link', [AuthController::class, 'createMagicLink']);
 
-    //Magic link route
-    Route::post('magic-link/{id}', [AuthController::class, 'getMagicLink'])->name('magic-link');
-
-
     //Study Routes
     Route::post('studies', [StudyController::class, 'createStudy']);
     Route::get('studies', [StudyController::class, 'getStudies']);
@@ -217,3 +213,6 @@ Route::get('email/verify/{id}/{hash}', function (Request $request) {
 
     return redirect('/email-verified');
 })->middleware(['signed'])->name('verification.verify');
+
+//Magic link route
+Route::get('magic-link/{id}', [AuthController::class, 'getMagicLink'])->name('magic-link');
