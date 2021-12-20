@@ -59,7 +59,9 @@ Route::middleware(['auth:sanctum', 'verified', 'activated'])->group(function () 
     Route::delete('users/{id}/roles/{roleName}', [UserController::class, 'deleteRole']);
     Route::get('studies/{studyName}/users', [UserController::class, 'getUserFromStudy']);
     Route::post('user/{id}/magic-link', [AuthController::class, 'createMagicLink']);
-    Route::post('user/{id}/magic-link/{redirect_to}', [AuthController::class, 'getMagicLink'])->name('magic-link');
+
+    //Magic link route
+    Route::post('magic-link/{id}', [AuthController::class, 'getMagicLink'])->name('magic-link');
 
 
     //Study Routes
