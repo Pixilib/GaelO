@@ -2,16 +2,12 @@
 
 namespace App\GaelO\Services;
 
-use App\GaelO\Constants\SettingsConstants;
 use App\GaelO\Exceptions\GaelOBadRequestException;
-use App\GaelO\Interfaces\Adapters\FrameworkInterface;
 use App\GaelO\Interfaces\Repositories\CenterRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\PatientRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\StudyRepositoryInterface;
 use App\GaelO\Util;
 use Exception;
-use Hamcrest\Type\IsNumeric;
-use Illuminate\Support\Facades\Log;
 
 class ImportPatientService
 {

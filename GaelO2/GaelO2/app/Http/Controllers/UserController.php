@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\GaelO\UseCases\AddAffiliatedCenter\AddAffiliatedCenter;
 use App\GaelO\UseCases\AddAffiliatedCenter\AddAffiliatedCenterRequest;
 use App\GaelO\UseCases\AddAffiliatedCenter\AddAffiliatedCenterResponse;
+use App\GaelO\UseCases\CreateMagicLink\CreateMagicLink;
+use App\GaelO\UseCases\CreateMagicLink\CreateMagicLinkRequest ;
+use App\GaelO\UseCases\CreateMagicLink\CreateMagicLinkResponse ;
 use App\GaelO\UseCases\CreateUser\CreateUser;
 use App\GaelO\UseCases\CreateUser\CreateUserRequest;
 use App\GaelO\UseCases\CreateUser\CreateUserResponse;
@@ -14,9 +17,6 @@ use App\GaelO\UseCases\ModifyUser\ModifyUserResponse;
 use App\GaelO\UseCases\GetUser\GetUser;
 use App\GaelO\UseCases\GetUser\GetUserRequest;
 use App\GaelO\UseCases\GetUser\GetUserResponse;
-use App\GaelO\UseCases\ChangePassword\ChangePassword;
-use App\GaelO\UseCases\ChangePassword\ChangePasswordRequest;
-use App\GaelO\UseCases\ChangePassword\ChangePasswordResponse;
 use App\GaelO\UseCases\CreateUserRoles\CreateUserRoles;
 use App\GaelO\UseCases\CreateUserRoles\CreateUserRolesRequest;
 use App\GaelO\UseCases\CreateUserRoles\CreateUserRolesResponse;
@@ -53,6 +53,7 @@ use App\GaelO\UseCases\ModifyUserIdentification\ModifyUserIdentificationResponse
 use App\GaelO\Util;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
+use Illuminate\Auth\Events\Verified;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
@@ -85,6 +86,13 @@ class UserController extends Controller
                     'password' => Hash::make($password)
                 ]);
 
+                //If password is null, it is the first password definition so we validate email as this reset password is made using email link
+                if($user->password === null ){
+                    if ($user->markEmailAsVerified()) event(new Verified($user));
+                }
+
+                //Reset number of attempts (unblock if blocked)
+                $user->attempts = 0;
                 $user->save();
             }
         );
@@ -249,5 +257,21 @@ class UserController extends Controller
         $getUserFromStudyRequest->role = $queryParam['role'];
         $getUserFromStudy->execute($getUserFromStudyRequest, $getUserFromStudyResponse);
         return $this->getJsonResponse($getUserFromStudyResponse->body, $getUserFromStudyResponse->status, $getUserFromStudyResponse->statusText);
+    }
+
+    public function createMagicLink(int $userId, Request $request, CreateMagicLink $createMagicLink, CreateMagicLinkRequest $createMagicLinkRequest, CreateMagicLinkResponse $createMagicLinkResponse) {
+
+        $curentUser = Auth::user();
+        $requestData = $request->all();
+
+        $createMagicLinkRequest->targetUser = $userId;
+        $createMagicLinkRequest->currentUserId = $curentUser['id'];
+
+        $createMagicLinkRequest = Util::fillObject($requestData, $createMagicLinkResponse);
+;
+        $createMagicLink->execute($createMagicLinkRequest, $createMagicLinkResponse);
+
+        return $this->getJsonResponse($createMagicLinkResponse->body, $createMagicLinkResponse->status, $createMagicLinkResponse->statusText);
+
     }
 }

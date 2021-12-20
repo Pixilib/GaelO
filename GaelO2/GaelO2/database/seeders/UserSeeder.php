@@ -21,7 +21,6 @@ class UserSeeder extends Seeder
             'firstname' => 'administrator',
             'email' => 'administrator@gaelo.fr',
             'creation_date'=> now(),
-            'status' => 'Activated',
             'password' => Hash::make('administrator'), // password
             'center_code' => 0,
             'job' => 'Monitor',

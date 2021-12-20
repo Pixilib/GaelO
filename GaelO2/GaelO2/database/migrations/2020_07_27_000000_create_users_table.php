@@ -23,7 +23,6 @@ class CreateUsersTable extends Migration
             $table->string('phone')->nullable(true);
             $table->dateTime('creation_date', 6)->nullable(false);
             $table->dateTime('last_connection', 6)->nullable(true);
-            $table->enum('status', ['Unconfirmed', 'Activated', 'Blocked'])->default('Unconfirmed')->nullable(false);
             $table->integer('attempts')->default(0)->nullable(false);
             $table->boolean('administrator')->default(false)->nullable(false);
             $table->unsignedInteger('center_code')->nullable(false);
@@ -34,7 +33,6 @@ class CreateUsersTable extends Migration
             $table->string('api_token', 80) ->unique()->nullable()->default(null);
             $table->dateTime('email_verified_at')->nullable()->default(null);
             $table->softDeletes();
-            //SK rememberToken sert a CSRF, peut etre pas utile si JWT a documenter
             $table->rememberToken();
             $table->timestamps();
 

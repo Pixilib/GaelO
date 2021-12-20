@@ -52,16 +52,16 @@ class Login
             }
 
             //if everything OK => Login
-            if ($user['status'] === Constants::USER_STATUS_ACTIVATED && $attempts < 3) {
+            if ( $user['email_verified_at'] !== null && $attempts < 3 ) {
                 $this->updateDbOnSuccess($user, $loginRequest->ip);
                 $loginResponse->status = 200;
                 $loginResponse->statusText = "OK";
             //should not happen
-            } else if($user['status'] === Constants::USER_STATUS_BLOCKED ) {
-                throw new GaelOUnauthorizedException("Blocked Account");
-            } else if($user['status'] === Constants::USER_STATUS_UNCONFIRMED ) {
-                throw new GaelOUnauthorizedException("Unconfirmed Account");
-            }else{
+            } else if( $user['email_verified_at'] === null ) {
+                throw new GaelOUnauthorizedException(Constants::USER_EMAIL_NOT_VERIFIED);
+            } else if( $attempts >= 3 ) {
+                throw new GaelOUnauthorizedException(Constants::USER_BLOCKED);
+            } else{
                 throw new Exception("Unkown Login Failure");
             }
 
@@ -86,7 +86,6 @@ class Login
         //Block account if needed
         if ($user['attempts'] >= 3) {
             if ($user['attempts'] == 3) $this->writeBlockedAccountInTracker($user);
-            $this->userRepositoryInterface->updateUserStatus($user['id'], Constants::USER_STATUS_BLOCKED);
             $this->sendBlockedEmail($user);
         }
 

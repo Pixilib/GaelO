@@ -36,8 +36,6 @@ class ForgotPassword
 
             $this->checkNotDeactivatedAccount($userEntity);
 
-            $this->userRepositoryInterface->updateUserAttempts($userEntity['id'], 0);
-
             $emailSendSuccess = $this->frameworkInterface->sendResetPasswordLink($email);
 
             if (! $emailSendSuccess) throw new Exception('Error Sending Reset Email');

@@ -55,7 +55,7 @@ class DeleteUserTest extends TestCase
         User::find(2)->delete();
         $this->json('PATCH', '/api/users/2/reactivate', $payload)->assertNoContent(200);
         $user = User::find(2)->toArray();
-        $this->assertEquals(Constants::USER_STATUS_UNCONFIRMED, $user['status']);
+        $this->assertNull($user['email_verified_at']);
 
     }
 }

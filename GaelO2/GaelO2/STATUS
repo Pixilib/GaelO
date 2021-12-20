@@ -1,16 +1,18 @@
 Salim TODO :
 
-- Optimiser l'utilisation des authorization service en injectant les data depuis le usecase (ou les rendre stateless)
+- Test et debeug magic link
+- API Statistics Study (nombre de patients, de dicom study-series-instance et taille disque, nombre de visistes )
+- Passer status QC / Review au niveau visite et plus au niveau study
+- Connecteur FTP/SFTP
+- Orthanc Send to peer
 
-Creatable Visit : Manque Study Custom Logic => Passer dans frontend
-Review  : faire une propriete dans visit pour savoir si review disponible a un user en plus de status reviewAvailable ?
+- Optimiser l'utilisation des authorization service en injectant les data depuis le usecase (ou les rendre stateless)
+- Creatable Visit : Manque Study Custom Logic => Passer dans frontend
+- Review  : faire une propriete dans visit pour savoir si review disponible a un user en plus de status reviewAvailable ?
 
 Reste Autres :
-- Monitoring etude (espace / patient ...)
 - Mise en place scheduler
 - Monitoring scheduler via tracker
-- Orthanc Send to peer
-- Connecteur FTP/SFTP
 - Dummy Run => Impact sur la db a designer => peut etre ne rien faire et passer par une etude de challenge
 - Dicom liée aux review  => Impacte sur la db a designer => probablement privilegier les associated file des reviews
 
@@ -18,6 +20,17 @@ Reste Autres :
 pourra modifier cornerstoneWADOImageLoader pour injecter l'etude courante
 et devrait pouvoir recuperer des info soit via le useQuery soit via un localstorage
 
+---- Refactoring Backend ----
+Refac pour la lecture eviter de passer par des services pour laisser les services à l'ecriture ?
+Dicom Series Service => peut etre evoluer vers un DicomService pour les deux niveaux
+
+Entity :
+- Pluger toutes les reponses "data" sur ces entity response
+=> GetPossibleUpload => VisitEntity ?
+=> GetReviewProgression => Visit + Review_status + Progression entity?
+=> GetVisitTree => ?, visit ?
+
+---- /Refactoring Backend ------
 
 --- Etudes ancillaires ---
 Ne doit pas pouvoir faire les relance d'upload => Voir avec Emilie
@@ -36,19 +49,6 @@ GetVisitTree
 => Reste avoir Study Service pour limiter les fonctionalité des etudes ancillaires
 
 --- /Etudes ancillaires ---
-
----- Refactoring Backend ----
-Refac pour la lecture eviter de passer par des services pour laisser les services à l'ecriture ?
-Dicom Series Service => peut etre evoluer vers un DicomService pour les deux niveaux
-
-Entity :
-- Pluger toutes les reponses "data" sur ces entity response
-=> GetPossibleUpload => VisitEntity ?
-=> GetReviewProgression => Visit + Review_status + Progression entity?
-=> GetVisitTree => ?, visit ?
-
----- /Refactoring Backend ------
-
 
 **** Tests ***
 Test feature : visit et autres (dicom...)
