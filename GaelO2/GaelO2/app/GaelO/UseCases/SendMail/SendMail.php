@@ -32,7 +32,7 @@ class SendMail {
 
             //EO split 1 use case par role ? 
             if($sendMailRequest->role === Constants::ROLE_SUPERVISOR){
-                if(!isset($sendMailRequest->userId)) throw new GaelOBadRequestException('Request Missing recipient');
+                if(!isset($sendMailRequest->userIds)) throw new GaelOBadRequestException('Request Missing recipient');
 
                 //EO Identifier les admins par 0 ? Rajouter un paramètre bool toAdministrators ?
                 if($sendMailRequest->userIds === 0) $this->mailService->sendMailToAdministrators(

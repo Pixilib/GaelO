@@ -521,7 +521,7 @@ class MailServices
 
         $this->mailInterface->setTo(
                 array_map(function ($userId) {
-                    $this->getUserEmail($userId);
+                    return $this->getUserEmail($userId);
                 }, $userIds)
         );
         $this->mailInterface->setReplyTo();

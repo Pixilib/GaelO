@@ -40,7 +40,6 @@ class SendMailTest extends TestCase
         }
     }
 
-
     public function testSendReminderInvestigator() {
         $currentUserId = AuthorizationTools::actAsAdmin(false);
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $this->study->name);
@@ -65,7 +64,7 @@ class SendMailTest extends TestCase
             <p>The imaging team</p>',
         ];
 
-        $response = $this->json('POST', '/api/studies/'.$this->study->name.'/send-reminder?role='.Constants::ROLE_INVESTIGATOR, $payload)->assertNoContent(200);
+        $this->json('POST', '/api/studies/'.$this->study->name.'/send-reminder?role='.Constants::ROLE_INVESTIGATOR, $payload)->assertNoContent(200);
     }
 
     public function testSendReminderController() {
@@ -90,7 +89,7 @@ class SendMailTest extends TestCase
             <p>The imaging team</p>',
         ];
 
-        $response = $this->json('POST', '/api/studies/'.$this->study->name.'/send-reminder?role='.Constants::ROLE_CONTROLLER, $payload)->assertNoContent(200);
+        $this->json('POST', '/api/studies/'.$this->study->name.'/send-reminder?role='.Constants::ROLE_CONTROLLER, $payload)->assertNoContent(200);
     }
 
     public function testSendReminderReviewer() {
@@ -115,7 +114,7 @@ class SendMailTest extends TestCase
             <p>The imaging team</p>',
         ];
 
-        $response = $this->json('POST', '/api/studies/'.$this->study->name.'/send-reminder?role='.Constants::ROLE_REVIEWER, $payload)->assertNoContent(200);
+        $this->json('POST', '/api/studies/'.$this->study->name.'/send-reminder?role='.Constants::ROLE_REVIEWER, $payload)->assertNoContent(200);
     }
 
     public function testSendMailToSupervisors() {
@@ -128,7 +127,7 @@ class SendMailTest extends TestCase
             'content' => '<p>Something</p>',
         ];
 
-        $response = $this->json('POST', '/api/send-mail?role='.Constants::ROLE_INVESTIGATOR.'&study='.$this->study->name, $payload)->assertNoContent(200);
+        $this->json('POST', '/api/send-mail?role='.Constants::ROLE_INVESTIGATOR.'&study='.$this->study->name, $payload)->assertNoContent(200);
     }
 
     public function testSendMailToUser() {
@@ -136,12 +135,12 @@ class SendMailTest extends TestCase
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $this->study->name);
 
         $payload = [
-            'userId' => $currentUserId,
+            'userIds' => [$currentUserId],
             'subject' => 'Question',
             'content' => '<p>Something</p>',
         ];
 
-        $response = $this->json('POST', '/api/send-mail?role='.Constants::ROLE_SUPERVISOR.'&study='.$this->study->name, $payload)->assertNoContent(200);
+        $this->json('POST', '/api/send-mail?role='.Constants::ROLE_SUPERVISOR.'&study='.$this->study->name, $payload)->assertNoContent(200);
     }
 
 }
