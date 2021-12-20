@@ -2,7 +2,7 @@
 
 namespace App\GaelO\UseCases\CreateMagicLink;
 
-class CreateMagicLinkResponse {
+class CreateMagicLinkResponse{
     public int $status;
     public string $statusText;
     public $body = null;
