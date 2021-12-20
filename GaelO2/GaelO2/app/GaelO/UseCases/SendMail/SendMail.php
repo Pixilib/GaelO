@@ -35,7 +35,7 @@ class SendMail {
                 if(!isset($sendMailRequest->userId)) throw new GaelOBadRequestException('Request Missing recipient');
 
                 //EO Identifier les admins par 0 ? Rajouter un paramètre bool toAdministrators ?
-                if($sendMailRequest->userId === 0) $this->mailService->sendMailToAdministrators(
+                if($sendMailRequest->userIds === 0) $this->mailService->sendMailToAdministrators(
                     $sendMailRequest->study, 
                     $sendMailRequest->subject, 
                     $sendMailRequest->content
@@ -43,7 +43,7 @@ class SendMail {
                 else {
                     //EO checkEmpty() ne passe pas pour id 0 (renvoie faux)
                     $this->mailService->sendMailToUser(
-                        $sendMailRequest->userId, 
+                        $sendMailRequest->userIds, 
                         $sendMailRequest->study, 
                         $sendMailRequest->subject, 
                         $sendMailRequest->content

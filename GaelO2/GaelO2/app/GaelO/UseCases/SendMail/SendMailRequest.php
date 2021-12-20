@@ -8,7 +8,7 @@ class SendMailRequest{
     public string $subject;
     public string $content;
     public string $role;
-    public ?int $userId = null;
+    public $userIds;
     public ?string $patientId = null;
     public ?int $visitId = null;
     public ?bool $toAdministrators = false;
