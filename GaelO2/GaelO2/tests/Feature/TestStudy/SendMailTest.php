@@ -143,4 +143,16 @@ class SendMailTest extends TestCase
         $this->json('POST', '/api/send-mail?role='.Constants::ROLE_SUPERVISOR.'&study='.$this->study->name, $payload)->assertNoContent(200);
     }
 
+    public function testSendMailToUserFromAdmin() {
+        $currentUserId = AuthorizationTools::actAsAdmin(true);
+
+        $payload = [
+            'userIds' => [$currentUserId],
+            'subject' => 'Question',
+            'content' => '<p>Something</p>',
+        ];
+
+        $this->json('POST', '/api/send-mail?role='.Constants::ROLE_ADMINISTRATOR, $payload)->assertNoContent(200);
+    }
+
 }

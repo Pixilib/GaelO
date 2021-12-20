@@ -30,8 +30,12 @@ class MailUser extends Mailable implements ShouldQueue
      */
     public function build()
     {
+        //If mail is from admin, there is no study context
+        $subject = $this->parameters['study'] ? 
+            $this->parameters['study']." - ".$this->parameters['subject'] : 
+            $this->parameters['subject'];
         return $this->view('mails.mail_user')
-        ->subject($this->parameters['study']." - ".$this->parameters['subject'])
+        ->subject($subject)
         ->with($this->parameters);
     }
 }

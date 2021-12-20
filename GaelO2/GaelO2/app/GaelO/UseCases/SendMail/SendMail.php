@@ -49,6 +49,13 @@ class SendMail {
                         $sendMailRequest->content
                     );
                 }
+            } else if ($sendMailRequest->role === Constants::ROLE_ADMINISTRATOR) {
+                $this->mailService->sendMailToUser(
+                    $sendMailRequest->userIds, 
+                    null, 
+                    $sendMailRequest->subject, 
+                    $sendMailRequest->content
+                );
             } else {
                 $this->mailService->sendMailToSupervisors(
                     $sendMailRequest->study, 

@@ -511,7 +511,7 @@ class MailServices
         $this->mailInterface->send();
     }
 
-    public function sendMailToUser(array $userIds, string $study, string $subject, string $content)
+    public function sendMailToUser(array $userIds, ?string $study, string $subject, string $content)
     {
         $parameters = [
             'study' => $study,
