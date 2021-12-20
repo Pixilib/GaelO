@@ -1,5 +1,5 @@
 @extends('mails.mail_template')
 
 @section('content')
-    Magic Link is available <a href={{$url}}>
+    Magic Link To Connect <a href={{$url}}>Following This Link </a>
 @endsection
