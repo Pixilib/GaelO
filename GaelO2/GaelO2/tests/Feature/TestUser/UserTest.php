@@ -236,7 +236,7 @@ class UserTest extends TestCase
         //Expect to have 5 users in the list
         $this->assertEquals(6, sizeof($responseArray));
         //Each User has limited details
-        $this->assertEquals(5, sizeof( array_keys($responseArray[0]) ));
+        $this->assertEquals(7, sizeof( array_keys($responseArray[0]) ));
     }
 
     public function testGetUserFromStudyForbiddenNotAdminOrSupervisor()

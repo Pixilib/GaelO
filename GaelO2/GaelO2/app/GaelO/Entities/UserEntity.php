@@ -47,6 +47,8 @@ class UserEntity {
         $userEntity->firstname = $array['firstname'];
         $userEntity->lastname = $array['lastname'];
         $userEntity->centerCode = $array['center_code'];
+        $userEntity->email = $array['email'];
+        $userEntity->phone = $array['phone'];
         return $userEntity;
     }
 
