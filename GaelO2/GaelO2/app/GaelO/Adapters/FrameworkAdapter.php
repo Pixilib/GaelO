@@ -4,11 +4,11 @@ namespace App\GaelO\Adapters;
 
 use App\GaelO\Interfaces\Adapters\FrameworkInterface;
 use App\Models\User;
-use Grosv\LaravelPasswordlessLogin\LoginUrl;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Facades\URL;
 
 class FrameworkAdapter implements FrameworkInterface
 {
@@ -44,14 +44,21 @@ class FrameworkAdapter implements FrameworkInterface
     }
 
 
-    public static function generateMagicLink(int $userId, string $destination): string
+    public static function createMagicLink(int $userId, string $redirectUrl): string
     {
+        $routeName = 'magic-link';
+        $routeExpires = 72;
+
         $user = User::find($userId);
 
-        $generator = new LoginUrl($user);
-        $generator->setRedirectUrl($destination); // Override the default url to redirect to after login
-        $url = $generator->generate();
+        return URL::temporarySignedRoute(
+            $routeName,
+            now()->addHour($routeExpires),
+            [
+                'id' => $user->getAuthIdentifier(),
+                'redirect_to' => $redirectUrl
+            ]
+        );
 
-        return $url;
     }
 }

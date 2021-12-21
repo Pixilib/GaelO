@@ -259,18 +259,4 @@ class UserController extends Controller
         return $this->getJsonResponse($getUserFromStudyResponse->body, $getUserFromStudyResponse->status, $getUserFromStudyResponse->statusText);
     }
 
-    public function createMagicLink(int $userId, Request $request, CreateMagicLink $createMagicLink, CreateMagicLinkRequest $createMagicLinkRequest, CreateMagicLinkResponse $createMagicLinkResponse) {
-
-        $currentUser = Auth::user();
-        $requestData = $request->all();
-
-        $createMagicLinkRequest->targetUser = $userId;
-        $createMagicLinkRequest->currentUserId = $currentUser['id'];
-
-        $createMagicLinkRequest = Util::fillObject($requestData, $createMagicLinkResponse);
-        $createMagicLink->execute($createMagicLinkRequest, $createMagicLinkResponse);
-
-        return $this->getJsonResponse($createMagicLinkResponse->body, $createMagicLinkResponse->status, $createMagicLinkResponse->statusText);
-
-    }
 }

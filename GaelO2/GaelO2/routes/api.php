@@ -58,7 +58,7 @@ Route::middleware(['auth:sanctum', 'verified', 'activated'])->group(function () 
     Route::post('users/{id}/roles', [UserController::class, 'createRole']);
     Route::delete('users/{id}/roles/{roleName}', [UserController::class, 'deleteRole']);
     Route::get('studies/{studyName}/users', [UserController::class, 'getUserFromStudy']);
-    Route::post('user/{id}/magic-link', [UserController::class, 'createMagicLink']);
+    Route::post('user/{id}/magic-link', [AuthController::class, 'createMagicLink']);
 
     //Study Routes
     Route::post('studies', [StudyController::class, 'createStudy']);
@@ -214,3 +214,6 @@ Route::get('email/verify/{id}/{hash}', function (Request $request) {
 
     return redirect('/email-verified');
 })->middleware(['signed'])->name('verification.verify');
+
+//Magic link route
+Route::get('magic-link/{id}', [AuthController::class, 'getMagicLink'])->name('magic-link');
