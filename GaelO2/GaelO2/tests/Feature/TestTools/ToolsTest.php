@@ -5,16 +5,12 @@ namespace Tests\Feature\TestTools;
 use App\GaelO\Constants\Constants;
 use App\Models\Center;
 use App\Models\Patient;
-use App\Models\Review;
-use App\Models\ReviewStatus;
+use App\Models\User;
 use App\Models\Study;
-use App\Models\Visit;
-use App\Models\VisitGroup;
-use App\Models\VisitType;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\AuthorizationTools;
 use Tests\TestCase;
-use Log;
+
 class ToolsTest extends TestCase
 {
     use DatabaseMigrations {
@@ -33,15 +29,9 @@ class ToolsTest extends TestCase
         $study = Study::factory()->name('TEST')->create();
         $center = Center::factory()->code(1)->create();
         $patient = Patient::factory()->studyName($study->name)->centerCode($center->code)->create();
-        $visitGroup = VisitGroup::factory()->studyName($study->name)->modality('PT')->create();
-        $visitType  = VisitType::factory()->visitGroupId($visitGroup->id)->name('PET0')->localFormNeeded()->create();
-        $visit = Visit::factory()->patientId($patient->id)->visitTypeId($visitType->id)->create();
-        ReviewStatus::factory()->studyName($study->name)->visitId($visit->id)->reviewAvailable()->create();
-        $this->review = Review::factory()->studyName($study->name)->visitId($visit->id)->reviewForm()->create();
         $this->studyName = $study->name;
         $this->centerCode = $center->code;
         $this->patientId = $patient->id;
-        $this->visitTypeId = $visitType->id;
     }
 
     public function testGetPatientsInStudyFromCenters() {
@@ -64,6 +54,16 @@ class ToolsTest extends TestCase
         $this->assertEquals(20, sizeof($content));
     }
 
+    public function testGetPatientsInStudyFromCentersForbiddenNotSupervisor() {
+        AuthorizationTools::actAsAdmin(false);
+
+        $validPayload['centerCodes']  = [ $this->centerCode ];
+        $validPayload['studyName'] = $this->studyName;
+
+        $answer = $this->json('POST', 'api/tools/centers/patients-from-centers', $validPayload);
+        $answer->assertStatus(403);
+    }
+
     public function testGetPatientsVisitsInStudy() {
         $currentUserId = AuthorizationTools::actAsAdmin(false);
 
@@ -73,7 +73,42 @@ class ToolsTest extends TestCase
         $answer = $this->json('POST', 'api/tools/patients/visits-from-patients?studyName='.$this->studyName, $validPayload);
         $answer->assertSuccessful();
         $content = json_decode($answer->content(), true);
+    }
 
+    public function testGetPatientsVisitsInStudyForbiddenNotSupervisor() {
+        AuthorizationTools::actAsAdmin(false);
+
+        $validPayload['patientIds'] = [ $this->patientId ];
+        $answer = $this->json('POST', 'api/tools/patients/visits-from-patients?studyName='.$this->studyName, $validPayload);
+        $answer->assertStatus(403);
+    }
+
+    public function testFindUser() {
+        User::factory()->email('test@test.fr')->create();
+        
+        $currentUserId = AuthorizationTools::actAsAdmin(false);
+        AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $this->studyName);
+
+        $validPayload['email'] = 'test@test.fr';
+        $answer = $this->json('POST', 'api/tools/find-user?studyName='.$this->studyName, $validPayload);
+        $answer->assertSuccessful();
+    }
+
+    public function testFindUserDoesNotExist() {        
+        $currentUserId = AuthorizationTools::actAsAdmin(false);
+        AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $this->studyName);
+
+        $validPayload['email'] = 'test@test.fr';
+        $answer = $this->json('POST', 'api/tools/find-user?studyName='.$this->studyName, $validPayload);
+        $answer->assertStatus(404);
+    }
+
+    public function testFindUserForbiddenNotSupervisor() {
+        AuthorizationTools::actAsAdmin(false);
+
+        $validPayload['email'] = 'test@test.fr';
+        $answer = $this->json('POST', 'api/tools/find-user?studyName='.$this->studyName, $validPayload);
+        $answer->assertStatus(403);
     }
 
 }

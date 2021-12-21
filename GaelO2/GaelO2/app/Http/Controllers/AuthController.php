@@ -56,7 +56,7 @@ class AuthController extends Controller
             $user = User::findOrFail($request->id);
             $token = $user->createToken('GaelO')->plainTextToken;
 
-            return response()->redirectTo($request->redirect_to."?token=".$token);
+            return response()->redirectTo($request->redirect_to."?userId=".$request->id."&token=".$token);
 
     }
 
