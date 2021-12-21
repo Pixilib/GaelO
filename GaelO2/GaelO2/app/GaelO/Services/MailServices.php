@@ -495,7 +495,6 @@ class MailServices
     {
 
         $parameters = [
-            'name' => 'Supervisor',
             'study' => $study,
             'subject' => $subject,
             'content' => $content,
@@ -512,20 +511,18 @@ class MailServices
         $this->mailInterface->send();
     }
 
-    public function sendMailToUser(int $userId, string $study, string $subject, string $content)
+    public function sendMailToUser(array $userIds, ?string $study, string $subject, string $content)
     {
-        $userId = $userId;
         $parameters = [
-            'name' => $this->getUserName($userId),
             'study' => $study,
             'subject' => $subject,
             'content' => $content
         ];
 
         $this->mailInterface->setTo(
-            [
-                $this->getUserEmail($userId)
-            ]
+                array_map(function ($userId) {
+                    return $this->getUserEmail($userId);
+                }, $userIds)
         );
         $this->mailInterface->setReplyTo();
         $this->mailInterface->setParameters($parameters);

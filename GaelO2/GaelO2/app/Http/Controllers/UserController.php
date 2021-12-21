@@ -104,8 +104,8 @@ class UserController extends Controller
 
     public function getUser(int $id = null, GetUserRequest $getUserRequest, GetUserResponse $getUserResponse, GetUser $getUser)
     {
-        $curentUser = Auth::user();
-        $getUserRequest->currentUserId = $curentUser['id'];
+        $currentUser = Auth::user();
+        $getUserRequest->currentUserId = $currentUser['id'];
         $getUserRequest->id = $id;
         $getUser->execute($getUserRequest, $getUserResponse);
         return $this->getJsonResponse($getUserResponse->body, $getUserResponse->status, $getUserResponse->statusText);
@@ -114,9 +114,9 @@ class UserController extends Controller
     public function createUser(Request $request, CreateUserRequest $createUserRequest, CreateUserResponse $createUserResponse, CreateUser $createUser)
     {
         //Get current user requesting the API
-        $curentUser = Auth::user();
+        $currentUser = Auth::user();
         //Add current user ID in Request DTO
-        $createUserRequest->currentUserId = $curentUser['id'];
+        $createUserRequest->currentUserId = $currentUser['id'];
         $requestData = $request->all();
         //Fill DTO with all other request data
         $createUserRequest = Util::fillObject($requestData, $createUserRequest);
@@ -128,8 +128,8 @@ class UserController extends Controller
 
     public function modifyUser(int $id, Request $request, ModifyUserRequest $modifyUserRequest, ModifyUserResponse $modifyUserResponse, ModifyUser $modifyUser)
     {
-        $curentUser = Auth::user();
-        $modifyUserRequest->currentUserId = $curentUser['id'];
+        $currentUser = Auth::user();
+        $modifyUserRequest->currentUserId = $currentUser['id'];
         $requestData = $request->all();
         $requestData['userId'] = $id;
         $modifyUserRequest = Util::fillObject($requestData, $modifyUserRequest);
@@ -139,8 +139,8 @@ class UserController extends Controller
 
     public function modifyUserIdentification(int $id, Request $request, ModifyUserIdentificationRequest $modifyUserRequest, ModifyUserIdentificationResponse $modifyUserResponse, ModifyUserIdentification $modifyUser)
     {
-        $curentUser = Auth::user();
-        $modifyUserRequest->currentUserId = $curentUser['id'];
+        $currentUser = Auth::user();
+        $modifyUserRequest->currentUserId = $currentUser['id'];
         $requestData = $request->all();
         $requestData['userId'] = $id;
         $modifyUserRequest = Util::fillObject($requestData, $modifyUserRequest);
@@ -162,10 +162,10 @@ class UserController extends Controller
 
     public function getRoles(int $id, Request $request, GetRolesInStudyFromUser $getRolesInStudyFromUser, GetRolesInStudyFromUserRequest $getRolesInStudyFromUserRequest, GetRolesInStudyFromUserResponse $getRolesInStudyFromUserResponse)
     {
-        $curentUser = Auth::user();
+        $currentUser = Auth::user();
         $queryParam = $request->query();
         $getRolesInStudyFromUserRequest->studyName = $queryParam['studyName'];
-        $getRolesInStudyFromUserRequest->currentUserId = $curentUser['id'];
+        $getRolesInStudyFromUserRequest->currentUserId = $currentUser['id'];
         $getRolesInStudyFromUserRequest->userId = $id;
 
         $getRolesInStudyFromUser->execute($getRolesInStudyFromUserRequest, $getRolesInStudyFromUserResponse);
@@ -174,8 +174,8 @@ class UserController extends Controller
 
     public function getStudiesFromUser(int $userId, GetStudiesFromUser $getStudiesFromUser, GetStudiesFromUserRequest $getStudiesFromUserRequest, GetStudiesFromUserResponse $getStudiesFromUserResponse)
     {
-        $curentUser = Auth::user();
-        $getStudiesFromUserRequest->currentUserId = $curentUser['id'];
+        $currentUser = Auth::user();
+        $getStudiesFromUserRequest->currentUserId = $currentUser['id'];
         $getStudiesFromUserRequest->userId = $userId;
         $getStudiesFromUser->execute($getStudiesFromUserRequest, $getStudiesFromUserResponse);
 
@@ -184,12 +184,12 @@ class UserController extends Controller
 
     public function createRole(int $id, Request $request, CreateUserRoles $createUserRole, CreateUserRolesRequest $createUserRoleRequest, CreateUserRolesResponse $createUserRoleResponse)
     {
-        $curentUser = Auth::user();
+        $currentUser = Auth::user();
         $requestData = $request->all();
         $queryParam = $request->query();
         $createUserRoleRequest->studyName = $queryParam['studyName'];
         $createUserRoleRequest->userId = $id;
-        $createUserRoleRequest->currentUserId = $curentUser['id'];
+        $createUserRoleRequest->currentUserId = $currentUser['id'];
         $createUserRoleRequest = Util::fillObject($requestData, $createUserRoleRequest);
         $createUserRole->execute($createUserRoleRequest, $createUserRoleResponse);
         return $this->getJsonResponse($createUserRoleResponse->body, $createUserRoleResponse->status, $createUserRoleResponse->statusText);
@@ -197,10 +197,10 @@ class UserController extends Controller
 
     public function deleteRole(int $id, Request $request, String $roleName, DeleteUserRole $deleteUserRole, DeleteUserRoleRequest $deleteUserRoleRequest, DeleteUserRoleResponse $deleteUserRoleResponse)
     {
-        $curentUser = Auth::user();
+        $currentUser = Auth::user();
         $queryParam = $request->query();
         $deleteUserRoleRequest->studyName = $queryParam['studyName'];
-        $deleteUserRoleRequest->currentUserId = $curentUser['id'];
+        $deleteUserRoleRequest->currentUserId = $currentUser['id'];
         $deleteUserRoleRequest->userId = $id;
         $deleteUserRoleRequest->role = $roleName;
         $deleteUserRole->execute($deleteUserRoleRequest, $deleteUserRoleResponse);
@@ -211,8 +211,8 @@ class UserController extends Controller
     {
         $requestData = $request->all();
         $addAffiliatedCenterRequest = Util::fillObject($requestData, $addAffiliatedCenterRequest);
-        $curentUser = Auth::user();
-        $addAffiliatedCenterRequest->currentUserId = $curentUser['id'];
+        $currentUser = Auth::user();
+        $addAffiliatedCenterRequest->currentUserId = $currentUser['id'];
         $addAffiliatedCenterRequest->userId = $userId;
 
         $addAffiliatedCenter->execute($addAffiliatedCenterRequest, $addAffiliatedCenterResponse);
@@ -222,8 +222,8 @@ class UserController extends Controller
 
     public function getAffiliatedCenter(int $userId, GetAffiliatedCenter $getAffiliatedCenter, GetAffiliatedCenterRequest $getAffiliatedCenterRequest, GetAffiliatedCenterResponse $getAffiliatedCenterResponse)
     {
-        $curentUser = Auth::user();
-        $getAffiliatedCenterRequest->currentUserId = $curentUser['id'];
+        $currentUser = Auth::user();
+        $getAffiliatedCenterRequest->currentUserId = $currentUser['id'];
         $getAffiliatedCenterRequest->userId = $userId;
         $getAffiliatedCenter->execute($getAffiliatedCenterRequest, $getAffiliatedCenterResponse);
         return $this->getJsonResponse($getAffiliatedCenterResponse->body, $getAffiliatedCenterResponse->status, $getAffiliatedCenterResponse->statusText);
@@ -231,8 +231,8 @@ class UserController extends Controller
 
     public function deleteAffiliatedCenter(int $userId, int $centerCode, DeleteAffiliatedCenter $deleteAffiliatedCenter, DeleteAffiliatedCenterRequest $deleteAffiliatedCenterRequest, DeleteAffiliatedCenterResponse $deleteAffiliatedCenterResponse)
     {
-        $curentUser = Auth::user();
-        $deleteAffiliatedCenterRequest->currentUserId = $curentUser['id'];
+        $currentUser = Auth::user();
+        $deleteAffiliatedCenterRequest->currentUserId = $currentUser['id'];
         $deleteAffiliatedCenterRequest->userId = $userId;
         $deleteAffiliatedCenterRequest->centerCode = $centerCode;
         $deleteAffiliatedCenter->execute($deleteAffiliatedCenterRequest, $deleteAffiliatedCenterResponse);
@@ -241,8 +241,8 @@ class UserController extends Controller
 
     public function reactivateUser(int $userId, ReactivateUser $reactivateUser, ReactivateUserRequest $reactivateUserRequest, ReactivateUserResponse $reactivateUserResponse)
     {
-        $curentUser = Auth::user();
-        $reactivateUserRequest->currentUserId = $curentUser['id'];
+        $currentUser = Auth::user();
+        $reactivateUserRequest->currentUserId = $currentUser['id'];
         $reactivateUserRequest->userId = $userId;
         $reactivateUser->execute($reactivateUserRequest, $reactivateUserResponse);
         return $this->getJsonResponse($reactivateUserResponse->body, $reactivateUserResponse->status, $reactivateUserResponse->statusText);
@@ -250,9 +250,9 @@ class UserController extends Controller
 
     public function getUserFromStudy(string $studyName, Request $request, GetUserFromStudyRequest $getUserFromStudyRequest, GetUserFromStudyResponse $getUserFromStudyResponse, GetUserFromStudy $getUserFromStudy)
     {
-        $curentUser = Auth::user();
+        $currentUser = Auth::user();
         $queryParam = $request->query();
-        $getUserFromStudyRequest->currentUserId = $curentUser['id'];
+        $getUserFromStudyRequest->currentUserId = $currentUser['id'];
         $getUserFromStudyRequest->studyName = $studyName;
         $getUserFromStudyRequest->role = $queryParam['role'];
         $getUserFromStudy->execute($getUserFromStudyRequest, $getUserFromStudyResponse);

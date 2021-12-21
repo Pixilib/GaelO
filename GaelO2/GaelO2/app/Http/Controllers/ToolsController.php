@@ -8,6 +8,9 @@ use App\GaelO\UseCases\GetPatientsInStudyFromCenters\GetPatientsInStudyFromCente
 use App\GaelO\UseCases\GetPatientsVisitsInStudy\GetPatientsVisitsInStudy;
 use App\GaelO\UseCases\GetPatientsVisitsInStudy\GetPatientsVisitsInStudyRequest;
 use App\GaelO\UseCases\GetPatientsVisitsInStudy\GetPatientsVisitsInStudyResponse;
+use App\GaelO\UseCases\FindUser\FindUser;
+use App\GaelO\UseCases\FindUser\FindUserRequest;
+use App\GaelO\UseCases\FindUser\FindUserResponse;
 use App\GaelO\Util;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -45,4 +48,20 @@ class ToolsController extends Controller
         return $this->getJsonResponse($getPatientsVisitsInStudyResponse->body, $getPatientsVisitsInStudyResponse->status, $getPatientsVisitsInStudyResponse->statusText);
     }
 
+    public function findUser(Request $request,
+        FindUser $findUser,
+        FindUserRequest $findUserRequest,
+        FindUserResponse $findUserResponse) {
+            
+        $currentUser = Auth::user();
+
+        $findUserRequest->currentUserId = $currentUser['id'];
+        $requestData = $request->all();
+        $findUserRequest = Util::fillObject($requestData, $findUserRequest);
+        $queryParam = $request->query();
+        $findUserRequest->studyName = $queryParam['studyName'];
+        $findUser->execute($findUserRequest, $findUserResponse);
+        return $this->getJsonResponse($findUserResponse->body, $findUserResponse->status, $findUserResponse->statusText);
+
+    }
 }

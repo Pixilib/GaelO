@@ -32,10 +32,10 @@ class SendMail {
 
             //EO split 1 use case par role ? 
             if($sendMailRequest->role === Constants::ROLE_SUPERVISOR){
-                if(!isset($sendMailRequest->userId)) throw new GaelOBadRequestException('Request Missing recipient');
+                if(!isset($sendMailRequest->userIds)) throw new GaelOBadRequestException('Request Missing recipient');
 
                 //EO Identifier les admins par 0 ? Rajouter un paramètre bool toAdministrators ?
-                if($sendMailRequest->userId === 0) $this->mailService->sendMailToAdministrators(
+                if($sendMailRequest->userIds === 0) $this->mailService->sendMailToAdministrators(
                     $sendMailRequest->study, 
                     $sendMailRequest->subject, 
                     $sendMailRequest->content
@@ -43,12 +43,19 @@ class SendMail {
                 else {
                     //EO checkEmpty() ne passe pas pour id 0 (renvoie faux)
                     $this->mailService->sendMailToUser(
-                        $sendMailRequest->userId, 
+                        $sendMailRequest->userIds, 
                         $sendMailRequest->study, 
                         $sendMailRequest->subject, 
                         $sendMailRequest->content
                     );
                 }
+            } else if ($sendMailRequest->role === Constants::ROLE_ADMINISTRATOR) {
+                $this->mailService->sendMailToUser(
+                    $sendMailRequest->userIds, 
+                    null, 
+                    $sendMailRequest->subject, 
+                    $sendMailRequest->content
+                );
             } else {
                 $this->mailService->sendMailToSupervisors(
                     $sendMailRequest->study, 
