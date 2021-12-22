@@ -53,8 +53,8 @@ class ReviewController extends Controller
     public function getInvestigatorForm(int $visitId, Request $request, GetInvestigatorForm $getInvestigatorForm, GetInvestigatorFormRequest $getInvestigatorFormRequest, GetInvestigatorFormResponse $getInvestigatorFormResponse)
     {
 
-        $curentUser = Auth::user();
-        $getInvestigatorFormRequest->currentUserId = $curentUser['id'];
+        $currentUser = Auth::user();
+        $getInvestigatorFormRequest->currentUserId = $currentUser['id'];
         $getInvestigatorFormRequest->visitId = $visitId;
 
         $queryParam = $request->query();
@@ -68,9 +68,9 @@ class ReviewController extends Controller
 
     public function deleteInvestigatorForm(int $visitId, Request $request, DeleteInvestigatorForm $deleteInvestigatorForm, DeleteInvestigatorFormRequest $deleteInvestigatorFormRequest, DeleteInvestigatorFormResponse $deleteInvestigatorFormResponse)
     {
-        $curentUser = Auth::user();
+        $currentUser = Auth::user();
 
-        $deleteInvestigatorFormRequest->currentUserId = $curentUser['id'];
+        $deleteInvestigatorFormRequest->currentUserId = $currentUser['id'];
         $deleteInvestigatorFormRequest->visitId = $visitId;
 
         $requestData = $request->all();
@@ -83,9 +83,9 @@ class ReviewController extends Controller
 
     public function unlockInvestigatorForm(int $visitId, Request $request, UnlockInvestigatorForm $unlockInvestigatorForm, UnlockInvestigatorFormRequest $unlockInvestigatorFormRequest, UnlockInvestigatorFormResponse $unlockInvestigatorFormResponse)
     {
-        $curentUser = Auth::user();
+        $currentUser = Auth::user();
 
-        $unlockInvestigatorFormRequest->currentUserId = $curentUser['id'];
+        $unlockInvestigatorFormRequest->currentUserId = $currentUser['id'];
         $unlockInvestigatorFormRequest->visitId = $visitId;
 
         $requestData = $request->all();
@@ -99,9 +99,9 @@ class ReviewController extends Controller
     public function createInvestigatorForm(int $visitId, Request $request, CreateInvestigatorForm $createInvestigatorForm, CreateInvestigatorFormRequest $createInvestigatorFormRequest, CreateInvestigatorFormResponse $createInvestigatorFormResponse)
     {
 
-        $curentUser = Auth::user();
+        $currentUser = Auth::user();
 
-        $createInvestigatorFormRequest->currentUserId = $curentUser['id'];
+        $createInvestigatorFormRequest->currentUserId = $currentUser['id'];
         $createInvestigatorFormRequest->visitId = $visitId;
 
         $requestData = $request->all();
@@ -115,9 +115,9 @@ class ReviewController extends Controller
     public function modifyInvestigatorForm(int $visitId, Request $request, ModifyInvestigatorForm $modifyInvestigatorForm, ModifyInvestigatorFormRequest $modifyInvestigatorFormRequest, ModifyInvestigatorFormResponse $modifyInvestigatorFormResponse)
     {
 
-        $curentUser = Auth::user();
+        $currentUser = Auth::user();
 
-        $modifyInvestigatorFormRequest->currentUserId = $curentUser['id'];
+        $modifyInvestigatorFormRequest->currentUserId = $currentUser['id'];
         $modifyInvestigatorFormRequest->visitId = $visitId;
 
         $requestData = $request->all();
@@ -130,13 +130,13 @@ class ReviewController extends Controller
 
     public function createReviewForm(int $visitId, Request $request, CreateReview $createReview, CreateReviewFormRequest $createReviewFormRequest, CreateReviewFormResponse $createReviewFormResponse)
     {
-        $curentUser = Auth::user();
+        $currentUser = Auth::user();
         $requestData = $request->all();
         $queryParam = $request->query();
         $createReviewFormRequest->studyName = $queryParam['studyName'];
 
         $createReviewFormRequest->visitId = $visitId;
-        $createReviewFormRequest->currentUserId = $curentUser['id'];
+        $createReviewFormRequest->currentUserId = $currentUser['id'];
 
         $createReviewFormRequest = Util::fillObject($requestData, $createReviewFormRequest);
 
@@ -148,11 +148,11 @@ class ReviewController extends Controller
     public function modifyReviewForm(int $reviewId, Request $request, ModifyReviewForm $modifyReviewForm, ModifyReviewFormRequest $modifyReviewFormRequest, ModifyReviewFormResponse $modifyReviewFormResponse)
     {
 
-        $curentUser = Auth::user();
+        $currentUser = Auth::user();
         $requestData = $request->all();
 
         $modifyReviewFormRequest->reviewId = $reviewId;
-        $modifyReviewFormRequest->currentUserId = $curentUser['id'];
+        $modifyReviewFormRequest->currentUserId = $currentUser['id'];
         $modifyReviewFormRequest = Util::fillObject($requestData, $modifyReviewFormRequest);
 
         $modifyReviewForm->execute($modifyReviewFormRequest, $modifyReviewFormResponse);
@@ -162,8 +162,8 @@ class ReviewController extends Controller
 
     public function getReviewForm(int $reviewId, GetReviewForm $getReviewForm, GetReviewFormRequest $getReviewFormRequest, GetReviewFormResponse $getReviewFormResponse)
     {
-        $curentUser = Auth::user();
-        $getReviewFormRequest->currentUserId = $curentUser['id'];
+        $currentUser = Auth::user();
+        $getReviewFormRequest->currentUserId = $currentUser['id'];
         $getReviewFormRequest->reviewId = $reviewId;
 
         $getReviewForm->execute($getReviewFormRequest, $getReviewFormResponse);
@@ -173,9 +173,9 @@ class ReviewController extends Controller
 
     public function getReviewsFromVisit(Request $request, int $visitId, GetReviewFormFromVisit $getReviewFormFromVisit, GetReviewFormFromVisitRequest $getReviewFormFromVisitRequest, GetReviewFormFromVisitResponse $getReviewFormFromVisitResponse)
     {
-        $curentUser = Auth::user();
+        $currentUser = Auth::user();
 
-        $getReviewFormFromVisitRequest->currentUserId = $curentUser['id'];
+        $getReviewFormFromVisitRequest->currentUserId = $currentUser['id'];
         $getReviewFormFromVisitRequest->visitId = $visitId;
 
         $queryParam = $request->query();
@@ -190,10 +190,10 @@ class ReviewController extends Controller
 
     public function deleteReviewForm(int $reviewId, Request $request, DeleteReviewForm $deleteReviewForm, DeleteReviewFormRequest $deleteReviewFormRequest, DeleteReviewFormResponse $deleteReviewFormResponse)
     {
-        $curentUser = Auth::user();
+        $currentUser = Auth::user();
         $requestData = $request->all();
 
-        $deleteReviewFormRequest->currentUserId = $curentUser['id'];
+        $deleteReviewFormRequest->currentUserId = $currentUser['id'];
         $deleteReviewFormRequest->reviewId = $reviewId;
 
         $deleteReviewFormRequest = Util::fillObject($requestData, $deleteReviewFormRequest);
@@ -205,10 +205,10 @@ class ReviewController extends Controller
 
     public function unlockReviewForm(int $reviewId, Request $request, UnlockReviewForm $unlockReviewForm, UnlockReviewFormRequest $unlockReviewFormRequest, UnlockReviewFormResponse $unlockReviewFormResponse)
     {
-        $curentUser = Auth::user();
+        $currentUser = Auth::user();
         $requestData = $request->all();
 
-        $unlockReviewFormRequest->currentUserId = $curentUser['id'];
+        $unlockReviewFormRequest->currentUserId = $currentUser['id'];
         $unlockReviewFormRequest->reviewId = $reviewId;
 
         $deleteReviewFormRequest = Util::fillObject($requestData, $unlockReviewFormRequest);

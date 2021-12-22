@@ -18,8 +18,8 @@ use Illuminate\Support\Facades\Auth;
 class VisitGroupController extends Controller
 {
     public function createVisitGroup(String $studyName, Request $request, CreateVisitGroup $createVisitGroup, CreateVisitGroupRequest $createVisitGroupRequest, CreateVisitGroupResponse $createVisitGroupResponse) {
-        $curentUser = Auth::user();
-        $createVisitGroupRequest->currentUserId = $curentUser['id'];
+        $currentUser = Auth::user();
+        $createVisitGroupRequest->currentUserId = $currentUser['id'];
         $createVisitGroupRequest->studyName = $studyName;
         $requestData = $request->all();
         $createVisitGroupRequest = Util::fillObject($requestData, $createVisitGroupRequest);
@@ -29,8 +29,8 @@ class VisitGroupController extends Controller
     }
 
     public function getVisitGroup(int $visitGroupId, GetVisitGroup $getVisitGroup, GetVisitGroupRequest $getVisitGroupRequest, GetVisitGroupResponse $getVisitGroupResponse){
-        $curentUser = Auth::user();
-        $getVisitGroupRequest->currentUserId = $curentUser['id'];
+        $currentUser = Auth::user();
+        $getVisitGroupRequest->currentUserId = $currentUser['id'];
         $getVisitGroupRequest->visitGroupId = $visitGroupId;
 
         $getVisitGroup->execute($getVisitGroupRequest, $getVisitGroupResponse);
@@ -40,8 +40,8 @@ class VisitGroupController extends Controller
     }
 
     public function deleteVisitGroup(int $visitGroupId, DeleteVisitGroup $deleteVisitGroup, DeleteVisitGroupRequest $deleteVisitGroupRequest, DeleteVisitGroupResponse $deleteVisitGroupResponse){
-        $curentUser = Auth::user();
-        $deleteVisitGroupRequest->currentUserId = $curentUser['id'];
+        $currentUser = Auth::user();
+        $deleteVisitGroupRequest->currentUserId = $currentUser['id'];
         $deleteVisitGroupRequest->visitGroupId = $visitGroupId;
         $deleteVisitGroup->execute($deleteVisitGroupRequest, $deleteVisitGroupResponse);
         return $this->getJsonResponse($deleteVisitGroupResponse->body, $deleteVisitGroupResponse->status, $deleteVisitGroupResponse->statusText);
