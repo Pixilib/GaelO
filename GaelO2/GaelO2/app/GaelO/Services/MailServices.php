@@ -383,7 +383,7 @@ class MailServices
         $this->mailInterface->send();
     }
 
-    public function sendDeleteFormMessage( int $visitId, bool $investigatorForm, int $formOwnerId, string $studyName, string $patientId, string $visitType)
+    public function sendDeleteFormMessage(int $visitId, bool $investigatorForm, int $formOwnerId, string $studyName, string $patientId, string $visitType)
     {
 
         $parameters = [
@@ -491,7 +491,7 @@ class MailServices
         $this->mailInterface->send();
     }
 
-    public function sendMailToSupervisors(string $study, string $subject, string $content, ?string $patientId, ?int $visitId)
+    public function sendMailToSupervisors(string $study, string $subject, string $content, ?string $patientId, ?int $visitId, $patients = null)
     {
 
         $parameters = [
@@ -499,7 +499,8 @@ class MailServices
             'subject' => $subject,
             'content' => $content,
             'patientId' => $patientId,
-            'visitId' => $visitId
+            'visitId' => $visitId,
+            'patients' => $patients
         ];
 
         $this->mailInterface->setTo(
@@ -520,9 +521,9 @@ class MailServices
         ];
 
         $this->mailInterface->setTo(
-                array_map(function ($userId) {
-                    return $this->getUserEmail($userId);
-                }, $userIds)
+            array_map(function ($userId) {
+                return $this->getUserEmail($userId);
+            }, $userIds)
         );
         $this->mailInterface->setReplyTo();
         $this->mailInterface->setParameters($parameters);
@@ -548,7 +549,8 @@ class MailServices
         $this->mailInterface->send();
     }
 
-    public function sendCreatedUserMessage(string $email){
+    public function sendCreatedUserMessage(string $email)
+    {
         $parameters = ['name' => 'user'];
 
         $this->mailInterface->setTo([$email]);
@@ -558,16 +560,15 @@ class MailServices
         $this->mailInterface->send();
     }
 
-    public function sendMagicLink(int $targetedUserId, string $level, int $ressourceId, string $study, string $url){
+    public function sendMagicLink(int $targetedUserId, string $level, int $ressourceId, string $study, string $url)
+    {
 
-        $parameters = ['name' => 'user', 'study'=>$study, 'url' => $url];
+        $parameters = ['name' => 'user', 'study' => $study, 'url' => $url];
 
         $this->mailInterface->setTo([$this->getUserEmail($targetedUserId)]);
         $this->mailInterface->setReplyTo();
         $this->mailInterface->setParameters($parameters);
         $this->mailInterface->setBody(MailConstants::EMAIL_MAGIC_LINK);
         $this->mailInterface->send();
-
     }
-
 }

@@ -12,4 +12,5 @@ class SendMailRequest{
     public ?string $patientId = null;
     public ?int $visitId = null;
     public ?bool $toAdministrators = false;
+    public $patients = null;
 }
