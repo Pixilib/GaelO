@@ -345,7 +345,7 @@
 </script>
 
 <!-- Button menu for supervisor functions -->
-<div class="text-center">
+<div class="text-center container">
 	<input id="btn_main" class="btn btn-primary" type="button" value="Main">
 	<input id="btn_upload_manager" class="btn btn-primary" type="button" value="Upload Manager">
 	<input id="btn_review_manager" class="btn btn-primary" type="button" value="Review Manager">

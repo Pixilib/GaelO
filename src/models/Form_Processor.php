@@ -228,6 +228,20 @@ abstract class Form_Processor {
 		return $datas;
 	}
 
+		/**
+	 * return all reviews (local and reviewer) of the current visit
+	 * Usefull to determine visit conclusion status
+	 */
+	public function getValidatedReviewsFormsOfVisit() {
+	    
+		$query=$this->linkpdo->prepare('SELECT * FROM reviews,'.$this->specificTable.' WHERE reviews.id_review='.$this->specificTable.'.id_review AND reviews.id_visit=:idVisit AND reviews.validated=1 AND reviews.is_local=0 AND reviews.deleted=0');
+		$query->execute(array(
+			'idVisit'=>$this->id_visit
+		));
+		$datas=$query->fetchAll(PDO::FETCH_ASSOC);
+		return $datas;
+	}
+
 	/**
 	 * Return of validated review object (no local form)
 	 */
@@ -274,6 +288,13 @@ abstract class Form_Processor {
 		else {
 			$this->visitObject->changeReviewAvailability(true);
 		}
+	}
+
+	//Check if form data is empty (except for "0" value)
+	public function isEmpty($value) : bool {
+		if ( $value === "0" || $value === 0 ) return false;
+		return empty($value);
+
 	}
 	
 }

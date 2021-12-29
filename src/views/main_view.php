@@ -258,7 +258,7 @@
 
 	<main class="container">
 		<div class="block block-content">
-			<div style="padding-bottom: 30px;">
+			<div class="row" style="padding-bottom: 30px;">
 				<!-- Study Selector -->
 				<label>You are currently working on study:</label>
 				<select class="custom-select" name="etude" id="etude" style="width:auto;">

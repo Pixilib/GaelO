@@ -374,7 +374,9 @@ Class Send_Email {
         Username : $username<br>
         Temporary password : $newPassword<br>
         You will be asked to change this password at your first log in attempt<br>
-        on the platform.<br>";
+        on the platform.<br><br>
+		<b style=\"color:red\">Please do not use Internet Explorer to connect</b>
+		<br>";
         
 		$this->setMessage($message);
 		$this->subject='Reactivation';
@@ -389,7 +391,9 @@ Class Send_Email {
                 Username : $username<br>
                 Temporary password : $password<br>
                 You will be asked to change this password at your first log in attempt
-                on the platform.<br><br>";
+                on the platform.<br><br>
+				<b style=\"color:red\">Please do not use Internet Explorer to connect</b>
+				<br><br>";
 
 		$this->setMessage($message);
 		$this->subject='New account';
@@ -401,8 +405,10 @@ Class Send_Email {
 		$message="This automatic e-mail contains your new temporary password for your
           user account.<br>
           Username : ".$username." <br>
-          Temporary password : ".$password." <br>
-          You will be asked to change this password at your first connection.<br>";
+          Temporary password : ".$password."<br>
+          You will be asked to change this password at your first connection.<br><br>
+		  <b style=\"color:red\">Please do not use Internet Explorer to connect</b>
+		  <br>";
         
 		$this->setMessage($message);
 		$this->subject='New Password';
