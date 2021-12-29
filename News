@@ -3,7 +3,7 @@ GaelO
 -- Pending Changes --
 
 --GaelO 1.7.0 30/12/21--
-  Upgrade Uploader : Dicom Creation
+  Upgrade Uploader to 3.2.7 : Dicom Creation
   Small enhancment in display
   Add Modality filter for reviewer
   Add Center code reminder in patient import
