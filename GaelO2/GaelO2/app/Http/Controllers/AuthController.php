@@ -62,11 +62,11 @@ class AuthController extends Controller
 
     public function createMagicLink(int $userId, Request $request, CreateMagicLink $createMagicLink, CreateMagicLinkRequest $createMagicLinkRequest, CreateMagicLinkResponse $createMagicLinkResponse) {
 
-        $curentUser = $request->user();
+        $currentUser = $request->user();
         $requestData = $request->all();
 
         $createMagicLinkRequest->targetUser = $userId;
-        $createMagicLinkRequest->currentUserId = $curentUser['id'];
+        $createMagicLinkRequest->currentUserId = $currentUser['id'];
 
         $createMagicLinkRequest = Util::fillObject($requestData, $createMagicLinkRequest);
 

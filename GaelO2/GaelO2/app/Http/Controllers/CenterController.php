@@ -59,8 +59,8 @@ class CenterController extends Controller
         GetCentersFromStudyRequest $getCentersFromStudyRequest,
         GetCentersFromStudyResponse $getCentersFromStudyResponse) {
 
-        $curentUser = Auth::user();
-        $getCentersFromStudyRequest->currentUserId = $curentUser['id'];
+        $currentUser = Auth::user();
+        $getCentersFromStudyRequest->currentUserId = $currentUser['id'];
         $getCentersFromStudyRequest->studyName = $studyName;
 
         $getCentersFromStudy->execute($getCentersFromStudyRequest, $getCentersFromStudyResponse);

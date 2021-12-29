@@ -14,8 +14,8 @@ use Illuminate\Support\Facades\Auth;
 class ReverseProxyController extends Controller
 {
     public function tusUpload(string $filename=null, Request $request, ReverseProxyTus $reverseProxyTus, ReverseProxyTusRequest $reverseProxyTusRequest, ReverseProxyTusResponse $reverseProxyTusResponse){
-        $curentUser = Auth::user();
-        $reverseProxyTusRequest->currentUserId = $curentUser['id'];
+        $currentUser = Auth::user();
+        $reverseProxyTusRequest->currentUserId = $currentUser['id'];
 
         $reverseProxyTusRequest->header =$request->header();
         $reverseProxyTusRequest->url =$request->getRequestUri();
@@ -29,8 +29,8 @@ class ReverseProxyController extends Controller
 
     public function dicomWebReverseProxy(Request $request, ReverseProxyDicomWeb $reverseProxyDicomWeb, ReverseProxyDicomWebRequest $reverseProxyDicomWebRequest, ReverseProxyDicomWebResponse $reverseProxyDicomWebResponse){
 
-        $curentUser = Auth::user();
-        $reverseProxyDicomWebRequest->currentUserId = $curentUser['id'];
+        $currentUser = Auth::user();
+        $reverseProxyDicomWebRequest->currentUserId = $currentUser['id'];
 
         $reverseProxyDicomWebRequest->header =$request->header();
         $reverseProxyDicomWebRequest->url =$request->getRequestUri();

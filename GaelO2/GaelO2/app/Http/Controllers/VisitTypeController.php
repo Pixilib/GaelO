@@ -20,8 +20,8 @@ class VisitTypeController extends Controller
     public function createVisitType(int $visitGroupId, Request $request, CreateVisitType $createVisitType,
         CreateVisitTypeRequest $createVisitTypeRequest, CreateVisitTypeResponse $createVisitTypeResponse){
 
-        $curentUser = Auth::user();
-        $createVisitTypeRequest->currentUserId = $curentUser['id'];
+        $currentUser = Auth::user();
+        $createVisitTypeRequest->currentUserId = $currentUser['id'];
         $createVisitTypeRequest->visitGroupId = $visitGroupId;
 
         $requestData = $request->all();
@@ -32,16 +32,16 @@ class VisitTypeController extends Controller
     }
 
     public function getVisitType(int $visitTypeId, GetVisitType $getVisitType, GetVisitTypeRequest $getVisitTypeRequest, GetVisitTypeResponse $getVisitTypeResponse){
-        $curentUser = Auth::user();
-        $getVisitTypeRequest->currentUserId = $curentUser['id'];
+        $currentUser = Auth::user();
+        $getVisitTypeRequest->currentUserId = $currentUser['id'];
         $getVisitTypeRequest->visitTypeId = $visitTypeId;
         $getVisitType->execute($getVisitTypeRequest, $getVisitTypeResponse);
         return $this->getJsonResponse($getVisitTypeResponse->body, $getVisitTypeResponse->status, $getVisitTypeResponse->statusText);
     }
 
     public function deleteVisitType(int $visitTypeId, DeleteVisitType $deleteVisitType, DeleteVisitTypeRequest $deleteVisitTypeRequest, DeleteVisitTypeResponse $deleteVisitTypeResponse){
-        $curentUser = Auth::user();
-        $deleteVisitTypeRequest->currentUserId = $curentUser['id'];
+        $currentUser = Auth::user();
+        $deleteVisitTypeRequest->currentUserId = $currentUser['id'];
         $deleteVisitTypeRequest->visitTypeId = $visitTypeId;
         $deleteVisitType->execute($deleteVisitTypeRequest, $deleteVisitTypeResponse);
         return $this->getJsonResponse($deleteVisitTypeResponse->body, $deleteVisitTypeResponse->status, $deleteVisitTypeResponse->statusText);

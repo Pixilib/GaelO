@@ -31,11 +31,21 @@ class MailUser extends Mailable implements ShouldQueue
     public function build()
     {
         //If mail is from admin, there is no study context
-        $subject = $this->parameters['study'] ? 
-            $this->parameters['study']." - ".$this->parameters['subject'] : 
+        $subject = $this->parameters['study'] ?
+            $this->parameters['study'] . " - " . $this->parameters['subject'] :
             $this->parameters['subject'];
-        return $this->view('mails.mail_user')
-        ->subject($subject)
-        ->with($this->parameters);
+
+        $mail = $this->view('mails.mail_user')
+            ->subject($subject)
+            ->with($this->parameters);
+
+        //If mail is associated to a patients creation request, attach given json
+        array_key_exists('patients', $this->parameters) && isset($this->parameters['patients']) ?
+            $mail->attachData($this->parameters['patients'], 'patients.json', [
+                'mime' => 'application/json',
+            ])
+            : null;
+
+        return $mail;
     }
 }
