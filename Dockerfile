@@ -7,7 +7,7 @@ RUN git clone --depth 1 --branch @ohif/viewer@4.9.21 https://github.com/OHIF/Vie
 RUN cd Viewers && yarn install && QUICK_BUILD=true PUBLIC_URL=/ohif/ yarn build
 RUN rm /ohif/Viewers/platform/viewer/dist/app-config.js
 
-FROM php:7.4.1-apache
+FROM php:7.4.19-apache
 
 ENV COMPOSER_ALLOW_SUPERUSER=1
 
