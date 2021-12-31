@@ -22,4 +22,6 @@ interface StudyRepositoryInterface {
 
     public function reactivateStudy(string $name) : void ;
 
+    public function getStudyStatistics(string $name) : array;
+
 }

@@ -1,4 +1,4 @@
-FROM php:8.0.7-apache-buster
+FROM php:8.1.1-apache-buster
 
 ENV PHP_OPCACHE_VALIDATE_TIMESTAMPS="0"
 

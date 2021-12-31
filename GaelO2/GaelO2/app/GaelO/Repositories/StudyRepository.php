@@ -71,4 +71,9 @@ class StudyRepository implements StudyRepositoryInterface {
         $this->study->withTrashed()->findOrFail($name)->restore();
     }
 
+    public function getStudyStatistics(string $name) : array {
+        //SK TODO
+        $numberOfPatients = $this->study->findOrFail($name)->patients()->count();
+    }
+
 }
