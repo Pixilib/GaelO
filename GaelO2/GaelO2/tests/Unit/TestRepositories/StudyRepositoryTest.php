@@ -117,10 +117,13 @@ class StudyRepositoryTest extends TestCase
 
         $study = Study::findOrFail($studyName);
         $statistics = $this->studyRepository->getStudyStatistics($study->name);
+
         $this->assertEquals($statistics['patients_count'], 30);
         $this->assertEquals($statistics['dicom_studies_count'], 1);
         $this->assertEquals($statistics['dicom_series_count'], 5);
         $this->assertGreaterThan(1 , $statistics['dicom_instances_count']);
+        $this->assertGreaterThan(1 , $statistics['dicom_disk_size']);
+
 
     }
 

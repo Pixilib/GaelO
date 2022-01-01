@@ -25,14 +25,6 @@ class GetStudyStatistics {
         try{
             $this->checkAuthorization($getStudyStatisticsRequest->currentUserId);
 
-            // Should return
-            // Number of patient
-            // number of visits
-            // number of dicom studies
-            // number of dicom instances
-            // number of dicom instances
-            // Amount of data storage
-            // Avec les deleted
             $studyStatistics = $this->studyRepositoryInterface->getStudyStatistics($getStudyStatisticsRequest->studyName);
 
             $getStudyStatisticsResponse->body = $studyStatistics;

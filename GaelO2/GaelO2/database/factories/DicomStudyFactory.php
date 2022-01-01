@@ -28,10 +28,10 @@ class DicomStudyFactory extends Factory
             'patient_orthanc_id'=>$this->faker->regexify('[A-Za-z0-9]{44}'),
             'patient_name'=>$this->faker->word,
             'patient_id'=>$this->faker->word,
-            'number_of_series'=>$this->faker->randomNumber,
-            'number_of_instances'=>$this->faker->randomNumber,
-            'disk_size'=>$this->faker->randomNumber,
-            'uncompressed_disk_size'=>$this->faker->randomNumber
+            'number_of_series'=> (1+$this->faker->randomNumber),
+            'number_of_instances'=> (1+$this->faker->randomNumber),
+            'disk_size'=> (1 + $this->faker->randomNumber),
+            'uncompressed_disk_size'=> (1+$this->faker->randomNumber)
         ];
     }
 
