@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "39911afdc2b216ae6ee301740e5e79af",
+    "content-hash": "8aa1c9a5983bc628242ee43075b8bd81",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -3651,6 +3651,58 @@
                 }
             ],
             "time": "2021-02-24T14:56:42+00:00"
+        },
+        {
+            "name": "staudenmeir/eloquent-has-many-deep",
+            "version": "v1.14.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/staudenmeir/eloquent-has-many-deep.git",
+                "reference": "b121fdb50ca3e0a4b884f97dd19af68d1e73bbff"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/staudenmeir/eloquent-has-many-deep/zipball/b121fdb50ca3e0a4b884f97dd19af68d1e73bbff",
+                "reference": "b121fdb50ca3e0a4b884f97dd19af68d1e73bbff",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/database": "^8.0",
+                "php": "^7.3|^8.0"
+            },
+            "require-dev": {
+                "illuminate/pagination": "^8.0",
+                "phpunit/phpunit": "^9.3",
+                "staudenmeir/eloquent-eager-limit": "^1.6"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Staudenmeir\\EloquentHasManyDeep\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Jonas Staudenmeir",
+                    "email": "mail@jonas-staudenmeir.de"
+                }
+            ],
+            "description": "Laravel Eloquent HasManyThrough relationships with unlimited levels",
+            "support": {
+                "issues": "https://github.com/staudenmeir/eloquent-has-many-deep/issues",
+                "source": "https://github.com/staudenmeir/eloquent-has-many-deep/tree/v1.14.4"
+            },
+            "funding": [
+                {
+                    "url": "https://paypal.me/JonasStaudenmeir",
+                    "type": "custom"
+                }
+            ],
+            "time": "2021-12-07T11:59:19+00:00"
         },
         {
             "name": "swiftmailer/swiftmailer",

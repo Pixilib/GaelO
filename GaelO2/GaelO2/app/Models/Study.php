@@ -5,10 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Staudenmeir\EloquentHasManyDeep\HasRelationships;
 
 class Study extends Model
 {
-    use SoftDeletes, HasFactory;
+    use SoftDeletes, HasFactory, HasRelationships;
 
     protected $primaryKey = 'name';
     protected $keyType = 'string';
@@ -28,6 +29,21 @@ class Study extends Model
     {
         return $this->hasMany(VisitGroup::class, 'study_name')->with('visitTypes');
     }
+
+    public function visits(){
+        return $this->hasManyDeep(Visit::class, [Patient::class]);
+    }
+
+
+    public function dicomStudies(){
+        return $this->hasManyDeep(DicomStudy::class, [Patient::class, Visit::class]);
+    }
+
+    /*
+    public function dicomSeries(){
+        return $this->hasManyDeep(DicomSeries::class, [Patient::class, Visit::class, DicomStudy::class]);
+    }
+    */
 
     public function documentations()
     {

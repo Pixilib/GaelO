@@ -8,6 +8,8 @@ use Exception;
 
 class StudyRepository implements StudyRepositoryInterface {
 
+    private Study $study;
+
     public function __construct(Study $study){
         $this->study = $study;
     }
@@ -73,7 +75,9 @@ class StudyRepository implements StudyRepositoryInterface {
 
     public function getStudyStatistics(string $name) : array {
         //SK TODO
-        $numberOfPatients = $this->study->findOrFail($name)->patients()->count();
+        $counts = $this->study->where('name', $name)->withCount(['patients', 'visits', 'dicomStudies'])->get()->toArray();
+
+        return $counts;
     }
 
 }

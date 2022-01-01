@@ -19,7 +19,8 @@
         "phpoffice/phpspreadsheet": "^1.17",
         "ralouphie/mimey": "^1.0",
         "respect/validation": "^2.2",
-        "spatie/db-dumper": "^2.17"
+        "spatie/db-dumper": "^2.17",
+        "staudenmeir/eloquent-has-many-deep": "^1.14"
     },
     "require-dev": {
         "darkaonline/l5-swagger": "^8.0.4",

@@ -3,11 +3,13 @@
 namespace Tests\Unit\TestRepositories;
 
 use App\GaelO\Repositories\StudyRepository;
+use App\Models\Patient;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\TestCase;
 
 use App\Models\Study;
+use App\Models\Visit;
 
 class StudyRepositoryTest extends TestCase
 {
@@ -100,6 +102,15 @@ class StudyRepositoryTest extends TestCase
         Study::factory()->ancillaryOf($study->name)->count(5)->create();
         $ancilarriesStudies = $this->studyRepository->getAncillariesStudyOfStudy($study->name);
         $this->assertEquals(5, sizeof($ancilarriesStudies));
+    }
+
+    public function testGetStatistics(){
+        $visits = Visit::factory()->count(10)->create();
+        $studyName = $visits->first()->patient->study_name;
+        $study = Study::findOrFail($studyName);
+        $statistics = $this->studyRepository->getStudyStatistics($study->name);
+        dd($statistics);
+
     }
 
 
