@@ -102,7 +102,7 @@ class UserController extends Controller
 
     }
 
-    public function getUser(int $id = null, GetUserRequest $getUserRequest, GetUserResponse $getUserResponse, GetUser $getUser)
+    public function getUser(?int $id = null, GetUserRequest $getUserRequest, GetUserResponse $getUserResponse, GetUser $getUser)
     {
         $currentUser = Auth::user();
         $getUserRequest->currentUserId = $currentUser['id'];
