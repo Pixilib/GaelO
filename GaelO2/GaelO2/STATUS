@@ -1,7 +1,6 @@
 Salim TODO :
 
-- Test et debeug magic link
-- API Statistics Study (nombre de patients, de dicom study-series-instance et taille disque, nombre de visistes )
+- API Statistics Study (nombre de patients, de dicom study-series-instance et taille disque, nombre de visistes ) => reste à exposer l'API et test integration (voir pour les soft delete)
 - Passer status QC / Review au niveau visite et plus au niveau study
 - Connecteur FTP/SFTP
 - Orthanc Send to peer
