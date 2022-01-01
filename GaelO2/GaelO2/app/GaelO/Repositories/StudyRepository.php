@@ -74,9 +74,8 @@ class StudyRepository implements StudyRepositoryInterface {
     }
 
     public function getStudyStatistics(string $name) : array {
-        //SK TODO
-        $counts = $this->study->where('name', $name)->withCount(['patients', 'visits', 'dicomStudies', 'dicomSeries'])->get()->toArray();
-
+        $counts = $this->study::withCount(['patients', 'visits', 'dicomStudies', 'dicomSeries'])->where('name', $name)->sole()->toArray();
+        $counts['dicom_instances_count'] = $this->study->findOrFail($name)->dicomStudies()->sum('number_of_instances');
         return $counts;
     }
 

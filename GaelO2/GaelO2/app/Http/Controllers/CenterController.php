@@ -21,7 +21,7 @@ use Illuminate\Support\Facades\Auth;
 
 class CenterController extends Controller
 {
-    public function getCenter(int $code=null, Request $request, GetCenterRequest $getCenterRequest, GetCenterResponse $getCenterResponse, GetCenter $getCenter) {
+    public function getCenter(?int $code=null, Request $request, GetCenterRequest $getCenterRequest, GetCenterResponse $getCenterResponse, GetCenter $getCenter) {
         $currentUser = Auth::user();
         $getCenterRequest->currentUserId = $currentUser['id'];
         $getCenterRequest->code = $code;

@@ -41,7 +41,7 @@ class Study extends Model
 
 
     public function dicomSeries(){
-        return $this->hasManyDeep(DicomSeries::class, [Patient::class, Visit::class, DicomStudy::class]);
+        return $this->hasManyDeep(DicomSeries::class, [Patient::class, Visit::class, DicomStudy::class], [null, null, null, 'study_instance_uid'], [null, null, null, null] );
     }
 
 
