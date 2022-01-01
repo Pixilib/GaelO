@@ -103,8 +103,8 @@ class DicomSeriesRepositoryTest extends TestCase
     public function testGetSeriesByStudyInstanceUidArray(){
 
         $dicomSeries = DicomSeries::factory()->count(10)->create();
-        $studyInstanceUID1  = $dicomSeries->first()->study_uid;
-        $studyInstanceUID2 = $dicomSeries->last()->study_uid;
+        $studyInstanceUID1  = $dicomSeries->first()->study_instance_uid;
+        $studyInstanceUID2 = $dicomSeries->last()->study_instance_uid;
 
         $dicomSeries->first->delete();
         $series = $this->orthancSeriesRepository->getDicomSeriesOfStudyInstanceUIDArray([$studyInstanceUID1, $studyInstanceUID2], false);

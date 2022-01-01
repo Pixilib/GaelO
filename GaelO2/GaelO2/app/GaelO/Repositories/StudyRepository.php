@@ -75,7 +75,7 @@ class StudyRepository implements StudyRepositoryInterface {
 
     public function getStudyStatistics(string $name) : array {
         //SK TODO
-        $counts = $this->study->where('name', $name)->withCount(['patients', 'visits', 'dicomStudies'])->get()->toArray();
+        $counts = $this->study->where('name', $name)->withCount(['patients', 'visits', 'dicomStudies', 'dicomSeries'])->get()->toArray();
 
         return $counts;
     }

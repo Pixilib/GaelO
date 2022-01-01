@@ -101,7 +101,7 @@ class DeleteStudy extends Command
             }, $dicomStudies->toArray());
 
             $dicomSeries = [];
-            $dicomSeries = $this->dicomSeries->whereIn('study_uid', $studyUids)->get()->pluck('orthanc_id');
+            $dicomSeries = $this->dicomSeries->whereIn('study_instance_uid', $studyUids)->get()->pluck('orthanc_id');
 
             $this->table(
                 ['seriesOrthancID'],

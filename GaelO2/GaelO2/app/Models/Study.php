@@ -39,11 +39,11 @@ class Study extends Model
         return $this->hasManyDeep(DicomStudy::class, [Patient::class, Visit::class]);
     }
 
-    /*
+
     public function dicomSeries(){
         return $this->hasManyDeep(DicomSeries::class, [Patient::class, Visit::class, DicomStudy::class]);
     }
-    */
+
 
     public function documentations()
     {

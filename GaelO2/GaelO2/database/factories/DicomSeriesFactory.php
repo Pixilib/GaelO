@@ -15,7 +15,7 @@ class DicomSeriesFactory extends Factory
     {
         return [
             'orthanc_id' =>$this->faker->regexify('[A-Za-z0-9]{44}'),
-            'study_uid' => DicomStudy::factory()->create()->study_uid,
+            'study_instance_uid' => DicomStudy::factory()->create()->study_uid,
             'acquisition_date'=>$this->faker->date(),
             'acquisition_time'=>$this->faker->time(),
             'modality'=>$this->faker->word,
@@ -40,7 +40,7 @@ class DicomSeriesFactory extends Factory
 
         return $this->state(function (array $attributes) use($studyInstanceUID) {
             return [
-                'study_uid' => $studyInstanceUID,
+                'study_instance_uid' => $studyInstanceUID,
             ];
         });
     }
