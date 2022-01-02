@@ -47,6 +47,9 @@ use App\GaelO\UseCases\GetStudyDetails\GetStudyDetailsResponse;
 use App\GaelO\UseCases\GetStudyDetailsSupervisor\GetStudyDetailsSupervisor;
 use App\GaelO\UseCases\GetStudyDetailsSupervisor\GetStudyDetailsSupervisorRequest;
 use App\GaelO\UseCases\GetStudyDetailsSupervisor\GetStudyDetailsSupervisorResponse;
+use App\GaelO\UseCases\GetStudyStatistics\GetStudyStatistics;
+use App\GaelO\UseCases\GetStudyStatistics\GetStudyStatisticsRequest;
+use App\GaelO\UseCases\GetStudyStatistics\GetStudyStatisticsResponse;
 use App\GaelO\UseCases\GetVisitsFromVisitType\GetVisitsFromVisitType;
 use App\GaelO\UseCases\GetVisitsFromVisitType\GetVisitsFromVisitTypeRequest;
 use App\GaelO\UseCases\GetVisitsFromVisitType\GetVisitsFromVisitTypeResponse;
@@ -325,5 +328,16 @@ class StudyController extends Controller
         $sendMailRequest = Util::fillObject($requestData, $sendMailRequest);
         $sendMail->execute($sendMailRequest, $sendMailResponse);
         return $this->getJsonResponse($sendMailResponse->body, $sendMailResponse->status, $sendMailResponse->statusText);
+    }
+
+    public function getStudyStatistics(GetStudyStatistics $getStudyStatistics, GetStudyStatisticsRequest $getStudyStatisticsRequest, GetStudyStatisticsResponse $getStudyStatisticsResponse, string $studyName){
+
+        $currentUser = Auth::user();
+
+        $getStudyStatisticsRequest->currentUserId = $currentUser['id'];
+        $getStudyStatisticsRequest->studyName = $studyName;
+        $getStudyStatistics->execute($getStudyStatisticsRequest, $getStudyStatisticsResponse);
+        return $this->getJsonResponse($getStudyStatisticsResponse->body, $getStudyStatisticsResponse->status, $getStudyStatisticsResponse->statusText);
+
     }
 }
