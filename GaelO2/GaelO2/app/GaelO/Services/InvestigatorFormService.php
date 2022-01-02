@@ -8,14 +8,14 @@ use App\GaelO\Exceptions\GaelOBadRequestException;
 class InvestigatorFormService extends FormService {
 
     public function saveInvestigatorForm(array $data, bool $validated) : void {
-        if( ! $this->abstractStudyRules->checkInvestigatorFormValidity($data, $validated)) throw new GaelOBadRequestException('Form Contraints Failed');
+        if( ! $this->abstractVisitRules->checkInvestigatorFormValidity($data, $validated)) throw new GaelOBadRequestException('Form Contraints Failed');
         $this->reviewRepositoryInterface->createReview(true, $this->visitId, $this->studyName, $this->currentUserId, $data, $validated);
         $this->updateVisitInvestigatorFormStatus($validated);
 
     }
 
     public function updateInvestigatorForm(array $data, bool $validated) : void {
-        if( ! $this->abstractStudyRules->checkInvestigatorFormValidity($data, $validated) ) throw new GaelOBadRequestException('Form Contraints Failed');;
+        if( ! $this->abstractVisitRules->checkInvestigatorFormValidity($data, $validated) ) throw new GaelOBadRequestException('Form Contraints Failed');;
         $localReviewEntitity = $this->reviewRepositoryInterface->getInvestigatorForm($this->visitId, false);
         $this->reviewRepositoryInterface->updateReview($localReviewEntitity['id'], $this->currentUserId, $data, $validated);
         $this->updateVisitInvestigatorFormStatus($validated);

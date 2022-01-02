@@ -6,7 +6,7 @@ use App\GaelO\Adapters\ValidatorAdapter;
 use App\GaelO\Constants\Constants;
 use Exception;
 
-abstract class AbstractStudyRules
+abstract class AbstractVisitRules
 {
 
     const RULE_STRING = "string";

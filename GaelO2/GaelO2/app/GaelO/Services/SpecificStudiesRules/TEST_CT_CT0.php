@@ -3,9 +3,9 @@ namespace App\GaelO\Services\SpecificStudiesRules;
 
 use App\GaelO\Adapters\MimeAdapter;
 use App\GaelO\Constants\Constants;
-use App\GaelO\Services\SpecificStudiesRules\AbstractStudyRules;
+use App\GaelO\Services\SpecificStudiesRules\AbstractVisitRules;
 
-class TEST_CT_CT0 extends AbstractStudyRules {
+class TEST_CT_CT0 extends AbstractVisitRules {
 
     public function getInvestigatorValidationRules()  : array {
         return [

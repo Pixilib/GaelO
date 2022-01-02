@@ -6,7 +6,7 @@ use App\GaelO\Exceptions\GaelOBadRequestException;
 use App\GaelO\Interfaces\Adapters\FrameworkInterface;
 use App\GaelO\Interfaces\Repositories\ReviewRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\ReviewStatusRepositoryInterface;
-use App\GaelO\Services\SpecificStudiesRules\AbstractStudyRules;
+use App\GaelO\Services\SpecificStudiesRules\AbstractVisitRules;
 use App\GaelO\Util;
 
 class FormService
@@ -15,7 +15,7 @@ class FormService
     protected VisitService $visitService;
     protected ReviewRepositoryInterface $reviewRepositoryInterface;
     protected ReviewStatusRepositoryInterface $reviewStatusRepositoryInterface;
-    protected AbstractStudyRules $abstractStudyRules;
+    protected AbstractVisitRules $abstractVisitRules;
     protected MailServices $mailServices;
     protected FrameworkInterface $frameworkInterface;
 
@@ -58,7 +58,7 @@ class FormService
         $this->uploaderId = $this->visitContext['creator_user_id'];
         $this->studyName = $studyName;
         $modality = $this->visitContext['visit_type']['visit_group']['modality'];
-        $this->abstractStudyRules = $this->frameworkInterface::make('\App\GaelO\Services\SpecificStudiesRules\\' . $this->studyName . '_' . $modality . '_' . $this->visitType);
+        $this->abstractVisitRules = $this->frameworkInterface::make('\App\GaelO\Services\SpecificStudiesRules\\' . $this->studyName . '_' . $modality . '_' . $this->visitType);
     }
 
     public function attachFile(array $reviewEntity, string $key, string $filename, string $mimeType, $binaryData)
@@ -67,9 +67,9 @@ class FormService
         $keyMimeArray = [];
 
         if ($reviewEntity['local']) {
-            $keyMimeArray = $this->abstractStudyRules->getAllowedKeyAndMimeTypeInvestigator();
+            $keyMimeArray = $this->abstractVisitRules->getAllowedKeyAndMimeTypeInvestigator();
         } else {
-            $keyMimeArray = $this->abstractStudyRules->getAllowedKeyAndMimeTypeReviewer();
+            $keyMimeArray = $this->abstractVisitRules->getAllowedKeyAndMimeTypeReviewer();
         }
 
         $expectedMime = $keyMimeArray[$key];
