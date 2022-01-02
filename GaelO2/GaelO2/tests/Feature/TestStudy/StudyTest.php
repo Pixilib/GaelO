@@ -247,7 +247,7 @@ class StudyTest extends TestCase
     public function testGetStudyStatistics(){
         $dicomStudy = DicomStudy::factory()
             ->create();
-        $currentUserId = AuthorizationTools::actAsAdmin(true);
+        AuthorizationTools::actAsAdmin(true);
         $answer = $this->json('GET', '/api/studies/'.$dicomStudy->visit->patient->study_name.'/statistics');
         $answer->assertStatus(200);
 
@@ -256,7 +256,7 @@ class StudyTest extends TestCase
     public function testGetStudyStatisticsShouldFailNotAdmin(){
         $dicomStudy = DicomStudy::factory()
             ->create();
-        $currentUserId = AuthorizationTools::actAsAdmin(false);
+        AuthorizationTools::actAsAdmin(false);
         $answer = $this->json('GET', '/api/studies/'.$dicomStudy->visit->patient->study_name.'/statistics');
         $answer->assertStatus(403);
 

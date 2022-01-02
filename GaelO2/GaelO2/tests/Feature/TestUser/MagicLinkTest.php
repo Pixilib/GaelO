@@ -32,7 +32,8 @@ class MagicLinkTest extends TestCase
         AuthorizationTools::addRoleToUser($userId, Constants::ROLE_SUPERVISOR, $studyName);
         $data = [
             'ressourceLevel' => 'visit',
-            'ressourceId' => $visit->id
+            'ressourceId' => $visit->id,
+            'role' => 'controller'
         ];
         $response = $this->json('POST', 'api/user/1/magic-link', $data)-> assertSuccessful();
         $response->assertSuccessful();
@@ -46,7 +47,8 @@ class MagicLinkTest extends TestCase
         AuthorizationTools::addRoleToUser($userId, Constants::ROLE_SUPERVISOR, $studyName);
         $data = [
             'ressourceLevel' => 'patient',
-            'ressourceId' => $patient->id
+            'ressourceId' => $patient->id,
+            'role' => 'investigator'
         ];
         $response = $this->json('POST', 'api/user/1/magic-link', $data)-> assertSuccessful();
         $response->assertSuccessful();
@@ -60,7 +62,8 @@ class MagicLinkTest extends TestCase
         AuthorizationTools::addRoleToUser($userId, Constants::ROLE_SUPERVISOR, $studyName);
         $data = [
             'ressourceLevel' => 'review',
-            'ressourceId' => $patient->id
+            'ressourceId' => $patient->id,
+            'role' => 'investigator'
         ];
         $response = $this->json('POST', 'api/user/1/magic-link', $data);
         $response->assertStatus(400);
@@ -72,7 +75,8 @@ class MagicLinkTest extends TestCase
         $visit = Visit::factory()->create();
         $data = [
             'ressourceLevel' => 'visit',
-            'ressourceId' => $visit->id
+            'ressourceId' => $visit->id,
+            'role' => 'investigator'
         ];
         $response = $this->json('POST', 'api/user/1/magic-link', $data);
         $response->assertStatus(403);

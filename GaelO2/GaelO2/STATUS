@@ -1,6 +1,7 @@
 Salim TODO :
 
-- API Statistics Study (nombre de patients, de dicom study-series-instance et taille disque, nombre de visistes ) => reste à exposer l'API et test integration (voir pour les soft delete)
+- API Statistics Study => Frontend à faire
+
 - Passer status QC / Review au niveau visite et plus au niveau study
 - Connecteur FTP/SFTP
 - Orthanc Send to peer

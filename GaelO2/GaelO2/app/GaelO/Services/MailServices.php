@@ -560,10 +560,10 @@ class MailServices
         $this->mailInterface->send();
     }
 
-    public function sendMagicLink(int $targetedUserId, string $level, int $ressourceId, string $study, string $url)
+    public function sendMagicLink(int $targetedUserId, string $study, string $url, string $role, int $patientCode, string $visitType = null )
     {
 
-        $parameters = ['name' => 'user', 'study' => $study, 'url' => $url];
+        $parameters = ['name' => 'user', 'study' => $study, 'url' => $url, 'role' => $role, 'patientCode' => $patientCode, 'visitType' => $visitType];
 
         $this->mailInterface->setTo([$this->getUserEmail($targetedUserId)]);
         $this->mailInterface->setReplyTo();
