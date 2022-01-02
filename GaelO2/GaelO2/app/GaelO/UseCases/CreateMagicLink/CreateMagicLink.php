@@ -20,21 +20,19 @@ class CreateMagicLink{
     private VisitRepositoryInterface $visitRepositoryInterface;
     private PatientRepositoryInterface $patientRepositoryInterface;
     private MailServices $mailServices;
-    private MagicLinkService $magicLinkService;
+    private FrameworkInterface $frameworkInterface;
 
     public function __construct(AuthorizationStudyService $authorizationStudyService,
                                 VisitRepositoryInterface $visitRepositoryInterface,
                                 PatientRepositoryInterface $patientRepositoryInterface,
                                 FrameworkInterface $frameworkInterface,
-                                MailServices $mailServices,
-                                MagicLinkService $magicLinkService)
+                                MailServices $mailServices)
     {
         $this->authorizationStudyService = $authorizationStudyService;
         $this->patientRepositoryInterface = $patientRepositoryInterface;
         $this->visitRepositoryInterface = $visitRepositoryInterface;
         $this->frameworkInterface = $frameworkInterface;
         $this->mailServices = $mailServices;
-        $this->magicLinkService = $magicLinkService;
     }
 
     public function execute(CreateMagicLinkRequest $createMagicLinkRequest, CreateMagicLinkResponse $createMagicLinkResponse){
@@ -67,10 +65,7 @@ class CreateMagicLink{
             $this->checkAuthorization($currentUserId, $studyName);
 
             //Generate Magic Link for targeted user
-            $this->magicLinkService->setRedirectUrl('/study/'.$studyName.'/role/'.$role.'/'.$level.'/'.$ressourceId);
-            $this->magicLinkService->setUserId($createMagicLinkRequest->targetUser);
-
-            $urlLink = $this->magicLinkService->generate();
+            $urlLink = $this->frameworkInterface->createMagicLink($createMagicLinkRequest->targetUser, '/study/'.$studyName.'/role/'.$role.'/'.$level.'/'.$ressourceId);
 
             //Send the magic link to destinators
             $this->mailServices->sendMagicLink($createMagicLinkRequest->targetUser, $studyName, $urlLink, $role, $patientCode, $visitType);

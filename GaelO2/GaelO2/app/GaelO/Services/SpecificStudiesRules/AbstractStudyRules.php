@@ -76,4 +76,5 @@ abstract class AbstractStudyRules
             return true;
         }
     }
+
 }

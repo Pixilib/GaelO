@@ -15,6 +15,16 @@ class VisitTypeRepository implements VisitTypeRepositoryInterface {
         return $this->visitType->findOrFail($id)->toArray();
     }
 
+    public function findByName(string $studyName, string $visitGroupName, string $visitTypeName) : array {
+        return $this->visitType
+        ->where('name', $visitTypeName)
+        ->whereHas('visitGroup', function ($query) use ($studyName, $visitGroupName) {
+            $query->where('study_name', $studyName);
+            $query->where('name', $visitGroupName);
+        })
+        ->sole()->toArray();
+    }
+
     public function delete($id) : void {
         $this->visitType->findOrFail($id)->delete();
     }
@@ -54,5 +64,5 @@ class VisitTypeRepository implements VisitTypeRepositoryInterface {
         $visitTypes = $this->visitType->whereIn('id', $visitTypeIds)->get();
         return $visitTypes !== null  ? $visitTypes->toArray() : [];
     }
-    
+
 }

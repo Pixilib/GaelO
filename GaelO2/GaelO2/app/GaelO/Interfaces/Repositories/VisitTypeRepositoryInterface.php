@@ -7,6 +7,8 @@ interface VisitTypeRepositoryInterface
 
     public function find($id) : array ;
 
+    public function findByName(string $studyName, string $visitGroupName, string $visitTypeName) : array;
+
     public function delete($id) : void ;
 
     public function createVisitType(

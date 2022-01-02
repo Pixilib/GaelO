@@ -188,4 +188,17 @@ class VisitService
     {
         return $this->reviewStatusRepository->getReviewStatus($this->visitId, $studyName);
     }
+
+
+    //SK ICI PROBABILITE EN BASE DE DONNE ET DOIT POUVOIR ETRE OVERRIDE PAR LE CUSTOM OBJECT
+    /*
+    public function isReviewNeeded(array $visitTypeEntity) {
+
+
+    }
+
+    public function isQcNeeded(array $visitTypeEntity) {
+
+    }
+    */
 }
