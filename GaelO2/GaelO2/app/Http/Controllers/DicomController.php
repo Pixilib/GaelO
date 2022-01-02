@@ -14,9 +14,6 @@ use App\GaelO\UseCases\GetDicomsFile\GetDicomsFileResponse;
 use App\GaelO\UseCases\GetDicomsFileSupervisor\GetDicomsFileSupervisor;
 use App\GaelO\UseCases\GetDicomsFileSupervisor\GetDicomsFileSupervisorRequest;
 use App\GaelO\UseCases\GetDicomsFileSupervisor\GetDicomsFileSupervisorResponse;
-use App\GaelO\UseCases\GetDicomsStudy\GetDicomsStudy;
-use App\GaelO\UseCases\GetDicomsStudy\GetDicomsStudyRequest;
-use App\GaelO\UseCases\GetDicomsStudy\GetDicomsStudyResponse;
 use App\GaelO\UseCases\ReactivateDicomSeries\ReactivateDicomSeries;
 use App\GaelO\UseCases\ReactivateDicomSeries\ReactivateDicomSeriesRequest;
 use App\GaelO\UseCases\ReactivateDicomSeries\ReactivateDicomSeriesResponse;
@@ -30,7 +27,7 @@ use Illuminate\Support\Facades\Log;
 
 class DicomController extends Controller
 {
-    public function getVisitDicomsFile(int $visitId, Request $request, GetDicomsFile $getDicomsFile, GetDicomsFileRequest $getDicomsFileRequest, GetDicomsFileResponse $getDicomsFileResponse)
+    public function getVisitDicomsFile(Request $request, GetDicomsFile $getDicomsFile, GetDicomsFileRequest $getDicomsFileRequest, GetDicomsFileResponse $getDicomsFileResponse, int $visitId)
     {
         $currentUser = Auth::user();
         $queryParam = $request->query();
@@ -51,7 +48,7 @@ class DicomController extends Controller
         }
     }
 
-    public function getVisitDicoms(int $visitId, Request $request, GetDicoms $getDicoms, GetDicomsRequest $getDicomsRequest, GetDicomsResponse $getDicomsResponse)
+    public function getVisitDicoms(Request $request, GetDicoms $getDicoms, GetDicomsRequest $getDicomsRequest, GetDicomsResponse $getDicomsResponse, int $visitId)
     {
         $currentUser = Auth::user();
         $queryParam = $request->query();
@@ -65,7 +62,7 @@ class DicomController extends Controller
         return $this->getJsonResponse($getDicomsResponse->body, $getDicomsResponse->status, $getDicomsResponse->statusText);
     }
 
-    public function deleteSeries(string $seriesInstanceUID, Request $request, DeleteSeries $deleteSeries, DeleteSeriesRequest $deleteSeriesRequest, DeleteSeriesResponse $deleteSeriesResponse)
+    public function deleteSeries(Request $request, DeleteSeries $deleteSeries, DeleteSeriesRequest $deleteSeriesRequest, DeleteSeriesResponse $deleteSeriesResponse, string $seriesInstanceUID)
     {
         $currentUser = Auth::user();
         $queryParam = $request->query();
@@ -81,7 +78,7 @@ class DicomController extends Controller
         return $this->getJsonResponse($deleteSeriesResponse->body, $deleteSeriesResponse->status, $deleteSeriesResponse->statusText);
     }
 
-    public function reactivateSeries(string $seriesInstanceUID, Request $request, ReactivateDicomSeries $reactivateDicomSeries, ReactivateDicomSeriesRequest $reactivateDicomSeriesRequest, ReactivateDicomSeriesResponse $reactivateDicomSeriesResponse)
+    public function reactivateSeries(Request $request, ReactivateDicomSeries $reactivateDicomSeries, ReactivateDicomSeriesRequest $reactivateDicomSeriesRequest, ReactivateDicomSeriesResponse $reactivateDicomSeriesResponse, string $seriesInstanceUID)
     {
         $currentUser = Auth::user();
         $requestData = $request->all();
@@ -97,7 +94,7 @@ class DicomController extends Controller
         return $this->getJsonResponse($reactivateDicomSeriesResponse->body, $reactivateDicomSeriesResponse->status, $reactivateDicomSeriesResponse->statusText);
     }
 
-    public function reactivateStudy(string $studyInstanceUID, Request $request, ReactivateDicomStudy $reactivateDicomStudy, ReactivateDicomStudyRequest $reactivateDicomStudyRequest, ReactivateDicomStudyResponse $reactivateDicomStudyResponse)
+    public function reactivateStudy(Request $request, ReactivateDicomStudy $reactivateDicomStudy, ReactivateDicomStudyRequest $reactivateDicomStudyRequest, ReactivateDicomStudyResponse $reactivateDicomStudyResponse, string $studyInstanceUID)
     {
 
         $currentUser = Auth::user();
@@ -112,7 +109,7 @@ class DicomController extends Controller
         return $this->getJsonResponse($reactivateDicomStudyResponse->body, $reactivateDicomStudyResponse->status, $reactivateDicomStudyResponse->statusText);
     }
 
-    public function getSupervisorDicomsFile(string $studyName, Request $request, GetDicomsFileSupervisor $getDicomsFileSupervisor, GetDicomsFileSupervisorRequest $getDicomsFileSupervisorRequest, GetDicomsFileSupervisorResponse $getDicomsFileSupervisorResponse)
+    public function getSupervisorDicomsFile(Request $request, GetDicomsFileSupervisor $getDicomsFileSupervisor, GetDicomsFileSupervisorRequest $getDicomsFileSupervisorRequest, GetDicomsFileSupervisorResponse $getDicomsFileSupervisorResponse, string $studyName)
     {
         $currentUser = Auth::user();
         $requestData = $request->all();

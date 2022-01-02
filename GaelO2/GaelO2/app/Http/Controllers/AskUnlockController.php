@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Auth;
 
 class AskUnlockController extends Controller
 {
-    public function askUnlock(int $visitId, Request $request, RequestUnlock $requestUnlock, RequestUnlockRequest $requestUnlockRequest, RequestUnlockResponse $requestUnlockResponse)
+    public function askUnlock(Request $request, RequestUnlock $requestUnlock, RequestUnlockRequest $requestUnlockRequest, RequestUnlockResponse $requestUnlockResponse, int $visitId)
     {
         $currentUser = Auth::user();
         $queryParam = $request->query();

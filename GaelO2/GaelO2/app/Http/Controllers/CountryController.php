@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Auth;
 
 class CountryController extends Controller
 {
-    public function getCountry(?string $code = null, GetCountryRequest $getCountryRequest, GetCountryResponse $getCountryResponse, GetCountry $getCountry)
+    public function getCountry(GetCountryRequest $getCountryRequest, GetCountryResponse $getCountryResponse, GetCountry $getCountry, ?string $code = null)
     {
         $currentUser = Auth::user();
         $getCountryRequest->currentUserId = $currentUser['id'];

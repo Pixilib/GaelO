@@ -22,7 +22,7 @@ use Illuminate\Support\Facades\Auth;
 class PatientController extends Controller
 {
 
-    public function getPatient(string $id, Request $request, GetPatientRequest $getPatientRequest, GetPatientResponse $getPatientResponse, GetPatient $getPatient)
+    public function getPatient(Request $request, GetPatientRequest $getPatientRequest, GetPatientResponse $getPatientResponse, GetPatient $getPatient, string $id)
     {
         $currentUser = Auth::user();
         $queryParam = $request->query();
@@ -34,7 +34,7 @@ class PatientController extends Controller
         return $this->getJsonResponse($getPatientResponse->body, $getPatientResponse->status, $getPatientResponse->statusText);
     }
 
-    public function getPatientVisit(string $patientId, Request $request, GetPatientVisit $getPatientVisit, GetPatientVisitRequest $getPatientVisitRequest, GetPatientVisitResponse $getPatientVisitResponse)
+    public function getPatientVisit(Request $request, GetPatientVisit $getPatientVisit, GetPatientVisitRequest $getPatientVisitRequest, GetPatientVisitResponse $getPatientVisitResponse, string $patientId)
     {
         $currentUser = Auth::user();
         $queryParam = $request->query();
@@ -49,7 +49,7 @@ class PatientController extends Controller
         return $this->getJsonResponse($getPatientVisitResponse->body, $getPatientVisitResponse->status, $getPatientVisitResponse->statusText);
     }
 
-    public function modifyPatient(string $patientId, Request $request, ModifyPatient $modifyPatient, ModifyPatientRequest $modifyPatientRequest, ModifyPatientResponse $modifyPatientResponse)
+    public function modifyPatient(Request $request, ModifyPatient $modifyPatient, ModifyPatientRequest $modifyPatientRequest, ModifyPatientResponse $modifyPatientResponse, string $patientId)
     {
         $currentUser = Auth::user();
         $requestData = $request->all();
@@ -62,7 +62,7 @@ class PatientController extends Controller
         return $this->getJsonResponse($modifyPatientResponse->body, $modifyPatientResponse->status, $modifyPatientResponse->statusText);
     }
 
-    public function getCreatableVisits(string $patientId, GetCreatableVisits $getCreatableVisits, GetCreatableVisitsRequest $getCreatableVisitsRequest, GetCreatableVisitsResponse $getCreatableVisitsResponse)
+    public function getCreatableVisits(GetCreatableVisits $getCreatableVisits, GetCreatableVisitsRequest $getCreatableVisitsRequest, GetCreatableVisitsResponse $getCreatableVisitsResponse, string $patientId)
     {
 
         $currentUser = Auth::user();

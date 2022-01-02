@@ -29,7 +29,7 @@ use Illuminate\Support\Facades\Auth;
 
 class DocumentationController extends Controller
 {
-    public function createDocumentation(string $studyName, Request $request, CreateDocumentation $createDocumentation, CreateDocumentationRequest $createDocumentationRequest, CreateDocumentationResponse $createDocumentationResponse)
+    public function createDocumentation(Request $request, CreateDocumentation $createDocumentation, CreateDocumentationRequest $createDocumentationRequest, CreateDocumentationResponse $createDocumentationResponse, string $studyName)
     {
         $currentUser = Auth::user();
         $requestData = $request->all();
@@ -40,7 +40,7 @@ class DocumentationController extends Controller
         return $this->getJsonResponse($createDocumentationResponse->body, $createDocumentationResponse->status, $createDocumentationResponse->statusText);
     }
 
-    public function uploadDocumentation(int $documentationId, Request $request, CreateDocumentationFile $createDocumentationFile, CreateDocumentationFileRequest $createDocumentationFileRequest, CreateDocumentationFileResponse $createDocumentationFileResponse)
+    public function uploadDocumentation(Request $request, CreateDocumentationFile $createDocumentationFile, CreateDocumentationFileRequest $createDocumentationFileRequest, CreateDocumentationFileResponse $createDocumentationFileResponse, int $documentationId)
     {
         $currentUser = Auth::user();
         $requestData = $request->all();
@@ -52,7 +52,7 @@ class DocumentationController extends Controller
         return $this->getJsonResponse($createDocumentationFileResponse->body, $createDocumentationFileResponse->status, $createDocumentationFileResponse->statusText);
     }
 
-    public function deleteDocumentation(int $documentationId, DeleteDocumentation $deleteDocumentation, DeleteDocumentationRequest $deleteDocumentationRequest, DeleteDocumentationResponse $deleteDocumentationResponse)
+    public function deleteDocumentation(DeleteDocumentation $deleteDocumentation, DeleteDocumentationRequest $deleteDocumentationRequest, DeleteDocumentationResponse $deleteDocumentationResponse, int $documentationId)
     {
         $currentUser = Auth::user();
         $deleteDocumentationRequest->id = $documentationId;
@@ -62,7 +62,7 @@ class DocumentationController extends Controller
         return $this->getJsonResponse($deleteDocumentationResponse->body, $deleteDocumentationResponse->status, $deleteDocumentationResponse->statusText);
     }
 
-    public function getDocumentationsFromStudy(string $studyName, Request $request, GetDocumentation $getDocumentation, GetDocumentationRequest $getDocumentationRequest, GetDocumentationResponse $getDocumentationResponse)
+    public function getDocumentationsFromStudy(Request $request, GetDocumentation $getDocumentation, GetDocumentationRequest $getDocumentationRequest, GetDocumentationResponse $getDocumentationResponse, string $studyName)
     {
         $currentUser = Auth::user();
         $queryParam = $request->query();
@@ -73,7 +73,7 @@ class DocumentationController extends Controller
         return $this->getJsonResponse($getDocumentationResponse->body, $getDocumentationResponse->status, $getDocumentationResponse->statusText);
     }
 
-    public function getDocumentationFile(int $documentationId, GetDocumentationFile $getDocumentationFile, GetDocumentationFileRequest $getDocumentationFileRequest, GetDocumentationFileResponse $getDocumentationFileResponse)
+    public function getDocumentationFile(GetDocumentationFile $getDocumentationFile, GetDocumentationFileRequest $getDocumentationFileRequest, GetDocumentationFileResponse $getDocumentationFileResponse, int $documentationId)
     {
         $currentUser = Auth::user();
         $getDocumentationFileRequest->id = $documentationId;
@@ -87,7 +87,7 @@ class DocumentationController extends Controller
         }
     }
 
-    public function modifyDocumentation(int $documentationId, Request $request, ModifyDocumentation $modifyDocumentation, ModifyDocumentationRequest $modifyDocumentationRequest, ModifyDocumentationResponse $modifyDocumentationResponse)
+    public function modifyDocumentation(Request $request, ModifyDocumentation $modifyDocumentation, ModifyDocumentationRequest $modifyDocumentationRequest, ModifyDocumentationResponse $modifyDocumentationResponse, int $documentationId)
     {
         $currentUser = Auth::user();
         $requestData = $request->all();
@@ -98,7 +98,7 @@ class DocumentationController extends Controller
         return $this->getJsonResponse($modifyDocumentationResponse->body, $modifyDocumentationResponse->status, $modifyDocumentationResponse->statusText);
     }
 
-    public function reactivateDocumentation(int $documentationId, ReactivateDocumentation $reactivateDocumentation, ReactivateDocumentationRequest $reactivateDocumentationRequest, ReactivateDocumentationResponse $reactivateDocumentationResponse){
+    public function reactivateDocumentation(ReactivateDocumentation $reactivateDocumentation, ReactivateDocumentationRequest $reactivateDocumentationRequest, ReactivateDocumentationResponse $reactivateDocumentationResponse, int $documentationId){
         $currentUser = Auth::user();
         $reactivateDocumentationRequest->currentUserId = $currentUser['id'];
         $reactivateDocumentationRequest->documentationId = $documentationId;
