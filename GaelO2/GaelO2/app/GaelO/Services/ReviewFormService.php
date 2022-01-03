@@ -12,7 +12,7 @@ class ReviewFormService extends FormService {
     }
 
     public function saveReview(array $data, bool $validated, bool $adjudication) : int {
-        $validity = $this->abstractStudyRules->checkReviewFormValidity($data, $validated, $adjudication);
+        $validity = $this->abstractVisitRules->checkReviewFormValidity($data, $validated, $adjudication);
         if(!$validity){
             throw new GaelOBadRequestException('Review Form Validation Failed');
         }
@@ -27,7 +27,7 @@ class ReviewFormService extends FormService {
         //Get current Entity to know if adjudication form
         $reviewEntity = $this->reviewRepositoryInterface->find($reviewId);
         //Pass validation
-        $validity = $this->abstractStudyRules->checkReviewFormValidity($data, $validated, $reviewEntity['adjudication']);
+        $validity = $this->abstractVisitRules->checkReviewFormValidity($data, $validated, $reviewEntity['adjudication']);
         if(!$validity){
             throw new GaelOBadRequestException('Review Form Validation Failed');
         }
@@ -49,9 +49,9 @@ class ReviewFormService extends FormService {
     }
 
     private function doSpecificReviewDecisions(){
-        $reviewStatus = $this->abstractStudyRules->getReviewStatus();
-        $availability = $this->abstractStudyRules->getReviewAvailability($reviewStatus);
-        $conclusion = $this->abstractStudyRules->getReviewConclusion();
+        $reviewStatus = $this->abstractVisitRules->getReviewStatus();
+        $availability = $this->abstractVisitRules->getReviewAvailability($reviewStatus);
+        $conclusion = $this->abstractVisitRules->getReviewConclusion();
 
         if( $availability !== $this->reviewStatusEntity['review_available'] ) $this->reviewStatusRepositoryInterface->updateReviewAvailability($this->visitId, $this->studyName, $availability );
         if( $reviewStatus !== $this->reviewStatusEntity['review_status'] ) $this->reviewStatusRepositoryInterface->updateReviewStatus($this->visitId, $this->studyName, $reviewStatus );

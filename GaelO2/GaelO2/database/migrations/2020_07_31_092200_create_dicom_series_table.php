@@ -15,7 +15,7 @@ class CreateDicomSeriesTable extends Migration
     {
         Schema::create('dicom_series', function (Blueprint $table) {
             $table->string('series_uid', 256)->primary();
-            $table->string('study_uid', 256)->nullable(false);
+            $table->string('study_instance_uid', 256)->nullable(false);
             $table->string('orthanc_id', 44)->nullable(false);
             $table->date('acquisition_date')->nullable(true)->default(null);
             $table->time('acquisition_time')->nullable(true)->default(null);
@@ -37,7 +37,7 @@ class CreateDicomSeriesTable extends Migration
             $table->softDeletes();
             $table->timestamps();
             //Dependencies
-            $table->foreign('study_uid')->references('study_uid')->on('dicom_studies');
+            $table->foreign('study_instance_uid')->references('study_uid')->on('dicom_studies');
             $table->unique('orthanc_id');
         });
     }

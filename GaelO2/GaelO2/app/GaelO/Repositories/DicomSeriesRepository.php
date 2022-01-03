@@ -32,7 +32,7 @@ class DicomSeriesRepository implements DicomSeriesRepositoryInterface {
 
         $dicomSeries = new DicomSeries();
         $dicomSeries->orthanc_id = $seriesOrthancID;
-        $dicomSeries->study_uid = $studyInstanceUID;
+        $dicomSeries->study_instance_uid = $studyInstanceUID;
         $dicomSeries->acquisition_date = $acquisitionDate;
         $dicomSeries->acquisition_time = $acquisitionTime;
         $dicomSeries->modality = $modality;
@@ -89,7 +89,7 @@ class DicomSeriesRepository implements DicomSeriesRepositoryInterface {
 
     public function getDicomSeriesOfStudyInstanceUIDArray(array $studyInstanceUID, bool $withTrashed) : array {
 
-        $query = $this->dicomSeries->whereIn('study_uid', $studyInstanceUID);
+        $query = $this->dicomSeries->whereIn('study_instance_uid', $studyInstanceUID);
 
         if($withTrashed){
             $query->withTrashed();

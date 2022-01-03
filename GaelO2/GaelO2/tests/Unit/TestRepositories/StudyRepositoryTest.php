@@ -3,11 +3,15 @@
 namespace Tests\Unit\TestRepositories;
 
 use App\GaelO\Repositories\StudyRepository;
+use App\Models\DicomSeries;
+use App\Models\DicomStudy;
+use App\Models\Patient;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\TestCase;
 
 use App\Models\Study;
+use App\Models\Visit;
 
 class StudyRepositoryTest extends TestCase
 {
@@ -100,6 +104,27 @@ class StudyRepositoryTest extends TestCase
         Study::factory()->ancillaryOf($study->name)->count(5)->create();
         $ancilarriesStudies = $this->studyRepository->getAncillariesStudyOfStudy($study->name);
         $this->assertEquals(5, sizeof($ancilarriesStudies));
+    }
+
+    public function testGetStatistics(){
+        $study = Study::factory()->create();
+        $patients = Patient::factory()->count(30)->studyName($study->name)->create();
+        $visit = Visit::factory()->patientId($patients->first()->id)->create();
+        $dicomStudy = DicomStudy::factory()->visitId($visit->id)->create();
+        DicomSeries::factory()->studyInstanceUID($dicomStudy->study_uid)->count(5)->create();
+
+        $studyName = $study->name;
+
+        $study = Study::findOrFail($studyName);
+        $statistics = $this->studyRepository->getStudyStatistics($study->name);
+
+        $this->assertEquals($statistics['patients_count'], 30);
+        $this->assertEquals($statistics['dicom_studies_count'], 1);
+        $this->assertEquals($statistics['dicom_series_count'], 5);
+        $this->assertGreaterThan(1 , $statistics['dicom_instances_count']);
+        $this->assertGreaterThan(1 , $statistics['dicom_disk_size']);
+
+
     }
 
 

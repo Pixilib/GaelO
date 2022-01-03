@@ -50,7 +50,7 @@ use Illuminate\Support\Facades\Auth;
 
 class ReviewController extends Controller
 {
-    public function getInvestigatorForm(int $visitId, Request $request, GetInvestigatorForm $getInvestigatorForm, GetInvestigatorFormRequest $getInvestigatorFormRequest, GetInvestigatorFormResponse $getInvestigatorFormResponse)
+    public function getInvestigatorForm(Request $request, GetInvestigatorForm $getInvestigatorForm, GetInvestigatorFormRequest $getInvestigatorFormRequest, GetInvestigatorFormResponse $getInvestigatorFormResponse, int $visitId)
     {
 
         $currentUser = Auth::user();
@@ -66,7 +66,7 @@ class ReviewController extends Controller
         return $this->getJsonResponse($getInvestigatorFormResponse->body, $getInvestigatorFormResponse->status, $getInvestigatorFormResponse->statusText);
     }
 
-    public function deleteInvestigatorForm(int $visitId, Request $request, DeleteInvestigatorForm $deleteInvestigatorForm, DeleteInvestigatorFormRequest $deleteInvestigatorFormRequest, DeleteInvestigatorFormResponse $deleteInvestigatorFormResponse)
+    public function deleteInvestigatorForm(Request $request, DeleteInvestigatorForm $deleteInvestigatorForm, DeleteInvestigatorFormRequest $deleteInvestigatorFormRequest, DeleteInvestigatorFormResponse $deleteInvestigatorFormResponse, int $visitId)
     {
         $currentUser = Auth::user();
 
@@ -81,7 +81,7 @@ class ReviewController extends Controller
         return $this->getJsonResponse($deleteInvestigatorFormResponse->body, $deleteInvestigatorFormResponse->status, $deleteInvestigatorFormResponse->statusText);
     }
 
-    public function unlockInvestigatorForm(int $visitId, Request $request, UnlockInvestigatorForm $unlockInvestigatorForm, UnlockInvestigatorFormRequest $unlockInvestigatorFormRequest, UnlockInvestigatorFormResponse $unlockInvestigatorFormResponse)
+    public function unlockInvestigatorForm(Request $request, UnlockInvestigatorForm $unlockInvestigatorForm, UnlockInvestigatorFormRequest $unlockInvestigatorFormRequest, UnlockInvestigatorFormResponse $unlockInvestigatorFormResponse, int $visitId)
     {
         $currentUser = Auth::user();
 
@@ -96,7 +96,7 @@ class ReviewController extends Controller
         return $this->getJsonResponse($unlockInvestigatorFormResponse->body, $unlockInvestigatorFormResponse->status, $unlockInvestigatorFormResponse->statusText);
     }
 
-    public function createInvestigatorForm(int $visitId, Request $request, CreateInvestigatorForm $createInvestigatorForm, CreateInvestigatorFormRequest $createInvestigatorFormRequest, CreateInvestigatorFormResponse $createInvestigatorFormResponse)
+    public function createInvestigatorForm(Request $request, CreateInvestigatorForm $createInvestigatorForm, CreateInvestigatorFormRequest $createInvestigatorFormRequest, CreateInvestigatorFormResponse $createInvestigatorFormResponse, int $visitId)
     {
 
         $currentUser = Auth::user();
@@ -112,7 +112,7 @@ class ReviewController extends Controller
         return $this->getJsonResponse($createInvestigatorFormResponse->body, $createInvestigatorFormResponse->status, $createInvestigatorFormResponse->statusText);
     }
 
-    public function modifyInvestigatorForm(int $visitId, Request $request, ModifyInvestigatorForm $modifyInvestigatorForm, ModifyInvestigatorFormRequest $modifyInvestigatorFormRequest, ModifyInvestigatorFormResponse $modifyInvestigatorFormResponse)
+    public function modifyInvestigatorForm(Request $request, ModifyInvestigatorForm $modifyInvestigatorForm, ModifyInvestigatorFormRequest $modifyInvestigatorFormRequest, ModifyInvestigatorFormResponse $modifyInvestigatorFormResponse, int $visitId)
     {
 
         $currentUser = Auth::user();
@@ -128,7 +128,7 @@ class ReviewController extends Controller
         return $this->getJsonResponse($modifyInvestigatorFormResponse->body, $modifyInvestigatorFormResponse->status, $modifyInvestigatorFormResponse->statusText);
     }
 
-    public function createReviewForm(int $visitId, Request $request, CreateReview $createReview, CreateReviewFormRequest $createReviewFormRequest, CreateReviewFormResponse $createReviewFormResponse)
+    public function createReviewForm(Request $request, CreateReview $createReview, CreateReviewFormRequest $createReviewFormRequest, CreateReviewFormResponse $createReviewFormResponse, int $visitId)
     {
         $currentUser = Auth::user();
         $requestData = $request->all();
@@ -145,7 +145,7 @@ class ReviewController extends Controller
         return $this->getJsonResponse($createReviewFormResponse->body, $createReviewFormResponse->status, $createReviewFormResponse->statusText);
     }
 
-    public function modifyReviewForm(int $reviewId, Request $request, ModifyReviewForm $modifyReviewForm, ModifyReviewFormRequest $modifyReviewFormRequest, ModifyReviewFormResponse $modifyReviewFormResponse)
+    public function modifyReviewForm(Request $request, ModifyReviewForm $modifyReviewForm, ModifyReviewFormRequest $modifyReviewFormRequest, ModifyReviewFormResponse $modifyReviewFormResponse, int $reviewId)
     {
 
         $currentUser = Auth::user();
@@ -160,7 +160,7 @@ class ReviewController extends Controller
         return $this->getJsonResponse($modifyReviewFormResponse->body, $modifyReviewFormResponse->status, $modifyReviewFormResponse->statusText);
     }
 
-    public function getReviewForm(int $reviewId, GetReviewForm $getReviewForm, GetReviewFormRequest $getReviewFormRequest, GetReviewFormResponse $getReviewFormResponse)
+    public function getReviewForm(GetReviewForm $getReviewForm, GetReviewFormRequest $getReviewFormRequest, GetReviewFormResponse $getReviewFormResponse, int $reviewId)
     {
         $currentUser = Auth::user();
         $getReviewFormRequest->currentUserId = $currentUser['id'];
@@ -171,7 +171,7 @@ class ReviewController extends Controller
         return $this->getJsonResponse($getReviewFormResponse->body, $getReviewFormResponse->status, $getReviewFormResponse->statusText);
     }
 
-    public function getReviewsFromVisit(Request $request, int $visitId, GetReviewFormFromVisit $getReviewFormFromVisit, GetReviewFormFromVisitRequest $getReviewFormFromVisitRequest, GetReviewFormFromVisitResponse $getReviewFormFromVisitResponse)
+    public function getReviewsFromVisit(Request $request, GetReviewFormFromVisit $getReviewFormFromVisit, GetReviewFormFromVisitRequest $getReviewFormFromVisitRequest, GetReviewFormFromVisitResponse $getReviewFormFromVisitResponse, int $visitId)
     {
         $currentUser = Auth::user();
 
@@ -188,7 +188,7 @@ class ReviewController extends Controller
         return $this->getJsonResponse($getReviewFormFromVisitResponse->body, $getReviewFormFromVisitResponse->status, $getReviewFormFromVisitResponse->statusText);
     }
 
-    public function deleteReviewForm(int $reviewId, Request $request, DeleteReviewForm $deleteReviewForm, DeleteReviewFormRequest $deleteReviewFormRequest, DeleteReviewFormResponse $deleteReviewFormResponse)
+    public function deleteReviewForm(Request $request, DeleteReviewForm $deleteReviewForm, DeleteReviewFormRequest $deleteReviewFormRequest, DeleteReviewFormResponse $deleteReviewFormResponse, int $reviewId)
     {
         $currentUser = Auth::user();
         $requestData = $request->all();
@@ -203,7 +203,7 @@ class ReviewController extends Controller
         return $this->getJsonResponse($deleteReviewFormResponse->body, $deleteReviewFormResponse->status, $deleteReviewFormResponse->statusText);
     }
 
-    public function unlockReviewForm(int $reviewId, Request $request, UnlockReviewForm $unlockReviewForm, UnlockReviewFormRequest $unlockReviewFormRequest, UnlockReviewFormResponse $unlockReviewFormResponse)
+    public function unlockReviewForm(Request $request, UnlockReviewForm $unlockReviewForm, UnlockReviewFormRequest $unlockReviewFormRequest, UnlockReviewFormResponse $unlockReviewFormResponse, int $reviewId)
     {
         $currentUser = Auth::user();
         $requestData = $request->all();
@@ -218,7 +218,7 @@ class ReviewController extends Controller
         return $this->getJsonResponse($unlockReviewFormResponse->body, $unlockReviewFormResponse->status, $unlockReviewFormResponse->statusText);
     }
 
-    public function createReviewFile(int $reviewId, string $key, Request $request, CreateFileToForm $createFileToForm, CreateFileToFormRequest $createFileToFormRequest, CreateFileToFormResponse $createFileToFormResponse)
+    public function createReviewFile(Request $request, CreateFileToForm $createFileToForm, CreateFileToFormRequest $createFileToFormRequest, CreateFileToFormResponse $createFileToFormResponse, int $reviewId, string $key)
     {
 
         $currentUser = Auth::user();
@@ -235,7 +235,7 @@ class ReviewController extends Controller
         return $this->getJsonResponse($createFileToFormResponse->body, $createFileToFormResponse->status, $createFileToFormResponse->statusText);
     }
 
-    public function deleteReviewFile(int $reviewId, string $key, DeleteFileOfForm $deleteFileOfForm, DeleteFileOfFormRequest $deleteFileOfFormRequest, DeleteFileOfFormResponse $deleteFileOfFormResponse)
+    public function deleteReviewFile(DeleteFileOfForm $deleteFileOfForm, DeleteFileOfFormRequest $deleteFileOfFormRequest, DeleteFileOfFormResponse $deleteFileOfFormResponse, int $reviewId, string $key)
     {
 
         $currentUser = Auth::user();
@@ -249,7 +249,7 @@ class ReviewController extends Controller
         return $this->getJsonResponse($deleteFileOfFormResponse->body, $deleteFileOfFormResponse->status, $deleteFileOfFormResponse->statusText);
     }
 
-    public function getReviewFile(int $reviewId, string $key, GetFileOfForm $getFileOfForm, GetFileOfFormRequest $getFileOfFormRequest, GetFileOfFormResponse $getFileOfFormResponse)
+    public function getReviewFile(GetFileOfForm $getFileOfForm, GetFileOfFormRequest $getFileOfFormRequest, GetFileOfFormResponse $getFileOfFormResponse, int $reviewId, string $key)
     {
 
         $currentUser = Auth::user();

@@ -28,7 +28,7 @@ class TrackerController extends Controller
         return $this->getJsonResponse($getTrackerResponse->body, $getTrackerResponse->status, $getTrackerResponse->statusText);
     }
 
-    public function getStudyTracker(string $studyName, Request $request, GetStudyTrackerRequest $getStudyTrackerRequest, GetStudyTrackerResponse $getStudyTrackerResponse, getStudyTracker $getStudyTracker) {
+    public function getStudyTracker(Request $request, GetStudyTrackerRequest $getStudyTrackerRequest, GetStudyTrackerResponse $getStudyTrackerResponse, getStudyTracker $getStudyTracker, string $studyName) {
         $currentUser = Auth::user();
         $getStudyTrackerRequest->currentUserId = $currentUser['id'];
         $queryParam = $request->query();
@@ -39,7 +39,7 @@ class TrackerController extends Controller
         return $this->getJsonResponse($getStudyTrackerResponse->body, $getStudyTrackerResponse->status, $getStudyTrackerResponse->statusText);
     }
 
-    public function getStudyTrackerRoleAction(string $studyName, string $role, Request $request, GetStudyTrackerRoleActionRequest $getStudyTrackerRoleActionRequest, GetStudyTrackerRoleActionResponse $getStudyTrackerRoleActionResponse, GetStudyTrackerRoleAction $getStudyTrackerRoleAction) {
+    public function getStudyTrackerRoleAction(Request $request, GetStudyTrackerRoleActionRequest $getStudyTrackerRoleActionRequest, GetStudyTrackerRoleActionResponse $getStudyTrackerRoleActionResponse, GetStudyTrackerRoleAction $getStudyTrackerRoleAction, string $studyName, string $role) {
         $currentUser = Auth::user();
         $getStudyTrackerRoleActionRequest->currentUserId = $currentUser['id'];
         $queryParam = $request->query();
@@ -51,7 +51,7 @@ class TrackerController extends Controller
         return $this->getJsonResponse($getStudyTrackerRoleActionResponse->body, $getStudyTrackerRoleActionResponse->status, $getStudyTrackerRoleActionResponse->statusText);
     }
 
-    public function getStudyTrackerByVisit(string $studyName, string $visitId, GetStudyTrackerByVisitRequest $getStudyTrackerByVisitRequest, GetStudyTrackerByVisitResponse $getStudyTrackerByVisitResponse, GetStudyTrackerByVisit $getStudyTrackerByVisit) {
+    public function getStudyTrackerByVisit(GetStudyTrackerByVisitRequest $getStudyTrackerByVisitRequest, GetStudyTrackerByVisitResponse $getStudyTrackerByVisitResponse, GetStudyTrackerByVisit $getStudyTrackerByVisit, string $studyName, string $visitId) {
         $currentUser = Auth::user();
         $getStudyTrackerByVisitRequest->currentUserId = $currentUser['id'];
         $getStudyTrackerByVisitRequest->visitId = $visitId;

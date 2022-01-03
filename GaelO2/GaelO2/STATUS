@@ -1,7 +1,5 @@
 Salim TODO :
 
-- Test et debeug magic link
-- API Statistics Study (nombre de patients, de dicom study-series-instance et taille disque, nombre de visistes )
 - Passer status QC / Review au niveau visite et plus au niveau study
 - Connecteur FTP/SFTP
 - Orthanc Send to peer
@@ -58,17 +56,3 @@ Les tests ne font pas d'assertion sur
 - le tracker => Via un spy ?
 - l'envoi de mails => voir doc laravel
 Review => tester un scenario de custom conclusion / adjudication
-
-
---- Maintenance Tips ---
-
-A executer en post install :
-docker-compose run gaelo2 php artisan migrate --seed **ou** php artisan db:migrate --seed
-
-Afficher une nouvelle APP_KEY : (sert a cryptage/decryptage mais pas pour hash)
-php artisan key:generate --show
-
-Si dev :
-php artisan telescope:install
-
---- /Maintenance Tips ---

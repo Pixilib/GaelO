@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\Auth;
 
 class VisitGroupController extends Controller
 {
-    public function createVisitGroup(String $studyName, Request $request, CreateVisitGroup $createVisitGroup, CreateVisitGroupRequest $createVisitGroupRequest, CreateVisitGroupResponse $createVisitGroupResponse) {
+    public function createVisitGroup(Request $request, CreateVisitGroup $createVisitGroup, CreateVisitGroupRequest $createVisitGroupRequest, CreateVisitGroupResponse $createVisitGroupResponse, String $studyName) {
         $currentUser = Auth::user();
         $createVisitGroupRequest->currentUserId = $currentUser['id'];
         $createVisitGroupRequest->studyName = $studyName;
@@ -28,7 +28,7 @@ class VisitGroupController extends Controller
         return $this->getJsonResponse($createVisitGroupResponse->body, $createVisitGroupResponse->status, $createVisitGroupResponse->statusText);
     }
 
-    public function getVisitGroup(int $visitGroupId, GetVisitGroup $getVisitGroup, GetVisitGroupRequest $getVisitGroupRequest, GetVisitGroupResponse $getVisitGroupResponse){
+    public function getVisitGroup(GetVisitGroup $getVisitGroup, GetVisitGroupRequest $getVisitGroupRequest, GetVisitGroupResponse $getVisitGroupResponse, int $visitGroupId){
         $currentUser = Auth::user();
         $getVisitGroupRequest->currentUserId = $currentUser['id'];
         $getVisitGroupRequest->visitGroupId = $visitGroupId;
@@ -39,7 +39,7 @@ class VisitGroupController extends Controller
 
     }
 
-    public function deleteVisitGroup(int $visitGroupId, DeleteVisitGroup $deleteVisitGroup, DeleteVisitGroupRequest $deleteVisitGroupRequest, DeleteVisitGroupResponse $deleteVisitGroupResponse){
+    public function deleteVisitGroup(DeleteVisitGroup $deleteVisitGroup, DeleteVisitGroupRequest $deleteVisitGroupRequest, DeleteVisitGroupResponse $deleteVisitGroupResponse, int $visitGroupId){
         $currentUser = Auth::user();
         $deleteVisitGroupRequest->currentUserId = $currentUser['id'];
         $deleteVisitGroupRequest->visitGroupId = $visitGroupId;

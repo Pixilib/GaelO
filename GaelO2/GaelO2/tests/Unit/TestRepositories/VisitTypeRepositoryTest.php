@@ -91,4 +91,13 @@ class VisitTypeRepositoryTest extends TestCase
 
     }
 
+    public function testGetVisitTypeByName(){
+        $visitType1 = VisitType::factory()->create();
+        VisitType::factory()->create();
+
+        $visitTypeEntity = $this->visitTypeRepository->findByName($visitType1->visitGroup->study_name, $visitType1->visitGroup->name, $visitType1->name);
+
+        $this->assertIsArray($visitTypeEntity);
+    }
+
 }

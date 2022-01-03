@@ -10,12 +10,13 @@ class DicomSeries extends Model
 {
     use SoftDeletes, HasFactory;
 
+    protected $table = 'dicom_series';
     protected $primaryKey = 'series_uid';
     protected $keyType = 'string';
     public $incrementing = false;
 
     public function dicomStudy(){
-        return $this->belongsTo(DicomStudy::class, 'study_uid', 'study_uid');
+        return $this->belongsTo(DicomStudy::class, 'study_instance_uid', 'study_uid');
     }
 
 }

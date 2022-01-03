@@ -21,7 +21,7 @@ use Illuminate\Support\Facades\Auth;
 
 class CenterController extends Controller
 {
-    public function getCenter(int $code=null, Request $request, GetCenterRequest $getCenterRequest, GetCenterResponse $getCenterResponse, GetCenter $getCenter) {
+    public function getCenter(Request $request, GetCenterRequest $getCenterRequest, GetCenterResponse $getCenterResponse, GetCenter $getCenter, ?int $code=null) {
         $currentUser = Auth::user();
         $getCenterRequest->currentUserId = $currentUser['id'];
         $getCenterRequest->code = $code;
@@ -31,7 +31,7 @@ class CenterController extends Controller
         return $this->getJsonResponse($getCenterResponse->body, $getCenterResponse->status, $getCenterResponse->statusText);
     }
 
-    public function modifyCenter(int $code, Request $request, ModifyCenterRequest $modifyCenterRequest, ModifyCenterResponse $modifyCenterResponse, ModifyCenter $modifyCenter) {
+    public function modifyCenter(Request $request, ModifyCenterRequest $modifyCenterRequest, ModifyCenterResponse $modifyCenterResponse, ModifyCenter $modifyCenter, int $code) {
         $currentUser = Auth::user();
         $modifyCenterRequest->currentUserId = $currentUser['id'];
         $modifyCenterRequest->code = $code;
@@ -54,10 +54,10 @@ class CenterController extends Controller
         return $this->getJsonResponse($createCenterResponse->body, $createCenterResponse->status, $createCenterResponse->statusText);
     }
 
-    public function getCentersFromStudy(String $studyName,
+    public function getCentersFromStudy(
         GetCentersFromStudy $getCentersFromStudy,
         GetCentersFromStudyRequest $getCentersFromStudyRequest,
-        GetCentersFromStudyResponse $getCentersFromStudyResponse) {
+        GetCentersFromStudyResponse $getCentersFromStudyResponse, String $studyName) {
 
         $currentUser = Auth::user();
         $getCentersFromStudyRequest->currentUserId = $currentUser['id'];

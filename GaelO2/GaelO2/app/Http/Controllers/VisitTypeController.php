@@ -17,8 +17,8 @@ use Illuminate\Support\Facades\Auth;
 
 class VisitTypeController extends Controller
 {
-    public function createVisitType(int $visitGroupId, Request $request, CreateVisitType $createVisitType,
-        CreateVisitTypeRequest $createVisitTypeRequest, CreateVisitTypeResponse $createVisitTypeResponse){
+    public function createVisitType(Request $request, CreateVisitType $createVisitType,
+        CreateVisitTypeRequest $createVisitTypeRequest, CreateVisitTypeResponse $createVisitTypeResponse, int $visitGroupId){
 
         $currentUser = Auth::user();
         $createVisitTypeRequest->currentUserId = $currentUser['id'];
@@ -31,7 +31,7 @@ class VisitTypeController extends Controller
         return $this->getJsonResponse($createVisitTypeResponse->body, $createVisitTypeResponse->status, $createVisitTypeResponse->statusText);
     }
 
-    public function getVisitType(int $visitTypeId, GetVisitType $getVisitType, GetVisitTypeRequest $getVisitTypeRequest, GetVisitTypeResponse $getVisitTypeResponse){
+    public function getVisitType(GetVisitType $getVisitType, GetVisitTypeRequest $getVisitTypeRequest, GetVisitTypeResponse $getVisitTypeResponse, int $visitTypeId){
         $currentUser = Auth::user();
         $getVisitTypeRequest->currentUserId = $currentUser['id'];
         $getVisitTypeRequest->visitTypeId = $visitTypeId;
@@ -39,7 +39,7 @@ class VisitTypeController extends Controller
         return $this->getJsonResponse($getVisitTypeResponse->body, $getVisitTypeResponse->status, $getVisitTypeResponse->statusText);
     }
 
-    public function deleteVisitType(int $visitTypeId, DeleteVisitType $deleteVisitType, DeleteVisitTypeRequest $deleteVisitTypeRequest, DeleteVisitTypeResponse $deleteVisitTypeResponse){
+    public function deleteVisitType(DeleteVisitType $deleteVisitType, DeleteVisitTypeRequest $deleteVisitTypeRequest, DeleteVisitTypeResponse $deleteVisitTypeResponse, int $visitTypeId){
         $currentUser = Auth::user();
         $deleteVisitTypeRequest->currentUserId = $currentUser['id'];
         $deleteVisitTypeRequest->visitTypeId = $visitTypeId;

@@ -47,6 +47,9 @@ use App\GaelO\UseCases\GetStudyDetails\GetStudyDetailsResponse;
 use App\GaelO\UseCases\GetStudyDetailsSupervisor\GetStudyDetailsSupervisor;
 use App\GaelO\UseCases\GetStudyDetailsSupervisor\GetStudyDetailsSupervisorRequest;
 use App\GaelO\UseCases\GetStudyDetailsSupervisor\GetStudyDetailsSupervisorResponse;
+use App\GaelO\UseCases\GetStudyStatistics\GetStudyStatistics;
+use App\GaelO\UseCases\GetStudyStatistics\GetStudyStatisticsRequest;
+use App\GaelO\UseCases\GetStudyStatistics\GetStudyStatisticsResponse;
 use App\GaelO\UseCases\GetVisitsFromVisitType\GetVisitsFromVisitType;
 use App\GaelO\UseCases\GetVisitsFromVisitType\GetVisitsFromVisitTypeRequest;
 use App\GaelO\UseCases\GetVisitsFromVisitType\GetVisitsFromVisitTypeResponse;
@@ -99,7 +102,7 @@ class StudyController extends Controller
         }
     }
 
-    public function getStudyDetails(string $studyName, GetStudyDetailsSupervisor $getStudyDetailsSupervisor, GetStudyDetailsSupervisorRequest $getStudyDetailsSupervisorRequest, GetStudyDetailsSupervisorResponse $getStudyDetailsSupervisorResponse)
+    public function getStudyDetails(GetStudyDetailsSupervisor $getStudyDetailsSupervisor, GetStudyDetailsSupervisorRequest $getStudyDetailsSupervisorRequest, GetStudyDetailsSupervisorResponse $getStudyDetailsSupervisorResponse, string $studyName)
     {
         $currentUser = Auth::user();
         $getStudyDetailsSupervisorRequest->currentUserId = $currentUser['id'];
@@ -108,7 +111,7 @@ class StudyController extends Controller
         return $this->getJsonResponse($getStudyDetailsSupervisorResponse->body, $getStudyDetailsSupervisorResponse->status, $getStudyDetailsSupervisorResponse->statusText);
     }
 
-    public function deleteStudy(String $studyName, Request $request, DeleteStudy $deleteStudy,  DeleteStudyRequest $deleteStudyRequest, DeleteStudyResponse $deleteStudyResponse)
+    public function deleteStudy(Request $request, DeleteStudy $deleteStudy,  DeleteStudyRequest $deleteStudyRequest, DeleteStudyResponse $deleteStudyResponse, String $studyName)
     {
         $currentUser = Auth::user();
 
@@ -123,7 +126,7 @@ class StudyController extends Controller
         return $this->getJsonResponse($deleteStudyResponse->body, $deleteStudyResponse->status, $deleteStudyResponse->statusText);
     }
 
-    public function reactivateStudy(string $studyName, Request $request, ReactivateStudy $reactivateStudy, ReactivateStudyRequest $reactivateStudyRequest, ReactivateStudyResponse $reactivateStudyResponse)
+    public function reactivateStudy(Request $request, ReactivateStudy $reactivateStudy, ReactivateStudyRequest $reactivateStudyRequest, ReactivateStudyResponse $reactivateStudyResponse, string $studyName)
     {
         $currentUser = Auth::user();
         $requestData = $request->all();
@@ -136,7 +139,7 @@ class StudyController extends Controller
         return $this->getJsonResponse($reactivateStudyResponse->body, $reactivateStudyResponse->status, $reactivateStudyResponse->statusText);
     }
 
-    public function importPatients(string $studyName, Request $request, ImportPatients $importPatients, ImportPatientsRequest $importPatientsRequest, ImportPatientsResponse $importPatientsResponse)
+    public function importPatients(Request $request, ImportPatients $importPatients, ImportPatientsRequest $importPatientsRequest, ImportPatientsResponse $importPatientsResponse, string $studyName)
     {
 
         $currentUser = Auth::user();
@@ -147,7 +150,7 @@ class StudyController extends Controller
         return $this->getJsonResponse($importPatientsResponse->body, $importPatientsResponse->status, $importPatientsResponse->statusText);
     }
 
-    public function isKnownOrthancId(string $studyName, string $orthancStudyID, GetKnownOrthancID $getKnownOrthancID, GetKnownOrthancIDRequest $getKnownOrthancIDRequest, GetKnownOrthancIDResponse $getKnownOrthancIDResponse)
+    public function isKnownOrthancId(GetKnownOrthancID $getKnownOrthancID, GetKnownOrthancIDRequest $getKnownOrthancIDRequest, GetKnownOrthancIDResponse $getKnownOrthancIDResponse, string $studyName, string $orthancStudyID)
     {
 
         $currentUser = Auth::user();
@@ -160,7 +163,7 @@ class StudyController extends Controller
         return $this->getJsonResponse($getKnownOrthancIDResponse->body, $getKnownOrthancIDResponse->status, $getKnownOrthancIDResponse->statusText);
     }
 
-    public function getVisitsTree(string $studyName, Request $request, GetVisitsTree $getVisitsTree, GetVisitsTreeRequest $getVisitsTreeRequest, GetVisitsTreeResponse $getVisitsTreeResponse)
+    public function getVisitsTree(Request $request, GetVisitsTree $getVisitsTree, GetVisitsTreeRequest $getVisitsTreeRequest, GetVisitsTreeResponse $getVisitsTreeResponse, string $studyName)
     {
         $currentUser = Auth::user();
         $queryParam = $request->query();
@@ -173,7 +176,7 @@ class StudyController extends Controller
         return $this->getJsonResponse($getVisitsTreeResponse->body, $getVisitsTreeResponse->status, $getVisitsTreeResponse->statusText);
     }
 
-    public function getPossibleUploads(string $studyName, GetPossibleUpload $getPossibleUpload, GetPossibleUploadRequest $getPossibleUploadRequest, GetPossibleUploadResponse $getPossibleUploadResponse)
+    public function getPossibleUploads(GetPossibleUpload $getPossibleUpload, GetPossibleUploadRequest $getPossibleUploadRequest, GetPossibleUploadResponse $getPossibleUploadResponse, string $studyName)
     {
         $currentUser = Auth::user();
         $getPossibleUploadRequest->currentUserId = $currentUser['id'];
@@ -182,7 +185,7 @@ class StudyController extends Controller
         return $this->getJsonResponse($getPossibleUploadResponse->body, $getPossibleUploadResponse->status, $getPossibleUploadResponse->statusText);
     }
 
-    public function getPatientFromStudy(String $studyName, Request $request, GetPatientFromStudyRequest $getPatientRequest, GetPatientFromStudyResponse $getPatientResponse, GetPatientFromStudy $getPatient)
+    public function getPatientFromStudy(Request $request, GetPatientFromStudyRequest $getPatientRequest, GetPatientFromStudyResponse $getPatientResponse, GetPatientFromStudy $getPatient, String $studyName)
     {
         $currentUser = Auth::user();
         $queryParam = $request->query();
@@ -193,7 +196,7 @@ class StudyController extends Controller
         return $this->getJsonResponse($getPatientResponse->body, $getPatientResponse->status, $getPatientResponse->statusText);
     }
 
-    public function getReviewProgression(int $visitTypeId, Request $request, GetReviewProgression $getReviewProgression, GetReviewProgressionRequest $getReviewProgressionRequest, GetReviewProgressionResponse $getReviewProgressionResponse)
+    public function getReviewProgression(Request $request, GetReviewProgression $getReviewProgression, GetReviewProgressionRequest $getReviewProgressionRequest, GetReviewProgressionResponse $getReviewProgressionResponse, int $visitTypeId)
     {
         $currentUser = Auth::user();
 
@@ -207,7 +210,7 @@ class StudyController extends Controller
         return $this->getJsonResponse($getReviewProgressionResponse->body, $getReviewProgressionResponse->status, $getReviewProgressionResponse->statusText);
     }
 
-    public function exportStudyData(string $studyName, ExportStudyData $exportStudyData, ExportStudyDataRequest $exportStudyDataRequest, ExportStudyDataResponse $exportStudyDataResponse)
+    public function exportStudyData(ExportStudyData $exportStudyData, ExportStudyDataRequest $exportStudyDataRequest, ExportStudyDataResponse $exportStudyDataResponse, string $studyName)
     {
         $currentUser = Auth::user();
         $exportStudyDataRequest->currentUserId = $currentUser['id'];
@@ -228,7 +231,7 @@ class StudyController extends Controller
         }
     }
 
-    public function getVisitsFromVisitType(int $visitTypeId, Request $request, GetVisitsFromVisitType $getVisitsFromVisitType, GetVisitsFromVisitTypeRequest $getVisitsFromVisitTypeRequest, GetVisitsFromVisitTypeResponse $getVisitsFromVisitTypeResponse)
+    public function getVisitsFromVisitType(Request $request, GetVisitsFromVisitType $getVisitsFromVisitType, GetVisitsFromVisitTypeRequest $getVisitsFromVisitTypeRequest, GetVisitsFromVisitTypeResponse $getVisitsFromVisitTypeResponse, int $visitTypeId)
     {
         $currentUser = Auth::user();
         $queryParam = $request->query();
@@ -241,7 +244,7 @@ class StudyController extends Controller
     }
 
 
-    public function getReviewsFromVisitType(int $visitTypeId, Request $request, GetReviewsFromVisitType $getReviewsFromVisitType, GetReviewsFromVisitTypeRequest $getReviewsFromVisitTypeRequest, GetReviewsFromVisitTypeResponse $getReviewsFromVisitTypeResponse)
+    public function getReviewsFromVisitType(Request $request, GetReviewsFromVisitType $getReviewsFromVisitType, GetReviewsFromVisitTypeRequest $getReviewsFromVisitTypeRequest, GetReviewsFromVisitTypeResponse $getReviewsFromVisitTypeResponse, int $visitTypeId)
     {
         $currentUser = Auth::user();
         $queryParam = $request->query();
@@ -254,7 +257,7 @@ class StudyController extends Controller
         return $this->getJsonResponse($getReviewsFromVisitTypeResponse->body, $getReviewsFromVisitTypeResponse->status, $getReviewsFromVisitTypeResponse->statusText);
     }
 
-    public function getReviewsMetadataFromVisitType(int $visitTypeId, Request $request, GetReviewsMetadataFromVisitType $getReviewsMetadataFromVisitType, GetReviewsMetadataFromVisitTypeRequest $getReviewsMetadataFromVisitTypeRequest, GetReviewsMetadataFromVisitTypeResponse $getReviewsMetadataFromVisitTypeResponse){
+    public function getReviewsMetadataFromVisitType(Request $request, GetReviewsMetadataFromVisitType $getReviewsMetadataFromVisitType, GetReviewsMetadataFromVisitTypeRequest $getReviewsMetadataFromVisitTypeRequest, GetReviewsMetadataFromVisitTypeResponse $getReviewsMetadataFromVisitTypeResponse, int $visitTypeId){
 
         $currentUser = Auth::user();
         $queryParam = $request->query();
@@ -268,7 +271,7 @@ class StudyController extends Controller
 
     }
 
-    public function getInvestigatorFormsFromVisitType(int $visitTypeId, Request $request, GetInvestigatorFormsFromVisitType $getInvestigatorFormsFromVisitType, GetInvestigatorFormsFromVisitTypeRequest $getInvestigatorFormsFromVisitTypeRequest, GetInvestigatorFormsFromVisitTypeResponse $getInvestigatorFormsFromVisitTypeResponse)
+    public function getInvestigatorFormsFromVisitType(Request $request, GetInvestigatorFormsFromVisitType $getInvestigatorFormsFromVisitType, GetInvestigatorFormsFromVisitTypeRequest $getInvestigatorFormsFromVisitTypeRequest, GetInvestigatorFormsFromVisitTypeResponse $getInvestigatorFormsFromVisitTypeResponse, int $visitTypeId)
     {
         $currentUser = Auth::user();
         $queryParam = $request->query();
@@ -281,7 +284,7 @@ class StudyController extends Controller
         return $this->getJsonResponse($getInvestigatorFormsFromVisitTypeResponse->body, $getInvestigatorFormsFromVisitTypeResponse->status, $getInvestigatorFormsFromVisitTypeResponse->statusText);
     }
 
-    public function getInvestigatorFormsMetadataFromVisitType(int $visitTypeId, Request $request, GetInvestigatorFormsMetadataFromVisitType $getInvestigatorFormsMetadataFromVisitType, GetInvestigatorFormsMetadataFromVisitTypeRequest $getInvestigatorFormsMetadataFromVisitTypeRequest, GetInvestigatorFormsMetadataFromVisitTypeResponse $getInvestigatorFormsMetadataFromVisitTypeResponse){
+    public function getInvestigatorFormsMetadataFromVisitType(Request $request, GetInvestigatorFormsMetadataFromVisitType $getInvestigatorFormsMetadataFromVisitType, GetInvestigatorFormsMetadataFromVisitTypeRequest $getInvestigatorFormsMetadataFromVisitTypeRequest, GetInvestigatorFormsMetadataFromVisitTypeResponse $getInvestigatorFormsMetadataFromVisitTypeResponse, int $visitTypeId){
         $currentUser = Auth::user();
         $queryParam = $request->query();
         $getInvestigatorFormsMetadataFromVisitTypeRequest->studyName = $queryParam['studyName'];
@@ -293,7 +296,7 @@ class StudyController extends Controller
         return $this->getJsonResponse($getInvestigatorFormsMetadataFromVisitTypeResponse->body, $getInvestigatorFormsMetadataFromVisitTypeResponse->status, $getInvestigatorFormsMetadataFromVisitTypeResponse->statusText);
     }
 
-    public function getDicomStudiesFromVisitType(Request $request, int $visitTypeId, GetDicomsStudiesFromVisitType $getDicomsStudiesFromVisitType, GetDicomsStudiesFromVisitTypeRequest $getDicomsStudiesFromVisitTypeRequest, GetDicomsStudiesFromVisitTypeResponse $getDicomsStudiesFromVisitTypeResponse)
+    public function getDicomStudiesFromVisitType(Request $request, GetDicomsStudiesFromVisitType $getDicomsStudiesFromVisitType, GetDicomsStudiesFromVisitTypeRequest $getDicomsStudiesFromVisitTypeRequest, GetDicomsStudiesFromVisitTypeResponse $getDicomsStudiesFromVisitTypeResponse, int $visitTypeId)
     {
 
         $currentUser = Auth::user();
@@ -308,7 +311,7 @@ class StudyController extends Controller
         return $this->getJsonResponse($getDicomsStudiesFromVisitTypeResponse->body, $getDicomsStudiesFromVisitTypeResponse->status, $getDicomsStudiesFromVisitTypeResponse->statusText);
     }
 
-    public function sendReminder(string $studyName, Request $request, SendReminder $sendReminder, ReminderRequest $reminderRequest, ReminderResponse $reminderResponse) {
+    public function sendReminder(Request $request, SendReminder $sendReminder, ReminderRequest $reminderRequest, ReminderResponse $reminderResponse, string $studyName) {
         $currentUser = Auth::user();
         $requestData = $request->all();
         $reminderRequest->currentUserId = $currentUser['id'];
@@ -325,5 +328,16 @@ class StudyController extends Controller
         $sendMailRequest = Util::fillObject($requestData, $sendMailRequest);
         $sendMail->execute($sendMailRequest, $sendMailResponse);
         return $this->getJsonResponse($sendMailResponse->body, $sendMailResponse->status, $sendMailResponse->statusText);
+    }
+
+    public function getStudyStatistics(GetStudyStatistics $getStudyStatistics, GetStudyStatisticsRequest $getStudyStatisticsRequest, GetStudyStatisticsResponse $getStudyStatisticsResponse, string $studyName){
+
+        $currentUser = Auth::user();
+
+        $getStudyStatisticsRequest->currentUserId = $currentUser['id'];
+        $getStudyStatisticsRequest->studyName = $studyName;
+        $getStudyStatistics->execute($getStudyStatisticsRequest, $getStudyStatisticsResponse);
+        return $this->getJsonResponse($getStudyStatisticsResponse->body, $getStudyStatisticsResponse->status, $getStudyStatisticsResponse->statusText);
+
     }
 }

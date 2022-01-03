@@ -20,21 +20,19 @@ class CreateMagicLink{
     private VisitRepositoryInterface $visitRepositoryInterface;
     private PatientRepositoryInterface $patientRepositoryInterface;
     private MailServices $mailServices;
-    private MagicLinkService $magicLinkService;
+    private FrameworkInterface $frameworkInterface;
 
     public function __construct(AuthorizationStudyService $authorizationStudyService,
                                 VisitRepositoryInterface $visitRepositoryInterface,
                                 PatientRepositoryInterface $patientRepositoryInterface,
                                 FrameworkInterface $frameworkInterface,
-                                MailServices $mailServices,
-                                MagicLinkService $magicLinkService)
+                                MailServices $mailServices)
     {
         $this->authorizationStudyService = $authorizationStudyService;
         $this->patientRepositoryInterface = $patientRepositoryInterface;
         $this->visitRepositoryInterface = $visitRepositoryInterface;
         $this->frameworkInterface = $frameworkInterface;
         $this->mailServices = $mailServices;
-        $this->magicLinkService = $magicLinkService;
     }
 
     public function execute(CreateMagicLinkRequest $createMagicLinkRequest, CreateMagicLinkResponse $createMagicLinkResponse){
@@ -43,28 +41,34 @@ class CreateMagicLink{
             $currentUserId = $createMagicLinkRequest->currentUserId;
             $ressourceId = $createMagicLinkRequest->ressourceId;
             $level = $createMagicLinkRequest->ressourceLevel;
+            $role = ucfirst($createMagicLinkRequest->role);
+
+            $patientCode = null;
+            $visitType = null;
 
             if( !in_array($level, ['visit', 'patient']) ) throw new GaelOBadRequestException('Wrong Level Type');
+            if( !in_array($role, [Constants::ROLE_INVESTIGATOR, Constants::ROLE_CONTROLLER, Constants::ROLE_MONITOR, Constants::ROLE_SUPERVISOR]) ) throw new GaelOBadRequestException('Wrong Role Type');
+
             if($level === 'patient'){
                 $patientEntity = $this->patientRepositoryInterface->find($ressourceId);
                 $studyName = $patientEntity['study_name'];
+                $patientCode = $patientEntity['code'];
 
             }else if($level === 'visit'){
                 $visitContext = $this->visitRepositoryInterface->getVisitContext($ressourceId);
                 $studyName = $visitContext['patient']['study_name'];
+                $patientCode = $visitContext['patient']['code'];
+                $visitType = $visitContext['visit_type']['name'];
 
             }
 
             $this->checkAuthorization($currentUserId, $studyName);
 
             //Generate Magic Link for targeted user
-            $this->magicLinkService->setRedirectUrl('/study/'.$studyName.'/role/Investigator/'.$level.'/'.$ressourceId);
-            $this->magicLinkService->setUserId($createMagicLinkRequest->targetUser);
-
-            $urlLink = $this->magicLinkService->generate();
+            $urlLink = $this->frameworkInterface->createMagicLink($createMagicLinkRequest->targetUser, '/study/'.$studyName.'/role/'.$role.'/'.$level.'/'.$ressourceId);
 
             //Send the magic link to destinators
-            $this->mailServices->sendMagicLink($createMagicLinkRequest->targetUser, $level, $ressourceId, $studyName, $urlLink);
+            $this->mailServices->sendMagicLink($createMagicLinkRequest->targetUser, $studyName, $urlLink, $role, $patientCode, $visitType);
 
             $createMagicLinkResponse->status = 200;
             $createMagicLinkResponse->statusText =  'OK';
