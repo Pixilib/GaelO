@@ -13,5 +13,6 @@
         @else Patient
         @endif
     </a>
+     (72h validity)
 
 @endsection
