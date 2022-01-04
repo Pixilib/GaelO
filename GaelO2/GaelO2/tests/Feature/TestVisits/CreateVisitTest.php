@@ -86,6 +86,34 @@ class CreateVisitTest extends TestCase
         $this->json('POST', 'api/visit-types/'.$this->visitTypeId.'/visits?role=Investigator', $validPayload)->assertStatus(403);
     }
 
+    public function testCreateVisitAsSupervisor(){
+
+        $currentUserId = AuthorizationTools::actAsAdmin(false);
+        AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $this->studyName);
+
+        $validPayload = [
+            'patientId' => $this->patient->id,
+            'visitDate' => '2020-01-01',
+            'statusDone' => 'Done',
+        ];
+
+        $this->json('POST', 'api/visit-types/'.$this->visitTypeId.'/visits?role=Supervisor', $validPayload)->assertStatus(201);
+    }
+
+    public function testCreateVisitForbiddenRole(){
+        
+        $currentUserId = AuthorizationTools::actAsAdmin(false);
+        AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_CONTROLLER, $this->studyName);
+
+        $validPayload = [
+            'patientId' => $this->patient->id,
+            'visitDate' => '2020-01-01',
+            'statusDone' => 'Done',
+        ];
+
+        $this->json('POST', 'api/visit-types/'.$this->visitTypeId.'/visits?role=Controller', $validPayload)->assertStatus(403);
+    }
+
     public function testCreateVisitWrongDate(){
 
         $validPayload = [

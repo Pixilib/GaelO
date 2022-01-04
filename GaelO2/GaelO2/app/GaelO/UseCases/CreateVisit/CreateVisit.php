@@ -16,7 +16,8 @@ use App\GaelO\Services\VisitService;
 use DateTime;
 use Exception;
 
-class CreateVisit {
+class CreateVisit
+{
 
     private PatientRepositoryInterface $patientRepositoryInterface;
     private VisitRepositoryInterface $visitRepositoryInterface;
@@ -25,7 +26,8 @@ class CreateVisit {
     private TrackerRepositoryInterface $trackerRepositoryInterface;
     private MailServices $mailServices;
 
-    public function __construct(VisitRepositoryInterface $visitRepositoryInterface, PatientRepositoryInterface $patientRepositoryInterface, AuthorizationPatientService $authorizationPatientService, VisitService $visitService, TrackerRepositoryInterface $trackerRepositoryInterface, MailServices $mailServices){
+    public function __construct(VisitRepositoryInterface $visitRepositoryInterface, PatientRepositoryInterface $patientRepositoryInterface, AuthorizationPatientService $authorizationPatientService, VisitService $visitService, TrackerRepositoryInterface $trackerRepositoryInterface, MailServices $mailServices)
+    {
         $this->visitService = $visitService;
         $this->authorizationPatientService = $authorizationPatientService;
         $this->visitRepositoryInterface = $visitRepositoryInterface;
@@ -34,39 +36,42 @@ class CreateVisit {
         $this->mailServices = $mailServices;
     }
 
-    public function execute(CreateVisitRequest $createVisitRequest, CreateVisitResponse $createVisitResponse) : void {
+    public function execute(CreateVisitRequest $createVisitRequest, CreateVisitResponse $createVisitResponse): void
+    {
 
-        try{
+        try {
 
             $patientId = $createVisitRequest->patientId;
             $currentUserId = $createVisitRequest->currentUserId;
-
+            $role = $createVisitRequest->role;
+            
             $patientEntity = $this->patientRepositoryInterface->find($patientId);
 
             $studyName = $patientEntity['study_name'];
-            $this->checkAuthorization($currentUserId, $patientId, $studyName);
+            $this->checkAuthorization($currentUserId, $patientId, $studyName, $role);
 
             //If visit was not done, force visitDate to null
             if ($createVisitRequest->statusDone === Constants::VISIT_STATUS_NOT_DONE && !empty($createVisitRequest->visitDate)) {
                 throw new GaelOBadRequestException('Visit Date should not be specified for visit status done');
             }
 
-            if ($createVisitRequest->statusDone === Constants::VISIT_STATUS_NOT_DONE && empty($createVisitRequest->reasonForNotDone) ){
+            if ($createVisitRequest->statusDone === Constants::VISIT_STATUS_NOT_DONE && empty($createVisitRequest->reasonForNotDone)) {
                 throw new GaelOBadRequestException('Reason must be specified is visit not done');
             }
 
             $existingVisit = $this->visitRepositoryInterface->isExistingVisit(
-                            $patientId,
-                            $createVisitRequest->visitTypeId);
+                $patientId,
+                $createVisitRequest->visitTypeId
+            );
 
-            if($existingVisit) {
+            if ($existingVisit) {
                 throw new GaelOConflictException('Visit Already Created');
             }
 
-            if($createVisitRequest->visitDate !== null){
+            if ($createVisitRequest->visitDate !== null) {
 
                 //Input date should be in SQL FORMAT YYYY-MM-DD
-                if ( !  $this->validateDate($createVisitRequest->visitDate) ){
+                if (!$this->validateDate($createVisitRequest->visitDate)) {
                     throw new GaelOBadRequestException("Visit Date should be in YYYY-MM-DD and valid");
                 }
             }
@@ -81,7 +86,7 @@ class CreateVisit {
                 $createVisitRequest->reasonForNotDone
             );
 
-            if($createVisitRequest->statusDone === Constants::VISIT_STATUS_NOT_DONE){
+            if ($createVisitRequest->statusDone === Constants::VISIT_STATUS_NOT_DONE) {
                 $visitContext = $this->visitRepositoryInterface->getVisitContext($visitId);
 
                 $visitType = $visitContext['visit_type']['name'];
@@ -108,40 +113,35 @@ class CreateVisit {
                 $studyName,
                 $visitId,
                 Constants::TRACKER_CREATE_VISIT,
-                $details);
+                $details
+            );
 
             $createVisitResponse->status = 201;
             $createVisitResponse->statusText = 'Created';
-
-        } catch (GaelOException $e){
+        } catch (GaelOException $e) {
 
             $createVisitResponse->status = $e->statusCode;
             $createVisitResponse->statusText = $e->statusText;
             $createVisitResponse->body = $e->getErrorBody();
-
-        } catch (Exception $e){
+        } catch (Exception $e) {
             throw $e;
         }
-
-
     }
 
-    private function checkAuthorization(int $userId, string $patientId, string $studyName) : void{
+    private function checkAuthorization(int $userId, string $patientId, string $studyName, string $role): void
+    {
         $this->authorizationPatientService->setUserId($userId);
         $this->authorizationPatientService->setStudyName($studyName);
         $this->authorizationPatientService->setPatientId($patientId);
 
-        if (! $this->authorizationPatientService->isPatientAllowed(Constants::ROLE_INVESTIGATOR) ){
+        if (!in_array($role, [Constants::ROLE_INVESTIGATOR, Constants::ROLE_SUPERVISOR]) || !$this->authorizationPatientService->isPatientAllowed($role)) {
             throw new GaelOForbiddenException();
         }
-
-
     }
 
-    private function validateDate(string $date, $format = 'Y-m-d'){
+    private function validateDate(string $date, $format = 'Y-m-d')
+    {
         $d = DateTime::createFromFormat($format, $date);
         return $d && $d->format($format) === $date;
     }
-
-
 }
