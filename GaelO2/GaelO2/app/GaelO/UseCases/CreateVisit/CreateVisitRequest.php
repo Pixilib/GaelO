@@ -9,4 +9,5 @@ class CreateVisitRequest {
     public ?string $visitDate = null;
     public string $statusDone;
     public ?string $reasonForNotDone = null;
+    public string $role;
 }
