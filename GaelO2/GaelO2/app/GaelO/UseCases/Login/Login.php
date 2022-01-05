@@ -39,32 +39,25 @@ class Login
             $attempts = $user['attempts'];
 
             //If wrong password increase attempt count and refuse connexion
-            if ( !$passwordCheck ) {
+            if (!$passwordCheck) {
                 $newAttemptCount = $this->increaseAttemptCount($user);
-                $remainingAttempts = $this->getRemainingAttempts($newAttemptCount) ;
-                if ( $remainingAttempts > 0 ) {
-                    throw new GaelOUnauthorizedException('Wrong Password remaining ' . $remainingAttempts . ' attempts');
-                } else {
+                $remainingAttempts = $this->getRemainingAttempts($newAttemptCount);
+                if ($remainingAttempts === 0) {
                     $this->sendBlockedEmail($user);
-                    throw new GaelOUnauthorizedException('Account Blocked');
                 }
+                throw new GaelOUnauthorizedException('Unknown email/password pair');
                 return;
             }
 
             //if everything OK => Login
-            if ( $user['email_verified_at'] !== null && $attempts < 3 ) {
+            if ($user['email_verified_at'] !== null && $attempts < 3) {
                 $this->updateDbOnSuccess($user, $loginRequest->ip);
                 $loginResponse->status = 200;
                 $loginResponse->statusText = "OK";
-            //should not happen
-            } else if( $user['email_verified_at'] === null ) {
-                throw new GaelOUnauthorizedException(Constants::USER_EMAIL_NOT_VERIFIED);
-            } else if( $attempts >= 3 ) {
-                throw new GaelOUnauthorizedException(Constants::USER_BLOCKED);
-            } else{
-                throw new Exception("Unkown Login Failure");
+                //should not happen
+            } else {
+                throw new GaelOUnauthorizedException("Unknown email/password");
             }
-
         } catch (GaelOException $e) {
             $loginResponse->body = $e->getErrorBody();
             $loginResponse->status = $e->statusCode;
@@ -92,9 +85,9 @@ class Login
         return $attempts;
     }
 
-    private function getRemainingAttempts($attemptCount) : int
+    private function getRemainingAttempts($attemptCount): int
     {
-        if ( $attemptCount < 3 ) return (3 - $attemptCount) ;
+        if ($attemptCount < 3) return (3 - $attemptCount);
         else return 0;
     }
 

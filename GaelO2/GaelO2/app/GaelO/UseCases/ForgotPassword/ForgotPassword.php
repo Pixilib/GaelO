@@ -19,7 +19,7 @@ class ForgotPassword
     private MailServices $mailServices;
     private TrackerRepositoryInterface $trackerRepositoryInterface;
 
-    public function __construct( FrameworkInterface $frameworkInterface, UserRepositoryInterface $userRepositoryInterface, MailServices $mailServices, TrackerRepositoryInterface $trackerRepositoryInterface)
+    public function __construct(FrameworkInterface $frameworkInterface, UserRepositoryInterface $userRepositoryInterface, MailServices $mailServices, TrackerRepositoryInterface $trackerRepositoryInterface)
     {
         $this->frameworkInterface = $frameworkInterface;
         $this->userRepositoryInterface = $userRepositoryInterface;
@@ -38,20 +38,23 @@ class ForgotPassword
 
             $emailSendSuccess = $this->frameworkInterface->sendResetPasswordLink($email);
 
-            if (! $emailSendSuccess) throw new Exception('Error Sending Reset Email');
+            if (!$emailSendSuccess) throw new Exception('Error Sending Reset Email');
 
             //Write action in tracker
             $this->trackerRepositoryInterface->writeAction($userEntity['id'], Constants::TRACKER_ROLE_USER, null, null, Constants::TRACKER_RESET_PASSWORD, null);
 
             $forgotPasswordResponse->status = 200;
             $forgotPasswordResponse->statusText = 'OK';
-
         } catch (GaelOException $e) {
             $forgotPasswordResponse->status = $e->statusCode;
             $forgotPasswordResponse->statusText = $e->statusText;
             $forgotPasswordResponse->body = $e->getErrorBody();
         } catch (Exception $e) {
-            throw $e;
+            //Do not notify if email does not exist in db
+            if ($e instanceof \Illuminate\Database\Eloquent\ModelNotFoundException) {
+                $forgotPasswordResponse->status = 200;
+                $forgotPasswordResponse->statusText = 'OK';
+            } else throw $e;
         }
     }
 

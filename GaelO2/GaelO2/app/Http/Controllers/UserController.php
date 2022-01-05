@@ -53,7 +53,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Auth\Events\Verified;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Facades\Password as FacadePassword;
+use Illuminate\Validation\Rules\Password as RulesPassword;
 
 class UserController extends Controller
 {
@@ -72,11 +73,18 @@ class UserController extends Controller
         $request->validate([
             'token' => 'required',
             'email' => 'required|email',
-            'password' => 'required|confirmed|min:8',
+            'password' => [
+                'required', 'confirmed',
+                RulesPassword::min(12) // Require at least 12 characters
+                    ->mixedCase() // Require at least one uppercase and one lowercase letter
+                    ->numbers() // Require at least one number
+                    ->symbols() // Require at least one symbol...
+                    ->uncompromised() // Password has not been compromised (checks leaks via haveibeenpwned.com)
+            ],
             'password_confirmation' => 'required_with:password|same:password'
         ]);
 
-        $status = Password::reset(
+        $status = FacadePassword::reset(
             $request->only('email', 'password', 'password_confirmation', 'token'),
             function ($user, $password) {
                 $user->forceFill([
@@ -84,7 +92,7 @@ class UserController extends Controller
                 ]);
 
                 //If password is null, it is the first password definition so we validate email as this reset password is made using email link
-                if($user->password === null ){
+                if ($user->password === null) {
                     if ($user->markEmailAsVerified()) event(new Verified($user));
                 }
 
@@ -94,9 +102,8 @@ class UserController extends Controller
             }
         );
 
-        if($status === Password::PASSWORD_RESET) return redirect('/');
+        if ($status === FacadePassword::PASSWORD_RESET) return redirect('/');
         else return response()->noContent(400);
-
     }
 
     public function getUser(GetUserRequest $getUserRequest, GetUserResponse $getUserResponse, GetUser $getUser, ?int $id = null)
@@ -255,5 +262,4 @@ class UserController extends Controller
         $getUserFromStudy->execute($getUserFromStudyRequest, $getUserFromStudyResponse);
         return $this->getJsonResponse($getUserFromStudyResponse->body, $getUserFromStudyResponse->status, $getUserFromStudyResponse->statusText);
     }
-
 }
