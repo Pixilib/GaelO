@@ -5,15 +5,12 @@ namespace App\GaelO\Services;
 use App\GaelO\Constants\Constants;
 use App\GaelO\Repositories\ReviewRepository;
 use App\GaelO\Repositories\ReviewStatusRepository;
-use App\GaelO\Repositories\VisitTypeRepository;
 use App\GaelO\Repositories\VisitRepository;
-use App\GaelO\Entities\VisitTypeEntity;
 
 class VisitService
 {
     private VisitRepository $visitRepository;
     private ReviewRepository $reviewRepository;
-    private VisitTypeRepository $visitTypeRepository;
     private MailServices $mailServices;
     private ReviewStatusRepository $reviewStatusRepository;
 
@@ -23,10 +20,8 @@ class VisitService
         VisitRepository $visitRepository,
         ReviewRepository $reviewRepository,
         ReviewStatusRepository $reviewStatusRepository,
-        VisitTypeRepository $visitTypeRepository,
         MailServices $mailServices
     ) {
-        $this->visitTypeRepository = $visitTypeRepository;
         $this->visitRepository = $visitRepository;
         $this->mailServices = $mailServices;
         $this->reviewStatusRepository = $reviewStatusRepository;
@@ -41,44 +36,6 @@ class VisitService
     public function getVisitContext(): array
     {
         return $this->visitRepository->getVisitContext($this->visitId);
-    }
-
-    public function createVisit(
-        string $studyName,
-        int $creatorUserId,
-        string $patientId,
-        ?string $visitDate,
-        int $visitTypeId,
-        string $statusDone,
-        ?string $reasonForNotDone
-    ) : int {
-
-        $visitTypeData = $this->visitTypeRepository->find($visitTypeId);
-        $visitTypeEntity = VisitTypeEntity::fillFromDBReponseArray($visitTypeData);
-
-        $stateInvestigatorForm = Constants::INVESTIGATOR_FORM_NOT_DONE;
-        $stateQualityControl = Constants::QUALITY_CONTROL_NOT_DONE;
-        $stateReview = Constants::REVIEW_STATUS_NOT_DONE;
-
-        //SK ICI PASSER EN CALCUL DE PROBABILITE ET ISOLER CE SERVICE DANS UNE AUTRE CLASSE?
-        if (!$visitTypeEntity->localFormNeeded) $stateInvestigatorForm = Constants::INVESTIGATOR_FORM_NOT_NEEDED;
-        if (!$visitTypeEntity->qcNeeded) $stateQualityControl = Constants::QUALITY_CONTROL_NOT_NEEDED;
-        if (!$visitTypeEntity->reviewNeeded) $stateReview = Constants::REVIEW_STATUS_NOT_NEEDED;
-
-        $visitId = $this->visitRepository->createVisit(
-            $studyName,
-            $creatorUserId,
-            $patientId,
-            $visitDate,
-            $visitTypeId,
-            $statusDone,
-            $reasonForNotDone,
-            $stateInvestigatorForm,
-            $stateQualityControl,
-            $stateReview
-        );
-
-        return $visitId;
     }
 
     public function updateUploadStatus(string $uploadStatus)
@@ -172,16 +129,4 @@ class VisitService
         return $this->reviewStatusRepository->getReviewStatus($this->visitId, $studyName);
     }
 
-
-    //SK ICI PROBABILITE EN BASE DE DONNE ET DOIT POUVOIR ETRE OVERRIDE PAR LE CUSTOM OBJECT
-    /*
-    public function isReviewNeeded(array $visitTypeEntity) {
-
-
-    }
-
-    public function isQcNeeded(array $visitTypeEntity) {
-
-    }
-    */
 }

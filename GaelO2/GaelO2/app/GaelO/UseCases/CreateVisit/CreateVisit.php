@@ -11,8 +11,8 @@ use App\GaelO\Interfaces\Repositories\PatientRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
 use App\GaelO\Services\AuthorizationService\AuthorizationPatientService;
+use App\GaelO\Services\CreateVisitService;
 use App\GaelO\Services\MailServices;
-use App\GaelO\Services\VisitService;
 use DateTime;
 use Exception;
 
@@ -22,13 +22,13 @@ class CreateVisit
     private PatientRepositoryInterface $patientRepositoryInterface;
     private VisitRepositoryInterface $visitRepositoryInterface;
     private AuthorizationPatientService $authorizationPatientService;
-    private VisitService $visitService;
+    private CreateVisitService $createVisitSerice;
     private TrackerRepositoryInterface $trackerRepositoryInterface;
     private MailServices $mailServices;
 
-    public function __construct(VisitRepositoryInterface $visitRepositoryInterface, PatientRepositoryInterface $patientRepositoryInterface, AuthorizationPatientService $authorizationPatientService, VisitService $visitService, TrackerRepositoryInterface $trackerRepositoryInterface, MailServices $mailServices)
+    public function __construct(VisitRepositoryInterface $visitRepositoryInterface, PatientRepositoryInterface $patientRepositoryInterface, AuthorizationPatientService $authorizationPatientService, CreateVisitService $createVisitSerice, TrackerRepositoryInterface $trackerRepositoryInterface, MailServices $mailServices)
     {
-        $this->visitService = $visitService;
+        $this->createVisitSerice = $createVisitSerice;
         $this->authorizationPatientService = $authorizationPatientService;
         $this->visitRepositoryInterface = $visitRepositoryInterface;
         $this->patientRepositoryInterface = $patientRepositoryInterface;
@@ -44,7 +44,7 @@ class CreateVisit
             $patientId = $createVisitRequest->patientId;
             $currentUserId = $createVisitRequest->currentUserId;
             $role = $createVisitRequest->role;
-            
+
             $patientEntity = $this->patientRepositoryInterface->find($patientId);
 
             $studyName = $patientEntity['study_name'];
@@ -76,7 +76,7 @@ class CreateVisit
                 }
             }
 
-            $visitId = $this->visitService->createVisit(
+            $visitId = $this->createVisitSerice->createVisit(
                 $studyName,
                 $currentUserId,
                 $patientId,
