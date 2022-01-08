@@ -60,6 +60,7 @@ class VisitService
         $stateQualityControl = Constants::QUALITY_CONTROL_NOT_DONE;
         $stateReview = Constants::REVIEW_STATUS_NOT_DONE;
 
+        //SK ICI PASSER EN CALCUL DE PROBABILITE ET ISOLER CE SERVICE DANS UNE AUTRE CLASSE?
         if (!$visitTypeEntity->localFormNeeded) $stateInvestigatorForm = Constants::INVESTIGATOR_FORM_NOT_NEEDED;
         if (!$visitTypeEntity->qcNeeded) $stateQualityControl = Constants::QUALITY_CONTROL_NOT_NEEDED;
         if (!$visitTypeEntity->reviewNeeded) $stateReview = Constants::REVIEW_STATUS_NOT_NEEDED;
@@ -127,7 +128,7 @@ class VisitService
         $qcNeeded = $visitEntity['state_quality_control'] !== Constants::QUALITY_CONTROL_NOT_NEEDED;
         $reviewNeeded = $reviewStatus['review_status'] !== Constants::REVIEW_STATUS_NOT_NEEDED;
 
-        $this->mailServices->sendUploadedVisitMessage($this->visitId, $visitEntity['creator_user_id'], $study, $patientId, $visitType, $qcNeeded);
+        $this->mailServices->sendUploadedVisitMessage($this->visitId, $visitEntity['creator_user_id'], $studyName, $patientId, $visitType, $qcNeeded);
         //If Qc NotNeeded mark visit as available for review
         if (!$qcNeeded && $reviewNeeded ) {
             $this->reviewStatusRepository->updateReviewAvailability($this->visitId, $studyName, true);
