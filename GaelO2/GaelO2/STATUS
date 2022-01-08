@@ -5,7 +5,6 @@ Salim TODO :
 - Connecteur FTP/SFTP
 - Orthanc Send to peer
 
-
 - Optimiser l'utilisation des authorization service en injectant les data depuis le usecase (ou les rendre stateless)
 - Creatable Visit : Manque Study Custom Logic => Passer dans frontend
 - Review  : faire une propriete dans visit pour savoir si review disponible a un user en plus de status reviewAvailable ?
