@@ -41,4 +41,8 @@ class TEST_CT_CT0 extends AbstractVisitRules {
         return ['2.5' => MimeAdapter::getMimeFromExtension('csv')];
     }
 
+    public function getTargetLesion() : ?array {
+        return null;
+    }
+
 }

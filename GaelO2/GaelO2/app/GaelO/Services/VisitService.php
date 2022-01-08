@@ -117,27 +117,21 @@ class VisitService
     {
         //If uploaded done and investigator done (Done or Not Needed) send notification message
         $visitEntity = $this->visitRepository->getVisitContext($this->visitId);
+
         $patientId = $visitEntity['patient_id'];
-        $study = $visitEntity['patient']['study_name'];
         $visitType = $visitEntity['visit_type']['name'];
-        $qcNeeded = $visitEntity['visit_type']['qc_needed'];
+        $studyName = $visitEntity['patient']['study_name'];
+
+        $reviewStatus = $this->getReviewStatus($studyName);
+
+        $qcNeeded = $visitEntity['state_quality_control'] !== Constants::QUALITY_CONTROL_NOT_NEEDED;
+        $reviewNeeded = $reviewStatus['review_status'] !== Constants::REVIEW_STATUS_NOT_NEEDED;
 
         $this->mailServices->sendUploadedVisitMessage($this->visitId, $visitEntity['creator_user_id'], $study, $patientId, $visitType, $qcNeeded);
         //If Qc NotNeeded mark visit as available for review
-        if (!$qcNeeded) {
-            $this->updateReviewAvailability(true, $study, $patientId, $visitType);
-        }
-    }
-
-    /**
-     * Update review status of visit
-     * if change to available, send notification message to reviewers
-     */
-    public function updateReviewAvailability(bool $available, string $study, string $patientId, string $visitType)
-    {
-        $this->reviewStatusRepository->updateReviewAvailability($this->visitId, $study, $available);
-        if ($available) {
-            $this->mailServices->sendAvailableReviewMessage($this->visitId, $study, $patientId, $visitType);
+        if (!$qcNeeded && $reviewNeeded ) {
+            $this->reviewStatusRepository->updateReviewAvailability($this->visitId, $studyName, true);
+            $this->mailServices->sendAvailableReviewMessage($this->visitId, $studyName, $patientId, $visitType);
         }
     }
 

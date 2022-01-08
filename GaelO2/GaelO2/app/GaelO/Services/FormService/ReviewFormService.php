@@ -34,7 +34,8 @@ class ReviewFormService extends FormService
 
     public function saveReview(array $data, bool $validated, bool $adjudication): int
     {
-        $validity = $this->abstractVisitRules->checkReviewFormValidity($data, $validated, $adjudication);
+        $this->abstractVisitRules->setFormData($data);
+        $validity = $this->abstractVisitRules->checkReviewFormValidity($validated, $adjudication);
         if (!$validity) {
             throw new GaelOBadRequestException('Review Form Validation Failed');
         }
@@ -50,7 +51,8 @@ class ReviewFormService extends FormService
         //Get current Entity to know if adjudication form
         $reviewEntity = $this->reviewRepositoryInterface->find($reviewId);
         //Pass validation
-        $validity = $this->abstractVisitRules->checkReviewFormValidity($data, $validated, $reviewEntity['adjudication']);
+        $this->abstractVisitRules->setFormData($data);
+        $validity = $this->abstractVisitRules->checkReviewFormValidity($validated, $reviewEntity['adjudication']);
         if (!$validity) {
             throw new GaelOBadRequestException('Review Form Validation Failed');
         }
@@ -78,10 +80,11 @@ class ReviewFormService extends FormService
         $reviewStatus = $this->abstractVisitRules->getReviewStatus();
         $availability = $this->abstractVisitRules->getReviewAvailability($reviewStatus);
         $conclusion = $this->abstractVisitRules->getReviewConclusion();
+        $targetLesions = $this->abstractVisitRules->getTargetLesion();
 
         if ($availability !== $this->reviewStatusEntity['review_available']) $this->reviewStatusRepositoryInterface->updateReviewAvailability($this->visitId, $this->studyName, $availability);
         if ($reviewStatus !== $this->reviewStatusEntity['review_status']) $this->reviewStatusRepositoryInterface->updateReviewStatus($this->visitId, $this->studyName, $reviewStatus);
-        if ($conclusion === Constants::REVIEW_STATUS_DONE) $this->reviewStatusRepositoryInterface->updateReviewConclusion($this->visitId, $this->studyName, $conclusion);
+        if ($conclusion === Constants::REVIEW_STATUS_DONE) $this->reviewStatusRepositoryInterface->updateReviewConclusion($this->visitId, $this->studyName, $conclusion, $targetLesions);
 
         //Send Notification emails
         if ($reviewStatus === Constants::REVIEW_STATUS_WAIT_ADJUDICATION) {

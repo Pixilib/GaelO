@@ -14,25 +14,31 @@ abstract class AbstractVisitRules
     const RULE_SET = "set";
     const RULE_FLOAT = "float";
 
+    public array $data;
+
     abstract function getInvestigatorValidationRules(): array;
 
     abstract function getReviewerValidationRules(bool $adjudication): array;
 
-    public function checkInvestigatorFormValidity(array $data, bool $validated): bool
+    public function setFormData(array $data){
+        $this->data = $data;
+    }
+
+    public function checkInvestigatorFormValidity(bool $validated): bool
     {
 
         $validatorAdapter = new ValidatorAdapter($validated);
         $investigatorsRules = $this->getInvestigatorValidationRules();
         $this->fillValidator($investigatorsRules, $validatorAdapter);
-        return $validatorAdapter->validate($data);
+        return $validatorAdapter->validate($this->data);
     }
 
-    public function checkReviewFormValidity(array $data, bool $validated, bool $adjudication): bool
+    public function checkReviewFormValidity(bool $validated, bool $adjudication): bool
     {
         $validatorAdapter = new ValidatorAdapter($validated);
         $reviewerRules = $this->getReviewerValidationRules($adjudication);
         $this->fillValidator($reviewerRules, $validatorAdapter);
-        return $validatorAdapter->validate($data);
+        return $validatorAdapter->validate($this->data);
     }
 
     protected function fillValidator(array $rules, ValidatorAdapter $validatorAdapter)
@@ -76,5 +82,7 @@ abstract class AbstractVisitRules
             return true;
         }
     }
+
+    abstract function getTargetLesion() : ?array ;
 
 }
