@@ -37,7 +37,7 @@ class CreateVisitService {
 
         //SK ICI PASSER EN CALCUL DE PROBABILITE
         if (!$visitTypeEntity->localFormNeeded) $stateInvestigatorForm = Constants::INVESTIGATOR_FORM_NOT_NEEDED;
-        if (!$visitTypeEntity->qcNeeded) $stateQualityControl = Constants::QUALITY_CONTROL_NOT_NEEDED;
+        if ( !$this->calculateIsNeeded($visitTypeEntity->qcProbability) ) $stateQualityControl = Constants::QUALITY_CONTROL_NOT_NEEDED;
         if (!$visitTypeEntity->reviewNeeded) $stateReview = Constants::REVIEW_STATUS_NOT_NEEDED;
 
         $visitId = $this->visitRepositoryInterface->createVisit(
@@ -54,5 +54,13 @@ class CreateVisitService {
         );
 
         return $visitId;
+    }
+
+    /**
+     * Generate random value between 0 and 100 and return if the value is below the probability threshold
+     */
+    private function calculateIsNeeded(int $probability) : bool{
+        $randomValue = random_int(0, 100);
+        return $randomValue <= $probability;
     }
 }

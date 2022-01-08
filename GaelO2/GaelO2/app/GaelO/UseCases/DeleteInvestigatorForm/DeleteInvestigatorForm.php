@@ -49,13 +49,13 @@ class DeleteInvestigatorForm{
             $investigatorFormEntity = $this->reviewRepositoryInterface->getInvestigatorForm($deleteInvestigatorFormRequest->visitId, false);
 
             $this->checkAuthorization($deleteInvestigatorFormRequest->currentUserId, $deleteInvestigatorFormRequest->visitId, $visitContext['state_quality_control'], $studyName);
-          
+
             //Delete review
             $this->reviewRepositoryInterface->delete($investigatorFormEntity['id']);
             //Make investigator form not done
             $this->visitRepositoryInterface->updateInvestigatorFormStatus($investigatorFormEntity['visit_id'], Constants::INVESTIGATOR_FORM_NOT_DONE);
-            //Reset QC if QC is needed in this visitType
-            if($visitContext['visit_type']['qc_needed']) $this->visitRepositoryInterface->resetQc($deleteInvestigatorFormRequest->currentUserId);
+            //Reset QC if QC is needed in this visit
+            if( $visitContext['state_quality_control'] !== Constants::QUALITY_CONTROL_NOT_NEEDED ) $this->visitRepositoryInterface->resetQc($visitContext['id']);
 
             $actionDetails = [
                 'Visit Group Name' => $visitContext['visit_type']['visit_group']['name'],

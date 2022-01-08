@@ -8,7 +8,7 @@ class CreateVisitTypeRequest {
     public String $name;
     public int $order;
     public bool $localFormNeeded;
-    public bool $qcNeeded;
+    public bool $qcProbability;
     public bool $reviewNeeded;
     public bool $optional;
     public int $limitLowDays;

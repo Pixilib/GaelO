@@ -46,7 +46,7 @@ class CreateVisitType {
                 $createVisitTypeRequest->name,
                 $createVisitTypeRequest->order,
                 $createVisitTypeRequest->localFormNeeded,
-                $createVisitTypeRequest->qcNeeded,
+                $createVisitTypeRequest->qcProbability,
                 $createVisitTypeRequest->reviewNeeded,
                 $createVisitTypeRequest->optional,
                 $createVisitTypeRequest->limitLowDays,

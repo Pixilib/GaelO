@@ -19,7 +19,7 @@ class CreateVisitTypesTable extends Migration
             $table->string('name')->nullable(false);
             $table->integer('order')->nullable(false);
             $table->boolean('local_form_needed')->default(true)->nullable(false);
-            $table->boolean('qc_needed')->default(true)->nullable(false);
+            $table->integer('qc_probability')->nullable(false);
             $table->boolean('review_needed')->default(true)->nullable(false);
             $table->boolean('optional')->default(false)->nullable(false);
             $table->integer('limit_low_days')->nullable(false);

@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\GaelO\Constants\Constants;
 use App\GaelO\Util;
 use App\Models\Patient;
 use App\Models\ReviewStatus;
@@ -24,9 +25,9 @@ class VisitFactory extends Factory
             'visit_type_id'=> VisitType::factory()->create()->id,
             'status_done'=> 'Done',
             'reason_for_not_done'=> $this->faker->word,
-            'upload_status'=> 'Not Done',
-            'state_investigator_form'=> 'Not Done',
-            'state_quality_control'=> 'Not Done',
+            'upload_status'=> Constants::UPLOAD_STATUS_NOT_DONE,
+            'state_investigator_form'=> Constants::INVESTIGATOR_FORM_NOT_DONE,
+            'state_quality_control'=> Constants::QUALITY_CONTROL_NOT_DONE,
             'controller_user_id'=> null,
             'control_date'=>Util::now(),
             'image_quality_control'=> $this->faker->randomElement([true, false]),

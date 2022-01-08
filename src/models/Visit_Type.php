@@ -47,7 +47,7 @@ Class Visit_Type {
 		$this->tableReviewSpecificName=$visitType['table_review_specific'];
 		$this->visitOrder=$visitType['visit_order'];
 		$this->localFormNeeded=$visitType['local_form_needed'];
-		$this->qcNeeded=$visitType['qc_needed'];
+		$this->qcNeeded=$visitType['qc_probability'];
 		$this->reviewNeeded=$visitType['review_needed'];
 		$this->optionalVisit=$visitType['optional'];
 		$this->limitLowDays=$visitType['limit_low_days'];
