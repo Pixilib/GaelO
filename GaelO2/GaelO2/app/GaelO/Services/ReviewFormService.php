@@ -61,7 +61,7 @@ class ReviewFormService extends FormService {
 		if ($reviewStatus === Constants::REVIEW_STATUS_WAIT_ADJUDICATION) {
             $this->mailServices->sendAwaitingAdjudicationMessage($this->studyName, $this->patientId,  $this->visitType, $this->visitId);
 		}else if ($reviewStatus === Constants::REVIEW_STATUS_DONE) {
-            //Si ANCIllaire pas besoin d'embetter l'uploader du princepts ...
+            //SK Si ANCIllaire pas besoin d'embetter l'uploader du princeps ...
             $this->mailServices->sendVisitConcludedMessage(
                 $this->visitId,
                 $this->uploaderId,

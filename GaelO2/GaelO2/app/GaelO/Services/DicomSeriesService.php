@@ -51,18 +51,6 @@ class DicomSeriesService
         }
     }
 
-
-
-    public function getDicomSeries(string $seriesInstanceUID, bool $includeDeleted)
-    {
-        return $this->dicomSeriesRepositoryInterface->getSeries($seriesInstanceUID, $includeDeleted);
-    }
-
-    public function getDicomStudy(string $studyInstanceUID, bool $includeDeleted): array
-    {
-        return $this->dicomStudyRepositoryInterface->getDicomStudy($studyInstanceUID, $includeDeleted);
-    }
-
     public function reactivateDicomStudy(string $studyInstanceUID): void
     {
 

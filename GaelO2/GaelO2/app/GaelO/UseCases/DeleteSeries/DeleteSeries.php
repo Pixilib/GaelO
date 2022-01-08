@@ -6,6 +6,7 @@ use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOBadRequestException;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
+use App\GaelO\Interfaces\Repositories\DicomSeriesRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
 use App\GaelO\Services\AuthorizationService\AuthorizationVisitService;
@@ -18,11 +19,13 @@ class DeleteSeries{
     private DicomSeriesService $dicomSeriesService;
     private TrackerRepositoryInterface $trackerRepositoryInterface;
     private AuthorizationVisitService $authorizationVisitService;
+    private DicomSeriesRepositoryInterface $dicomSeriesRepositoryInterface;
 
 
-    public function __construct( VisitRepositoryInterface $visitRepositoryInterface, DicomSeriesService $dicomSeriesService, AuthorizationVisitService $authorizationVisitService, TrackerRepositoryInterface $trackerRepositoryInterface)
+    public function __construct( VisitRepositoryInterface $visitRepositoryInterface, DicomSeriesRepositoryInterface $dicomSeriesRepositoryInterface, DicomSeriesService $dicomSeriesService, AuthorizationVisitService $authorizationVisitService, TrackerRepositoryInterface $trackerRepositoryInterface)
     {
         $this->authorizationVisitService = $authorizationVisitService;
+        $this->dicomSeriesRepositoryInterface = $dicomSeriesRepositoryInterface;
         $this->dicomSeriesService = $dicomSeriesService;
         $this->trackerRepositoryInterface = $trackerRepositoryInterface;
         $this->visitRepositoryInterface = $visitRepositoryInterface;
@@ -36,7 +39,7 @@ class DeleteSeries{
                 throw new GaelOBadRequestException("A reason must be specified");
             }
 
-            $seriesData = $this->dicomSeriesService->getDicomSeries($deleteSeriesRequest->seriesInstanceUID, false);
+            $seriesData = $this->dicomSeriesRepositoryInterface->getSeries($deleteSeriesRequest->seriesInstanceUID, false);
             $visitId = $seriesData['dicom_study']['visit_id'];
 
             $visitContext = $this->visitRepositoryInterface->getVisitContext($visitId);
