@@ -55,8 +55,10 @@ class VisitTypeTest extends TestCase
         AuthorizationTools::actAsAdmin(true);
         $id = $this->visitGroup->id;
         $this->json('POST', 'api/visit-groups/'.$id.'/visit-types', $this->payload)->assertNoContent(201);
-        $visitGroup = VisitType::where('name', 'Baseline')->get()->first()->toArray();
-        $this->assertEquals(14, sizeOf($visitGroup));
+        $visitType = VisitType::where('name', 'Baseline')->get()->first();
+        $this->assertEquals(14, sizeOf($visitType->toArray()));
+        $this->assertEquals($this->payload['qcProbability'], $visitType->qc_probability);
+        $this->assertEquals($this->payload['reviewProbability'], $visitType->review_probability);
     }
 
     public function testCreateVisitTypeShouldFailedBecauseAlreadyExistingName()

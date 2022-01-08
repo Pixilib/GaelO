@@ -8,8 +8,8 @@ class VisitTypeEntity {
     public string $name;
     public int $order;
     public bool $localFormNeeded;
-    public bool $qcProbability;
-    public bool $reviewProbability;
+    public int $qcProbability;
+    public int $reviewProbability;
     public bool $optional;
     public int $limitLowDays;
     public int $limitUpDays;
