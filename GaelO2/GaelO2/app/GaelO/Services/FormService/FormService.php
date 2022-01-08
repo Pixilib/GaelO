@@ -5,7 +5,6 @@ namespace App\GaelO\Services\FormService;
 use App\GaelO\Exceptions\GaelOBadRequestException;
 use App\GaelO\Interfaces\Adapters\FrameworkInterface;
 use App\GaelO\Interfaces\Repositories\ReviewRepositoryInterface;
-use App\GaelO\Interfaces\Repositories\ReviewStatusRepositoryInterface;
 use App\GaelO\Services\MailServices;
 use App\GaelO\Services\SpecificStudiesRules\AbstractVisitRules;
 use App\GaelO\Services\VisitService;
@@ -14,9 +13,8 @@ use App\GaelO\Util;
 class FormService
 {
 
-    protected VisitService $visitService;
     protected ReviewRepositoryInterface $reviewRepositoryInterface;
-    protected ReviewStatusRepositoryInterface $reviewStatusRepositoryInterface;
+    protected VisitService $visitService;
     protected AbstractVisitRules $abstractVisitRules;
     protected MailServices $mailServices;
     protected FrameworkInterface $frameworkInterface;
@@ -30,15 +28,13 @@ class FormService
     protected int $uploaderId;
 
     public function __construct(
-        VisitService $visitService,
         ReviewRepositoryInterface $reviewRepositoryInterface,
-        ReviewStatusRepositoryInterface $reviewStatusRepositoryInterface,
+        VisitService $visitService,
         MailServices $mailServices,
         FrameworkInterface $frameworkInterface
     ) {
-        $this->visitService = $visitService;
         $this->reviewRepositoryInterface = $reviewRepositoryInterface;
-        $this->reviewStatusRepositoryInterface = $reviewStatusRepositoryInterface;
+        $this->visitService = $visitService;
         $this->mailServices = $mailServices;
         $this->frameworkInterface = $frameworkInterface;
     }
@@ -76,7 +72,7 @@ class FormService
 
         $expectedMime = $keyMimeArray[$key];
 
-        if(!empty($reviewEntity['sent_files'][$key])){
+        if (!empty($reviewEntity['sent_files'][$key])) {
             throw new GaelOBadRequestException("Already Existing File for this review");
         }
 
@@ -90,7 +86,7 @@ class FormService
 
         $storagePath = $this->frameworkInterface::getStoragePath();
 
-        $destinationPath = $this->studyName.'/'.'attached_review_file';
+        $destinationPath = $this->studyName . '/' . 'attached_review_file';
         if (!is_dir($storagePath . '/' . $destinationPath)) {
             mkdir($storagePath . '/' . $destinationPath, 0755, true);
         }
@@ -105,11 +101,11 @@ class FormService
 
     public function removeFile(array $reviewEntity, string $key)
     {
-        if(empty($reviewEntity['sent_files'][$key])){
+        if (empty($reviewEntity['sent_files'][$key])) {
             throw new GaelOBadRequestException('Non exisiting key file in review');
         }
         $storagePath = $this->frameworkInterface::getStoragePath();
-        $targetedFile = $storagePath.'/'.$reviewEntity['sent_files'][$key];
+        $targetedFile = $storagePath . '/' . $reviewEntity['sent_files'][$key];
         unlink($targetedFile);
         unset($reviewEntity['sent_files'][$key]);
         $this->reviewRepositoryInterface->updateReviewFile($reviewEntity['id'], $reviewEntity);
