@@ -2,11 +2,7 @@
 
 namespace App\GaelO\Interfaces\Repositories;
 
-use App\GaelO\Entities\PatientEntity;
-
 interface PatientRepositoryInterface {
-
-    public function update($code, array $data) : void ;
 
     public function find($id) : array ;
 
@@ -31,7 +27,7 @@ interface PatientRepositoryInterface {
     public function updatePatient(int $code, ?string $lastname, ?string $firstname,
                     ?string $gender, ?int $birthDay, ?int $birthMonth, ?int $birthYear,
                     string $studyName, ?string $registrationDate, ?string $investigatorName, int $centerCode,
-                    string $inclusionStatus, string $withdrawReason, string $withdrawDate) : void ;
+                    string $inclusionStatus, ?string $withdrawReason, ?string $withdrawDate) : void ;
 
 }
 

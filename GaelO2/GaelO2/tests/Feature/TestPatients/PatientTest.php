@@ -199,6 +199,10 @@ class PatientTest extends TestCase
     {
         $currentUserId = AuthorizationTools::actAsAdmin(false);
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $this->study->name);
+        $this->patient->inclusion_status = Constants::PATIENT_INCLUSION_STATUS_WITHDRAWN;
+        $this->patient->withdraw_reason = 'personal';
+        $this->patient->withdraw_date = now();
+        $this->patient->save();
 
         $payload = $this->validPayload;
         $payload['inclusionStatus'] = Constants::PATIENT_INCLUSION_STATUS_INCLUDED;
