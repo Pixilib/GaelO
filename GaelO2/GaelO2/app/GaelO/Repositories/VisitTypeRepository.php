@@ -29,7 +29,7 @@ class VisitTypeRepository implements VisitTypeRepositoryInterface {
         $this->visitType->findOrFail($id)->delete();
     }
 
-    public function createVisitType(int $visitGroupId, String $name, int $order, bool $localFormNeeded, int $qcProbability, bool $reviewNeeded,
+    public function createVisitType(int $visitGroupId, String $name, int $order, bool $localFormNeeded, int $qcProbability, int $reviewProbability,
                                     bool $optional, int $limitLowDays, int $limitUpDays, String $anonProfile, array $dicomContraints) : void {
 
         $visitType = new VisitType();
@@ -39,7 +39,7 @@ class VisitTypeRepository implements VisitTypeRepositoryInterface {
         $visitType->order = $order;
         $visitType->local_form_needed = $localFormNeeded;
         $visitType->qc_probability = $qcProbability;
-        $visitType->review_needed = $reviewNeeded;
+        $visitType->review_probability = $reviewProbability;
         $visitType->optional = $optional;
         $visitType->limit_low_days = $limitLowDays;
         $visitType->limit_up_days = $limitUpDays;

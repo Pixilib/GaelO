@@ -9,7 +9,7 @@ class CreateVisitTypeRequest {
     public int $order;
     public bool $localFormNeeded;
     public bool $qcProbability;
-    public bool $reviewNeeded;
+    public bool $reviewProbability;
     public bool $optional;
     public int $limitLowDays;
     public int $limitUpDays;

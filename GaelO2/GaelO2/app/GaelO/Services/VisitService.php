@@ -96,11 +96,13 @@ class VisitService
 
     public function editQc(string $stateQc, int $controllerId, bool $imageQc, bool $formQc, ?string $imageQcComment, ?string $formQcComment)
     {
-
         $visitEntity = $this->visitRepository->getVisitContext($this->visitId);
-        $localFormNeeded = $visitEntity['visit_type']['local_form_needed'];
-        $reviewNeeded = $visitEntity['visit_type']['review_needed'];
         $studyName = $visitEntity['patient']['study_name'];
+
+        $reviewStatus = $this->getReviewStatus($studyName);
+
+        $reviewNeeded = $reviewStatus['review_status'] !== Constants::REVIEW_STATUS_NOT_NEEDED;
+        $localFormNeeded = $visitEntity['state_investigator_form'] !== Constants::INVESTIGATOR_FORM_NOT_NEEDED;
 
         $this->visitRepository->editQc($this->visitId, $stateQc, $controllerId, $imageQc, $formQc, $imageQcComment, $formQcComment);
 

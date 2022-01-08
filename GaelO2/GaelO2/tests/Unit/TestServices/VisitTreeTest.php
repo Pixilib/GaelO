@@ -54,7 +54,7 @@ class VisitTreeTest extends TestCase
                 "order" => 26,
                 "local_form_needed" => 0,
                 "qc_probability" => 0,
-                "review_needed" => "0",
+                "review_probability" => 100,
                 "optional" => "0",
                 "limit_low_days" => "638",
                 "limit_up_days" => "56788",

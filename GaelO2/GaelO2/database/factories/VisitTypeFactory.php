@@ -16,7 +16,7 @@ class VisitTypeFactory extends Factory
             'order'=>  $this->faker->unique()->randomNumber,
             'local_form_needed'=>false,
             'qc_probability'=>0,
-            'review_needed'=>false,
+            'review_probability'=>0,
             'optional'=>false,
             'limit_low_days'=>  $this->faker->randomNumber,
             'limit_up_days'=> $this->faker->randomNumber,
@@ -56,7 +56,7 @@ class VisitTypeFactory extends Factory
 
         return $this->state(function (array $attributes) {
             return [
-                'qc_probability' => 1
+                'qc_probability' => 100
             ];
         });
     }
@@ -65,7 +65,7 @@ class VisitTypeFactory extends Factory
 
         return $this->state(function (array $attributes) {
             return [
-                'review_needed' => true
+                'review_probability' => 100
             ];
         });
     }

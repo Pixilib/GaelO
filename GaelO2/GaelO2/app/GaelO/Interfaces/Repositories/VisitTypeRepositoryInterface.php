@@ -17,7 +17,7 @@ interface VisitTypeRepositoryInterface
         int $order,
         bool $localFormNeeded,
         int $qcProbability,
-        bool $reviewNeeded,
+        int $reviewProbability,
         bool $optional,
         int $limitLowDays,
         int $limitUpDays,

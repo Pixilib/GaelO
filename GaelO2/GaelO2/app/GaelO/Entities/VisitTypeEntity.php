@@ -9,7 +9,7 @@ class VisitTypeEntity {
     public int $order;
     public bool $localFormNeeded;
     public bool $qcProbability;
-    public bool $reviewNeeded;
+    public bool $reviewProbability;
     public bool $optional;
     public int $limitLowDays;
     public int $limitUpDays;
@@ -26,7 +26,7 @@ class VisitTypeEntity {
         $visitTypeEntity->order = $array['order'];
         $visitTypeEntity->localFormNeeded = $array['local_form_needed'];
         $visitTypeEntity->qcProbability = $array['qc_probability'];
-        $visitTypeEntity->reviewNeeded = $array['review_needed'];
+        $visitTypeEntity->reviewProbability = $array['review_probability'];
         $visitTypeEntity->optional = $array['optional'];
         $visitTypeEntity->limitLowDays = $array['limit_low_days'];
         $visitTypeEntity->limitUpDays = $array['limit_up_days'];

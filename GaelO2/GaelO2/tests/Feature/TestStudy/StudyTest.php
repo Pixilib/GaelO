@@ -161,7 +161,7 @@ class StudyTest extends TestCase
             "order",
             "localFormNeeded",
             "qcProbability",
-            "reviewNeeded",
+            "reviewProbability",
             "optional",
             "limitLowDays",
             "limitUpDays",

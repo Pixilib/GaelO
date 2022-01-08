@@ -7,15 +7,16 @@ use App\GaelO\Entities\VisitTypeEntity;
 use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\VisitTypeRepositoryInterface;
 
-class CreateVisitService {
+class CreateVisitService
+{
 
     private VisitTypeRepositoryInterface $visitTypeRepositoryInterface;
     private VisitRepositoryInterface $visitRepositoryInterface;
 
     public function __construct(VisitTypeRepositoryInterface $visitTypeRepositoryInterface, VisitRepositoryInterface $visitRepositoryInterface)
     {
-       $this->visitTypeRepositoryInterface = $visitTypeRepositoryInterface;
-       $this->visitRepositoryInterface = $visitRepositoryInterface;
+        $this->visitTypeRepositoryInterface = $visitTypeRepositoryInterface;
+        $this->visitRepositoryInterface = $visitRepositoryInterface;
     }
 
     public function createVisit(
@@ -26,7 +27,7 @@ class CreateVisitService {
         int $visitTypeId,
         string $statusDone,
         ?string $reasonForNotDone
-    ) : int {
+    ): int {
 
         $visitTypeData = $this->visitTypeRepositoryInterface->find($visitTypeId);
         $visitTypeEntity = VisitTypeEntity::fillFromDBReponseArray($visitTypeData);
@@ -35,10 +36,9 @@ class CreateVisitService {
         $stateQualityControl = Constants::QUALITY_CONTROL_NOT_DONE;
         $stateReview = Constants::REVIEW_STATUS_NOT_DONE;
 
-        //SK ICI PASSER EN CALCUL DE PROBABILITE
         if (!$visitTypeEntity->localFormNeeded) $stateInvestigatorForm = Constants::INVESTIGATOR_FORM_NOT_NEEDED;
-        if ( !$this->calculateIsNeeded($visitTypeEntity->qcProbability) ) $stateQualityControl = Constants::QUALITY_CONTROL_NOT_NEEDED;
-        if (!$visitTypeEntity->reviewNeeded) $stateReview = Constants::REVIEW_STATUS_NOT_NEEDED;
+        if (!$this->calculateIsNeeded($visitTypeEntity->qcProbability)) $stateQualityControl = Constants::QUALITY_CONTROL_NOT_NEEDED;
+        if (!$this->calculateIsNeeded($visitTypeEntity->reviewProbability)) $stateReview = Constants::REVIEW_STATUS_NOT_NEEDED;
 
         $visitId = $this->visitRepositoryInterface->createVisit(
             $studyName,
@@ -59,8 +59,9 @@ class CreateVisitService {
     /**
      * Generate random value between 0 and 100 and return if the value is below the probability threshold
      */
-    private function calculateIsNeeded(int $probability) : bool{
-        $randomValue = random_int(0, 100);
-        return $randomValue <= $probability;
+    private function calculateIsNeeded(int $probability): bool
+    {
+        $randomValue = random_int(1, 100);
+        return ($randomValue <= $probability);
     }
 }

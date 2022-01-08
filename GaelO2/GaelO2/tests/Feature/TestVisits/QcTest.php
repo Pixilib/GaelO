@@ -39,7 +39,7 @@ class QcTest extends TestCase
         ->forVisitType([
             'visit_group_id'=>$this->visitGroup->id,
             'local_form_needed' => true,
-            'review_needed' => true
+            'review_probability' => 100
         ])
         ->patientId($this->patient->id)
         ->uploadDone()
