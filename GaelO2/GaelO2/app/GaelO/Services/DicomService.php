@@ -7,7 +7,7 @@ use App\GaelO\Exceptions\GaelOBadRequestException;
 use App\GaelO\Interfaces\Repositories\DicomStudyRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\DicomSeriesRepositoryInterface;
 
-class DicomSeriesService
+class DicomService
 {
 
     private DicomSeriesRepositoryInterface $dicomSeriesRepositoryInterface;

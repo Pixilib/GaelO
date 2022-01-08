@@ -40,7 +40,8 @@ class VisitRepository implements VisitRepositoryInterface
         string $statusDone,
         ?string $reasonForNotDone,
         string $stateInvestigatorForm,
-        string $stateQualityControl
+        string $stateQualityControl,
+        string $stateReview
     ): int {
 
         $data = [
@@ -55,11 +56,12 @@ class VisitRepository implements VisitRepositoryInterface
             'state_quality_control' => $stateQualityControl
         ];
 
-        $visitId = DB::transaction(function () use ($data, $studyName) {
+        $visitId = DB::transaction(function () use ($data, $studyName, $stateReview) {
             $newVisit = $this->visit->create($data);
             $this->reviewStatus->create([
                 'visit_id' => $newVisit->id,
-                'study_name' => $studyName
+                'study_name' => $studyName,
+                'review_status' => $stateReview
             ]);
 
             return $newVisit->id;

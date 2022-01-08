@@ -3,7 +3,6 @@
 namespace App\GaelO\Services;
 
 use App\GaelO\Constants\Constants;
-use App\GaelO\Interfaces\Repositories\DicomStudyRepositoryInterface;
 use App\GaelO\Repositories\ReviewRepository;
 use App\GaelO\Repositories\ReviewStatusRepository;
 use App\GaelO\Repositories\VisitTypeRepository;
@@ -15,7 +14,6 @@ class VisitService
     private VisitRepository $visitRepository;
     private ReviewRepository $reviewRepository;
     private VisitTypeRepository $visitTypeRepository;
-    private DicomStudyRepositoryInterface $dicomStudyRepositoryInterface;
     private MailServices $mailServices;
     private ReviewStatusRepository $reviewStatusRepository;
 
@@ -26,13 +24,11 @@ class VisitService
         ReviewRepository $reviewRepository,
         ReviewStatusRepository $reviewStatusRepository,
         VisitTypeRepository $visitTypeRepository,
-        DicomStudyRepositoryInterface $dicomStudyRepositoryInterface,
         MailServices $mailServices
     ) {
         $this->visitTypeRepository = $visitTypeRepository;
         $this->visitRepository = $visitRepository;
         $this->mailServices = $mailServices;
-        $this->dicomStudyRepositoryInterface = $dicomStudyRepositoryInterface;
         $this->reviewStatusRepository = $reviewStatusRepository;
         $this->reviewRepository = $reviewRepository;
     }
@@ -45,17 +41,6 @@ class VisitService
     public function getVisitContext(): array
     {
         return $this->visitRepository->getVisitContext($this->visitId);
-    }
-
-    public function getVisitSeriesIdsDicomArray(bool $deleted) : array
-    {
-        $studyInstanceUid = $this->dicomStudyRepositoryInterface->getStudyInstanceUidFromVisit($this->visitId);
-        $seriesEntities = $this->dicomStudyRepositoryInterface->getChildSeries($studyInstanceUid, $deleted);
-        $seriesOrthancIdArray = array_map(function ($series) {
-            return $series['orthanc_id'];
-        }, $seriesEntities);
-
-        return $seriesOrthancIdArray;
     }
 
     public function createVisit(
@@ -73,9 +58,11 @@ class VisitService
 
         $stateInvestigatorForm = Constants::INVESTIGATOR_FORM_NOT_DONE;
         $stateQualityControl = Constants::QUALITY_CONTROL_NOT_DONE;
+        $stateReview = Constants::REVIEW_STATUS_NOT_DONE;
 
         if (!$visitTypeEntity->localFormNeeded) $stateInvestigatorForm = Constants::INVESTIGATOR_FORM_NOT_NEEDED;
         if (!$visitTypeEntity->qcNeeded) $stateQualityControl = Constants::QUALITY_CONTROL_NOT_NEEDED;
+        if (!$visitTypeEntity->reviewNeeded) $stateReview = Constants::REVIEW_STATUS_NOT_NEEDED;
 
         $visitId = $this->visitRepository->createVisit(
             $studyName,
@@ -86,7 +73,8 @@ class VisitService
             $statusDone,
             $reasonForNotDone,
             $stateInvestigatorForm,
-            $stateQualityControl
+            $stateQualityControl,
+            $stateReview
         );
 
         return $visitId;

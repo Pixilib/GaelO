@@ -4,21 +4,24 @@ namespace App\GaelO\UseCases\GetDicomsFile;
 
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
+use App\GaelO\Interfaces\Repositories\DicomStudyRepositoryInterface;
+use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
 use App\GaelO\Services\AuthorizationService\AuthorizationVisitService;
 use App\GaelO\Services\OrthancService;
-use App\GaelO\Services\VisitService;
 use Exception;
 
 class GetDicomsFile{
 
+    private VisitRepositoryInterface $visitRepositoryInterface;
     private AuthorizationVisitService $authorizationService;
-    private VisitService $visitService;
+    private DicomStudyRepositoryInterface $dicomStudyRepositoryInterface;
     private OrthancService $orthancService;
 
-    public function __construct(AuthorizationVisitService $authorizationService, VisitService $visitService, OrthancService $orthancService)
+    public function __construct(VisitRepositoryInterface $visitRepositoryInterface, DicomStudyRepositoryInterface $dicomStudyRepositoryInterface, AuthorizationVisitService $authorizationService, OrthancService $orthancService)
     {
+        $this->visitRepositoryInterface = $visitRepositoryInterface;
+        $this->dicomStudyRepositoryInterface = $dicomStudyRepositoryInterface;
         $this->orthancService = $orthancService;
-        $this->visitService = $visitService;
         $this->authorizationService = $authorizationService;
         $this->orthancService->setOrthancServer(true);
     }
@@ -31,16 +34,15 @@ class GetDicomsFile{
             //Authorization Check
             $this->checkAuthorization($getDicomsRequest->currentUserId, $getDicomsRequest->visitId, $getDicomsRequest->role, $studyName);
             //Visits data
-            $this->visitService->setVisitId($getDicomsRequest->visitId);
-            $visitContext = $this->visitService->getVisitContext();
+            $visitContext = $this->visitRepositoryInterface->getVisitContext($getDicomsRequest->visitId, false);
 
             $visitType = $visitContext['visit_type']['name'];
             $visitGroup =  $visitContext['visit_type']['visit_group']['modality'];
             $patientId = $visitContext['patient']['id'];
 
             //Get SeriesOrthancID from database to be downloaded
-            //SK ICI PASSER DIRECTEMENT PAR LE REPOSITORY
-            $this->orthancSeriesIDs = $this->visitService->getVisitSeriesIdsDicomArray(false);
+            $this->orthancSeriesIDs = $this->getVisitSeriesIdsDicomArray();
+
             //First output the filename, then the controller will call outputStream to get content of orthanc response
             $getDicomsResponse->filename = 'DICOM_'.$studyName.'_'.$visitGroup.'_'.$visitType.'_'.$patientId.'.zip';
 
@@ -64,6 +66,18 @@ class GetDicomsFile{
         if( !$this->authorizationService->isVisitAllowed($role) ){
             throw new GaelOForbiddenException();
         }
+    }
+
+
+    private function getVisitSeriesIdsDicomArray() : array
+    {
+        $studyInstanceUid = $this->dicomStudyRepositoryInterface->getStudyInstanceUidFromVisit($this->visitId);
+        $seriesEntities = $this->dicomStudyRepositoryInterface->getChildSeries($studyInstanceUid, false);
+        $seriesOrthancIdArray = array_map(function ($series) {
+            return $series['orthanc_id'];
+        }, $seriesEntities);
+
+        return $seriesOrthancIdArray;
     }
 
     public function outputStream(){
