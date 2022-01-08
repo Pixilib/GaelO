@@ -1,9 +1,10 @@
 <?php
 
-namespace App\GaelO\Services;
+namespace App\GaelO\Services\FormService;
 
 use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOBadRequestException;
+use App\GaelO\Services\FormService\FormService;
 
 class ReviewFormService extends FormService {
 

@@ -11,8 +11,8 @@ use App\GaelO\Interfaces\Repositories\ReviewStatusRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
 use App\GaelO\Services\AuthorizationService\AuthorizationReviewService;
+use App\GaelO\Services\FormService\ReviewFormService;
 use App\GaelO\Services\MailServices;
-use App\GaelO\Services\ReviewFormService;
 use Exception;
 
 class UnlockReviewForm {

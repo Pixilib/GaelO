@@ -1,9 +1,10 @@
 <?php
 
-namespace App\GaelO\Services;
+namespace App\GaelO\Services\FormService;
 
 use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOBadRequestException;
+use App\GaelO\Services\FormService\FormService;
 
 class InvestigatorFormService extends FormService {
 
@@ -15,7 +16,7 @@ class InvestigatorFormService extends FormService {
     }
 
     public function updateInvestigatorForm(array $data, bool $validated) : void {
-        if( ! $this->abstractVisitRules->checkInvestigatorFormValidity($data, $validated) ) throw new GaelOBadRequestException('Form Contraints Failed');;
+        if( ! $this->abstractVisitRules->checkInvestigatorFormValidity($data, $validated) ) throw new GaelOBadRequestException('Form Contraints Failed');
         $localReviewEntitity = $this->reviewRepositoryInterface->getInvestigatorForm($this->visitId, false);
         $this->reviewRepositoryInterface->updateReview($localReviewEntitity['id'], $this->currentUserId, $data, $validated);
         $this->updateVisitInvestigatorFormStatus($validated);

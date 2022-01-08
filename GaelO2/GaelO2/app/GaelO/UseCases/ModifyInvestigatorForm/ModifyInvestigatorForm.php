@@ -9,7 +9,7 @@ use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
 use App\GaelO\Services\AuthorizationService\AuthorizationVisitService;
-use App\GaelO\Services\InvestigatorFormService;
+use App\GaelO\Services\FormService\InvestigatorFormService;
 use Exception;
 
 class ModifyInvestigatorForm {
@@ -75,7 +75,7 @@ class ModifyInvestigatorForm {
 
 
     private function checkAuthorization(int $currentUserId, int $visitId, string $visitInvestigatorFormStatus, bool $investigatorFormNeeded, string $studyName){
-        
+
         if(in_array($visitInvestigatorFormStatus, [Constants::INVESTIGATOR_FORM_DONE])){
             throw new GaelOForbiddenException();
         };
