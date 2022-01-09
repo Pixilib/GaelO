@@ -1,11 +1,10 @@
 Salim TODO :
 
-- Passer status QC / Review au niveau visite et plus au niveau study
-- Abstract visit rule voir comment on accede aux autre review de la visite ?
-- Connecteur FTP/SFTP
+- Abstract visit rule voir comment on accede aux autre review de la visite ? Api pour info custom ?
 - Orthanc Send to peer
 
 - Optimiser l'utilisation des authorization service en injectant les data depuis le usecase (ou les rendre stateless)
+- Optimiser le service visit en injectant directement le visit context?
 - Creatable Visit : Manque Study Custom Logic => Passer dans frontend
 - Review  : faire une propriete dans visit pour savoir si review disponible a un user en plus de status reviewAvailable ?
 
