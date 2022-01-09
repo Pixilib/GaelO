@@ -52,6 +52,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Auth\Events\Verified;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password as FacadePassword;
 use Illuminate\Validation\Rules\Password as RulesPassword;
@@ -92,8 +93,9 @@ class UserController extends Controller
                 ]);
 
                 //If password is null, it is the first password definition so we validate email as this reset password is made using email link
-                if ($user->password === null) {
-                    if ($user->markEmailAsVerified()) event(new Verified($user));
+                if ($user->email_verified_at === null) {
+                    $user->email_verified_at = Date::now();
+                    event(new Verified($user));
                 }
 
                 //Reset number of attempts (unblock if blocked)
