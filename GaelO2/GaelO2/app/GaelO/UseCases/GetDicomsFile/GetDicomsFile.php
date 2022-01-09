@@ -16,6 +16,7 @@ class GetDicomsFile{
     private AuthorizationVisitService $authorizationService;
     private DicomStudyRepositoryInterface $dicomStudyRepositoryInterface;
     private OrthancService $orthancService;
+    private array $orthancSeriesIDs;
 
     public function __construct(VisitRepositoryInterface $visitRepositoryInterface, DicomStudyRepositoryInterface $dicomStudyRepositoryInterface, AuthorizationVisitService $authorizationService, OrthancService $orthancService)
     {
@@ -41,7 +42,7 @@ class GetDicomsFile{
             $patientId = $visitContext['patient']['id'];
 
             //Get SeriesOrthancID from database to be downloaded
-            $this->orthancSeriesIDs = $this->getVisitSeriesIdsDicomArray();
+            $this->orthancSeriesIDs = $this->getVisitSeriesIdsDicomArray($visitContext['id']);
 
             //First output the filename, then the controller will call outputStream to get content of orthanc response
             $getDicomsResponse->filename = 'DICOM_'.$studyName.'_'.$visitGroup.'_'.$visitType.'_'.$patientId.'.zip';
@@ -69,9 +70,9 @@ class GetDicomsFile{
     }
 
 
-    private function getVisitSeriesIdsDicomArray() : array
+    private function getVisitSeriesIdsDicomArray(int $visitId) : array
     {
-        $studyInstanceUid = $this->dicomStudyRepositoryInterface->getStudyInstanceUidFromVisit($this->visitId);
+        $studyInstanceUid = $this->dicomStudyRepositoryInterface->getStudyInstanceUidFromVisit($visitId);
         $seriesEntities = $this->dicomStudyRepositoryInterface->getChildSeries($studyInstanceUid, false);
         $seriesOrthancIdArray = array_map(function ($series) {
             return $series['orthanc_id'];

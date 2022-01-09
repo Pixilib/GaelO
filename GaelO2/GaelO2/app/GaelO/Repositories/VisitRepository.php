@@ -106,7 +106,7 @@ class VisitRepository implements VisitRepositoryInterface
     public function getVisitContextByVisitIdArray(array $visitIdArray): array
     {
 
-        $query = $this->visit->with('visitType')->withTrashed()->whereIn('id', $visitIdArray);
+        $query = $this->visit->with('visitType', 'patient')->withTrashed()->whereIn('id', $visitIdArray);
         $visits = $query->get();
 
         return empty($visits) ? [] : $visits->toArray();
