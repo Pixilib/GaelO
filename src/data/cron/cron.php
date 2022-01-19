@@ -29,7 +29,7 @@ $scheduler=new Scheduler();
 //Define action and timing
 
 
-scheduleEveryXMinutes("import_from_email_ennov.php", ["study" =>"TRAILOCLORI"] , 1);
+//scheduleEveryXMinutes("import_from_email_ennov.php", ["study" =>"TRAILOCLORI"] , 1);
 // Let the scheduler execute jobs which are due.
 $scheduler->run();
 
