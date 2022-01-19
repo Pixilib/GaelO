@@ -29,10 +29,10 @@ RUN apt-get update -qy && \
     msmtp-mta && \
     docker-php-ext-install zip && \
     curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer && \
-    apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+    apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* 
 
-RUN docker-php-ext-configure imap --with-kerberos --with-imap-ssl \
-    && docker-php-ext-install imap
+RUN docker-php-ext-configure imap --with-kerberos --with-imap-ssl && \
+    docker-php-ext-install -j$(nproc) imap
 
 RUN docker-php-ext-install -j$(nproc) opcache pdo_mysql
 COPY php.ini /usr/local/etc/php/conf.d/app.ini
