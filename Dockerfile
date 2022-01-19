@@ -23,13 +23,18 @@ RUN apt-get update -qy && \
     unzip \
     libzip-dev \
     zip \
+    libc-client-dev \
+    libkrb5-dev \
     msmtp \
     msmtp-mta && \
     docker-php-ext-install zip && \
     curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer && \
     apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-RUN docker-php-ext-install -j$(nproc) opcache pdo_mysql imap
+RUN docker-php-ext-configure imap --with-kerberos --with-imap-ssl \
+    && docker-php-ext-install imap
+
+RUN docker-php-ext-install -j$(nproc) opcache pdo_mysql
 COPY php.ini /usr/local/etc/php/conf.d/app.ini
 
 # Create the cronjob (job has to be set in /data/cron/cron.php)
