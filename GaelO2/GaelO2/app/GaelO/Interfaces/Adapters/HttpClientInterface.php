@@ -29,6 +29,11 @@ interface HttpClientInterface
     public function streamResponse(string $method, string $uri, array $body = []): void;
 
     /**
+     * Return Http respond as ressource
+     */
+    public function getResponseAsStream(string $method, string $uri, array $body = []);
+
+    /**
      * Store response in destination file
      */
     public function requestStreamResponseToFile(string $method, string $uri, $ressource, array $headers): Psr7ResponseInterface;

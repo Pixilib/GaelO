@@ -344,4 +344,12 @@ class OrthancService
         $payload = array('Transcode' => '1.2.840.10008.1.2.1', 'Resources' => $seriesOrthancIDs);
         $this->httpClientInterface->streamResponse('POST', '/tools/create-archive', $payload);
     }
+
+    public function getOrthancZipStream2(array $seriesOrthancIDs)
+    {
+        $payload = array('Transcode' => '1.2.840.10008.1.2.1', 'Resources' => $seriesOrthancIDs);
+        return $this->httpClientInterface->getResponseAsStream('POST', '/tools/create-archive', $payload);
+        
+    }
 }
+

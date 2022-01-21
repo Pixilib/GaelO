@@ -143,6 +143,7 @@ return [
     'orthanc_storage_login'=>env('ORTHANC_STORAGE_LOGIN'),
     'orthanc_storage_password'=>env('ORTHANC_STORAGE_PASSWORD'),
     'tus_url'=>env('TUS_URL'),
+    'gaelo_processing_url'=>env('GAELO_PROCESSING_URL'),
 
 
     'providers' => [

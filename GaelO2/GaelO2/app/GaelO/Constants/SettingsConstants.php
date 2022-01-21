@@ -20,4 +20,6 @@ class SettingsConstants {
     const ORTHANC_STORAGE_LOGIN = 'orthanc_storage_login';
     const ORTHANC_STORAGE_PASSWORD = 'orthanc_storage_password';
 
+    const GAELO_PROCESSING_URL ='gaelo_processing_url';
+
 }

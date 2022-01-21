@@ -84,7 +84,7 @@ class HttpClientAdapter implements HttpClientInterface
         return new Psr7ResponseAdapter($response);
     }
 
-    public function streamResponse(string $method, string $uri, array $body = []): void
+    public function getResponseAsStream(string $method, string $uri, array $body = [])
     {
 
         $response = $this->client->request($method, $this->address . $uri, ['stream' => true, 'json' => $body, 'auth' => [$this->login, $this->password]]);
@@ -99,8 +99,13 @@ class HttpClientAdapter implements HttpClientInterface
             header("Content-Type: " . $contentType);
 
         }
+        return $response->getBody();
+    }
 
-        $body = $response->getBody();
+    public function streamResponse(string $method, string $uri, array $body = []): void
+    {
+        $body= $this->getResponseAsStream($method,$uri,$body);
+
         while (!$body->eof()) {
             echo $body->read(1024);
             flush();
