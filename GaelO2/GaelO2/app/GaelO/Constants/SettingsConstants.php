@@ -22,4 +22,7 @@ class SettingsConstants {
 
     const GAELO_PROCESSING_URL ='gaelo_processing_url';
 
+    const AZURE_CLIENT_ID ='azure_client_id';
+    const AZURE_TENANT_ID ='azure_tenant_id';
+    const AZURE_CLIENT_SECRET='azure_client_secret';
 }
