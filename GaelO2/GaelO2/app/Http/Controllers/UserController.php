@@ -108,11 +108,13 @@ class UserController extends Controller
         else return response()->noContent(400);
     }
 
-    public function getUser(GetUserRequest $getUserRequest, GetUserResponse $getUserResponse, GetUser $getUser, ?int $id = null)
+    public function getUser(Request $request, GetUserRequest $getUserRequest, GetUserResponse $getUserResponse, GetUser $getUser, ?int $id = null)
     {
         $currentUser = Auth::user();
+        $queryParam = $request->query();
         $getUserRequest->currentUserId = $currentUser['id'];
         $getUserRequest->id = $id;
+        $getUserRequest->withTrashed =  array_key_exists('withTrashed', $queryParam);
         $getUser->execute($getUserRequest, $getUserResponse);
         return $this->getJsonResponse($getUserResponse->body, $getUserResponse->status, $getUserResponse->statusText);
     }

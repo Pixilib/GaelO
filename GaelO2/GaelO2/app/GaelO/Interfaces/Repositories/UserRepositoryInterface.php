@@ -6,7 +6,7 @@ interface UserRepositoryInterface {
 
     public function find(int $id) : array ;
 
-    public function getAll() : array;
+    public function getAll(bool $withTrashed) : array;
 
     public function delete($id) : void;
 

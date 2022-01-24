@@ -31,7 +31,7 @@ class GetUser {
             $this->checkAuthorization($getUserRequest->currentUserId, $id);
 
             if ($id === null) {
-                $dbData = $this->userRepositoryInterface->getAll();
+                $dbData = $this->userRepositoryInterface->getAll($getUserRequest->withTrashed);
                 $responseArray = [];
                 foreach($dbData as $data){
                     $responseArray[] = UserEntity::fillFromDBReponseArray($data);

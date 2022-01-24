@@ -56,6 +56,15 @@ class UserTest extends TestCase
         $this->json('GET', '/api/users')->assertJsonCount(2);
     }
 
+    public function testGetAllUsersWithDeleted()
+    {
+        AuthorizationTools::actAsAdmin(true);
+        $users = User::factory()->count(5)->create();
+        $users->first()->delete();
+        //Test get all users ( 5 in databat : current user + default user + 5 created)
+        $this->json('GET', '/api/users?withTrashed')->assertJsonCount(7);
+    }
+
     public function testGetAllUserShouldFailNotAdmin()
     {
         AuthorizationTools::actAsAdmin(false);
