@@ -31,6 +31,7 @@ class TrackerEntity {
         $this->user = new UserEntity();
         $this->user->lastname = $array['lastname'];
         $this->user->firstname = $array['firstname'];
+        $this->user->email = $array['email'];
     }
 
 }
