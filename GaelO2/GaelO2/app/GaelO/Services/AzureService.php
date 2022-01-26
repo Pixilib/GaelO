@@ -26,7 +26,7 @@ class AzureService{
     {
       $this -> httpClientInterface=$httpClientInterface;
       $this -> frameworkInterface=$frameworkInterface;
-      $this -> tenantID =frameworkInterface::getConfig(SettingsConstants::AZURE_TENANT_ID);
+      $this -> tenantID =$frameworkInterface::getConfig(SettingsConstants::AZURE_TENANT_ID);
 
     }
 
@@ -37,10 +37,12 @@ class AzureService{
     $requestUrl = "https://login.microsoftonline.com/".$this ->tenantID."/oauth2/token";
 
      $payload=[ 
-    'clientID'=>$this->frameworkInterface::getConfig(SettingsConstants::AZURE_CLIENT_ID),
-    'client_secret'=>$this->frameworkInterface::getConfig(SettingsConstants::AZURE_CLIENT_SECRET),
-    'ressource'=> $this->ressource,
+    "grant_type"=> "client_credentials",
+    "client_id"=>$this->frameworkInterface::getConfig(SettingsConstants::AZURE_CLIENT_ID),
+    "client_secret"=>$this->frameworkInterface::getConfig(SettingsConstants::AZURE_CLIENT_SECRET),
+    "ressource"=> $this->ressource,
   ];
+  Log::info($payload);
     $response = $this -> httpClientInterface -> requestUrlEncoded($requestUrl,$payload);
   
    }          
