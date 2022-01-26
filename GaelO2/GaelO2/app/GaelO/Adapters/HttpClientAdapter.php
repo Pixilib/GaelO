@@ -16,6 +16,7 @@ class HttpClientAdapter implements HttpClientInterface
     private string $login = '';
     private string $password = '';
     private string $address;
+    private string $authorizationToken;
     private Client $client;
 
     public function __construct()
@@ -31,6 +32,11 @@ class HttpClientAdapter implements HttpClientInterface
     public function setUrl(string $url): void
     {
         $this->address = $url;
+    }
+
+    public function setAuthorizationToken(string $authorizationToken): void 
+    {
+        $this -> authorizationToken = $authorizationToken;
     }
 
     public function setBasicAuthentication(string $login, string $password): void
@@ -133,6 +139,9 @@ class HttpClientAdapter implements HttpClientInterface
 
         if ($headers != null) {
             $options['headers'] = $headers;
+        }
+        if ($this->authorizationToken != null) {
+           $options['Headers']['Authorization']= 'Bearer'. $authorizationToken,        
         }
 
         $response = $this->client->request($method, $this->address . $uri, $options);

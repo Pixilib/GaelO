@@ -42,8 +42,9 @@ class AzureService{
     "client_secret"=>$this->frameworkInterface::getConfig(SettingsConstants::AZURE_CLIENT_SECRET),
     "ressource"=> $this->ressource,
   ];
-  Log::info($payload);
-    $response = $this -> httpClientInterface -> requestUrlEncoded($requestUrl,$payload);
-  
+    $response = $this -> httpClientInterface -> requestUrlEncoded($requestUrl,$payload)->getJsonBody();
+   // Log::info($response["access_token"]);
+   
+   return $response["access_token"];
    }          
 }
