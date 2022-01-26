@@ -10,31 +10,38 @@ use Illuminate\Support\Facades\Log;
 use App\GaelO\Interfaces\Adapters\FrameworkInterface;
 
 
+
 class AzureService{               
     
     // variable     
     private HttpClientInterface $httpClientInterface;    
     private FrameworkInterface $frameworkInterface;
+    private $tenantID;
     private $ressource =  "https://management.azure.com/";
-    private  $requestUrl = "https://login.microsoftonline.com/%7BtenantId%7D/oauth2/token";
 
     // constructor
 
-    public function __construct(HttpClientInterface $httpClientInterface, FrameworkInterface $frameworkInterface)
+    public function __construct(HttpClientInterface $httpClientInterface, FrameworkInterface $frameworkInterface, $tenantID, $ressource)
     {
       $this -> httpClientInterface=$httpClientInterface;
       $this -> frameworkInterface=$frameworkInterface;
+      $this -> tenantID = $this->frameworkInterface::getConfig(SettingsConstants::AZURE_TENANT_ID);
+      $this -> ressource =$ressource
     }
- 
+
    // fonction 
+  
+   private function getTokenAzure() {    
 
-   private function getTokenAzure() {
-    $clientID = $this->frameworkInterface::getConfig(SettingsConstants::AZURE_CLIENT_ID);
-    $tenantID = $this->frameworkInterface::getConfig(SettingsConstants::AZURE_TENANT_ID);
-    $client_secret = $this->frameworkInterface::getConfig(SettingsConstants::AZURE_CLIENT_SECRET);
-    
-   
+    $requestUrl = "https://login.microsoftonline.com/".$tenantID."/oauth2/token";
 
-   }
-              
+     $payload=[ 
+    'clientID'=>$this->frameworkInterface::getConfig(SettingsConstants::AZURE_CLIENT_ID),
+    'client_secret'=>$this->frameworkInterface::getConfig(SettingsConstants::AZURE_CLIENT_SECRET),
+    'ressource'=>$ressource,
+     
+  ];
+    $response = $this -> httpClientInterface -> requestUrlEncoded($requestUrl,$payload);
+
+   }          
 }

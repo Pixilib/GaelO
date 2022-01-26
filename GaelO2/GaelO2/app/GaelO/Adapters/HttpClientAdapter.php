@@ -8,6 +8,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Pool;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
+use GuzzleHttp\RequestOptions;
 
 class HttpClientAdapter implements HttpClientInterface
 {
@@ -136,5 +137,13 @@ class HttpClientAdapter implements HttpClientInterface
 
         $response = $this->client->request($method, $this->address . $uri, $options);
         return new Psr7ResponseAdapter($response);
+    }
+
+    public function requestUrlEncoded(string $uri ,array|string $payload): Psr7ResponseInterface  {
+        $body = [
+            'form_params' =>$payload ];
+
+        $response=$this -> client -> request('POST',$uri,$body );
+        return new Psr7ResponseAdapter($response)  ;
     }
 }
