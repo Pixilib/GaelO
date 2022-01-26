@@ -144,6 +144,7 @@ return [
     'orthanc_storage_password'=>env('ORTHANC_STORAGE_PASSWORD'),
     'tus_url'=>env('TUS_URL'),
     'gaelo_processing_url'=>env('GAELO_PROCESSING_URL'),
+    'azure_tenant_id' =>env('AZURE_TENANT_ID'),
 
 
     'providers' => [

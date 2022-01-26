@@ -2,12 +2,13 @@
 
 namespace App\Gaelo\Services;
 
-use App\GaelO\Adapters\FrameworkAdapter;
+
 use App\GaelO\Interfaces\Adapters\HttpClientInterface;  
 use App\GaelO\Constants\SettingsConstants;
 use App\GaelO\Interfaces\Adapters\Psr7ResponseInterface;
 use Illuminate\Support\Facades\Log;
 use App\GaelO\Interfaces\Adapters\FrameworkInterface;
+
 
 
 
@@ -21,27 +22,26 @@ class AzureService{
 
     // constructor
 
-    public function __construct(HttpClientInterface $httpClientInterface, FrameworkInterface $frameworkInterface, $tenantID, $ressource)
+    public function __construct(HttpClientInterface $httpClientInterface, FrameworkInterface $frameworkInterface)
     {
       $this -> httpClientInterface=$httpClientInterface;
       $this -> frameworkInterface=$frameworkInterface;
-      $this -> tenantID = $this->frameworkInterface::getConfig(SettingsConstants::AZURE_TENANT_ID);
-      $this -> ressource =$ressource
+      $this -> tenantID =frameworkInterface::getConfig(SettingsConstants::AZURE_TENANT_ID);
+
     }
 
    // fonction 
   
-   private function getTokenAzure() {    
+   public function getTokenAzure() {    
 
-    $requestUrl = "https://login.microsoftonline.com/".$tenantID."/oauth2/token";
+    $requestUrl = "https://login.microsoftonline.com/".$this ->tenantID."/oauth2/token";
 
      $payload=[ 
     'clientID'=>$this->frameworkInterface::getConfig(SettingsConstants::AZURE_CLIENT_ID),
     'client_secret'=>$this->frameworkInterface::getConfig(SettingsConstants::AZURE_CLIENT_SECRET),
-    'ressource'=>$ressource,
-     
+    'ressource'=> $this->ressource,
   ];
     $response = $this -> httpClientInterface -> requestUrlEncoded($requestUrl,$payload);
-
+  
    }          
 }

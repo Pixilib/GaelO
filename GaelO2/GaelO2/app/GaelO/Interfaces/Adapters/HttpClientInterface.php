@@ -38,5 +38,5 @@ interface HttpClientInterface
      */
     public function requestStreamResponseToFile(string $method, string $uri, $ressource, array $headers): Psr7ResponseInterface;
 
-    public function requestUrlEncoded(string $uri ,$payload):Psr7ResponseInterface;
+    public function requestUrlEncoded(string $uri ,array|string $payload):Psr7ResponseInterface;
 }
