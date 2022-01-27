@@ -9,6 +9,8 @@ interface HttpClientInterface
 
     public function setUrl(string $url): void;
 
+    public function setAuthorizationToken(string $authorizationToken): void; 
+
     public function setBasicAuthentication(string $login, string $password): void;
 
     public function rowRequest(string $method, string $uri, $body, ?array $headers): Psr7ResponseInterface;

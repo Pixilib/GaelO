@@ -27,11 +27,13 @@ class AzureService{
       $this -> httpClientInterface=$httpClientInterface;
       $this -> frameworkInterface=$frameworkInterface;
       $this -> tenantID =$frameworkInterface::getConfig(SettingsConstants::AZURE_TENANT_ID);
-
+      $this -> getTokenAzure();
+      $this -> setServerAddress();
+    
     }
 
    // fonction 
-  
+
    public function getTokenAzure() {    
 
     $requestUrl = "https://login.microsoftonline.com/".$this ->tenantID."/oauth2/token";
@@ -44,7 +46,52 @@ class AzureService{
   ];
     $response = $this -> httpClientInterface -> requestUrlEncoded($requestUrl,$payload)->getJsonBody();
    // Log::info($response["access_token"]);
+    $token =$response["access_token"];
+   return $token;
+   }   
+
+   public function setToken(){ 
+    $authorizationToken=$this->getTokenAzure();
+  
+     $this->httpClientInterface->setAuthorizationToken($authorizationToken);
+ }       
+
+  private function setServerAddress(){
+    $subID=$this->frameworkInterface::getConfig(SettingsConstants::AZURE_SUBSCRIPTION_ID);
+    $ressourceGroupe=$this->frameworkInterface::getConfig(SettingsConstants::AZURE_CONTAINER_NAME);
+    $containerGroupe=$this->frameworkInterface::getConfig(SettingsConstants::AZURE_RESSOURCE_NAME);
+    $url="https://management.azure.com/subscriptions/".$subID."/resourceGroups/".$ressourceGroupe."/providers/Microsoft.ContainerInstance/containerGroups/".$containerGroupe."";
+    $this->httpClientInterface->setUrl($url);
+  }
+
+  /* public function startAci(){
+     getTokenAzure();
+     setToken();
+     $subID=$this->frameworkInterface::getConfig(SettingsConstants::AZURE_SUBSCRIPTION_ID);
+     $ressourceGroupe=$this->frameworkInterface::getConfig(SettingsConstants::AZURE_CONTAINER_NAME);
+     $containerGroupe=$this->frameworkInterface::getConfig(SettingsConstants::AZURE_RESOURCE_NAME);
+     $urlRequest="https://management.azure.com/subscriptions/".$subID."/resourceGroups/".$ressourceGroupe."/providers/Microsoft.ContainerInstance/containerGroups/".$containerGroupe."/start?api-version=2021-09-01";
+     $response = $this->httpClientInterface->rowRequest('POST',$urlRequest,['Accept' =>'application/json']);
+    
+
+   }
+   public function stopACI(){
+    getTokenAzure();
+    setToken();
+    $subID=$this->frameworkInterface::getConfig(SettingsConstants::AZURE_SUBSCRIPTION_ID);
+    $ressourceGroupe=$this->frameworkInterface::getConfig(SettingsConstants::AZURE_CONTAINER_NAME);
+    $containerGroupe=$this->frameworkInterface::getConfig(SettingsConstants::AZURE_RESOURCE_NAME);
+  
+    $urlRequest="https://management.azure.com/subscriptions/".$subID."/resourceGroups/".$ressourceGroupe."/providers/Microsoft.ContainerInstance/containerGroups/".$containerGroupe."/stop?api-version=2021-09-01";
+    $response = $this->httpClientInterface->rowRequest('POST',$urlRequest,['Accept' =>'application/json']);
+  
+   } */
+
+  public function getStatusAci(){
+    $this->setToken();
+    $uri="?api-version=2021-09-01";
+    $response = $this->httpClientInterface->rowRequest('GET',$uri, $body='',['Accept' =>'application/json']);
+  
+   }
    
-   return $response["access_token"];
-   }          
 }

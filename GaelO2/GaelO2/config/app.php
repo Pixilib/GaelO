@@ -147,6 +147,9 @@ return [
     'azure_tenant_id' =>env('AZURE_TENANT_ID'),
     'azure_client_id' =>env('AZURE_CLIENT_ID'),
     'azure_client_secret' =>env('AZURE_CLIENT_SECRET'),
+    'azure_subscription_id' => env('AZURE_SUBSCRIPTION_ID'),
+    'azure_container_name' => env('AZURE_CONTAINER_NAME'),
+    'azure_ressource_name' => env('AZURE_RESSOURCE_NAME'),
 
 
     'providers' => [

@@ -25,4 +25,8 @@ class SettingsConstants {
     const AZURE_CLIENT_ID ='azure_client_id';
     const AZURE_TENANT_ID ='azure_tenant_id';
     const AZURE_CLIENT_SECRET='azure_client_secret';
+    const AZURE_SUBSCRIPTION_ID='azure_subscription_id';
+    const AZURE_CONTAINER_NAME='azure_container_name';
+    const AZURE_RESSOURCE_NAME='azure_ressource_name';
+
 }

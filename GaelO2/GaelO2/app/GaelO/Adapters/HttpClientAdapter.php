@@ -9,6 +9,8 @@ use GuzzleHttp\Pool;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\RequestOptions;
+use Illuminate\Support\Facades\Log;
+
 
 class HttpClientAdapter implements HttpClientInterface
 {
@@ -16,7 +18,7 @@ class HttpClientAdapter implements HttpClientInterface
     private string $login = '';
     private string $password = '';
     private string $address;
-    private string $authorizationToken;
+    private string $authorizationToken='';
     private Client $client;
 
     public function __construct()
@@ -125,7 +127,7 @@ class HttpClientAdapter implements HttpClientInterface
         return new Psr7ResponseAdapter($response);
     }
 
-    public function rowRequest(string $method, string $uri, $body, ?array $headers): Psr7ResponseInterface
+    public function rowRequest(string $method, string $uri, $body, ?array $headers ): Psr7ResponseInterface
     {
         $options = [];
 
@@ -141,9 +143,9 @@ class HttpClientAdapter implements HttpClientInterface
             $options['headers'] = $headers;
         }
         if ($this->authorizationToken != null) {
-           $options['Headers']['Authorization']= 'Bearer'. $authorizationToken,        
+           $options['headers']['Authorization']='Bearer '.$this->authorizationToken;      
         }
-
+        log::info($options);
         $response = $this->client->request($method, $this->address . $uri, $options);
         return new Psr7ResponseAdapter($response);
     }
