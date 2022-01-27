@@ -18,7 +18,7 @@ class AzureService{
     private HttpClientInterface $httpClientInterface;    
     private FrameworkInterface $frameworkInterface;
     private $tenantID;
-    private $ressource =  "https://management.azure.com/";
+    private $ressource = "https://management.azure.com/";
 
     // constructor
 
@@ -42,10 +42,9 @@ class AzureService{
     "grant_type"=> "client_credentials",
     "client_id"=>$this->frameworkInterface::getConfig(SettingsConstants::AZURE_CLIENT_ID),
     "client_secret"=>$this->frameworkInterface::getConfig(SettingsConstants::AZURE_CLIENT_SECRET),
-    "ressource"=> $this->ressource,
+    "resource"=> $this->ressource,
   ];
     $response = $this -> httpClientInterface -> requestUrlEncoded($requestUrl,$payload)->getJsonBody();
-   // Log::info($response["access_token"]);
     $token =$response["access_token"];
    return $token;
    }   
@@ -90,8 +89,13 @@ class AzureService{
   public function getStatusAci(){
     $this->setToken();
     $uri="?api-version=2021-09-01";
-    $response = $this->httpClientInterface->rowRequest('GET',$uri, $body='',['Accept' =>'application/json']);
-  
+    
+    try {
+      $response = $this->httpClientInterface->rowRequest('GET',$uri, $body='',['Accept' =>'application/json']);
+    } catch (\Exception $th) {
+   
+     Log::info($th->getMessage());
+    }
    }
    
 }
