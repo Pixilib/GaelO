@@ -417,4 +417,15 @@ class UserRepositoryTest extends TestCase
         $this->assertEquals(5, sizeof($users));
     }
 
+    public function testGetAllUser(){
+        $users = User::factory()->count(5)->create();
+        $users->first()->delete();
+        $withDeletedUsers = $this->userRepository->getAll(true);
+        $nonDeletedUsers = $this->userRepository->getAll(false);
+
+        //5 users created + default user
+        $this->assertEquals(6, sizeof($withDeletedUsers));
+        $this->assertEquals(5, sizeof($nonDeletedUsers));
+    }
+
 }

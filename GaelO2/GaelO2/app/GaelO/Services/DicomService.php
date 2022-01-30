@@ -6,9 +6,8 @@ use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOBadRequestException;
 use App\GaelO\Interfaces\Repositories\DicomStudyRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\DicomSeriesRepositoryInterface;
-use App\GaelO\Interfaces\Repositories\ReviewRepositoryInterface;
 
-class DicomSeriesService
+class DicomService
 {
 
     private DicomSeriesRepositoryInterface $dicomSeriesRepositoryInterface;
@@ -18,14 +17,12 @@ class DicomSeriesService
     public function __construct(
         DicomSeriesRepositoryInterface $dicomSeriesRepositoryInterface,
         DicomStudyRepositoryInterface $dicomStudyRepositoryInterface,
-        ReviewRepositoryInterface $reviewRepositoryInterface,
         VisitService $visitService
     ) {
 
         $this->dicomSeriesRepositoryInterface = $dicomSeriesRepositoryInterface;
         $this->dicomStudyRepositoryInterface = $dicomStudyRepositoryInterface;
         $this->visitService = $visitService;
-        $this->reviewRepositoryInterface = $reviewRepositoryInterface;
     }
 
     public function deleteSeries(string $seriesInstanceUID, string $role)
@@ -49,18 +46,6 @@ class DicomSeriesService
             }
 
         }
-    }
-
-
-
-    public function getDicomSeries(string $seriesInstanceUID, bool $includeDeleted)
-    {
-        return $this->dicomSeriesRepositoryInterface->getSeries($seriesInstanceUID, $includeDeleted);
-    }
-
-    public function getDicomStudy(string $studyInstanceUID, bool $includeDeleted): array
-    {
-        return $this->dicomStudyRepositoryInterface->getDicomStudy($studyInstanceUID, $includeDeleted);
     }
 
     public function reactivateDicomStudy(string $studyInstanceUID): void

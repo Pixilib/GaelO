@@ -53,8 +53,8 @@ class VisitTreeTest extends TestCase
                 "name" => "voluptatibus",
                 "order" => 26,
                 "local_form_needed" => 0,
-                "qc_needed" => 0,
-                "review_needed" => "0",
+                "qc_probability" => 0,
+                "review_probability" => 100,
                 "optional" => "0",
                 "limit_low_days" => "638",
                 "limit_up_days" => "56788",
@@ -99,7 +99,7 @@ class VisitTreeTest extends TestCase
         $patientRepository = Mockery::mock(PatientRepository::class);
         $patientRepository->shouldReceive('getPatientsInStudyInCenters')
             ->andReturn([['id' => 32, 'code' => 54]]);
-        $patientRepository->shouldReceive('getPatientsFromIdArray'); 
+        $patientRepository->shouldReceive('getPatientsFromIdArray');
 
         $this->instance(VisitRepository::class, $mockVisitRepository);
         $this->instance(UserRepository::class, $mockUserRepository);

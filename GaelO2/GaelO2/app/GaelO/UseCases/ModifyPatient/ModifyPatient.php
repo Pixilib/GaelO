@@ -65,7 +65,21 @@ class ModifyPatient {
                 $patientEntity[Util::camelCaseToSnakeCase($data)] = $modifyPatientRequest->$data;
             }
 
-            $this->patientRepositoryInterface->update($modifyPatientRequest->patientId, $patientEntity);
+            $this->patientRepositoryInterface->updatePatient($modifyPatientRequest->patientId,
+                $patientEntity['lastname'],
+                $patientEntity['firstname'],
+                $patientEntity['gender'],
+                $patientEntity['birth_day'],
+                $patientEntity['birth_month'],
+                $patientEntity['birth_year'],
+                $patientEntity['study_name'],
+                $patientEntity['registration_date'],
+                $patientEntity['investigator_name'],
+                $patientEntity['center_code'],
+                $patientEntity['inclusion_status'],
+                $patientEntity['withdraw_reason'],
+                $patientEntity['withdraw_date']);
+
             $this->trackerRepositoryInterface->writeAction($modifyPatientRequest->currentUserId, Constants::ROLE_SUPERVISOR, $patientEntity['study_name'], null, Constants::TRACKER_EDIT_PATIENT, (array) $modifyPatientRequest);
 
             $modifyPatientResponse->status = 200;

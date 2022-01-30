@@ -97,6 +97,7 @@ class StudyController extends Controller
             return $this->getJsonResponse($getStudyDetailsResponse->body, $getStudyDetailsResponse->status, $getStudyDetailsResponse->statusText);
         } else {
             $getStudyRequest->currentUserId = $currentUser['id'];
+            $getStudyRequest->withTrashed = key_exists('withTrashed', $queryParam);
             $getStudy->execute($getStudyRequest, $getStudyResponse);
             return $this->getJsonResponse($getStudyResponse->body, $getStudyResponse->status, $getStudyResponse->statusText);
         }

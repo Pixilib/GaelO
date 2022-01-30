@@ -25,7 +25,7 @@ class GetStudy{
         try{
             $this->checkAuthorization($getStudyRequest->currentUserId);
 
-            $studies = $this->studyRepositoryInterface->getStudies(true);
+            $studies = $this->studyRepositoryInterface->getStudies($getStudyRequest->withTrashed);
 
             $responseArray = [];
             foreach($studies as $study){

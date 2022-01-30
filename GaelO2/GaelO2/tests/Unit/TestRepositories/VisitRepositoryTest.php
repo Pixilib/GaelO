@@ -52,7 +52,8 @@ class VisitRepositoryTest extends TestCase
             Constants::VISIT_STATUS_DONE,
             null,
             Constants::INVESTIGATOR_FORM_DONE,
-            Constants::QUALITY_CONTROL_NOT_DONE
+            Constants::QUALITY_CONTROL_NOT_DONE,
+            Constants::REVIEW_STATUS_NOT_DONE
         );
 
         $visits = Visit::findOrFail($visitId);

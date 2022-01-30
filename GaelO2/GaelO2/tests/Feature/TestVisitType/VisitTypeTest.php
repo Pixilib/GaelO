@@ -39,8 +39,8 @@ class VisitTypeTest extends TestCase
             'name'=>'Baseline',
             'order'=>0,
             'localFormNeeded'=>true,
-            'qcNeeded'=>true,
-            'reviewNeeded'=>true,
+            'qcProbability'=>100,
+            'reviewProbability'=>100,
             'optional'=>true,
             'limitLowDays'=>5,
             'limitUpDays'=>50,
@@ -55,8 +55,10 @@ class VisitTypeTest extends TestCase
         AuthorizationTools::actAsAdmin(true);
         $id = $this->visitGroup->id;
         $this->json('POST', 'api/visit-groups/'.$id.'/visit-types', $this->payload)->assertNoContent(201);
-        $visitGroup = VisitType::where('name', 'Baseline')->get()->first()->toArray();
-        $this->assertEquals(14, sizeOf($visitGroup));
+        $visitType = VisitType::where('name', 'Baseline')->get()->first();
+        $this->assertEquals(14, sizeOf($visitType->toArray()));
+        $this->assertEquals($this->payload['qcProbability'], $visitType->qc_probability);
+        $this->assertEquals($this->payload['reviewProbability'], $visitType->review_probability);
     }
 
     public function testCreateVisitTypeShouldFailedBecauseAlreadyExistingName()
@@ -105,8 +107,8 @@ class VisitTypeTest extends TestCase
             "name",
             "order",
             "localFormNeeded",
-            "qcNeeded",
-            "reviewNeeded",
+            "qcProbability",
+            "reviewProbability",
             "optional",
             "limitLowDays",
             "limitUpDays",

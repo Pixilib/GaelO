@@ -6,23 +6,26 @@ use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOBadRequestException;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
+use App\GaelO\Interfaces\Repositories\DicomStudyRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
 use App\GaelO\Services\AuthorizationService\AuthorizationVisitService;
-use App\GaelO\Services\DicomSeriesService;
+use App\GaelO\Services\DicomService;
 use Exception;
 
 class ReactivateDicomStudy{
 
     private VisitRepositoryInterface $visitRepositoryInterface;
     private AuthorizationVisitService $authorizationVisitService;
-    private DicomSeriesService $dicomSeriesService;
+    private DicomService $dicomService;
+    private DicomStudyRepositoryInterface $dicomStudyRepositoryInterface;
     private TrackerRepositoryInterface $trackerRepositoryInterface;
 
-    public function __construct(VisitRepositoryInterface $visitRepositoryInterface, AuthorizationVisitService $authorizationVisitService, DicomSeriesService $dicomSeriesService, TrackerRepositoryInterface $trackerRepositoryInterface){
+    public function __construct(VisitRepositoryInterface $visitRepositoryInterface, AuthorizationVisitService $authorizationVisitService, DicomService $dicomService, DicomStudyRepositoryInterface $dicomStudyRepositoryInterface,  TrackerRepositoryInterface $trackerRepositoryInterface){
         $this->authorizationVisitService = $authorizationVisitService;
         $this->visitRepositoryInterface = $visitRepositoryInterface;
-        $this->dicomSeriesService = $dicomSeriesService;
+        $this->dicomService = $dicomService;
+        $this->dicomStudyRepositoryInterface = $dicomStudyRepositoryInterface;
         $this->trackerRepositoryInterface = $trackerRepositoryInterface;
     }
 
@@ -32,7 +35,7 @@ class ReactivateDicomStudy{
 
             if(empty($reactivateDicomStudyRequest->reason)) throw new GaelOBadRequestException('Reason must be specified');
 
-            $studyData = $this->dicomSeriesService->getDicomStudy($reactivateDicomStudyRequest->studyInstanceUID, true);
+            $studyData = $this->dicomStudyRepositoryInterface->getDicomStudy($reactivateDicomStudyRequest->studyInstanceUID, true);
             $visitId = $studyData['visit_id'];
 
             $visitContext = $this->visitRepositoryInterface->getVisitContext($visitId);
@@ -41,7 +44,7 @@ class ReactivateDicomStudy{
             $this->checkAuthorization($reactivateDicomStudyRequest->currentUserId, $visitId, $visitContext['state_quality_control'], $studyName);
 
             //Change dicom study Activation
-            $this->dicomSeriesService->reactivateDicomStudy($studyData['study_uid']);
+            $this->dicomService->reactivateDicomStudy($studyData['study_uid']);
 
             //Tracker
             $actionDetails = [

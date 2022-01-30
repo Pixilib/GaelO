@@ -39,7 +39,7 @@ class PatientTest extends TestCase
             "birthDay" => 23,
             "birthMonth" => 1,
             "birthYear" => 1985,
-            "registrationDate" => "2021-12-17 10:25:57.966076",
+            "registrationDate" => "2021-12-17",
             "investigatorName" => "voluptas",
             "centerCode" => $this->patient['center_code'],
             "studyName" => $this->patient['study_name'],
@@ -127,7 +127,7 @@ class PatientTest extends TestCase
             'birthDay' => 5,
             'birthMonth' => 12,
             'birthYear' => 1955,
-            'registrationDate' => '12/31/2020',
+            'registrationDate' => '2021-12-30',
             'investigatorName' => 'salim',
             'centerCode' => 0,
             'reason' => 'wrong patient data'
@@ -199,6 +199,10 @@ class PatientTest extends TestCase
     {
         $currentUserId = AuthorizationTools::actAsAdmin(false);
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $this->study->name);
+        $this->patient->inclusion_status = Constants::PATIENT_INCLUSION_STATUS_WITHDRAWN;
+        $this->patient->withdraw_reason = 'personal';
+        $this->patient->withdraw_date = now();
+        $this->patient->save();
 
         $payload = $this->validPayload;
         $payload['inclusionStatus'] = Constants::PATIENT_INCLUSION_STATUS_INCLUDED;

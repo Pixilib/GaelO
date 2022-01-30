@@ -6,24 +6,27 @@ use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOBadRequestException;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
+use App\GaelO\Interfaces\Repositories\DicomSeriesRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
 use App\GaelO\Services\AuthorizationService\AuthorizationVisitService;
-use App\GaelO\Services\DicomSeriesService;
+use App\GaelO\Services\DicomService;
 use Exception;
 
 class DeleteSeries{
 
     private VisitRepositoryInterface $visitRepositoryInterface;
-    private DicomSeriesService $dicomSeriesService;
+    private DicomService $dicomService;
     private TrackerRepositoryInterface $trackerRepositoryInterface;
     private AuthorizationVisitService $authorizationVisitService;
+    private DicomSeriesRepositoryInterface $dicomSeriesRepositoryInterface;
 
 
-    public function __construct( VisitRepositoryInterface $visitRepositoryInterface, DicomSeriesService $dicomSeriesService, AuthorizationVisitService $authorizationVisitService, TrackerRepositoryInterface $trackerRepositoryInterface)
+    public function __construct( VisitRepositoryInterface $visitRepositoryInterface, DicomSeriesRepositoryInterface $dicomSeriesRepositoryInterface, DicomService $dicomService, AuthorizationVisitService $authorizationVisitService, TrackerRepositoryInterface $trackerRepositoryInterface)
     {
         $this->authorizationVisitService = $authorizationVisitService;
-        $this->dicomSeriesService = $dicomSeriesService;
+        $this->dicomSeriesRepositoryInterface = $dicomSeriesRepositoryInterface;
+        $this->dicomService = $dicomService;
         $this->trackerRepositoryInterface = $trackerRepositoryInterface;
         $this->visitRepositoryInterface = $visitRepositoryInterface;
     }
@@ -36,7 +39,7 @@ class DeleteSeries{
                 throw new GaelOBadRequestException("A reason must be specified");
             }
 
-            $seriesData = $this->dicomSeriesService->getDicomSeries($deleteSeriesRequest->seriesInstanceUID, false);
+            $seriesData = $this->dicomSeriesRepositoryInterface->getSeries($deleteSeriesRequest->seriesInstanceUID, false);
             $visitId = $seriesData['dicom_study']['visit_id'];
 
             $visitContext = $this->visitRepositoryInterface->getVisitContext($visitId);
@@ -45,7 +48,7 @@ class DeleteSeries{
 
             $this->checkAuthorization($deleteSeriesRequest->currentUserId, $visitId, $deleteSeriesRequest->role, $stateQc, $studyName);
 
-            $this->dicomSeriesService->deleteSeries($deleteSeriesRequest->seriesInstanceUID, $deleteSeriesRequest->role);
+            $this->dicomService->deleteSeries($deleteSeriesRequest->seriesInstanceUID, $deleteSeriesRequest->role);
 
             $actionDetails = [
                 'seriesInstanceUID'=>$seriesData['series_uid'],

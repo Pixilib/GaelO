@@ -219,12 +219,14 @@ class ExportStudyService {
         //Flatten the nested review status
         $reviewersForms = array_map(function($review){
             $reviewData = $review['review_data'];
+            $review['sent_files'] = json_encode($review['sent_files']);
             unset($review['review_data']);
             return array_merge($review, $reviewData);
         }, $reviewData);
 
         $investigatorsForms = array_map(function($review){
             $reviewData = $review['review_data'];
+            $review['sent_files'] = json_encode($review['sent_files']);
             unset($review['review_data']);
             return array_merge($review, $reviewData);
         }, $localForms);
@@ -271,7 +273,7 @@ class ExportStudyService {
             $tempFileNameCsv = $spreadsheetAdapter->writeToCsv($sheet);
             $exportTrackerResult->addExportFile(ExportDataResults::EXPORT_TYPE_CSV, $tempFileNameCsv, $sheet);
         }
-        
+
         $this->exportStudyResults->setTrackerReviewResults($exportTrackerResult);
 
 

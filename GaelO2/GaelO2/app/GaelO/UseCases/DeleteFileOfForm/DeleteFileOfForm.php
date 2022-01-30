@@ -9,7 +9,7 @@ use App\GaelO\Interfaces\Repositories\ReviewRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
 use App\GaelO\Services\AuthorizationService\AuthorizationReviewService;
-use App\GaelO\Services\FormService;
+use App\GaelO\Services\FormService\FormService;
 use Exception;
 
 class DeleteFileOfForm

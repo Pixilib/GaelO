@@ -4,21 +4,11 @@ namespace App\GaelO\Repositories;
 
 use App\GaelO\Interfaces\Repositories\PatientRepositoryInterface;
 use App\Models\Patient;
-use App\GaelO\Entities\PatientEntity;
 
 class PatientRepository implements PatientRepositoryInterface {
 
     public function __construct(Patient $patient){
         $this->patient = $patient;
-    }
-
-    //SK APPELEE A L EXTERIEUR A ENELEVER
-    public function update($code, array $data) : void {
-        $patient = $this->patient->findOrFail($code);
-        foreach($patient->getAttributes() as $property => $value){
-            $patient->$property = $data[$property];
-        }
-        $patient->save();
     }
 
     public function find($id) : array {
@@ -74,12 +64,12 @@ class PatientRepository implements PatientRepositoryInterface {
         $patient->save();
     }
 
-    public function updatePatient(int $code, ?string $lastname, ?string $firstname, 
-        ?string $gender, ?int $birthDay, ?int $birthMonth, ?int $birthYear, 
-        string $studyName, ?string $registrationDate, ?string $investigatorName, int $centerCode, 
-        string $inclusionStatus, string $withdrawReason, string $withdrawDate) : void {
+    public function updatePatient(int $id, ?string $lastname, ?string $firstname,
+        ?string $gender, ?int $birthDay, ?int $birthMonth, ?int $birthYear,
+        string $studyName, ?string $registrationDate, ?string $investigatorName, int $centerCode,
+        string $inclusionStatus, ?string $withdrawReason, ?string $withdrawDate) : void {
 
-        $patient = $this->patient->findOrFail($code);
+        $patient = $this->patient->findOrFail($id);
 
         $patient->lastname = $lastname;
         $patient->firstname = $firstname;

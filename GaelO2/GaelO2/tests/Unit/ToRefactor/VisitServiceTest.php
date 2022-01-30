@@ -50,7 +50,7 @@ class VisitServiceTest extends TestCase
         $this->visitService  = App::Make(\App\GaelO\Services\VisitService::class);
     }
 
-    private function createVisit(string $stateInvestigatorForm, bool $qcNeeded, bool $localFormNeeded, bool $reviewNeeded)
+    private function createVisit(string $stateInvestigatorForm, int $qcProbability, bool $localFormNeeded, int $reviewProbability)
     {
 
 
@@ -58,8 +58,8 @@ class VisitServiceTest extends TestCase
             [
                 'visit_group_id' => $this->visitGroup['id'],
                 'local_form_needed' => $localFormNeeded,
-                'qc_needed' => $qcNeeded,
-                'review_needed' => $reviewNeeded
+                'qc_probability' => $qcProbability,
+                'review_probability' => $reviewProbability
             ]
         );
 

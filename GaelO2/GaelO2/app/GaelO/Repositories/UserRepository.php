@@ -37,8 +37,9 @@ class UserRepository implements UserRepositoryInterface {
         $this->user->findOrFail($id)->delete();
     }
 
-    public function getAll() : array {
-        $users = $this->user->withTrashed()->get();
+    public function getAll($withTrashed) : array {
+        if($withTrashed) $users = $this->user->withTrashed()->get();
+        else $users = $this->user->get();
         return empty($users) ? [] : $users->toArray();
     }
 

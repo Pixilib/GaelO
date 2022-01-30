@@ -138,9 +138,18 @@ class StudyTest extends TestCase
 
     public function testGetStudies(){
         AuthorizationTools::actAsAdmin(true);
-        Study::factory()->create();
+        $studies=Study::factory()->count(2)->create();
+        $studies->first()->delete();
         $this->json('GET', '/api/studies')->assertJsonCount(1);
     }
+
+    public function testGetStudiesWithTrashed(){
+        AuthorizationTools::actAsAdmin(true);
+        $studies=Study::factory()->count(2)->create();
+        $studies->first()->delete();
+        $this->json('GET', '/api/studies?withTrashed')->assertJsonCount(2);
+    }
+
 
     public function testGetStudiesForbiddenNotAdmin(){
         AuthorizationTools::actAsAdmin(false);
@@ -160,8 +169,8 @@ class StudyTest extends TestCase
             "name",
             "order",
             "localFormNeeded",
-            "qcNeeded",
-            "reviewNeeded",
+            "qcProbability",
+            "reviewProbability",
             "optional",
             "limitLowDays",
             "limitUpDays",
@@ -178,16 +187,6 @@ class StudyTest extends TestCase
         AuthorizationTools::actAsAdmin(true);
         $visitType = VisitType::factory()->create();
         $this->json('GET', '/api/studies/'.$visitType->visitGroup->study->name.'/visit-types')->assertStatus(403);
-    }
-
-
-    public function testGetDeletedStudies(){
-        AuthorizationTools::actAsAdmin(true);
-        $study =  Study::factory()->create();
-        $study->delete();
-        $response = $this->json('GET', '/api/studies')->content();
-        $response = json_decode($response, true);
-        $this->assertTrue($response[0]['deleted']);
     }
 
     public function testReactivateStudy(){

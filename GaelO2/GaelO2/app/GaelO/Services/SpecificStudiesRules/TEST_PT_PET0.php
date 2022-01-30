@@ -41,4 +41,8 @@ class TEST_PT_PET0 extends AbstractVisitRules {
         return ['41' => MimeAdapter::getMimeFromExtension('csv')];
     }
 
+    public function getTargetLesion() : ?array {
+        return null;
+    }
+
 }

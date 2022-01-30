@@ -62,8 +62,8 @@ class UnlockInvestigatorForm
             //Make investigator form not done
             $this->visitRepositoryInterface->updateInvestigatorFormStatus($unlockInvestigatorFormRequest->visitId, Constants::INVESTIGATOR_FORM_DRAFT);
 
-            //Reset QC if QC is needed in this visitType
-            if ($visitContext['visit_type']['qc_needed']) $this->visitRepositoryInterface->resetQc($unlockInvestigatorFormRequest->currentUserId);
+            //Reset QC if QC is needed in this Visit
+            if ($visitContext['state_quality_control'] !== Constants::QUALITY_CONTROL_NOT_NEEDED) $this->visitRepositoryInterface->resetQc($visitContext['id']);
 
             $actionDetails = [
                 'modality' => $visitContext['visit_type']['visit_group']['modality'],
