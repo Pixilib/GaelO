@@ -2,6 +2,9 @@ GaelO
 
 -- Pending Changes --
 
+--GaelO 1.8.0 30/01/22--
+  Email Monitoring
+
 --GaelO 1.7.0 30/12/21--
   Upgrade Uploader to 3.2.7 : Dicom Creation
   Small enhancment in display
