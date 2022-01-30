@@ -144,12 +144,12 @@ return [
     'orthanc_storage_password'=>env('ORTHANC_STORAGE_PASSWORD'),
     'tus_url'=>env('TUS_URL'),
     'gaelo_processing_url'=>env('GAELO_PROCESSING_URL'),
-    'azure_tenant_id' =>env('AZURE_TENANT_ID'),
+    'azure_directory_id' =>env('AZURE_DIRECTORY_ID'),
     'azure_client_id' =>env('AZURE_CLIENT_ID'),
     'azure_client_secret' =>env('AZURE_CLIENT_SECRET'),
     'azure_subscription_id' => env('AZURE_SUBSCRIPTION_ID'),
-    'azure_container_name' => env('AZURE_CONTAINER_NAME'),
-    'azure_ressource_name' => env('AZURE_RESSOURCE_NAME'),
+    'azure_container_group' => env('AZURE_CONTAINER_GROUP'),
+    'azure_ressource_group' => env('AZURE_RESSOURCE_GROUP'),
 
 
     'providers' => [

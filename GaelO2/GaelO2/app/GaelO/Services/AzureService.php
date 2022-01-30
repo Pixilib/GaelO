@@ -26,8 +26,7 @@ class AzureService{
     {
       $this -> httpClientInterface=$httpClientInterface;
       $this -> frameworkInterface=$frameworkInterface;
-      $this -> tenantID =$frameworkInterface::getConfig(SettingsConstants::AZURE_TENANT_ID);
-      $this -> getTokenAzure();
+      $this -> tenantID =$frameworkInterface::getConfig(SettingsConstants::AZURE_DIRECTORY_ID);
       $this -> setServerAddress();
     
     }
@@ -46,6 +45,7 @@ class AzureService{
   ];
     $response = $this -> httpClientInterface -> requestUrlEncoded($requestUrl,$payload)->getJsonBody();
     $token =$response["access_token"];
+    //Log::info("je suis dans le get token" ,$response);
    return $token;
    }   
 
@@ -57,45 +57,68 @@ class AzureService{
 
   private function setServerAddress(){
     $subID=$this->frameworkInterface::getConfig(SettingsConstants::AZURE_SUBSCRIPTION_ID);
-    $ressourceGroupe=$this->frameworkInterface::getConfig(SettingsConstants::AZURE_CONTAINER_NAME);
-    $containerGroupe=$this->frameworkInterface::getConfig(SettingsConstants::AZURE_RESSOURCE_NAME);
+    $ressourceGroupe=$this->frameworkInterface::getConfig(SettingsConstants::AZURE_RESSOURCE_GROUP);
+    $containerGroupe=$this->frameworkInterface::getConfig(SettingsConstants::AZURE_CONTAINER_GROUP);
     $url="https://management.azure.com/subscriptions/".$subID."/resourceGroups/".$ressourceGroupe."/providers/Microsoft.ContainerInstance/containerGroups/".$containerGroupe."";
     $this->httpClientInterface->setUrl($url);
   }
 
-  /* public function startAci(){
-     getTokenAzure();
-     setToken();
-     $subID=$this->frameworkInterface::getConfig(SettingsConstants::AZURE_SUBSCRIPTION_ID);
-     $ressourceGroupe=$this->frameworkInterface::getConfig(SettingsConstants::AZURE_CONTAINER_NAME);
-     $containerGroupe=$this->frameworkInterface::getConfig(SettingsConstants::AZURE_RESOURCE_NAME);
-     $urlRequest="https://management.azure.com/subscriptions/".$subID."/resourceGroups/".$ressourceGroupe."/providers/Microsoft.ContainerInstance/containerGroups/".$containerGroupe."/start?api-version=2021-09-01";
-     $response = $this->httpClientInterface->rowRequest('POST',$urlRequest,['Accept' =>'application/json']);
-    
-
-   }
+  public function startAci(){
+  
+     $this->setToken();
+     $uri="/start?api-version=2021-09-01";
+     try {
+     $response = $this->httpClientInterface->rowRequest('POST',$uri,$body='',['Accept' =>'application/json'])->getStatusCode();
+     Log::info($response);
+    } catch (\Exception $th) {
+   
+      Log::info($th->getMessage());
+     }
+  }
+ 
+   
    public function stopACI(){
-    getTokenAzure();
-    setToken();
-    $subID=$this->frameworkInterface::getConfig(SettingsConstants::AZURE_SUBSCRIPTION_ID);
-    $ressourceGroupe=$this->frameworkInterface::getConfig(SettingsConstants::AZURE_CONTAINER_NAME);
-    $containerGroupe=$this->frameworkInterface::getConfig(SettingsConstants::AZURE_RESOURCE_NAME);
-  
-    $urlRequest="https://management.azure.com/subscriptions/".$subID."/resourceGroups/".$ressourceGroupe."/providers/Microsoft.ContainerInstance/containerGroups/".$containerGroupe."/stop?api-version=2021-09-01";
-    $response = $this->httpClientInterface->rowRequest('POST',$urlRequest,['Accept' =>'application/json']);
-  
-   } */
+   
+    $this->setToken();
+    $uri="/stop?api-version=2021-09-01";
+    try {
+    $response = $this->httpClientInterface->rowRequest('POST',$uri,$body='' ,['Accept' =>'application/json'])->getStatusCode();
+    Log::info($response);
+  } catch (\Exception $th) {
+   
+    Log::info($th->getMessage());
+   }
+   } 
 
-  public function getStatusAci(){
+  public function getStatusAci():array{
     $this->setToken();
     $uri="?api-version=2021-09-01";
     
     try {
-      $response = $this->httpClientInterface->rowRequest('GET',$uri, $body='',['Accept' =>'application/json']);
+      $response = $this->httpClientInterface->rowRequest('GET',$uri, $body='',['Accept' =>'application/json'])->getJsonBody();
+      
+      /*3 states disponible
+      * Pending -> Creation en cours
+      * Running -> en cours d'allumage de l'aci
+      * Stopped -> Fermé 
+      *
+      *L'ip est disponible uniquement en pending et running
+      */
+      Log::info("je suis le state de getstatus");
+     Log::info($response["properties"]['instanceView']["state"]);
+     Log::info("je suis l ip de getstatus");
+     Log::info($response["properties"]["ipAddress"]["ip"]);
+  
     } catch (\Exception $th) {
-   
+    
      Log::info($th->getMessage());
     }
-   }
+    $attributes=[
+      'state'=>$response["properties"]['instanceView']["state"],
+      'ip'=>$response["properties"]["ipAddress"]["ip"],
+    ];
+    return  $attributes;
+    }
+
    
 }
