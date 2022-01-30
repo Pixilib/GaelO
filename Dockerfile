@@ -7,7 +7,7 @@ RUN git clone --depth 1 --branch @ohif/viewer@4.9.21 https://github.com/OHIF/Vie
 RUN cd Viewers && yarn install && QUICK_BUILD=true PUBLIC_URL=/ohif/ yarn build
 RUN rm /ohif/Viewers/platform/viewer/dist/app-config.js
 
-FROM php:7.4.1-apache
+FROM php:7.4.19-apache
 
 ENV COMPOSER_ALLOW_SUPERUSER=1
 
@@ -23,11 +23,16 @@ RUN apt-get update -qy && \
     unzip \
     libzip-dev \
     zip \
+    libc-client-dev \
+    libkrb5-dev \
     msmtp \
     msmtp-mta && \
     docker-php-ext-install zip && \
     curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer && \
-    apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+    apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* 
+
+RUN docker-php-ext-configure imap --with-kerberos --with-imap-ssl && \
+    docker-php-ext-install -j$(nproc) imap
 
 RUN docker-php-ext-install -j$(nproc) opcache pdo_mysql
 COPY php.ini /usr/local/etc/php/conf.d/app.ini

@@ -28,25 +28,37 @@ $scheduler=new Scheduler();
 
 //Define action and timing
 
-//Execute each hour TUS script to remove expired incomplete upload
-$tusConfigFile = dirname(__DIR__, 1).'/data/_config/tus_server.php';
-$rootPath = dirname(__DIR__, 2);
-$scheduler->raw($rootPath.'/vendor/bin/tus tus:expired --config='.$tusConfigFile)->hourly()->output('/var/log/tus_cron.log');
 
-
+//scheduleEveryXMinutes("import_from_email_ennov.php", ["study" =>"TRAILOCLORI"] , 1);
 // Let the scheduler execute jobs which are due.
 $scheduler->run();
 
-function scheduleWorkindDays(String $scriptName, array $arugments, int $hour, int $min) {
-	global $scheduler;
-	$scheduler->php(__DIR__.'/'.$scriptName, null, $arugments)->monday($hour, $min)->output('/var/log/gaelo_cron.log');
-	$scheduler->php(__DIR__.'/'.$scriptName, null, $arugments)->tuesday($hour, $min)->output('/var/log/gaelo_cron.log');
-	$scheduler->php(__DIR__.'/'.$scriptName, null, $arugments)->wednesday($hour, $min)->output('/var/log/gaelo_cron.log');
-	$scheduler->php(__DIR__.'/'.$scriptName, null, $arugments)->thursday($hour, $min)->output('/var/log/gaelo_cron.log');
-	$scheduler->php(__DIR__.'/'.$scriptName, null, $arugments)->friday($hour, $min)->output('/var/log/gaelo_cron.log');
+
+function testScheduleForDebug(String $scriptName, array $arugments, int $hour, int $min){
+    global $scheduler;
+    $scheduler->php(__DIR__.'/'.$scriptName, null, $arugments)->everyMinute(15)->output('/var/log/gaelo_cron_'.$scriptName.'.log');
 }
 
-function scheduleSundays(String $scriptName, array $arugments, int $hour, int $min) {
-	global $scheduler;
-	$scheduler->php(__DIR__.'/'.$scriptName, null, $arugments)->sunday($hour, $min)->output('/var/log/gaelo_cron.log');
+function scheduleWorkingDays(String $scriptName, array $arugments, int $hour, int $min){
+    global $scheduler;
+    $scheduler->php(__DIR__.'/'.$scriptName, null, $arugments)->monday($hour, $min)->output('/var/log/gaelo_cron_'.$scriptName.'.log');
+    $scheduler->php(__DIR__.'/'.$scriptName, null, $arugments)->tuesday($hour, $min)->output('/var/log/gaelo_cron_'.$scriptName.'.log');
+    $scheduler->php(__DIR__.'/'.$scriptName, null, $arugments)->wednesday($hour, $min)->output('/var/log/gaelo_cron_'.$scriptName.'.log');
+    $scheduler->php(__DIR__.'/'.$scriptName, null, $arugments)->thursday($hour, $min)->output('/var/log/gaelo_cron_'.$scriptName.'.log');
+    $scheduler->php(__DIR__.'/'.$scriptName, null, $arugments)->friday($hour, $min)->output('/var/log/gaelo_cron_'.$scriptName.'.log');
+}
+
+function scheduleEveryDays(String $scriptName, array $arugments, int $hour, int $min){
+    global $scheduler;
+    $scheduler->php(__DIR__.'/'.$scriptName, null, $arugments)->daily($hour, $min)->output('/var/log/gaelo_cron_'.$scriptName.'.log');
+}
+
+function scheduleSundays(String $scriptName, array $arugments, int $hour, int $min){
+    global $scheduler;
+    $scheduler->php(__DIR__.'/'.$scriptName, null, $arugments)->sunday($hour, $min)->output('/var/log/gaelo_cron_'.$scriptName.'.log');
+}
+
+function scheduleEveryXMinutes(String $scriptName, array $arugments, int $min){
+    global $scheduler;
+    $scheduler->php(__DIR__.'/'.$scriptName, null, $arugments)->everyMinute($min)->output('/var/log/gaelo_cron_'.$scriptName.'.log');
 }
