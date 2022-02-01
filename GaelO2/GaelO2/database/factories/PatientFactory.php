@@ -92,4 +92,14 @@ class PatientFactory extends Factory
 
     }
 
+    public function registrationDate(string $registrationDate){
+
+        return $this->state(function (array $attributes) use($registrationDate) {
+            return [
+                'registration_date' => $registrationDate,
+            ];
+        });
+
+    }
+
 }
