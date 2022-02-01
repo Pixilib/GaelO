@@ -38,12 +38,6 @@ class ProcessingService{
         // recupere la dicom
         $psr7Response = $this ->orthancService ->getOrthancZipStream2($orthancID);
         // envoie la dicom
-        Log::Info(print_r($psr7Response,true));
-        Log::Info(print_r($psr7Response->getBodyAsStream(),true));
-        $body = $psr7Response->getBodyAsStream();
-while (!$body->eof()) {
-    echo $body->read(1024);
-}
         $response = $this->httpClientInterface->rowRequest ('POST' ,"/app/dicom", $psr7Response->getBodyAsStream(), ['content-type' => 'application/zip', 'Accept' => 'application/json']);
 
         return $response;

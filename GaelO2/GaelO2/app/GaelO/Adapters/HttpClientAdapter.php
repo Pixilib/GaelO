@@ -150,7 +150,6 @@ class HttpClientAdapter implements HttpClientInterface
         }
 
         Log::info($options);
-      //log::info($options);
         $response = $this->client->request($method, $this->address . $uri, $options);
         return new Psr7ResponseAdapter($response);
     }
