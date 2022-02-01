@@ -3,10 +3,8 @@
 namespace App\Gaelo\Services;
 
 use App\GaelO\Interfaces\Adapters\HttpClientInterface;
-use App\GaelO\Constants\SettingsConstants;
-use App\GaelO\Interfaces\Adapters\Psr7ResponseInterface;
-use Illuminate\Support\Facades\Log;
 use App\GaelO\Interfaces\Adapters\FrameworkInterface;
+use App\GaelO\Constants\SettingsConstants;
 
 class AzureService
 {
@@ -14,7 +12,11 @@ class AzureService
     private HttpClientInterface $httpClientInterface;
     private FrameworkInterface $frameworkInterface;
     private $tenantID;
-    private $ressource = "https://management.azure.com/";
+    private $resource = "https://management.azure.com/";
+
+    const ACI_STATUS_RUNNING = "Running";
+    const ACI_STATUS_PENDING = "Pending";
+    const ACI_STATUS_STOPPED = "Stopped";
 
 
     public function __construct(HttpClientInterface $httpClientInterface, FrameworkInterface $frameworkInterface)
@@ -25,14 +27,14 @@ class AzureService
         $this->setServerAddress();
     }
 
-    public function getTokenAzure()
+    private function createAccessTokenAzure()  : string
     {
         $requestUrl = "https://login.microsoftonline.com/" . $this->tenantID . "/oauth2/token";
         $payload = [
             "grant_type" => "client_credentials",
             "client_id" => $this->frameworkInterface::getConfig(SettingsConstants::AZURE_CLIENT_ID),
             "client_secret" => $this->frameworkInterface::getConfig(SettingsConstants::AZURE_CLIENT_SECRET),
-            "resource" => $this->ressource,
+            "resource" => $this->resource,
         ];
         $response = $this->httpClientInterface->requestUrlEncoded($requestUrl, $payload)->getJsonBody();
         $token = $response["access_token"];
@@ -40,13 +42,13 @@ class AzureService
         return $token;
     }
 
-    public function setToken()
+    private function setAccessToken() : void
     {
-        $authorizationToken = $this->getTokenAzure();
+        $authorizationToken = $this->createAccessTokenAzure();
         $this->httpClientInterface->setAuthorizationToken($authorizationToken);
     }
 
-    private function setServerAddress()
+    private function setServerAddress() : void
     {
         $subID = $this->frameworkInterface::getConfig(SettingsConstants::AZURE_SUBSCRIPTION_ID);
         $ressourceGroupe = $this->frameworkInterface::getConfig(SettingsConstants::AZURE_RESSOURCE_GROUP);
@@ -55,29 +57,29 @@ class AzureService
         $this->httpClientInterface->setUrl($url);
     }
 
-    public function startAci()
+    public function startAci() : bool
     {
-        $this->setToken();
+        $this->setAccessToken();
         $uri = "/start?api-version=2021-09-01";
-        $response = $this->httpClientInterface->rowRequest('POST', $uri, '', ['Accept' => 'application/json'])->getStatusCode();
+        $response = $this->httpClientInterface->rowRequest('POST', $uri, null, ['Accept' => 'application/json'])->getStatusCode();
 
-        return $response;
+        return $response === 202;
     }
 
-    public function stopACI()
+    public function stopACI() : bool
     {
-        $this->setToken();
+        $this->setAccessToken();
         $uri = "/stop?api-version=2021-09-01";
-        $response = $this->httpClientInterface->rowRequest('POST', $uri, '', ['Accept' => 'application/json'])->getStatusCode();
+        $response = $this->httpClientInterface->rowRequest('POST', $uri, null, ['Accept' => 'application/json'])->getStatusCode();
 
-        return $response;
+        return $response === 204;
     }
 
     public function getStatusAci(): array
     {
-        $this->setToken();
+        $this->setAccessToken();
         $uri = "?api-version=2021-09-01";
-        $response = $this->httpClientInterface->rowRequest('GET', $uri, '', ['Accept' => 'application/json'])->getJsonBody();
+        $response = $this->httpClientInterface->rowRequest('GET', $uri, null, ['Accept' => 'application/json'])->getJsonBody();
 
         /*3 states disponible
         * Pending -> Creation en cours
@@ -94,14 +96,16 @@ class AzureService
         return  $attributes;
     }
 
-    public function checkStatus()
+    //SK : PHP 8.1 vient de faire les Enumeration, ici pour le status ca serait bien de faire une enumeration
+    public function checkStatus() : string
     {
-        $test = $this->getStatusAci();
+        $aciStatus = $this->getStatusAci();
 
-        while ($test['state'] === 'Pending') {
-            $test = $this->getStatusAci();
+        while ($aciStatus['state'] === AzureService::ACI_STATUS_PENDING) {
+            $aciStatus = $this->getStatusAci();
             sleep(15);
         }
-        Log::info("Lancement des job");
+
+        return $aciStatus['state'];
     }
 }
