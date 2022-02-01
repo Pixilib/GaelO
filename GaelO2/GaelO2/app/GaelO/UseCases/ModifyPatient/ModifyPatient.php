@@ -13,24 +13,27 @@ use App\GaelO\Services\ImportPatientService;
 use App\GaelO\Util;
 use Exception;
 
-class ModifyPatient {
+class ModifyPatient
+{
 
     private PatientRepositoryInterface $patientRepositoryInterface;
     private AuthorizationPatientService $authorizationPatientService;
     private TrackerRepositoryInterface $trackerRepositoryInterface;
 
-    public function __construct(PatientRepositoryInterface $patientRepositoryInterface,
-                                AuthorizationPatientService $authorizationPatientService,
-                                TrackerRepositoryInterface $trackerRepositoryInterface)
-    {
+    public function __construct(
+        PatientRepositoryInterface $patientRepositoryInterface,
+        AuthorizationPatientService $authorizationPatientService,
+        TrackerRepositoryInterface $trackerRepositoryInterface
+    ) {
         $this->patientRepositoryInterface = $patientRepositoryInterface;
         $this->authorizationPatientService = $authorizationPatientService;
         $this->trackerRepositoryInterface = $trackerRepositoryInterface;
     }
 
-    public function execute(ModifyPatientRequest $modifyPatientRequest, ModifyPatientResponse $modifyPatientResponse){
+    public function execute(ModifyPatientRequest $modifyPatientRequest, ModifyPatientResponse $modifyPatientResponse)
+    {
 
-        try{
+        try {
 
             if (empty($modifyPatientRequest->reason)) throw new GaelOBadRequestException('Reason for patient edition must be sepecified');
 
@@ -39,13 +42,21 @@ class ModifyPatient {
 
             $this->checkAuthorization($modifyPatientRequest->currentUserId, $modifyPatientRequest->patientId, $studyName);
 
-            $updatableData = ['firstname', 'lastname', 'gender', 'birthDay', 'birthMonth', 'birthYear',
-            'registrationDate', 'investigatorName', 'centerCode', 'inclusionStatus', 'withdrawReason', 'withdrawDate'];
+            $updatableData = [
+                'firstname', 'lastname', 'gender', 'birthDay', 'birthMonth', 'birthYear',
+                'registrationDate', 'investigatorName', 'centerCode', 'inclusionStatus', 'withdrawReason', 'withdrawDate'
+            ];
 
-            if($modifyPatientRequest->inclusionStatus === Constants::PATIENT_INCLUSION_STATUS_WITHDRAWN){
-                if(empty($modifyPatientRequest->withdrawDate) ||
+            //Update each updatable data
+            foreach ($updatableData as $data) {
+                $patientEntity[Util::camelCaseToSnakeCase($data)] = $modifyPatientRequest->$data;
+            }
+
+            if ($modifyPatientRequest->inclusionStatus === Constants::PATIENT_INCLUSION_STATUS_WITHDRAWN) {
+                if (
+                    empty($modifyPatientRequest->withdrawDate) ||
                     empty($modifyPatientRequest->withdrawReason)
-                ){
+                ) {
                     throw new GaelOBadRequestException('Withdraw Date and Reason must be specified for withdraw declaration');
                 }
             } else {
@@ -54,18 +65,15 @@ class ModifyPatient {
             }
 
             //Check Gender Validity
-            if($modifyPatientRequest->gender !== null) {
+            if ($modifyPatientRequest->gender !== null) {
                 ImportPatientService::checkPatientGender($modifyPatientRequest->gender);
             }
             //Check BirthDate Validity
             ImportPatientService::checkCorrectBirthDate($modifyPatientRequest->birthDay, $modifyPatientRequest->birthMonth, $modifyPatientRequest->birthYear);
 
-            //Update each updatable data
-            foreach($updatableData as $data){
-                $patientEntity[Util::camelCaseToSnakeCase($data)] = $modifyPatientRequest->$data;
-            }
 
-            $this->patientRepositoryInterface->updatePatient($modifyPatientRequest->patientId,
+            $this->patientRepositoryInterface->updatePatient(
+                $modifyPatientRequest->patientId,
                 $patientEntity['lastname'],
                 $patientEntity['firstname'],
                 $patientEntity['gender'],
@@ -78,30 +86,28 @@ class ModifyPatient {
                 $patientEntity['center_code'],
                 $patientEntity['inclusion_status'],
                 $patientEntity['withdraw_reason'],
-                $patientEntity['withdraw_date']);
+                $patientEntity['withdraw_date']
+            );
 
             $this->trackerRepositoryInterface->writeAction($modifyPatientRequest->currentUserId, Constants::ROLE_SUPERVISOR, $patientEntity['study_name'], null, Constants::TRACKER_EDIT_PATIENT, (array) $modifyPatientRequest);
 
             $modifyPatientResponse->status = 200;
             $modifyPatientResponse->statusText = 'OK';
-
-
-
-        }catch(GaelOException $e){
+        } catch (GaelOException $e) {
             $modifyPatientResponse->body = $e->getErrorBody();
             $modifyPatientResponse->status = $e->statusCode;
             $modifyPatientResponse->statusText = $e->statusText;
-
-        }catch (Exception $e){
+        } catch (Exception $e) {
             throw $e;
         }
     }
 
-    private function checkAuthorization(int $userId, string $patientId, string $studyName){
+    private function checkAuthorization(int $userId, string $patientId, string $studyName)
+    {
         $this->authorizationPatientService->setUserId($userId);
         $this->authorizationPatientService->setPatientId($patientId);
         $this->authorizationPatientService->setStudyName($studyName);
-        if( ! $this->authorizationPatientService->isPatientAllowed(Constants::ROLE_SUPERVISOR)){
+        if (!$this->authorizationPatientService->isPatientAllowed(Constants::ROLE_SUPERVISOR)) {
             throw new GaelOForbiddenException();
         };
     }
