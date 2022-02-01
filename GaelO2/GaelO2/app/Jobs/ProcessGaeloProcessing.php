@@ -3,7 +3,7 @@
 namespace App\Jobs;
 
 use App\Gaelo\Services\AzureService;
-use App\GaelO\Services\ProcessingService;
+use App\GaelO\Services\GaelOProcessingService;
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
@@ -17,14 +17,16 @@ class ProcessGaeloProcessing implements ShouldQueue
     use Batchable, Dispatchable, InteractsWithQueue, Queueable, SerializesModels, ShouldBeUnique;
 
     private string $orthancSeriesID;
+    private string $processingName;
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct(string $orthancSeriesID)
+    public function __construct(string $orthancSeriesID, string $processingName)
     {
         $this->orthancSeriesID = $orthancSeriesID;
+        $this->processingName = $processingName;
         $this->onQueue('GaelOProcessing');
     }
 
@@ -33,7 +35,7 @@ class ProcessGaeloProcessing implements ShouldQueue
      *
      * @return void
      */
-    public function handle(ProcessingService $processingService, AzureService $azureService)
+    public function handle(GaelOProcessingService $gaelOProcessingService, AzureService $azureService)
     {
         //
 
