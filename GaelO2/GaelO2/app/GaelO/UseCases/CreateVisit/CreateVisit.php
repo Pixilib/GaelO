@@ -117,6 +117,7 @@ class CreateVisit
             );
 
             $createVisitResponse->status = 201;
+            $createVisitResponse->body = ['id' => $visitId];
             $createVisitResponse->statusText = 'Created';
         } catch (GaelOException $e) {
 
