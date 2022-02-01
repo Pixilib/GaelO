@@ -149,7 +149,7 @@ class HttpClientAdapter implements HttpClientInterface
            $options['headers']['Authorization']='Bearer '.$this->authorizationToken;
         }
 
-        Log::info($options);
+        echo $options['body']->getContents();
         $response = $this->client->request($method, $this->address . $uri, $options);
         return new Psr7ResponseAdapter($response);
     }
