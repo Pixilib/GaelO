@@ -2,6 +2,7 @@
 
 namespace App\GaelO\Services;
 
+use App\GaelO\Adapters\Psr7ResponseAdapter;
 use App\GaelO\Constants\Constants;
 use App\GaelO\Constants\SettingsConstants;
 use App\GaelO\Interfaces\Adapters\FrameworkInterface;
@@ -345,11 +346,11 @@ class OrthancService
         $this->httpClientInterface->streamResponse('POST', '/tools/create-archive', $payload);
     }
 
-    public function getOrthancZipStream2(array $seriesOrthancIDs)
+    public function getOrthancZipStream2(array $seriesOrthancIDs) : Psr7ResponseAdapter
     {
         $payload = array('Transcode' => '1.2.840.10008.1.2.1', 'Resources' => $seriesOrthancIDs);
-        return $this->httpClientInterface->getResponseAsStream('POST', '/tools/create-archive', $payload);
-        
+        return $this->httpClientInterface->getResponseRawStream('POST', '/tools/create-archive', $payload);
+
     }
 }
 

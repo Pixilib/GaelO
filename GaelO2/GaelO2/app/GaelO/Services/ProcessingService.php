@@ -36,9 +36,9 @@ class ProcessingService{
     */
     public function sendDicom (array $orthancID):Psr7ResponseInterface{
         // recupere la dicom
-        $stream = $this ->orthancService ->getOrthancZipStream2($orthancID);
+        $psr7Response = $this ->orthancService ->getOrthancZipStream2($orthancID);
         // envoie la dicom$
-        $response = $this->httpClientInterface->rowRequest ('POST' ,"/app/dicom", $stream,['content-type' => 'application/zip', 'Accept' => 'application/json']);
+        $response = $this->httpClientInterface->rowRequest ('POST' ,"/app/dicom", $psr7Response->getBodyAsStream(), ['content-type' => 'application/zip', 'Accept' => 'application/json']);
 
         return $response;
     }

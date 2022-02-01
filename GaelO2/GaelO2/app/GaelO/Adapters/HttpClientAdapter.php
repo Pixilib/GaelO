@@ -10,7 +10,7 @@ use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\RequestOptions;
 use Illuminate\Support\Facades\Log;
-
+use Psr\Http\Message\StreamInterface;
 
 class HttpClientAdapter implements HttpClientInterface
 {
@@ -36,7 +36,7 @@ class HttpClientAdapter implements HttpClientInterface
         $this->address = $url;
     }
 
-    public function setAuthorizationToken(string $authorizationToken): void 
+    public function setAuthorizationToken(string $authorizationToken): void
     {
         $this -> authorizationToken = $authorizationToken;
     }
@@ -93,6 +93,11 @@ class HttpClientAdapter implements HttpClientInterface
         return new Psr7ResponseAdapter($response);
     }
 
+    public function getResponseRawStream(string $method, string $uri, array $body = []) : Psr7ResponseInterface {
+        $response = $this->client->request($method, $this->address . $uri, ['stream' => true, 'json' => $body, 'auth' => [$this->login, $this->password]]);
+        return new Psr7ResponseAdapter($response);
+    }
+
     public function getResponseAsStream(string $method, string $uri, array $body = [])
     {
 
@@ -143,7 +148,7 @@ class HttpClientAdapter implements HttpClientInterface
             $options['headers'] = $headers;
         }
         if ($this->authorizationToken != null) {
-           $options['headers']['Authorization']='Bearer '.$this->authorizationToken;      
+           $options['headers']['Authorization']='Bearer '.$this->authorizationToken;
         }
       //log::info($options);
         $response = $this->client->request($method, $this->address . $uri, $options);

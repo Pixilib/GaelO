@@ -9,7 +9,7 @@ interface HttpClientInterface
 
     public function setUrl(string $url): void;
 
-    public function setAuthorizationToken(string $authorizationToken): void; 
+    public function setAuthorizationToken(string $authorizationToken): void;
 
     public function setBasicAuthentication(string $login, string $password): void;
 
@@ -34,6 +34,8 @@ interface HttpClientInterface
      * Return Http respond as ressource
      */
     public function getResponseAsStream(string $method, string $uri, array $body = []);
+
+    public function getResponseRawStream(string $method, string $uri, array $body = []) : Psr7ResponseInterface ;
 
     /**
      * Store response in destination file
