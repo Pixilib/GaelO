@@ -5,7 +5,6 @@ namespace Tests\Unit\TestServices;
 use Tests\TestCase;
 use App\GaelO\Services\AzureService;
 use Illuminate\Support\Facades\App;
-
 use Illuminate\Support\Facades\Log;
 
 class AzureServiceTest extends TestCase
@@ -33,20 +32,35 @@ class AzureServiceTest extends TestCase
    /*
     public function testStartAci(){
         $res = $this -> azureService -> startAci();
-        $this->assertEquals($res ,202);
+        Log::info('j allume azure');
+        Log::info($res);
+        $this->assertEquals(202,$res );
     }
    */
   /*
     public function testStopAci(){
         $res = $this -> azureService -> stopAci();
-        $this->assertEquals($res ,204);
+        $this->assertEquals(204 , $res);
     }
  */ 
 
-    public function testGetStatusAci(){
+    public function testGetStatusAciState(){
+
     $res = $this -> azureService -> getStatusAci();
-    log::info('je suis le status');
-    
-}
- 
+    $state = ["Pending","Running","Stopped"];
+    $this->assertContains($res['state'],$state);
+    }
+
+    public function testGetStatusAciIP(){
+
+    $res = $this -> azureService -> getStatusAci();
+    $ip = preg_match('/^((25[0-5]|(2[0-4]|1\d|[1-9]|)\d)(\.(?!$)|$)){4}$/', $res['ip']);
+    $this->assertTrue(true,$ip);
+    }
+
+    /*
+    public function testCheckStatus(){
+    $res=$this-> azureService ->checkStatus();
+    } 
+ */
 }

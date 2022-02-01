@@ -11,17 +11,16 @@ class ProcessingServiceTest extends TestCase
 {
     private ProcessingService $processingService;
     
-
     protected function setUp():void{
 
         parent::setUp();
-
-      $this->processingService = App::make(ProcessingService::class);
-          
+        $this->processingService = App::make(ProcessingService::class);     
     }
+    
     public function testSendDicom()
     {
         $resultat=$this->processingService->sendDicom(["717b834e-a4e89074-51018c12-59e12ebd-598a673f"]);
         Log::info($resultat);
+        //$this->assertNotEmpty($resultat);
     }
 }
