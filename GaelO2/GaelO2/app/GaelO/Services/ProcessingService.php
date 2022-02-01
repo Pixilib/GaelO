@@ -7,7 +7,7 @@ use App\GaelO\Interfaces\Adapters\FrameworkInterface;
 use App\GaelO\Interfaces\Adapters\HttpClientInterface;
 use App\GaelO\Interfaces\Adapters\Psr7ResponseInterface;
 use App\GaelO\Services\OrthancService;
-
+use Illuminate\Support\Facades\Log;
 
 class ProcessingService{
 
@@ -37,7 +37,8 @@ class ProcessingService{
     public function sendDicom (array $orthancID):Psr7ResponseInterface{
         // recupere la dicom
         $psr7Response = $this ->orthancService ->getOrthancZipStream2($orthancID);
-        // envoie la dicom$
+        // envoie la dicom
+        Log::info($psr7Response);
         $response = $this->httpClientInterface->rowRequest ('POST' ,"/app/dicom", $psr7Response->getBodyAsStream(), ['content-type' => 'application/zip', 'Accept' => 'application/json']);
 
         return $response;

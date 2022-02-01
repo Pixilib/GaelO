@@ -135,7 +135,7 @@ class HttpClientAdapter implements HttpClientInterface
     public function rowRequest(string $method, string $uri, $body, ?array $headers ): Psr7ResponseInterface
     {
         $options = [];
-
+        Log::info($body);
         if ($body !== null) {
             $options['body'] = $body;
         }
