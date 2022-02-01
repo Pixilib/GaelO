@@ -22,14 +22,13 @@ class ProcessingService{
         $this->httpClientInterface=$httpClientInterface;
         $this->orthancService=$orthancService;
         $this->frameworkInterface=$frameworkInterface;
-        $this->setServerAddress();
+        $url = $this->frameworkInterface::getConfig(SettingsConstants::GAELO_PROCESSING_URL);
+        $this->httpClientInterface->setUrl($url);
         $this->orthancService->setOrthancServer(true);
     }
 
-    // fonction
-    private function setServerAddress(){
-        $url = $this->frameworkInterface::getConfig(SettingsConstants::GAELO_PROCESSING_URL);
-        $this->httpClientInterface->setUrl($url);
+    public function setServerAdress(string $address){
+        $this->httpClientInterface->setUrl($address);
     }
 
     /*
@@ -40,7 +39,7 @@ class ProcessingService{
         $stream = $this ->orthancService ->getOrthancZipStream2($orthancID);
         // envoie la dicom$
         $response = $this->httpClientInterface->rowRequest ('POST' ,"/app/dicom", $stream,['content-type' => 'application/zip', 'Accept' => 'application/json']);
-        
-        return $response;    
+
+        return $response;
     }
-} 
+}
