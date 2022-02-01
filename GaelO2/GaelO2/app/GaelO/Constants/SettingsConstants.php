@@ -20,4 +20,13 @@ class SettingsConstants {
     const ORTHANC_STORAGE_LOGIN = 'orthanc_storage_login';
     const ORTHANC_STORAGE_PASSWORD = 'orthanc_storage_password';
 
+    const GAELO_PROCESSING_URL ='gaelo_processing_url';
+
+    const AZURE_CLIENT_ID ='azure_client_id';
+    const AZURE_DIRECTORY_ID ='azure_directory_id';
+    const AZURE_CLIENT_SECRET='azure_client_secret';
+    const AZURE_SUBSCRIPTION_ID='azure_subscription_id';
+    const AZURE_CONTAINER_GROUP='azure_container_group';
+    const AZURE_RESSOURCE_GROUP='azure_ressource_group';
+
 }

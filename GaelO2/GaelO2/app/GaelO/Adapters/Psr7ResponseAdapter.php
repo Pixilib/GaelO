@@ -4,6 +4,7 @@ namespace App\GaelO\Adapters;
 
 use App\GaelO\Interfaces\Adapters\Psr7ResponseInterface;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\StreamInterface;
 
 class Psr7ResponseAdapter implements Psr7ResponseInterface {
 
@@ -19,6 +20,11 @@ class Psr7ResponseAdapter implements Psr7ResponseInterface {
 
     public function getBody() : string {
         return $this->response->getBody()->getContents();
+    }
+
+    public function getBodyAsStream(): StreamInterface
+    {
+        return $this->response->getBody()->getContent();
     }
 
     public function getReasonPhrase() :string {
