@@ -91,11 +91,6 @@ class HttpClientAdapter implements HttpClientInterface
         return new Psr7ResponseAdapter($response);
     }
 
-    public function getResponseRawStream(string $method, string $uri, array $body = []) : Psr7ResponseInterface {
-        $response = $this->client->request($method, $this->address . $uri, ['stream' => true, 'json' => $body, 'auth' => [$this->login, $this->password]]);
-        return new Psr7ResponseAdapter($response);
-    }
-
     public function getResponseAsStream(string $method, string $uri, array $body = [])
     {
 

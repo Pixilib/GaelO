@@ -24,7 +24,7 @@ class Psr7ResponseAdapter implements Psr7ResponseInterface {
 
     public function getBodyAsStream(): StreamInterface
     {
-        return $this->response->getBody();
+        return $this->response->getBody()->getContent();
     }
 
     public function getReasonPhrase() :string {

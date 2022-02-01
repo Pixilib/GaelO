@@ -35,8 +35,6 @@ interface HttpClientInterface
      */
     public function getResponseAsStream(string $method, string $uri, array $body = []);
 
-    public function getResponseRawStream(string $method, string $uri, array $body = []) : Psr7ResponseInterface ;
-
     /**
      * Store response in destination file
      */
