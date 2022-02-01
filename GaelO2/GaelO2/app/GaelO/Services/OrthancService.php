@@ -349,7 +349,7 @@ class OrthancService
     public function getOrthancZipStreamAsString(array $seriesOrthancIDs) : Psr7ResponseAdapter
     {
         $payload = array('Transcode' => '1.2.840.10008.1.2.1', 'Resources' => $seriesOrthancIDs);
-        return $this->httpClientInterface->rowRequest('POST', '/tools/create-archive', $payload, null);
+        return $this->httpClientInterface->requestJson('POST', '/tools/create-archive', $payload);
 
     }
 }
