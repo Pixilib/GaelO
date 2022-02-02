@@ -15,7 +15,8 @@ use App\GaelO\Services\AuthorizationService\AuthorizationVisitService;
 use App\GaelO\Services\FormService\ReviewFormService;
 use Exception;
 
-class CreateReview {
+class CreateReview
+{
 
     private TrackerRepositoryInterface $trackerRepositoryInterface;
     private ReviewFormService $reviewFormService;
@@ -31,32 +32,32 @@ class CreateReview {
         ReviewStatusRepositoryInterface $reviewStatusRepositoryInterface,
         ReviewRepositoryInterface $reviewRepositoryInterface,
         AuthorizationVisitService $authorizationVisitService
-    ){
+    ) {
         $this->trackerRepositoryInterface = $trackerRepositoryInterface;
         $this->reviewFormService = $reviewFormService;
         $this->visitRepositoryInterface = $visitRepositoryInterface;
         $this->reviewStatusRepositoryInterface = $reviewStatusRepositoryInterface;
         $this->reviewRepositoryInterface = $reviewRepositoryInterface;
         $this->authorizationVisitService = $authorizationVisitService;
-
     }
 
-    public function execute(CreateReviewFormRequest $createReviewFormRequest, CreateReviewFormResponse $createReviewFormResponse){
+    public function execute(CreateReviewFormRequest $createReviewFormRequest, CreateReviewFormResponse $createReviewFormResponse)
+    {
 
-        try{
+        try {
 
-            if( ! isset($createReviewFormRequest->validated) || !isset($createReviewFormRequest->visitId) ){
+            if (!isset($createReviewFormRequest->validated) || !isset($createReviewFormRequest->visitId)) {
                 throw new GaelOBadRequestException('VisitID and Validated Status are mandatory');
             }
 
-            if($this->reviewRepositoryInterface->isExistingReviewForStudyVisitUser( $createReviewFormRequest->studyName, $createReviewFormRequest->visitId, $createReviewFormRequest->currentUserId) ){
+            if ($this->reviewRepositoryInterface->isExistingReviewForStudyVisitUser($createReviewFormRequest->studyName, $createReviewFormRequest->visitId, $createReviewFormRequest->currentUserId)) {
                 throw new GaelOConflictException('Review Already Created');
             };
 
             $visitContext = $this->visitRepositoryInterface->getVisitContext($createReviewFormRequest->visitId);
             $reviewStatus = $this->reviewStatusRepositoryInterface->getReviewStatus($createReviewFormRequest->visitId, $createReviewFormRequest->studyName);
 
-            if( $createReviewFormRequest->adjudication &&  $reviewStatus['review_status'] !== Constants::REVIEW_STATUS_WAIT_ADJUDICATION ){
+            if ($createReviewFormRequest->adjudication &&  $reviewStatus['review_status'] !== Constants::REVIEW_STATUS_WAIT_ADJUDICATION) {
                 throw new GaelOBadRequestException('Review Not Awaiting Adjudication');
             };
 
@@ -65,7 +66,7 @@ class CreateReview {
             //Call service to register form
             $this->reviewFormService->setCurrentUserId($createReviewFormRequest->currentUserId);
             $this->reviewFormService->setReviewStatus($reviewStatus);
-            $this->reviewFormService->setVisitContextAndStudy($visitContext, $createReviewFormRequest->studyName );
+            $this->reviewFormService->setVisitContextAndStudy($visitContext, $createReviewFormRequest->studyName);
             $createdReviewId = $this->reviewFormService->saveReview($createReviewFormRequest->data, $createReviewFormRequest->validated, $createReviewFormRequest->adjudication);
 
             //Write in Tracker
@@ -80,22 +81,20 @@ class CreateReview {
 
             $createReviewFormResponse->status = 201;
             $createReviewFormResponse->statusText =  'Created';
-
-        } catch (GaelOException $e){
+        } catch (GaelOException $e) {
 
             $createReviewFormResponse->body = $e->getErrorBody();
             $createReviewFormResponse->status = $e->statusCode;
             $createReviewFormResponse->statusText =  $e->statusText;
-
-        }catch (Exception $e){
+        } catch (Exception $e) {
             throw $e;
         }
-
     }
 
-    private function checkAuthorization(int $visitId, int $currentUserId, bool $reviewAvailability, string $studyName){
+    private function checkAuthorization(int $visitId, int $currentUserId, bool $reviewAvailability, string $studyName)
+    {
 
-        if(!$reviewAvailability){
+        if (!$reviewAvailability) {
             throw new GaelOForbiddenException();
         }
 
@@ -103,10 +102,8 @@ class CreateReview {
         $this->authorizationVisitService->setVisitId($visitId);
         $this->authorizationVisitService->setStudyName($studyName);
 
-        if( !$this->authorizationVisitService->isVisitAllowed(Constants::ROLE_REVIEWER) ){
+        if (!$this->authorizationVisitService->isVisitAllowed(Constants::ROLE_REVIEWER)) {
             throw new GaelOForbiddenException();
         };
-
     }
-
 }
