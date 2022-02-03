@@ -5,7 +5,7 @@ namespace App\Jobs;
 use App\GaelO\Services\GaelOProcessingService;
 use App\GaelO\Interfaces\Adapters\HttpClientInterface;
 use Illuminate\Bus\Queueable;
-
+use Illuminate\Support\Facades\Log;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
@@ -21,20 +21,20 @@ class JobGaeloProcessing implements ShouldQueue
     */
     
    
-    private $orthancSeriesID ="717b834e-a4e89074-51018c12-59e12ebd-598a673f";
-    private $processingName='Nimportequoi';
-    private $ip='20.74.32.229';
+    private $orthancSeriesID = '';
+    private $processingName = '';
+    private $url = '';
     
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct(string $orthancSeriesID, string $processingName,string $ip)
+    public function __construct(array  $orthancSeriesID, string $processingName,string $url)
     {
         $this->orthancSeriesID = $orthancSeriesID;
         $this->processingName = $processingName;
-        $this->ip=$ip;
+        $this->url=$url;
         
     }
 
@@ -45,13 +45,12 @@ class JobGaeloProcessing implements ShouldQueue
      */
    
 
-    public function handle(GaelOProcessingService $gaelOProcessingService ,HttpClientInterface $httpClientInterface)
-    {
-        
+    public function handle(GaelOProcessingService $gaelOProcessingService  )
+    {  
         //l'ip arrive  pour l'adresse 
-        
-         $httpClientInterface->setUrl('http://'.'20.74.32.229'.':8000');
-         $gaelOProcessingService->sendDicom(["a97f5e66-bbff00d4-1639c63f-a3e1e53a-d4b5e553"]);   
+        $gaelOProcessingService->setServerAdress($this->url);
+        $gaelOProcessingService->sendDicom($this->orthancSeriesID);  
+        Log::info($this->batch());  
         
     }
 }

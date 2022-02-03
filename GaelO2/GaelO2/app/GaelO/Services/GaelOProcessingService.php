@@ -6,7 +6,6 @@ use App\GaelO\Constants\SettingsConstants;
 use App\GaelO\Interfaces\Adapters\FrameworkInterface;
 use App\GaelO\Interfaces\Adapters\HttpClientInterface;
 use App\GaelO\Interfaces\Adapters\Psr7ResponseInterface;
-use App\Gaelo\Services\AzureService;
 use App\GaelO\Services\OrthancService;
 
 class GaelOProcessingService{
@@ -16,7 +15,7 @@ class GaelOProcessingService{
     private FrameworkInterface $frameworkInterface;
 
     public function __construct( OrthancService $orthancService, FrameworkInterface $frameworkInterface, HttpClientInterface $httpClientInterface ){
-        
+
         $this->httpClientInterface=$httpClientInterface;
         $this->orthancService=$orthancService;
         $this->frameworkInterface=$frameworkInterface;

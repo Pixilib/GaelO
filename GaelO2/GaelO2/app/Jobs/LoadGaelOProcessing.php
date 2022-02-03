@@ -39,19 +39,17 @@ class LoadGaelOProcessing implements ShouldQueue
     {
         //
         /* getorthancID et un getProcessingName*/
-        $this->AzureService->isRunning();
-        $this->AzureService->getIP();
-        
+     
         /*
         *Passage des job ici donc on rentré l'ip ici 
         *set ip 
         */
         $batch = Bus::batch 
-        ([new JobGaelOProcessing("717b834e-a4e89074-51018c12-59e12ebd-598a673f",'Nimportequoi','
+        ([new JobGaelOProcessing(["a97f5e66-bbff00d4-1639c63f-a3e1e53a-d4b5e553"],'Nimportequoi','
         51.138.216.115
         ')]);
     
-        $this->AzureService->isStopped();
+        $this->AzureService->checkstatus();
      
     }
 }
