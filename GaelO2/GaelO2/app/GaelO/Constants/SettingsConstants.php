@@ -27,6 +27,6 @@ class SettingsConstants {
     const AZURE_CLIENT_SECRET='azure_client_secret';
     const AZURE_SUBSCRIPTION_ID='azure_subscription_id';
     const AZURE_CONTAINER_GROUP='azure_container_group';
-    const AZURE_RESSOURCE_GROUP='azure_ressource_group';
+    const AZURE_RESOURCE_GROUP='azure_resource_group';
 
 }

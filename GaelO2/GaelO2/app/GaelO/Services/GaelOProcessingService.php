@@ -6,6 +6,7 @@ use App\GaelO\Constants\SettingsConstants;
 use App\GaelO\Interfaces\Adapters\FrameworkInterface;
 use App\GaelO\Interfaces\Adapters\HttpClientInterface;
 use App\GaelO\Interfaces\Adapters\Psr7ResponseInterface;
+use App\Gaelo\Services\AzureService;
 use App\GaelO\Services\OrthancService;
 
 class GaelOProcessingService{

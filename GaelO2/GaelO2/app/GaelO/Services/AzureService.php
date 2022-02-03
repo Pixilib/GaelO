@@ -51,7 +51,7 @@ class AzureService
     private function setServerAddress() : void
     {
         $subID = $this->frameworkInterface::getConfig(SettingsConstants::AZURE_SUBSCRIPTION_ID);
-        $ressourceGroupe = $this->frameworkInterface::getConfig(SettingsConstants::AZURE_RESSOURCE_GROUP);
+        $ressourceGroupe = $this->frameworkInterface::getConfig(SettingsConstants::AZURE_RESOURCE_GROUP);
         $containerGroupe = $this->frameworkInterface::getConfig(SettingsConstants::AZURE_CONTAINER_GROUP);
         $url = "https://management.azure.com/subscriptions/" . $subID . "/resourceGroups/" . $ressourceGroupe . "/providers/Microsoft.ContainerInstance/containerGroups/" . $containerGroupe . "";
         $this->httpClientInterface->setUrl($url);
@@ -108,4 +108,35 @@ class AzureService
 
         return $aciStatus['state'];
     }
+
+    public function getIP(){
+        $tab =$this -> getStatusAci();
+        $ip=$tab['ip']:
+        return $ip;
+    }   
+
+    public function startAndWait(){
+        $this->startAci();
+    }
+   
+
+    public function isRunning():Bool{
+        $this->startAndWait();
+        $this->checkStatus();
+        return true;
+    }
+
+    public function stopAciAndWait(){
+        $this->stopACI();
+        $this->checkStatus();
+    }
+
+    public function isStopped():bool{
+        $this->stopAciAndWait();
+        return true;
+    }
+
+    /* is running (startandwait + check state) , isstopped(stopAciandwait qui verifie stopped  ) 
+        setIP 
+    */
 }

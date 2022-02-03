@@ -149,7 +149,7 @@ return [
     'azure_client_secret' =>env('AZURE_CLIENT_SECRET'),
     'azure_subscription_id' => env('AZURE_SUBSCRIPTION_ID'),
     'azure_container_group' => env('AZURE_CONTAINER_GROUP'),
-    'azure_ressource_group' => env('AZURE_RESSOURCE_GROUP'),
+    'azure_resource_group' => env('AZURE_RESOURCE_GROUP'),
 
 
     'providers' => [
