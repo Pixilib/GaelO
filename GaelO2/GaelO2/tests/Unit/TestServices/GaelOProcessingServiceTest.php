@@ -19,7 +19,7 @@ class GaelOProcessingServiceTest extends TestCase
 
     public function testSendDicom()
     {
-        $resultat=$this->gaeloProcessingService->sendDicom(["717b834e-a4e89074-51018c12-59e12ebd-598a673f"]);
+        $resultat=$this->gaeloProcessingService->sendDicom(["a97f5e66-bbff00d4-1639c63f-a3e1e53a-d4b5e553"]);
         Log::info($resultat);
         //$this->assertNotEmpty($resultat);
     }

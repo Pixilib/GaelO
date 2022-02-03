@@ -6,7 +6,6 @@ use App\Gaelo\Services\AzureService;
 use App\Jobs\JobGaelOProcessing;
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
@@ -14,7 +13,7 @@ use Illuminate\Queue\SerializesModels;
 
 class LoadGaelOProcessing implements ShouldQueue
 {
-    use Batchable, Dispatchable, InteractsWithQueue, Queueable, SerializesModels, ShouldBeUnique;
+    use Batchable, Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     /*
     * Gestionnaire de queue 
@@ -26,24 +25,20 @@ class LoadGaelOProcessing implements ShouldQueue
      *
      * @return void
      */
-    public function __construct(  )
+    public function __construct( )
     {
-      
+    
     }
-
-   
-
-    }
+    
     /**
      * Execute the job.
      *
      * @return void
      */
-
     public function handle()
     {
         //
-       
+        /* getorthancID et un getProcessingName*/
         $this->AzureService->isRunning();
         $this->AzureService->getIP();
         
@@ -52,7 +47,10 @@ class LoadGaelOProcessing implements ShouldQueue
         *set ip 
         */
         $batch = Bus::batch 
-        ([new JobGaelOProcessing("717b834e-a4e89074-51018c12-59e12ebd-598a673f",'Nimportequoi',$ip)]);
+        ([new JobGaelOProcessing("717b834e-a4e89074-51018c12-59e12ebd-598a673f",'Nimportequoi','
+        51.138.216.115
+        ')]);
+    
         $this->AzureService->isStopped();
      
     }

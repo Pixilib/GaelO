@@ -16,6 +16,7 @@ class GaelOProcessingService{
     private FrameworkInterface $frameworkInterface;
 
     public function __construct( OrthancService $orthancService, FrameworkInterface $frameworkInterface, HttpClientInterface $httpClientInterface ){
+        
         $this->httpClientInterface=$httpClientInterface;
         $this->orthancService=$orthancService;
         $this->frameworkInterface=$frameworkInterface;
