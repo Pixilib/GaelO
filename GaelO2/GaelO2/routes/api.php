@@ -217,3 +217,6 @@ Route::get('email/verify/{id}/{hash}', function (Request $request) {
 
 //Magic link route
 Route::get('magic-link/{id}', [AuthController::class, 'getMagicLink'])->name('magic-link');
+
+
+Route::get('aci/{name}',  [UserController::class, 'getAciStatus']);

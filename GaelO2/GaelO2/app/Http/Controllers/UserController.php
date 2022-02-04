@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\GaelO\Services\AzureService;
 use App\GaelO\UseCases\AddAffiliatedCenter\AddAffiliatedCenter;
 use App\GaelO\UseCases\AddAffiliatedCenter\AddAffiliatedCenterRequest;
 use App\GaelO\UseCases\AddAffiliatedCenter\AddAffiliatedCenterResponse;
@@ -263,5 +264,14 @@ class UserController extends Controller
         $getUserFromStudyRequest->role = $queryParam['role'];
         $getUserFromStudy->execute($getUserFromStudyRequest, $getUserFromStudyResponse);
         return $this->getJsonResponse($getUserFromStudyResponse->body, $getUserFromStudyResponse->status, $getUserFromStudyResponse->statusText);
+    }
+
+    public function getAciStatus(Request $request, AzureService $azureService, string $name){
+
+        $status = $azureService->getStatusAci();
+
+        return response($status, 200);
+
+
     }
 }

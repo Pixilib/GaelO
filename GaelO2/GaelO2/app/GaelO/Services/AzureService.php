@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Gaelo\Services;
+namespace App\GaelO\Services;
 
 use App\GaelO\Interfaces\Adapters\HttpClientInterface;
 use App\GaelO\Interfaces\Adapters\FrameworkInterface;
