@@ -27,7 +27,7 @@ class AzureService
         $this->setServerAddress();
     }
 
-    private function createAccessTokenAzure()  : string
+    private function createAccessTokenAzure(): string
     {
         $requestUrl = "https://login.microsoftonline.com/" . $this->tenantID . "/oauth2/token";
         $payload = [
@@ -42,13 +42,13 @@ class AzureService
         return $token;
     }
 
-    private function setAccessToken() : void
+    private function setAccessToken(): void
     {
         $authorizationToken = $this->createAccessTokenAzure();
         $this->httpClientInterface->setAuthorizationToken($authorizationToken);
     }
 
-    private function setServerAddress() : void
+    private function setServerAddress(): void
     {
         $subID = $this->frameworkInterface::getConfig(SettingsConstants::AZURE_SUBSCRIPTION_ID);
         $ressourceGroupe = $this->frameworkInterface::getConfig(SettingsConstants::AZURE_RESOURCE_GROUP);
@@ -57,7 +57,7 @@ class AzureService
         $this->httpClientInterface->setUrl($url);
     }
 
-    public function startAci() : bool
+    public function startAci(): bool
     {
         $this->setAccessToken();
         $uri = "/start?api-version=2021-09-01";
@@ -66,7 +66,7 @@ class AzureService
         return $response === 202;
     }
 
-    public function stopACI() : bool
+    public function stopACI(): bool
     {
         $this->setAccessToken();
         $uri = "/stop?api-version=2021-09-01";
@@ -97,7 +97,7 @@ class AzureService
     }
 
     //SK : PHP 8.1 vient de faire les Enumeration, ici pour le status ca serait bien de faire une enumeration
-    public function checkStatus() : string
+    private function waitEndOfPending(): string
     {
         $aciStatus = $this->getStatusAci();
 
@@ -109,34 +109,35 @@ class AzureService
         return $aciStatus['state'];
     }
 
-    public function getIP(){
-        $tab =$this -> getStatusAci();
-        $ip=$tab['ip']:
+    public function getIP() : string
+    {
+        $status = $this->getStatusAci();
+        $ip = $status['ip'];
         return $ip;
-    }   
+    }
 
-    public function startAndWait(){
+    public function startAndWait(): void
+    {
         $this->startAci();
-    }
-   
-
-    public function isRunning():Bool{
-        $this->startAndWait();
-        $this->checkStatus();
-        return true;
+        $this->waitEndOfPending();
     }
 
-    public function stopAciAndWait(){
+
+    public function isRunning(): Bool
+    {
+        $status = $this->getStatusAci();
+        return $status['state'] === self::ACI_STATUS_RUNNING;
+    }
+
+    public function stopAciAndWait(): void
+    {
         $this->stopACI();
-        $this->checkStatus();
+        $this->waitEndOfPending();
     }
 
-    public function isStopped():bool{
-        $this->stopAciAndWait();
-        return true;
+    public function isStopped(): bool
+    {
+        $status = $this->getStatusAci();
+        return $status['state'] === self::ACI_STATUS_STOPPED;
     }
-
-    /* is running (startandwait + check state) , isstopped(stopAciandwait qui verifie stopped  ) 
-        setIP 
-    */
 }

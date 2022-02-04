@@ -12,25 +12,26 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Bus\Batchable;
 
-class JobGaeloProcessing implements ShouldQueue
+class JobGaelOProcessing implements ShouldQueue
 {
-    use  Batchable,Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use  Batchable, Dispatchable, InteractsWithQueue, Queueable;
 
+    
     /*
     *Creation des job qui seront envoyer dans le load
     */
     
    
-    private $orthancSeriesID = '';
-    private $processingName = '';
-    private $url = '';
+    private array $orthancSeriesID;
+    private string $processingName;
+    private string $url;
     
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct(array  $orthancSeriesID, string $processingName,string $url)
+    public function __construct(array  $orthancSeriesID, string $processingName, string $url)
     {
         $this->orthancSeriesID = $orthancSeriesID;
         $this->processingName = $processingName;
@@ -45,12 +46,12 @@ class JobGaeloProcessing implements ShouldQueue
      */
    
 
-    public function handle(GaelOProcessingService $gaelOProcessingService  )
+    public function handle(GaelOProcessingService $gaelOProcessingService )
     {  
         //l'ip arrive  pour l'adresse 
         $gaelOProcessingService->setServerAdress($this->url);
         $gaelOProcessingService->sendDicom($this->orthancSeriesID);  
-        Log::info($this->batch());  
+
         
     }
 }

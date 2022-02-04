@@ -4,52 +4,69 @@ namespace App\Jobs;
 
 use App\Gaelo\Services\AzureService;
 use App\Jobs\JobGaelOProcessing;
-use Illuminate\Bus\Batchable;
+use Illuminate\Bus\Batch;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Bus;
+use Throwable;
 
 class LoadGaelOProcessing implements ShouldQueue
 {
-    use Batchable, Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use  Dispatchable, InteractsWithQueue, Queueable;
 
-    /*
-    * Gestionnaire de queue 
-    */
-   
-    public int $timeout=1800;
-    /**
-     * Create a new job instance.
-     *
-     * @return void
-     */
-    public function __construct( )
+    private array  $orthancSeriesID;
+    private string $processingName;
+
+    public function __construct(array  $orthancSeriesID, string $processingName)
     {
-    
+        $this->orthancSeriesID = $orthancSeriesID;
+        $this->processingName = $processingName;
     }
-    
     /**
      * Execute the job.
      *
      * @return void
      */
-    public function handle()
+    public function handle(AzureService $azureService)
     {
+
+        //Si ACI ETTEINTE => START AND WAIT
+        if( ! $azureService->isRunning()){
+            $azureService->startAndWait();
+        };
+
+
+        //Recuperere l'IP
+        $ip = $azureService->getIP();
+
+
         //
         /* getorthancID et un getProcessingName*/
-     
+
         /*
         *Passage des job ici donc on rentré l'ip ici 
         *set ip 
         */
-        $batch = Bus::batch 
-        ([new JobGaelOProcessing(["a97f5e66-bbff00d4-1639c63f-a3e1e53a-d4b5e553"],'Nimportequoi','
-        51.138.216.115
-        ')]);
-    
-        $this->AzureService->checkstatus();
-     
+        Bus::batch(
+                [
+                    new JobGaelOProcessing(
+                        $this->orthancSeriesID,
+                        $this->processingName,
+                        $ip
+                    )
+                ]
+            )->then(function (Batch $batch) {
+                // All jobs completed successfully...
+                //=> AZURE SERVICE STOP AND WAIT => auzre service stop and wait
+            })->catch(function (Batch $batch, Throwable $e) {
+                // First batch job failure detected...
+                //ALERTE MAIL + stop azurz
+            })->finally(function (Batch $batch) {
+                //?
+            })->dispatch();
+
+        
     }
 }
