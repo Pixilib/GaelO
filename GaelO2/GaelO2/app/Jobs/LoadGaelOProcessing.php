@@ -10,6 +10,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Support\Facades\Bus;
+use Illuminate\Support\Facades\Log;
 use Throwable;
 
 class LoadGaelOProcessing implements ShouldQueue
@@ -18,7 +19,13 @@ class LoadGaelOProcessing implements ShouldQueue
 
     private array  $orthancSeriesID;
     private string $processingName;
-
+    public $timeout = 1200;
+       /*
+        *fonction qui recupere l'orthancID
+        *fonction qui recupere le processingname 
+        *pour le passé dans les job
+        *ou passé par un service qui s'en charge 
+        **/
     public function __construct(array  $orthancSeriesID, string $processingName)
     {
         $this->orthancSeriesID = $orthancSeriesID;
@@ -36,19 +43,17 @@ class LoadGaelOProcessing implements ShouldQueue
         if( ! $azureService->isRunning()){
             $azureService->startAndWait();
         };
-
-
         //Recuperere l'IP
         $ip = $azureService->getIP();
-
-
-        //
-        /* getorthancID et un getProcessingName*/
-
         /*
-        *Passage des job ici donc on rentré l'ip ici 
-        *set ip 
-        */
+        *fonction qui recupere l'orthancID
+        *fonction qui recupere le processingname 
+        *pour le passé dans les job
+        **/
+        Log::info("je suis l ip");
+        Log::info($ip);
+        $azureService->stopAci();
+/*
         Bus::batch(
                 [
                     new JobGaelOProcessing(
@@ -58,15 +63,24 @@ class LoadGaelOProcessing implements ShouldQueue
                     )
                 ]
             )->then(function (Batch $batch) {
+                Log::info("je suis dans le then");
                 // All jobs completed successfully...
-                //=> AZURE SERVICE STOP AND WAIT => auzre service stop and wait
+              // $azureService->stopAciAndWait();
+               //$azureService->isStopped();
             })->catch(function (Batch $batch, Throwable $e) {
-                // First batch job failure detected...
-                //ALERTE MAIL + stop azurz
+                //ALERTE MAIL admin pk pas avec log 
+                Log::info("je suis dans le catch");
             })->finally(function (Batch $batch) {
-                //?
-            })->dispatch();
-
-        
+                Log::info("je suis dans le finally");
+                $azureService->stopAciAndWait();
+                $azureService->isStopped();
+            })->allowFailures()->dispatch();
+ */    
+    }
+    private function failed(Throwable $exception)
+    {
+        Log::info("je suis dans le failed");
+        //meme fonction sandMail que dans le catch 
+           $azureService->stopAci();
     }
 }

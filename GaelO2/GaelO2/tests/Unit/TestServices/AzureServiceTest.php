@@ -18,12 +18,12 @@ class AzureServiceTest extends TestCase
         $this ->azureService = App::make(AzureService::class);
     }
 
-  /*  public function testGetTokenAzure()
+    public function testGetTokenAzure()
     {
         $res = $this -> azureService -> getTokenAzure();
         Log::info($res);
     } 
-*/
+
      /*  
       public function testSetToken(){
         $res = $this -> azureService -> setToken();

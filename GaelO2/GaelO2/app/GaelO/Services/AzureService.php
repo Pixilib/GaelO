@@ -11,7 +11,6 @@ class AzureService
 
     private HttpClientInterface $httpClientInterface;
     private FrameworkInterface $frameworkInterface;
-    private $tenantID;
     private $resource = "https://management.azure.com/";
 
     const ACI_STATUS_RUNNING = "Running";
@@ -23,28 +22,14 @@ class AzureService
     {
         $this->httpClientInterface = $httpClientInterface;
         $this->frameworkInterface = $frameworkInterface;
-        $this->tenantID = $frameworkInterface::getConfig(SettingsConstants::AZURE_DIRECTORY_ID);
         $this->setServerAddress();
     }
 
-    private function createAccessTokenAzure(): string
-    {
-        $requestUrl = "https://login.microsoftonline.com/" . $this->tenantID . "/oauth2/token";
-        $payload = [
-            "grant_type" => "client_credentials",
-            "client_id" => $this->frameworkInterface::getConfig(SettingsConstants::AZURE_CLIENT_ID),
-            "client_secret" => $this->frameworkInterface::getConfig(SettingsConstants::AZURE_CLIENT_SECRET),
-            "resource" => $this->resource,
-        ];
-        $response = $this->httpClientInterface->requestUrlEncoded($requestUrl, $payload)->getJsonBody();
-        $token = $response["access_token"];
-
-        return $token;
-    }
+  
 
     private function setAccessToken(): void
     {
-        $authorizationToken = $this->createAccessTokenAzure();
+        $authorizationToken = $this->tokenService->getToken();
         $this->httpClientInterface->setAuthorizationToken($authorizationToken);
     }
 
@@ -96,7 +81,7 @@ class AzureService
         return  $attributes;
     }
 
-    //SK : PHP 8.1 vient de faire les Enumeration, ici pour le status ca serait bien de faire une enumeration
+  
     private function waitEndOfPending(): string
     {
         $aciStatus = $this->getStatusAci();

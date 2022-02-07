@@ -25,6 +25,7 @@ class JobGaelOProcessing implements ShouldQueue
     private array $orthancSeriesID;
     private string $processingName;
     private string $url;
+    public $timeout = 600;
     
     /**
      * Create a new job instance.

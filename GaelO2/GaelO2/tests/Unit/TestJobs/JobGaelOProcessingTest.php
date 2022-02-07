@@ -3,19 +3,17 @@
 namespace Tests\Unit\TestJobs;
 
 use App\GaelO\Services\GaelOProcessingService;
-use App\Jobs\LoadGaelOProcessing;
 use App\Jobs\JobGaelOProcessing;
+use App\Jobs\LoadGaelOProcessing;
 use Illuminate\Bus\Batch;
 use Illuminate\Bus\PendingBatch;
-use Illuminate\Support\Facades\Log;
-use Tests\TestCase;
-use Illuminate\Support\Facades\Queue;
-use Illuminate\Support\Facades\Bus;
-use Illuminate\Support\Facades\Event;
-
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Support\Facades\App;
-
+use Illuminate\Support\Facades\Bus;
+use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Queue;
+use Tests\TestCase;
 class JobGaelOProcessingTest extends TestCase
 {
 
@@ -61,7 +59,7 @@ class JobGaelOProcessingTest extends TestCase
         //dd($job2);
         $job2->handle($gaeloProcessing);
         $job1->handle($gaeloProcessing);
-        dd($batch->finished());
+        
         // [...] Run code that dispatches the job
         //JobGaelOProcessing::dispatch( ["3a84b7f7-d0c66087-d70b292e-0c585356-56b6ccb3"],'Nimportequoi','http://gaeloprocessing:8000');
 
