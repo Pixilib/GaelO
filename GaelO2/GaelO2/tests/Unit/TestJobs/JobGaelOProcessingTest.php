@@ -28,6 +28,14 @@ class JobGaelOProcessingTest extends TestCase
         //$new_job = new JobGaelOProcessing(["3a84b7f7-d0c66087-d70b292e-0c585356-56b6ccb3"],'Nimportequoi','http://gaeloprocessing:8000');
        
         //dispatch_sync($new_job);
+        Log::info('je suis le port ');
+        Log::info($port);
+        Log::info('je suis le proto ');
+        Log::info($protocole);
+        Log::info('je suis le host ');
+        log::info($host);
+        Log::info('je suis le url ');
+        Log::info($url);
     }
 
     public function testBatch(){

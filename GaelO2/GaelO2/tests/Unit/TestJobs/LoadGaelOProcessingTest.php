@@ -36,7 +36,7 @@ protected function setUp():void {
 public function  testLoad (){
 
     Log::info("je suis dans le test");
-    $Load =new LoadGaelOProcessing(["3a84b7f7-d0c66087-d70b292e-0c585356-56b6ccb3"],'Nimportequoi');
+    $Load =new LoadGaelOProcessing(["a97f5e66-bbff00d4-1639c63f-a3e1e53a-d4b5e553"],'Nimportequoi');
     $res = $Load -> handle($this->azureService);
     Log::info($res);
     

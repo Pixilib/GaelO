@@ -145,7 +145,7 @@ return [
     'tus_url'=>env('TUS_URL'),
     'gaelo_processing_protocol'=>env('GAELO_PROCESSING_PROTOCOL'),
     'gaelo_processing_host'=>env('GAELO_PROCESSING_HOST'),
-    'gaelo_processing_port'=>env('GAELO_PROCESSING_HOST'),
+    'gaelo_processing_port'=>env('GAELO_PROCESSING_PORT'),
     'azure_directory_id' =>env('AZURE_DIRECTORY_ID'),
     'azure_client_id' =>env('AZURE_CLIENT_ID'),
     'azure_client_secret' =>env('AZURE_CLIENT_SECRET'),

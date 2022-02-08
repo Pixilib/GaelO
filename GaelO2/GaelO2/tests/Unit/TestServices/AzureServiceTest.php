@@ -33,12 +33,12 @@ class AzureServiceTest extends TestCase
         $this->assertEquals(202,$res );
     }
    
- */
+  */
     public function testStopAci(){
         $res = $this -> azureService -> stopAci();
         $this->assertEquals(204 , $res);
     }
- 
+
 
     public function testGetStatusAciState(){
 
