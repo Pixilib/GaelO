@@ -8,7 +8,6 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Pool;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
-use Illuminate\Support\Facades\Log;
 
 class HttpClientAdapter implements HttpClientInterface
 {
