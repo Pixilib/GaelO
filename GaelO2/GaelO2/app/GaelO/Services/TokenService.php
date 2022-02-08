@@ -5,23 +5,29 @@ namespace App\GaelO\Services;
 use App\GaelO\Constants\SettingsConstants;
 use App\GaelO\Interfaces\Adapters\FrameworkInterface;
 use App\GaelO\Interfaces\Adapters\HttpClientInterface;
+use Illuminate\Support\Facades\Log;
 
 
 class TokenService
 {
     private $date;
-    private $expiresOn=0;
+    public $expiresOn=0;
     public $token;
+    private $tenantID;
+    private $resource = "https://management.azure.com/";
 
     public function __construct(HttpClientInterface $httpClientInterface, FrameworkInterface $frameworkInterface)
     {
         $this->httpClientInterface = $httpClientInterface;
         $this->frameworkInterface = $frameworkInterface;
+        $this->tenantID = $frameworkInterface::getConfig(SettingsConstants::AZURE_DIRECTORY_ID);
+        $this->createAccessTokenAzure();
+    
     }
 
-    private function createAccessTokenAzure(): string
+    public function createAccessTokenAzure()
     {
-        $requestUrl = "https://login.microsoftonline.com/" . $this->$frameworkInterface::getConfig(SettingsConstants::AZURE_DIRECTORY_ID). "/oauth2/token";
+        $requestUrl = "https://login.microsoftonline.com/" .$this->tenantID. "/oauth2/token";
         $payload = [
             "grant_type" => "client_credentials",
             "client_id" => $this->frameworkInterface::getConfig(SettingsConstants::AZURE_CLIENT_ID),
@@ -30,23 +36,20 @@ class TokenService
         ];
         $response = $this->httpClientInterface->requestUrlEncoded($requestUrl, $payload)->getJsonBody();
         
-        $token = $response["access_token"];
-        $expiresOn=$response["expires_on"];
-
+        $this->token= $response["access_token"];
+        $this->expiresOn=$response["expires_on"];
+        
     }
-
-    public function getToken():string {
-
+    
+    public function getToken() {
+        
         $date=time();
-        if($expireOn - $date > 0)
-        {
-         createAccessTokenAzure();
+       if($this->expiresOn - $date < 0)
+        {   
+         $this->createAccessTokenAzure();
+         
+         return $this->token;
         }
-        return $token;
+        return $this->token;      
     }
-
-   
-
-
-
 }

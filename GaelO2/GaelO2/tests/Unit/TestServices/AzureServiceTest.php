@@ -18,35 +18,32 @@ class AzureServiceTest extends TestCase
         $this ->azureService = App::make(AzureService::class);
     }
 
-    public function testGetTokenAzure()
-    {
-        $res = $this -> azureService -> getTokenAzure();
-        Log::info($res);
-    } 
+ 
 
      /*  
       public function testSetToken(){
         $res = $this -> azureService -> setToken();
         log::info($res);
     }*/
-   /*
+    /* 
     public function testStartAci(){
         $res = $this -> azureService -> startAci();
         Log::info('j allume azure');
         Log::info($res);
         $this->assertEquals(202,$res );
     }
-   */
-  /*
+   
+ */
     public function testStopAci(){
         $res = $this -> azureService -> stopAci();
         $this->assertEquals(204 , $res);
     }
- */ 
+ 
 
     public function testGetStatusAciState(){
 
     $res = $this -> azureService -> getStatusAci();
+    Log::info($res['state']);
     $state = ["Pending","Running","Stopped"];
     $this->assertContains($res['state'],$state);
     }

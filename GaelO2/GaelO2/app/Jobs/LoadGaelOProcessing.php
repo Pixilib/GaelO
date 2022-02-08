@@ -2,7 +2,7 @@
 
 namespace App\Jobs;
 
-use App\Gaelo\Services\AzureService;
+use App\GaelO\Services\AzureService;
 use App\Jobs\JobGaelOProcessing;
 use Illuminate\Bus\Batch;
 use Illuminate\Bus\Queueable;
@@ -52,8 +52,8 @@ class LoadGaelOProcessing implements ShouldQueue
         **/
         Log::info("je suis l ip");
         Log::info($ip);
-        $azureService->stopAci();
-/*
+       
+
         Bus::batch(
                 [
                     new JobGaelOProcessing(
@@ -70,12 +70,14 @@ class LoadGaelOProcessing implements ShouldQueue
             })->catch(function (Batch $batch, Throwable $e) {
                 //ALERTE MAIL admin pk pas avec log 
                 Log::info("je suis dans le catch");
+                Log::info($e);
             })->finally(function (Batch $batch) {
                 Log::info("je suis dans le finally");
+                App::make(AzureService::class);
                 $azureService->stopAciAndWait();
                 $azureService->isStopped();
             })->allowFailures()->dispatch();
- */    
+  
     }
     private function failed(Throwable $exception)
     {

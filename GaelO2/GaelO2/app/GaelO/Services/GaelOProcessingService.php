@@ -20,7 +20,7 @@ class GaelOProcessingService{
         $this->orthancService=$orthancService;
         $this->frameworkInterface=$frameworkInterface;
         //Set GAELO Processing URL Passed in Env variable (default address)
-        $url = $this->frameworkInterface::getConfig(SettingsConstants::GAELO_PROCESSING_URL);
+        $url = $this->frameworkInterface::getConfig(SettingsConstants::GAELO_PROCESSING_PROTOCOL).$this->frameworkInterface::getConfig(SettingsConstants::GAELO_PROCESSING_HOST).$this->frameworkInterface::getConfig(SettingsConstants::GAELO_PROCESSING_PORT);
         $this->httpClientInterface->setUrl($url);
         //Need to access to Orthanc storage
         $this->orthancService->setOrthancServer(true);

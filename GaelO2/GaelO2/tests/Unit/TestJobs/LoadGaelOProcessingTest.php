@@ -3,9 +3,10 @@
 namespace Tests\Unit\TestJobs;
 
 use App\Jobs\LoadGaelOProcessing;
-use App\Gaelo\Services\AzureService;
+use App\GaelO\Services\AzureService;
 use Illuminate\Bus\Batch;
 use Illuminate\Bus\PendingBatch;
+use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Event;
