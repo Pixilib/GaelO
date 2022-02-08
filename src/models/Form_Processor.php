@@ -160,6 +160,10 @@ abstract class Form_Processor {
 		if ($validate && !$this->local && $this->reviewStatus != Visit::REVIEW_DONE) {
 			$this->setVisitValidation();
 		}
+
+		if ($validate && $this->local) {
+			$this->setLocalVisitValidation();
+		}
 		
 	}
 	
@@ -294,6 +298,13 @@ abstract class Form_Processor {
 	public function isEmpty($value) : bool {
 		if ( $value === "0" || $value === 0 ) return false;
 		return empty($value);
+
+	}
+
+	/**
+	 * Do nothing, only to be override in child class (do not remove !)
+	 */
+	public function setLocalVisitValidation() {
 
 	}
 	
