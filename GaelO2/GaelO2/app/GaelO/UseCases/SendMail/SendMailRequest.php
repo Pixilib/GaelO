@@ -4,7 +4,7 @@ namespace App\GaelO\UseCases\SendMail;
 
 class SendMailRequest{
     public string $currentUserId;
-    public string $study;
+    public ?string $study = null;
     public string $subject;
     public string $content;
     public string $role;

@@ -35,16 +35,17 @@ class TrackerRepositoryTest extends TestCase
         $this->trackerRepository = new TrackerRepository(new Tracker());
     }
 
-    public function testGetTrackerOfRole() {
+    public function testGetTrackerOfRole()
+    {
         Tracker::factory()->role(Constants::ROLE_INVESTIGATOR)->actionType(Constants::TRACKER_UPLOAD_SERIES)->count(3)->create();
         Tracker::factory()->role(Constants::ROLE_SUPERVISOR)->actionType(Constants::TRACKER_DELETE_VISIT)->count(5)->create();
 
         $answer = $this->trackerRepository->getTrackerOfRole(Constants::ROLE_INVESTIGATOR);
         $this->assertEquals(3, sizeof($answer));
-
     }
 
-    public function testGetTrackerOfRoleAndStudy(){
+    public function testGetTrackerOfRoleAndStudy()
+    {
         $study1 = Study::factory()->create();
         $study2 = Study::factory()->create();
 
@@ -56,10 +57,10 @@ class TrackerRepositoryTest extends TestCase
 
         $answer = $this->trackerRepository->getTrackerOfRoleAndStudy($study1->name, Constants::ROLE_INVESTIGATOR, true);
         $this->assertEquals(3, sizeof($answer));
-
     }
 
-    public function testGetTrackerOfStudy(){
+    public function testGetTrackerOfStudy()
+    {
 
         $study1 = Study::factory()->create();
         $study2 = Study::factory()->create();
@@ -74,7 +75,8 @@ class TrackerRepositoryTest extends TestCase
         $this->assertEquals(5, sizeof($answer));
     }
 
-    public function testGetTrackerOfVisit(){
+    public function testGetTrackerOfVisit()
+    {
 
         $visit = Visit::factory()->create();
         $visit2 = Visit::factory()->create();
@@ -88,7 +90,8 @@ class TrackerRepositoryTest extends TestCase
         $this->assertEquals(6, sizeof($answer));
     }
 
-    public function testGetTrackerStudyAction(){
+    public function testGetTrackerStudyAction()
+    {
 
         $visit = Visit::factory()->create();
         $studyName = $visit->patient->study_name;
@@ -97,9 +100,16 @@ class TrackerRepositoryTest extends TestCase
         Tracker::factory()->role(Constants::ROLE_INVESTIGATOR)->visitId($visit->id)->actionType(Constants::TRACKER_SAVE_REVIEWER_FORM)->count(3)->create();
 
 
-        $trackerEntities = $this->trackerRepository->getTrackerOfRoleActionInStudy(Constants::ROLE_INVESTIGATOR, Constants::TRACKER_SAVE_REVIEWER_FORM, $studyName );
+        $trackerEntities = $this->trackerRepository->getTrackerOfRoleActionInStudy(Constants::ROLE_INVESTIGATOR, Constants::TRACKER_SAVE_REVIEWER_FORM, $studyName);
         $this->assertEquals(5, sizeof($trackerEntities));
     }
 
+    public function testGetTrackerOfMessages()
+    {
+        Tracker::factory()->role(Constants::ROLE_INVESTIGATOR)->actionType(Constants::TRACKER_SEND_MESSAGE)->count(3)->create();
+        Tracker::factory()->role(Constants::ROLE_SUPERVISOR)->actionType(Constants::TRACKER_SEND_MESSAGE)->count(5)->create();
 
+        $answer = $this->trackerRepository->getTrackerOfMessages();
+        $this->assertEquals(8, sizeof($answer));
+    }
 }
