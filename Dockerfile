@@ -36,7 +36,7 @@ RUN apt-get update -qy && \
     apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 RUN pecl install redis && pecl install memcached-3.1.5
-RUN docker-php-ext-install gd zip pdo pdo_mysql pdo_pgsql mbstring bcmath ctype fileinfo xml bz2
+RUN docker-php-ext-install gd zip pdo pdo_mysql pdo_pgsql mbstring bcmath ctype fileinfo xml bz2 pcntl
 RUN docker-php-ext-configure opcache --enable-opcache \
     && docker-php-ext-install opcache
 

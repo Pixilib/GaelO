@@ -9,6 +9,8 @@ interface HttpClientInterface
 
     public function setUrl(string $url): void;
 
+    public function setAuthorizationToken(string $authorizationToken): void;
+
     public function setBasicAuthentication(string $login, string $password): void;
 
     public function rowRequest(string $method, string $uri, $body, ?array $headers): Psr7ResponseInterface;
@@ -29,9 +31,14 @@ interface HttpClientInterface
     public function streamResponse(string $method, string $uri, array $body = []): void;
 
     /**
+     * Return Http respond as ressource
+     */
+    public function getResponseAsStream(string $method, string $uri, array $body = []);
+
+    /**
      * Store response in destination file
      */
     public function requestStreamResponseToFile(string $method, string $uri, $ressource, array $headers): Psr7ResponseInterface;
 
-
+    public function requestUrlEncoded(string $uri ,array|string $payload):Psr7ResponseInterface;
 }
