@@ -5,40 +5,49 @@ namespace App\GaelO\Repositories;
 use App\GaelO\Interfaces\Repositories\PatientRepositoryInterface;
 use App\Models\Patient;
 
-class PatientRepository implements PatientRepositoryInterface {
+class PatientRepository implements PatientRepositoryInterface
+{
 
-    public function __construct(Patient $patient){
+    public function __construct(Patient $patient)
+    {
         $this->patient = $patient;
     }
 
-    public function find($id) : array {
+    public function find($id): array
+    {
         return $this->patient->findOrFail($id)->toArray();
     }
 
-    public function getAllPatientsNumberInStudy(string $studyName) : array {
+    public function getAllPatientsNumberInStudy(string $studyName): array
+    {
         return $this->patient->where('study_name', $studyName)->select('code')->get()->pluck('code')->toArray();
     }
 
-    public function getPatientWithCenterDetails(int $code) : array {
+    public function getPatientWithCenterDetails(int $code): array
+    {
         return $this->patient->with('center')->findOrFail($code)->toArray();
     }
 
-    public function getPatientsInStudy(string $studyName) : array {
+    public function getPatientsInStudy(string $studyName): array
+    {
         $patients = $this->patient->where('study_name', $studyName)->get();
         return empty($patients) ? [] : $patients->toArray();
     }
 
-    public function getPatientsInStudyInCenters(string $studyName, array $centerCodes) : array {
+    public function getPatientsInStudyInCenters(string $studyName, array $centerCodes): array
+    {
         $patients = $this->patient->where('study_name', $studyName)->whereIn('center_code', $centerCodes)->get();
         return empty($patients) ? [] : $patients->toArray();
     }
 
-    public function getPatientsFromCodeArray(array $codes) : array {
+    public function getPatientsFromCodeArray(array $codes): array
+    {
         $patients = $this->patient->whereIn('code', $codes)->get();
         return $patients !== null  ? $patients->toArray() : [];
     }
 
-    public function getPatientsFromIdArray(array $ids) : array {
+    public function getPatientsFromIdArray(array $ids): array
+    {
         $patients = $this->patient->whereIn('id', $ids)->get();
         return $patients !== null  ? $patients->toArray() : [];
     }
@@ -46,7 +55,20 @@ class PatientRepository implements PatientRepositoryInterface {
     /**
      * @param $patients expected array of Patient Entity
      */
-    public function addPatientInStudy(string $id, string $code, ?string $lastname, ?string $firstname, ?string $gender, ?int $birthDay, ?int $birthMonth, ?int $birthYear, ?string $registrationDate, ?string $investigatorName, int $centerCode, String $studyName) : void {
+    public function addPatientInStudy(
+        string $id,
+        string $code,
+        ?string $lastname,
+        ?string $firstname,
+        ?string $gender,
+        ?int $birthDay,
+        ?int $birthMonth,
+        ?int $birthYear,
+        ?string $registrationDate,
+        ?string $investigatorName,
+        int $centerCode,
+        String $studyName
+    ): void {
 
         $patient = new Patient();
         $patient->id = $id;
@@ -64,10 +86,22 @@ class PatientRepository implements PatientRepositoryInterface {
         $patient->save();
     }
 
-    public function updatePatient(int $id, ?string $lastname, ?string $firstname,
-        ?string $gender, ?int $birthDay, ?int $birthMonth, ?int $birthYear,
-        string $studyName, ?string $registrationDate, ?string $investigatorName, int $centerCode,
-        string $inclusionStatus, ?string $withdrawReason, ?string $withdrawDate) : void {
+    public function updatePatient(
+        int $id,
+        ?string $lastname,
+        ?string $firstname,
+        ?string $gender,
+        ?int $birthDay,
+        ?int $birthMonth,
+        ?int $birthYear,
+        string $studyName,
+        ?string $registrationDate,
+        ?string $investigatorName,
+        int $centerCode,
+        string $inclusionStatus,
+        ?string $withdrawReason,
+        ?string $withdrawDate
+    ): void {
 
         $patient = $this->patient->findOrFail($id);
 
@@ -87,5 +121,4 @@ class PatientRepository implements PatientRepositoryInterface {
 
         $patient->save();
     }
-
 }

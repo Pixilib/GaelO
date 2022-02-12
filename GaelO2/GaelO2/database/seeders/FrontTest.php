@@ -2,8 +2,6 @@
 
 namespace Database\Seeders;
 
-use App\Models\Center;
-use App\Models\InvestigatorForm;
 use App\Models\DicomStudy;
 use App\Models\DicomSeries;
 use App\Models\Patient;
@@ -16,9 +14,6 @@ use App\Models\VisitType;
 use App\Models\Review;
 use App\Models\Role;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
 use App\GaelO\Constants\Constants;
 
 class FrontTest extends Seeder
@@ -35,10 +30,8 @@ class FrontTest extends Seeder
             CenterSeeder::class
         ]);
 
-        $this->user = User::factory()->administrator()->email('administrator@gaelo.fr')->password('administrator')
-            ->centerCode(0)->create();
-
-        User::factory()->email('test@gaelo.fr')->status('Unconfirmed')->centerCode(0)->create();
+        $this->user = User::factory()->administrator()->email('administrator@gaelo.fr')
+            ->password('administrator')->centerCode(0)->create();
 
         Study::factory()->count(5)->create();
 
@@ -50,20 +43,20 @@ class FrontTest extends Seeder
         Role::factory()->userId($this->user->id)->studyName($this->study->name)->roleName('Reviewer')->create();
         Role::factory()->userId($this->user->id)->studyName($this->study->name)->roleName('Controller')->create();
 
-        Patient::factory()->id(123000 + rand(0,999))->inclusionStatus('Included')->investigatorName('administrator')
-            ->studyName($this->study->name)->centerCode(0)->create();
-        Patient::factory()->id(123000 + rand(0,999))->investigatorName('administrator')
-            ->studyName($this->study->name)->centerCode(0)->create();
-        Patient::factory()->id(123000 + rand(0,999))->investigatorName('administrator')
-            ->studyName($this->study->name)->centerCode(0)->create();
+        Patient::factory()->id(rand(10000, 99999))->inclusionStatus('Included')->investigatorName('administrator')
+            ->studyName($this->study->name)->centerCode(0)->registrationDate(now())->create();
+        Patient::factory()->id(rand(10000, 99999))->investigatorName('administrator')
+            ->studyName($this->study->name)->centerCode(0)->registrationDate(now())->create();
+        Patient::factory()->id(rand(10000, 99999))->investigatorName('administrator')
+            ->studyName($this->study->name)->centerCode(0)->registrationDate(now())->create();
 
         $this->visitGroup = VisitGroup::factory()->studyName($this->study->name)->create();
-        VisitType::factory()->count(6)->visitGroupId($this->visitGroup['id'])->create();
+        VisitType::factory()->count(6)->visitGroupId($this->visitGroup['id'])->limitLowDays(0)->limitUpDays(5)->create();
 
         $this->visitGroup = VisitGroup::factory()->studyName($this->study->name)->modality('PT')->create();
 
         $this->visitType = VisitType::factory()->name('PET0')->visitGroupId($this->visitGroup['id'])
-            ->localFormNeeded()->qcNeeded()->reviewNeeded()->create();
+            ->localFormNeeded()->qcNeeded()->reviewNeeded()->limitLowDays(1)->limitUpDays(2)->create();
 
         $this->visit = Visit::factory()->creatorUserId(1)->patientId(Patient::first()['id'])
             ->uploadDone()->stateQualityControl(Constants::QUALITY_CONTROL_NOT_NEEDED)
@@ -79,6 +72,6 @@ class FrontTest extends Seeder
             ->reviewAvailable()->reviewStatus('Done')->create();
         Review::factory()->studyName($this->study->name)->visitId($this->visit->id)->reviewForm()->create();
 
-        User::factory()->count(20)->create();
+        User::factory()->count(10)->create();
     }
 }

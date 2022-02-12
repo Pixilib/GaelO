@@ -6,6 +6,7 @@ use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOBadRequestException;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
+use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
 use App\GaelO\Services\AuthorizationService\AuthorizationStudyService;
 use App\GaelO\Services\MailServices;
 
@@ -15,10 +16,14 @@ class SendMail
     private MailServices $mailService;
     private AuthorizationStudyService $authorizationStudyService;
 
-    public function __construct(MailServices $mailService, AuthorizationStudyService $authorizationStudyService)
-    {
+    public function __construct(
+        MailServices $mailService,
+        AuthorizationStudyService $authorizationStudyService,
+        TrackerRepositoryInterface $trackerRepositoryInterface
+    ) {
         $this->mailService = $mailService;
         $this->authorizationStudyService = $authorizationStudyService;
+        $this->trackerRepositoryInterface = $trackerRepositoryInterface;
     }
 
     public function execute(SendMailRequest $sendMailRequest, SendMailResponse $sendMailResponse)
@@ -74,6 +79,15 @@ class SendMail
                         $sendMailRequest->patients,
                     );
             }
+
+            $this->trackerRepositoryInterface->writeAction(
+                $sendMailRequest->currentUserId,
+                $sendMailRequest->role,
+                $sendMailRequest->study,
+                $sendMailRequest->visitId,
+                Constants::TRACKER_SEND_MESSAGE,
+                (array) $sendMailRequest
+            );
 
             $sendMailResponse->status = 200;
             $sendMailResponse->statusText = 'OK';

@@ -79,4 +79,21 @@ class VisitTypeFactory extends Factory
         });
     }
 
+    public function limitLowDays(int $limitLowDays){
+
+        return $this->state(function (array $attributes) use ($limitLowDays) {
+            return [
+                'limit_low_days' => $limitLowDays
+            ];
+        });
+    }
+
+    public function limitUpDays(int $limitUpDays){
+
+        return $this->state(function (array $attributes) use ($limitUpDays) {
+            return [
+                'limit_up_days' => $limitUpDays
+            ];
+        });
+    }
 }

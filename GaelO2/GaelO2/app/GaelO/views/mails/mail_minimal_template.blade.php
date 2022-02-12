@@ -49,12 +49,28 @@
             text-align: left;
             margin: 5% 0;
         }
+
+        table,
+        th,
+        td {
+            border: 1px solid black;
+        }
+
+        th {
+            font-weight: bold;
+            text-align: center;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 80%;
+        }
     </style>
 </head>
 
 <body>
     <header class="main-header" id="header">
-        <img id="logo-gaelo" src="<?= $message->embed(public_path('static/media/gaelo-logo.png')); ?>" alt="Banner Image" >
+        <img id="logo-gaelo" src="<?= $message->embed(public_path('static/media/gaelo-logo.png')); ?>" alt="Banner Image">
     </header>
     <div id="message">
         @yield('content')
