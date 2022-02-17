@@ -160,7 +160,7 @@ class ReviewRepositoryTest extends TestCase
 
     }
 
-    public function testGetValidatedReviewsForStudyVisitType(){
+    public function testGetValidatedReviewsForStudy(){
         $studies = Study::factory()->count(2)->create();
         //Add review to a study that should not be selected
         Review::factory()->studyName($studies->first()->name)->count(10)->create();
@@ -174,7 +174,7 @@ class ReviewRepositoryTest extends TestCase
         //create Targeted review, non local and validated
         Review::factory()->studyName($studies->last()->name)->visitId($visit->first()->id)->reviewForm()->validated()->count(10)->create();
 
-        $results = $this->reviewRepository->getUsersHavingReviewedForStudyVisitType($studies->last()->name, $visit->first()->visitType->id);
+        $results = $this->reviewRepository->getStudyReviewsGroupedByUserIds($studies->last()->name);
         $this->assertArrayHasKey($visit->first()->visitType->id, $results);
         $this->assertEquals(10, sizeof($results[$visit->first()->visitType->id]) );
 

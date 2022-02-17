@@ -1,11 +1,12 @@
 <?php
 
-namespace App\GaelO\UseCases\GetReviewProgression;
+namespace App\GaelO\UseCases\GetStudyReviewProgression;
 
 use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\ReviewRepositoryInterface;
+use App\GaelO\Interfaces\Repositories\StudyRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\UserRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
 use App\GaelO\Services\AuthorizationService\AuthorizationStudyService;
@@ -14,7 +15,7 @@ use Exception;
 /**
  * Return array of Reviewer with validated review and Reviewer with no validated review for all Visits of this visitType
  */
-class GetReviewProgression {
+class GetStudyReviewProgression {
 
     private AuthorizationStudyService $authorizationStudyService;
     private VisitRepositoryInterface $visitRepositoryInterface;
@@ -24,8 +25,9 @@ class GetReviewProgression {
     public function __construct(AuthorizationStudyService $authorizationStudyService,
                                 VisitRepositoryInterface $visitRepositoryInterface,
                                 UserRepositoryInterface $userRepositoryInterface,
-                                ReviewRepositoryInterface $reviewRepositoryInterface){
-
+                                ReviewRepositoryInterface $reviewRepositoryInterface,
+                                StudyRepositoryInterface $studyRepositoryInterface){
+        $this->studyRepositoryInterface = $studyRepositoryInterface;
         $this->authorizationStudyService = $authorizationStudyService;
         $this->visitRepositoryInterface = $visitRepositoryInterface;
         $this->userRepositoryInterface = $userRepositoryInterface;
@@ -33,13 +35,12 @@ class GetReviewProgression {
 
     }
 
-    public function execute(GetReviewProgressionRequest $getReviewProgressionRequest, GetReviewProgressionResponse $getReviewProgressionResponse){
+    public function execute(GetStudyReviewProgressionRequest $getStudyReviewProgressionRequest, GetStudyReviewProgressionResponse $getStudyReviewProgressionResponse){
         try{
 
-            $this->checkAuthorization($getReviewProgressionRequest->currentUserId, $getReviewProgressionRequest->studyName);
-
+            $this->checkAuthorization($getStudyReviewProgressionRequest->currentUserId, $getStudyReviewProgressionRequest->studyName);
             //Get Reviewers in the asked study
-            $reviewers = $this->userRepositoryInterface->getUsersByRolesInStudy($getReviewProgressionRequest->studyName, Constants::ROLE_REVIEWER);
+            $reviewers = $this->userRepositoryInterface->getUsersByRolesInStudy($getStudyReviewProgressionRequest->studyName, Constants::ROLE_REVIEWER);
 
             $reviewersById = [];
             foreach ( $reviewers as $reviewer ) {
@@ -49,11 +50,13 @@ class GetReviewProgression {
                 ];
             }
 
-            //Get Visits in the asked visitTypeId and Study (with review status)
-            $visits = $this->visitRepositoryInterface->getVisitsInVisitType($getReviewProgressionRequest->visitTypeId, true, $getReviewProgressionRequest->studyName);
+            $studyName = $this->getOriginalStudyName($getStudyReviewProgressionRequest->studyName);
 
-            //Get Validated review for VisitType and Study
-            $validatedReview = $this->reviewRepositoryInterface->getUsersHavingReviewedForStudyVisitType($getReviewProgressionRequest->studyName, $getReviewProgressionRequest->visitTypeId);
+            //Get visits in the asked study (with review status)
+            $visits = $this->visitRepositoryInterface->getVisitsInStudy($studyName, true, false);
+
+            //Get validated review for study
+            $validatedReview = $this->reviewRepositoryInterface->getStudyReviewsGroupedByUserIds($getStudyReviewProgressionRequest->studyName);
 
             $answer = [];
 
@@ -77,15 +80,15 @@ class GetReviewProgression {
                 ];
             }
 
-            $getReviewProgressionResponse->body = $answer;
-            $getReviewProgressionResponse->status = 200;
-            $getReviewProgressionResponse->statusText = 'OK';
+            $getStudyReviewProgressionResponse->body = $answer;
+            $getStudyReviewProgressionResponse->status = 200;
+            $getStudyReviewProgressionResponse->statusText = 'OK';
 
         } catch (GaelOException $e) {
 
-            $getReviewProgressionResponse->body = $e->getErrorBody();
-            $getReviewProgressionResponse->status = $e->statusCode;
-            $getReviewProgressionResponse->statusText = $e->statusText;
+            $getStudyReviewProgressionResponse->body = $e->getErrorBody();
+            $getStudyReviewProgressionResponse->status = $e->statusCode;
+            $getStudyReviewProgressionResponse->statusText = $e->statusText;
 
         } catch (Exception $e) {
             throw $e;
@@ -110,6 +113,17 @@ class GetReviewProgression {
         }
 
         return $answer;
+    }
+
+
+    /**
+     * Check if study is ancillary
+     * If so, return name of original study
+     */
+    private function getOriginalStudyName($studyName) {
+        $study = $this->studyRepositoryInterface->find($studyName);
+        if ($study['ancillary_of']) return $study['ancillary_of'];
+        else return $studyName;
     }
 
 }
