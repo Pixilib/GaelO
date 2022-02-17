@@ -13,6 +13,7 @@ abstract class AbstractVisitRules
     const RULE_INT = "int";
     const RULE_SET = "set";
     const RULE_FLOAT = "float";
+    const RULE_BOOLEAN = "boolean";
 
     public array $data;
 
@@ -57,6 +58,9 @@ abstract class AbstractVisitRules
                     break;
                 case self::RULE_SET:
                     $validatorAdapter->addSetValidator($name, $details['values'], $details['optional']);
+                    break;
+                case self::RULE_BOOLEAN:
+                    $validatorAdapter->addBooleanValidator($name, $details['optional']);
                     break;
                 default:
                     throw new Exception('Unknown Rule');
