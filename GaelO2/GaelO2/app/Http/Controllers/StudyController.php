@@ -29,9 +29,9 @@ use App\GaelO\UseCases\GetPatientFromStudy\GetPatientFromStudyResponse;
 use App\GaelO\UseCases\GetPossibleUpload\GetPossibleUpload;
 use App\GaelO\UseCases\GetPossibleUpload\GetPossibleUploadRequest;
 use App\GaelO\UseCases\GetPossibleUpload\GetPossibleUploadResponse;
-use App\GaelO\UseCases\GetReviewProgression\GetReviewProgression;
-use App\GaelO\UseCases\GetReviewProgression\GetReviewProgressionRequest;
-use App\GaelO\UseCases\GetReviewProgression\GetReviewProgressionResponse;
+use App\GaelO\UseCases\GetStudyReviewProgression\GetStudyReviewProgression;
+use App\GaelO\UseCases\GetStudyReviewProgression\GetStudyReviewProgressionRequest;
+use App\GaelO\UseCases\GetStudyReviewProgression\GetStudyReviewProgressionResponse;
 use App\GaelO\UseCases\GetReviewsFromVisitType\GetReviewsFromVisitType;
 use App\GaelO\UseCases\GetReviewsFromVisitType\GetReviewsFromVisitTypeRequest;
 use App\GaelO\UseCases\GetReviewsFromVisitType\GetReviewsFromVisitTypeResponse;
@@ -197,18 +197,16 @@ class StudyController extends Controller
         return $this->getJsonResponse($getPatientResponse->body, $getPatientResponse->status, $getPatientResponse->statusText);
     }
 
-    public function getReviewProgression(Request $request, GetReviewProgression $getReviewProgression, GetReviewProgressionRequest $getReviewProgressionRequest, GetReviewProgressionResponse $getReviewProgressionResponse, int $visitTypeId)
+    public function getStudyReviewProgression(string $studyName, GetStudyReviewProgression $getStudyReviewProgression, GetStudyReviewProgressionRequest $getStudyReviewProgressionRequest, GetStudyReviewProgressionResponse $getStudyReviewProgressionResponse)
     {
         $currentUser = Auth::user();
 
-        $queryParam = $request->query();
-        $getReviewProgressionRequest->studyName = $queryParam['studyName'];
-        $getReviewProgressionRequest->visitTypeId = $visitTypeId;
-        $getReviewProgressionRequest->currentUserId = $currentUser['id'];
+        $getStudyReviewProgressionRequest->studyName = $studyName;
+        $getStudyReviewProgressionRequest->currentUserId = $currentUser['id'];
 
-        $getReviewProgression->execute($getReviewProgressionRequest, $getReviewProgressionResponse);
+        $getStudyReviewProgression->execute($getStudyReviewProgressionRequest, $getStudyReviewProgressionResponse);
 
-        return $this->getJsonResponse($getReviewProgressionResponse->body, $getReviewProgressionResponse->status, $getReviewProgressionResponse->statusText);
+        return $this->getJsonResponse($getStudyReviewProgressionResponse->body, $getStudyReviewProgressionResponse->status, $getStudyReviewProgressionResponse->statusText);
     }
 
     public function exportStudyData(ExportStudyData $exportStudyData, ExportStudyDataRequest $exportStudyDataRequest, ExportStudyDataResponse $exportStudyDataResponse, string $studyName)
@@ -258,7 +256,8 @@ class StudyController extends Controller
         return $this->getJsonResponse($getReviewsFromVisitTypeResponse->body, $getReviewsFromVisitTypeResponse->status, $getReviewsFromVisitTypeResponse->statusText);
     }
 
-    public function getReviewsMetadataFromVisitType(Request $request, GetReviewsMetadataFromVisitType $getReviewsMetadataFromVisitType, GetReviewsMetadataFromVisitTypeRequest $getReviewsMetadataFromVisitTypeRequest, GetReviewsMetadataFromVisitTypeResponse $getReviewsMetadataFromVisitTypeResponse, int $visitTypeId){
+    public function getReviewsMetadataFromVisitType(Request $request, GetReviewsMetadataFromVisitType $getReviewsMetadataFromVisitType, GetReviewsMetadataFromVisitTypeRequest $getReviewsMetadataFromVisitTypeRequest, GetReviewsMetadataFromVisitTypeResponse $getReviewsMetadataFromVisitTypeResponse, int $visitTypeId)
+    {
 
         $currentUser = Auth::user();
         $queryParam = $request->query();
@@ -269,7 +268,6 @@ class StudyController extends Controller
         $getReviewsMetadataFromVisitType->execute($getReviewsMetadataFromVisitTypeRequest, $getReviewsMetadataFromVisitTypeResponse);
 
         return $this->getJsonResponse($getReviewsMetadataFromVisitTypeResponse->body, $getReviewsMetadataFromVisitTypeResponse->status, $getReviewsMetadataFromVisitTypeResponse->statusText);
-
     }
 
     public function getInvestigatorFormsFromVisitType(Request $request, GetInvestigatorFormsFromVisitType $getInvestigatorFormsFromVisitType, GetInvestigatorFormsFromVisitTypeRequest $getInvestigatorFormsFromVisitTypeRequest, GetInvestigatorFormsFromVisitTypeResponse $getInvestigatorFormsFromVisitTypeResponse, int $visitTypeId)
@@ -285,7 +283,8 @@ class StudyController extends Controller
         return $this->getJsonResponse($getInvestigatorFormsFromVisitTypeResponse->body, $getInvestigatorFormsFromVisitTypeResponse->status, $getInvestigatorFormsFromVisitTypeResponse->statusText);
     }
 
-    public function getInvestigatorFormsMetadataFromVisitType(Request $request, GetInvestigatorFormsMetadataFromVisitType $getInvestigatorFormsMetadataFromVisitType, GetInvestigatorFormsMetadataFromVisitTypeRequest $getInvestigatorFormsMetadataFromVisitTypeRequest, GetInvestigatorFormsMetadataFromVisitTypeResponse $getInvestigatorFormsMetadataFromVisitTypeResponse, int $visitTypeId){
+    public function getInvestigatorFormsMetadataFromVisitType(Request $request, GetInvestigatorFormsMetadataFromVisitType $getInvestigatorFormsMetadataFromVisitType, GetInvestigatorFormsMetadataFromVisitTypeRequest $getInvestigatorFormsMetadataFromVisitTypeRequest, GetInvestigatorFormsMetadataFromVisitTypeResponse $getInvestigatorFormsMetadataFromVisitTypeResponse, int $visitTypeId)
+    {
         $currentUser = Auth::user();
         $queryParam = $request->query();
         $getInvestigatorFormsMetadataFromVisitTypeRequest->studyName = $queryParam['studyName'];
@@ -312,7 +311,8 @@ class StudyController extends Controller
         return $this->getJsonResponse($getDicomsStudiesFromVisitTypeResponse->body, $getDicomsStudiesFromVisitTypeResponse->status, $getDicomsStudiesFromVisitTypeResponse->statusText);
     }
 
-    public function sendReminder(Request $request, SendReminder $sendReminder, ReminderRequest $reminderRequest, ReminderResponse $reminderResponse, string $studyName) {
+    public function sendReminder(Request $request, SendReminder $sendReminder, ReminderRequest $reminderRequest, ReminderResponse $reminderResponse, string $studyName)
+    {
         $currentUser = Auth::user();
         $requestData = $request->all();
         $reminderRequest->currentUserId = $currentUser['id'];
@@ -322,7 +322,8 @@ class StudyController extends Controller
         return $this->getJsonResponse($reminderResponse->body, $reminderResponse->status, $reminderResponse->statusText);
     }
 
-    public function sendMail(Request $request, SendMail $sendMail, SendMailRequest $sendMailRequest, SendMailResponse $sendMailResponse) {
+    public function sendMail(Request $request, SendMail $sendMail, SendMailRequest $sendMailRequest, SendMailResponse $sendMailResponse)
+    {
         $currentUser = Auth::user();
         $requestData = $request->all();
         $sendMailRequest->currentUserId = $currentUser['id'];
@@ -331,7 +332,8 @@ class StudyController extends Controller
         return $this->getJsonResponse($sendMailResponse->body, $sendMailResponse->status, $sendMailResponse->statusText);
     }
 
-    public function getStudyStatistics(GetStudyStatistics $getStudyStatistics, GetStudyStatisticsRequest $getStudyStatisticsRequest, GetStudyStatisticsResponse $getStudyStatisticsResponse, string $studyName){
+    public function getStudyStatistics(GetStudyStatistics $getStudyStatistics, GetStudyStatisticsRequest $getStudyStatisticsRequest, GetStudyStatisticsResponse $getStudyStatisticsResponse, string $studyName)
+    {
 
         $currentUser = Auth::user();
 
@@ -339,6 +341,5 @@ class StudyController extends Controller
         $getStudyStatisticsRequest->studyName = $studyName;
         $getStudyStatistics->execute($getStudyStatisticsRequest, $getStudyStatisticsResponse);
         return $this->getJsonResponse($getStudyStatisticsResponse->body, $getStudyStatisticsResponse->status, $getStudyStatisticsResponse->statusText);
-
     }
 }
