@@ -25,6 +25,7 @@ class ReviewFormService extends FormService
     ) {
         parent::__construct($reviewRepositoryInterface, $visitService, $mailServices, $frameworkInterface);
         $this->reviewStatusRepositoryInterface = $reviewStatusRepositoryInterface;
+        $this->local = false;
     }
 
     public function setReviewStatus(array $reviewStatusEntity)

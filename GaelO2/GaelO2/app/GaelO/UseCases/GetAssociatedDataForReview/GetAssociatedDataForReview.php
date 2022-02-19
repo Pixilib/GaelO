@@ -34,8 +34,6 @@ class GetAssociatedDataForReview
 
             $this->reviewFormService->setCurrentUserId($getAssociatedDataForReviewRequest->currentUserId);
             $this->reviewFormService->setVisitContextAndStudy($visitContext, $getAssociatedDataForReviewRequest->studyName);
-            //SK TODO A gerer ici le statut de investigator ou reviewer dans le form service
-            // SK TODO EXPOSER LA ROUTE ET FAIRE LE TEST
             $associatedData = $this->reviewFormService->getAssociatedDataForForm();
 
             $getAssociatedDataForReviewResponse->body =  $associatedData;

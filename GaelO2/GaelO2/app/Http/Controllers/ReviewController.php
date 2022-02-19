@@ -20,6 +20,9 @@ use App\GaelO\UseCases\DeleteInvestigatorForm\DeleteInvestigatorFormResponse;
 use App\GaelO\UseCases\DeleteReviewForm\DeleteReviewForm;
 use App\GaelO\UseCases\DeleteReviewForm\DeleteReviewFormRequest;
 use App\GaelO\UseCases\DeleteReviewForm\DeleteReviewFormResponse;
+use App\GaelO\UseCases\GetAssociatedDataForReview\GetAssociatedDataForReview;
+use App\GaelO\UseCases\GetAssociatedDataForReview\GetAssociatedDataForReviewRequest;
+use App\GaelO\UseCases\GetAssociatedDataForReview\GetAssociatedDataForReviewResponse;
 use App\GaelO\UseCases\GetFileOfForm\GetFileOfForm;
 use App\GaelO\UseCases\GetFileOfForm\GetFileOfFormRequest;
 use App\GaelO\UseCases\GetFileOfForm\GetFileOfFormResponse;
@@ -260,5 +263,17 @@ class ReviewController extends Controller
         $getFileOfForm->execute($getFileOfFormRequest, $getFileOfFormResponse);
 
         return $this->getJsonResponse($getFileOfFormResponse->body, $getFileOfFormResponse->status, $getFileOfFormResponse->statusText);
+    }
+
+    public function getAssociatedDataOfVisitForReviewer(GetAssociatedDataForReview $getAssociatedDataForReview, GetAssociatedDataForReviewRequest $getAssociatedDataForReviewRequest, GetAssociatedDataForReviewResponse $getAssociatedDataForReviewResponse, string $studyName, int $visitId)
+    {
+        $currentUser = Auth::user();
+        $getAssociatedDataForReviewRequest->currentUserId = $currentUser['id'];
+        $getAssociatedDataForReviewRequest->studyName = $studyName;
+        $getAssociatedDataForReviewRequest->visitId = $visitId;
+
+        $getAssociatedDataForReview->execute($getAssociatedDataForReviewRequest, $getAssociatedDataForReviewResponse);
+
+        return $this->getJsonResponse($getAssociatedDataForReviewResponse->body, $getAssociatedDataForReviewResponse->status, $getAssociatedDataForReviewResponse->statusText);
     }
 }

@@ -137,6 +137,7 @@ Route::middleware(['auth:sanctum', 'verified', 'activated'])->group(function () 
     Route::post('reviews/{id}/file/{key}', [ReviewController::class, 'createReviewFile']);
     Route::delete('reviews/{id}/file/{key}', [ReviewController::class, 'deleteReviewFile']);
     Route::get('visits/{visitId}/reviews', [ReviewController::class, 'getReviewsFromVisit']);
+    Route::get('studies/{studyName}/visits/{visitId}/reviewer-associated-data', [ReviewController::class, 'getAssociatedDataOfVisitForReviewer']);
 
     //Dicom Routes
     Route::delete('dicom-series/{seriesInstanceUID}', [DicomController::class, 'deleteSeries']);

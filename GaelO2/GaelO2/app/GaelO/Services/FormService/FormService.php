@@ -26,6 +26,7 @@ class FormService
     protected string $visitType;
     protected string $patientId;
     protected int $uploaderId;
+    protected string $local;
 
     public function __construct(
         ReviewRepositoryInterface $reviewRepositoryInterface,
@@ -113,7 +114,7 @@ class FormService
 
 
     public function getAssociatedDataForForm() : array {
-
-        return $this->abstractVisitRules->getAssociatedDataForReviewForm();
+        if($this->local) return $this->abstractVisitRules->getAssociatedDataForInvestigatorForm();
+        else return $this->abstractVisitRules->getAssociatedDataForReviewForm();
     }
 }
