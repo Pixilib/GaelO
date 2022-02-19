@@ -11,7 +11,7 @@
         "php": "^8.0.2",
         "fruitcake/laravel-cors": "^2.0",
         "giggsey/libphonenumber-for-php": "^8.12",
-        "guzzlehttp/guzzle": "^7.0.1",
+        "guzzlehttp/guzzle": "^7.4",
         "laravel/framework": "^9.0",
         "laravel/sanctum": "^2.14",
         "laravel/tinker": "^2.7",
@@ -20,7 +20,7 @@
         "ralouphie/mimey": "^1.0",
         "respect/validation": "^2.2",
         "spatie/db-dumper": "^3.1",
-        "staudenmeir/eloquent-has-many-deep": "^1.14"
+        "staudenmeir/eloquent-has-many-deep": "^1.15"
     },
     "require-dev": {
         "darkaonline/l5-swagger": "^8.0.4",
