@@ -45,4 +45,18 @@ class TEST_PT_PET0 extends AbstractVisitRules {
         return null;
     }
 
+    public function getAssociatedDataForInvestigatorForm(): array
+    {
+        return [
+            'LastChemo' => '01/01/2021'
+        ];
+    }
+
+    public function getAssociatedDataForReviewForm(): array
+    {
+        return [
+            'Radiotherapy' => false
+        ];
+    }
+
 }

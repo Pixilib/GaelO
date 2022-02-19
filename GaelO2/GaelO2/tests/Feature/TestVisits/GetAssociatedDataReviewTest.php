@@ -13,7 +13,7 @@ use App\Models\VisitGroup;
 use App\Models\VisitType;
 use Tests\AuthorizationTools;
 
-class GetAssociatedDataTest extends TestCase
+class GetAssociatedDataReviewTest extends TestCase
 {
 
     use DatabaseMigrations {
@@ -49,6 +49,8 @@ class GetAssociatedDataTest extends TestCase
         $currentUserId = AuthorizationTools::actAsAdmin(false);
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_REVIEWER, $this->studyName );
         $resp = $this->json('GET', '/api/studies/'.$this->studyName.'/visits/'.$this->visit->id.'/reviewer-associated-data');
+        $answer = json_decode($resp->content(), true);
+        $this->assertArrayHasKey('Radiotherapy', $answer);
         $resp->assertStatus(200);
     }
 

@@ -355,9 +355,10 @@ class InvestigatorFormTest extends TestCase
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_INVESTIGATOR, $study->name);
         AuthorizationTools::addAffiliatedCenter($currentUserId, $patient->center_code);
 
-        $this->get('api/visits/'.$visit->id.'/investigator-associated-data?role=Investigator')->assertStatus(200);
-
-
+        $answer = $this->get('api/visits/'.$visit->id.'/investigator-associated-data?role=Investigator');
+        $content= json_decode($answer->content(), true);
+        $this->assertArrayHasKey('LastChemo', $content);
+        $answer->assertStatus(200);
     }
 
 
