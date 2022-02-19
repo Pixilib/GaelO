@@ -20,6 +20,9 @@ use App\GaelO\UseCases\DeleteInvestigatorForm\DeleteInvestigatorFormResponse;
 use App\GaelO\UseCases\DeleteReviewForm\DeleteReviewForm;
 use App\GaelO\UseCases\DeleteReviewForm\DeleteReviewFormRequest;
 use App\GaelO\UseCases\DeleteReviewForm\DeleteReviewFormResponse;
+use App\GaelO\UseCases\GetAssociatedDataForInvestigator\GetAssociatedDataForInvestigator;
+use App\GaelO\UseCases\GetAssociatedDataForInvestigator\GetAssociatedDataForInvestigatorRequest;
+use App\GaelO\UseCases\GetAssociatedDataForInvestigator\GetAssociatedDataForInvestigatorResponse;
 use App\GaelO\UseCases\GetAssociatedDataForReview\GetAssociatedDataForReview;
 use App\GaelO\UseCases\GetAssociatedDataForReview\GetAssociatedDataForReviewRequest;
 use App\GaelO\UseCases\GetAssociatedDataForReview\GetAssociatedDataForReviewResponse;
@@ -275,5 +278,19 @@ class ReviewController extends Controller
         $getAssociatedDataForReview->execute($getAssociatedDataForReviewRequest, $getAssociatedDataForReviewResponse);
 
         return $this->getJsonResponse($getAssociatedDataForReviewResponse->body, $getAssociatedDataForReviewResponse->status, $getAssociatedDataForReviewResponse->statusText);
+    }
+
+    public function getAssociatedDataOfVisitForInvestigator(Request $request, GetAssociatedDataForInvestigator $getAssociatedDataForInvestigator, GetAssociatedDataForInvestigatorRequest $getAssociatedDataForInvestigatorRequest, GetAssociatedDataForInvestigatorResponse $getAssociatedDataForInvestigatorResponse, int $visitId)
+    {
+        $currentUser = Auth::user();
+        $queryParam = $request->query();
+
+        $getAssociatedDataForInvestigatorRequest->currentUserId = $currentUser['id'];
+        $getAssociatedDataForInvestigatorRequest->visitId = $visitId;
+        $getAssociatedDataForInvestigatorRequest->role = $queryParam['role'];
+
+        $getAssociatedDataForInvestigator->execute($getAssociatedDataForInvestigatorRequest, $getAssociatedDataForInvestigatorResponse);
+
+        return $this->getJsonResponse($getAssociatedDataForInvestigatorResponse->body, $getAssociatedDataForInvestigatorResponse->status, $getAssociatedDataForInvestigatorResponse->statusText);
     }
 }

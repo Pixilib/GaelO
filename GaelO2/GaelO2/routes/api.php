@@ -127,6 +127,7 @@ Route::middleware(['auth:sanctum', 'verified', 'activated'])->group(function () 
     Route::post('visits/{id}/investigator-form', [ReviewController::class, 'createInvestigatorForm']);
     Route::put('visits/{id}/investigator-form', [ReviewController::class, 'modifyInvestigatorForm']);
     Route::patch('visits/{id}/investigator-form/unlock', [ReviewController::class, 'unlockInvestigatorForm']);
+    Route::get('visits/{id}/investigator-associated-data', [ReviewController::class, 'getAssociatedDataOfVisitForInvestigator']);
 
     //Review routes
     Route::post('visits/{visitId}/reviews', [ReviewController::class, 'createReviewForm']);

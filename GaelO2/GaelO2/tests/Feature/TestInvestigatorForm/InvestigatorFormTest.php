@@ -343,5 +343,23 @@ class InvestigatorFormTest extends TestCase
     }
 
 
+    public function testGetAssociatedDataForInvestigator(){
+
+        $study = Study::factory()->name('TEST')->create();
+        $patient = Patient::factory()->studyName($study->name)->create();
+        $visitGroup = VisitGroup::factory()->studyName($study->name)->modality('PT')->create();
+        $visitType  = VisitType::factory()->visitGroupId($visitGroup->id)->name('PET0')->localFormNeeded()->create();
+        $visit = Visit::Factory()->patientId($patient->id)->visitTypeId($visitType->id)->create();
+
+        $currentUserId = AuthorizationTools::actAsAdmin(false);
+        AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_INVESTIGATOR, $study->name);
+        AuthorizationTools::addAffiliatedCenter($currentUserId, $patient->center_code);
+
+        $this->get('api/visits/'.$visit->id.'/investigator-associated-data?role=Investigator')->assertStatus(200);
+
+
+    }
+
+
 
 }
