@@ -110,4 +110,10 @@ class FormService
         unset($reviewEntity['sent_files'][$key]);
         $this->reviewRepositoryInterface->updateReviewFile($reviewEntity['id'], $reviewEntity);
     }
+
+
+    public function getAssociatedDataForForm() : array {
+
+        return $this->abstractVisitRules->getAssociatedDataForReviewForm();
+    }
 }
