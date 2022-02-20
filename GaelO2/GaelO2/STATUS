@@ -25,14 +25,19 @@ Entity :
 ---- /Refactoring Backend ------
 
 --- Etudes ancillaires ---
+
+--Done --
+GetDicomStudiesFromVisitType => doit prendre patient dans etude princeps
+
+--Todo --
+GetDicomFileSupervisor => Passe par les seriesUID mais le RBAC doit autoriser les etude ancillaire
+
 Ne doit pas pouvoir faire les relance d'upload => Voir avec Emilie
 Adapter les points de lecture
-getCentersFromStudy => Doit prendre centres des patient de l'étude princeps si ancillaire
-GetDicomFileSupervisor => Doit prendre patient de l'etude princeps
-GetDicomStudiesFromVisitType => doit prendre patient dans etude princeps
+GetCentersFromStudy => Doit prendre centres des patient de l'étude princeps si ancillaire
 GetPatientFromStudy
 GetPatientInStudyFromCenters
-GetPatientVisitsInStudyg
+GetPatientVisitsInStudy
 GetVisitsFromStudy
 GetVisitsFromVisitType
 GetVisitTree

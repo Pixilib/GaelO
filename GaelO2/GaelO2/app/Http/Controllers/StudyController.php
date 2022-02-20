@@ -11,9 +11,9 @@ use App\GaelO\UseCases\DeleteStudy\DeleteStudyResponse;
 use App\GaelO\UseCases\ExportStudyData\ExportStudyData;
 use App\GaelO\UseCases\ExportStudyData\ExportStudyDataRequest;
 use App\GaelO\UseCases\ExportStudyData\ExportStudyDataResponse;
-use App\GaelO\UseCases\GetDicomsStudiesFromVisitType\GetDicomsStudiesFromVisitType;
-use App\GaelO\UseCases\GetDicomsStudiesFromVisitType\GetDicomsStudiesFromVisitTypeRequest;
-use App\GaelO\UseCases\GetDicomsStudiesFromVisitType\GetDicomsStudiesFromVisitTypeResponse;
+use App\GaelO\UseCases\GetDicomsStudiesFromStudy\GetDicomsStudiesFromStudy;
+use App\GaelO\UseCases\GetDicomsStudiesFromStudy\GetDicomsStudiesFromStudyRequest;
+use App\GaelO\UseCases\GetDicomsStudiesFromStudy\GetDicomsStudiesFromStudyResponse;
 use App\GaelO\UseCases\GetInvestigatorFormsFromVisitType\GetInvestigatorFormsFromVisitType;
 use App\GaelO\UseCases\GetInvestigatorFormsFromVisitType\GetInvestigatorFormsFromVisitTypeRequest;
 use App\GaelO\UseCases\GetInvestigatorFormsFromVisitType\GetInvestigatorFormsFromVisitTypeResponse;
@@ -296,19 +296,18 @@ class StudyController extends Controller
         return $this->getJsonResponse($getInvestigatorFormsMetadataFromVisitTypeResponse->body, $getInvestigatorFormsMetadataFromVisitTypeResponse->status, $getInvestigatorFormsMetadataFromVisitTypeResponse->statusText);
     }
 
-    public function getDicomStudiesFromVisitType(Request $request, GetDicomsStudiesFromVisitType $getDicomsStudiesFromVisitType, GetDicomsStudiesFromVisitTypeRequest $getDicomsStudiesFromVisitTypeRequest, GetDicomsStudiesFromVisitTypeResponse $getDicomsStudiesFromVisitTypeResponse, int $visitTypeId)
+    public function getDicomStudiesFromStudy(Request $request, GetDicomsStudiesFromStudy $getDicomsStudiesFromStudy, GetDicomsStudiesFromStudyRequest $getDicomsStudiesFromStudyRequest, GetDicomsStudiesFromStudyResponse $getDicomsStudiesFromStudyResponse, string $studyName)
     {
 
         $currentUser = Auth::user();
         $queryParam = $request->query();
-        $getDicomsStudiesFromVisitTypeRequest->currentUserId = $currentUser['id'];
-        $getDicomsStudiesFromVisitTypeRequest->studyName = $queryParam['studyName'];
-        $getDicomsStudiesFromVisitTypeRequest->visitTypeId = $visitTypeId;
-        $getDicomsStudiesFromVisitTypeRequest->withTrashed = key_exists('withTrashed', $queryParam);
+        $getDicomsStudiesFromStudyRequest->currentUserId = $currentUser['id'];
+        $getDicomsStudiesFromStudyRequest->studyName = $studyName;
+        $getDicomsStudiesFromStudyRequest->withTrashed = key_exists('withTrashed', $queryParam);
 
-        $getDicomsStudiesFromVisitType->execute($getDicomsStudiesFromVisitTypeRequest, $getDicomsStudiesFromVisitTypeResponse);
+        $getDicomsStudiesFromStudy->execute($getDicomsStudiesFromStudyRequest, $getDicomsStudiesFromStudyResponse);
 
-        return $this->getJsonResponse($getDicomsStudiesFromVisitTypeResponse->body, $getDicomsStudiesFromVisitTypeResponse->status, $getDicomsStudiesFromVisitTypeResponse->statusText);
+        return $this->getJsonResponse($getDicomsStudiesFromStudyResponse->body, $getDicomsStudiesFromStudyResponse->status, $getDicomsStudiesFromStudyResponse->statusText);
     }
 
     public function sendReminder(Request $request, SendReminder $sendReminder, ReminderRequest $reminderRequest, ReminderResponse $reminderResponse, string $studyName)
