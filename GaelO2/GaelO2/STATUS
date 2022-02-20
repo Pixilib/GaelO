@@ -29,8 +29,6 @@ Entity :
 Ne doit pas pouvoir faire les relance d'upload => Voir avec Emilie
 Adapter les points de lecture :
 GetDicomFileSupervisor => Passe par les seriesUID mais le RBAC doit autoriser les etude ancillaire
-GetPatientFromStudy => Prendre data de etude original
-GetPatientInStudyFromCenters => Prendre data de etude original
 GetPatientVisitsInStudy => Prendre data de etude original
 GetVisitsFromStudy => Prendre data de etude original
 GetVisitsFromVisitType => Prendre data de etude original
