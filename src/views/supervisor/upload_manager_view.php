@@ -181,7 +181,7 @@
 			}
 
             tableStatus.column( $(this).parent().index() )
-                .search( this.value )
+                .search(searchValue, regex)
                 .draw();
 		});
 
@@ -233,6 +233,8 @@
                 <select type="text" placeholder="Search" class="column_search select_search" style="max-width:75px" >
                     <option value="">Choose</option>
                     <option value=<?=Visit::DONE?>><?=Visit::DONE?></option>	
+                    <option value="<?=Patient_Visit_Manager::SHOULD_BE_DONE?>"><?=Patient_Visit_Manager::SHOULD_BE_DONE?></option>
+                    <option value=<?=Patient_Visit_Manager::OPTIONAL_VISIT?>><?=Patient_Visit_Manager::OPTIONAL_VISIT?></option>
                     <option value=<?=Visit::NOT_DONE?>><?=Visit::NOT_DONE?></option>
                 </select> 
             </th>

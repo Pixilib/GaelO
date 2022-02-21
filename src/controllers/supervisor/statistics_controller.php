@@ -31,8 +31,24 @@ if ($accessCheck && $_SESSION['role'] == User::SUPERVISOR) {
 
 	$studyObj=new Study($_SESSION['study'], $linkpdo);
 
-	//SK ICI A GENERALISER SUIVANT MODALITY GROUPE
-	$statisticsObj=$studyObj->getStatistics("PT");
+
+	$visitGroups = $studyObj->getAllPossibleVisitGroups();
+
+	//Ici on ne traitera que de la modalite principale
+	
+	foreach($visitGroups as $visitGroup){
+		if($visitGroup->groupModality == Visit_Group::GROUP_MODALITY_PET){
+			$statisticsObj=$studyObj->getStatistics(Visit_Group::GROUP_MODALITY_PET);
+			break;
+		}
+
+		if($visitGroup->groupModality == Visit_Group::GROUP_MODALITY_MR){
+			$statisticsObj=$studyObj->getStatistics(Visit_Group::GROUP_MODALITY_MR);
+			break;
+		}
+		
+	}
+	
 
 	switch ($_POST['chartId']) {
 		case 'acquPETDelay':
