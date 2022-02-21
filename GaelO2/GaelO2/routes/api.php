@@ -78,7 +78,7 @@ Route::middleware(['auth:sanctum', 'verified', 'activated'])->group(function () 
     Route::get('visit-types/{visitTypeId}/reviews/metadata', [StudyController::class, 'getReviewsMetadataFromVisitType']);
     Route::get('visit-types/{visitTypeId}/investigator-forms', [StudyController::class, 'getInvestigatorFormsFromVisitType']);
     Route::get('visit-types/{visitTypeId}/investigator-forms/metadata', [StudyController::class, 'getInvestigatorFormsMetadataFromVisitType']);
-    Route::get('visit-types/{visitTypeId}/dicom-studies', [StudyController::class, 'getDicomStudiesFromVisitType']);
+    Route::get('studies/{studyName}/dicom-studies', [StudyController::class, 'getDicomStudiesFromStudy']);
     Route::post('studies/{studyName}/send-reminder', [StudyController::class, 'sendReminder']);
     Route::post('send-mail', [StudyController::class, 'sendMail']);
 
@@ -127,6 +127,7 @@ Route::middleware(['auth:sanctum', 'verified', 'activated'])->group(function () 
     Route::post('visits/{id}/investigator-form', [ReviewController::class, 'createInvestigatorForm']);
     Route::put('visits/{id}/investigator-form', [ReviewController::class, 'modifyInvestigatorForm']);
     Route::patch('visits/{id}/investigator-form/unlock', [ReviewController::class, 'unlockInvestigatorForm']);
+    Route::get('visits/{id}/investigator-associated-data', [ReviewController::class, 'getAssociatedDataOfVisitForInvestigator']);
 
     //Review routes
     Route::post('visits/{visitId}/reviews', [ReviewController::class, 'createReviewForm']);
@@ -137,6 +138,7 @@ Route::middleware(['auth:sanctum', 'verified', 'activated'])->group(function () 
     Route::post('reviews/{id}/file/{key}', [ReviewController::class, 'createReviewFile']);
     Route::delete('reviews/{id}/file/{key}', [ReviewController::class, 'deleteReviewFile']);
     Route::get('visits/{visitId}/reviews', [ReviewController::class, 'getReviewsFromVisit']);
+    Route::get('studies/{studyName}/visits/{visitId}/reviewer-associated-data', [ReviewController::class, 'getAssociatedDataOfVisitForReviewer']);
 
     //Dicom Routes
     Route::delete('dicom-series/{seriesInstanceUID}', [DicomController::class, 'deleteSeries']);

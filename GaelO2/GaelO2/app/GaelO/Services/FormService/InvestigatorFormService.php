@@ -4,10 +4,24 @@ namespace App\GaelO\Services\FormService;
 
 use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOBadRequestException;
+use App\GaelO\Interfaces\Adapters\FrameworkInterface;
+use App\GaelO\Interfaces\Repositories\ReviewRepositoryInterface;
 use App\GaelO\Services\FormService\FormService;
+use App\GaelO\Services\MailServices;
+use App\GaelO\Services\VisitService;
 
 class InvestigatorFormService extends FormService
 {
+
+    public function __construct(
+        VisitService $visitService,
+        MailServices $mailServices,
+        FrameworkInterface $frameworkInterface,
+        ReviewRepositoryInterface $reviewRepositoryInterface
+    ) {
+        parent::__construct($reviewRepositoryInterface, $visitService, $mailServices, $frameworkInterface);
+        $this->local = true;
+    }
 
     public function saveInvestigatorForm(array $data, bool $validated): void
     {

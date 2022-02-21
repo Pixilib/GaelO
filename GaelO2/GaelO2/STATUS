@@ -1,14 +1,12 @@
 Salim TODO :
 
-- Abstract visit rule voir comment on accede aux autre review de la visite ? Api pour info custom ?
-- Orthanc Send to peer
-
 - Optimiser l'utilisation des authorization service en injectant les data depuis le usecase (ou les rendre stateless)
 - Optimiser le service visit en injectant directement le visit context?
-- Creatable Visit : Manque Study Custom Logic => Passer dans frontend
 - Review  : faire une propriete dans visit pour savoir si review disponible a un user en plus de status reviewAvailable ?
+- Creatable Visit : Manque Study Custom Logic => Passer dans frontend => Emilie
 
 Reste Autres :
+- Orthanc Send to peer
 - Mise en place scheduler
 - Monitoring scheduler via tracker
 - Dicom liée aux review  => Impact sur la db a designer => probablement privilegier les associated file des reviews
@@ -27,17 +25,12 @@ Entity :
 ---- /Refactoring Backend ------
 
 --- Etudes ancillaires ---
+
 Ne doit pas pouvoir faire les relance d'upload => Voir avec Emilie
-Adapter les points de lecture
-getCentersFromStudy => Doit prendre centres des patient de l'étude princeps si ancillaire
-GetDicomFileSupervisor => Doit prendre patient de l'etude princeps
-GetDicomStudiesFromVisitType => doit prendre patient dans etude princeps
-GetPatientFromStudy
-GetPatientInStudyFromCenters
-GetPatientVisitsInStudyg
-GetVisitsFromStudy
-GetVisitsFromVisitType
-GetVisitTree
+Adapter les points de lecture :
+GetDicomFileSupervisor => Passe par les seriesUID mais le RBAC doit autoriser les etude ancillaire
+GetVisitsFromVisitType => Prendre data de etude original => passer a query tag sur getVisitFrom Study ? Evaluer pertinence ?
+GetVisitTree => Prendre data de etude original
 
 => Reste avoir Study Service pour limiter les fonctionalité des etudes ancillaires
 

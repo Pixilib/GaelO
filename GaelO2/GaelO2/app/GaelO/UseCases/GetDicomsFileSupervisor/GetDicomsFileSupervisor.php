@@ -87,6 +87,7 @@ class GetDicomsFileSupervisor {
 
         $this->authorizationStudyService->setUserId($currentUserId);
         $this->authorizationStudyService->setStudyName($studyName);
+        //SK ICI A TENIR COMPTE DES ETUDE ANCILLAIRE
         if( ! $this->authorizationStudyService->isAllowedStudy( Constants::ROLE_SUPERVISOR )){
             throw new GaelOForbiddenException();
         }

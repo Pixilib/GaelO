@@ -76,6 +76,24 @@ abstract class AbstractVisitRules
 
     abstract function getAllowedKeyAndMimeTypeReviewer(): array;
 
+    abstract function getTargetLesion() : ?array ;
+
+    /**
+     * Return custom data should be usefull to generate investigator form
+     * Empty array by default, to be override in specific models
+     */
+    public function getAssociatedDataForInvestigatorForm() : array {
+        return [];
+    }
+
+    /**
+     * Return custom data should be usefull to generate review form
+     * Empty array by default, to be override in specific models
+     */
+    public function getAssociatedDataForReviewForm() : array {
+        return [];
+    }
+
     public function getReviewAvailability(string $reviewStatus): bool
     {
         if ($reviewStatus === Constants::REVIEW_STATUS_DONE) {
@@ -87,6 +105,6 @@ abstract class AbstractVisitRules
         }
     }
 
-    abstract function getTargetLesion() : ?array ;
+
 
 }

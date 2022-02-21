@@ -32,11 +32,10 @@ class GetPatientsVisitsInStudy {
     public function execute(GetPatientsVisitsInStudyRequest $getPatientsVisitsInStudyRequest, GetPatientsVisitsInStudyResponse $getPatientsVisitsInStudyResponse) : void
     {
         try{
-
-            $this->checkAuthorization($getPatientsVisitsInStudyRequest->currentUserId, $getPatientsVisitsInStudyRequest->studyName);
-
             $studyName = $getPatientsVisitsInStudyRequest->studyName;
             $patientIds = $getPatientsVisitsInStudyRequest->patientIds;
+
+            $this->checkAuthorization($getPatientsVisitsInStudyRequest->currentUserId, $studyName);
 
             $responseArray = [];
             $visitsArray = $this->visitRepositoryInterface->getPatientListVisitWithContextAndReviewStatus($patientIds, $studyName);

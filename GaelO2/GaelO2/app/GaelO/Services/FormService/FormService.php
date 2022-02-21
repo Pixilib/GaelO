@@ -26,6 +26,7 @@ class FormService
     protected string $visitType;
     protected string $patientId;
     protected int $uploaderId;
+    protected string $local;
 
     public function __construct(
         ReviewRepositoryInterface $reviewRepositoryInterface,
@@ -109,5 +110,11 @@ class FormService
         unlink($targetedFile);
         unset($reviewEntity['sent_files'][$key]);
         $this->reviewRepositoryInterface->updateReviewFile($reviewEntity['id'], $reviewEntity);
+    }
+
+
+    public function getAssociatedDataForForm() : array {
+        if($this->local) return $this->abstractVisitRules->getAssociatedDataForInvestigatorForm();
+        else return $this->abstractVisitRules->getAssociatedDataForReviewForm();
     }
 }

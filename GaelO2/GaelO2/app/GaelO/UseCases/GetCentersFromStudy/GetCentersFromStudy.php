@@ -7,7 +7,9 @@ use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\CenterRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\PatientRepositoryInterface;
+use App\GaelO\Interfaces\Repositories\StudyRepositoryInterface;
 use App\GaelO\Services\AuthorizationService\AuthorizationStudyService;
+use App\GaelO\Services\StudyService;
 use Exception;
 
 class GetCentersFromStudy {
@@ -15,25 +17,35 @@ class GetCentersFromStudy {
     private AuthorizationStudyService $authorizationStudyService;
     private PatientRepositoryInterface $patientRepositoryInterface;
     private CenterRepositoryInterface $centerRepositoryInterface;
+    private StudyRepositoryInterface $studyRepositoryInterface;
+    private StudyService $studyService;
 
 
     public function __construct(CenterRepositoryInterface $centerRepositoryInterface,
         AuthorizationStudyService $authorizationStudyService,
-        PatientRepositoryInterface $patientRepositoryInterface){
+        PatientRepositoryInterface $patientRepositoryInterface,
+        StudyRepositoryInterface $studyRepositoryInterface,
+        StudyService $studyService){
         $this->centerRepositoryInterface = $centerRepositoryInterface;
         $this->patientRepositoryInterface = $patientRepositoryInterface;
+        $this->studyRepositoryInterface = $studyRepositoryInterface;
         $this->authorizationStudyService = $authorizationStudyService;
+        $this->studyService = $studyService;
      }
 
     public function execute(GetCentersFromStudyRequest $getCentersFromStudyRequest, GetCentersFromStudyResponse $getCentersFromStudyResponse) : void
     {
         try {
-
-            $this->checkAuthorization($getCentersFromStudyRequest->currentUserId, $getCentersFromStudyRequest->studyName);
-
             $studyName = $getCentersFromStudyRequest->studyName;
 
-            $patients = $this->patientRepositoryInterface->getPatientsInStudy($studyName);
+            $this->checkAuthorization($getCentersFromStudyRequest->currentUserId, $studyName);
+
+            //Check If study is an ancillary study, as patient should comme from an original study
+            $studyEntity = $this->studyRepositoryInterface->find($studyName);
+            $this->studyService->setStudyEntity($studyEntity);
+            $originalStudyName = $this->studyService->getOriginalStudyName();
+
+            $patients = $this->patientRepositoryInterface->getPatientsInStudy($originalStudyName);
             $centerCodes = array_column($patients, 'center_code');
 
             $centers = $this->centerRepositoryInterface->getCentersFromCodeArray($centerCodes);

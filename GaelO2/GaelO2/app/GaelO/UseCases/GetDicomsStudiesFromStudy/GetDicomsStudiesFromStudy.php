@@ -1,6 +1,6 @@
 <?php
 
-namespace App\GaelO\UseCases\GetDicomsStudiesFromVisitType;
+namespace App\GaelO\UseCases\GetDicomsStudiesFromStudy;
 
 use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOException;
@@ -9,40 +9,56 @@ use App\GaelO\Interfaces\Repositories\DicomStudyRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
 use App\GaelO\Entities\DicomSeriesEntity;
 use App\GaelO\Entities\DicomStudyEntity;
+use App\GaelO\Interfaces\Repositories\StudyRepositoryInterface;
 use App\GaelO\Services\AuthorizationService\AuthorizationStudyService;
+use App\GaelO\Services\StudyService;
 use Exception;
 
-class GetDicomsStudiesFromVisitType
+class GetDicomsStudiesFromStudy
 {
 
     private AuthorizationStudyService $authorizationStudyService;
     private VisitRepositoryInterface $visitRepositoryInterface;
     private DicomStudyRepositoryInterface $dicomStudyRepositoryInterface;
+    private StudyService $studyService;
+    private StudyRepositoryInterface $studyRepositoryInterface;
 
-    public function __construct(AuthorizationStudyService $authorizationStudyService, VisitRepositoryInterface $visitRepositoryInterface, DicomStudyRepositoryInterface $dicomStudyRepositoryInterface)
-    {
+    public function __construct(
+        AuthorizationStudyService $authorizationStudyService,
+        VisitRepositoryInterface $visitRepositoryInterface,
+        DicomStudyRepositoryInterface $dicomStudyRepositoryInterface,
+        StudyRepositoryInterface $studyRepositoryInterface,
+        StudyService $studyService
+    ) {
         $this->authorizationStudyService = $authorizationStudyService;
         $this->visitRepositoryInterface = $visitRepositoryInterface;
         $this->dicomStudyRepositoryInterface = $dicomStudyRepositoryInterface;
+        $this->studyRepositoryInterface = $studyRepositoryInterface;
+        $this->studyService = $studyService;
     }
 
-    public function execute(GetDicomsStudiesFromVisitTypeRequest $getDicomsStudiesFromVisitTypeRequest, GetDicomsStudiesFromVisitTypeResponse $getDicomsStudiesFromVisitTypeResponse)
+    public function execute(GetDicomsStudiesFromStudyRequest $getDicomsStudiesFromStudyRequest, GetDicomsStudiesFromStudyResponse $getDicomsStudiesFromStudyResponse)
     {
 
         try {
 
-            $studyName = $getDicomsStudiesFromVisitTypeRequest->studyName;
-            $this->checkAuthorization($getDicomsStudiesFromVisitTypeRequest->currentUserId, $studyName);
+            $studyName = $getDicomsStudiesFromStudyRequest->studyName;
+            $this->checkAuthorization($getDicomsStudiesFromStudyRequest->currentUserId, $studyName);
 
-            //Get Visits in the asked visitTypeId
-            $visits = $this->visitRepositoryInterface->getVisitsInVisitType($getDicomsStudiesFromVisitTypeRequest->visitTypeId, false, null, false);
+            //Retrieve study information, in case being an ancillary study we need to retrieve original study dicom
+            $studyEntity = $this->studyRepositoryInterface->find($studyName);
+            $this->studyService->setStudyEntity($studyEntity);
+            $originalStudyName = $this->studyService->getOriginalStudyName();
+
+            //Get Visits in the asked study
+            $visits = $this->visitRepositoryInterface->getVisitsInStudy($originalStudyName, false, false);
             //make visitsId array
-            $visitsId = array_map(function ($visit) {
+            $visitsIds = array_map(function ($visit) {
                 return $visit['id'];
             }, $visits);
 
             //Get Validated review for these visits
-            $dicomStudies = $this->dicomStudyRepositoryInterface->getDicomStudyFromVisitIdArrayWithSeries($visitsId, $studyName, false);
+            $dicomStudies = $this->dicomStudyRepositoryInterface->getDicomStudyFromVisitIdArrayWithSeries($visitsIds, $getDicomsStudiesFromStudyRequest->withTrashed);
 
             $answer = [];
 
@@ -64,16 +80,13 @@ class GetDicomsStudiesFromVisitType
                 $answer[] = $dicomStudyEntity;
             }
 
-            $getDicomsStudiesFromVisitTypeResponse->body = $answer;
-            $getDicomsStudiesFromVisitTypeResponse->status = 200;
-            $getDicomsStudiesFromVisitTypeResponse->statusText = 'OK';
-
+            $getDicomsStudiesFromStudyResponse->body = $answer;
+            $getDicomsStudiesFromStudyResponse->status = 200;
+            $getDicomsStudiesFromStudyResponse->statusText = 'OK';
         } catch (GaelOException $e) {
-
-            $getDicomsStudiesFromVisitTypeResponse->body = $e->getErrorBody();
-            $getDicomsStudiesFromVisitTypeResponse->status = $e->statusCode;
-            $getDicomsStudiesFromVisitTypeResponse->statusText = $e->statusText;
-
+            $getDicomsStudiesFromStudyResponse->body = $e->getErrorBody();
+            $getDicomsStudiesFromStudyResponse->status = $e->statusCode;
+            $getDicomsStudiesFromStudyResponse->statusText = $e->statusText;
         } catch (Exception $e) {
             throw $e;
         }
