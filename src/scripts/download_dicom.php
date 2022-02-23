@@ -81,7 +81,7 @@ if ($permissionCheck && count($ids) > 0) {
 	}
 
 	while (!$zipStream->eof()) {
-		echo $zipStream->read(512);
+		echo $zipStream->read(2048);
 	}
 
 }else {
