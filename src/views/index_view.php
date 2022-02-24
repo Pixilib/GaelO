@@ -105,11 +105,8 @@
 		<div class="alert alert-danger" id="errorJS"> Warning : Your Navigator do not support Javascript, mendatory for this website</div>
 	</noscript>
 
-	<section id="logos">
-		<img id="logo-gaelo" src="assets/images/gaelo-logo-square.png" alt="GaelO">
-		<div id="name-div">
-			<?php if (defined('GAELO_PLATEFORM_NAME')) echo(GAELO_PLATEFORM_NAME); else echo('GaelO')?>
-		</div>
+	<section id="logos" class="mb-5">
+		<img id="logo-gaelo" style="max-width: 400px;"src="assets/images/gaelo-logo-rectangle.png" alt="GaelO">
 	</section>
 
 	<div class="alert alert-danger" id="error" style="display: none;"></div>
