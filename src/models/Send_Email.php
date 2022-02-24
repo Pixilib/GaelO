@@ -188,7 +188,7 @@ Class Send_Email {
             </head>
             <body>
                 <header class="main-header" id ="header">
-                    <img id="logo-gaelo" src=cid:logo_gaelo alt="Banner Image"/>
+                    <img id="logo-gaelo" style="max-width: 200px;" src=cid:logo_gaelo alt="Banner Image"/>
                 </header>
                 <div id="message"><b>Dear '.$nameString.',</b><br>'.$this->message.'</div>
                 <div class="footer">
