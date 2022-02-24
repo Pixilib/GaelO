@@ -131,7 +131,8 @@ Class Orthanc {
 		$options = [
 			'auth' => [$this->login, $this->password],
 			'headers'  => ['content-type' => 'application/json', 'Accept' => 'application/zip'],
-			'body' => json_encode(array('Transcode'=>'1.2.840.10008.1.2.1', 'Resources' => $uidList)),
+			//'Transcode'=>'1.2.840.10008.1.2.1', 
+			'body' => json_encode(array('Resources' => $uidList)),
 			'stream' => true
 		];
 
