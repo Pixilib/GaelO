@@ -136,7 +136,7 @@ Class Send_Email {
 
 		//Content
 		$mail->isHTML(true); // Set email format to HTML
-		$mail->Subject=$this->corporation.' Imaging Platform -'.$this->subject;
+		$mail->Subject=$this->corporation.' Imaging Platform - '.$this->subject;
 		try {
 			$answer=$mail->send();
 			return $answer;
