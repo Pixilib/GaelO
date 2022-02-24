@@ -190,7 +190,6 @@ Class Send_Email {
                 <header class="main-header" id ="header">
                     <img id="logo-gaelo" src=cid:logo_gaelo alt="Banner Image"/>
                 </header>
-                <h1><a href="http://'.$this->webAddress.'">'.$this->platformName.'</a></h1>
                 <div id="message"><b>Dear '.$nameString.',</b><br>'.$this->message.'</div>
                 <div class="footer">
                     <p id ="footer-contact">Please contact the Imaging Department of '.$this->corporation.' for any questions (<a HREF="mailto:'.$this->adminEmail.'">'.$this->adminEmail.'</a>) <br>
@@ -210,7 +209,7 @@ Class Send_Email {
 		$htmlMessageObject=new \Html2Text\Html2Text($messageToSend);
 		$mail->Body=$messageToSend;
 		$mail->AltBody=$htmlMessageObject->getText();
-		$mail->AddEmbeddedImage($_SERVER['DOCUMENT_ROOT'].'/assets/images/gaelo-logo-square.png', 'logo_gaelo');
+		$mail->AddEmbeddedImage($_SERVER['DOCUMENT_ROOT'].'/assets/images/gaelo-logo-rectangle.png', 'logo_gaelo');
         
         
 	}
