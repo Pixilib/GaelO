@@ -464,7 +464,7 @@ Class Send_Email {
         Reason for request: " . $request." <br>";
 		$this->setMessage($message);
 		$this->setReplyTo($contactEmail);
-		$this->subject='Ask Unlock';
+		$this->subject=$study.'Ask Unlock';
 		$this->sendEmail();
         
 	}
