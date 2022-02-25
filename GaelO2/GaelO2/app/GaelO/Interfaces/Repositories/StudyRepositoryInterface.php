@@ -8,7 +8,7 @@ interface StudyRepositoryInterface {
 
     public function delete($name) : void ;
 
-    public function addStudy(String $name, string $code, int $patientCodeLength, ?string $ancillaryOf) : void ;
+    public function addStudy(String $name, string $code, int $patientCodeLength, string $contactEmail, ?string $ancillaryOf) : void ;
 
     public function isExistingStudy(string $name) : bool ;
 

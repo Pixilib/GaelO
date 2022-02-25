@@ -33,6 +33,7 @@ class CreateStudy {
             $studyName = $createStudyRequest->name;
             $studyCode = $createStudyRequest->code;
             $patientCodeLength = $createStudyRequest->patientCodeLength;
+            $contactEmail = $createStudyRequest->contactEmail;
             $ancillaryOf = $createStudyRequest->ancillaryOf;
 
             if(preg_match('/[^A-Z0-9]/', $studyName)){
@@ -51,7 +52,11 @@ class CreateStudy {
                 throw new GaelOBadRequestException('Missing Patient Code Lenght');
             }
 
-            $this->studyRepositoryInterface->addStudy($studyName, $studyCode, $patientCodeLength, $ancillaryOf);
+            if( empty($contactEmail) ){
+                throw new GaelOBadRequestException('Missing Contact Email');
+            }
+
+            $this->studyRepositoryInterface->addStudy($studyName, $studyCode, $patientCodeLength, $contactEmail, $ancillaryOf);
 
             $currentUserId=$createStudyRequest->currentUserId;
             $actionDetails = [

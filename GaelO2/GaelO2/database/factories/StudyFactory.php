@@ -13,6 +13,7 @@ class StudyFactory extends Factory
             'name' => $this->faker->unique()->regexify('[A-Z0-9]{20}'),
             'code' => $this->faker->unique()->randomNumber(5),
             'patient_code_length' => $this->faker->randomNumber(5),
+            'contact_email' => $this->faker->email(),
             'ancillary_of' => null
         ];
     }

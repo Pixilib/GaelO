@@ -118,7 +118,7 @@ class MailServices
         $this->mailInterface->send();
     }
 
-    public function sendImportPatientMessage(String $study, array $successList, array $failList)
+    public function sendImportPatientMessage(String $study, string $contactEmail, array $successList, array $failList)
     {
 
         $parameters = [
@@ -130,7 +130,7 @@ class MailServices
 
         //Send to supervisors of the study
         $this->mailInterface->setTo($this->userRepositoryInterface->getUsersEmailsByRolesInStudy($study, Constants::ROLE_SUPERVISOR));
-        $this->mailInterface->setReplyTo();
+        $this->mailInterface->setReplyTo($contactEmail);
         $this->mailInterface->setParameters($parameters);
         $this->mailInterface->setBody(MailConstants::EMAIL_IMPORT_PATIENT);
         $this->mailInterface->send();
