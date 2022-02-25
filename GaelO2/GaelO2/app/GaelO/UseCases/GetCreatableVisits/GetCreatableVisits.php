@@ -96,6 +96,7 @@ class GetCreatableVisits{
                     'groupName' => $visitGroupDetails['name'],
                     'typeId' => $visitType['id'],
                     'name' => $visitType['name'],
+                    'optional' => $visitType['optional']
                 ];
             }
         }

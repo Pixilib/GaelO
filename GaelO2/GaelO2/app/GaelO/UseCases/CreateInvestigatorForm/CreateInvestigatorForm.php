@@ -54,7 +54,7 @@ class CreateInvestigatorForm {
 
             $this->investigatorFormService->setCurrentUserId($createInvestigatorFormRequest->currentUserId);
             $this->investigatorFormService->setVisitContextAndStudy($visitContext, $studyName);
-            $this->investigatorFormService->saveInvestigatorForm($createInvestigatorFormRequest->data, $createInvestigatorFormRequest->validated);
+            $createdFormId = $this->investigatorFormService->saveInvestigatorForm($createInvestigatorFormRequest->data, $createInvestigatorFormRequest->validated);
 
             $actionDetails = [
                 'raw_data' => $createInvestigatorFormRequest->data,
@@ -63,6 +63,7 @@ class CreateInvestigatorForm {
 
             $this->trackerRepositoryInterface->writeAction($createInvestigatorFormRequest->currentUserId, Constants::ROLE_INVESTIGATOR, $studyName, $createInvestigatorFormRequest->visitId, Constants::TRACKER_SAVE_INVESTIGATOR_FORM, $actionDetails);
 
+            $createInvestigatorFormResponse->body = ['id' => $createdFormId];
             $createInvestigatorFormResponse->status = 201;
             $createInvestigatorFormResponse->statusText =  'Created';
 
