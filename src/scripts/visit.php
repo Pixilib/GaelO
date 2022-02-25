@@ -63,10 +63,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 			}
             
 			if ($statusDone === 'Not Done') {
-
+				$studyObject = $visitObject->getParentStudyObject();
 				$emailObject=new Send_Email($linkpdo);
 				$emailObject->addGroupEmails($study, User::SUPERVISOR);
-				$emailObject->sendCreatedNotDoneVisitNotification($patientCode, $study, $visitType, $userObject->username);
+				$emailObject->sendCreatedNotDoneVisitNotification($patientCode, $studyObject->contactEmail, $study, $visitType, $userObject->username);
 
 			}
 

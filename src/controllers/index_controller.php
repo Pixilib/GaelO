@@ -39,7 +39,7 @@ else if (!empty($_POST['formSent'])) {
 			$_SESSION['admin']=true;
 			//Alert all admins of this connexion
 			$email=new Send_Email($linkpdo);
-			$email->addAminEmails();
+			$email->addAdminEmails();
 			$email->sendAdminLoggedAlertEmail($_POST['username'], $_SERVER['REMOTE_ADDR']);
 
 		}else {

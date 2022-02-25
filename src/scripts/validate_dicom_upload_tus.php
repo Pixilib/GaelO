@@ -252,7 +252,7 @@ function warningAdminError(string $errorMessage, PDO $linkpdo) {
 	global $study;
 	global $username;
 
-	$sendEmails->addGroupEmails($study, User::SUPERVISOR)->addEmail($sendEmails->getUserEmails($username));
+	$sendEmails->addGroupEmails($study, User::SUPERVISOR)->addAdminEmails()->addEmail($sendEmails->getUserEmails($username));
 	$sendEmails->sendUploadValidationFailure($visitObject->id_visit, $visitObject->patientCode, $visitObject->visitType,
 			$study, $unzipedPath, $username, $errorMessage);
 }

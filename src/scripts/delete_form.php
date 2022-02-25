@@ -53,9 +53,10 @@ if ($_SESSION['role'] == User::SUPERVISOR && $permissionsCheck) {
 		}
 		
 		//Notify the user that his form has been Deleted
+		$studyObject = $visitObject->getParentStudyObject();
 		$email=new Send_Email($linkpdo);
 		$email->addEmail($email->getUserEmails($reviewObject->username));
-		$email->sendDeletedFormMessage($visitObject->study, $visitObject->patientCode, $visitObject->visitType);
+		$email->sendDeletedFormMessage($visitObject->study, $studyObject->contactEmail, $visitObject->patientCode, $visitObject->visitType);
 
 	}else {
 		$answer=false;

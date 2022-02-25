@@ -44,7 +44,7 @@ if (isset($_SESSION['username'])) {
 			if ($role != User::ADMINISTRATOR) {
 				$sendEmail->addGroupEmails($_SESSION['study'], $role);
 			}else {
-				$sendEmail->addAminEmails();            
+				$sendEmail->addAdminEmails();            
 			}
             
 		}

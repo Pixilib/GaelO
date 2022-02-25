@@ -120,7 +120,8 @@ if (isset($_SESSION['username']) && $patientAllowed) {
 				->addEmail($email->getUserEmails($visitObject->uploaderUsername))
 				->selectInvestigatorsEmailsWithSameCenter($visitObject->study, $visitObject->getPatient()->getPatientCenter()->code);
 
-		$email->sendQCDesicionEmail($controlDecision, $visitObject->study, $visitObject->patientCode, $visitObject->visitType, $formAccepted, $commentForm, $imageAccepted, $commentImage);
+		$study = $visitObject->getParentStudyObject();
+		$email->sendQCDesicionEmail($controlDecision, $visitObject->study, $study->contactEmail, $visitObject->patientCode, $visitObject->visitType, $formAccepted, $commentForm, $imageAccepted, $commentImage);
         
 
 	  //if send form with uncorrect permission, refuse

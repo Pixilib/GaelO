@@ -54,6 +54,10 @@ Class Send_Email {
 		$this->subject='GaelO Notification';
 	}
 
+	public function setReplyTo(string $email) : void {
+		$this->replyTo = $email;
+	}
+
 	/**
 	 * Set the message to send (will be included in the HTML template)
 	 */
@@ -310,7 +314,7 @@ Class Send_Email {
 		return $this;
 	}
 
-	public function addAminEmails() : Send_Email {
+	public function addAdminEmails() : Send_Email {
 
 		$emails=$this->getAdminsEmails();
 		$this->addEmails($emails);
@@ -415,7 +419,7 @@ Class Send_Email {
 
 	}
 
-	public function sendQCDesicionEmail(String $controlDecision, String $study, String $patientCode, String $visitType, $formDecision, $formComment, $imageDecision, $imageComment) {
+	public function sendQCDesicionEmail(String $controlDecision, String $study, String $contactEmail, String $patientCode, String $visitType, $formDecision, $formComment, $imageDecision, $imageComment) {
 		$message="Quality Control of the following visit has been set to : ".$controlDecision."<br>
                 Study : ".$study."<br>
                 Patient Number : ".$patientCode."<br>
@@ -425,6 +429,7 @@ Class Send_Email {
 
 		$this->setMessage($message);
 		$this->subject = $study.' - Quality Control Patient '.$patientCode;
+		$this->setReplyTo($contactEmail);
 		$this->sendEmail();
 	}
 
@@ -451,29 +456,31 @@ Class Send_Email {
         
 	}
 
-	public function sendUnlockRequestMessage(String $role, String $username, String $visitType, $patientNum, String $study, String $request) {
+	public function sendUnlockRequestMessage(String $role, String $username, String $visitType, $patientNum, String $study, string $contactEmail, String $request) {
 		$message="An Unlock ".$role." form Request was emitted by ".$username. 
 		" for the ".$visitType. 
 		" visit of patient ".$patientNum. 
 		" in Study ".$study."<br>
         Reason for request: " . $request." <br>";
 		$this->setMessage($message);
+		$this->setReplyTo($contactEmail);
 		$this->subject='Ask Unlock';
 		$this->sendEmail();
         
 	}
 
-	public function sendReviewReadyMessage(String $study, int $patientCode, String $visitType) {
+	public function sendReviewReadyMessage(String $study, string $contactEmail, int $patientCode, String $visitType) {
 		$message = "The following visit is ready for review in the platform: <br>
         Study : ".$study."<br>
         Patient Number : ".$patientCode."<br>
         Visit : ".$visitType."<br>";
 		$this->setMessage($message);
+		$this->setReplyTo($contactEmail);
 		$this->subject=$study." - Awaiting Review Patient ".$patientCode;
 		$this->sendEmail();
 	}
 
-	public function sendCorrectiveActionDoneMessage(bool $done, String $study, int $patientCode, String $visitType) {
+	public function sendCorrectiveActionDoneMessage(bool $done, String $study, string $contactEmail, int $patientCode, String $visitType) {
 
 		if (!$done) {
 			$message="No corrective action could be applied on the following visit: <br>
@@ -489,6 +496,7 @@ Class Send_Email {
 			
 		}
 		$this->setMessage($message);
+		$this->setReplyTo($contactEmail);
 		$this->subject= $study." - Corrective Action Patient ".$patientCode;
 		$this->sendEmail();
 
@@ -506,7 +514,7 @@ Class Send_Email {
 		$this->sendEmail();
 	}
 
-	public function sendAwaitingAdjudicationMessage(String $study, int $patientCode, String $visitType) {
+	public function sendAwaitingAdjudicationMessage(String $study, string $contactEmail, int $patientCode, String $visitType) {
 		$message="Review of the following visit is awaiting adjudication <br>
         Study : ".$study."<br>
         Patient Number : ".$patientCode."<br>
@@ -514,11 +522,12 @@ Class Send_Email {
         The visit is awaiting for your adjudication review";
 
 		$this->setMessage($message);
+		$this->setReplyTo($contactEmail);
 		$this->subject= $study." - Awaiting Adjudication Patient ".$patientCode ;
 		$this->sendEmail();
 	}
 
-	public function sendVisitConcludedMessage(String $study, int $patientCode, String $visitType, $conclusionValue) {
+	public function sendVisitConcludedMessage(String $study, string $contactEmail, int $patientCode, String $visitType, $conclusionValue) {
 		$message="Review of the following visit is concluded <br>
                 Study : ".$study."<br>
                 Patient Number : ".$patientCode."<br>
@@ -526,6 +535,7 @@ Class Send_Email {
                 Conclusion Value : ".$conclusionValue;
 
 		$this->setMessage($message);
+		$this->setReplyTo($contactEmail);
 		$this->subject=$study." - Visit Concluded Patient ".$patientCode;
 		$this->sendEmail();
 	}
@@ -542,19 +552,20 @@ Class Send_Email {
 		$this->sendEmail();
 	}
 
-	public function sendUploadedVisitMessage($study, $patientCode, $visitType) {
+	public function sendUploadedVisitMessage($study, $contactEmail, $patientCode, $visitType) {
 		$message="The following visit has been uploaded on the platform: <br>
         Study : ".$study."<br>
         Patient Number : ".$patientCode."<br>
         Uploaded visit : ".$visitType."<br>";
 
 		$this->setMessage($message);
+		$this->setReplyTo($contactEmail);
 		$this->subject= $study." - New upload Patient ".$patientCode;
 		$this->sendEmail();
 
 	}
 
-	public function sendDeletedFormMessage(String $study, String $patientCode, String $visitType) {
+	public function sendDeletedFormMessage(String $study, string $contactEmail, String $patientCode, String $visitType) {
 		$message="Your form sent for study : ".$study."<br>
         Patient : ".$patientCode."<br>
         Visit  : ".$visitType." <br>
@@ -562,12 +573,13 @@ Class Send_Email {
         You can now resend a new version of this form <br>";
 
 		$this->setMessage($message);
+		$this->setReplyTo($contactEmail);
 		$this->subject= $study." - Form Deleted Patient ".$patientCode;
 		$this->sendEmail();
 
 	}
 
-	public function sendUnlockedFormMessage(String $study, String $patientCode, String $visitType) {
+	public function sendUnlockedFormMessage(String $study, string $contactEmail, String $patientCode, String $visitType) {
 		$message="Your form sent for study : ".$study."<br>
         Patient : ".$patientCode."<br>
         Visit  : ".$visitType." <br>
@@ -575,6 +587,7 @@ Class Send_Email {
         You can now resend a new version of this form <br>";
 
 		$this->setMessage($message);
+		$this->setReplyTo($contactEmail);
 		$this->subject= $study." - Form Unlocked Patient ".$patientCode;
 		$this->sendEmail();
 
@@ -595,7 +608,7 @@ Class Send_Email {
 		$this->sendEmail();
 	}
 
-	public function sendCreatedNotDoneVisitNotification($patientCode, $study, $visitType, $creatorUser) {
+	public function sendCreatedNotDoneVisitNotification($patientCode, $contactEmail, $study, $visitType, $creatorUser) {
 		$message="A Not Done visit has been created <br>
         Patient Number : ".$patientCode."<br>
         Study : ".$study."<br> 
@@ -603,6 +616,7 @@ Class Send_Email {
         Creating Username : ".$creatorUser."<br>";
 
 		$this->setMessage($message);
+		$this->setReplyTo($contactEmail);
 		$this->subject=$study." - Visit Not Done Patient ".$patientCode;
 		$this->sendEmail();
 	}

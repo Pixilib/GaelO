@@ -293,7 +293,7 @@ class FTP_Reader
 			$email=new Send_Email($this->linkpdo);
 			$email->setMessage("FTP Process Has failed <br> Reason : ".$exceptionMessage);
 			$email->setSubject('FTP Process Failed');
-			$email->addAminEmails();
+			$email->addAdminEmails();
 			$email->sendEmail();
 		}catch (Exception $e) {
 			echo('sendEmailException');

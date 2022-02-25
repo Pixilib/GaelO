@@ -177,15 +177,17 @@ abstract class Form_Processor {
 	protected function changeVisitValidationStatus(string $reviewStatus, $conclusionValue="N/A") {
 		$this->visitObject->changeVisitValidationStatus($reviewStatus, $conclusionValue);
 		$this->reviewAvailabilityDecision($reviewStatus);
-
+		$studyObject = $this->visitObject->getParentStudyObject();
+		
 		//Send Notification emails
 		if ($reviewStatus == Visit::REVIEW_WAIT_ADJUDICATION) {
 
 			$email=new Send_Email($this->linkpdo);
 			$email->addEmailsReviewerWithNoReview($this->visitObject->study, $this->id_visit)
 					->addGroupEmails($this->visitObject->study, User::SUPERVISOR);
-			$email->sendAwaitingAdjudicationMessage($this->visitObject->study, $this->visitObject->patientCode, $this->visitObject->visitType);
-
+			
+			$email->sendAwaitingAdjudicationMessage($this->visitObject->study, $studyObject->contactEmail, $this->visitObject->patientCode, $this->visitObject->visitType);
+ 
 		}else if ($reviewStatus == Visit::REVIEW_DONE) {
 
 			$email=new Send_Email($this->linkpdo);
@@ -194,7 +196,7 @@ abstract class Form_Processor {
 			$email->addGroupEmails($this->visitObject->study, User::MONITOR)
 					->addGroupEmails($this->visitObject->study, User::SUPERVISOR)
 					->addEmail($uploaderEmail);
-			$email->sendVisitConcludedMessage($this->visitObject->study, $this->visitObject->patientCode, $this->visitObject->visitType, $conclusionValue);
+			$email->sendVisitConcludedMessage($this->visitObject->study, $studyObject->contactEmail, $this->visitObject->patientCode, $this->visitObject->visitType, $conclusionValue);
 
 		}
 	}
