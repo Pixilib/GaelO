@@ -79,6 +79,7 @@ class CreateReview
 
             $this->trackerRepositoryInterface->writeAction($createReviewFormRequest->currentUserId, Constants::ROLE_REVIEWER, $createReviewFormRequest->studyName, $createReviewFormRequest->visitId, Constants::TRACKER_SAVE_REVIEWER_FORM, $actionDetails);
 
+            $createReviewFormResponse->body = ['id' => $createdReviewId];
             $createReviewFormResponse->status = 201;
             $createReviewFormResponse->statusText =  'Created';
         } catch (GaelOException $e) {

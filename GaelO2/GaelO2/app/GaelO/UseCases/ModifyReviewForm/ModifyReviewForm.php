@@ -71,6 +71,7 @@ class ModifyReviewForm {
 
             $this->trackerRepositoryInterface->writeAction($modifyReviewFormRequest->currentUserId, Constants::ROLE_REVIEWER, $reviewEntity['study_name'], $reviewEntity['visit_id'], Constants::TRACKER_MODIFY_REVIEWER_FORM, $actionDetails);
 
+            $modifyReviewFormResponse->body = ['id' => $reviewEntity['id']];
             $modifyReviewFormResponse->status = 200;
             $modifyReviewFormResponse->statusText = 'OK';
 

@@ -1,13 +1,16 @@
 <?php
+
 namespace App\GaelO\Services\SpecificStudiesRules;
 
 use App\GaelO\Adapters\MimeAdapter;
 use App\GaelO\Constants\Constants;
 use App\GaelO\Services\SpecificStudiesRules\AbstractVisitRules;
 
-class GATA_PT_PET0 extends AbstractVisitRules {
+class GATA_PT_PET0 extends AbstractVisitRules
+{
 
-    public function getInvestigatorValidationRules()  : array {
+    public function getInvestigatorValidationRules(): array
+    {
         return [
             'glycaemia' => [
                 'rule' => self::RULE_FLOAT,
@@ -17,7 +20,7 @@ class GATA_PT_PET0 extends AbstractVisitRules {
             ],
             'glycaemiaNotDone' => [
                 'rule' => self::RULE_BOOLEAN,
-                'optional' => false
+                'optional' => true
             ],
             'radiotherapyThreeMonths' => [
                 'rule' => self::RULE_BOOLEAN,
@@ -60,30 +63,55 @@ class GATA_PT_PET0 extends AbstractVisitRules {
         ];
     }
 
-    public function getReviewerValidationRules(bool $adjudication) : array {
+    public function getReviewerValidationRules(bool $adjudication): array
+    {
         return [];
     }
 
-    public function getReviewStatus() : string {
+    public function getReviewStatus(): string
+    {
         return Constants::REVIEW_STATUS_NOT_NEEDED;
     }
 
-    public function getReviewConclusion() : string {
+    public function getReviewConclusion(): string
+    {
         return '';
     }
 
-    public function getAllowedKeyAndMimeTypeInvestigator() : array {
-        return [];
+    public function getAllowedKeyAndMimeTypeInvestigator(): array
+    {
+        return [
+            'complementaryData' => MimeAdapter::getMimeFromExtension('csv'),
+            'otherData' => MimeAdapter::getMimeFromExtension('csv'),
+        ];
     }
 
-    public function getAllowedKeyAndMimeTypeReviewer() : array {
-        return ['41' => MimeAdapter::getMimeFromExtension('csv')];
+    public function getAllowedKeyAndMimeTypeReviewer(): array
+    {
+        return ['2.5' => MimeAdapter::getMimeFromExtension('csv')];
     }
 
-    public function getTargetLesion() : ?array {
+    public function getTargetLesion(): ?array
+    {
         return null;
     }
 
+    public function getAssociatedDataForInvestigatorForm(): array
+    {
+        return [
+            'TestData1' => '01/01/2021',
+            'TestData2' => 341,
+            'TestData3' => true,
+            'TestData4' => null
+        ];
+    }
+
+    public function getAssociatedDataForReviewForm(): array
+    {
+        return [
+            'Radiotherapy' => false
+        ];
+    }
 }
 
 define('OPTIONS', [

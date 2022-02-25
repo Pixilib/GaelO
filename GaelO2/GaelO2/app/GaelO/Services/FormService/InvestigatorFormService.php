@@ -23,21 +23,23 @@ class InvestigatorFormService extends FormService
         $this->local = true;
     }
 
-    public function saveInvestigatorForm(array $data, bool $validated): void
+    public function saveInvestigatorForm(array $data, bool $validated): int
     {
         $this->abstractVisitRules->setFormData($data);
         if (!$this->abstractVisitRules->checkInvestigatorFormValidity($validated)) throw new GaelOBadRequestException('Form Contraints Failed');
-        $this->reviewRepositoryInterface->createReview(true, $this->visitId, $this->studyName, $this->currentUserId, $data, $validated);
+        $localReviewId = $this->reviewRepositoryInterface->createReview(true, $this->visitId, $this->studyName, $this->currentUserId, $data, $validated);
         $this->updateVisitInvestigatorFormStatus($validated);
+        return $localReviewId;
     }
 
-    public function updateInvestigatorForm(array $data, bool $validated): void
+    public function updateInvestigatorForm(array $data, bool $validated): int
     {
         $this->abstractVisitRules->setFormData($data);
         if (!$this->abstractVisitRules->checkInvestigatorFormValidity($validated)) throw new GaelOBadRequestException('Form Contraints Failed');
         $localReviewEntitity = $this->reviewRepositoryInterface->getInvestigatorForm($this->visitId, false);
         $this->reviewRepositoryInterface->updateReview($localReviewEntitity['id'], $this->currentUserId, $data, $validated);
         $this->updateVisitInvestigatorFormStatus($validated);
+        return $localReviewEntitity['id'];
     }
 
     private function updateVisitInvestigatorFormStatus(bool $validated): void

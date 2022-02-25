@@ -49,7 +49,7 @@ class ModifyInvestigatorForm {
 
             $this->investigatorFormService->setCurrentUserId($modifyInvestigatorFormRequest->currentUserId);
             $this->investigatorFormService->setVisitContextAndStudy($visitContext, $studyName);
-            $this->investigatorFormService->updateInvestigatorForm($modifyInvestigatorFormRequest->data, $modifyInvestigatorFormRequest->validated);
+            $localReviewId = $this->investigatorFormService->updateInvestigatorForm($modifyInvestigatorFormRequest->data, $modifyInvestigatorFormRequest->validated);
 
             $actionDetails = [
                 'raw_data' => $modifyInvestigatorFormRequest->data,
@@ -58,6 +58,7 @@ class ModifyInvestigatorForm {
 
             $this->trackerRepositoryInterface->writeAction($modifyInvestigatorFormRequest->currentUserId, Constants::ROLE_INVESTIGATOR, $studyName, $modifyInvestigatorFormRequest->visitId, Constants::TRACKER_MODIFY_INVESTIGATOR_FORM, $actionDetails);
 
+            $modifyInvestigatorFormResponse->body = ['id' => $localReviewId];
             $modifyInvestigatorFormResponse->status = 200;
             $modifyInvestigatorFormResponse->statusText =  'OK';
 
