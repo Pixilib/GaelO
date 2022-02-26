@@ -68,7 +68,6 @@ class VisitTreeService
     {
 
         $patientsIdArray = array_keys($patientsIdCodeArray);
-        $patientsCodeArray = array_values($patientsIdCodeArray);
         $patientVisitsArray = [];
 
         //If Reviewer need to add review status for tree selections
