@@ -2,31 +2,42 @@
 
 namespace App\GaelO\UseCases\GetVisitsTree;
 
+use App\GaelO\Constants\Constants;
+use App\GaelO\Exceptions\GaelOBadRequestException;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
+use App\GaelO\Interfaces\Adapters\FrameworkInterface;
 use App\GaelO\Services\AuthorizationService\AuthorizationStudyService;
-use App\GaelO\Services\VisitTreeService;
+use App\GaelO\Services\TreeService\AbstractTreeService;
 use Exception;
 
 class GetVisitsTree {
 
     private AuthorizationStudyService $authorizationStudyService;
-    private VisitTreeService $visitTreeService;
+    private FrameworkInterface $frameworkInterface;
+    private AbstractTreeService $abstractTreeService;
 
-    public function __construct( AuthorizationStudyService $authorizationStudyService, VisitTreeService $visitTreeService )
+    public function __construct( AuthorizationStudyService $authorizationStudyService, FrameworkInterface $frameworkInterface )
     {
         $this->authorizationStudyService = $authorizationStudyService;
-        $this->visitTreeService = $visitTreeService;
+        $this->frameworkInterface = $frameworkInterface;
     }
 
     public function execute(GetVisitsTreeRequest $getVisitsTreeRequest, GetVisitsTreeResponse $getVisitsTreeResponse){
 
         try{
 
-            $this->checkAuthorization($getVisitsTreeRequest->currentUserId, $getVisitsTreeRequest->studyName, $getVisitsTreeRequest->role);
+            $role = $getVisitsTreeRequest->role;
 
-            $this->visitTreeService->setUserAndStudy($getVisitsTreeRequest->currentUserId, $getVisitsTreeRequest->role, $getVisitsTreeRequest->studyName);
-            $tree = $this->visitTreeService->buildTree();
+            if(!in_array($role, [Constants::ROLE_INVESTIGATOR, Constants::ROLE_MONITOR, Constants::ROLE_CONTROLLER, Constants::ROLE_REVIEWER])){
+                throw new GaelOBadRequestException('Unavailable Role');
+            }
+
+            $this->checkAuthorization($getVisitsTreeRequest->currentUserId, $getVisitsTreeRequest->studyName, $role);
+
+            $this->abstractTreeService = $this->frameworkInterface->make('\App\GaelO\Services\TreeService\\' . $role . 'TreeService');
+            $this->abstractTreeService->setUserAndStudy($getVisitsTreeRequest->currentUserId, $role, $getVisitsTreeRequest->studyName);
+            $tree = $this->abstractTreeService->buildTree();
 
             $getVisitsTreeResponse->body = $tree;
             $getVisitsTreeResponse->status = 200;

@@ -2,6 +2,8 @@
 
 namespace App\GaelO\Services\TreeService;
 
+use App\GaelO\Constants\Constants;
+
 class TreeItem {
 
     public int $id;
@@ -22,6 +24,7 @@ class TreeItem {
 
 
     //SK A VOIR SI CETTE ENTITY EST VRAIMENT DIFFERENTE DE L ENTITY VISITE
+    //SK PEUT UTILISER VISIT ENTITY A LA PLACE!
     public static function createItem(array $visitEntity) : TreeItem {
 
         $treeItem = new TreeItem();
@@ -39,7 +42,7 @@ class TreeItem {
         $treeItem->visitTypeId = $visitEntity['visit_type']['id'];
         $treeItem->visitGroupId = $visitEntity['visit_type']['visit_group']['id'];
         $treeItem->patientId = $visitEntity['patient_id'];
-        $treeItem->reviewStatus = array_key_exists('review_status', $visitEntity) ? $visitEntity['review_status']['review_status'] : null;
+        $treeItem->reviewStatus = array_key_exists('review_status', $visitEntity) ? $visitEntity['review_status']['review_status'] : Constants::REVIEW_STATUS_NOT_DONE;
 
         return $treeItem;
     }

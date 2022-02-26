@@ -46,7 +46,7 @@ abstract class AbstractTreeService {
         }
 
         foreach ($visitsArray as $visitObject) {
-            $visitsFormattedData = TreeItem::createItem($visitObject);
+            $visitsFormattedData = (array) TreeItem::createItem($visitObject);
             $responseArray['visits'][] = $visitsFormattedData;
         }
 
