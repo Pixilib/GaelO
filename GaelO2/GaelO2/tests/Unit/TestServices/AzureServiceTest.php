@@ -2,8 +2,8 @@
 
 namespace Tests\Unit\TestServices;
 
+use App\GaelO\Services\GaelOProcessingService\AzureService;
 use Tests\TestCase;
-use App\GaelO\Services\AzureService;
 use Illuminate\Support\Facades\App;
 
 class AzureServiceTest extends TestCase

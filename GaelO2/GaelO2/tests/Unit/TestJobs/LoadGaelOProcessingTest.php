@@ -2,8 +2,8 @@
 
 namespace Tests\Unit\TestJobs;
 
+use App\GaelO\Services\GaelOProcessingService\AzureService;
 use App\Jobs\LoadGaelOProcessing;
-use App\GaelO\Services\AzureService;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Log;

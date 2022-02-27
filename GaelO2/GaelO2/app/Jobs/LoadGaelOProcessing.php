@@ -2,7 +2,7 @@
 
 namespace App\Jobs;
 
-use App\GaelO\Services\AzureService;
+use App\GaelO\Services\GaelOProcessingService\AzureService;
 use App\Jobs\JobGaelOProcessing;
 use Illuminate\Bus\Batch;
 use Illuminate\Bus\Queueable;

@@ -1,15 +1,14 @@
 <?php
 
-namespace App\GaelO\Services;
+namespace App\GaelO\Services\GaelOProcessingService;
 
-use App\GaelO\Services\TokenService;
 use App\GaelO\Interfaces\Adapters\HttpClientInterface;
 use App\GaelO\Interfaces\Adapters\FrameworkInterface;
 use App\GaelO\Constants\SettingsConstants;
 
 class AzureService
 {
-    private TokenService $tokenService;
+    private AzureTokenService $azureTokenService;
     private HttpClientInterface $httpClientInterface;
     private FrameworkInterface $frameworkInterface;
 
@@ -22,9 +21,9 @@ class AzureService
      * Interact with Container Group (Azure Container Instances)
      * https://docs.microsoft.com/fr-fr/rest/api/container-instances/
      */
-    public function __construct(HttpClientInterface $httpClientInterface, TokenService $tokenService, FrameworkInterface $frameworkInterface)
+    public function __construct(HttpClientInterface $httpClientInterface, AzureTokenService $azureTokenService, FrameworkInterface $frameworkInterface)
     {
-        $this->tokenService = $tokenService;
+        $this->azureTokenService = $azureTokenService;
         $this->httpClientInterface = $httpClientInterface;
         $this->frameworkInterface = $frameworkInterface;
         $this->setServerAddress();
@@ -32,7 +31,7 @@ class AzureService
 
     private function setAccessToken(): void
     {
-        $authorizationToken = $this->tokenService->getToken();
+        $authorizationToken = $this->azureTokenService->getToken();
         $this->httpClientInterface->setAuthorizationToken($authorizationToken);
     }
 

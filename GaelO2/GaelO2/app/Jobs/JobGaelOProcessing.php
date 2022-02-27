@@ -2,7 +2,7 @@
 
 namespace App\Jobs;
 
-use App\GaelO\Services\GaelOProcessingService;
+use App\GaelO\Services\GaelOProcessingService\GaelOProcessingService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
