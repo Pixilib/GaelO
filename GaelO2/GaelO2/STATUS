@@ -22,6 +22,8 @@ Entity :
 => GetPossibleUpload => VisitEntity ?
 => GetReviewProgression => Visit + Review_status + Progression entity?
 
+=> utiliser les entity en sortie de repository ? et dissocier la lecture de l'entity de l'output ?
+
 
 ---- /Refactoring Backend ------
 
@@ -29,12 +31,9 @@ Entity :
 
 Ne doit pas pouvoir faire les relance d'upload => Voir avec Emilie
 Adapter les points de lecture :
+GetVisitTree => Prendre data de etude originale (Accessible que pour role reviewer si ancillary study)
 GetDicomFileSupervisor => Passe par les seriesUID mais le RBAC doit autoriser les etude ancillaire
 GetVisitsFromVisitType => Prendre data de etude original => passer a query tag sur getVisitFrom Study ? Evaluer pertinence ?
-GetVisitTree => Prendre data de etude originale
-
-=> Reste avoir Study Service pour limiter les fonctionalité des etudes ancillaires
-
 --- /Etudes ancillaires ---
 
 **** Tests ***
