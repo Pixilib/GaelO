@@ -11,7 +11,6 @@ use App\GaelO\UseCases\GetPatientFromStudy\GetPatientFromStudyResponse;
 use App\GaelO\Entities\PatientEntity;
 use App\GaelO\Interfaces\Repositories\StudyRepositoryInterface;
 use App\GaelO\Services\AuthorizationService\AuthorizationStudyService;
-use App\GaelO\Services\StudyService;
 use Exception;
 
 class GetPatientFromStudy {
@@ -19,18 +18,15 @@ class GetPatientFromStudy {
     private PatientRepositoryInterface $patientRepositoryInterface;
     private StudyRepositoryInterface $studyRepositoryInterface;
     private AuthorizationStudyService $authorizationStudyService;
-    private StudyService $studyService;
 
     public function __construct(
         PatientRepositoryInterface $patientRepositoryInterface,
         AuthorizationStudyService $authorizationStudyService,
-        StudyRepositoryInterface $studyRepositoryInterface,
-        StudyService $studyService
+        StudyRepositoryInterface $studyRepositoryInterface
         ){
         $this->patientRepositoryInterface = $patientRepositoryInterface;
         $this->studyRepositoryInterface = $studyRepositoryInterface;
         $this->authorizationStudyService = $authorizationStudyService;
-        $this->studyService = $studyService;
     }
 
     public function execute(GetPatientFromStudyRequest $patientRequest, GetPatientFromStudyResponse $patientResponse) : void
@@ -43,8 +39,7 @@ class GetPatientFromStudy {
 
             //Get Patient from Original Study Name if Ancillary Study
             $studyEntity = $this->studyRepositoryInterface->find($studyName);
-            $this->studyService->setStudyEntity($studyEntity);
-            $originalStudyName = $this->studyService->getOriginalStudyName();
+            $originalStudyName = $studyEntity->getOriginalStudyName();
 
             $patientsDbEntities = $this->patientRepositoryInterface->getPatientsInStudy($originalStudyName);
             $responseArray = [];
@@ -79,5 +74,3 @@ class GetPatientFromStudy {
 
 
 }
-
-?>

@@ -3,11 +3,12 @@
 namespace App\GaelO\Services\AuthorizationService;
 
 use App\GaelO\Constants\Constants;
+use App\GaelO\Entities\StudyEntity;
 use App\GaelO\Interfaces\Repositories\StudyRepositoryInterface;
 class AuthorizationStudyService
 {
     private string $studyName;
-    private array $studyData;
+    private StudyEntity $studyEntity;
     private StudyRepositoryInterface $studyRepositoryInterface;
     private AuthorizationUserService $authorizationUserService;
 
@@ -19,32 +20,21 @@ class AuthorizationStudyService
     public function setStudyName(string $studyName) : void
     {
         $this->studyName = $studyName;
+        $this->studyEntity = $this->studyRepositoryInterface->find($this->studyName);
     }
 
     public function setUserId(int $userId) : void {
         $this->authorizationUserService->setUserId($userId);
     }
 
-    private function fillStudyData(){
-        if( ! isset($this->studyData) ) $this->studyData = $this->studyRepositoryInterface->find($this->studyName);
-    }
-
-
-    public function isAncillaryStudy(): bool
+    public function getStudyEntity(): StudyEntity
     {
-        $this->fillStudyData();
-        return $this->studyData['ancillary_of'] == null ? false : true;
-    }
-
-    public function isAncillaryStudyOf(String $studyName): bool
-    {
-        $this->fillStudyData();
-        return $this->studyData['ancillary_of'] === $studyName ? true : false;
+        return $this->studyEntity;
     }
 
     public function isAllowedStudy(string $requestedRole) : bool {
 
-        if ( $this->isAncillaryStudy() ) {
+        if ( $this->studyEntity->isAncillaryStudy() ) {
             //For Ancillaries studies only Reviewer and Supervisor role are allowed
             if( ! in_array($requestedRole, array(Constants::ROLE_REVIEWER, Constants::ROLE_SUPERVISOR))) return false;
         }

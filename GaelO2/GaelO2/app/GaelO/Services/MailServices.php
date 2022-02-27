@@ -55,7 +55,7 @@ class MailServices
 
     private function getStudyContactEmail(string $studyName) : string {
         $studyEntity = $this->studyRepositoryInterface->find($studyName);
-        return $studyEntity['contact_email'];
+        return $studyEntity->contactEmail;
     }
 
     public function sendRequestMessage(string $name, string $email, string $center, string $request): void

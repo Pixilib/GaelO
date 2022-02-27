@@ -75,7 +75,7 @@ class ImportPatients
 
             $this->trackerRepositoryInterface->writeAction($currentUserId, Constants::TRACKER_IMPORT_PATIENT, $studyName, null, Constants::TRACKER_IMPORT_PATIENT, $actionDetails);
 
-            $this->mailService->sendImportPatientMessage($studyName, $studyEntity['contact_email'], $this->importPatient->successList, $this->importPatient->failList);
+            $this->mailService->sendImportPatientMessage($studyName, $studyEntity->contactEmail, $this->importPatient->successList, $this->importPatient->failList);
         } catch (GaelOException $e) {
 
             $importPatientsResponse->body = $e->getErrorBody();
@@ -90,7 +90,7 @@ class ImportPatients
     {
         $this->authorizationStudyService->setUserId($userId);
         $this->authorizationStudyService->setStudyName($studyName);
-        if ($this->authorizationStudyService->isAncillaryStudy() ) {
+        if ($this->authorizationStudyService->getStudyEntity()->isAncillaryStudy() ) {
             throw new GaelOForbiddenException("Forbidden for ancillaries study");
         };
         if (!$this->authorizationStudyService->isAllowedStudy(Constants::ROLE_SUPERVISOR)) {

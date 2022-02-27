@@ -2,6 +2,7 @@
 
 namespace App\GaelO\Repositories;
 
+use App\GaelO\Entities\StudyEntity;
 use App\Models\Study;
 use App\GaelO\Interfaces\Repositories\StudyRepositoryInterface;
 use Exception;
@@ -14,8 +15,9 @@ class StudyRepository implements StudyRepositoryInterface {
         $this->study = $study;
     }
 
-    public function find($name) : array {
-        return $this->study->findOrFail($name)->toArray();
+    public function find($name) : StudyEntity {
+        $studyInfoArray= $this->study->findOrFail($name)->toArray();
+        return StudyEntity::fillFromDBReponseArray($studyInfoArray);
     }
 
     public function delete($name) : void {

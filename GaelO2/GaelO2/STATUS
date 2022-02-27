@@ -18,9 +18,10 @@ et devrait pouvoir recuperer des info soit via le useQuery soit via un localstor
 ---- Refactoring Backend ----
 Entity :
 - Pluger toutes les reponses "data" sur ces entity response
+=> GetVisitTree => A pluger avec Visit Entity
 => GetPossibleUpload => VisitEntity ?
 => GetReviewProgression => Visit + Review_status + Progression entity?
-=> GetVisitTree => ?, visit ?
+
 
 ---- /Refactoring Backend ------
 
@@ -30,7 +31,7 @@ Ne doit pas pouvoir faire les relance d'upload => Voir avec Emilie
 Adapter les points de lecture :
 GetDicomFileSupervisor => Passe par les seriesUID mais le RBAC doit autoriser les etude ancillaire
 GetVisitsFromVisitType => Prendre data de etude original => passer a query tag sur getVisitFrom Study ? Evaluer pertinence ?
-GetVisitTree => Prendre data de etude original
+GetVisitTree => Prendre data de etude originale
 
 => Reste avoir Study Service pour limiter les fonctionalité des etudes ancillaires
 

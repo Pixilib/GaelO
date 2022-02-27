@@ -2,9 +2,11 @@
 
 namespace App\GaelO\Interfaces\Repositories;
 
+use App\GaelO\Entities\StudyEntity;
+
 interface StudyRepositoryInterface {
 
-    public function find($name) : array ;
+    public function find($name) : StudyEntity ;
 
     public function delete($name) : void ;
 

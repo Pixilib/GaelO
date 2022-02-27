@@ -2,6 +2,7 @@
 
 namespace App\GaelO\Services;
 
+use App\GaelO\Entities\StudyEntity;
 use App\GaelO\Exceptions\GaelOBadRequestException;
 use App\GaelO\Interfaces\Repositories\CenterRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\PatientRepositoryInterface;
@@ -13,7 +14,7 @@ class ImportPatientService
 
     private int $patientCodeLength;
     private array $existingPatientNumber;
-    private array $studyEntity;
+    private StudyEntity $studyEntity;
     private PatientRepositoryInterface $patientRepository;
     private CenterRepositoryInterface $centerRepository;
 
@@ -37,14 +38,14 @@ class ImportPatientService
         $this->studyName = $studyName;
     }
 
-    public function setStudyEntity(array $study) : void {
-        $this->studyEntity = $study;
+    public function setStudyEntity(StudyEntity $studyEntity) : void {
+        $this->studyEntity = $studyEntity;
     }
 
 	public function import() {
 
-        $this->patientCodeLength = $this->studyEntity['patient_code_length'];
-        $this->existingPatientNumber = $this->patientRepository->getAllPatientsNumberInStudy($this->studyEntity['name']);
+        $this->patientCodeLength = $this->studyEntity->patientCodeLength;
+        $this->existingPatientNumber = $this->patientRepository->getAllPatientsNumberInStudy($this->studyEntity->name);
 
         $allCenters = $this->centerRepository->getAll();
         //Store array of all existing centers code
@@ -65,7 +66,7 @@ class ImportPatientService
                 $this->checkCurrentStudy($patientEntity['studyName'], $this->studyName);
 
                 //Store the patient result import process in this object
-                $this->patientRepository->addPatientInStudy($this->studyEntity['code'].$patientEntity['code'], $patientEntity['code'],
+                $this->patientRepository->addPatientInStudy($this->studyEntity->code.$patientEntity['code'], $patientEntity['code'],
                     $patientEntity['lastname'], $patientEntity['firstname'], $patientEntity['gender'],
                     $patientEntity['birthDay'], $patientEntity['birthMonth'], $patientEntity['birthYear'],$patientEntity['registrationDate'],$patientEntity['investigatorName'], $patientEntity['centerCode'], $this->studyName
                 );

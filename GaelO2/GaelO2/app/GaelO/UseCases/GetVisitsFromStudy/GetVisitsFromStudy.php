@@ -9,7 +9,6 @@ use App\GaelO\Interfaces\Repositories\StudyRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
 use App\GaelO\Entities\VisitEntity;
 use App\GaelO\Services\AuthorizationService\AuthorizationStudyService;
-use App\GaelO\Services\StudyService;
 use Exception;
 
 class GetVisitsFromStudy
@@ -18,18 +17,15 @@ class GetVisitsFromStudy
     private VisitRepositoryInterface $visitRepositoryInterface;
     private StudyRepositoryInterface $studyRepositoryInterface;
     private AuthorizationStudyService $authorizationStudyService;
-    private StudyService $studyService;
 
     public function __construct(
         VisitRepositoryInterface $visitRepositoryInterface,
         StudyRepositoryInterface $studyRepositoryInterface,
-        AuthorizationStudyService $authorizationStudyService,
-        StudyService $studyService)
+        AuthorizationStudyService $authorizationStudyService)
     {
         $this->visitRepositoryInterface = $visitRepositoryInterface;
         $this->studyRepositoryInterface = $studyRepositoryInterface;
         $this->authorizationStudyService = $authorizationStudyService;
-        $this->studyService = $studyService;
     }
 
     public function execute(GetVisitsFromStudyRequest $getVisitsFromStudyRequest, GetVisitsFromStudyResponse $getVisitsFromStudyResponse)
@@ -43,8 +39,7 @@ class GetVisitsFromStudy
 
             //Get Original Study name for ancilaries studies
             $studyEntity = $this->studyRepositoryInterface->find($studyName);
-            $this->studyService->setStudyEntity($studyEntity);
-            $originalStudyName = $this->studyService->getOriginalStudyName($studyEntity);
+            $originalStudyName = $studyEntity->getOriginalStudyName($studyEntity);
 
             $dbData = $this->visitRepositoryInterface->getVisitsInStudy($originalStudyName, true, false);
             $responseArray = [];

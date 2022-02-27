@@ -30,6 +30,7 @@ class GetDicomFileSupervisorTest extends TestCase
 
         $authorizationServiceMock = $this->partialMock(AuthorizationStudyService::class, function (MockInterface $mock) {
             $mock->shouldReceive('setUserId')->andReturn(null);
+            $mock->shouldReceive('setStudyName')->andReturn(null);
             $mock->shouldReceive('isAllowedStudy')->andReturn(true);
         });
 
@@ -52,7 +53,7 @@ class GetDicomFileSupervisorTest extends TestCase
 
 
 
-        $this->instance(AuthorizationUserService::class, $authorizationServiceMock);
+        $this->instance(AuthorizationStudyService::class, $authorizationServiceMock);
         $this->instance(DicomSeriesRepositoryInterface::class, $dicomRepositoryMock);
         $this->instance(OrthancService::class, $orthancServiceMock);
         $this->instance(VisitRepository::class, $visitRepositoryMock);

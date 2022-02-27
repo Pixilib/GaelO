@@ -21,4 +21,19 @@ class StudyEntity {
 
         return $studyEntity;
     }
+
+    public function isAncillaryStudy(): bool
+    {
+        return $this->ancillaryOf == null ? false : true;
+    }
+
+    public function isAncillaryStudyOf(String $studyName): bool
+    {
+        return $this->ancillaryOf === $studyName ? true : false;
+    }
+
+    public function getOriginalStudyName() : string {
+        if ($this->ancillaryOf) return $this->ancillaryOf;
+        else return $this->name;
+    }
 }

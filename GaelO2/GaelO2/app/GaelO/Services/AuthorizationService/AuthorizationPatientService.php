@@ -48,9 +48,9 @@ class AuthorizationPatientService {
     {
         $this->fillPatientData();
 
-        if (  $this->authorizationStudyService->isAncillaryStudy() ) {
+        if (  $this->authorizationStudyService->getStudyEntity()->isAncillaryStudy() ) {
             //Reject if requested ancillary study is not ancillary of the orginal patient study
-            if( ! $this->authorizationStudyService->isAncillaryStudyOf($this->patientStudy) ) return false;
+            if( ! $this->authorizationStudyService->getStudyEntity()->isAncillaryStudyOf($this->patientStudy) ) return false;
         }
 
         if ($requestedRole === Constants::ROLE_INVESTIGATOR) {
