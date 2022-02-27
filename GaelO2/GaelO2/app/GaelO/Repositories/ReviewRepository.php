@@ -173,5 +173,4 @@ class ReviewRepository implements ReviewRepositoryInterface
         return $answer->count() === 0 ? [] : $answer->toArray();
     }
 
-    //SK FAIRE UPDATE ASSOCIATED FILE
 }
