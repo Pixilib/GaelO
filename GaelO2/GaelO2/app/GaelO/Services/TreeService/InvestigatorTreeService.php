@@ -13,8 +13,8 @@ class InvestigatorTreeService extends AbstractTreeService
     public function buildTree(): array
     {
         //retrieve from DB the patient's list of the requested study and included in user's center or affiliated centers
-        $userCentersArray = $this->userRepository->getAllUsersCenters($this->userId);
-        $patientsArray = $this->patientRepository->getPatientsInStudyInCenters($this->studyName, $userCentersArray);
+        $userCentersArray = $this->userRepositoryInterface->getAllUsersCenters($this->userId);
+        $patientsArray = $this->patientRepositoryInterface->getPatientsInStudyInCenters($this->studyEntity->name, $userCentersArray);
 
         $patientIdArray = [];
         foreach ($patientsArray as $patientEntity) {
@@ -22,7 +22,7 @@ class InvestigatorTreeService extends AbstractTreeService
         }
 
         $patientsIdArray = array_keys($patientIdArray);
-        $patientVisitsArray = $this->visitRepository->getPatientListVisitsWithContext($patientsIdArray);
+        $patientVisitsArray = $this->visitRepositoryInterface->getPatientListVisitsWithContext($patientsIdArray);
 
 
         return $this->makeTreeFromVisits($patientVisitsArray);

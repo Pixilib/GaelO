@@ -243,6 +243,22 @@ class VisitRepository implements VisitRepositoryInterface
         return $answer->count() === 0 ? []  : $answer->toArray();
     }
 
+    public function getVisitsInStudyNeedingQualityControl(string $studyName): array
+    {
+
+        $answer = $this->visit->with('visitType')
+            ->whereHas('patient', function ($query) use ($studyName) {
+                $query->where('study_name', $studyName);
+            })
+            ->where('status_done', Constants::VISIT_STATUS_DONE)
+            ->where('upload_status', Constants::UPLOAD_STATUS_DONE)
+            ->whereIn('state_investigator_form', [Constants::INVESTIGATOR_FORM_NOT_NEEDED, Constants::INVESTIGATOR_FORM_DONE])
+            ->where('state_quality_control', '!=',  Constants::QUALITY_CONTROL_NOT_NEEDED)
+            ->get();
+
+        return $answer->count() === 0 ? []  : $answer->toArray();
+    }
+
 
     public function getVisitsAwaitingReviews(string $studyName): array
     {

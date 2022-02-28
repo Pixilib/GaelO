@@ -3,7 +3,9 @@
 namespace Tests\Unit\TestServices;
 
 use App\GaelO\Constants\Constants;
+use App\GaelO\Entities\StudyEntity;
 use App\GaelO\Repositories\PatientRepository;
+use App\GaelO\Repositories\StudyRepository;
 use App\GaelO\Repositories\UserRepository;
 use App\GaelO\Repositories\VisitRepository;
 use App\GaelO\Services\TreeService\ControllerTreeService;
@@ -104,9 +106,24 @@ class VisitTreeTest extends TestCase
             ->andReturn([['id' => 32, 'code' => 54]]);
         $patientRepository->shouldReceive('getPatientsFromIdArray');
 
+        $studyRepository = Mockery::mock(StudyRepository::class);
+        $studyRepository->shouldReceive('find')
+            ->andReturn(StudyEntity::fillFromDBReponseArray([
+                'name' => 'test',
+                'code' => 1234,
+                'patient_code_length' => 14,
+                'contact_email' => 'sa@sa.fr',
+                'controller_show_all' => false,
+                'monitor_show_all' => false,
+                'ancillary_of' => null,
+                'deleted_at' => null
+            ]));
+
+
         $this->instance(VisitRepository::class, $mockVisitRepository);
         $this->instance(UserRepository::class, $mockUserRepository);
         $this->instance(PatientRepository::class, $patientRepository);
+        $this->instance(StudyRepository::class, $studyRepository);
 
     }
 
@@ -129,8 +146,9 @@ class VisitTreeTest extends TestCase
     {
         $treeService = new MonitorTreeService(
             App::make(UserRepository::class),
+            App::make(StudyRepository::class),
             App::make(PatientRepository::class),
-            App::make(VisitRepository::class),
+            App::make(VisitRepository::class)
         );
 
         $treeService->setUserAndStudy(1, 'test');
@@ -142,8 +160,9 @@ class VisitTreeTest extends TestCase
     {
         $treeService = new ControllerTreeService(
             App::make(UserRepository::class),
+            App::make(StudyRepository::class),
             App::make(PatientRepository::class),
-            App::make(VisitRepository::class),
+            App::make(VisitRepository::class)
         );
         $treeService->setUserAndStudy(1, 'test');
         $tree = $treeService->buildTree();
@@ -154,8 +173,9 @@ class VisitTreeTest extends TestCase
     {
         $treeService = new InvestigatorTreeService(
             App::make(UserRepository::class),
+            App::make(StudyRepository::class),
             App::make(PatientRepository::class),
-            App::make(VisitRepository::class),
+            App::make(VisitRepository::class)
         );
         $treeService->setUserAndStudy(1, 'test');
         $tree = $treeService->buildTree();
@@ -167,8 +187,9 @@ class VisitTreeTest extends TestCase
     {
         $treeService = new ReviewerTreeService(
             App::make(UserRepository::class),
+            App::make(StudyRepository::class),
             App::make(PatientRepository::class),
-            App::make(VisitRepository::class),
+            App::make(VisitRepository::class)
         );
         $treeService->setUserAndStudy(1, 'test');
         $tree = $treeService->buildTree();

@@ -3,10 +3,13 @@
 namespace App\GaelO\Entities;
 
 class StudyEntity {
+
     public string $name;
     public string $code;
     public int $patientCodeLength;
     public string $contactEmail;
+    public bool $controllerShowAll;
+    public bool $monitorShowAll;
     public bool $deleted;
     public ?string $ancillaryOf;
 
@@ -16,6 +19,8 @@ class StudyEntity {
         $studyEntity->code = $array['code'];
         $studyEntity->patientCodeLength = $array['patient_code_length'];
         $studyEntity->contactEmail = $array['contact_email'];
+        $studyEntity->controllerShowAll = $array['controller_show_all'];
+        $studyEntity->monitorShowAll = $array['monitor_show_all'];
         $studyEntity->ancillaryOf = $array['ancillary_of'];
         $studyEntity->deleted = $array['deleted_at'] !== null;
 

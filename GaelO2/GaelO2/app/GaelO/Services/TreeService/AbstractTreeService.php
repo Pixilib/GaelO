@@ -2,33 +2,36 @@
 
 namespace App\GaelO\Services\TreeService;
 
-use App\GaelO\Repositories\PatientRepository;
-use App\GaelO\Repositories\UserRepository;
-use App\GaelO\Repositories\VisitRepository;
+use App\GaelO\Entities\StudyEntity;
+use App\GaelO\Interfaces\Repositories\PatientRepositoryInterface;
+use App\GaelO\Interfaces\Repositories\StudyRepositoryInterface;
+use App\GaelO\Interfaces\Repositories\UserRepositoryInterface;
+use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
 
 abstract class AbstractTreeService {
 
     protected string $role;
     protected int $userId;
-    protected string $studyName;
-    protected PatientRepository $patientRepository;
-    protected VisitRepository $visitRepository;
-    protected UserRepository $userRepository;
+    protected StudyEntity $studyEntity;
+    protected PatientRepositoryInterface $patientRepositoryInterface;
+    protected VisitRepositoryInterface $visitRepositoryInterface;
+    protected UserRepositoryInterface $userRepositoryInterface;
+    protected StudyRepositoryInterface $studyRepositoryInterface;
 
-    public function __construct(UserRepository $userRepository, PatientRepository $patientRepository, VisitRepository $visitRepository)
+    public function __construct(UserRepositoryInterface $userRepositoryInterface, StudyRepositoryInterface $studyRepositoryInterface, PatientRepositoryInterface $patientRepositoryInterface, VisitRepositoryInterface $visitRepositoryInterface)
     {
-        $this->patientRepository = $patientRepository;
-        $this->userRepository = $userRepository;
-        $this->visitRepository = $visitRepository;
+        $this->patientRepositoryInterface = $patientRepositoryInterface;
+        $this->userRepositoryInterface = $userRepositoryInterface;
+        $this->visitRepositoryInterface = $visitRepositoryInterface;
+        $this->studyRepositoryInterface = $studyRepositoryInterface;
     }
 
     public function setUserAndStudy(int $userId, string $studyName)
     {
         $this->userId = $userId;
-        $this->studyName = $studyName;
+        $this->studyEntity = $this->studyRepositoryInterface->find($studyName);
     }
 
-    //SK ICI A REFACTORER LES VISIT ARRAY DEVRAIENT AVOIR LE PATIENT PARRENT DEDANS
     protected function makeTreeFromVisits(array $visitsArray): array
     {
 
@@ -40,7 +43,7 @@ abstract class AbstractTreeService {
             return $visit['patient_id'];
         }, $visitsArray));
 
-        $patientsArray = $this->patientRepository->getPatientsFromIdArray($patientIdsArray);
+        $patientsArray = $this->patientRepositoryInterface->getPatientsFromIdArray($patientIdsArray);
         foreach($patientsArray as $patientEntity) {
             $responseArray['patients'][$patientEntity['id']] = $patientEntity['code'];
         }
