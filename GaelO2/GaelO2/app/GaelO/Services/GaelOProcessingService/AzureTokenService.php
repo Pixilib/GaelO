@@ -1,12 +1,12 @@
 <?php
 
-namespace App\GaelO\Services;
+namespace App\GaelO\Services\GaelOProcessingService;
 
 use App\GaelO\Constants\SettingsConstants;
 use App\GaelO\Interfaces\Adapters\FrameworkInterface;
 use App\GaelO\Interfaces\Adapters\HttpClientInterface;
 
-class TokenService
+class AzureTokenService
 {
     public int $expiresOn = 0;
     public string $token;

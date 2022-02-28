@@ -5,5 +5,6 @@
     Patient Number : {{$patientId}}<br>
     Study : {{$study}}<br>
     Visit Type : {{$visitType}}<br>
+    Reason for Not Done Visit : {{$notDoneReason}}<br>
     Creating Username : {{$creatorUser}}<br>
 @endsection

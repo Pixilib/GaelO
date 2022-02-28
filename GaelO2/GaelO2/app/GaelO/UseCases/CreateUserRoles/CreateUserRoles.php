@@ -35,7 +35,7 @@ class CreateUserRoles {
             $actualRolesArray = $this->userRepositoryInterface->getUsersRolesInStudy($createRoleRequest->userId, $createRoleRequest->studyName);
             $studyEntity = $this->studyRepositoryInterface->find($createRoleRequest->studyName);
 
-            if( $studyEntity['ancillary_of'] && ! in_array($createRoleRequest->role, [Constants::ROLE_SUPERVISOR, Constants::ROLE_REVIEWER]) ){
+            if( $studyEntity->isAncillaryStudy() && ! in_array($createRoleRequest->role, [Constants::ROLE_SUPERVISOR, Constants::ROLE_REVIEWER]) ){
                 throw new GaelOForbiddenException("For an ancillary study only reviewer and supervisor role are allowed");
             }
 

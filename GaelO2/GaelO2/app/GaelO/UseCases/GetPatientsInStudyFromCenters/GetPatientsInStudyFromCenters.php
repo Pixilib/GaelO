@@ -11,7 +11,6 @@ use App\GaelO\UseCases\GetPatientsInStudyFromCenters\GetPatientsInStudyFromCente
 use App\GaelO\Entities\PatientEntity;
 use App\GaelO\Interfaces\Repositories\StudyRepositoryInterface;
 use App\GaelO\Services\AuthorizationService\AuthorizationStudyService;
-use App\GaelO\Services\StudyService;
 use Exception;
 
 class GetPatientsInStudyFromCenters {
@@ -19,18 +18,15 @@ class GetPatientsInStudyFromCenters {
     private PatientRepositoryInterface $patientRepositoryInterface;
     private StudyRepositoryInterface $studyRepositoryInterface;
     private AuthorizationStudyService $authorizationStudyService;
-    private StudyService $studyService;
 
     public function __construct(
         PatientRepositoryInterface $patientRepositoryInterface,
         StudyRepositoryInterface $studyRepositoryInterface,
-        AuthorizationStudyService $authorizationStudyService,
-        StudyService $studyService
+        AuthorizationStudyService $authorizationStudyService
         ){
         $this->patientRepositoryInterface = $patientRepositoryInterface;
         $this->studyRepositoryInterface = $studyRepositoryInterface;
         $this->authorizationStudyService = $authorizationStudyService;
-        $this->studyService = $studyService;
     }
 
     public function execute(GetPatientsInStudyFromCentersRequest $getPatientsInStudyFromCentersRequest, GetPatientsInStudyFromCentersResponse $getPatientsInStudyFromCentersResponse) : void
@@ -44,8 +40,7 @@ class GetPatientsInStudyFromCenters {
 
             //Get Patient from Original Study Name if Ancillary Study
             $studyEntity = $this->studyRepositoryInterface->find($studyName);
-            $this->studyService->setStudyEntity($studyEntity);
-            $originalStudyName = $this->studyService->getOriginalStudyName();
+            $originalStudyName = $studyEntity->getOriginalStudyName();
 
             $responseArray = [];
             $patientsDbEntities = $this->patientRepositoryInterface->getPatientsInStudyInCenters($originalStudyName, $centerCodes);

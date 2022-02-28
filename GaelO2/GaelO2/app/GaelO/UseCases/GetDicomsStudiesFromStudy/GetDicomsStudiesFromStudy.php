@@ -11,7 +11,6 @@ use App\GaelO\Entities\DicomSeriesEntity;
 use App\GaelO\Entities\DicomStudyEntity;
 use App\GaelO\Interfaces\Repositories\StudyRepositoryInterface;
 use App\GaelO\Services\AuthorizationService\AuthorizationStudyService;
-use App\GaelO\Services\StudyService;
 use Exception;
 
 class GetDicomsStudiesFromStudy
@@ -20,21 +19,18 @@ class GetDicomsStudiesFromStudy
     private AuthorizationStudyService $authorizationStudyService;
     private VisitRepositoryInterface $visitRepositoryInterface;
     private DicomStudyRepositoryInterface $dicomStudyRepositoryInterface;
-    private StudyService $studyService;
     private StudyRepositoryInterface $studyRepositoryInterface;
 
     public function __construct(
         AuthorizationStudyService $authorizationStudyService,
         VisitRepositoryInterface $visitRepositoryInterface,
         DicomStudyRepositoryInterface $dicomStudyRepositoryInterface,
-        StudyRepositoryInterface $studyRepositoryInterface,
-        StudyService $studyService
+        StudyRepositoryInterface $studyRepositoryInterface
     ) {
         $this->authorizationStudyService = $authorizationStudyService;
         $this->visitRepositoryInterface = $visitRepositoryInterface;
         $this->dicomStudyRepositoryInterface = $dicomStudyRepositoryInterface;
         $this->studyRepositoryInterface = $studyRepositoryInterface;
-        $this->studyService = $studyService;
     }
 
     public function execute(GetDicomsStudiesFromStudyRequest $getDicomsStudiesFromStudyRequest, GetDicomsStudiesFromStudyResponse $getDicomsStudiesFromStudyResponse)
@@ -47,8 +43,7 @@ class GetDicomsStudiesFromStudy
 
             //Retrieve study information, in case being an ancillary study we need to retrieve original study dicom
             $studyEntity = $this->studyRepositoryInterface->find($studyName);
-            $this->studyService->setStudyEntity($studyEntity);
-            $originalStudyName = $this->studyService->getOriginalStudyName();
+            $originalStudyName = $studyEntity->getOriginalStudyName();
 
             //Get Visits in the asked study
             $visits = $this->visitRepositoryInterface->getVisitsInStudy($originalStudyName, false, false);

@@ -6,7 +6,10 @@ use App\GaelO\Constants\Constants;
 use App\GaelO\Repositories\PatientRepository;
 use App\GaelO\Repositories\UserRepository;
 use App\GaelO\Repositories\VisitRepository;
-use App\GaelO\Services\VisitTreeService;
+use App\GaelO\Services\TreeService\ControllerTreeService;
+use App\GaelO\Services\TreeService\InvestigatorTreeService;
+use App\GaelO\Services\TreeService\MonitorTreeService;
+use App\GaelO\Services\TreeService\ReviewerTreeService;
 use Illuminate\Support\Facades\App;
 use Mockery;
 use Tests\TestCase;
@@ -104,11 +107,7 @@ class VisitTreeTest extends TestCase
         $this->instance(VisitRepository::class, $mockVisitRepository);
         $this->instance(UserRepository::class, $mockUserRepository);
         $this->instance(PatientRepository::class, $patientRepository);
-        $this->treeService = new VisitTreeService(
-            App::make(UserRepository::class),
-            App::make(PatientRepository::class),
-            App::make(VisitRepository::class),
-        );
+
     }
 
     private function doAssertionOnContent($treeAnswer, bool $withReviewStatus)
@@ -128,30 +127,51 @@ class VisitTreeTest extends TestCase
 
     public function testTreeMonitor()
     {
-        $this->treeService->setUserAndStudy(1, Constants::ROLE_MONITOR, 'test');
-        $tree = $this->treeService->buildTree();
+        $treeService = new MonitorTreeService(
+            App::make(UserRepository::class),
+            App::make(PatientRepository::class),
+            App::make(VisitRepository::class),
+        );
+
+        $treeService->setUserAndStudy(1, 'test');
+        $tree = $treeService->buildTree();
         $this->doAssertionOnContent($tree, false);
     }
 
     public function testTreeController()
     {
-        $this->treeService->setUserAndStudy(1, Constants::ROLE_CONTROLLER, 'test');
-        $tree = $this->treeService->buildTree();
+        $treeService = new ControllerTreeService(
+            App::make(UserRepository::class),
+            App::make(PatientRepository::class),
+            App::make(VisitRepository::class),
+        );
+        $treeService->setUserAndStudy(1, 'test');
+        $tree = $treeService->buildTree();
         $this->doAssertionOnContent($tree, false);
     }
 
     public function testTreeInvestigator()
     {
-        $this->treeService->setUserAndStudy(1, Constants::ROLE_INVESTIGATOR, 'test');
-        $tree = $this->treeService->buildTree();
+        $treeService = new InvestigatorTreeService(
+            App::make(UserRepository::class),
+            App::make(PatientRepository::class),
+            App::make(VisitRepository::class),
+        );
+        $treeService->setUserAndStudy(1, 'test');
+        $tree = $treeService->buildTree();
         $this->assertArrayHasKey('patients', $tree);
         $this->doAssertionOnContent($tree, false);
     }
 
     public function testTreeReviewer()
     {
-        $this->treeService->setUserAndStudy(1, Constants::ROLE_REVIEWER, 'test');
-        $tree = $this->treeService->buildTree();
+        $treeService = new ReviewerTreeService(
+            App::make(UserRepository::class),
+            App::make(PatientRepository::class),
+            App::make(VisitRepository::class),
+        );
+        $treeService->setUserAndStudy(1, 'test');
+        $tree = $treeService->buildTree();
         $this->doAssertionOnContent($tree, true);
     }
 }

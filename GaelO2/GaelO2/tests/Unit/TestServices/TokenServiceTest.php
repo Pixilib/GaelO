@@ -2,31 +2,31 @@
 
 namespace Tests\Unit\TestServices;
 
+use App\GaelO\Services\GaelOProcessingService\AzureTokenService;
 use Tests\TestCase;
-use App\GaelO\Services\TokenService;
 use Illuminate\Support\Facades\App;
 
 class TokenServiceTest extends TestCase
 {
-    private TokenService $tokenService;
+    private AzureTokenService $azureTokenService;
 
     protected function setUp(): void
     {
         parent::setUp();
-        $this->tokenService = App::make(TokenService::class);
+        $this->azureTokenService = App::make(AzureTokenService::class);
         $this->markTestSkipped();
     }
 
     public function testGetToken()
     {
-        $res = $this->tokenService->getToken();
+        $res = $this->azureTokenService->getToken();
         $this->assertNotNull($res);
     }
 
     public function testSameToken()
     {
-        $res1 = $this->tokenService->getToken();
-        $res2 = $this->tokenService->getToken();
+        $res1 = $this->azureTokenService->getToken();
+        $res2 = $this->azureTokenService->getToken();
         $this->assertEquals($res1, $res2);
     }
 }

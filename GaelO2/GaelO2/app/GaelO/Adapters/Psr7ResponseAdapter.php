@@ -32,6 +32,9 @@ class Psr7ResponseAdapter implements Psr7ResponseInterface {
         $body = $this->response->getBody();
         //SK : A Verifier pb de caractere accentue
         //$utf8_body = mb_convert_encoding($body, 'UTF-8');
+        //https://github.com/guzzle/guzzle/issues/1664
+        //Verif ce que retourne guzzle et checker format de la db (devrait etre utf8)
+        //Checker si creation de la db bien faite en utf8
         return json_decode($body, true);
     }
 

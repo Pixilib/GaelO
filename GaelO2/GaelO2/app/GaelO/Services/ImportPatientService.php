@@ -2,10 +2,10 @@
 
 namespace App\GaelO\Services;
 
+use App\GaelO\Entities\StudyEntity;
 use App\GaelO\Exceptions\GaelOBadRequestException;
 use App\GaelO\Interfaces\Repositories\CenterRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\PatientRepositoryInterface;
-use App\GaelO\Interfaces\Repositories\StudyRepositoryInterface;
 use App\GaelO\Util;
 use Exception;
 
@@ -14,9 +14,10 @@ class ImportPatientService
 
     private int $patientCodeLength;
     private array $existingPatientNumber;
+    private StudyEntity $studyEntity;
     private PatientRepositoryInterface $patientRepository;
     private CenterRepositoryInterface $centerRepository;
-    private StudyRepositoryInterface $studyRepository;
+
     /**
      * Import patient in study
      */
@@ -24,10 +25,9 @@ class ImportPatientService
 	public array $successList = [];
 	public array $failList = [];
 
-	public function __construct(StudyRepositoryInterface $studyRepository, PatientRepositoryInterface $patientRepository, CenterRepositoryInterface $centerRepository) {
+	public function __construct(PatientRepositoryInterface $patientRepository, CenterRepositoryInterface $centerRepository) {
         $this->patientRepository = $patientRepository;
         $this->centerRepository = $centerRepository;
-        $this->studyRepository = $studyRepository;
 	}
 
     public function setPatientEntities(array $patientEntities) : void {
@@ -38,10 +38,14 @@ class ImportPatientService
         $this->studyName = $studyName;
     }
 
+    public function setStudyEntity(StudyEntity $studyEntity) : void {
+        $this->studyEntity = $studyEntity;
+    }
+
 	public function import() {
-        $studyEntity = $this->studyRepository->find($this->studyName);
-        $this->patientCodeLength = $studyEntity['patient_code_length'];
-        $this->existingPatientNumber = $this->patientRepository->getAllPatientsNumberInStudy($studyEntity['name']);
+
+        $this->patientCodeLength = $this->studyEntity->patientCodeLength;
+        $this->existingPatientNumber = $this->patientRepository->getAllPatientsNumberInStudy($this->studyEntity->name);
 
         $allCenters = $this->centerRepository->getAll();
         //Store array of all existing centers code
@@ -62,7 +66,7 @@ class ImportPatientService
                 $this->checkCurrentStudy($patientEntity['studyName'], $this->studyName);
 
                 //Store the patient result import process in this object
-                $this->patientRepository->addPatientInStudy($studyEntity['code'].$patientEntity['code'], $patientEntity['code'],
+                $this->patientRepository->addPatientInStudy($this->studyEntity->code.$patientEntity['code'], $patientEntity['code'],
                     $patientEntity['lastname'], $patientEntity['firstname'], $patientEntity['gender'],
                     $patientEntity['birthDay'], $patientEntity['birthMonth'], $patientEntity['birthYear'],$patientEntity['registrationDate'],$patientEntity['investigatorName'], $patientEntity['centerCode'], $this->studyName
                 );

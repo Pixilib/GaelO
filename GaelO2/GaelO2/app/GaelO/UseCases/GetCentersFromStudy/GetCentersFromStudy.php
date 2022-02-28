@@ -9,7 +9,6 @@ use App\GaelO\Interfaces\Repositories\CenterRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\PatientRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\StudyRepositoryInterface;
 use App\GaelO\Services\AuthorizationService\AuthorizationStudyService;
-use App\GaelO\Services\StudyService;
 use Exception;
 
 class GetCentersFromStudy {
@@ -18,19 +17,17 @@ class GetCentersFromStudy {
     private PatientRepositoryInterface $patientRepositoryInterface;
     private CenterRepositoryInterface $centerRepositoryInterface;
     private StudyRepositoryInterface $studyRepositoryInterface;
-    private StudyService $studyService;
 
 
     public function __construct(CenterRepositoryInterface $centerRepositoryInterface,
         AuthorizationStudyService $authorizationStudyService,
         PatientRepositoryInterface $patientRepositoryInterface,
-        StudyRepositoryInterface $studyRepositoryInterface,
-        StudyService $studyService){
+        StudyRepositoryInterface $studyRepositoryInterface
+        ){
         $this->centerRepositoryInterface = $centerRepositoryInterface;
         $this->patientRepositoryInterface = $patientRepositoryInterface;
         $this->studyRepositoryInterface = $studyRepositoryInterface;
         $this->authorizationStudyService = $authorizationStudyService;
-        $this->studyService = $studyService;
      }
 
     public function execute(GetCentersFromStudyRequest $getCentersFromStudyRequest, GetCentersFromStudyResponse $getCentersFromStudyResponse) : void
@@ -42,8 +39,7 @@ class GetCentersFromStudy {
 
             //Check If study is an ancillary study, as patient should comme from an original study
             $studyEntity = $this->studyRepositoryInterface->find($studyName);
-            $this->studyService->setStudyEntity($studyEntity);
-            $originalStudyName = $this->studyService->getOriginalStudyName();
+            $originalStudyName = $studyEntity->getOriginalStudyName();
 
             $patients = $this->patientRepositoryInterface->getPatientsInStudy($originalStudyName);
             $centerCodes = array_column($patients, 'center_code');

@@ -2,6 +2,7 @@
 
 namespace App\GaelO\Repositories;
 
+use App\GaelO\Entities\StudyEntity;
 use App\Models\Study;
 use App\GaelO\Interfaces\Repositories\StudyRepositoryInterface;
 use Exception;
@@ -14,8 +15,9 @@ class StudyRepository implements StudyRepositoryInterface {
         $this->study = $study;
     }
 
-    public function find($name) : array {
-        return $this->study->findOrFail($name)->toArray();
+    public function find($name) : StudyEntity {
+        $studyInfoArray= $this->study->findOrFail($name)->toArray();
+        return StudyEntity::fillFromDBReponseArray($studyInfoArray);
     }
 
     public function delete($name) : void {
@@ -26,11 +28,12 @@ class StudyRepository implements StudyRepositoryInterface {
         throw new Exception('Use Get Studies instead');
     }
 
-    public function addStudy(String $name, string $code, int $patientCodeLength, ?string $ancillaryOf) : void {
+    public function addStudy(String $name, string $code, int $patientCodeLength, string $contactEmail, ?string $ancillaryOf) : void {
         $study = new Study();
         $study->name = $name;
         $study->code = $code;
         $study->patient_code_length = $patientCodeLength;
+        $study->contact_email = $contactEmail;
         $study->ancillary_of = $ancillaryOf;
         $study->save();
     }

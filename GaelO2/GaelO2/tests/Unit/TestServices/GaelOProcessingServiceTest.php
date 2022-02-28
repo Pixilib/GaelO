@@ -2,7 +2,7 @@
 
 namespace Tests\Unit\TestServices;
 
-use App\GaelO\Services\GaelOProcessingService;
+use App\GaelO\Services\GaelOProcessingService\GaelOProcessingService;
 use Tests\TestCase;
 use Illuminate\Support\Facades\App;
 

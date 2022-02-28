@@ -1,6 +1,6 @@
 <?php
 
-namespace App\GaelO\Services;
+namespace App\GaelO\Services\GaelOProcessingService;
 
 use App\GaelO\Constants\SettingsConstants;
 use App\GaelO\Interfaces\Adapters\FrameworkInterface;

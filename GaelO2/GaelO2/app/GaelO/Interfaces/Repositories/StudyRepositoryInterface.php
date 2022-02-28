@@ -2,13 +2,15 @@
 
 namespace App\GaelO\Interfaces\Repositories;
 
+use App\GaelO\Entities\StudyEntity;
+
 interface StudyRepositoryInterface {
 
-    public function find($name) : array ;
+    public function find($name) : StudyEntity ;
 
     public function delete($name) : void ;
 
-    public function addStudy(String $name, string $code, int $patientCodeLength, ?string $ancillaryOf) : void ;
+    public function addStudy(String $name, string $code, int $patientCodeLength, string $contactEmail, ?string $ancillaryOf) : void ;
 
     public function isExistingStudy(string $name) : bool ;
 

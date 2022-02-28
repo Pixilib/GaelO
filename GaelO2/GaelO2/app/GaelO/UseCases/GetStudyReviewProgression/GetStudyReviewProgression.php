@@ -10,7 +10,6 @@ use App\GaelO\Interfaces\Repositories\StudyRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\UserRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
 use App\GaelO\Services\AuthorizationService\AuthorizationStudyService;
-use App\GaelO\Services\StudyService;
 use Exception;
 
 /**
@@ -22,21 +21,17 @@ class GetStudyReviewProgression {
     private VisitRepositoryInterface $visitRepositoryInterface;
     private UserRepositoryInterface $userRepositoryInterface;
     private ReviewRepositoryInterface $reviewRepositoryInterface;
-    private StudyService $studyService;
 
     public function __construct(AuthorizationStudyService $authorizationStudyService,
                                 VisitRepositoryInterface $visitRepositoryInterface,
                                 UserRepositoryInterface $userRepositoryInterface,
                                 ReviewRepositoryInterface $reviewRepositoryInterface,
-                                StudyRepositoryInterface $studyRepositoryInterface,
-                                StudyService $studyService){
+                                StudyRepositoryInterface $studyRepositoryInterface){
         $this->studyRepositoryInterface = $studyRepositoryInterface;
         $this->authorizationStudyService = $authorizationStudyService;
         $this->visitRepositoryInterface = $visitRepositoryInterface;
         $this->userRepositoryInterface = $userRepositoryInterface;
         $this->reviewRepositoryInterface = $reviewRepositoryInterface;
-        $this->studyService = $studyService;
-
     }
 
     public function execute(GetStudyReviewProgressionRequest $getStudyReviewProgressionRequest, GetStudyReviewProgressionResponse $getStudyReviewProgressionResponse){
@@ -55,9 +50,7 @@ class GetStudyReviewProgression {
             }
 
             $studyEntity = $this->studyRepositoryInterface->find($getStudyReviewProgressionRequest->studyName);
-
-            $this->studyService->setStudyEntity($studyEntity);
-            $studyName = $this->studyService->getOriginalStudyName();
+            $studyName = $studyEntity->getOriginalStudyName();
 
             //Get visits in the asked study (with review status)
             $visits = $this->visitRepositoryInterface->getVisitsInStudy($studyName, true, false);

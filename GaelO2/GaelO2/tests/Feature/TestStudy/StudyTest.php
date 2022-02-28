@@ -35,7 +35,8 @@ class StudyTest extends TestCase
         $payload = [
             'name'=>'NEWSTUDY',
             'code'=>'1234',
-            'patientCodeLength' => 5
+            'patientCodeLength' => 5,
+            'contactEmail' => 'test@gaelo.fr'
         ];
 
         $this->json('POST', '/api/studies', $payload)->assertNoContent(201);
@@ -48,7 +49,8 @@ class StudyTest extends TestCase
         $payload = [
             'name'=>'NEWSTUDy',
             'code'=>'1234',
-            'patientCodeLength' => 5
+            'patientCodeLength' => 5,
+            'contactEmail' => 'test@gaelo.fr'
         ];
 
         $this->json('POST', '/api/studies', $payload)->assertStatus(400);
@@ -56,7 +58,8 @@ class StudyTest extends TestCase
         $payload = [
             'name'=>'NEW STUDY',
             'code'=>'1234',
-            'patientCodeLength' => 5
+            'patientCodeLength' => 5,
+            'contactEmail' => 'test@gaelo.fr'
         ];
 
         $this->json('POST', '/api/studies', $payload)->assertStatus(400);
@@ -64,7 +67,8 @@ class StudyTest extends TestCase
         $payload = [
             'name'=>'NEW.STUDY',
             'code'=>'1234',
-            'patientCodeLength' => 5
+            'patientCodeLength' => 5,
+            'contactEmail' => 'test@gaelo.fr'
         ];
 
         $this->json('POST', '/api/studies', $payload)->assertStatus(400);
@@ -78,7 +82,8 @@ class StudyTest extends TestCase
             'name'=>'NEWSTUDY',
             'code'=>'1234',
             'patientCodeLength' => 5,
-            'ancillaryOf'=> $study->name
+            'ancillaryOf'=> $study->name,
+            'contactEmail' => 'test@gaelo.fr'
         ];
         $this->json('POST', '/api/studies', $payload)->assertStatus(201);
     }
@@ -88,7 +93,8 @@ class StudyTest extends TestCase
         $payload = [
             'name'=>'NEWSTUDY',
             'code'=>'1234',
-            'patientCodeLength' => 5
+            'patientCodeLength' => 5,
+            'contactEmail' => 'test@gaelo.fr'
         ];
         $this->json('POST', '/api/studies', $payload)->assertStatus(403);
     }
@@ -99,7 +105,8 @@ class StudyTest extends TestCase
         $payload = [
             'name'=>$study->name,
             'code'=>'1234',
-            'patientCodeLength' => 5
+            'patientCodeLength' => 5,
+            'contactEmail' => 'test@gaelo.fr'
         ];
         $this->json('POST', '/api/studies', $payload)->assertStatus(409);
     }
@@ -109,7 +116,8 @@ class StudyTest extends TestCase
         $payload = [
             'name'=>'NEWSTUDY',
             'code'=>'1234',
-            'patientCodeLength' => 0
+            'patientCodeLength' => 0,
+            'contactEmail' => 'test@gaelo.fr'
         ];
         $this->json('POST', '/api/studies', $payload)->assertStatus(400);
     }
