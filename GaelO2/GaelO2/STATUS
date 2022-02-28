@@ -1,9 +1,8 @@
 Salim TODO :
 
 - Optimiser l'utilisation des authorization service en injectant les data depuis le usecase (ou les rendre stateless)
-- Optimiser le service visit en injectant directement le visit context?
+- Optimiser le service visit en injectant directement le visit context
 - Review  : faire une propriete dans visit pour savoir si review disponible a un user en plus de status reviewAvailable ?
-- Creatable Visit : Manque Study Custom Logic => Passer dans frontend => Emilie
 
 Reste Autres :
 - Orthanc Send to peer
