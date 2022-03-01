@@ -16,28 +16,28 @@ class CenterUserFactory extends Factory
     public function definition()
     {
         return [
-            'user_id'=>$this->faker->randomNumber,
-            'center_code'=> Center::factory()->create()->code
+            'user_id' => $this->faker->randomNumber,
+            'center_code' => function () {
+                return Center::factory()->create()->code;
+            }
         ];
     }
 
-    public function centerCode(int $centerCode){
-
+    public function centerCode(int $centerCode)
+    {
         return $this->state(function (array $attributes) use ($centerCode) {
             return [
                 'center_code' => $centerCode,
             ];
         });
-
     }
 
-    public function userId(int $userId){
-
+    public function userId(int $userId)
+    {
         return $this->state(function (array $attributes) use ($userId) {
             return [
                 'user_id' => $userId,
             ];
         });
-
     }
 }

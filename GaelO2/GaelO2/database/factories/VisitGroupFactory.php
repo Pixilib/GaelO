@@ -11,14 +11,16 @@ class VisitGroupFactory extends Factory
     public function definition()
     {
         return [
-            'study_name'=> Study::factory()->create()->name,
+            'study_name' => function () {
+                return Study::factory()->create()->name;
+            },
             'name' => $this->faker->unique()->word,
-            'modality'=>'CT',
+            'modality' => $this->faker->randomElement(['MR', 'PT', 'CT']),
         ];
     }
 
-    public function studyName(string $studyName){
-
+    public function studyName(string $studyName)
+    {
         return $this->state(function (array $attributes) use ($studyName) {
             return [
                 'study_name' => $studyName
@@ -26,7 +28,8 @@ class VisitGroupFactory extends Factory
         });
     }
 
-    public function name(string $name){
+    public function name(string $name)
+    {
         return $this->state(function (array $attributes) use ($name) {
             return [
                 'name' => $name
@@ -34,8 +37,8 @@ class VisitGroupFactory extends Factory
         });
     }
 
-    public function modality(string $modality){
-
+    public function modality(string $modality)
+    {
         return $this->state(function (array $attributes) use ($modality) {
             return [
                 'modality' => $modality
@@ -43,6 +46,3 @@ class VisitGroupFactory extends Factory
         });
     }
 }
-
-
-

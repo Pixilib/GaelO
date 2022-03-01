@@ -16,36 +16,41 @@ class VisitFactory extends Factory
 
     public function definition()
     {
-
         return [
-            'creator_user_id' => User::factory()->create()->id,
-            'creation_date'=> Util::now(),
-            'patient_id'=> Patient::factory()->create()->id,
-            'visit_date'=> Util::now(),
-            'visit_type_id'=> VisitType::factory()->create()->id,
-            'status_done'=> 'Done',
-            'reason_for_not_done'=> $this->faker->word,
-            'upload_status'=> Constants::UPLOAD_STATUS_NOT_DONE,
-            'state_investigator_form'=> Constants::INVESTIGATOR_FORM_NOT_DONE,
-            'state_quality_control'=> Constants::QUALITY_CONTROL_NOT_DONE,
-            'controller_user_id'=> null,
-            'control_date'=>Util::now(),
-            'image_quality_control'=> $this->faker->randomElement([true, false]),
-            'form_quality_control'=> $this->faker->randomElement([true, false]),
-            'image_quality_comment'=> $this->faker->word,
-            'form_quality_comment'=> $this->faker->word,
-            'corrective_action_user_id'=> null,
-            'corrective_action_date'=>Util::now(),
-            'corrective_action_new_upload'=> $this->faker->randomElement([true, false]),
-            'corrective_action_investigator_form'=> $this->faker->randomElement([true, false]),
-            'corrective_action_comment'=> $this->faker->word,
-            'corrective_action_applied'=> $this->faker->randomElement([true, false]),
-            'last_reminder_upload'=>Util::now()
+            'creator_user_id' => function () {
+                return User::factory()->create()->id;
+            },
+            'creation_date' => Util::now(),
+            'patient_id' => function () {
+                return Patient::factory()->create()->id;
+            },
+            'visit_date' => Util::now(),
+            'visit_type_id' => function () {
+                return VisitType::factory()->create()->id;
+            },
+            'status_done' => 'Done',
+            'reason_for_not_done' => $this->faker->word,
+            'upload_status' => Constants::UPLOAD_STATUS_NOT_DONE,
+            'state_investigator_form' => Constants::INVESTIGATOR_FORM_NOT_DONE,
+            'state_quality_control' => Constants::QUALITY_CONTROL_NOT_DONE,
+            'controller_user_id' => null,
+            'control_date' => Util::now(),
+            'image_quality_control' => $this->faker->randomElement([true, false]),
+            'form_quality_control' => $this->faker->randomElement([true, false]),
+            'image_quality_comment' => $this->faker->word,
+            'form_quality_comment' => $this->faker->word,
+            'corrective_action_user_id' => null,
+            'corrective_action_date' => Util::now(),
+            'corrective_action_new_upload' => $this->faker->randomElement([true, false]),
+            'corrective_action_investigator_form' => $this->faker->randomElement([true, false]),
+            'corrective_action_comment' => $this->faker->word,
+            'corrective_action_applied' => $this->faker->randomElement([true, false]),
+            'last_reminder_upload' => Util::now()
         ];
     }
 
-    public function creatorUserId(int $userId){
-
+    public function creatorUserId(int $userId)
+    {
         return $this->state(function (array $attributes) use ($userId) {
             return [
                 'creator_user_id' => $userId
@@ -53,8 +58,8 @@ class VisitFactory extends Factory
         });
     }
 
-    public function patientId(string $patientId){
-
+    public function patientId(string $patientId)
+    {
         return $this->state(function (array $attributes) use ($patientId) {
             return [
                 'patient_id' => $patientId
@@ -62,8 +67,8 @@ class VisitFactory extends Factory
         });
     }
 
-    public function visitTypeId(int $visitTypeId){
-
+    public function visitTypeId(int $visitTypeId)
+    {
         return $this->state(function (array $attributes) use ($visitTypeId) {
             return [
                 'visit_type_id' => $visitTypeId
@@ -71,8 +76,8 @@ class VisitFactory extends Factory
         });
     }
 
-    public function stateQualityControl(string $stateQualityControl){
-
+    public function stateQualityControl(string $stateQualityControl)
+    {
         return $this->state(function (array $attributes) use ($stateQualityControl) {
             return [
                 'state_quality_control' => $stateQualityControl
@@ -80,8 +85,8 @@ class VisitFactory extends Factory
         });
     }
 
-    public function stateInvestigatorForm(string $stateInvestigatorForm){
-
+    public function stateInvestigatorForm(string $stateInvestigatorForm)
+    {
         return $this->state(function (array $attributes) use ($stateInvestigatorForm) {
             return [
                 'state_investigator_form' => $stateInvestigatorForm
@@ -89,8 +94,8 @@ class VisitFactory extends Factory
         });
     }
 
-    public function notDone(){
-
+    public function notDone()
+    {
         return $this->state(function (array $attributes) {
             return [
                 'status_done' => 'Not Done'
@@ -98,8 +103,8 @@ class VisitFactory extends Factory
         });
     }
 
-    public function done(){
-
+    public function done()
+    {
         return $this->state(function (array $attributes) {
             return [
                 'status_done' => 'Done'
@@ -107,8 +112,8 @@ class VisitFactory extends Factory
         });
     }
 
-    public function uploadDone(){
-
+    public function uploadDone()
+    {
         return $this->state(function (array $attributes) {
             return [
                 'upload_status' => 'Done'
