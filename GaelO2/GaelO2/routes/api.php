@@ -73,11 +73,10 @@ Route::middleware(['auth:sanctum', 'verified', 'activated'])->group(function () 
     Route::get('studies/{studyName}/possible-uploads', [StudyController::class, 'getPossibleUploads']);
     Route::get('studies/{studyName}/review-progression', [StudyController::class, 'getStudyReviewProgression']);
     Route::get('studies/{studyName}/visits', [VisitController::class, 'getVisitsFromStudy']);
-    Route::get('visit-types/{visitTypeId}/visits', [StudyController::class, 'getVisitsFromVisitType']);
-    Route::get('visit-types/{visitTypeId}/reviews', [StudyController::class, 'getReviewsFromVisitType']);
-    Route::get('visit-types/{visitTypeId}/reviews/metadata', [StudyController::class, 'getReviewsMetadataFromVisitType']);
-    Route::get('visit-types/{visitTypeId}/investigator-forms', [StudyController::class, 'getInvestigatorFormsFromVisitType']);
-    Route::get('visit-types/{visitTypeId}/investigator-forms/metadata', [StudyController::class, 'getInvestigatorFormsMetadataFromVisitType']);
+    Route::get('studies/{studyName}/reviews', [StudyController::class, 'getReviewsFromVisitType']);
+    Route::get('studies/{studyName}/reviews/metadata', [StudyController::class, 'getReviewsMetadataFromVisitType']);
+    Route::get('studies/{studyName}/investigator-forms', [StudyController::class, 'getInvestigatorFormsFromVisitType']);
+    Route::get('studies/{studyName}/investigator-forms/metadata', [StudyController::class, 'getInvestigatorFormsMetadataFromVisitType']);
     Route::get('studies/{studyName}/dicom-studies', [StudyController::class, 'getDicomStudiesFromStudy']);
     Route::post('studies/{studyName}/send-reminder', [StudyController::class, 'sendReminder']);
     Route::post('send-mail', [StudyController::class, 'sendMail']);

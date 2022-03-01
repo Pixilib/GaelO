@@ -21,8 +21,8 @@ class GetVisitsFromStudy
     public function __construct(
         VisitRepositoryInterface $visitRepositoryInterface,
         StudyRepositoryInterface $studyRepositoryInterface,
-        AuthorizationStudyService $authorizationStudyService)
-    {
+        AuthorizationStudyService $authorizationStudyService
+    ) {
         $this->visitRepositoryInterface = $visitRepositoryInterface;
         $this->studyRepositoryInterface = $studyRepositoryInterface;
         $this->authorizationStudyService = $authorizationStudyService;
@@ -37,15 +37,21 @@ class GetVisitsFromStudy
 
             $this->checkAuthorization($getVisitsFromStudyRequest->currentUserId, $getVisitsFromStudyRequest->studyName);
 
-            //Get Original Study name for ancilaries studies
-            $studyEntity = $this->studyRepositoryInterface->find($studyName);
-            $originalStudyName = $studyEntity->getOriginalStudyName($studyEntity);
+            if (is_null($getVisitsFromStudyRequest)) {
+                //Get Original Study name for ancilaries studies
+                $studyEntity = $this->studyRepositoryInterface->find($studyName);
+                $originalStudyName = $studyEntity->getOriginalStudyName($studyEntity);
 
-            $dbData = $this->visitRepositoryInterface->getVisitsInStudy($originalStudyName, true, false);
+                $dbData = $this->visitRepositoryInterface->getVisitsInStudy($originalStudyName, true, false);
+            } else {
+                $dbData = $this->visitRepositoryInterface->getVisitsInVisitType($getVisitsFromStudyRequest->visitTypeId, true, $studyName, false, true);
+            }
+
             $responseArray = [];
             foreach ($dbData as $data) {
                 $responseEntity = VisitEntity::fillFromDBReponseArray($data);
                 $responseEntity->setPatientEntity($data['patient']);
+                $responseEntity->patient->fillCenterDetails($data['patient']['center']['name'], $data['patient']['center']['country_code']);
                 $responseEntity->setVisitContext(
                     $data['visit_type']['visit_group'],
                     $data['visit_type']

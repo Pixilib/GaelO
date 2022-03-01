@@ -69,12 +69,14 @@ class VisitController extends Controller
         return $this->getJsonResponse($getVisitResponse->body, $getVisitResponse->status, $getVisitResponse->statusText);
     }
 
-    public function getVisitsFromStudy(GetVisitsFromStudy $getVisitsFromStudy, GetVisitsFromStudyRequest $getVisitsFromStudyRequest, GetVisitsFromStudyResponse $getVisitsFromStudyResponse, string $studyName)
+    public function getVisitsFromStudy(Request $request, GetVisitsFromStudy $getVisitsFromStudy, GetVisitsFromStudyRequest $getVisitsFromStudyRequest, GetVisitsFromStudyResponse $getVisitsFromStudyResponse, string $studyName)
     {
         $currentUser = Auth::user();
 
+        $requestData = $request->all();
         $getVisitsFromStudyRequest->currentUserId = $currentUser['id'];
         $getVisitsFromStudyRequest->studyName = $studyName;
+        $getVisitsFromStudyRequest = Util::fillObject($requestData, $getVisitsFromStudyRequest);
 
         $getVisitsFromStudy->execute($getVisitsFromStudyRequest, $getVisitsFromStudyResponse);
 
