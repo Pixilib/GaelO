@@ -24,7 +24,11 @@ class InvestigatorTreeService extends AbstractTreeService
         $patientsIdArray = array_keys($patientIdArray);
         $patientVisitsArray = $this->visitRepositoryInterface->getPatientListVisitsWithContext($patientsIdArray);
 
+        foreach ($patientIdArray as $id=>$code) {
+            $responseArray['patients'][$id] = $code;
+        }
 
-        return $this->makeTreeFromVisits($patientVisitsArray);
+
+        return [...$this->makeTreeFromVisits($patientVisitsArray), ...$responseArray];
     }
 }
