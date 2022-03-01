@@ -36,7 +36,7 @@ class GetVisitsTree {
             $this->checkAuthorization($getVisitsTreeRequest->currentUserId, $getVisitsTreeRequest->studyName, $role);
 
             $this->abstractTreeService = $this->frameworkInterface->make('\App\GaelO\Services\TreeService\\' . $role . 'TreeService');
-            $this->abstractTreeService->setUserAndStudy($getVisitsTreeRequest->currentUserId, $role, $getVisitsTreeRequest->studyName);
+            $this->abstractTreeService->setUserAndStudy($getVisitsTreeRequest->currentUserId, $getVisitsTreeRequest->studyName);
             $tree = $this->abstractTreeService->buildTree();
 
             $getVisitsTreeResponse->body = $tree;

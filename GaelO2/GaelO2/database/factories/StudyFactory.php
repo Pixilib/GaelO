@@ -14,6 +14,8 @@ class StudyFactory extends Factory
             'code' => $this->faker->unique()->randomNumber(5),
             'patient_code_length' => $this->faker->randomNumber(5),
             'contact_email' => $this->faker->email(),
+            'controller_show_all'=> false,
+            'monitor_show_all' => false,
             'ancillary_of' => null
         ];
     }
@@ -46,6 +48,22 @@ class StudyFactory extends Factory
 
     }
 
+    public function controllerShowAll(){
+        return $this->state(function (array $attributes) {
+            return [
+                'controller_show_all' => true,
+            ];
+        });
+    }
+
+    public function monitorShowAll(){
+        return $this->state(function (array $attributes) {
+            return [
+                'monitor_show_all' => true,
+            ];
+        });
+    }
+
     public function ancillaryOf(string $studyName){
 
         return $this->state(function (array $attributes) use($studyName) {
@@ -55,4 +73,6 @@ class StudyFactory extends Factory
         });
 
     }
+
+
 }

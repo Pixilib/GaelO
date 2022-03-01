@@ -10,8 +10,16 @@ class ControllerTreeService extends AbstractTreeService{
 
     public function buildTree(): array
     {
-        $visitsArray = $this->visitRepository->getVisitsInStudyAwaitingControllerAction($this->studyName);
-        return  $this->makeTreeFromVisits($visitsArray);
+        if($this->studyEntity->controllerShowAll){
+            //If show all in this study, return all visits with Needed QC to display all status
+            $visitsArray = $this->visitRepositoryInterface->getVisitsInStudyNeedingQualityControl($this->studyEntity->name);
+            return $this->makeTreeFromVisits($visitsArray);
+        }else{
+            //Return only visits awaiting QC
+            $visitsArray = $this->visitRepositoryInterface->getVisitsInStudyAwaitingControllerAction($this->studyEntity->name);
+            return $this->makeTreeFromVisits($visitsArray);
+        }
+
     }
 
 }

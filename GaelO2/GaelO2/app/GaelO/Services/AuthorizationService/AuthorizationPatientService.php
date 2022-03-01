@@ -53,8 +53,8 @@ class AuthorizationPatientService {
             if( ! $this->authorizationStudyService->getStudyEntity()->isAncillaryStudyOf($this->patientStudy) ) return false;
         }
 
-        if ($requestedRole === Constants::ROLE_INVESTIGATOR) {
-            //Investigator should not access patient outside their centers
+        if ($requestedRole === Constants::ROLE_INVESTIGATOR || $requestedRole === Constants::ROLE_MONITOR) {
+            //Investigator and Monitor should not access patient outside their centers
             if (  !$this->authorizationStudyService->getAuthorizationUserService()->isCenterAffiliatedToUser($this->patientCenter) ) return false;
         }
 

@@ -48,6 +48,8 @@ interface VisitRepositoryInterface
 
     public function getVisitsInStudyAwaitingControllerAction(string $studyName): array;
 
+    public function getVisitsInStudyNeedingQualityControl(string $studyName): array;
+
     public function getVisitsAwaitingReviews(string $studyName): array;
 
     public function getVisitsAwaitingReviewForUser(string $studyName, int $userId): array;
