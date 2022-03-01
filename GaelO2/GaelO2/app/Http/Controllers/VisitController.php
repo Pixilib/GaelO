@@ -73,11 +73,10 @@ class VisitController extends Controller
     {
         $currentUser = Auth::user();
 
-        $requestData = $request->all();
+        $queryParam = $request->query();
         $getVisitsFromStudyRequest->currentUserId = $currentUser['id'];
         $getVisitsFromStudyRequest->studyName = $studyName;
-        $getVisitsFromStudyRequest = Util::fillObject($requestData, $getVisitsFromStudyRequest);
-
+        $getVisitsFromStudyRequest->visitTypeId = $queryParam['visitType'];
         $getVisitsFromStudy->execute($getVisitsFromStudyRequest, $getVisitsFromStudyResponse);
 
         return $this->getJsonResponse($getVisitsFromStudyResponse->body, $getVisitsFromStudyResponse->status, $getVisitsFromStudyResponse->statusText);

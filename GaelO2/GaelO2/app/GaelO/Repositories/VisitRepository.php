@@ -201,7 +201,7 @@ class VisitRepository implements VisitRepositoryInterface
 
         $visits = $this->visit->whereHas('visitType', function ($query) use ($visitTypeId) {
             $query->where('id', $visitTypeId);
-        });
+        })->with('visitType');
 
         if ($withReviewStatus) {
             $visits->with(['reviewStatus' => function ($q) use ($studyName) {

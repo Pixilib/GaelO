@@ -37,7 +37,7 @@ class GetVisitsFromStudy
 
             $this->checkAuthorization($getVisitsFromStudyRequest->currentUserId, $getVisitsFromStudyRequest->studyName);
 
-            if (is_null($getVisitsFromStudyRequest)) {
+            if (is_null($getVisitsFromStudyRequest->visitTypeId)) {
                 //Get Original Study name for ancilaries studies
                 $studyEntity = $this->studyRepositoryInterface->find($studyName);
                 $originalStudyName = $studyEntity->getOriginalStudyName($studyEntity);
