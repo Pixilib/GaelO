@@ -43,12 +43,12 @@ class DocumentationController extends Controller
     public function uploadDocumentation(Request $request, CreateDocumentationFile $createDocumentationFile, CreateDocumentationFileRequest $createDocumentationFileRequest, CreateDocumentationFileResponse $createDocumentationFileResponse, int $documentationId)
     {
         $currentUser = Auth::user();
-        $requestData = $request->all();
+        $requestData = $request->getContent();
         $createDocumentationFileRequest->currentUserId = $currentUser['id'];
         $createDocumentationFileRequest->id = $documentationId;
         $createDocumentationFileRequest->contentType = $request->headers->get('Content-Type');
-        $storeDocumentationFileRequest = Util::fillObject($requestData, $createDocumentationFileRequest);
-        $createDocumentationFile->execute($storeDocumentationFileRequest, $createDocumentationFileResponse);
+        $createDocumentationFileRequest->binaryData = $requestData;
+        $createDocumentationFile->execute($createDocumentationFileRequest, $createDocumentationFileResponse);
         return $this->getJsonResponse($createDocumentationFileResponse->body, $createDocumentationFileResponse->status, $createDocumentationFileResponse->statusText);
     }
 

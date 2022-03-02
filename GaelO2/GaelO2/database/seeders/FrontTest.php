@@ -27,51 +27,50 @@ class FrontTest extends Seeder
     {
         $this->call([
             CountrySeeder::class,
-            CenterSeeder::class
+            CenterSeeder::class,
+            GATAStudySeeder::class
         ]);
 
         $this->user = User::factory()->administrator()->email('administrator@gaelo.fr')
             ->password('administrator')->centerCode(0)->create();
 
-        Study::factory()->count(5)->create();
-
         $this->study = Study::factory()->name('TEST')->code('123')->patientCodeLength(5)->create();
 
-        Role::factory()->userId($this->user->id)->studyName($this->study->name)->roleName('Supervisor')->create();
-        Role::factory()->userId($this->user->id)->studyName($this->study->name)->roleName('Monitor')->create();
-        Role::factory()->userId($this->user->id)->studyName($this->study->name)->roleName('Investigator')->create();
-        Role::factory()->userId($this->user->id)->studyName($this->study->name)->roleName('Reviewer')->create();
-        Role::factory()->userId($this->user->id)->studyName($this->study->name)->roleName('Controller')->create();
+        foreach (Study::all() as $studyEntity) {
+            Role::factory()->userId($this->user->id)->studyName($studyEntity->name)->roleName('Supervisor')->create();
+            Role::factory()->userId($this->user->id)->studyName($studyEntity->name)->roleName('Monitor')->create();
+            Role::factory()->userId($this->user->id)->studyName($studyEntity->name)->roleName('Investigator')->create();
+            Role::factory()->userId($this->user->id)->studyName($studyEntity->name)->roleName('Reviewer')->create();
+            Role::factory()->userId($this->user->id)->studyName($studyEntity->name)->roleName('Controller')->create();
+        }
 
-        Patient::factory()->id(rand(10000, 99999))->inclusionStatus('Included')->investigatorName('administrator')
-            ->studyName($this->study->name)->centerCode(0)->registrationDate(now())->create();
+        $this->patient = Patient::factory()->id(rand(10000, 99999))->inclusionStatus('Included')->investigatorName('administrator')
+            ->studyName($this->study->name)->centerCode(0)->create();
         Patient::factory()->id(rand(10000, 99999))->investigatorName('administrator')
-            ->studyName($this->study->name)->centerCode(0)->registrationDate(now())->create();
+            ->studyName($this->study->name)->centerCode(0)->create();
         Patient::factory()->id(rand(10000, 99999))->investigatorName('administrator')
-            ->studyName($this->study->name)->centerCode(0)->registrationDate(now())->create();
+            ->studyName($this->study->name)->centerCode(0)->create();
 
         $this->visitGroup = VisitGroup::factory()->studyName($this->study->name)->create();
-        VisitType::factory()->count(6)->visitGroupId($this->visitGroup['id'])->limitLowDays(0)->limitUpDays(5)->create();
+        VisitType::factory()->count(6)->visitGroupId($this->visitGroup->id)->limitLowDays(0)->limitUpDays(5)->create();
 
         $this->visitGroup = VisitGroup::factory()->studyName($this->study->name)->modality('PT')->create();
 
-        $this->visitType = VisitType::factory()->name('PET0')->visitGroupId($this->visitGroup['id'])
-            ->localFormNeeded()->qcNeeded()->reviewNeeded()->limitLowDays(1)->limitUpDays(2)->create();
+        $this->visitType = VisitType::factory()->name('PET0')->visitGroupId($this->visitGroup->id)
+            ->localFormNeeded()->qcProbability()->reviewProbability()->limitLowDays(1)->limitUpDays(2)->create();
 
-        $this->visit = Visit::factory()->creatorUserId(1)->patientId(Patient::first()['id'])
+        $this->visit = Visit::factory()->creatorUserId($this->user->id)->patientId($this->patient->id)
             ->uploadDone()->stateQualityControl(Constants::QUALITY_CONTROL_NOT_NEEDED)
             ->stateInvestigatorForm(Constants::INVESTIGATOR_FORM_DONE)
-            ->visitTypeId($this->visitType['id'])->done()->create();
+            ->visitTypeId($this->visitType->id)->done()->create();
 
-        $this->dicomStudy = DicomStudy::factory()->visitId($this->visit->id)->create();
-        DicomSeries::factory()->studyInstanceUID($this->dicomStudy['study_uid'])->create();
+        $this->dicomStudy = DicomStudy::factory()->visitId($this->visit->id)->userId($this->user->id)->create();
+        DicomSeries::factory()->studyInstanceUID($this->dicomStudy->study_uid)->create();
 
-        Review::factory()->studyName($this->study->name)->visitId($this->visit->id)->create();
+        Review::factory()->studyName($this->study->name)->visitId($this->visit->id)->userId($this->user->id)->create();
 
         ReviewStatus::factory()->studyName($this->study->name)->visitId($this->visit->id)
             ->reviewAvailable()->reviewStatus('Done')->create();
-        Review::factory()->studyName($this->study->name)->visitId($this->visit->id)->reviewForm()->create();
-
-        User::factory()->count(10)->create();
+        Review::factory()->studyName($this->study->name)->visitId($this->visit->id)->userId($this->user->id)->reviewForm()->create();
     }
 }

@@ -16,27 +16,31 @@ class DicomStudyFactory extends Factory
     public function definition()
     {
         return [
-            'orthanc_id' =>$this->faker->regexify('[A-Za-z0-9]{44}'),
-            'visit_id'=> Visit::factory()->create()->id,
-            'user_id'=> User::factory()->create()->id,
-            'upload_date'=> Util::now(),
-            'acquisition_date'=>$this->faker->date(),
-            'acquisition_time'=>$this->faker->time(),
-            'anon_from_orthanc_id'=>$this->faker->regexify('[A-Za-z0-9]{44}'),
-            'study_uid'=>$this->faker->unique()->word,
-            'study_description'=>$this->faker->word,
-            'patient_orthanc_id'=>$this->faker->regexify('[A-Za-z0-9]{44}'),
-            'patient_name'=>$this->faker->word,
-            'patient_id'=>$this->faker->word,
-            'number_of_series'=> (1+$this->faker->randomNumber),
-            'number_of_instances'=> (1+$this->faker->randomNumber),
-            'disk_size'=> (1 + $this->faker->randomNumber),
-            'uncompressed_disk_size'=> (1+$this->faker->randomNumber)
+            'orthanc_id' => $this->faker->regexify('[A-Za-z0-9]{44}'),
+            'visit_id' => function () {
+                return Visit::factory()->create()->id;
+            },
+            'user_id' => function () {
+                return User::factory()->create()->id;
+            },
+            'upload_date' => Util::now(),
+            'acquisition_date' => $this->faker->date(),
+            'acquisition_time' => $this->faker->time(),
+            'anon_from_orthanc_id' => $this->faker->regexify('[A-Za-z0-9]{44}'),
+            'study_uid' => $this->faker->unique()->word,
+            'study_description' => $this->faker->word,
+            'patient_orthanc_id' => $this->faker->regexify('[A-Za-z0-9]{44}'),
+            'patient_name' => $this->faker->word,
+            'patient_id' => $this->faker->word,
+            'number_of_series' => (1 + $this->faker->randomNumber),
+            'number_of_instances' => (1 + $this->faker->randomNumber),
+            'disk_size' => (1 + $this->faker->randomNumber),
+            'uncompressed_disk_size' => (1 + $this->faker->randomNumber)
         ];
     }
 
-    public function visitId(int $visitId){
-
+    public function visitId(int $visitId)
+    {
         return $this->state(function (array $attributes) use ($visitId) {
             return [
                 'visit_id' => $visitId,
@@ -44,18 +48,26 @@ class DicomStudyFactory extends Factory
         });
     }
 
-    public function orthancStudy(string $patientOrthancId){
+    public function userId(int $userId)
+    {
+        return $this->state(function (array $attributes) use ($userId) {
+            return [
+                'user_id' => $userId,
+            ];
+        });
+    }
 
+    public function orthancStudy(string $patientOrthancId)
+    {
         return $this->state(function (array $attributes) use ($patientOrthancId) {
             return [
                 'orthanc_id' => $patientOrthancId,
             ];
         });
-
     }
 
-    public function uploaderId(int $uploaderId){
-
+    public function uploaderId(int $uploaderId)
+    {
         return $this->state(function (array $attributes) use ($uploaderId) {
             return [
                 'user_id' => $uploaderId,
@@ -63,7 +75,8 @@ class DicomStudyFactory extends Factory
         });
     }
 
-    public function studyUid(string $studyInstanceUID){
+    public function studyUid(string $studyInstanceUID)
+    {
         return $this->state(function (array $attributes) use ($studyInstanceUID) {
             return [
                 'study_uid' => $studyInstanceUID,

@@ -228,13 +228,13 @@ class ReviewController extends Controller
     {
 
         $currentUser = Auth::user();
-        $requestData = $request->input();
+        $requestData = $request->getContent();
 
         $createFileToFormRequest->currentUserId = $currentUser['id'];
         $createFileToFormRequest->id = $reviewId;
         $createFileToFormRequest->key = $key;
         $createFileToFormRequest->contentType = $request->headers->get('Content-Type');
-        $createFileToFormRequest->binaryData = $requestData[0];
+        $createFileToFormRequest->binaryData = $requestData;
 
         $createFileToForm->execute($createFileToFormRequest, $createFileToFormResponse);
 
