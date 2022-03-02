@@ -24,11 +24,14 @@ class InvestigatorTreeService extends AbstractTreeService
         $patientsIdArray = array_keys($patientIdArray);
         $patientVisitsArray = $this->visitRepositoryInterface->getPatientListVisitsWithContext($patientsIdArray);
 
+
+        $existingVisitTree = $this->makeTreeFromVisits($patientVisitsArray);
+
+        //Now adding patient with no visit created yet
         foreach ($patientIdArray as $id=>$code) {
-            $responseArray['patients'][$id] = $code;
+            if ( array_key_exists($id, $existingVisitTree['patients']) ) $existingVisitTree['patients'][$id] = $code;
         }
 
-
-        return [...$this->makeTreeFromVisits($patientVisitsArray), ...$responseArray];
+        return $existingVisitTree;
     }
 }
