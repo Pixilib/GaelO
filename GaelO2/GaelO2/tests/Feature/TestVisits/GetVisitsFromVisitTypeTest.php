@@ -56,14 +56,14 @@ class GetVisitsFromVisitTypeTest extends TestCase
         $currentUserId = AuthorizationTools::actAsAdmin(false);
 
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $this->studyName);
-        $answer = $this->json('GET', 'api/visit-types/'.$this->visitTypeId.'/visits?studyName='.$this->studyName);
+        $answer = $this->json('GET', 'api/studies/'.$this->studyName.'/visits?visitType='.$this->visitTypeId);
         $answer->assertStatus(200);
     }
 
     public function testGetVisitFromVisitTypeShouldFailNotSupervisor(){
 
         AuthorizationTools::actAsAdmin(false);
-        $answer = $this->json('GET', 'api/visit-types/'.$this->visitTypeId.'/visits?studyName='.$this->studyName);
+        $answer = $this->json('GET', 'api/studies/'.$this->studyName.'/visits?visitType='.$this->visitTypeId);
         $answer->assertStatus(403);
     }
 

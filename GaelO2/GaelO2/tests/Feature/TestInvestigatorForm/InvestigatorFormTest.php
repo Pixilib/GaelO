@@ -325,7 +325,7 @@ class InvestigatorFormTest extends TestCase
         $currentUserId = AuthorizationTools::actAsAdmin(false);
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $study->name);
 
-        $answer = $this->get('api/visit-types/'.$visitType->id.'/investigator-forms/metadata?studyName='.$study->name);
+        $answer = $this->get('api/studies/'.$study->name.'/investigator-forms/metadata?visitType='.$visitType->id);
         $answer->assertStatus(200);
 
     }
@@ -337,7 +337,7 @@ class InvestigatorFormTest extends TestCase
 
         AuthorizationTools::actAsAdmin(false);
 
-        $answer = $this->get('api/visit-types/'.$visitType->id.'/investigator-forms/metadata?studyName='.$study->name);
+        $answer = $this->get('api/studies/'.$study->name.'/investigator-forms/metadata?visitType='.$visitType->id);
         $answer->assertStatus(403);
 
     }

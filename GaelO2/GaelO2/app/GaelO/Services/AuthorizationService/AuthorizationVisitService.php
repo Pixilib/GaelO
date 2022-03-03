@@ -57,6 +57,11 @@ class AuthorizationVisitService {
         return in_array($this->stateInvestigatorForm, [Constants::INVESTIGATOR_FORM_DONE, Constants::INVESTIGATOR_FORM_NOT_NEEDED] );
     }
 
+    private function isControllerAllowed() : bool {
+       //For controller visit QC status be not done or awaiting definitive conclusion, Investigator Form should be Done or Not Needed and Upload status should be done
+        return ($this->isAllowedStatusQC() && $this->isAllowedInvestigatorFormStatus() && $this->visitUploadStatus === Constants::UPLOAD_STATUS_DONE );
+    }
+
 
     public function isVisitAllowed(string $requestedRole): bool {
 
@@ -69,10 +74,9 @@ class AuthorizationVisitService {
             return $this->authorizationPatientService->isPatientAllowed($requestedRole) && $this->visitRepositoryInterface->isParentPatientHavingOneVisitAwaitingReview($this->visitId, $this->patientStudy, $this->userId);
 
         } else if ($requestedRole === Constants::ROLE_CONTROLLER) {
-            //For controller visit QC status be not done or awaiting definitive conclusion, Investigator Form should be Done or Not Needed and Upload status should be done
-            if ( ! $this->isAllowedStatusQC() || ! $this->isAllowedInvestigatorFormStatus() || $this->visitUploadStatus !== Constants::UPLOAD_STATUS_DONE ) {
-                return false;
-            }
+            $showAll = $this->authorizationPatientService->getAuthorizationStudyService()->getStudyEntity()->controllerShowAll;
+            //if not show all check QC status to allow access
+            if ( ! $showAll  && !$this->isControllerAllowed()) return false;
         }
 
         //For all other role access depend on patient access
