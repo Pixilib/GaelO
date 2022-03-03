@@ -5,8 +5,8 @@ namespace App\GaelO\Services\FormService;
 use App\GaelO\Exceptions\GaelOBadRequestException;
 use App\GaelO\Interfaces\Adapters\FrameworkInterface;
 use App\GaelO\Interfaces\Repositories\ReviewRepositoryInterface;
+use App\GaelO\Services\AbstractVisitRules;
 use App\GaelO\Services\MailServices;
-use App\GaelO\Services\SpecificStudiesRules\AbstractVisitRules;
 use App\GaelO\Services\VisitService;
 use App\GaelO\Util;
 
