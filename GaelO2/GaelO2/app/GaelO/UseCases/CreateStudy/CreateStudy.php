@@ -33,6 +33,8 @@ class CreateStudy {
             $studyName = $createStudyRequest->name;
             $studyCode = $createStudyRequest->code;
             $patientCodeLength = $createStudyRequest->patientCodeLength;
+            $controllerShowAll = $createStudyRequest->controllerShowAll;
+            $monitorShowAll = $createStudyRequest->monitorShowAll;
             $contactEmail = $createStudyRequest->contactEmail;
             $ancillaryOf = $createStudyRequest->ancillaryOf;
 
@@ -56,7 +58,15 @@ class CreateStudy {
                 throw new GaelOBadRequestException('Missing Contact Email');
             }
 
-            $this->studyRepositoryInterface->addStudy($studyName, $studyCode, $patientCodeLength, $contactEmail, $ancillaryOf);
+            if( !isset($controllerShowAll) ){
+                throw new GaelOBadRequestException('Missing Controller Show All');
+            }
+
+            if( !isset($monitorShowAll) ){
+                throw new GaelOBadRequestException('Missing Monitor Show All');
+            }
+
+            $this->studyRepositoryInterface->addStudy($studyName, $studyCode, $patientCodeLength, $contactEmail, $controllerShowAll, $monitorShowAll,  $ancillaryOf);
 
             $currentUserId=$createStudyRequest->currentUserId;
             $actionDetails = [

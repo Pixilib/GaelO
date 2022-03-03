@@ -8,5 +8,7 @@ class CreateStudyRequest {
     public String $code;
     public int $patientCodeLength;
     public String $contactEmail;
+    public bool $monitorShowAll;
+    public bool $controllerShowAll;
     public ?string $ancillaryOf = null;
 }

@@ -10,7 +10,7 @@ interface StudyRepositoryInterface {
 
     public function delete($name) : void ;
 
-    public function addStudy(String $name, string $code, int $patientCodeLength, string $contactEmail, ?string $ancillaryOf) : void ;
+    public function addStudy(String $name, string $code, int $patientCodeLength, string $contactEmail, bool $controllerShowAll, bool $monitorShowAll, ?string $ancillaryOf) : void ;
 
     public function isExistingStudy(string $name) : bool ;
 
@@ -25,5 +25,7 @@ interface StudyRepositoryInterface {
     public function reactivateStudy(string $name) : void ;
 
     public function getStudyStatistics(string $name) : array;
+
+    public function isExistingCode(string $code) : bool ;
 
 }
