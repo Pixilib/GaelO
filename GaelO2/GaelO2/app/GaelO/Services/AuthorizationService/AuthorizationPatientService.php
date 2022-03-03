@@ -53,10 +53,18 @@ class AuthorizationPatientService {
             if( ! $this->authorizationStudyService->getStudyEntity()->isAncillaryStudyOf($this->patientStudy) ) return false;
         }
 
-        if ($requestedRole === Constants::ROLE_INVESTIGATOR || $requestedRole === Constants::ROLE_MONITOR) {
-            //Investigator and Monitor should not access patient outside their centers
-            if (  !$this->authorizationStudyService->getAuthorizationUserService()->isCenterAffiliatedToUser($this->patientCenter) ) return false;
+        if ($requestedRole === Constants::ROLE_INVESTIGATOR ) {
+            //Investigator should not access patient outside their centers if show all not set in study
+            $showAll = $this->authorizationStudyService->getStudyEntity()->controllerShowAll;
+            if ( !$showAll && !$this->authorizationStudyService->getAuthorizationUserService()->isCenterAffiliatedToUser($this->patientCenter) ) return false;
         }
+
+        if ($requestedRole === Constants::ROLE_MONITOR) {
+            //Monitor should not access patient outside their centers if show all not set in study
+            $showAll = $this->authorizationStudyService->getStudyEntity()->monitorShowAll;
+            if ( !$showAll && !$this->authorizationStudyService->getAuthorizationUserService()->isCenterAffiliatedToUser($this->patientCenter) ) return false;
+        }
+
 
         //For all other cases access granted if role exists in the patient's study
         return $this->authorizationStudyService->isAllowedStudy($requestedRole);

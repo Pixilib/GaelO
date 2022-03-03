@@ -75,7 +75,7 @@ class QcTest extends TestCase
 
     public function testQcForbiddenNotRole(){
 
-        $currentUserId = AuthorizationTools::actAsAdmin(false);
+        AuthorizationTools::actAsAdmin(false);
 
         $payload = [
             'stateQc'=>Constants::QUALITY_CONTROL_ACCEPTED,
