@@ -64,6 +64,23 @@ class ValidatorAdapter implements ValidatorInterface
         $this->validator->addRule($validatorKey);
     }
 
+    public function addNumberValidator(string $key, bool $optional, ?float $min, ?float $max): void
+    {
+        $validatable = Validator::Number();
+
+        if ($min != null) {
+            $validatable->min($min);
+        }
+
+        if ($max != null) {
+            $validatable->max($max);
+        }
+
+        $validatorKey = new Key($key, $validatable, ($this->validatedForm && !$optional));
+
+        $this->validator->addRule($validatorKey);
+    }
+
     public function addSetValidator(string $key, array $acceptedValues, bool $optional): void
     {
         $validatorKey = new Key($key, new In($acceptedValues, true), ($this->validatedForm && !$optional));

@@ -13,7 +13,7 @@ class GATA_PT_PET0 extends AbstractVisitRules
     {
         return [
             'glycaemia' => [
-                'rule' => self::RULE_FLOAT,
+                'rule' => self::RULE_NUMBER,
                 'optional' => true,
                 'min' => null,
                 'max' => null

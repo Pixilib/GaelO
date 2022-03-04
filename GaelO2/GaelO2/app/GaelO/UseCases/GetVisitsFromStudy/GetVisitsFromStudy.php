@@ -51,7 +51,8 @@ class GetVisitsFromStudy
             foreach ($dbData as $data) {
                 $responseEntity = VisitEntity::fillFromDBReponseArray($data);
                 $responseEntity->setPatientEntity($data['patient']);
-                $responseEntity->patient->fillCenterDetails($data['patient']['center']['name'], $data['patient']['center']['country_code']);
+                //EO Quick fix, à modifier
+                if(isset($data['patient']['center'])) $responseEntity->patient->fillCenterDetails($data['patient']['center']['name'], $data['patient']['center']['country_code']);
                 $responseEntity->setVisitContext(
                     $data['visit_type']['visit_group'],
                     $data['visit_type']

@@ -3,12 +3,14 @@
 namespace App\GaelO\Services\TreeService;
 
 use App\GaelO\Entities\StudyEntity;
+use App\GaelO\Interfaces\Repositories\CenterRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\PatientRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\StudyRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\UserRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
 
-abstract class AbstractTreeService {
+abstract class AbstractTreeService
+{
 
     protected string $role;
     protected int $userId;
@@ -17,13 +19,15 @@ abstract class AbstractTreeService {
     protected VisitRepositoryInterface $visitRepositoryInterface;
     protected UserRepositoryInterface $userRepositoryInterface;
     protected StudyRepositoryInterface $studyRepositoryInterface;
+    protected CenterRepositoryInterface $centerRepositoryInterface;
 
-    public function __construct(UserRepositoryInterface $userRepositoryInterface, StudyRepositoryInterface $studyRepositoryInterface, PatientRepositoryInterface $patientRepositoryInterface, VisitRepositoryInterface $visitRepositoryInterface)
+    public function __construct(UserRepositoryInterface $userRepositoryInterface, StudyRepositoryInterface $studyRepositoryInterface, PatientRepositoryInterface $patientRepositoryInterface, VisitRepositoryInterface $visitRepositoryInterface, CenterRepositoryInterface $centerRepositoryInterface)
     {
         $this->patientRepositoryInterface = $patientRepositoryInterface;
         $this->userRepositoryInterface = $userRepositoryInterface;
         $this->visitRepositoryInterface = $visitRepositoryInterface;
         $this->studyRepositoryInterface = $studyRepositoryInterface;
+        $this->centerRepositoryInterface = $centerRepositoryInterface;
     }
 
     public function setUserAndStudy(int $userId, string $studyName)
@@ -44,8 +48,13 @@ abstract class AbstractTreeService {
         }, $visitsArray));
 
         $patientsArray = $this->patientRepositoryInterface->getPatientsFromIdArray($patientIdsArray);
-        foreach($patientsArray as $patientEntity) {
-            $responseArray['patients'][$patientEntity['id']] = $patientEntity['code'];
+        foreach ($patientsArray as $patientEntity) {
+            $responseArray['patients'][$patientEntity['id']] = [
+                'code' => $patientEntity['code'],
+                //TO DO
+                'centerName' => '',
+                'centerCode' => ''
+            ];
         }
 
         foreach ($visitsArray as $visitObject) {
@@ -56,6 +65,5 @@ abstract class AbstractTreeService {
         return $responseArray;
     }
 
-    public abstract function buildTree() : array;
-
+    public abstract function buildTree(): array;
 }

@@ -14,6 +14,7 @@ abstract class AbstractVisitRules
     const RULE_SET = "set";
     const RULE_FLOAT = "float";
     const RULE_BOOLEAN = "boolean";
+    const RULE_NUMBER = "number";
 
     public array $data;
 
@@ -21,7 +22,8 @@ abstract class AbstractVisitRules
 
     abstract function getReviewerValidationRules(bool $adjudication): array;
 
-    public function setFormData(array $data){
+    public function setFormData(array $data)
+    {
         $this->data = $data;
     }
 
@@ -62,6 +64,9 @@ abstract class AbstractVisitRules
                 case self::RULE_BOOLEAN:
                     $validatorAdapter->addBooleanValidator($name, $details['optional']);
                     break;
+                case self::RULE_NUMBER:
+                    $validatorAdapter->addNumberValidator($name, $details['optional'], $details['min'], $details['max']);
+                    break;
                 default:
                     throw new Exception('Unknown Rule');
             }
@@ -76,13 +81,14 @@ abstract class AbstractVisitRules
 
     abstract function getAllowedKeyAndMimeTypeReviewer(): array;
 
-    abstract function getTargetLesion() : ?array ;
+    abstract function getTargetLesion(): ?array;
 
     /**
      * Return custom data should be usefull to generate investigator form
      * Empty array by default, to be override in specific models
      */
-    public function getAssociatedDataForInvestigatorForm() : array {
+    public function getAssociatedDataForInvestigatorForm(): array
+    {
         return [];
     }
 
@@ -90,7 +96,8 @@ abstract class AbstractVisitRules
      * Return custom data should be usefull to generate review form
      * Empty array by default, to be override in specific models
      */
-    public function getAssociatedDataForReviewForm() : array {
+    public function getAssociatedDataForReviewForm(): array
+    {
         return [];
     }
 
@@ -104,7 +111,4 @@ abstract class AbstractVisitRules
             return true;
         }
     }
-
-
-
 }
