@@ -36,6 +36,8 @@ class StudyTest extends TestCase
             'name'=>'NEWSTUDY',
             'code'=>'1234',
             'patientCodeLength' => 5,
+            'controllerShowAll'=>true,
+            'monitorShowAll'=>false,
             'contactEmail' => 'test@gaelo.fr'
         ];
 
@@ -49,6 +51,8 @@ class StudyTest extends TestCase
         $payload = [
             'name'=>'NEWSTUDy',
             'code'=>'1234',
+            'controllerShowAll'=>true,
+            'monitorShowAll'=>false,
             'patientCodeLength' => 5,
             'contactEmail' => 'test@gaelo.fr'
         ];
@@ -58,6 +62,8 @@ class StudyTest extends TestCase
         $payload = [
             'name'=>'NEW STUDY',
             'code'=>'1234',
+            'controllerShowAll'=>true,
+            'monitorShowAll'=>false,
             'patientCodeLength' => 5,
             'contactEmail' => 'test@gaelo.fr'
         ];
@@ -67,6 +73,8 @@ class StudyTest extends TestCase
         $payload = [
             'name'=>'NEW.STUDY',
             'code'=>'1234',
+            'controllerShowAll'=>true,
+            'monitorShowAll'=>false,
             'patientCodeLength' => 5,
             'contactEmail' => 'test@gaelo.fr'
         ];
@@ -81,6 +89,8 @@ class StudyTest extends TestCase
         $payload = [
             'name'=>'NEWSTUDY',
             'code'=>'1234',
+            'controllerShowAll'=>true,
+            'monitorShowAll'=>false,
             'patientCodeLength' => 5,
             'ancillaryOf'=> $study->name,
             'contactEmail' => 'test@gaelo.fr'
@@ -93,6 +103,8 @@ class StudyTest extends TestCase
         $payload = [
             'name'=>'NEWSTUDY',
             'code'=>'1234',
+            'controllerShowAll'=>true,
+            'monitorShowAll'=>false,
             'patientCodeLength' => 5,
             'contactEmail' => 'test@gaelo.fr'
         ];
@@ -105,6 +117,8 @@ class StudyTest extends TestCase
         $payload = [
             'name'=>$study->name,
             'code'=>'1234',
+            'controllerShowAll'=>true,
+            'monitorShowAll'=>false,
             'patientCodeLength' => 5,
             'contactEmail' => 'test@gaelo.fr'
         ];
@@ -116,6 +130,8 @@ class StudyTest extends TestCase
         $payload = [
             'name'=>'NEWSTUDY',
             'code'=>'1234',
+            'controllerShowAll'=>true,
+            'monitorShowAll'=>false,
             'patientCodeLength' => 0,
             'contactEmail' => 'test@gaelo.fr'
         ];
