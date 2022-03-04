@@ -76,7 +76,7 @@ class VisitController extends Controller
         $queryParam = $request->query();
         $getVisitsFromStudyRequest->currentUserId = $currentUser['id'];
         $getVisitsFromStudyRequest->studyName = $studyName;
-        $getVisitsFromStudyRequest->visitTypeId = $queryParam['visitType'];
+        if(isset($queryParam['visitType'])) $getVisitsFromStudyRequest->visitTypeId = $queryParam['visitType'];
         $getVisitsFromStudy->execute($getVisitsFromStudyRequest, $getVisitsFromStudyResponse);
 
         return $this->getJsonResponse($getVisitsFromStudyResponse->body, $getVisitsFromStudyResponse->status, $getVisitsFromStudyResponse->statusText);
