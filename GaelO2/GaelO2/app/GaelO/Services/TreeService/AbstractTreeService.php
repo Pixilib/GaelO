@@ -48,12 +48,17 @@ abstract class AbstractTreeService
         }, $visitsArray));
 
         $patientsArray = $this->patientRepositoryInterface->getPatientsFromIdArray($patientIdsArray);
+
+        $centers = $this->centerRepositoryInterface->getCentersFromCodeArray(
+            array_map(function ($patient) { return $patient['center_code']; }, $patientsArray)
+        );
+
         foreach ($patientsArray as $patientEntity) {
+            $centerIndex = array_search($patientEntity['center_code'], array_column($centers, 'code'));
             $responseArray['patients'][$patientEntity['id']] = [
                 'code' => $patientEntity['code'],
-                //TO DO
-                'centerName' => '',
-                'centerCode' => ''
+                'centerName' => $centers[$centerIndex]['name'],
+                'centerCode' => $patientEntity['center_code']
             ];
         }
 
