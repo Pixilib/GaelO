@@ -1,7 +1,8 @@
 Salim TODO :
 
 - getVisitsInStudyNeedingQualityControl => Ecrire le test
-- Use case ask reset QC (pour controller)
+- Use case ask reset QC (pour controller) => Reste a faire modele mail, route et test
+- refactoring Tree Service
 
 - Optimiser l'utilisation des authorization service en injectant les data depuis le usecase (ou les rendre stateless)
 - Optimiser le service visit en injectant directement le visit context

@@ -6,7 +6,6 @@ use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOBadRequestException;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
-use App\GaelO\Interfaces\Repositories\UserRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
 use App\GaelO\Repositories\TrackerRepository;
 use App\GaelO\Services\AuthorizationService\AuthorizationVisitService;
@@ -17,14 +16,12 @@ class RequestUnlock
 {
 
     private AuthorizationVisitService $authorizationVisitService;
-    private UserRepositoryInterface $userRepositoryInterface;
     private MailServices $mailServices;
     private VisitRepositoryInterface $visitRepositoryInterface;
     private TrackerRepository $trackerRepository;
 
-    public function __construct(UserRepositoryInterface $userRepositoryInterface, VisitRepositoryInterface $visitRepositoryInterface, AuthorizationVisitService $authorizationVisitService, MailServices $mailServices, TrackerRepository $trackerRepository)
+    public function __construct( VisitRepositoryInterface $visitRepositoryInterface, AuthorizationVisitService $authorizationVisitService, MailServices $mailServices, TrackerRepository $trackerRepository)
     {
-        $this->userRepositoryInterface = $userRepositoryInterface;
         $this->mailServices = $mailServices;
         $this->authorizationVisitService = $authorizationVisitService;
         $this->visitRepositoryInterface = $visitRepositoryInterface;
@@ -43,8 +40,6 @@ class RequestUnlock
                 $requestUnlockRequest->studyName
             );
 
-            $userEntity = $this->userRepositoryInterface->find($requestUnlockRequest->currentUserId);
-
             $visitContext = $this->visitRepositoryInterface->getVisitContext($requestUnlockRequest->visitId);
 
             $patientId = $visitContext['patient']['id'];
@@ -58,8 +53,6 @@ class RequestUnlock
                 $requestUnlockRequest->visitId,
                 $requestUnlockRequest->currentUserId,
                 $requestUnlockRequest->role,
-                $userEntity['firstname'],
-                $userEntity['lastname'],
                 $requestUnlockRequest->studyName,
                 $patientId,
                 $requestUnlockRequest->message,
