@@ -1,6 +1,5 @@
 Salim TODO :
 
-- getVisitsInStudyNeedingQualityControl => Ecrire le test
 - refactoring Tree Service avec Reponse visite à A pluger avec Visit Entity
 
 - Dans les mails passer des PatentId à PatientNumber dans le texte et titre des mails
