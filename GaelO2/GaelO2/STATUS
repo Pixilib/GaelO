@@ -1,9 +1,9 @@
 Salim TODO :
 
 - getVisitsInStudyNeedingQualityControl => Ecrire le test
-- Use case ask reset QC (pour controller) => Reste a faire modele mail, route et test
-- refactoring Tree Service
+- refactoring Tree Service avec Reponse visite à A pluger avec Visit Entity
 
+- Dans les mails passer des PatentId à PatientNumber dans le texte et titre des mails
 - Optimiser l'utilisation des authorization service en injectant les data depuis le usecase (ou les rendre stateless)
 - Optimiser le service visit en injectant directement le visit context
 - Review  : faire une propriete dans visit pour savoir si review disponible a un user en plus de status reviewAvailable ?
@@ -21,7 +21,6 @@ et devrait pouvoir recuperer des info soit via le useQuery soit via un localstor
 ---- Refactoring Backend ----
 Entity :
 - Pluger toutes les reponses "data" sur ces entity response
-=> GetVisitTree => A pluger avec Visit Entity
 => GetPossibleUpload => VisitEntity ?
 => GetReviewProgression => Visit + Review_status + Progression entity?
 
