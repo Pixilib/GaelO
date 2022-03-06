@@ -46,6 +46,10 @@ class FormService
         $this->currentUserId = $currentUserId;
     }
 
+    public function getSpecificStudiesRules(string $studyName, string $modality, string $visitName) : AbstractVisitRules {
+        return $this->frameworkInterface::make('\App\GaelO\Services\SpecificStudiesRules\\'. $studyName .'\\' . $studyName . '_' . $modality . '_' . $visitName);
+    }
+
     public function setVisitContextAndStudy(array $visitContext, string $studyName)
     {
 
@@ -57,7 +61,7 @@ class FormService
         $this->uploaderId = $this->visitContext['creator_user_id'];
         $this->studyName = $studyName;
         $modality = $this->visitContext['visit_type']['visit_group']['modality'];
-        $this->abstractVisitRules = $this->frameworkInterface::make('\App\GaelO\Services\SpecificStudiesRules\\' . $this->studyName . '_' . $modality . '_' . $this->visitType);
+        $this->abstractVisitRules = $this->getSpecificStudiesRules($this->studyName, $modality, $this->visitType);
     }
 
     public function attachFile(array $reviewEntity, string $key, string $filename, string $mimeType, $binaryData)

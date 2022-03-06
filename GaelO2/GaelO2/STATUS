@@ -1,6 +1,7 @@
 Salim TODO :
 
 - refactoring Tree Service avec Reponse visite à A pluger avec Visit Entity
+- Les regles specifiques devraient etre identifié par visitGroupName et pas par Modality !
 
 - Dans les mails passer des PatentId à PatientNumber dans le texte et titre des mails
 - Optimiser l'utilisation des authorization service en injectant les data depuis le usecase (ou les rendre stateless)
