@@ -46,6 +46,11 @@ if ($accessCheck && $_SESSION['role'] == User::SUPERVISOR) {
 			$statisticsObj=$studyObj->getStatistics(Visit_Group::GROUP_MODALITY_MR);
 			break;
 		}
+
+		if($visitGroup->groupModality == Visit_Group::GROUP_MODALITY_CT){
+			$statisticsObj=$studyObj->getStatistics(Visit_Group::GROUP_MODALITY_CT);
+			break;
+		}
 		
 	}
 	

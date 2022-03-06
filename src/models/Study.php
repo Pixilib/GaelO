@@ -91,7 +91,7 @@ Class Study {
 		$visitsObjectArray=[];
 
 		foreach ($possibleStudyGroups as $studyGroup) {
-			if (in_array($studyGroup->groupModality, array(Visit_Group::GROUP_MODALITY_CT, Visit_Group::GROUP_MODALITY_MR, Visit_Group::GROUP_MODALITY_PET, Visit_Group::GROUP_MODALITY_RTSTRUCT, Visit_Group::GROUP_MODALITY_OP))) {
+			if (in_array($studyGroup->groupModality, array(Visit_Group::GROUP_MODALITY_CT, Visit_Group::GROUP_MODALITY_MR, Visit_Group::GROUP_MODALITY_PET, Visit_Group::GROUP_MODALITY_RTSTRUCT, Visit_Group::GROUP_MODALITY_OP, Visit_Group::GROUP_MODALITY_NM))) {
 				$awaitingUploadVisits=$studyGroup->getStudyVisitManager()->getAwaitingUploadVisit();
 				array_push($visitsObjectArray, ...$awaitingUploadVisits);
 			}
@@ -109,7 +109,7 @@ Class Study {
 		$visitsObjectArray=[];
 
 		foreach ($possibleStudyGroups as $studyGroup) {
-			if (in_array($studyGroup->groupModality, array(Visit_Group::GROUP_MODALITY_CT, Visit_Group::GROUP_MODALITY_MR, Visit_Group::GROUP_MODALITY_PET, Visit_Group::GROUP_MODALITY_RTSTRUCT, Visit_Group::GROUP_MODALITY_OP))) {
+			if (in_array($studyGroup->groupModality, array(Visit_Group::GROUP_MODALITY_CT, Visit_Group::GROUP_MODALITY_MR, Visit_Group::GROUP_MODALITY_PET, Visit_Group::GROUP_MODALITY_RTSTRUCT, Visit_Group::GROUP_MODALITY_OP, Visit_Group::GROUP_MODALITY_NM))) {
 				$awaitingReviewVisits=$studyGroup->getStudyVisitManager()->getAwaitingReviewVisit($username);
 				array_push($visitsObjectArray, ...$awaitingReviewVisits);
 			}
@@ -127,7 +127,7 @@ Class Study {
 		$visitsObjectArray=[];
 
 		foreach ($possibleStudyGroups as $studyGroup) {
-			if (in_array($studyGroup->groupModality, array(Visit_Group::GROUP_MODALITY_CT, Visit_Group::GROUP_MODALITY_MR, Visit_Group::GROUP_MODALITY_PET, Visit_Group::GROUP_MODALITY_RTSTRUCT, Visit_Group::GROUP_MODALITY_OP))) {
+			if (in_array($studyGroup->groupModality, array(Visit_Group::GROUP_MODALITY_CT, Visit_Group::GROUP_MODALITY_MR, Visit_Group::GROUP_MODALITY_PET, Visit_Group::GROUP_MODALITY_RTSTRUCT, Visit_Group::GROUP_MODALITY_OP, Visit_Group::GROUP_MODALITY_NM))) {
 				$uploadedVisits=$studyGroup->getStudyVisitManager()->getUploadedVisits();
 				array_push($visitsObjectArray, ...$uploadedVisits);
 			}

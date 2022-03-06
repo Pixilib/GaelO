@@ -37,6 +37,7 @@
 								<option value=\"MR\">MR</option> \
 								<option value=\"RTSTRUCT\">RTSTRUCT</option> \
 								<option value=\"OP\">OP</option> \
+								<option value=\"NM\">NM</option> \
 							</select> \
 						</td> \
 						<td contenteditable=true>Name</td> \

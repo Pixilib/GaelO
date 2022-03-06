@@ -145,7 +145,7 @@ class Export_Study_Data
 		$imagingVisit=array_filter($this->allcreatedVisits, function(Visit $visitObject) {
 			$inArrayBool=in_array(
 				$visitObject->visitGroupObject->groupModality,
-				array(Visit_Group::GROUP_MODALITY_CT, Visit_Group::GROUP_MODALITY_PET, Visit_Group::GROUP_MODALITY_MR, Visit_Group::GROUP_MODALITY_RTSTRUCT)
+				array(Visit_Group::GROUP_MODALITY_CT, Visit_Group::GROUP_MODALITY_PET, Visit_Group::GROUP_MODALITY_MR, Visit_Group::GROUP_MODALITY_RTSTRUCT, Visit_Group::GROUP_MODALITY_NM)
 			);
 			return ($inArrayBool);
 		});
