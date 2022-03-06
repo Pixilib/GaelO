@@ -24,21 +24,9 @@ class InvestigatorTreeService extends AbstractTreeService
         //Get visits of thoose patients
         $patientVisitsArray = $this->visitRepositoryInterface->getPatientListVisitsWithContext($patientIdArray);
 
-        $responseArray = $this->makeTreeFromVisits($patientVisitsArray);
-
-        //SK A REFACTORISER DEUX APPELS A GETCENTERFROMCODEARRAY
-        $centers = $this->centerRepositoryInterface->getCentersFromCodeArray($userCentersArray);
-        //reloop to add patient with no visits
-        foreach ($patientsArray as $patientEntity) {
-            $centerIndex = array_search($patientEntity['center_code'], array_column($centers, 'code'));
-            $responseArray['patients'][$patientEntity['id']] = [
-                'code' => $patientEntity['code'],
-                'centerName' => $centers[$centerIndex]['name'],
-                'centerCode' => $patientEntity['center_code']
-            ];
-        }
-
-
-        return $responseArray;
+        return[
+            'patients' => $this->makePatientDetails($patientIdArray),
+            'visits'=> $this->makeVisitDetails($patientVisitsArray)
+        ];
     }
 }

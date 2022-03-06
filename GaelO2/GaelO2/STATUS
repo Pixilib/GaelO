@@ -1,6 +1,6 @@
 Salim TODO :
 
-- refactoring Tree Service avec Reponse visite à A pluger avec Visit Entity
+- TreeService à pluger avec Visit/Patient Entity
 - Les regles specifiques devraient etre identifié par visitGroupName et pas par Modality !
 
 - Dans les mails passer des PatentId à PatientNumber dans le texte et titre des mails
@@ -33,7 +33,6 @@ Entity :
 
 Ne doit pas pouvoir faire les relance d'upload => Voir avec Emilie
 Adapter les points de lecture :
-GetVisitTree => Prendre data de etude originale (Accessible que pour role reviewer si ancillary study)
 GetDicomFileSupervisor => Passe par les seriesUID mais le RBAC doit autoriser les etude ancillaire
 GetVisitsFromVisitType => Prendre data de etude original => passer a query tag sur getVisitFrom Study ? Evaluer pertinence ?
 --- /Etudes ancillaires ---

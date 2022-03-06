@@ -13,12 +13,12 @@ class ControllerTreeService extends AbstractTreeService{
         if($this->studyEntity->controllerShowAll){
             //If show all in this study, return all visits with Needed QC to display all status
             $visitsArray = $this->visitRepositoryInterface->getVisitsInStudyNeedingQualityControl($this->studyEntity->name);
-            return $this->makeTreeFromVisits($visitsArray);
+            return $this->formatResponse($visitsArray);
 
         }else{
             //Return only visits awaiting QC
             $visitsArray = $this->visitRepositoryInterface->getVisitsInStudyAwaitingControllerAction($this->studyEntity->name);
-            return $this->makeTreeFromVisits($visitsArray);
+            return $this->formatResponse($visitsArray);
         }
 
     }
