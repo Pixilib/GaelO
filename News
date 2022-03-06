@@ -1,6 +1,7 @@
 GaelO
 
 -- Pending Changes --
+  Add modality NM
   Add Local form validation function
   Fix filtering in uploadmanager
   Fix statistics in case of multiple visit group (pt prioritary to mr)
