@@ -41,7 +41,6 @@ class RequestUnlockQC
 
             $this->checkAuthorization(
                 $requestUnlockQCRequest->currentUserId,
-                $requestUnlockQCRequest->role,
                 $requestUnlockQCRequest->visitId,
                 $studyName
             );
@@ -53,11 +52,9 @@ class RequestUnlockQC
                 throw new GaelOBadRequestException('Unlock message should not be empty');
             }
 
-            //SK RESTE A FAIRE MODELE DE MAIL
             $this->mailServices->sendUnlockQCMessage(
                 $requestUnlockQCRequest->visitId,
                 $requestUnlockQCRequest->currentUserId,
-                $requestUnlockQCRequest->role,
                 $studyName,
                 $patientId,
                 $requestUnlockQCRequest->message,
@@ -71,7 +68,7 @@ class RequestUnlockQC
 
             $this->trackerRepository->writeAction(
                 $requestUnlockQCRequest->currentUserId,
-                $requestUnlockQCRequest->role,
+                Constants::ROLE_CONTROLLER,
                 $studyName,
                 $requestUnlockQCRequest->visitId,
                 Constants::TRACKER_ASK_UNLOCK,

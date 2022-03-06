@@ -113,6 +113,7 @@ Route::middleware(['auth:sanctum', 'verified', 'activated'])->group(function () 
     Route::post('visits/{id}/validate-dicom', [VisitController::class, 'validateDicom']);
     Route::patch('visits/{id}/quality-control', [VisitController::class, 'modifyQualityControl']);
     Route::patch('visits/{id}/quality-control/reset', [VisitController::class, 'modifyQualityControlReset']);
+    Route::post('visits/{id}/quality-control/unlock', [VisitController::class, 'unlockQc']);
     Route::patch('visits/{id}/corrective-action', [VisitController::class, 'modifyCorrectiveAction']);
     Route::patch('visits/{id}/visit-date', [VisitController::class, 'modifyVisitDate']);
     Route::delete('visits/{id}', [VisitController::class, 'deleteVisit']);

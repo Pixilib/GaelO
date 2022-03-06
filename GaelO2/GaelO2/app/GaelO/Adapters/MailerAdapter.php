@@ -135,6 +135,9 @@ class MailerAdapter implements MailerInterface {
             case MailConstants::EMAIL_MAGIC_LINK:
                 $model = new MagicLink($this->parameters);
                 break;
+            case MailConstants::EMAIL_UNLOCK_QC_REQUEST:
+                $model = new UnlockQcRequest($this->parameters);
+                break;
         }
 
         return $model;

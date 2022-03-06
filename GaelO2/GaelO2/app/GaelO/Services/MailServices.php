@@ -324,6 +324,28 @@ class MailServices
         $this->mailInterface->send();
     }
 
+    public function sendUnlockQCMessage(int $visitId, int $currentUserId, string $studyName, string $patientId, string $messages, string $visitType)
+    {
+
+        $parameters = [
+            'name' => $this->getUserName($currentUserId),
+            'study' => $studyName,
+            'patientId' => $patientId,
+            'messages' => $messages,
+            'visitType' => $visitType,
+            'visitId' => $visitId
+        ];
+
+        $this->mailInterface->setTo([
+            ...$this->userRepositoryInterface->getUsersEmailsByRolesInStudy($studyName, Constants::ROLE_SUPERVISOR)
+        ]);
+
+        $this->mailInterface->setReplyTo( $this->getStudyContactEmail($studyName) );
+        $this->mailInterface->setParameters($parameters);
+        $this->mailInterface->setBody(MailConstants::EMAIL_UNLOCK_QC_REQUEST);
+        $this->mailInterface->send();
+    }
+
     public function sendAwaitingAdjudicationMessage(string $studyName, string $patientId, string $visitType, int $visitId)
     {
 
