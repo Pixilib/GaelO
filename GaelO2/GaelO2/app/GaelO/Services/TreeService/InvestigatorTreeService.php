@@ -15,26 +15,18 @@ class InvestigatorTreeService extends AbstractTreeService
         //retrieve from DB the patient's list of the requested study and included in user's center or affiliated centers
         $userCentersArray = $this->userRepositoryInterface->getAllUsersCenters($this->userId);
         $patientsArray = $this->patientRepositoryInterface->getPatientsInStudyInCenters($this->studyEntity->name, $userCentersArray);
-        $centers = $this->centerRepositoryInterface->getCentersFromCodeArray($userCentersArray);
 
-        $patientIdArray = [];
-        foreach ($patientsArray as $patientEntity) {
-            $patientIdArray[$patientEntity['id']] = $patientEntity['code'];
-        }
+        //Extract the Patient ID Array
+        $patientIdArray = array_map(function ($patientEntity) {
+            return $patientEntity['id'];
+        }, $patientsArray);
 
-        $patientsIdArray = array_keys($patientIdArray);
-        $patientVisitsArray = $this->visitRepositoryInterface->getPatientListVisitsWithContext($patientsIdArray);
+        //Get visits of thoose patients
+        $patientVisitsArray = $this->visitRepositoryInterface->getPatientListVisitsWithContext($patientIdArray);
 
-        foreach ($patientIdArray as $id=>$code) {
-            $responseArray['patients'][$id] = [
-                'code' => $code,
-                //TO DO
-                'centerCode' => '',
-                'centerName' => ''
-            ];
-        }
-
-
-        return [...$this->makeTreeFromVisits($patientVisitsArray), ...$responseArray];
+        return[
+            'patients' => $this->makePatientDetails($patientIdArray),
+            'visits'=> $this->makeVisitDetails($patientVisitsArray)
+        ];
     }
 }

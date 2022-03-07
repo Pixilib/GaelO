@@ -36,33 +36,49 @@ abstract class AbstractTreeService
         $this->studyEntity = $this->studyRepositoryInterface->find($studyName);
     }
 
-    protected function makeTreeFromVisits(array $visitsArray): array
-    {
+    protected function makePatientDetails( array $patientIdArray) : array {
 
-        $responseArray = [];
-        $responseArray['visits'] = [];
-        $responseArray['patients'] = [];
+        $patientsArray = $this->patientRepositoryInterface->getPatientsFromIdArray($patientIdArray);
 
-        $patientIdsArray = array_unique(array_map(function ($visit) {
-            return $visit['patient_id'];
-        }, $visitsArray));
+        $centersArray = $this->centerRepositoryInterface->getCentersFromCodeArray(
+            array_map(function ($patient) { return $patient['center_code']; }, $patientsArray)
+        );
 
-        $patientsArray = $this->patientRepositoryInterface->getPatientsFromIdArray($patientIdsArray);
+        $patientArray = [];
+
         foreach ($patientsArray as $patientEntity) {
-            $responseArray['patients'][$patientEntity['id']] = [
+            $centerIndex = array_search($patientEntity['center_code'], array_column($centersArray, 'code'));
+            $patientArray[ $patientEntity['id'] ] = [
                 'code' => $patientEntity['code'],
-                //TO DO
-                'centerName' => '',
-                'centerCode' => ''
+                'centerName' => $centersArray[$centerIndex]['name'],
+                'centerCode' => $patientEntity['center_code']
             ];
         }
 
+        return $patientArray;
+
+    }
+
+    protected function makeVisitDetails(array $visitsArray): array
+    {
+        $visitArray=[];
         foreach ($visitsArray as $visitObject) {
             $visitsFormattedData = (array) TreeItem::createItem($visitObject);
-            $responseArray['visits'][] = $visitsFormattedData;
+            $visitArray[] = $visitsFormattedData;
         }
 
-        return $responseArray;
+        return $visitArray;
+    }
+
+    protected function formatResponse(array $visitArray) : array{
+        $patientIdArray = array_map(function($visit){
+            return $visit['patient_id'];
+        }, $visitArray);
+
+        return[
+            'patients'=> $this->makePatientDetails($patientIdArray),
+            'visits' => $this->makeVisitDetails($visitArray)
+        ];
     }
 
     public abstract function buildTree(): array;

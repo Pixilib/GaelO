@@ -207,6 +207,48 @@ class QcTest extends TestCase
 
     }
 
+    public function testAskResetQc(){
+        $currentUserId = AuthorizationTools::actAsAdmin(false);
+        AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_CONTROLLER, $this->studyName);
+
+        $payload = [
+            'message' => 'sent wrong qc'
+        ];
+
+        $response = $this->post('/api/visits/'.$this->visit->id.'/quality-control/unlock', $payload);
+
+        $response->assertStatus(200);
+
+    }
+
+    public function testAskResetQcShouldFailNoRole(){
+        AuthorizationTools::actAsAdmin(false);
+        $payload = [
+            'message' => 'sent wrong qc'
+        ];
+
+        $response = $this->post('/api/visits/'.$this->visit->id.'/quality-control/unlock', $payload);
+
+        $response->assertStatus(403);
+
+    }
+
+    public function testAskResetQcShoudFailNoMessage(){
+        $currentUserId = AuthorizationTools::actAsAdmin(false);
+        AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_CONTROLLER, $this->studyName);
+
+        $payload = [
+            'message' => ''
+        ];
+
+        $response = $this->post('/api/visits/'.$this->visit->id.'/quality-control/unlock', $payload);
+
+        $response->assertStatus(400);
+
+    }
+
+
+
     public function testResetQc()
     {
         $currentUserId = AuthorizationTools::actAsAdmin(false);

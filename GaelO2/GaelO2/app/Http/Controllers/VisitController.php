@@ -29,6 +29,10 @@ use App\GaelO\UseCases\ModifyVisitDate\ModifyVisitDateResponse;
 use App\GaelO\UseCases\ReactivateVisit\ReactivateVisit;
 use App\GaelO\UseCases\ReactivateVisit\ReactivateVisitRequest;
 use App\GaelO\UseCases\ReactivateVisit\ReactivateVisitResponse;
+use App\GaelO\UseCases\RequestUnlock\RequestUnlockRequest;
+use App\GaelO\UseCases\RequestUnlockQC\RequestUnlockQC;
+use App\GaelO\UseCases\RequestUnlockQC\RequestUnlockQCRequest;
+use App\GaelO\UseCases\RequestUnlockQC\RequestUnlockQCResponse;
 use App\GaelO\UseCases\ValidateDicomUpload\ValidateDicomUpload;
 use App\GaelO\UseCases\ValidateDicomUpload\ValidateDicomUploadRequest;
 use App\GaelO\UseCases\ValidateDicomUpload\ValidateDicomUploadResponse;
@@ -175,5 +179,20 @@ class VisitController extends Controller
         $reactivateVisit->execute($reactivateVisitRequest, $reactivateVisitResponse);
 
         return $this->getJsonResponse($reactivateVisitResponse->body, $reactivateVisitResponse->status, $reactivateVisitResponse->statusText);
+    }
+
+    public function unlockQc(Request $request, RequestUnlockQC $requestUnlockQC, RequestUnlockQCRequest $requestUnlockQCRequest, RequestUnlockQCResponse $requestUnlockQCResponse, int $visitId){
+
+        $currentUser = Auth::user();
+        $requestData = $request->all();
+
+        $requestUnlockRequest = Util::fillObject($requestData, $requestUnlockQCRequest);
+        $requestUnlockRequest->currentUserId = $currentUser['id'];
+        $requestUnlockRequest->visitId = $visitId;
+
+        $requestUnlockQC->execute($requestUnlockRequest, $requestUnlockQCResponse);
+
+        return $this->getJsonResponse($requestUnlockQCResponse->body, $requestUnlockQCResponse->status, $requestUnlockQCResponse->statusText);
+
     }
 }

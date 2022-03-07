@@ -9,21 +9,22 @@ use App\GaelO\Interfaces\Adapters\FrameworkInterface;
 use App\GaelO\Repositories\VisitGroupRepository;
 use App\GaelO\Repositories\VisitTypeRepository;
 use App\GaelO\Services\AuthorizationService\AuthorizationStudyService;
+use App\GaelO\Services\FormService\FormService;
 use Exception;
 
 class GetInvestigatorFormsMetadataFromVisitType
 {
     private VisitTypeRepository $visitTypeRepository;
     private VisitGroupRepository $visitGroupRepository;
-    private FrameworkInterface $frameworkInterface;
+    private FormService $formService;
     private AuthorizationStudyService $authorizationStudyService;
 
-    public function __construct(AuthorizationStudyService $authorizationStudyService, VisitTypeRepository $visitTypeRepository, VisitGroupRepository $visitGroupRepository, FrameworkInterface $frameworkInterface)
+    public function __construct(AuthorizationStudyService $authorizationStudyService, VisitTypeRepository $visitTypeRepository, VisitGroupRepository $visitGroupRepository, FormService $formService)
     {
         $this->authorizationStudyService = $authorizationStudyService;
         $this->visitTypeRepository = $visitTypeRepository;
         $this->visitGroupRepository = $visitGroupRepository;
-        $this->frameworkInterface = $frameworkInterface;
+        $this->formService = $formService;
     }
 
     public function execute(GetInvestigatorFormsMetadataFromVisitTypeRequest $getInvestigatorFormsMetadataFromVisitTypeRequest, GetInvestigatorFormsMetadataFromVisitTypeResponse $getInvestigatorFormsMetadataFromVisitTypeResponse)
@@ -38,7 +39,7 @@ class GetInvestigatorFormsMetadataFromVisitType
 
             $visitGroupEntity = $this->visitGroupRepository->find($visitTypeEntity['visit_group_id']);
 
-            $abstractStudyRules = $this->frameworkInterface->make('\App\GaelO\Services\SpecificStudiesRules\\' . $studyName . '_' . $visitGroupEntity['modality'] . '_' . $visitTypeEntity['name']);
+            $abstractStudyRules = $this->formService->getSpecificStudiesRules($studyName, $visitGroupEntity['modality'], $visitTypeEntity['name']);
 
             $investigatorRules = $abstractStudyRules->getInvestigatorValidationRules();
 

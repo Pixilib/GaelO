@@ -300,14 +300,12 @@ class MailServices
         $this->mailInterface->send();
     }
 
-    public function sendUnlockMessage(int $visitId, int $currentUserId, string $role, string $firstname, string $lastname, string $studyName, string $patientId, string $messages, string $visitType)
+    public function sendUnlockMessage(int $visitId, int $currentUserId, string $role, string $studyName, string $patientId, string $messages, string $visitType)
     {
 
         $parameters = [
-            'name' => 'Supervisor',
+            'name' => $this->getUserName($currentUserId),
             'role' => $role,
-            'firstname' => $firstname,
-            'lastname' => $lastname,
             'study' => $studyName,
             'patientId' => $patientId,
             'messages' => $messages,
@@ -323,6 +321,28 @@ class MailServices
         $this->mailInterface->setReplyTo( $this->getStudyContactEmail($studyName) );
         $this->mailInterface->setParameters($parameters);
         $this->mailInterface->setBody(MailConstants::EMAIL_UNLOCK_REQUEST);
+        $this->mailInterface->send();
+    }
+
+    public function sendUnlockQCMessage(int $visitId, int $currentUserId, string $studyName, string $patientId, string $messages, string $visitType)
+    {
+
+        $parameters = [
+            'name' => $this->getUserName($currentUserId),
+            'study' => $studyName,
+            'patientId' => $patientId,
+            'messages' => $messages,
+            'visitType' => $visitType,
+            'visitId' => $visitId
+        ];
+
+        $this->mailInterface->setTo([
+            ...$this->userRepositoryInterface->getUsersEmailsByRolesInStudy($studyName, Constants::ROLE_SUPERVISOR)
+        ]);
+
+        $this->mailInterface->setReplyTo( $this->getStudyContactEmail($studyName) );
+        $this->mailInterface->setParameters($parameters);
+        $this->mailInterface->setBody(MailConstants::EMAIL_UNLOCK_QC_REQUEST);
         $this->mailInterface->send();
     }
 

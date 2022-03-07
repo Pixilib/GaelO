@@ -513,5 +513,18 @@ class VisitRepositoryTest extends TestCase
 
     }
 
+    public function testGetVisitsInStudyNeedingQualityControl() {
+        $patient = Patient::factory()->create();
+        Visit::factory()->patientId($patient->id)->stateInvestigatorForm(Constants::INVESTIGATOR_FORM_DONE)->uploadDone()->count(5)->create();
+        //Create Visit with requested status but not same study
+        Visit::factory()->stateInvestigatorForm(Constants::INVESTIGATOR_FORM_DONE)->uploadDone()->count(3)->create();
+        //Create Visit from same study but uncorrect status
+        Visit::factory()->patientId($patient->id)->stateInvestigatorForm(Constants::INVESTIGATOR_FORM_DONE)->count(5)->create();
+        Visit::factory()->patientId($patient->id)->uploadDone()->count(5)->create();
+        $answers = $this->visitRepository->getVisitsInStudyNeedingQualityControl($patient->study_name);
+        $this->assertEquals(5, sizeof($answers));
+
+    }
+
 
 }
