@@ -16,11 +16,17 @@ abstract class AbstractVisitRules
     const RULE_BOOLEAN = "boolean";
     const RULE_NUMBER = "number";
 
-    public array $data;
+    protected array $data;
+    protected array $visitContext;
 
     abstract function getInvestigatorValidationRules(): array;
 
     abstract function getReviewerValidationRules(bool $adjudication): array;
+
+    public function setVisitContext(array $visitContext)
+    {
+        $this->visitContext = $visitContext;
+    }
 
     public function setFormData(array $data)
     {
