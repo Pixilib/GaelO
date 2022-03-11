@@ -26,7 +26,7 @@ class CreatePatientsTable extends Migration
             $table->string('investigator_name')->nullable(true)->default(null);
             $table->unsignedInteger('center_code')->default(null);
             $table->string('study_name')->default(null);
-            $table->enum('inclusion_status', ['Included', 'Not Included', 'Excluded', 'Withdrawn'])->default('Included')->nullable(false);
+            $table->enum('inclusion_status', ['Included', 'Pre Included', 'Excluded', 'Withdrawn'])->default('Included')->nullable(false);
             $table->string('withdraw_reason')->nullable(true)->default(null);
             $table->date('withdraw_date')->nullable(true)->default(null);
             $table->timestamps();

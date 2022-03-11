@@ -35,12 +35,7 @@ class GetCreatableVisits{
 
             $this->checkAuthorization($getCreatableVisitsRequest->currentUserId, $getCreatableVisitsRequest->patientId, $patientEntity['study_name']);
 
-            //If Patient status different from Included, No further visit creation is possible
-            if ($patientEntity['inclusion_status'] !== Constants::PATIENT_INCLUSION_STATUS_INCLUDED) {
-                $visitToCreate = [];
-            } else {
-                $visitToCreate = $this->getAvailableVisitToCreate($patientEntity);
-            }
+            $visitToCreate = $this->getAvailableVisitToCreate($patientEntity);
 
             $getCreatableVisitsResponse->status = 200;
             $getCreatableVisitsResponse->statusText = 'OK';
