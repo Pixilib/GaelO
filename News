@@ -1,6 +1,6 @@
 GaelO
 
--- Pending Changes --
+--GaelO 1.9.0 15/03/22--
   Add modality NM
   Add Local form validation function
   Fix filtering in uploadmanager
