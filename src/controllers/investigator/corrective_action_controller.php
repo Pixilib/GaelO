@@ -80,7 +80,8 @@ if (isset ($_SESSION ['username']) && $visitAllowed) {
 		$sendEmail=new Send_Email($linkpdo);
 		$sendEmail->addGroupEmails($visitObject->study, User::SUPERVISOR)
 					->addGroupEmails($visitObject->study, User::CONTROLLER);
-		$sendEmail->sendCorrectiveActionDoneMessage($correctiveActionDecision, $visitObject->study, $visitObject->patientCode, $visitObject->visitType);
+		$studyObject = $visitObject->getParentStudyObject();
+		$sendEmail->sendCorrectiveActionDoneMessage($correctiveActionDecision, $visitObject->study, $studyObject->contactEmail, $visitObject->patientCode, $visitObject->visitType);
 		
 		$answer="Success";
 		echo(json_encode($answer));

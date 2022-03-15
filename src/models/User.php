@@ -393,7 +393,7 @@ class User {
 		$linkedStudies=$this->getAllStudiesWithRole();
 		//Send Email notification
 		$sendEmail=new Send_Email($this->linkpdo);
-		$sendEmail->addAminEmails()->addEmail($this->userEmail);
+		$sendEmail->addAdminEmails()->addEmail($this->userEmail);
 		$sendEmail->sendBlockedAccountNotification($this->username, $linkedStudies);
 
 	}

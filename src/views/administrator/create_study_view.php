@@ -37,6 +37,7 @@
 								<option value=\"MR\">MR</option> \
 								<option value=\"RTSTRUCT\">RTSTRUCT</option> \
 								<option value=\"OP\">OP</option> \
+								<option value=\"NM\">NM</option> \
 							</select> \
 						</td> \
 						<td contenteditable=true>Name</td> \
@@ -69,6 +70,7 @@
 
 			let studyNameString = $("#studyName").val();
 			let patientCodePrefix = $("#patientCodePrefix").val();
+			let contactEmail = $("#contactEmail").val();
 
 			let dataArray={};
 
@@ -153,7 +155,7 @@
 					type: "POST",
 					dataType: 'json',
 					url: 'scripts/study.php',
-					data: { studyName : studyNameString, patientCodePrefix : patientCodePrefix, visitsData : dataArray }, // serializes the form's elements.
+					data: { studyName : studyNameString, patientCodePrefix : patientCodePrefix, contactEmail : contactEmail, visitsData : dataArray }, // serializes the form's elements.
 					success: function(data) {
 						if(data){
 							alertifySuccess("Done")
@@ -174,6 +176,7 @@
 		<div class="form-group row">
 			<label class="col-form-label">Study Name:</label> <input type="text" class="form-control" id="studyName" name="studyName" placeholder="study Name" maxlength="32" required>
 			<label class="col-form-label">Patient Code Prefix :</label> <input type=number class="form-control" id="patientCodePrefix" name="patientCodePrefix" required>
+			<label class="col-form-label">Contact Email :</label> <input type="text" class="form-control" id="contactEmail" name="contactEmail" required>
 		</div>
 			
 		<div>

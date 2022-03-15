@@ -50,7 +50,7 @@ if (isset($_POST['send'])) {
 		$linkedStudy=$userObject->getAllStudiesWithRole();
 		
 		$sendEmail=new Send_Email($linkpdo);
-		$sendEmail->addAminEmails()->addEmail($email);
+		$sendEmail->addAdminEmails()->addEmail($email);
 		$sendEmail->sendBlockedAccountNoPasswordChangeEmail($username, $linkedStudy); 
 		
 		$answer="Blocked";

@@ -679,7 +679,8 @@ class Visit
 			if ($username != null) {
 				$emailObject->addEmail($emailObject->getUserEmails($username));
 			}
-			$emailObject->sendUploadedVisitMessage($this->study, $this->patientCode, $this->visitType);
+			$studyObject = $this->getParentStudyObject();
+			$emailObject->sendUploadedVisitMessage($this->study, $studyObject->contactEmail, $this->patientCode, $this->visitType);
 
 			return true;
 		} else {
@@ -694,7 +695,7 @@ class Visit
 	{
 		$emailObject = new Send_Email($this->linkpdo);
 		$emailObject->addEmailsReviewerWithNoReview($this->study, $this->id_visit);
-		$emailObject->sendReviewReadyMessage($this->study, $this->patientCode, $this->visitType);
+		$emailObject->sendReviewReadyMessage($this->study, $this->getParentStudyObject()->contactEmail, $this->patientCode, $this->visitType);
 	}
 
 	/**
@@ -702,9 +703,10 @@ class Visit
 	 */
 	private function sendUploadNotificationToSupervisor()
 	{
+		$studyObject = $this->getParentStudyObject();
 		$emailObject = new Send_Email($this->linkpdo);
 		$emailObject->addGroupEmails($this->study, User::SUPERVISOR);
-		$emailObject->sendUploadedVisitMessage($this->study, $this->patientCode, $this->visitType);
+		$emailObject->sendUploadedVisitMessage($this->study, $studyObject->contactEmail, $this->patientCode, $this->visitType);
 	}
 
 	/**
@@ -752,7 +754,7 @@ class Visit
 	 * @param $linkpdo
 	 * @return string
 	 */
-	public static function createVisit($visitName, $visitGroupId, $patientCode, $statusDone, $reasonNotDone, $acquisitionDate, $username, PDO $linkpdo)
+	public static function createVisit($visitName, $visitGroupId, $patientCode, $statusDone, $reasonNotDone, $acquisitionDate, $username, PDO $linkpdo) : Visit
 	{
 
 		$visitType = Visit_Type::getVisitTypeByName($visitGroupId, $visitName, $linkpdo);

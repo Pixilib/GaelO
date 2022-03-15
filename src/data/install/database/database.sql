@@ -569,7 +569,8 @@ INSERT INTO `states` (`quality_state`) VALUES
 CREATE TABLE `studies` (
   `name` varchar(32) NOT NULL,
   `patient_code_prefix` tinytext DEFAULT NULL,
-  `active` tinyint(1) NOT NULL DEFAULT '1'
+  `active` tinyint(1) NOT NULL DEFAULT '1',
+  `contact_email` tinytext NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -672,7 +673,7 @@ CREATE TABLE `visits` (
 CREATE TABLE `visit_group` (
   `id` int(11) NOT NULL,
   `study` varchar(32) NOT NULL,
-  `group_modality` set('PT','MR','CT', 'RTSTRUCT','OP') NOT NULL
+  `group_modality` set('PT','MR','CT', 'NM', 'RTSTRUCT','OP') NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------

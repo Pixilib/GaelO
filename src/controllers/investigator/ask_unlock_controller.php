@@ -38,9 +38,11 @@ if (isset($_SESSION['username']) && $patientAllowed) {
 		$request=$_POST['request'];
         
 		if (!empty($request)) {
+			$visit = new Visit($id_visit, $linkpdo);
+			$studyObject = $visit->getParentStudyObject();
 			$emailObject=new Send_Email($linkpdo);
 			$emailObject->addGroupEmails($study, User::SUPERVISOR)->addEmail($userObject->userEmail);
-			$emailObject->sendUnlockRequestMessage($_SESSION['role'], $username, $type_visit, $patient_num, $study, $request);
+			$emailObject->sendUnlockRequestMessage($_SESSION['role'], $username, $type_visit, $patient_num, $study, $studyObject->contactEmail, $request);
             
 			$answer="Success";
 		}else {

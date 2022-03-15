@@ -22,6 +22,7 @@ Class Study {
 	private $linkpdo;
 	public $study;
 	public $patientCodePrefix;
+	public $contactEmail;
     
 	public function __construct(String $study, PDO $linkpdo) {
 
@@ -34,6 +35,7 @@ Class Study {
 
 		$this->study=$result['name'];
 		$this->patientCodePrefix=$result['patient_code_prefix'];
+		$this->contactEmail = $result['contact_email'];
         
         
 	}
@@ -89,7 +91,7 @@ Class Study {
 		$visitsObjectArray=[];
 
 		foreach ($possibleStudyGroups as $studyGroup) {
-			if (in_array($studyGroup->groupModality, array(Visit_Group::GROUP_MODALITY_CT, Visit_Group::GROUP_MODALITY_MR, Visit_Group::GROUP_MODALITY_PET, Visit_Group::GROUP_MODALITY_RTSTRUCT, Visit_Group::GROUP_MODALITY_OP))) {
+			if (in_array($studyGroup->groupModality, array(Visit_Group::GROUP_MODALITY_CT, Visit_Group::GROUP_MODALITY_MR, Visit_Group::GROUP_MODALITY_PET, Visit_Group::GROUP_MODALITY_RTSTRUCT, Visit_Group::GROUP_MODALITY_OP, Visit_Group::GROUP_MODALITY_NM))) {
 				$awaitingUploadVisits=$studyGroup->getStudyVisitManager()->getAwaitingUploadVisit();
 				array_push($visitsObjectArray, ...$awaitingUploadVisits);
 			}
@@ -107,7 +109,7 @@ Class Study {
 		$visitsObjectArray=[];
 
 		foreach ($possibleStudyGroups as $studyGroup) {
-			if (in_array($studyGroup->groupModality, array(Visit_Group::GROUP_MODALITY_CT, Visit_Group::GROUP_MODALITY_MR, Visit_Group::GROUP_MODALITY_PET, Visit_Group::GROUP_MODALITY_RTSTRUCT, Visit_Group::GROUP_MODALITY_OP))) {
+			if (in_array($studyGroup->groupModality, array(Visit_Group::GROUP_MODALITY_CT, Visit_Group::GROUP_MODALITY_MR, Visit_Group::GROUP_MODALITY_PET, Visit_Group::GROUP_MODALITY_RTSTRUCT, Visit_Group::GROUP_MODALITY_OP, Visit_Group::GROUP_MODALITY_NM))) {
 				$awaitingReviewVisits=$studyGroup->getStudyVisitManager()->getAwaitingReviewVisit($username);
 				array_push($visitsObjectArray, ...$awaitingReviewVisits);
 			}
@@ -125,7 +127,7 @@ Class Study {
 		$visitsObjectArray=[];
 
 		foreach ($possibleStudyGroups as $studyGroup) {
-			if (in_array($studyGroup->groupModality, array(Visit_Group::GROUP_MODALITY_CT, Visit_Group::GROUP_MODALITY_MR, Visit_Group::GROUP_MODALITY_PET, Visit_Group::GROUP_MODALITY_RTSTRUCT, Visit_Group::GROUP_MODALITY_OP))) {
+			if (in_array($studyGroup->groupModality, array(Visit_Group::GROUP_MODALITY_CT, Visit_Group::GROUP_MODALITY_MR, Visit_Group::GROUP_MODALITY_PET, Visit_Group::GROUP_MODALITY_RTSTRUCT, Visit_Group::GROUP_MODALITY_OP, Visit_Group::GROUP_MODALITY_NM))) {
 				$uploadedVisits=$studyGroup->getStudyVisitManager()->getUploadedVisits();
 				array_push($visitsObjectArray, ...$uploadedVisits);
 			}
@@ -298,13 +300,14 @@ Class Study {
         
 	}
     
-	public static function createStudy(string $studyName, $patientCodePrefix, PDO $linkpdo) {
+	public static function createStudy(string $studyName, $patientCodePrefix, string $contactEmail, PDO $linkpdo) {
         
-		$req=$linkpdo->prepare('INSERT INTO studies (name, patient_code_prefix) VALUES(:studyName, :patientCodePrefix) ');
+		$req=$linkpdo->prepare('INSERT INTO studies (name, patient_code_prefix, contact_email) VALUES(:studyName, :patientCodePrefix, :contactEmail) ');
         
 		$req->execute(array(
 			'studyName' => $studyName,
-			'patientCodePrefix' => $patientCodePrefix
+			'patientCodePrefix' => $patientCodePrefix,
+			'contactEmail' => $contactEmail
 		));
         
 	}
