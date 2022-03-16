@@ -15,6 +15,7 @@ use App\Mail\Request;
 use App\Mail\ReviewReady;
 use App\Mail\UnlockedForm;
 use App\Mail\UnlockRequest;
+use App\Mail\UnlockQcRequest;
 use App\Mail\UploadedVisit;
 use App\Mail\UploadFailure;
 use App\Mail\VisitNotDone;

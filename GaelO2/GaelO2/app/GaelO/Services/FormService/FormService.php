@@ -62,6 +62,7 @@ class FormService
         $this->studyName = $studyName;
         $modality = $this->visitContext['visit_type']['visit_group']['modality'];
         $this->abstractVisitRules = $this->getSpecificStudiesRules($this->studyName, $modality, $this->visitType);
+        $this->abstractVisitRules->setVisitContext($this->visitContext);
     }
 
     public function attachFile(array $reviewEntity, string $key, string $filename, string $mimeType, $binaryData)
