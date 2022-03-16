@@ -42,7 +42,7 @@ class GetVisitsFromStudy
                 $studyEntity = $this->studyRepositoryInterface->find($studyName);
                 $originalStudyName = $studyEntity->getOriginalStudyName($studyEntity);
 
-                $dbData = $this->visitRepositoryInterface->getVisitsInStudy($originalStudyName, true, false);
+                $dbData = $this->visitRepositoryInterface->getVisitsInStudy($originalStudyName, true, true, false);
             } else {
                 $dbData = $this->visitRepositoryInterface->getVisitsInVisitType($getVisitsFromStudyRequest->visitTypeId, true, $studyName, false, true);
             }
@@ -51,8 +51,7 @@ class GetVisitsFromStudy
             foreach ($dbData as $data) {
                 $responseEntity = VisitEntity::fillFromDBReponseArray($data);
                 $responseEntity->setPatientEntity($data['patient']);
-                //EO Quick fix, à modifier
-                if(isset($data['patient']['center'])) $responseEntity->patient->fillCenterDetails($data['patient']['center']['name'], $data['patient']['center']['country_code']);
+                $responseEntity->patient->fillCenterDetails($data['patient']['center']['name'], $data['patient']['center']['country_code']);
                 $responseEntity->setVisitContext(
                     $data['visit_type']['visit_group'],
                     $data['visit_type']

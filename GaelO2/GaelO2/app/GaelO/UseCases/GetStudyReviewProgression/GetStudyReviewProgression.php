@@ -53,7 +53,7 @@ class GetStudyReviewProgression {
             $studyName = $studyEntity->getOriginalStudyName();
 
             //Get visits in the asked study (with review status)
-            $visits = $this->visitRepositoryInterface->getVisitsInStudy($studyName, true, false);
+            $visits = $this->visitRepositoryInterface->getVisitsInStudy($studyName, true, false, false);
 
             //Get validated review for study
             $validatedReview = $this->reviewRepositoryInterface->getStudyReviewsGroupedByUserIds($getStudyReviewProgressionRequest->studyName);
