@@ -47,6 +47,10 @@ class CreateVisit
 
             $patientEntity = $this->patientRepositoryInterface->find($patientId);
 
+            if( !in_array($patientEntity['inclusion_status'], [Constants::PATIENT_INCLUSION_STATUS_INCLUDED]) ){
+                throw new GaelOForbiddenException("Visit Creation only allowed for preincluded or included patient");
+            }
+
             $studyName = $patientEntity['study_name'];
             $this->checkAuthorization($currentUserId, $patientId, $studyName, $role);
 
