@@ -4,6 +4,7 @@ Salim TODO :
 - TreeService à refactorer en ayant directement le center nesté dans le patient (appel db via with patient.center)
 - Les regles specifiques devraient etre identifié par visitGroupName et pas par Modality !
 - Faire une couche d'abstraction par study pour get les objet specifique (pour pas avoir a dupliquer les fichiers des visites qui ont le meme comportement)
+- GetCreatableVisit soit faire passer par les object specifique pour avoir la main soit à supprimer et faire avec definition de l'etude?
 
 - Dans les mails passer des PatentId à PatientNumber dans le texte et titre des mails
 - Optimiser l'utilisation des authorization service en injectant les data depuis le usecase (ou les rendre stateless)

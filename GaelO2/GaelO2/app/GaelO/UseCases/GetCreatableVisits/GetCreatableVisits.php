@@ -36,7 +36,7 @@ class GetCreatableVisits{
             $this->checkAuthorization($getCreatableVisitsRequest->currentUserId, $getCreatableVisitsRequest->patientId, $patientEntity['study_name']);
 
             //If Patient status different from Included, No further visit creation is possible
-            if (!in_array($patientEntity['inclusion_status'], [Constants::PATIENT_INCLUSION_STATUS_INCLUDED || Constants::PATIENT_INCLUSION_STATUS_PRE_INCLUDED]) ) {
+            if (!in_array($patientEntity['inclusion_status'], [Constants::PATIENT_INCLUSION_STATUS_INCLUDED, Constants::PATIENT_INCLUSION_STATUS_PRE_INCLUDED]) ) {
                 $visitToCreate = [];
             } else {
                 $visitToCreate = $this->getAvailableVisitToCreate($patientEntity);
