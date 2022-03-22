@@ -227,17 +227,17 @@ class Visit
 
 		$visitType = $this->getVisitCharacteristics();
 
-		if (!$visitType->localFormNeeded || !$visitType->qcNeeded) {
-
-			//If QC Not needed validate it
-			if (!$visitType->qcNeeded) {
-				$this->editQc(true, true, null, null, Visit::QC_ACCEPTED, null);
-			}
-			//If form Not Needed put investigator form to Done
-			if (!$visitType->localFormNeeded) {
-				$this->changeVisitStateInvestigatorForm(Visit::DONE);
-			}
+		//If form Not Needed put investigator form to Done
+		if (!$visitType->localFormNeeded) {
+			$this->changeVisitStateInvestigatorForm(Visit::DONE);
 		}
+
+		//If QC Not needed validate it
+		if (!$visitType->qcNeeded) {
+			$this->editQc(true, true, null, null, Visit::QC_ACCEPTED, null);
+		}
+
+		
 	}
 
 	/**
@@ -433,6 +433,12 @@ class Visit
 		}
 	}
 
+	private function makeReviewAvailableIfFormAndQcDone(){
+		$this->refreshVisitData();
+		if($this->stateInvestigatorForm == Visit::DONE && $this->stateQualityControl == Visit::QC_ACCEPTED && $this->getVisitCharacteristics()->reviewNeeded) $this->changeReviewAvailability(true);
+		else $this->changeReviewAvailability(false);
+	}
+
 	/**
 	 * Update quality control data
 	 * @param bool $formAccepted
@@ -468,19 +474,15 @@ class Visit
 
 		$this->refreshVisitData();
 
-		if ($controlDecision == Visit::QC_ACCEPTED) {
-			if ($this->getVisitCharacteristics()->reviewNeeded) {
-				//If review needed make it available for reviewers
-				$this->changeReviewAvailability(true);
-			} else if (!$this->getVisitCharacteristics()->qcNeeded) {
-				//The visit is QC accepted and will not go further as Review is not needed
-				//Inform supervisors that the visit is well recieved
-				//Do this only if QC is not needed as supervisor will get QC notification otherwise (avoid dual mail)
-				$this->sendUploadNotificationToSupervisor();
-			}
-		} else if ($controlDecision == Visit::QC_REFUSED) {
-			$this->changeReviewAvailability(false);
+		if ($controlDecision == Visit::QC_ACCEPTED) $this->makeReviewAvailableIfFormAndQcDone();
+
+		if ($controlDecision == Visit::QC_ACCEPTED && !$this->getVisitCharacteristics()->qcNeeded && !$this->getVisitCharacteristics()->reviewNeeded) {
+			//The visit is QC accepted and will not go further as Review is not needed
+			//Inform supervisors that the visit is well recieved
+			//Do this only if QC is not needed as supervisor will get QC notification otherwise (avoid dual mail)
+			$this->sendUploadNotificationToSupervisor();
 		}
+		
 	}
 
 	/**
@@ -558,9 +560,11 @@ class Visit
 		//Update data in this object
 		$this->refreshVisitData();
 
-		if ($status == Visit::LOCAL_FORM_DONE) {
+		if ($status == Visit::LOCAL_FORM_DONE && $this->getVisitCharacteristics()->qcNeeded ) {
 			$this->sendUploadedVisitEmailToController($username);
 		}
+
+		if ($status == Visit::LOCAL_FORM_DONE) $this->makeReviewAvailableIfFormAndQcDone();
 	}
 
 	/**
