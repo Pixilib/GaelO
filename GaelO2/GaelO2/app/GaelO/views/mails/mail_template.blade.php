@@ -1,91 +1,72 @@
-<!doctype html>
-<html lang="en">
+<body style="margin: 0; background-color: #f7f7f7;">
+    <table align="center" cellpadding="0" cellspacing="0" width="100%">
+        <tr>
+            <td align="center">
+                <table class="content" align="center" cellpadding="0" width="100%" cellspacing="0"
+                    style="border-collapse: separate; margin-top: 80px; max-width: 300px;" bgcolor="#ffffff">
+                    <tr>
+                        <td class="banner" align="center">
+                            <a href="{{ $webAddress }}"><img
+                                    src="<?= $message->embed(public_path('static/media/gaelo-mail-header.png')) ?>"
+                                    alt="Logo" width="300" /></a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td bgcolor="#ffffff">
+                            <table class="content content_wrapper" align="center" cellpadding="0" cellspacing="0"
+                                width="100%" style="max-width: 300px; padding: 32px 30px;">
+                                <tr>
+                                    <td>
+                                        <p
+                                            style="font-family: helvetica; color: #314053; font-size: 16px; line-height: 1.6; margin-top: 0; margin-bottom: 20px;">
+                                            <strong>Dear {{ $name }},</strong>
+                                        </p>
+                                        <p
+                                            style="font-family: helvetica; color: #314053; font-size: 16px; line-height: 1.6; margin-top: 0; margin-bottom: 40px;">
+                                            @yield('content')</p>
 
-<head>
-    <meta charset="utf-8">
-    <title>{{$platformName}}</title>
-    <style>
-        h1 {
-            color: brown;
-            text-align: center
-        }
-
-        a:link {
-            color: brown;
-        }
-
-        header {
-            text-align: center;
-        }
-
-        #footer-link {
-            width: 100%;
-            background-color: beige;
-            color: black;
-            text-align: center;
-        }
-
-        #automatic {
-            font-style: italic;
-        }
-
-        #logo-gaelo {
-            max-height: 180px;
-            width: auto;
-        }
-
-        #footer-contact {
-            color: black;
-            background: white;
-            text-align: left
-        }
-
-        #message {
-            text-align: left;
-            margin: 5% 0;
-        }
-
-        #visit-link {
-            text-align: left;
-            margin: 5% 0;
-        }
-    </style>
-</head>
-
-<body>
-    <header class="main-header" id="header">
-        <img id="logo-gaelo" src="<?= $message->embed(public_path('static/media/gaelo-logo.png')); ?>" alt="Banner Image" >
-    </header>
-    <div id="message">
-        <b>Dear {{$name}},</b><br>
-        @yield('content')
-    </div>
-    <div id="visit-link">
-        @if(!empty($visitId) && !empty($study))
-            Access Visit as
-            <a href="{{$webAddress}}/study/{{$study}}/role/Investigator/visit/{{$visitId}}">Investigator</a>
-            -
-            <a href="{{$webAddress}}/study/{{$study}}/role/Monitor/visit/{{$visitId}}">Monitor</a>
-            -
-            <a href="{{$webAddress}}/study/{{$study}}/role/Controller/visit/{{$visitId}}">Controller</a>
-            -
-            <a href="{{$webAddress}}/study/{{$study}}/role/Reviewer/visit/{{$visitId}}">Reviewer</a>
-            -
-            <a href="{{$webAddress}}/study/{{$study}}/role/Supervisor/visit/{{$visitId}}">Supervisor</a>
-        @endif
-    </div>
-    <div class="footer">
-        <p id="footer-contact">Please contact the Imaging Department of {{$corporation}} for any questions (<a HREF="mailto:{{$adminEmail}}">{{$adminEmail}}</a>)<br>
-            Kind regards, <br>
-            The Imaging Department of {{$corporation}}.<br>
-        </p>
-        <p id="automatic">
-            This is an automatic e-mail. Please do not reply.<br>
-        </p>
-        <p id="footer-link">
-            <a href="{{$webAddress}}">{{$webAddress}}</a>
-        </p>
-    </div>
+                                        <p> @yield('visitLink') </p>
+                                        <p
+                                            style="font-family: helvetica; color: #314053; font-size: 16px; line-height: 1.6; margin-top: 0; margin-bottom: 20px;">
+                                            Please contact the Imaging Department of {{ $corporation }} for any
+                                            questions <a
+                                                style="font-family: helvetica; color: #314053; font-size: 16px; line-height: 1.6; text-decoration: underline;"
+                                                href="mailto:{{ $adminEmail }}"><strong>{{ $adminEmail }}</strong></a>
+                                        </p>
+                                        <p
+                                            style="font-family: helvetica; color: #314053; font-size: 16px; line-height: 1.6; margin-top: 0; margin-bottom: 20px;">
+                                            Kind regards,</p>
+                                        <p
+                                            style="font-family: helvetica; color: #314053; font-size: 16px; line-height: 1.6; margin-top: 0; margin-bottom: 20px;">
+                                            The Imaging Department of {{ $corporation }}.</p>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td bgcolor="#f7f7f7">
+                            <table class="content" align="center" cellpadding="0" cellspacing="0" width="100%"
+                                style="max-width: 300px; margin:0 auto; line-height: 1.3; padding: 18px">
+                                <tr>
+                                    <td align="center">
+                                        <p
+                                            style="font-family: helvetica; color: #314053; font-size: 18px; margin-top: 10px; margin-bottom: 10px;">
+                                            <a style="font-family: helvetica; color: #314053; font-size: 18px; text-decoration: none;"
+                                                href="{{ $webAddress }}"><strong>{{ $webAddress }}</strong></a>
+                                        </p>
+                                        <p
+                                            style="font-family: helvetica; color: #314053; font-size: 14px; margin-top: 0px; margin-bottom: 80px; font-style: italic;">
+                                            This is an automatic e-mail. Please do not reply.</p>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
 </body>
 
 </html>
