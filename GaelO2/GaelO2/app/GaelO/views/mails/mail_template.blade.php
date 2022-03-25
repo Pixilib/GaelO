@@ -19,7 +19,7 @@
                                     <td>
                                         <p
                                             style="font-family: helvetica; color: #314053; font-size: 16px; line-height: 1.6; margin-top: 0; margin-bottom: 20px;">
-                                            <strong>Dear {{ $name }},</strong>
+                                            <strong>Dear {{ $name ?? "User" }},</strong>
                                         </p>
                                         <p
                                             style="font-family: helvetica; color: #314053; font-size: 16px; line-height: 1.6; margin-top: 0; margin-bottom: 40px;">
