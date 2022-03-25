@@ -7,7 +7,7 @@
                     <tr>
                         <td class="banner" align="center">
                             <a href="{{ $webAddress }}"><img
-                                    src="<?= $message->embed(public_path('static/media/gaelo-mail-header.png')) ?>"
+                                    src="<?= $message->embed(public_path('static/media/gaelo-mail-header.jpg')) ?>"
                                     alt="Logo" width="300" /></a>
                         </td>
                     </tr>
