@@ -1,6 +1,6 @@
 <?php
 /**
- Copyright (C) 2018-2020 KANOUN Salim
+ Copyright (C) 2018 KANOUN Salim
  This program is free software; you can redistribute it and/or modify
  it under the terms of the Affero GNU General Public v.3 License as published by
  the Free Software Foundation;
@@ -24,15 +24,12 @@ require_once(__DIR__.'/../../vendor/autoload.php');
 use GO\Scheduler;
 
 // Create a new scheduler
-$scheduler=new Scheduler();
+$scheduler = new Scheduler();
 
 //Define action and timing
 
-
-//scheduleEveryXMinutes("import_from_email_ennov.php", ["study" =>"TRAILOCLORI"] , 1);
 // Let the scheduler execute jobs which are due.
 $scheduler->run();
-
 
 function testScheduleForDebug(String $scriptName, array $arugments, int $hour, int $min){
     global $scheduler;
@@ -56,6 +53,11 @@ function scheduleEveryDays(String $scriptName, array $arugments, int $hour, int 
 function scheduleSundays(String $scriptName, array $arugments, int $hour, int $min){
     global $scheduler;
     $scheduler->php(__DIR__.'/'.$scriptName, null, $arugments)->sunday($hour, $min)->output('/var/log/gaelo_cron_'.$scriptName.'.log');
+}
+
+function scheduleMondays(String $scriptName, array $arugments, int $hour, int $min){
+    global $scheduler;
+    $scheduler->php(__DIR__.'/'.$scriptName, null, $arugments)->monday($hour, $min)->output('/var/log/gaelo_cron_'.$scriptName.'.log');
 }
 
 function scheduleEveryXMinutes(String $scriptName, array $arugments, int $min){
