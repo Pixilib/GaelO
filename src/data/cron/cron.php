@@ -28,28 +28,6 @@ $scheduler = new Scheduler();
 
 //Define action and timing
 
-
-//TO BE STARTED EMAIL MONITORING
-//scheduleEveryXMinutes("monitor_ennov_email.php", [] , 1);
-
-
-/* Disabled DESCART monitoring until new instruction
-scheduleWorkingDays("import_patient_DESCART.php", ["study" =>"DESCART","limitUpdate" => (24*60)] , 9, 0);
-scheduleWorkingDays("import_patient_DESCART.php", ["study" =>"DESCART","limitUpdate" => (24*60)] , 14, 0);
-
-scheduleWorkingDays("import_file_from_ftp.php", ["study" => "DESCART",
-                                                "LimitUpdate" => (24*60), 
-                                                "path" => "/data/upload/from_ftp/DESCART",
-                                                "filename" =>"DESCART_PATIENTS.txt"]
-                                            , 9, 01);
-
-scheduleWorkingDays("import_file_from_ftp.php", ["study" => "DESCART",
-                                                "LimitUpdate" => (24*60), 
-                                                "path" => "/data/upload/from_ftp/DESCART",
-                                                "filename" =>"DESCART_PATIENTS.txt"]
-                                            , 14, 01);
-*/
-
 // Let the scheduler execute jobs which are due.
 $scheduler->run();
 
