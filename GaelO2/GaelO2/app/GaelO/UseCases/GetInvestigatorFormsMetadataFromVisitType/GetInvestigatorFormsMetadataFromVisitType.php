@@ -39,7 +39,7 @@ class GetInvestigatorFormsMetadataFromVisitType
 
             $visitGroupEntity = $this->visitGroupRepository->find($visitTypeEntity['visit_group_id']);
 
-            $abstractStudyRules = $this->formService->getSpecificStudiesRules($studyName, $visitGroupEntity['modality'], $visitTypeEntity['name']);
+            $abstractStudyRules = $this->formService->getSpecificStudiesRules($studyName, $visitGroupEntity['name'], $visitTypeEntity['name']);
 
             $investigatorRules = $abstractStudyRules->getInvestigatorValidationRules();
 

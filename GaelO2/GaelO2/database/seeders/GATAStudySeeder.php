@@ -45,7 +45,7 @@ class GATAStudySeeder extends Seeder
         Patient::factory()->id(10000000000003)->inclusionStatus('Included')->studyName($this->study->name)
             ->centerCode(0)->create();
 
-        $this->visitGroup = VisitGroup::factory()->studyName($this->study->name)->name('FDG')->modality('PT')->create();
+        $this->visitGroup = VisitGroup::factory()->studyName($this->study->name)->name('PT')->modality('PT')->create();
         $this->visitType = VisitType::factory()->visitGroupId($this->visitGroup->id)->name('PET0')->order(1)
             ->limitLowDays(-28)->limitUpDays(0)
             ->localFormNeeded()->qcProbability()->reviewProbability(0)->create();

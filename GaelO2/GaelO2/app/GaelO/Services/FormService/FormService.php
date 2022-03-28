@@ -46,8 +46,8 @@ class FormService
         $this->currentUserId = $currentUserId;
     }
 
-    public function getSpecificStudiesRules(string $studyName, string $modality, string $visitName) : AbstractVisitRules {
-        return $this->frameworkInterface::make('\App\GaelO\Services\SpecificStudiesRules\\'. $studyName .'\\' . $studyName . '_' . $modality . '_' . $visitName);
+    public function getSpecificStudiesRules(string $studyName, string $visitGroup, string $visitName) : AbstractVisitRules {
+        return $this->frameworkInterface::make('\App\GaelO\Services\SpecificStudiesRules\\'. $studyName .'\\' . $studyName . '_' . $visitGroup . '_' . $visitName);
     }
 
     public function setVisitContextAndStudy(array $visitContext, string $studyName)
@@ -60,8 +60,8 @@ class FormService
         $this->patientId = $this->visitContext['patient_id'];
         $this->uploaderId = $this->visitContext['creator_user_id'];
         $this->studyName = $studyName;
-        $modality = $this->visitContext['visit_type']['visit_group']['modality'];
-        $this->abstractVisitRules = $this->getSpecificStudiesRules($this->studyName, $modality, $this->visitType);
+        $visitGroup = $this->visitContext['visit_type']['visit_group']['name'];
+        $this->abstractVisitRules = $this->getSpecificStudiesRules($this->studyName, $visitGroup, $this->visitType);
         $this->abstractVisitRules->setVisitContext($this->visitContext);
     }
 

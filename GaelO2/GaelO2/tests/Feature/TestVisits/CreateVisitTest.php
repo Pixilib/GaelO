@@ -151,7 +151,7 @@ class CreateVisitTest extends TestCase
 
     public function testCreateAlreadyCreatedVisit(){
 
-        $patient = Patient::factory()->create();
+        $patient = Patient::factory()->inclusionStatus(Constants::PATIENT_INCLUSION_STATUS_INCLUDED)->create();
         $visit=Visit::factory()->patientId($patient->id)->create();
 
         $studyName = $patient->study->name;
