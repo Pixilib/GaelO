@@ -4,7 +4,10 @@ RUN apt-get update -qy && \
     git
 WORKDIR /ohif
 RUN git clone --depth 1 --branch v3-stable https://github.com/OHIF/Viewers.git
-RUN cd Viewers && yarn install && QUICK_BUILD=true PUBLIC_URL=/ohif/ yarn build
+RUN cd Viewers
+RUN yarn config set workspaces-experimental true
+RUN yarn install 
+RUN QUICK_BUILD=true PUBLIC_URL=/ohif/ yarn build
 RUN rm /ohif/Viewers/platform/viewer/dist/app-config.js
 
 FROM alpine as stone

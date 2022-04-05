@@ -165,7 +165,7 @@ if ($visitObject->statusDone == Visit::NOT_DONE) {
             		});
             		
             		$("#OHIFViewer").on('click', function() {
-            			var win = window.open('/ohif/viewer/<?=$visitObject->getStudyDicomDetails()->studyUID ?>', '_blank');
+            			var win = window.open('/ohif/Viewer?StudyInstanceUIDs=<?=$visitObject->getStudyDicomDetails()->studyUID ?>', '_blank');
                         if (win) {
                             //Browser has allowed it to be opened
                             win.focus();
