@@ -7,6 +7,14 @@ RUN git clone --depth 1 --branch @ohif/viewer@4.9.21 https://github.com/OHIF/Vie
 RUN cd Viewers && yarn install && QUICK_BUILD=true PUBLIC_URL=/ohif/ yarn build
 RUN rm /ohif/Viewers/platform/viewer/dist/app-config.js
 
+FROM alpine as stone
+RUN apk --no-cache add wget
+RUN apk add --update zip
+RUN wget https://lsb.orthanc-server.com/stone-webviewer/2.3/wasm-binaries.zip
+RUN mkdir /stone
+RUN unzip wasm-binaries.zip -d /stone
+RUN rm /stone/wasm-binaries/StoneWebViewer/configuration.json
+
 FROM php:7.4.19-apache
 
 ENV COMPOSER_ALLOW_SUPERUSER=1
@@ -54,6 +62,9 @@ RUN a2enconf gaelo-app
 
 COPY --chown=www-data:www-data src .
 COPY --from=ohif --chown=www-data:www-data /ohif/Viewers/platform/viewer/dist ./ohif/
+COPY --from=stone /stone/wasm-binaries/StoneWebViewer ./stone/
+
+
 RUN composer install --no-dev
 
 RUN service apache2 restart
