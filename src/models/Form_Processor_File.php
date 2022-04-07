@@ -91,11 +91,11 @@ abstract class Form_Processor_File extends Form_Processor {
 
 	}
     
-	private function isInDeclaredKey(string $fileKey) {
+	protected function isInDeclaredKey(string $fileKey) {
 		return in_array($fileKey, $this->getAllowedFileKeys());
 	}
 
-	private function isInAllowedType(string $extension) {
+	protected function isInAllowedType(string $extension) {
 		return in_array($extension, $this->getAllowedType());
 	}
 
