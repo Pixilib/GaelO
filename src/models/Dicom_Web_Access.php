@@ -20,21 +20,21 @@
  */
 class Dicom_Web_Access {
 
-	private $isStudyMetadataRequested;
-	private $isSerieRequested;
-	private $requestedURI;
+	private $parsedUrl;
 	private $userObject;
 	private $userRole;
 	private $linkpdo;
+	private $level;
     
 	public function __construct(string $requestedURI, User $userObject, string $userRole, PDO $linkpdo) {
-		$this->requestedURI=$requestedURI;
 		$this->userObject=$userObject;
 		$this->userRole=$userRole;
 		$this->linkpdo=$linkpdo;
         
-		if ($this->endsWith($requestedURI, "/series")) $this->isStudyMetadataRequested=true; 
-		else $this->isSerieRequested=true;
+		//error_log(print_r)
+		$url = parse_url($requestedURI);
+		$this->level = $this->getLevel($url);
+		$this->parsedUrl = $url;
         
 	}
     
@@ -43,47 +43,34 @@ class Dicom_Web_Access {
 	 * @return boolean
 	 */
 	public function getDecision() {
-		//Get related visit ID of the called ressource
-		$id_visit=$this->getRelatedVisitID($this->getUID());
-        
+
+		//Determine parent Visit ID depending of requested UID
+
+		if($this->level === "patients"){
+
+            $patientId = $this->getPatientID($this->parsedUrl);
+			$patientEntity = new Patient($patientId, $this->linkpdo);
+			return $this->userObject->isRoleAllowed($patientEntity->patientStudy, $this->userRole);
+
+        }
+        else if($this->level === "studies"){
+
+            $requestedStudyInstanceUID = $this->getStudyInstanceUID($this->parsedUrl);
+			$studyEntity = Study_Details::getStudyObjectByUID($requestedStudyInstanceUID, $this->linkpdo);
+            $visitId = $studyEntity->idVisit;
+
+        }else if ($this->level === "series"){
+
+            $requestedSeriesInstanceUID = $this->getSeriesInstanceUID($this->parsedUrl);
+			$seriesEntity = Series_Details::getSerieObjectByUID($requestedSeriesInstanceUID, $this->linkpdo);
+            $visitId = $seriesEntity->studyDetailsObject->idVisit;
+
+        }
+
 		//Return test of acess allowance
-		return $this->isAccessAllowedForUser($id_visit);
+		return $this->isAccessAllowedForUser($visitId);
 	}
     
-	/**
-	 * Isolate the called Study or Series Instance UID 
-	 * @return string
-	 */
-	private function getUID() {
-		if ($this->isSerieRequested) $level="series";
-		else if ($this->isStudyMetadataRequested) $level="studies";
-		$studySubString=strstr($this->requestedURI, "/".$level."/");
-		$studySubString=str_replace("/".$level."/", "", $studySubString);
-		$endStudyUIDPosition=strpos($studySubString, "/");
-		$studyUID=substr($studySubString, 0, $endStudyUIDPosition);
-		return $studyUID;
-	}
-    
-	/**
-	 * Check if called ressource is allowed for current user
-	 * @param string $uid
-	 * @return string
-	 */
-	private function getRelatedVisitID(string $uid) {
-       
-		if ($this->isSerieRequested) {
-			$seriesObject=Series_Details::getSerieObjectByUID($uid, $this->linkpdo);
-			if ($this->userRole != User::SUPERVISOR && $seriesObject->deleted) throw new Exception('Deleted Series');
-			$studyObject=$seriesObject->studyDetailsObject;
-            
-		}else if ($this->isStudyMetadataRequested) {
-			$studyObject=Study_Details::getStudyObjectByUID($uid, $this->linkpdo);
-			if ($this->userRole != User::SUPERVISOR && $studyObject->deleted) throw new Exception('Deleted Study');
-		}
-        
-		return $studyObject->idVisit;
-        
-	}
     
 	/**
 	 * Check that visit is granter for the calling user (still awaiting review or still awaiting QC)
@@ -113,6 +100,80 @@ class Dicom_Web_Access {
 		return $visitCheck;
         
 	}
+
+
+	private function getLevel(array $url) : string {
+
+		$level = null;
+
+        if( key_exists('query',  $url) ){
+            $params = [];
+            parse_str($url['query'], $params);
+
+			if(key_exists('00100020',  $params)) {
+                $level = "patients";
+                return $level;
+            };
+
+            if(key_exists('0020000D',  $params)) {
+                $level = "studies";
+                return $level;
+            };
+        }
+
+		if ($this->endsWith($url['path'], "/studies"))  $level = "patients";
+        else if ($this->endsWith($url['path'], "/series"))  $level = "studies";
+        else $level = "series";
+
+		return $level;
+
+    }
+
+	private function getPatientID(array $url) : string {
+
+		if( key_exists('query',  $url) ){
+            $params = [];
+            parse_str($url['query'], $params);
+            if(key_exists('00100020',  $params)) return $params['00100020'];
+        }
+        return $this->getUID($url['path'], "patients");
+
+	}
+
+
+	private function getStudyInstanceUID(array $url) : string {
+        if( key_exists('query',  $url) ){
+            $params = [];
+            parse_str($url['query'], $params);
+            if(key_exists('0020000D',  $params)) return $params['0020000D'];
+        }
+        return $this->getUID($url['path'], "studies");
+    }
+
+    private function getSeriesInstanceUID(array $url)  : string {
+        return $this->getUID($url['path'], "series");
+    }
+
+
+	 /**
+     * Isolate the called Study or Series Instance UID
+     * @return string
+     */
+    private function getUID(string $requestedURI, string $level): string
+    {
+        $studySubString = strstr($requestedURI, "/" . $level . "/");
+        $studySubString = str_replace("/" . $level . "/", "", $studySubString);
+
+        $endStudyUIDPosition = strpos($studySubString, "/");
+
+        if ($endStudyUIDPosition) {
+            $studyUID = substr($studySubString, 0, $endStudyUIDPosition);
+        } else {
+            $studyUID = $studySubString;
+        };
+
+        return $studyUID;
+    }
 
 	private function endsWith($haystack, $needle) {
 		return substr_compare($haystack, $needle, -strlen($needle)) === 0;
