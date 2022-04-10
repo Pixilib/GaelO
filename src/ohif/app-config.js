@@ -9,7 +9,7 @@ window.config = {
   dataSources: [
     {
       friendlyName: 'GaelO DICOMWeb Server',
-      namespace: 'org.ohif.default.dataSourcesModule.dicomweb',
+      namespace: '@ohif/extension-default.dataSourcesModule.dicomweb',
       sourceName: 'dicomweb',
       configuration: {
         name: "Orthanc",
