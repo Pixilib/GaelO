@@ -49,8 +49,15 @@ class Dicom_Web_Access {
 		if($this->level === "patients"){
 
             $patientId = $this->getPatientID($this->parsedUrl);
-			$patientEntity = new Patient($patientId, $this->linkpdo);
-			return $this->userObject->isRoleAllowed($patientEntity->patientStudy, $this->userRole);
+			if($patientId){
+				$patientEntity = new Patient($patientId, $this->linkpdo);
+				return $this->userObject->isRoleAllowed($patientEntity->patientStudy, $this->userRole);
+			}else{
+				$requestedStudyInstanceUID = $this->getStudyInstanceUID($this->parsedUrl);
+				$studyEntity = Study_Details::getStudyObjectByUID($requestedStudyInstanceUID, $this->linkpdo);
+				$visitId = $studyEntity->idVisit;
+			}
+			
 
         }
         else if($this->level === "studies"){
@@ -129,14 +136,14 @@ class Dicom_Web_Access {
 
     }
 
-	private function getPatientID(array $url) : string {
+	private function getPatientID(array $url) {
 
 		if( key_exists('query',  $url) ){
             $params = [];
             parse_str($url['query'], $params);
-            if(key_exists('00100020',  $params)) return $params['00100020'];
+			// Filter wild card beacause OHIF add wildcard
+            if(key_exists('00100020',  $params)) return str_replace("*", "", $params['00100020']); ;
         }
-        return $this->getUID($url['path'], "patients");
 
 	}
 
@@ -146,6 +153,7 @@ class Dicom_Web_Access {
             $params = [];
             parse_str($url['query'], $params);
             if(key_exists('0020000D',  $params)) return $params['0020000D'];
+			if(key_exists('StudyInstanceUID',  $params)) return $params['StudyInstanceUID'];
         }
         return $this->getUID($url['path'], "studies");
     }
