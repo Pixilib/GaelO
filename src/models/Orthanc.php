@@ -426,11 +426,24 @@ Class Orthanc {
 		if ($profile == "Default") {
 			$date=TagAnon::KEEP;
 			$body=TagAnon::KEEP;
+			$RTStruct = TagAnon::KEEP;
     
 		}else if ($profile == "Full") {
 			$date=TagAnon::CLEAR;
 			$body=TagAnon::CLEAR;
+			$RTStruct = TagAnon::CLEAR;
 		}
+
+
+		$tagsObjects[]=new TagAnon("3006,0026", $RTStruct); // ROIName
+		$tagsObjects[]=new TagAnon("3006,0028", $RTStruct); // ROIDescription
+		$tagsObjects[]=new TagAnon("3006,0038", $RTStruct); // ROI Generation Description
+		$tagsObjects[]=new TagAnon("3006,0088", $RTStruct); // ROI Observation Description
+		$tagsObjects[]=new TagAnon("3006,0085", $RTStruct); // ROI Observation Label
+		$tagsObjects[]=new TagAnon("3006,0008", $RTStruct); // Structure Set Date
+
+		$tagsObjects[]=new TagAnon("300A,0006", $RTStruct); // RTPlan Date
+		$tagsObjects[]=new TagAnon("300A,0007", $RTStruct); // RTPlan Time
         
 		//List tags releted to Date
 		$tagsObjects[]=new TagAnon("0008,0022", $date); // Acquisition Date
