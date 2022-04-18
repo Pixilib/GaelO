@@ -38,7 +38,7 @@ class TEST_WB_CT0 extends AbstractVisitRules {
     }
 
     public function getAllowedKeyAndMimeTypeReviewer() : array {
-        return ['2.5' => MimeAdapter::getMimeFromExtension('csv')];
+        return ['25' => MimeAdapter::getMimeFromExtension('csv')];
     }
 
     public function getTargetLesion() : ?array {

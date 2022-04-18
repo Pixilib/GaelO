@@ -47,7 +47,9 @@ class FormService
     }
 
     public function getSpecificStudiesRules(string $studyName, string $visitGroup, string $visitName) : AbstractVisitRules {
-        return $this->frameworkInterface::make('\App\GaelO\Services\SpecificStudiesRules\\'. $studyName .'\\' . $studyName . '_' . $visitGroup . '_' . $visitName);
+        $studyObject = $this->frameworkInterface::make('\App\GaelO\Services\SpecificStudiesRules\\'. $studyName .'\\' .  $studyName );
+        $specificObjectClass = $studyObject->getSpecificForm($visitGroup, $visitName);
+        return $this->frameworkInterface::make($specificObjectClass);
     }
 
     public function setVisitContextAndStudy(array $visitContext, string $studyName)
