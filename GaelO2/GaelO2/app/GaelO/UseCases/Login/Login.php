@@ -63,7 +63,9 @@ class Login
             $loginResponse->status = $e->statusCode;
             $loginResponse->statusText = $e->statusText;
         } catch (Exception $e) {
-            throw $e;
+            $loginResponse->body = ['errorMessage' => "Unknown email/password"];
+            $loginResponse->status = 401;
+            $loginResponse->statusText = 'Unauthorized';
         }
     }
 
