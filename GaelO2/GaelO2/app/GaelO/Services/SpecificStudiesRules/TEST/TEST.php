@@ -21,6 +21,6 @@ class TEST extends AbstractGaelOStudy {
 
 enum TEST_VISITS: string
 {
-    case PET0 = "FDG_PET0";
+    case PET0 = "FDG_PET_0";
     case CT0 = "WB_CT0";
 }
