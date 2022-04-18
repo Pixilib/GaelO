@@ -37,11 +37,11 @@ class VisitTypeRepositoryTest extends TestCase
 
     public function testCreateVisitType(){
         $visitGroup = VisitGroup::factory()->create();
-        $this->visitTypeRepository->createVisitType($visitGroup->id, 'PET0', 0, true, 100, 100, false, 0, 100, Constants::ORTHANC_ANON_PROFILE_DEFAULT, []);
+        $this->visitTypeRepository->createVisitType($visitGroup->id, 'PET_0', 0, true, 100, 100, false, 0, 100, Constants::ORTHANC_ANON_PROFILE_DEFAULT, []);
 
         $visitType = VisitType::get()->first();
 
-        $this->assertEquals('PET0', $visitType->name);
+        $this->assertEquals('PET_0', $visitType->name);
         $this->assertEquals(100, $visitType->limit_up_days);
 
     }

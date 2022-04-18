@@ -56,7 +56,7 @@ class FrontTest extends Seeder
 
         $this->visitGroup = VisitGroup::factory()->studyName($this->study->name)->name('PT')->modality('PT')->create();
 
-        $this->visitType = VisitType::factory()->name('PET0')->visitGroupId($this->visitGroup->id)
+        $this->visitType = VisitType::factory()->name('PET_0')->visitGroupId($this->visitGroup->id)
             ->localFormNeeded()->qcProbability()->reviewProbability()->limitLowDays(1)->limitUpDays(2)->create();
 
         $this->visit = Visit::factory()->creatorUserId($this->user->id)->patientId($this->patient->id)
