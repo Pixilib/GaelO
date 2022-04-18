@@ -5,7 +5,7 @@ use App\GaelO\Adapters\MimeAdapter;
 use App\GaelO\Constants\Constants;
 use App\GaelO\Services\AbstractVisitRules;
 
-class TEST_PT_PET0 extends AbstractVisitRules {
+class TEST_FDG_PET0 extends AbstractVisitRules {
 
     public function getInvestigatorValidationRules()  : array {
         return [
