@@ -2,11 +2,9 @@
 
 namespace Tests\Feature\TestUser;
 
-use Illuminate\Foundation\Testing\DatabaseMigrations;
-use Illuminate\Support\Facades\Hash;
+use Illuminate\Foundation\Testing\DatabaseMigrations;;
 use Tests\TestCase;
 use App\Models\User;
-use App\GaelO\Constants\Constants;
 
 class LoginTest extends TestCase
 {
@@ -32,6 +30,16 @@ class LoginTest extends TestCase
         $response = $this->json('POST', '/api/login', $data)-> assertSuccessful();
         $content= json_decode($response->content(), true);
         $this->assertArrayHasKey('access_token', $content);
+    }
+
+
+    public function testLoginNonExistingUser()
+    {
+        $data = ['email'=> 'administrator2@gaelo.fr',
+        'password'=> 'administrator'];
+        $adminDefaultUser = User::where('id', 1)->first();
+        $adminDefaultUser->save();
+        $response = $this->json('POST', '/api/login', $data)->assertStatus(401);
     }
 
     public function testLoginWrongPassword()
