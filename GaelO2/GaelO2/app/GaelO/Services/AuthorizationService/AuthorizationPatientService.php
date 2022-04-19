@@ -9,7 +9,7 @@ class AuthorizationPatientService {
 
     private PatientRepositoryInterface $patientRepositoryInterface;
     private AuthorizationStudyService $authorizationStudyService;
-    private int $patientId;
+    private string $patientId;
     private array $patientData;
 
     public function __construct(PatientRepositoryInterface $patientRepositoryInterface, AuthorizationStudyService $authorizationStudyService, AuthorizationUserService $authorizationUserService )

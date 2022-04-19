@@ -16,6 +16,16 @@ class Visit extends Model
         return $this->hasMany(Review::class, 'visit_id');
     }
 
+
+    /*
+    ->withDefault([
+            'review_available' => false,
+            'target_lesions' => null,
+            'review_status' => 'Not Done',
+            'review_conclusion_value' => null,
+            'review_conclusion_date'=>null
+        ]);;*/
+
     public function reviewStatus(){
         return $this->hasOne(ReviewStatus::class, 'visit_id');
     }

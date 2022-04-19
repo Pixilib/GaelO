@@ -84,7 +84,7 @@ class ExportStudyService {
         $this->visitTypeArray = $visitTypeArray;
 
         //Store Id of visits of this study
-        $this->availableVisits = $this->visitRepositoryInterface->getVisitsInStudy($this->studyName, true, true);
+        $this->availableVisits = $this->visitRepositoryInterface->getVisitsInStudy($this->studyName, true, false, true);
 
         $this->visitIdArray = array_map(function($visit){
             return $visit['id'];

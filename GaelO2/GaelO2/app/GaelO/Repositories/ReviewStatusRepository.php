@@ -21,28 +21,29 @@ class ReviewStatusRepository implements ReviewStatusRepositoryInterface {
 
     public function updateReviewConclusion(int $visitId, string $studyName, string $reviewConclusionValue, ?array $targetLesions) : void {
 
-        $model = $this->reviewStatus->where('visit_id', $visitId)->where('study_name', $studyName)->sole();
-        $model->review_conclusion_value = $reviewConclusionValue;
-        $model->target_lesions = $targetLesions;
-        $model->review_conclusion_date = Util::now();
-        $model->save();
+        $this->reviewStatus->updateOrCreate(
+            ['visit_id' => $visitId, 'study_name' => $studyName],
+            ['review_conclusion_value' => $reviewConclusionValue, 'target_lesions' => $targetLesions, 'review_conclusion_date' =>Util::now() ]
+        );
 
     }
 
     public function updateReviewStatus(int $visitId, string $studyName, string $reviewStatus): void
     {
-
-        $model = $this->reviewStatus->where('visit_id', $visitId)->where('study_name', $studyName)->sole();
-        $model->review_status = $reviewStatus;
-        $model->save();
+        $this->reviewStatus->updateOrCreate(
+            ['visit_id' => $visitId, 'study_name' => $studyName],
+            ['review_status' => $reviewStatus]
+        );
 
     }
 
     public function updateReviewAvailability(int $visitId, string $studyName, bool $reviewAvailable): void
     {
-        $reviewStatusEntity = $this->reviewStatus->where('visit_id', $visitId)->where('study_name', $studyName)->sole();
-        $reviewStatusEntity['review_available'] = $reviewAvailable;
-        $reviewStatusEntity->save();
+
+        $this->reviewStatus->updateOrCreate(
+            ['visit_id' => $visitId, 'study_name' => $studyName],
+            ['review_available' => $reviewAvailable]
+        );
 
     }
 

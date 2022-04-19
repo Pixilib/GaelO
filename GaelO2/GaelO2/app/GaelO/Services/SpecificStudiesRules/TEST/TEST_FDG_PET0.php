@@ -5,7 +5,7 @@ use App\GaelO\Adapters\MimeAdapter;
 use App\GaelO\Constants\Constants;
 use App\GaelO\Services\AbstractVisitRules;
 
-class TEST_CT_CT0 extends AbstractVisitRules {
+class TEST_FDG_PET0 extends AbstractVisitRules {
 
     public function getInvestigatorValidationRules()  : array {
         return [
@@ -34,15 +34,29 @@ class TEST_CT_CT0 extends AbstractVisitRules {
     }
 
     public function getAllowedKeyAndMimeTypeInvestigator() : array {
-        return ['41' => MimeAdapter::getMimeFromExtension('csv')];
+        return [];
     }
 
     public function getAllowedKeyAndMimeTypeReviewer() : array {
-        return ['2.5' => MimeAdapter::getMimeFromExtension('csv')];
+        return ['41' => MimeAdapter::getMimeFromExtension('csv')];
     }
 
     public function getTargetLesion() : ?array {
         return null;
+    }
+
+    public function getAssociatedDataForInvestigatorForm(): array
+    {
+        return [
+            'LastChemo' => '01/01/2021'
+        ];
+    }
+
+    public function getAssociatedDataForReviewForm(): array
+    {
+        return [
+            'Radiotherapy' => false
+        ];
     }
 
 }

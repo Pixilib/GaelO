@@ -38,7 +38,7 @@ class CreateVisitTest extends TestCase
         $this->visitGroupId = $visitType->visitGroup->id;
         $this->studyName = $visitType->visitGroup->study_name;
 
-        $this->patient = Patient::factory()->studyName($this->studyName)->create();
+        $this->patient = Patient::factory()->inclusionStatus(Constants::PATIENT_INCLUSION_STATUS_INCLUDED)->studyName($this->studyName)->create();
         $centerCode = $this->patient->center_code;
 
         $currentUserId = AuthorizationTools::actAsAdmin(false);
@@ -101,7 +101,7 @@ class CreateVisitTest extends TestCase
     }
 
     public function testCreateVisitForbiddenRole(){
-        
+
         $currentUserId = AuthorizationTools::actAsAdmin(false);
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_CONTROLLER, $this->studyName);
 
@@ -136,10 +136,22 @@ class CreateVisitTest extends TestCase
         $this->json('POST', 'api/visit-types/'.$this->visitTypeId.'/visits?role=Investigator', $validPayload)->assertStatus(400);
     }
 
+    public function testCreateVisitNotIncludedPatientShouldFail(){
+        $validPayload = [
+            'patientId' => $this->patient->id,
+            'visitDate' => '2020-01-01',
+            'statusDone' => 'Done',
+        ];
+
+        $this->patient->inclusion_status = Constants::PATIENT_INCLUSION_STATUS_EXCLUDED;
+        $this->patient->save();
+        $this->json('POST', 'api/visit-types/'.$this->visitTypeId.'/visits?role=Investigator', $validPayload)->assertStatus(403);
+    }
+
 
     public function testCreateAlreadyCreatedVisit(){
 
-        $patient = Patient::factory()->create();
+        $patient = Patient::factory()->inclusionStatus(Constants::PATIENT_INCLUSION_STATUS_INCLUDED)->create();
         $visit=Visit::factory()->patientId($patient->id)->create();
 
         $studyName = $patient->study->name;

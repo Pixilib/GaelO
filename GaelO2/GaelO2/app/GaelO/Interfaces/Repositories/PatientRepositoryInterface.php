@@ -8,7 +8,7 @@ interface PatientRepositoryInterface {
 
     public function getAllPatientsNumberInStudy(string $studyName) : array ;
 
-    public function getPatientWithCenterDetails(int $code) : array ;
+    public function getPatientWithCenterDetails(string $code) : array ;
 
     public function getPatientsInStudy(string $studyName) : array ;
 

@@ -1,13 +1,20 @@
 Salim TODO :
 
+- Association par defaut pour les review status pour pas obliger a créer a priori l'entrée review status
+=> revenir a une relation one to many et gérer l'absence dans l'entity de reponse ?
+
 - TreeService à pluger avec Visit/Patient Entity
-- Les regles specifiques devraient etre identifié par visitGroupName et pas par Modality !
-- GetVisitsFromStudy => A cleaner
+- TreeService à refactorer en ayant directement le center nesté dans le patient (appel db via with patient.center)
+- GetCreatableVisit soit faire passer par les object specifique pour avoir la main soit à supprimer et faire avec definition de l'etude?
 
 - Dans les mails passer des PatentId à PatientNumber dans le texte et titre des mails
 - Optimiser l'utilisation des authorization service en injectant les data depuis le usecase (ou les rendre stateless)
 - Optimiser le service visit en injectant directement le visit context
-- Review  : faire une propriete dans visit pour savoir si review disponible a un user en plus de status reviewAvailable ?
+
+- Portage GaelO1 anonymisation RTSTRUCT et Viewers
+
+- les methode du repo visit en rapport avec le review status est peut etre mieux dans review status
+
 
 Reste Autres :
 - Orthanc Send to peer
@@ -41,3 +48,4 @@ Les tests ne font pas d'assertion sur
 - le tracker => Via un spy ?
 - l'envoi de mails => voir doc laravel
 Review => tester un scenario de custom conclusion / adjudication
+Test par etude specifique

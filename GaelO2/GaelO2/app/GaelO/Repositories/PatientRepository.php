@@ -23,7 +23,7 @@ class PatientRepository implements PatientRepositoryInterface
         return $this->patient->where('study_name', $studyName)->select('code')->get()->pluck('code')->toArray();
     }
 
-    public function getPatientWithCenterDetails(int $code): array
+    public function getPatientWithCenterDetails(string $code): array
     {
         return $this->patient->with('center')->findOrFail($code)->toArray();
     }

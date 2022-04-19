@@ -28,3 +28,4 @@ composer.phar
 
 GaelO2/GaelO2/app/GaelO/Services/SpecificStudiesRules/*
 !GaelO2/GaelO2/app/GaelO/Services/SpecificStudiesRules/TEST
+!GaelO2/GaelO2/app/GaelO/Services/SpecificStudiesRules/AbstractGaelOStudy.php

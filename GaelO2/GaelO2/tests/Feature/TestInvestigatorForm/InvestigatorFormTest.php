@@ -123,8 +123,8 @@ class InvestigatorFormTest extends TestCase
     public function testCreateInvestigatorForm(){
         $study = Study::factory()->name('TEST')->create();
         $patient = Patient::factory()->studyName($study->name)->create();
-        $visitGroup = VisitGroup::factory()->studyName($study->name)->modality('PT')->create();
-        $visitType  = VisitType::factory()->visitGroupId($visitGroup->id)->name('PET0')->localFormNeeded()->create();
+        $visitGroup = VisitGroup::factory()->studyName($study->name)->name('FDG')->create();
+        $visitType  = VisitType::factory()->visitGroupId($visitGroup->id)->name('PET_0')->localFormNeeded()->create();
         $visit = Visit::Factory()->patientId($patient->id)->visitTypeId($visitType->id)->create();
 
         $currentUserId = AuthorizationTools::actAsAdmin(false);
@@ -146,8 +146,8 @@ class InvestigatorFormTest extends TestCase
     public function testCreateInvestigatorFormShouldFailNoRole(){
         $study = Study::factory()->name('TEST')->create();
         $patient = Patient::factory()->studyName($study->name)->create();
-        $visitGroup = VisitGroup::factory()->studyName($study->name)->modality('PT')->create();
-        $visitType  = VisitType::factory()->visitGroupId($visitGroup->id)->name('PET0')->localFormNeeded()->create();
+        $visitGroup = VisitGroup::factory()->studyName($study->name)->name('FDG')->create();
+        $visitType  = VisitType::factory()->visitGroupId($visitGroup->id)->name('PET_0')->localFormNeeded()->create();
         $visit = Visit::Factory()->patientId($patient->id)->visitTypeId($visitType->id)->create();
 
         AuthorizationTools::actAsAdmin(false);
@@ -166,8 +166,8 @@ class InvestigatorFormTest extends TestCase
     public function testCreateInvestigatorFormShouldFailInvestigatorFormNotNeeded(){
         $study = Study::factory()->name('TEST')->create();
         $patient = Patient::factory()->studyName($study->name)->create();
-        $visitGroup = VisitGroup::factory()->studyName($study->name)->modality('PT')->create();
-        $visitType  = VisitType::factory()->visitGroupId($visitGroup->id)->name('PET0')->create();
+        $visitGroup = VisitGroup::factory()->studyName($study->name)->name('FDG')->create();
+        $visitType  = VisitType::factory()->visitGroupId($visitGroup->id)->name('PET_0')->create();
         $visit = Visit::Factory()->patientId($patient->id)->visitTypeId($visitType->id)->create();
 
         $currentUserId = AuthorizationTools::actAsAdmin(false);
@@ -188,8 +188,8 @@ class InvestigatorFormTest extends TestCase
     public function testCreateInvestigatorFormShouldFailInvestigatorFormAlreadyExisting(){
         $study = Study::factory()->name('TEST')->create();
         $patient = Patient::factory()->studyName($study->name)->create();
-        $visitGroup = VisitGroup::factory()->studyName($study->name)->modality('PT')->create();
-        $visitType  = VisitType::factory()->visitGroupId($visitGroup->id)->name('PET0')->localFormNeeded()->create();
+        $visitGroup = VisitGroup::factory()->studyName($study->name)->name('FDG')->create();
+        $visitType  = VisitType::factory()->visitGroupId($visitGroup->id)->name('PET_0')->localFormNeeded()->create();
         $visit = Visit::Factory()->patientId($patient->id)->visitTypeId($visitType->id)->stateInvestigatorForm(Constants::INVESTIGATOR_FORM_DRAFT)->create();
 
         $currentUserId = AuthorizationTools::actAsAdmin(false);
@@ -211,8 +211,8 @@ class InvestigatorFormTest extends TestCase
     public function testModifyInvestigatorForm(){
         $study = Study::factory()->name('TEST')->create();
         $patient = Patient::factory()->studyName($study->name)->create();
-        $visitGroup = VisitGroup::factory()->studyName($study->name)->modality('PT')->create();
-        $visitType  = VisitType::factory()->visitGroupId($visitGroup->id)->name('PET0')->localFormNeeded()->create();
+        $visitGroup = VisitGroup::factory()->studyName($study->name)->name('FDG')->create();
+        $visitType  = VisitType::factory()->visitGroupId($visitGroup->id)->name('PET_0')->localFormNeeded()->create();
         $visit = Visit::Factory()->patientId($patient->id)->visitTypeId($visitType->id)->create();
 
         Review::factory()->visitId($visit->id)->studyName($study->name)->create();
@@ -233,8 +233,8 @@ class InvestigatorFormTest extends TestCase
     public function testModifyInvestigatorFormShouldFailNoRole(){
         $study = Study::factory()->name('TEST')->create();
         $patient = Patient::factory()->studyName($study->name)->create();
-        $visitGroup = VisitGroup::factory()->studyName($study->name)->modality('PT')->create();
-        $visitType  = VisitType::factory()->visitGroupId($visitGroup->id)->name('PET0')->localFormNeeded()->create();
+        $visitGroup = VisitGroup::factory()->studyName($study->name)->name('FDG')->create();
+        $visitType  = VisitType::factory()->visitGroupId($visitGroup->id)->name('PET_0')->localFormNeeded()->create();
         $visit = Visit::Factory()->patientId($patient->id)->visitTypeId($visitType->id)->create();
 
         Review::factory()->visitId($visit->id)->studyName($study->name)->create();
@@ -255,8 +255,8 @@ class InvestigatorFormTest extends TestCase
     public function testModifyInvestigatorFormShouldFailAlreadyValidated(){
         $study = Study::factory()->name('TEST')->create();
         $patient = Patient::factory()->studyName($study->name)->create();
-        $visitGroup = VisitGroup::factory()->studyName($study->name)->modality('PT')->create();
-        $visitType  = VisitType::factory()->visitGroupId($visitGroup->id)->name('PET0')->localFormNeeded()->create();
+        $visitGroup = VisitGroup::factory()->studyName($study->name)->name('FDG')->create();
+        $visitType  = VisitType::factory()->visitGroupId($visitGroup->id)->name('PET_0')->localFormNeeded()->create();
         $visit = Visit::Factory()->patientId($patient->id)->stateInvestigatorForm(Constants::INVESTIGATOR_FORM_DONE)->visitTypeId($visitType->id)->create();
 
         Review::factory()->visitId($visit->id)->studyName($study->name)->create();
@@ -277,8 +277,8 @@ class InvestigatorFormTest extends TestCase
     public function testModifyInvestigatorFormShouldFailInvestigatorFormNotNeeded(){
         $study = Study::factory()->name('TEST')->create();
         $patient = Patient::factory()->studyName($study->name)->create();
-        $visitGroup = VisitGroup::factory()->studyName($study->name)->modality('PT')->create();
-        $visitType  = VisitType::factory()->visitGroupId($visitGroup->id)->name('PET0')->create();
+        $visitGroup = VisitGroup::factory()->studyName($study->name)->name('FDG')->create();
+        $visitType  = VisitType::factory()->visitGroupId($visitGroup->id)->name('PET_0')->create();
         $visit = Visit::Factory()->patientId($patient->id)->visitTypeId($visitType->id)->create();
 
         Review::factory()->visitId($visit->id)->studyName($study->name)->create();
@@ -299,8 +299,8 @@ class InvestigatorFormTest extends TestCase
     public function testModifyInvestigatorFormShouldFailNotExistingForm(){
         $study = Study::factory()->name('TEST')->create();
         $patient = Patient::factory()->studyName($study->name)->create();
-        $visitGroup = VisitGroup::factory()->studyName($study->name)->modality('PT')->create();
-        $visitType  = VisitType::factory()->visitGroupId($visitGroup->id)->name('PET0')->localFormNeeded()->create();
+        $visitGroup = VisitGroup::factory()->studyName($study->name)->name('FDG')->create();
+        $visitType  = VisitType::factory()->visitGroupId($visitGroup->id)->name('PET_0')->localFormNeeded()->create();
         $visit = Visit::Factory()->patientId($patient->id)->visitTypeId($visitType->id)->create();
 
         $currentUserId = AuthorizationTools::actAsAdmin(false);
@@ -319,8 +319,8 @@ class InvestigatorFormTest extends TestCase
 
     public function testGetInvestigatorFormMetadata(){
         $study = Study::factory()->name('TEST')->create();
-        $visitGroup = VisitGroup::factory()->studyName($study->name)->modality('PT')->create();
-        $visitType  = VisitType::factory()->visitGroupId($visitGroup->id)->name('PET0')->localFormNeeded()->create();
+        $visitGroup = VisitGroup::factory()->studyName($study->name)->name('FDG')->create();
+        $visitType  = VisitType::factory()->visitGroupId($visitGroup->id)->name('PET_0')->localFormNeeded()->create();
 
         $currentUserId = AuthorizationTools::actAsAdmin(false);
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $study->name);
@@ -332,8 +332,8 @@ class InvestigatorFormTest extends TestCase
 
     public function testGetInvestigatorFormMetadataShouldFailNotSupervisor(){
         $study = Study::factory()->name('TEST')->create();
-        $visitGroup = VisitGroup::factory()->studyName($study->name)->modality('PT')->create();
-        $visitType  = VisitType::factory()->visitGroupId($visitGroup->id)->name('PET0')->localFormNeeded()->create();
+        $visitGroup = VisitGroup::factory()->studyName($study->name)->name('FDG')->create();
+        $visitType  = VisitType::factory()->visitGroupId($visitGroup->id)->name('PET_0')->localFormNeeded()->create();
 
         AuthorizationTools::actAsAdmin(false);
 
@@ -347,8 +347,8 @@ class InvestigatorFormTest extends TestCase
 
         $study = Study::factory()->name('TEST')->create();
         $patient = Patient::factory()->studyName($study->name)->create();
-        $visitGroup = VisitGroup::factory()->studyName($study->name)->modality('PT')->create();
-        $visitType  = VisitType::factory()->visitGroupId($visitGroup->id)->name('PET0')->localFormNeeded()->create();
+        $visitGroup = VisitGroup::factory()->studyName($study->name)->name('FDG')->create();
+        $visitType  = VisitType::factory()->visitGroupId($visitGroup->id)->name('PET_0')->localFormNeeded()->create();
         $visit = Visit::Factory()->patientId($patient->id)->visitTypeId($visitType->id)->create();
 
         $currentUserId = AuthorizationTools::actAsAdmin(false);

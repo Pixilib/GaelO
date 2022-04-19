@@ -1,4 +1,4 @@
-@extends('mails.mail_minimal_template')
+@extends('mails.mail_template')
 
 @section('content')
     {!!$content!!}
