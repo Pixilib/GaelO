@@ -35,7 +35,7 @@ class ModifyPatient
 
         try {
 
-            if (empty($modifyPatientRequest->reason)) throw new GaelOBadRequestException('Reason for patient edition must be sepecified');
+            if (empty($modifyPatientRequest->reason)) throw new GaelOBadRequestException('Reason for patient edition must be specified');
 
             $patientEntity = $this->patientRepositoryInterface->find($modifyPatientRequest->patientId);
             $studyName = $patientEntity['study_name'];

@@ -87,7 +87,7 @@ class PatientRepository implements PatientRepositoryInterface
     }
 
     public function updatePatient(
-        int $id,
+        string $id,
         ?string $lastname,
         ?string $firstname,
         ?string $gender,
