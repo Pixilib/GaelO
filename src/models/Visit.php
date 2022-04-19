@@ -576,7 +576,7 @@ class Visit {
 	}
     
 	/**
-	 * Return the object sepecific instance for this visit to manage users form data
+	 * Return the object specific instance for this visit to manage users form data
 	 * @param boolean $local
 	 * @param string $username
 	 * @return Form_Processor
