@@ -8,6 +8,8 @@ use App\Models\Patient;
 class PatientRepository implements PatientRepositoryInterface
 {
 
+    private Patient $patient;
+
     public function __construct(Patient $patient)
     {
         $this->patient = $patient;
@@ -40,21 +42,12 @@ class PatientRepository implements PatientRepositoryInterface
         return empty($patients) ? [] : $patients->toArray();
     }
 
-    public function getPatientsFromCodeArray(array $codes): array
-    {
-        $patients = $this->patient->whereIn('code', $codes)->get();
-        return $patients !== null  ? $patients->toArray() : [];
-    }
-
     public function getPatientsFromIdArray(array $ids): array
     {
         $patients = $this->patient->whereIn('id', $ids)->get();
         return $patients !== null  ? $patients->toArray() : [];
     }
 
-    /**
-     * @param $patients expected array of Patient Entity
-     */
     public function addPatientInStudy(
         string $id,
         string $code,

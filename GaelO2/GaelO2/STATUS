@@ -1,18 +1,17 @@
 Salim TODO :
 
-- Refact repository : Reprendre à PatientRepo
+- Refact repository : Reprendre à Review Repository
+- les methode du repo visit en rapport avec le review status est peut etre mieux dans review status
+- Dans les mails passer des PatentId à PatientNumber dans le texte et titre des mails
 
 - TreeService à pluger avec Visit/Patient Entity
 - TreeService à refactorer en ayant directement le center nesté dans le patient (appel db via with patient.center)
 - GetCreatableVisit soit faire passer par les object specifique pour avoir la main soit à supprimer et faire avec definition de l'etude?
 
-- Dans les mails passer des PatentId à PatientNumber dans le texte et titre des mails
 - Optimiser l'utilisation des authorization service en injectant les data depuis le usecase (ou les rendre stateless)
 - Optimiser le service visit en injectant directement le visit context
 
 - Portage GaelO1 anonymisation RTSTRUCT et Viewers
-
-- les methode du repo visit en rapport avec le review status est peut etre mieux dans review status
 
 
 Reste Autres :

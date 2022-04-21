@@ -90,7 +90,7 @@ class ReviewRepositoryTest extends TestCase
         $visit = Visit::factory()->create();
         $studyName = $visit->patient->study->name;
 
-        $reviewId = $this->reviewRepository->createReview(true, $visit->id, $studyName, 1, ['comment'=>'PR'], true);
+        $reviewId = $this->reviewRepository->createReview(true, $visit->id, $studyName, 1, ['comment'=>'PR'], true, false);
 
         $this->assertEquals(1, $reviewId);
 
