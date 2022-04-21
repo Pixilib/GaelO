@@ -16,8 +16,6 @@ interface DicomSeriesRepositoryInterface {
 
     public function reactivateSeries(string $seriesInstanceUID) : void ;
 
-    public function isExistingSeriesInstanceUID(string $seriesInstanceUID) : bool ;
-
     public function getSeries(string $seriesInstanceUID, bool $withTrashed) : array ;
 
     public function getRelatedVisitIdFromSeriesInstanceUID(array $seriesInstanceUID, bool $withTrashed) : array ;

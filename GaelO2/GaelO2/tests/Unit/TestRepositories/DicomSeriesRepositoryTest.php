@@ -54,12 +54,6 @@ class DicomSeriesRepositoryTest extends TestCase
         $this->assertEquals(30, $orthancSeries->disk_size);
     }
 
-    public function testIsExistingSeriesId(){
-        $orthancSeries = DicomSeries::factory()->create();
-        $existing = $this->orthancSeriesRepository->isExistingSeriesInstanceUID($orthancSeries->series_uid);
-        $this->assertTrue($existing);
-    }
-
     public function testGetSeriesBySeriesInstanceUid(){
 
         $orthancSeries = DicomSeries::factory()->create();

@@ -13,11 +13,6 @@ class CenterRepository implements CenterRepositoryInterface
         $this->center = $center;
     }
 
-    public function find($id): array
-    {
-        return $this->center->findOrFail($id);
-    }
-
     public function getAll(): array
     {
         $centers = $this->center->get();

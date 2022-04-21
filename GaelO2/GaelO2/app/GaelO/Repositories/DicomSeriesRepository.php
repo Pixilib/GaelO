@@ -72,11 +72,6 @@ class DicomSeriesRepository implements DicomSeriesRepositoryInterface
         $dicomSeries->save();
     }
 
-    public function isExistingSeriesInstanceUID(string $seriesInstanceUID): bool
-    {
-        return empty($this->dicomSeries->find($seriesInstanceUID)) ? false : true;
-    }
-
     public function getSeries(string $seriesInstanceUID, bool $withTrashed): array
     {
         $series = $this->dicomSeries->with('dicomStudy')->where('series_uid', $seriesInstanceUID);
