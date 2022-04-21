@@ -3,6 +3,7 @@ Salim TODO :
 - Refact repository : Reprendre à Review Repository
 - les methode du repo visit en rapport avec le review status est peut etre mieux dans review status
 - Dans les mails passer des PatentId à PatientNumber dans le texte et titre des mails
+- Rebaser le repo GaelO2 a la racine
 
 - TreeService à pluger avec Visit/Patient Entity
 - TreeService à refactorer en ayant directement le center nesté dans le patient (appel db via with patient.center)
