@@ -22,7 +22,7 @@ interface DicomStudyRepositoryInterface {
 
     public function getDicomStudy(string $studyInstanceUID, bool $includeDeleted) : array ;
 
-    public function getChildSeries(string $studyInstanceUID, bool $deleted) : array ;
+    public function getChildSeries(string $studyInstanceUID, bool $onlyTrashed) : array ;
 
     public function reactivateByStudyInstanceUID(string $studyInstanceUID) :void ;
 

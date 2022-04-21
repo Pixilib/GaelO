@@ -58,6 +58,7 @@ class VisitRepository implements VisitRepositoryInterface
 
         $visitId = DB::transaction(function () use ($data, $studyName, $stateReview) {
             $newVisit = $this->visit->create($data);
+            //create review status to set review status study preset for primary studies
             $this->reviewStatus->create([
                 'visit_id' => $newVisit->id,
                 'study_name' => $studyName,
@@ -126,8 +127,8 @@ class VisitRepository implements VisitRepositoryInterface
             $builder = $builder->withTrashed();
         }
         $visits = $builder->with('visitType')->where('patient_id', $patientId)
-            ->with(['reviewStatus' => function ($q) use ($studyName) {
-                $q->where('study_name', $studyName);
+            ->with(['reviewStatus' => function ($query) use ($studyName) {
+                $query->where('study_name', $studyName);
             }])
             ->get();
 
@@ -168,8 +169,8 @@ class VisitRepository implements VisitRepositoryInterface
         }
         if ($withReviewStatus) {
 
-            $queryBuilder->with(['reviewStatus' => function ($q) use ($studyName) {
-                $q->where('study_name', $studyName);
+            $queryBuilder->with(['reviewStatus' => function ($query) use ($studyName) {
+                $query->where('study_name', $studyName);
             }]);
         }
 
@@ -207,8 +208,8 @@ class VisitRepository implements VisitRepositoryInterface
         })->with('visitType');
 
         if ($withReviewStatus) {
-            $visits->with(['reviewStatus' => function ($q) use ($studyName) {
-                $q->where('study_name', $studyName);
+            $visits->with(['reviewStatus' => function ($query) use ($studyName) {
+                $query->where('study_name', $studyName);
             }, 'patient']);
         }
 
@@ -270,8 +271,8 @@ class VisitRepository implements VisitRepositoryInterface
 
         $answer = $this->visit->with('visitType')
             ->whereIn('id', $visitIdAwaitingReview)
-            ->with(['reviewStatus' => function ($q) use ($studyName) {
-                $q->where('study_name', $studyName);
+            ->with(['reviewStatus' => function ($query) use ($studyName) {
+                $query->where('study_name', $studyName);
             }])
             ->get();
 

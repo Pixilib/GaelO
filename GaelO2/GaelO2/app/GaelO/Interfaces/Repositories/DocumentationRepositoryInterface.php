@@ -5,7 +5,7 @@ namespace App\GaelO\Interfaces\Repositories;
 interface DocumentationRepositoryInterface
 {
 
-    public function find(int $id);
+    public function find(int $id, bool $withTrashed);
 
     public function delete($id): void;
 

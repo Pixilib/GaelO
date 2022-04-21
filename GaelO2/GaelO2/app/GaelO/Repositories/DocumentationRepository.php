@@ -8,15 +8,17 @@ use App\GaelO\Util;
 
 class DocumentationRepository implements DocumentationRepositoryInterface
 {
+    private Documentation $documentation;
 
     public function __construct(Documentation $documentation)
     {
         $this->documentation = $documentation;
     }
 
-    public function find($id): array
+    public function find($id, $withTrashed): array
     {
-        return $this->documentation->withTrashed()->findOrFail($id)->toArray();
+        if ($withTrashed) return $this->documentation->withTrashed()->findOrFail($id)->toArray();
+        else return $this->documentation->findOrFail($id)->toArray();
     }
 
     public function delete($id): void
@@ -50,11 +52,9 @@ class DocumentationRepository implements DocumentationRepositoryInterface
 
     public function getDocumentationsOfStudy(string $studyName, bool $withTrashed = false): array
     {
-
         $query = $this->documentation->where('study_name', $studyName);
-        if ($withTrashed) {
-            $query->withTrashed();
-        }
+        if ($withTrashed) $query->withTrashed();
+
         $documentations = $query->get();
         return empty($documentations) ? [] : $documentations->toArray();
     }
@@ -86,18 +86,13 @@ class DocumentationRepository implements DocumentationRepositoryInterface
         $documentation->monitor = $monitor;
         $documentation->reviewer = $reviewer;
         $documentation->save();
-
     }
 
-    public function updateDocumentationPath(
-        int $id,
-        string $path
-    ) {
-
+    public function updateDocumentationPath(int $id, string $path)
+    {
         $documentation = $this->documentation->findOrFail($id);
         $documentation->path = $path;
         $documentation->save();
-
     }
 
     public function isKnownDocumentation(string $name, string $version): bool

@@ -18,11 +18,11 @@ interface DicomSeriesRepositoryInterface {
 
     public function isExistingSeriesInstanceUID(string $seriesInstanceUID) : bool ;
 
-    public function getSeries(string $seriesInstanceUID, bool $includeDeleted) : array ;
+    public function getSeries(string $seriesInstanceUID, bool $withTrashed) : array ;
 
-    public function getRelatedVisitIdFromSeriesInstanceUID(array $seriesInstanceUID) : array ;
+    public function getRelatedVisitIdFromSeriesInstanceUID(array $seriesInstanceUID, bool $withTrashed) : array ;
 
-    public function getSeriesOrthancIDOfSeriesInstanceUID(array $seriesInstanceUID) : array ;
+    public function getSeriesOrthancIDOfSeriesInstanceUID(array $seriesInstanceUID, bool $withTrashed) : array ;
 
     public function getDicomSeriesOfStudyInstanceUIDArray(array $studyInstanceUID, bool $withTrashed) : array ;
 
