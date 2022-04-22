@@ -49,7 +49,7 @@ class MailServices
 
     private function getInvestigatorOfCenterInStudy(String $studyName, String $center, ?String $job = null): array
     {
-        $emails = $this->userRepositoryInterface->getInvestigatorsStudyFromCenterEmails($studyName, $center, $job);
+        $emails = $this->userRepositoryInterface->getInvestigatorsEmailsFromStudyFromCenter($studyName, $center, $job);
         return $emails;
     }
 

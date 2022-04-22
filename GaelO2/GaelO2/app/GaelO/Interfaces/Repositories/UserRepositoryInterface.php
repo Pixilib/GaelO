@@ -33,7 +33,7 @@ interface UserRepositoryInterface {
 
     public function getAdministratorsEmails() : array;
 
-    public function getInvestigatorsStudyFromCenterEmails(string $study, int $centerCode, ?string $job) : array;
+    public function getInvestigatorsEmailsFromStudyFromCenter(string $study, int $centerCode, ?string $job) : array;
 
     public function getUsersByRolesInStudy(string $study, string $role ) : array;
 

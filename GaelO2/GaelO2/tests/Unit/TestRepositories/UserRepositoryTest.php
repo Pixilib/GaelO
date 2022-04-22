@@ -207,19 +207,19 @@ class UserRepositoryTest extends TestCase
         });
 
         //Querying investigator from first study and center 3 with CRA role should return 10 results
-        $investigatorsEmails = $this->userRepository->getInvestigatorsStudyFromCenterEmails($study1->name, 3, Constants::USER_JOB_CRA);
+        $investigatorsEmails = $this->userRepository->getInvestigatorsEmailsFromStudyFromCenter($study1->name, 3, Constants::USER_JOB_CRA);
         $this->assertEquals(10, sizeof($investigatorsEmails));
 
         //Querying investigator from last study and center 3 with CRA role should return 0 results
-        $investigatorsEmails2 = $this->userRepository->getInvestigatorsStudyFromCenterEmails($study2->name, 3, Constants::USER_JOB_CRA);
+        $investigatorsEmails2 = $this->userRepository->getInvestigatorsEmailsFromStudyFromCenter($study2->name, 3, Constants::USER_JOB_CRA);
         $this->assertEquals(0, sizeof($investigatorsEmails2));
 
         //Querying investigator from last study and center 5 with Supervision role should return 15 results
-        $investigatorsEmails3 = $this->userRepository->getInvestigatorsStudyFromCenterEmails($study2->name, 5, Constants::USER_JOB_SUPERVISION);
+        $investigatorsEmails3 = $this->userRepository->getInvestigatorsEmailsFromStudyFromCenter($study2->name, 5, Constants::USER_JOB_SUPERVISION);
         $this->assertEquals(15, sizeof($investigatorsEmails3));
 
         //Querying investigator from first study and center 3 with Radiologist role should return 0 results
-        $investigatorsEmails4 = $this->userRepository->getInvestigatorsStudyFromCenterEmails($study2->name, 3, Constants::USER_JOB_RADIOLOGIST);
+        $investigatorsEmails4 = $this->userRepository->getInvestigatorsEmailsFromStudyFromCenter($study2->name, 3, Constants::USER_JOB_RADIOLOGIST);
         $this->assertEquals(0, sizeof($investigatorsEmails4));
 
         //Results of user query should be different
