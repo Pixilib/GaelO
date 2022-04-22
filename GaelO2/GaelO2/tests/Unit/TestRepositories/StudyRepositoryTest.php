@@ -51,8 +51,8 @@ class StudyRepositoryTest extends TestCase
 
     public function testIsExistingStudy(){
         $studyEntity = Study::factory()->create();
-        $answer  = $this->studyRepository->isExistingStudy($studyEntity->name);
-        $answer2  = $this->studyRepository->isExistingStudy('NotExistingStudyName');
+        $answer  = $this->studyRepository->isExistingStudyName($studyEntity->name);
+        $answer2  = $this->studyRepository->isExistingStudyName('NotExistingStudyName');
         $this->assertTrue($answer);
         $this->assertFalse($answer2);
     }

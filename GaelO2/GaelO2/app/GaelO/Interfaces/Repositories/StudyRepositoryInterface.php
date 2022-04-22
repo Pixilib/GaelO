@@ -12,7 +12,7 @@ interface StudyRepositoryInterface {
 
     public function addStudy(String $name, string $code, int $patientCodeLength, string $contactEmail, bool $controllerShowAll, bool $monitorShowAll, ?string $ancillaryOf) : void ;
 
-    public function isExistingStudy(string $name) : bool ;
+    public function isExistingStudyName(string $name) : bool ;
 
     public function getAncillariesStudyOfStudy(string $name) : array ;
 
@@ -26,6 +26,6 @@ interface StudyRepositoryInterface {
 
     public function getStudyStatistics(string $name) : array;
 
-    public function isExistingCode(string $code) : bool ;
+    public function isExistingStudyCode(string $code) : bool ;
 
 }

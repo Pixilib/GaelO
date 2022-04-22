@@ -42,11 +42,11 @@ class CreateStudy {
                 throw new GaelOBadRequestException('Only uppercase alphanumerical name allowed, no space or special characters');
             }
 
-            if( $this->studyRepositoryInterface->isExistingStudy($studyName) ){
+            if( $this->studyRepositoryInterface->isExistingStudyName($studyName) ){
                 throw new GaelOConflictException('Already Existing Study');
             }
 
-            if( $this->studyRepositoryInterface->isExistingCode($studyCode) ){
+            if( $this->studyRepositoryInterface->isExistingStudyCode($studyCode) ){
                 throw new GaelOConflictException('Already used study code');
             }
 

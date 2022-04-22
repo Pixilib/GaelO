@@ -9,6 +9,7 @@ use App\GaelO\Util;
 
 class TrackerRepository implements TrackerRepositoryInterface
 {
+    private Tracker $tracker;
 
     public function __construct(Tracker $tracker)
     {
