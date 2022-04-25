@@ -5,30 +5,47 @@ namespace App\GaelO\Repositories;
 use App\GaelO\Interfaces\Repositories\DicomSeriesRepositoryInterface;
 use App\Models\DicomSeries;
 
-class DicomSeriesRepository implements DicomSeriesRepositoryInterface {
-
-
+class DicomSeriesRepository implements DicomSeriesRepositoryInterface
+{
     private DicomSeries $dicomSeries;
 
-    public function __construct(DicomSeries $dicomSeries){
+    public function __construct(DicomSeries $dicomSeries)
+    {
         $this->dicomSeries = $dicomSeries;
     }
 
-    public function deleteSeries(string $seriesInstanceUID) : void {
-        $this->dicomSeries->where('series_uid',$seriesInstanceUID)->sole()->delete();
+    public function deleteSeries(string $seriesInstanceUID): void
+    {
+        $this->dicomSeries->where('series_uid', $seriesInstanceUID)->sole()->delete();
     }
 
-    public function reactivateSeries(string $seriesInstanceUID) : void {
-        $this->dicomSeries->withTrashed()->where('series_uid',$seriesInstanceUID)->sole()->restore();
+    public function reactivateSeries(string $seriesInstanceUID): void
+    {
+        $this->dicomSeries->withTrashed()->where('series_uid', $seriesInstanceUID)->sole()->restore();
     }
 
-    public function addSeries(string $seriesOrthancID, string $studyInstanceUID, ?string $acquisitionDate,
-                            ?string $acquisitionTime, ?string $modality, ?string $seriesDescription,
-                            ?int $injectedDose, ?string $radiopharmaceutical, ?int $halfLife,
-                            ?string $injectedTime,?string $injectedDateTime, ?int $injectedActivity, ?int $patientWeight,
-                            int $numberOfInstances, string $seriesUID, ?string $seriesNumber,
-                            int $seriesDiskSize, int $seriesUncompressedDiskSize, ?string $manufacturer,
-                            ?string $modelName ) : void {
+    public function addSeries(
+        string $seriesOrthancID,
+        string $studyInstanceUID,
+        ?string $acquisitionDate,
+        ?string $acquisitionTime,
+        ?string $modality,
+        ?string $seriesDescription,
+        ?int $injectedDose,
+        ?string $radiopharmaceutical,
+        ?int $halfLife,
+        ?string $injectedTime,
+        ?string $injectedDateTime,
+        ?int $injectedActivity,
+        ?int $patientWeight,
+        int $numberOfInstances,
+        string $seriesUID,
+        ?string $seriesNumber,
+        int $seriesDiskSize,
+        int $seriesUncompressedDiskSize,
+        ?string $manufacturer,
+        ?string $modelName
+    ): void {
 
         $dicomSeries = new DicomSeries();
         $dicomSeries->orthanc_id = $seriesOrthancID;
@@ -53,51 +70,43 @@ class DicomSeriesRepository implements DicomSeriesRepositoryInterface {
         $dicomSeries->model_name = $modelName;
 
         $dicomSeries->save();
-
     }
 
-    public function isExistingSeriesInstanceUID(string $seriesInstanceUID) : bool {
-        return empty($this->dicomSeries->find($seriesInstanceUID)) ? false : true;
+    public function getSeries(string $seriesInstanceUID, bool $withTrashed): array
+    {
+        $series = $this->dicomSeries->with('dicomStudy')->where('series_uid', $seriesInstanceUID);
+
+        if ($withTrashed) $series->withTrashed();
+        return $series->sole()->toArray();
     }
 
-    public function getSeries(string $seriesInstanceUID, bool $includeDeleted) : array {
-        if($includeDeleted){
-            $series = $this->dicomSeries->with('dicomStudy')->where('series_uid',$seriesInstanceUID)->withTrashed()->sole()->toArray();
-        }else{
-            $series = $this->dicomSeries->with('dicomStudy')->where('series_uid',$seriesInstanceUID)->sole()->toArray();
-        }
-
-        return $series;
-
-    }
-
-    public function getRelatedVisitIdFromSeriesInstanceUID(array $seriesInstanceUID) : array {
+    public function getRelatedVisitIdFromSeriesInstanceUID(array $seriesInstanceUID, bool $withTrashed): array
+    {
         $query = $this->dicomSeries
             ->with('dicomStudy')
-            ->whereIn('series_uid', $seriesInstanceUID)
-            ->withTrashed();
+            ->whereIn('series_uid', $seriesInstanceUID);
+
+        if ($withTrashed) $query->withTrashed();
         return $query->get()->pluck('dicomStudy.visit_id')->unique()->toArray();
     }
 
-    public function getSeriesOrthancIDOfSeriesInstanceUID(array $seriesInstanceUID) : array {
+    public function getSeriesOrthancIDOfSeriesInstanceUID(array $seriesInstanceUID, bool $withTrashed): array
+    {
         $query = $this->dicomSeries
             ->whereIn('series_uid', $seriesInstanceUID)
-            ->select('orthanc_id')
-            ->withTrashed();
+            ->select('orthanc_id');
+
+        if ($withTrashed) $query->withTrashed();
         return $query->get()->pluck('orthanc_id')->toArray();
     }
 
-    public function getDicomSeriesOfStudyInstanceUIDArray(array $studyInstanceUID, bool $withTrashed) : array {
-
+    public function getDicomSeriesOfStudyInstanceUIDArray(array $studyInstanceUID, bool $withTrashed): array
+    {
         $query = $this->dicomSeries->whereIn('study_instance_uid', $studyInstanceUID);
 
-        if($withTrashed){
-            $query->withTrashed();
-        }
+        if ($withTrashed) $query->withTrashed();
 
         $answer = $query->get();
-
         return $answer->count() === 0 ? []  : $answer->toArray();
     }
-
 }

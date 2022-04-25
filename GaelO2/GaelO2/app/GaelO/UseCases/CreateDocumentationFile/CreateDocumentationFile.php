@@ -32,7 +32,7 @@ class CreateDocumentationFile{
 
         try{
 
-            $documentationEntity = $this->documentationRepositoryInterface->find($createDocumentationFileRequest->id);
+            $documentationEntity = $this->documentationRepositoryInterface->find($createDocumentationFileRequest->id, false);
             $studyName = $documentationEntity['study_name'];
             $this->checkAuthorization($createDocumentationFileRequest->currentUserId, $studyName);
 

@@ -2,6 +2,8 @@
 
 namespace App\GaelO\Entities;
 
+use App\GaelO\Constants\Constants;
+
 class VisitEntity {
     public ?int $creatorUserId;
     public ?string $creationDate;
@@ -79,8 +81,8 @@ class VisitEntity {
         $this->patient = PatientEntity::fillFromDBReponseArray($patientEntity);
     }
 
-    public function setReviewVisitStatus(string $reviewStatus, ?string $reviewConclusionValue, ?string $reviewConclusionDate, ?array $targetLesions){
-        $this->reviewStatus = $reviewStatus;
+    public function setReviewVisitStatus(?string $reviewStatus, ?string $reviewConclusionValue, ?string $reviewConclusionDate, ?array $targetLesions){
+        $this->reviewStatus = $reviewStatus === null ? Constants::REVIEW_STATUS_NOT_DONE : $reviewStatus;
         $this->reviewConclusionValue = $reviewConclusionValue;
         $this->reviewConclusionDate = $reviewConclusionDate;
         $this->targetLesions  = $targetLesions;

@@ -27,7 +27,7 @@ class ReactivateDocumentation {
 
         try{
 
-            $documentationEntity = $this->documentationRepositoryInterface->find($reactivateDocumentationRequest->documentationId);
+            $documentationEntity = $this->documentationRepositoryInterface->find($reactivateDocumentationRequest->documentationId, true);
             $studyName = $documentationEntity['study_name'];
 
             $this->checkAuthorization($reactivateDocumentationRequest->currentUserId, $studyName);

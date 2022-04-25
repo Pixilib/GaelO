@@ -26,7 +26,7 @@ class ModifyDocumentation {
     public function execute(ModifyDocumentationRequest $modifyDocumentationRequest, ModifyDocumentationResponse $modifyDocumentationResponse){
         try{
 
-            $documentation = $this->documentationRepositoryInterface->find($modifyDocumentationRequest->id);
+            $documentation = $this->documentationRepositoryInterface->find($modifyDocumentationRequest->id, false);
             $studyName = $documentation['study_name'];
 
             $this->checkAuthorization($modifyDocumentationRequest->currentUserId, $studyName);

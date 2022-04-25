@@ -40,7 +40,7 @@ class GetDicomsFileSupervisor {
             }
 
             //Get Related visit ID of requested seriesInstanceUID
-            $visitIds = $this->dicomSeriesRepositoryInterface->getRelatedVisitIdFromSeriesInstanceUID($getDicomsFileSupervisorRequest->seriesInstanceUID);
+            $visitIds = $this->dicomSeriesRepositoryInterface->getRelatedVisitIdFromSeriesInstanceUID($getDicomsFileSupervisorRequest->seriesInstanceUID, true);
 
             //Get Contexts of these visits
             $contexts = $this->visitRepositoryInterface->getVisitContextByVisitIdArray($visitIds);
@@ -62,7 +62,7 @@ class GetDicomsFileSupervisor {
             $this->checkAuthorization($getDicomsFileSupervisorRequest->currentUserId, $uniqueStudyName[0]);
 
             //getOrthancSeriesIdArray
-            $this->orthancSeriesIDs = $this->dicomSeriesRepositoryInterface->getSeriesOrthancIDOfSeriesInstanceUID($getDicomsFileSupervisorRequest->seriesInstanceUID);
+            $this->orthancSeriesIDs = $this->dicomSeriesRepositoryInterface->getSeriesOrthancIDOfSeriesInstanceUID($getDicomsFileSupervisorRequest->seriesInstanceUID, true);
 
             //First output the filename, then the controller will call outputStream to get content of orthanc response
             $getDicomsFileSupervisorResponse->filename = 'DICOM_Export_'.$getDicomsFileSupervisorRequest->studyName.'.zip';

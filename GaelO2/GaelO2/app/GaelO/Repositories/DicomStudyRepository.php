@@ -8,6 +8,7 @@ use App\Models\DicomStudy;
 class DicomStudyRepository implements DicomStudyRepositoryInterface
 {
 
+    private DicomStudy $dicomStudy;
 
     public function __construct(DicomStudy $dicomStudy)
     {
@@ -96,25 +97,19 @@ class DicomStudyRepository implements DicomStudyRepositoryInterface
 
     public function getDicomsDataFromVisit(int $visitID, bool $withDeletedStudy, bool $withDeletedSeries): array
     {
+        $query = $this->dicomStudy->where('visit_id', $visitID)->with('uploader');
 
-        $query = $this->dicomStudy;
-
-        if($withDeletedStudy){
-            $query = $query->withTrashed();
-        }
-
+        if ($withDeletedStudy) $query = $query->withTrashed();
 
         if ($withDeletedSeries) {
             $query = $query->with(['dicomSeries' => function ($query) {
                 $query->withTrashed();
             }]);
-        }else{
+        } else {
             $query = $query->with('dicomSeries');
         }
 
-        $studies = $query->where('visit_id', $visitID)->with('uploader')->get();
-
-
+        $studies = $query->get();
         return $studies->count() == 0 ? [] : $studies->toArray();
     }
 
@@ -129,28 +124,21 @@ class DicomStudyRepository implements DicomStudyRepositoryInterface
         return $study;
     }
 
-    public function getChildSeries(string $studyInstanceUID, bool $deleted): array
+    public function getChildSeries(string $studyInstanceUID, bool $onlyTrashed): array
     {
-        if (!$deleted) {
-            $series = $this->dicomStudy->findOrFail($studyInstanceUID)->dicomSeries()->get()->toArray();
-        } else {
-            $series = $this->dicomStudy->findOrFail($studyInstanceUID)->dicomSeries()->onlyTrashed()->get()->toArray();
-        }
+        $query = $this->dicomStudy->findOrFail($studyInstanceUID)->dicomSeries();
+        if ($onlyTrashed) $query->onlyTrashed();
 
-        return $series;
+        return $query->get()->toArray();
     }
 
     public function getDicomStudyFromVisitIdArray(array $visitId, bool $withTrashed): array
     {
-
         $queryBuilder = $this->dicomStudy->whereIn('visit_id', $visitId);
 
-        if ($withTrashed) {
-            $queryBuilder->withTrashed();
-        }
+        if ($withTrashed) $queryBuilder->withTrashed();
 
         $answer = $queryBuilder->get();
-
         return $answer->count() === 0 ? []  : $answer->toArray();
     }
 
@@ -166,9 +154,7 @@ class DicomStudyRepository implements DicomStudyRepositoryInterface
             }])
             ->whereIn('visit_id', $visitId)->with('dicomSeries');
 
-        if ($withTrashed) {
-            $queryBuilder->withTrashed();
-        }
+        if ($withTrashed) $queryBuilder->withTrashed();
 
         $answer = $queryBuilder->get();
 

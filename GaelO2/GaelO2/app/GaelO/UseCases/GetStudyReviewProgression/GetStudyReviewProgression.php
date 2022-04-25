@@ -69,7 +69,6 @@ class GetStudyReviewProgression {
                 //Listing users not having done review of this visit
                 $userIdNotHavingReviewed = array_diff(array_keys($reviewersById), $userIdHavingReviewed);
 
-
                 $answer[] = [
                     'visitId' => $visit['id'],
                     'patientId' => $visit['patient_id'],

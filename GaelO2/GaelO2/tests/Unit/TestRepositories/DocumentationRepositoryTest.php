@@ -50,7 +50,7 @@ class DocumentationRepositoryTest extends TestCase
 
     public function testGetDocumentation(){
         $createdDocumentation = Documentation::factory()->studyName($this->study->name)->create();
-        $documentation = $this->documentationRepository->find($createdDocumentation->id);
+        $documentation = $this->documentationRepository->find($createdDocumentation->id, false);
 
         $this->assertEquals($createdDocumentation->name, $documentation['name']);
         $this->assertEquals($createdDocumentation->version, $documentation['version']);

@@ -8,7 +8,7 @@ use App\Models\Review;
 
 class ReviewRepository implements ReviewRepositoryInterface
 {
-
+    private Review $review;
 
     public function __construct(Review $review)
     {
@@ -27,8 +27,10 @@ class ReviewRepository implements ReviewRepositoryInterface
 
     public function getInvestigatorForm(int $visitId, bool $withUser): array
     {
-        if ($withUser) return $this->review->with('user')->where('visit_id', $visitId)->where('local', true)->sole()->toArray();
-        else return $this->review->where('visit_id', $visitId)->where('local', true)->sole()->toArray();
+        $query = $this->review->where('visit_id', $visitId)->where('local', true);
+        if ($withUser) $query->with('user');
+
+        return $query->sole()->toArray();
     }
 
     public function unlockInvestigatorForm(int $visitId): void
@@ -38,7 +40,7 @@ class ReviewRepository implements ReviewRepositoryInterface
         $reviewEntity->save();
     }
 
-    public function createReview(bool $local, int $visitId, string $studyName, int $userId, array $reviewData, bool $validated, bool $adjudication = false): int
+    public function createReview(bool $local, int $visitId, string $studyName, int $userId, array $reviewData, bool $validated, bool $adjudication): int
     {
 
         $review = new Review();
@@ -84,16 +86,13 @@ class ReviewRepository implements ReviewRepositoryInterface
 
     public function getReviewsForStudyVisit(string $studyName, int $visitId, bool $onlyValidated): array
     {
-
         $reviewQuery = $this->review
             ->where('study_name', $studyName)
             ->where('visit_id', $visitId)
             ->where('local', false)
             ->with('user');
 
-        if ($onlyValidated) {
-            $reviewQuery->where('validated', true);
-        }
+        if ($onlyValidated) $reviewQuery->where('validated', true);
 
         $reviewEntity = $reviewQuery->get();
 
@@ -172,5 +171,4 @@ class ReviewRepository implements ReviewRepositoryInterface
 
         return $answer->count() === 0 ? [] : $answer->toArray();
     }
-
 }

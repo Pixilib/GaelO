@@ -5,30 +5,30 @@ namespace App\GaelO\Repositories;
 use App\GaelO\Entities\StudyEntity;
 use App\Models\Study;
 use App\GaelO\Interfaces\Repositories\StudyRepositoryInterface;
-use Exception;
 
-class StudyRepository implements StudyRepositoryInterface {
+class StudyRepository implements StudyRepositoryInterface
+{
 
     private Study $study;
 
-    public function __construct(Study $study){
+    public function __construct(Study $study)
+    {
         $this->study = $study;
     }
 
-    public function find($name) : StudyEntity {
-        $studyInfoArray= $this->study->findOrFail($name)->toArray();
+    public function find($name): StudyEntity
+    {
+        $studyInfoArray = $this->study->findOrFail($name)->toArray();
         return StudyEntity::fillFromDBReponseArray($studyInfoArray);
     }
 
-    public function delete($name) : void {
+    public function delete($name): void
+    {
         $this->study->findOrFail($name)->delete();
     }
 
-    public function getAll() : array {
-        throw new Exception('Use Get Studies instead');
-    }
-
-    public function addStudy(String $name, string $code, int $patientCodeLength, string $contactEmail, bool $controllerShowAll, bool $monitorShowAll, ?string $ancillaryOf) : void {
+    public function addStudy(String $name, string $code, int $patientCodeLength, string $contactEmail, bool $controllerShowAll, bool $monitorShowAll, ?string $ancillaryOf): void
+    {
         $study = new Study();
         $study->name = $name;
         $study->code = $code;
@@ -40,49 +40,56 @@ class StudyRepository implements StudyRepositoryInterface {
         $study->save();
     }
 
-    public function isExistingStudy(string $name) : bool {
+    public function isExistingStudyName(string $name): bool
+    {
         $studies = $this->study->withTrashed()->where('name', $name)->get();
-        return $studies->count()> 0 ? true : false ;
+        return $studies->count() > 0 ? true : false;
     }
 
-    public function isExistingCode(string $code) : bool {
+    public function isExistingStudyCode(string $code): bool
+    {
         $studies = $this->study->withTrashed()->where('code', $code)->get();
-        return $studies->count()> 0 ? true : false ;
+        return $studies->count() > 0 ? true : false;
     }
 
-    public function getStudies(bool $withTrashed = false) : array {
-        if($withTrashed){
+    public function getStudies(bool $withTrashed = false): array
+    {
+        if ($withTrashed) {
             $studies = $this->study->withTrashed()->get();
-        }else {
+        } else {
             $studies = $this->study->get();
         }
-        return $studies->count() == 0 ? [] : $studies->toArray() ;
+        return $studies->count() == 0 ? [] : $studies->toArray();
     }
 
-    public function getAncillariesStudyOfStudy(string $studyName) : array {
+    public function getAncillariesStudyOfStudy(string $studyName): array
+    {
         $ancilariesStudies = $this->study->where('ancillary_of', $studyName)->get();
-        return $ancilariesStudies->count() == 0 ? [] : $ancilariesStudies->pluck('name')->toArray() ;
+        return $ancilariesStudies->count() == 0 ? [] : $ancilariesStudies->pluck('name')->toArray();
     }
 
-    public function getAllStudiesWithDetails() : array {
+    public function getAllStudiesWithDetails(): array
+    {
         $studiesDetails = $this->study->withTrashed()->with('visitGroupDetails')->get();
         return $studiesDetails->toArray();
     }
 
-    public function getStudyDetails(string $name) : array {
+    public function getStudyDetails(string $name): array
+    {
         $studiesDetails = $this->study->with('visitGroupDetails')->findOrFail($name);
         return $studiesDetails->toArray();
     }
 
-    public function reactivateStudy(string $name) : void {
+    public function reactivateStudy(string $name): void
+    {
         $this->study->withTrashed()->findOrFail($name)->restore();
     }
 
-    public function getStudyStatistics(string $name) : array {
+    public function getStudyStatistics(string $name): array
+    {
         $counts = $this->study::withCount(['patients', 'visits', 'dicomStudies', 'dicomSeries'])->where('name', $name)->sole()->toArray();
         $counts['dicom_instances_count'] = $this->study->findOrFail($name)->dicomStudies()->sum('number_of_instances');
-        $counts['dicom_disk_size'] =$this->study->findOrFail($name)->dicomStudies()->sum('disk_size');
+        $counts['dicom_disk_size'] = $this->study->findOrFail($name)->dicomStudies()->sum('disk_size');
         return $counts;
     }
-
 }
