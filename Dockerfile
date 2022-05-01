@@ -51,7 +51,7 @@ ENV COMPOSER_ALLOW_SUPERUSER=1
 WORKDIR $APP_HOME
 
 COPY docker_start.sh /usr/local/bin/start
-COPY --chown=www-data:www-data GaelO2/GaelO2 .
+COPY --chown=www-data:www-data GaelO2 .
 
 RUN mv .env.example .env
 
