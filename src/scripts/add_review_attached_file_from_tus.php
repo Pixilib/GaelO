@@ -27,6 +27,7 @@ $visitId=$_POST['visit_id'];
 $fileKey=$_POST['file_key'];
 $tusIds = $_POST['tusIds'];
 $nbOfInstances = $_POST['numberOfInstances'];
+$timeStamp = time();
 
 //Need to retrieve study before testing permission, can't test visit permissions directly because permission class tests non deleted status
 $visitObject=new Visit($visitId, $linkpdo);
@@ -40,7 +41,7 @@ if ($accessCheck && in_array($_SESSION['role'], array(User::REVIEWER))) {
 		return json_encode((false));
 	}
 
-    $unzipedPath = $_SERVER['DOCUMENT_ROOT'].'/data/upload/temp/'.$timeStamp.'_'.$id_visit;
+    $unzipedPath = $_SERVER['DOCUMENT_ROOT'].'/data/upload/temp/'.$timeStamp.'_'.$visitId;
     if (!is_dir($unzipedPath)) {
         mkdir($unzipedPath, 0755);
     }
@@ -177,4 +178,18 @@ function sendFolderToOrthanc(string $unzipedPath, Orthanc $orthancExposedObject)
 		}
 	}
 	
+}
+
+/**
+ * Recursively delete unziped folder
+ * @param string $directory
+ */
+function recursive_directory_delete(string $directory) {
+	$it=new RecursiveDirectoryIterator($directory, FilesystemIterator::SKIP_DOTS);
+	$it=new RecursiveIteratorIterator($it, RecursiveIteratorIterator::CHILD_FIRST);
+	foreach ($it as $file) {
+		if ($file->isDir()) rmdir($file->getPathname());
+		else unlink($file->getPathname());
+	}
+	rmdir($directory);
 }
