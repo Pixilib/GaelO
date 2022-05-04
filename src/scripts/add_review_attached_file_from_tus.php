@@ -33,7 +33,7 @@ $visitObject=new Visit($visitId, $linkpdo);
 $accessCheck=$userObject->isVisitAllowed($visitId, $_SESSION['role']);
 
 if ($accessCheck && in_array($_SESSION['role'], array(User::REVIEWER))) {
-	$formProcessor=$visitObject->getFromProcessor($local, $_SESSION['username']);
+	$formProcessor=$visitObject->getFromProcessor(false, $_SESSION['username']);
 
 	if (!$formProcessor instanceof Form_Processor_File) {
 		throw new Exception('Wrong From Processor type');
@@ -55,7 +55,7 @@ if ($accessCheck && in_array($_SESSION['role'], array(User::REVIEWER))) {
         $zip->close();
         
         //Remove file from TUS and downloaded temporary zip
-        delete_tus_file($fileName);
+        delete_tus_file($tusId);
         unlink($tempZipPath);
 
     }
@@ -126,7 +126,7 @@ function delete_tus_file($id){
 function sendFolderToOrthanc(string $unzipedPath, Orthanc $orthancExposedObject) {
 	
 	global $nbOfInstances;
-	//Recursive scann of the unzipped folder
+	//Recursive scan of the unzipped folder
 	$rii=new RecursiveIteratorIterator(new RecursiveDirectoryIterator($unzipedPath));
 	
 	$files=array();
