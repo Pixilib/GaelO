@@ -81,13 +81,14 @@ if ($accessCheck && in_array($_SESSION['role'], array(User::REVIEWER))) {
 
     $fileSize = $fileStat['size'];
     $fileMime = mime_content_type($tempFileLocation);
-
+	error_log(print_r($fileStat, true));
 	try{
 		$formProcessor->storeAssociatedFile($fileKey, $fileMime, $fileSize, $tempFileLocation);
 		echo( json_encode((true)) );
 	}catch (Throwable $t){
 		error_log($t->getMessage());
-		echo (json_encode((false)) );
+		header('HTTP/1.0 500 Internal Server Error');
+		die('You are not allowed to access this file.');
 	}
 
 }else {
