@@ -16,4 +16,8 @@ class Tracker extends Model
     public function study(){
         return $this->belongsTo(Study::class, 'study_name', 'name');
     }
+
+    public function visit(){
+        return $this->belongsTo(Visit::class, 'visit_id', 'id');
+    }
 }

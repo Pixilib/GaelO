@@ -31,6 +31,7 @@ class GetStudyTrackerRoleAction {
             foreach($dbData as $data){
                 $trackerEntity = TrackerEntity::fillFromDBReponseArray($data);
                 $trackerEntity->setUserData($data['user']);
+                $trackerEntity->setVisitData($data['visit']);
                 $responseArray[] = $trackerEntity;
             }
 
