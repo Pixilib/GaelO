@@ -44,10 +44,7 @@ class TrackerEntity
             $array['visit_type']['visit_group'],
             $array['visit_type']
         );
-        $this->visit->uploadStatus = $array['upload_status'];
-        $this->visit->stateInvestigatorForm = $array['state_investigator_form'];
-        $this->visit->stateQualityControl = $array['state_quality_control'];
-        $this->visit->reviewStatus = $array['review_status']['review_status'];
-
+        $this->visit->fillFromDBReponseArray($array);
+        $this->visit->setReviewVisitStatus($array['review_status']['review_status'], $array['review_status']['review_conclusion_value'], $array['review_status']['review_conclusion_date'], $array['review_status']['target_lesions']);
     }
 }
