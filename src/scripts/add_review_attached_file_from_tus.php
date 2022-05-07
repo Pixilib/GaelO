@@ -67,23 +67,23 @@ if ($accessCheck && in_array($_SESSION['role'], array(User::REVIEWER))) {
     $orthancExposedObject=new Orthanc(true);
     $importedMap=sendFolderToOrthanc($unzipedPath, $orthancExposedObject);
 
-    $tempFileLocation=tempnam(ini_get('upload_tmp_dir'), 'TMPZIP_');
-
+    $tempFileLocations = [];
     //Retrieve ZIP archive to be stored
     foreach ($importedMap as $studyID=>$seriesIDs) {
-        $zipStream=$orthancExposedObject->getZipStream([$studyID]);
-        file_put_contents($tempFileLocation, $zipStream);
+		$tempFileLocation=tempnam(ini_get('upload_tmp_dir'), 'TMPZIP_');
+        $zipStream=$orthancExposedObject->getZipStreamToFile([$studyID], $tempFileLocation);
+		$tempFileLocations[] = $tempFileLocation;
         $orthancExposedObject->deleteFromOrthanc("studies", $studyID);
     }
 
     //Store ZIP archive with assioated review files
-    $fileStat = stat($tempFileLocation);
-
+	$fileLocation = $tempFileLocations[0];
+    $fileStat = stat($fileLocation);
+	$mime = mime_content_type($fileLocation);
     $fileSize = $fileStat['size'];
-    $fileMime = mime_content_type($tempFileLocation);
-	error_log(print_r($fileStat, true));
+	
 	try{
-		$formProcessor->storeAssociatedFile($fileKey, $fileMime, $fileSize, $tempFileLocation);
+		$formProcessor->storeManuallyCreatedAssociatedFile($fileKey, $mime, $fileSize, $fileLocation);
 		echo( json_encode((true)) );
 	}catch (Throwable $t){
 		error_log($t->getMessage());

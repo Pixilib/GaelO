@@ -141,6 +141,28 @@ Class Orthanc {
 		
 		return $zipStream;
 	}
+
+
+	/**
+	 * return the ZIP as temp file containing the Orthanc ID ressources dicoms
+	 * @param array $uidList
+	 * @return resource temporary file path
+	 */
+	public function getZipStreamToFile(array $uidList, $ressource) {
+	   
+		if (!is_array($uidList)) {
+			$uidList=array($uidList);
+		}
+
+		$options = [
+			'auth' => [$this->login, $this->password],
+			'headers'  => ['content-type' => 'application/json', 'Accept' => 'application/zip'],
+			'body' => json_encode(array('Transcode'=>'1.2.840.10008.1.2.1', 'Resources' => $uidList)),
+			'sink' => $ressource
+		];
+
+		$this->client->request('POST', $this->url.'/tools/create-archive' , $options);
+	}
 	
 	
 	/**
