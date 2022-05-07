@@ -65,7 +65,7 @@ class VisitService
         $updatedEntity = $this->visitRepository->updateInvestigatorFormStatus($this->visitId, $stateInvestigatorForm);
         if (
             $updatedEntity['upload_status'] === Constants::UPLOAD_STATUS_DONE
-            && $updatedEntity['state_investigator_form'] !== Constants::INVESTIGATOR_FORM_NOT_DONE
+            && ($updatedEntity['state_investigator_form'] === Constants::INVESTIGATOR_FORM_DONE)
         ) {
             $this->sendUploadEmailAndSkipQcIfNeeded($this->visitId);
         }
