@@ -198,29 +198,6 @@ class VisitRepositoryTest extends TestCase
         $this->assertTrue($answer2);
     }
 
-    public function testHasVisitsInVisitGroup(){
-        $visitGroup = VisitGroup::factory()->create();
-
-        $answer = $this->visitRepository->hasVisitsInVisitGroup(
-            $visitGroup->id);
-
-        $this->assertFalse($answer);
-
-        $visit = Visit::factory()->create();
-        $answer2 = $this->visitRepository->hasVisitsInVisitGroup(
-            $visit->visitType->visitGroup->id);
-
-        $this->assertTrue($answer2);
-    }
-
-    public function testGetVisitsInVisitGroup(){
-
-        $visit = Visit::factory()->create();
-        $answer = $this->visitRepository->getVisitsInVisitGroup(
-            $visit->visitType->visitGroup->id);
-        $this->assertEquals(1, sizeof($answer));
-    }
-
     public function testGetVisitsInVisitType(){
         $visit = Visit::factory()->count(5)->create();
         $answer = $this->visitRepository->getVisitsInVisitType( $visit->first()->visitType->id );
@@ -290,87 +267,6 @@ class VisitRepositoryTest extends TestCase
         ]);
 
         return $visit;
-    }
-
-    public function testReviewAvailableForUser()
-    {
-        $visit = $this->createVisit(true);
-        $studyName = $visit->patient->study_name;
-        $answer = $this->visitRepository->getVisitsAwaitingReviewForUser($studyName, 1);
-        $availableForUser = $this->visitRepository->isVisitAvailableForReview($visit->id, $studyName, 1);
-        $this->assertTrue($availableForUser);
-        $this->assertEquals(1, sizeof($answer));
-    }
-
-    public function testGetVisitAwaitingReview()
-    {
-
-        $study = Study::factory()->create();
-        //Create 2 patient in which we will populate of visits
-        $patient = Patient::factory()->studyName($study->name)->create();
-        $patient2 = Patient::factory()->studyName($study->name)->create();
-
-        //Create visitGroup
-        $visitGroupsCT = VisitGroup::factory()->studyName($study->name)->modality('CT')->create();
-        $visitGroupsPT = VisitGroup::factory()->studyName($study->name)->modality('PT')->create();
-
-        $visitGroups = collect([$visitGroupsCT, $visitGroupsPT]);
-
-        //Create VisitType and Visits
-        $visitGroups->each(function ($item, $key) use ($patient, $patient2) {
-            $visitTypes = VisitType::factory()->visitGroupId($item->id)->count(3)->create();
-            $visitTypes->each(function ($item, $key) use ($patient, $patient2) {
-                $visit = Visit::factory()->visitTypeId($item->id)->patientId($patient->id)->create();
-                ReviewStatus::factory()->visitId($visit->id)->reviewAvailable()->studyName($patient->study_name)->create();
-                $visit2 = Visit::factory()->visitTypeId($item->id)->patientId($patient2->id)->create();
-                ReviewStatus::factory()->visitId($visit2->id)->studyName($patient->study_name)->create();
-            });
-        });
-
-        $studyName = $study->name;
-
-        $visitAwaitingReview = $this->visitRepository->getVisitsAwaitingReviews($studyName);
-        $this->assertEquals(6, sizeof($visitAwaitingReview));
-        $this->assertEquals($visitAwaitingReview[0]['id'], $visitAwaitingReview[0]['review_status']['visit_id'] );
-        $this->assertEquals($studyName, $visitAwaitingReview[0]['review_status']['study_name'] );
-    }
-
-    public function testReviewAvailableForUserEvenDraftStarted()
-    {
-
-        $visit = $this->createVisit(true);
-        $studyName = $visit->patient->study_name;
-
-        Review::factory()->visitId($visit->id)->reviewForm()->userId(1)->studyName($studyName)->create();
-
-        $answer = $this->visitRepository->getVisitsAwaitingReviewForUser($studyName, 1);
-        $availableForUser = $this->visitRepository->isVisitAvailableForReview($visit->id, $studyName, 1);
-        $this->assertEquals(true, $availableForUser);
-        $this->assertEquals(1, sizeof($answer));
-    }
-
-    public function testReviewNotAvailableForUserWhileVisitReviewStillAvailable()
-    {
-
-        $visit = $this->createVisit(true);
-        $studyName = $visit->patient->study_name;
-
-        Review::factory()->visitId($visit->id)->reviewForm()->userId(1)->validated()->studyName($studyName)->create();
-
-        $answer = $this->visitRepository->getVisitsAwaitingReviewForUser($studyName, 1);
-        $availableForUser = $this->visitRepository->isVisitAvailableForReview($visit->id, $studyName, 1);
-        $this->assertEquals(false, $availableForUser);
-        $this->assertEquals(0, sizeof($answer));
-    }
-
-    public function testReviewNotAvailableForUserAsNotAvailableForReview()
-    {
-        $visit = $this->createVisit(false);
-        $studyName = $visit->patient->study->name;
-        $answer = $this->visitRepository->getVisitsAwaitingReviewForUser($studyName, 1);
-        $this->assertEquals(0, sizeof($answer));
-        $availableForUser = $this->visitRepository->isVisitAvailableForReview($visit->id, $studyName, 1);
-        $this->assertEquals(false, $availableForUser);
     }
 
     public function testGetPatientHavingOneAwaitingReviewForUser()

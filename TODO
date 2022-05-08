@@ -1,6 +1,5 @@
 Salim TODO :
 
-- Refact repository reste Visit Repository / les methode du repo visit en rapport avec le review status est peut etre mieux dans review status
 - Dans les mails passer des PatentId à PatientNumber dans le texte et titre des mails
 
 - TreeService à pluger avec Visit/Patient Entity
@@ -11,6 +10,7 @@ Salim TODO :
 - Optimiser le service visit en injectant directement le visit context
 
 - Portage GaelO1 anonymisation RTSTRUCT et Viewers
+- Tester Etudes ancillaire avec Emilie
 
 
 Reste Autres :

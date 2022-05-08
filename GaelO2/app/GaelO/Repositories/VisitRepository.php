@@ -21,11 +21,6 @@ class VisitRepository implements VisitRepositoryInterface
         $this->reviewStatus = new ReviewStatus();
     }
 
-    public function find($id): array
-    {
-        return $this->visit->findOrFail($id)->toArray();
-    }
-
     public function delete($id): void
     {
         $this->visit->findOrFail($id)->delete();
@@ -73,8 +68,7 @@ class VisitRepository implements VisitRepositoryInterface
 
     public function isExistingVisit(string $patientId, int $visitTypeId): bool
     {
-        $builder = $this->visit->where([['patient_id', '=', $patientId], ['visit_type_id', '=', $visitTypeId]]);
-        $visit = $builder->get();
+        $visit = $this->visit->where([['patient_id', '=', $patientId], ['visit_type_id', '=', $visitTypeId]])->get();
         return $visit->count() > 0 ? true : false;
     }
 
@@ -115,7 +109,6 @@ class VisitRepository implements VisitRepositoryInterface
 
     public function getPatientsVisits(string $patientId): array
     {
-        //Add withTrashed if bool true
         $visits = $this->visit->with('visitType')->where('patient_id', $patientId)->get();
         return empty($visits) ? [] : $visits->toArray();
     }
@@ -191,15 +184,6 @@ class VisitRepository implements VisitRepositoryInterface
         return sizeof($visits) === 0 ? false  : true;
     }
 
-    public function getVisitsInVisitGroup(int $visitGroupId): array
-    {
-
-        $visits = $this->visit->whereHas('visitType', function ($query) use ($visitGroupId) {
-            $query->where('visit_group_id', $visitGroupId);
-        })->get();
-        return $visits->toArray();
-    }
-
     public function getVisitsInVisitType(int $visitTypeId, bool $withReviewStatus = false, string $studyName = null, bool $withTrashed = false, bool $withCenter = false): array
     {
 
@@ -222,12 +206,6 @@ class VisitRepository implements VisitRepositoryInterface
         }
 
         return $visits->get()->toArray();
-    }
-
-    public function hasVisitsInVisitGroup(int $visitGroupId): bool
-    {
-        $visits = $this->getVisitsInVisitGroup($visitGroupId);
-        return sizeof($visits) > 0 ? true : false;
     }
 
     public function getVisitsInStudyAwaitingControllerAction(string $studyName): array
@@ -258,22 +236,6 @@ class VisitRepository implements VisitRepositoryInterface
             ->where('upload_status', Constants::UPLOAD_STATUS_DONE)
             ->whereIn('state_investigator_form', [Constants::INVESTIGATOR_FORM_NOT_NEEDED, Constants::INVESTIGATOR_FORM_DONE])
             ->where('state_quality_control', '!=',  Constants::QUALITY_CONTROL_NOT_NEEDED)
-            ->get();
-
-        return $answer->count() === 0 ? []  : $answer->toArray();
-    }
-
-
-    public function getVisitsAwaitingReviews(string $studyName): array
-    {
-
-        $visitIdAwaitingReview = $this->reviewStatus->where('study_name', $studyName)->where('review_available', true)->select('visit_id')->get()->toArray();
-
-        $answer = $this->visit->with('visitType')
-            ->whereIn('id', $visitIdAwaitingReview)
-            ->with(['reviewStatus' => function ($query) use ($studyName) {
-                $query->where('study_name', $studyName);
-            }])
             ->get();
 
         return $answer->count() === 0 ? []  : $answer->toArray();
@@ -325,25 +287,6 @@ class VisitRepository implements VisitRepositoryInterface
             ->pluck('patient_id');
 
         return $answer->count() === 0 ? []  : $answer->toArray();
-    }
-
-    public function isVisitAvailableForReview(int $visitId, string $studyName, int $userId): bool
-    {
-        $visitIdAwaitingReview = $this->reviewStatus->where('study_name', $studyName)->where('review_available', true)->select('visit_id')->get()->toArray();
-
-        $answer = $this->visit
-            ->where(function ($query) use ($studyName, $userId) {
-                $query->selectRaw('count(*)')
-                    ->from('reviews')
-                    ->whereColumn('reviews.visit_id', '=', 'visits.id')
-                    ->where('study_name', '=', $studyName)
-                    ->where('validated', true)
-                    ->where('local', false)
-                    ->where('user_id', $userId);
-            }, '=', 0)
-            ->whereIn('id', $visitIdAwaitingReview)->get();
-
-        return $answer->count() === 0 ? false  : true;
     }
 
     public function isParentPatientHavingOneVisitAwaitingReview(int $visitId, string $studyName, int $userId) : bool
