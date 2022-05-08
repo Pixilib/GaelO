@@ -1,6 +1,9 @@
 GaelO
 
 -- Pending --
+Add Stone of Orthanc Viewer
+Upgrade OHIF v3
+Upgrade Uploader
 
 --GaelO 1.9.1 27/03/22--
   Fix bug in visit status if QC not needed but local form needed
