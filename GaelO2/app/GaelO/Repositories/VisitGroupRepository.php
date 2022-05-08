@@ -38,7 +38,7 @@ class VisitGroupRepository implements VisitGroupRepositoryInterface
 
     public function hasVisitTypes(int $visitGroupId): bool
     {
-        $visitGroup = $this->visitGroup->find($visitGroupId)->withCount('visitTypes')->get();
+        $visitGroup = $this->visitGroup->withCount('visitTypes')->findOrFail($visitGroupId);
         return $visitGroup->visit_types_count > 0 ? true : false;
     }
 
