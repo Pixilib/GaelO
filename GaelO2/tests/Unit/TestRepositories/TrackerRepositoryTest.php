@@ -4,6 +4,7 @@ namespace Tests\Unit\TestRepositories;
 
 use App\GaelO\Constants\Constants;
 use App\GaelO\Repositories\TrackerRepository;
+use App\Models\ReviewStatus;
 use App\Models\Study;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
@@ -99,10 +100,13 @@ class TrackerRepositoryTest extends TestCase
         Tracker::factory()->role(Constants::ROLE_INVESTIGATOR)->studyName($studyName)->visitId($visit->id)->actionType(Constants::TRACKER_SAVE_REVIEWER_FORM)->count(5)->create();
         Tracker::factory()->role(Constants::ROLE_CONTROLLER)->studyName($studyName)->visitId($visit->id)->actionType(Constants::TRACKER_CORRECTIVE_ACTION)->count(3)->create();
         Tracker::factory()->role(Constants::ROLE_INVESTIGATOR)->visitId($visit->id)->actionType(Constants::TRACKER_SAVE_REVIEWER_FORM)->count(3)->create();
+        ReviewStatus::factory()->visitId($visit->id)->studyName($studyName)->create();
 
 
         $trackerEntities = $this->trackerRepository->getTrackerOfRoleActionInStudy(Constants::ROLE_INVESTIGATOR, Constants::TRACKER_SAVE_REVIEWER_FORM, $studyName);
-        $this->assertEquals(5, sizeof($trackerEntities));
+        dd($trackerEntities);
+        $this->hasar(5, sizeof($trackerEntities));
+        $this->assertHa(5, sizeof($trackerEntities));
     }
 
     public function testGetTrackerOfMessages()

@@ -19,13 +19,13 @@ class GetStudyTrackerRoleAction {
         $this->authorizationStudyService = $authorizationStudyService;
     }
 
-    public function execute(GetStudyTrackerRoleActionRequest $GetStudyTrackerRoleActionRequest, GetStudyTrackerRoleActionResponse $GetStudyTrackerRoleActionResponse) : void {
+    public function execute(GetStudyTrackerRoleActionRequest $getStudyTrackerRoleActionRequest, GetStudyTrackerRoleActionResponse $getStudyTrackerRoleActionResponse) : void {
 
         try{
 
-            $this->checkAuthorization($GetStudyTrackerRoleActionRequest->currentUserId, $GetStudyTrackerRoleActionRequest->studyName, $GetStudyTrackerRoleActionRequest->role);
+            $this->checkAuthorization($getStudyTrackerRoleActionRequest->currentUserId, $getStudyTrackerRoleActionRequest->studyName, $getStudyTrackerRoleActionRequest->role);
 
-            $dbData = $this->trackerRepositoryInterface->getTrackerOfRoleActionInStudy($GetStudyTrackerRoleActionRequest->trackerOfRole, $GetStudyTrackerRoleActionRequest->actionType, $GetStudyTrackerRoleActionRequest->studyName);
+            $dbData = $this->trackerRepositoryInterface->getTrackerOfRoleActionInStudy($getStudyTrackerRoleActionRequest->trackerOfRole, $getStudyTrackerRoleActionRequest->actionType, $getStudyTrackerRoleActionRequest->studyName);
 
             $responseArray = [];
             foreach($dbData as $data){
@@ -35,15 +35,15 @@ class GetStudyTrackerRoleAction {
                 $responseArray[] = $trackerEntity;
             }
 
-            $GetStudyTrackerRoleActionResponse->body = $responseArray;
-            $GetStudyTrackerRoleActionResponse->status = 200;
-            $GetStudyTrackerRoleActionResponse->statusText = 'OK';
+            $getStudyTrackerRoleActionResponse->body = $responseArray;
+            $getStudyTrackerRoleActionResponse->status = 200;
+            $getStudyTrackerRoleActionResponse->statusText = 'OK';
 
         } catch (GaelOException $e){
 
-            $GetStudyTrackerRoleActionResponse->body = $e->getErrorBody();
-            $GetStudyTrackerRoleActionResponse->status = $e->statusCode;
-            $GetStudyTrackerRoleActionResponse->statusText = $e->statusText;
+            $getStudyTrackerRoleActionResponse->body = $e->getErrorBody();
+            $getStudyTrackerRoleActionResponse->status = $e->statusCode;
+            $getStudyTrackerRoleActionResponse->statusText = $e->statusText;
 
         } catch (Exception $e){
             throw $e;
