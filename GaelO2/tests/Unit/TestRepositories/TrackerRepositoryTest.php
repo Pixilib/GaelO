@@ -104,9 +104,11 @@ class TrackerRepositoryTest extends TestCase
 
 
         $trackerEntities = $this->trackerRepository->getTrackerOfRoleActionInStudy(Constants::ROLE_INVESTIGATOR, Constants::TRACKER_SAVE_REVIEWER_FORM, $studyName);
-        dd($trackerEntities);
-        $this->hasar(5, sizeof($trackerEntities));
-        $this->assertHa(5, sizeof($trackerEntities));
+        $this->assertEquals(5, sizeof($trackerEntities));
+        $this->assertArrayHasKey('visit', $trackerEntities[0]);
+        $this->assertArrayHasKey('review_status', $trackerEntities[0]['visit']);
+        $this->assertArrayHasKey('visit_type', $trackerEntities[0]['visit']);
+        $this->assertArrayHasKey('user', $trackerEntities[0]);
     }
 
     public function testGetTrackerOfMessages()
