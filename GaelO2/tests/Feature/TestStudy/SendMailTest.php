@@ -188,9 +188,9 @@ class SendMailTest extends TestCase
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $this->study->name);
 
         $payload = [
-            'userIds' => 0,
             'subject' => 'Question',
             'content' => '<p>Something</p>',
+            'toAdministrators' => true
         ];
 
         $this->json('POST', '/api/send-mail?role=' . Constants::ROLE_SUPERVISOR . '&study=' . $this->study->name, $payload)

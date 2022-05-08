@@ -40,16 +40,14 @@ class SendMail
             //EO split 1 use case par role ? Dissocier send mail de patients creation request ?
             switch ($sendMailRequest->role) {
                 case Constants::ROLE_SUPERVISOR:
-                    //EO Identifier les admins par 0 ? Rajouter un paramètre bool toAdministrators ?
-                    //checkEmpty() ne passe pas pour id 0 (renvoie faux)
-                    if (!isset($sendMailRequest->userIds)) throw new GaelOBadRequestException('Request Missing recipient');
-                    if ($sendMailRequest->userIds === 0)
+                    if ($sendMailRequest->toAdministrators)
                         $this->mailService->sendMailToAdministrators(
                             $sendMailRequest->study,
                             $sendMailRequest->subject,
                             $sendMailRequest->content,
                         );
                     else {
+                        if($this->checkEmpty($sendMailRequest->userIds, 'userIds')) throw new GaelOBadRequestException('Request Missing recipient');
                         $this->mailService->sendMailToUser(
                             $sendMailRequest->userIds,
                             $sendMailRequest->study,

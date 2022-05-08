@@ -16,11 +16,11 @@ class TrackerRepository implements TrackerRepositoryInterface
         $this->tracker = $tracker;
     }
 
-    public function writeAction(int $userId, string $role, ?string $study, ?int $id_visit, string $actionType, ?array $actionDetails): void
+    public function writeAction(int $userId, string $role, ?string $studyName, ?int $id_visit, string $actionType, ?array $actionDetails): void
     {
         $tracker = new Tracker();
 
-        $tracker->study_name = $study;
+        $tracker->study_name = $studyName;
         $tracker->user_id = $userId;
         $tracker->date = Util::now();
         $tracker->role = $role;
@@ -37,10 +37,10 @@ class TrackerRepository implements TrackerRepositoryInterface
         return empty($trackerData) ? [] : $trackerData->toArray();
     }
 
-    public function getTrackerOfRoleAndStudy(string $study, string $role, bool $withUser): array
+    public function getTrackerOfRoleAndStudy(string $studyName, string $role, bool $withUser): array
     {
-        if ($withUser) $trackerData = $this->tracker->with('user')->where('study_name', $study)->where('role', $role)->get();
-        else $trackerData = $this->tracker->where('study_name', $study)->where('role', $role)->get();
+        if ($withUser) $trackerData = $this->tracker->with('user')->where('study_name', $studyName)->where('role', $role)->get();
+        else $trackerData = $this->tracker->where('study_name', $studyName)->where('role', $role)->get();
         return empty($trackerData)  ? [] : $trackerData->toArray();
     }
 
@@ -50,15 +50,18 @@ class TrackerRepository implements TrackerRepositoryInterface
         return empty($trackerData) ? [] : $trackerData->toArray();
     }
 
-    public function getTrackerOfActionInStudy(string $action, string $study): array
+    public function getTrackerOfActionInStudy(string $action, string $studyName): array
     {
-        $trackerData = $this->tracker->with('user')->where('study_name', $study)->where('action_type', $action)->get();
+        $trackerData = $this->tracker->with('user')->where('study_name', $studyName)->where('action_type', $action)->get();
         return empty($trackerData) ? [] : $trackerData->toArray();
     }
 
-    public function getTrackerOfRoleActionInStudy(string $role, string $action, string $study): array
+    public function getTrackerOfRoleActionInStudy(string $role, string $action, string $studyName): array
     {
-        $trackerData = $this->tracker->with('user')->where('study_name', $study)->where('role', $role)->where('action_type', $action)->get();
+        $trackerData = $this->tracker->with('user', 'visit', 'visit.visitType')
+        ->with(['reviewStatus' => function ($query) use ($studyName) {
+            $query->where('study_name', $studyName);
+        }])->where('study_name', $studyName)->where('role', $role)->where('action_type', $action)->get();
         return empty($trackerData) ? [] : $trackerData->toArray();
     }
 
