@@ -60,22 +60,6 @@ class TrackerRepositoryTest extends TestCase
         $this->assertEquals(3, sizeof($answer));
     }
 
-    public function testGetTrackerOfStudy()
-    {
-
-        $study1 = Study::factory()->create();
-        $study2 = Study::factory()->create();
-
-        Tracker::factory()->role(Constants::ROLE_INVESTIGATOR)->studyName($study1->name)->actionType(Constants::TRACKER_UPLOAD_SERIES)->count(3)->create();
-        Tracker::factory()->role(Constants::ROLE_SUPERVISOR)->studyName($study1->name)->actionType(Constants::TRACKER_DELETE_VISIT)->count(5)->create();
-
-        Tracker::factory()->role(Constants::ROLE_INVESTIGATOR)->studyName($study2->name)->actionType(Constants::TRACKER_UPLOAD_SERIES)->count(7)->create();
-        Tracker::factory()->role(Constants::ROLE_SUPERVISOR)->studyName($study2->name)->actionType(Constants::TRACKER_DELETE_VISIT)->count(9)->create();
-
-        $answer = $this->trackerRepository->getTrackerOfActionInStudy(Constants::TRACKER_DELETE_VISIT, $study1->name);
-        $this->assertEquals(5, sizeof($answer));
-    }
-
     public function testGetTrackerOfVisit()
     {
 

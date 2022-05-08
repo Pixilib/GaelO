@@ -41,16 +41,28 @@ class TrackerTest extends TestCase
         $this->json('GET', '/api/tracker?admin=false')->assertStatus(403);
     }
 
+    public function testGetStudyMessageTracker () {
+        $currentUserId = AuthorizationTools::actAsAdmin(false);
+        AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $this->study->name);
+        $response = $this->json('GET', '/api/studies/'.$this->study->name.'/tracker/messages')->assertSuccessful();
+    }
+
+    public function testGetStudyMessageTrackerShouldFailNotSupervisor () {
+        $currentUserId = AuthorizationTools::actAsAdmin(false);
+        AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_INVESTIGATOR, $this->study->name);
+        $response = $this->json('GET', '/api/studies/'.$this->study->name.'/tracker/messages')->assertStatus(403);
+    }
+
     public function testGetStudyTracker () {
         $currentUserId = AuthorizationTools::actAsAdmin(false);
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $this->study->name);
-        $response = $this->json('GET', '/api/studies/'.$this->study->name.'/tracker?role=Supervisor&action=Create Visit')->assertSuccessful();
+        $response = $this->json('GET', '/api/studies/'.$this->study->name.'/tracker/Supervisor?action=Create Visit')->assertSuccessful();
     }
 
     public function testGetStudyTrackerShouldFailNotSupervisor () {
         $currentUserId = AuthorizationTools::actAsAdmin(false);
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_INVESTIGATOR, $this->study->name);
-        $response = $this->json('GET', '/api/studies/'.$this->study->name.'/tracker?role=Supervisor&action=Create Visit')->assertStatus(403);
+        $response = $this->json('GET', '/api/studies/'.$this->study->name.'/tracker/Supervisor?action=Create Visit')->assertStatus(403);
     }
 
     public function testGetStudyTrackerByVisit () {
