@@ -12,6 +12,12 @@ Salim TODO :
 - Portage GaelO1 anonymisation RTSTRUCT et Viewers
 - Tester Etudes ancillaire avec Emilie
 
+---- Refactoring Entity ----
+- Pluger toutes les reponses "data" sur ces entity response
+=> GetPossibleUpload => VisitEntity ?
+=> GetReviewProgression => Visit + Review_status + Progression entity?
+=> utiliser les entity en sortie de repository ? et dissocier la lecture de l'entity de l'output ?
+---- /Refactoring Entity ------
 
 Reste Autres :
 - Orthanc Send to peer
@@ -22,14 +28,6 @@ Reste Autres :
 - OHIF essayer de faire passer le role dans les requetes => Faire un GaelO plugin dans OHIF
 pourra modifier cornerstoneWADOImageLoader pour injecter l'etude courante
 et devrait pouvoir recuperer des info soit via le useQuery soit via un localstorage
-
----- Refactoring Backend ----
-Entity :
-- Pluger toutes les reponses "data" sur ces entity response
-=> GetPossibleUpload => VisitEntity ?
-=> GetReviewProgression => Visit + Review_status + Progression entity?
-=> utiliser les entity en sortie de repository ? et dissocier la lecture de l'entity de l'output ?
----- /Refactoring Backend ------
 
 --- Etudes ancillaires ---
 Ne doit pas pouvoir faire les relance d'upload => Voir avec Emilie
