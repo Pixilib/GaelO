@@ -80,17 +80,6 @@ class VisitTypeRepositoryTest extends TestCase
 
     }
 
-    public function testGetVisitTypesFromIdArray() {
-        $visitType1 = VisitType::factory()->create();
-        $visitType2 = VisitType::factory()->create();
-
-        $visitTypeIds = [$visitType1->id, $visitType2->id];
-        $visitTypeEntitiesArray = $this->visitTypeRepository->getVisitTypesFromIdArray($visitTypeIds);
-        $fetchedVisitTypes = array_column($visitTypeEntitiesArray, 'id');
-        $this->assertTrue(!array_diff($fetchedVisitTypes, $visitTypeIds));
-
-    }
-
     public function testGetVisitTypeByName(){
         $visitType1 = VisitType::factory()->create();
         VisitType::factory()->create();
