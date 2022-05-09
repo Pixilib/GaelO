@@ -2,7 +2,8 @@
 
 namespace App\GaelO\Entities;
 
-class TrackerEntity {
+class TrackerEntity
+{
     public int $id;
     public ?string $study_name;
     public int $user_id;
@@ -14,7 +15,8 @@ class TrackerEntity {
 
     public UserEntity $user;
 
-    public static function fillFromDBReponseArray(array $array){
+    public static function fillFromDBReponseArray(array $array)
+    {
         $trackerEntity  = new TrackerEntity();
         $trackerEntity->id = $array['id'];
         $trackerEntity->study_name = $array['study_name'];
@@ -27,11 +29,22 @@ class TrackerEntity {
         return $trackerEntity;
     }
 
-    public function setUserData(array $array){
+    public function setUserData(array $array)
+    {
         $this->user = new UserEntity();
         $this->user->lastname = $array['lastname'];
         $this->user->firstname = $array['firstname'];
         $this->user->email = $array['email'];
     }
 
+    public function setVisitData(array $array)
+    {
+        $this->visit = new VisitEntity();
+        $this->visit->setVisitContext(
+            $array['visit_type']['visit_group'],
+            $array['visit_type']
+        );
+        $this->visit->fillFromDBReponseArray($array);
+        $this->visit->setReviewVisitStatus($array['review_status']['review_status'], $array['review_status']['review_conclusion_value'], $array['review_status']['review_conclusion_date'], $array['review_status']['target_lesions']);
+    }
 }

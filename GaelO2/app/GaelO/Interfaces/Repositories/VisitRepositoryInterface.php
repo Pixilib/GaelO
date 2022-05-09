@@ -5,8 +5,6 @@ namespace App\GaelO\Interfaces\Repositories;
 interface VisitRepositoryInterface
 {
 
-    public function find($id): array;
-
     public function delete($id): void;
 
     public function createVisit(
@@ -42,21 +40,13 @@ interface VisitRepositoryInterface
 
     public function hasVisitsInStudy(string $studyName): bool;
 
-    public function getVisitsInVisitGroup(int $visitGroupId): array;
-
-    public function hasVisitsInVisitGroup(int $visitGroupId): bool;
-
     public function getVisitsInStudyAwaitingControllerAction(string $studyName): array;
 
     public function getVisitsInStudyNeedingQualityControl(string $studyName): array;
 
-    public function getVisitsAwaitingReviews(string $studyName): array;
-
     public function getVisitsAwaitingReviewForUser(string $studyName, int $userId): array;
 
     public function getPatientsHavingAtLeastOneAwaitingReviewForUser(string $studyName, int $userId): array;
-
-    public function isVisitAvailableForReview(int $visitId, string $studyName, int $userId): bool;
 
     public function isParentPatientHavingOneVisitAwaitingReview(int $visitId, string $studyName, int $userId) : bool;
 

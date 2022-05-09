@@ -2,7 +2,6 @@
 
 namespace Tests\Feature\TestVisitType;
 
-use App\GaelO\Entities\VisitTypeEntity;
 use App\Models\Patient;
 use App\Models\Study;
 use Illuminate\Foundation\Testing\DatabaseMigrations;

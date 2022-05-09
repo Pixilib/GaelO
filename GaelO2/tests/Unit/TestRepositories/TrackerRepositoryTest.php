@@ -4,6 +4,7 @@ namespace Tests\Unit\TestRepositories;
 
 use App\GaelO\Constants\Constants;
 use App\GaelO\Repositories\TrackerRepository;
+use App\Models\ReviewStatus;
 use App\Models\Study;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
@@ -59,22 +60,6 @@ class TrackerRepositoryTest extends TestCase
         $this->assertEquals(3, sizeof($answer));
     }
 
-    public function testGetTrackerOfStudy()
-    {
-
-        $study1 = Study::factory()->create();
-        $study2 = Study::factory()->create();
-
-        Tracker::factory()->role(Constants::ROLE_INVESTIGATOR)->studyName($study1->name)->actionType(Constants::TRACKER_UPLOAD_SERIES)->count(3)->create();
-        Tracker::factory()->role(Constants::ROLE_SUPERVISOR)->studyName($study1->name)->actionType(Constants::TRACKER_DELETE_VISIT)->count(5)->create();
-
-        Tracker::factory()->role(Constants::ROLE_INVESTIGATOR)->studyName($study2->name)->actionType(Constants::TRACKER_UPLOAD_SERIES)->count(7)->create();
-        Tracker::factory()->role(Constants::ROLE_SUPERVISOR)->studyName($study2->name)->actionType(Constants::TRACKER_DELETE_VISIT)->count(9)->create();
-
-        $answer = $this->trackerRepository->getTrackerOfActionInStudy(Constants::TRACKER_DELETE_VISIT, $study1->name);
-        $this->assertEquals(5, sizeof($answer));
-    }
-
     public function testGetTrackerOfVisit()
     {
 
@@ -90,6 +75,7 @@ class TrackerRepositoryTest extends TestCase
         $this->assertEquals(6, sizeof($answer));
     }
 
+    //Vérifier présence entities
     public function testGetTrackerStudyAction()
     {
 
@@ -98,10 +84,15 @@ class TrackerRepositoryTest extends TestCase
         Tracker::factory()->role(Constants::ROLE_INVESTIGATOR)->studyName($studyName)->visitId($visit->id)->actionType(Constants::TRACKER_SAVE_REVIEWER_FORM)->count(5)->create();
         Tracker::factory()->role(Constants::ROLE_CONTROLLER)->studyName($studyName)->visitId($visit->id)->actionType(Constants::TRACKER_CORRECTIVE_ACTION)->count(3)->create();
         Tracker::factory()->role(Constants::ROLE_INVESTIGATOR)->visitId($visit->id)->actionType(Constants::TRACKER_SAVE_REVIEWER_FORM)->count(3)->create();
+        ReviewStatus::factory()->visitId($visit->id)->studyName($studyName)->create();
 
 
         $trackerEntities = $this->trackerRepository->getTrackerOfRoleActionInStudy(Constants::ROLE_INVESTIGATOR, Constants::TRACKER_SAVE_REVIEWER_FORM, $studyName);
         $this->assertEquals(5, sizeof($trackerEntities));
+        $this->assertArrayHasKey('visit', $trackerEntities[0]);
+        $this->assertArrayHasKey('review_status', $trackerEntities[0]['visit']);
+        $this->assertArrayHasKey('visit_type', $trackerEntities[0]['visit']);
+        $this->assertArrayHasKey('user', $trackerEntities[0]);
     }
 
     public function testGetTrackerOfMessages()

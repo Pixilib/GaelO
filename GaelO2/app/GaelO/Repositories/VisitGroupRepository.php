@@ -6,21 +6,28 @@ use App\Models\VisitGroup;
 use App\GaelO\Interfaces\Repositories\VisitGroupRepositoryInterface;
 use App\GaelO\Util;
 
-class VisitGroupRepository implements VisitGroupRepositoryInterface {
+class VisitGroupRepository implements VisitGroupRepositoryInterface
+{
 
-    public function __construct(VisitGroup $visitGroup){
+    private VisitGroup $visitGroup;
+
+    public function __construct(VisitGroup $visitGroup)
+    {
         $this->visitGroup = $visitGroup;
     }
 
-    public function find($id){
+    public function find($id)
+    {
         return $this->visitGroup->findOrFail($id)->toArray();
     }
 
-    public function delete($id) : void {
+    public function delete($id): void
+    {
         $this->visitGroup->findOrFail($id)->delete();
     }
 
-    public function createVisitGroup(String $studyName, String $name, String $modality)  : void {
+    public function createVisitGroup(String $studyName, String $name, String $modality): void
+    {
 
         $visitGroup = new VisitGroup();
         $visitGroup->name = $name;
@@ -29,14 +36,15 @@ class VisitGroupRepository implements VisitGroupRepositoryInterface {
         $visitGroup->save();
     }
 
-    public function hasVisitTypes(int $visitGroupId) : bool {
-        $visitTypes = $this->visitGroup->find($visitGroupId)->visitTypes()->get();
-        return $visitTypes->count()>0 ? true : false;
+    public function hasVisitTypes(int $visitGroupId): bool
+    {
+        $visitGroup = $this->visitGroup->withCount('visitTypes')->findOrFail($visitGroupId);
+        return $visitGroup->visit_types_count > 0 ? true : false;
     }
 
-    public function isExistingVisitGroup(String $studyName, String $name) : bool {
+    public function isExistingVisitGroup(String $studyName, String $name): bool
+    {
         $visitGroup = $this->visitGroup->where([['study_name', '=', $studyName], ['name', '=', $name]])->get();
-        return sizeof($visitGroup)>0;
+        return sizeof($visitGroup) > 0;
     }
-
 }

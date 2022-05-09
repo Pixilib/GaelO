@@ -157,8 +157,7 @@ Route::middleware(['auth:sanctum', 'verified', 'activated'])->group(function () 
 
     //Tracker Routes
     Route::get('tracker', [TrackerController::class, 'getTracker']);
-    Route::get('studies/{studyName}/tracker', [TrackerController::class, 'getStudyTracker']);
-    Route::get('studies/{studyName}/tracker/{trackerOfRole}', [TrackerController::class, 'getStudyTrackerRoleAction']);
+    Route::get('studies/{studyName}/tracker/{role}', [TrackerController::class, 'getStudyTrackerByRole']);
     Route::get('studies/{studyName}/visits/{visitId}/tracker', [TrackerController::class, 'getStudyTrackerByVisit']);
 
     //Documentations routes

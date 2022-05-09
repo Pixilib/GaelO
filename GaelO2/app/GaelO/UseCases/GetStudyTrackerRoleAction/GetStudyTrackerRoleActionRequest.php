@@ -7,5 +7,4 @@ class GetStudyTrackerRoleActionRequest {
     public string $studyName;
     public string $role;
     public string $actionType;
-    public string $trackerOfRole;
 }
