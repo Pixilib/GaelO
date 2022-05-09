@@ -19,6 +19,7 @@
  * Check Access grant to user using the Dicom_Web_Access Class
  */
 
+use GuzzleHttp\Exception\BadResponseException;
 use Proxy\Proxy;
 use Proxy\Adapter\Guzzle\GuzzleAdapter;
 use Proxy\Filter\RemoveEncodingFilter;
@@ -45,8 +46,9 @@ if ($roleAllowed ) {
 	// Add a response filter that removes the encoding headers.
 	$proxy->filter(new RemoveEncodingFilter());
     
-	// Forward the request and get the response.
-	$response=$proxy -> forward($request) -> filter(function($request, $response, $next) {
+	try {
+		// Forward the request and get the response.
+		$response=$proxy -> forward($request) -> filter(function($request, $response, $next) {
 		$url = getenv("HOST_URL");
 		$port = getenv("HOST_PORT");
 		$protocol = getenv("HOST_PROTOCOL");
@@ -55,7 +57,12 @@ if ($roleAllowed ) {
 		$response=$next($request, $response);
         
 		return $response;
-	}) -> to(TUS_SERVER);
+		}) -> to(TUS_SERVER);
+
+	} catch (BadResponseException $e){
+		(new Narrowspark\HttpEmitter\SapiEmitter)->emit($e->getResponse());
+	}
+	
     //error_log(print_r($response, true));
 	// Output response to the browser.
 	(new Narrowspark\HttpEmitter\SapiEmitter)->emit($response);
