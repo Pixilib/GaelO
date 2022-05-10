@@ -41,7 +41,7 @@ class ReviewFormService extends FormService
             throw new GaelOBadRequestException('Review Form Validation Failed');
         }
         $createdReviewId = $this->reviewRepositoryInterface->createReview(false, $this->visitId, $this->studyName, $this->currentUserId, $data, $validated, $adjudication);
-        if ($validated && $this->reviewStatusEntity['review_status'] !== Constants::REVIEW_STATUS_DONE) {
+        if ($validated) {
             $this->doSpecificReviewDecisions();
         }
         return $createdReviewId;
@@ -59,7 +59,7 @@ class ReviewFormService extends FormService
         }
         //Update DB
         $this->reviewRepositoryInterface->updateReview($reviewId, $this->currentUserId, $data, $validated);
-        if ($validated && $this->reviewStatusEntity['review_status'] !== Constants::REVIEW_STATUS_DONE) {
+        if ($validated) {
             $this->doSpecificReviewDecisions();
         }
     }
@@ -85,7 +85,7 @@ class ReviewFormService extends FormService
 
         if ($availability !== $this->reviewStatusEntity['review_available']) $this->reviewStatusRepositoryInterface->updateReviewAvailability($this->visitId, $this->studyName, $availability);
         if ($reviewStatus !== $this->reviewStatusEntity['review_status']) $this->reviewStatusRepositoryInterface->updateReviewStatus($this->visitId, $this->studyName, $reviewStatus);
-        if ($conclusion === Constants::REVIEW_STATUS_DONE) $this->reviewStatusRepositoryInterface->updateReviewConclusion($this->visitId, $this->studyName, $conclusion, $targetLesions);
+        if ($reviewStatus === Constants::REVIEW_STATUS_DONE) $this->reviewStatusRepositoryInterface->updateReviewConclusion($this->visitId, $this->studyName, $conclusion, $targetLesions);
 
         //Send Notification emails
         if ($reviewStatus === Constants::REVIEW_STATUS_WAIT_ADJUDICATION) {

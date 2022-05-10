@@ -15,7 +15,8 @@ use App\GaelO\Services\FormService\ReviewFormService;
 use App\GaelO\Services\MailServices;
 use Exception;
 
-class UnlockReviewForm {
+class UnlockReviewForm
+{
 
     private AuthorizationReviewService $authorizationReviewService;
     private TrackerRepositoryInterface $trackerRepositoryInterface;
@@ -25,14 +26,15 @@ class UnlockReviewForm {
     private ReviewStatusRepositoryInterface $reviewStatusRepositoryInterface;
     private MailServices $mailServices;
 
-    public function __construct(AuthorizationReviewService $authorizationReviewService,
+    public function __construct(
+        AuthorizationReviewService $authorizationReviewService,
         ReviewFormService $reviewFormService,
         ReviewRepositoryInterface $reviewRepositoryInterface,
         ReviewStatusRepositoryInterface $reviewStatusRepositoryInterface,
         VisitRepositoryInterface $visitRepositoryInterface,
         TrackerRepositoryInterface $trackerRepositoryInterface,
         MailServices $mailServices
-        ){
+    ) {
         $this->authorizationReviewService = $authorizationReviewService;
         $this->trackerRepositoryInterface = $trackerRepositoryInterface;
         $this->visitRepositoryInterface = $visitRepositoryInterface;
@@ -42,15 +44,24 @@ class UnlockReviewForm {
         $this->mailServices = $mailServices;
     }
 
-    public function execute(UnlockReviewFormRequest $unlockReviewFormRequest, UnlockReviewFormResponse $unlockReviewFormResponse){
+    public function execute(UnlockReviewFormRequest $unlockReviewFormRequest, UnlockReviewFormResponse $unlockReviewFormResponse)
+    {
 
-        try{
+        try {
 
-            if(empty($unlockReviewFormRequest->reason)){
+            if (empty($unlockReviewFormRequest->reason)) {
                 throw new GaelOBadRequestException("Reason must be specified");
             }
 
             $reviewEntity = $this->reviewRepositoryInterface->find($unlockReviewFormRequest->reviewId);
+
+            /* Search for validated adjudication review */
+            $studyVisitReviews = $this->reviewRepositoryInterface->getReviewsForStudyVisit($reviewEntity['study_name'], $reviewEntity['visit_id'], true);
+            $existingAdjudicationForm = array_search(true, array_map(function ($review) {
+                return $review['adjudication'];
+            }, $studyVisitReviews));
+            /* If validated review exist, this review can't be unlocked */
+            if ($existingAdjudicationForm) throw new GaelOBadRequestException('Please delete adjudication form before unlocking this review');
 
             $this->checkAuthorization($unlockReviewFormRequest->currentUserId, $unlockReviewFormRequest->reviewId, $reviewEntity['local']);
 
@@ -78,7 +89,8 @@ class UnlockReviewForm {
                 $reviewEntity['study_name'],
                 $reviewEntity['visit_id'],
                 Constants::TRACKER_UNLOCK_REVIEW_FORM,
-                $actionDetails);
+                $actionDetails
+            );
 
             //send Email notification to review owner
             $this->mailServices->sendUnlockFormMessage(
@@ -87,30 +99,29 @@ class UnlockReviewForm {
                 $unlockReviewFormRequest->currentUserId,
                 $reviewEntity['study_name'],
                 $visitContext['patient_id'],
-                $visitContext['visit_type']['name'] );
+                $visitContext['visit_type']['name']
+            );
 
             $unlockReviewFormResponse->status = 200;
             $unlockReviewFormResponse->statusText =  'OK';
-
-        } catch (GaelOException $e){
+        } catch (GaelOException $e) {
 
             $unlockReviewFormResponse->body = $e->getErrorBody();
             $unlockReviewFormResponse->status = $e->statusCode;
             $unlockReviewFormResponse->statusText =  $e->statusText;
-
-        } catch (Exception $e){
+        } catch (Exception $e) {
             throw $e;
         }
-
     }
 
-    private function checkAuthorization(int $currentUserId, int $reviewId, bool $local){
-        if($local){
+    private function checkAuthorization(int $currentUserId, int $reviewId, bool $local)
+    {
+        if ($local) {
             throw new GaelOForbiddenException();
         }
         $this->authorizationReviewService->setUserId($currentUserId);
         $this->authorizationReviewService->setReviewId($reviewId);
-        if( !$this->authorizationReviewService->isReviewAllowed(Constants::ROLE_SUPERVISOR) ) {
+        if (!$this->authorizationReviewService->isReviewAllowed(Constants::ROLE_SUPERVISOR)) {
             throw new GaelOForbiddenException();
         }
     }
