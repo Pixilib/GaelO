@@ -15,7 +15,8 @@ use App\GaelO\Services\FormService\ReviewFormService;
 use App\GaelO\Services\MailServices;
 use Exception;
 
-class DeleteReviewForm {
+class DeleteReviewForm
+{
 
     private AuthorizationReviewService $authorizationReviewService;
     private TrackerRepositoryInterface $trackerRepositoryInterface;
@@ -25,14 +26,15 @@ class DeleteReviewForm {
     private ReviewStatusRepositoryInterface $reviewStatusRepositoryInterface;
     private MailServices $mailServices;
 
-    public function __construct(AuthorizationReviewService $authorizationReviewService,
+    public function __construct(
+        AuthorizationReviewService $authorizationReviewService,
         ReviewFormService $reviewFormService,
         ReviewRepositoryInterface $reviewRepositoryInterface,
         ReviewStatusRepositoryInterface $reviewStatusRepositoryInterface,
         VisitRepositoryInterface $visitRepositoryInterface,
         TrackerRepositoryInterface $trackerRepositoryInterface,
         MailServices $mailServices
-        ){
+    ) {
         $this->authorizationReviewService = $authorizationReviewService;
         $this->trackerRepositoryInterface = $trackerRepositoryInterface;
         $this->visitRepositoryInterface = $visitRepositoryInterface;
@@ -42,11 +44,12 @@ class DeleteReviewForm {
         $this->mailServices = $mailServices;
     }
 
-    public function execute(DeleteReviewFormRequest $deleteReviewFormRequest, DeleteReviewFormResponse $deleteReviewFormResponse){
+    public function execute(DeleteReviewFormRequest $deleteReviewFormRequest, DeleteReviewFormResponse $deleteReviewFormResponse)
+    {
 
-        try{
+        try {
 
-            if(empty($deleteReviewFormRequest->reason)){
+            if (empty($deleteReviewFormRequest->reason)) {
                 throw new GaelOBadRequestException("Reason must be specified");
             }
 
@@ -55,6 +58,14 @@ class DeleteReviewForm {
             $studyName = $reviewEntity['study_name'];
             $local = $reviewEntity['local'];
             $visitId = $reviewEntity['visit_id'];
+
+            /* Search for validated adjudication review */
+            $studyVisitReviews = $this->reviewRepositoryInterface->getReviewsForStudyVisit($studyName, $visitId, true);
+            $existingAdjudicationForm = array_search(true, array_map(function ($review) {
+                return $review['adjudication'];
+            }, $studyVisitReviews));
+            /* If validated review exist, this review can't be deleted */
+            if($existingAdjudicationForm) throw new GaelOBadRequestException('Please delete adjudication form before deleting this review');
 
             $this->checkAuthorization($deleteReviewFormRequest->currentUserId, $deleteReviewFormRequest->reviewId, $local);
 
@@ -82,7 +93,8 @@ class DeleteReviewForm {
                 $studyName,
                 $visitId,
                 Constants::TRACKER_DELETE_REVIEW_FORM,
-                $actionDetails);
+                $actionDetails
+            );
 
             //send Email notification to review owner
             $this->mailServices->sendDeleteFormMessage(
@@ -91,30 +103,29 @@ class DeleteReviewForm {
                 $reviewEntity['user_id'],
                 $studyName,
                 $visitContext['patient_id'],
-                $visitContext['visit_type']['name'] );
+                $visitContext['visit_type']['name']
+            );
 
             $deleteReviewFormResponse->status = 200;
             $deleteReviewFormResponse->statusText =  'OK';
-
-        } catch (GaelOException $e){
+        } catch (GaelOException $e) {
 
             $deleteReviewFormResponse->body = $e->getErrorBody();
             $deleteReviewFormResponse->status = $e->statusCode;
             $deleteReviewFormResponse->statusText =  $e->statusText;
-
-        } catch (Exception $e){
+        } catch (Exception $e) {
             throw $e;
         }
-
     }
 
-    private function checkAuthorization(int $currentUserId, int $reviewId, bool $local){
-        if($local){
+    private function checkAuthorization(int $currentUserId, int $reviewId, bool $local)
+    {
+        if ($local) {
             throw new GaelOForbiddenException();
         }
         $this->authorizationReviewService->setUserId($currentUserId);
         $this->authorizationReviewService->setReviewId($reviewId);
-        if( !$this->authorizationReviewService->isReviewAllowed(Constants::ROLE_SUPERVISOR) ) {
+        if (!$this->authorizationReviewService->isReviewAllowed(Constants::ROLE_SUPERVISOR)) {
             throw new GaelOForbiddenException();
         }
     }

@@ -52,30 +52,34 @@ abstract class AbstractVisitRules
 
     protected function fillValidator(array $rules, ValidatorAdapter $validatorAdapter)
     {
-
         foreach ($rules as $name => $details) {
-            switch ($details['rule']) {
-                case self::RULE_STRING:
-                    $validatorAdapter->addValidatorString($name, $details['optional']);
-                    break;
-                case self::RULE_INT:
-                    $validatorAdapter->addValidatorInt($name, $details['optional'], $details['min'], $details['max']);
-                    break;
-                case self::RULE_FLOAT:
-                    $validatorAdapter->addValidatorFloat($name, $details['optional'], $details['min'], $details['max']);
-                    break;
-                case self::RULE_SET:
-                    $validatorAdapter->addSetValidator($name, $details['values'], $details['optional']);
-                    break;
-                case self::RULE_BOOLEAN:
-                    $validatorAdapter->addBooleanValidator($name, $details['optional']);
-                    break;
-                case self::RULE_NUMBER:
-                    $validatorAdapter->addNumberValidator($name, $details['optional'], $details['min'], $details['max']);
-                    break;
-                default:
-                    throw new Exception('Unknown Rule');
-            }
+            $this->addValidator($name, $details, $validatorAdapter);
+        }
+    }
+
+    protected function addValidator(string $name, array $details, ValidatorAdapter $validatorAdapter)
+    {
+        switch ($details['rule']) {
+            case self::RULE_STRING:
+                $validatorAdapter->addValidatorString($name, $details['optional']);
+                break;
+            case self::RULE_INT:
+                $validatorAdapter->addValidatorInt($name, $details['optional'], $details['min'], $details['max']);
+                break;
+            case self::RULE_FLOAT:
+                $validatorAdapter->addValidatorFloat($name, $details['optional'], $details['min'], $details['max']);
+                break;
+            case self::RULE_SET:
+                $validatorAdapter->addSetValidator($name, $details['values'], $details['optional']);
+                break;
+            case self::RULE_BOOLEAN:
+                $validatorAdapter->addBooleanValidator($name, $details['optional']);
+                break;
+            case self::RULE_NUMBER:
+                $validatorAdapter->addNumberValidator($name, $details['optional'], $details['min'], $details['max']);
+                break;
+            default:
+                throw new Exception('Unknown Rule');
         }
     }
 
