@@ -1,9 +1,12 @@
 GaelO
 
 -- Pending --
+
+--GaelO 1.10.0 14/05/22--
 Add Stone of Orthanc Viewer
 Upgrade OHIF v3
-Upgrade Uploader
+Upgrade Uploader 3.3.11
+Experimental workflow for dummyrun and radiotherapy studies
 
 --GaelO 1.9.1 27/03/22--
   Fix bug in visit status if QC not needed but local form needed
