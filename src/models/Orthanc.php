@@ -141,6 +141,28 @@ Class Orthanc {
 		
 		return $zipStream;
 	}
+
+
+	/**
+	 * return the ZIP as temp file containing the Orthanc ID ressources dicoms
+	 * @param array $uidList
+	 * @return resource temporary file path
+	 */
+	public function getZipStreamToFile(array $uidList, $ressource) {
+	   
+		if (!is_array($uidList)) {
+			$uidList=array($uidList);
+		}
+
+		$options = [
+			'auth' => [$this->login, $this->password],
+			'headers'  => ['content-type' => 'application/json', 'Accept' => 'application/zip'],
+			'body' => json_encode(array('Transcode'=>'1.2.840.10008.1.2.1', 'Resources' => $uidList)),
+			'sink' => $ressource
+		];
+
+		$this->client->request('POST', $this->url.'/tools/create-archive' , $options);
+	}
 	
 	
 	/**
@@ -426,11 +448,23 @@ Class Orthanc {
 		if ($profile == "Default") {
 			$date=TagAnon::KEEP;
 			$body=TagAnon::KEEP;
+			$RTStruct = TagAnon::KEEP;
     
 		}else if ($profile == "Full") {
 			$date=TagAnon::CLEAR;
 			$body=TagAnon::CLEAR;
+			$RTStruct = TagAnon::CLEAR;
 		}
+
+
+		$tagsObjects[]=new TagAnon("3006,0026", $RTStruct); // ROIName
+		$tagsObjects[]=new TagAnon("3006,0028", $RTStruct); // ROIDescription
+		$tagsObjects[]=new TagAnon("3006,0038", $RTStruct); // ROI Generation Description
+
+		$tagsObjects[]=new TagAnon("3006,0008", $RTStruct); // Structure Set Date
+		$tagsObjects[]=new TagAnon("3006,0009", $RTStruct); // Structure Set Time
+		$tagsObjects[]=new TagAnon("300A,0006", $RTStruct); // RTPlan Date
+		$tagsObjects[]=new TagAnon("300A,0007", $RTStruct); // RTPlan Time
         
 		//List tags releted to Date
 		$tagsObjects[]=new TagAnon("0008,0022", $date); // Acquisition Date

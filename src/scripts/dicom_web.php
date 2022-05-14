@@ -29,12 +29,14 @@ $linkpdo=Session::getLinkpdo();
 
 $userObject=new User($_SESSION['username'], $linkpdo);
 $permissionDicomWebObject=new Dicom_Web_Access($_SERVER['REQUEST_URI'], $userObject, $_SESSION['role'], $linkpdo);
+
 try {
 	$permissionDicomWeb=$permissionDicomWebObject->getDecision();
 }catch (Exception $e) {
 	header('HTTP/1.0 403 Forbidden');
 	exit();
 }
+
 
 if ($permissionDicomWeb) {   
 	unset($_GET['page']);

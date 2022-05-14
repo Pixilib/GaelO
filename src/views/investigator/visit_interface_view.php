@@ -165,7 +165,29 @@ if ($visitObject->statusDone == Visit::NOT_DONE) {
             		});
             		
             		$("#OHIFViewer").on('click', function() {
-            			var win = window.open('/ohif/viewer/<?=$visitObject->getStudyDicomDetails()->studyUID ?>', '_blank');
+            			var win = window.open('/ohif/viewer?StudyInstanceUIDs=<?=$visitObject->getStudyDicomDetails()->studyUID ?>', '_blank');
+                        if (win) {
+                            //Browser has allowed it to be opened
+                            win.focus();
+                        } else {
+                            //Browser has blocked it
+                            alert('Please allow popups for this website');
+                        }
+            		});
+
+					$("#StoneViewerStudy").on('click', function() {
+            			var win = window.open('/stone/index.html?study=<?=$visitObject->getStudyDicomDetails()->studyUID ?>', '_blank');
+                        if (win) {
+                            //Browser has allowed it to be opened
+                            win.focus();
+                        } else {
+                            //Browser has blocked it
+                            alert('Please allow popups for this website');
+                        }
+            		});
+
+					$("#StoneViewerPatient").on('click', function() {
+            			var win = window.open('/stone/index.html?patient=<?=$visitObject->patientCode ?>', '_blank');
                         if (win) {
                             //Browser has allowed it to be opened
                             win.focus();
@@ -272,6 +294,17 @@ if ($role == User::REVIEWER || ($role == User::INVESTIGATOR && $visitObject->upl
     		id="reviewerDownloadDicomBtn" value="Download DICOM">
 		<input class="btn btn-primary" type="button"
     		id="OHIFViewer" value="OHIF Viewer">
+
+		<div id="dropdown_stone" style="display: inline-block">
+			<input id="btn_stone"  class="btn btn-primary dropdown-toggle" type="button" value="Stone Viewer" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+			<div class="dropdown-menu" aria-labelledby="btn_statistics">
+				<a class="dropdown-item" href="#" 
+				id="StoneViewerPatient" value="Patient">Patient</a>
+				<a class="dropdown-item" href="#" 
+				id="StoneViewerStudy" value="Study">Study</a>
+			</div>
+		</div>
+
     </div>
     <form id="downloadForm" method="post"
     	action="scripts/download_dicom.php">

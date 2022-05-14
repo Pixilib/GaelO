@@ -150,7 +150,7 @@
     			{ data: 'orthancSeriesIDs' },
 				{
 					render: function ( data, type, row, meta ) {
-						return '<a href="/ohif/viewer/'+row.studyUID+'" target="_blank" ">OHIF Viewer</a>';
+						return '<a href="/ohif/viewer?StudyInstanceUIDs='+row.studyUID+'" target="_blank" ">OHIF Viewer</a>';
 					}
 				},
 				{ data: 'studyUID' },

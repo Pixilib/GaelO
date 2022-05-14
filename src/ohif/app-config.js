@@ -1,14 +1,17 @@
 window.config = {
   // default: '/'
   routerBasename: '/ohif',
-  whiteLabelling: {},
+  //whiteLabelling: {},
   extensions: [],
-  maxConcurrentMetadataRequests: 1,
+  modes: [],
   showStudyList: false,
   filterQueryParam: false,
-  servers: {
-    dicomWeb: [
-      {
+  dataSources: [
+    {
+      friendlyName: 'GaelO DICOMWeb Server',
+      namespace: '@ohif/extension-default.dataSourcesModule.dicomweb',
+      sourceName: 'dicomweb',
+      configuration: {
         name: "Orthanc",
         wadoUriRoot:
           "/orthanc/wado",
@@ -17,12 +20,16 @@ window.config = {
         wadoRoot:
           "/orthanc/dicom-web",
         qidoSupportsIncludeField: true,
-        imageRendering: "wadors",
-        thumbnailRendering: "wadors",
-        enableStudyLazyLoad: true
+        supportsReject: true,
+        imageRendering: 'wadors',
+        thumbnailRendering: 'wadors',
+        enableStudyLazyLoad: true,
+        supportsFuzzyMatching: true,
+        supportsWildcard: true,
       }
-    ]
-  },
+    }
+  ],
+  defaultDataSourceName: 'dicomweb',
   // Extensions should be able to suggest default values for these?
   // Or we can require that these be explicitly set
   hotkeys: [
@@ -120,6 +127,9 @@ window.config = {
       keys: ['9'],
     },
   ],
+  httpErrorHandler: error => {
+    console.warn(error.status);
+  },
   cornerstoneExtensionConfig: {},
   // Following property limits number of simultaneous series metadata requests.
   // For http/1.x-only servers, set this to 5 or less to improve

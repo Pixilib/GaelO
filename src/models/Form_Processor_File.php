@@ -90,12 +90,46 @@ abstract class Form_Processor_File extends Form_Processor {
 		$this->reviewObject->updateAssociatedFiles($fileArray);
 
 	}
+
+
+	public function storeManuallyCreatedAssociatedFile(string $fileKey, string $mime, int $fileSize, string $uploadedTempFile) {
+
+		//If first form upload create a draft form to insert file uploaded data
+		if (empty($this->reviewObject)) {
+			$this->createReview();
+			$this->createEmptySpecificForm();
+		}else {
+			//If review exist but validated throw exception
+			if ($this->reviewObject->validated) {
+				throw new Exception('Validated Review, can\'t add File');
+			}
+		}
+        
+		//Get extension of file and check extension is allowed
+		//Get filesize and check it matches limits
+		$sizeMb=$fileSize/1048576;
+		if ($sizeMb > $this->getMaxSizeMb()) throw new Exception('File over limits');
+		if (!$this->isInDeclaredKey($fileKey)) throw new Exception('Unhauthrized file key'); 
+		if (!$this->isInAllowedType($mime)) throw new Exception('Extension not allowed');
+
+		$mimes=new \Mimey\MimeTypes;
+		$extension=$mimes->getExtension($mime);
+		$fileName=$this->visitObject->patientCode.'_'.$this->visitObject->visitType.'_'.$fileKey.'.'.$extension;
+
+		$associatedFinalFile=$this->reviewObject->storeManuallyCreatedAssociatedFile($uploadedTempFile, $fileName);
+        
+		//Add or overide file key and write to database
+		$fileArray=$this->reviewObject->associatedFiles;
+		$fileArray[$fileKey]=$associatedFinalFile;
+		$this->reviewObject->updateAssociatedFiles($fileArray);
+
+	}
     
-	private function isInDeclaredKey(string $fileKey) {
+	protected function isInDeclaredKey(string $fileKey) {
 		return in_array($fileKey, $this->getAllowedFileKeys());
 	}
 
-	private function isInAllowedType(string $extension) {
+	protected function isInAllowedType(string $extension) {
 		return in_array($extension, $this->getAllowedType());
 	}
 
