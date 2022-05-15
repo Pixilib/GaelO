@@ -93,12 +93,13 @@ class UnlockReviewForm
             );
 
             //send Email notification to review owner
-            $this->mailServices->sendUnlockFormMessage(
+            $this->mailServices->sendUnlockedFormMessage(
                 $reviewEntity['visit_id'],
                 false,
                 $unlockReviewFormRequest->currentUserId,
                 $reviewEntity['study_name'],
                 $visitContext['patient_id'],
+                $visitContext['patient']['code'],
                 $visitContext['visit_type']['name']
             );
 

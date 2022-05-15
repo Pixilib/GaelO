@@ -3,6 +3,6 @@
 @section('content')
     The following visit has been uploaded on the platform:<br>
     Study : {{$study}}<br>
-    Patient Number : {{$patientId}}<br>
+    Patient Code : {{$patientCode}}<br>
     Uploaded visit : {{$visitType}}<br>
 @endsection

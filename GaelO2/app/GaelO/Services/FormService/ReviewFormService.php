@@ -89,7 +89,7 @@ class ReviewFormService extends FormService
 
         //Send Notification emails
         if ($reviewStatus === Constants::REVIEW_STATUS_WAIT_ADJUDICATION) {
-            $this->mailServices->sendAwaitingAdjudicationMessage($this->studyName, $this->patientId,  $this->visitType, $this->visitId);
+            $this->mailServices->sendAwaitingAdjudicationMessage($this->studyName, $this->patientId, $this->patientCode,  $this->visitType, $this->visitId);
         } else if ($reviewStatus === Constants::REVIEW_STATUS_DONE) {
             //SK Si ANCIllaire pas besoin d'embetter l'uploader du princeps ...
             $this->mailServices->sendVisitConcludedMessage(
@@ -97,6 +97,7 @@ class ReviewFormService extends FormService
                 $this->uploaderId,
                 $this->studyName,
                 $this->patientId,
+                $this->patientCode,
                 $this->visitType,
                 $conclusion
             );

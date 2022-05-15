@@ -103,6 +103,7 @@ class DeleteReviewForm
                 $reviewEntity['user_id'],
                 $studyName,
                 $visitContext['patient_id'],
+                $visitContext['patient']['code'],
                 $visitContext['visit_type']['name']
             );
 

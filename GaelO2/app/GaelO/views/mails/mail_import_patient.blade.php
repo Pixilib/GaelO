@@ -12,10 +12,10 @@
 
     <p>Error :</p>
     <ul>
-        @foreach ($failList as $reason => $patientIdArray)
+        @foreach ($failList as $reason => $patientCodeArray)
         <li>{{$reason}} :</li>
-            @foreach ($patientIdArray as $patientId)
-            <li>{{$patientId}}</li>
+            @foreach ($patientCodeArray as $patientCode)
+            <li>{{$patientCode}}</li>
             @endforeach
         @endforeach
     </ul>

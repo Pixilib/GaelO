@@ -34,6 +34,7 @@ class ModifyQualityControl {
 
             $studyName = $visitContext['patient']['study_name'];
             $patientId = $visitContext['patient']['id'];
+            $patientCode = $visitContext['patient']['code'];
             $visitType = $visitContext['visit_type']['name'];
             $visitModality = $visitContext['visit_type']['visit_group']['modality'];
             $centerCode = $visitContext['patient']['center_code'];
@@ -98,6 +99,7 @@ class ModifyQualityControl {
                 $centerCode,
                 $modifyQualityControlRequest->stateQc,
                 $patientId,
+                $patientCode,
                 $visitModality,
                 $visitType,
                 $modifyQualityControlRequest->formQc ? 'Accepted ' : 'Refused',

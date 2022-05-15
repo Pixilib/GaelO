@@ -7,7 +7,7 @@
     No corrective action could be applied on the following visit:<br>
     @endif
     Study : {{$study}}<br>
-    Patient Number : {{$patientId}}<br>
+    Patient Code : {{$patientCode}}<br>
     Visit Modality : {{$visitModality}}<br>
     Visit Type :  {{$visitType}}<br>
 @endsection

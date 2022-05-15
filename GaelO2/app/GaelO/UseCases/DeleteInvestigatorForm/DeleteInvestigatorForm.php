@@ -81,6 +81,7 @@ class DeleteInvestigatorForm{
                 $investigatorFormEntity['user_id'],
                 $studyName,
                 $visitContext['patient_id'],
+                $visitContext['patient']['code'],
                 $visitContext['visit_type']['name'] );
 
             $DeleteInvestigatorFormResponse->status = 200;

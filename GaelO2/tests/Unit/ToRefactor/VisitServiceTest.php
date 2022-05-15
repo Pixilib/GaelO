@@ -104,7 +104,7 @@ class VisitServiceTest extends TestCase
 
         $this->visitService->updateUploadStatus($this->visit['id'], 'Done');
 
-        $this->mailServiceSpy->shouldHaveReceived('sendAvailableReviewMessage')->once();
+        $this->mailServiceSpy->shouldHaveReceived('sendReviewReadyMessage')->once();
     }
 
     public function testUpdateUploadStatusInvestigatorFormNotDone()
