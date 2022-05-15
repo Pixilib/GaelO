@@ -1,6 +1,6 @@
 Salim TODO :
 
-- Dans les mails passer des PatentId à PatientNumber dans le texte et titre des mails
+- Refac : ImportPatientService a encore des variable faisant reference a patientNumber plutot qu'a patientCode
 
 - TreeService à pluger avec Visit/Patient Entity
 - TreeService à refactorer en ayant directement le center nesté dans le patient (appel db via with patient.center)
