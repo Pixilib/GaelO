@@ -13,7 +13,7 @@ class ReviewerTreeService extends AbstractTreeService
     {
         //Get patient with at least an awaiting review visit for the current user (visit with review available and review form not validated by user)
         $patientIdsArray = $this->visitRepositoryInterface->getPatientsHavingAtLeastOneAwaitingReviewForUser($this->studyEntity->name, $this->userId);
-        $visitArray = $this->visitRepositoryInterface->getPatientListVisitWithContextAndReviewStatus($patientIdsArray, $this->studyEntity->name);
+        $visitArray = $this->visitRepositoryInterface->getVisitFromPatientIdsWithContextAndReviewStatus($patientIdsArray, $this->studyEntity->name);
 
         return $this->formatResponse($visitArray);
     }

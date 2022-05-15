@@ -148,7 +148,7 @@ class VisitRepositoryTest extends TestCase
     public function testGetPatientListVisitsWithContext()
     {
         $patient = $this->populateVisits();
-        $visits = $this->visitRepository->getPatientListVisitsWithContext([$patient[0]->id, $patient[1]->id]);
+        $visits = $this->visitRepository->getVisitsFromPatientIdsWithContext([$patient[0]->id, $patient[1]->id]);
         $this->assertEquals(12, sizeof($visits));
         $this->assertArrayHasKey('visit_type', $visits[0]);
         $this->assertArrayHasKey('visit_group', $visits[0]['visit_type']);
@@ -158,7 +158,7 @@ class VisitRepositoryTest extends TestCase
 
     {
         $patient = $this->populateVisits();
-        $visits = $this->visitRepository->getPatientListVisitWithContextAndReviewStatus([$patient[0]->id, $patient[1]->id], $patient[0]->study_name);
+        $visits = $this->visitRepository->getVisitFromPatientIdsWithContextAndReviewStatus([$patient[0]->id, $patient[1]->id], $patient[0]->study_name);
         $this->assertEquals(12, sizeof($visits));
         $this->assertArrayHasKey('review_status', $visits[0]);
 

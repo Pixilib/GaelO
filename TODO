@@ -2,8 +2,6 @@ Salim TODO :
 
 - Refac : ImportPatientService a encore des variable faisant reference a patientNumber plutot qu'a patientCode
 
-- TreeService à pluger avec Visit/Patient Entity
-- TreeService à refactorer en ayant directement le center nesté dans le patient (appel db via with patient.center)
 - GetCreatableVisit soit faire passer par les object specifique pour avoir la main soit à supprimer et faire avec definition de l'etude?
 
 - Optimiser l'utilisation des authorization service en injectant les data depuis le usecase (ou les rendre stateless)

@@ -72,6 +72,16 @@ class VisitEntity {
         return $visitEntity;
     }
 
+    public function fillForTree($visitArray){
+        $this->id = $visitArray['id'];
+        $this->patientId = $visitArray['patient_id'];
+        $this->visitTypeId = $visitArray['visit_type_id'];
+        $this->statusDone = $visitArray['status_done'];
+        $this->uploadStatus = $visitArray['upload_status'];
+        $this->stateInvestigatorForm = $visitArray['state_investigator_form'];
+        $this->stateQualityControl = $visitArray['state_quality_control'];
+    }
+
     public function setVisitContext(array $visitGroupEntity ,array $visitTypeEntity){
         $this->visitGroup = VisitGroupEntity::fillFromDBReponseArray($visitGroupEntity);
         $this->visitType = VisitTypeEntity::fillFromDBReponseArray($visitTypeEntity);
