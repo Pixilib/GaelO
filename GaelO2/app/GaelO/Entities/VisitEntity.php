@@ -77,6 +77,7 @@ class VisitEntity {
         $this->patientId = $visitArray['patient_id'];
         $this->visitTypeId = $visitArray['visit_type_id'];
         $this->statusDone = $visitArray['status_done'];
+        $this->visitDate = $visitArray['visit_date'];
         $this->uploadStatus = $visitArray['upload_status'];
         $this->stateInvestigatorForm = $visitArray['state_investigator_form'];
         $this->stateQualityControl = $visitArray['state_quality_control'];

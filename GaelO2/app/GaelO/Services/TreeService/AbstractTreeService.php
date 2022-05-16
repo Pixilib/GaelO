@@ -2,6 +2,7 @@
 
 namespace App\GaelO\Services\TreeService;
 
+use App\GaelO\Constants\Constants;
 use App\GaelO\Entities\PatientEntity;
 use App\GaelO\Entities\StudyEntity;
 use App\GaelO\Entities\VisitEntity;
@@ -45,7 +46,7 @@ abstract class AbstractTreeService
             $patient = new PatientEntity();
             $patient->code = $patientEntity['code'];
             $patient->id = $patientEntity['id'];
-            $patient->fillCenterDetails($patientEntity['center']['name'], $patientEntity['center']['country']);
+            $patient->fillCenterDetails($patientEntity['center']['name'], $patientEntity['center']['country_code']);
             $patientArray[$patient->id] = (array) $patient;
         }
 
@@ -59,7 +60,7 @@ abstract class AbstractTreeService
             $visit = new VisitEntity();
             $visit->fillForTree($visitEntity);
             $visit->setVisitContext($visitEntity['visit_type']['visit_group'], $visitEntity['visit_type']);
-            $visit->reviewStatus = key_exists( 'review_status', $visitEntity ) ? $visitEntity['review_status']['review_status'] : null;
+            $visit->reviewStatus = key_exists( 'review_status', $visitEntity ) ? $visitEntity['review_status']['review_status'] : Constants::REVIEW_STATUS_NOT_DONE ;
             $visitArray[] = (array) $visit;
         }
 

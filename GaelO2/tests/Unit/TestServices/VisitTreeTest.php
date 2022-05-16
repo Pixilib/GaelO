@@ -112,7 +112,7 @@ class VisitTreeTest extends TestCase
                 'center' => [
                     'code' => 54,
                     'name' => "azc",
-                    'country'=> 'FR'
+                    'country_code'=> 'FR'
                 ]
             ],
             [
@@ -122,7 +122,7 @@ class VisitTreeTest extends TestCase
                 'center' => [
                     'code' => 55,
                     'name' => "aze",
-                    'country'=> 'IT'
+                    'country_code'=> 'IT'
                 ]
             ],
         ];
@@ -164,7 +164,7 @@ class VisitTreeTest extends TestCase
     private function doAssertionOnContent($treeAnswer, bool $withReviewStatus)
     {
         $expectedArray = [
-            'id', 'visitType',
+            'id', 'visitType', 'visitDate',
             'stateInvestigatorForm', 'stateQualityControl', 'uploadStatus', 'statusDone', 'visitTypeId', 'patientId'
         ];
 
