@@ -96,7 +96,7 @@ class FormService
 
         $destinationPath = $this->studyName . '/' . 'attached_review_file';
 
-        $destinationFileName = '/' . $destinationPath . '/' . $filename;
+        $destinationFileName = $destinationPath . '/' . $filename;
         $this->frameworkInterface->storeFile($destinationFileName, base64_decode($binaryData));
 
         $reviewEntity['sent_files'][$key] = $destinationFileName;

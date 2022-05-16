@@ -53,6 +53,8 @@ use App\GaelO\UseCases\UnlockReviewForm\UnlockReviewFormResponse;
 use App\GaelO\Util;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
 
 class ReviewController extends Controller
 {
@@ -265,7 +267,13 @@ class ReviewController extends Controller
 
         $getFileOfForm->execute($getFileOfFormRequest, $getFileOfFormResponse);
 
-        return $this->getJsonResponse($getFileOfFormResponse->body, $getFileOfFormResponse->status, $getFileOfFormResponse->statusText);
+
+        if ($getFileOfFormResponse->status === 200) {
+            return Storage::download( $getFileOfFormResponse->filePath, $getFileOfFormResponse->filename);
+        } else {
+            return response()->json($getFileOfFormResponse->body)
+                ->setStatusCode($getFileOfFormResponse->status, $getFileOfFormResponse->statusText);
+        }
     }
 
     public function getAssociatedDataOfVisitForReviewer(GetAssociatedDataForReview $getAssociatedDataForReview, GetAssociatedDataForReviewRequest $getAssociatedDataForReviewRequest, GetAssociatedDataForReviewResponse $getAssociatedDataForReviewResponse, string $studyName, int $visitId)

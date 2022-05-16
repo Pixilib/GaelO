@@ -19,6 +19,12 @@ interface FrameworkInterface {
      */
     public static function getStoragePath() : string ;
 
+    public static function storeFile(string $path, $contents) : void;
+
+    public static function deleteFile(string $path) : void;
+
+    public static function getFile(string $path) : string;
+
     public static function sendResetPasswordLink(string $email) : bool;
 
     public static function sendRegisteredEventForEmailVerification(int $userId) : void ;
