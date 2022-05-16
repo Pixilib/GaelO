@@ -43,6 +43,7 @@ class RequestUnlock
             $visitContext = $this->visitRepositoryInterface->getVisitContext($requestUnlockRequest->visitId);
 
             $patientId = $visitContext['patient']['id'];
+            $patientCode = $visitContext['patient']['code'];
             $visitType = $visitContext['visit_type']['name'];
 
             if (empty($requestUnlockRequest->message)) {
@@ -55,6 +56,7 @@ class RequestUnlock
                 $requestUnlockRequest->role,
                 $requestUnlockRequest->studyName,
                 $patientId,
+                $patientCode,
                 $requestUnlockRequest->message,
                 $visitType
             );

@@ -3,7 +3,7 @@
 @section('content')
     Review of the following visit is concluded <br>
     Study : {{$study}}<br>
-    Patient Number : {{$patientId}}<br>
+    Patient Code : {{$patientCode}}
     Visit : {{$visitType}}<br>
     Conclusion Value : {{$conclusionValue}}
 @endsection

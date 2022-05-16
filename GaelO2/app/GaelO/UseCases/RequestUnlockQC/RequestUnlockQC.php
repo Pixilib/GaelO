@@ -46,6 +46,7 @@ class RequestUnlockQC
             );
 
             $patientId = $visitContext['patient']['id'];
+            $patientCode = $visitContext['patient']['code'];
             $visitType = $visitContext['visit_type']['name'];
 
             if (empty($requestUnlockQCRequest->message)) {
@@ -57,6 +58,7 @@ class RequestUnlockQC
                 $requestUnlockQCRequest->currentUserId,
                 $studyName,
                 $patientId,
+                $patientCode,
                 $requestUnlockQCRequest->message,
                 $visitType
             );

@@ -25,6 +25,7 @@ class FormService
     protected string $studyName;
     protected string $visitType;
     protected string $patientId;
+    protected string $patientCode;
     protected int $uploaderId;
     protected string $local;
 
@@ -60,6 +61,7 @@ class FormService
         $this->visitContext = $visitContext;
         $this->visitType = $this->visitContext['visit_type']['name'];
         $this->patientId = $this->visitContext['patient_id'];
+        $this->patientCode = $this->visitContext['patient']['code'];
         $this->uploaderId = $this->visitContext['creator_user_id'];
         $this->studyName = $studyName;
         $visitGroup = $this->visitContext['visit_type']['visit_group']['name'];

@@ -33,6 +33,7 @@ class ModifyCorrectiveAction{
 
             $studyName = $visitContext['patient']['study_name'];
             $patientId = $visitContext['patient']['id'];
+            $patientCode = $visitContext['patient']['code'];
             $visitType = $visitContext['visit_type']['name'];
             $localFormNeeded = $visitContext['visit_type']['local_form_needed'];
             $visitModality = $visitContext['visit_type']['visit_group']['modality'];
@@ -87,6 +88,7 @@ class ModifyCorrectiveAction{
                 $studyName,
                 $modifyCorrectiveActionRequest->correctiveActionDone,
                 $patientId,
+                $patientCode,
                 $visitModality,
                 $visitType
             );

@@ -83,12 +83,13 @@ class UnlockInvestigatorForm
             );
 
             //send unlock form notification to form owner
-            $this->mailServices->sendUnlockFormMessage(
+            $this->mailServices->sendUnlockedFormMessage(
                 $unlockInvestigatorFormRequest->visitId,
                 true,
                 $unlockInvestigatorFormRequest->currentUserId,
                 $studyName,
                 $visitContext['patient_id'],
+                $visitContext['patient']['code'],
                 $visitContext['visit_type']['name']
             );
 
