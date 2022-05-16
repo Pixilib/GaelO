@@ -128,14 +128,14 @@ class VisitRepository implements VisitRepositoryInterface
         return empty($visits) ? [] : $visits->toArray();
     }
 
-    public function getPatientListVisitsWithContext(array $patientIdArray): array
+    public function getVisitsFromPatientIdsWithContext(array $patientIdArray): array
     {
 
         $answer = $this->visit->with('visitType')->whereIn('patient_id', $patientIdArray)->get();
         return $answer->count() === 0 ? []  : $answer->toArray();
     }
 
-    public function getPatientListVisitWithContextAndReviewStatus(array $patientIdArray, string $studyName): array
+    public function getVisitFromPatientIdsWithContextAndReviewStatus(array $patientIdArray, string $studyName): array
     {
 
         $answer = $this->visit

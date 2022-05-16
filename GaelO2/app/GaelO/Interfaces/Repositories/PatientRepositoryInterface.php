@@ -12,9 +12,9 @@ interface PatientRepositoryInterface {
 
     public function getPatientsInStudy(string $studyName) : array ;
 
-    public function getPatientsInStudyInCenters(string $studyName, array $centerCodes) : array ;
+    public function getPatientsInStudyInCenters(string $studyName, array $centerCodes, bool $withCenters) : array ;
 
-    public function getPatientsFromIdArray(array $ids) : array ;
+    public function getPatientsFromIdArray(array $ids, bool $withCenters) : array ;
 
     public function addPatientInStudy(string $id,
                     string $code, string $lastname, string $firstname,

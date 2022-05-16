@@ -3,7 +3,6 @@
 namespace Tests\Unit\TestServices;
 
 use App\GaelO\Constants\Constants;
-use App\GaelO\Entities\CenterEntity;
 use App\GaelO\Entities\StudyEntity;
 use App\GaelO\Repositories\CenterRepository;
 use App\GaelO\Repositories\PatientRepository;
@@ -68,6 +67,7 @@ class VisitTreeTest extends TestCase
                 "anon_profile" => "Default",
                 "created_at" => "2021-01-26T23:23:36.000000Z",
                 "updated_at" => "2021-01-26T23:23:36.000000Z",
+                "dicom_constraints" => [],
                 "visit_group" => [
                     "id" => 2,
                     "study_name" => "FTF46YRWEZIZB9R9JPON",
@@ -87,17 +87,17 @@ class VisitTreeTest extends TestCase
         $mockVisitRepository->shouldReceive('getPatientsHavingAtLeastOneAwaitingReviewForUser')
             ->andReturn([32]);
 
-        $mockVisitRepository->shouldReceive('getPatientListVisitsWithContext')
+        $mockVisitRepository->shouldReceive('getVisitsFromPatientIdsWithContext')
             ->andReturn($visitArrayMock);
 
-        $arrayMockWithReviewStatus = array_map(function($visit){
+        $arrayMockWithReviewStatus = array_map(function ($visit) {
             $visit['review_status']['review_status'] = Constants::REVIEW_STATUS_DONE;
             return $visit;
         }, $visitArrayMock);
 
         $mockVisitRepository
-        ->shouldReceive('getPatientListVisitWithContextAndReviewStatus')
-        ->andReturn($arrayMockWithReviewStatus);
+            ->shouldReceive('getVisitFromPatientIdsWithContextAndReviewStatus')
+            ->andReturn($arrayMockWithReviewStatus);
 
         $mockUserRepository = Mockery::mock(UserRepository::class);
         $mockUserRepository->shouldReceive('getAllUsersCenters')
@@ -105,12 +105,26 @@ class VisitTreeTest extends TestCase
 
         $patientRepository = Mockery::mock(PatientRepository::class);
         $patientArray = [
-            ['id'=>32,
-            'code'=>54,
-            'center_code'=>1234],
-            ['id'=>33,
-            'code'=>55,
-            'center_code'=>1234],
+            [
+                'id' => 32,
+                'code' => 12332,
+                'center_code' => 54,
+                'center' => [
+                    'code' => 54,
+                    'name' => "azc",
+                    'country_code'=> 'FR'
+                ]
+            ],
+            [
+                'id' => 33,
+                'code'=> 12333,
+                'center_code' => 55,
+                'center' => [
+                    'code' => 55,
+                    'name' => "aze",
+                    'country_code'=> 'IT'
+                ]
+            ],
         ];
 
         $patientRepository->shouldReceive('getPatientsInStudyInCenters')
@@ -133,7 +147,7 @@ class VisitTreeTest extends TestCase
 
         $centerRepository = Mockery::mock(CenterRepository::class);
         $centerRepository->shouldReceive('getCentersFromCodeArray')
-            ->andReturn( [[
+            ->andReturn([[
                 'name' => 'Toulouse',
                 'code' => 1234,
                 'country_code' => 'FR'
@@ -145,22 +159,20 @@ class VisitTreeTest extends TestCase
         $this->instance(PatientRepository::class, $patientRepository);
         $this->instance(StudyRepository::class, $studyRepository);
         $this->instance(CenterRepository::class, $centerRepository);
-
     }
 
     private function doAssertionOnContent($treeAnswer, bool $withReviewStatus)
     {
         $expectedArray = [
-            'id', 'name', 'order', 'optional', 'modality', 'studyName',
-            'stateInvestigatorForm', 'stateQualityControl', 'uploadStatus', 'statusDone', 'visitTypeId', 'visitGroupId', 'patientId'
+            'id', 'visitType', 'visitDate',
+            'stateInvestigatorForm', 'stateQualityControl', 'uploadStatus', 'statusDone', 'visitTypeId', 'patientId'
         ];
 
-        if($withReviewStatus) $expectedArray = ['reviewStatus'];
+        if ($withReviewStatus) $expectedArray = ['reviewStatus'];
 
         foreach ($expectedArray as $key) {
             $this->assertArrayHasKey($key, $treeAnswer['visits'][0]);
         }
-
     }
 
     public function testTreeMonitor()

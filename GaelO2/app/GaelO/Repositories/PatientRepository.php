@@ -36,15 +36,25 @@ class PatientRepository implements PatientRepositoryInterface
         return empty($patients) ? [] : $patients->toArray();
     }
 
-    public function getPatientsInStudyInCenters(string $studyName, array $centerCodes): array
+    public function getPatientsInStudyInCenters(string $studyName, array $centerCodes, bool $withCenters): array
     {
-        $patients = $this->patient->where('study_name', $studyName)->whereIn('center_code', $centerCodes)->get();
+        $query = $this->patient->where('study_name', $studyName)->whereIn('center_code', $centerCodes);
+        if($withCenters){
+            $query->with('center');
+        }
+        $patients = $query->get();
         return empty($patients) ? [] : $patients->toArray();
     }
 
-    public function getPatientsFromIdArray(array $ids): array
+    public function getPatientsFromIdArray(array $ids, bool $withCenters): array
     {
-        $patients = $this->patient->whereIn('id', $ids)->get();
+        $query = $this->patient->whereIn('id', $ids);
+
+        if($withCenters){
+            $query->with('center');
+        }
+
+        $patients = $query->get();
         return $patients !== null  ? $patients->toArray() : [];
     }
 
