@@ -38,7 +38,7 @@ class GetPatientsVisitsInStudy {
             $this->checkAuthorization($getPatientsVisitsInStudyRequest->currentUserId, $studyName);
 
             $responseArray = [];
-            $visitsArray = $this->visitRepositoryInterface->getPatientListVisitWithContextAndReviewStatus($patientIds, $studyName);
+            $visitsArray = $this->visitRepositoryInterface->getVisitFromPatientIdsWithContextAndReviewStatus($patientIds, $studyName);
             $patientEntities = $this->patientRepositoryInterface->find($patientIds);
 
             foreach($patientEntities as $patientEntity) {

@@ -43,7 +43,7 @@ class GetPatientsInStudyFromCenters {
             $originalStudyName = $studyEntity->getOriginalStudyName();
 
             $responseArray = [];
-            $patientsDbEntities = $this->patientRepositoryInterface->getPatientsInStudyInCenters($originalStudyName, $centerCodes);
+            $patientsDbEntities = $this->patientRepositoryInterface->getPatientsInStudyInCenters($originalStudyName, $centerCodes, false);
 
             foreach($patientsDbEntities as $patientEntity){
                 $patientEntity = PatientEntity::fillFromDBReponseArray($patientEntity);

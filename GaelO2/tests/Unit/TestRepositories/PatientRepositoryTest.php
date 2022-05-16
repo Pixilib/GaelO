@@ -3,7 +3,6 @@
 namespace Tests\Unit\TestRepositories;
 
 use App\GaelO\Repositories\PatientRepository;
-use App\GaelO\Entities\PatientEntity;
 use App\Models\Center;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
@@ -114,7 +113,7 @@ class PatientRepositoryTest extends TestCase
 
         Patient::factory()->studyName($study->last()->name)->centerCode($centers->get(0)->code)->count(2)->create();
 
-        $selectedPatients = $this->patientRepository->getPatientsInStudyInCenters($study->first()->name, [$centers->get(0)->code, $centers->get(1)->code]);
+        $selectedPatients = $this->patientRepository->getPatientsInStudyInCenters($study->first()->name, [$centers->get(0)->code, $centers->get(1)->code], false);
         $this->assertEquals(11, sizeof($selectedPatients));
     }
 
@@ -122,7 +121,7 @@ class PatientRepositoryTest extends TestCase
         $patient1 = Patient::factory()->create();
         $patient2 = Patient::factory()->create();
         $patientIdArray = [strval($patient1->id), strval($patient2->id)];
-        $patientEntitiesArray = $this->patientRepository->getPatientsFromIdArray($patientIdArray);
+        $patientEntitiesArray = $this->patientRepository->getPatientsFromIdArray($patientIdArray, false);
         $fetchedPatientsCodes = array_column($patientEntitiesArray, 'id');
         $this->assertTrue(!array_diff($fetchedPatientsCodes, $patientIdArray));
     }

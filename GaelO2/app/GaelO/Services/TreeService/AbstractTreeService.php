@@ -2,7 +2,10 @@
 
 namespace App\GaelO\Services\TreeService;
 
+use App\GaelO\Constants\Constants;
+use App\GaelO\Entities\PatientEntity;
 use App\GaelO\Entities\StudyEntity;
+use App\GaelO\Entities\VisitEntity;
 use App\GaelO\Interfaces\Repositories\CenterRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\PatientRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\StudyRepositoryInterface;
@@ -36,48 +39,47 @@ abstract class AbstractTreeService
         $this->studyEntity = $this->studyRepositoryInterface->find($studyName);
     }
 
-    protected function makePatientDetails( array $patientIdArray) : array {
-
-        $patientsArray = $this->patientRepositoryInterface->getPatientsFromIdArray($patientIdArray);
-
-        $centersArray = $this->centerRepositoryInterface->getCentersFromCodeArray(
-            array_map(function ($patient) { return $patient['center_code']; }, $patientsArray)
-        );
-
+    protected function makePatientDetails(array $patientsEntities): array
+    {
         $patientArray = [];
-
-        foreach ($patientsArray as $patientEntity) {
-            $centerIndex = array_search($patientEntity['center_code'], array_column($centersArray, 'code'));
-            $patientArray[ $patientEntity['id'] ] = [
-                'code' => $patientEntity['code'],
-                'centerName' => $centersArray[$centerIndex]['name'],
-                'centerCode' => $patientEntity['center_code']
-            ];
+        foreach ($patientsEntities as $patientEntity) {
+            $patient = new PatientEntity();
+            $patient->code = $patientEntity['code'];
+            $patient->id = $patientEntity['id'];
+            $patient->fillCenterDetails($patientEntity['center']['name'], $patientEntity['center']['country_code']);
+            $patientArray[$patient->id] = (array) $patient;
         }
 
         return $patientArray;
-
     }
 
-    protected function makeVisitDetails(array $visitsArray): array
+    protected function makeVisitDetails(array $visitsEntities): array
     {
-        $visitArray=[];
-        foreach ($visitsArray as $visitObject) {
-            $visitsFormattedData = (array) TreeItem::createItem($visitObject);
-            $visitArray[] = $visitsFormattedData;
+        $visitArray = [];
+        foreach ($visitsEntities as $visitEntity) {
+            $visit = new VisitEntity();
+            $visit->fillForTree($visitEntity);
+            $visit->setVisitContext($visitEntity['visit_type']['visit_group'], $visitEntity['visit_type']);
+            $visit->reviewStatus = key_exists( 'review_status', $visitEntity ) ? $visitEntity['review_status']['review_status'] : Constants::REVIEW_STATUS_NOT_DONE ;
+            $visitArray[] = (array) $visit;
         }
 
         return $visitArray;
     }
 
-    protected function formatResponse(array $visitArray) : array{
-        $patientIdArray = array_map(function($visit){
+    protected function formatResponse(array $visitsEntities): array
+    {
+        $patientIdArray = array_map(function ($visit) {
             return $visit['patient_id'];
-        }, $visitArray);
+        }, $visitsEntities);
 
-        return[
-            'patients'=> $this->makePatientDetails($patientIdArray),
-            'visits' => $this->makeVisitDetails($visitArray)
+
+        $patientsEntities = $this->patientRepositoryInterface->getPatientsFromIdArray($patientIdArray, true);
+
+
+        return [
+            'patients' => $this->makePatientDetails($patientsEntities),
+            'visits' => $this->makeVisitDetails($visitsEntities)
         ];
     }
 

@@ -12,7 +12,6 @@ class MonitorTreeService extends InvestigatorTreeService{
     {
         if($this->studyEntity->monitorShowAll){
             //If show all in this study, return whole list of visits
-            //SK ICI A REVOIR SI PATIENT CENTER SUFFIT PAS DANS ENTITY VISIT !
             $visitsArray = $this->visitRepositoryInterface->getVisitsInStudy($this->studyEntity->name, false, false, false);
             return $this->formatResponse($visitsArray);
         }else{
