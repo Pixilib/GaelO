@@ -44,18 +44,11 @@ class CreateDocumentationFile{
                 throw new GaelOBadRequestException("Payload should be base64 encoded");
             }
 
-            $storagePath = $this->frameworkInterface::getStoragePath();
+            $destinationPath = '/'.$studyName.'/documentations/'.$documentationEntity['id'].'.pdf';
 
-            $destinationPath = $storagePath.'/'.$studyName.'/documentations';
-            if (!is_dir($destinationPath)) {
-                mkdir($destinationPath, 0755, true);
-            }
+            $this->frameworkInterface->storeFile( $destinationPath , base64_decode($createDocumentationFileRequest->binaryData));
 
-            file_put_contents ( $destinationPath.'/'.$documentationEntity['id'].'.pdf', base64_decode($createDocumentationFileRequest->binaryData) );
-
-            $relativePath= '/'.$studyName.'/documentations/'.$documentationEntity['id'].'.pdf';
-
-            $this->documentationRepositoryInterface->updateDocumentationPath($createDocumentationFileRequest->id, $relativePath);
+            $this->documentationRepositoryInterface->updateDocumentationPath($createDocumentationFileRequest->id, $destinationPath);
 
             $actionDetails =[
                 'documentation_id'=>$createDocumentationFileRequest->id,

@@ -8,7 +8,9 @@ use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
+use PhpOption\None;
 
 class FrameworkAdapter implements FrameworkInterface
 {
@@ -26,6 +28,14 @@ class FrameworkAdapter implements FrameworkInterface
     public static function getStoragePath(): string
     {
         return storage_path() . '/gaelo';
+    }
+
+    public static function storeFile(string $path, $contents) : void {
+        Storage::put('/gaelo'.$path, $contents);
+    }
+
+    public static function deleteFile(string $path) : void {
+        Storage::delete('/gaelo'.$path);
     }
 
     public static function sendRegisteredEventForEmailVerification(int $userId): void
