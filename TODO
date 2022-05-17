@@ -1,6 +1,5 @@
 Salim TODO :
 
-- Refac : ImportPatientService a encore des variable faisant reference a patientNumber plutot qu'a patientCode
 - Refac : setVisitData de VisitEntity à revoir
 
 - GetCreatableVisit soit faire passer par les object specifique pour avoir la main soit à supprimer et faire avec definition de l'etude?
