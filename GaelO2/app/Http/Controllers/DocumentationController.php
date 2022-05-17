@@ -83,6 +83,7 @@ class DocumentationController extends Controller
         $getDocumentationFileRequest->currentUserId = $currentUser['id'];
         $getDocumentationFile->execute($getDocumentationFileRequest, $getDocumentationFileResponse);
         if ($getDocumentationFileResponse->status === 200) {
+            FrameworkAdapter::getStoredFiles();
             return Storage::download($getDocumentationFileResponse->filePath, $getDocumentationFileResponse->filename);
         } else {
             return response()->json($getDocumentationFileResponse->body)

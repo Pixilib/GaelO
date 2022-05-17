@@ -2,6 +2,7 @@
 
 namespace App\GaelO;
 
+use App\GaelO\Adapters\FrameworkAdapter;
 use App\GaelO\Exceptions\GaelOBadRequestException;
 use Carbon\Carbon;
 use DateTime;
@@ -88,23 +89,17 @@ class Util {
         return preg_match('/^'.$wholeStringCheck.'$/', $password);
     }
 
-    public static function getFileInPathGenerator(String $path) {
+    public static function addStoredFilesInZip(ZipArchive $zip, ?string $path){
 
-		if (is_dir($path)) {
-			// Create recursive directory iterator
-			$files=new RecursiveIteratorIterator(
-				new RecursiveDirectoryIterator($path),
-				RecursiveIteratorIterator::LEAVES_ONLY
-				);
+        $files = FrameworkAdapter::getStoredFiles($path);
 
-			foreach ($files as $name => $file) {
-				// Skip directories (they would be added automatically)
-				if (!$file->isDir()) {
-					// Get real and relative path for current file
-					yield $file;
-				}
-			}
-		}
+        foreach ($files as $file) {
+            // Add current file to archive
+            $fileContent = FrameworkAdapter::getFile($file);
+            $zip->addFromString($file, $fileContent);
+
+        }
+
     }
 
     public static function recursiveDirectoryDelete(string $directory) {

@@ -25,21 +25,24 @@ class FrameworkAdapter implements FrameworkInterface
         return Config::get('app.' . $key);
     }
 
-    public static function getStoragePath(): string
-    {
-        return storage_path() . '/app/gaelo';
+    /**
+     * Return array of file of the storage folder, path is relative to storage folder and could be queried by the get method
+     */
+    public static function getStoredFiles($directory = null) : array {
+        $files = Storage::allFiles($directory);
+        return $files;
     }
 
     public static function storeFile(string $path, $contents) : void {
-        Storage::put('/gaelo/'.$path, $contents);
+        Storage::put($path, $contents);
     }
 
     public static function deleteFile(string $path) : void {
-        Storage::delete('/gaelo/'.$path);
+        Storage::delete($path);
     }
 
     public static function getFile(string $path) : string {
-        return Storage::get('/gaelo/'.$path);
+        return Storage::get($path);
     }
 
     public static function sendRegisteredEventForEmailVerification(int $userId): void
