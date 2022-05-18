@@ -2,11 +2,14 @@
 
 namespace Tests\Feature\TestDocumentation;
 
+use App\GaelO\Adapters\FrameworkAdapter;
 use App\Models\Documentation;
 use App\GaelO\Constants\Constants;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\TestCase;
 use App\Models\Study;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
 use Tests\AuthorizationTools;
 
 class DocumentationTest extends TestCase
@@ -134,10 +137,8 @@ class DocumentationTest extends TestCase
     {
         $currentUserId = AuthorizationTools::actAsAdmin(false);
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_INVESTIGATOR, $this->study->name);
-        $filename = storage_path() . '/gaelo/' . $this->study->name . '/documentations/test.pdf';
-        if (!file_exists(dirname($filename))) mkdir(dirname($filename), 0777, true);
-        file_put_contents($filename, 'content');
-        $documentation = Documentation::factory()->studyName($this->study->name)->investigator()->path('/'.$this->study->name.'/documentations/test.pdf')->create();
+        FrameworkAdapter::storeFile($this->study->name . '/documentations/test.pdf', 'content');
+        $documentation = Documentation::factory()->studyName($this->study->name)->investigator()->path($this->study->name.'/documentations/test.pdf')->create();
         $response = $this->get('api/documentations/' . $documentation->id . '/file');
         $response->assertStatus(200);
     }

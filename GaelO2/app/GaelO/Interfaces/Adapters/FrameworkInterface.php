@@ -14,10 +14,13 @@ interface FrameworkInterface {
      */
     public static function getConfig(string $key);
 
-    /**
-     * Get storage path in the project
-     */
-    public static function getStoragePath() : string ;
+    public static function getStoredFiles($directory = null);
+
+    public static function storeFile(string $path, $contents) : void;
+
+    public static function deleteFile(string $path) : void;
+
+    public static function getFile(string $path) : string;
 
     public static function sendResetPasswordLink(string $email) : bool;
 

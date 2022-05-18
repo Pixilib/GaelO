@@ -20,7 +20,7 @@ class PatientRepository implements PatientRepositoryInterface
         return $this->patient->findOrFail($id)->toArray();
     }
 
-    public function getAllPatientsNumberInStudy(string $studyName): array
+    public function getAllPatientsCodesInStudy(string $studyName): array
     {
         return $this->patient->where('study_name', $studyName)->select('code')->get()->pluck('code')->toArray();
     }

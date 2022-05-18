@@ -15,7 +15,6 @@ class ExportDatabase{
 
     private DatabaseDumperInterface $databaseDumperInterface;
     private AuthorizationUserService $authorizationUserService;
-    private FrameworkInterface $frameworkInterface;
 
     public function __construct(DatabaseDumperInterface $databaseDumperInterface, AuthorizationUserService $authorizationUserService, FrameworkInterface $frameworkInterface) {
         $this->databaseDumperInterface = $databaseDumperInterface;
@@ -37,7 +36,7 @@ class ExportDatabase{
             $date=Date('Ymd_his');
             $zip->addFile($databaseDumpedFile, "export_database_$date.sql");
 
-            $this->addRecursivelyInZip($zip, $this->frameworkInterface::getStoragePath() );
+            Util::addStoredFilesInZip($zip, null);
 
             $zip->close();
 
@@ -58,19 +57,7 @@ class ExportDatabase{
 
     }
 
-    public static function addRecursivelyInZip(ZipArchive $zip, String $path){
 
-        $fileGenerator=Util::getFileInPathGenerator($path);
-
-        foreach ($fileGenerator as $file) {
-            $filePath=$file->getRealPath();
-            $subPathDestination=substr($filePath, strlen($path));
-            // Add current file to archive
-            $zip->addFile($filePath, $subPathDestination);
-
-        }
-
-    }
 
     private function checkAuthorization(int $userId) : void {
         $this->authorizationUserService->setUserId($userId);

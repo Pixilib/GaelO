@@ -16,7 +16,6 @@ class GetFileOfForm {
     private AuthorizationVisitService $authorizationVisitService;
     private AuthorizationReviewService $authorizationReviewService;
     private ReviewRepositoryInterface $reviewRepositoryInterface;
-    private FrameworkInterface $frameworkInterface;
 
     public function __construct(AuthorizationVisitService $authorizationVisitService, AuthorizationReviewService $authorizationReviewService, ReviewRepositoryInterface $reviewRepositoryInterface, FrameworkInterface $frameworkInterface)
     {
@@ -39,7 +38,7 @@ class GetFileOfForm {
 
             $getFileOfFormResponse->status = 200;
             $getFileOfFormResponse->statusText = 'OK';
-            $getFileOfFormResponse->filePath = $this->frameworkInterface::getStoragePath().'/'.$reviewEntity['sent_files'][$getFileOfFormRequest->key];
+            $getFileOfFormResponse->filePath = $reviewEntity['sent_files'][$getFileOfFormRequest->key];
             $getFileOfFormResponse->filename = basename($reviewEntity['sent_files'][$getFileOfFormRequest->key]);
 
         } catch (GaelOException $e){

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\GaelO\Adapters\FrameworkAdapter;
 use App\GaelO\UseCases\CreateDocumentation\CreateDocumentation;
 use App\GaelO\UseCases\CreateDocumentation\CreateDocumentationRequest;
 use App\GaelO\UseCases\CreateDocumentation\CreateDocumentationResponse;
@@ -26,6 +27,8 @@ use App\GaelO\UseCases\ReactivateDocumentation\ReactivateDocumentationResponse;
 use App\GaelO\Util;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
 
 class DocumentationController extends Controller
 {
@@ -80,7 +83,8 @@ class DocumentationController extends Controller
         $getDocumentationFileRequest->currentUserId = $currentUser['id'];
         $getDocumentationFile->execute($getDocumentationFileRequest, $getDocumentationFileResponse);
         if ($getDocumentationFileResponse->status === 200) {
-            return response()->download($getDocumentationFileResponse->filePath, $getDocumentationFileResponse->filename, array('Content-Type: application/pdf', 'Content-Length: ' . filesize($getDocumentationFileResponse->filePath)));
+            FrameworkAdapter::getStoredFiles();
+            return Storage::download($getDocumentationFileResponse->filePath, $getDocumentationFileResponse->filename);
         } else {
             return response()->json($getDocumentationFileResponse->body)
                 ->setStatusCode($getDocumentationFileResponse->status, $getDocumentationFileResponse->statusText);

@@ -94,17 +94,12 @@ class FormService
             throw new GaelOBadRequestException("Payload should be base64 encoded");
         }
 
-        $storagePath = $this->frameworkInterface::getStoragePath();
-
         $destinationPath = $this->studyName . '/' . 'attached_review_file';
-        if (!is_dir($storagePath . '/' . $destinationPath)) {
-            mkdir($storagePath . '/' . $destinationPath, 0755, true);
-        }
 
-        $destinationFileName = $storagePath . '/' . $destinationPath . '/' . $filename;
-        file_put_contents($destinationFileName, base64_decode($binaryData));
+        $destinationFileName = $destinationPath . '/' . $filename;
+        $this->frameworkInterface->storeFile($destinationFileName, base64_decode($binaryData));
 
-        $reviewEntity['sent_files'][$key] = $destinationPath . '/' . $filename;
+        $reviewEntity['sent_files'][$key] = $destinationFileName;
 
         $this->reviewRepositoryInterface->updateReviewFile($reviewEntity['id'], $reviewEntity);
     }
@@ -114,9 +109,10 @@ class FormService
         if (empty($reviewEntity['sent_files'][$key])) {
             throw new GaelOBadRequestException('Non exisiting key file in review');
         }
-        $storagePath = $this->frameworkInterface::getStoragePath();
-        $targetedFile = $storagePath . '/' . $reviewEntity['sent_files'][$key];
-        unlink($targetedFile);
+
+        $targetedFile = $reviewEntity['sent_files'][$key];
+        $this->frameworkInterface->deleteFile($targetedFile);
+
         unset($reviewEntity['sent_files'][$key]);
         $this->reviewRepositoryInterface->updateReviewFile($reviewEntity['id'], $reviewEntity);
     }

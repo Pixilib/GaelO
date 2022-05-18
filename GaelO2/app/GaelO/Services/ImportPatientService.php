@@ -13,7 +13,7 @@ class ImportPatientService
 {
 
     private int $patientCodeLength;
-    private array $existingPatientNumber;
+    private array $existingPatientCodes;
     private StudyEntity $studyEntity;
     private PatientRepositoryInterface $patientRepository;
     private CenterRepositoryInterface $centerRepository;
@@ -45,7 +45,7 @@ class ImportPatientService
 	public function import() {
 
         $this->patientCodeLength = $this->studyEntity->patientCodeLength;
-        $this->existingPatientNumber = $this->patientRepository->getAllPatientsNumberInStudy($this->studyEntity->name);
+        $this->existingPatientCodes = $this->patientRepository->getAllPatientsCodesInStudy($this->studyEntity->name);
 
         $allCenters = $this->centerRepository->getAll();
         //Store array of all existing centers code
@@ -61,7 +61,7 @@ class ImportPatientService
                 self::checkPatientGender($patientEntity['gender']);
                 self::checkCorrectBirthDate($patientEntity['birthDay'], $patientEntity['birthMonth'], $patientEntity['birthYear']);
                 $this->checkNewPatient($patientEntity['code']);
-                $this->isCorrectPatientNumber($patientEntity['code']);
+                $this->isCorrectPatientCode($patientEntity['code']);
                 $this->isExistingCenter($patientEntity['centerCode']);
                 $this->checkCurrentStudy($patientEntity['studyName'], $this->studyName);
 
@@ -109,8 +109,8 @@ class ImportPatientService
 	 * NB : Each patient code should be unique (across study), patient code should include a study identifier
 	 * @param $patientId
 	 */
-	private function checkNewPatient(string $patientNumber) : void {
-        if (in_array($patientNumber, $this->existingPatientNumber)) {
+	private function checkNewPatient(string $patientCode) : void {
+        if (in_array($patientCode, $this->existingPatientCodes)) {
             throw new GaelOBadRequestException('Existing Patient Code');
         }
 	}
@@ -119,13 +119,13 @@ class ImportPatientService
 	 * Check that patient code has the correct lenght
 	 * @param $patientId
 	 */
-	private function isCorrectPatientNumber(string $patientNumber) : void {
+	private function isCorrectPatientCode(string $patientCode) : void {
 
-        if ( !is_numeric($patientNumber) ) {
+        if ( !is_numeric($patientCode) ) {
 			throw new GaelOBadRequestException('Patient Code accept only numbers');
 		}
 
-		$lenghtImport=strlen((string) $patientNumber);
+		$lenghtImport=strlen((string) $patientCode);
 
 		if ($lenghtImport != $this->patientCodeLength) {
 			throw new GaelOBadRequestException('Incorrect Patient Code Length');

@@ -2,6 +2,7 @@
 
 namespace App\GaelO\Services;
 
+use App\GaelO\Adapters\FrameworkAdapter;
 use App\GaelO\Adapters\SpreadsheetAdapter;
 use App\GaelO\Constants\Constants;
 use App\GaelO\Interfaces\Adapters\FrameworkInterface;
@@ -23,6 +24,7 @@ use App\GaelO\Services\StoreObjects\Export\ExportTrackerResults;
 use App\GaelO\Services\StoreObjects\Export\ExportUserResults;
 use App\GaelO\Services\StoreObjects\Export\ExportVisitsResults;
 use App\GaelO\UseCases\ExportDatabase\ExportDatabase;
+use App\GaelO\Util;
 use ZipArchive;
 
 class ExportStudyService {
@@ -280,19 +282,13 @@ class ExportStudyService {
     }
 
     public function exportAssociatedFiles() : void {
-        $storagePath = $this->frameworkInterface::getStoragePath();
-
-        $destinationPath = $storagePath . '/' . $this->studyName;
-
         $zip=new ZipArchive();
         $tempZip=tempnam(ini_get('upload_tmp_dir'), 'TMPZIP_'.$this->studyName.'_');
         $zip->open($tempZip, ZipArchive::OVERWRITE);
         //Add a file to create zip
         $zip->addFromString('Readme', 'Folder Containing associated files to study');
-        //If path send file to zip
-        if ( !is_dir($storagePath . '/' . $this->studyName) ) {
-            ExportDatabase::addRecursivelyInZip($zip, $destinationPath);
-        }
+        //send stored file for this study
+        Util::addStoredFilesInZip($zip, $this->studyName);
         $zip->close();
 
         $exporFileResult = new ExportFileResults();

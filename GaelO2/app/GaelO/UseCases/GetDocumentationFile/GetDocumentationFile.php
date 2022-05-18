@@ -14,7 +14,6 @@ class GetDocumentationFile{
 
     private DocumentationRepositoryInterface $documentationRepositoryInterface;
     private AuthorizationUserService $authorizationUserService;
-    private FrameworkInterface $frameworkInterface;
 
     public function __construct(DocumentationRepositoryInterface $documentationRepositoryInterface, AuthorizationUserService $authorizationUserService, FrameworkInterface $frameworkInterface)
     {
@@ -39,7 +38,7 @@ class GetDocumentationFile{
 
             $getdocumentationFileReponse->status = 200;
             $getdocumentationFileReponse->statusText = 'OK';
-            $getdocumentationFileReponse->filePath = $this->frameworkInterface::getStoragePath().$documentationData['path'];
+            $getdocumentationFileReponse->filePath = $documentationData['path'];
             $getdocumentationFileReponse->filename = $documentationData['name'].'_'.$documentationData['version'].'.pdf';
 
         } catch (GaelOException $e){
