@@ -35,7 +35,7 @@ class MagicLinkTest extends TestCase
             'ressourceId' => $visit->id,
             'role' => 'controller'
         ];
-        $response = $this->json('POST', 'api/user/1/magic-link', $data)-> assertSuccessful();
+        $response = $this->json('POST', 'api/users/1/magic-link', $data)-> assertSuccessful();
         $response->assertSuccessful();
     }
 
@@ -50,7 +50,7 @@ class MagicLinkTest extends TestCase
             'ressourceId' => $patient->id,
             'role' => 'investigator'
         ];
-        $response = $this->json('POST', 'api/user/1/magic-link', $data)-> assertSuccessful();
+        $response = $this->json('POST', 'api/users/1/magic-link', $data)-> assertSuccessful();
         $response->assertSuccessful();
     }
 
@@ -65,7 +65,7 @@ class MagicLinkTest extends TestCase
             'ressourceId' => $patient->id,
             'role' => 'investigator'
         ];
-        $response = $this->json('POST', 'api/user/1/magic-link', $data);
+        $response = $this->json('POST', 'api/users/1/magic-link', $data);
         $response->assertStatus(400);
     }
 
@@ -78,7 +78,7 @@ class MagicLinkTest extends TestCase
             'ressourceId' => $visit->id,
             'role' => 'investigator'
         ];
-        $response = $this->json('POST', 'api/user/1/magic-link', $data);
+        $response = $this->json('POST', 'api/users/1/magic-link', $data);
         $response->assertStatus(403);
     }
 

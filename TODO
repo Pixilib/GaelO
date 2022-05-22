@@ -2,13 +2,11 @@ Salim TODO :
 
 - Refac : setVisitData de VisitEntity à revoir
 
-- GetCreatableVisit faire passer par les object specifique pour avoir la main soit à supprimer et faire avec definition de l'etude?
-
 - Optimiser l'utilisation des authorization service en injectant les data depuis le usecase (ou les rendre stateless)
 - Optimiser le service visit en injectant directement le visit context
 
 - Portage GaelO1 anonymisation RTSTRUCT et Viewers
-- Tester Etudes ancillaire avec Emilie
+- Tester Etudes ancillaire avec Emilie (voir return default data de review status si entitée non crée)
 
 ---- Refactoring Entity ----
 - Pluger toutes les reponses "data" sur ces entity response
@@ -22,6 +20,7 @@ Reste Autres :
 - Mise en place scheduler
 - Monitoring scheduler via tracker
 - Dicom liée aux review  => privilegier les associated file des reviews
+- Mettre en place des event pour faire de la logique custom aux upload ect... ?
 
 - OHIF essayer de faire passer le role dans les requetes => Faire un GaelO plugin dans OHIF
 pourra modifier cornerstoneWADOImageLoader pour injecter l'etude courante
