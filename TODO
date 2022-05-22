@@ -2,7 +2,7 @@ Salim TODO :
 
 - Refac : setVisitData de VisitEntity à revoir
 
-- GetCreatableVisit soit faire passer par les object specifique pour avoir la main soit à supprimer et faire avec definition de l'etude?
+- GetCreatableVisit faire passer par les object specifique pour avoir la main soit à supprimer et faire avec definition de l'etude?
 
 - Optimiser l'utilisation des authorization service en injectant les data depuis le usecase (ou les rendre stateless)
 - Optimiser le service visit en injectant directement le visit context

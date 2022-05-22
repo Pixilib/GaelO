@@ -1,6 +1,6 @@
 <?php
 
-namespace App\GaelO\Services;
+namespace App\GaelO\Services\GaelOStudiesService;
 
 use App\GaelO\Adapters\ValidatorAdapter;
 use App\GaelO\Constants\Constants;
