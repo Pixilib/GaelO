@@ -82,14 +82,6 @@ class StudyRepositoryTest extends TestCase
 
     }
 
-    public function testGetStudyDetails(){
-
-        $study = Study::factory()->create();
-        $answer = $this->studyRepository->getStudyDetails($study->name);
-        $this->assertArrayHasKey('visit_group_details', $answer);
-        $this->assertEquals($study->name, $answer['name']);
-    }
-
     public function testReactivateStudy(){
 
         $study = Study::factory()->create();

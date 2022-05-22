@@ -2,6 +2,9 @@ Salim TODO :
 
 - Refac : setVisitData de VisitEntity à revoir
 
+- Get Creatable Visit, retourner les visitType entity des créable ? 
+- CreateVisit => Verifier que la visite à creer est bien créable niveau backend
+
 - Optimiser l'utilisation des authorization service en injectant les data depuis le usecase (ou les rendre stateless)
 - Optimiser le service visit en injectant directement le visit context
 

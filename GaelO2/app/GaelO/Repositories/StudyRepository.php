@@ -74,12 +74,6 @@ class StudyRepository implements StudyRepositoryInterface
         return $studiesDetails->toArray();
     }
 
-    public function getStudyDetails(string $name): array
-    {
-        $studiesDetails = $this->study->with('visitGroupDetails')->findOrFail($name);
-        return $studiesDetails->toArray();
-    }
-
     public function reactivateStudy(string $name): void
     {
         $this->study->withTrashed()->findOrFail($name)->restore();

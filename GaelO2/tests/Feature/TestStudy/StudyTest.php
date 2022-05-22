@@ -181,7 +181,7 @@ class StudyTest extends TestCase
         $this->json('GET', '/api/studies')->assertStatus(403);
     }
 
-    public function testGetStudyDetails(){
+    public function testGetStudyVisitTypes(){
         $userId = AuthorizationTools::actAsAdmin(true);
         $visitType = VisitType::factory()->create();
         AuthorizationTools::addRoleToUser($userId, Constants::ROLE_SUPERVISOR, $visitType->visitGroup->study->name);
@@ -207,7 +207,7 @@ class StudyTest extends TestCase
         }
     }
 
-    public function testGetStudyDetailsShouldFailNotSupervisor(){
+    public function testGetStudyVisitTypesShouldFailNotSupervisor(){
         AuthorizationTools::actAsAdmin(true);
         $visitType = VisitType::factory()->create();
         $this->json('GET', '/api/studies/'.$visitType->visitGroup->study->name.'/visit-types')->assertStatus(403);

@@ -2,7 +2,6 @@
 
 namespace App\GaelO\Services;
 
-use App\GaelO\Adapters\FrameworkAdapter;
 use App\GaelO\Adapters\SpreadsheetAdapter;
 use App\GaelO\Constants\Constants;
 use App\GaelO\Interfaces\Adapters\FrameworkInterface;
@@ -10,10 +9,10 @@ use App\GaelO\Interfaces\Repositories\DicomSeriesRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\DicomStudyRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\PatientRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\ReviewRepositoryInterface;
-use App\GaelO\Interfaces\Repositories\StudyRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\UserRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
+use App\GaelO\Interfaces\Repositories\VisitTypeRepositoryInterface;
 use App\GaelO\Services\StoreObjects\Export\ExportDataResults;
 use App\GaelO\Services\StoreObjects\Export\ExportDicomResults;
 use App\GaelO\Services\StoreObjects\Export\ExportFileResults;
@@ -23,7 +22,6 @@ use App\GaelO\Services\StoreObjects\Export\ExportStudyResults;
 use App\GaelO\Services\StoreObjects\Export\ExportTrackerResults;
 use App\GaelO\Services\StoreObjects\Export\ExportUserResults;
 use App\GaelO\Services\StoreObjects\Export\ExportVisitsResults;
-use App\GaelO\UseCases\ExportDatabase\ExportDatabase;
 use App\GaelO\Util;
 use ZipArchive;
 
@@ -31,7 +29,7 @@ class ExportStudyService {
 
     private UserRepositoryInterface $userRepositoryInterface;
     private PatientRepositoryInterface $patientRepositoryInterface;
-    private StudyRepositoryInterface $studyRepositoryInterface;
+    private VisitTypeRepositoryInterface $visitTypeRepositoryInterface;
     private VisitRepositoryInterface $visitRepositoryInterface;
     private DicomStudyRepositoryInterface $dicomStudyRepositoryInterface;
     private DicomSeriesRepositoryInterface $dicomSeriesRepositoryInterface;
@@ -45,7 +43,7 @@ class ExportStudyService {
     public function __construct(
         UserRepositoryInterface $userRepositoryInterface,
         PatientRepositoryInterface $patientRepositoryInterface,
-        StudyRepositoryInterface $studyRepositoryInterface,
+        VisitTypeRepositoryInterface $visitTypeRepositoryInterface,
         VisitRepositoryInterface $visitRepositoryInterface,
         DicomStudyRepositoryInterface $dicomStudyRepositoryInterface,
         DicomSeriesRepositoryInterface $dicomSeriesRepositoryInterface,
@@ -56,7 +54,7 @@ class ExportStudyService {
     {
         $this->userRepositoryInterface = $userRepositoryInterface;
         $this->patientRepositoryInterface = $patientRepositoryInterface;
-        $this->studyRepositoryInterface = $studyRepositoryInterface;
+        $this->visitTypeRepositoryInterface = $visitTypeRepositoryInterface;
         $this->visitRepositoryInterface = $visitRepositoryInterface;
         $this->dicomStudyRepositoryInterface = $dicomStudyRepositoryInterface;
         $this->dicomSeriesRepositoryInterface = $dicomSeriesRepositoryInterface;
@@ -70,17 +68,15 @@ class ExportStudyService {
         $this->studyName = $studyName;
 
         //List Visit Type of this study
-        $studyDetails = $this->studyRepositoryInterface->getStudyDetails($this->studyName);
+        $visitTypes = $this->visitTypeRepositoryInterface->getVisitTypesOfStudy($this->studyName);
 
         $visitTypeArray = [];
 
-        foreach ( $studyDetails['visit_group_details'] as $visitGroup) {
-            foreach($visitGroup['visit_types'] as $visitType){
-                $visitTypeArray[ $visitType['id'] ] = [
-                    'modality'=>$visitGroup['modality'],
-                    'name'=>$visitType['name']
-                ];
-            }
+        foreach($visitTypes as $visitType){
+            $visitTypeArray[ $visitType['id'] ] = [
+                'modality'=>$visitType['visit_group']['modality'],
+                'name'=>$visitType['name']
+            ];
         }
 
         $this->visitTypeArray = $visitTypeArray;

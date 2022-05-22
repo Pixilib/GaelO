@@ -20,8 +20,6 @@ interface StudyRepositoryInterface {
 
     public function getAllStudiesWithDetails() : array ;
 
-    public function getStudyDetails(string $name) : array ;
-
     public function reactivateStudy(string $name) : void ;
 
     public function getStudyStatistics(string $name) : array;

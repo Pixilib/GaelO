@@ -1,6 +1,6 @@
 <?php
 
-namespace App\GaelO\UseCases\GetStudy;
+namespace App\GaelO\UseCases\GetStudies;
 
 use App\GaelO\Entities\StudyEntity;
 use App\GaelO\Exceptions\GaelOException;
@@ -9,7 +9,7 @@ use App\GaelO\Interfaces\Repositories\StudyRepositoryInterface;
 use App\GaelO\Services\AuthorizationService\AuthorizationUserService;
 use Exception;
 
-class GetStudy{
+class GetStudies{
 
     private StudyRepositoryInterface $studyRepositoryInterface;
     private AuthorizationUserService $authorizationUserService;
@@ -20,27 +20,27 @@ class GetStudy{
 
     }
 
-    public function execute(GetStudyRequest $getStudyRequest, GetStudyResponse $getStudyResponse) : void{
+    public function execute(GetStudiesRequest $getStudiesRequest, GetStudiesResponse $getStudiesResponse) : void{
 
         try{
-            $this->checkAuthorization($getStudyRequest->currentUserId);
+            $this->checkAuthorization($getStudiesRequest->currentUserId);
 
-            $studies = $this->studyRepositoryInterface->getStudies($getStudyRequest->withTrashed);
+            $studies = $this->studyRepositoryInterface->getStudies($getStudiesRequest->withTrashed);
 
             $responseArray = [];
             foreach($studies as $study){
                 $responseArray[] = StudyEntity::fillFromDBReponseArray($study);
             }
 
-            $getStudyResponse->body = $responseArray;
-            $getStudyResponse->status = 200;
-            $getStudyResponse->statusText = 'OK';
+            $getStudiesResponse->body = $responseArray;
+            $getStudiesResponse->status = 200;
+            $getStudiesResponse->statusText = 'OK';
 
         } catch (GaelOException $e){
 
-            $getStudyResponse->body = $e->getErrorBody();
-            $getStudyResponse->status = $e->statusCode;
-            $getStudyResponse->statusText = $e->statusText;
+            $getStudiesResponse->body = $e->getErrorBody();
+            $getStudiesResponse->status = $e->statusCode;
+            $getStudiesResponse->statusText = $e->statusText;
 
         } catch (Exception $e){
             throw $e;

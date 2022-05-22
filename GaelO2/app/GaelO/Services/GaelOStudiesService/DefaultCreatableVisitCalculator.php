@@ -5,16 +5,18 @@ namespace App\GaelO\Services\GaelOStudiesService;
 use App\GaelO\Constants\Constants;
 use App\GaelO\Interfaces\Repositories\StudyRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
+use App\GaelO\Interfaces\Repositories\VisitTypeRepositoryInterface;
 
-class DefaultCreatableVisitCalculator {
+class DefaultCreatableVisitCalculator
+{
 
     protected VisitRepositoryInterface $visitRepositoryInterface;
-    protected StudyRepositoryInterface $studyRepositoryInterface;
+    protected VisitTypeRepositoryInterface $visitTypeRepositoryInterface;
 
-    public function __construct(VisitRepositoryInterface $visitRepositoryInterface, StudyRepositoryInterface $studyRepositoryInterface)
+    public function __construct(VisitRepositoryInterface $visitRepositoryInterface, VisitTypeRepositoryInterface $visitTypeRepositoryInterface)
     {
         $this->visitRepositoryInterface = $visitRepositoryInterface;
-        $this->studyRepositoryInterface = $studyRepositoryInterface;
+        $this->visitTypeRepositoryInterface = $visitTypeRepositoryInterface;
     }
 
     public function getAvailableVisitToCreate(array $patientEntity): array
@@ -28,6 +30,9 @@ class DefaultCreatableVisitCalculator {
         //Get Created Patients Visits
         $createdVisitsArray = $this->visitRepositoryInterface->getPatientsVisits($patientEntity['id']);
 
+        //Get possible visits groups and types from study
+        $studyVisitsTypes = $this->visitTypeRepositoryInterface->getVisitTypesOfStudy($patientEntity['study_name']);
+
         $createdVisitMap = [];
 
         //Build array of Created visit Order indexed by visit group name
@@ -38,24 +43,25 @@ class DefaultCreatableVisitCalculator {
         }
 
 
-        //Get possible visits groups and types from study
-        $studyVisitsDetails = $this->studyRepositoryInterface->getStudyDetails($patientEntity['study_name']);
+
         $studyVisitMap = [];
         //Reindex possible visits by visit group name and order
-        foreach ($studyVisitsDetails['visit_group_details'] as $visitGroupDetails) {
 
-            foreach ($visitGroupDetails['visit_types'] as $visitType) {
+        foreach ($studyVisitsTypes as $visitType) {
 
-                $studyVisitMap[$visitGroupDetails['name']][$visitType['order']] = [
-                    'groupId' => $visitType['visit_group_id'],
-                    'groupModality' => $visitGroupDetails['modality'],
-                    'groupName' => $visitGroupDetails['name'],
-                    'typeId' => $visitType['id'],
-                    'name' => $visitType['name'],
-                    'optional' => $visitType['optional']
-                ];
-            }
+            $visitGroupName = $visitType['visit_group']['name'];
+            $visitGroupModality = $visitType['visit_group']['modality'];
+
+            $studyVisitMap[$visitGroupName][$visitType['order']] = [
+                'groupId' => $visitType['visit_group_id'],
+                'groupModality' => $visitGroupModality,
+                'groupName' => $visitGroupName,
+                'typeId' => $visitType['id'],
+                'name' => $visitType['name'],
+                'optional' => $visitType['optional']
+            ];
         }
+
 
         $visitToCreateMap = [];
 
@@ -72,6 +78,4 @@ class DefaultCreatableVisitCalculator {
 
         return $visitToCreateMap;
     }
-
-
 }

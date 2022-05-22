@@ -8,6 +8,7 @@ use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\TestCase;
 
 use App\GaelO\Repositories\VisitTypeRepository;
+use App\Models\Study;
 use App\Models\Visit;
 use App\Models\VisitGroup;
 use App\Models\VisitType;
@@ -87,6 +88,19 @@ class VisitTypeRepositoryTest extends TestCase
         $visitTypeEntity = $this->visitTypeRepository->findByName($visitType1->visitGroup->study_name, $visitType1->visitGroup->name, $visitType1->name);
 
         $this->assertIsArray($visitTypeEntity);
+    }
+
+    public function testGetVisitTypeOfStudy(){
+
+        $visitGroup = VisitGroup::factory()->create();
+        visitType::factory()->visitGroupId($visitGroup->id)->count(2)->create();
+
+        VisitType::factory()->count(5)->create();
+
+        $results = $this->visitTypeRepository->getVisitTypesOfStudy($visitGroup->study_name);
+
+        $this->assertEquals(2, sizeof($results));
+        $this->assertArrayHasKey('visit_group', $results[0]);
     }
 
 }
