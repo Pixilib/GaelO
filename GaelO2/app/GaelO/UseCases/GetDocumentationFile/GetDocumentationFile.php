@@ -56,7 +56,8 @@ class GetDocumentationFile{
 
     private function checkAuthorization($currentUserId, $studyName, $documentationAllowedRoles){
         $this->authorizationUserService->setUserId($currentUserId);
-        if ( ! $this->authorizationUserService->isOneOfRoleAllowed($documentationAllowedRoles, $studyName)){
+        //Disallowed if user not supervisor and not in the granted role for this documentation
+        if ( ! $this->authorizationUserService->isRoleAllowed(Constants::ROLE_SUPERVISOR, $studyName) && ! $this->authorizationUserService->isOneOfRoleAllowed($documentationAllowedRoles, $studyName)){
             throw new GaelOForbiddenException();
         }
     }
