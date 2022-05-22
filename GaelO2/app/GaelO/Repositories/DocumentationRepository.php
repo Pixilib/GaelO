@@ -95,9 +95,9 @@ class DocumentationRepository implements DocumentationRepositoryInterface
         $documentation->save();
     }
 
-    public function isKnownDocumentation(string $name, string $version): bool
+    public function isKnownDocumentation(string $studyName, string $name, string $version): bool
     {
-        $documentations = $this->documentation->where('name', $name)->where('version', $version)->get();
+        $documentations = $this->documentation->where('study_name', $studyName)->where('name', $name)->where('version', $version)->get();
         return $documentations->count() == 0 ? false : true;
     }
 

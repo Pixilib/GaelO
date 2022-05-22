@@ -1,8 +1,8 @@
 <?php
 
-namespace App\GaelO\UseCases\GetUserFromStudy;
+namespace App\GaelO\UseCases\GetUsersFromStudy;
 
-class GetUserFromStudyRequest {
+class GetUsersFromStudyRequest {
     public string $role;
     public String $studyName;
     public int $currentUserId;

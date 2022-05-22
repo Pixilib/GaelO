@@ -11,7 +11,8 @@ use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
 use App\GaelO\Services\AuthorizationService\AuthorizationStudyService;
 use Exception;
 
-class CreateDocumentation {
+class CreateDocumentation
+{
 
     private AuthorizationStudyService $authorizationStudyService;
     private DocumentationRepositoryInterface $documentationRepositoryInterface;
@@ -24,67 +25,70 @@ class CreateDocumentation {
         $this->trackerRepositoryInterface = $trackerRepositoryInterface;
     }
 
-    public function execute(CreateDocumentationRequest $createDocumentationRequest, CreateDocumentationResponse $createDocumentationResponse){
+    public function execute(CreateDocumentationRequest $createDocumentationRequest, CreateDocumentationResponse $createDocumentationResponse)
+    {
 
-        try{
-            $this->checkAuthorization($createDocumentationRequest->currentUserId, $createDocumentationRequest->studyName);
+        try {
 
-            if($this->documentationRepositoryInterface->isKnowndocumentation($createDocumentationRequest->name, $createDocumentationRequest->version)){
+            $currentUserId = $createDocumentationRequest->currentUserId;
+            $studyName = $createDocumentationRequest->studyName;
+            $documentationName = $createDocumentationRequest->name;
+            $documentationVersion = $createDocumentationRequest->version;
+
+            $this->checkAuthorization($currentUserId, $studyName);
+
+            if ($this->documentationRepositoryInterface->isKnowndocumentation($studyName, $documentationName, $documentationVersion)) {
                 throw new GaelOConflictException("Documentation already existing under this version");
             };
 
             $createdEntity = $this->documentationRepositoryInterface->createDocumentation(
-                $createDocumentationRequest->name,
-                $createDocumentationRequest->studyName,
-                $createDocumentationRequest->version,
+                $documentationName,
+                $studyName,
+                $documentationVersion,
                 $createDocumentationRequest->investigator,
                 $createDocumentationRequest->controller,
                 $createDocumentationRequest->monitor,
                 $createDocumentationRequest->reviewer
             );
 
-            $actionDetails =[
-                'documentation_id'=>$createdEntity['id'],
-                'name'=>$createDocumentationRequest->studyName,
-                'version'=>$createDocumentationRequest->version,
-                'investigator'=>$createDocumentationRequest->investigator,
-                'controller'=>$createDocumentationRequest->controller,
-                'monitor'=>$createDocumentationRequest->monitor,
-                'reviewer'=>$createDocumentationRequest->reviewer
+            $actionDetails = [
+                'documentation_id' => $createdEntity['id'],
+                'name' => $documentationName,
+                'version' => $documentationVersion,
+                'investigator' => $createDocumentationRequest->investigator,
+                'controller' => $createDocumentationRequest->controller,
+                'monitor' => $createDocumentationRequest->monitor,
+                'reviewer' => $createDocumentationRequest->reviewer
             ];
 
             $this->trackerRepositoryInterface->writeAction(
-                $createDocumentationRequest->currentUserId,
+                $currentUserId,
                 Constants::ROLE_SUPERVISOR,
-                $createDocumentationRequest->studyName,
+                $studyName,
                 null,
                 Constants::TRACKER_ADD_DOCUMENTATION,
-                $actionDetails);
+                $actionDetails
+            );
 
             //Return created documentation ID to help front end to send file data
-            $createDocumentationResponse->body = ['id'=>$createdEntity['id']];
+            $createDocumentationResponse->body = ['id' => $createdEntity['id']];
             $createDocumentationResponse->status = 201;
             $createDocumentationResponse->statusText =  'Created';
-
-        } catch (GaelOException $e){
-
+        } catch (GaelOException $e) {
             $createDocumentationResponse->body = $e->getErrorBody();
             $createDocumentationResponse->status = $e->statusCode;
             $createDocumentationResponse->statusText =  $e->statusText;
-
-        }catch (Exception $e){
+        } catch (Exception $e) {
             throw $e;
         }
-
     }
 
-    public function checkAuthorization(int $currentUserId, string $studyName){
+    public function checkAuthorization(int $currentUserId, string $studyName)
+    {
         $this->authorizationStudyService->setUserId($currentUserId);
         $this->authorizationStudyService->setStudyName($studyName);
-        if( !$this->authorizationStudyService->isAllowedStudy(Constants::ROLE_SUPERVISOR)){
+        if (!$this->authorizationStudyService->isAllowedStudy(Constants::ROLE_SUPERVISOR)) {
             throw new GaelOForbiddenException();
         }
-
     }
-
 }

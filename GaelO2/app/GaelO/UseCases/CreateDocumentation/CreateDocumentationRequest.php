@@ -2,7 +2,8 @@
 
 namespace App\GaelO\UseCases\CreateDocumentation;
 
-class CreateDocumentationRequest{
+class CreateDocumentationRequest
+{
     public int $currentUserId;
     public string $name;
     public string $studyName;

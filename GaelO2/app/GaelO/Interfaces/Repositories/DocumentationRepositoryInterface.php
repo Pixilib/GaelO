@@ -36,7 +36,7 @@ interface DocumentationRepositoryInterface
 
     public function updateDocumentationPath(int $id, string $path);
 
-    public function isKnownDocumentation(string $name, string $version): bool;
+    public function isKnownDocumentation(string $studyName, string $name, string $version): bool;
 
     public function reactivateDocumentation(int $documentationId): void;
 }

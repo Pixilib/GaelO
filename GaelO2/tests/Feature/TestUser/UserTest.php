@@ -200,7 +200,7 @@ class UserTest extends TestCase
         $this->json('DELETE', '/api/users/1/roles/Investigator?studyName='.$study->name)->assertStatus(403);
     }
 
-    public function testGetUserFromStudyAdministrator()
+    public function testGetUsersFromStudyAdministrator()
     {
 
         AuthorizationTools::actAsAdmin(true);
@@ -224,7 +224,7 @@ class UserTest extends TestCase
         $this->assertEquals(16, sizeof( array_keys($responseArray[0]) ));
     }
 
-    public function testGetUserFromStudySupervisor()
+    public function testGetUsersFromStudySupervisor()
     {
         $currentUserId = AuthorizationTools::actAsAdmin(false);
 
@@ -248,7 +248,7 @@ class UserTest extends TestCase
         $this->assertEquals(7, sizeof( array_keys($responseArray[0]) ));
     }
 
-    public function testGetUserFromStudyForbiddenNotAdminOrSupervisor()
+    public function testGetUsersFromStudyForbiddenNotAdminOrSupervisor()
     {
         AuthorizationTools::actAsAdmin(false);
         //Create 5 users
