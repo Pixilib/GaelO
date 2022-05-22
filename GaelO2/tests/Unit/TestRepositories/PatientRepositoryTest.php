@@ -125,4 +125,17 @@ class PatientRepositoryTest extends TestCase
         $fetchedPatientsCodes = array_column($patientEntitiesArray, 'id');
         $this->assertTrue(!array_diff($fetchedPatientsCodes, $patientIdArray));
     }
+
+    public function testUpdatePatientInclusionStatus() {
+        $patient = Patient::factory()->create();
+
+        $this->patientRepository->updateInclusionStatus(
+            $patient->id,
+            'Excluded',
+        );
+
+        $updatedPatient = Patient::find($patient->id);
+        $this->assertEquals('Excluded', $updatedPatient->inclusion_status);
+        $this->assertEquals($patient->firstname, $updatedPatient->firstname);
+    }
 }

@@ -124,4 +124,10 @@ class PatientRepository implements PatientRepositoryInterface
 
         $patient->save();
     }
+
+    public function updateInclusionStatus(string $id, string $inclusionStatus): void {
+        $patient = $this->patient->findOrFail($id);
+        $patient->inclusion_status = $inclusionStatus;
+        $patient->save();
+    }
 }

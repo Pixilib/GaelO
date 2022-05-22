@@ -2,30 +2,53 @@
 
 namespace App\GaelO\Interfaces\Repositories;
 
-interface PatientRepositoryInterface {
+interface PatientRepositoryInterface
+{
 
-    public function find($id) : array ;
+    public function find($id): array;
 
-    public function getAllPatientsCodesInStudy(string $studyName) : array ;
+    public function getAllPatientsCodesInStudy(string $studyName): array;
 
-    public function getPatientWithCenterDetails(string $code) : array ;
+    public function getPatientWithCenterDetails(string $code): array;
 
-    public function getPatientsInStudy(string $studyName) : array ;
+    public function getPatientsInStudy(string $studyName): array;
 
-    public function getPatientsInStudyInCenters(string $studyName, array $centerCodes, bool $withCenters) : array ;
+    public function getPatientsInStudyInCenters(string $studyName, array $centerCodes, bool $withCenters): array;
 
-    public function getPatientsFromIdArray(array $ids, bool $withCenters) : array ;
+    public function getPatientsFromIdArray(array $ids, bool $withCenters): array;
 
-    public function addPatientInStudy(string $id,
-                    string $code, string $lastname, string $firstname,
-                    string $gender, int $birthDay, int $birthMonth, int $birthYear,
-                    string $registrationDate, string $investigatorName, int $centerCode,
-                    String $studyName) : void ;
+    public function addPatientInStudy(
+        string $id,
+        string $code,
+        string $lastname,
+        string $firstname,
+        string $gender,
+        int $birthDay,
+        int $birthMonth,
+        int $birthYear,
+        string $registrationDate,
+        string $investigatorName,
+        int $centerCode,
+        String $studyName
+    ): void;
 
-    public function updatePatient(string $id, ?string $lastname, ?string $firstname,
-                    ?string $gender, ?int $birthDay, ?int $birthMonth, ?int $birthYear,
-                    string $studyName, ?string $registrationDate, ?string $investigatorName, int $centerCode,
-                    string $inclusionStatus, ?string $withdrawReason, ?string $withdrawDate) : void ;
+    public function updatePatient(
+        string $id,
+        ?string $lastname,
+        ?string $firstname,
+        ?string $gender,
+        ?int $birthDay,
+        ?int $birthMonth,
+        ?int $birthYear,
+        string $studyName,
+        ?string $registrationDate,
+        ?string $investigatorName,
+        int $centerCode,
+        string $inclusionStatus,
+        ?string $withdrawReason,
+        ?string $withdrawDate
+    ): void;
 
+
+    public function updateInclusionStatus(string $id, string $inclusionStatus): void;
 }
-
