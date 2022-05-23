@@ -15,7 +15,7 @@ use App\GaelO\Services\AuthorizationService\AuthorizationVisitService;
 use App\GaelO\Services\FormService\ReviewFormService;
 use Exception;
 
-class CreateReview
+class CreateReviewForm
 {
 
     private TrackerRepositoryInterface $trackerRepositoryInterface;
@@ -65,7 +65,7 @@ class CreateReview
             $reviewStatusEntity = $this->reviewStatusRepositoryInterface->getReviewStatus($visitId, $studyName);
 
             $reviewStatus = $reviewStatusEntity['review_status'];
-            $reviewAvailable = $reviewStatus['review_available'];
+            $reviewAvailable = $reviewStatusEntity['review_available'];
 
             if ($adjudication &&  $reviewStatus !== Constants::REVIEW_STATUS_WAIT_ADJUDICATION) {
                 throw new GaelOBadRequestException('Review Not Awaiting Adjudication');

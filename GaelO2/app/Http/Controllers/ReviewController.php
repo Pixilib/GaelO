@@ -8,7 +8,7 @@ use App\GaelO\UseCases\CreateFileToForm\CreateFileToFormResponse;
 use App\GaelO\UseCases\CreateInvestigatorForm\CreateInvestigatorForm;
 use App\GaelO\UseCases\CreateInvestigatorForm\CreateInvestigatorFormRequest;
 use App\GaelO\UseCases\CreateInvestigatorForm\CreateInvestigatorFormResponse;
-use App\GaelO\UseCases\CreateReviewForm\CreateReview;
+use App\GaelO\UseCases\CreateReviewForm\CreateReviewForm;
 use App\GaelO\UseCases\CreateReviewForm\CreateReviewFormRequest;
 use App\GaelO\UseCases\CreateReviewForm\CreateReviewFormResponse;
 use App\GaelO\UseCases\DeleteFileOfForm\DeleteFileOfForm;
@@ -136,7 +136,7 @@ class ReviewController extends Controller
         return $this->getJsonResponse($modifyInvestigatorFormResponse->body, $modifyInvestigatorFormResponse->status, $modifyInvestigatorFormResponse->statusText);
     }
 
-    public function createReviewForm(Request $request, CreateReview $createReview, CreateReviewFormRequest $createReviewFormRequest, CreateReviewFormResponse $createReviewFormResponse, int $visitId)
+    public function createReviewForm(Request $request, CreateReviewForm $createReviewForm, CreateReviewFormRequest $createReviewFormRequest, CreateReviewFormResponse $createReviewFormResponse, int $visitId)
     {
         $currentUser = Auth::user();
         $requestData = $request->all();
@@ -148,7 +148,7 @@ class ReviewController extends Controller
 
         $createReviewFormRequest = Util::fillObject($requestData, $createReviewFormRequest);
 
-        $createReview->execute($createReviewFormRequest, $createReviewFormResponse);
+        $createReviewForm->execute($createReviewFormRequest, $createReviewFormResponse);
 
         return $this->getJsonResponse($createReviewFormResponse->body, $createReviewFormResponse->status, $createReviewFormResponse->statusText);
     }
