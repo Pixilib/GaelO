@@ -1,8 +1,8 @@
 Salim TODO :
 
-- Relecture UseCases : Fait jusqu'a DeleteDocumentation Inclus
-- Refac : Relation VisitGroupDetails à revoir
+- Relecture UseCases : Fait jusqu'a DeleteFileOfForm Inclus
 
+- Refac : Relation VisitGroupDetails à revoir
 - Refac : setVisitData de VisitEntity à revoir
 
 - Get Creatable Visit, retourner les visitType entity des créables ? 

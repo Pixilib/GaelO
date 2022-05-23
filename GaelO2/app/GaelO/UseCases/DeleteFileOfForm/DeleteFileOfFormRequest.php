@@ -2,7 +2,8 @@
 
 namespace App\GaelO\UseCases\DeleteFileOfForm;
 
-class DeleteFileOfFormRequest{
+class DeleteFileOfFormRequest
+{
     public int $currentUserId;
     public int $id;
     public string $key;

@@ -45,7 +45,6 @@ class DeleteAffiliatedCenter
             $deleteAffiliatedCenterResponse->status = 200;
             $deleteAffiliatedCenterResponse->statusText = 'OK';
         } catch (GaelOException $e) {
-
             $deleteAffiliatedCenterResponse->status = $e->statusCode;
             $deleteAffiliatedCenterResponse->statusText = $e->statusText;
             $deleteAffiliatedCenterResponse->body = $e->getErrorBody();
