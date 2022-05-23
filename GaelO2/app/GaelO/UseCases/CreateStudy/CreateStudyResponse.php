@@ -2,7 +2,8 @@
 
 namespace App\GaelO\UseCases\CreateStudy;
 
-class CreateStudyResponse {
+class CreateStudyResponse
+{
     public int $status;
     public string $statusText;
     public $body = null;

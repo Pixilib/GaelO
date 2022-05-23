@@ -2,7 +2,8 @@
 
 namespace App\GaelO\UseCases\CreateUser;
 
-class CreateUserRequest {
+class CreateUserRequest
+{
     public int $currentUserId;
     public ?string $lastname = null;
     public ?string $firstname = null;

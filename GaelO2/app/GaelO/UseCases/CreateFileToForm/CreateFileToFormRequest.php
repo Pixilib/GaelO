@@ -2,7 +2,8 @@
 
 namespace App\GaelO\UseCases\CreateFileToForm;
 
-class CreateFileToFormRequest{
+class CreateFileToFormRequest
+{
     public int $currentUserId;
     public int $id;
     public string $key;

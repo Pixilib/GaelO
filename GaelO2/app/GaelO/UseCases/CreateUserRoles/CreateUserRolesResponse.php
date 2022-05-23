@@ -2,7 +2,8 @@
 
 namespace App\GaelO\UseCases\CreateUserRoles;
 
-class CreateUserRolesResponse {
+class CreateUserRolesResponse
+{
     public int $status;
     public string $statusText;
     public $body = null;

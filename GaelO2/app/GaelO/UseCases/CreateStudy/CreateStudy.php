@@ -13,21 +13,24 @@ use App\GaelO\Services\AuthorizationService\AuthorizationUserService;
 use Exception;
 
 
-class CreateStudy {
+class CreateStudy
+{
 
     private StudyRepositoryInterface $studyRepositoryInterface;
     private AuthorizationUserService $authorizationUserService;
     private TrackerRepositoryInterface $trackerRepositoryInterface;
 
-    public function __construct(StudyRepositoryInterface $studyRepositoryInterface, AuthorizationUserService $authorizationUserService, TrackerRepositoryInterface $trackerRepositoryInterface){
+    public function __construct(StudyRepositoryInterface $studyRepositoryInterface, AuthorizationUserService $authorizationUserService, TrackerRepositoryInterface $trackerRepositoryInterface)
+    {
         $this->studyRepositoryInterface = $studyRepositoryInterface;
         $this->authorizationUserService = $authorizationUserService;
         $this->trackerRepositoryInterface = $trackerRepositoryInterface;
     }
 
-    public function execute(CreateStudyRequest $createStudyRequest, CreateStudyResponse $createStudyResponse){
+    public function execute(CreateStudyRequest $createStudyRequest, CreateStudyResponse $createStudyResponse)
+    {
 
-        try{
+        try {
             $this->checkAuthorization($createStudyRequest->currentUserId);
 
             $studyName = $createStudyRequest->name;
@@ -38,37 +41,37 @@ class CreateStudy {
             $contactEmail = $createStudyRequest->contactEmail;
             $ancillaryOf = $createStudyRequest->ancillaryOf;
 
-            if(preg_match('/[^A-Z0-9]/', $studyName)){
+            if (preg_match('/[^A-Z0-9]/', $studyName)) {
                 throw new GaelOBadRequestException('Only uppercase alphanumerical name allowed, no space or special characters');
             }
 
-            if( $this->studyRepositoryInterface->isExistingStudyName($studyName) ){
+            if ($this->studyRepositoryInterface->isExistingStudyName($studyName)) {
                 throw new GaelOConflictException('Already Existing Study');
             }
 
-            if( $this->studyRepositoryInterface->isExistingStudyCode($studyCode) ){
+            if ($this->studyRepositoryInterface->isExistingStudyCode($studyCode)) {
                 throw new GaelOConflictException('Already used study code');
             }
 
-            if( empty($patientCodeLength) ){
+            if (empty($patientCodeLength)) {
                 throw new GaelOBadRequestException('Missing Patient Code Lenght');
             }
 
-            if( empty($contactEmail) ){
+            if (empty($contactEmail)) {
                 throw new GaelOBadRequestException('Missing Contact Email');
             }
 
-            if( !isset($controllerShowAll) ){
+            if (!isset($controllerShowAll)) {
                 throw new GaelOBadRequestException('Missing Controller Show All');
             }
 
-            if( !isset($monitorShowAll) ){
+            if (!isset($monitorShowAll)) {
                 throw new GaelOBadRequestException('Missing Monitor Show All');
             }
 
             $this->studyRepositoryInterface->addStudy($studyName, $studyCode, $patientCodeLength, $contactEmail, $controllerShowAll, $monitorShowAll,  $ancillaryOf);
 
-            $currentUserId=$createStudyRequest->currentUserId;
+            $currentUserId = $createStudyRequest->currentUserId;
             $actionDetails = [
                 'studyName' => $studyName,
                 'studyCode' => $studyCode,
@@ -79,22 +82,20 @@ class CreateStudy {
 
             $createStudyResponse->status = 201;
             $createStudyResponse->statusText = 'Created';
-
-        }catch(GaelOException $e){
+        } catch (GaelOException $e) {
             $createStudyResponse->body = $e->getErrorBody();
             $createStudyResponse->status = $e->statusCode;
             $createStudyResponse->statusText = $e->statusText;
-        }catch (Exception $e){
+        } catch (Exception $e) {
             throw $e;
         }
-
     }
 
-    private function checkAuthorization(int $currentUserId){
+    private function checkAuthorization(int $currentUserId)
+    {
         $this->authorizationUserService->setUserId($currentUserId);
-        if( ! $this->authorizationUserService->isAdmin($currentUserId) ) {
+        if (!$this->authorizationUserService->isAdmin($currentUserId)) {
             throw new GaelOForbiddenException();
         };
     }
-
 }

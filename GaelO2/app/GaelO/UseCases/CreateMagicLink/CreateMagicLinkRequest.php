@@ -2,7 +2,8 @@
 
 namespace App\GaelO\UseCases\CreateMagicLink;
 
-class CreateMagicLinkRequest{
+class CreateMagicLinkRequest
+{
     public int $currentUserId;
     public int $targetUser;
     public string $ressourceLevel;

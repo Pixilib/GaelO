@@ -2,8 +2,8 @@
 
 namespace App\GaelO\UseCases\CreateReviewForm;
 
-class CreateReviewFormRequest {
-
+class CreateReviewFormRequest
+{
     public int $currentUserId;
     public string $studyName;
     public int $visitId;
@@ -11,5 +11,4 @@ class CreateReviewFormRequest {
     public array $data;
     public bool $validated;
     public bool $adjudication;
-
 }

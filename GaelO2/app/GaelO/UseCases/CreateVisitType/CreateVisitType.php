@@ -11,33 +11,36 @@ use App\GaelO\Interfaces\Repositories\VisitTypeRepositoryInterface;
 use App\GaelO\Services\AuthorizationService\AuthorizationUserService;
 use Exception;
 
-class CreateVisitType {
+class CreateVisitType
+{
 
     private VisitTypeRepositoryInterface $visitTypeRepositoryInterface;
     private VisitGroupRepositoryInterface $visitGroupRepositoryInterface;
     private VisitRepositoryInterface $visitRepositoryInterface;
     private AuthorizationUserService $authorizationUserService;
 
-    public function __construct(VisitTypeRepositoryInterface $visitTypeRepositoryInterface, VisitGroupRepositoryInterface $visitGroupRepositoryInterface, VisitRepositoryInterface $visitRepositoryInterface, AuthorizationUserService $authorizationUserService) {
+    public function __construct(VisitTypeRepositoryInterface $visitTypeRepositoryInterface, VisitGroupRepositoryInterface $visitGroupRepositoryInterface, VisitRepositoryInterface $visitRepositoryInterface, AuthorizationUserService $authorizationUserService)
+    {
         $this->visitGroupRepositoryInterface = $visitGroupRepositoryInterface;
         $this->visitTypeRepositoryInterface = $visitTypeRepositoryInterface;
         $this->visitRepositoryInterface = $visitRepositoryInterface;
         $this->authorizationUserService = $authorizationUserService;
     }
 
-    public function execute( CreateVisitTypeRequest $createVisitTypeRequest, CreateVisitTypeResponse $createVisitTypeResponse ){
+    public function execute(CreateVisitTypeRequest $createVisitTypeRequest, CreateVisitTypeResponse $createVisitTypeResponse)
+    {
 
-        try{
+        try {
             $this->checkAuthorization($createVisitTypeRequest->currentUserId);
 
-            if(  $this->visitTypeRepositoryInterface->isExistingVisitType($createVisitTypeRequest->visitGroupId, $createVisitTypeRequest->name)){
+            if ($this->visitTypeRepositoryInterface->isExistingVisitType($createVisitTypeRequest->visitGroupId, $createVisitTypeRequest->name)) {
                 throw new GaelOConflictException('Already Existing Visit Name in group');
             }
 
             $visitGroup = $this->visitGroupRepositoryInterface->find($createVisitTypeRequest->visitGroupId);
             $hasVisits = $this->visitRepositoryInterface->hasVisitsInStudy($visitGroup['study_name']);
 
-            if($hasVisits) {
+            if ($hasVisits) {
                 throw new GaelOForbiddenException("Study already having visits, can't change workflow");
             }
 
@@ -57,28 +60,21 @@ class CreateVisitType {
 
             $createVisitTypeResponse->status = 201;
             $createVisitTypeResponse->statusText = 'Created';
-
-        } catch (GaelOException $e){
+        } catch (GaelOException $e) {
 
             $createVisitTypeResponse->body = $e->getErrorBody();
             $createVisitTypeResponse->status = $e->statusCode;
             $createVisitTypeResponse->statusText = $e->statusText;
-
-        } catch (Exception $e){
+        } catch (Exception $e) {
             throw $e;
         }
-
     }
 
-
-    private function checkAuthorization(int $userId){
+    private function checkAuthorization(int $userId)
+    {
         $this->authorizationUserService->setUserId($userId);
-        if( ! $this->authorizationUserService->isAdmin()){
+        if (!$this->authorizationUserService->isAdmin()) {
             throw new GaelOForbiddenException();
         }
-
-
     }
-
-
 }

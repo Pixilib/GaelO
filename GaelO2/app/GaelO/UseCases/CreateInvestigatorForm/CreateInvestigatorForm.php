@@ -13,7 +13,8 @@ use App\GaelO\Services\FormService\InvestigatorFormService;
 use Exception;
 
 
-class CreateInvestigatorForm {
+class CreateInvestigatorForm
+{
 
     private AuthorizationVisitService $authorizationVisitService;
     private VisitRepositoryInterface $visitRepositoryInterface;
@@ -24,30 +25,32 @@ class CreateInvestigatorForm {
         AuthorizationVisitService $authorizationVisitService,
         VisitRepositoryInterface $visitRepositoryInterface,
         InvestigatorFormService $investigatorFormService,
-        TrackerRepositoryInterface $trackerRepositoryInterface)
-    {
+        TrackerRepositoryInterface $trackerRepositoryInterface
+    ) {
         $this->authorizationVisitService = $authorizationVisitService;
         $this->visitRepositoryInterface = $visitRepositoryInterface;
         $this->investigatorFormService = $investigatorFormService;
         $this->trackerRepositoryInterface = $trackerRepositoryInterface;
     }
 
-    public function execute(CreateInvestigatorFormRequest $createInvestigatorFormRequest, CreateInvestigatorFormResponse $createInvestigatorFormResponse){
+    public function execute(CreateInvestigatorFormRequest $createInvestigatorFormRequest, CreateInvestigatorFormResponse $createInvestigatorFormResponse)
+    {
 
-        try{
+        try {
 
-            if( ! isset($createInvestigatorFormRequest->validated) || !isset($createInvestigatorFormRequest->visitId) ){
+            if (!isset($createInvestigatorFormRequest->validated) || !isset($createInvestigatorFormRequest->visitId)) {
                 throw new GaelOBadRequestException('VisitID and Validated Status are mandatory');
             }
 
             $visitContext = $this->visitRepositoryInterface->getVisitContext($createInvestigatorFormRequest->visitId);
             $studyName = $visitContext['patient']['study_name'];
             $isLocalFormNeeded = $visitContext['visit_type']['local_form_needed'];
+            $stateInvestigatorForm = $visitContext['state_investigator_form'];
 
             $this->checkAuthorization(
                 $createInvestigatorFormRequest->currentUserId,
                 $createInvestigatorFormRequest->visitId,
-                $visitContext['state_investigator_form'],
+                $stateInvestigatorForm,
                 $isLocalFormNeeded,
                 $studyName
             );
@@ -66,26 +69,24 @@ class CreateInvestigatorForm {
             $createInvestigatorFormResponse->body = ['id' => $createdFormId];
             $createInvestigatorFormResponse->status = 201;
             $createInvestigatorFormResponse->statusText =  'Created';
-
-        } catch (GaelOException $e){
+        } catch (GaelOException $e) {
 
             $createInvestigatorFormResponse->body = $e->getErrorBody();
             $createInvestigatorFormResponse->status = $e->statusCode;
             $createInvestigatorFormResponse->statusText =  $e->statusText;
-
-        }catch (Exception $e){
+        } catch (Exception $e) {
             throw $e;
         }
-
     }
 
-    private function checkAuthorization(int $currentUserId, int $visitId, string $visitInvestigatorFormStatus, bool $investigatorFormNeeded, string $studyName){
+    private function checkAuthorization(int $currentUserId, int $visitId, string $visitInvestigatorFormStatus, bool $investigatorFormNeeded, string $studyName)
+    {
 
-        if(in_array($visitInvestigatorFormStatus, [Constants::INVESTIGATOR_FORM_DRAFT, Constants::INVESTIGATOR_FORM_DONE])){
+        if (in_array($visitInvestigatorFormStatus, [Constants::INVESTIGATOR_FORM_DRAFT, Constants::INVESTIGATOR_FORM_DONE])) {
             throw new GaelOForbiddenException();
         };
 
-        if(!$investigatorFormNeeded){
+        if (!$investigatorFormNeeded) {
             throw new GaelOForbiddenException();
         };
 
@@ -93,9 +94,8 @@ class CreateInvestigatorForm {
         $this->authorizationVisitService->setVisitId($visitId);
         $this->authorizationVisitService->setStudyName($studyName);
 
-        if ( ! $this->authorizationVisitService->isVisitAllowed(Constants::ROLE_INVESTIGATOR)){
+        if (!$this->authorizationVisitService->isVisitAllowed(Constants::ROLE_INVESTIGATOR)) {
             throw new GaelOForbiddenException();
         }
     }
-
 }
