@@ -11,55 +11,62 @@ use App\GaelO\Interfaces\Repositories\UserRepositoryInterface;
 use App\GaelO\Services\AuthorizationService\AuthorizationUserService;
 use Exception;
 
-class AddAffiliatedCenter {
+class AddAffiliatedCenter
+{
 
     private AuthorizationUserService $authorizationUserService;
     private TrackerRepositoryInterface $trackerRepositoryInterface;
     private UserRepositoryInterface $userRepositoryInterface;
 
-    public function __construct( UserRepositoryInterface $userRepositoryInterface, AuthorizationUserService $authorizationUserService, TrackerRepositoryInterface $trackerRepositoryInterface){
+    public function __construct(UserRepositoryInterface $userRepositoryInterface, AuthorizationUserService $authorizationUserService, TrackerRepositoryInterface $trackerRepositoryInterface)
+    {
         $this->userRepositoryInterface = $userRepositoryInterface;
         $this->trackerRepositoryInterface = $trackerRepositoryInterface;
         $this->authorizationUserService = $authorizationUserService;
     }
 
-    public function execute(AddAffiliatedCenterRequest $addAffiliatedCenterRequest, AddAffiliatedCenterResponse $addAffiliatedCenterResponse){
+    public function execute(AddAffiliatedCenterRequest $addAffiliatedCenterRequest, AddAffiliatedCenterResponse $addAffiliatedCenterResponse)
+    {
 
-        try{
-            $this->checkAuthorization($addAffiliatedCenterRequest->currentUserId);
+        try {
 
-            $existingCenterCodeArray = $this->userRepositoryInterface->getAllUsersCenters($addAffiliatedCenterRequest->userId);
+            $currentUserId = $addAffiliatedCenterRequest->currentUserId;
+            $userId = $addAffiliatedCenterRequest->userId;
+            $centerCode = $addAffiliatedCenterRequest->centerCode;
+
+            $this->checkAuthorization($currentUserId);
+
+            $existingCenterCodeArray = $this->userRepositoryInterface->getAllUsersCenters($userId);
 
             //Check the request creation is not in Main or affiliated centers
-            if( ! in_array($addAffiliatedCenterRequest->centerCode, $existingCenterCodeArray) ){
+            if (!in_array($centerCode, $existingCenterCodeArray)) {
 
-                $this->userRepositoryInterface->addAffiliatedCenter($addAffiliatedCenterRequest->userId, $addAffiliatedCenterRequest->centerCode);
+                $this->userRepositoryInterface->addAffiliatedCenter($userId, $centerCode);
 
                 $actionDetails = [
-                    'addAffiliatedCenters' => $addAffiliatedCenterRequest->centerCode
+                    'userId' => $userId,
+                    'addAffiliatedCenters' => $centerCode
                 ];
-                $this->trackerRepositoryInterface->writeAction($addAffiliatedCenterRequest->userId, Constants::TRACKER_ROLE_ADMINISTRATOR, null, null, Constants::TRACKER_EDIT_USER, $actionDetails);
+                $this->trackerRepositoryInterface->writeAction($currentUserId, Constants::TRACKER_ROLE_ADMINISTRATOR, null, null, Constants::TRACKER_EDIT_USER, $actionDetails);
 
                 $addAffiliatedCenterResponse->status = '201';
                 $addAffiliatedCenterResponse->statusText = 'Created';
-
             } else {
                 throw new GaelOConflictException('Center already affiliated to user');
             }
-
-        } catch(GaelOException $e) {
+        } catch (GaelOException $e) {
             $addAffiliatedCenterResponse->status = $e->statusCode;
-            $addAffiliatedCenterResponse->statusText =$e->statusText;
-            $addAffiliatedCenterResponse->body =$e->getErrorBody();
-        } catch (Exception $e){
+            $addAffiliatedCenterResponse->statusText = $e->statusText;
+            $addAffiliatedCenterResponse->body = $e->getErrorBody();
+        } catch (Exception $e) {
             throw $e;
         };
-
     }
 
-    private function checkAuthorization(int $userId){
+    private function checkAuthorization(int $userId)
+    {
         $this->authorizationUserService->setUserId($userId);
-        if( ! $this->authorizationUserService->isAdmin()){
+        if (!$this->authorizationUserService->isAdmin()) {
             throw new GaelOForbiddenException();
         };
     }

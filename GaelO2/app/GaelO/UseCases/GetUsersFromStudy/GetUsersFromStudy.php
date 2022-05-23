@@ -1,6 +1,6 @@
 <?php
 
-namespace App\GaelO\UseCases\GetUserFromStudy;
+namespace App\GaelO\UseCases\GetUsersFromStudy;
 
 use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOException;
@@ -8,11 +8,9 @@ use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\UserRepositoryInterface;
 use App\GaelO\Entities\UserEntity;
 use App\GaelO\Services\AuthorizationService\AuthorizationStudyService;
-use App\GaelO\UseCases\GetUserFromStudy\GetUserFromStudyRequest;
-use App\GaelO\UseCases\GetUserFromStudy\GetUserFromStudyResponse;
 use Exception;
 
-class GetUserFromStudy
+class GetUsersFromStudy
 {
 
     private AuthorizationStudyService $authorizationStudyService;
@@ -24,21 +22,24 @@ class GetUserFromStudy
         $this->authorizationStudyService = $authorizationStudyService;
     }
 
-    public function execute(GetUserFromStudyRequest $userRequest, GetUserFromStudyResponse $userResponse): void
+    public function execute(GetUsersFromStudyRequest $getUsersFromStudyRequest, GetUsersFromStudyResponse $getUsersFromStudyResponse): void
     {
         try {
 
-            $studyName = $userRequest->studyName;
-            $this->checkAuthorization($userRequest->currentUserId, $userRequest->role, $studyName);
+            $studyName = $getUsersFromStudyRequest->studyName;
+            $role = $getUsersFromStudyRequest->role;
+            $currentUserId = $getUsersFromStudyRequest->currentUserId;
+
+            $this->checkAuthorization($currentUserId, $role, $studyName);
 
             $dbData = $this->userRepositoryInterface->getUsersFromStudy($studyName);
 
             $responseArray = [];
             foreach ($dbData as $data) {
                 $userEntity = [];
-                if ($userRequest->role === Constants::ROLE_SUPERVISOR) {
+                if ($getUsersFromStudyRequest->role === Constants::ROLE_SUPERVISOR) {
                     $userEntity = UserEntity::fillMinimalFromDBReponseArray($data);
-                } else if ($userRequest->role === Constants::ROLE_ADMINISTRATOR) {
+                } else if ($getUsersFromStudyRequest->role === Constants::ROLE_ADMINISTRATOR) {
                     $userEntity = UserEntity::fillFromDBReponseArray($data);
                 }
 
@@ -56,13 +57,15 @@ class GetUserFromStudy
                 $userEntity->addRoles($rolesArray);
                 $responseArray[] = $userEntity;
             }
-            $userResponse->body = $responseArray;
-            $userResponse->status = 200;
-            $userResponse->statusText = 'OK';
+
+            $getUsersFromStudyResponse->body = $responseArray;
+            $getUsersFromStudyResponse->status = 200;
+            $getUsersFromStudyResponse->statusText = 'OK';
+
         } catch (GaelOException $e) {
-            $userResponse->body = $e->getErrorBody();
-            $userResponse->status = $e->statusCode;
-            $userResponse->statusText = $e->statusText;
+            $getUsersFromStudyResponse->body = $e->getErrorBody();
+            $getUsersFromStudyResponse->status = $e->statusCode;
+            $getUsersFromStudyResponse->statusText = $e->statusText;
         } catch (Exception $e) {
             throw $e;
         }

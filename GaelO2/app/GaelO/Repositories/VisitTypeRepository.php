@@ -79,4 +79,15 @@ class VisitTypeRepository implements VisitTypeRepositoryInterface
         $visitGroup = $this->visitType->where([['visit_group_id', '=', $visitGroupId], ['name', '=', $name]])->get();
         return sizeof($visitGroup) > 0;
     }
+
+    public function getVisitTypesOfStudy(string $studyName): array
+    {
+
+        $visitTypes = $this->visitType->with('visitGroup')
+            ->whereHas('visitGroup', function ($query) use ($studyName) {
+                $query->where('study_name', $studyName);
+            })->get();
+
+        return $visitTypes->toArray();
+    }
 }

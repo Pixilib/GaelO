@@ -1,8 +1,8 @@
 <?php
 
-namespace App\GaelO\UseCases\GetStudy;
+namespace App\GaelO\UseCases\GetStudies;
 
-class GetStudyRequest {
+class GetStudiesRequest {
     public int $currentUserId;
     public bool $withTrashed;
 }

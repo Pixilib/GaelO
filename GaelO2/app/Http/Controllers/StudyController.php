@@ -38,18 +38,18 @@ use App\GaelO\UseCases\GetReviewsFromVisitType\GetReviewsFromVisitTypeResponse;
 use App\GaelO\UseCases\GetReviewsMetadataFromVisitType\GetReviewsMetadataFromVisitType;
 use App\GaelO\UseCases\GetReviewsMetadataFromVisitType\GetReviewsMetadataFromVisitTypeRequest;
 use App\GaelO\UseCases\GetReviewsMetadataFromVisitType\GetReviewsMetadataFromVisitTypeResponse;
-use App\GaelO\UseCases\GetStudy\GetStudy;
-use App\GaelO\UseCases\GetStudy\GetStudyRequest;
-use App\GaelO\UseCases\GetStudy\GetStudyResponse;
-use App\GaelO\UseCases\GetStudyDetails\GetStudyDetails;
-use App\GaelO\UseCases\GetStudyDetails\GetStudyDetailsRequest;
-use App\GaelO\UseCases\GetStudyDetails\GetStudyDetailsResponse;
-use App\GaelO\UseCases\GetStudyDetailsSupervisor\GetStudyDetailsSupervisor;
-use App\GaelO\UseCases\GetStudyDetailsSupervisor\GetStudyDetailsSupervisorRequest;
-use App\GaelO\UseCases\GetStudyDetailsSupervisor\GetStudyDetailsSupervisorResponse;
+use App\GaelO\UseCases\GetStudies\GetStudies;
+use App\GaelO\UseCases\GetStudies\GetStudiesRequest;
+use App\GaelO\UseCases\GetStudies\GetStudiesResponse;
+use App\GaelO\UseCases\GetStudiesWithDetails\GetStudiesWithDetails;
+use App\GaelO\UseCases\GetStudiesWithDetails\GetStudiesWithDetailsRequest;
+use App\GaelO\UseCases\GetStudiesWithDetails\GetStudiesWithDetailsResponse;
 use App\GaelO\UseCases\GetStudyStatistics\GetStudyStatistics;
 use App\GaelO\UseCases\GetStudyStatistics\GetStudyStatisticsRequest;
 use App\GaelO\UseCases\GetStudyStatistics\GetStudyStatisticsResponse;
+use App\GaelO\UseCases\GetStudyVisitTypes\GetStudyVisitTypes;
+use App\GaelO\UseCases\GetStudyVisitTypes\GetStudyVisitTypesRequest;
+use App\GaelO\UseCases\GetStudyVisitTypes\GetStudyVisitTypesResponse;
 use App\GaelO\UseCases\GetVisitsTree\GetVisitsTree;
 use App\GaelO\UseCases\GetVisitsTree\GetVisitsTreeRequest;
 use App\GaelO\UseCases\GetVisitsTree\GetVisitsTreeResponse;
@@ -84,29 +84,29 @@ class StudyController extends Controller
         return $this->getJsonResponse($createStudyResponse->body, $createStudyResponse->status, $createStudyResponse->statusText);
     }
 
-    public function getStudies(Request $request, GetStudy $getStudy, GetStudyRequest $getStudyRequest, GetStudyResponse $getStudyResponse, GetStudyDetails $getStudyDetails, GetStudyDetailsRequest $getStudyDetailsRequest, GetStudyDetailsResponse $getStudyDetailsResponse)
+    public function getStudies(Request $request, GetStudies $getStudies, GetStudiesRequest $getStudiesRequest, GetStudiesResponse $getStudiesResponse, GetStudiesWithDetails $getStudiesWithDetails, GetStudiesWithDetailsRequest $getStudiesWithDetailsRequest, GetStudiesWithDetailsResponse $getStudiesWithDetailsResponse)
     {
         $currentUser = Auth::user();
         $queryParam = $request->query();
         if (array_key_exists('expand', $queryParam)) {
-            $getStudyDetailsRequest->currentUserId = $currentUser['id'];
-            $getStudyDetails->execute($getStudyDetailsRequest, $getStudyDetailsResponse);
-            return $this->getJsonResponse($getStudyDetailsResponse->body, $getStudyDetailsResponse->status, $getStudyDetailsResponse->statusText);
+            $getStudiesWithDetailsRequest->currentUserId = $currentUser['id'];
+            $getStudiesWithDetails->execute($getStudiesWithDetailsRequest, $getStudiesWithDetailsResponse);
+            return $this->getJsonResponse($getStudiesWithDetailsResponse->body, $getStudiesWithDetailsResponse->status, $getStudiesWithDetailsResponse->statusText);
         } else {
-            $getStudyRequest->currentUserId = $currentUser['id'];
-            $getStudyRequest->withTrashed = key_exists('withTrashed', $queryParam);
-            $getStudy->execute($getStudyRequest, $getStudyResponse);
-            return $this->getJsonResponse($getStudyResponse->body, $getStudyResponse->status, $getStudyResponse->statusText);
+            $getStudiesRequest->currentUserId = $currentUser['id'];
+            $getStudiesRequest->withTrashed = key_exists('withTrashed', $queryParam);
+            $getStudies->execute($getStudiesRequest, $getStudiesResponse);
+            return $this->getJsonResponse($getStudiesResponse->body, $getStudiesResponse->status, $getStudiesResponse->statusText);
         }
     }
 
-    public function getStudyDetails(GetStudyDetailsSupervisor $getStudyDetailsSupervisor, GetStudyDetailsSupervisorRequest $getStudyDetailsSupervisorRequest, GetStudyDetailsSupervisorResponse $getStudyDetailsSupervisorResponse, string $studyName)
+    public function getStudyVisitTypes(GetStudyVisitTypes $getStudyVisitTypes, GetStudyVisitTypesRequest $getStudyVisitTypesRequest, GetStudyVisitTypesResponse $getStudyVisitTypesResponse, string $studyName)
     {
         $currentUser = Auth::user();
-        $getStudyDetailsSupervisorRequest->currentUserId = $currentUser['id'];
-        $getStudyDetailsSupervisorRequest->studyName = $studyName;
-        $getStudyDetailsSupervisor->execute($getStudyDetailsSupervisorRequest, $getStudyDetailsSupervisorResponse);
-        return $this->getJsonResponse($getStudyDetailsSupervisorResponse->body, $getStudyDetailsSupervisorResponse->status, $getStudyDetailsSupervisorResponse->statusText);
+        $getStudyVisitTypesRequest->currentUserId = $currentUser['id'];
+        $getStudyVisitTypesRequest->studyName = $studyName;
+        $getStudyVisitTypes->execute($getStudyVisitTypesRequest, $getStudyVisitTypesResponse);
+        return $this->getJsonResponse($getStudyVisitTypesResponse->body, $getStudyVisitTypesResponse->status, $getStudyVisitTypesResponse->statusText);
     }
 
     public function deleteStudy(Request $request, DeleteStudy $deleteStudy,  DeleteStudyRequest $deleteStudyRequest, DeleteStudyResponse $deleteStudyResponse, String $studyName)

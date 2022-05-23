@@ -2,7 +2,8 @@
 
 namespace App\GaelO\UseCases\CreateCenter;
 
-class CreateCenterRequest {
+class CreateCenterRequest
+{
     public int $currentUserId;
     public int $code;
     public String $name;

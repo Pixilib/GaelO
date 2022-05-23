@@ -1,6 +1,6 @@
 <?php
 
-namespace App\GaelO\UseCases\GetStudyDetails;
+namespace App\GaelO\UseCases\GetStudiesWithDetails;
 
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
@@ -11,7 +11,7 @@ use App\GaelO\Entities\VisitTypeEntity;
 use App\GaelO\Services\AuthorizationService\AuthorizationUserService;
 use Exception;
 
-class GetStudyDetails
+class GetStudiesWithDetails
 {
 
     private StudyRepositoryInterface $studyRepositoryInterface;
@@ -23,13 +23,15 @@ class GetStudyDetails
         $this->authorizationUserService = $authorizationUserService;
     }
 
-    public function execute(GetStudyDetailsRequest $getStudyDetailsRequest, GetStudyDetailsResponse $getStudyDetailsResponse): void
+    public function execute(GetStudiesWithDetailsRequest $getStudiesWithDetailsRequest, GetStudiesWithDetailsResponse $getStudiesWithDetailsResponse): void
     {
 
         try {
-            $this->checkAuthorization($getStudyDetailsRequest->currentUserId);
 
-            $studyDetails = $this->studyRepositoryInterface->getAllStudiesWithDetails($getStudyDetailsRequest->currentUserId);
+            $curentUserId = $getStudiesWithDetailsRequest->currentUserId;
+            $this->checkAuthorization($curentUserId);
+
+            $studyDetails = $this->studyRepositoryInterface->getAllStudiesWithDetails($curentUserId);
 
             $studyDetailResponse = [];
 
@@ -53,15 +55,15 @@ class GetStudyDetails
                 }
             }
 
-            $getStudyDetailsResponse->body = $studyDetailResponse;
-            $getStudyDetailsResponse->status = 200;
-            $getStudyDetailsResponse->statusText = 'OK';
+            $getStudiesWithDetailsResponse->body = $studyDetailResponse;
+            $getStudiesWithDetailsResponse->status = 200;
+            $getStudiesWithDetailsResponse->statusText = 'OK';
 
         } catch (GaelOException $e) {
 
-            $getStudyDetailsResponse->body = $e->getErrorBody();
-            $getStudyDetailsResponse->status = $e->statusCode;
-            $getStudyDetailsResponse->statusText = $e->statusText;
+            $getStudiesWithDetailsResponse->body = $e->getErrorBody();
+            $getStudiesWithDetailsResponse->status = $e->statusCode;
+            $getStudiesWithDetailsResponse->statusText = $e->statusText;
 
         } catch (Exception $e) {
             throw $e;

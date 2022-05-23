@@ -3,7 +3,7 @@ namespace App\GaelO\Services\SpecificStudiesRules\TEST;
 
 use App\GaelO\Adapters\MimeAdapter;
 use App\GaelO\Constants\Constants;
-use App\GaelO\Services\AbstractVisitRules;
+use App\GaelO\Services\GaelOStudiesService\AbstractVisitRules;
 
 class TEST_FDG_PET0 extends AbstractVisitRules {
 

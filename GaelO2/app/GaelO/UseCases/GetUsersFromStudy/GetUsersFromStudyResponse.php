@@ -1,8 +1,8 @@
 <?php
 
-namespace App\GaelO\UseCases\GetStudy;
+namespace App\GaelO\UseCases\GetUsersFromStudy;
 
-class GetStudyResponse {
+class GetUsersFromStudyResponse {
     public $body = null;
     public int $status;
     public string $statusText;

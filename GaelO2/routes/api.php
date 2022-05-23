@@ -56,14 +56,14 @@ Route::middleware(['auth:sanctum', 'verified', 'activated'])->group(function () 
     Route::get('users/{id}/roles', [UserController::class, 'getRoles']);
     Route::post('users/{id}/roles', [UserController::class, 'createRole']);
     Route::delete('users/{id}/roles/{roleName}', [UserController::class, 'deleteRole']);
-    Route::get('studies/{studyName}/users', [UserController::class, 'getUserFromStudy']);
-    Route::post('user/{id}/magic-link', [AuthController::class, 'createMagicLink']);
+    Route::get('studies/{studyName}/users', [UserController::class, 'getUsersFromStudy']);
+    Route::post('users/{id}/magic-link', [AuthController::class, 'createMagicLink']);
 
     //Study Routes
     Route::post('studies', [StudyController::class, 'createStudy']);
     Route::get('studies', [StudyController::class, 'getStudies']);
     Route::get('studies/{studyName}/statistics', [StudyController::class, 'getStudyStatistics']);
-    Route::get('studies/{studyName}/visit-types', [StudyController::class, 'getStudyDetails']);
+    Route::get('studies/{studyName}/visit-types', [StudyController::class, 'getStudyVisitTypes']);
     Route::delete('studies/{studyName}', [StudyController::class, 'deleteStudy']);
     Route::patch('studies/{studyName}/reactivate', [StudyController::class, 'reactivateStudy']);
     Route::get('studies/{studyName}/patients', [StudyController::class, 'getPatientFromStudy']);

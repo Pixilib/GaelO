@@ -27,7 +27,7 @@ class CreateDocumentationTable extends Migration
             $table->softDeletes();
             $table->timestamps();
 
-            $table->unique(array('name', 'version'));
+            $table->unique(array('study_name', 'name', 'version'));
             $table->foreign('study_name')->references('name')->on('studies');
         });
     }

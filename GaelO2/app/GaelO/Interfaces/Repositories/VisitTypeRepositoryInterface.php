@@ -28,4 +28,6 @@ interface VisitTypeRepositoryInterface
     public function hasVisits(int $visitTypeId): bool ;
 
     public function isExistingVisitType(int $visitGroupId, string $name): bool ;
+
+    public function getVisitTypesOfStudy(string $studyName) : array ;
 }

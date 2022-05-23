@@ -2,7 +2,7 @@
 
 namespace App\GaelO\Services\SpecificStudiesRules\TEST;
 
-use App\GaelO\Services\SpecificStudiesRules\AbstractGaelOStudy;
+use App\GaelO\Services\GaelOStudiesService\AbstractGaelOStudy;
 use App\GaelO\Services\SpecificStudiesRules\TEST\TEST_FDG_PET0;
 
 class TEST extends AbstractGaelOStudy {

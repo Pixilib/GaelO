@@ -5,7 +5,8 @@ namespace App\GaelO\Services\FormService;
 use App\GaelO\Exceptions\GaelOBadRequestException;
 use App\GaelO\Interfaces\Adapters\FrameworkInterface;
 use App\GaelO\Interfaces\Repositories\ReviewRepositoryInterface;
-use App\GaelO\Services\AbstractVisitRules;
+use App\GaelO\Services\GaelOStudiesService\AbstractGaelOStudy;
+use App\GaelO\Services\GaelOStudiesService\AbstractVisitRules;
 use App\GaelO\Services\MailServices;
 use App\GaelO\Services\VisitService;
 use App\GaelO\Util;
@@ -48,7 +49,7 @@ class FormService
     }
 
     public function getSpecificStudiesRules(string $studyName, string $visitGroup, string $visitName) : AbstractVisitRules {
-        $studyObject = $this->frameworkInterface::make('\App\GaelO\Services\SpecificStudiesRules\\'. $studyName .'\\' .  $studyName );
+        $studyObject = AbstractGaelOStudy::getSpecificStudyObject($studyName);
         $specificObjectClass = $studyObject->getSpecificForm($visitGroup, $visitName);
         return $this->frameworkInterface::make($specificObjectClass);
     }

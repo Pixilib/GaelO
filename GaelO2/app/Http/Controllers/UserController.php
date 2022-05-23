@@ -38,12 +38,12 @@ use App\GaelO\UseCases\GetRolesInStudyFromUser\GetRolesInStudyFromUserResponse;
 use App\GaelO\UseCases\GetStudiesFromUser\GetStudiesFromUser;
 use App\GaelO\UseCases\GetStudiesFromUser\GetStudiesFromUserRequest;
 use App\GaelO\UseCases\GetStudiesFromUser\GetStudiesFromUserResponse;
+use App\GaelO\UseCases\GetUsersFromStudy\GetUsersFromStudy;
+use App\GaelO\UseCases\GetUsersFromStudy\GetUsersFromStudyRequest;
+use App\GaelO\UseCases\GetUsersFromStudy\GetUsersFromStudyResponse;
 use App\GaelO\UseCases\ReactivateUser\ReactivateUser;
 use App\GaelO\UseCases\ReactivateUser\ReactivateUserRequest;
 use App\GaelO\UseCases\ReactivateUser\ReactivateUserResponse;
-use App\GaelO\UseCases\GetUserFromStudy\GetUserFromStudy;
-use App\GaelO\UseCases\GetUserFromStudy\GetUserFromStudyRequest;
-use App\GaelO\UseCases\GetUserFromStudy\GetUserFromStudyResponse;
 use App\GaelO\UseCases\ModifyUserIdentification\ModifyUserIdentification;
 use App\GaelO\UseCases\ModifyUserIdentification\ModifyUserIdentificationRequest;
 use App\GaelO\UseCases\ModifyUserIdentification\ModifyUserIdentificationResponse;
@@ -256,14 +256,14 @@ class UserController extends Controller
         return $this->getJsonResponse($reactivateUserResponse->body, $reactivateUserResponse->status, $reactivateUserResponse->statusText);
     }
 
-    public function getUserFromStudy(Request $request, GetUserFromStudyRequest $getUserFromStudyRequest, GetUserFromStudyResponse $getUserFromStudyResponse, GetUserFromStudy $getUserFromStudy, string $studyName)
+    public function getUsersFromStudy(Request $request, GetUsersFromStudyRequest $getUsersFromStudyRequest, GetUsersFromStudyResponse $getUsersFromStudyResponse, GetUsersFromStudy $getUsersFromStudy, string $studyName)
     {
         $currentUser = Auth::user();
         $queryParam = $request->query();
-        $getUserFromStudyRequest->currentUserId = $currentUser['id'];
-        $getUserFromStudyRequest->studyName = $studyName;
-        $getUserFromStudyRequest->role = $queryParam['role'];
-        $getUserFromStudy->execute($getUserFromStudyRequest, $getUserFromStudyResponse);
-        return $this->getJsonResponse($getUserFromStudyResponse->body, $getUserFromStudyResponse->status, $getUserFromStudyResponse->statusText);
+        $getUsersFromStudyRequest->currentUserId = $currentUser['id'];
+        $getUsersFromStudyRequest->studyName = $studyName;
+        $getUsersFromStudyRequest->role = $queryParam['role'];
+        $getUsersFromStudy->execute($getUsersFromStudyRequest, $getUsersFromStudyResponse);
+        return $this->getJsonResponse($getUsersFromStudyResponse->body, $getUsersFromStudyResponse->status, $getUsersFromStudyResponse->statusText);
     }
 }

@@ -152,6 +152,18 @@ class DocumentationTest extends TestCase
         $response->assertStatus(403);
     }
 
+
+
+    public function testGetDocumentationFileShouldPassBecauseSupervisor()
+    {
+        $currentUserId = AuthorizationTools::actAsAdmin(false);
+        AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $this->study->name);
+        FrameworkAdapter::storeFile($this->study->name . '/documentations/test.pdf', 'content');
+        $documentation = Documentation::factory()->studyName($this->study->name)->path('/'.$this->study->name.'/documentations/test.pdf')->create();
+        $response = $this->get('api/documentations/' . $documentation->id . '/file');
+        $response->assertStatus(200);
+    }
+
     public function testModifyDocumentation()
     {
         $currentUserId = AuthorizationTools::actAsAdmin(false);
