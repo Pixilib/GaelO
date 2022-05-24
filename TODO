@@ -1,6 +1,6 @@
 Salim TODO :
 
-- Relecture UseCases : Fait jusqu'a DeleteFileOfForm Inclus
+- Relecture UseCases : Fait jusqu'a DeleteUserRole Inclus
 
 - Refac : Relation VisitGroupDetails à revoir
 - Refac : setVisitData de VisitEntity à revoir

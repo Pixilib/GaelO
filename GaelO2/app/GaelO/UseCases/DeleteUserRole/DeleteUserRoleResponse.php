@@ -2,7 +2,8 @@
 
 namespace App\GaelO\UseCases\DeleteUserRole;
 
-class DeleteUserRoleResponse{
+class DeleteUserRoleResponse
+{
     public $body = null;
     public int $status;
     public string $statusText;

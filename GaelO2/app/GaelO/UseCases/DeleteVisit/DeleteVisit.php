@@ -24,7 +24,6 @@ class DeleteVisit{
         $this->authorizationVisitService = $authorizationVisitService;
         $this->visitRepositoryInterface = $visitRepositoryInterface;
         $this->trackerRepositoryInterface = $trackerRepositoryInterface;
-
     }
 
     public function execute(DeleteVisitRequest $deleteVisitRequest,
@@ -38,7 +37,6 @@ class DeleteVisit{
 
             $studyName = $visitContext['patient']['study_name'];
             $visitTypeName = $visitContext['visit_type']['name'];
-          
             $patientId = $visitContext['patient']['id'];
             $visitTypeName = $visitContext['visit_type']['name'];
             $qcStatus = $visitContext['state_quality_control'];
@@ -68,22 +66,18 @@ class DeleteVisit{
             $deleteVisitResponse->statusText = 'OK';
 
         } catch (GaelOException $e){
-
             $deleteVisitResponse->body = $e->getErrorBody();
             $deleteVisitResponse->status = $e->statusCode;
             $deleteVisitResponse->statusText = $e->statusText;
-
         } catch (Exception $e){
-
             throw $e;
-
         }
 
     }
 
 
     public function checkAuthorization(int $userId, string $role, int $visitId, string $qcStatus, string $studyName){
-      
+
         //This role only allowed for Investigator and Supervisor Roles
         if ( ! in_array($role, [Constants::ROLE_INVESTIGATOR, Constants::ROLE_SUPERVISOR]) ){
             throw new GaelOForbiddenException();

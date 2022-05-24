@@ -2,7 +2,8 @@
 
 namespace App\GaelO\UseCases\DeleteSeries;
 
-class DeleteSeriesResponse{
+class DeleteSeriesResponse
+{
     public int $status;
     public string $statusText;
     public $body = null;

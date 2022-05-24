@@ -2,7 +2,8 @@
 
 namespace App\GaelO\UseCases\DeleteSeries;
 
-class DeleteSeriesRequest{
+class DeleteSeriesRequest
+{
     public int $currentUserId;
     public string $seriesInstanceUID;
     public string $role;
