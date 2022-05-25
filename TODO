@@ -1,6 +1,6 @@
 Salim TODO :
 
-- Relecture UseCases : Fait jusqu'a ForgotPassword Inclus
+- Relecture UseCases : Fait jusqu'a GetCenter Inclus
 
 - Refac : Relation VisitGroupDetails à revoir
 - Refac : setVisitData de VisitEntity à revoir

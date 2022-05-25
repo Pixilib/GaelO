@@ -25,7 +25,6 @@ class GetCenter
     public function execute(GetCenterRequest $getCenterRequest, GetCenterResponse $getCenterResponse): void
     {
         try {
-
             $studyName = null;
             if (isset($getCenterRequest->studyName)) $studyName = $getCenterRequest->studyName;
 
@@ -60,9 +59,9 @@ class GetCenter
     {
         $this->authorizationUserService->setUserId($userId);
 
-        if ( $studyName == null ) {
-             //If no study name specified user shall be admin
-            if ( !$this->authorizationUserService->isAdmin() ) throw new GaelOForbiddenException();
+        if ($studyName == null) {
+            //If no study name specified user shall be admin
+            if (!$this->authorizationUserService->isAdmin()) throw new GaelOForbiddenException();
         } else {
             //Else shall be supervisor in the study
             if (!$this->authorizationUserService->isRoleAllowed(Constants::ROLE_SUPERVISOR, $studyName)) {

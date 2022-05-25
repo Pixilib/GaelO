@@ -2,7 +2,8 @@
 
 namespace App\GaelO\UseCases\GetAffiliatedCenter;
 
-class GetAffiliatedCenterResponse {
+class GetAffiliatedCenterResponse
+{
     public $body = null;
     public int $status;
     public string $statusText;

@@ -27,25 +27,25 @@ class GetAssociatedDataForReview
     public function execute(GetAssociatedDataForReviewRequest $getAssociatedDataForReviewRequest, GetAssociatedDataForReviewResponse $getAssociatedDataForReviewResponse)
     {
         try {
+            $currentUserId = $getAssociatedDataForReviewRequest->currentUserId;
+            $visitId = $getAssociatedDataForReviewRequest->visitId;
+            $studyName = $getAssociatedDataForReviewRequest->studyName;
 
-            $this->checkAuthorization($getAssociatedDataForReviewRequest->currentUserId, $getAssociatedDataForReviewRequest->visitId, $getAssociatedDataForReviewRequest->studyName);
+            $this->checkAuthorization($currentUserId, $visitId, $studyName);
 
-            $visitContext = $this->visitRepositoryInterface->getVisitContext($getAssociatedDataForReviewRequest->visitId);
+            $visitContext = $this->visitRepositoryInterface->getVisitContext($visitId);
 
-            $this->reviewFormService->setCurrentUserId($getAssociatedDataForReviewRequest->currentUserId);
-            $this->reviewFormService->setVisitContextAndStudy($visitContext, $getAssociatedDataForReviewRequest->studyName);
+            $this->reviewFormService->setCurrentUserId($currentUserId);
+            $this->reviewFormService->setVisitContextAndStudy($visitContext, $studyName);
             $associatedData = $this->reviewFormService->getAssociatedDataForForm();
 
-            $getAssociatedDataForReviewResponse->body =  $associatedData;
+            $getAssociatedDataForReviewResponse->body = $associatedData;
             $getAssociatedDataForReviewResponse->status = 200;
             $getAssociatedDataForReviewResponse->statusText = 'OK';
-
         } catch (GaelOException $e) {
-
-            $getAssociatedDataForReviewResponse->body =  $e->getErrorBody();
+            $getAssociatedDataForReviewResponse->body = $e->getErrorBody();
             $getAssociatedDataForReviewResponse->status = $e->statusCode;
             $getAssociatedDataForReviewResponse->statusText = $e->statusCode;
-
         } catch (Exception $e) {
             throw $e;
         }
