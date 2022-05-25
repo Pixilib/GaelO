@@ -143,6 +143,6 @@ class VisitTypeTest extends TestCase
         AuthorizationTools::actAsAdmin(true);
         $visit = Visit::factory()->create();
 
-        $this->json('DELETE', 'api/visit-types/'.$visit->visitType->id)->assertStatus(409);
+        $this->json('DELETE', 'api/visit-types/'.$visit->visitType->id)->assertStatus(403);
     }
 }

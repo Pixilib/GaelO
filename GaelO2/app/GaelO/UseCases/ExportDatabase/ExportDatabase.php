@@ -11,29 +11,32 @@ use App\GaelO\Util;
 use Exception;
 use ZipArchive;
 
-class ExportDatabase{
+class ExportDatabase
+{
 
     private DatabaseDumperInterface $databaseDumperInterface;
     private AuthorizationUserService $authorizationUserService;
 
-    public function __construct(DatabaseDumperInterface $databaseDumperInterface, AuthorizationUserService $authorizationUserService, FrameworkInterface $frameworkInterface) {
+    public function __construct(DatabaseDumperInterface $databaseDumperInterface, AuthorizationUserService $authorizationUserService, FrameworkInterface $frameworkInterface)
+    {
         $this->databaseDumperInterface = $databaseDumperInterface;
         $this->authorizationUserService = $authorizationUserService;
         $this->frameworkInterface = $frameworkInterface;
     }
 
-    public function execute(ExportDatabaseRequest $exportDatabaseRequest, ExportDatabaseResponse $exportDatabaseResponse){
+    public function execute(ExportDatabaseRequest $exportDatabaseRequest, ExportDatabaseResponse $exportDatabaseResponse)
+    {
 
-        try{
+        try {
             $this->checkAuthorization($exportDatabaseRequest->currentUserId);
 
-            $zip=new ZipArchive();
-            $tempZip=tempnam(ini_get('upload_tmp_dir'), 'TMPZIPDB_');
+            $zip = new ZipArchive();
+            $tempZip = tempnam(ini_get('upload_tmp_dir'), 'TMPZIPDB_');
             $zip->open($tempZip, ZipArchive::OVERWRITE);
 
             $databaseDumpedFile = $this->databaseDumperInterface->getDatabaseDumpFile();
 
-            $date=Date('Ymd_his');
+            $date = Date('Ymd_his');
             $zip->addFile($databaseDumpedFile, "export_database_$date.sql");
 
             Util::addStoredFilesInZip($zip, null);
@@ -43,27 +46,20 @@ class ExportDatabase{
             $exportDatabaseResponse->status = 200;
             $exportDatabaseResponse->statusText = 'OK';
             $exportDatabaseResponse->zipFile = $tempZip;
-            $exportDatabaseResponse->fileName = "export_database_".$date.".zip";
-
-        }catch(GaelOException $e){
+            $exportDatabaseResponse->fileName = "export_database_" . $date . ".zip";
+        } catch (GaelOException $e) {
             $exportDatabaseResponse->status = $e->statusCode;
             $exportDatabaseResponse->statusText = $e->statusText;
-
-        }catch (Exception $e){
+        } catch (Exception $e) {
             throw $e;
         };
-
-
-
     }
 
-
-
-    private function checkAuthorization(int $userId) : void {
+    private function checkAuthorization(int $userId): void
+    {
         $this->authorizationUserService->setUserId($userId);
-        if( ! $this->authorizationUserService->isAdmin($userId)) {
+        if (!$this->authorizationUserService->isAdmin($userId)) {
             throw new GaelOForbiddenException();
         };
     }
-
 }

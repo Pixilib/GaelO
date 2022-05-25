@@ -9,7 +9,8 @@ use App\GaelO\Services\AuthorizationService\AuthorizationStudyService;
 use App\GaelO\Services\ExportStudyService;
 use Exception;
 
-class ExportStudyData{
+class ExportStudyData
+{
 
     private AuthorizationStudyService $authorizationStudyService;
     private ExportStudyService $exportStudyService;
@@ -20,13 +21,16 @@ class ExportStudyData{
         $this->exportStudyService = $exportStudyService;
     }
 
-    public function execute(ExportStudyDataRequest $exportStudyDataRequest, ExportStudyDataResponse $exportStudyDataResponse){
+    public function execute(ExportStudyDataRequest $exportStudyDataRequest, ExportStudyDataResponse $exportStudyDataResponse)
+    {
 
-        try{
+        try {
 
-            $this->checkAuthorization($exportStudyDataRequest->currentUserId, $exportStudyDataRequest->studyName);
+            $studyName = $exportStudyDataRequest->studyName;
 
-            $this->exportStudyService->setStudyName($exportStudyDataRequest->studyName);
+            $this->checkAuthorization($exportStudyDataRequest->currentUserId, $studyName);
+
+            $this->exportStudyService->setStudyName($studyName);
 
             $this->exportStudyService->exportPatientTable();
             $this->exportStudyService->exportVisitTable();
@@ -41,26 +45,23 @@ class ExportStudyData{
             $exportStudyDataResponse->zipFile = $exportResults->getResultsAsZip();
             $exportStudyDataResponse->status = 200;
             $exportStudyDataResponse->statusText = 'OK';
-            $exportStudyDataResponse->fileName = "export_".$exportStudyDataRequest->studyName.".zip";
-
-        }catch(GaelOException $e){
+            $exportStudyDataResponse->fileName = "export_" . $studyName . ".zip";
+        } catch (GaelOException $e) {
 
             $exportStudyDataResponse->status = $e->statusCode;
             $exportStudyDataResponse->statusText = $e->statusText;
-
-        }catch (Exception $e){
+        } catch (Exception $e) {
             throw $e;
         };
-
     }
 
-    private function checkAuthorization(int $currentUserId, string $studyName){
+    private function checkAuthorization(int $currentUserId, string $studyName)
+    {
 
         $this->authorizationStudyService->setStudyName($studyName);
         $this->authorizationStudyService->setUserId($currentUserId);
-        if( ! $this->authorizationStudyService->isAllowedStudy(Constants::ROLE_SUPERVISOR)){
+        if (!$this->authorizationStudyService->isAllowedStudy(Constants::ROLE_SUPERVISOR)) {
             throw new GaelOForbiddenException();
         }
-
     }
 }

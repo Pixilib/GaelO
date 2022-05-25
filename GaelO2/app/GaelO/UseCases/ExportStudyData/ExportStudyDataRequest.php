@@ -2,7 +2,8 @@
 
 namespace App\GaelO\UseCases\ExportStudyData;
 
-class ExportStudyDataRequest{
+class ExportStudyDataRequest
+{
     public int $currentUserId;
     public string $studyName;
 }

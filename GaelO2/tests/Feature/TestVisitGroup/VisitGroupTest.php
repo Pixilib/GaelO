@@ -75,10 +75,10 @@ class VisitGroupTest extends TestCase
 
     }
 
-    public function testDeleteVisitGroupShouldFailBecauseExistingVisitTypes(){
+    public function testDeleteVisitGroupShouldFailBecauseExistingVisits(){
         AuthorizationTools::actAsAdmin(true);
         $visitType = VisitType::factory()->create();
-        $this->json('DELETE', 'api/visit-groups/'.$visitType->visitGroup->id)->assertStatus(400);
+        $this->json('DELETE', 'api/visit-groups/'.$visitType->visitGroup->id)->assertStatus(403);
     }
 
     public function testCreateVisitGroupShouldFailBecauseExistingVisits(){

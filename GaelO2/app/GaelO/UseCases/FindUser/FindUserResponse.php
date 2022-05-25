@@ -2,7 +2,8 @@
 
 namespace App\GaelO\UseCases\FindUser;
 
-class FindUserResponse {
+class FindUserResponse
+{
     public $body = null;
     public int $status;
     public string $statusText;

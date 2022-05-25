@@ -2,6 +2,7 @@
 
 namespace App\GaelO\UseCases\ForgotPassword;
 
-class ForgotPasswordRequest {
+class ForgotPasswordRequest
+{
     public string $email;
 }

@@ -2,7 +2,8 @@
 
 namespace App\GaelO\UseCases\DeleteVisit;
 
-class DeleteVisitRequest {
+class DeleteVisitRequest
+{
     public int $currentUserId;
     public string $role;
     public int $visitId;

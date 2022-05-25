@@ -1,6 +1,6 @@
 Salim TODO :
 
-- Relecture UseCases : Fait jusqu'a DeleteUserRole Inclus
+- Relecture UseCases : Fait jusqu'a ForgotPassword Inclus
 
 - Refac : Relation VisitGroupDetails à revoir
 - Refac : setVisitData de VisitEntity à revoir
@@ -23,14 +23,10 @@ Salim TODO :
 
 Reste Autres :
 - Orthanc Send to peer
-- Mise en place scheduler
-- Monitoring scheduler via tracker
+- Mise en place scheduler, monitoring scheduler par email pourra etre personnalisé (ex que si nouveau patient...)
 - Dicom liée aux review  => privilegier les associated file des reviews
 - Mettre en place des event pour faire de la logique custom aux upload ect... ?
-
-- OHIF essayer de faire passer le role dans les requetes => Faire un GaelO plugin dans OHIF
-pourra modifier cornerstoneWADOImageLoader pour injecter l'etude courante
-et devrait pouvoir recuperer des info soit via le useQuery soit via un localstorage
+- Plugin GaelO dans OHIF (profil reviewer)
 
 --- Etudes ancillaires ---
 Ne doit pas pouvoir faire les relance d'upload => Voir avec Emilie
