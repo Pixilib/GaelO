@@ -2,7 +2,8 @@
 
 namespace App\GaelO\UseCases\GetDicomsFileSupervisor;
 
-class GetDicomsFileSupervisorRequest {
+class GetDicomsFileSupervisorRequest
+{
     public string $studyName;
     public int $currentUserId;
     public array $seriesInstanceUID = [];

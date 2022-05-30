@@ -2,7 +2,8 @@
 
 namespace App\GaelO\UseCases\GetCreatableVisits;
 
-class GetCreatableVisitsResponse{
+class GetCreatableVisitsResponse
+{
     public $body = null;
     public int $status;
     public string $statusText;

@@ -10,11 +10,11 @@ use App\GaelO\Services\AuthorizationService\AuthorizationPatientService;
 use App\GaelO\Services\GaelOStudiesService\AbstractGaelOStudy;
 use Exception;
 
-class GetCreatableVisits{
+class GetCreatableVisits
+{
 
     private AuthorizationPatientService $authorizationPatientService;
     private PatientRepositoryInterface $patientRepositoryInterface;
-
 
     public function __construct(AuthorizationPatientService $authorizationPatientService, PatientRepositoryInterface $patientRepositoryInterface)
     {
@@ -22,14 +22,15 @@ class GetCreatableVisits{
         $this->patientRepositoryInterface = $patientRepositoryInterface;
     }
 
-    public function execute(GetCreatableVisitsRequest $getCreatableVisitsRequest, GetCreatableVisitsResponse $getCreatableVisitsResponse){
+    public function execute(GetCreatableVisitsRequest $getCreatableVisitsRequest, GetCreatableVisitsResponse $getCreatableVisitsResponse)
+    {
 
-        try{
+        try {
             $patientId = $getCreatableVisitsRequest->patientId;
             $patientEntity = $this->patientRepositoryInterface->find($patientId);
             $studyName = $patientEntity['study_name'];
 
-            $this->checkAuthorization($getCreatableVisitsRequest->currentUserId, $getCreatableVisitsRequest->patientId, $studyName);
+            $this->checkAuthorization($getCreatableVisitsRequest->currentUserId, $patientId, $studyName);
 
             //Get Visit To Create from specific Study Object
             $studyObject = AbstractGaelOStudy::getSpecificStudyObject($studyName);
@@ -38,26 +39,22 @@ class GetCreatableVisits{
             $getCreatableVisitsResponse->status = 200;
             $getCreatableVisitsResponse->statusText = 'OK';
             $getCreatableVisitsResponse->body = $visitToCreate;
-
-        } catch (GaelOException $e){
-
+        } catch (GaelOException $e) {
             $getCreatableVisitsResponse->status = $e->statusCode;
             $getCreatableVisitsResponse->statusText = $e->statusText;
             $getCreatableVisitsResponse->body = $e->getErrorBody();
-
-        } catch (Exception $e){
+        } catch (Exception $e) {
             throw $e;
         }
     }
 
-    private function checkAuthorization(int $userId, string $patientId, string $studyName){
+    private function checkAuthorization(int $userId, string $patientId, string $studyName)
+    {
         $this->authorizationPatientService->setUserId($userId);
         $this->authorizationPatientService->setStudyName($studyName);
         $this->authorizationPatientService->setPatientId($patientId);
-        if ( ! $this->authorizationPatientService->isPatientAllowed(Constants::ROLE_INVESTIGATOR) ){
+        if (!$this->authorizationPatientService->isPatientAllowed(Constants::ROLE_INVESTIGATOR)) {
             throw new GaelOForbiddenException();
         }
-
     }
-
 }
