@@ -7,6 +7,7 @@ use App\GaelO\Exceptions\GaelOBadRequestException;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\DicomSeriesRepositoryInterface;
+use App\GaelO\Interfaces\Repositories\StudyRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
 use App\GaelO\Services\AuthorizationService\AuthorizationStudyService;
 use App\GaelO\Services\OrthancService;
@@ -19,15 +20,18 @@ class GetDicomsFileSupervisor
     private DicomSeriesRepositoryInterface $dicomSeriesRepositoryInterface;
     private OrthancService $orthancService;
     private VisitRepositoryInterface $visitRepositoryInterface;
+    private StudyRepositoryInterface $studyRepositoryInterface;
 
     public function __construct(
         OrthancService $orthancService,
         AuthorizationStudyService $authorizationStudyService,
         DicomSeriesRepositoryInterface $dicomSeriesRepositoryInterface,
+        StudyRepositoryInterface $studyRepositoryInterface,
         VisitRepositoryInterface $visitRepositoryInterface
     ) {
         $this->authorizationStudyService = $authorizationStudyService;
         $this->dicomSeriesRepositoryInterface = $dicomSeriesRepositoryInterface;
+        $this->studyRepositoryInterface = $studyRepositoryInterface;
         $this->orthancService = $orthancService;
         $this->orthancService->setOrthancServer(true);
         $this->visitRepositoryInterface = $visitRepositoryInterface;
@@ -61,10 +65,18 @@ class GetDicomsFileSupervisor
                 throw new GaelOBadRequestException('Requested Series should come from the same study');
             }
 
-            //SK ICI DOIT ACCEPTER SI ETUDE ANCILLAIRE
+            //Retrieve study information, in case being an ancillary study we need to retrieve original study dicom
+            $originalStudyName = $uniqueStudyName[0];
+
+            //Get original studyname if called study is an ancillary one
+            $requestedStudyName = $this->studyRepositoryInterface->find($getDicomsFileSupervisorRequest->studyName);
+            $originalRequestedStudyName = $requestedStudyName->getOriginalStudyName();
+
+            //called original study and dicom original study shall be identical
+            if( $originalStudyName !== $originalRequestedStudyName) throw new GaelOForbiddenException("Requested Study in not original or ancillary study of these dicoms");
 
             //Check that currentUser is Supervisor in this study
-            $this->checkAuthorization($getDicomsFileSupervisorRequest->currentUserId, $uniqueStudyName[0]);
+            $this->checkAuthorization($getDicomsFileSupervisorRequest->currentUserId, $getDicomsFileSupervisorRequest->studyName);
 
             //getOrthancSeriesIdArray
             $this->orthancSeriesIDs = $this->dicomSeriesRepositoryInterface->getSeriesOrthancIDOfSeriesInstanceUID($getDicomsFileSupervisorRequest->seriesInstanceUID, true);
@@ -74,7 +86,6 @@ class GetDicomsFileSupervisor
             $getDicomsFileSupervisorResponse->status = 200;
             $getDicomsFileSupervisorResponse->statusText = 'OK';
         } catch (GaelOException $e) {
-
             $getDicomsFileSupervisorResponse->status = $e->statusCode;
             $getDicomsFileSupervisorResponse->statusText = $e->statusText;
             $getDicomsFileSupervisorResponse->body = $e->getErrorBody();
