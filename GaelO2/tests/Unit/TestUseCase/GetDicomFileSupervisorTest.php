@@ -24,7 +24,7 @@ class GetDicomFileSupervisorTest extends TestCase
     {
         parent::setUp();
 
-        $orthancServiceMock = Mockery::mock(OrthancService::class);
+        $orthancServiceMock = $this->partialMock(OrthancService::class);
         $orthancServiceMock->shouldReceive('getOrthancZipStream')
             ->andReturn('FileTest');
 
