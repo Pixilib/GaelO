@@ -1,6 +1,6 @@
 Salim TODO :
 
-- Relecture UseCases : Fait jusqu'a GetDicomFilesSupervisor Inclus
+- Relecture UseCases : Fait jusqu'a GetDocumentationFile Inclus
 
 - Refac : Relation VisitGroupDetails à revoir
 - Refac : setVisitData de VisitEntity à revoir
@@ -21,18 +21,16 @@ Salim TODO :
 => utiliser les entity en sortie de repository ? et dissocier la lecture de l'entity de l'output ?
 ---- /Refactoring Entity ------
 
+--- Etudes ancillaires ---
+Ne doit pas pouvoir faire les relance d'upload => Voir avec Emilie
+--- /Etudes ancillaires ---
+
 Reste Autres :
 - Orthanc Send to peer
 - Mise en place scheduler, monitoring scheduler par email pourra etre personnalisé (ex que si nouveau patient...)
 - Dicom liée aux review  => privilegier les associated file des reviews
 - Mettre en place des event pour faire de la logique custom aux upload ect... ?
 - Plugin GaelO dans OHIF (profil reviewer)
-
---- Etudes ancillaires ---
-Ne doit pas pouvoir faire les relance d'upload => Voir avec Emilie
-Adapter les points de lecture :
-GetDicomFileSupervisor => Passe par les seriesUID mais le RBAC doit autoriser les etude ancillaire
---- /Etudes ancillaires ---
 
 **** Tests ***
 Test feature : visit et autres (dicom...)

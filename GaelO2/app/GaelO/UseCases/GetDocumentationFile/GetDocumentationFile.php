@@ -10,7 +10,8 @@ use App\GaelO\Interfaces\Repositories\DocumentationRepositoryInterface;
 use App\GaelO\Services\AuthorizationService\AuthorizationUserService;
 use Exception;
 
-class GetDocumentationFile{
+class GetDocumentationFile
+{
 
     private DocumentationRepositoryInterface $documentationRepositoryInterface;
     private AuthorizationUserService $authorizationUserService;
@@ -22,42 +23,39 @@ class GetDocumentationFile{
         $this->frameworkInterface = $frameworkInterface;
     }
 
-    public function execute(GetDocumentationFileRequest $getDocumentationFileRequest, GetDocumentationFileResponse $getdocumentationFileReponse){
-        try{
+    public function execute(GetDocumentationFileRequest $getDocumentationFileRequest, GetDocumentationFileResponse $getdocumentationFileReponse)
+    {
+        try {
 
             $documentationData = $this->documentationRepositoryInterface->find($getDocumentationFileRequest->id, false);
 
             $documentationAllowedRoles = [];
 
-            if($documentationData['investigator']) $documentationAllowedRoles[]= Constants::ROLE_INVESTIGATOR;
-            if($documentationData['monitor']) $documentationAllowedRoles[]= Constants::ROLE_CONTROLLER;
-            if($documentationData['controller']) $documentationAllowedRoles[]= Constants::ROLE_CONTROLLER;
-            if($documentationData['reviewer']) $documentationAllowedRoles[]= Constants::ROLE_REVIEWER;
+            if ($documentationData['investigator']) $documentationAllowedRoles[] = Constants::ROLE_INVESTIGATOR;
+            if ($documentationData['monitor']) $documentationAllowedRoles[] = Constants::ROLE_CONTROLLER;
+            if ($documentationData['controller']) $documentationAllowedRoles[] = Constants::ROLE_CONTROLLER;
+            if ($documentationData['reviewer']) $documentationAllowedRoles[] = Constants::ROLE_REVIEWER;
 
-            $this->checkAuthorization($getDocumentationFileRequest->currentUserId, $documentationData['study_name'], $documentationAllowedRoles );
+            $this->checkAuthorization($getDocumentationFileRequest->currentUserId, $documentationData['study_name'], $documentationAllowedRoles);
 
             $getdocumentationFileReponse->status = 200;
             $getdocumentationFileReponse->statusText = 'OK';
             $getdocumentationFileReponse->filePath = $documentationData['path'];
-            $getdocumentationFileReponse->filename = $documentationData['name'].'_'.$documentationData['version'].'.pdf';
-
-        } catch (GaelOException $e){
+            $getdocumentationFileReponse->filename = $documentationData['name'] . '_' . $documentationData['version'] . '.pdf';
+        } catch (GaelOException $e) {
             $getdocumentationFileReponse->status = $e->statusCode;
             $getdocumentationFileReponse->statusText = $e->statusText;
             $getdocumentationFileReponse->body = $e->getErrorBody();
-
-        } catch (Exception $e){
-
+        } catch (Exception $e) {
             throw $e;
-
         }
-
     }
 
-    private function checkAuthorization($currentUserId, $studyName, $documentationAllowedRoles){
+    private function checkAuthorization($currentUserId, $studyName, $documentationAllowedRoles)
+    {
         $this->authorizationUserService->setUserId($currentUserId);
         //Disallowed if user not supervisor and not in the granted role for this documentation
-        if ( ! $this->authorizationUserService->isRoleAllowed(Constants::ROLE_SUPERVISOR, $studyName) && ! $this->authorizationUserService->isOneOfRoleAllowed($documentationAllowedRoles, $studyName)){
+        if (!$this->authorizationUserService->isRoleAllowed(Constants::ROLE_SUPERVISOR, $studyName) && !$this->authorizationUserService->isOneOfRoleAllowed($documentationAllowedRoles, $studyName)) {
             throw new GaelOForbiddenException();
         }
     }

@@ -15,7 +15,6 @@ use Exception;
 
 class GetDicomsStudiesFromStudy
 {
-
     private AuthorizationStudyService $authorizationStudyService;
     private VisitRepositoryInterface $visitRepositoryInterface;
     private DicomStudyRepositoryInterface $dicomStudyRepositoryInterface;
