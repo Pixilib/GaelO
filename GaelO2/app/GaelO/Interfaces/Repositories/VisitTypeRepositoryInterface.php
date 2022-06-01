@@ -5,7 +5,7 @@ namespace App\GaelO\Interfaces\Repositories;
 interface VisitTypeRepositoryInterface
 {
 
-    public function find($id) : array ;
+    public function find(int $id, bool $withVisitGroup) : array ;
 
     public function findByName(string $studyName, string $visitGroupName, string $visitTypeName) : array;
 

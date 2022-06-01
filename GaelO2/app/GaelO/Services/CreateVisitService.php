@@ -29,7 +29,7 @@ class CreateVisitService
         ?string $reasonForNotDone
     ): int {
 
-        $visitTypeData = $this->visitTypeRepositoryInterface->find($visitTypeId);
+        $visitTypeData = $this->visitTypeRepositoryInterface->find($visitTypeId, false);
         $visitTypeEntity = VisitTypeEntity::fillFromDBReponseArray($visitTypeData);
 
         $stateInvestigatorForm = Constants::INVESTIGATOR_FORM_NOT_DONE;

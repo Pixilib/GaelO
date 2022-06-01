@@ -201,10 +201,8 @@ class DicomSeriesTest extends TestCase
 
     public function testReactivateStudyShouldFailExistingAlreadyActivatedStudy()
     {
-        //SK ICI SUREMENT LE TEST DOIT ETRE FAIT DANS LE SERVICE
         $userId = AuthorizationTools::actAsAdmin(false);
         AuthorizationTools::addRoleToUser($userId, Constants::ROLE_SUPERVISOR, $this->studyName);
-
         $response = $this->patch('api/dicom-study/' . $this->dicomSeries->dicomStudy->study_uid, ['reason' => 'correct study']);
         $response->assertStatus(400);
     }

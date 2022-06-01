@@ -1,6 +1,6 @@
 Salim TODO :
 
-- Relecture UseCases : Fait jusqu'a GetDocumentationFile Inclus
+- Relecture UseCases : Fait jusqu'a GetPatientsInStudyFromCenters Inclus
 
 - Refac : Relation VisitGroupDetails à revoir
 - Refac : setVisitData de VisitEntity à revoir

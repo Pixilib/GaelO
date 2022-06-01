@@ -36,7 +36,7 @@ class GetReviewsMetadataFromVisitType {
 
             $this->checkAuthorization($getReviewsMetadataFromVisitTypeRequest->currentUserId, $studyName);
 
-            $visitTypeEntity = $this->visitTypeRepository->find($getReviewsMetadataFromVisitTypeRequest->visitTypeId);
+            $visitTypeEntity = $this->visitTypeRepository->find($getReviewsMetadataFromVisitTypeRequest->visitTypeId, false);
 
             $visitGroupEntity = $this->visitGroupRepository->find($visitTypeEntity['visit_group_id']);
 

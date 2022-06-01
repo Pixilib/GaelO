@@ -2,7 +2,8 @@
 
 namespace App\GaelO\UseCases\GetFileOfForm;
 
-class GetFileOfFormResponse{
+class GetFileOfFormResponse
+{
     public $body = null;
     public ?string $filePath = null;
     public ?string $filename = null;

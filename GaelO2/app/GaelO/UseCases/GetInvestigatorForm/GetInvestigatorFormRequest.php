@@ -2,7 +2,8 @@
 
 namespace App\GaelO\UseCases\GetInvestigatorForm;
 
-class GetInvestigatorFormRequest{
+class GetInvestigatorFormRequest
+{
     public int $currentUserId;
     public string $studyName;
     public int $visitId;

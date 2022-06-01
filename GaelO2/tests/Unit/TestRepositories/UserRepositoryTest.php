@@ -98,8 +98,6 @@ class UserRepositoryTest extends TestCase
         $this->assertNotEquals($updatedEntity['center_code'], $userToModify['center_code']);
         $this->assertNotEquals($updatedEntity['job'], $userToModify['job']);
         $this->assertNotEquals($updatedEntity['updated_at'], $userToModify['updated_at']);
-        //SK ICI PROBLEME CAR LE USECASE ACCEDE DIRECTREMENT AU MODIFY
-        //AJOUTER LES FONCTION D UPDATE POUR TOUS LES CHAMP POUR LE REPOSITORY
         $this->assertEquals($updatedEntity['password'], $userToModify['password']);
     }
 

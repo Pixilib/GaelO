@@ -24,7 +24,7 @@ class GetVisitType {
         try{
 
             $this->checkAuthorization($getVisitTypeRequest->currentUserId);
-            $visitType = $this->visitTypeRepositoryInterface->find($getVisitTypeRequest->visitTypeId);
+            $visitType = $this->visitTypeRepositoryInterface->find($getVisitTypeRequest->visitTypeId, false);
             $visitTypeEntity = VisitTypeEntity::fillFromDBReponseArray($visitType);
             $getVisitTypeResponse->body = $visitTypeEntity;
             $getVisitTypeResponse->status = 200;
