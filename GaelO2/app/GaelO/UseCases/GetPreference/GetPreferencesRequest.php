@@ -2,7 +2,7 @@
 
 namespace App\GaelO\UseCases\GetPreference;
 
-class GetPreferencesRequest {
+class GetPreferencesRequest
+{
     public int $currentUserId;
-
 }

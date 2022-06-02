@@ -27,8 +27,6 @@ class GetReviewsFromVisitType
 
     public function execute(GetReviewsFromVisitTypeRequest $getReviewsFromVisitTypeRequest, GetReviewsFromVisitTypeResponse $getReviewsFromVisitTypeResponse)
     {
-
-
         try {
 
             $studyName = $getReviewsFromVisitTypeRequest->studyName;
@@ -37,7 +35,9 @@ class GetReviewsFromVisitType
             //Get Visits in the asked visitTypeId
             $visits = $this->visitRepositoryInterface->getVisitsInVisitType($getReviewsFromVisitTypeRequest->visitTypeId, false, null, false);
             //make visitsId array
-            $visitsId = array_map(function($visit){ return $visit['id']; }, $visits);
+            $visitsId = array_map(function ($visit) {
+                return $visit['id'];
+            }, $visits);
 
             //Get Validated review for these visits
             $reviews = $this->reviewRepositoryInterface->getReviewsFromVisitIdArrayStudyName($visitsId, $studyName, false, true);
@@ -53,13 +53,10 @@ class GetReviewsFromVisitType
             $getReviewsFromVisitTypeResponse->body = $answer;
             $getReviewsFromVisitTypeResponse->status = 200;
             $getReviewsFromVisitTypeResponse->statusText = 'OK';
-
         } catch (GaelOException $e) {
-
             $getReviewsFromVisitTypeResponse->body = $e->getErrorBody();
             $getReviewsFromVisitTypeResponse->status = $e->statusCode;
             $getReviewsFromVisitTypeResponse->statusText = $e->statusText;
-
         } catch (Exception $e) {
             throw $e;
         }

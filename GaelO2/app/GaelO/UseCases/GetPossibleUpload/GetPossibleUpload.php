@@ -53,25 +53,22 @@ class GetPossibleUpload
             $getPossibleUploadResponse->body = $answerArray;
             $getPossibleUploadResponse->status = 200;
             $getPossibleUploadResponse->statusText = 'OK';
-
         } catch (GaelOException $e) {
 
             $getPossibleUploadResponse->body = $e->getErrorBody();
             $getPossibleUploadResponse->status = $e->statusCode;
             $getPossibleUploadResponse->statusText = $e->statusText;
-
         } catch (Exception $e) {
 
             throw $e;
-
         }
     }
 
-    private function checkAuthorization(int $userId, string $studyName) : void
+    private function checkAuthorization(int $userId, string $studyName): void
     {
         $this->authorizationStudyService->setUserId($userId);
         $this->authorizationStudyService->setStudyName($studyName);
-        if( ! $this->authorizationStudyService->isAllowedStudy(Constants::ROLE_INVESTIGATOR) ){
+        if (!$this->authorizationStudyService->isAllowedStudy(Constants::ROLE_INVESTIGATOR)) {
             throw new GaelOForbiddenException();
         };
     }

@@ -10,7 +10,8 @@ use App\GaelO\Interfaces\Repositories\ReviewRepositoryInterface;
 use App\GaelO\Services\AuthorizationService\AuthorizationReviewService;
 use Exception;
 
-class GetReviewForm {
+class GetReviewForm
+{
 
     private AuthorizationReviewService $authorizationReviewService;
     private ReviewRepositoryInterface $reviewRepositoryInterface;
@@ -18,15 +19,15 @@ class GetReviewForm {
     public function __construct(
         AuthorizationReviewService $authorizationReviewService,
         ReviewRepositoryInterface $reviewRepositoryInterface
-    )
-    {
+    ) {
         $this->authorizationReviewService = $authorizationReviewService;
         $this->reviewRepositoryInterface = $reviewRepositoryInterface;
     }
 
-    public function execute( GetReviewFormRequest $getReviewFormRequest, GetReviewFormResponse $getReviewFormResponse){
+    public function execute(GetReviewFormRequest $getReviewFormRequest, GetReviewFormResponse $getReviewFormResponse)
+    {
 
-        try{
+        try {
 
             $this->checkAuthorization($getReviewFormRequest->currentUserId, $getReviewFormRequest->reviewId);
 
@@ -36,26 +37,21 @@ class GetReviewForm {
             $getReviewFormResponse->body = $review;
             $getReviewFormResponse->status = 200;
             $getReviewFormResponse->statusText = 'OK';
-
-        } catch (GaelOException $e ){
-
+        } catch (GaelOException $e) {
             $getReviewFormResponse->body = $e->getErrorBody();
             $getReviewFormResponse->status = $e->statusCode;
             $getReviewFormResponse->statusText = $e->statusText;
-
-        } catch (Exception $e){
+        } catch (Exception $e) {
             throw $e;
         }
-
     }
 
-    private function checkAuthorization(int $currentUserId, int $reviewId){
+    private function checkAuthorization(int $currentUserId, int $reviewId)
+    {
         $this->authorizationReviewService->setUserId($currentUserId);
         $this->authorizationReviewService->setReviewId($reviewId);
-        if ( ! $this->authorizationReviewService->isReviewAllowed( Constants::ROLE_REVIEWER )){
+        if (!$this->authorizationReviewService->isReviewAllowed(Constants::ROLE_REVIEWER)) {
             throw new GaelOForbiddenException();
         }
-
     }
-
 }

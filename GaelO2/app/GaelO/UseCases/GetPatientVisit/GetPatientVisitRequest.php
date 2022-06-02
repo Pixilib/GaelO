@@ -2,7 +2,8 @@
 
 namespace App\GaelO\UseCases\GetPatientVisit;
 
-class GetPatientVisitRequest {
+class GetPatientVisitRequest
+{
     public int $currentUserId;
     public string $studyName;
     public string $patientId;
