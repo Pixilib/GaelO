@@ -100,8 +100,6 @@
 		</tbody>
 		</table>
 
-		<a href="scripts/export_users.php" class="btn btn-primary">Export Users Details</a>
-
 	</div>
 	
 </div>	
