@@ -2,7 +2,8 @@
 
 namespace App\GaelO\UseCases\GetStudyTrackerRoleAction;
 
-class GetStudyTrackerRoleActionRequest {
+class GetStudyTrackerRoleActionRequest
+{
     public int $currentUserId;
     public string $studyName;
     public string $role;

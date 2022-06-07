@@ -8,7 +8,8 @@ use App\GaelO\Interfaces\Repositories\UserRepositoryInterface;
 use App\GaelO\Services\AuthorizationService\AuthorizationUserService;
 use Exception;
 
-class GetRolesInStudyFromUser{
+class GetRolesInStudyFromUser
+{
 
     private UserRepositoryInterface $userRepositoryInterface;
     private AuthorizationUserService $authorizationUserService;
@@ -19,9 +20,10 @@ class GetRolesInStudyFromUser{
         $this->authorizationUserService = $authorizationUserService;
     }
 
-    public function execute(GetRolesInStudyFromUserRequest $getRolesInStudyFromUserRequest, GetRolesInStudyFromUserResponse $getRolesInStudyFromUserResponse){
+    public function execute(GetRolesInStudyFromUserRequest $getRolesInStudyFromUserRequest, GetRolesInStudyFromUserResponse $getRolesInStudyFromUserResponse)
+    {
 
-        try{
+        try {
             $this->checkAuthorization($getRolesInStudyFromUserRequest->currentUserId, $getRolesInStudyFromUserRequest->userId);
 
             $roles = $this->userRepositoryInterface->getUsersRolesInStudy($getRolesInStudyFromUserRequest->userId, $getRolesInStudyFromUserRequest->studyName);
@@ -29,22 +31,19 @@ class GetRolesInStudyFromUser{
             $getRolesInStudyFromUserResponse->body = $roles;
             $getRolesInStudyFromUserResponse->status = 200;
             $getRolesInStudyFromUserResponse->statusText = 'OK';
-
         } catch (GaelOException $e) {
 
             $getRolesInStudyFromUserResponse->body = $e->getErrorBody();
             $getRolesInStudyFromUserResponse->status = $e->statusCode;
             $getRolesInStudyFromUserResponse->statusText = $e->statusText;
-
         } catch (Exception $e) {
             throw $e;
         }
-
     }
 
-    private function checkAuthorization(int $currentUserId, int $userId) : void
+    private function checkAuthorization(int $currentUserId, int $userId): void
     {
         $this->authorizationUserService->setUserId($currentUserId);
-        if($currentUserId !== $userId && !$this->authorizationUserService->isAdmin()) throw new GaelOForbiddenException();
+        if ($currentUserId !== $userId && !$this->authorizationUserService->isAdmin()) throw new GaelOForbiddenException();
     }
 }

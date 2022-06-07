@@ -2,7 +2,8 @@
 
 namespace App\GaelO\UseCases\GetStudyTrackerByVisit;
 
-class GetStudyTrackerByVisitResponse {
+class GetStudyTrackerByVisitResponse
+{
     public $body = null;
     public int $status;
     public string $statusText;

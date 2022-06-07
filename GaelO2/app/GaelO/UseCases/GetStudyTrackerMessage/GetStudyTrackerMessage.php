@@ -41,7 +41,6 @@ class GetStudyTrackerMessage
             $getStudyTrackerMessageResponse->status = 200;
             $getStudyTrackerMessageResponse->statusText = 'OK';
         } catch (GaelOException $e) {
-
             $getStudyTrackerMessageResponse->body = $e->getErrorBody();
             $getStudyTrackerMessageResponse->status = $e->statusCode;
             $getStudyTrackerMessageResponse->statusText = $e->statusText;

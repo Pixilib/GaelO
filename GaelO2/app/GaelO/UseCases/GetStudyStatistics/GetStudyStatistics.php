@@ -8,7 +8,8 @@ use App\GaelO\Interfaces\Repositories\StudyRepositoryInterface;
 use App\GaelO\Services\AuthorizationService\AuthorizationUserService;
 use Exception;
 
-class GetStudyStatistics {
+class GetStudyStatistics
+{
 
     private AuthorizationUserService $authorizationUserService;
     private StudyRepositoryInterface $studyRepositoryInterface;
@@ -17,12 +18,12 @@ class GetStudyStatistics {
     {
         $this->authorizationUserService = $authorizationUserService;
         $this->studyRepositoryInterface = $studyRepositoryInterface;
-
     }
 
-    public function execute(GetStudyStatisticsRequest $getStudyStatisticsRequest, GetStudyStatisticsResponse $getStudyStatisticsResponse){
+    public function execute(GetStudyStatisticsRequest $getStudyStatisticsRequest, GetStudyStatisticsResponse $getStudyStatisticsResponse)
+    {
 
-        try{
+        try {
             $this->checkAuthorization($getStudyStatisticsRequest->currentUserId);
 
             $studyStatistics = $this->studyRepositoryInterface->getStudyStatistics($getStudyStatisticsRequest->studyName);
@@ -30,26 +31,22 @@ class GetStudyStatistics {
             $getStudyStatisticsResponse->body = $studyStatistics;
             $getStudyStatisticsResponse->status = 200;
             $getStudyStatisticsResponse->statusText = 'OK';
-
-        } catch (GaelOException $e ){
-
+        } catch (GaelOException $e) {
             $getStudyStatisticsResponse->body = $e->getErrorBody();
             $getStudyStatisticsResponse->status = $e->statusCode;
             $getStudyStatisticsResponse->statusText = $e->statusText;
-
-        } catch (Exception $e){
+        } catch (Exception $e) {
             throw $e;
         }
-
     }
 
     //Allowed if user is administrator
-    private function checkAuthorization(int $userId){
+    private function checkAuthorization(int $userId)
+    {
 
         $this->authorizationUserService->setUserId($userId);
-        if ( ! $this->authorizationUserService->isAdmin()) {
+        if (!$this->authorizationUserService->isAdmin()) {
             throw new GaelOForbiddenException();
         }
-
     }
 }

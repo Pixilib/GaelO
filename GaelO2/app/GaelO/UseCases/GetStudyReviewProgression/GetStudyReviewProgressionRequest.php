@@ -2,7 +2,8 @@
 
 namespace App\GaelO\UseCases\GetStudyReviewProgression;
 
-class GetStudyReviewProgressionRequest{
+class GetStudyReviewProgressionRequest
+{
     public string $studyName;
     public int $currentUserId;
 }

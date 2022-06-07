@@ -2,7 +2,8 @@
 
 namespace App\GaelO\UseCases\GetStudiesFromUser;
 
-class GetStudiesFromUserResponse{
+class GetStudiesFromUserResponse
+{
     public $body = null;
     public int $status;
     public string $statusText;

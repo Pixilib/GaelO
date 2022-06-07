@@ -46,7 +46,7 @@ class GetStudiesWithDetails
                     $visitGroupEntity = VisitGroupEntity::fillFromDBReponseArray($visitGroupDetails);
 
                     $studyDetailResponse[$studyName]['visitGroups'][$visitGroupEntity->id] = get_object_vars($visitGroupEntity);
-                    $studyDetailResponse[$studyName]['visitGroups'][$visitGroupEntity->id]['visitTypes']= [];
+                    $studyDetailResponse[$studyName]['visitGroups'][$visitGroupEntity->id]['visitTypes'] = [];
 
                     foreach ($visitGroupDetails['visit_types'] as $visitType) {
                         $visitTypeEntity = VisitTypeEntity::fillFromDBReponseArray($visitType);
@@ -58,13 +58,11 @@ class GetStudiesWithDetails
             $getStudiesWithDetailsResponse->body = $studyDetailResponse;
             $getStudiesWithDetailsResponse->status = 200;
             $getStudiesWithDetailsResponse->statusText = 'OK';
-
         } catch (GaelOException $e) {
 
             $getStudiesWithDetailsResponse->body = $e->getErrorBody();
             $getStudiesWithDetailsResponse->status = $e->statusCode;
             $getStudiesWithDetailsResponse->statusText = $e->statusText;
-
         } catch (Exception $e) {
             throw $e;
         }

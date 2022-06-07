@@ -2,7 +2,8 @@
 
 namespace App\GaelO\UseCases\GetStudyTrackerMessage;
 
-class GetStudyTrackerMessageRequest {
+class GetStudyTrackerMessageRequest
+{
     public int $currentUserId;
     public string $studyName;
 }

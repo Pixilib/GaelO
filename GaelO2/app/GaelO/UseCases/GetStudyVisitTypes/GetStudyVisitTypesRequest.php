@@ -2,7 +2,8 @@
 
 namespace App\GaelO\UseCases\GetStudyVisitTypes;
 
-class GetStudyVisitTypesRequest {
+class GetStudyVisitTypesRequest
+{
     public string $studyName;
     public int $currentUserId;
 }
