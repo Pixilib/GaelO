@@ -12,7 +12,6 @@ use Exception;
 
 class GetCenter
 {
-
     private CenterRepositoryInterface $centerRepositoryInterface;
     private AuthorizationUserService $authorizationUserService;
 

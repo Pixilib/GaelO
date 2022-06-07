@@ -1,6 +1,6 @@
 Salim TODO :
 
-- Relecture UseCases : Fait jusqu'a GetStudyVisitTypes Inclus
+- Relecture UseCases : Fait jusqu'a GetUser Inclus
 
 - Refac : GetStudiesWithDetails relation VisitGroupDetails et voir l'entity d'output
 - Refac : Relation VisitGroupDetails à revoir

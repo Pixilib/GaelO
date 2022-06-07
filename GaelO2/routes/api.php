@@ -156,7 +156,7 @@ Route::middleware(['auth:sanctum', 'verified', 'activated'])->group(function () 
     Route::get('orthanc/{path?}', [ReverseProxyController::class, 'dicomWebReverseProxy'])->where(['path' => '.*']);
 
     //Tracker Routes
-    Route::get('tracker', [TrackerController::class, 'getTracker']);
+    Route::get('tracker', [TrackerController::class, 'getAdminTracker']);
     Route::get('studies/{studyName}/tracker/{role}', [TrackerController::class, 'getStudyTrackerByRole']);
     Route::get('studies/{studyName}/visits/{visitId}/tracker', [TrackerController::class, 'getStudyTrackerByVisit']);
 

@@ -16,7 +16,7 @@ class GetAssociatedDataForInvestigator
     private InvestigatorFormService $investigatorFormService;
     private VisitRepositoryInterface $visitRepositoryInterface;
 
-    public function __construct(AuthorizationVisitService $authorizationVisitService, VisitRepositoryInterface $visitRepositoryInterface,InvestigatorFormService $investigatorFormService)
+    public function __construct(AuthorizationVisitService $authorizationVisitService, VisitRepositoryInterface $visitRepositoryInterface, InvestigatorFormService $investigatorFormService)
     {
         $this->authorizationVisitService = $authorizationVisitService;
         $this->investigatorFormService = $investigatorFormService;
@@ -57,7 +57,7 @@ class GetAssociatedDataForInvestigator
         $this->authorizationVisitService->setStudyName($studyName);
         $this->authorizationVisitService->setVisitId($visitId);
 
-        if( ! $this->authorizationVisitService->isVisitAllowed($role)){
+        if (!$this->authorizationVisitService->isVisitAllowed($role)) {
             throw new GaelOForbiddenException();
         }
     }
