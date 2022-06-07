@@ -749,6 +749,34 @@ function make_interface_tableau_review_supervisor($data_reviews)
 				?>
 			</tr>
 			<tr>
+				<td>Associated Files</td>
+				<?php
+				for ($i = 0; $i < $res_nb_reviews; $i++) {
+					$reviewObject = $data_reviews[$i];
+					$dataSpecific = $reviewObject->getSpecificData();
+				?>
+					<td style="text-align:unset;">
+						<div id="dropdown_dl_associated" style="display: inline-block">
+							<button id="dropdownMenuButton"  class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+								Files
+  							</button>
+							<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+								<?php
+								$associatedFiles = $reviewObject->associatedFiles;
+									foreach($associatedFiles as $filekey => $fileName){
+										?>
+										<a class="dropdown-item" href="scripts/get_review_attached_file.php?id_visit=<?= $reviewObject->id_visit ?>&file_key=<?= $filekey ?>" value=<?= $filekey ?> > <?= $filekey ?> </a>
+										<?php
+									}
+								?>
+							</div>
+						</div>
+					</td>
+				<?php
+				}
+				?>
+			</tr>
+			<tr>
 				<td>Status</td>
 				<?php
 				for ($i = 0; $i < $res_nb_reviews; $i++) {

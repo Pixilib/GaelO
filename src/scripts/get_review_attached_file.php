@@ -28,7 +28,7 @@ $local=$_SESSION['role'] == User::INVESTIGATOR ? true : false;
 $visitObject=new Visit($idVisit, $linkpdo);
 $accessCheck=$userObject->isRoleAllowed($visitObject->study, $_SESSION['role']);
 
-if ($accessCheck && in_array($_SESSION['role'], array(User::INVESTIGATOR, User::REVIEWER))) {
+if ($accessCheck && in_array($_SESSION['role'], array(User::INVESTIGATOR, User::REVIEWER, User::SUPERVISOR))) {
     
 	if ($_SESSION['role'] == User::INVESTIGATOR) $reviewObject=$visitObject->getReviewsObject(true);
 	else $reviewObject=$visitObject->queryExistingReviewForReviewer($_SESSION['username']);
