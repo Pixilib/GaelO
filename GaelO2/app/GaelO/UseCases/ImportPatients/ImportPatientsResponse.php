@@ -2,7 +2,8 @@
 
 namespace App\GaelO\UseCases\ImportPatients;
 
-class ImportPatientsResponse {
+class ImportPatientsResponse
+{
     public $body = null;
     public int $status;
     public string $statusText;
