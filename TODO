@@ -1,10 +1,11 @@
 Salim TODO :
 
-- Relecture UseCases : Fait jusqu'a GetUser Inclus
+- Relecture UseCases : Fait jusqu'a GetVisitType Inclus
 
 - Refac : GetStudiesWithDetails relation VisitGroupDetails et voir l'entity d'output
 - Refac : Relation VisitGroupDetails à revoir
 - Refac : setVisitData de VisitEntity à revoir
+- Refac : GetVisit pourrait un avoir un accès plus direct aux données (review status + visit context + user details)
 
 - Get Creatable Visit, retourner les visitType entity des créables ? 
 - CreateVisit => Verifier que la visite à creer est bien créable niveau backend

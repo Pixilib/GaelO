@@ -9,19 +9,23 @@ use App\GaelO\Repositories\VisitGroupRepository;
 use App\GaelO\Services\AuthorizationService\AuthorizationUserService;
 use Exception;
 
-class GetVisitGroup {
+class GetVisitGroup
+{
 
     private VisitGroupRepository $visitGroupRepository;
     private AuthorizationUserService $authorizationUserService;
 
-    public function __construct(VisitGroupRepository $visitGroupRepository, AuthorizationUserService $authorizationUserService){
+    public function __construct(VisitGroupRepository $visitGroupRepository, AuthorizationUserService $authorizationUserService)
+    {
         $this->visitGroupRepository = $visitGroupRepository;
         $this->authorizationUserService = $authorizationUserService;
     }
 
-    public function execute(GetVisitGroupRequest $getVisitGroupRequest, GetVisitGroupResponse $getVisitTypeResponse){
+    public function execute(GetVisitGroupRequest $getVisitGroupRequest, GetVisitGroupResponse $getVisitTypeResponse)
+    {
 
-        try{
+        try {
+
             $this->checkAuthorization($getVisitGroupRequest->currentUserId);
             $visitGroupData = $this->visitGroupRepository->find($getVisitGroupRequest->visitGroupId);
             $visitGroupEntity = VisitGroupEntity::fillFromDBReponseArray($visitGroupData);
@@ -29,24 +33,20 @@ class GetVisitGroup {
             $getVisitTypeResponse->status = 200;
             $getVisitTypeResponse->statusText = 'OK';
 
-        } catch (GaelOException $e){
-
+        } catch (GaelOException $e) {
             $getVisitTypeResponse->body = $e->getErrorBody();
             $getVisitTypeResponse->status = $e->statusCode;
             $getVisitTypeResponse->statusText = $e->statusText;
-
-        } catch (Exception $e){
+        } catch (Exception $e) {
             throw $e;
         }
-
-
     }
 
-    private function checkAuthorization(int $userId){
+    private function checkAuthorization(int $userId)
+    {
         $this->authorizationUserService->setUserId($userId);
-        if( ! $this->authorizationUserService->isAdmin() ) {
+        if (!$this->authorizationUserService->isAdmin()) {
             throw new GaelOForbiddenException();
         }
-
     }
 }

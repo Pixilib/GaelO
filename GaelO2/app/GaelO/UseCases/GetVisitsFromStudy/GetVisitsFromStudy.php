@@ -41,7 +41,6 @@ class GetVisitsFromStudy
                 //Get Original Study name for ancilaries studies
                 $studyEntity = $this->studyRepositoryInterface->find($studyName);
                 $originalStudyName = $studyEntity->getOriginalStudyName($studyEntity);
-
                 $dbData = $this->visitRepositoryInterface->getVisitsInStudy($originalStudyName, true, true, false);
             } else {
                 $dbData = $this->visitRepositoryInterface->getVisitsInVisitType($getVisitsFromStudyRequest->visitTypeId, true, $studyName, false, true);
@@ -64,7 +63,6 @@ class GetVisitsFromStudy
             $getVisitsFromStudyResponse->status = 200;
             $getVisitsFromStudyResponse->statusText = 'OK';
         } catch (GaelOException $e) {
-
             $getVisitsFromStudyResponse->body = $e->getErrorBody();
             $getVisitsFromStudyResponse->status  = $e->statusCode;
             $getVisitsFromStudyResponse->statusText = $e->statusText;

@@ -2,7 +2,8 @@
 
 namespace App\GaelO\UseCases\GetVisitsFromStudy;
 
-class GetVisitsFromStudyResponse {
+class GetVisitsFromStudyResponse
+{
     public $body = null;
     public int $status;
     public string $statusText;

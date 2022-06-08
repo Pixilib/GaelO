@@ -28,12 +28,13 @@ class GetVisit {
     public function execute(GetVisitRequest $getVisitRequest, GetVisitResponse $getVisitResponse){
 
         try{
-
             $visitId = $getVisitRequest->visitId;
-            $this->checkAuthorization($visitId, $getVisitRequest->currentUserId, $getVisitRequest->role, $getVisitRequest->studyName);
+            $studyName = $getVisitRequest->studyName;
+
+            $this->checkAuthorization($visitId, $getVisitRequest->currentUserId, $getVisitRequest->role, $studyName);
 
             $visitEntity = $this->visitRepositoryInterface->getVisitContext($visitId);
-            $reviewStatus = $this->reviewStatusRepositoryInterface->getReviewStatus($visitId, $getVisitRequest->studyName);
+            $reviewStatus = $this->reviewStatusRepositoryInterface->getReviewStatus($visitId, $studyName);
             $userEntity  = $this->userRepositoryInterface->find($visitEntity['creator_user_id']);
 
             $responseEntity = VisitEntity::fillFromDBReponseArray($visitEntity);
@@ -49,15 +50,11 @@ class GetVisit {
             $getVisitResponse->statusText = 'OK';
 
         } catch( GaelOException $e){
-
             $getVisitResponse->body = $e->getErrorBody();
             $getVisitResponse->status  = $e->statusCode;
             $getVisitResponse->statusText = $e->statusText;
-
         } catch (Exception $e){
-
             throw $e;
-
         }
 
     }
