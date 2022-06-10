@@ -37,10 +37,13 @@ class ModifyPatient
 
             if (empty($modifyPatientRequest->reason)) throw new GaelOBadRequestException('Reason for patient edition must be specified');
 
-            $patientEntity = $this->patientRepositoryInterface->find($modifyPatientRequest->patientId);
+            $patientId = $modifyPatientRequest->patientId;
+            $currentUserId = $modifyPatientRequest->currentUserId;
+
+            $patientEntity = $this->patientRepositoryInterface->find($patientId);
             $studyName = $patientEntity['study_name'];
 
-            $this->checkAuthorization($modifyPatientRequest->currentUserId, $modifyPatientRequest->patientId, $studyName);
+            $this->checkAuthorization($currentUserId, $patientId, $studyName);
 
             $updatableData = [
                 'firstname', 'lastname', 'gender', 'birthDay', 'birthMonth', 'birthYear',
@@ -73,7 +76,7 @@ class ModifyPatient
 
 
             $this->patientRepositoryInterface->updatePatient(
-                $modifyPatientRequest->patientId,
+                $patientId,
                 $patientEntity['lastname'],
                 $patientEntity['firstname'],
                 $patientEntity['gender'],
@@ -89,7 +92,7 @@ class ModifyPatient
                 $patientEntity['withdraw_date']
             );
 
-            $this->trackerRepositoryInterface->writeAction($modifyPatientRequest->currentUserId, Constants::ROLE_SUPERVISOR, $patientEntity['study_name'], null, Constants::TRACKER_EDIT_PATIENT, (array) $modifyPatientRequest);
+            $this->trackerRepositoryInterface->writeAction($currentUserId, Constants::ROLE_SUPERVISOR, $patientEntity['study_name'], null, Constants::TRACKER_EDIT_PATIENT, (array) $modifyPatientRequest);
 
             $modifyPatientResponse->status = 200;
             $modifyPatientResponse->statusText = 'OK';

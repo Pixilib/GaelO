@@ -11,14 +11,15 @@ use App\GaelO\Services\AuthorizationService\AuthorizationVisitService;
 use App\GaelO\Services\MailServices;
 use Exception;
 
-class ModifyCorrectiveAction{
+class ModifyCorrectiveAction
+{
 
     private AuthorizationVisitService $authorizationVisitService;
     private VisitRepositoryInterface $visitRepositoryInterface;
     private TrackerRepositoryInterface $trackerRepositoryInterface;
     private MailServices $mailServices;
 
-    public function __construct( AuthorizationVisitService $authorizationVisitService, VisitRepositoryInterface $visitRepositoryInterface, TrackerRepositoryInterface $trackerRepositoryInterface, MailServices $mailServices)
+    public function __construct(AuthorizationVisitService $authorizationVisitService, VisitRepositoryInterface $visitRepositoryInterface, TrackerRepositoryInterface $trackerRepositoryInterface, MailServices $mailServices)
     {
         $this->authorizationVisitService = $authorizationVisitService;
         $this->visitRepositoryInterface = $visitRepositoryInterface;
@@ -26,9 +27,10 @@ class ModifyCorrectiveAction{
         $this->mailServices = $mailServices;
     }
 
-    public function execute(ModifyCorrectiveActionRequest $modifyCorrectiveActionRequest, ModifyCorrectiveActionResponse $modifyCorrectiveActionResponse){
+    public function execute(ModifyCorrectiveActionRequest $modifyCorrectiveActionRequest, ModifyCorrectiveActionResponse $modifyCorrectiveActionResponse)
+    {
 
-        try{
+        try {
             $visitContext = $this->visitRepositoryInterface->getVisitContext($modifyCorrectiveActionRequest->visitId);
 
             $studyName = $visitContext['patient']['study_name'];
@@ -42,34 +44,34 @@ class ModifyCorrectiveAction{
             $uploadStatus = $visitContext['upload_status'];
 
             //If form Needed, form need to be sent before making corrective action
-            if($localFormNeeded  && $stateInvestigatorForm !== Constants::INVESTIGATOR_FORM_DONE ){
+            if ($localFormNeeded  && $stateInvestigatorForm !== Constants::INVESTIGATOR_FORM_DONE) {
                 throw new GaelOForbiddenException('You need to send the Investigator Form first!');
             }
 
             //If not Uploaded images can't perform Corrective action
-            if( $uploadStatus !== Constants::UPLOAD_STATUS_DONE ){
+            if ($uploadStatus !== Constants::UPLOAD_STATUS_DONE) {
                 throw new GaelOForbiddenException('You need to upload DICOMs first!');
             }
 
             $this->checkAuthorization($modifyCorrectiveActionRequest->currentUserId, $modifyCorrectiveActionRequest->visitId, $currentQcStatus, $studyName);
 
             $this->visitRepositoryInterface->setCorrectiveAction(
-                    $modifyCorrectiveActionRequest->visitId,
-                    $modifyCorrectiveActionRequest->currentUserId,
-                    $modifyCorrectiveActionRequest->newSeriesUploaded,
-                    $modifyCorrectiveActionRequest->newInvestigatorForm,
-                    $modifyCorrectiveActionRequest->correctiveActionDone,
-                    $modifyCorrectiveActionRequest->comment
+                $modifyCorrectiveActionRequest->visitId,
+                $modifyCorrectiveActionRequest->currentUserId,
+                $modifyCorrectiveActionRequest->newSeriesUploaded,
+                $modifyCorrectiveActionRequest->newInvestigatorForm,
+                $modifyCorrectiveActionRequest->correctiveActionDone,
+                $modifyCorrectiveActionRequest->comment
             );
 
             $actionDetails = [
-                'patient_id'=>$patientId,
-                'visit_type'=>$visitType,
-                'vist_group_modality'=>$visitModality,
-                'new_series'=>$modifyCorrectiveActionRequest->newSeriesUploaded,
-                'new_investigator_form'=>$modifyCorrectiveActionRequest->newInvestigatorForm,
-                'comment'=>$modifyCorrectiveActionRequest->comment,
-                'corrective_action_applied'=>$modifyCorrectiveActionRequest->correctiveActionDone,
+                'patient_id' => $patientId,
+                'visit_type' => $visitType,
+                'vist_group_modality' => $visitModality,
+                'new_series' => $modifyCorrectiveActionRequest->newSeriesUploaded,
+                'new_investigator_form' => $modifyCorrectiveActionRequest->newInvestigatorForm,
+                'comment' => $modifyCorrectiveActionRequest->comment,
+                'corrective_action_applied' => $modifyCorrectiveActionRequest->correctiveActionDone,
             ];
 
             $this->trackerRepositoryInterface->writeAction(
@@ -95,21 +97,19 @@ class ModifyCorrectiveAction{
 
             $modifyCorrectiveActionResponse->status = 200;
             $modifyCorrectiveActionResponse->statusText = 'OK';
-
-        }catch(GaelOException $e){
-
+        } catch (GaelOException $e) {
             $modifyCorrectiveActionResponse->body = $e->getErrorBody();
             $modifyCorrectiveActionResponse->status = $e->statusCode;
             $modifyCorrectiveActionResponse->statusText = $e->statusText;
-
-        }catch (Exception $e){
+        } catch (Exception $e) {
             throw $e;
         }
     }
 
-    private function checkAuthorization(int $userId, int $visitId, string $currentQcStatus, string $studyName) : void {
+    private function checkAuthorization(int $userId, int $visitId, string $currentQcStatus, string $studyName): void
+    {
 
-        if($currentQcStatus !== Constants::QUALITY_CONTROL_CORRECTIVE_ACTION_ASKED){
+        if ($currentQcStatus !== Constants::QUALITY_CONTROL_CORRECTIVE_ACTION_ASKED) {
             throw new GaelOForbiddenException('Visit Not Awaiting Corrective Action');
         }
 
@@ -118,12 +118,8 @@ class ModifyCorrectiveAction{
         $this->authorizationVisitService->setVisitId($visitId);
         $this->authorizationVisitService->setStudyName($studyName);
 
-        if ( ! $this->authorizationVisitService->isVisitAllowed(Constants::ROLE_INVESTIGATOR) ){
+        if (!$this->authorizationVisitService->isVisitAllowed(Constants::ROLE_INVESTIGATOR)) {
             throw new GaelOForbiddenException('Not allowed');
         }
-
     }
-
-
-
 }
