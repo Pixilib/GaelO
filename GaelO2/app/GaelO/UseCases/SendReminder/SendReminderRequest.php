@@ -1,10 +1,10 @@
 <?php
 
-namespace App\GaelO\UseCases\Reminder;
+namespace App\GaelO\UseCases\SendReminder;
 
-class ReminderRequest{
+class SendReminderRequest{
     public string $currentUserId;
-    public string $study;
+    public string $studyName;
     public string $subject;
     public string $content;
     public string $role;

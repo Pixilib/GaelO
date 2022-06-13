@@ -59,9 +59,9 @@ use App\GaelO\UseCases\ImportPatients\ImportPatientsResponse;
 use App\GaelO\UseCases\ReactivateStudy\ReactivateStudy;
 use App\GaelO\UseCases\ReactivateStudy\ReactivateStudyRequest;
 use App\GaelO\UseCases\ReactivateStudy\ReactivateStudyResponse;
-use App\GaelO\UseCases\Reminder\SendReminder;
-use App\GaelO\UseCases\Reminder\ReminderRequest;
-use App\GaelO\UseCases\Reminder\ReminderResponse;
+use App\GaelO\UseCases\SendReminder\SendReminder;
+use App\GaelO\UseCases\SendReminder\SendReminderRequest;
+use App\GaelO\UseCases\SendReminder\SendReminderResponse;
 use App\GaelO\UseCases\SendMail\SendMail;
 use App\GaelO\UseCases\SendMail\SendMailRequest;
 use App\GaelO\UseCases\SendMail\SendMailResponse;
@@ -295,15 +295,15 @@ class StudyController extends Controller
         return $this->getJsonResponse($getDicomsStudiesFromStudyResponse->body, $getDicomsStudiesFromStudyResponse->status, $getDicomsStudiesFromStudyResponse->statusText);
     }
 
-    public function sendReminder(Request $request, SendReminder $sendReminder, ReminderRequest $reminderRequest, ReminderResponse $reminderResponse, string $studyName)
+    public function sendReminder(Request $request, SendReminder $sendReminder, SendReminderRequest $sendReminderRequest, SendReminderResponse $sendReminderResponse, string $studyName)
     {
         $currentUser = Auth::user();
         $requestData = $request->all();
-        $reminderRequest->currentUserId = $currentUser['id'];
-        $reminderRequest->study = $studyName;
-        $reminderRequest = Util::fillObject($requestData, $reminderRequest);
-        $sendReminder->execute($reminderRequest, $reminderResponse);
-        return $this->getJsonResponse($reminderResponse->body, $reminderResponse->status, $reminderResponse->statusText);
+        $sendReminderRequest->currentUserId = $currentUser['id'];
+        $sendReminderRequest->studyName = $studyName;
+        $reminderRequest = Util::fillObject($requestData, $sendReminderRequest);
+        $sendReminder->execute($reminderRequest, $sendReminderResponse);
+        return $this->getJsonResponse($sendReminderResponse->body, $sendReminderResponse->status, $sendReminderResponse->statusText);
     }
 
     public function sendMail(Request $request, SendMail $sendMail, SendMailRequest $sendMailRequest, SendMailResponse $sendMailResponse)

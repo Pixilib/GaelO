@@ -2,7 +2,8 @@
 
 namespace App\GaelO\UseCases\Request;
 
-class RequestResponse {
+class RequestResponse
+{
     public int $status;
     public string $statusText;
     public $body = null;

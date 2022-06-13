@@ -14,13 +14,12 @@ use Exception;
 
 class RequestUnlock
 {
-
     private AuthorizationVisitService $authorizationVisitService;
     private MailServices $mailServices;
     private VisitRepositoryInterface $visitRepositoryInterface;
     private TrackerRepository $trackerRepository;
 
-    public function __construct( VisitRepositoryInterface $visitRepositoryInterface, AuthorizationVisitService $authorizationVisitService, MailServices $mailServices, TrackerRepository $trackerRepository)
+    public function __construct(VisitRepositoryInterface $visitRepositoryInterface, AuthorizationVisitService $authorizationVisitService, MailServices $mailServices, TrackerRepository $trackerRepository)
     {
         $this->mailServices = $mailServices;
         $this->authorizationVisitService = $authorizationVisitService;
@@ -33,61 +32,64 @@ class RequestUnlock
 
         try {
 
+            $currentUserId = $requestUnlockRequest->currentUserId;
+            $role = $requestUnlockRequest->role;
+            $visitId = $requestUnlockRequest->visitId;
+            $studyName = $requestUnlockRequest->studyName;
+            $message = $requestUnlockRequest->message;
+
             $this->checkAuthorization(
-                $requestUnlockRequest->currentUserId,
-                $requestUnlockRequest->role,
-                $requestUnlockRequest->visitId,
-                $requestUnlockRequest->studyName
+                $currentUserId,
+                $role,
+                $visitId,
+                $studyName
             );
 
-            $visitContext = $this->visitRepositoryInterface->getVisitContext($requestUnlockRequest->visitId);
-
+            $visitContext = $this->visitRepositoryInterface->getVisitContext($visitId);
             $patientId = $visitContext['patient']['id'];
             $patientCode = $visitContext['patient']['code'];
             $visitType = $visitContext['visit_type']['name'];
 
-            if (empty($requestUnlockRequest->message)) {
+            if (empty($message)) {
                 throw new GaelOBadRequestException('Unlock message should not be empty');
             }
 
             $this->mailServices->sendUnlockMessage(
-                $requestUnlockRequest->visitId,
-                $requestUnlockRequest->currentUserId,
-                $requestUnlockRequest->role,
-                $requestUnlockRequest->studyName,
+                $visitId,
+                $currentUserId,
+                $role,
+                $studyName,
                 $patientId,
                 $patientCode,
-                $requestUnlockRequest->message,
+                $message,
                 $visitType
             );
 
             $formType = null;
 
-            if($requestUnlockRequest->role === Constants::ROLE_INVESTIGATOR){
+            if ($role === Constants::ROLE_INVESTIGATOR) {
                 $formType = 'Investigator';
-            }else if ($requestUnlockRequest->role === Constants::ROLE_REVIEWER){
+            } else if ($role === Constants::ROLE_REVIEWER) {
                 $formType = 'Reviewer';
             }
 
             $details = [
                 'form_type' => $formType,
-                'message' => $requestUnlockRequest->message
+                'message' => $message
             ];
 
             $this->trackerRepository->writeAction(
-                $requestUnlockRequest->currentUserId,
-                $requestUnlockRequest->role,
-                $requestUnlockRequest->studyName,
-                $requestUnlockRequest->visitId,
+                $currentUserId,
+                $role,
+                $studyName,
+                $visitId,
                 Constants::TRACKER_ASK_UNLOCK,
                 $details
             );
 
             $requestUnlockResponse->status = 200;
             $requestUnlockResponse->statusText = 'OK';
-
         } catch (GaelOException $e) {
-
             $requestUnlockResponse->body = $e->getErrorBody();
             $requestUnlockResponse->status = $e->statusCode;
             $requestUnlockResponse->statusText = $e->statusText;
@@ -98,7 +100,6 @@ class RequestUnlock
 
     private function checkAuthorization(int $userId, string $role, int $visitId, string $studyName)
     {
-
         $this->authorizationVisitService->setUserId($userId);
         $this->authorizationVisitService->setVisitId($visitId);
         $this->authorizationVisitService->setStudyName($studyName);

@@ -1,6 +1,6 @@
 Salim TODO :
 
-- Relecture UseCases : Fait jusqu'a ReactivateVisit Inclus
+- Relecture UseCases : Fait jusqu'a RequestUnlock Inclus + SendReminder
 
 - Refac : GetStudiesWithDetails relation VisitGroupDetails et voir l'entity d'output
 - Refac : Relation VisitGroupDetails à revoir
