@@ -1,6 +1,6 @@
 Salim TODO :
 
-- Relecture UseCases : Fait jusqu'a Modify Patient Inclus
+- Relecture UseCases : Fait jusqu'a Modify QC Reset Inclus
 
 - Refac : GetStudiesWithDetails relation VisitGroupDetails et voir l'entity d'output
 - Refac : Relation VisitGroupDetails à revoir
