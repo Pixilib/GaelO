@@ -2,7 +2,8 @@
 
 namespace App\GaelO\UseCases\ModifyReviewForm;
 
-class ModifyReviewFormResponse{
+class ModifyReviewFormResponse
+{
     public int $status;
     public string $statusText;
     public $body = null;

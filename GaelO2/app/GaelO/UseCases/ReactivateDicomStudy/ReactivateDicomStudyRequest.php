@@ -2,7 +2,8 @@
 
 namespace App\GaelO\UseCases\ReactivateDicomStudy;
 
-class ReactivateDicomStudyRequest{
+class ReactivateDicomStudyRequest
+{
     public int $currentUserId;
     public string $studyInstanceUID;
     public string $reason;

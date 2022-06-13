@@ -2,7 +2,8 @@
 
 namespace App\GaelO\UseCases\ModifyReviewForm;
 
-class ModifyReviewFormRequest{
+class ModifyReviewFormRequest
+{
     public int $currentUserId;
     public int $reviewId;
     public array $data;

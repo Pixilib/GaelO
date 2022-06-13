@@ -13,7 +13,8 @@ use App\GaelO\Services\AuthorizationService\AuthorizationVisitService;
 use App\GaelO\Services\DicomService;
 use Exception;
 
-class ReactivateDicomStudy{
+class ReactivateDicomStudy
+{
 
     private VisitRepositoryInterface $visitRepositoryInterface;
     private AuthorizationVisitService $authorizationVisitService;
@@ -21,7 +22,8 @@ class ReactivateDicomStudy{
     private DicomStudyRepositoryInterface $dicomStudyRepositoryInterface;
     private TrackerRepositoryInterface $trackerRepositoryInterface;
 
-    public function __construct(VisitRepositoryInterface $visitRepositoryInterface, AuthorizationVisitService $authorizationVisitService, DicomService $dicomService, DicomStudyRepositoryInterface $dicomStudyRepositoryInterface,  TrackerRepositoryInterface $trackerRepositoryInterface){
+    public function __construct(VisitRepositoryInterface $visitRepositoryInterface, AuthorizationVisitService $authorizationVisitService, DicomService $dicomService, DicomStudyRepositoryInterface $dicomStudyRepositoryInterface,  TrackerRepositoryInterface $trackerRepositoryInterface)
+    {
         $this->authorizationVisitService = $authorizationVisitService;
         $this->visitRepositoryInterface = $visitRepositoryInterface;
         $this->dicomService = $dicomService;
@@ -29,11 +31,15 @@ class ReactivateDicomStudy{
         $this->trackerRepositoryInterface = $trackerRepositoryInterface;
     }
 
-    public function execute(ReactivateDicomStudyRequest $reactivateDicomStudyRequest, ReactivateDicomStudyResponse $reactivateDicomStudyResponse){
+    public function execute(ReactivateDicomStudyRequest $reactivateDicomStudyRequest, ReactivateDicomStudyResponse $reactivateDicomStudyResponse)
+    {
 
-        try{
+        try {
 
-            if(empty($reactivateDicomStudyRequest->reason)) throw new GaelOBadRequestException('Reason must be specified');
+            if (empty($reactivateDicomStudyRequest->reason)) throw new GaelOBadRequestException('Reason must be specified');
+
+            $currentUserId = $reactivateDicomStudyRequest->currentUserId;
+
 
             $studyData = $this->dicomStudyRepositoryInterface->getDicomStudy($reactivateDicomStudyRequest->studyInstanceUID, true);
             $visitId = $studyData['visit_id'];
@@ -41,46 +47,41 @@ class ReactivateDicomStudy{
             $visitContext = $this->visitRepositoryInterface->getVisitContext($visitId);
             $studyName = $visitContext['patient']['study_name'];
 
-            $this->checkAuthorization($reactivateDicomStudyRequest->currentUserId, $visitId, $visitContext['state_quality_control'], $studyName);
+            $this->checkAuthorization($currentUserId, $visitId, $visitContext['state_quality_control'], $studyName);
 
             //Change dicom study Activation
             $this->dicomService->reactivateDicomStudy($studyData['study_uid']);
 
             //Tracker
             $actionDetails = [
-                'studyInstanceUID'=>$studyData['study_uid'],
+                'studyInstanceUID' => $studyData['study_uid'],
                 'reason' => $reactivateDicomStudyRequest->reason
             ];
 
             $this->trackerRepositoryInterface->writeAction(
-                $reactivateDicomStudyRequest->currentUserId,
+                $currentUserId,
                 Constants::ROLE_SUPERVISOR,
                 $studyName,
                 $visitId,
                 Constants::TRACKER_REACTIVATE_DICOM_STUDY,
                 $actionDetails
             );
-
-
             $reactivateDicomStudyResponse->status = 200;
             $reactivateDicomStudyResponse->statusText = 'OK';
-
-        } catch (GaelOException $e){
-
+        } catch (GaelOException $e) {
             $reactivateDicomStudyResponse->status = $e->statusCode;
             $reactivateDicomStudyResponse->statusText = $e->statusText;
             $reactivateDicomStudyResponse->body = $e->getErrorBody();
-
-        } catch (Exception $e){
+        } catch (Exception $e) {
             throw $e;
         }
-
     }
 
-    private function checkAuthorization(int $userId, int $visitId, string $qcStatus, string $studyName) : void{
+    private function checkAuthorization(int $userId, int $visitId, string $qcStatus, string $studyName): void
+    {
 
         //If QC is done, can't reactivate Study
-        if( in_array($qcStatus, [Constants::QUALITY_CONTROL_ACCEPTED, Constants::QUALITY_CONTROL_REFUSED])){
+        if (in_array($qcStatus, [Constants::QUALITY_CONTROL_ACCEPTED, Constants::QUALITY_CONTROL_REFUSED])) {
             throw new GaelOForbiddenException();
         }
 
@@ -88,9 +89,8 @@ class ReactivateDicomStudy{
         $this->authorizationVisitService->setVisitId($visitId);
         $this->authorizationVisitService->setStudyName($studyName);
 
-        if ( ! $this->authorizationVisitService->isVisitAllowed(Constants::ROLE_SUPERVISOR)){
+        if (!$this->authorizationVisitService->isVisitAllowed(Constants::ROLE_SUPERVISOR)) {
             throw new GaelOForbiddenException();
         }
-
     }
 }

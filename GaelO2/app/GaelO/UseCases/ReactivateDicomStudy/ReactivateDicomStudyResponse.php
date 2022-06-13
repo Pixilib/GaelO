@@ -2,7 +2,8 @@
 
 namespace App\GaelO\UseCases\ReactivateDicomStudy;
 
-class ReactivateDicomStudyResponse{
+class ReactivateDicomStudyResponse
+{
     public int $status;
     public string $statusText;
     public $body = null;

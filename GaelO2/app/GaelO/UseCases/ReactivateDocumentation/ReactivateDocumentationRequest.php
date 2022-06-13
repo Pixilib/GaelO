@@ -2,7 +2,8 @@
 
 namespace App\GaelO\UseCases\ReactivateDocumentation;
 
-class ReactivateDocumentationRequest {
+class ReactivateDocumentationRequest
+{
     public int $currentUserId;
     public string $documentationId;
 }

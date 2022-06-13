@@ -2,7 +2,8 @@
 
 namespace App\GaelO\UseCases\ReactivateVisit;
 
-class ReactivateVisitRequest {
+class ReactivateVisitRequest
+{
     public int $currentUserId;
     public int $visitId;
 }

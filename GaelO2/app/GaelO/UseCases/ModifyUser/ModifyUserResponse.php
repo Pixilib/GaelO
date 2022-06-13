@@ -2,7 +2,8 @@
 
 namespace App\GaelO\UseCases\ModifyUser;
 
-class ModifyUserResponse {
+class ModifyUserResponse
+{
     public $body = null;
     public int $status;
     public string $statusText;

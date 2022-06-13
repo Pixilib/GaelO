@@ -2,7 +2,8 @@
 
 namespace App\GaelO\UseCases\ModifyVisitDate;
 
-class ModifyVisitDateRequest {
+class ModifyVisitDateRequest
+{
     public int $currentUserId;
     public int $visitId;
     public string $visitDate;

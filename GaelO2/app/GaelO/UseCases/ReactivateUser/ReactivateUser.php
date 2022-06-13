@@ -11,30 +11,35 @@ use Exception;
 use App\GaelO\Interfaces\Repositories\UserRepositoryInterface;
 use App\GaelO\Services\AuthorizationService\AuthorizationUserService;
 
-class ReactivateUser{
+class ReactivateUser
+{
 
     private UserRepositoryInterface $userRepositoryInterface;
     private AuthorizationUserService $authorizationUserService;
     private TrackerRepositoryInterface $trackerRepositoryInterface;
     private FrameworkInterface $frameworkInterface;
 
-    public function __construct(UserRepositoryInterface $userRepositoryInterface, AuthorizationUserService $authorizationUserService, TrackerRepositoryInterface $trackerRepositoryInterface, FrameworkInterface $frameworkInterface){
+    public function __construct(UserRepositoryInterface $userRepositoryInterface, AuthorizationUserService $authorizationUserService, TrackerRepositoryInterface $trackerRepositoryInterface, FrameworkInterface $frameworkInterface)
+    {
         $this->trackerRepositoryInterface = $trackerRepositoryInterface;
         $this->userRepositoryInterface = $userRepositoryInterface;
         $this->frameworkInterface = $frameworkInterface;
         $this->authorizationUserService = $authorizationUserService;
     }
 
-    public function execute(ReactivateUserRequest $reactivateUserRequest, ReactivateUserResponse $reactivateUserResponse){
+    public function execute(ReactivateUserRequest $reactivateUserRequest, ReactivateUserResponse $reactivateUserResponse)
+    {
 
-        try{
+        try {
+            $currentUserId = $reactivateUserRequest->currentUserId;
+            $userId = $reactivateUserRequest->userId;
 
-            $this->checkAuthorization($reactivateUserRequest->currentUserId);
+            $this->checkAuthorization($currentUserId);
 
             //Undelete User
-            $this->userRepositoryInterface->reactivateUser($reactivateUserRequest->userId);
+            $this->userRepositoryInterface->reactivateUser($userId);
             //Generate new password and set status unconfirmed
-            $user = $this->userRepositoryInterface->find($reactivateUserRequest->userId);
+            $user = $this->userRepositoryInterface->find($userId);
 
             $this->userRepositoryInterface->updateUser(
                 $user['id'],
@@ -53,33 +58,30 @@ class ReactivateUser{
 
             //Send reset password link.
             $emailSendSuccess = $this->frameworkInterface->sendResetPasswordLink($user['email']);
-            if (! $emailSendSuccess) throw new Exception('Error Sending Reset Email');
+            if (!$emailSendSuccess) throw new Exception('Error Sending Reset Email');
 
             $actionsDetails = [
-                'reactivatedUser' => $reactivateUserRequest->userId
+                'reactivatedUser' => $userId
             ];
-            $this->trackerRepositoryInterface->writeAction($reactivateUserRequest->currentUserId, Constants::TRACKER_ROLE_ADMINISTRATOR, null, null, Constants::TRACKER_EDIT_USER, $actionsDetails);
+            $this->trackerRepositoryInterface->writeAction($currentUserId, Constants::TRACKER_ROLE_ADMINISTRATOR, null, null, Constants::TRACKER_EDIT_USER, $actionsDetails);
 
             $reactivateUserResponse->status = 200;
             $reactivateUserResponse->statusText = 'OK';
-
-        } catch( GaelOException $e){
+        } catch (GaelOException $e) {
 
             $reactivateUserResponse->body = $e->getErrorBody();
             $reactivateUserResponse->status = $e->statusCode;
             $reactivateUserResponse->statusText = $e->statusText;
-
-        } catch (Exception $e){
+        } catch (Exception $e) {
             throw $e;
         }
-
     }
 
-    private function checkAuthorization($userId)  {
+    private function checkAuthorization($userId)
+    {
         $this->authorizationUserService->setUserId($userId);
-        if( ! $this->authorizationUserService->isAdmin() ) {
+        if (!$this->authorizationUserService->isAdmin()) {
             throw new GaelOForbiddenException();
         };
     }
-
 }

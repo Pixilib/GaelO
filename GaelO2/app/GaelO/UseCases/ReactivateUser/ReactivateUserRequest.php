@@ -2,7 +2,8 @@
 
 namespace App\GaelO\UseCases\ReactivateUser;
 
-class ReactivateUserRequest {
+class ReactivateUserRequest
+{
     public int $currentUserId;
     public int $userId;
 }

@@ -10,7 +10,8 @@ use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
 use App\GaelO\Services\AuthorizationService\AuthorizationStudyService;
 use Exception;
 
-class ReactivateDocumentation {
+class ReactivateDocumentation
+{
 
     private AuthorizationStudyService $authorizationStudyService;
     private DocumentationRepositoryInterface $documentationRepositoryInterface;
@@ -23,14 +24,16 @@ class ReactivateDocumentation {
         $this->trackerRepositoryInterface = $trackerRepositoryInterface;
     }
 
-    public function execute(ReactivateDocumentationRequest $reactivateDocumentationRequest, ReactivateDocumentationResponse $reactivateDocumentationResponse){
+    public function execute(ReactivateDocumentationRequest $reactivateDocumentationRequest, ReactivateDocumentationResponse $reactivateDocumentationResponse)
+    {
 
-        try{
+        try {
 
             $documentationEntity = $this->documentationRepositoryInterface->find($reactivateDocumentationRequest->documentationId, true);
             $studyName = $documentationEntity['study_name'];
+            $currentUserId = $reactivateDocumentationRequest->currentUserId;
 
-            $this->checkAuthorization($reactivateDocumentationRequest->currentUserId, $studyName);
+            $this->checkAuthorization($currentUserId, $studyName);
 
 
             //Change dicom study Activation
@@ -38,44 +41,36 @@ class ReactivateDocumentation {
 
             //Tracker
             $actionDetails = [
-                'documentationId'=>$documentationEntity['id'],
+                'documentationId' => $documentationEntity['id'],
                 'name' => $documentationEntity['name'],
                 'version' => $documentationEntity['version'],
             ];
 
             $this->trackerRepositoryInterface->writeAction(
-                $reactivateDocumentationRequest->currentUserId,
+                $currentUserId,
                 Constants::ROLE_SUPERVISOR,
                 $studyName,
                 null,
                 Constants::TRACKER_REACTIVATE_DOCUMENTATION,
                 $actionDetails
             );
-
-
             $reactivateDocumentationResponse->status = 200;
             $reactivateDocumentationResponse->statusText = 'OK';
-
-        } catch (GaelOException $e){
-
+        } catch (GaelOException $e) {
             $reactivateDocumentationResponse->status = $e->statusCode;
             $reactivateDocumentationResponse->statusText = $e->statusText;
             $reactivateDocumentationResponse->body = $e->getErrorBody();
-
-        } catch (Exception $e){
+        } catch (Exception $e) {
             throw $e;
         }
-
     }
 
-    public function checkAuthorization(int $currentUserId, string $studyName) : void {
-
+    public function checkAuthorization(int $currentUserId, string $studyName): void
+    {
         $this->authorizationStudyService->setUserId($currentUserId);
         $this->authorizationStudyService->setStudyName($studyName);
-        if ( !$this->authorizationStudyService->isAllowedStudy( Constants::ROLE_SUPERVISOR)){
+        if (!$this->authorizationStudyService->isAllowedStudy(Constants::ROLE_SUPERVISOR)) {
             throw new GaelOForbiddenException();
         }
-
     }
-
 }

@@ -2,7 +2,8 @@
 
 namespace App\GaelO\UseCases\ModifyUser;
 
-class ModifyUserRequest {
+class ModifyUserRequest
+{
     public int $currentUserId;
     public int $userId;
     public ?string $lastname = null;
