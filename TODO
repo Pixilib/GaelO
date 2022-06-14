@@ -1,7 +1,5 @@
 Salim TODO :
 
-- Relecture UseCases : Reste ValidateDicomUpload
-
 - Refac SendMail est complexe probablement a splitter
 - Refac : GetStudiesWithDetails relation VisitGroupDetails et voir l'entity d'output
 - Refac : Relation VisitGroupDetails à revoir

@@ -2,7 +2,8 @@
 
 namespace App\GaelO\UseCases\ValidateDicomUpload;
 
-class ValidateDicomUploadResponse {
+class ValidateDicomUploadResponse
+{
     public int $status;
     public string $statusText;
     public $body = null;
