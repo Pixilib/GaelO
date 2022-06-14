@@ -26,9 +26,9 @@ class SendReminder
 
         try {
 
-            $this->checkAuthorization($sendReminderRequest->currentUserId, $sendReminderRequest->study);
+            $this->checkAuthorization($sendReminderRequest->currentUserId, $sendReminderRequest->studyName);
 
-            $this->checkEmpty($sendReminderRequest->study, 'study');
+            $this->checkEmpty($sendReminderRequest->studyName, 'study');
             $this->checkEmpty($sendReminderRequest->role, 'role');
             $this->checkEmpty($sendReminderRequest->subject, 'subject');
             $this->checkEmpty($sendReminderRequest->content, 'content');
