@@ -49,7 +49,7 @@ class RequestUnlock
             $patientCode = $visitContext['patient']['code'];
             $visitType = $visitContext['visit_type']['name'];
 
-            if (empty($message)) {
+            if (empty($requestUnlockRequest->message)) {
                 throw new GaelOBadRequestException('Unlock message should not be empty');
             }
 
