@@ -70,7 +70,7 @@ class StudyRepository implements StudyRepositoryInterface
 
     public function getAllStudiesWithDetails(): array
     {
-        $studiesDetails = $this->study->withTrashed()->with('visitGroupDetails')->get();
+        $studiesDetails = $this->study->withTrashed()->with('visitGroups', 'visitGroups.visitTypes')->get();
         return $studiesDetails->toArray();
     }
 

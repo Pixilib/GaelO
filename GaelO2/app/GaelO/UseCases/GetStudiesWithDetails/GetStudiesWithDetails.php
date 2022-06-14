@@ -42,13 +42,13 @@ class GetStudiesWithDetails
                 $studyDetailResponse[$studyName] = get_object_vars($studyEntity);
                 $studyDetailResponse[$studyName]['visitGroups'] = [];
 
-                foreach ($studyDetail['visit_group_details'] as $visitGroupDetails) {
-                    $visitGroupEntity = VisitGroupEntity::fillFromDBReponseArray($visitGroupDetails);
+                foreach ($studyDetail['visit_groups'] as $visitGroup) {
+                    $visitGroupEntity = VisitGroupEntity::fillFromDBReponseArray($visitGroup);
 
                     $studyDetailResponse[$studyName]['visitGroups'][$visitGroupEntity->id] = get_object_vars($visitGroupEntity);
                     $studyDetailResponse[$studyName]['visitGroups'][$visitGroupEntity->id]['visitTypes'] = [];
 
-                    foreach ($visitGroupDetails['visit_types'] as $visitType) {
+                    foreach ($visitGroup['visit_types'] as $visitType) {
                         $visitTypeEntity = VisitTypeEntity::fillFromDBReponseArray($visitType);
                         $studyDetailResponse[$studyName]['visitGroups'][$visitGroupEntity->id]['visitTypes'][$visitTypeEntity->id] = get_object_vars($visitTypeEntity);
                     }

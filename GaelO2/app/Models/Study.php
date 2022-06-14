@@ -25,11 +25,6 @@ class Study extends Model
         return $this->hasMany(VisitGroup::class, 'study_name');
     }
 
-    public function visitGroupDetails()
-    {
-        return $this->hasMany(VisitGroup::class, 'study_name')->with('visitTypes');
-    }
-
     public function visits(){
         return $this->hasManyDeep(Visit::class, [Patient::class]);
     }
