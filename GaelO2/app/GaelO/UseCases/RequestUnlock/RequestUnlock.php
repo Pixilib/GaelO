@@ -36,7 +36,6 @@ class RequestUnlock
             $role = $requestUnlockRequest->role;
             $visitId = $requestUnlockRequest->visitId;
             $studyName = $requestUnlockRequest->studyName;
-            $message = $requestUnlockRequest->message;
 
             $this->checkAuthorization(
                 $currentUserId,
@@ -53,6 +52,8 @@ class RequestUnlock
             if (empty($message)) {
                 throw new GaelOBadRequestException('Unlock message should not be empty');
             }
+
+            $message = $requestUnlockRequest->message;
 
             $this->mailServices->sendUnlockMessage(
                 $visitId,

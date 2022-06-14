@@ -2,7 +2,8 @@
 
 namespace App\GaelO\UseCases\UnlockReviewForm;
 
-class UnlockReviewFormRequest {
+class UnlockReviewFormRequest
+{
     public int $currentUserId;
     public int $reviewId;
     public string $reason;

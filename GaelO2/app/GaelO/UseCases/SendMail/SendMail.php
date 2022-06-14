@@ -47,7 +47,7 @@ class SendMail
                             $sendMailRequest->content,
                         );
                     else {
-                        if($this->checkEmpty($sendMailRequest->userIds, 'userIds')) throw new GaelOBadRequestException('Request Missing recipient');
+                        if ($this->checkEmpty($sendMailRequest->userIds, 'userIds')) throw new GaelOBadRequestException('Request Missing recipient');
                         $this->mailService->sendMailToUser(
                             $sendMailRequest->userIds,
                             $sendMailRequest->study,

@@ -2,8 +2,8 @@
 
 namespace App\GaelO\UseCases\ReverseProxyTus;
 
-
-class ReverseProxyTusRequest{
+class ReverseProxyTusRequest
+{
     public int $currentUserId;
     public int $visitId;
     public string $studyName;

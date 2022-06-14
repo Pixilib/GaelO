@@ -2,7 +2,8 @@
 
 namespace App\GaelO\UseCases\ReverseProxyDicomWeb;
 
-class ReverseProxyDicomWebResponse{
+class ReverseProxyDicomWebResponse
+{
     public int $status;
     public string $statusText;
     public $body = null;
