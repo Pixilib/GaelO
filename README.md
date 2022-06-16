@@ -5,7 +5,7 @@
 
 GaelO is a free and open source web platform for medical imaging processing in clinical trials.
 
-Website : http://www.GaelO.fr
+Website : https://www.gaelo.fr
 
 Developpers : <br>
 Leader & Maintainer  : Salim Kanoun <br>
