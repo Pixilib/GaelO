@@ -3,10 +3,9 @@ RUN apt-get update -qy && \
     apt-get install -y --no-install-recommends apt-utils\
     git
 WORKDIR /ohif
-RUN git clone --depth 1 --branch conerstone3D-FixCelian https://github.com/salimkanoun/OHIF.git
+RUN git clone --depth 1 --branch conerstone3D-FixCelian https://github.com/salimkanoun/Viewers.git
 #https://github.com/OHIF/Viewers.git
-RUN ls
-RUN yarn config set workspaces-experimental true && yarn install && QUICK_BUILD=true PUBLIC_URL=/ohif/ yarn run build
+RUN cd Viewers && yarn config set workspaces-experimental true && yarn install && QUICK_BUILD=true PUBLIC_URL=/ohif/ yarn run build
 RUN rm /ohif/Viewers/platform/viewer/dist/app-config.js
 
 FROM alpine as stone
