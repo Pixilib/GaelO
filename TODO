@@ -2,10 +2,7 @@ Salim TODO :
 
 - Refac SendMail est complexe probablement a splitter
 - Refac : GetVisit pourrait un avoir un accès plus direct aux données (review status + visit context + user details)
-
-- Pluger toutes les reponses "data" sur entity response
-=> GetPossibleUpload => VisitEntity ?
-=> GetReviewProgression => Visit + Review_status + Progression entity?
+- Refac : Pluger GetPossibleUpload sur VisitEntity pour la réponse (nécéssite d'updater V1)
 
 - Get Creatable Visit, retourner les visitType entity des créables ? 
 - CreateVisit => Verifier que la visite à creer est bien créable niveau backend
