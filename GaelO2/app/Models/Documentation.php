@@ -10,7 +10,8 @@ class Documentation extends Model
 {
     use SoftDeletes, HasFactory;
 
-    public function study(){
+    public function study()
+    {
         return $this->belongsTo(Study::class, 'study_name', 'name');
     }
 }

@@ -13,11 +13,13 @@ class VisitType extends Model
         'dicom_constraints' => 'array',
     ];
 
-    public function visits(){
+    public function visits()
+    {
         return $this->hasMany(Visit::class, 'visit_type_id');
     }
 
-    public function visitGroup() {
-        return $this->belongsTo(VisitGroup::class, 'visit_group_id' , 'id');
+    public function visitGroup()
+    {
+        return $this->belongsTo(VisitGroup::class, 'visit_group_id', 'id');
     }
 }

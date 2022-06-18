@@ -25,18 +25,21 @@ class Study extends Model
         return $this->hasMany(VisitGroup::class, 'study_name');
     }
 
-    public function visits(){
+    public function visits()
+    {
         return $this->hasManyDeep(Visit::class, [Patient::class]);
     }
 
 
-    public function dicomStudies(){
+    public function dicomStudies()
+    {
         return $this->hasManyDeep(DicomStudy::class, [Patient::class, Visit::class]);
     }
 
 
-    public function dicomSeries(){
-        return $this->hasManyDeep(DicomSeries::class, [Patient::class, Visit::class, DicomStudy::class], [null, null, null, 'study_instance_uid'], [null, null, null, null] );
+    public function dicomSeries()
+    {
+        return $this->hasManyDeep(DicomSeries::class, [Patient::class, Visit::class, DicomStudy::class], [null, null, null, 'study_instance_uid'], [null, null, null, null]);
     }
 
 

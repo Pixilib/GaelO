@@ -9,12 +9,13 @@ class VisitGroup extends Model
 {
     use HasFactory;
 
-    public function study(){
+    public function study()
+    {
         return $this->belongsTo(Study::class, 'study_name', 'name');
     }
 
-    public function visitTypes(){
+    public function visitTypes()
+    {
         return $this->hasMany(VisitType::class, 'visit_group_id');
     }
-
 }

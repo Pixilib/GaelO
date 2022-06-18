@@ -10,6 +10,7 @@ class ReviewStatus extends Model
     use HasFactory;
 
     protected $table = 'reviews_status';
+    protected $guarded = [];
 
     protected $casts = [
         'target_lesions' => 'array',
@@ -20,14 +21,14 @@ class ReviewStatus extends Model
         'target_lesions' => '{}',
     ];
 
-    protected $guarded = [];
 
-    public function visit(){
+    public function visit()
+    {
         return $this->belongsTo(Visit::class, 'visit_id', 'id');
     }
 
-    public function study(){
+    public function study()
+    {
         return $this->belongsTo(Study::class, 'study_name', 'name');
     }
-
 }

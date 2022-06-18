@@ -45,25 +45,29 @@ class User extends Authenticatable implements CanResetPassword, MustVerifyEmail
         'administrator' => 'boolean'
     ];
 
-    public function roles() {
-        return $this-> hasMany(Role::class, 'user_id');
+    public function roles()
+    {
+        return $this->hasMany(Role::class, 'user_id');
     }
 
-    public function affiliatedCenters(){
+    public function affiliatedCenters()
+    {
         return $this->hasManyThrough(Center::class, CenterUser::class, 'user_id', 'code', 'id', 'center_code');
     }
 
-    public function mainCenter(){
-        return $this->belongsTo(Center::class, 'code','center_code');
+    public function mainCenter()
+    {
+        return $this->belongsTo(Center::class, 'code', 'center_code');
     }
 
     //Override by custom notification
-    public function sendEmailVerificationNotification() {
+    public function sendEmailVerificationNotification()
+    {
         $this->notify(new VerifyEmailNotification());
     }
 
-    public function sendPasswordResetNotification($token) {
+    public function sendPasswordResetNotification($token)
+    {
         $this->notify(new ResetPasswordNotification($token));
     }
-
 }

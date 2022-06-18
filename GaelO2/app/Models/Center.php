@@ -12,7 +12,8 @@ class Center extends Model
     protected $primaryKey = 'code';
     public $incrementing = false;
 
-    public function country(){
+    public function country()
+    {
         return $this->belongsTo(Country::class, 'country_code', 'code');
     }
 }

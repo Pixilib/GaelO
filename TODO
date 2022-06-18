@@ -1,8 +1,7 @@
 Salim TODO :
 
 - Refac SendMail est complexe probablement a splitter
-- Refac : Relation Visit -> VisitType qui rappelle VisitGroup à revoir
-- Refac : setVisitData de VisitEntity à revoir
+- Refac : setVisitData de VisitEntity à revoir (spliter en differents sets)
 - Refac : GetVisit pourrait un avoir un accès plus direct aux données (review status + visit context + user details)
 
 - Get Creatable Visit, retourner les visitType entity des créables ? 

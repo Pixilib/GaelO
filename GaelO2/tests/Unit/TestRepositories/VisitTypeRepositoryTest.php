@@ -93,7 +93,7 @@ class VisitTypeRepositoryTest extends TestCase
     public function testGetVisitTypeOfStudy(){
 
         $visitGroup = VisitGroup::factory()->create();
-        visitType::factory()->visitGroupId($visitGroup->id)->count(2)->create();
+        VisitType::factory()->visitGroupId($visitGroup->id)->count(2)->create();
 
         VisitType::factory()->count(5)->create();
 

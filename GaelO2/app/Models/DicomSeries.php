@@ -15,8 +15,8 @@ class DicomSeries extends Model
     protected $keyType = 'string';
     public $incrementing = false;
 
-    public function dicomStudy(){
+    public function dicomStudy()
+    {
         return $this->belongsTo(DicomStudy::class, 'study_instance_uid', 'study_uid');
     }
-
 }

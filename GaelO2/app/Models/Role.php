@@ -14,11 +14,13 @@ class Role extends Model
     protected $primaryKey = ['name', 'user_id', 'study_name'];
     public $incrementing = false;
 
-    public function user(){
-        return $this->belongsTo(User::class, 'user_id' , 'id');
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id', 'id');
     }
 
-    public function study(){
+    public function study()
+    {
         return $this->belongsTo(Study::class, 'study_name', 'name');
     }
 }
