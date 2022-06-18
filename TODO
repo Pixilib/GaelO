@@ -4,6 +4,11 @@ Salim TODO :
 - Refac : setVisitData de VisitEntity à revoir (spliter en differents sets)
 - Refac : GetVisit pourrait un avoir un accès plus direct aux données (review status + visit context + user details)
 
+- Relire les Entities
+- Pluger toutes les reponses "data" sur entity response
+=> GetPossibleUpload => VisitEntity ?
+=> GetReviewProgression => Visit + Review_status + Progression entity?
+
 - Get Creatable Visit, retourner les visitType entity des créables ? 
 - CreateVisit => Verifier que la visite à creer est bien créable niveau backend
 
@@ -15,13 +20,6 @@ Salim TODO :
 - Portage GaelO1 anonymisation RTSTRUCT et Viewers
 - Orthanc Send to peer
 - Mise en place scheduler, monitoring scheduler par email pourra etre personnalisé (ex que si nouveau patient...)
-
----- Refactoring Entity ----
-- Pluger toutes les reponses "data" sur ces entity response
-=> GetPossibleUpload => VisitEntity ?
-=> GetReviewProgression => Visit + Review_status + Progression entity?
-=> utiliser les entity en sortie de repository ? et dissocier la lecture de l'entity de l'output ?
----- /Refactoring Entity ------
 
 --- Etudes ancillaires ---
 Tester Etudes ancillaire avec Emilie (voir return default data de review status si entitée non crée)
