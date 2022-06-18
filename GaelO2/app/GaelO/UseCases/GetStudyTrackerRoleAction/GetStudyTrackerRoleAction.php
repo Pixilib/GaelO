@@ -7,6 +7,7 @@ use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
 use App\GaelO\Entities\TrackerEntity;
+use App\GaelO\Entities\UserEntity;
 use App\GaelO\Services\AuthorizationService\AuthorizationStudyService;
 use Exception;
 
@@ -38,7 +39,7 @@ class GetStudyTrackerRoleAction
             $responseArray = [];
             foreach ($dbData as $data) {
                 $trackerEntity = TrackerEntity::fillFromDBReponseArray($data);
-                $trackerEntity->setUserData($data['user']);
+                $trackerEntity->setUserDetails((UserEntity::fillMinimalFromDBReponseArray($data['user'])));
                 //If tracker entity is related to a visit (not all actions are) add visit details info
                 if ($data['visit']) $trackerEntity->setVisitData($data['visit']);
                 $responseArray[] = $trackerEntity;

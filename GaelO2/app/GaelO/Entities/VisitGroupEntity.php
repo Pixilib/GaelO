@@ -2,7 +2,8 @@
 
 namespace App\GaelO\Entities;
 
-class VisitGroupEntity {
+class VisitGroupEntity
+{
     public int $id;
     public String $studyName;
     public String $modality;
@@ -10,7 +11,8 @@ class VisitGroupEntity {
 
     public array $visitTypes;
 
-    public static function fillFromDBReponseArray(array $array){
+    public static function fillFromDBReponseArray(array $array) : VisitGroupEntity
+    {
         $visitGroupEntity  = new VisitGroupEntity();
         $visitGroupEntity->id = $array['id'];
         $visitGroupEntity->studyName = $array['study_name'];
@@ -20,7 +22,11 @@ class VisitGroupEntity {
         return $visitGroupEntity;
     }
 
-    public function setVisitTypes(array $visitTypeEntities){
+    /**
+     * Set child VisitTypes, $visitTypeEntities is an array of VisitTypeEntity
+     */
+    public function setVisitTypes(array $visitTypeEntities) : void
+    {
         $this->visitTypes = $visitTypeEntities;
     }
 }

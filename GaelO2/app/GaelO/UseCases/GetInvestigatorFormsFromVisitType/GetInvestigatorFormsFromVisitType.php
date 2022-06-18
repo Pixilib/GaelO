@@ -8,6 +8,7 @@ use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\ReviewRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
 use App\GaelO\Entities\ReviewEntity;
+use App\GaelO\Entities\UserEntity;
 use App\GaelO\Repositories\VisitTypeRepository;
 use App\GaelO\Services\AuthorizationService\AuthorizationStudyService;
 use Exception;
@@ -63,7 +64,7 @@ class GetInvestigatorFormsFromVisitType
 
             foreach ($reviews as $review) {
                 $reviewEntity = ReviewEntity::fillFromDBReponseArray($review);
-                $reviewEntity->setUserDetails($review['user']['lastname'], $review['user']['firstname'], $review['user']['center_code']);
+                $reviewEntity->setUserDetails( UserEntity::fillMinimalFromDBReponseArray($review['user']) );
                 $answer[] = $reviewEntity;
             }
 

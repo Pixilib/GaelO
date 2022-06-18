@@ -20,7 +20,7 @@ class DicomStudyEntity
     public PatientEntity $patient;
     public VisitEntity $visit;
 
-    public static function fillFromDBReponseArray(array $array)
+    public static function fillFromDBReponseArray(array $array): DicomStudyEntity
     {
         $orthancStudy  = new DicomStudyEntity();
         $orthancStudy->studyInstanceUID = $array['study_uid'];
@@ -35,13 +35,15 @@ class DicomStudyEntity
         $orthancStudy->patientId = $array['patient_id'];
         $orthancStudy->diskSize = $array['disk_size'];
 
-
         return $orthancStudy;
     }
 
-    public function addDicomSeries(array $dicomSeriesObjects): void
+    /**
+     * dicomSeriesEntities is an array of DicomSeriesEntity
+     */
+    public function addDicomSeries(array $dicomSeriesEntities): void
     {
-        $this->series = $dicomSeriesObjects;
+        $this->series = $dicomSeriesEntities;
     }
 
     public function addPatientDetails(array $patientData): void
@@ -64,10 +66,8 @@ class DicomStudyEntity
         $this->visit->stateQualityControl = $visitDetails['state_quality_control'];
     }
 
-    public function addUploaderDetails(array $userDetails): void
+    public function addUploaderDetails(UserEntity $userDetails): void
     {
-        $this->uploader = new UserEntity();
-        $this->uploader->lastname = $userDetails['lastname'];
-        $this->uploader->firstname = $userDetails['firstname'];
+        $this->uploader = $userDetails;
     }
 }

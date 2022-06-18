@@ -2,7 +2,8 @@
 
 namespace App\GaelO\Entities;
 
-class DocumentationEntity{
+class DocumentationEntity
+{
 
     public int $id;
     public string $name;
@@ -15,7 +16,8 @@ class DocumentationEntity{
     public bool $reviewer;
     public ?string $deletedAt;
 
-    public static function fillFromDBReponseArray(array $array){
+    public static function fillFromDBReponseArray(array $array): DocumentationEntity
+    {
         $documentationEntity  = new DocumentationEntity();
         $documentationEntity->id = $array['id'];
         $documentationEntity->name = $array['name'];
@@ -30,5 +32,4 @@ class DocumentationEntity{
 
         return $documentationEntity;
     }
-
 }

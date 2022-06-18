@@ -3,6 +3,7 @@
 namespace App\GaelO\UseCases\GetVisitsFromStudy;
 
 use App\GaelO\Constants\Constants;
+use App\GaelO\Entities\CenterEntity;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\StudyRepositoryInterface;
@@ -50,7 +51,7 @@ class GetVisitsFromStudy
             foreach ($dbData as $data) {
                 $responseEntity = VisitEntity::fillFromDBReponseArray($data);
                 $responseEntity->setPatientEntity($data['patient']);
-                $responseEntity->patient->fillCenterDetails($data['patient']['center']['name'], $data['patient']['center']['country_code']);
+                $responseEntity->patient->fillCenterDetails(CenterEntity::fillFromDBReponseArray($data['patient']['center']));
                 $responseEntity->setVisitContext(
                     $data['visit_type']['visit_group'],
                     $data['visit_type']

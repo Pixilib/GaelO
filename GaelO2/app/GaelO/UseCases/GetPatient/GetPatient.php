@@ -3,6 +3,7 @@
 namespace App\GaelO\UseCases\GetPatient;
 
 use App\GaelO\Constants\Constants;
+use App\GaelO\Entities\CenterEntity;
 use App\GaelO\Entities\PatientEntity;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
@@ -38,7 +39,7 @@ class GetPatient
             if ($getPatientRequest->role === Constants::ROLE_REVIEWER) {
                 $responseEntity->centerCode = null;
             } else {
-                $responseEntity->fillCenterDetails($dbData['center']['name'], $dbData['center']['country_code']);
+                $responseEntity->fillCenterDetails(CenterEntity::fillFromDBReponseArray($dbData['center']));
             }
 
             $getPatientResponse->body = $responseEntity;

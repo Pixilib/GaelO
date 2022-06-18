@@ -3,6 +3,7 @@
 namespace App\GaelO\UseCases\GetStudyVisitTypes;
 
 use App\GaelO\Constants\Constants;
+use App\GaelO\Entities\VisitGroupEntity;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Entities\VisitTypeEntity;
@@ -37,7 +38,7 @@ class GetStudyVisitTypes
 
             foreach ($visitTypes as $visitType) {
                 $visitTypeEntity = VisitTypeEntity::fillFromDBReponseArray($visitType);
-                $visitTypeEntity->setVisitGroupContext($visitType['visit_group']);
+                $visitTypeEntity->setVisitGroup(VisitGroupEntity::fillFromDBReponseArray($visitType['visit_group']));
                 $studyDetailResponse[] = $visitTypeEntity;
             }
 

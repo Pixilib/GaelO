@@ -2,7 +2,8 @@
 
 namespace App\GaelO\Entities;
 
-class ReviewEntity {
+class ReviewEntity
+{
     public int $id;
     public bool $local;
     public string $studyName;
@@ -15,7 +16,8 @@ class ReviewEntity {
     public bool $adjudication;
     public UserEntity $user;
 
-    public static function fillFromDBReponseArray(array $array) : ReviewEntity {
+    public static function fillFromDBReponseArray(array $array): ReviewEntity
+    {
         $reviewEntity  = new ReviewEntity();
         $reviewEntity->local = $array['local'];
         $reviewEntity->id = $array['id'];
@@ -30,11 +32,8 @@ class ReviewEntity {
         return $reviewEntity;
     }
 
-    public function setUserDetails(string $lastname, string $firstname, int $centerCode) : void {
-        $this->user = new UserEntity();
-        $this->user->lastname = $lastname;
-        $this->user->firstname = $firstname;
-        $this->user->centerCode = $centerCode;
+    public function setUserDetails(UserEntity $userEntity): void
+    {
+        $this->user = $userEntity;
     }
-
 }

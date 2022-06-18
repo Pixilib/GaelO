@@ -5,6 +5,7 @@ namespace App\GaelO\UseCases\GetDicoms;
 use App\GaelO\Constants\Constants;
 use App\GaelO\Entities\DicomSeriesEntity;
 use App\GaelO\Entities\DicomStudyEntity;
+use App\GaelO\Entities\UserEntity;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\DicomStudyRepositoryInterface;
@@ -51,7 +52,7 @@ class GetDicoms
 
             foreach ($data as $study) {
                 $studyEntity = DicomStudyEntity::fillFromDBReponseArray($study);
-                $studyEntity->addUploaderDetails($study['uploader']);
+                $studyEntity->addUploaderDetails(UserEntity::fillOnlyUserIdentification($study['uploader']));
                 foreach ($study['dicom_series'] as $series) {
                     $studyEntity->series[] = DicomSeriesEntity::fillFromDBReponseArray($series);
                 }

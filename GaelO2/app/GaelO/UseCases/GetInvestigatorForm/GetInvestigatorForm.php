@@ -3,6 +3,7 @@
 namespace App\GaelO\UseCases\GetInvestigatorForm;
 
 use App\GaelO\Entities\ReviewEntity;
+use App\GaelO\Entities\UserEntity;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\ReviewRepositoryInterface;
@@ -30,7 +31,7 @@ class GetInvestigatorForm
             $investigatorFormEntity = $this->reviewRepositoryInterface->getInvestigatorForm($getInvestigatorFormRequest->visitId, true);
 
             $investigatorForm = ReviewEntity::fillFromDBReponseArray($investigatorFormEntity);
-            $investigatorForm->setUserDetails($investigatorFormEntity['user']['lastname'], $investigatorFormEntity['user']['firstname'], $investigatorFormEntity['user']['center_code']);
+            $investigatorForm->setUserDetails( UserEntity::fillOnlyUserIdentification($investigatorFormEntity['user']) );
 
             $getInvestigatorFormResponse->body = $investigatorForm;
             $getInvestigatorFormResponse->status = 200;

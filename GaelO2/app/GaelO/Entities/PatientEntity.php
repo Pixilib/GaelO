@@ -3,7 +3,8 @@
 namespace App\GaelO\Entities;
 
 
-class PatientEntity {
+class PatientEntity
+{
     public string $id;
     public string $code;
     public ?string $firstname;
@@ -22,7 +23,8 @@ class PatientEntity {
     public CenterEntity $center;
     public array $visits = [];
 
-    public static function fillFromDBReponseArray(array $array) : PatientEntity{
+    public static function fillFromDBReponseArray(array $array): PatientEntity
+    {
         $patientEntity  = new PatientEntity();
         $patientEntity->id = $array['id'];
         $patientEntity->code = $array['code'];
@@ -42,14 +44,16 @@ class PatientEntity {
         return $patientEntity;
     }
 
-    public function fillCenterDetails(string $centerName, string $countryCode) : void {
-        $this->center = new CenterEntity();
-        $this->center->name = $centerName;
-        $this->center->countryCode = $countryCode;
+    public function fillCenterDetails(CenterEntity $centerEntity): void
+    {
+        $this->center = $centerEntity;
     }
 
-    public function setVisitsDetails(array $visits) : void {
-        $this->visits = $visits;
+    /**
+     * visitEntities is an array of VisitEntities
+     */
+    public function setVisitsDetails(array $visitEntities): void
+    {
+        $this->visits = $visitEntities;
     }
-
 }

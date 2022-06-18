@@ -2,7 +2,8 @@
 
 namespace App\GaelO\Entities;
 
-class UserEntity {
+class UserEntity
+{
     public int $id;
     public ?String $lastname;
     public ?String $firstname;
@@ -21,7 +22,8 @@ class UserEntity {
 
     public ?array $roles;
 
-    public static function fillFromDBReponseArray(array $array){
+    public static function fillFromDBReponseArray(array $array): UserEntity
+    {
         $userEntity  = new UserEntity();
         $userEntity->id = $array['id'];
         $userEntity->lastname = $array['lastname'];
@@ -41,7 +43,8 @@ class UserEntity {
         return $userEntity;
     }
 
-    public static function fillMinimalFromDBReponseArray(array $array){
+    public static function fillMinimalFromDBReponseArray(array $array): UserEntity
+    {
         $userEntity  = new UserEntity();
         $userEntity->id = $array['id'];
         $userEntity->firstname = $array['firstname'];
@@ -52,7 +55,18 @@ class UserEntity {
         return $userEntity;
     }
 
-    public function addRoles(array $roles) : void {
+    public static function fillOnlyUserIdentification(array $user): UserEntity
+    {
+        $userEntity = new UserEntity();
+        $userEntity->lastname = $user['lastname'];
+        $userEntity->firstname = $user['firstname'];
+        $userEntity->centerCode = $user['center_code'];
+        $userEntity->email = $user['email'];
+        return $userEntity;
+    }
+
+    public function addRoles(array $roles): void
+    {
         $this->roles = $roles;
     }
 }

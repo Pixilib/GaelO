@@ -4,6 +4,7 @@ namespace App\GaelO\UseCases\GetAdminTracker;
 
 use App\GaelO\Constants\Constants;
 use App\GaelO\Entities\TrackerEntity;
+use App\GaelO\Entities\UserEntity;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
@@ -36,7 +37,7 @@ class GetAdminTracker
             $responseArray = [];
             foreach ($dbData as $data) {
                 $trackerEntity = TrackerEntity::fillFromDBReponseArray($data);
-                $trackerEntity->setUserData($data['user']);
+                $trackerEntity->setUserDetails(UserEntity::fillMinimalFromDBReponseArray($data['user']));
                 $responseArray[] = $trackerEntity;
             }
 

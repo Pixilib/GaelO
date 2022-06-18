@@ -2,12 +2,14 @@
 
 namespace App\GaelO\Entities;
 
-class CountryEntity {
+class CountryEntity
+{
     public string $code;
     public string $countryUs;
     public string $countryFr;
 
-    public static function fillFromDBReponseArray(array $array){
+    public static function fillFromDBReponseArray(array $array): CountryEntity
+    {
         $countryEntity  = new CountryEntity();
         $countryEntity->code = $array['code'];
         $countryEntity->countryUs = $array['country_us'];
