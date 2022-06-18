@@ -13,6 +13,9 @@ class StudyEntity {
     public bool $deleted;
     public ?string $ancillaryOf;
 
+    //Array of VisitGroupEntities
+    public array $visitGroups;
+
     public static function fillFromDBReponseArray(array $array){
         $studyEntity  = new StudyEntity();
         $studyEntity->name = $array['name'];
@@ -40,5 +43,9 @@ class StudyEntity {
     public function getOriginalStudyName() : string {
         if ($this->ancillaryOf) return $this->ancillaryOf;
         else return $this->name;
+    }
+
+    public function setVisitGroups(array $visitGroupEntities){
+        $this->visitGroups = $visitGroupEntities;
     }
 }

@@ -1,7 +1,6 @@
 Salim TODO :
 
 - Refac SendMail est complexe probablement a splitter
-- Refac : GetStudiesWithDetails revoir l'entity d'output
 - Refac : Relation Visit -> VisitType qui rappelle VisitGroup à revoir
 - Refac : setVisitData de VisitEntity à revoir
 - Refac : GetVisit pourrait un avoir un accès plus direct aux données (review status + visit context + user details)
@@ -27,7 +26,7 @@ Salim TODO :
 
 --- Etudes ancillaires ---
 Tester Etudes ancillaire avec Emilie (voir return default data de review status si entitée non crée)
-Ne doit pas pouvoir faire les relance d'upload => Voir avec Emilie
+Ne doit pas pouvoir faire les relance d'upload => Voir avec Emilie (probablement passer les info de study dans un contexte)
 --- /Etudes ancillaires ---
 
 **** Tests ***

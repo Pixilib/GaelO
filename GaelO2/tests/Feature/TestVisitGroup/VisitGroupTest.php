@@ -38,7 +38,7 @@ class VisitGroupTest extends TestCase
         $response = $this->json('GET', 'api/visit-groups/'.$visitGroup->id)->content();
         $response = json_decode($response, true);
         //Check all Item in visitGroupEntity are present in reponse
-        foreach ( get_class_vars(VisitGroupEntity::class) as $key=>$value ){
+        foreach ( ['id', 'modality', 'name', 'studyName'] as $key ){
             $this->assertArrayHasKey($key, $response);
         }
 

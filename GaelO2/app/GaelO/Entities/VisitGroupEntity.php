@@ -8,6 +8,8 @@ class VisitGroupEntity {
     public String $modality;
     public String $name;
 
+    public array $visitTypes;
+
     public static function fillFromDBReponseArray(array $array){
         $visitGroupEntity  = new VisitGroupEntity();
         $visitGroupEntity->id = $array['id'];
@@ -16,5 +18,9 @@ class VisitGroupEntity {
         $visitGroupEntity->modality = $array['modality'];
 
         return $visitGroupEntity;
+    }
+
+    public function setVisitTypes(array $visitTypeEntities){
+        $this->visitTypes = $visitTypeEntities;
     }
 }

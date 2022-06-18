@@ -154,9 +154,14 @@ class StudyTest extends TestCase
 
     public function testGetStudiesWithDetails(){
         AuthorizationTools::actAsAdmin(true);
-        Study::factory()->count(2)->create();
+        VisitType::factory()->count(4)->create();
         $response = $this->json('GET', '/api/studies?expand')->assertSuccessful();
-        $response->assertJsonCount(2);
+        $response->assertJsonCount(4);
+        $answer =json_decode($response->content(), true);
+        foreach($answer as $studyName => $details){
+            $this->assertArrayHasKey('visitGroups', $details);
+            $this->assertArrayHasKey('visitTypes', $details['visitGroups'][0]);
+        }
 
     }
 
