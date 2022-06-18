@@ -74,7 +74,7 @@ class VisitEntity
         return $visitEntity;
     }
 
-    public function fillForTree($visitArray): void
+    public function fillForTree(array $visitArray): void
     {
         $this->id = $visitArray['id'];
         $this->patientId = $visitArray['patient_id'];
@@ -92,9 +92,9 @@ class VisitEntity
         $this->visitType = VisitTypeEntity::fillFromDBReponseArray($visitTypeEntity);
     }
 
-    public function setPatientEntity(array $patientEntity): void
+    public function setPatientEntity(PatientEntity $patientEntity): void
     {
-        $this->patient = PatientEntity::fillFromDBReponseArray($patientEntity);
+        $this->patient = $patientEntity;
     }
 
     public function setReviewVisitStatus(?string $reviewStatus, ?string $reviewConclusionValue, ?string $reviewConclusionDate, ?array $targetLesions): void
@@ -105,11 +105,8 @@ class VisitEntity
         $this->targetLesions  = $targetLesions;
     }
 
-    public function setCreatorDetails(string $firstname, string $lastname): void
+    public function setCreatorDetails(UserEntity $userEntity): void
     {
-        $userEntity = new UserEntity();
-        $userEntity->firstname = $firstname;
-        $userEntity->lastname = $lastname;
         $this->creatorUser = $userEntity;
     }
 }

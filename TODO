@@ -3,13 +3,6 @@ Salim TODO :
 - Refac SendMail est complexe probablement a splitter
 - Refac : GetVisit pourrait un avoir un accès plus direct aux données (review status + visit context + user details)
 
-- Refac : setVisitData de VisitEntity à revoir (spliter en differents sets)
--> DicomStudyEntity
--> PatientEntity
--> Review Entity
--> Tracker Entity
--> Visit Entity
-
 - Pluger toutes les reponses "data" sur entity response
 => GetPossibleUpload => VisitEntity ?
 => GetReviewProgression => Visit + Review_status + Progression entity?
