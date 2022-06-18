@@ -37,17 +37,15 @@ class GetVisit
 
             $this->checkAuthorization($visitId, $getVisitRequest->currentUserId, $getVisitRequest->role, $studyName);
 
-            $visitEntity = $this->visitRepositoryInterface->getVisitContext($visitId);
-            $reviewStatus = $this->reviewStatusRepositoryInterface->getReviewStatus($visitId, $studyName);
-            $userEntity  = $this->userRepositoryInterface->find($visitEntity['creator_user_id']);
+            $visitEntity = $this->visitRepositoryInterface->getVisitWithContextAndReviewStatus($visitId, $studyName);
 
             $responseEntity = VisitEntity::fillFromDBReponseArray($visitEntity);
             $responseEntity->setVisitContext(
                 $visitEntity['visit_type']['visit_group'],
                 $visitEntity['visit_type']
             );
-            $responseEntity->setReviewVisitStatus($reviewStatus['review_status'], $reviewStatus['review_conclusion_value'], $reviewStatus['review_conclusion_date'], $reviewStatus['target_lesions']);
-            $responseEntity->setCreatorDetails(UserEntity::fillOnlyUserIdentification($userEntity));
+            $responseEntity->setReviewVisitStatus($visitEntity['review_status']['review_status'], $visitEntity['review_status']['review_conclusion_value'], $visitEntity['review_status']['review_conclusion_date'], $visitEntity['review_status']['target_lesions']);
+            $responseEntity->setCreatorDetails(UserEntity::fillOnlyUserIdentification($visitEntity['creator']));
 
             $getVisitResponse->body = $responseEntity;
             $getVisitResponse->status = 200;

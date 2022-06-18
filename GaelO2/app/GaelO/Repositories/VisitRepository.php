@@ -98,6 +98,19 @@ class VisitRepository implements VisitRepositoryInterface
         return $dataArray;
     }
 
+    public function getVisitWithContextAndReviewStatus(int $visitId, string $studyName): array
+    {
+
+        $builder = $this->visit->with(['visitType', 'visitType.visitGroup', 'creator']);
+        $builder->with(['reviewStatus' => function ($query) use ($studyName) {
+            $query->where('study_name', $studyName);
+        }]);
+
+        $dataArray = $builder->findOrFail($visitId)->toArray();
+        return $dataArray;
+
+    }
+
     public function getVisitContextByVisitIdArray(array $visitIdArray): array
     {
 
@@ -157,7 +170,7 @@ class VisitRepository implements VisitRepositoryInterface
                 $query->where('study_name', $studyName);
             });
 
-        if($withPatientCenter){
+        if ($withPatientCenter) {
             $queryBuilder->with('patient.center');
         }
         if ($withReviewStatus) {
@@ -289,7 +302,7 @@ class VisitRepository implements VisitRepositoryInterface
         return $answer->count() === 0 ? []  : $answer->toArray();
     }
 
-    public function isParentPatientHavingOneVisitAwaitingReview(int $visitId, string $studyName, int $userId) : bool
+    public function isParentPatientHavingOneVisitAwaitingReview(int $visitId, string $studyName, int $userId): bool
     {
         //Get parent patient
         $patient = $this->visit->findOrFail($visitId)->patient()->sole();

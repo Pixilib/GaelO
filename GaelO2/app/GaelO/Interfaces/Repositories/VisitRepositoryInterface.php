@@ -28,6 +28,8 @@ interface VisitRepositoryInterface
 
     public function getVisitContext(int $visitId, bool $withTrashed = false): array;
 
+    public function getVisitWithContextAndReviewStatus(int $visitId, string $studyName): array;
+
     public function getPatientsVisits(string $patientId): array;
 
     public function getAllPatientsVisitsWithReviewStatus(string $patientId, string $studyName, bool $withTrashed): array;
