@@ -765,7 +765,7 @@ function make_interface_tableau_review_supervisor($data_reviews)
 								$associatedFiles = $reviewObject->associatedFiles;
 									foreach($associatedFiles as $filekey => $fileName){
 										?>
-										<a class="dropdown-item" href="scripts/get_review_attached_file.php?id_visit=<?= $reviewObject->id_visit ?>&file_key=<?= $filekey ?>" value=<?= $filekey ?> > <?= $filekey ?> </a>
+										<a class="dropdown-item" href="scripts/get_review_attached_file_supervisor.php?id_review=<?= $reviewObject->id_review ?>&file_key=<?= $filekey ?>" value=<?= $filekey ?> > <?= $filekey ?> </a>
 										<?php
 									}
 								?>

@@ -20,19 +20,18 @@ $linkpdo=Session::getLinkpdo();
 
 $userObject=new User($_SESSION['username'], $linkpdo);
 
-$idVisit=$_GET['id_visit'];
-$fileKey=$_GET['file_key'];
-$local=$_SESSION['role'] == User::INVESTIGATOR ? true : false; 
+$idReview=$_GET['id_review'];
+$fileKey=$_GET['file_key']; 
 
 //Need to retrieve study before testing permission, can't test visit permissions directly because permission class tests non deleted status
+$reviewObject = new Review($idReview, $linkpdo);
+
+$idVisit = $reviewObject->id_visit;
 $visitObject=new Visit($idVisit, $linkpdo);
 $accessCheck=$userObject->isRoleAllowed($visitObject->study, $_SESSION['role']);
 
-if ($accessCheck && in_array($_SESSION['role'], array(User::INVESTIGATOR, User::REVIEWER))) {
+if ($accessCheck && $_SESSION['role'] == User::SUPERVISOR) {
     
-	if ($_SESSION['role'] == User::INVESTIGATOR) $reviewObject=$visitObject->getReviewsObject(true);
-	else $reviewObject=$visitObject->queryExistingReviewForReviewer($_SESSION['username']);
-
 	$filePath=$reviewObject->getAssociatedFilePath($fileKey);
     
 	header('Content-type: application/octet-stream; charset=utf-8');
