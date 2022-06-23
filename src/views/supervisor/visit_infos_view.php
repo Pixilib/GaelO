@@ -751,28 +751,35 @@ function make_interface_tableau_review_supervisor($data_reviews)
 			<tr>
 				<td>Associated Files</td>
 				<?php
+				
 				for ($i = 0; $i < $res_nb_reviews; $i++) {
 					$reviewObject = $data_reviews[$i];
-					$dataSpecific = $reviewObject->getSpecificData();
-				?>
-					<td style="text-align:unset;">
-						<div id="dropdown_dl_associated" style="display: inline-block">
-							<button id="dropdownMenuButton"  class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-								Files
-  							</button>
-							<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-								<?php
-								$associatedFiles = $reviewObject->associatedFiles;
-									foreach($associatedFiles as $filekey => $fileName){
-										?>
-										<a class="dropdown-item" href="scripts/get_review_attached_file_supervisor.php?id_review=<?= $reviewObject->id_review ?>&file_key=<?= $filekey ?>" value=<?= $filekey ?> > <?= $filekey ?> </a>
-										<?php
-									}
-								?>
+					$associatedFiles = $reviewObject->associatedFiles;
+					if(sizeof($associatedFiles) > 0){
+						?>
+						<td style="text-align:unset;">
+							<div id="dropdown_dl_associated" style="display: inline-block">
+								<button id="dropdownMenuButton"  class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+									Files
+								</button>
+								<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+									<?php
+									
+										foreach($associatedFiles as $filekey => $fileName){
+											?>
+											<a class="dropdown-item" href="scripts/get_review_attached_file_supervisor.php?id_review=<?= $reviewObject->id_review ?>&file_key=<?= $filekey ?>" value=<?= $filekey ?> > <?= $filekey ?> </a>
+											<?php
+										}
+									?>
+								</div>
 							</div>
-						</div>
-					</td>
-				<?php
+						</td>
+					<?php
+					} else {
+						?>
+							<td style="text-align:unset;">None</td>
+						<?php
+					}
 				}
 				?>
 			</tr>
