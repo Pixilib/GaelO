@@ -70,7 +70,7 @@ class StudyRepository implements StudyRepositoryInterface
 
     public function getstudyWithDetails(string $name): array
     {
-        $studiesDetails = $this->study->findOrFail($name)->with('visitGroups', 'visitGroups.visitTypes')->sole();
+        $studiesDetails = $this->study->with('visitGroups', 'visitGroups.visitTypes')->findOrFail($name);
         return $studiesDetails->toArray();
     }
 
