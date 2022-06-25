@@ -71,6 +71,19 @@ class StudyRepositoryTest extends TestCase
 
     }
 
+    public function testGetStudyWithDetails(){
+
+        $visitType = VisitType::factory()->create();
+
+        $studyName = $visitType->visitGroup->study_name;
+
+        $answer = $this->studyRepository->getstudyWithDetails($studyName);
+
+        $this->assertArrayHasKey('visit_groups', $answer);
+        $this->assertArrayHasKey('visit_types', $answer['visit_groups'][0]);
+
+    }
+
     public function testGetAllStudiesWithDetails(){
 
         VisitType::factory()->count(5)->create();

@@ -44,6 +44,9 @@ use App\GaelO\UseCases\GetStudies\GetStudiesResponse;
 use App\GaelO\UseCases\GetStudiesWithDetails\GetStudiesWithDetails;
 use App\GaelO\UseCases\GetStudiesWithDetails\GetStudiesWithDetailsRequest;
 use App\GaelO\UseCases\GetStudiesWithDetails\GetStudiesWithDetailsResponse;
+use App\GaelO\UseCases\GetStudy\GetStudy;
+use App\GaelO\UseCases\GetStudy\GetStudyRequest;
+use App\GaelO\UseCases\GetStudy\GetStudyResponse;
 use App\GaelO\UseCases\GetStudyStatistics\GetStudyStatistics;
 use App\GaelO\UseCases\GetStudyStatistics\GetStudyStatisticsRequest;
 use App\GaelO\UseCases\GetStudyStatistics\GetStudyStatisticsResponse;
@@ -325,5 +328,14 @@ class StudyController extends Controller
         $getStudyStatisticsRequest->studyName = $studyName;
         $getStudyStatistics->execute($getStudyStatisticsRequest, $getStudyStatisticsResponse);
         return $this->getJsonResponse($getStudyStatisticsResponse->body, $getStudyStatisticsResponse->status, $getStudyStatisticsResponse->statusText);
+    }
+
+    public function getStudy(GetStudy $getStudy, GetStudyRequest $getStudyRequest, GetStudyResponse $getStudyResponse, string $studyName){
+        $currentUser = Auth::user();
+
+        $getStudyRequest->currentUserId = $currentUser['id'];
+        $getStudyRequest->studyName = $studyName;
+        $getStudy->execute($getStudyRequest, $getStudyResponse);
+        return $this->getJsonResponse($getStudyResponse->body, $getStudyResponse->status, $getStudyResponse->statusText);
     }
 }
