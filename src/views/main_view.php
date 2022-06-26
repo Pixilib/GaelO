@@ -292,9 +292,11 @@
 					?>		
 				</div>
 					
-				<div class="col-auto">
+				<div class="col">
+					<div class="text-end">
 					<button id="messengerButton" class="btn btn-info">Messenger</button>
 					<button id="myAccountButton" class="btn btn-info mr-5">My Account</button>
+					</div>
 				</div>
 
 			</div>
