@@ -142,7 +142,7 @@
     
     <div id="trackerDivAdministrator" class="trackerRoleDiv">
     	<h1>Administrator Log</h1>
-        <table id="trackerTableAdministrator" class="table table-striped" style="text-align:center; width:100%">
+        <table id="trackerTableAdministrator" class="table table-borderless table-striped" style="text-align:center; width:100%">
             <thead>
                 <tr>
                 <th>Date</th>

@@ -97,7 +97,7 @@
 <div class="jumbotron">
 
 	<div class="text-center">
-    		<table class="table table-striped" id="centersTable">
+    		<table class="table table-borderless table-striped" id="centersTable">
     			<thead>
         			<tr>
             			<td>Code</td>

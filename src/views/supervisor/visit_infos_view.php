@@ -699,7 +699,7 @@ function make_interface_tableau_review_supervisor($data_reviews)
 	}
 ?>
 	<div style="overflow-x:auto;">
-		<table class="table table-striped block">
+		<table class="table table-borderless table-striped block">
 			<tr>
 				<th></th>
 				<?php

@@ -181,7 +181,7 @@
 			
 		<div>
 			<label class="col-form-label">Visits In Study :</label>
-			<table id="visitTable" class="table table-striped">
+			<table id="visitTable" class="table table-borderless table-striped">
 				<thead>
 					<tr>
 						<td>

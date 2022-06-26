@@ -141,7 +141,7 @@
     
     <div id="trackerDivUser" class="trackerRoleDiv">
     	<h1>User Log</h1>
-        <table id="trackerTableUser" class="table table-striped" style="text-align:center; width:100%">
+        <table id="trackerTableUser" class="table table-borderless table-striped" style="text-align:center; width:100%">
             <thead>
                 <tr>
                 <th>Date</th>
