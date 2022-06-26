@@ -458,8 +458,9 @@ Class Orthanc {
 
 
 		$tagsObjects[]=new TagAnon("3006,0026", $RTStruct); // ROIName
-		$tagsObjects[]=new TagAnon("3006,0028", $RTStruct); // ROIDescription
-		$tagsObjects[]=new TagAnon("3006,0038", $RTStruct); // ROI Generation Description
+		//SK ces deux Item à verfier
+		//$tagsObjects[]=new TagAnon("3006,0028", $RTStruct); // ROIDescription
+		//$tagsObjects[]=new TagAnon("3006,0038", $RTStruct); // ROI Generation Description
 
 		$tagsObjects[]=new TagAnon("3006,0008", $RTStruct); // Structure Set Date
 		$tagsObjects[]=new TagAnon("3006,0009", $RTStruct); // Structure Set Time

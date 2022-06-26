@@ -42,8 +42,9 @@ if ($visitObject->statusDone == Visit::NOT_DONE) {
 						let targetVisit = data.filter((visit)=>{
 							return visit.visitID === <?= $id_visit ?>
 						})
-
-						window.Gaelo_Uploader.installUploader({
+						
+						window.gaelo_uploader_instance = new window.Gaelo_Uploader.GaelOUploader()
+						window.gaelo_uploader_instance.installUploader({
 							minNbOfInstances: 30,
 							availableVisits : targetVisit,
 							tusEndpoint : '/tus',
@@ -110,7 +111,7 @@ if ($visitObject->statusDone == Visit::NOT_DONE) {
 				});	
 
 				$("#dicomUploaderv2").on("remove", function () {
-					let results = window.Gaelo_Uploader.closeUploader('dicomUploaderv2')
+					let results = window.gaelo_uploader_instance.closeUploader()
 					console.log('Uploader Removed '+results)
 				})	
                

@@ -40,7 +40,7 @@
 				$("#tree").html('<div id="dicomMutiUploader" style="width:100%"></div>');
 
 				$("#dicomMutiUploader").on("remove", function () {
-					let results = window.Gaelo_Uploader.closeUploader('dicomMutiUploader')
+					let results = window.gaelo_uploader_instance.closeUploader()
 					console.log('Uploader Removed '+results)
 				})	
 
@@ -49,7 +49,8 @@
 					url: '/scripts/get_possible_import.php',
 					dataType: 'json',
 					success: function(visits) {
-						window.Gaelo_Uploader.installUploader({
+						window.gaelo_uploader_instance = new window.Gaelo_Uploader.GaelOUploader()
+						window.gaelo_uploader_instance.installUploader({
 							minNbOfInstances: 30,
 							availableVisits : visits,
 							tusEndpoint : '/tus',

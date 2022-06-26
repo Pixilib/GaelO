@@ -259,37 +259,40 @@
 	<main class="container">
 		<div class="block block-content">
 			<div class="row" style="padding-bottom: 30px;">
-				<!-- Study Selector -->
-				<label>You are currently working on study:</label>
-				<select class="custom-select" name="etude" id="etude" style="width:auto;">
+				<div class="col-auto">
+					<!-- Study Selector -->
+					<label>You are currently working on study:</label>
+					<select class="custom-select" name="etude" id="etude" style="width:auto;">
+						<?php
+						//If multiple possibilities add Choose option
+						if (sizeof($availableStudies) > 1) {
+							echo '<option value="Choose">Choose</option>';
+						}
+						//Add all available studies in the selector
+						foreach ($availableStudies as $study) {
+							echo '<option value="'.htmlspecialchars($study).'">'.htmlspecialchars($study).'</option>';
+						}
+						?>
+					</select>
+					<label id="label_role">Role:</label>
+					<select class="custom-select" name="role" id="role" style="width:auto;">
+					</select>
+				</div>
+				<div class="col-auto">
+					<button class="btn btn-success" id="confirmStudyRole">Confirm</button>
+					<!-- Disconnection button -->
+					<input class="btn btn-danger" type="button" id="logOut" value="Log out">
 					<?php
-					//If multiple possibilities add Choose option
-					if (sizeof($availableStudies) > 1) {
-						echo '<option value="Choose">Choose</option>';
+					//If admin, add Admin button
+					if ($_SESSION['admin']) {
+						?>
+						<input class="btn btn-danger" type="button" value="Admin" id="adminButton" style="margin-left: 20px;">
+					<?php
 					}
-					//Add all available studies in the selector
-					foreach ($availableStudies as $study) {
-						echo '<option value="'.htmlspecialchars($study).'">'.htmlspecialchars($study).'</option>';
-					}
-					?>
-				</select>
-				<label id="label_role">Role:</label>
-				<select class="custom-select" name="role" id="role" style="width:auto;">
-				</select>
-
-				<button class="btn btn-success" id="confirmStudyRole">Confirm</button>
-				<!-- Disconnection button -->
-				<input class="btn btn-danger" type="button" id="logOut" value="Log out">
-
-				<?php
-				//If admin, add Admin button
-				if ($_SESSION['admin']) {
-					?>
-					<input class="btn btn-danger" type="button" value="Admin" id="adminButton" style="margin-left: 20px;">
-				<?php
-				}
-				?>			
-				<div class="float-right">
+					?>		
+				</div>
+					
+				<div class="col-auto">
 					<button id="messengerButton" class="btn btn-info">Messenger</button>
 					<button id="myAccountButton" class="btn btn-info mr-5">My Account</button>
 				</div>
