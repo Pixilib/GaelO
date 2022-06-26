@@ -92,7 +92,7 @@
 		<?php
 		}
 
-		if ($visitObject->stateInvestigatorForm != Visit::LOCAL_FORM_NOT_DONE) {
+		if ($visitObject->stateInvestigatorForm != Visit::LOCAL_FORM_NOT_DONE && $visit_type->localFormNeeded) {
 		?>
 			//Display the local investigator specific form
 			$("#investigatorForm").load('/specific_form', {
