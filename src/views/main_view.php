@@ -295,7 +295,7 @@
 				<div class="col">
 					<div class="text-end">
 					<button id="messengerButton" class="btn btn-info">Messenger</button>
-					<button id="myAccountButton" class="btn btn-info mr-5">My Account</button>
+					<button id="myAccountButton" class="btn btn-info">My Account</button>
 					</div>
 				</div>
 
