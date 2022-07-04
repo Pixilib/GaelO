@@ -91,6 +91,7 @@ class TrackerRepositoryTest extends TestCase
         $this->assertEquals(5, sizeof($trackerEntities));
         $this->assertArrayHasKey('visit', $trackerEntities[0]);
         $this->assertArrayHasKey('visit_type', $trackerEntities[0]['visit']);
+        $this->assertArrayHasKey('patient', $trackerEntities[0]['visit']);
         $this->assertArrayHasKey('visit_group', $trackerEntities[0]['visit']['visit_type']);
         $this->assertArrayHasKey('user', $trackerEntities[0]);
     }

@@ -73,6 +73,9 @@ class TrackerTest extends TestCase
         $response = $this->json('GET', '/api/studies/' . $this->study->name . '/tracker/Investigator?action=Corrective Action')->assertSuccessful();
         $data = json_decode($response->content(), true);
         $this->assertEquals(1, sizeof($data));
+        $this->assertArrayHasKey('patient', $data[0]['visit']);
+        $this->assertArrayHasKey('visitType', $data[0]['visit']);
+        $this->assertArrayHasKey('visitGroup', $data[0]['visit']);
     }
 
     public function testGetStudyTrackerShouldFailNotSupervisor()

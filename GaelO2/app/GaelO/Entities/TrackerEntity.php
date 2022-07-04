@@ -37,6 +37,9 @@ class TrackerEntity
     public function setVisitData(array $array) : void
     {
         $this->visit = new VisitEntity();
+        $this->visit->patient = new PatientEntity();
+        $this->visit->patient->code = $array['patient']['code'];
+        $this->visit->patient->id = $array['patient_id'];
         $this->visit->setVisitContext(
             $array['visit_type']['visit_group'],
             $array['visit_type']
