@@ -42,6 +42,5 @@ class TrackerEntity
             $array['visit_type']
         );
         $this->visit->fillFromDBReponseArray($array);
-        $this->visit->setReviewVisitStatus($array['review_status']['review_status'], $array['review_status']['review_conclusion_value'], $array['review_status']['review_conclusion_date'], $array['review_status']['target_lesions']);
     }
 }
