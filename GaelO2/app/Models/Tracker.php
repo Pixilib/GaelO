@@ -21,6 +21,6 @@ class Tracker extends Model
 
     public function visit()
     {
-        return $this->belongsTo(Visit::class, 'visit_id', 'id');
+        return $this->belongsTo(Visit::class, 'visit_id', 'id')->withTrashed();
     }
 }
