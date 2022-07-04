@@ -47,20 +47,22 @@ class UnlockInvestigatorForm
             $visitContext = $this->visitRepositoryInterface->getVisitContext($unlockInvestigatorFormRequest->visitId);
 
             $studyName = $visitContext['patient']['study_name'];
+            $visitId = $visitContext['id'];
+            $currentUserId = $unlockInvestigatorFormRequest->currentUserId;
 
-            $this->checkAuthorization($unlockInvestigatorFormRequest->currentUserId, $unlockInvestigatorFormRequest->visitId, $visitContext['state_quality_control'], $studyName);
+            $this->checkAuthorization($currentUserId, $visitId, $visitContext['state_quality_control'], $studyName);
 
-            $investigatorFormEntity = $this->reviewRepositoryInterface->getInvestigatorForm($unlockInvestigatorFormRequest->visitId, false);
+            $investigatorFormEntity = $this->reviewRepositoryInterface->getInvestigatorForm($visitId, false);
 
             if (!$investigatorFormEntity['validated']) {
                 throw new GaelOBadRequestException('Form Already Unlocked');
             }
 
             //Unlock Investigator Form
-            $this->reviewRepositoryInterface->unlockInvestigatorForm($unlockInvestigatorFormRequest->visitId);
+            $this->reviewRepositoryInterface->unlockInvestigatorForm($visitId);
 
             //Make investigator form not done
-            $this->visitRepositoryInterface->updateInvestigatorFormStatus($unlockInvestigatorFormRequest->visitId, Constants::INVESTIGATOR_FORM_DRAFT);
+            $this->visitRepositoryInterface->updateInvestigatorFormStatus($visitId, Constants::INVESTIGATOR_FORM_DRAFT);
 
             //Reset QC if QC is needed in this Visit
             if ($visitContext['state_quality_control'] !== Constants::QUALITY_CONTROL_NOT_NEEDED) $this->visitRepositoryInterface->resetQc($visitContext['id']);
@@ -74,19 +76,19 @@ class UnlockInvestigatorForm
             ];
 
             $this->trackerRepositoryInterface->writeAction(
-                $unlockInvestigatorFormRequest->currentUserId,
+                $currentUserId,
                 Constants::ROLE_SUPERVISOR,
                 $studyName,
-                $unlockInvestigatorFormRequest->visitId,
+                $visitId,
                 Constants::TRACKER_UNLOCK_INVESTIGATOR_FORM,
                 $actionDetails
             );
 
             //send unlock form notification to form owner
             $this->mailServices->sendUnlockedFormMessage(
-                $unlockInvestigatorFormRequest->visitId,
+                $visitId,
                 true,
-                $unlockInvestigatorFormRequest->currentUserId,
+                $currentUserId,
                 $studyName,
                 $visitContext['patient_id'],
                 $visitContext['patient']['code'],
@@ -96,7 +98,6 @@ class UnlockInvestigatorForm
             $unlockInvestigatorFormResponse->status = 200;
             $unlockInvestigatorFormResponse->statusText =  'OK';
         } catch (GaelOException $e) {
-
             $unlockInvestigatorFormResponse->body = $e->getErrorBody();
             $unlockInvestigatorFormResponse->status = $e->statusCode;
             $unlockInvestigatorFormResponse->statusText =  $e->statusText;

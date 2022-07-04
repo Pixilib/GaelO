@@ -2,7 +2,8 @@
 
 namespace App\GaelO\UseCases\UnlockInvestigatorForm;
 
-class UnlockInvestigatorFormRequest {
+class UnlockInvestigatorFormRequest
+{
     public int $currentUserId;
     public int $visitId;
     public string $reason;

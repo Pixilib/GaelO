@@ -10,7 +10,8 @@ use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
 use App\GaelO\Services\AuthorizationService\AuthorizationStudyService;
 use Exception;
 
-class DeleteDocumentation{
+class DeleteDocumentation
+{
 
     private DocumentationRepositoryInterface $documentationRepositoryInterface;
     private AuthorizationStudyService $authorizationStudyService;
@@ -23,50 +24,52 @@ class DeleteDocumentation{
         $this->trackerRepositoryInterface = $trackerRepositoryInterface;
     }
 
-    public function execute(DeleteDocumentationRequest $deleteDocumentationRequest, DeleteDocumentationResponse $deleteDocumentationResponse){
+    public function execute(DeleteDocumentationRequest $deleteDocumentationRequest, DeleteDocumentationResponse $deleteDocumentationResponse)
+    {
 
-        try{
+        try {
 
-            $documentationEntity = $this->documentationRepositoryInterface->find($deleteDocumentationRequest->id, false);
+            $currentUserId = $deleteDocumentationRequest->currentUserId;
+            $documentationId = $deleteDocumentationRequest->id;
+
+            $documentationEntity = $this->documentationRepositoryInterface->find($documentationId, false);
             $studyName = $documentationEntity['study_name'];
 
-            $this->checkAuthorization($deleteDocumentationRequest->currentUserId, $studyName);
+            $this->checkAuthorization($currentUserId, $studyName);
 
-            $this->documentationRepositoryInterface->delete($deleteDocumentationRequest->id);
+            $this->documentationRepositoryInterface->delete($documentationId);
 
             $actionDetails = [
-                'documentationId' => $deleteDocumentationRequest->id,
-                'documenationName'=> $documentationEntity['name'],
-                'documenationVersion'=> $documentationEntity['version']
+                'documentationId' => $documentationId,
+                'documenationName' => $documentationEntity['name'],
+                'documenationVersion' => $documentationEntity['version']
             ];
 
             $this->trackerRepositoryInterface->writeAction(
-                $deleteDocumentationRequest->currentUserId,
+                $currentUserId,
                 Constants::ROLE_SUPERVISOR,
                 $studyName,
                 null,
                 Constants::TRACKER_DELETE_DOCUMENTATION,
-                $actionDetails);
+                $actionDetails
+            );
 
-                $deleteDocumentationResponse->status = 200;
-                $deleteDocumentationResponse->statusText =  'OK';
-
-
-        } catch (GaelOException $e){
-
+            $deleteDocumentationResponse->status = 200;
+            $deleteDocumentationResponse->statusText =  'OK';
+        } catch (GaelOException $e) {
             $deleteDocumentationResponse->body = $e->getErrorBody();
             $deleteDocumentationResponse->status = $e->statusCode;
             $deleteDocumentationResponse->statusText =  $e->statusText;
-
-        } catch (Exception $e){
+        } catch (Exception $e) {
             throw $e;
         }
     }
 
-    private function checkAuthorization(int $currentUserId, string $studyName){
+    private function checkAuthorization(int $currentUserId, string $studyName)
+    {
         $this->authorizationStudyService->setStudyName($studyName);
         $this->authorizationStudyService->setUserId($currentUserId);
-        if( !$this->authorizationStudyService->isAllowedStudy(Constants::ROLE_SUPERVISOR)){
+        if (!$this->authorizationStudyService->isAllowedStudy(Constants::ROLE_SUPERVISOR)) {
             throw new GaelOForbiddenException();
         }
     }

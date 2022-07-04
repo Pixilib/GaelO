@@ -88,6 +88,15 @@ class VisitRepositoryTest extends TestCase
         $this->assertArrayHasKey('patient', $visitContext);
     }
 
+    public function testGetVisitWithContextAndReviewStatus()
+    {
+        $reviewStatus = ReviewStatus::factory()->create();
+        $visitData = $this->visitRepository->getVisitWithContextAndReviewStatus($reviewStatus->visit_id, $reviewStatus->study_name);
+        $this->assertArrayHasKey('visit_type', $visitData);
+        $this->assertArrayHasKey('creator', $visitData);
+        $this->assertArrayHasKey('review_status', $visitData);
+    }
+
     private function populateVisits()
     {
         $study = Study::factory()->create();

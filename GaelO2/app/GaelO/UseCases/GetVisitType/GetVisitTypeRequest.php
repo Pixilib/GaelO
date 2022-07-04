@@ -2,7 +2,8 @@
 
 namespace App\GaelO\UseCases\GetVisitType;
 
-class GetVisitTypeRequest {
+class GetVisitTypeRequest
+{
     public int $currentUserId;
     public int $visitGroupId;
     public int $visitTypeId;

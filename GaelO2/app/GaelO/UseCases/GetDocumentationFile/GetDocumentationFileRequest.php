@@ -2,7 +2,8 @@
 
 namespace App\GaelO\UseCases\GetDocumentationFile;
 
-class GetDocumentationFileRequest{
+class GetDocumentationFileRequest
+{
     public int $currentUserId;
     public int $id;
     public string $role;

@@ -134,7 +134,7 @@ class VisitFactory extends Factory
             */
         })->afterCreating(function (Visit $visit) {
             //SK FAUDRAIT CREER LE REVIEW STATUS MAIS PB CONFLIT FAKER
-            //$studyName = $visit->visitTypeOnly->visitGroup->study->name;
+            //$studyName = $visit->visitType->visitGroup->study->name;
             //ReviewStatus::factory()->studyName($studyName)->visitId($visit->id)->create();
         });
     }

@@ -18,6 +18,8 @@ interface StudyRepositoryInterface {
 
     public function getStudies(bool $withTrashed = false) : array ;
 
+    public function getstudyWithDetails(string $name): array;
+
     public function getAllStudiesWithDetails() : array ;
 
     public function reactivateStudy(string $name) : void ;

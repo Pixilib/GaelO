@@ -2,7 +2,8 @@
 
 namespace App\GaelO\UseCases\ReactivateDicomSeries;
 
-class ReactivateDicomSeriesRequest{
+class ReactivateDicomSeriesRequest
+{
     public int $currentUserId;
     public string $seriesInstanceUID;
     public string $reason;

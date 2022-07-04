@@ -2,7 +2,8 @@
 
 namespace App\GaelO\UseCases\GetUsersFromStudy;
 
-class GetUsersFromStudyRequest {
+class GetUsersFromStudyRequest
+{
     public string $role;
     public String $studyName;
     public int $currentUserId;

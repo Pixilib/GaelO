@@ -13,15 +13,18 @@ class Patient extends Model
     protected $keyType = 'string';
     public $incrementing = false;
 
-    public function center(){
+    public function center()
+    {
         return $this->belongsTo(Center::class, 'center_code', 'code');
     }
 
-    public function study(){
+    public function study()
+    {
         return $this->belongsTo(Study::class, 'study_name', 'name');
     }
 
-    public function visits(){
+    public function visits()
+    {
         return $this->hasMany(Visit::class, 'patient_id', 'id');
     }
 }

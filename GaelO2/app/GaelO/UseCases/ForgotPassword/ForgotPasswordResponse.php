@@ -2,7 +2,8 @@
 
 namespace App\GaelO\UseCases\ForgotPassword;
 
-class ForgotPasswordResponse {
+class ForgotPasswordResponse
+{
     public int $status;
     public string $statusText;
     public $body = null;

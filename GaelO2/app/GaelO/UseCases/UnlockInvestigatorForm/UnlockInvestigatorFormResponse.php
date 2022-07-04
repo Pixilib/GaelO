@@ -2,7 +2,8 @@
 
 namespace App\GaelO\UseCases\UnlockInvestigatorForm;
 
-class UnlockInvestigatorFormResponse {
+class UnlockInvestigatorFormResponse
+{
     public int $status;
     public string $statusText;
     public $body = null;

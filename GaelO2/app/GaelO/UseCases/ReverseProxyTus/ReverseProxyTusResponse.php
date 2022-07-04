@@ -2,7 +2,8 @@
 
 namespace App\GaelO\UseCases\ReverseProxyTus;
 
-class ReverseProxyTusResponse{
+class ReverseProxyTusResponse
+{
     public int $status;
     public string $statusText;
     public $body = null;

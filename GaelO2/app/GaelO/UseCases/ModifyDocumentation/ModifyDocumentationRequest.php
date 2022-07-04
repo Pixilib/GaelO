@@ -2,7 +2,8 @@
 
 namespace App\GaelO\UseCases\ModifyDocumentation;
 
-class ModifyDocumentationRequest{
+class ModifyDocumentationRequest
+{
     public int $currentUserId;
     public int $id;
     public string $version;

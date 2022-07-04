@@ -2,7 +2,8 @@
 
 namespace App\GaelO\UseCases\RequestUnlock;
 
-class RequestUnlockRequest {
+class RequestUnlockRequest
+{
     public int $currentUserId;
     public int $visitId;
     public string $studyName;

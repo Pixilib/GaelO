@@ -2,7 +2,8 @@
 
 namespace App\GaelO\UseCases\ModifyInvestigatorForm;
 
-class ModifyInvestigatorFormResponse {
+class ModifyInvestigatorFormResponse
+{
     public $body = null;
     public int $status;
     public string $statusText;

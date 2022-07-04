@@ -11,25 +11,29 @@ use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
 use App\GaelO\Services\AuthorizationService\AuthorizationUserService;
 use Exception;
 
-class DeleteStudy {
+class DeleteStudy
+{
 
     private StudyRepositoryInterface $studyRepositoryInterface;
     private AuthorizationUserService $authorizationUserService;
     private TrackerRepositoryInterface $trackerRepositoryInterface;
 
-    public function __construct(StudyRepositoryInterface $studyRepositoryInterface, AuthorizationUserService $authorizationUserService, TrackerRepositoryInterface $trackerRepositoryInterface) {
-        $this->studyRepositoryInterface=$studyRepositoryInterface;
-        $this->trackerRepositoryInterface=$trackerRepositoryInterface;
+    public function __construct(StudyRepositoryInterface $studyRepositoryInterface, AuthorizationUserService $authorizationUserService, TrackerRepositoryInterface $trackerRepositoryInterface)
+    {
+        $this->studyRepositoryInterface = $studyRepositoryInterface;
+        $this->trackerRepositoryInterface = $trackerRepositoryInterface;
         $this->authorizationUserService = $authorizationUserService;
     }
 
-    public function execute(DeleteStudyRequest $deleteStudyRequest, DeleteStudyResponse $deleteStudyResponse){
+    public function execute(DeleteStudyRequest $deleteStudyRequest, DeleteStudyResponse $deleteStudyResponse)
+    {
 
-        try{
+        try {
 
-            if(empty($deleteStudyRequest->reason)) throw new GaelOBadRequestException('reason must be specified');
+            if (empty($deleteStudyRequest->reason)) throw new GaelOBadRequestException('reason must be specified');
 
-            $this->checkAuthorization($deleteStudyRequest->currentUserId);
+            $currentUserId = $deleteStudyRequest->currentUserId;
+            $this->checkAuthorization($currentUserId);
             $studyName = $deleteStudyRequest->studyName;
             $this->studyRepositoryInterface->delete($studyName);
 
@@ -37,27 +41,24 @@ class DeleteStudy {
                 'reason' => $deleteStudyRequest->reason
             ];
 
-            $this->trackerRepositoryInterface->writeAction($deleteStudyRequest->currentUserId, Constants::TRACKER_ROLE_ADMINISTRATOR, $studyName, null, Constants::TRACKER_DEACTIVATE_STUDY, $details);
+            $this->trackerRepositoryInterface->writeAction($currentUserId, Constants::TRACKER_ROLE_ADMINISTRATOR, $studyName, null, Constants::TRACKER_DEACTIVATE_STUDY, $details);
 
             $deleteStudyResponse->status = 200;
             $deleteStudyResponse->statusText = 'OK';
-
-        } catch(GaelOException $e){
+        } catch (GaelOException $e) {
             $deleteStudyResponse->body = $e->getErrorBody();
             $deleteStudyResponse->status = $e->statusCode;
             $deleteStudyResponse->statusText = $e->statusText;
-
-        } catch(Exception $e){
+        } catch (Exception $e) {
             throw $e;
         }
-
     }
 
-    private function checkAuthorization(int $userId){
+    private function checkAuthorization(int $userId)
+    {
         $this->authorizationUserService->setUserId($userId);
-        if ( ! $this->authorizationUserService->isAdmin()) {
+        if (!$this->authorizationUserService->isAdmin()) {
             throw new GaelOForbiddenException();
         };
     }
-
 }

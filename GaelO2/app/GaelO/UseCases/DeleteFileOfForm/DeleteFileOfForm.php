@@ -21,12 +21,13 @@ class DeleteFileOfForm
     private VisitRepositoryInterface $visitRepositoryInterface;
     private FormService $formService;
 
-    public function __construct(AuthorizationReviewService $authorizationReviewService,
+    public function __construct(
+        AuthorizationReviewService $authorizationReviewService,
         FormService $formService,
         ReviewRepositoryInterface $reviewRepositoryInterface,
         TrackerRepositoryInterface $trackerRepositoryInterface,
-        VisitRepositoryInterface $visitRepositoryInterface)
-    {
+        VisitRepositoryInterface $visitRepositoryInterface
+    ) {
         $this->authorizationReviewService = $authorizationReviewService;
         $this->trackerRepositoryInterface = $trackerRepositoryInterface;
         $this->reviewRepositoryInterface = $reviewRepositoryInterface;
@@ -40,37 +41,41 @@ class DeleteFileOfForm
 
             $reviewEntity = $this->reviewRepositoryInterface->find($deleteFileOfFormRequest->id);
 
+            $currentUserId = $deleteFileOfFormRequest->currentUserId;
+            $fileKey = $deleteFileOfFormRequest->key;
             $studyName = $reviewEntity['study_name'];
             $local = $reviewEntity['local'];
-            $this->checkAuthorization($local, $reviewEntity['validated'], $deleteFileOfFormRequest->id, $deleteFileOfFormRequest->currentUserId);
+            $validated = $reviewEntity['validated'];
+            $visitId = $reviewEntity['visit_id'];
+            $reviewId = $reviewEntity['id'];
 
-            $visitContext = $this->visitRepositoryInterface->getVisitContext($reviewEntity['visit_id']);
+            $this->checkAuthorization($local, $validated, $reviewId, $currentUserId);
+
+            $visitContext = $this->visitRepositoryInterface->getVisitContext($visitId);
             $this->formService->setVisitContextAndStudy($visitContext, $studyName);
-            $this->formService->removeFile($reviewEntity, $deleteFileOfFormRequest->key);
+            $this->formService->removeFile($reviewEntity, $fileKey);
 
             $actionDetails = [
-                'removed_file' => $deleteFileOfFormRequest->key,
-                'review_id' => $reviewEntity['id']
+                'removed_file' => $fileKey,
+                'review_id' => $reviewId
             ];
 
             $this->trackerRepositoryInterface->writeAction(
-                $deleteFileOfFormRequest->currentUserId,
-                $reviewEntity['local'] ? Constants::ROLE_INVESTIGATOR : Constants::ROLE_SUPERVISOR,
+                $currentUserId,
+                $local ? Constants::ROLE_INVESTIGATOR : Constants::ROLE_SUPERVISOR,
                 $studyName,
-                $reviewEntity['visit_id'],
-                $reviewEntity['local'] ? Constants::TRACKER_SAVE_INVESTIGATOR_FORM : Constants::TRACKER_SAVE_REVIEWER_FORM,
+                $visitId,
+                $local ? Constants::TRACKER_SAVE_INVESTIGATOR_FORM : Constants::TRACKER_SAVE_REVIEWER_FORM,
                 $actionDetails
             );
 
             $deleteFileOfFormResponse->status = 200;
             $deleteFileOfFormResponse->statusText =  'OK';
-
         } catch (GaelOException $e) {
 
             $deleteFileOfFormResponse->body = $e->getErrorBody();
             $deleteFileOfFormResponse->status = $e->statusCode;
             $deleteFileOfFormResponse->statusText =  $e->statusText;
-
         } catch (Exception $e) {
             throw $e;
         }
@@ -84,7 +89,6 @@ class DeleteFileOfForm
 
         //Required role depends on local or review form
         $role = $local ? Constants::ROLE_INVESTIGATOR : Constants::ROLE_REVIEWER;
-        if ( !$this->authorizationReviewService->isReviewAllowed($role) ) throw new GaelOForbiddenException();
-
+        if (!$this->authorizationReviewService->isReviewAllowed($role)) throw new GaelOForbiddenException();
     }
 }

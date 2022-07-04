@@ -37,9 +37,9 @@ class GetUsersFromStudy
             $responseArray = [];
             foreach ($dbData as $data) {
                 $userEntity = [];
-                if ($getUsersFromStudyRequest->role === Constants::ROLE_SUPERVISOR) {
+                if ($role === Constants::ROLE_SUPERVISOR) {
                     $userEntity = UserEntity::fillMinimalFromDBReponseArray($data);
-                } else if ($getUsersFromStudyRequest->role === Constants::ROLE_ADMINISTRATOR) {
+                } else if ($role === Constants::ROLE_ADMINISTRATOR) {
                     $userEntity = UserEntity::fillFromDBReponseArray($data);
                 }
 
@@ -61,7 +61,6 @@ class GetUsersFromStudy
             $getUsersFromStudyResponse->body = $responseArray;
             $getUsersFromStudyResponse->status = 200;
             $getUsersFromStudyResponse->statusText = 'OK';
-
         } catch (GaelOException $e) {
             $getUsersFromStudyResponse->body = $e->getErrorBody();
             $getUsersFromStudyResponse->status = $e->statusCode;

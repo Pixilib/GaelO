@@ -18,19 +18,19 @@ use Exception;
 
 class ImportPatients
 {
-
     private TrackerRepositoryInterface $trackerRepositoryInterface;
     private StudyRepositoryInterface $studyRepositoryInterface;
     private MailServices $mailService;
     private ImportPatientService $importPatient;
     private AuthorizationStudyService $authorizationStudyService;
 
-    public function __construct(TrackerRepositoryInterface $trackerRepositoryInterface,
+    public function __construct(
+        TrackerRepositoryInterface $trackerRepositoryInterface,
         StudyRepositoryInterface $studyRepositoryInterface,
         MailServices $mailService,
         ImportPatientService $importPatient,
-        AuthorizationStudyService $authorizationStudyService)
-    {
+        AuthorizationStudyService $authorizationStudyService
+    ) {
         $this->importPatient = $importPatient;
         $this->trackerRepositoryInterface = $trackerRepositoryInterface;
         $this->studyRepositoryInterface = $studyRepositoryInterface;
@@ -43,11 +43,11 @@ class ImportPatients
         try {
             $studyName = $importPatientsRequest->studyName;
             $currentUserId = $importPatientsRequest->currentUserId;
-
+            $patients = $importPatientsRequest->patients;
 
             $this->checkAuthorization($currentUserId, $studyName);
             $arrayPatients = [];
-            foreach ($importPatientsRequest->patients as $patient) {
+            foreach ($patients as $patient) {
 
                 foreach ($patient as $key => $value) {
                     $patient[Util::camelCaseToSnakeCase($key)] = $value;
@@ -55,11 +55,10 @@ class ImportPatients
                 $patient['studyName'] = $studyName;
                 $arrayPatients[] = $patient;
             }
-            $importPatientsRequest->patients = $arrayPatients;
             $studyEntity = $this->studyRepositoryInterface->find($studyName);
 
             $this->importPatient->setStudyEntity($studyEntity);
-            $this->importPatient->setPatientEntities($importPatientsRequest->patients);
+            $this->importPatient->setPatientEntities($arrayPatients);
             $this->importPatient->setStudyName($studyName);
 
             //Import Patient with service
@@ -77,7 +76,6 @@ class ImportPatients
 
             $this->mailService->sendImportPatientMessage($studyName, $studyEntity->contactEmail, $this->importPatient->successList, $this->importPatient->failList);
         } catch (GaelOException $e) {
-
             $importPatientsResponse->body = $e->getErrorBody();
             $importPatientsResponse->status = $e->statusCode;
             $importPatientsResponse->statusText = $e->statusText;
@@ -90,7 +88,7 @@ class ImportPatients
     {
         $this->authorizationStudyService->setUserId($userId);
         $this->authorizationStudyService->setStudyName($studyName);
-        if ($this->authorizationStudyService->getStudyEntity()->isAncillaryStudy() ) {
+        if ($this->authorizationStudyService->getStudyEntity()->isAncillaryStudy()) {
             throw new GaelOForbiddenException("Forbidden for ancillaries study");
         };
         if (!$this->authorizationStudyService->isAllowedStudy(Constants::ROLE_SUPERVISOR)) {

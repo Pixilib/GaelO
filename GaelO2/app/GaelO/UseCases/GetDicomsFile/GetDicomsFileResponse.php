@@ -2,7 +2,8 @@
 
 namespace App\GaelO\UseCases\GetDicomsFile;
 
-class GetDicomsFileResponse{
+class GetDicomsFileResponse
+{
     public string $filename;
     public $body = null;
     public int $status;

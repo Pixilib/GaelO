@@ -11,48 +11,50 @@ use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
 use App\GaelO\Services\AuthorizationService\AuthorizationStudyService;
 use Exception;
 
-class ReactivateVisit {
+class ReactivateVisit
+{
 
     private AuthorizationStudyService $authorizationStudyService;
     private VisitRepositoryInterface $visitRepositoryInterface;
     private TrackerRepositoryInterface $trackerRepositoryInterface;
 
-    public function __construct(AuthorizationStudyService $authorizationStudyService,
+    public function __construct(
+        AuthorizationStudyService $authorizationStudyService,
         VisitRepositoryInterface $visitRepositoryInterface,
-        TrackerRepositoryInterface $trackerRepositoryInterface)
-    {
+        TrackerRepositoryInterface $trackerRepositoryInterface
+    ) {
         $this->authorizationStudyService = $authorizationStudyService;
         $this->visitRepositoryInterface = $visitRepositoryInterface;
         $this->trackerRepositoryInterface = $trackerRepositoryInterface;
-
     }
 
     public function execute(ReactivateVisitRequest $reactivateVisitRequest, ReactivateVisitResponse $reactivateVisitResponse)
     {
 
-        try{
+        try {
 
             $visitContext = $this->visitRepositoryInterface->getVisitContext($reactivateVisitRequest->visitId, true);
 
+            $currentUserId = $reactivateVisitRequest->currentUserId;
             $studyName = $visitContext['patient']['study_name'];
             $visitType = $visitContext['visit_type']['name'];
             $modality = $visitContext['visit_type']['visit_group']['modality'];
             $patientId = $visitContext['patient_id'];
+            $visitId = $visitContext['id'];
 
-
-            $this->checkAuthorization($reactivateVisitRequest->currentUserId, $studyName);
+            $this->checkAuthorization($currentUserId, $studyName);
 
             $isExisitingVisit = $this->visitRepositoryInterface->isExistingVisit($patientId, $visitContext['visit_type']['id']);
 
-            if( $visitContext['deleted_at'] == null ){
+            if ($visitContext['deleted_at'] == null) {
                 throw new GaelOConflictException("Visit Not Deleted, can't reactivate it");
             }
 
-            if($isExisitingVisit){
+            if ($isExisitingVisit) {
                 throw new GaelOConflictException("Already existing visit for this Patient / Visit Type, delete it first");
             }
 
-            $this->visitRepositoryInterface->reactivateVisit($reactivateVisitRequest->visitId);
+            $this->visitRepositoryInterface->reactivateVisit($visitId);
 
             $actionDetails = [
                 'Visit Type' => $visitType,
@@ -61,36 +63,31 @@ class ReactivateVisit {
             ];
 
             $this->trackerRepositoryInterface->writeAction(
-                $reactivateVisitRequest->currentUserId,
+                $currentUserId,
                 Constants::ROLE_SUPERVISOR,
                 $studyName,
-                $reactivateVisitRequest->visitId,
+                $visitId,
                 Constants::TRACKER_REACTIVATE_VISIT,
                 $actionDetails
             );
 
-
             $reactivateVisitResponse->status = 200;
             $reactivateVisitResponse->statusText = 'OK';
-
-        } catch (GaelOException $e){
-
+        } catch (GaelOException $e) {
             $reactivateVisitResponse->status = $e->statusCode;
             $reactivateVisitResponse->statusText = $e->statusText;
             $reactivateVisitResponse->body = $e->getErrorBody();
-
-        } catch (Exception $e){
+        } catch (Exception $e) {
             throw $e;
         }
-
     }
 
-    private function checkAuthorization(int $currentUserId, string $studyName){
+    private function checkAuthorization(int $currentUserId, string $studyName)
+    {
         $this->authorizationStudyService->setUserId($currentUserId);
         $this->authorizationStudyService->setStudyName($studyName);
-        if ( ! $this->authorizationStudyService->isAllowedStudy(Constants::ROLE_SUPERVISOR)){
+        if (!$this->authorizationStudyService->isAllowedStudy(Constants::ROLE_SUPERVISOR)) {
             throw new GaelOForbiddenException();
         }
-
     }
 }

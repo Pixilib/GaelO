@@ -90,7 +90,7 @@ class VisitRepository implements VisitRepositoryInterface
     public function getVisitContext(int $visitId, bool $withTrashed = false): array
     {
 
-        $builder = $this->visit->with(['visitType', 'patient']);
+        $builder = $this->visit->with(['visitType', 'visitType.visitGroup', 'patient']);
         if ($withTrashed) {
             $builder->withTrashed();
         }
@@ -98,10 +98,23 @@ class VisitRepository implements VisitRepositoryInterface
         return $dataArray;
     }
 
+    public function getVisitWithContextAndReviewStatus(int $visitId, string $studyName): array
+    {
+
+        $builder = $this->visit->with(['visitType', 'visitType.visitGroup', 'creator']);
+        $builder->with(['reviewStatus' => function ($query) use ($studyName) {
+            $query->where('study_name', $studyName);
+        }]);
+
+        $dataArray = $builder->findOrFail($visitId)->toArray();
+        return $dataArray;
+
+    }
+
     public function getVisitContextByVisitIdArray(array $visitIdArray): array
     {
 
-        $query = $this->visit->with('visitType', 'patient')->withTrashed()->whereIn('id', $visitIdArray);
+        $query = $this->visit->with('visitType', 'visitType.visitGroup', 'patient')->withTrashed()->whereIn('id', $visitIdArray);
         $visits = $query->get();
 
         return empty($visits) ? [] : $visits->toArray();
@@ -109,7 +122,7 @@ class VisitRepository implements VisitRepositoryInterface
 
     public function getPatientsVisits(string $patientId): array
     {
-        $visits = $this->visit->with('visitType')->where('patient_id', $patientId)->get();
+        $visits = $this->visit->with('visitType', 'visitType.visitGroup')->where('patient_id', $patientId)->get();
         return empty($visits) ? [] : $visits->toArray();
     }
 
@@ -119,7 +132,7 @@ class VisitRepository implements VisitRepositoryInterface
         if ($withTrashed) {
             $builder = $builder->withTrashed();
         }
-        $visits = $builder->with('visitType')->where('patient_id', $patientId)
+        $visits = $builder->with('visitType', 'visitType.visitGroup')->where('patient_id', $patientId)
             ->with(['reviewStatus' => function ($query) use ($studyName) {
                 $query->where('study_name', $studyName);
             }])
@@ -131,7 +144,7 @@ class VisitRepository implements VisitRepositoryInterface
     public function getVisitsFromPatientIdsWithContext(array $patientIdArray): array
     {
 
-        $answer = $this->visit->with('visitType')->whereIn('patient_id', $patientIdArray)->get();
+        $answer = $this->visit->with('visitType', 'visitType.visitGroup')->whereIn('patient_id', $patientIdArray)->get();
         return $answer->count() === 0 ? []  : $answer->toArray();
     }
 
@@ -139,7 +152,7 @@ class VisitRepository implements VisitRepositoryInterface
     {
 
         $answer = $this->visit
-            ->with('visitType')
+            ->with('visitType', 'visitType.visitGroup')
             ->with(['reviewStatus' => function ($query) use ($studyName) {
                 $query->where('study_name', $studyName);
             }])
@@ -152,12 +165,12 @@ class VisitRepository implements VisitRepositoryInterface
     public function getVisitsInStudy(string $studyName, bool $withReviewStatus, bool $withPatientCenter, bool $withTrashed): array
     {
 
-        $queryBuilder = $this->visit->with(['visitType', 'patient'])
+        $queryBuilder = $this->visit->with(['visitType', 'visitType.visitGroup', 'patient'])
             ->whereHas('patient', function ($query) use ($studyName) {
                 $query->where('study_name', $studyName);
             });
 
-        if($withPatientCenter){
+        if ($withPatientCenter) {
             $queryBuilder->with('patient.center');
         }
         if ($withReviewStatus) {
@@ -189,7 +202,7 @@ class VisitRepository implements VisitRepositoryInterface
 
         $visits = $this->visit->whereHas('visitType', function ($query) use ($visitTypeId) {
             $query->where('id', $visitTypeId);
-        })->with('visitType');
+        })->with('visitType', 'visitType.visitGroup');
 
         if ($withReviewStatus) {
             $visits->with(['reviewStatus' => function ($query) use ($studyName) {
@@ -212,7 +225,7 @@ class VisitRepository implements VisitRepositoryInterface
     {
         $controllerActionStatusArray = array(Constants::QUALITY_CONTROL_NOT_DONE, Constants::QUALITY_CONTROL_WAIT_DEFINITIVE_CONCLUSION);
 
-        $answer = $this->visit->with('visitType')
+        $answer = $this->visit->with('visitType', 'visitType.visitGroup')
             ->whereHas('patient', function ($query) use ($studyName) {
                 $query->where('study_name', $studyName);
             })
@@ -228,7 +241,7 @@ class VisitRepository implements VisitRepositoryInterface
     public function getVisitsInStudyNeedingQualityControl(string $studyName): array
     {
 
-        $answer = $this->visit->with('visitType')
+        $answer = $this->visit->with('visitType', 'visitType.visitGroup')
             ->whereHas('patient', function ($query) use ($studyName) {
                 $query->where('study_name', $studyName);
             })
@@ -246,7 +259,7 @@ class VisitRepository implements VisitRepositoryInterface
 
         $visitIdAwaitingReview = $this->reviewStatus->where('study_name', $studyName)->where('review_available', true)->select('visit_id')->get()->toArray();
 
-        $answer = $this->visit->with('visitType')
+        $answer = $this->visit->with('visitType', 'visitType.visitGroup')
             ->with(['reviewStatus' => function ($query) use ($studyName) {
                 $query->where('study_name', $studyName);
             }])
@@ -289,7 +302,7 @@ class VisitRepository implements VisitRepositoryInterface
         return $answer->count() === 0 ? []  : $answer->toArray();
     }
 
-    public function isParentPatientHavingOneVisitAwaitingReview(int $visitId, string $studyName, int $userId) : bool
+    public function isParentPatientHavingOneVisitAwaitingReview(int $visitId, string $studyName, int $userId): bool
     {
         //Get parent patient
         $patient = $this->visit->findOrFail($visitId)->patient()->sole();
@@ -387,7 +400,7 @@ class VisitRepository implements VisitRepositoryInterface
     public function getImagingVisitsAwaitingUpload(string $studyName, array $centerCode): array
     {
 
-        $answer = $this->visit->with('visitType', 'patient')
+        $answer = $this->visit->with('visitType', 'visitType.visitGroup', 'patient')
             ->whereHas('patient', function ($query) use ($centerCode) {
                 $query->whereIn('center_code', $centerCode);
             })

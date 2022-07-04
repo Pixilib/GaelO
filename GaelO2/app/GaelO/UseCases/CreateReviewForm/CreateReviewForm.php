@@ -15,7 +15,7 @@ use App\GaelO\Services\AuthorizationService\AuthorizationVisitService;
 use App\GaelO\Services\FormService\ReviewFormService;
 use Exception;
 
-class CreateReview
+class CreateReviewForm
 {
 
     private TrackerRepositoryInterface $trackerRepositoryInterface;
@@ -50,34 +50,44 @@ class CreateReview
                 throw new GaelOBadRequestException('VisitID and Validated Status are mandatory');
             }
 
-            if ($this->reviewRepositoryInterface->isExistingReviewForStudyVisitUser($createReviewFormRequest->studyName, $createReviewFormRequest->visitId, $createReviewFormRequest->currentUserId)) {
+            $visitId = $createReviewFormRequest->visitId;
+            $studyName = $createReviewFormRequest->studyName;
+            $currentUserId = $createReviewFormRequest->currentUserId;
+            $formData = $createReviewFormRequest->data;
+            $validated = $createReviewFormRequest->validated;
+            $adjudication = $createReviewFormRequest->adjudication;
+
+            if ($this->reviewRepositoryInterface->isExistingReviewForStudyVisitUser($studyName, $visitId, $currentUserId)) {
                 throw new GaelOConflictException('Review Already Created');
             };
 
-            $visitContext = $this->visitRepositoryInterface->getVisitContext($createReviewFormRequest->visitId);
-            $reviewStatus = $this->reviewStatusRepositoryInterface->getReviewStatus($createReviewFormRequest->visitId, $createReviewFormRequest->studyName);
+            $visitContext = $this->visitRepositoryInterface->getVisitContext($visitId);
+            $reviewStatusEntity = $this->reviewStatusRepositoryInterface->getReviewStatus($visitId, $studyName);
 
-            if ($createReviewFormRequest->adjudication &&  $reviewStatus['review_status'] !== Constants::REVIEW_STATUS_WAIT_ADJUDICATION) {
+            $reviewStatus = $reviewStatusEntity['review_status'];
+            $reviewAvailable = $reviewStatusEntity['review_available'];
+
+            if ($adjudication &&  $reviewStatus !== Constants::REVIEW_STATUS_WAIT_ADJUDICATION) {
                 throw new GaelOBadRequestException('Review Not Awaiting Adjudication');
             };
 
-            $this->checkAuthorization($createReviewFormRequest->visitId, $createReviewFormRequest->currentUserId, $reviewStatus['review_available'], $createReviewFormRequest->studyName);
+            $this->checkAuthorization($visitId, $currentUserId, $reviewAvailable, $studyName);
 
             //Call service to register form
-            $this->reviewFormService->setCurrentUserId($createReviewFormRequest->currentUserId);
-            $this->reviewFormService->setReviewStatus($reviewStatus);
-            $this->reviewFormService->setVisitContextAndStudy($visitContext, $createReviewFormRequest->studyName);
-            $createdReviewId = $this->reviewFormService->saveReview($createReviewFormRequest->data, $createReviewFormRequest->validated, $createReviewFormRequest->adjudication);
+            $this->reviewFormService->setCurrentUserId($currentUserId);
+            $this->reviewFormService->setReviewStatus($reviewStatusEntity);
+            $this->reviewFormService->setVisitContextAndStudy($visitContext, $studyName);
+            $createdReviewId = $this->reviewFormService->saveReview($formData, $validated, $adjudication);
 
             //Write in Tracker
             $actionDetails = [
                 'idReview' => $createdReviewId,
-                'adjudication' => $reviewStatus['review_status'] === Constants::REVIEW_STATUS_WAIT_ADJUDICATION,
-                'raw_data' => $createReviewFormRequest->data,
-                'validated' => $createReviewFormRequest->validated
+                'adjudication' => $adjudication,
+                'raw_data' => $formData,
+                'validated' => $validated
             ];
 
-            $this->trackerRepositoryInterface->writeAction($createReviewFormRequest->currentUserId, Constants::ROLE_REVIEWER, $createReviewFormRequest->studyName, $createReviewFormRequest->visitId, Constants::TRACKER_SAVE_REVIEWER_FORM, $actionDetails);
+            $this->trackerRepositoryInterface->writeAction($currentUserId, Constants::ROLE_REVIEWER, $studyName, $visitId, Constants::TRACKER_SAVE_REVIEWER_FORM, $actionDetails);
 
             $createReviewFormResponse->body = ['id' => $createdReviewId];
             $createReviewFormResponse->status = 201;

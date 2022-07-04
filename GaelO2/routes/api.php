@@ -62,6 +62,7 @@ Route::middleware(['auth:sanctum', 'verified', 'activated'])->group(function () 
     //Study Routes
     Route::post('studies', [StudyController::class, 'createStudy']);
     Route::get('studies', [StudyController::class, 'getStudies']);
+    Route::get('studies/{studyName}', [StudyController::class, 'getStudy']);
     Route::get('studies/{studyName}/statistics', [StudyController::class, 'getStudyStatistics']);
     Route::get('studies/{studyName}/visit-types', [StudyController::class, 'getStudyVisitTypes']);
     Route::delete('studies/{studyName}', [StudyController::class, 'deleteStudy']);
@@ -156,7 +157,7 @@ Route::middleware(['auth:sanctum', 'verified', 'activated'])->group(function () 
     Route::get('orthanc/{path?}', [ReverseProxyController::class, 'dicomWebReverseProxy'])->where(['path' => '.*']);
 
     //Tracker Routes
-    Route::get('tracker', [TrackerController::class, 'getTracker']);
+    Route::get('tracker', [TrackerController::class, 'getAdminTracker']);
     Route::get('studies/{studyName}/tracker/{role}', [TrackerController::class, 'getStudyTrackerByRole']);
     Route::get('studies/{studyName}/visits/{visitId}/tracker', [TrackerController::class, 'getStudyTrackerByVisit']);
 

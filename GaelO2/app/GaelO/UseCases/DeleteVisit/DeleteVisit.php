@@ -11,86 +11,90 @@ use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
 use App\GaelO\Services\AuthorizationService\AuthorizationVisitService;
 use Exception;
 
-class DeleteVisit{
+class DeleteVisit
+{
 
     private VisitRepositoryInterface $visitRepositoryInterface;
     private AuthorizationVisitService $authorizationVisitService;
     private TrackerRepositoryInterface $trackerRepositoryInterface;
 
-    public function __construct(VisitRepositoryInterface $visitRepositoryInterface,
-                                AuthorizationVisitService $authorizationVisitService,
-                                TrackerRepositoryInterface $trackerRepositoryInterface)
-    {
+    public function __construct(
+        VisitRepositoryInterface $visitRepositoryInterface,
+        AuthorizationVisitService $authorizationVisitService,
+        TrackerRepositoryInterface $trackerRepositoryInterface
+    ) {
         $this->authorizationVisitService = $authorizationVisitService;
         $this->visitRepositoryInterface = $visitRepositoryInterface;
         $this->trackerRepositoryInterface = $trackerRepositoryInterface;
-
     }
 
-    public function execute(DeleteVisitRequest $deleteVisitRequest,
-                            DeleteVisitResponse $deleteVisitResponse){
+    public function execute(DeleteVisitRequest $deleteVisitRequest, DeleteVisitResponse $deleteVisitResponse)
+    {
 
-        try{
+        try {
 
-            if(empty($deleteVisitRequest->reason)) throw new GaelOBadRequestException('Reason must be specified');
+            if (empty($deleteVisitRequest->reason)) throw new GaelOBadRequestException('Reason must be specified');
 
             $visitContext  = $this->visitRepositoryInterface->getVisitContext($deleteVisitRequest->visitId);
 
             $studyName = $visitContext['patient']['study_name'];
             $visitTypeName = $visitContext['visit_type']['name'];
-          
             $patientId = $visitContext['patient']['id'];
             $visitTypeName = $visitContext['visit_type']['name'];
             $qcStatus = $visitContext['state_quality_control'];
+            $visitId = $visitContext['id'];
+            $currentUserId = $deleteVisitRequest->currentUserId;
+            $role = $deleteVisitRequest->role;
+            $reason = $deleteVisitRequest->reason;
 
-            $this->checkAuthorization($deleteVisitRequest->currentUserId,
-                                        $deleteVisitRequest->role,
-                                        $deleteVisitRequest->visitId,
-                                        $qcStatus,
-                                        $studyName);
 
-            $this->visitRepositoryInterface->delete($deleteVisitRequest->visitId);
+            $this->checkAuthorization(
+                $currentUserId,
+                $role,
+                $visitId,
+                $qcStatus,
+                $studyName
+            );
+
+            $this->visitRepositoryInterface->delete($visitId);
 
             $actionDetails  = [
                 'patient_id' => $patientId,
                 'type_visit' => $visitTypeName,
-                'reason' => $deleteVisitRequest->reason
+                'reason' => $reason
             ];
 
-            $this->trackerRepositoryInterface->writeAction($deleteVisitRequest->currentUserId,
-                                                $deleteVisitRequest->role,
-                                                $studyName,
-                                                $deleteVisitRequest->visitId,
-                                                Constants::TRACKER_DELETE_VISIT,
-                                                $actionDetails);
+            $this->trackerRepositoryInterface->writeAction(
+                $currentUserId,
+                $role,
+                $studyName,
+                $visitId,
+                Constants::TRACKER_DELETE_VISIT,
+                $actionDetails
+            );
 
             $deleteVisitResponse->status = 200;
             $deleteVisitResponse->statusText = 'OK';
-
-        } catch (GaelOException $e){
-
+        } catch (GaelOException $e) {
             $deleteVisitResponse->body = $e->getErrorBody();
             $deleteVisitResponse->status = $e->statusCode;
             $deleteVisitResponse->statusText = $e->statusText;
-
-        } catch (Exception $e){
-
+        } catch (Exception $e) {
             throw $e;
-
         }
-
     }
 
 
-    public function checkAuthorization(int $userId, string $role, int $visitId, string $qcStatus, string $studyName){
-      
+    public function checkAuthorization(int $userId, string $role, int $visitId, string $qcStatus, string $studyName)
+    {
+
         //This role only allowed for Investigator and Supervisor Roles
-        if ( ! in_array($role, [Constants::ROLE_INVESTIGATOR, Constants::ROLE_SUPERVISOR]) ){
+        if (!in_array($role, [Constants::ROLE_INVESTIGATOR, Constants::ROLE_SUPERVISOR])) {
             throw new GaelOForbiddenException();
         }
 
         //If Investigator, only possible to delete Visits with Non finished QC
-        if( $role === Constants::ROLE_INVESTIGATOR && in_array($qcStatus, [Constants::QUALITY_CONTROL_REFUSED, Constants::QUALITY_CONTROL_ACCEPTED])){
+        if ($role === Constants::ROLE_INVESTIGATOR && in_array($qcStatus, [Constants::QUALITY_CONTROL_REFUSED, Constants::QUALITY_CONTROL_ACCEPTED])) {
             throw new GaelOForbiddenException();
         }
 
@@ -98,9 +102,8 @@ class DeleteVisit{
         $this->authorizationVisitService->setVisitId($visitId);
         $this->authorizationVisitService->setStudyName($studyName);
 
-        if ( ! $this->authorizationVisitService->isVisitAllowed($role)){
+        if (!$this->authorizationVisitService->isVisitAllowed($role)) {
             throw new GaelOForbiddenException();
         }
-
     }
 }

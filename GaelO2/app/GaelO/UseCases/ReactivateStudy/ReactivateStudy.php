@@ -11,54 +11,56 @@ use App\GaelO\Repositories\TrackerRepository;
 use App\GaelO\Services\AuthorizationService\AuthorizationUserService;
 use Exception;
 
-class ReactivateStudy {
-
+class ReactivateStudy
+{
     private StudyRepositoryInterface $studyRepositoryInterface;
     private AuthorizationUserService $authorizationUserService;
     private TrackerRepository $trackerRepository;
 
-    public function __construct(StudyRepositoryInterface $studyRepositoryInterface, AuthorizationUserService $authorizationUserService, TrackerRepository $trackerRepository){
+    public function __construct(StudyRepositoryInterface $studyRepositoryInterface, AuthorizationUserService $authorizationUserService, TrackerRepository $trackerRepository)
+    {
         $this->studyRepositoryInterface = $studyRepositoryInterface;
         $this->trackerRepository = $trackerRepository;
         $this->authorizationUserService = $authorizationUserService;
     }
 
-    public function execute(ReactivateStudyRequest $reactivateStudyRequest, ReactivateStudyResponse $reactivateStudyResponse){
+    public function execute(ReactivateStudyRequest $reactivateStudyRequest, ReactivateStudyResponse $reactivateStudyResponse)
+    {
 
         try {
 
-            if( empty($reactivateStudyRequest->reason) ) throw new GaelOBadRequestException('Reason must be specified');
+            if (empty($reactivateStudyRequest->reason)) throw new GaelOBadRequestException('Reason must be specified');
 
-            $this->checkAuthorization($reactivateStudyRequest->currentUserId);
+            $currentUserId = $reactivateStudyRequest->currentUserId;
+            $studyName = $reactivateStudyRequest->studyName;
+            $reason = $reactivateStudyRequest->reason;
 
-            $this->studyRepositoryInterface->reactivateStudy($reactivateStudyRequest->studyName);
+            $this->checkAuthorization($currentUserId);
+
+            $this->studyRepositoryInterface->reactivateStudy($studyName);
 
             $actionsDetails = [
-                'reactivatedStudy' => $reactivateStudyRequest->studyName,
-                'reason' => $reactivateStudyRequest->reason
+                'reactivatedStudy' => $studyName,
+                'reason' => $reason
             ];
-            $this->trackerRepository->writeAction($reactivateStudyRequest->currentUserId, Constants::TRACKER_ROLE_ADMINISTRATOR, null, null, Constants::TRACKER_REACTIVATE_STUDY, $actionsDetails);
+            $this->trackerRepository->writeAction($currentUserId, Constants::TRACKER_ROLE_ADMINISTRATOR, null, null, Constants::TRACKER_REACTIVATE_STUDY, $actionsDetails);
 
             $reactivateStudyResponse->status = 200;
             $reactivateStudyResponse->statusText = 'OK';
-
-        } catch (GaelOException $e){
-
+        } catch (GaelOException $e) {
             $reactivateStudyResponse->body = $e->getErrorBody();
             $reactivateStudyResponse->status = $e->statusCode;
             $reactivateStudyResponse->statusText = $e->statusText;
-
-        } catch (Exception $e){
+        } catch (Exception $e) {
             throw $e;
         }
-
     }
 
-    private function checkAuthorization($userId)  {
+    private function checkAuthorization($userId)
+    {
         $this->authorizationUserService->setUserId($userId);
-        if( ! $this->authorizationUserService->isAdmin() ) {
+        if (!$this->authorizationUserService->isAdmin()) {
             throw new GaelOForbiddenException();
         };
     }
-
 }

@@ -2,7 +2,8 @@
 
 namespace App\GaelO\UseCases\CreateVisitGroup;
 
-class CreateVisitGroupRequest {
+class CreateVisitGroupRequest
+{
     public int $currentUserId;
     public string $currentVisitId;
     public string $studyName;

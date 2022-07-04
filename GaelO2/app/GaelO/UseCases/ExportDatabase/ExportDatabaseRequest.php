@@ -2,6 +2,7 @@
 
 namespace App\GaelO\UseCases\ExportDatabase;
 
-class ExportDatabaseRequest {
+class ExportDatabaseRequest
+{
     public int $currentUserId;
 }

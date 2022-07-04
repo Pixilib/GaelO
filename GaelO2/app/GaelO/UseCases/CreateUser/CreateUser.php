@@ -40,8 +40,10 @@ class CreateUser
     {
 
         try {
-            $this->checkAuthorization($createUserRequest->currentUserId);
 
+            $currentUserId = $createUserRequest->currentUserId;
+
+            $this->checkAuthorization($currentUserId);
             self::checkFormComplete($createUserRequest);
             self::checkEmailValid($createUserRequest->email);
             self::checkPhoneCorrect($createUserRequest->phone);
@@ -66,7 +68,7 @@ class CreateUser
 
             //Send reset password link.
             $emailSendSuccess = $this->frameworkInterface->sendResetPasswordLink($createUserRequest->email);
-            if (! $emailSendSuccess) throw new Exception('Error Sending Reset Email');
+            if (!$emailSendSuccess) throw new Exception('Error Sending Reset Email');
 
             $this->mailService->sendCreatedUserMessage($createUserRequest->email);
 
@@ -77,7 +79,7 @@ class CreateUser
             ];
 
             $this->trackerRepositoryInterface->writeAction(
-                $createUserRequest->currentUserId,
+                $currentUserId,
                 Constants::TRACKER_ROLE_ADMINISTRATOR,
                 null,
                 null,
@@ -88,9 +90,7 @@ class CreateUser
             $createUserResponse->body = ['id' => $createdUserEntity['id']];
             $createUserResponse->status = 201;
             $createUserResponse->statusText = 'Created';
-
         } catch (GaelOException $e) {
-
             $createUserResponse->body = $e->getErrorBody();
             $createUserResponse->status = $e->statusCode;
             $createUserResponse->statusText = $e->statusText;
@@ -107,7 +107,8 @@ class CreateUser
 
     public static function checkFormComplete(CreateUserRequest|ModifyUserRequest $userRequest): void
     {
-        if ( !isset($userRequest->job)
+        if (
+            !isset($userRequest->job)
             || !isset($userRequest->email)
             || !is_numeric($userRequest->centerCode)
             || !isset($userRequest->administrator)
@@ -126,7 +127,7 @@ class CreateUser
     public static function checkPhoneCorrect(?string $phone): void
     {
         //If contains non number caracters throw error
-        if ($phone != null && !FrameworkAdapter::make(PhoneNumberInterface::class)::isValidPhoneNumber($phone) ) {
+        if ($phone != null && !FrameworkAdapter::make(PhoneNumberInterface::class)::isValidPhoneNumber($phone)) {
             throw new GaelOBadRequestException('Not a valid phone number');
         }
     }

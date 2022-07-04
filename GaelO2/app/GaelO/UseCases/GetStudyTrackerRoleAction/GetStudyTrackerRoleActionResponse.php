@@ -2,7 +2,8 @@
 
 namespace App\GaelO\UseCases\GetStudyTrackerRoleAction;
 
-class GetStudyTrackerRoleActionResponse {
+class GetStudyTrackerRoleActionResponse
+{
     public $body = null;
     public int $status;
     public string $statusText;

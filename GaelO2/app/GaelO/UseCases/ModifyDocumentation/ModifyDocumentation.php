@@ -11,20 +11,23 @@ use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
 use App\GaelO\Services\AuthorizationService\AuthorizationStudyService;
 use Exception;
 
-class ModifyDocumentation {
+class ModifyDocumentation
+{
 
     private DocumentationRepositoryInterface $documentationRepositoryInterface;
     private AuthorizationStudyService $authorizationStudyService;
     private TrackerRepositoryInterface $trackerRepositoryInterface;
 
-    public function __construct(DocumentationRepositoryInterface $documentationRepositoryInterface, AuthorizationStudyService $authorizationStudyService, TrackerRepositoryInterface $trackerRepositoryInterface){
+    public function __construct(DocumentationRepositoryInterface $documentationRepositoryInterface, AuthorizationStudyService $authorizationStudyService, TrackerRepositoryInterface $trackerRepositoryInterface)
+    {
         $this->documentationRepositoryInterface = $documentationRepositoryInterface;
         $this->trackerRepositoryInterface = $trackerRepositoryInterface;
         $this->authorizationStudyService = $authorizationStudyService;
-     }
+    }
 
-    public function execute(ModifyDocumentationRequest $modifyDocumentationRequest, ModifyDocumentationResponse $modifyDocumentationResponse){
-        try{
+    public function execute(ModifyDocumentationRequest $modifyDocumentationRequest, ModifyDocumentationResponse $modifyDocumentationResponse)
+    {
+        try {
 
             $documentation = $this->documentationRepositoryInterface->find($modifyDocumentationRequest->id, false);
             $studyName = $documentation['study_name'];
@@ -38,8 +41,8 @@ class ModifyDocumentation {
             $documentation['reviewer'] = $modifyDocumentationRequest->reviewer;
 
             //In case of version change, check for conflicts
-            if($modifyDocumentationRequest->version !==  $documentation['version']) {
-                if($this->documentationRepositoryInterface->isKnowndocumentation($studyName, $documentation['name'], $modifyDocumentationRequest->version)){
+            if ($modifyDocumentationRequest->version !==  $documentation['version']) {
+                if ($this->documentationRepositoryInterface->isKnowndocumentation($studyName, $documentation['name'], $modifyDocumentationRequest->version)) {
                     throw new GaelOConflictException("Documentation already existing under this version");
                 };
                 $documentation['version'] = $modifyDocumentationRequest->version;
@@ -53,7 +56,8 @@ class ModifyDocumentation {
                 $documentation['investigator'],
                 $documentation['controller'],
                 $documentation['monitor'],
-                $documentation['reviewer']);
+                $documentation['reviewer']
+            );
 
             $actionDetails = $documentation;
 
@@ -61,22 +65,20 @@ class ModifyDocumentation {
 
             $modifyDocumentationResponse->status = 200;
             $modifyDocumentationResponse->statusText = 'OK';
-
-        } catch (GaelOException $e){
-
+        } catch (GaelOException $e) {
             $modifyDocumentationResponse->body = $e->getErrorBody();
             $modifyDocumentationResponse->status = $e->statusCode;
             $modifyDocumentationResponse->statusText = $e->statusText;
-
-        } catch (Exception $e){
+        } catch (Exception $e) {
             throw $e;
         }
     }
 
-    private function checkAuthorization(int $currentUserId, string $studyName){
+    private function checkAuthorization(int $currentUserId, string $studyName)
+    {
         $this->authorizationStudyService->setStudyName($studyName);
         $this->authorizationStudyService->setUserId($currentUserId);
-        if(!$this->authorizationStudyService->isAllowedStudy(Constants::ROLE_SUPERVISOR)){
+        if (!$this->authorizationStudyService->isAllowedStudy(Constants::ROLE_SUPERVISOR)) {
             throw new GaelOForbiddenException();
         }
     }

@@ -55,36 +55,40 @@ class UnlockReviewForm
 
             $reviewEntity = $this->reviewRepositoryInterface->find($unlockReviewFormRequest->reviewId);
 
+            $currentUserId = $unlockReviewFormRequest->currentUserId;
+            $reviewId = $reviewEntity['id'];
+            $reason = $unlockReviewFormRequest->reason;
+
             /* Search for validated adjudication review */
             $studyVisitReviews = $this->reviewRepositoryInterface->getReviewsForStudyVisit($reviewEntity['study_name'], $reviewEntity['visit_id'], true);
             $existingAdjudicationForm = array_search(true, array_map(function ($review) {
                 return $review['adjudication'];
             }, $studyVisitReviews));
-            /* If validated review exist, this review can't be unlocked */
+            /* If validated adjudication review exist, this review can't be unlocked */
             if ($existingAdjudicationForm) throw new GaelOBadRequestException('Please delete adjudication form before unlocking this review');
 
-            $this->checkAuthorization($unlockReviewFormRequest->currentUserId, $unlockReviewFormRequest->reviewId, $reviewEntity['local']);
+            $this->checkAuthorization($currentUserId, $reviewId, $reviewEntity['local']);
 
             $visitContext = $this->visitRepositoryInterface->getVisitContext($reviewEntity['visit_id']);
 
             $reviewStatus = $this->reviewStatusRepositoryInterface->getReviewStatus($reviewEntity['visit_id'], $reviewEntity['study_name']);
 
             //Delete review via service review
-            $this->reviewFormService->setCurrentUserId($unlockReviewFormRequest->currentUserId);
+            $this->reviewFormService->setCurrentUserId($currentUserId);
             $this->reviewFormService->setVisitContextAndStudy($visitContext, $reviewEntity['study_name']);
             $this->reviewFormService->setReviewStatus($reviewStatus);
-            $this->reviewFormService->unlockReview($unlockReviewFormRequest->reviewId);
+            $this->reviewFormService->unlockReview($reviewId);
 
             $actionDetails = [
                 'modality' => $visitContext['visit_type']['visit_group']['modality'],
                 'visit_type' => $visitContext['visit_type']['name'],
                 'patient_id' => $visitContext['patient_id'],
-                'id_review' => $unlockReviewFormRequest->reviewId,
-                'reason' => $unlockReviewFormRequest->reason
+                'id_review' => $reviewId,
+                'reason' => $reason
             ];
 
             $this->trackerRepositoryInterface->writeAction(
-                $unlockReviewFormRequest->currentUserId,
+                $currentUserId,
                 Constants::ROLE_SUPERVISOR,
                 $reviewEntity['study_name'],
                 $reviewEntity['visit_id'],
@@ -96,7 +100,7 @@ class UnlockReviewForm
             $this->mailServices->sendUnlockedFormMessage(
                 $reviewEntity['visit_id'],
                 false,
-                $unlockReviewFormRequest->currentUserId,
+                $currentUserId,
                 $reviewEntity['study_name'],
                 $visitContext['patient_id'],
                 $visitContext['patient']['code'],
@@ -106,7 +110,6 @@ class UnlockReviewForm
             $unlockReviewFormResponse->status = 200;
             $unlockReviewFormResponse->statusText =  'OK';
         } catch (GaelOException $e) {
-
             $unlockReviewFormResponse->body = $e->getErrorBody();
             $unlockReviewFormResponse->status = $e->statusCode;
             $unlockReviewFormResponse->statusText =  $e->statusText;

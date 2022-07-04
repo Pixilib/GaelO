@@ -2,7 +2,8 @@
 
 namespace App\GaelO\UseCases\GetAssociatedDataForReview;
 
-class GetAssociatedDataForReviewResponse {
+class GetAssociatedDataForReviewResponse
+{
     public $body = null;
     public int $status;
     public string $statusText;

@@ -4,7 +4,8 @@ namespace App\GaelO\Entities;
 
 use App\GaelO\Constants\Constants;
 
-class VisitEntity {
+class VisitEntity
+{
     public ?int $creatorUserId;
     public ?string $creationDate;
     public string $patientId;
@@ -42,7 +43,8 @@ class VisitEntity {
 
 
 
-    public static function fillFromDBReponseArray(array $array){
+    public static function fillFromDBReponseArray(array $array): VisitEntity
+    {
         $visitEntity  = new VisitEntity();
         $visitEntity->id = $array['id'];
         $visitEntity->creatorUserId = $array['creator_user_id'];
@@ -72,7 +74,8 @@ class VisitEntity {
         return $visitEntity;
     }
 
-    public function fillForTree($visitArray){
+    public function fillForTree(array $visitArray): void
+    {
         $this->id = $visitArray['id'];
         $this->patientId = $visitArray['patient_id'];
         $this->visitTypeId = $visitArray['visit_type_id'];
@@ -83,26 +86,27 @@ class VisitEntity {
         $this->stateQualityControl = $visitArray['state_quality_control'];
     }
 
-    public function setVisitContext(array $visitGroupEntity ,array $visitTypeEntity){
+    public function setVisitContext(array $visitGroupEntity, array $visitTypeEntity): void
+    {
         $this->visitGroup = VisitGroupEntity::fillFromDBReponseArray($visitGroupEntity);
         $this->visitType = VisitTypeEntity::fillFromDBReponseArray($visitTypeEntity);
     }
 
-    public function setPatientEntity(array $patientEntity){
-        $this->patient = PatientEntity::fillFromDBReponseArray($patientEntity);
+    public function setPatientEntity(PatientEntity $patientEntity): void
+    {
+        $this->patient = $patientEntity;
     }
 
-    public function setReviewVisitStatus(?string $reviewStatus, ?string $reviewConclusionValue, ?string $reviewConclusionDate, ?array $targetLesions){
+    public function setReviewVisitStatus(?string $reviewStatus, ?string $reviewConclusionValue, ?string $reviewConclusionDate, ?array $targetLesions): void
+    {
         $this->reviewStatus = $reviewStatus === null ? Constants::REVIEW_STATUS_NOT_DONE : $reviewStatus;
         $this->reviewConclusionValue = $reviewConclusionValue;
         $this->reviewConclusionDate = $reviewConclusionDate;
         $this->targetLesions  = $targetLesions;
     }
 
-    public function setCreatorDetails(string $firstname, string $lastname) : void {
-        $userEntity = new UserEntity();
-        $userEntity->firstname = $firstname;
-        $userEntity->lastname = $lastname;
+    public function setCreatorDetails(UserEntity $userEntity): void
+    {
         $this->creatorUser = $userEntity;
     }
 }

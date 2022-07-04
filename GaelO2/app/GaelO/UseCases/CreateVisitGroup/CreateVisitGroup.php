@@ -12,68 +12,69 @@ use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
 use App\GaelO\Services\AuthorizationService\AuthorizationUserService;
 use Exception;
 
-class CreateVisitGroup {
-
+class CreateVisitGroup
+{
     private VisitGroupRepositoryInterface $visitGroupRepositoryInterface;
     private VisitRepositoryInterface $visitRepositoryInterface;
     private AuthorizationUserService $authorizationUserService;
     private TrackerRepositoryInterface $trackerRepositoryInterface;
 
-    public function __construct(VisitGroupRepositoryInterface $visitGroupRepositoryInterface, VisitRepositoryInterface $visitRepositoryInterface, AuthorizationUserService $authorizationUserService, TrackerRepositoryInterface $trackerRepositoryInterface){
+    public function __construct(VisitGroupRepositoryInterface $visitGroupRepositoryInterface, VisitRepositoryInterface $visitRepositoryInterface, AuthorizationUserService $authorizationUserService, TrackerRepositoryInterface $trackerRepositoryInterface)
+    {
 
         $this->visitGroupRepositoryInterface = $visitGroupRepositoryInterface;
         $this->trackerRepositoryInterface = $trackerRepositoryInterface;
         $this->authorizationUserService = $authorizationUserService;
-        $this->visitRepositoryInterface =$visitRepositoryInterface;
-
+        $this->visitRepositoryInterface = $visitRepositoryInterface;
     }
 
-    public function execute(CreateVisitGroupRequest $createVisitGroupRequest, CreateVisitGroupResponse $createVisitGroupResponse) : void {
+    public function execute(CreateVisitGroupRequest $createVisitGroupRequest, CreateVisitGroupResponse $createVisitGroupResponse): void
+    {
 
-        try{
-            $this->checkAuthorization($createVisitGroupRequest->currentUserId);
+        try {
+            $currentUserId = $createVisitGroupRequest->currentUserId;
+            $studyName = $createVisitGroupRequest->studyName;
+            $visitGroupName = $createVisitGroupRequest->name;
+            $visitGroupModality = $createVisitGroupRequest->modality;
 
-            $existingVisitGroup = $this->visitGroupRepositoryInterface->isExistingVisitGroup($createVisitGroupRequest->studyName,
-                                                            $createVisitGroupRequest->name);
+            $this->checkAuthorization($currentUserId);
 
-            if($existingVisitGroup) {
-                throw new GaelOConflictException("Already Exisiting Visit Group");
-            }
+            $existingVisitGroup = $this->visitGroupRepositoryInterface->isExistingVisitGroup(
+                $studyName,
+                $visitGroupName
+            );
 
-            $hasVisits = $this->visitRepositoryInterface->hasVisitsInStudy($createVisitGroupRequest->studyName);
+            if ($existingVisitGroup) throw new GaelOConflictException("Already Exisiting Visit Group");
 
-            if($hasVisits) {
-                throw new GaelOForbiddenException("Study already having visits, can't change workflow");
-            }
+            $hasVisits = $this->visitRepositoryInterface->hasVisitsInStudy($studyName);
 
-            $this->visitGroupRepositoryInterface->createVisitGroup($createVisitGroupRequest->studyName, $createVisitGroupRequest->name, $createVisitGroupRequest->modality);
+            if ($hasVisits) throw new GaelOForbiddenException("Study already having visits, can't change workflow");
+
+            $this->visitGroupRepositoryInterface->createVisitGroup($studyName, $visitGroupName, $visitGroupModality);
 
             $actionDetails = [
-                'modality' => $createVisitGroupRequest->modality
+                'modality' => $visitGroupModality,
+                'name' => $visitGroupName
             ];
 
-            $this->trackerRepositoryInterface->writeAction($createVisitGroupRequest->currentUserId, Constants::TRACKER_ROLE_ADMINISTRATOR, $createVisitGroupRequest->studyName, null, Constants::TRACKER_CREATE_VISIT_GROUP, $actionDetails);
+            $this->trackerRepositoryInterface->writeAction($currentUserId, Constants::TRACKER_ROLE_ADMINISTRATOR, $studyName, null, Constants::TRACKER_CREATE_VISIT_GROUP, $actionDetails);
             $createVisitGroupResponse->status = 201;
             $createVisitGroupResponse->statusText = 'Created';
 
         } catch (GaelOException $e) {
-
             $createVisitGroupResponse->status = $e->statusCode;
             $createVisitGroupResponse->statusText = $e->statusText;
             $createVisitGroupResponse->body = $e->getErrorBody();
-
-        } catch (Exception $e){
+        } catch (Exception $e) {
             throw $e;
         }
-
     }
 
-    private function checkAuthorization(int $userId){
+    private function checkAuthorization(int $userId)
+    {
         $this->authorizationUserService->setUserId($userId);
-        if(! $this->authorizationUserService->isAdmin() ){
+        if (!$this->authorizationUserService->isAdmin()) {
             throw new GaelOForbiddenException();
         }
     }
-
-
 }

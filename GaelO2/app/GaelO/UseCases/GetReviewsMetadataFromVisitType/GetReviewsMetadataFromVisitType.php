@@ -5,15 +5,14 @@ namespace App\GaelO\UseCases\GetReviewsMetadataFromVisitType;
 use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
-use App\GaelO\Interfaces\Adapters\FrameworkInterface;
 use App\GaelO\Repositories\VisitGroupRepository;
 use App\GaelO\Repositories\VisitTypeRepository;
 use App\GaelO\Services\AuthorizationService\AuthorizationStudyService;
-use App\GaelO\Services\AuthorizationService\AuthorizationUserService;
 use App\GaelO\Services\FormService\FormService;
 use Exception;
 
-class GetReviewsMetadataFromVisitType {
+class GetReviewsMetadataFromVisitType
+{
 
     private AuthorizationStudyService $authorizationStudyService;
     private VisitTypeRepository $visitTypeRepository;
@@ -30,13 +29,13 @@ class GetReviewsMetadataFromVisitType {
 
     public function execute(GetReviewsMetadataFromVisitTypeRequest $getReviewsMetadataFromVisitTypeRequest, GetReviewsMetadataFromVisitTypeResponse $getReviewsMetadataFromVisitTypeResponse)
     {
-        try{
+        try {
 
             $studyName = $getReviewsMetadataFromVisitTypeRequest->studyName;
 
             $this->checkAuthorization($getReviewsMetadataFromVisitTypeRequest->currentUserId, $studyName);
 
-            $visitTypeEntity = $this->visitTypeRepository->find($getReviewsMetadataFromVisitTypeRequest->visitTypeId);
+            $visitTypeEntity = $this->visitTypeRepository->find($getReviewsMetadataFromVisitTypeRequest->visitTypeId, false);
 
             $visitGroupEntity = $this->visitGroupRepository->find($visitTypeEntity['visit_group_id']);
 
@@ -50,13 +49,11 @@ class GetReviewsMetadataFromVisitType {
             $getReviewsMetadataFromVisitTypeResponse->body = $answer;
             $getReviewsMetadataFromVisitTypeResponse->status = 200;
             $getReviewsMetadataFromVisitTypeResponse->statusText = 'OK';
-
         } catch (GaelOException $e) {
 
             $getReviewsMetadataFromVisitTypeResponse->body = $e->getErrorBody();
             $getReviewsMetadataFromVisitTypeResponse->status = $e->statusCode;
             $getReviewsMetadataFromVisitTypeResponse->statusText = $e->statusText;
-
         } catch (Exception $e) {
             throw $e;
         }
@@ -70,5 +67,4 @@ class GetReviewsMetadataFromVisitType {
             throw new GaelOForbiddenException();
         };
     }
-
 }

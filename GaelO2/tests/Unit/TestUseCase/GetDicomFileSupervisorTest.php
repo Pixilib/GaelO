@@ -2,7 +2,9 @@
 
 namespace Tests\Unit\TestUseCase;
 
+use App\GaelO\Entities\StudyEntity;
 use App\GaelO\Interfaces\Repositories\DicomSeriesRepositoryInterface;
+use App\GaelO\Interfaces\Repositories\StudyRepositoryInterface;
 use App\GaelO\Repositories\VisitRepository;
 use App\GaelO\Services\AuthorizationService\AuthorizationStudyService;
 use App\GaelO\Services\AuthorizationService\AuthorizationUserService;
@@ -24,9 +26,10 @@ class GetDicomFileSupervisorTest extends TestCase
     {
         parent::setUp();
 
-        $orthancServiceMock = Mockery::mock(OrthancService::class);
-        $orthancServiceMock->shouldReceive('getOrthancZipStream')
-            ->andReturn('FileTest');
+        $orthancServiceMock = $this->partialMock(OrthancService::class, function (MockInterface $mock) {
+            $mock->shouldReceive('setOrthancServer')->andReturn(null);
+            $mock->shouldReceive('getOrthancZipStream')->andReturn('FileTest');
+        });
 
         $authorizationServiceMock = $this->partialMock(AuthorizationStudyService::class, function (MockInterface $mock) {
             $mock->shouldReceive('setUserId')->andReturn(null);
@@ -51,19 +54,28 @@ class GetDicomFileSupervisorTest extends TestCase
 
             ->andReturn([$context1, $context2]);
 
+        $studyRepositoryMock = Mockery::mock(StudyRepositoryInterface::class);
+        $studyEntity = new StudyEntity();
+        $studyEntity->ancillaryOf = false;
+        $studyEntity->name = 'test';
 
+        $studyRepositoryMock->shouldReceive('find')
+            ->andReturn($studyEntity);
 
         $this->instance(AuthorizationStudyService::class, $authorizationServiceMock);
         $this->instance(DicomSeriesRepositoryInterface::class, $dicomRepositoryMock);
         $this->instance(OrthancService::class, $orthancServiceMock);
         $this->instance(VisitRepository::class, $visitRepositoryMock);
+        $this->instance(StudyRepositoryInterface::class, $studyRepositoryMock);
 
 
         $this->getDicomsFileSupervisor = new GetDicomsFileSupervisor(
             App::make(OrthancService::class),
             App::make(AuthorizationStudyService::class),
             App::make(DicomSeriesRepositoryInterface::class),
+            App::make(StudyRepositoryInterface::class),
             App::make(VisitRepository::class),
+
         );
     }
 

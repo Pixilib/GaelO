@@ -2,7 +2,8 @@
 
 namespace App\GaelO\Entities;
 
-class StudyEntity {
+class StudyEntity
+{
 
     public string $name;
     public string $code;
@@ -13,7 +14,11 @@ class StudyEntity {
     public bool $deleted;
     public ?string $ancillaryOf;
 
-    public static function fillFromDBReponseArray(array $array){
+    //Array of VisitGroupEntities
+    public array $visitGroups;
+
+    public static function fillFromDBReponseArray(array $array) : StudyEntity
+    {
         $studyEntity  = new StudyEntity();
         $studyEntity->name = $array['name'];
         $studyEntity->code = $array['code'];
@@ -37,8 +42,17 @@ class StudyEntity {
         return $this->ancillaryOf === $studyName ? true : false;
     }
 
-    public function getOriginalStudyName() : string {
+    public function getOriginalStudyName(): string
+    {
         if ($this->ancillaryOf) return $this->ancillaryOf;
         else return $this->name;
+    }
+
+    /**
+     * Set Childs visit groupe, $visitGroupEntities is an array of VisitGroupEntity
+     */
+    public function setVisitGroups(array $visitGroupEntities) : void
+    {
+        $this->visitGroups = $visitGroupEntities;
     }
 }

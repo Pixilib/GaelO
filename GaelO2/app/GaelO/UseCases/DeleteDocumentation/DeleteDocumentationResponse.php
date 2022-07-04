@@ -2,7 +2,8 @@
 
 namespace App\GaelO\UseCases\DeleteDocumentation;
 
-class DeleteDocumentationResponse{
+class DeleteDocumentationResponse
+{
     public $body = null;
     public int $status;
     public string $statusText;

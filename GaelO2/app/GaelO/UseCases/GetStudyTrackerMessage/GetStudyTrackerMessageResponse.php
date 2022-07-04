@@ -2,7 +2,8 @@
 
 namespace App\GaelO\UseCases\GetStudyTrackerMessage;
 
-class GetStudyTrackerMessageResponse {
+class GetStudyTrackerMessageResponse
+{
     public $body = null;
     public int $status;
     public string $statusText;

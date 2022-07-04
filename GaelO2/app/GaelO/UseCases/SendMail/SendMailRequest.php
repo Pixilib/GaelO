@@ -2,7 +2,8 @@
 
 namespace App\GaelO\UseCases\SendMail;
 
-class SendMailRequest{
+class SendMailRequest
+{
     public string $currentUserId;
     public ?string $study = null;
     public string $subject;

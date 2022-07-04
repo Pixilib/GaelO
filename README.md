@@ -11,3 +11,10 @@ Website : http://www.GaelO.fr
 Developpers : <br>
 Leader & Maintainer  : Salim Kanoun <br>
 Contributors : Bastien Proudhom, Ludwig Chieng, Emilie Olivié
+
+# Tips
+
+- To know backend version
+php artisan --version 
+
+# Release Cyles ; Upgrade version in composer.json

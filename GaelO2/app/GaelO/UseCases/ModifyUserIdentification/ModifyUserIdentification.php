@@ -13,26 +13,32 @@ use App\GaelO\Interfaces\Repositories\UserRepositoryInterface;
 use App\GaelO\UseCases\CreateUser\CreateUser;
 use Exception;
 
-class ModifyUserIdentification {
+class ModifyUserIdentification
+{
 
     private TrackerRepositoryInterface $trackerRepositoryInterface;
     private UserRepositoryInterface $userRepositoryInterface;
 
-    public function __construct( UserRepositoryInterface $userRepositoryInterface, TrackerRepositoryInterface $trackerRepositoryInterface){
+    public function __construct(UserRepositoryInterface $userRepositoryInterface, TrackerRepositoryInterface $trackerRepositoryInterface)
+    {
         $this->trackerRepositoryInterface = $trackerRepositoryInterface;
         $this->userRepositoryInterface = $userRepositoryInterface;
     }
 
-    public function execute(ModifyUserIdentificationRequest $modifyUserIdentificationRequest, ModifyUserIdentificationResponse $modifyUserIdentificationResponse) : void {
+    public function execute(ModifyUserIdentificationRequest $modifyUserIdentificationRequest, ModifyUserIdentificationResponse $modifyUserIdentificationResponse): void
+    {
 
-        try{
+        try {
 
-            $this->checkAuthorization($modifyUserIdentificationRequest->currentUserId, $modifyUserIdentificationRequest->userId);
+            $currentUserId = $modifyUserIdentificationRequest->currentUserId;
+            $userId = $modifyUserIdentificationRequest->userId;
 
-            $user = $this->userRepositoryInterface->find($modifyUserIdentificationRequest->userId);
+            $this->checkAuthorization($currentUserId, $userId);
+
+            $user = $this->userRepositoryInterface->find($userId);
 
             $resetEmailValidation = false;
-            if($modifyUserIdentificationRequest->email !== $user['email']) {
+            if ($modifyUserIdentificationRequest->email !== $user['email']) {
                 CreateUser::checkEmailValid($modifyUserIdentificationRequest->email);
                 $knownEmail = $this->userRepositoryInterface->isExistingEmail($modifyUserIdentificationRequest->email);
                 if ($knownEmail) throw new GaelOConflictException("Email Already Known");
@@ -57,31 +63,28 @@ class ModifyUserIdentification {
             );
 
             $details = [
-                'modified_user_id'=>$modifyUserIdentificationRequest->userId,
-                'lastname'=>$modifyUserIdentificationRequest->lastname,
-                'firstname'=>$modifyUserIdentificationRequest->firstname,
-                'email'=>$modifyUserIdentificationRequest->email,
-                'phone'=>$modifyUserIdentificationRequest->phone
+                'modified_user_id' => $userId,
+                'lastname' => $modifyUserIdentificationRequest->lastname,
+                'firstname' => $modifyUserIdentificationRequest->firstname,
+                'email' => $modifyUserIdentificationRequest->email,
+                'phone' => $modifyUserIdentificationRequest->phone
             ];
 
-            $this->trackerRepositoryInterface->writeAction($modifyUserIdentificationRequest->currentUserId, Constants::TRACKER_ROLE_USER, null, null, Constants::TRACKER_EDIT_USER, $details);
+            $this->trackerRepositoryInterface->writeAction($currentUserId, Constants::TRACKER_ROLE_USER, null, null, Constants::TRACKER_EDIT_USER, $details);
 
             $modifyUserIdentificationResponse->status = 200;
             $modifyUserIdentificationResponse->statusText = 'OK';
-
-        } catch (GaelOException $e){
+        } catch (GaelOException $e) {
             $modifyUserIdentificationResponse->body = $e->getErrorBody();
             $modifyUserIdentificationResponse->status = $e->statusCode;
             $modifyUserIdentificationResponse->statusText = $e->statusText;
-
-        } catch (Exception $e){
+        } catch (Exception $e) {
             throw $e;
         }
     }
 
-    private function checkAuthorization(int $currentUserId, int $userId){
-        if($currentUserId !== $userId) throw new GaelOForbiddenException();
-
+    private function checkAuthorization(int $currentUserId, int $userId)
+    {
+        if ($currentUserId !== $userId) throw new GaelOForbiddenException();
     }
-
 }

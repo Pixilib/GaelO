@@ -9,15 +9,18 @@ class Tracker extends Model
 {
     use HasFactory;
 
-    public function user(){
+    public function user()
+    {
         return $this->belongsTo(User::class, 'user_id', 'id')->withTrashed();
     }
 
-    public function study(){
+    public function study()
+    {
         return $this->belongsTo(Study::class, 'study_name', 'name');
     }
 
-    public function visit(){
+    public function visit()
+    {
         return $this->belongsTo(Visit::class, 'visit_id', 'id');
     }
 }

@@ -1,9 +1,7 @@
 Salim TODO :
 
-- Relecture UseCases : Jusqu'a CreateDocumentation Inclus
-- Refac : Relation VisitGroupDetails à revoir
-
-- Refac : setVisitData de VisitEntity à revoir
+- Refac SendMail est complexe probablement a splitter
+- Refac : Pluger GetPossibleUpload sur VisitEntity pour la réponse (nécéssite d'updater V1)
 
 - Get Creatable Visit, retourner les visitType entity des créables ? 
 - CreateVisit => Verifier que la visite à creer est bien créable niveau backend
@@ -11,31 +9,15 @@ Salim TODO :
 - Optimiser l'utilisation des authorization service en injectant les data depuis le usecase (ou les rendre stateless)
 - Optimiser le service visit en injectant directement le visit context
 
+- Sur les action du superviseur faire passer l'etude appelée en query tag pour sécuriser le contexte dans lequel la ressource est appelée (en cas d'etude ancillaire si l'utilisateur est superviseur de l'étude principale la requette emise de l'étude ancillaire passera le RBAC )
+  
 - Portage GaelO1 anonymisation RTSTRUCT et Viewers
-- Tester Etudes ancillaire avec Emilie (voir return default data de review status si entitée non crée)
-
----- Refactoring Entity ----
-- Pluger toutes les reponses "data" sur ces entity response
-=> GetPossibleUpload => VisitEntity ?
-=> GetReviewProgression => Visit + Review_status + Progression entity?
-=> utiliser les entity en sortie de repository ? et dissocier la lecture de l'entity de l'output ?
----- /Refactoring Entity ------
-
-Reste Autres :
 - Orthanc Send to peer
-- Mise en place scheduler
-- Monitoring scheduler via tracker
-- Dicom liée aux review  => privilegier les associated file des reviews
-- Mettre en place des event pour faire de la logique custom aux upload ect... ?
-
-- OHIF essayer de faire passer le role dans les requetes => Faire un GaelO plugin dans OHIF
-pourra modifier cornerstoneWADOImageLoader pour injecter l'etude courante
-et devrait pouvoir recuperer des info soit via le useQuery soit via un localstorage
+- Mise en place scheduler, monitoring scheduler par email pourra etre personnalisé (ex que si nouveau patient...)
 
 --- Etudes ancillaires ---
-Ne doit pas pouvoir faire les relance d'upload => Voir avec Emilie
-Adapter les points de lecture :
-GetDicomFileSupervisor => Passe par les seriesUID mais le RBAC doit autoriser les etude ancillaire
+Tester Etudes ancillaire avec Emilie (voir return default data de review status si entitée non crée)
+Ne doit pas pouvoir faire les relance d'upload => Voir avec Emilie (probablement passer les info de study dans un contexte)
 --- /Etudes ancillaires ---
 
 **** Tests ***

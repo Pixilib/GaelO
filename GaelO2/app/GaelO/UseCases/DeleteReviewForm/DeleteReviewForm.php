@@ -49,46 +49,49 @@ class DeleteReviewForm
 
         try {
 
-            if (empty($deleteReviewFormRequest->reason)) {
-                throw new GaelOBadRequestException("Reason must be specified");
-            }
+            if (empty($deleteReviewFormRequest->reason)) throw new GaelOBadRequestException("Reason must be specified");
 
             $reviewEntity = $this->reviewRepositoryInterface->find($deleteReviewFormRequest->reviewId);
 
             $studyName = $reviewEntity['study_name'];
             $local = $reviewEntity['local'];
             $visitId = $reviewEntity['visit_id'];
+            $reviewId = $reviewEntity['id'];
+            $currentUserId = $deleteReviewFormRequest->currentUserId;
+            $reason = $deleteReviewFormRequest->reason;
+
 
             /* Search for validated adjudication review */
             $studyVisitReviews = $this->reviewRepositoryInterface->getReviewsForStudyVisit($studyName, $visitId, true);
+
             $existingAdjudicationForm = array_search(true, array_map(function ($review) {
                 return $review['adjudication'];
             }, $studyVisitReviews));
-            /* If validated review exist, this review can't be deleted */
-            if($existingAdjudicationForm) throw new GaelOBadRequestException('Please delete adjudication form before deleting this review');
 
-            $this->checkAuthorization($deleteReviewFormRequest->currentUserId, $deleteReviewFormRequest->reviewId, $local);
+            /* If validated review exist, this review can't be deleted */
+            if ($existingAdjudicationForm) throw new GaelOBadRequestException('Please delete adjudication form before deleting this review');
+
+            $this->checkAuthorization($currentUserId, $reviewId, $local);
 
             $visitContext = $this->visitRepositoryInterface->getVisitContext($visitId);
-
             $reviewStatus = $this->reviewStatusRepositoryInterface->getReviewStatus($visitId, $studyName);
 
             //Delete review via service review
-            $this->reviewFormService->setCurrentUserId($deleteReviewFormRequest->currentUserId);
+            $this->reviewFormService->setCurrentUserId($currentUserId);
             $this->reviewFormService->setVisitContextAndStudy($visitContext, $studyName);
             $this->reviewFormService->setReviewStatus($reviewStatus);
-            $this->reviewFormService->deleteReview($deleteReviewFormRequest->reviewId);
+            $this->reviewFormService->deleteReview($reviewId);
 
             $actionDetails = [
                 'modality' => $visitContext['visit_type']['visit_group']['modality'],
                 'visit_type' => $visitContext['visit_type']['name'],
                 'patient_id' => $visitContext['patient_id'],
-                'id_review' => $deleteReviewFormRequest->reviewId,
-                'reason' => $deleteReviewFormRequest->reason
+                'id_review' => $reviewId,
+                'reason' => $reason
             ];
 
             $this->trackerRepositoryInterface->writeAction(
-                $deleteReviewFormRequest->currentUserId,
+                $currentUserId,
                 Constants::ROLE_SUPERVISOR,
                 $studyName,
                 $visitId,
@@ -110,7 +113,6 @@ class DeleteReviewForm
             $deleteReviewFormResponse->status = 200;
             $deleteReviewFormResponse->statusText =  'OK';
         } catch (GaelOException $e) {
-
             $deleteReviewFormResponse->body = $e->getErrorBody();
             $deleteReviewFormResponse->status = $e->statusCode;
             $deleteReviewFormResponse->statusText =  $e->statusText;

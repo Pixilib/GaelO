@@ -10,29 +10,35 @@ use App\GaelO\Entities\VisitEntity;
 use App\GaelO\Services\AuthorizationService\AuthorizationPatientService;
 use Exception;
 
-class GetPatientVisit {
+class GetPatientVisit
+{
 
     private VisitRepositoryInterface $visitRepositoryInterface;
     private AuthorizationPatientService $authorizationPatientService;
 
-    public function __construct(VisitRepositoryInterface $visitRepositoryInterface, AuthorizationPatientService $authorizationPatientService){
+    public function __construct(VisitRepositoryInterface $visitRepositoryInterface, AuthorizationPatientService $authorizationPatientService)
+    {
         $this->visitRepositoryInterface = $visitRepositoryInterface;
         $this->authorizationPatientService = $authorizationPatientService;
     }
 
-    public function execute(GetPatientVisitRequest $getPatientVisitRequest, GetPatientVisitResponse $getPatientVisitResponse){
+    public function execute(GetPatientVisitRequest $getPatientVisitRequest, GetPatientVisitResponse $getPatientVisitResponse)
+    {
 
-        try{
-            $this->checkAuthorization($getPatientVisitRequest->currentUserId, $getPatientVisitRequest->patientId, $getPatientVisitRequest->studyName, $getPatientVisitRequest->role);
+        try {
+
+            $role = $getPatientVisitRequest->role;
+
+            $this->checkAuthorization($getPatientVisitRequest->currentUserId, $getPatientVisitRequest->patientId, $getPatientVisitRequest->studyName, $role);
             $visitsArray = $this->visitRepositoryInterface->getAllPatientsVisitsWithReviewStatus($getPatientVisitRequest->patientId, $getPatientVisitRequest->studyName, $getPatientVisitRequest->withTrashed);
 
             $responseArray = [];
-            foreach($visitsArray as $data){
+            foreach ($visitsArray as $data) {
 
                 $reviewStatus =  $data['review_status']['review_status'];
-                $reviewConclusionValue = $getPatientVisitRequest->role === Constants::ROLE_SUPERVISOR ? $data['review_status']['review_conclusion_value'] : null;
-                $reviewConclusionDate =  $getPatientVisitRequest->role === Constants::ROLE_SUPERVISOR ? $data['review_status']['review_conclusion_date'] : null;
-                $targetLesions =  $getPatientVisitRequest->role === Constants::ROLE_SUPERVISOR ? $data['review_status']['target_lesions'] : null;
+                $reviewConclusionValue = $role === Constants::ROLE_SUPERVISOR ? $data['review_status']['review_conclusion_value'] : null;
+                $reviewConclusionDate =  $role === Constants::ROLE_SUPERVISOR ? $data['review_status']['review_conclusion_date'] : null;
+                $targetLesions =  $role === Constants::ROLE_SUPERVISOR ? $data['review_status']['target_lesions'] : null;
 
                 $visitEntity = VisitEntity::fillFromDBReponseArray($data);
                 $visitEntity->setVisitContext($data['visit_type']['visit_group'], $data['visit_type']);
@@ -43,26 +49,23 @@ class GetPatientVisit {
             $getPatientVisitResponse->body = $responseArray;
             $getPatientVisitResponse->status = 200;
             $getPatientVisitResponse->statusText = 'OK';
-
-        } catch(GaelOException $e){
+        } catch (GaelOException $e) {
 
             $getPatientVisitResponse->status = $e->statusCode;
             $getPatientVisitResponse->statusText = $e->statusText;
             $getPatientVisitResponse->body = $e->getErrorBody();
-
-        } catch(Exception $e){
+        } catch (Exception $e) {
 
             throw $e;
-
         }
-
     }
 
-    private function checkAuthorization(int $userId, string $patientId, string $studyName, string $role){
+    private function checkAuthorization(int $userId, string $patientId, string $studyName, string $role)
+    {
         $this->authorizationPatientService->setUserId($userId);
         $this->authorizationPatientService->setPatientId($patientId);
         $this->authorizationPatientService->setStudyName($studyName);
-        if( ! $this->authorizationPatientService->isPatientAllowed($role)){
+        if (!$this->authorizationPatientService->isPatientAllowed($role)) {
             throw new GaelOForbiddenException();
         }
     }

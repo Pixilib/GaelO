@@ -2,7 +2,8 @@
 
 namespace App\GaelO\UseCases\GetAssociatedDataForInvestigator;
 
-class GetAssociatedDataForInvestigatorRequest {
+class GetAssociatedDataForInvestigatorRequest
+{
     public int $currentUserId;
     public int $visitId;
     public string $role;

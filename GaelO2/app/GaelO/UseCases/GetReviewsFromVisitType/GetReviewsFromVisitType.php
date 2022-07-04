@@ -8,6 +8,7 @@ use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\ReviewRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
 use App\GaelO\Entities\ReviewEntity;
+use App\GaelO\Entities\UserEntity;
 use App\GaelO\Services\AuthorizationService\AuthorizationStudyService;
 use Exception;
 
@@ -27,8 +28,6 @@ class GetReviewsFromVisitType
 
     public function execute(GetReviewsFromVisitTypeRequest $getReviewsFromVisitTypeRequest, GetReviewsFromVisitTypeResponse $getReviewsFromVisitTypeResponse)
     {
-
-
         try {
 
             $studyName = $getReviewsFromVisitTypeRequest->studyName;
@@ -37,7 +36,9 @@ class GetReviewsFromVisitType
             //Get Visits in the asked visitTypeId
             $visits = $this->visitRepositoryInterface->getVisitsInVisitType($getReviewsFromVisitTypeRequest->visitTypeId, false, null, false);
             //make visitsId array
-            $visitsId = array_map(function($visit){ return $visit['id']; }, $visits);
+            $visitsId = array_map(function ($visit) {
+                return $visit['id'];
+            }, $visits);
 
             //Get Validated review for these visits
             $reviews = $this->reviewRepositoryInterface->getReviewsFromVisitIdArrayStudyName($visitsId, $studyName, false, true);
@@ -46,20 +47,17 @@ class GetReviewsFromVisitType
 
             foreach ($reviews as $review) {
                 $reviewEntity = ReviewEntity::fillFromDBReponseArray($review);
-                $reviewEntity->setUserDetails($review['user']['lastname'], $review['user']['firstname'], $review['user']['center_code']);
+                $reviewEntity->setUserDetails(UserEntity::fillMinimalFromDBReponseArray($review['user']));
                 $answer[] = $reviewEntity;
             }
 
             $getReviewsFromVisitTypeResponse->body = $answer;
             $getReviewsFromVisitTypeResponse->status = 200;
             $getReviewsFromVisitTypeResponse->statusText = 'OK';
-
         } catch (GaelOException $e) {
-
             $getReviewsFromVisitTypeResponse->body = $e->getErrorBody();
             $getReviewsFromVisitTypeResponse->status = $e->statusCode;
             $getReviewsFromVisitTypeResponse->statusText = $e->statusText;
-
         } catch (Exception $e) {
             throw $e;
         }

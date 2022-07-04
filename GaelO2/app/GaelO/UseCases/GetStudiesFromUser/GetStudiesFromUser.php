@@ -7,7 +7,8 @@ use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\UserRepositoryInterface;
 use Exception;
 
-class GetStudiesFromUser {
+class GetStudiesFromUser
+{
 
     private UserRepositoryInterface $userRepositoryInterface;
 
@@ -19,33 +20,30 @@ class GetStudiesFromUser {
     public function execute(GetStudiesFromUserRequest $getStudiesFromUserRequest, GetStudiesFromUserResponse $getStudiesFromUserResponse)
     {
 
-        try{
+        try {
             $this->checkAuthorization($getStudiesFromUserRequest->currentUserId, $getStudiesFromUserRequest->userId);
 
             $studiesEntities = $this->userRepositoryInterface->getStudiesOfUser($getStudiesFromUserRequest->userId);
 
-            $studiesNames = array_map(function ($study){
+            $studiesNames = array_map(function ($study) {
                 return $study['name'];
             }, $studiesEntities);
 
             $getStudiesFromUserResponse->body = $studiesNames;
             $getStudiesFromUserResponse->status = 200;
             $getStudiesFromUserResponse->statusText = 'OK';
-
         } catch (GaelOException $e) {
 
             $getStudiesFromUserResponse->body = $e->getErrorBody();
             $getStudiesFromUserResponse->status = $e->statusCode;
             $getStudiesFromUserResponse->statusText = $e->statusText;
-
         } catch (Exception $e) {
             throw $e;
         }
-
     }
 
-    private function checkAuthorization(int $currentUserId, int $userId) : void
+    private function checkAuthorization(int $currentUserId, int $userId): void
     {
-        if($currentUserId !== $userId) throw new GaelOForbiddenException();
+        if ($currentUserId !== $userId) throw new GaelOForbiddenException();
     }
 }

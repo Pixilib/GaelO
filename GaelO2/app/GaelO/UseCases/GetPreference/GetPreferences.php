@@ -9,20 +9,22 @@ use App\GaelO\Interfaces\Adapters\FrameworkInterface;
 use App\GaelO\Services\AuthorizationService\AuthorizationUserService;
 use Exception;
 
-class GetPreferences {
+class GetPreferences
+{
 
     private FrameworkInterface $frameworkInterface;
     private AuthorizationUserService $authorizationUserService;
 
-    public function __construct(AuthorizationUserService $authorizationUserService, FrameworkInterface $frameworkInterface) {
+    public function __construct(AuthorizationUserService $authorizationUserService, FrameworkInterface $frameworkInterface)
+    {
         $this->authorizationUserService = $authorizationUserService;
         $this->frameworkInterface = $frameworkInterface;
-
     }
 
-    public function execute(GetPreferencesRequest $getPreferencesRequest, GetPreferencesResponse $getPreferencesResponse){
+    public function execute(GetPreferencesRequest $getPreferencesRequest, GetPreferencesResponse $getPreferencesResponse)
+    {
 
-        try{
+        try {
 
             $this->checkAuthorization($getPreferencesRequest->currentUserId);
 
@@ -36,24 +38,20 @@ class GetPreferences {
             $getPreferencesResponse->body = $preferences;
             $getPreferencesResponse->status = 200;
             $getPreferencesResponse->statusText = 'OK';
-
-        } catch (GaelOException $e ){
-
+        } catch (GaelOException $e) {
             $getPreferencesResponse->body = $e->getErrorBody();
             $getPreferencesResponse->status = $e->statusCode;
             $getPreferencesResponse->statusText = $e->statusText;
-
-        } catch (Exception $e){
+        } catch (Exception $e) {
             throw $e;
         }
-
     }
 
-    private function checkAuthorization(int $userId) : void {
+    private function checkAuthorization(int $userId): void
+    {
         $this->authorizationUserService->setUserId($userId);
-        if( ! $this->authorizationUserService->isAdmin()) {
+        if (!$this->authorizationUserService->isAdmin()) {
             throw new GaelOForbiddenException();
         };
     }
-
 }

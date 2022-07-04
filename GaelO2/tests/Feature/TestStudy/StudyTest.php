@@ -154,9 +154,30 @@ class StudyTest extends TestCase
 
     public function testGetStudiesWithDetails(){
         AuthorizationTools::actAsAdmin(true);
-        Study::factory()->count(2)->create();
+        VisitType::factory()->count(4)->create();
         $response = $this->json('GET', '/api/studies?expand')->assertSuccessful();
-        $response->assertJsonCount(2);
+        $response->assertJsonCount(4);
+        $answer =json_decode($response->content(), true);
+        foreach($answer as $studyName => $details){
+            $this->assertArrayHasKey('visitGroups', $details);
+            $this->assertArrayHasKey('visitTypes', $details['visitGroups'][0]);
+        }
+
+    }
+
+    public function getStudy(){
+        AuthorizationTools::actAsAdmin(true);
+        $study=Study::factory()->create();
+        $answer = $this->json('GET', '/api/studies/'+$study->name);
+        $answer->assertSuccessful();
+        $data = json_decode($answer->content(), true);
+        $this->assertArrayHasKey('visitGroups', $data);
+    }
+
+    public function getStudyShouldFailNotAdmin(){
+        AuthorizationTools::actAsAdmin(false);
+        $study=Study::factory()->create();
+        $this->json('GET', '/api/studies/'+$study->name)->assertStatus(403);
 
     }
 

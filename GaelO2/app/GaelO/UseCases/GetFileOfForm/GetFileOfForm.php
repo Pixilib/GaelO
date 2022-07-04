@@ -11,7 +11,8 @@ use App\GaelO\Services\AuthorizationService\AuthorizationReviewService;
 use App\GaelO\Services\AuthorizationService\AuthorizationVisitService;
 use Exception;
 
-class GetFileOfForm {
+class GetFileOfForm
+{
 
     private AuthorizationVisitService $authorizationVisitService;
     private AuthorizationReviewService $authorizationReviewService;
@@ -25,9 +26,10 @@ class GetFileOfForm {
         $this->frameworkInterface = $frameworkInterface;
     }
 
-    public function execute(GetFileOfFormRequest $getFileOfFormRequest, GetFileOfFormResponse $getFileOfFormResponse){
+    public function execute(GetFileOfFormRequest $getFileOfFormRequest, GetFileOfFormResponse $getFileOfFormResponse)
+    {
 
-        try{
+        try {
 
             $reviewEntity = $this->reviewRepositoryInterface->find($getFileOfFormRequest->id);
 
@@ -40,19 +42,15 @@ class GetFileOfForm {
             $getFileOfFormResponse->statusText = 'OK';
             $getFileOfFormResponse->filePath = $reviewEntity['sent_files'][$getFileOfFormRequest->key];
             $getFileOfFormResponse->filename = basename($reviewEntity['sent_files'][$getFileOfFormRequest->key]);
-
-        } catch (GaelOException $e){
+        } catch (GaelOException $e) {
 
             $getFileOfFormResponse->status = $e->statusCode;
             $getFileOfFormResponse->statusText = $e->statusText;
             $getFileOfFormResponse->body = $e->getErrorBody();
-
-        } catch (Exception $e){
+        } catch (Exception $e) {
 
             throw $e;
-
         }
-
     }
 
     private function checkAuthorization(bool $local, int $reviewId, int $visitId, int $currentUserId, string $studyName): void
@@ -62,7 +60,7 @@ class GetFileOfForm {
             $this->authorizationVisitService->setVisitId($visitId);
             $this->authorizationVisitService->setUserId($currentUserId);
             $this->authorizationVisitService->setStudyName($studyName);
-            if ( !$this->authorizationVisitService->isVisitAllowed(Constants::ROLE_INVESTIGATOR) ) throw new GaelOForbiddenException();
+            if (!$this->authorizationVisitService->isVisitAllowed(Constants::ROLE_INVESTIGATOR)) throw new GaelOForbiddenException();
         } else {
             $this->authorizationReviewService->setReviewId($reviewId);
             $this->authorizationReviewService->setUserId($currentUserId);

@@ -1,7 +1,8 @@
 {
-    "name": "salimkanoun/gaelo",
+    "name": "pixilib/gaelo",
     "type": "project",
     "description": "GaelO Imaging platform for clinical trials",
+    "version": "0.0.1",
     "keywords": [
         "framework",
         "laravel"

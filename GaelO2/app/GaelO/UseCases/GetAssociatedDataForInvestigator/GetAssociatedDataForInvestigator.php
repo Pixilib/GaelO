@@ -16,7 +16,7 @@ class GetAssociatedDataForInvestigator
     private InvestigatorFormService $investigatorFormService;
     private VisitRepositoryInterface $visitRepositoryInterface;
 
-    public function __construct(AuthorizationVisitService $authorizationVisitService, VisitRepositoryInterface $visitRepositoryInterface,InvestigatorFormService $investigatorFormService)
+    public function __construct(AuthorizationVisitService $authorizationVisitService, VisitRepositoryInterface $visitRepositoryInterface, InvestigatorFormService $investigatorFormService)
     {
         $this->authorizationVisitService = $authorizationVisitService;
         $this->investigatorFormService = $investigatorFormService;
@@ -26,20 +26,22 @@ class GetAssociatedDataForInvestigator
     public function execute(GetAssociatedDataForInvestigatorRequest $getAssociatedDataForInvestigatorRequest, GetAssociatedDataForInvestigatorResponse $getAssociatedDataForInvestigatorResponse)
     {
         try {
+            $visitId = $getAssociatedDataForInvestigatorRequest->visitId;
+            $role = $getAssociatedDataForInvestigatorRequest->role;
+            $currentUserId = $getAssociatedDataForInvestigatorRequest->currentUserId;
 
-            $visitContext = $this->visitRepositoryInterface->getVisitContext($getAssociatedDataForInvestigatorRequest->visitId, false);
+            $visitContext = $this->visitRepositoryInterface->getVisitContext($visitId, false);
             $studyName = $visitContext['patient']['study_name'];
 
-            $this->checkAuthorization($getAssociatedDataForInvestigatorRequest->currentUserId, $getAssociatedDataForInvestigatorRequest->visitId, $studyName, $getAssociatedDataForInvestigatorRequest->role);
+            $this->checkAuthorization($currentUserId, $visitId, $studyName, $role);
 
-            $this->investigatorFormService->setCurrentUserId($getAssociatedDataForInvestigatorRequest->currentUserId);
+            $this->investigatorFormService->setCurrentUserId($currentUserId);
             $this->investigatorFormService->setVisitContextAndStudy($visitContext, $studyName);
             $associatedData = $this->investigatorFormService->getAssociatedDataForForm();
 
             $getAssociatedDataForInvestigatorResponse->body =  $associatedData;
             $getAssociatedDataForInvestigatorResponse->status = 200;
             $getAssociatedDataForInvestigatorResponse->statusText = 'OK';
-
         } catch (GaelOException $e) {
             $getAssociatedDataForInvestigatorResponse->body =  $e->getErrorBody();
             $getAssociatedDataForInvestigatorResponse->status = $e->statusCode;
@@ -55,7 +57,7 @@ class GetAssociatedDataForInvestigator
         $this->authorizationVisitService->setStudyName($studyName);
         $this->authorizationVisitService->setVisitId($visitId);
 
-        if( ! $this->authorizationVisitService->isVisitAllowed($role)){
+        if (!$this->authorizationVisitService->isVisitAllowed($role)) {
             throw new GaelOForbiddenException();
         }
     }

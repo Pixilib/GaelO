@@ -15,15 +15,18 @@ class DicomStudy extends Model
     protected $keyType = 'string';
     public $incrementing = false;
 
-    public function dicomSeries(){
+    public function dicomSeries()
+    {
         return $this->hasMany(DicomSeries::class, 'study_instance_uid', 'study_uid');
     }
 
-    public function visit(){
+    public function visit()
+    {
         return $this->belongsTo(Visit::class, 'visit_id', 'id');
     }
 
-    public function uploader(){
+    public function uploader()
+    {
         return $this->belongsTo(User::class, 'user_id', 'id')->withTrashed();
     }
 }

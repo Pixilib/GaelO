@@ -2,7 +2,8 @@
 
 namespace App\GaelO\UseCases\GetStudyStatistics;
 
-class GetStudyStatisticsRequest {
+class GetStudyStatisticsRequest
+{
     public int $currentUserId;
     public string $studyName;
 }

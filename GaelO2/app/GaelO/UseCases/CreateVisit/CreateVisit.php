@@ -18,7 +18,6 @@ use Exception;
 
 class CreateVisit
 {
-
     private PatientRepositoryInterface $patientRepositoryInterface;
     private VisitRepositoryInterface $visitRepositoryInterface;
     private AuthorizationPatientService $authorizationPatientService;
@@ -44,11 +43,15 @@ class CreateVisit
             $patientId = $createVisitRequest->patientId;
             $currentUserId = $createVisitRequest->currentUserId;
             $role = $createVisitRequest->role;
+            $statusDone = $createVisitRequest->statusDone;
+            $visitDate = $createVisitRequest->visitDate;
+            $reasonForNotDone = $createVisitRequest->reasonForNotDone;
+            $visitTypeId = $createVisitRequest->visitTypeId;
 
             $patientEntity = $this->patientRepositoryInterface->find($patientId);
             $patientCode = $patientEntity['code'];
 
-            if( !in_array($patientEntity['inclusion_status'], [Constants::PATIENT_INCLUSION_STATUS_INCLUDED, Constants::PATIENT_INCLUSION_STATUS_PRE_INCLUDED]) ){
+            if (!in_array($patientEntity['inclusion_status'], [Constants::PATIENT_INCLUSION_STATUS_INCLUDED, Constants::PATIENT_INCLUSION_STATUS_PRE_INCLUDED])) {
                 throw new GaelOForbiddenException("Visit Creation only allowed for preincluded or included patient");
             }
 
@@ -56,27 +59,27 @@ class CreateVisit
             $this->checkAuthorization($currentUserId, $patientId, $studyName, $role);
 
             //If visit was not done, force visitDate to null
-            if ($createVisitRequest->statusDone === Constants::VISIT_STATUS_NOT_DONE && !empty($createVisitRequest->visitDate)) {
+            if ($statusDone === Constants::VISIT_STATUS_NOT_DONE && !empty($visitDate)) {
                 throw new GaelOBadRequestException('Visit Date should not be specified for visit status done');
             }
 
-            if ($createVisitRequest->statusDone === Constants::VISIT_STATUS_NOT_DONE && empty($createVisitRequest->reasonForNotDone)) {
+            if ($statusDone === Constants::VISIT_STATUS_NOT_DONE && empty($reasonForNotDone)) {
                 throw new GaelOBadRequestException('Reason must be specified is visit not done');
             }
 
             $existingVisit = $this->visitRepositoryInterface->isExistingVisit(
                 $patientId,
-                $createVisitRequest->visitTypeId
+                $visitTypeId
             );
 
             if ($existingVisit) {
                 throw new GaelOConflictException('Visit Already Created');
             }
 
-            if ($createVisitRequest->visitDate !== null) {
+            if ($visitDate !== null) {
 
                 //Input date should be in SQL FORMAT YYYY-MM-DD
-                if (!$this->validateDate($createVisitRequest->visitDate)) {
+                if (!$this->validateDate($visitDate)) {
                     throw new GaelOBadRequestException("Visit Date should be in YYYY-MM-DD and valid");
                 }
             }
@@ -85,10 +88,10 @@ class CreateVisit
                 $studyName,
                 $currentUserId,
                 $patientId,
-                $createVisitRequest->visitDate,
-                $createVisitRequest->visitTypeId,
-                $createVisitRequest->statusDone,
-                $createVisitRequest->reasonForNotDone
+                $visitDate,
+                $visitTypeId,
+                $statusDone,
+                $reasonForNotDone
             );
 
             if ($createVisitRequest->statusDone === Constants::VISIT_STATUS_NOT_DONE) {
@@ -102,15 +105,15 @@ class CreateVisit
                     $patientId,
                     $patientCode,
                     $visitType,
-                    $createVisitRequest->reasonForNotDone,
+                    $reasonForNotDone,
                     $currentUserId
                 );
             }
 
             $details = [
-                'visit_date' =>  $createVisitRequest->visitDate,
-                'status_done' => $createVisitRequest->statusDone,
-                'reason_for_not_done' => $createVisitRequest->reasonForNotDone
+                'visit_date' =>  $visitDate,
+                'status_done' => $statusDone,
+                'reason_for_not_done' => $reasonForNotDone
             ];
 
             $this->trackerRepositoryInterface->writeAction(
@@ -124,10 +127,8 @@ class CreateVisit
 
             $createVisitResponse->body = ['id' => $visitId];
             $createVisitResponse->status = 201;
-            $createVisitResponse->body = ['id' => $visitId];
             $createVisitResponse->statusText = 'Created';
         } catch (GaelOException $e) {
-
             $createVisitResponse->status = $e->statusCode;
             $createVisitResponse->statusText = $e->statusText;
             $createVisitResponse->body = $e->getErrorBody();

@@ -2,7 +2,8 @@
 
 namespace App\GaelO\UseCases\GetPatientsInStudyFromCenters;
 
-class GetPatientsInStudyFromCentersResponse {
+class GetPatientsInStudyFromCentersResponse
+{
     public $body;
     public int $status;
     public string $statusText;

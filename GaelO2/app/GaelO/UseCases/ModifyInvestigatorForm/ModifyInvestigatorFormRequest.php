@@ -2,7 +2,8 @@
 
 namespace App\GaelO\UseCases\ModifyInvestigatorForm;
 
-class ModifyInvestigatorFormRequest{
+class ModifyInvestigatorFormRequest
+{
     public int $currentUserId;
     public int $visitId;
     public array $data;

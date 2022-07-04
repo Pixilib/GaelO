@@ -3,6 +3,8 @@
 namespace App\GaelO\UseCases\GetVisitsFromStudy;
 
 use App\GaelO\Constants\Constants;
+use App\GaelO\Entities\CenterEntity;
+use App\GaelO\Entities\PatientEntity;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\StudyRepositoryInterface;
@@ -41,7 +43,6 @@ class GetVisitsFromStudy
                 //Get Original Study name for ancilaries studies
                 $studyEntity = $this->studyRepositoryInterface->find($studyName);
                 $originalStudyName = $studyEntity->getOriginalStudyName($studyEntity);
-
                 $dbData = $this->visitRepositoryInterface->getVisitsInStudy($originalStudyName, true, true, false);
             } else {
                 $dbData = $this->visitRepositoryInterface->getVisitsInVisitType($getVisitsFromStudyRequest->visitTypeId, true, $studyName, false, true);
@@ -50,8 +51,8 @@ class GetVisitsFromStudy
             $responseArray = [];
             foreach ($dbData as $data) {
                 $responseEntity = VisitEntity::fillFromDBReponseArray($data);
-                $responseEntity->setPatientEntity($data['patient']);
-                $responseEntity->patient->fillCenterDetails($data['patient']['center']['name'], $data['patient']['center']['country_code']);
+                $responseEntity->setPatientEntity( PatientEntity::fillFromDBReponseArray($data['patient']) );
+                $responseEntity->patient->fillCenterDetails(CenterEntity::fillFromDBReponseArray($data['patient']['center']));
                 $responseEntity->setVisitContext(
                     $data['visit_type']['visit_group'],
                     $data['visit_type']
@@ -64,7 +65,6 @@ class GetVisitsFromStudy
             $getVisitsFromStudyResponse->status = 200;
             $getVisitsFromStudyResponse->statusText = 'OK';
         } catch (GaelOException $e) {
-
             $getVisitsFromStudyResponse->body = $e->getErrorBody();
             $getVisitsFromStudyResponse->status  = $e->statusCode;
             $getVisitsFromStudyResponse->statusText = $e->statusText;

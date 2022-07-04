@@ -18,7 +18,8 @@ use App\GaelO\Util;
 use Exception;
 use ZipArchive;
 
-class ValidateDicomUpload{
+class ValidateDicomUpload
+{
 
     private AuthorizationVisitService $authorizationService;
     private TusService $tusService;
@@ -29,15 +30,16 @@ class ValidateDicomUpload{
     private TrackerRepositoryInterface $trackerRepositoryInterface;
     private MailServices $mailServices;
 
-    public function __construct(AuthorizationVisitService $authorizationService,
-                        TusService $tusService,
-                        OrthancService $orthancService,
-                        RegisterDicomStudyService $registerDicomStudyService,
-                        VisitService $visitService,
-                        PatientRepositoryInterface $patientRepositoryInterface,
-                        TrackerRepositoryInterface $trackerRepositoryInterface,
-                        MailServices $mailServices)
-    {
+    public function __construct(
+        AuthorizationVisitService $authorizationService,
+        TusService $tusService,
+        OrthancService $orthancService,
+        RegisterDicomStudyService $registerDicomStudyService,
+        VisitService $visitService,
+        PatientRepositoryInterface $patientRepositoryInterface,
+        TrackerRepositoryInterface $trackerRepositoryInterface,
+        MailServices $mailServices
+    ) {
         $this->authorizationService = $authorizationService;
         $this->registerDicomStudyService = $registerDicomStudyService;
         $this->orthancService = $orthancService;
@@ -48,9 +50,10 @@ class ValidateDicomUpload{
         $this->mailServices = $mailServices;
     }
 
-    public function execute(ValidateDicomUploadRequest $validateDicomUploadRequest, ValidateDicomUploadResponse $validateDicomUploadResponse){
+    public function execute(ValidateDicomUploadRequest $validateDicomUploadRequest, ValidateDicomUploadResponse $validateDicomUploadResponse)
+    {
 
-        try{
+        try {
             //Retrieve Visit Context
             $this->visitService->setVisitId($validateDicomUploadRequest->visitId);
             $visitEntity = $this->visitService->getVisitContext();
@@ -62,31 +65,35 @@ class ValidateDicomUpload{
             $studyName = $visitEntity['patient']['study_name'];
             $visitType = $visitEntity['visit_type']['name'];
             $anonProfile = $visitEntity['visit_type']['anon_profile'];
+            $visitStatus = $visitEntity['status_done'];
 
-            //TODO Authorization : Check Investigator Role, and patient is in affiliated center of user, and status upload not done, and visit status done
-            $this->checkAuthorization($validateDicomUploadRequest->currentUserId, $validateDicomUploadRequest->visitId, $uploadStatus, $studyName);
+            $currentUserId = $validateDicomUploadRequest->currentUserId;
+            $visitId  = $validateDicomUploadRequest->visitId;
+
+            $this->checkAuthorization($currentUserId, $visitId, $uploadStatus, $studyName, $visitStatus);
+
             //Make Visit as being upload processing
             $this->visitService->updateUploadStatus(Constants::UPLOAD_STATUS_PROCESSING);
 
             //Create Temporary folder to work
-            $unzipedPath = sys_get_temp_dir().'/GaelO_Upload_'.mt_rand(10000, 99999).'_'.$validateDicomUploadRequest->currentUserId;
+            $unzipedPath = sys_get_temp_dir() . '/GaelO_Upload_' . mt_rand(10000, 99999) . '_' . $currentUserId;
             if (is_dir($unzipedPath)) {
                 unlink($unzipedPath);
-            }else{
+            } else {
                 mkdir($unzipedPath, 0755);
             }
 
             //Get uploaded Zips from TUS and upzip it in a temporary folder
-            foreach($validateDicomUploadRequest->uploadedFileTusId as $tusFileId){
+            foreach ($validateDicomUploadRequest->uploadedFileTusId as $tusFileId) {
                 $tusTempZip = $this->tusService->getZip($tusFileId);
 
-                $zipSize=filesize($tusTempZip);
-                $uncompressedzipSize= Util::getZipUncompressedSize($tusTempZip);
-                if ($uncompressedzipSize/$zipSize > 50) {
+                $zipSize = filesize($tusTempZip);
+                $uncompressedzipSize = Util::getZipUncompressedSize($tusTempZip);
+                if ($uncompressedzipSize / $zipSize > 50) {
                     throw new GaelOValidateDicomException("Bomb Zip");
                 }
 
-                $zip=new ZipArchive();
+                $zip = new ZipArchive();
                 $zip->open($tusTempZip);
                 $zip->extractTo($unzipedPath);
                 $zip->close();
@@ -94,19 +101,20 @@ class ValidateDicomUpload{
                 //Remove file from TUS and downloaded temporary zip
                 $this->tusService->deleteZip($tusFileId);
                 unlink($tusTempZip);
-
             }
             $this->orthancService->setOrthancServer(false);
 
             $importedOrthancStudyID = $this->sendFolderToOrthanc($unzipedPath, $validateDicomUploadRequest->numberOfInstances);
 
             //Anonymize and store new anonymized study Orthanc ID
-            $anonymizedOrthancStudyID=$this->orthancService->anonymize($importedOrthancStudyID,
-                                        $anonProfile,
-                                        $patientCode,
-                                        $patientId,
-                                        $visitType,
-                                        $studyName);
+            $anonymizedOrthancStudyID = $this->orthancService->anonymize(
+                $importedOrthancStudyID,
+                $anonProfile,
+                $patientCode,
+                $patientId,
+                $visitType,
+                $studyName
+            );
 
             //Delete original import
             $this->orthancService->deleteFromOrthanc("studies", $importedOrthancStudyID);
@@ -121,15 +129,15 @@ class ValidateDicomUpload{
             $this->orthancService->setOrthancServer(true);
 
             $statistics = $this->orthancService->getOrthancRessourcesStatistics('studies', $anonymizedOrthancStudyID);
-            if($statistics['CountInstances'] !== $validateDicomUploadRequest->numberOfInstances){
+            if ($statistics['CountInstances'] !== $validateDicomUploadRequest->numberOfInstances) {
                 throw new GaelOValidateDicomException("Error during Peer transfers");
             }
 
             //Fill DB with studies /series information
             $this->registerDicomStudyService->setData(
-                $validateDicomUploadRequest->visitId,
+                $visitId,
                 $studyName,
-                $validateDicomUploadRequest->currentUserId,
+                $currentUserId,
                 $anonymizedOrthancStudyID,
                 $validateDicomUploadRequest->originalOrthancId
             );
@@ -141,47 +149,60 @@ class ValidateDicomUpload{
 
             //Write success in Tracker
             $actionDetails = [
-                'studyInstanceUID'=>$studyInstanceUID
+                'studyInstanceUID' => $studyInstanceUID
             ];
 
-            $this->trackerRepositoryInterface->writeAction($validateDicomUploadRequest->currentUserId,
-                            Constants::ROLE_INVESTIGATOR,
-                            $studyName,
-                            $validateDicomUploadRequest->visitId,
-                            Constants::TRACKER_UPLOAD_SERIES,
-                            $actionDetails);
+            $this->trackerRepositoryInterface->writeAction(
+                $currentUserId,
+                Constants::ROLE_INVESTIGATOR,
+                $studyName,
+                $visitId,
+                Constants::TRACKER_UPLOAD_SERIES,
+                $actionDetails
+            );
 
             $validateDicomUploadResponse->status = 200;
             $validateDicomUploadResponse->statusText = 'OK';
-
-        } catch (GaelOException $e){
-            $this->handleImportException($e->getMessage(), $validateDicomUploadRequest->visitId,
-                        $patientId, $visitType, $unzipedPath, $studyName, $validateDicomUploadRequest->currentUserId);
+        } catch (GaelOException $e) {
+            $this->handleImportException(
+                $e->getMessage(),
+                $visitId,
+                $patientId,
+                $visitType,
+                $unzipedPath,
+                $studyName,
+                $currentUserId
+            );
 
             $validateDicomUploadResponse->status = $e->statusCode;
             $validateDicomUploadResponse->statusText = $e->statusText;
             $validateDicomUploadResponse->body = $e->getErrorBody();
+        } catch (Exception $e) {
 
-        } catch (Exception $e){
-
-            $this->handleImportException($e->getMessage(), $validateDicomUploadRequest->visitId,
-                        $patientId, $visitType, $unzipedPath, $studyName, $validateDicomUploadRequest->currentUserId);
+            $this->handleImportException(
+                $e->getMessage(),
+                $visitId,
+                $patientId,
+                $visitType,
+                $unzipedPath,
+                $studyName,
+                $currentUserId
+            );
 
             throw $e;
         }
-
     }
 
-    private function checkAuthorization(int $currentUserId, int $visitId, string $uploadStatus, string $studyName ) : void {
+    private function checkAuthorization(int $currentUserId, int $visitId, string $uploadStatus, string $studyName, string $visitStatus): void
+    {
 
         $this->authorizationService->setUserId($currentUserId);
 
         $this->authorizationService->setStudyName($studyName);
         $this->authorizationService->setVisitId($visitId);
-        if( ! $this->authorizationService->isVisitAllowed( Constants::ROLE_INVESTIGATOR ) || $uploadStatus !== Constants::UPLOAD_STATUS_NOT_DONE){
+        if (!$this->authorizationService->isVisitAllowed(Constants::ROLE_INVESTIGATOR) || $uploadStatus !== Constants::UPLOAD_STATUS_NOT_DONE || $visitStatus !== Constants::VISIT_STATUS_DONE) {
             throw new GaelOForbiddenException();
         };
-
     }
 
     /**
@@ -189,22 +210,23 @@ class ValidateDicomUpload{
      * Checks that imported dicom match number of expected dicoms
      * returns OrthancStudyID
      */
-    private function sendFolderToOrthanc(string $unzipedPath, int $numberOfInstances)  : string {
+    private function sendFolderToOrthanc(string $unzipedPath, int $numberOfInstances): string
+    {
 
         //Recursive scann of the unzipped folder
         $filesArray = Util::getPathAsFileArray($unzipedPath);
 
-        if(sizeof($filesArray) != $numberOfInstances){
+        if (sizeof($filesArray) != $numberOfInstances) {
             throw new GaelOValidateDicomException("Number Of Uploaded Files dosen't match expected instance number");
         }
 
-        $importedMap=[];
+        $importedMap = [];
 
         $uploadSuccessResponseArray = $this->orthancService->importFiles($filesArray);
 
         //Import dicom file one by one
         foreach ($uploadSuccessResponseArray as $response) {
-            $importedMap[$response['ParentStudy']][$response['ParentSeries']][]=$response['ID'];
+            $importedMap[$response['ParentStudy']][$response['ParentSeries']][] = $response['ID'];
         }
 
         $numberOfImportedInstances = sizeof($uploadSuccessResponseArray);
@@ -213,16 +235,15 @@ class ValidateDicomUpload{
         Util::recursiveDirectoryDelete($unzipedPath);
 
         if (count($importedMap) == 1 && $numberOfImportedInstances === $numberOfInstances) {
-            return array_key_first ($importedMap);
-        }else {
+            return array_key_first($importedMap);
+        } else {
             //These error shall never occur
             if (count($importedMap) > 1) {
                 throw new GaelOValidateDicomException("More than one study in Zip");
-            }else if ($numberOfImportedInstances !== $numberOfInstances) {
+            } else if ($numberOfImportedInstances !== $numberOfInstances) {
                 throw new GaelOValidateDicomException("Imported DICOM not matching announced number of Instances");
             }
         }
-
     }
 
     /**
@@ -231,19 +252,26 @@ class ValidateDicomUpload{
      * Write Failure in Tracker
      * Send warning emails to administrators
      */
-    private function handleImportException(string $errorMessage, int $visitId, string $patientId, string $visitType,  string $unzipedPath, string $studyName, int $userId) {
+    private function handleImportException(string $errorMessage, int $visitId, string $patientId, string $visitType,  string $unzipedPath, string $studyName, int $userId)
+    {
 
         $this->visitService->updateUploadStatus(Constants::UPLOAD_STATUS_NOT_DONE);
 
         $actionDetails = [
-            'reason'=>$errorMessage
+            'reason' => $errorMessage
         ];
         $this->trackerRepositoryInterface->writeAction($userId, Constants::ROLE_INVESTIGATOR, $studyName, $visitId, Constants::TRACKER_UPLOAD_VALIDATION_FAILED, $actionDetails);
 
-        $this->mailServices->sendValidationFailMessage($visitId, $patientId, $visitType,
-                $studyName, $unzipedPath, $userId, $errorMessage);
+        $this->mailServices->sendValidationFailMessage(
+            $visitId,
+            $patientId,
+            $visitType,
+            $studyName,
+            $unzipedPath,
+            $userId,
+            $errorMessage
+        );
 
-        if(is_dir($unzipedPath)) Util::recursiveDirectoryDelete($unzipedPath);
+        if (is_dir($unzipedPath)) Util::recursiveDirectoryDelete($unzipedPath);
     }
-
 }

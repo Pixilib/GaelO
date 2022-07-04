@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\GaelO\UseCases\GetTracker\GetTracker;
-use App\GaelO\UseCases\GetTracker\GetTrackerRequest;
-use App\GaelO\UseCases\GetTracker\GetTrackerResponse;
+use App\GaelO\UseCases\GetAdminTracker\GetAdminTracker;
+use App\GaelO\UseCases\GetAdminTracker\GetAdminTrackerRequest;
+use App\GaelO\UseCases\GetAdminTracker\GetAdminTrackerResponse;
 use App\GaelO\UseCases\GetStudyTrackerRoleAction\GetStudyTrackerRoleAction;
 use App\GaelO\UseCases\GetStudyTrackerRoleAction\GetStudyTrackerRoleActionRequest;
 use App\GaelO\UseCases\GetStudyTrackerRoleAction\GetStudyTrackerRoleActionResponse;
@@ -19,14 +19,14 @@ use Illuminate\Support\Facades\Auth;
 
 class TrackerController extends Controller
 {
-    public function getTracker(Request $request, GetTrackerRequest $getTrackerRequest, GetTrackerResponse $getTrackerResponse, GetTracker $getTracker)
+    public function getAdminTracker(Request $request, GetAdminTracker $getAdminTracker, GetAdminTrackerRequest $getAdminTrackerRequest, GetAdminTrackerResponse $getAdminTrackerResponse)
     {
         $currentUser = Auth::user();
-        $getTrackerRequest->currentUserId = $currentUser['id'];
+        $getAdminTrackerRequest->currentUserId = $currentUser['id'];
         $queryParam = $request->query();
-        $getTrackerRequest->admin = $queryParam['admin'];
-        $getTracker->execute($getTrackerRequest, $getTrackerResponse);
-        return $this->getJsonResponse($getTrackerResponse->body, $getTrackerResponse->status, $getTrackerResponse->statusText);
+        $getAdminTrackerRequest->admin = $queryParam['admin'];
+        $getAdminTracker->execute($getAdminTrackerRequest, $getAdminTrackerResponse);
+        return $this->getJsonResponse($getAdminTrackerResponse->body, $getAdminTrackerResponse->status, $getAdminTrackerResponse->statusText);
     }
 
     public function getStudyTrackerByRole(Request $request,

@@ -12,55 +12,58 @@ use App\GaelO\UseCases\DeleteUser\DeleteUserRequest;
 use App\GaelO\UseCases\DeleteUser\DeleteUserResponse;
 use Exception;
 
-class DeleteUser {
+class DeleteUser
+{
 
     private UserRepositoryInterface $userRepositoryInterface;
     private AuthorizationUserService $authorizationUserService;
     private TrackerRepositoryInterface $trackerRepositoryInterface;
 
-    public function __construct(UserRepositoryInterface $userRepositoryInterface, AuthorizationUserService $authorizationUserService, TrackerRepositoryInterface $trackerRepositoryInterface){
+    public function __construct(UserRepositoryInterface $userRepositoryInterface, AuthorizationUserService $authorizationUserService, TrackerRepositoryInterface $trackerRepositoryInterface)
+    {
         $this->userRepositoryInterface = $userRepositoryInterface;
         $this->trackerRepositoryInterface  = $trackerRepositoryInterface;
         $this->authorizationUserService = $authorizationUserService;
     }
 
-    public function execute(DeleteUserRequest $deleteRequest, DeleteUserResponse $deleteResponse) : void {
+    public function execute(DeleteUserRequest $deleteRequest, DeleteUserResponse $deleteResponse): void
+    {
 
-        try{
+        try {
 
             $this->checkAuthorization($deleteRequest->currentUserId);
 
             $this->userRepositoryInterface->delete($deleteRequest->id);
 
             $actionsDetails = [
-                'deactivated_user'=>$deleteRequest->id
+                'deactivated_user' => $deleteRequest->id
             ];
 
-            $this->trackerRepositoryInterface->writeAction($deleteRequest->currentUserId,
-                                    Constants::TRACKER_ROLE_USER, null, null,
-                                    Constants::TRACKER_EDIT_USER, $actionsDetails);
+            $this->trackerRepositoryInterface->writeAction(
+                $deleteRequest->currentUserId,
+                Constants::TRACKER_ROLE_USER,
+                null,
+                null,
+                Constants::TRACKER_EDIT_USER,
+                $actionsDetails
+            );
 
             $deleteResponse->status = 200;
             $deleteResponse->statusText = 'OK';
-
-        }catch ( GaelOException $e ) {
+        } catch (GaelOException $e) {
             $deleteResponse->status = $e->statusCode;
             $deleteResponse->statusText = $e->statusText;
             $deleteResponse->body = $e->getErrorBody();
-
-        } catch (Exception $e){
+        } catch (Exception $e) {
             throw $e;
         };
-
     }
 
-    private function checkAuthorization(int $userId) : void {
+    private function checkAuthorization(int $userId): void
+    {
         $this->authorizationUserService->setUserId($userId);
-        if( ! $this->authorizationUserService->isAdmin()) {
+        if (!$this->authorizationUserService->isAdmin()) {
             throw new GaelOForbiddenException();
         };
     }
-
 }
-
-?>

@@ -2,7 +2,8 @@
 
 namespace App\GaelO\UseCases\ModifyVisitDate;
 
-class ModifyVisitDateResponse {
+class ModifyVisitDateResponse
+{
     public $body = null;
     public int $status;
     public string $statusText;

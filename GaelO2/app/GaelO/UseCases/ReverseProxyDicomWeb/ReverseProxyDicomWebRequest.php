@@ -2,7 +2,8 @@
 
 namespace App\GaelO\UseCases\ReverseProxyDicomWeb;
 
-class ReverseProxyDicomWebRequest{
+class ReverseProxyDicomWebRequest
+{
     public int $currentUserId;
     public string $url;
     public array $header;

@@ -39,32 +39,32 @@ class GetStudiesWithDetails
             foreach ($studyDetails as $studyDetail) {
                 $studyEntity = StudyEntity::fillFromDBReponseArray($studyDetail);
                 $studyName = $studyEntity->name;
-                $studyDetailResponse[$studyName] = get_object_vars($studyEntity);
-                $studyDetailResponse[$studyName]['visitGroups'] = [];
 
-                foreach ($studyDetail['visit_group_details'] as $visitGroupDetails) {
-                    $visitGroupEntity = VisitGroupEntity::fillFromDBReponseArray($visitGroupDetails);
+                $visitGroupEntities = [];
 
-                    $studyDetailResponse[$studyName]['visitGroups'][$visitGroupEntity->id] = get_object_vars($visitGroupEntity);
-                    $studyDetailResponse[$studyName]['visitGroups'][$visitGroupEntity->id]['visitTypes']= [];
+                foreach ($studyDetail['visit_groups'] as $visitGroup) {
+                    $visitGroupEntity = VisitGroupEntity::fillFromDBReponseArray($visitGroup);
 
-                    foreach ($visitGroupDetails['visit_types'] as $visitType) {
-                        $visitTypeEntity = VisitTypeEntity::fillFromDBReponseArray($visitType);
-                        $studyDetailResponse[$studyName]['visitGroups'][$visitGroupEntity->id]['visitTypes'][$visitTypeEntity->id] = get_object_vars($visitTypeEntity);
+                    $visitTypeEntities = [];
+                    foreach ($visitGroup['visit_types'] as $visitType) {
+                        $visitTypeEntities[] = VisitTypeEntity::fillFromDBReponseArray($visitType);
                     }
+                    $visitGroupEntity->setVisitTypes($visitTypeEntities);
+                    $visitGroupEntities[] = $visitGroupEntity;
                 }
+
+                $studyEntity->setVisitGroups($visitGroupEntities);
+                $studyDetailResponse[$studyName] = $studyEntity;
             }
 
             $getStudiesWithDetailsResponse->body = $studyDetailResponse;
             $getStudiesWithDetailsResponse->status = 200;
             $getStudiesWithDetailsResponse->statusText = 'OK';
-
         } catch (GaelOException $e) {
 
             $getStudiesWithDetailsResponse->body = $e->getErrorBody();
             $getStudiesWithDetailsResponse->status = $e->statusCode;
             $getStudiesWithDetailsResponse->statusText = $e->statusText;
-
         } catch (Exception $e) {
             throw $e;
         }

@@ -38,7 +38,7 @@ class VisitGroupTest extends TestCase
         $response = $this->json('GET', 'api/visit-groups/'.$visitGroup->id)->content();
         $response = json_decode($response, true);
         //Check all Item in visitGroupEntity are present in reponse
-        foreach ( get_class_vars(VisitGroupEntity::class) as $key=>$value ){
+        foreach ( ['id', 'modality', 'name', 'studyName'] as $key ){
             $this->assertArrayHasKey($key, $response);
         }
 
@@ -75,10 +75,10 @@ class VisitGroupTest extends TestCase
 
     }
 
-    public function testDeleteVisitGroupShouldFailBecauseExistingVisitTypes(){
+    public function testDeleteVisitGroupShouldFailBecauseExistingVisits(){
         AuthorizationTools::actAsAdmin(true);
         $visitType = VisitType::factory()->create();
-        $this->json('DELETE', 'api/visit-groups/'.$visitType->visitGroup->id)->assertStatus(400);
+        $this->json('DELETE', 'api/visit-groups/'.$visitType->visitGroup->id)->assertStatus(403);
     }
 
     public function testCreateVisitGroupShouldFailBecauseExistingVisits(){

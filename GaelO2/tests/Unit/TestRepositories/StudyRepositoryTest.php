@@ -12,6 +12,7 @@ use Tests\TestCase;
 
 use App\Models\Study;
 use App\Models\Visit;
+use App\Models\VisitType;
 
 class StudyRepositoryTest extends TestCase
 {
@@ -70,15 +71,29 @@ class StudyRepositoryTest extends TestCase
 
     }
 
+    public function testGetStudyWithDetails(){
+
+        $visitType = VisitType::factory()->create();
+
+        $studyName = $visitType->visitGroup->study_name;
+
+        $answer = $this->studyRepository->getstudyWithDetails($studyName);
+
+        $this->assertArrayHasKey('visit_groups', $answer);
+        $this->assertArrayHasKey('visit_types', $answer['visit_groups'][0]);
+
+    }
+
     public function testGetAllStudiesWithDetails(){
 
-        Study::factory()->count(5)->create();
-        Study::factory()->create()->delete();
+        VisitType::factory()->count(5)->create();
+        VisitType::factory()->create()->delete();
 
         $answer = $this->studyRepository->getAllStudiesWithDetails();
 
         $this->assertEquals(6, sizeof($answer));
-        $this->assertArrayHasKey('visit_group_details', $answer[0]);
+        $this->assertArrayHasKey('visit_groups', $answer[0]);
+        $this->assertArrayHasKey('visit_types', $answer[0]['visit_groups'][0]);
 
     }
 

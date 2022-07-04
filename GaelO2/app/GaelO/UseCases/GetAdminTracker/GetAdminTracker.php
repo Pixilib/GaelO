@@ -1,62 +1,62 @@
 <?php
 
-namespace App\GaelO\UseCases\GetTracker;
+namespace App\GaelO\UseCases\GetAdminTracker;
 
 use App\GaelO\Constants\Constants;
 use App\GaelO\Entities\TrackerEntity;
+use App\GaelO\Entities\UserEntity;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
 use App\GaelO\Services\AuthorizationService\AuthorizationUserService;
 use Exception;
 
-class GetTracker {
+class GetAdminTracker
+{
 
     private TrackerRepositoryInterface $trackerRepositoryInterface;
     private AuthorizationUserService $authorizationUserService;
 
-    public function __construct(TrackerRepositoryInterface $trackerRepositoryInterface, AuthorizationUserService $authorizationUserService){
+    public function __construct(TrackerRepositoryInterface $trackerRepositoryInterface, AuthorizationUserService $authorizationUserService)
+    {
         $this->trackerRepositoryInterface = $trackerRepositoryInterface;
         $this->authorizationUserService = $authorizationUserService;
     }
 
-    //SK CETTE CLASSE EVOLUERA AVEC SUPERVISOR POUR L INSTANT ACCESSIBLE QUE PAR ADMIN, PROBABLEMENT QUERY TAG OU URI A REVOIR
-    public function execute(GetTrackerRequest $getTrackerRequest, GetTrackerResponse $getTrackerResponse) : void {
+    public function execute(GetAdminTrackerRequest $getTrackerRequest, GetAdminTrackerResponse $getTrackerResponse): void
+    {
 
-        try{
+        try {
 
             $this->checkAuthorization($getTrackerRequest->currentUserId);
-
             $admin = $getTrackerRequest->admin;
+
             if (filter_var($admin, FILTER_VALIDATE_BOOLEAN)) $dbData = $this->trackerRepositoryInterface->getTrackerOfRole(Constants::TRACKER_ROLE_ADMINISTRATOR);
             else $dbData = $this->trackerRepositoryInterface->getTrackerOfRole(Constants::TRACKER_ROLE_USER);
 
             $responseArray = [];
-            foreach($dbData as $data){
+            foreach ($dbData as $data) {
                 $trackerEntity = TrackerEntity::fillFromDBReponseArray($data);
-                $trackerEntity->setUserData($data['user']);
+                $trackerEntity->setUserDetails(UserEntity::fillMinimalFromDBReponseArray($data['user']));
                 $responseArray[] = $trackerEntity;
             }
 
             $getTrackerResponse->body = $responseArray;
             $getTrackerResponse->status = 200;
             $getTrackerResponse->statusText = 'OK';
-
-        } catch (GaelOException $e){
-
+        } catch (GaelOException $e) {
             $getTrackerResponse->body = $e->getErrorBody();
             $getTrackerResponse->status = $e->statusCode;
             $getTrackerResponse->statusText = $e->statusText;
-
-        } catch (Exception $e){
+        } catch (Exception $e) {
             throw $e;
         }
-
     }
 
-    private function checkAuthorization(int $userId) : void  {
+    private function checkAuthorization(int $userId): void
+    {
         $this->authorizationUserService->setUserId($userId);
-        if( ! $this->authorizationUserService->isAdmin()) {
+        if (!$this->authorizationUserService->isAdmin()) {
             throw new GaelOForbiddenException();
         };
     }

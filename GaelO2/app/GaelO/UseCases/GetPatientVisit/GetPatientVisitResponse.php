@@ -2,7 +2,8 @@
 
 namespace App\GaelO\UseCases\GetPatientVisit;
 
-class GetPatientVisitResponse {
+class GetPatientVisitResponse
+{
     public $body = null;
     public int $status;
     public string $statusText;

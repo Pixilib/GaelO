@@ -2,8 +2,9 @@
 
 namespace App\GaelO\UseCases\GetPatientFromStudy;
 
-class GetPatientFromStudyRequest {
+class GetPatientFromStudyRequest
+{
     public int $currentUserId;
     public string $role;
-    public string $studyName ;
+    public string $studyName;
 }

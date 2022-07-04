@@ -9,51 +9,48 @@ use App\GaelO\Interfaces\Repositories\StudyRepositoryInterface;
 use App\GaelO\Services\AuthorizationService\AuthorizationUserService;
 use Exception;
 
-class GetStudies{
+class GetStudies
+{
 
     private StudyRepositoryInterface $studyRepositoryInterface;
     private AuthorizationUserService $authorizationUserService;
 
-    public function __construct(StudyRepositoryInterface $studyRepositoryInterface, AuthorizationUserService $authorizationUserService){
+    public function __construct(StudyRepositoryInterface $studyRepositoryInterface, AuthorizationUserService $authorizationUserService)
+    {
         $this->studyRepositoryInterface = $studyRepositoryInterface;
         $this->authorizationUserService = $authorizationUserService;
-
     }
 
-    public function execute(GetStudiesRequest $getStudiesRequest, GetStudiesResponse $getStudiesResponse) : void{
+    public function execute(GetStudiesRequest $getStudiesRequest, GetStudiesResponse $getStudiesResponse): void
+    {
 
-        try{
+        try {
             $this->checkAuthorization($getStudiesRequest->currentUserId);
 
             $studies = $this->studyRepositoryInterface->getStudies($getStudiesRequest->withTrashed);
 
             $responseArray = [];
-            foreach($studies as $study){
+            foreach ($studies as $study) {
                 $responseArray[] = StudyEntity::fillFromDBReponseArray($study);
             }
 
             $getStudiesResponse->body = $responseArray;
             $getStudiesResponse->status = 200;
             $getStudiesResponse->statusText = 'OK';
-
-        } catch (GaelOException $e){
-
+        } catch (GaelOException $e) {
             $getStudiesResponse->body = $e->getErrorBody();
             $getStudiesResponse->status = $e->statusCode;
             $getStudiesResponse->statusText = $e->statusText;
-
-        } catch (Exception $e){
+        } catch (Exception $e) {
             throw $e;
         }
-
-
     }
 
-    private function checkAuthorization(int $userId) : void {
+    private function checkAuthorization(int $userId): void
+    {
         $this->authorizationUserService->setUserId($userId);
-        if( ! $this->authorizationUserService->isAdmin()) {
+        if (!$this->authorizationUserService->isAdmin()) {
             throw new GaelOForbiddenException();
         };
     }
-
 }

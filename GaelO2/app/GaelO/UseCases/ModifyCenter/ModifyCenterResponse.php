@@ -2,7 +2,8 @@
 
 namespace App\GaelO\UseCases\ModifyCenter;
 
-class ModifyCenterResponse {
+class ModifyCenterResponse
+{
     public int $status;
     public string $statusText;
     public $body = null;

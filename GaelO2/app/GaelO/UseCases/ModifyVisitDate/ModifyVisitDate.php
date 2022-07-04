@@ -10,7 +10,8 @@ use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
 use App\GaelO\Services\AuthorizationService\AuthorizationVisitService;
 use Exception;
 
-class ModifyVisitDate {
+class ModifyVisitDate
+{
 
     private AuthorizationVisitService $authorizationVisitService;
     private VisitRepositoryInterface $visitRepositoryInterface;
@@ -23,9 +24,10 @@ class ModifyVisitDate {
         $this->trackerRepositoryInterface = $trackerRepositoryInterface;
     }
 
-    public function execute(ModifyVisitDateRequest $modifyVisitDateRequest, ModifyVisitDateResponse $modifyVisitDateResponse){
+    public function execute(ModifyVisitDateRequest $modifyVisitDateRequest, ModifyVisitDateResponse $modifyVisitDateResponse)
+    {
 
-        try{
+        try {
 
             $visitId = $modifyVisitDateRequest->visitId;
             $currentUserId = $modifyVisitDateRequest->currentUserId;
@@ -33,26 +35,26 @@ class ModifyVisitDate {
 
             $visitContext = $this->visitRepositoryInterface->getVisitContext($visitId);
             $studyName = $visitContext['patient']['study_name'];
-          
+
             $this->checkAuthorization($currentUserId, $visitId, $studyName);
 
             //update visit Date in db
             $this->visitRepositoryInterface->updateVisitDate($visitId, $newVisitDate);
 
             $actionsDetails = [
-                'patientId'=>$visitContext['patient_id'],
+                'patientId' => $visitContext['patient_id'],
                 'modality' => $visitContext['visit_type']['visit_group']['modality'],
                 'visitType' => $visitContext['visit_type']['name'],
-                'previousDate' =>$visitContext['visit_date'],
+                'previousDate' => $visitContext['visit_date'],
                 'newDate' => $newVisitDate
             ];
 
             //Write in Tracker
             $this->trackerRepositoryInterface->writeAction(
-                $modifyVisitDateRequest->currentUserId,
+                $currentUserId,
                 Constants::ROLE_SUPERVISOR,
                 $studyName,
-                $modifyVisitDateRequest->visitId,
+                $visitId,
                 Constants::TRACKER_UPDATE_VISIT_DATE,
                 $actionsDetails
 
@@ -60,27 +62,24 @@ class ModifyVisitDate {
 
             $modifyVisitDateResponse->status = 200;
             $modifyVisitDateResponse->statusText = 'OK';
-
         } catch (GaelOException $e) {
             $modifyVisitDateResponse->body = $e->getErrorBody();
             $modifyVisitDateResponse->status = $e->statusCode;
             $modifyVisitDateResponse->statusText = $e->statusText;
-
         } catch (Exception $e) {
             throw $e;
         };
     }
 
-    private function checkAuthorization(int $userId, int $visitId, string $studyName){
+    private function checkAuthorization(int $userId, int $visitId, string $studyName)
+    {
 
         $this->authorizationVisitService->setUserId($userId);
         $this->authorizationVisitService->setVisitId($visitId);
         $this->authorizationVisitService->setStudyName($studyName);
 
-        if(!$this->authorizationVisitService->isVisitAllowed(Constants::ROLE_SUPERVISOR)){
+        if (!$this->authorizationVisitService->isVisitAllowed(Constants::ROLE_SUPERVISOR)) {
             throw new GaelOForbiddenException();
         }
-
     }
-
 }

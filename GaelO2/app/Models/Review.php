@@ -21,12 +21,13 @@ class Review extends Model
         'sent_files' => '{}'
     ];
 
-    public function user(){
+    public function user()
+    {
         return $this->belongsTo(User::class, 'user_id', 'id')->withTrashed();
     }
 
-    public function visit(){
+    public function visit()
+    {
         return $this->belongsTo(Visit::class, 'visit_id', 'id');
     }
-
 }

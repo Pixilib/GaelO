@@ -9,45 +9,44 @@ use App\GaelO\Interfaces\Repositories\VisitTypeRepositoryInterface;
 use App\GaelO\Services\AuthorizationService\AuthorizationUserService;
 use Exception;
 
-class GetVisitType {
+class GetVisitType
+{
 
     private VisitTypeRepositoryInterface $visitTypeRepositoryInterface;
     private AuthorizationUserService $authorizationUserService;
 
-    public function __construct(VisitTypeRepositoryInterface $visitTypeRepositoryInterface, AuthorizationUserService $authorizationUserService){
+    public function __construct(VisitTypeRepositoryInterface $visitTypeRepositoryInterface, AuthorizationUserService $authorizationUserService)
+    {
         $this->visitTypeRepositoryInterface = $visitTypeRepositoryInterface;
         $this->authorizationUserService = $authorizationUserService;
     }
 
-    public function execute(GetVisitTypeRequest $getVisitTypeRequest, GetVisitTypeResponse $getVisitTypeResponse){
+    public function execute(GetVisitTypeRequest $getVisitTypeRequest, GetVisitTypeResponse $getVisitTypeResponse)
+    {
 
-        try{
+        try {
 
             $this->checkAuthorization($getVisitTypeRequest->currentUserId);
-            $visitType = $this->visitTypeRepositoryInterface->find($getVisitTypeRequest->visitTypeId);
+            $visitType = $this->visitTypeRepositoryInterface->find($getVisitTypeRequest->visitTypeId, false);
             $visitTypeEntity = VisitTypeEntity::fillFromDBReponseArray($visitType);
             $getVisitTypeResponse->body = $visitTypeEntity;
             $getVisitTypeResponse->status = 200;
             $getVisitTypeResponse->statusText = 'OK';
 
-        } catch (GaelOException $e ){
-
+        } catch (GaelOException $e) {
             $getVisitTypeResponse->body = $e->getErrorBody();
             $getVisitTypeResponse->status = $e->statusCode;
             $getVisitTypeResponse->statusText = $e->statusText;
-
-        } catch (Exception $e){
+        } catch (Exception $e) {
             throw $e;
         }
-
     }
 
-    private function checkAuthorization(int $userId){
+    private function checkAuthorization(int $userId)
+    {
         $this->authorizationUserService->setUserId($userId);
-        if( ! $this->authorizationUserService->isAdmin() ) {
+        if (!$this->authorizationUserService->isAdmin()) {
             throw new GaelOForbiddenException();
         }
-
     }
-
 }

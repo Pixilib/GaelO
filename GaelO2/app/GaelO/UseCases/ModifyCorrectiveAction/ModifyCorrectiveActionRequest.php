@@ -2,7 +2,8 @@
 
 namespace App\GaelO\UseCases\ModifyCorrectiveAction;
 
-class ModifyCorrectiveActionRequest{
+class ModifyCorrectiveActionRequest
+{
     public int $currentUserId;
     public int $visitId;
     public bool $newSeriesUploaded;

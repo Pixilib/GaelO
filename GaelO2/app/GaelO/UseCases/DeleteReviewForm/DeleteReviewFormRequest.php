@@ -2,7 +2,8 @@
 
 namespace App\GaelO\UseCases\DeleteReviewForm;
 
-class DeleteReviewFormRequest {
+class DeleteReviewFormRequest
+{
     public int $currentUserId;
     public int $reviewId;
     public string $reason;

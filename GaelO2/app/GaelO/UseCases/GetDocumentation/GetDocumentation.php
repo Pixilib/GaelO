@@ -10,7 +10,8 @@ use App\GaelO\Interfaces\Repositories\DocumentationRepositoryInterface;
 use App\GaelO\Services\AuthorizationService\AuthorizationStudyService;
 use Exception;
 
-class GetDocumentation {
+class GetDocumentation
+{
 
     private DocumentationRepositoryInterface $documentationRepositoryInterface;
     private AuthorizationStudyService $authorizationStudyService;
@@ -19,49 +20,48 @@ class GetDocumentation {
     {
         $this->documentationRepositoryInterface = $documentationRepositoryInterface;
         $this->authorizationStudyService = $authorizationStudyService;
-
     }
 
-    public function execute(GetDocumentationRequest $getDocumentationRequest, GetDocumentationResponse $getDocumentationResponse){
-        try{
+    public function execute(GetDocumentationRequest $getDocumentationRequest, GetDocumentationResponse $getDocumentationResponse)
+    {
+        try {
 
-            $this->checkAuthorization($getDocumentationRequest->currentUserId, $getDocumentationRequest->role, $getDocumentationRequest->studyName);
+            $currentUserId = $getDocumentationRequest->currentUserId;
+            $role = $getDocumentationRequest->role;
+            $studyName = $getDocumentationRequest->studyName;
 
-            $answersArray = [] ;
+            $this->checkAuthorization($currentUserId, $role, $studyName);
 
-            if($getDocumentationRequest->role === Constants::ROLE_SUPERVISOR){
-                $answersArray = $this->documentationRepositoryInterface->getDocumentationsOfStudy($getDocumentationRequest->studyName, true);
-            }else{
-                $answersArray = $this->documentationRepositoryInterface->getDocumentationOfStudyWithRole($getDocumentationRequest->studyName, $getDocumentationRequest->role);
+            $answersArray = [];
+            if ($role === Constants::ROLE_SUPERVISOR) {
+                $answersArray = $this->documentationRepositoryInterface->getDocumentationsOfStudy($studyName, true);
+            } else {
+                $answersArray = $this->documentationRepositoryInterface->getDocumentationOfStudyWithRole($studyName, $role);
             }
 
             $entitiesArray = [];
-
-            foreach($answersArray as $answer){
+            foreach ($answersArray as $answer) {
                 $entitiesArray[] = DocumentationEntity::fillFromDBReponseArray($answer);
             }
 
             $getDocumentationResponse->body = $entitiesArray;
             $getDocumentationResponse->status = 200;
             $getDocumentationResponse->statusText = 'OK';
-
-        } catch (GaelOException $e){
-
+        } catch (GaelOException $e) {
             $getDocumentationResponse->body = $e->getErrorBody();
             $getDocumentationResponse->status = $e->statusCode;
             $getDocumentationResponse->statusText = $e->statusText;
-
-        } catch (Exception $e){
+        } catch (Exception $e) {
             throw $e;
         }
     }
 
-    private function checkAuthorization(int $currentUserId, string $role, string $studyName){
+    private function checkAuthorization(int $currentUserId, string $role, string $studyName)
+    {
         $this->authorizationStudyService->setUserId($currentUserId);
         $this->authorizationStudyService->setStudyName($studyName);
-        if(!$this->authorizationStudyService->isAllowedStudy($role)){
+        if (!$this->authorizationStudyService->isAllowedStudy($role)) {
             throw new GaelOForbiddenException();
         };
-
     }
 }

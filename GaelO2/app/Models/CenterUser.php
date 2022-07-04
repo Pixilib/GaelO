@@ -14,5 +14,4 @@ class CenterUser extends Model
      * @var string
      */
     protected $table = 'center_user';
-
 }

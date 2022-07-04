@@ -11,53 +11,51 @@ use App\GaelO\UseCases\GetCountry\GetCountryRequest;
 use App\GaelO\UseCases\GetCountry\GetCountryResponse;
 use Exception;
 
-class GetCountry {
+class GetCountry
+{
 
     private CountryRepositoryInterface $countryRepositoryInterface;
     private AuthorizationUserService $authorizationUserService;
 
-    public function __construct(CountryRepositoryInterface $countryRepositoryInterface, AuthorizationUserService $authorizationUserService){
+    public function __construct(CountryRepositoryInterface $countryRepositoryInterface, AuthorizationUserService $authorizationUserService)
+    {
         $this->countryRepositoryInterface = $countryRepositoryInterface;
         $this->authorizationUserService = $authorizationUserService;
-     }
+    }
 
-    public function execute(GetCountryRequest $getCountryRequest, GetCountryResponse $getCountryResponse) : void
+    public function execute(GetCountryRequest $getCountryRequest, GetCountryResponse $getCountryResponse): void
     {
-        try{
+        try {
 
             $this->checkAuthorization($getCountryRequest->currentUserId);
             $code = $getCountryRequest->code;
             if ($code === null) {
                 $responseArray = [];
                 $countries = $this->countryRepositoryInterface->getAllCountries();
-                foreach($countries as $country){
+                foreach ($countries as $country) {
                     $responseArray[] = CountryEntity::fillFromDBReponseArray($country);
                 }
                 $getCountryResponse->body = $responseArray;
-            }else {
+            } else {
                 $country = $this->countryRepositoryInterface->getCountryByCode($code);
                 $getCountryResponse->body = CountryEntity::fillFromDBReponseArray($country);
             }
             $getCountryResponse->status = 200;
             $getCountryResponse->statusText = 'OK';
-
-        }catch (GaelOException $e){
-
+        } catch (GaelOException $e) {
             $getCountryResponse->status = $e->statusCode;
             $getCountryResponse->statusText = $e->statusText;
             $getCountryRequest->body = $e->getErrorBody();
-
-        } catch (Exception $e){
+        } catch (Exception $e) {
             throw $e;
         }
-
     }
 
-    private function checkAuthorization(int $userId){
+    private function checkAuthorization(int $userId)
+    {
         $this->authorizationUserService->setUserId($userId);
-        if(!$this->authorizationUserService->isAdmin()){
+        if (!$this->authorizationUserService->isAdmin()) {
             throw new GaelOForbiddenException();
         };
     }
-
 }

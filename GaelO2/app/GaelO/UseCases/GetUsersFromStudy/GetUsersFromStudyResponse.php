@@ -2,7 +2,8 @@
 
 namespace App\GaelO\UseCases\GetUsersFromStudy;
 
-class GetUsersFromStudyResponse {
+class GetUsersFromStudyResponse
+{
     public $body = null;
     public int $status;
     public string $statusText;

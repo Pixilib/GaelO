@@ -6,7 +6,8 @@ use App\GaelO\Exceptions\GaelOBadRequestException;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Services\MailServices;
 
-class SendRequest {
+class SendRequest
+{
 
     private MailServices $mailService;
 
@@ -15,9 +16,10 @@ class SendRequest {
         $this->mailService = $mailService;
     }
 
-    public function execute(RequestRequest $requestRequest, RequestResponse $requestResponse){
+    public function execute(RequestRequest $requestRequest, RequestResponse $requestResponse)
+    {
 
-        try{
+        try {
             $this->checkEmpty($requestRequest->name, 'name');
             $this->checkEmpty($requestRequest->email, 'email');
             $this->checkEmpty($requestRequest->center, 'center');
@@ -28,21 +30,19 @@ class SendRequest {
             $requestResponse->status = 200;
             $requestResponse->statusText = 'OK';
 
-        }catch (GaelOException $e) {
+        } catch (GaelOException $e) {
             $requestResponse->body = $e->getErrorBody();
             $requestResponse->status = $e->statusCode;
             $requestResponse->statusText = $e->statusText;
         }
 
         return $requestResponse;
-
     }
 
-    private function checkEmpty($inputData, string $name){
-        if(empty($inputData)){
-            throw new GaelOBadRequestException('Request Missing '.$name);
+    private function checkEmpty($inputData, string $name)
+    {
+        if (empty($inputData)) {
+            throw new GaelOBadRequestException('Request Missing ' . $name);
         }
     }
-
-
 }

@@ -1,8 +1,8 @@
 <?php
 
-namespace App\GaelO\UseCases\Reminder;
+namespace App\GaelO\UseCases\SendReminder;
 
-class ReminderResponse {
+class SendReminderResponse {
     public int $status;
     public string $statusText;
     public $body = null;

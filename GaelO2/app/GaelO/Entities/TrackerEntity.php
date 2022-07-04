@@ -15,7 +15,7 @@ class TrackerEntity
 
     public UserEntity $user;
 
-    public static function fillFromDBReponseArray(array $array)
+    public static function fillFromDBReponseArray(array $array) : TrackerEntity
     {
         $trackerEntity  = new TrackerEntity();
         $trackerEntity->id = $array['id'];
@@ -29,15 +29,12 @@ class TrackerEntity
         return $trackerEntity;
     }
 
-    public function setUserData(array $array)
+    public function setUserDetails(UserEntity $userEntity) : void
     {
-        $this->user = new UserEntity();
-        $this->user->lastname = $array['lastname'];
-        $this->user->firstname = $array['firstname'];
-        $this->user->email = $array['email'];
+        $this->user = $userEntity;
     }
 
-    public function setVisitData(array $array)
+    public function setVisitData(array $array) : void
     {
         $this->visit = new VisitEntity();
         $this->visit->setVisitContext(

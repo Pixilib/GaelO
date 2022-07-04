@@ -2,7 +2,8 @@
 
 namespace App\GaelO\UseCases\GetUser;
 
-class GetUserResponse {
+class GetUserResponse
+{
     public $body = null;
     public int $status;
     public string $statusText;

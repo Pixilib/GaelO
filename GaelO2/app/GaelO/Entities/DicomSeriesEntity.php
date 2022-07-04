@@ -2,7 +2,8 @@
 
 namespace App\GaelO\Entities;
 
-class DicomSeriesEntity {
+class DicomSeriesEntity
+{
     public string $seriesInstanceUID;
     public bool $deleted;
     public ?string $acquisitionDate;
@@ -23,7 +24,8 @@ class DicomSeriesEntity {
 
     public int $diskSize;
 
-    public static function fillFromDBReponseArray(array $array){
+    public static function fillFromDBReponseArray(array $array): DicomSeriesEntity
+    {
         $orthancSeries  = new DicomSeriesEntity();
         $orthancSeries->seriesInstanceUID = $array['series_uid'];
         $orthancSeries->deleted = $array['deleted_at'] !== null;
@@ -45,5 +47,4 @@ class DicomSeriesEntity {
         $orthancSeries->diskSize = $array['disk_size'];
         return $orthancSeries;
     }
-
 }

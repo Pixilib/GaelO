@@ -2,7 +2,8 @@
 
 namespace App\GaelO\UseCases\GetPatientsInStudyFromCenters;
 
-class GetPatientsInStudyFromCentersRequest {
+class GetPatientsInStudyFromCentersRequest
+{
     public int $currentUserId;
     public string $role;
     public string $studyName;

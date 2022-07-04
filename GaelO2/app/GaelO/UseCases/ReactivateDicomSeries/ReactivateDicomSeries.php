@@ -12,53 +12,58 @@ use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
 use App\GaelO\Services\AuthorizationService\AuthorizationVisitService;
 use Exception;
 
-class ReactivateDicomSeries{
-
+class ReactivateDicomSeries
+{
     private AuthorizationVisitService $authorizationVisitService;
     private DicomSeriesRepositoryInterface $dicomSeriesRepositoryInterface;
     private TrackerRepositoryInterface $trackerRepositoryInterface;
     private VisitRepositoryInterface $visitRepositoryInterface;
 
-    public function __construct(VisitRepositoryInterface $visitRepositoryInterface,
-                                DicomSeriesRepositoryInterface $dicomSeriesRepositoryInterface,
-                                AuthorizationVisitService $authorizationVisitService,
-                                TrackerRepositoryInterface $trackerRepositoryInterface)
-    {
+    public function __construct(
+        VisitRepositoryInterface $visitRepositoryInterface,
+        DicomSeriesRepositoryInterface $dicomSeriesRepositoryInterface,
+        AuthorizationVisitService $authorizationVisitService,
+        TrackerRepositoryInterface $trackerRepositoryInterface
+    ) {
         $this->visitRepositoryInterface = $visitRepositoryInterface;
         $this->authorizationVisitService = $authorizationVisitService;
         $this->dicomSeriesRepositoryInterface = $dicomSeriesRepositoryInterface;
         $this->trackerRepositoryInterface = $trackerRepositoryInterface;
-
     }
 
-    public function execute(ReactivateDicomSeriesRequest $reactivateDicomSeriesRequest, ReactivateDicomSeriesResponse $reactivateDicomSeriesResponse){
+    public function execute(ReactivateDicomSeriesRequest $reactivateDicomSeriesRequest, ReactivateDicomSeriesResponse $reactivateDicomSeriesResponse)
+    {
 
-        try{
+        try {
 
-            if( empty($reactivateDicomSeriesRequest->reason) ) throw new GaelOBadRequestException('Reason must be specified');
+            if (empty($reactivateDicomSeriesRequest->reason)) throw new GaelOBadRequestException('Reason must be specified');
 
-            $seriesData = $this->dicomSeriesRepositoryInterface->getSeries($reactivateDicomSeriesRequest->seriesInstanceUID, true);
+            $seriesInstanceUID = $reactivateDicomSeriesRequest->seriesInstanceUID;
+            $reason = $reactivateDicomSeriesRequest->reason;
+            $currentUserId = $reactivateDicomSeriesRequest->currentUserId;
+            $role = $reactivateDicomSeriesRequest->role;
 
-            if($seriesData['dicom_study'] === null){
+            $seriesData = $this->dicomSeriesRepositoryInterface->getSeries($seriesInstanceUID, true);
+
+            if ($seriesData['dicom_study'] === null) {
                 throw new GaelOBadRequestException("Parent study is deactivated can't act on child series");
             }
 
             $visitId = $seriesData['dicom_study']['visit_id'];
             $visitContext = $this->visitRepositoryInterface->getVisitContext($visitId);
-            $role = $reactivateDicomSeriesRequest->role;
             $studyName = $visitContext['patient']['study_name'];
 
-            $this->checkAuthorization($reactivateDicomSeriesRequest->currentUserId, $visitId, $visitContext['state_quality_control'], $role, $studyName);
+            $this->checkAuthorization($currentUserId, $visitId, $visitContext['state_quality_control'], $role, $studyName);
 
-            $this->dicomSeriesRepositoryInterface->reactivateSeries($reactivateDicomSeriesRequest->seriesInstanceUID);
+            $this->dicomSeriesRepositoryInterface->reactivateSeries($seriesInstanceUID);
 
             $actionDetails = [
-                'seriesInstanceUID'=>$seriesData['series_uid'],
-                'reason' => $reactivateDicomSeriesRequest->reason
+                'seriesInstanceUID' => $seriesData['series_uid'],
+                'reason' => $reason
             ];
 
             $this->trackerRepositoryInterface->writeAction(
-                $reactivateDicomSeriesRequest->currentUserId,
+                $currentUserId,
                 $role,
                 $studyName,
                 $visitId,
@@ -68,27 +73,24 @@ class ReactivateDicomSeries{
 
             $reactivateDicomSeriesResponse->status = 200;
             $reactivateDicomSeriesResponse->statusText =  'OK';
-
-
-        } catch (GaelOException $e){
-
+        } catch (GaelOException $e) {
             $reactivateDicomSeriesResponse->status = $e->statusCode;
             $reactivateDicomSeriesResponse->statusText = $e->statusText;
             $reactivateDicomSeriesResponse->body = $e->getErrorBody();
-
-        } catch (Exception $e){
+        } catch (Exception $e) {
             throw $e;
         }
     }
 
-    private function checkAuthorization(int $userId, int $visitId, string $qcStatus, string $role, string $studyName) : void{
+    private function checkAuthorization(int $userId, int $visitId, string $qcStatus, string $role, string $studyName): void
+    {
 
         //If QC is done, can't reactivate series
-        if( in_array($qcStatus, [Constants::QUALITY_CONTROL_ACCEPTED, Constants::QUALITY_CONTROL_REFUSED, Constants::QUALITY_CONTROL_NOT_NEEDED])){
+        if (in_array($qcStatus, [Constants::QUALITY_CONTROL_ACCEPTED, Constants::QUALITY_CONTROL_REFUSED, Constants::QUALITY_CONTROL_NOT_NEEDED])) {
             throw new GaelOForbiddenException();
         }
 
-        if( !in_array($role, [Constants::ROLE_INVESTIGATOR, Constants::ROLE_SUPERVISOR]) ){
+        if (!in_array($role, [Constants::ROLE_INVESTIGATOR, Constants::ROLE_SUPERVISOR])) {
             throw new GaelOForbiddenException();
         }
 
@@ -96,10 +98,8 @@ class ReactivateDicomSeries{
         $this->authorizationVisitService->setVisitId($visitId);
         $this->authorizationVisitService->setStudyName($studyName);
 
-        if ( !$this->authorizationVisitService->isVisitAllowed($role) ){
+        if (!$this->authorizationVisitService->isVisitAllowed($role)) {
             throw new GaelOForbiddenException();
         }
-
     }
-
 }

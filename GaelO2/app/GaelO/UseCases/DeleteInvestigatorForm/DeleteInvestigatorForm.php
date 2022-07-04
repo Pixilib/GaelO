@@ -13,7 +13,8 @@ use App\GaelO\Services\AuthorizationService\AuthorizationVisitService;
 use App\GaelO\Services\MailServices;
 use Exception;
 
-class DeleteInvestigatorForm{
+class DeleteInvestigatorForm
+{
 
     private AuthorizationVisitService $authorizationVisitService;
     private VisitRepositoryInterface $visitRepositoryInterface;
@@ -21,13 +22,13 @@ class DeleteInvestigatorForm{
     private ReviewRepositoryInterface $reviewRepositoryInterface;
     private MailServices $mailServices;
 
-    public function __construct(AuthorizationVisitService $authorizationVisitService,
-            ReviewRepositoryInterface $reviewRepositoryInterface,
-            VisitRepositoryInterface $visitRepositoryInterface,
-            TrackerRepositoryInterface $trackerRepositoryInterface,
-            MailServices $mailServices
-            )
-    {
+    public function __construct(
+        AuthorizationVisitService $authorizationVisitService,
+        ReviewRepositoryInterface $reviewRepositoryInterface,
+        VisitRepositoryInterface $visitRepositoryInterface,
+        TrackerRepositoryInterface $trackerRepositoryInterface,
+        MailServices $mailServices
+    ) {
         $this->authorizationVisitService = $authorizationVisitService;
         $this->visitRepositoryInterface = $visitRepositoryInterface;
         $this->trackerRepositoryInterface = $trackerRepositoryInterface;
@@ -35,27 +36,32 @@ class DeleteInvestigatorForm{
         $this->mailServices  = $mailServices;
     }
 
-    public function execute(DeleteInvestigatorFormRequest $deleteInvestigatorFormRequest, DeleteInvestigatorFormResponse $DeleteInvestigatorFormResponse){
-        try{
+    public function execute(DeleteInvestigatorFormRequest $deleteInvestigatorFormRequest, DeleteInvestigatorFormResponse $DeleteInvestigatorFormResponse)
+    {
+        try {
 
-            if(empty($deleteInvestigatorFormRequest->reason)){
+            if (empty($deleteInvestigatorFormRequest->reason)) {
                 throw new GaelOBadRequestException("Reason must be specified");
             }
 
-            $visitContext = $this->visitRepositoryInterface->getVisitContext($deleteInvestigatorFormRequest->visitId);
+            $visitId = $deleteInvestigatorFormRequest->visitId;
+            $currentUserId = $deleteInvestigatorFormRequest->currentUserId;
+            $reason = $deleteInvestigatorFormRequest->reason;
+
+            $visitContext = $this->visitRepositoryInterface->getVisitContext($visitId);
 
             $studyName = $visitContext['patient']['study_name'];
 
-            $investigatorFormEntity = $this->reviewRepositoryInterface->getInvestigatorForm($deleteInvestigatorFormRequest->visitId, false);
+            $investigatorFormEntity = $this->reviewRepositoryInterface->getInvestigatorForm($visitId, false);
 
-            $this->checkAuthorization($deleteInvestigatorFormRequest->currentUserId, $deleteInvestigatorFormRequest->visitId, $visitContext['state_quality_control'], $studyName);
+            $this->checkAuthorization($currentUserId, $visitId, $visitContext['state_quality_control'], $studyName);
 
             //Delete review
             $this->reviewRepositoryInterface->delete($investigatorFormEntity['id']);
             //Make investigator form not done
             $this->visitRepositoryInterface->updateInvestigatorFormStatus($investigatorFormEntity['visit_id'], Constants::INVESTIGATOR_FORM_NOT_DONE);
             //Reset QC if QC is needed in this visit
-            if( $visitContext['state_quality_control'] !== Constants::QUALITY_CONTROL_NOT_NEEDED ) $this->visitRepositoryInterface->resetQc($visitContext['id']);
+            if ($visitContext['state_quality_control'] !== Constants::QUALITY_CONTROL_NOT_NEEDED) $this->visitRepositoryInterface->resetQc($visitContext['id']);
 
             $actionDetails = [
                 'Visit Group Name' => $visitContext['visit_type']['visit_group']['name'],
@@ -63,51 +69,50 @@ class DeleteInvestigatorForm{
                 'visit_type' => $visitContext['visit_type']['name'],
                 'patient_id' => $visitContext['patient_id'],
                 'id_review' => $investigatorFormEntity['id'],
-                'reason' => $deleteInvestigatorFormRequest->reason
+                'reason' => $reason
             ];
 
             $this->trackerRepositoryInterface->writeAction(
-                $deleteInvestigatorFormRequest->currentUserId,
+                $currentUserId,
                 Constants::ROLE_SUPERVISOR,
                 $studyName,
-                $deleteInvestigatorFormRequest->visitId,
+                $visitId,
                 Constants::TRACKER_DELETE_INVESTIGATOR_FORM,
-                $actionDetails);
+                $actionDetails
+            );
 
             //send Email notification to review owner
             $this->mailServices->sendDeleteFormMessage(
-                $deleteInvestigatorFormRequest->visitId,
+                $visitId,
                 true,
                 $investigatorFormEntity['user_id'],
                 $studyName,
                 $visitContext['patient_id'],
                 $visitContext['patient']['code'],
-                $visitContext['visit_type']['name'] );
+                $visitContext['visit_type']['name']
+            );
 
             $DeleteInvestigatorFormResponse->status = 200;
             $DeleteInvestigatorFormResponse->statusText =  'OK';
-
-        } catch (GaelOException $e){
+        } catch (GaelOException $e) {
 
             $DeleteInvestigatorFormResponse->body = $e->getErrorBody();
             $DeleteInvestigatorFormResponse->status = $e->statusCode;
             $DeleteInvestigatorFormResponse->statusText =  $e->statusText;
-
-        } catch (Exception $e){
+        } catch (Exception $e) {
             throw $e;
         }
-
     }
 
-    private function checkAuthorization(int $currentUserId, int $visitId, string $visitQcStatus, string $studyName){
+    private function checkAuthorization(int $currentUserId, int $visitId, string $visitQcStatus, string $studyName)
+    {
 
         $this->authorizationVisitService->setUserId($currentUserId);
         $this->authorizationVisitService->setVisitId($visitId);
         $this->authorizationVisitService->setStudyName($studyName);
 
-        if ( ! $this->authorizationVisitService->isVisitAllowed(Constants::ROLE_SUPERVISOR) || in_array($visitQcStatus , [Constants::QUALITY_CONTROL_ACCEPTED, Constants::QUALITY_CONTROL_REFUSED])){
+        if (!$this->authorizationVisitService->isVisitAllowed(Constants::ROLE_SUPERVISOR) || in_array($visitQcStatus, [Constants::QUALITY_CONTROL_ACCEPTED, Constants::QUALITY_CONTROL_REFUSED])) {
             throw new GaelOForbiddenException();
         }
-
     }
 }

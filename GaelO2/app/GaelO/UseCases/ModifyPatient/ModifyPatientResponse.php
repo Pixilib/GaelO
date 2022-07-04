@@ -2,7 +2,8 @@
 
 namespace App\GaelO\UseCases\ModifyPatient;
 
-class ModifyPatientResponse {
+class ModifyPatientResponse
+{
     public int $status;
     public string $statusText;
     public $body = null;

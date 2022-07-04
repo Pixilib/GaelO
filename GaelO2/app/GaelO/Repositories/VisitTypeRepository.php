@@ -4,7 +4,6 @@ namespace App\GaelO\Repositories;
 
 use App\Models\VisitType;
 use App\GaelO\Interfaces\Repositories\VisitTypeRepositoryInterface;
-use Illuminate\Support\Facades\Log;
 
 class VisitTypeRepository implements VisitTypeRepositoryInterface
 {
@@ -16,9 +15,10 @@ class VisitTypeRepository implements VisitTypeRepositoryInterface
         $this->visitType = $visitType;
     }
 
-    public function find($id): array
+    public function find(int $id, bool $withVisitGroup): array
     {
-        return $this->visitType->findOrFail($id)->toArray();
+        if($withVisitGroup) return $this->visitType->with('visitGroup')->findOrFail($id)->toArray();
+        else return $this->visitType->findOrFail($id)->toArray();
     }
 
     public function findByName(string $studyName, string $visitGroupName, string $visitTypeName): array

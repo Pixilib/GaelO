@@ -2,7 +2,7 @@
 
 namespace App\GaelO\UseCases\GetStudiesWithDetails;
 
-class GetStudiesWithDetailsRequest {
+class GetStudiesWithDetailsRequest
+{
     public int $currentUserId;
-
 }

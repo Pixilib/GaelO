@@ -13,8 +13,8 @@ use App\GaelO\Interfaces\Repositories\StudyRepositoryInterface;
 use App\GaelO\Services\AuthorizationService\AuthorizationStudyService;
 use Exception;
 
-class GetPatientFromStudy {
-
+class GetPatientFromStudy
+{
     private PatientRepositoryInterface $patientRepositoryInterface;
     private StudyRepositoryInterface $studyRepositoryInterface;
     private AuthorizationStudyService $authorizationStudyService;
@@ -23,15 +23,15 @@ class GetPatientFromStudy {
         PatientRepositoryInterface $patientRepositoryInterface,
         AuthorizationStudyService $authorizationStudyService,
         StudyRepositoryInterface $studyRepositoryInterface
-        ){
+    ) {
         $this->patientRepositoryInterface = $patientRepositoryInterface;
         $this->studyRepositoryInterface = $studyRepositoryInterface;
         $this->authorizationStudyService = $authorizationStudyService;
     }
 
-    public function execute(GetPatientFromStudyRequest $patientRequest, GetPatientFromStudyResponse $patientResponse) : void
+    public function execute(GetPatientFromStudyRequest $patientRequest, GetPatientFromStudyResponse $patientResponse): void
     {
-        try{
+        try {
 
             $studyName = $patientRequest->studyName;
 
@@ -43,34 +43,28 @@ class GetPatientFromStudy {
 
             $patientsDbEntities = $this->patientRepositoryInterface->getPatientsInStudy($originalStudyName);
             $responseArray = [];
-            foreach($patientsDbEntities as $patientEntity){
+            foreach ($patientsDbEntities as $patientEntity) {
                 $responseArray[] = PatientEntity::fillFromDBReponseArray($patientEntity);
             }
 
             $patientResponse->body = $responseArray;
             $patientResponse->status = 200;
             $patientResponse->statusText = 'OK';
-
-        } catch (GaelOException $e){
-
+        } catch (GaelOException $e) {
             $patientResponse->body = $e->getErrorBody();
             $patientResponse->status = $e->statusCode;
             $patientResponse->statusText = $e->statusText;
-
-        } catch (Exception $e){
+        } catch (Exception $e) {
             throw $e;
         }
-
-
     }
 
-    private function checkAuthorization(int $currentUserId, string $studyName){
+    private function checkAuthorization(int $currentUserId, string $studyName)
+    {
         $this->authorizationStudyService->setUserId($currentUserId);
         $this->authorizationStudyService->setStudyName($studyName);
-        if ( ! $this->authorizationStudyService->isAllowedStudy(Constants::ROLE_SUPERVISOR)){
+        if (!$this->authorizationStudyService->isAllowedStudy(Constants::ROLE_SUPERVISOR)) {
             throw new GaelOForbiddenException();
         };
     }
-
-
 }

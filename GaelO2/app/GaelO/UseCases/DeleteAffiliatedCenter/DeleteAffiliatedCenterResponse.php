@@ -2,7 +2,8 @@
 
 namespace App\GaelO\UseCases\DeleteAffiliatedCenter;
 
-class DeleteAffiliatedCenterResponse {
+class DeleteAffiliatedCenterResponse
+{
     public $body = null;
     public int $status;
     public string $statusText;

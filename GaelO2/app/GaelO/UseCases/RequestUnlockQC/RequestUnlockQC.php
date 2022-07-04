@@ -33,15 +33,17 @@ class RequestUnlockQC
     {
 
         try {
+            $visitId = $requestUnlockQCRequest->visitId;
+            $currentUserId = $requestUnlockQCRequest->currentUserId;
 
-            $visitContext = $this->visitRepositoryInterface->getVisitContext($requestUnlockQCRequest->visitId);
+            $visitContext = $this->visitRepositoryInterface->getVisitContext($visitId);
 
             //StudyName extracted from visit as it apply only for original study
             $studyName = $visitContext['patient']['study_name'];
 
             $this->checkAuthorization(
-                $requestUnlockQCRequest->currentUserId,
-                $requestUnlockQCRequest->visitId,
+                $currentUserId,
+                $visitId,
                 $studyName
             );
 
@@ -53,35 +55,35 @@ class RequestUnlockQC
                 throw new GaelOBadRequestException('Unlock message should not be empty');
             }
 
+            $message = $requestUnlockQCRequest->message;
+
             $this->mailServices->sendUnlockQCMessage(
-                $requestUnlockQCRequest->visitId,
-                $requestUnlockQCRequest->currentUserId,
+                $visitId,
+                $currentUserId,
                 $studyName,
                 $patientId,
                 $patientCode,
-                $requestUnlockQCRequest->message,
+                $message,
                 $visitType
             );
 
             $details = [
                 'form_type' => 'QC Reset',
-                'message' => $requestUnlockQCRequest->message
+                'message' => $message
             ];
 
             $this->trackerRepository->writeAction(
-                $requestUnlockQCRequest->currentUserId,
+                $currentUserId,
                 Constants::ROLE_CONTROLLER,
                 $studyName,
-                $requestUnlockQCRequest->visitId,
+                $visitId,
                 Constants::TRACKER_ASK_UNLOCK,
                 $details
             );
 
             $requestUnlockQCResponse->status = 200;
             $requestUnlockQCResponse->statusText = 'OK';
-
         } catch (GaelOException $e) {
-
             $requestUnlockQCResponse->body = $e->getErrorBody();
             $requestUnlockQCResponse->status = $e->statusCode;
             $requestUnlockQCResponse->statusText = $e->statusText;

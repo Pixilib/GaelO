@@ -2,7 +2,8 @@
 
 namespace App\GaelO\UseCases\RequestUnlockQC;
 
-class RequestUnlockQCRequest {
+class RequestUnlockQCRequest
+{
     public int $currentUserId;
     public int $visitId;
     public string $message;

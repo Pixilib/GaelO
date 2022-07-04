@@ -31,11 +31,14 @@ class ModifyQualityControlReset
 
         try {
 
-            $this->visitService->setVisitId($modifyQualityControlResetRequest->visitId);
+            $visitId = $modifyQualityControlResetRequest->visitId;
+            $currentUserId = $modifyQualityControlResetRequest->currentUserId;
+
+            $this->visitService->setVisitId($visitId);
             $visitContext = $this->visitService->getVisitContext();
             $studyName = $visitContext['patient']['study_name'];
 
-            $this->checkAuthorization($modifyQualityControlResetRequest->currentUserId, $modifyQualityControlResetRequest->visitId, $studyName);
+            $this->checkAuthorization($currentUserId, $visitId, $studyName);
 
             if (empty($modifyQualityControlResetRequest->reason)) {
                 throw new GaelOBadRequestException("Can't reset QC without reason");
@@ -47,24 +50,23 @@ class ModifyQualityControlReset
                 throw new GaelOBadRequestException("Can't reset QC with review started");
             }
 
-            $this->visitService->resetQc($modifyQualityControlResetRequest->visitId);
+            $this->visitService->resetQc($visitId);
 
             $actionDetails = [
                 'reason' => $modifyQualityControlResetRequest->reason
             ];
 
             $this->trackerRepositoryInterface->writeAction(
-                $modifyQualityControlResetRequest->currentUserId,
+                $currentUserId,
                 Constants::ROLE_CONTROLLER,
                 $studyName,
-                $modifyQualityControlResetRequest->visitId,
+                $visitId,
                 Constants::TRACKER_RESET_QC,
                 $actionDetails
             );
 
             $modifyQualityControlResetResponse->status = 200;
             $modifyQualityControlResetResponse->statusText = 'OK';
-
         } catch (GaelOException $e) {
             $modifyQualityControlResetResponse->body = $e->getErrorBody();
             $modifyQualityControlResetResponse->status = $e->statusCode;
@@ -80,7 +82,7 @@ class ModifyQualityControlReset
         $this->authorizationVisitService->setStudyName($studyName);
         $this->authorizationVisitService->setVisitId($visitId);
 
-        if ( !$this->authorizationVisitService->isVisitAllowed(Constants::ROLE_SUPERVISOR) ) {
+        if (!$this->authorizationVisitService->isVisitAllowed(Constants::ROLE_SUPERVISOR)) {
             throw new GaelOForbiddenException();
         }
     }

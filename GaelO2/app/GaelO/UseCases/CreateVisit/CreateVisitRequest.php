@@ -2,7 +2,8 @@
 
 namespace App\GaelO\UseCases\CreateVisit;
 
-class CreateVisitRequest {
+class CreateVisitRequest
+{
     public int $currentUserId;
     public string $patientId;
     public int $visitTypeId;

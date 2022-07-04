@@ -23,11 +23,12 @@ class ModifyUser
     private TrackerRepositoryInterface $trackerRepositoryInterface;
     private FrameworkInterface $frameworkInterface;
 
-    public function __construct(AuthorizationUserService $authorizationUserService,
-                            UserRepositoryInterface $userRepositoryInterface,
-                            TrackerRepositoryInterface $trackerRepositoryInterface,
-                            FrameworkInterface $frameworkInterface)
-    {
+    public function __construct(
+        AuthorizationUserService $authorizationUserService,
+        UserRepositoryInterface $userRepositoryInterface,
+        TrackerRepositoryInterface $trackerRepositoryInterface,
+        FrameworkInterface $frameworkInterface
+    ) {
         $this->authorizationUserService = $authorizationUserService;
         $this->trackerRepositoryInterface = $trackerRepositoryInterface;
         $this->userRepositoryInterface = $userRepositoryInterface;
@@ -43,15 +44,13 @@ class ModifyUser
 
             $user = $this->userRepositoryInterface->find($modifyUserRequest->userId);
 
-
-
             CreateUser::checkFormComplete($modifyUserRequest);
             CreateUser::checkEmailValid($modifyUserRequest->email);
             CreateUser::checkPhoneCorrect($modifyUserRequest->phone);
 
             $resetEmailValidation = false;
 
-            if($user['email'] !== $modifyUserRequest->email){
+            if ($user['email'] !== $modifyUserRequest->email) {
                 $resetEmailValidation = true;
                 $knownEmail = $this->userRepositoryInterface->isExistingEmail($modifyUserRequest->email);
                 if ($knownEmail) throw new GaelOConflictException("Email Already Known");
@@ -86,12 +85,10 @@ class ModifyUser
 
             $modifyUserResponse->status = 200;
             $modifyUserResponse->statusText = 'OK';
-
         } catch (GaelOException $e) {
             $modifyUserResponse->body = $e->getErrorBody();
             $modifyUserResponse->status = $e->statusCode;
             $modifyUserResponse->statusText = $e->statusText;
-
         } catch (Exception $e) {
             throw $e;
         };

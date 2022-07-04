@@ -13,7 +13,6 @@ use Exception;
 
 class Login
 {
-
     private UserRepositoryInterface $userRepositoryInterface;
     private MailServices $mailService;
     private TrackerRepositoryInterface $trackerRepositoryInterface;
