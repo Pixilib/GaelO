@@ -251,6 +251,8 @@ class ExportStudyService
             $exportReviewResults->addExportFile(ExportDataResults::EXPORT_TYPE_CSV, $tempCsvFileName, $sheetName);
         }
 
+        //SK VOIR REPRESENTATION DE L OUTPUT DANS XLS ON PEUT AVOIR UNE TAB PAR VISITTYPE * 2 fichiers (investigateur et reviewer)
+        //et il y aura n fichier *2 pour les csv
         $tempFileNameXls = $spreadsheetAdapter->writeToExcel();
         $exportReviewResults->addExportFile(ExportDataResults::EXPORT_TYPE_XLS, $tempFileNameXls);
         $this->exportStudyResults->setExportReviewResults($exportReviewResults);
