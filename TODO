@@ -29,3 +29,6 @@ Les tests ne font pas d'assertion sur
 - l'envoi de mails => voir doc laravel
 Review => tester un scenario de custom conclusion / adjudication
 Test par etude specifique
+
+**Release procedure **
+- Update version parameter in config app
