@@ -83,6 +83,7 @@ class DeleteReviewForm
             $this->reviewFormService->deleteReview($reviewId);
 
             $actionDetails = [
+                'visit_group_name' => $visitContext['visit_type']['visit_group']['name'],
                 'modality' => $visitContext['visit_type']['visit_group']['modality'],
                 'visit_type' => $visitContext['visit_type']['name'],
                 'patient_id' => $visitContext['patient_id'],

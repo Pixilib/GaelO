@@ -42,11 +42,12 @@ class ModifyVisitDate
             $this->visitRepositoryInterface->updateVisitDate($visitId, $newVisitDate);
 
             $actionsDetails = [
-                'patientId' => $visitContext['patient_id'],
+                'patient_id' => $visitContext['patient_id'],
+                'visit_group_name' => $visitContext['visit_type']['visit_group']['name'],
                 'modality' => $visitContext['visit_type']['visit_group']['modality'],
-                'visitType' => $visitContext['visit_type']['name'],
-                'previousDate' => $visitContext['visit_date'],
-                'newDate' => $newVisitDate
+                'visit_type_name' => $visitContext['visit_type']['name'],
+                'previous_date' => $visitContext['visit_date'],
+                'new_date' => $newVisitDate
             ];
 
             //Write in Tracker

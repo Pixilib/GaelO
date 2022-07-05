@@ -73,9 +73,9 @@ class CreateStudy
 
             $currentUserId = $createStudyRequest->currentUserId;
             $actionDetails = [
-                'studyName' => $studyName,
-                'studyCode' => $studyCode,
-                'ancillaryOf' => $ancillaryOf
+                'study_name' => $studyName,
+                'study_code' => $studyCode,
+                'ancillary_of' => $ancillaryOf
             ];
 
             $this->trackerRepositoryInterface->writeAction($currentUserId, Constants::TRACKER_ROLE_ADMINISTRATOR, null, null, Constants::TRACKER_CREATE_STUDY, $actionDetails);

@@ -44,8 +44,8 @@ class AddAffiliatedCenter
                 $this->userRepositoryInterface->addAffiliatedCenter($userId, $centerCode);
 
                 $actionDetails = [
-                    'userId' => $userId,
-                    'addAffiliatedCenters' => $centerCode
+                    'user_id' => $userId,
+                    'add_affiliated_center' => $centerCode
                 ];
                 $this->trackerRepositoryInterface->writeAction($currentUserId, Constants::TRACKER_ROLE_ADMINISTRATOR, null, null, Constants::TRACKER_EDIT_USER, $actionDetails);
 

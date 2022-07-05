@@ -38,6 +38,7 @@ class ModifyCorrectiveAction
             $patientCode = $visitContext['patient']['code'];
             $visitType = $visitContext['visit_type']['name'];
             $localFormNeeded = $visitContext['visit_type']['local_form_needed'];
+            $visitGroupName = $visitContext['visit_type']['visit_group']['name'];
             $visitModality = $visitContext['visit_type']['visit_group']['modality'];
             $stateInvestigatorForm = $visitContext['state_investigator_form'];
             $currentQcStatus = $visitContext['state_quality_control'];
@@ -67,6 +68,7 @@ class ModifyCorrectiveAction
             $actionDetails = [
                 'patient_id' => $patientId,
                 'visit_type' => $visitType,
+                'vist_group_name' => $visitGroupName,
                 'vist_group_modality' => $visitModality,
                 'new_series' => $modifyCorrectiveActionRequest->newSeriesUploaded,
                 'new_investigator_form' => $modifyCorrectiveActionRequest->newInvestigatorForm,

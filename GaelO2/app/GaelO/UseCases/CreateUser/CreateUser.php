@@ -75,7 +75,7 @@ class CreateUser
 
             //Save action in Tracker
             $detailsTracker = [
-                'createdUserId' => $createdUserEntity['id']
+                'created_user_id' => $createdUserEntity['id']
             ];
 
             $this->trackerRepositoryInterface->writeAction(

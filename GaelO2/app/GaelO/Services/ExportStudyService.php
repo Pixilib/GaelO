@@ -75,7 +75,7 @@ class ExportStudyService
 
         foreach ($visitTypes as $visitType) {
             $visitTypeArray[$visitType['id']] = [
-                'visit_group_name' => $visitType['visit_group']['modality'],
+                'visit_group_name' => $visitType['visit_group']['name'],
                 'visit_type_name' => $visitType['name']
             ];
         }

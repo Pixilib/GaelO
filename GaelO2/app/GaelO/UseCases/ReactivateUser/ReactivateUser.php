@@ -61,7 +61,7 @@ class ReactivateUser
             if (!$emailSendSuccess) throw new Exception('Error Sending Reset Email');
 
             $actionsDetails = [
-                'reactivatedUser' => $userId
+                'reactivated_user' => $userId
             ];
             $this->trackerRepositoryInterface->writeAction($currentUserId, Constants::TRACKER_ROLE_ADMINISTRATOR, null, null, Constants::TRACKER_EDIT_USER, $actionsDetails);
 

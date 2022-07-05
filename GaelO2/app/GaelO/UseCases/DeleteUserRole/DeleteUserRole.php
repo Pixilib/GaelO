@@ -38,7 +38,7 @@ class DeleteUserRole
             $this->userRepositoryInterface->deleteRoleForUser($userId, $study, $role);
 
             $actionDetails = [
-                'deletedRole' => $role
+                'deleted_role' => $role
             ];
 
             $this->trackerRepositoryInterface->writeAction($deleteUserRoleRequest->currentUserId, Constants::TRACKER_ROLE_ADMINISTRATOR, $study, null, Constants::TRACKER_EDIT_USER, $actionDetails);
