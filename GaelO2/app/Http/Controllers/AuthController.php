@@ -79,7 +79,9 @@ class AuthController extends Controller
 
     }
 
-    public function getSystem(GetSystem $getSystem, GetSystemRequest $getSystemRequest, GetSystemResponse $getSystemResponse){
+    public function getSystem(Request $request, GetSystem $getSystem, GetSystemRequest $getSystemRequest, GetSystemResponse $getSystemResponse){
+        $currentUser = $request->user();
+        $getSystemRequest->currentUserId = $currentUser['id'];
         $getSystem->execute($getSystemRequest, $getSystemResponse);
         return $this->getJsonResponse($getSystemResponse->body, $getSystemResponse->status, $getSystemResponse->statusText);
     }

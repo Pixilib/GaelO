@@ -39,6 +39,9 @@ use Illuminate\Support\Facades\Route;
 //Routes that need authentication
 Route::middleware(['auth:sanctum', 'verified', 'activated'])->group(function () {
 
+    //System Route
+    Route::get('system', [AuthController::class, 'getSystem']);
+
     //Logout Route
     Route::delete('login', [AuthController::class, 'logout']);
 
@@ -192,7 +195,6 @@ Route::middleware(['auth:sanctum', 'verified', 'activated'])->group(function () 
 */
 //Request Route
 Route::post('request', [RequestController::class, 'sendRequest']);
-Route::get('system', [AuthController::class, 'getSystem']);
 
 //Login Route
 Route::post('login', [AuthController::class, 'login'])->name('login');

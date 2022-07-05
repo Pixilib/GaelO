@@ -3,16 +3,20 @@
 namespace App\GaelO\UseCases\GetSystem;
 
 use App\GaelO\Exceptions\GaelOException;
+use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Adapters\FrameworkInterface;
+use App\GaelO\Services\AuthorizationService\AuthorizationUserService;
 use Exception;
 
 class GetSystem
 {
 
     private FrameworkInterface $frameworkInterface;
+    private AuthorizationUserService $authorizationUserService;
 
-    public function __construct(FrameworkInterface $frameworkInterface)
+    public function __construct(AuthorizationUserService $authorizationUserService, FrameworkInterface $frameworkInterface)
     {
+        $this->authorizationUserService = $authorizationUserService;
         $this->frameworkInterface = $frameworkInterface;
     }
 
@@ -20,6 +24,9 @@ class GetSystem
     {
 
         try {
+            $currentUserId = $getSystemRequest->currentUserId;
+
+            $this->checkAuthorization($currentUserId);
 
             $version = $this->frameworkInterface->getConfig('version');
 
@@ -36,6 +43,14 @@ class GetSystem
             $getSystemResponse->statusText = $e->statusText;
         } catch (Exception $e) {
             throw $e;
+        }
+    }
+
+    private function checkAuthorization(int $userId)
+    {
+        $this->authorizationUserService->setUserId($userId);
+        if (!$this->authorizationUserService->isAdmin()) {
+            throw new GaelOForbiddenException();
         }
     }
 }
