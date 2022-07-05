@@ -1,4 +1,5 @@
 Salim TODO :
+- ExportStudyService = > A revoir !
 
 - Refac SendMail est complexe probablement a splitter
 - Refac : Pluger GetPossibleUpload sur VisitEntity pour la réponse (nécéssite d'updater V1)

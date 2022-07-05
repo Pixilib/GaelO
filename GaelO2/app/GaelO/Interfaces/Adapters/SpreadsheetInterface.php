@@ -6,7 +6,7 @@ Interface SpreadsheetInterface{
 
     public function addSheet(String $title) : void ;
 
-    public function fillData(string $spreadsheetName, array $data) : void ;
+    public function fillData(string $spreadsheetName, array $data, ?array $titles) : void ;
 
     public function writeToExcel() : string ;
 

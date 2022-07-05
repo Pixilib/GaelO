@@ -18,7 +18,7 @@ class ExportReviewResults extends ExportDataResults{
         parent::__construct(parent::EXPORT_TYPE_REVIEWS);
     }
 
-    public function addExportFile( string $type, string $path, string $key = null ){
+    public function addExportFile( string $type, string $path, string $key ){
 
         if($type === ExportDataResults::EXPORT_TYPE_XLS) {
             $this->xlsExport = new ExportFile('export_forms.xlsx', $path);

@@ -35,7 +35,8 @@ class ExportStudyData
             $this->exportStudyService->exportPatientTable();
             $this->exportStudyService->exportVisitTable();
             $this->exportStudyService->exportDicomsTable();
-            $this->exportStudyService->exportReviewTable();
+            $this->exportStudyService->exportInvestigatorForms();
+            $this->exportStudyService->exportReviewerForms();
             $this->exportStudyService->exportTrackerTable();
             $this->exportStudyService->exportUsersOfStudy();
             $this->exportStudyService->exportAssociatedFiles();

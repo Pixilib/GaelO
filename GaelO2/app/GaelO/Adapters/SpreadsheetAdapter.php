@@ -22,9 +22,9 @@ class SpreadsheetAdapter implements SpreadsheetInterface {
         $workSheet->setTitle($title);
     }
 
-    public function fillData(string $spreadsheetName, array $data) : void {
+    public function fillData(string $spreadsheetName, array $data, ?array $titles = null) : void {
         $inputArray = [];
-        if(sizeof($data)>0) $inputArray = $this->generateArrayForSpreadSheet($data);
+        if(sizeof($data)>0) $inputArray = $this->generateArrayForSpreadSheet($data, $titles);
         //Strict null comparison is set to interpret 0 (bool val in db) as not null value
         $this->spreadsheet->getSheetByName($spreadsheetName)->fromArray($inputArray, null, 'A1', true);
     }
@@ -53,12 +53,10 @@ class SpreadsheetAdapter implements SpreadsheetInterface {
         return $path;
     }
 
-    private function generateArrayForSpreadSheet(array $data) : array {
+    private function generateArrayForSpreadSheet(array $data, ?array $titles = null) : array {
 
-        $resultArray = [];
-
-        //Extract title from the first database row
-        $titles = array_keys($data[0]);
+        //if title not given build title from the keys available in the first row
+        if(!$titles) $titles = array_keys($data[0]);
 
         //Generate the title row
         $resultArray[] = $titles;
