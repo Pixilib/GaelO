@@ -13,13 +13,15 @@ Salim TODO :
 - Sur les action du superviseur faire passer l'etude appelée en query tag pour sécuriser le contexte dans lequel la ressource est appelée (en cas d'etude ancillaire si l'utilisateur est superviseur de l'étude principale la requette emise de l'étude ancillaire passera le RBAC )
   
 - Portage GaelO1 anonymisation RTSTRUCT et Viewers
-- Orthanc Send to peer
 - Mise en place scheduler, monitoring scheduler par email pourra etre personnalisé (ex que si nouveau patient...)
 
 --- Etudes ancillaires ---
 Tester Etudes ancillaire avec Emilie (voir return default data de review status si entitée non crée)
 Ne doit pas pouvoir faire les relance d'upload => Voir avec Emilie (probablement passer les info de study dans un contexte)
 --- /Etudes ancillaires ---
+
+**** Post Release ****
+- Orthanc Send to peer
 
 **** Tests ***
 Test feature : visit et autres (dicom...)
