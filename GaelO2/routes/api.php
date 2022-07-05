@@ -192,6 +192,7 @@ Route::middleware(['auth:sanctum', 'verified', 'activated'])->group(function () 
 */
 //Request Route
 Route::post('request', [RequestController::class, 'sendRequest']);
+Route::get('system', [AuthController::class, 'getSystem']);
 
 //Login Route
 Route::post('login', [AuthController::class, 'login'])->name('login');

@@ -47,4 +47,10 @@ class RequestTest extends TestCase
         $answer-> assertJsonStructure(["errorMessage"]);
 
     }
+
+    public function testSystemApi(){
+        $answer = $this->json('GET', '/api/system');
+        $answer-> assertStatus(200);
+        $answer-> assertJsonStructure(["version"]);
+    }
 }
