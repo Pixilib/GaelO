@@ -7,7 +7,7 @@ use Exception;
 class ExportReviewResults extends ExportDataResults{
 
     private ExportFile $xlsExport;
-    private ExportFile $investigatorFormCSV;
+    private Array $CSVExports = [];
     private ExportFile $reviewFormCSV;
 
     const EXPORT_INVESTIGATOR_FORM = 'InvestigatorsForms';
@@ -18,14 +18,12 @@ class ExportReviewResults extends ExportDataResults{
         parent::__construct(parent::EXPORT_TYPE_REVIEWS);
     }
 
-    public function addExportFile( string $type, string $path, string $key ){
+    public function addExportFile( string $type, string $path, ?string $key=null ){
 
         if($type === ExportDataResults::EXPORT_TYPE_XLS) {
             $this->xlsExport = new ExportFile('export_forms.xlsx', $path);
         }else if ($type === ExportDataResults::EXPORT_TYPE_CSV) {
-            if($key === self::EXPORT_INVESTIGATOR_FORM) $this->investigatorFormCSV = new ExportFile('export_investigator_forms.csv', $path);
-            else if($key===self::EXPORT_REVIEW_FORM) $this->reviewFormCSV = new ExportFile('export_review_forms.csv', $path);
-            else throw new Exception('Unknown Key Type');
+            $this->CSVExports[] = new ExportFile($key.'.csv', $path);
         }else{
             throw new Exception('Unknown File Type');
         }
@@ -37,7 +35,7 @@ class ExportReviewResults extends ExportDataResults{
     }
 
     public function getCsvExportFiles() : array {
-        return [$this->investigatorFormCSV, $this->reviewFormCSV];
+        return [...$this->CSVExports];
     }
 
     public function getZipExportFiles(): array {
