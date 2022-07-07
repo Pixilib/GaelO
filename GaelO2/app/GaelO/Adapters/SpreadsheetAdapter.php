@@ -68,7 +68,7 @@ class SpreadsheetAdapter implements SpreadsheetInterface {
             $row = [];
             //Loop each key in the title order to generate row of spreadsheet
             foreach($resultArray[0] as $key){
-                $row[] = $rowData[$key];
+                $row[] = $rowData[$key] ?? null;
             }
             $resultArray[] = $row;
         }

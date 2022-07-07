@@ -90,8 +90,9 @@ class TrackerRepositoryTest extends TestCase
         $trackerEntities = $this->trackerRepository->getTrackerOfRoleActionInStudy(Constants::ROLE_INVESTIGATOR, Constants::TRACKER_SAVE_REVIEWER_FORM, $studyName);
         $this->assertEquals(5, sizeof($trackerEntities));
         $this->assertArrayHasKey('visit', $trackerEntities[0]);
-        $this->assertArrayHasKey('review_status', $trackerEntities[0]['visit']);
         $this->assertArrayHasKey('visit_type', $trackerEntities[0]['visit']);
+        $this->assertArrayHasKey('patient', $trackerEntities[0]['visit']);
+        $this->assertArrayHasKey('visit_group', $trackerEntities[0]['visit']['visit_type']);
         $this->assertArrayHasKey('user', $trackerEntities[0]);
     }
 

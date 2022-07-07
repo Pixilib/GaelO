@@ -37,11 +37,13 @@ class TrackerEntity
     public function setVisitData(array $array) : void
     {
         $this->visit = new VisitEntity();
+        $this->visit->patient = new PatientEntity();
+        $this->visit->patient->code = $array['patient']['code'];
+        $this->visit->patient->id = $array['patient_id'];
         $this->visit->setVisitContext(
             $array['visit_type']['visit_group'],
             $array['visit_type']
         );
         $this->visit->fillFromDBReponseArray($array);
-        $this->visit->setReviewVisitStatus($array['review_status']['review_status'], $array['review_status']['review_conclusion_value'], $array['review_status']['review_conclusion_date'], $array['review_status']['target_lesions']);
     }
 }

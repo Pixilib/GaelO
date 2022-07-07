@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\GaelO\UseCases\CreateMagicLink\CreateMagicLink;
 use App\GaelO\UseCases\CreateMagicLink\CreateMagicLinkRequest;
 use App\GaelO\UseCases\CreateMagicLink\CreateMagicLinkResponse;
+use App\GaelO\UseCases\GetSystem\GetSystem;
+use App\GaelO\UseCases\GetSystem\GetSystemRequest;
+use App\GaelO\UseCases\GetSystem\GetSystemResponse;
 use App\GaelO\UseCases\Login\Login;
 use App\GaelO\UseCases\Login\LoginRequest;
 use App\GaelO\UseCases\Login\LoginResponse;
@@ -74,6 +77,13 @@ class AuthController extends Controller
 
         return $this->getJsonResponse($createMagicLinkResponse->body, $createMagicLinkResponse->status, $createMagicLinkResponse->statusText);
 
+    }
+
+    public function getSystem(Request $request, GetSystem $getSystem, GetSystemRequest $getSystemRequest, GetSystemResponse $getSystemResponse){
+        $currentUser = $request->user();
+        $getSystemRequest->currentUserId = $currentUser['id'];
+        $getSystem->execute($getSystemRequest, $getSystemResponse);
+        return $this->getJsonResponse($getSystemResponse->body, $getSystemResponse->status, $getSystemResponse->statusText);
     }
 
 }
