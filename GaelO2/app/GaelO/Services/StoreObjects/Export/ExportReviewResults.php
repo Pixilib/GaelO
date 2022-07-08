@@ -8,7 +8,6 @@ class ExportReviewResults extends ExportDataResults{
 
     private ExportFile $xlsExport;
     private Array $CSVExports = [];
-    private ExportFile $reviewFormCSV;
 
     const EXPORT_INVESTIGATOR_FORM = 'InvestigatorsForms';
     const EXPORT_REVIEW_FORM = 'ReviewersForms';

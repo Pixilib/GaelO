@@ -13,12 +13,10 @@ use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\UserRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\VisitTypeRepositoryInterface;
-use App\GaelO\Services\FormService\FormService;
 use App\GaelO\Services\StoreObjects\Export\ExportDataResults;
 use App\GaelO\Services\StoreObjects\Export\ExportDicomResults;
 use App\GaelO\Services\StoreObjects\Export\ExportFileResults;
 use App\GaelO\Services\StoreObjects\Export\ExportPatientResults;
-use App\GaelO\Services\StoreObjects\Export\ExportReviewData;
 use App\GaelO\Services\StoreObjects\Export\ExportReviewDataCollection;
 use App\GaelO\Services\StoreObjects\Export\ExportReviewResults;
 use App\GaelO\Services\StoreObjects\Export\ExportStudyResults;
@@ -38,7 +36,6 @@ class ExportStudyService
     private DicomStudyRepositoryInterface $dicomStudyRepositoryInterface;
     private DicomSeriesRepositoryInterface $dicomSeriesRepositoryInterface;
     private ReviewRepositoryInterface $reviewRepositoryInterface;
-    private FormService $formService;
     private ExportStudyResults $exportStudyResults;
     private TrackerRepositoryInterface $trackerRepositoryInterface;
 
@@ -53,7 +50,6 @@ class ExportStudyService
         DicomSeriesRepositoryInterface $dicomSeriesRepositoryInterface,
         ReviewRepositoryInterface $reviewRepositoryInterface,
         TrackerRepositoryInterface $trackerRepositoryInterface,
-        FormService $formService,
         ExportStudyResults $exportStudyResults,
         FrameworkInterface $frameworkInterface
     ) {
@@ -64,7 +60,6 @@ class ExportStudyService
         $this->dicomStudyRepositoryInterface = $dicomStudyRepositoryInterface;
         $this->dicomSeriesRepositoryInterface = $dicomSeriesRepositoryInterface;
         $this->reviewRepositoryInterface = $reviewRepositoryInterface;
-        $this->formService = $formService;
         $this->exportStudyResults = $exportStudyResults;
         $this->trackerRepositoryInterface = $trackerRepositoryInterface;
         $this->frameworkInterface = $frameworkInterface;
@@ -218,19 +213,19 @@ class ExportStudyService
     public function exportReviewerForms(): void
     {
         $reviewEntities = $this->reviewRepositoryInterface->getReviewsFromVisitIdArrayStudyName($this->visitIdArray, $this->studyName, false);
-        $this->groupReviewPerVisitType($reviewEntities, false);
+        $this->groupReviewPerVisitType($reviewEntities, Constants::ROLE_REVIEWER);
     }
 
     public function exportInvestigatorForms(): void
     {
         $investigatorForms = $this->reviewRepositoryInterface->getInvestigatorsFormsFromVisitIdArrayStudyName($this->visitIdArray, $this->studyName, false);
-        $this->groupReviewPerVisitType($investigatorForms, true);
+        $this->groupReviewPerVisitType($investigatorForms, Constants::ROLE_INVESTIGATOR);
     }
 
-    private function groupReviewPerVisitType(array $reviewEntities, bool $investigator): void
+    private function groupReviewPerVisitType(array $reviewEntities, string $role): void
     {
 
-        $exportReviewDataCollection = new ExportReviewDataCollection($this->studyName);
+        $exportReviewDataCollection = new ExportReviewDataCollection($this->studyName, $role);
 
         //Sort review into object to isolate each visit results
         foreach ($reviewEntities as $reviewEntity) {
@@ -248,19 +243,13 @@ class ExportStudyService
             $visitGroupName = $exportReviewData->getVisitGroupName();
             $visitTypeName = $exportReviewData->getVisitTypeName();
 
-            $sheetName =  ($investigator ? 'investigator' : 'reviewer') . '_' . $visitGroupName . '_' . $visitTypeName;
+            $sheetName =  $role . '_' . $visitGroupName . '_' . $visitTypeName;
 
-            if ($investigator) {
-                $specificInputs = $this->formService->getSpecificStudiesRules($this->studyName, $visitGroupName, $visitTypeName)->getInvestigatorInputNames();
-            } else {
-                $specificInputs = $this->formService->getSpecificStudiesRules($this->studyName, $visitGroupName, $visitTypeName)->getReviewerInputNames();
-            }
-
+            //get formatted date from export review data
             $data = $exportReviewData->getData();
-            $columns = array_unique([...array_keys($data), ...$specificInputs]);
 
             $spreadsheetAdapter->addSheet($sheetName);
-            $spreadsheetAdapter->fillData($sheetName, $data, $columns);
+            $spreadsheetAdapter->fillData($sheetName, $data);
 
             $tempCsvFileName = $spreadsheetAdapter->writeToCsv($sheetName);
             $exportReviewResults->addExportFile(ExportDataResults::EXPORT_TYPE_CSV, $tempCsvFileName, $sheetName);

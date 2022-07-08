@@ -5,11 +5,13 @@ namespace App\GaelO\Services\StoreObjects\Export;
 class ExportReviewDataCollection
 {
     private string $studyName;
+    private string $role;
     private array $exportReviewDatas = [];
 
-    public function __construct(string $studyName)
+    public function __construct(string $studyName, string $role)
     {
         $this->studyName = $studyName;
+        $this->role = $role;
     }
 
     private function getExportData(string $visitGroupName, string $visitTypeName): ExportReviewData
@@ -19,7 +21,9 @@ class ExportReviewDataCollection
 
     private function createExportData(string $visitGroupName, string $visitTypeName): void
     {
-        $this->exportReviewDatas[$visitGroupName . '_' . $visitTypeName] = new ExportReviewData($this->studyName, $visitGroupName, $visitTypeName);
+        $exportReviewData = new ExportReviewData();
+        $exportReviewData->setContext($this->studyName, $visitGroupName, $visitTypeName, $this->role);
+        $this->exportReviewDatas[$visitGroupName . '_' . $visitTypeName] = $exportReviewData;
     }
 
     private function isExisitingExportData(string $visitGroupName, string $visitTypeName): bool

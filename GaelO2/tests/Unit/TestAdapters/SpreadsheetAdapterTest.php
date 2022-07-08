@@ -28,7 +28,7 @@ class SpreadsheetAdapterTest extends TestCase
             ]
         ];
 
-        $this->spreadsheetAdapter->fillData('TestSalim', $data, ['title1', 'title2', 'title3']);
+        $this->spreadsheetAdapter->fillData('TestSalim', $data);
         //Create Temp file to be automatically collected
         $tempFile = tmpfile();
         $tempFileMetadata = stream_get_meta_data($tempFile);

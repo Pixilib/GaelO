@@ -2,8 +2,6 @@
 
 namespace App\GaelO\Services\StoreObjects\Export;
 
-use Illuminate\Log\Logger;
-use Illuminate\Support\Facades\Log;
 use ZipArchive;
 
 class ExportStudyResults {

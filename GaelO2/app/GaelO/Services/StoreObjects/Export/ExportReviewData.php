@@ -2,19 +2,34 @@
 
 namespace App\GaelO\Services\StoreObjects\Export;
 
+use App\GaelO\Adapters\FrameworkAdapter;
+use App\GaelO\Constants\Constants;
+use App\GaelO\Services\FormService\FormService;
+
 class ExportReviewData
 {
 
+    private FormService $formService;
     private string $studyName;
     private string $visitGroupName;
     private string $visitTypeName;
+    private array $specificColumnNames;
     private array $data = [];
 
-    public function __construct(string $studyName, string $visitGroupName, string $visitTypeName)
+    public function __construct()
+    {
+        $this->formService = FrameworkAdapter::make(FormService::class);
+    }
+
+    public function setContext(string $studyName, string $visitGroupName, string $visitTypeName, string $role)
     {
         $this->studyName = $studyName;
         $this->visitGroupName = $visitGroupName;
         $this->visitTypeName = $visitTypeName;
+        $this->role = $role;
+        $studyRules = $this->formService->getSpecificStudiesRules($studyName, $visitGroupName, $visitTypeName);
+        if ($role === Constants::ROLE_INVESTIGATOR) $this->specificColumnNames = $studyRules->getInvestigatorInputNames();
+        if ($role === Constants::ROLE_REVIEWER) $this->specificColumnNames= $studyRules->getReviewerInputNames();
     }
 
     public function getVisitGroupName(): string
@@ -27,8 +42,9 @@ class ExportReviewData
         return $this->visitTypeName;
     }
 
-    public function getColumns(){
-        return [... array_keys($this->data[0]), ... $this->specificColumns];
+    public function getColumns()
+    {
+        return [...array_keys($this->data[0]), ...$this->specificColumns];
     }
 
     public function addData(array $data): void
@@ -39,11 +55,18 @@ class ExportReviewData
     public function getData(): array
     {
         $rows = [];
-        foreach($this->data as $review){
-            $reviewData = $review['review_data'];
-            unset($review['review_data']);
-            $review['sent_files'] = json_encode($review['sent_files']);
-            $rows[] = array_merge($review, $reviewData);
+        foreach ($this->data as $review) {
+            $reviewEntity = $review;
+            $reviewEntity['sent_files'] = json_encode($review['sent_files']);
+            $reviewData = [];
+            foreach($this->specificColumnNames as $name){
+                $reviewData[$name] = $reviewEntity['review_data'][$name] ?? null;
+            }
+            unset($reviewEntity['review_data']);
+            $rows[] = [
+                ...$reviewEntity,
+                ...$reviewData
+            ]
         }
 
         return $rows;
