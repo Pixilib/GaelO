@@ -22,6 +22,10 @@ class SpreadsheetAdapter implements SpreadsheetInterface {
         $workSheet->setTitle($title);
     }
 
+    /**
+     * Data should be in key => value array,
+     * keys should be identical for all records
+     */
     public function fillData(string $spreadsheetName, array $data) : void {
         $inputArray = [];
         if(sizeof($data)>0) $inputArray = $this->generateArrayForSpreadSheet($data);
@@ -55,9 +59,7 @@ class SpreadsheetAdapter implements SpreadsheetInterface {
 
     private function generateArrayForSpreadSheet(array $data) : array {
 
-        $resultArray = [];
-
-        //Extract title from the first database row
+        //Generate title using the key of the first record
         $titles = array_keys($data[0]);
 
         //Generate the title row

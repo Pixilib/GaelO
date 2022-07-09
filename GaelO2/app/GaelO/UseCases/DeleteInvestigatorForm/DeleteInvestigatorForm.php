@@ -64,7 +64,7 @@ class DeleteInvestigatorForm
             if ($visitContext['state_quality_control'] !== Constants::QUALITY_CONTROL_NOT_NEEDED) $this->visitRepositoryInterface->resetQc($visitContext['id']);
 
             $actionDetails = [
-                'Visit Group Name' => $visitContext['visit_type']['visit_group']['name'],
+                'visit_group_name' => $visitContext['visit_type']['visit_group']['name'],
                 'modality' => $visitContext['visit_type']['visit_group']['modality'],
                 'visit_type' => $visitContext['visit_type']['name'],
                 'patient_id' => $visitContext['patient_id'],

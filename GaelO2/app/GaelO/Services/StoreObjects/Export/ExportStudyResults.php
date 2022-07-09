@@ -2,8 +2,6 @@
 
 namespace App\GaelO\Services\StoreObjects\Export;
 
-use Illuminate\Log\Logger;
-use Illuminate\Support\Facades\Log;
 use ZipArchive;
 
 class ExportStudyResults {
@@ -12,6 +10,7 @@ class ExportStudyResults {
     private ExportVisitsResults $exportVisitResults;
     private ExportDicomResults $exportDicomResults;
     private ExportReviewResults $exportReviewResults;
+    private ExportReviewResults $exportInvestigatorFormResults;
     private ExportTrackerResults $exportTrackerResults;
     private ExportUserResults $exportUserResults;
     private ExportFileResults $exportFileResults;
@@ -30,6 +29,10 @@ class ExportStudyResults {
 
     public function setExportReviewResults(ExportReviewResults $exportReviewResults){
         $this->exportReviewResults = $exportReviewResults;
+    }
+
+    public function setExportInvestigatorFormResults(ExportReviewResults $exportReviewResults){
+        $this->exportInvestigatorFormResults = $exportReviewResults;
     }
 
     public function setTrackerReviewResults(ExportTrackerResults $exportTrackerResults){
@@ -73,6 +76,7 @@ class ExportStudyResults {
             $this->exportPatientResults,
             $this->exportDicomResults,
             $this->exportReviewResults,
+            $this->exportInvestigatorFormResults,
             $this->exportVisitResults,
             $this->exportTrackerResults,
             $this->exportUserResults,

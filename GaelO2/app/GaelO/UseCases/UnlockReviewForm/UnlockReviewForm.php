@@ -80,10 +80,11 @@ class UnlockReviewForm
             $this->reviewFormService->unlockReview($reviewId);
 
             $actionDetails = [
-                'modality' => $visitContext['visit_type']['visit_group']['modality'],
-                'visit_type' => $visitContext['visit_type']['name'],
+                'visit_group_name' =>$visitContext['visit_type']['visit_group']['name'],
+                'visit_group_modality' => $visitContext['visit_type']['visit_group']['modality'],
+                'visit_type_name' => $visitContext['visit_type']['name'],
                 'patient_id' => $visitContext['patient_id'],
-                'id_review' => $reviewId,
+                'review_id' => $reviewId,
                 'reason' => $reason
             ];
 

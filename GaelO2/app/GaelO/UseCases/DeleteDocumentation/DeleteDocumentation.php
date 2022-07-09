@@ -40,9 +40,9 @@ class DeleteDocumentation
             $this->documentationRepositoryInterface->delete($documentationId);
 
             $actionDetails = [
-                'documentationId' => $documentationId,
-                'documenationName' => $documentationEntity['name'],
-                'documenationVersion' => $documentationEntity['version']
+                'id' => $documentationId,
+                'name' => $documentationEntity['name'],
+                'version' => $documentationEntity['version']
             ];
 
             $this->trackerRepositoryInterface->writeAction(

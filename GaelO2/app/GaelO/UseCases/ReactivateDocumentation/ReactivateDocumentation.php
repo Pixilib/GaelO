@@ -41,7 +41,7 @@ class ReactivateDocumentation
 
             //Tracker
             $actionDetails = [
-                'documentationId' => $documentationEntity['id'],
+                'documentation_id' => $documentationEntity['id'],
                 'name' => $documentationEntity['name'],
                 'version' => $documentationEntity['version'],
             ];

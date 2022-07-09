@@ -43,6 +43,7 @@ class ModifyQualityControl
             $patientId = $visitContext['patient']['id'];
             $patientCode = $visitContext['patient']['code'];
             $visitType = $visitContext['visit_type']['name'];
+            $visitGroupName = $visitContext['visit_type']['visit_group']['name'];
             $visitModality = $visitContext['visit_type']['visit_group']['modality'];
             $centerCode = $visitContext['patient']['center_code'];
             $creatorId = $visitContext['creator_user_id'];
@@ -80,6 +81,7 @@ class ModifyQualityControl
             $actionDetails = [
                 'patient_id' => $patientId,
                 'visit_type' => $visitType,
+                'visit_group_name' => $visitGroupName,
                 'vist_group_modality' => $visitModality,
                 'form_accepted' => $modifyQualityControlRequest->formQc,
                 'image_accepted' => $modifyQualityControlRequest->imageQc,

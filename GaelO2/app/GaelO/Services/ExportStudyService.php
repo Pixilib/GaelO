@@ -17,6 +17,7 @@ use App\GaelO\Services\StoreObjects\Export\ExportDataResults;
 use App\GaelO\Services\StoreObjects\Export\ExportDicomResults;
 use App\GaelO\Services\StoreObjects\Export\ExportFileResults;
 use App\GaelO\Services\StoreObjects\Export\ExportPatientResults;
+use App\GaelO\Services\StoreObjects\Export\ExportReviewDataCollection;
 use App\GaelO\Services\StoreObjects\Export\ExportReviewResults;
 use App\GaelO\Services\StoreObjects\Export\ExportStudyResults;
 use App\GaelO\Services\StoreObjects\Export\ExportTrackerResults;
@@ -25,7 +26,10 @@ use App\GaelO\Services\StoreObjects\Export\ExportVisitsResults;
 use App\GaelO\Util;
 use ZipArchive;
 
-class ExportStudyService {
+use Illuminate\Support\Facades\Log;
+
+class ExportStudyService
+{
 
     private UserRepositoryInterface $userRepositoryInterface;
     private PatientRepositoryInterface $patientRepositoryInterface;
@@ -36,7 +40,6 @@ class ExportStudyService {
     private ReviewRepositoryInterface $reviewRepositoryInterface;
     private ExportStudyResults $exportStudyResults;
     private TrackerRepositoryInterface $trackerRepositoryInterface;
-    private FrameworkInterface $frameworkInterface;
 
     private string $studyName;
 
@@ -50,8 +53,8 @@ class ExportStudyService {
         ReviewRepositoryInterface $reviewRepositoryInterface,
         TrackerRepositoryInterface $trackerRepositoryInterface,
         ExportStudyResults $exportStudyResults,
-        FrameworkInterface $frameworkInterface)
-    {
+        FrameworkInterface $frameworkInterface
+    ) {
         $this->userRepositoryInterface = $userRepositoryInterface;
         $this->patientRepositoryInterface = $patientRepositoryInterface;
         $this->visitTypeRepositoryInterface = $visitTypeRepositoryInterface;
@@ -64,7 +67,8 @@ class ExportStudyService {
         $this->frameworkInterface = $frameworkInterface;
     }
 
-    public function setStudyName(string $studyName){
+    public function setStudyName(string $studyName)
+    {
         $this->studyName = $studyName;
 
         //List Visit Type of this study
@@ -72,10 +76,10 @@ class ExportStudyService {
 
         $visitTypeArray = [];
 
-        foreach($visitTypes as $visitType){
-            $visitTypeArray[ $visitType['id'] ] = [
-                'modality'=>$visitType['visit_group']['modality'],
-                'name'=>$visitType['name']
+        foreach ($visitTypes as $visitType) {
+            $visitTypeArray[$visitType['id']] = [
+                'visit_group_name' => $visitType['visit_group']['name'],
+                'visit_type_name' => $visitType['name']
             ];
         }
 
@@ -84,19 +88,21 @@ class ExportStudyService {
         //Store Id of visits of this study
         $this->availableVisits = $this->visitRepositoryInterface->getVisitsInStudy($this->studyName, true, false, true);
 
-        $this->visitIdArray = array_map(function($visit){
+        $this->visitIdArray = array_map(function ($visit) {
             return $visit['id'];
         }, $this->availableVisits);
-
     }
 
-    public function exportUsersOfStudy() : void {
+    public function exportUsersOfStudy(): void
+    {
         $users = $this->userRepositoryInterface->getUsersFromStudy($this->studyName);
 
         $usersData = [];
         //Select only needed info and concatenate roles in a string
-        foreach($users as $user){
-            $roles = array_map(function($role){return $role['name'];}, $user['roles']);
+        foreach ($users as $user) {
+            $roles = array_map(function ($role) {
+                return $role['name'];
+            }, $user['roles']);
             $usersData[] = [
                 'id' => $user['id'],
                 'lastname' => $user['lastname'],
@@ -118,7 +124,8 @@ class ExportStudyService {
         $this->exportStudyResults->setUserResults($exportPatientResults);
     }
 
-    public function exportPatientTable() : void {
+    public function exportPatientTable(): void
+    {
         $patientData = $this->patientRepositoryInterface->getPatientsInStudy($this->studyName);
         $spreadsheetAdapter = new SpreadsheetAdapter();
         $spreadsheetAdapter->addSheet('Patients');
@@ -133,27 +140,27 @@ class ExportStudyService {
         $this->exportStudyResults->setExportPatientResults($exportPatientResults);
     }
 
-    public function exportVisitTable() : void {
+    public function exportVisitTable(): void
+    {
 
         $spreadsheetAdapter = new SpreadsheetAdapter();
 
         $resultsData = [];
 
         //Loop each visitType and export data for each one
-        foreach($this->availableVisits as $visit){
+        foreach ($this->availableVisits as $visit) {
             //Determine Sheet Name
-            $visitTypeDetails = $this->visitTypeArray[ $visit['visit_type']['id'] ];
-            $sheetName = $visitTypeDetails['modality'].'_'.$visitTypeDetails['name'];
+            $visitTypeDetails = $this->visitTypeArray[$visit['visit_type']['id']];
+            $sheetName = $visitTypeDetails['visit_group_name'] . '_' . $visitTypeDetails['visit_type_name'];
             unset($visit['visit_type']);
             unset($visit['patient']);
             //transform target_lesions as json string
             $visit['review_status']['target_lesions'] = json_encode($visit['review_status']['target_lesions']);
 
-            $resultsData[$sheetName][]=array_merge( [ 'modality'=> $visitTypeDetails['modality'], 'visit_type' => $visitTypeDetails['name']] , $visit, $visit['review_status'] );
-
+            $resultsData[$sheetName][] = array_merge(['visit_group' => $visitTypeDetails['visit_group_name'], 'visit_type' => $visitTypeDetails['visit_type_name']], $visit, $visit['review_status']);
         }
 
-        foreach($resultsData as $sheetName => $value){
+        foreach ($resultsData as $sheetName => $value) {
             $spreadsheetAdapter->addSheet($sheetName);
             $spreadsheetAdapter->fillData($sheetName, $value);
         }
@@ -164,16 +171,16 @@ class ExportStudyService {
         $exportVisitResults = new ExportVisitsResults();
         $exportVisitResults->addExportFile(ExportDataResults::EXPORT_TYPE_XLS, $tempFileNameXls);
 
-        foreach($resultsData as $sheetName => $value){
+        foreach ($resultsData as $sheetName => $value) {
             $tempCsvFileName = $spreadsheetAdapter->writeToCsv($sheetName);
             $exportVisitResults->addExportFile(ExportDataResults::EXPORT_TYPE_CSV, $tempCsvFileName, $sheetName);
         }
 
         $this->exportStudyResults->setExportVisitResults($exportVisitResults);
-
     }
 
-    public function exportDicomsTable() : void {
+    public function exportDicomsTable(): void
+    {
 
         $spreadsheetAdapter = new SpreadsheetAdapter();
 
@@ -181,7 +188,7 @@ class ExportStudyService {
         $spreadsheetAdapter->addSheet('DicomStudies');
         $spreadsheetAdapter->fillData('DicomStudies', $dicomStudyData);
 
-        $studyInstanceUIDArray = array_map(function ($studyEntity){
+        $studyInstanceUIDArray = array_map(function ($studyEntity) {
             return $studyEntity['study_uid'];
         }, $dicomStudyData);
 
@@ -197,65 +204,77 @@ class ExportStudyService {
         $exportDicomResults->addExportFile(ExportDataResults::EXPORT_TYPE_XLS, $tempFileNameXls);
 
         $sheets = ['DicomStudies', 'DicomSeries'];
-        foreach($sheets as $sheet){
+        foreach ($sheets as $sheet) {
             $tempFileNameCsv = $spreadsheetAdapter->writeToCsv($sheet);
             $exportDicomResults->addExportFile(ExportDataResults::EXPORT_TYPE_CSV, $tempFileNameCsv, $sheet);
         }
 
         $this->exportStudyResults->setExportDicomResults($exportDicomResults);
-
     }
 
-    public function exportReviewTable() : void {
+    public function exportReviewerForms(): void
+    {
+        $reviewEntities = $this->reviewRepositoryInterface->getReviewsFromVisitIdArrayStudyName($this->visitIdArray, $this->studyName, false);
+        $this->groupReviewPerVisitType($reviewEntities, Constants::ROLE_REVIEWER);
+    }
 
-        $spreadsheetAdapter = new SpreadsheetAdapter();
+    public function exportInvestigatorForms(): void
+    {
+        $investigatorForms = $this->reviewRepositoryInterface->getInvestigatorsFormsFromVisitIdArrayStudyName($this->visitIdArray, $this->studyName, false);
+        $this->groupReviewPerVisitType($investigatorForms, Constants::ROLE_INVESTIGATOR);
+    }
 
-        $reviewData = $this->reviewRepositoryInterface->getReviewsFromVisitIdArrayStudyName($this->visitIdArray, $this->studyName, true);
+    private function groupReviewPerVisitType(array $reviewEntities, string $role): void
+    {
 
-        $localForms = $this->reviewRepositoryInterface->getInvestigatorsFormsFromVisitIdArrayStudyName($this->visitIdArray, $this->studyName, true);
+        $exportReviewDataCollection = new ExportReviewDataCollection($this->studyName, $role);
 
-        //Flatten the nested review status
-        $reviewersForms = array_map(function($review){
-            $reviewData = $review['review_data'];
-            $review['sent_files'] = json_encode($review['sent_files']);
-            unset($review['review_data']);
-            return array_merge($review, $reviewData);
-        }, $reviewData);
-
-        $investigatorsForms = array_map(function($review){
-            $reviewData = $review['review_data'];
-            $review['sent_files'] = json_encode($review['sent_files']);
-            unset($review['review_data']);
-            return array_merge($review, $reviewData);
-        }, $localForms);
-
-        $spreadsheetAdapter->addSheet('InvestigatorsForms');
-        $spreadsheetAdapter->fillData('InvestigatorsForms', $investigatorsForms);
-        $spreadsheetAdapter->addSheet('ReviewersForms');
-        $spreadsheetAdapter->fillData('ReviewersForms', $reviewersForms);
-
-        $tempFileNameXls = $spreadsheetAdapter->writeToExcel();
-
-        $exportReviewResults = new ExportReviewResults();
-        $exportReviewResults->addExportFile(ExportDataResults::EXPORT_TYPE_XLS, $tempFileNameXls);
-
-        $sheets = ['InvestigatorsForms', 'ReviewersForms'];
-        foreach($sheets as $sheet){
-            $tempFileNameCsv = $spreadsheetAdapter->writeToCsv($sheet);
-            $exportReviewResults->addExportFile(ExportDataResults::EXPORT_TYPE_CSV, $tempFileNameCsv, $sheet);
+        //Sort review into object to isolate each visit results
+        foreach ($reviewEntities as $reviewEntity) {
+            $visitTypeDetails = $this->visitTypeArray[$reviewEntity['visit_id']];
+            $exportReviewDataCollection->addData($visitTypeDetails['visit_group_name'], $visitTypeDetails['visit_type_name'], $reviewEntity);
         }
 
-        $this->exportStudyResults->setExportReviewResults($exportReviewResults);
+        $exportReviewResults = new ExportReviewResults();
+        $spreadsheetAdapter = new SpreadsheetAdapter();
 
+        $dataCollection = $exportReviewDataCollection->getCollection();
+
+        //Treat each visits type review's
+        foreach ($dataCollection as $exportReviewData) {
+            $visitGroupName = $exportReviewData->getVisitGroupName();
+            $visitTypeName = $exportReviewData->getVisitTypeName();
+
+            $sheetName =  $role . '_' . $visitGroupName . '_' . $visitTypeName;
+
+            //get formatted date from export review data
+            $data = $exportReviewData->getData();
+            Log::info($data);
+            $spreadsheetAdapter->addSheet($sheetName);
+            $spreadsheetAdapter->fillData($sheetName, $data);
+
+            $tempCsvFileName = $spreadsheetAdapter->writeToCsv($sheetName);
+            $exportReviewResults->addExportFile(ExportDataResults::EXPORT_TYPE_CSV, $tempCsvFileName, $sheetName);
+        }
+
+        $tempFileNameXls = $spreadsheetAdapter->writeToExcel();
+        $exportReviewResults->addExportFile(ExportDataResults::EXPORT_TYPE_XLS, $tempFileNameXls);
+        if ($role === Constants::ROLE_REVIEWER) {
+            $this->exportStudyResults->setExportReviewResults($exportReviewResults);
+        }
+        if ($role === Constants::ROLE_INVESTIGATOR) {
+            $this->exportStudyResults->setExportInvestigatorFormResults($exportReviewResults);
+        }
     }
 
-    public function exportTrackerTable() : void {
+    public function exportTrackerTable(): void
+    {
 
         $spreadsheetAdapter = new SpreadsheetAdapter();
 
         $roleArray = [Constants::ROLE_INVESTIGATOR, Constants::ROLE_CONTROLLER, Constants::ROLE_REVIEWER, Constants::ROLE_SUPERVISOR];
 
-        foreach($roleArray as $role){
+        foreach ($roleArray as $role) {
             $trackerData = $this->trackerRepositoryInterface->getTrackerOfRoleAndStudy($this->studyName, $role, false);
             $sheets[] = $role;
             $spreadsheetAdapter->addSheet($role);
@@ -267,19 +286,18 @@ class ExportStudyService {
         $tempFileNameXls = $spreadsheetAdapter->writeToExcel();
         $exportTrackerResult->addExportFile(ExportDataResults::EXPORT_TYPE_XLS, $tempFileNameXls);
 
-        foreach($sheets as $sheet){
+        foreach ($sheets as $sheet) {
             $tempFileNameCsv = $spreadsheetAdapter->writeToCsv($sheet);
             $exportTrackerResult->addExportFile(ExportDataResults::EXPORT_TYPE_CSV, $tempFileNameCsv, $sheet);
         }
 
         $this->exportStudyResults->setTrackerReviewResults($exportTrackerResult);
-
-
     }
 
-    public function exportAssociatedFiles() : void {
-        $zip=new ZipArchive();
-        $tempZip=tempnam(ini_get('upload_tmp_dir'), 'TMPZIP_'.$this->studyName.'_');
+    public function exportAssociatedFiles(): void
+    {
+        $zip = new ZipArchive();
+        $tempZip = tempnam(ini_get('upload_tmp_dir'), 'TMPZIP_' . $this->studyName . '_');
         $zip->open($tempZip, ZipArchive::OVERWRITE);
         //Add a file to create zip
         $zip->addFromString('Readme', 'Folder Containing associated files to study');
@@ -292,10 +310,8 @@ class ExportStudyService {
         $this->exportStudyResults->setExportFileResults($exporFileResult);
     }
 
-    public function getExportStudyResult () : ExportStudyResults {
+    public function getExportStudyResult(): ExportStudyResults
+    {
         return $this->exportStudyResults;
     }
-
-
-
 }

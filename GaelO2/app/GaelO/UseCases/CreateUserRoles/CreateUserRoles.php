@@ -53,7 +53,7 @@ class CreateUserRoles
             //Write in database and return sucess response (error will be handled by laravel)
             $this->userRepositoryInterface->addUserRoleInStudy($userId, $studyName, $createRoleRequest->role);
             $actionDetails = [
-                "New role" => $role
+                "new_role" => $role
             ];
             $this->trackerRepositoryInterface->writeAction($currentUserId, Constants::TRACKER_ROLE_ADMINISTRATOR, $studyName, null, Constants::TRACKER_EDIT_USER, $actionDetails);
 

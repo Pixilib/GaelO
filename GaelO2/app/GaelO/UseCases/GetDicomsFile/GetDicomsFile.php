@@ -41,14 +41,14 @@ class GetDicomsFile
             //Visits data
             $visitContext = $this->visitRepositoryInterface->getVisitContext($visitId, false);
             $visitType = $visitContext['visit_type']['name'];
-            $visitGroup =  $visitContext['visit_type']['visit_group']['modality'];
+            $visitGroupName =  $visitContext['visit_type']['visit_group']['name'];
             $patientId = $visitContext['patient']['id'];
 
             //Get SeriesOrthancID from database to be downloaded
             $this->orthancSeriesIDs = $this->getVisitSeriesIdsDicomArray($visitContext['id']);
 
             //First output the filename, then the controller will call outputStream to get content of orthanc response
-            $getDicomsResponse->filename = 'DICOM_' . $studyName . '_' . $visitGroup . '_' . $visitType . '_' . $patientId . '.zip';
+            $getDicomsResponse->filename = 'DICOM_' . $studyName . '_' . $visitGroupName . '_' . $visitType . '_' . $patientId . '.zip';
             $getDicomsResponse->status = 200;
             $getDicomsResponse->statusText = 'OK';
         } catch (GaelOException $e) {

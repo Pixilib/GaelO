@@ -36,8 +36,8 @@ class DeleteAffiliatedCenter
             $this->userRepositoryInterface->deleteAffiliatedCenter($deleteAffiliatedCenterRequest->userId, $deleteAffiliatedCenterRequest->centerCode);
 
             $actionDetails = [
-                'userId' => $deleteAffiliatedCenterRequest->userId,
-                'deletedAffiliatedCenters' => $deleteAffiliatedCenterRequest->centerCode
+                'user_id' => $deleteAffiliatedCenterRequest->userId,
+                'deleted_affiliated_center' => $deleteAffiliatedCenterRequest->centerCode
             ];
 
             $this->trackerRepositoryInterface->writeAction($currentUserId, Constants::TRACKER_ROLE_ADMINISTRATOR, null, null, Constants::TRACKER_EDIT_USER, $actionDetails);
