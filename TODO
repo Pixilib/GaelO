@@ -1,19 +1,20 @@
 Salim TODO :
-- ExportStudyService = > A revoir !
 
 - Refac SendMail est complexe probablement a splitter
+  
 - Refac : Pluger GetPossibleUpload sur VisitEntity pour la réponse (nécéssite d'updater V1)
-
 - Get Creatable Visit, retourner les visitType entity des créables ? 
 - CreateVisit => Verifier que la visite à creer est bien créable niveau backend
 
 - Optimiser l'utilisation des authorization service en injectant les data depuis le usecase (ou les rendre stateless)
 - Optimiser le service visit en injectant directement le visit context
 
-- Sur les action du superviseur faire passer l'etude appelée en query tag pour sécuriser le contexte dans lequel la ressource est appelée (en cas d'etude ancillaire si l'utilisateur est superviseur de l'étude principale la requette emise de l'étude ancillaire passera le RBAC )
+- Sur les action du superviseur faire passer l'etude appelée en query tag pour sécuriser le contexte dans lequel la ressource est appelée (en cas d'etude ancillaire si l'utilisateur est superviseur de l'étude principale la requette emise de l'étude ancillaire passera le RBAC)
   
 - Portage GaelO1 anonymisation RTSTRUCT et Viewers
 - Mise en place scheduler, monitoring scheduler par email pourra etre personnalisé (ex que si nouveau patient...)
+
+- ExportStudyService => facotring a reflechir et A tester avec data
 
 --- Etudes ancillaires ---
 Tester Etudes ancillaire avec Emilie (voir return default data de review status si entitée non crée)
