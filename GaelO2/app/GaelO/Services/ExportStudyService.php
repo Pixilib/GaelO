@@ -26,6 +26,8 @@ use App\GaelO\Services\StoreObjects\Export\ExportVisitsResults;
 use App\GaelO\Util;
 use ZipArchive;
 
+use Illuminate\Support\Facades\Log;
+
 class ExportStudyService
 {
 
@@ -247,7 +249,7 @@ class ExportStudyService
 
             //get formatted date from export review data
             $data = $exportReviewData->getData();
-
+            Log::info($data);
             $spreadsheetAdapter->addSheet($sheetName);
             $spreadsheetAdapter->fillData($sheetName, $data);
 
@@ -257,7 +259,12 @@ class ExportStudyService
 
         $tempFileNameXls = $spreadsheetAdapter->writeToExcel();
         $exportReviewResults->addExportFile(ExportDataResults::EXPORT_TYPE_XLS, $tempFileNameXls);
-        $this->exportStudyResults->setExportReviewResults($exportReviewResults);
+        if ($role === Constants::ROLE_REVIEWER) {
+            $this->exportStudyResults->setExportReviewResults($exportReviewResults);
+        }
+        if ($role === Constants::ROLE_INVESTIGATOR) {
+            $this->exportStudyResults->setExportInvestigatorFormResults($exportReviewResults);
+        }
     }
 
     public function exportTrackerTable(): void
