@@ -59,9 +59,17 @@ class ModifyDocumentation
                 $documentation['reviewer']
             );
 
-            $actionDetails = $documentation;
+            $actionDetails = [
+                'id' => $documentation['id'],
+                'name' => $documentation['name'],
+                'version' => $documentation['version'],
+                'investigator' => $documentation['investigator'],
+                'controller' => $documentation['controller'],
+                'monitor' => $documentation['monitor'],
+                'reviewer' => $documentation['reviewer']
+            ];
 
-            $this->trackerRepositoryInterface->writeAction($modifyDocumentationRequest->currentUserId, Constants::TRACKER_ROLE_USER, null, null, Constants::TRACKER_UPDATE_DOCUMENTATION, $actionDetails);
+            $this->trackerRepositoryInterface->writeAction($modifyDocumentationRequest->currentUserId, Constants::TRACKER_ROLE_USER, $studyName, null, Constants::TRACKER_UPDATE_DOCUMENTATION, $actionDetails);
 
             $modifyDocumentationResponse->status = 200;
             $modifyDocumentationResponse->statusText = 'OK';
