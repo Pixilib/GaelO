@@ -49,16 +49,4 @@ class RequestTest extends TestCase
 
     }
 
-    public function testSystemApi(){
-        AuthorizationTools::actAsAdmin(true);
-        $answer = $this->json('GET', '/api/system');
-        $answer-> assertStatus(200);
-        $answer-> assertJsonStructure(["version"]);
-    }
-
-    public function testSystemApiShouldFailNotAdmin(){
-        AuthorizationTools::actAsAdmin(false);
-        $answer = $this->json('GET', '/api/system');
-        $answer-> assertStatus(403);
-    }
 }

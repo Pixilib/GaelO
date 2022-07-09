@@ -94,9 +94,6 @@ Route::middleware(['auth:sanctum', 'verified', 'activated'])->group(function () 
     //Countries Routes
     Route::get('countries/{code?}', [CountryController::class, 'getCountry']);
 
-    //Preferences Routes
-    Route::get('preferences', [PreferenceController::class, 'getPreference']);
-
     //VisitGroup Routes
     Route::post('studies/{studyName}/visit-groups', [VisitGroupController::class, 'createVisitGroup']);
     Route::get('visit-groups/{visitGroupId}', [VisitGroupController::class, 'getVisitGroup']);
