@@ -28,7 +28,7 @@ class ExportReviewDataCollection
 
     private function isExisitingExportData(string $visitGroupName, string $visitTypeName): bool
     {
-        return $this->exportReviewDatas[$visitGroupName . '_' . $visitTypeName] != null;
+        return array_key_exists(($visitGroupName . '_' . $visitTypeName), $this->exportReviewDatas);
     }
 
 

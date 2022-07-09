@@ -66,7 +66,7 @@ class ExportReviewData
             $rows[] = [
                 ...$reviewEntity,
                 ...$reviewData
-            ]
+            ];
         }
 
         return $rows;
