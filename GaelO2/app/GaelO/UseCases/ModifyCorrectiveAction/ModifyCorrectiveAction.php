@@ -44,14 +44,17 @@ class ModifyCorrectiveAction
             $currentQcStatus = $visitContext['state_quality_control'];
             $uploadStatus = $visitContext['upload_status'];
 
-            //If form Needed, form need to be sent before making corrective action
-            if ($localFormNeeded  && $stateInvestigatorForm !== Constants::INVESTIGATOR_FORM_DONE) {
-                throw new GaelOForbiddenException('You need to send the Investigator Form first!');
-            }
+            //If a corrective action was done, check that relevant pieces were sent
+            if ($modifyCorrectiveActionRequest->correctiveActionDone) {
+                //If form Needed, form need to be sent before making corrective action
+                if ($localFormNeeded  && $stateInvestigatorForm !== Constants::INVESTIGATOR_FORM_DONE) {
+                    throw new GaelOForbiddenException('You need to send the Investigator Form first!');
+                }
 
-            //If not Uploaded images can't perform Corrective action
-            if ($uploadStatus !== Constants::UPLOAD_STATUS_DONE) {
-                throw new GaelOForbiddenException('You need to upload DICOMs first!');
+                //If no images were uploaded, can't perform Corrective action
+                if ($uploadStatus !== Constants::UPLOAD_STATUS_DONE) {
+                    throw new GaelOForbiddenException('You need to upload DICOMs first!');
+                }
             }
 
             $this->checkAuthorization($modifyCorrectiveActionRequest->currentUserId, $modifyCorrectiveActionRequest->visitId, $currentQcStatus, $studyName);
