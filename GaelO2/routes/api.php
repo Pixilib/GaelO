@@ -8,7 +8,6 @@ use App\Http\Controllers\DicomController;
 use App\Http\Controllers\DocumentationController;
 use App\Http\Controllers\ExportDBController;
 use App\Http\Controllers\PatientController;
-use App\Http\Controllers\PreferenceController;
 use App\Http\Controllers\RequestController;
 use App\Http\Controllers\ReverseProxyController;
 use App\Http\Controllers\ReviewController;
