@@ -357,7 +357,7 @@ class InvestigatorFormTest extends TestCase
 
         $answer = $this->get('api/visits/'.$visit->id.'/investigator-associated-data?role=Investigator');
         $content= json_decode($answer->content(), true);
-        $this->assertArrayHasKey('LastChemo', $content);
+        $this->assertArrayHasKey('LastChemo', $content[0]);
         $answer->assertStatus(200);
     }
 

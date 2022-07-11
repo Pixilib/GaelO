@@ -50,7 +50,7 @@ class GetAssociatedDataReviewTest extends TestCase
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_REVIEWER, $this->studyName );
         $resp = $this->json('GET', '/api/studies/'.$this->studyName.'/visits/'.$this->visit->id.'/reviewer-associated-data');
         $answer = json_decode($resp->content(), true);
-        $this->assertArrayHasKey('Radiotherapy', $answer);
+        $this->assertArrayHasKey('Radiotherapy', $answer[0]);
         $resp->assertStatus(200);
     }
 
