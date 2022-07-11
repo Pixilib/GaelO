@@ -83,7 +83,9 @@ class DicomSeriesRepository implements DicomSeriesRepositoryInterface
     public function getRelatedVisitIdFromSeriesInstanceUID(array $seriesInstanceUID, bool $withTrashed): array
     {
         $query = $this->dicomSeries
-            ->with('dicomStudy')
+            ->with(['dicomStudy' => function ($query) use ($withTrashed) {
+                if ($withTrashed) $query->withTrashed();
+            }])
             ->whereIn('series_uid', $seriesInstanceUID);
 
         if ($withTrashed) $query->withTrashed();
