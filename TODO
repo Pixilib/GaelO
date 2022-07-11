@@ -1,7 +1,4 @@
 Salim TODO :
-
-- Refac SendMail est complexe probablement a splitter
-  
 - Refac : Pluger GetPossibleUpload sur VisitEntity pour la réponse (nécéssite d'updater V1)
 - Get Creatable Visit, retourner les visitType entity des créables ? 
 - CreateVisit => Verifier que la visite à creer est bien créable niveau backend
