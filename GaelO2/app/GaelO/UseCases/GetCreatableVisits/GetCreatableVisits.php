@@ -53,7 +53,8 @@ class GetCreatableVisits
         $this->authorizationPatientService->setUserId($userId);
         $this->authorizationPatientService->setStudyName($studyName);
         $this->authorizationPatientService->setPatientId($patientId);
-        if (!$this->authorizationPatientService->isPatientAllowed(Constants::ROLE_INVESTIGATOR)) {
+        if (!$this->authorizationPatientService->isPatientAllowed(Constants::ROLE_INVESTIGATOR)
+        && !$this->authorizationPatientService->isPatientAllowed(Constants::ROLE_SUPERVISOR)) {
             throw new GaelOForbiddenException();
         }
     }
