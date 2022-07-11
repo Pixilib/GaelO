@@ -90,7 +90,7 @@ class AuthorizationDicomWebService
     }
 
 
-    private function setLevel(array $url)
+    private function setLevel(array $url) : void
     {
 
         if (key_exists('query',  $url)) {
@@ -98,8 +98,8 @@ class AuthorizationDicomWebService
             parse_str($url['query'], $params);
 
             if (key_exists('00100020',  $params)) {
-                $level = "patients";
-                return $level;
+                $this->level = "patients";
+                return;
             };
 
             if (key_exists('0020000D',  $params)) {
@@ -108,7 +108,7 @@ class AuthorizationDicomWebService
             };
         }
 
-        if (Util::endsWith($url['path'], "/studies"))  $level = "patients";
+        if (Util::endsWith($url['path'], "/studies"))  $this->level = "patients";
         else if (Util::endsWith($url['path'], "/series"))  $this->level = "studies";
         else $this->level = "series";
     }
