@@ -123,7 +123,7 @@
 <div id="change_patient_status"> </div>
 <div id="patientInfoSupervisor">
 
-	<br><table id='tab_patient_super' class='table table-striped table-sm'>
+	<br><table id='tab_patient_super' class='table table-borderless table-striped table-sm'>
 		<tr>
 			<td colspan=2><b>Patient information</b></td>
 		</tr>
@@ -177,7 +177,7 @@
 
 
 	 <div style="overflow-x:auto;">
-	 	<table id='tab_visit_super' class='table table-striped'>
+	 	<table id='tab_visit_super' class='table table-borderless table-striped'>
 			<tr>
 			<th colspan=7>Visit information</th>
 			</tr>

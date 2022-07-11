@@ -130,7 +130,7 @@
 		<span class="table-add float-right mb-3 mr-2"><button type="button" class="btn btn-success btn-rounded btn-sm my-0">Add</button>
 		</span>
 
-		<table class="table table-striped">
+		<table class="table table-borderless table-striped">
 			<thead>
 				<tr>
 					<th class="text-center">patientNumber</th>
@@ -172,7 +172,7 @@
 		</button>
 
 		<div id="centerDetails" class="mt-3 collapse text-center" aria-labelledby="headingOne" data-parent="#centerAccordion">
-			<table class="table table-striped">
+			<table class="table table-borderless table-striped">
 				<thead>
 					<tr>
 						<th class="text-center">Name</th>

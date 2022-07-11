@@ -92,7 +92,7 @@
 
 <div id="userDetailsRoles" style="overflow-x: auto">
 	<h1>Users Details</h1>
-	<table class="table table-striped" id="userRoles"
+	<table class="table table-borderless table-striped" id="userRoles"
 		style="text-align: center; width: 100%">
 		<thead>
 			<tr>

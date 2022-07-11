@@ -25,37 +25,18 @@ $linkpdo=Session::getLinkpdo();
 
 if (isset($_SESSION['admin'])) {
 	
-	$study=$_SESSION['study'];
 	$username=$_SESSION['admin'];
     
-	if ($study == "All Studies") {
-		//Select all users
-		$userObjects=Global_Data::getAllUsers($linkpdo);
-		//Build the CSV, header row and data
-		$list[]=array('username', 'last name', 'first name', 'email', 'phone', 'country', 'creation date', 'last connexion', 'account status', 'main center code', 'main center name', 'job', 'number attempts', 'roles map', 'affiliated centers');
-        
-		foreach ($userObjects as $user) {
-			$rolesMap=$user->getRolesMap();
-			$userCenter=$user->getMainCenter();
-			$list[]=array($user->username, $user->lastName, $user->firstName, $user->userEmail, $user->userPhone, $userCenter->countryName, $user->creationDateUser, $user->lastConnexionDate, $user->userStatus, $userCenter->code, $userCenter->name, $user->userJob, $user->loginAttempt, json_encode($rolesMap), json_encode($user->getAffiliatedCenters()));
-		}
-        
-        
-	}else {
-		//Select users from the called study
-		$studyObject=new Study($study, $linkpdo);
-		$usersObjectArray=$studyObject->getUsersWithRoleInStudy();
-		//Build the CSV, header row and data
-		$list[]=array('username', 'last name', 'first name', 'email', 'phone', 'country', 'creation date', 'last connexion', 'account status', 'main center code', 'main center name', 'job', 'number attempts', 'roles in '.$study, 'affiliated centers');
-
-		foreach ($usersObjectArray as $userObject) {
-			$roles=$userObject->getRolesInStudy($study);
-			$userCenter=$userObject->getMainCenter();
-			$list[]=array($userObject->username, $userObject->lastName, $userObject->firstName, $userObject->userEmail, $userObject->userPhone, $userCenter->countryName, $userObject->creationDateUser, $userObject->lastConnexionDate, $userObject->userStatus, $userCenter->code, $userCenter->name, $userObject->userJob, $userObject->loginAttempt, implode("/", $roles), json_encode($userObject->getAffiliatedCenters()));
-		}
+	//Select all users
+	$userObjects=Global_Data::getAllUsers($linkpdo);
+	//Build the CSV, header row and data
+	$list[]=array('username', 'last name', 'first name', 'email', 'phone', 'country', 'creation date', 'last connexion', 'account status', 'main center code', 'main center name', 'job', 'number attempts', 'roles map', 'affiliated centers');
+	
+	foreach ($userObjects as $user) {
+		$rolesMap=$user->getRolesMap();
+		$userCenter=$user->getMainCenter();
+		$list[]=array($user->username, $user->lastName, $user->firstName, $user->userEmail, $user->userPhone, $userCenter->countryName, $user->creationDateUser, $user->lastConnexionDate, $user->userStatus, $userCenter->code, $userCenter->name, $user->userJob, $user->loginAttempt, json_encode($rolesMap), json_encode($user->getAffiliatedCenters()));
 	}
-   
-    
    
 	$date=Date('Ymd_his');
 	header('Content-type: text/csv');

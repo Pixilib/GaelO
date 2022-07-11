@@ -218,7 +218,7 @@
 	<input id="includeDeleted" class="form-check-input" type="checkbox">
 	<label for="includeDeleted" class="form-check-label">View Deleted Series</label>
         
-    <table class="table table-striped" id="tableau" style='text-align:center; width:100%'>
+    <table class="table table-borderless table-striped" id="tableau" style='text-align:center; width:100%'>
 		<thead>
 			<!-- Column name filled by dataTable -->
 			<tr>

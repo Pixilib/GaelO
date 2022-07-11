@@ -15,7 +15,7 @@
  ?>
  
  <div>
-	<table class="table table-striped">
+	<table class="table table-borderless table-striped">
 		<thead class="thead-light">
 			<tr>
 				<th scope="col"></th>

@@ -43,7 +43,8 @@ if ($visitObject->statusDone == Visit::NOT_DONE) {
 							return visit.visitID === <?= $id_visit ?>
 						})
 
-						window.Gaelo_Uploader.installUploader({
+						window.gaelo_uploader_instance = new window.Gaelo_Uploader.GaelOUploader()
+						window.gaelo_uploader_instance.installUploader({
 							minNbOfInstances: 30,
 							availableVisits : targetVisit,
 							tusEndpoint : '/tus',
@@ -110,7 +111,7 @@ if ($visitObject->statusDone == Visit::NOT_DONE) {
 				});	
 
 				$("#dicomUploaderv2").on("remove", function () {
-					let results = window.Gaelo_Uploader.closeUploader('dicomUploaderv2')
+					let results = window.gaelo_uploader_instance.closeUploader()
 					console.log('Uploader Removed '+results)
 				})	
                
@@ -362,7 +363,7 @@ function build_table_series($role, $visitObject)
 			<div id="seriesDetails" class="show mt-3" aria-labelledby="headingOne" data-parent="#accordionExample">
 			<div>
 				<div style="overflow-x:auto;"> 
-					<table id="tab_series" class="table table-striped">
+					<table id="tab_series" class="table table-borderless table-striped">
 						<tr>
 							<th colspan=<?=$colspan ?>>Series information</th>
 						</tr>

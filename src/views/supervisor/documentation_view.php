@@ -39,7 +39,7 @@
 </script>
 <div>
 	<form id="documentationForm">
-		<table class="table table-striped text-center">
+		<table class="table table-borderless table-striped text-center">
 			<thead class="thead-light">
 				<tr>
 					<th scope="col"></th>
