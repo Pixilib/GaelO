@@ -50,9 +50,9 @@ class CreateCenter
             $this->centerRepositoryInterface->createCenter($code, $name, $countryCode);
 
             $actionDetails = [
-                'centerCode' => $code,
-                'centerName' => $name,
-                'centerCountryCode' => $countryCode
+                'center_code' => $code,
+                'center_name' => $name,
+                'center_country_code' => $countryCode
             ];
 
             $this->trackerRepositoryInterface->writeAction($currentUserId, Constants::TRACKER_ROLE_ADMINISTRATOR, null, null, Constants::TRACKER_CREATE_CENTER, $actionDetails);

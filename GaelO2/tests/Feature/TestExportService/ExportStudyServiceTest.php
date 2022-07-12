@@ -96,7 +96,23 @@ class ExportStudyServiceTest extends TestCase
         });
 
         $this->exportServiceData->setStudyName($studyName);
-        $this->exportServiceData->exportReviewTable();
+        $this->exportServiceData->exportReviewerForms();
+
+    }
+
+    public function testExportInvestigatorForm(){
+
+        $visitType = VisitType::factory()->create();
+        $studyName = $visitType->visitGroup->study_name;
+        $visits = Visit::factory()->visitTypeId($visitType->id)->count(3)->create();
+
+        $visits->each(function($visit) use ($studyName) {
+            Review::factory()->visitId($visit->id)->studyName($studyName)->count(5)->create();
+            Review::factory()->visitId($visit->id)->studyName($studyName)->reviewForm()->count(5)->create();
+        });
+
+        $this->exportServiceData->setStudyName($studyName);
+        $this->exportServiceData->exportInvestigatorForms();
 
     }
 

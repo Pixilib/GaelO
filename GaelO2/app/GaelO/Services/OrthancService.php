@@ -236,9 +236,11 @@ class OrthancService
         if ($profile === Constants::ORTHANC_ANON_PROFILE_DEFAULT) {
             $date = TagAnon::KEEP;
             $body = TagAnon::KEEP;
+            $RTStruct = TagAnon::KEEP;
         } else if ($profile === Constants::ORTHANC_ANON_PROFILE_FULL) {
             $date = TagAnon::CLEAR;
             $body = TagAnon::CLEAR;
+            $RTStruct = TagAnon::CLEAR;
         }
 
         //List tags releted to Date
@@ -279,6 +281,13 @@ class OrthancService
 
         //Keep series descriptions
         $tagsObjects[] = new TagAnon("0008,103E", TagAnon::KEEP); //series Description
+
+        //Radiotherapy Tags
+        $tagsObjects[]=new TagAnon("3006,0026", $RTStruct); // ROIName
+        $tagsObjects[]=new TagAnon("3006,0008", $RTStruct); // Structure Set Date
+		$tagsObjects[]=new TagAnon("3006,0009", $RTStruct); // Structure Set Time
+		$tagsObjects[]=new TagAnon("300A,0006", $RTStruct); // RTPlan Date
+		$tagsObjects[]=new TagAnon("300A,0007", $RTStruct); // RTPlan Time
 
         // Keep some Private tags usefull for PET/CT or Scintigraphy
         $tagsObjects[] = new TagAnon("7053,1000", TagAnon::KEEP); //Phillips

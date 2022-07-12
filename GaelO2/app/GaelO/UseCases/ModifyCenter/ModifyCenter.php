@@ -51,7 +51,11 @@ class ModifyCenter
 
             $this->centerRepositoryInterface->updateCenter($center['code'], $center['name'], $center['country_code']);
 
-            $actionDetails = $center;
+            $actionDetails = [
+                'name' => $center['name'],
+                'code' => $center['code'],
+                'country_code' => $center['country_code']
+            ];
 
             $this->trackerRepositoryInterface->writeAction($modifyCenterRequest->currentUserId, Constants::TRACKER_ROLE_ADMINISTRATOR, null, null, Constants::TRACKER_EDIT_CENTER, $actionDetails);
 

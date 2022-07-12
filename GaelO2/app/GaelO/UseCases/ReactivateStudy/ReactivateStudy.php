@@ -40,7 +40,7 @@ class ReactivateStudy
             $this->studyRepositoryInterface->reactivateStudy($studyName);
 
             $actionsDetails = [
-                'reactivatedStudy' => $studyName,
+                'reactivated_study' => $studyName,
                 'reason' => $reason
             ];
             $this->trackerRepository->writeAction($currentUserId, Constants::TRACKER_ROLE_ADMINISTRATOR, null, null, Constants::TRACKER_REACTIVATE_STUDY, $actionsDetails);

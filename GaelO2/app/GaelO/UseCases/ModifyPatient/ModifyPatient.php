@@ -92,6 +92,16 @@ class ModifyPatient
                 $patientEntity['withdraw_date']
             );
 
+            $actionDetails = [
+                'id' =>$patientEntity['id'],
+                'code' => $patientEntity['code'],
+                'reason'=> $modifyPatientRequest->reason
+            ];
+
+            foreach ($updatableData as $data) {
+                $actionDetails[Util::camelCaseToSnakeCase($data)] = $modifyPatientRequest->$data;
+            }
+
             $this->trackerRepositoryInterface->writeAction($currentUserId, Constants::ROLE_SUPERVISOR, $patientEntity['study_name'], null, Constants::TRACKER_EDIT_PATIENT, (array) $modifyPatientRequest);
 
             $modifyPatientResponse->status = 200;

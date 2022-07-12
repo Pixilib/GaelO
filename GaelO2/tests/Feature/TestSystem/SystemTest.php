@@ -6,7 +6,7 @@ use Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\AuthorizationTools;
 
-class PreferenceTest extends TestCase
+class SystemTest extends TestCase
 {
 
     use DatabaseMigrations {
@@ -27,16 +27,15 @@ class PreferenceTest extends TestCase
     public function testGetPreferences()
     {
         AuthorizationTools::actAsAdmin(true);
-        $answer = $this->json('GET', 'api/preferences');
+        $answer = $this->json('GET', 'api/system');
         $answer->assertStatus(200);
         $answer->assertJsonStructure(['platformName', 'adminEmail', 'emailReplyTo', 'corporation',
-         'url']);
+         'url', 'version']);
 
     }
 
     public function testGetPreferencesShouldFailNotAdmin(){
         AuthorizationTools::actAsAdmin(false);
-        $this->json('GET', 'api/preferences')->assertStatus(403);
-
+        $this->json('GET', 'api/system')->assertStatus(403);
     }
 }

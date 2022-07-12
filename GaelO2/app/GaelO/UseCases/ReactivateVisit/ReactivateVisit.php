@@ -38,6 +38,7 @@ class ReactivateVisit
             $currentUserId = $reactivateVisitRequest->currentUserId;
             $studyName = $visitContext['patient']['study_name'];
             $visitType = $visitContext['visit_type']['name'];
+            $visitGroupName = $visitContext['visit_type']['visit_group']['name'];
             $modality = $visitContext['visit_type']['visit_group']['modality'];
             $patientId = $visitContext['patient_id'];
             $visitId = $visitContext['id'];
@@ -57,9 +58,10 @@ class ReactivateVisit
             $this->visitRepositoryInterface->reactivateVisit($visitId);
 
             $actionDetails = [
-                'Visit Type' => $visitType,
-                'Modality' => $modality,
-                'Patient ID' => $patientId
+                'visit_type_name' => $visitType,
+                'visit_group_name' => $visitGroupName,
+                'visit_group_modality' => $modality,
+                'patient_id' => $patientId
             ];
 
             $this->trackerRepositoryInterface->writeAction(

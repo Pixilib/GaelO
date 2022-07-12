@@ -4,18 +4,21 @@ namespace App\GaelO\Services\AuthorizationService;
 
 use App\GaelO\Interfaces\Repositories\DicomSeriesRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\DicomStudyRepositoryInterface;
+use App\GaelO\Interfaces\Repositories\PatientRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\StudyRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\UserRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
 use App\GaelO\Util;
 
-class AuthorizationDicomWebService {
+class AuthorizationDicomWebService
+{
 
     private string $originalStudyName;
     private string $level;
     private DicomSeriesRepositoryInterface $dicomSeriesRepositoryInterface;
     private DicomStudyRepositoryInterface $dicomStudyRepositoryInterface;
     private VisitRepositoryInterface $visitRepositoryInterface;
+    private PatientRepositoryInterface $patientRepositoryInterface;
     private StudyRepositoryInterface $studyRepositoryInterface;
     private UserRepositoryInterface $userRepositoryInterface;
 
@@ -23,20 +26,21 @@ class AuthorizationDicomWebService {
         DicomSeriesRepositoryInterface $dicomSeriesRepositoryInterface,
         DicomStudyRepositoryInterface $dicomStudyRepositoryInterface,
         VisitRepositoryInterface $visitRepositoryInterface,
+        PatientRepositoryInterface $patientRepositoryInterface,
         StudyRepositoryInterface $studyRepositoryInterface,
         UserRepositoryInterface $userRepositoryInterface
-        )
-    {
+    ) {
         $this->dicomStudyRepositoryInterface = $dicomStudyRepositoryInterface;
         $this->dicomSeriesRepositoryInterface = $dicomSeriesRepositoryInterface;
         $this->visitRepositoryInterface = $visitRepositoryInterface;
+        $this->patientRepositoryInterface = $patientRepositoryInterface;
         $this->studyRepositoryInterface = $studyRepositoryInterface;
         $this->userRepositoryInterface = $userRepositoryInterface;
     }
 
-    public function setUserId(int $userId){
+    public function setUserId(int $userId)
+    {
         $this->userId = $userId;
-
     }
 
     public function setRequestedUri(string $requestedURI): void
@@ -45,53 +49,77 @@ class AuthorizationDicomWebService {
         $this->setLevel($url);
 
         //Determine parent Visit ID depending of requested UID
-        if($this->level === "studies"){
+        if ($this->level === "patients") {
+            //If patient Level retrieve original study name from patient entity
+            $patientId = $this->getPatientID($url);
+            $patientEntity = $this->patientRepositoryInterface->find($patientId);
+            $this->originalStudyName = $patientEntity['study_name'];
+        } else {
 
-            $requestedStudyInstanceUID = $this->getStudyInstanceUID($url);
-            $studyEntity = $this->dicomStudyRepositoryInterface->getDicomStudy($requestedStudyInstanceUID, false);
-            $visitId = $studyEntity['visit_id'];
+            if ($this->level === "studies") {
 
-        }else if ($this->level === "series"){
+                $requestedStudyInstanceUID = $this->getStudyInstanceUID($url);
+                $studyEntity = $this->dicomStudyRepositoryInterface->getDicomStudy($requestedStudyInstanceUID, false);
+                $visitId = $studyEntity['visit_id'];
 
-            $requestedSeriesInstanceUID = $this->getSeriesInstanceUID($url);
-            $this->seriesEntity = $this->dicomSeriesRepositoryInterface->getSeries($requestedSeriesInstanceUID, false);
-            $visitId = $this->seriesEntity['dicom_study']['visit_id'];
+            } else if ($this->level === "series") {
 
+                $requestedSeriesInstanceUID = $this->getSeriesInstanceUID($url);
+                $this->seriesEntity = $this->dicomSeriesRepositoryInterface->getSeries($requestedSeriesInstanceUID, false);
+                $visitId = $this->seriesEntity['dicom_study']['visit_id'];
+            }
+
+            $visitContext = $this->visitRepositoryInterface->getVisitContext($visitId);
+            $this->originalStudyName = $visitContext['patient']['study_name'];
         }
-
-        $visitContext = $this->visitRepositoryInterface->getVisitContext($visitId);
-        $this->originalStudyName = $visitContext['patient']['study_name'];
-
     }
 
-    private function getStudyInstanceUID(array $url) : string {
-        if( key_exists('query',  $url) ){
+    private function getStudyInstanceUID(array $url): string
+    {
+        if (key_exists('query',  $url)) {
             $params = [];
             parse_str($url['query'], $params);
-            if(key_exists('0020000D',  $params)) return $params['0020000D'];
+            if (key_exists('0020000D',  $params)) return $params['0020000D'];
         }
         return $this->getUID($url['path'], "studies");
     }
 
-    private function getSeriesInstanceUID(array $url)  : string {
+    private function getSeriesInstanceUID(array $url): string
+    {
         return $this->getUID($url['path'], "series");
     }
 
 
-    private function setLevel(array $url){
+    private function setLevel(array $url) : void
+    {
 
-        if( key_exists('query',  $url) ){
+        if (key_exists('query',  $url)) {
             $params = [];
             parse_str($url['query'], $params);
-            if(key_exists('0020000D',  $params)) {
+
+            if (key_exists('00100020',  $params)) {
+                $this->level = "patients";
+                return;
+            };
+
+            if (key_exists('0020000D',  $params)) {
                 $this->level = "studies";
                 return;
             };
         }
 
-        if (Util::endsWith($url['path'], "/series"))  $this->level = "studies";
+        if (Util::endsWith($url['path'], "/studies"))  $this->level = "patients";
+        else if (Util::endsWith($url['path'], "/series"))  $this->level = "studies";
         else $this->level = "series";
+    }
 
+    private function getPatientID(array $url): string
+    {
+
+        $params = [];
+        parse_str($url['query'], $params);
+        // Filter wild card beacause OHIF add wildcard
+        if (key_exists('00100020',  $params)) return str_replace("*", "", $params['00100020']);;
     }
 
     /**
@@ -132,7 +160,6 @@ class AuthorizationDicomWebService {
         $availableRoles = $this->userRepositoryInterface->getUsersRoles($this->userId);
         $userStudies = array_keys($availableRoles);
 
-        return sizeOf( array_intersect($studies, $userStudies) ) > 0 ;
+        return sizeOf(array_intersect($studies, $userStudies)) > 0;
     }
-
 }

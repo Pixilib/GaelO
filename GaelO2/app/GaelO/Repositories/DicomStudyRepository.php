@@ -152,7 +152,7 @@ class DicomStudyRepository implements DicomStudyRepositoryInterface
             ->with(['dicomSeries' => function ($query) use ($withTrashed) {
                 if ($withTrashed) $query->withTrashed();
             }])
-            ->whereIn('visit_id', $visitId)->with('dicomSeries');
+            ->whereIn('visit_id', $visitId);
 
         if ($withTrashed) $queryBuilder->withTrashed();
 

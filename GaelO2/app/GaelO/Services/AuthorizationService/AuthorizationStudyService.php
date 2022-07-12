@@ -5,7 +5,6 @@ namespace App\GaelO\Services\AuthorizationService;
 use App\GaelO\Adapters\FrameworkAdapter;
 use App\GaelO\Constants\Constants;
 use App\GaelO\Entities\StudyEntity;
-use App\GaelO\Interfaces\Adapters\FrameworkInterface;
 use App\GaelO\Interfaces\Repositories\StudyRepositoryInterface;
 class AuthorizationStudyService
 {

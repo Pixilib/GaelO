@@ -78,13 +78,22 @@ class SendMail
                     );
             }
 
+            $actionsDetails = [
+                'subject' => $sendMailRequest->subject,
+                'content' => $sendMailRequest->content,
+                'to_user_ids' => $sendMailRequest->userIds,
+                'to_administrators' => $sendMailRequest->toAdministrators,
+                'patientId' => $sendMailRequest->patientId,
+                'patients' => $sendMailRequest->patients
+            ];
+
             $this->trackerRepositoryInterface->writeAction(
                 $sendMailRequest->currentUserId,
                 $sendMailRequest->role,
                 $sendMailRequest->study,
                 $sendMailRequest->visitId,
                 Constants::TRACKER_SEND_MESSAGE,
-                (array) $sendMailRequest
+                $actionsDetails
             );
 
             $sendMailResponse->status = 200;

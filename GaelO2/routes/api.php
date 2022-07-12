@@ -8,7 +8,6 @@ use App\Http\Controllers\DicomController;
 use App\Http\Controllers\DocumentationController;
 use App\Http\Controllers\ExportDBController;
 use App\Http\Controllers\PatientController;
-use App\Http\Controllers\PreferenceController;
 use App\Http\Controllers\RequestController;
 use App\Http\Controllers\ReverseProxyController;
 use App\Http\Controllers\ReviewController;
@@ -93,9 +92,6 @@ Route::middleware(['auth:sanctum', 'verified', 'activated'])->group(function () 
 
     //Countries Routes
     Route::get('countries/{code?}', [CountryController::class, 'getCountry']);
-
-    //Preferences Routes
-    Route::get('preferences', [PreferenceController::class, 'getPreference']);
 
     //VisitGroup Routes
     Route::post('studies/{studyName}/visit-groups', [VisitGroupController::class, 'createVisitGroup']);

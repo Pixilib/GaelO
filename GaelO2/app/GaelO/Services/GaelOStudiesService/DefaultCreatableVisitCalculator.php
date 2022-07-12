@@ -3,7 +3,6 @@
 namespace App\GaelO\Services\GaelOStudiesService;
 
 use App\GaelO\Constants\Constants;
-use App\GaelO\Interfaces\Repositories\StudyRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\VisitTypeRepositoryInterface;
 

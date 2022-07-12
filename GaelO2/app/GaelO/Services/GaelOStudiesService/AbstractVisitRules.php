@@ -23,6 +23,18 @@ abstract class AbstractVisitRules
 
     abstract function getReviewerValidationRules(bool $adjudication): array;
 
+    public function getInvestigatorInputNames() : array {
+        $rules = $this->getInvestigatorValidationRules();
+        return array_unique(array_keys($rules));
+    }
+
+    public function getReviewerInputNames() : array {
+        $rules = $this->getReviewerValidationRules(true);
+        $adjudicationRules = $this->getReviewerValidationRules(false);
+        $inputs = [...array_keys($rules), ...array_keys($adjudicationRules)];
+        return array_unique($inputs);
+    }
+
     public function setVisitContext(array $visitContext)
     {
         $this->visitContext = $visitContext;
