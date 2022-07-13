@@ -9,7 +9,7 @@ class TEST_WB_CT0 extends AbstractVisitRules {
 
     public function getInvestigatorValidationRules()  : array {
         return [
-            'comments' => [
+            'comment' => [
                 'rule' => self::RULE_STRING,
                 'optional' => false
             ]
@@ -18,7 +18,7 @@ class TEST_WB_CT0 extends AbstractVisitRules {
 
     public function getReviewerValidationRules(bool $adjudication) : array {
         return [
-            'comments' => [
+            'comment' => [
                 'rule' => self::RULE_STRING,
                 'optional' => false
             ]
@@ -30,15 +30,15 @@ class TEST_WB_CT0 extends AbstractVisitRules {
     }
 
     public function getReviewConclusion() : string {
-        return 'N/A';
+        return 'CR';
     }
 
     public function getAllowedKeyAndMimeTypeInvestigator() : array {
-        return [];
+        return ['41' => MimeAdapter::getMimeFromExtension('csv')];
     }
 
     public function getAllowedKeyAndMimeTypeReviewer() : array {
-        return [];
+        return ['25' => MimeAdapter::getMimeFromExtension('csv')];
     }
 
     public function getTargetLesion() : ?array {

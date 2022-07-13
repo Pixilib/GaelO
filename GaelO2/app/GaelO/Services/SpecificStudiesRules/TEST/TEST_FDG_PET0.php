@@ -9,64 +9,18 @@ use App\GaelO\Services\GaelOStudiesService\AbstractVisitRules;
 class TEST_FDG_PET0 extends AbstractVisitRules
 {
 
-    public function getInvestigatorValidationRules(): array
-    {
+    public function getInvestigatorValidationRules()  : array {
         return [
-            'glycaemia' => [
-                'rule' => self::RULE_NUMBER,
-                'optional' => true,
-                'min' => 0,
-                'max' => 20
-            ],
-            'glycaemiaNotDone' => [
-                'rule' => self::RULE_BOOLEAN,
-                'optional' => true
-            ],
-            'radiotherapyThreeMonths' => [
-                'rule' => self::RULE_BOOLEAN,
-                'optional' => false
-            ],
-            'csfThreeWeeks' => [
-                'rule' => self::RULE_BOOLEAN,
-                'optional' => false
-            ],
-            'biopsy' => [
-                'rule' => self::RULE_BOOLEAN,
-                'optional' => false
-            ],
-            'biopsyDate' => [
+            'comment' => [
                 'rule' => self::RULE_STRING,
-                'optional' => true
-            ],
-            'biopsyLocation' => [
-                'rule' => self::RULE_SET,
-                'values' => TEST::TEST_LOCALIZATIONS,
-                'optional' => true
-            ],
-            'infection' => [
-                'rule' => self::RULE_BOOLEAN,
                 'optional' => false
-            ],
-            'infectionDate' => [
-                'rule' => self::RULE_STRING,
-                'optional' => true
-            ],
-            'infectionLocation' => [
-                'rule' => self::RULE_SET,
-                'values' => TEST::TEST_LOCALIZATIONS,
-                'optional' => true
-            ],
-            'comments' => [
-                'rule' => self::RULE_STRING,
-                'optional' => true
             ]
         ];
     }
 
-    public function getReviewerValidationRules(bool $adjudication): array
-    {
+    public function getReviewerValidationRules(bool $adjudication) : array {
         return [
-            'comments' => [
+            'comment' => [
                 'rule' => self::RULE_STRING,
                 'optional' => false
             ]
@@ -85,12 +39,12 @@ class TEST_FDG_PET0 extends AbstractVisitRules
 
     public function getAllowedKeyAndMimeTypeInvestigator(): array
     {
-        return ['41' => MimeAdapter::getMimeFromExtension('csv')];
+        return [];
     }
 
     public function getAllowedKeyAndMimeTypeReviewer(): array
     {
-        return [];
+        return ['41' => MimeAdapter::getMimeFromExtension('csv')];
     }
 
     public function getTargetLesion(): ?array
@@ -101,18 +55,14 @@ class TEST_FDG_PET0 extends AbstractVisitRules
     public function getAssociatedDataForInvestigatorForm(): array
     {
         return [
-            [
                 'LastChemo' => '01/01/2021'
-            ]
         ];
     }
 
     public function getAssociatedDataForReviewForm(): array
     {
         return [
-            [
                 'Radiotherapy' => false
-            ]
         ];
     }
 }
