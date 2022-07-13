@@ -69,8 +69,6 @@ class DicomSeriesTest extends TestCase
         $dicomStudyEntity = DicomStudy::withTrashed()->find($this->dicomSeries->dicomStudy->study_uid);
         $visitEntity = Visit::find($this->dicomSeries->dicomStudy->visit->id);
 
-
-
         //Expect study to be deleted
         $this->assertNotNull($dicomStudyEntity['deleted_at']);
         $this->assertEquals(Constants::INVESTIGATOR_FORM_DRAFT, $visitEntity['state_investigator_form']);
@@ -79,6 +77,16 @@ class DicomSeriesTest extends TestCase
         //Check Investigator form has been unlocked
         $localForm = Review::where('study_name', $this->studyName)->where('visit_id', $this->dicomSeries->dicomStudy->visit->id)->where('local', true)->sole();
         $this->assertFalse(boolval($localForm['validated']));
+    }
+
+    public function testDeleteLastSeriesShouldFailController()
+    {
+
+        $userId = AuthorizationTools::actAsAdmin(false);
+        AuthorizationTools::addRoleToUser($userId, Constants::ROLE_CONTROLLER, $this->studyName);
+
+        $payload = ['reason' => 'wrong series'];
+        $this->delete('api/dicom-series/' . $this->dicomSeries->series_uid . '?role=Controller', $payload)->assertStatus(403);
     }
 
     public function testDeleteSeriesShouldFailNoRole()
