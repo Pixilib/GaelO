@@ -42,6 +42,7 @@ class SendMail
                 case Constants::ROLE_SUPERVISOR:
                     if ($sendMailRequest->toAdministrators)
                         $this->mailService->sendMailToAdministrators(
+                            $sendMailRequest->currentUserId,
                             $sendMailRequest->study,
                             $sendMailRequest->subject,
                             $sendMailRequest->content,
@@ -49,6 +50,7 @@ class SendMail
                     else {
                         if ($this->checkEmpty($sendMailRequest->userIds, 'userIds')) throw new GaelOBadRequestException('Request Missing recipient');
                         $this->mailService->sendMailToUser(
+                            $sendMailRequest->currentUserId,
                             $sendMailRequest->userIds,
                             $sendMailRequest->study,
                             $sendMailRequest->subject,
@@ -59,6 +61,7 @@ class SendMail
                 case Constants::ROLE_ADMINISTRATOR:
                     $this->checkEmpty($sendMailRequest->userIds, 'recipient');
                     $this->mailService->sendMailToUser(
+                        $sendMailRequest->currentUserId,
                         $sendMailRequest->userIds,
                         null,
                         $sendMailRequest->subject,
@@ -69,6 +72,7 @@ class SendMail
                     if (isset($sendMailRequest->userIds)) throw new GaelOForbiddenException();
                     if (isset($sendMailRequest->patients) && count(json_decode($sendMailRequest->patients, true)) === 0) throw new GaelOBadRequestException('Request missing patient list');
                     $this->mailService->sendMailToSupervisors(
+                        $sendMailRequest->currentUserId,
                         $sendMailRequest->study,
                         $sendMailRequest->subject,
                         $sendMailRequest->content,
