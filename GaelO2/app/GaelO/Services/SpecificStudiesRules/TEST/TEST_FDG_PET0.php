@@ -1,11 +1,13 @@
 <?php
+
 namespace App\GaelO\Services\SpecificStudiesRules\TEST;
 
 use App\GaelO\Adapters\MimeAdapter;
 use App\GaelO\Constants\Constants;
 use App\GaelO\Services\GaelOStudiesService\AbstractVisitRules;
 
-class TEST_FDG_PET0 extends AbstractVisitRules {
+class TEST_FDG_PET0 extends AbstractVisitRules
+{
 
     public function getInvestigatorValidationRules()  : array {
         return [
@@ -25,38 +27,42 @@ class TEST_FDG_PET0 extends AbstractVisitRules {
         ];
     }
 
-    public function getReviewStatus() : string {
+    public function getReviewStatus(): string
+    {
         return Constants::REVIEW_STATUS_DONE;
     }
 
-    public function getReviewConclusion() : string {
+    public function getReviewConclusion(): string
+    {
         return 'CR';
     }
 
-    public function getAllowedKeyAndMimeTypeInvestigator() : array {
+    public function getAllowedKeyAndMimeTypeInvestigator(): array
+    {
         return [];
     }
 
-    public function getAllowedKeyAndMimeTypeReviewer() : array {
+    public function getAllowedKeyAndMimeTypeReviewer(): array
+    {
         return ['41' => MimeAdapter::getMimeFromExtension('csv')];
     }
 
-    public function getTargetLesion() : ?array {
+    public function getTargetLesion(): ?array
+    {
         return null;
     }
 
     public function getAssociatedDataForInvestigatorForm(): array
     {
         return [
-            'LastChemo' => '01/01/2021'
+                'LastChemo' => '01/01/2021'
         ];
     }
 
     public function getAssociatedDataForReviewForm(): array
     {
         return [
-            'Radiotherapy' => false
+                'Radiotherapy' => false
         ];
     }
-
 }

@@ -47,6 +47,13 @@ class DeleteSeries
             $reason = $deleteSeriesRequest->reason;
 
             $seriesData = $this->dicomSeriesRepositoryInterface->getSeries($seriesInstanceUID, false);
+
+            //For Controller, forbid series deletion if it's the last one
+            $studyData = $this->dicomSeriesRepositoryInterface->getDicomSeriesOfStudyInstanceUIDArray([$seriesData['study_instance_uid']], false);
+            if ($role === Constants::ROLE_CONTROLLER && sizeof($studyData) === 1) {
+                throw new GaelOForbiddenException("You cannot reset DICOM upload");
+            }
+
             $visitId = $seriesData['dicom_study']['visit_id'];
 
             $visitContext = $this->visitRepositoryInterface->getVisitContext($visitId);

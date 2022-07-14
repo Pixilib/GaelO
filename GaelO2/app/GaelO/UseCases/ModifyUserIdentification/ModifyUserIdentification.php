@@ -8,6 +8,7 @@ use App\GaelO\UseCases\ModifyUserIdentification\ModifyUserIdentificationRequest;
 use App\GaelO\UseCases\ModifyUserIdentification\ModifyUserIdentificationResponse;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
+use App\GaelO\Interfaces\Adapters\FrameworkInterface;
 use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\UserRepositoryInterface;
 use App\GaelO\UseCases\CreateUser\CreateUser;
@@ -18,11 +19,16 @@ class ModifyUserIdentification
 
     private TrackerRepositoryInterface $trackerRepositoryInterface;
     private UserRepositoryInterface $userRepositoryInterface;
+    private FrameworkInterface $frameworkInterface;
 
-    public function __construct(UserRepositoryInterface $userRepositoryInterface, TrackerRepositoryInterface $trackerRepositoryInterface)
-    {
+    public function __construct(
+        UserRepositoryInterface $userRepositoryInterface,
+        TrackerRepositoryInterface $trackerRepositoryInterface,
+        FrameworkInterface $frameworkInterface
+    ) {
         $this->trackerRepositoryInterface = $trackerRepositoryInterface;
         $this->userRepositoryInterface = $userRepositoryInterface;
+        $this->frameworkInterface = $frameworkInterface;
     }
 
     public function execute(ModifyUserIdentificationRequest $modifyUserIdentificationRequest, ModifyUserIdentificationResponse $modifyUserIdentificationResponse): void
@@ -57,10 +63,12 @@ class ModifyUserIdentification
                 $user['orthanc_address'],
                 $user['orthanc_login'],
                 $user['orthanc_password'],
-                $user['password'],
-                $user['creation_date'],
                 $resetEmailValidation
             );
+
+            if ($resetEmailValidation) {
+                $this->frameworkInterface->sendRegisteredEventForEmailVerification($user['id']);
+            }
 
             $details = [
                 'modified_user_id' => $userId,

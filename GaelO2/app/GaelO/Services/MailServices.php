@@ -18,12 +18,12 @@ class MailServices
     private ReviewRepository $reviewRepositoryInterface;
     private StudyRepositoryInterface $studyRepositoryInterface;
 
-    public function __construct(MailerInterface $mailInterface,
-                                UserRepositoryInterface $userRepositoryInterface,
-                                ReviewRepositoryInterface $reviewRepositoryInterface,
-                                StudyRepositoryInterface $studyRepositoryInterface,
-    )
-    {
+    public function __construct(
+        MailerInterface $mailInterface,
+        UserRepositoryInterface $userRepositoryInterface,
+        ReviewRepositoryInterface $reviewRepositoryInterface,
+        StudyRepositoryInterface $studyRepositoryInterface,
+    ) {
         $this->mailInterface = $mailInterface;
         $this->userRepositoryInterface = $userRepositoryInterface;
         $this->reviewRepositoryInterface = $reviewRepositoryInterface;
@@ -53,7 +53,8 @@ class MailServices
         return $emails;
     }
 
-    private function getStudyContactEmail(string $studyName) : string {
+    private function getStudyContactEmail(string $studyName): string
+    {
         $studyEntity = $this->studyRepositoryInterface->find($studyName);
         return $studyEntity->contactEmail;
     }
@@ -175,7 +176,7 @@ class MailServices
         }
 
         $this->mailInterface->setTo($destinators);
-        $this->mailInterface->setReplyTo( $this->getStudyContactEmail($studyName) );
+        $this->mailInterface->setReplyTo($this->getStudyContactEmail($studyName));
         $this->mailInterface->setParameters($parameters);
         $this->mailInterface->setBody(MailConstants::EMAIL_UPLOADED_VISIT);
         $this->mailInterface->send();
@@ -193,7 +194,7 @@ class MailServices
         ];
 
         $this->mailInterface->setTo($this->userRepositoryInterface->getUsersEmailsByRolesInStudy($studyName, Constants::ROLE_REVIEWER));
-        $this->mailInterface->setReplyTo( $this->getStudyContactEmail($studyName) );
+        $this->mailInterface->setReplyTo($this->getStudyContactEmail($studyName));
         $this->mailInterface->setParameters($parameters);
         $this->mailInterface->setBody(MailConstants::EMAIL_REVIEW_READY);
         $this->mailInterface->send();
@@ -270,7 +271,7 @@ class MailServices
             ]
         );
 
-        $this->mailInterface->setReplyTo( $this->getStudyContactEmail($studyName) );
+        $this->mailInterface->setReplyTo($this->getStudyContactEmail($studyName));
         $this->mailInterface->setParameters($parameters);
         $this->mailInterface->setBody(MailConstants::EMAIL_QC_DECISION);
         $this->mailInterface->send();
@@ -299,7 +300,7 @@ class MailServices
             ]
         );
 
-        $this->mailInterface->setReplyTo( $this->getStudyContactEmail($studyName) );
+        $this->mailInterface->setReplyTo($this->getStudyContactEmail($studyName));
         $this->mailInterface->setParameters($parameters);
         $this->mailInterface->setBody(MailConstants::EMAIL_CORRECTIVE_ACTION);
         $this->mailInterface->send();
@@ -324,7 +325,7 @@ class MailServices
             ...$this->userRepositoryInterface->getUsersEmailsByRolesInStudy($studyName, Constants::ROLE_SUPERVISOR)
         ]);
 
-        $this->mailInterface->setReplyTo( $this->getStudyContactEmail($studyName) );
+        $this->mailInterface->setReplyTo($this->getStudyContactEmail($studyName));
         $this->mailInterface->setParameters($parameters);
         $this->mailInterface->setBody(MailConstants::EMAIL_UNLOCK_REQUEST);
         $this->mailInterface->send();
@@ -347,7 +348,7 @@ class MailServices
             ...$this->userRepositoryInterface->getUsersEmailsByRolesInStudy($studyName, Constants::ROLE_SUPERVISOR)
         ]);
 
-        $this->mailInterface->setReplyTo( $this->getStudyContactEmail($studyName) );
+        $this->mailInterface->setReplyTo($this->getStudyContactEmail($studyName));
         $this->mailInterface->setParameters($parameters);
         $this->mailInterface->setBody(MailConstants::EMAIL_UNLOCK_QC_REQUEST);
         $this->mailInterface->send();
@@ -391,7 +392,7 @@ class MailServices
             ]
         );
 
-        $this->mailInterface->setReplyTo( $this->getStudyContactEmail($studyName) );
+        $this->mailInterface->setReplyTo($this->getStudyContactEmail($studyName));
         $this->mailInterface->setParameters($parameters);
         $this->mailInterface->setBody(MailConstants::EMAIL_ADJUDICATION);
         $this->mailInterface->send();
@@ -418,7 +419,7 @@ class MailServices
             ]
         );
 
-        $this->mailInterface->setReplyTo( $this->getStudyContactEmail($studyName) );
+        $this->mailInterface->setReplyTo($this->getStudyContactEmail($studyName));
         $this->mailInterface->setParameters($parameters);
         $this->mailInterface->setBody(MailConstants::EMAIL_CONCLUSION);
         $this->mailInterface->send();
@@ -443,7 +444,7 @@ class MailServices
             ]
         );
 
-        $this->mailInterface->setReplyTo( $this->getStudyContactEmail($studyName) );
+        $this->mailInterface->setReplyTo($this->getStudyContactEmail($studyName));
         $this->mailInterface->setParameters($parameters);
         $this->mailInterface->setBody(MailConstants::EMAIL_DELETED_FORM);
         $this->mailInterface->send();
@@ -462,13 +463,9 @@ class MailServices
             'formType' => $investigatorForm ? 'Investigator' : 'Review'
         ];
 
-        $this->mailInterface->setTo(
-            [
-                ...$this->userRepositoryInterface->getUsersEmailsByRolesInStudy($studyName, Constants::ROLE_SUPERVISOR)
-            ]
-        );
+        $this->mailInterface->setTo($this->userRepositoryInterface->getUsersEmailsByRolesInStudy($studyName, Constants::ROLE_SUPERVISOR));
 
-        $this->mailInterface->setReplyTo( $this->getStudyContactEmail($studyName) );
+        $this->mailInterface->setReplyTo($this->getStudyContactEmail($studyName));
         $this->mailInterface->setParameters($parameters);
         $this->mailInterface->setBody(MailConstants::EMAIL_UNLOCK_FORM);
         $this->mailInterface->send();
@@ -492,7 +489,7 @@ class MailServices
             $this->userRepositoryInterface->getUsersEmailsByRolesInStudy($studyName, Constants::ROLE_SUPERVISOR)
         );
 
-        $this->mailInterface->setReplyTo( $this->getStudyContactEmail($studyName) );
+        $this->mailInterface->setReplyTo($this->getStudyContactEmail($studyName));
         $this->mailInterface->setParameters($parameters);
         $this->mailInterface->setBody(MailConstants::EMAIL_VISIT_NOT_DONE);
         $this->mailInterface->send();
@@ -510,7 +507,7 @@ class MailServices
         ];
 
         $this->mailInterface->setTo($this->getInvestigatorOfCenterInStudy($studyName, $centerCode));
-        $this->mailInterface->setReplyTo( $this->getStudyContactEmail($studyName) );
+        $this->mailInterface->setReplyTo($this->getStudyContactEmail($studyName));
         $this->mailInterface->setParameters($parameters);
         $this->mailInterface->setBody(MailConstants::EMAIL_REMINDER);
         $this->mailInterface->send();
@@ -530,13 +527,13 @@ class MailServices
         $this->mailInterface->setTo(
             $this->userRepositoryInterface->getUsersEmailsByRolesInStudy($studyName, $role)
         );
-        $this->mailInterface->setReplyTo( $this->getStudyContactEmail($studyName) );
+        $this->mailInterface->setReplyTo($this->getStudyContactEmail($studyName));
         $this->mailInterface->setParameters($parameters);
         $this->mailInterface->setBody(MailConstants::EMAIL_REMINDER);
         $this->mailInterface->send();
     }
 
-    public function sendMailToSupervisors(string $studyName, string $subject, string $content, ?string $patientId, ?int $visitId, $patients = null)
+    public function sendMailToSupervisors(int $senderId, string $studyName, string $subject, string $content, ?string $patientId, ?int $visitId, $patients = null)
     {
 
         $parameters = [
@@ -551,13 +548,13 @@ class MailServices
         $this->mailInterface->setTo(
             $this->userRepositoryInterface->getUsersEmailsByRolesInStudy($studyName, Constants::ROLE_SUPERVISOR)
         );
-        $this->mailInterface->setReplyTo( $this->getStudyContactEmail($studyName) );
+        $this->mailInterface->setReplyTo($this->getUserEmail($senderId));
         $this->mailInterface->setParameters($parameters);
         $this->mailInterface->setBody(MailConstants::EMAIL_USER);
         $this->mailInterface->send();
     }
 
-    public function sendMailToUser(array $userIds, ?string $studyName, string $subject, string $content)
+    public function sendMailToUser(int $senderId, array $userIds, ?string $studyName, string $subject, string $content)
     {
         $parameters = [
             'study' => $studyName,
@@ -571,15 +568,14 @@ class MailServices
             }, $userIds)
         );
 
-        if ($studyName) $this->mailInterface->setReplyTo( $this->getStudyContactEmail($studyName) );
-        else $this->mailInterface->setReplyTo();
+        $this->mailInterface->setReplyTo($this->getUserEmail($senderId));
 
         $this->mailInterface->setParameters($parameters);
         $this->mailInterface->setBody(MailConstants::EMAIL_USER);
         $this->mailInterface->send();
     }
 
-    public function sendMailToAdministrators(string $studyName, string $subject, string $content)
+    public function sendMailToAdministrators(int $senderId, string $studyName, string $subject, string $content)
     {
 
         $parameters = [
@@ -591,7 +587,7 @@ class MailServices
         $this->mailInterface->setTo(
             $this->userRepositoryInterface->getAdministratorsEmails()
         );
-        $this->mailInterface->setReplyTo( $this->getStudyContactEmail($studyName) );
+        $this->mailInterface->setReplyTo($this->getUserEmail($senderId));
         $this->mailInterface->setParameters($parameters);
         $this->mailInterface->setBody(MailConstants::EMAIL_USER);
         $this->mailInterface->send();
@@ -608,13 +604,13 @@ class MailServices
         $this->mailInterface->send();
     }
 
-    public function sendMagicLink(int $targetedUserId, string $studyName, string $url, string $role, int $patientCode, string $visitType = null )
+    public function sendMagicLink(int $targetedUserId, string $studyName, string $url, string $role, int $patientCode, string $visitType = null)
     {
 
         $parameters = ['name' => 'user', 'study' => $studyName, 'url' => $url, 'role' => $role, 'patientCode' => $patientCode, 'visitType' => $visitType];
 
         $this->mailInterface->setTo([$this->getUserEmail($targetedUserId)]);
-        $this->mailInterface->setReplyTo( $this->getStudyContactEmail($studyName) );
+        $this->mailInterface->setReplyTo($this->getStudyContactEmail($studyName));
         $this->mailInterface->setParameters($parameters);
         $this->mailInterface->setBody(MailConstants::EMAIL_MAGIC_LINK);
         $this->mailInterface->send();
