@@ -42,6 +42,7 @@ class ExportStudyService
     private TrackerRepositoryInterface $trackerRepositoryInterface;
 
     private string $studyName;
+    private array $visitTypeArray;
 
     public function __construct(
         UserRepositoryInterface $userRepositoryInterface,
