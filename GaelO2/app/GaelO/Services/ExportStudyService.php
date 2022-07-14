@@ -231,7 +231,7 @@ class ExportStudyService
 
         //Sort review into object to isolate each visit results
         foreach ($reviewEntities as $reviewEntity) {
-            $visitTypeDetails = $this->visitTypeArray[$reviewEntity['visit_id']];
+            $visitTypeDetails = $this->visitTypeArray[$reviewEntity['visit']['visit_type_id']];
             $exportReviewDataCollection->addData($visitTypeDetails['visit_group_name'], $visitTypeDetails['visit_type_name'], $reviewEntity);
         }
 
