@@ -5,6 +5,7 @@ namespace Database\Factories;
 use App\GaelO\Util;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Hash;
 
 class UserFactory extends Factory
@@ -28,7 +29,7 @@ class UserFactory extends Factory
             'orthanc_address' => $this->faker->domainName,
             'orthanc_login' => $this->faker->userName,
             'orthanc_password' => $this->faker->password,
-            'onboarding_version' => '0.0.1',
+            'onboarding_version' => Config::get('app.onboarding_version'),
             'email_verified_at' => now()
         ];
     }

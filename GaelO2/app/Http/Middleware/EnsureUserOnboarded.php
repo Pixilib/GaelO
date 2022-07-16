@@ -3,8 +3,11 @@
 namespace App\Http\Middleware;
 
 use App\GaelO\Constants\Constants;
+use App\GaelO\Util;
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Config;
 
 class EnsureUserOnboarded
 {
@@ -18,7 +21,7 @@ class EnsureUserOnboarded
     public function handle(Request $request, Closure $next)
     {
         $user = $request->user();
-        if ($user->onboarding_version === '0.0.0') {
+        if (Util::isVersionHigher(Config::get('app.onboarding_version'), $user->onboarding_version)) {
             return response(Constants::USER_NOT_ONBOARDED, 403);
         }
 

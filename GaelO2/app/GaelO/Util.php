@@ -165,6 +165,6 @@ class Util
 
     public static function isVersionHigher($current, $previous): bool
     {
-        return version_compare($previous, $current, '<=');
+        return version_compare($previous, $current, '<');
     }
 }
