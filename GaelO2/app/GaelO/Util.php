@@ -167,4 +167,5 @@ class Util
     {
         return version_compare($previous, $current, '<');
     }
+
 }
