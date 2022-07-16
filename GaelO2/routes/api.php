@@ -35,8 +35,13 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-//Routes that need authentication
+//For the modify onboaded the route is accessible for non onboarded users
 Route::middleware(['auth:sanctum', 'verified', 'activated'])->group(function () {
+    Route::post('users/{id}/onboarding', [UserController::class, 'modifyUserOnboarding']);
+});
+
+//Routes that need authentication
+Route::middleware(['auth:sanctum', 'verified', 'activated', 'onboarded'])->group(function () {
 
     //System Route
     Route::get('system', [AuthController::class, 'getSystem']);
@@ -48,7 +53,7 @@ Route::middleware(['auth:sanctum', 'verified', 'activated'])->group(function () 
     Route::get('users/{id?}',  [UserController::class, 'getUser']);
     Route::post('users', [UserController::class, 'createUser']);
     Route::put('users/{id}', [UserController::class, 'modifyUser']);
-    Route::post('users/{id}/onboarding', [UserController::class, 'modifyUserOnboarding']);
+
     Route::patch('users/{id}', [UserController::class, 'modifyUserIdentification']);
     Route::delete('users/{id}', [UserController::class, 'deleteUser']);
     Route::patch('users/{id}/reactivate', [UserController::class, 'reactivateUser']);
@@ -199,10 +204,10 @@ Route::post('tools/forgot-password', [UserController::class, 'forgotPassword'])-
 
 //Forgot password routes
 Route::get('tools/reset-password/{token}', function ($token) {
-    return redirect('/reset-password?token='.$token);
+    return redirect('/reset-password?token=' . $token);
 })->name('password.reset');
 
-Route::post('tools/reset-password', [UserController::class, 'updatePassword'] )->name('password.update');
+Route::post('tools/reset-password', [UserController::class, 'updatePassword'])->name('password.update');
 
 //Route to validate email
 Route::get('email/verify/{id}/{hash}', function (Request $request) {

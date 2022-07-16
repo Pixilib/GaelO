@@ -6,6 +6,7 @@ class Constants {
     const USER_EMAIL_NOT_VERIFIED = 'Email Not Verified';
     const USER_DELETED = 'User Deleted';
     const USER_BLOCKED = 'User Blocked';
+    const USER_NOT_ONBOARDED = 'User Missing Onboarding';
 
     const USER_JOB_CRA = 'CRA';
     const USER_JOB_SUPERVISION = 'Supervision';
