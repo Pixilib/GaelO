@@ -28,6 +28,7 @@ class UserFactory extends Factory
             'orthanc_address' => $this->faker->domainName,
             'orthanc_login' => $this->faker->userName,
             'orthanc_password' => $this->faker->password,
+            'onboarding_version' => '0.0.0',
             'email_verified_at' => now()
         ];
     }
@@ -100,6 +101,15 @@ class UserFactory extends Factory
         return $this->state(function (array $attributes) use ($attempts) {
             return [
                 'attempts' => $attempts,
+            ];
+        });
+    }
+
+    public function onboardingVersion(string $version)
+    {
+        return $this->state(function (array $attributes) use ($version) {
+            return [
+                'onboarding_version' => $version,
             ];
         });
     }

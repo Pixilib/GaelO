@@ -90,6 +90,7 @@ class UserRepository implements UserRepositoryInterface
         ?String $orthancAdress,
         ?String $orthancLogin,
         ?String $orthancPassword,
+        ?String $onboardingVersion,
         bool $resetEmailVerification
     ): void {
 
@@ -104,6 +105,7 @@ class UserRepository implements UserRepositoryInterface
         $user->orthanc_address = $orthancAdress;
         $user->orthanc_login = $orthancLogin;
         $user->orthanc_password = $orthancPassword;
+        $user->onboarding_version = $onboardingVersion;
         if ($resetEmailVerification) $user->email_verified_at = null;
         $user->save();
     }

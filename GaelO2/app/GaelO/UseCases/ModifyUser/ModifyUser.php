@@ -69,6 +69,7 @@ class ModifyUser
                 $modifyUserRequest->orthancAddress,
                 $modifyUserRequest->orthancLogin,
                 $modifyUserRequest->orthancPassword,
+                $user['onboarding_version'],
                 $resetEmailValidation
             );
 

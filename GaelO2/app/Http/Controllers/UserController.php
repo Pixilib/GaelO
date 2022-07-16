@@ -47,6 +47,9 @@ use App\GaelO\UseCases\ReactivateUser\ReactivateUserResponse;
 use App\GaelO\UseCases\ModifyUserIdentification\ModifyUserIdentification;
 use App\GaelO\UseCases\ModifyUserIdentification\ModifyUserIdentificationRequest;
 use App\GaelO\UseCases\ModifyUserIdentification\ModifyUserIdentificationResponse;
+use App\GaelO\UseCases\ModifyUserOnboarding\ModifyUserOnboarding;
+use App\GaelO\UseCases\ModifyUserOnboarding\ModifyUserOnboardingRequest;
+use App\GaelO\UseCases\ModifyUserOnboarding\ModifyUserOnboardingResponse;
 use App\GaelO\Util;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
@@ -265,5 +268,16 @@ class UserController extends Controller
         $getUsersFromStudyRequest->role = $queryParam['role'];
         $getUsersFromStudy->execute($getUsersFromStudyRequest, $getUsersFromStudyResponse);
         return $this->getJsonResponse($getUsersFromStudyResponse->body, $getUsersFromStudyResponse->status, $getUsersFromStudyResponse->statusText);
+    }
+
+    public function modifyUserOnboarding(Request $request, ModifyUserOnboarding $modifyUserOnboarding, ModifyUserOnboardingRequest $modifyUserOnboardingRequest, ModifyUserOnboardingResponse $modifyUserOnboardingResponse, int $id){
+        $currentUser = Auth::user();
+        $requestData = $request->all();
+        $modifyUserOnboardingRequest = Util::fillObject($requestData, $modifyUserOnboardingRequest);
+        $modifyUserOnboardingRequest->currentUserId = $currentUser['id'];
+        $modifyUserOnboardingRequest->userId = $id;
+        $modifyUserOnboarding->execute($modifyUserOnboardingRequest, $modifyUserOnboardingResponse);
+        return $this->getJsonResponse($modifyUserOnboardingResponse->body, $modifyUserOnboardingResponse->status, $modifyUserOnboardingResponse->statusText);
+
     }
 }

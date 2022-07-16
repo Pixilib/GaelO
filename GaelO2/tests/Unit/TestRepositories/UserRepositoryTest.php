@@ -85,6 +85,7 @@ class UserRepositoryTest extends TestCase
             'a',
             'b',
             'c',
+            '1.0.1',
             false
         );
 
@@ -98,6 +99,7 @@ class UserRepositoryTest extends TestCase
         $this->assertNotEquals($updatedEntity['center_code'], $userToModify['center_code']);
         $this->assertNotEquals($updatedEntity['job'], $userToModify['job']);
         $this->assertNotEquals($updatedEntity['updated_at'], $userToModify['updated_at']);
+        $this->assertNotEquals($updatedEntity['onboarding_version'], $userToModify['onboarding_version']);
         $this->assertEquals($updatedEntity['password'], $userToModify['password']);
     }
 

@@ -48,6 +48,7 @@ Route::middleware(['auth:sanctum', 'verified', 'activated'])->group(function () 
     Route::get('users/{id?}',  [UserController::class, 'getUser']);
     Route::post('users', [UserController::class, 'createUser']);
     Route::put('users/{id}', [UserController::class, 'modifyUser']);
+    Route::post('users/{id}/onboarding', [UserController::class, 'modifyUserOnboarding']);
     Route::patch('users/{id}', [UserController::class, 'modifyUserIdentification']);
     Route::delete('users/{id}', [UserController::class, 'deleteUser']);
     Route::patch('users/{id}/reactivate', [UserController::class, 'reactivateUser']);

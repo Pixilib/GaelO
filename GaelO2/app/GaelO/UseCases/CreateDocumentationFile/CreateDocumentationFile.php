@@ -40,7 +40,7 @@ class CreateDocumentationFile{
                 throw new GaelOBadRequestException("Only application/pdf content accepted");
             }
 
-            if( ! Util ::is_base64_encoded($createDocumentationFileRequest->binaryData)){
+            if( ! Util ::isBase64Encoded($createDocumentationFileRequest->binaryData)){
                 throw new GaelOBadRequestException("Payload should be base64 encoded");
             }
 

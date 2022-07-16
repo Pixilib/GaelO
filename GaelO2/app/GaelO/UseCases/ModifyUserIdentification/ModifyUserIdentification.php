@@ -63,6 +63,7 @@ class ModifyUserIdentification
                 $user['orthanc_address'],
                 $user['orthanc_login'],
                 $user['orthanc_password'],
+                $user['onboarding_version'],
                 $resetEmailValidation
             );
 
