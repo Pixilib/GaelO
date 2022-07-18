@@ -26,8 +26,6 @@ use App\GaelO\Services\StoreObjects\Export\ExportVisitsResults;
 use App\GaelO\Util;
 use ZipArchive;
 
-use Illuminate\Support\Facades\Log;
-
 class ExportStudyService
 {
 
@@ -74,7 +72,6 @@ class ExportStudyService
 
         //List Visit Type of this study
         $visitTypes = $this->visitTypeRepositoryInterface->getVisitTypesOfStudy($this->studyName);
-        Log::info($visitTypes);
         $visitTypeArray = [];
 
         foreach ($visitTypes as $visitType) {
@@ -85,8 +82,6 @@ class ExportStudyService
         }
 
         $this->visitTypeArray = $visitTypeArray;
-
-        Log::info($this->visitTypeArray);
 
         //Store Id of visits of this study
         $this->availableVisits = $this->visitRepositoryInterface->getVisitsInStudy($this->studyName, true, false, true);
@@ -233,8 +228,7 @@ class ExportStudyService
     {
 
         $exportReviewDataCollection = new ExportReviewDataCollection($this->studyName, $role);
-        Log::info($reviewEntities);
-        Log::info($this->visitTypeArray);
+
         //Sort review into object to isolate each visit results
         foreach ($reviewEntities as $reviewEntity) {
             $visitTypeDetails = $this->visitTypeArray[$reviewEntity['visit']['visit_type_id']];
