@@ -2,6 +2,10 @@ GaelO
 
 -- Pending --
 Add download associated file for supervisor
+Anon rule for RT Studies
+Fix check comment if ask corrective action
+Upgraded bootstrap 5
+Upgraded uploader 3.4.5
 
 --GaelO 1.10.1 14/05/22--
 Add Stone of Orthanc Viewer
