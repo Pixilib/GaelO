@@ -251,7 +251,8 @@ class ExportStudyService
             $visitGroupName = $exportReviewData->getVisitGroupName();
             $visitTypeName = $exportReviewData->getVisitTypeName();
 
-            $sheetName =  $role . '_' . $visitGroupName . '_' . $visitTypeName;
+            //Only put 3 first letter of role (Inv or Rev) to reduce the risk of lenth > 31 caractere
+            $sheetName =  substr($role, 0, 3)  . '_' . $visitGroupName . '_' . $visitTypeName;
 
             //get formatted date from export review data
             $data = $exportReviewData->getData();
