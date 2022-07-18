@@ -42,6 +42,7 @@ class ExportStudyService
     private TrackerRepositoryInterface $trackerRepositoryInterface;
 
     private string $studyName;
+    private array $visitTypeArray;
 
     public function __construct(
         UserRepositoryInterface $userRepositoryInterface,
@@ -73,7 +74,6 @@ class ExportStudyService
 
         //List Visit Type of this study
         $visitTypes = $this->visitTypeRepositoryInterface->getVisitTypesOfStudy($this->studyName);
-
         $visitTypeArray = [];
 
         foreach ($visitTypes as $visitType) {
@@ -229,9 +229,10 @@ class ExportStudyService
 
         $exportReviewDataCollection = new ExportReviewDataCollection($this->studyName, $role);
 
+
         //Sort review into object to isolate each visit results
         foreach ($reviewEntities as $reviewEntity) {
-            $visitTypeDetails = $this->visitTypeArray[$reviewEntity['visit_id']];
+            $visitTypeDetails = $this->visitTypeArray[$reviewEntity['visit']['visit_type_id']];
             $exportReviewDataCollection->addData($visitTypeDetails['visit_group_name'], $visitTypeDetails['visit_type_name'], $reviewEntity);
         }
 
@@ -249,7 +250,6 @@ class ExportStudyService
 
             //get formatted date from export review data
             $data = $exportReviewData->getData();
-            Log::info($data);
             $spreadsheetAdapter->addSheet($sheetName);
             $spreadsheetAdapter->fillData($sheetName, $data);
 

@@ -63,6 +63,7 @@ class ExportReviewData
                 $reviewData[$name] = $reviewEntity['review_data'][$name] ?? null;
             }
             unset($reviewEntity['review_data']);
+            unset($reviewEntity['visit']);
             $rows[] = [
                 ...$reviewEntity,
                 ...$reviewData
