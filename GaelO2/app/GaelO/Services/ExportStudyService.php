@@ -129,8 +129,8 @@ class ExportStudyService
 
         //Loop each visitType and export data for each one
         foreach ($this->availableVisits as $visit) {
-            $visitTypeName = $visit['visit']['visit_type']['name'];
-            $visitGroupName = $visit['visit']['visit_type']['visit_group']['name'];
+            $visitTypeName = $visit['visit_type']['name'];
+            $visitGroupName = $visit['visit_type']['visit_group']['name'];
             //Determine Sheet Name
             $sheetName = $visitGroupName . '_' . $visitTypeName;
             unset($visit['visit_type']);
