@@ -217,12 +217,14 @@ class ExportStudyService
 
     public function exportReviewerForms(): void
     {
+        //SK ON DEVRAIT PLUTOT ICI REQUETER LE NIVEAU VISIT POUR PRENDRE QUE LES NON SUPPRIMEE ET CHAQUE VISITE A SES ATTRIBUE VISITTYPE VISITGROUP
         $reviewEntities = $this->reviewRepositoryInterface->getReviewsFromVisitIdArrayStudyName($this->visitIdArray, $this->studyName, false);
         $this->groupReviewPerVisitType($reviewEntities, Constants::ROLE_REVIEWER);
     }
 
     public function exportInvestigatorForms(): void
     {
+         //SK ON DEVRAIT PLUTOT ICI REQUETER LE NIVEAU VISIT POUR PRENDRE QUE LES NON SUPPRIMEE ET CHAQUE VISITE A SES ATTRIBUE VISITTYPE VISITGROUP
         $investigatorForms = $this->reviewRepositoryInterface->getInvestigatorsFormsFromVisitIdArrayStudyName($this->visitIdArray, $this->studyName, false);
         $this->groupReviewPerVisitType($investigatorForms, Constants::ROLE_INVESTIGATOR);
     }
