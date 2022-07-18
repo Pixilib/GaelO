@@ -66,7 +66,7 @@ class ExportStudyService
         $this->studyName = $studyName;
 
         //Store Id of visits of this study
-        $this->availableVisits = $this->visitRepositoryInterface->getVisitsInStudy($this->studyName, true, false, true);
+        $this->availableVisits = $this->visitRepositoryInterface->getVisitsInStudy($this->studyName, true, false, false);
 
         $this->visitIdArray = array_map(function ($visit) {
             return $visit['id'];
@@ -165,7 +165,7 @@ class ExportStudyService
 
         $spreadsheetAdapter = new SpreadsheetAdapter();
 
-        $dicomStudyData = $this->dicomStudyRepositoryInterface->getDicomStudyFromVisitIdArray($this->visitIdArray, true);
+        $dicomStudyData = $this->dicomStudyRepositoryInterface->getDicomStudyFromVisitIdArray($this->visitIdArray, false);
         $spreadsheetAdapter->addSheet('DicomStudies');
         $spreadsheetAdapter->fillData('DicomStudies', $dicomStudyData);
 
@@ -174,7 +174,7 @@ class ExportStudyService
         }, $dicomStudyData);
 
         //Get Series data for series spreadsheet
-        $dicomSeriesData = $this->dicomSeriesRepositoryInterface->getDicomSeriesOfStudyInstanceUIDArray($studyInstanceUIDArray, true);
+        $dicomSeriesData = $this->dicomSeriesRepositoryInterface->getDicomSeriesOfStudyInstanceUIDArray($studyInstanceUIDArray, false);
         $spreadsheetAdapter->addSheet('DicomSeries');
         $spreadsheetAdapter->fillData('DicomSeries', $dicomSeriesData);
 
