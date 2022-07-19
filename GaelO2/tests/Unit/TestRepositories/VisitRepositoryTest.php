@@ -15,6 +15,7 @@ use App\Models\VisitGroup;
 use App\Models\VisitType;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
+use PHPUnit\TextUI\XmlConfiguration\Constant;
 
 class VisitRepositoryTest extends TestCase
 {
@@ -116,7 +117,7 @@ class VisitRepositoryTest extends TestCase
             $visitTypes->each(function ($item, $key) use ($patient, $patient2) {
                 $visit = Visit::factory()->visitTypeId($item->id)->patientId($patient->id)->create();
                 ReviewStatus::factory()->visitId($visit->id)->reviewAvailable()->studyName($patient->study_name)->create();
-                $visit2 = Visit::factory()->visitTypeId($item->id)->patientId($patient2->id)->create();
+                $visit2 = Visit::factory()->visitTypeId($item->id)->uploadDone()->stateInvestigatorForm(Constants::INVESTIGATOR_FORM_DONE)->stateQualityControl(Constants::QUALITY_CONTROL_NOT_NEEDED)->patientId($patient2->id)->create();
                 ReviewStatus::factory()->visitId($visit2->id)->studyName($patient->study_name)->create();
             });
         });
@@ -175,7 +176,7 @@ class VisitRepositoryTest extends TestCase
     public function testGetReviewAvailableVisitFromPatientIdsWithContextAndReviewStatus()
     {
         $patient = $this->populateVisits();
-        $visits = $this->visitRepository->getReviewAvailableVisitFromPatientIdsWithContextAndReviewStatus([$patient[0]->id, $patient[1]->id], $patient[0]->study_name);
+        $visits = $this->visitRepository->getReviewVisitHistoryFromPatientIdsWithContextAndReviewStatus([$patient[0]->id, $patient[1]->id], $patient[0]->study_name);
         $this->assertEquals(6, sizeof($visits));
         $this->assertArrayHasKey('review_status', $visits[0]);
     }
@@ -389,7 +390,7 @@ class VisitRepositoryTest extends TestCase
 
         $patients = $this->populateVisits();
         $visits = $this->visitRepository->getImagingVisitsAwaitingUpload($patients[0]->study->name, [$patients[0]->center_code, $patients[1]->center_code]);
-        $this->assertEquals(12, sizeof($visits));
+        $this->assertEquals(6, sizeof($visits));
         $this->assertArrayHasKey('patient', $visits[0]);
     }
 
