@@ -162,6 +162,20 @@ class VisitRepository implements VisitRepositoryInterface
         return $answer->count() === 0 ? []  : $answer->toArray();
     }
 
+    public function getReviewAvailableVisitFromPatientIdsWithContextAndReviewStatus(array $patientIdArray, string $studyName): array
+    {
+
+        $answer = $this->visit
+            ->with('visitType', 'visitType.visitGroup', 'reviewStatus')
+            ->whereHas('reviewStatus', function ($query) use ($studyName) {
+                $query->where('study_name', $studyName)->where('review_available', true);
+            })
+            ->whereIn('patient_id', $patientIdArray)
+            ->get();
+
+        return $answer->count() === 0 ? []  : $answer->toArray();
+    }
+
     public function getVisitsInStudy(string $studyName, bool $withReviewStatus, bool $withPatientCenter, bool $withTrashed): array
     {
 
