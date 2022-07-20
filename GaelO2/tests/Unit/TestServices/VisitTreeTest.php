@@ -96,7 +96,7 @@ class VisitTreeTest extends TestCase
         }, $visitArrayMock);
 
         $mockVisitRepository
-            ->shouldReceive('getVisitFromPatientIdsWithContextAndReviewStatus')
+            ->shouldReceive('getReviewVisitHistoryFromPatientIdsWithContextAndReviewStatus')
             ->andReturn($arrayMockWithReviewStatus);
 
         $mockUserRepository = Mockery::mock(UserRepository::class);

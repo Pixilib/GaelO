@@ -183,17 +183,21 @@ class ReviewRepositoryTest extends TestCase
     public function testGetReviewFromVisitIdArrayAndStudyName(){
 
         $study = Study::factory()->create();
-        $visit = Visit::factory()->count(2)->create();
+        $visits = Visit::factory()->count(3)->create();
 
-        $reviews = Review::factory()->studyName($study->name)->visitId($visit->first()->id)->reviewForm()->validated()->count(7)->create();
-        Review::factory()->studyName($study->name)->visitId($visit->last()->id)->reviewForm()->validated()->count(3)->create();
+        $reviews = Review::factory()->studyName($study->name)->visitId($visits->first()->id)->reviewForm()->validated()->count(7)->create();
+        Review::factory()->studyName($study->name)->visitId($visits->last()->id)->reviewForm()->validated()->count(3)->create();
+
+        //add review in a deleted visit (should not be selected)
+        $visits->get(1)->delete();
+        Review::factory()->studyName($study->name)->visitId($visits->get(1)->id)->reviewForm()->validated()->count(3)->create();
 
         //Add localform that should not be selected
-        Review::factory()->studyName($study->name)->visitId($visit->last()->id)->validated()->count(3)->create();
+        Review::factory()->studyName($study->name)->visitId($visits->last()->id)->validated()->count(3)->create();
 
         $reviews->first()->delete();
 
-        $reviewData = $this->reviewRepository->getReviewsFromVisitIdArrayStudyName([$visit->first()->id, $visit->last()->id], $study->name, true);
+        $reviewData = $this->reviewRepository->getReviewsFromVisitIdArrayStudyName([$visits->first()->id, $visits->last()->id, $visits->get(1)->id], $study->name, true);
 
         $this->assertEquals(10, sizeof($reviewData));
     }
@@ -201,17 +205,21 @@ class ReviewRepositoryTest extends TestCase
     public function testGetInvestigatorsFormsFromVisitIdArrayAndStudyName(){
 
         $study = Study::factory()->create();
-        $visit = Visit::factory()->count(2)->create();
+        $visits = Visit::factory()->count(3)->create();
 
-        $reviews = Review::factory()->studyName($study->name)->visitId($visit->first()->id)->validated()->count(7)->create();
-        Review::factory()->studyName($study->name)->visitId($visit->last()->id)->validated()->count(3)->create();
+        $reviews = Review::factory()->studyName($study->name)->visitId($visits->first()->id)->validated()->count(7)->create();
+        Review::factory()->studyName($study->name)->visitId($visits->last()->id)->validated()->count(3)->create();
+
+        //add review in a deleted visit (should not be selected)
+        $visits->get(1)->delete();
+        Review::factory()->studyName($study->name)->visitId($visits->get(1)->id)->validated()->count(3)->create();
 
         //Add review form that should be not selected
-        Review::factory()->studyName($study->name)->visitId($visit->last()->id)->reviewForm()->validated()->count(3)->create();
+        Review::factory()->studyName($study->name)->visitId($visits->last()->id)->reviewForm()->validated()->count(3)->create();
 
         $reviews->first()->delete();
 
-        $reviewData = $this->reviewRepository->getInvestigatorsFormsFromVisitIdArrayStudyName([$visit->first()->id, $visit->last()->id], $study->name, true);
+        $reviewData = $this->reviewRepository->getInvestigatorsFormsFromVisitIdArrayStudyName([$visits->first()->id, $visits->last()->id, $visits->get(1)->id], $study->name, true);
 
         $this->assertEquals(10, sizeof($reviewData));
     }

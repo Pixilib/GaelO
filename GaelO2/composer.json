@@ -20,6 +20,7 @@
         "phpoffice/phpspreadsheet": "1.22.0",
         "ralouphie/mimey": "^1.0",
         "respect/validation": "^2.2",
+        "sentry/sentry-laravel": "^2.13",
         "spatie/db-dumper": "^3.1",
         "staudenmeir/eloquent-has-many-deep": "^1.15"
     },

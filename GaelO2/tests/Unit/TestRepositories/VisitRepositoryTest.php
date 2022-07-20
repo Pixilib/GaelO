@@ -15,6 +15,7 @@ use App\Models\VisitGroup;
 use App\Models\VisitType;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
+use PHPUnit\TextUI\XmlConfiguration\Constant;
 
 class VisitRepositoryTest extends TestCase
 {
@@ -116,8 +117,8 @@ class VisitRepositoryTest extends TestCase
             $visitTypes->each(function ($item, $key) use ($patient, $patient2) {
                 $visit = Visit::factory()->visitTypeId($item->id)->patientId($patient->id)->create();
                 ReviewStatus::factory()->visitId($visit->id)->reviewAvailable()->studyName($patient->study_name)->create();
-                $visit2 = Visit::factory()->visitTypeId($item->id)->patientId($patient2->id)->create();
-                ReviewStatus::factory()->visitId($visit2->id)->reviewAvailable()->studyName($patient->study_name)->create();
+                $visit2 = Visit::factory()->visitTypeId($item->id)->uploadDone()->stateInvestigatorForm(Constants::INVESTIGATOR_FORM_DONE)->stateQualityControl(Constants::QUALITY_CONTROL_NOT_NEEDED)->patientId($patient2->id)->create();
+                ReviewStatus::factory()->visitId($visit2->id)->studyName($patient->study_name)->create();
             });
         });
 
@@ -142,8 +143,8 @@ class VisitRepositoryTest extends TestCase
         $this->assertArrayHasKey('review_available', $visits[0]['review_status']);
         $this->assertArrayHasKey('review_conclusion_value', $visits[0]['review_status']);
         $this->assertArrayHasKey('review_conclusion_date', $visits[0]['review_status']);
-        $this->assertEquals($visits[0]['id'], $visits[0]['review_status']['visit_id'] );
-        $this->assertEquals($patient->study_name, $visits[0]['review_status']['study_name'] );
+        $this->assertEquals($visits[0]['id'], $visits[0]['review_status']['visit_id']);
+        $this->assertEquals($patient->study_name, $visits[0]['review_status']['study_name']);
     }
 
     public function testGetPatientVisitsWithReviewStatusWithTrashed()
@@ -170,7 +171,14 @@ class VisitRepositoryTest extends TestCase
         $visits = $this->visitRepository->getVisitFromPatientIdsWithContextAndReviewStatus([$patient[0]->id, $patient[1]->id], $patient[0]->study_name);
         $this->assertEquals(12, sizeof($visits));
         $this->assertArrayHasKey('review_status', $visits[0]);
+    }
 
+    public function testGetReviewAvailableVisitFromPatientIdsWithContextAndReviewStatus()
+    {
+        $patient = $this->populateVisits();
+        $visits = $this->visitRepository->getReviewVisitHistoryFromPatientIdsWithContextAndReviewStatus([$patient[0]->id, $patient[1]->id], $patient[0]->study_name);
+        $this->assertEquals(6, sizeof($visits));
+        $this->assertArrayHasKey('review_status', $visits[0]);
     }
 
     public function testGetVisitInStudy()
@@ -188,8 +196,8 @@ class VisitRepositoryTest extends TestCase
         $visitsWithReview = $this->visitRepository->getVisitsInStudy($patient->study_name, true, false, false);
         $this->assertEquals(12, sizeof($visitsWithReview));
         $this->assertArrayHasKey('review_status', $visitsWithReview[0]);
-        $this->assertEquals($visitsWithReview[0]['id'], $visitsWithReview[0]['review_status']['visit_id'] );
-        $this->assertEquals($patient->study_name, $visitsWithReview[0]['review_status']['study_name'] );
+        $this->assertEquals($visitsWithReview[0]['id'], $visitsWithReview[0]['review_status']['visit_id']);
+        $this->assertEquals($patient->study_name, $visitsWithReview[0]['review_status']['study_name']);
     }
 
     public function testHasVisitInStudy()
@@ -207,22 +215,25 @@ class VisitRepositoryTest extends TestCase
         $this->assertTrue($answer2);
     }
 
-    public function testGetVisitsInVisitType(){
+    public function testGetVisitsInVisitType()
+    {
         $visit = Visit::factory()->count(5)->create();
-        $answer = $this->visitRepository->getVisitsInVisitType( $visit->first()->visitType->id );
+        $answer = $this->visitRepository->getVisitsInVisitType($visit->first()->visitType->id);
         $this->assertEquals(1, sizeof($answer));
     }
 
-    public function testGetVisitsInVisitTypeWithTrashed(){
+    public function testGetVisitsInVisitTypeWithTrashed()
+    {
         $visit = Visit::factory()->count(5)->create();
         $visit->first()->delete();
-        $answer = $this->visitRepository->getVisitsInVisitType( $visit->first()->visitType->id, true, '', true );
+        $answer = $this->visitRepository->getVisitsInVisitType($visit->first()->visitType->id, true, '', true);
         $this->assertEquals(1, sizeof($answer));
-        $answer = $this->visitRepository->getVisitsInVisitType( $visit->first()->visitType->id, true, '', false );
+        $answer = $this->visitRepository->getVisitsInVisitType($visit->first()->visitType->id, true, '', false);
         $this->assertEquals(0, sizeof($answer));
     }
 
-    public function testGetVisitsInVisitTypeWithReviewStatus(){
+    public function testGetVisitsInVisitTypeWithReviewStatus()
+    {
         $visit = Visit::factory()->count(5)->create();
         $study = Study::factory()->create();
         ReviewStatus::factory()->create([
@@ -231,7 +242,7 @@ class VisitRepositoryTest extends TestCase
             'review_available' => true
         ]);
 
-        $answer = $this->visitRepository->getVisitsInVisitType( $visit->first()->visitType->id, true, $study->name );
+        $answer = $this->visitRepository->getVisitsInVisitType($visit->first()->visitType->id, true, $study->name);
         $this->assertEquals(1, sizeof($answer));
         $this->assertArrayHasKey('review_status', $answer[0]);
     }
@@ -283,10 +294,11 @@ class VisitRepositoryTest extends TestCase
         $patient = $this->populateVisits()[0];
         $studyName = $patient->study->name;
         $answer = $this->visitRepository->getPatientsHavingAtLeastOneAwaitingReviewForUser($studyName, 1);
-        $this->assertEquals(2, sizeof($answer));
+        $this->assertEquals(1, sizeof($answer));
     }
 
-    public function testIsParentPatientHavingOneVisitAwaitingReview(){
+    public function testIsParentPatientHavingOneVisitAwaitingReview()
+    {
         //create patient with 2 visits
         $patient = Patient::factory()->create();
         $visits = Visit::factory()->patientId($patient->id)->count(2)->create();
@@ -312,41 +324,42 @@ class VisitRepositoryTest extends TestCase
         $secondReview->save();
         $answer3 = $this->visitRepository->isParentPatientHavingOneVisitAwaitingReview($visits->first()->id, $patient->study_name, 1);
         $this->assertFalse($answer3);
-
     }
 
-    public function testEditQC(){
+    public function testEditQC()
+    {
         $visit = Visit::factory()->create();
         $this->visitRepository->editQc($visit->id, Constants::QUALITY_CONTROL_ACCEPTED, 1, true, true, 'OK', 'OK');
         $updatedVisit = Visit::find($visit->id);
 
-        $this->assertEquals(Constants::QUALITY_CONTROL_ACCEPTED, $updatedVisit->state_quality_control );
-        $this->assertEquals('OK', $updatedVisit->image_quality_comment );
-        $this->assertEquals('OK', $updatedVisit->form_quality_comment );
+        $this->assertEquals(Constants::QUALITY_CONTROL_ACCEPTED, $updatedVisit->state_quality_control);
+        $this->assertEquals('OK', $updatedVisit->image_quality_comment);
+        $this->assertEquals('OK', $updatedVisit->form_quality_comment);
     }
 
-    public function testResetQC(){
+    public function testResetQC()
+    {
         $visit = Visit::factory()->stateQualityControl(Constants::QUALITY_CONTROL_ACCEPTED)->create();
         $this->visitRepository->resetQc($visit->id);
 
         $updatedVisit = Visit::find($visit->id);
-        $this->assertEquals(Constants::QUALITY_CONTROL_NOT_DONE, $updatedVisit->state_quality_control );
-        $this->assertNull($updatedVisit->controller_user_id );
-        $this->assertNull($updatedVisit->control_date );
-        $this->assertFalse(boolval($updatedVisit->image_quality_control) );
-        $this->assertFalse(boolval($updatedVisit->form_quality_control) );
-        $this->assertNull($updatedVisit->image_quality_comment );
-        $this->assertNull($updatedVisit->form_quality_comment );
-        $this->assertNull($updatedVisit->corrective_action_user_id );
-        $this->assertNull($updatedVisit->corrective_action_date );
-        $this->assertFalse(boolval($updatedVisit->corrective_action_new_upload) );
-        $this->assertFalse(boolval($updatedVisit->corrective_action_investigator_form) );
-        $this->assertNull($updatedVisit->corrective_action_comment );
-        $this->assertFalse(boolval($updatedVisit->corrective_action_applied) );
-
+        $this->assertEquals(Constants::QUALITY_CONTROL_NOT_DONE, $updatedVisit->state_quality_control);
+        $this->assertNull($updatedVisit->controller_user_id);
+        $this->assertNull($updatedVisit->control_date);
+        $this->assertFalse(boolval($updatedVisit->image_quality_control));
+        $this->assertFalse(boolval($updatedVisit->form_quality_control));
+        $this->assertNull($updatedVisit->image_quality_comment);
+        $this->assertNull($updatedVisit->form_quality_comment);
+        $this->assertNull($updatedVisit->corrective_action_user_id);
+        $this->assertNull($updatedVisit->corrective_action_date);
+        $this->assertFalse(boolval($updatedVisit->corrective_action_new_upload));
+        $this->assertFalse(boolval($updatedVisit->corrective_action_investigator_form));
+        $this->assertNull($updatedVisit->corrective_action_comment);
+        $this->assertFalse(boolval($updatedVisit->corrective_action_applied));
     }
 
-    public function testSetCorrectiveAction(){
+    public function testSetCorrectiveAction()
+    {
         $visit = Visit::factory()->create();
         $this->visitRepository->setCorrectiveAction(
             $visit->id,
@@ -358,30 +371,31 @@ class VisitRepositoryTest extends TestCase
         );
 
         $updatedVisit = Visit::find($visit->id);
-        $this->assertEquals(Constants::QUALITY_CONTROL_WAIT_DEFINITIVE_CONCLUSION, $updatedVisit->state_quality_control );
-        $this->assertTrue(boolval($updatedVisit->corrective_action_new_upload) );
-        $this->assertTrue(boolval($updatedVisit->corrective_action_investigator_form) );
-        $this->assertEquals('updated' , $updatedVisit->corrective_action_comment);
-
+        $this->assertEquals(Constants::QUALITY_CONTROL_WAIT_DEFINITIVE_CONCLUSION, $updatedVisit->state_quality_control);
+        $this->assertTrue(boolval($updatedVisit->corrective_action_new_upload));
+        $this->assertTrue(boolval($updatedVisit->corrective_action_investigator_form));
+        $this->assertEquals('updated', $updatedVisit->corrective_action_comment);
     }
 
-    public function testUpdateInvestigatorFormStatus(){
+    public function testUpdateInvestigatorFormStatus()
+    {
         $visit = Visit::factory()->create();
         $this->visitRepository->updateInvestigatorFormStatus($visit->id, Constants::INVESTIGATOR_FORM_DRAFT);
         $updatedVisit = Visit::find($visit->id);
-        $this->assertEquals(Constants::INVESTIGATOR_FORM_DRAFT , $updatedVisit->state_investigator_form);
-
+        $this->assertEquals(Constants::INVESTIGATOR_FORM_DRAFT, $updatedVisit->state_investigator_form);
     }
 
-    public function testImagingVisitAwaitingUpload(){
+    public function testImagingVisitAwaitingUpload()
+    {
 
         $patients = $this->populateVisits();
         $visits = $this->visitRepository->getImagingVisitsAwaitingUpload($patients[0]->study->name, [$patients[0]->center_code, $patients[1]->center_code]);
-        $this->assertEquals(12, sizeof($visits));
+        $this->assertEquals(6, sizeof($visits));
         $this->assertArrayHasKey('patient', $visits[0]);
     }
 
-    public function testDeleteVisit(){
+    public function testDeleteVisit()
+    {
         $visit = Visit::factory()->create();
 
         $this->visitRepository->delete($visit->id);
@@ -390,7 +404,8 @@ class VisitRepositoryTest extends TestCase
         Visit::findOrFail($visit->id);
     }
 
-    public function testReactivateVisit(){
+    public function testReactivateVisit()
+    {
         $visit = Visit::factory()->create();
         $visit->delete();
 
@@ -400,25 +415,27 @@ class VisitRepositoryTest extends TestCase
         $this->assertEquals(1, $updatedVisit->count());
     }
 
-    public function testGetVisitContextByVisitIdArray(){
+    public function testGetVisitContextByVisitIdArray()
+    {
         $visits = Visit::factory()->count(5)->create();
         $visitIdArray = $visits->pluck('id');
         $results = $this->visitRepository->getVisitContextByVisitIdArray($visitIdArray->toArray());
         $this->assertEquals(5, sizeof($results));
     }
 
-    public function testUpdateVisitDate(){
+    public function testUpdateVisitDate()
+    {
         $visit = Visit::factory()->create();
         $originalVisitDate = $visit['visit_date'];
 
-        $this->visitRepository->updateVisitDate($visit->id, now() );
+        $this->visitRepository->updateVisitDate($visit->id, now());
 
         $updatedVisit = Visit::findOrFail($visit->id);
         $this->assertNotEquals($updatedVisit['visit_date'], $originalVisitDate);
-
     }
 
-    public function testGetVisitsInStudyNeedingQualityControl() {
+    public function testGetVisitsInStudyNeedingQualityControl()
+    {
         $patient = Patient::factory()->create();
         Visit::factory()->patientId($patient->id)->stateInvestigatorForm(Constants::INVESTIGATOR_FORM_DONE)->uploadDone()->count(5)->create();
         //Create Visit with requested status but not same study
@@ -428,8 +445,5 @@ class VisitRepositoryTest extends TestCase
         Visit::factory()->patientId($patient->id)->uploadDone()->count(5)->create();
         $answers = $this->visitRepository->getVisitsInStudyNeedingQualityControl($patient->study_name);
         $this->assertEquals(5, sizeof($answers));
-
     }
-
-
 }

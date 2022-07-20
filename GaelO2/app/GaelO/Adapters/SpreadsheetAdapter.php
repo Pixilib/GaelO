@@ -7,7 +7,8 @@ use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Csv;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
-class SpreadsheetAdapter implements SpreadsheetInterface {
+class SpreadsheetAdapter implements SpreadsheetInterface
+{
 
     private Spreadsheet $spreadsheet;
 
@@ -17,18 +18,29 @@ class SpreadsheetAdapter implements SpreadsheetInterface {
         $this->spreadsheet->removeSheetByIndex(0);
     }
 
-    public function addSheet(String $title) : void {
+    private function trimIfSheetNameTooLong(string $spreadsheetName): string
+    {
+        if (strlen($spreadsheetName) > 31) return substr($spreadsheetName, 0, 31);
+        else return $spreadsheetName;
+    }
+
+    public function addSheet(String $spreadsheetName): void
+    {
+        //Max length of a sheet is 31 caracters
+        $spreadsheetName = $this->trimIfSheetNameTooLong($spreadsheetName);
         $workSheet = $this->spreadsheet->createSheet();
-        $workSheet->setTitle($title);
+        $workSheet->setTitle($spreadsheetName);
     }
 
     /**
      * Data should be in key => value array,
      * keys should be identical for all records
      */
-    public function fillData(string $spreadsheetName, array $data) : void {
+    public function fillData(string $spreadsheetName, array $data): void
+    {
+        $spreadsheetName = $this->trimIfSheetNameTooLong($spreadsheetName);
         $inputArray = [];
-        if(sizeof($data)>0) $inputArray = $this->generateArrayForSpreadSheet($data);
+        if (sizeof($data) > 0) $inputArray = $this->generateArrayForSpreadSheet($data);
         //Strict null comparison is set to interpret 0 (bool val in db) as not null value
         $this->spreadsheet->getSheetByName($spreadsheetName)->fromArray($inputArray, null, 'A1', true);
     }
@@ -36,16 +48,19 @@ class SpreadsheetAdapter implements SpreadsheetInterface {
     /**
      * Path should contains filename finishing by .xlsx
      */
-    public function writeToExcel() : string {
+    public function writeToExcel(): string
+    {
         $path = $this->createTempFile();
         $writer = new Xlsx($this->spreadsheet);
         $writer->save($path);
         return $path;
     }
 
-    public function writeToCsv(string $sheetName) : string {
+    public function writeToCsv(string $spreadsheetName): string
+    {
+        $spreadsheetName = $this->trimIfSheetNameTooLong($spreadsheetName);
         $writer = new CSV($this->spreadsheet);
-        $index = $this->getSheetIndexByName($sheetName);
+        $index = $this->getSheetIndexByName($spreadsheetName);
         $path = $this->createTempFile();
 
         $writer->setSheetIndex($index);
@@ -57,7 +72,8 @@ class SpreadsheetAdapter implements SpreadsheetInterface {
         return $path;
     }
 
-    private function generateArrayForSpreadSheet(array $data) : array {
+    private function generateArrayForSpreadSheet(array $data): array
+    {
 
         //Generate title using the key of the first record
         $titles = array_keys($data[0]);
@@ -66,10 +82,10 @@ class SpreadsheetAdapter implements SpreadsheetInterface {
         $resultArray[] = $titles;
 
         //Loop each row of input array
-        foreach($data as $rowData){
+        foreach ($data as $rowData) {
             $row = [];
             //Loop each key in the title order to generate row of spreadsheet
-            foreach($resultArray[0] as $key){
+            foreach ($resultArray[0] as $key) {
                 $row[] = $rowData[$key] ?? null;
             }
             $resultArray[] = $row;
@@ -78,16 +94,17 @@ class SpreadsheetAdapter implements SpreadsheetInterface {
         return $resultArray;
     }
 
-    private function createTempFile() : string {
+    private function createTempFile(): string
+    {
         $tempFile = tmpfile();
         $tempFileMetadata = stream_get_meta_data($tempFile);
         return $tempFileMetadata["uri"];
     }
 
-    private function getSheetIndexByName( string $sheetName ) : int {
-        $workSheet = $this->spreadsheet->getSheetByName( $sheetName );
+    private function getSheetIndexByName(string $sheetName): int
+    {
+        $workSheet = $this->spreadsheet->getSheetByName($sheetName);
         $index = $this->spreadsheet->getIndex($workSheet);
         return $index;
     }
-
 }
