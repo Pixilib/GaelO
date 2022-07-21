@@ -90,7 +90,7 @@ class ReactivateDicomSeries
             throw new GaelOForbiddenException();
         }
 
-        if (!in_array($role, [Constants::ROLE_INVESTIGATOR, Constants::ROLE_SUPERVISOR])) {
+        if (!in_array($role, [Constants::ROLE_INVESTIGATOR, Constants::ROLE_CONTROLLER, Constants::ROLE_SUPERVISOR])) {
             throw new GaelOForbiddenException();
         }
 
