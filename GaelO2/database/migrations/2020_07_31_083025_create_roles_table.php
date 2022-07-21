@@ -17,6 +17,7 @@ class CreateRolesTable extends Migration
             $table->enum('name', ['Investigator', 'Monitor', 'Controller', 'Supervisor', 'Reviewer'])->nullable(false);
             $table->unsignedBigInteger('user_id')->nullable(false);
             $table->string('study_name')->nullable(false);
+            $table->string('validated_documentation_version')->nullable(true)->default(null);
             $table->timestamps();
             //Dependencies
             $table->primary(['name', 'user_id', 'study_name']);

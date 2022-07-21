@@ -330,6 +330,16 @@ class UserRepositoryTest extends TestCase
 
     }
 
+    public function testGetUseRoleInStudy(){
+
+        $role = Role::factory()->roleName(Constants::ROLE_INVESTIGATOR)->create();
+        $entity = $this->userRepository->getUserRoleInStudy($role->user_id, $role->study_name, $role->name );
+
+        $this->assertArrayHasKey('validated_documentation_version', $entity);
+
+
+    }
+
     public function testAddUserRoleInStudy(){
 
         $user = User::factory()->create();

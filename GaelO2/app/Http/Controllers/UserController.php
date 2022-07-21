@@ -41,6 +41,9 @@ use App\GaelO\UseCases\GetStudiesFromUser\GetStudiesFromUserResponse;
 use App\GaelO\UseCases\GetUsersFromStudy\GetUsersFromStudy;
 use App\GaelO\UseCases\GetUsersFromStudy\GetUsersFromStudyRequest;
 use App\GaelO\UseCases\GetUsersFromStudy\GetUsersFromStudyResponse;
+use App\GaelO\UseCases\GetValidatedDocumentationForRole\GetValidatedDocumentationForRole;
+use App\GaelO\UseCases\GetValidatedDocumentationForRole\GetValidatedDocumentationForRoleRequest;
+use App\GaelO\UseCases\GetValidatedDocumentationForRole\GetValidatedDocumentationForRoleResponse;
 use App\GaelO\UseCases\ReactivateUser\ReactivateUser;
 use App\GaelO\UseCases\ReactivateUser\ReactivateUserRequest;
 use App\GaelO\UseCases\ReactivateUser\ReactivateUserResponse;
@@ -216,6 +219,19 @@ class UserController extends Controller
         $deleteUserRoleRequest->role = $roleName;
         $deleteUserRole->execute($deleteUserRoleRequest, $deleteUserRoleResponse);
         return $this->getJsonResponse($deleteUserRoleResponse->body, $deleteUserRoleResponse->status, $deleteUserRoleResponse->statusText);
+    }
+
+    //SK TODO
+    public function getValidatedDocumentionForRole( GetValidatedDocumentationForRole $getValidatedDocumentationForRole, GetValidatedDocumentationForRoleRequest $getValidatedDocumentationForRoleRequest, GetValidatedDocumentationForRoleResponse $getValidatedDocumentationForRoleResponse, int $userId, string $studyName, String $roleName){
+
+        $currentUser = Auth::user();
+        $getValidatedDocumentationForRoleRequest->currentUserId = $currentUser['id'];
+        $getValidatedDocumentationForRoleRequest->userId = $userId;
+        $getValidatedDocumentationForRoleRequest->studyName = $studyName;
+        $getValidatedDocumentationForRoleRequest->role = $roleName;
+        $getValidatedDocumentationForRole->execute($getValidatedDocumentationForRoleRequest, $getValidatedDocumentationForRoleResponse);
+        return $this->getJsonResponse($getValidatedDocumentationForRoleResponse->body, $getValidatedDocumentationForRoleResponse->status, $getValidatedDocumentationForRoleResponse->statusText);
+
     }
 
     public function addAffiliatedCenter(Request $request, AddAffiliatedCenter $addAffiliatedCenter, AddAffiliatedCenterRequest $addAffiliatedCenterRequest, AddAffiliatedCenterResponse $addAffiliatedCenterResponse, int $userId)

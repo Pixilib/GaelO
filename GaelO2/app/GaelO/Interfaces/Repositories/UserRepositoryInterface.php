@@ -43,6 +43,8 @@ interface UserRepositoryInterface {
 
     public function getUsersRoles(int $userId) : array;
 
+    public function getUserRoleInStudy(int $userId, string $studyName, string $role): array;
+
     public function getUsersRolesInStudy(int $userId, String $study) : array;
 
     public function addUserRoleInStudy(int $userId, String $study, string $role) : void;

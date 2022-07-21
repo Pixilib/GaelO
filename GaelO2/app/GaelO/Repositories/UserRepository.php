@@ -235,6 +235,17 @@ class UserRepository implements UserRepositoryInterface
         return empty($roles) ? [] : $roles->toArray();
     }
 
+    public function getUserRoleInStudy(int $userId, string $studyName, string $roleName): array
+    {
+        $role = $this->roles
+            ->where('user_id', $userId)
+            ->where('study_name', $studyName)
+            ->where('name', $roleName)
+            ->sole();
+
+        return $role->toArray();
+    }
+
     public function getUsersRolesInStudy(int $userId, String $studyName): array
     {
         //Check that called study and user are existing entities (not deleted)
