@@ -12,7 +12,6 @@ use App\GaelO\Interfaces\Repositories\ReviewRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\UserRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
-use App\GaelO\Interfaces\Repositories\VisitTypeRepositoryInterface;
 use App\GaelO\Services\StoreObjects\Export\ExportDataResults;
 use App\GaelO\Services\StoreObjects\Export\ExportDicomResults;
 use App\GaelO\Services\StoreObjects\Export\ExportFileResults;
@@ -26,14 +25,11 @@ use App\GaelO\Services\StoreObjects\Export\ExportVisitsResults;
 use App\GaelO\Util;
 use ZipArchive;
 
-use Illuminate\Support\Facades\Log;
-
 class ExportStudyService
 {
 
     private UserRepositoryInterface $userRepositoryInterface;
     private PatientRepositoryInterface $patientRepositoryInterface;
-    private VisitTypeRepositoryInterface $visitTypeRepositoryInterface;
     private VisitRepositoryInterface $visitRepositoryInterface;
     private DicomStudyRepositoryInterface $dicomStudyRepositoryInterface;
     private DicomSeriesRepositoryInterface $dicomSeriesRepositoryInterface;
@@ -42,12 +38,10 @@ class ExportStudyService
     private TrackerRepositoryInterface $trackerRepositoryInterface;
 
     private string $studyName;
-    private array $visitTypeArray;
 
     public function __construct(
         UserRepositoryInterface $userRepositoryInterface,
         PatientRepositoryInterface $patientRepositoryInterface,
-        VisitTypeRepositoryInterface $visitTypeRepositoryInterface,
         VisitRepositoryInterface $visitRepositoryInterface,
         DicomStudyRepositoryInterface $dicomStudyRepositoryInterface,
         DicomSeriesRepositoryInterface $dicomSeriesRepositoryInterface,
@@ -58,7 +52,6 @@ class ExportStudyService
     ) {
         $this->userRepositoryInterface = $userRepositoryInterface;
         $this->patientRepositoryInterface = $patientRepositoryInterface;
-        $this->visitTypeRepositoryInterface = $visitTypeRepositoryInterface;
         $this->visitRepositoryInterface = $visitRepositoryInterface;
         $this->dicomStudyRepositoryInterface = $dicomStudyRepositoryInterface;
         $this->dicomSeriesRepositoryInterface = $dicomSeriesRepositoryInterface;
@@ -72,21 +65,8 @@ class ExportStudyService
     {
         $this->studyName = $studyName;
 
-        //List Visit Type of this study
-        $visitTypes = $this->visitTypeRepositoryInterface->getVisitTypesOfStudy($this->studyName);
-        $visitTypeArray = [];
-
-        foreach ($visitTypes as $visitType) {
-            $visitTypeArray[$visitType['id']] = [
-                'visit_group_name' => $visitType['visit_group']['name'],
-                'visit_type_name' => $visitType['name']
-            ];
-        }
-
-        $this->visitTypeArray = $visitTypeArray;
-
         //Store Id of visits of this study
-        $this->availableVisits = $this->visitRepositoryInterface->getVisitsInStudy($this->studyName, true, false, true);
+        $this->availableVisits = $this->visitRepositoryInterface->getVisitsInStudy($this->studyName, true, false, false);
 
         $this->visitIdArray = array_map(function ($visit) {
             return $visit['id'];
@@ -149,15 +129,16 @@ class ExportStudyService
 
         //Loop each visitType and export data for each one
         foreach ($this->availableVisits as $visit) {
+            $visitTypeName = $visit['visit_type']['name'];
+            $visitGroupName = $visit['visit_type']['visit_group']['name'];
             //Determine Sheet Name
-            $visitTypeDetails = $this->visitTypeArray[$visit['visit_type']['id']];
-            $sheetName = $visitTypeDetails['visit_group_name'] . '_' . $visitTypeDetails['visit_type_name'];
+            $sheetName = $visitGroupName . '_' . $visitTypeName;
             unset($visit['visit_type']);
             unset($visit['patient']);
             //transform target_lesions as json string
             $visit['review_status']['target_lesions'] = json_encode($visit['review_status']['target_lesions']);
 
-            $resultsData[$sheetName][] = array_merge(['visit_group' => $visitTypeDetails['visit_group_name'], 'visit_type' => $visitTypeDetails['visit_type_name']], $visit, $visit['review_status']);
+            $resultsData[$sheetName][] = array_merge(['visit_group' => $visitGroupName, 'visit_type' => $visitTypeName], $visit, $visit['review_status']);
         }
 
         foreach ($resultsData as $sheetName => $value) {
@@ -184,7 +165,7 @@ class ExportStudyService
 
         $spreadsheetAdapter = new SpreadsheetAdapter();
 
-        $dicomStudyData = $this->dicomStudyRepositoryInterface->getDicomStudyFromVisitIdArray($this->visitIdArray, true);
+        $dicomStudyData = $this->dicomStudyRepositoryInterface->getDicomStudyFromVisitIdArray($this->visitIdArray, false);
         $spreadsheetAdapter->addSheet('DicomStudies');
         $spreadsheetAdapter->fillData('DicomStudies', $dicomStudyData);
 
@@ -193,7 +174,7 @@ class ExportStudyService
         }, $dicomStudyData);
 
         //Get Series data for series spreadsheet
-        $dicomSeriesData = $this->dicomSeriesRepositoryInterface->getDicomSeriesOfStudyInstanceUIDArray($studyInstanceUIDArray, true);
+        $dicomSeriesData = $this->dicomSeriesRepositoryInterface->getDicomSeriesOfStudyInstanceUIDArray($studyInstanceUIDArray, false);
         $spreadsheetAdapter->addSheet('DicomSeries');
         $spreadsheetAdapter->fillData('DicomSeries', $dicomSeriesData);
 
@@ -214,12 +195,14 @@ class ExportStudyService
 
     public function exportReviewerForms(): void
     {
+        //Get reviews of the visits of this study
         $reviewEntities = $this->reviewRepositoryInterface->getReviewsFromVisitIdArrayStudyName($this->visitIdArray, $this->studyName, false);
         $this->groupReviewPerVisitType($reviewEntities, Constants::ROLE_REVIEWER);
     }
 
     public function exportInvestigatorForms(): void
     {
+        //Get investigator forms of the visits of this study
         $investigatorForms = $this->reviewRepositoryInterface->getInvestigatorsFormsFromVisitIdArrayStudyName($this->visitIdArray, $this->studyName, false);
         $this->groupReviewPerVisitType($investigatorForms, Constants::ROLE_INVESTIGATOR);
     }
@@ -229,11 +212,11 @@ class ExportStudyService
 
         $exportReviewDataCollection = new ExportReviewDataCollection($this->studyName, $role);
 
-
         //Sort review into object to isolate each visit results
         foreach ($reviewEntities as $reviewEntity) {
-            $visitTypeDetails = $this->visitTypeArray[$reviewEntity['visit']['visit_type_id']];
-            $exportReviewDataCollection->addData($visitTypeDetails['visit_group_name'], $visitTypeDetails['visit_type_name'], $reviewEntity);
+            $visitTypeName = $reviewEntity['visit']['visit_type']['name'];
+            $visitGroupName = $reviewEntity['visit']['visit_type']['visit_group']['name'];
+            $exportReviewDataCollection->addData($visitGroupName, $visitTypeName, $reviewEntity);
         }
 
         $exportReviewResults = new ExportReviewResults();
@@ -246,7 +229,8 @@ class ExportStudyService
             $visitGroupName = $exportReviewData->getVisitGroupName();
             $visitTypeName = $exportReviewData->getVisitTypeName();
 
-            $sheetName =  $role . '_' . $visitGroupName . '_' . $visitTypeName;
+            //Only put 3 first letter of role (Inv or Rev) to reduce the risk of lenth > 31 caractere
+            $sheetName =  substr($role, 0, 3)  . '_' . $visitGroupName . '_' . $visitTypeName;
 
             //get formatted date from export review data
             $data = $exportReviewData->getData();

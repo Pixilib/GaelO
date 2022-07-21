@@ -49,17 +49,17 @@ class Visit extends Model
 
     public function creator()
     {
-        return $this->belongsTo(User::class, 'creator_user_id', 'id');
+        return $this->belongsTo(User::class, 'creator_user_id', 'id')->withTrashed();
     }
 
     public function controller()
     {
-        return $this->belongsTo(User::class, 'controller_user_id', 'id');
+        return $this->belongsTo(User::class, 'controller_user_id', 'id')->withTrashed();
     }
 
     public function correctiveActionUser()
     {
-        return $this->belongsTo(User::class, 'corrective_action_user_id', 'id');
+        return $this->belongsTo(User::class, 'corrective_action_user_id', 'id')->withTrashed();
     }
 
     public function dicomStudies()
