@@ -70,6 +70,7 @@ class PatientRepository implements PatientRepositoryInterface
         ?string $registrationDate,
         ?string $investigatorName,
         int $centerCode,
+        string $inclusionStatus,
         String $studyName
     ): void {
 
@@ -86,6 +87,7 @@ class PatientRepository implements PatientRepositoryInterface
         $patient->registration_date = $registrationDate;
         $patient->investigator_name = $investigatorName;
         $patient->center_code = $centerCode;
+        $patient->inclusion_status = $inclusionStatus;
         $patient->save();
     }
 

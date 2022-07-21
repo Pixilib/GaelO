@@ -39,7 +39,7 @@ class PatientRepositoryTest extends TestCase
 
         $studyName = Study::factory()->create()->name;
 
-        $this->patientRepository->addPatientInStudy('123456789123456', '3', 'S', 'K', 'M', 25, 05, 1900, '2020-01-01', 'salim', 0 , $studyName);
+        $this->patientRepository->addPatientInStudy('123456789123456', '3', 'S', 'K', 'M', 25, 05, 1900, '2020-01-01', 'salim', 0, 'Included', $studyName);
 
         $patientRecord = Patient::findOrFail('123456789123456');
 
@@ -117,7 +117,8 @@ class PatientRepositoryTest extends TestCase
         $this->assertEquals(11, sizeof($selectedPatients));
     }
 
-    public function testGetPatientsFromIdArray() {
+    public function testGetPatientsFromIdArray()
+    {
         $patient1 = Patient::factory()->create();
         $patient2 = Patient::factory()->create();
         $patientIdArray = [strval($patient1->id), strval($patient2->id)];
@@ -126,7 +127,8 @@ class PatientRepositoryTest extends TestCase
         $this->assertTrue(!array_diff($fetchedPatientsCodes, $patientIdArray));
     }
 
-    public function testUpdatePatientInclusionStatus() {
+    public function testUpdatePatientInclusionStatus()
+    {
         $patient = Patient::factory()->create();
 
         $this->patientRepository->updateInclusionStatus(

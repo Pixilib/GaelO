@@ -29,6 +29,7 @@ interface PatientRepositoryInterface
         string $registrationDate,
         string $investigatorName,
         int $centerCode,
+        string $inclusionStatus,
         String $studyName
     ): void;
 
