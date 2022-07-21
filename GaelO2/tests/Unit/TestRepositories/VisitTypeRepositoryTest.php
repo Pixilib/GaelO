@@ -69,6 +69,15 @@ class VisitTypeRepositoryTest extends TestCase
         $this->assertFalse($answer2);
     }
 
+    public function testIsExistingOrder(){
+        $visitType = VisitType::factory()->create();
+
+        $answer = $this->visitTypeRepository->isExistingOrder($visitType->visitGroup->id , $visitType->order);
+        $answer2 = $this->visitTypeRepository->isExistingOrder($visitType->visitGroup->id , 0);
+        $this->assertTrue($answer);
+        $this->assertFalse($answer2);
+    }
+
     public function testDeleteVisitType(){
 
         $visitType = VisitType::factory()->create();

@@ -37,6 +37,10 @@ class CreateVisitType
                 throw new GaelOConflictException('Already Existing Visit Name in group');
             }
 
+            if ($this->visitTypeRepositoryInterface->isExistingOrder($createVisitTypeRequest->visitGroupId, $createVisitTypeRequest->order)) {
+                throw new GaelOConflictException('Already Existing Order in group');
+            }
+
             $visitGroup = $this->visitGroupRepositoryInterface->find($createVisitTypeRequest->visitGroupId);
             $hasVisits = $this->visitRepositoryInterface->hasVisitsInStudy($visitGroup['study_name']);
 

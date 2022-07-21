@@ -80,6 +80,12 @@ class VisitTypeRepository implements VisitTypeRepositoryInterface
         return sizeof($visitGroup) > 0;
     }
 
+    public function isExistingOrder(int $visitGroupId, int $order): bool
+    {
+        $visitGroup = $this->visitType->where([['visit_group_id', '=', $visitGroupId], ['order', '=', $order]])->get();
+        return sizeof($visitGroup) > 0;
+    }
+
     public function getVisitTypesOfStudy(string $studyName): array
     {
 
