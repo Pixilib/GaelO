@@ -1,6 +1,6 @@
 <?php
 
-namespace App\GaelO\UseCases\GetValidatedDocumentationForRole;
+namespace App\GaelO\UseCases\GetUserRoleByName;
 
 use App\GaelO\Entities\RoleEntity;
 use App\GaelO\Exceptions\GaelOException;
@@ -9,7 +9,7 @@ use App\GaelO\Interfaces\Repositories\UserRepositoryInterface;
 use App\GaelO\Services\AuthorizationService\AuthorizationUserService;
 use Exception;
 
-class GetValidatedDocumentationForRole
+class GetUserRoleByName
 {
     private AuthorizationUserService $authorizationUserService;
     private UserRepositoryInterface $userRepositoryInterface;
@@ -20,14 +20,14 @@ class GetValidatedDocumentationForRole
         $this->userRepositoryInterface = $userRepositoryInterface;
     }
 
-    public function execute(GetValidatedDocumentationForRoleRequest $getValidatedDocumentationForRoleRequest, GetValidatedDocumentationForRoleResponse $getValidatedDocumentationForRoleResponse)
+    public function execute(GetUserRoleByNameRequest $getUserRoleByNameRequest, GetUserRoleByNameResponse $getUserRoleByNameResponse)
     {
 
         try {
-            $studyName = $getValidatedDocumentationForRoleRequest->studyName;
-            $role = $getValidatedDocumentationForRoleRequest->role;
-            $currentUserId = $getValidatedDocumentationForRoleRequest->currentUserId;
-            $userId = $getValidatedDocumentationForRoleRequest->userId;
+            $studyName = $getUserRoleByNameRequest->studyName;
+            $role = $getUserRoleByNameRequest->role;
+            $currentUserId = $getUserRoleByNameRequest->currentUserId;
+            $userId = $getUserRoleByNameRequest->userId;
 
             $this->checkAuthorization($currentUserId, $userId, $role, $studyName);
 
@@ -35,13 +35,13 @@ class GetValidatedDocumentationForRole
 
             $roleEntity = RoleEntity::fillFromDBReponseArray($roleData);
 
-            $getValidatedDocumentationForRoleResponse->body = $roleEntity;
-            $getValidatedDocumentationForRoleResponse->status = 200;
-            $getValidatedDocumentationForRoleResponse->statusText = 'OK';
+            $getUserRoleByNameResponse->body = $roleEntity;
+            $getUserRoleByNameResponse->status = 200;
+            $getUserRoleByNameResponse->statusText = 'OK';
         } catch (GaelOException $e) {
-            $getValidatedDocumentationForRoleResponse->body = $e->getErrorBody();
-            $getValidatedDocumentationForRoleResponse->status = $e->statusCode;
-            $getValidatedDocumentationForRoleResponse->statusText = $e->statusText;
+            $getUserRoleByNameResponse->body = $e->getErrorBody();
+            $getUserRoleByNameResponse->status = $e->statusCode;
+            $getUserRoleByNameResponse->statusText = $e->statusText;
         } catch (Exception $e) {
             throw $e;
         }

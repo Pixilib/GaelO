@@ -38,12 +38,12 @@ use App\GaelO\UseCases\GetRolesInStudyFromUser\GetRolesInStudyFromUserResponse;
 use App\GaelO\UseCases\GetStudiesFromUser\GetStudiesFromUser;
 use App\GaelO\UseCases\GetStudiesFromUser\GetStudiesFromUserRequest;
 use App\GaelO\UseCases\GetStudiesFromUser\GetStudiesFromUserResponse;
+use App\GaelO\UseCases\GetUserRoleByName\GetUserRoleByName;
+use App\GaelO\UseCases\GetUserRoleByName\GetUserRoleByNameRequest;
+use App\GaelO\UseCases\GetUserRoleByName\GetUserRoleByNameResponse;
 use App\GaelO\UseCases\GetUsersFromStudy\GetUsersFromStudy;
 use App\GaelO\UseCases\GetUsersFromStudy\GetUsersFromStudyRequest;
 use App\GaelO\UseCases\GetUsersFromStudy\GetUsersFromStudyResponse;
-use App\GaelO\UseCases\GetValidatedDocumentationForRole\GetValidatedDocumentationForRole;
-use App\GaelO\UseCases\GetValidatedDocumentationForRole\GetValidatedDocumentationForRoleRequest;
-use App\GaelO\UseCases\GetValidatedDocumentationForRole\GetValidatedDocumentationForRoleResponse;
 use App\GaelO\UseCases\ReactivateUser\ReactivateUser;
 use App\GaelO\UseCases\ReactivateUser\ReactivateUserRequest;
 use App\GaelO\UseCases\ReactivateUser\ReactivateUserResponse;
@@ -53,6 +53,9 @@ use App\GaelO\UseCases\ModifyUserIdentification\ModifyUserIdentificationResponse
 use App\GaelO\UseCases\ModifyUserOnboarding\ModifyUserOnboarding;
 use App\GaelO\UseCases\ModifyUserOnboarding\ModifyUserOnboardingRequest;
 use App\GaelO\UseCases\ModifyUserOnboarding\ModifyUserOnboardingResponse;
+use App\GaelO\UseCases\ModifyValidatedDocumentationForRole\ModifyValidatedDocumentationForRole;
+use App\GaelO\UseCases\ModifyValidatedDocumentationForRole\ModifyValidatedDocumentationForRoleRequest;
+use App\GaelO\UseCases\ModifyValidatedDocumentationForRole\ModifyValidatedDocumentationForRoleResponse;
 use App\GaelO\Util;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
@@ -221,16 +224,28 @@ class UserController extends Controller
         return $this->getJsonResponse($deleteUserRoleResponse->body, $deleteUserRoleResponse->status, $deleteUserRoleResponse->statusText);
     }
 
-    //SK TODO
-    public function getValidatedDocumentionForRole( GetValidatedDocumentationForRole $getValidatedDocumentationForRole, GetValidatedDocumentationForRoleRequest $getValidatedDocumentationForRoleRequest, GetValidatedDocumentationForRoleResponse $getValidatedDocumentationForRoleResponse, int $userId, string $studyName, String $roleName){
+    public function getUserRoleByName( GetUserRoleByName $getUserRoleByName, GetUserRoleByNameRequest $getUserRoleByNameRequest, GetUserRoleByNameResponse $getUserRoleByNameResponse, int $userId, string $studyName, String $roleName){
 
         $currentUser = Auth::user();
-        $getValidatedDocumentationForRoleRequest->currentUserId = $currentUser['id'];
-        $getValidatedDocumentationForRoleRequest->userId = $userId;
-        $getValidatedDocumentationForRoleRequest->studyName = $studyName;
-        $getValidatedDocumentationForRoleRequest->role = $roleName;
-        $getValidatedDocumentationForRole->execute($getValidatedDocumentationForRoleRequest, $getValidatedDocumentationForRoleResponse);
-        return $this->getJsonResponse($getValidatedDocumentationForRoleResponse->body, $getValidatedDocumentationForRoleResponse->status, $getValidatedDocumentationForRoleResponse->statusText);
+        $getUserRoleByNameRequest->currentUserId = $currentUser['id'];
+        $getUserRoleByNameRequest->userId = $userId;
+        $getUserRoleByNameRequest->studyName = $studyName;
+        $getUserRoleByNameRequest->role = $roleName;
+        $getUserRoleByName->execute($getUserRoleByNameRequest, $getUserRoleByNameResponse);
+        return $this->getJsonResponse($getUserRoleByNameResponse->body, $getUserRoleByNameResponse->status, $getUserRoleByNameResponse->statusText);
+
+    }
+
+    public function modifyValidatedDocumentationForRole( Request $request, ModifyValidatedDocumentationForRole $modifyValidatedDocumentationForRole, ModifyValidatedDocumentationForRoleRequest $modifyValidatedDocumentationForRoleRequest, ModifyValidatedDocumentationForRoleResponse $modifyValidatedDocumentationForRoleResponse, int $userId, string $studyName, String $roleName){
+        $currentUser = Auth::user();
+        $requestData = $request->all();
+        $modifyValidatedDocumentationForRoleRequest = Util::fillObject($requestData, $modifyValidatedDocumentationForRoleRequest);
+        $modifyValidatedDocumentationForRoleRequest->currentUserId = $currentUser['id'];
+        $modifyValidatedDocumentationForRoleRequest->userId = $userId;
+        $modifyValidatedDocumentationForRoleRequest->studyName = $studyName;
+        $modifyValidatedDocumentationForRoleRequest->role = $roleName;
+        $modifyValidatedDocumentationForRole->execute($modifyValidatedDocumentationForRoleRequest, $modifyValidatedDocumentationForRoleResponse);
+        return $this->getJsonResponse($modifyValidatedDocumentationForRoleResponse->body, $modifyValidatedDocumentationForRoleResponse->status, $modifyValidatedDocumentationForRoleResponse->statusText);
 
     }
 

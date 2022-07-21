@@ -62,7 +62,8 @@ Route::middleware(['auth:sanctum', 'verified', 'activated', 'onboarded'])->group
     Route::delete('users/{id}/affiliated-centers/{centerCode}', [UserController::class, 'deleteAffiliatedCenter']);
     Route::get('users/{id}/studies',  [UserController::class, 'getStudiesFromUser']);
     Route::get('users/{id}/roles', [UserController::class, 'getRoles']);
-    Route::get('users/{id}/studies/{studyName}/roles/{roleName}/validated-documentation', [UserController::class, 'getValidatedDocumentionForRole']);
+    Route::get('users/{id}/studies/{studyName}/roles/{roleName}', [UserController::class, 'getUserRoleByName']);
+    Route::put('users/{id}/studies/{studyName}/roles/{roleName}/validated-documentation', [UserController::class, 'modifyValidatedDocumentationForRole']);
     Route::post('users/{id}/roles', [UserController::class, 'createRole']);
     Route::delete('users/{id}/roles/{roleName}', [UserController::class, 'deleteRole']);
     Route::get('studies/{studyName}/users', [UserController::class, 'getUsersFromStudy']);

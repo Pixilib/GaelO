@@ -1,8 +1,8 @@
 <?php
 
-namespace App\GaelO\UseCases\GetValidatedDocumentationForRole;
+namespace App\GaelO\UseCases\GetUserRoleByName;
 
-class GetValidatedDocumentationForRoleRequest
+class GetUserRoleByNameRequest
 {
     public int $userId;
     public int $currentUserId;

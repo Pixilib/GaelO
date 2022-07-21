@@ -43,6 +43,8 @@ interface UserRepositoryInterface {
 
     public function getUsersRoles(int $userId) : array;
 
+    public function updateValidatedDocumentationVersion(int $userId, string $studyName, string $roleName, string $version) :void;
+
     public function getUserRoleInStudy(int $userId, string $studyName, string $role): array;
 
     public function getUsersRolesInStudy(int $userId, String $study) : array;
