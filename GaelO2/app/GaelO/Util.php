@@ -168,4 +168,9 @@ class Util
         return version_compare($previous, $current, '<');
     }
 
+    public static function isSemanticVersioning(string $version) : bool
+    {
+        return preg_match('/^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)?$/', $version);
+    }
+
 }
