@@ -72,7 +72,7 @@ class ImportPatients
             $importPatientsResponse->status = 200;
             $importPatientsResponse->statusText = 'OK';
 
-            $this->trackerRepositoryInterface->writeAction($currentUserId, Constants::TRACKER_IMPORT_PATIENT, $studyName, null, Constants::TRACKER_IMPORT_PATIENT, $actionDetails);
+            $this->trackerRepositoryInterface->writeAction($currentUserId, Constants::ROLE_SUPERVISOR, $studyName, null, Constants::TRACKER_IMPORT_PATIENT, $actionDetails);
 
             $this->mailService->sendImportPatientMessage($studyName, $studyEntity->contactEmail, $this->importPatient->successList, $this->importPatient->failList);
         } catch (GaelOException $e) {

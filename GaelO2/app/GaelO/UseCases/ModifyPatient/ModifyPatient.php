@@ -55,7 +55,10 @@ class ModifyPatient
                 $patientEntity[Util::camelCaseToSnakeCase($data)] = $modifyPatientRequest->$data;
             }
 
-            if ($modifyPatientRequest->inclusionStatus === Constants::PATIENT_INCLUSION_STATUS_WITHDRAWN) {
+            if (
+                $modifyPatientRequest->inclusionStatus === Constants::PATIENT_INCLUSION_STATUS_WITHDRAWN
+                || $modifyPatientRequest->inclusionStatus === Constants::PATIENT_INCLUSION_STATUS_EXCLUDED
+            ) {
                 if (
                     empty($modifyPatientRequest->withdrawDate) ||
                     empty($modifyPatientRequest->withdrawReason)
@@ -93,9 +96,9 @@ class ModifyPatient
             );
 
             $actionDetails = [
-                'id' =>$patientEntity['id'],
+                'id' => $patientEntity['id'],
                 'code' => $patientEntity['code'],
-                'reason'=> $modifyPatientRequest->reason
+                'reason' => $modifyPatientRequest->reason
             ];
 
             foreach ($updatableData as $data) {
