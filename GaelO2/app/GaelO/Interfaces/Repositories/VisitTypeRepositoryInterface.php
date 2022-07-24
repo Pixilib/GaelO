@@ -25,8 +25,6 @@ interface VisitTypeRepositoryInterface
         array $dicomConstraints
     ): void;
 
-    public function hasVisits(int $visitTypeId): bool;
-
     public function isExistingVisitType(int $visitGroupId, string $name): bool;
 
     public function isExistingOrder(int $visitGroupId, int $order): bool;

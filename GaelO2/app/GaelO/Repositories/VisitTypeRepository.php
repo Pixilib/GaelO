@@ -68,12 +68,6 @@ class VisitTypeRepository implements VisitTypeRepositoryInterface
         $visitType->save();
     }
 
-    public function hasVisits(int $visitTypeId): bool
-    {
-        $visits = $this->visitType->withCount('visits')->findOrFail($visitTypeId);
-        return $visits->visits_count > 0 ? true : false;
-    }
-
     public function isExistingVisitType(int $visitGroupId, String $name): bool
     {
         $visitGroup = $this->visitType->where([['visit_group_id', '=', $visitGroupId], ['name', '=', $name]])->get();
