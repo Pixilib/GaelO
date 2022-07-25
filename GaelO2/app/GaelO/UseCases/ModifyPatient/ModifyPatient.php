@@ -52,6 +52,7 @@ class ModifyPatient
 
             //Update each updatable data
             foreach ($updatableData as $data) {
+                if($data === "registrationDate") $modifyPatientRequest->$data = Util::formatUSDateStringToSQLDateFormat($modifyPatientRequest->$data);
                 $patientEntity[Util::camelCaseToSnakeCase($data)] = $modifyPatientRequest->$data;
             }
 

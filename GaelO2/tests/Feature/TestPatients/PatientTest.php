@@ -39,7 +39,7 @@ class PatientTest extends TestCase
             "birthDay" => 23,
             "birthMonth" => 1,
             "birthYear" => 1985,
-            "registrationDate" => "2021-12-17",
+            "registrationDate" => "12/17/2021",
             "investigatorName" => "voluptas",
             "centerCode" => $this->patient['center_code'],
             "studyName" => $this->patient['study_name'],
@@ -127,7 +127,7 @@ class PatientTest extends TestCase
             'birthDay' => 5,
             'birthMonth' => 12,
             'birthYear' => 1955,
-            'registrationDate' => '2021-12-30',
+            'registrationDate' => '12/30/2021',
             'investigatorName' => 'salim',
             'centerCode' => 0,
             'reason' => 'wrong patient data'
