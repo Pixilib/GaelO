@@ -5,8 +5,6 @@ Salim TODO :
 
 - Sur les action du superviseur faire passer l'etude appelée en query tag pour sécuriser le contexte dans lequel la ressource est appelée (en cas d'etude ancillaire si l'utilisateur est superviseur de l'étude principale la requette emise de l'étude ancillaire passera le RBAC)
 
-- Refac : Pluger GetPossibleUpload sur VisitEntity pour la réponse (nécéssite d'updater V1)
-
 - Mise en place scheduler, monitoring scheduler par email pourra etre personnalisé (ex que si nouveau patient...)
 
 --- Etudes ancillaires ---
