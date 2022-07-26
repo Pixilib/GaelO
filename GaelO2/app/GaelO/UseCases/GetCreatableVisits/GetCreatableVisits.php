@@ -41,10 +41,8 @@ class GetCreatableVisits
             $answer = [];
 
             foreach($availableVisitType as $visitType){
-                $visitTypeEntity = new VisitTypeEntity();
-                $visitTypeEntity->fillFromDBReponseArray($visitType);
-                $visitGroupEntity = new VisitGroupEntity();
-                $visitGroupEntity->fillFromDBReponseArray($visitType['visit_group']);
+                $visitTypeEntity = VisitTypeEntity::fillFromDBReponseArray($visitType);
+                $visitGroupEntity = VisitGroupEntity::fillFromDBReponseArray($visitType['visit_group']);
                 $visitTypeEntity->setVisitGroup($visitGroupEntity);
                 $answer[] = $visitTypeEntity;
             }
