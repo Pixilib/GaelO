@@ -2,7 +2,5 @@ composer-setup.php
 composer.phar
 .VSCodeCounter/*
 
+
 GaelO2/app/GaelO/Services/SpecificStudiesRules/*
-!GaelO2/app/GaelO/Services/SpecificStudiesRules/TEST/*
-/src*
-GaelO2/database/seeders/TestSeeder.php

@@ -8,5 +8,5 @@ class CreateMagicLinkRequest
     public int $targetUser;
     public string $ressourceLevel;
     public string $role;
-    public int $ressourceId;
+    public string|int $ressourceId;
 }
