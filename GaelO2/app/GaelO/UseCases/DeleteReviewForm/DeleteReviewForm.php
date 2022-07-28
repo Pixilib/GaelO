@@ -96,7 +96,7 @@ class DeleteReviewForm
                 Constants::ROLE_SUPERVISOR,
                 $studyName,
                 $visitId,
-                Constants::TRACKER_DELETE_REVIEW_FORM,
+                Constants::TRACKER_DELETE_REVIEWER_FORM,
                 $actionDetails
             );
 
