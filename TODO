@@ -1,4 +1,6 @@
 Salim TODO :
+- Output des dates à harmoniser (dans les entites ?)
+
 - Refac : Pluger GetPossibleUpload sur VisitEntity pour la réponse (nécéssite d'updater V1)
 
 - Optimiser l'utilisation des authorization service en injectant les data depuis le usecase (ou les rendre stateless) (dont visite, review...)
