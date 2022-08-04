@@ -7,8 +7,6 @@ use App\GaelO\Entities\UserEntity;
 use App\GaelO\Entities\VisitEntity;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
-use App\GaelO\Interfaces\Repositories\ReviewStatusRepositoryInterface;
-use App\GaelO\Interfaces\Repositories\UserRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
 use App\GaelO\Services\AuthorizationService\AuthorizationVisitService;
 use Exception;
@@ -17,16 +15,12 @@ class GetVisit
 {
 
     private VisitRepositoryInterface $visitRepositoryInterface;
-    private ReviewStatusRepositoryInterface $reviewStatusRepositoryInterface;
     private AuthorizationVisitService $authorizationVisitService;
-    private UserRepositoryInterface $userRepositoryInterface;
 
-    public function __construct(VisitRepositoryInterface $visitRepositoryInterface, ReviewStatusRepositoryInterface $reviewStatusRepositoryInterface, UserRepositoryInterface $userRepositoryInterface, AuthorizationVisitService $authorizationVisitService)
+    public function __construct(VisitRepositoryInterface $visitRepositoryInterface, AuthorizationVisitService $authorizationVisitService)
     {
         $this->visitRepositoryInterface = $visitRepositoryInterface;
         $this->authorizationVisitService = $authorizationVisitService;
-        $this->reviewStatusRepositoryInterface = $reviewStatusRepositoryInterface;
-        $this->userRepositoryInterface =  $userRepositoryInterface;
     }
 
     public function execute(GetVisitRequest $getVisitRequest, GetVisitResponse $getVisitResponse)
