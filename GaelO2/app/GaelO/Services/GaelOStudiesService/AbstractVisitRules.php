@@ -97,7 +97,7 @@ abstract class AbstractVisitRules
 
     abstract function getReviewStatus(): string;
 
-    abstract function getReviewConclusion(): string;
+    abstract function getReviewConclusion(): ?string;
 
     abstract function getAllowedKeyAndMimeTypeInvestigator(): array;
 
