@@ -51,7 +51,7 @@ class ValidatorAdapter implements ValidatorInterface
 
     public function addValidatorFloat(string $key, bool $optional, ?float $min, ?float $max): void
     {
-        if (!$this->validatedForm || $optional) $validatable = Validator::OneOf(validator::floatType(), validator::nullType());
+        if (!$this->validatedForm || $optional) $validatable = Validator::OneOf(validator::Number(), validator::nullType());
         else $validatable = Validator::floatType();
 
         if ($min != null) {

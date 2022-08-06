@@ -55,7 +55,6 @@ class ValidatorAdapterTest extends TestCase
     public function testAddOptionalIntValidation()
     {
         $this->validatorAdapter->addValidatorInt('age', true, 5, 50);
-        dd($this->validatorAdapter->validate(['age' => null]));
         $result = $this->validatorAdapter->validate(['age' => null]);
         $this->assertTrue($result);
         $result = $this->validatorAdapter->validate(['age' => 60]);
