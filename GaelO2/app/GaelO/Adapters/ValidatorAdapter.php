@@ -4,7 +4,6 @@ namespace App\GaelO\Adapters;
 
 use App\GaelO\Interfaces\Adapters\ValidatorInterface;
 use Respect\Validation\Validator;
-use Respect\Validation\Rules\In;
 use Respect\Validation\Rules\Key;
 
 class ValidatorAdapter implements ValidatorInterface
@@ -26,13 +25,16 @@ class ValidatorAdapter implements ValidatorInterface
 
     public function addValidatorString(string $key, bool $optional): void
     {
-        $validatorKey = new Key($key, Validator::stringType(), ($this->validatedForm && !$optional));
+        if (!$this->validatedForm || $optional) $validatable = Validator::OneOf(validator::stringType(), validator::nullType());
+        else $validatable = Validator::stringType();
+        $validatorKey = new Key($key, $validatable, $this->validatedForm);
         $this->validator->addRule($validatorKey);
     }
 
     public function addValidatorInt(string $key, bool $optional, ?int $min, ?int $max): void
     {
-        $validatable = Validator::intType();
+        if (!$this->validatedForm || $optional) $validatable = Validator::OneOf(validator::intType(), validator::nullType());
+        else $validatable = Validator::intType();
 
         if ($min != null) {
             $validatable->min($min);
@@ -42,14 +44,15 @@ class ValidatorAdapter implements ValidatorInterface
             $validatable->max($max);
         }
 
-        $validatorKey = new Key($key, $validatable, ($this->validatedForm && !$optional));
+        $validatorKey = new Key($key, $validatable, $this->validatedForm);
 
         $this->validator->addRule($validatorKey);
     }
 
     public function addValidatorFloat(string $key, bool $optional, ?float $min, ?float $max): void
     {
-        $validatable = Validator::floatType();
+        if (!$this->validatedForm || $optional) $validatable = Validator::OneOf(validator::floatType(), validator::nullType());
+        else $validatable = Validator::floatType();
 
         if ($min != null) {
             $validatable->min($min);
@@ -59,14 +62,15 @@ class ValidatorAdapter implements ValidatorInterface
             $validatable->max($max);
         }
 
-        $validatorKey = new Key($key, $validatable, ($this->validatedForm && !$optional));
+        $validatorKey = new Key($key, $validatable, $this->validatedForm);
 
         $this->validator->addRule($validatorKey);
     }
 
     public function addNumberValidator(string $key, bool $optional, ?float $min, ?float $max): void
     {
-        $validatable = Validator::Number();
+        if (!$this->validatedForm || $optional) $validatable = Validator::OneOf(validator::Number(), validator::nullType());
+        else $validatable = Validator::Number();
 
         if ($min != null) {
             $validatable->min($min);
@@ -76,20 +80,26 @@ class ValidatorAdapter implements ValidatorInterface
             $validatable->max($max);
         }
 
-        $validatorKey = new Key($key, $validatable, ($this->validatedForm && !$optional));
+        $validatorKey = new Key($key, $validatable, $this->validatedForm);
 
         $this->validator->addRule($validatorKey);
     }
 
     public function addSetValidator(string $key, array $acceptedValues, bool $optional): void
     {
-        $validatorKey = new Key($key, new In($acceptedValues, true), ($this->validatedForm && !$optional));
+        if (!$this->validatedForm || $optional) $validatable = Validator::OneOf(validator::in($acceptedValues, true), validator::nullType());
+        else $validatable = Validator::in($acceptedValues, true);
+
+        $validatorKey = new Key($key, $validatable, $this->validatedForm);
         $this->validator->addRule($validatorKey);
     }
 
     public function addBooleanValidator(string $key,  bool $optional): void
     {
-        $validatorKey = new Key($key, Validator::boolType(), ($this->validatedForm && !$optional));
+        if (!$this->validatedForm || $optional) $validatable = Validator::OneOf(validator::boolType(), validator::nullType());
+        else $validatable = Validator::boolType();
+
+        $validatorKey = new Key($key, $validatable, $this->validatedForm);
         $this->validator->addRule($validatorKey);
     }
 

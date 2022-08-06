@@ -4,23 +4,78 @@ namespace App\GaelO\Services\SpecificStudiesRules\TEST;
 
 use App\GaelO\Adapters\MimeAdapter;
 use App\GaelO\Constants\Constants;
+use App\GaelO\Interfaces\Repositories\ReviewRepositoryInterface;
 use App\GaelO\Services\GaelOStudiesService\AbstractVisitRules;
 
 class TEST_FDG_PET0 extends AbstractVisitRules
 {
 
-    public function getInvestigatorValidationRules()  : array {
+    private ReviewRepositoryInterface $reviewRepositoryInterface;
+    private string $studyName = "TEST";
+
+    public function __construct(ReviewRepositoryInterface $reviewRepositoryInterface)
+    {
+        $this->reviewRepositoryInterface = $reviewRepositoryInterface;
+    }
+
+    public function getInvestigatorValidationRules(): array
+    {
         return [
-            'comment' => [
-                'rule' => self::RULE_STRING,
+            'glycaemia' => [
+                'rule' => self::RULE_NUMBER,
+                'optional' => true,
+                'min' => 0,
+                'max' => 20
+            ],
+            'glycaemiaNotDone' => [
+                'rule' => self::RULE_BOOLEAN,
                 'optional' => false
+            ],
+            'radiotherapyThreeMonths' => [
+                'rule' => self::RULE_BOOLEAN,
+                'optional' => false
+            ],
+            'csfThreeWeeks' => [
+                'rule' => self::RULE_BOOLEAN,
+                'optional' => false
+            ],
+            'biopsy' => [
+                'rule' => self::RULE_BOOLEAN,
+                'optional' => false
+            ],
+            'biopsyDate' => [
+                'rule' => self::RULE_STRING,
+                'optional' => true
+            ],
+            'biopsyLocation' => [
+                'rule' => self::RULE_SET,
+                'values' => TEST::TEST_LOCALIZATIONS,
+                'optional' => true
+            ],
+            'infection' => [
+                'rule' => self::RULE_BOOLEAN,
+                'optional' => false
+            ],
+            'infectionDate' => [
+                'rule' => self::RULE_STRING,
+                'optional' => true
+            ],
+            'infectionLocation' => [
+                'rule' => self::RULE_SET,
+                'values' => TEST::TEST_LOCALIZATIONS,
+                'optional' => true
+            ],
+            'comments' => [
+                'rule' => self::RULE_STRING,
+                'optional' => true
             ]
         ];
     }
 
-    public function getReviewerValidationRules(bool $adjudication) : array {
+    public function getReviewerValidationRules(bool $adjudication): array
+    {
         return [
-            'comment' => [
+            'comments' => [
                 'rule' => self::RULE_STRING,
                 'optional' => false
             ]
@@ -29,22 +84,24 @@ class TEST_FDG_PET0 extends AbstractVisitRules
 
     public function getReviewStatus(): string
     {
-        return Constants::REVIEW_STATUS_DONE;
+        //Fetch visit validated review
+        $reviews = $this->reviewRepositoryInterface->getReviewsForStudyVisit($this->studyName, $this->visitContext['id'], true);
+        return sizeof($reviews) > 0 ? Constants::REVIEW_STATUS_DONE : Constants::REVIEW_STATUS_NOT_DONE;
     }
 
-    public function getReviewConclusion(): string
+    public function getReviewConclusion(): ?string
     {
-        return 'CR';
+        return 'Done';
     }
 
     public function getAllowedKeyAndMimeTypeInvestigator(): array
     {
-        return [];
+        return ['41' => MimeAdapter::getMimeFromExtension('csv')];
     }
 
     public function getAllowedKeyAndMimeTypeReviewer(): array
     {
-        return ['41' => MimeAdapter::getMimeFromExtension('csv')];
+        return [];
     }
 
     public function getTargetLesion(): ?array
@@ -55,14 +112,18 @@ class TEST_FDG_PET0 extends AbstractVisitRules
     public function getAssociatedDataForInvestigatorForm(): array
     {
         return [
+            [
                 'LastChemo' => '01/01/2021'
+            ]
         ];
     }
 
     public function getAssociatedDataForReviewForm(): array
     {
         return [
+            [
                 'Radiotherapy' => false
+            ]
         ];
     }
 }

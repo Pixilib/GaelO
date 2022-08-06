@@ -1,48 +1,65 @@
 <?php
+
 namespace App\GaelO\Services\SpecificStudiesRules\TEST;
 
-use App\GaelO\Adapters\MimeAdapter;
 use App\GaelO\Constants\Constants;
 use App\GaelO\Services\GaelOStudiesService\AbstractVisitRules;
 
-class TEST_WB_CT0 extends AbstractVisitRules {
+class TEST_WB_CT0 extends AbstractVisitRules
+{
 
-    public function getInvestigatorValidationRules()  : array {
+    private string $studyName = "TEST";
+    private ReviewRepositoryInterface $reviewRepositoryInterface;
+
+    public function __construct(ReviewRepositoryInterface $reviewRepositoryInterface)
+    {
+        $this->reviewRepositoryInterface = $reviewRepositoryInterface;
+    }
+
+    public function getInvestigatorValidationRules(): array
+    {
         return [
-            'comment' => [
+            'comments' => [
                 'rule' => self::RULE_STRING,
                 'optional' => false
             ]
         ];
     }
 
-    public function getReviewerValidationRules(bool $adjudication) : array {
+    public function getReviewerValidationRules(bool $adjudication): array
+    {
         return [
-            'comment' => [
+            'comments' => [
                 'rule' => self::RULE_STRING,
                 'optional' => false
             ]
         ];
     }
 
-    public function getReviewStatus() : string {
-        return Constants::REVIEW_STATUS_DONE;
+    public function getReviewStatus(): string
+    {
+        //Fetch visit validated review
+        $reviews = $this->reviewRepositoryInterface->getReviewsForStudyVisit($this->studyName, $this->visitContext['id'], true);
+        return sizeof($reviews) > 0 ? Constants::REVIEW_STATUS_DONE : Constants::REVIEW_STATUS_NOT_DONE;
     }
 
-    public function getReviewConclusion() : string {
-        return 'CR';
-    }
-
-    public function getAllowedKeyAndMimeTypeInvestigator() : array {
-        return ['41' => MimeAdapter::getMimeFromExtension('csv')];
-    }
-
-    public function getAllowedKeyAndMimeTypeReviewer() : array {
-        return ['25' => MimeAdapter::getMimeFromExtension('csv')];
-    }
-
-    public function getTargetLesion() : ?array {
+    public function getReviewConclusion(): ?string
+    {
         return null;
     }
 
+    public function getAllowedKeyAndMimeTypeInvestigator(): array
+    {
+        return [];
+    }
+
+    public function getAllowedKeyAndMimeTypeReviewer(): array
+    {
+        return [];
+    }
+
+    public function getTargetLesion(): ?array
+    {
+        return null;
+    }
 }
