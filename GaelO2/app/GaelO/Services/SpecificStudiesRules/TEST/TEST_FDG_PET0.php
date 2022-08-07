@@ -111,11 +111,10 @@ class TEST_FDG_PET0 extends AbstractVisitRules
 
     public function getAssociatedDataForInvestigatorForm(): array
     {
-        return [
-            [
+        return[
                 'LastChemo' => '01/01/2021'
-            ]
         ];
+
     }
 
     public function getAssociatedDataForReviewForm(): array
