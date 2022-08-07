@@ -32,8 +32,8 @@ class ModifyReviewFormTest extends TestCase
 
         $study = Study::factory()->name('TEST')->create();
         $patient = Patient::factory()->studyName($study->name)->create();
-        $visitGroup = VisitGroup::factory()->studyName($study->name)->name('FDG')->create();
-        $visitType  = VisitType::factory()->visitGroupId($visitGroup->id)->name('PET_0')->localFormNeeded()->create();
+        $visitGroup = VisitGroup::factory()->studyName($study->name)->name('WB')->create();
+        $visitType  = VisitType::factory()->visitGroupId($visitGroup->id)->name('CT0')->localFormNeeded()->create();
         $visit = Visit::factory()->patientId($patient->id)->visitTypeId($visitType->id)->create();
         ReviewStatus::factory()->studyName($study->name)->visitId($visit->id)->reviewAvailable()->create();
         $this->review = Review::factory()->studyName($study->name)->visitId($visit->id)->create();
@@ -49,7 +49,7 @@ class ModifyReviewFormTest extends TestCase
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_REVIEWER, $this->studyName);
 
         $payload = [
-            'data' => ['comment' => 'CR'],
+            'data' => ['comments' => 'CR'],
             'adjudication' => false,
             'validated' => true
         ];
@@ -65,7 +65,7 @@ class ModifyReviewFormTest extends TestCase
         $this->review->save();
 
         $payload = [
-            'data' => ['comment' => 'CR'],
+            'data' => ['comments' => 'CR'],
             'adjudication' => false,
             'validated' => true
         ];
@@ -80,7 +80,7 @@ class ModifyReviewFormTest extends TestCase
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_REVIEWER, $this->studyName);
 
         $payload = [
-            'data' => ['comment' => 'CR'],
+            'data' => ['comments' => 'CR'],
             'adjudication' => false,
             'validated' => true
         ];
@@ -98,7 +98,7 @@ class ModifyReviewFormTest extends TestCase
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_REVIEWER, $this->studyName);
 
         $payload = [
-            'data' => ['comment' => 'CR'],
+            'data' => ['comments' => 'CR'],
             'adjudication' => false,
             'validated' => true
         ];
@@ -118,7 +118,7 @@ class ModifyReviewFormTest extends TestCase
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_REVIEWER, $this->studyName);
 
         $payload = [
-            'data' => ['comment' => 'CR'],
+            'data' => ['comments' => 'CR'],
             'adjudication' => false,
             'validated' => true
         ];
@@ -135,7 +135,7 @@ class ModifyReviewFormTest extends TestCase
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_REVIEWER, $this->studyName);
 
         $payload = [
-            'data' => ['comment' => 'CR'],
+            'data' => ['comments' => 'CR'],
             'adjudication' => false
         ];
 

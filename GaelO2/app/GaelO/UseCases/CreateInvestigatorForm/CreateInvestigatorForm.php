@@ -44,14 +44,12 @@ class CreateInvestigatorForm
 
             $visitContext = $this->visitRepositoryInterface->getVisitContext($createInvestigatorFormRequest->visitId);
             $studyName = $visitContext['patient']['study_name'];
-            $isLocalFormNeeded = $visitContext['visit_type']['local_form_needed'];
             $stateInvestigatorForm = $visitContext['state_investigator_form'];
 
             $this->checkAuthorization(
                 $createInvestigatorFormRequest->currentUserId,
                 $createInvestigatorFormRequest->visitId,
                 $stateInvestigatorForm,
-                $isLocalFormNeeded,
                 $studyName
             );
 
@@ -79,14 +77,15 @@ class CreateInvestigatorForm
         }
     }
 
-    private function checkAuthorization(int $currentUserId, int $visitId, string $visitInvestigatorFormStatus, bool $investigatorFormNeeded, string $studyName)
+    private function checkAuthorization(int $currentUserId, int $visitId, string $visitInvestigatorFormStatus, string $studyName)
     {
 
         if (in_array($visitInvestigatorFormStatus, [Constants::INVESTIGATOR_FORM_DRAFT, Constants::INVESTIGATOR_FORM_DONE])) {
             throw new GaelOForbiddenException();
         };
 
-        if (!$investigatorFormNeeded) {
+        if ($visitInvestigatorFormStatus === Constants::INVESTIGATOR_FORM_NOT_NEEDED) {
+            //No investigator form creation if not expected to have one
             throw new GaelOForbiddenException();
         };
 
