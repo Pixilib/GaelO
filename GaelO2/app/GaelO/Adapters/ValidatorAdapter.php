@@ -3,6 +3,7 @@
 namespace App\GaelO\Adapters;
 
 use App\GaelO\Interfaces\Adapters\ValidatorInterface;
+use App\Rules\BooleanType;
 use App\Rules\NumberType;
 use App\Rules\StringType;
 use Illuminate\Support\Facades\Validator;
@@ -24,11 +25,6 @@ class ValidatorAdapter implements ValidatorInterface
         $this->validatedForm = $validatedForm;
     }
 
-    private function buildRuleString(array $rules): string
-    {
-        return implode('|', $rules);
-    }
-
     public function addValidatorString(string $key, bool $optional): void
     {
         $rules = [];
@@ -36,7 +32,7 @@ class ValidatorAdapter implements ValidatorInterface
         if ($optional || !$this->validatedForm) $rules[] = 'nullable';
         else $rules[] = 'required';
 
-        $this->validationRules[$key] = [$this->buildRuleString($rules), new StringType];
+        $this->validationRules[$key] = [...$rules, new StringType];
     }
 
     public function addValidatorInt(string $key, bool $optional, ?int $min, ?int $max): void
@@ -56,7 +52,7 @@ class ValidatorAdapter implements ValidatorInterface
         }
 
 
-        $this->validationRules[$key] = $this->buildRuleString($rules);
+        $this->validationRules[$key] = [...$rules, new NumberType];
     }
 
     public function addNumberValidator(string $key, bool $optional, ?float $min, ?float $max): void
@@ -74,7 +70,7 @@ class ValidatorAdapter implements ValidatorInterface
             $rules[] = "max:" . $max;
         }
 
-        $this->validationRules[$key] = [$this->buildRuleString($rules), new NumberType];
+        $this->validationRules[$key] = [...$rules, new NumberType];
     }
 
     public function addSetValidator(string $key, array $acceptedValues, bool $optional): void
@@ -85,7 +81,7 @@ class ValidatorAdapter implements ValidatorInterface
         else $rules[] = 'required';
 
         $this->validationRules[$key] = [
-            $this->buildRuleString($rules),
+            ...$rules,
             Rule::in($acceptedValues)
         ];
     }
@@ -97,7 +93,7 @@ class ValidatorAdapter implements ValidatorInterface
         if ($optional || !$this->validatedForm) $rules[] = 'nullable';
         else $rules[] = 'required';
 
-        $this->validationRules[$key] = $this->buildRuleString($rules);
+        $this->validationRules[$key] = [...$rules, new BooleanType];
     }
 
     public function validate(array $data): bool
