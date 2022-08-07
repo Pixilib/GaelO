@@ -3,6 +3,7 @@
 namespace App\GaelO\Services\SpecificStudiesRules\TEST;
 
 use App\GaelO\Constants\Constants;
+use App\GaelO\Interfaces\Repositories\ReviewRepositoryInterface;
 use App\GaelO\Services\GaelOStudiesService\AbstractVisitRules;
 
 class TEST_WB_CT0 extends AbstractVisitRules
