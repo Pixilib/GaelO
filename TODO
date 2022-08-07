@@ -1,16 +1,13 @@
 Salim TODO :
-- Refac : Pluger GetPossibleUpload sur VisitEntity pour la réponse (nécéssite d'updater V1)
-- Get Creatable Visit, retourner les visitType entity des créables ? 
-- CreateVisit => Verifier que la visite à creer est bien créable niveau backend
+- Output des dates à harmoniser (dans les entites ?)
 
-- Optimiser l'utilisation des authorization service en injectant les data depuis le usecase (ou les rendre stateless)
-- Optimiser le service visit en injectant directement le visit context
+- Refac : Pluger GetPossibleUpload sur VisitEntity pour la réponse (nécéssite d'updater V1)
+
+- Optimiser l'utilisation des authorization service en injectant les data depuis le usecase (ou les rendre stateless) (dont visite, review...)
 
 - Sur les action du superviseur faire passer l'etude appelée en query tag pour sécuriser le contexte dans lequel la ressource est appelée (en cas d'etude ancillaire si l'utilisateur est superviseur de l'étude principale la requette emise de l'étude ancillaire passera le RBAC)
-  
-- Mise en place scheduler, monitoring scheduler par email pourra etre personnalisé (ex que si nouveau patient...)
 
-- ExportStudyService => facotring a reflechir et A tester avec data
+- Mise en place scheduler, monitoring scheduler par email pourra etre personnalisé (ex que si nouveau patient...)
 
 --- Etudes ancillaires ---
 Tester Etudes ancillaire avec Emilie (voir return default data de review status si entitée non crée)
@@ -32,3 +29,5 @@ Test par etude specifique
 
 **Release procedure **
 - Update version parameter in config app
+- Update onboarding version si besoin
+- Documentation : sheetname limité a 31 caractère $sheetName =  substr($role, 0, 3)  . '_' . $visitGroupName . '_' . $visitTypeName; donc groupname et typename ensemble doivent etre < 25 caractères

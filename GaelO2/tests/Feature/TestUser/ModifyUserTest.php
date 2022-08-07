@@ -31,9 +31,9 @@ class ModifyUserTest extends TestCase
             'administrator' => true,
             'centerCode' => $center->code,
             'job' => 'CRA',
-            'orthancAddress' => 'http://gaelo.fr',
-            'orthancLogin' => 'gaelo',
-            'orthancPassword' => 'gaelo',
+            'orthancAddress'=> 'https://gaelo.fr',
+            'orthancLogin'=>'gaelo',
+            'orthancPassword'=>'gaelo'
         ];
     }
 

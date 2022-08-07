@@ -17,85 +17,67 @@ class ValidatorAdapterTest extends TestCase
         $this->validatorAdapter = new ValidatorAdapter(true);
     }
 
-    public function testAddMendatoryStringValidation(){
+    public function testAddMendatoryStringValidation()
+    {
         $this->validatorAdapter->addValidatorString('name', false);
-        $result = $this->validatorAdapter->validate(['name'=> 'yes']);
+        $result = $this->validatorAdapter->validate(['name' => 'yes']);
         $this->assertTrue($result);
-        $result = $this->validatorAdapter->validate(['name'=> 1]);
+        $result = $this->validatorAdapter->validate(['name' => 1]);
         $this->assertFalse($result);
         $result = $this->validatorAdapter->validate([]);
         $this->assertFalse($result);
     }
 
-    public function testAddOptionalStringValidation(){
+    public function testAddOptionalStringValidation()
+    {
         $this->validatorAdapter->addValidatorString('name', true);
-        $result = $this->validatorAdapter->validate(['name'=> 'yes']);
+        $result = $this->validatorAdapter->validate(['name' => 'yes']);
         $this->assertTrue($result);
-        $result = $this->validatorAdapter->validate([]);
+        $result = $this->validatorAdapter->validate(['name' => null]);
         $this->assertTrue($result);
-        $result = $this->validatorAdapter->validate(['name'=> 1]);
+        $result = $this->validatorAdapter->validate(['name' => 1]);
         $this->assertFalse($result);
     }
 
-    public function testAddMendatoryIntValidation(){
+    public function testAddMendatoryIntValidation()
+    {
         $this->validatorAdapter->addValidatorInt('age', false, 5, 50);
-        $result = $this->validatorAdapter->validate(['age'=> 30]);
+        $result = $this->validatorAdapter->validate(['age' => 30]);
         $this->assertTrue($result);
-        $result = $this->validatorAdapter->validate(['age'=> 60]);
+        $result = $this->validatorAdapter->validate(['age' => 60]);
         $this->assertFalse($result);
-        $result = $this->validatorAdapter->validate(['age'=> 30.5]);
+        $result = $this->validatorAdapter->validate(['age' => 30.5]);
         $this->assertFalse($result);
-        $result = $this->validatorAdapter->validate(['age'=> '50']);
+        $result = $this->validatorAdapter->validate(['age' => '50']);
         $this->assertFalse($result);
     }
 
-    public function testAddOptionalIntValidation(){
+    public function testAddOptionalIntValidation()
+    {
         $this->validatorAdapter->addValidatorInt('age', true, 5, 50);
-        $result = $this->validatorAdapter->validate([]);
+        $result = $this->validatorAdapter->validate(['age' => null]);
         $this->assertTrue($result);
-        $result = $this->validatorAdapter->validate(['age'=> 60]);
+        $result = $this->validatorAdapter->validate(['age' => 60]);
         $this->assertFalse($result);
     }
 
-    public function testAddMendatoryFloatValidation(){
-        $this->validatorAdapter->addValidatorFloat('age', false, 5, 50);
-        $result = $this->validatorAdapter->validate(['age'=> 30.1]);
-        $this->assertTrue($result);
-        $result = $this->validatorAdapter->validate(['age'=> 30]);
-        $this->assertFalse($result);
-        $result = $this->validatorAdapter->validate(['age'=> 60]);
-        $this->assertFalse($result);
-        $result = $this->validatorAdapter->validate(['age'=> '50']);
-        $this->assertFalse($result);
-    }
-
-    public function testAddOptionalFloatValidation(){
-        $this->validatorAdapter->addValidatorFloat('age', true, 5, 50);
-        $result = $this->validatorAdapter->validate([]);
-        $this->assertTrue($result);
-        $result = $this->validatorAdapter->validate(['age'=> 60.5]);
-        $this->assertFalse($result);
-    }
-
-    public function testAddMendatorySetValidation(){
+    public function testAddMendatorySetValidation()
+    {
         $this->validatorAdapter->addSetValidator('lugano', ['CR', 'PR', 'NMR', 'PD'], false);
         $result = $this->validatorAdapter->validate(['lugano' => 'CR']);
         $this->assertTrue($result);
-        $result = $this->validatorAdapter->validate(['lugano'=> 'Complete']);
+        $result = $this->validatorAdapter->validate(['lugano' => 'Complete']);
         $this->assertFalse($result);
-        $result = $this->validatorAdapter->validate(['lugano'=> 'CR2']);
+        $result = $this->validatorAdapter->validate(['lugano' => 'CR2']);
         $this->assertFalse($result);
     }
 
-    public function testAddOptionalSetValidation(){
+    public function testAddOptionalSetValidation()
+    {
         $this->validatorAdapter->addSetValidator('lugano', ['CR', 'PR', 'NMR', 'PD'], true);
-        $result = $this->validatorAdapter->validate([]);
+        $result = $this->validatorAdapter->validate(['lugano' => null]);
         $this->assertTrue($result);
-        $result = $this->validatorAdapter->validate(['lugano'=> 'CR2']);
+        $result = $this->validatorAdapter->validate(['lugano' => 'CR2']);
         $this->assertFalse($result);
     }
-
-
-
-
 }

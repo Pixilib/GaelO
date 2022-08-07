@@ -47,24 +47,20 @@ class VisitTypeRepositoryTest extends TestCase
 
     }
 
-    public function testHasVisit(){
-        $visitType = VisitType::factory()->create();
-
-        $answer = $this->visitTypeRepository->hasVisits($visitType->id);
-
-        $visit = Visit::factory()->create();
-        $visitTypeWithVisit = $visit->visitType;
-        $answer2 = $this->visitTypeRepository->hasVisits($visitTypeWithVisit->id);
-
-        $this->assertTrue($answer2);
-        $this->assertFalse($answer);
-    }
-
     public function testIsExistingVisitType(){
         $visitType = VisitType::factory()->create();
 
         $answer = $this->visitTypeRepository->isExistingVisitType($visitType->visitGroup->id , $visitType->name);
         $answer2 = $this->visitTypeRepository->isExistingVisitType($visitType->visitGroup->id , 'New Visit Type');
+        $this->assertTrue($answer);
+        $this->assertFalse($answer2);
+    }
+
+    public function testIsExistingOrder(){
+        $visitType = VisitType::factory()->create();
+
+        $answer = $this->visitTypeRepository->isExistingOrder($visitType->visitGroup->id , $visitType->order);
+        $answer2 = $this->visitTypeRepository->isExistingOrder($visitType->visitGroup->id , 0);
         $this->assertTrue($answer);
         $this->assertFalse($answer2);
     }

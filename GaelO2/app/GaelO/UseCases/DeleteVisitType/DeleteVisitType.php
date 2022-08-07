@@ -4,6 +4,7 @@ namespace App\GaelO\UseCases\DeleteVisitType;
 
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
+use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\VisitTypeRepositoryInterface;
 use App\GaelO\Services\AuthorizationService\AuthorizationUserService;
 use Exception;
@@ -13,10 +14,12 @@ class DeleteVisitType
 
     private VisitTypeRepositoryInterface $visitTypeRepositoryInterface;
     private AuthorizationUserService $authorizationUserService;
+    private VisitRepositoryInterface $visitRepositoryInterface;
 
-    public function __construct(VisitTypeRepositoryInterface $visitTypeRepositoryInterface, AuthorizationUserService $authorizationUserService)
+    public function __construct(VisitTypeRepositoryInterface $visitTypeRepositoryInterface, VisitRepositoryInterface $visitRepositoryInterface, AuthorizationUserService $authorizationUserService)
     {
         $this->visitTypeRepositoryInterface = $visitTypeRepositoryInterface;
+        $this->visitRepositoryInterface = $visitRepositoryInterface;
         $this->authorizationUserService = $authorizationUserService;
     }
 
@@ -26,8 +29,11 @@ class DeleteVisitType
         try {
             $this->checkAuthorization($deleteVisitTypeRequest->currentUserId);
 
-            $hasVisits = $this->visitTypeRepositoryInterface->hasVisits($deleteVisitTypeRequest->visitTypeId);
-            if ($hasVisits) throw new GaelOForbiddenException('Existing Child Visits');
+            $visitTypeEntity = $this->visitTypeRepositoryInterface->find($deleteVisitTypeRequest->visitTypeId, true);
+            $studyName = $visitTypeEntity['visit_group']['study_name'];
+            $hasVisits = $this->visitRepositoryInterface->hasVisitsInStudy($studyName);
+
+            if ($hasVisits) throw new GaelOForbiddenException('Existing Visits in the study');
 
             $this->visitTypeRepositoryInterface->delete($deleteVisitTypeRequest->visitTypeId);
             $deleteVisitTypeResponse->status = 200;

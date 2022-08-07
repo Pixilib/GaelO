@@ -47,8 +47,11 @@ class CreatableVisitTest extends TestCase
 
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_INVESTIGATOR, $this->studyName);
         $response = $this->get('/api/patients/' . $this->patientId . '/creatable-visits');
-        $responseArray = json_decode( $response->content() );
+        $responseArray = json_decode( $response->content(), true );
         $this->assertEquals(1, sizeof($responseArray));
+        $this->assertArrayHasKey('order', $responseArray[0]);
+        $this->assertArrayHasKey('name', $responseArray[0]);
+        $this->assertArrayHasKey('optional', $responseArray[0]);
         $response->assertStatus(200);
     }
 

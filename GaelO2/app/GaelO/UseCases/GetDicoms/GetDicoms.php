@@ -44,7 +44,7 @@ class GetDicoms
             //Include Trashed Series if Supervisor OR (Investigator and QC pending)
             $includedTrashedSeries = ($role === Constants::ROLE_INVESTIGATOR
                 && in_array($visitContext['state_quality_control'], [Constants::QUALITY_CONTROL_CORRECTIVE_ACTION_ASKED, Constants::QUALITY_CONTROL_NOT_DONE]))
-                || ($role === Constants::ROLE_SUPERVISOR);
+                || (in_array($role, [Constants::ROLE_SUPERVISOR, Constants::ROLE_CONTROLLER]));
 
             $data = $this->dicomStudyRepositoryInterface->getDicomsDataFromVisit($visitId, $includeTrashedStudies, $includedTrashedSeries);
 

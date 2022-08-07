@@ -33,7 +33,7 @@ class Constants {
     const TRACKER_UPLOAD_VALIDATION_FAILED = "Upload Failed";
     const TRACKER_ASK_UNLOCK = "Ask Unlock Form";
     const TRACKER_UNLOCK_INVESTIGATOR_FORM = "Unlock Investigator Form";
-    const TRACKER_UNLOCK_REVIEW_FORM = "Unlock Review Form";
+    const TRACKER_UNLOCK_REVIEWER_FORM = "Unlock Reviewer Form";
     const TRACKER_CREATE_STUDY = "Create Study";
     const TRACKER_DEACTIVATE_STUDY = "Deactivate Study";
     const TRACKER_REACTIVATE_STUDY = "Reactivate Study";
@@ -44,7 +44,7 @@ class Constants {
     const TRACKER_REACTIVATE_DICOM_STUDY = "Reactivate DICOM Study";
     const TRACKER_DELETE_VISIT = "Delete Visit";
     const TRACKER_DELETE_INVESTIGATOR_FORM = "Delete Investigator Form";
-    const TRACKER_DELETE_REVIEW_FORM = "Delete Review Form";
+    const TRACKER_DELETE_REVIEWER_FORM = "Delete Reviewer Form";
     const TRACKER_ACCOUNT_BLOCKED = "Account Blocked";
     const TRACKER_SAVE_INVESTIGATOR_FORM = "Save Investigator Form";
     const TRACKER_MODIFY_INVESTIGATOR_FORM = "Modify Investigator Form";

@@ -37,7 +37,6 @@ class ModifyCorrectiveAction
             $patientId = $visitContext['patient']['id'];
             $patientCode = $visitContext['patient']['code'];
             $visitType = $visitContext['visit_type']['name'];
-            $localFormNeeded = $visitContext['visit_type']['local_form_needed'];
             $visitGroupName = $visitContext['visit_type']['visit_group']['name'];
             $visitModality = $visitContext['visit_type']['visit_group']['modality'];
             $stateInvestigatorForm = $visitContext['state_investigator_form'];
@@ -47,7 +46,7 @@ class ModifyCorrectiveAction
             //If a corrective action was done, check that relevant pieces were sent
             if ($modifyCorrectiveActionRequest->correctiveActionDone) {
                 //If form Needed, form need to be sent before making corrective action
-                if ($localFormNeeded  && $stateInvestigatorForm !== Constants::INVESTIGATOR_FORM_DONE) {
+                if ($stateInvestigatorForm !== Constants::INVESTIGATOR_FORM_NOT_NEEDED  && $stateInvestigatorForm !== Constants::INVESTIGATOR_FORM_DONE) {
                     throw new GaelOForbiddenException('You need to send the Investigator Form first!');
                 }
 

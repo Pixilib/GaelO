@@ -497,7 +497,6 @@ class MailServices
 
     public function sendReminderToInvestigators(int $centerCode, string $studyName, string $subject, string $content)
     {
-        $centerCode = $centerCode;
 
         $parameters = [
             'name' => 'Investigator',
@@ -515,7 +514,6 @@ class MailServices
 
     public function sendReminder(string $role, string $studyName, string $subject, string $content)
     {
-        $role = $role;
 
         $parameters = [
             'name' => $role,

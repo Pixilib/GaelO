@@ -257,13 +257,15 @@ class ReviewController extends Controller
         return $this->getJsonResponse($deleteFileOfFormResponse->body, $deleteFileOfFormResponse->status, $deleteFileOfFormResponse->statusText);
     }
 
-    public function getReviewFile(GetFileOfForm $getFileOfForm, GetFileOfFormRequest $getFileOfFormRequest, GetFileOfFormResponse $getFileOfFormResponse, int $reviewId, string $key)
+    public function getReviewFile(Request $request, GetFileOfForm $getFileOfForm, GetFileOfFormRequest $getFileOfFormRequest, GetFileOfFormResponse $getFileOfFormResponse, int $reviewId, string $key)
     {
 
         $currentUser = Auth::user();
+        $queryParam = $request->query();
         $getFileOfFormRequest->currentUserId = $currentUser['id'];
         $getFileOfFormRequest->key = $key;
         $getFileOfFormRequest->id = $reviewId;
+        $getFileOfFormRequest->role = $queryParam['role'];
 
         $getFileOfForm->execute($getFileOfFormRequest, $getFileOfFormResponse);
 

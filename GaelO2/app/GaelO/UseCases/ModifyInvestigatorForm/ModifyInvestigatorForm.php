@@ -39,7 +39,6 @@ class ModifyInvestigatorForm
 
             $visitContext = $this->visitRepositoryInterface->getVisitContext($modifyInvestigatorFormRequest->visitId);
             $studyName = $visitContext['patient']['study_name'];
-            $isLocalFormNeeded = $visitContext['visit_type']['local_form_needed'];
             $visitId = $visitContext['id'];
 
             $currentUserId = $modifyInvestigatorFormRequest->currentUserId;
@@ -50,7 +49,6 @@ class ModifyInvestigatorForm
                 $currentUserId,
                 $visitId,
                 $visitContext['state_investigator_form'],
-                $isLocalFormNeeded,
                 $studyName
             );
 
@@ -79,14 +77,15 @@ class ModifyInvestigatorForm
     }
 
 
-    private function checkAuthorization(int $currentUserId, int $visitId, string $visitInvestigatorFormStatus, bool $investigatorFormNeeded, string $studyName)
+    private function checkAuthorization(int $currentUserId, int $visitId, string $visitInvestigatorFormStatus, string $studyName)
     {
 
         if (in_array($visitInvestigatorFormStatus, [Constants::INVESTIGATOR_FORM_DONE])) {
             throw new GaelOForbiddenException();
         };
 
-        if (!$investigatorFormNeeded) {
+        if ($visitInvestigatorFormStatus === Constants::INVESTIGATOR_FORM_NOT_NEEDED) {
+            //Can't modify an investigator form if not expected to have
             throw new GaelOForbiddenException();
         };
 

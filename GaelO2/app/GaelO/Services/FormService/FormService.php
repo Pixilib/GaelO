@@ -43,18 +43,19 @@ class FormService
     }
 
 
-    public function setCurrentUserId(int $currentUserId)
+    public function setCurrentUserId(int $currentUserId): void
     {
         $this->currentUserId = $currentUserId;
     }
 
-    public function getSpecificStudiesRules(string $studyName, string $visitGroup, string $visitName) : AbstractVisitRules {
+    public function getSpecificStudiesRules(string $studyName, string $visitGroup, string $visitName): AbstractVisitRules
+    {
         $studyObject = AbstractGaelOStudy::getSpecificStudyObject($studyName);
         $specificObjectClass = $studyObject->getSpecificForm($visitGroup, $visitName);
         return $this->frameworkInterface::make($specificObjectClass);
     }
 
-    public function setVisitContextAndStudy(array $visitContext, string $studyName)
+    public function setVisitContextAndStudy(array $visitContext, string $studyName): void
     {
 
         $this->visitId = $visitContext['id'];
@@ -70,7 +71,7 @@ class FormService
         $this->abstractVisitRules->setVisitContext($this->visitContext);
     }
 
-    public function attachFile(array $reviewEntity, string $key, string $filename, string $mimeType, $binaryData)
+    public function attachFile(array $reviewEntity, string $key, string $filename, string $mimeType, $binaryData): void
     {
 
         $keyMimeArray = [];
@@ -105,7 +106,7 @@ class FormService
         $this->reviewRepositoryInterface->updateReviewFile($reviewEntity['id'], $reviewEntity);
     }
 
-    public function removeFile(array $reviewEntity, string $key)
+    public function removeFile(array $reviewEntity, string $key): void
     {
         if (empty($reviewEntity['sent_files'][$key])) {
             throw new GaelOBadRequestException('Non exisiting key file in review');
@@ -119,8 +120,9 @@ class FormService
     }
 
 
-    public function getAssociatedDataForForm() : array {
-        if($this->local) return $this->abstractVisitRules->getAssociatedDataForInvestigatorForm();
-        else return $this->abstractVisitRules->getAssociatedDataForReviewForm();
+    public function getAssociatedDataForForm(): object
+    {
+        if ($this->local) return (object) $this->abstractVisitRules->getAssociatedDataForInvestigatorForm();
+        else return (object) $this->abstractVisitRules->getAssociatedDataForReviewForm();
     }
 }

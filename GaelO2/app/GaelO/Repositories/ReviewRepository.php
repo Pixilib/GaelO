@@ -151,7 +151,7 @@ class ReviewRepository implements ReviewRepositoryInterface
         if ($withTrashed) {
             $query->withTrashed();
         }
-        $answer = $query->with('visit')->get();
+        $answer = $query->has('visit')->with('visit', 'visit.visitType', 'visit.visitType.visitGroup')->get();
 
         return $answer->count() === 0 ? [] : $answer->toArray();
     }
@@ -167,7 +167,7 @@ class ReviewRepository implements ReviewRepositoryInterface
         if ($withTrashed) {
             $query->withTrashed();
         }
-        $answer = $query->with('visit')->get();
+        $answer = $query->has('visit')->with('visit', 'visit.visitType', 'visit.visitType.visitGroup')->get();
 
         return $answer->count() === 0 ? [] : $answer->toArray();
     }

@@ -28,53 +28,23 @@ class DefaultCreatableVisitCalculator
 
         //Get Created Patients Visits
         $createdVisitsArray = $this->visitRepositoryInterface->getPatientsVisits($patientEntity['id']);
+        $createdVisitTypeIds = array_map(function ($visit) {
+            return $visit['visit_type_id'];
+        }, $createdVisitsArray);
 
         //Get possible visits groups and types from study
         $studyVisitsTypes = $this->visitTypeRepositoryInterface->getVisitTypesOfStudy($patientEntity['study_name']);
 
-        $createdVisitMap = [];
+        $availableVisitType = [];
 
-        //Build array of Created visit Order indexed by visit group name
-        foreach ($createdVisitsArray as $createdVisit) {
-            $visitOrder = $createdVisit['visit_type']['order'];
-            $visitGroupName = $createdVisit['visit_type']['visit_group']['name'];
-            $createdVisitMap[$visitGroupName][] = $visitOrder;
-        }
-
-
-
-        $studyVisitMap = [];
-        //Reindex possible visits by visit group name and order
-
-        foreach ($studyVisitsTypes as $visitType) {
-
-            $visitGroupName = $visitType['visit_group']['name'];
-            $visitGroupModality = $visitType['visit_group']['modality'];
-
-            $studyVisitMap[$visitGroupName][$visitType['order']] = [
-                'groupId' => $visitType['visit_group_id'],
-                'groupModality' => $visitGroupModality,
-                'groupName' => $visitGroupName,
-                'typeId' => $visitType['id'],
-                'name' => $visitType['name'],
-                'optional' => $visitType['optional']
-            ];
-        }
-
-
-        $visitToCreateMap = [];
-
-        //Search for visits that have not been created
-        foreach ($studyVisitMap as $visitGroupName => $visitsArray) {
-
-            foreach ($visitsArray as $visitOrder => $visit) {
-                if (!isset($createdVisitMap[$visitGroupName]) || !in_array($visitOrder, $createdVisitMap[$visitGroupName])) {
-                    $visit['order'] = $visitOrder;
-                    $visitToCreateMap[] = $visit;
-                }
+        //Loop possible Visit Type and select thoose not created
+        foreach ($studyVisitsTypes as $possibleVisitType) {
+            $visitTypeId = $possibleVisitType['id'];
+            if (!in_array($visitTypeId, $createdVisitTypeIds)) {
+                $availableVisitType[] = $possibleVisitType;
             }
         }
 
-        return $visitToCreateMap;
+        return $availableVisitType;
     }
 }

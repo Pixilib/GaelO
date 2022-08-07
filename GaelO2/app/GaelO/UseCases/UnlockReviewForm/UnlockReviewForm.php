@@ -93,7 +93,7 @@ class UnlockReviewForm
                 Constants::ROLE_SUPERVISOR,
                 $reviewEntity['study_name'],
                 $reviewEntity['visit_id'],
-                Constants::TRACKER_UNLOCK_REVIEW_FORM,
+                Constants::TRACKER_UNLOCK_REVIEWER_FORM,
                 $actionDetails
             );
 

@@ -12,6 +12,7 @@ use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
 use App\GaelO\Services\AuthorizationService\AuthorizationPatientService;
 use App\GaelO\Services\CreateVisitService;
+use App\GaelO\Services\GaelOStudiesService\AbstractGaelOStudy;
 use App\GaelO\Services\MailServices;
 use DateTime;
 use Exception;
@@ -74,6 +75,17 @@ class CreateVisit
 
             if ($existingVisit) {
                 throw new GaelOConflictException('Visit Already Created');
+            }
+
+            //Checking that requested creation is available in the creatable visit type
+            //Get specific Study Object
+            $studyObject = AbstractGaelOStudy::getSpecificStudyObject($studyName);
+            $availableVisitType = $studyObject->getCreatableVisitCalculator()->getAvailableVisitToCreate($patientEntity);
+            //put available visitType Id in an array
+            $avaibleVisitTypeId = array_map(function($visitType){return $visitType['id'];}, $availableVisitType);
+
+            if(!in_array($visitTypeId, $avaibleVisitTypeId)){
+                throw new GaelOForbiddenException('Forbidden Visit Type Creation');
             }
 
             if ($visitDate !== null) {

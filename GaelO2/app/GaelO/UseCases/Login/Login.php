@@ -47,7 +47,6 @@ class Login
                     $this->sendBlockedEmail($user);
                 }
                 throw new GaelOUnauthorizedException('Unknown email/password pair');
-                return;
             }
 
             //if everything OK => Login
