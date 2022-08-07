@@ -32,6 +32,7 @@ class CreateUsersTable extends Migration
             $table->string('orthanc_password')->nullable(true);
             $table->string('api_token', 80) ->unique()->nullable()->default(null);
             $table->dateTime('email_verified_at')->nullable()->default(null);
+            $table->string('onboarding_version')->nullable(false)->default('0.0.0');
             $table->softDeletes();
             $table->rememberToken();
             $table->timestamps();

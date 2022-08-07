@@ -33,9 +33,9 @@ class AuthController extends Controller
             $user = User::where('email', $request->email)->sole();
 
             $tokenResult = $user->createToken('GaelO');
-
-          return response()->json([
+            return response()->json([
                 'id' => $user->id,
+                'onboarded' => $loginResponse->onboarded,
                 'access_token' => $tokenResult->plainTextToken,
                 'token_type' => 'Bearer'
             ], 200);
@@ -50,20 +50,21 @@ class AuthController extends Controller
         return response()->json();
     }
 
-    public function getMagicLink(Request $request, UrlGenerator $urlGenerator){
+    public function getMagicLink(Request $request, UrlGenerator $urlGenerator)
+    {
 
-            if (!$request->hasValidSignature() || !$urlGenerator->hasCorrectSignature($request) || !$urlGenerator->signatureHasNotExpired($request)) {
-                throw new AuthorizationException();
-            }
+        if (!$request->hasValidSignature() || !$urlGenerator->hasCorrectSignature($request) || !$urlGenerator->signatureHasNotExpired($request)) {
+            throw new AuthorizationException();
+        }
 
-            $user = User::findOrFail($request->id);
-            $token = $user->createToken('GaelO')->plainTextToken;
+        $user = User::findOrFail($request->id);
+        $token = $user->createToken('GaelO')->plainTextToken;
 
-            return response()->redirectTo($request->redirect_to."?userId=".$request->id."&token=".$token);
-
+        return response()->redirectTo($request->redirect_to . "?userId=" . $request->id . "&token=" . $token);
     }
 
-    public function createMagicLink(Request $request, CreateMagicLink $createMagicLink, CreateMagicLinkRequest $createMagicLinkRequest, CreateMagicLinkResponse $createMagicLinkResponse, int $userId) {
+    public function createMagicLink(Request $request, CreateMagicLink $createMagicLink, CreateMagicLinkRequest $createMagicLinkRequest, CreateMagicLinkResponse $createMagicLinkResponse, int $userId)
+    {
 
         $currentUser = $request->user();
         $requestData = $request->all();
@@ -76,14 +77,13 @@ class AuthController extends Controller
         $createMagicLink->execute($createMagicLinkRequest, $createMagicLinkResponse);
 
         return $this->getJsonResponse($createMagicLinkResponse->body, $createMagicLinkResponse->status, $createMagicLinkResponse->statusText);
-
     }
 
-    public function getSystem(Request $request, GetSystem $getSystem, GetSystemRequest $getSystemRequest, GetSystemResponse $getSystemResponse){
+    public function getSystem(Request $request, GetSystem $getSystem, GetSystemRequest $getSystemRequest, GetSystemResponse $getSystemResponse)
+    {
         $currentUser = $request->user();
         $getSystemRequest->currentUserId = $currentUser['id'];
         $getSystem->execute($getSystemRequest, $getSystemResponse);
         return $this->getJsonResponse($getSystemResponse->body, $getSystemResponse->status, $getSystemResponse->statusText);
     }
-
 }

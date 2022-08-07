@@ -1,11 +1,10 @@
 <?php
 
-namespace App\GaelO\UseCases\Login;
+namespace App\GaelO\UseCases\ModifyUserOnboarding;
 
-class LoginResponse
+class ModifyUserOnboardingResponse
 {
     public $body = null;
-    public ?bool $onboarded = null;
     public int $status;
     public string $statusText;
 }

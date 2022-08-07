@@ -170,7 +170,7 @@ class DocumentationTest extends TestCase
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $this->study->name);
         $documentation = Documentation::factory()->studyName($this->study->name)->create();
         $newPayload = [
-            'version' => '2.0',
+            'version' => '2.2.0',
             'controller' => true,
             'investigator' => true,
             'monitor' => true,
@@ -181,14 +181,31 @@ class DocumentationTest extends TestCase
         $response->assertStatus(200);
     }
 
+    public function testModifyDocumentationNotSemanticVersioning()
+    {
+        $currentUserId = AuthorizationTools::actAsAdmin(false);
+        AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $this->study->name);
+        $documentation = Documentation::factory()->studyName($this->study->name)->create();
+        $newPayload = [
+            'version' => '2.2',
+            'controller' => true,
+            'investigator' => true,
+            'monitor' => true,
+            'reviewer' => true
+        ];
+
+        $response = $this->patch('api/documentations/' . $documentation->id, $newPayload);
+        $response->assertStatus(400);
+    }
+
     public function testModifyDocumentationConflict()
     {
         $currentUserId = AuthorizationTools::actAsAdmin(false);
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $this->study->name);
-        Documentation::factory()->studyName($this->study->name)->name('newFile')->version('2.0')->create();
+        Documentation::factory()->studyName($this->study->name)->name('newFile')->version('2.2.0')->create();
         $documentation = Documentation::factory()->studyName($this->study->name)->name('newFile')->version('1.0')->create();
         $newPayload = [
-            'version' => '2.0',
+            'version' => '2.2.0',
             'controller' => true,
             'investigator' => true,
             'monitor' => true,

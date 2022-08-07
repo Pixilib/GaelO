@@ -18,6 +18,7 @@ class UserEntity
     public ?String $orthancLogin;
     public ?String $orthancPassword;
     public ?String $deletedAt;
+    public ?String $onboardingVersion;
     public ?string $emailVerifiedAt;
 
     public ?array $roles;
@@ -40,6 +41,7 @@ class UserEntity
         $userEntity->deletedAt = $array['deleted_at'];
         $userEntity->emailVerifiedAt = $array['email_verified_at'];
         $userEntity->lastConnection = $array['last_connection'];
+        $userEntity->onboardingVersion = $array['onboarding_version'];
         return $userEntity;
     }
 

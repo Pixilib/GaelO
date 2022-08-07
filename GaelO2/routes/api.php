@@ -35,8 +35,13 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-//Routes that need authentication
+//For the modify onboaded the route is accessible for non onboarded users
 Route::middleware(['auth:sanctum', 'verified', 'activated'])->group(function () {
+    Route::post('users/{id}/onboarding', [UserController::class, 'modifyUserOnboarding']);
+});
+
+//Routes that need authentication
+Route::middleware(['auth:sanctum', 'verified', 'activated', 'onboarded'])->group(function () {
 
     //System Route
     Route::get('system', [AuthController::class, 'getSystem']);
@@ -48,6 +53,7 @@ Route::middleware(['auth:sanctum', 'verified', 'activated'])->group(function () 
     Route::get('users/{id?}',  [UserController::class, 'getUser']);
     Route::post('users', [UserController::class, 'createUser']);
     Route::put('users/{id}', [UserController::class, 'modifyUser']);
+
     Route::patch('users/{id}', [UserController::class, 'modifyUserIdentification']);
     Route::delete('users/{id}', [UserController::class, 'deleteUser']);
     Route::patch('users/{id}/reactivate', [UserController::class, 'reactivateUser']);
@@ -56,6 +62,8 @@ Route::middleware(['auth:sanctum', 'verified', 'activated'])->group(function () 
     Route::delete('users/{id}/affiliated-centers/{centerCode}', [UserController::class, 'deleteAffiliatedCenter']);
     Route::get('users/{id}/studies',  [UserController::class, 'getStudiesFromUser']);
     Route::get('users/{id}/roles', [UserController::class, 'getRoles']);
+    Route::get('users/{id}/studies/{studyName}/roles/{roleName}', [UserController::class, 'getUserRoleByName']);
+    Route::put('users/{id}/studies/{studyName}/roles/{roleName}/validated-documentation', [UserController::class, 'modifyValidatedDocumentationForRole']);
     Route::post('users/{id}/roles', [UserController::class, 'createRole']);
     Route::delete('users/{id}/roles/{roleName}', [UserController::class, 'deleteRole']);
     Route::get('studies/{studyName}/users', [UserController::class, 'getUsersFromStudy']);
@@ -198,10 +206,10 @@ Route::post('tools/forgot-password', [UserController::class, 'forgotPassword'])-
 
 //Forgot password routes
 Route::get('tools/reset-password/{token}', function ($token) {
-    return redirect('/reset-password?token='.$token);
+    return redirect('/reset-password?token=' . $token);
 })->name('password.reset');
 
-Route::post('tools/reset-password', [UserController::class, 'updatePassword'] )->name('password.update');
+Route::post('tools/reset-password', [UserController::class, 'updatePassword'])->name('password.update');
 
 //Route to validate email
 Route::get('email/verify/{id}/{hash}', function (Request $request) {

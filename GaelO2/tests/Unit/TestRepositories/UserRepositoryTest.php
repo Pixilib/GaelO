@@ -85,6 +85,7 @@ class UserRepositoryTest extends TestCase
             'a',
             'b',
             'c',
+            '1.0.1',
             false
         );
 
@@ -98,6 +99,7 @@ class UserRepositoryTest extends TestCase
         $this->assertNotEquals($updatedEntity['center_code'], $userToModify['center_code']);
         $this->assertNotEquals($updatedEntity['job'], $userToModify['job']);
         $this->assertNotEquals($updatedEntity['updated_at'], $userToModify['updated_at']);
+        $this->assertNotEquals($updatedEntity['onboarding_version'], $userToModify['onboarding_version']);
         $this->assertEquals($updatedEntity['password'], $userToModify['password']);
     }
 
@@ -326,6 +328,19 @@ class UserRepositoryTest extends TestCase
         $this->assertTrue(in_array(Constants::ROLE_INVESTIGATOR, $roles));
         $this->assertTrue(in_array(Constants::ROLE_SUPERVISOR, $roles));
 
+    }
+
+    public function testGetUseRoleInStudy(){
+        $role = Role::factory()->roleName(Constants::ROLE_INVESTIGATOR)->create();
+        $entity = $this->userRepository->getUserRoleInStudy($role->user_id, $role->study_name, $role->name );
+        $this->assertArrayHasKey('validated_documentation_version', $entity);
+    }
+
+    public function testUpdateValidatedDocumentationVersion(){
+        $role = Role::factory()->roleName(Constants::ROLE_INVESTIGATOR)->create();
+        $this->userRepository->updateValidatedDocumentationVersion($role->user_id, $role->study_name, $role->name, '3.0.0' );
+        $updatedRole = Role::where('user_id',  $role->user_id)->where('study_name', $role->study_name)->where('name', $role->name)->sole();
+        $this->assertEquals('3.0.0', $updatedRole->validated_documentation_version);
     }
 
     public function testAddUserRoleInStudy(){

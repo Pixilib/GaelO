@@ -90,6 +90,7 @@ class UserRepository implements UserRepositoryInterface
         ?String $orthancAdress,
         ?String $orthancLogin,
         ?String $orthancPassword,
+        ?String $onboardingVersion,
         bool $resetEmailVerification
     ): void {
 
@@ -104,6 +105,7 @@ class UserRepository implements UserRepositoryInterface
         $user->orthanc_address = $orthancAdress;
         $user->orthanc_login = $orthancLogin;
         $user->orthanc_password = $orthancPassword;
+        $user->onboarding_version = $onboardingVersion;
         if ($resetEmailVerification) $user->email_verified_at = null;
         $user->save();
     }
@@ -233,14 +235,47 @@ class UserRepository implements UserRepositoryInterface
         return empty($roles) ? [] : $roles->toArray();
     }
 
+    public function getUserRoleInStudy(int $userId, string $studyName, string $roleName): array
+    {
+        $role = $this->roles
+            ->whereHas('user', function ($query) use ($userId) {
+                $query->where('id', $userId);
+            })
+            ->whereHas('study', function ($query) use ($studyName) {
+                $query->where('name', $studyName);
+            })
+            ->where('name', $roleName)
+            ->sole();
+
+        return $role->toArray();
+    }
+
+    public function updateValidatedDocumentationVersion(int $userId, string $studyName, string $roleName, string $version): void
+    {
+        $role = $this->roles
+            ->whereHas('user', function ($query) use ($userId) {
+                $query->where('id', $userId);
+            })
+            ->whereHas('study', function ($query) use ($studyName) {
+                $query->where('name', $studyName);
+            })
+            ->where('name', $roleName)
+            ->sole();
+
+        $role->validated_documentation_version = $version;
+        $role->save();
+    }
+
     public function getUsersRolesInStudy(int $userId, String $studyName): array
     {
         //Check that called study and user are existing entities (not deleted)
-        $study = $this->study->findOrFail($studyName);
-        $user = $this->user->findOrFail($userId);
         $roles = $this->roles
-            ->where('user_id', $user->id)
-            ->where('study_name', $study->name)
+            ->whereHas('user', function ($query) use ($userId) {
+                $query->where('id', $userId);
+            })
+            ->whereHas('study', function ($query) use ($studyName) {
+                $query->where('name', $studyName);
+            })
             ->get();
         return $roles->count() === 0 ? [] : $roles->pluck('name')->toArray();
     }

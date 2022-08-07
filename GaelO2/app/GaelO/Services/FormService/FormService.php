@@ -92,7 +92,7 @@ class FormService
             throw new GaelOBadRequestException("File Key or Mime Not Allowed");
         }
 
-        if (!Util::is_base64_encoded($binaryData)) {
+        if (!Util::isBase64Encoded($binaryData)) {
             throw new GaelOBadRequestException("Payload should be base64 encoded");
         }
 
