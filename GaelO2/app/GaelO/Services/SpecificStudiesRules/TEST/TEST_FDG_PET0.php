@@ -120,9 +120,7 @@ class TEST_FDG_PET0 extends AbstractVisitRules
     public function getAssociatedDataForReviewForm(): array
     {
         return [
-            [
                 'Radiotherapy' => false
-            ]
         ];
     }
 }
