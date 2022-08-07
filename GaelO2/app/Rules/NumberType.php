@@ -16,6 +16,8 @@ class NumberType implements InvokableRule
      */
     public function __invoke($attribute, $value, $fail)
     {
-        //
+        if (!is_numeric($value) || is_string($value)) {
+            $fail('The :attribute must be a number.');
+        }
     }
 }

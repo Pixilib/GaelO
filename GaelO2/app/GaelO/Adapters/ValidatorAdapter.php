@@ -3,6 +3,8 @@
 namespace App\GaelO\Adapters;
 
 use App\GaelO\Interfaces\Adapters\ValidatorInterface;
+use App\Rules\NumberType;
+use App\Rules\StringType;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 
@@ -34,7 +36,7 @@ class ValidatorAdapter implements ValidatorInterface
         if ($optional || !$this->validatedForm) $rules[] = 'nullable';
         else $rules[] = 'required';
 
-        $this->validationRules[$key] = $this->buildRuleString($rules);
+        $this->validationRules[$key] = [$this->buildRuleString($rules), new StringType];
     }
 
     public function addValidatorInt(string $key, bool $optional, ?int $min, ?int $max): void
@@ -72,7 +74,7 @@ class ValidatorAdapter implements ValidatorInterface
             $rules[] = "max:" . $max;
         }
 
-        $this->validationRules[$key] = $this->buildRuleString($rules);
+        $this->validationRules[$key] = [$this->buildRuleString($rules), new NumberType];
     }
 
     public function addSetValidator(string $key, array $acceptedValues, bool $optional): void

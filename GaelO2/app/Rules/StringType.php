@@ -16,7 +16,8 @@ class StringType implements InvokableRule
      */
     public function __invoke($attribute, $value, $fail)
     {
-
-        //
+        if (!is_string($value)) {
+            $fail('The :attribute must be a string.');
+        }
     }
 }
