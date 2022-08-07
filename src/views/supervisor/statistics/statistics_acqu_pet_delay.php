@@ -75,7 +75,7 @@
 
 <div style="margin-top: 32px">
 	<h1>Statistics</h1>
-	<table id="stats-centers" class="table table-sm table-striped" style="text-align:center; width:100%">
+	<table id="stats-centers" class="table table-sm table-borderless table-striped" style="text-align:center; width:100%">
 		<thead>
 			<tr>
 				<th>Country</th>

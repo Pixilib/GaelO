@@ -22,7 +22,7 @@
 			<input type="hidden" name="reviewMap" value="<?= json_encode($reviewdetailsMap) ?>"> <input type="button" class="btn btn-primary" id="btnReviewerReminders" value="Send Reminder Emails">
 		</form>
 	</div>
-	<table id="reviewTable" class="table table-striped" style="width: 100%">
+	<table id="reviewTable" class="table table-borderless table-striped" style="width: 100%">
 		<thead>
 			<!-- Header column filled by title by datatable -->
 			<tr>

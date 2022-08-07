@@ -36,7 +36,7 @@
             	<label for="Delete Visit">Delete Visit</label>
         	</div>
 		</div>
-        <table id="trackerTableSupervisor" class="table table-striped" style="text-align:center; width:100%">
+        <table id="trackerTableSupervisor" class="table table-borderless table-striped" style="text-align:center; width:100%">
             <thead>
                 <tr>
                 <th>Date</th>

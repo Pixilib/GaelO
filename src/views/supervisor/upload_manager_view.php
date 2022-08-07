@@ -208,7 +208,7 @@
 <br>
 
 <div class="upManagerDiv">
-    <table id="tableStatus" class="table table-striped" style="text-align:center; width:100%">
+    <table id="tableStatus" class="table table-borderless table-striped" style="text-align:center; width:100%">
         <thead>
             <tr>
             <th>Modality</th>

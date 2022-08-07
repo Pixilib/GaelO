@@ -54,7 +54,7 @@
 
 <div>
 	<div id="adminUserDiv">
-		<table id="tableau_admin" class="table table-striped" style="width: 100%;">
+		<table id="tableau_admin" class="table table-borderless table-striped" style="width: 100%;">
 		<thead>
 			<tr>
 				<th>username</th>
@@ -99,8 +99,6 @@
 		?>
 		</tbody>
 		</table>
-
-		<a href="scripts/export_users.php" class="btn btn-primary">Export Users Details</a>
 
 	</div>
 	

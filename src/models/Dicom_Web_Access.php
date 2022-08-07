@@ -1,4 +1,5 @@
 <?php
+
 /**
  Copyright (C) 2018-2020 KANOUN Salim
  This program is free software; you can redistribute it and/or modify
@@ -18,173 +19,172 @@
  * @author salim
  *
  */
-class Dicom_Web_Access {
+class Dicom_Web_Access
+{
 
 	private $parsedUrl;
 	private $userObject;
 	private $userRole;
 	private $linkpdo;
 	private $level;
-    
-	public function __construct(string $requestedURI, User $userObject, string $userRole, PDO $linkpdo) {
-		$this->userObject=$userObject;
-		$this->userRole=$userRole;
-		$this->linkpdo=$linkpdo;
-        
+
+	public function __construct(string $requestedURI, User $userObject, string $userRole, PDO $linkpdo)
+	{
+		$this->userObject = $userObject;
+		$this->userRole = $userRole;
+		$this->linkpdo = $linkpdo;
+
 		//error_log(print_r)
 		$url = parse_url($requestedURI);
 		$this->level = $this->getLevel($url);
 		$this->parsedUrl = $url;
-        
 	}
-    
+
 	/**
 	 * Output the decision for access allowance
 	 * @return boolean
 	 */
-	public function getDecision() {
+	public function getDecision()
+	{
 
 		//Determine parent Visit ID depending of requested UID
 
-		if($this->level === "patients"){
+		if ($this->level === "patients") {
 
-            $patientId = $this->getPatientID($this->parsedUrl);
-			if($patientId){
+			$patientId = $this->getPatientID($this->parsedUrl);
+			if ($patientId) {
 				$patientEntity = new Patient($patientId, $this->linkpdo);
 				return $this->userObject->isRoleAllowed($patientEntity->patientStudy, $this->userRole);
-			}else{
+			} else {
 				$requestedStudyInstanceUID = $this->getStudyInstanceUID($this->parsedUrl);
 				$studyEntity = Study_Details::getStudyObjectByUID($requestedStudyInstanceUID, $this->linkpdo);
 				$visitId = $studyEntity->idVisit;
 			}
-			
+		} else if ($this->level === "studies") {
 
-        }
-        else if($this->level === "studies"){
-
-            $requestedStudyInstanceUID = $this->getStudyInstanceUID($this->parsedUrl);
+			$requestedStudyInstanceUID = $this->getStudyInstanceUID($this->parsedUrl);
 			$studyEntity = Study_Details::getStudyObjectByUID($requestedStudyInstanceUID, $this->linkpdo);
-            $visitId = $studyEntity->idVisit;
+			$visitId = $studyEntity->idVisit;
+		} else if ($this->level === "series") {
 
-        }else if ($this->level === "series"){
-
-            $requestedSeriesInstanceUID = $this->getSeriesInstanceUID($this->parsedUrl);
+			$requestedSeriesInstanceUID = $this->getSeriesInstanceUID($this->parsedUrl);
 			$seriesEntity = Series_Details::getSerieObjectByUID($requestedSeriesInstanceUID, $this->linkpdo);
-            $visitId = $seriesEntity->studyDetailsObject->idVisit;
-
-        }
+			$visitId = $seriesEntity->studyDetailsObject->idVisit;
+		}
 
 		//Return test of acess allowance
 		return $this->isAccessAllowedForUser($visitId);
 	}
-    
-    
+
+
 	/**
 	 * Check that visit is granter for the calling user (still awaiting review or still awaiting QC)
 	 * @param string $id_visit
 	 * @return boolean
 	 */
-	private function isAccessAllowedForUser(string $id_visit) {
-        
-		$visitObject=new Visit($id_visit, $this->linkpdo);
-        
+	private function isAccessAllowedForUser(string $id_visit)
+	{
+
+		$visitObject = new Visit($id_visit, $this->linkpdo);
+
 		//Check Visit Availability of the calling user
 		if ($this->userRole == User::REVIEWER || ($this->userRole == User::INVESTIGATOR && $visitObject->uploadStatus == Visit::DONE)) {
 			//Check that visit is in patient that is still awaiting for some reviews
-			$visitCheck=$this->userObject->isVisitAllowed($id_visit, $this->userRole);
-		}else if ($this->userRole == User::CONTROLLER) {
+			$visitCheck = $this->userObject->isVisitAllowed($id_visit, $this->userRole);
+		} else if ($this->userRole == User::CONTROLLER) {
 			//Check that QC status still require an action from Controller
 			if (in_array($visitObject->stateQualityControl, array(Visit::QC_WAIT_DEFINITVE_CONCLUSION, Visit::QC_NOT_DONE))) {
-				$visitCheck=$this->userObject->isVisitAllowed($id_visit, $this->userRole);
+				$visitCheck = $this->userObject->isVisitAllowed($id_visit, $this->userRole);
 			}
-		}else if ($this->userRole == User::SUPERVISOR) {
-			$visitCheck=$this->userObject->isVisitAllowed($id_visit, $this->userRole);
-		}else {
+		} else if ($this->userRole == User::SUPERVISOR) {
+			$visitCheck = $this->userObject->isVisitAllowed($id_visit, $this->userRole);
+		} else {
 			//Other roles can't have access to images
-			$visitCheck=false;
+			$visitCheck = false;
 		}
-        
+
 		return $visitCheck;
-        
 	}
 
 
-	private function getLevel(array $url) : string {
+	private function getLevel(array $url): string
+	{
 
 		$level = null;
 
-        if( key_exists('query',  $url) ){
-            $params = [];
-            parse_str($url['query'], $params);
+		if (key_exists('query',  $url)) {
+			$params = [];
+			parse_str($url['query'], $params);
 
-			if(key_exists('00100020',  $params)) {
-                $level = "patients";
-                return $level;
-            };
+			if (key_exists('00100020',  $params)) {
+				$level = "patients";
+				return $level;
+			};
 
-            if(key_exists('0020000D',  $params)) {
-                $level = "studies";
-                return $level;
-            };
-        }
+			if (key_exists('0020000D',  $params)) {
+				$level = "studies";
+				return $level;
+			};
+		}
 
 		if ($this->endsWith($url['path'], "/studies"))  $level = "patients";
-        else if ($this->endsWith($url['path'], "/series"))  $level = "studies";
-        else $level = "series";
+		else if ($this->endsWith($url['path'], "/series"))  $level = "studies";
+		else $level = "series";
 
 		return $level;
+	}
 
-    }
+	private function getPatientID(array $url)
+	{
 
-	private function getPatientID(array $url) {
-
-		if( key_exists('query',  $url) ){
-            $params = [];
-            parse_str($url['query'], $params);
+		if (key_exists('query',  $url)) {
+			$params = [];
+			parse_str($url['query'], $params);
 			// Filter wild card beacause OHIF add wildcard
-            if(key_exists('00100020',  $params)) return str_replace("*", "", $params['00100020']); ;
-        }
-
+			if (key_exists('00100020',  $params)) return str_replace("*", "", $params['00100020']);;
+		}
 	}
 
 
-	private function getStudyInstanceUID(array $url) : string {
-        if( key_exists('query',  $url) ){
-            $params = [];
-            parse_str($url['query'], $params);
-            if(key_exists('0020000D',  $params)) return $params['0020000D'];
-			if(key_exists('StudyInstanceUID',  $params)) return $params['StudyInstanceUID'];
-        }
-        return $this->getUID($url['path'], "studies");
-    }
+	private function getStudyInstanceUID(array $url): string
+	{
+		if (key_exists('query',  $url)) {
+			$params = [];
+			parse_str($url['query'], $params);
+			if (key_exists('0020000D',  $params)) return $params['0020000D'];
+			if (key_exists('StudyInstanceUID',  $params)) return $params['StudyInstanceUID'];
+		}
+		return $this->getUID($url['path'], "studies");
+	}
 
-    private function getSeriesInstanceUID(array $url)  : string {
-        return $this->getUID($url['path'], "series");
-    }
+	private function getSeriesInstanceUID(array $url): string
+	{
+		return $this->getUID($url['path'], "series");
+	}
 
 
-	 /**
-     * Isolate the called Study or Series Instance UID
-     * @return string
-     */
-    private function getUID(string $requestedURI, string $level): string
-    {
-        $studySubString = strstr($requestedURI, "/" . $level . "/");
-        $studySubString = str_replace("/" . $level . "/", "", $studySubString);
+	/**
+	 * Isolate the called Study or Series Instance UID
+	 * @return string
+	 */
+	private function getUID(string $requestedURI, string $level): string
+	{
+		$studySubString = strstr($requestedURI, "/" . $level . "/");
+		$studySubString = str_replace("/" . $level . "/", "", $studySubString);
 
-        $endStudyUIDPosition = strpos($studySubString, "/");
+		$endStudyUIDPosition = strpos($studySubString, "/");
 
-        if ($endStudyUIDPosition) {
-            $studyUID = substr($studySubString, 0, $endStudyUIDPosition);
-        } else {
-            $studyUID = $studySubString;
-        };
+		if ($endStudyUIDPosition) {
+			$studyUID = substr($studySubString, 0, $endStudyUIDPosition);
+		} else {
+			$studyUID = $studySubString;
+		};
 
-        return $studyUID;
-    }
+		return $studyUID;
+	}
 
-	private function endsWith($haystack, $needle) {
+	private function endsWith($haystack, $needle)
+	{
 		return substr_compare($haystack, $needle, -strlen($needle)) === 0;
 	}
-
 }

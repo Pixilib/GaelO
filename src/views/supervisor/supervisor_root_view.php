@@ -387,7 +387,7 @@
 	<h1>Patients Status</h1>
 	<!--Add the "Patient Information" table -->
 	<div id="patientInformation" class="upManagerDiv">
-		<table id="table_patient_informations" class="table table-striped" style="text-align:center; width:100%">
+		<table id="table_patient_informations" class="table table-borderless table-striped" style="text-align:center; width:100%">
 			<thead>
 				<tr>
 					<th>Center</th>
@@ -446,7 +446,7 @@
 
 	<h1>Visits Status</h1>
 	<div id="visitStatusDiv">
-    	<table class="table table-striped" id="tableau" style="text-align:center; width:100%">
+    	<table class="table table-borderless table-striped" id="tableau" style="text-align:center; width:100%">
     		<thead>
     			<!-- Header for column name (filled by datatable) -->
     			<tr>
