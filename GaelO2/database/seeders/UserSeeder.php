@@ -27,6 +27,7 @@ class UserSeeder extends Seeder
             'administrator' => true,
             'remember_token' => Str::random(10),
             'email_verified_at' => now(),
+            'onboarding_version' => '1.0.0'
         ]);
     }
 }
