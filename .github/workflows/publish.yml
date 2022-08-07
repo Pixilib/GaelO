@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - Gaelo2
+      - Form-debeuging
 
 jobs:
   build:
