@@ -9,6 +9,13 @@ class VisitGroup extends Model
 {
     use HasFactory;
 
+    protected $casts = [
+        'id' => 'integer',
+        'study_name' => 'string',
+        'name' => 'string',
+        'modality' => 'string'
+    ];
+
     public function study()
     {
         return $this->belongsTo(Study::class, 'study_name', 'name');

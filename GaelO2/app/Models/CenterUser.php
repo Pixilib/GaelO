@@ -8,6 +8,12 @@ use Illuminate\Database\Eloquent\Model;
 class CenterUser extends Model
 {
     use HasFactory;
+
+    protected $casts = [
+        'user_id' => 'integer',
+        'center_code' => 'integer'
+    ];
+
     /**
      * The table associated with the model.
      *

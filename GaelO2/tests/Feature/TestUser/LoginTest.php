@@ -40,6 +40,7 @@ class LoginTest extends TestCase
         $data = ['email'=> 'administrator@gaelo.fr',
         'password'=> 'administrator'];
         $adminDefaultUser = User::where('id', 1)->first();
+        $adminDefaultUser->onboarding_version = '0.0.0';
         $adminDefaultUser->save();
         $response = $this->json('POST', '/api/login', $data)-> assertSuccessful();
         $content= json_decode($response->content(), true);
