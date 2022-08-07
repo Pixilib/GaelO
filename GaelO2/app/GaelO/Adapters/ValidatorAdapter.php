@@ -3,8 +3,8 @@
 namespace App\GaelO\Adapters;
 
 use App\GaelO\Interfaces\Adapters\ValidatorInterface;
-use Respect\Validation\Validator;
-use Respect\Validation\Rules\Key;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 
 class ValidatorAdapter implements ValidatorInterface
 {
@@ -14,97 +14,97 @@ class ValidatorAdapter implements ValidatorInterface
     public const TYPE_SET = "Set";
     public const TYPE_BOOLEAN = "Boolean";
 
-    private Validator $validator;
+    private array $validationRules;
     private bool $validatedForm;
 
     public function __construct(bool $validatedForm)
     {
         $this->validatedForm = $validatedForm;
-        $this->validator = new Validator();
+    }
+
+    private function buildRuleString(array $rules): string
+    {
+        return implode('|', $rules);
     }
 
     public function addValidatorString(string $key, bool $optional): void
     {
-        if (!$this->validatedForm || $optional) $validatable = Validator::OneOf(validator::stringType(), validator::nullType());
-        else $validatable = Validator::stringType();
-        $validatorKey = new Key($key, $validatable, $this->validatedForm);
-        $this->validator->addRule($validatorKey);
+        $rules = [];
+        $rules[] = "string";
+        if ($optional || !$this->validatedForm) $rules[] = 'nullable';
+        else $rules[] = 'required';
+
+        $this->validationRules[$key] = $this->buildRuleString($rules);
     }
 
     public function addValidatorInt(string $key, bool $optional, ?int $min, ?int $max): void
     {
-        if (!$this->validatedForm || $optional) $validatable = Validator::OneOf(validator::intType(), validator::nullType());
-        else $validatable = Validator::intType();
+        $rules = [];
+        $rules[] = "integer";
+        $rules[] = "numeric";
+        if ($optional || !$this->validatedForm) $rules[] = 'nullable';
+        else $rules[] = 'required';
 
         if ($min != null) {
-            $validatable->min($min);
+            $rules[] = "min:" . $min;
         }
 
         if ($max != null) {
-            $validatable->max($max);
+            $rules[] = "max:" . $max;
         }
 
-        $validatorKey = new Key($key, $validatable, $this->validatedForm);
 
-        $this->validator->addRule($validatorKey);
-    }
-
-    public function addValidatorFloat(string $key, bool $optional, ?float $min, ?float $max): void
-    {
-        if (!$this->validatedForm || $optional) $validatable = Validator::OneOf(validator::Number(), validator::nullType());
-        else $validatable = Validator::floatType();
-
-        if ($min != null) {
-            $validatable->min($min);
-        }
-
-        if ($max != null) {
-            $validatable->max($max);
-        }
-
-        $validatorKey = new Key($key, $validatable, $this->validatedForm);
-
-        $this->validator->addRule($validatorKey);
+        $this->validationRules[$key] = $this->buildRuleString($rules);
     }
 
     public function addNumberValidator(string $key, bool $optional, ?float $min, ?float $max): void
     {
-        if (!$this->validatedForm || $optional) $validatable = Validator::OneOf(validator::Number(), validator::nullType());
-        else $validatable = Validator::Number();
+        $rules = [];
+        $rules[] = "numeric";
+        if ($optional || !$this->validatedForm) $rules[] = 'nullable';
+        else $rules[] = 'required';
 
         if ($min != null) {
-            $validatable->min($min);
+            $rules[] = "min:" . $min;
         }
 
         if ($max != null) {
-            $validatable->max($max);
+            $rules[] = "max:" . $max;
         }
 
-        $validatorKey = new Key($key, $validatable, $this->validatedForm);
-
-        $this->validator->addRule($validatorKey);
+        $this->validationRules[$key] = $this->buildRuleString($rules);
     }
 
     public function addSetValidator(string $key, array $acceptedValues, bool $optional): void
     {
-        if (!$this->validatedForm || $optional) $validatable = Validator::OneOf(validator::in($acceptedValues, true), validator::nullType());
-        else $validatable = Validator::in($acceptedValues, true);
 
-        $validatorKey = new Key($key, $validatable, $this->validatedForm);
-        $this->validator->addRule($validatorKey);
+        $rules = [];
+        if ($optional || !$this->validatedForm) $rules[] = 'nullable';
+        else $rules[] = 'required';
+
+        $this->validationRules[$key] = [
+            $this->buildRuleString($rules),
+            Rule::in($acceptedValues)
+        ];
     }
 
     public function addBooleanValidator(string $key,  bool $optional): void
     {
-        if (!$this->validatedForm || $optional) $validatable = Validator::OneOf(validator::boolType(), validator::nullType());
-        else $validatable = Validator::boolType();
+        $rules = [];
+        $rules[] = "boolean";
+        if ($optional || !$this->validatedForm) $rules[] = 'nullable';
+        else $rules[] = 'required';
 
-        $validatorKey = new Key($key, $validatable, $this->validatedForm);
-        $this->validator->addRule($validatorKey);
+        $this->validationRules[$key] = $this->buildRuleString($rules);
     }
 
     public function validate(array $data): bool
     {
-        return $this->validator->validate($data);
+        $validator = Validator::make($data, $this->validationRules);
+        if ($validator->fails()) {
+            return false;
+        } else {
+            return true;
+        }
     }
 }

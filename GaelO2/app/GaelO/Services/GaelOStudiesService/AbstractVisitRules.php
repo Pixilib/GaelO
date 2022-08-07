@@ -11,10 +11,9 @@ abstract class AbstractVisitRules
 
     const RULE_STRING = "string";
     const RULE_INT = "int";
-    const RULE_SET = "set";
-    const RULE_FLOAT = "float";
-    const RULE_BOOLEAN = "boolean";
     const RULE_NUMBER = "number";
+    const RULE_SET = "set";
+    const RULE_BOOLEAN = "boolean";
 
     protected array $data;
     protected array $visitContext;
@@ -77,9 +76,6 @@ abstract class AbstractVisitRules
                 break;
             case self::RULE_INT:
                 $validatorAdapter->addValidatorInt($name, $details['optional'], $details['min'], $details['max']);
-                break;
-            case self::RULE_FLOAT:
-                $validatorAdapter->addValidatorFloat($name, $details['optional'], $details['min'], $details['max']);
                 break;
             case self::RULE_SET:
                 $validatorAdapter->addSetValidator($name, $details['values'], $details['optional']);

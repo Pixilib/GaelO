@@ -61,28 +61,6 @@ class ValidatorAdapterTest extends TestCase
         $this->assertFalse($result);
     }
 
-    public function testAddMendatoryFloatValidation()
-    {
-        $this->validatorAdapter->addValidatorFloat('age', false, 5, 50);
-        $result = $this->validatorAdapter->validate(['age' => 30.1]);
-        $this->assertTrue($result);
-        $result = $this->validatorAdapter->validate(['age' => 30]);
-        $this->assertFalse($result);
-        $result = $this->validatorAdapter->validate(['age' => 60]);
-        $this->assertFalse($result);
-        $result = $this->validatorAdapter->validate(['age' => '50']);
-        $this->assertFalse($result);
-    }
-
-    public function testAddOptionalFloatValidation()
-    {
-        $this->validatorAdapter->addValidatorFloat('age', true, 5, 50);
-        $result = $this->validatorAdapter->validate(['age' => null]);
-        $this->assertTrue($result);
-        $result = $this->validatorAdapter->validate(['age' => 60.5]);
-        $this->assertFalse($result);
-    }
-
     public function testAddMendatorySetValidation()
     {
         $this->validatorAdapter->addSetValidator('lugano', ['CR', 'PR', 'NMR', 'PD'], false);
