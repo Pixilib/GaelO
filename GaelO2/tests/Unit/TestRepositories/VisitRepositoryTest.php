@@ -15,7 +15,6 @@ use App\Models\VisitGroup;
 use App\Models\VisitType;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
-use PHPUnit\TextUI\XmlConfiguration\Constant;
 
 class VisitRepositoryTest extends TestCase
 {
