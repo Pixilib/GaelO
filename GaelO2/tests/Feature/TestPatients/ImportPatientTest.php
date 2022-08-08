@@ -3,6 +3,7 @@
 namespace Tests\Feature\TestPatients;
 
 use App\GaelO\Constants\Constants;
+use App\Models\Patient;
 use App\Models\Study;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\TestCase;
@@ -32,7 +33,7 @@ class ImportPatientTest extends TestCase
         "birthDay" => 1,
         "birthMonth" => 1,
         "birthYear" => 1998,
-        "registrationDate" => '10/19/2020',
+        "registrationDate" => '2011-10-05T14:48:00.000Z',
         "investigatorName" => "administrator",
         "centerCode" => 0,
         "inclusionStatus"  => Constants::PATIENT_INCLUSION_STATUS_INCLUDED
@@ -54,7 +55,7 @@ class ImportPatientTest extends TestCase
         "birthDay" => 1,
         "birthMonth" => 1,
         "birthYear" => 1998,
-        "registrationDate" => '10/19/2020',
+        "registrationDate" => '2011-10-05T14:48:00.000Z',
         "investigatorName" => "administrator",
         "centerCode" => 0,
         "inclusionStatus"  => Constants::PATIENT_INCLUSION_STATUS_INCLUDED],
@@ -65,7 +66,7 @@ class ImportPatientTest extends TestCase
         "birthDay" => 1,
         "birthMonth" => 1,
         "birthYear" => 1998,
-        "registrationDate" => '10/19/2020',
+        "registrationDate" => '2011-10-06T14:48:00.000Z',
         "investigatorName" => "administrator",
         "centerCode" => 0,
         "inclusionStatus"  => Constants::PATIENT_INCLUSION_STATUS_INCLUDED],
@@ -76,7 +77,7 @@ class ImportPatientTest extends TestCase
         "birthDay" => 1,
         "birthMonth" => 1,
         "birthYear" => 1998,
-        "registrationDate" => '10/19/2020',
+        "registrationDate" => '2011-10-07T14:48:00.000Z',
         "investigatorName" => "administrator",
         "centerCode" => 0,
         "inclusionStatus"  => Constants::PATIENT_INCLUSION_STATUS_INCLUDED]
@@ -85,6 +86,9 @@ class ImportPatientTest extends TestCase
         $resp->assertSuccessful();
         $this->assertEquals(3,sizeof($resp['success']));
         $this->assertEquals(0,sizeof($resp['fail']));
+
+        $patient1 = Patient::find($this->study->code.'12341231234123')->toArray();
+        $this->assertEquals('2011-10-05T14:48:00.000Z', $patient1['registration_date']);
     }
 
     public function testImportPatient() {

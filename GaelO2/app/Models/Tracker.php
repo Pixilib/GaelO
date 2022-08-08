@@ -13,7 +13,6 @@ class Tracker extends Model
         'id' => 'integer',
         'study_name' => 'string',
         'user_id' => 'integer',
-        //Create issues in test because of sub milisec difference not seen
         //'date' => 'datetime',
         'role' => 'string',
         'visit_id' => 'integer',

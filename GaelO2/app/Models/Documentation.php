@@ -13,7 +13,7 @@ class Documentation extends Model
     protected $casts = [
         'id' => 'integer',
         'name' => 'string',
-        'document_date' => 'datetime',
+        //'document_date' => 'datetime',
         'study_name' => 'string',
         'version' => 'string',
         'investigator' => 'boolean',
