@@ -41,8 +41,23 @@ class User extends Authenticatable implements CanResetPassword, MustVerifyEmail
      * @var array
      */
     protected $casts = [
+        'lastname' => 'string',
+        'firstname' => 'string',
+        'email' => 'string',
+        'password' => 'string',
+        'phone' => 'string',
+        'creation_date' => 'datetime',
+        'last_connexion' => 'datetime',
+        'attempts' => 'integer',
+        'administrator' => 'boolean',
+        'center_code' => 'integer',
+        'job' => 'string',
+        'orthanc_address' => 'string',
+        'orthanc_login' => 'string',
+        'orthanc_password' => 'string',
+        'api_token' => 'string',
         'email_verified_at' => 'datetime',
-        'administrator' => 'boolean'
+        'onboarding_version' => 'string'
     ];
 
     public function roles()

@@ -428,7 +428,7 @@ class VisitRepositoryTest extends TestCase
         $visit = Visit::factory()->create();
         $originalVisitDate = $visit['visit_date'];
 
-        $this->visitRepository->updateVisitDate($visit->id, now());
+        $this->visitRepository->updateVisitDate($visit->id, now()->addDay());
 
         $updatedVisit = Visit::findOrFail($visit->id);
         $this->assertNotEquals($updatedVisit['visit_date'], $originalVisitDate);
