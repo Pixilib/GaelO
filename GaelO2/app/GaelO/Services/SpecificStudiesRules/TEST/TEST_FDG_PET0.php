@@ -44,7 +44,7 @@ class TEST_FDG_PET0 extends AbstractVisitRules
                 'optional' => false
             ],
             'biopsyDate' => [
-                'rule' => self::RULE_STRING,
+                'rule' => self::RULE_DATE,
                 'optional' => true
             ],
             'biopsyLocation' => [
@@ -57,7 +57,7 @@ class TEST_FDG_PET0 extends AbstractVisitRules
                 'optional' => false
             ],
             'infectionDate' => [
-                'rule' => self::RULE_STRING,
+                'rule' => self::RULE_DATE,
                 'optional' => true
             ],
             'infectionLocation' => [
@@ -111,16 +111,15 @@ class TEST_FDG_PET0 extends AbstractVisitRules
 
     public function getAssociatedDataForInvestigatorForm(): array
     {
-        return[
-                'LastChemo' => '01/01/2021'
+        return [
+            'LastChemo' => '01/01/2021'
         ];
-
     }
 
     public function getAssociatedDataForReviewForm(): array
     {
         return [
-                'Radiotherapy' => false
+            'Radiotherapy' => false
         ];
     }
 }
