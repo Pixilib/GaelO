@@ -9,6 +9,22 @@ class Tracker extends Model
 {
     use HasFactory;
 
+    protected $casts = [
+        'id' => 'integer',
+        'study_name' => 'string',
+        'user_id' => 'integer',
+        //Create issues in test because of sub milisec difference not seen
+        //'date' => 'datetime',
+        'role' => 'string',
+        'visit_id' => 'integer',
+        'action_type' =>  'string',
+        'action_details' => 'array'
+    ];
+
+    protected $attributes = [
+        'action_details' => '{}',
+    ];
+
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id', 'id')->withTrashed();

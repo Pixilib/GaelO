@@ -35,7 +35,7 @@ class Util
         return substr_compare($haystack, $needle, -strlen($needle)) === 0;
     }
 
-    public static function now()
+    public static function now() : string
     {
         return Carbon::now()->format('Y-m-d H:i:s.u');
     }

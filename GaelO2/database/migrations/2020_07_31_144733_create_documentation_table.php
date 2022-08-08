@@ -16,7 +16,7 @@ class CreateDocumentationTable extends Migration
         Schema::create('documentations', function (Blueprint $table) {
             $table->id();
             $table->string('name')->nullable(false);
-            $table->date('document_date')->nullable(false);
+            $table->datetime('document_date')->nullable(false);
             $table->string('study_name')->nullable(false);
             $table->string('version')->nullable(false);
             $table->boolean('investigator')->default(false)->nullable(false);

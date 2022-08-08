@@ -260,6 +260,10 @@ class ExportStudyService
 
         foreach ($roleArray as $role) {
             $trackerData = $this->trackerRepositoryInterface->getTrackerOfRoleAndStudy($this->studyName, $role, false);
+            $trackerData = array_map(function($trackerEntity) {
+                $trackerEntity['action_details'] = json_encode($trackerEntity['action_details']);
+                return $trackerEntity;
+            }, $trackerData);
             $sheets[] = $role;
             $spreadsheetAdapter->addSheet($role);
             $spreadsheetAdapter->fillData($role, $trackerData);
