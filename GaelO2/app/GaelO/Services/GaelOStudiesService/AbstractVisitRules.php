@@ -14,6 +14,7 @@ abstract class AbstractVisitRules
     const RULE_NUMBER = "number";
     const RULE_SET = "set";
     const RULE_BOOLEAN = "boolean";
+    const RULE_DATE = "date";
 
     protected array $data;
     protected array $visitContext;
@@ -85,6 +86,9 @@ abstract class AbstractVisitRules
                 break;
             case self::RULE_NUMBER:
                 $validatorAdapter->addNumberValidator($name, $details['optional'], $details['min'], $details['max']);
+                break;
+            case self::RULE_DATE:
+                $validatorAdapter->addDateValidator($name, $details['optional']);
                 break;
             default:
                 throw new Exception('Unknown Rule');

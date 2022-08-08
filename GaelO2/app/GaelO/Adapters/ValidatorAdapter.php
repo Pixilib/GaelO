@@ -11,13 +11,6 @@ use Illuminate\Validation\Rule;
 
 class ValidatorAdapter implements ValidatorInterface
 {
-
-    public const TYPE_STRING = "String";
-    public const TYPE_NUMBER = "Number";
-    public const TYPE_SET = "Set";
-    public const TYPE_BOOLEAN = "Boolean";
-    public const TYPE_DATE = "Date";
-
     private array $validationRules;
     private bool $validatedForm;
 
