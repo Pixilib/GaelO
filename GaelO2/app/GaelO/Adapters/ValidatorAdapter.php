@@ -16,6 +16,7 @@ class ValidatorAdapter implements ValidatorInterface
     public const TYPE_NUMBER = "Number";
     public const TYPE_SET = "Set";
     public const TYPE_BOOLEAN = "Boolean";
+    public const TYPE_DATE = "Date";
 
     private array $validationRules;
     private bool $validatedForm;
@@ -27,19 +28,18 @@ class ValidatorAdapter implements ValidatorInterface
 
     public function addValidatorString(string $key, bool $optional): void
     {
-        $rules = [];
+        $rules = [new StringType];
         $rules[] = "string";
         if ($optional || !$this->validatedForm) $rules[] = 'nullable';
         else $rules[] = 'required';
 
-        $this->validationRules[$key] = [...$rules, new StringType];
+        $this->validationRules[$key] = $rules;
     }
 
     public function addValidatorInt(string $key, bool $optional, ?int $min, ?int $max): void
     {
-        $rules = [];
-        $rules[] = "integer";
-        $rules[] = "numeric";
+        $rules = [new NumberType, "integer", "numeric"];
+
         if ($optional || !$this->validatedForm) $rules[] = 'nullable';
         else $rules[] = 'required';
 
@@ -52,13 +52,13 @@ class ValidatorAdapter implements ValidatorInterface
         }
 
 
-        $this->validationRules[$key] = [...$rules, new NumberType];
+        $this->validationRules[$key] = $rules;
     }
 
     public function addNumberValidator(string $key, bool $optional, ?float $min, ?float $max): void
     {
-        $rules = [];
-        $rules[] = "numeric";
+        $rules = [new NumberType, "numeric"];
+
         if ($optional || !$this->validatedForm) $rules[] = 'nullable';
         else $rules[] = 'required';
 
@@ -70,30 +70,37 @@ class ValidatorAdapter implements ValidatorInterface
             $rules[] = "max:" . $max;
         }
 
-        $this->validationRules[$key] = [...$rules, new NumberType];
+        $this->validationRules[$key] = $rules;
     }
 
     public function addSetValidator(string $key, array $acceptedValues, bool $optional): void
     {
 
-        $rules = [];
+        $rules = [Rule::in($acceptedValues)];
+
         if ($optional || !$this->validatedForm) $rules[] = 'nullable';
         else $rules[] = 'required';
 
-        $this->validationRules[$key] = [
-            ...$rules,
-            Rule::in($acceptedValues)
-        ];
+        $this->validationRules[$key] = $rules;
     }
 
     public function addBooleanValidator(string $key,  bool $optional): void
     {
-        $rules = [];
-        $rules[] = "boolean";
+        $rules = [new BooleanType, "boolean"];
         if ($optional || !$this->validatedForm) $rules[] = 'nullable';
         else $rules[] = 'required';
 
-        $this->validationRules[$key] = [...$rules, new BooleanType];
+        $this->validationRules[$key] = $rules;
+    }
+
+    public function addDateValidator(string $key, bool $optional): void
+    {
+        $rules = ["date"];
+
+        if ($optional || !$this->validatedForm) $rules[] = 'nullable';
+        else $rules[] = 'required';
+
+        $this->validationRules[$key] = $rules;
     }
 
     public function validate(array $data): bool

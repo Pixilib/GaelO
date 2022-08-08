@@ -80,4 +80,20 @@ class ValidatorAdapterTest extends TestCase
         $result = $this->validatorAdapter->validate(['lugano' => 'CR2']);
         $this->assertFalse($result);
     }
+
+    public function testAddMandatoryDateValidation(){
+        $this->validatorAdapter->addDateValidator('infectionDate', false);
+        $result = $this->validatorAdapter->validate(['infectionDate' => '2022-12-30']);
+        $this->assertTrue($result);
+        $result = $this->validatorAdapter->validate(['infectionDate' => '2022-50-98']);
+        $this->assertFalse($result);
+    }
+
+    public function testAddOptionalDateValidation(){
+        $this->validatorAdapter->addDateValidator('infectionDate', true);
+        $result = $this->validatorAdapter->validate(['infectionDate' => '2022-12-30']);
+        $this->assertTrue($result);
+        $result = $this->validatorAdapter->validate(['infectionDate' => null]);
+        $this->assertTrue($result);
+    }
 }
