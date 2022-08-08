@@ -3,10 +3,7 @@
 namespace App\GaelO;
 
 use App\GaelO\Adapters\FrameworkAdapter;
-use App\GaelO\Exceptions\GaelOBadRequestException;
 use Carbon\Carbon;
-use DateTime;
-use Exception;
 use FilesystemIterator;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
@@ -47,31 +44,6 @@ class Util
             $us,
             $string
         ));
-    }
-
-    function snakeCaseToCamelCase(string $string): string
-    {
-        $str = str_replace('_', '', ucwords($string, '_'));
-        $str = lcfirst($str);
-        return $str;
-    }
-
-
-    /**
-     * Check Password constraints :
-     * Should have length at least 8 characters
-     * Should have at least a different case
-     * Can have special characters like !@#$%^&*()\[]{}-_+=~`|:;'<>,./?
-     */
-    public static function checkPasswordFormatCorrect(string $password)
-    {
-        $checkOneDigit = "(?=.*\d)";
-        $checkOneLowerCase = "(?=.*[a-z])";
-        $checkOneUpperCase = "(?=.*[A-Z])";
-        $checkStrContent = "[0-9A-Za-z\!@#$%^&*()\\[\]{}\-_+=~`|:;'<>,.\/?]"; //Allow for special char
-        $checkLength = "{8,}";
-        $wholeStringCheck = $checkOneDigit . $checkOneLowerCase . $checkOneUpperCase . $checkStrContent . $checkLength;
-        return preg_match('/^' . $wholeStringCheck . '$/', $password);
     }
 
     public static function addStoredFilesInZip(ZipArchive $zip, ?string $path)
