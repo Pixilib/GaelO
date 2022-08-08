@@ -41,7 +41,7 @@ class ForgotPassword
             if (!$emailSendSuccess) throw new Exception('Error Sending Reset Email');
 
             //Write action in tracker
-            $this->trackerRepositoryInterface->writeAction($userEntity['id'], Constants::TRACKER_ROLE_USER, null, null, Constants::TRACKER_RESET_PASSWORD, null);
+            $this->trackerRepositoryInterface->writeAction($userEntity['id'], Constants::TRACKER_ROLE_USER, null, null, Constants::TRACKER_RESET_PASSWORD, []);
 
             $forgotPasswordResponse->status = 200;
             $forgotPasswordResponse->statusText = 'OK';

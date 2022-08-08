@@ -16,7 +16,7 @@ class TrackerRepository implements TrackerRepositoryInterface
         $this->tracker = $tracker;
     }
 
-    public function writeAction(int $userId, string $role, ?string $studyName, ?int $id_visit, string $actionType, ?array $actionDetails): void
+    public function writeAction(int $userId, string $role, ?string $studyName, ?int $id_visit, string $actionType, array $actionDetails = []): void
     {
         $tracker = new Tracker();
 
@@ -26,7 +26,7 @@ class TrackerRepository implements TrackerRepositoryInterface
         $tracker->role = $role;
         $tracker->visit_id = $id_visit;
         $tracker->action_type = $actionType;
-        $tracker->action_details = json_encode($actionDetails);
+        $tracker->action_details = $actionDetails;
 
         $tracker->save();
     }

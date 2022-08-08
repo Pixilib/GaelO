@@ -15,7 +15,6 @@ use App\Models\VisitGroup;
 use App\Models\VisitType;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
-use PHPUnit\TextUI\XmlConfiguration\Constant;
 
 class VisitRepositoryTest extends TestCase
 {
@@ -428,7 +427,7 @@ class VisitRepositoryTest extends TestCase
         $visit = Visit::factory()->create();
         $originalVisitDate = $visit['visit_date'];
 
-        $this->visitRepository->updateVisitDate($visit->id, now());
+        $this->visitRepository->updateVisitDate($visit->id, now()->addDay());
 
         $updatedVisit = Visit::findOrFail($visit->id);
         $this->assertNotEquals($updatedVisit['visit_date'], $originalVisitDate);

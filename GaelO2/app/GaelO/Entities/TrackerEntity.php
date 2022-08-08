@@ -11,7 +11,7 @@ class TrackerEntity
     public string $role;
     public ?int $visit_id;
     public string $action_type;
-    public ?string $action_details;
+    public array $action_details;
 
     public UserEntity $user;
 

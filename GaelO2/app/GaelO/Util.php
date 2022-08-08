@@ -3,10 +3,7 @@
 namespace App\GaelO;
 
 use App\GaelO\Adapters\FrameworkAdapter;
-use App\GaelO\Exceptions\GaelOBadRequestException;
 use Carbon\Carbon;
-use DateTime;
-use Exception;
 use FilesystemIterator;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
@@ -35,7 +32,7 @@ class Util
         return substr_compare($haystack, $needle, -strlen($needle)) === 0;
     }
 
-    public static function now()
+    public static function now() : string
     {
         return Carbon::now()->format('Y-m-d H:i:s.u');
     }
@@ -47,55 +44,6 @@ class Util
             $us,
             $string
         ));
-    }
-
-    function snakeCaseToCamelCase(string $string): string
-    {
-        $str = str_replace('_', '', ucwords($string, '_'));
-        $str = lcfirst($str);
-        return $str;
-    }
-
-    /**
-     * Format registration date according to plateform preference (french or US format)
-     * @param string registrationDate
-     * @return String
-     */
-    public static function formatUSDateStringToSQLDateFormat(string $registrationDate): String
-    {
-        $dateNbArray = explode('/', $registrationDate);
-        $registrationDay = intval($dateNbArray[1]);
-        $registrationMonth = intval($dateNbArray[0]);
-        $registrationYear = intval($dateNbArray[2]);
-
-        if ($registrationDay == 0 || $registrationMonth == 0 || $registrationYear == 0) {
-            throw new GaelOBadRequestException('Wrong Registration Date');
-        }
-
-        try {
-            $dateResult = new DateTime($registrationYear . '-' . $registrationMonth . '-' . $registrationDay);
-            return $dateResult->format('Y-m-d');
-        } catch (Exception $e) {
-            throw new GaelOBadRequestException('Wrong Registration Date');
-        }
-    }
-
-
-    /**
-     * Check Password constraints :
-     * Should have length at least 8 characters
-     * Should have at least a different case
-     * Can have special characters like !@#$%^&*()\[]{}-_+=~`|:;'<>,./?
-     */
-    public static function checkPasswordFormatCorrect(string $password)
-    {
-        $checkOneDigit = "(?=.*\d)";
-        $checkOneLowerCase = "(?=.*[a-z])";
-        $checkOneUpperCase = "(?=.*[A-Z])";
-        $checkStrContent = "[0-9A-Za-z\!@#$%^&*()\\[\]{}\-_+=~`|:;'<>,.\/?]"; //Allow for special char
-        $checkLength = "{8,}";
-        $wholeStringCheck = $checkOneDigit . $checkOneLowerCase . $checkOneUpperCase . $checkStrContent . $checkLength;
-        return preg_match('/^' . $wholeStringCheck . '$/', $password);
     }
 
     public static function addStoredFilesInZip(ZipArchive $zip, ?string $path)

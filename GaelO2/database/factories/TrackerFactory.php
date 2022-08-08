@@ -24,7 +24,7 @@ class TrackerFactory extends Factory
             'role' => null,
             'visit_id' => null,
             'action_type' => $this->faker->randomElement([Constants::TRACKER_UNLOCK_INVESTIGATOR_FORM, Constants::TRACKER_CREATE_USER]),
-            'action_details' => json_encode([])
+            'action_details' => []
         ];
     }
 

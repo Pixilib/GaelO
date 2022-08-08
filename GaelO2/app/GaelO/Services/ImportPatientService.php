@@ -61,7 +61,6 @@ class ImportPatientService
         //For each patient from the array list
         foreach ($this->patientEntities as $patientEntity) {
             try {
-                if ($patientEntity['registrationDate']) $patientEntity['registrationDate'] = Util::formatUSDateStringToSQLDateFormat($patientEntity['registrationDate']);
                 //Check condition before import
                 self::checkPatientGender($patientEntity['gender']);
                 self::checkCorrectBirthDate($patientEntity['birthDay'], $patientEntity['birthMonth'], $patientEntity['birthYear']);
