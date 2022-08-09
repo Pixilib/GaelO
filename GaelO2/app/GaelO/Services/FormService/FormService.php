@@ -103,7 +103,7 @@ class FormService
 
         $reviewEntity['sent_files'][$key] = $destinationFileName;
 
-        $this->reviewRepositoryInterface->updateReviewFile($reviewEntity['id'], $reviewEntity);
+        $this->reviewRepositoryInterface->updateReviewFile($reviewEntity['id'], $reviewEntity['sent_files']);
     }
 
     public function removeFile(array $reviewEntity, string $key): void
@@ -116,7 +116,7 @@ class FormService
         $this->frameworkInterface->deleteFile($targetedFile);
 
         unset($reviewEntity['sent_files'][$key]);
-        $this->reviewRepositoryInterface->updateReviewFile($reviewEntity['id'], $reviewEntity);
+        $this->reviewRepositoryInterface->updateReviewFile($reviewEntity['id'], $reviewEntity['sent_files']);
     }
 
 
