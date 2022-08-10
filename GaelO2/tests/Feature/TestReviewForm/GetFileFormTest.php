@@ -1,6 +1,5 @@
 <?php
 
-use App\GaelO\Adapters\MimeAdapter;
 use App\GaelO\Constants\Constants;
 use App\Models\Patient;
 use App\Models\Review;
@@ -14,7 +13,7 @@ use Tests\AuthorizationTools;
 use Tests\TestCase;
 use Illuminate\Support\Facades\Storage;
 
-class UploadFileFormTest extends TestCase
+class GetFileFormTest extends TestCase
 {
     use DatabaseMigrations {
         runDatabaseMigrations as baseRunDatabaseMigrations;
@@ -30,6 +29,7 @@ class UploadFileFormTest extends TestCase
     {
         parent::setUp();
         Storage::fake();
+
     }
 
     private function createVisit() {
@@ -39,6 +39,9 @@ class UploadFileFormTest extends TestCase
         $visitType  = VisitType::factory()->visitGroupId($visitGroup->id)->name('PET_0')->localFormNeeded()->create();
         $visit = Visit::factory()->patientId($patient->id)->visitTypeId($visitType->id)->create();
         ReviewStatus::factory()->studyName($study->name)->visitId($visit->id)->reviewAvailable()->create();
+
+        $path = $study->name.'/'.'attached_review_file'.'/'.'review_1_41.csv';
+        Storage::put($path, "testcontent");
         return [
             'studyName'=>$study->name,
             'visitId' => $visit->id,
@@ -46,36 +49,51 @@ class UploadFileFormTest extends TestCase
         ];
     }
 
-    public function testUploadFile()
-    {
+    public function testGetFileOfForm(){
         $currentVisit = $this->createVisit();
         $currentUserId = AuthorizationTools::actAsAdmin(false);
-        $review = Review::factory()->userId($currentUserId)->visitId($currentVisit['visitId'])->studyName($currentVisit['studyName'])->create();
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_INVESTIGATOR, $currentVisit['studyName'] );
         AuthorizationTools::addAffiliatedCenter($currentUserId, $currentVisit['centerCode']);
-        $response = $this->post('api/reviews/' . $review->id . '/file/41', [base64_encode("testFileContent")], ['CONTENT_TYPE' => MimeAdapter::getMimeFromExtension('csv')]);
+        $review = Review::factory()->userId($currentUserId)->visitId($currentVisit['visitId'])->studyName($currentVisit['studyName'])->create();
+        $review->sent_files = ['41' => $currentVisit['studyName'].'/'.'attached_review_file'.'/'.'review_1_41.csv'];
+        $review->save();
+        AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $currentVisit['studyName'] );
+        $response = $this->get('api/reviews/' . $review->id . '/file/41?role=Supervisor');
         $response->assertSuccessful();
     }
 
-    public function testUploadFileShouldFailNoRole()
-    {
-        $currentVisit = $this->createVisit();
-        $currentUserId = AuthorizationTools::actAsAdmin(false);
-        $review = Review::factory()->userId($currentUserId)->visitId($currentVisit['visitId'])->studyName($currentVisit['studyName'])->create();
-        $response = $this->post('api/reviews/' . $review->id . '/file/41', [base64_encode("testFileContent")], ['CONTENT_TYPE' => MimeAdapter::getMimeFromExtension('csv')]);
-        $response->assertStatus(403);
-    }
-
-    public function testUploadFileShouldFailWrongMime()
-    {
+    public function testGetFileOfFormShouldFailNoRole(){
         $currentVisit = $this->createVisit();
         $currentUserId = AuthorizationTools::actAsAdmin(false);
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_INVESTIGATOR, $currentVisit['studyName'] );
         AuthorizationTools::addAffiliatedCenter($currentUserId, $currentVisit['centerCode']);
         $review = Review::factory()->userId($currentUserId)->visitId($currentVisit['visitId'])->studyName($currentVisit['studyName'])->create();
-        AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_REVIEWER, $currentVisit['studyName'] );
-        $response = $this->post('api/reviews/' . $review->id . '/file/41', [base64_encode("testFileContent")], ['CONTENT_TYPE' => MimeAdapter::getMimeFromExtension('png')]);
-        $response->assertStatus(400);
+        $review->sent_files = ['41' => $currentVisit['studyName'].'/'.'attached_review_file'.'/'.'review_1_41.csv'];
+        $review->save();
+        $response = $this->get('api/reviews/' . $review->id . '/file/41?role=Supervisor');
+        $response->assertStatus(403);
+    }
+
+    public function testDeleteFileOfForm(){
+        $currentVisit = $this->createVisit();
+        $currentUserId = AuthorizationTools::actAsAdmin(false);
+        AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_INVESTIGATOR, $currentVisit['studyName'] );
+        AuthorizationTools::addAffiliatedCenter($currentUserId, $currentVisit['centerCode']);
+        $review = Review::factory()->userId($currentUserId)->visitId($currentVisit['visitId'])->studyName($currentVisit['studyName'])->create();
+        $review->sent_files = ['41' => $currentVisit['studyName'].'/'.'attached_review_file'.'/'.'review_1_41.csv'];
+        $review->save();
+        $response = $this->delete('api/reviews/' . $review->id . '/file/41');
+        $response->assertSuccessful();
+    }
+
+    public function testDeleteFileOfFormShouldFailNoRole(){
+        $currentVisit = $this->createVisit();
+        $currentUserId = AuthorizationTools::actAsAdmin(false);
+        $review = Review::factory()->userId($currentUserId)->visitId($currentVisit['visitId'])->studyName($currentVisit['studyName'])->create();
+        $review->sent_files = ['41' => $currentVisit['studyName'].'/'.'attached_review_file'.'/'.'review_1_41.csv'];
+        $review->save();
+        $response = $this->delete('api/reviews/' . $review->id . '/file/41');
+        $response->assertStatus(403);
     }
 
 

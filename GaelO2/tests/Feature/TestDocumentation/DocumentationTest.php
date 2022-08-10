@@ -6,10 +6,9 @@ use App\GaelO\Adapters\FrameworkAdapter;
 use App\Models\Documentation;
 use App\GaelO\Constants\Constants;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 use App\Models\Study;
-use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Storage;
 use Tests\AuthorizationTools;
 
 class DocumentationTest extends TestCase
@@ -28,6 +27,7 @@ class DocumentationTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+        Storage::fake();
         $this->study = Study::factory()->create();
 
         $this->validPayload = [
