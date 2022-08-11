@@ -39,7 +39,7 @@ class DeletedForm extends Mailable implements ShouldQueue
     public function build()
     {
         return $this->view('mails.mail_deleted_form')
-        ->subject($this->parameters['study']." - Form Deleted Patient - ".$this->parameters['patientId']." - Visit - ".$this->parameters['visitType'])
+        ->subject($this->parameters['study']." - Form Deleted Patient - ".$this->parameters['patientCode']." - Visit - ".$this->parameters['visitType'])
         ->with($this->parameters);
     }
 }

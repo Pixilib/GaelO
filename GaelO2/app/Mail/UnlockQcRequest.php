@@ -42,7 +42,7 @@ class UnlockQcRequest extends Mailable implements ShouldQueue
     public function build()
     {
         return $this->view('mails.mail_unlock_qc_request')
-            ->subject($this->parameters['study']." - Unlock QC Request - Patient - ".$this->parameters['patientId']." - Visit - ".$this->parameters['visitType'])
+            ->subject($this->parameters['study']." - Unlock QC Request - Patient - ".$this->parameters['patientCode']." - Visit - ".$this->parameters['visitType'])
             ->with($this->parameters);
     }
 }

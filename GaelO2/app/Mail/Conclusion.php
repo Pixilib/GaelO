@@ -38,7 +38,7 @@ class Conclusion extends Mailable implements ShouldQueue
     public function build()
     {
         return $this->view('mails.mail_conclusion')
-        ->subject($this->parameters['study']." - Visit Concluded Patient - ".$this->parameters['patientId']." - Visit - ".$this->parameters['visitType'])
+        ->subject($this->parameters['study']." - Visit Concluded Patient - ".$this->parameters['patientCode']." - Visit - ".$this->parameters['visitType'])
         ->with($this->parameters);
     }
 }
