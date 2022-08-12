@@ -35,12 +35,10 @@ class ValidateDicomTest extends TestCase
         $this->studyName = $this->reviewStatus->visit->patient->study->name;
         $this->visitId = $this->reviewStatus->visitId;
 
-        if (true) {
-            $this->markTestSkipped('all tests in this file are invactive, this is only to check orthanc communication');
-        }else{
-            $this->tusIdArray = ['c80f0bd67443e65d84ed663b37adf146'];
-            $this->numberOfInstances = 326;
-        }
+        $this->tusIdArray = ['c80f0bd67443e65d84ed663b37adf146'];
+        $this->numberOfInstances = 326;
+
+        $this->markTestSkipped('all tests in this file are invactive, this is only to check orthanc communication');
 
     }
 

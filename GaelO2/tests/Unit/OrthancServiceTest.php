@@ -20,10 +20,7 @@ class OrthancServiceTest extends TestCase
         $this->orthancService = App::make(OrthancService::class);
         $this->orthancService->setOrthancServer(false);
 
-        if (true) {
-            $this->markTestSkipped('all tests in this file are invactive, this is only to check orthanc communication');
-        }
-
+        $this->markTestSkipped('all tests in this file are invactive, this is only to check orthanc communication');
     }
 
     public function testPeersFunctions()
@@ -76,7 +73,8 @@ class OrthancServiceTest extends TestCase
     /**
      * @depends testSendDicomFile
      */
-    public function testGetStudyStatistics($testingOrthancStudyID){
+    public function testGetStudyStatistics($testingOrthancStudyID)
+    {
         $studyStatistics = $this->orthancService->getOrthancRessourcesStatistics('studies', $testingOrthancStudyID);
         $this->assertIsArray($studyStatistics);
     }
@@ -84,7 +82,8 @@ class OrthancServiceTest extends TestCase
     /**
      * @depends testSendDicomFile
      */
-    public function testGetOrthancRessourceDetails($testingOrthancStudyID){
+    public function testGetOrthancRessourceDetails($testingOrthancStudyID)
+    {
         $ressourceDetails = $this->orthancService->getOrthancRessourcesDetails('studies', $testingOrthancStudyID);
         $this->assertIsArray($ressourceDetails);
     }
@@ -119,14 +118,15 @@ class OrthancServiceTest extends TestCase
     /**
      * @depends testAnonymizeOrthanc
      */
-    public function testDeleteOrthancStudy($anonymizedID){
+    public function testDeleteOrthancStudy($anonymizedID)
+    {
         $ressourceDetails = $this->orthancService->getOrthancRessourcesDetails('studies', $anonymizedID);
-        $data = $this->orthancService->searchInOrthanc( 'studies', '', '', '', $ressourceDetails['MainDicomTags']['StudyInstanceUID'] );
+        $data = $this->orthancService->searchInOrthanc('studies', '', '', '', $ressourceDetails['MainDicomTags']['StudyInstanceUID']);
         $this->assertEquals(1, sizeof($data));
         //Delete the anonymized studies
         $this->orthancService->deleteFromOrthanc('studies', $anonymizedID);
         //Check it has gone
-        $data = $this->orthancService->searchInOrthanc( 'studies', '', '', '', $ressourceDetails['MainDicomTags']['StudyInstanceUID'] );
+        $data = $this->orthancService->searchInOrthanc('studies', '', '', '', $ressourceDetails['MainDicomTags']['StudyInstanceUID']);
         $this->assertEquals(0, sizeof($data));
     }
 }
