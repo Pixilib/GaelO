@@ -57,7 +57,7 @@ jobs:
 
       - name: Fix code coverage paths
         working-directory: ./GaelO2
-        run: sed -i 's@'$GITHUB_WORKSPACE'@/github/workspace/@g' coverage.xml
+        run: sed -i 's@'$GITHUB_WORKSPACE'@/github/workspace/@g' ./coverage.xml
 
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@master
