@@ -18,7 +18,7 @@ class GaelOUtilTest extends TestCase
     }
 
     public function testIsNotSemanticVersioning(){
-        $shouldFalse = Util::isSemanticVersioning('1.2.4.5.5');
+        $shouldFalse = Util::isSemanticVersioning('1.2.3.4');
         $this->assertFalse($shouldFalse);
         $shouldFalse = Util::isSemanticVersioning('1.2');
         $this->assertFalse($shouldFalse);
