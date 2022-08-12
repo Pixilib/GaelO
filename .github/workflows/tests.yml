@@ -56,7 +56,7 @@ jobs:
         run: vendor/bin/phpunit --verbose --coverage-clover=coverage.xml
 
       - name: Fix code coverage paths
-          run: sed -i 
+        run: sed -i 
 's@'$GITHUB_WORKSPACE'@/github/workspace/@g' coverage.xml
 
       - name: SonarCloud Scan
