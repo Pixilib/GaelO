@@ -12,9 +12,11 @@
                     style="border-collapse: separate; margin-top: 80px; max-width: 600px;" bgcolor="#ffffff">
                     <tr>
                         <td class="banner" align="center">
-                            <a href="{{ $webAddress }}"><img
-                                    src="<?= $message->embed(public_path('static/media/gaelo-mail-header.jpg')) ?>"
-                                    alt="Logo" width="600" /></a>
+                            <a href="{{ $webAddress }}">
+                                <img
+                                    src="{{ $message->embed(public_path('static/media/gaelo-mail-header.jpg')) }}"
+                                    alt="Logo" width="600" />
+                            </a>
                         </td>
                     </tr>
                     <tr>
