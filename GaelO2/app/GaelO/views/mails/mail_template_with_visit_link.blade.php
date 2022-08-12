@@ -3,10 +3,10 @@
 @section('visitLink')
     @if (!empty($visitId) && !empty($study))
         <div
-            style="font-family: helvetica; color: #314053; font-size: 16px; line-height: 1.6; margin-top: 0; margin-bottom: 20px">
+            style="font-family: helvetica, sans-serif; color: #314053; font-size: 16px; line-height: 1.6; margin-top: 0; margin-bottom: 20px">
             <strong>Access Visit as :</strong>
         </div>
-        <div style="font-family: helvetica; font-size: 14px; margin-top: 0; margin-bottom: 20px">
+        <div style="font-family: helvetica, sans-serif; font-size: 14px; margin-top: 0; margin-bottom: 20px">
             <a href="{{ $webAddress }}/study/{{ $study }}/role/Investigator/visit/{{ $visitId }}"
                 style="display: inline-block; color: #0495A0; font-family: helvetica, sans-serif; font-size: 14px; padding: 10px 8px; border: 1px solid #0495A0; border-radius: 50px; text-decoration: none; margin-right: 17px; margin-bottom: 10px;"><strong>Investigator</strong></a><a
                 href="{{ $webAddress }}/study/{{ $study }}/role/Monitor/visit/{{ $visitId }}"
