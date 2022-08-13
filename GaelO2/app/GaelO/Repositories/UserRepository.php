@@ -16,35 +16,35 @@ use App\Models\Study;
 class UserRepository implements UserRepositoryInterface
 {
 
-    private User $user;
-    private Role $roles;
-    private CenterUser $centerUser;
-    private Study $study;
+    private User $userModel;
+    private Role $rolesModel;
+    private CenterUser $centerUserModel;
+    private Study $studyModel;
     private HashInterface $hashInterface;
 
     public function __construct(User $user, Role $roles, CenterUser $centerUser, Study $study, HashInterface $hashInterface)
     {
-        $this->user = $user;
-        $this->roles = $roles;
-        $this->centerUser = $centerUser;
-        $this->study = $study;
+        $this->userModel = $user;
+        $this->rolesModel = $roles;
+        $this->centerUserModel = $centerUser;
+        $this->studyModel = $study;
         $this->hashInterface = $hashInterface;
     }
 
     public function find($id): array
     {
-        return $this->user->findOrFail($id)->toArray();
+        return $this->userModel->findOrFail($id)->toArray();
     }
 
     public function delete($id): void
     {
-        $this->user->findOrFail($id)->delete();
+        $this->userModel->findOrFail($id)->delete();
     }
 
     public function getAll($withTrashed): array
     {
-        if ($withTrashed) $users = $this->user->withTrashed()->get();
-        else $users = $this->user->get();
+        if ($withTrashed) $users = $this->userModel->withTrashed()->get();
+        else $users = $this->userModel->get();
         return empty($users) ? [] : $users->toArray();
     }
 
@@ -94,7 +94,7 @@ class UserRepository implements UserRepositoryInterface
         bool $resetEmailVerification
     ): void {
 
-        $user = $this->user->findOrFail($id);
+        $user = $this->userModel->findOrFail($id);
         $user->lastname = $lastname;
         $user->firstname = $firstname;
         $user->email = $email;
@@ -112,21 +112,21 @@ class UserRepository implements UserRepositoryInterface
 
     public function updateUserPassword(int $userId, ?string $passwordCurrent): void
     {
-        $user = $this->user->findOrFail($userId);
+        $user = $this->userModel->findOrFail($userId);
         $user->password = $this->hashInterface->hash($passwordCurrent);
         $user->save();
     }
 
     public function updateUserAttempts(int $userId, int $attempts): void
     {
-        $user = $this->user->findOrFail($userId);
+        $user = $this->userModel->findOrFail($userId);
         $user->attempts = $attempts;
         $user->save();
     }
 
     public function resetAttemptsAndUpdateLastConnexion(int $userId): void
     {
-        $user = $this->user->findOrFail($userId);
+        $user = $this->userModel->findOrFail($userId);
         $user->attempts = 0;
         $user->last_connection = Util::now();
         $user->save();
@@ -135,9 +135,9 @@ class UserRepository implements UserRepositoryInterface
     public function getUserByEmail(String $email, bool $withTrashed = false): array
     {
         if ($withTrashed) {
-            $user = $this->user->withTrashed()->where('email', $email)->sole();
+            $user = $this->userModel->withTrashed()->where('email', $email)->sole();
         } else {
-            $user = $this->user->where('email', $email)->sole();
+            $user = $this->userModel->where('email', $email)->sole();
         }
 
         return $user->toArray();
@@ -145,18 +145,18 @@ class UserRepository implements UserRepositoryInterface
 
     public function isExistingEmail(String $email): bool
     {
-        $user = $this->user->withTrashed()->where('email', $email);
+        $user = $this->userModel->withTrashed()->where('email', $email);
         return $user->count() > 0 ? true : false;
     }
 
     public function reactivateUser(int $id): void
     {
-        $this->user->withTrashed()->find($id)->restore();
+        $this->userModel->withTrashed()->find($id)->restore();
     }
 
     public function getAdministratorsEmails(): array
     {
-        $emails = $this->user->where('administrator', true)->get();
+        $emails = $this->userModel->where('administrator', true)->get();
         return empty($emails) ? [] : $emails->pluck('email')->toArray();
     }
 
@@ -167,7 +167,7 @@ class UserRepository implements UserRepositoryInterface
     public function getInvestigatorsEmailsFromStudyFromCenter(string $study, int $centerCode, ?string $job): array
     {
 
-        $emails = $this->user
+        $emails = $this->userModel
             ->with('affiliatedCenters')
             ->whereHas('roles', function ($query) use ($study, $job) {
                 if ($job !== null) {
@@ -193,7 +193,7 @@ class UserRepository implements UserRepositoryInterface
     public function getUsersByRolesInStudy(string $study, string $role): array
     {
 
-        $users = $this->user
+        $users = $this->userModel
             ->whereHas('roles', function ($query) use ($study, $role) {
                 $query->where('name', '=', $role)
                     ->where('study_name', '=', $study);
@@ -216,15 +216,15 @@ class UserRepository implements UserRepositoryInterface
 
     public function getStudiesOfUser(int $userId): array
     {
-        $studiesInRole = $this->user->findOrFail($userId)->roles()->get()->pluck('study_name')->toArray();
+        $studiesInRole = $this->userModel->findOrFail($userId)->roles()->get()->pluck('study_name')->toArray();
         //2nd call needed to get only non deleted studies
-        $studies = $this->study->whereIn('name', $studiesInRole)->get();
+        $studies = $this->studyModel->whereIn('name', $studiesInRole)->get();
         return $studies->count() === 0 ?  [] : $studies->toArray();
     }
 
     public function getUsersRoles(int $userId): array
     {
-        $roles = $this->user->findOrFail($userId)->roles()->get(['name', 'study_name']);
+        $roles = $this->userModel->findOrFail($userId)->roles()->get(['name', 'study_name']);
         $roles = $roles->groupBy(['study_name'])
             ->map(function ($group) {
                 return $group->map(function ($value) {
@@ -237,7 +237,7 @@ class UserRepository implements UserRepositoryInterface
 
     public function getUserRoleInStudy(int $userId, string $studyName, string $roleName): array
     {
-        $role = $this->roles
+        $role = $this->rolesModel
             ->whereHas('user', function ($query) use ($userId) {
                 $query->where('id', $userId);
             })
@@ -252,7 +252,7 @@ class UserRepository implements UserRepositoryInterface
 
     public function updateValidatedDocumentationVersion(int $userId, string $studyName, string $roleName, string $version): void
     {
-        $role = $this->roles
+        $role = $this->rolesModel
             ->whereHas('user', function ($query) use ($userId) {
                 $query->where('id', $userId);
             })
@@ -269,7 +269,7 @@ class UserRepository implements UserRepositoryInterface
     public function getUsersRolesInStudy(int $userId, String $studyName): array
     {
         //Check that called study and user are existing entities (not deleted)
-        $roles = $this->roles
+        $roles = $this->rolesModel
             ->whereHas('user', function ($query) use ($userId) {
                 $query->where('id', $userId);
             })
@@ -283,7 +283,7 @@ class UserRepository implements UserRepositoryInterface
     public function addUserRoleInStudy(int $userId, String $study, string $role): void
     {
 
-        $user = $this->user->findOrFail($userId);
+        $user = $this->userModel->findOrFail($userId);
         $insertData = [
             'user_id' => $user['id'],
             'study_name' => $study,
@@ -294,7 +294,7 @@ class UserRepository implements UserRepositoryInterface
 
     public function deleteRoleForUser(int $userId, String $study, String $role): void
     {
-        $this->roles->where([
+        $this->rolesModel->where([
             ['user_id', '=', $userId],
             ['study_name', '=', $study],
             ['name', '=', $role]
@@ -304,25 +304,25 @@ class UserRepository implements UserRepositoryInterface
     public function addAffiliatedCenter(int $userId, int $centerCode): void
     {
 
-        $user = $this->user->findOrFail($userId);
+        $user = $this->userModel->findOrFail($userId);
 
         $insertArray = [
             'user_id' => $user['id'],
             'center_code' => $centerCode
         ];
 
-        $this->centerUser->insert($insertArray);
+        $this->centerUserModel->insert($insertArray);
     }
 
     public function deleteAffiliatedCenter(int $userId, int $centerCode): void
     {
-        $affiliatedCenter = $this->centerUser->where(['user_id' => $userId, 'center_code' => $centerCode])->sole();
+        $affiliatedCenter = $this->centerUserModel->where(['user_id' => $userId, 'center_code' => $centerCode])->sole();
         $affiliatedCenter->delete();
     }
 
     public function getAffiliatedCenter(int $userId): array
     {
-        $user = $this->user->findOrFail($userId);
+        $user = $this->userModel->findOrFail($userId);
         $centers = $user->affiliatedCenters()->get();
         return empty($centers) ? [] : $centers->toArray();
     }
@@ -330,7 +330,7 @@ class UserRepository implements UserRepositoryInterface
     public function getAllUsersCenters(int $userId): array
     {
 
-        $user = $this->user->findOrFail($userId);
+        $user = $this->userModel->findOrFail($userId);
         $centers = $user->affiliatedCenters()->get()->pluck('code');
         if (empty($centers)) {
             return [$user['center_code']];
@@ -342,7 +342,7 @@ class UserRepository implements UserRepositoryInterface
     public function getUsersFromStudy(string $studyName): array
     {
 
-        $users = $this->user
+        $users = $this->userModel
             ->whereHas('roles', function ($query) use ($studyName) {
                 $query->where('study_name', '=', $studyName);
             })

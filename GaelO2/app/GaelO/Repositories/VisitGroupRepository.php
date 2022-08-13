@@ -9,21 +9,21 @@ use App\GaelO\Util;
 class VisitGroupRepository implements VisitGroupRepositoryInterface
 {
 
-    private VisitGroup $visitGroup;
+    private VisitGroup $visitGroupModel;
 
     public function __construct(VisitGroup $visitGroup)
     {
-        $this->visitGroup = $visitGroup;
+        $this->visitGroupModel = $visitGroup;
     }
 
     public function find($id)
     {
-        return $this->visitGroup->findOrFail($id)->toArray();
+        return $this->visitGroupModel->findOrFail($id)->toArray();
     }
 
     public function delete($id): void
     {
-        $this->visitGroup->findOrFail($id)->delete();
+        $this->visitGroupModel->findOrFail($id)->delete();
     }
 
     public function createVisitGroup(String $studyName, String $name, String $modality): void
@@ -38,13 +38,13 @@ class VisitGroupRepository implements VisitGroupRepositoryInterface
 
     public function hasVisitTypes(int $visitGroupId): bool
     {
-        $visitGroup = $this->visitGroup->withCount('visitTypes')->findOrFail($visitGroupId);
+        $visitGroup = $this->visitGroupModel->withCount('visitTypes')->findOrFail($visitGroupId);
         return $visitGroup->visit_types_count > 0 ? true : false;
     }
 
     public function isExistingVisitGroup(String $studyName, String $name): bool
     {
-        $visitGroup = $this->visitGroup->where([['study_name', '=', $studyName], ['name', '=', $name]])->get();
+        $visitGroup = $this->visitGroupModel->where([['study_name', '=', $studyName], ['name', '=', $name]])->get();
         return sizeof($visitGroup) > 0;
     }
 }

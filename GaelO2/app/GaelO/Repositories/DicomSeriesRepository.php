@@ -7,21 +7,21 @@ use App\Models\DicomSeries;
 
 class DicomSeriesRepository implements DicomSeriesRepositoryInterface
 {
-    private DicomSeries $dicomSeries;
+    private DicomSeries $dicomSeriesModel;
 
     public function __construct(DicomSeries $dicomSeries)
     {
-        $this->dicomSeries = $dicomSeries;
+        $this->dicomSeriesModel = $dicomSeries;
     }
 
     public function deleteSeries(string $seriesInstanceUID): void
     {
-        $this->dicomSeries->where('series_uid', $seriesInstanceUID)->sole()->delete();
+        $this->dicomSeriesModel->where('series_uid', $seriesInstanceUID)->sole()->delete();
     }
 
     public function reactivateSeries(string $seriesInstanceUID): void
     {
-        $this->dicomSeries->withTrashed()->where('series_uid', $seriesInstanceUID)->sole()->restore();
+        $this->dicomSeriesModel->withTrashed()->where('series_uid', $seriesInstanceUID)->sole()->restore();
     }
 
     public function addSeries(
@@ -74,7 +74,7 @@ class DicomSeriesRepository implements DicomSeriesRepositoryInterface
 
     public function getSeries(string $seriesInstanceUID, bool $withTrashed): array
     {
-        $series = $this->dicomSeries->with('dicomStudy')->where('series_uid', $seriesInstanceUID);
+        $series = $this->dicomSeriesModel->with('dicomStudy')->where('series_uid', $seriesInstanceUID);
 
         if ($withTrashed) $series->withTrashed();
         return $series->sole()->toArray();
@@ -82,7 +82,7 @@ class DicomSeriesRepository implements DicomSeriesRepositoryInterface
 
     public function getRelatedVisitIdFromSeriesInstanceUID(array $seriesInstanceUID, bool $withTrashed): array
     {
-        $query = $this->dicomSeries
+        $query = $this->dicomSeriesModel
             ->with(['dicomStudy' => function ($query) use ($withTrashed) {
                 if ($withTrashed) $query->withTrashed();
             }])
@@ -94,7 +94,7 @@ class DicomSeriesRepository implements DicomSeriesRepositoryInterface
 
     public function getSeriesOrthancIDOfSeriesInstanceUID(array $seriesInstanceUID, bool $withTrashed): array
     {
-        $query = $this->dicomSeries
+        $query = $this->dicomSeriesModel
             ->whereIn('series_uid', $seriesInstanceUID)
             ->select('orthanc_id');
 
@@ -104,7 +104,7 @@ class DicomSeriesRepository implements DicomSeriesRepositoryInterface
 
     public function getDicomSeriesOfStudyInstanceUIDArray(array $studyInstanceUID, bool $withTrashed): array
     {
-        $query = $this->dicomSeries->whereIn('study_instance_uid', $studyInstanceUID);
+        $query = $this->dicomSeriesModel->whereIn('study_instance_uid', $studyInstanceUID);
 
         if ($withTrashed) $query->withTrashed();
 

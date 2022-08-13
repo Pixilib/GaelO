@@ -8,21 +8,21 @@ use App\Models\DicomStudy;
 class DicomStudyRepository implements DicomStudyRepositoryInterface
 {
 
-    private DicomStudy $dicomStudy;
+    private DicomStudy $dicomStudyModel;
 
     public function __construct(DicomStudy $dicomStudy)
     {
-        $this->dicomStudy = $dicomStudy;
+        $this->dicomStudyModel = $dicomStudy;
     }
 
     public function delete($studyInstanceUID): void
     {
-        $this->dicomStudy->findOrFail($studyInstanceUID)->delete();
+        $this->dicomStudyModel->findOrFail($studyInstanceUID)->delete();
     }
 
     public function reactivateByStudyInstanceUID(string $studyInstanceUID): void
     {
-        $this->dicomStudy->withTrashed()->where('study_uid', $studyInstanceUID)->sole()->restore();
+        $this->dicomStudyModel->withTrashed()->where('study_uid', $studyInstanceUID)->sole()->restore();
     }
 
     public function addStudy(
@@ -72,7 +72,7 @@ class DicomStudyRepository implements DicomStudyRepositoryInterface
      */
     public function isExistingOriginalOrthancStudyID(string $originalOrthancStudyID, string $studyName): bool
     {
-        $dicomStudies = $this->dicomStudy->where('anon_from_orthanc_id', $originalOrthancStudyID)
+        $dicomStudies = $this->dicomStudyModel->where('anon_from_orthanc_id', $originalOrthancStudyID)
             ->whereHas('visit', function ($query) use ($studyName) {
                 $query->whereHas('patient', function ($query) use ($studyName) {
                     $query->where('study_name', $studyName);
@@ -85,19 +85,19 @@ class DicomStudyRepository implements DicomStudyRepositoryInterface
 
     public function getStudyInstanceUidFromVisit(int $visitID): string
     {
-        $studyEntity = $this->dicomStudy->where('visit_id', '=', $visitID)->sole();
+        $studyEntity = $this->dicomStudyModel->where('visit_id', '=', $visitID)->sole();
         return $studyEntity->study_uid;
     }
 
     public function isExistingDicomStudyForVisit(int $visitID): bool
     {
-        $dicomStudies =  $this->dicomStudy->where('visit_id', $visitID)->get();
+        $dicomStudies =  $this->dicomStudyModel->where('visit_id', $visitID)->get();
         return $dicomStudies->count() > 0 ? true : false;
     }
 
     public function getDicomsDataFromVisit(int $visitID, bool $withDeletedStudy, bool $withDeletedSeries): array
     {
-        $query = $this->dicomStudy->where('visit_id', $visitID)->with('uploader');
+        $query = $this->dicomStudyModel->where('visit_id', $visitID)->with('uploader');
 
         if ($withDeletedStudy) $query = $query->withTrashed();
 
@@ -116,9 +116,9 @@ class DicomStudyRepository implements DicomStudyRepositoryInterface
     public function getDicomStudy(string $studyInstanceUID, bool $includeDeleted): array
     {
         if ($includeDeleted) {
-            $study = $this->dicomStudy->withTrashed()->findOrFail($studyInstanceUID)->toArray();
+            $study = $this->dicomStudyModel->withTrashed()->findOrFail($studyInstanceUID)->toArray();
         } else {
-            $study = $this->dicomStudy->findOrFail($studyInstanceUID)->toArray();
+            $study = $this->dicomStudyModel->findOrFail($studyInstanceUID)->toArray();
         }
 
         return $study;
@@ -126,7 +126,7 @@ class DicomStudyRepository implements DicomStudyRepositoryInterface
 
     public function getChildSeries(string $studyInstanceUID, bool $onlyTrashed): array
     {
-        $query = $this->dicomStudy->findOrFail($studyInstanceUID)->dicomSeries();
+        $query = $this->dicomStudyModel->findOrFail($studyInstanceUID)->dicomSeries();
         if ($onlyTrashed) $query->onlyTrashed();
 
         return $query->get()->toArray();
@@ -134,7 +134,7 @@ class DicomStudyRepository implements DicomStudyRepositoryInterface
 
     public function getDicomStudyFromVisitIdArray(array $visitId, bool $withTrashed): array
     {
-        $queryBuilder = $this->dicomStudy->whereIn('visit_id', $visitId);
+        $queryBuilder = $this->dicomStudyModel->whereIn('visit_id', $visitId);
 
         if ($withTrashed) $queryBuilder->withTrashed();
 
@@ -145,7 +145,7 @@ class DicomStudyRepository implements DicomStudyRepositoryInterface
     public function getDicomStudyFromVisitIdArrayWithSeries(array $visitId, bool $withTrashed): array
     {
 
-        $queryBuilder = $this->dicomStudy
+        $queryBuilder = $this->dicomStudyModel
             ->with(['visit' => function ($query) {
                 $query->with(['visitType', 'visitType.visitGroup', 'patient']);
             }])

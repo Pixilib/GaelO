@@ -12,18 +12,18 @@ use Illuminate\Support\Facades\DB;
 class VisitRepository implements VisitRepositoryInterface
 {
 
-    private Visit $visit;
-    private ReviewStatus $reviewStatus;
+    private Visit $visitModel;
+    private ReviewStatus $reviewStatusModel;
 
     public function __construct()
     {
-        $this->visit = new Visit();
-        $this->reviewStatus = new ReviewStatus();
+        $this->visitModel = new Visit();
+        $this->reviewStatusModel = new ReviewStatus();
     }
 
     public function delete($id): void
     {
-        $this->visit->findOrFail($id)->delete();
+        $this->visitModel->findOrFail($id)->delete();
     }
 
     public function createVisit(
@@ -52,9 +52,9 @@ class VisitRepository implements VisitRepositoryInterface
         ];
 
         $visitId = DB::transaction(function () use ($data, $studyName, $stateReview) {
-            $newVisit = $this->visit->create($data);
+            $newVisit = $this->visitModel->create($data);
             //create review status to set review status study preset for primary studies
-            $this->reviewStatus->create([
+            $this->reviewStatusModel->create([
                 'visit_id' => $newVisit->id,
                 'study_name' => $studyName,
                 'review_status' => $stateReview
@@ -68,13 +68,13 @@ class VisitRepository implements VisitRepositoryInterface
 
     public function isExistingVisit(string $patientId, int $visitTypeId): bool
     {
-        $visit = $this->visit->where([['patient_id', '=', $patientId], ['visit_type_id', '=', $visitTypeId]])->get();
+        $visit = $this->visitModel->where([['patient_id', '=', $patientId], ['visit_type_id', '=', $visitTypeId]])->get();
         return $visit->count() > 0 ? true : false;
     }
 
     public function updateUploadStatus(int $visitId, string $newUploadStatus): array
     {
-        $visitEntity = $this->visit->findOrFail($visitId);
+        $visitEntity = $this->visitModel->findOrFail($visitId);
         $visitEntity['upload_status'] = $newUploadStatus;
         $visitEntity->save();
         return $visitEntity->toArray();
@@ -82,7 +82,7 @@ class VisitRepository implements VisitRepositoryInterface
 
     public function updateVisitDate(int $visitId, string $visitDate): void
     {
-        $visitEntity = $this->visit->findOrFail($visitId);
+        $visitEntity = $this->visitModel->findOrFail($visitId);
         $visitEntity['visit_date'] = $visitDate;
         $visitEntity->save();
     }
@@ -90,7 +90,7 @@ class VisitRepository implements VisitRepositoryInterface
     public function getVisitContext(int $visitId, bool $withTrashed = false): array
     {
 
-        $builder = $this->visit->with(['visitType', 'visitType.visitGroup', 'patient']);
+        $builder = $this->visitModel->with(['visitType', 'visitType.visitGroup', 'patient']);
         if ($withTrashed) {
             $builder->withTrashed();
         }
@@ -101,7 +101,7 @@ class VisitRepository implements VisitRepositoryInterface
     public function getVisitWithContextAndReviewStatus(int $visitId, string $studyName): array
     {
 
-        $builder = $this->visit->with(['visitType', 'visitType.visitGroup', 'creator']);
+        $builder = $this->visitModel->with(['visitType', 'visitType.visitGroup', 'creator']);
         $builder->with(['reviewStatus' => function ($query) use ($studyName) {
             $query->where('study_name', $studyName);
         }]);
@@ -114,7 +114,7 @@ class VisitRepository implements VisitRepositoryInterface
     public function getVisitContextByVisitIdArray(array $visitIdArray): array
     {
 
-        $query = $this->visit->with('visitType', 'visitType.visitGroup', 'patient')->withTrashed()->whereIn('id', $visitIdArray);
+        $query = $this->visitModel->with('visitType', 'visitType.visitGroup', 'patient')->withTrashed()->whereIn('id', $visitIdArray);
         $visits = $query->get();
 
         return empty($visits) ? [] : $visits->toArray();
@@ -122,13 +122,13 @@ class VisitRepository implements VisitRepositoryInterface
 
     public function getPatientsVisits(string $patientId): array
     {
-        $visits = $this->visit->with('visitType', 'visitType.visitGroup')->where('patient_id', $patientId)->get();
+        $visits = $this->visitModel->with('visitType', 'visitType.visitGroup')->where('patient_id', $patientId)->get();
         return empty($visits) ? [] : $visits->toArray();
     }
 
     public function getAllPatientsVisitsWithReviewStatus(string $patientId, string $studyName, bool $withTrashed): array
     {
-        $builder = $this->visit;
+        $builder = $this->visitModel;
         if ($withTrashed) {
             $builder = $builder->withTrashed();
         }
@@ -144,14 +144,14 @@ class VisitRepository implements VisitRepositoryInterface
     public function getVisitsFromPatientIdsWithContext(array $patientIdArray): array
     {
 
-        $answer = $this->visit->with('visitType', 'visitType.visitGroup')->whereIn('patient_id', $patientIdArray)->get();
+        $answer = $this->visitModel->with('visitType', 'visitType.visitGroup')->whereIn('patient_id', $patientIdArray)->get();
         return $answer->count() === 0 ? []  : $answer->toArray();
     }
 
     public function getVisitFromPatientIdsWithContextAndReviewStatus(array $patientIdArray, string $studyName): array
     {
 
-        $answer = $this->visit
+        $answer = $this->visitModel
             ->with('visitType', 'visitType.visitGroup')
             ->with(['reviewStatus' => function ($query) use ($studyName) {
                 $query->where('study_name', $studyName);
@@ -165,7 +165,7 @@ class VisitRepository implements VisitRepositoryInterface
     public function getReviewVisitHistoryFromPatientIdsWithContextAndReviewStatus(array $patientIdArray, string $studyName): array
     {
 
-        $answer = $this->visit
+        $answer = $this->visitModel
             ->with('visitType', 'visitType.visitGroup', 'reviewStatus')
             ->where('upload_status', Constants::UPLOAD_STATUS_DONE)
             ->whereIn('state_investigator_form', [Constants::INVESTIGATOR_FORM_NOT_NEEDED, Constants::INVESTIGATOR_FORM_DONE])
@@ -179,7 +179,7 @@ class VisitRepository implements VisitRepositoryInterface
     public function getVisitsInStudy(string $studyName, bool $withReviewStatus, bool $withPatientCenter, bool $withTrashed): array
     {
 
-        $queryBuilder = $this->visit->with(['visitType', 'visitType.visitGroup', 'patient'])
+        $queryBuilder = $this->visitModel->with(['visitType', 'visitType.visitGroup', 'patient'])
             ->whereHas('patient', function ($query) use ($studyName) {
                 $query->where('study_name', $studyName);
             });
@@ -214,7 +214,7 @@ class VisitRepository implements VisitRepositoryInterface
     public function getVisitsInVisitType(int $visitTypeId, bool $withReviewStatus = false, string $studyName = null, bool $withTrashed = false, bool $withCenter = false): array
     {
 
-        $visits = $this->visit->whereHas('visitType', function ($query) use ($visitTypeId) {
+        $visits = $this->visitModel->whereHas('visitType', function ($query) use ($visitTypeId) {
             $query->where('id', $visitTypeId);
         })->with('visitType', 'visitType.visitGroup');
 
@@ -239,7 +239,7 @@ class VisitRepository implements VisitRepositoryInterface
     {
         $controllerActionStatusArray = array(Constants::QUALITY_CONTROL_NOT_DONE, Constants::QUALITY_CONTROL_WAIT_DEFINITIVE_CONCLUSION);
 
-        $answer = $this->visit->with('visitType', 'visitType.visitGroup')
+        $answer = $this->visitModel->with('visitType', 'visitType.visitGroup')
             ->whereHas('patient', function ($query) use ($studyName) {
                 $query->where('study_name', $studyName);
             })
@@ -255,7 +255,7 @@ class VisitRepository implements VisitRepositoryInterface
     public function getVisitsInStudyNeedingQualityControl(string $studyName): array
     {
 
-        $answer = $this->visit->with('visitType', 'visitType.visitGroup')
+        $answer = $this->visitModel->with('visitType', 'visitType.visitGroup')
             ->whereHas('patient', function ($query) use ($studyName) {
                 $query->where('study_name', $studyName);
             })
@@ -271,9 +271,9 @@ class VisitRepository implements VisitRepositoryInterface
     public function getVisitsAwaitingReviewForUser(string $studyName, int $userId): array
     {
 
-        $visitIdAwaitingReview = $this->reviewStatus->where('study_name', $studyName)->where('review_available', true)->select('visit_id')->get()->toArray();
+        $visitIdAwaitingReview = $this->reviewStatusModel->where('study_name', $studyName)->where('review_available', true)->select('visit_id')->get()->toArray();
 
-        $answer = $this->visit->with('visitType', 'visitType.visitGroup')
+        $answer = $this->visitModel->with('visitType', 'visitType.visitGroup')
             ->with(['reviewStatus' => function ($query) use ($studyName) {
                 $query->where('study_name', $studyName);
             }])
@@ -294,9 +294,9 @@ class VisitRepository implements VisitRepositoryInterface
 
     public function getPatientsHavingAtLeastOneAwaitingReviewForUser(string $studyName, int $userId): array
     {
-        $visitIdAwaitingReview = $this->reviewStatus->where('study_name', $studyName)->where('review_available', true)->select('visit_id')->get()->toArray();
+        $visitIdAwaitingReview = $this->reviewStatusModel->where('study_name', $studyName)->where('review_available', true)->select('visit_id')->get()->toArray();
 
-        $answer = $this->visit
+        $answer = $this->visitModel
             ->with(['reviewStatus' => function ($query) use ($studyName) {
                 $query->where('study_name', $studyName);
             }])
@@ -319,10 +319,10 @@ class VisitRepository implements VisitRepositoryInterface
     public function isParentPatientHavingOneVisitAwaitingReview(int $visitId, string $studyName, int $userId): bool
     {
         //Get parent patient
-        $patient = $this->visit->findOrFail($visitId)->patient()->sole();
+        $patient = $this->visitModel->findOrFail($visitId)->patient()->sole();
 
         //Select visits available for review in this patient
-        $patientVisitsIdAvailableForReview = $this->visit
+        $patientVisitsIdAvailableForReview = $this->visitModel
             ->where('patient_id', $patient->id)
             ->whereHas('reviewStatus', function ($query) use ($studyName) {
                 $query->where('study_name', $studyName);
@@ -331,7 +331,7 @@ class VisitRepository implements VisitRepositoryInterface
             ->select('id')->get()->toArray();
 
         //In these review select visit in which current user didn't validated his review form
-        $answer = $this->visit
+        $answer = $this->visitModel
             ->where(function ($query) use ($studyName, $userId) {
                 $query->selectRaw('count(*)')
                     ->from('reviews')
@@ -348,7 +348,7 @@ class VisitRepository implements VisitRepositoryInterface
 
     public function editQc(int $visitId, string $stateQc, int $controllerId, bool $imageQc, bool $formQc, ?string $imageQcComment, ?string $formQcComment): void
     {
-        $visitEntity = $this->visit->findOrFail($visitId);
+        $visitEntity = $this->visitModel->findOrFail($visitId);
 
         $visitEntity['state_quality_control'] = $stateQc;
         $visitEntity['controller_user_id'] = $controllerId;
@@ -364,7 +364,7 @@ class VisitRepository implements VisitRepositoryInterface
     public function resetQc(int $visitId): void
     {
 
-        $visitEntity = $this->visit->findOrFail($visitId);
+        $visitEntity = $this->visitModel->findOrFail($visitId);
 
         $visitEntity['state_quality_control'] = Constants::QUALITY_CONTROL_NOT_DONE;
         $visitEntity['controller_user_id'] = null;
@@ -386,7 +386,7 @@ class VisitRepository implements VisitRepositoryInterface
     public function setCorrectiveAction(int $visitId, int $investigatorId, bool $newUpload, bool $newInvestigatorForm, bool $correctiveActionApplied, ?string $comment): void
     {
 
-        $visitEntity = $this->visit->findOrFail($visitId);
+        $visitEntity = $this->visitModel->findOrFail($visitId);
 
         $visitEntity['state_quality_control'] = Constants::QUALITY_CONTROL_WAIT_DEFINITIVE_CONCLUSION;
         $visitEntity['corrective_action_user_id'] = $investigatorId;
@@ -401,7 +401,7 @@ class VisitRepository implements VisitRepositoryInterface
 
     public function updateInvestigatorFormStatus(int $visitId, string $stateInvestigatorFormStatus): array
     {
-        $visitEntity = $this->visit->findOrFail($visitId);
+        $visitEntity = $this->visitModel->findOrFail($visitId);
         $visitEntity['state_investigator_form'] = $stateInvestigatorFormStatus;
         $visitEntity->save();
         return $visitEntity->toArray();
@@ -414,7 +414,7 @@ class VisitRepository implements VisitRepositoryInterface
     public function getImagingVisitsAwaitingUpload(string $studyName, array $centerCode): array
     {
 
-        $answer = $this->visit->with('visitType', 'visitType.visitGroup', 'patient')
+        $answer = $this->visitModel->with('visitType', 'visitType.visitGroup', 'patient')
             ->whereHas('patient', function ($query) use ($centerCode) {
                 $query->whereIn('center_code', $centerCode);
             })
@@ -433,6 +433,6 @@ class VisitRepository implements VisitRepositoryInterface
 
     public function reactivateVisit(int $visitId): void
     {
-        $this->visit->withTrashed()->findOrFail($visitId)->restore();
+        $this->visitModel->withTrashed()->findOrFail($visitId)->restore();
     }
 }

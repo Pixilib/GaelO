@@ -8,22 +8,22 @@ use App\GaelO\Interfaces\Repositories\VisitTypeRepositoryInterface;
 class VisitTypeRepository implements VisitTypeRepositoryInterface
 {
 
-    private VisitType $visitType;
+    private VisitType $visitTypeModel;
 
     public function __construct(VisitType $visitType)
     {
-        $this->visitType = $visitType;
+        $this->visitTypeModel = $visitType;
     }
 
     public function find(int $id, bool $withVisitGroup): array
     {
-        if($withVisitGroup) return $this->visitType->with('visitGroup')->findOrFail($id)->toArray();
-        else return $this->visitType->findOrFail($id)->toArray();
+        if($withVisitGroup) return $this->visitTypeModel->with('visitGroup')->findOrFail($id)->toArray();
+        else return $this->visitTypeModel->findOrFail($id)->toArray();
     }
 
     public function findByName(string $studyName, string $visitGroupName, string $visitTypeName): array
     {
-        return $this->visitType
+        return $this->visitTypeModel
             ->where('name', $visitTypeName)
             ->whereHas('visitGroup', function ($query) use ($studyName, $visitGroupName) {
                 $query->where('study_name', $studyName);
@@ -34,7 +34,7 @@ class VisitTypeRepository implements VisitTypeRepositoryInterface
 
     public function delete($id): void
     {
-        $this->visitType->findOrFail($id)->delete();
+        $this->visitTypeModel->findOrFail($id)->delete();
     }
 
     public function createVisitType(
@@ -70,20 +70,20 @@ class VisitTypeRepository implements VisitTypeRepositoryInterface
 
     public function isExistingVisitType(int $visitGroupId, String $name): bool
     {
-        $visitGroup = $this->visitType->where([['visit_group_id', '=', $visitGroupId], ['name', '=', $name]])->get();
+        $visitGroup = $this->visitTypeModel->where([['visit_group_id', '=', $visitGroupId], ['name', '=', $name]])->get();
         return sizeof($visitGroup) > 0;
     }
 
     public function isExistingOrder(int $visitGroupId, int $order): bool
     {
-        $visitGroup = $this->visitType->where([['visit_group_id', '=', $visitGroupId], ['order', '=', $order]])->get();
+        $visitGroup = $this->visitTypeModel->where([['visit_group_id', '=', $visitGroupId], ['order', '=', $order]])->get();
         return sizeof($visitGroup) > 0;
     }
 
     public function getVisitTypesOfStudy(string $studyName): array
     {
 
-        $visitTypes = $this->visitType->with('visitGroup')
+        $visitTypes = $this->visitTypeModel->with('visitGroup')
             ->whereHas('visitGroup', function ($query) use ($studyName) {
                 $query->where('study_name', $studyName);
             })->get();
