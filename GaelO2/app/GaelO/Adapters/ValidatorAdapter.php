@@ -2,6 +2,7 @@
 
 namespace App\GaelO\Adapters;
 
+use App\GaelO\Exceptions\GaelOBadRequestException;
 use App\GaelO\Interfaces\Adapters\ValidatorInterface;
 use App\Rules\BooleanType;
 use App\Rules\NumberType;
@@ -116,7 +117,7 @@ class ValidatorAdapter implements ValidatorInterface
     {
         $validator = Validator::make($data, $this->validationRules);
         if ($validator->fails()) {
-            return false;
+            throw new GaelOBadRequestException($validator->errors()->first());
         } else {
             return true;
         }
