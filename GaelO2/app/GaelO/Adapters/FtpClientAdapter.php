@@ -41,12 +41,16 @@ class FtpClientAdapter implements FTPClientInterface
 
     public function getFileContent(string $fullPath, ?int $maxAgeSeconds): string
     {
-        if (!$this->filesystem->has($fullPath)) throw new Exception('FTP File Not Found');
+        if (!$this->filesystem->has($fullPath)) {
+            throw new Exception('FTP File Not Found');
+        }
 
         $lastUpdateTimeStamp = $this->filesystem->getTimestamp($fullPath);
         $dateNow = new DateTime();
 
-        if ($maxAgeSeconds && ($dateNow->getTimestamp() - $lastUpdateTimeStamp) > $maxAgeSeconds) throw new Exception('FTP Last update over limits');
+        if ($maxAgeSeconds && ($dateNow->getTimestamp() - $lastUpdateTimeStamp) > $maxAgeSeconds) {
+            throw new Exception('FTP Last update over limits');
+        }
 
         $content = $this->filesystem->read($fullPath);
 
@@ -56,7 +60,9 @@ class FtpClientAdapter implements FTPClientInterface
     public function writeFileContent(string $content, string $destinationPath): bool
     {
         $success = $this->filesystem->put($destinationPath, $content);
-        if (!$success) throw new Exception('FTP Write Error');
+        if (!$success) {
+            throw new Exception('FTP Write Error');
+        }
         return $success;
     }
 }
