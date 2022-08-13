@@ -76,7 +76,7 @@ class ValidateDicomUpload
             $this->visitService->updateUploadStatus(Constants::UPLOAD_STATUS_PROCESSING);
 
             //Create Temporary folder to work
-            $unzipedPath = sys_get_temp_dir() . '/GaelO_Upload_' . mt_rand(10000, 99999) . '_' . $currentUserId;
+            $unzipedPath = sys_get_temp_dir() . '/GaelO_Upload_' . random_int(10000, 99999) . '_' . $currentUserId;
             if (is_dir($unzipedPath)) {
                 unlink($unzipedPath);
             } else {
