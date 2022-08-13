@@ -13,6 +13,7 @@ use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
 use App\GaelO\Services\AuthorizationService\AuthorizationVisitService;
 use App\GaelO\Services\FormService\ReviewFormService;
 use Exception;
+use Illuminate\Support\Facades\Log;
 
 class ModifyReviewForm
 {
@@ -88,6 +89,12 @@ class ModifyReviewForm
     private function checkAuthorization(int $currentUserId, int $formOwner, bool $formValidated, bool $reviewAvailability, int $visitId, string $studyName)
     {
         //Asked edition review should be owned by current user, not yet validated and in a visit still allowing review
+        Log::warning($currentUserId);
+        Log::warning($formOwner);
+        Log::warning($formValidated);
+        Log::warning($reviewAvailability);
+        Log::warning($visitId);
+        Log::warning($studyName);
         if ($currentUserId !== $formOwner || $formValidated || !$reviewAvailability) {
             throw new GaelOForbiddenException();
         }
