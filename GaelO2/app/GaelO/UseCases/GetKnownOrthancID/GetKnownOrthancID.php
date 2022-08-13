@@ -3,7 +3,7 @@
 namespace App\GaelO\UseCases\GetKnownOrthancID;
 
 use App\GaelO\Constants\Constants;
-use App\GaelO\Exceptions\GaelOException;
+use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Exceptions\GaelONotFoundException;
 use App\GaelO\Interfaces\Repositories\DicomStudyRepositoryInterface;
@@ -36,7 +36,7 @@ class GetKnownOrthancID
             } else {
                 throw new GaelONotFoundException('Unknown Orthanc Study ID');
             }
-        } catch (GaelOException $e) {
+        } catch (AbstractGaelOException $e) {
             $getKnownOrthancIDResponse->body = $e->getErrorBody();
             $getKnownOrthancIDResponse->status = $e->statusCode;
             $getKnownOrthancIDResponse->statusText = $e->statusText;

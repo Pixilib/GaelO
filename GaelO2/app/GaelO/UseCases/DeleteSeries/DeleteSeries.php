@@ -3,8 +3,8 @@
 namespace App\GaelO\UseCases\DeleteSeries;
 
 use App\GaelO\Constants\Constants;
+use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOBadRequestException;
-use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\DicomSeriesRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
@@ -81,7 +81,7 @@ class DeleteSeries
             $deleteSeriesResponse->status = 200;
             $deleteSeriesResponse->statusText =  'OK';
 
-        } catch (GaelOException $e) {
+        } catch (AbstractGaelOException $e) {
             $deleteSeriesResponse->body = $e->getErrorBody();
             $deleteSeriesResponse->status = $e->statusCode;
             $deleteSeriesResponse->statusText =  $e->statusText;

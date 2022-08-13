@@ -4,7 +4,7 @@ namespace App\GaelO\UseCases\GetCentersFromStudy;
 
 use App\GaelO\Constants\Constants;
 use App\GaelO\Entities\CenterEntity;
-use App\GaelO\Exceptions\GaelOException;
+use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\CenterRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\PatientRepositoryInterface;
@@ -57,7 +57,7 @@ class GetCentersFromStudy
             $getCentersFromStudyResponse->status = 200;
             $getCentersFromStudyResponse->statusText = 'OK';
 
-        } catch (GaelOException $e) {
+        } catch (AbstractGaelOException $e) {
             $getCentersFromStudyResponse->status = $e->statusCode;
             $getCentersFromStudyResponse->statusText = $e->statusText;
             $getCentersFromStudyResponse->body = $e->getErrorBody();

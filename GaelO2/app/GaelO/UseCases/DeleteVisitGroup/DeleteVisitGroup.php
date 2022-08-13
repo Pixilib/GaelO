@@ -2,7 +2,7 @@
 
 namespace App\GaelO\UseCases\DeleteVisitGroup;
 
-use App\GaelO\Exceptions\GaelOException;
+use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\VisitGroupRepositoryInterface;
 use App\GaelO\Services\AuthorizationService\AuthorizationUserService;
@@ -35,7 +35,7 @@ class DeleteVisitGroup {
 
             $deleteVisitGroupResponse->status = 200;
             $deleteVisitGroupResponse->statusText = 'OK';
-        }catch (GaelOException $e){
+        }catch (AbstractGaelOException $e){
             $deleteVisitGroupResponse->body = $e->getErrorBody();
             $deleteVisitGroupResponse->status = $e->statusCode;
             $deleteVisitGroupResponse->statusText = $e->statusText;

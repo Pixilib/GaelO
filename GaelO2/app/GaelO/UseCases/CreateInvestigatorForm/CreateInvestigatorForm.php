@@ -3,8 +3,8 @@
 namespace App\GaelO\UseCases\CreateInvestigatorForm;
 
 use App\GaelO\Constants\Constants;
+use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOBadRequestException;
-use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
@@ -67,8 +67,7 @@ class CreateInvestigatorForm
             $createInvestigatorFormResponse->body = ['id' => $createdFormId];
             $createInvestigatorFormResponse->status = 201;
             $createInvestigatorFormResponse->statusText =  'Created';
-        } catch (GaelOException $e) {
-
+        } catch (AbstractGaelOException $e) {
             $createInvestigatorFormResponse->body = $e->getErrorBody();
             $createInvestigatorFormResponse->status = $e->statusCode;
             $createInvestigatorFormResponse->statusText =  $e->statusText;

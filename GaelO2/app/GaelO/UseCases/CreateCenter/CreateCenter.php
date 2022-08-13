@@ -3,7 +3,7 @@
 namespace App\GaelO\UseCases\CreateCenter;
 
 use App\GaelO\Constants\Constants;
-use App\GaelO\Exceptions\GaelOException;
+use App\GaelO\Exceptions\AbstractGaelOException;
 use Exception;
 use App\GaelO\Exceptions\GaelOConflictException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
@@ -59,7 +59,7 @@ class CreateCenter
 
             $createCenterResponse->status = 201;
             $createCenterResponse->statusText = 'Created';
-        } catch (GaelOException $e) {
+        } catch (AbstractGaelOException $e) {
             $createCenterResponse->body = $e->getErrorBody();
             $createCenterResponse->status = $e->statusCode;
             $createCenterResponse->statusText =  $e->statusText;

@@ -2,7 +2,7 @@
 
 namespace App\GaelO\UseCases\GetRolesInStudyFromUser;
 
-use App\GaelO\Exceptions\GaelOException;
+use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\UserRepositoryInterface;
 use App\GaelO\Services\AuthorizationService\AuthorizationUserService;
@@ -31,7 +31,7 @@ class GetRolesInStudyFromUser
             $getRolesInStudyFromUserResponse->body = $roles;
             $getRolesInStudyFromUserResponse->status = 200;
             $getRolesInStudyFromUserResponse->statusText = 'OK';
-        } catch (GaelOException $e) {
+        } catch (AbstractGaelOException $e) {
 
             $getRolesInStudyFromUserResponse->body = $e->getErrorBody();
             $getRolesInStudyFromUserResponse->status = $e->statusCode;

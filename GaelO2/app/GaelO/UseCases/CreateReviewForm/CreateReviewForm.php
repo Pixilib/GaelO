@@ -3,9 +3,9 @@
 namespace App\GaelO\UseCases\CreateReviewForm;
 
 use App\GaelO\Constants\Constants;
+use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOBadRequestException;
 use App\GaelO\Exceptions\GaelOConflictException;
-use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\ReviewRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\ReviewStatusRepositoryInterface;
@@ -92,7 +92,7 @@ class CreateReviewForm
             $createReviewFormResponse->body = ['id' => $createdReviewId];
             $createReviewFormResponse->status = 201;
             $createReviewFormResponse->statusText =  'Created';
-        } catch (GaelOException $e) {
+        } catch (AbstractGaelOException $e) {
 
             $createReviewFormResponse->body = $e->getErrorBody();
             $createReviewFormResponse->status = $e->statusCode;

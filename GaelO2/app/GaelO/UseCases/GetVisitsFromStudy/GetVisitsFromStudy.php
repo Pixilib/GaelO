@@ -5,7 +5,7 @@ namespace App\GaelO\UseCases\GetVisitsFromStudy;
 use App\GaelO\Constants\Constants;
 use App\GaelO\Entities\CenterEntity;
 use App\GaelO\Entities\PatientEntity;
-use App\GaelO\Exceptions\GaelOException;
+use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\StudyRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
@@ -64,7 +64,7 @@ class GetVisitsFromStudy
             $getVisitsFromStudyResponse->body = $responseArray;
             $getVisitsFromStudyResponse->status = 200;
             $getVisitsFromStudyResponse->statusText = 'OK';
-        } catch (GaelOException $e) {
+        } catch (AbstractGaelOException $e) {
             $getVisitsFromStudyResponse->body = $e->getErrorBody();
             $getVisitsFromStudyResponse->status  = $e->statusCode;
             $getVisitsFromStudyResponse->statusText = $e->statusText;

@@ -3,7 +3,7 @@
 namespace App\GaelO\UseCases\FindUser;
 
 use App\GaelO\Constants\Constants;
-use App\GaelO\Exceptions\GaelOException;
+use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\UserRepositoryInterface;
 use App\GaelO\Services\AuthorizationService\AuthorizationStudyService;
@@ -37,7 +37,7 @@ class FindUser
             $findUserResponse->body = ['id' => $userId];
             $findUserResponse->status = 200;
             $findUserResponse->statusText = 'OK';
-        } catch (GaelOException $e) {
+        } catch (AbstractGaelOException $e) {
             $findUserResponse->body = $e->getErrorBody();
             $findUserResponse->status = $e->statusCode;
             $findUserResponse->statusText = $e->statusText;

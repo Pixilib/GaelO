@@ -4,7 +4,7 @@ namespace App\GaelO\Services\GaelOStudiesService;
 
 use App\GaelO\Adapters\ValidatorAdapter;
 use App\GaelO\Constants\Constants;
-use Exception;
+use App\GaelO\Exceptions\GaelOException;
 
 abstract class AbstractVisitRules
 {
@@ -91,7 +91,7 @@ abstract class AbstractVisitRules
                 $validatorAdapter->addDateValidator($name, $details['optional']);
                 break;
             default:
-                throw new Exception('Unknown Rule');
+                throw new GaelOException('Unknown Rule');
         }
     }
 

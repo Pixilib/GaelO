@@ -3,7 +3,7 @@
 namespace App\GaelO\UseCases\GetInvestigatorFormsMetadataFromVisitType;
 
 use App\GaelO\Constants\Constants;
-use App\GaelO\Exceptions\GaelOException;
+use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Repositories\VisitTypeRepository;
 use App\GaelO\Services\AuthorizationService\AuthorizationStudyService;
@@ -46,7 +46,7 @@ class GetInvestigatorFormsMetadataFromVisitType
             $getInvestigatorFormsMetadataFromVisitTypeResponse->body = $investigatorRules;
             $getInvestigatorFormsMetadataFromVisitTypeResponse->status = 200;
             $getInvestigatorFormsMetadataFromVisitTypeResponse->statusText = 'OK';
-        } catch (GaelOException $e) {
+        } catch (AbstractGaelOException $e) {
             $getInvestigatorFormsMetadataFromVisitTypeResponse->body = $e->getErrorBody();
             $getInvestigatorFormsMetadataFromVisitTypeResponse->status = $e->statusCode;
             $getInvestigatorFormsMetadataFromVisitTypeResponse->statusText = $e->statusText;

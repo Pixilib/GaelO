@@ -3,12 +3,12 @@
 namespace App\GaelO\UseCases\GetReviewsFromVisitType;
 
 use App\GaelO\Constants\Constants;
-use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\ReviewRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
 use App\GaelO\Entities\ReviewEntity;
 use App\GaelO\Entities\UserEntity;
+use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Services\AuthorizationService\AuthorizationStudyService;
 use Exception;
 
@@ -54,7 +54,7 @@ class GetReviewsFromVisitType
             $getReviewsFromVisitTypeResponse->body = $answer;
             $getReviewsFromVisitTypeResponse->status = 200;
             $getReviewsFromVisitTypeResponse->statusText = 'OK';
-        } catch (GaelOException $e) {
+        } catch (AbstractGaelOException $e) {
             $getReviewsFromVisitTypeResponse->body = $e->getErrorBody();
             $getReviewsFromVisitTypeResponse->status = $e->statusCode;
             $getReviewsFromVisitTypeResponse->statusText = $e->statusText;

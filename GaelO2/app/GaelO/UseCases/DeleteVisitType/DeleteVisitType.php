@@ -2,7 +2,7 @@
 
 namespace App\GaelO\UseCases\DeleteVisitType;
 
-use App\GaelO\Exceptions\GaelOException;
+use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\VisitTypeRepositoryInterface;
@@ -38,7 +38,7 @@ class DeleteVisitType
             $this->visitTypeRepositoryInterface->delete($deleteVisitTypeRequest->visitTypeId);
             $deleteVisitTypeResponse->status = 200;
             $deleteVisitTypeResponse->statusText = 'OK';
-        } catch (GaelOException $e) {
+        } catch (AbstractGaelOException $e) {
             $deleteVisitTypeResponse->status = $e->statusCode;
             $deleteVisitTypeResponse->statusText = $e->statusText;
             $deleteVisitTypeResponse->body = $e->getErrorBody();

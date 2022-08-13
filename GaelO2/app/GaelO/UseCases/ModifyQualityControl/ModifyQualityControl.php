@@ -4,7 +4,7 @@ namespace App\GaelO\UseCases\ModifyQualityControl;
 
 use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOBadRequestException;
-use App\GaelO\Exceptions\GaelOException;
+use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
 use App\GaelO\Services\AuthorizationService\AuthorizationVisitService;
@@ -118,7 +118,7 @@ class ModifyQualityControl
 
             $modifyQualityControlResponse->status = 200;
             $modifyQualityControlResponse->statusText = 'OK';
-        } catch (GaelOException $e) {
+        } catch (AbstractGaelOException $e) {
 
             $modifyQualityControlResponse->body = $e->getErrorBody();
             $modifyQualityControlResponse->status = $e->statusCode;

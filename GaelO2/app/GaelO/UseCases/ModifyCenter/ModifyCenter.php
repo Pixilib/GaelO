@@ -4,7 +4,7 @@ namespace App\GaelO\UseCases\ModifyCenter;
 
 use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOConflictException;
-use App\GaelO\Exceptions\GaelOException;
+use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Exceptions\GaelONotFoundException;
 use App\GaelO\Interfaces\Repositories\CenterRepositoryInterface;
@@ -61,7 +61,7 @@ class ModifyCenter
 
             $modifyCenterResponse->status = 200;
             $modifyCenterResponse->statusText = 'OK';
-        } catch (GaelOException $e) {
+        } catch (AbstractGaelOException $e) {
 
             $modifyCenterResponse->status = $e->statusCode;
             $modifyCenterResponse->statusText = $e->statusText;

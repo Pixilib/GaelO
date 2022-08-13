@@ -3,7 +3,7 @@
 namespace App\GaelO\UseCases\ExportStudyData;
 
 use App\GaelO\Constants\Constants;
-use App\GaelO\Exceptions\GaelOException;
+use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Services\AuthorizationService\AuthorizationStudyService;
 use App\GaelO\Services\ExportStudyService;
@@ -47,7 +47,7 @@ class ExportStudyData
             $exportStudyDataResponse->status = 200;
             $exportStudyDataResponse->statusText = 'OK';
             $exportStudyDataResponse->fileName = "export_" . $studyName . ".zip";
-        } catch (GaelOException $e) {
+        } catch (AbstractGaelOException $e) {
 
             $exportStudyDataResponse->status = $e->statusCode;
             $exportStudyDataResponse->statusText = $e->statusText;

@@ -4,7 +4,7 @@ namespace App\GaelO\UseCases\Login;
 
 use App\GaelO\Adapters\FrameworkAdapter;
 use App\GaelO\Constants\Constants;
-use App\GaelO\Exceptions\GaelOException;
+use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOUnauthorizedException;
 use App\GaelO\Interfaces\Adapters\HashInterface;
 use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
@@ -59,7 +59,7 @@ class Login
             } else {
                 throw new GaelOUnauthorizedException("Unknown email/password");
             }
-        } catch (GaelOException $e) {
+        } catch (AbstractGaelOException $e) {
             $loginResponse->body = $e->getErrorBody();
             $loginResponse->status = $e->statusCode;
             $loginResponse->statusText = $e->statusText;

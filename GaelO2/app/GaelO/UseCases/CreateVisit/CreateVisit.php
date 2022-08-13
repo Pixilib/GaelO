@@ -3,9 +3,9 @@
 namespace App\GaelO\UseCases\CreateVisit;
 
 use App\GaelO\Constants\Constants;
+use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOBadRequestException;
 use App\GaelO\Exceptions\GaelOConflictException;
-use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\PatientRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
@@ -140,7 +140,7 @@ class CreateVisit
             $createVisitResponse->body = ['id' => $visitId];
             $createVisitResponse->status = 201;
             $createVisitResponse->statusText = 'Created';
-        } catch (GaelOException $e) {
+        } catch (AbstractGaelOException $e) {
             $createVisitResponse->status = $e->statusCode;
             $createVisitResponse->statusText = $e->statusText;
             $createVisitResponse->body = $e->getErrorBody();

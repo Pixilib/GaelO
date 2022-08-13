@@ -4,7 +4,7 @@ namespace App\GaelO\UseCases\ModifyUser;
 
 use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOConflictException;
-use App\GaelO\Exceptions\GaelOException;
+use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Adapters\FrameworkInterface;
 use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
@@ -86,7 +86,7 @@ class ModifyUser
 
             $modifyUserResponse->status = 200;
             $modifyUserResponse->statusText = 'OK';
-        } catch (GaelOException $e) {
+        } catch (AbstractGaelOException $e) {
             $modifyUserResponse->body = $e->getErrorBody();
             $modifyUserResponse->status = $e->statusCode;
             $modifyUserResponse->statusText = $e->statusText;

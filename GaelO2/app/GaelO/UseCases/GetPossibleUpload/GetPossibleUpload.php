@@ -3,7 +3,7 @@
 namespace App\GaelO\UseCases\GetPossibleUpload;
 
 use App\GaelO\Constants\Constants;
-use App\GaelO\Exceptions\GaelOException;
+use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\UserRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
@@ -53,7 +53,7 @@ class GetPossibleUpload
             $getPossibleUploadResponse->body = $answerArray;
             $getPossibleUploadResponse->status = 200;
             $getPossibleUploadResponse->statusText = 'OK';
-        } catch (GaelOException $e) {
+        } catch (AbstractGaelOException $e) {
 
             $getPossibleUploadResponse->body = $e->getErrorBody();
             $getPossibleUploadResponse->status = $e->statusCode;

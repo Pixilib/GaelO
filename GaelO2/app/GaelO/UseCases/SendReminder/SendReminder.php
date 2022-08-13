@@ -4,7 +4,7 @@ namespace App\GaelO\UseCases\SendReminder;
 
 use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOBadRequestException;
-use App\GaelO\Exceptions\GaelOException;
+use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Services\MailServices;
 use App\GaelO\Services\AuthorizationService\AuthorizationStudyService;
@@ -49,7 +49,7 @@ class SendReminder
             $sendReminderResponse->status = 200;
             $sendReminderResponse->statusText = 'OK';
 
-        } catch (GaelOException $e) {
+        } catch (AbstractGaelOException $e) {
             $sendReminderResponse->body = $e->getErrorBody();
             $sendReminderResponse->status = $e->statusCode;
             $sendReminderResponse->statusText = $e->statusText;

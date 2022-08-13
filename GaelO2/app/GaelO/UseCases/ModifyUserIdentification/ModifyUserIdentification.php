@@ -6,7 +6,7 @@ use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOConflictException;
 use App\GaelO\UseCases\ModifyUserIdentification\ModifyUserIdentificationRequest;
 use App\GaelO\UseCases\ModifyUserIdentification\ModifyUserIdentificationResponse;
-use App\GaelO\Exceptions\GaelOException;
+use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Adapters\FrameworkInterface;
 use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
@@ -83,7 +83,7 @@ class ModifyUserIdentification
 
             $modifyUserIdentificationResponse->status = 200;
             $modifyUserIdentificationResponse->statusText = 'OK';
-        } catch (GaelOException $e) {
+        } catch (AbstractGaelOException $e) {
             $modifyUserIdentificationResponse->body = $e->getErrorBody();
             $modifyUserIdentificationResponse->status = $e->statusCode;
             $modifyUserIdentificationResponse->statusText = $e->statusText;

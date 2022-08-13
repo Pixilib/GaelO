@@ -3,8 +3,8 @@
 namespace App\GaelO\UseCases\CreateDocumentation;
 
 use App\GaelO\Constants\Constants;
+use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOBadRequestException;
-use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOConflictException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\DocumentationRepositoryInterface;
@@ -81,7 +81,7 @@ class CreateDocumentation
             $createDocumentationResponse->body = ['id' => $createdEntity['id']];
             $createDocumentationResponse->status = 201;
             $createDocumentationResponse->statusText =  'Created';
-        } catch (GaelOException $e) {
+        } catch (AbstractGaelOException $e) {
             $createDocumentationResponse->body = $e->getErrorBody();
             $createDocumentationResponse->status = $e->statusCode;
             $createDocumentationResponse->statusText =  $e->statusText;

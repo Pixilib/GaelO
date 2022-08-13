@@ -2,7 +2,7 @@
 
 namespace App\GaelO\Services\StoreObjects\Export;
 
-use Exception;
+use App\GaelO\Exceptions\GaelOException;
 
 class ExportVisitsResults extends ExportDataResults{
 
@@ -21,7 +21,7 @@ class ExportVisitsResults extends ExportDataResults{
         }else if ($type === ExportDataResults::EXPORT_TYPE_CSV) {
            $this->csvVisitsExport[] = new ExportFile('export_visits_'.$key.'.csv', $path);
         }else{
-            throw new Exception('Unknown File Type');
+            throw new GaelOException('Unknown File Type');
         }
 
     }

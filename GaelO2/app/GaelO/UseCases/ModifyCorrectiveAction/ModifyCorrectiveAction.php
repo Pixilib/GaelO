@@ -3,7 +3,7 @@
 namespace App\GaelO\UseCases\ModifyCorrectiveAction;
 
 use App\GaelO\Constants\Constants;
-use App\GaelO\Exceptions\GaelOException;
+use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
@@ -101,7 +101,7 @@ class ModifyCorrectiveAction
 
             $modifyCorrectiveActionResponse->status = 200;
             $modifyCorrectiveActionResponse->statusText = 'OK';
-        } catch (GaelOException $e) {
+        } catch (AbstractGaelOException $e) {
             $modifyCorrectiveActionResponse->body = $e->getErrorBody();
             $modifyCorrectiveActionResponse->status = $e->statusCode;
             $modifyCorrectiveActionResponse->statusText = $e->statusText;

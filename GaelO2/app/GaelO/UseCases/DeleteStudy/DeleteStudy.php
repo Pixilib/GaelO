@@ -3,8 +3,8 @@
 namespace App\GaelO\UseCases\DeleteStudy;
 
 use App\GaelO\Constants\Constants;
+use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOBadRequestException;
-use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\StudyRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
@@ -45,7 +45,7 @@ class DeleteStudy
 
             $deleteStudyResponse->status = 200;
             $deleteStudyResponse->statusText = 'OK';
-        } catch (GaelOException $e) {
+        } catch (AbstractGaelOException $e) {
             $deleteStudyResponse->body = $e->getErrorBody();
             $deleteStudyResponse->status = $e->statusCode;
             $deleteStudyResponse->statusText = $e->statusText;

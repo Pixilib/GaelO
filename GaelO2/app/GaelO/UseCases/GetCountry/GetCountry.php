@@ -2,10 +2,10 @@
 
 namespace App\GaelO\UseCases\GetCountry;
 
-use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\CountryRepositoryInterface;
 use App\GaelO\Entities\CountryEntity;
+use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Services\AuthorizationService\AuthorizationUserService;
 use App\GaelO\UseCases\GetCountry\GetCountryRequest;
 use App\GaelO\UseCases\GetCountry\GetCountryResponse;
@@ -42,7 +42,7 @@ class GetCountry
             }
             $getCountryResponse->status = 200;
             $getCountryResponse->statusText = 'OK';
-        } catch (GaelOException $e) {
+        } catch (AbstractGaelOException $e) {
             $getCountryResponse->status = $e->statusCode;
             $getCountryResponse->statusText = $e->statusText;
             $getCountryRequest->body = $e->getErrorBody();

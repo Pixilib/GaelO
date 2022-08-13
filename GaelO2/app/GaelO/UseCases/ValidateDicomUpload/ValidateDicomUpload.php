@@ -3,7 +3,7 @@
 namespace App\GaelO\UseCases\ValidateDicomUpload;
 
 use App\GaelO\Constants\Constants;
-use App\GaelO\Exceptions\GaelOException;
+use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Exceptions\GaelOValidateDicomException;
 use App\GaelO\Interfaces\Repositories\PatientRepositoryInterface;
@@ -163,7 +163,7 @@ class ValidateDicomUpload
 
             $validateDicomUploadResponse->status = 200;
             $validateDicomUploadResponse->statusText = 'OK';
-        } catch (GaelOException $e) {
+        } catch (AbstractGaelOException $e) {
             $this->handleImportException(
                 $e->getMessage(),
                 $visitId,

@@ -5,7 +5,7 @@ namespace App\GaelO\UseCases\GetVisit;
 use App\GaelO\Constants\Constants;
 use App\GaelO\Entities\UserEntity;
 use App\GaelO\Entities\VisitEntity;
-use App\GaelO\Exceptions\GaelOException;
+use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
 use App\GaelO\Services\AuthorizationService\AuthorizationVisitService;
@@ -54,7 +54,7 @@ class GetVisit
             $getVisitResponse->body = $responseEntity;
             $getVisitResponse->status = 200;
             $getVisitResponse->statusText = 'OK';
-        } catch (GaelOException $e) {
+        } catch (AbstractGaelOException $e) {
             $getVisitResponse->body = $e->getErrorBody();
             $getVisitResponse->status  = $e->statusCode;
             $getVisitResponse->statusText = $e->statusText;

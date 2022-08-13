@@ -3,8 +3,8 @@
 namespace App\GaelO\UseCases\CreateUserRoles;
 
 use App\GaelO\Constants\Constants;
+use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOConflictException;
-use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\StudyRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
@@ -59,7 +59,7 @@ class CreateUserRoles
 
             $createRoleResponse->statusText = "Created";
             $createRoleResponse->status = 201;
-        } catch (GaelOException $e) {
+        } catch (AbstractGaelOException $e) {
             $createRoleResponse->statusText = $e->statusText;
             $createRoleResponse->status = $e->statusCode;
             $createRoleResponse->body = $e->getErrorBody();

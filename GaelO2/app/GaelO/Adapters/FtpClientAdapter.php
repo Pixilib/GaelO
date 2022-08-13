@@ -2,8 +2,8 @@
 
 namespace App\GaelO\Adapters;
 
+use App\GaelO\Exceptions\GaelOException;
 use DateTime;
-use Exception;
 use App\GaelO\Interfaces\Adapters\FTPClientInterface;
 use League\Flysystem\Adapter\Ftp as FtpAdapter;
 use League\Flysystem\Sftp\SftpAdapter;
@@ -42,14 +42,14 @@ class FtpClientAdapter implements FTPClientInterface
     public function getFileContent(string $fullPath, ?int $maxAgeSeconds): string
     {
         if (!$this->filesystem->has($fullPath)) {
-            throw new Exception('FTP File Not Found');
+            throw new GaelOException('FTP File Not Found');
         }
 
         $lastUpdateTimeStamp = $this->filesystem->getTimestamp($fullPath);
         $dateNow = new DateTime();
 
         if ($maxAgeSeconds && ($dateNow->getTimestamp() - $lastUpdateTimeStamp) > $maxAgeSeconds) {
-            throw new Exception('FTP Last update over limits');
+            throw new GaelOException('FTP Last update over limits');
         }
 
         $content = $this->filesystem->read($fullPath);
@@ -61,7 +61,7 @@ class FtpClientAdapter implements FTPClientInterface
     {
         $success = $this->filesystem->put($destinationPath, $content);
         if (!$success) {
-            throw new Exception('FTP Write Error');
+            throw new GaelOException('FTP Write Error');
         }
         return $success;
     }

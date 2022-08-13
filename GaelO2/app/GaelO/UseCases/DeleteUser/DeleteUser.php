@@ -3,7 +3,7 @@
 namespace App\GaelO\UseCases\DeleteUser;
 
 use App\GaelO\Constants\Constants;
-use App\GaelO\Exceptions\GaelOException;
+use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\UserRepositoryInterface;
@@ -50,7 +50,7 @@ class DeleteUser
 
             $deleteResponse->status = 200;
             $deleteResponse->statusText = 'OK';
-        } catch (GaelOException $e) {
+        } catch (AbstractGaelOException $e) {
             $deleteResponse->status = $e->statusCode;
             $deleteResponse->statusText = $e->statusText;
             $deleteResponse->body = $e->getErrorBody();

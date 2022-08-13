@@ -3,8 +3,8 @@
 namespace App\GaelO\UseCases\DeleteReviewForm;
 
 use App\GaelO\Constants\Constants;
+use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOBadRequestException;
-use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\ReviewRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\ReviewStatusRepositoryInterface;
@@ -113,7 +113,7 @@ class DeleteReviewForm
 
             $deleteReviewFormResponse->status = 200;
             $deleteReviewFormResponse->statusText =  'OK';
-        } catch (GaelOException $e) {
+        } catch (AbstractGaelOException $e) {
             $deleteReviewFormResponse->body = $e->getErrorBody();
             $deleteReviewFormResponse->status = $e->statusCode;
             $deleteReviewFormResponse->statusText =  $e->statusText;

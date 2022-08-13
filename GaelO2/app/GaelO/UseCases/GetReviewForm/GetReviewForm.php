@@ -4,7 +4,7 @@ namespace App\GaelO\UseCases\GetReviewForm;
 
 use App\GaelO\Constants\Constants;
 use App\GaelO\Entities\ReviewEntity;
-use App\GaelO\Exceptions\GaelOException;
+use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\ReviewRepositoryInterface;
 use App\GaelO\Services\AuthorizationService\AuthorizationReviewService;
@@ -37,7 +37,7 @@ class GetReviewForm
             $getReviewFormResponse->body = $review;
             $getReviewFormResponse->status = 200;
             $getReviewFormResponse->statusText = 'OK';
-        } catch (GaelOException $e) {
+        } catch (AbstractGaelOException $e) {
             $getReviewFormResponse->body = $e->getErrorBody();
             $getReviewFormResponse->status = $e->statusCode;
             $getReviewFormResponse->statusText = $e->statusText;

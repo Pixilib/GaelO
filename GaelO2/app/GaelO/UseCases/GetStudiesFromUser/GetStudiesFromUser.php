@@ -2,7 +2,7 @@
 
 namespace App\GaelO\UseCases\GetStudiesFromUser;
 
-use App\GaelO\Exceptions\GaelOException;
+use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\UserRepositoryInterface;
 use Exception;
@@ -32,7 +32,7 @@ class GetStudiesFromUser
             $getStudiesFromUserResponse->body = $studiesNames;
             $getStudiesFromUserResponse->status = 200;
             $getStudiesFromUserResponse->statusText = 'OK';
-        } catch (GaelOException $e) {
+        } catch (AbstractGaelOException $e) {
 
             $getStudiesFromUserResponse->body = $e->getErrorBody();
             $getStudiesFromUserResponse->status = $e->statusCode;

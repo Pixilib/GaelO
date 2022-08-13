@@ -2,9 +2,7 @@
 
 namespace App\GaelO\Exceptions;
 
-use App\GaelO\Exceptions\GaelOException;
-
-class GaelONotFoundException extends GaelOException {
+class GaelONotFoundException extends AbstractGaelOException {
 
     public function __construct(string $message){
         parent::__construct($message, 404, "Not Found");

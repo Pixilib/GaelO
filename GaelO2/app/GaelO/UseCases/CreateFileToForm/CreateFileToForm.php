@@ -3,7 +3,7 @@
 namespace App\GaelO\UseCases\CreateFileToForm;
 
 use App\GaelO\Constants\Constants;
-use App\GaelO\Exceptions\GaelOException;
+use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Adapters\MimeInterface;
 use App\GaelO\Interfaces\Repositories\ReviewRepositoryInterface;
@@ -82,7 +82,7 @@ class CreateFileToForm
 
             $createFileToReviewResponse->status = 201;
             $createFileToReviewResponse->statusText =  'Created';
-        } catch (GaelOException $e) {
+        } catch (AbstractGaelOException $e) {
             $createFileToReviewResponse->body = $e->getErrorBody();
             $createFileToReviewResponse->status = $e->statusCode;
             $createFileToReviewResponse->statusText =  $e->statusText;

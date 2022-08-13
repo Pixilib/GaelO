@@ -4,7 +4,7 @@ namespace App\GaelO\UseCases\ModifyReviewForm;
 
 use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOBadRequestException;
-use App\GaelO\Exceptions\GaelOException;
+use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\ReviewRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\ReviewStatusRepositoryInterface;
@@ -76,7 +76,7 @@ class ModifyReviewForm
             $modifyReviewFormResponse->body = ['id' => $reviewEntity['id']];
             $modifyReviewFormResponse->status = 200;
             $modifyReviewFormResponse->statusText = 'OK';
-        } catch (GaelOException $e) {
+        } catch (AbstractGaelOException $e) {
             $modifyReviewFormResponse->body = $e->getErrorBody();
             $modifyReviewFormResponse->status = $e->statusCode;
             $modifyReviewFormResponse->statusText = $e->statusText;

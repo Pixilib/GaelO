@@ -3,7 +3,7 @@
 namespace App\GaelO\UseCases\DeleteDocumentation;
 
 use App\GaelO\Constants\Constants;
-use App\GaelO\Exceptions\GaelOException;
+use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\DocumentationRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
@@ -56,7 +56,7 @@ class DeleteDocumentation
 
             $deleteDocumentationResponse->status = 200;
             $deleteDocumentationResponse->statusText =  'OK';
-        } catch (GaelOException $e) {
+        } catch (AbstractGaelOException $e) {
             $deleteDocumentationResponse->body = $e->getErrorBody();
             $deleteDocumentationResponse->status = $e->statusCode;
             $deleteDocumentationResponse->statusText =  $e->statusText;

@@ -3,7 +3,7 @@
 namespace App\GaelO\UseCases\GetDocumentationFile;
 
 use App\GaelO\Constants\Constants;
-use App\GaelO\Exceptions\GaelOException;
+use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Adapters\FrameworkInterface;
 use App\GaelO\Interfaces\Repositories\DocumentationRepositoryInterface;
@@ -42,7 +42,7 @@ class GetDocumentationFile
             $getdocumentationFileReponse->statusText = 'OK';
             $getdocumentationFileReponse->filePath = $documentationData['path'];
             $getdocumentationFileReponse->filename = $documentationData['name'] . '_' . $documentationData['version'] . '.pdf';
-        } catch (GaelOException $e) {
+        } catch (AbstractGaelOException $e) {
             $getdocumentationFileReponse->status = $e->statusCode;
             $getdocumentationFileReponse->statusText = $e->statusText;
             $getdocumentationFileReponse->body = $e->getErrorBody();

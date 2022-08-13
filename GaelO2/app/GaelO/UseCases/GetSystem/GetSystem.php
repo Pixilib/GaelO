@@ -3,7 +3,7 @@
 namespace App\GaelO\UseCases\GetSystem;
 
 use App\GaelO\Constants\SettingsConstants;
-use App\GaelO\Exceptions\GaelOException;
+use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Adapters\FrameworkInterface;
 use App\GaelO\Services\AuthorizationService\AuthorizationUserService;
@@ -41,7 +41,7 @@ class GetSystem
             $getSystemResponse->body = $preferences;
             $getSystemResponse->status = 200;
             $getSystemResponse->statusText = 'OK';
-        } catch (GaelOException $e) {
+        } catch (AbstractGaelOException $e) {
             $getSystemResponse->body = $e->getErrorBody();
             $getSystemResponse->status = $e->statusCode;
             $getSystemResponse->statusText = $e->statusText;

@@ -3,8 +3,8 @@
 namespace App\GaelO\UseCases\CreateStudy;
 
 use App\GaelO\Constants\Constants;
+use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOBadRequestException;
-use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOConflictException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\StudyRepositoryInterface;
@@ -82,7 +82,7 @@ class CreateStudy
 
             $createStudyResponse->status = 201;
             $createStudyResponse->statusText = 'Created';
-        } catch (GaelOException $e) {
+        } catch (AbstractGaelOException $e) {
             $createStudyResponse->body = $e->getErrorBody();
             $createStudyResponse->status = $e->statusCode;
             $createStudyResponse->statusText = $e->statusText;

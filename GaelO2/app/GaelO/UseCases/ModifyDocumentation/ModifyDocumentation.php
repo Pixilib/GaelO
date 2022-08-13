@@ -4,7 +4,7 @@ namespace App\GaelO\UseCases\ModifyDocumentation;
 
 use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOBadRequestException;
-use App\GaelO\Exceptions\GaelOException;
+use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOConflictException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\DocumentationRepositoryInterface;
@@ -81,7 +81,7 @@ class ModifyDocumentation
 
             $modifyDocumentationResponse->status = 200;
             $modifyDocumentationResponse->statusText = 'OK';
-        } catch (GaelOException $e) {
+        } catch (AbstractGaelOException $e) {
             $modifyDocumentationResponse->body = $e->getErrorBody();
             $modifyDocumentationResponse->status = $e->statusCode;
             $modifyDocumentationResponse->statusText = $e->statusText;

@@ -4,7 +4,7 @@ namespace App\GaelO\UseCases\ModifyUserOnboarding;
 
 use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOBadRequestException;
-use App\GaelO\Exceptions\GaelOException;
+use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\UserRepositoryInterface;
@@ -64,7 +64,7 @@ class ModifyUserOnboarding
 
             $modifyUserOnboardingResponse->status = 200;
             $modifyUserOnboardingResponse->statusText = 'OK';
-        } catch (GaelOException $e) {
+        } catch (AbstractGaelOException $e) {
             $modifyUserOnboardingResponse->body = $e->getErrorBody();
             $modifyUserOnboardingResponse->status = $e->statusCode;
             $modifyUserOnboardingResponse->statusText = $e->statusText;

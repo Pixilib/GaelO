@@ -4,7 +4,7 @@ namespace App\GaelO\UseCases\ModifyInvestigatorForm;
 
 use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOBadRequestException;
-use App\GaelO\Exceptions\GaelOException;
+use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
@@ -66,7 +66,7 @@ class ModifyInvestigatorForm
             $modifyInvestigatorFormResponse->body = ['id' => $localReviewId];
             $modifyInvestigatorFormResponse->status = 200;
             $modifyInvestigatorFormResponse->statusText =  'OK';
-        } catch (GaelOException $e) {
+        } catch (AbstractGaelOException $e) {
 
             $modifyInvestigatorFormResponse->body = $e->getErrorBody();
             $modifyInvestigatorFormResponse->status = $e->statusCode;

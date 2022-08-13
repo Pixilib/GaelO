@@ -3,12 +3,12 @@
 namespace App\GaelO\UseCases\GetPatientsInStudyFromCenters;
 
 use App\GaelO\Constants\Constants;
-use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\PatientRepositoryInterface;
 use App\GaelO\UseCases\GetPatientsInStudyFromCenters\GetPatientsInStudyFromCentersRequest;
 use App\GaelO\UseCases\GetPatientsInStudyFromCenters\GetPatientsInStudyFromCentersResponse;
 use App\GaelO\Entities\PatientEntity;
+use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Interfaces\Repositories\StudyRepositoryInterface;
 use App\GaelO\Services\AuthorizationService\AuthorizationStudyService;
 use Exception;
@@ -56,7 +56,7 @@ class GetPatientsInStudyFromCenters
             $getPatientsInStudyFromCentersResponse->body = $responseArray;
             $getPatientsInStudyFromCentersResponse->status = 200;
             $getPatientsInStudyFromCentersResponse->statusText = 'OK';
-        } catch (GaelOException $e) {
+        } catch (AbstractGaelOException $e) {
             $getPatientsInStudyFromCentersResponse->body = $e->getErrorBody();
             $getPatientsInStudyFromCentersResponse->status = $e->statusCode;
             $getPatientsInStudyFromCentersResponse->statusText = $e->statusText;

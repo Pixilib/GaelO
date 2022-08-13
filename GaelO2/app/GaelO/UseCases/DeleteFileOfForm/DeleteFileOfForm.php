@@ -3,7 +3,7 @@
 namespace App\GaelO\UseCases\DeleteFileOfForm;
 
 use App\GaelO\Constants\Constants;
-use App\GaelO\Exceptions\GaelOException;
+use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\ReviewRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
@@ -75,7 +75,7 @@ class DeleteFileOfForm
 
             $deleteFileOfFormResponse->status = 200;
             $deleteFileOfFormResponse->statusText =  'OK';
-        } catch (GaelOException $e) {
+        } catch (AbstractGaelOException $e) {
 
             $deleteFileOfFormResponse->body = $e->getErrorBody();
             $deleteFileOfFormResponse->status = $e->statusCode;
