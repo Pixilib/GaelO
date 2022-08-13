@@ -152,7 +152,7 @@ class RegisterDicomStudyService
         );
     }
 
-    private function filterMicrosecInDicomTime(?string $string): string
+    private function filterMicrosecInDicomTime(?string $string): ?string
     {
 
         if (strpos($string, ".")) {
@@ -163,7 +163,7 @@ class RegisterDicomStudyService
         return $string;
     }
 
-    private function parseDicomDateTime(?string $string)
+    private function parseDicomDateTime(?string $string) : ?string
     {
         $parsedDateTime = null;
 
@@ -177,7 +177,7 @@ class RegisterDicomStudyService
         return $parsedDateTime;
     }
 
-    private function parseDicomTime(?string $string)
+    private function parseDicomTime(?string $string) : ?string
     {
         $parsedDateTime = null;
 
@@ -191,7 +191,7 @@ class RegisterDicomStudyService
         return $parsedDateTime;
     }
 
-    private function parseDicomDate(?string $string)
+    private function parseDicomDate(?string $string) : ?string
     {
         $parsedDateTime = null;
 
