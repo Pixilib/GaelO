@@ -125,6 +125,6 @@ class ModifyPatient
         $this->authorizationPatientService->setStudyName($studyName);
         if (!$this->authorizationPatientService->isPatientAllowed(Constants::ROLE_SUPERVISOR)) {
             throw new GaelOForbiddenException();
-        };
+        }
     }
 }

@@ -82,12 +82,12 @@ class CreateInvestigatorForm
 
         if (in_array($visitInvestigatorFormStatus, [Constants::INVESTIGATOR_FORM_DRAFT, Constants::INVESTIGATOR_FORM_DONE])) {
             throw new GaelOForbiddenException();
-        };
+        }
 
         if ($visitInvestigatorFormStatus === Constants::INVESTIGATOR_FORM_NOT_NEEDED) {
             //No investigator form creation if not expected to have one
             throw new GaelOForbiddenException();
-        };
+        }
 
         $this->authorizationVisitService->setUserId($currentUserId);
         $this->authorizationVisitService->setVisitId($visitId);

@@ -51,6 +51,6 @@ class GetKnownOrthancID
         $this->authorizationStudyService->setUserId($currentUserId);
         if (!$this->authorizationStudyService->isAllowedStudy(Constants::ROLE_INVESTIGATOR)) {
             throw new GaelOForbiddenException();
-        };
+        }
     }
 }

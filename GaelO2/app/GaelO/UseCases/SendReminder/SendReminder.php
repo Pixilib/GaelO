@@ -71,6 +71,6 @@ class SendReminder
         $this->authorizationStudyService->setUserId($userId);
         if (!$this->authorizationStudyService->isAllowedStudy(Constants::ROLE_SUPERVISOR)) {
             throw new GaelOForbiddenException();
-        };
+        }
     }
 }

@@ -46,7 +46,7 @@ class CreateDocumentation
 
             if ($this->documentationRepositoryInterface->isKnowndocumentation($studyName, $documentationName, $documentationVersion)) {
                 throw new GaelOConflictException("Documentation already existing under this version");
-            };
+            }
 
             $createdEntity = $this->documentationRepositoryInterface->createDocumentation(
                 $documentationName,

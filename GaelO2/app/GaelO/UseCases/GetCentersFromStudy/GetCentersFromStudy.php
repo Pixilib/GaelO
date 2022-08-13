@@ -72,6 +72,6 @@ class GetCentersFromStudy
         $this->authorizationStudyService->setStudyName($studyName);
         if (!$this->authorizationStudyService->isAllowedStudy(Constants::ROLE_SUPERVISOR)) {
             throw new GaelOForbiddenException();
-        };
+        }
     }
 }

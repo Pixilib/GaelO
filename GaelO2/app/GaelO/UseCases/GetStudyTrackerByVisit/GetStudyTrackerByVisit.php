@@ -57,6 +57,6 @@ class GetStudyTrackerByVisit
         $this->authorizationVisitService->setStudyName($studyName);
         if (!$this->authorizationVisitService->isVisitAllowed(Constants::ROLE_SUPERVISOR)) {
             throw new GaelOForbiddenException();
-        };
+        }
     }
 }

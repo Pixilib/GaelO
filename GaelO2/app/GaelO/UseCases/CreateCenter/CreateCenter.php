@@ -41,11 +41,11 @@ class CreateCenter
 
             if ($this->centerRepositoryInterface->isKnownCenter($code)) {
                 throw new GaelOConflictException("Center Code already used");
-            };
+            }
 
             if ($this->centerRepositoryInterface->isExistingCenterName($name)) {
                 throw new GaelOConflictException("Center Name already used.");
-            };
+            }
 
             $this->centerRepositoryInterface->createCenter($code, $name, $countryCode);
 
@@ -73,6 +73,6 @@ class CreateCenter
         $this->authorizationUserService->setUserId($currentUserId);
         if (!$this->authorizationUserService->isAdmin()) {
             throw new GaelOForbiddenException();
-        };
+        }
     }
 }

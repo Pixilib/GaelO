@@ -59,6 +59,6 @@ class DeleteUserRole
         $this->authorizationUserService->setUserId($userId);
         if (!$this->authorizationUserService->isAdmin()) {
             throw new GaelOForbiddenException();
-        };
+        }
     }
 }

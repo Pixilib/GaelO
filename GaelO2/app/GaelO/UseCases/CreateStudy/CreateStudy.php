@@ -96,6 +96,6 @@ class CreateStudy
         $this->authorizationUserService->setUserId($currentUserId);
         if (!$this->authorizationUserService->isAdmin($currentUserId)) {
             throw new GaelOForbiddenException();
-        };
+        }
     }
 }

@@ -92,7 +92,7 @@ class ModifyUser
             $modifyUserResponse->statusText = $e->statusText;
         } catch (Exception $e) {
             throw $e;
-        };
+        }
     }
 
     private function checkAuthorization($userId)
@@ -100,6 +100,6 @@ class ModifyUser
         $this->authorizationUserService->setUserId($userId);
         if (!$this->authorizationUserService->isAdmin()) {
             throw new GaelOForbiddenException();
-        };
+        }
     }
 }

@@ -56,7 +56,7 @@ class DeleteUser
             $deleteResponse->body = $e->getErrorBody();
         } catch (Exception $e) {
             throw $e;
-        };
+        }
     }
 
     private function checkAuthorization(int $userId): void
@@ -64,6 +64,6 @@ class DeleteUser
         $this->authorizationUserService->setUserId($userId);
         if (!$this->authorizationUserService->isAdmin()) {
             throw new GaelOForbiddenException();
-        };
+        }
     }
 }

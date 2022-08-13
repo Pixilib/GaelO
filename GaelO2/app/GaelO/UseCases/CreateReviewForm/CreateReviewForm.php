@@ -59,7 +59,7 @@ class CreateReviewForm
 
             if ($this->reviewRepositoryInterface->isExistingReviewForStudyVisitUser($studyName, $visitId, $currentUserId)) {
                 throw new GaelOConflictException('Review Already Created');
-            };
+            }
 
             $visitContext = $this->visitRepositoryInterface->getVisitContext($visitId);
             $reviewStatusEntity = $this->reviewStatusRepositoryInterface->getReviewStatus($visitId, $studyName);
@@ -69,7 +69,7 @@ class CreateReviewForm
 
             if ($adjudication &&  $reviewStatus !== Constants::REVIEW_STATUS_WAIT_ADJUDICATION) {
                 throw new GaelOBadRequestException('Review Not Awaiting Adjudication');
-            };
+            }
 
             $this->checkAuthorization($visitId, $currentUserId, $reviewAvailable, $studyName);
 
@@ -115,6 +115,6 @@ class CreateReviewForm
 
         if (!$this->authorizationVisitService->isVisitAllowed(Constants::ROLE_REVIEWER)) {
             throw new GaelOForbiddenException();
-        };
+        }
     }
 }

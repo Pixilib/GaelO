@@ -69,7 +69,7 @@ class ModifyVisitDate
             $modifyVisitDateResponse->statusText = $e->statusText;
         } catch (Exception $e) {
             throw $e;
-        };
+        }
     }
 
     private function checkAuthorization(int $userId, int $visitId, string $studyName)

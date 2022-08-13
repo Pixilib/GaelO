@@ -202,7 +202,7 @@ class ValidateDicomUpload
         $this->authorizationService->setVisitId($visitId);
         if (!$this->authorizationService->isVisitAllowed(Constants::ROLE_INVESTIGATOR) || $uploadStatus !== Constants::UPLOAD_STATUS_NOT_DONE || $visitStatus !== Constants::VISIT_STATUS_DONE) {
             throw new GaelOForbiddenException();
-        };
+        }
     }
 
     /**

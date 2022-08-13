@@ -62,6 +62,6 @@ class GetDocumentation
         $this->authorizationStudyService->setStudyName($studyName);
         if (!$this->authorizationStudyService->isAllowedStudy($role)) {
             throw new GaelOForbiddenException();
-        };
+        }
     }
 }

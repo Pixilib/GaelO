@@ -78,11 +78,11 @@ class GetUsersFromStudy
         if ($askedRole === Constants::ROLE_SUPERVISOR) {
             if (!$this->authorizationStudyService->isAllowedStudy(Constants::ROLE_SUPERVISOR)) {
                 throw new GaelOForbiddenException();
-            };
+            }
         } else if ($askedRole === CONSTANTS::ROLE_ADMINISTRATOR) {
             if (!$this->authorizationStudyService->getAuthorizationUserService()->isAdmin()) {
                 throw new GaelOForbiddenException();
-            };
+            }
         }
     }
 }

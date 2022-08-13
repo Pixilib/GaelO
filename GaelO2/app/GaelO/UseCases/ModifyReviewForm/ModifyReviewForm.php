@@ -97,6 +97,6 @@ class ModifyReviewForm
         $this->authorizationVisitService->setStudyName($studyName);
         if (!$this->authorizationVisitService->isVisitAllowed(Constants::ROLE_REVIEWER)) {
             throw new GaelOForbiddenException();
-        };
+        }
     }
 }

@@ -51,7 +51,7 @@ class ModifyDocumentation
 
                 if ($this->documentationRepositoryInterface->isKnowndocumentation($studyName, $documentation['name'], $modifyDocumentationRequest->version)) {
                     throw new GaelOConflictException("Documentation already existing under this version");
-                };
+                }
 
                 $documentation['version'] = $modifyDocumentationRequest->version;
             }

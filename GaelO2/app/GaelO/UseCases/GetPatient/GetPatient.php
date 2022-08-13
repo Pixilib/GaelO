@@ -61,6 +61,6 @@ class GetPatient
         $this->authorizationPatientService->setStudyName($studyName);
         if (!$this->authorizationPatientService->isPatientAllowed($role)) {
             throw new GaelOForbiddenException();
-        };
+        }
     }
 }

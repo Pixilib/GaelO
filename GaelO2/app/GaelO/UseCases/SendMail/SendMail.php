@@ -124,6 +124,6 @@ class SendMail
         $this->authorizationStudyService->setStudyName($study);
         if (!$this->authorizationStudyService->isAllowedStudy($role)) {
             throw new GaelOForbiddenException();
-        };
+        }
     }
 }

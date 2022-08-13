@@ -102,7 +102,7 @@ class CreateUser
         $this->authorizationUserService->setUserId($userId);
         if (!$this->authorizationUserService->isAdmin($userId)) {
             throw new GaelOForbiddenException();
-        };
+        }
     }
 
     public static function checkFormComplete(CreateUserRequest|ModifyUserRequest $userRequest): void

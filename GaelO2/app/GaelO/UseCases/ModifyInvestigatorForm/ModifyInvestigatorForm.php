@@ -82,12 +82,12 @@ class ModifyInvestigatorForm
 
         if (in_array($visitInvestigatorFormStatus, [Constants::INVESTIGATOR_FORM_DONE])) {
             throw new GaelOForbiddenException();
-        };
+        }
 
         if ($visitInvestigatorFormStatus === Constants::INVESTIGATOR_FORM_NOT_NEEDED) {
             //Can't modify an investigator form if not expected to have
             throw new GaelOForbiddenException();
-        };
+        }
 
         $this->authorizationVisitService->setUserId($currentUserId);
         $this->authorizationVisitService->setVisitId($visitId);

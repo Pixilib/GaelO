@@ -70,7 +70,7 @@ class GetPossibleUpload
         $this->authorizationStudyService->setStudyName($studyName);
         if (!$this->authorizationStudyService->isAllowedStudy(Constants::ROLE_INVESTIGATOR)) {
             throw new GaelOForbiddenException();
-        };
+        }
     }
 
     private function formatBirthDateUS(?int $month, ?int $day, ?int $year): string

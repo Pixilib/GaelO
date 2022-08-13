@@ -37,12 +37,12 @@ class ModifyCenter
 
             if (!$this->centerRepositoryInterface->isKnownCenter($modifyCenterRequest->code)) {
                 throw new GaelONotFoundException('Non Existing Center');
-            };
+            }
 
             //If center name has been changed, check that name isn't already used
             if (!empty($modifyCenterRequest->name) && $this->centerRepositoryInterface->isExistingCenterName($modifyCenterRequest->name)) {
                 throw new GaelOConflictException('Center Name already used');
-            };
+            }
 
             //Fill missing fields with known info from the database
             $center = $this->centerRepositoryInterface->getCenterByCode($modifyCenterRequest->code);
@@ -76,6 +76,6 @@ class ModifyCenter
         $this->authorizationUserService->setUserId($userId);
         if (!$this->authorizationUserService->isAdmin()) {
             throw new GaelOForbiddenException();
-        };
+        }
     }
 }

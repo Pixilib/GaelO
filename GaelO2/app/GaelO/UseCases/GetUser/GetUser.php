@@ -63,7 +63,7 @@ class GetUser
         } else {
             if ($calledUserId !== $userId) {
                 throw new GaelOForbiddenException();
-            };
-        };
+            }
+        }
     }
 }

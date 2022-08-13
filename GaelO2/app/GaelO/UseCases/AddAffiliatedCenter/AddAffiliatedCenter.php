@@ -60,7 +60,7 @@ class AddAffiliatedCenter
             $addAffiliatedCenterResponse->body = $e->getErrorBody();
         } catch (Exception $e) {
             throw $e;
-        };
+        }
     }
 
     private function checkAuthorization(int $userId)
@@ -68,6 +68,6 @@ class AddAffiliatedCenter
         $this->authorizationUserService->setUserId($userId);
         if (!$this->authorizationUserService->isAdmin()) {
             throw new GaelOForbiddenException();
-        };
+        }
     }
 }

@@ -71,6 +71,6 @@ class GetPatientsInStudyFromCenters
         $this->authorizationStudyService->setUserId($currentUserId);
         if (!$this->authorizationStudyService->isAllowedStudy(Constants::ROLE_SUPERVISOR)) {
             throw new GaelOForbiddenException();
-        };
+        }
     }
 }

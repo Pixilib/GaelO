@@ -52,7 +52,7 @@ class ExportDatabase
             $exportDatabaseResponse->statusText = $e->statusText;
         } catch (Exception $e) {
             throw $e;
-        };
+        }
     }
 
     private function checkAuthorization(int $userId): void
@@ -60,6 +60,6 @@ class ExportDatabase
         $this->authorizationUserService->setUserId($userId);
         if (!$this->authorizationUserService->isAdmin($userId)) {
             throw new GaelOForbiddenException();
-        };
+        }
     }
 }

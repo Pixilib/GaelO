@@ -53,7 +53,7 @@ class ExportStudyData
             $exportStudyDataResponse->statusText = $e->statusText;
         } catch (Exception $e) {
             throw $e;
-        };
+        }
     }
 
     private function checkAuthorization(int $currentUserId, string $studyName)
