@@ -6,10 +6,12 @@
 
 <body style="margin: 0; background-color: #f7f7f7;">
     <table align="center" cellpadding="0" cellspacing="0" width="100%">
+        <caption>GaelO Email</caption>
         <tr>
             <td align="center">
                 <table class="content" align="center" cellpadding="0" width="100%" cellspacing="0"
                     style="border-collapse: separate; margin-top: 80px; max-width: 600px;" bgcolor="#ffffff">
+                    <caption>GaelO Email Header</caption>
                     <tr>
                         <td class="banner" align="center">
                             <a href="{{ $webAddress }}">
@@ -23,6 +25,7 @@
                         <td bgcolor="#ffffff">
                             <table class="content content_wrapper" align="center" cellpadding="0" cellspacing="0"
                                 width="100%" style="max-width: 600px; padding: 32px 30px;">
+                                <caption>GaelO Email Content</caption>
                                 <tr>
                                     <td>
                                         <div
@@ -56,6 +59,7 @@
                         <td bgcolor="#f7f7f7">
                             <table class="content" align="center" cellpadding="0" cellspacing="0" width="100%"
                                 style="max-width: 600px; margin:0 auto; line-height: 1.3; padding: 18px">
+                                <caption>GaelO Email Footer</caption>
                                 <tr>
                                     <td align="center">
                                         <div
