@@ -94,8 +94,8 @@ class RegisterDicomStudyService
      */
     private function addToDbStudy(OrthancStudy $studyOrthancObject)
     {
-        $studyAcquisitionDate = $this->parseDateTime($studyOrthancObject->studyDate, 1);
-        $studyAcquisitionTime = $this->parseDateTime($studyOrthancObject->studyTime, 2);
+        $studyAcquisitionDate = $this->parseDicomDate($studyOrthancObject->studyDate);
+        $studyAcquisitionTime = $this->parseDicomTime($studyOrthancObject->studyTime);
 
         $this->dicomStudyRepositoryInterface->addStudy(
             $studyOrthancObject->studyOrthancID,
@@ -124,9 +124,9 @@ class RegisterDicomStudyService
     private function addtoDbSerie(OrthancSeries $series, string $studyInstanceUID)
     {
 
-        $serieAcquisitionDate = $this->parseDateTime($series->seriesDate, 1);
-        $serieAcquisitionTime = $this->parseDateTime($series->seriesTime, 2);
-        $injectedDateTime = $this->parseDateTime($series->injectedDateTime, 0);
+        $serieAcquisitionDate = $this->parseDicomDate($series->seriesDate);
+        $serieAcquisitionTime = $this->parseDicomTime($series->seriesTime);
+        $injectedDateTime = $this->parseDicomDateTime($series->injectedDateTime);
 
         $this->dicomSeriesRepositoryInterface->addSeries(
             $series->serieOrthancID,
@@ -150,43 +150,54 @@ class RegisterDicomStudyService
             $series->manufacturer,
             $series->modelName
         );
-
     }
 
-    /**
-     * Parse a DICOM date or Time string and return a string ready to send to database
-     * Return null if non parsable
-     * @param string $string
-     * @param type 0=dateTime, 1=Date, 2=Time
-     * return formated date for db saving, null if parse failed
-     */
-    private function parseDateTime(?string $string, int $type)
+    private function filterMicrosecInDicomTime(?string $string): string
+    {
+
+        if (strpos($string, ".")) {
+            $timeWithoutms = explode(".", $string);
+            $string = $timeWithoutms[0];
+        }
+
+        return $string;
+    }
+
+    private function parseDicomDateTime(?string $string)
     {
         $parsedDateTime = null;
 
-        //If contain time split the ms (after.) which are not constant
-        if ($type == 0 || $type == 2) {
-            if (strpos($string, ".")) {
-                $timeWithoutms = explode(".", $string);
-                $string = $timeWithoutms[0];
-            }
+        $string = $this->filterMicrosecInDicomTime($string);
+
+        $dateObject = DateTime::createFromFormat('YmdHis', $string);
+        if ($dateObject !== false) {
+            $parsedDateTime = $dateObject->format('Y-m-d H:i:s');
         }
 
-        if ($type == 2) {
-            $dateObject = DateTime::createFromFormat('His', $string);
-            if ($dateObject !== false) {
-                $parsedDateTime = $dateObject->format('H:i:s');
-            }
-        } else if ($type == 1) {
-            $dateObject = DateTime::createFromFormat('Ymd', $string);
-            if ($dateObject !== false) {
-                $parsedDateTime = $dateObject->format('Y-m-d');
-            }
-        } else if ($type == 0) {
-            $dateObject = DateTime::createFromFormat('YmdHis', $string);
-            if ($dateObject !== false) {
-                $parsedDateTime = $dateObject->format('Y-m-d H:i:s');
-            }
+        return $parsedDateTime;
+    }
+
+    private function parseDicomTime(?string $string)
+    {
+        $parsedDateTime = null;
+
+        $string = $this->filterMicrosecInDicomTime($string);
+
+        $dateObject = DateTime::createFromFormat('His', $string);
+        if ($dateObject !== false) {
+            $parsedDateTime = $dateObject->format('H:i:s');
+        }
+
+        return $parsedDateTime;
+    }
+
+    private function parseDicomDate(?string $string)
+    {
+        $parsedDateTime = null;
+
+        $dateObject = DateTime::createFromFormat('Ymd', $string);
+        if ($dateObject !== false) {
+            $parsedDateTime = $dateObject->format('Y-m-d');
         }
 
         return $parsedDateTime;
