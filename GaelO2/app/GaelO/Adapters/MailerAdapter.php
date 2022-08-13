@@ -29,6 +29,7 @@ use App\GaelO\Interfaces\Adapters\MailerInterface;
 use App\Mail\ImportPatient;
 use App\Mail\MagicLink;
 use App\Mail\UserCreated;
+use Exception;
 use Illuminate\Contracts\Mail\Mailable;
 
 class MailerAdapter implements MailerInterface {
@@ -139,6 +140,10 @@ class MailerAdapter implements MailerInterface {
             case MailConstants::EMAIL_UNLOCK_QC_REQUEST:
                 $model = new UnlockQcRequest($this->parameters);
                 break;
+            default:
+                throw new Exception("Unkown Mail Type");
+                break;
+
         }
 
         return $model;
