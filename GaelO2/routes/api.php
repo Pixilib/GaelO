@@ -54,6 +54,7 @@ Route::middleware(['auth:sanctum', 'verified', 'activated', 'onboarded'])->group
     Route::patch('users/{id}', [UserController::class, 'modifyUserIdentification']);
     Route::delete('users/{id}', [UserController::class, 'deleteUser']);
     Route::patch('users/{id}/reactivate', [UserController::class, 'reactivateUser']);
+    Route::get('users/{id}/centers', [UserController::class, 'getUserCenters']);
     Route::get('users/{id}/affiliated-centers', [UserController::class, 'getAffiliatedCenter']);
     Route::post('users/{id}/affiliated-centers', [UserController::class, 'addAffiliatedCenter']);
     Route::delete('users/{id}/affiliated-centers/{centerCode}', [UserController::class, 'deleteAffiliatedCenter']);

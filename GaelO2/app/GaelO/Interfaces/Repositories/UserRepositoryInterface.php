@@ -53,6 +53,8 @@ interface UserRepositoryInterface {
 
     public function deleteRoleForUser(int $userId, String $study, String $role) : void;
 
+    public function getUserMainCenter(int $userId): array;
+
     public function addAffiliatedCenter(int $userId, int $centerCode) : void;
 
     public function deleteAffiliatedCenter(int $userId, int $centerCode) : void;

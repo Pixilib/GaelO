@@ -38,6 +38,9 @@ use App\GaelO\UseCases\GetRolesInStudyFromUser\GetRolesInStudyFromUserResponse;
 use App\GaelO\UseCases\GetStudiesFromUser\GetStudiesFromUser;
 use App\GaelO\UseCases\GetStudiesFromUser\GetStudiesFromUserRequest;
 use App\GaelO\UseCases\GetStudiesFromUser\GetStudiesFromUserResponse;
+use App\GaelO\UseCases\GetUserCenters\GetUserCenters;
+use App\GaelO\UseCases\GetUserCenters\GetUserCentersRequest;
+use App\GaelO\UseCases\GetUserCenters\GetUserCentersResponse;
 use App\GaelO\UseCases\GetUserRoleByName\GetUserRoleByName;
 use App\GaelO\UseCases\GetUserRoleByName\GetUserRoleByNameRequest;
 use App\GaelO\UseCases\GetUserRoleByName\GetUserRoleByNameResponse;
@@ -260,6 +263,17 @@ class UserController extends Controller
         $addAffiliatedCenter->execute($addAffiliatedCenterRequest, $addAffiliatedCenterResponse);
 
         return $this->getJsonResponse($addAffiliatedCenterResponse->body, $addAffiliatedCenterResponse->status, $addAffiliatedCenterResponse->statusText);
+    }
+
+    public function getUserCenters(GetUserCenters $getUserCenters, GetUserCentersRequest $getUserCentersRequest, GetUserCentersResponse $getUserCentersResponse, int $userId)
+    {
+        $currentUser = Auth::user();
+        $getUserCentersRequest->currentUserId = $currentUser['id'];
+        $getUserCentersRequest->userId = $userId;
+
+        $getUserCenters->execute($getUserCentersRequest, $getUserCentersResponse);
+
+        return $this->getJsonResponse($getUserCentersResponse->body, $getUserCentersResponse->status, $getUserCentersResponse->statusText);
     }
 
     public function getAffiliatedCenter(GetAffiliatedCenter $getAffiliatedCenter, GetAffiliatedCenterRequest $getAffiliatedCenterRequest, GetAffiliatedCenterResponse $getAffiliatedCenterResponse, int $userId)

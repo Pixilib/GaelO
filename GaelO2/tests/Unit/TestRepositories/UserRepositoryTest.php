@@ -383,6 +383,13 @@ class UserRepositoryTest extends TestCase
 
     }
 
+    public function testGetUserMainCenter(){
+        $user = User::factory()->create();
+        $center = $this->userRepository->getUserMainCenter($user->id);
+        $this->assertArrayHasKey('code', $center);
+        $this->assertArrayHasKey('name', $center);
+    }
+
     public function testGetAffiliatedCenters(){
 
         $user = User::factory()->create();

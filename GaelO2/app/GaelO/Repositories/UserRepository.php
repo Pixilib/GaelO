@@ -327,6 +327,11 @@ class UserRepository implements UserRepositoryInterface
         return empty($centers) ? [] : $centers->toArray();
     }
 
+    public function getUserMainCenter(int $userId): array
+    {
+        return $this->userModel->findOrFail($userId)->mainCenter()->sole()->toArray();
+    }
+
     public function getAllUsersCenters(int $userId): array
     {
 

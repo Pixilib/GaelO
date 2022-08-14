@@ -15,7 +15,7 @@ class DicomStudyEntity
     public ?string $patientId;
     public int $diskSize;
     public bool $deleted;
-    public array $series;
+    public array $series = [];
     public UserEntity $uploader;
     public PatientEntity $patient;
     public VisitEntity $visit;

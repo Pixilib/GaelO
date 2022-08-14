@@ -72,7 +72,7 @@ class User extends Authenticatable implements CanResetPassword, MustVerifyEmail
 
     public function mainCenter()
     {
-        return $this->belongsTo(Center::class, 'code', 'center_code');
+        return $this->belongsTo(Center::class, 'center_code', 'code');
     }
 
     //Override by custom notification
