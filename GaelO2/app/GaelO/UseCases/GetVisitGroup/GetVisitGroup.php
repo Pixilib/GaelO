@@ -3,7 +3,7 @@
 namespace App\GaelO\UseCases\GetVisitGroup;
 
 use App\GaelO\Entities\VisitGroupEntity;
-use App\GaelO\Exceptions\GaelOException;
+use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Repositories\VisitGroupRepository;
 use App\GaelO\Services\AuthorizationService\AuthorizationUserService;
@@ -33,7 +33,7 @@ class GetVisitGroup
             $getVisitTypeResponse->status = 200;
             $getVisitTypeResponse->statusText = 'OK';
 
-        } catch (GaelOException $e) {
+        } catch (AbstractGaelOException $e) {
             $getVisitTypeResponse->body = $e->getErrorBody();
             $getVisitTypeResponse->status = $e->statusCode;
             $getVisitTypeResponse->statusText = $e->statusText;

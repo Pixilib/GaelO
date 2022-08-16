@@ -3,8 +3,8 @@
 namespace App\GaelO\UseCases\UnlockInvestigatorForm;
 
 use App\GaelO\Constants\Constants;
+use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOBadRequestException;
-use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\ReviewRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
@@ -98,7 +98,7 @@ class UnlockInvestigatorForm
 
             $unlockInvestigatorFormResponse->status = 200;
             $unlockInvestigatorFormResponse->statusText =  'OK';
-        } catch (GaelOException $e) {
+        } catch (AbstractGaelOException $e) {
             $unlockInvestigatorFormResponse->body = $e->getErrorBody();
             $unlockInvestigatorFormResponse->status = $e->statusCode;
             $unlockInvestigatorFormResponse->statusText =  $e->statusText;

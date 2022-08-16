@@ -8,22 +8,22 @@ use App\GaelO\Util;
 
 class DocumentationRepository implements DocumentationRepositoryInterface
 {
-    private Documentation $documentation;
+    private Documentation $documentationModel;
 
     public function __construct(Documentation $documentation)
     {
-        $this->documentation = $documentation;
+        $this->documentationModel = $documentation;
     }
 
     public function find($id, $withTrashed): array
     {
-        if ($withTrashed) return $this->documentation->withTrashed()->findOrFail($id)->toArray();
-        else return $this->documentation->findOrFail($id)->toArray();
+        if ($withTrashed) return $this->documentationModel->withTrashed()->findOrFail($id)->toArray();
+        else return $this->documentationModel->findOrFail($id)->toArray();
     }
 
     public function delete($id): void
     {
-        $this->documentation->findOrFail($id)->delete();
+        $this->documentationModel->findOrFail($id)->delete();
     }
 
     public function createDocumentation(
@@ -52,7 +52,7 @@ class DocumentationRepository implements DocumentationRepositoryInterface
 
     public function getDocumentationsOfStudy(string $studyName, bool $withTrashed = false): array
     {
-        $query = $this->documentation->where('study_name', $studyName);
+        $query = $this->documentationModel->where('study_name', $studyName);
         if ($withTrashed) $query->withTrashed();
 
         $documentations = $query->get();
@@ -61,7 +61,7 @@ class DocumentationRepository implements DocumentationRepositoryInterface
 
     public function getDocumentationOfStudyWithRole(string $studyName, string $role): array
     {
-        $documentations = $this->documentation->where([['study_name', $studyName], [strtolower($role), true]])->get();
+        $documentations = $this->documentationModel->where([['study_name', $studyName], [strtolower($role), true]])->get();
         return empty($documentations) ? [] : $documentations->toArray();
     }
 
@@ -76,7 +76,7 @@ class DocumentationRepository implements DocumentationRepositoryInterface
         bool $reviewer
     ) {
 
-        $documentation = $this->documentation->findOrFail($id);
+        $documentation = $this->documentationModel->findOrFail($id);
         $documentation->name = $name;
         $documentation->document_date = Util::now();
         $documentation->study_name = $studyName;
@@ -90,19 +90,19 @@ class DocumentationRepository implements DocumentationRepositoryInterface
 
     public function updateDocumentationPath(int $id, string $path)
     {
-        $documentation = $this->documentation->findOrFail($id);
+        $documentation = $this->documentationModel->findOrFail($id);
         $documentation->path = $path;
         $documentation->save();
     }
 
     public function isKnownDocumentation(string $studyName, string $name, string $version): bool
     {
-        $documentations = $this->documentation->where('study_name', $studyName)->where('name', $name)->where('version', $version)->get();
+        $documentations = $this->documentationModel->where('study_name', $studyName)->where('name', $name)->where('version', $version)->get();
         return $documentations->count() == 0 ? false : true;
     }
 
     public function reactivateDocumentation(int $documentationId): void
     {
-        $this->documentation->withTrashed()->findOrFail($documentationId)->restore();
+        $this->documentationModel->withTrashed()->findOrFail($documentationId)->restore();
     }
 }

@@ -17,7 +17,7 @@ interface UserRepositoryInterface {
     public function updateUser(int $id, ?String $lastname, ?String $firstname,
                                 String $email, ?String $phone, bool $administrator, int $centerCode, String $job,
                                 ?String $orthancAdress, ?String $orthancLogin, ?String $orthancPassword,
-                                bool $resetEmailVerify) : void ;
+                                ?string $onboardingVersion, bool $resetEmailVerify) : void ;
 
     public function updateUserPassword(int $userId, ?string $passwordCurrent) : void ;
 
@@ -43,11 +43,17 @@ interface UserRepositoryInterface {
 
     public function getUsersRoles(int $userId) : array;
 
+    public function updateValidatedDocumentationVersion(int $userId, string $studyName, string $roleName, string $version) :void;
+
+    public function getUserRoleInStudy(int $userId, string $studyName, string $role): array;
+
     public function getUsersRolesInStudy(int $userId, String $study) : array;
 
     public function addUserRoleInStudy(int $userId, String $study, string $role) : void;
 
     public function deleteRoleForUser(int $userId, String $study, String $role) : void;
+
+    public function getUserMainCenter(int $userId): array;
 
     public function addAffiliatedCenter(int $userId, int $centerCode) : void;
 

@@ -4,7 +4,7 @@ namespace App\GaelO\UseCases\ReactivateDicomStudy;
 
 use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOBadRequestException;
-use App\GaelO\Exceptions\GaelOException;
+use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\DicomStudyRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
@@ -68,7 +68,7 @@ class ReactivateDicomStudy
             );
             $reactivateDicomStudyResponse->status = 200;
             $reactivateDicomStudyResponse->statusText = 'OK';
-        } catch (GaelOException $e) {
+        } catch (AbstractGaelOException $e) {
             $reactivateDicomStudyResponse->status = $e->statusCode;
             $reactivateDicomStudyResponse->statusText = $e->statusText;
             $reactivateDicomStudyResponse->body = $e->getErrorBody();

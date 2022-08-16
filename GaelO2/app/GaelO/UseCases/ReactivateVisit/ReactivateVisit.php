@@ -4,7 +4,7 @@ namespace App\GaelO\UseCases\ReactivateVisit;
 
 use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOConflictException;
-use App\GaelO\Exceptions\GaelOException;
+use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
@@ -75,7 +75,7 @@ class ReactivateVisit
 
             $reactivateVisitResponse->status = 200;
             $reactivateVisitResponse->statusText = 'OK';
-        } catch (GaelOException $e) {
+        } catch (AbstractGaelOException $e) {
             $reactivateVisitResponse->status = $e->statusCode;
             $reactivateVisitResponse->statusText = $e->statusText;
             $reactivateVisitResponse->body = $e->getErrorBody();

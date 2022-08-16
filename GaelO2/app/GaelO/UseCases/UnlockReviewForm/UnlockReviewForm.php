@@ -3,8 +3,8 @@
 namespace App\GaelO\UseCases\UnlockReviewForm;
 
 use App\GaelO\Constants\Constants;
+use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOBadRequestException;
-use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\ReviewRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\ReviewStatusRepositoryInterface;
@@ -93,7 +93,7 @@ class UnlockReviewForm
                 Constants::ROLE_SUPERVISOR,
                 $reviewEntity['study_name'],
                 $reviewEntity['visit_id'],
-                Constants::TRACKER_UNLOCK_REVIEW_FORM,
+                Constants::TRACKER_UNLOCK_REVIEWER_FORM,
                 $actionDetails
             );
 
@@ -110,7 +110,7 @@ class UnlockReviewForm
 
             $unlockReviewFormResponse->status = 200;
             $unlockReviewFormResponse->statusText =  'OK';
-        } catch (GaelOException $e) {
+        } catch (AbstractGaelOException $e) {
             $unlockReviewFormResponse->body = $e->getErrorBody();
             $unlockReviewFormResponse->status = $e->statusCode;
             $unlockReviewFormResponse->statusText =  $e->statusText;

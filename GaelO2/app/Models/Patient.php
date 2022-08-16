@@ -13,6 +13,25 @@ class Patient extends Model
     protected $keyType = 'string';
     public $incrementing = false;
 
+    protected $casts = [
+        'id' => 'string',
+        'code' => 'string',
+        'firstname' => 'string',
+        'lastname' => 'string',
+        'gender' => 'string',
+        'birth_day' => 'integer',
+        'birth_month' => 'integer',
+        'birth_year' => 'integer',
+        //'registration_date' => 'datetime',
+        'investigator_name' => 'string',
+        'center_code' => 'integer',
+        'study_name' => 'string',
+        'inclusion_status' => 'string',
+        'withdraw_reason' => 'string',
+        //'withdraw_date' => 'date'
+    ];
+
+
     public function center()
     {
         return $this->belongsTo(Center::class, 'center_code', 'code');

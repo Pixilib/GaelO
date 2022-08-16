@@ -24,6 +24,7 @@ use App\Mail\MailUser;
 
 use App\GaelO\Constants\MailConstants;
 use App\GaelO\Constants\SettingsConstants;
+use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Interfaces\Adapters\FrameworkInterface;
 use App\GaelO\Interfaces\Adapters\MailerInterface;
 use App\Mail\ImportPatient;
@@ -139,6 +140,10 @@ class MailerAdapter implements MailerInterface {
             case MailConstants::EMAIL_UNLOCK_QC_REQUEST:
                 $model = new UnlockQcRequest($this->parameters);
                 break;
+            default:
+                throw new GaelOException("Unkown Mail Type");
+                break;
+
         }
 
         return $model;

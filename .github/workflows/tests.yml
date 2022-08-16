@@ -10,6 +10,9 @@ on:
       - '*'
 
 jobs:
+
+
+
   tests:
     name: 'Tests Gaelo'
     runs-on: ubuntu-latest
@@ -50,4 +53,14 @@ jobs:
           DB_CONNECTION: sqlite
           DB_DATABASE: database/database.sqlite
           APP_ENV: testing
-        run: vendor/bin/phpunit
+        run: vendor/bin/phpunit --verbose --coverage-clover=coverage.xml
+
+      - name: Fix code coverage paths
+        working-directory: ./GaelO2
+        run: sed -i 's@'$GITHUB_WORKSPACE'@/github/workspace/@g' coverage.xml
+
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

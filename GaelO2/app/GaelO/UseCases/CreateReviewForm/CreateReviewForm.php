@@ -3,9 +3,9 @@
 namespace App\GaelO\UseCases\CreateReviewForm;
 
 use App\GaelO\Constants\Constants;
+use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOBadRequestException;
 use App\GaelO\Exceptions\GaelOConflictException;
-use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\ReviewRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\ReviewStatusRepositoryInterface;
@@ -59,7 +59,7 @@ class CreateReviewForm
 
             if ($this->reviewRepositoryInterface->isExistingReviewForStudyVisitUser($studyName, $visitId, $currentUserId)) {
                 throw new GaelOConflictException('Review Already Created');
-            };
+            }
 
             $visitContext = $this->visitRepositoryInterface->getVisitContext($visitId);
             $reviewStatusEntity = $this->reviewStatusRepositoryInterface->getReviewStatus($visitId, $studyName);
@@ -69,7 +69,7 @@ class CreateReviewForm
 
             if ($adjudication &&  $reviewStatus !== Constants::REVIEW_STATUS_WAIT_ADJUDICATION) {
                 throw new GaelOBadRequestException('Review Not Awaiting Adjudication');
-            };
+            }
 
             $this->checkAuthorization($visitId, $currentUserId, $reviewAvailable, $studyName);
 
@@ -92,7 +92,7 @@ class CreateReviewForm
             $createReviewFormResponse->body = ['id' => $createdReviewId];
             $createReviewFormResponse->status = 201;
             $createReviewFormResponse->statusText =  'Created';
-        } catch (GaelOException $e) {
+        } catch (AbstractGaelOException $e) {
 
             $createReviewFormResponse->body = $e->getErrorBody();
             $createReviewFormResponse->status = $e->statusCode;
@@ -115,6 +115,6 @@ class CreateReviewForm
 
         if (!$this->authorizationVisitService->isVisitAllowed(Constants::ROLE_REVIEWER)) {
             throw new GaelOForbiddenException();
-        };
+        }
     }
 }

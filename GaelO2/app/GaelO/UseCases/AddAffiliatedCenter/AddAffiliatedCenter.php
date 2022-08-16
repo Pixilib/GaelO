@@ -3,8 +3,8 @@
 namespace App\GaelO\UseCases\AddAffiliatedCenter;
 
 use App\GaelO\Constants\Constants;
+use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOConflictException;
-use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\UserRepositoryInterface;
@@ -54,13 +54,13 @@ class AddAffiliatedCenter
             } else {
                 throw new GaelOConflictException('Center already affiliated to user');
             }
-        } catch (GaelOException $e) {
+        } catch (AbstractGaelOException $e) {
             $addAffiliatedCenterResponse->status = $e->statusCode;
             $addAffiliatedCenterResponse->statusText = $e->statusText;
             $addAffiliatedCenterResponse->body = $e->getErrorBody();
         } catch (Exception $e) {
             throw $e;
-        };
+        }
     }
 
     private function checkAuthorization(int $userId)
@@ -68,6 +68,6 @@ class AddAffiliatedCenter
         $this->authorizationUserService->setUserId($userId);
         if (!$this->authorizationUserService->isAdmin()) {
             throw new GaelOForbiddenException();
-        };
+        }
     }
 }

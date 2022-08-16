@@ -3,12 +3,12 @@
 namespace App\GaelO\UseCases\GetPatientFromStudy;
 
 use App\GaelO\Constants\Constants;
-use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\PatientRepositoryInterface;
 use App\GaelO\UseCases\GetPatientFromStudy\GetPatientFromStudyRequest;
 use App\GaelO\UseCases\GetPatientFromStudy\GetPatientFromStudyResponse;
 use App\GaelO\Entities\PatientEntity;
+use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Interfaces\Repositories\StudyRepositoryInterface;
 use App\GaelO\Services\AuthorizationService\AuthorizationStudyService;
 use Exception;
@@ -50,7 +50,7 @@ class GetPatientFromStudy
             $patientResponse->body = $responseArray;
             $patientResponse->status = 200;
             $patientResponse->statusText = 'OK';
-        } catch (GaelOException $e) {
+        } catch (AbstractGaelOException $e) {
             $patientResponse->body = $e->getErrorBody();
             $patientResponse->status = $e->statusCode;
             $patientResponse->statusText = $e->statusText;
@@ -65,6 +65,6 @@ class GetPatientFromStudy
         $this->authorizationStudyService->setStudyName($studyName);
         if (!$this->authorizationStudyService->isAllowedStudy(Constants::ROLE_SUPERVISOR)) {
             throw new GaelOForbiddenException();
-        };
+        }
     }
 }

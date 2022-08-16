@@ -4,7 +4,7 @@ namespace App\GaelO\UseCases\GetDocumentation;
 
 use App\GaelO\Constants\Constants;
 use App\GaelO\Entities\DocumentationEntity;
-use App\GaelO\Exceptions\GaelOException;
+use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\DocumentationRepositoryInterface;
 use App\GaelO\Services\AuthorizationService\AuthorizationStudyService;
@@ -47,7 +47,7 @@ class GetDocumentation
             $getDocumentationResponse->body = $entitiesArray;
             $getDocumentationResponse->status = 200;
             $getDocumentationResponse->statusText = 'OK';
-        } catch (GaelOException $e) {
+        } catch (AbstractGaelOException $e) {
             $getDocumentationResponse->body = $e->getErrorBody();
             $getDocumentationResponse->status = $e->statusCode;
             $getDocumentationResponse->statusText = $e->statusText;
@@ -62,6 +62,6 @@ class GetDocumentation
         $this->authorizationStudyService->setStudyName($studyName);
         if (!$this->authorizationStudyService->isAllowedStudy($role)) {
             throw new GaelOForbiddenException();
-        };
+        }
     }
 }

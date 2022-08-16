@@ -59,7 +59,7 @@ class DicomService
         //Check no other activated study for this visit
         if ($this->dicomStudyRepositoryInterface->isExistingDicomStudyForVisit($visitId) ) {
             throw new GaelOBadRequestException("Already existing Dicom Study for this visit");
-        };
+        }
 
         //reactivate study level
         $this->dicomStudyRepositoryInterface->reactivateByStudyInstanceUID($studyInstanceUID);

@@ -3,13 +3,14 @@
 namespace App\GaelO\UseCases\ReactivateUser;
 
 use App\GaelO\Constants\Constants;
+use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Adapters\FrameworkInterface;
 use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
-use Exception;
 use App\GaelO\Interfaces\Repositories\UserRepositoryInterface;
 use App\GaelO\Services\AuthorizationService\AuthorizationUserService;
+use Exception;
 
 class ReactivateUser
 {
@@ -53,12 +54,13 @@ class ReactivateUser
                 $user['orthanc_address'],
                 $user['orthanc_login'],
                 $user['orthanc_password'],
+                $user['onboarding_version'],
                 true
             );
 
             //Send reset password link.
             $emailSendSuccess = $this->frameworkInterface->sendResetPasswordLink($user['email']);
-            if (!$emailSendSuccess) throw new Exception('Error Sending Reset Email');
+            if (!$emailSendSuccess) throw new GaelOException('Error Sending Reset Email');
 
             $actionsDetails = [
                 'reactivated_user' => $userId
@@ -67,7 +69,7 @@ class ReactivateUser
 
             $reactivateUserResponse->status = 200;
             $reactivateUserResponse->statusText = 'OK';
-        } catch (GaelOException $e) {
+        } catch (AbstractGaelOException $e) {
 
             $reactivateUserResponse->body = $e->getErrorBody();
             $reactivateUserResponse->status = $e->statusCode;
@@ -82,6 +84,6 @@ class ReactivateUser
         $this->authorizationUserService->setUserId($userId);
         if (!$this->authorizationUserService->isAdmin()) {
             throw new GaelOForbiddenException();
-        };
+        }
     }
 }

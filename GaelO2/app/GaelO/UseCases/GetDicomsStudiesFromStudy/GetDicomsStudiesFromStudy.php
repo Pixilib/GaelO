@@ -3,12 +3,12 @@
 namespace App\GaelO\UseCases\GetDicomsStudiesFromStudy;
 
 use App\GaelO\Constants\Constants;
-use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\DicomStudyRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
 use App\GaelO\Entities\DicomSeriesEntity;
 use App\GaelO\Entities\DicomStudyEntity;
+use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Interfaces\Repositories\StudyRepositoryInterface;
 use App\GaelO\Services\AuthorizationService\AuthorizationStudyService;
 use Exception;
@@ -77,7 +77,7 @@ class GetDicomsStudiesFromStudy
             $getDicomsStudiesFromStudyResponse->body = $answer;
             $getDicomsStudiesFromStudyResponse->status = 200;
             $getDicomsStudiesFromStudyResponse->statusText = 'OK';
-        } catch (GaelOException $e) {
+        } catch (AbstractGaelOException $e) {
             $getDicomsStudiesFromStudyResponse->body = $e->getErrorBody();
             $getDicomsStudiesFromStudyResponse->status = $e->statusCode;
             $getDicomsStudiesFromStudyResponse->statusText = $e->statusText;

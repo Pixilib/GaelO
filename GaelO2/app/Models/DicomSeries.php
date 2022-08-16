@@ -15,6 +15,29 @@ class DicomSeries extends Model
     protected $keyType = 'string';
     public $incrementing = false;
 
+    protected $casts = [
+        'series_uid' => 'string',
+        'study_instance_uid' => 'string',
+        'orthanc_id' => 'string',
+        //'acquisition_date' => 'date',
+        //'acquisition_time' => 'datetime',
+        'modality' => 'string',
+        'series_description' => 'string',
+        'injected_dose' => 'integer',
+        'radiopharmaceutical' => 'string',
+        'half_life' => 'integer',
+        //'injected_time' => 'datetime',
+        //'injected_datetime' => 'datetime',
+        'injected_activity' => 'integer',
+        'patient_weight' => 'integer',
+        'number_of_instances' => 'integer',
+        'series_number' => 'string',
+        'disk_size' => 'integer',
+        'uncompressed_disk_size' => 'integer',
+        'manufacturer' => 'string',
+        'model_name' => 'string'
+    ];
+
     public function dicomStudy()
     {
         return $this->belongsTo(DicomStudy::class, 'study_instance_uid', 'study_uid');

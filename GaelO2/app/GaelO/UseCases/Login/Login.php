@@ -2,13 +2,15 @@
 
 namespace App\GaelO\UseCases\Login;
 
+use App\GaelO\Adapters\FrameworkAdapter;
 use App\GaelO\Constants\Constants;
-use App\GaelO\Exceptions\GaelOException;
+use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOUnauthorizedException;
 use App\GaelO\Interfaces\Adapters\HashInterface;
 use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\UserRepositoryInterface;
 use App\GaelO\Services\MailServices;
+use App\GaelO\Util;
 use Exception;
 
 class Login
@@ -45,19 +47,19 @@ class Login
                     $this->sendBlockedEmail($user);
                 }
                 throw new GaelOUnauthorizedException('Unknown email/password pair');
-                return;
             }
 
             //if everything OK => Login
             if ($user['email_verified_at'] !== null && $attempts < 3) {
                 $this->updateDbOnSuccess($user, $loginRequest->ip);
+                $loginResponse->onboarded = !(Util::isVersionHigher(FrameworkAdapter::getConfig('onboarding_version'), $user['onboarding_version']));
                 $loginResponse->status = 200;
                 $loginResponse->statusText = "OK";
                 //should not happen
             } else {
                 throw new GaelOUnauthorizedException("Unknown email/password");
             }
-        } catch (GaelOException $e) {
+        } catch (AbstractGaelOException $e) {
             $loginResponse->body = $e->getErrorBody();
             $loginResponse->status = $e->statusCode;
             $loginResponse->statusText = $e->statusText;

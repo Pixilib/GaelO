@@ -21,7 +21,7 @@ class DocumentationFactory extends Factory
             'study_name' => function () {
                 return Study::factory()->create()->name;
             },
-            'version' => $this->faker->word,
+            'version' => $this->faker->randomDigit().'.'.$this->faker->randomDigit().'.'.$this->faker->randomDigit(),
             'investigator' => false,
             'controller' => false,
             'monitor' => false,

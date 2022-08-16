@@ -4,7 +4,7 @@ namespace App\GaelO\UseCases\ReactivateDicomSeries;
 
 use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOBadRequestException;
-use App\GaelO\Exceptions\GaelOException;
+use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\DicomSeriesRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
@@ -73,7 +73,7 @@ class ReactivateDicomSeries
 
             $reactivateDicomSeriesResponse->status = 200;
             $reactivateDicomSeriesResponse->statusText =  'OK';
-        } catch (GaelOException $e) {
+        } catch (AbstractGaelOException $e) {
             $reactivateDicomSeriesResponse->status = $e->statusCode;
             $reactivateDicomSeriesResponse->statusText = $e->statusText;
             $reactivateDicomSeriesResponse->body = $e->getErrorBody();

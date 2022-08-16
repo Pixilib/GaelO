@@ -4,6 +4,7 @@ namespace App\GaelO\UseCases\CreateUser;
 
 use App\GaelO\Adapters\FrameworkAdapter;
 use App\GaelO\Constants\Constants;
+use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOBadRequestException;
 use App\GaelO\Exceptions\GaelOConflictException;
 use App\GaelO\Exceptions\GaelOException;
@@ -17,7 +18,6 @@ use App\GaelO\UseCases\CreateUser\CreateUserResponse;
 use App\GaelO\Services\AuthorizationService\AuthorizationUserService;
 use App\GaelO\Services\MailServices;
 use App\GaelO\UseCases\ModifyUser\ModifyUserRequest;
-use Exception;
 
 class CreateUser
 {
@@ -68,7 +68,7 @@ class CreateUser
 
             //Send reset password link.
             $emailSendSuccess = $this->frameworkInterface->sendResetPasswordLink($createUserRequest->email);
-            if (!$emailSendSuccess) throw new Exception('Error Sending Reset Email');
+            if (!$emailSendSuccess) throw new GaelOException('Error Sending Reset Email');
 
             $this->mailService->sendCreatedUserMessage($createUserRequest->email);
 
@@ -90,7 +90,7 @@ class CreateUser
             $createUserResponse->body = ['id' => $createdUserEntity['id']];
             $createUserResponse->status = 201;
             $createUserResponse->statusText = 'Created';
-        } catch (GaelOException $e) {
+        } catch (AbstractGaelOException $e) {
             $createUserResponse->body = $e->getErrorBody();
             $createUserResponse->status = $e->statusCode;
             $createUserResponse->statusText = $e->statusText;
@@ -102,7 +102,7 @@ class CreateUser
         $this->authorizationUserService->setUserId($userId);
         if (!$this->authorizationUserService->isAdmin($userId)) {
             throw new GaelOForbiddenException();
-        };
+        }
     }
 
     public static function checkFormComplete(CreateUserRequest|ModifyUserRequest $userRequest): void

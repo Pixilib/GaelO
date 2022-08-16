@@ -3,12 +3,14 @@
 namespace App\GaelO\UseCases\ModifyDocumentation;
 
 use App\GaelO\Constants\Constants;
-use App\GaelO\Exceptions\GaelOException;
+use App\GaelO\Exceptions\GaelOBadRequestException;
+use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOConflictException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\DocumentationRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
 use App\GaelO\Services\AuthorizationService\AuthorizationStudyService;
+use App\GaelO\Util;
 use Exception;
 
 class ModifyDocumentation
@@ -42,9 +44,15 @@ class ModifyDocumentation
 
             //In case of version change, check for conflicts
             if ($modifyDocumentationRequest->version !==  $documentation['version']) {
+
+                if (!Util::isSemanticVersioning($modifyDocumentationRequest->version)) {
+                    throw new GaelOBadRequestException('documentation version shall be in semantic versioning major.minor.patch ex: 1.2.0');
+                }
+
                 if ($this->documentationRepositoryInterface->isKnowndocumentation($studyName, $documentation['name'], $modifyDocumentationRequest->version)) {
                     throw new GaelOConflictException("Documentation already existing under this version");
-                };
+                }
+
                 $documentation['version'] = $modifyDocumentationRequest->version;
             }
 
@@ -73,7 +81,7 @@ class ModifyDocumentation
 
             $modifyDocumentationResponse->status = 200;
             $modifyDocumentationResponse->statusText = 'OK';
-        } catch (GaelOException $e) {
+        } catch (AbstractGaelOException $e) {
             $modifyDocumentationResponse->body = $e->getErrorBody();
             $modifyDocumentationResponse->status = $e->statusCode;
             $modifyDocumentationResponse->statusText = $e->statusText;

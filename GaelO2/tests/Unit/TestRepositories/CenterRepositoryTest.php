@@ -8,7 +8,6 @@ use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\TestCase;
 
 use App\Models\Center;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class CenterRepositoryTest extends TestCase
 {

@@ -3,7 +3,9 @@
 namespace App\GaelO\UseCases\GetCreatableVisits;
 
 use App\GaelO\Constants\Constants;
-use App\GaelO\Exceptions\GaelOException;
+use App\GaelO\Entities\VisitGroupEntity;
+use App\GaelO\Entities\VisitTypeEntity;
+use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\PatientRepositoryInterface;
 use App\GaelO\Services\AuthorizationService\AuthorizationPatientService;
@@ -34,12 +36,21 @@ class GetCreatableVisits
 
             //Get Visit To Create from specific Study Object
             $studyObject = AbstractGaelOStudy::getSpecificStudyObject($studyName);
-            $visitToCreate = $studyObject->getCreatableVisitCalculator()->getAvailableVisitToCreate($patientEntity);
+            $availableVisitType = $studyObject->getCreatableVisitCalculator()->getAvailableVisitToCreate($patientEntity);
+
+            $answer = [];
+
+            foreach($availableVisitType as $visitType){
+                $visitTypeEntity = VisitTypeEntity::fillFromDBReponseArray($visitType);
+                $visitGroupEntity = VisitGroupEntity::fillFromDBReponseArray($visitType['visit_group']);
+                $visitTypeEntity->setVisitGroup($visitGroupEntity);
+                $answer[] = $visitTypeEntity;
+            }
 
             $getCreatableVisitsResponse->status = 200;
             $getCreatableVisitsResponse->statusText = 'OK';
-            $getCreatableVisitsResponse->body = $visitToCreate;
-        } catch (GaelOException $e) {
+            $getCreatableVisitsResponse->body = $answer;
+        } catch (AbstractGaelOException $e) {
             $getCreatableVisitsResponse->status = $e->statusCode;
             $getCreatableVisitsResponse->statusText = $e->statusText;
             $getCreatableVisitsResponse->body = $e->getErrorBody();

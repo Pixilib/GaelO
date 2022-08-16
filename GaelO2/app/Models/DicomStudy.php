@@ -15,6 +15,25 @@ class DicomStudy extends Model
     protected $keyType = 'string';
     public $incrementing = false;
 
+    protected $casts = [
+        'study_uid' => 'string',
+        'orthanc_id' => 'string',
+        'visit_id' => 'integer',
+        'user_id' => 'integer',
+        //'upload_date' => 'datetime',
+        //'acquisition_date' => 'date',
+        //'acquisition_time' => 'datetime',
+        'anon_from_orthanc_id' => 'string',
+        'study_description' => 'string',
+        'patient_orthanc_id' => 'string',
+        'patient_name' => 'string',
+        'patient_id' => 'string',
+        'number_of_series' => 'integer',
+        'number_of_instances' => 'integer',
+        'disk_size' => 'integer',
+        'uncompressed_disk_size' => 'integer'
+    ];
+
     public function dicomSeries()
     {
         return $this->hasMany(DicomSeries::class, 'study_instance_uid', 'study_uid');

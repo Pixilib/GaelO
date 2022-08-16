@@ -4,17 +4,17 @@ namespace App\GaelO\Services\GaelOStudiesService;
 
 use App\GaelO\Adapters\ValidatorAdapter;
 use App\GaelO\Constants\Constants;
-use Exception;
+use App\GaelO\Exceptions\GaelOException;
 
 abstract class AbstractVisitRules
 {
 
     const RULE_STRING = "string";
     const RULE_INT = "int";
-    const RULE_SET = "set";
-    const RULE_FLOAT = "float";
-    const RULE_BOOLEAN = "boolean";
     const RULE_NUMBER = "number";
+    const RULE_SET = "set";
+    const RULE_BOOLEAN = "boolean";
+    const RULE_DATE = "date";
 
     protected array $data;
     protected array $visitContext;
@@ -78,9 +78,6 @@ abstract class AbstractVisitRules
             case self::RULE_INT:
                 $validatorAdapter->addValidatorInt($name, $details['optional'], $details['min'], $details['max']);
                 break;
-            case self::RULE_FLOAT:
-                $validatorAdapter->addValidatorFloat($name, $details['optional'], $details['min'], $details['max']);
-                break;
             case self::RULE_SET:
                 $validatorAdapter->addSetValidator($name, $details['values'], $details['optional']);
                 break;
@@ -90,14 +87,17 @@ abstract class AbstractVisitRules
             case self::RULE_NUMBER:
                 $validatorAdapter->addNumberValidator($name, $details['optional'], $details['min'], $details['max']);
                 break;
+            case self::RULE_DATE:
+                $validatorAdapter->addDateValidator($name, $details['optional']);
+                break;
             default:
-                throw new Exception('Unknown Rule');
+                throw new GaelOException('Unknown Rule');
         }
     }
 
     abstract function getReviewStatus(): string;
 
-    abstract function getReviewConclusion(): string;
+    abstract function getReviewConclusion(): ?string;
 
     abstract function getAllowedKeyAndMimeTypeInvestigator(): array;
 

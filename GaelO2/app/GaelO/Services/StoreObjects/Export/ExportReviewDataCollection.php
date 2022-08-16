@@ -36,7 +36,7 @@ class ExportReviewDataCollection
     {
         if (!$this->isExisitingExportData($visitGroupName, $visitTypeName)) {
             $this->createExportData($visitGroupName, $visitTypeName);
-        };
+        }
 
         $exportData = $this->getExportData($visitGroupName, $visitTypeName);
         $exportData->addData($data);

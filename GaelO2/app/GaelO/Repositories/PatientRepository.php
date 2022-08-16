@@ -8,37 +8,37 @@ use App\Models\Patient;
 class PatientRepository implements PatientRepositoryInterface
 {
 
-    private Patient $patient;
+    private Patient $patientModel;
 
     public function __construct(Patient $patient)
     {
-        $this->patient = $patient;
+        $this->patientModel = $patient;
     }
 
     public function find($id): array
     {
-        return $this->patient->findOrFail($id)->toArray();
+        return $this->patientModel->findOrFail($id)->toArray();
     }
 
     public function getAllPatientsCodesInStudy(string $studyName): array
     {
-        return $this->patient->where('study_name', $studyName)->select('code')->get()->pluck('code')->toArray();
+        return $this->patientModel->where('study_name', $studyName)->select('code')->get()->pluck('code')->toArray();
     }
 
     public function getPatientWithCenterDetails(string $code): array
     {
-        return $this->patient->with('center')->findOrFail($code)->toArray();
+        return $this->patientModel->with('center')->findOrFail($code)->toArray();
     }
 
     public function getPatientsInStudy(string $studyName): array
     {
-        $patients = $this->patient->where('study_name', $studyName)->get();
+        $patients = $this->patientModel->where('study_name', $studyName)->get();
         return empty($patients) ? [] : $patients->toArray();
     }
 
     public function getPatientsInStudyInCenters(string $studyName, array $centerCodes, bool $withCenters): array
     {
-        $query = $this->patient->where('study_name', $studyName)->whereIn('center_code', $centerCodes);
+        $query = $this->patientModel->where('study_name', $studyName)->whereIn('center_code', $centerCodes);
         if($withCenters){
             $query->with('center');
         }
@@ -48,7 +48,7 @@ class PatientRepository implements PatientRepositoryInterface
 
     public function getPatientsFromIdArray(array $ids, bool $withCenters): array
     {
-        $query = $this->patient->whereIn('id', $ids);
+        $query = $this->patientModel->whereIn('id', $ids);
 
         if($withCenters){
             $query->with('center');
@@ -108,7 +108,7 @@ class PatientRepository implements PatientRepositoryInterface
         ?string $withdrawDate
     ): void {
 
-        $patient = $this->patient->findOrFail($id);
+        $patient = $this->patientModel->findOrFail($id);
 
         $patient->lastname = $lastname;
         $patient->firstname = $firstname;
@@ -128,7 +128,7 @@ class PatientRepository implements PatientRepositoryInterface
     }
 
     public function updateInclusionStatus(string $id, string $inclusionStatus): void {
-        $patient = $this->patient->findOrFail($id);
+        $patient = $this->patientModel->findOrFail($id);
         $patient->inclusion_status = $inclusionStatus;
         $patient->save();
     }

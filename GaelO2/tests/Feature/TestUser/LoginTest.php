@@ -5,6 +5,7 @@ namespace Tests\Feature\TestUser;
 use Illuminate\Foundation\Testing\DatabaseMigrations;;
 use Tests\TestCase;
 use App\Models\User;
+use Illuminate\Support\Facades\Config;
 
 class LoginTest extends TestCase
 {
@@ -26,10 +27,25 @@ class LoginTest extends TestCase
         $data = ['email'=> 'administrator@gaelo.fr',
         'password'=> 'administrator'];
         $adminDefaultUser = User::where('id', 1)->first();
+        $adminDefaultUser->onboarding_version= Config::get('app.onboarding_version');
         $adminDefaultUser->save();
         $response = $this->json('POST', '/api/login', $data)-> assertSuccessful();
         $content= json_decode($response->content(), true);
         $this->assertArrayHasKey('access_token', $content);
+        $this->assertEquals($content['onboarded'], true);
+    }
+
+    public function testLoginSuccessButNotOnboaded()
+    {
+        $data = ['email'=> 'administrator@gaelo.fr',
+        'password'=> 'administrator'];
+        $adminDefaultUser = User::where('id', 1)->first();
+        $adminDefaultUser->onboarding_version = '0.0.0';
+        $adminDefaultUser->save();
+        $response = $this->json('POST', '/api/login', $data)-> assertSuccessful();
+        $content= json_decode($response->content(), true);
+        $this->assertArrayHasKey('access_token', $content);
+        $this->assertEquals($content['onboarded'], false);
     }
 
 

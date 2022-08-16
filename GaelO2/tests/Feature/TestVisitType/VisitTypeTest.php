@@ -129,20 +129,24 @@ class VisitTypeTest extends TestCase
 
     public function testDeleteVisitType(){
         AuthorizationTools::actAsAdmin(true);
-        $visitType = VisitType::factory()->create();
+        $visitGroup = VisitGroup::factory()->create();
+        $visitType = VisitType::factory()->visitGroupId($visitGroup->id)->create();
         $this->json('DELETE', 'api/visit-types/'.$visitType->id)->assertStatus(200);
     }
 
     public function testDeleteVisitTypeForbiddenNotAdmin(){
         AuthorizationTools::actAsAdmin(false);
-        $visitType = VisitType::factory()->create();
+        $visitGroup = VisitGroup::factory()->create();
+        $visitType = VisitType::factory()->visitGroupId($visitGroup->id)->create();
         $this->json('DELETE', 'api/visit-types/'.$visitType->id)->assertStatus(403);
     }
 
     public function testDeleteVisitTypeShouldFailedBecauseHasChildVisit(){
         AuthorizationTools::actAsAdmin(true);
-        $visit = Visit::factory()->create();
-
-        $this->json('DELETE', 'api/visit-types/'.$visit->visitType->id)->assertStatus(403);
+        $patient = Patient::factory()->create();
+        $visitGroup = VisitGroup::factory()->studyName($patient->study_name)->create();
+        $visitType = VisitType::factory()->visitGroupId($visitGroup->id)->create();
+        $visits = Visit::factory()->patientId($patient->id)->visitTypeId($visitType->id)->create();
+        $this->json('DELETE', 'api/visit-types/'.$visits->first()->visitType->id)->assertStatus(403);
     }
 }

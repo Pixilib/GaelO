@@ -3,7 +3,7 @@
 namespace App\GaelO\UseCases\ValidateDicomUpload;
 
 use App\GaelO\Constants\Constants;
-use App\GaelO\Exceptions\GaelOException;
+use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Exceptions\GaelOValidateDicomException;
 use App\GaelO\Interfaces\Repositories\PatientRepositoryInterface;
@@ -76,7 +76,7 @@ class ValidateDicomUpload
             $this->visitService->updateUploadStatus(Constants::UPLOAD_STATUS_PROCESSING);
 
             //Create Temporary folder to work
-            $unzipedPath = sys_get_temp_dir() . '/GaelO_Upload_' . mt_rand(10000, 99999) . '_' . $currentUserId;
+            $unzipedPath = sys_get_temp_dir() . '/GaelO_Upload_' . random_int(10000, 99999) . '_' . $currentUserId;
             if (is_dir($unzipedPath)) {
                 unlink($unzipedPath);
             } else {
@@ -163,7 +163,7 @@ class ValidateDicomUpload
 
             $validateDicomUploadResponse->status = 200;
             $validateDicomUploadResponse->statusText = 'OK';
-        } catch (GaelOException $e) {
+        } catch (AbstractGaelOException $e) {
             $this->handleImportException(
                 $e->getMessage(),
                 $visitId,
@@ -202,7 +202,7 @@ class ValidateDicomUpload
         $this->authorizationService->setVisitId($visitId);
         if (!$this->authorizationService->isVisitAllowed(Constants::ROLE_INVESTIGATOR) || $uploadStatus !== Constants::UPLOAD_STATUS_NOT_DONE || $visitStatus !== Constants::VISIT_STATUS_DONE) {
             throw new GaelOForbiddenException();
-        };
+        }
     }
 
     /**

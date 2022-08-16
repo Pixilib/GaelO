@@ -3,7 +3,7 @@
 namespace App\GaelO\UseCases\ReverseProxyDicomWeb;
 
 use App\GaelO\Constants\SettingsConstants;
-use App\GaelO\Exceptions\GaelOException;
+use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Adapters\FrameworkInterface;
 use App\GaelO\Interfaces\Adapters\HttpClientInterface;
@@ -67,7 +67,7 @@ class ReverseProxyDicomWeb
             $reverseProxyDicomWebResponse->statusText = $response->getReasonPhrase();
             $reverseProxyDicomWebResponse->body = $response->getBody();
             $reverseProxyDicomWebResponse->header = $response->getHeaders();
-        } catch (GaelOException $e) {
+        } catch (AbstractGaelOException $e) {
             $reverseProxyDicomWebResponse->status = $e->statusCode;
             $reverseProxyDicomWebResponse->statusText = $e->statusText;
             $reverseProxyDicomWebResponse->body = $e->getErrorBody();

@@ -62,6 +62,17 @@ class CreateVisitTest extends TestCase
         $this->json('POST', 'api/visit-types/'.$this->visitTypeId.'/visits?role=Investigator', $validPayload)->assertStatus(201);
     }
 
+    public function testCreateUnavailableVisitTypeIdShouldBeForbidden() {
+
+        $validPayload = [
+            'patientId' => $this->patient->id,
+            'visitDate' => '2020-01-01',
+            'statusDone' => 'Done',
+        ];
+
+        $this->json('POST', 'api/visit-types/50/visits?role=Investigator', $validPayload)->assertStatus(403);
+    }
+
     public function testCreateVisitNotDone() {
 
         $validPayload = [

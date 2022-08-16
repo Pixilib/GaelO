@@ -2,8 +2,8 @@
 
 namespace App\GaelO\UseCases\CreateVisitType;
 
+use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOConflictException;
-use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\VisitGroupRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
@@ -64,7 +64,7 @@ class CreateVisitType
 
             $createVisitTypeResponse->status = 201;
             $createVisitTypeResponse->statusText = 'Created';
-        } catch (GaelOException $e) {
+        } catch (AbstractGaelOException $e) {
 
             $createVisitTypeResponse->body = $e->getErrorBody();
             $createVisitTypeResponse->status = $e->statusCode;

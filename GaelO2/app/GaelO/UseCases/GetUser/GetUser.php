@@ -3,7 +3,7 @@
 namespace App\GaelO\UseCases\GetUser;
 
 use App\GaelO\Entities\UserEntity;
-use App\GaelO\Exceptions\GaelOException;
+use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\UserRepositoryInterface;
 use App\GaelO\Services\AuthorizationService\AuthorizationUserService;
@@ -46,7 +46,7 @@ class GetUser
             }
             $getUserResponse->status = 200;
             $getUserResponse->statusText = 'OK';
-        } catch (GaelOException $e) {
+        } catch (AbstractGaelOException $e) {
             $getUserResponse->body = $e->getErrorBody();
             $getUserResponse->status = $e->statusCode;
             $getUserResponse->statusText = $e->statusText;
@@ -63,7 +63,7 @@ class GetUser
         } else {
             if ($calledUserId !== $userId) {
                 throw new GaelOForbiddenException();
-            };
-        };
+            }
+        }
     }
 }

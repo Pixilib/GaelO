@@ -2,7 +2,7 @@
 
 namespace App\GaelO\Services\StoreObjects\Export;
 
-use Exception;
+use App\GaelO\Exceptions\GaelOException;
 
 class ExportFileResults extends ExportDataResults{
 
@@ -18,7 +18,7 @@ class ExportFileResults extends ExportDataResults{
         if($type === ExportDataResults::EXPORT_TYPE_ZIP) {
             $this->zipExport = new ExportFile('export_files.zip', $path);
         }else{
-            throw new Exception('Unknown File Type');
+            throw new GaelOException('Unknown File Type');
         }
 
     }

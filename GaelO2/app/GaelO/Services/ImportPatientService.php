@@ -2,12 +2,14 @@
 
 namespace App\GaelO\Services;
 
+use App\GaelO\Constants\Constants;
 use App\GaelO\Entities\StudyEntity;
 use App\GaelO\Exceptions\GaelOBadRequestException;
 use App\GaelO\Interfaces\Repositories\CenterRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\PatientRepositoryInterface;
-use App\GaelO\Util;
+use DateTime;
 use Exception;
+use Throwable;
 
 class ImportPatientService
 {
@@ -61,10 +63,15 @@ class ImportPatientService
         //For each patient from the array list
         foreach ($this->patientEntities as $patientEntity) {
             try {
-                if ($patientEntity['registrationDate']) $patientEntity['registrationDate'] = Util::formatUSDateStringToSQLDateFormat($patientEntity['registrationDate']);
                 //Check condition before import
                 self::checkPatientGender($patientEntity['gender']);
                 self::checkCorrectBirthDate($patientEntity['birthDay'], $patientEntity['birthMonth'], $patientEntity['birthYear']);
+                if ($patientEntity['inclusionStatus']  === Constants::PATIENT_INCLUSION_STATUS_INCLUDED && $patientEntity['registrationDate'] == null) {
+                    throw new GaelOBadRequestException('Registration Date Missing or Invalid');
+                }
+                if ($patientEntity['inclusionStatus']  !== null) {
+                    $this->isRegistrationDateValid($patientEntity['registrationDate']);
+                }
                 $this->checkNewPatient($patientEntity['code']);
                 $this->isCorrectPatientCode($patientEntity['code']);
                 $this->isExistingCenter($patientEntity['centerCode']);
@@ -159,6 +166,15 @@ class ImportPatientService
     {
         if ($patientNumCenter === null || !in_array($patientNumCenter, $this->existingCenter)) {
             throw new GaelOBadRequestException('Unknown Center');
+        }
+    }
+
+    private function isRegistrationDateValid(?string $registrationDate): void
+    {
+        try {
+            new DateTime($registrationDate);
+        } catch (Throwable) {
+            throw new GaelOBadRequestException('Registration Date Missing or Invalid');
         }
     }
 }

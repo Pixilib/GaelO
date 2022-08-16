@@ -6,7 +6,7 @@ use App\GaelO\Constants\Constants;
 use App\GaelO\Entities\DicomSeriesEntity;
 use App\GaelO\Entities\DicomStudyEntity;
 use App\GaelO\Entities\UserEntity;
-use App\GaelO\Exceptions\GaelOException;
+use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\DicomStudyRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
@@ -63,7 +63,7 @@ class GetDicoms
             $getDicomResponse->status = 200;
             $getDicomResponse->statusText = 'OK';
             $getDicomResponse->body = $responseArray;
-        } catch (GaelOException $e) {
+        } catch (AbstractGaelOException $e) {
             $getDicomResponse->status = $e->statusCode;
             $getDicomResponse->statusText = $e->statusText;
             $getDicomResponse->body = $e->getErrorBody();

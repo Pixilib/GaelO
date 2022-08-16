@@ -41,8 +41,23 @@ class User extends Authenticatable implements CanResetPassword, MustVerifyEmail
      * @var array
      */
     protected $casts = [
-        'email_verified_at' => 'datetime',
-        'administrator' => 'boolean'
+        'lastname' => 'string',
+        'firstname' => 'string',
+        'email' => 'string',
+        'password' => 'string',
+        'phone' => 'string',
+        //'creation_date' => 'datetime',
+        //'last_connexion' => 'datetime',
+        'attempts' => 'integer',
+        'administrator' => 'boolean',
+        'center_code' => 'integer',
+        'job' => 'string',
+        'orthanc_address' => 'string',
+        'orthanc_login' => 'string',
+        'orthanc_password' => 'string',
+        'api_token' => 'string',
+        //'email_verified_at' => 'datetime',
+        'onboarding_version' => 'string'
     ];
 
     public function roles()
@@ -57,7 +72,7 @@ class User extends Authenticatable implements CanResetPassword, MustVerifyEmail
 
     public function mainCenter()
     {
-        return $this->belongsTo(Center::class, 'code', 'center_code');
+        return $this->belongsTo(Center::class, 'center_code', 'code');
     }
 
     //Override by custom notification

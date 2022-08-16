@@ -40,9 +40,8 @@ class ReverseProxyTest extends TestCase
 
         $this->studyName = $this->orthancStudy->visit->patient->study->name;
 
-        if (true) {
-            $this->markTestSkipped('all tests in this file are invactive, this is only to check orthanc communication');
-        }
+        $this->markTestSkipped('all tests in this file are invactive, this is only to check orthanc communication');
+
     }
 
     public function testDicomWebReverseProxyStudy()

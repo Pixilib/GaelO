@@ -3,11 +3,11 @@
 namespace App\GaelO\UseCases\GetReviewFormFromVisit;
 
 use App\GaelO\Constants\Constants;
-use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\ReviewRepositoryInterface;
 use App\GaelO\Entities\ReviewEntity;
 use App\GaelO\Entities\UserEntity;
+use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Services\AuthorizationService\AuthorizationVisitService;
 use Exception;
 
@@ -54,7 +54,7 @@ class GetReviewFormFromVisit
             $getReviewFormFromVisitResponse->body = $reviews;
             $getReviewFormFromVisitResponse->status = 200;
             $getReviewFormFromVisitResponse->statusText = 'OK';
-        } catch (GaelOException $e) {
+        } catch (AbstractGaelOException $e) {
 
             $getReviewFormFromVisitResponse->body = $e->getErrorBody();
             $getReviewFormFromVisitResponse->status = $e->statusCode;

@@ -3,12 +3,14 @@
 namespace App\GaelO\UseCases\CreateDocumentation;
 
 use App\GaelO\Constants\Constants;
-use App\GaelO\Exceptions\GaelOException;
+use App\GaelO\Exceptions\AbstractGaelOException;
+use App\GaelO\Exceptions\GaelOBadRequestException;
 use App\GaelO\Exceptions\GaelOConflictException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\DocumentationRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
 use App\GaelO\Services\AuthorizationService\AuthorizationStudyService;
+use App\GaelO\Util;
 use Exception;
 
 class CreateDocumentation
@@ -35,11 +37,16 @@ class CreateDocumentation
             $documentationName = $createDocumentationRequest->name;
             $documentationVersion = $createDocumentationRequest->version;
 
+            if(!Util::isSemanticVersioning($documentationVersion))
+            {
+                throw new GaelOBadRequestException('documentation version shall be in semantic versioning major.minor.patch ex: 1.2.0');
+            }
+
             $this->checkAuthorization($currentUserId, $studyName);
 
             if ($this->documentationRepositoryInterface->isKnowndocumentation($studyName, $documentationName, $documentationVersion)) {
                 throw new GaelOConflictException("Documentation already existing under this version");
-            };
+            }
 
             $createdEntity = $this->documentationRepositoryInterface->createDocumentation(
                 $documentationName,
@@ -74,7 +81,7 @@ class CreateDocumentation
             $createDocumentationResponse->body = ['id' => $createdEntity['id']];
             $createDocumentationResponse->status = 201;
             $createDocumentationResponse->statusText =  'Created';
-        } catch (GaelOException $e) {
+        } catch (AbstractGaelOException $e) {
             $createDocumentationResponse->body = $e->getErrorBody();
             $createDocumentationResponse->status = $e->statusCode;
             $createDocumentationResponse->statusText =  $e->statusText;

@@ -2,7 +2,7 @@
 
 namespace App\GaelO\UseCases\GetStudyStatistics;
 
-use App\GaelO\Exceptions\GaelOException;
+use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\StudyRepositoryInterface;
 use App\GaelO\Services\AuthorizationService\AuthorizationUserService;
@@ -31,7 +31,7 @@ class GetStudyStatistics
             $getStudyStatisticsResponse->body = $studyStatistics;
             $getStudyStatisticsResponse->status = 200;
             $getStudyStatisticsResponse->statusText = 'OK';
-        } catch (GaelOException $e) {
+        } catch (AbstractGaelOException $e) {
             $getStudyStatisticsResponse->body = $e->getErrorBody();
             $getStudyStatisticsResponse->status = $e->statusCode;
             $getStudyStatisticsResponse->statusText = $e->statusText;

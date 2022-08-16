@@ -39,7 +39,7 @@ class PatientTest extends TestCase
             "birthDay" => 23,
             "birthMonth" => 1,
             "birthYear" => 1985,
-            "registrationDate" => "2021-12-17",
+            "registrationDate" => "2011-10-05",
             "investigatorName" => "voluptas",
             "centerCode" => $this->patient['center_code'],
             "studyName" => $this->patient['study_name'],
@@ -127,7 +127,7 @@ class PatientTest extends TestCase
             'birthDay' => 5,
             'birthMonth' => 12,
             'birthYear' => 1955,
-            'registrationDate' => '2021-12-30',
+            'registrationDate' => '2011-10-05',
             'investigatorName' => 'salim',
             'centerCode' => 0,
             'reason' => 'wrong patient data'
@@ -145,7 +145,7 @@ class PatientTest extends TestCase
         $this->json('PATCH', '/api/patients/' . $this->patient->id, ['birthDay' => 32])->assertStatus(400);
         $this->json('PATCH', '/api/patients/' . $this->patient->id, ['birthMonth' => 13])->assertStatus(400);
         $this->json('PATCH', '/api/patients/' . $this->patient->id, ['birthYear' => 5000])->assertStatus(400);
-        $this->json('PATCH', '/api/patients/' . $this->patient->id, ['registrationDate' => '31/01/2020'])->assertStatus(400);
+        $this->json('PATCH', '/api/patients/' . $this->patient->id, ['registrationDate' => '2011-10-05'])->assertStatus(400);
     }
 
     public function testModifyPatientForbidenNotSupervisor()
@@ -169,14 +169,14 @@ class PatientTest extends TestCase
         $payload = $this->validPayload;
         $payload = array_merge($payload, [
             'inclusionStatus' => Constants::PATIENT_INCLUSION_STATUS_WITHDRAWN,
-            'withdrawDate' => '12/31/2020',
+            'withdrawDate' => '2011-10-05T14:48:00.000Z',
             'withdrawReason' => 'fed-up',
             'reason' => 'inclusion status changed'
         ]);
         $this->json('PATCH', '/api/patients/' . $this->patient->id, $payload)->assertStatus(200);
         $updatedPatientEntity = Patient::find($this->patient->id)->toArray();
         $this->assertEquals(Constants::PATIENT_INCLUSION_STATUS_WITHDRAWN, $updatedPatientEntity['inclusion_status']);
-        $this->assertEquals(new DateTime($payload['withdrawDate']), new DateTime($updatedPatientEntity['withdraw_date']));
+        $this->assertEquals('2011-10-05T14:48:00.000Z', $updatedPatientEntity['withdraw_date']);
         $this->assertEquals($payload['withdrawReason'], $updatedPatientEntity['withdraw_reason']);
     }
 
@@ -187,7 +187,7 @@ class PatientTest extends TestCase
         $payload = $this->validPayload;
         $payload = array_merge($payload, [
             'inclusionStatus' => Constants::PATIENT_INCLUSION_STATUS_INCLUDED,
-            'withdrawDate' => '12/31/2020',
+            'withdrawDate' => '2011-10-05',
             'withdrawReason' => 'fed-up',
             'reason' => 'inclusion status changed'
         ]);

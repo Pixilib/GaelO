@@ -3,7 +3,7 @@
 namespace App\GaelO\UseCases\GetAffiliatedCenter;
 
 use App\GaelO\Entities\CenterEntity;
-use App\GaelO\Exceptions\GaelOException;
+use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\UserRepositoryInterface;
 use App\GaelO\Services\AuthorizationService\AuthorizationUserService;
@@ -36,7 +36,7 @@ class GetAffiliatedCenter
             $getAffiliatedCenterResponse->body = $centerResponseArray;
             $getAffiliatedCenterResponse->status = 200;
             $getAffiliatedCenterResponse->statusText = 'OK';
-        } catch (GaelOException $e) {
+        } catch (AbstractGaelOException $e) {
             $getAffiliatedCenterResponse->body =  $e->getErrorBody();
             $getAffiliatedCenterResponse->status = $e->statusCode;
             $getAffiliatedCenterResponse->statusText = $e->statusCode;
@@ -50,6 +50,6 @@ class GetAffiliatedCenter
         $this->authorizationUserService->setUserId($userId);
         if (!$this->authorizationUserService->isAdmin()) {
             throw new GaelOForbiddenException();
-        };
+        }
     }
 }

@@ -8,19 +8,21 @@ use App\Models\Country;
 class CountryRepository implements CountryRepositoryInterface
 {
 
+    private Country $countryModel;
+
     public function __construct(Country $country)
     {
-        $this->country = $country;
+        $this->countryModel = $country;
     }
 
     public function getCountryByCode($code)
     {
-        return $this->country->findOrFail($code)->toArray();
+        return $this->countryModel->findOrFail($code)->toArray();
     }
 
     public function getAllCountries()
     {
-        $countries = $this->country->get();
+        $countries = $this->countryModel->get();
         return empty($countries) ? []  : $countries->sortBy('country_us')->toArray();
     }
 }

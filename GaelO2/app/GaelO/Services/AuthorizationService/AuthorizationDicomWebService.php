@@ -100,12 +100,12 @@ class AuthorizationDicomWebService
             if (key_exists('00100020',  $params)) {
                 $this->level = "patients";
                 return;
-            };
+            }
 
             if (key_exists('0020000D',  $params)) {
                 $this->level = "studies";
                 return;
-            };
+            }
         }
 
         if (Util::endsWith($url['path'], "/studies"))  $this->level = "patients";
@@ -137,7 +137,7 @@ class AuthorizationDicomWebService
             $studyUID = substr($studySubString, 0, $endStudyUIDPosition);
         } else {
             $studyUID = $studySubString;
-        };
+        }
 
         return $studyUID;
     }

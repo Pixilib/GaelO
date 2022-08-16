@@ -15,6 +15,16 @@ class Study extends Model
     protected $keyType = 'string';
     public $incrementing = false;
 
+    protected $casts = [
+        'name' => 'string',
+        'code' => 'string',
+        'patient_code_length' => 'integer',
+        'contact_email' => 'string',
+        'controller_show_all' => 'boolean',
+        'monitor_show_all' => 'boolean',
+        'ancillary_of' =>  'string'
+    ];
+
     public function patients()
     {
         return $this->hasMany(Patient::class, 'study_name');

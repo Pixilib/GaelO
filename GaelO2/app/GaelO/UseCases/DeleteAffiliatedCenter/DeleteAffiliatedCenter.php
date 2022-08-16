@@ -3,7 +3,7 @@
 namespace App\GaelO\UseCases\DeleteAffiliatedCenter;
 
 use App\GaelO\Constants\Constants;
-use App\GaelO\Exceptions\GaelOException;
+use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\UserRepositoryInterface;
@@ -44,7 +44,7 @@ class DeleteAffiliatedCenter
 
             $deleteAffiliatedCenterResponse->status = 200;
             $deleteAffiliatedCenterResponse->statusText = 'OK';
-        } catch (GaelOException $e) {
+        } catch (AbstractGaelOException $e) {
             $deleteAffiliatedCenterResponse->status = $e->statusCode;
             $deleteAffiliatedCenterResponse->statusText = $e->statusText;
             $deleteAffiliatedCenterResponse->body = $e->getErrorBody();

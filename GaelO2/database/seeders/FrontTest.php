@@ -44,11 +44,11 @@ class FrontTest extends Seeder
             Role::factory()->userId($this->user->id)->studyName($studyEntity->name)->roleName('Controller')->create();
         }
 
-        $this->patient = Patient::factory()->id(rand(10000, 99999))->inclusionStatus('Included')->investigatorName('administrator')
+        $this->patient = Patient::factory()->id(random_int(10000, 99999))->inclusionStatus('Included')->investigatorName('administrator')
             ->studyName($this->study->name)->centerCode(0)->create();
-        Patient::factory()->id(rand(10000, 99999))->investigatorName('administrator')
+        Patient::factory()->id(random_int(10000, 99999))->investigatorName('administrator')
             ->studyName($this->study->name)->centerCode(0)->create();
-        Patient::factory()->id(rand(10000, 99999))->investigatorName('administrator')
+        Patient::factory()->id(random_int(10000, 99999))->investigatorName('administrator')
             ->studyName($this->study->name)->centerCode(0)->create();
 
         $this->visitGroup = VisitGroup::factory()->studyName($this->study->name)->create();

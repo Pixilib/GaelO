@@ -2,7 +2,7 @@
 
 namespace App\GaelO\UseCases\ExportDatabase;
 
-use App\GaelO\Exceptions\GaelOException;
+use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Adapters\DatabaseDumperInterface;
 use App\GaelO\Interfaces\Adapters\FrameworkInterface;
@@ -47,12 +47,12 @@ class ExportDatabase
             $exportDatabaseResponse->statusText = 'OK';
             $exportDatabaseResponse->zipFile = $tempZip;
             $exportDatabaseResponse->fileName = "export_database_" . $date . ".zip";
-        } catch (GaelOException $e) {
+        } catch (AbstractGaelOException $e) {
             $exportDatabaseResponse->status = $e->statusCode;
             $exportDatabaseResponse->statusText = $e->statusText;
         } catch (Exception $e) {
             throw $e;
-        };
+        }
     }
 
     private function checkAuthorization(int $userId): void
@@ -60,6 +60,6 @@ class ExportDatabase
         $this->authorizationUserService->setUserId($userId);
         if (!$this->authorizationUserService->isAdmin($userId)) {
             throw new GaelOForbiddenException();
-        };
+        }
     }
 }

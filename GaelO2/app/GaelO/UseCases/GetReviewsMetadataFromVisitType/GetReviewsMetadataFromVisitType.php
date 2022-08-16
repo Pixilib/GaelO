@@ -3,7 +3,7 @@
 namespace App\GaelO\UseCases\GetReviewsMetadataFromVisitType;
 
 use App\GaelO\Constants\Constants;
-use App\GaelO\Exceptions\GaelOException;
+use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Repositories\VisitGroupRepository;
 use App\GaelO\Repositories\VisitTypeRepository;
@@ -49,7 +49,7 @@ class GetReviewsMetadataFromVisitType
             $getReviewsMetadataFromVisitTypeResponse->body = $answer;
             $getReviewsMetadataFromVisitTypeResponse->status = 200;
             $getReviewsMetadataFromVisitTypeResponse->statusText = 'OK';
-        } catch (GaelOException $e) {
+        } catch (AbstractGaelOException $e) {
 
             $getReviewsMetadataFromVisitTypeResponse->body = $e->getErrorBody();
             $getReviewsMetadataFromVisitTypeResponse->status = $e->statusCode;
@@ -65,6 +65,6 @@ class GetReviewsMetadataFromVisitType
         $this->authorizationStudyService->setStudyName($studyName);
         if (!$this->authorizationStudyService->isAllowedStudy(Constants::ROLE_SUPERVISOR)) {
             throw new GaelOForbiddenException();
-        };
+        }
     }
 }

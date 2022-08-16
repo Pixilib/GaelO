@@ -2,7 +2,7 @@
 
 namespace App\GaelO\UseCases\GetAssociatedDataForInvestigator;
 
-use App\GaelO\Exceptions\GaelOException;
+use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
 use App\GaelO\Services\AuthorizationService\AuthorizationVisitService;
@@ -42,7 +42,7 @@ class GetAssociatedDataForInvestigator
             $getAssociatedDataForInvestigatorResponse->body =  $associatedData;
             $getAssociatedDataForInvestigatorResponse->status = 200;
             $getAssociatedDataForInvestigatorResponse->statusText = 'OK';
-        } catch (GaelOException $e) {
+        } catch (AbstractGaelOException $e) {
             $getAssociatedDataForInvestigatorResponse->body =  $e->getErrorBody();
             $getAssociatedDataForInvestigatorResponse->status = $e->statusCode;
             $getAssociatedDataForInvestigatorResponse->statusText = $e->statusCode;

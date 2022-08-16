@@ -4,7 +4,7 @@ namespace App\GaelO\UseCases\RequestUnlockQC;
 
 use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOBadRequestException;
-use App\GaelO\Exceptions\GaelOException;
+use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
 use App\GaelO\Repositories\TrackerRepository;
@@ -83,7 +83,7 @@ class RequestUnlockQC
 
             $requestUnlockQCResponse->status = 200;
             $requestUnlockQCResponse->statusText = 'OK';
-        } catch (GaelOException $e) {
+        } catch (AbstractGaelOException $e) {
             $requestUnlockQCResponse->body = $e->getErrorBody();
             $requestUnlockQCResponse->status = $e->statusCode;
             $requestUnlockQCResponse->statusText = $e->statusText;

@@ -4,7 +4,7 @@ namespace App\GaelO\UseCases\ModifyQualityControl;
 
 use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOBadRequestException;
-use App\GaelO\Exceptions\GaelOException;
+use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
 use App\GaelO\Services\AuthorizationService\AuthorizationVisitService;
@@ -47,7 +47,7 @@ class ModifyQualityControl
             $visitModality = $visitContext['visit_type']['visit_group']['modality'];
             $centerCode = $visitContext['patient']['center_code'];
             $creatorId = $visitContext['creator_user_id'];
-            $localFormNeeded = $visitContext['visit_type']['local_form_needed'];
+            $localFormNeeded = $visitContext['state_investigator_form'] !== Constants::INVESTIGATOR_FORM_NOT_NEEDED;
 
             $this->checkAuthorization($currentUserId, $visitId, $studyName);
 
@@ -118,7 +118,7 @@ class ModifyQualityControl
 
             $modifyQualityControlResponse->status = 200;
             $modifyQualityControlResponse->statusText = 'OK';
-        } catch (GaelOException $e) {
+        } catch (AbstractGaelOException $e) {
 
             $modifyQualityControlResponse->body = $e->getErrorBody();
             $modifyQualityControlResponse->status = $e->statusCode;

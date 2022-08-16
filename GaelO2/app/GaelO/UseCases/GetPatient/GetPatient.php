@@ -5,7 +5,7 @@ namespace App\GaelO\UseCases\GetPatient;
 use App\GaelO\Constants\Constants;
 use App\GaelO\Entities\CenterEntity;
 use App\GaelO\Entities\PatientEntity;
-use App\GaelO\Exceptions\GaelOException;
+use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\PatientRepositoryInterface;
 use App\GaelO\Services\AuthorizationService\AuthorizationPatientService;
@@ -45,7 +45,7 @@ class GetPatient
             $getPatientResponse->body = $responseEntity;
             $getPatientResponse->status = 200;
             $getPatientResponse->statusText = 'OK';
-        } catch (GaelOException $e) {
+        } catch (AbstractGaelOException $e) {
             $getPatientResponse->status = $e->statusCode;
             $getPatientResponse->statusText = $e->statusText;
             $getPatientResponse->body = $e->getErrorBody();
@@ -61,6 +61,6 @@ class GetPatient
         $this->authorizationPatientService->setStudyName($studyName);
         if (!$this->authorizationPatientService->isPatientAllowed($role)) {
             throw new GaelOForbiddenException();
-        };
+        }
     }
 }

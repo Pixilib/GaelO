@@ -3,6 +3,7 @@
 namespace Tests\Feature\TestPatients;
 
 use App\GaelO\Constants\Constants;
+use App\Models\Patient;
 use App\Models\Study;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\TestCase;
@@ -32,7 +33,7 @@ class ImportPatientTest extends TestCase
         "birthDay" => 1,
         "birthMonth" => 1,
         "birthYear" => 1998,
-        "registrationDate" => '10/19/2020',
+        "registrationDate" => '2011-10-05',
         "investigatorName" => "administrator",
         "centerCode" => 0,
         "inclusionStatus"  => Constants::PATIENT_INCLUSION_STATUS_INCLUDED
@@ -54,7 +55,7 @@ class ImportPatientTest extends TestCase
         "birthDay" => 1,
         "birthMonth" => 1,
         "birthYear" => 1998,
-        "registrationDate" => '10/19/2020',
+        "registrationDate" => '2011-10-05',
         "investigatorName" => "administrator",
         "centerCode" => 0,
         "inclusionStatus"  => Constants::PATIENT_INCLUSION_STATUS_INCLUDED],
@@ -65,7 +66,7 @@ class ImportPatientTest extends TestCase
         "birthDay" => 1,
         "birthMonth" => 1,
         "birthYear" => 1998,
-        "registrationDate" => '10/19/2020',
+        "registrationDate" => '2011-10-06',
         "investigatorName" => "administrator",
         "centerCode" => 0,
         "inclusionStatus"  => Constants::PATIENT_INCLUSION_STATUS_INCLUDED],
@@ -76,7 +77,7 @@ class ImportPatientTest extends TestCase
         "birthDay" => 1,
         "birthMonth" => 1,
         "birthYear" => 1998,
-        "registrationDate" => '10/19/2020',
+        "registrationDate" => '2011-10-07',
         "investigatorName" => "administrator",
         "centerCode" => 0,
         "inclusionStatus"  => Constants::PATIENT_INCLUSION_STATUS_INCLUDED]
@@ -85,6 +86,9 @@ class ImportPatientTest extends TestCase
         $resp->assertSuccessful();
         $this->assertEquals(3,sizeof($resp['success']));
         $this->assertEquals(0,sizeof($resp['fail']));
+
+        $patient1 = Patient::find($this->study->code.'12341231234123')->toArray();
+        $this->assertEquals('2011-10-05', $patient1['registration_date']);
     }
 
     public function testImportPatient() {
@@ -189,6 +193,27 @@ class ImportPatientTest extends TestCase
         $this->assertEquals(0, count($resp['success']));
         $this->assertNotEmpty($resp['fail']['Incorrect Patient Code Length']);
         $this->assertEquals(123, $resp['fail']['Incorrect Patient Code Length'][0]);
+    }
+
+    public function testMissingInclusionDateWhileIncluded(){
+        $currentUserId = AuthorizationTools::actAsAdmin(false);
+        AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $this->study->name);
+
+        $this->validPayload[0]['registrationDate'] = '123';
+        $resp = $this->json('POST', '/api/studies/'.$this->study->name.'/import-patients', $this->validPayload);
+        $this->assertEquals(0, count($resp['success']));
+        $this->assertNotEmpty($resp['fail']['Registration Date Missing or Invalid']);
+        $this->assertEquals(12341231234123, $resp['fail']['Registration Date Missing or Invalid'][0]);
+    }
+
+
+    public function testMissingInclusionDateAllowedIfPreIncluded(){
+        $currentUserId = AuthorizationTools::actAsAdmin(false);
+        AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $this->study->name);
+        $this->validPayload[0]['registrationDate'] = null;
+        $this->validPayload[0]['inclusionStatus'] = Constants::PATIENT_INCLUSION_STATUS_PRE_INCLUDED;
+        $resp = $this->json('POST', '/api/studies/'.$this->study->name.'/import-patients', $this->validPayload);
+        $this->assertEquals(1, count($resp['success']));
     }
 
 }

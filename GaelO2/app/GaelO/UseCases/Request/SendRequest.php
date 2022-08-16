@@ -3,7 +3,7 @@
 namespace App\GaelO\UseCases\Request;
 
 use App\GaelO\Exceptions\GaelOBadRequestException;
-use App\GaelO\Exceptions\GaelOException;
+use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Services\MailServices;
 
 class SendRequest
@@ -30,7 +30,7 @@ class SendRequest
             $requestResponse->status = 200;
             $requestResponse->statusText = 'OK';
 
-        } catch (GaelOException $e) {
+        } catch (AbstractGaelOException $e) {
             $requestResponse->body = $e->getErrorBody();
             $requestResponse->status = $e->statusCode;
             $requestResponse->statusText = $e->statusText;

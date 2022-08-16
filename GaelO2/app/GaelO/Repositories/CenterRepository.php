@@ -7,15 +7,16 @@ use App\Models\Center;
 
 class CenterRepository implements CenterRepositoryInterface
 {
+    private Center $centerModel;
 
     public function __construct(Center $center)
     {
-        $this->center = $center;
+        $this->centerModel = $center;
     }
 
     public function getAll(): array
     {
-        $centers = $this->center->get();
+        $centers = $this->centerModel->get();
         return empty($centers) ? [] : $centers->toArray();
     }
 
@@ -30,30 +31,30 @@ class CenterRepository implements CenterRepositoryInterface
 
     public function isExistingCenterName(string $name): bool
     {
-        $center = $this->center->where('name', $name)->get();
+        $center = $this->centerModel->where('name', $name)->get();
         return $center->count() > 0  ? true : false;
     }
 
     public function getCenterByCode(int $code): array
     {
-        $center = $this->center->find($code)->toArray();
+        $center = $this->centerModel->find($code)->toArray();
         return $center;
     }
 
     public function getCentersFromCodeArray(array $centerCodes): array
     {
-        $centers = $this->center->whereIn('code', $centerCodes)->get();
+        $centers = $this->centerModel->whereIn('code', $centerCodes)->get();
         return $centers !== null  ? $centers->toArray() : [];
     }
 
     public function isKnownCenter(int $code): bool
     {
-        return empty($this->center->find($code)) ? false : true;
+        return empty($this->centerModel->find($code)) ? false : true;
     }
 
     public function updateCenter(int $code, String $name, String $countryCode): void
     {
-        $center = $this->center->findOrFail($code);
+        $center = $this->centerModel->findOrFail($code);
         $center->name = $name;
         $center->country_code = $countryCode;
         $center->save();

@@ -3,7 +3,7 @@
 namespace App\GaelO\UseCases\GetAssociatedDataForReview;
 
 use App\GaelO\Constants\Constants;
-use App\GaelO\Exceptions\GaelOException;
+use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
 use App\GaelO\Services\AuthorizationService\AuthorizationVisitService;
@@ -42,7 +42,7 @@ class GetAssociatedDataForReview
             $getAssociatedDataForReviewResponse->body = $associatedData;
             $getAssociatedDataForReviewResponse->status = 200;
             $getAssociatedDataForReviewResponse->statusText = 'OK';
-        } catch (GaelOException $e) {
+        } catch (AbstractGaelOException $e) {
             $getAssociatedDataForReviewResponse->body = $e->getErrorBody();
             $getAssociatedDataForReviewResponse->status = $e->statusCode;
             $getAssociatedDataForReviewResponse->statusText = $e->statusCode;
