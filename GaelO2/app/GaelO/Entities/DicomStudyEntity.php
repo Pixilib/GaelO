@@ -50,6 +50,7 @@ class DicomStudyEntity
     {
         $this->patient = new PatientEntity();
         $this->patient->id = $patientData['id'];
+        $this->patient->code = $patientData['code'];
         $this->patient->centerCode = $patientData['center_code'];
         $this->patient->inclusionStatus = $patientData['inclusion_status'];
     }
