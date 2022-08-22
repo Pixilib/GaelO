@@ -219,7 +219,7 @@ Route::get('email/verify/{id}/{hash}', function (Request $request) {
 
     if ($user->markEmailAsVerified()) event(new Verified($user));
 
-}->middleware(['signed'])->name('verification.verify');
+})->middleware(['signed'])->name('verification.verify');
 
 //Magic link route
 Route::get('magic-link/{id}', [AuthController::class, 'getMagicLink'])->name('magic-link');
