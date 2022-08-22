@@ -18,10 +18,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\VisitController;
 use App\Http\Controllers\VisitGroupController;
 use App\Http\Controllers\VisitTypeController;
-use App\Models\User;
-use Illuminate\Auth\Access\AuthorizationException;
-use Illuminate\Auth\Events\Verified;
-use Illuminate\Http\Request;
+use App\Http\Requests\SignedEmailVerificationRequest;
 use Illuminate\Support\Facades\Route;
 /*
 |--------------------------------------------------------------------------
@@ -213,15 +210,9 @@ Route::post('tools/reset-password', [UserController::class, 'updatePassword'])->
 
 
 //Route to validate email
-Route::get('email/verify/{id}/{hash}', function (Request $request) {
-
-    $user = User::findOrFail($request->route('id'));
-    if (!hash_equals((string) $request->route('hash'), sha1($user->getEmailForVerification()))) {
-        throw new AuthorizationException();
-    }
-
-    if ($user->markEmailAsVerified()) event(new Verified($user));
-
+Route::get('email/verify/{id}/{hash}', function (SignedEmailVerificationRequest $request) {
+    $request->fulfill();
+    return 'Email verified.';
 })->middleware(['signed'])->name('verification.verify');
 
 //Magic link route
