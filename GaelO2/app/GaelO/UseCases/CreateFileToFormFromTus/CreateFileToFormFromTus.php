@@ -1,11 +1,12 @@
 <?php
 
-namespace App\GaelO\UseCases\CreateFileToForm;
+namespace App\GaelO\UseCases\CreateFileToFormFromTus;
 
 use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOBadRequestException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
+use App\GaelO\Exceptions\GaelOValidateDicomException;
 use App\GaelO\Interfaces\Adapters\MimeInterface;
 use App\GaelO\Interfaces\Repositories\ReviewRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
@@ -13,10 +14,12 @@ use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
 use App\GaelO\Services\AuthorizationService\AuthorizationReviewService;
 use App\GaelO\Services\AuthorizationService\AuthorizationVisitService;
 use App\GaelO\Services\FormService\FormService;
+use App\GaelO\Services\TusService;
 use App\GaelO\Util;
 use Exception;
+use ZipArchive;
 
-class CreateFileToForm
+class CreateFileToFormFromTus
 {
 
     private AuthorizationVisitService $authorizationVisitService;
@@ -26,6 +29,7 @@ class CreateFileToForm
     private VisitRepositoryInterface $visitRepositoryInterface;
     private FormService $formService;
     private MimeInterface $mimeInterface;
+    private TusService $tusService;
 
     public function __construct(
         AuthorizationVisitService $authorizationVisitService,
@@ -34,7 +38,8 @@ class CreateFileToForm
         ReviewRepositoryInterface $reviewRepositoryInterface,
         FormService $formService,
         TrackerRepositoryInterface $trackerRepositoryInterface,
-        MimeInterface $mimeInterface
+        MimeInterface $mimeInterface,
+        TusService $tusService,
     ) {
         $this->authorizationVisitService = $authorizationVisitService;
         $this->authorizationReviewService = $authorizationReviewService;
@@ -43,37 +48,87 @@ class CreateFileToForm
         $this->formService = $formService;
         $this->trackerRepositoryInterface = $trackerRepositoryInterface;
         $this->mimeInterface = $mimeInterface;
+        $this->tusService = $tusService;
     }
 
-    public function execute(CreateFileToFormRequest $createFileToReviewRequest, CreateFileToFormResponse $createFileToReviewResponse)
+    //SK TODO FINIR CE USECASE
+    //EXPOSER UNE ROUTE
+    //TESTER
+    public function execute(CreateFileToFormFromTusRequest $createFileToFormFromTusRequest, CreateFileToFormFromTusResponse $createFileToFormFromTusResponse)
     {
 
         try {
-            $reviewEntity = $this->reviewRepositoryInterface->find($createFileToReviewRequest->id);
+            $reviewEntity = $this->reviewRepositoryInterface->find($createFileToFormFromTusRequest->id);
 
             $studyName = $reviewEntity['study_name'];
             $local = $reviewEntity['local'];
             $visitId = $reviewEntity['visit_id'];
             $reviewId = $reviewEntity['id'];
 
-            $key = $createFileToReviewRequest->key;
-            $binaryData = $createFileToReviewRequest->binaryData;
+            $key = $createFileToFormFromTusRequest->key;
+            $tusIds = $createFileToFormFromTusRequest->tusIds;
 
-
-            if (!Util::isBase64Encoded($binaryData)) {
-                throw new GaelOBadRequestException("Payload should be base64 encoded");
+            if (empty($tusIds)) {
+                throw new GaelOBadRequestException('Tus Ids Should not be empty');
             }
 
-            $this->checkAuthorization($local, $reviewEntity['validated'], $createFileToReviewRequest->id, $visitId, $createFileToReviewRequest->currentUserId, $studyName);
+            $this->checkAuthorization($local, $reviewEntity['validated'], $createFileToFormFromTusRequest->id, $visitId, $createFileToFormFromTusRequest->currentUserId, $studyName);
 
-            $extension = $this->mimeInterface::getExtensionFromMime($createFileToReviewRequest->contentType);
+            $file = null;
 
+            //Only one file
+            if (sizeof($tusIds) === 1) {
+                $file = $this->tusService->getFile($tusIds[0]);
+                $this->tusService->deleteFile($tusIds[0]);
+            }
+
+            //Several file, expected ziped dicom upload, unzip and merge in a single zipe
+            if (sizeof($tusIds) > 1) {
+                //Create Temporary folder to work
+                $unzipedPath = Util::getUploadTemporaryFolder();
+
+                //Get uploaded Zips from TUS and upzip it in a temporary folder
+                foreach ($tusIds as $tusId) {
+                    $tusTempZip = $this->tusService->getFile($tusId);
+
+                    $zipSize = filesize($tusTempZip);
+                    $uncompressedzipSize = Util::getZipUncompressedSize($tusTempZip);
+                    if ($uncompressedzipSize / $zipSize > 50) {
+                        throw new GaelOValidateDicomException("Bomb Zip");
+                    }
+
+                    $zip = new ZipArchive();
+                    $zip->open($tusTempZip);
+                    $zip->extractTo($unzipedPath);
+                    $zip->close();
+
+                    //Remove file from TUS and downloaded temporary zip
+                    $this->tusService->deleteFile($tusId);
+                    unlink($tusTempZip);
+                }
+
+                $tempFileLocation = tempnam(ini_get('upload_tmp_dir'), 'TMPZIP_');
+                //SK REPRENDRE ICI
+                $expectedNumberOfInstances = $createFileToFormFromTusRequest->numberOfInstances;
+
+                $orthancStudyImport = $this->orthancService->importDicomFolder($unzipedPath);
+                if ($expectedNumberOfInstances !== $orthancStudyImport->getNumberOfInstances()) {
+                    throw new GaelOValidateDicomException("Imported DICOM not matching announced number of Instances");
+                }
+
+                $importedOrthancStudyID = $orthancStudyImport->getStudyOrthancId();
+
+                $file = $this->orthancService->getZipStreamToFile([$studyID], $tempFileLocation);
+            }
+
+            $mime = mime_content_type($file);
+            $extension = $this->mimeInterface::getExtensionFromMime($mime);
             $fileName = 'review_' . $reviewId . '_' . $key . '.' . $extension;
 
             $visitContext = $this->visitRepositoryInterface->getVisitContext($visitId);
-
             $this->formService->setVisitContextAndStudy($visitContext, $studyName);
-            $this->formService->attachFile($reviewEntity, $key, $fileName, $createFileToReviewRequest->contentType, base64_decode($binaryData));
+
+            $this->formService->attachFile($reviewEntity, $key, $fileName, $mime, $file);
 
             $actionDetails = [
                 'uploaded_file' => $key,
@@ -82,7 +137,7 @@ class CreateFileToForm
             ];
 
             $this->trackerRepositoryInterface->writeAction(
-                $createFileToReviewRequest->currentUserId,
+                $createFileToFormFromTusRequest->currentUserId,
                 $local ? Constants::ROLE_INVESTIGATOR : Constants::ROLE_SUPERVISOR,
                 $studyName,
                 $visitId,
@@ -90,12 +145,12 @@ class CreateFileToForm
                 $actionDetails
             );
 
-            $createFileToReviewResponse->status = 201;
-            $createFileToReviewResponse->statusText =  'Created';
+            $createFileToFormFromTusResponse->status = 201;
+            $createFileToFormFromTusResponse->statusText =  'Created';
         } catch (AbstractGaelOException $e) {
-            $createFileToReviewResponse->body = $e->getErrorBody();
-            $createFileToReviewResponse->status = $e->statusCode;
-            $createFileToReviewResponse->statusText =  $e->statusText;
+            $createFileToFormFromTusResponse->body = $e->getErrorBody();
+            $createFileToFormFromTusResponse->status = $e->statusCode;
+            $createFileToFormFromTusResponse->statusText =  $e->statusText;
         } catch (Exception $e) {
             throw $e;
         }

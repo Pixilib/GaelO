@@ -91,15 +91,11 @@ class FormService
         if ($mimeType !== $expectedMime) {
             throw new GaelOBadRequestException("File Key or Mime Not Allowed");
         }
-
-        if (!Util::isBase64Encoded($binaryData)) {
-            throw new GaelOBadRequestException("Payload should be base64 encoded");
-        }
-
+        
         $destinationPath = $this->studyName . '/' . 'attached_review_file';
 
         $destinationFileName = $destinationPath . '/' . $filename;
-        $this->frameworkInterface->storeFile($destinationFileName, base64_decode($binaryData));
+        $this->frameworkInterface->storeFile($destinationFileName, $binaryData);
 
         $reviewEntity['sent_files'][$key] = $destinationFileName;
 
