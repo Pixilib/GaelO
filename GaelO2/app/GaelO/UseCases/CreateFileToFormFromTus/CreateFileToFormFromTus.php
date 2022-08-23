@@ -54,6 +54,8 @@ class CreateFileToFormFromTus
     //SK TODO FINIR CE USECASE
     //EXPOSER UNE ROUTE
     //TESTER
+    //Tester Validated Dicom
+    
     public function execute(CreateFileToFormFromTusRequest $createFileToFormFromTusRequest, CreateFileToFormFromTusResponse $createFileToFormFromTusResponse)
     {
 
