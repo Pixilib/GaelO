@@ -83,9 +83,10 @@ class ReviewFormService extends FormService
         $conclusion = $this->abstractVisitRules->getReviewConclusion();
         $targetLesions = $this->abstractVisitRules->getTargetLesion();
 
+        //Update review availability if change compared on current value
         if ($availability !== $this->reviewStatusEntity['review_available']) $this->reviewStatusRepositoryInterface->updateReviewAvailability($this->visitId, $this->studyName, $availability);
-        if ($reviewStatus !== $this->reviewStatusEntity['review_status']) $this->reviewStatusRepositoryInterface->updateReviewStatus($this->visitId, $this->studyName, $reviewStatus);
-        if ($reviewStatus === Constants::REVIEW_STATUS_DONE) $this->reviewStatusRepositoryInterface->updateReviewConclusion($this->visitId, $this->studyName, $conclusion, $targetLesions);
+        //Update review status table to computed new values
+        $this->reviewStatusRepositoryInterface->updateReviewStatusAndConclusion($this->visitId, $this->studyName, $reviewStatus, $conclusion, $targetLesions);
 
         //Send Notification emails
         if ($reviewStatus === Constants::REVIEW_STATUS_WAIT_ADJUDICATION) {

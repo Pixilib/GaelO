@@ -44,27 +44,13 @@ class ReviewStatusRepositoryTest extends TestCase
         $this->assertEquals(boolval($reviewStatusEntity['review_available']), $reviewStatus->review_available);
     }
 
-    public function testUpdateReviewStatus()
-    {
+    public function testUpdateReviewStatusAndConclusion(){
 
         $reviewStatus = ReviewStatus::factory()->create();
-        $this->reviewStatus->updateReviewStatus(
+        $this->reviewStatus->updateReviewStatusAndConclusion(
             $reviewStatus->visit_id,
             $reviewStatus->study_name,
             Constants::REVIEW_STATUS_DONE,
-        );
-
-        $review = ReviewStatus::get()->first();
-
-        $this->assertEquals(Constants::REVIEW_STATUS_DONE, $review['review_status']);
-    }
-
-    public function testUpdateReviewConclusion(){
-
-        $reviewStatus = ReviewStatus::factory()->create();
-        $this->reviewStatus->updateReviewConclusion(
-            $reviewStatus->visit_id,
-            $reviewStatus->study_name,
             'Progression',
             ['liver'=> 3.54]
         );
@@ -72,6 +58,7 @@ class ReviewStatusRepositoryTest extends TestCase
         $review = ReviewStatus::get()->first();
 
         $this->assertEquals('Progression', $review['review_conclusion_value']);
+        $this->assertEquals(Constants::REVIEW_STATUS_DONE, $review['review_status']);
         $this->assertIsArray($review['target_lesions']);
 
     }
