@@ -284,7 +284,8 @@ class VisitRepository implements VisitRepositoryInterface
                     ->where('study_name', '=', $studyName)
                     ->where('validated', true)
                     ->where('local', false)
-                    ->where('user_id', $userId);
+                    ->where('user_id', $userId)
+                    ->where('deleted_at', null);
             }, '=', 0)
             ->whereIn('id', $visitIdAwaitingReview)
             ->get();
@@ -307,7 +308,8 @@ class VisitRepository implements VisitRepositoryInterface
                     ->where('study_name', '=', $studyName)
                     ->where('validated', true)
                     ->where('local', false)
-                    ->where('user_id', $userId);
+                    ->where('user_id', $userId)
+                    ->where('deleted_at', null);
             }, '=', 0)
             ->whereIn('id', $visitIdAwaitingReview)
             ->distinct('patient_id')
@@ -339,7 +341,8 @@ class VisitRepository implements VisitRepositoryInterface
                     ->where('study_name', '=', $studyName)
                     ->where('validated', true)
                     ->where('local', false)
-                    ->where('user_id', $userId);
+                    ->where('user_id', $userId)
+                    ->where('deleted_at', null);
             }, '=', 0)
             ->whereIn('id', $patientVisitsIdAvailableForReview)->get();
 
