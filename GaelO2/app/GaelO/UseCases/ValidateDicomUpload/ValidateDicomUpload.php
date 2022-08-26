@@ -17,6 +17,7 @@ use App\GaelO\Services\VisitService;
 use App\GaelO\Util;
 use Exception;
 use ZipArchive;
+use Illuminate\Support\Facades\Log;
 
 class ValidateDicomUpload
 {
@@ -105,6 +106,7 @@ class ValidateDicomUpload
             $this->orthancService->setOrthancServer(false);
 
             $importedOrthancStudyID = $this->sendFolderToOrthanc($unzipedPath, $validateDicomUploadRequest->numberOfInstances);
+
 
             //Anonymize and store new anonymized study Orthanc ID
             $anonymizedOrthancStudyID = $this->orthancService->anonymize(
