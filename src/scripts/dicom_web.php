@@ -66,7 +66,7 @@ if ($permissionDicomWeb) {
 
 		$response=$next($request, $response);
         $response = $response->withHeader('Cross-Origin-Embedder-Policy', 'require-corp');
-		$response = $response->withHeader('Cross-Origin-Resource-Policy', 'same-origin');
+		$response = $response->withHeader('Cross-Origin-Resource-Policy', 'cross-origin');
 		$response = $response->withHeader('Cross-Origin-Opener-Policy', 'same-origin');
 		return $response;
 	}) -> to($calledURL);
