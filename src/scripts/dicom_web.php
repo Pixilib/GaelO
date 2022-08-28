@@ -65,6 +65,9 @@ if ($permissionDicomWeb) {
 		$request=$request->withHeader('Forwarded', 'by=localhost;for=localhost;host='.$url.':'.$port.'/orthanc'.';proto='.$protocol);
 
 		$response=$next($request, $response);
+        $response = $response->withHeader('Cross-Origin-Embedder-Policy', 'require-corp');
+		$response = $response->withHeader('Cross-Origin-Resource-Policy', 'same-origin');
+		$response = $response->withHeader('Cross-Origin-Opener-Policy', 'same-origin');
 		return $response;
 	}) -> to($calledURL);
     
