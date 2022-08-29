@@ -81,6 +81,7 @@ class VisitTypeTest extends TestCase
         $visit = Visit::factory()->patientId($patient->id)->visitTypeId($visitType->id)->create();
 
         $payload = $this->payload;
+        //Sk ici a eu un random fail sur un conflict, a surveiller
         $this->json('POST', 'api/visit-groups/'.$visit->visitType->visitGroup->id.'/visit-types', $payload)->assertStatus(403);
     }
 

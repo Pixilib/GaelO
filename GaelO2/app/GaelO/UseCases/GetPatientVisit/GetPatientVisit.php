@@ -39,10 +39,11 @@ class GetPatientVisit
                 $reviewConclusionValue = $role === Constants::ROLE_SUPERVISOR ? $data['review_status']['review_conclusion_value'] : null;
                 $reviewConclusionDate =  $role === Constants::ROLE_SUPERVISOR ? $data['review_status']['review_conclusion_date'] : null;
                 $targetLesions =  $role === Constants::ROLE_SUPERVISOR ? $data['review_status']['target_lesions'] : null;
+                $reviewAvailable = $role === Constants::ROLE_SUPERVISOR ?  $data['review_status']['review_available'] : null;
 
                 $visitEntity = VisitEntity::fillFromDBReponseArray($data);
                 $visitEntity->setVisitContext($data['visit_type']['visit_group'], $data['visit_type']);
-                $visitEntity->setReviewVisitStatus($reviewStatus, $reviewConclusionValue, $reviewConclusionDate, $targetLesions);
+                $visitEntity->setReviewVisitStatus($reviewStatus, $reviewConclusionValue, $reviewConclusionDate, $targetLesions, $reviewAvailable);
                 $responseArray[] = $visitEntity;
             }
 
