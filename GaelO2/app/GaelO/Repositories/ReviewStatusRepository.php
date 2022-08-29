@@ -2,6 +2,7 @@
 
 namespace App\GaelO\Repositories;
 
+use App\GaelO\Constants\Constants;
 use App\GaelO\Interfaces\Repositories\ReviewStatusRepositoryInterface;
 use App\GaelO\Util;
 use App\Models\ReviewStatus;
@@ -27,7 +28,7 @@ class ReviewStatusRepository implements ReviewStatusRepositoryInterface
     public function updateReviewStatusAndConclusion(int $visitId, string $studyName, string $reviewStatus, ?string $reviewConclusionValue, ?array $targetLesions): void
     {
         //If a conclusion is set, write the date of conclusion (now)
-        $conclusionDate = $reviewConclusionValue === null ? null :  Util::now();
+        $conclusionDate = $reviewStatus === Constants::REVIEW_STATUS_DONE ? Util::now() : null ;
         $this->reviewStatusModel->updateOrCreate(
             ['visit_id' => $visitId, 'study_name' => $studyName],
             [

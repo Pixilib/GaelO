@@ -9,6 +9,7 @@ use App\GaelO\Services\GaelOStudiesService\AbstractVisitRules;
 
 class TEST_FDG_PET0 extends AbstractVisitRules
 {
+    private $reviewConclusion = null;
 
     private ReviewRepositoryInterface $reviewRepositoryInterface;
     private string $studyName = "TEST";
@@ -86,12 +87,17 @@ class TEST_FDG_PET0 extends AbstractVisitRules
     {
         //Fetch visit validated review
         $reviews = $this->reviewRepositoryInterface->getReviewsForStudyVisit($this->studyName, $this->visitContext['id'], true);
-        return sizeof($reviews) > 0 ? Constants::REVIEW_STATUS_DONE : Constants::REVIEW_STATUS_NOT_DONE;
+        if(sizeof($reviews) > 0){
+            $this->reviewConclusion = "Done";
+            return Constants::REVIEW_STATUS_DONE;
+        }else{
+            return Constants::REVIEW_STATUS_NOT_DONE;
+        }
     }
 
     public function getReviewConclusion(): ?string
     {
-        return 'Done';
+        return $this->reviewConclusion;
     }
 
     public function getAllowedKeyAndMimeTypeInvestigator(): array
