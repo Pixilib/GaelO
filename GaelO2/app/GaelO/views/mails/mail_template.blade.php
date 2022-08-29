@@ -149,7 +149,7 @@
                           <tbody>
                             <tr>
                               <td align="left" style="font-size:0px;padding:10px 25px;padding-bottom:30px;word-break:break-word;">
-                                <div style="font-family:Roboto, Helvetica, sans-serif;font-size:16px;font-weight:700;line-height:1.6;text-align:left;color:#314053;">Dear {{ $name }},</div>
+                                <div style="font-family:Roboto, Helvetica, sans-serif;font-size:16px;font-weight:700;line-height:1.6;text-align:left;color:#314053;">Dear {{ $name ?? 'User' }},</div>
                               </td>
                             </tr>
                             <tr>
