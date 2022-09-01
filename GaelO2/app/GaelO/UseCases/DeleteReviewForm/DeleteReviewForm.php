@@ -68,8 +68,8 @@ class DeleteReviewForm
                 return $review['adjudication'];
             }, $studyVisitReviews));
 
-            /* If validated review exist, this review can't be deleted */
-            if ($existingAdjudicationForm) throw new GaelOBadRequestException('Please delete adjudication form before deleting this review');
+            /* If validated review exist (different from false strictly typed as if adjudciation is position 0 will be falsy), this review can't be deleted */
+            if ($existingAdjudicationForm !== false) throw new GaelOForbiddenException('Please delete adjudication form before deleting this review');
 
             $this->checkAuthorization($currentUserId, $reviewId, $local);
 

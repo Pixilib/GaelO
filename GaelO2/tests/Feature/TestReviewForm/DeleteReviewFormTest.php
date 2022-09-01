@@ -37,7 +37,7 @@ class DeleteReviewFormTest extends TestCase
         $visitType  = VisitType::factory()->visitGroupId($visitGroup->id)->name('PET_0')->localFormNeeded()->create();
         $visit = Visit::factory()->patientId($patient->id)->visitTypeId($visitType->id)->create();
         ReviewStatus::factory()->studyName($study->name)->visitId($visit->id)->reviewAvailable()->create();
-        $review = Review::factory()->reviewForm()->visitId($visit->id)->studyName($study->name)->create();
+        $review = Review::factory()->reviewForm()->visitId($visit->id)->studyName($study->name)->validated()->create();
         return [
             'studyName'=>$study->name,
             'visitId' => $visit->id,
@@ -78,6 +78,21 @@ class DeleteReviewFormTest extends TestCase
         $studyName = $visitData['studyName'];
         $currentUserId = AuthorizationTools::actAsAdmin(false);
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_INVESTIGATOR, $studyName);
+
+        $payload = [
+            'reason' => 'wrong from'
+        ];
+
+        $this->delete('api/reviews/'.$visitData['reviewId'], $payload)->assertStatus(403);
+
+    }
+
+    public function testDeleteReviewFormShouldFailBecauseExistingAdjudication(){
+        $visitData = $this->createVisit();
+        $studyName = $visitData['studyName'];
+        Review::factory()->reviewForm()->visitId($visitData['visitId'])->studyName($visitData['studyName'])->adjudication()->validated()->create();
+        $currentUserId = AuthorizationTools::actAsAdmin(false);
+        AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $studyName);
 
         $payload = [
             'reason' => 'wrong from'

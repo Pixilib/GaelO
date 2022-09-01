@@ -65,7 +65,7 @@ class UnlockReviewForm
                 return $review['adjudication'];
             }, $studyVisitReviews));
             /* If validated adjudication review exist, this review can't be unlocked */
-            if ($existingAdjudicationForm) throw new GaelOBadRequestException('Please delete adjudication form before unlocking this review');
+            if ($existingAdjudicationForm !== false) throw new GaelOForbiddenException('Please delete adjudication form before unlocking this review');
 
             $this->checkAuthorization($currentUserId, $reviewId, $reviewEntity['local']);
 
@@ -80,7 +80,7 @@ class UnlockReviewForm
             $this->reviewFormService->unlockReview($reviewId);
 
             $actionDetails = [
-                'visit_group_name' =>$visitContext['visit_type']['visit_group']['name'],
+                'visit_group_name' => $visitContext['visit_type']['visit_group']['name'],
                 'visit_group_modality' => $visitContext['visit_type']['visit_group']['modality'],
                 'visit_type_name' => $visitContext['visit_type']['name'],
                 'patient_id' => $visitContext['patient_id'],
