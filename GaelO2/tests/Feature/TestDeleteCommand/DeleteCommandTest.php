@@ -2,14 +2,16 @@
 
 namespace Tests\Feature\TestDeleteCommand;
 
-use App\GaelO\Constants\Constants;
 use App\Models\DicomSeries;
 use App\Models\DicomStudy;
+use App\Models\Patient;
 use App\Models\Review;
 use App\Models\ReviewStatus;
+use App\Models\Study;
 use App\Models\Visit;
+use App\Models\VisitGroup;
+use App\Models\VisitType;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
-use Tests\AuthorizationTools;
 use Tests\TestCase;
 
 class DeleteCommandTest extends TestCase
@@ -33,29 +35,41 @@ class DeleteCommandTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->visit = Visit::factory()->create();
+        $this->study = Study::factory()->create();
+        $this->visitGroup = VisitGroup::factory()->studyName($this->study->name)->create();
+        $this->visitType = VisitType::factory()->visitGroupId($this->visitGroup->id)->create();
+        $this->patient = Patient::factory()->studyName($this->study->name)->create();
+        $this->visit = Visit::factory()->patientId($this->patient->id)->visitTypeId($this->visitType->id)->create();
+        $this->dicomStudy = DicomStudy::factory()->visitId($this->visit->id)->create();
+        $this->dicomSeries = DicomSeries::factory()->studyInstanceUid($this->dicomStudy->study_uid)->create();
+        $this->review = Review::factory()->visitId($this->visit->id)->studyName($this->study->name)->create();
+        $this->reviewStatus = ReviewStatus::factory()->visitId($this->visit->id)->studyName($this->study->name)->create();
+
+        $this->study->delete();
     }
 
     public function testDeleteCommandShouldFailStudyNotDeleted()
     {
-        $studyName = $this->visit->patient->study_name;
-
-        $this->artisan('study:delete '.$studyName)->expectsQuestion('Warning : Please confirm study Name', $studyName)
-        ->expectsOutput('Study is not soft deleted, terminating');
-        
+        $this->study->restore();
+        $studyName = $this->study->name;
+        $this->artisan('study:delete ' . $studyName)->expectsQuestion('Warning : Please confirm study Name', $studyName)
+            ->expectsOutput('The command was successful, delete Orthanc Series and Associated Form Data !');
     }
 
     public function testDeleteCommand()
     {
-        $this->visit->patient->study->delete();
-        $studyName = $this->visit->patient->study_name;
-
-        /*
-        $this->artisan('study:delete '.$studyName)->expectsQuestion('Warning : Please confirm study Name', $studyName)
-        ->expectsQuestion('Warning : This CANNOT be undone, do you wish to continue?', "\r\n")
-        ->expectsOutput('The command was successful!');
-        */
-        
+        $studyName = $this->study->name;
+        $this->artisan('study:delete ' . $studyName)->expectsQuestion('Warning : Please confirm study Name', $studyName)
+            ->expectsQuestion('Warning : This CANNOT be undone, do you wish to continue?', "\r\n")
+            ->expectsTable(['orthanc_id'], [[$this->dicomSeries->orthanc_id]])
+            ->expectsOutput('The command was successful, delete Orthanc Series and Associated Form Data !');
     }
 
+    public function testDeleteCommandShouldFailBecauseExistingAncillary()
+    {
+        $studyName = $this->study->name;
+        Study::factory()->ancillaryOf($studyName)->create();
+        $this->artisan('study:delete ' . $studyName)->expectsQuestion('Warning : Please confirm study Name', $studyName)
+        ->expectsOutput('The command was successful, delete Orthanc Series and Associated Form Data !');
+    }
 }

@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\Models\DicomSeries;
 use App\Models\DicomStudy;
 use App\Models\Documentation;
+use App\Models\Patient;
 use App\Models\Review;
 use App\Models\ReviewStatus;
 use App\Models\Role;
@@ -50,6 +51,7 @@ class DeleteStudy extends Command
         Study $study,
         VisitGroup $visitGroup,
         Visit $visit,
+        Patient $patient,
         DicomStudy $dicomStudy,
         DicomSeries $dicomSeries,
         Role $role,
@@ -62,6 +64,7 @@ class DeleteStudy extends Command
         $this->study = $study;
         $this->visitGroup = $visitGroup;
         $this->visit = $visit;
+        $this->patient = $patient;
         $this->dicomStudy = $dicomStudy;
         $this->dicomSeries = $dicomSeries;
         $this->tracker = $tracker;
@@ -89,19 +92,27 @@ class DeleteStudy extends Command
 
         $studyEntity = $this->study->withTrashed()->findOrFail($studyName);
 
+        //Check study have been soft delete before real deletion
         if (!$studyEntity->trashed()) {
             $this->error('Study is not soft deleted, terminating');
             return 0;
         }
 
-        if ($this->confirm('Warning : This CANNOT be undone, do you wish to continue?')) {
+        //Check that no ancillary study is remaining on this study
+        $ancilariesStudies = $this->study->where('ancillary_of', $studyName)->get();
+        if ($ancilariesStudies->count() > 0) {
+            $this->error('Delete all ancilaries studies first');
+            return 0;
+        }
 
-            //SK TODO : Verifier qu'il n'y a pas d'étude ancillaire existante (doivent avoir etre supprimée avant) -> Command a part à faire
+        if ($this->confirm('Warning : This CANNOT be undone, do you wish to continue?')) {
 
             $this->deleteDocumentation($studyEntity->name);
             $this->deleteRoles($studyEntity->name);
             $this->deleteTracker($studyEntity->name);
             $visits = $this->getVisitsOfStudy($studyEntity->name);
+
+
 
             $visitIds = array_map(function ($visit) {
                 return $visit['id'];
@@ -110,7 +121,7 @@ class DeleteStudy extends Command
             $dicomSeries = $this->getDicomSeriesOfVisits($visitIds);
 
             $this->table(
-                ['seriesOrthancID'],
+                ['orthanc_id'],
                 $dicomSeries
             );
 
@@ -121,9 +132,10 @@ class DeleteStudy extends Command
             $this->deleteVisits($visitIds);
             $this->deleteVisitGroupAndVisitType($studyName);
             $this->deletePatient($studyName);
-            $studyEntity->delete();
-            //SK TODO : Delete associated files
-            $this->info('The command was successful!');
+            $studyEntity->forceDelete();
+            //SK TODO : Delete associated files (supprimer le repertoire de stockage de l'étude)
+            //SK TODO : Faire Deletion auto des ressources dans Orthanc?
+            $this->info('The command was successful, delete Orthanc Series and Associated Form Data !');
         }
 
         return 0;
@@ -131,10 +143,10 @@ class DeleteStudy extends Command
 
     private function getDicomSeriesOfVisits(array $visitIds)
     {
-        return $this->dicomSeries->with('dicomStudy')
+        return $this->dicomSeries
             ->whereHas('dicomStudy', function ($query) use ($visitIds) {
                 $query->whereIn('visit_id', $visitIds)->withTrashed();
-            })->get()->pluck('orthanc_id');
+            })->select('orthanc_id')->get()->toArray();
     }
 
     private function getVisitsOfStudy(string $studyName)
@@ -176,10 +188,10 @@ class DeleteStudy extends Command
     private function deleteVisitGroupAndVisitType(string $studyName)
     {
         $visitGroups = $this->visitGroup->where('study_name', $studyName)->get();
-        //SK ICI A DEBEUG
-        //dd($visitGroups);
-        $visitGroups->visitTypes->delete();
-        $visitGroups->delete();
+        foreach ($visitGroups as $visitGroup) {
+            $visitGroup->visitTypes()->delete();
+            $visitGroup->delete();
+        }
     }
 
     private function deletePatient(string $studyName)
