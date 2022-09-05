@@ -26,6 +26,7 @@ use App\GaelO\Constants\MailConstants;
 use App\GaelO\Constants\SettingsConstants;
 use App\GaelO\Interfaces\Adapters\FrameworkInterface;
 use App\GaelO\Interfaces\Adapters\MailerInterface;
+use App\Mail\AutoQC;
 use App\Mail\ImportPatient;
 use App\Mail\MagicLink;
 use App\Mail\UserCreated;
@@ -138,6 +139,9 @@ class MailerAdapter implements MailerInterface {
                 break;
             case MailConstants::EMAIL_UNLOCK_QC_REQUEST:
                 $model = new UnlockQcRequest($this->parameters);
+                break;
+            case MailConstants::EMAIL_AUTO_QC:
+                $model = new AutoQC($this->parameters);
                 break;
         }
 

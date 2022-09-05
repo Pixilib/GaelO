@@ -361,5 +361,28 @@ class OrthancService
         return $this->httpClientInterface->requestJson('POST', '/tools/create-archive', $payload);
 
     }
+
+    public function getSharedTags(string $seriesOrthancID) : array
+    {
+        return $this->httpClientInterface->requestJson('GET', '/series/'.$seriesOrthancID.'shared-tags')->getJsonBody();
+    }
+
+    public function getMIP(string $seriesOrthancID) : string
+    {
+        $downloadedFilePath = tempnam(sys_get_temp_dir(), 'mipDICOM');
+        $resource  = fopen( $downloadedFilePath, 'r+');
+
+        $this->httpClientInterface->requestStreamResponseToFile('GET', '/series/'.$seriesOrthancID.'/MIP',  $resource, []);
+        return $downloadedFilePath;
+    }
+
+    public function getMozaic(string $seriesOrthancID) : string
+    {
+        $downloadedFilePath = tempnam(sys_get_temp_dir(), 'mozaicDICOM');
+        $resource  = fopen( $downloadedFilePath, 'r+');
+
+        $this->httpClientInterface->requestStreamResponseToFile('GET', '/series/'.$seriesOrthancID.'/mozaic',  $resource, []);
+        return $downloadedFilePath;
+    }
 }
 
