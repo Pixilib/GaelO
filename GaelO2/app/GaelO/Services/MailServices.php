@@ -9,6 +9,8 @@ use App\GaelO\Interfaces\Repositories\ReviewRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\StudyRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\UserRepositoryInterface;
 use App\GaelO\Repositories\ReviewRepository;
+use App\GaelO\Entities\DicomStudyEntity;
+use App\GaelO\Entities\VisitEntity;
 
 class MailServices
 {
@@ -611,6 +613,26 @@ class MailServices
         $this->mailInterface->setReplyTo($this->getStudyContactEmail($studyName));
         $this->mailInterface->setParameters($parameters);
         $this->mailInterface->setBody(MailConstants::EMAIL_MAGIC_LINK);
+        $this->mailInterface->send();
+    }
+
+    public function sendAutoQC(string $studyName, string $visitType, string $patientCode, array $studyInfo, array $seriesInfo, string $magiclink, string $controllerEmail)
+    {
+        
+        
+        $parameters = [
+            'study' => $studyName,
+            'visitType' => $visitType,
+            'patientCode' => $patientCode,
+            'studyInfo' => $studyInfo,
+            'seriesInfo' => $seriesInfo,
+            'magicLink' => $magiclink,
+        ];
+
+        $this->mailInterface->setTo([$controllerEmail]);
+        $this->mailInterface->setReplyTo($this->getStudyContactEmail($studyName));
+        $this->mailInterface->setParameters($parameters);
+        $this->mailInterface->setBody(MailConstants::EMAIL_AUTO_QC);
         $this->mailInterface->send();
     }
 }
