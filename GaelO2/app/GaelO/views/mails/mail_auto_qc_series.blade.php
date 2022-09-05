@@ -13,7 +13,7 @@
                     <tr>
                       <td align="left" style="font-size:0px;padding:10px 25px;word-break:break-word;">
                         <div style="font-family:Ubuntu, Helvetica, Arial, sans-serif;font-size:13px;line-height:1;text-align:left;color:#000000;">
-                          <h3 style="font-weight: bold; margin-top: 0; margin-bottom: 0" align="center"> <a style="color: #3498DB; text-decoration: none"> {{$seriesseries_description}} </a> </h3>
+                          <h3 style="font-weight: bold; margin-top: 0; margin-bottom: 0" align="center"> <a style="color: #3498DB; text-decoration: none"> {{$}} </a> </h3>
                         </div>
                       </td>
                     </tr>
