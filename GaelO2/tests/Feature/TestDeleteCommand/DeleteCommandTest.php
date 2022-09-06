@@ -48,12 +48,19 @@ class DeleteCommandTest extends TestCase
         $this->study->delete();
     }
 
+    public function testDeleteCommandShouldFailWrongStudyNameConfirmation()
+    {
+        $studyName = $this->study->name;
+        $this->artisan('study:delete ' . $studyName)->expectsQuestion('Warning : Please confirm study Name', 'WrongStudyName')
+            ->expectsOutput('Wrong study name, terminating');
+    }
+
     public function testDeleteCommandShouldFailStudyNotDeleted()
     {
         $this->study->restore();
         $studyName = $this->study->name;
         $this->artisan('study:delete ' . $studyName)->expectsQuestion('Warning : Please confirm study Name', $studyName)
-            ->expectsOutput('The command was successful, delete Orthanc Series and Associated Form Data !');
+            ->expectsOutput('Study is not soft deleted, terminating');
     }
 
     public function testDeleteCommand()
@@ -70,6 +77,6 @@ class DeleteCommandTest extends TestCase
         $studyName = $this->study->name;
         Study::factory()->ancillaryOf($studyName)->create();
         $this->artisan('study:delete ' . $studyName)->expectsQuestion('Warning : Please confirm study Name', $studyName)
-        ->expectsOutput('The command was successful, delete Orthanc Series and Associated Form Data !');
+        ->expectsOutput('Delete all ancilaries studies first');
     }
 }

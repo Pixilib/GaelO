@@ -86,7 +86,7 @@ class DeleteStudy extends Command
         $studyNameConfirmation = $this->ask('Warning : Please confirm study Name');
 
         if ($studyName !== $studyNameConfirmation) {
-            $this->error('Wrong study name!');
+            $this->error('Wrong study name, terminating');
             return 0;
         }
 
