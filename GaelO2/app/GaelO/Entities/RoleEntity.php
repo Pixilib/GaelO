@@ -6,7 +6,7 @@ class RoleEntity
 {
     public string $studyName;
     public string $name;
-    public string $validatedDocumentationVersion;
+    public ?string $validatedDocumentationVersion;
 
     public static function fillFromDBReponseArray(array $array): RoleEntity
     {
