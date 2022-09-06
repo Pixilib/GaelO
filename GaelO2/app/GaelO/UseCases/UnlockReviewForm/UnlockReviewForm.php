@@ -57,15 +57,18 @@ class UnlockReviewForm
 
             $currentUserId = $unlockReviewFormRequest->currentUserId;
             $reviewId = $reviewEntity['id'];
+            $adjudication = $reviewEntity['adjudication'];
             $reason = $unlockReviewFormRequest->reason;
 
-            /* Search for validated adjudication review */
-            $studyVisitReviews = $this->reviewRepositoryInterface->getReviewsForStudyVisit($reviewEntity['study_name'], $reviewEntity['visit_id'], true);
-            $existingAdjudicationForm = array_search(true, array_map(function ($review) {
-                return $review['adjudication'];
-            }, $studyVisitReviews));
-            /* If validated adjudication review exist, this review can't be unlocked */
-            if ($existingAdjudicationForm !== false) throw new GaelOForbiddenException('Please delete adjudication form before unlocking this review');
+            /* if try to unlock non adjudication from, search for validated adjudication review that would need to be unlock / deleted first */
+            if (!$adjudication) {
+                $studyVisitReviews = $this->reviewRepositoryInterface->getReviewsForStudyVisit($reviewEntity['study_name'], $reviewEntity['visit_id'], true);
+                $existingAdjudicationForm = array_search(true, array_map(function ($review) {
+                    return $review['adjudication'];
+                }, $studyVisitReviews));
+                /* If validated adjudication review exist, this review can't be unlocked */
+                if ($existingAdjudicationForm !== false) throw new GaelOForbiddenException('Please delete adjudication form before unlocking this review');
+            }
 
             $this->checkAuthorization($currentUserId, $reviewId, $reviewEntity['local']);
 

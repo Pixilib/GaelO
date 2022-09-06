@@ -102,4 +102,19 @@ class DeleteReviewFormTest extends TestCase
 
     }
 
+    public function testDeleteAdjudicationeviewForm(){
+        $visitData = $this->createVisit();
+        $studyName = $visitData['studyName'];
+        $review = Review::factory()->reviewForm()->visitId($visitData['visitId'])->studyName($visitData['studyName'])->adjudication()->validated()->create();
+        $currentUserId = AuthorizationTools::actAsAdmin(false);
+        AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $studyName);
+
+        $payload = [
+            'reason' => 'wrong from'
+        ];
+
+        $this->delete('api/reviews/'.$review['id'], $payload)->assertStatus(200);
+
+    }
+
 }

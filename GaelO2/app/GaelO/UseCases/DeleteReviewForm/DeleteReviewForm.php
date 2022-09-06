@@ -57,19 +57,23 @@ class DeleteReviewForm
             $local = $reviewEntity['local'];
             $visitId = $reviewEntity['visit_id'];
             $reviewId = $reviewEntity['id'];
+            $adjudication = $reviewEntity['adjudication'];
             $currentUserId = $deleteReviewFormRequest->currentUserId;
             $reason = $deleteReviewFormRequest->reason;
 
 
-            /* Search for validated adjudication review */
-            $studyVisitReviews = $this->reviewRepositoryInterface->getReviewsForStudyVisit($studyName, $visitId, true);
+            /* if try to delete a non adjudication form, verify that no validated adjudication review exists that would need to be unlocked/deleted first */
+            if (!$adjudication) {
 
-            $existingAdjudicationForm = array_search(true, array_map(function ($review) {
-                return $review['adjudication'];
-            }, $studyVisitReviews));
+                $studyVisitReviews = $this->reviewRepositoryInterface->getReviewsForStudyVisit($studyName, $visitId, true);
 
-            /* If validated review exist (different from false strictly typed as if adjudciation is position 0 will be falsy), this review can't be deleted */
-            if ($existingAdjudicationForm !== false) throw new GaelOForbiddenException('Please delete adjudication form before deleting this review');
+                $existingAdjudicationForm = array_search(true, array_map(function ($review) {
+                    return $review['adjudication'];
+                }, $studyVisitReviews));
+
+                /* If validated review exist (different from false strictly typed as if adjudciation is position 0 will be falsy), this review can't be deleted */
+                if ($existingAdjudicationForm !== false) throw new GaelOForbiddenException('Please delete adjudication form before deleting this review');
+            }
 
             $this->checkAuthorization($currentUserId, $reviewId, $local);
 
