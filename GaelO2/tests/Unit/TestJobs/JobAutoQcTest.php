@@ -22,8 +22,6 @@ use Mockery;
 
 class JobAutoQcTest extends TestCase
 {
-   
-
     use DatabaseMigrations {
         runDatabaseMigrations as baseRunDatabaseMigrations;
     }
@@ -57,7 +55,6 @@ class JobAutoQcTest extends TestCase
         
         app()->instance(OrthancService::class, $mockOrthancService);
         JobAutoQc::dispatchSync($visit->id);
-
     }
 }
 

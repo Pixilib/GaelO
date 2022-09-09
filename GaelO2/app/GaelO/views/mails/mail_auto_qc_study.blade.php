@@ -12,17 +12,17 @@
                   <tbody>
                     <tr>
                       <td align="center" style="font-size:0px;padding:10px 25px;word-break:break-word;">
-                        <div style="font-family:Ubuntu, Helvetica, Arial, sans-serif;font-size:13px;line-height:1;text-align:center;color:#000000;">New visit has been uploaded to the study {{$studyInfo['study']}}</div>
+                        <div style="font-family:Ubuntu, Helvetica, Arial, sans-serif;font-size:13px;line-height:1;text-align:center;color:#000000;">A new visit has been uploaded to the study {{$studyInfo['studyName']}}</div>
                       </td>
                     </tr>
                     <tr>
                       <td align="center" style="font-size:0px;padding:10px 25px;word-break:break-word;">
-                        <div style="font-family:Ubuntu, Helvetica, Arial, sans-serif;font-size:13px;line-height:1;text-align:center;color:#000000;">Following to the upload of a visit (type de visite) from the patient (code patient) series series are to be validated</div>
+                        <div style="font-family:Ubuntu, Helvetica, Arial, sans-serif;font-size:13px;line-height:1;text-align:center;color:#000000;">{{$studyInfo['studyDescription']}} uploaded by {{$studyInfo['studyManufacturer']}} on {{$studyInfo['studyDate']}}</div>
                       </td>
                     </tr>
                     <tr>
                       <td align="center" style="font-size:0px;padding:10px 25px;word-break:break-word;">
-                        <div style="font-family:Ubuntu, Helvetica, Arial, sans-serif;font-size:11px;line-height:16px;text-align:center;color:#445566;">Visit uploaded by (uploader) the (date)</div>
+                        <div style="font-family:Ubuntu, Helvetica, Arial, sans-serif;font-size:11px;line-height:16px;text-align:center;color:#445566;">There is {{$studyInfo['numberOfSeries']}} series for $studyInfo['numberOfInstances'] instances</div>
                       </td>
                     </tr>
                   </tbody>

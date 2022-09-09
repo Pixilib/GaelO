@@ -50,7 +50,7 @@ class JobAutoQc implements ShouldQueue
         $sharedTags = new SharedTags($orthancService->getSharedTags($this->visitId));
 
         $studyInfo = [];
-
+        $studyInfo['studyName'] = $visitEntity['patient']['study_name'];
         $studyInfo['studyDescription'] = $sharedTags->getStudyDescription();
         $studyInfo['studyManufacturer'] = $sharedTags->getStudyManufacturer();
         $studyInfo['studyDate'] = $sharedTags->getStudyDate();
@@ -59,14 +59,19 @@ class JobAutoQc implements ShouldQueue
         $studyInfo['numberOfInstances'] = 0;
 
         $seriesInfo = [];
-
         foreach ($dicomStudyEntity[0]['dicom_series'] as $series) {
             $studyInfo['numberOfInstances'] += $series['number_of_instances'];
 
             $seriesData = [];
             $seriesData['infos'] = [];
             $seriesSharedTags = new SharedTags($orthancService->getSharedTags($series['orthanc_id']));
-            $seriesData['image_path'] = $orthancService->getMIP($series['orthanc_id']);
+            if ($sharedTags->getImageType() == 0) {
+                $seriesData['image_path'] = $orthancService->getMosaic($series['orthanc_id']);
+            } else if ($sharedTags->getImageType() == 1) {
+                $seriesData['image_path'] = $orthancService->getMIP($series['orthanc_id']);
+            } else {
+                $seriesData['image_path'] = $orthancService->getPreview($series['orthanc_id']);
+            }
             $seriesData['series_description'] = $seriesSharedTags->getSeriesDescription();
             $seriesData['infos']['modality'] = $seriesSharedTags->getSeriesModality();
             $seriesData['infos']['series_date'] =  $seriesSharedTags->getSeriesDate();
@@ -101,7 +106,6 @@ class JobAutoQc implements ShouldQueue
         $patientCode = $visitEntity['patient']['code'];
 
         $controllerUsers = $userRepositoryInterface->getUsersByRolesInStudy($studyName, Constants::ROLE_CONTROLLER);
-
 
         foreach ($controllerUsers as $user) {
             $redirectLink = '/study/'.$studyName.'/role/'.Constants::ROLE_CONTROLLER.'/visit/'.$visitId;

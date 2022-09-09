@@ -376,7 +376,7 @@ class OrthancService
         return $downloadedFilePath;
     }
 
-    public function getMozaic(string $seriesOrthancID) : string
+    public function getMosaic(string $seriesOrthancID) : string
     {
         $downloadedFilePath = tempnam(sys_get_temp_dir(), 'mozaicDICOM');
         $resource  = fopen( $downloadedFilePath, 'r+');
@@ -384,5 +384,15 @@ class OrthancService
         $this->httpClientInterface->requestStreamResponseToFile('GET', '/series/'.$seriesOrthancID.'/mozaic',  $resource, []);
         return $downloadedFilePath;
     }
+
+    public function getPreview(string $seriesOrthancID) : string
+    {
+        $downloadedFilePath = tempnam(sys_get_temp_dir(), 'previewDICOM');
+        $resource  = fopen( $downloadedFilePath, 'r+');
+
+        $this->httpClientInterface->requestStreamResponseToFile('GET', '/series/'.$seriesOrthancID.'/preview',  $resource, []);
+        return $downloadedFilePath;
+    }
+
 }
 
