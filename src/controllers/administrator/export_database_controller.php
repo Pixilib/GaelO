@@ -20,6 +20,9 @@ $linkpdo=Session::getLinkpdo();
 
 if ($_SESSION['admin']) {
 
+	//Set Time Limit at 5 min as operation could be long
+	set_time_limit(300);
+
 	//Get dump SQL file
 	$fileSql=Global_Data::dumpDatabase();
     
