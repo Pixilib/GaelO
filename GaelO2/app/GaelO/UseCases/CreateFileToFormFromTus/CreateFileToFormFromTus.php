@@ -14,6 +14,7 @@ use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
 use App\GaelO\Services\AuthorizationService\AuthorizationReviewService;
 use App\GaelO\Services\AuthorizationService\AuthorizationVisitService;
 use App\GaelO\Services\FormService\FormService;
+use App\GaelO\Services\OrthancService;
 use App\GaelO\Services\TusService;
 use App\GaelO\Util;
 use Exception;
@@ -29,6 +30,7 @@ class CreateFileToFormFromTus
     private VisitRepositoryInterface $visitRepositoryInterface;
     private FormService $formService;
     private MimeInterface $mimeInterface;
+    private OrthancService $orthancService;
     private TusService $tusService;
 
     public function __construct(
@@ -37,6 +39,7 @@ class CreateFileToFormFromTus
         VisitRepositoryInterface $visitRepositoryInterface,
         ReviewRepositoryInterface $reviewRepositoryInterface,
         FormService $formService,
+        OrthancService $orthancService,
         TrackerRepositoryInterface $trackerRepositoryInterface,
         MimeInterface $mimeInterface,
         TusService $tusService,
@@ -48,24 +51,27 @@ class CreateFileToFormFromTus
         $this->formService = $formService;
         $this->trackerRepositoryInterface = $trackerRepositoryInterface;
         $this->mimeInterface = $mimeInterface;
+        $this->orthancService = $orthancService;
         $this->tusService = $tusService;
     }
 
-    //SK TODO FINIR CE USECASE
-    //EXPOSER UNE ROUTE
-    //TESTER
-    //Tester Validated Dicom
-    
+    //SK TODO FINIR CE USECASE (devrait etre ok)
+    //EXPOSER UNE ROUTE fait tools
+    //TESTER ce use case et
+    //check test Tester Validated Dicom
+
     public function execute(CreateFileToFormFromTusRequest $createFileToFormFromTusRequest, CreateFileToFormFromTusResponse $createFileToFormFromTusResponse)
     {
 
         try {
             $reviewEntity = $this->reviewRepositoryInterface->find($createFileToFormFromTusRequest->id);
 
+            $currentUserId = $createFileToFormFromTusRequest->currentUserId;
             $studyName = $reviewEntity['study_name'];
             $local = $reviewEntity['local'];
             $visitId = $reviewEntity['visit_id'];
             $reviewId = $reviewEntity['id'];
+            $validated = $reviewEntity['validated'];
 
             $key = $createFileToFormFromTusRequest->key;
             $tusIds = $createFileToFormFromTusRequest->tusIds;
@@ -74,7 +80,7 @@ class CreateFileToFormFromTus
                 throw new GaelOBadRequestException('Tus Ids Should not be empty');
             }
 
-            $this->checkAuthorization($local, $reviewEntity['validated'], $createFileToFormFromTusRequest->id, $visitId, $createFileToFormFromTusRequest->currentUserId, $studyName);
+            $this->checkAuthorization($local, $validated, $reviewId, $visitId, $currentUserId, $studyName);
 
             $file = null;
 
@@ -108,11 +114,10 @@ class CreateFileToFormFromTus
                     $this->tusService->deleteFile($tusId);
                     unlink($tusTempZip);
                 }
-
-                $tempFileLocation = tempnam(ini_get('upload_tmp_dir'), 'TMPZIP_');
-                //SK REPRENDRE ICI
+                
                 $expectedNumberOfInstances = $createFileToFormFromTusRequest->numberOfInstances;
 
+                $this->orthancService->setOrthancServer(false);
                 $orthancStudyImport = $this->orthancService->importDicomFolder($unzipedPath);
                 if ($expectedNumberOfInstances !== $orthancStudyImport->getNumberOfInstances()) {
                     throw new GaelOValidateDicomException("Imported DICOM not matching announced number of Instances");
@@ -120,9 +125,12 @@ class CreateFileToFormFromTus
 
                 $importedOrthancStudyID = $orthancStudyImport->getStudyOrthancId();
 
-                $file = $this->orthancService->getZipStreamToFile([$studyID], $tempFileLocation);
+                $tempFileLocation = tempnam(ini_get('upload_tmp_dir'), 'TMPZIP_');
+                $this->orthancService->getZipStreamToFile([$importedOrthancStudyID], $tempFileLocation);
+                $file = $tempFileLocation;
             }
 
+            //Send file to associated file
             $mime = mime_content_type($file);
             $extension = $this->mimeInterface::getExtensionFromMime($mime);
             $fileName = 'review_' . $reviewId . '_' . $key . '.' . $extension;

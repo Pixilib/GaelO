@@ -365,6 +365,24 @@ class OrthancService
     }
 
     /**
+     * fill ressource with dicom zip containing the Orthanc ID ressources dicoms
+     * @param array $uidList
+     * @return resource temporary file path
+     */
+    public function getZipStreamToFile(array $orthancIDs, $ressource)
+    {
+
+        $body = json_encode([
+            'Transcode' => '1.2.840.10008.1.2.1',
+            'Resources' => $orthancIDs
+        ]);
+
+        $headers = ['content-type' => 'application/json', 'Accept' => 'application/zip'];
+
+        $this->httpClientInterface->rowRequest('POST', $this->url . '/tools/create-archive', $body, $headers, $ressource);
+    }
+
+    /**
      * Send folder content to orthanc, and treat responses to output the uploaded studyOrthancId
      */
     public function importDicomFolder(string $unzipedPath): OrthancStudyImport
