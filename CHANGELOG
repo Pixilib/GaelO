@@ -1,5 +1,8 @@
 GaelO
 
+-- GaelO 1.10.3 11/09/22 --
+Fix timeout issue for export db
+
 -- GaelO 1.10.2 07/08/22 --
 Add download associated file for supervisor
 Anon rule for RT Studies
