@@ -151,9 +151,7 @@
 				{
 					render: function ( data, type, row, meta ) {
 						if(row.visit_modality === 'PT'){
-							//return '<a href="/ohif/tmtv?StudyInstanceUIDs='+row.studyUID+'" target="_blank" ">OHIF Viewer</a>';
-							//Temporary until making TMTV mode working with NAC series
-							return '<a href="/ohif/viewer?StudyInstanceUIDs='+row.studyUID+'" target="_blank" ">OHIF Viewer</a>';
+							return '<a href="/ohif/tmtv?StudyInstanceUIDs='+row.studyUID+'" target="_blank" ">OHIF Viewer</a>';
 						}else {
 							return '<a href="/ohif/viewer?StudyInstanceUIDs='+row.studyUID+'" target="_blank" ">OHIF Viewer</a>';
 						}
