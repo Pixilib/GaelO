@@ -2,6 +2,7 @@ GaelO
 
 -- GaelO 1.10.3 11/09/22 --
 Fix timeout issue for export db
+Upgrade OHIF 3.2.0
 
 -- GaelO 1.10.2 07/08/22 --
 Add download associated file for supervisor
