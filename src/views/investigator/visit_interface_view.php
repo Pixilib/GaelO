@@ -168,7 +168,9 @@ if ($visitObject->statusDone == Visit::NOT_DONE) {
             		$("#OHIFViewer").on('click', function() {
 						var win = null
 						if( "<?= $visitObject->getVisitGroup()->groupModality ?>"  === 'PT' ) {
-							win = window.open('/ohif/tmtv?StudyInstanceUIDs=<?=$visitObject->getStudyDicomDetails()->studyUID ?>', '_blank');
+							//win = window.open('/ohif/tmtv?StudyInstanceUIDs=<?=$visitObject->getStudyDicomDetails()->studyUID ?>', '_blank');
+							//Temporary until tmtv mode works with NAC series
+							win = window.open('/ohif/viewer?StudyInstanceUIDs=<?=$visitObject->getStudyDicomDetails()->studyUID ?>', '_blank');
 						}else {
 							win = window.open('/ohif/viewer?StudyInstanceUIDs=<?=$visitObject->getStudyDicomDetails()->studyUID ?>', '_blank');
 						}
