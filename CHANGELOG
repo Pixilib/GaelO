@@ -1,0 +1,164 @@
+GaelO
+
+-- GaelO 1.10.2 07/08/22 --
+Add download associated file for supervisor
+Anon rule for RT Studies
+Fix check comment if ask corrective action
+Upgraded bootstrap 5
+Upgraded uploader 3.4.5
+
+--GaelO 1.10.1 14/05/22--
+Add Stone of Orthanc Viewer
+Upgrade OHIF v3
+Upgrade Uploader 3.3.11
+Experimental workflow for dummyrun and radiotherapy studies
+
+--GaelO 1.9.1 27/03/22--
+  Fix bug in visit status if QC not needed but local form needed
+
+--GaelO 1.9.0 15/03/22--
+  Add modality NM
+  Add Local form validation function
+  Fix filtering in uploadmanager
+  Fix statistics in case of multiple visit group (pt prioritary to mr)
+  Add new GaelO Logo
+  Reply to of email now scoped by study
+  
+--GaelO 1.8.0 30/01/22--
+  Email Monitoring
+
+--GaelO 1.7.0 30/12/21--
+  Upgrade Uploader to 3.2.7 : Dicom Creation
+  Small enhancment in display
+  Add Modality filter for reviewer
+  Add Center code reminder in patient import
+  Increased timeout for very long post processing upload
+
+--GaelO 1.6.0 31/08/21 --
+  Add OP Modality
+  Upgrade Uploader to 3.2.4 (Dicom Creation)
+  Enhanced Anonymization rules
+  Add Edition of visit acquisition date for supervisor
+  Add export of target lesions
+
+--GaelO 1.5.4 30/07/21 --
+  Upgrade Uploader to 3.1.10
+  Upgrade OHIF to 4.9.21
+  Fix bug when adding patient in the import patient table
+
+--GaelO 1.5.3 28/07/21 --
+  Upgrade Uploader to 3.1.9
+
+--GaelO 1.5.1 25/07/21 --
+  Upgrade Uploader to 3.1.5
+  Import Patient: Automatically start patientcode by studyprefix
+  Security : Fix predictability of generated password
+  
+
+--GaelO 1.5.0 19/07/21 --
+  Upgrade Uploader to 3.1.2
+  DicomTag constraints for upload
+  Target Lesion for Visits
+  Fix : QC form comment mendatory for each refused item
+  Fix : Remaining reason value when visit creation interface switched from not done to done
+  Fix : QC done if not needed
+
+--GaelO 1.4.1 16/03/21 --
+  Upgrade GaelO_Uploader to 1.1.0
+  Bug fix : triggering form validation of specific form
+  Export : Add deleted visit and add visit type column for review export
+
+--GaelO 1.4.0 28/01/21 --
+  Select of withdraw reason for declaring patient withdraw
+  Upgrade GaelO_Uploader to 1.0.17
+  Upload Validation Failure tracked in Tracker
+  Email for reviewer notification are now sent only for user with awaiting review
+  Fix button draft/send of specific form was displayer even if the visit was not available anymore
+
+--GaelO 1.3.4 20/11/20--
+  fix authorization now made at visit level to attach review files
+
+--GaelO 1.3.3 19/11/20--
+  Upgrade GaelO_Uploader to 1.0.3
+  
+--GaelO 1.3.2 12/11/20--
+  Upgrade GaelO_Uploader to 1.0.2
+
+--GaelO 1.3.1 10/11/20--
+  Upgrade GaelO_Uploader to 1.0.1
+  Dicom Import to Orthanc uzing Guzzle to stream file content without running out memory
+
+--GaelO 1.3.0 28/10/20--
+  Uploader v2
+  Fiji Connector for reviews
+  OHIF static build instead of using script tag
+  Fix update review avaibility when QC is reset to Refused
+  Fix when resetQC visit is not removed from review
+  Add study name in patient import notification email
+  Add Study name and Patient code in notification email
+  Removed draft (non validated) reviews form export study data
+  Interface : 
+    - Export of tables now export all pages (and not juste visible lines)
+    - Add footer with version number
+    - Additional warning explaining that special character are not allowed in password
+    - Show review status for investigator
+    - Hide patient center for reviewer
+    - Add show / hide for series details
+    - Supervisor root add Select filter for Patient and Visit Table
+  
+--GaelO 1.2.2 27/06/20--
+  Fix frontend deidentification of dicom tag sequence
+
+--GaelO 1.2.1 06/06/20--
+  Add Lock database at specific form creation
+
+--GaelO 1.2.0 01/06/20--
+  Dicom Transcoding, compression on storage and decompression on export thanks to Orthanc 1.7.1
+  Fix reading failure if missing tag at dicom upload
+  Fix duplicated reviewer notification
+  Fix remaining temporary file in case of interrupted download
+  Security : Update phpmailer
+  Security : Fix XSS security from Dicom data string
+
+--GaelO 1.1.3 19/05/20--
+  BugFix :
+    - Better Dicom parsing at upload
+    - Fix Form saving with associated files upload
+
+--GaelO 1.1.2 06/05/20--
+  BugFix :
+    - When Review is not needed, supervisor recieve 2 notification emails when QC is done
+    - ZIPed Dicom upload was broken for zip containing some non dicom files
+
+--GaelO 1.1.1 04/05/20 --
+  BugFix : dicomdir breaks dicom parsing
+
+-- GaelO 1.1.0 29/04/20 --
+
+  Features : 
+    - Visit group to manage multiple modalities (in which each modality will have it's visit type)
+    - User's data edition panel
+    - Docker : 
+      - SMTP service for (mail() function)
+      - Cron services to automatize recurrent tasks
+    - Patient Visit Manager can be redifined through inheritance for custom visit creation workflow and status determination
+    - FTP/SFTP class to retrieve data from remote server (ex : automatic import of included patient list)
+    - Json Import for centers
+    - Possibility to declare patient code prefix per study at study creation (to avoid wrong patient import)
+    - Possibility to associate file upload with specific form
+
+  Enhancements : 
+    - Tree filter in right click to filter visits according to some status (depending on current role)
+    - Anon profile, optional visit, local form needed, Qc needed, Review needed are now defined per visit type
+    - Monitors now recieve QC decision emails
+    - Supervisors are notified in case of a not done visit creation
+    - Email notification when visit review is awaiting adjudication or concluded
+    - Export button on DataTables now export only visible (filtered) data
+    - Replaced Jquery datepicker by Bootrastrp datepicker
+    - Simplified download interface for DICOM (supervisor)
+    - faster visit status determination in upload manager (supervisor)
+    - Add OHIF viewer for supervisors and investigators
+    - Reduced ZIP compression level of Dicom before upload to decrease CPU comsuption in the client
+    - Small memory usage reduction when zipping dicom
+
+
