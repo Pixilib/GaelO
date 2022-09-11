@@ -150,7 +150,14 @@
     			{ data: 'orthancSeriesIDs' },
 				{
 					render: function ( data, type, row, meta ) {
-						return '<a href="/ohif/viewer?StudyInstanceUIDs='+row.studyUID+'" target="_blank" ">OHIF Viewer</a>';
+						if(row.visit_modality === 'PT'){
+							//return '<a href="/ohif/tmtv?StudyInstanceUIDs='+row.studyUID+'" target="_blank" ">OHIF Viewer</a>';
+							//Until debuging TMTV with NAC
+							return '<a href="/ohif/viewer?StudyInstanceUIDs='+row.studyUID+'" target="_blank" ">OHIF Viewer</a>';
+						}else {
+							return '<a href="/ohif/viewer?StudyInstanceUIDs='+row.studyUID+'" target="_blank" ">OHIF Viewer</a>';
+						}
+						
 					}
 				},
 				{ data: 'studyUID' },

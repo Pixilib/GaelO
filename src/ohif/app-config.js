@@ -5,7 +5,13 @@ window.config = {
   extensions: [],
   modes: [],
   showStudyList: false,
-  filterQueryParam: false,
+  maxNumberOfWebWorkers: 3,
+  maxNumRequests: {
+    interaction: 100,
+    thumbnail: 75,
+    prefetch: 10,
+  },
+  //filterQueryParam: false,
   dataSources: [
     {
       friendlyName: 'GaelO DICOMWeb Server',
@@ -29,11 +35,13 @@ window.config = {
       }
     }
   ],
+  httpErrorHandler: error => {
+    console.warn(error.status);
+  },
   defaultDataSourceName: 'dicomweb',
   // Extensions should be able to suggest default values for these?
   // Or we can require that these be explicitly set
   hotkeys: [
-    // ~ Global
     {
       commandName: 'incrementActiveViewport',
       label: 'Next Viewport',
@@ -44,18 +52,16 @@ window.config = {
       label: 'Previous Viewport',
       keys: ['left'],
     },
-    // Supported Keys: https://craig.is/killing/mice
-    // ~ Cornerstone Extension
     { commandName: 'rotateViewportCW', label: 'Rotate Right', keys: ['r'] },
     { commandName: 'rotateViewportCCW', label: 'Rotate Left', keys: ['l'] },
     { commandName: 'invertViewport', label: 'Invert', keys: ['i'] },
     {
-      commandName: 'flipViewportVertical',
+      commandName: 'flipViewportHorizontal',
       label: 'Flip Horizontally',
       keys: ['h'],
     },
     {
-      commandName: 'flipViewportHorizontal',
+      commandName: 'flipViewportVertical',
       label: 'Flip Vertically',
       keys: ['v'],
     },
@@ -63,11 +69,8 @@ window.config = {
     { commandName: 'scaleDownViewport', label: 'Zoom Out', keys: ['-'] },
     { commandName: 'fitViewportToWindow', label: 'Zoom to Fit', keys: ['='] },
     { commandName: 'resetViewport', label: 'Reset', keys: ['space'] },
-    // clearAnnotations
     { commandName: 'nextImage', label: 'Next Image', keys: ['down'] },
     { commandName: 'previousImage', label: 'Previous Image', keys: ['up'] },
-    // firstImage
-    // lastImage
     {
       commandName: 'previousViewportDisplaySet',
       label: 'Previous Series',
@@ -78,7 +81,6 @@ window.config = {
       label: 'Next Series',
       keys: ['pageup'],
     },
-    // ~ Cornerstone Tools
     { commandName: 'setZoomTool', label: 'Zoom', keys: ['z'] },
     // ~ Window level presets
     {
@@ -127,16 +129,4 @@ window.config = {
       keys: ['9'],
     },
   ],
-  httpErrorHandler: error => {
-    console.warn(error.status);
-  },
-  cornerstoneExtensionConfig: {},
-  // Following property limits number of simultaneous series metadata requests.
-  // For http/1.x-only servers, set this to 5 or less to improve
-  //  on first meaningful display in viewer
-  // If the server is particularly slow to respond to series metadata
-  //  requests as it extracts the metadata from raw files everytime,
-  //  try setting this to even lower value
-  // Leave it undefined for no limit, sutiable for HTTP/2 enabled servers
-  // maxConcurrentMetadataRequests: 5,
 };
