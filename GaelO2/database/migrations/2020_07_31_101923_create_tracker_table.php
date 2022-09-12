@@ -17,7 +17,7 @@ class CreateTrackerTable extends Migration
             $table->id();
             $table->string('study_name')->nullable(true)->default(null);
             $table->unsignedBigInteger('user_id');
-            $table->dateTime('date', 6);
+            $table->dateTimeTz('date', 6);
             $table->string('role')->nullable(false);
             $table->integer('visit_id')->nullable(true)->default(null);
             $table->string('action_type')->nullable(false);
