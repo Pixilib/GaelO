@@ -23,7 +23,6 @@ class CreateTrackerTable extends Migration
             $table->string('action_type')->nullable(false);
             $table->json('action_details');
             $table->timestamps();
-            $table->unique(['date', 'user_id']);
             //Dependencies
             $table->foreign('user_id')->references('id')->on('users');
             $table->foreign('study_name')->references('name')->on('studies');
