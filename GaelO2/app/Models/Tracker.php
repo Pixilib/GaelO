@@ -13,7 +13,7 @@ class Tracker extends Model
         'id' => 'integer',
         'study_name' => 'string',
         'user_id' => 'integer',
-        //'date' => 'datetime',
+        'date' => 'datetime',
         'role' => 'string',
         'visit_id' => 'integer',
         'action_type' =>  'string',

@@ -428,13 +428,22 @@ class UserRepositoryTest extends TestCase
             Role::factory()->userId($user->id)->roleName(Constants::ROLE_SUPERVISOR)->studyName($study1Name)->create();
         });
 
+        //Add role in another study, that should not be selected
+        $userStudy1->each(function ($user) use($study2Name) {
+            Role::factory()->userId($user->id)->roleName(Constants::ROLE_INVESTIGATOR)->studyName($study2Name)->create();
+            Role::factory()->userId($user->id)->roleName(Constants::ROLE_SUPERVISOR)->studyName($study2Name)->create();
+        });
+
         $userStudy2->each(function ($user) use($study2Name) {
             Role::factory()->userId($user->id)->roleName(Constants::ROLE_INVESTIGATOR)->studyName($study2Name)->create();
         });
 
         $users = $this->userRepository->getUsersFromStudy($study1Name);
 
+        //Should have 5 users in this study
         $this->assertEquals(5, sizeof($users));
+        //Each user should have 2 roles
+        $this->assertEquals(2, sizeof($users[0]['roles']));
     }
 
     public function testGetAllUser(){

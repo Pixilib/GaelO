@@ -18,7 +18,7 @@ class CreateDicomStudiesTable extends Migration
             $table->string('orthanc_id', 44)->nullable(false);
             $table->unsignedBigInteger('visit_id')->nullable(false);
             $table->unsignedBigInteger('user_id')->nullable(false);
-            $table->dateTime('upload_date', 6)->nullable(false);
+            $table->dateTimeTz('upload_date', 6)->nullable(false);
             $table->date('acquisition_date')->nullable(true);
             $table->time('acquisition_time')->nullable(true);
             $table->string('anon_from_orthanc_id', 44)->nullable(false);

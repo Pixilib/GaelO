@@ -15,7 +15,7 @@ class Review extends Model
         'study_name' => 'string',
         'visit_id' => 'integer',
         'user_id' => 'integer',
-        //'review_date' => 'datetime',
+        'review_date' => 'datetime',
         'validated' => 'boolean',
         'local' => 'boolean',
         'adjudication' => 'boolean',

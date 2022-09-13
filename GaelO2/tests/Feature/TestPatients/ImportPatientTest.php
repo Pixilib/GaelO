@@ -88,7 +88,7 @@ class ImportPatientTest extends TestCase
         $this->assertEquals(0,sizeof($resp['fail']));
 
         $patient1 = Patient::find($this->study->code.'12341231234123')->toArray();
-        $this->assertEquals('2011-10-05', $patient1['registration_date']);
+        $this->assertEquals('2011-10-05T00:00:00.000000Z', $patient1['registration_date']);
     }
 
     public function testImportPatient() {

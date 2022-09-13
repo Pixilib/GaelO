@@ -17,7 +17,7 @@ class CreateVisitsTable extends Migration
 
             $table->id();
             $table->unsignedBigInteger('creator_user_id')->nullable(false);
-            $table->dateTime('creation_date', 6)->nullable(false);
+            $table->dateTimeTz('creation_date', 6)->nullable(false);
             $table->string('patient_id')->nullable(false);
             $table->date('visit_date')->nullable(true)->default(null);
             $table->unsignedBigInteger('visit_type_id')->nullable(false);
@@ -27,18 +27,18 @@ class CreateVisitsTable extends Migration
             $table->enum('state_investigator_form', ['Not Done', 'Not Needed', 'Draft', 'Done'])->nullable(false)->default('Not Done');
             $table->enum('state_quality_control', ['Not Done', 'Not Needed', 'Wait Definitive Conclusion','Corrective Action Asked','Refused','Accepted'])->nullable(false)->default('Not Done');
             $table->unsignedBigInteger('controller_user_id')->nullable(true)->default(null);
-            $table->dateTime('control_date', 6)->nullable(true)->default(null);
+            $table->dateTimeTz('control_date', 6)->nullable(true)->default(null);
             $table->boolean('image_quality_control')->nullable(false)->default(false);
             $table->boolean('form_quality_control')->nullable(false)->default(false);
             $table->string('image_quality_comment', 256)->nullable(true)->default(null);
             $table->string('form_quality_comment', 256)->nullable(true)->default(null);
             $table->unsignedBigInteger('corrective_action_user_id')->nullable(true)->default(null);
-            $table->dateTime('corrective_action_date', 6)->nullable(true)->default(null);
+            $table->dateTimeTz('corrective_action_date', 6)->nullable(true)->default(null);
             $table->boolean('corrective_action_new_upload')->nullable(false)->default(false);
             $table->boolean('corrective_action_investigator_form')->nullable(false)->default(false);
             $table->string('corrective_action_comment', 256)->nullable(true)->default(null);
             $table->boolean('corrective_action_applied')->nullable(true)->default(null);
-            $table->dateTime('last_reminder_upload', 6)->nullable(true)->default(null);
+            $table->dateTimeTz('last_reminder_upload', 6)->nullable(true)->default(null);
             $table->softDeletes();
             $table->timestamps();
             //Dependencies

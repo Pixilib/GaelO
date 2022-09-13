@@ -25,7 +25,7 @@ class CreateDicomSeriesTable extends Migration
             $table->text('radiopharmaceutical')->nullable(true)->default(null);
             $table->bigInteger('half_life')->nullable(true)->default(null);
             $table->time('injected_time', 0)->nullable(true)->default(null);
-            $table->dateTime('injected_datetime', 0)->nullable(true)->default(null);
+            $table->dateTimeTz('injected_datetime', 0)->nullable(true)->default(null);
             $table->bigInteger('injected_activity')->nullable(true)->default(null);
             $table->integer('patient_weight')->nullable(true)->default(null);
             $table->integer('number_of_instances')->nullable(false);
