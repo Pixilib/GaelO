@@ -42,19 +42,7 @@ class GetUsersFromStudy
                 } else if ($role === Constants::ROLE_ADMINISTRATOR) {
                     $userEntity = UserEntity::fillFromDBReponseArray($data);
                 }
-
-                $rolesArray = array_map(function ($roleData) use ($studyName) {
-                    if ($roleData['study_name'] == $studyName) return $roleData['name'];
-                    else return null;
-                }, $data['roles']);
-                //filter empty location
-                $rolesArray = array_filter($rolesArray, function ($role) {
-                    if ($role === null) return false;
-                    else return true;
-                });
-                //Rearange array to start as 0 without associative keys
-                $rolesArray = array_values($rolesArray);
-                $userEntity->addRoles($rolesArray);
+                $userEntity->addRoles($data['roles']);
                 $responseArray[] = $userEntity;
             }
 

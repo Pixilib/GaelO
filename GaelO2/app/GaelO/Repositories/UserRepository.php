@@ -346,12 +346,13 @@ class UserRepository implements UserRepositoryInterface
 
     public function getUsersFromStudy(string $studyName): array
     {
-
         $users = $this->userModel
             ->whereHas('roles', function ($query) use ($studyName) {
                 $query->where('study_name', '=', $studyName);
             })
-            ->with('roles')
+            ->with(['roles' => function ($query) use ($studyName) {
+                $query->where('study_name', '=', $studyName);
+            }])
             ->get();
         return empty($users) ? [] : $users->unique('id')->toArray();
     }
