@@ -255,7 +255,7 @@ class ReviewController extends Controller
         $createFileToFormFromTusRequest->currentUserId = $currentUser['id'];
         $createFileToFormFromTus->execute($createFileToFormFromTusRequest, $createFileToFormFromTusResponse);
 
-        return $this->getJsonResponse($createFileToFormFromTusRequest->body, $createFileToFormFromTusRequest->status, $createFileToFormFromTusRequest->statusText);
+        return $this->getJsonResponse($createFileToFormFromTusResponse->body, $createFileToFormFromTusResponse->status, $createFileToFormFromTusResponse->statusText);
     }
 
     public function deleteReviewFile(DeleteFileOfForm $deleteFileOfForm, DeleteFileOfFormRequest $deleteFileOfFormRequest, DeleteFileOfFormResponse $deleteFileOfFormResponse, int $reviewId, string $key)

@@ -55,11 +55,6 @@ class CreateFileToFormFromTus
         $this->tusService = $tusService;
     }
 
-    //SK TODO FINIR CE USECASE (devrait etre ok)
-    //EXPOSER UNE ROUTE fait tools
-    //TESTER ce use case et
-    //check test Tester Validated Dicom
-
     public function execute(CreateFileToFormFromTusRequest $createFileToFormFromTusRequest, CreateFileToFormFromTusResponse $createFileToFormFromTusResponse)
     {
 
@@ -104,7 +99,7 @@ class CreateFileToFormFromTus
                     if ($uncompressedzipSize / $zipSize > 50) {
                         throw new GaelOValidateDicomException("Bomb Zip");
                     }
-
+                    
                     $zip = new ZipArchive();
                     $zip->open($tusTempZip);
                     $zip->extractTo($unzipedPath);

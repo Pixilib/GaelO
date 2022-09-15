@@ -379,7 +379,7 @@ class OrthancService
 
         $headers = ['content-type' => 'application/json', 'Accept' => 'application/zip'];
 
-        $this->httpClientInterface->rowRequest('POST', $this->url . '/tools/create-archive', $body, $headers, $ressource);
+        $this->httpClientInterface->rowRequest('POST', '/tools/create-archive', $body, $headers, $ressource);
     }
 
     /**
