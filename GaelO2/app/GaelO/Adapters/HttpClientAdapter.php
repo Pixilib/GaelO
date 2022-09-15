@@ -124,7 +124,7 @@ class HttpClientAdapter implements HttpClientInterface
         return new Psr7ResponseAdapter($response);
     }
 
-    public function rowRequest(string $method, string $uri, $body, ?array $headers ): Psr7ResponseInterface
+    public function rowRequest(string $method, string $uri, $body, ?array $headers, $ressourceDestination = null ): Psr7ResponseInterface
     {
         $options = [];
 
@@ -139,10 +139,14 @@ class HttpClientAdapter implements HttpClientInterface
         if ($headers != null) {
             $options['headers'] = $headers;
         }
+
         if ($this->authorizationToken != null) {
            $options['headers']['Authorization']='Bearer '.$this->authorizationToken;
         }
 
+        if($ressourceDestination){
+            $options['sink']= $ressourceDestination;
+        }
 
         $response = $this->client->request($method, $this->address . $uri, $options);
         return new Psr7ResponseAdapter($response);
