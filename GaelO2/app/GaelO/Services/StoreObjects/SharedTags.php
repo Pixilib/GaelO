@@ -175,6 +175,11 @@ class SharedTags
         return $this->getSharedTagsValueFromCode('0008,0031');
     }
 
+    public function getSOPClassUID() : ?string
+    {
+        return $this->getSharedTagsValueFromCode('0008,0016');
+    }
+
     public function getRadioPharmaceuticalTags(OrthancService $orthancService, string $orthancID) : ?array
     {
         $radioPharmaceuticalArray = [];
@@ -188,24 +193,5 @@ class SharedTags
             $radioPharmaceuticalArray[$radioPharmaceuticalTags[$j]['Name']] = $radioPharmaceuticalTags[$j]['Value'];
         }
         return $radioPharmaceuticalArray;
-    }
-
-    public function getImageType() : int
-    {
-        $SOPClassUID = $this->getSharedTagsValueFromCode('0008,0016');
-
-        if ($SOPClassUID == '1.2.840.10008.5.1.4.1.1.4' ||
-            $SOPClassUID == '1.2.840.10008.5.1.4.1.1.4.1') {
-            return 0;
-        } elseif ($SOPClassUID == '1.2.840.10008.5.1.4.1.1.2' ||
-            $SOPClassUID == '1.2.840.10008.5.1.4.1.1.2.1' ||
-            $SOPClassUID == '1.2.840.10008.5.1.4.1.1.20' ||
-            $SOPClassUID == '1.2.840.10008.5.1.4.1.1.128' ||
-            $SOPClassUID == '1.2.840.10008.5.1.4.1.1.130' ||
-            $SOPClassUID == '1.2.840.10008.5.1.4.1.1.128.1') {
-            return 1;
-        } else {
-            return 2;
-        }
     }
 }

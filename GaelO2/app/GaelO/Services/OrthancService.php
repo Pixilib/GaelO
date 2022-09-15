@@ -367,7 +367,7 @@ class OrthancService
         return $this->httpClientInterface->requestJson('GET', '/series/'.$seriesOrthancID.'shared-tags')->getJsonBody();
     }
 
-    public function getMIP(string $seriesOrthancID) : string
+    public function getSeriesMIP(string $seriesOrthancID) : string
     {
         $downloadedFilePath = tempnam(sys_get_temp_dir(), 'mipDICOM');
         $resource  = fopen( $downloadedFilePath, 'r+');
@@ -376,7 +376,7 @@ class OrthancService
         return $downloadedFilePath;
     }
 
-    public function getMosaic(string $seriesOrthancID) : string
+    public function getSeriesMosaic(string $seriesOrthancID) : string
     {
         $downloadedFilePath = tempnam(sys_get_temp_dir(), 'mozaicDICOM');
         $resource  = fopen( $downloadedFilePath, 'r+');
@@ -385,12 +385,12 @@ class OrthancService
         return $downloadedFilePath;
     }
 
-    public function getPreview(string $seriesOrthancID) : string
+    public function getInstancePreview(string $instanceOrthancID) : string
     {
         $downloadedFilePath = tempnam(sys_get_temp_dir(), 'previewDICOM');
         $resource  = fopen( $downloadedFilePath, 'r+');
 
-        $this->httpClientInterface->requestStreamResponseToFile('GET', '/series/'.$seriesOrthancID.'/preview',  $resource, []);
+        $this->httpClientInterface->requestStreamResponseToFile('GET', '/instances/'.$instanceOrthancID.'/preview?returnUnsupportedImage',  $resource, []);
         return $downloadedFilePath;
     }
 

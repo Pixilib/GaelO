@@ -12,6 +12,7 @@
   <!--<![endif]-->
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" type="text/css" href="./mjml/style.css">
   <style type="text/css">
     #outlook a {
       padding: 0;
@@ -75,13 +76,39 @@
     }
   </style>
   <style type="text/css">
+    @media only screen and (min-width:480px) {
+      .mj-column-per-100 {
+        width: 100% !important;
+        max-width: 100%;
+      }
+
+      .mj-column-per-70 {
+        width: 70% !important;
+        max-width: 70%;
+      }
+    }
+
+  </style>
+  <style>
+    .gaelo-table-series tr:nth-child(even) {
+      background: #f0f0f0;
+    }
+    .gaelo-table-series tr:nth-child(odd) {
+        background: #FFF;
+    }
+  </style>
+  <style type="text/css">
   </style>
 </head>
+
 <body style="word-spacing:normal;">
   @include('mails.mail_auto_qc_study', ['studyInfo' => $studyInfo])
   @foreach ($seriesInfo as $series)
     @include('mails.mail_auto_qc_series', ['seriesInfo' => $series])
   @endforeach
+  @if ($studyInfo['investigatorForm'] != null)
+    @include('mails.mail_auto_qc_investigator_form', ['investigatorForm' => $studyInfo['investigatorForm']])
+  @endif
   <div style="">
     <!--[if mso | IE]><table align="center" border="0" cellpadding="0" cellspacing="0" class="" style="width:600px;" width="600" ><tr><td style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;"><![endif]-->
     <div style="margin:0px auto;max-width:600px;">
@@ -98,7 +125,7 @@
                         <table border="0" cellpadding="0" cellspacing="0" role="presentation" style="border-collapse:separate;line-height:100%;">
                           <tr>
                             <td align="center" bgcolor="#2ec086" role="presentation" style="border:none;border-radius:10px;cursor:auto;mso-padding-alt:10px 25px;background:#2ec086;" valign="middle">
-                              <a href="{{ $magicLink }}" style="display:inline-block;background:#2ec086;color:#FFFFFF;font-family:Helvetica;font-size:14px;font-weight:bold;line-height:120%;margin:0;text-decoration:none;text-transform:none;padding:10px 25px;mso-padding-alt:0px;border-radius:10px;" target="_blank"> Accept </a>
+                              <a href="{{ $magicLink }}" style="display:inline-block;background:#2ec086;color:#FFFFFF;font-family:Helvetica;font-size:14px;font-weight:bold;line-height:120%;margin:0;text-decoration:none;text-transform:none;padding:10px 25px;mso-padding-alt:0px;border-radius:10px;" target="_blank">It's all good</a>
                             </td>
                           </tr>
                         </table>
@@ -116,7 +143,7 @@
                         <table border="0" cellpadding="0" cellspacing="0" role="presentation" style="border-collapse:separate;line-height:100%;">
                           <tr>
                             <td align="center" bgcolor="#FFBA4D" role="presentation" style="border:none;border-radius:10px;cursor:auto;mso-padding-alt:10px 25px;background:#FFBA4D;" valign="middle">
-                              <a href="{{ $magicLink }}" style="display:inline-block;background:#FFBA4D;color:#FFFFFF;font-family:Helvetica;font-size:14px;font-weight:bold;line-height:120%;margin:0;text-decoration:none;text-transform:none;padding:10px 25px;mso-padding-alt:0px;border-radius:10px;" target="_blank"> Refuse </a>
+                              <a href="{{ $magicLink }}" style="display:inline-block;background:#FFBA4D;color:#FFFFFF;font-family:Helvetica;font-size:14px;font-weight:bold;line-height:120%;margin:0;text-decoration:none;text-transform:none;padding:10px 25px;mso-padding-alt:0px;border-radius:10px;" target="_blank">See in GaelO</a>
                             </td>
                           </tr>
                         </table>

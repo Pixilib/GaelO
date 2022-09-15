@@ -1,12 +1,14 @@
 <?php
 
 namespace App\Jobs;
+namespace Enum;
 
 use App\GaelO\Constants\Constants;
 use App\GaelO\Entities\DicomStudyEntity;
 use App\GaelO\Entities\VisitEntity;
 use App\GaelO\Interfaces\Adapters\FrameworkInterface;
 use App\GaelO\Interfaces\Repositories\DicomStudyRepositoryInterface;
+use App\GaelO\Interfaces\Repositories\ReviewRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\UserRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
 use App\GaelO\Repositories\VisitRepository;
@@ -22,11 +24,19 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use App\GaelO\Services\StoreObjects\SharedTags;
 
+enum ImageType : string
+{
+    case MIP = 'MIP';
+    case MOSAIC = 'MOSAIC';
+    case DEFAULT = 'DEFAULT';
+}
+
 class JobAutoQc implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
     private int $visitId;
 
+    
     /**
      * Create a new job instance.
      *
@@ -37,17 +47,53 @@ class JobAutoQc implements ShouldQueue
         $this->visitId = $visitId;
     }
 
+    public function getImageType(SharedTags $sharedTags): ImageType
+    {
+        $mosaicIDs = ['1.2.840.10008.5.1.4.1.1.4', '1.2.840.10008.5.1.4.1.1.4.1'];
+        $gifIDs = ['1.2.840.10008.5.1.4.1.1.2', '1.2.840.10008.5.1.4.1.1.2.1', '1.2.840.10008.5.1.4.1.1.20',
+            '1.2.840.10008.5.1.4.1.1.128', '1.2.840.10008.5.1.4.1.1.130', '1.2.840.10008.5.1.4.1.1.128.1'];
+
+        $SOPClassUID = $sharedTags->getSOPClassUID();
+        if (in_array($SOPClassUID, $mosaicIDs)) {
+            return ImageType::MOSAIC;
+        } elseif (in_array($SOPClassUID, $gifIDs)) {
+            return ImageType::MIP;
+        } else {
+            return ImageType::DEFAULT;
+        }
+    }
+
+    public function getImagePath(SharedTags $sharedTags, string $seriesID, string $firstInstanceID, OrthancService $orthancService): string
+    {
+        $imageType = $this->getImageType($sharedTags);
+        $imagePath = '';
+        switch ($imageType) {
+            case ImageType::MIP:
+                $imagePath = $orthancService->getSeriesMIP($seriesID);
+                break;
+            case ImageType::MOSAIC:
+                $imagePath = $orthancService->getSeriesMosaic($seriesID);
+                break;
+            case ImageType::DEFAULT:
+                $imagePath = $orthancService->getInstancePreview($firstInstanceID);
+                break;
+        }
+        return $imagePath;
+    }
+
     /**
      * Execute the job.
      *
      * @return void
      */
     public function handle(FrameworkInterface $frameworkInterface, UserRepositoryInterface $userRepositoryInterface, VisitRepositoryInterface $visitRepositoryInterface, DicomStudyRepositoryInterface $dicomStudyRepositoryInterface, 
-        MailServices $mailServices, OrthancService $orthancService)
+        MailServices $mailServices, OrthancService $orthancService, ReviewRepositoryInterface $reviewRepositoryInterface)
     {
         $visitEntity = $visitRepositoryInterface->getVisitContext($this->visitId);
         $dicomStudyEntity = $dicomStudyRepositoryInterface->getDicomsDataFromVisit($this->visitId, false, false);
         $sharedTags = new SharedTags($orthancService->getSharedTags($this->visitId));
+    
+        $stateInvestigatorForm = $visitEntity['state_investigator_form'];
 
         $studyInfo = [];
         $studyInfo['studyName'] = $visitEntity['patient']['study_name'];
@@ -57,45 +103,47 @@ class JobAutoQc implements ShouldQueue
         $studyInfo['studyTime'] = $sharedTags->getStudyTime();
         $studyInfo['numberOfSeries'] = count($dicomStudyEntity[0]['dicom_series']);
         $studyInfo['numberOfInstances'] = 0;
-
+        if ($stateInvestigatorForm != 'Not needed') {
+            $studyInfo['investigatorForm'] = json_encode($reviewRepositoryInterface->getInvestigatorForm($this->visitId, false),
+                JSON_PRETTY_PRINT);
+        } else {
+            $studyInfo['investigatorForm'] = null;
+        }
+        
         $seriesInfo = [];
         foreach ($dicomStudyEntity[0]['dicom_series'] as $series) {
             $studyInfo['numberOfInstances'] += $series['number_of_instances'];
+            if ($series['dicom_instances'][0])
+                $firstInstanceID = $series['dicom_instances'][0]['instance_id'];
 
             $seriesData = [];
             $seriesData['infos'] = [];
             $seriesSharedTags = new SharedTags($orthancService->getSharedTags($series['orthanc_id']));
-            if ($sharedTags->getImageType() == 0) {
-                $seriesData['image_path'] = $orthancService->getMosaic($series['orthanc_id']);
-            } else if ($sharedTags->getImageType() == 1) {
-                $seriesData['image_path'] = $orthancService->getMIP($series['orthanc_id']);
-            } else {
-                $seriesData['image_path'] = $orthancService->getPreview($series['orthanc_id']);
-            }
             $seriesData['series_description'] = $seriesSharedTags->getSeriesDescription();
-            $seriesData['infos']['modality'] = $seriesSharedTags->getSeriesModality();
-            $seriesData['infos']['series_date'] =  $seriesSharedTags->getSeriesDate();
-            $seriesData['infos']['series_time'] = $series['acquisition_time'];
-            $seriesData['infos']['slice_thickness'] = $seriesSharedTags->getSliceThickness();
-            $seriesData['infos']['pixel_spacing'] = $seriesSharedTags->getPixelSpacing();
-            $seriesData['infos']['fov'] = $seriesSharedTags->getFieldOfView();
-            $seriesData['infos']['matrix_size'] = $seriesSharedTags->getMatrixSize();
-            $seriesData['infos']['patient_position'] = $seriesSharedTags->getPatientPosition();
-            $seriesData['infos']['patient_orientation'] = $seriesSharedTags->getImageOrientation();
-            $seriesData['infos']['number_of_instances'] = $series['number_of_instances'];
-            if ($seriesData['infos']['modality'] == 'MR') {
-                $seriesData['infos']['scanning_sequence'] = $seriesSharedTags->getScanningSequence();
-                $seriesData['infos']['sequence_variant'] = $seriesSharedTags->getSequenceVariant();
-                $seriesData['infos']['echo_time'] = $seriesSharedTags->getEchoTime();
-                $seriesData['infos']['inversion_time'] = $seriesSharedTags->getInversionTime();
-                $seriesData['infos']['echo_train_length'] = $seriesSharedTags->getEchoTrainLength();
-                $seriesData['infos']['spacing_between_slices'] = $seriesSharedTags->getSpacingBetweenSlices();
-                $seriesData['infos']['protocol_name'] = $seriesSharedTags->getProtocolName();
-            } else if ($seriesData['infos']['modality'] == 'PT') {
-                $seriesData['infos']['patient_weight'] = $seriesSharedTags->getPatientWeight();
-                $seriesData['infos']['patient_height'] = $seriesSharedTags->getPatientHeight();
+            $seriesData['image_path'] = $this->getImagePath($seriesSharedTags, $series['orthanc_id'], $firstInstanceID, $orthancService);
+            $seriesData['infos']['Modality'] = $seriesSharedTags->getSeriesModality();
+            $seriesData['infos']['Series date'] =  $seriesSharedTags->getSeriesDate();
+            $seriesData['infos']['Series time'] = $series['acquisition_time'];
+            $seriesData['infos']['Slice thickness'] = $seriesSharedTags->getSliceThickness();
+            $seriesData['infos']['Pixel_spacing'] = $seriesSharedTags->getPixelSpacing();
+            $seriesData['infos']['FOV'] = $seriesSharedTags->getFieldOfView();
+            $seriesData['infos']['Matrix size'] = $seriesSharedTags->getMatrixSize();
+            $seriesData['infos']['Patient position'] = $seriesSharedTags->getPatientPosition();
+            $seriesData['infos']['Patient orientation'] = $seriesSharedTags->getImageOrientation();
+            $seriesData['infos']['Number of instances'] = $series['number_of_instances'];
+            if ($seriesData['infos']['Modality'] == 'MR') {
+                $seriesData['infos']['Scanning sequence'] = $seriesSharedTags->getScanningSequence();
+                $seriesData['infos']['Sequence variant'] = $seriesSharedTags->getSequenceVariant();
+                $seriesData['infos']['Echo_ ime'] = $seriesSharedTags->getEchoTime();
+                $seriesData['infos']['Inversion_time'] = $seriesSharedTags->getInversionTime();
+                $seriesData['infos']['Echo train length'] = $seriesSharedTags->getEchoTrainLength();
+                $seriesData['infos']['Spacing between slices'] = $seriesSharedTags->getSpacingBetweenSlices();
+                $seriesData['infos']['Protocol name'] = $seriesSharedTags->getProtocolName();
+            } else if ($seriesData['infos']['Modality'] == 'PT') {
+                $seriesData['infos']['Patient weight'] = $seriesSharedTags->getPatientWeight();
+                $seriesData['infos']['Patient height'] = $seriesSharedTags->getPatientHeight();
                 $seriesData['infos'][] = [$seriesData['infos'], ...$seriesSharedTags->getRadioPharmaceuticalTags($orthancService,
-                    $series['dicom_instances'][0]['orthanc_id'])];
+                    $firstInstanceID)];
             }
             $seriesInfo[] = $seriesData;
         }
@@ -110,7 +158,7 @@ class JobAutoQc implements ShouldQueue
         foreach ($controllerUsers as $user) {
             $redirectLink = '/study/'.$studyName.'/role/'.Constants::ROLE_CONTROLLER.'/visit/'.$visitId;
             $magicLink = $frameworkInterface->createMagicLink($user['id'], $redirectLink);
-            $mailServices->sendAutoQC($studyName, $visitType, $patientCode, $studyInfo, $seriesInfo, $magicLink, $user['email'], );
+            $mailServices->sendAutoQC($studyName, $visitType, $patientCode, $studyInfo, $seriesInfo, $magicLink, $user['email']);
         }
     }
 }

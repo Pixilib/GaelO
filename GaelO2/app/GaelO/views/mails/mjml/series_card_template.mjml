@@ -1,15 +1,16 @@
 <mjml>
     <mj-head>
         <mj-attributes>
-            <mj-class name="text" color="#445566"/>
+            <mj-class name="text" color="#353275"/>
+            <mj-include path="./style.css" type="css" />
         </mj-attributes>
     </mj-head>
   <mj-body>
     <mj-section>
       <mj-column width="100%">
         <mj-text>
-          <h3 style="font-weight: bold; margin-top: 0; margin-bottom: 0" align="center"> <a style="color: #3498DB; text-decoration: none">
-                (Nom)
+          <h3 style="font-weight: bold; margin-top: 0; margin-bottom: 0" align="center"> <a text-decoration: none">
+                {{$series['series_description']}}
           </a> </h3>
         </mj-text>
       </mj-column width="100%">
@@ -19,11 +20,11 @@
     </mj-section>
     <mj-section>
       <mj-column width="100%">
-        <mj-table>
+        <mj-table css-class="gaelo-table-series" color="#353275">
           <tr>
             <td style="padding: 0 15px 0 0;" align="left">{{ $item['Type'] }}</td>
             <td style="padding: 0 15px;" align="right">{{ $item['Result'] }}</td>
-          </tr> 
+          </tr>
         </mj-table>
       </mj-column>
     </mj-section>
