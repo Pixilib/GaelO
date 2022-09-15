@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\GaelO\UseCases\CreateFileToForm\CreateFileToForm;
 use App\GaelO\UseCases\CreateFileToForm\CreateFileToFormRequest;
 use App\GaelO\UseCases\CreateFileToForm\CreateFileToFormResponse;
+use App\GaelO\UseCases\CreateFileToFormFromTus\CreateFileToFormFromTus;
+use App\GaelO\UseCases\CreateFileToFormFromTus\CreateFileToFormFromTusRequest;
+use App\GaelO\UseCases\CreateFileToFormFromTus\CreateFileToFormFromTusResponse;
 use App\GaelO\UseCases\CreateInvestigatorForm\CreateInvestigatorForm;
 use App\GaelO\UseCases\CreateInvestigatorForm\CreateInvestigatorFormRequest;
 use App\GaelO\UseCases\CreateInvestigatorForm\CreateInvestigatorFormResponse;
@@ -241,6 +244,18 @@ class ReviewController extends Controller
         $createFileToForm->execute($createFileToFormRequest, $createFileToFormResponse);
 
         return $this->getJsonResponse($createFileToFormResponse->body, $createFileToFormResponse->status, $createFileToFormResponse->statusText);
+    }
+
+    public function createReviewFileFromTus(Request $request, CreateFileToFormFromTus $createFileToFormFromTus, CreateFileToFormFromTusRequest $createFileToFormFromTusRequest, CreateFileToFormFromTusResponse $createFileToFormFromTusResponse)
+    {
+        $currentUser = Auth::user();
+        $requestData = $request->all();
+
+        $createFileToFormFromTusRequest = Util::fillObject($requestData, $createFileToFormFromTusRequest);
+        $createFileToFormFromTusRequest->currentUserId = $currentUser['id'];
+        $createFileToFormFromTus->execute($createFileToFormFromTusRequest, $createFileToFormFromTusResponse);
+
+        return $this->getJsonResponse($createFileToFormFromTusResponse->body, $createFileToFormFromTusResponse->status, $createFileToFormFromTusResponse->statusText);
     }
 
     public function deleteReviewFile(DeleteFileOfForm $deleteFileOfForm, DeleteFileOfFormRequest $deleteFileOfFormRequest, DeleteFileOfFormResponse $deleteFileOfFormResponse, int $reviewId, string $key)

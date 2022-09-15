@@ -4,7 +4,7 @@ namespace App\GaelO\UseCases\GetVisitsTree;
 
 use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOBadRequestException;
-use App\GaelO\Exceptions\GaelOException;
+use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Adapters\FrameworkInterface;
 use App\GaelO\Services\AuthorizationService\AuthorizationStudyService;
@@ -45,7 +45,7 @@ class GetVisitsTree
             $getVisitsTreeResponse->body = $tree;
             $getVisitsTreeResponse->status = 200;
             $getVisitsTreeResponse->statusText = 'OK';
-        } catch (GaelOException $e) {
+        } catch (AbstractGaelOException $e) {
             $getVisitsTreeResponse->body = $e->getErrorBody();
             $getVisitsTreeResponse->status = $e->statusCode;
             $getVisitsTreeResponse->statusText = $e->statusText;

@@ -5,7 +5,7 @@ namespace App\GaelO\UseCases\GetStudy;
 use App\GaelO\Entities\StudyEntity;
 use App\GaelO\Entities\VisitGroupEntity;
 use App\GaelO\Entities\VisitTypeEntity;
-use App\GaelO\Exceptions\GaelOException;
+use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\StudyRepositoryInterface;
 use App\GaelO\Services\AuthorizationService\AuthorizationUserService;
@@ -58,7 +58,7 @@ class GetStudy {
             $getStudyResponse->status = 200;
             $getStudyResponse->statusText = 'OK';
 
-        } catch (GaelOException $e) {
+        } catch (AbstractGaelOException $e) {
             $getStudyResponse->body = $e->getErrorBody();
             $getStudyResponse->status = $e->statusCode;
             $getStudyResponse->statusText = $e->statusText;
@@ -73,6 +73,6 @@ class GetStudy {
         $this->authorizationUserService->setUserId($userId);
         if (!$this->authorizationUserService->isAdmin()) {
             throw new GaelOForbiddenException();
-        };
+        }
     }
 }

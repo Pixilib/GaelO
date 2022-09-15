@@ -4,7 +4,7 @@ namespace App\GaelO\UseCases\ReactivateStudy;
 
 use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOBadRequestException;
-use App\GaelO\Exceptions\GaelOException;
+use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\StudyRepositoryInterface;
 use App\GaelO\Repositories\TrackerRepository;
@@ -47,7 +47,7 @@ class ReactivateStudy
 
             $reactivateStudyResponse->status = 200;
             $reactivateStudyResponse->statusText = 'OK';
-        } catch (GaelOException $e) {
+        } catch (AbstractGaelOException $e) {
             $reactivateStudyResponse->body = $e->getErrorBody();
             $reactivateStudyResponse->status = $e->statusCode;
             $reactivateStudyResponse->statusText = $e->statusText;
@@ -61,6 +61,6 @@ class ReactivateStudy
         $this->authorizationUserService->setUserId($userId);
         if (!$this->authorizationUserService->isAdmin()) {
             throw new GaelOForbiddenException();
-        };
+        }
     }
 }

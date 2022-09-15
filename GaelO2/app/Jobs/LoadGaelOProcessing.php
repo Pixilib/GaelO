@@ -41,7 +41,7 @@ class LoadGaelOProcessing implements ShouldQueue
         //If ACI is not running, start and wait for initialization
         if (!$azureService->isRunning()) {
             $azureService->startAndWait();
-        };
+        }
 
         //Get IP of the ACI
         $ip = $azureService->getIP();

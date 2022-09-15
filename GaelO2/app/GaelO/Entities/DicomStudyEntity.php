@@ -15,7 +15,7 @@ class DicomStudyEntity
     public ?string $patientId;
     public int $diskSize;
     public bool $deleted;
-    public array $series;
+    public array $series = [];
     public UserEntity $uploader;
     public PatientEntity $patient;
     public VisitEntity $visit;
@@ -50,6 +50,7 @@ class DicomStudyEntity
     {
         $this->patient = new PatientEntity();
         $this->patient->id = $patientData['id'];
+        $this->patient->code = $patientData['code'];
         $this->patient->centerCode = $patientData['center_code'];
         $this->patient->inclusionStatus = $patientData['inclusion_status'];
     }

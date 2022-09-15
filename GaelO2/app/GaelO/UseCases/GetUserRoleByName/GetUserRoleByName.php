@@ -3,7 +3,7 @@
 namespace App\GaelO\UseCases\GetUserRoleByName;
 
 use App\GaelO\Entities\RoleEntity;
-use App\GaelO\Exceptions\GaelOException;
+use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\UserRepositoryInterface;
 use App\GaelO\Services\AuthorizationService\AuthorizationUserService;
@@ -38,7 +38,7 @@ class GetUserRoleByName
             $getUserRoleByNameResponse->body = $roleEntity;
             $getUserRoleByNameResponse->status = 200;
             $getUserRoleByNameResponse->statusText = 'OK';
-        } catch (GaelOException $e) {
+        } catch (AbstractGaelOException $e) {
             $getUserRoleByNameResponse->body = $e->getErrorBody();
             $getUserRoleByNameResponse->status = $e->statusCode;
             $getUserRoleByNameResponse->statusText = $e->statusText;

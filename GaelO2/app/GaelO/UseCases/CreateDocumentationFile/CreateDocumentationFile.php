@@ -3,8 +3,8 @@
 namespace App\GaelO\UseCases\CreateDocumentationFile;
 
 use App\GaelO\Constants\Constants;
+use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOBadRequestException;
-use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Adapters\FrameworkInterface;
 use App\GaelO\Interfaces\Repositories\DocumentationRepositoryInterface;
@@ -66,7 +66,7 @@ class CreateDocumentationFile{
             $createDocumentationFileResponse->status = 201;
             $createDocumentationFileResponse->statusText =  'Created';
 
-        } catch (GaelOException $e){
+        } catch (AbstractGaelOException $e){
 
             $createDocumentationFileResponse->body = $e->getErrorBody();
             $createDocumentationFileResponse->status = $e->statusCode;

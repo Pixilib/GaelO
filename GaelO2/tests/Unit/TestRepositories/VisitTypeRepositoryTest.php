@@ -57,7 +57,7 @@ class VisitTypeRepositoryTest extends TestCase
     }
 
     public function testIsExistingOrder(){
-        $visitType = VisitType::factory()->create();
+        $visitType = VisitType::factory()->order(5)->create();
 
         $answer = $this->visitTypeRepository->isExistingOrder($visitType->visitGroup->id , $visitType->order);
         $answer2 = $this->visitTypeRepository->isExistingOrder($visitType->visitGroup->id , 0);

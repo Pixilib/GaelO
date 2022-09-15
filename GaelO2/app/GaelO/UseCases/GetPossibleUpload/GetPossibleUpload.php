@@ -3,7 +3,7 @@
 namespace App\GaelO\UseCases\GetPossibleUpload;
 
 use App\GaelO\Constants\Constants;
-use App\GaelO\Exceptions\GaelOException;
+use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\UserRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
@@ -37,6 +37,7 @@ class GetPossibleUpload
 
             foreach ($visitsEntities as $visit) {
                 $item['patientId'] = $visit['patient_id'];
+                $item['patientCode'] = $visit['patient']['code'];
                 $item['patientFirstname'] = $visit['patient']['firstname'];
                 $item['patientLastname'] = $visit['patient']['lastname'];
                 $item['patientSex'] = $visit['patient']['gender'];
@@ -53,7 +54,7 @@ class GetPossibleUpload
             $getPossibleUploadResponse->body = $answerArray;
             $getPossibleUploadResponse->status = 200;
             $getPossibleUploadResponse->statusText = 'OK';
-        } catch (GaelOException $e) {
+        } catch (AbstractGaelOException $e) {
 
             $getPossibleUploadResponse->body = $e->getErrorBody();
             $getPossibleUploadResponse->status = $e->statusCode;
@@ -70,7 +71,7 @@ class GetPossibleUpload
         $this->authorizationStudyService->setStudyName($studyName);
         if (!$this->authorizationStudyService->isAllowedStudy(Constants::ROLE_INVESTIGATOR)) {
             throw new GaelOForbiddenException();
-        };
+        }
     }
 
     private function formatBirthDateUS(?int $month, ?int $day, ?int $year): string

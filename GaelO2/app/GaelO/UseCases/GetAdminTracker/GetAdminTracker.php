@@ -5,7 +5,7 @@ namespace App\GaelO\UseCases\GetAdminTracker;
 use App\GaelO\Constants\Constants;
 use App\GaelO\Entities\TrackerEntity;
 use App\GaelO\Entities\UserEntity;
-use App\GaelO\Exceptions\GaelOException;
+use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
 use App\GaelO\Services\AuthorizationService\AuthorizationUserService;
@@ -44,7 +44,7 @@ class GetAdminTracker
             $getTrackerResponse->body = $responseArray;
             $getTrackerResponse->status = 200;
             $getTrackerResponse->statusText = 'OK';
-        } catch (GaelOException $e) {
+        } catch (AbstractGaelOException $e) {
             $getTrackerResponse->body = $e->getErrorBody();
             $getTrackerResponse->status = $e->statusCode;
             $getTrackerResponse->statusText = $e->statusText;
@@ -58,6 +58,6 @@ class GetAdminTracker
         $this->authorizationUserService->setUserId($userId);
         if (!$this->authorizationUserService->isAdmin()) {
             throw new GaelOForbiddenException();
-        };
+        }
     }
 }

@@ -2,7 +2,7 @@
 
 namespace App\GaelO\Services\StoreObjects\Export;
 
-use Exception;
+use App\GaelO\Exceptions\GaelOException;
 
 class ExportDicomResults extends ExportDataResults {
 
@@ -26,9 +26,9 @@ class ExportDicomResults extends ExportDataResults {
         }else if ($type === ExportDataResults::EXPORT_TYPE_CSV) {
             if($key === self::DICOM_STUDIES) $this->dicomStudyCSV = new ExportFile('export_dicoms_studies.csv', $path);
             else if($key===self::DICOM_SERIES) $this->dicomSeriesCSV = new ExportFile('export_dicoms_series.csv', $path);
-            else throw new Exception('Unknown File Key');
+            else throw new GaelOException('Unknown File Key');
         }else{
-            throw new Exception('Unknown File Type');
+            throw new GaelOException('Unknown File Type');
         }
 
     }

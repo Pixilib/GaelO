@@ -3,7 +3,7 @@
 namespace App\GaelO\UseCases\GetStudyReviewProgression;
 
 use App\GaelO\Constants\Constants;
-use App\GaelO\Exceptions\GaelOException;
+use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\ReviewRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\StudyRepositoryInterface;
@@ -88,7 +88,7 @@ class GetStudyReviewProgression
             $getStudyReviewProgressionResponse->body = $answer;
             $getStudyReviewProgressionResponse->status = 200;
             $getStudyReviewProgressionResponse->statusText = 'OK';
-        } catch (GaelOException $e) {
+        } catch (AbstractGaelOException $e) {
             $getStudyReviewProgressionResponse->body = $e->getErrorBody();
             $getStudyReviewProgressionResponse->status = $e->statusCode;
             $getStudyReviewProgressionResponse->statusText = $e->statusText;
@@ -103,7 +103,7 @@ class GetStudyReviewProgression
         $this->authorizationStudyService->setStudyName($studyName);
         if (!$this->authorizationStudyService->isAllowedStudy(Constants::ROLE_SUPERVISOR)) {
             throw new GaelOForbiddenException();
-        };
+        }
     }
 
     /**

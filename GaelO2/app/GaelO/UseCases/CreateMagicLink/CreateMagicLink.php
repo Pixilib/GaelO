@@ -3,8 +3,8 @@
 namespace App\GaelO\UseCases\CreateMagicLink;
 
 use App\GaelO\Constants\Constants;
+use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOBadRequestException;
-use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Adapters\FrameworkInterface;
 use App\GaelO\Interfaces\Repositories\PatientRepositoryInterface;
@@ -72,7 +72,7 @@ class CreateMagicLink
 
             $createMagicLinkResponse->status = 200;
             $createMagicLinkResponse->statusText =  'OK';
-        } catch (GaelOException $e) {
+        } catch (AbstractGaelOException $e) {
 
             $createMagicLinkResponse->body = $e->getErrorBody();
             $createMagicLinkResponse->status = $e->statusCode;

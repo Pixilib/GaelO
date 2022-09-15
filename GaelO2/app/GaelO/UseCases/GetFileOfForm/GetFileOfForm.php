@@ -3,7 +3,7 @@
 namespace App\GaelO\UseCases\GetFileOfForm;
 
 use App\GaelO\Constants\Constants;
-use App\GaelO\Exceptions\GaelOException;
+use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Adapters\FrameworkInterface;
 use App\GaelO\Interfaces\Repositories\ReviewRepositoryInterface;
@@ -46,7 +46,7 @@ class GetFileOfForm
             $getFileOfFormResponse->statusText = 'OK';
             $getFileOfFormResponse->filePath = $reviewEntity['sent_files'][$getFileOfFormRequest->key];
             $getFileOfFormResponse->filename = basename($reviewEntity['sent_files'][$getFileOfFormRequest->key]);
-        } catch (GaelOException $e) {
+        } catch (AbstractGaelOException $e) {
 
             $getFileOfFormResponse->status = $e->statusCode;
             $getFileOfFormResponse->statusText = $e->statusText;

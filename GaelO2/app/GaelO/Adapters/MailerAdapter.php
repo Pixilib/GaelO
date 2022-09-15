@@ -24,6 +24,7 @@ use App\Mail\MailUser;
 
 use App\GaelO\Constants\MailConstants;
 use App\GaelO\Constants\SettingsConstants;
+use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Interfaces\Adapters\FrameworkInterface;
 use App\GaelO\Interfaces\Adapters\MailerInterface;
 use App\Mail\AutoQC;
@@ -142,6 +143,9 @@ class MailerAdapter implements MailerInterface {
                 break;
             case MailConstants::EMAIL_AUTO_QC:
                 $model = new AutoQC($this->parameters);
+                break;
+            default:
+                throw new GaelOException("Unkown Mail Type");
                 break;
         }
 

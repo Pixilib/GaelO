@@ -4,7 +4,7 @@ namespace App\GaelO\UseCases\GetInvestigatorForm;
 
 use App\GaelO\Entities\ReviewEntity;
 use App\GaelO\Entities\UserEntity;
-use App\GaelO\Exceptions\GaelOException;
+use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\ReviewRepositoryInterface;
 use App\GaelO\Services\AuthorizationService\AuthorizationVisitService;
@@ -36,7 +36,7 @@ class GetInvestigatorForm
             $getInvestigatorFormResponse->body = $investigatorForm;
             $getInvestigatorFormResponse->status = 200;
             $getInvestigatorFormResponse->statusText = 'OK';
-        } catch (GaelOException $e) {
+        } catch (AbstractGaelOException $e) {
 
             $getInvestigatorFormResponse->body = $e->getErrorBody();
             $getInvestigatorFormResponse->status = $e->statusCode;

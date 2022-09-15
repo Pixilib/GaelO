@@ -3,8 +3,8 @@
 namespace App\GaelO\UseCases\GetDicomsFileSupervisor;
 
 use App\GaelO\Constants\Constants;
+use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOBadRequestException;
-use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\DicomSeriesRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\StudyRepositoryInterface;
@@ -85,7 +85,7 @@ class GetDicomsFileSupervisor
             $getDicomsFileSupervisorResponse->filename = 'DICOM_Export_' . $getDicomsFileSupervisorRequest->studyName . '.zip';
             $getDicomsFileSupervisorResponse->status = 200;
             $getDicomsFileSupervisorResponse->statusText = 'OK';
-        } catch (GaelOException $e) {
+        } catch (AbstractGaelOException $e) {
             $getDicomsFileSupervisorResponse->status = $e->statusCode;
             $getDicomsFileSupervisorResponse->statusText = $e->statusText;
             $getDicomsFileSupervisorResponse->body = $e->getErrorBody();

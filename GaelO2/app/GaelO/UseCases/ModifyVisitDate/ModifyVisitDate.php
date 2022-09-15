@@ -3,7 +3,7 @@
 namespace App\GaelO\UseCases\ModifyVisitDate;
 
 use App\GaelO\Constants\Constants;
-use App\GaelO\Exceptions\GaelOException;
+use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
@@ -63,13 +63,13 @@ class ModifyVisitDate
 
             $modifyVisitDateResponse->status = 200;
             $modifyVisitDateResponse->statusText = 'OK';
-        } catch (GaelOException $e) {
+        } catch (AbstractGaelOException $e) {
             $modifyVisitDateResponse->body = $e->getErrorBody();
             $modifyVisitDateResponse->status = $e->statusCode;
             $modifyVisitDateResponse->statusText = $e->statusText;
         } catch (Exception $e) {
             throw $e;
-        };
+        }
     }
 
     private function checkAuthorization(int $userId, int $visitId, string $studyName)

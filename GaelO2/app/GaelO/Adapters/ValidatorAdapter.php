@@ -2,6 +2,7 @@
 
 namespace App\GaelO\Adapters;
 
+use App\GaelO\Exceptions\GaelOBadRequestException;
 use App\GaelO\Interfaces\Adapters\ValidatorInterface;
 use App\Rules\BooleanType;
 use App\Rules\NumberType;
@@ -23,8 +24,9 @@ class ValidatorAdapter implements ValidatorInterface
     {
         $rules = [new StringType];
         $rules[] = "string";
-        if ($optional || !$this->validatedForm) $rules[] = 'nullable';
-        else $rules[] = 'required';
+        if ($optional || !$this->validatedForm) {
+            $rules[] = 'nullable';
+        } else $rules[] = 'required';
 
         $this->validationRules[$key] = $rules;
     }
@@ -33,8 +35,11 @@ class ValidatorAdapter implements ValidatorInterface
     {
         $rules = [new NumberType, "integer", "numeric"];
 
-        if ($optional || !$this->validatedForm) $rules[] = 'nullable';
-        else $rules[] = 'required';
+        if ($optional || !$this->validatedForm) {
+            $rules[] = 'nullable';
+        } else {
+            $rules[] = 'required';
+        }
 
         if ($min != null) {
             $rules[] = "min:" . $min;
@@ -52,8 +57,11 @@ class ValidatorAdapter implements ValidatorInterface
     {
         $rules = [new NumberType, "numeric"];
 
-        if ($optional || !$this->validatedForm) $rules[] = 'nullable';
-        else $rules[] = 'required';
+        if ($optional || !$this->validatedForm) {
+            $rules[] = 'nullable';
+        } else {
+            $rules[] = 'required';
+        }
 
         if ($min != null) {
             $rules[] = "min:" . $min;
@@ -71,8 +79,11 @@ class ValidatorAdapter implements ValidatorInterface
 
         $rules = [Rule::in($acceptedValues)];
 
-        if ($optional || !$this->validatedForm) $rules[] = 'nullable';
-        else $rules[] = 'required';
+        if ($optional || !$this->validatedForm) {
+            $rules[] = 'nullable';
+        } else {
+            $rules[] = 'required';
+        }
 
         $this->validationRules[$key] = $rules;
     }
@@ -80,8 +91,11 @@ class ValidatorAdapter implements ValidatorInterface
     public function addBooleanValidator(string $key,  bool $optional): void
     {
         $rules = [new BooleanType, "boolean"];
-        if ($optional || !$this->validatedForm) $rules[] = 'nullable';
-        else $rules[] = 'required';
+        if ($optional || !$this->validatedForm) {
+            $rules[] = 'nullable';
+        } else {
+            $rules[] = 'required';
+        }
 
         $this->validationRules[$key] = $rules;
     }
@@ -90,8 +104,11 @@ class ValidatorAdapter implements ValidatorInterface
     {
         $rules = ["date"];
 
-        if ($optional || !$this->validatedForm) $rules[] = 'nullable';
-        else $rules[] = 'required';
+        if ($optional || !$this->validatedForm) {
+            $rules[] = 'nullable';
+        } else {
+            $rules[] = 'required';
+        }
 
         $this->validationRules[$key] = $rules;
     }
@@ -100,7 +117,7 @@ class ValidatorAdapter implements ValidatorInterface
     {
         $validator = Validator::make($data, $this->validationRules);
         if ($validator->fails()) {
-            return false;
+            throw new GaelOBadRequestException($validator->errors()->first());
         } else {
             return true;
         }

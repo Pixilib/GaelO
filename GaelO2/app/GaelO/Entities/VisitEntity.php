@@ -40,7 +40,7 @@ class VisitEntity
     public ?string $reviewConclusionValue;
     public ?string $reviewConclusionDate;
     public ?array $targetLesions;
-
+    public ?bool $reviewAvailable;
 
 
     public static function fillFromDBReponseArray(array $array): VisitEntity
@@ -97,12 +97,13 @@ class VisitEntity
         $this->patient = $patientEntity;
     }
 
-    public function setReviewVisitStatus(?string $reviewStatus, ?string $reviewConclusionValue, ?string $reviewConclusionDate, ?array $targetLesions): void
+    public function setReviewVisitStatus(?string $reviewStatus, ?string $reviewConclusionValue, ?string $reviewConclusionDate, ?array $targetLesions, ?bool $reviewAvailable): void
     {
         $this->reviewStatus = $reviewStatus === null ? Constants::REVIEW_STATUS_NOT_DONE : $reviewStatus;
         $this->reviewConclusionValue = $reviewConclusionValue;
         $this->reviewConclusionDate = $reviewConclusionDate;
         $this->targetLesions  = $targetLesions;
+        $this->reviewAvailable = $reviewAvailable;
     }
 
     public function setCreatorDetails(UserEntity $userEntity): void

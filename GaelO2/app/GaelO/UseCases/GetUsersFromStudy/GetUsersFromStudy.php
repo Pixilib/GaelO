@@ -3,7 +3,7 @@
 namespace App\GaelO\UseCases\GetUsersFromStudy;
 
 use App\GaelO\Constants\Constants;
-use App\GaelO\Exceptions\GaelOException;
+use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\UserRepositoryInterface;
 use App\GaelO\Entities\UserEntity;
@@ -42,26 +42,14 @@ class GetUsersFromStudy
                 } else if ($role === Constants::ROLE_ADMINISTRATOR) {
                     $userEntity = UserEntity::fillFromDBReponseArray($data);
                 }
-
-                $rolesArray = array_map(function ($roleData) use ($studyName) {
-                    if ($roleData['study_name'] == $studyName) return $roleData['name'];
-                    else return null;
-                }, $data['roles']);
-                //filter empty location
-                $rolesArray = array_filter($rolesArray, function ($role) {
-                    if ($role === null) return false;
-                    else return true;
-                });
-                //Rearange array to start as 0 without associative keys
-                $rolesArray = array_values($rolesArray);
-                $userEntity->addRoles($rolesArray);
+                $userEntity->addRoles($data['roles']);
                 $responseArray[] = $userEntity;
             }
 
             $getUsersFromStudyResponse->body = $responseArray;
             $getUsersFromStudyResponse->status = 200;
             $getUsersFromStudyResponse->statusText = 'OK';
-        } catch (GaelOException $e) {
+        } catch (AbstractGaelOException $e) {
             $getUsersFromStudyResponse->body = $e->getErrorBody();
             $getUsersFromStudyResponse->status = $e->statusCode;
             $getUsersFromStudyResponse->statusText = $e->statusText;
@@ -78,11 +66,11 @@ class GetUsersFromStudy
         if ($askedRole === Constants::ROLE_SUPERVISOR) {
             if (!$this->authorizationStudyService->isAllowedStudy(Constants::ROLE_SUPERVISOR)) {
                 throw new GaelOForbiddenException();
-            };
+            }
         } else if ($askedRole === CONSTANTS::ROLE_ADMINISTRATOR) {
             if (!$this->authorizationStudyService->getAuthorizationUserService()->isAdmin()) {
                 throw new GaelOForbiddenException();
-            };
+            }
         }
     }
 }

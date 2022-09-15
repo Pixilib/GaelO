@@ -312,7 +312,7 @@ class MailServices
     {
 
         $parameters = [
-            'name' => $this->getUserName($currentUserId),
+            'name' => 'supervisor',
             'role' => $role,
             'study' => $studyName,
             'patientId' => $patientId,

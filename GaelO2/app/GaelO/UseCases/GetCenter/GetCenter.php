@@ -4,7 +4,7 @@ namespace App\GaelO\UseCases\GetCenter;
 
 use App\GaelO\Entities\CenterEntity;
 use App\GaelO\Constants\Constants;
-use App\GaelO\Exceptions\GaelOException;
+use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\CenterRepositoryInterface;
 use App\GaelO\Services\AuthorizationService\AuthorizationUserService;
@@ -45,7 +45,7 @@ class GetCenter
 
             $getCenterResponse->status = 200;
             $getCenterResponse->statusText = 'OK';
-        } catch (GaelOException $e) {
+        } catch (AbstractGaelOException $e) {
             $getCenterResponse->status = $e->statusCode;
             $getCenterResponse->statusText = $e->statusText;
             $getCenterResponse->body = $e->getErrorBody();

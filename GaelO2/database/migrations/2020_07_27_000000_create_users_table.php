@@ -21,8 +21,8 @@ class CreateUsersTable extends Migration
             $table->string('email')->unique()->nullable(false);
             $table->string('password')->nullable(true);
             $table->string('phone')->nullable(true);
-            $table->dateTime('creation_date', 6)->nullable(false);
-            $table->dateTime('last_connection', 6)->nullable(true);
+            $table->dateTimeTz('creation_date', 6)->nullable(false);
+            $table->dateTimeTz('last_connection', 6)->nullable(true);
             $table->integer('attempts')->default(0)->nullable(false);
             $table->boolean('administrator')->default(false)->nullable(false);
             $table->unsignedInteger('center_code')->nullable(false);
@@ -31,7 +31,7 @@ class CreateUsersTable extends Migration
             $table->string('orthanc_login')->nullable(true);
             $table->string('orthanc_password')->nullable(true);
             $table->string('api_token', 80) ->unique()->nullable()->default(null);
-            $table->dateTime('email_verified_at')->nullable()->default(null);
+            $table->dateTimeTz('email_verified_at')->nullable()->default(null);
             $table->string('onboarding_version')->nullable(false)->default('0.0.0');
             $table->softDeletes();
             $table->rememberToken();

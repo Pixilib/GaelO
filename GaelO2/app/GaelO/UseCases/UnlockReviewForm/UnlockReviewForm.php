@@ -3,8 +3,8 @@
 namespace App\GaelO\UseCases\UnlockReviewForm;
 
 use App\GaelO\Constants\Constants;
+use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOBadRequestException;
-use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\ReviewRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\ReviewStatusRepositoryInterface;
@@ -57,15 +57,18 @@ class UnlockReviewForm
 
             $currentUserId = $unlockReviewFormRequest->currentUserId;
             $reviewId = $reviewEntity['id'];
+            $adjudication = $reviewEntity['adjudication'];
             $reason = $unlockReviewFormRequest->reason;
 
-            /* Search for validated adjudication review */
-            $studyVisitReviews = $this->reviewRepositoryInterface->getReviewsForStudyVisit($reviewEntity['study_name'], $reviewEntity['visit_id'], true);
-            $existingAdjudicationForm = array_search(true, array_map(function ($review) {
-                return $review['adjudication'];
-            }, $studyVisitReviews));
-            /* If validated adjudication review exist, this review can't be unlocked */
-            if ($existingAdjudicationForm) throw new GaelOBadRequestException('Please delete adjudication form before unlocking this review');
+            /* if try to unlock non adjudication from, search for validated adjudication review that would need to be unlock / deleted first */
+            if (!$adjudication) {
+                $studyVisitReviews = $this->reviewRepositoryInterface->getReviewsForStudyVisit($reviewEntity['study_name'], $reviewEntity['visit_id'], true);
+                $existingAdjudicationForm = array_search(true, array_map(function ($review) {
+                    return $review['adjudication'];
+                }, $studyVisitReviews));
+                /* If validated adjudication review exist, this review can't be unlocked */
+                if ($existingAdjudicationForm !== false) throw new GaelOForbiddenException('Please delete adjudication form before unlocking this review');
+            }
 
             $this->checkAuthorization($currentUserId, $reviewId, $reviewEntity['local']);
 
@@ -80,7 +83,7 @@ class UnlockReviewForm
             $this->reviewFormService->unlockReview($reviewId);
 
             $actionDetails = [
-                'visit_group_name' =>$visitContext['visit_type']['visit_group']['name'],
+                'visit_group_name' => $visitContext['visit_type']['visit_group']['name'],
                 'visit_group_modality' => $visitContext['visit_type']['visit_group']['modality'],
                 'visit_type_name' => $visitContext['visit_type']['name'],
                 'patient_id' => $visitContext['patient_id'],
@@ -110,7 +113,7 @@ class UnlockReviewForm
 
             $unlockReviewFormResponse->status = 200;
             $unlockReviewFormResponse->statusText =  'OK';
-        } catch (GaelOException $e) {
+        } catch (AbstractGaelOException $e) {
             $unlockReviewFormResponse->body = $e->getErrorBody();
             $unlockReviewFormResponse->status = $e->statusCode;
             $unlockReviewFormResponse->statusText =  $e->statusText;

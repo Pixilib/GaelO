@@ -2,7 +2,7 @@
 
 namespace App\GaelO\UseCases\GetStudyTrackerByVisit;
 
-use App\GaelO\Exceptions\GaelOException;
+use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
 use App\GaelO\Entities\TrackerEntity;
@@ -41,7 +41,7 @@ class GetStudyTrackerByVisit
             $getStudyTrackerByVisitResponse->body = $responseArray;
             $getStudyTrackerByVisitResponse->status = 200;
             $getStudyTrackerByVisitResponse->statusText = 'OK';
-        } catch (GaelOException $e) {
+        } catch (AbstractGaelOException $e) {
             $getStudyTrackerByVisitResponse->body = $e->getErrorBody();
             $getStudyTrackerByVisitResponse->status = $e->statusCode;
             $getStudyTrackerByVisitResponse->statusText = $e->statusText;
@@ -57,6 +57,6 @@ class GetStudyTrackerByVisit
         $this->authorizationVisitService->setStudyName($studyName);
         if (!$this->authorizationVisitService->isVisitAllowed(Constants::ROLE_SUPERVISOR)) {
             throw new GaelOForbiddenException();
-        };
+        }
     }
 }

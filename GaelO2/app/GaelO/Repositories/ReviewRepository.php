@@ -8,26 +8,26 @@ use App\Models\Review;
 
 class ReviewRepository implements ReviewRepositoryInterface
 {
-    private Review $review;
+    private Review $reviewModel;
 
     public function __construct(Review $review)
     {
-        $this->review = $review;
+        $this->reviewModel = $review;
     }
 
     public function find($id): array
     {
-        return $this->review->findOrFail($id)->toArray();
+        return $this->reviewModel->findOrFail($id)->toArray();
     }
 
     public function delete($id): void
     {
-        $this->review->findOrFail($id)->delete();
+        $this->reviewModel->findOrFail($id)->delete();
     }
 
     public function getInvestigatorForm(int $visitId, bool $withUser): array
     {
-        $query = $this->review->where('visit_id', $visitId)->where('local', true);
+        $query = $this->reviewModel->where('visit_id', $visitId)->where('local', true);
         if ($withUser) $query->with('user');
 
         return $query->sole()->toArray();
@@ -35,7 +35,7 @@ class ReviewRepository implements ReviewRepositoryInterface
 
     public function unlockInvestigatorForm(int $visitId): void
     {
-        $reviewEntity = $this->review->where('visit_id', $visitId)->where('local', true)->sole();
+        $reviewEntity = $this->reviewModel->where('visit_id', $visitId)->where('local', true)->sole();
         $reviewEntity->validated = false;
         $reviewEntity->save();
     }
@@ -61,7 +61,7 @@ class ReviewRepository implements ReviewRepositoryInterface
     public function updateReview(int $reviewId, int $userId, array $reviewData, bool $validated): void
     {
 
-        $review = $this->review->findOrFail($reviewId);
+        $review = $this->reviewModel->findOrFail($reviewId);
         $review->validated = $validated;
         $review->review_date = Util::now();
         $review->user_id =  $userId;
@@ -72,21 +72,21 @@ class ReviewRepository implements ReviewRepositoryInterface
     public function updateReviewFile(int $reviewId, array $associatedFile): void
     {
 
-        $review = $this->review->findOrFail($reviewId);
+        $review = $this->reviewModel->findOrFail($reviewId);
         $review->sent_files = $associatedFile;
         $review->save();
     }
 
     public function unlockReview(int $reviewId): void
     {
-        $reviewEntity = $this->review->findOrFail($reviewId);
+        $reviewEntity = $this->reviewModel->findOrFail($reviewId);
         $reviewEntity->validated = false;
         $reviewEntity->save();
     }
 
     public function getReviewsForStudyVisit(string $studyName, int $visitId, bool $onlyValidated): array
     {
-        $reviewQuery = $this->review
+        $reviewQuery = $this->reviewModel
             ->where('study_name', $studyName)
             ->where('visit_id', $visitId)
             ->where('local', false)
@@ -101,7 +101,7 @@ class ReviewRepository implements ReviewRepositoryInterface
 
     public function getReviewFormForStudyVisitUser(string $studyName, int $visitId, int $userId): array
     {
-        $reviewEntity = $this->review
+        $reviewEntity = $this->reviewModel
             ->where('study_name', $studyName)
             ->where('visit_id', $visitId)
             ->where('user_id', $userId)
@@ -117,7 +117,7 @@ class ReviewRepository implements ReviewRepositoryInterface
     public function getStudyReviewsGroupedByUserIds(string $studyName): array
     {
 
-        $answer = $this->review
+        $answer = $this->reviewModel
             ->with('user:id')
             ->where('study_name', $studyName)
             ->where('local', false)
@@ -131,7 +131,7 @@ class ReviewRepository implements ReviewRepositoryInterface
     public function isExistingReviewForStudyVisitUser(string $studyName, int $visitId, int $userId): bool
     {
 
-        $reviewEntity = $this->review
+        $reviewEntity = $this->reviewModel
             ->where('study_name', $studyName)
             ->where('visit_id', $visitId)
             ->where('user_id', $userId)
@@ -144,7 +144,7 @@ class ReviewRepository implements ReviewRepositoryInterface
     public function getReviewsFromVisitIdArrayStudyName(array $visitId, string $studyName, bool $withTrashed, bool $withUser = false): array
     {
 
-        $query = $this->review->whereIn('visit_id', $visitId)->where('study_name', $studyName)->where('local', false);
+        $query = $this->reviewModel->whereIn('visit_id', $visitId)->where('study_name', $studyName)->where('local', false);
         if ($withUser) {
             $query->with('user');
         }
@@ -159,7 +159,7 @@ class ReviewRepository implements ReviewRepositoryInterface
     public function getInvestigatorsFormsFromVisitIdArrayStudyName(array $visitId, string $studyName, bool $withTrashed, bool $withUser = false): array
     {
 
-        $query = $this->review->whereIn('visit_id', $visitId)->where('study_name', $studyName)->where('local', true);
+        $query = $this->reviewModel->whereIn('visit_id', $visitId)->where('study_name', $studyName)->where('local', true);
         if ($withUser) {
             $query->with('user');
         }

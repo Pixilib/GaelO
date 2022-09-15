@@ -15,9 +15,9 @@ class Visit extends Model
     protected $casts = [
         'id' => 'integer',
         'creator_user_id'=> 'integer',
-        //'creation_date' => 'datetime',
+        'creation_date' => 'datetime',
         'patient_id' => 'string',
-        //'visit_date'=>'date',
+        'visit_date'=>'date',
         'visit_type_id' => 'integer',
         'status_done' => 'string',
         'reason_for_not_done'=> 'string',
@@ -25,18 +25,18 @@ class Visit extends Model
         'state_investigator_form' => 'string',
         'state_quality_control'=>'string',
         'controller_user_id' => 'integer',
-        //'control_date' => 'datetime',
+        'control_date' => 'datetime',
         'image_quality_control' => 'boolean',
         'form_quality_control' => 'boolean',
         'image_quality_comment' => 'string',
         'form_quality_comment' => 'string',
         'corrective_action_user_id' => 'integer',
-        //'corrective_action_date' => 'datetime',
+        'corrective_action_date' => 'datetime',
         'corrective_action_new_upload' => 'boolean',
         'corrective_action_investigator_form'=>'boolean',
         'corrective_action_comment' => 'string',
         'corrective_action_applied' => 'boolean',
-        //'last_reminder_upload' => 'datetime'
+        'last_reminder_upload' => 'datetime'
     ];
 
     public function reviews()

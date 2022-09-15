@@ -4,7 +4,7 @@ namespace App\GaelO\UseCases\GetStudyVisitTypes;
 
 use App\GaelO\Constants\Constants;
 use App\GaelO\Entities\VisitGroupEntity;
-use App\GaelO\Exceptions\GaelOException;
+use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Entities\VisitTypeEntity;
 use App\GaelO\Interfaces\Repositories\VisitTypeRepositoryInterface;
@@ -45,7 +45,7 @@ class GetStudyVisitTypes
             $getStudyVisitTypesResponse->body = $studyDetailResponse;
             $getStudyVisitTypesResponse->status = 200;
             $getStudyVisitTypesResponse->statusText = 'OK';
-        } catch (GaelOException $e) {
+        } catch (AbstractGaelOException $e) {
             $getStudyVisitTypesResponse->body = $e->getErrorBody();
             $getStudyVisitTypesResponse->status = $e->statusCode;
             $getStudyVisitTypesResponse->statusText = $e->statusText;
@@ -60,6 +60,6 @@ class GetStudyVisitTypes
         $this->authorizationStudyService->setStudyName($studyName);
         if (!$this->authorizationStudyService->isAllowedStudy(Constants::ROLE_SUPERVISOR)) {
             throw new GaelOForbiddenException();
-        };
+        }
     }
 }

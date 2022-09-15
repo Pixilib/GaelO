@@ -3,8 +3,8 @@
 namespace App\GaelO\UseCases\CreateVisitGroup;
 
 use App\GaelO\Constants\Constants;
+use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOConflictException;
-use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\VisitGroupRepositoryInterface;
@@ -61,7 +61,7 @@ class CreateVisitGroup
             $createVisitGroupResponse->status = 201;
             $createVisitGroupResponse->statusText = 'Created';
 
-        } catch (GaelOException $e) {
+        } catch (AbstractGaelOException $e) {
             $createVisitGroupResponse->status = $e->statusCode;
             $createVisitGroupResponse->statusText = $e->statusText;
             $createVisitGroupResponse->body = $e->getErrorBody();

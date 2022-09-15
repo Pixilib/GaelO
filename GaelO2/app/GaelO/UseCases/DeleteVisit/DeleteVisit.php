@@ -3,8 +3,8 @@
 namespace App\GaelO\UseCases\DeleteVisit;
 
 use App\GaelO\Constants\Constants;
+use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOBadRequestException;
-use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
@@ -75,7 +75,7 @@ class DeleteVisit
 
             $deleteVisitResponse->status = 200;
             $deleteVisitResponse->statusText = 'OK';
-        } catch (GaelOException $e) {
+        } catch (AbstractGaelOException $e) {
             $deleteVisitResponse->body = $e->getErrorBody();
             $deleteVisitResponse->status = $e->statusCode;
             $deleteVisitResponse->statusText = $e->statusText;

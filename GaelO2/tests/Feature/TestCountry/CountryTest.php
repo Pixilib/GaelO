@@ -3,7 +3,6 @@
 namespace Tests\Feature\TestCountry;
 
 use Illuminate\Foundation\Testing\DatabaseMigrations;
-use Illuminate\Support\Facades\Artisan;
 use Tests\TestCase;
 use Tests\AuthorizationTools;
 

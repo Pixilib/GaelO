@@ -2,7 +2,7 @@
 
 namespace App\GaelO\UseCases\ModifyValidatedDocumentationForRole;
 
-use App\GaelO\Exceptions\GaelOException;
+use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\UserRepositoryInterface;
 use App\GaelO\Services\AuthorizationService\AuthorizationUserService;
@@ -36,7 +36,7 @@ class ModifyValidatedDocumentationForRole
 
             $modifyValidatedDocumentationForRoleResponse->status = 200;
             $modifyValidatedDocumentationForRoleResponse->statusText = 'OK';
-        } catch (GaelOException $e) {
+        } catch (AbstractGaelOException $e) {
             $modifyValidatedDocumentationForRoleResponse->body = $e->getErrorBody();
             $modifyValidatedDocumentationForRoleResponse->status = $e->statusCode;
             $modifyValidatedDocumentationForRoleResponse->statusText = $e->statusText;

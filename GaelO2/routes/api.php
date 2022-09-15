@@ -18,12 +18,8 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\VisitController;
 use App\Http\Controllers\VisitGroupController;
 use App\Http\Controllers\VisitTypeController;
-use App\Models\User;
-use Illuminate\Auth\Access\AuthorizationException;
-use Illuminate\Auth\Events\Verified;
-use Illuminate\Http\Request;
+use App\Http\Requests\SignedEmailVerificationRequest;
 use Illuminate\Support\Facades\Route;
-
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -57,6 +53,7 @@ Route::middleware(['auth:sanctum', 'verified', 'activated', 'onboarded'])->group
     Route::patch('users/{id}', [UserController::class, 'modifyUserIdentification']);
     Route::delete('users/{id}', [UserController::class, 'deleteUser']);
     Route::patch('users/{id}/reactivate', [UserController::class, 'reactivateUser']);
+    Route::get('users/{id}/centers', [UserController::class, 'getUserCenters']);
     Route::get('users/{id}/affiliated-centers', [UserController::class, 'getAffiliatedCenter']);
     Route::post('users/{id}/affiliated-centers', [UserController::class, 'addAffiliatedCenter']);
     Route::delete('users/{id}/affiliated-centers/{centerCode}', [UserController::class, 'deleteAffiliatedCenter']);
@@ -180,6 +177,7 @@ Route::middleware(['auth:sanctum', 'verified', 'activated', 'onboarded'])->group
     Route::post('tools/centers/patients-from-centers', [ToolsController::class, 'getPatientsInStudyFromCenters']);
     Route::post('tools/patients/visits-from-patients', [ToolsController::class, 'getPatientsVisitsInStudy']);
     Route::post('tools/find-user', [ToolsController::class, 'findUser']);
+    Route::post('tools/review-file-from-tus', [ReviewController::class, 'createReviewFileFromTus']);
 
     // Binary routes
     Route::get('export-db', [ExportDBController::class, 'exportDB']);
@@ -211,17 +209,11 @@ Route::get('tools/reset-password/{token}', function ($token) {
 
 Route::post('tools/reset-password', [UserController::class, 'updatePassword'])->name('password.update');
 
+
 //Route to validate email
-Route::get('email/verify/{id}/{hash}', function (Request $request) {
-
-    $user = User::findOrFail($request->route('id'));
-    if (!hash_equals((string) $request->route('hash'), sha1($user->getEmailForVerification()))) {
-        throw new AuthorizationException();
-    }
-
-    if ($user->markEmailAsVerified()) event(new Verified($user));
-
-    return redirect('/email-verified');
+Route::get('email/verify/{id}/{hash}', function (SignedEmailVerificationRequest $request) {
+    $request->fulfill();
+    return redirect('/');
 })->middleware(['signed'])->name('verification.verify');
 
 //Magic link route

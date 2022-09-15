@@ -3,7 +3,7 @@
 namespace App\GaelO\UseCases\GetStudyTrackerRoleAction;
 
 use App\GaelO\Constants\Constants;
-use App\GaelO\Exceptions\GaelOException;
+use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
 use App\GaelO\Entities\TrackerEntity;
@@ -48,7 +48,7 @@ class GetStudyTrackerRoleAction
             $getStudyTrackerRoleActionResponse->body = $responseArray;
             $getStudyTrackerRoleActionResponse->status = 200;
             $getStudyTrackerRoleActionResponse->statusText = 'OK';
-        } catch (GaelOException $e) {
+        } catch (AbstractGaelOException $e) {
             $getStudyTrackerRoleActionResponse->body = $e->getErrorBody();
             $getStudyTrackerRoleActionResponse->status = $e->statusCode;
             $getStudyTrackerRoleActionResponse->statusText = $e->statusText;

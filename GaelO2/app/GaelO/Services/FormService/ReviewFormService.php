@@ -4,6 +4,7 @@ namespace App\GaelO\Services\FormService;
 
 use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOBadRequestException;
+use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Interfaces\Adapters\FrameworkInterface;
 use App\GaelO\Interfaces\Repositories\ReviewRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\ReviewStatusRepositoryInterface;
@@ -83,9 +84,13 @@ class ReviewFormService extends FormService
         $conclusion = $this->abstractVisitRules->getReviewConclusion();
         $targetLesions = $this->abstractVisitRules->getTargetLesion();
 
+        if ($reviewStatus === Constants::REVIEW_STATUS_NOT_DONE && $conclusion !== null) {
+            throw new GaelOException("Review Status Not Done needs to be associated with null conclusion value");
+        }
+        //Update review availability if change compared on current value
         if ($availability !== $this->reviewStatusEntity['review_available']) $this->reviewStatusRepositoryInterface->updateReviewAvailability($this->visitId, $this->studyName, $availability);
-        if ($reviewStatus !== $this->reviewStatusEntity['review_status']) $this->reviewStatusRepositoryInterface->updateReviewStatus($this->visitId, $this->studyName, $reviewStatus);
-        if ($reviewStatus === Constants::REVIEW_STATUS_DONE) $this->reviewStatusRepositoryInterface->updateReviewConclusion($this->visitId, $this->studyName, $conclusion, $targetLesions);
+        //Update review status table to computed new values
+        $this->reviewStatusRepositoryInterface->updateReviewStatusAndConclusion($this->visitId, $this->studyName, $reviewStatus, $conclusion, $targetLesions);
 
         //Send Notification emails
         if ($reviewStatus === Constants::REVIEW_STATUS_WAIT_ADJUDICATION) {

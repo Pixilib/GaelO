@@ -5,7 +5,7 @@ namespace App\GaelO\UseCases\GetVisitsFromStudy;
 use App\GaelO\Constants\Constants;
 use App\GaelO\Entities\CenterEntity;
 use App\GaelO\Entities\PatientEntity;
-use App\GaelO\Exceptions\GaelOException;
+use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\StudyRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
@@ -57,14 +57,14 @@ class GetVisitsFromStudy
                     $data['visit_type']['visit_group'],
                     $data['visit_type']
                 );
-                $responseEntity->setReviewVisitStatus($data['review_status']['review_status'], $data['review_status']['review_conclusion_value'], $data['review_status']['review_conclusion_date'], null);
+                $responseEntity->setReviewVisitStatus($data['review_status']['review_status'], $data['review_status']['review_conclusion_value'], $data['review_status']['review_conclusion_date'], null, null);
                 $responseArray[] = $responseEntity;
             }
 
             $getVisitsFromStudyResponse->body = $responseArray;
             $getVisitsFromStudyResponse->status = 200;
             $getVisitsFromStudyResponse->statusText = 'OK';
-        } catch (GaelOException $e) {
+        } catch (AbstractGaelOException $e) {
             $getVisitsFromStudyResponse->body = $e->getErrorBody();
             $getVisitsFromStudyResponse->status  = $e->statusCode;
             $getVisitsFromStudyResponse->statusText = $e->statusText;

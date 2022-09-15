@@ -4,7 +4,7 @@ namespace App\GaelO\UseCases\ModifyPatient;
 
 use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOBadRequestException;
-use App\GaelO\Exceptions\GaelOException;
+use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\PatientRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
@@ -109,7 +109,7 @@ class ModifyPatient
 
             $modifyPatientResponse->status = 200;
             $modifyPatientResponse->statusText = 'OK';
-        } catch (GaelOException $e) {
+        } catch (AbstractGaelOException $e) {
             $modifyPatientResponse->body = $e->getErrorBody();
             $modifyPatientResponse->status = $e->statusCode;
             $modifyPatientResponse->statusText = $e->statusText;
@@ -125,6 +125,6 @@ class ModifyPatient
         $this->authorizationPatientService->setStudyName($studyName);
         if (!$this->authorizationPatientService->isPatientAllowed(Constants::ROLE_SUPERVISOR)) {
             throw new GaelOForbiddenException();
-        };
+        }
     }
 }

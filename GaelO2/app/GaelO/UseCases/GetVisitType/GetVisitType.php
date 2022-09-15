@@ -3,7 +3,7 @@
 namespace App\GaelO\UseCases\GetVisitType;
 
 use App\GaelO\Entities\VisitTypeEntity;
-use App\GaelO\Exceptions\GaelOException;
+use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\VisitTypeRepositoryInterface;
 use App\GaelO\Services\AuthorizationService\AuthorizationUserService;
@@ -33,7 +33,7 @@ class GetVisitType
             $getVisitTypeResponse->status = 200;
             $getVisitTypeResponse->statusText = 'OK';
 
-        } catch (GaelOException $e) {
+        } catch (AbstractGaelOException $e) {
             $getVisitTypeResponse->body = $e->getErrorBody();
             $getVisitTypeResponse->status = $e->statusCode;
             $getVisitTypeResponse->statusText = $e->statusText;

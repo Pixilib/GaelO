@@ -4,7 +4,7 @@ namespace App\GaelO\UseCases\SendMail;
 
 use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOBadRequestException;
-use App\GaelO\Exceptions\GaelOException;
+use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
 use App\GaelO\Services\AuthorizationService\AuthorizationStudyService;
@@ -102,7 +102,7 @@ class SendMail
 
             $sendMailResponse->status = 200;
             $sendMailResponse->statusText = 'OK';
-        } catch (GaelOException $e) {
+        } catch (AbstractGaelOException $e) {
             $sendMailResponse->body = $e->getErrorBody();
             $sendMailResponse->status = $e->statusCode;
             $sendMailResponse->statusText = $e->statusText;
@@ -124,6 +124,6 @@ class SendMail
         $this->authorizationStudyService->setStudyName($study);
         if (!$this->authorizationStudyService->isAllowedStudy($role)) {
             throw new GaelOForbiddenException();
-        };
+        }
     }
 }

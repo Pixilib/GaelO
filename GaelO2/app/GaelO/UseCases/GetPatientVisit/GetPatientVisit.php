@@ -3,10 +3,10 @@
 namespace App\GaelO\UseCases\GetPatientVisit;
 
 use App\GaelO\Constants\Constants;
-use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
 use App\GaelO\Entities\VisitEntity;
+use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Services\AuthorizationService\AuthorizationPatientService;
 use Exception;
 
@@ -39,17 +39,18 @@ class GetPatientVisit
                 $reviewConclusionValue = $role === Constants::ROLE_SUPERVISOR ? $data['review_status']['review_conclusion_value'] : null;
                 $reviewConclusionDate =  $role === Constants::ROLE_SUPERVISOR ? $data['review_status']['review_conclusion_date'] : null;
                 $targetLesions =  $role === Constants::ROLE_SUPERVISOR ? $data['review_status']['target_lesions'] : null;
+                $reviewAvailable = $role === Constants::ROLE_SUPERVISOR ?  $data['review_status']['review_available'] : null;
 
                 $visitEntity = VisitEntity::fillFromDBReponseArray($data);
                 $visitEntity->setVisitContext($data['visit_type']['visit_group'], $data['visit_type']);
-                $visitEntity->setReviewVisitStatus($reviewStatus, $reviewConclusionValue, $reviewConclusionDate, $targetLesions);
+                $visitEntity->setReviewVisitStatus($reviewStatus, $reviewConclusionValue, $reviewConclusionDate, $targetLesions, $reviewAvailable);
                 $responseArray[] = $visitEntity;
             }
 
             $getPatientVisitResponse->body = $responseArray;
             $getPatientVisitResponse->status = 200;
             $getPatientVisitResponse->statusText = 'OK';
-        } catch (GaelOException $e) {
+        } catch (AbstractGaelOException $e) {
 
             $getPatientVisitResponse->status = $e->statusCode;
             $getPatientVisitResponse->statusText = $e->statusText;

@@ -3,6 +3,7 @@
 namespace App\GaelO\UseCases\ForgotPassword;
 
 use App\GaelO\Constants\Constants;
+use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOBadRequestException;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Interfaces\Adapters\FrameworkInterface;
@@ -38,14 +39,14 @@ class ForgotPassword
 
             $emailSendSuccess = $this->frameworkInterface->sendResetPasswordLink($email);
 
-            if (!$emailSendSuccess) throw new Exception('Error Sending Reset Email');
+            if (!$emailSendSuccess) throw new GaelOException('Error Sending Reset Email');
 
             //Write action in tracker
             $this->trackerRepositoryInterface->writeAction($userEntity['id'], Constants::TRACKER_ROLE_USER, null, null, Constants::TRACKER_RESET_PASSWORD, []);
 
             $forgotPasswordResponse->status = 200;
             $forgotPasswordResponse->statusText = 'OK';
-        } catch (GaelOException $e) {
+        } catch (AbstractGaelOException $e) {
             $forgotPasswordResponse->status = $e->statusCode;
             $forgotPasswordResponse->statusText = $e->statusText;
             $forgotPasswordResponse->body = $e->getErrorBody();

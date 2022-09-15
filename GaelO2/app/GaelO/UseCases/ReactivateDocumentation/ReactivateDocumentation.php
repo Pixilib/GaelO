@@ -3,7 +3,7 @@
 namespace App\GaelO\UseCases\ReactivateDocumentation;
 
 use App\GaelO\Constants\Constants;
-use App\GaelO\Exceptions\GaelOException;
+use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\DocumentationRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
@@ -56,7 +56,7 @@ class ReactivateDocumentation
             );
             $reactivateDocumentationResponse->status = 200;
             $reactivateDocumentationResponse->statusText = 'OK';
-        } catch (GaelOException $e) {
+        } catch (AbstractGaelOException $e) {
             $reactivateDocumentationResponse->status = $e->statusCode;
             $reactivateDocumentationResponse->statusText = $e->statusText;
             $reactivateDocumentationResponse->body = $e->getErrorBody();

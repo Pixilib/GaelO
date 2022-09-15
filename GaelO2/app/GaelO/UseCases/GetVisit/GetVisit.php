@@ -5,7 +5,7 @@ namespace App\GaelO\UseCases\GetVisit;
 use App\GaelO\Constants\Constants;
 use App\GaelO\Entities\UserEntity;
 use App\GaelO\Entities\VisitEntity;
-use App\GaelO\Exceptions\GaelOException;
+use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
 use App\GaelO\Services\AuthorizationService\AuthorizationVisitService;
@@ -47,14 +47,15 @@ class GetVisit
             $reviewConclusionDate =  (in_array($role, [Constants::ROLE_SUPERVISOR])) ? $visitEntity['review_status']['review_conclusion_date'] : null;
             //Target lesions are allowed also for reviewer
             $targetLesions =  (in_array($role, [Constants::ROLE_REVIEWER, Constants::ROLE_SUPERVISOR])) ? $visitEntity['review_status']['target_lesions'] : null;
+            $reviewAvailable =  (in_array($role, [Constants::ROLE_REVIEWER, Constants::ROLE_SUPERVISOR])) ? $visitEntity['review_status']['review_available'] : null;
 
-            $responseEntity->setReviewVisitStatus($reviewStatus, $reviewConclusionValue, $reviewConclusionDate, $targetLesions);
+            $responseEntity->setReviewVisitStatus($reviewStatus, $reviewConclusionValue, $reviewConclusionDate, $targetLesions, $reviewAvailable);
             $responseEntity->setCreatorDetails(UserEntity::fillOnlyUserIdentification($visitEntity['creator']));
 
             $getVisitResponse->body = $responseEntity;
             $getVisitResponse->status = 200;
             $getVisitResponse->statusText = 'OK';
-        } catch (GaelOException $e) {
+        } catch (AbstractGaelOException $e) {
             $getVisitResponse->body = $e->getErrorBody();
             $getVisitResponse->status  = $e->statusCode;
             $getVisitResponse->statusText = $e->statusText;

@@ -2,12 +2,12 @@
 
 namespace App\GaelO\Services\GaelOStudiesService;
 
-use Exception;
+use App\GaelO\Exceptions\GaelOException;
 
 class DefaultGaelOStudy extends AbstractGaelOStudy{
 
     public function getSpecificForm(string $visitGroupName, string $visitTypeName): string {
-        throw new Exception("No Specific Form in Default Study Object");
+        throw new GaelOException("No Specific Form in Default Study Object");
     }
 
 }

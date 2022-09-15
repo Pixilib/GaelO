@@ -3,7 +3,8 @@
 namespace App\GaelO\UseCases\CreateFileToForm;
 
 use App\GaelO\Constants\Constants;
-use App\GaelO\Exceptions\GaelOException;
+use App\GaelO\Exceptions\AbstractGaelOException;
+use App\GaelO\Exceptions\GaelOBadRequestException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Adapters\MimeInterface;
 use App\GaelO\Interfaces\Repositories\ReviewRepositoryInterface;
@@ -12,6 +13,7 @@ use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
 use App\GaelO\Services\AuthorizationService\AuthorizationReviewService;
 use App\GaelO\Services\AuthorizationService\AuthorizationVisitService;
 use App\GaelO\Services\FormService\FormService;
+use App\GaelO\Util;
 use Exception;
 
 class CreateFileToForm
@@ -55,6 +57,13 @@ class CreateFileToForm
             $reviewId = $reviewEntity['id'];
 
             $key = $createFileToReviewRequest->key;
+            $binaryData = $createFileToReviewRequest->binaryData;
+
+
+            if (!Util::isBase64Encoded($binaryData)) {
+                throw new GaelOBadRequestException("Payload should be base64 encoded");
+            }
+
             $this->checkAuthorization($local, $reviewEntity['validated'], $createFileToReviewRequest->id, $visitId, $createFileToReviewRequest->currentUserId, $studyName);
 
             $extension = $this->mimeInterface::getExtensionFromMime($createFileToReviewRequest->contentType);
@@ -62,8 +71,9 @@ class CreateFileToForm
             $fileName = 'review_' . $reviewId . '_' . $key . '.' . $extension;
 
             $visitContext = $this->visitRepositoryInterface->getVisitContext($visitId);
+
             $this->formService->setVisitContextAndStudy($visitContext, $studyName);
-            $this->formService->attachFile($reviewEntity, $key, $fileName, $createFileToReviewRequest->contentType, $createFileToReviewRequest->binaryData);
+            $this->formService->attachFile($reviewEntity, $key, $fileName, $createFileToReviewRequest->contentType, base64_decode($binaryData));
 
             $actionDetails = [
                 'uploaded_file' => $key,
@@ -82,7 +92,7 @@ class CreateFileToForm
 
             $createFileToReviewResponse->status = 201;
             $createFileToReviewResponse->statusText =  'Created';
-        } catch (GaelOException $e) {
+        } catch (AbstractGaelOException $e) {
             $createFileToReviewResponse->body = $e->getErrorBody();
             $createFileToReviewResponse->status = $e->statusCode;
             $createFileToReviewResponse->statusText =  $e->statusText;

@@ -9,11 +9,11 @@ use App\GaelO\Util;
 
 class TrackerRepository implements TrackerRepositoryInterface
 {
-    private Tracker $tracker;
+    private Tracker $trackerModel;
 
     public function __construct(Tracker $tracker)
     {
-        $this->tracker = $tracker;
+        $this->trackerModel = $tracker;
     }
 
     public function writeAction(int $userId, string $role, ?string $studyName, ?int $id_visit, string $actionType, array $actionDetails = []): void
@@ -33,33 +33,33 @@ class TrackerRepository implements TrackerRepositoryInterface
 
     public function getTrackerOfRole(string $role): array
     {
-        $trackerData = $this->tracker->with('user')->where('role', $role)->get();
+        $trackerData = $this->trackerModel->with('user')->where('role', $role)->get();
         return empty($trackerData) ? [] : $trackerData->toArray();
     }
 
     public function getTrackerOfRoleAndStudy(string $studyName, string $role, bool $withUser): array
     {
-        if ($withUser) $trackerData = $this->tracker->with('user')->where('study_name', $studyName)->where('role', $role)->get();
-        else $trackerData = $this->tracker->where('study_name', $studyName)->where('role', $role)->get();
+        if ($withUser) $trackerData = $this->trackerModel->with('user')->where('study_name', $studyName)->where('role', $role)->get();
+        else $trackerData = $this->trackerModel->where('study_name', $studyName)->where('role', $role)->get();
         return empty($trackerData)  ? [] : $trackerData->toArray();
     }
 
     public function getTrackerOfVisitId(int $visitId): array
     {
-        $trackerData = $this->tracker->with('user')->where('visit_id', $visitId)->get();
+        $trackerData = $this->trackerModel->with('user')->where('visit_id', $visitId)->get();
         return empty($trackerData) ? [] : $trackerData->toArray();
     }
 
     public function getTrackerOfRoleActionInStudy(string $role, string $action, string $studyName): array
     {
-        $trackerData = $this->tracker->with('user', 'visit', 'visit.visitType', 'visit.visitType.visitGroup', 'visit.patient')
+        $trackerData = $this->trackerModel->with('user', 'visit', 'visit.visitType', 'visit.visitType.visitGroup', 'visit.patient')
         ->where('study_name', $studyName)->where('role', $role)->where('action_type', $action)->get();
         return empty($trackerData) ? [] : $trackerData->toArray();
     }
 
     public function getTrackerOfMessages(): array
     {
-        $trackerData = $this->tracker->with('user')->where('action_type', Constants::TRACKER_SEND_MESSAGE)->get();
+        $trackerData = $this->trackerModel->with('user')->where('action_type', Constants::TRACKER_SEND_MESSAGE)->get();
         return empty($trackerData) ? [] : $trackerData->toArray();
     }
 }

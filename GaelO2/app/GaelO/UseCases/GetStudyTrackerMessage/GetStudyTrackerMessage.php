@@ -3,7 +3,7 @@
 namespace App\GaelO\UseCases\GetStudyTrackerMessage;
 
 use App\GaelO\Constants\Constants;
-use App\GaelO\Exceptions\GaelOException;
+use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
 use App\GaelO\Entities\TrackerEntity;
@@ -41,7 +41,7 @@ class GetStudyTrackerMessage
             $getStudyTrackerMessageResponse->body = $responseArray;
             $getStudyTrackerMessageResponse->status = 200;
             $getStudyTrackerMessageResponse->statusText = 'OK';
-        } catch (GaelOException $e) {
+        } catch (AbstractGaelOException $e) {
             $getStudyTrackerMessageResponse->body = $e->getErrorBody();
             $getStudyTrackerMessageResponse->status = $e->statusCode;
             $getStudyTrackerMessageResponse->statusText = $e->statusText;

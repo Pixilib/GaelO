@@ -3,12 +3,12 @@
 namespace App\GaelO\UseCases\GetInvestigatorFormsFromVisitType;
 
 use App\GaelO\Constants\Constants;
-use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\ReviewRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
 use App\GaelO\Entities\ReviewEntity;
 use App\GaelO\Entities\UserEntity;
+use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Repositories\VisitTypeRepository;
 use App\GaelO\Services\AuthorizationService\AuthorizationStudyService;
 use Exception;
@@ -71,7 +71,7 @@ class GetInvestigatorFormsFromVisitType
             $getInvestigatorFormsFromVisitTypeResponse->body = $answer;
             $getInvestigatorFormsFromVisitTypeResponse->status = 200;
             $getInvestigatorFormsFromVisitTypeResponse->statusText = 'OK';
-        } catch (GaelOException $e) {
+        } catch (AbstractGaelOException $e) {
             $getInvestigatorFormsFromVisitTypeResponse->body = $e->getErrorBody();
             $getInvestigatorFormsFromVisitTypeResponse->status = $e->statusCode;
             $getInvestigatorFormsFromVisitTypeResponse->statusText = $e->statusText;
@@ -86,6 +86,6 @@ class GetInvestigatorFormsFromVisitType
         $this->authorizationStudyService->setStudyName($studyName);
         if (!$this->authorizationStudyService->isAllowedStudy(Constants::ROLE_SUPERVISOR)) {
             throw new GaelOForbiddenException();
-        };
+        }
     }
 }

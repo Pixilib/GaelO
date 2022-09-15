@@ -4,7 +4,7 @@ namespace App\GaelO\Services\GaelOStudiesService;
 
 use App\GaelO\Adapters\ValidatorAdapter;
 use App\GaelO\Constants\Constants;
-use Exception;
+use App\GaelO\Exceptions\GaelOException;
 
 abstract class AbstractVisitRules
 {
@@ -91,12 +91,19 @@ abstract class AbstractVisitRules
                 $validatorAdapter->addDateValidator($name, $details['optional']);
                 break;
             default:
-                throw new Exception('Unknown Rule');
+                throw new GaelOException('Unknown Rule');
         }
     }
 
+    /**
+     * Must return the review status for each action on review (send, delete, unlock), 
+     * needs to handle backward and forward
+     */
     abstract function getReviewStatus(): string;
 
+    /**
+     * Return the conclusion value, must return null if review status is not done
+     */
     abstract function getReviewConclusion(): ?string;
 
     abstract function getAllowedKeyAndMimeTypeInvestigator(): array;

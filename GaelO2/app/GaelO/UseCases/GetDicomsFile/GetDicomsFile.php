@@ -2,7 +2,7 @@
 
 namespace App\GaelO\UseCases\GetDicomsFile;
 
-use App\GaelO\Exceptions\GaelOException;
+use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\DicomStudyRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
@@ -51,7 +51,7 @@ class GetDicomsFile
             $getDicomsResponse->filename = 'DICOM_' . $studyName . '_' . $visitGroupName . '_' . $visitType . '_' . $patientId . '.zip';
             $getDicomsResponse->status = 200;
             $getDicomsResponse->statusText = 'OK';
-        } catch (GaelOException $e) {
+        } catch (AbstractGaelOException $e) {
             $getDicomsResponse->status = $e->statusCode;
             $getDicomsResponse->statusText = $e->statusText;
             $getDicomsResponse->body = $e->getErrorBody();

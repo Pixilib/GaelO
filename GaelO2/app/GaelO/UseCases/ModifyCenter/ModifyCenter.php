@@ -4,7 +4,7 @@ namespace App\GaelO\UseCases\ModifyCenter;
 
 use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOConflictException;
-use App\GaelO\Exceptions\GaelOException;
+use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Exceptions\GaelONotFoundException;
 use App\GaelO\Interfaces\Repositories\CenterRepositoryInterface;
@@ -37,12 +37,12 @@ class ModifyCenter
 
             if (!$this->centerRepositoryInterface->isKnownCenter($modifyCenterRequest->code)) {
                 throw new GaelONotFoundException('Non Existing Center');
-            };
+            }
 
             //If center name has been changed, check that name isn't already used
             if (!empty($modifyCenterRequest->name) && $this->centerRepositoryInterface->isExistingCenterName($modifyCenterRequest->name)) {
                 throw new GaelOConflictException('Center Name already used');
-            };
+            }
 
             //Fill missing fields with known info from the database
             $center = $this->centerRepositoryInterface->getCenterByCode($modifyCenterRequest->code);
@@ -61,7 +61,7 @@ class ModifyCenter
 
             $modifyCenterResponse->status = 200;
             $modifyCenterResponse->statusText = 'OK';
-        } catch (GaelOException $e) {
+        } catch (AbstractGaelOException $e) {
 
             $modifyCenterResponse->status = $e->statusCode;
             $modifyCenterResponse->statusText = $e->statusText;
@@ -76,6 +76,6 @@ class ModifyCenter
         $this->authorizationUserService->setUserId($userId);
         if (!$this->authorizationUserService->isAdmin()) {
             throw new GaelOForbiddenException();
-        };
+        }
     }
 }

@@ -92,4 +92,20 @@ class AffiliatedCenterTest extends TestCase
         AuthorizationTools::actAsAdmin(true);
         $this->json('DELETE', 'api/users/1/affiliated-centers/3')->assertStatus(404);
     }
+
+    public function testGetUsersCenters(){
+        //Should pass for admin
+        AuthorizationTools::actAsAdmin(true);
+        $this->json('GET', 'api/users/1/centers')->assertStatus(200);
+        //Should Pass for same user
+        $currentUserId = AuthorizationTools::actAsAdmin(false);
+        AuthorizationTools::addAffiliatedCenter($currentUserId, 3);
+        $this->json('GET', 'api/users/'.$currentUserId.'/centers')->assertStatus(200);
+
+    }
+
+    public function testGetUsersCenterShouldFailNotAdmin(){
+        AuthorizationTools::actAsAdmin(false);
+        $this->json('GET', 'api/users/1/centers')->assertStatus(403);
+    }
 }

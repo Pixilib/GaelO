@@ -20,7 +20,7 @@ class ReviewStatus extends Model
         'target_lesions' => 'array',
         'review_status' => 'string',
         'review_conclusion_value' => 'string',
-        //'review_conclusion_date' => 'datetime'
+        'review_conclusion_date' => 'datetime'
     ];
 
     //Default value because db does not accept default value json
