@@ -54,7 +54,7 @@ class DeleteDicomSeriesTest extends TestCase
         $userId = AuthorizationTools::actAsAdmin(false);
         AuthorizationTools::addRoleToUser($userId, Constants::ROLE_SUPERVISOR, $this->studyName);
         $payload = ['reason' => 'wrong series'];
-        $response = $this->delete('api/dicom-series/' . $this->dicomSeries->series_uid . '?role=Supervisor', $payload);
+        $response = $this->delete('api/dicom-series/' . $this->dicomSeries->series_uid . '?role=Supervisor&studyName=' . $this->studyName, $payload);
         $response->assertStatus(200);
     }
 
@@ -65,7 +65,7 @@ class DeleteDicomSeriesTest extends TestCase
         AuthorizationTools::addRoleToUser($userId, Constants::ROLE_SUPERVISOR, $this->studyName);
 
         $payload = ['reason' => 'wrong series'];
-        $this->delete('api/dicom-series/' . $this->dicomSeries->series_uid . '?role=Supervisor', $payload)->assertStatus(200);
+        $this->delete('api/dicom-series/' . $this->dicomSeries->series_uid . '?role=Supervisor&studyName=' . $this->studyName, $payload)->assertStatus(200);
         $dicomStudyEntity = DicomStudy::withTrashed()->find($this->dicomSeries->dicomStudy->study_uid);
         $visitEntity = Visit::find($this->dicomSeries->dicomStudy->visit->id);
 
@@ -79,6 +79,15 @@ class DeleteDicomSeriesTest extends TestCase
         $this->assertFalse(boolval($localForm['validated']));
     }
 
+    public function testDeleteSeriesShouldFailNotSameStudyName()
+    {
+        $userId = AuthorizationTools::actAsAdmin(false);
+        AuthorizationTools::addRoleToUser($userId, Constants::ROLE_SUPERVISOR, $this->studyName);
+        $payload = ['reason' => 'wrong series'];
+        $response = $this->delete('api/dicom-series/' . $this->dicomSeries->series_uid . '?role=Supervisor&studyName=' . $this->studyName .'wrong', $payload);
+        $response->assertStatus(403);
+    }
+
     public function testDeleteLastSeriesShouldFailController()
     {
 
@@ -86,7 +95,7 @@ class DeleteDicomSeriesTest extends TestCase
         AuthorizationTools::addRoleToUser($userId, Constants::ROLE_CONTROLLER, $this->studyName);
 
         $payload = ['reason' => 'wrong series'];
-        $this->delete('api/dicom-series/' . $this->dicomSeries->series_uid . '?role=Controller', $payload)->assertStatus(403);
+        $this->delete('api/dicom-series/' . $this->dicomSeries->series_uid . '?role=Controller&studyName=' . $this->studyName, $payload)->assertStatus(403);
     }
 
     public function testDeleteSeriesShouldFailNoRole()
@@ -94,7 +103,7 @@ class DeleteDicomSeriesTest extends TestCase
         AuthorizationTools::actAsAdmin(false);
 
         $payload = ['reason' => 'wrong series'];
-        $response = $this->delete('api/dicom-series/' . $this->dicomSeries->series_uid . '?role=Supervisor', $payload);
+        $response = $this->delete('api/dicom-series/' . $this->dicomSeries->series_uid . '?role=Supervisor&studyName=' . $this->studyName, $payload);
         $response->assertStatus(403);
     }
 
@@ -104,7 +113,7 @@ class DeleteDicomSeriesTest extends TestCase
         AuthorizationTools::addRoleToUser($userId, Constants::ROLE_SUPERVISOR, $this->studyName);
 
         $payload = [];
-        $response = $this->delete('api/dicom-series/' . $this->dicomSeries->series_uid . '?role=Supervisor', $payload);
+        $response = $this->delete('api/dicom-series/' . $this->dicomSeries->series_uid . '?role=Supervisor&studyName=' . $this->studyName, $payload);
         $response->assertStatus(400);
     }
 
@@ -118,7 +127,7 @@ class DeleteDicomSeriesTest extends TestCase
         $this->dicomSeries->dicomStudy->visit->save();
 
         $payload = ['reason' => 'wrong series'];
-        $response = $this->delete('api/dicom-series/' . $this->dicomSeries->series_uid . '?role=Supervisor', $payload);
+        $response = $this->delete('api/dicom-series/' . $this->dicomSeries->series_uid . '?role=Supervisor&studyName=' . $this->studyName, $payload);
         $response->assertStatus(403);
     }
 }

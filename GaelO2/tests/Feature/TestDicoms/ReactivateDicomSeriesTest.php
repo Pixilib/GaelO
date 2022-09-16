@@ -59,6 +59,19 @@ class ReactivateDicomSeriesTest extends TestCase
         $response->assertStatus(200);
     }
 
+    public function testReactivateSeriesInvestigatorShouldFailNotSameStudyName()
+    {
+        $userId = AuthorizationTools::actAsAdmin(false);
+        $patientCenterCode = $this->dicomSeries->dicomStudy->visit->patient->center_code;
+        AuthorizationTools::addRoleToUser($userId, Constants::ROLE_INVESTIGATOR, $this->studyName);
+        AuthorizationTools::addAffiliatedCenter($userId, $patientCenterCode);
+
+        $this->dicomSeries->delete();
+        $response = $this->post('api/dicom-series/' . $this->dicomSeries->series_uid.'/activate?role=Investigator&studyName='.$this->studyName . 'error', ['reason' => 'good series']);
+        $response->assertStatus(403);
+    }
+
+
     public function testReactivateSeriesSupervisor()
     {
         $userId = AuthorizationTools::actAsAdmin(false);

@@ -61,6 +61,20 @@ class ReactivateDicomStudyTest extends TestCase
         $response->assertStatus(200);
     }
 
+    public function testReactivateStudyShouldFailNotSameStudyName()
+    {
+        $userId = AuthorizationTools::actAsAdmin(false);
+        AuthorizationTools::addRoleToUser($userId, Constants::ROLE_SUPERVISOR, $this->studyName);
+
+        $this->dicomSeries->dicomStudy->delete();
+        //At study deletion the investigator form is Draft or Not Done
+        $this->dicomSeries->dicomStudy->visit->state_investigator_form = Constants::INVESTIGATOR_FORM_DRAFT;
+        $this->dicomSeries->dicomStudy->visit->save();
+
+        $response = $this->post('api/dicom-study/' . $this->dicomSeries->dicomStudy->study_uid.'/activate?studyName='.$this->studyName. 'error', ['reason' => 'correct study']);
+        $response->assertStatus(403);
+    }
+
 
     public function testReactivateStudyShouldFailNoReason()
     {
