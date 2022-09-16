@@ -93,9 +93,11 @@ class JobAutoQc implements ShouldQueue
         $dicomStudyEntity = $dicomStudyRepositoryInterface->getDicomsDataFromVisit($this->visitId, false, false);
         $sharedTags = new SharedTags($orthancService->getSharedTags($this->visitId));
     
-        $stateInvestigatorForm = $visitEntity['state_investigator_form'];
+        //$stateInvestigatorForm = $visitEntity['state_investigator_form'];
 
         $studyInfo = [];
+        $studyInfo['visitDate'] = $visitEntity['visit_date'];
+        $studyInfo['registrationDate'] = $visitEntity['patient']['registration_date'];
         $studyInfo['studyName'] = $visitEntity['patient']['study_name'];
         $studyInfo['studyDescription'] = $sharedTags->getStudyDescription();
         $studyInfo['studyManufacturer'] = $sharedTags->getStudyManufacturer();
@@ -103,12 +105,12 @@ class JobAutoQc implements ShouldQueue
         $studyInfo['studyTime'] = $sharedTags->getStudyTime();
         $studyInfo['numberOfSeries'] = count($dicomStudyEntity[0]['dicom_series']);
         $studyInfo['numberOfInstances'] = 0;
-        if ($stateInvestigatorForm != 'Not needed') {
+        /*if ($stateInvestigatorForm != 'Not needed') {
             $studyInfo['investigatorForm'] = json_encode($reviewRepositoryInterface->getInvestigatorForm($this->visitId, false),
                 JSON_PRETTY_PRINT);
         } else {
             $studyInfo['investigatorForm'] = null;
-        }
+        }*/
         
         $seriesInfo = [];
         foreach ($dicomStudyEntity[0]['dicom_series'] as $series) {
@@ -152,6 +154,8 @@ class JobAutoQc implements ShouldQueue
         $visitId = $visitEntity['id'];
         $visitType = $visitEntity['visit_type']['name'];
         $patientCode = $visitEntity['patient']['code'];
+
+        dd($studyInfo);
 
         $controllerUsers = $userRepositoryInterface->getUsersByRolesInStudy($studyName, Constants::ROLE_CONTROLLER);
 

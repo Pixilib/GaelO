@@ -13,7 +13,7 @@
                     <tr>
                       <td align="center" style="font-size:0px;padding:10px 25px;word-break:break-word;">
                         <div style="font-family:Ubuntu, Helvetica, Arial, sans-serif;font-size:13px;line-height:1;text-align:center;color:#000000;">
-                          <h3 style="font-weight: bold; margin-top: 0; margin-bottom: 0"> <a text-decoration: none"> Investigator form </a> </h3>
+                          <h3 style="color:#0495A0;font-weight: bold; margin-top: 0; margin-bottom: 0"> <a text-decoration: none"> Investigator form </a> </h3>
                         </div>
                       </td>
                     </tr>
@@ -37,11 +37,11 @@
                 <table border="0" cellpadding="0" cellspacing="0" role="presentation" style="vertical-align:top;" width="100%">
                   <tbody>
                     <tr>
-                      <td align="center" style="font-size:0px;padding:10px 25px;word-break:break-word;">
-                        <div style="font-family:Ubuntu, Helvetica, Arial, sans-serif;font-size:13px;line-height:1;text-align:center;color:#000000;">
-                          <pre>
-{{$investigatorForm}}
-                          </pre>
+                      <td align="left" style="font-size:0px;padding:10px 25px;word-break:break-word;">
+                        <div style="font-family:Ubuntu, Helvetica, Arial, sans-serif;font-size:13px;line-height:1;text-align:left;color:#0495A0;">
+                        <pre>
+{{$studyInfo['investigatorForm']}}
+                        </pre>
                         </div>
                       </td>
                     </tr>

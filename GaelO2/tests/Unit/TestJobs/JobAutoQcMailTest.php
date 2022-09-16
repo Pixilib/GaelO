@@ -17,6 +17,13 @@ class JobAutoQcMailTest
         $studyInfo['studyTime'] = 'studyTime';
         $studyInfo['numberOfSeries'] = 5;
         $studyInfo['numberOfInstances'] = 0;
+        $studyInfo['visitDate'] = '05/05/2021';
+        $studyInfo['registrationDate'] = '05/05/2021';
+        $studyInfo['investigatorForm'] = '"0008,0012" : {
+            "Name" : "InstanceCreationDate",
+            "Type" : "String",
+            "Value" : "20151217"
+},';
         $seriesInfo = [];
         for ($i = 0; $i < $studyInfo['numberOfSeries']; $i++) {
             $nbInstances = rand(0, 500);
@@ -46,10 +53,10 @@ class JobAutoQcMailTest
             'webAddress' => 'https://google.com',
             'corporation' => 'Pixilib',
             'adminEmail' => 'test@gaelo.fr',
-
         ];
 
         Mail::to('test@gaelo.fr')->send(new AutoQC($parameters));
+        dd($studyInfo['investigatorForm']);
         
     }
 }

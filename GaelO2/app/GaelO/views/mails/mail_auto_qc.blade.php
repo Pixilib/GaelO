@@ -107,7 +107,7 @@
     @include('mails.mail_auto_qc_series', ['seriesInfo' => $series])
   @endforeach
   @if ($studyInfo['investigatorForm'] != null)
-    @include('mails.mail_auto_qc_investigator_form', ['investigatorForm' => $studyInfo['investigatorForm']])
+    @include('mails.mail_auto_qc_investigator_form', ['studyInfo' => $studyInfo])
   @endif
   <div style="">
     <!--[if mso | IE]><table align="center" border="0" cellpadding="0" cellspacing="0" class="" style="width:600px;" width="600" ><tr><td style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;"><![endif]-->

@@ -12,7 +12,7 @@
                     <tr>
                       <td align="left" style="font-size:0px;padding:10px 25px;word-break:break-word;">
                         <div style="font-family:Ubuntu, Helvetica, Arial, sans-serif;font-size:13px;line-height:1;text-align:left;color:#000000;">
-                          <h3 style="font-weight: bold; margin-top: 0; margin-bottom: 0" align="center"> <a text-decoration: none"> {{$series['series_description']}} </a> </h3>
+                          <h3 style="color:#0495A0;font-weight: bold; margin-top: 0; margin-bottom: 0" align="center"> <a text-decoration: none"> {{$series['series_description']}} </a> </h3>
                         </div>
                       </td>
                     </tr>
@@ -57,10 +57,10 @@
                   <tbody>
                     <tr>
                       <td align="left" class="gaelo-table-series" style="font-size:0px;padding:10px 25px;word-break:break-word;">
-                        <table cellpadding="0" cellspacing="0" width="100%" border="0" style="color:#353275;font-family:Ubuntu, Helvetica, Arial, sans-serif;font-size:13px;line-height:22px;table-layout:auto;width:100%;border:none;">
+                        <table cellpadding="0" cellspacing="0" width="100%" border="0" style="color:#0495A0;font-family:Ubuntu, Helvetica, Arial, sans-serif;font-size:13px;line-height:22px;table-layout:auto;width:100%;border:none;">
                           @foreach($series['infos'] as $key => $value)
                             <tr>
-                                <td style="padding: 0 15px 0 0;" align="left">{{ $key }}</td>
+                                <td style="padding: 0 15px 0 0;font-weight: bold;" align="left">{{ $key }}</td>
                                 <td style="padding: 0 15px;" align="right">{{ $value }}</td>
                             </tr> 
                         @endforeach
