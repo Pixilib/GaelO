@@ -84,6 +84,7 @@ class DicomController extends Controller
         $requestData = $request->all();
         $queryParam = $request->query();
 
+        $reactivateDicomSeriesRequest->studyName = $queryParam['studyName'];
         $reactivateDicomSeriesRequest->seriesInstanceUID = $seriesInstanceUID;
         $reactivateDicomSeriesRequest->currentUserId = $currentUser['id'];
         $reactivateDicomSeriesRequest->role = $queryParam['role'];
@@ -99,7 +100,9 @@ class DicomController extends Controller
 
         $currentUser = Auth::user();
         $requestData = $request->all();
+        $queryParam = $request->query();
 
+        $reactivateDicomStudyRequest->studyName = $queryParam['studyName'];
         $reactivateDicomStudyRequest->studyInstanceUID = $studyInstanceUID;
         $reactivateDicomStudyRequest->currentUserId = $currentUser['id'];
         $reactivateDicomStudyRequest = Util::fillObject($requestData, $reactivateDicomStudyRequest);

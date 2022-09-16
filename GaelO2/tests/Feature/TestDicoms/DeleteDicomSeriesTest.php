@@ -12,7 +12,7 @@ use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\AuthorizationTools;
 use Tests\TestCase;
 
-class DicomSeriesTest extends TestCase
+class DeleteDicomSeriesTest extends TestCase
 {
 
     use DatabaseMigrations {
@@ -120,98 +120,5 @@ class DicomSeriesTest extends TestCase
         $payload = ['reason' => 'wrong series'];
         $response = $this->delete('api/dicom-series/' . $this->dicomSeries->series_uid . '?role=Supervisor', $payload);
         $response->assertStatus(403);
-    }
-
-    public function testReactivateSeriesInvestigator()
-    {
-        $userId = AuthorizationTools::actAsAdmin(false);
-        $patientCenterCode = $this->dicomSeries->dicomStudy->visit->patient->center_code;
-        AuthorizationTools::addRoleToUser($userId, Constants::ROLE_INVESTIGATOR, $this->studyName);
-        AuthorizationTools::addAffiliatedCenter($userId, $patientCenterCode);
-
-        $this->dicomSeries->delete();
-        $response = $this->patch('api/dicom-series/' . $this->dicomSeries->series_uid.'?role=Investigator', ['reason' => 'good series']);
-        $response->assertStatus(200);
-    }
-
-    public function testReactivateSeriesSupervisor()
-    {
-        $userId = AuthorizationTools::actAsAdmin(false);
-        AuthorizationTools::addRoleToUser($userId, Constants::ROLE_SUPERVISOR, $this->studyName);
-
-        $this->dicomSeries->delete();
-        $response = $this->patch('api/dicom-series/' . $this->dicomSeries->series_uid.'?role=Supervisor', ['reason' => 'good series']);
-        $response->assertStatus(200);
-    }
-
-    public function testReactivateSeriesFailNotSupervisor()
-    {
-        AuthorizationTools::actAsAdmin(false);
-
-        $this->dicomSeries->delete();
-        $response = $this->patch('api/dicom-series/' . $this->dicomSeries->series_uid.'?role=Supervisor', ['reason' => 'good series']);
-        $response->assertStatus(403);
-    }
-
-    public function testReactivateSeriesFailParentStudyDeleted()
-    {
-        $userId = AuthorizationTools::actAsAdmin(false);
-        AuthorizationTools::addRoleToUser($userId, Constants::ROLE_SUPERVISOR, $this->studyName);
-
-        $this->dicomSeries->dicomStudy->delete();
-        $response = $this->patch('api/dicom-series/' . $this->dicomSeries->series_uid.'?role=Supervisor', []);
-
-        $response->assertStatus(400);
-    }
-
-    public function testReactivateStudy()
-    {
-
-        $userId = AuthorizationTools::actAsAdmin(false);
-        AuthorizationTools::addRoleToUser($userId, Constants::ROLE_SUPERVISOR, $this->studyName);
-
-        $this->dicomSeries->dicomStudy->delete();
-        //At study deletion the investigator form is Draft or Not Done
-        $this->dicomSeries->dicomStudy->visit->state_investigator_form = Constants::INVESTIGATOR_FORM_DRAFT;
-        $this->dicomSeries->dicomStudy->visit->save();
-
-        $response = $this->patch('api/dicom-study/' . $this->dicomSeries->dicomStudy->study_uid, ['reason' => 'correct study']);
-        $response->assertStatus(200);
-    }
-
-
-    public function testReactivateStudyShouldFailNoReason()
-    {
-
-        $userId = AuthorizationTools::actAsAdmin(false);
-        AuthorizationTools::addRoleToUser($userId, Constants::ROLE_SUPERVISOR, $this->studyName);
-
-        $this->dicomSeries->dicomStudy->delete();
-        //At study deletion the investigator form is Draft or Not Done
-        $this->dicomSeries->dicomStudy->visit->state_investigator_form = Constants::INVESTIGATOR_FORM_DRAFT;
-        $this->dicomSeries->dicomStudy->visit->save();
-
-        $response = $this->patch('api/dicom-study/' . $this->dicomSeries->dicomStudy->study_uid);
-        $response->assertStatus(400);
-    }
-
-
-    public function testReactivateStudyShouldFailNoRole()
-    {
-
-        AuthorizationTools::actAsAdmin(false);
-
-        $this->dicomSeries->dicomStudy->delete();
-        $response = $this->patch('api/dicom-study/' . $this->dicomSeries->dicomStudy->study_uid, ['reason' => 'correct study']);
-        $response->assertStatus(403);
-    }
-
-
-    public function testReactivateStudyShouldFailExistingAlreadyActivatedStudy()
-    {
-        $userId = AuthorizationTools::actAsAdmin(false);
-        AuthorizationTools::addRoleToUser($userId, Constants::ROLE_SUPERVISOR, $this->studyName);
-        $response = $this->patch('api/dicom-study/' . $this->dicomSeries->dicomStudy->study_uid, ['reason' => 'correct study']);
-        $response->assertStatus(400);
     }
 }

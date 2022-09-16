@@ -36,6 +36,7 @@ class ReactivateDicomStudy
 
         try {
 
+
             if (empty($reactivateDicomStudyRequest->reason)) throw new GaelOBadRequestException('Reason must be specified');
 
             $currentUserId = $reactivateDicomStudyRequest->currentUserId;
@@ -46,6 +47,10 @@ class ReactivateDicomStudy
 
             $visitContext = $this->visitRepositoryInterface->getVisitContext($visitId);
             $studyName = $visitContext['patient']['study_name'];
+
+            if ($reactivateDicomStudyRequest->studyName !== $studyName) {
+                throw new GaelOForbiddenException();
+            }
 
             $this->checkAuthorization($currentUserId, $visitId, $visitContext['state_quality_control'], $studyName);
 

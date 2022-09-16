@@ -147,8 +147,8 @@ Route::middleware(['auth:sanctum', 'verified', 'activated', 'onboarded'])->group
 
     //Dicom Routes
     Route::delete('dicom-series/{seriesInstanceUID}', [DicomController::class, 'deleteSeries']);
-    Route::patch('dicom-series/{seriesInstanceUID}', [DicomController::class, 'reactivateSeries']);
-    Route::patch('dicom-study/{studyInstanceUID}', [DicomController::class, 'reactivateStudy']);
+    Route::post('dicom-series/{seriesInstanceUID}/activate', [DicomController::class, 'reactivateSeries']);
+    Route::post('dicom-study/{studyInstanceUID}/activate', [DicomController::class, 'reactivateStudy']);
     Route::get('visits/{id}/dicoms', [DicomController::class, 'getVisitDicoms']);
 
     //Ask Unlock route
