@@ -68,6 +68,21 @@ class ResetQcTest extends TestCase
 
     }
 
+    public function testResetQcShouldFailWrongStudy()
+    {
+        $currentUserId = AuthorizationTools::actAsAdmin(false);
+        AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $this->studyName);
+
+        $payload = [
+            'reason' => 'error filling qc'
+        ];
+
+        $response = $this->patch('/api/visits/'.$this->visit->id.'/quality-control/reset?studyName='.$this->studyName.'wrong', $payload);
+
+        $response->assertStatus(200);
+
+    }
+
     public function testResetQcMissingReason()
     {
         $currentUserId = AuthorizationTools::actAsAdmin(false);
