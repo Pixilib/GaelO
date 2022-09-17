@@ -8,3 +8,4 @@ GaelO2/database/seeders/GaelOStudyBaseSeeder.php
 GaelO2/database/seeders/BicarSeeder.php
 GaelO2/database/seeders/GataSeeder.php
 GaelO2/database/seeders/TestSeeder.php
+src/data/*
