@@ -165,10 +165,12 @@ class VisitController extends Controller
     public function modifyVisitDate(Request $request, ModifyVisitDate $modifyVisitDate, ModifyVisitDateRequest $modifyVisitDateRequest, ModifyVisitDateResponse $modifyVisitDateResponse, int $visitId){
         $currentUser = Auth::user();
         $requestData = $request->all();
+        $queryParam = $request->query();
 
         $modifyCorrectiveActionRequest = Util::fillObject($requestData, $modifyVisitDateRequest);
         $modifyCorrectiveActionRequest->currentUserId = $currentUser['id'];
         $modifyCorrectiveActionRequest->visitId = $visitId;
+        $modifyCorrectiveActionRequest->studyName = $queryParam['studyName'];
 
         $modifyVisitDate->execute($modifyVisitDateRequest, $modifyVisitDateResponse);
 

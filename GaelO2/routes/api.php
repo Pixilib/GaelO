@@ -120,7 +120,7 @@ Route::middleware(['auth:sanctum', 'verified', 'activated', 'onboarded'])->group
     Route::patch('visits/{id}/quality-control/reset', [VisitController::class, 'modifyQualityControlReset']);
     Route::post('visits/{id}/quality-control/unlock', [VisitController::class, 'unlockQc']);
     Route::patch('visits/{id}/corrective-action', [VisitController::class, 'modifyCorrectiveAction']);
-    Route::patch('visits/{id}/visit-date', [VisitController::class, 'modifyVisitDate']);
+    Route::put('visits/{id}/visit-date', [VisitController::class, 'modifyVisitDate']);
     Route::delete('visits/{id}', [VisitController::class, 'deleteVisit']);
     Route::post('visits/{id}/activate', [VisitController::class, 'reactivateVisit']);
     Route::post('visit-types/{visitTypeId}/visits', [VisitController::class, 'createVisit']);
