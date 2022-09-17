@@ -73,7 +73,7 @@ Route::middleware(['auth:sanctum', 'verified', 'activated', 'onboarded'])->group
     Route::get('studies/{studyName}/statistics', [StudyController::class, 'getStudyStatistics']);
     Route::get('studies/{studyName}/visit-types', [StudyController::class, 'getStudyVisitTypes']);
     Route::delete('studies/{studyName}', [StudyController::class, 'deleteStudy']);
-    Route::patch('studies/{studyName}/reactivate', [StudyController::class, 'reactivateStudy']);
+    Route::post('studies/{studyName}/activate', [StudyController::class, 'reactivateStudy']);
     Route::get('studies/{studyName}/patients', [StudyController::class, 'getPatientFromStudy']);
     Route::get('studies/{studyName}/visits-tree', [StudyController::class, 'getVisitsTree']);
     Route::post('studies/{studyName}/import-patients', [StudyController::class, 'importPatients']);
