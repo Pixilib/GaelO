@@ -53,7 +53,7 @@ class DeleteUserTest extends TestCase
         AuthorizationTools::actAsAdmin(true);
         $payload = [];
         User::find(2)->delete();
-        $this->json('PATCH', '/api/users/2/reactivate', $payload)->assertNoContent(200);
+        $this->json('POST', '/api/users/2/activate', $payload)->assertNoContent(200);
         $user = User::find(2)->toArray();
         $this->assertNull($user['email_verified_at']);
 
