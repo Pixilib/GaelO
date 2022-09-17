@@ -2,11 +2,9 @@
 
 namespace Tests\Feature\TestUser;
 
-use App\GaelO\Constants\Constants;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\TestCase;
 use App\Models\User;
-use Illuminate\Support\Facades\Artisan;
 use Tests\AuthorizationTools;
 
 class DeleteUserTest extends TestCase
