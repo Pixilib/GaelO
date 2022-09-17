@@ -171,7 +171,7 @@ Route::middleware(['auth:sanctum', 'verified', 'activated', 'onboarded'])->group
     Route::post('documentations/{id}/file', [DocumentationController::class, 'uploadDocumentation']);
     Route::delete('documentations/{id}', [DocumentationController::class, 'deleteDocumentation']);
     Route::patch('documentations/{id}', [DocumentationController::class, 'modifyDocumentation']);
-    Route::patch('documentations/{id}/reactivate', [DocumentationController::class, 'reactivateDocumentation']);
+    Route::post('documentations/{id}/activate', [DocumentationController::class, 'reactivateDocumentation']);
 
     //Tools routes
     Route::post('tools/centers/patients-from-centers', [ToolsController::class, 'getPatientsInStudyFromCenters']);
