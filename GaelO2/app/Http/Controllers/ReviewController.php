@@ -97,8 +97,10 @@ class ReviewController extends Controller
     public function unlockInvestigatorForm(Request $request, UnlockInvestigatorForm $unlockInvestigatorForm, UnlockInvestigatorFormRequest $unlockInvestigatorFormRequest, UnlockInvestigatorFormResponse $unlockInvestigatorFormResponse, int $visitId)
     {
         $currentUser = Auth::user();
+        $queryParam = $request->query();
 
         $unlockInvestigatorFormRequest->currentUserId = $currentUser['id'];
+        $unlockInvestigatorFormRequest->studyName = $queryParam['studyName'];
         $unlockInvestigatorFormRequest->visitId = $visitId;
 
         $requestData = $request->all();
