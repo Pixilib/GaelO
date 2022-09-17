@@ -39,6 +39,18 @@ class DeleteInvestigatorFormTest extends TestCase
         $this->delete('api/visits/' . $this->review->visit_id . '/investigator-form?studyName=' . $this->studyName, $payload)->assertSuccessful();
     }
 
+    public function testDeleteInvestigatorFormShouldFailWrongStudy()
+    {
+
+        $currentUserId = AuthorizationTools::actAsAdmin(false);
+        AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $this->studyName);
+        $payload = [
+            'reason' => 'wrong Form'
+        ];
+
+        $this->delete('api/visits/' . $this->review->visit_id . '/investigator-form?studyName=' . $this->studyName.'wrong', $payload)->assertStatus(403);
+    }
+
     public function testDeleteInvestigatorFormShouldFailNoRole()
     {
         AuthorizationTools::actAsAdmin(false);

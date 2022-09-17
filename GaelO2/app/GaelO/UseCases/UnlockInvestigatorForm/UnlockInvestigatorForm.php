@@ -52,7 +52,7 @@ class UnlockInvestigatorForm
             $currentUserId = $unlockInvestigatorFormRequest->currentUserId;
 
             if($unlockInvestigatorFormRequest->studyName !== $studyName){
-                throw new GaelOException("Should be called from the original study");
+                throw new GaelOForbiddenException("Should be called from the original study");
             }
 
             $this->checkAuthorization($currentUserId, $visitId, $visitContext['state_quality_control'], $studyName);

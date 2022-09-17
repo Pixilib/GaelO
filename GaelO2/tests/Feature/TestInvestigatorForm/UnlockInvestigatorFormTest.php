@@ -38,6 +38,18 @@ class UnlockInvestigatorFormTest extends TestCase
         $this->patch('api/visits/' . $this->review->visit_id . '/investigator-form/unlock?studyName=' . $this->studyName, $payload)->assertStatus(200);
     }
 
+
+    public function testUnlockInvestigatorFormShouldFailWrongStudy()
+    {
+        $currentUserId = AuthorizationTools::actAsAdmin(false);
+        AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $this->studyName);
+        $payload = [
+            'reason' => 'wrong Form'
+        ];
+
+        $this->patch('api/visits/' . $this->review->visit_id . '/investigator-form/unlock?studyName=' . $this->studyName . 'wrong', $payload)->assertStatus(403);
+    }
+
     public function testUnlockInvestigatorFormShouldFailedAlreadyUnlocked()
     {
         $this->review->validated = false;
