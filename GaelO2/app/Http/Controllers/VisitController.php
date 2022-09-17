@@ -118,10 +118,12 @@ class VisitController extends Controller
     {
         $currentUser = Auth::user();
         $requestData = $request->all();
+        $queryParam = $request->query();
 
         $modifyQualityControlRequest = Util::fillObject($requestData, $modifyQualityControlRequest);
         $modifyQualityControlRequest->currentUserId = $currentUser['id'];
         $modifyQualityControlRequest->visitId = $visitId;
+        $modifyQualityControlRequest->studyName = $queryParam['studyName'];
 
         $modifyQualityControl->execute($modifyQualityControlRequest, $modifyQualityControlResponse);
 
@@ -132,9 +134,11 @@ class VisitController extends Controller
     {
         $currentUser = Auth::user();
         $requestData = $request->all();
+        $queryParam = $request->query();
 
         $modifyQualityControlResetRequest->currentUserId = $currentUser['id'];
         $modifyQualityControlResetRequest->visitId = $visitId;
+        $modifyQualityControlResetRequest->studyName = $queryParam['studyName'];
         $modifyQualityControlResetRequest = Util::fillObject($requestData, $modifyQualityControlResetRequest);
 
         $modifyQualityControlReset->execute($modifyQualityControlResetRequest, $modifyQualityControlResetResponse);

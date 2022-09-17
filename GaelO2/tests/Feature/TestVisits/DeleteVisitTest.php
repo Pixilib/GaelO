@@ -48,6 +48,20 @@ class DeleteVisitTest extends TestCase
         $resp->assertStatus(200);
     }
 
+    public function testDeleteVisitShouldFailWrongStudy()
+    {
+
+        $currentUserId = AuthorizationTools::actAsAdmin(false);
+        AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $this->studyName);
+
+        $payload = [
+            'reason' => 'false visit'
+        ];
+
+        $resp = $this->json('DELETE', 'api/visits/' . $this->visit->id . '?role=Supervisor&studyName=' . $this->studyName . 'wrong', $payload);
+        $resp->assertStatus(403);
+    }
+
     public function testDeleteVisitShouldFailNoReason()
     {
         $currentUserId = AuthorizationTools::actAsAdmin(false);
