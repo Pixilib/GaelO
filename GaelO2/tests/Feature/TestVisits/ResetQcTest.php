@@ -79,7 +79,7 @@ class ResetQcTest extends TestCase
 
         $response = $this->patch('/api/visits/'.$this->visit->id.'/quality-control/reset?studyName='.$this->studyName.'wrong', $payload);
 
-        $response->assertStatus(200);
+        $response->assertStatus(403);
 
     }
 
