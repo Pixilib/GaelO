@@ -80,8 +80,10 @@ class ReviewController extends Controller
     public function deleteInvestigatorForm(Request $request, DeleteInvestigatorForm $deleteInvestigatorForm, DeleteInvestigatorFormRequest $deleteInvestigatorFormRequest, DeleteInvestigatorFormResponse $deleteInvestigatorFormResponse, int $visitId)
     {
         $currentUser = Auth::user();
+        $queryParam = $request->query();
 
         $deleteInvestigatorFormRequest->currentUserId = $currentUser['id'];
+        $deleteInvestigatorFormRequest->studyName = $queryParam['studyName'];
         $deleteInvestigatorFormRequest->visitId = $visitId;
 
         $requestData = $request->all();

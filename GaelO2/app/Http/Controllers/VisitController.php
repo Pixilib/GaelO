@@ -29,7 +29,6 @@ use App\GaelO\UseCases\ModifyVisitDate\ModifyVisitDateResponse;
 use App\GaelO\UseCases\ReactivateVisit\ReactivateVisit;
 use App\GaelO\UseCases\ReactivateVisit\ReactivateVisitRequest;
 use App\GaelO\UseCases\ReactivateVisit\ReactivateVisitResponse;
-use App\GaelO\UseCases\RequestUnlock\RequestUnlockRequest;
 use App\GaelO\UseCases\RequestUnlockQC\RequestUnlockQC;
 use App\GaelO\UseCases\RequestUnlockQC\RequestUnlockQCRequest;
 use App\GaelO\UseCases\RequestUnlockQC\RequestUnlockQCResponse;

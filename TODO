@@ -4,6 +4,7 @@ Salim TODO :
 - Optimiser l'utilisation des authorization service en injectant les data depuis le usecase (ou les rendre stateless) (dont visite, review...)
 
 --- Etudes ancillaires ---
+Export study data => Ne tient pas en compte du statut ancillaire ou non de l'etude a exporter
 Tester Etudes ancillaire avec Emilie (voir return default data de review status si entitée non crée)
 Ne doit pas pouvoir faire les relance d'upload => Voir avec Emilie (probablement passer les info de study dans un contexte)
 --- /Etudes ancillaires ---

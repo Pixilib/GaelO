@@ -38,41 +38,6 @@ class InvestigatorFormTest extends TestCase
 
     }
 
-    public function testDeleteInvestigatorForm(){
-        $review = Review::factory()->create();
-        $currentUserId = AuthorizationTools::actAsAdmin(false);
-        AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $review->visit->patient->study_name);
-        $payload = [
-            'reason' => 'wrong Form'
-        ];
-
-        $this->delete('api/visits/'.$review->visit_id.'/investigator-form',$payload)->assertSuccessful();
-
-    }
-
-    public function testDeleteInvestigatorFormShouldFailNoRole(){
-        $review = Review::factory()->create();
-        AuthorizationTools::actAsAdmin(false);
-        $payload = [
-            'reason' => 'wrong Form'
-        ];
-
-        $this->delete('api/visits/'.$review->visit_id.'/investigator-form',$payload)->assertStatus(403);
-
-    }
-
-    public function testDeleteInvestigatorFormShouldFailNoReason(){
-        $review = Review::factory()->create();
-        $currentUserId = AuthorizationTools::actAsAdmin(false);
-        AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $review->visit->patient->study_name);
-        $payload = [
-            'reason' => ''
-        ];
-
-        $this->delete('api/visits/'.$review->visit_id.'/investigator-form', $payload)->assertStatus(400);
-
-    }
-
     public function testUnlockInvestigatorForm(){
         $review = Review::factory()->validated()->create();
         $currentUserId = AuthorizationTools::actAsAdmin(false);
