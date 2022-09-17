@@ -39,14 +39,14 @@ class ReactivateVisitTest extends TestCase
         $currentUserId = AuthorizationTools::actAsAdmin(false);
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $this->visit->patient->study_name);
 
-        $this->json('PATCH', 'api/visits/'.$this->visit->id.'/reactivate')->assertStatus(200);
+        $this->json('POST', 'api/visits/'.$this->visit->id.'/activate')->assertStatus(200);
 
     }
 
     public function testReactivateTestShouldFailNoRole(){
 
         AuthorizationTools::actAsAdmin(false);
-        $this->json('PATCH', 'api/visits/'.$this->visit->id.'/reactivate')->assertStatus(403);
+        $this->json('POST', 'api/visits/'.$this->visit->id.'/activate')->assertStatus(403);
 
     }
 
@@ -57,7 +57,7 @@ class ReactivateVisitTest extends TestCase
         $currentUserId = AuthorizationTools::actAsAdmin(false);
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $this->visit->patient->study_name);
 
-        $this->json('PATCH', 'api/visits/'.$this->visit->id.'/reactivate')->assertStatus(409);
+        $this->json('POST', 'api/visits/'.$this->visit->id.'/activate')->assertStatus(409);
 
     }
 
@@ -68,7 +68,7 @@ class ReactivateVisitTest extends TestCase
         $currentUserId = AuthorizationTools::actAsAdmin(false);
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $this->visit->patient->study_name);
 
-        $this->json('PATCH', 'api/visits/'.$this->visit->id.'/reactivate')->assertStatus(409);
+        $this->json('POST', 'api/visits/'.$this->visit->id.'/activate')->assertStatus(409);
 
     }
 

@@ -122,7 +122,7 @@ Route::middleware(['auth:sanctum', 'verified', 'activated', 'onboarded'])->group
     Route::patch('visits/{id}/corrective-action', [VisitController::class, 'modifyCorrectiveAction']);
     Route::patch('visits/{id}/visit-date', [VisitController::class, 'modifyVisitDate']);
     Route::delete('visits/{id}', [VisitController::class, 'deleteVisit']);
-    Route::patch('visits/{id}/reactivate', [VisitController::class, 'reactivateVisit']);
+    Route::post('visits/{id}/activate', [VisitController::class, 'reactivateVisit']);
     Route::post('visit-types/{visitTypeId}/visits', [VisitController::class, 'createVisit']);
     Route::get('visits/{id}', [VisitController::class, 'getVisit']);
 
