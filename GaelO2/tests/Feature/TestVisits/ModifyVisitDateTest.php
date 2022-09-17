@@ -51,13 +51,13 @@ class ModifyVisitDateTest extends TestCase {
     public function testModifyVisitDateShouldFailWrongStudy()
     {
         $currentUserId = AuthorizationTools::actAsAdmin(false);
-        AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $this->studyName. 'wrong');
+        AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $this->studyName);
 
         $payload = [
             'visitDate' => now()
         ];
 
-        $response = $this->put('/api/visits/'.$this->visit->id.'/visit-date?studyName='.$this->studyName, $payload);
+        $response = $this->put('/api/visits/'.$this->visit->id.'/visit-date?studyName='.$this->studyName. 'wrong', $payload);
 
         $response->assertStatus(403);
 
