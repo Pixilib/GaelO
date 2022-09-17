@@ -107,6 +107,7 @@ class VisitController extends Controller
         $deleteVisitRequest->currentUserId = $currentUser['id'];
         $deleteVisitRequest->visitId = $visitId;
         $deleteVisitRequest->role = $queryParam['role'];
+        $deleteVisitRequest->studyName = $queryParam['studyName'];
 
         $deleteVisit->execute($deleteVisitRequest, $deleteVisitResponse);
 
