@@ -17,7 +17,6 @@ use App\GaelO\Services\VisitService;
 use App\GaelO\Util;
 use Exception;
 use ZipArchive;
-use Illuminate\Support\Facades\Log;
 
 class ValidateDicomUpload
 {

@@ -1,11 +1,17 @@
 <?php
 
-namespace Tests\Unit\TestJobs;
+namespace Tests\Unit\Mail;
 
 use App\Mail\AutoQC;
 use Illuminate\Support\Facades\Mail;
 
-class JobAutoQcMailTest
+/*
+use Tests\Unit\Mail\SendMailAutoQc;
+$mail = new SendMailAutoQc();
+$mail->sendTestAutoQcMail();
+*/
+
+class SendMailAutoQc
 {
 
     public function sendTestAutoQcMail() {
@@ -56,8 +62,6 @@ class JobAutoQcMailTest
         ];
 
         Mail::to('test@gaelo.fr')->send(new AutoQC($parameters));
-        dd($studyInfo['investigatorForm']);
-        
     }
 }
 

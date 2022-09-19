@@ -8,6 +8,7 @@ use App\GaelO\Constants\SettingsConstants;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Interfaces\Adapters\FrameworkInterface;
 use App\GaelO\Interfaces\Adapters\HttpClientInterface;
+use App\GaelO\Services\StoreObjects\OrthancMetaData;
 use App\GaelO\Services\StoreObjects\TagAnon;
 use App\GaelO\Services\StoreObjects\OrthancStudy;
 use App\GaelO\Services\StoreObjects\OrthancStudyImport;
@@ -56,9 +57,10 @@ class OrthancService
         return $this->httpClientInterface->requestJson('GET', '/' . $level . '/' . $orthancID . '/statistics/')->getJsonBody();
     }
 
-    public function getInstanceTags(string $orthancInstanceID): array
+    public function getInstanceTags(string $orthancInstanceID): OrthancMetaData
     {
-        return $this->httpClientInterface->requestJson('GET', '/instances/' . $orthancInstanceID . '/tags/')->getJsonBody();
+        $response = $this->httpClientInterface->requestJson('GET', '/instances/' . $orthancInstanceID . '/tags/')->getJsonBody();
+        return new OrthancMetaData($response);
     }
 
     public function getOrthancPeers(): array
@@ -411,9 +413,10 @@ class OrthancService
         }
     }
 
-    public function getSharedTags(string $seriesOrthancID) : array
+    public function getMetaData(string $seriesOrthancID) : OrthancMetaData
     {
-        return $this->httpClientInterface->requestJson('GET', '/series/'.$seriesOrthancID.'shared-tags')->getJsonBody();
+        $response = $this->httpClientInterface->requestJson('GET', '/series/' . $seriesOrthancID . '/shared-tags');
+        return new OrthancMetaData($response->getJsonBody());
     }
 
     public function getSeriesMIP(string $seriesOrthancID) : string

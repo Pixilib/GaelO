@@ -1,35 +1,22 @@
 <?php
 
 namespace App\Jobs;
-namespace Enum;
 
 use App\GaelO\Constants\Constants;
-use App\GaelO\Entities\DicomStudyEntity;
-use App\GaelO\Entities\VisitEntity;
 use App\GaelO\Interfaces\Adapters\FrameworkInterface;
 use App\GaelO\Interfaces\Repositories\DicomStudyRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\ReviewRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\UserRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
-use App\GaelO\Repositories\VisitRepository;
 use App\GaelO\Services\MailServices;
 use App\GaelO\Services\OrthancService;
-use App\Models\Visit;
-use Exception;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use App\GaelO\Services\StoreObjects\SharedTags;
-
-enum ImageType : string
-{
-    case MIP = 'MIP';
-    case MOSAIC = 'MOSAIC';
-    case DEFAULT = 'DEFAULT';
-}
+use App\GaelO\Services\StoreObjects\OrthancMetaData;
+use App\Jobs\Imagetype;
 
 class JobAutoQc implements ShouldQueue
 {
@@ -47,7 +34,7 @@ class JobAutoQc implements ShouldQueue
         $this->visitId = $visitId;
     }
 
-    public function getImageType(SharedTags $sharedTags): ImageType
+    public function getImageType(OrthancMetaData $sharedTags): ImageType
     {
         $mosaicIDs = ['1.2.840.10008.5.1.4.1.1.4', '1.2.840.10008.5.1.4.1.1.4.1'];
         $gifIDs = ['1.2.840.10008.5.1.4.1.1.2', '1.2.840.10008.5.1.4.1.1.2.1', '1.2.840.10008.5.1.4.1.1.20',
@@ -63,7 +50,7 @@ class JobAutoQc implements ShouldQueue
         }
     }
 
-    public function getImagePath(SharedTags $sharedTags, string $seriesID, string $firstInstanceID, OrthancService $orthancService): string
+    private function getSeriesPreview(OrthancMetaData $sharedTags, string $seriesID, string $firstInstanceID, OrthancService $orthancService): string
     {
         $imageType = $this->getImageType($sharedTags);
         $imagePath = '';
@@ -81,6 +68,19 @@ class JobAutoQc implements ShouldQueue
         return $imagePath;
     }
 
+    private function getRadioPharmaceutical(array $radioPharmaceuticalTags) : ?array
+    {
+        $radioPharmaceuticalArray = [];
+
+        if ($radioPharmaceuticalTags != null) {
+            for ($j = 0; $j < count($radioPharmaceuticalTags); $j++) {
+                $radioPharmaceuticalArray[$radioPharmaceuticalTags[$j]['Name']] = $radioPharmaceuticalTags[$j]['Value'];
+            }
+        } 
+        return $radioPharmaceuticalArray;
+
+    }
+
     /**
      * Execute the job.
      *
@@ -91,38 +91,41 @@ class JobAutoQc implements ShouldQueue
     {
         $visitEntity = $visitRepositoryInterface->getVisitContext($this->visitId);
         $dicomStudyEntity = $dicomStudyRepositoryInterface->getDicomsDataFromVisit($this->visitId, false, false);
-        $sharedTags = new SharedTags($orthancService->getSharedTags($this->visitId));
     
-        //$stateInvestigatorForm = $visitEntity['state_investigator_form'];
+        $stateInvestigatorForm = $visitEntity['state_investigator_form'];
 
         $studyInfo = [];
         $studyInfo['visitDate'] = $visitEntity['visit_date'];
         $studyInfo['registrationDate'] = $visitEntity['patient']['registration_date'];
         $studyInfo['studyName'] = $visitEntity['patient']['study_name'];
-        $studyInfo['studyDescription'] = $sharedTags->getStudyDescription();
-        $studyInfo['studyManufacturer'] = $sharedTags->getStudyManufacturer();
-        $studyInfo['studyDate'] = $sharedTags->getStudyDate();
-        $studyInfo['studyTime'] = $sharedTags->getStudyTime();
+        
         $studyInfo['numberOfSeries'] = count($dicomStudyEntity[0]['dicom_series']);
         $studyInfo['numberOfInstances'] = 0;
-        /*if ($stateInvestigatorForm != 'Not needed') {
+        if ($stateInvestigatorForm != 'Not needed') {
             $studyInfo['investigatorForm'] = json_encode($reviewRepositoryInterface->getInvestigatorForm($this->visitId, false),
                 JSON_PRETTY_PRINT);
         } else {
             $studyInfo['investigatorForm'] = null;
-        }*/
+        }
         
         $seriesInfo = [];
+        $index = 0;
         foreach ($dicomStudyEntity[0]['dicom_series'] as $series) {
+            $seriesSharedTags = $orthancService->getMetaData($series['orthanc_id']);
+            $seriesDetails = $orthancService->getOrthancRessourcesDetails(Constants::ORTHANC_SERIES_LEVEL, $series['orthanc_id']);
+
+            if ($index == 0) {
+                $studyInfo['studyDescription'] = $seriesSharedTags->getStudyDescription();
+                $studyInfo['studyManufacturer'] = $seriesSharedTags->getStudyManufacturer();
+                $studyInfo['studyDate'] = $seriesSharedTags->getStudyDate();
+                $studyInfo['studyTime'] = $seriesSharedTags->getStudyTime();
+            }
             $studyInfo['numberOfInstances'] += $series['number_of_instances'];
-            if ($series['dicom_instances'][0])
-                $firstInstanceID = $series['dicom_instances'][0]['instance_id'];
 
             $seriesData = [];
             $seriesData['infos'] = [];
-            $seriesSharedTags = new SharedTags($orthancService->getSharedTags($series['orthanc_id']));
             $seriesData['series_description'] = $seriesSharedTags->getSeriesDescription();
-            $seriesData['image_path'] = $this->getImagePath($seriesSharedTags, $series['orthanc_id'], $firstInstanceID, $orthancService);
+            $seriesData['image_path'] = $this->getSeriesPreview($seriesSharedTags, $series['orthanc_id'], $seriesDetails['Instances'][0], $orthancService);
             $seriesData['infos']['Modality'] = $seriesSharedTags->getSeriesModality();
             $seriesData['infos']['Series date'] =  $seriesSharedTags->getSeriesDate();
             $seriesData['infos']['Series time'] = $series['acquisition_time'];
@@ -144,8 +147,9 @@ class JobAutoQc implements ShouldQueue
             } else if ($seriesData['infos']['Modality'] == 'PT') {
                 $seriesData['infos']['Patient weight'] = $seriesSharedTags->getPatientWeight();
                 $seriesData['infos']['Patient height'] = $seriesSharedTags->getPatientHeight();
-                $seriesData['infos'][] = [$seriesData['infos'], ...$seriesSharedTags->getRadioPharmaceuticalTags($orthancService,
-                    $firstInstanceID)];
+
+                $instanceTags = $orthancService->getInstanceTags($seriesDetails['Instances'][0]);
+                $seriesData['infos'][] = [$seriesData['infos'], ...$this->getRadioPharmaceutical($instanceTags->getMetaDataFromCode('0018,1072'))];
             }
             $seriesInfo[] = $seriesData;
         }
@@ -154,8 +158,6 @@ class JobAutoQc implements ShouldQueue
         $visitId = $visitEntity['id'];
         $visitType = $visitEntity['visit_type']['name'];
         $patientCode = $visitEntity['patient']['code'];
-
-        dd($studyInfo);
 
         $controllerUsers = $userRepositoryInterface->getUsersByRolesInStudy($studyName, Constants::ROLE_CONTROLLER);
 

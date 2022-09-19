@@ -4,6 +4,7 @@ namespace Tests\Unit\TestJobs;
 
 use App\GaelO\Constants\Constants;
 use App\GaelO\Services\OrthancService;
+use App\GaelO\Services\StoreObjects\OrthancMetaData;
 use App\Jobs\JobAutoQc;
 use App\Jobs\JobGaelOProcessing;
 use App\Models\DicomSeries;
@@ -44,12 +45,17 @@ class JobAutoQcTest extends TestCase
         Role::factory()->userId($user->id)->studyName($studyName)->roleName(Constants::ROLE_CONTROLLER)->create();
         $strJsonFileContents = file_get_contents(getcwd()."/tests/Unit/TestJobs/sharedTags.json");
         $sharedTags = json_decode($strJsonFileContents, true);
+        $tags = new OrthancMetaData($sharedTags);
         $mockOrthancService = Mockery::mock(OrthancService::class);
-        $mockOrthancService->shouldReceive('getSharedTags')
-            ->andReturn($sharedTags);
-        $mockOrthancService->ShouldReceive('getMIP')
-            ->andReturn((getcwd()."/tests/Unit/TestJobs/test.gif"));
-        $mockOrthancService->ShouldReceive('getMosaic')
+        $mockOrthancService->shouldReceive('getMetaData')
+            ->andReturn($tags);
+        $strJsonFileContentsData = file_get_contents(getcwd()."/tests/Unit/TestJobs/seriesData.json");
+        $decoded = json_decode($strJsonFileContentsData, true);
+        $mockOrthancService->shouldReceive('getOrthancRessourcesDetails')
+            ->andReturn($decoded);
+        $mockOrthancService->ShouldReceive('getSeriesMIP')
+            ->andReturn((getcwd()."/tests/Unit/TestJobs/testGif.gif"));
+        $mockOrthancService->ShouldReceive('getSeriesMosaic')
             ->andReturn((getcwd()."/tests/Unit/TestJobs/testMosaic.gif"));
         app()->instance(OrthancService::class, $mockOrthancService);
 

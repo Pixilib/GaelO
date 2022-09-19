@@ -98,16 +98,16 @@ Class OrthancSeries {
 	 * @param $instanceID
 	 */
 	private function retrieveInstancesData($instanceOrthancID) {
-		$instanceTags=$this->orthancService->getInstanceTags($instanceOrthancID);
-		$this->patientWeight=is_numeric($instanceTags['0010,1030']['Value']) ? $instanceTags['0010,1030']['Value'] : null;
-		$this->modelName=$instanceTags['0008,1090']['Value'] ?? null;
-		$this->injectedDose=is_numeric($instanceTags['0054,0016']['Value'][0]['0018,1074']['Value']) ? $instanceTags['0054,0016']['Value'][0]['0018,1074']['Value'] : null;
-        $this->injectedTime=$instanceTags['0054,0016']['Value'][0]['0018,1072']['Value'] ?? null;
-        $this->injectedDateTime=$instanceTags['0054,0016']['Value'][0]['0018,1078']['Value'] ?? null;
-		$this->injectedActivity=is_numeric($instanceTags['0054,0016']['Value'][0]['0018,1077']['Value'])? $instanceTags['0054,0016']['Value'][0]['0018,1077']['Value'] : null;
-		$this->radiopharmaceutical=$instanceTags['0054,0016']['Value'][0]['0018,0031']['Value'] ?? null;
-		$this->halfLife=is_numeric($instanceTags['0054,0016']['Value'][0]['0018,1075']['Value'])? $instanceTags['0054,0016']['Value'][0]['0018,1075']['Value'] : null;
-		$this->sopClassUid=$instanceTags['0008,0016']['Value'];
+		$instanceTags = $this->orthancService->getInstanceTags($instanceOrthancID);
+		$this->patientWeight=is_numeric($instanceTags->getPatientWeight()) ? $instanceTags->getPatientWeight() : null;
+		$this->modelName = $instanceTags->getModelName();
+		$this->injectedDose = is_numeric($instanceTags->getInjectedDose()) ? $instanceTags->getInjectedDose() : null;
+        $this->injectedTime = $instanceTags->getInjectedTime();
+        $this->injectedDateTime = $instanceTags->getInjectedDateTime();
+		$this->injectedActivity = is_numeric($instanceTags->getInjectedActivity())? $instanceTags->getInjectedActivity() : null;
+		$this->radiopharmaceutical = $instanceTags->getRadiopharmaceutical();
+		$this->halfLife=is_numeric($instanceTags->getHalfLife())? $instanceTags->getHalfLife() : null;
+		$this->sopClassUid= $instanceTags->getSOPClassUID();
 	}
 
 	/**
