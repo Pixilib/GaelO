@@ -5,9 +5,9 @@ namespace App\GaelO\Adapters;
 use App\GaelO\Interfaces\Adapters\JobInterface;
 use App\Jobs\JobAutoQc;
 
-class JobAdatper implements JobInterface {
+class JobAdapter implements JobInterface {
     public function sendAutoQcJob(int $visitId) : void
     {
-        new JobAutoQc($visitId);
+        JobAutoQc::dispatch($visitId);
     }
 }

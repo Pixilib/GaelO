@@ -89,6 +89,7 @@ class JobAutoQc implements ShouldQueue
     public function handle(FrameworkInterface $frameworkInterface, UserRepositoryInterface $userRepositoryInterface, VisitRepositoryInterface $visitRepositoryInterface, DicomStudyRepositoryInterface $dicomStudyRepositoryInterface, 
         MailServices $mailServices, OrthancService $orthancService, ReviewRepositoryInterface $reviewRepositoryInterface)
     {
+        $orthancService->setOrthancServer(true);
         $visitEntity = $visitRepositoryInterface->getVisitContext($this->visitId);
         $dicomStudyEntity = $dicomStudyRepositoryInterface->getDicomsDataFromVisit($this->visitId, false, false);
     
@@ -101,7 +102,7 @@ class JobAutoQc implements ShouldQueue
         
         $studyInfo['numberOfSeries'] = count($dicomStudyEntity[0]['dicom_series']);
         $studyInfo['numberOfInstances'] = 0;
-        if ($stateInvestigatorForm != 'Not needed') {
+        if ($stateInvestigatorForm != Constants::INVESTIGATOR_FORM_NOT_NEEDED) {
             $studyInfo['investigatorForm'] = json_encode($reviewRepositoryInterface->getInvestigatorForm($this->visitId, false),
                 JSON_PRETTY_PRINT);
         } else {

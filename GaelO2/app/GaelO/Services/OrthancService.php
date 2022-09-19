@@ -424,7 +424,7 @@ class OrthancService
         $downloadedFilePath = tempnam(sys_get_temp_dir(), 'mipDICOM');
         $resource  = fopen( $downloadedFilePath, 'r+');
 
-        $this->httpClientInterface->requestStreamResponseToFile('GET', '/series/'.$seriesOrthancID.'/MIP',  $resource, []);
+        $this->httpClientInterface->requestStreamResponseToFile('GET', '/series/'.$seriesOrthancID.'/mip',  $resource, []);
         return $downloadedFilePath;
     }
 
@@ -433,7 +433,7 @@ class OrthancService
         $downloadedFilePath = tempnam(sys_get_temp_dir(), 'mozaicDICOM');
         $resource  = fopen( $downloadedFilePath, 'r+');
 
-        $this->httpClientInterface->requestStreamResponseToFile('GET', '/series/'.$seriesOrthancID.'/mozaic',  $resource, []);
+        $this->httpClientInterface->requestStreamResponseToFile('GET', '/series/'.$seriesOrthancID.'/mosaic',  $resource, []);
         return $downloadedFilePath;
     }
 
