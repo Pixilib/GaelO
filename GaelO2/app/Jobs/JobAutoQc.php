@@ -16,7 +16,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use App\GaelO\Services\StoreObjects\OrthancMetaData;
-use App\Jobs\Imagetype;
+use App\Jobs\ImageType;
 
 class JobAutoQc implements ShouldQueue
 {
