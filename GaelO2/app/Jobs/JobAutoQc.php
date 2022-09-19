@@ -23,7 +23,7 @@ class JobAutoQc implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
     private int $visitId;
 
-    
+    public $timeout = 120;
     /**
      * Create a new job instance.
      *

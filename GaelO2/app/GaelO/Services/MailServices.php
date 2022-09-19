@@ -9,8 +9,6 @@ use App\GaelO\Interfaces\Repositories\ReviewRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\StudyRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\UserRepositoryInterface;
 use App\GaelO\Repositories\ReviewRepository;
-use App\GaelO\Entities\DicomStudyEntity;
-use App\GaelO\Entities\VisitEntity;
 
 class MailServices
 {
