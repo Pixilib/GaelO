@@ -17,6 +17,7 @@ use Enum\JobAutoQc as EnumJobAutoQc;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
+use Mockery\MockInterface;
 use Mockery;
 
 class JobAutoQcTest extends TestCase
@@ -46,18 +47,16 @@ class JobAutoQcTest extends TestCase
         $strJsonFileContents = file_get_contents(getcwd()."/tests/Unit/TestJobs/sharedTags.json");
         $sharedTags = json_decode($strJsonFileContents, true);
         $tags = new OrthancMetaData($sharedTags);
-        $mockOrthancService = Mockery::mock(OrthancService::class);
-        $mockOrthancService->shouldReceive('getMetaData')
-            ->andReturn($tags);
         $strJsonFileContentsData = file_get_contents(getcwd()."/tests/Unit/TestJobs/seriesData.json");
         $decoded = json_decode($strJsonFileContentsData, true);
-        $mockOrthancService->shouldReceive('getOrthancRessourcesDetails')
-            ->andReturn($decoded);
-        $mockOrthancService->ShouldReceive('getSeriesMIP')
-            ->andReturn((getcwd()."/tests/Unit/TestJobs/testGif.gif"));
-        $mockOrthancService->ShouldReceive('getSeriesMosaic')
-            ->andReturn((getcwd()."/tests/Unit/TestJobs/testMosaic.gif"));
-        app()->instance(OrthancService::class, $mockOrthancService);
+
+        $mockOrthancService = $this->partialMock(OrthancService::class, function (MockInterface $mock) use ($tags, $decoded){
+            $mock->shouldReceive('getMetaData')->andReturn($tags);
+            $mock->shouldReceive('setOrthancServer')->andReturn(null);
+            $mock->shouldReceive('getOrthancRessourcesDetails')->andReturn($decoded);
+            $mock->shouldReceive('getSeriesMIP')->andReturn((getcwd()."/tests/Unit/TestJobs/testGif.gif"));
+            $mock->shouldReceive('getSeriesMosaic')->andReturn((getcwd()."/tests/Unit/TestJobs/testMosaic.gif"));
+        });
 
         $investigatorInfos = [
             '0008,0012' => [
@@ -65,10 +64,12 @@ class JobAutoQcTest extends TestCase
                 'Value' => '2021-01-01',
             ],
         ];
-        $mockReviewRepository = Mockery::mock(ReviewRepository::class);
-        $mockReviewRepository->shouldReceive('getInvestigatorForm')
-            ->andReturn($investigatorInfos);
+        $mockReviewRepository = $this->partialMock(ReviewRepository::class, function (MockInterface $mock) use ($investigatorInfos) {
+            $mock->shouldReceive('getInvestigatorForm')->andReturn($investigatorInfos);
+         });
 
+        app()->instance(OrthancService::class, $mockOrthancService);
+        app()->instance(ReviewRepository::class, $mockReviewRepository);
         JobAutoQc::dispatchSync($visit->id);
     }
 }

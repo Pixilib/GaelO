@@ -131,7 +131,7 @@ class JobAutoQc implements ShouldQueue
             $seriesData['infos']['Series date'] =  $seriesSharedTags->getSeriesDate();
             $seriesData['infos']['Series time'] = $series['acquisition_time'];
             $seriesData['infos']['Slice thickness'] = $seriesSharedTags->getSliceThickness();
-            $seriesData['infos']['Pixel_spacing'] = $seriesSharedTags->getPixelSpacing();
+            $seriesData['infos']['Pixel spacing'] = $seriesSharedTags->getPixelSpacing();
             $seriesData['infos']['FOV'] = $seriesSharedTags->getFieldOfView();
             $seriesData['infos']['Matrix size'] = $seriesSharedTags->getMatrixSize();
             $seriesData['infos']['Patient position'] = $seriesSharedTags->getPatientPosition();
