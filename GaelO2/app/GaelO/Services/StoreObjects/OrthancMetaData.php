@@ -40,9 +40,12 @@ class OrthancMetaData
         return null;
     }
 
-    private function getRadioPharmaceuticalGroup() : ?array
+    private function getRadioPharmaceuticalGroup() : array
     {
-        return $this->metaDataArray['0054,0016'] ?? $this->metaDataArray['0054,0016']['Value'][0];
+        if (array_key_exists('0054,0016', $this->metaDataArray)) {
+            return $this->metaDataArray['0054,0016']['Value'][0];
+        }
+        return [];
     }
 
     public function getStudyManufacturer(): ?string
