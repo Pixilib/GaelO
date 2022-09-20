@@ -191,36 +191,54 @@ class OrthancMetaData
     public function getInjectedDose() : ?string
     {
         $radioPharmaceuticalGroup = $this->getRadioPharmaceuticalGroup();
-        return $radioPharmaceuticalGroup['0018,1074'] ?? $radioPharmaceuticalGroup['0018,1074']['Value'];
+        if (array_key_exists('0018,1074', $radioPharmaceuticalGroup)) {
+            return $radioPharmaceuticalGroup['0018,1074']['Value'];
+        }
+        return null;
     }
 
     public function getInjectedTime() : ?string
     {
         $radioPharmaceuticalGroup = $this->getRadioPharmaceuticalGroup();
-        return $radioPharmaceuticalGroup['0018,1072'] ?? $radioPharmaceuticalGroup['0018,1072']['Value'];
+        if (array_key_exists('0018,1072', $radioPharmaceuticalGroup)) {
+            return $radioPharmaceuticalGroup['0018,1072']['Value'];
+        }
+        return null;
     }
     
     public function getInjectedDateTime() : ?string
     {
         $radioPharmaceuticalGroup = $this->getRadioPharmaceuticalGroup();
-        return $radioPharmaceuticalGroup['0018,1078'] ?? $radioPharmaceuticalGroup['0018,1078']['Value'];
+        if (array_key_exists('0018,1078', $radioPharmaceuticalGroup)) {
+            return $radioPharmaceuticalGroup['0018,1078']['Value'];
+        }
+        return null;
     }
 
     public function getInjectedActivity() : ?string
     {
         $radioPharmaceuticalGroup = $this->getRadioPharmaceuticalGroup();
-        return $radioPharmaceuticalGroup['0018,1077'] ?? $radioPharmaceuticalGroup['0018,1077']['Value'];
+        if (array_key_exists('0018,1077', $radioPharmaceuticalGroup)) {
+            return $radioPharmaceuticalGroup['0018,1077']['Value'];
+        }
+        return null;
     }
 
     public function getRadiopharmaceutical() : ?string
     {
         $radioPharmaceuticalGroup = $this->getRadioPharmaceuticalGroup();
-        return $radioPharmaceuticalGroup['0018,0031'] ?? $radioPharmaceuticalGroup['0018,0031']['Value'];
+        if (array_key_exists('0018,0031', $radioPharmaceuticalGroup)) {
+            return $radioPharmaceuticalGroup['0018,0031']['Value'];
+        }
+        return null;
     }
 
     public function getHalfLife() : ?string
     {
         $radioPharmaceuticalGroup = $this->getRadioPharmaceuticalGroup();
-        return $radioPharmaceuticalGroup['0018,1075'] ?? $radioPharmaceuticalGroup['0018,1075']['Value'];
+        if (array_key_exists('0018,1075', $radioPharmaceuticalGroup)) {
+            return $radioPharmaceuticalGroup['0018,1075']['Value'];
+        }
+        return null;
     }
 }
