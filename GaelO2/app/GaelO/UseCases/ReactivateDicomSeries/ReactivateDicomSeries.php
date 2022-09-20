@@ -53,6 +53,10 @@ class ReactivateDicomSeries
             $visitContext = $this->visitRepositoryInterface->getVisitContext($visitId);
             $studyName = $visitContext['patient']['study_name'];
 
+            if ($reactivateDicomSeriesRequest->studyName !== $studyName) {
+                throw new GaelOForbiddenException();
+            }
+
             $this->checkAuthorization($currentUserId, $visitId, $visitContext['state_quality_control'], $role, $studyName);
 
             $this->dicomSeriesRepositoryInterface->reactivateSeries($seriesInstanceUID);

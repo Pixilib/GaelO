@@ -38,6 +38,9 @@ class ModifyQualityControlReset
             $visitContext = $this->visitService->getVisitContext();
             $studyName = $visitContext['patient']['study_name'];
 
+            if($modifyQualityControlResetRequest->studyName !== $studyName){
+                throw new GaelOForbiddenException("Should be called from original study");
+            }
             $this->checkAuthorization($currentUserId, $visitId, $studyName);
 
             if (empty($modifyQualityControlResetRequest->reason)) {

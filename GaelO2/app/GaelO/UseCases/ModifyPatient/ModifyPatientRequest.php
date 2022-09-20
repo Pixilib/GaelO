@@ -6,6 +6,7 @@ class ModifyPatientRequest
 {
     public int $currentUserId;
     public string $patientId;
+    public string $studyName;
     public string $reason;
     public ?string $firstname = null;
     public ?string $lastname = null;

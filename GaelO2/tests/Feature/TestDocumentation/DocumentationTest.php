@@ -238,7 +238,7 @@ class DocumentationTest extends TestCase
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $this->study->name);
         $documentation = Documentation::factory()->studyName($this->study->name)->create();
 
-        $response = $this->patch('api/documentations/' . $documentation->id . '/reactivate');
+        $response = $this->post('api/documentations/' . $documentation->id . '/activate');
         $response->assertStatus(200);
     }
 
@@ -249,7 +249,7 @@ class DocumentationTest extends TestCase
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_INVESTIGATOR, $this->study->name);
         $documentation = Documentation::factory()->studyName($this->study->name)->create();
 
-        $response = $this->patch('api/documentations/' . $documentation->id . '/reactivate');
+        $response = $this->post('api/documentations/' . $documentation->id . '/activate');
         $response->assertStatus(403);
     }
 }

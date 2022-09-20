@@ -6,6 +6,7 @@ class ModifyQualityControlRequest
 {
     public int $currentUserId;
     public int $visitId;
+    public string $studyName;
     public string $stateQc;
     public bool $imageQc;
     public bool $formQc;

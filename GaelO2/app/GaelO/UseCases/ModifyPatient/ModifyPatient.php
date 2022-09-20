@@ -43,6 +43,9 @@ class ModifyPatient
             $patientEntity = $this->patientRepositoryInterface->find($patientId);
             $studyName = $patientEntity['study_name'];
 
+            if($modifyPatientRequest->studyName !== $studyName){
+                throw new GaelOForbiddenException('Should be called from the original study');
+            }
             $this->checkAuthorization($currentUserId, $patientId, $studyName);
 
             $updatableData = [

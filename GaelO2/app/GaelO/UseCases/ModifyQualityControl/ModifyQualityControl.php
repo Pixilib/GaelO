@@ -49,6 +49,10 @@ class ModifyQualityControl
             $creatorId = $visitContext['creator_user_id'];
             $localFormNeeded = $visitContext['state_investigator_form'] !== Constants::INVESTIGATOR_FORM_NOT_NEEDED;
 
+            if($modifyQualityControlRequest->studyName !== $studyName){
+                throw new GaelOForbiddenException("Should be called from original study");
+            }
+
             $this->checkAuthorization($currentUserId, $visitId, $studyName);
 
             if ($modifyQualityControlRequest->stateQc === Constants::QUALITY_CONTROL_ACCEPTED) {

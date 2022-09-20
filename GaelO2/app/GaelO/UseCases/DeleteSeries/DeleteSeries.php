@@ -60,6 +60,10 @@ class DeleteSeries
             $stateQc = $visitContext['state_quality_control'];
             $studyName = $visitContext['patient']['study_name'];
 
+            if ($deleteSeriesRequest->studyName !== $studyName) {
+                throw new GaelOForbiddenException();
+            }
+
             $this->checkAuthorization($currentUserId, $visitId, $role, $stateQc, $studyName);
 
             $this->dicomService->deleteSeries($seriesInstanceUID, $role);
@@ -80,7 +84,6 @@ class DeleteSeries
 
             $deleteSeriesResponse->status = 200;
             $deleteSeriesResponse->statusText =  'OK';
-
         } catch (AbstractGaelOException $e) {
             $deleteSeriesResponse->body = $e->getErrorBody();
             $deleteSeriesResponse->status = $e->statusCode;

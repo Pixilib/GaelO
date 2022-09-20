@@ -80,8 +80,10 @@ class ReviewController extends Controller
     public function deleteInvestigatorForm(Request $request, DeleteInvestigatorForm $deleteInvestigatorForm, DeleteInvestigatorFormRequest $deleteInvestigatorFormRequest, DeleteInvestigatorFormResponse $deleteInvestigatorFormResponse, int $visitId)
     {
         $currentUser = Auth::user();
+        $queryParam = $request->query();
 
         $deleteInvestigatorFormRequest->currentUserId = $currentUser['id'];
+        $deleteInvestigatorFormRequest->studyName = $queryParam['studyName'];
         $deleteInvestigatorFormRequest->visitId = $visitId;
 
         $requestData = $request->all();
@@ -95,8 +97,10 @@ class ReviewController extends Controller
     public function unlockInvestigatorForm(Request $request, UnlockInvestigatorForm $unlockInvestigatorForm, UnlockInvestigatorFormRequest $unlockInvestigatorFormRequest, UnlockInvestigatorFormResponse $unlockInvestigatorFormResponse, int $visitId)
     {
         $currentUser = Auth::user();
+        $queryParam = $request->query();
 
         $unlockInvestigatorFormRequest->currentUserId = $currentUser['id'];
+        $unlockInvestigatorFormRequest->studyName = $queryParam['studyName'];
         $unlockInvestigatorFormRequest->visitId = $visitId;
 
         $requestData = $request->all();

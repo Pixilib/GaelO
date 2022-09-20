@@ -28,16 +28,17 @@ class CorrectiveActionTest extends TestCase
         $this->artisan('db:seed');
     }
 
-    protected function setUp() : void{
+    protected function setUp(): void
+    {
         parent::setUp();
 
         $visitType = VisitType::factory()->localFormNeeded()->create();
 
         $this->visit = Visit::factory()
-        ->visitTypeId($visitType->id)
-        ->uploadDone()
-        ->stateQualityControl(Constants::QUALITY_CONTROL_CORRECTIVE_ACTION_ASKED)
-        ->stateInvestigatorForm(Constants::INVESTIGATOR_FORM_DONE)->create();
+            ->visitTypeId($visitType->id)
+            ->uploadDone()
+            ->stateQualityControl(Constants::QUALITY_CONTROL_CORRECTIVE_ACTION_ASKED)
+            ->stateInvestigatorForm(Constants::INVESTIGATOR_FORM_DONE)->create();
 
         $this->studyName = $this->visit->patient->study_name;
         $centerCode = $this->visit->patient->center_code;
@@ -55,24 +56,38 @@ class CorrectiveActionTest extends TestCase
 
         $payload = [
             'newSeriesUploaded' => true,
-            'newInvestigatorForm'=>true,
-            'correctiveActionDone'=>true,
+            'newInvestigatorForm' => true,
+            'correctiveActionDone' => true,
             'comment' => "lala"
         ];
-        $response = $this->patch('/api/visits/'.$this->visit->id.'/corrective-action', $payload);
+        $response = $this->patch('/api/visits/' . $this->visit->id . '/corrective-action?studyName=' . $this->studyName, $payload);
         $response->assertStatus(200);
+    }
+
+    public function testCorrectiveActionShouldFailWrongStudy()
+    {
+        AuthorizationTools::addRoleToUser($this->currentUserId, Constants::ROLE_INVESTIGATOR, $this->studyName);
+
+        $payload = [
+            'newSeriesUploaded' => true,
+            'newInvestigatorForm' => true,
+            'correctiveActionDone' => true,
+            'comment' => "lala"
+        ];
+        $response = $this->patch('/api/visits/' . $this->visit->id . '/corrective-action?studyName=' . $this->studyName.'wrong', $payload);
+        $response->assertStatus(403);
     }
 
     public function testCorrectiveActionShouldFailNoRole()
     {
         $payload = [
             'newSeriesUploaded' => true,
-            'newInvestigatorForm'=>true,
-            'correctiveActionDone'=>true,
+            'newInvestigatorForm' => true,
+            'correctiveActionDone' => true,
             'comment' => "lala"
         ];
 
-        $response = $this->patch('/api/visits/'.$this->visit->id.'/corrective-action', $payload);
+        $response = $this->patch('/api/visits/' . $this->visit->id . '/corrective-action?studyName=' . $this->studyName, $payload);
         $response->assertStatus(403);
     }
 
@@ -83,12 +98,12 @@ class CorrectiveActionTest extends TestCase
         $this->visit->save();
         $payload = [
             'newSeriesUploaded' => true,
-            'newInvestigatorForm'=>true,
-            'correctiveActionDone'=>true,
+            'newInvestigatorForm' => true,
+            'correctiveActionDone' => true,
             'comment' => "lala"
         ];
 
-        $response = $this->patch('/api/visits/'.$this->visit->id.'/corrective-action', $payload);
+        $response = $this->patch('/api/visits/' . $this->visit->id . '/corrective-action?studyName=' . $this->studyName, $payload);
         $response->assertStatus(403);
     }
 
@@ -100,11 +115,11 @@ class CorrectiveActionTest extends TestCase
         $payload = [
             'newSeriesUploaded' => true,
             'newInvestigatorForm' => true,
-            'correctiveActionDone'=>true,
+            'correctiveActionDone' => true,
             'comment' => "lala"
         ];
 
-        $response = $this->patch('/api/visits/'.$this->visit->id.'/corrective-action', $payload);
+        $response = $this->patch('/api/visits/' . $this->visit->id . '/corrective-action?studyName=' . $this->studyName, $payload);
         $response->assertStatus(403);
     }
 }

@@ -47,7 +47,10 @@ class DeleteVisit
             $role = $deleteVisitRequest->role;
             $reason = $deleteVisitRequest->reason;
 
-
+            if($deleteVisitRequest->studyName !== $studyName){
+                throw new GaelOForbiddenException('Should be called from original study');
+            }
+            
             $this->checkAuthorization(
                 $currentUserId,
                 $role,

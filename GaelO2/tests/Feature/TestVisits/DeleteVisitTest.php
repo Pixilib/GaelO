@@ -26,47 +26,65 @@ class DeleteVisitTest extends TestCase
         $this->artisan('db:seed');
     }
 
-    protected function setUp() : void {
+    protected function setUp(): void
+    {
         parent::setUp();
-
         $this->visit = Visit::factory()->create();
+        $this->studyName = $this->visit->patient->study->name;
     }
 
 
-    public function testDeleteVisit(){
+    public function testDeleteVisit()
+    {
 
         $currentUserId = AuthorizationTools::actAsAdmin(false);
-        AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $this->visit->patient->study->name);
+        AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $this->studyName);
 
         $payload = [
-            'reason'=> 'false visit'
+            'reason' => 'false visit'
         ];
 
-        $resp = $this->json('DELETE', 'api/visits/'.$this->visit->id.'?role=Supervisor', $payload);
+        $resp = $this->json('DELETE', 'api/visits/' . $this->visit->id . '?role=Supervisor&studyName=' . $this->studyName, $payload);
         $resp->assertStatus(200);
     }
 
-    public function testDeleteVisitShouldFailNoReason(){
-        $currentUserId = AuthorizationTools::actAsAdmin(false);
-        AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $this->visit->patient->study->name);
+    public function testDeleteVisitShouldFailWrongStudy()
+    {
 
-        $resp = $this->json('DELETE', 'api/visits/'.$this->visit->id.'?role=Supervisor');
+        $currentUserId = AuthorizationTools::actAsAdmin(false);
+        AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $this->studyName);
+
+        $payload = [
+            'reason' => 'false visit'
+        ];
+
+        $resp = $this->json('DELETE', 'api/visits/' . $this->visit->id . '?role=Supervisor&studyName=' . $this->studyName . 'wrong', $payload);
+        $resp->assertStatus(403);
+    }
+
+    public function testDeleteVisitShouldFailNoReason()
+    {
+        $currentUserId = AuthorizationTools::actAsAdmin(false);
+        AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $this->studyName);
+
+        $resp = $this->json('DELETE', 'api/visits/' . $this->visit->id . '?role=Supervisor&studyName=' . $this->studyName);
         $resp->assertStatus(400);
     }
 
-    public function testDeleteVisitShouldFailNoRole(){
+    public function testDeleteVisitShouldFailNoRole()
+    {
         AuthorizationTools::actAsAdmin(false);
 
         $payload = [
-            'reason'=> 'false visit'
+            'reason' => 'false visit'
         ];
 
-        $resp = $this->json('DELETE', 'api/visits/'.$this->visit->id.'?role=Supervisor', $payload);
+        $resp = $this->json('DELETE', 'api/visits/' . $this->visit->id . '?role=Supervisor&studyName=' . $this->studyName, $payload);
         $resp->assertStatus(403);
-
     }
 
-    public function testDeleteVistByInvestigatorFailQcDone(){
+    public function testDeleteVistByInvestigatorFailQcDone()
+    {
 
         $visit = Visit::factory()->stateQualityControl(Constants::QUALITY_CONTROL_ACCEPTED)->create();
 
@@ -74,10 +92,10 @@ class DeleteVisitTest extends TestCase
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_INVESTIGATOR, $visit->patient->study->name);
 
         $payload = [
-            'reason'=> 'false visit'
+            'reason' => 'false visit'
         ];
 
-        $resp = $this->json('DELETE', 'api/visits/'.$visit->id.'?role=Investigator', $payload);
+        $resp = $this->json('DELETE', 'api/visits/' . $visit->id . '?role=Investigator&studyName=' . $this->studyName, $payload);
         $resp->assertStatus(403);
     }
 }

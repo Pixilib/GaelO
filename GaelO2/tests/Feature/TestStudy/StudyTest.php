@@ -240,7 +240,7 @@ class StudyTest extends TestCase
         $studyName = $study->name;
         $study->delete();
         $payload = ['reason' => 'need new analysis'];
-        $this->json('PATCH', '/api/studies/'.$studyName.'/reactivate', $payload)->assertNoContent(200);
+        $this->json('POST', '/api/studies/'.$studyName.'/activate', $payload)->assertNoContent(200);
 
     }
 
@@ -250,7 +250,7 @@ class StudyTest extends TestCase
         $studyName = $study->name;
         $study->delete();
         $payload = [];
-        $this->json('PATCH', '/api/studies/'.$studyName.'/reactivate', $payload)->assertStatus(400);
+        $this->json('POST', '/api/studies/'.$studyName.'/activate', $payload)->assertStatus(400);
 
     }
 
@@ -259,7 +259,7 @@ class StudyTest extends TestCase
         $study = Study::factory()->create();
         $study->delete();
         $payload = ['reason'=> 'need new analysis'];
-        $this->json('PATCH', '/api/studies/'.$study->name.'/reactivate', $payload)->assertStatus(403);
+        $this->json('POST', '/api/studies/'.$study->name.'/activate', $payload)->assertStatus(403);
     }
 
     public function testIsKnownOrthancStudyIDForbiddenNotInvestigator(){
