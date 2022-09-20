@@ -107,6 +107,7 @@ class ValidateDicomUpload
             }
             $importedOrthancStudyID = $orthancStudyImport->getStudyOrthancId();
 
+
             //Anonymize and store new anonymized study Orthanc ID
             $anonymizedOrthancStudyID = $this->orthancService->anonymize(
                 $importedOrthancStudyID,

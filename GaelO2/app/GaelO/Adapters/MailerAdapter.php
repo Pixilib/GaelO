@@ -27,6 +27,7 @@ use App\GaelO\Constants\SettingsConstants;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Interfaces\Adapters\FrameworkInterface;
 use App\GaelO\Interfaces\Adapters\MailerInterface;
+use App\Mail\AutoQC;
 use App\Mail\ImportPatient;
 use App\Mail\MagicLink;
 use App\Mail\UserCreated;
@@ -140,10 +141,12 @@ class MailerAdapter implements MailerInterface {
             case MailConstants::EMAIL_UNLOCK_QC_REQUEST:
                 $model = new UnlockQcRequest($this->parameters);
                 break;
+            case MailConstants::EMAIL_AUTO_QC:
+                $model = new AutoQC($this->parameters);
+                break;
             default:
                 throw new GaelOException("Unkown Mail Type");
                 break;
-
         }
 
         return $model;
