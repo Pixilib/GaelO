@@ -148,9 +148,14 @@ class JobAutoQc implements ShouldQueue
             } else if ($seriesData['infos']['Modality'] == 'PT') {
                 $seriesData['infos']['Patient weight'] = $seriesSharedTags->getPatientWeight();
                 $seriesData['infos']['Patient height'] = $seriesSharedTags->getPatientHeight();
-
+                //Add radiopharmaceutical data (need first instance metadata to access it)
                 $instanceTags = $orthancService->getInstanceTags($seriesDetails['Instances'][0]);
-                $seriesData['infos'][] = [$seriesData['infos'], ...$this->getRadioPharmaceutical($instanceTags->getMetaDataFromCode('0018,1072'))];
+                $seriesData['infos']['Injected Dose'] = $instanceTags->getInjectedDose();
+                $seriesData['infos']['Injected Time'] = $instanceTags->getInjectedTime();
+                $seriesData['infos']['Injected DateTime'] = $instanceTags->getInjectedDateTime();
+                $seriesData['infos']['Injected Activity'] = $instanceTags->getInjectedActivity();
+                $seriesData['infos']['Radiopharmaceutical'] = $instanceTags->getRadiopharmaceutical();
+                $seriesData['infos']['Half Life'] = $instanceTags->getHalfLife();
             }
             $seriesInfo[] = $seriesData;
         }
