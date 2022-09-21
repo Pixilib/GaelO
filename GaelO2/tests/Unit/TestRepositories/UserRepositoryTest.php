@@ -334,6 +334,7 @@ class UserRepositoryTest extends TestCase
         $role = Role::factory()->roleName(Constants::ROLE_INVESTIGATOR)->create();
         $entity = $this->userRepository->getUserRoleInStudy($role->user_id, $role->study_name, $role->name );
         $this->assertArrayHasKey('validated_documentation_version', $entity);
+        $this->assertArrayHasKey('study', $entity);
     }
 
     public function testUpdateValidatedDocumentationVersion(){

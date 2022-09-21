@@ -28,6 +28,7 @@ class UserRoleTest extends TestCase
         $answer = $this->json('GET', 'api/users/'.$this->role->user_id.'/studies/'.$this->role->study_name.'/roles/'.$this->role->name);
         $response = json_decode($answer->content(), true);
         $this->assertArrayHasKey('validatedDocumentationVersion', $response);
+        $this->assertArrayHasKey('study', $response);
         $this->assertEquals('2.0.0', $response['validatedDocumentationVersion']);
 
     }
