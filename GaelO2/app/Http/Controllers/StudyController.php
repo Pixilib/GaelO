@@ -332,7 +332,10 @@ class StudyController extends Controller
     {
         $currentUser = Auth::user();
         $requestData = $request->all();
+        $queryParam = $request->query();
+
         $sendMailRequest->currentUserId = $currentUser['id'];
+        $sendMailRequest->studyName = key_exists('studyName', $queryParam) ?  $queryParam['studyName'] : null;
         $sendMailRequest = Util::fillObject($requestData, $sendMailRequest);
         $sendMail->execute($sendMailRequest, $sendMailResponse);
         return $this->getJsonResponse($sendMailResponse->body, $sendMailResponse->status, $sendMailResponse->statusText);

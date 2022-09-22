@@ -134,7 +134,7 @@ class SendMailTest extends TestCase
             'content' => '<p>Something</p>',
         ];
 
-        $this->json('POST', '/api/send-mail?role=' . Constants::ROLE_INVESTIGATOR . '&study=' . $this->study->name, $payload)
+        $this->json('POST', '/api/send-mail?role=' . Constants::ROLE_INVESTIGATOR . '&studyName=' . $this->study->name, $payload)
             ->assertNoContent(200);
     }
 
@@ -149,7 +149,7 @@ class SendMailTest extends TestCase
             'content' => '<p>Something</p>',
         ];
 
-        $this->json('POST', '/api/send-mail?role=' . Constants::ROLE_SUPERVISOR . '&study=' . $this->study->name, $payload)
+        $this->json('POST', '/api/send-mail?role=' . Constants::ROLE_SUPERVISOR . '&studyName=' . $this->study->name, $payload)
             ->assertNoContent(200);
     }
 
@@ -164,7 +164,7 @@ class SendMailTest extends TestCase
             'content' => '<p>Something</p>',
         ];
 
-        $this->json('POST', '/api/send-mail?role=' . Constants::ROLE_INVESTIGATOR . '&study=' . $this->study->name, $payload)
+        $this->json('POST', '/api/send-mail?role=' . Constants::ROLE_INVESTIGATOR . '&studyName=' . $this->study->name, $payload)
             ->assertStatus(403);
     }
 
@@ -193,7 +193,7 @@ class SendMailTest extends TestCase
             'toAdministrators' => true
         ];
 
-        $this->json('POST', '/api/send-mail?role=' . Constants::ROLE_SUPERVISOR . '&study=' . $this->study->name, $payload)
+        $this->json('POST', '/api/send-mail?role=' . Constants::ROLE_SUPERVISOR . '&studyName=' . $this->study->name, $payload)
             ->assertNoContent(200);
     }
 
