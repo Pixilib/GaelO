@@ -17,12 +17,4 @@
             </a>
         </em>
     @endif
-    @if(!empty($patients) && !empty($study))
-        <em>
-            <a href="{{$webAddress}}/study/{{$study}}/role/Supervisor/patients">
-                Connect to the platform
-            </a>
-            if you want to add these patients to {{$study}} study
-        </em>
-    @endif
 @endsection

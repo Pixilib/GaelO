@@ -7,7 +7,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
-class MailUser extends Mailable implements ShouldQueue
+class RequestPatientCreation extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
 
@@ -31,13 +31,16 @@ class MailUser extends Mailable implements ShouldQueue
     public function build()
     {
         //If mail is from admin, there is no study context
-        $subject = $this->parameters['study'] ?
-            $this->parameters['study'] . " - " . $this->parameters['subject'] :
-            $this->parameters['subject'];
+        $subject = $this->parameters['study'] . " - Patient Creation Request";
 
-        $mail = $this->view('mails.mail_user')
+        $mail = $this->view('mails.mail_request_patient_creation')
             ->subject($subject)
             ->with($this->parameters);
+
+        //Attach JSON of Patient request creation
+        $mail->attachData(json_encode($this->parameters['patients'], JSON_PRETTY_PRINT), 'patients.json', [
+            'mime' => 'application/json',
+        ]);
 
         return $mail;
     }

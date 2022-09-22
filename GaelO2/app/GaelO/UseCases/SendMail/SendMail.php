@@ -70,15 +70,13 @@ class SendMail
                     break;
                 default:
                     if (isset($sendMailRequest->userIds)) throw new GaelOForbiddenException();
-                    if (isset($sendMailRequest->patients) && count(json_decode($sendMailRequest->patients, true)) === 0) throw new GaelOBadRequestException('Request missing patient list');
                     $this->mailService->sendMailToSupervisors(
                         $sendMailRequest->currentUserId,
                         $sendMailRequest->study,
                         $sendMailRequest->subject,
                         $sendMailRequest->content,
                         $sendMailRequest->patientId,
-                        $sendMailRequest->visitId,
-                        $sendMailRequest->patients,
+                        $sendMailRequest->visitId
                     );
             }
 
@@ -87,8 +85,7 @@ class SendMail
                 'content' => $sendMailRequest->content,
                 'to_user_ids' => $sendMailRequest->userIds,
                 'to_administrators' => $sendMailRequest->toAdministrators,
-                'patientId' => $sendMailRequest->patientId,
-                'patients' => $sendMailRequest->patients
+                'patientId' => $sendMailRequest->patientId
             ];
 
             $this->trackerRepositoryInterface->writeAction(
@@ -107,8 +104,6 @@ class SendMail
             $sendMailResponse->status = $e->statusCode;
             $sendMailResponse->statusText = $e->statusText;
         }
-
-        return $sendMailResponse;
     }
 
     private function checkEmpty($inputData, $name)

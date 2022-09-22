@@ -205,7 +205,7 @@ class SendMailTest extends TestCase
         $payload = [
             'subject' => 'Request Patients Creation',
             'content' => '<p>Some very insightful message</p>',
-            'patients' => json_encode([
+            'patients' => [
                 'id' => 1,
                 'code' => 123,
                 'firstname' => 'A',
@@ -218,10 +218,10 @@ class SendMailTest extends TestCase
                 'investigatorName' => 'someone',
                 'centerCode' => 0,
                 'inclusionStatus' => 'Included'
-            ])
+            ]
         ];
 
-        $this->json('POST', '/api/send-mail?role=' . Constants::ROLE_INVESTIGATOR . '&study=' . $this->study->name, $payload)
+        $this->json('POST', '/api/studies/'.$this->study->name.'/ask-patient-creation?role=' . Constants::ROLE_INVESTIGATOR , $payload)
             ->assertNoContent(200);
     }
 
@@ -233,10 +233,10 @@ class SendMailTest extends TestCase
         $payload = [
             'subject' => 'Request Patients Creation',
             'content' => '<p>Some very insightful message</p>',
-            'patients' => json_encode([])
+            'patients' => []
         ];
 
-        $this->json('POST', '/api/send-mail?role=' . Constants::ROLE_INVESTIGATOR . '&study=' . $this->study->name, $payload)
+        $this->json('POST', '/api/studies/'.$this->study->name.'/ask-patient-creation?role=' . Constants::ROLE_INVESTIGATOR, $payload)
             ->assertStatus(400);
     }
 }
