@@ -11,6 +11,7 @@ class StudyEntity
     public string $contactEmail;
     public bool $controllerShowAll;
     public bool $monitorShowAll;
+    public bool $documentationMandatory;
     public bool $deleted;
     public ?string $ancillaryOf;
 
@@ -27,6 +28,7 @@ class StudyEntity
         $studyEntity->controllerShowAll = $array['controller_show_all'];
         $studyEntity->monitorShowAll = $array['monitor_show_all'];
         $studyEntity->ancillaryOf = $array['ancillary_of'];
+        $studyEntity->documentationMandatory = $array['documentation_mandatory'];
         $studyEntity->deleted = $array['deleted_at'] !== null;
 
         return $studyEntity;

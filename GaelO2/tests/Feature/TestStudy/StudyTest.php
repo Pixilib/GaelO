@@ -4,28 +4,20 @@ namespace Tests\Feature\TestStudy;
 
 use App\GaelO\Constants\Constants;
 use App\Models\DicomStudy;
-use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\TestCase;
 use App\Models\Study;
 use App\Models\Visit;
 use App\Models\VisitType;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\AuthorizationTools;
 
 class StudyTest extends TestCase
 {
 
-    use DatabaseMigrations {
-        runDatabaseMigrations as baseRunDatabaseMigrations;
-    }
+    use RefreshDatabase;
 
-    /**
-     * Define hooks to migrate the database before and after each test.
-     *
-     * @return void
-     */
-    public function runDatabaseMigrations()
-    {
-        $this->baseRunDatabaseMigrations();
+    protected function setUp() : void{
+        parent::setUp();
         $this->artisan('db:seed');
     }
 

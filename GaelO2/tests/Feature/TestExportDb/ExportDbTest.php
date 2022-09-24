@@ -2,22 +2,17 @@
 
 namespace Tests\Feature\TestExportDb;
 
-use Illuminate\Support\Facades\Artisan;
 use Tests\TestCase;
-use Illuminate\Foundation\Testing\DatabaseMigrations;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\AuthorizationTools;
 
 class ExportDbTest extends TestCase
 {
-    use DatabaseMigrations {
-        runDatabaseMigrations as baseRunDatabaseMigrations;
-    }
+    use RefreshDatabase;
 
-    public function runDatabaseMigrations()
-    {
-        $this->baseRunDatabaseMigrations();
+    protected function setUp() : void {
+        parent::setUp();
         $this->artisan('db:seed');
-
     }
 
     public function testExportDb()

@@ -4,7 +4,6 @@ namespace Tests\Unit\TestRepositories;
 
 use App\GaelO\Repositories\CountryRepository;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\TestCase;
 
 use App\Models\Country;
@@ -13,22 +12,12 @@ class CountryRepositoryTest extends TestCase
 {
     private CountryRepository $countryRepository;
 
-    use DatabaseMigrations {
-        runDatabaseMigrations as baseRunDatabaseMigrations;
-    }
-
     use RefreshDatabase;
-
-    public function runDatabaseMigrations()
-    {
-        $this->baseRunDatabaseMigrations();
-        $this->artisan('db:seed');
-    }
-
 
     protected function setUp(): void
     {
         parent::setUp();
+        $this->artisan('db:seed');
         $this->countryRepository = new CountryRepository(new Country());
     }
 

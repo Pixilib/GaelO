@@ -2,32 +2,24 @@
 
 namespace Tests\Feature\TestVisitGroup;
 
-use App\GaelO\Entities\VisitGroupEntity;
 use App\Models\Patient;
-use Illuminate\Foundation\Testing\DatabaseMigrations;
 
 use Tests\TestCase;
 use App\Models\Study;
 use App\Models\Visit;
 use App\Models\VisitGroup;
 use App\Models\VisitType;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\AuthorizationTools;
 
 class VisitGroupTest extends TestCase
 {
 
-    use DatabaseMigrations {
-        runDatabaseMigrations as baseRunDatabaseMigrations;
-    }
+    use RefreshDatabase;
 
-    /**
-     * Define hooks to migrate the database before and after each test.
-     *
-     * @return void
-     */
-    public function runDatabaseMigrations()
+    public function setUp(): void
     {
-        $this->baseRunDatabaseMigrations();
+        parent::setUp();
         $this->artisan('db:seed');
     }
 

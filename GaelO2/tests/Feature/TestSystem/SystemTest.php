@@ -3,24 +3,16 @@
 namespace Tests\Feature\TestSystem;
 
 use Tests\TestCase;
-use Illuminate\Foundation\Testing\DatabaseMigrations;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\AuthorizationTools;
 
 class SystemTest extends TestCase
 {
 
-    use DatabaseMigrations {
-        runDatabaseMigrations as baseRunDatabaseMigrations;
-    }
+    use RefreshDatabase;
 
-     /**
-     * Define hooks to migrate the database before and after each test.
-     *
-     * @return void
-     */
-    public function runDatabaseMigrations()
-    {
-        $this->baseRunDatabaseMigrations();
+    protected function setUp() : void{
+        parent::setUp();
         $this->artisan('db:seed');
     }
 

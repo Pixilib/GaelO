@@ -5,27 +5,18 @@ namespace Tests\Feature\TestPatients;
 use App\GaelO\Constants\Constants;
 use App\Models\Patient;
 use App\Models\Study;
-use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\TestCase;
-use DateTime;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\AuthorizationTools;
 
 class PatientTest extends TestCase
 {
-    use DatabaseMigrations {
-        runDatabaseMigrations as baseRunDatabaseMigrations;
-    }
-
-    public function runDatabaseMigrations()
-    {
-        $this->baseRunDatabaseMigrations();
-        $this->artisan('db:seed');
-    }
+    use RefreshDatabase;
 
     protected function setUp(): void
     {
         parent::setUp();
-
+        $this->artisan('db:seed');
         //Fill patient table
         $this->study = Study::factory()->create();
         $this->patient = Patient::factory()->studyName($this->study->name)->create();

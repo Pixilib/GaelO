@@ -4,7 +4,6 @@ namespace Tests\Unit\TestRepositories;
 
 use App\GaelO\Repositories\CenterRepository;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\TestCase;
 
 use App\Models\Center;
@@ -13,22 +12,12 @@ class CenterRepositoryTest extends TestCase
 {
     private CenterRepository $centerRepository;
 
-    use DatabaseMigrations {
-        runDatabaseMigrations as baseRunDatabaseMigrations;
-    }
-
     use RefreshDatabase;
-
-    public function runDatabaseMigrations()
-    {
-        $this->baseRunDatabaseMigrations();
-        $this->artisan('db:seed');
-    }
-
 
     protected function setUp(): void
     {
         parent::setUp();
+        $this->artisan('db:seed');
         $this->centerRepository = new CenterRepository(new Center());
 
         //Create 2 random Centers

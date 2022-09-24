@@ -15,30 +15,21 @@ use App\Models\Visit;
 use App\Models\VisitType;
 use App\Models\Tracker;
 use App\Models\VisitGroup;
-use Illuminate\Foundation\Testing\DatabaseMigrations;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\App;
 use Tests\TestCase;
 
 
 class ExportStudyServiceTest extends TestCase
 {
-    use DatabaseMigrations {
-        runDatabaseMigrations as baseRunDatabaseMigrations;
-    }
-
-    public function runDatabaseMigrations()
-    {
-        $this->baseRunDatabaseMigrations();
-        $this->artisan('db:seed');
-
-    }
+    use RefreshDatabase;
 
     private ExportStudyService $exportStudyService;
 
     protected function setUp(): void
     {
         parent::setUp();
-
+        $this->artisan('db:seed');
         $this->exportStudyService = App::make(ExportStudyService::class);
     }
 

@@ -2,27 +2,19 @@
 
 namespace Tests\Feature\TestUser;
 
-use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\TestCase;
 use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\AuthorizationTools;
 
 class DeleteUserTest extends TestCase
 {
 
-    use DatabaseMigrations {
-        runDatabaseMigrations as baseRunDatabaseMigrations;
-    }
-
-    public function runDatabaseMigrations()
-    {
-        $this->baseRunDatabaseMigrations();
-        $this->artisan('db:seed');
-
-    }
+    use RefreshDatabase;
 
     protected function setUp() : void{
         parent::setUp();
+        $this->artisan('db:seed');
         User::factory()->count(5)->create();
     }
 

@@ -3,33 +3,21 @@
 namespace Tests\Feature\TestDicoms;
 
 use App\GaelO\Constants\Constants;
-use Illuminate\Foundation\Testing\DatabaseMigrations;
 use App\Models\ReviewStatus;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 use Tests\AuthorizationTools;
 
 class ValidateDicomTest extends TestCase
 {
 
-    use DatabaseMigrations {
-        runDatabaseMigrations as baseRunDatabaseMigrations;
-    }
-
-    /**
-     * Define hooks to migrate the database before and after each test.
-     *
-     * @return void
-     */
-    public function runDatabaseMigrations()
-    {
-        $this->baseRunDatabaseMigrations();
-        $this->artisan('db:seed');
-    }
+    use RefreshDatabase;
 
     protected function setUp() : void{
 
         $this->markTestSkipped('Ces tests son a revoir et necessitent le reste de la stack technique');
         parent::setUp();
+        $this->artisan('db:seed');
         $this->reviewStatus = ReviewStatus::factory()->create();
 
         $this->studyName = $this->reviewStatus->visit->patient->study->name;

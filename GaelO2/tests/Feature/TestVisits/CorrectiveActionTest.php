@@ -3,35 +3,22 @@
 namespace Tests\Feature\TestVisits;
 
 use App\GaelO\Constants\Constants;
-use Illuminate\Foundation\Testing\DatabaseMigrations;
 use App\Models\User;
 use App\Models\Visit;
 use App\Models\VisitType;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\AuthorizationTools;
 use Tests\TestCase;
 
 class CorrectiveActionTest extends TestCase
 {
 
-    use DatabaseMigrations {
-        runDatabaseMigrations as baseRunDatabaseMigrations;
-    }
-
-    /**
-     * Define hooks to migrate the database before and after each test.
-     *
-     * @return void
-     */
-    public function runDatabaseMigrations()
-    {
-        $this->baseRunDatabaseMigrations();
-        $this->artisan('db:seed');
-    }
+    use RefreshDatabase;
 
     protected function setUp(): void
     {
         parent::setUp();
-
+        $this->artisan('db:seed');
         $visitType = VisitType::factory()->localFormNeeded()->create();
 
         $this->visit = Visit::factory()

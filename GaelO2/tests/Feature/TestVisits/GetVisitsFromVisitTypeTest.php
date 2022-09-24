@@ -3,39 +3,23 @@
 namespace Tests\Feature\TestVisits;
 
 use App\GaelO\Constants\Constants;
-use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\TestCase;
-use App\Models\User;
 use App\Models\Visit;
-use App\Models\Patient;
-use App\Models\Review;
 use App\Models\ReviewStatus;
 use App\Models\Study;
 use App\Models\VisitGroup;
 use App\Models\VisitType;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\AuthorizationTools;
 
 class GetVisitsFromVisitTypeTest extends TestCase
 {
 
-    use DatabaseMigrations {
-        runDatabaseMigrations as baseRunDatabaseMigrations;
-    }
-
-    /**
-     * Define hooks to migrate the database before and after each test.
-     *
-     * @return void
-     */
-    public function runDatabaseMigrations()
-    {
-        $this->baseRunDatabaseMigrations();
-        $this->artisan('db:seed');
-    }
-
+    use RefreshDatabase; 
+    
     protected function setUp() : void {
         parent::setUp();
-
+        $this->artisan('db:seed');
         $study = Study::factory()->create();
         $visitGroup = VisitGroup::factory()->studyName($study->name)->create();
         $visitType = VisitType::factory()->visitGroupId($visitGroup->id)->count(2)->create();

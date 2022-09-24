@@ -4,12 +4,9 @@ namespace Tests\Unit\TestRepositories;
 
 use App\GaelO\Constants\Constants;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\TestCase;
 
 use App\GaelO\Repositories\VisitTypeRepository;
-use App\Models\Study;
-use App\Models\Visit;
 use App\Models\VisitGroup;
 use App\Models\VisitType;
 
@@ -17,22 +14,12 @@ class VisitTypeRepositoryTest extends TestCase
 {
     private VisitTypeRepository $visitTypeRepository;
 
-    use DatabaseMigrations {
-        runDatabaseMigrations as baseRunDatabaseMigrations;
-    }
-
     use RefreshDatabase;
-
-    public function runDatabaseMigrations()
-    {
-        $this->baseRunDatabaseMigrations();
-        $this->artisan('db:seed');
-    }
-
 
     protected function setUp(): void
     {
         parent::setUp();
+        $this->artisan('db:seed');
         $this->visitTypeRepository = new VisitTypeRepository(new VisitType());
     }
 

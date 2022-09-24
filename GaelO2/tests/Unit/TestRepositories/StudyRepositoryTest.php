@@ -7,7 +7,6 @@ use App\Models\DicomSeries;
 use App\Models\DicomStudy;
 use App\Models\Patient;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\TestCase;
 
 use App\Models\Study;
@@ -18,22 +17,12 @@ class StudyRepositoryTest extends TestCase
 {
     private StudyRepository $studyRepository;
 
-    use DatabaseMigrations {
-        runDatabaseMigrations as baseRunDatabaseMigrations;
-    }
-
     use RefreshDatabase;
-
-    public function runDatabaseMigrations()
-    {
-        $this->baseRunDatabaseMigrations();
-        $this->artisan('db:seed');
-    }
-
 
     protected function setUp(): void
     {
         parent::setUp();
+        $this->artisan('db:seed');
         $this->studyRepository = new StudyRepository(new Study());
     }
 

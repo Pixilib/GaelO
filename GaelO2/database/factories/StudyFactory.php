@@ -16,6 +16,7 @@ class StudyFactory extends Factory
             'contact_email' => $this->faker->email(),
             'controller_show_all' => false,
             'monitor_show_all' => false,
+            'documentation_mandatory' => false,
             'ancillary_of' => null
         ];
     }
@@ -72,5 +73,16 @@ class StudyFactory extends Factory
                 'ancillary_of' => $studyName,
             ];
         });
+    }
+
+    public function documentationMandatory() 
+    {
+        return $this->state(function (array $attributes) {
+            return [
+                'documentation_mandatory' => true,
+            ];
+        });
+
+        
     }
 }

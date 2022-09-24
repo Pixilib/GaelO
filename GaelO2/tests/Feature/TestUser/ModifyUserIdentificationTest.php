@@ -3,23 +3,20 @@
 namespace Tests\Feature\TestUser;
 
 use App\Models\User;
-use Illuminate\Foundation\Testing\DatabaseMigrations;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\AuthorizationTools;
 use Tests\TestCase;
 
 class ModifyUserIdentificationTest extends TestCase
 {
 
-    use DatabaseMigrations {
-        runDatabaseMigrations as baseRunDatabaseMigrations;
-    }
+    use RefreshDatabase;
 
-    public function runDatabaseMigrations()
+    protected function setUp(): void
     {
-        $this->baseRunDatabaseMigrations();
+        parent::setUp();
         $this->artisan('db:seed');
     }
-
 
     public function testValidModifyUserIdentification()
     {

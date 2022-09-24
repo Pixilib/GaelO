@@ -3,25 +3,18 @@
 namespace Tests\Feature\TestRequest;
 
 use Tests\TestCase;
-use Illuminate\Foundation\Testing\DatabaseMigrations;
-use Tests\AuthorizationTools;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class RequestTest extends TestCase
 {
-    use DatabaseMigrations {
-        runDatabaseMigrations as baseRunDatabaseMigrations;
-    }
+    use RefreshDatabase;
 
-    /**
-     * Define hooks to migrate the database before and after each test.
-     *
-     * @return void
-     */
-    public function runDatabaseMigrations()
+    protected function setUp(): void
     {
-        $this->baseRunDatabaseMigrations();
+        parent::setUp();
         $this->artisan('db:seed');
     }
+
     /**
      * Test Send Request API
      *

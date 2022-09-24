@@ -1,6 +1,5 @@
 <?php
 
-use App\GaelO\Adapters\MimeAdapter;
 use App\GaelO\Constants\Constants;
 use App\GaelO\Services\TusService;
 use App\Models\Patient;
@@ -10,27 +9,20 @@ use App\Models\Study;
 use App\Models\Visit;
 use App\Models\VisitGroup;
 use App\Models\VisitType;
-use Illuminate\Foundation\Testing\DatabaseMigrations;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\AuthorizationTools;
 use Tests\TestCase;
 use Illuminate\Support\Facades\Storage;
 
 class CreateFileFromTusTest extends TestCase
 {
-    use DatabaseMigrations {
-        runDatabaseMigrations as baseRunDatabaseMigrations;
-    }
-
-    public function runDatabaseMigrations()
-    {
-        $this->baseRunDatabaseMigrations();
-        $this->artisan('db:seed');
-    }
+    use RefreshDatabase;
 
     protected function setUp(): void
     {
         $this->markTestSkipped('Need Orthanc Container Running');
         parent::setUp();
+        $this->artisan('db:seed');
         Storage::fake();
 
         $mockTusService = Mockery::mock(TusService::class)->makePartial();

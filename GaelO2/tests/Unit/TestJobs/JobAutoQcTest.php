@@ -3,38 +3,31 @@
 namespace Tests\Unit\TestJobs;
 
 use App\GaelO\Constants\Constants;
+use App\GaelO\Repositories\DicomSeriesRepository;
 use App\GaelO\Services\OrthancService;
 use App\GaelO\Services\StoreObjects\OrthancMetaData;
 use App\Jobs\JobAutoQc;
-use App\Jobs\JobGaelOProcessing;
 use App\Models\DicomSeries;
 use App\Models\DicomStudy;
 use App\Models\Review;
 use App\Models\Role;
 use App\Models\User;
 use App\Models\Visit;
-use Enum\JobAutoQc as EnumJobAutoQc;
-use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 use Mockery\MockInterface;
-use Mockery;
-
 class JobAutoQcTest extends TestCase
 {
-   
-
-    use DatabaseMigrations {
-        runDatabaseMigrations as baseRunDatabaseMigrations;
-    }
-
     use RefreshDatabase;
 
-    public function runDatabaseMigrations()
+    protected function setUp(): void
     {
-        $this->baseRunDatabaseMigrations();
+        parent::setUp();
         $this->artisan('db:seed');
+        $this->orthancSeriesRepository = new DicomSeriesRepository(new DicomSeries());
+        $this->orthancStudy = DicomStudy::factory()->create();
     }
+
 
     public function testSendAutoQc() {
         $visit = Visit::factory()->create();

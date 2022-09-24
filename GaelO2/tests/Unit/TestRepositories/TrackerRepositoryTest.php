@@ -7,7 +7,6 @@ use App\GaelO\Repositories\TrackerRepository;
 use App\Models\ReviewStatus;
 use App\Models\Study;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\TestCase;
 
 use App\Models\Tracker;
@@ -17,22 +16,12 @@ class TrackerRepositoryTest extends TestCase
 {
     private TrackerRepository $trackerRepository;
 
-    use DatabaseMigrations {
-        runDatabaseMigrations as baseRunDatabaseMigrations;
-    }
-
     use RefreshDatabase;
-
-    public function runDatabaseMigrations()
-    {
-        $this->baseRunDatabaseMigrations();
-        $this->artisan('db:seed');
-    }
-
 
     protected function setUp(): void
     {
         parent::setUp();
+        $this->artisan('db:seed');
         $this->trackerRepository = new TrackerRepository(new Tracker());
     }
 

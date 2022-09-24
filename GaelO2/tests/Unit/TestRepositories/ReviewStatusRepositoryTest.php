@@ -5,7 +5,6 @@ namespace Tests\Unit\TestRepositories;
 use App\GaelO\Constants\Constants;
 use App\GaelO\Repositories\ReviewStatusRepository;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\TestCase;
 
 use App\Models\ReviewStatus;
@@ -13,23 +12,13 @@ use App\Models\ReviewStatus;
 class ReviewStatusRepositoryTest extends TestCase
 {
     private ReviewStatusRepository $reviewStatus;
-
-    use DatabaseMigrations {
-        runDatabaseMigrations as baseRunDatabaseMigrations;
-    }
-
     use RefreshDatabase;
-
-    public function runDatabaseMigrations()
-    {
-        $this->baseRunDatabaseMigrations();
-        $this->artisan('db:seed');
-    }
 
 
     protected function setUp(): void
     {
         parent::setUp();
+        $this->artisan('db:seed');
         $this->reviewStatus = new ReviewStatusRepository(new ReviewStatus());
     }
 

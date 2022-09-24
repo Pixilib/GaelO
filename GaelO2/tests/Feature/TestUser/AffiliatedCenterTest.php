@@ -2,27 +2,21 @@
 
 namespace Tests\Feature\TestUser;
 
-use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\TestCase;
 use App\Models\User;
 use App\Models\Center;
 use App\Models\CenterUser;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\AuthorizationTools;
 
 class AffiliatedCenterTest extends TestCase
 {
 
-    use DatabaseMigrations {
-        runDatabaseMigrations as baseRunDatabaseMigrations;
-    }
-
-    public function runDatabaseMigrations() {
-        $this->baseRunDatabaseMigrations();
-        $this->artisan('db:seed');
-    }
+    use RefreshDatabase;
 
     protected function setUp() : void{
         parent::setUp();
+        $this->artisan('db:seed');
         Center::factory()->code(3)->create();
         Center::factory()->code(4)->create();
 

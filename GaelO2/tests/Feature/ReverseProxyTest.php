@@ -6,26 +6,17 @@ use App\GaelO\Constants\Constants;
 use App\Models\DicomSeries;
 use App\Models\DicomStudy;
 use Tests\TestCase;
-use Illuminate\Foundation\Testing\DatabaseMigrations;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\AuthorizationTools;
 
 class ReverseProxyTest extends TestCase
 {
 
-    use DatabaseMigrations {
-        runDatabaseMigrations as baseRunDatabaseMigrations;
-    }
-
-    public function runDatabaseMigrations()
-    {
-        $this->baseRunDatabaseMigrations();
-        $this->artisan('db:seed');
-    }
-
+    use RefreshDatabase;
 
     protected function setUp() : void{
         parent::setUp();
-
+        $this->artisan('db:seed');
         $this->seriesInstanceUID = '1.2.826.0.1.3680043.5.2014.6.4.10.27.08.20160309120853.168.11009';
         $this->studyInstanceUID = '1.2.826.0.1.3680043.5.2014.6.4.10.27.08.20160309120853.168.11008';
 
