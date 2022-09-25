@@ -27,7 +27,7 @@ class StudyRepositoryTest extends TestCase
     }
 
     public function testCreateStudy(){
-        $this->studyRepository->addStudy('myStudy', '12345', 5,  'contact@gaelo.fr',true, false, null);
+        $this->studyRepository->addStudy('myStudy', '12345', 5,  'contact@gaelo.fr',true, false, false, null);
         $studyEntity  = Study::find('myStudy');
 
         $this->assertEquals('myStudy', $studyEntity->name);
@@ -36,6 +36,7 @@ class StudyRepositoryTest extends TestCase
         $this->assertEquals( 'contact@gaelo.fr' , $studyEntity->contact_email);
         $this->assertTrue( (bool) $studyEntity->controller_show_all);
         $this->assertFalse( (bool) $studyEntity->monitor_show_all);
+        $this->assertFalse( (bool) $studyEntity->documentation_mandatory);
         $this->assertEquals( null , $studyEntity->ancillary_of);
     }
 
