@@ -310,7 +310,7 @@ class MailServices
     {
 
         $parameters = [
-            'name' => $this->getUserName($currentUserId),
+            'name' => 'supervisor',
             'role' => $role,
             'study' => $studyName,
             'patientId' => $patientId,
@@ -531,7 +531,24 @@ class MailServices
         $this->mailInterface->send();
     }
 
-    public function sendMailToSupervisors(int $senderId, string $studyName, string $subject, string $content, ?string $patientId, ?int $visitId, $patients = null)
+    public function sendPatientCreationRequest(int $senderId, string $studyName, string $content, array $patients)
+    {
+        $parameters = [
+            'study' => $studyName,
+            'content' => $content,
+            'patients' => $patients
+        ];
+
+        $this->mailInterface->setTo(
+            $this->userRepositoryInterface->getUsersEmailsByRolesInStudy($studyName, Constants::ROLE_SUPERVISOR)
+        );
+        $this->mailInterface->setReplyTo($this->getUserEmail($senderId));
+        $this->mailInterface->setParameters($parameters);
+        $this->mailInterface->setBody(MailConstants::EMAIL_REQUEST_PATIENT_CREATION);
+        $this->mailInterface->send();
+    }
+
+    public function sendMailToSupervisors(int $senderId, string $studyName, string $subject, string $content, ?string $patientId, ?int $visitId)
     {
 
         $parameters = [
@@ -539,8 +556,7 @@ class MailServices
             'subject' => $subject,
             'content' => $content,
             'patientId' => $patientId,
-            'visitId' => $visitId,
-            'patients' => $patients
+            'visitId' => $visitId
         ];
 
         $this->mailInterface->setTo(
@@ -611,6 +627,26 @@ class MailServices
         $this->mailInterface->setReplyTo($this->getStudyContactEmail($studyName));
         $this->mailInterface->setParameters($parameters);
         $this->mailInterface->setBody(MailConstants::EMAIL_MAGIC_LINK);
+        $this->mailInterface->send();
+    }
+
+    public function sendAutoQC(string $studyName, string $visitType, string $patientCode, array $studyInfo, array $seriesInfo, string $magiclink, string $controllerEmail)
+    {
+
+
+        $parameters = [
+            'study' => $studyName,
+            'visitType' => $visitType,
+            'patientCode' => $patientCode,
+            'studyInfo' => $studyInfo,
+            'seriesInfo' => $seriesInfo,
+            'magicLink' => $magiclink,
+        ];
+
+        $this->mailInterface->setTo([$controllerEmail]);
+        $this->mailInterface->setReplyTo($this->getStudyContactEmail($studyName));
+        $this->mailInterface->setParameters($parameters);
+        $this->mailInterface->setBody(MailConstants::EMAIL_AUTO_QC);
         $this->mailInterface->send();
     }
 }

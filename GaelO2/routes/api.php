@@ -18,9 +18,8 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\VisitController;
 use App\Http\Controllers\VisitGroupController;
 use App\Http\Controllers\VisitTypeController;
-use Illuminate\Foundation\Auth\EmailVerificationRequest;
+use App\Http\Requests\SignedEmailVerificationRequest;
 use Illuminate\Support\Facades\Route;
-
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -53,7 +52,7 @@ Route::middleware(['auth:sanctum', 'verified', 'activated', 'onboarded'])->group
 
     Route::patch('users/{id}', [UserController::class, 'modifyUserIdentification']);
     Route::delete('users/{id}', [UserController::class, 'deleteUser']);
-    Route::patch('users/{id}/reactivate', [UserController::class, 'reactivateUser']);
+    Route::post('users/{id}/activate', [UserController::class, 'reactivateUser']);
     Route::get('users/{id}/centers', [UserController::class, 'getUserCenters']);
     Route::get('users/{id}/affiliated-centers', [UserController::class, 'getAffiliatedCenter']);
     Route::post('users/{id}/affiliated-centers', [UserController::class, 'addAffiliatedCenter']);
@@ -74,7 +73,7 @@ Route::middleware(['auth:sanctum', 'verified', 'activated', 'onboarded'])->group
     Route::get('studies/{studyName}/statistics', [StudyController::class, 'getStudyStatistics']);
     Route::get('studies/{studyName}/visit-types', [StudyController::class, 'getStudyVisitTypes']);
     Route::delete('studies/{studyName}', [StudyController::class, 'deleteStudy']);
-    Route::patch('studies/{studyName}/reactivate', [StudyController::class, 'reactivateStudy']);
+    Route::post('studies/{studyName}/activate', [StudyController::class, 'reactivateStudy']);
     Route::get('studies/{studyName}/patients', [StudyController::class, 'getPatientFromStudy']);
     Route::get('studies/{studyName}/visits-tree', [StudyController::class, 'getVisitsTree']);
     Route::post('studies/{studyName}/import-patients', [StudyController::class, 'importPatients']);
@@ -88,6 +87,7 @@ Route::middleware(['auth:sanctum', 'verified', 'activated', 'onboarded'])->group
     Route::get('studies/{studyName}/investigator-forms/metadata', [StudyController::class, 'getInvestigatorFormsMetadataFromVisitType']);
     Route::get('studies/{studyName}/dicom-studies', [StudyController::class, 'getDicomStudiesFromStudy']);
     Route::post('studies/{studyName}/send-reminder', [StudyController::class, 'sendReminder']);
+    Route::post('studies/{studyName}/ask-patient-creation', [StudyController::class, 'requestPatientCreation']);
     Route::post('send-mail', [StudyController::class, 'sendMail']);
 
     //Centers Routes
@@ -121,9 +121,9 @@ Route::middleware(['auth:sanctum', 'verified', 'activated', 'onboarded'])->group
     Route::patch('visits/{id}/quality-control/reset', [VisitController::class, 'modifyQualityControlReset']);
     Route::post('visits/{id}/quality-control/unlock', [VisitController::class, 'unlockQc']);
     Route::patch('visits/{id}/corrective-action', [VisitController::class, 'modifyCorrectiveAction']);
-    Route::patch('visits/{id}/visit-date', [VisitController::class, 'modifyVisitDate']);
+    Route::put('visits/{id}/visit-date', [VisitController::class, 'modifyVisitDate']);
     Route::delete('visits/{id}', [VisitController::class, 'deleteVisit']);
-    Route::patch('visits/{id}/reactivate', [VisitController::class, 'reactivateVisit']);
+    Route::post('visits/{id}/activate', [VisitController::class, 'reactivateVisit']);
     Route::post('visit-types/{visitTypeId}/visits', [VisitController::class, 'createVisit']);
     Route::get('visits/{id}', [VisitController::class, 'getVisit']);
 
@@ -148,8 +148,8 @@ Route::middleware(['auth:sanctum', 'verified', 'activated', 'onboarded'])->group
 
     //Dicom Routes
     Route::delete('dicom-series/{seriesInstanceUID}', [DicomController::class, 'deleteSeries']);
-    Route::patch('dicom-series/{seriesInstanceUID}', [DicomController::class, 'reactivateSeries']);
-    Route::patch('dicom-study/{studyInstanceUID}', [DicomController::class, 'reactivateStudy']);
+    Route::post('dicom-series/{seriesInstanceUID}/activate', [DicomController::class, 'reactivateSeries']);
+    Route::post('dicom-study/{studyInstanceUID}/activate', [DicomController::class, 'reactivateStudy']);
     Route::get('visits/{id}/dicoms', [DicomController::class, 'getVisitDicoms']);
 
     //Ask Unlock route
@@ -172,12 +172,13 @@ Route::middleware(['auth:sanctum', 'verified', 'activated', 'onboarded'])->group
     Route::post('documentations/{id}/file', [DocumentationController::class, 'uploadDocumentation']);
     Route::delete('documentations/{id}', [DocumentationController::class, 'deleteDocumentation']);
     Route::patch('documentations/{id}', [DocumentationController::class, 'modifyDocumentation']);
-    Route::patch('documentations/{id}/reactivate', [DocumentationController::class, 'reactivateDocumentation']);
+    Route::post('documentations/{id}/activate', [DocumentationController::class, 'reactivateDocumentation']);
 
     //Tools routes
     Route::post('tools/centers/patients-from-centers', [ToolsController::class, 'getPatientsInStudyFromCenters']);
     Route::post('tools/patients/visits-from-patients', [ToolsController::class, 'getPatientsVisitsInStudy']);
     Route::post('tools/find-user', [ToolsController::class, 'findUser']);
+    Route::post('tools/review-file-from-tus', [ReviewController::class, 'createReviewFileFromTus']);
 
     // Binary routes
     Route::get('export-db', [ExportDBController::class, 'exportDB']);
@@ -209,12 +210,11 @@ Route::get('tools/reset-password/{token}', function ($token) {
 
 Route::post('tools/reset-password', [UserController::class, 'updatePassword'])->name('password.update');
 
+
 //Route to validate email
-Route::get('email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
-
+Route::get('email/verify/{id}/{hash}', function (SignedEmailVerificationRequest $request) {
     $request->fulfill();
-
-    return redirect('/email-verified');
+    return redirect('/');
 })->middleware(['signed'])->name('verification.verify');
 
 //Magic link route

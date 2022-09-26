@@ -2,29 +2,20 @@
 
 namespace Tests\Feature\TestUser;
 
-use App\GaelO\Constants\Constants;
-use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\TestCase;
 use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\AuthorizationTools;
 
 class CreateUserTest extends TestCase
 {
     //Run Migration at each test
-    use DatabaseMigrations {
-        runDatabaseMigrations as baseRunDatabaseMigrations;
-    }
-    //Run migration and seeds before each test
-    public function runDatabaseMigrations()
-    {
-        $this->baseRunDatabaseMigrations();
-        $this->artisan('db:seed');
-    }
+    use RefreshDatabase;
 
     //This method is called before each test, it needs to call the parent setup methods
     protected function setUp() : void{
         parent::setUp();
-
+        $this->artisan('db:seed');
         //Define the valid payload the user creation should success
         $this->validPayload =
         ['lastname' => 'truc',

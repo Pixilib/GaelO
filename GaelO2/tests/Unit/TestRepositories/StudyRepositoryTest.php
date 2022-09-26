@@ -7,7 +7,6 @@ use App\Models\DicomSeries;
 use App\Models\DicomStudy;
 use App\Models\Patient;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\TestCase;
 
 use App\Models\Study;
@@ -18,27 +17,17 @@ class StudyRepositoryTest extends TestCase
 {
     private StudyRepository $studyRepository;
 
-    use DatabaseMigrations {
-        runDatabaseMigrations as baseRunDatabaseMigrations;
-    }
-
     use RefreshDatabase;
-
-    public function runDatabaseMigrations()
-    {
-        $this->baseRunDatabaseMigrations();
-        $this->artisan('db:seed');
-    }
-
 
     protected function setUp(): void
     {
         parent::setUp();
+        $this->artisan('db:seed');
         $this->studyRepository = new StudyRepository(new Study());
     }
 
     public function testCreateStudy(){
-        $this->studyRepository->addStudy('myStudy', '12345', 5,  'contact@gaelo.fr',true, false, null);
+        $this->studyRepository->addStudy('myStudy', '12345', 5,  'contact@gaelo.fr',true, false, false, null);
         $studyEntity  = Study::find('myStudy');
 
         $this->assertEquals('myStudy', $studyEntity->name);
@@ -47,6 +36,7 @@ class StudyRepositoryTest extends TestCase
         $this->assertEquals( 'contact@gaelo.fr' , $studyEntity->contact_email);
         $this->assertTrue( (bool) $studyEntity->controller_show_all);
         $this->assertFalse( (bool) $studyEntity->monitor_show_all);
+        $this->assertFalse( (bool) $studyEntity->documentation_mandatory);
         $this->assertEquals( null , $studyEntity->ancillary_of);
     }
 

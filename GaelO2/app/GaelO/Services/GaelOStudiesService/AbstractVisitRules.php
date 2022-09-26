@@ -95,8 +95,15 @@ abstract class AbstractVisitRules
         }
     }
 
+    /**
+     * Must return the review status for each action on review (send, delete, unlock), 
+     * needs to handle backward and forward
+     */
     abstract function getReviewStatus(): string;
 
+    /**
+     * Return the conclusion value, must return null if review status is not done
+     */
     abstract function getReviewConclusion(): ?string;
 
     abstract function getAllowedKeyAndMimeTypeInvestigator(): array;

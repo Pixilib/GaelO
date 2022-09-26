@@ -23,7 +23,6 @@ use App\GaelO\UseCases\ReactivateDicomStudy\ReactivateDicomStudyResponse;
 use App\GaelO\Util;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
 
 class DicomController extends Controller
 {
@@ -70,6 +69,7 @@ class DicomController extends Controller
 
         $deleteSeriesRequest->seriesInstanceUID = $seriesInstanceUID;
         $deleteSeriesRequest->role = $queryParam['role'];
+        $deleteSeriesRequest->studyName = $queryParam['studyName'];
         $deleteSeriesRequest->currentUserId = $currentUser['id'];
         $deleteSeriesRequest = Util::fillObject($requestData, $deleteSeriesRequest);
 
@@ -84,6 +84,7 @@ class DicomController extends Controller
         $requestData = $request->all();
         $queryParam = $request->query();
 
+        $reactivateDicomSeriesRequest->studyName = $queryParam['studyName'];
         $reactivateDicomSeriesRequest->seriesInstanceUID = $seriesInstanceUID;
         $reactivateDicomSeriesRequest->currentUserId = $currentUser['id'];
         $reactivateDicomSeriesRequest->role = $queryParam['role'];
@@ -99,7 +100,9 @@ class DicomController extends Controller
 
         $currentUser = Auth::user();
         $requestData = $request->all();
+        $queryParam = $request->query();
 
+        $reactivateDicomStudyRequest->studyName = $queryParam['studyName'];
         $reactivateDicomStudyRequest->studyInstanceUID = $studyInstanceUID;
         $reactivateDicomStudyRequest->currentUserId = $currentUser['id'];
         $reactivateDicomStudyRequest = Util::fillObject($requestData, $reactivateDicomStudyRequest);

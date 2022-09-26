@@ -2,22 +2,20 @@
 
 namespace Tests\Feature\TestUser;
 
-use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\TestCase;
 use App\GaelO\Constants\Constants;
 use App\Models\Patient;
 use App\Models\Visit;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\AuthorizationTools;
 
 class MagicLinkTest extends TestCase
 {
-    use DatabaseMigrations {
-        runDatabaseMigrations as baseRunDatabaseMigrations;
-    }
+    use RefreshDatabase;
 
-    public function runDatabaseMigrations()
+    protected function setUp(): void
     {
-        $this->baseRunDatabaseMigrations();
+        parent::setUp();
         $this->artisan('db:seed');
     }
 

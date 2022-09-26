@@ -27,12 +27,15 @@ use App\GaelO\Constants\SettingsConstants;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Interfaces\Adapters\FrameworkInterface;
 use App\GaelO\Interfaces\Adapters\MailerInterface;
+use App\Mail\AutoQC;
 use App\Mail\ImportPatient;
 use App\Mail\MagicLink;
+use App\Mail\RequestPatientCreation;
 use App\Mail\UserCreated;
 use Illuminate\Contracts\Mail\Mailable;
 
-class MailerAdapter implements MailerInterface {
+class MailerAdapter implements MailerInterface
+{
 
     private FrameworkInterface $frameworkInterface;
 
@@ -43,38 +46,42 @@ class MailerAdapter implements MailerInterface {
 
     private array $to;
 
-    public function setReplyTo( ?String $replyTo = null ){
-        if($replyTo == null) $this->replyTo= $this->frameworkInterface::getConfig('mail_reply_to_default');
+    public function setReplyTo(?String $replyTo = null)
+    {
+        if ($replyTo == null) $this->replyTo = $this->frameworkInterface::getConfig('mail_reply_to_default');
         else $this->replyTo = $replyTo;
     }
 
-    public function setTo(array $to){
+    public function setTo(array $to)
+    {
         //get only unique emails
         $this->to = array_values(array_unique($to));
-
     }
 
-    public function setParameters(array $parameters){
+    public function setParameters(array $parameters)
+    {
         $this->parameters = $parameters;
         $this->parameters['platformName'] = $this->frameworkInterface::getConfig(SettingsConstants::PLATFORM_NAME);
         $this->parameters['webAddress'] = $this->frameworkInterface::getConfig(SettingsConstants::APP_URL);
         $this->parameters['corporation'] = $this->frameworkInterface::getConfig(SettingsConstants::CORPORATION);
-        $this->parameters['adminEmail']= $this->frameworkInterface::getConfig(SettingsConstants::MAIL_FROM_ADDRESS);
-
+        $this->parameters['adminEmail'] = $this->frameworkInterface::getConfig(SettingsConstants::MAIL_FROM_ADDRESS);
     }
 
-    public function setBody($modelType){
+    public function setBody($modelType)
+    {
         $this->modelType = $modelType;
     }
 
-    public function send(){
-        foreach($this->to as $destinator ){
+    public function send()
+    {
+        foreach ($this->to as $destinator) {
             $model = $this->getModel($this->modelType);
             Mail::to($destinator)->send($model);
         }
     }
 
-    private function getModel(int $model) : Mailable{
+    private function getModel(int $model): Mailable
+    {
 
         switch ($model) {
             case MailConstants::EMAIL_REQUEST:
@@ -140,14 +147,17 @@ class MailerAdapter implements MailerInterface {
             case MailConstants::EMAIL_UNLOCK_QC_REQUEST:
                 $model = new UnlockQcRequest($this->parameters);
                 break;
+            case MailConstants::EMAIL_AUTO_QC:
+                $model = new AutoQC($this->parameters);
+                break;
+            case MailConstants::EMAIL_REQUEST_PATIENT_CREATION:
+                $model = new RequestPatientCreation($this->parameters);
+                break;
             default:
                 throw new GaelOException("Unkown Mail Type");
                 break;
-
         }
 
         return $model;
-
     }
-
 }

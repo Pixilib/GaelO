@@ -39,13 +39,6 @@ class MailUser extends Mailable implements ShouldQueue
             ->subject($subject)
             ->with($this->parameters);
 
-        //If mail is associated to a patients creation request, attach given json
-        array_key_exists('patients', $this->parameters) && isset($this->parameters['patients']) ?
-            $mail->attachData($this->parameters['patients'], 'patients.json', [
-                'mime' => 'application/json',
-            ])
-            : null;
-
         return $mail;
     }
 }

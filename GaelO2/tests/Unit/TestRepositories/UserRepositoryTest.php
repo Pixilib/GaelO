@@ -4,7 +4,6 @@ namespace Tests\Unit\TestRepositories;
 
 use App\GaelO\Constants\Constants;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\TestCase;
 
 use App\Models\Study;
@@ -18,23 +17,13 @@ use Illuminate\Support\Facades\App;
 class UserRepositoryTest extends TestCase
 {
     private UserRepository $userRepository;
-    use DatabaseMigrations {
-        runDatabaseMigrations as baseRunDatabaseMigrations;
-    }
 
     use RefreshDatabase;
-
-    public function runDatabaseMigrations()
-    {
-        $this->baseRunDatabaseMigrations();
-        $this->artisan('db:seed');
-    }
-
 
     protected function setUp(): void
     {
         parent::setUp();
-
+        $this->artisan('db:seed');
         $this->userRepository = App::make(UserRepository::class);
 
         //Create 2 random studies
@@ -334,6 +323,7 @@ class UserRepositoryTest extends TestCase
         $role = Role::factory()->roleName(Constants::ROLE_INVESTIGATOR)->create();
         $entity = $this->userRepository->getUserRoleInStudy($role->user_id, $role->study_name, $role->name );
         $this->assertArrayHasKey('validated_documentation_version', $entity);
+        $this->assertArrayHasKey('study', $entity);
     }
 
     public function testUpdateValidatedDocumentationVersion(){
@@ -428,13 +418,22 @@ class UserRepositoryTest extends TestCase
             Role::factory()->userId($user->id)->roleName(Constants::ROLE_SUPERVISOR)->studyName($study1Name)->create();
         });
 
+        //Add role in another study, that should not be selected
+        $userStudy1->each(function ($user) use($study2Name) {
+            Role::factory()->userId($user->id)->roleName(Constants::ROLE_INVESTIGATOR)->studyName($study2Name)->create();
+            Role::factory()->userId($user->id)->roleName(Constants::ROLE_SUPERVISOR)->studyName($study2Name)->create();
+        });
+
         $userStudy2->each(function ($user) use($study2Name) {
             Role::factory()->userId($user->id)->roleName(Constants::ROLE_INVESTIGATOR)->studyName($study2Name)->create();
         });
 
         $users = $this->userRepository->getUsersFromStudy($study1Name);
 
+        //Should have 5 users in this study
         $this->assertEquals(5, sizeof($users));
+        //Each user should have 2 roles
+        $this->assertEquals(2, sizeof($users[0]['roles']));
     }
 
     public function testGetAllUser(){

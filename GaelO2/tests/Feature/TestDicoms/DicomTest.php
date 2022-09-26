@@ -3,27 +3,20 @@
 namespace Tests\Feature\TestDicoms;
 
 use App\GaelO\Constants\Constants;
-use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\TestCase;
 use App\Models\DicomSeries;
 use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\AuthorizationTools;
 
 class DicomTest extends TestCase
 {
 
-    use DatabaseMigrations {
-        runDatabaseMigrations as baseRunDatabaseMigrations;
-    }
-
-    public function runDatabaseMigrations() {
-        $this->baseRunDatabaseMigrations();
-        $this->artisan('db:seed');
-
-    }
+    use RefreshDatabase;
 
     protected function setUp() : void{
         parent::setUp();
+        $this->artisan('db:seed');
         $this->dicomSeries = DicomSeries::factory()->create();
         $this->visitId = $this->dicomSeries->dicomStudy->visit->id;
         $this->studyName = $this->dicomSeries->dicomStudy->visit->patient->study->name;

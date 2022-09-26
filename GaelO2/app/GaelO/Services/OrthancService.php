@@ -5,10 +5,14 @@ namespace App\GaelO\Services;
 use App\GaelO\Adapters\Psr7ResponseAdapter;
 use App\GaelO\Constants\Constants;
 use App\GaelO\Constants\SettingsConstants;
+use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Interfaces\Adapters\FrameworkInterface;
 use App\GaelO\Interfaces\Adapters\HttpClientInterface;
+use App\GaelO\Services\StoreObjects\OrthancMetaData;
 use App\GaelO\Services\StoreObjects\TagAnon;
 use App\GaelO\Services\StoreObjects\OrthancStudy;
+use App\GaelO\Services\StoreObjects\OrthancStudyImport;
+use App\GaelO\Util;
 
 class OrthancService
 {
@@ -53,9 +57,10 @@ class OrthancService
         return $this->httpClientInterface->requestJson('GET', '/' . $level . '/' . $orthancID . '/statistics/')->getJsonBody();
     }
 
-    public function getInstanceTags(string $orthancInstanceID): array
+    public function getInstanceTags(string $orthancInstanceID): OrthancMetaData
     {
-        return $this->httpClientInterface->requestJson('GET', '/instances/' . $orthancInstanceID . '/tags/')->getJsonBody();
+        $response = $this->httpClientInterface->requestJson('GET', '/instances/' . $orthancInstanceID . '/tags/')->getJsonBody();
+        return new OrthancMetaData($response);
     }
 
     public function getOrthancPeers(): array
@@ -283,11 +288,11 @@ class OrthancService
         $tagsObjects[] = new TagAnon("0008,103E", TagAnon::KEEP); //series Description
 
         //Radiotherapy Tags
-        $tagsObjects[]=new TagAnon("3006,0026", $RTStruct); // ROIName
-        $tagsObjects[]=new TagAnon("3006,0008", $RTStruct); // Structure Set Date
-		$tagsObjects[]=new TagAnon("3006,0009", $RTStruct); // Structure Set Time
-		$tagsObjects[]=new TagAnon("300A,0006", $RTStruct); // RTPlan Date
-		$tagsObjects[]=new TagAnon("300A,0007", $RTStruct); // RTPlan Time
+        $tagsObjects[] = new TagAnon("3006,0026", $RTStruct); // ROIName
+        $tagsObjects[] = new TagAnon("3006,0008", $RTStruct); // Structure Set Date
+        $tagsObjects[] = new TagAnon("3006,0009", $RTStruct); // Structure Set Time
+        $tagsObjects[] = new TagAnon("300A,0006", $RTStruct); // RTPlan Date
+        $tagsObjects[] = new TagAnon("300A,0007", $RTStruct); // RTPlan Time
 
         // Keep some Private tags usefull for PET/CT or Scintigraphy
         $tagsObjects[] = new TagAnon("7053,1000", TagAnon::KEEP); //Phillips
@@ -355,11 +360,90 @@ class OrthancService
         $this->httpClientInterface->streamResponse('POST', '/tools/create-archive', $payload);
     }
 
-    public function getOrthancZipStreamAsString(array $seriesOrthancIDs) : Psr7ResponseAdapter
+    public function getOrthancZipStreamAsString(array $seriesOrthancIDs): Psr7ResponseAdapter
     {
         $payload = array('Transcode' => '1.2.840.10008.1.2.1', 'Resources' => $seriesOrthancIDs);
         return $this->httpClientInterface->requestJson('POST', '/tools/create-archive', $payload);
-
     }
-}
 
+    /**
+     * fill ressource with dicom zip containing the Orthanc ID ressources dicoms
+     * @param array $uidList
+     * @return resource temporary file path
+     */
+    public function getZipStreamToFile(array $orthancIDs, $ressource)
+    {
+
+        $body = json_encode([
+            'Transcode' => '1.2.840.10008.1.2.1',
+            'Resources' => $orthancIDs
+        ]);
+
+        $headers = ['content-type' => 'application/json', 'Accept' => 'application/zip'];
+
+        $this->httpClientInterface->rowRequest('POST', '/tools/create-archive', $body, $headers, $ressource);
+    }
+
+    /**
+     * Send folder content to orthanc, and treat responses to output the uploaded studyOrthancId
+     */
+    public function importDicomFolder(string $unzipedPath): OrthancStudyImport
+    {
+        //Recursive scann of the unzipped folder
+        $filesArray = Util::getPathAsFileArray($unzipedPath);
+
+        $importedMap = [];
+
+        $uploadSuccessResponseArray = $this->importFiles($filesArray);
+
+        //Import dicom file one by one
+        foreach ($uploadSuccessResponseArray as $response) {
+            $importedMap[$response['ParentStudy']][$response['ParentSeries']][] = $response['ID'];
+        }
+
+        $numberOfImportedInstances = sizeof($uploadSuccessResponseArray);
+
+        //Delete original file after import
+        Util::recursiveDirectoryDelete($unzipedPath);
+
+        if (count($importedMap) == 1) {
+            return new OrthancStudyImport(array_key_first($importedMap), $numberOfImportedInstances);
+        } else {
+            throw new GaelOException("More than one study in Zip");
+        }
+    }
+
+    public function getMetaData(string $seriesOrthancID) : OrthancMetaData
+    {
+        $response = $this->httpClientInterface->requestJson('GET', '/series/' . $seriesOrthancID . '/shared-tags');
+        return new OrthancMetaData($response->getJsonBody());
+    }
+
+    public function getSeriesMIP(string $seriesOrthancID) : string
+    {
+        $downloadedFilePath = tempnam(sys_get_temp_dir(), 'mipDICOM');
+        $resource  = fopen( $downloadedFilePath, 'r+');
+
+        $this->httpClientInterface->requestStreamResponseToFile('GET', '/series/'.$seriesOrthancID.'/mip',  $resource, []);
+        return $downloadedFilePath;
+    }
+
+    public function getSeriesMosaic(string $seriesOrthancID) : string
+    {
+        $downloadedFilePath = tempnam(sys_get_temp_dir(), 'mozaicDICOM');
+        $resource  = fopen( $downloadedFilePath, 'r+');
+
+        $this->httpClientInterface->requestStreamResponseToFile('GET', '/series/'.$seriesOrthancID.'/mosaic',  $resource, []);
+        return $downloadedFilePath;
+    }
+
+    public function getInstancePreview(string $instanceOrthancID) : string
+    {
+        $downloadedFilePath = tempnam(sys_get_temp_dir(), 'previewDICOM');
+        $resource  = fopen( $downloadedFilePath, 'r+');
+
+        $this->httpClientInterface->requestStreamResponseToFile('GET', '/instances/'.$instanceOrthancID.'/preview?returnUnsupportedImage',  $resource, []);
+        return $downloadedFilePath;
+    }
+
+}

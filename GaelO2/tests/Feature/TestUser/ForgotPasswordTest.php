@@ -2,27 +2,20 @@
 
 namespace Tests\Feature\TestUser;
 
-use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\TestCase;
 use App\Models\User;
 use App\Notifications\ResetPasswordNotification;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 
 class ForgotPasswordTest extends TestCase
 {
-    use DatabaseMigrations {
-        runDatabaseMigrations as baseRunDatabaseMigrations;
-    }
+    use RefreshDatabase;
 
-    /**
-     * Define hooks to migrate the database before and after each test.
-     *
-     * @return void
-     */
-    public function runDatabaseMigrations()
+    protected function setUp(): void
     {
-        $this->baseRunDatabaseMigrations();
+        parent::setUp();
         $this->artisan('db:seed');
     }
 

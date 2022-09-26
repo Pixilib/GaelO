@@ -19,7 +19,7 @@ class TusService{
         $this->httpClientInterface->setUrl($url);
     }
 
-    public function getZip(string $tusFileId) : string {
+    public function getFile(string $tusFileId) : string {
 
         $downloadedFileName = tempnam(sys_get_temp_dir(), 'TusDicom');
 
@@ -31,7 +31,7 @@ class TusService{
 
     }
 
-    public function deleteZip(string $tusFileId) : void {
+    public function deleteFile(string $tusFileId) : void {
         $this->httpClientInterface->rowRequest('DELETE', '/api/tus/'.$tusFileId, null, ['Tus-Resumable' => '1.0.0'] );
     }
 

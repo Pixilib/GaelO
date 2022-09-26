@@ -46,8 +46,8 @@ class User extends Authenticatable implements CanResetPassword, MustVerifyEmail
         'email' => 'string',
         'password' => 'string',
         'phone' => 'string',
-        //'creation_date' => 'datetime',
-        //'last_connexion' => 'datetime',
+        'creation_date' => 'datetime',
+        'last_connexion' => 'datetime',
         'attempts' => 'integer',
         'administrator' => 'boolean',
         'center_code' => 'integer',
@@ -56,7 +56,7 @@ class User extends Authenticatable implements CanResetPassword, MustVerifyEmail
         'orthanc_login' => 'string',
         'orthanc_password' => 'string',
         'api_token' => 'string',
-        //'email_verified_at' => 'datetime',
+        'email_verified_at' => 'datetime',
         'onboarding_version' => 'string'
     ];
 

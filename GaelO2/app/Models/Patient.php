@@ -22,13 +22,13 @@ class Patient extends Model
         'birth_day' => 'integer',
         'birth_month' => 'integer',
         'birth_year' => 'integer',
-        //'registration_date' => 'datetime',
+        'registration_date' => 'date',
         'investigator_name' => 'string',
         'center_code' => 'integer',
         'study_name' => 'string',
         'inclusion_status' => 'string',
         'withdraw_reason' => 'string',
-        //'withdraw_date' => 'date'
+        'withdraw_date' => 'date'
     ];
 
 

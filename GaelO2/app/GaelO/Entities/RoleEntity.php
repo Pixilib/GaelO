@@ -6,7 +6,8 @@ class RoleEntity
 {
     public string $studyName;
     public string $name;
-    public string $validatedDocumentationVersion;
+    public ?string $validatedDocumentationVersion;
+    public StudyEntity $study;
 
     public static function fillFromDBReponseArray(array $array): RoleEntity
     {
@@ -16,5 +17,9 @@ class RoleEntity
         $roleEntity->validatedDocumentationVersion = $array['validated_documentation_version'];
 
         return $roleEntity;
+    }
+
+    public function setStudyEntity(StudyEntity $studyEntity){
+        $this->study = $studyEntity;
     }
 }

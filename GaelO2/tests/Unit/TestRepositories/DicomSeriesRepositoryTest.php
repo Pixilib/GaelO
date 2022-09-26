@@ -3,9 +3,7 @@
 namespace Tests\Unit\TestRepositories;
 
 use App\GaelO\Repositories\DicomSeriesRepository;
-use App\GaelO\Services\StoreObjects\OrthancSeries;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\TestCase;
 
 use App\Models\DicomSeries;
@@ -16,22 +14,12 @@ class DicomSeriesRepositoryTest extends TestCase
 {
     private DicomSeriesRepository $orthancSeriesRepository;
 
-    use DatabaseMigrations {
-        runDatabaseMigrations as baseRunDatabaseMigrations;
-    }
-
     use RefreshDatabase;
-
-    public function runDatabaseMigrations()
-    {
-        $this->baseRunDatabaseMigrations();
-        $this->artisan('db:seed');
-    }
-
 
     protected function setUp(): void
     {
         parent::setUp();
+        $this->artisan('db:seed');
         $this->orthancSeriesRepository = new DicomSeriesRepository(new DicomSeries());
         $this->orthancStudy = DicomStudy::factory()->create();
     }

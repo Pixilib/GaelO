@@ -140,6 +140,7 @@ class VisitTreeTest extends TestCase
                 'contact_email' => 'sa@sa.fr',
                 'controller_show_all' => false,
                 'monitor_show_all' => false,
+                'documentation_mandatory' => false,
                 'ancillary_of' => null,
                 'deleted_at' => null
             ]));

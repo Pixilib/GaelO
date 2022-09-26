@@ -4,28 +4,18 @@ namespace Tests\Feature\TestExportService;
 
 use App\GaelO\Constants\Constants;
 use App\Models\Study;
-use Illuminate\Support\Facades\Artisan;
 use Tests\TestCase;
-use Illuminate\Foundation\Testing\DatabaseMigrations;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\AuthorizationTools;
 
 class ExportStudyDataTest extends TestCase
 {
-    use DatabaseMigrations {
-        runDatabaseMigrations as baseRunDatabaseMigrations;
-    }
-
-    public function runDatabaseMigrations()
-    {
-        $this->baseRunDatabaseMigrations();
-        $this->artisan('db:seed');
-
-    }
+    use RefreshDatabase;
 
     protected function setUp() : void {
         parent::setUp();
+        $this->artisan('db:seed');
         $this->study = Study::factory()->create();
-
     }
 
     public function testExportDb()

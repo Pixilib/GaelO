@@ -4,7 +4,7 @@ namespace Tests\Unit\TestJobs;
 
 use App\GaelO\Services\GaelOProcessingService\AzureService;
 use App\Jobs\LoadGaelOProcessing;
-use Illuminate\Foundation\Testing\DatabaseMigrations;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Log;
 use Tests\TestCase;
@@ -12,20 +12,13 @@ use Tests\TestCase;
 class LoadGaelOProcessingTest extends TestCase
 {
 
-    use DatabaseMigrations {
-        runDatabaseMigrations as baseRunDatabaseMigrations;
-    }
-
-    public function runDatabaseMigrations()
-    {
-        $this->baseRunDatabaseMigrations();
-        $this->artisan('db:seed');
-        $this->markTestSkipped();
-    }
+    use RefreshDatabase;
 
     protected function setUp(): void
     {
         parent::setUp();
+        $this->artisan('db:seed');
+        $this->markTestSkipped();
         $this->azureService = App::make(AzureService::class);
     }
 

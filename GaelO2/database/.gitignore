@@ -1,2 +1,5 @@
 *.sqlite
 *.sqlite-journal
+/seeders/BicarSeeder.php
+/seeders/GataSeeder.php
+/seeders/GaelOStudyBaseSeeder.php

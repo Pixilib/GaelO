@@ -5,14 +5,18 @@ namespace Tests\Unit\TestJobs;
 use App\Jobs\JobGaelOProcessing;
 use Illuminate\Bus\Batch;
 use Illuminate\Bus\PendingBatch;
-use Illuminate\Foundation\Testing\DatabaseMigrations;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Bus;
 use Tests\TestCase;
 class JobGaelOProcessingTest extends TestCase
 {
 
-    use DatabaseMigrations {
-        runDatabaseMigrations as baseRunDatabaseMigrations;
+    use RefreshDatabase;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->artisan('db:seed');
     }
 
     public function testBatch(){

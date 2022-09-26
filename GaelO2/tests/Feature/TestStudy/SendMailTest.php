@@ -3,33 +3,21 @@
 namespace Tests\Feature\TestStudy;
 
 use App\GaelO\Constants\Constants;
-use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\TestCase;
 use App\Models\Study;
 use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\AuthorizationTools;
 
 class SendMailTest extends TestCase
 {
 
-    use DatabaseMigrations {
-        runDatabaseMigrations as baseRunDatabaseMigrations;
-    }
-
-    /**
-     * Define hooks to migrate the database before and after each test.
-     *
-     * @return void
-     */
-    public function runDatabaseMigrations()
-    {
-        $this->baseRunDatabaseMigrations();
-        $this->artisan('db:seed');
-    }
+    use RefreshDatabase;
 
     protected function setUp(): void
     {
         parent::setUp();
+        $this->artisan('db:seed');
 
         $this->study = Study::factory()->code('123')->create();
         for ($i = 0; $i < 10; $i++) {
@@ -134,7 +122,7 @@ class SendMailTest extends TestCase
             'content' => '<p>Something</p>',
         ];
 
-        $this->json('POST', '/api/send-mail?role=' . Constants::ROLE_INVESTIGATOR . '&study=' . $this->study->name, $payload)
+        $this->json('POST', '/api/send-mail?role=' . Constants::ROLE_INVESTIGATOR . '&studyName=' . $this->study->name, $payload)
             ->assertNoContent(200);
     }
 
@@ -149,7 +137,7 @@ class SendMailTest extends TestCase
             'content' => '<p>Something</p>',
         ];
 
-        $this->json('POST', '/api/send-mail?role=' . Constants::ROLE_SUPERVISOR . '&study=' . $this->study->name, $payload)
+        $this->json('POST', '/api/send-mail?role=' . Constants::ROLE_SUPERVISOR . '&studyName=' . $this->study->name, $payload)
             ->assertNoContent(200);
     }
 
@@ -164,7 +152,7 @@ class SendMailTest extends TestCase
             'content' => '<p>Something</p>',
         ];
 
-        $this->json('POST', '/api/send-mail?role=' . Constants::ROLE_INVESTIGATOR . '&study=' . $this->study->name, $payload)
+        $this->json('POST', '/api/send-mail?role=' . Constants::ROLE_INVESTIGATOR . '&studyName=' . $this->study->name, $payload)
             ->assertStatus(403);
     }
 
@@ -193,7 +181,7 @@ class SendMailTest extends TestCase
             'toAdministrators' => true
         ];
 
-        $this->json('POST', '/api/send-mail?role=' . Constants::ROLE_SUPERVISOR . '&study=' . $this->study->name, $payload)
+        $this->json('POST', '/api/send-mail?role=' . Constants::ROLE_SUPERVISOR . '&studyName=' . $this->study->name, $payload)
             ->assertNoContent(200);
     }
 
@@ -205,7 +193,7 @@ class SendMailTest extends TestCase
         $payload = [
             'subject' => 'Request Patients Creation',
             'content' => '<p>Some very insightful message</p>',
-            'patients' => json_encode([
+            'patients' => [
                 'id' => 1,
                 'code' => 123,
                 'firstname' => 'A',
@@ -218,10 +206,10 @@ class SendMailTest extends TestCase
                 'investigatorName' => 'someone',
                 'centerCode' => 0,
                 'inclusionStatus' => 'Included'
-            ])
+            ]
         ];
 
-        $this->json('POST', '/api/send-mail?role=' . Constants::ROLE_INVESTIGATOR . '&study=' . $this->study->name, $payload)
+        $this->json('POST', '/api/studies/'.$this->study->name.'/ask-patient-creation?role=' . Constants::ROLE_INVESTIGATOR , $payload)
             ->assertNoContent(200);
     }
 
@@ -233,10 +221,10 @@ class SendMailTest extends TestCase
         $payload = [
             'subject' => 'Request Patients Creation',
             'content' => '<p>Some very insightful message</p>',
-            'patients' => json_encode([])
+            'patients' => []
         ];
 
-        $this->json('POST', '/api/send-mail?role=' . Constants::ROLE_INVESTIGATOR . '&study=' . $this->study->name, $payload)
+        $this->json('POST', '/api/studies/'.$this->study->name.'/ask-patient-creation?role=' . Constants::ROLE_INVESTIGATOR, $payload)
             ->assertStatus(400);
     }
 }

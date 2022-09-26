@@ -9,24 +9,17 @@ use App\Models\Study;
 use App\Models\Visit;
 use App\Models\VisitGroup;
 use App\Models\VisitType;
-use Illuminate\Foundation\Testing\DatabaseMigrations;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\AuthorizationTools;
 use Tests\TestCase;
 
 class InvestigatorFormTest extends TestCase
 {
-    use DatabaseMigrations {
-        runDatabaseMigrations as baseRunDatabaseMigrations;
-    }
-
-    public function runDatabaseMigrations()
-    {
-        $this->baseRunDatabaseMigrations();
-        $this->artisan('db:seed');
-    }
+    use RefreshDatabase;
 
     protected function setUp() : void{
         parent::setUp();
+        $this->artisan('db:seed');
     }
 
     public function testGetInvestigatorForm(){
@@ -35,88 +28,6 @@ class InvestigatorFormTest extends TestCase
         $studyName = $review->visit->patient->study_name;
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $studyName );
         $this->get('api/visits/'.$review->visit_id.'/investigator-form?role=Supervisor&studyName='.$studyName)->assertSuccessful();
-
-    }
-
-    public function testDeleteInvestigatorForm(){
-        $review = Review::factory()->create();
-        $currentUserId = AuthorizationTools::actAsAdmin(false);
-        AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $review->visit->patient->study_name);
-        $payload = [
-            'reason' => 'wrong Form'
-        ];
-
-        $this->delete('api/visits/'.$review->visit_id.'/investigator-form',$payload)->assertSuccessful();
-
-    }
-
-    public function testDeleteInvestigatorFormShouldFailNoRole(){
-        $review = Review::factory()->create();
-        AuthorizationTools::actAsAdmin(false);
-        $payload = [
-            'reason' => 'wrong Form'
-        ];
-
-        $this->delete('api/visits/'.$review->visit_id.'/investigator-form',$payload)->assertStatus(403);
-
-    }
-
-    public function testDeleteInvestigatorFormShouldFailNoReason(){
-        $review = Review::factory()->create();
-        $currentUserId = AuthorizationTools::actAsAdmin(false);
-        AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $review->visit->patient->study_name);
-        $payload = [
-            'reason' => ''
-        ];
-
-        $this->delete('api/visits/'.$review->visit_id.'/investigator-form', $payload)->assertStatus(400);
-
-    }
-
-    public function testUnlockInvestigatorForm(){
-        $review = Review::factory()->validated()->create();
-        $currentUserId = AuthorizationTools::actAsAdmin(false);
-        AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $review->visit->patient->study_name);
-        $payload = [
-            'reason' => 'wrong Form'
-        ];
-
-        $this->patch('api/visits/'.$review->visit_id.'/investigator-form/unlock',$payload)->assertStatus(200);
-
-    }
-
-    public function testUnlockInvestigatorFormShouldFailedAlreadyUnlocked(){
-        $review = Review::factory()->create();
-        $currentUserId = AuthorizationTools::actAsAdmin(false);
-        AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $review->visit->patient->study_name);
-        $payload = [
-            'reason' => 'wrong Form'
-        ];
-
-        $this->patch('api/visits/'.$review->visit_id.'/investigator-form/unlock',$payload)->assertStatus(400);
-
-    }
-
-    public function testUnlockInvestigatorFormShouldFailedNoReason(){
-        $review = Review::factory()->validated()->create();
-        $currentUserId = AuthorizationTools::actAsAdmin(false);
-        AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $review->visit->patient->study_name);
-        $payload = [
-            'reason' => ''
-        ];
-
-        $this->patch('api/visits/'.$review->visit_id.'/investigator-form/unlock',$payload)->assertStatus(400);
-
-    }
-
-    public function testUnlockInvestigatorFormShouldFailNoRole(){
-        $review = Review::factory()->validated()->create();
-        AuthorizationTools::actAsAdmin(false);
-        $payload = [
-            'reason' => 'wrong Form'
-        ];
-
-        $this->patch('api/visits/'.$review->visit_id.'/investigator-form/unlock',$payload)->assertStatus(403);
 
     }
 
@@ -145,7 +56,6 @@ class InvestigatorFormTest extends TestCase
 
     }
 
-
     public function testGetAssociatedDataForInvestigator(){
 
         $study = Study::factory()->name('TEST')->create();
@@ -163,7 +73,5 @@ class InvestigatorFormTest extends TestCase
         $this->assertArrayHasKey('LastChemo', $content);
         $answer->assertStatus(200);
     }
-
-
 
 }

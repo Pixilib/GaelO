@@ -47,8 +47,9 @@ class GetVisit
             $reviewConclusionDate =  (in_array($role, [Constants::ROLE_SUPERVISOR])) ? $visitEntity['review_status']['review_conclusion_date'] : null;
             //Target lesions are allowed also for reviewer
             $targetLesions =  (in_array($role, [Constants::ROLE_REVIEWER, Constants::ROLE_SUPERVISOR])) ? $visitEntity['review_status']['target_lesions'] : null;
+            $reviewAvailable =  (in_array($role, [Constants::ROLE_REVIEWER, Constants::ROLE_SUPERVISOR])) ? $visitEntity['review_status']['review_available'] : null;
 
-            $responseEntity->setReviewVisitStatus($reviewStatus, $reviewConclusionValue, $reviewConclusionDate, $targetLesions);
+            $responseEntity->setReviewVisitStatus($reviewStatus, $reviewConclusionValue, $reviewConclusionDate, $targetLesions, $reviewAvailable);
             $responseEntity->setCreatorDetails(UserEntity::fillOnlyUserIdentification($visitEntity['creator']));
 
             $getVisitResponse->body = $responseEntity;

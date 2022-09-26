@@ -4,7 +4,6 @@ namespace Tests\Unit\TestRepositories;
 
 use App\GaelO\Repositories\ReviewRepository;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\TestCase;
 
 use App\Models\Review;
@@ -16,25 +15,13 @@ class ReviewRepositoryTest extends TestCase
 {
     private ReviewRepository $reviewRepository;
 
-    use DatabaseMigrations {
-        runDatabaseMigrations as baseRunDatabaseMigrations;
-    }
-
     use RefreshDatabase;
-
-    public function runDatabaseMigrations()
-    {
-        $this->baseRunDatabaseMigrations();
-        $this->artisan('db:seed');
-    }
-
 
     protected function setUp(): void
     {
         parent::setUp();
+        $this->artisan('db:seed');
         $this->reviewRepository = new ReviewRepository(new Review());
-
-
     }
 
     public function testGetInvestigatorForm(){
@@ -129,7 +116,7 @@ class ReviewRepositoryTest extends TestCase
     public function testGetReviewFormForStudyVisitUser(){
         $review = Review::factory()->reviewForm()->count(5)->create();
         $reviewAnswer = $this->reviewRepository->getReviewFormForStudyVisitUser($review->first()->study_name, $review->first()->visit_id, $review->first()->user_id);
-        $this->assertEquals($review->first()->review_date, $reviewAnswer['review_date']);
+        $this->assertEquals($review->first()->review_date->toISOString(), $reviewAnswer['review_date']);
     }
 
     public function testIsExistingReviewForStudyVisitUser(){

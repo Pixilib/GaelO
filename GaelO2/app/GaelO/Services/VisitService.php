@@ -3,6 +3,7 @@
 namespace App\GaelO\Services;
 
 use App\GaelO\Constants\Constants;
+use App\GaelO\Interfaces\Adapters\JobInterface;
 use App\GaelO\Repositories\ReviewRepository;
 use App\GaelO\Repositories\ReviewStatusRepository;
 use App\GaelO\Repositories\VisitRepository;
@@ -13,6 +14,7 @@ class VisitService
     private ReviewRepository $reviewRepository;
     private MailServices $mailServices;
     private ReviewStatusRepository $reviewStatusRepository;
+    private JobInterface $jobInterface;
 
     private int $visitId;
 
@@ -20,12 +22,14 @@ class VisitService
         VisitRepository $visitRepository,
         ReviewRepository $reviewRepository,
         ReviewStatusRepository $reviewStatusRepository,
-        MailServices $mailServices
+        MailServices $mailServices,
+        JobInterface $jobInterface
     ) {
         $this->visitRepository = $visitRepository;
         $this->mailServices = $mailServices;
         $this->reviewStatusRepository = $reviewStatusRepository;
         $this->reviewRepository = $reviewRepository;
+        $this->jobInterface = $jobInterface;
     }
 
     public function setVisitId(int $visitId)
@@ -87,6 +91,8 @@ class VisitService
         $reviewNeeded = $reviewStatus['review_status'] !== Constants::REVIEW_STATUS_NOT_NEEDED;
 
         $this->mailServices->sendUploadedVisitMessage($this->visitId, $visitEntity['creator_user_id'], $studyName, $patientId, $patientCode, $visitType, $qcNeeded);
+        // Send auto qc job
+        $this->jobInterface->sendAutoQcJob($this->visitId);
         //If Qc NotNeeded mark visit as available for review
         if (!$qcNeeded && $reviewNeeded ) {
             $this->reviewStatusRepository->updateReviewAvailability($this->visitId, $studyName, true);

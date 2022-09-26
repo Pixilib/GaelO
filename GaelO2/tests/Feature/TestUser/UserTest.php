@@ -3,27 +3,20 @@
 namespace Tests\Feature\TestUser;
 
 use App\GaelO\Constants\Constants;
-use Illuminate\Foundation\Testing\DatabaseMigrations;
 
 use Tests\TestCase;
 use App\Models\User;
 use App\Models\Study;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\AuthorizationTools;
 
 class UserTest extends TestCase
 {
-    use DatabaseMigrations {
-        runDatabaseMigrations as baseRunDatabaseMigrations;
-    }
+    use RefreshDatabase;
 
-    /**
-     * Define hooks to migrate the database before and after each test.
-     *
-     * @return void
-     */
-    public function runDatabaseMigrations()
+    public function setUp(): void
     {
-        $this->baseRunDatabaseMigrations();
+        parent::setUp();
         $this->artisan('db:seed');
     }
 

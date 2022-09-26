@@ -4,34 +4,21 @@ namespace Tests\Feature\TestVisits;
 
 use App\GaelO\Constants\Constants;
 use App\Models\Patient;
-use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\TestCase;
 use App\Models\Visit;
 use App\Models\Review;
 use App\Models\ReviewStatus;
 use App\Models\VisitGroup;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\AuthorizationTools;
 
 class QcTest extends TestCase
 {
-    use DatabaseMigrations {
-        runDatabaseMigrations as baseRunDatabaseMigrations;
-    }
-
-    /**
-     * Define hooks to migrate the database before and after each test.
-     *
-     * @return void
-     */
-    public function runDatabaseMigrations()
-    {
-        $this->baseRunDatabaseMigrations();
-        $this->artisan('db:seed');
-    }
+    use RefreshDatabase;
 
     protected function setUp() : void {
         parent::setUp();
-
+        $this->artisan('db:seed');
         $this->patient = Patient::factory()->create();
         $this->visitGroup = VisitGroup::factory()->studyName($this->patient->study_name)->create();
 
@@ -65,7 +52,7 @@ class QcTest extends TestCase
             'formQc'=>true
         ];
 
-        $response = $this->patch('/api/visits/'.$this->visit->id.'/quality-control', $payload);
+        $response = $this->patch('/api/visits/'.$this->visit->id.'/quality-control?studyName='.$this->studyName, $payload);
         $response->assertStatus(200);
 
         $reviewStatus = ReviewStatus::where('visit_id', $this->visit->id)->where('study_name', $this->studyName)->sole();
@@ -85,7 +72,7 @@ class QcTest extends TestCase
             'formQcComment'=>'non'
         ];
 
-        $response = $this->patch('/api/visits/'.$this->visit->id.'/quality-control', $payload);
+        $response = $this->patch('/api/visits/'.$this->visit->id.'/quality-control?studyName='.$this->studyName, $payload);
         $response->assertStatus(403);
 
     }
@@ -106,7 +93,7 @@ class QcTest extends TestCase
             'formQcComment'=>'non'
         ];
 
-        $response = $this->patch('/api/visits/'.$this->visit->id.'/quality-control', $payload);
+        $response = $this->patch('/api/visits/'.$this->visit->id.'/quality-control?studyName='.$this->studyName, $payload);
         $response->assertStatus(403);
 
     }
@@ -127,7 +114,7 @@ class QcTest extends TestCase
             'formQcComment'=>'non'
         ];
 
-        $response = $this->patch('/api/visits/'.$this->visit->id.'/quality-control', $payload);
+        $response = $this->patch('/api/visits/'.$this->visit->id.'/quality-control?studyName='.$this->studyName, $payload);
         $response->assertStatus(403);
 
     }
@@ -152,7 +139,7 @@ class QcTest extends TestCase
             'formQcComment'=>'non'
         ];
 
-        $response = $this->patch('/api/visits/'.$this->visit->id.'/quality-control', $payload);
+        $response = $this->patch('/api/visits/'.$this->visit->id.'/quality-control?studyName='.$this->studyName, $payload);
         $response->assertStatus(200);
     }
 
@@ -168,7 +155,7 @@ class QcTest extends TestCase
             'formQcComment'=>'non'
         ];
 
-        $response = $this->patch('/api/visits/'.$this->visit->id.'/quality-control', $payload);
+        $response = $this->patch('/api/visits/'.$this->visit->id.'/quality-control?studyName='.$this->studyName, $payload);
         $response->assertStatus(400);
 
     }
@@ -185,7 +172,7 @@ class QcTest extends TestCase
             'formQcComment'=>'non'
         ];
 
-        $response = $this->patch('/api/visits/'.$this->visit->id.'/quality-control', $payload);
+        $response = $this->patch('/api/visits/'.$this->visit->id.'/quality-control?studyName='.$this->studyName, $payload);
         $response->assertStatus(400);
 
     }
@@ -201,7 +188,7 @@ class QcTest extends TestCase
             'imageQcComment'=>'OK'
         ];
 
-        $response = $this->patch('/api/visits/'.$this->visit->id.'/quality-control', $payload);
+        $response = $this->patch('/api/visits/'.$this->visit->id.'/quality-control?studyName='.$this->studyName, $payload);
         $response->assertStatus(400);
 
 
@@ -244,62 +231,6 @@ class QcTest extends TestCase
         $response = $this->post('/api/visits/'.$this->visit->id.'/quality-control/unlock', $payload);
 
         $response->assertStatus(400);
-
-    }
-
-
-
-    public function testResetQc()
-    {
-        $currentUserId = AuthorizationTools::actAsAdmin(false);
-        AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $this->studyName);
-
-        $payload = [
-            'reason' => 'error filling qc'
-        ];
-
-        $response = $this->patch('/api/visits/'.$this->visit->id.'/quality-control/reset', $payload);
-
-        $response->assertStatus(200);
-
-    }
-
-    public function testResetQcMissingReason()
-    {
-        $currentUserId = AuthorizationTools::actAsAdmin(false);
-        AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $this->studyName);
-
-        $payload = [];
-
-        $response = $this->patch('/api/visits/'.$this->visit->id.'/quality-control/reset', $payload);
-
-        $response->assertStatus(400);
-
-    }
-
-    public function testResetQcShouldFailNoRole()
-    {
-        AuthorizationTools::actAsAdmin(false);
-        $payload = [
-            'reason' => 'error filling qc'
-        ];
-        $this->patch('/api/visits/'.$this->visit->id.'/quality-control/reset', $payload)->assertStatus(403);
-
-    }
-
-    public function testResetQcShouldFailReviewStatusStarted()
-    {
-        $currentUserId = AuthorizationTools::actAsAdmin(false);
-        AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $this->studyName);
-
-
-        $this->reviewStatus->review_status = Constants::REVIEW_STATUS_ONGOING;
-        $this->reviewStatus->save();
-
-        $payload = [
-            'reason' => 'error filling qc'
-        ];
-        $this->patch('/api/visits/'.$this->visit->id.'/quality-control/reset', $payload)->assertStatus(400);
 
     }
 }

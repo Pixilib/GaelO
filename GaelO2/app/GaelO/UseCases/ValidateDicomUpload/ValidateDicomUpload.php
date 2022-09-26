@@ -76,16 +76,11 @@ class ValidateDicomUpload
             $this->visitService->updateUploadStatus(Constants::UPLOAD_STATUS_PROCESSING);
 
             //Create Temporary folder to work
-            $unzipedPath = sys_get_temp_dir() . '/GaelO_Upload_' . random_int(10000, 99999) . '_' . $currentUserId;
-            if (is_dir($unzipedPath)) {
-                unlink($unzipedPath);
-            } else {
-                mkdir($unzipedPath, 0755);
-            }
+            $unzipedPath = Util::getUploadTemporaryFolder();
 
             //Get uploaded Zips from TUS and upzip it in a temporary folder
             foreach ($validateDicomUploadRequest->uploadedFileTusId as $tusFileId) {
-                $tusTempZip = $this->tusService->getZip($tusFileId);
+                $tusTempZip = $this->tusService->getFile($tusFileId);
 
                 $zipSize = filesize($tusTempZip);
                 $uncompressedzipSize = Util::getZipUncompressedSize($tusTempZip);
@@ -99,12 +94,19 @@ class ValidateDicomUpload
                 $zip->close();
 
                 //Remove file from TUS and downloaded temporary zip
-                $this->tusService->deleteZip($tusFileId);
+                $this->tusService->deleteFile($tusFileId);
                 unlink($tusTempZip);
             }
             $this->orthancService->setOrthancServer(false);
 
-            $importedOrthancStudyID = $this->sendFolderToOrthanc($unzipedPath, $validateDicomUploadRequest->numberOfInstances);
+            $expectedNumberOfInstances = $validateDicomUploadRequest->numberOfInstances;
+
+            $orthancStudyImport = $this->orthancService->importDicomFolder($unzipedPath);
+            if ($expectedNumberOfInstances !== $orthancStudyImport->getNumberOfInstances()) {
+                throw new GaelOValidateDicomException("Imported DICOM not matching announced number of Instances");
+            }
+            $importedOrthancStudyID = $orthancStudyImport->getStudyOrthancId();
+
 
             //Anonymize and store new anonymized study Orthanc ID
             $anonymizedOrthancStudyID = $this->orthancService->anonymize(
@@ -202,47 +204,6 @@ class ValidateDicomUpload
         $this->authorizationService->setVisitId($visitId);
         if (!$this->authorizationService->isVisitAllowed(Constants::ROLE_INVESTIGATOR) || $uploadStatus !== Constants::UPLOAD_STATUS_NOT_DONE || $visitStatus !== Constants::VISIT_STATUS_DONE) {
             throw new GaelOForbiddenException();
-        }
-    }
-
-    /**
-     * Send folder content to orthanc,
-     * Checks that imported dicom match number of expected dicoms
-     * returns OrthancStudyID
-     */
-    private function sendFolderToOrthanc(string $unzipedPath, int $numberOfInstances): string
-    {
-
-        //Recursive scann of the unzipped folder
-        $filesArray = Util::getPathAsFileArray($unzipedPath);
-
-        if (sizeof($filesArray) != $numberOfInstances) {
-            throw new GaelOValidateDicomException("Number Of Uploaded Files dosen't match expected instance number");
-        }
-
-        $importedMap = [];
-
-        $uploadSuccessResponseArray = $this->orthancService->importFiles($filesArray);
-
-        //Import dicom file one by one
-        foreach ($uploadSuccessResponseArray as $response) {
-            $importedMap[$response['ParentStudy']][$response['ParentSeries']][] = $response['ID'];
-        }
-
-        $numberOfImportedInstances = sizeof($uploadSuccessResponseArray);
-
-        //Delete original file after import
-        Util::recursiveDirectoryDelete($unzipedPath);
-
-        if (count($importedMap) == 1 && $numberOfImportedInstances === $numberOfInstances) {
-            return array_key_first($importedMap);
-        } else {
-            //These error shall never occur
-            if (count($importedMap) > 1) {
-                throw new GaelOValidateDicomException("More than one study in Zip");
-            } else if ($numberOfImportedInstances !== $numberOfInstances) {
-                throw new GaelOValidateDicomException("Imported DICOM not matching announced number of Instances");
-            }
         }
     }
 

@@ -5,28 +5,21 @@ namespace Tests\Feature\TestDocumentation;
 use App\GaelO\Adapters\FrameworkAdapter;
 use App\Models\Documentation;
 use App\GaelO\Constants\Constants;
-use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 use App\Models\Study;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\AuthorizationTools;
 
 class DocumentationTest extends TestCase
 {
 
-    use DatabaseMigrations {
-        runDatabaseMigrations as baseRunDatabaseMigrations;
-    }
-
-    public function runDatabaseMigrations()
-    {
-        $this->baseRunDatabaseMigrations();
-        $this->artisan('db:seed');
-    }
+    use RefreshDatabase;
 
     protected function setUp(): void
     {
         parent::setUp();
+        $this->artisan('db:seed');
         Storage::fake();
         $this->study = Study::factory()->create();
 
@@ -238,7 +231,7 @@ class DocumentationTest extends TestCase
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $this->study->name);
         $documentation = Documentation::factory()->studyName($this->study->name)->create();
 
-        $response = $this->patch('api/documentations/' . $documentation->id . '/reactivate');
+        $response = $this->post('api/documentations/' . $documentation->id . '/activate');
         $response->assertStatus(200);
     }
 
@@ -249,7 +242,7 @@ class DocumentationTest extends TestCase
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_INVESTIGATOR, $this->study->name);
         $documentation = Documentation::factory()->studyName($this->study->name)->create();
 
-        $response = $this->patch('api/documentations/' . $documentation->id . '/reactivate');
+        $response = $this->post('api/documentations/' . $documentation->id . '/activate');
         $response->assertStatus(403);
     }
 }

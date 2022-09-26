@@ -32,7 +32,7 @@ class Util
         return substr_compare($haystack, $needle, -strlen($needle)) === 0;
     }
 
-    public static function now() : string
+    public static function now(): string
     {
         return Carbon::now()->format('Y-m-d H:i:s.u');
     }
@@ -111,14 +111,24 @@ class Util
         }
     }
 
+
+    /**
+     * Create and return a tempororary directory path
+     */
+    public static function getUploadTemporaryFolder(): string
+    {
+        $unzipedPath = sys_get_temp_dir() . '/GaelO_Upload_' . bin2hex(random_bytes(15));
+        mkdir($unzipedPath, 0755);
+        return $unzipedPath;
+    }
+
     public static function isVersionHigher($current, $previous): bool
     {
         return version_compare($previous, $current, '<');
     }
 
-    public static function isSemanticVersioning(string $version) : bool
+    public static function isSemanticVersioning(string $version): bool
     {
         return preg_match('/^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)?$/', $version);
     }
-
 }

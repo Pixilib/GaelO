@@ -1,0 +1,33 @@
+<mjml>
+    <mj-head>
+        <mj-attributes>
+            <mj-class name="text" color="#353275"/>
+            <mj-include path="./style.css" type="css" />
+        </mj-attributes>
+    </mj-head>
+  <mj-body>
+    <mj-section>
+      <mj-column width="100%">
+        <mj-text align="center">
+          <h3 style="font-weight: bold; margin-top: 0; margin-bottom: 0"> <a text-decoration: none">
+                Investigator form
+          </a> </h3>
+        </mj-text>
+      </mj-column>
+    </mj-section>
+    <mj-section>
+      <mj-column width="100%">
+        <mj-text align="center">
+            <pre>
+{{$investigatorForm}}
+            </pre>
+        </mj-text>
+      </mj-column>
+    </mj-section>
+    <mj-section>
+      <mj-column width="100%">
+        <mj-divider border-width="1px" border-color="#E0E0E0"></mj-divider>
+      </mj-column>
+    </mj-section>
+  </mj-body>
+</mjml>

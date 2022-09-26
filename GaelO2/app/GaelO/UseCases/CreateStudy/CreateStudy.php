@@ -38,6 +38,7 @@ class CreateStudy
             $patientCodeLength = $createStudyRequest->patientCodeLength;
             $controllerShowAll = $createStudyRequest->controllerShowAll;
             $monitorShowAll = $createStudyRequest->monitorShowAll;
+            $documentationMandatory = $createStudyRequest->documentationMandatory;
             $contactEmail = $createStudyRequest->contactEmail;
             $ancillaryOf = $createStudyRequest->ancillaryOf;
 
@@ -69,7 +70,7 @@ class CreateStudy
                 throw new GaelOBadRequestException('Missing Monitor Show All');
             }
 
-            $this->studyRepositoryInterface->addStudy($studyName, $studyCode, $patientCodeLength, $contactEmail, $controllerShowAll, $monitorShowAll,  $ancillaryOf);
+            $this->studyRepositoryInterface->addStudy($studyName, $studyCode, $patientCodeLength, $contactEmail, $controllerShowAll, $monitorShowAll, $documentationMandatory, $ancillaryOf);
 
             $currentUserId = $createStudyRequest->currentUserId;
             $actionDetails = [

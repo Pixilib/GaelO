@@ -56,6 +56,9 @@ class ModifyCorrectiveAction
                 }
             }
 
+            if($modifyCorrectiveActionRequest->studyName !== $studyName){
+                throw new GaelOForbiddenException("Should be called from original study");
+            }
             $this->checkAuthorization($modifyCorrectiveActionRequest->currentUserId, $modifyCorrectiveActionRequest->visitId, $currentQcStatus, $studyName);
 
             $this->visitRepositoryInterface->setCorrectiveAction(
