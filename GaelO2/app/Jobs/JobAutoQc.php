@@ -60,7 +60,9 @@ class JobAutoQc implements ShouldQueue
         $imagePath = '';
         switch ($imageType) {
             case ImageType::MIP:
-                $imagePath = $orthancService->getSeriesMIP($seriesID);
+                //SK Mosaic temporairement
+                $imagePath = $orthancService->getSeriesMosaic($seriesID);
+                //$imagePath = $orthancService->getSeriesMIP($seriesID);
                 break;
             case ImageType::MOSAIC:
                 $imagePath = $orthancService->getSeriesMosaic($seriesID);
