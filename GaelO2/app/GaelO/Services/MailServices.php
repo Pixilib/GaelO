@@ -531,7 +531,24 @@ class MailServices
         $this->mailInterface->send();
     }
 
-    public function sendMailToSupervisors(int $senderId, string $studyName, string $subject, string $content, ?string $patientId, ?int $visitId, $patients = null)
+    public function sendPatientCreationRequest(int $senderId, string $studyName, string $content, array $patients)
+    {
+        $parameters = [
+            'study' => $studyName,
+            'content' => $content,
+            'patients' => $patients
+        ];
+
+        $this->mailInterface->setTo(
+            $this->userRepositoryInterface->getUsersEmailsByRolesInStudy($studyName, Constants::ROLE_SUPERVISOR)
+        );
+        $this->mailInterface->setReplyTo($this->getUserEmail($senderId));
+        $this->mailInterface->setParameters($parameters);
+        $this->mailInterface->setBody(MailConstants::EMAIL_REQUEST_PATIENT_CREATION);
+        $this->mailInterface->send();
+    }
+
+    public function sendMailToSupervisors(int $senderId, string $studyName, string $subject, string $content, ?string $patientId, ?int $visitId)
     {
 
         $parameters = [
@@ -539,8 +556,7 @@ class MailServices
             'subject' => $subject,
             'content' => $content,
             'patientId' => $patientId,
-            'visitId' => $visitId,
-            'patients' => $patients
+            'visitId' => $visitId
         ];
 
         $this->mailInterface->setTo(
@@ -616,8 +632,8 @@ class MailServices
 
     public function sendAutoQC(string $studyName, string $visitType, string $patientCode, array $studyInfo, array $seriesInfo, string $magiclink, string $controllerEmail)
     {
-        
-        
+
+
         $parameters = [
             'study' => $studyName,
             'visitType' => $visitType,

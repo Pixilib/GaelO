@@ -4,34 +4,21 @@ namespace Tests\Feature\TestVisitType;
 
 use App\Models\Patient;
 use App\Models\Study;
-use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\TestCase;
 use App\Models\VisitGroup;
 use App\Models\VisitType;
 use App\Models\Visit;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\AuthorizationTools;
 
 class VisitTypeTest extends TestCase
 {
-    use DatabaseMigrations {
-        runDatabaseMigrations as baseRunDatabaseMigrations;
-    }
-
-    /**
-     * Define hooks to migrate the database before and after each test.
-     *
-     * @return void
-     */
-    public function runDatabaseMigrations()
-    {
-        $this->baseRunDatabaseMigrations();
-        $this->artisan('db:seed');
-    }
+    use RefreshDatabase;
 
     protected function setUp() : void {
 
         parent::setUp();
-
+        $this->artisan('db:seed');
         $this->visitGroup = VisitGroup::factory()->create();
 
         $this->payload = [

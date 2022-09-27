@@ -3,6 +3,7 @@
 namespace App\GaelO\UseCases\GetUserRoleByName;
 
 use App\GaelO\Entities\RoleEntity;
+use App\GaelO\Entities\StudyEntity;
 use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\UserRepositoryInterface;
@@ -34,6 +35,8 @@ class GetUserRoleByName
             $roleData = $this->userRepositoryInterface->getUserRoleInStudy($userId, $studyName, $role);
 
             $roleEntity = RoleEntity::fillFromDBReponseArray($roleData);
+            $studyEntity = StudyEntity::fillFromDBReponseArray($roleData['study']);
+            $roleEntity->setStudyEntity($studyEntity);
 
             $getUserRoleByNameResponse->body = $roleEntity;
             $getUserRoleByNameResponse->status = 200;

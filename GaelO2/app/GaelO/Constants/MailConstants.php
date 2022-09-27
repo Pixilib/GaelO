@@ -26,4 +26,5 @@ class MailConstants {
     const EMAIL_MAGIC_LINK=21;
     const EMAIL_UNLOCK_QC_REQUEST=22;
     const EMAIL_AUTO_QC = 23;
+    const EMAIL_REQUEST_PATIENT_CREATION = 24;
 }

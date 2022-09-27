@@ -7,25 +7,17 @@ use App\Models\Center;
 use App\Models\Patient;
 use App\Models\User;
 use App\Models\Study;
-use Illuminate\Foundation\Testing\DatabaseMigrations;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\AuthorizationTools;
 use Tests\TestCase;
 
 class ToolsTest extends TestCase
 {
-    use DatabaseMigrations {
-        runDatabaseMigrations as baseRunDatabaseMigrations;
-    }
-
-    public function runDatabaseMigrations()
-    {
-        $this->baseRunDatabaseMigrations();
-        $this->artisan('db:seed');
-    }
+    use RefreshDatabase;
 
     protected function setUp() : void{
         parent::setUp();
-
+        $this->artisan('db:seed');
         $study = Study::factory()->name('TEST')->create();
         $center = Center::factory()->code(1)->create();
         $patient = Patient::factory()->studyName($study->name)->centerCode($center->code)->create();

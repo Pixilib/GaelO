@@ -11,30 +11,18 @@ use App\Models\Study;
 use App\Models\Visit;
 use App\Models\VisitGroup;
 use App\Models\VisitType;
-use Illuminate\Foundation\Testing\DatabaseMigrations;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 class DeleteCommandTest extends TestCase
 {
 
-    use DatabaseMigrations {
-        runDatabaseMigrations as baseRunDatabaseMigrations;
-    }
-
-    /**
-     * Define hooks to migrate the database before and after each test.
-     *
-     * @return void
-     */
-    public function runDatabaseMigrations()
-    {
-        $this->baseRunDatabaseMigrations();
-        $this->artisan('db:seed');
-    }
+    use RefreshDatabase;
 
     protected function setUp(): void
     {
         parent::setUp();
+        $this->artisan('db:seed');
         $this->study = Study::factory()->create();
         $this->visitGroup = VisitGroup::factory()->studyName($this->study->name)->create();
         $this->visitType = VisitType::factory()->visitGroupId($this->visitGroup->id)->create();

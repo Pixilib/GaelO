@@ -3,23 +3,21 @@
 namespace Tests\Feature\TestUser;
 
 use App\GaelO\Constants\Constants;
-use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\TestCase;
 use App\Models\User;
 use App\Models\Center;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\AuthorizationTools;
 
 class ModifyUserTest extends TestCase
 {
 
-    use DatabaseMigrations {
-        runDatabaseMigrations as baseRunDatabaseMigrations;
-    }
+    use RefreshDatabase;
 
     protected function setUp(): void
     {
         parent::setUp();
-
+        $this->artisan('db:seed');
         $center = Center::factory()->create();
         $this->user = User::factory()->job(Constants::USER_JOB_SUPERVISION)->create();
 
@@ -35,12 +33,6 @@ class ModifyUserTest extends TestCase
             'orthancLogin'=>'gaelo',
             'orthancPassword'=>'gaelo'
         ];
-    }
-
-    public function runDatabaseMigrations()
-    {
-        $this->baseRunDatabaseMigrations();
-        $this->artisan('db:seed');
     }
 
     /**

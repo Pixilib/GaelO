@@ -5,30 +5,18 @@ namespace Tests\Feature\TestVisits;
 
 use App\GaelO\Constants\Constants;
 use App\Models\Visit;
-use Illuminate\Foundation\Testing\DatabaseMigrations;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\AuthorizationTools;
 use Tests\TestCase;
 
 class ModifyVisitDateTest extends TestCase {
 
-    use DatabaseMigrations {
-        runDatabaseMigrations as baseRunDatabaseMigrations;
-    }
-
-    /**
-     * Define hooks to migrate the database before and after each test.
-     *
-     * @return void
-     */
-    public function runDatabaseMigrations()
-    {
-        $this->baseRunDatabaseMigrations();
-        $this->artisan('db:seed');
-    }
+    use RefreshDatabase;
 
     protected function setUp() : void {
 
         parent::setUp();
+        $this->artisan('db:seed');
         $this->visit = Visit::factory()->create();
         $this->studyName = $this->visit->patient->study_name;
     }

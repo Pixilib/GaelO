@@ -8,11 +8,6 @@ Tester Etudes ancillaire avec Emilie (voir return default data de review status 
 Ne doit pas pouvoir faire les relance d'upload => Voir avec Emilie (probablement passer les info de study dans un contexte)
 --- /Etudes ancillaires ---
 
-**** Post Release ****
-- Orthanc Send to peer
-- Refac : Pluger GetPossibleUpload sur VisitEntity pour la réponse (nécéssite d'updater V1)
-- Mise en place scheduler, monitoring scheduler par email pourra etre personnalisé (ex que si nouveau patient...)
-
 **** Tests ***
 Test feature : visit et autres (dicom...)
 Tests Services à faire

@@ -244,6 +244,7 @@ class UserRepository implements UserRepositoryInterface
             ->whereHas('study', function ($query) use ($studyName) {
                 $query->where('name', $studyName);
             })
+            ->with('study')
             ->where('name', $roleName)
             ->sole();
 

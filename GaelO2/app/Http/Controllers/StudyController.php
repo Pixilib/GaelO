@@ -62,6 +62,9 @@ use App\GaelO\UseCases\ImportPatients\ImportPatientsResponse;
 use App\GaelO\UseCases\ReactivateStudy\ReactivateStudy;
 use App\GaelO\UseCases\ReactivateStudy\ReactivateStudyRequest;
 use App\GaelO\UseCases\ReactivateStudy\ReactivateStudyResponse;
+use App\GaelO\UseCases\RequestPatientCreation\RequestPatientCreation;
+use App\GaelO\UseCases\RequestPatientCreation\RequestPatientCreationRequest;
+use App\GaelO\UseCases\RequestPatientCreation\RequestPatientCreationResponse;
 use App\GaelO\UseCases\SendReminder\SendReminder;
 use App\GaelO\UseCases\SendReminder\SendReminderRequest;
 use App\GaelO\UseCases\SendReminder\SendReminderResponse;
@@ -309,11 +312,30 @@ class StudyController extends Controller
         return $this->getJsonResponse($sendReminderResponse->body, $sendReminderResponse->status, $sendReminderResponse->statusText);
     }
 
+    public function requestPatientCreation(Request $request, RequestPatientCreation $requestPatientCreation, RequestPatientCreationRequest $requestPatientCreationRequest, RequestPatientCreationResponse $requestPatientCreationResponse, string $studyName)
+    {
+        $currentUser = Auth::user();
+        $requestData = $request->all();
+        $queryParam = $request->query();
+
+        $requestPatientCreationRequest->studyName = $studyName;
+        $requestPatientCreationRequest->role = $queryParam['role'];
+        $requestPatientCreationRequest->currentUserId = $currentUser['id'];
+
+        $requestPatientCreationRequest = Util::fillObject($requestData, $requestPatientCreationRequest);
+        $requestPatientCreation->execute($requestPatientCreationRequest, $requestPatientCreationResponse);
+
+        return $this->getJsonResponse($requestPatientCreationResponse->body, $requestPatientCreationResponse->status, $requestPatientCreationResponse->statusText);
+    }
+
     public function sendMail(Request $request, SendMail $sendMail, SendMailRequest $sendMailRequest, SendMailResponse $sendMailResponse)
     {
         $currentUser = Auth::user();
         $requestData = $request->all();
+        $queryParam = $request->query();
+
         $sendMailRequest->currentUserId = $currentUser['id'];
+        $sendMailRequest->studyName = key_exists('studyName', $queryParam) ?  $queryParam['studyName'] : null;
         $sendMailRequest = Util::fillObject($requestData, $sendMailRequest);
         $sendMail->execute($sendMailRequest, $sendMailResponse);
         return $this->getJsonResponse($sendMailResponse->body, $sendMailResponse->status, $sendMailResponse->statusText);
@@ -330,7 +352,8 @@ class StudyController extends Controller
         return $this->getJsonResponse($getStudyStatisticsResponse->body, $getStudyStatisticsResponse->status, $getStudyStatisticsResponse->statusText);
     }
 
-    public function getStudy(GetStudy $getStudy, GetStudyRequest $getStudyRequest, GetStudyResponse $getStudyResponse, string $studyName){
+    public function getStudy(GetStudy $getStudy, GetStudyRequest $getStudyRequest, GetStudyResponse $getStudyResponse, string $studyName)
+    {
         $currentUser = Auth::user();
 
         $getStudyRequest->currentUserId = $currentUser['id'];

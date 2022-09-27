@@ -11,5 +11,6 @@ class CreateStudyRequest
     public String $contactEmail;
     public bool $monitorShowAll;
     public bool $controllerShowAll;
+    public bool $documentationMandatory;
     public ?string $ancillaryOf = null;
 }

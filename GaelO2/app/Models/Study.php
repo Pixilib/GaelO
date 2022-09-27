@@ -22,7 +22,8 @@ class Study extends Model
         'contact_email' => 'string',
         'controller_show_all' => 'boolean',
         'monitor_show_all' => 'boolean',
-        'ancillary_of' =>  'string'
+        'ancillary_of' =>  'string',
+        'documentation_mandatory' => 'boolean'
     ];
 
     public function patients()

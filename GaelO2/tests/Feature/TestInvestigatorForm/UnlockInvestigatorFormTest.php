@@ -4,25 +4,18 @@ namespace Tests\Feature\TestInvestigatorForm;
 
 use App\GaelO\Constants\Constants;
 use App\Models\Review;
-use Illuminate\Foundation\Testing\DatabaseMigrations;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\AuthorizationTools;
 use Tests\TestCase;
 
 class UnlockInvestigatorFormTest extends TestCase
 {
-    use DatabaseMigrations {
-        runDatabaseMigrations as baseRunDatabaseMigrations;
-    }
-
-    public function runDatabaseMigrations()
-    {
-        $this->baseRunDatabaseMigrations();
-        $this->artisan('db:seed');
-    }
+    use RefreshDatabase;
 
     protected function setUp(): void
     {
         parent::setUp();
+        $this->artisan('db:seed');
         $this->review = Review::factory()->validated()->create();
         $this->studyName = $this->review->visit->patient->study_name;
     }

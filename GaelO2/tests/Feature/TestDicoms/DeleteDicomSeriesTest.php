@@ -8,31 +8,19 @@ use App\Models\DicomStudy;
 use App\Models\Review;
 use App\Models\ReviewStatus;
 use App\Models\Visit;
-use Illuminate\Foundation\Testing\DatabaseMigrations;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\AuthorizationTools;
 use Tests\TestCase;
 
 class DeleteDicomSeriesTest extends TestCase
 {
 
-    use DatabaseMigrations {
-        runDatabaseMigrations as baseRunDatabaseMigrations;
-    }
-
-    /**
-     * Define hooks to migrate the database before and after each test.
-     *
-     * @return void
-     */
-    public function runDatabaseMigrations()
-    {
-        $this->baseRunDatabaseMigrations();
-        $this->artisan('db:seed');
-    }
+    use RefreshDatabase;
 
     protected function setUp(): void
     {
         parent::setUp();
+        $this->artisan('db:seed');
         $this->dicomSeries = DicomSeries::factory()->create();
         $this->studyName = $this->dicomSeries->dicomStudy->visit->patient->study_name;
         $visit = $this->dicomSeries->dicomStudy->visit;

@@ -6,25 +6,18 @@ use App\GaelO\Constants\Constants;
 use App\Models\Center;
 use App\Models\Patient;
 use App\Models\Study;
-use Illuminate\Foundation\Testing\DatabaseMigrations;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 use Tests\AuthorizationTools;
 
 class CenterTest extends TestCase
 {
 
-    use DatabaseMigrations {
-        runDatabaseMigrations as baseRunDatabaseMigrations;
-    }
+    use RefreshDatabase;
 
-    /**
-     * Define hooks to migrate the database before and after each test.
-     *
-     * @return void
-     */
-    public function runDatabaseMigrations()
-    {
-        $this->baseRunDatabaseMigrations();
+    //This method is called before each test, it needs to call the parent setup methods
+    protected function setUp() : void{
+        parent::setUp();
         $this->artisan('db:seed');
     }
 

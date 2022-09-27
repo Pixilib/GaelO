@@ -4,7 +4,6 @@ namespace Tests\Unit;
 
 use App\GaelO\Constants\Constants;
 use App\GaelO\Services\MailServices;
-use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Artisan;
@@ -20,24 +19,12 @@ use App\Models\ReviewStatus;
 
 class VisitServiceTest extends TestCase
 {
-
-    use DatabaseMigrations {
-        runDatabaseMigrations as baseRunDatabaseMigrations;
-    }
-
     use RefreshDatabase;
-
-    public function runDatabaseMigrations()
-    {
-        $this->baseRunDatabaseMigrations();
-        $this->artisan('db:seed');
-    }
-
 
     protected function setUp(): void
     {
         parent::setUp();
-
+        $this->artisan('db:seed');
         Passport::actingAs(
             User::where('id', 1)->first()
         );

@@ -8,21 +8,24 @@ use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
 use App\GaelO\Services\AuthorizationService\AuthorizationStudyService;
+use App\GaelO\Services\AuthorizationService\AuthorizationUserService;
 use App\GaelO\Services\MailServices;
 
 class SendMail
 {
-
     private MailServices $mailService;
     private AuthorizationStudyService $authorizationStudyService;
+    private AuthorizationUserService $authorizationUserService;
 
     public function __construct(
         MailServices $mailService,
         AuthorizationStudyService $authorizationStudyService,
+        AuthorizationUserService $authorizationUserService,
         TrackerRepositoryInterface $trackerRepositoryInterface
     ) {
         $this->mailService = $mailService;
         $this->authorizationStudyService = $authorizationStudyService;
+        $this->authorizationUserService = $authorizationUserService;
         $this->trackerRepositoryInterface = $trackerRepositoryInterface;
     }
 
@@ -30,71 +33,61 @@ class SendMail
     {
 
         try {
-            $this->checkEmpty($sendMailRequest->role, 'role');
 
-            if ($sendMailRequest->role !== Constants::ROLE_ADMINISTRATOR) $this->checkAuthorization($sendMailRequest->currentUserId, $sendMailRequest->study, $sendMailRequest->role);
+            $currentUserId = $sendMailRequest->currentUserId;
+            $studyName = $sendMailRequest->studyName;
+            $role = $sendMailRequest->role;
+            $subject = $sendMailRequest->subject;
+            $content = $sendMailRequest->content;
+            $userIds = $sendMailRequest->userIds;
 
-            $this->checkEmpty($sendMailRequest->subject, 'subject');
-            $this->checkEmpty($sendMailRequest->content, 'content');
+            $this->checkEmpty($role, 'role');
+            $this->checkEmpty($subject, 'subject');
+            $this->checkEmpty($content, 'content');
 
-            //EO split 1 use case par role ? Dissocier send mail de patients creation request ?
-            switch ($sendMailRequest->role) {
-                case Constants::ROLE_SUPERVISOR:
-                    if ($sendMailRequest->toAdministrators)
-                        $this->mailService->sendMailToAdministrators(
-                            $sendMailRequest->currentUserId,
-                            $sendMailRequest->study,
-                            $sendMailRequest->subject,
-                            $sendMailRequest->content,
-                        );
-                    else {
-                        $this->checkEmpty($sendMailRequest->userIds, 'recipient');
-                        $this->mailService->sendMailToUser(
-                            $sendMailRequest->currentUserId,
-                            $sendMailRequest->userIds,
-                            $sendMailRequest->study,
-                            $sendMailRequest->subject,
-                            $sendMailRequest->content
-                        );
-                    }
-                    break;
-                case Constants::ROLE_ADMINISTRATOR:
-                    $this->checkEmpty($sendMailRequest->userIds, 'recipient');
-                    $this->mailService->sendMailToUser(
-                        $sendMailRequest->currentUserId,
-                        $sendMailRequest->userIds,
-                        null,
-                        $sendMailRequest->subject,
-                        $sendMailRequest->content
-                    );
-                    break;
-                default:
-                    if (isset($sendMailRequest->userIds)) throw new GaelOForbiddenException();
-                    if (isset($sendMailRequest->patients) && count(json_decode($sendMailRequest->patients, true)) === 0) throw new GaelOBadRequestException('Request missing patient list');
-                    $this->mailService->sendMailToSupervisors(
-                        $sendMailRequest->currentUserId,
-                        $sendMailRequest->study,
-                        $sendMailRequest->subject,
-                        $sendMailRequest->content,
-                        $sendMailRequest->patientId,
-                        $sendMailRequest->visitId,
-                        $sendMailRequest->patients,
-                    );
+            if ($role !== Constants::ROLE_ADMINISTRATOR) $this->checkAuthorization($currentUserId, $studyName, $role);
+            else $this->checkAuthorizationAdmin($currentUserId);
+
+            if ($role === Constants::ROLE_SUPERVISOR && $sendMailRequest->toAdministrators) {
+                $this->mailService->sendMailToAdministrators(
+                    $currentUserId,
+                    $studyName,
+                    $subject,
+                    $content,
+                );
+            } else if ($role === Constants::ROLE_SUPERVISOR || $role === Constants::ROLE_ADMINISTRATOR) {
+                $this->checkEmpty($userIds, 'recipient');
+                $this->mailService->sendMailToUser(
+                    $currentUserId,
+                    $userIds,
+                    $studyName,
+                    $subject,
+                    $content
+                );
+            } else if ($role === Constants::ROLE_INVESTIGATOR || $role === Constants::ROLE_CONTROLLER || $role === Constants::ROLE_REVIEWER || $role === Constants::ROLE_MONITOR) {
+                if (isset($userIds)) throw new GaelOForbiddenException();
+                $this->mailService->sendMailToSupervisors(
+                    $currentUserId,
+                    $studyName,
+                    $subject,
+                    $content,
+                    $sendMailRequest->patientId,
+                    $sendMailRequest->visitId
+                );
             }
 
             $actionsDetails = [
-                'subject' => $sendMailRequest->subject,
-                'content' => $sendMailRequest->content,
-                'to_user_ids' => $sendMailRequest->userIds,
+                'subject' => $subject,
+                'content' => $content,
+                'to_user_ids' => $userIds,
                 'to_administrators' => $sendMailRequest->toAdministrators,
-                'patientId' => $sendMailRequest->patientId,
-                'patients' => $sendMailRequest->patients
+                'patientId' => $sendMailRequest->patientId
             ];
 
             $this->trackerRepositoryInterface->writeAction(
-                $sendMailRequest->currentUserId,
-                $sendMailRequest->role,
-                $sendMailRequest->study,
+                $currentUserId,
+                $role,
+                $studyName,
                 $sendMailRequest->visitId,
                 Constants::TRACKER_SEND_MESSAGE,
                 $actionsDetails
@@ -107,8 +100,6 @@ class SendMail
             $sendMailResponse->status = $e->statusCode;
             $sendMailResponse->statusText = $e->statusText;
         }
-
-        return $sendMailResponse;
     }
 
     private function checkEmpty($inputData, $name)
@@ -123,6 +114,14 @@ class SendMail
         $this->authorizationStudyService->setUserId($userId);
         $this->authorizationStudyService->setStudyName($study);
         if (!$this->authorizationStudyService->isAllowedStudy($role)) {
+            throw new GaelOForbiddenException();
+        }
+    }
+
+    private function checkAuthorizationAdmin(int $currentUserId)
+    {
+        $this->authorizationUserService->setUserId($currentUserId);
+        if (!$this->authorizationUserService->isAdmin($currentUserId)) {
             throw new GaelOForbiddenException();
         }
     }
