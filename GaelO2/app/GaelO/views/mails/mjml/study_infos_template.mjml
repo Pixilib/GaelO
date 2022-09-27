@@ -20,7 +20,7 @@
     <mj-section>
       <mj-column width="100%">
         <mj-text align="left">
-          <mj-table css-class="gaelo-table-series" color="#353275">
+          <mj-table css-class="table-striped" color="#353275">
             <tr>
               <td style="padding: 0 15px 0 0;" align="left">Study description</td>
               <td style="padding: 0 15px;" align="right">{{$studyDescription}}</td>
