@@ -2,7 +2,7 @@
   <mj-head>
     <mj-attributes>
       <mj-all font-family="Roboto, Helvetica, sans-serif" color="#314053"></mj-all>
-      <mj-class name="button"  color="#FFF" font-size="14px" align="center" font-weight="bold" border="none" padding="15px 30px" border-radius="10px"  font-family="Helvetica" padding-left="25px" padding-right="25px" padding-bottom="10px" padding-top="10px" />
+      <mj-class name="button" color="#FFF" font-size="14px" align="center" font-weight="bold" border="none" padding="15px 30px" border-radius="10px" padding-left="25px" padding-right="25px" padding-bottom="10px" padding-top="10px" />
     </mj-attributes>
   </mj-head>
   <mj-body>

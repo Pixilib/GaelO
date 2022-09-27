@@ -1,18 +1,16 @@
 <mjml>
   <mj-head>
     <mj-attributes>
-      <mj-class name="text" color="#353275" />
+      <mj-class name="text-blue" color="#353275" />
       <mj-include path="./style.css" type="css" />
     </mj-attributes>
   </mj-head>
   <mj-body>
     <mj-section>
       <mj-column width="100%">
-        <mj-text>
+        <mj-text mj-class="text-blue">
           <h3 align="center">
-            <a text-decoration: "none">
-              {{$series['series_description']}}
-            </a>
+            {{$series['series_description']}}
           </h3>
         </mj-text>
       </mj-column width="100%">

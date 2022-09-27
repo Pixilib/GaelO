@@ -1,7 +1,6 @@
 <mjml>
   <mj-head>
     <mj-attributes>
-      <mj-class name="text" color="#445566" />
       <mj-include path="./style.css" type="css" />
     </mj-attributes>
   </mj-head>
@@ -19,28 +18,26 @@
     </mj-section>
     <mj-section>
       <mj-column width="100%">
-        <mj-text align="left">
-          <mj-table css-class="table-striped" color="#353275">
-            <tr>
-              <td style="padding: 0 15px 0 0;" align="left">Study description</td>
-              <td style="padding: 0 15px;" align="right">{{$studyDescription}}</td>
-            </tr>
-            <tr>
-              <td style="padding: 0 15px 0 0;" align="left">Manufacturer</td>
-              <td style="padding: 0 15px;" align="right">{{$manufacturer}} </td>
-            </tr>
-            <tr>
-              <td style="padding: 0 15px 0 0;" align="left">Acquisition Date</td>
-              <td style="padding: 0 15px;" align="right">{{$acquisitionDate}}</td>
-            </tr>
-            <tr>
-              <td style="padding: 0 15px 0 0;" align="left">Modalities</td>
-              <td style="padding: 0 15px;" align="right">{{$modalities}}</td>
-            </tr>
-          </mj-table>
-        </mj-text>
+        <mj-table css-class="table-striped" color="#353275">
+          <tr>
+            <td style="padding: 0 15px 0 0;" align="left">Study description</td>
+            <td style="padding: 0 15px;" align="right">{{$studyDescription}}</td>
+          </tr>
+          <tr>
+            <td style="padding: 0 15px 0 0;" align="left">Manufacturer</td>
+            <td style="padding: 0 15px;" align="right">{{$manufacturer}} </td>
+          </tr>
+          <tr>
+            <td style="padding: 0 15px 0 0;" align="left">Acquisition Date</td>
+            <td style="padding: 0 15px;" align="right">{{$acquisitionDate}}</td>
+          </tr>
+          <tr>
+            <td style="padding: 0 15px 0 0;" align="left">Modalities</td>
+            <td style="padding: 0 15px;" align="right">{{$modalities}}</td>
+          </tr>
+        </mj-table>
       </mj-column>
-      <mj-column width="75%">
+      <mj-column width="100%">
         <mj-divider border-width="2px" border-color="#616161"></mj-divider>
       </mj-column>
     </mj-section>

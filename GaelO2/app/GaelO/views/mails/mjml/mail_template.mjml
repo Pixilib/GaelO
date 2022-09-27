@@ -18,7 +18,7 @@
       </mj-column>
     </mj-section>
     <mj-section>
-      <mj-column padding="15px 30px">
+      <mj-column>
         <mj-text mj-class="bold" padding-bottom="30px">
           Dear {{ $name }},
         </mj-text>
