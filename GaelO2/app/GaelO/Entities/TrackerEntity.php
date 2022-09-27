@@ -40,6 +40,7 @@ class TrackerEntity
         $this->visit->patient = new PatientEntity();
         $this->visit->patient->code = $array['patient']['code'];
         $this->visit->patient->id = $array['patient_id'];
+        $this->visit->deletedAt = $array['deleted_at'];
         $this->visit->setVisitContext(
             $array['visit_type']['visit_group'],
             $array['visit_type']

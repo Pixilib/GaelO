@@ -53,8 +53,10 @@ class PatientController extends Controller
     {
         $currentUser = Auth::user();
         $requestData = $request->all();
+        $queryParam = $request->query();
 
         $modifyPatientRequest = Util::fillObject($requestData, $modifyPatientRequest);
+        $modifyPatientRequest->studyName = $queryParam['studyName'];
         $modifyPatientRequest->patientId = $patientId;
         $modifyPatientRequest->currentUserId = $currentUser['id'];
         $modifyPatient->execute($modifyPatientRequest, $modifyPatientResponse);

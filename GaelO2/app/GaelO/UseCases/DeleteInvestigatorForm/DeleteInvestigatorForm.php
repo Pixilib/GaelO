@@ -54,6 +54,11 @@ class DeleteInvestigatorForm
 
             $investigatorFormEntity = $this->reviewRepositoryInterface->getInvestigatorForm($visitId, false);
 
+            //check that it is called from the correct study
+            if($deleteInvestigatorFormRequest->studyName !== $studyName){
+                throw new GaelOForbiddenException("Should be called from same study than original study");
+            }
+
             $this->checkAuthorization($currentUserId, $visitId, $visitContext['state_quality_control'], $studyName);
 
             //Delete review

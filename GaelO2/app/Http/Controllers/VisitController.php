@@ -29,7 +29,6 @@ use App\GaelO\UseCases\ModifyVisitDate\ModifyVisitDateResponse;
 use App\GaelO\UseCases\ReactivateVisit\ReactivateVisit;
 use App\GaelO\UseCases\ReactivateVisit\ReactivateVisitRequest;
 use App\GaelO\UseCases\ReactivateVisit\ReactivateVisitResponse;
-use App\GaelO\UseCases\RequestUnlock\RequestUnlockRequest;
 use App\GaelO\UseCases\RequestUnlockQC\RequestUnlockQC;
 use App\GaelO\UseCases\RequestUnlockQC\RequestUnlockQCRequest;
 use App\GaelO\UseCases\RequestUnlockQC\RequestUnlockQCResponse;
@@ -108,6 +107,7 @@ class VisitController extends Controller
         $deleteVisitRequest->currentUserId = $currentUser['id'];
         $deleteVisitRequest->visitId = $visitId;
         $deleteVisitRequest->role = $queryParam['role'];
+        $deleteVisitRequest->studyName = $queryParam['studyName'];
 
         $deleteVisit->execute($deleteVisitRequest, $deleteVisitResponse);
 
@@ -118,10 +118,12 @@ class VisitController extends Controller
     {
         $currentUser = Auth::user();
         $requestData = $request->all();
+        $queryParam = $request->query();
 
         $modifyQualityControlRequest = Util::fillObject($requestData, $modifyQualityControlRequest);
         $modifyQualityControlRequest->currentUserId = $currentUser['id'];
         $modifyQualityControlRequest->visitId = $visitId;
+        $modifyQualityControlRequest->studyName = $queryParam['studyName'];
 
         $modifyQualityControl->execute($modifyQualityControlRequest, $modifyQualityControlResponse);
 
@@ -132,9 +134,11 @@ class VisitController extends Controller
     {
         $currentUser = Auth::user();
         $requestData = $request->all();
+        $queryParam = $request->query();
 
         $modifyQualityControlResetRequest->currentUserId = $currentUser['id'];
         $modifyQualityControlResetRequest->visitId = $visitId;
+        $modifyQualityControlResetRequest->studyName = $queryParam['studyName'];
         $modifyQualityControlResetRequest = Util::fillObject($requestData, $modifyQualityControlResetRequest);
 
         $modifyQualityControlReset->execute($modifyQualityControlResetRequest, $modifyQualityControlResetResponse);
@@ -146,9 +150,11 @@ class VisitController extends Controller
     {
         $currentUser = Auth::user();
         $requestData = $request->all();
+        $queryParam = $request->query();
 
         $modifyCorrectiveActionRequest = Util::fillObject($requestData, $modifyCorrectiveActionRequest);
         $modifyCorrectiveActionRequest->currentUserId = $currentUser['id'];
+        $modifyCorrectiveActionRequest->studyName = $queryParam['studyName'];
         $modifyCorrectiveActionRequest->visitId = $visitId;
 
         $modifyCorrectiveAction->execute($modifyCorrectiveActionRequest, $modifyCorrectiveActionResponse);
@@ -159,10 +165,12 @@ class VisitController extends Controller
     public function modifyVisitDate(Request $request, ModifyVisitDate $modifyVisitDate, ModifyVisitDateRequest $modifyVisitDateRequest, ModifyVisitDateResponse $modifyVisitDateResponse, int $visitId){
         $currentUser = Auth::user();
         $requestData = $request->all();
+        $queryParam = $request->query();
 
         $modifyCorrectiveActionRequest = Util::fillObject($requestData, $modifyVisitDateRequest);
         $modifyCorrectiveActionRequest->currentUserId = $currentUser['id'];
         $modifyCorrectiveActionRequest->visitId = $visitId;
+        $modifyCorrectiveActionRequest->studyName = $queryParam['studyName'];
 
         $modifyVisitDate->execute($modifyVisitDateRequest, $modifyVisitDateResponse);
 

@@ -36,6 +36,10 @@ class ModifyVisitDate
             $visitContext = $this->visitRepositoryInterface->getVisitContext($visitId);
             $studyName = $visitContext['patient']['study_name'];
 
+            if($modifyVisitDateRequest->studyName !== $studyName){
+                throw new GaelOForbiddenException("should be called from original study");
+            }
+
             $this->checkAuthorization($currentUserId, $visitId, $studyName);
 
             //update visit Date in db

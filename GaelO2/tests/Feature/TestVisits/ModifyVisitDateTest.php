@@ -42,9 +42,24 @@ class ModifyVisitDateTest extends TestCase {
             'visitDate' => now()
         ];
 
-        $response = $this->patch('/api/visits/'.$this->visit->id.'/visit-date', $payload);
+        $response = $this->put('/api/visits/'.$this->visit->id.'/visit-date?studyName='.$this->studyName, $payload);
 
         $response->assertStatus(200);
+
+    }
+
+    public function testModifyVisitDateShouldFailWrongStudy()
+    {
+        $currentUserId = AuthorizationTools::actAsAdmin(false);
+        AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $this->studyName);
+
+        $payload = [
+            'visitDate' => now()
+        ];
+
+        $response = $this->put('/api/visits/'.$this->visit->id.'/visit-date?studyName='.$this->studyName. 'wrong', $payload);
+
+        $response->assertStatus(403);
 
     }
 
@@ -57,7 +72,7 @@ class ModifyVisitDateTest extends TestCase {
             'visitDate' => now()
         ];
 
-        $response = $this->patch('/api/visits/'.$this->visit->id.'/visit-date', $payload);
+        $response = $this->put('/api/visits/'.$this->visit->id.'/visit-date?studyName='.$this->studyName, $payload);
 
         $response->assertStatus(403);
 

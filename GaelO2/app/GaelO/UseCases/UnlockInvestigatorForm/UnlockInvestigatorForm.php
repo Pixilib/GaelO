@@ -5,6 +5,7 @@ namespace App\GaelO\UseCases\UnlockInvestigatorForm;
 use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOBadRequestException;
+use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\ReviewRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
@@ -49,6 +50,10 @@ class UnlockInvestigatorForm
             $studyName = $visitContext['patient']['study_name'];
             $visitId = $visitContext['id'];
             $currentUserId = $unlockInvestigatorFormRequest->currentUserId;
+
+            if($unlockInvestigatorFormRequest->studyName !== $studyName){
+                throw new GaelOForbiddenException("Should be called from the original study");
+            }
 
             $this->checkAuthorization($currentUserId, $visitId, $visitContext['state_quality_control'], $studyName);
 

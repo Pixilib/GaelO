@@ -2,11 +2,9 @@
 
 namespace Tests\Feature\TestUser;
 
-use App\GaelO\Constants\Constants;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\TestCase;
 use App\Models\User;
-use Illuminate\Support\Facades\Artisan;
 use Tests\AuthorizationTools;
 
 class DeleteUserTest extends TestCase
@@ -53,7 +51,7 @@ class DeleteUserTest extends TestCase
         AuthorizationTools::actAsAdmin(true);
         $payload = [];
         User::find(2)->delete();
-        $this->json('PATCH', '/api/users/2/reactivate', $payload)->assertNoContent(200);
+        $this->json('POST', '/api/users/2/activate', $payload)->assertNoContent(200);
         $user = User::find(2)->toArray();
         $this->assertNull($user['email_verified_at']);
 

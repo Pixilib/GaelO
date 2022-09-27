@@ -65,7 +65,7 @@ class QcTest extends TestCase
             'formQc'=>true
         ];
 
-        $response = $this->patch('/api/visits/'.$this->visit->id.'/quality-control', $payload);
+        $response = $this->patch('/api/visits/'.$this->visit->id.'/quality-control?studyName='.$this->studyName, $payload);
         $response->assertStatus(200);
 
         $reviewStatus = ReviewStatus::where('visit_id', $this->visit->id)->where('study_name', $this->studyName)->sole();
@@ -85,7 +85,7 @@ class QcTest extends TestCase
             'formQcComment'=>'non'
         ];
 
-        $response = $this->patch('/api/visits/'.$this->visit->id.'/quality-control', $payload);
+        $response = $this->patch('/api/visits/'.$this->visit->id.'/quality-control?studyName='.$this->studyName, $payload);
         $response->assertStatus(403);
 
     }
@@ -106,7 +106,7 @@ class QcTest extends TestCase
             'formQcComment'=>'non'
         ];
 
-        $response = $this->patch('/api/visits/'.$this->visit->id.'/quality-control', $payload);
+        $response = $this->patch('/api/visits/'.$this->visit->id.'/quality-control?studyName='.$this->studyName, $payload);
         $response->assertStatus(403);
 
     }
@@ -127,7 +127,7 @@ class QcTest extends TestCase
             'formQcComment'=>'non'
         ];
 
-        $response = $this->patch('/api/visits/'.$this->visit->id.'/quality-control', $payload);
+        $response = $this->patch('/api/visits/'.$this->visit->id.'/quality-control?studyName='.$this->studyName, $payload);
         $response->assertStatus(403);
 
     }
@@ -152,7 +152,7 @@ class QcTest extends TestCase
             'formQcComment'=>'non'
         ];
 
-        $response = $this->patch('/api/visits/'.$this->visit->id.'/quality-control', $payload);
+        $response = $this->patch('/api/visits/'.$this->visit->id.'/quality-control?studyName='.$this->studyName, $payload);
         $response->assertStatus(200);
     }
 
@@ -168,7 +168,7 @@ class QcTest extends TestCase
             'formQcComment'=>'non'
         ];
 
-        $response = $this->patch('/api/visits/'.$this->visit->id.'/quality-control', $payload);
+        $response = $this->patch('/api/visits/'.$this->visit->id.'/quality-control?studyName='.$this->studyName, $payload);
         $response->assertStatus(400);
 
     }
@@ -185,7 +185,7 @@ class QcTest extends TestCase
             'formQcComment'=>'non'
         ];
 
-        $response = $this->patch('/api/visits/'.$this->visit->id.'/quality-control', $payload);
+        $response = $this->patch('/api/visits/'.$this->visit->id.'/quality-control?studyName='.$this->studyName, $payload);
         $response->assertStatus(400);
 
     }
@@ -201,7 +201,7 @@ class QcTest extends TestCase
             'imageQcComment'=>'OK'
         ];
 
-        $response = $this->patch('/api/visits/'.$this->visit->id.'/quality-control', $payload);
+        $response = $this->patch('/api/visits/'.$this->visit->id.'/quality-control?studyName='.$this->studyName, $payload);
         $response->assertStatus(400);
 
 
@@ -244,62 +244,6 @@ class QcTest extends TestCase
         $response = $this->post('/api/visits/'.$this->visit->id.'/quality-control/unlock', $payload);
 
         $response->assertStatus(400);
-
-    }
-
-
-
-    public function testResetQc()
-    {
-        $currentUserId = AuthorizationTools::actAsAdmin(false);
-        AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $this->studyName);
-
-        $payload = [
-            'reason' => 'error filling qc'
-        ];
-
-        $response = $this->patch('/api/visits/'.$this->visit->id.'/quality-control/reset', $payload);
-
-        $response->assertStatus(200);
-
-    }
-
-    public function testResetQcMissingReason()
-    {
-        $currentUserId = AuthorizationTools::actAsAdmin(false);
-        AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $this->studyName);
-
-        $payload = [];
-
-        $response = $this->patch('/api/visits/'.$this->visit->id.'/quality-control/reset', $payload);
-
-        $response->assertStatus(400);
-
-    }
-
-    public function testResetQcShouldFailNoRole()
-    {
-        AuthorizationTools::actAsAdmin(false);
-        $payload = [
-            'reason' => 'error filling qc'
-        ];
-        $this->patch('/api/visits/'.$this->visit->id.'/quality-control/reset', $payload)->assertStatus(403);
-
-    }
-
-    public function testResetQcShouldFailReviewStatusStarted()
-    {
-        $currentUserId = AuthorizationTools::actAsAdmin(false);
-        AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $this->studyName);
-
-
-        $this->reviewStatus->review_status = Constants::REVIEW_STATUS_ONGOING;
-        $this->reviewStatus->save();
-
-        $payload = [
-            'reason' => 'error filling qc'
-        ];
-        $this->patch('/api/visits/'.$this->visit->id.'/quality-control/reset', $payload)->assertStatus(400);
 
     }
 }
