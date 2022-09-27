@@ -108,7 +108,8 @@ class JobAutoQc implements ShouldQueue
 
         $studyInfo = [];
         $studyInfo['visitDate'] = $visitEntity['visit_date'];
-        $studyInfo['registrationDate'] = $visitEntity['patient']['registration_date'];
+        $studyInfo['visistName'] = $visitEntity['visit_name'];
+        $studyInfo['patientCode'] = $visitEntity['patient_code'];
         $studyInfo['studyName'] = $visitEntity['patient']['study_name'];
 
         $studyInfo['numberOfSeries'] = count($dicomStudyEntity[0]['dicom_series']);
@@ -124,6 +125,7 @@ class JobAutoQc implements ShouldQueue
 
         $seriesInfo = [];
         $index = 0;
+        $modalities = [];
         foreach ($dicomStudyEntity[0]['dicom_series'] as $series) {
             $seriesSharedTags = $orthancService->getMetaData($series['orthanc_id']);
             $seriesDetails = $orthancService->getOrthancRessourcesDetails(Constants::ORTHANC_SERIES_LEVEL, $series['orthanc_id']);
@@ -131,10 +133,11 @@ class JobAutoQc implements ShouldQueue
             if ($index == 0) {
                 $studyInfo['studyDescription'] = $seriesSharedTags->getStudyDescription();
                 $studyInfo['studyManufacturer'] = $seriesSharedTags->getStudyManufacturer();
-                $studyInfo['studyDate'] = $seriesSharedTags->getStudyDate();
-                $studyInfo['studyTime'] = $seriesSharedTags->getStudyTime();
+                $studyInfo['acquisitionDate'] = $seriesSharedTags->getAcquisitonDateTime();
             }
             $studyInfo['numberOfInstances'] += $series['number_of_instances'];
+            $modalities[] = $seriesSharedTags->getSeriesModality();
+
             $seriesData = [];
             $seriesData['infos'] = [];
             $seriesData['series_description'] = $seriesSharedTags->getSeriesDescription();
@@ -175,6 +178,9 @@ class JobAutoQc implements ShouldQueue
             }
             $seriesInfo[] = $seriesData;
         }
+
+        $modalities = array_unique($modalities);
+        $studyInfo['modalities'] = implode(' - ', $modalities);
 
         $studyName = $visitEntity['patient']['study_name'];
         $visitId = $visitEntity['id'];

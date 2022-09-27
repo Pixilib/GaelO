@@ -7,12 +7,22 @@
     <mj-body>
         <mj-section>
             <mj-column width="100%">
-                <mj-text align="center"> New visit has been uploaded to the study (Nom d'étude)</mj-text>
-                <mj-text align="center"> Following to the upload of a visit (type de visite) from the patient (code patient)
-                (nombre d'instances / series) series/instances are to be validated</mj-text>
+                <mj-text align="center"> The visit {{$visitName}} of the patient {{$patientCode}} from the study {{$studyName}} has been uploaded</mj-text>
                 <mj-text color="#445566" font-size="11px" align="center" line-height="16px">
-                    Visit uploaded by (uploader) the (date)
+                    {{$visitDate}}
                 </mj-text>
+            </mj-column>
+            <mj-column width="100%">
+                <mj-divider border-width="1px" border-color="#616161"></mj-divider>
+            </mj-column>>
+        </mj-section>
+        <mj-section>
+            <mj-column width="100%">
+                <mj-text align="left"> <pre> Dicom Study =
+        - Study description: {{$studyDescription}}
+        - Manufacturer: {{$manufacturer}} 
+        - Acquisition Date: {{$acquisitionDate}}
+        - Modalities: {{$modalities}}</mj-text>
             </mj-column>
             <mj-column width="75%">
                 <mj-divider border-width="2px" border-color="#616161"></mj-divider>
