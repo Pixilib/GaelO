@@ -108,8 +108,8 @@ class JobAutoQc implements ShouldQueue
 
         $studyInfo = [];
         $studyInfo['visitDate'] = $visitEntity['visit_date'];
-        $studyInfo['visistName'] = $visitEntity['visit_name'];
-        $studyInfo['patientCode'] = $visitEntity['patient_code'];
+        $studyInfo['visitName'] = $visitEntity['visit_type']['name'];
+        $studyInfo['patientCode'] = $visitEntity['patient']['code'];
         $studyInfo['studyName'] = $visitEntity['patient']['study_name'];
 
         $studyInfo['numberOfSeries'] = count($dicomStudyEntity[0]['dicom_series']);
@@ -132,7 +132,7 @@ class JobAutoQc implements ShouldQueue
 
             if ($index == 0) {
                 $studyInfo['studyDescription'] = $seriesSharedTags->getStudyDescription();
-                $studyInfo['studyManufacturer'] = $seriesSharedTags->getStudyManufacturer();
+                $studyInfo['manufacturer'] = $seriesSharedTags->getStudyManufacturer();
                 $studyInfo['acquisitionDate'] = $seriesSharedTags->getAcquisitonDateTime();
             }
             $studyInfo['numberOfInstances'] += $series['number_of_instances'];
