@@ -224,18 +224,8 @@ class OrthancMetaData
         return $radioPharmaceuticalGroup['0018,1075'] ?? $radioPharmaceuticalGroup['0018,1075']['Value'];
     }
 
-    public function getRadioPharmaceuticalTags(OrthancService $orthancService, string $orthancID) : ?array
+    public function getAcquisitonDateTime() : ?string
     {
-        $radioPharmaceuticalArray = [];
-        $firstInstanceTags = new SharedTags($orthancService->getInstanceTags($orthancID));
-        $radioPharmaceuticalTags = $firstInstanceTags->getMetaDataFromCode('0018,1072');
-
-        if ($radioPharmaceuticalTags == null) {
-            return null;
-        }
-        for ($j = 0; $j < count($radioPharmaceuticalTags); $j++) {
-            $radioPharmaceuticalArray[$radioPharmaceuticalTags[$j]['Name']] = $radioPharmaceuticalTags[$j]['Value'];
-        }
-        return $radioPharmaceuticalArray;
+        return $this->getMetaDataValueFromCode('0008,0022');
     }
 }
