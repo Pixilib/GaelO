@@ -9,7 +9,7 @@
     <mj-section>
       <mj-column width="100%">
         <mj-text align="center"> The visit {{$visitName}} of the patient {{$patientCode}} from the study {{$studyName}} has been uploaded</mj-text>
-        <mj-text color="#445566" font-size="11px" align="center" line-height="16px">
+        <mj-text font-size="11px" align="center" line-height="16px">
           {{$visitDate}}
         </mj-text>
       </mj-column>
