@@ -9,7 +9,7 @@
     <mj-section>
       <mj-column width="100%">
         <mj-text>
-          <h3 style="font-weight: bold; margin-top: 0; margin-bottom: 0" align="center"> <a text-decoration: none">
+          <h3 style="font-weight: bold; margin-top: 0; margin-bottom: 0" align="center"> <a text-decoration: "none">
                 {{$series['series_description']}}
           </a> </h3>
         </mj-text>

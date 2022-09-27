@@ -239,7 +239,10 @@ class OrthancMetaData
     public function getHalfLife() : ?string
     {
         $radioPharmaceuticalGroup = $this->getRadioPharmaceuticalGroup();
-        return $radioPharmaceuticalGroup['0018,1075'] ?? $radioPharmaceuticalGroup['0018,1075']['Value'];
+        if (array_key_exists('0018,1075', $radioPharmaceuticalGroup)) {
+            return $radioPharmaceuticalGroup['0018,1075']['Value'];
+        }
+        return null;
     }
 
     public function getAcquisitonDateTime() : ?string
