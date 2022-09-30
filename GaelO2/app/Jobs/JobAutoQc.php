@@ -115,8 +115,9 @@ class JobAutoQc implements ShouldQueue
         $studyInfo['numberOfSeries'] = count($dicomStudyEntity[0]['dicom_series']);
         $studyInfo['numberOfInstances'] = 0;
         if ($stateInvestigatorForm != Constants::INVESTIGATOR_FORM_NOT_NEEDED) {
+            $reviewEntity = $reviewRepositoryInterface->getInvestigatorForm($this->visitId, false);
             $studyInfo['investigatorForm'] = json_encode(
-                $reviewRepositoryInterface->getInvestigatorForm($this->visitId, false),
+                $reviewEntity['review_data'],
                 JSON_PRETTY_PRINT
             );
         } else {
