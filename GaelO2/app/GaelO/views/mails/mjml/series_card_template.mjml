@@ -1,7 +1,7 @@
 <mjml>
   <mj-head>
     <mj-attributes>
-      <mj-class name="text-blue" color="#353275" />
+      <mj-class name="text-blue" color="#0495A0" />
       <mj-include path="./style.css" type="css" />
     </mj-attributes>
   </mj-head>
@@ -15,12 +15,12 @@
         </mj-text>
       </mj-column width="100%">
       <mj-column width="70%">
-        <mj-image width="512px" src="{{$series['image_path']}}" align="center"></mj-image>
+        <mj-image width="512px" src="{{$message->embed($series['image_path'])}}" align="center"></mj-image>
       </mj-column>
     </mj-section>
     <mj-section>
       <mj-column width="100%">
-        <mj-table css-class="table-striped" color="#353275">
+        <mj-table css-class="table-striped" mj-class="text-blue">
           <tr>
             <td style="padding: 0 15px 0 0;" align="left">{{ $item['Type'] }}</td>
             <td style="padding: 0 15px;" align="right">{{ $item['Result'] }}</td>

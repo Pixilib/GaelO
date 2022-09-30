@@ -1,7 +1,7 @@
 <mjml>
   <mj-head>
     <mj-attributes>
-      <mj-class name="text-blue" color="#353275" />
+      <mj-class name="text-blue" color="#0495A0" />
       <mj-include path="./style.css" type="css" />
     </mj-attributes>
   </mj-head>
@@ -17,9 +17,9 @@
     </mj-section>
     <mj-section>
       <mj-column>
-        <mj-text align="center">
+        <mj-text align="center" mj-class="text-blue">
           <pre>
-          {{$investigatorForm}}
+{{$studyInfo['investigatorForm']}}
           </pre>
         </mj-text>
       </mj-column>
