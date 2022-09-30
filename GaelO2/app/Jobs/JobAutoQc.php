@@ -24,6 +24,7 @@ class JobAutoQc implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
     private int $visitId;
+    public $failOnTimeout = true;
 
     public $timeout = 120;
     /**
@@ -33,6 +34,7 @@ class JobAutoQc implements ShouldQueue
      */
     public function __construct(int $visitId)
     {
+        $this->onQueue('auto-qc');
         $this->visitId = $visitId;
     }
 

@@ -22,7 +22,9 @@ if [ "$role" = "app" ]; then
 
 elif [ "$role" = "queue" ]; then
     echo "Queue role"
-    php artisan queue:work --verbose --tries=3 --timeout=90
+    supervisorctl reread
+    supervisorctl update
+    supervisorctl start laravel-worker:*
 
 elif [ "$role" = "scheduler" ]; then
     echo "Scheduler role"

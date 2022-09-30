@@ -17,6 +17,7 @@ RUN apt-get update -qy && \
     libxml2-dev \
     openssl \
     sqlite3 \
+    supervisor \
     zip \
     libpng-dev \
     libmemcached-dev \
@@ -52,6 +53,7 @@ WORKDIR $APP_HOME
 
 COPY docker_start.sh /usr/local/bin/start
 COPY --chown=www-data:www-data GaelO2 .
+COPY /etc/supervisor/conf.d ./laravel-worker.conf
 
 RUN mv .env.example .env
 
