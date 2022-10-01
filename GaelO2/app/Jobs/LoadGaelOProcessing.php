@@ -29,6 +29,7 @@ class LoadGaelOProcessing implements ShouldQueue
     {
         $this->orthancSeriesID = $orthancSeriesID;
         $this->processingName = $processingName;
+        $this->onQueue('processing');
     }
     /**
      * Execute the job.
