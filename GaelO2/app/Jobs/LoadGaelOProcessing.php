@@ -21,6 +21,7 @@ class LoadGaelOProcessing implements ShouldQueue
     private array $orthancSeriesID;
     private string $processingName;
     public $timeout = 1200;
+    public $tries = 1;
 
     /**
      * Job to start ACI and add processing job to bach processing

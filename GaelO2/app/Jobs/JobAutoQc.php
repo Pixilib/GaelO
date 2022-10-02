@@ -27,6 +27,7 @@ class JobAutoQc implements ShouldQueue
     public $failOnTimeout = true;
 
     public $timeout = 120;
+    public $tries = 1;
     /**
      * Create a new job instance.
      *

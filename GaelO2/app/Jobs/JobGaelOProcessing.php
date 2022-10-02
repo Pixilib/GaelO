@@ -18,6 +18,7 @@ class JobGaelOProcessing implements ShouldQueue
     private string $host;
     public $timeout = 600;
     public $failOnTimeout = true;
+    public $tries = 1;
 
     /**
      * Create a new processing job instance.
