@@ -23,12 +23,14 @@ abstract class AbstractVisitRules
 
     abstract function getReviewerValidationRules(bool $adjudication): array;
 
-    public function getInvestigatorInputNames() : array {
+    public function getInvestigatorInputNames(): array
+    {
         $rules = $this->getInvestigatorValidationRules();
         return array_unique(array_keys($rules));
     }
 
-    public function getReviewerInputNames() : array {
+    public function getReviewerInputNames(): array
+    {
         $rules = $this->getReviewerValidationRules(true);
         $adjudicationRules = $this->getReviewerValidationRules(false);
         $inputs = [...array_keys($rules), ...array_keys($adjudicationRules)];
@@ -93,6 +95,11 @@ abstract class AbstractVisitRules
             default:
                 throw new GaelOException('Unknown Rule');
         }
+    }
+
+    public function getPatientId()
+    {
+        return $this->visitContext['patient_id'];
     }
 
     /**
