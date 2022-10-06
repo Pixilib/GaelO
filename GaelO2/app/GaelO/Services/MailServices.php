@@ -630,7 +630,7 @@ class MailServices
         $this->mailInterface->send();
     }
 
-    public function sendAutoQC(string $studyName, string $visitType, string $patientCode, array $studyInfo, array $seriesInfo, string $magiclink, string $controllerEmail)
+    public function sendQcReport(string $studyName, string $visitType, string $patientCode, array $studyInfo, array $seriesInfo, string $magiclink, string $controllerEmail)
     {
 
 
@@ -646,7 +646,7 @@ class MailServices
         $this->mailInterface->setTo([$controllerEmail]);
         $this->mailInterface->setReplyTo($this->getStudyContactEmail($studyName));
         $this->mailInterface->setParameters($parameters);
-        $this->mailInterface->setBody(MailConstants::EMAIL_AUTO_QC);
+        $this->mailInterface->setBody(MailConstants::EMAIL_QC_REPORT);
         $this->mailInterface->send();
     }
 }

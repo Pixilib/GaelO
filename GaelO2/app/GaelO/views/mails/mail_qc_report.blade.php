@@ -102,12 +102,12 @@
 </head>
 
 <body style="word-spacing:normal;">
-  @include('mails.mail_auto_qc_study', ['studyInfo' => $studyInfo])
+  @include('mails.mail_qc_report_study', ['studyInfo' => $studyInfo])
   @foreach ($seriesInfo as $series)
-    @include('mails.mail_auto_qc_series', ['seriesInfo' => $series])
+    @include('mails.mail_qc_report_series', ['seriesInfo' => $series])
   @endforeach
   @if ($studyInfo['investigatorForm'] != null)
-    @include('mails.mail_auto_qc_investigator_form', ['studyInfo' => $studyInfo])
+    @include('mails.mail_qc_report_investigator_form', ['studyInfo' => $studyInfo])
   @endif
   <div style="">
     <!--[if mso | IE]><table align="center" border="0" cellpadding="0" cellspacing="0" class="" style="width:600px;" width="600" ><tr><td style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;"><![endif]-->
