@@ -17,7 +17,7 @@
     </mj-section>
     <mj-section>
       <mj-column>
-        <mj-text align="center" mj-class="text-blue">
+        <mj-text align="center">
           <pre>
 {{$studyInfo['investigatorForm']}}
           </pre>
