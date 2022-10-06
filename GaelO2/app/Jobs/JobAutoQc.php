@@ -17,13 +17,17 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use App\GaelO\Services\StoreObjects\OrthancMetaData;
 use App\Jobs\ImageType;
+use Illuminate\Support\Facades\Log;
+use Throwable;
 
 class JobAutoQc implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
     private int $visitId;
+    public $failOnTimeout = true;
 
     public $timeout = 120;
+    public $tries = 1;
     /**
      * Create a new job instance.
      *
@@ -31,14 +35,17 @@ class JobAutoQc implements ShouldQueue
      */
     public function __construct(int $visitId)
     {
+        $this->onQueue('auto-qc');
         $this->visitId = $visitId;
     }
 
     public function getImageType(OrthancMetaData $sharedTags): ImageType
     {
         $mosaicIDs = ['1.2.840.10008.5.1.4.1.1.4', '1.2.840.10008.5.1.4.1.1.4.1'];
-        $gifIDs = ['1.2.840.10008.5.1.4.1.1.2', '1.2.840.10008.5.1.4.1.1.2.1', '1.2.840.10008.5.1.4.1.1.20',
-            '1.2.840.10008.5.1.4.1.1.128', '1.2.840.10008.5.1.4.1.1.130', '1.2.840.10008.5.1.4.1.1.128.1'];
+        $gifIDs = [
+            '1.2.840.10008.5.1.4.1.1.2', '1.2.840.10008.5.1.4.1.1.2.1', '1.2.840.10008.5.1.4.1.1.20',
+            '1.2.840.10008.5.1.4.1.1.128', '1.2.840.10008.5.1.4.1.1.130', '1.2.840.10008.5.1.4.1.1.128.1'
+        ];
 
         $SOPClassUID = $sharedTags->getSOPClassUID();
         if (in_array($SOPClassUID, $mosaicIDs)) {
@@ -56,7 +63,9 @@ class JobAutoQc implements ShouldQueue
         $imagePath = '';
         switch ($imageType) {
             case ImageType::MIP:
-                $imagePath = $orthancService->getSeriesMIP($seriesID);
+                //SK Mosaic temporairement
+                $imagePath = $orthancService->getSeriesMosaic($seriesID);
+                //$imagePath = $orthancService->getSeriesMIP($seriesID);
                 break;
             case ImageType::MOSAIC:
                 $imagePath = $orthancService->getSeriesMosaic($seriesID);
@@ -68,7 +77,7 @@ class JobAutoQc implements ShouldQueue
         return $imagePath;
     }
 
-    private function getRadioPharmaceutical(array $radioPharmaceuticalTags) : ?array
+    private function getRadioPharmaceutical(array $radioPharmaceuticalTags): ?array
     {
         $radioPharmaceuticalArray = [];
 
@@ -76,9 +85,8 @@ class JobAutoQc implements ShouldQueue
             for ($j = 0; $j < count($radioPharmaceuticalTags); $j++) {
                 $radioPharmaceuticalArray[$radioPharmaceuticalTags[$j]['Name']] = $radioPharmaceuticalTags[$j]['Value'];
             }
-        } 
+        }
         return $radioPharmaceuticalArray;
-
     }
 
     /**
@@ -86,47 +94,62 @@ class JobAutoQc implements ShouldQueue
      *
      * @return void
      */
-    public function handle(FrameworkInterface $frameworkInterface, UserRepositoryInterface $userRepositoryInterface, VisitRepositoryInterface $visitRepositoryInterface, DicomStudyRepositoryInterface $dicomStudyRepositoryInterface, 
-        MailServices $mailServices, OrthancService $orthancService, ReviewRepositoryInterface $reviewRepositoryInterface)
-    {
+    public function handle(
+        FrameworkInterface $frameworkInterface,
+        UserRepositoryInterface $userRepositoryInterface,
+        VisitRepositoryInterface $visitRepositoryInterface,
+        DicomStudyRepositoryInterface $dicomStudyRepositoryInterface,
+        MailServices $mailServices,
+        OrthancService $orthancService,
+        ReviewRepositoryInterface $reviewRepositoryInterface
+    ) {
         $orthancService->setOrthancServer(true);
         $visitEntity = $visitRepositoryInterface->getVisitContext($this->visitId);
         $dicomStudyEntity = $dicomStudyRepositoryInterface->getDicomsDataFromVisit($this->visitId, false, false);
-    
+
         $stateInvestigatorForm = $visitEntity['state_investigator_form'];
 
         $studyInfo = [];
         $studyInfo['visitDate'] = $visitEntity['visit_date'];
-        $studyInfo['registrationDate'] = $visitEntity['patient']['registration_date'];
+        $studyInfo['visitName'] = $visitEntity['visit_type']['name'];
+        $studyInfo['patientCode'] = $visitEntity['patient']['code'];
         $studyInfo['studyName'] = $visitEntity['patient']['study_name'];
-        
+
         $studyInfo['numberOfSeries'] = count($dicomStudyEntity[0]['dicom_series']);
         $studyInfo['numberOfInstances'] = 0;
         if ($stateInvestigatorForm != Constants::INVESTIGATOR_FORM_NOT_NEEDED) {
-            $studyInfo['investigatorForm'] = json_encode($reviewRepositoryInterface->getInvestigatorForm($this->visitId, false),
-                JSON_PRETTY_PRINT);
+            $reviewEntity = $reviewRepositoryInterface->getInvestigatorForm($this->visitId, false);
+            $studyInfo['investigatorForm'] = json_encode(
+                $reviewEntity['review_data'],
+                JSON_PRETTY_PRINT
+            );
         } else {
             $studyInfo['investigatorForm'] = null;
         }
-        
+
         $seriesInfo = [];
         $index = 0;
+        $modalities = [];
         foreach ($dicomStudyEntity[0]['dicom_series'] as $series) {
             $seriesSharedTags = $orthancService->getMetaData($series['orthanc_id']);
             $seriesDetails = $orthancService->getOrthancRessourcesDetails(Constants::ORTHANC_SERIES_LEVEL, $series['orthanc_id']);
 
             if ($index == 0) {
                 $studyInfo['studyDescription'] = $seriesSharedTags->getStudyDescription();
-                $studyInfo['studyManufacturer'] = $seriesSharedTags->getStudyManufacturer();
-                $studyInfo['studyDate'] = $seriesSharedTags->getStudyDate();
-                $studyInfo['studyTime'] = $seriesSharedTags->getStudyTime();
+                $studyInfo['manufacturer'] = $seriesSharedTags->getStudyManufacturer();
+                $studyInfo['acquisitionDate'] = $seriesSharedTags->getAcquisitonDateTime();
             }
             $studyInfo['numberOfInstances'] += $series['number_of_instances'];
+            $modalities[] = $seriesSharedTags->getSeriesModality();
 
             $seriesData = [];
             $seriesData['infos'] = [];
             $seriesData['series_description'] = $seriesSharedTags->getSeriesDescription();
-            $seriesData['image_path'] = $this->getSeriesPreview($seriesSharedTags, $series['orthanc_id'], $seriesDetails['Instances'][0], $orthancService);
+            try {
+                $seriesData['image_path'] = $this->getSeriesPreview($seriesSharedTags, $series['orthanc_id'], $seriesDetails['Instances'][0], $orthancService);
+            } catch (Throwable $t) {
+                Log::info($t);
+            }
             $seriesData['infos']['Modality'] = $seriesSharedTags->getSeriesModality();
             $seriesData['infos']['Series date'] =  $seriesSharedTags->getSeriesDate();
             $seriesData['infos']['Series time'] = $series['acquisition_time'];
@@ -160,6 +183,9 @@ class JobAutoQc implements ShouldQueue
             $seriesInfo[] = $seriesData;
         }
 
+        $modalities = array_unique($modalities);
+        $studyInfo['modalities'] = implode(' - ', $modalities);
+
         $studyName = $visitEntity['patient']['study_name'];
         $visitId = $visitEntity['id'];
         $visitType = $visitEntity['visit_type']['name'];
@@ -168,7 +194,7 @@ class JobAutoQc implements ShouldQueue
         $controllerUsers = $userRepositoryInterface->getUsersByRolesInStudy($studyName, Constants::ROLE_CONTROLLER);
 
         foreach ($controllerUsers as $user) {
-            $redirectLink = '/study/'.$studyName.'/role/'.Constants::ROLE_CONTROLLER.'/visit/'.$visitId;
+            $redirectLink = '/study/' . $studyName . '/role/' . Constants::ROLE_CONTROLLER . '/visit/' . $visitId;
             $magicLink = $frameworkInterface->createMagicLink($user['id'], $redirectLink);
             $mailServices->sendAutoQC($studyName, $visitType, $patientCode, $studyInfo, $seriesInfo, $magicLink, $user['email']);
         }

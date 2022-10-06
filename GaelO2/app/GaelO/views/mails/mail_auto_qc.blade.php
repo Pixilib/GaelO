@@ -90,10 +90,10 @@
 
   </style>
   <style>
-    .gaelo-table-series tr:nth-child(even) {
+    .table-striped tr:nth-child(even) {
       background: #f0f0f0;
     }
-    .gaelo-table-series tr:nth-child(odd) {
+    .table-striped tr:nth-child(odd) {
         background: #FFF;
     }
   </style>

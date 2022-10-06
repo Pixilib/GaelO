@@ -244,4 +244,9 @@ class OrthancMetaData
         }
         return null;
     }
+
+    public function getAcquisitonDateTime() : ?string
+    {
+        return $this->getMetaDataValueFromCode('0008,0022');
+    }
 }

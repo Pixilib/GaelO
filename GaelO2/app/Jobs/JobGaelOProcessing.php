@@ -17,6 +17,8 @@ class JobGaelOProcessing implements ShouldQueue
     private string $processingName;
     private string $host;
     public $timeout = 600;
+    public $failOnTimeout = true;
+    public $tries = 1;
 
     /**
      * Create a new processing job instance.
@@ -25,6 +27,7 @@ class JobGaelOProcessing implements ShouldQueue
      */
     public function __construct(array  $orthancSeriesID, string $processingName, string $host)
     {
+        $this->onQueue('processing');
         $this->orthancSeriesID = $orthancSeriesID;
         $this->processingName = $processingName;
         $this->host = $host;
