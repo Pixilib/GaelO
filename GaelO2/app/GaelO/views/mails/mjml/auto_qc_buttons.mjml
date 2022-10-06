@@ -8,10 +8,10 @@
   <mj-body>
     <mj-section padding-bottom="20px" padding-top="20px">
       <mj-column width="50%">
-        <mj-button href="{{ $magicLink }}" href="https://www.gaelo.fr" background-color="#2ec086" mj-class="button">It's all good !</mj-button>
+        <mj-button href="{{ $magicLink + '?accepted=true'}}" background-color="#2ec086" mj-class="button">It's all good !</mj-button>
       </mj-column>
       <mj-column width="50%">
-        <mj-button href="{{ $magicLink }}" href="https://www.gaelo.fr" background-color="#FFBA4D" mj-class="button">See in GaelO</mj-button>
+        <mj-button href="{{ $magicLink }}" background-color="#FFBA4D" mj-class="button">See in GaelO</mj-button>
       </mj-column>
     </mj-section>
     <mj-section>
