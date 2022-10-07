@@ -24,8 +24,10 @@ class JobQcReport implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
     private int $visitId;
+    public $failOnTimeout = true;
 
     public $timeout = 120;
+    public $tries = 1;
     /**
      * Create a new job instance.
      *
@@ -33,6 +35,7 @@ class JobQcReport implements ShouldQueue
      */
     public function __construct(int $visitId)
     {
+        $this->onQueue('auto-qc');
         $this->visitId = $visitId;
     }
 
@@ -121,8 +124,9 @@ class JobQcReport implements ShouldQueue
         $studyInfo['numberOfSeries'] = count($dicomStudyEntity[0]['dicom_series']);
         $studyInfo['numberOfInstances'] = 0;
         if ($stateInvestigatorForm != Constants::INVESTIGATOR_FORM_NOT_NEEDED) {
+            $reviewEntity = $reviewRepositoryInterface->getInvestigatorForm($this->visitId, false);
             $studyInfo['investigatorForm'] = json_encode(
-                $reviewRepositoryInterface->getInvestigatorForm($this->visitId, false),
+                $reviewEntity['review_data'],
                 JSON_PRETTY_PRINT
             );
         } else {

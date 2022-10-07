@@ -108,7 +108,6 @@ class VisitRepository implements VisitRepositoryInterface
 
         $dataArray = $builder->findOrFail($visitId)->toArray();
         return $dataArray;
-
     }
 
     public function getVisitContextByVisitIdArray(array $visitIdArray): array
@@ -209,6 +208,29 @@ class VisitRepository implements VisitRepositoryInterface
         $visits = $this->getVisitsInStudy($studyName, false, false, true);
 
         return sizeof($visits) === 0 ? false  : true;
+    }
+
+    public function getVisitOfPatientByVisitTypeName(string $patientId, string $visitGroupName, string $visitTypeName, bool $withReviewStatus, string $studyName): array
+    {
+        $visits = $this->visitModel
+            ->with('visitType', 'visitType.visitGroup', 'patient')
+            ->whereHas('patient', function ($query) use ($patientId) {
+                $query->where('id', $patientId);
+            })
+            ->whereHas('visitType', function ($query) use ($visitTypeName) {
+                $query->where('name', $visitTypeName);
+            })
+            ->whereHas('visitType.visitGroup', function ($query) use ($visitGroupName) {
+                $query->where('name', $visitGroupName);
+            });
+
+        if ($withReviewStatus) {
+            $visits->with(['reviewStatus' => function ($query) use ($studyName) {
+                $query->where('study_name', $studyName);
+            }]);
+        }
+
+        return $visits->sole()->toArray();
     }
 
     public function getVisitsInVisitType(int $visitTypeId, bool $withReviewStatus = false, string $studyName = null, bool $withTrashed = false, bool $withCenter = false): array

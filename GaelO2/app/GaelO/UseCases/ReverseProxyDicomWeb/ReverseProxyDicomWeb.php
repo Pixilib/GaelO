@@ -62,11 +62,16 @@ class ReverseProxyDicomWeb
 
             $response = $this->httpClientInterface->rowRequest('GET', $calledUrl, null, $headers);
 
+            $responseHeaders  = $response->getHeaders();
+            $responseHeaders['Cross-Origin-Embedder-Policy'] = ['require-corp'];
+            $responseHeaders['Cross-Origin-Resource-Policy'] = ['cross-origin'];
+            $responseHeaders['Cross-Origin-Opener-Policy'] = ['same-origin'];
+
             //Output response
             $reverseProxyDicomWebResponse->status = $response->getStatusCode();
             $reverseProxyDicomWebResponse->statusText = $response->getReasonPhrase();
             $reverseProxyDicomWebResponse->body = $response->getBody();
-            $reverseProxyDicomWebResponse->header = $response->getHeaders();
+            $reverseProxyDicomWebResponse->header = $responseHeaders;
         } catch (AbstractGaelOException $e) {
             $reverseProxyDicomWebResponse->status = $e->statusCode;
             $reverseProxyDicomWebResponse->statusText = $e->statusText;

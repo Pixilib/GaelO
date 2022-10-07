@@ -80,6 +80,7 @@ class AuthorizationDicomWebService
             $params = [];
             parse_str($url['query'], $params);
             if (key_exists('0020000D',  $params)) return $params['0020000D'];
+            if (key_exists('StudyInstanceUID',  $params)) return $params['StudyInstanceUID'];
         }
         return $this->getUID($url['path'], "studies");
     }
@@ -102,7 +103,7 @@ class AuthorizationDicomWebService
                 return;
             }
 
-            if (key_exists('0020000D',  $params)) {
+            if (key_exists('0020000D',  $params) || key_exists('StudyInstanceUID',  $params)) {
                 $this->level = "studies";
                 return;
             }
