@@ -60,7 +60,7 @@ class FrameworkAdapter implements FrameworkInterface
     }
 
 
-    public static function createMagicLink(int $userId, string $redirectUrl): string
+    public static function createMagicLink(int $userId, string $redirectUrl, array $queryParams = []): string
     {
         $routeName = 'magic-link';
         $routeExpires = 72;
@@ -72,7 +72,8 @@ class FrameworkAdapter implements FrameworkInterface
             now()->addHour($routeExpires),
             [
                 'id' => $user->getAuthIdentifier(),
-                'redirect_to' => $redirectUrl
+                'redirect_to' => $redirectUrl,
+                'query_params' => $queryParams
             ]
         );
 

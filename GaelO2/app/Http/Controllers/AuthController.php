@@ -60,7 +60,11 @@ class AuthController extends Controller
         $user = User::findOrFail($request->id);
         $token = $user->createToken('GaelO')->plainTextToken;
 
-        return response()->redirectTo($request->redirect_to . "?userId=" . $request->id . "&token=" . $token);
+        $requestQueryParams = $request->query_params;
+        $requestQueryParams['userId'] = $request->id;
+        $requestQueryParams['token'] = $token;
+
+        return response()->redirectTo($request->redirect_to . '?' . http_build_query($requestQueryParams));
     }
 
     public function createMagicLink(Request $request, CreateMagicLink $createMagicLink, CreateMagicLinkRequest $createMagicLinkRequest, CreateMagicLinkResponse $createMagicLinkResponse, int $userId)
