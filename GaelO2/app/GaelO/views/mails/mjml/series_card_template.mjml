@@ -20,11 +20,15 @@
     </mj-section>
     <mj-section>
       <mj-column width="100%">
-        <mj-table css-class="table-striped" mj-class="text-blue">
+        <mj-table css-class="table-striped">
+          @foreach($series['infos'] as $key => $value)
+            @if ($value != null)
           <tr>
-            <td style="padding: 0 15px 0 0;" align="left">{{ $item['Type'] }}</td>
+            <td style="padding: 0 15px 0 0;font-weight: bold;" align="left">{{ $item['Type'] }}</td>
             <td style="padding: 0 15px;" align="right">{{ $item['Result'] }}</td>
           </tr>
+            @endif
+          @endforeach
         </mj-table>
       </mj-column>
     </mj-section>

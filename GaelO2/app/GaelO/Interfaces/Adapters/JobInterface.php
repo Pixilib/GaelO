@@ -4,5 +4,5 @@ namespace App\GaelO\Interfaces\Adapters;
 
 interface JobInterface
 {
-    public function sendAutoQcJob(int $visitId) : void;
+    public function sendQcReportJob(int $visitId) : void;
 }

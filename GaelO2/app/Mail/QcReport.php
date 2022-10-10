@@ -7,7 +7,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
-class AutoQC extends Mailable //implements ShouldQueue
+class QcReport extends Mailable //implements ShouldQueue
 {
     //use Queueable, SerializesModels;
 
@@ -30,8 +30,8 @@ class AutoQC extends Mailable //implements ShouldQueue
      */
     public function build()
     {
-        return $this->view('mails.mail_auto_qc')
-        ->subject($this->parameters['study']." - AutoQc Patient - ".$this->parameters['patientCode']." - Visit - ".$this->parameters['visitType'])
+        return $this->view('mails.mail_qc_report')
+        ->subject($this->parameters['study']." - QcReport Patient - ".$this->parameters['patientCode']." - Visit - ".$this->parameters['visitType'])
         ->with($this->parameters);
     }
 }

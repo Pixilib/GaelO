@@ -11,12 +11,12 @@
                   <tbody>
                     <tr>
                       <td align="center" class="text-color" style="font-size:0px;padding:10px 25px;word-break:break-word;">
-                        <div style="font-family:Ubuntu, Helvetica, Arial, sans-serif;font-size:13px;line-height:1;text-align:center;color:#0495A0;">The visit {{$studyInfo['visitName']}} of the patient {{$studyInfo['patientCode']}} from the study {{$studyInfo['studyName']}} has been uploaded.</div>
+                        <div style="font-family:Ubuntu, Helvetica, Arial, sans-serif;font-size:13px;line-height:1;text-align:center;">The visit {{$studyInfo['visitName']}} of the patient {{$studyInfo['patientCode']}} from the study {{$studyInfo['studyName']}} has been uploaded.</div>
                       </td>
                     </tr>
                     <tr>
                       <td align="center" style="font-size:0px;padding:10px 25px;word-break:break-word;">
-                        <div style="font-family:Ubuntu, Helvetica, Arial, sans-serif;font-size:11px;line-height:16px;text-align:center;color:#0495A0;">{{$studyInfo['visitDate']}}</div>
+                        <div style="font-family:Ubuntu, Helvetica, Arial, sans-serif;font-size:11px;line-height:16px;text-align:center;">Visit Date: {{$studyInfo['visitDate']}}</div>
                       </td>
                     </tr>
                   </tbody>
@@ -62,21 +62,21 @@
                   <tbody>
                     <tr>
                       <td align="left" class="table-striped" style="font-size:0px;padding:10px 25px;word-break:break-word;">
-                        <table cellpadding="0" cellspacing="0" width="100%" border="0" style="color:#0495A0;font-family:Ubuntu, Helvetica, Arial, sans-serif;font-size:13px;line-height:22px;table-layout:auto;width:100%;border:none;">
+                        <table cellpadding="0" cellspacing="0" width="100%" border="0" style="font-family:Ubuntu, Helvetica, Arial, sans-serif;font-size:13px;line-height:22px;table-layout:auto;width:100%;border:none;">
                           <tr>
-                            <td style="padding: 0 15px 0 0;" align="left">Study description</td>
+                            <td style="padding: 0 15px 0 0;font-weight: bold;" align="left">Study description</td>
                             <td style="padding: 0 15px;" align="right">{{$studyInfo['studyDescription']}}</td>
                           </tr>
                           <tr>
-                            <td style="padding: 0 15px 0 0;" align="left">Manufacturer</td>
+                            <td style="padding: 0 15px 0 0;font-weight: bold;" align="left">Manufacturer</td>
                             <td style="padding: 0 15px;" align="right">{{$studyInfo['manufacturer']}} </td>
                           </tr>
                           <tr>
-                            <td style="padding: 0 15px 0 0;" align="left">Acquisition Date</td>
+                            <td style="padding: 0 15px 0 0;font-weight: bold;" align="left">Acquisition Date</td>
                             <td style="padding: 0 15px;" align="right">{{$studyInfo['acquisitionDate']}}</td>
                           </tr>
                           <tr>
-                            <td style="padding: 0 15px 0 0;" align="left">Modalities</td>
+                            <td style="padding: 0 15px 0 0;font-weight: bold;" align="left">Modalities</td>
                             <td style="padding: 0 15px;" align="right">{{$studyInfo['modalities']}}</td>
                           </tr>
                         </table>

@@ -2,19 +2,19 @@
 
 namespace Tests\Unit\Mail;
 
-use App\Mail\AutoQC;
+use App\Mail\QcReport;
 use Illuminate\Support\Facades\Mail;
 
 /*
-use Tests\Unit\Mail\SendMailAutoQc;
-$mail = new SendMailAutoQc();
-$mail->sendTestAutoQcMail();
+use Tests\Unit\Mail\SendMailQcReport;
+$mail = new SendMailQcReport();
+$mail->sendTestQcReportMail();
 */
 
-class SendMailAutoQc
+class SendMailQcReport
 {
 
-    public function sendTestAutoQcMail() {
+    public function sendTestQcReportMail() {
 
         $studyInfo = [];
         $studyInfo['studyDescription'] = 'studyDescription';
@@ -61,7 +61,7 @@ class SendMailAutoQc
             'adminEmail' => 'test@gaelo.fr',
         ];
 
-        Mail::to('test@gaelo.fr')->send(new AutoQC($parameters));
+        Mail::to('test@gaelo.fr')->send(new QcReport($parameters));
     }
 }
 

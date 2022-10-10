@@ -20,7 +20,7 @@ use App\Jobs\ImageType;
 use Illuminate\Support\Facades\Log;
 use Throwable;
 
-class JobAutoQc implements ShouldQueue
+class JobQcReport implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
     private int $visitId;
@@ -89,6 +89,12 @@ class JobAutoQc implements ShouldQueue
         return $radioPharmaceuticalArray;
     }
 
+    private function convertVisitDate(string $visitDate): string
+    {
+        $date = new \DateTime($visitDate);
+        return $date->format('Y/m/d');
+    }
+
     /**
      * Execute the job.
      *
@@ -110,7 +116,7 @@ class JobAutoQc implements ShouldQueue
         $stateInvestigatorForm = $visitEntity['state_investigator_form'];
 
         $studyInfo = [];
-        $studyInfo['visitDate'] = $visitEntity['visit_date'];
+        $studyInfo['visitDate'] = $this->convertVisitDate($visitEntity['visit_date']);
         $studyInfo['visitName'] = $visitEntity['visit_type']['name'];
         $studyInfo['patientCode'] = $visitEntity['patient']['code'];
         $studyInfo['studyName'] = $visitEntity['patient']['study_name'];
@@ -196,7 +202,7 @@ class JobAutoQc implements ShouldQueue
         foreach ($controllerUsers as $user) {
             $redirectLink = '/study/' . $studyName . '/role/' . Constants::ROLE_CONTROLLER . '/visit/' . $visitId;
             $magicLink = $frameworkInterface->createMagicLink($user['id'], $redirectLink);
-            $mailServices->sendAutoQC($studyName, $visitType, $patientCode, $studyInfo, $seriesInfo, $magicLink, $user['email']);
+            $mailServices->sendQcReport($studyName, $visitType, $patientCode, $studyInfo, $seriesInfo, $magicLink, $user['email']);
         }
     }
 }

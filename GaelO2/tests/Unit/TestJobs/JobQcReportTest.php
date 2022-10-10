@@ -6,7 +6,7 @@ use App\GaelO\Constants\Constants;
 use App\GaelO\Repositories\DicomSeriesRepository;
 use App\GaelO\Services\OrthancService;
 use App\GaelO\Services\StoreObjects\OrthancMetaData;
-use App\Jobs\JobAutoQc;
+use App\Jobs\JobQcReport;
 use App\Models\DicomSeries;
 use App\Models\DicomStudy;
 use App\Models\Review;
@@ -16,7 +16,8 @@ use App\Models\Visit;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 use Mockery\MockInterface;
-class JobAutoQcTest extends TestCase
+
+class JobQcReportTest extends TestCase
 {
     use RefreshDatabase;
 
@@ -29,7 +30,7 @@ class JobAutoQcTest extends TestCase
     }
 
 
-    public function testSendAutoQc() {
+    public function testSendQcReport() {
         $visit = Visit::factory()->create();
         $dicomStudy = DicomStudy::factory()->visitId($visit->id)->create();
         $dicomSeries = DicomSeries::factory()->studyInstanceUID($dicomStudy->study_uid)->count(5)->create();
@@ -63,6 +64,6 @@ class JobAutoQcTest extends TestCase
 
         app()->instance(OrthancService::class, $mockOrthancService);
         app()->instance(ReviewRepository::class, $mockReviewRepository);
-        JobAutoQc::dispatchSync($visit->id);
+        JobQcReport::dispatchSync($visit->id);
     }
 }
