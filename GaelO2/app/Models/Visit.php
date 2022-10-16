@@ -14,16 +14,16 @@ class Visit extends Model
 
     protected $casts = [
         'id' => 'integer',
-        'creator_user_id'=> 'integer',
+        'creator_user_id' => 'integer',
         'creation_date' => 'datetime',
         'patient_id' => 'string',
-        'visit_date'=>'date',
+        'visit_date' => 'date',
         'visit_type_id' => 'integer',
         'status_done' => 'string',
-        'reason_for_not_done'=> 'string',
+        'reason_for_not_done' => 'string',
         'upload_status' => 'string',
         'state_investigator_form' => 'string',
-        'state_quality_control'=>'string',
+        'state_quality_control' => 'string',
         'controller_user_id' => 'integer',
         'control_date' => 'datetime',
         'image_quality_control' => 'boolean',
@@ -33,7 +33,7 @@ class Visit extends Model
         'corrective_action_user_id' => 'integer',
         'corrective_action_date' => 'datetime',
         'corrective_action_new_upload' => 'boolean',
-        'corrective_action_investigator_form'=>'boolean',
+        'corrective_action_investigator_form' => 'boolean',
         'corrective_action_comment' => 'string',
         'corrective_action_applied' => 'boolean',
         'last_reminder_upload' => 'datetime'
@@ -44,19 +44,18 @@ class Visit extends Model
         return $this->hasMany(Review::class, 'visit_id');
     }
 
-
-    /*
-    ->withDefault([
+    /**
+     * Relation defined with default value as record will not be always created for ancillaries studies
+     */
+    public function reviewStatus()
+    {
+        return $this->hasOne(ReviewStatus::class, 'visit_id', 'id')->withDefault([
             'review_available' => false,
             'target_lesions' => null,
             'review_status' => 'Not Done',
             'review_conclusion_value' => null,
             'review_conclusion_date'=>null
-        ]);;*/
-
-    public function reviewStatus()
-    {
-        return $this->hasOne(ReviewStatus::class, 'visit_id', 'id');
+        ]);;
     }
 
     public function patient()
