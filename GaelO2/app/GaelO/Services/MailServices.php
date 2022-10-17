@@ -495,37 +495,21 @@ class MailServices
         $this->mailInterface->send();
     }
 
-    public function sendReminderToInvestigators(int $centerCode, string $studyName, string $subject, string $content)
+    public function sendReminder(string $senderId, array $userIds, string $studyName, string $subject, string $content)
     {
 
         $parameters = [
-            'name' => 'Investigator',
-            'study' => $studyName,
-            'subject' => $subject,
-            'content' => $content
-        ];
-
-        $this->mailInterface->setTo($this->getInvestigatorOfCenterInStudy($studyName, $centerCode));
-        $this->mailInterface->setReplyTo($this->getStudyContactEmail($studyName));
-        $this->mailInterface->setParameters($parameters);
-        $this->mailInterface->setBody(MailConstants::EMAIL_REMINDER);
-        $this->mailInterface->send();
-    }
-
-    public function sendReminder(string $role, string $studyName, string $subject, string $content)
-    {
-
-        $parameters = [
-            'name' => $role,
             'study' => $studyName,
             'subject' => $subject,
             'content' => $content
         ];
 
         $this->mailInterface->setTo(
-            $this->userRepositoryInterface->getUsersEmailsByRolesInStudy($studyName, $role)
+            array_map(function ($userId) {
+                return $this->getUserEmail($userId);
+            }, $userIds)
         );
-        $this->mailInterface->setReplyTo($this->getStudyContactEmail($studyName));
+        $this->mailInterface->setReplyTo($this->getUserEmail($senderId));
         $this->mailInterface->setParameters($parameters);
         $this->mailInterface->setBody(MailConstants::EMAIL_REMINDER);
         $this->mailInterface->send();

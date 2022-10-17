@@ -29,26 +29,20 @@ class SendReminder
             $this->checkAuthorization($sendReminderRequest->currentUserId, $sendReminderRequest->studyName);
 
             $this->checkEmpty($sendReminderRequest->studyName, 'study');
-            $this->checkEmpty($sendReminderRequest->role, 'role');
+            $this->checkEmpty($sendReminderRequest->userIds, 'userIds');
             $this->checkEmpty($sendReminderRequest->subject, 'subject');
             $this->checkEmpty($sendReminderRequest->content, 'content');
 
+            $senderId = $sendReminderRequest->currentUserId;
             $studyName = $sendReminderRequest->studyName;
-            $centerCode = $sendReminderRequest->centerCode;
-            $role = $sendReminderRequest->role;
+            $userIds = $sendReminderRequest->userIds;
             $subject = $sendReminderRequest->subject;
             $content = $sendReminderRequest->content;
 
-            if ($role === Constants::ROLE_INVESTIGATOR) {
-                if (!isset($centerCode)) throw new GaelOBadRequestException('Request Missing center');
-                $this->mailService->sendReminderToInvestigators($centerCode, $studyName, $subject, $content);
-            } else {
-                $this->mailService->sendReminder($role, $studyName, $subject, $content);
-            }
+            $this->mailService->sendReminder($senderId, $userIds, $studyName, $subject, $content);
 
             $sendReminderResponse->status = 200;
             $sendReminderResponse->statusText = 'OK';
-
         } catch (AbstractGaelOException $e) {
             $sendReminderResponse->body = $e->getErrorBody();
             $sendReminderResponse->status = $e->statusCode;
