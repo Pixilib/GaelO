@@ -51,7 +51,8 @@ class GetStudyReviewProgression
             foreach ($reviewers as $reviewer) {
                 $reviewersById[$reviewer['id']] = [
                     'lastname' => $reviewer['lastname'],
-                    'firstname' => $reviewer['firstname']
+                    'firstname' => $reviewer['firstname'],
+                    'id' => $reviewer['id']
                 ];
             }
 
