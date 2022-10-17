@@ -200,8 +200,13 @@ class JobQcReport implements ShouldQueue
         $controllerUsers = $userRepositoryInterface->getUsersByRolesInStudy($studyName, Constants::ROLE_CONTROLLER);
 
         foreach ($controllerUsers as $user) {
-            $redirectLink = '/study/' . $studyName . '/role/' . Constants::ROLE_CONTROLLER . '/visit/' . $visitId;
-            $magicLink = $frameworkInterface->createMagicLink($user['id'], $redirectLink);
+            $redirectLink = '/magic-link-tools/auto-qc';
+            $queryParams = [
+                'visitId' => $visitId,
+                'accepted' => 'true',
+                'studyName' => $studyName
+            ];
+            $magicLink = $frameworkInterface->createMagicLink($user['id'], $redirectLink, $queryParams);
             $mailServices->sendQcReport($studyName, $visitType, $patientCode, $studyInfo, $seriesInfo, $magicLink, $user['email']);
         }
     }

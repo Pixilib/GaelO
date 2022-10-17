@@ -19,9 +19,9 @@ abstract class AbstractVisitRules
     protected array $data;
     protected array $visitContext;
 
-    abstract function getInvestigatorValidationRules(): array;
+    abstract public function getInvestigatorValidationRules(): array;
 
-    abstract function getReviewerValidationRules(bool $adjudication): array;
+    abstract public function getReviewerValidationRules(bool $adjudication): array;
 
     public function getInvestigatorInputNames(): array
     {
@@ -106,18 +106,18 @@ abstract class AbstractVisitRules
      * Must return the review status for each action on review (send, delete, unlock), 
      * needs to handle backward and forward
      */
-    abstract function getReviewStatus(): string;
+    abstract public function getReviewStatus(): string;
 
     /**
      * Return the conclusion value, must return null if review status is not done
      */
-    abstract function getReviewConclusion(): ?string;
+    abstract public function getReviewConclusion(): ?string;
 
-    abstract function getAllowedKeyAndMimeTypeInvestigator(): array;
+    abstract public function getAllowedKeyAndMimeTypeInvestigator(): array;
 
-    abstract function getAllowedKeyAndMimeTypeReviewer(): array;
+    abstract public function getAllowedKeyAndMimeTypeReviewer(): array;
 
-    abstract function getTargetLesion(): ?array;
+    abstract public function getTargetLesion(): ?array;
 
     /**
      * Return custom data should be usefull to generate investigator form
