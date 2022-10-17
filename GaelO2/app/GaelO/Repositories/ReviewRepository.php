@@ -118,7 +118,7 @@ class ReviewRepository implements ReviewRepositoryInterface
     {
 
         $answer = $this->reviewModel
-            ->with('user:id')
+            ->with('user:id,firstname,lastname')
             ->where('study_name', $studyName)
             ->where('local', false)
             ->where('validated', true)
