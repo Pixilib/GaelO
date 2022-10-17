@@ -36,7 +36,7 @@ class SendMailTest extends TestCase
 
         $subject = 'Upload';
         $payload = [
-            'centerCode' => 0,
+            'userIds' => [$currentUserId],
             'subject' => $subject,
             'content' => '<p><b>Recipients: Default CRAs</b></p>
             <p><b>Object: ' . $this->study->name . ' - ' . $subject . '</b></p>
@@ -65,6 +65,7 @@ class SendMailTest extends TestCase
 
         $subject = 'Quality Control';
         $payload = [
+            'userIds' => [$currentUserId],
             'subject' => $subject,
             'content' => '<p><b>Recipients: Controllers</b></p>
             <p><b>Object: ' . $this->study->name . ' - ' . $subject . '</b></p>
@@ -92,6 +93,7 @@ class SendMailTest extends TestCase
 
         $subject = 'Review';
         $payload = [
+            'userIds' => [$currentUserId],
             'subject' => $subject,
             'content' => '<p><b>Recipients: Reviewers</b></p>
             <p><b>Object: ' . $this->study->name . ' - ' . $subject . '</b></p>
