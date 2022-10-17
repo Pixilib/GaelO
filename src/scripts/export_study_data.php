@@ -32,6 +32,9 @@ $accessCheck=$userObject->isRoleAllowed($_SESSION['study'], $_SESSION['role']);
 
 if ($accessCheck && $_SESSION['role'] == User::SUPERVISOR) {
 
+	//Set Time Limit at 5 min as operation could be long
+	set_time_limit(300);
+
 	$studyObject=new Study($_SESSION['study'], $linkpdo);
 
 	$exportObject=$studyObject->getExportStudyData();
