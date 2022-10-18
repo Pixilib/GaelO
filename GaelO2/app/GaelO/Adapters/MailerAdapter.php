@@ -77,7 +77,8 @@ class MailerAdapter implements MailerInterface
     {
         foreach ($this->to as $destinator) {
             $model = $this->getModel($this->modelType);
-            Mail::to($destinator)->replyTo($this->replyTo)->send($model);
+            $model->replyTo($this->replyTo);
+            Mail::to($destinator)->send($model);
         }
     }
 
