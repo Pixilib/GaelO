@@ -614,9 +614,8 @@ class MailServices
         $this->mailInterface->send();
     }
 
-    public function sendQcReport(string $studyName, string $visitType, string $patientCode, array $studyInfo, array $seriesInfo, string $magiclink, string $controllerEmail)
+    public function sendQcReport(string $studyName, string $visitType, string $patientCode, array $studyInfo, array $seriesInfo, string $magicLinkAccepted, string $magicLinkRefused, string $controllerEmail)
     {
-
 
         $parameters = [
             'study' => $studyName,
@@ -624,7 +623,8 @@ class MailServices
             'patientCode' => $patientCode,
             'studyInfo' => $studyInfo,
             'seriesInfo' => $seriesInfo,
-            'magicLink' => $magiclink,
+            'magicLinkAccepted' => $magicLinkAccepted,
+            'magicLinkRefused' => $magicLinkRefused
         ];
 
         $this->mailInterface->setTo([$controllerEmail]);
