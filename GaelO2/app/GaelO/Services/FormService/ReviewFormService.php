@@ -82,7 +82,11 @@ class ReviewFormService extends FormService
         $reviewStatus = $this->abstractVisitRules->getReviewStatus();
         $availability = $this->abstractVisitRules->getReviewAvailability($reviewStatus);
         $conclusion = $this->abstractVisitRules->getReviewConclusion();
-        $targetLesions = $this->abstractVisitRules->getTargetLesion();
+        $targetLesions = null;
+
+        if ($reviewStatus === Constants::REVIEW_STATUS_DONE) {
+            $targetLesions = $this->abstractVisitRules->getTargetLesion();
+        }
 
         if ($reviewStatus === Constants::REVIEW_STATUS_NOT_DONE && $conclusion !== null) {
             throw new GaelOException("Review Status Not Done needs to be associated with null conclusion value");
