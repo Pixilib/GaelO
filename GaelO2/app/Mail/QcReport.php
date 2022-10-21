@@ -31,7 +31,7 @@ class QcReport extends Mailable //implements ShouldQueue
     public function build()
     {
         return $this->view('mails.mail_qc_report')
-        ->subject($this->parameters['study']." - QcReport Patient - ".$this->parameters['patientCode']." - Visit - ".$this->parameters['visitType'])
+        ->subject($this->parameters['study']." - Qc Report Patient - ".$this->parameters['patientCode']." - Visit - ".$this->parameters['visitType'])
         ->with($this->parameters);
     }
 }
