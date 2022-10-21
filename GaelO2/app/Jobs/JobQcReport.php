@@ -206,8 +206,10 @@ class JobQcReport implements ShouldQueue
                 'accepted' => 'true',
                 'studyName' => $studyName
             ];
-            $magicLink = $frameworkInterface->createMagicLink($user['id'], $redirectLink, $queryParams);
-            $mailServices->sendQcReport($studyName, $visitType, $patientCode, $studyInfo, $seriesInfo, $magicLink, $user['email']);
+            $magicLinkAccepted = $frameworkInterface->createMagicLink($user['id'], $redirectLink, $queryParams);
+            $queryParams['accepted'] = 'false';
+            $magicLinkRefused = $frameworkInterface->createMagicLink($user['id'], $redirectLink, $queryParams);
+            $mailServices->sendQcReport($studyName, $visitType, $patientCode, $studyInfo, $seriesInfo, $magicLinkAccepted, $magicLinkRefused, $user['email']);
         }
     }
 }
