@@ -163,7 +163,7 @@ class OrthancMetaData
 
     public function getPatientHeight() : ?string
     {
-        return $this->getMetaDataValueFromCode('0010,0010');
+        return $this->getMetaDataValueFromCode('0010,1020');
     }
 
     public function getPatientWeight() : ?string
