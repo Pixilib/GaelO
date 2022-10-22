@@ -292,9 +292,6 @@ class VisitRepository implements VisitRepositoryInterface
 
     public function getVisitsAwaitingReviewForUser(string $studyName, int $userId): array
     {
-
-        $visitIdAwaitingReview = $this->reviewStatusModel->where('study_name', $studyName)->where('review_available', true)->select('visit_id')->get()->toArray();
-
         $answer = $this->visitModel->with('visitType', 'visitType.visitGroup')
             ->with(['reviewStatus' => function ($query) use ($studyName) {
                 $query->where('study_name', $studyName);
@@ -309,17 +306,19 @@ class VisitRepository implements VisitRepositoryInterface
                     ->where('user_id', $userId)
                     ->where('deleted_at', null);
             }, '=', 0)
-            ->whereIn('id', $visitIdAwaitingReview)
             ->get();
+        
+        //Filtered outside the query because confusing laravel to do default value (which is dynamic in our case) + condition after the default value
+        $reviewAvailable = $collection->filter(function ($visit, $key) {
+            return $visit->reviewStatus->review_available === true;
+        });
 
-        return $answer->count() === 0 ? []  : $answer->toArray();
+        return $reviewAvailable->count() === 0 ? []  : $reviewAvailable->toArray();
     }
 
     public function getPatientsHavingAtLeastOneAwaitingReviewForUser(string $studyName, int $userId): array
     {
-        $visitIdAwaitingReview = $this->reviewStatusModel->where('study_name', $studyName)->where('review_available', true)->select('visit_id')->get()->toArray();
-
-        $answer = $this->visitModel
+        $collection = $this->visitModel
             ->with(['reviewStatus' => function ($query) use ($studyName) {
                 $query->where('study_name', $studyName);
             }])
@@ -332,12 +331,16 @@ class VisitRepository implements VisitRepositoryInterface
                     ->where('local', false)
                     ->where('user_id', $userId)
                     ->where('deleted_at', null);
-            }, '=', 0)
-            ->whereIn('id', $visitIdAwaitingReview)
-            ->distinct('patient_id')
-            ->pluck('patient_id');
-
-        return $answer->count() === 0 ? []  : $answer->toArray();
+            }, '=', 0)->get();
+        
+        //Filtered outside the query because confusing laravel to do default value (which is dynamic in our case) + condition after the default value
+        $reviewAvailable = $collection->filter(function ($visit, $key) {
+                return $visit->reviewStatus->review_available === true;
+        });
+        
+        $patientIds = $reviewAvailable->pluck('patient_id')->unique();
+    
+        return $patientIds->count() === 0 ? []  : $patientIds->toArray();
     }
 
     public function isParentPatientHavingOneVisitAwaitingReview(int $visitId, string $studyName, int $userId): bool

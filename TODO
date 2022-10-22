@@ -1,4 +1,5 @@
 Salim TODO :
+- Peut etre enelever la transaction lors creation visite et reposer sur le review status par defaut
 - Optimiser l'utilisation des authorization service en injectant les data depuis le usecase (ou les rendre stateless) (dont visite, review...)
 
 --- Etudes ancillaires ---
