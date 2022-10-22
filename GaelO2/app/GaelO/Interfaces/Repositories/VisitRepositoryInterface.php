@@ -48,7 +48,7 @@ interface VisitRepositoryInterface
 
     public function getVisitsInStudyNeedingQualityControl(string $studyName): array;
 
-    public function getPatientsHavingAtLeastOneAwaitingReviewForUser(string $studyName, int $userId): array;
+    public function getPatientsHavingAtLeastOneAwaitingReviewForUser(string $studyName, int $userId, ?string $ancillaryStudyName): array;
 
     public function isParentPatientHavingOneVisitAwaitingReview(int $visitId, string $studyName, int $userId) : bool;
 

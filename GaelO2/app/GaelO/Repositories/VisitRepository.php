@@ -165,7 +165,10 @@ class VisitRepository implements VisitRepositoryInterface
     {
 
         $answer = $this->visitModel
-            ->with('visitType', 'visitType.visitGroup', 'reviewStatus')
+            ->with('visitType', 'visitType.visitGroup')
+            ->with(['reviewStatus' => function ($query) use ($studyName) {
+                $query->where('study_name', $studyName);
+            }])
             ->where('upload_status', Constants::UPLOAD_STATUS_DONE)
             ->whereIn('state_investigator_form', [Constants::INVESTIGATOR_FORM_NOT_NEEDED, Constants::INVESTIGATOR_FORM_DONE])
             ->whereIn('state_quality_control', [Constants::QUALITY_CONTROL_NOT_NEEDED, CONSTANTS::QUALITY_CONTROL_ACCEPTED])
@@ -290,12 +293,15 @@ class VisitRepository implements VisitRepositoryInterface
         return $answer->count() === 0 ? []  : $answer->toArray();
     }
 
-    public function getPatientsHavingAtLeastOneAwaitingReviewForUser(string $studyName, int $userId): array
+    public function getPatientsHavingAtLeastOneAwaitingReviewForUser(string $studyName, int $userId, ?string $ancillaryStudyName): array
     {
         $collection = $this->visitModel
-            ->with(['reviewStatus' => function ($query) use ($studyName) {
-                $query->where('study_name', $studyName);
+            ->with(['reviewStatus' => function ($query) use ($studyName, $ancillaryStudyName) {
+                $query->where('study_name', ($ancillaryStudyName ?? $studyName));
             }])
+            ->whereHas('patient', function ($query) use ($studyName) {
+                $query->where('study_name', $studyName);
+            })
             ->where(function ($query) use ($studyName, $userId) {
                 $query->selectRaw('count(*)')
                     ->from('reviews')

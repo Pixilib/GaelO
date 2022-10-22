@@ -77,8 +77,8 @@ class VisitRepositoryAncillaryTest extends TestCase
 
     public function testGetPatientHavingOneAwaitingReviewForUser()
     {
-        $patient = $this->populateVisits();
-        $answer = $this->visitRepository->getPatientsHavingAtLeastOneAwaitingReviewForUser('ancilary', 1);
+        $patient = $this->populateVisits()[0];
+        $answer = $this->visitRepository->getPatientsHavingAtLeastOneAwaitingReviewForUser($patient->study_name, 1, 'ancilary');
         $this->assertEquals(1, sizeof($answer));
     }
 
