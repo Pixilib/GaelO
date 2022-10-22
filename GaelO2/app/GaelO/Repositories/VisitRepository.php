@@ -290,32 +290,6 @@ class VisitRepository implements VisitRepositoryInterface
         return $answer->count() === 0 ? []  : $answer->toArray();
     }
 
-    public function getVisitsAwaitingReviewForUser(string $studyName, int $userId): array
-    {
-        $answer = $this->visitModel->with('visitType', 'visitType.visitGroup')
-            ->with(['reviewStatus' => function ($query) use ($studyName) {
-                $query->where('study_name', $studyName);
-            }])
-            ->where(function ($query) use ($studyName, $userId) {
-                $query->selectRaw('count(*)')
-                    ->from('reviews')
-                    ->whereColumn('reviews.visit_id', '=', 'visits.id')
-                    ->where('study_name', '=', $studyName)
-                    ->where('validated', true)
-                    ->where('local', false)
-                    ->where('user_id', $userId)
-                    ->where('deleted_at', null);
-            }, '=', 0)
-            ->get();
-        
-        //Filtered outside the query because confusing laravel to do default value (which is dynamic in our case) + condition after the default value
-        $reviewAvailable = $collection->filter(function ($visit, $key) {
-            return $visit->reviewStatus->review_available === true;
-        });
-
-        return $reviewAvailable->count() === 0 ? []  : $reviewAvailable->toArray();
-    }
-
     public function getPatientsHavingAtLeastOneAwaitingReviewForUser(string $studyName, int $userId): array
     {
         $collection = $this->visitModel
