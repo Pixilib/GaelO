@@ -49,7 +49,7 @@
                     <tr>
                       <td align="left" style="font-size:0px;padding:10px 25px;word-break:break-word;">
                         <div style="font-family:Ubuntu, Helvetica, Arial, sans-serif;font-size:13px;line-height:1;text-align:left;color:#0495A0;">
-                          <h3 align="center"> Study infos </h3>
+                          <h3 align="center">Study infos </h3>
                         </div>
                       </td>
                     </tr>
@@ -58,7 +58,7 @@
               </div>
               <!--[if mso | IE]></td><td class="" style="vertical-align:top;width:600px;" ><![endif]-->
               <div class="mj-column-per-100 mj-outlook-group-fix" style="font-size:0px;text-align:left;direction:ltr;display:inline-block;vertical-align:top;width:100%;">
-                <table border="0" cellpadding="0" cellspacing="0" role="presentation" style="vertical-align:top;" width="100%">
+                <table border="0" cellpadding="0" cellspacing="0" role="presentation" style="vertical-align:top;" width="100%" role="presentation">
                   <tbody>
                     <tr>
                       <td align="left" class="table-striped" style="font-size:0px;padding:10px 25px;word-break:break-word;">
@@ -91,7 +91,7 @@
                   <tbody>
                     <tr>
                       <td align="center" style="font-size:0px;padding:10px 25px;word-break:break-word;">
-                        <p style="border-top:solid 2px #616161;font-size:1px;margin:0px auto;width:100%;">
+                        <p style="border-top:solid 1px #616161;font-size:1px;margin:0px auto;width:100%;">
                         </p>
                         <!--[if mso | IE]><table align="center" border="0" cellpadding="0" cellspacing="0" style="border-top:solid 2px #616161;font-size:1px;margin:0px auto;width:400px;" role="presentation" width="400px" ><tr><td style="height:0;line-height:0;"> &nbsp;
 </td></tr></table><![endif]-->

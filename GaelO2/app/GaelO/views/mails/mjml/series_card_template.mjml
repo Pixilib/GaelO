@@ -20,7 +20,7 @@
     </mj-section>
     <mj-section>
       <mj-column width="100%">
-        <mj-table css-class="table-striped">
+        <mj-table css-class="table-striped" role="presentation">
           @foreach($series['infos'] as $key => $value)
             @if ($value != null)
           <tr>

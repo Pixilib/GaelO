@@ -57,7 +57,7 @@
                   <tbody>
                     <tr>
                       <td align="left" class="table-striped" style="font-size:0px;padding:10px 25px;word-break:break-word;">
-                        <table cellpadding="0" cellspacing="0" width="100%" border="0" style="font-family:Ubuntu, Helvetica, Arial, sans-serif;font-size:13px;line-height:22px;table-layout:auto;width:100%;border:none;">
+                        <table cellpadding="0" cellspacing="0" width="100%" border="0" style="font-family:Ubuntu, Helvetica, Arial, sans-serif;font-size:13px;line-height:22px;table-layout:auto;width:100%;border:none;" role="presentation">
                           @foreach($series['infos'] as $key => $value)
                             @if ($value != null)
                             <tr>
