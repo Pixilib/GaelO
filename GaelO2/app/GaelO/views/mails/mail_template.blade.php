@@ -202,7 +202,7 @@
                   <tbody>
                     <tr>
                       <td align="center" style="font-size:0px;padding:10px 25px;word-break:break-word;">
-                        <div style="font-family:Roboto, Helvetica, sans-serif;font-size:16px;font-weight:700;line-height:1.3;text-align:center;color:#314053;"><a style="color: #314053; font-size: 18px; text-decoration: none;" href="{{ $webAddress }}">{{ $webAddress }}</a></div>
+                        <div style="font-family:Roboto, Helvetica, sans-serif;font-size:16px;font-weight:700;line-height:1.3;text-align:center;color:#314053;"><a style="color: #314053; font-size: 18px; text-decoration: none;" href="{{ $webAddress }}" rel="noopener">{{ $webAddress }}</a></div>
                       </td>
                     </tr>
                     <tr>
