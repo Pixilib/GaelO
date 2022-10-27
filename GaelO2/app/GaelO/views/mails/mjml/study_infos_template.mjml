@@ -18,13 +18,11 @@
     <mj-column width="100%">
       <mj-divider border-width="1px" border-color="#616161"></mj-divider>
         <mj-text mj-class="text-blue">
-          <h3 align="center">
-            Study infos
-          </h3>
+          <h3 align="center">Study infos</h3>
         </mj-text>
       </mj-column width="100%">
       <mj-column width="100%">
-        <mj-table css-class="table-striped">
+        <mj-table css-class="table-striped" role="presentation">
           <tr>
             <td style="padding: 0 15px 0 0;font-weight: bold;" align="left">Study description</td>
             <td style="padding: 0 15px;" align="right">{{$studyInfo['studyDescription']}}</td>
@@ -44,7 +42,7 @@
         </mj-table>
       </mj-column>
       <mj-column width="75%">
-        <mj-divider border-width="2px" border-color="#616161"></mj-divider>
+        <mj-divider border-width="1px" border-color="#616161"></mj-divider>
       </mj-column>
     </mj-section>
   </mj-body>

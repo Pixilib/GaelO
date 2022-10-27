@@ -25,11 +25,11 @@ class SendMailQcReport
         $studyInfo['numberOfInstances'] = 0;
         $studyInfo['visitDate'] = '05/05/2021';
         $studyInfo['registrationDate'] = '05/05/2021';
-        $studyInfo['investigatorForm'] = '"0008,0012" : {
-            "Name" : "InstanceCreationDate",
-            "Type" : "String",
-            "Value" : "20151217"
-},';
+        $studyInfo['investigatorForm'] = [
+            "Name" => "InstanceCreationDate",
+            "Type" => "String",
+            "Value" => "20151217"
+        ];
         $seriesInfo = [];
         for ($i = 0; $i < $studyInfo['numberOfSeries']; $i++) {
             $nbInstances = rand(0, 500);
