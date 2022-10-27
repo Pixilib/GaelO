@@ -125,7 +125,7 @@
                         <table border="0" cellpadding="0" cellspacing="0" role="presentation" style="border-collapse:separate;line-height:100%;">
                           <tr>
                             <td align="center" bgcolor="#2ec086" role="presentation" style="border:none;border-radius:10px;cursor:auto;mso-padding-alt:10px 25px;background:#2ec086;" valign="middle">
-                              <a href="{{ $magicLink . '/accept'}}" style="display:inline-block;background:#2ec086;color:#FFFFFF;font-family:Helvetica;font-size:14px;font-weight:bold;line-height:120%;margin:0;text-decoration:none;text-transform:none;padding:10px 25px;mso-padding-alt:0px;border-radius:10px;font-family: Roboto, Helvetica, sans-serif;" target="_blank">It's all good</a>
+                              <a href="{{ $magicLinkAccepted }}" style="display:inline-block;background:#2ec086;color:#FFFFFF;font-family:Helvetica;font-size:14px;font-weight:bold;line-height:120%;margin:0;text-decoration:none;text-transform:none;padding:10px 25px;mso-padding-alt:0px;border-radius:10px;" target="_blank">It's all good</a>
                             </td>
                           </tr>
                         </table>
@@ -143,7 +143,7 @@
                         <table border="0" cellpadding="0" cellspacing="0" role="presentation" style="border-collapse:separate;line-height:100%;">
                           <tr>
                             <td align="center" bgcolor="#FFBA4D" role="presentation" style="border:none;border-radius:10px;cursor:auto;mso-padding-alt:10px 25px;background:#FFBA4D;" valign="middle">
-                              <a href="{{ $magicLink }}" style="display:inline-block;background:#FFBA4D;color:#FFFFFF;font-family:Helvetica;font-size:14px;font-weight:bold;line-height:120%;margin:0;text-decoration:none;text-transform:none;padding:10px 25px;mso-padding-alt:0px;border-radius:10px;font-family: Roboto, Helvetica, sans-serif;" target="_blank">See in GaelO</a>
+                              <a href="{{ $magicLinkRefused }}" style="display:inline-block;background:#FFBA4D;color:#FFFFFF;font-family:Helvetica;font-size:14px;font-weight:bold;line-height:120%;margin:0;text-decoration:none;text-transform:none;padding:10px 25px;mso-padding-alt:0px;border-radius:10px;" target="_blank">See in GaelO</a>
                             </td>
                           </tr>
                         </table>

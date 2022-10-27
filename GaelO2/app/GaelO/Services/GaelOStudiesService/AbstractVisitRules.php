@@ -19,16 +19,18 @@ abstract class AbstractVisitRules
     protected array $data;
     protected array $visitContext;
 
-    abstract function getInvestigatorValidationRules(): array;
+    abstract public function getInvestigatorValidationRules(): array;
 
-    abstract function getReviewerValidationRules(bool $adjudication): array;
+    abstract public function getReviewerValidationRules(bool $adjudication): array;
 
-    public function getInvestigatorInputNames() : array {
+    public function getInvestigatorInputNames(): array
+    {
         $rules = $this->getInvestigatorValidationRules();
         return array_unique(array_keys($rules));
     }
 
-    public function getReviewerInputNames() : array {
+    public function getReviewerInputNames(): array
+    {
         $rules = $this->getReviewerValidationRules(true);
         $adjudicationRules = $this->getReviewerValidationRules(false);
         $inputs = [...array_keys($rules), ...array_keys($adjudicationRules)];
@@ -95,22 +97,27 @@ abstract class AbstractVisitRules
         }
     }
 
+    public function getPatientId()
+    {
+        return $this->visitContext['patient_id'];
+    }
+
     /**
      * Must return the review status for each action on review (send, delete, unlock), 
      * needs to handle backward and forward
      */
-    abstract function getReviewStatus(): string;
+    abstract public function getReviewStatus(): string;
 
     /**
      * Return the conclusion value, must return null if review status is not done
      */
-    abstract function getReviewConclusion(): ?string;
+    abstract public function getReviewConclusion(): ?string;
 
-    abstract function getAllowedKeyAndMimeTypeInvestigator(): array;
+    abstract public function getAllowedKeyAndMimeTypeInvestigator(): array;
 
-    abstract function getAllowedKeyAndMimeTypeReviewer(): array;
+    abstract public function getAllowedKeyAndMimeTypeReviewer(): array;
 
-    abstract function getTargetLesion(): ?array;
+    abstract public function getTargetLesion(): ?array;
 
     /**
      * Return custom data should be usefull to generate investigator form

@@ -7,7 +7,5 @@ class SendReminderRequest{
     public string $studyName;
     public string $subject;
     public string $content;
-    public string $role;
-    public ?int $centerCode = null;
-
+    public array $userIds;
 }

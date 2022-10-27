@@ -285,7 +285,7 @@ class VisitRepositoryTest extends TestCase
     {
         $patient = $this->populateVisits()[0];
         $studyName = $patient->study->name;
-        $answer = $this->visitRepository->getPatientsHavingAtLeastOneAwaitingReviewForUser($studyName, 1);
+        $answer = $this->visitRepository->getPatientsHavingAtLeastOneAwaitingReviewForUser($studyName, 1, null);
         $this->assertEquals(1, sizeof($answer));
     }
 
@@ -437,5 +437,21 @@ class VisitRepositoryTest extends TestCase
         Visit::factory()->patientId($patient->id)->uploadDone()->count(5)->create();
         $answers = $this->visitRepository->getVisitsInStudyNeedingQualityControl($patient->study_name);
         $this->assertEquals(5, sizeof($answers));
+    }
+
+    public function testGetVisitOfPatientByVisitTypeName()
+    {
+        $visits = Visit::factory()->count(5)->create();
+        $visit = $visits->get(3);
+        $visitTypeName = $visit->visitType->name;
+        $visitGroupName = $visit->visitType->visitGroup->name;
+        $patientId = $visit->patient_id;
+        $studyName = $visit->patient->study_name;
+        //Should find the correct visit
+        $foundVisit = $this->visitRepository->getVisitOfPatientByVisitTypeName($patientId, $visitGroupName, $visitTypeName, true, $studyName);
+        $this->assertEquals($visit->id, $foundVisit['id']);
+        //Should throw exception as does not exist
+        $this->expectException(ModelNotFoundException::class);
+        $this->visitRepository->getVisitOfPatientByVisitTypeName($patientId, $visitGroupName, $visitTypeName.'wrong', true, $studyName);
     }
 }

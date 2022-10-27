@@ -51,7 +51,8 @@ class GetStudyReviewProgression
             foreach ($reviewers as $reviewer) {
                 $reviewersById[$reviewer['id']] = [
                     'lastname' => $reviewer['lastname'],
-                    'firstname' => $reviewer['firstname']
+                    'firstname' => $reviewer['firstname'],
+                    'id' => $reviewer['id']
                 ];
             }
 
@@ -68,19 +69,28 @@ class GetStudyReviewProgression
 
             foreach ($visits as $visit) {
 
+                $visitId = $visit['id'];
                 //Listing users having done a review of this visit
-                if (key_exists($visit['id'], $validatedReview)) $userIdHavingReviewed = array_keys($validatedReview[$visit['id']]);
+                if (key_exists($visitId, $validatedReview)) {
+                    $userIdHavingReviewed = array_keys($validatedReview[$visitId]);
+                }
                 else $userIdHavingReviewed = [];
 
                 //Listing users not having done review of this visit
                 $userIdNotHavingReviewed = array_diff(array_keys($reviewersById), $userIdHavingReviewed);
 
+                $userDetailsHavingReviewed = [];
+                //Get reviewer details having reviewed from db answer (user may have been removed so won't be in the list of current reviewer in the study)
+                foreach($userIdHavingReviewed as $reviewerId){
+                    $userDetailsHavingReviewed[] = $validatedReview[(string) $visitId][(string) $reviewerId][0]['user'];
+                }
+               
                 $answer[] = [
-                    'visitId' => $visit['id'],
+                    'visitId' => $visitId,
                     'patientId' => $visit['patient_id'],
                     'reviewStatus' => $visit['review_status']['review_status'],
                     'visitDate' => $visit['visit_date'],
-                    'reviewDoneBy' => $this->getUsersDetails($userIdHavingReviewed, $reviewersById),
+                    'reviewDoneBy' => $userDetailsHavingReviewed,
                     'reviewNotDoneBy' => $this->getUsersDetails($userIdNotHavingReviewed, $reviewersById)
                 ];
             }

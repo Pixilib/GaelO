@@ -48,9 +48,7 @@ interface VisitRepositoryInterface
 
     public function getVisitsInStudyNeedingQualityControl(string $studyName): array;
 
-    public function getVisitsAwaitingReviewForUser(string $studyName, int $userId): array;
-
-    public function getPatientsHavingAtLeastOneAwaitingReviewForUser(string $studyName, int $userId): array;
+    public function getPatientsHavingAtLeastOneAwaitingReviewForUser(string $studyName, int $userId, ?string $ancillaryStudyName): array;
 
     public function isParentPatientHavingOneVisitAwaitingReview(int $visitId, string $studyName, int $userId) : bool;
 
@@ -65,6 +63,8 @@ interface VisitRepositoryInterface
     public function getImagingVisitsAwaitingUpload(string $studyName, array $centerCode): array;
 
     public function reactivateVisit(int $visitId): void;
+    
+    public function getVisitOfPatientByVisitTypeName(string $patientId, string $visitGroupName, string $visitTypeName, bool $withReviewStatus, string $studyName) : array;
 
     public function getVisitsInVisitType(int $visitTypeId, bool $withReviewStatus = false, string $studyName = null, bool $withTrashed = false, bool $withCenter = false): array;
 

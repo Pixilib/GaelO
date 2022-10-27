@@ -86,7 +86,7 @@ class MailServices
         }, $studiesEntities);
 
         $parameters = [
-            'name' => 'user',
+            'name' => 'User',
             'email' => $email,
             'studies' => $studies
         ];
@@ -117,7 +117,7 @@ class MailServices
     {
 
         $parameters = [
-            'name' => 'user',
+            'name' => 'User',
             'email' => $userEmail,
             'lastname' => $lastname,
             'firstname' => $firstname
@@ -135,7 +135,7 @@ class MailServices
     {
 
         $parameters = [
-            'name' => 'supervisor',
+            'name' => 'Supervisor',
             'study' => $studyName,
             'successList' => $successList,
             'failList' => $failList
@@ -153,7 +153,7 @@ class MailServices
     {
 
         $parameters = [
-            'name' => $this->getUserName($uploadUserId),
+            'name' => 'User',
             'study' => $studyName,
             'patientId' => $patientId,
             'patientCode' => $patientCode,
@@ -310,7 +310,7 @@ class MailServices
     {
 
         $parameters = [
-            'name' => 'supervisor',
+            'name' => 'Supervisor',
             'role' => $role,
             'study' => $studyName,
             'patientId' => $patientId,
@@ -335,7 +335,7 @@ class MailServices
     {
 
         $parameters = [
-            'name' => $this->getUserName($currentUserId),
+            'name' => 'reviewer',
             'study' => $studyName,
             'patientId' => $patientId,
             'patientCode' => $patientCode,
@@ -495,37 +495,21 @@ class MailServices
         $this->mailInterface->send();
     }
 
-    public function sendReminderToInvestigators(int $centerCode, string $studyName, string $subject, string $content)
+    public function sendReminder(string $senderId, array $userIds, string $studyName, string $subject, string $content)
     {
 
         $parameters = [
-            'name' => 'Investigator',
-            'study' => $studyName,
-            'subject' => $subject,
-            'content' => $content
-        ];
-
-        $this->mailInterface->setTo($this->getInvestigatorOfCenterInStudy($studyName, $centerCode));
-        $this->mailInterface->setReplyTo($this->getStudyContactEmail($studyName));
-        $this->mailInterface->setParameters($parameters);
-        $this->mailInterface->setBody(MailConstants::EMAIL_REMINDER);
-        $this->mailInterface->send();
-    }
-
-    public function sendReminder(string $role, string $studyName, string $subject, string $content)
-    {
-
-        $parameters = [
-            'name' => $role,
             'study' => $studyName,
             'subject' => $subject,
             'content' => $content
         ];
 
         $this->mailInterface->setTo(
-            $this->userRepositoryInterface->getUsersEmailsByRolesInStudy($studyName, $role)
+            array_map(function ($userId) {
+                return $this->getUserEmail($userId);
+            }, $userIds)
         );
-        $this->mailInterface->setReplyTo($this->getStudyContactEmail($studyName));
+        $this->mailInterface->setReplyTo($this->getUserEmail($senderId));
         $this->mailInterface->setParameters($parameters);
         $this->mailInterface->setBody(MailConstants::EMAIL_REMINDER);
         $this->mailInterface->send();
@@ -609,7 +593,7 @@ class MailServices
 
     public function sendCreatedUserMessage(string $email)
     {
-        $parameters = ['name' => 'user'];
+        $parameters = ['name' => 'User'];
 
         $this->mailInterface->setTo([$email]);
         $this->mailInterface->setReplyTo();
@@ -621,7 +605,14 @@ class MailServices
     public function sendMagicLink(int $targetedUserId, string $studyName, string $url, string $role, int $patientCode, string $visitType = null)
     {
 
-        $parameters = ['name' => 'user', 'study' => $studyName, 'url' => $url, 'role' => $role, 'patientCode' => $patientCode, 'visitType' => $visitType];
+        $parameters = [
+            'name' => 'User', 
+            'study' => $studyName, 
+            'url' => $url, 
+            'role' => $role, 
+            'patientCode' => $patientCode, 
+            'visitType' => $visitType
+        ];
 
         $this->mailInterface->setTo([$this->getUserEmail($targetedUserId)]);
         $this->mailInterface->setReplyTo($this->getStudyContactEmail($studyName));
@@ -630,9 +621,8 @@ class MailServices
         $this->mailInterface->send();
     }
 
-    public function sendQcReport(string $studyName, string $visitType, string $patientCode, array $studyInfo, array $seriesInfo, string $magiclink, string $controllerEmail)
+    public function sendQcReport(string $studyName, string $visitType, string $patientCode, array $studyInfo, array $seriesInfo, string $magicLinkAccepted, string $magicLinkRefused, string $controllerEmail)
     {
-
 
         $parameters = [
             'study' => $studyName,
@@ -640,7 +630,8 @@ class MailServices
             'patientCode' => $patientCode,
             'studyInfo' => $studyInfo,
             'seriesInfo' => $seriesInfo,
-            'magicLink' => $magiclink,
+            'magicLinkAccepted' => $magicLinkAccepted,
+            'magicLinkRefused' => $magicLinkRefused
         ];
 
         $this->mailInterface->setTo([$controllerEmail]);

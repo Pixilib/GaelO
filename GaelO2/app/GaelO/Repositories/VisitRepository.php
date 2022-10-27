@@ -108,7 +108,6 @@ class VisitRepository implements VisitRepositoryInterface
 
         $dataArray = $builder->findOrFail($visitId)->toArray();
         return $dataArray;
-
     }
 
     public function getVisitContextByVisitIdArray(array $visitIdArray): array
@@ -166,7 +165,10 @@ class VisitRepository implements VisitRepositoryInterface
     {
 
         $answer = $this->visitModel
-            ->with('visitType', 'visitType.visitGroup', 'reviewStatus')
+            ->with('visitType', 'visitType.visitGroup')
+            ->with(['reviewStatus' => function ($query) use ($studyName) {
+                $query->where('study_name', $studyName);
+            }])
             ->where('upload_status', Constants::UPLOAD_STATUS_DONE)
             ->whereIn('state_investigator_form', [Constants::INVESTIGATOR_FORM_NOT_NEEDED, Constants::INVESTIGATOR_FORM_DONE])
             ->whereIn('state_quality_control', [Constants::QUALITY_CONTROL_NOT_NEEDED, CONSTANTS::QUALITY_CONTROL_ACCEPTED])
@@ -209,6 +211,29 @@ class VisitRepository implements VisitRepositoryInterface
         $visits = $this->getVisitsInStudy($studyName, false, false, true);
 
         return sizeof($visits) === 0 ? false  : true;
+    }
+
+    public function getVisitOfPatientByVisitTypeName(string $patientId, string $visitGroupName, string $visitTypeName, bool $withReviewStatus, string $studyName): array
+    {
+        $visits = $this->visitModel
+            ->with('visitType', 'visitType.visitGroup', 'patient')
+            ->whereHas('patient', function ($query) use ($patientId) {
+                $query->where('id', $patientId);
+            })
+            ->whereHas('visitType', function ($query) use ($visitTypeName) {
+                $query->where('name', $visitTypeName);
+            })
+            ->whereHas('visitType.visitGroup', function ($query) use ($visitGroupName) {
+                $query->where('name', $visitGroupName);
+            });
+
+        if ($withReviewStatus) {
+            $visits->with(['reviewStatus' => function ($query) use ($studyName) {
+                $query->where('study_name', $studyName);
+            }]);
+        }
+
+        return $visits->sole()->toArray();
     }
 
     public function getVisitsInVisitType(int $visitTypeId, bool $withReviewStatus = false, string $studyName = null, bool $withTrashed = false, bool $withCenter = false): array
@@ -268,15 +293,15 @@ class VisitRepository implements VisitRepositoryInterface
         return $answer->count() === 0 ? []  : $answer->toArray();
     }
 
-    public function getVisitsAwaitingReviewForUser(string $studyName, int $userId): array
+    public function getPatientsHavingAtLeastOneAwaitingReviewForUser(string $studyName, int $userId, ?string $ancillaryStudyName): array
     {
-
-        $visitIdAwaitingReview = $this->reviewStatusModel->where('study_name', $studyName)->where('review_available', true)->select('visit_id')->get()->toArray();
-
-        $answer = $this->visitModel->with('visitType', 'visitType.visitGroup')
-            ->with(['reviewStatus' => function ($query) use ($studyName) {
-                $query->where('study_name', $studyName);
+        $collection = $this->visitModel
+            ->with(['reviewStatus' => function ($query) use ($studyName, $ancillaryStudyName) {
+                $query->where('study_name', ($ancillaryStudyName ?? $studyName));
             }])
+            ->whereHas('patient', function ($query) use ($studyName) {
+                $query->where('study_name', $studyName);
+            })
             ->where(function ($query) use ($studyName, $userId) {
                 $query->selectRaw('count(*)')
                     ->from('reviews')
@@ -286,36 +311,16 @@ class VisitRepository implements VisitRepositoryInterface
                     ->where('local', false)
                     ->where('user_id', $userId)
                     ->where('deleted_at', null);
-            }, '=', 0)
-            ->whereIn('id', $visitIdAwaitingReview)
-            ->get();
-
-        return $answer->count() === 0 ? []  : $answer->toArray();
-    }
-
-    public function getPatientsHavingAtLeastOneAwaitingReviewForUser(string $studyName, int $userId): array
-    {
-        $visitIdAwaitingReview = $this->reviewStatusModel->where('study_name', $studyName)->where('review_available', true)->select('visit_id')->get()->toArray();
-
-        $answer = $this->visitModel
-            ->with(['reviewStatus' => function ($query) use ($studyName) {
-                $query->where('study_name', $studyName);
-            }])
-            ->where(function ($query) use ($studyName, $userId) {
-                $query->selectRaw('count(*)')
-                    ->from('reviews')
-                    ->whereColumn('reviews.visit_id', '=', 'visits.id')
-                    ->where('study_name', '=', $studyName)
-                    ->where('validated', true)
-                    ->where('local', false)
-                    ->where('user_id', $userId)
-                    ->where('deleted_at', null);
-            }, '=', 0)
-            ->whereIn('id', $visitIdAwaitingReview)
-            ->distinct('patient_id')
-            ->pluck('patient_id');
-
-        return $answer->count() === 0 ? []  : $answer->toArray();
+            }, '=', 0)->get();
+        
+        //Filtered outside the query because confusing laravel to do default value (which is dynamic in our case) + condition after the default value
+        $reviewAvailable = $collection->filter(function ($visit, $key) {
+                return $visit->reviewStatus->review_available === true;
+        });
+        
+        $patientIds = $reviewAvailable->pluck('patient_id')->unique();
+    
+        return $patientIds->count() === 0 ? []  : $patientIds->toArray();
     }
 
     public function isParentPatientHavingOneVisitAwaitingReview(int $visitId, string $studyName, int $userId): bool

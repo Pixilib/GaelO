@@ -4,7 +4,6 @@ Salim TODO :
 --- Etudes ancillaires ---
 Export study data => Ne tient pas en compte du statut ancillaire ou non de l'etude a exporter
 Api Reminder à voir avec Emilie (pas de relance d'envoi d'imagerie depuis une étude ancillaire, probablement à occulter en front seulement)
-Tester Etudes ancillaire avec Emilie (voir return default data de review status si entitée non crée)
 Ne doit pas pouvoir faire les relance d'upload => Voir avec Emilie (probablement passer les info de study dans un contexte)
 --- /Etudes ancillaires ---
 

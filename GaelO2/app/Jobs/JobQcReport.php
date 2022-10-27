@@ -24,8 +24,10 @@ class JobQcReport implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
     private int $visitId;
+    public $failOnTimeout = true;
 
     public $timeout = 120;
+    public $tries = 1;
     /**
      * Create a new job instance.
      *
@@ -33,6 +35,7 @@ class JobQcReport implements ShouldQueue
      */
     public function __construct(int $visitId)
     {
+        $this->onQueue('auto-qc');
         $this->visitId = $visitId;
     }
 
@@ -61,8 +64,8 @@ class JobQcReport implements ShouldQueue
         switch ($imageType) {
             case ImageType::MIP:
                 //SK Mosaic temporairement
-                $imagePath = $orthancService->getSeriesMosaic($seriesID);
-                //$imagePath = $orthancService->getSeriesMIP($seriesID);
+                //$imagePath = $orthancService->getSeriesMosaic($seriesID);
+                $imagePath = $orthancService->getSeriesMIP($seriesID);
                 break;
             case ImageType::MOSAIC:
                 $imagePath = $orthancService->getSeriesMosaic($seriesID);
@@ -121,8 +124,9 @@ class JobQcReport implements ShouldQueue
         $studyInfo['numberOfSeries'] = count($dicomStudyEntity[0]['dicom_series']);
         $studyInfo['numberOfInstances'] = 0;
         if ($stateInvestigatorForm != Constants::INVESTIGATOR_FORM_NOT_NEEDED) {
+            $reviewEntity = $reviewRepositoryInterface->getInvestigatorForm($this->visitId, false);
             $studyInfo['investigatorForm'] = json_encode(
-                $reviewRepositoryInterface->getInvestigatorForm($this->visitId, false),
+                $reviewEntity['review_data'],
                 JSON_PRETTY_PRINT
             );
         } else {
@@ -196,9 +200,16 @@ class JobQcReport implements ShouldQueue
         $controllerUsers = $userRepositoryInterface->getUsersByRolesInStudy($studyName, Constants::ROLE_CONTROLLER);
 
         foreach ($controllerUsers as $user) {
-            $redirectLink = '/study/' . $studyName . '/role/' . Constants::ROLE_CONTROLLER . '/visit/' . $visitId;
-            $magicLink = $frameworkInterface->createMagicLink($user['id'], $redirectLink);
-            $mailServices->sendQcReport($studyName, $visitType, $patientCode, $studyInfo, $seriesInfo, $magicLink, $user['email']);
+            $redirectLink = '/magic-link-tools/auto-qc';
+            $queryParams = [
+                'visitId' => $visitId,
+                'accepted' => 'true',
+                'studyName' => $studyName
+            ];
+            $magicLinkAccepted = $frameworkInterface->createMagicLink($user['id'], $redirectLink, $queryParams);
+            $queryParams['accepted'] = 'false';
+            $magicLinkRefused = $frameworkInterface->createMagicLink($user['id'], $redirectLink, $queryParams);
+            $mailServices->sendQcReport($studyName, $visitType, $patientCode, $studyInfo, $seriesInfo, $magicLinkAccepted, $magicLinkRefused, $user['email']);
         }
     }
 }

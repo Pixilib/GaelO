@@ -35,6 +35,7 @@ class StudyReviewProgressionTest extends TestCase
     public function testGetStudyReviewProgression()
     {
         $reviewerUser = User::factory()->create();
+        $reviewerUser->delete();
         $visit = Visit::factory()->create();
         $review = Review::factory()->reviewForm()->userId($reviewerUser->id)->visitId($visit->id)->studyName($visit->patient->study_name)->validated()->create();
 
@@ -47,7 +48,6 @@ class StudyReviewProgressionTest extends TestCase
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $review->study_name);
 
         $answer = $this->json('GET', '/api/studies/' . $review->study_name . '/review-progression');
-
         $answer->assertStatus(200);
         $answerArray = json_decode($answer->content(), true);
 

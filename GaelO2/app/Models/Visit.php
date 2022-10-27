@@ -45,18 +45,18 @@ class Visit extends Model
     }
 
 
-    /*
-    ->withDefault([
-            'review_available' => false,
-            'target_lesions' => null,
-            'review_status' => 'Not Done',
-            'review_conclusion_value' => null,
-            'review_conclusion_date'=>null
-        ]);;*/
-
+    /**
+     * Add default relation as record not always existing in ancillary studies
+     */
     public function reviewStatus()
     {
-        return $this->hasOne(ReviewStatus::class, 'visit_id', 'id');
+        return $this->hasOne(ReviewStatus::class, 'visit_id', 'id')->withDefault(function ($reviewStatus, $visit) {
+            $reviewStatus->review_available = in_array($visit->state_quality_control, ['Accepted', 'Not Needed']);
+            $reviewStatus->target_lesions = null;
+            $reviewStatus->review_status = 'Not Done';
+            $reviewStatus->review_conclusion_value = null;
+            $reviewStatus->review_conclusion_date = null;
+        });
     }
 
     public function patient()
