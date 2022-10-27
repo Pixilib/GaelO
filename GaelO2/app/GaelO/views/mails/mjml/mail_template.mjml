@@ -14,7 +14,7 @@
   <mj-body>
     <mj-section>
       <mj-column>
-        <mj-image href="{{ $webAddress }}" src="<?= $message->embed(public_path('static/media/gaelo-mail-header.jpg')) ?>" alt="Logo" align="center" />
+        <mj-image href="{{ $webAddress }}" rel="noopener" src="<?= $message->embed(public_path('static/media/gaelo-mail-header.jpg')) ?>" alt="Logo" align="center" />
       </mj-column>
     </mj-section>
     <mj-section>

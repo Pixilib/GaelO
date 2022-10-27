@@ -115,7 +115,7 @@
                           <tbody>
                             <tr>
                               <td style="width:550px;">
-                                <a href="{{ $webAddress }}" target="_blank">
+                                <a href="{{ $webAddress }}" target="_blank" rel="noopener" >
                                 <img alt="Logo" height="auto" src="{{ $message->embed(public_path('static/media/gaelo-mail-header.jpg')) }}" style="border:0;display:block;outline:none;text-decoration:none;height:auto;width:100%;font-size:13px;" width="550" />
                                 </a>
                               </td>
