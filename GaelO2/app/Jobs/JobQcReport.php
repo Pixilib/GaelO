@@ -125,12 +125,9 @@ class JobQcReport implements ShouldQueue
         $studyInfo['numberOfInstances'] = 0;
         if ($stateInvestigatorForm != Constants::INVESTIGATOR_FORM_NOT_NEEDED) {
             $reviewEntity = $reviewRepositoryInterface->getInvestigatorForm($this->visitId, false);
-            $studyInfo['investigatorForm'] = json_encode(
-                $reviewEntity['review_data'],
-                JSON_PRETTY_PRINT
-            );
+            $studyInfo['investigatorForm'] = $reviewEntity['review_data'];
         } else {
-            $studyInfo['investigatorForm'] = null;
+            $studyInfo['investigatorForm'] = [];
         }
 
         $seriesInfo = [];
