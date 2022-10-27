@@ -64,8 +64,8 @@ class JobQcReport implements ShouldQueue
         switch ($imageType) {
             case ImageType::MIP:
                 //SK Mosaic temporairement
-                $imagePath = $orthancService->getSeriesMosaic($seriesID);
-                //$imagePath = $orthancService->getSeriesMIP($seriesID);
+                //$imagePath = $orthancService->getSeriesMosaic($seriesID);
+                $imagePath = $orthancService->getSeriesMIP($seriesID);
                 break;
             case ImageType::MOSAIC:
                 $imagePath = $orthancService->getSeriesMosaic($seriesID);
