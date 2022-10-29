@@ -58,10 +58,10 @@ class JobQcReport implements ShouldQueue
         }
     }
 
-    private function getSeriesPreview(OrthancMetaData $sharedTags, string $seriesID, string $firstInstanceID): string
+    private function getSeriesPreview(OrthancMetaData $sharedTags, string $seriesID, string $firstInstanceID): ?string
     {
         $imageType = $this->getImageType($sharedTags);
-        $imagePath = public_path('static/media/gaelo-logo.png');
+        $imagePath = null;
         switch ($imageType) {
             case ImageType::MIP:
                 //SK Mosaic temporairement
@@ -150,6 +150,7 @@ class JobQcReport implements ShouldQueue
             $seriesData = [];
             $seriesData['infos'] = [];
             $seriesData['series_description'] = $seriesSharedTags->getSeriesDescription();
+            $seriesData['image_path'] = public_path('static/media/gaelo-logo.png');
             try {
                 $seriesData['image_path'] = $this->getSeriesPreview($seriesSharedTags, $series['orthanc_id'], $seriesDetails['Instances'][0]);
             } catch (Throwable $t) {
