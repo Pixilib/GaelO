@@ -61,7 +61,7 @@ class JobQcReport implements ShouldQueue
     private function getSeriesPreview(OrthancMetaData $sharedTags, string $seriesID, string $firstInstanceID): string
     {
         $imageType = $this->getImageType($sharedTags);
-        $imagePath = '';
+        $imagePath = public_path('static/media/gaelo-logo.png');
         switch ($imageType) {
             case ImageType::MIP:
                 //SK Mosaic temporairement
