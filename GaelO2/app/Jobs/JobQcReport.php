@@ -24,6 +24,7 @@ class JobQcReport implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
     private int $visitId;
+    private OrthancService $orthancService;
     public $failOnTimeout = true;
 
     public $timeout = 120;
@@ -39,7 +40,7 @@ class JobQcReport implements ShouldQueue
         $this->visitId = $visitId;
     }
 
-    public function getImageType(OrthancMetaData $sharedTags): ImageType
+    private function getImageType(OrthancMetaData $sharedTags): ImageType
     {
         $mosaicIDs = ['1.2.840.10008.5.1.4.1.1.4', '1.2.840.10008.5.1.4.1.1.4.1'];
         $gifIDs = [
@@ -57,7 +58,7 @@ class JobQcReport implements ShouldQueue
         }
     }
 
-    private function getSeriesPreview(OrthancMetaData $sharedTags, string $seriesID, string $firstInstanceID, OrthancService $orthancService): string
+    private function getSeriesPreview(OrthancMetaData $sharedTags, string $seriesID, string $firstInstanceID): string
     {
         $imageType = $this->getImageType($sharedTags);
         $imagePath = '';
@@ -65,13 +66,13 @@ class JobQcReport implements ShouldQueue
             case ImageType::MIP:
                 //SK Mosaic temporairement
                 //$imagePath = $orthancService->getSeriesMosaic($seriesID);
-                $imagePath = $orthancService->getSeriesMIP($seriesID);
+                $imagePath = $this->orthancService->getSeriesMIP($seriesID);
                 break;
             case ImageType::MOSAIC:
-                $imagePath = $orthancService->getSeriesMosaic($seriesID);
+                $imagePath = $this->orthancService->getSeriesMosaic($seriesID);
                 break;
             case ImageType::DEFAULT:
-                $imagePath = $orthancService->getInstancePreview($firstInstanceID);
+                $imagePath = $this->orthancService->getInstancePreview($firstInstanceID);
                 break;
         }
         return $imagePath;
@@ -109,7 +110,8 @@ class JobQcReport implements ShouldQueue
         OrthancService $orthancService,
         ReviewRepositoryInterface $reviewRepositoryInterface
     ) {
-        $orthancService->setOrthancServer(true);
+        $this->orthancService = $orthancService;
+        $this->orthancService->setOrthancServer(true);
         $visitEntity = $visitRepositoryInterface->getVisitContext($this->visitId);
         $dicomStudyEntity = $dicomStudyRepositoryInterface->getDicomsDataFromVisit($this->visitId, false, false);
 
@@ -134,8 +136,8 @@ class JobQcReport implements ShouldQueue
         $index = 0;
         $modalities = [];
         foreach ($dicomStudyEntity[0]['dicom_series'] as $series) {
-            $seriesSharedTags = $orthancService->getMetaData($series['orthanc_id']);
-            $seriesDetails = $orthancService->getOrthancRessourcesDetails(Constants::ORTHANC_SERIES_LEVEL, $series['orthanc_id']);
+            $seriesSharedTags = $this->orthancService->getMetaData($series['orthanc_id']);
+            $seriesDetails = $this->orthancService->getOrthancRessourcesDetails(Constants::ORTHANC_SERIES_LEVEL, $series['orthanc_id']);
 
             if ($index == 0) {
                 $studyInfo['studyDescription'] = $seriesSharedTags->getStudyDescription();
@@ -149,7 +151,7 @@ class JobQcReport implements ShouldQueue
             $seriesData['infos'] = [];
             $seriesData['series_description'] = $seriesSharedTags->getSeriesDescription();
             try {
-                $seriesData['image_path'] = $this->getSeriesPreview($seriesSharedTags, $series['orthanc_id'], $seriesDetails['Instances'][0], $orthancService);
+                $seriesData['image_path'] = $this->getSeriesPreview($seriesSharedTags, $series['orthanc_id'], $seriesDetails['Instances'][0]);
             } catch (Throwable $t) {
                 Log::info($t);
             }
@@ -175,7 +177,7 @@ class JobQcReport implements ShouldQueue
                 $seriesData['infos']['Patient weight'] = $seriesSharedTags->getPatientWeight();
                 $seriesData['infos']['Patient height'] = $seriesSharedTags->getPatientHeight();
                 //Add radiopharmaceutical data (need first instance metadata to access it)
-                $instanceTags = $orthancService->getInstanceTags($seriesDetails['Instances'][0]);
+                $instanceTags = $this->orthancService->getInstanceTags($seriesDetails['Instances'][0]);
                 $seriesData['infos']['Injected Dose'] = $instanceTags->getInjectedDose();
                 $seriesData['infos']['Injected Time'] = $instanceTags->getInjectedTime();
                 $seriesData['infos']['Injected DateTime'] = $instanceTags->getInjectedDateTime();

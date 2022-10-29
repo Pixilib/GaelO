@@ -54,12 +54,12 @@ class OrthancService
 
     public function getOrthancRessourcesStatistics(string $level, string $orthancID): array
     {
-        return $this->httpClientInterface->requestJson('GET', '/' . $level . '/' . $orthancID . '/statistics/')->getJsonBody();
+        return $this->httpClientInterface->requestJson('GET', '/' . $level . '/' . $orthancID . '/statistics')->getJsonBody();
     }
 
     public function getInstanceTags(string $orthancInstanceID): OrthancMetaData
     {
-        $response = $this->httpClientInterface->requestJson('GET', '/instances/' . $orthancInstanceID . '/tags/')->getJsonBody();
+        $response = $this->httpClientInterface->requestJson('GET', '/instances/' . $orthancInstanceID . '/tags')->getJsonBody();
         return new OrthancMetaData($response);
     }
 
@@ -138,7 +138,7 @@ class OrthancService
     public function isPeerAccelerated(string $peer): bool
     {
 
-        $peers = $this->httpClientInterface->rowRequest('GET', '/transfers/peers/', null, null)->getJsonBody();
+        $peers = $this->httpClientInterface->rowRequest('GET', '/transfers/peers', null, null)->getJsonBody();
 
         if ($peers[$peer] == "installed") {
             return true;
@@ -226,7 +226,7 @@ class OrthancService
      * @param string $newPatientName
      * @param string $newPatientID
      * @param string $newStudyDescription
-     * @return string
+     * @return array
      */
     private function buildAnonQuery(
         string $profile,
