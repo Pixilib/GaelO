@@ -17,6 +17,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use App\GaelO\Services\StoreObjects\OrthancMetaData;
 use App\Jobs\ImageType;
+use Exception;
 use Illuminate\Support\Facades\Log;
 use Throwable;
 
@@ -25,7 +26,7 @@ class JobQcReport implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
     private int $visitId;
     private OrthancService $orthancService;
-    
+
     public $failOnTimeout = true;
     public $timeout = 600;
     public $backoff = 60;
@@ -212,4 +213,11 @@ class JobQcReport implements ShouldQueue
             $mailServices->sendQcReport($studyName, $visitType, $patientCode, $studyInfo, $seriesInfo, $magicLinkAccepted, $magicLinkRefused, $user['email']);
         }
     }
+
+    /*
+    public function failed(Exception $exception)
+    {
+        // Send user notification of failure, etc...
+    }
+    */
 }
