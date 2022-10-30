@@ -147,7 +147,7 @@ class JobQcReport implements ShouldQueue
             $seriesData = [];
             $seriesData['infos'] = [];
             $seriesData['series_description'] = $seriesSharedTags->getSeriesDescription();
-            $seriesData['image_path'] = public_path('static/media/gaelo-logo.png');
+            $seriesData['image_path'] = public_path('static/media/ban-image-photo-icon.png');
             try {
                 $seriesData['image_path'] = $this->getSeriesPreview($seriesSharedTags, $series['orthanc_id'], $seriesDetails['Instances'][0]);
             } catch (Throwable $t) {
