@@ -27,7 +27,7 @@ class JobQcReport implements ShouldQueue
     private OrthancService $orthancService;
     public $failOnTimeout = true;
 
-    public $timeout = 120;
+    public $timeout = 600;
     public $tries = 1;
     /**
      * Create a new job instance.
