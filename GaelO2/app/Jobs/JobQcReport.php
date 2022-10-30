@@ -25,8 +25,8 @@ class JobQcReport implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
     private int $visitId;
     private OrthancService $orthancService;
+    
     public $failOnTimeout = true;
-
     public $timeout = 600;
     /**
      * Create a new job instance.
@@ -63,8 +63,6 @@ class JobQcReport implements ShouldQueue
         $imagePath = null;
         switch ($imageType) {
             case ImageType::MIP:
-                //SK Mosaic temporairement
-                //$imagePath = $orthancService->getSeriesMosaic($seriesID);
                 $imagePath = $this->orthancService->getSeriesMIP($seriesID);
                 break;
             case ImageType::MOSAIC:
