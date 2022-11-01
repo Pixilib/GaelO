@@ -4,5 +4,4 @@ composer.phar
 
 
 GaelO2/app/GaelO/Services/SpecificStudiesRules/*
-GaelO2/database/seeders/studies/*
 src/*
