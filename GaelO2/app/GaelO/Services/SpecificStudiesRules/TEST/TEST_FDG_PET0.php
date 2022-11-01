@@ -12,7 +12,7 @@ class TEST_FDG_PET0 extends AbstractVisitRules
     private $reviewConclusion = null;
 
     private ReviewRepositoryInterface $reviewRepositoryInterface;
-    private string $studyName = "TEST";
+    protected string $studyName = "TEST";
 
     public function __construct(ReviewRepositoryInterface $reviewRepositoryInterface)
     {

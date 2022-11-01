@@ -9,7 +9,7 @@ use App\GaelO\Services\GaelOStudiesService\AbstractVisitRules;
 class TEST_WB_CT0 extends AbstractVisitRules
 {
 
-    private string $studyName = "TEST";
+    protected string $studyName = "TEST";
     private ReviewRepositoryInterface $reviewRepositoryInterface;
 
     public function __construct(ReviewRepositoryInterface $reviewRepositoryInterface)
