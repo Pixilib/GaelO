@@ -16,7 +16,8 @@ abstract class AbstractVisitRules
     const RULE_BOOLEAN = "boolean";
     const RULE_DATE = "date";
 
-    protected array $data;
+    protected array $data = [];
+    protected string $studyName;
     protected array $visitContext;
 
     abstract public function getInvestigatorValidationRules(): array;
@@ -78,7 +79,7 @@ abstract class AbstractVisitRules
                 $validatorAdapter->addValidatorString($name, $details['optional']);
                 break;
             case self::RULE_INT:
-                $validatorAdapter->addValidatorInt($name, $details['optional'], $details['min'], $details['max']);
+                $validatorAdapter->addValidatorInt($name, $details['optional'], $details['min'] ?? null, $details['max'] ?? null);
                 break;
             case self::RULE_SET:
                 $validatorAdapter->addSetValidator($name, $details['values'], $details['optional']);
@@ -87,7 +88,7 @@ abstract class AbstractVisitRules
                 $validatorAdapter->addBooleanValidator($name, $details['optional']);
                 break;
             case self::RULE_NUMBER:
-                $validatorAdapter->addNumberValidator($name, $details['optional'], $details['min'], $details['max']);
+                $validatorAdapter->addNumberValidator($name, $details['optional'], $details['min'] ?? null, $details['max'] ?? null);
                 break;
             case self::RULE_DATE:
                 $validatorAdapter->addDateValidator($name, $details['optional']);
