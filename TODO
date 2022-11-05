@@ -1,4 +1,5 @@
 Salim TODO :
+- Refac visit Rule (adjudication / validation) => stocker en variable d'instance
 - Optimiser l'utilisation des authorization service en injectant les data depuis le usecase (ou les rendre stateless) (dont visite, review...)
 
 --- Etudes ancillaires ---
