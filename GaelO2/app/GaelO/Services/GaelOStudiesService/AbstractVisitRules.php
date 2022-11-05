@@ -17,6 +17,7 @@ abstract class AbstractVisitRules
     const RULE_DATE = "date";
 
     protected array $data = [];
+    protected bool $adjudication;
     protected string $studyName;
     protected array $visitContext;
 
@@ -46,6 +47,10 @@ abstract class AbstractVisitRules
     public function setFormData(array $data)
     {
         $this->data = $data;
+    }
+
+    public function setAdjudication(bool $adjudication){
+        $this->adjudication = $adjudication;
     }
 
     public function checkInvestigatorFormValidity(bool $validated): bool

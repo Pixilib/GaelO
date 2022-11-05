@@ -37,6 +37,7 @@ class ReviewFormService extends FormService
     public function saveReview(array $data, bool $validated, bool $adjudication): int
     {
         $this->abstractVisitRules->setFormData($data);
+        $this->abstractVisitRules->setAdjudication($adjudication);
         $validity = $this->abstractVisitRules->checkReviewFormValidity($validated, $adjudication);
         if (!$validity) {
             throw new GaelOBadRequestException('Review Form Validation Failed');
@@ -54,6 +55,7 @@ class ReviewFormService extends FormService
         $reviewEntity = $this->reviewRepositoryInterface->find($reviewId);
         //Pass validation
         $this->abstractVisitRules->setFormData($data);
+        $this->abstractVisitRules->setAdjudication($reviewEntity['adjudication']);
         $validity = $this->abstractVisitRules->checkReviewFormValidity($validated, $reviewEntity['adjudication']);
         if (!$validity) {
             throw new GaelOBadRequestException('Review Form Validation Failed');
