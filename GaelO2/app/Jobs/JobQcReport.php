@@ -30,7 +30,7 @@ class JobQcReport implements ShouldQueue
     public $failOnTimeout = true;
     public $timeout = 600;
     public $backoff = 60;
-    public $tries = 2;
+    public $tries = 1;
 
     /**
      * Create a new job instance.
@@ -113,9 +113,9 @@ class JobQcReport implements ShouldQueue
     ) {
         $this->orthancService = $orthancService;
         $this->orthancService->setOrthancServer(true);
+
         $visitEntity = $visitRepositoryInterface->getVisitContext($this->visitId);
         $dicomStudyEntity = $dicomStudyRepositoryInterface->getDicomsDataFromVisit($this->visitId, false, false);
-
         $stateInvestigatorForm = $visitEntity['state_investigator_form'];
 
         $studyInfo = [];
@@ -123,9 +123,9 @@ class JobQcReport implements ShouldQueue
         $studyInfo['visitName'] = $visitEntity['visit_type']['name'];
         $studyInfo['patientCode'] = $visitEntity['patient']['code'];
         $studyInfo['studyName'] = $visitEntity['patient']['study_name'];
-
         $studyInfo['numberOfSeries'] = count($dicomStudyEntity[0]['dicom_series']);
         $studyInfo['numberOfInstances'] = 0;
+
         if ($stateInvestigatorForm != Constants::INVESTIGATOR_FORM_NOT_NEEDED) {
             $reviewEntity = $reviewRepositoryInterface->getInvestigatorForm($this->visitId, false);
             $studyInfo['investigatorForm'] = $reviewEntity['review_data'];
@@ -137,9 +137,17 @@ class JobQcReport implements ShouldQueue
         $index = 0;
         $modalities = [];
         foreach ($dicomStudyEntity[0]['dicom_series'] as $series) {
-            $seriesSharedTags = $this->orthancService->getMetaData($series['orthanc_id']);
-            $seriesDetails = $this->orthancService->getOrthancRessourcesDetails(Constants::ORTHANC_SERIES_LEVEL, $series['orthanc_id']);
-
+            $seriesData = [];
+            $seriesData['infos'] = [];
+            $seriesData['image_path'] = public_path('static/media/ban-image-photo-icon.png');
+            try {
+                $seriesSharedTags = $this->orthancService->getMetaData($series['orthanc_id']);
+                $seriesDetails = $this->orthancService->getOrthancRessourcesDetails(Constants::ORTHANC_SERIES_LEVEL, $series['orthanc_id']);
+                $seriesData['image_path'] = $this->getSeriesPreview($seriesSharedTags, $series['orthanc_id'], $seriesDetails['Instances'][0]);
+            } catch (Throwable $t) {
+                Log::info($t);
+            }
+            
             if ($index == 0) {
                 $studyInfo['studyDescription'] = $seriesSharedTags->getStudyDescription();
                 $studyInfo['manufacturer'] = $seriesSharedTags->getStudyManufacturer();
@@ -148,15 +156,8 @@ class JobQcReport implements ShouldQueue
             $studyInfo['numberOfInstances'] += $series['number_of_instances'];
             $modalities[] = $seriesSharedTags->getSeriesModality();
 
-            $seriesData = [];
-            $seriesData['infos'] = [];
+            //SK devrait etre dans series info je pense
             $seriesData['series_description'] = $seriesSharedTags->getSeriesDescription();
-            $seriesData['image_path'] = public_path('static/media/ban-image-photo-icon.png');
-            try {
-                $seriesData['image_path'] = $this->getSeriesPreview($seriesSharedTags, $series['orthanc_id'], $seriesDetails['Instances'][0]);
-            } catch (Throwable $t) {
-                Log::info($t);
-            }
             $seriesData['infos']['Modality'] = $seriesSharedTags->getSeriesModality();
             $seriesData['infos']['Series date'] =  $seriesSharedTags->getSeriesDate();
             $seriesData['infos']['Series time'] = $series['acquisition_time'];
