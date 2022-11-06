@@ -144,6 +144,8 @@ class JobQcReport implements ShouldQueue
                 $seriesSharedTags = $this->orthancService->getMetaData($series['orthanc_id']);
                 $seriesDetails = $this->orthancService->getOrthancRessourcesDetails(Constants::ORTHANC_SERIES_LEVEL, $series['orthanc_id']);
                 $seriesData['image_path'] = $this->getSeriesPreview($seriesSharedTags, $series['orthanc_id'], $seriesDetails['Instances'][0]);
+                //Needed for radiopharmaceutical data (need first instance metadata to access it)
+                $instanceTags = $this->orthancService->getInstanceTags($seriesDetails['Instances'][0]);
             } catch (Throwable $t) {
                 Log::info($t);
             }
@@ -179,8 +181,6 @@ class JobQcReport implements ShouldQueue
             } else if ($seriesData['infos']['Modality'] == 'PT') {
                 $seriesData['infos']['Patient weight'] = $seriesSharedTags->getPatientWeight();
                 $seriesData['infos']['Patient height'] = $seriesSharedTags->getPatientHeight();
-                //Add radiopharmaceutical data (need first instance metadata to access it)
-                $instanceTags = $this->orthancService->getInstanceTags($seriesDetails['Instances'][0]);
                 $seriesData['infos']['Injected Dose'] = $instanceTags->getInjectedDose();
                 $seriesData['infos']['Injected Time'] = $instanceTags->getInjectedTime();
                 $seriesData['infos']['Injected DateTime'] = $instanceTags->getInjectedDateTime();
