@@ -43,7 +43,6 @@ RUN a2enmod rewrite
 RUN a2enmod headers
 RUN a2enmod remoteip
 RUN a2enmod deflate
-RUN a2enmod http2
 
 RUN a2enconf zgaelo
 
