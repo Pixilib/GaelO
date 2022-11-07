@@ -8,8 +8,6 @@ Securité access review => dissocier visit groupe en fonction du Job reviewer, p
 Objet Visit : Ne pas instancier automatiquement Visit Groupe et Visit Type, seulement quand on a besoin avec Getteur
 Options export review deleted et draft dans export
 
-OHIF Build :  QUICK_BUILD=true PUBLIC_URL=/ohif/ yarn build 
-
 
 Release : 
 Fixer Uploder

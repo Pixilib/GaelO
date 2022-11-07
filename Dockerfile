@@ -1,11 +1,11 @@
-FROM node:16.17.0 as ohif
-RUN apt-get update -qy && \
-    apt-get install -y --no-install-recommends apt-utils\
-    git
-WORKDIR /ohif
-RUN git clone --depth 1 --branch v3-stable https://github.com/OHIF/Viewers.git
-RUN cd Viewers && yarn config set workspaces-experimental true && yarn install && QUICK_BUILD=true PUBLIC_URL=/ohif/ yarn run build
-RUN rm /ohif/Viewers/platform/viewer/dist/app-config.js
+#FROM node:16.17.0 as ohif
+#RUN apt-get update -qy && \
+#    apt-get install -y --no-install-recommends apt-utils\
+#    git
+#WORKDIR /ohif
+#RUN git clone --depth 1 --branch v3-stable https://github.com/OHIF/Viewers.git
+#RUN cd Viewers && yarn config set workspaces-experimental true && yarn install && QUICK_BUILD=true PUBLIC_URL=/ohif/ yarn run build
+#RUN rm /ohif/Viewers/platform/viewer/dist/app-config.js
 
 FROM alpine as stone
 RUN apk --no-cache add wget
@@ -61,7 +61,7 @@ RUN a2enmod remoteip
 RUN a2enconf gaelo-app
 
 COPY --chown=www-data:www-data src .
-COPY --from=ohif --chown=www-data:www-data /ohif/Viewers/platform/viewer/dist ./ohif/
+#COPY --from=ohif --chown=www-data:www-data /ohif/Viewers/platform/viewer/dist ./ohif/
 COPY --from=stone /stone/wasm-binaries/StoneWebViewer ./stone/
 
 
