@@ -1,6 +1,6 @@
 window.config = {
   // default: '/'
-  routerBasename: '/ohif',
+  routerBasename: '/viewer-ohif',
   //whiteLabelling: {},
   extensions: [],
   modes: [],

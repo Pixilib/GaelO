@@ -168,13 +168,25 @@ if ($visitObject->statusDone == Visit::NOT_DONE) {
             		$("#OHIFViewer").on('click', function() {
 						var win = null
 						if( "<?= $visitObject->getVisitGroup()->groupModality ?>"  === 'PT' ) {
-							//win = window.open('/ohif/tmtv?StudyInstanceUIDs=<?=$visitObject->getStudyDicomDetails()->studyUID ?>', '_blank');
+							//win = window.open('/viewer-ohif/tmtv?StudyInstanceUIDs=<?=$visitObject->getStudyDicomDetails()->studyUID ?>', '_blank');
 							//Until debuging TMTV with NAC
-							win = window.open('/ohif/viewer?StudyInstanceUIDs=<?=$visitObject->getStudyDicomDetails()->studyUID ?>', '_blank');
+							win = window.open('/viewer-ohif/viewer?StudyInstanceUIDs=<?=$visitObject->getStudyDicomDetails()->studyUID ?>', '_blank');
 						}else {
-							win = window.open('/ohif/viewer?StudyInstanceUIDs=<?=$visitObject->getStudyDicomDetails()->studyUID ?>', '_blank');
+							win = window.open('/viewer-ohif/viewer?StudyInstanceUIDs=<?=$visitObject->getStudyDicomDetails()->studyUID ?>', '_blank');
 						}
 
+            			if (win) {
+                            //Browser has allowed it to be opened
+                            win.focus();
+                        } else {
+                            //Browser has blocked it
+                            alert('Please allow popups for this website');
+                        }
+            		});
+
+					$("#OHIFViewerGaelO").on('click', function() {
+						var win = window.open('/viewer-ohif/gaelo?StudyInstanceUIDs=<?=$visitObject->getStudyDicomDetails()->studyUID ?>', '_blank');
+						
             			if (win) {
                             //Browser has allowed it to be opened
                             win.focus();
@@ -301,16 +313,24 @@ if ($role == User::REVIEWER || ($role == User::INVESTIGATOR && $visitObject->upl
     <div class="text-center mt-3 mb-3">
     	<input class="btn btn-primary" type="button"
     		id="reviewerDownloadDicomBtn" value="Download DICOM">
-		<input class="btn btn-primary" type="button"
-    		id="OHIFViewer" value="OHIF Viewer">
+
+		<div id="dropdown_ohif" style="display: inline-block">
+			<input id="btn_ohif"  class="btn btn-primary dropdown-toggle" type="button" value="OHIF Viewer" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+			<div class="dropdown-menu">
+				<a class="dropdown-item" href="#" 
+				id="OHIFViewer">Default Viewer</a>
+				<a class="dropdown-item" href="#" 
+				id="OHIFViewerGaelO">GaelO Mode (experimental)</a>
+			</div>
+		</div>
 
 		<div id="dropdown_stone" style="display: inline-block">
 			<input id="btn_stone"  class="btn btn-primary dropdown-toggle" type="button" value="Stone Viewer" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 			<div class="dropdown-menu" aria-labelledby="btn_statistics">
 				<a class="dropdown-item" href="#" 
-				id="StoneViewerPatient" value="Patient">Patient</a>
+				id="StoneViewerPatient" value="Patient">Patient Level</a>
 				<a class="dropdown-item" href="#" 
-				id="StoneViewerStudy" value="Study">Study</a>
+				id="StoneViewerStudy" value="Study">Study Level</a>
 			</div>
 		</div>
 

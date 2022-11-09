@@ -151,11 +151,11 @@
 				{
 					render: function ( data, type, row, meta ) {
 						if(row.visit_modality === 'PT'){
-							//return '<a href="/ohif/tmtv?StudyInstanceUIDs='+row.studyUID+'" target="_blank" ">OHIF Viewer</a>';
+							//return '<a href="/viewer-ohif/tmtv?StudyInstanceUIDs='+row.studyUID+'" target="_blank" ">OHIF Viewer</a>';
 							//Until debuging TMTV with NAC
-							return '<a href="/ohif/viewer?StudyInstanceUIDs='+row.studyUID+'" target="_blank" ">OHIF Viewer</a>';
+							return '<a href="/viewer-ohif/viewer?StudyInstanceUIDs='+row.studyUID+'" target="_blank" ">OHIF Viewer</a>';
 						}else {
-							return '<a href="/ohif/viewer?StudyInstanceUIDs='+row.studyUID+'" target="_blank" ">OHIF Viewer</a>';
+							return '<a href="/viewer-ohif/viewer?StudyInstanceUIDs='+row.studyUID+'" target="_blank" ">OHIF Viewer</a>';
 						}
 						
 					}
