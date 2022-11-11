@@ -73,7 +73,7 @@ class TEST_FDG_PET0 extends AbstractVisitRules
         ];
     }
 
-    public function getReviewerValidationRules(bool $adjudication): array
+    public function getReviewerValidationRules(): array
     {
         return [
             'comments' => [
@@ -81,6 +81,11 @@ class TEST_FDG_PET0 extends AbstractVisitRules
                 'optional' => false
             ]
         ];
+    }
+
+    public function getReviewerAdjudicationValidationRules(): array
+    {
+        return [];
     }
 
     public function getReviewStatus(): string
