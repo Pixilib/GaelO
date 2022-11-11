@@ -1,8 +1,9 @@
 Salim TODO :
-- Refac visit Rule (adjudication / validation) => stocker en variable d'instance
+- Refac visit Rule mettre validation en variable d'instnace? 
 - Optimiser l'utilisation des authorization service en injectant les data depuis le usecase (ou les rendre stateless) (dont visite, review...)
 
 --- Etudes ancillaires ---
+Creation patient pas interdite aux etudes ancillaires
 Export study data => Ne tient pas en compte du statut ancillaire ou non de l'etude a exporter
 Api Reminder à voir avec Emilie (pas de relance d'envoi d'imagerie depuis une étude ancillaire, probablement à occulter en front seulement)
 Ne doit pas pouvoir faire les relance d'upload => Voir avec Emilie (probablement passer les info de study dans un contexte)

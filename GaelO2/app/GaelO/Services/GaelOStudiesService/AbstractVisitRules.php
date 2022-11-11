@@ -23,7 +23,9 @@ abstract class AbstractVisitRules
 
     abstract public function getInvestigatorValidationRules(): array;
 
-    abstract public function getReviewerValidationRules(bool $adjudication): array;
+    abstract public function getReviewerValidationRules(): array;
+
+    abstract public function getReviewerAdjudicationValidationRules(): array;
 
     public function getInvestigatorInputNames(): array
     {
@@ -33,8 +35,8 @@ abstract class AbstractVisitRules
 
     public function getReviewerInputNames(): array
     {
-        $rules = $this->getReviewerValidationRules(true);
-        $adjudicationRules = $this->getReviewerValidationRules(false);
+        $rules = $this->getReviewerValidationRules();
+        $adjudicationRules = $this->getReviewerAdjudicationValidationRules();
         $inputs = [...array_keys($rules), ...array_keys($adjudicationRules)];
         return array_unique($inputs);
     }
@@ -62,10 +64,17 @@ abstract class AbstractVisitRules
         return $validatorAdapter->validate($this->data);
     }
 
-    public function checkReviewFormValidity(bool $validated, bool $adjudication): bool
+    public function checkReviewFormValidity(bool $validated): bool
     {
         $validatorAdapter = new ValidatorAdapter($validated);
-        $reviewerRules = $this->getReviewerValidationRules($adjudication);
+        $reviewerRules = [];
+
+        if($this->adjudication) {
+            $reviewerRules = $this->getReviewerAdjudicationValidationRules();
+        }else {
+            $reviewerRules = $this->getReviewerValidationRules();
+        }
+        
         $this->fillValidator($reviewerRules, $validatorAdapter);
         return $validatorAdapter->validate($this->data);
     }
