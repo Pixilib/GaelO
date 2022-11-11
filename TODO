@@ -1,5 +1,6 @@
 Salim TODO :
 - Refac visit Rule mettre validation en variable d'instnace? 
+- Form service en abstrait et ne passer que par investigator et review form service ? 
 - Optimiser l'utilisation des authorization service en injectant les data depuis le usecase (ou les rendre stateless) (dont visite, review...)
 
 --- Etudes ancillaires ---
