@@ -42,8 +42,8 @@ class GetReviewsMetadataFromVisitType
             $abstractStudyRules = $this->formService->getSpecificStudiesRules($studyName, $visitGroupEntity['name'], $visitTypeEntity['name']);
 
             $answer = [];
-            $answer['default'] = $abstractStudyRules->getReviewerValidationRules(false);
-            $answer['adjudication'] = $abstractStudyRules->getReviewerValidationRules(true);
+            $answer['default'] = $abstractStudyRules->getReviewerValidationRules();
+            $answer['adjudication'] = $abstractStudyRules->getReviewerAdjudicationValidationRules();
 
 
             $getReviewsMetadataFromVisitTypeResponse->body = $answer;
