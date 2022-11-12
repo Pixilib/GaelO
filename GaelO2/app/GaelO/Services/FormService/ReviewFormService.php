@@ -64,6 +64,9 @@ class ReviewFormService extends FormService
 
     public function deleteReview(int $reviewId): void
     {
+        //Get current Entity to know if adjudication form
+        $reviewEntity = $this->reviewRepositoryInterface->find($reviewId);
+        $this->abstractVisitRules->setAdjudication($reviewEntity['adjudication']);
         $this->reviewRepositoryInterface->delete($reviewId);
         $this->doSpecificReviewDecisions();
     }
