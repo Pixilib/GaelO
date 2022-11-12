@@ -54,9 +54,8 @@ class AuthorizationPatientService {
         }
 
         if ($requestedRole === Constants::ROLE_INVESTIGATOR ) {
-            //Investigator should not access patient outside their centers if show all not set in study
-            $showAll = $this->authorizationStudyService->getStudyEntity()->controllerShowAll;
-            if ( !$showAll && !$this->authorizationStudyService->getAuthorizationUserService()->isCenterAffiliatedToUser($this->patientCenter) ) return false;
+            //Investigator should not access patient outside their centers
+            if (! $this->authorizationStudyService->getAuthorizationUserService()->isCenterAffiliatedToUser($this->patientCenter) ) return false;
         }
 
         if ($requestedRole === Constants::ROLE_MONITOR) {
