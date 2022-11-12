@@ -23,14 +23,12 @@ class DeleteReviewForm
     private ReviewRepositoryInterface $reviewRepositoryInterface;
     private VisitRepositoryInterface $visitRepositoryInterface;
     private ReviewFormService $reviewFormService;
-    private ReviewStatusRepositoryInterface $reviewStatusRepositoryInterface;
     private MailServices $mailServices;
 
     public function __construct(
         AuthorizationReviewService $authorizationReviewService,
         ReviewFormService $reviewFormService,
         ReviewRepositoryInterface $reviewRepositoryInterface,
-        ReviewStatusRepositoryInterface $reviewStatusRepositoryInterface,
         VisitRepositoryInterface $visitRepositoryInterface,
         TrackerRepositoryInterface $trackerRepositoryInterface,
         MailServices $mailServices
@@ -39,7 +37,6 @@ class DeleteReviewForm
         $this->trackerRepositoryInterface = $trackerRepositoryInterface;
         $this->visitRepositoryInterface = $visitRepositoryInterface;
         $this->reviewRepositoryInterface = $reviewRepositoryInterface;
-        $this->reviewStatusRepositoryInterface = $reviewStatusRepositoryInterface;
         $this->reviewFormService = $reviewFormService;
         $this->mailServices = $mailServices;
     }
@@ -77,13 +74,11 @@ class DeleteReviewForm
 
             $this->checkAuthorization($currentUserId, $reviewId, $local);
 
-            $visitContext = $this->visitRepositoryInterface->getVisitContext($visitId);
-            $reviewStatus = $this->reviewStatusRepositoryInterface->getReviewStatus($visitId, $studyName);
+            $visitContext = $this->visitRepositoryInterface->getVisitWithContextAndReviewStatus($visitId, $studyName);
 
             //Delete review via service review
             $this->reviewFormService->setCurrentUserId($currentUserId);
             $this->reviewFormService->setVisitContextAndStudy($visitContext, $studyName);
-            $this->reviewFormService->setReviewStatus($reviewStatus);
             $this->reviewFormService->deleteReview($reviewId);
 
             $actionDetails = [

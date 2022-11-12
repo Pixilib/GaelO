@@ -7,7 +7,6 @@ use App\GaelO\Exceptions\GaelOBadRequestException;
 use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\ReviewRepositoryInterface;
-use App\GaelO\Interfaces\Repositories\ReviewStatusRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
 use App\GaelO\Services\AuthorizationService\AuthorizationVisitService;
@@ -19,7 +18,6 @@ class ModifyReviewForm
 
     private ReviewRepositoryInterface $reviewRepositoryInterface;
     private VisitRepositoryInterface $visitRepositoryInterface;
-    private ReviewStatusRepositoryInterface $reviewStatusRepositoryInterface;
     private TrackerRepositoryInterface $trackerRepositoryInterface;
     private ReviewFormService $reviewFormService;
     private AuthorizationVisitService $authorizationVisitService;
@@ -28,13 +26,11 @@ class ModifyReviewForm
         AuthorizationVisitService $authorizationVisitService,
         ReviewRepositoryInterface $reviewRepositoryInterface,
         VisitRepositoryInterface $visitRepositoryInterface,
-        ReviewStatusRepositoryInterface $reviewStatusRepositoryInterface,
         ReviewFormService $reviewFormService,
         TrackerRepositoryInterface $trackerRepositoryInterface
     ) {
         $this->reviewRepositoryInterface = $reviewRepositoryInterface;
         $this->visitRepositoryInterface = $visitRepositoryInterface;
-        $this->reviewStatusRepositoryInterface = $reviewStatusRepositoryInterface;
         $this->reviewFormService = $reviewFormService;
         $this->trackerRepositoryInterface = $trackerRepositoryInterface;
         $this->authorizationVisitService = $authorizationVisitService;
@@ -52,26 +48,31 @@ class ModifyReviewForm
             }
 
             $reviewEntity = $this->reviewRepositoryInterface->find($modifyReviewFormRequest->reviewId);
-            $visitContext = $this->visitRepositoryInterface->getVisitContext($reviewEntity['visit_id']);
-            $reviewStatus = $this->reviewStatusRepositoryInterface->getReviewStatus($reviewEntity['visit_id'], $reviewEntity['study_name']);
+            $studyName = $reviewEntity['study_name'];
+            $visitId = $reviewEntity['visit_id'];
+            $reviewId = $reviewEntity['id'];
+            $reviewerId = $reviewEntity['user_id'];
+            $reviewValidated = $reviewEntity['validated'];
 
-            $this->checkAuthorization($currentUserId, $reviewEntity['user_id'], $reviewEntity['validated'], $reviewStatus['review_available'], $reviewEntity['visit_id'],  $reviewEntity['study_name']);
+            $visitContext = $this->visitRepositoryInterface->getVisitWithContextAndReviewStatus($visitId, $studyName);
+            $reviewAvailable = $visitContext['review_status']['review_available'];
+            $reviewStatus = $visitContext['review_status']['review_status'];
+            $this->checkAuthorization($currentUserId, $reviewerId, $reviewValidated, $reviewAvailable, $visitId,  $studyName);
 
             //Call service to update form
             $this->reviewFormService->setCurrentUserId($currentUserId);
-            $this->reviewFormService->setReviewStatus($reviewStatus);
-            $this->reviewFormService->setVisitContextAndStudy($visitContext, $reviewEntity['study_name']);
-            $this->reviewFormService->updateReview($reviewEntity['id'], $modifyReviewFormRequest->data, $modifyReviewFormRequest->validated);
+            $this->reviewFormService->setVisitContextAndStudy($visitContext, $studyName);
+            $this->reviewFormService->updateReview($reviewId, $modifyReviewFormRequest->data, $modifyReviewFormRequest->validated);
 
             //Write in Tracker
             $actionDetails = [
-                'review_id' => $reviewEntity['id'],
-                'adjudication' => $reviewStatus['review_status'] === Constants::REVIEW_STATUS_WAIT_ADJUDICATION,
+                'review_id' => $reviewId,
+                'adjudication' => $reviewStatus === Constants::REVIEW_STATUS_WAIT_ADJUDICATION,
                 'raw_data' => $modifyReviewFormRequest->data,
                 'validated' => $modifyReviewFormRequest->validated
             ];
 
-            $this->trackerRepositoryInterface->writeAction($currentUserId, Constants::ROLE_REVIEWER, $reviewEntity['study_name'], $reviewEntity['visit_id'], Constants::TRACKER_MODIFY_REVIEWER_FORM, $actionDetails);
+            $this->trackerRepositoryInterface->writeAction($currentUserId, Constants::ROLE_REVIEWER, $studyName, $visitId, Constants::TRACKER_MODIFY_REVIEWER_FORM, $actionDetails);
 
             $modifyReviewFormResponse->body = ['id' => $reviewEntity['id']];
             $modifyReviewFormResponse->status = 200;

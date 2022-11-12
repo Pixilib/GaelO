@@ -70,7 +70,7 @@ class CreateFileToForm
 
             $fileName = 'review_' . $reviewId . '_' . $key . '.' . $extension;
 
-            $visitContext = $this->visitRepositoryInterface->getVisitContext($visitId);
+            $visitContext = $this->visitRepositoryInterface->getVisitWithContextAndReviewStatus($visitId, $studyName);
 
             $this->formService->setVisitContextAndStudy($visitContext, $studyName);
             $this->formService->attachFile($reviewEntity, $key, $fileName, $createFileToReviewRequest->contentType, base64_decode($binaryData));

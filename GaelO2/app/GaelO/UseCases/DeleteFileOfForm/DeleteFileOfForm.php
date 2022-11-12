@@ -53,7 +53,7 @@ class DeleteFileOfForm
             $visitId = $reviewEntity['visit_id'];
             $reviewId = $reviewEntity['id'];
 
-            $visitContext = $this->visitRepositoryInterface->getVisitContext($visitId);
+            $visitContext = $this->visitRepositoryInterface->getVisitWithContextAndReviewStatus($visitId, $studyName);
 
             $this->checkAuthorization($local, $validated, $reviewId, $currentUserId, $visitContext);
             $this->formService->setVisitContextAndStudy($visitContext, $studyName);

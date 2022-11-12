@@ -29,11 +29,6 @@ class ReviewFormService extends FormService
         $this->local = false;
     }
 
-    public function setReviewStatus(array $reviewStatusEntity)
-    {
-        $this->reviewStatusEntity = $reviewStatusEntity;
-    }
-
     public function saveReview(array $data, bool $validated, bool $adjudication): int
     {
         $this->abstractVisitRules->setFormData($data);
@@ -94,7 +89,7 @@ class ReviewFormService extends FormService
             throw new GaelOException("Review Status Not Done needs to be associated with null conclusion value");
         }
         //Update review availability if change compared on current value
-        if ($availability !== $this->reviewStatusEntity['review_available']) $this->reviewStatusRepositoryInterface->updateReviewAvailability($this->visitId, $this->studyName, $availability);
+        if ($availability !== $this->visitContext['review_status']['review_available']) $this->reviewStatusRepositoryInterface->updateReviewAvailability($this->visitId, $this->studyName, $availability);
         //Update review status table to computed new values
         $this->reviewStatusRepositoryInterface->updateReviewStatusAndConclusion($this->visitId, $this->studyName, $reviewStatus, $conclusion, $targetLesions);
 

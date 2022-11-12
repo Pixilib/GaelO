@@ -33,7 +33,7 @@ class GetAssociatedDataForReview
 
             $this->checkAuthorization($currentUserId, $visitId, $studyName);
 
-            $visitContext = $this->visitRepositoryInterface->getVisitContext($visitId);
+            $visitContext = $this->visitRepositoryInterface->getVisitWithContextAndReviewStatus($visitId, $studyName);
 
             $this->reviewFormService->setCurrentUserId($currentUserId);
             $this->reviewFormService->setVisitContextAndStudy($visitContext, $studyName);

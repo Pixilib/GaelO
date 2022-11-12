@@ -23,14 +23,12 @@ class UnlockReviewForm
     private ReviewRepositoryInterface $reviewRepositoryInterface;
     private VisitRepositoryInterface $visitRepositoryInterface;
     private ReviewFormService $reviewFormService;
-    private ReviewStatusRepositoryInterface $reviewStatusRepositoryInterface;
     private MailServices $mailServices;
 
     public function __construct(
         AuthorizationReviewService $authorizationReviewService,
         ReviewFormService $reviewFormService,
         ReviewRepositoryInterface $reviewRepositoryInterface,
-        ReviewStatusRepositoryInterface $reviewStatusRepositoryInterface,
         VisitRepositoryInterface $visitRepositoryInterface,
         TrackerRepositoryInterface $trackerRepositoryInterface,
         MailServices $mailServices
@@ -39,7 +37,6 @@ class UnlockReviewForm
         $this->trackerRepositoryInterface = $trackerRepositoryInterface;
         $this->visitRepositoryInterface = $visitRepositoryInterface;
         $this->reviewRepositoryInterface = $reviewRepositoryInterface;
-        $this->reviewStatusRepositoryInterface = $reviewStatusRepositoryInterface;
         $this->reviewFormService = $reviewFormService;
         $this->mailServices = $mailServices;
     }
@@ -72,14 +69,11 @@ class UnlockReviewForm
 
             $this->checkAuthorization($currentUserId, $reviewId, $reviewEntity['local']);
 
-            $visitContext = $this->visitRepositoryInterface->getVisitContext($reviewEntity['visit_id']);
-
-            $reviewStatus = $this->reviewStatusRepositoryInterface->getReviewStatus($reviewEntity['visit_id'], $reviewEntity['study_name']);
+            $visitContext = $this->visitRepositoryInterface->getVisitWithContextAndReviewStatus($reviewEntity['visit_id'], $reviewEntity['study_name']);
 
             //Delete review via service review
             $this->reviewFormService->setCurrentUserId($currentUserId);
             $this->reviewFormService->setVisitContextAndStudy($visitContext, $reviewEntity['study_name']);
-            $this->reviewFormService->setReviewStatus($reviewStatus);
             $this->reviewFormService->unlockReview($reviewId);
 
             $actionDetails = [

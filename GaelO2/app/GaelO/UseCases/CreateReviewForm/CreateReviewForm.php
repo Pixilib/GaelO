@@ -20,7 +20,6 @@ class CreateReviewForm
 
     private TrackerRepositoryInterface $trackerRepositoryInterface;
     private ReviewFormService $reviewFormService;
-    private ReviewStatusRepositoryInterface $reviewStatusRepositoryInterface;
     private ReviewRepositoryInterface $reviewRepositoryInterface;
     private VisitRepositoryInterface $visitRepositoryInterface;
     private AuthorizationVisitService $authorizationVisitService;
@@ -29,14 +28,12 @@ class CreateReviewForm
         TrackerRepositoryInterface $trackerRepositoryInterface,
         VisitRepositoryInterface $visitRepositoryInterface,
         ReviewFormService $reviewFormService,
-        ReviewStatusRepositoryInterface $reviewStatusRepositoryInterface,
         ReviewRepositoryInterface $reviewRepositoryInterface,
         AuthorizationVisitService $authorizationVisitService
     ) {
         $this->trackerRepositoryInterface = $trackerRepositoryInterface;
         $this->reviewFormService = $reviewFormService;
         $this->visitRepositoryInterface = $visitRepositoryInterface;
-        $this->reviewStatusRepositoryInterface = $reviewStatusRepositoryInterface;
         $this->reviewRepositoryInterface = $reviewRepositoryInterface;
         $this->authorizationVisitService = $authorizationVisitService;
     }
@@ -61,11 +58,10 @@ class CreateReviewForm
                 throw new GaelOConflictException('Review Already Created');
             }
 
-            $visitContext = $this->visitRepositoryInterface->getVisitContext($visitId);
-            $reviewStatusEntity = $this->reviewStatusRepositoryInterface->getReviewStatus($visitId, $studyName);
-
-            $reviewStatus = $reviewStatusEntity['review_status'];
-            $reviewAvailable = $reviewStatusEntity['review_available'];
+            $visitContext = $this->visitRepositoryInterface->getVisitWithContextAndReviewStatus($visitId, $studyName);
+            
+            $reviewStatus = $visitContext['review_status']['review_status'];
+            $reviewAvailable = $visitContext['review_status']['review_available'];
 
             if ($adjudication &&  $reviewStatus !== Constants::REVIEW_STATUS_WAIT_ADJUDICATION) {
                 throw new GaelOBadRequestException('Review Not Awaiting Adjudication');
@@ -75,7 +71,6 @@ class CreateReviewForm
 
             //Call service to register form
             $this->reviewFormService->setCurrentUserId($currentUserId);
-            $this->reviewFormService->setReviewStatus($reviewStatusEntity);
             $this->reviewFormService->setVisitContextAndStudy($visitContext, $studyName);
             $createdReviewId = $this->reviewFormService->saveReview($formData, $validated, $adjudication);
 
