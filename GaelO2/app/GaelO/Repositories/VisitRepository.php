@@ -101,7 +101,7 @@ class VisitRepository implements VisitRepositoryInterface
     public function getVisitWithContextAndReviewStatus(int $visitId, string $studyName): array
     {
 
-        $builder = $this->visitModel->with(['visitType', 'visitType.visitGroup', 'creator']);
+        $builder = $this->visitModel->with(['patient','visitType', 'visitType.visitGroup', 'creator']);
         $builder->with(['reviewStatus' => function ($query) use ($studyName) {
             $query->where('study_name', $studyName);
         }]);
