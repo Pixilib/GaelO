@@ -3,7 +3,7 @@ name: 'publish'
 on:
   push:
     branches:
-      - Gaelo2
+      - '*'
 
 jobs:
   build:
