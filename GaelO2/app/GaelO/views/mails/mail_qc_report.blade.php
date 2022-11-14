@@ -5,8 +5,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office" lang="en">
 
 <head>
-  <title>
-  </title>
+  <title>Quality Control Report</title>
   <!--[if !mso]><!-->
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <!--<![endif]-->
@@ -87,14 +86,14 @@
         max-width: 70%;
       }
     }
-
   </style>
   <style>
     .table-striped tr:nth-child(even) {
       background: #f0f0f0;
     }
+
     .table-striped tr:nth-child(odd) {
-        background: #FFF;
+      background: #FFF;
     }
   </style>
   <style type="text/css">
@@ -109,7 +108,7 @@
   @if ($studyInfo['investigatorForm'] != null)
     @include('mails.mail_qc_report_investigator_form', ['studyInfo' => $studyInfo])
   @endif
-  @include('mails.mail_qc_report')
+  @include('mails.mail_qc_report_buttons')
 </body>
 
 </html>
