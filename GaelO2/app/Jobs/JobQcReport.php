@@ -17,7 +17,6 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use App\GaelO\Services\StoreObjects\OrthancMetaData;
 use App\Jobs\ImageType;
-use Exception;
 use Illuminate\Support\Facades\Log;
 use Throwable;
 
@@ -91,10 +90,9 @@ class JobQcReport implements ShouldQueue
         return $radioPharmaceuticalArray;
     }
 
-    private function convertVisitDate(string $visitDate): string
+    private function convertDate(string $visitDate): \DateTime
     {
-        $date = new \DateTime($visitDate);
-        return $date->format('Y/m/d');
+        return new \DateTime($visitDate);
     }
 
     /**
@@ -118,19 +116,36 @@ class JobQcReport implements ShouldQueue
         $dicomStudyEntity = $dicomStudyRepositoryInterface->getDicomsDataFromVisit($this->visitId, false, false);
         $stateInvestigatorForm = $visitEntity['state_investigator_form'];
 
-        $studyInfo = [];
-        $studyInfo['visitDate'] = $this->convertVisitDate($visitEntity['visit_date']);
-        $studyInfo['visitName'] = $visitEntity['visit_type']['name'];
-        $studyInfo['patientCode'] = $visitEntity['patient']['code'];
-        $studyInfo['studyName'] = $visitEntity['patient']['study_name'];
-        $studyInfo['numberOfSeries'] = count($dicomStudyEntity[0]['dicom_series']);
-        $studyInfo['numberOfInstances'] = 0;
+        $reportData = [];
+        $reportData['visitDate'] = $this->convertDate($visitEntity['visit_date'])->format('Y/m/d');
+        $minDayToInclusion = $visitEntity['visit_type']['limit_low_days'];
+        $maxDayToInclusion = $visitEntity['visit_type']['limit_up_days'];
+        //Determine min and max visit date compared to registration date
+        $reportData['minVisitDate'] = null;
+        $reportData['maxVisitDate'] = null;
+        $reportData['registrationDate'] = null;
+        if ($visitEntity['patient']['registration_date'] !== null) {
+            $registrationDate = $visitEntity['patient']['registration_date'];
+            $reportData['registrationDate'] = $this->convertDate($registrationDate)->format('Y/m/d');
+            $reportData['minVisitDate'] = $this->convertDate($registrationDate)->modify($minDayToInclusion . ' day')->format('Y/m/d');
+            $reportData['maxVisitDate'] = $this->convertDate($registrationDate)->modify($maxDayToInclusion . ' day')->format('Y/m/d');
+        }
+        $reportData['visitName'] = $visitEntity['visit_type']['name'];
+        $reportData['patientCode'] = $visitEntity['patient']['code'];
+        $reportData['studyName'] = $visitEntity['patient']['study_name'];
+        $reportData['studyDetails']['Acquisition Date'] = null;
+        if($dicomStudyEntity[0]['acquisition_date'] !==null) {
+            $reportData['studyDetails']['Acquisition Date'] = $dicomStudyEntity[0]['acquisition_date'];
+        }
+        
+        $reportData['studyDetails']['Number Of Series'] = count($dicomStudyEntity[0]['dicom_series']);
+        $reportData['studyDetails']['Number Of Instances'] = 0;
 
         if ($stateInvestigatorForm != Constants::INVESTIGATOR_FORM_NOT_NEEDED) {
             $reviewEntity = $reviewRepositoryInterface->getInvestigatorForm($this->visitId, false);
-            $studyInfo['investigatorForm'] = $reviewEntity['review_data'];
+            $reportData['investigatorForm'] = $reviewEntity['review_data'];
         } else {
-            $studyInfo['investigatorForm'] = [];
+            $reportData['investigatorForm'] = [];
         }
 
         $seriesInfo = [];
@@ -149,13 +164,13 @@ class JobQcReport implements ShouldQueue
             } catch (Throwable $t) {
                 Log::info($t);
             }
-            
+
             if ($index == 0) {
-                $studyInfo['studyDescription'] = $seriesSharedTags->getStudyDescription();
-                $studyInfo['manufacturer'] = $seriesSharedTags->getStudyManufacturer();
-                $studyInfo['acquisitionDate'] = $seriesSharedTags->getAcquisitonDateTime();
+                $reportData['studyDetails']['Study Description'] = $seriesSharedTags->getStudyDescription();
+                $reportData['studyDetails']['Manufacturer'] = $seriesSharedTags->getStudyManufacturer();
+                $reportData['studyDetails']['Acquisition Date'] = $seriesSharedTags->getAcquisitonDateTime();
             }
-            $studyInfo['numberOfInstances'] += $series['number_of_instances'];
+            $reportData['studyDetails']['Number Of Instances'] += $series['number_of_instances'];
             $modalities[] = $seriesSharedTags->getSeriesModality();
 
             //SK devrait etre dans series info je pense
@@ -192,7 +207,7 @@ class JobQcReport implements ShouldQueue
         }
 
         $modalities = array_unique($modalities);
-        $studyInfo['modalities'] = implode(' - ', $modalities);
+        $reportData['studyDetails']['Modalities'] = implode(' - ', $modalities);
 
         $studyName = $visitEntity['patient']['study_name'];
         $visitId = $visitEntity['id'];
@@ -211,14 +226,7 @@ class JobQcReport implements ShouldQueue
             $magicLinkAccepted = $frameworkInterface->createMagicLink($user['id'], $redirectLink, $queryParams);
             $queryParams['accepted'] = 'false';
             $magicLinkRefused = $frameworkInterface->createMagicLink($user['id'], $redirectLink, $queryParams);
-            $mailServices->sendQcReport($studyName, $visitType, $patientCode, $studyInfo, $seriesInfo, $magicLinkAccepted, $magicLinkRefused, $user['email']);
+            $mailServices->sendQcReport($studyName, $visitType, $patientCode, $reportData, $seriesInfo, $magicLinkAccepted, $magicLinkRefused, $user['email']);
         }
     }
-
-    /*
-    public function failed(Exception $exception)
-    {
-        // Send user notification of failure, etc...
-    }
-    */
 }

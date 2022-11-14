@@ -23,22 +23,14 @@
       </mj-column width="100%">
       <mj-column width="100%">
         <mj-table css-class="table-striped" role="presentation">
+          @foreach($studyInfo['studyDetails'] as $key => $value)
+            @if ($value != null)
           <tr>
-            <td style="padding: 0 15px 0 0;font-weight: bold;" align="left">Study description</td>
-            <td style="padding: 0 15px;" align="right">{{$studyInfo['studyDescription']}}</td>
+            <td style="padding: 0 15px 0 0;font-weight: bold;" align="left">{{ $key }}</td>
+            <td style="padding: 0 15px;" align="right">{{ $value }}</td>
           </tr>
-          <tr>
-            <td style="padding: 0 15px 0 0;font-weight: bold;" align="left">Manufacturer</td>
-            <td style="padding: 0 15px;" align="right">{{$studyInfo['manufacturer']}} </td>
-          </tr>
-          <tr>
-            <td style="padding: 0 15px 0 0;font-weight: bold;" align="left">Acquisition Date</td>
-            <td style="padding: 0 15px;" align="right">{{$studyInfo['acquisitionDate']}}</td>
-          </tr>
-          <tr>
-            <td style="padding: 0 15px 0 0;font-weight: bold;" align="left">Modalities</td>
-            <td style="padding: 0 15px;" align="right">{{$studyInfo['modalities']}}</td>
-          </tr>
+            @endif
+          @endforeach
         </mj-table>
       </mj-column>
       <mj-column width="75%">

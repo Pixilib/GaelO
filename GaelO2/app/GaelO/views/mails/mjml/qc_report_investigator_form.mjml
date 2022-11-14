@@ -7,25 +7,22 @@
   </mj-head>
   <mj-body>
     <mj-section>
-      <mj-column width="100%">
-        <mj-text mj-class="text-blue">
-          <h3 align="center">
-            {{$series['series_description']}}
+      <mj-column>
+        <mj-text mj-class="text-blue" align="center">
+          <h3>
+            Investigator form
           </h3>
         </mj-text>
-      </mj-column width="100%">
-      <mj-column width="70%">
-        <mj-image width="512px" src="{{$message->embed($series['image_path'])}}" align="center"></mj-image>
       </mj-column>
     </mj-section>
     <mj-section>
-      <mj-column width="100%">
+    <mj-column width="100%">
         <mj-table css-class="table-striped" role="presentation">
-          @foreach($series['infos'] as $key => $value)
+          @foreach($studyInfo['investigatorForm'] as $key => $value)
             @if ($value != null)
           <tr>
-            <td style="padding: 0 15px 0 0;font-weight: bold;" align="left">{{ $item['Type'] }}</td>
-            <td style="padding: 0 15px;" align="right">{{ $item['Result'] }}</td>
+            <td style="padding: 0 15px 0 0;font-weight: bold;" align="left">{{ $key }}</td>
+            <td style="padding: 0 15px;" align="right">{{ $value }}</td>
           </tr>
             @endif
           @endforeach
@@ -33,7 +30,7 @@
       </mj-column>
     </mj-section>
     <mj-section>
-      <mj-column width="100%">
+      <mj-column>
         <mj-divider border-width="1px" border-color="#E0E0E0"></mj-divider>
       </mj-column>
     </mj-section>

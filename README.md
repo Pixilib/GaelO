@@ -18,3 +18,9 @@ Contributors : Bastien Proudhom, Ludwig Chieng, Emilie Olivié
 php artisan --version 
 
 # Release Cyles ; Upgrade version in composer.json
+
+# Regenerate views email using mjml template
+node_modules/mjml/bin/mjml ./app/GaelO/views/mails/mjml/qc_report_buttons.mjml -o ./app/GaelO/views/mails/mail_qc_report_buttons.blade.php
+node_modules/mjml/bin/mjml ./app/GaelO/views/mails/mjml/qc_report_series.mjml -o ./app/GaelO/views/mails/mail_qc_report_series.blade.php
+node_modules/mjml/bin/mjml ./app/GaelO/views/mails/mjml/qc_report_study.mjml -o ./app/GaelO/views/mails/mail_qc_report_study.blade.php
+node_modules/mjml/bin/mjml ./app/GaelO/views/mails/mjml/qc_report_investigator_form.mjml -o ./app/GaelO/views/mails/qc_report_investigator_form.blade.php
