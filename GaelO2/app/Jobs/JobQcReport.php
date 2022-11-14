@@ -229,4 +229,9 @@ class JobQcReport implements ShouldQueue
             $mailServices->sendQcReport($studyName, $visitType, $patientCode, $reportData, $seriesInfo, $magicLinkAccepted, $magicLinkRefused, $user['email']);
         }
     }
+
+    public function failed(Throwable $exception)
+    {
+       Log::info($exception);
+    }
 }
