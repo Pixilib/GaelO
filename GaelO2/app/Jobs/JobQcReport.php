@@ -66,7 +66,8 @@ class JobQcReport implements ShouldQueue
         $imagePath = null;
         switch ($imageType) {
             case ImageType::MIP:
-                $imagePath = $this->orthancService->getSeriesMIP($seriesID);
+                //$imagePath = $this->orthancService->getSeriesMIP($seriesID);
+                $imagePath = $this->orthancService->getSeriesMosaic($seriesID);
                 break;
             case ImageType::MOSAIC:
                 $imagePath = $this->orthancService->getSeriesMosaic($seriesID);
@@ -124,6 +125,7 @@ class JobQcReport implements ShouldQueue
         $reportData['minVisitDate'] = null;
         $reportData['maxVisitDate'] = null;
         $reportData['registrationDate'] = null;
+
         if ($visitEntity['patient']['registration_date'] !== null) {
             $registrationDate = $visitEntity['patient']['registration_date'];
             $reportData['registrationDate'] = $this->convertDate($registrationDate)->format('Y/m/d');
@@ -137,7 +139,6 @@ class JobQcReport implements ShouldQueue
         if($dicomStudyEntity[0]['acquisition_date'] !==null) {
             $reportData['studyDetails']['Acquisition Date'] = $dicomStudyEntity[0]['acquisition_date'];
         }
-        
         $reportData['studyDetails']['Number Of Series'] = count($dicomStudyEntity[0]['dicom_series']);
         $reportData['studyDetails']['Number Of Instances'] = 0;
 
@@ -205,7 +206,6 @@ class JobQcReport implements ShouldQueue
             }
             $seriesInfo[] = $seriesData;
         }
-
         $modalities = array_unique($modalities);
         $reportData['studyDetails']['Modalities'] = implode(' - ', $modalities);
 

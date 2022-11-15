@@ -33,7 +33,7 @@
           @endforeach
         </mj-table>
       </mj-column>
-      <mj-column width="75%">
+      <mj-column width="100%">
         <mj-divider border-width="1px" border-color="#616161"></mj-divider>
       </mj-column>
     </mj-section>
