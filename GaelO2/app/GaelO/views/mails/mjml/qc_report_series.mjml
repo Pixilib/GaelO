@@ -1,4 +1,4 @@
-<mjml>
+<mjml lang="en">
   <mj-head>
     <mj-attributes>
       <mj-class name="text-blue" color="#0495A0" />
@@ -15,7 +15,7 @@
         </mj-text>
       </mj-column width="100%">
       <mj-column width="70%">
-        <mj-image width="512px" src="{{$message->embed($series['image_path'])}}" align="center"></mj-image>
+        <mj-image alt="series preview" width="512px" src="{{$message->embed($series['image_path'])}}" align="center"></mj-image>
       </mj-column>
     </mj-section>
     <mj-section>

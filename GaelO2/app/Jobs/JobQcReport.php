@@ -118,7 +118,7 @@ class JobQcReport implements ShouldQueue
         $stateInvestigatorForm = $visitEntity['state_investigator_form'];
 
         $reportData = [];
-        $reportData['visitDate'] = $this->convertDate($visitEntity['visit_date'])->format('Y/m/d');
+        $reportData['visitDate'] = $this->convertDate($visitEntity['visit_date'])->format('m/d/Y');
         $minDayToInclusion = $visitEntity['visit_type']['limit_low_days'];
         $maxDayToInclusion = $visitEntity['visit_type']['limit_up_days'];
         //Determine min and max visit date compared to registration date
@@ -128,9 +128,9 @@ class JobQcReport implements ShouldQueue
 
         if ($visitEntity['patient']['registration_date'] !== null) {
             $registrationDate = $visitEntity['patient']['registration_date'];
-            $reportData['registrationDate'] = $this->convertDate($registrationDate)->format('Y/m/d');
-            $reportData['minVisitDate'] = $this->convertDate($registrationDate)->modify($minDayToInclusion . ' day')->format('Y/m/d');
-            $reportData['maxVisitDate'] = $this->convertDate($registrationDate)->modify($maxDayToInclusion . ' day')->format('Y/m/d');
+            $reportData['registrationDate'] = $this->convertDate($registrationDate)->format('m/d/Y');
+            $reportData['minVisitDate'] = $this->convertDate($registrationDate)->modify($minDayToInclusion . ' day')->format('m/d/Y');
+            $reportData['maxVisitDate'] = $this->convertDate($registrationDate)->modify($maxDayToInclusion . ' day')->format('m/d/Y');
         }
         $reportData['visitName'] = $visitEntity['visit_type']['name'];
         $reportData['patientCode'] = $visitEntity['patient']['code'];

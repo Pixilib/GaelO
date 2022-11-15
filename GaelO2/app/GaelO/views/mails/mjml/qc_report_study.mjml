@@ -1,4 +1,4 @@
-<mjml>
+<mjml lang="en">
   <mj-head>
     <mj-attributes>
       <mj-class name="text-blue" color="#0495A0" />
@@ -10,6 +10,9 @@
       <mj-column width="100%">
         <mj-text align="center" css-class="text-color"> The visit {{$studyInfo['visitName']}} of the patient {{$studyInfo['patientCode']}} from the study {{$studyInfo['studyName']}} has been uploaded.</mj-text>
         <mj-text font-size="11px" align="center" line-height="16px">
+          Registation Date : {{$studyInfo['registrationDate']}}<br>
+          Visit Date Expected After : {{$studyInfo['minVisitDate']}}<br>
+          Visit Date Expected Before : {{$studyInfo['maxVisitDate']}}<br>
           Visit Date: {{$studyInfo['visitDate']}}
         </mj-text>
       </mj-column>
