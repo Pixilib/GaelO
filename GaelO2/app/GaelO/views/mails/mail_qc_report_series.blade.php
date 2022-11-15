@@ -1,4 +1,128 @@
-<div style="">
+<!doctype html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
+
+<head>
+  <title>
+  </title>
+  <!--[if !mso]><!-->
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <!--<![endif]-->
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style type="text/css">
+    #outlook a {
+      padding: 0;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      -webkit-text-size-adjust: 100%;
+      -ms-text-size-adjust: 100%;
+    }
+
+    table,
+    td {
+      border-collapse: collapse;
+      mso-table-lspace: 0pt;
+      mso-table-rspace: 0pt;
+    }
+
+    img {
+      border: 0;
+      height: auto;
+      line-height: 100%;
+      outline: none;
+      text-decoration: none;
+      -ms-interpolation-mode: bicubic;
+    }
+
+    p {
+      display: block;
+      margin: 13px 0;
+    }
+
+  </style>
+  <!--[if mso]>
+    <noscript>
+    <xml>
+    <o:OfficeDocumentSettings>
+      <o:AllowPNG/>
+      <o:PixelsPerInch>96</o:PixelsPerInch>
+    </o:OfficeDocumentSettings>
+    </xml>
+    </noscript>
+    <![endif]-->
+  <!--[if lte mso 11]>
+    <style type="text/css">
+      .mj-outlook-group-fix { width:100% !important; }
+    </style>
+    <![endif]-->
+  <!--[if !mso]><!-->
+  <link href="https://fonts.googleapis.com/css?family=Ubuntu:300,400,500,700" rel="stylesheet" type="text/css">
+  <style type="text/css">
+    @import url(https://fonts.googleapis.com/css?family=Ubuntu:300,400,500,700);
+
+  </style>
+  <!--<![endif]-->
+  <style type="text/css">
+    @media only screen and (min-width:480px) {
+      .mj-column-per-100 {
+        width: 100% !important;
+        max-width: 100%;
+      }
+
+      .mj-column-per-70 {
+        width: 70% !important;
+        max-width: 70%;
+      }
+    }
+
+  </style>
+  <style media="screen and (min-width:480px)">
+    .moz-text-html .mj-column-per-100 {
+      width: 100% !important;
+      max-width: 100%;
+    }
+
+    .moz-text-html .mj-column-per-70 {
+      width: 70% !important;
+      max-width: 70%;
+    }
+
+  </style>
+  <style type="text/css">
+    @media only screen and (max-width:480px) {
+      table.mj-full-width-mobile {
+        width: 100% !important;
+      }
+
+      td.mj-full-width-mobile {
+        width: auto !important;
+      }
+    }
+
+  </style>
+  <style type="text/css">
+    h3 {
+      font-weight: bold;
+      margin-top: 0;
+      margin-bottom: 0;
+    }
+
+    .table-striped tr:nth-child(even) {
+      background: #f0f0f0;
+    }
+
+    .table-striped tr:nth-child(odd) {
+      background: #FFF;
+    }
+
+  </style>
+</head>
+
+<body style="word-spacing:normal;">
+  <div style="" lang="en">
     <!--[if mso | IE]><table align="center" border="0" cellpadding="0" cellspacing="0" class="" role="presentation" style="width:600px;" width="600" ><tr><td style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;"><![endif]-->
     <div style="margin:0px auto;max-width:600px;">
       <table align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="width:100%;">
@@ -11,8 +135,10 @@
                   <tbody>
                     <tr>
                       <td align="left" style="font-size:0px;padding:10px 25px;word-break:break-word;">
-                        <div style="font-family:Ubuntu, Helvetica, Arial, sans-serif;font-size:13px;line-height:1;text-align:left;color:#000000;">
-                          <h3 style="color:#0495A0;font-weight: bold; margin-top: 0; margin-bottom: 0" align="center"> <a text-decoration: none"> {{$series['series_description']}} </a> </h3>
+                        <div style="font-family:Ubuntu, Helvetica, Arial, sans-serif;font-size:13px;line-height:1;text-align:left;color:#0495A0;">
+                          <h3 align="center">
+                            {{$series['series_description']}}
+                          </h3>
                         </div>
                       </td>
                     </tr>
@@ -29,7 +155,7 @@
                           <tbody>
                             <tr>
                               <td style="width:370px;">
-                                <img height="auto" src="{{$message->embed($series['image_path'])}}" style="border:0;display:block;outline:none;text-decoration:none;height:auto;width:100%;font-size:13px;" width="370" />
+                                <img alt="series preview" height="auto" src="{{$message->embed($series['image_path'])}}" style="border:0;display:block;outline:none;text-decoration:none;height:auto;width:100%;font-size:13px;" width="370" />
                               </td>
                             </tr>
                           </tbody>
@@ -57,16 +183,10 @@
                   <tbody>
                     <tr>
                       <td align="left" class="table-striped" style="font-size:0px;padding:10px 25px;word-break:break-word;">
-                        <table cellpadding="0" cellspacing="0" width="100%" border="0" style="font-family:Ubuntu, Helvetica, Arial, sans-serif;font-size:13px;line-height:22px;table-layout:auto;width:100%;border:none;" role="presentation">
-                          @foreach($series['infos'] as $key => $value)
-                            @if ($value != null)
-                            <tr>
-                                <td style="padding: 0 15px 0 0;font-weight: bold;" align="left">{{ $key }}</td>
-                                <td style="padding: 0 15px;" align="right">{{ $value }}</td>
-                            </tr> 
-                            @endif
-                          @endforeach
-                        </table>
+                        <table cellpadding="0" cellspacing="0" role="presentation" width="100%" border="0" style="color:#000000;font-family:Ubuntu, Helvetica, Arial, sans-serif;font-size:13px;line-height:22px;table-layout:auto;width:100%;border:none;"> @foreach($series['infos'] as $key => $value) @if ($value != null) <tr>
+                            <td style="padding: 0 15px 0 0;font-weight: bold;" align="left">{{ $key }}</td>
+                            <td style="padding: 0 15px;" align="right">{{ $value }}</td>
+                          </tr> @endif @endforeach </table>
                       </td>
                     </tr>
                   </tbody>
@@ -90,9 +210,9 @@
                   <tbody>
                     <tr>
                       <td align="center" style="font-size:0px;padding:10px 25px;word-break:break-word;">
-                        <p style="border-top:solid 1px #E0E0E0;font-size:1px;margin:0px auto;width:100%;">
+                        <p style="border-top:solid 1px #616161;font-size:1px;margin:0px auto;width:100%;">
                         </p>
-                        <!--[if mso | IE]><table align="center" border="0" cellpadding="0" cellspacing="0" style="border-top:solid 1px #E0E0E0;font-size:1px;margin:0px auto;width:550px;" role="presentation" width="550px" ><tr><td style="height:0;line-height:0;"> &nbsp;
+                        <!--[if mso | IE]><table align="center" border="0" cellpadding="0" cellspacing="0" style="border-top:solid 1px #616161;font-size:1px;margin:0px auto;width:550px;" role="presentation" width="550px" ><tr><td style="height:0;line-height:0;"> &nbsp;
 </td></tr></table><![endif]-->
                       </td>
                     </tr>
@@ -107,3 +227,6 @@
     </div>
     <!--[if mso | IE]></td></tr></table><![endif]-->
   </div>
+</body>
+
+</html>

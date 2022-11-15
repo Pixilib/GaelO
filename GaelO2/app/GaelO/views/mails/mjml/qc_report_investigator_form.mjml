@@ -1,4 +1,4 @@
-<mjml>
+<mjml lang="en">
   <mj-head>
     <mj-attributes>
       <mj-class name="text-blue" color="#0495A0" />
@@ -21,8 +21,8 @@
           @foreach($studyInfo['investigatorForm'] as $key => $value)
             @if ($value != null)
           <tr>
-            <td style="padding: 0 15px 0 0;font-weight: bold;" align="left">{{ $item['Type'] }}</td>
-            <td style="padding: 0 15px;" align="right">{{ $item['Result'] }}</td>
+            <td style="padding: 0 15px 0 0;font-weight: bold;" align="left">{{ $key }}</td>
+            <td style="padding: 0 15px;" align="right">{{ $value }}</td>
           </tr>
             @endif
           @endforeach
@@ -31,7 +31,7 @@
     </mj-section>
     <mj-section>
       <mj-column>
-        <mj-divider border-width="1px" border-color="#E0E0E0"></mj-divider>
+        <mj-divider border-width="1px" border-color="#616161"></mj-divider>
       </mj-column>
     </mj-section>
   </mj-body>
