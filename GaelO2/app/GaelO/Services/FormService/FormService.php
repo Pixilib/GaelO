@@ -47,13 +47,6 @@ class FormService
         $this->currentUserId = $currentUserId;
     }
 
-    public function getSpecificStudiesRules(string $studyName, string $visitGroup, string $visitName): AbstractVisitRules
-    {
-        $studyObject = AbstractGaelOStudy::getSpecificStudyObject($studyName);
-        $specificObjectClass = $studyObject->getSpecificForm($visitGroup, $visitName);
-        return $this->frameworkInterface::make($specificObjectClass);
-    }
-
     public function setVisitContextAndStudy(array $visitContext, string $studyName): void
     {
 
@@ -66,7 +59,7 @@ class FormService
         $this->uploaderId = $this->visitContext['creator_user_id'];
         $this->studyName = $studyName;
         $visitGroup = $this->visitContext['visit_type']['visit_group']['name'];
-        $this->abstractVisitRules = $this->getSpecificStudiesRules($this->studyName, $visitGroup, $this->visitType);
+        $this->abstractVisitRules = AbstractGaelOStudy::getSpecificStudiesRules($this->studyName, $visitGroup, $this->visitType);
         $this->abstractVisitRules->setVisitContext($this->visitContext);
     }
 
@@ -114,10 +107,4 @@ class FormService
         $this->reviewRepositoryInterface->updateReviewFile($reviewEntity['id'], $reviewEntity['sent_files']);
     }
 
-
-    public function getAssociatedDataForForm(): object
-    {
-        if ($this->local) return (object) $this->abstractVisitRules->getAssociatedDataForInvestigatorForm();
-        else return (object) $this->abstractVisitRules->getAssociatedDataForReviewForm();
-    }
 }

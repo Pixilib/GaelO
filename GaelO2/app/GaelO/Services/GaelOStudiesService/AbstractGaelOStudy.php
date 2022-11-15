@@ -22,4 +22,11 @@ abstract class AbstractGaelOStudy
         if(class_exists($class)) return FrameworkAdapter::make($class);
         else return FrameworkAdapter::make(DefaultGaelOStudy::class);
     }
+
+    public static function getSpecificStudiesRules(string $studyName, string $visitGroup, string $visitName): AbstractVisitRules
+    {
+        $studyObject = AbstractGaelOStudy::getSpecificStudyObject($studyName);
+        $specificObjectClass = $studyObject->getSpecificForm($visitGroup, $visitName);
+        return FrameworkAdapter::make($specificObjectClass);
+    }
 }

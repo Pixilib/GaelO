@@ -50,4 +50,5 @@ class InvestigatorFormService extends FormService
             $this->visitService->updateInvestigatorFormStatus(Constants::INVESTIGATOR_FORM_DRAFT);
         }
     }
+    
 }

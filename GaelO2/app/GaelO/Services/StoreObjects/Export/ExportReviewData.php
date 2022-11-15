@@ -2,24 +2,17 @@
 
 namespace App\GaelO\Services\StoreObjects\Export;
 
-use App\GaelO\Adapters\FrameworkAdapter;
 use App\GaelO\Constants\Constants;
-use App\GaelO\Services\FormService\FormService;
+use App\GaelO\Services\GaelOStudiesService\AbstractGaelOStudy;
 
 class ExportReviewData
 {
 
-    private FormService $formService;
     private string $studyName;
     private string $visitGroupName;
     private string $visitTypeName;
     private array $specificColumnNames;
     private array $data = [];
-
-    public function __construct()
-    {
-        $this->formService = FrameworkAdapter::make(FormService::class);
-    }
 
     public function setContext(string $studyName, string $visitGroupName, string $visitTypeName, string $role)
     {
@@ -27,7 +20,7 @@ class ExportReviewData
         $this->visitGroupName = $visitGroupName;
         $this->visitTypeName = $visitTypeName;
         $this->role = $role;
-        $studyRules = $this->formService->getSpecificStudiesRules($studyName, $visitGroupName, $visitTypeName);
+        $studyRules = AbstractGaelOStudy::getSpecificStudiesRules($studyName, $visitGroupName, $visitTypeName);
         if ($role === Constants::ROLE_INVESTIGATOR) $this->specificColumnNames = $studyRules->getInvestigatorInputNames();
         if ($role === Constants::ROLE_REVIEWER) $this->specificColumnNames= $studyRules->getReviewerInputNames();
     }

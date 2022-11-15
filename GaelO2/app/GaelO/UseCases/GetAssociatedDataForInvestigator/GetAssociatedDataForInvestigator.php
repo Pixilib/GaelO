@@ -7,19 +7,18 @@ use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
 use App\GaelO\Services\AuthorizationService\AuthorizationVisitService;
 use App\GaelO\Services\FormService\InvestigatorFormService;
+use App\GaelO\Services\GaelOStudiesService\AbstractGaelOStudy;
 use Exception;
 
 class GetAssociatedDataForInvestigator
 {
 
     private AuthorizationVisitService $authorizationVisitService;
-    private InvestigatorFormService $investigatorFormService;
     private VisitRepositoryInterface $visitRepositoryInterface;
 
-    public function __construct(AuthorizationVisitService $authorizationVisitService, VisitRepositoryInterface $visitRepositoryInterface, InvestigatorFormService $investigatorFormService)
+    public function __construct(AuthorizationVisitService $authorizationVisitService, VisitRepositoryInterface $visitRepositoryInterface)
     {
         $this->authorizationVisitService = $authorizationVisitService;
-        $this->investigatorFormService = $investigatorFormService;
         $this->visitRepositoryInterface = $visitRepositoryInterface;
     }
 
@@ -35,9 +34,9 @@ class GetAssociatedDataForInvestigator
 
             $this->checkAuthorization($currentUserId, $visitId, $studyName, $role);
 
-            $this->investigatorFormService->setCurrentUserId($currentUserId);
-            $this->investigatorFormService->setVisitContextAndStudy($visitContext, $studyName);
-            $associatedData = $this->investigatorFormService->getAssociatedDataForForm();
+            $visitGroup = $visitContext['visit_type']['visit_group']['name'];
+            $visitType = $visitContext['visit_type']['name'];
+            $associatedData = AbstractGaelOStudy::getSpecificStudiesRules($studyName, $visitGroup, $visitType)->getAssociatedDataForInvestigatorForm();
 
             $getAssociatedDataForInvestigatorResponse->body =  $associatedData;
             $getAssociatedDataForInvestigatorResponse->status = 200;
