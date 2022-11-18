@@ -1,5 +1,7 @@
 Salim TODO :
-- Investigator form service doit integrer unlock et delete comme review form service (actuellement fait dans le use case)
+- Investigator form service doit integrer unlock et delete comme review form service (actuellement fait dans le use case) => fait
+- Refactorer le reviewFormService pour respecter la class abstraite
+- Voir si unlock investigator form dans le repository a pas plus sa place dans une transaction?
 - Abstract visit Rules
   - getReviewStatus des visit rule pas optimal (car depend état local des données du form)
   - mettre validation en variable d'instnace? 
