@@ -94,6 +94,7 @@ class ReviewFormService extends FormService
         //Update review availability if change compared on current value
         if ($availability !== $this->visitContext['review_status']['review_available']) $this->reviewStatusRepositoryInterface->updateReviewAvailability($this->visitId, $this->studyName, $availability);
         //Update review status table to computed new values
+        //sk a fusionner avec rev availability
         $this->reviewStatusRepositoryInterface->updateReviewStatusAndConclusion($this->visitId, $this->studyName, $reviewStatus, $conclusion, $targetLesions);
 
         //Send Notification emails

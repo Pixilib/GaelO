@@ -9,8 +9,9 @@ use App\GaelO\Services\GaelOStudiesService\AbstractGaelOStudy;
 use App\GaelO\Services\GaelOStudiesService\AbstractVisitRules;
 use App\GaelO\Services\MailServices;
 use App\GaelO\Services\VisitService;
+use App\Mail\Adjudication;
 
-class FormService
+abstract class FormService
 {
 
     protected ReviewRepositoryInterface $reviewRepositoryInterface;
@@ -27,7 +28,7 @@ class FormService
     protected string $patientId;
     protected string $patientCode;
     protected int $uploaderId;
-    protected string $local;
+    protected bool $local;
 
     public function __construct(
         ReviewRepositoryInterface $reviewRepositoryInterface,
@@ -60,13 +61,23 @@ class FormService
         $this->studyName = $studyName;
         $visitGroup = $this->visitContext['visit_type']['visit_group']['name'];
         $this->abstractVisitRules = AbstractGaelOStudy::getSpecificStudiesRules($this->studyName, $visitGroup, $this->visitType);
+        //SK a revoir si c'est une bonne idée, le visit context sert a avoir la decision etc (objet a part?)
         $this->abstractVisitRules->setVisitContext($this->visitContext);
     }
+
+    abstract function saveForm(array $data, bool $validated, ?bool $adjudication = null): int;
+    abstract function updateForm(int $reviewId, array $data, bool $validated);
+    abstract function unlockForm(int $reviewId);
+    abstract function deleteForm(int $reviewId);
+
+    //abstract function getAllowedKeyAndMimeType();
 
     public function attachFile(array $reviewEntity, string $key, string $filename, string $mimeType, $binaryData): void
     {
 
         $keyMimeArray = [];
+
+        //SK Checker que local de review est bien le meme que local de la classe ? 
 
         if ($reviewEntity['local']) {
             $keyMimeArray = $this->abstractVisitRules->getAllowedKeyAndMimeTypeInvestigator();
@@ -83,7 +94,7 @@ class FormService
         if ($mimeType !== $expectedMime) {
             throw new GaelOBadRequestException("File Key or Mime Not Allowed");
         }
-        
+
         $destinationPath = $this->studyName . '/' . 'attached_review_file';
 
         $destinationFileName = $destinationPath . '/' . $filename;
@@ -106,5 +117,4 @@ class FormService
         unset($reviewEntity['sent_files'][$key]);
         $this->reviewRepositoryInterface->updateReviewFile($reviewEntity['id'], $reviewEntity['sent_files']);
     }
-
 }

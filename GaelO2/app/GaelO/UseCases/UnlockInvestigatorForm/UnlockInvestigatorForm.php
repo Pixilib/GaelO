@@ -11,6 +11,7 @@ use App\GaelO\Interfaces\Repositories\ReviewRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
 use App\GaelO\Services\AuthorizationService\AuthorizationVisitService;
+use App\GaelO\Services\FormService\InvestigatorFormService;
 use App\GaelO\Services\MailServices;
 use Exception;
 
@@ -20,6 +21,7 @@ class UnlockInvestigatorForm
     private ReviewRepositoryInterface $reviewRepositoryInterface;
     private VisitRepositoryInterface $visitRepositoryInterface;
     private TrackerRepositoryInterface $trackerRepositoryInterface;
+    private InvestigatorFormService $investigatorFormService;
     private MailServices $mailServices;
 
     public function __construct(
@@ -27,12 +29,14 @@ class UnlockInvestigatorForm
         ReviewRepositoryInterface $reviewRepositoryInterface,
         VisitRepositoryInterface $visitRepositoryInterface,
         TrackerRepositoryInterface $trackerRepositoryInterface,
+        InvestigatorFormService $investigatorFormService,
         MailServices $mailServices
     ) {
         $this->authorizationVisitService = $authorizationVisitService;
         $this->reviewRepositoryInterface = $reviewRepositoryInterface;
         $this->visitRepositoryInterface = $visitRepositoryInterface;
         $this->trackerRepositoryInterface = $trackerRepositoryInterface;
+        $this->investigatorFormService = $investigatorFormService;
         $this->mailServices = $mailServices;
     }
 
@@ -63,14 +67,9 @@ class UnlockInvestigatorForm
                 throw new GaelOBadRequestException('Form Already Unlocked');
             }
 
-            //Unlock Investigator Form
-            $this->reviewRepositoryInterface->unlockInvestigatorForm($visitId);
-
-            //Make investigator form not done
-            $this->visitRepositoryInterface->updateInvestigatorFormStatus($visitId, Constants::INVESTIGATOR_FORM_DRAFT);
-
-            //Reset QC if QC is needed in this Visit
-            if ($visitContext['state_quality_control'] !== Constants::QUALITY_CONTROL_NOT_NEEDED) $this->visitRepositoryInterface->resetQc($visitContext['id']);
+            $this->investigatorFormService->setCurrentUserId($currentUserId);
+            $this->investigatorFormService->setVisitContextAndStudy($visitContext, $studyName);
+            $this->investigatorFormService->unlockForm($investigatorFormEntity['id']);
 
             $actionDetails = [
                 'visit_group_name' => $visitContext['visit_type']['visit_group']['name'],
