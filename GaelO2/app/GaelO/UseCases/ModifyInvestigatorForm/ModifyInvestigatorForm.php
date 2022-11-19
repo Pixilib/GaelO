@@ -55,7 +55,7 @@ class ModifyInvestigatorForm
                 $studyName
             );
 
-            $localReviewEntitity = $this->reviewRepositoryInterface->getInvestigatorForm($this->visitId, false);
+            $localReviewEntitity = $this->reviewRepositoryInterface->getInvestigatorForm($visitId, false);
             $localReviewId = $localReviewEntitity['id'];
 
             $this->investigatorFormService->setCurrentUserId($currentUserId);
