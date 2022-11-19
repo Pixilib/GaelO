@@ -9,8 +9,6 @@ use App\GaelO\Services\GaelOStudiesService\AbstractGaelOStudy;
 use App\GaelO\Services\GaelOStudiesService\AbstractVisitRules;
 use App\GaelO\Services\MailServices;
 use App\GaelO\Services\VisitService;
-use App\Mail\Adjudication;
-
 abstract class FormService
 {
 
@@ -70,15 +68,12 @@ abstract class FormService
     abstract function unlockForm(int $reviewId);
     abstract function deleteForm(int $reviewId);
 
-    //abstract function getAllowedKeyAndMimeType();
-
     public function attachFile(array $reviewEntity, string $key, string $filename, string $mimeType, $binaryData): void
     {
 
         $keyMimeArray = [];
 
         //SK Checker que local de review est bien le meme que local de la classe ? 
-
         if ($reviewEntity['local']) {
             $keyMimeArray = $this->abstractVisitRules->getAllowedKeyAndMimeTypeInvestigator();
         } else {

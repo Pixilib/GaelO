@@ -62,7 +62,7 @@ class ModifyReviewForm
             //Call service to update form
             $this->reviewFormService->setCurrentUserId($currentUserId);
             $this->reviewFormService->setVisitContextAndStudy($visitContext, $studyName);
-            $this->reviewFormService->updateReview($reviewId, $modifyReviewFormRequest->data, $modifyReviewFormRequest->validated);
+            $this->reviewFormService->updateForm($reviewId, $modifyReviewFormRequest->data, $modifyReviewFormRequest->validated);
 
             //Write in Tracker
             $actionDetails = [
