@@ -10,9 +10,7 @@ use App\GaelO\Interfaces\Repositories\ReviewRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
 use App\GaelO\Services\AuthorizationService\AuthorizationVisitService;
-use App\GaelO\Services\FormService\FormService;
 use App\GaelO\Services\FormService\InvestigatorFormService;
-use App\GaelO\Services\MailServices;
 use Exception;
 
 class DeleteInvestigatorForm
