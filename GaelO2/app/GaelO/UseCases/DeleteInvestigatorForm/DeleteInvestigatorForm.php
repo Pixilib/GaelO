@@ -11,6 +11,7 @@ use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
 use App\GaelO\Services\AuthorizationService\AuthorizationVisitService;
 use App\GaelO\Services\FormService\InvestigatorFormService;
+use App\GaelO\Services\MailServices;
 use Exception;
 
 class DeleteInvestigatorForm
@@ -21,19 +22,22 @@ class DeleteInvestigatorForm
     private TrackerRepositoryInterface $trackerRepositoryInterface;
     private ReviewRepositoryInterface $reviewRepositoryInterface;
     private InvestigatorFormService $inverstigatorFormService;
+    private MailServices $mailServices;
 
     public function __construct(
         AuthorizationVisitService $authorizationVisitService,
         ReviewRepositoryInterface $reviewRepositoryInterface,
         VisitRepositoryInterface $visitRepositoryInterface,
         TrackerRepositoryInterface $trackerRepositoryInterface,
-        InvestigatorFormService $inverstigatorFormService
+        InvestigatorFormService $inverstigatorFormService,
+        MailServices $mailServices
     ) {
         $this->authorizationVisitService = $authorizationVisitService;
         $this->visitRepositoryInterface = $visitRepositoryInterface;
         $this->trackerRepositoryInterface = $trackerRepositoryInterface;
         $this->reviewRepositoryInterface = $reviewRepositoryInterface;
         $this->inverstigatorFormService = $inverstigatorFormService;
+        $this->mailServices = $mailServices;
     }
 
     public function execute(DeleteInvestigatorFormRequest $deleteInvestigatorFormRequest, DeleteInvestigatorFormResponse $DeleteInvestigatorFormResponse)

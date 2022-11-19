@@ -29,14 +29,14 @@ class InvestigatorFormService extends FormService
 
     private function unlockQcIfNeeded()
     {
-        if ($this->visitContext['state_quality_control'] !== Constants::QUALITY_CONTROL_NOT_NEEDED) $this->visitService->resetQc($this->visitContext['id']);
+        if ($this->visitContext['state_quality_control'] !== Constants::QUALITY_CONTROL_NOT_NEEDED) $this->visitService->resetQc($this->visitId);
     }
 
     public function deleteForm(int $reviewId)
     {
         $this->reviewRepositoryInterface->delete($reviewId);
         //Make investigator form not done
-        $this->visitService->updateInvestigatorFormStatus($this->visitId, Constants::INVESTIGATOR_FORM_NOT_DONE);
+        $this->visitService->updateInvestigatorFormStatus(Constants::INVESTIGATOR_FORM_NOT_DONE);
         $this->unlockQcIfNeeded();
     }
 
@@ -44,7 +44,7 @@ class InvestigatorFormService extends FormService
     {
         $this->reviewRepositoryInterface->unlockReview($reviewId);
         //Make investigator form not done
-        $this->visitService->updateInvestigatorFormStatus($this->visitContext['id'], Constants::INVESTIGATOR_FORM_DRAFT);
+        $this->visitService->updateInvestigatorFormStatus(Constants::INVESTIGATOR_FORM_DRAFT);
         $this->unlockQcIfNeeded();
     }
 
