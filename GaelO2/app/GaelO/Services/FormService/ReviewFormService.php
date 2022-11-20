@@ -91,11 +91,8 @@ class ReviewFormService extends FormService
         if ($reviewStatus === Constants::REVIEW_STATUS_NOT_DONE && $conclusion !== null) {
             throw new GaelOException("Review Status Not Done needs to be associated with null conclusion value");
         }
-        //Update review availability if change compared on current value
-        if ($availability !== $this->visitContext['review_status']['review_available']) $this->reviewStatusRepositoryInterface->updateReviewAvailability($this->visitId, $this->studyName, $availability);
-        //Update review status table to computed new values
-        //SK TODO a fusionner avec rev availability
-        $this->reviewStatusRepositoryInterface->updateReviewStatusAndConclusion($this->visitId, $this->studyName, $reviewStatus, $conclusion, $targetLesions);
+        //Update review status
+        $this->reviewStatusRepositoryInterface->updateReviewAvailabilityStatusAndConclusion($this->visitId, $this->studyName, $availability, $reviewStatus, $conclusion, $targetLesions);
 
         //Send Notification emails
         if ($reviewStatus === Constants::REVIEW_STATUS_WAIT_ADJUDICATION) {
