@@ -7,20 +7,22 @@ use Illuminate\Support\Facades\Config;
 use Spatie\DbDumper\Databases\MySql;
 use Spatie\DbDumper\Databases\PostgreSql;
 
-class DatabaseDumperAdapter implements DatabaseDumperInterface {
+class DatabaseDumperAdapter implements DatabaseDumperInterface
+{
 
     const DB_MYSQL = "mysql";
     const DB_PGSQL = "pgsql";
 
-    public function getDatabaseDumpFile() : string {
+    public function getDatabaseDumpFile(): string
+    {
 
-        $fileSql=tempnam(ini_get('upload_tmp_dir'), 'TMPDB_');
+        $fileSql = tempnam(ini_get('upload_tmp_dir'), 'TMPDB_');
 
         $databaseType = Config::get('database.default');
 
-        if($databaseType === self::DB_MYSQL){
+        if ($databaseType === self::DB_MYSQL) {
             $this->getMysqlDump($fileSql);
-        }else if ($databaseType === self::DB_PGSQL){
+        } else if ($databaseType === self::DB_PGSQL) {
             $this->getPosgresDump($fileSql);
         }
 
@@ -28,7 +30,8 @@ class DatabaseDumperAdapter implements DatabaseDumperInterface {
         return $fileSql;
     }
 
-    private function getMysqlDump(String $file){
+    private function getMysqlDump(String $file)
+    {
 
         $databaseHost = Config::get('database.connections.mysql.host');
         $databasePort = Config::get('database.connections.mysql.port');
@@ -37,17 +40,17 @@ class DatabaseDumperAdapter implements DatabaseDumperInterface {
         $password = Config::get('database.connections.mysql.password');
 
         return MySql::create()
-        ->setHost($databaseHost)
-        ->setPort($databasePort)
-        ->setDbName($databaseName)
-        ->setUserName($userName)
-        ->setPassword($password)
-        ->dumpToFile($file);
-
+            ->setHost($databaseHost)
+            ->setPort($databasePort)
+            ->setDbName($databaseName)
+            ->setUserName($userName)
+            ->setPassword($password)
+            ->dumpToFile($file);
     }
 
 
-    private function getPosgresDump(String $file){
+    private function getPosgresDump(String $file)
+    {
 
         $databaseHost = Config::get('database.connections.pgsql.host');
         $databasePort = Config::get('database.connections.pgsql.port');
@@ -56,12 +59,11 @@ class DatabaseDumperAdapter implements DatabaseDumperInterface {
         $password = Config::get('database.connections.pgsql.password');
 
         return PostgreSql::create()
-        ->setHost($databaseHost)
-        ->setPort($databasePort)
-        ->setDbName($databaseName)
-        ->setUserName($userName)
-        ->setPassword($password)
-        ->dumpToFile($file);
-
+            ->setHost($databaseHost)
+            ->setPort($databasePort)
+            ->setDbName($databaseName)
+            ->setUserName($userName)
+            ->setPassword($password)
+            ->dumpToFile($file);
     }
 }

@@ -8,13 +8,13 @@ use Mimey\MimeTypes;
 class MimeAdapter implements MimeInterface
 {
 
-    public static function getExtensionFromMime(string $mime) : string
+    public static function getExtensionFromMime(string $mime): string
     {
         $mimes = new MimeTypes();
         return $mimes->getExtension($mime);
     }
 
-    public static function getMimeFromExtension(string $extension) : string
+    public static function getMimeFromExtension(string $extension): string
     {
         $mimes = new MimeTypes();
         return $mimes->getMimeType($extension);

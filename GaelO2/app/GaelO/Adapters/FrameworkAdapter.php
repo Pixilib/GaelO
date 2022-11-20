@@ -27,20 +27,24 @@ class FrameworkAdapter implements FrameworkInterface
     /**
      * Return array of file of the storage folder, path is relative to storage folder and could be queried by the get method
      */
-    public static function getStoredFiles($directory = null) : array {
+    public static function getStoredFiles($directory = null): array
+    {
         $files = Storage::allFiles($directory);
         return $files;
     }
 
-    public static function storeFile(string $path, $contents) : void {
+    public static function storeFile(string $path, $contents): void
+    {
         Storage::put($path, $contents);
     }
 
-    public static function deleteFile(string $path) : void {
+    public static function deleteFile(string $path): void
+    {
         Storage::delete($path);
     }
 
-    public static function getFile(string $path) : string {
+    public static function getFile(string $path): string
+    {
         return Storage::get($path);
     }
 
@@ -76,6 +80,5 @@ class FrameworkAdapter implements FrameworkInterface
                 'query_params' => $queryParams
             ]
         );
-
     }
 }
