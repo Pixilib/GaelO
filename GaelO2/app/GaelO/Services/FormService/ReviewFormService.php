@@ -16,6 +16,7 @@ class ReviewFormService extends FormService
 {
 
     protected ReviewStatusRepositoryInterface $reviewStatusRepositoryInterface;
+    protected bool $local = false;
 
     public function __construct(
         VisitService $visitService,
@@ -26,10 +27,9 @@ class ReviewFormService extends FormService
     ) {
         parent::__construct($reviewRepositoryInterface, $visitService, $mailServices, $frameworkInterface);
         $this->reviewStatusRepositoryInterface = $reviewStatusRepositoryInterface;
-        $this->local = false;
     }
 
-    public function saveReview(array $data, bool $validated, bool $adjudication): int
+    public function saveForm(array $data, bool $validated, ?bool $adjudication = null): int
     {
         $this->abstractVisitRules->setFormData($data);
         $this->abstractVisitRules->setAdjudication($adjudication);
@@ -44,7 +44,7 @@ class ReviewFormService extends FormService
         return $createdReviewId;
     }
 
-    public function updateReview(int $reviewId, array $data, bool $validated): void
+    public function updateForm(int $reviewId, array $data, bool $validated)
     {
         //Get current Entity to know if adjudication form
         $reviewEntity = $this->reviewRepositoryInterface->find($reviewId);
@@ -62,7 +62,7 @@ class ReviewFormService extends FormService
         }
     }
 
-    public function deleteReview(int $reviewId): void
+    public function deleteForm(int $reviewId)
     {
         //Get current Entity to know if adjudication form
         $reviewEntity = $this->reviewRepositoryInterface->find($reviewId);
@@ -71,7 +71,7 @@ class ReviewFormService extends FormService
         $this->doSpecificReviewDecisions();
     }
 
-    public function unlockReview(int $reviewId): void
+    public function unlockForm(int $reviewId)
     {
         $this->reviewRepositoryInterface->unlockReview($reviewId);
         $this->doSpecificReviewDecisions();
@@ -91,10 +91,8 @@ class ReviewFormService extends FormService
         if ($reviewStatus === Constants::REVIEW_STATUS_NOT_DONE && $conclusion !== null) {
             throw new GaelOException("Review Status Not Done needs to be associated with null conclusion value");
         }
-        //Update review availability if change compared on current value
-        if ($availability !== $this->visitContext['review_status']['review_available']) $this->reviewStatusRepositoryInterface->updateReviewAvailability($this->visitId, $this->studyName, $availability);
-        //Update review status table to computed new values
-        $this->reviewStatusRepositoryInterface->updateReviewStatusAndConclusion($this->visitId, $this->studyName, $reviewStatus, $conclusion, $targetLesions);
+        //Update review status
+        $this->reviewStatusRepositoryInterface->updateReviewAvailabilityStatusAndConclusion($this->visitId, $this->studyName, $availability, $reviewStatus, $conclusion, $targetLesions);
 
         //Send Notification emails
         if ($reviewStatus === Constants::REVIEW_STATUS_WAIT_ADJUDICATION) {

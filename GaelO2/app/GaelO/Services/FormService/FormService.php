@@ -10,7 +10,7 @@ use App\GaelO\Services\GaelOStudiesService\AbstractVisitRules;
 use App\GaelO\Services\MailServices;
 use App\GaelO\Services\VisitService;
 
-class FormService
+abstract class FormService
 {
 
     protected ReviewRepositoryInterface $reviewRepositoryInterface;
@@ -27,7 +27,7 @@ class FormService
     protected string $patientId;
     protected string $patientCode;
     protected int $uploaderId;
-    protected string $local;
+    protected bool $local;
 
     public function __construct(
         ReviewRepositoryInterface $reviewRepositoryInterface,
@@ -47,13 +47,6 @@ class FormService
         $this->currentUserId = $currentUserId;
     }
 
-    public function getSpecificStudiesRules(string $studyName, string $visitGroup, string $visitName): AbstractVisitRules
-    {
-        $studyObject = AbstractGaelOStudy::getSpecificStudyObject($studyName);
-        $specificObjectClass = $studyObject->getSpecificForm($visitGroup, $visitName);
-        return $this->frameworkInterface::make($specificObjectClass);
-    }
-
     public function setVisitContextAndStudy(array $visitContext, string $studyName): void
     {
 
@@ -66,15 +59,22 @@ class FormService
         $this->uploaderId = $this->visitContext['creator_user_id'];
         $this->studyName = $studyName;
         $visitGroup = $this->visitContext['visit_type']['visit_group']['name'];
-        $this->abstractVisitRules = $this->getSpecificStudiesRules($this->studyName, $visitGroup, $this->visitType);
+        $this->abstractVisitRules = AbstractGaelOStudy::getSpecificStudiesRules($this->studyName, $visitGroup, $this->visitType);
+        //SK a revoir si c'est une bonne idée, le visit context sert a avoir la decision etc (objet a part?)
         $this->abstractVisitRules->setVisitContext($this->visitContext);
     }
+
+    public abstract function saveForm(array $data, bool $validated, ?bool $adjudication = null): int;
+    public abstract function updateForm(int $reviewId, array $data, bool $validated);
+    public abstract function unlockForm(int $reviewId);
+    public abstract function deleteForm(int $reviewId);
 
     public function attachFile(array $reviewEntity, string $key, string $filename, string $mimeType, $binaryData): void
     {
 
         $keyMimeArray = [];
 
+        //SK Checker que local de review est bien le meme que local de la classe ? 
         if ($reviewEntity['local']) {
             $keyMimeArray = $this->abstractVisitRules->getAllowedKeyAndMimeTypeInvestigator();
         } else {
@@ -90,7 +90,7 @@ class FormService
         if ($mimeType !== $expectedMime) {
             throw new GaelOBadRequestException("File Key or Mime Not Allowed");
         }
-        
+
         $destinationPath = $this->studyName . '/' . 'attached_review_file';
 
         $destinationFileName = $destinationPath . '/' . $filename;
@@ -112,12 +112,5 @@ class FormService
 
         unset($reviewEntity['sent_files'][$key]);
         $this->reviewRepositoryInterface->updateReviewFile($reviewEntity['id'], $reviewEntity['sent_files']);
-    }
-
-
-    public function getAssociatedDataForForm(): object
-    {
-        if ($this->local) return (object) $this->abstractVisitRules->getAssociatedDataForInvestigatorForm();
-        else return (object) $this->abstractVisitRules->getAssociatedDataForReviewForm();
     }
 }

@@ -55,7 +55,7 @@ class CreateInvestigatorForm
 
             $this->investigatorFormService->setCurrentUserId($createInvestigatorFormRequest->currentUserId);
             $this->investigatorFormService->setVisitContextAndStudy($visitContext, $studyName);
-            $createdFormId = $this->investigatorFormService->saveInvestigatorForm($createInvestigatorFormRequest->data, $createInvestigatorFormRequest->validated);
+            $createdFormId = $this->investigatorFormService->saveForm($createInvestigatorFormRequest->data, $createInvestigatorFormRequest->validated);
 
             $actionDetails = [
                 'raw_data' => $createInvestigatorFormRequest->data,

@@ -25,13 +25,14 @@ class ReviewStatusRepository implements ReviewStatusRepositoryInterface
             ->toArray();
     }
 
-    public function updateReviewStatusAndConclusion(int $visitId, string $studyName, string $reviewStatus, ?string $reviewConclusionValue, ?array $targetLesions): void
+    public function updateReviewAvailabilityStatusAndConclusion(int $visitId, string $studyName, bool $availability, string $reviewStatus, ?string $reviewConclusionValue, ?array $targetLesions): void
     {
         //If a conclusion is set, write the date of conclusion (now)
         $conclusionDate = $reviewStatus === Constants::REVIEW_STATUS_DONE ? Util::now() : null ;
         $this->reviewStatusModel->updateOrCreate(
             ['visit_id' => $visitId, 'study_name' => $studyName],
             [
+                'review_available' => $availability,
                 'review_status' => $reviewStatus,
                 'review_conclusion_value' => $reviewConclusionValue,
                 'target_lesions' => $targetLesions,

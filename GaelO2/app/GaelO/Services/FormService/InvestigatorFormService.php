@@ -4,26 +4,13 @@ namespace App\GaelO\Services\FormService;
 
 use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOBadRequestException;
-use App\GaelO\Interfaces\Adapters\FrameworkInterface;
-use App\GaelO\Interfaces\Repositories\ReviewRepositoryInterface;
 use App\GaelO\Services\FormService\FormService;
-use App\GaelO\Services\MailServices;
-use App\GaelO\Services\VisitService;
 
 class InvestigatorFormService extends FormService
 {
+    protected bool $local = true;
 
-    public function __construct(
-        VisitService $visitService,
-        MailServices $mailServices,
-        FrameworkInterface $frameworkInterface,
-        ReviewRepositoryInterface $reviewRepositoryInterface
-    ) {
-        parent::__construct($reviewRepositoryInterface, $visitService, $mailServices, $frameworkInterface);
-        $this->local = true;
-    }
-
-    public function saveInvestigatorForm(array $data, bool $validated): int
+    public function saveForm(array $data, bool $validated, ?bool $adjudication = null): int
     {
         $this->abstractVisitRules->setFormData($data);
         if (!$this->abstractVisitRules->checkInvestigatorFormValidity($validated)) throw new GaelOBadRequestException('Form Constraints Failed');
@@ -32,14 +19,33 @@ class InvestigatorFormService extends FormService
         return $localReviewId;
     }
 
-    public function updateInvestigatorForm(array $data, bool $validated): int
+    public function updateForm(int $reviewId, array $data, bool $validated)
     {
         $this->abstractVisitRules->setFormData($data);
         if (!$this->abstractVisitRules->checkInvestigatorFormValidity($validated)) throw new GaelOBadRequestException('Form Constraints Failed');
-        $localReviewEntitity = $this->reviewRepositoryInterface->getInvestigatorForm($this->visitId, false);
-        $this->reviewRepositoryInterface->updateReview($localReviewEntitity['id'], $this->currentUserId, $data, $validated);
+        $this->reviewRepositoryInterface->updateReview($reviewId, $this->currentUserId, $data, $validated);
         $this->updateVisitInvestigatorFormStatus($validated);
-        return $localReviewEntitity['id'];
+    }
+
+    private function unlockQcIfNeeded()
+    {
+        if ($this->visitContext['state_quality_control'] !== Constants::QUALITY_CONTROL_NOT_NEEDED) $this->visitService->resetQc($this->visitId);
+    }
+
+    public function deleteForm(int $reviewId)
+    {
+        $this->reviewRepositoryInterface->delete($reviewId);
+        //Make investigator form not done
+        $this->visitService->updateInvestigatorFormStatus(Constants::INVESTIGATOR_FORM_NOT_DONE);
+        $this->unlockQcIfNeeded();
+    }
+
+    public function unlockForm(int $reviewId)
+    {
+        $this->reviewRepositoryInterface->unlockReview($reviewId);
+        //Make investigator form not done
+        $this->updateVisitInvestigatorFormStatus(false);
+        $this->unlockQcIfNeeded();
     }
 
     private function updateVisitInvestigatorFormStatus(bool $validated): void

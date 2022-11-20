@@ -36,8 +36,7 @@ class ReviewRepository implements ReviewRepositoryInterface
     public function unlockInvestigatorForm(int $visitId): void
     {
         $reviewEntity = $this->reviewModel->where('visit_id', $visitId)->where('local', true)->sole();
-        $reviewEntity->validated = false;
-        $reviewEntity->save();
+        $this->unlockReview($reviewEntity['id']);
     }
 
     public function createReview(bool $local, int $visitId, string $studyName, int $userId, array $reviewData, bool $validated, bool $adjudication): int

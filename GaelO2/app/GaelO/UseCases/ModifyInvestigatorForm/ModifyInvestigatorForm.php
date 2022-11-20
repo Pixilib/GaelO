@@ -6,6 +6,7 @@ use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOBadRequestException;
 use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
+use App\GaelO\Interfaces\Repositories\ReviewRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
 use App\GaelO\Services\AuthorizationService\AuthorizationVisitService;
@@ -17,15 +18,17 @@ class ModifyInvestigatorForm
 
     private AuthorizationVisitService $authorizationVisitService;
     private VisitRepositoryInterface $visitRepositoryInterface;
+    private ReviewRepositoryInterface $reviewRepositoryInterface;
     private InvestigatorFormService $investigatorFormService;
     private TrackerRepositoryInterface $trackerRepositoryInterface;
 
-    public function __construct(AuthorizationVisitService $authorizationVisitService, VisitRepositoryInterface $visitRepositoryInterface, InvestigatorFormService $investigatorFormService, TrackerRepositoryInterface $trackerRepositoryInterface)
+    public function __construct(AuthorizationVisitService $authorizationVisitService, VisitRepositoryInterface $visitRepositoryInterface, ReviewRepositoryInterface $reviewRepositoryInterface, InvestigatorFormService $investigatorFormService, TrackerRepositoryInterface $trackerRepositoryInterface)
     {
         $this->authorizationVisitService = $authorizationVisitService;
         $this->visitRepositoryInterface = $visitRepositoryInterface;
         $this->investigatorFormService = $investigatorFormService;
         $this->trackerRepositoryInterface = $trackerRepositoryInterface;
+        $this->reviewRepositoryInterface = $reviewRepositoryInterface;
     }
 
     public function execute(ModifyInvestigatorFormRequest $modifyInvestigatorFormRequest, ModifyInvestigatorFormResponse $modifyInvestigatorFormResponse)
@@ -52,9 +55,12 @@ class ModifyInvestigatorForm
                 $studyName
             );
 
+            $localReviewEntitity = $this->reviewRepositoryInterface->getInvestigatorForm($visitId, false);
+            $localReviewId = $localReviewEntitity['id'];
+
             $this->investigatorFormService->setCurrentUserId($currentUserId);
             $this->investigatorFormService->setVisitContextAndStudy($visitContext, $studyName);
-            $localReviewId = $this->investigatorFormService->updateInvestigatorForm($data, $validated);
+            $this->investigatorFormService->updateForm($localReviewId , $data, $validated);
 
             $actionDetails = [
                 'raw_data' => $data,

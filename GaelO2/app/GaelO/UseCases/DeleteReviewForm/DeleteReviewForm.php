@@ -78,7 +78,7 @@ class DeleteReviewForm
             //Delete review via service review
             $this->reviewFormService->setCurrentUserId($currentUserId);
             $this->reviewFormService->setVisitContextAndStudy($visitContext, $studyName);
-            $this->reviewFormService->deleteReview($reviewId);
+            $this->reviewFormService->deleteForm($reviewId);
 
             $actionDetails = [
                 'visit_group_name' => $visitContext['visit_type']['visit_group']['name'],

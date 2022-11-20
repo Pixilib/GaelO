@@ -73,7 +73,7 @@ class UnlockReviewForm
             //Delete review via service review
             $this->reviewFormService->setCurrentUserId($currentUserId);
             $this->reviewFormService->setVisitContextAndStudy($visitContext, $reviewEntity['study_name']);
-            $this->reviewFormService->unlockReview($reviewId);
+            $this->reviewFormService->unlockForm($reviewId);
 
             $actionDetails = [
                 'visit_group_name' => $visitContext['visit_type']['visit_group']['name'],
