@@ -9,6 +9,7 @@ use App\GaelO\Services\GaelOStudiesService\AbstractGaelOStudy;
 use App\GaelO\Services\GaelOStudiesService\AbstractVisitRules;
 use App\GaelO\Services\MailServices;
 use App\GaelO\Services\VisitService;
+
 abstract class FormService
 {
 

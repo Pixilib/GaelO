@@ -76,7 +76,7 @@ class ReviewFormService extends FormService
         $this->reviewRepositoryInterface->unlockReview($reviewId);
         $this->doSpecificReviewDecisions();
     }
-    
+
     private function doSpecificReviewDecisions()
     {
         $reviewStatus = $this->abstractVisitRules->getReviewStatus();

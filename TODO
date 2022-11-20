@@ -3,10 +3,7 @@ Salim TODO :
 - Abstract visit Rules
   - getReviewStatus des visit rule pas optimal (car depend état local des données du form)
   - mettre validation en variable d'instnace? 
-
-  
 - Verifier qu'une PJ d'un investigateur et telechargeable par un reviewer (et chemin pour le faire)=> devrait etre ok en backend voir comment faire en frontend
-  
 - Optimiser l'utilisation des authorization service en injectant les data depuis le usecase (ou les rendre stateless) (dont visite, review...)
 
 --- Etudes ancillaires ---
