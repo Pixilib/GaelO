@@ -21,22 +21,22 @@ abstract class AbstractVisitRules
     protected string $studyName;
     protected array $visitContext;
 
-    abstract public function getInvestigatorValidationRules(): array;
+    abstract public static function getInvestigatorValidationRules(): array;
 
-    abstract public function getReviewerValidationRules(): array;
+    abstract public static function getReviewerValidationRules(): array;
 
-    abstract public function getReviewerAdjudicationValidationRules(): array;
+    abstract public static function getReviewerAdjudicationValidationRules(): array;
 
     public function getInvestigatorInputNames(): array
     {
-        $rules = $this->getInvestigatorValidationRules();
+        $rules = self::getInvestigatorValidationRules();
         return array_unique(array_keys($rules));
     }
 
     public function getReviewerInputNames(): array
     {
-        $rules = $this->getReviewerValidationRules();
-        $adjudicationRules = $this->getReviewerAdjudicationValidationRules();
+        $rules = self::getReviewerValidationRules();
+        $adjudicationRules = self::getReviewerAdjudicationValidationRules();
         $inputs = [...array_keys($rules), ...array_keys($adjudicationRules)];
         return array_unique($inputs);
     }
@@ -59,7 +59,7 @@ abstract class AbstractVisitRules
     {
 
         $validatorAdapter = new ValidatorAdapter($validated);
-        $investigatorsRules = $this->getInvestigatorValidationRules();
+        $investigatorsRules = self::getInvestigatorValidationRules();
         $this->fillValidator($investigatorsRules, $validatorAdapter);
         return $validatorAdapter->validate($this->data);
     }
@@ -70,9 +70,9 @@ abstract class AbstractVisitRules
         $reviewerRules = [];
 
         if($this->adjudication) {
-            $reviewerRules = $this->getReviewerAdjudicationValidationRules();
+            $reviewerRules = self::getReviewerAdjudicationValidationRules();
         }else {
-            $reviewerRules = $this->getReviewerValidationRules();
+            $reviewerRules = self::getReviewerValidationRules();
         }
         
         $this->fillValidator($reviewerRules, $validatorAdapter);

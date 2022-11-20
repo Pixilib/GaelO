@@ -40,8 +40,8 @@ class GetReviewsMetadataFromVisitType
             $abstractStudyRules = AbstractGaelOStudy::getSpecificStudiesRules($studyName, $visitGroupEntity['name'], $visitTypeEntity['name']);
 
             $answer = [];
-            $answer['default'] = $abstractStudyRules->getReviewerValidationRules();
-            $answer['adjudication'] = $abstractStudyRules->getReviewerAdjudicationValidationRules();
+            $answer['default'] = $abstractStudyRules::getReviewerValidationRules();
+            $answer['adjudication'] = $abstractStudyRules::getReviewerAdjudicationValidationRules();
 
 
             $getReviewsMetadataFromVisitTypeResponse->body = $answer;

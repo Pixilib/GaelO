@@ -39,7 +39,7 @@ class GetInvestigatorFormsMetadataFromVisitType
             }
 
             $abstractStudyRules = AbstractGaelOStudy::getSpecificStudiesRules($studyName, $visitGroupEntity['name'], $visitTypeEntity['name']);
-            $investigatorRules = $abstractStudyRules->getInvestigatorValidationRules();
+            $investigatorRules = $abstractStudyRules::getInvestigatorValidationRules();
 
             $getInvestigatorFormsMetadataFromVisitTypeResponse->body = $investigatorRules;
             $getInvestigatorFormsMetadataFromVisitTypeResponse->status = 200;

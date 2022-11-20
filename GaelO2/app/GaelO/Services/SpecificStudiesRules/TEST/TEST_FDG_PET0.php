@@ -19,7 +19,7 @@ class TEST_FDG_PET0 extends AbstractVisitRules
         $this->reviewRepositoryInterface = $reviewRepositoryInterface;
     }
 
-    public function getInvestigatorValidationRules(): array
+    public static function getInvestigatorValidationRules(): array
     {
         return [
             'glycaemia' => [
@@ -73,7 +73,7 @@ class TEST_FDG_PET0 extends AbstractVisitRules
         ];
     }
 
-    public function getReviewerValidationRules(): array
+    public static function getReviewerValidationRules(): array
     {
         return [
             'comments' => [
@@ -83,7 +83,7 @@ class TEST_FDG_PET0 extends AbstractVisitRules
         ];
     }
 
-    public function getReviewerAdjudicationValidationRules(): array
+    public static function getReviewerAdjudicationValidationRules(): array
     {
         return [];
     }
