@@ -2,6 +2,7 @@
 
 namespace App\GaelO\UseCases\GetDicomsFile;
 
+use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\DicomStudyRepositoryInterface;
@@ -62,6 +63,9 @@ class GetDicomsFile
 
     private function checkAuthorization(int $currentUserId, int $visitId, string $role, string $studyName)
     {
+        if ($role === Constants::ROLE_MONITOR) {
+            throw new GaelOForbiddenException("Monitor can't donwload Dicom");
+        }
         $this->authorizationService->setUserId($currentUserId);
         $this->authorizationService->setVisitId($visitId);
         $this->authorizationService->setStudyName($studyName);
