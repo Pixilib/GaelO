@@ -3,7 +3,12 @@
 namespace Tests\Feature\TestInvestigatorForm;
 
 use App\GaelO\Constants\Constants;
+use App\Models\Patient;
 use App\Models\Review;
+use App\Models\Study;
+use App\Models\Visit;
+use App\Models\VisitGroup;
+use App\Models\VisitType;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\AuthorizationTools;
 use Tests\TestCase;
@@ -16,8 +21,14 @@ class UnlockInvestigatorFormTest extends TestCase
     {
         parent::setUp();
         $this->artisan('db:seed');
-        $this->review = Review::factory()->validated()->create();
-        $this->studyName = $this->review->visit->patient->study_name;
+
+        $study = Study::factory()->name('TEST')->create();
+        $patient = Patient::factory()->studyName($study->name)->create();
+        $visitGroup = VisitGroup::factory()->studyName($study->name)->name('FDG')->create();
+        $visitType  = VisitType::factory()->visitGroupId($visitGroup->id)->name('PET_0')->localFormNeeded()->create();
+        $this->visit = Visit::factory()->patientId($patient->id)->visitTypeId($visitType->id)->create();
+        $this->review = Review::factory()->visitId($this->visit->id)->studyName('TEST')->create();
+        $this->studyName = "TEST";
     }
 
     public function testUnlockInvestigatorForm()

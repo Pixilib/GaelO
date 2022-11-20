@@ -16,6 +16,7 @@ class ReviewFormService extends FormService
 {
 
     protected ReviewStatusRepositoryInterface $reviewStatusRepositoryInterface;
+    protected bool $local = false;
 
     public function __construct(
         VisitService $visitService,
