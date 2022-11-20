@@ -2,6 +2,7 @@
 
 namespace App\GaelO\Services\AuthorizationService;
 
+use App\GaelO\Constants\Constants;
 use App\GaelO\Interfaces\Repositories\DicomSeriesRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\DicomStudyRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\PatientRepositoryInterface;
@@ -158,7 +159,8 @@ class AuthorizationDicomWebService
         $studies[] = $this->originalStudyName;
 
         //Get User's Role
-        $availableRoles = $this->userRepositoryInterface->getUsersRoles($this->userId);
+        $allowedRoles =  [Constants::ROLE_INVESTIGATOR, Constants::ROLE_CONTROLLER, Constants::ROLE_REVIEWER, Constants::ROLE_SUPERVISOR];
+        $availableRoles = $this->userRepositoryInterface->getUsersRoles($this->userId, $allowedRoles);
         $userStudies = array_keys($availableRoles);
 
         return sizeOf(array_intersect($studies, $userStudies)) > 0;

@@ -299,6 +299,10 @@ class UserRepositoryTest extends TestCase
         $this->assertEquals(1, sizeof($rolesAnswer[$study2Name]));
         $this->assertEquals(2, sizeof($rolesAnswer[$study1Name]));
 
+        //Test using a filter for a specific role
+        $rolesAnswer = $this->userRepository->getUsersRoles($user->id, [Constants::ROLE_SUPERVISOR]);
+        $this->assertFalse(array_key_exists($study2Name, $rolesAnswer));
+
     }
 
     public function testGetUserRolesInStudy(){

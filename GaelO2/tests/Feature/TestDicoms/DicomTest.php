@@ -23,7 +23,7 @@ class DicomTest extends TestCase
 
     }
 
-    public function testGetOrthancZip(){
+    public function testGetDicomZipOfVisit(){
         $this->markTestSkipped('Needs Orthanc To Be Tested');
         AuthorizationTools::addRoleToUser(1, Constants::ROLE_INVESTIGATOR, $this->study->name);
         $answer = $this->get('api/visits/1/dicoms/file?role=Investigator&studyName='.$this->studyName);
@@ -31,7 +31,15 @@ class DicomTest extends TestCase
 
     }
 
-    public function testGetOrthancShouldFailBeacauseNoRole(){
+    public function testGetDicomZipOfVisitShouldFailForMonitor(){
+        $this->markTestSkipped('Needs Orthanc To Be Tested');
+        AuthorizationTools::addRoleToUser(1, Constants::ROLE_MONITOR, $this->study->name);
+        $answer = $this->get('api/visits/1/dicoms/file?role=Investigator&studyName='.$this->studyName);
+        $answer->assertStatus(200);
+
+    }
+
+    public function testGetDicomZipOfVisitShouldFailBeacauseNoRole(){
         $this->markTestSkipped('Needs Orthanc To Be Tested');
         $answer = $this->get('api/visits/1/dicoms/file?role=Investigator&studyName='.$this->studyName);
         $answer->assertStatus(403);
