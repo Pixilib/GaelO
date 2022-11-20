@@ -64,10 +64,10 @@ abstract class FormService
         $this->abstractVisitRules->setVisitContext($this->visitContext);
     }
 
-    abstract function saveForm(array $data, bool $validated, ?bool $adjudication = null): int;
-    abstract function updateForm(int $reviewId, array $data, bool $validated);
-    abstract function unlockForm(int $reviewId);
-    abstract function deleteForm(int $reviewId);
+    public abstract function saveForm(array $data, bool $validated, ?bool $adjudication = null): int;
+    public abstract function updateForm(int $reviewId, array $data, bool $validated);
+    public abstract function unlockForm(int $reviewId);
+    public abstract function deleteForm(int $reviewId);
 
     public function attachFile(array $reviewEntity, string $key, string $filename, string $mimeType, $binaryData): void
     {
