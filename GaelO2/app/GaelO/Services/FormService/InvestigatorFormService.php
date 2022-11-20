@@ -44,7 +44,7 @@ class InvestigatorFormService extends FormService
     {
         $this->reviewRepositoryInterface->unlockReview($reviewId);
         //Make investigator form not done
-        $this->visitService->updateInvestigatorFormStatus(Constants::INVESTIGATOR_FORM_DRAFT);
+        $this->updateVisitInvestigatorFormStatus(false);
         $this->unlockQcIfNeeded();
     }
 

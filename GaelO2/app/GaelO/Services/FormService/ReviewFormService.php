@@ -27,7 +27,6 @@ class ReviewFormService extends FormService
     ) {
         parent::__construct($reviewRepositoryInterface, $visitService, $mailServices, $frameworkInterface);
         $this->reviewStatusRepositoryInterface = $reviewStatusRepositoryInterface;
-        $this->local = false;
     }
 
     public function saveForm(array $data, bool $validated, ?bool $adjudication = null): int
