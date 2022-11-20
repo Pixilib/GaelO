@@ -6,7 +6,7 @@ use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
 use App\GaelO\Services\AuthorizationService\AuthorizationVisitService;
-use App\GaelO\Services\GaelOStudiesService\AbstractGaelOStudy;
+use App\GaelO\Services\FormService\InvestigatorFormService;
 use Exception;
 
 class GetAssociatedDataForInvestigator
@@ -14,11 +14,13 @@ class GetAssociatedDataForInvestigator
 
     private AuthorizationVisitService $authorizationVisitService;
     private VisitRepositoryInterface $visitRepositoryInterface;
+    private InvestigatorFormService $investigatorFormService;
 
-    public function __construct(AuthorizationVisitService $authorizationVisitService, VisitRepositoryInterface $visitRepositoryInterface)
+    public function __construct(AuthorizationVisitService $authorizationVisitService, VisitRepositoryInterface $visitRepositoryInterface, InvestigatorFormService $investigatorFormService)
     {
         $this->authorizationVisitService = $authorizationVisitService;
         $this->visitRepositoryInterface = $visitRepositoryInterface;
+        $this->investigatorFormService = $investigatorFormService;
     }
 
     public function execute(GetAssociatedDataForInvestigatorRequest $getAssociatedDataForInvestigatorRequest, GetAssociatedDataForInvestigatorResponse $getAssociatedDataForInvestigatorResponse)
@@ -33,9 +35,9 @@ class GetAssociatedDataForInvestigator
 
             $this->checkAuthorization($currentUserId, $visitId, $studyName, $role);
 
-            $visitGroup = $visitContext['visit_type']['visit_group']['name'];
-            $visitType = $visitContext['visit_type']['name'];
-            $associatedData = AbstractGaelOStudy::getSpecificStudiesRules($studyName, $visitGroup, $visitType)->getAssociatedDataForInvestigatorForm();
+            $this->investigatorFormService->setCurrentUserId($currentUserId);
+            $this->investigatorFormService->setVisitContextAndStudy($visitContext, $studyName);
+            $associatedData = $this->investigatorFormService->getVisitRules()->getAssociatedDataForInvestigatorForm();
 
             $getAssociatedDataForInvestigatorResponse->body =  $associatedData;
             $getAssociatedDataForInvestigatorResponse->status = 200;

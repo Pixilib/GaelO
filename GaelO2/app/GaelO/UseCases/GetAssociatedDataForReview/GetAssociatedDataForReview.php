@@ -7,7 +7,7 @@ use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
 use App\GaelO\Services\AuthorizationService\AuthorizationVisitService;
-use App\GaelO\Services\GaelOStudiesService\AbstractGaelOStudy;
+use App\GaelO\Services\FormService\ReviewFormService;
 use Exception;
 
 class GetAssociatedDataForReview
@@ -15,11 +15,16 @@ class GetAssociatedDataForReview
 
     private AuthorizationVisitService $authorizationVisitService;
     private VisitRepositoryInterface $visitRepositoryInterface;
+    private ReviewFormService $reviewFormService;
 
-    public function __construct(AuthorizationVisitService $authorizationVisitService, VisitRepositoryInterface $visitRepositoryInterface)
+    public function __construct(
+        AuthorizationVisitService $authorizationVisitService, 
+        VisitRepositoryInterface $visitRepositoryInterface,
+        ReviewFormService $reviewFormService)
     {
         $this->authorizationVisitService = $authorizationVisitService;
         $this->visitRepositoryInterface = $visitRepositoryInterface;
+        $this->reviewFormService = $reviewFormService;
     }
 
     public function execute(GetAssociatedDataForReviewRequest $getAssociatedDataForReviewRequest, GetAssociatedDataForReviewResponse $getAssociatedDataForReviewResponse)
@@ -33,9 +38,10 @@ class GetAssociatedDataForReview
 
             $visitContext = $this->visitRepositoryInterface->getVisitWithContextAndReviewStatus($visitId, $studyName);
 
-            $visitGroup = $visitContext['visit_type']['visit_group']['name'];
-            $visitType = $visitContext['visit_type']['name'];
-            $associatedData = AbstractGaelOStudy::getSpecificStudiesRules($studyName, $visitGroup, $visitType)->getAssociatedDataForReviewForm();
+            $this->reviewFormService->setCurrentUserId($currentUserId);
+            $this->reviewFormService->setVisitContextAndStudy($visitContext, $studyName);
+            //TODO Manque le statut sur l'adjudication ?
+            $associatedData = $this->reviewFormService->getVisitRules()->getAssociatedDataForReviewForm();
 
             $getAssociatedDataForReviewResponse->body = $associatedData;
             $getAssociatedDataForReviewResponse->status = 200;

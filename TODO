@@ -5,6 +5,7 @@ Salim TODO :
   - mettre validation en variable d'instnace? 
 - Verifier qu'une PJ d'un investigateur et telechargeable par un reviewer (et chemin pour le faire)=> devrait etre ok en backend voir comment faire en frontend
 - Optimiser l'utilisation des authorization service en injectant les data depuis le usecase (ou les rendre stateless) (dont visite, review...)
+- getAssociatedData for review form Manque le statut sur l'adjudication ? 
 
 --- Etudes ancillaires ---
 Export study data => Ne tient pas en compte du statut ancillaire ou non de l'etude a exporter 

@@ -113,4 +113,9 @@ abstract class FormService
         unset($reviewEntity['sent_files'][$key]);
         $this->reviewRepositoryInterface->updateReviewFile($reviewEntity['id'], $reviewEntity['sent_files']);
     }
+
+    public function getVisitRules() : AbstractVisitRules
+    {
+        return $this->abstractVisitRules;
+    }
 }
