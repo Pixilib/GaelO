@@ -27,7 +27,7 @@ class UnlockInvestigatorFormTest extends TestCase
         $visitGroup = VisitGroup::factory()->studyName($study->name)->name('FDG')->create();
         $visitType  = VisitType::factory()->visitGroupId($visitGroup->id)->name('PET_0')->localFormNeeded()->create();
         $this->visit = Visit::factory()->patientId($patient->id)->visitTypeId($visitType->id)->create();
-        $this->review = Review::factory()->visitId($this->visit->id)->studyName('TEST')->create();
+        $this->review = Review::factory()->visitId($this->visit->id)->validated()->studyName('TEST')->create();
         $this->studyName = "TEST";
     }
 
