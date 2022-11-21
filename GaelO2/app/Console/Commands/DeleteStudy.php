@@ -33,7 +33,7 @@ class DeleteStudy extends Command
      *
      * @var string
      */
-    protected $signature = 'study:delete {studyName : the study name to delete}';
+    protected $signature = 'gaelo:delete-study {studyName : the study name to delete}';
 
     /**
      * The console command description.
@@ -120,6 +120,12 @@ class DeleteStudy extends Command
 
             $dicomSeries = $this->getDicomSeriesOfVisits($visitIds);
 
+            $orthancIdArray = array_map(function ($seriesId) {
+                return $seriesId['orthanc_id'];
+            }, $dicomSeries);
+
+            $this->line(implode(" ", $orthancIdArray));
+
             $this->table(
                 ['orthanc_id'],
                 $dicomSeries
@@ -133,8 +139,6 @@ class DeleteStudy extends Command
             $this->deleteVisitGroupAndVisitType($studyName);
             $this->deletePatient($studyName);
             $studyEntity->forceDelete();
-            //SK TODO : Delete associated files (supprimer le repertoire de stockage de l'étude)
-            //SK TODO : Faire Deletion auto des ressources dans Orthanc?
             $this->info('The command was successful, delete Orthanc Series and Associated Form Data !');
         }
 
