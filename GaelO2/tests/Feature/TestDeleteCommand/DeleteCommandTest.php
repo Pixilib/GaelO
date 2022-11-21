@@ -39,7 +39,7 @@ class DeleteCommandTest extends TestCase
     public function testDeleteCommandShouldFailWrongStudyNameConfirmation()
     {
         $studyName = $this->study->name;
-        $this->artisan('study:delete ' . $studyName)->expectsQuestion('Warning : Please confirm study Name', 'WrongStudyName')
+        $this->artisan('gaelo:delete-study ' . $studyName)->expectsQuestion('Warning : Please confirm study Name', 'WrongStudyName')
             ->expectsOutput('Wrong study name, terminating');
     }
 
@@ -47,14 +47,14 @@ class DeleteCommandTest extends TestCase
     {
         $this->study->restore();
         $studyName = $this->study->name;
-        $this->artisan('study:delete ' . $studyName)->expectsQuestion('Warning : Please confirm study Name', $studyName)
+        $this->artisan('gaelo:delete-study ' . $studyName)->expectsQuestion('Warning : Please confirm study Name', $studyName)
             ->expectsOutput('Study is not soft deleted, terminating');
     }
 
     public function testDeleteCommand()
     {
         $studyName = $this->study->name;
-        $this->artisan('study:delete ' . $studyName)->expectsQuestion('Warning : Please confirm study Name', $studyName)
+        $this->artisan('gaelo:delete-study ' . $studyName)->expectsQuestion('Warning : Please confirm study Name', $studyName)
             ->expectsQuestion('Warning : This CANNOT be undone, do you wish to continue?', "\r\n")
             ->expectsTable(['orthanc_id'], [[$this->dicomSeries->orthanc_id]])
             ->expectsOutput('The command was successful, delete Orthanc Series and Associated Form Data !');
@@ -64,7 +64,7 @@ class DeleteCommandTest extends TestCase
     {
         $studyName = $this->study->name;
         Study::factory()->ancillaryOf($studyName)->create();
-        $this->artisan('study:delete ' . $studyName)->expectsQuestion('Warning : Please confirm study Name', $studyName)
+        $this->artisan('gaelo:delete-study ' . $studyName)->expectsQuestion('Warning : Please confirm study Name', $studyName)
         ->expectsOutput('Delete all ancilaries studies first');
     }
 }
