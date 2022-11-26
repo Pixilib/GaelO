@@ -21,5 +21,6 @@
  */
 define('GAELO_VERSION', '1.11.0');
 header('content-type: text/html; charset=utf-8');
+header("X-Robots-Tag: noindex, nofollow");
 require_once('vendor/autoload.php');
 require 'router.php';
