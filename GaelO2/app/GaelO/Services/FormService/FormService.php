@@ -78,7 +78,9 @@ abstract class FormService
         if ($reviewEntity['local']) {
             $keyMimeArray = $this->abstractVisitRules->getAllowedKeyAndMimeTypeInvestigator();
         } else {
-            $keyMimeArray = $this->abstractVisitRules->getAllowedKeyAndMimeTypeReviewer();
+            $isAdjudication = $reviewEntity['adjudication'];
+            if ($isAdjudication) $keyMimeArray = $this->abstractVisitRules->getAllowedKeyAndMimeTypeAdjudication();
+            else $keyMimeArray = $this->abstractVisitRules->getAllowedKeyAndMimeTypeReviewer();
         }
 
         $expectedMime = $keyMimeArray[$key];
@@ -114,7 +116,7 @@ abstract class FormService
         $this->reviewRepositoryInterface->updateReviewFile($reviewEntity['id'], $reviewEntity['sent_files']);
     }
 
-    public function getVisitRules() : AbstractVisitRules
+    public function getVisitRules(): AbstractVisitRules
     {
         return $this->abstractVisitRules;
     }

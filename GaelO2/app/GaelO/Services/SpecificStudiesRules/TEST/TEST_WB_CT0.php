@@ -54,12 +54,17 @@ class TEST_WB_CT0 extends AbstractVisitRules
         return null;
     }
 
-    public function getAllowedKeyAndMimeTypeInvestigator(): array
+    public static function getAllowedKeyAndMimeTypeInvestigator(): array
     {
         return [];
     }
 
-    public function getAllowedKeyAndMimeTypeReviewer(): array
+    public static function getAllowedKeyAndMimeTypeReviewer(): array
+    {
+        return [];
+    }
+
+    public static function getAllowedKeyAndMimeTypeAdjudication(): array
     {
         return [];
     }

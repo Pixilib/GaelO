@@ -27,6 +27,12 @@ abstract class AbstractVisitRules
 
     abstract public static function getReviewerAdjudicationValidationRules(): array;
 
+    abstract public static function getAllowedKeyAndMimeTypeInvestigator(): array;
+
+    abstract public static function getAllowedKeyAndMimeTypeReviewer(): array;
+
+    abstract public static function getAllowedKeyAndMimeTypeAdjudication(): array;
+  
     public function getInvestigatorInputNames(): array
     {
         $rules = $this::getInvestigatorValidationRules();
@@ -128,12 +134,6 @@ abstract class AbstractVisitRules
      */
     abstract public function getReviewConclusion(): ?string;
 
-    abstract public function getAllowedKeyAndMimeTypeInvestigator(): array;
-
-    abstract public function getAllowedKeyAndMimeTypeReviewer(): array;
-
-    abstract public function getTargetLesion(): ?array;
-
     /**
      * Return custom data should be usefull to generate investigator form
      * Empty array by default, to be override in specific models
@@ -151,6 +151,8 @@ abstract class AbstractVisitRules
     {
         return [];
     }
+
+    abstract public function getTargetLesion(): ?array;
 
     public function getReviewAvailability(string $reviewStatus): bool
     {

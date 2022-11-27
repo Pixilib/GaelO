@@ -105,12 +105,17 @@ class TEST_FDG_PET0 extends AbstractVisitRules
         return $this->reviewConclusion;
     }
 
-    public function getAllowedKeyAndMimeTypeInvestigator(): array
+    public static function getAllowedKeyAndMimeTypeInvestigator(): array
     {
         return ['41' => MimeAdapter::getMimeFromExtension('csv'), '25' => MimeAdapter::getMimeFromExtension('zip')];
     }
 
-    public function getAllowedKeyAndMimeTypeReviewer(): array
+    public static function getAllowedKeyAndMimeTypeReviewer(): array
+    {
+        return [];
+    }
+
+    public static function getAllowedKeyAndMimeTypeAdjudication(): array
     {
         return [];
     }
