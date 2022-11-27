@@ -1,21 +1,15 @@
 Salim TODO :
 - Voir si unlock investigator form dans le repository a pas plus sa place dans une transaction? 
-- Voir pb creation concurrent de review
-- Abstract visit Rules
-  - getReviewStatus des visit rule pas optimal (car depend état local des données du form)
-  - mettre validation en variable d'instnace? 
-- Verifier qu'une PJ d'un investigateur et telechargeable par un reviewer (et chemin pour le faire)=> devrait etre ok en backend voir comment faire en frontend
-  
-
-- Optimiser l'utilisation des authorization service en injectant les data depuis le usecase (ou les rendre stateless) (dont visite, review...)
 - Lock db (pb de double soumission) -> mettre les save / modify de review das une transaction avec un lockForUpdate ?
-- Deferer le statut de besoin de QC et de review dans le default study rule pour permettre de prendre la main dessus dans des études particulieres (ex review selon donnée de investigateur) ? A refrechir (on peut changer le statut lors enregistrement inv form)
+- Verifier qu'une PJ d'un investigateur et telechargeable par un reviewer (et chemin pour le faire)=> devrait etre ok en backend voir comment faire en frontend
+- Optimiser l'utilisation des authorization service en injectant les data depuis le usecase (ou les rendre stateless) (dont visite, review...)
 
 --- Etudes ancillaires ---
 Export study data => Ne tient pas en compte du statut ancillaire ou non de l'etude a exporter 
   - La methode getVisitsInStudy dans le repository visite ne tient pas compte des études ancillaire (a squizzer?) 
 Api Reminder à voir avec Emilie (pas de relance d'envoi d'imagerie depuis une étude ancillaire, probablement à occulter en front seulement)
 Ne doit pas pouvoir faire les relance d'upload => Voir avec Emilie (probablement passer les info de study dans un contexte)
+notification de l'uplaoder à review conclusion a skipper sur étude ancillaire
 --- /Etudes ancillaires ---
 
 **** Tests ***
