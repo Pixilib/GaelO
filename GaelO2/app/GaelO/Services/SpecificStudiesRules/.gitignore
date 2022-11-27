@@ -1,3 +1,4 @@
-*
-!.gitignore
-!TEST/*
+/**
+!/.gitignore
+!/TEST
+!/TEST/*.php
