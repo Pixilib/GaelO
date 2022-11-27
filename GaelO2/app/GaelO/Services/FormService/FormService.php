@@ -63,6 +63,7 @@ abstract class FormService
         $this->abstractVisitRules = AbstractGaelOStudy::getSpecificStudiesRules($this->studyName, $visitGroup, $this->visitType);
         //SK a revoir si c'est une bonne idée, le visit context sert a avoir la decision etc (objet a part?)
         $this->abstractVisitRules->setVisitContext($this->visitContext);
+        $this->abstractVisitRules->setLocalForm($this->local);
     }
 
     public abstract function saveForm(array $data, bool $validated, ?bool $adjudication = null): int;

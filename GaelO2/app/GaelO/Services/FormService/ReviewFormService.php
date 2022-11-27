@@ -32,7 +32,6 @@ class ReviewFormService extends FormService
     public function saveForm(array $data, bool $validated, ?bool $adjudication = null): int
     {
         $this->abstractVisitRules->setFormData($data);
-        $this->abstractVisitRules->setLocalForm(false);
         $this->abstractVisitRules->setAdjudication($adjudication);
         $validity = $this->abstractVisitRules->checkReviewFormValidity($validated);
         if (!$validity) {
@@ -51,7 +50,6 @@ class ReviewFormService extends FormService
         $reviewEntity = $this->reviewRepositoryInterface->find($reviewId);
         //Pass validation
         $this->abstractVisitRules->setFormData($data);
-        $this->abstractVisitRules->setLocalForm(false);
         $this->abstractVisitRules->setAdjudication($reviewEntity['adjudication']);
         $validity = $this->abstractVisitRules->checkReviewFormValidity($validated, $reviewEntity['adjudication']);
         if (!$validity) {
@@ -75,6 +73,8 @@ class ReviewFormService extends FormService
 
     public function unlockForm(int $reviewId)
     {
+        $reviewEntity = $this->reviewRepositoryInterface->find($reviewId);
+        $this->abstractVisitRules->setAdjudication($reviewEntity['adjudication']);
         $this->reviewRepositoryInterface->unlockReview($reviewId);
         $this->doSpecificReviewDecisions();
     }
