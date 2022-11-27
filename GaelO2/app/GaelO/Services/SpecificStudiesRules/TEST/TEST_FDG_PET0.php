@@ -3,21 +3,12 @@
 namespace App\GaelO\Services\SpecificStudiesRules\TEST;
 
 use App\GaelO\Adapters\MimeAdapter;
-use App\GaelO\Constants\Constants;
-use App\GaelO\Interfaces\Repositories\ReviewRepositoryInterface;
 use App\GaelO\Services\GaelOStudiesService\AbstractVisitRules;
 
 class TEST_FDG_PET0 extends AbstractVisitRules
 {
-    private $reviewConclusion = null;
 
-    private ReviewRepositoryInterface $reviewRepositoryInterface;
     protected string $studyName = "TEST";
-
-    public function __construct(ReviewRepositoryInterface $reviewRepositoryInterface)
-    {
-        $this->reviewRepositoryInterface = $reviewRepositoryInterface;
-    }
 
     public static function getInvestigatorValidationRules(): array
     {
@@ -88,23 +79,6 @@ class TEST_FDG_PET0 extends AbstractVisitRules
         return [];
     }
 
-    public function getReviewStatus(): string
-    {
-        //Fetch visit validated review
-        $reviews = $this->reviewRepositoryInterface->getReviewsForStudyVisit($this->studyName, $this->visitContext['id'], true);
-        if(sizeof($reviews) > 0){
-            $this->reviewConclusion = "Done";
-            return Constants::REVIEW_STATUS_DONE;
-        }else{
-            return Constants::REVIEW_STATUS_NOT_DONE;
-        }
-    }
-
-    public function getReviewConclusion(): ?string
-    {
-        return $this->reviewConclusion;
-    }
-
     public static function getAllowedKeyAndMimeTypeInvestigator(): array
     {
         return ['41' => MimeAdapter::getMimeFromExtension('csv'), '25' => MimeAdapter::getMimeFromExtension('zip')];
@@ -120,22 +94,9 @@ class TEST_FDG_PET0 extends AbstractVisitRules
         return [];
     }
 
-    public function getTargetLesion(): ?array
+    public static function getVisitDecisionClass(): string
     {
-        return null;
+        return TEST_FDG_PET0_DECISION::class;
     }
 
-    public function getAssociatedDataForInvestigatorForm(): array
-    {
-        return [
-            'LastChemo' => '01/01/2021'
-        ];
-    }
-
-    public function getAssociatedDataForReviewForm(): array
-    {
-        return [
-            'Radiotherapy' => false
-        ];
-    }
 }

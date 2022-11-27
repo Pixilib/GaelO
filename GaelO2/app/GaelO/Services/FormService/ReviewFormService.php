@@ -32,6 +32,7 @@ class ReviewFormService extends FormService
     public function saveForm(array $data, bool $validated, ?bool $adjudication = null): int
     {
         $this->abstractVisitRules->setFormData($data);
+        $this->abstractVisitRules->setLocalForm(false);
         $this->abstractVisitRules->setAdjudication($adjudication);
         $validity = $this->abstractVisitRules->checkReviewFormValidity($validated);
         if (!$validity) {
@@ -50,6 +51,7 @@ class ReviewFormService extends FormService
         $reviewEntity = $this->reviewRepositoryInterface->find($reviewId);
         //Pass validation
         $this->abstractVisitRules->setFormData($data);
+        $this->abstractVisitRules->setLocalForm(false);
         $this->abstractVisitRules->setAdjudication($reviewEntity['adjudication']);
         $validity = $this->abstractVisitRules->checkReviewFormValidity($validated, $reviewEntity['adjudication']);
         if (!$validity) {
@@ -79,13 +81,14 @@ class ReviewFormService extends FormService
 
     private function doSpecificReviewDecisions()
     {
-        $reviewStatus = $this->abstractVisitRules->getReviewStatus();
-        $availability = $this->abstractVisitRules->getReviewAvailability($reviewStatus);
-        $conclusion = $this->abstractVisitRules->getReviewConclusion();
+        $visitDecision = $this->abstractVisitRules->getVisitDecisionObject();
+        $reviewStatus = $visitDecision->getReviewStatus();
+        $availability = $visitDecision->getReviewAvailability($reviewStatus);
+        $conclusion = $visitDecision->getReviewConclusion();
         $targetLesions = null;
 
         if ($reviewStatus === Constants::REVIEW_STATUS_DONE) {
-            $targetLesions = $this->abstractVisitRules->getTargetLesion();
+            $targetLesions = $visitDecision->getTargetLesion();
         }
 
         if ($reviewStatus === Constants::REVIEW_STATUS_NOT_DONE && $conclusion !== null) {

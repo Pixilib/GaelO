@@ -2,20 +2,12 @@
 
 namespace App\GaelO\Services\SpecificStudiesRules\TEST;
 
-use App\GaelO\Constants\Constants;
-use App\GaelO\Interfaces\Repositories\ReviewRepositoryInterface;
 use App\GaelO\Services\GaelOStudiesService\AbstractVisitRules;
 
 class TEST_WB_CT0 extends AbstractVisitRules
 {
 
     protected string $studyName = "TEST";
-    private ReviewRepositoryInterface $reviewRepositoryInterface;
-
-    public function __construct(ReviewRepositoryInterface $reviewRepositoryInterface)
-    {
-        $this->reviewRepositoryInterface = $reviewRepositoryInterface;
-    }
 
     public static function getInvestigatorValidationRules(): array
     {
@@ -42,18 +34,6 @@ class TEST_WB_CT0 extends AbstractVisitRules
         return [];
     }
 
-    public function getReviewStatus(): string
-    {
-        //Fetch visit validated review
-        $reviews = $this->reviewRepositoryInterface->getReviewsForStudyVisit($this->studyName, $this->visitContext['id'], true);
-        return sizeof($reviews) > 0 ? Constants::REVIEW_STATUS_DONE : Constants::REVIEW_STATUS_NOT_DONE;
-    }
-
-    public function getReviewConclusion(): ?string
-    {
-        return null;
-    }
-
     public static function getAllowedKeyAndMimeTypeInvestigator(): array
     {
         return [];
@@ -69,8 +49,8 @@ class TEST_WB_CT0 extends AbstractVisitRules
         return [];
     }
 
-    public function getTargetLesion(): ?array
+    public static function getVisitDecisionClass(): string
     {
-        return null;
+        return TEST_FDG_PET0_DECISION::class;
     }
 }

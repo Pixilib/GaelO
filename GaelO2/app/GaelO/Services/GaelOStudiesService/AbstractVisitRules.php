@@ -2,8 +2,8 @@
 
 namespace App\GaelO\Services\GaelOStudiesService;
 
+use App\GaelO\Adapters\FrameworkAdapter;
 use App\GaelO\Adapters\ValidatorAdapter;
-use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOException;
 
 abstract class AbstractVisitRules
@@ -17,6 +17,7 @@ abstract class AbstractVisitRules
     const RULE_DATE = "date";
 
     protected array $data = [];
+    protected bool $isLocal;
     protected bool $adjudication;
     protected string $studyName;
     protected array $visitContext;
@@ -32,7 +33,7 @@ abstract class AbstractVisitRules
     abstract public static function getAllowedKeyAndMimeTypeReviewer(): array;
 
     abstract public static function getAllowedKeyAndMimeTypeAdjudication(): array;
-  
+
     public function getInvestigatorInputNames(): array
     {
         $rules = $this::getInvestigatorValidationRules();
@@ -57,7 +58,13 @@ abstract class AbstractVisitRules
         $this->data = $data;
     }
 
-    public function setAdjudication(bool $adjudication){
+    public function setLocalForm(bool $isLocal)
+    {
+        $this->isLocal = $isLocal;
+    }
+
+    public function setAdjudication(bool $adjudication)
+    {
         $this->adjudication = $adjudication;
     }
 
@@ -75,12 +82,12 @@ abstract class AbstractVisitRules
         $validatorAdapter = new ValidatorAdapter($validated);
         $reviewerRules = [];
 
-        if($this->adjudication) {
+        if ($this->adjudication) {
             $reviewerRules = $this::getReviewerAdjudicationValidationRules();
-        }else {
+        } else {
             $reviewerRules = $this::getReviewerValidationRules();
         }
-        
+
         $this->fillValidator($reviewerRules, $validatorAdapter);
         return $validatorAdapter->validate($this->data);
     }
@@ -118,50 +125,17 @@ abstract class AbstractVisitRules
         }
     }
 
-    public function getPatientId()
+    abstract static public function getVisitDecisionClass(): string;
+
+    public function getVisitDecisionObject(): AbstractVisitDecisions
     {
-        return $this->visitContext['patient_id'];
-    }
-
-    /**
-     * Must return the review status for each action on review (send, delete, unlock), 
-     * needs to handle backward and forward
-     */
-    abstract public function getReviewStatus(): string;
-
-    /**
-     * Return the conclusion value, must return null if review status is not done
-     */
-    abstract public function getReviewConclusion(): ?string;
-
-    /**
-     * Return custom data should be usefull to generate investigator form
-     * Empty array by default, to be override in specific models
-     */
-    public function getAssociatedDataForInvestigatorForm(): array
-    {
-        return [];
-    }
-
-    /**
-     * Return custom data should be usefull to generate review form
-     * Empty array by default, to be override in specific models
-     */
-    public function getAssociatedDataForReviewForm(): array
-    {
-        return [];
-    }
-
-    abstract public function getTargetLesion(): ?array;
-
-    public function getReviewAvailability(string $reviewStatus): bool
-    {
-        if ($reviewStatus === Constants::REVIEW_STATUS_DONE) {
-            //If Done reached make the review unavailable for review
-            return false;
-        } else {
-            //Needed in case of deletion of a review (even if true by default initialy, need to come back if deletion)
-            return true;
-        }
+        $className =  $this->getVisitDecisionClass();
+        $visitDecisionObject = FrameworkAdapter::make($className);
+        $visitDecisionObject->setVisitContext($this->visitContext);
+        $visitDecisionObject->setFormData($this->data);
+        $visitDecisionObject->setLocalForm($this->isLocal);
+        if (isset($this->adjudication)) $visitDecisionObject->setAdjudication($this->adjudication);
+        $visitDecisionObject->setStudyName($this->studyName);
+        return $visitDecisionObject;
     }
 }

@@ -6,6 +6,7 @@ use App\GaelO\Exceptions\GaelOBadRequestException;
 use App\GaelO\Interfaces\Adapters\FrameworkInterface;
 use App\GaelO\Interfaces\Repositories\ReviewRepositoryInterface;
 use App\GaelO\Services\GaelOStudiesService\AbstractGaelOStudy;
+use App\GaelO\Services\GaelOStudiesService\AbstractVisitDecisions;
 use App\GaelO\Services\GaelOStudiesService\AbstractVisitRules;
 use App\GaelO\Services\MailServices;
 use App\GaelO\Services\VisitService;
@@ -119,5 +120,10 @@ abstract class FormService
     public function getVisitRules(): AbstractVisitRules
     {
         return $this->abstractVisitRules;
+    }
+
+    public function getVisitDecisionObject() : AbstractVisitDecisions
+    {
+        return $this->abstractVisitRules->getVisitDecisionObject();
     }
 }
