@@ -78,7 +78,7 @@ class PatientTest extends TestCase
     }
 
 
-    public function testGetPatientReviewerShouldNotContainPatientCenter()
+    public function testGetPatientReviewerShouldNotContainPatientDetails()
     {
 
         $currentUserId = AuthorizationTools::actAsAdmin(false);
@@ -93,6 +93,12 @@ class PatientTest extends TestCase
 
         //centerCode should be hidden and center details not in payload
         $this->assertNull($answer['centerCode']);
+        $this->assertArrayNotHasKey('lastname', $answer);
+        $this->assertArrayNotHasKey('firstname', $answer);
+        $this->assertArrayNotHasKey('birthYear', $answer);
+        $this->assertArrayNotHasKey('birthDay', $answer);
+        $this->assertArrayNotHasKey('birthMonth', $answer);
+        $this->assertArrayNotHasKey('gender', $answer);
         $this->assertArrayNotHasKey('centerName', $answer);
         $this->assertArrayNotHasKey('countryCode', $answer);
     }
