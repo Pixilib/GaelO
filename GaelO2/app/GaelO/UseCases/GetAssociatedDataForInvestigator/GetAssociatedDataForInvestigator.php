@@ -37,7 +37,7 @@ class GetAssociatedDataForInvestigator
 
             $this->investigatorFormService->setCurrentUserId($currentUserId);
             $this->investigatorFormService->setVisitContextAndStudy($visitContext, $studyName);
-            $associatedData = $this->investigatorFormService->getVisitRules()->getAssociatedDataForInvestigatorForm();
+            $associatedData = $this->investigatorFormService->getVisitDecisionObject()->getAssociatedDataForInvestigatorForm();
 
             $getAssociatedDataForInvestigatorResponse->body =  $associatedData;
             $getAssociatedDataForInvestigatorResponse->status = 200;

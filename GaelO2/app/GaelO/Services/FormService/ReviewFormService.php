@@ -73,19 +73,22 @@ class ReviewFormService extends FormService
 
     public function unlockForm(int $reviewId)
     {
+        $reviewEntity = $this->reviewRepositoryInterface->find($reviewId);
+        $this->abstractVisitRules->setAdjudication($reviewEntity['adjudication']);
         $this->reviewRepositoryInterface->unlockReview($reviewId);
         $this->doSpecificReviewDecisions();
     }
 
     private function doSpecificReviewDecisions()
     {
-        $reviewStatus = $this->abstractVisitRules->getReviewStatus();
-        $availability = $this->abstractVisitRules->getReviewAvailability($reviewStatus);
-        $conclusion = $this->abstractVisitRules->getReviewConclusion();
+        $visitDecision = $this->abstractVisitRules->getVisitDecisionObject();
+        $reviewStatus = $visitDecision->getReviewStatus();
+        $availability = $visitDecision->getReviewAvailability($reviewStatus);
+        $conclusion = $visitDecision->getReviewConclusion();
         $targetLesions = null;
 
         if ($reviewStatus === Constants::REVIEW_STATUS_DONE) {
-            $targetLesions = $this->abstractVisitRules->getTargetLesion();
+            $targetLesions = $visitDecision->getTargetLesion();
         }
 
         if ($reviewStatus === Constants::REVIEW_STATUS_NOT_DONE && $conclusion !== null) {

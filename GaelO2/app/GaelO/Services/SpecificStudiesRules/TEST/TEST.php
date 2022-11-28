@@ -69,7 +69,7 @@ class TEST extends AbstractGaelOStudy {
         67
     ];
 
-    public function getSpecificForm(string $visitGroupName, string $visitTypeName): String
+    public function getVisitRulesClass(string $visitGroupName, string $visitTypeName): String
     {
         $key = $visitGroupName.'_'.$visitTypeName;
         if($key === TEST_VISITS::PET0->value) return TEST_FDG_PET0::class;

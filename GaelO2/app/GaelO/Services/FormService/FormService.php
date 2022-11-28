@@ -6,6 +6,7 @@ use App\GaelO\Exceptions\GaelOBadRequestException;
 use App\GaelO\Interfaces\Adapters\FrameworkInterface;
 use App\GaelO\Interfaces\Repositories\ReviewRepositoryInterface;
 use App\GaelO\Services\GaelOStudiesService\AbstractGaelOStudy;
+use App\GaelO\Services\GaelOStudiesService\AbstractVisitDecisions;
 use App\GaelO\Services\GaelOStudiesService\AbstractVisitRules;
 use App\GaelO\Services\MailServices;
 use App\GaelO\Services\VisitService;
@@ -62,6 +63,7 @@ abstract class FormService
         $this->abstractVisitRules = AbstractGaelOStudy::getSpecificStudiesRules($this->studyName, $visitGroup, $this->visitType);
         //SK a revoir si c'est une bonne idée, le visit context sert a avoir la decision etc (objet a part?)
         $this->abstractVisitRules->setVisitContext($this->visitContext);
+        $this->abstractVisitRules->setLocalForm($this->local);
     }
 
     public abstract function saveForm(array $data, bool $validated, ?bool $adjudication = null): int;
@@ -119,5 +121,10 @@ abstract class FormService
     public function getVisitRules(): AbstractVisitRules
     {
         return $this->abstractVisitRules;
+    }
+
+    public function getVisitDecisionObject() : AbstractVisitDecisions
+    {
+        return $this->abstractVisitRules->getVisitDecisionObject();
     }
 }

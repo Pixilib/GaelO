@@ -41,7 +41,7 @@ class GetAssociatedDataForReview
             $this->reviewFormService->setCurrentUserId($currentUserId);
             $this->reviewFormService->setVisitContextAndStudy($visitContext, $studyName);
             //NB switch depending on adjudication should be decided in the function in visit rule (visit context is passed)
-            $associatedData = $this->reviewFormService->getVisitRules()->getAssociatedDataForReviewForm();
+            $associatedData = $this->reviewFormService->getVisitDecisionObject()->getAssociatedDataForReviewForm();
 
             $getAssociatedDataForReviewResponse->body = $associatedData;
             $getAssociatedDataForReviewResponse->status = 200;

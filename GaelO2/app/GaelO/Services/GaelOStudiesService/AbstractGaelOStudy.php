@@ -8,7 +8,7 @@ abstract class AbstractGaelOStudy
 {
     protected string $studyName;
 
-    public abstract function getSpecificForm(string $visitGroupName, string $visitTypeName): String;
+    public abstract function getVisitRulesClass(string $visitGroupName, string $visitTypeName): String;
 
     public function getCreatableVisitCalculator() : DefaultCreatableVisitCalculator {
         return FrameworkAdapter::make(DefaultCreatableVisitCalculator::class);
@@ -26,7 +26,7 @@ abstract class AbstractGaelOStudy
     public static function getSpecificStudiesRules(string $studyName, string $visitGroup, string $visitName): AbstractVisitRules
     {
         $studyObject = AbstractGaelOStudy::getSpecificStudyObject($studyName);
-        $specificObjectClass = $studyObject->getSpecificForm($visitGroup, $visitName);
+        $specificObjectClass = $studyObject->getVisitRulesClass($visitGroup, $visitName);
         return FrameworkAdapter::make($specificObjectClass);
     }
 }
