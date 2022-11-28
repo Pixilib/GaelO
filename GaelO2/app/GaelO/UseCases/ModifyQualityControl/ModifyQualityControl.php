@@ -53,7 +53,7 @@ class ModifyQualityControl
                 throw new GaelOForbiddenException("Should be called from original study");
             }
 
-            $this->checkAuthorization($currentUserId, $visitId, $studyName);
+            $this->checkAuthorization($currentUserId, $visitId, $studyName, $visitContext);
 
             if ($modifyQualityControlRequest->stateQc === Constants::QUALITY_CONTROL_ACCEPTED) {
                 if ($localFormNeeded && !$modifyQualityControlRequest->formQc) {
@@ -132,12 +132,13 @@ class ModifyQualityControl
         }
     }
 
-    private function checkAuthorization(int $userId, int $visitId, string $studyName): void
+    private function checkAuthorization(int $userId, int $visitId, string $studyName, array $visitContext): void
     {
         //Check user has controller role in the visit
         $this->authorizationVisitService->setUserId($userId);
         $this->authorizationVisitService->setVisitId($visitId);
         $this->authorizationVisitService->setStudyName($studyName);
+        $this->authorizationVisitService->setVisitContext($visitContext);
 
         if (!$this->authorizationVisitService->isVisitAllowed(Constants::ROLE_CONTROLLER)) {
             throw new GaelOForbiddenException();

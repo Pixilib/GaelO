@@ -55,8 +55,8 @@ class DeleteVisit
                 $currentUserId,
                 $role,
                 $visitId,
-                $qcStatus,
-                $studyName
+                $studyName,
+                $visitContext
             );
 
             $this->visitRepositoryInterface->delete($visitId);
@@ -88,8 +88,9 @@ class DeleteVisit
     }
 
 
-    public function checkAuthorization(int $userId, string $role, int $visitId, string $qcStatus, string $studyName)
+    public function checkAuthorization(int $userId, string $role, int $visitId, string $studyName, array $visitContext)
     {
+        $qcStatus = $visitContext['state_quality_control'];
 
         //This role only allowed for Investigator and Supervisor Roles
         if (!in_array($role, [Constants::ROLE_INVESTIGATOR, Constants::ROLE_SUPERVISOR])) {
@@ -104,6 +105,7 @@ class DeleteVisit
         $this->authorizationVisitService->setUserId($userId);
         $this->authorizationVisitService->setVisitId($visitId);
         $this->authorizationVisitService->setStudyName($studyName);
+        $this->authorizationVisitService->setVisitContext($visitContext);
 
         if (!$this->authorizationVisitService->isVisitAllowed($role)) {
             throw new GaelOForbiddenException();

@@ -5,7 +5,6 @@ namespace App\GaelO\UseCases\UnlockInvestigatorForm;
 use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOBadRequestException;
-use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\ReviewRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
@@ -50,16 +49,15 @@ class UnlockInvestigatorForm
             }
 
             $visitContext = $this->visitRepositoryInterface->getVisitContext($unlockInvestigatorFormRequest->visitId);
-
             $studyName = $visitContext['patient']['study_name'];
             $visitId = $visitContext['id'];
             $currentUserId = $unlockInvestigatorFormRequest->currentUserId;
 
-            if($unlockInvestigatorFormRequest->studyName !== $studyName){
+            if ($unlockInvestigatorFormRequest->studyName !== $studyName) {
                 throw new GaelOForbiddenException("Should be called from the original study");
             }
 
-            $this->checkAuthorization($currentUserId, $visitId, $visitContext['state_quality_control'], $studyName);
+            $this->checkAuthorization($currentUserId, $visitId,  $studyName, $visitContext);
 
             $investigatorFormEntity = $this->reviewRepositoryInterface->getInvestigatorForm($visitId, false);
 
@@ -111,11 +109,13 @@ class UnlockInvestigatorForm
         }
     }
 
-    public function checkAuthorization(int $currentUserId, int $visitId, string $visitQcStatus, string $studyName)
+    public function checkAuthorization(int $currentUserId, int $visitId, string $studyName, array $visitContext)
     {
+        $visitQcStatus = $visitContext['state_quality_control'];
         $this->authorizationVisitService->setUserId($currentUserId);
         $this->authorizationVisitService->setStudyName($studyName);
         $this->authorizationVisitService->setVisitId($visitId);
+        $this->authorizationVisitService->setVisitContext($visitContext);
 
         if (!$this->authorizationVisitService->isVisitAllowed(Constants::ROLE_SUPERVISOR) || in_array($visitQcStatus, [Constants::QUALITY_CONTROL_ACCEPTED, Constants::QUALITY_CONTROL_REFUSED])) {
             throw new GaelOForbiddenException();

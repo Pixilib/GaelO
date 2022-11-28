@@ -40,7 +40,6 @@ class ModifyCorrectiveAction
             $visitGroupName = $visitContext['visit_type']['visit_group']['name'];
             $visitModality = $visitContext['visit_type']['visit_group']['modality'];
             $stateInvestigatorForm = $visitContext['state_investigator_form'];
-            $currentQcStatus = $visitContext['state_quality_control'];
             $uploadStatus = $visitContext['upload_status'];
 
             //If a corrective action was done, check that relevant pieces were sent
@@ -56,10 +55,10 @@ class ModifyCorrectiveAction
                 }
             }
 
-            if($modifyCorrectiveActionRequest->studyName !== $studyName){
+            if ($modifyCorrectiveActionRequest->studyName !== $studyName) {
                 throw new GaelOForbiddenException("Should be called from original study");
             }
-            $this->checkAuthorization($modifyCorrectiveActionRequest->currentUserId, $modifyCorrectiveActionRequest->visitId, $currentQcStatus, $studyName);
+            $this->checkAuthorization($modifyCorrectiveActionRequest->currentUserId, $modifyCorrectiveActionRequest->visitId, $studyName, $visitContext);
 
             $this->visitRepositoryInterface->setCorrectiveAction(
                 $modifyCorrectiveActionRequest->visitId,
@@ -113,9 +112,9 @@ class ModifyCorrectiveAction
         }
     }
 
-    private function checkAuthorization(int $userId, int $visitId, string $currentQcStatus, string $studyName): void
+    private function checkAuthorization(int $userId, int $visitId, string $studyName, array $visitContext): void
     {
-
+        $currentQcStatus = $visitContext['state_quality_control'];
         if ($currentQcStatus !== Constants::QUALITY_CONTROL_CORRECTIVE_ACTION_ASKED) {
             throw new GaelOForbiddenException('Visit Not Awaiting Corrective Action');
         }
@@ -124,6 +123,7 @@ class ModifyCorrectiveAction
         $this->authorizationVisitService->setUserId($userId);
         $this->authorizationVisitService->setVisitId($visitId);
         $this->authorizationVisitService->setStudyName($studyName);
+        $this->authorizationVisitService->setVisitContext($visitContext);
 
         if (!$this->authorizationVisitService->isVisitAllowed(Constants::ROLE_INVESTIGATOR)) {
             throw new GaelOForbiddenException('Not allowed');

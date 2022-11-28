@@ -31,26 +31,25 @@ class GetVisit
             $studyName = $getVisitRequest->studyName;
             $role = $getVisitRequest->role;
 
-            $this->checkAuthorization($visitId, $getVisitRequest->currentUserId, $getVisitRequest->role, $studyName);
-
-            $visitEntity = $this->visitRepositoryInterface->getVisitWithContextAndReviewStatus($visitId, $studyName);
-
-            $responseEntity = VisitEntity::fillFromDBReponseArray($visitEntity);
+            $visitContext = $this->visitRepositoryInterface->getVisitWithContextAndReviewStatus($visitId, $studyName);
+            $this->checkAuthorization($visitId, $getVisitRequest->currentUserId, $getVisitRequest->role, $studyName, $visitContext);
+            
+            $responseEntity = VisitEntity::fillFromDBReponseArray($visitContext);
             $responseEntity->setVisitContext(
-                $visitEntity['visit_type']['visit_group'],
-                $visitEntity['visit_type']
+                $visitContext['visit_type']['visit_group'],
+                $visitContext['visit_type']
             );
 
-            $reviewStatus = $visitEntity['review_status']['review_status'];
+            $reviewStatus = $visitContext['review_status']['review_status'];
             //Allow visit conclusion and date only for supervisor
-            $reviewConclusionValue = (in_array($role, [Constants::ROLE_SUPERVISOR])) ? $visitEntity['review_status']['review_conclusion_value'] : null;
-            $reviewConclusionDate =  (in_array($role, [Constants::ROLE_SUPERVISOR])) ? $visitEntity['review_status']['review_conclusion_date'] : null;
+            $reviewConclusionValue = (in_array($role, [Constants::ROLE_SUPERVISOR])) ? $visitContext['review_status']['review_conclusion_value'] : null;
+            $reviewConclusionDate =  (in_array($role, [Constants::ROLE_SUPERVISOR])) ? $visitContext['review_status']['review_conclusion_date'] : null;
             //Target lesions are allowed also for reviewer
-            $targetLesions =  (in_array($role, [Constants::ROLE_REVIEWER, Constants::ROLE_SUPERVISOR])) ? $visitEntity['review_status']['target_lesions'] : null;
-            $reviewAvailable =  (in_array($role, [Constants::ROLE_REVIEWER, Constants::ROLE_SUPERVISOR])) ? $visitEntity['review_status']['review_available'] : null;
+            $targetLesions =  (in_array($role, [Constants::ROLE_REVIEWER, Constants::ROLE_SUPERVISOR])) ? $visitContext['review_status']['target_lesions'] : null;
+            $reviewAvailable =  (in_array($role, [Constants::ROLE_REVIEWER, Constants::ROLE_SUPERVISOR])) ? $visitContext['review_status']['review_available'] : null;
 
             $responseEntity->setReviewVisitStatus($reviewStatus, $reviewConclusionValue, $reviewConclusionDate, $targetLesions, $reviewAvailable);
-            $responseEntity->setCreatorDetails(UserEntity::fillOnlyUserIdentification($visitEntity['creator']));
+            $responseEntity->setCreatorDetails(UserEntity::fillOnlyUserIdentification($visitContext['creator']));
 
             $getVisitResponse->body = $responseEntity;
             $getVisitResponse->status = 200;
@@ -64,11 +63,12 @@ class GetVisit
         }
     }
 
-    private function checkAuthorization(int $visitId, int $userId, string $role, string $studyName)
+    private function checkAuthorization(int $visitId, int $userId, string $role, string $studyName, array $visitContext)
     {
         $this->authorizationVisitService->setUserId($userId);
         $this->authorizationVisitService->setStudyName($studyName);
         $this->authorizationVisitService->setVisitId($visitId);
+        $this->authorizationVisitService->setVisitContext($visitContext);
 
         if (!$this->authorizationVisitService->isVisitAllowed($role)) {
             throw new GaelOForbiddenException();

@@ -63,7 +63,7 @@ class DeleteInvestigatorForm
                 throw new GaelOForbiddenException("Should be called from same study than original study");
             }
 
-            $this->checkAuthorization($currentUserId, $visitId, $visitContext['state_quality_control'], $studyName);
+            $this->checkAuthorization($currentUserId, $visitId, $studyName, $visitContext);
 
             $this->inverstigatorFormService->setCurrentUserId($currentUserId);
             $this->inverstigatorFormService->setVisitContextAndStudy($visitContext, $studyName);
@@ -110,9 +110,9 @@ class DeleteInvestigatorForm
         }
     }
 
-    private function checkAuthorization(int $currentUserId, int $visitId, string $visitQcStatus, string $studyName)
+    private function checkAuthorization(int $currentUserId, int $visitId, string $studyName, array $visitContext)
     {
-
+        $visitQcStatus = $visitContext['state_quality_control'];
         $this->authorizationVisitService->setUserId($currentUserId);
         $this->authorizationVisitService->setVisitId($visitId);
         $this->authorizationVisitService->setStudyName($studyName);

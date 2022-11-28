@@ -12,16 +12,19 @@ class AuthorizationUserService
 
     private UserRepositoryInterface $userRepositoryInterface;
 
-    public function __construct( UserRepositoryInterface $userRepositoryInterface ) {
+    public function __construct(UserRepositoryInterface $userRepositoryInterface)
+    {
         $this->userRepositoryInterface = $userRepositoryInterface;
     }
 
-    private function fillUserData(){
-        if( !isset($this->userData) ) $this->userData = $this->userRepositoryInterface->find($this->userId);
+    private function fillUserData()
+    {
+        if (!isset($this->userData)) $this->userData = $this->userRepositoryInterface->find($this->userId);
     }
 
-    private function fillUserCenters(){
-        if( !isset($this->userCenters) ) $this->userCenters = $this->userRepositoryInterface->getAllUsersCenters($this->userId);
+    private function fillUserCenters()
+    {
+        if (!isset($this->userCenters)) $this->userCenters = $this->userRepositoryInterface->getAllUsersCenters($this->userId);
     }
 
     public function setUserId(int $userId)
@@ -35,7 +38,8 @@ class AuthorizationUserService
         return $this->userData['administrator'];
     }
 
-    public function isCenterAffiliatedToUser(int $center) : bool {
+    public function isCenterAffiliatedToUser(int $center): bool
+    {
         $this->fillUserCenters();
         return in_array($center, $this->userCenters);
     }
@@ -49,7 +53,6 @@ class AuthorizationUserService
     public function isOneOfRoleAllowed(array $requestedRole, string $studyName)
     {
         $availableRoles = $this->userRepositoryInterface->getUsersRolesInStudy($this->userId, $studyName);
-        return sizeof( array_intersect($requestedRole, $availableRoles) ) > 0 ? true : false ;
+        return sizeof(array_intersect($requestedRole, $availableRoles)) > 0 ? true : false;
     }
-
 }

@@ -57,7 +57,7 @@ class ReactivateDicomSeries
                 throw new GaelOForbiddenException();
             }
 
-            $this->checkAuthorization($currentUserId, $visitId, $visitContext['state_quality_control'], $role, $studyName);
+            $this->checkAuthorization($currentUserId, $visitId, $role, $studyName, $visitContext);
 
             $this->dicomSeriesRepositoryInterface->reactivateSeries($seriesInstanceUID);
 
@@ -86,8 +86,9 @@ class ReactivateDicomSeries
         }
     }
 
-    private function checkAuthorization(int $userId, int $visitId, string $qcStatus, string $role, string $studyName): void
+    private function checkAuthorization(int $userId, int $visitId, string $role, string $studyName, array $visitContext): void
     {
+        $qcStatus = $visitContext['state_quality_control'];
 
         //If QC is done, can't reactivate series
         if (in_array($qcStatus, [Constants::QUALITY_CONTROL_ACCEPTED, Constants::QUALITY_CONTROL_REFUSED, Constants::QUALITY_CONTROL_NOT_NEEDED])) {
@@ -101,6 +102,7 @@ class ReactivateDicomSeries
         $this->authorizationVisitService->setUserId($userId);
         $this->authorizationVisitService->setVisitId($visitId);
         $this->authorizationVisitService->setStudyName($studyName);
+        $this->authorizationVisitService->setVisitContext($visitContext);
 
         if (!$this->authorizationVisitService->isVisitAllowed($role)) {
             throw new GaelOForbiddenException();

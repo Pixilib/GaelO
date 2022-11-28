@@ -56,21 +56,19 @@ class ValidateDicomUpload
         try {
             //Retrieve Visit Context
             $this->visitService->setVisitId($validateDicomUploadRequest->visitId);
-            $visitEntity = $this->visitService->getVisitContext();
-            $patientId = $visitEntity['patient_id'];
+            $visitContext = $this->visitService->getVisitContext();
+            $patientId = $visitContext['patient_id'];
             $patientEntity = $this->patientRepositoryInterface->find($patientId);
             $patientCode = $patientEntity['code'];
-            //$patientCode = $visitEntity['patient_id'];
-            $uploadStatus = $visitEntity['upload_status'];
-            $studyName = $visitEntity['patient']['study_name'];
-            $visitType = $visitEntity['visit_type']['name'];
-            $anonProfile = $visitEntity['visit_type']['anon_profile'];
-            $visitStatus = $visitEntity['status_done'];
+            $studyName = $visitContext['patient']['study_name'];
+            $visitType = $visitContext['visit_type']['name'];
+            $anonProfile = $visitContext['visit_type']['anon_profile'];
+            
 
             $currentUserId = $validateDicomUploadRequest->currentUserId;
             $visitId  = $validateDicomUploadRequest->visitId;
 
-            $this->checkAuthorization($currentUserId, $visitId, $uploadStatus, $studyName, $visitStatus);
+            $this->checkAuthorization($currentUserId, $visitId, $studyName, $visitContext);
 
             //Make Visit as being upload processing
             $this->visitService->updateUploadStatus(Constants::UPLOAD_STATUS_PROCESSING);
@@ -195,13 +193,14 @@ class ValidateDicomUpload
         }
     }
 
-    private function checkAuthorization(int $currentUserId, int $visitId, string $uploadStatus, string $studyName, string $visitStatus): void
+    private function checkAuthorization(int $currentUserId, int $visitId, string $studyName, array $visitContext): void
     {
-
+        $visitStatus = $visitContext['status_done'];
+        $uploadStatus = $visitContext['upload_status'];
         $this->authorizationService->setUserId($currentUserId);
-
         $this->authorizationService->setStudyName($studyName);
         $this->authorizationService->setVisitId($visitId);
+        $this->authorizationService->setVisitContext($visitContext);
         if (!$this->authorizationService->isVisitAllowed(Constants::ROLE_INVESTIGATOR) || $uploadStatus !== Constants::UPLOAD_STATUS_NOT_DONE || $visitStatus !== Constants::VISIT_STATUS_DONE) {
             throw new GaelOForbiddenException();
         }

@@ -51,13 +51,10 @@ class ModifyReviewForm
             $studyName = $reviewEntity['study_name'];
             $visitId = $reviewEntity['visit_id'];
             $reviewId = $reviewEntity['id'];
-            $reviewerId = $reviewEntity['user_id'];
-            $reviewValidated = $reviewEntity['validated'];
 
             $visitContext = $this->visitRepositoryInterface->getVisitWithContextAndReviewStatus($visitId, $studyName);
-            $reviewAvailable = $visitContext['review_status']['review_available'];
             $reviewStatus = $visitContext['review_status']['review_status'];
-            $this->checkAuthorization($currentUserId, $reviewerId, $reviewValidated, $reviewAvailable, $visitId,  $studyName);
+            $this->checkAuthorization($currentUserId, $reviewEntity, $visitId,  $studyName, $visitContext);
 
             //Call service to update form
             $this->reviewFormService->setCurrentUserId($currentUserId);
@@ -86,8 +83,12 @@ class ModifyReviewForm
         }
     }
 
-    private function checkAuthorization(int $currentUserId, int $formOwner, bool $formValidated, bool $reviewAvailability, int $visitId, string $studyName)
+    private function checkAuthorization(int $currentUserId, array $reviewEntity, int $visitId, string $studyName, array $visitContext)
     {
+        $formOwner = $reviewEntity['user_id'];
+        $formValidated = $reviewEntity['validated'];
+        $reviewAvailability = $visitContext['review_status']['review_available'];
+
         //Asked edition review should be owned by current user, not yet validated and in a visit still allowing review
         if ($currentUserId !== $formOwner || $formValidated || !$reviewAvailability) {
             throw new GaelOForbiddenException();
@@ -96,6 +97,7 @@ class ModifyReviewForm
         $this->authorizationVisitService->setUserId($currentUserId);
         $this->authorizationVisitService->setVisitId($visitId);
         $this->authorizationVisitService->setStudyName($studyName);
+        $this->authorizationVisitService->setVisitContext($visitContext);
         if (!$this->authorizationVisitService->isVisitAllowed(Constants::ROLE_REVIEWER)) {
             throw new GaelOForbiddenException();
         }

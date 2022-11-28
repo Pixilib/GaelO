@@ -2,7 +2,6 @@ Salim TODO :
 - Voir si unlock investigator form dans le repository a pas plus sa place dans une transaction? 
 - Lock db (pb de double soumission) -> mettre les save / modify de review das une transaction avec un lockForUpdate ?
 - Verifier qu'une PJ d'un investigateur et telechargeable par un reviewer (et chemin pour le faire)=> devrait etre ok en backend voir comment faire en frontend
-- Optimiser l'utilisation des authorization service en injectant les data depuis le usecase (ou les rendre stateless) (dont visite, review...)
 
 --- Etudes ancillaires ---
 Export study data => Ne tient pas en compte du statut ancillaire ou non de l'etude a exporter 

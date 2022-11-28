@@ -58,7 +58,7 @@ class CreateReviewForm
             }
 
             $visitContext = $this->visitRepositoryInterface->getVisitWithContextAndReviewStatus($visitId, $studyName);
-            
+
             $reviewStatus = $visitContext['review_status']['review_status'];
             $reviewAvailable = $visitContext['review_status']['review_available'];
 
@@ -66,7 +66,7 @@ class CreateReviewForm
                 throw new GaelOBadRequestException('Review Not Awaiting Adjudication');
             }
 
-            $this->checkAuthorization($visitId, $currentUserId, $reviewAvailable, $studyName);
+            $this->checkAuthorization($visitId, $currentUserId, $studyName, $visitContext);
 
             //Call service to register form
             $this->reviewFormService->setCurrentUserId($currentUserId);
@@ -96,9 +96,9 @@ class CreateReviewForm
         }
     }
 
-    private function checkAuthorization(int $visitId, int $currentUserId, bool $reviewAvailability, string $studyName)
+    private function checkAuthorization(int $visitId, int $currentUserId, string $studyName, array $visitContext)
     {
-
+        $reviewAvailability = $visitContext['review_status']['review_available'];
         if (!$reviewAvailability) {
             throw new GaelOForbiddenException();
         }
@@ -106,6 +106,7 @@ class CreateReviewForm
         $this->authorizationVisitService->setUserId($currentUserId);
         $this->authorizationVisitService->setVisitId($visitId);
         $this->authorizationVisitService->setStudyName($studyName);
+        $this->authorizationVisitService->setVisitContext($visitContext);
 
         if (!$this->authorizationVisitService->isVisitAllowed(Constants::ROLE_REVIEWER)) {
             throw new GaelOForbiddenException();

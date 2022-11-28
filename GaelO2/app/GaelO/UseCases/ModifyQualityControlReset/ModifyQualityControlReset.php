@@ -41,7 +41,8 @@ class ModifyQualityControlReset
             if($modifyQualityControlResetRequest->studyName !== $studyName){
                 throw new GaelOForbiddenException("Should be called from original study");
             }
-            $this->checkAuthorization($currentUserId, $visitId, $studyName);
+            
+            $this->checkAuthorization($currentUserId, $visitId, $studyName, $visitContext);
 
             if (empty($modifyQualityControlResetRequest->reason)) {
                 throw new GaelOBadRequestException("Can't reset QC without reason");
@@ -79,11 +80,12 @@ class ModifyQualityControlReset
         }
     }
 
-    public function checkAuthorization(int $userId, int $visitId, string $studyName)
+    public function checkAuthorization(int $userId, int $visitId, string $studyName, array $visitContext)
     {
         $this->authorizationVisitService->setUserId($userId);
         $this->authorizationVisitService->setStudyName($studyName);
         $this->authorizationVisitService->setVisitId($visitId);
+        $this->authorizationVisitService->setVisitContext($visitContext);
 
         if (!$this->authorizationVisitService->isVisitAllowed(Constants::ROLE_SUPERVISOR)) {
             throw new GaelOForbiddenException();

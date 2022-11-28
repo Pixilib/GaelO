@@ -6,7 +6,8 @@ use App\GaelO\Constants\Constants;
 use App\GaelO\Interfaces\Repositories\ReviewRepositoryInterface;
 use App\GaelO\Services\AuthorizationService\AuthorizationVisitService;
 
-class AuthorizationReviewService {
+class AuthorizationReviewService
+{
 
     private ReviewRepositoryInterface $reviewRepositoryInterface;
     private AuthorizationVisitService $authorizationVisitService;
@@ -21,22 +22,26 @@ class AuthorizationReviewService {
         $this->authorizationVisitService = $authorizationVisitService;
     }
 
-    public function setUserId(int $userId) {
+    public function setUserId(int $userId)
+    {
         $this->userId = $userId;
         $this->authorizationVisitService->setUserId($userId);
     }
 
-    public function setReviewId(int $reviewId){
+    public function setReviewId(int $reviewId)
+    {
         $this->reviewId = $reviewId;
     }
 
-    private function fillVisitData(){
-        if( !isset($this->reviewData) ) $this->reviewData = $this->reviewRepositoryInterface->find($this->reviewId);
+    private function fillVisitData()
+    {
+        if (!isset($this->reviewData)) $this->reviewData = $this->reviewRepositoryInterface->find($this->reviewId);
         $this->reviewStudyName = $this->reviewData['study_name'];
         $this->reviewOwnerId = $this->reviewData['user_id'];
     }
 
-    public function isReviewAllowed(string $requestedRole): bool {
+    public function isReviewAllowed(string $requestedRole): bool
+    {
 
         $this->fillVisitData();
 
@@ -48,15 +53,10 @@ class AuthorizationReviewService {
             return $this->authorizationVisitService->isVisitAllowed($requestedRole) && ($this->reviewOwnerId === $this->userId);
         } else if ($requestedRole === Constants::ROLE_SUPERVISOR) {
             //Allow Review of the study with supervisor roles
-           return $this->authorizationVisitService->isVisitAllowed($requestedRole);
+            return $this->authorizationVisitService->isVisitAllowed($requestedRole);
         } else {
             //other roles not allowed to access review data
             return false;
         }
-
     }
-
-
-
-
 }

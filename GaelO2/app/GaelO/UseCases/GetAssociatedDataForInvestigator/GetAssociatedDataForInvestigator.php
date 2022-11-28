@@ -33,7 +33,7 @@ class GetAssociatedDataForInvestigator
             $visitContext = $this->visitRepositoryInterface->getVisitContext($visitId, false);
             $studyName = $visitContext['patient']['study_name'];
 
-            $this->checkAuthorization($currentUserId, $visitId, $studyName, $role);
+            $this->checkAuthorization($currentUserId, $visitId, $studyName, $role, $visitContext);
 
             $this->investigatorFormService->setCurrentUserId($currentUserId);
             $this->investigatorFormService->setVisitContextAndStudy($visitContext, $studyName);
@@ -51,11 +51,12 @@ class GetAssociatedDataForInvestigator
         }
     }
 
-    private function checkAuthorization(int $currentUserId, int $visitId, string $studyName, string $role)
+    private function checkAuthorization(int $currentUserId, int $visitId, string $studyName, string $role, array $visitContext)
     {
         $this->authorizationVisitService->setUserId($currentUserId);
         $this->authorizationVisitService->setStudyName($studyName);
         $this->authorizationVisitService->setVisitId($visitId);
+        $this->authorizationVisitService->setVisitContext($visitContext);
 
         if (!$this->authorizationVisitService->isVisitAllowed($role)) {
             throw new GaelOForbiddenException();
