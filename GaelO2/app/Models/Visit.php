@@ -50,13 +50,13 @@ class Visit extends Model
      */
     public function reviewStatus()
     {
-        return $this->hasOne(ReviewStatus::class, 'visit_id', 'id')->withDefault([
-            'review_available' => false,
-            'target_lesions' => null,
-            'review_status' => 'Not Done',
-            'review_conclusion_value' => null,
-            'review_conclusion_date'=>null
-        ]);
+        return $this->hasOne(ReviewStatus::class, 'visit_id', 'id')->withDefault(function ($reviewStatus, $visit) {
+            $reviewStatus->review_available = in_array($visit->state_quality_control, ['Accepted', 'Not Needed']);
+            $reviewStatus->target_lesions = null;
+            $reviewStatus->review_status = 'Not Done';
+            $reviewStatus->review_conclusion_value = null;
+            $reviewStatus->review_conclusion_date = null;
+        });
     }
 
     public function patient()

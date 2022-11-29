@@ -6,13 +6,15 @@ use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOBadRequestException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
+use App\GaelO\Interfaces\Adapters\FrameworkInterface;
 use App\GaelO\Interfaces\Adapters\MimeInterface;
 use App\GaelO\Interfaces\Repositories\ReviewRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
 use App\GaelO\Services\AuthorizationService\AuthorizationReviewService;
 use App\GaelO\Services\AuthorizationService\AuthorizationVisitService;
-use App\GaelO\Services\FormService\FormService;
+use App\GaelO\Services\FormService\InvestigatorFormService;
+use App\GaelO\Services\FormService\ReviewFormService;
 use App\GaelO\Util;
 use Exception;
 
@@ -24,7 +26,7 @@ class CreateFileToForm
     private ReviewRepositoryInterface $reviewRepositoryInterface;
     private TrackerRepositoryInterface $trackerRepositoryInterface;
     private VisitRepositoryInterface $visitRepositoryInterface;
-    private FormService $formService;
+    private FrameworkInterface $frameworkInterface;
     private MimeInterface $mimeInterface;
 
     public function __construct(
@@ -32,7 +34,7 @@ class CreateFileToForm
         AuthorizationReviewService $authorizationReviewService,
         VisitRepositoryInterface $visitRepositoryInterface,
         ReviewRepositoryInterface $reviewRepositoryInterface,
-        FormService $formService,
+        FrameworkInterface $frameworkInterface,
         TrackerRepositoryInterface $trackerRepositoryInterface,
         MimeInterface $mimeInterface
     ) {
@@ -40,7 +42,7 @@ class CreateFileToForm
         $this->authorizationReviewService = $authorizationReviewService;
         $this->reviewRepositoryInterface = $reviewRepositoryInterface;
         $this->visitRepositoryInterface = $visitRepositoryInterface;
-        $this->formService = $formService;
+        $this->frameworkInterface = $frameworkInterface;
         $this->trackerRepositoryInterface = $trackerRepositoryInterface;
         $this->mimeInterface = $mimeInterface;
     }
@@ -70,10 +72,18 @@ class CreateFileToForm
 
             $fileName = 'review_' . $reviewId . '_' . $key . '.' . $extension;
 
-            $visitContext = $this->visitRepositoryInterface->getVisitContext($visitId);
+            $visitContext = $this->visitRepositoryInterface->getVisitWithContextAndReviewStatus($visitId, $studyName);
+            
+            $formService = null;
 
-            $this->formService->setVisitContextAndStudy($visitContext, $studyName);
-            $this->formService->attachFile($reviewEntity, $key, $fileName, $createFileToReviewRequest->contentType, base64_decode($binaryData));
+            if ($local) {
+                $formService = $this->frameworkInterface->make(InvestigatorFormService::class);
+            } else {
+                $formService = $this->frameworkInterface->make(ReviewFormService::class);
+            }
+
+            $formService->setVisitContextAndStudy($visitContext, $studyName);
+            $formService->attachFile($reviewEntity, $key, $fileName, $createFileToReviewRequest->contentType, base64_decode($binaryData));
 
             $actionDetails = [
                 'uploaded_file' => $key,

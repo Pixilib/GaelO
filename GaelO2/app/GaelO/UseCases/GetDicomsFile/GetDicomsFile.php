@@ -2,6 +2,7 @@
 
 namespace App\GaelO\UseCases\GetDicomsFile;
 
+use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\DicomStudyRepositoryInterface;
@@ -35,11 +36,11 @@ class GetDicomsFile
 
             $studyName = $getDicomsRequest->studyName;
             $visitId = $getDicomsRequest->visitId;
-            //Authorization Check
-            $this->checkAuthorization($getDicomsRequest->currentUserId, $visitId, $getDicomsRequest->role, $studyName);
-
             //Visits data
-            $visitContext = $this->visitRepositoryInterface->getVisitContext($visitId, false);
+            $visitContext = $this->visitRepositoryInterface->getVisitContext($visitId);
+            //Authorization Check
+            $this->checkAuthorization($getDicomsRequest->currentUserId, $visitId, $getDicomsRequest->role, $studyName, $visitContext);
+
             $visitType = $visitContext['visit_type']['name'];
             $visitGroupName =  $visitContext['visit_type']['visit_group']['name'];
             $patientId = $visitContext['patient']['id'];
@@ -60,11 +61,17 @@ class GetDicomsFile
         }
     }
 
-    private function checkAuthorization(int $currentUserId, int $visitId, string $role, string $studyName)
+    private function checkAuthorization(int $currentUserId, int $visitId, string $role, string $studyName, array $visitContext)
     {
+        if ($role === Constants::ROLE_MONITOR) {
+            throw new GaelOForbiddenException("Monitor can't donwload Dicom");
+        }
+
         $this->authorizationService->setUserId($currentUserId);
         $this->authorizationService->setVisitId($visitId);
         $this->authorizationService->setStudyName($studyName);
+        $this->authorizationService->setVisitContext($visitContext);
+
         if (!$this->authorizationService->isVisitAllowed($role)) {
             throw new GaelOForbiddenException();
         }

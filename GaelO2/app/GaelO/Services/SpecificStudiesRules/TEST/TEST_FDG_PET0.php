@@ -3,23 +3,14 @@
 namespace App\GaelO\Services\SpecificStudiesRules\TEST;
 
 use App\GaelO\Adapters\MimeAdapter;
-use App\GaelO\Constants\Constants;
-use App\GaelO\Interfaces\Repositories\ReviewRepositoryInterface;
 use App\GaelO\Services\GaelOStudiesService\AbstractVisitRules;
 
 class TEST_FDG_PET0 extends AbstractVisitRules
 {
-    private $reviewConclusion = null;
 
-    private ReviewRepositoryInterface $reviewRepositoryInterface;
-    private string $studyName = "TEST";
+    protected string $studyName = "TEST";
 
-    public function __construct(ReviewRepositoryInterface $reviewRepositoryInterface)
-    {
-        $this->reviewRepositoryInterface = $reviewRepositoryInterface;
-    }
-
-    public function getInvestigatorValidationRules(): array
+    public static function getInvestigatorValidationRules(): array
     {
         return [
             'glycaemia' => [
@@ -73,7 +64,7 @@ class TEST_FDG_PET0 extends AbstractVisitRules
         ];
     }
 
-    public function getReviewerValidationRules(bool $adjudication): array
+    public static function getReviewerValidationRules(): array
     {
         return [
             'comments' => [
@@ -83,49 +74,29 @@ class TEST_FDG_PET0 extends AbstractVisitRules
         ];
     }
 
-    public function getReviewStatus(): string
-    {
-        //Fetch visit validated review
-        $reviews = $this->reviewRepositoryInterface->getReviewsForStudyVisit($this->studyName, $this->visitContext['id'], true);
-        if(sizeof($reviews) > 0){
-            $this->reviewConclusion = "Done";
-            return Constants::REVIEW_STATUS_DONE;
-        }else{
-            return Constants::REVIEW_STATUS_NOT_DONE;
-        }
-    }
-
-    public function getReviewConclusion(): ?string
-    {
-        return $this->reviewConclusion;
-    }
-
-    public function getAllowedKeyAndMimeTypeInvestigator(): array
-    {
-        return ['41' => MimeAdapter::getMimeFromExtension('csv'), '25' => MimeAdapter::getMimeFromExtension('zip')];
-    }
-
-    public function getAllowedKeyAndMimeTypeReviewer(): array
+    public static function getReviewerAdjudicationValidationRules(): array
     {
         return [];
     }
 
-    public function getTargetLesion(): ?array
+    public static function getAllowedKeyAndMimeTypeInvestigator(): array
     {
-        return null;
+        return ['41' => MimeAdapter::getMimeFromExtension('csv'), '25' => MimeAdapter::getMimeFromExtension('zip')];
     }
 
-    public function getAssociatedDataForInvestigatorForm(): array
+    public static function getAllowedKeyAndMimeTypeReviewer(): array
     {
-        return [
-            'LastChemo' => '01/01/2021'
-        ];
+        return [];
     }
 
-    public function getAssociatedDataForReviewForm(): array
+    public static function getAllowedKeyAndMimeTypeAdjudication(): array
     {
-        return [
-            'Radiotherapy' => false
-        ];
+        return [];
     }
+
+    public static function getVisitDecisionClass(): string
+    {
+        return TEST_FDG_PET0_DECISION::class;
+    }
+
 }

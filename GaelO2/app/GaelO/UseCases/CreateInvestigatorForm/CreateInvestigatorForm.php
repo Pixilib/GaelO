@@ -50,12 +50,13 @@ class CreateInvestigatorForm
                 $createInvestigatorFormRequest->currentUserId,
                 $createInvestigatorFormRequest->visitId,
                 $stateInvestigatorForm,
-                $studyName
+                $studyName,
+                $visitContext
             );
 
             $this->investigatorFormService->setCurrentUserId($createInvestigatorFormRequest->currentUserId);
             $this->investigatorFormService->setVisitContextAndStudy($visitContext, $studyName);
-            $createdFormId = $this->investigatorFormService->saveInvestigatorForm($createInvestigatorFormRequest->data, $createInvestigatorFormRequest->validated);
+            $createdFormId = $this->investigatorFormService->saveForm($createInvestigatorFormRequest->data, $createInvestigatorFormRequest->validated);
 
             $actionDetails = [
                 'raw_data' => $createInvestigatorFormRequest->data,
@@ -76,7 +77,7 @@ class CreateInvestigatorForm
         }
     }
 
-    private function checkAuthorization(int $currentUserId, int $visitId, string $visitInvestigatorFormStatus, string $studyName)
+    private function checkAuthorization(int $currentUserId, int $visitId, string $visitInvestigatorFormStatus, string $studyName, array $visitContext)
     {
 
         if (in_array($visitInvestigatorFormStatus, [Constants::INVESTIGATOR_FORM_DRAFT, Constants::INVESTIGATOR_FORM_DONE])) {
@@ -91,6 +92,7 @@ class CreateInvestigatorForm
         $this->authorizationVisitService->setUserId($currentUserId);
         $this->authorizationVisitService->setVisitId($visitId);
         $this->authorizationVisitService->setStudyName($studyName);
+        $this->authorizationVisitService->setVisitContext($visitContext);
 
         if (!$this->authorizationVisitService->isVisitAllowed(Constants::ROLE_INVESTIGATOR)) {
             throw new GaelOForbiddenException();

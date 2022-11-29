@@ -17,7 +17,10 @@ class GetAssociatedDataForReview
     private VisitRepositoryInterface $visitRepositoryInterface;
     private ReviewFormService $reviewFormService;
 
-    public function __construct(AuthorizationVisitService $authorizationVisitService, VisitRepositoryInterface $visitRepositoryInterface, ReviewFormService $reviewFormService)
+    public function __construct(
+        AuthorizationVisitService $authorizationVisitService, 
+        VisitRepositoryInterface $visitRepositoryInterface,
+        ReviewFormService $reviewFormService)
     {
         $this->authorizationVisitService = $authorizationVisitService;
         $this->visitRepositoryInterface = $visitRepositoryInterface;
@@ -31,13 +34,13 @@ class GetAssociatedDataForReview
             $visitId = $getAssociatedDataForReviewRequest->visitId;
             $studyName = $getAssociatedDataForReviewRequest->studyName;
 
-            $this->checkAuthorization($currentUserId, $visitId, $studyName);
-
-            $visitContext = $this->visitRepositoryInterface->getVisitContext($visitId);
+            $visitContext = $this->visitRepositoryInterface->getVisitWithContextAndReviewStatus($visitId, $studyName);
+            $this->checkAuthorization($currentUserId, $visitId, $studyName, $visitContext);
 
             $this->reviewFormService->setCurrentUserId($currentUserId);
             $this->reviewFormService->setVisitContextAndStudy($visitContext, $studyName);
-            $associatedData = $this->reviewFormService->getAssociatedDataForForm();
+            //NB switch depending on adjudication should be decided in the function in visit rule (visit context is passed)
+            $associatedData = $this->reviewFormService->getVisitDecisionObject()->getAssociatedDataForReviewForm();
 
             $getAssociatedDataForReviewResponse->body = $associatedData;
             $getAssociatedDataForReviewResponse->status = 200;
@@ -51,11 +54,13 @@ class GetAssociatedDataForReview
         }
     }
 
-    private function checkAuthorization(int $currentUserId, int $visitId, string $studyName)
+    private function checkAuthorization(int $currentUserId, int $visitId, string $studyName, array $visitContext)
     {
         $this->authorizationVisitService->setVisitId($visitId);
         $this->authorizationVisitService->setUserId($currentUserId);
         $this->authorizationVisitService->setStudyName($studyName);
+        $this->authorizationVisitService->setVisitContext($visitContext);
+
         if (!$this->authorizationVisitService->isVisitAllowed(Constants::ROLE_REVIEWER)) {
             throw new GaelOForbiddenException();
         }

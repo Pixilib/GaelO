@@ -1,4 +1,4 @@
-<mjml>
+<mjml lang="en">
   <mj-head>
     <mj-attributes>
       <mj-all font-family="Roboto, Helvetica, sans-serif" color="#314053"></mj-all>
@@ -8,10 +8,10 @@
   <mj-body>
     <mj-section padding-bottom="20px" padding-top="20px">
       <mj-column width="50%">
-        <mj-button href="{{ $magicLink }}" href="https://www.gaelo.fr" background-color="#2ec086" mj-class="button">It's all good !</mj-button>
+        <mj-button href="{{ $magicLinkAccepted }}" rel="noopener" background-color="#2ec086" mj-class="button">It's all good !</mj-button>
       </mj-column>
       <mj-column width="50%">
-        <mj-button href="{{ $magicLink }}" href="https://www.gaelo.fr" background-color="#FFBA4D" mj-class="button">See in GaelO</mj-button>
+        <mj-button href="{{ $magicLinkRefused }}" rel="noopener" background-color="#FFBA4D" mj-class="button">See in GaelO</mj-button>
       </mj-column>
     </mj-section>
     <mj-section>

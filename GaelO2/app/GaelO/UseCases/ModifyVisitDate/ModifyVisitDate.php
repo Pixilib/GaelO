@@ -40,7 +40,7 @@ class ModifyVisitDate
                 throw new GaelOForbiddenException("should be called from original study");
             }
 
-            $this->checkAuthorization($currentUserId, $visitId, $studyName);
+            $this->checkAuthorization($currentUserId, $visitId, $studyName, $visitContext);
 
             //update visit Date in db
             $this->visitRepositoryInterface->updateVisitDate($visitId, $newVisitDate);
@@ -76,12 +76,13 @@ class ModifyVisitDate
         }
     }
 
-    private function checkAuthorization(int $userId, int $visitId, string $studyName)
+    private function checkAuthorization(int $userId, int $visitId, string $studyName, array $visitContext)
     {
 
         $this->authorizationVisitService->setUserId($userId);
         $this->authorizationVisitService->setVisitId($visitId);
         $this->authorizationVisitService->setStudyName($studyName);
+        $this->authorizationVisitService->setVisitContext($visitContext);
 
         if (!$this->authorizationVisitService->isVisitAllowed(Constants::ROLE_SUPERVISOR)) {
             throw new GaelOForbiddenException();

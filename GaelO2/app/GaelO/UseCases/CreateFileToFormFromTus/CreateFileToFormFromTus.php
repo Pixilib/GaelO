@@ -7,13 +7,15 @@ use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOBadRequestException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Exceptions\GaelOValidateDicomException;
+use App\GaelO\Interfaces\Adapters\FrameworkInterface;
 use App\GaelO\Interfaces\Adapters\MimeInterface;
 use App\GaelO\Interfaces\Repositories\ReviewRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
 use App\GaelO\Services\AuthorizationService\AuthorizationReviewService;
 use App\GaelO\Services\AuthorizationService\AuthorizationVisitService;
-use App\GaelO\Services\FormService\FormService;
+use App\GaelO\Services\FormService\InvestigatorFormService;
+use App\GaelO\Services\FormService\ReviewFormService;
 use App\GaelO\Services\OrthancService;
 use App\GaelO\Services\TusService;
 use App\GaelO\Util;
@@ -28,7 +30,7 @@ class CreateFileToFormFromTus
     private ReviewRepositoryInterface $reviewRepositoryInterface;
     private TrackerRepositoryInterface $trackerRepositoryInterface;
     private VisitRepositoryInterface $visitRepositoryInterface;
-    private FormService $formService;
+    private FrameworkInterface $frameworkInterface;
     private MimeInterface $mimeInterface;
     private OrthancService $orthancService;
     private TusService $tusService;
@@ -38,7 +40,7 @@ class CreateFileToFormFromTus
         AuthorizationReviewService $authorizationReviewService,
         VisitRepositoryInterface $visitRepositoryInterface,
         ReviewRepositoryInterface $reviewRepositoryInterface,
-        FormService $formService,
+        FrameworkInterface $frameworkInterface,
         OrthancService $orthancService,
         TrackerRepositoryInterface $trackerRepositoryInterface,
         MimeInterface $mimeInterface,
@@ -48,7 +50,7 @@ class CreateFileToFormFromTus
         $this->authorizationReviewService = $authorizationReviewService;
         $this->reviewRepositoryInterface = $reviewRepositoryInterface;
         $this->visitRepositoryInterface = $visitRepositoryInterface;
-        $this->formService = $formService;
+        $this->frameworkInterface = $frameworkInterface;
         $this->trackerRepositoryInterface = $trackerRepositoryInterface;
         $this->mimeInterface = $mimeInterface;
         $this->orthancService = $orthancService;
@@ -130,10 +132,18 @@ class CreateFileToFormFromTus
             $extension = $this->mimeInterface::getExtensionFromMime($mime);
             $fileName = 'review_' . $reviewId . '_' . $key . '.' . $extension;
 
-            $visitContext = $this->visitRepositoryInterface->getVisitContext($visitId);
-            $this->formService->setVisitContextAndStudy($visitContext, $studyName);
+            $visitContext = $this->visitRepositoryInterface->getVisitWithContextAndReviewStatus($visitId, $studyName);
+            
+            $formService = null;
 
-            $this->formService->attachFile($reviewEntity, $key, $fileName, $mime, $file);
+            if ($local) {
+                $formService = $this->frameworkInterface->make(InvestigatorFormService::class);
+            } else {
+                $formService = $this->frameworkInterface->make(ReviewFormService::class);
+            }
+
+            $formService->setVisitContextAndStudy($visitContext, $studyName);
+            $formService->attachFile($reviewEntity, $key, $fileName, $mime, $file);
 
             $actionDetails = [
                 'uploaded_file' => $key,

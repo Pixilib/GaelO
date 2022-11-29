@@ -222,9 +222,15 @@ class UserRepository implements UserRepositoryInterface
         return $studies->count() === 0 ?  [] : $studies->toArray();
     }
 
-    public function getUsersRoles(int $userId): array
+    public function getUsersRoles(int $userId, ?array $rolesIn = null): array
     {
-        $roles = $this->userModel->findOrFail($userId)->roles()->get(['name', 'study_name']);
+        $query = $this->rolesModel->where('user_id', $userId);
+        if ($rolesIn != null) {
+            $query->whereIn('name', $rolesIn);
+        }
+
+        $roles = $query->get(['name', 'study_name']);
+
         $roles = $roles->groupBy(['study_name'])
             ->map(function ($group) {
                 return $group->map(function ($value) {

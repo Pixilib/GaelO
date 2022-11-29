@@ -285,7 +285,7 @@ class VisitRepositoryTest extends TestCase
     {
         $patient = $this->populateVisits()[0];
         $studyName = $patient->study->name;
-        $answer = $this->visitRepository->getPatientsHavingAtLeastOneAwaitingReviewForUser($studyName, 1);
+        $answer = $this->visitRepository->getPatientsHavingAtLeastOneAwaitingReviewForUser($studyName, 1, null);
         $this->assertEquals(1, sizeof($answer));
     }
 

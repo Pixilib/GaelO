@@ -13,14 +13,14 @@ class GetAssociatedDataForInvestigator
 {
 
     private AuthorizationVisitService $authorizationVisitService;
-    private InvestigatorFormService $investigatorFormService;
     private VisitRepositoryInterface $visitRepositoryInterface;
+    private InvestigatorFormService $investigatorFormService;
 
     public function __construct(AuthorizationVisitService $authorizationVisitService, VisitRepositoryInterface $visitRepositoryInterface, InvestigatorFormService $investigatorFormService)
     {
         $this->authorizationVisitService = $authorizationVisitService;
-        $this->investigatorFormService = $investigatorFormService;
         $this->visitRepositoryInterface = $visitRepositoryInterface;
+        $this->investigatorFormService = $investigatorFormService;
     }
 
     public function execute(GetAssociatedDataForInvestigatorRequest $getAssociatedDataForInvestigatorRequest, GetAssociatedDataForInvestigatorResponse $getAssociatedDataForInvestigatorResponse)
@@ -33,11 +33,11 @@ class GetAssociatedDataForInvestigator
             $visitContext = $this->visitRepositoryInterface->getVisitContext($visitId, false);
             $studyName = $visitContext['patient']['study_name'];
 
-            $this->checkAuthorization($currentUserId, $visitId, $studyName, $role);
+            $this->checkAuthorization($currentUserId, $visitId, $studyName, $role, $visitContext);
 
             $this->investigatorFormService->setCurrentUserId($currentUserId);
             $this->investigatorFormService->setVisitContextAndStudy($visitContext, $studyName);
-            $associatedData = $this->investigatorFormService->getAssociatedDataForForm();
+            $associatedData = $this->investigatorFormService->getVisitDecisionObject()->getAssociatedDataForInvestigatorForm();
 
             $getAssociatedDataForInvestigatorResponse->body =  $associatedData;
             $getAssociatedDataForInvestigatorResponse->status = 200;
@@ -51,11 +51,12 @@ class GetAssociatedDataForInvestigator
         }
     }
 
-    private function checkAuthorization(int $currentUserId, int $visitId, string $studyName, string $role)
+    private function checkAuthorization(int $currentUserId, int $visitId, string $studyName, string $role, array $visitContext)
     {
         $this->authorizationVisitService->setUserId($currentUserId);
         $this->authorizationVisitService->setStudyName($studyName);
         $this->authorizationVisitService->setVisitId($visitId);
+        $this->authorizationVisitService->setVisitContext($visitContext);
 
         if (!$this->authorizationVisitService->isVisitAllowed($role)) {
             throw new GaelOForbiddenException();

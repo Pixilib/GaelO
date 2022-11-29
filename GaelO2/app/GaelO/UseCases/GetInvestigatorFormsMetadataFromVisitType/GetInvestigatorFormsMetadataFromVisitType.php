@@ -7,20 +7,18 @@ use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Repositories\VisitTypeRepository;
 use App\GaelO\Services\AuthorizationService\AuthorizationStudyService;
-use App\GaelO\Services\FormService\FormService;
+use App\GaelO\Services\GaelOStudiesService\AbstractGaelOStudy;
 use Exception;
 
 class GetInvestigatorFormsMetadataFromVisitType
 {
     private VisitTypeRepository $visitTypeRepository;
-    private FormService $formService;
     private AuthorizationStudyService $authorizationStudyService;
 
-    public function __construct(AuthorizationStudyService $authorizationStudyService, VisitTypeRepository $visitTypeRepository, FormService $formService)
+    public function __construct(AuthorizationStudyService $authorizationStudyService, VisitTypeRepository $visitTypeRepository)
     {
         $this->authorizationStudyService = $authorizationStudyService;
         $this->visitTypeRepository = $visitTypeRepository;
-        $this->formService = $formService;
     }
 
     public function execute(GetInvestigatorFormsMetadataFromVisitTypeRequest $getInvestigatorFormsMetadataFromVisitTypeRequest, GetInvestigatorFormsMetadataFromVisitTypeResponse $getInvestigatorFormsMetadataFromVisitTypeResponse)
@@ -40,8 +38,8 @@ class GetInvestigatorFormsMetadataFromVisitType
                 throw new GaelOForbiddenException('Forbidden acces to this Visit Type');
             }
 
-            $abstractStudyRules = $this->formService->getSpecificStudiesRules($studyName, $visitGroupEntity['name'], $visitTypeEntity['name']);
-            $investigatorRules = $abstractStudyRules->getInvestigatorValidationRules();
+            $abstractStudyRules = AbstractGaelOStudy::getSpecificStudiesRules($studyName, $visitGroupEntity['name'], $visitTypeEntity['name']);
+            $investigatorRules = $abstractStudyRules::getInvestigatorValidationRules();
 
             $getInvestigatorFormsMetadataFromVisitTypeResponse->body = $investigatorRules;
             $getInvestigatorFormsMetadataFromVisitTypeResponse->status = 200;

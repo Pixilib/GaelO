@@ -16,6 +16,7 @@ class ReviewFormService extends FormService
 {
 
     protected ReviewStatusRepositoryInterface $reviewStatusRepositoryInterface;
+    protected bool $local = false;
 
     public function __construct(
         VisitService $visitService,
@@ -26,18 +27,13 @@ class ReviewFormService extends FormService
     ) {
         parent::__construct($reviewRepositoryInterface, $visitService, $mailServices, $frameworkInterface);
         $this->reviewStatusRepositoryInterface = $reviewStatusRepositoryInterface;
-        $this->local = false;
     }
 
-    public function setReviewStatus(array $reviewStatusEntity)
-    {
-        $this->reviewStatusEntity = $reviewStatusEntity;
-    }
-
-    public function saveReview(array $data, bool $validated, bool $adjudication): int
+    public function saveForm(array $data, bool $validated, ?bool $adjudication = null): int
     {
         $this->abstractVisitRules->setFormData($data);
-        $validity = $this->abstractVisitRules->checkReviewFormValidity($validated, $adjudication);
+        $this->abstractVisitRules->setAdjudication($adjudication);
+        $validity = $this->abstractVisitRules->checkReviewFormValidity($validated);
         if (!$validity) {
             throw new GaelOBadRequestException('Review Form Validation Failed');
         }
@@ -48,12 +44,13 @@ class ReviewFormService extends FormService
         return $createdReviewId;
     }
 
-    public function updateReview(int $reviewId, array $data, bool $validated): void
+    public function updateForm(int $reviewId, array $data, bool $validated)
     {
         //Get current Entity to know if adjudication form
         $reviewEntity = $this->reviewRepositoryInterface->find($reviewId);
         //Pass validation
         $this->abstractVisitRules->setFormData($data);
+        $this->abstractVisitRules->setAdjudication($reviewEntity['adjudication']);
         $validity = $this->abstractVisitRules->checkReviewFormValidity($validated, $reviewEntity['adjudication']);
         if (!$validity) {
             throw new GaelOBadRequestException('Review Form Validation Failed');
@@ -65,36 +62,40 @@ class ReviewFormService extends FormService
         }
     }
 
-    public function deleteReview(int $reviewId): void
+    public function deleteForm(int $reviewId)
     {
+        //Get current Entity to know if adjudication form
+        $reviewEntity = $this->reviewRepositoryInterface->find($reviewId);
+        $this->abstractVisitRules->setAdjudication($reviewEntity['adjudication']);
         $this->reviewRepositoryInterface->delete($reviewId);
         $this->doSpecificReviewDecisions();
     }
 
-    public function unlockReview(int $reviewId): void
+    public function unlockForm(int $reviewId)
     {
+        $reviewEntity = $this->reviewRepositoryInterface->find($reviewId);
+        $this->abstractVisitRules->setAdjudication($reviewEntity['adjudication']);
         $this->reviewRepositoryInterface->unlockReview($reviewId);
         $this->doSpecificReviewDecisions();
     }
 
     private function doSpecificReviewDecisions()
     {
-        $reviewStatus = $this->abstractVisitRules->getReviewStatus();
-        $availability = $this->abstractVisitRules->getReviewAvailability($reviewStatus);
-        $conclusion = $this->abstractVisitRules->getReviewConclusion();
+        $visitDecision = $this->abstractVisitRules->getVisitDecisionObject();
+        $reviewStatus = $visitDecision->getReviewStatus();
+        $availability = $visitDecision->getReviewAvailability($reviewStatus);
+        $conclusion = $visitDecision->getReviewConclusion();
         $targetLesions = null;
 
         if ($reviewStatus === Constants::REVIEW_STATUS_DONE) {
-            $targetLesions = $this->abstractVisitRules->getTargetLesion();
+            $targetLesions = $visitDecision->getTargetLesion();
         }
 
         if ($reviewStatus === Constants::REVIEW_STATUS_NOT_DONE && $conclusion !== null) {
             throw new GaelOException("Review Status Not Done needs to be associated with null conclusion value");
         }
-        //Update review availability if change compared on current value
-        if ($availability !== $this->reviewStatusEntity['review_available']) $this->reviewStatusRepositoryInterface->updateReviewAvailability($this->visitId, $this->studyName, $availability);
-        //Update review status table to computed new values
-        $this->reviewStatusRepositoryInterface->updateReviewStatusAndConclusion($this->visitId, $this->studyName, $reviewStatus, $conclusion, $targetLesions);
+        //Update review status
+        $this->reviewStatusRepositoryInterface->updateReviewAvailabilityStatusAndConclusion($this->visitId, $this->studyName, $availability, $reviewStatus, $conclusion, $targetLesions);
 
         //Send Notification emails
         if ($reviewStatus === Constants::REVIEW_STATUS_WAIT_ADJUDICATION) {

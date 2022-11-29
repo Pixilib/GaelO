@@ -20,6 +20,7 @@ class CreateVisitTest extends TestCase
         parent::setUp();
         $this->artisan('db:seed');
         $visitType=VisitType::factory()->create();
+        $this->study = $visitType->visitGroup->study;
         $this->visitTypeId = $visitType->id;
         $this->visitGroupId = $visitType->visitGroup->id;
         $this->studyName = $visitType->visitGroup->study_name;
@@ -46,6 +47,25 @@ class CreateVisitTest extends TestCase
         ];
 
         $this->json('POST', 'api/visit-types/'.$this->visitTypeId.'/visits?role=Investigator', $validPayload)->assertStatus(201);
+    }
+
+    public function testCreateVisitShouldBeForbiddenForAncillaries() {
+
+        $this->study->ancillary_of = $this->study->name;
+        $this->study->save();
+
+        //Use supervisor role (investigator will be forbiden anyway for an ancillary study)
+        $currentUserId = AuthorizationTools::actAsAdmin(false);
+        AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $this->studyName);
+
+        $validPayload = [
+            'patientId' => $this->patient->id,
+            'visitDate' => '2020-01-01',
+            'statusDone' => 'Done',
+        ];
+
+        $answer = $this->json('POST', 'api/visit-types/'.$this->visitTypeId.'/visits?role=Supervisor', $validPayload);
+        $answer->assertStatus(403);
     }
 
     public function testCreateUnavailableVisitTypeIdShouldBeForbidden() {

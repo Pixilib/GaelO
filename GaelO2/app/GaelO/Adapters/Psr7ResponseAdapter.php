@@ -4,7 +4,9 @@ namespace App\GaelO\Adapters;
 
 use App\GaelO\Interfaces\Adapters\Psr7ResponseInterface;
 use Psr\Http\Message\ResponseInterface;
-class Psr7ResponseAdapter implements Psr7ResponseInterface {
+
+class Psr7ResponseAdapter implements Psr7ResponseInterface
+{
 
 
     public function __construct(ResponseInterface $response)
@@ -12,23 +14,28 @@ class Psr7ResponseAdapter implements Psr7ResponseInterface {
         $this->response = $response;
     }
 
-    public function getStatusCode() : int {
+    public function getStatusCode(): int
+    {
         return $this->response->getStatusCode();
     }
 
-    public function getBody() : string {
+    public function getBody(): string
+    {
         return $this->response->getBody()->getContents();
     }
 
-    public function getReasonPhrase() :string {
+    public function getReasonPhrase(): string
+    {
         return $this->response->getReasonPhrase();
     }
 
-    public function getHeaders()  : array {
+    public function getHeaders(): array
+    {
         return $this->response->getHeaders();
     }
 
-    public function getJsonBody() : array {
+    public function getJsonBody(): array
+    {
         $body = $this->response->getBody();
         //SK : A Verifier pb de caractere accentue
         //$utf8_body = mb_convert_encoding($body, 'UTF-8');
@@ -37,5 +44,4 @@ class Psr7ResponseAdapter implements Psr7ResponseInterface {
         //Checker si creation de la db bien faite en utf8
         return json_decode($body, true);
     }
-
 }

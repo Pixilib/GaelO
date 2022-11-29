@@ -36,9 +36,9 @@ class GetDicoms
             $role = $getDicomsRequest->role;
             $studyName = $getDicomsRequest->studyName;
 
-            $this->checkAuthorization($visitId, $currentUserId, $role, $studyName);
-
             $visitContext = $this->visitRepositoryInterface->getVisitContext($visitId, false);
+
+            $this->checkAuthorization($visitId, $currentUserId, $role, $studyName, $visitContext);
             //If Supervisor include deleted studies
             $includeTrashedStudies = $role === Constants::ROLE_SUPERVISOR;
             //Include Trashed Series if Supervisor OR (Investigator and QC pending)
@@ -72,12 +72,12 @@ class GetDicoms
         }
     }
 
-    private function checkAuthorization(int $visitId, int $userId, string $role, string $studyName): void
+    private function checkAuthorization(int $visitId, int $userId, string $role, string $studyName, array $visitContext): void
     {
-
         $this->authorizationVisitService->setUserId($userId);
         $this->authorizationVisitService->setVisitId($visitId);
         $this->authorizationVisitService->setStudyName($studyName);
+        $this->authorizationVisitService->setVisitContext($visitContext);
         if (!$this->authorizationVisitService->isVisitAllowed($role)) {
             throw new GaelOForbiddenException();
         }

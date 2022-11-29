@@ -2,6 +2,7 @@
 
 namespace App\GaelO\Services\AuthorizationService;
 
+use App\GaelO\Constants\Constants;
 use App\GaelO\Interfaces\Repositories\DicomSeriesRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\DicomStudyRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\PatientRepositoryInterface;
@@ -61,9 +62,7 @@ class AuthorizationDicomWebService
                 $requestedStudyInstanceUID = $this->getStudyInstanceUID($url);
                 $studyEntity = $this->dicomStudyRepositoryInterface->getDicomStudy($requestedStudyInstanceUID, false);
                 $visitId = $studyEntity['visit_id'];
-
             } else if ($this->level === "series") {
-
                 $requestedSeriesInstanceUID = $this->getSeriesInstanceUID($url);
                 $this->seriesEntity = $this->dicomSeriesRepositoryInterface->getSeries($requestedSeriesInstanceUID, false);
                 $visitId = $this->seriesEntity['dicom_study']['visit_id'];
@@ -91,7 +90,7 @@ class AuthorizationDicomWebService
     }
 
 
-    private function setLevel(array $url) : void
+    private function setLevel(array $url): void
     {
 
         if (key_exists('query',  $url)) {
@@ -149,7 +148,6 @@ class AuthorizationDicomWebService
      * So we are cheking that the requested dicom are linked to a primary or ancillary study
      * in which the user has a role
      */
-    //SK ICI A AMELIORER EN FAISANT QUE LE VIEWER ENVOI L ETUDE COURANTE
     public function isDicomAllowed(): bool
     {
 
@@ -158,7 +156,8 @@ class AuthorizationDicomWebService
         $studies[] = $this->originalStudyName;
 
         //Get User's Role
-        $availableRoles = $this->userRepositoryInterface->getUsersRoles($this->userId);
+        $allowedRoles =  [Constants::ROLE_INVESTIGATOR, Constants::ROLE_CONTROLLER, Constants::ROLE_REVIEWER, Constants::ROLE_SUPERVISOR];
+        $availableRoles = $this->userRepositoryInterface->getUsersRoles($this->userId, $allowedRoles);
         $userStudies = array_keys($availableRoles);
 
         return sizeOf(array_intersect($studies, $userStudies)) > 0;

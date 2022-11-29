@@ -33,12 +33,14 @@ class GetPatient
             $this->checkAuthorization($getPatientRequest->currentUserId, $getPatientRequest->role, $code, $getPatientRequest->studyName);
             $dbData = $this->patientRepositoryInterface->getPatientWithCenterDetails($code);
 
-            $responseEntity = PatientEntity::fillFromDBReponseArray($dbData);
+            $responseEntity = null;
 
             //If Reviewer hide patient's center
-            if ($getPatientRequest->role === Constants::ROLE_REVIEWER) {
+            if (in_array($getPatientRequest->role, [Constants::ROLE_REVIEWER, Constants::ROLE_CONTROLLER])) {
+                $responseEntity = PatientEntity::fillMinimalFromDBReponseArray($dbData);
                 $responseEntity->centerCode = null;
             } else {
+                $responseEntity = PatientEntity::fillFromDBReponseArray($dbData);
                 $responseEntity->fillCenterDetails(CenterEntity::fillFromDBReponseArray($dbData['center']));
             }
 

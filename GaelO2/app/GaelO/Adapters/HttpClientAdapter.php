@@ -15,7 +15,7 @@ class HttpClientAdapter implements HttpClientInterface
     private string $login = '';
     private string $password = '';
     private string $address;
-    private string $authorizationToken='';
+    private string $authorizationToken = '';
     private Client $client;
 
     public function __construct()
@@ -35,7 +35,7 @@ class HttpClientAdapter implements HttpClientInterface
 
     public function setAuthorizationToken(string $authorizationToken): void
     {
-        $this -> authorizationToken = $authorizationToken;
+        $this->authorizationToken = $authorizationToken;
     }
 
     public function setBasicAuthentication(string $login, string $password): void
@@ -95,22 +95,21 @@ class HttpClientAdapter implements HttpClientInterface
 
         $response = $this->client->request($method, $this->address . $uri, ['stream' => true, 'json' => $body, 'auth' => [$this->login, $this->password]]);
 
-        if($response->getHeader('content-Length') != null) {
+        if ($response->getHeader('content-Length') != null) {
             $contentLength = $response->getHeader('content-Length')[0];
             header("Content-Length: " . $contentLength);
         }
 
-        if($response->getHeader('content-Type') != null){
+        if ($response->getHeader('content-Type') != null) {
             $contentType = $response->getHeader('content-Type')[0];
             header("Content-Type: " . $contentType);
-
         }
         return $response->getBody();
     }
 
     public function streamResponse(string $method, string $uri, array $body = []): void
     {
-        $body= $this->getResponseAsStream($method,$uri,$body);
+        $body = $this->getResponseAsStream($method, $uri, $body);
 
         while (!$body->eof()) {
             echo $body->read(1024);
@@ -124,7 +123,7 @@ class HttpClientAdapter implements HttpClientInterface
         return new Psr7ResponseAdapter($response);
     }
 
-    public function rowRequest(string $method, string $uri, $body, ?array $headers, $ressourceDestination = null ): Psr7ResponseInterface
+    public function rowRequest(string $method, string $uri, $body, ?array $headers, $ressourceDestination = null): Psr7ResponseInterface
     {
         $options = [];
 
@@ -141,22 +140,24 @@ class HttpClientAdapter implements HttpClientInterface
         }
 
         if ($this->authorizationToken != null) {
-           $options['headers']['Authorization']='Bearer '.$this->authorizationToken;
+            $options['headers']['Authorization'] = 'Bearer ' . $this->authorizationToken;
         }
 
-        if($ressourceDestination){
-            $options['sink']= $ressourceDestination;
+        if ($ressourceDestination) {
+            $options['sink'] = $ressourceDestination;
         }
 
         $response = $this->client->request($method, $this->address . $uri, $options);
         return new Psr7ResponseAdapter($response);
     }
 
-    public function requestUrlEncoded(string $uri ,array|string $payload): Psr7ResponseInterface  {
+    public function requestUrlEncoded(string $uri, array|string $payload): Psr7ResponseInterface
+    {
         $body = [
-            'form_params' =>$payload ];
+            'form_params' => $payload
+        ];
 
-        $response=$this -> client -> request('POST',$uri,$body );
-        return new Psr7ResponseAdapter($response)  ;
+        $response = $this->client->request('POST', $uri, $body);
+        return new Psr7ResponseAdapter($response);
     }
 }

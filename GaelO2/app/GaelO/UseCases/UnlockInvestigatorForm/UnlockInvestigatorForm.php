@@ -5,12 +5,12 @@ namespace App\GaelO\UseCases\UnlockInvestigatorForm;
 use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOBadRequestException;
-use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\ReviewRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
 use App\GaelO\Services\AuthorizationService\AuthorizationVisitService;
+use App\GaelO\Services\FormService\InvestigatorFormService;
 use App\GaelO\Services\MailServices;
 use Exception;
 
@@ -20,6 +20,7 @@ class UnlockInvestigatorForm
     private ReviewRepositoryInterface $reviewRepositoryInterface;
     private VisitRepositoryInterface $visitRepositoryInterface;
     private TrackerRepositoryInterface $trackerRepositoryInterface;
+    private InvestigatorFormService $investigatorFormService;
     private MailServices $mailServices;
 
     public function __construct(
@@ -27,12 +28,14 @@ class UnlockInvestigatorForm
         ReviewRepositoryInterface $reviewRepositoryInterface,
         VisitRepositoryInterface $visitRepositoryInterface,
         TrackerRepositoryInterface $trackerRepositoryInterface,
+        InvestigatorFormService $investigatorFormService,
         MailServices $mailServices
     ) {
         $this->authorizationVisitService = $authorizationVisitService;
         $this->reviewRepositoryInterface = $reviewRepositoryInterface;
         $this->visitRepositoryInterface = $visitRepositoryInterface;
         $this->trackerRepositoryInterface = $trackerRepositoryInterface;
+        $this->investigatorFormService = $investigatorFormService;
         $this->mailServices = $mailServices;
     }
 
@@ -46,16 +49,15 @@ class UnlockInvestigatorForm
             }
 
             $visitContext = $this->visitRepositoryInterface->getVisitContext($unlockInvestigatorFormRequest->visitId);
-
             $studyName = $visitContext['patient']['study_name'];
             $visitId = $visitContext['id'];
             $currentUserId = $unlockInvestigatorFormRequest->currentUserId;
 
-            if($unlockInvestigatorFormRequest->studyName !== $studyName){
+            if ($unlockInvestigatorFormRequest->studyName !== $studyName) {
                 throw new GaelOForbiddenException("Should be called from the original study");
             }
 
-            $this->checkAuthorization($currentUserId, $visitId, $visitContext['state_quality_control'], $studyName);
+            $this->checkAuthorization($currentUserId, $visitId,  $studyName, $visitContext);
 
             $investigatorFormEntity = $this->reviewRepositoryInterface->getInvestigatorForm($visitId, false);
 
@@ -63,14 +65,9 @@ class UnlockInvestigatorForm
                 throw new GaelOBadRequestException('Form Already Unlocked');
             }
 
-            //Unlock Investigator Form
-            $this->reviewRepositoryInterface->unlockInvestigatorForm($visitId);
-
-            //Make investigator form not done
-            $this->visitRepositoryInterface->updateInvestigatorFormStatus($visitId, Constants::INVESTIGATOR_FORM_DRAFT);
-
-            //Reset QC if QC is needed in this Visit
-            if ($visitContext['state_quality_control'] !== Constants::QUALITY_CONTROL_NOT_NEEDED) $this->visitRepositoryInterface->resetQc($visitContext['id']);
+            $this->investigatorFormService->setCurrentUserId($currentUserId);
+            $this->investigatorFormService->setVisitContextAndStudy($visitContext, $studyName);
+            $this->investigatorFormService->unlockForm($investigatorFormEntity['id']);
 
             $actionDetails = [
                 'visit_group_name' => $visitContext['visit_type']['visit_group']['name'],
@@ -112,11 +109,13 @@ class UnlockInvestigatorForm
         }
     }
 
-    public function checkAuthorization(int $currentUserId, int $visitId, string $visitQcStatus, string $studyName)
+    public function checkAuthorization(int $currentUserId, int $visitId, string $studyName, array $visitContext)
     {
+        $visitQcStatus = $visitContext['state_quality_control'];
         $this->authorizationVisitService->setUserId($currentUserId);
         $this->authorizationVisitService->setStudyName($studyName);
         $this->authorizationVisitService->setVisitId($visitId);
+        $this->authorizationVisitService->setVisitContext($visitContext);
 
         if (!$this->authorizationVisitService->isVisitAllowed(Constants::ROLE_SUPERVISOR) || in_array($visitQcStatus, [Constants::QUALITY_CONTROL_ACCEPTED, Constants::QUALITY_CONTROL_REFUSED])) {
             throw new GaelOForbiddenException();

@@ -10,6 +10,7 @@ use App\GaelO\Interfaces\Repositories\ReviewRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
 use App\GaelO\Services\AuthorizationService\AuthorizationVisitService;
+use App\GaelO\Services\FormService\InvestigatorFormService;
 use App\GaelO\Services\MailServices;
 use Exception;
 
@@ -20,6 +21,7 @@ class DeleteInvestigatorForm
     private VisitRepositoryInterface $visitRepositoryInterface;
     private TrackerRepositoryInterface $trackerRepositoryInterface;
     private ReviewRepositoryInterface $reviewRepositoryInterface;
+    private InvestigatorFormService $inverstigatorFormService;
     private MailServices $mailServices;
 
     public function __construct(
@@ -27,13 +29,15 @@ class DeleteInvestigatorForm
         ReviewRepositoryInterface $reviewRepositoryInterface,
         VisitRepositoryInterface $visitRepositoryInterface,
         TrackerRepositoryInterface $trackerRepositoryInterface,
+        InvestigatorFormService $inverstigatorFormService,
         MailServices $mailServices
     ) {
         $this->authorizationVisitService = $authorizationVisitService;
         $this->visitRepositoryInterface = $visitRepositoryInterface;
         $this->trackerRepositoryInterface = $trackerRepositoryInterface;
         $this->reviewRepositoryInterface = $reviewRepositoryInterface;
-        $this->mailServices  = $mailServices;
+        $this->inverstigatorFormService = $inverstigatorFormService;
+        $this->mailServices = $mailServices;
     }
 
     public function execute(DeleteInvestigatorFormRequest $deleteInvestigatorFormRequest, DeleteInvestigatorFormResponse $DeleteInvestigatorFormResponse)
@@ -55,18 +59,15 @@ class DeleteInvestigatorForm
             $investigatorFormEntity = $this->reviewRepositoryInterface->getInvestigatorForm($visitId, false);
 
             //check that it is called from the correct study
-            if($deleteInvestigatorFormRequest->studyName !== $studyName){
+            if ($deleteInvestigatorFormRequest->studyName !== $studyName) {
                 throw new GaelOForbiddenException("Should be called from same study than original study");
             }
 
-            $this->checkAuthorization($currentUserId, $visitId, $visitContext['state_quality_control'], $studyName);
+            $this->checkAuthorization($currentUserId, $visitId, $studyName, $visitContext);
 
-            //Delete review
-            $this->reviewRepositoryInterface->delete($investigatorFormEntity['id']);
-            //Make investigator form not done
-            $this->visitRepositoryInterface->updateInvestigatorFormStatus($investigatorFormEntity['visit_id'], Constants::INVESTIGATOR_FORM_NOT_DONE);
-            //Reset QC if QC is needed in this visit
-            if ($visitContext['state_quality_control'] !== Constants::QUALITY_CONTROL_NOT_NEEDED) $this->visitRepositoryInterface->resetQc($visitContext['id']);
+            $this->inverstigatorFormService->setCurrentUserId($currentUserId);
+            $this->inverstigatorFormService->setVisitContextAndStudy($visitContext, $studyName);
+            $this->inverstigatorFormService->deleteForm($investigatorFormEntity['id']);
 
             $actionDetails = [
                 'visit_group_name' => $visitContext['visit_type']['visit_group']['name'],
@@ -109,9 +110,9 @@ class DeleteInvestigatorForm
         }
     }
 
-    private function checkAuthorization(int $currentUserId, int $visitId, string $visitQcStatus, string $studyName)
+    private function checkAuthorization(int $currentUserId, int $visitId, string $studyName, array $visitContext)
     {
-
+        $visitQcStatus = $visitContext['state_quality_control'];
         $this->authorizationVisitService->setUserId($currentUserId);
         $this->authorizationVisitService->setVisitId($visitId);
         $this->authorizationVisitService->setStudyName($studyName);

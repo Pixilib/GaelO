@@ -1,6 +1,6 @@
 <!-- FILE: mail_template.mjml -->
 <!doctype html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office" lang="en">
 
 <head>
   <title> Gaelo </title>
@@ -115,7 +115,7 @@
                           <tbody>
                             <tr>
                               <td style="width:550px;">
-                                <a href="{{ $webAddress }}" target="_blank">
+                                <a href="{{ $webAddress }}" target="_blank" rel="noopener" >
                                 <img alt="Logo" height="auto" src="{{ $message->embed(public_path('static/media/gaelo-mail-header.jpg')) }}" style="border:0;display:block;outline:none;text-decoration:none;height:auto;width:100%;font-size:13px;" width="550" />
                                 </a>
                               </td>
@@ -202,7 +202,7 @@
                   <tbody>
                     <tr>
                       <td align="center" style="font-size:0px;padding:10px 25px;word-break:break-word;">
-                        <div style="font-family:Roboto, Helvetica, sans-serif;font-size:16px;font-weight:700;line-height:1.3;text-align:center;color:#314053;"><a style="color: #314053; font-size: 18px; text-decoration: none;" href="{{ $webAddress }}">{{ $webAddress }}</a></div>
+                        <div style="font-family:Roboto, Helvetica, sans-serif;font-size:16px;font-weight:700;line-height:1.3;text-align:center;color:#314053;"><a style="color: #314053; font-size: 18px; text-decoration: none;" href="{{ $webAddress }}" rel="noopener">{{ $webAddress }}</a></div>
                       </td>
                     </tr>
                     <tr>

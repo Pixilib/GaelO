@@ -5,12 +5,14 @@ namespace App\GaelO\UseCases\DeleteFileOfForm;
 use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
+use App\GaelO\Interfaces\Adapters\FrameworkInterface;
 use App\GaelO\Interfaces\Repositories\ReviewRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
 use App\GaelO\Services\AuthorizationService\AuthorizationReviewService;
 use App\GaelO\Services\AuthorizationService\AuthorizationVisitService;
-use App\GaelO\Services\FormService\FormService;
+use App\GaelO\Services\FormService\InvestigatorFormService;
+use App\GaelO\Services\FormService\ReviewFormService;
 use Exception;
 
 class DeleteFileOfForm
@@ -21,12 +23,12 @@ class DeleteFileOfForm
     private TrackerRepositoryInterface $trackerRepositoryInterface;
     private ReviewRepositoryInterface $reviewRepositoryInterface;
     private VisitRepositoryInterface $visitRepositoryInterface;
-    private FormService $formService;
+    private FrameworkInterface $frameworkInterface;
 
     public function __construct(
         AuthorizationVisitService $authorizationVisitService,
         AuthorizationReviewService $authorizationReviewService,
-        FormService $formService,
+        FrameworkInterface $frameworkInterface,
         ReviewRepositoryInterface $reviewRepositoryInterface,
         TrackerRepositoryInterface $trackerRepositoryInterface,
         VisitRepositoryInterface $visitRepositoryInterface
@@ -36,7 +38,7 @@ class DeleteFileOfForm
         $this->trackerRepositoryInterface = $trackerRepositoryInterface;
         $this->reviewRepositoryInterface = $reviewRepositoryInterface;
         $this->visitRepositoryInterface = $visitRepositoryInterface;
-        $this->formService = $formService;
+        $this->frameworkInterface = $frameworkInterface;
     }
 
     public function execute(DeleteFileOfFormRequest $deleteFileOfFormRequest, DeleteFileOfFormResponse $deleteFileOfFormResponse)
@@ -53,11 +55,20 @@ class DeleteFileOfForm
             $visitId = $reviewEntity['visit_id'];
             $reviewId = $reviewEntity['id'];
 
-            $visitContext = $this->visitRepositoryInterface->getVisitContext($visitId);
+            $visitContext = $this->visitRepositoryInterface->getVisitWithContextAndReviewStatus($visitId, $studyName);
 
             $this->checkAuthorization($local, $validated, $reviewId, $currentUserId, $visitContext);
-            $this->formService->setVisitContextAndStudy($visitContext, $studyName);
-            $this->formService->removeFile($reviewEntity, $fileKey);
+
+            $formService = null;
+
+            if ($local) {
+                $formService = $this->frameworkInterface->make(InvestigatorFormService::class);
+            } else {
+                $formService = $this->frameworkInterface->make(ReviewFormService::class);
+            }
+
+            $formService->setVisitContextAndStudy($visitContext, $studyName);
+            $formService->removeFile($reviewEntity, $fileKey);
 
             $actionDetails = [
                 'removed_file' => $fileKey,

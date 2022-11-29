@@ -36,9 +36,10 @@ class ReviewStatusRepositoryTest extends TestCase
     public function testUpdateReviewStatusAndConclusion(){
 
         $reviewStatus = ReviewStatus::factory()->create();
-        $this->reviewStatus->updateReviewStatusAndConclusion(
+        $this->reviewStatus->updateReviewAvailabilityStatusAndConclusion(
             $reviewStatus->visit_id,
             $reviewStatus->study_name,
+            false,
             Constants::REVIEW_STATUS_DONE,
             'Progression',
             ['liver'=> 3.54]

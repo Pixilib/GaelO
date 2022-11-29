@@ -2,22 +2,14 @@
 
 namespace App\GaelO\Services\SpecificStudiesRules\TEST;
 
-use App\GaelO\Constants\Constants;
-use App\GaelO\Interfaces\Repositories\ReviewRepositoryInterface;
 use App\GaelO\Services\GaelOStudiesService\AbstractVisitRules;
 
 class TEST_WB_CT0 extends AbstractVisitRules
 {
 
-    private string $studyName = "TEST";
-    private ReviewRepositoryInterface $reviewRepositoryInterface;
+    protected string $studyName = "TEST";
 
-    public function __construct(ReviewRepositoryInterface $reviewRepositoryInterface)
-    {
-        $this->reviewRepositoryInterface = $reviewRepositoryInterface;
-    }
-
-    public function getInvestigatorValidationRules(): array
+    public static function getInvestigatorValidationRules(): array
     {
         return [
             'comments' => [
@@ -27,7 +19,7 @@ class TEST_WB_CT0 extends AbstractVisitRules
         ];
     }
 
-    public function getReviewerValidationRules(bool $adjudication): array
+    public static function getReviewerValidationRules(): array
     {
         return [
             'comments' => [
@@ -37,30 +29,28 @@ class TEST_WB_CT0 extends AbstractVisitRules
         ];
     }
 
-    public function getReviewStatus(): string
-    {
-        //Fetch visit validated review
-        $reviews = $this->reviewRepositoryInterface->getReviewsForStudyVisit($this->studyName, $this->visitContext['id'], true);
-        return sizeof($reviews) > 0 ? Constants::REVIEW_STATUS_DONE : Constants::REVIEW_STATUS_NOT_DONE;
-    }
-
-    public function getReviewConclusion(): ?string
-    {
-        return null;
-    }
-
-    public function getAllowedKeyAndMimeTypeInvestigator(): array
+    public static function getReviewerAdjudicationValidationRules(): array
     {
         return [];
     }
 
-    public function getAllowedKeyAndMimeTypeReviewer(): array
+    public static function getAllowedKeyAndMimeTypeInvestigator(): array
     {
         return [];
     }
 
-    public function getTargetLesion(): ?array
+    public static function getAllowedKeyAndMimeTypeReviewer(): array
     {
-        return null;
+        return [];
+    }
+
+    public static function getAllowedKeyAndMimeTypeAdjudication(): array
+    {
+        return [];
+    }
+
+    public static function getVisitDecisionClass(): string
+    {
+        return TEST_FDG_PET0_DECISION::class;
     }
 }

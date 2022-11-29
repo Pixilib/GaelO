@@ -8,7 +8,7 @@ use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Repositories\VisitGroupRepository;
 use App\GaelO\Repositories\VisitTypeRepository;
 use App\GaelO\Services\AuthorizationService\AuthorizationStudyService;
-use App\GaelO\Services\FormService\FormService;
+use App\GaelO\Services\GaelOStudiesService\AbstractGaelOStudy;
 use Exception;
 
 class GetReviewsMetadataFromVisitType
@@ -17,14 +17,12 @@ class GetReviewsMetadataFromVisitType
     private AuthorizationStudyService $authorizationStudyService;
     private VisitTypeRepository $visitTypeRepository;
     private VisitGroupRepository $visitGroupRepository;
-    private FormService $formService;
 
-    public function __construct(AuthorizationStudyService $authorizationStudyService, VisitTypeRepository $visitTypeRepository, VisitGroupRepository $visitGroupRepository, FormService $formService)
+    public function __construct(AuthorizationStudyService $authorizationStudyService, VisitTypeRepository $visitTypeRepository, VisitGroupRepository $visitGroupRepository)
     {
         $this->authorizationStudyService = $authorizationStudyService;
         $this->visitTypeRepository = $visitTypeRepository;
         $this->visitGroupRepository = $visitGroupRepository;
-        $this->formService = $formService;
     }
 
     public function execute(GetReviewsMetadataFromVisitTypeRequest $getReviewsMetadataFromVisitTypeRequest, GetReviewsMetadataFromVisitTypeResponse $getReviewsMetadataFromVisitTypeResponse)
@@ -39,11 +37,11 @@ class GetReviewsMetadataFromVisitType
 
             $visitGroupEntity = $this->visitGroupRepository->find($visitTypeEntity['visit_group_id']);
 
-            $abstractStudyRules = $this->formService->getSpecificStudiesRules($studyName, $visitGroupEntity['name'], $visitTypeEntity['name']);
+            $abstractStudyRules = AbstractGaelOStudy::getSpecificStudiesRules($studyName, $visitGroupEntity['name'], $visitTypeEntity['name']);
 
             $answer = [];
-            $answer['default'] = $abstractStudyRules->getReviewerValidationRules(false);
-            $answer['adjudication'] = $abstractStudyRules->getReviewerValidationRules(true);
+            $answer['default'] = $abstractStudyRules::getReviewerValidationRules();
+            $answer['adjudication'] = $abstractStudyRules::getReviewerAdjudicationValidationRules();
 
 
             $getReviewsMetadataFromVisitTypeResponse->body = $answer;

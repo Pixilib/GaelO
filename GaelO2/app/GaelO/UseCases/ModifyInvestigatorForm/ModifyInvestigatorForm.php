@@ -6,6 +6,7 @@ use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOBadRequestException;
 use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
+use App\GaelO\Interfaces\Repositories\ReviewRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
 use App\GaelO\Services\AuthorizationService\AuthorizationVisitService;
@@ -17,15 +18,17 @@ class ModifyInvestigatorForm
 
     private AuthorizationVisitService $authorizationVisitService;
     private VisitRepositoryInterface $visitRepositoryInterface;
+    private ReviewRepositoryInterface $reviewRepositoryInterface;
     private InvestigatorFormService $investigatorFormService;
     private TrackerRepositoryInterface $trackerRepositoryInterface;
 
-    public function __construct(AuthorizationVisitService $authorizationVisitService, VisitRepositoryInterface $visitRepositoryInterface, InvestigatorFormService $investigatorFormService, TrackerRepositoryInterface $trackerRepositoryInterface)
+    public function __construct(AuthorizationVisitService $authorizationVisitService, VisitRepositoryInterface $visitRepositoryInterface, ReviewRepositoryInterface $reviewRepositoryInterface, InvestigatorFormService $investigatorFormService, TrackerRepositoryInterface $trackerRepositoryInterface)
     {
         $this->authorizationVisitService = $authorizationVisitService;
         $this->visitRepositoryInterface = $visitRepositoryInterface;
         $this->investigatorFormService = $investigatorFormService;
         $this->trackerRepositoryInterface = $trackerRepositoryInterface;
+        $this->reviewRepositoryInterface = $reviewRepositoryInterface;
     }
 
     public function execute(ModifyInvestigatorFormRequest $modifyInvestigatorFormRequest, ModifyInvestigatorFormResponse $modifyInvestigatorFormResponse)
@@ -48,13 +51,16 @@ class ModifyInvestigatorForm
             $this->checkAuthorization(
                 $currentUserId,
                 $visitId,
-                $visitContext['state_investigator_form'],
-                $studyName
+                $studyName,
+                $visitContext
             );
+
+            $localReviewEntitity = $this->reviewRepositoryInterface->getInvestigatorForm($visitId, false);
+            $localReviewId = $localReviewEntitity['id'];
 
             $this->investigatorFormService->setCurrentUserId($currentUserId);
             $this->investigatorFormService->setVisitContextAndStudy($visitContext, $studyName);
-            $localReviewId = $this->investigatorFormService->updateInvestigatorForm($data, $validated);
+            $this->investigatorFormService->updateForm($localReviewId, $data, $validated);
 
             $actionDetails = [
                 'raw_data' => $data,
@@ -77,8 +83,9 @@ class ModifyInvestigatorForm
     }
 
 
-    private function checkAuthorization(int $currentUserId, int $visitId, string $visitInvestigatorFormStatus, string $studyName)
+    private function checkAuthorization(int $currentUserId, int $visitId, string $studyName, array $visitContext)
     {
+        $visitInvestigatorFormStatus = $visitContext['state_investigator_form'];
 
         if (in_array($visitInvestigatorFormStatus, [Constants::INVESTIGATOR_FORM_DONE])) {
             throw new GaelOForbiddenException();
@@ -92,6 +99,7 @@ class ModifyInvestigatorForm
         $this->authorizationVisitService->setUserId($currentUserId);
         $this->authorizationVisitService->setVisitId($visitId);
         $this->authorizationVisitService->setStudyName($studyName);
+        $this->authorizationVisitService->setVisitContext($visitContext);
 
         if (!$this->authorizationVisitService->isVisitAllowed(Constants::ROLE_INVESTIGATOR)) {
             throw new GaelOForbiddenException();

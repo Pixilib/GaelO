@@ -8,7 +8,7 @@ use libphonenumber\PhoneNumberUtil;
 class PhoneNumberAdapter implements PhoneNumberInterface
 {
 
-    public static function isValidPhoneNumber(string $phoneNumber) : bool
+    public static function isValidPhoneNumber(string $phoneNumber): bool
     {
         $phoneNumberUtil = PhoneNumberUtil::getInstance();
         return $phoneNumberUtil->isPossibleNumber($phoneNumber);

@@ -52,7 +52,7 @@ class ReactivateDicomStudy
                 throw new GaelOForbiddenException();
             }
 
-            $this->checkAuthorization($currentUserId, $visitId, $visitContext['state_quality_control'], $studyName);
+            $this->checkAuthorization($currentUserId, $visitId, $studyName, $visitContext);
 
             //Change dicom study Activation
             $this->dicomService->reactivateDicomStudy($studyData['study_uid']);
@@ -82,9 +82,9 @@ class ReactivateDicomStudy
         }
     }
 
-    private function checkAuthorization(int $userId, int $visitId, string $qcStatus, string $studyName): void
+    private function checkAuthorization(int $userId, int $visitId, string $studyName, array $visitContext): void
     {
-
+        $qcStatus = $visitContext['state_quality_control'];
         //If QC is done, can't reactivate Study
         if (in_array($qcStatus, [Constants::QUALITY_CONTROL_ACCEPTED, Constants::QUALITY_CONTROL_REFUSED])) {
             throw new GaelOForbiddenException();
@@ -93,6 +93,7 @@ class ReactivateDicomStudy
         $this->authorizationVisitService->setUserId($userId);
         $this->authorizationVisitService->setVisitId($visitId);
         $this->authorizationVisitService->setStudyName($studyName);
+        $this->authorizationVisitService->setVisitContext($visitContext);
 
         if (!$this->authorizationVisitService->isVisitAllowed(Constants::ROLE_SUPERVISOR)) {
             throw new GaelOForbiddenException();

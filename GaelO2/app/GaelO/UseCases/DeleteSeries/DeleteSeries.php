@@ -23,8 +23,13 @@ class DeleteSeries
     private DicomSeriesRepositoryInterface $dicomSeriesRepositoryInterface;
 
 
-    public function __construct(VisitRepositoryInterface $visitRepositoryInterface, DicomSeriesRepositoryInterface $dicomSeriesRepositoryInterface, DicomService $dicomService, AuthorizationVisitService $authorizationVisitService, TrackerRepositoryInterface $trackerRepositoryInterface)
-    {
+    public function __construct(
+        VisitRepositoryInterface $visitRepositoryInterface,
+        DicomSeriesRepositoryInterface $dicomSeriesRepositoryInterface,
+        DicomService $dicomService,
+        AuthorizationVisitService $authorizationVisitService,
+        TrackerRepositoryInterface $trackerRepositoryInterface
+    ) {
         $this->authorizationVisitService = $authorizationVisitService;
         $this->dicomSeriesRepositoryInterface = $dicomSeriesRepositoryInterface;
         $this->dicomService = $dicomService;
@@ -57,14 +62,13 @@ class DeleteSeries
             $visitId = $seriesData['dicom_study']['visit_id'];
 
             $visitContext = $this->visitRepositoryInterface->getVisitContext($visitId);
-            $stateQc = $visitContext['state_quality_control'];
             $studyName = $visitContext['patient']['study_name'];
 
             if ($deleteSeriesRequest->studyName !== $studyName) {
                 throw new GaelOForbiddenException();
             }
 
-            $this->checkAuthorization($currentUserId, $visitId, $role, $stateQc, $studyName);
+            $this->checkAuthorization($currentUserId, $visitId, $role, $studyName, $visitContext);
 
             $this->dicomService->deleteSeries($seriesInstanceUID, $role);
 
@@ -93,9 +97,9 @@ class DeleteSeries
         }
     }
 
-    public function checkAuthorization(int $userId, int $visitId, string $role, string $qcStatus, string $studyName): void
+    public function checkAuthorization(int $userId, int $visitId, string $role, string $studyName, array $visitContext): void
     {
-
+        $qcStatus = $visitContext['state_quality_control'];
         //Series delete only for Investigator, Controller, Supervisor
         if (!in_array($role, [Constants::ROLE_INVESTIGATOR, Constants::ROLE_CONTROLLER, Constants::ROLE_SUPERVISOR])) {
             throw new GaelOForbiddenException();

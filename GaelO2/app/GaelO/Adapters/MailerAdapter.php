@@ -46,7 +46,7 @@ class MailerAdapter implements MailerInterface
         $this->frameworkInterface = $frameworkInterface;
         $this->replyTo = $this->frameworkInterface::getConfig('mail_reply_to_default');
     }
-   
+
 
     public function setReplyTo(?String $replyTo = null)
     {

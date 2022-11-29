@@ -32,28 +32,28 @@ class RequestUnlock
 
         try {
 
+            if (empty($requestUnlockRequest->message)) {
+                throw new GaelOBadRequestException('Unlock message should not be empty');
+            }
+
             $currentUserId = $requestUnlockRequest->currentUserId;
             $role = $requestUnlockRequest->role;
             $visitId = $requestUnlockRequest->visitId;
             $studyName = $requestUnlockRequest->studyName;
-
-            $this->checkAuthorization(
-                $currentUserId,
-                $role,
-                $visitId,
-                $studyName
-            );
+            $message = $requestUnlockRequest->message;
 
             $visitContext = $this->visitRepositoryInterface->getVisitContext($visitId);
             $patientId = $visitContext['patient']['id'];
             $patientCode = $visitContext['patient']['code'];
             $visitType = $visitContext['visit_type']['name'];
 
-            if (empty($requestUnlockRequest->message)) {
-                throw new GaelOBadRequestException('Unlock message should not be empty');
-            }
-
-            $message = $requestUnlockRequest->message;
+            $this->checkAuthorization(
+                $currentUserId,
+                $role,
+                $visitId,
+                $studyName,
+                $visitContext
+            );
 
             $this->mailServices->sendUnlockMessage(
                 $visitId,
@@ -99,11 +99,12 @@ class RequestUnlock
         }
     }
 
-    private function checkAuthorization(int $userId, string $role, int $visitId, string $studyName)
+    private function checkAuthorization(int $userId, string $role, int $visitId, string $studyName, array $visitContext)
     {
         $this->authorizationVisitService->setUserId($userId);
         $this->authorizationVisitService->setVisitId($visitId);
         $this->authorizationVisitService->setStudyName($studyName);
+        $this->authorizationVisitService->setVisitContext($visitContext);
         if (!$this->authorizationVisitService->isVisitAllowed($role)) {
             throw new GaelOForbiddenException();
         }

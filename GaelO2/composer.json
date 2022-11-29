@@ -48,10 +48,12 @@
         "psr-4": {
             "App\\": "app/",
             "Database\\Factories\\": "database/factories/",
-            "Database\\Seeders\\": "database/seeders/"
+            "Database\\Seeders\\": "database/seeders/",
+            "Database\\Seeders\\Studies\\": "database/seeders/studies"
         },
         "classmap": [
             "database/seeders",
+            "database/seeders/studies",
             "database/factories"
         ]
     },

@@ -44,6 +44,19 @@ class PatientEntity
         return $patientEntity;
     }
 
+    public static function fillMinimalFromDBReponseArray(array $array): PatientEntity
+    {
+        $patientEntity  = new PatientEntity();
+        $patientEntity->id = $array['id'];
+        $patientEntity->code = $array['code'];
+        $patientEntity->registrationDate = $array['registration_date'];
+        $patientEntity->studyName = $array['study_name'];
+        $patientEntity->inclusionStatus = $array['inclusion_status'];
+        $patientEntity->withdrawReason = $array['withdraw_reason'];
+        $patientEntity->withdrawDate = $array['withdraw_date'];
+        return $patientEntity;
+    }
+
     public function fillCenterDetails(CenterEntity $centerEntity): void
     {
         $this->center = $centerEntity;

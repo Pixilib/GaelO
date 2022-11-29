@@ -1,11 +1,14 @@
 Salim TODO :
-- Optimiser l'utilisation des authorization service en injectant les data depuis le usecase (ou les rendre stateless) (dont visite, review...)
+- Voir si unlock investigator form dans le repository a pas plus sa place dans une transaction? 
+- Lock db (pb de double soumission) -> mettre les save / modify de review das une transaction avec un lockForUpdate ?
+- Verifier qu'une PJ d'un investigateur et telechargeable par un reviewer (et chemin pour le faire)=> devrait etre ok en backend voir comment faire en frontend
 
 --- Etudes ancillaires ---
-Export study data => Ne tient pas en compte du statut ancillaire ou non de l'etude a exporter
+Export study data => Ne tient pas en compte du statut ancillaire ou non de l'etude a exporter 
+  - La methode getVisitsInStudy dans le repository visite ne tient pas compte des études ancillaire (a squizzer?) 
 Api Reminder à voir avec Emilie (pas de relance d'envoi d'imagerie depuis une étude ancillaire, probablement à occulter en front seulement)
-Tester Etudes ancillaire avec Emilie (voir return default data de review status si entitée non crée)
 Ne doit pas pouvoir faire les relance d'upload => Voir avec Emilie (probablement passer les info de study dans un contexte)
+notification de l'uplaoder à review conclusion a skipper sur étude ancillaire
 --- /Etudes ancillaires ---
 
 **** Tests ***
@@ -22,3 +25,7 @@ Test par etude specifique
 - Update version parameter in config app
 - Update onboarding version si besoin
 - Documentation : sheetname limité a 31 caractère $sheetName =  substr($role, 0, 3)  . '_' . $visitGroupName . '_' . $visitTypeName; donc groupname et typename ensemble doivent etre < 25 caractères
+
+**Code centres **
+Indicatif international et code postal
+ex : 3331000

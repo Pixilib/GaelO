@@ -7,7 +7,6 @@ use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOBadRequestException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\ReviewRepositoryInterface;
-use App\GaelO\Interfaces\Repositories\ReviewStatusRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
 use App\GaelO\Services\AuthorizationService\AuthorizationReviewService;
@@ -23,14 +22,12 @@ class UnlockReviewForm
     private ReviewRepositoryInterface $reviewRepositoryInterface;
     private VisitRepositoryInterface $visitRepositoryInterface;
     private ReviewFormService $reviewFormService;
-    private ReviewStatusRepositoryInterface $reviewStatusRepositoryInterface;
     private MailServices $mailServices;
 
     public function __construct(
         AuthorizationReviewService $authorizationReviewService,
         ReviewFormService $reviewFormService,
         ReviewRepositoryInterface $reviewRepositoryInterface,
-        ReviewStatusRepositoryInterface $reviewStatusRepositoryInterface,
         VisitRepositoryInterface $visitRepositoryInterface,
         TrackerRepositoryInterface $trackerRepositoryInterface,
         MailServices $mailServices
@@ -39,7 +36,6 @@ class UnlockReviewForm
         $this->trackerRepositoryInterface = $trackerRepositoryInterface;
         $this->visitRepositoryInterface = $visitRepositoryInterface;
         $this->reviewRepositoryInterface = $reviewRepositoryInterface;
-        $this->reviewStatusRepositoryInterface = $reviewStatusRepositoryInterface;
         $this->reviewFormService = $reviewFormService;
         $this->mailServices = $mailServices;
     }
@@ -72,15 +68,12 @@ class UnlockReviewForm
 
             $this->checkAuthorization($currentUserId, $reviewId, $reviewEntity['local']);
 
-            $visitContext = $this->visitRepositoryInterface->getVisitContext($reviewEntity['visit_id']);
-
-            $reviewStatus = $this->reviewStatusRepositoryInterface->getReviewStatus($reviewEntity['visit_id'], $reviewEntity['study_name']);
+            $visitContext = $this->visitRepositoryInterface->getVisitWithContextAndReviewStatus($reviewEntity['visit_id'], $reviewEntity['study_name']);
 
             //Delete review via service review
             $this->reviewFormService->setCurrentUserId($currentUserId);
             $this->reviewFormService->setVisitContextAndStudy($visitContext, $reviewEntity['study_name']);
-            $this->reviewFormService->setReviewStatus($reviewStatus);
-            $this->reviewFormService->unlockReview($reviewId);
+            $this->reviewFormService->unlockForm($reviewId);
 
             $actionDetails = [
                 'visit_group_name' => $visitContext['visit_type']['visit_group']['name'],
