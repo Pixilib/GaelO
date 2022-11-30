@@ -106,7 +106,7 @@ class DeleteSeries
         }
 
         //If QC is done, can't remove series
-        if (in_array($qcStatus, [Constants::QUALITY_CONTROL_ACCEPTED, Constants::QUALITY_CONTROL_REFUSED, CONSTANTS::QUALITY_CONTROL_NOT_NEEDED])) {
+        if (in_array($qcStatus, [Constants::QUALITY_CONTROL_ACCEPTED, Constants::QUALITY_CONTROL_REFUSED])) {
             throw new GaelOForbiddenException();
         }
 
