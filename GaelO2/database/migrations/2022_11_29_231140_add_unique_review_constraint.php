@@ -15,7 +15,8 @@ return new class extends Migration
     {
         Schema::table('reviews', function (Blueprint $table) {
             //A user can only have on local and expert review per visit in the study (to avoid duplicated form creation)
-            $table->unique(['study_name', 'visit_id', 'user_id', 'local'], 'unique_review_per_user');
+            //sk probleme du deleted
+            //$table->unique(['study_name', 'visit_id', 'user_id', 'local'], 'unique_review_per_user');
         });
     }
 
@@ -27,7 +28,7 @@ return new class extends Migration
     public function down()
     {
         Schema::table('reviews', function (Blueprint $table) {
-            $table->dropUnique('unique_review_per_user');
+            //$table->dropUnique('unique_review_per_user');
         });
     }
 };
