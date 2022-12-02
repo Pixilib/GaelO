@@ -540,7 +540,8 @@ class MailServices
             'subject' => $subject,
             'content' => $content,
             'patientId' => $patientId,
-            'visitId' => $visitId
+            'visitId' => $visitId,
+            'canReply' => true
         ];
 
         $this->mailInterface->setTo(
@@ -557,7 +558,8 @@ class MailServices
         $parameters = [
             'study' => $studyName,
             'subject' => $subject,
-            'content' => $content
+            'content' => $content,
+            'canReply' => true
         ];
 
         $this->mailInterface->setTo(
@@ -580,6 +582,7 @@ class MailServices
             'study' => $studyName,
             'subject' => $subject,
             'content' => $content,
+            'canReply' => true
         ];
 
         $this->mailInterface->setTo(
