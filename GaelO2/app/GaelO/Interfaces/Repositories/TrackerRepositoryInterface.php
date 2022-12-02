@@ -14,6 +14,6 @@ interface TrackerRepositoryInterface {
 
     public function getTrackerOfRoleActionInStudy(string $role, string $action, string $studyName) : array ;
 
-    public function getTrackerOfMessages() : array ;
+    public function getTrackerOfMessages(string $studyName) : array ;
 
 }

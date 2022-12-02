@@ -30,7 +30,7 @@ class GetStudyTrackerMessage
 
             $this->checkAuthorization($getStudyTrackerMessageRequest->currentUserId, $getStudyTrackerMessageRequest->studyName);
 
-            $dbData = $this->trackerRepositoryInterface->getTrackerOfMessages();
+            $dbData = $this->trackerRepositoryInterface->getTrackerOfMessages($getStudyTrackerMessageRequest->studyName);
             $responseArray = [];
             foreach ($dbData as $data) {
                 $trackerEntity = TrackerEntity::fillFromDBReponseArray($data);

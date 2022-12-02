@@ -57,9 +57,9 @@ class TrackerRepository implements TrackerRepositoryInterface
         return empty($trackerData) ? [] : $trackerData->toArray();
     }
 
-    public function getTrackerOfMessages(): array
+    public function getTrackerOfMessages(string $studyName): array
     {
-        $trackerData = $this->trackerModel->with('user')->where('action_type', Constants::TRACKER_SEND_MESSAGE)->get();
+        $trackerData = $this->trackerModel->with('user')->where('study_name', $studyName)->where('action_type', Constants::TRACKER_SEND_MESSAGE)->get();
         return empty($trackerData) ? [] : $trackerData->toArray();
     }
 }
