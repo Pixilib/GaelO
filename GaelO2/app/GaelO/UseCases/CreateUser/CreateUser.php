@@ -42,8 +42,10 @@ class CreateUser
         try {
 
             $currentUserId = $createUserRequest->currentUserId;
+            //In case creation is asked by a supervisor
+            $studyName = $createUserRequest->studyName;
 
-            $this->checkAuthorization($currentUserId);
+            $this->checkAuthorization($currentUserId, $studyName);
             self::checkFormComplete($createUserRequest);
             self::checkEmailValid($createUserRequest->email);
             self::checkPhoneCorrect($createUserRequest->phone);
@@ -97,11 +99,19 @@ class CreateUser
         }
     }
 
-    private function checkAuthorization(int $userId): void
+    private function checkAuthorization(int $userId, ?string $studyName): void
     {
+
         $this->authorizationUserService->setUserId($userId);
-        if (!$this->authorizationUserService->isAdmin($userId)) {
-            throw new GaelOForbiddenException();
+
+        if ($studyName == null) {
+            //If no study name specified user shall be admin
+            if (!$this->authorizationUserService->isAdmin()) throw new GaelOForbiddenException();
+        } else {
+            //Else shall be supervisor in the study
+            if (!$this->authorizationUserService->isRoleAllowed(Constants::ROLE_SUPERVISOR, $studyName)) {
+                throw new GaelOForbiddenException();
+            }
         }
     }
 
