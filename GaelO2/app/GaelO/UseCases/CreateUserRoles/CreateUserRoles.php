@@ -36,7 +36,7 @@ class CreateUserRoles
             $studyName = $createRoleRequest->studyName;
             $role = $createRoleRequest->role;
 
-            $this->checkAuthorization($currentUserId);
+            $this->checkAuthorization($currentUserId, $studyName);
 
             //Get current roles in study for users
             $actualRolesArray = $this->userRepositoryInterface->getUsersRolesInStudy($userId, $studyName);
@@ -66,10 +66,10 @@ class CreateUserRoles
         }
     }
 
-    private function checkAuthorization(int $userId): void
+    private function checkAuthorization(int $userId, $studyName): void
     {
         $this->authorizationUserService->setUserId($userId);
-        if (!$this->authorizationUserService->isAdmin($userId)) {
+        if (!$this->authorizationUserService->isRoleAllowed(Constants::ROLE_SUPERVISOR, $studyName) && !$this->authorizationUserService->isAdmin($userId)) {
             throw new GaelOForbiddenException();
         }
     }

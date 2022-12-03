@@ -148,6 +148,28 @@ class UserTest extends TestCase
         $this->json('POST', '/api/users/1/roles?studyName='.$study->name, $payload)->assertStatus(403);
     }
 
+    public function testCreateRoleBySupervisor()
+    {
+        $userId = AuthorizationTools::actAsAdmin(false);
+        //Create 2 random studies
+        $study = Study::factory()->create();
+        AuthorizationTools::addRoleToUser($userId, Constants::ROLE_SUPERVISOR, $study->name);
+        $payload = ["role" => "Investigator"];
+        //First call should be success
+        $this->json('POST', '/api/users/1/roles?studyName='.$study->name, $payload)->assertStatus(201);
+    }
+
+    public function testCreateRoleBySupervisorShouldFailNoRole()
+    {
+        $userId = AuthorizationTools::actAsAdmin(false);
+        //Create 2 random studies
+        $study = Study::factory()->count(2)->create();
+        AuthorizationTools::addRoleToUser($userId, Constants::ROLE_SUPERVISOR, $study->first()->name);
+        $payload = ["role" => "Investigator"];
+        //First call should be success
+        $this->json('POST', '/api/users/1/roles?studyName='.$study->last()->name, $payload)->assertStatus(403);
+    }
+
     public function testCreateAlreadyExistingRoleForUser()
     {
         AuthorizationTools::actAsAdmin(true);
@@ -188,6 +210,29 @@ class UserTest extends TestCase
         AuthorizationTools::actAsAdmin(false);
         $study = Study::factory()->create();
         AuthorizationTools::addRoleToUser(1, Constants::ROLE_INVESTIGATOR, $study->name);
+
+        //Delete Investigator role
+        $this->json('DELETE', '/api/users/1/roles/Investigator?studyName='.$study->name)->assertStatus(403);
+    }
+
+    public function testDeleteRoleFromSupervisor()
+    {
+        $study = Study::factory()->create();
+        AuthorizationTools::addRoleToUser(1, Constants::ROLE_INVESTIGATOR, $study->name);
+        $userId = AuthorizationTools::actAsAdmin(false);
+        AuthorizationTools::addRoleToUser($userId, Constants::ROLE_SUPERVISOR, $study->name);
+
+        //Delete Investigator role
+        $this->json('DELETE', '/api/users/1/roles/Investigator?studyName='.$study->name)->assertStatus(200);
+    }
+
+    public function testDeleteRoleFromSupervisorShouldFailNoRole()
+    {
+        $study = Study::factory()->create();
+        AuthorizationTools::addRoleToUser(1, Constants::ROLE_INVESTIGATOR, $study->name);
+        $userId = AuthorizationTools::actAsAdmin(false);
+        $study2 = Study::factory()->create();
+        AuthorizationTools::addRoleToUser($userId, Constants::ROLE_SUPERVISOR, $study2->name);
 
         //Delete Investigator role
         $this->json('DELETE', '/api/users/1/roles/Investigator?studyName='.$study->name)->assertStatus(403);
