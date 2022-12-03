@@ -101,7 +101,7 @@ class VisitRepository implements VisitRepositoryInterface
     public function getVisitWithContextAndReviewStatus(int $visitId, string $studyName): array
     {
 
-        $builder = $this->visitModel->with(['patient','visitType', 'visitType.visitGroup', 'creator']);
+        $builder = $this->visitModel->with(['patient', 'visitType', 'visitType.visitGroup', 'creator']);
         $builder->with(['reviewStatus' => function ($query) use ($studyName) {
             $query->where('study_name', $studyName);
         }]);
@@ -312,14 +312,14 @@ class VisitRepository implements VisitRepositoryInterface
                     ->where('user_id', $userId)
                     ->where('deleted_at', null);
             }, '=', 0)->get();
-        
+
         //Filtered outside the query because confusing laravel to do default value (which is dynamic in our case) + condition after the default value
         $reviewAvailable = $collection->filter(function ($visit, $key) {
-                return $visit->reviewStatus->review_available === true;
+            return $visit->reviewStatus->review_available === true;
         });
-        
+
         $patientIds = $reviewAvailable->pluck('patient_id')->unique();
-    
+
         return $patientIds->count() === 0 ? []  : $patientIds->toArray();
     }
 
@@ -329,13 +329,19 @@ class VisitRepository implements VisitRepositoryInterface
         $patient = $this->visitModel->findOrFail($visitId)->patient()->sole();
 
         //Select visits available for review in this patient
-        $patientVisitsIdAvailableForReview = $this->visitModel
+        $patientAvailableForReview = $this->visitModel
             ->where('patient_id', $patient->id)
-            ->whereHas('reviewStatus', function ($query) use ($studyName) {
+            ->with(['reviewStatus' => function ($query) use ($studyName) {
                 $query->where('study_name', $studyName);
-                $query->where('review_available', true);
-            })
-            ->select('id')->get()->toArray();
+            }])->get();
+
+
+        //Filtered outside the query because confusing laravel to do default value (which is dynamic in our case) + condition after the default value
+        $patientAvailableForReview = $patientAvailableForReview->filter(function ($visit, $key) {
+            return $visit->reviewStatus->review_available === true;
+        });
+        
+        $patientVisitsIdAvailableForReview = $patientAvailableForReview->pluck('id');
 
         //In these review select visit in which current user didn't validated his review form
         $answer = $this->visitModel
