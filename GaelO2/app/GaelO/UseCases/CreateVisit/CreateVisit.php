@@ -130,7 +130,7 @@ class CreateVisit
 
             $this->trackerRepositoryInterface->writeAction(
                 $currentUserId,
-                Constants::ROLE_INVESTIGATOR,
+                $role,
                 $studyName,
                 $visitId,
                 Constants::TRACKER_CREATE_VISIT,

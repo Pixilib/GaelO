@@ -41,7 +41,6 @@
       display: block;
       margin: 13px 0;
     }
-
   </style>
   <!--[if mso]>
     <noscript>
@@ -62,7 +61,6 @@
   <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700" rel="stylesheet" type="text/css">
   <style type="text/css">
     @import url(https://fonts.googleapis.com/css?family=Roboto:300,400,500,700);
-
   </style>
   <!--<![endif]-->
   <style type="text/css">
@@ -72,14 +70,12 @@
         max-width: 100%;
       }
     }
-
   </style>
   <style media="screen and (min-width:480px)">
     .moz-text-html .mj-column-per-100 {
       width: 100% !important;
       max-width: 100%;
     }
-
   </style>
   <style type="text/css">
     @media only screen and (max-width:480px) {
@@ -91,7 +87,6 @@
         width: auto !important;
       }
     }
-
   </style>
   <style type="text/css">
   </style>
@@ -115,8 +110,8 @@
                           <tbody>
                             <tr>
                               <td style="width:550px;">
-                                <a href="{{ $webAddress }}" target="_blank" rel="noopener" >
-                                <img alt="Logo" height="auto" src="{{ $message->embed(public_path('static/media/gaelo-mail-header.jpg')) }}" style="border:0;display:block;outline:none;text-decoration:none;height:auto;width:100%;font-size:13px;" width="550" />
+                                <a href="{{ $webAddress }}" target="_blank" rel="noopener">
+                                  <img alt="Logo" height="auto" src="{{ $message->embed(public_path('static/media/gaelo-mail-header.jpg')) }}" style="border:0;display:block;outline:none;text-decoration:none;height:auto;width:100%;font-size:13px;" width="550" />
                                 </a>
                               </td>
                             </tr>
@@ -207,7 +202,13 @@
                     </tr>
                     <tr>
                       <td align="center" style="font-size:0px;padding:10px 25px;word-break:break-word;">
-                        <div style="font-family:Roboto, Helvetica, sans-serif;font-size:14px;font-style:italic;font-weight:300;line-height:1.3;text-align:center;color:#314053;">This is an automatic e-mail. Please do not reply.</div>
+                        <div style="font-family:Roboto, Helvetica, sans-serif;font-size:14px;font-style:italic;font-weight:300;line-height:1.3;text-align:center;color:#314053;">
+                          @if(!empty($canReply) && $canReply)
+                          You can reply to the sender of this message by clicking "Reply".
+                          @else
+                          This is an automatic e-mail. Please do not reply.
+                          @endif
+                        </div>
                       </td>
                     </tr>
                   </tbody>
@@ -224,4 +225,3 @@
 </body>
 
 </html>
-
