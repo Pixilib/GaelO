@@ -178,12 +178,12 @@ class VisitRepository implements VisitRepositoryInterface
         return $answer->count() === 0 ? []  : $answer->toArray();
     }
 
-    public function getVisitsInStudy(string $studyName, bool $withReviewStatus, bool $withPatientCenter, bool $withTrashed): array
+    public function getVisitsInStudy(string $originalStudyName, bool $withReviewStatus, bool $withPatientCenter, bool $withTrashed, ?string $ancillaryStudyName): array
     {
 
         $queryBuilder = $this->visitModel->with(['visitType', 'visitType.visitGroup', 'patient'])
-            ->whereHas('patient', function ($query) use ($studyName) {
-                $query->where('study_name', $studyName);
+            ->whereHas('patient', function ($query) use ($originalStudyName) {
+                $query->where('study_name', $originalStudyName);
             });
 
         if ($withPatientCenter) {
@@ -191,8 +191,8 @@ class VisitRepository implements VisitRepositoryInterface
         }
         if ($withReviewStatus) {
 
-            $queryBuilder->with(['reviewStatus' => function ($query) use ($studyName) {
-                $query->where('study_name', $studyName);
+            $queryBuilder->with(['reviewStatus' => function ($query) use ($originalStudyName) {
+                $query->where('study_name', ($ancillaryStudyName ?? $originalStudyName));
             }]);
         }
 
@@ -208,7 +208,7 @@ class VisitRepository implements VisitRepositoryInterface
     public function hasVisitsInStudy(string $studyName): bool
     {
 
-        $visits = $this->getVisitsInStudy($studyName, false, false, true);
+        $visits = $this->getVisitsInStudy($studyName, false, false, true, null);
 
         return sizeof($visits) === 0 ? false  : true;
     }

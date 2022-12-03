@@ -9,9 +9,11 @@ use App\GaelO\Interfaces\Repositories\DicomSeriesRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\DicomStudyRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\PatientRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\ReviewRepositoryInterface;
+use App\GaelO\Interfaces\Repositories\StudyRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\UserRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
+use App\GaelO\Repositories\StudyRepository;
 use App\GaelO\Services\StoreObjects\Export\ExportDataResults;
 use App\GaelO\Services\StoreObjects\Export\ExportDicomResults;
 use App\GaelO\Services\StoreObjects\Export\ExportFileResults;
@@ -29,6 +31,7 @@ class ExportStudyService
 {
 
     private UserRepositoryInterface $userRepositoryInterface;
+    private StudyRepositoryInterface $studyRepositoryInterface;
     private PatientRepositoryInterface $patientRepositoryInterface;
     private VisitRepositoryInterface $visitRepositoryInterface;
     private DicomStudyRepositoryInterface $dicomStudyRepositoryInterface;
@@ -41,6 +44,7 @@ class ExportStudyService
 
     public function __construct(
         UserRepositoryInterface $userRepositoryInterface,
+        StudyRepositoryInterface $studyRepositoryInterface,
         PatientRepositoryInterface $patientRepositoryInterface,
         VisitRepositoryInterface $visitRepositoryInterface,
         DicomStudyRepositoryInterface $dicomStudyRepositoryInterface,
@@ -51,6 +55,7 @@ class ExportStudyService
         FrameworkInterface $frameworkInterface
     ) {
         $this->userRepositoryInterface = $userRepositoryInterface;
+        $this->studyRepositoryInterface = $studyRepositoryInterface;
         $this->patientRepositoryInterface = $patientRepositoryInterface;
         $this->visitRepositoryInterface = $visitRepositoryInterface;
         $this->dicomStudyRepositoryInterface = $dicomStudyRepositoryInterface;
@@ -64,9 +69,10 @@ class ExportStudyService
     public function setStudyName(string $studyName)
     {
         $this->studyName = $studyName;
-
+        $studyEntity = $this->studyRepositoryInterface->find($this->studyName);
+        $originalStudyName = $studyEntity->getOriginalStudyName();
         //Store Id of visits of this study
-        $this->availableVisits = $this->visitRepositoryInterface->getVisitsInStudy($this->studyName, true, false, false);
+        $this->availableVisits = $this->visitRepositoryInterface->getVisitsInStudy($originalStudyName, true, false, false, $this->studyName);
 
         $this->visitIdArray = array_map(function ($visit) {
             return $visit['id'];
@@ -260,7 +266,7 @@ class ExportStudyService
 
         foreach ($roleArray as $role) {
             $trackerData = $this->trackerRepositoryInterface->getTrackerOfRoleAndStudy($this->studyName, $role, false);
-            $trackerData = array_map(function($trackerEntity) {
+            $trackerData = array_map(function ($trackerEntity) {
                 $trackerEntity['action_details'] = json_encode($trackerEntity['action_details']);
                 return $trackerEntity;
             }, $trackerData);

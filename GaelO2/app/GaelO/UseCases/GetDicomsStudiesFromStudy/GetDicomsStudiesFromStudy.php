@@ -45,7 +45,7 @@ class GetDicomsStudiesFromStudy
             $originalStudyName = $studyEntity->getOriginalStudyName();
 
             //Get Visits in the asked study
-            $visits = $this->visitRepositoryInterface->getVisitsInStudy($originalStudyName, false, false, false);
+            $visits = $this->visitRepositoryInterface->getVisitsInStudy($originalStudyName, false, false, false, null);
             //make visitsId array
             $visitsIds = array_map(function ($visit) {
                 return $visit['id'];

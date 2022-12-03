@@ -43,7 +43,7 @@ class GetVisitsFromStudy
                 //Get Original Study name for ancilaries studies
                 $studyEntity = $this->studyRepositoryInterface->find($studyName);
                 $originalStudyName = $studyEntity->getOriginalStudyName($studyEntity);
-                $dbData = $this->visitRepositoryInterface->getVisitsInStudy($originalStudyName, true, true, false);
+                $dbData = $this->visitRepositoryInterface->getVisitsInStudy($originalStudyName, true, true, false, $studyName);
             } else {
                 $dbData = $this->visitRepositoryInterface->getVisitsInVisitType($getVisitsFromStudyRequest->visitTypeId, true, $studyName, false, true);
             }

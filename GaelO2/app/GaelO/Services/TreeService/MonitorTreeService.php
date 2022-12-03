@@ -12,7 +12,7 @@ class MonitorTreeService extends InvestigatorTreeService{
     {
         if($this->studyEntity->monitorShowAll){
             //If show all in this study, return whole list of visits
-            $visitsArray = $this->visitRepositoryInterface->getVisitsInStudy($this->studyEntity->name, false, false, false);
+            $visitsArray = $this->visitRepositoryInterface->getVisitsInStudy($this->studyEntity->name, false, false, false, null);
             return $this->formatResponse($visitsArray);
         }else{
             //Return only visits belonging to user's centers as done for investigator roles
