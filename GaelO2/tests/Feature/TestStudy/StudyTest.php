@@ -20,9 +20,8 @@ class StudyTest extends TestCase
     {
         parent::setUp();
         $this->artisan('db:seed');
-      
     }
-    
+
     public function testGetStudiesWithDetails()
     {
         AuthorizationTools::actAsAdmin(true);
@@ -83,6 +82,36 @@ class StudyTest extends TestCase
         $visitType = VisitType::factory()->create();
         AuthorizationTools::addRoleToUser($userId, Constants::ROLE_SUPERVISOR, $visitType->visitGroup->study->name);
         $answer = $this->json('GET', '/api/studies/' . $visitType->visitGroup->study->name . '/visit-types');
+        $answer->assertStatus(200);
+        $expectedKeys = [
+            "id",
+            "visitGroupId",
+            "name",
+            "order",
+            "localFormNeeded",
+            "qcProbability",
+            "reviewProbability",
+            "optional",
+            "limitLowDays",
+            "limitUpDays",
+            "anonProfile",
+            "dicomConstraints",
+            "visitGroup"
+        ];
+        foreach ($expectedKeys as $key) {
+            $this->assertArrayHasKey($key, $answer[0]);
+        }
+    }
+
+
+    public function testGetStudyVisitTypesOfAncillaryStudy()
+    {
+        $userId = AuthorizationTools::actAsAdmin(true);
+        $visitType = VisitType::factory()->create();
+        $originalStudyName = $visitType->visitGroup->study->name;
+        $ancillaryStudy = Study::factory()->ancillaryOf($originalStudyName)->create();
+        AuthorizationTools::addRoleToUser($userId, Constants::ROLE_SUPERVISOR, $ancillaryStudy->name);
+        $answer = $this->json('GET', '/api/studies/' . $ancillaryStudy->name . '/visit-types');
         $answer->assertStatus(200);
         $expectedKeys = [
             "id",

@@ -28,20 +28,19 @@ class DeleteUserRole
     {
 
         try {
-
-            $this->checkAuthorization($deleteUserRoleRequest->currentUserId);
-
-            $study = $deleteUserRoleRequest->studyName;
+            $studyName = $deleteUserRoleRequest->studyName;
             $role = $deleteUserRoleRequest->role;
             $userId = $deleteUserRoleRequest->userId;
 
-            $this->userRepositoryInterface->deleteRoleForUser($userId, $study, $role);
+            $this->checkAuthorization($deleteUserRoleRequest->currentUserId, $studyName);
+
+            $this->userRepositoryInterface->deleteRoleForUser($userId, $studyName, $role);
 
             $actionDetails = [
                 'deleted_role' => $role
             ];
 
-            $this->trackerRepositoryInterface->writeAction($deleteUserRoleRequest->currentUserId, Constants::TRACKER_ROLE_ADMINISTRATOR, $study, null, Constants::TRACKER_EDIT_USER, $actionDetails);
+            $this->trackerRepositoryInterface->writeAction($deleteUserRoleRequest->currentUserId, Constants::TRACKER_ROLE_ADMINISTRATOR, $studyName, null, Constants::TRACKER_EDIT_USER, $actionDetails);
 
             $deleteUserRoleResponse->status = 200;
             $deleteUserRoleResponse->statusText = 'OK';
@@ -54,10 +53,10 @@ class DeleteUserRole
         }
     }
 
-    private function checkAuthorization(int $userId)
+    private function checkAuthorization(int $userId, string $studyName)
     {
         $this->authorizationUserService->setUserId($userId);
-        if (!$this->authorizationUserService->isAdmin()) {
+        if (!$this->authorizationUserService->isRoleAllowed(Constants::ROLE_SUPERVISOR, $studyName) && !$this->authorizationUserService->isAdmin()) {
             throw new GaelOForbiddenException();
         }
     }

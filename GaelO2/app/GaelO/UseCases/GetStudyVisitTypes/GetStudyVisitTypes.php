@@ -7,6 +7,7 @@ use App\GaelO\Entities\VisitGroupEntity;
 use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Entities\VisitTypeEntity;
+use App\GaelO\Interfaces\Repositories\StudyRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\VisitTypeRepositoryInterface;
 use App\GaelO\Services\AuthorizationService\AuthorizationStudyService;
 use Exception;
@@ -15,12 +16,18 @@ class GetStudyVisitTypes
 {
 
     private AuthorizationStudyService $authorizationStudyService;
+    private StudyRepositoryInterface $studyRepositoryInterface;
     private VisitTypeRepositoryInterface $visitTypeRepositoryInterface;
 
-    public function __construct(VisitTypeRepositoryInterface $visitTypeRepositoryInterface, AuthorizationStudyService $authorizationStudyService)
+    public function __construct(
+        StudyRepositoryInterface $studyRepositoryInterface,
+        VisitTypeRepositoryInterface $visitTypeRepositoryInterface,
+        AuthorizationStudyService $authorizationStudyService)
     {
-        $this->visitTypeRepositoryInterface = $visitTypeRepositoryInterface;
+
         $this->authorizationStudyService = $authorizationStudyService;
+        $this->studyRepositoryInterface = $studyRepositoryInterface;
+        $this->visitTypeRepositoryInterface = $visitTypeRepositoryInterface;
     }
 
     public function execute(GetStudyVisitTypesRequest $getStudyVisitTypesRequest, GetStudyVisitTypesResponse $getStudyVisitTypesResponse): void
@@ -32,7 +39,10 @@ class GetStudyVisitTypes
 
             $this->checkAuthorization($currentUserId, $studyName);
 
-            $visitTypes = $this->visitTypeRepositoryInterface->getVisitTypesOfStudy($studyName);
+            $studyEntity = $this->studyRepositoryInterface->find($studyName);
+            $originalStudyName = $studyEntity->getOriginalStudyName();
+
+            $visitTypes = $this->visitTypeRepositoryInterface->getVisitTypesOfStudy($originalStudyName);
 
             $studyDetailResponse = [];
 

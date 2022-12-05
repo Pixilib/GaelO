@@ -11,4 +11,5 @@ class CreateVisitRequest
     public string $statusDone;
     public ?string $reasonForNotDone = null;
     public string $role;
+    public string $studyName;
 }

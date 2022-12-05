@@ -40,7 +40,7 @@ interface VisitRepositoryInterface
 
     public function getReviewVisitHistoryFromPatientIdsWithContextAndReviewStatus(array $patientIdArray, string $studyName): array;
 
-    public function getVisitsInStudy(string $studyName, bool $withReviewStatus, bool $withPatientCenter, bool $withTrashed): array;
+    public function getVisitsInStudy(string $originalStudyName, bool $withReviewStatus, bool $withPatientCenter, bool $withTrashed, ?string $ancillaryStudyName): array;
 
     public function hasVisitsInStudy(string $studyName): bool;
 

@@ -10,6 +10,8 @@ class Review extends Model
 {
     use SoftDeletes, HasFactory;
 
+    protected $guarded = [];
+
     protected $casts = [
         'id' => 'integer',
         'study_name' => 'string',

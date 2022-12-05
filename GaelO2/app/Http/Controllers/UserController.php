@@ -138,7 +138,9 @@ class UserController extends Controller
         //Add current user ID in Request DTO
         $createUserRequest->currentUserId = $currentUser['id'];
         $requestData = $request->all();
+        $queryParam = $request->query();
         //Fill DTO with all other request data
+        $createUserRequest->studyName = $queryParam['studyName'] ?? null;
         $createUserRequest = Util::fillObject($requestData, $createUserRequest);
         //Execute use case
         $createUser->execute($createUserRequest, $createUserResponse);

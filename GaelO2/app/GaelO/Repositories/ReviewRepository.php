@@ -2,9 +2,11 @@
 
 namespace App\GaelO\Repositories;
 
+use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Interfaces\Repositories\ReviewRepositoryInterface;
 use App\GaelO\Util;
 use App\Models\Review;
+use Illuminate\Support\Facades\DB;
 
 class ReviewRepository implements ReviewRepositoryInterface
 {
@@ -42,19 +44,38 @@ class ReviewRepository implements ReviewRepositoryInterface
     public function createReview(bool $local, int $visitId, string $studyName, int $userId, array $reviewData, bool $validated, bool $adjudication): int
     {
 
-        $review = new Review();
+        $data = [
+            'local' => $local,
+            'validated' => $validated,
+            'adjudication' => $adjudication,
+            'review_date' => Util::now(),
+            'user_id' => $userId,
+            'visit_id' => $visitId,
+            'study_name' => $studyName,
+            'review_data' => $reviewData
+        ];
 
-        $review->local = $local;
-        $review->validated = $validated;
-        $review->adjudication = $adjudication;
-        $review->review_date = Util::now();
-        $review->user_id =  $userId;
-        $review->visit_id =  $visitId;
-        $review->study_name = $studyName;
-        $review->review_data = $reviewData;
+        $reviewId = DB::transaction(function () use ($data) {
+            //Lock review table to avoid having two review of the same user (except soft deleted ones, that's because sql constraint are not a solution)
+            $this->reviewModel->sharedLock();
 
-        $review->save();
-        return $review->toArray()['id'];
+            if ($this->reviewModel
+                ->where('visit_id', $data['visit_id'])
+                ->where('local', $data['local'])
+                ->where('user_id', $data['user_id'])
+                ->where('study_name', $data['study_name'])
+                ->exists()
+            ) {
+                throw new GaelOException("Review already existing for this visit, study and user");
+            };
+
+            //create review
+            $newReview = $this->reviewModel->create($data);
+
+            return $newReview->id;
+        });
+
+        return $reviewId;
     }
 
     public function updateReview(int $reviewId, int $userId, array $reviewData, bool $validated): void

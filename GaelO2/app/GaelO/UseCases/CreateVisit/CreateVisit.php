@@ -48,6 +48,7 @@ class CreateVisit
             $visitDate = $createVisitRequest->visitDate;
             $reasonForNotDone = $createVisitRequest->reasonForNotDone;
             $visitTypeId = $createVisitRequest->visitTypeId;
+            $studyName = $createVisitRequest->studyName;
 
             $patientEntity = $this->patientRepositoryInterface->find($patientId);
             $patientCode = $patientEntity['code'];
@@ -56,7 +57,10 @@ class CreateVisit
                 throw new GaelOForbiddenException("Visit Creation only allowed for preincluded or included patient");
             }
 
-            $studyName = $patientEntity['study_name'];
+            if($studyName !== $patientEntity['study_name']){
+                throw new GaelOForbiddenException("Visit Creation only for patient's orignial study");
+            }
+            
             $this->checkAuthorization($currentUserId, $patientId, $studyName, $role);
 
             //If visit was not done, force visitDate to null

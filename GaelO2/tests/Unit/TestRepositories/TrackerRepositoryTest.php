@@ -87,10 +87,12 @@ class TrackerRepositoryTest extends TestCase
 
     public function testGetTrackerOfMessages()
     {
-        Tracker::factory()->role(Constants::ROLE_INVESTIGATOR)->actionType(Constants::TRACKER_SEND_MESSAGE)->count(3)->create();
-        Tracker::factory()->role(Constants::ROLE_SUPERVISOR)->actionType(Constants::TRACKER_SEND_MESSAGE)->count(5)->create();
+        $study = Study::factory()->create();
+        $studyName=$study->name;
+        Tracker::factory()->studyName($studyName)->role(Constants::ROLE_INVESTIGATOR)->actionType(Constants::TRACKER_SEND_MESSAGE)->count(3)->create();
+        Tracker::factory()->studyName($studyName)->role(Constants::ROLE_SUPERVISOR)->actionType(Constants::TRACKER_SEND_MESSAGE)->count(5)->create();
 
-        $answer = $this->trackerRepository->getTrackerOfMessages();
+        $answer = $this->trackerRepository->getTrackerOfMessages($studyName);
         $this->assertEquals(8, sizeof($answer));
     }
 }

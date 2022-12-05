@@ -49,6 +49,7 @@ class VisitController extends Controller
         $createVisitRequest->visitTypeId = $visitTypeId;
         $queryParam = $request->query();
         $createVisitRequest->role = $queryParam['role'];
+        $createVisitRequest->studyName = $queryParam['studyName'];
 
         $requestData = $request->all();
         $createVisitRequest = Util::fillObject($requestData, $createVisitRequest);

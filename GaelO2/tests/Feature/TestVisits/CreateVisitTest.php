@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Models\Visit;
 use App\Models\VisitType;
 use App\Models\Patient;
+use App\Models\Study;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\AuthorizationTools;
 
@@ -16,10 +17,11 @@ class CreateVisitTest extends TestCase
 
     use RefreshDatabase;
 
-    protected function setUp() : void {
+    protected function setUp(): void
+    {
         parent::setUp();
         $this->artisan('db:seed');
-        $visitType=VisitType::factory()->create();
+        $visitType = VisitType::factory()->create();
         $this->study = $visitType->visitGroup->study;
         $this->visitTypeId = $visitType->id;
         $this->visitGroupId = $visitType->visitGroup->id;
@@ -34,11 +36,10 @@ class CreateVisitTest extends TestCase
         $userEntity = User::find($currentUserId);
         $userEntity->center_code = $centerCode;
         $userEntity->save();
-
-
     }
 
-    public function testCreateVisit() {
+    public function testCreateVisit()
+    {
 
         $validPayload = [
             'patientId' => $this->patient->id,
@@ -46,17 +47,17 @@ class CreateVisitTest extends TestCase
             'statusDone' => 'Done',
         ];
 
-        $this->json('POST', 'api/visit-types/'.$this->visitTypeId.'/visits?role=Investigator', $validPayload)->assertStatus(201);
+        $this->json('POST', 'api/visit-types/' . $this->visitTypeId . '/visits?role=Investigator&studyName=' . $this->studyName, $validPayload)->assertStatus(201);
     }
 
-    public function testCreateVisitShouldBeForbiddenForAncillaries() {
-
-        $this->study->ancillary_of = $this->study->name;
-        $this->study->save();
+    public function testCreateVisitShouldBeForbiddenForAncillaries()
+    {
+        $ancillaryStudy = Study::factory()->ancillaryOf($this->studyName)->create();
 
         //Use supervisor role (investigator will be forbiden anyway for an ancillary study)
         $currentUserId = AuthorizationTools::actAsAdmin(false);
-        AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $this->studyName);
+        AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $ancillaryStudy->name);
+        AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_INVESTIGATOR, $ancillaryStudy->name);
 
         $validPayload = [
             'patientId' => $this->patient->id,
@@ -64,11 +65,14 @@ class CreateVisitTest extends TestCase
             'statusDone' => 'Done',
         ];
 
-        $answer = $this->json('POST', 'api/visit-types/'.$this->visitTypeId.'/visits?role=Supervisor', $validPayload);
+        $answer = $this->json('POST', 'api/visit-types/' . $this->visitTypeId . '/visits?role=Supervisor&studyName=' . $ancillaryStudy->name, $validPayload);
+        $answer->assertStatus(403);
+        $answer = $this->json('POST', 'api/visit-types/' . $this->visitTypeId . '/visits?role=Investigator&studyName=' . $ancillaryStudy->name, $validPayload);
         $answer->assertStatus(403);
     }
 
-    public function testCreateUnavailableVisitTypeIdShouldBeForbidden() {
+    public function testCreateUnavailableVisitTypeIdShouldBeForbidden()
+    {
 
         $validPayload = [
             'patientId' => $this->patient->id,
@@ -76,21 +80,23 @@ class CreateVisitTest extends TestCase
             'statusDone' => 'Done',
         ];
 
-        $this->json('POST', 'api/visit-types/50/visits?role=Investigator', $validPayload)->assertStatus(403);
+        $this->json('POST', 'api/visit-types/50/visits?role=Investigator&studyName=' . $this->studyName, $validPayload)->assertStatus(403);
     }
 
-    public function testCreateVisitNotDone() {
+    public function testCreateVisitNotDone()
+    {
 
         $validPayload = [
             'patientId' => $this->patient->id,
             'statusDone' => Constants::VISIT_STATUS_NOT_DONE,
-            'reasonForNotDone'=> 'unavailable'
+            'reasonForNotDone' => 'unavailable'
         ];
 
-        $this->json('POST', 'api/visit-types/'.$this->visitTypeId.'/visits?role=Investigator', $validPayload)->assertStatus(201);
+        $this->json('POST', 'api/visit-types/' . $this->visitTypeId . '/visits?role=Investigator&studyName=' . $this->studyName, $validPayload)->assertStatus(201);
     }
 
-    public function testCreateVisitForbiddenNoRole(){
+    public function testCreateVisitForbiddenNoRole()
+    {
 
         AuthorizationTools::actAsAdmin(false);
 
@@ -100,10 +106,11 @@ class CreateVisitTest extends TestCase
             'statusDone' => 'Done',
         ];
 
-        $this->json('POST', 'api/visit-types/'.$this->visitTypeId.'/visits?role=Investigator', $validPayload)->assertStatus(403);
+        $this->json('POST', 'api/visit-types/' . $this->visitTypeId . '/visits?role=Investigator&studyName=' . $this->studyName, $validPayload)->assertStatus(403);
     }
 
-    public function testCreateVisitAsSupervisor(){
+    public function testCreateVisitAsSupervisor()
+    {
 
         $currentUserId = AuthorizationTools::actAsAdmin(false);
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $this->studyName);
@@ -114,10 +121,11 @@ class CreateVisitTest extends TestCase
             'statusDone' => 'Done',
         ];
 
-        $this->json('POST', 'api/visit-types/'.$this->visitTypeId.'/visits?role=Supervisor', $validPayload)->assertStatus(201);
+        $this->json('POST', 'api/visit-types/' . $this->visitTypeId . '/visits?role=Supervisor&studyName=' . $this->studyName, $validPayload)->assertStatus(201);
     }
 
-    public function testCreateVisitForbiddenRole(){
+    public function testCreateVisitForbiddenRole()
+    {
 
         $currentUserId = AuthorizationTools::actAsAdmin(false);
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_CONTROLLER, $this->studyName);
@@ -128,10 +136,11 @@ class CreateVisitTest extends TestCase
             'statusDone' => 'Done',
         ];
 
-        $this->json('POST', 'api/visit-types/'.$this->visitTypeId.'/visits?role=Controller', $validPayload)->assertStatus(403);
+        $this->json('POST', 'api/visit-types/' . $this->visitTypeId . '/visits?role=Controller&studyName=' . $this->studyName, $validPayload)->assertStatus(403);
     }
 
-    public function testCreateVisitWrongDate(){
+    public function testCreateVisitWrongDate()
+    {
 
         $validPayload = [
             'patientId' => $this->patient->id,
@@ -139,10 +148,11 @@ class CreateVisitTest extends TestCase
             'statusDone' => 'Done',
         ];
 
-        $this->json('POST', 'api/visit-types/'.$this->visitTypeId.'/visits?role=Investigator', $validPayload)->assertStatus(400);
+        $this->json('POST', 'api/visit-types/' . $this->visitTypeId . '/visits?role=Investigator&studyName=' . $this->studyName, $validPayload)->assertStatus(400);
     }
 
-    public function testCreateVisitNotDoneWithNoReasonShouldFail(){
+    public function testCreateVisitNotDoneWithNoReasonShouldFail()
+    {
 
         $validPayload = [
             'patientId' => $this->patient->id,
@@ -150,10 +160,11 @@ class CreateVisitTest extends TestCase
             'statusDone' => Constants::VISIT_STATUS_NOT_DONE,
         ];
 
-        $this->json('POST', 'api/visit-types/'.$this->visitTypeId.'/visits?role=Investigator', $validPayload)->assertStatus(400);
+        $this->json('POST', 'api/visit-types/' . $this->visitTypeId . '/visits?role=Investigator&studyName=' . $this->studyName, $validPayload)->assertStatus(400);
     }
 
-    public function testCreateVisitNotIncludedPatientShouldFail(){
+    public function testCreateVisitNotIncludedPatientShouldFail()
+    {
         $validPayload = [
             'patientId' => $this->patient->id,
             'visitDate' => '2020-01-01',
@@ -162,14 +173,15 @@ class CreateVisitTest extends TestCase
 
         $this->patient->inclusion_status = Constants::PATIENT_INCLUSION_STATUS_EXCLUDED;
         $this->patient->save();
-        $this->json('POST', 'api/visit-types/'.$this->visitTypeId.'/visits?role=Investigator', $validPayload)->assertStatus(403);
+        $this->json('POST', 'api/visit-types/' . $this->visitTypeId . '/visits?role=Investigator&studyName=' . $this->studyName, $validPayload)->assertStatus(403);
     }
 
 
-    public function testCreateAlreadyCreatedVisit(){
+    public function testCreateAlreadyCreatedVisit()
+    {
 
         $patient = Patient::factory()->inclusionStatus(Constants::PATIENT_INCLUSION_STATUS_INCLUDED)->create();
-        $visit=Visit::factory()->patientId($patient->id)->create();
+        $visit = Visit::factory()->patientId($patient->id)->create();
 
         $studyName = $patient->study->name;
         $centerCode = $patient->center_code;
@@ -188,9 +200,7 @@ class CreateVisitTest extends TestCase
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_INVESTIGATOR, $studyName);
 
         //create request should return conflict
-        $this->json('POST', 'api/visit-types/'.$visit->visitType->id.'/visits'.'?role=Investigator', $validPayload)
-        ->assertStatus(409);
-
+        $this->json('POST', 'api/visit-types/' . $visit->visitType->id . '/visits' . '?role=Investigator&studyName=' . $studyName, $validPayload)
+            ->assertStatus(409);
     }
-
 }
