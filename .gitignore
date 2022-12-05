@@ -22,5 +22,7 @@
 !/src/data/upload/attached_review_file/.htaccess
 
 /GaelO2/*/**
+/GaelO2/*
 
 .VSCodeCounter/*
+GaelO2/.env
