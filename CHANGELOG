@@ -1,5 +1,9 @@
 GaelO
 
+-- GaelO 1.11.1 6/12/22 --
+Increased read_timeout in guzzle to avoid timeout while awaiting orthanc response for zip archive apis
+Add http header to avoid seach engine indexation of production server
+
 -- GaelO 1.11.0 9/11/22 --
 Add private mode in OHIF
 
