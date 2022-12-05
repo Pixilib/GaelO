@@ -333,18 +333,7 @@ class VisitRepository implements VisitRepositoryInterface
             ->where('patient_id', $patient->id)
             ->with(['reviewStatus' => function ($query) use ($studyName) {
                 $query->where('study_name', $studyName);
-            }])->get();
-
-
-        //Filtered outside the query because confusing laravel to do default value (which is dynamic in our case) + condition after the default value
-        $patientAvailableForReview = $patientAvailableForReview->filter(function ($visit, $key) {
-            return $visit->reviewStatus->review_available === true;
-        });
-        
-        $patientVisitsIdAvailableForReview = $patientAvailableForReview->pluck('id');
-
-        //In these review select visit in which current user didn't validated his review form
-        $answer = $this->visitModel
+            }])
             ->where(function ($query) use ($studyName, $userId) {
                 $query->selectRaw('count(*)')
                     ->from('reviews')
@@ -355,9 +344,15 @@ class VisitRepository implements VisitRepositoryInterface
                     ->where('user_id', $userId)
                     ->where('deleted_at', null);
             }, '=', 0)
-            ->whereIn('id', $patientVisitsIdAvailableForReview)->get();
+            ->get();
 
-        return $answer->count() === 0 ? false  : true;
+
+        //Filtered outside the query because confusing laravel to do default value (which is dynamic in our case) + condition after the default value
+        $patientAvailableForReview = $patientAvailableForReview->filter(function ($visit, $key) {
+            return $visit->reviewStatus->review_available === true;
+        });
+
+        return $patientAvailableForReview->count() === 0 ? false  : true;
     }
 
     public function editQc(int $visitId, string $stateQc, int $controllerId, bool $imageQc, bool $formQc, ?string $imageQcComment, ?string $formQcComment): void
