@@ -78,7 +78,7 @@ class VisitRepositoryAncillaryTest extends TestCase
     public function testGetReviewAvailableVisitFromPatientIdsWithContextAndReviewStatus()
     {
         $patient = $this->populateVisits();
-        $visits = $this->visitRepository->getReviewVisitHistoryFromPatientIdsWithContextAndReviewStatus([$patient[0]->id, $patient[1]->id], $patient[0]->study_name);
+        $visits = $this->visitRepository->getReviewVisitHistoryFromPatientIdsWithContextAndReviewStatus([$patient[0]->id, $patient[1]->id], $this->ancillaryStudyName);
         $this->assertEquals(6, sizeof($visits));
         $this->assertArrayHasKey('review_status', $visits[0]);
     }
@@ -86,7 +86,7 @@ class VisitRepositoryAncillaryTest extends TestCase
     public function testGetPatientHavingOneAwaitingReviewForUser()
     {
         $patient = $this->populateVisits()[0];
-        $answer = $this->visitRepository->getPatientsHavingAtLeastOneAwaitingReviewForUser($patient->study_name, 1, 'ancilary');
+        $answer = $this->visitRepository->getPatientsHavingAtLeastOneAwaitingReviewForUser($patient->study_name, 1, $this->ancillaryStudyName);
         $this->assertEquals(1, sizeof($answer));
     }
 
@@ -95,27 +95,30 @@ class VisitRepositoryAncillaryTest extends TestCase
         //create patient with 2 visits
         $patient = Patient::factory()->create();
         $visits = Visit::factory()->patientId($patient->id)->count(2)->create();
+        $ancillaryStudy = Study::factory()->ancillaryOf($patient->study_name)->create();
+        $ancillaryStudyName = $ancillaryStudy->name;
         //create review status being available for review
-        $visits->each(function ($visit, $key) use ($patient) {
-            ReviewStatus::factory()->visitId($visit->id)->reviewAvailable()->studyName($patient->study_name)->create();
+        $visits->each(function ($visit, $key) use ($patient, $ancillaryStudyName) {
+            ReviewStatus::factory()->visitId($visit->id)->studyName($patient->study_name)->create();
+            ReviewStatus::factory()->visitId($visit->id)->reviewAvailable()->studyName($ancillaryStudyName)->create();
         });
 
+        
         //create one form for user for one visit (patient still has one visit awaiting review for user)
-
-        Review::factory()->visitId($visits->first()->id)->reviewForm()->userId(1)->validated()->studyName($patient->study_name)->create();
-        $answer1 = $this->visitRepository->isParentPatientHavingOneVisitAwaitingReview($visits->first()->id, $patient->study_name, 1);
+        Review::factory()->visitId($visits->first()->id)->reviewForm()->userId(1)->validated()->studyName($ancillaryStudyName)->create();
+        $answer1 = $this->visitRepository->isParentPatientHavingOneVisitAwaitingReview($visits->first()->id, $ancillaryStudyName, 1);
 
         $this->assertTrue($answer1);
         //create the second form for user as draft (still available)
-        $secondReview = Review::factory()->visitId($visits->last()->id)->reviewForm()->userId(1)->studyName($patient->study_name)->create();
+        $secondReview = Review::factory()->visitId($visits->last()->id)->reviewForm()->userId(1)->studyName($ancillaryStudyName)->create();
 
-        $answer2 = $this->visitRepository->isParentPatientHavingOneVisitAwaitingReview($visits->first()->id, $patient->study_name, 1);
+        $answer2 = $this->visitRepository->isParentPatientHavingOneVisitAwaitingReview($visits->first()->id, $ancillaryStudyName, 1);
         $this->assertTrue($answer2);
 
         //Validate the second draft (should be unavailable)
         $secondReview->validated = true;
         $secondReview->save();
-        $answer3 = $this->visitRepository->isParentPatientHavingOneVisitAwaitingReview($visits->first()->id, $patient->study_name, 1);
+        $answer3 = $this->visitRepository->isParentPatientHavingOneVisitAwaitingReview($visits->first()->id, $ancillaryStudyName, 1);
         $this->assertFalse($answer3);
     }
     
