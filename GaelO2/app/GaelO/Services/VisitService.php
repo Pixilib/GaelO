@@ -92,7 +92,9 @@ class VisitService
 
         $this->mailServices->sendUploadedVisitMessage($this->visitId, $visitEntity['creator_user_id'], $studyName, $patientId, $patientCode, $visitType, $qcNeeded);
         // Send auto qc job
-        $this->jobInterface->sendQcReportJob($this->visitId);
+        if($qcNeeded){
+            $this->jobInterface->sendQcReportJob($this->visitId);
+        }
         //If Qc NotNeeded mark visit as available for review
         if (!$qcNeeded && $reviewNeeded ) {
             $this->reviewStatusRepository->updateReviewAvailability($this->visitId, $studyName, true);
