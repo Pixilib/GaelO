@@ -191,7 +191,7 @@ class VisitRepository implements VisitRepositoryInterface
         }
         if ($withReviewStatus) {
 
-            $queryBuilder->with(['reviewStatus' => function ($query) use ($originalStudyName) {
+            $queryBuilder->with(['reviewStatus' => function ($query) use ($originalStudyName, $ancillaryStudyName) {
                 $query->where('study_name', ($ancillaryStudyName ?? $originalStudyName));
             }]);
         }
