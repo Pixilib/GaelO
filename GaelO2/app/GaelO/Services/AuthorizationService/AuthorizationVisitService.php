@@ -13,6 +13,7 @@ class AuthorizationVisitService
     private AuthorizationPatientService $authorizationPatientService;
     private int $visitId;
     private int $userId;
+    private string $studyName;
     private array $visitContext;
 
     public function __construct(VisitRepositoryInterface $visitRepositoryInterface, AuthorizationPatientService $authorizationPatientService)
@@ -34,6 +35,7 @@ class AuthorizationVisitService
 
     public function setStudyName(string $studyName)
     {
+        $this->studyName = $studyName;
         $this->authorizationPatientService->setStudyName($studyName);
     }
 
@@ -47,7 +49,6 @@ class AuthorizationVisitService
         if (!isset($this->visitContext)) $this->visitContext = $this->visitRepositoryInterface->getVisitContext($this->visitId);
 
         $this->stateQualityControl = $this->visitContext['state_quality_control'];
-        $this->patientStudy = $this->visitContext['patient']['study_name'];
         $this->patientCenter = $this->visitContext['patient']['center_code'];
         $this->patientId = $this->visitContext['patient']['id'];
         $this->visitUploadStatus = $this->visitContext['upload_status'];
@@ -80,7 +81,7 @@ class AuthorizationVisitService
 
         if ($requestedRole === Constants::ROLE_REVIEWER) {
             //Check parent patient allowed and has one awaiting review visit
-            return $this->authorizationPatientService->isPatientAllowed($requestedRole) && $this->visitRepositoryInterface->isParentPatientHavingOneVisitAwaitingReview($this->visitId, $this->patientStudy, $this->userId);
+            return $this->authorizationPatientService->isPatientAllowed($requestedRole) && $this->visitRepositoryInterface->isParentPatientHavingOneVisitAwaitingReview($this->visitId, $this->studyName, $this->userId);
         } else if ($requestedRole === Constants::ROLE_CONTROLLER) {
             $showAll = $this->authorizationPatientService->getAuthorizationStudyService()->getStudyEntity()->controllerShowAll;
             //if not show all check QC status to allow access
