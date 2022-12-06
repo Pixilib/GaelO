@@ -44,9 +44,9 @@ class TrackerRepository implements TrackerRepositoryInterface
         return empty($trackerData)  ? [] : $trackerData->toArray();
     }
 
-    public function getTrackerOfVisitId(int $visitId): array
+    public function getTrackerOfVisitId(int $visitId, string $studyName): array
     {
-        $trackerData = $this->trackerModel->with('user')->where('visit_id', $visitId)->get();
+        $trackerData = $this->trackerModel->with('user')->where('visit_id', $visitId)->where('study_name', $studyName)->get();
         return empty($trackerData) ? [] : $trackerData->toArray();
     }
 

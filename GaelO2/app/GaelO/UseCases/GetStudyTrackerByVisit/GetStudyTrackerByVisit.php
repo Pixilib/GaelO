@@ -29,7 +29,7 @@ class GetStudyTrackerByVisit
 
             $this->checkAuthorization($getStudyTrackerByVisitRequest->currentUserId, $getStudyTrackerByVisitRequest->visitId, $getStudyTrackerByVisitRequest->studyName);
 
-            $dbData = $this->trackerRepositoryInterface->getTrackerOfVisitId($getStudyTrackerByVisitRequest->visitId);
+            $dbData = $this->trackerRepositoryInterface->getTrackerOfVisitId($getStudyTrackerByVisitRequest->visitId, $getStudyTrackerByVisitRequest->studyName);
 
             $responseArray = [];
             foreach ($dbData as $data) {
