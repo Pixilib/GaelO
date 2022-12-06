@@ -55,12 +55,12 @@ class TrackerRepositoryTest extends TestCase
         $visit = Visit::factory()->create();
         $visit2 = Visit::factory()->create();
 
-        Tracker::factory()->role(Constants::ROLE_INVESTIGATOR)->visitId($visit->id)->actionType(Constants::TRACKER_UPLOAD_SERIES)->count(3)->create();
-        Tracker::factory()->role(Constants::ROLE_CONTROLLER)->visitId($visit->id)->actionType(Constants::TRACKER_CORRECTIVE_ACTION)->count(3)->create();
+        Tracker::factory()->role(Constants::ROLE_INVESTIGATOR)->studyName($visit->patient->study_name)->visitId($visit->id)->actionType(Constants::TRACKER_UPLOAD_SERIES)->count(3)->create();
+        Tracker::factory()->role(Constants::ROLE_CONTROLLER)->studyName($visit->patient->study_name)->visitId($visit->id)->actionType(Constants::TRACKER_CORRECTIVE_ACTION)->count(3)->create();
 
-        Tracker::factory()->role(Constants::ROLE_INVESTIGATOR)->visitId($visit2->id)->actionType(Constants::TRACKER_UPLOAD_SERIES)->count(3)->create();
+        Tracker::factory()->role(Constants::ROLE_INVESTIGATOR)->studyName($visit->patient->study_name)->visitId($visit2->id)->actionType(Constants::TRACKER_UPLOAD_SERIES)->count(3)->create();
 
-        $answer = $this->trackerRepository->getTrackerOfVisitId($visit->id);
+        $answer = $this->trackerRepository->getTrackerOfVisitId($visit->id, $visit->patient->study_name);
         $this->assertEquals(6, sizeof($answer));
     }
 

@@ -12,7 +12,7 @@ use Illuminate\Validation\Rule;
 
 class ValidatorAdapter implements ValidatorInterface
 {
-    private array $validationRules;
+    private array $validationRules = [];
     private bool $validatedForm;
 
     public function __construct(bool $validatedForm)
