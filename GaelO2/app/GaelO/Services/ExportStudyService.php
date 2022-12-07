@@ -13,7 +13,6 @@ use App\GaelO\Interfaces\Repositories\StudyRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\UserRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
-use App\GaelO\Repositories\StudyRepository;
 use App\GaelO\Services\StoreObjects\Export\ExportDataResults;
 use App\GaelO\Services\StoreObjects\Export\ExportDicomResults;
 use App\GaelO\Services\StoreObjects\Export\ExportFileResults;
@@ -248,7 +247,7 @@ class ExportStudyService
         }
 
         $tempFileNameXls = $spreadsheetAdapter->writeToExcel();
-        $exportReviewResults->addExportFile(ExportDataResults::EXPORT_TYPE_XLS, $tempFileNameXls);
+        $exportReviewResults->addExportFile(ExportDataResults::EXPORT_TYPE_XLS, $tempFileNameXls, substr($role, 0, 3));
         if ($role === Constants::ROLE_REVIEWER) {
             $this->exportStudyResults->setExportReviewResults($exportReviewResults);
         }

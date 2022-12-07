@@ -6,6 +6,7 @@ use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOConflictException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
+use App\GaelO\Interfaces\Repositories\StudyRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\VisitGroupRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
@@ -14,14 +15,21 @@ use Exception;
 
 class CreateVisitGroup
 {
+    private StudyRepositoryInterface $studyRepositoryInterface;
     private VisitGroupRepositoryInterface $visitGroupRepositoryInterface;
     private VisitRepositoryInterface $visitRepositoryInterface;
     private AuthorizationUserService $authorizationUserService;
     private TrackerRepositoryInterface $trackerRepositoryInterface;
 
-    public function __construct(VisitGroupRepositoryInterface $visitGroupRepositoryInterface, VisitRepositoryInterface $visitRepositoryInterface, AuthorizationUserService $authorizationUserService, TrackerRepositoryInterface $trackerRepositoryInterface)
+    public function __construct(
+        StudyRepositoryInterface $studyRepositoryInterface,
+        VisitGroupRepositoryInterface $visitGroupRepositoryInterface,
+        VisitRepositoryInterface $visitRepositoryInterface,
+        AuthorizationUserService $authorizationUserService,
+        TrackerRepositoryInterface $trackerRepositoryInterface
+        )
     {
-
+        $this->studyRepositoryInterface = $studyRepositoryInterface;
         $this->visitGroupRepositoryInterface = $visitGroupRepositoryInterface;
         $this->trackerRepositoryInterface = $trackerRepositoryInterface;
         $this->authorizationUserService = $authorizationUserService;
@@ -36,6 +44,11 @@ class CreateVisitGroup
             $studyName = $createVisitGroupRequest->studyName;
             $visitGroupName = $createVisitGroupRequest->name;
             $visitGroupModality = $createVisitGroupRequest->modality;
+
+            $studyEntity = $this->studyRepositoryInterface->find($studyName);
+            if($studyEntity->isAncillaryStudy()){
+                throw new GaelOForbiddenException("Forbidden for ancillary study");
+            }
 
             $this->checkAuthorization($currentUserId);
 

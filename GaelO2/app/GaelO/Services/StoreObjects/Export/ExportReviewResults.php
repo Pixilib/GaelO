@@ -20,7 +20,7 @@ class ExportReviewResults extends ExportDataResults{
     public function addExportFile( string $type, string $path, ?string $key=null ){
 
         if($type === ExportDataResults::EXPORT_TYPE_XLS) {
-            $this->xlsExport = new ExportFile('export_forms.xlsx', $path);
+            $this->xlsExport = new ExportFile('export_forms_'.$key.'.xlsx', $path);
         }else if ($type === ExportDataResults::EXPORT_TYPE_CSV) {
             $this->CSVExports[] = new ExportFile($key.'.csv', $path);
         }else{

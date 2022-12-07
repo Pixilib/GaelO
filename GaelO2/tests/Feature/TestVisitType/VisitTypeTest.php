@@ -47,6 +47,17 @@ class VisitTypeTest extends TestCase
         $this->assertEquals($this->payload['reviewProbability'], $visitType->review_probability);
     }
 
+    public function testCreateVisitTypeShouldFailForAncillaryStudy()
+    {
+        AuthorizationTools::actAsAdmin(true);
+        $study = Study::factory()->create();
+        $ancillaryStudy = Study::factory()->ancillaryOf($study->name)->create();
+        $visitGroup = VisitGroup::factory()->studyName($ancillaryStudy->name)->create();
+        $id = $visitGroup->id;
+        $this->json('POST', 'api/visit-groups/'.$id.'/visit-types', $this->payload)->assertStatus(403);
+
+    }
+
     public function testCreateVisitTypeShouldFailedBecauseAlreadyExistingName()
     {
         AuthorizationTools::actAsAdmin(true);
@@ -125,6 +136,15 @@ class VisitTypeTest extends TestCase
     public function testDeleteVisitTypeForbiddenNotAdmin(){
         AuthorizationTools::actAsAdmin(false);
         $visitGroup = VisitGroup::factory()->create();
+        $visitType = VisitType::factory()->visitGroupId($visitGroup->id)->create();
+        $this->json('DELETE', 'api/visit-types/'.$visitType->id)->assertStatus(403);
+    }
+
+    public function testDeleteVisitTypeForbiddenForAncillaries(){
+        AuthorizationTools::actAsAdmin(true);
+        $study = Study::factory()->create();
+        $ancillaryStudy = Study::factory()->ancillaryOf($study->name)->create();
+        $visitGroup = VisitGroup::factory()->studyName($ancillaryStudy->name)->create();
         $visitType = VisitType::factory()->visitGroupId($visitGroup->id)->create();
         $this->json('DELETE', 'api/visit-types/'.$visitType->id)->assertStatus(403);
     }

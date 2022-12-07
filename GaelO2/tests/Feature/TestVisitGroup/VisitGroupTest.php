@@ -67,6 +67,18 @@ class VisitGroupTest extends TestCase
 
     }
 
+    public function testCreateVisitGroupForbiddenForAncillaryStudy() {
+        AuthorizationTools::actAsAdmin(true);
+        $payload = [
+            'name' => 'wb',
+            'modality' => 'CT'
+        ];
+        $study = Study::factory()->create();
+        $ancillarystudy = Study::factory()->ancillaryOf($study->name)->create();
+        $this->json('POST', 'api/studies/'.$ancillarystudy->name.'/visit-groups', $payload)->assertStatus(403);
+    }
+
+
     public function testDeleteVisitGroupShouldFailBecauseExistingVisits(){
         AuthorizationTools::actAsAdmin(true);
         $visitType = VisitType::factory()->create();
@@ -89,6 +101,14 @@ class VisitGroupTest extends TestCase
         AuthorizationTools::actAsAdmin(true);
         $visitGroup = VisitGroup::factory()->create();
         $this->json('DELETE', 'api/visit-groups/'.$visitGroup->id)->assertStatus(200);
+    }
+
+    public function testDeleteVisitGroupForbiddenForAncillaryStudy(){
+        AuthorizationTools::actAsAdmin(true);
+        $study = Study::factory()->create();
+        $ancillarystudy = Study::factory()->ancillaryOf($study->name)->create();
+        $visitGroup = VisitGroup::factory()->studyName($ancillarystudy->name)->create();
+        $this->json('DELETE', 'api/visit-groups/'.$visitGroup->id)->assertStatus(403);
     }
 
     public function testDeleteVisitGroupForbiddenNotAdmin(){
