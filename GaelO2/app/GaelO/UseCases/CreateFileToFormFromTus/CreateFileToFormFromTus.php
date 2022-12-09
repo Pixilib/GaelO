@@ -129,7 +129,13 @@ class CreateFileToFormFromTus
 
             //Send file to associated file
             $mime = mime_content_type($file);
-            $extension = $this->mimeInterface::getExtensionFromMime($mime);
+
+            if(!is_null($createFileToFormFromTusRequest->extension)){
+                $extension = $createFileToFormFromTusRequest->extension;
+            } else {
+                $extension = $this->mimeInterface::getExtensionFromMime($mime);
+            }
+
             $fileName = 'review_' . $reviewId . '_' . $key . '.' . $extension;
 
             $visitContext = $this->visitRepositoryInterface->getVisitWithContextAndReviewStatus($visitId, $studyName);
