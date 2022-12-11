@@ -132,7 +132,6 @@ Class Orthanc {
 			'auth' => [$this->login, $this->password],
 			'headers'  => ['content-type' => 'application/json', 'Accept' => 'application/zip'],
 			'body' => json_encode(array('Transcode'=>'1.2.840.10008.1.2.1', 'Resources' => $uidList)),
-			'read_timeout' => (10*60),
 			'stream' => true
 		];
 
