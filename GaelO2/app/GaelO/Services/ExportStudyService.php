@@ -40,6 +40,7 @@ class ExportStudyService
     private TrackerRepositoryInterface $trackerRepositoryInterface;
 
     private string $studyName;
+    private string $originalStudyName;
 
     public function __construct(
         UserRepositoryInterface $userRepositoryInterface,
@@ -69,9 +70,9 @@ class ExportStudyService
     {
         $this->studyName = $studyName;
         $studyEntity = $this->studyRepositoryInterface->find($this->studyName);
-        $originalStudyName = $studyEntity->getOriginalStudyName();
+        $this->originalStudyName = $studyEntity->getOriginalStudyName();
         //Store Id of visits of this study
-        $this->availableVisits = $this->visitRepositoryInterface->getVisitsInStudy($originalStudyName, true, false, false, $this->studyName);
+        $this->availableVisits = $this->visitRepositoryInterface->getVisitsInStudy($this->originalStudyName, true, false, false, $this->studyName);
 
         $this->visitIdArray = array_map(function ($visit) {
             return $visit['id'];
@@ -111,7 +112,7 @@ class ExportStudyService
 
     public function exportPatientTable(): void
     {
-        $patientData = $this->patientRepositoryInterface->getPatientsInStudy($this->studyName);
+        $patientData = $this->patientRepositoryInterface->getPatientsInStudy($this->originalStudyName);
         $spreadsheetAdapter = new SpreadsheetAdapter();
         $spreadsheetAdapter->addSheet('Patients');
         $spreadsheetAdapter->fillData('Patients', $patientData);
@@ -208,7 +209,7 @@ class ExportStudyService
     public function exportInvestigatorForms(): void
     {
         //Get investigator forms of the visits of this study
-        $investigatorForms = $this->reviewRepositoryInterface->getInvestigatorsFormsFromVisitIdArrayStudyName($this->visitIdArray, $this->studyName, false);
+        $investigatorForms = $this->reviewRepositoryInterface->getInvestigatorsFormsFromVisitIdArrayStudyName($this->visitIdArray, $this->originalStudyName, false);
         $this->groupReviewPerVisitType($investigatorForms, Constants::ROLE_INVESTIGATOR);
     }
 

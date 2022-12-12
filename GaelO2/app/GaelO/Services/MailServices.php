@@ -596,7 +596,10 @@ class MailServices
 
     public function sendCreatedUserMessage(string $email)
     {
-        $parameters = ['name' => 'User'];
+        $parameters = [
+            'name' => 'User',
+            'email'=> $email
+        ];
 
         $this->mailInterface->setTo([$email]);
         $this->mailInterface->setReplyTo();

@@ -3,6 +3,7 @@
 namespace App\GaelO\UseCases\GetVisit;
 
 use App\GaelO\Constants\Constants;
+use App\GaelO\Entities\PatientEntity;
 use App\GaelO\Entities\UserEntity;
 use App\GaelO\Entities\VisitEntity;
 use App\GaelO\Exceptions\AbstractGaelOException;
@@ -50,6 +51,12 @@ class GetVisit
 
             $responseEntity->setReviewVisitStatus($reviewStatus, $reviewConclusionValue, $reviewConclusionDate, $targetLesions, $reviewAvailable);
             $responseEntity->setCreatorDetails(UserEntity::fillOnlyUserIdentification($visitContext['creator']));
+            
+            //Add Patient details for supervisor
+            if($role === Constants::ROLE_SUPERVISOR){
+                $patientEntity = PatientEntity::fillMinimalFromDBReponseArray($visitContext['patient']);
+                $responseEntity->setPatientEntity($patientEntity);
+            }
 
             $getVisitResponse->body = $responseEntity;
             $getVisitResponse->status = 200;
