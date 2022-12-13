@@ -81,14 +81,8 @@ class CreateFileToFormFromTus
 
             $file = null;
 
-            //Only one file
-            if (sizeof($tusIds) === 1) {
-                $file = $this->tusService->getFile($tusIds[0]);
-                $this->tusService->deleteFile($tusIds[0]);
-            }
-
             //Several file, expected ziped dicom upload, unzip and merge in a single zipe
-            if (sizeof($tusIds) > 1) {
+            if ($createFileToFormFromTusRequest->isDicom) {
                 //Create Temporary folder to work
                 $unzipedPath = Util::getUploadTemporaryFolder();
 
@@ -101,7 +95,7 @@ class CreateFileToFormFromTus
                     if ($uncompressedzipSize / $zipSize > 50) {
                         throw new GaelOValidateDicomException("Bomb Zip");
                     }
-                    
+
                     $zip = new ZipArchive();
                     $zip->open($tusTempZip);
                     $zip->extractTo($unzipedPath);
@@ -111,7 +105,7 @@ class CreateFileToFormFromTus
                     $this->tusService->deleteFile($tusId);
                     unlink($tusTempZip);
                 }
-                
+
                 $expectedNumberOfInstances = $createFileToFormFromTusRequest->numberOfInstances;
 
                 $this->orthancService->setOrthancServer(false);
@@ -125,12 +119,19 @@ class CreateFileToFormFromTus
                 $tempFileLocation = tempnam(ini_get('upload_tmp_dir'), 'TMPZIP_');
                 $this->orthancService->getZipStreamToFile([$importedOrthancStudyID], $tempFileLocation);
                 $file = $tempFileLocation;
+            } else {
+                //Only one file
+                if (sizeof($tusIds) === 1) {
+                    $file = $this->tusService->getFile($tusIds[0]);
+                    $this->tusService->deleteFile($tusIds[0]);
+                }
+                else throw new GaelOBadRequestException("A single TUS Id is expected for non-DICOM upload");
             }
 
             //Send file to associated file
             $mime = mime_content_type($file);
 
-            if(!is_null($createFileToFormFromTusRequest->extension)){
+            if (!is_null($createFileToFormFromTusRequest->extension)) {
                 $extension = $createFileToFormFromTusRequest->extension;
             } else {
                 $extension = $this->mimeInterface::getExtensionFromMime($mime);
@@ -139,7 +140,7 @@ class CreateFileToFormFromTus
             $fileName = 'review_' . $reviewId . '_' . $key . '.' . $extension;
 
             $visitContext = $this->visitRepositoryInterface->getVisitWithContextAndReviewStatus($visitId, $studyName);
-            
+
             $formService = null;
 
             if ($local) {
