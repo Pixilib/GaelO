@@ -12,7 +12,7 @@ class DicomSeriesEntity
     public ?string $modality;
     public ?int $injectedDose;
     public ?string $radiopharmaceutical;
-    public ?int $half_life;
+    public ?int $halfLife;
     public ?string $injectedTime;
     public ?string $injectedDateTime;
     public ?int $injectedActivity;
@@ -35,7 +35,7 @@ class DicomSeriesEntity
         $orthancSeries->modality = $array['modality'];
         $orthancSeries->injectedDose = $array['injected_dose'];
         $orthancSeries->radiopharmaceutical = $array['radiopharmaceutical'];
-        $orthancSeries->half_life = $array['half_life'];
+        $orthancSeries->halfLife = $array['half_life'];
         $orthancSeries->injectedTime = $array['injected_time'];
         $orthancSeries->injectedDateTime = $array['injected_datetime'];
         $orthancSeries->injectedActivity = $array['injected_activity'];
