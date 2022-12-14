@@ -1,5 +1,9 @@
 GaelO
 
+-- GaelO 1.11.3 14/12/22 --
+upgrade uploader to 3.4.8
+re-enable timeout to investigate side effect on imap
+
 -- GaelO 1.11.2 11/12/22 --
 upgrade uploader to 3.4.6
 removed timeout of streams
