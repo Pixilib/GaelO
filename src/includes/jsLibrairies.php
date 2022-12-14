@@ -121,8 +121,8 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.1.0/papaparse.min.js" crossorigin ></script>
 
 <!-- GaelO Uploader -->
-<script src="https://unpkg.com/gaelo-uploader@3.4.6/dist/bundle.js" crossorigin ></script>
-<link rel="stylesheet" href="https://unpkg.com/gaelo-uploader@3.4.6/dist/main.css" crossorigin >
+<script src="https://unpkg.com/gaelo-uploader@8/dist/bundle.js" crossorigin ></script>
+<link rel="stylesheet" href="https://unpkg.com/gaelo-uploader@3.4.8/dist/main.css" crossorigin >
 
 <script type="text/javascript" src="assets/javascripts/gaelO.js"></script>
 <link rel="stylesheet" href="assets/css/gaelO-specific.css">
