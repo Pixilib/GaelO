@@ -2,9 +2,12 @@
 
 namespace App\GaelO\Services\FormService;
 
+use App\GaelO\Entities\StudyEntity;
 use App\GaelO\Exceptions\GaelOBadRequestException;
 use App\GaelO\Interfaces\Adapters\FrameworkInterface;
 use App\GaelO\Interfaces\Repositories\ReviewRepositoryInterface;
+use App\GaelO\Interfaces\Repositories\StudyRepositoryInterface;
+use App\GaelO\Repositories\StudyRepository;
 use App\GaelO\Services\GaelOStudiesService\AbstractGaelOStudy;
 use App\GaelO\Services\GaelOStudiesService\AbstractVisitDecisions;
 use App\GaelO\Services\GaelOStudiesService\AbstractVisitRules;
@@ -14,6 +17,7 @@ use App\GaelO\Services\VisitService;
 abstract class FormService
 {
 
+    protected StudyRepositoryInterface $studyRepositoryInterface;
     protected ReviewRepositoryInterface $reviewRepositoryInterface;
     protected VisitService $visitService;
     protected AbstractVisitRules $abstractVisitRules;
@@ -29,13 +33,16 @@ abstract class FormService
     protected string $patientCode;
     protected int $uploaderId;
     protected bool $local;
+    protected StudyEntity $studyEntity;
 
     public function __construct(
+        StudyRepositoryInterface $studyRepositoryInterface,
         ReviewRepositoryInterface $reviewRepositoryInterface,
         VisitService $visitService,
         MailServices $mailServices,
         FrameworkInterface $frameworkInterface
     ) {
+        $this->studyRepositoryInterface = $studyRepositoryInterface;
         $this->reviewRepositoryInterface = $reviewRepositoryInterface;
         $this->visitService = $visitService;
         $this->mailServices = $mailServices;
@@ -50,7 +57,7 @@ abstract class FormService
 
     public function setVisitContextAndStudy(array $visitContext, string $studyName): void
     {
-
+        $this->studyEntity = $this->studyRepositoryInterface->find($studyName);
         $this->visitId = $visitContext['id'];
         $this->visitService->setVisitId($visitContext['id']);
         $this->visitContext = $visitContext;

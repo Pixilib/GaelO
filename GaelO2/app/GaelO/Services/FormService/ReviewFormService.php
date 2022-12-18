@@ -8,6 +8,7 @@ use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Interfaces\Adapters\FrameworkInterface;
 use App\GaelO\Interfaces\Repositories\ReviewRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\ReviewStatusRepositoryInterface;
+use App\GaelO\Interfaces\Repositories\StudyRepositoryInterface;
 use App\GaelO\Services\FormService\FormService;
 use App\GaelO\Services\MailServices;
 use App\GaelO\Services\VisitService;
@@ -22,10 +23,11 @@ class ReviewFormService extends FormService
         VisitService $visitService,
         MailServices $mailServices,
         FrameworkInterface $frameworkInterface,
+        StudyRepositoryInterface $studyRepositoryInterface,
         ReviewRepositoryInterface $reviewRepositoryInterface,
         ReviewStatusRepositoryInterface $reviewStatusRepositoryInterface
     ) {
-        parent::__construct($reviewRepositoryInterface, $visitService, $mailServices, $frameworkInterface);
+        parent::__construct($studyRepositoryInterface, $reviewRepositoryInterface, $visitService, $mailServices, $frameworkInterface);
         $this->reviewStatusRepositoryInterface = $reviewStatusRepositoryInterface;
     }
 
@@ -100,11 +102,11 @@ class ReviewFormService extends FormService
         //Send Notification emails
         if ($reviewStatus === Constants::REVIEW_STATUS_WAIT_ADJUDICATION) {
             $this->mailServices->sendAwaitingAdjudicationMessage($this->studyName, $this->patientId, $this->patientCode,  $this->visitType, $this->visitId);
-        } else if ($reviewStatus === Constants::REVIEW_STATUS_DONE) {
-            //SK Si ANCIllaire pas besoin d'embetter l'uploader du princeps ...
+        } else if ($reviewStatus === Constants::REVIEW_STATUS_DONE  ) {
+            //In case of conclusion reached send conclusion (but not to uploader if ancillary study)
             $this->mailServices->sendVisitConcludedMessage(
                 $this->visitId,
-                $this->uploaderId,
+                $this->studyEntity->isAncillaryStudy() ? null : $this->uploaderId,
                 $this->studyName,
                 $this->patientId,
                 $this->patientCode,
