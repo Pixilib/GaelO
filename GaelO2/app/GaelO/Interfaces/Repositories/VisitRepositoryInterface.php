@@ -52,7 +52,7 @@ interface VisitRepositoryInterface
 
     public function isParentPatientHavingOneVisitAwaitingReview(int $visitId, string $studyName, int $userId) : bool;
 
-    public function editQc(int $visitId, string $stateQc, int $controllerId, bool $imageQc, bool $formQc, ?string $imageQcComment, ?string $formQcComment): void;
+    public function editQc(int $visitId, string $stateQc, int $controllerId, ?bool $imageQc, ?bool $formQc, ?string $imageQcComment, ?string $formQcComment): void;
 
     public function resetQc(int $visitId): void;
 

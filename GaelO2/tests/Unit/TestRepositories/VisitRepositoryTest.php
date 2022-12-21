@@ -338,8 +338,8 @@ class VisitRepositoryTest extends TestCase
         $this->assertEquals(Constants::QUALITY_CONTROL_NOT_DONE, $updatedVisit->state_quality_control);
         $this->assertNull($updatedVisit->controller_user_id);
         $this->assertNull($updatedVisit->control_date);
-        $this->assertFalse(boolval($updatedVisit->image_quality_control));
-        $this->assertFalse(boolval($updatedVisit->form_quality_control));
+        $this->assertNull($updatedVisit->image_quality_control);
+        $this->assertNull($updatedVisit->form_quality_control);
         $this->assertNull($updatedVisit->image_quality_comment);
         $this->assertNull($updatedVisit->form_quality_comment);
         $this->assertNull($updatedVisit->corrective_action_user_id);

@@ -8,8 +8,8 @@ class ModifyQualityControlRequest
     public int $visitId;
     public string $studyName;
     public string $stateQc;
-    public bool $imageQc;
-    public bool $formQc;
+    public ?bool $imageQc = null;
+    public ?bool $formQc = null;
     public ?string $imageQcComment = null;
     public ?string $formQcComment = null;
 }

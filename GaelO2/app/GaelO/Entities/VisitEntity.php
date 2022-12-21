@@ -18,8 +18,8 @@ class VisitEntity
     public string $stateQualityControl;
     public ?int $controllerUserId;
     public ?string $controlDate;
-    public bool $imageQualityControl;
-    public bool $formQualityControl;
+    public ?bool $imageQualityControl;
+    public ?bool $formQualityControl;
     public ?string $imageQualityComment;
     public ?string $formQualityComment;
     public ?int $correctiveActionUserId;
