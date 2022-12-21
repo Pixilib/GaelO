@@ -37,6 +37,7 @@ class DeleteUserRole
             $this->userRepositoryInterface->deleteRoleForUser($userId, $studyName, $role);
 
             $actionDetails = [
+                "study_name" => $studyName,
                 'deleted_role' => $role
             ];
 
