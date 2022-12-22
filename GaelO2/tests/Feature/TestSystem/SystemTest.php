@@ -21,7 +21,7 @@ class SystemTest extends TestCase
         AuthorizationTools::actAsAdmin(true);
         $answer = $this->json('GET', 'api/system');
         $answer->assertStatus(200);
-        $answer->assertJsonStructure(['platformName', 'adminEmail', 'emailReplyTo', 'corporation',
+        $answer->assertJsonStructure(['platformName', 'mailFromAddress', 'mailReplyTo', 'corporation',
          'url', 'version']);
 
     }

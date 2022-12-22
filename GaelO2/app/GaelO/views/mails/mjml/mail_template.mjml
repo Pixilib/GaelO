@@ -29,16 +29,13 @@
           @yield('visitLink')
         </mj-text>
         <mj-text>
-          Please contact the Imaging Department of {{ $corporation }} for any questions
-          <a style="font-family: helvetica, sans-serif; color: #314053; font-size: 16px; line-height: 1.6; text-decoration: underline;" href="mailto:{{ $adminEmail }}">
-            <strong>{{ $adminEmail }}</strong>
+          Please contact the support of {{ $corporation }} for any questions
+          <a style="font-family: helvetica, sans-serif; color: #314053; font-size: 16px; line-height: 1.6; text-decoration: underline;" href="mailto:{{ $mailReplyTo }}">
+            <strong>{{ $mailReplyTo }}</strong>
           </a>
         </mj-text>
         <mj-text>
           Kind regards,
-        </mj-text>
-        <mj-text>
-          The Imaging Department of {{ $corporation }}.
         </mj-text>
       </mj-column>
     </mj-section>

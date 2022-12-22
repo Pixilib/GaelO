@@ -44,7 +44,8 @@ class ResetPasswordNotification extends Notification
         $platformName = FrameworkAdapter::getConfig(SettingsConstants::PLATFORM_NAME);
         $webAddress = FrameworkAdapter::getConfig(SettingsConstants::APP_URL);
         $corporation = FrameworkAdapter::getConfig(SettingsConstants::CORPORATION);
-        $adminEmail = FrameworkAdapter::getConfig(SettingsConstants::MAIL_FROM_ADDRESS);
+        $mailFromAddress = FrameworkAdapter::getConfig(SettingsConstants::MAIL_FROM_ADDRESS);
+        $mailReplyTo = FrameworkAdapter::getConfig(SettingsConstants::MAIL_REPLY_TO_DEFAULT);
 
         return (new MailMessage)
             ->subject('GaelO - Set New Password')
@@ -52,7 +53,8 @@ class ResetPasswordNotification extends Notification
             'platformName'=> $platformName,
             'corporation'=> $corporation,
             'webAddress'=>$webAddress,
-            'adminEmail'=> $adminEmail,
+            'mailFromAddress'=> $mailFromAddress,
+            'mailReplyTo' => $mailReplyTo,
             'name'=>'User']);
     }
 

@@ -50,8 +50,7 @@ class SendMailTest extends TestCase
             <p>Thank you in advance for your help. <br />
                 Have a nice day.
             </p>
-            <p>Kind regards,</p>
-            <p>The imaging team</p>',
+            <p>Kind regards,</p>',
         ];
 
         $this->json('POST', '/api/studies/' . $this->study->name . '/send-reminder?role=' . Constants::ROLE_INVESTIGATOR, $payload)
@@ -78,8 +77,7 @@ class SendMailTest extends TestCase
             <p>Thank you in advance for your help. <br />
                 Have a nice day.
             </p>
-            <p>Kind regards,</p>
-            <p>The imaging team</p>',
+            <p>Kind regards,</p>',
         ];
 
         $this->json('POST', '/api/studies/' . $this->study->name . '/send-reminder?role=' . Constants::ROLE_CONTROLLER, $payload)
@@ -106,8 +104,7 @@ class SendMailTest extends TestCase
             <p>Thank you in advance for your help. <br />
                 Have a nice day.
             </p>
-            <p>Kind regards,</p>
-            <p>The imaging team</p>',
+            <p>Kind regards,</p>',
         ];
 
         $this->json('POST', '/api/studies/' . $this->study->name . '/send-reminder?role=' . Constants::ROLE_REVIEWER, $payload)

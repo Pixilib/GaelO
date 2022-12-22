@@ -5,6 +5,6 @@
     User : {{$firstname}} {{$lastname}}<br>
     Email : {{$email}}<br>
     Please contact the {{$corporation}} to activate your account:<br>
-    {{$adminEmail}}<br>
+    {{$mailReplyTo}}<br>
 @endsection
 

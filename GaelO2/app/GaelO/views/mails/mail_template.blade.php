@@ -159,17 +159,12 @@
                             </tr>
                             <tr>
                               <td align="left" style="font-size:0px;padding:10px 25px;word-break:break-word;">
-                                <div style="font-family:Roboto, Helvetica, sans-serif;font-size:16px;font-weight:300;line-height:1.6;text-align:left;color:#314053;">Please contact the Imaging Department of {{ $corporation }} for any questions <a style="font-family: helvetica, sans-serif; color: #314053; font-size: 16px; line-height: 1.6; text-decoration: underline;" href="mailto:{{ $adminEmail }}"><strong>{{ $adminEmail }}</strong></a></div>
+                                <div style="font-family:Roboto, Helvetica, sans-serif;font-size:16px;font-weight:300;line-height:1.6;text-align:left;color:#314053;">Please contact the support of {{ $corporation }} for any questions <a style="font-family: helvetica, sans-serif; color: #314053; font-size: 16px; line-height: 1.6; text-decoration: underline;" href="mailto:{{ $mailReplyTo }}"><strong>{{ $mailReplyTo }}</strong></a></div>
                               </td>
                             </tr>
                             <tr>
                               <td align="left" style="font-size:0px;padding:10px 25px;word-break:break-word;">
                                 <div style="font-family:Roboto, Helvetica, sans-serif;font-size:16px;font-weight:300;line-height:1.6;text-align:left;color:#314053;">Kind regards,</div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td align="left" style="font-size:0px;padding:10px 25px;word-break:break-word;">
-                                <div style="font-family:Roboto, Helvetica, sans-serif;font-size:16px;font-weight:300;line-height:1.6;text-align:left;color:#314053;">The Imaging Department of {{ $corporation }}.</div>
                               </td>
                             </tr>
                           </tbody>
