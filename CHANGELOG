@@ -1,5 +1,8 @@
 GaelO
 
+-- GaelO 1.11.4 23/12/22 --
+Fix : Allow to reach tus endpoint for reviewer
+
 -- GaelO 1.11.3 14/12/22 --
 upgrade uploader to 3.4.8
 re-enable timeout to investigate side effect on imap
