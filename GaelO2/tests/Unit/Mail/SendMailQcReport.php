@@ -58,7 +58,8 @@ class SendMailQcReport
             'magicLink' => 'https://google.com',
             'webAddress' => 'https://google.com',
             'corporation' => 'Pixilib',
-            'adminEmail' => 'test@gaelo.fr',
+            'mailFromAddress' => 'test@gaelo.fr',
+            'mailReplyTo' => 'test@gaelo.fr'
         ];
 
         Mail::to('test@gaelo.fr')->send(new QcReport($parameters));

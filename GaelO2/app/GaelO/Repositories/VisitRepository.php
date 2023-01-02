@@ -355,7 +355,7 @@ class VisitRepository implements VisitRepositoryInterface
         return $patientAvailableForReview->count() === 0 ? false  : true;
     }
 
-    public function editQc(int $visitId, string $stateQc, int $controllerId, bool $imageQc, bool $formQc, ?string $imageQcComment, ?string $formQcComment): void
+    public function editQc(int $visitId, string $stateQc, int $controllerId, ?bool $imageQc, ?bool $formQc, ?string $imageQcComment, ?string $formQcComment): void
     {
         $visitEntity = $this->visitModel->findOrFail($visitId);
 
@@ -378,8 +378,8 @@ class VisitRepository implements VisitRepositoryInterface
         $visitEntity['state_quality_control'] = Constants::QUALITY_CONTROL_NOT_DONE;
         $visitEntity['controller_user_id'] = null;
         $visitEntity['control_date'] = null;
-        $visitEntity['image_quality_control'] = false;
-        $visitEntity['form_quality_control'] = false;
+        $visitEntity['image_quality_control'] = null;
+        $visitEntity['form_quality_control'] = null;
         $visitEntity['image_quality_comment'] = null;
         $visitEntity['form_quality_comment'] = null;
         $visitEntity['corrective_action_user_id'] = null;

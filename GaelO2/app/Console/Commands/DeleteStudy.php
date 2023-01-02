@@ -110,35 +110,44 @@ class DeleteStudy extends Command
             $this->deleteDocumentation($studyEntity->name);
             $this->deleteRoles($studyEntity->name);
             $this->deleteTracker($studyEntity->name);
-            $visits = $this->getVisitsOfStudy($studyEntity->name);
 
-
+            //Get Visit ID of Original Study
+            $originalStudy = $studyEntity->ancillary_of ?? $studyEntity->name;
+            $visits = $this->getVisitsOfStudy($originalStudy);
 
             $visitIds = array_map(function ($visit) {
                 return $visit['id'];
             }, $visits->toArray());
 
-            $dicomSeries = $this->getDicomSeriesOfVisits($visitIds);
+           
+            $this->deleteReviews($visitIds, $studyName);
+            $this->deleteReviewStatus($visitIds, $studyName);
 
-            $orthancIdArray = array_map(function ($seriesId) {
-                return $seriesId['orthanc_id'];
-            }, $dicomSeries);
+            if ($studyEntity['ancillary_of'] === null) {
 
-            $this->line(implode(" ", $orthancIdArray));
+                $dicomSeries = $this->getDicomSeriesOfVisits($visitIds);
 
-            $this->table(
-                ['orthanc_id'],
-                $dicomSeries
-            );
+                $orthancIdArray = array_map(function ($seriesId) {
+                    return $seriesId['orthanc_id'];
+                }, $dicomSeries);
+    
+                $this->line(implode(" ", $orthancIdArray));
+    
+                $this->table(
+                    ['orthanc_id'],
+                    $dicomSeries
+                );
 
-            $this->deleteDicomsSeries($visitIds);
-            $this->deleteDicomsStudies($visitIds);
-            $this->deleteReviews($visitIds);
-            $this->deleteReviewStatus($visitIds);
-            $this->deleteVisits($visitIds);
-            $this->deleteVisitGroupAndVisitType($studyName);
-            $this->deletePatient($studyName);
+                
+                $this->deleteDicomsSeries($visitIds);
+                $this->deleteDicomsStudies($visitIds);
+                $this->deleteVisits($visitIds);
+                $this->deleteVisitGroupAndVisitType($studyName);
+                $this->deletePatient($studyName);
+            }
+
             $studyEntity->forceDelete();
+
             $this->info('The command was successful, delete Orthanc Series and Associated Form Data !');
         }
 
@@ -203,14 +212,14 @@ class DeleteStudy extends Command
         $this->patient->where('study_name', $studyName)->delete();
     }
 
-    private function deleteReviews(array $visitIds)
+    private function deleteReviews(array $visitIds, string $studyName)
     {
-        $this->review->whereIn('visit_id', $visitIds)->withTrashed()->forceDelete();
+        $this->review->where('study_name', $studyName)->whereIn('visit_id', $visitIds)->withTrashed()->forceDelete();
     }
 
-    private function deleteReviewStatus(array $visitIds)
+    private function deleteReviewStatus(array $visitIds, String $studyName)
     {
-        $this->reviewStatus->whereIn('id', $visitIds)->delete();
+        $this->reviewStatus->where('study_name', $studyName)->whereIn('id', $visitIds)->delete();
     }
 
     private function deleteVisits(array $visitIds)

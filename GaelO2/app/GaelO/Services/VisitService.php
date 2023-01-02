@@ -103,7 +103,7 @@ class VisitService
     }
 
 
-    public function editQc(string $stateQc, int $controllerId, bool $imageQc, bool $formQc, ?string $imageQcComment, ?string $formQcComment)
+    public function editQc(string $stateQc, int $controllerId, ?bool $imageQc, ?bool $formQc, ?string $imageQcComment, ?string $formQcComment)
     {
         $visitEntity = $this->visitRepository->getVisitContext($this->visitId);
         $studyName = $visitEntity['patient']['study_name'];

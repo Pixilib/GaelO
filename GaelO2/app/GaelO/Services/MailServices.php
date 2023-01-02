@@ -398,7 +398,7 @@ class MailServices
         $this->mailInterface->send();
     }
 
-    public function sendVisitConcludedMessage(int $visitId, int $uploaderId, string $studyName, string $patientId, string $patientCode, string $visitType, string $conclusionValue)
+    public function sendVisitConcludedMessage(int $visitId, ?int $uploaderId, string $studyName, string $patientId, string $patientCode, string $visitType, string $conclusionValue)
     {
 
         $parameters = [
@@ -411,13 +411,17 @@ class MailServices
             'conclusionValue' => $conclusionValue
         ];
 
-        $this->mailInterface->setTo(
-            [
-                ...$this->userRepositoryInterface->getUsersEmailsByRolesInStudy($studyName, Constants::ROLE_SUPERVISOR),
-                ...$this->userRepositoryInterface->getUsersEmailsByRolesInStudy($studyName, Constants::ROLE_MONITOR),
-                $this->getUserEmail($uploaderId)
-            ]
-        );
+        $destinators = [
+            ...$this->userRepositoryInterface->getUsersEmailsByRolesInStudy($studyName, Constants::ROLE_SUPERVISOR),
+            ...$this->userRepositoryInterface->getUsersEmailsByRolesInStudy($studyName, Constants::ROLE_MONITOR),
+
+        ];
+        //If uplaoder need to be included
+        if ($uploaderId) {
+            $destinators[] = $this->getUserEmail($uploaderId);
+        }
+
+        $this->mailInterface->setTo($destinators);
 
         $this->mailInterface->setReplyTo($this->getStudyContactEmail($studyName));
         $this->mailInterface->setParameters($parameters);
@@ -598,7 +602,7 @@ class MailServices
     {
         $parameters = [
             'name' => 'User',
-            'email'=> $email
+            'email' => $email
         ];
 
         $this->mailInterface->setTo([$email]);
@@ -612,11 +616,11 @@ class MailServices
     {
 
         $parameters = [
-            'name' => 'User', 
-            'study' => $studyName, 
-            'url' => $url, 
-            'role' => $role, 
-            'patientCode' => $patientCode, 
+            'name' => 'User',
+            'study' => $studyName,
+            'url' => $url,
+            'role' => $role,
+            'patientCode' => $patientCode,
             'visitType' => $visitType
         ];
 

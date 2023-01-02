@@ -65,7 +65,8 @@ class MailerAdapter implements MailerInterface
         $this->parameters['platformName'] = $this->frameworkInterface::getConfig(SettingsConstants::PLATFORM_NAME);
         $this->parameters['webAddress'] = $this->frameworkInterface::getConfig(SettingsConstants::APP_URL);
         $this->parameters['corporation'] = $this->frameworkInterface::getConfig(SettingsConstants::CORPORATION);
-        $this->parameters['adminEmail'] = $this->frameworkInterface::getConfig(SettingsConstants::MAIL_FROM_ADDRESS);
+        $this->parameters['mailFromAddress'] = $this->frameworkInterface::getConfig(SettingsConstants::MAIL_FROM_ADDRESS);
+        $this->parameters['mailReplyTo'] = $this->frameworkInterface::getConfig(SettingsConstants::MAIL_REPLY_TO_DEFAULT);
     }
 
     public function setBody($modelType)
