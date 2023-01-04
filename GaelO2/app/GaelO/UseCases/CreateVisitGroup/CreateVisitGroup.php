@@ -57,7 +57,7 @@ class CreateVisitGroup
                 $visitGroupName
             );
 
-            if ($existingVisitGroup) throw new GaelOConflictException("Already Exisiting Visit Group");
+            if ($existingVisitGroup) throw new GaelOConflictException("Already Existing Visit Group");
 
             $hasVisits = $this->visitRepositoryInterface->hasVisitsInStudy($studyName);
 

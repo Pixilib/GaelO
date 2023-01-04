@@ -36,7 +36,7 @@ class ExportDatabase
 
             $databaseDumpedFile = $this->databaseDumperInterface->getDatabaseDumpFile();
 
-            $date = Date('Ymd_his');
+            $date = Date('Ymd_His');
             $zip->addFile($databaseDumpedFile, "export_database_$date.sql");
 
             Util::addStoredFilesInZip($zip, null);
