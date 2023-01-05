@@ -1,5 +1,8 @@
 GaelO
 
+-- GaelO 1.11.5 05/01/23 --
+Download dicom now implicit VR LI (for RT compatibility)
+
 -- GaelO 1.11.4 23/12/22 --
 Fix : Allow to reach tus endpoint for reviewer
 
