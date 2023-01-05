@@ -131,7 +131,7 @@ Class Orthanc {
 		$options = [
 			'auth' => [$this->login, $this->password],
 			'headers'  => ['content-type' => 'application/json', 'Accept' => 'application/zip'],
-			'body' => json_encode(array('Transcode'=>'1.2.840.10008.1.2.1', 'Resources' => $uidList)),
+			'body' => json_encode(array('Transcode'=>'1.2.840.10008.1.2', 'Resources' => $uidList)),
 			'stream' => true
 		];
 
@@ -157,7 +157,7 @@ Class Orthanc {
 		$options = [
 			'auth' => [$this->login, $this->password],
 			'headers'  => ['content-type' => 'application/json', 'Accept' => 'application/zip'],
-			'body' => json_encode(array('Transcode'=>'1.2.840.10008.1.2.1', 'Resources' => $uidList)),
+			'body' => json_encode(array('Transcode'=>'1.2.840.10008.1.2', 'Resources' => $uidList)),
 			'sink' => $ressource
 		];
 
