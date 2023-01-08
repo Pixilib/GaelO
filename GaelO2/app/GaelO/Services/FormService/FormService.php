@@ -85,20 +85,20 @@ abstract class FormService
 
         //SK Checker que local de review est bien le meme que local de la classe ? 
         if ($reviewEntity['local']) {
-            $keyMimeArray = $this->abstractVisitRules->getAllowedKeyAndMimeTypeInvestigator();
+            $keyMimeArray = $this->abstractVisitRules->getAllowedKeysAndMimeTypesInvestigator();
         } else {
             $isAdjudication = $reviewEntity['adjudication'];
-            if ($isAdjudication) $keyMimeArray = $this->abstractVisitRules->getAllowedKeyAndMimeTypeAdjudication();
-            else $keyMimeArray = $this->abstractVisitRules->getAllowedKeyAndMimeTypeReviewer();
+            if ($isAdjudication) $keyMimeArray = $this->abstractVisitRules->getAllowedKeysAndMimeTypesAdjudication();
+            else $keyMimeArray = $this->abstractVisitRules->getAllowedKeysAndMimeTypesReviewer();
         }
 
-        $expectedMime = $keyMimeArray[$key];
+        $expectedMimes = $keyMimeArray[$key];
 
         if (!empty($reviewEntity['sent_files'][$key])) {
             throw new GaelOBadRequestException("Already Existing File for this review");
         }
 
-        if ($mimeType !== $expectedMime) {
+        if ( !in_array($mimeType, $expectedMimes) ) {
             throw new GaelOBadRequestException("File Key or Mime Not Allowed");
         }
 

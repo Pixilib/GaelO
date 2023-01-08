@@ -8,15 +8,15 @@ use Mimey\MimeTypes;
 class MimeAdapter implements MimeInterface
 {
 
-    public static function getExtensionFromMime(string $mime): string
+    public static function getExtensionsFromMime(string $mime): array
     {
         $mimes = new MimeTypes();
-        return $mimes->getExtension($mime);
+        return $mimes->getAllExtensions($mime);
     }
 
-    public static function getMimeFromExtension(string $extension): string
+    public static function getMimesFromExtension(string $extension): array
     {
         $mimes = new MimeTypes();
-        return $mimes->getMimeType($extension);
+        return $mimes->getAllMimeTypes($extension);
     }
 }

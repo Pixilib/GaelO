@@ -79,17 +79,17 @@ class TEST_FDG_PET0 extends AbstractVisitRules
         return [];
     }
 
-    public static function getAllowedKeyAndMimeTypeInvestigator(): array
+    public static function getAllowedKeysAndMimeTypesInvestigator(): array
     {
-        return ['41' => MimeAdapter::getMimeFromExtension('csv'), '25' => MimeAdapter::getMimeFromExtension('zip')];
+        return ['41' => MimeAdapter::getMimesFromExtension('csv'), '25' => MimeAdapter::getMimesFromExtension('zip')];
     }
 
-    public static function getAllowedKeyAndMimeTypeReviewer(): array
+    public static function getAllowedKeysAndMimeTypesReviewer(): array
     {
         return [];
     }
 
-    public static function getAllowedKeyAndMimeTypeAdjudication(): array
+    public static function getAllowedKeysAndMimeTypesAdjudication(): array
     {
         return [];
     }

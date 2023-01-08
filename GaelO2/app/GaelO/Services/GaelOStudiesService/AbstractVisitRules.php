@@ -28,11 +28,11 @@ abstract class AbstractVisitRules
 
     abstract public static function getReviewerAdjudicationValidationRules(): array;
 
-    abstract public static function getAllowedKeyAndMimeTypeInvestigator(): array;
+    abstract public static function getAllowedKeysAndMimeTypesInvestigator(): array;
 
-    abstract public static function getAllowedKeyAndMimeTypeReviewer(): array;
+    abstract public static function getAllowedKeysAndMimeTypesReviewer(): array;
 
-    abstract public static function getAllowedKeyAndMimeTypeAdjudication(): array;
+    abstract public static function getAllowedKeysAndMimeTypesAdjudication(): array;
 
     public function getInvestigatorInputNames(): array
     {
