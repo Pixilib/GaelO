@@ -4,7 +4,6 @@ namespace App\GaelO\Services;
 
 use App\GaelO\Adapters\SpreadsheetAdapter;
 use App\GaelO\Constants\Constants;
-use App\GaelO\Interfaces\Adapters\FrameworkInterface;
 use App\GaelO\Interfaces\Repositories\DicomSeriesRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\DicomStudyRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\PatientRepositoryInterface;
@@ -41,6 +40,8 @@ class ExportStudyService
 
     private string $studyName;
     private string $originalStudyName;
+    private array $availableVisits;
+    private array $visitIdArray;
 
     public function __construct(
         UserRepositoryInterface $userRepositoryInterface,
@@ -51,8 +52,7 @@ class ExportStudyService
         DicomSeriesRepositoryInterface $dicomSeriesRepositoryInterface,
         ReviewRepositoryInterface $reviewRepositoryInterface,
         TrackerRepositoryInterface $trackerRepositoryInterface,
-        ExportStudyResults $exportStudyResults,
-        FrameworkInterface $frameworkInterface
+        ExportStudyResults $exportStudyResults
     ) {
         $this->userRepositoryInterface = $userRepositoryInterface;
         $this->studyRepositoryInterface = $studyRepositoryInterface;
@@ -63,7 +63,6 @@ class ExportStudyService
         $this->reviewRepositoryInterface = $reviewRepositoryInterface;
         $this->exportStudyResults = $exportStudyResults;
         $this->trackerRepositoryInterface = $trackerRepositoryInterface;
-        $this->frameworkInterface = $frameworkInterface;
     }
 
     public function setStudyName(string $studyName)

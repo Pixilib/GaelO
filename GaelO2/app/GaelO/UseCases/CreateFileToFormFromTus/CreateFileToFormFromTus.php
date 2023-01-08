@@ -150,8 +150,9 @@ class CreateFileToFormFromTus
             }
 
             $formService->setVisitContextAndStudy($visitContext, $studyName);
-            $formService->attachFile($reviewEntity, $key, $fileName, $mime, $file);
-
+            $formService->attachFile($reviewEntity, $key, $fileName, $mime, fopen($file, 'r'));
+            //Remove temporary file
+            unlink($file);
             $actionDetails = [
                 'uploaded_file' => $key,
                 'filename' => $fileName,

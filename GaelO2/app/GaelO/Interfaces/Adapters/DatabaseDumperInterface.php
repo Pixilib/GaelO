@@ -4,6 +4,6 @@ namespace App\GaelO\Interfaces\Adapters;
 
 interface DatabaseDumperInterface {
 
-    public function getDatabaseDumpFile() : string;
+    public function createDatabaseDumpFile(string $filePath) : void;
 
 }

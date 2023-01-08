@@ -11,6 +11,7 @@ use Tests\AuthorizationTools;
 class ExportStudyDataTest extends TestCase
 {
     use RefreshDatabase;
+    private Study $study;
 
     protected function setUp() : void {
         parent::setUp();
@@ -18,16 +19,19 @@ class ExportStudyDataTest extends TestCase
         $this->study = Study::factory()->create();
     }
 
-    public function testExportDb()
+    public function testExportStudyData()
     {
         $userId = AuthorizationTools::actAsAdmin(true);
         AuthorizationTools::addRoleToUser($userId, Constants::ROLE_SUPERVISOR, $this->study->name);
         $response = $this->get('/api/studies/'.$this->study->name.'/export');
+        ob_start();
+        $response->sendContent();
+        ob_end_clean();
         $response->assertStatus(200);
         $response->assertHeader('content-type', 'application/zip');
     }
 
-    public function testExportDbShouldBeForbiddenNotAdmin()
+    public function testExportStudyDataShouldBeForbiddenNotAdmin()
     {
         AuthorizationTools::actAsAdmin(false);
         $response = $this->get('/api/studies/'.$this->study->name.'/export');

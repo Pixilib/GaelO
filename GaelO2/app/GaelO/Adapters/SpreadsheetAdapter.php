@@ -96,9 +96,8 @@ class SpreadsheetAdapter implements SpreadsheetInterface
 
     private function createTempFile(): string
     {
-        $tempFile = tmpfile();
-        $tempFileMetadata = stream_get_meta_data($tempFile);
-        return $tempFileMetadata["uri"];
+        $tempFile = tempnam(ini_get('upload_tmp_dir'), 'TMPEXP_');
+        return $tempFile;
     }
 
     private function getSheetIndexByName(string $sheetName): int
