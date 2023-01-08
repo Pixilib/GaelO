@@ -421,8 +421,8 @@ class OrthancService
 
     public function getSeriesMIP(string $seriesOrthancID) : string
     {
-        $downloadedFilePath = tempnam(sys_get_temp_dir(), 'mipDICOM');
-        $resource  = fopen( $downloadedFilePath, 'r+');
+        $resource  = tmpfile();
+        $downloadedFilePath = stream_get_meta_data($resource)['uri'];
 
         $this->httpClientInterface->requestStreamResponseToFile('GET', '/series/'.$seriesOrthancID.'/mip',  $resource, []);
         return $downloadedFilePath;
@@ -430,8 +430,8 @@ class OrthancService
 
     public function getSeriesMosaic(string $seriesOrthancID) : string
     {
-        $downloadedFilePath = tempnam(sys_get_temp_dir(), 'mozaicDICOM');
-        $resource  = fopen( $downloadedFilePath, 'r+');
+        $resource  = tmpfile();
+        $downloadedFilePath = stream_get_meta_data($resource)['uri'];
 
         $this->httpClientInterface->requestStreamResponseToFile('GET', '/series/'.$seriesOrthancID.'/mosaic',  $resource, []);
         return $downloadedFilePath;
@@ -439,8 +439,8 @@ class OrthancService
 
     public function getInstancePreview(string $instanceOrthancID) : string
     {
-        $downloadedFilePath = tempnam(sys_get_temp_dir(), 'previewDICOM');
-        $resource  = fopen( $downloadedFilePath, 'r+');
+        $resource  = tmpfile();
+        $downloadedFilePath = stream_get_meta_data($resource)['uri'];
 
         $this->httpClientInterface->requestStreamResponseToFile('GET', '/instances/'.$instanceOrthancID.'/preview?returnUnsupportedImage',  $resource, []);
         return $downloadedFilePath;
