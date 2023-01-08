@@ -31,8 +31,11 @@ class ExportStudyServiceTest extends TestCase
         parent::setUp();
         $this->artisan('db:seed');
         $this->exportStudyService = App::make(ExportStudyService::class);
+    }
 
-        $this->markTestSkipped();
+    protected function tearDown(): void
+    {
+        $this->exportStudyService->getExportStudyResult()->deleteTemporaryFiles();
     }
 
     public function testExportUser()
@@ -51,34 +54,36 @@ class ExportStudyServiceTest extends TestCase
         $this->exportStudyService->exportPatientTable();
     }
 
-    public function testExportVisit(){
+    public function testExportVisit()
+    {
         $visitType = VisitType::factory()->create();
         $studyName = $visitType->visitGroup->study_name;
         $visits = Visit::factory()->visitTypeId($visitType->id)->count(10)->create();
 
-        $visits->each(function($visit) use ($studyName) {
+        $visits->each(function ($visit) use ($studyName) {
             ReviewStatus::factory()->visitId($visit->id)->studyName($studyName)->create();
         });
         $this->exportStudyService->setStudyName($studyName);
         $this->exportStudyService->exportVisitTable();
     }
 
-    public function testExportDicom(){
+    public function testExportDicom()
+    {
         $visitType = VisitType::factory()->create();
         $studyName = $visitType->visitGroup->study_name;
         $visits = Visit::factory()->visitTypeId($visitType->id)->count(10)->create();
 
-        $visits->each(function($visit) {
+        $visits->each(function ($visit) {
             $dicomStudy = DicomStudy::factory()->visitId($visit->id)->create();
             DicomSeries::factory()->studyInstanceUID($dicomStudy->study_uid)->create();
         });
 
         $this->exportStudyService->setStudyName($studyName);
         $this->exportStudyService->exportDicomsTable();
-
     }
 
-    public function testExportReview(){
+    public function testExportReview()
+    {
 
         $study = Study::factory()->name('TEST')->create();
         $visitGroup = VisitGroup::factory()->name('FDG')->studyName($study->name)->create();
@@ -88,17 +93,17 @@ class ExportStudyServiceTest extends TestCase
 
         $visits = Visit::factory()->visitTypeId($visitType->id)->patientId($patient->id)->count(3)->create();
 
-        $visits->each(function($visit) use ($studyName) {
+        $visits->each(function ($visit) use ($studyName) {
             Review::factory()->visitId($visit->id)->studyName($studyName)->count(5)->create();
             Review::factory()->visitId($visit->id)->studyName($studyName)->reviewForm()->count(5)->create();
         });
 
         $this->exportStudyService->setStudyName($studyName);
         $this->exportStudyService->exportReviewerForms();
-
     }
 
-    public function testExportInvestigatorForm(){
+    public function testExportInvestigatorForm()
+    {
 
         $study = Study::factory()->name('TEST')->create();
         $visitGroup = VisitGroup::factory()->name('FDG')->studyName($study->name)->create();
@@ -107,17 +112,17 @@ class ExportStudyServiceTest extends TestCase
         $patient = Patient::factory()->studyName($studyName)->create();
         $visits = Visit::factory()->patientId($patient->id)->visitTypeId($visitType->id)->count(3)->create();
 
-        $visits->each(function($visit) use ($studyName) {
+        $visits->each(function ($visit) use ($studyName) {
             Review::factory()->visitId($visit->id)->studyName($studyName)->count(5)->create();
             Review::factory()->visitId($visit->id)->studyName($studyName)->reviewForm()->count(5)->create();
         });
 
         $this->exportStudyService->setStudyName($studyName);
         $this->exportStudyService->exportInvestigatorForms();
-
     }
 
-    public function testExportTracker(){
+    public function testExportTracker()
+    {
 
         $visitType = VisitType::factory()->create();
         $studyName = $visitType->visitGroup->study_name;
@@ -127,6 +132,5 @@ class ExportStudyServiceTest extends TestCase
 
         $this->exportStudyService->setStudyName($studyName);
         $this->exportStudyService->exportTrackerTable();
-
     }
 }
