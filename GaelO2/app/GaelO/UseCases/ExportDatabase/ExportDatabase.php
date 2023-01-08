@@ -5,7 +5,6 @@ namespace App\GaelO\UseCases\ExportDatabase;
 use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Adapters\DatabaseDumperInterface;
-use App\GaelO\Interfaces\Adapters\FrameworkInterface;
 use App\GaelO\Services\AuthorizationService\AuthorizationUserService;
 use App\GaelO\Util;
 use Exception;
@@ -17,11 +16,10 @@ class ExportDatabase
     private DatabaseDumperInterface $databaseDumperInterface;
     private AuthorizationUserService $authorizationUserService;
 
-    public function __construct(DatabaseDumperInterface $databaseDumperInterface, AuthorizationUserService $authorizationUserService, FrameworkInterface $frameworkInterface)
+    public function __construct(DatabaseDumperInterface $databaseDumperInterface, AuthorizationUserService $authorizationUserService)
     {
         $this->databaseDumperInterface = $databaseDumperInterface;
         $this->authorizationUserService = $authorizationUserService;
-        $this->frameworkInterface = $frameworkInterface;
     }
 
     public function execute(ExportDatabaseRequest $exportDatabaseRequest, ExportDatabaseResponse $exportDatabaseResponse)
