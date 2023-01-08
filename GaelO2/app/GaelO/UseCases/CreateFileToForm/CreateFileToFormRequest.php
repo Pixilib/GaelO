@@ -9,4 +9,5 @@ class CreateFileToFormRequest
     public string $key;
     public string $contentType;
     public string $binaryData;
+    public ?string $extension = null;
 }

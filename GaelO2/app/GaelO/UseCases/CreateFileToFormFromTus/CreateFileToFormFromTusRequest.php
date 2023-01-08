@@ -7,7 +7,7 @@ class CreateFileToFormFromTusRequest
     public int $currentUserId;
     public int $id;
     public string $key;
-    public ?string $extension;
+    public ?string $extension = null;
     public array $tusIds;
     public ?int $numberOfInstances;
     public ?bool $isDicom = false;
