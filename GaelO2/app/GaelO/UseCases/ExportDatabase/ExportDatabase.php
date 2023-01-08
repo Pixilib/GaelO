@@ -32,10 +32,13 @@ class ExportDatabase
             $tempZip = tempnam(ini_get('upload_tmp_dir'), 'TMPZIPDB_');
             $zip->open($tempZip, ZipArchive::OVERWRITE);
 
-            $databaseDumpedFile = $this->databaseDumperInterface->getDatabaseDumpFile();
+            $filePathSql = tempnam(ini_get('upload_tmp_dir'), 'TMPDB_');
+            $this->databaseDumperInterface->createDatabaseDumpFile($filePathSql);
 
             $date = Date('Ymd_His');
-            $zip->addFile($databaseDumpedFile, "export_database_$date.sql");
+            
+            $zip->addFile($filePathSql, "export_database_$date.sql");
+            unlink($filePathSql);
 
             Util::addStoredFilesInZip($zip, null);
 
