@@ -16,13 +16,14 @@ class DatabaseDumperAdapter implements DatabaseDumperInterface
     public function createDatabaseDumpFile(string $filePath): void
     {
         $databaseType = Config::get('database.default');
-
         if ($databaseType === self::DB_MYSQL) {
             $this->getMysqlDump($filePath);
         } else if ($databaseType === self::DB_PGSQL) {
             $this->getPosgresDump($filePath);
+        } else {
+            //Failover (also for testing purposes)
+            file_put_contents($filePath, 'Database not Exportable');
         }
-
     }
 
     private function getMysqlDump(String $file)

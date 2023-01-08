@@ -36,13 +36,13 @@ class ExportDatabase
             $this->databaseDumperInterface->createDatabaseDumpFile($filePathSql);
 
             $date = Date('Ymd_His');
-            
             $zip->addFile($filePathSql, "export_database_$date.sql");
-            unlink($filePathSql);
-
+            
             Util::addStoredFilesInZip($zip, null);
-
             $zip->close();
+            
+            //Unlick after lock released by zip close
+            unlink($filePathSql);
 
             $exportDatabaseResponse->status = 200;
             $exportDatabaseResponse->statusText = 'OK';
