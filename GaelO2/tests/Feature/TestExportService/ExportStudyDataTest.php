@@ -11,6 +11,7 @@ use Tests\AuthorizationTools;
 class ExportStudyDataTest extends TestCase
 {
     use RefreshDatabase;
+    private Study $study;
 
     protected function setUp() : void {
         parent::setUp();
@@ -23,6 +24,9 @@ class ExportStudyDataTest extends TestCase
         $userId = AuthorizationTools::actAsAdmin(true);
         AuthorizationTools::addRoleToUser($userId, Constants::ROLE_SUPERVISOR, $this->study->name);
         $response = $this->get('/api/studies/'.$this->study->name.'/export');
+        ob_start();
+        $response->sendContent();
+        ob_flush();
         $response->assertStatus(200);
         $response->assertHeader('content-type', 'application/zip');
     }

@@ -84,6 +84,32 @@ class ExportStudyResults {
         ];
     }
 
+    private function deleteTemporaryFiles() :void {
+
+        $exportResultsObject = $this->getExportResultsObjects();
+
+        foreach($exportResultsObject as $exportObject){
+
+            $exportFilesXls = $exportObject->getXlsExportFiles();
+            foreach($exportFilesXls as $exportFileXls){
+                unlink($exportFileXls->getPath());
+            }
+
+
+            $exportFileCsv = $exportObject->getCsvExportFiles();
+            foreach($exportFileCsv as $exportCsv){
+                unlink($exportCsv->getPath());
+            }
+
+            $exportFilesZip = $exportObject->getZipExportFiles();
+            foreach($exportFilesZip as $exportZip){
+                unlink($exportZip->getPath());
+            }
+
+        }
+
+    }
+
     public function getResultsAsZip() : string {
 
         $exportResultsObject = $this->getExportResultsObjects();
@@ -114,7 +140,7 @@ class ExportStudyResults {
         }
 
         $zip->close();
-
+        $this->deleteTemporaryFiles();
         return $tempZip;
 
     }
