@@ -46,7 +46,7 @@ class UploadFileFormTest extends TestCase
         $review = Review::factory()->userId($currentUserId)->visitId($currentVisit['visitId'])->studyName($currentVisit['studyName'])->create();
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_INVESTIGATOR, $currentVisit['studyName'] );
         AuthorizationTools::addAffiliatedCenter($currentUserId, $currentVisit['centerCode']);
-        $response = $this->post('api/reviews/' . $review->id . '/file/41', [base64_encode("testFileContent")], ['CONTENT_TYPE' => 'plain/text']);
+        $response = $this->post('api/reviews/' . $review->id . '/file/41', [base64_encode("testFileContent")], ['CONTENT_TYPE' => 'text/csv']);
         $response->assertSuccessful();
     }
 
@@ -55,7 +55,7 @@ class UploadFileFormTest extends TestCase
         $currentVisit = $this->createVisit();
         $currentUserId = AuthorizationTools::actAsAdmin(false);
         $review = Review::factory()->userId($currentUserId)->visitId($currentVisit['visitId'])->studyName($currentVisit['studyName'])->create();
-        $response = $this->post('api/reviews/' . $review->id . '/file/41', [base64_encode("testFileContent")], ['CONTENT_TYPE' => 'plain/text']);
+        $response = $this->post('api/reviews/' . $review->id . '/file/41', [base64_encode("testFileContent")], ['CONTENT_TYPE' => 'text/csv']);
         $response->assertStatus(403);
     }
 

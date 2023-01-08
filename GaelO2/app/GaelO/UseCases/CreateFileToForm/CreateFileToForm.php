@@ -68,11 +68,8 @@ class CreateFileToForm
 
             $this->checkAuthorization($local, $reviewEntity['validated'], $createFileToReviewRequest->id, $visitId, $createFileToReviewRequest->currentUserId, $studyName);
 
-            if (!is_null($createFileToReviewRequest->extension)) {
-                $extension = $createFileToReviewRequest->extension;
-            } else {
-                $extension = $this->mimeInterface::getExtensionsFromMime($createFileToReviewRequest->contentType)[0];
-            }
+            $extension = $this->mimeInterface::getExtensionsFromMime($createFileToReviewRequest->contentType)[0];
+
             $fileName = 'review_' . $reviewId . '_' . $key . '.' . $extension;
 
             $visitContext = $this->visitRepositoryInterface->getVisitWithContextAndReviewStatus($visitId, $studyName);
