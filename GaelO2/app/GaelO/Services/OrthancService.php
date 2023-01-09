@@ -421,28 +421,25 @@ class OrthancService
 
     public function getSeriesMIP(string $seriesOrthancID) : string
     {
-        $resource  = tmpfile();
-        $downloadedFilePath = stream_get_meta_data($resource)['uri'];
+        $downloadedFilePath  = tempnam(ini_get('upload_tmp_dir'), 'TMP_QC_');
 
-        $this->httpClientInterface->requestStreamResponseToFile('GET', '/series/'.$seriesOrthancID.'/mip',  $resource, []);
+        $this->httpClientInterface->requestStreamResponseToFile('GET', '/series/'.$seriesOrthancID.'/mip',  $downloadedFilePath, []);
         return $downloadedFilePath;
     }
 
     public function getSeriesMosaic(string $seriesOrthancID) : string
     {
-        $resource  = tmpfile();
-        $downloadedFilePath = stream_get_meta_data($resource)['uri'];
+        $downloadedFilePath  = tempnam(ini_get('upload_tmp_dir'), 'TMP_QC_');
 
-        $this->httpClientInterface->requestStreamResponseToFile('GET', '/series/'.$seriesOrthancID.'/mosaic',  $resource, []);
+        $this->httpClientInterface->requestStreamResponseToFile('GET', '/series/'.$seriesOrthancID.'/mosaic',  $downloadedFilePath, []);
         return $downloadedFilePath;
     }
 
     public function getInstancePreview(string $instanceOrthancID) : string
     {
-        $resource  = tmpfile();
-        $downloadedFilePath = stream_get_meta_data($resource)['uri'];
+        $downloadedFilePath  = tempnam(ini_get('upload_tmp_dir'), 'TMP_QC_');
 
-        $this->httpClientInterface->requestStreamResponseToFile('GET', '/instances/'.$instanceOrthancID.'/preview?returnUnsupportedImage',  $resource, []);
+        $this->httpClientInterface->requestStreamResponseToFile('GET', '/instances/'.$instanceOrthancID.'/preview?returnUnsupportedImage',  $downloadedFilePath, []);
         return $downloadedFilePath;
     }
 
