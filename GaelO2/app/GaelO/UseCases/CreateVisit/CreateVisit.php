@@ -159,7 +159,7 @@ class CreateVisit
         $this->authorizationPatientService->setStudyName($studyName);
         $this->authorizationPatientService->setPatientId($patientId);
         if ($this->authorizationPatientService->getAuthorizationStudyService()->getStudyEntity()->isAncillaryStudy()) {
-            throw new GaelOForbiddenException("Forbidden for ancillaries study");
+            throw new GaelOForbiddenException("Forbidden for ancillary studies");
         }
         if (!in_array($role, [Constants::ROLE_INVESTIGATOR, Constants::ROLE_SUPERVISOR]) || !$this->authorizationPatientService->isPatientAllowed($role)) {
             throw new GaelOForbiddenException();

@@ -39,7 +39,7 @@ class DeleteVisitGroup
             $studyName = $visitGroupEntity['study_name'];
             $studyNameEntity = $this->studyRepositoryInterface->find($studyName);
             if ($studyNameEntity->isAncillaryStudy()) {
-                throw new GaelOForbiddenException("Forbidden for ancillary study");
+                throw new GaelOForbiddenException("Forbidden for ancillary studies");
             }
             $hasVisitTypes = $this->visitGroupRepositoryInterface->hasVisitTypes($visitGroupId);
 

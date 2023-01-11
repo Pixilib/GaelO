@@ -53,7 +53,7 @@ class CreateVisitType
             $studyEntity = $this->studyRepositoryInterface->find($visitGroup['study_name']);
             
             if ($studyEntity->isAncillaryStudy()) {
-                throw new GaelOForbiddenException("Forbidden for ancillary study");
+                throw new GaelOForbiddenException("Forbidden for ancillary studies");
             }
 
             $hasVisits = $this->visitRepositoryInterface->hasVisitsInStudy($visitGroup['study_name']);
