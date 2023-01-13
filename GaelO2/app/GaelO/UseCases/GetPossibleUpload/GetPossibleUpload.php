@@ -45,6 +45,7 @@ class GetPossibleUpload
                 $item['visitDate'] = date('m-d-Y', strtotime($visit['visit_date']));
                 $item['visitModality'] = $visit['visit_type']['visit_group']['modality'];
                 $item['visitType'] = $visit['visit_type']['name'];
+                $item['visitTypeOrder'] = $visit['visit_type']['order'];
                 $item['visitTypeID'] = $visit['visit_type']['id'];
                 $item['visitID'] = $visit['id'];
                 $item['dicomConstraints'] = $visit['visit_type']['dicom_constraints'];
