@@ -45,6 +45,7 @@ if ($studyInvestigatorAllowed) {
 			$patient['visitModality']=$visit->getVisitGroup()->groupModality;
 			$patient['visitDate']=$dateAcquisition;
 			$patient['visitType']=$visit->visitType;
+			$patient['visitTypeOrder']=$visit->visitTypeObject->visitOrder;
 			$patient['visitTypeID']=$visit->visitTypeId;
 			$patient['visitID']=intval($visit->id_visit);
 			$patient['dicomConstraints']=$visit->getVisitCharacteristics()->getDicomContraintsArray();

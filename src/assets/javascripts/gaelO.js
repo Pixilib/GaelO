@@ -16,16 +16,16 @@
  * check all require filds in a form before submit
  */
 function checkForm(form) {
-	 var inputs = form.elements;
-		for (var i = 0; i < inputs.length; i++) {
-			if(inputs[i].hasAttribute("required")){
-		        if(inputs[i].value == ""){
-		            // found an empty field
-		        	alertifyError("Please fill in all fields");
-		            return false;
-		        }
+	var inputs = form.elements;
+	for (var i = 0; i < inputs.length; i++) {
+		if (inputs[i].hasAttribute("required")) {
+			if (inputs[i].value == "") {
+				// found an empty field
+				alertifyError("Please fill in all fields");
+				return false;
 			}
 		}
+	}
 	return true;
 }
 
@@ -33,48 +33,48 @@ function checkForm(form) {
  * Change color of key text value in the tables
  * @returns
  */
-function changeColor(){
-	
+function changeColor() {
+
 	//Polly fill for IE11 missing function
 	if (!String.prototype.includes) {
-		  Object.defineProperty(String.prototype, 'includes', {
-		    value: function(search, start) {
-		      if (typeof start !== 'number') {
-		        start = 0
-		      }
-		      
-		      if (start + search.length > this.length) {
-		        return false
-		      } else {
-		        return this.indexOf(search, start) !== -1
-		      }
-		    }
-		  })
-	}
-	
-	
-  //on parcours tout les tableaux (balises table)
-  $("table:visible").each(function (i, el){
-    //si la table a un id
-    if(el.id != ""){
-      //on parcours chaque clonne de la table (identifiée grace à son id)
-      $('#'+el.id+' tr').each(function (i, el){
-    	  
-        $(this).find('td').each (function() {
-          if( $(this).html().includes("Not Done") || $(this).html().includes("Refused") ){
-            $(this).css('color', '#D53333');
-          }
-         else if( $(this).html().includes("Done") || $(this).html().includes("Accepted") ) {
-            $(this).css('color', '#47B236)');
-         }
-         else if($(this).html().includes("Should be done") || $(this).html().includes("Wait Definitive Conclusion") || $(this).html().includes("Draft") || $(this).html().includes("Corrective Action Asked")){
-            $(this).css('color', '#E29300');
-        }
-        });
-      });
-    }
+		Object.defineProperty(String.prototype, 'includes', {
+			value: function (search, start) {
+				if (typeof start !== 'number') {
+					start = 0
+				}
 
-  });
+				if (start + search.length > this.length) {
+					return false
+				} else {
+					return this.indexOf(search, start) !== -1
+				}
+			}
+		})
+	}
+
+
+	//on parcours tout les tableaux (balises table)
+	$("table:visible").each(function (i, el) {
+		//si la table a un id
+		if (el.id != "") {
+			//on parcours chaque clonne de la table (identifiée grace à son id)
+			$('#' + el.id + ' tr').each(function (i, el) {
+
+				$(this).find('td').each(function () {
+					if ($(this).html().includes("Not Done") || $(this).html().includes("Refused")) {
+						$(this).css('color', '#D53333');
+					}
+					else if ($(this).html().includes("Done") || $(this).html().includes("Accepted")) {
+						$(this).css('color', '#47B236)');
+					}
+					else if ($(this).html().includes("Should be done") || $(this).html().includes("Wait Definitive Conclusion") || $(this).html().includes("Draft") || $(this).html().includes("Corrective Action Asked")) {
+						$(this).css('color', '#E29300');
+					}
+				});
+			});
+		}
+
+	});
 }
 
 /**
@@ -82,19 +82,19 @@ function changeColor(){
  * @param id
  * @returns
  */
-function downloadDocumentation(id){
-	window.location="scripts/download_documentation.php?idDocumentation="+id;
+function downloadDocumentation(id) {
+	window.location = "scripts/download_documentation.php?idDocumentation=" + id;
 }
 
-function alertifyError(message){
+function alertifyError(message) {
 	alertify.error(message);
 }
 
-function alertifyWarning(message){
+function alertifyWarning(message) {
 	alertify.warning(message);
 }
 
-function alertifySuccess(message){
+function alertifySuccess(message) {
 	alertify.success(message);
 }
 
@@ -108,53 +108,29 @@ function µ(str) {
 }
 
 function checkBrowserSupportDicomUpload(selectorDom) {
-	var isSupported = {
-		webKitDirectory: (function () {
-			var elem = document.createElement('input'),
-				dir = 'directory',
-				domPrefixes = ["", "moz", "o", "ms", "webkit"],
-				prefix;
 
-			elem.type = 'file';
+	const browser = Bowser.getParser(window.navigator.userAgent);
+	let isValidBrowser = browser.satisfies({
+		// in general
+		chrome: ">=90",
+		firefox: ">=90",
+		edge: ">=90",
+		opera: ">=80",
+		electron: ">=21",
+		safari: ">=15"
+	});
 
-			for (prefix in domPrefixes) {
-				if (domPrefixes[prefix] + dir in elem) {
-					return true;
-				}
-			}
-			return false;
-		})(),
-		ecmascript6: (function () {
-			try {
-				new Function("(a = 0) => a");
-				return true;
-			}
-			catch (err) {
-				return false;
-			}
-		})()
-	}
-
-	if (!isSupported['ecmascript6']) {
+	if (!isValidBrowser) {
 		$(selectorDom).append('\
 			<div class="alert alert-danger" role="alert">\
-				Sorry, your browser does not support the DICOM Uploader. Please use Firefox 54+, Opera 62+, Edge 17+, Safari 12+, Chrome 58+ or newer versions.\
+				Sorry, your browser does not support the DICOM Uploader. Please use Firefox, Chrome, Edge 90+, Opera 80+, Safari 15+.\
 			</div>\
 		');
 		throw 'ECMAScript6 not supported.';
 	}
-
-
-	if (!isSupported['webKitDirectory']) {
-		$(selectorDom).append('\
-			<div class="alert alert-warning" role="alert">\
-				Be carefull, your browser does not support \'WebKitDirectory\'. Use drag and drop when importing files instead of using the browsing window. (You can also change your browser for Firefox 54+, Opera 62+, Edge 17+, Safari 12+, Chrome 58+ or newer versions)\
-			</div>\
-		');
-	}
 }
 
-const preventDefault = function (event){
+const preventDefault = function (event) {
 	event.preventDefault();
 	event.returnValue = ''; // Needed for Chrome
 }
@@ -178,7 +154,7 @@ function preventAjaxDivLoading() {
 	});
 }
 
-function allowAjaxDivLoading(){
+function allowAjaxDivLoading() {
 	window.removeEventListener('beforeunload', preventDefault);
 	$(document).off('ajaxSend');
 }
