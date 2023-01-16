@@ -3,21 +3,22 @@
 namespace App\GaelO\Services\GaelOStudiesService;
 
 use App\GaelO\Constants\Constants;
+use Exception;
 
 class DefaultVisitDecisions extends AbstractVisitDecisions
 {
     public function getReviewStatus(): string
     {
-        return Constants::REVIEW_STATUS_NOT_DONE;
+        throw new Exception("Default Decision class should not be called");
     }
 
     public function getReviewConclusion(): ?string
     {
-        return null;
+        throw new Exception("Default Decision class should not be called");
     }
 
     public function getTargetLesion(): ?array
     {
-        return null;
+        throw new Exception("Default Decision class should not be called");
     }
 }
