@@ -53,7 +53,7 @@ class ReviewFormService extends FormService
         //Pass validation
         $this->abstractVisitRules->setFormData($data);
         $this->abstractVisitRules->setAdjudication($reviewEntity['adjudication']);
-        $validity = $this->abstractVisitRules->checkReviewFormValidity($validated, $reviewEntity['adjudication']);
+        $validity = $this->abstractVisitRules->checkReviewFormValidity($validated);
         if (!$validity) {
             throw new GaelOBadRequestException('Review Form Validation Failed');
         }

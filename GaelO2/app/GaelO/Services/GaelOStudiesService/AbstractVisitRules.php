@@ -84,6 +84,7 @@ abstract class AbstractVisitRules
         $validatorAdapter = new ValidatorAdapter($validated);
         $investigatorsRules = $this::getInvestigatorValidationRules();
         $this->fillValidator($investigatorsRules, $validatorAdapter);
+        //TODO check associated file uploaded
         return $validatorAdapter->validate($this->data);
     }
 
@@ -94,8 +95,10 @@ abstract class AbstractVisitRules
 
         if ($this->adjudication) {
             $reviewerRules = $this::getReviewerAdjudicationValidationRules();
+            //TODO check associated file uploaded
         } else {
             $reviewerRules = $this::getReviewerValidationRules();
+            //TODO check associated file uploaded
         }
 
         $this->fillValidator($reviewerRules, $validatorAdapter);
