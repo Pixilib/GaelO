@@ -20,17 +20,17 @@ class DefaultVisitRules extends AbstractVisitRules
         return [];
     }
 
-    public static function getAllowedKeysAndMimeTypesInvestigator(): array
+    public static function getAssociatedFilesInvestigator(): array
     {
         return [];
     }
 
-    public static function getAllowedKeysAndMimeTypesReviewer(): array
+    public static function getAssociatedFilesReview(): array
     {
         return [];
     }
 
-    public static function getAllowedKeysAndMimeTypesAdjudication(): array
+    public static function getAssociatedFilesAdjudication(): array
     {
         return [];
     }

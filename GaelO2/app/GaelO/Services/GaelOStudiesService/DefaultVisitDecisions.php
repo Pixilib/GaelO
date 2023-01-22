@@ -2,7 +2,6 @@
 
 namespace App\GaelO\Services\GaelOStudiesService;
 
-use App\GaelO\Constants\Constants;
 use Exception;
 
 class DefaultVisitDecisions extends AbstractVisitDecisions

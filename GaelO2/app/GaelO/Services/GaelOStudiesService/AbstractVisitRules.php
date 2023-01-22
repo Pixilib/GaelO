@@ -5,6 +5,7 @@ namespace App\GaelO\Services\GaelOStudiesService;
 use App\GaelO\Adapters\FrameworkAdapter;
 use App\GaelO\Adapters\ValidatorAdapter;
 use App\GaelO\Exceptions\GaelOException;
+use App\GaelO\Services\GaelOStudiesService\AssociatedFiles\AssociatedFile;
 
 abstract class AbstractVisitRules
 {
@@ -28,11 +29,20 @@ abstract class AbstractVisitRules
 
     abstract public static function getReviewerAdjudicationValidationRules(): array;
 
-    abstract public static function getAllowedKeysAndMimeTypesInvestigator(): array;
+    /**
+     * @return AssociatedFile[]
+     */
+    abstract public static function getAssociatedFilesInvestigator(): array;
 
-    abstract public static function getAllowedKeysAndMimeTypesReviewer(): array;
+    /**
+     * @return AssociatedFile[]
+     */
+    abstract public static function getAssociatedFilesReview(): array;
 
-    abstract public static function getAllowedKeysAndMimeTypesAdjudication(): array;
+    /**
+     * @return AssociatedFile[]
+     */
+    abstract public static function getAssociatedFilesAdjudication(): array;
 
     public function getInvestigatorInputNames(): array
     {
