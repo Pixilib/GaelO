@@ -57,10 +57,11 @@ class ModifyInvestigatorForm
 
             $localReviewEntitity = $this->reviewRepositoryInterface->getInvestigatorForm($visitId, false);
             $localReviewId = $localReviewEntitity['id'];
+            $uploadedFileKeys = array_keys($localReviewEntitity['sent_files']);
 
             $this->investigatorFormService->setCurrentUserId($currentUserId);
             $this->investigatorFormService->setVisitContextAndStudy($visitContext, $studyName);
-            $this->investigatorFormService->updateForm($localReviewId, $data, $validated);
+            $this->investigatorFormService->updateForm($localReviewId, $uploadedFileKeys, $data, $validated);
 
             $actionDetails = [
                 'raw_data' => $data,

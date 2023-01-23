@@ -4,10 +4,10 @@ namespace App\GaelO\Services\FormService;
 
 use App\GaelO\Entities\StudyEntity;
 use App\GaelO\Exceptions\GaelOBadRequestException;
+use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Interfaces\Adapters\FrameworkInterface;
 use App\GaelO\Interfaces\Repositories\ReviewRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\StudyRepositoryInterface;
-use App\GaelO\Repositories\StudyRepository;
 use App\GaelO\Services\GaelOStudiesService\AbstractGaelOStudy;
 use App\GaelO\Services\GaelOStudiesService\AbstractVisitDecisions;
 use App\GaelO\Services\GaelOStudiesService\AbstractVisitRules;
@@ -73,32 +73,34 @@ abstract class FormService
         $this->abstractVisitRules->setLocalForm($this->local);
     }
 
-    public abstract function saveForm(array $data, bool $validated, ?bool $adjudication = null): int;
-    public abstract function updateForm(int $reviewId, array $data, bool $validated);
+    public abstract function createForm(array $data, bool $validated, ?bool $adjudication = null): int;
+    public abstract function updateForm(int $reviewId, array $uploadedFileKeys, array $data, bool $validated);
     public abstract function unlockForm(int $reviewId);
     public abstract function deleteForm(int $reviewId);
 
     public function attachFile(array $reviewEntity, string $key, string $filename, string $mimeType, $binaryData): void
     {
 
-        $keyMimeArray = [];
+        $associatedFiles = [];
 
-        //SK Checker que local de review est bien le meme que local de la classe ? 
+        //Safty check
+        if($reviewEntity['local']!== $this->local) throw new GaelOException("Form Service Unconsitancy");
+
         if ($reviewEntity['local']) {
-            $keyMimeArray = $this->abstractVisitRules->getAllowedKeysAndMimeTypesInvestigator();
+            $associatedFiles = $this->abstractVisitRules->getAssociatedFilesInvestigator();
         } else {
             $isAdjudication = $reviewEntity['adjudication'];
-            if ($isAdjudication) $keyMimeArray = $this->abstractVisitRules->getAllowedKeysAndMimeTypesAdjudication();
-            else $keyMimeArray = $this->abstractVisitRules->getAllowedKeysAndMimeTypesReviewer();
+            if ($isAdjudication) $associatedFiles = $this->abstractVisitRules->getAssociatedFilesAdjudication();
+            else $associatedFiles = $this->abstractVisitRules->getAssociatedFilesReview();
         }
 
-        $expectedMimes = $keyMimeArray[$key];
+        $associatiedFile = $associatedFiles[$key];
 
         if (!empty($reviewEntity['sent_files'][$key])) {
             throw new GaelOBadRequestException("Already Existing File for this review");
         }
 
-        if ( !in_array($mimeType, $expectedMimes) ) {
+        if ( !in_array($mimeType, $associatiedFile->mimes) ) {
             throw new GaelOBadRequestException("File Key or Mime Not Allowed");
         }
 
