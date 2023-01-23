@@ -3,6 +3,7 @@
 namespace App\GaelO\Repositories;
 
 use App\GaelO\Constants\Constants;
+use App\GaelO\Exceptions\GaelOException;
 use App\Models\Visit;
 use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
 use App\GaelO\Util;
@@ -52,6 +53,16 @@ class VisitRepository implements VisitRepositoryInterface
         ];
 
         $visitId = DB::transaction(function () use ($data, $studyName, $stateReview) {
+            $this->visitModel->sharedLock();
+
+            if ($this->visitModel
+                ->where('patient_id', $data['patient_id'])
+                ->where('visit_type_id', $data['visit_type_id'])
+                ->exists()
+            ) {
+                throw new GaelOException("Visit already existing for this patient");
+            };
+
             $newVisit = $this->visitModel->create($data);
             //create review status to set review status study preset for primary studies
             $this->reviewStatusModel->create([
