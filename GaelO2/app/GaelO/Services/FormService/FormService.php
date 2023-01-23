@@ -73,8 +73,8 @@ abstract class FormService
         $this->abstractVisitRules->setLocalForm($this->local);
     }
 
-    public abstract function saveForm(array $data, bool $validated, ?bool $adjudication = null): int;
-    public abstract function updateForm(int $reviewId, array $data, bool $validated);
+    public abstract function createForm(array $data, bool $validated, ?bool $adjudication = null): int;
+    public abstract function updateForm(int $reviewId, array $uploadedFileKeys, array $data, bool $validated);
     public abstract function unlockForm(int $reviewId);
     public abstract function deleteForm(int $reviewId);
 

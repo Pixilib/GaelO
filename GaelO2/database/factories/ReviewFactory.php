@@ -103,4 +103,13 @@ class ReviewFactory extends Factory
             ];
         });
     }
+
+    public function sentFiles(array $sentFiles)
+    {
+        return $this->state(function (array $attributes) use ($sentFiles) {
+            return [
+                'sent_files' => $sentFiles,
+            ];
+        });
+    }
 }

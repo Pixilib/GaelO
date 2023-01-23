@@ -83,7 +83,7 @@ class TEST_FDG_PET0 extends AbstractVisitRules
     public static function getAssociatedFilesInvestigator(): array
     {
         return [
-            '41' => new AssociatedFile('41', MimeAdapter::getMimesFromExtension('csv'), false),
+            '41' => new AssociatedFile('41', MimeAdapter::getMimesFromExtension('csv'), true),
             '25' => new AssociatedFile('25', MimeAdapter::getMimesFromExtension('zip'), false)
         ];
     }

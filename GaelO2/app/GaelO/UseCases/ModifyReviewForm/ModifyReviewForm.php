@@ -51,15 +51,17 @@ class ModifyReviewForm
             $studyName = $reviewEntity['study_name'];
             $visitId = $reviewEntity['visit_id'];
             $reviewId = $reviewEntity['id'];
+            $uploadedFileKeys = array_keys($reviewEntity['sent_files']);
 
             $visitContext = $this->visitRepositoryInterface->getVisitWithContextAndReviewStatus($visitId, $studyName);
             $reviewStatus = $visitContext['review_status']['review_status'];
             $this->checkAuthorization($currentUserId, $reviewEntity, $visitId,  $studyName, $visitContext);
+            
 
             //Call service to update form
             $this->reviewFormService->setCurrentUserId($currentUserId);
             $this->reviewFormService->setVisitContextAndStudy($visitContext, $studyName);
-            $this->reviewFormService->updateForm($reviewId, $modifyReviewFormRequest->data, $modifyReviewFormRequest->validated);
+            $this->reviewFormService->updateForm($reviewId, $uploadedFileKeys, $modifyReviewFormRequest->data, $modifyReviewFormRequest->validated);
 
             //Write in Tracker
             $actionDetails = [

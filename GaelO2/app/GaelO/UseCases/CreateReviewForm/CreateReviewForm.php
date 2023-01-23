@@ -71,7 +71,7 @@ class CreateReviewForm
             //Call service to register form
             $this->reviewFormService->setCurrentUserId($currentUserId);
             $this->reviewFormService->setVisitContextAndStudy($visitContext, $studyName);
-            $createdReviewId = $this->reviewFormService->saveForm($formData, $validated, $adjudication);
+            $createdReviewId = $this->reviewFormService->createForm($formData, $validated, $adjudication);
 
             //Write in Tracker
             $actionDetails = [

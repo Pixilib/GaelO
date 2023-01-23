@@ -31,7 +31,7 @@ class ReviewFormService extends FormService
         $this->reviewStatusRepositoryInterface = $reviewStatusRepositoryInterface;
     }
 
-    public function saveForm(array $data, bool $validated, ?bool $adjudication = null): int
+    public function createForm(array $data, bool $validated, ?bool $adjudication = null): int
     {
         $this->abstractVisitRules->setFormData($data);
         $this->abstractVisitRules->setAdjudication($adjudication);
@@ -46,12 +46,13 @@ class ReviewFormService extends FormService
         return $createdReviewId;
     }
 
-    public function updateForm(int $reviewId, array $data, bool $validated)
+    public function updateForm(int $reviewId, array $uploadedFileKeys, array $data, bool $validated)
     {
         //Get current Entity to know if adjudication form
         $reviewEntity = $this->reviewRepositoryInterface->find($reviewId);
         //Pass validation
         $this->abstractVisitRules->setFormData($data);
+        $this->abstractVisitRules->setUploadedFileKeys($uploadedFileKeys);
         $this->abstractVisitRules->setAdjudication($reviewEntity['adjudication']);
         $validity = $this->abstractVisitRules->checkReviewFormValidity($validated);
         if (!$validity) {

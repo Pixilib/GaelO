@@ -28,7 +28,7 @@ class ModifyInvestigatorFormTest extends TestCase
         $this->studyName = $study->name;
         $this->centerCode = $patient->center_code;
         $this->visit = Visit::Factory()->patientId($patient->id)->visitTypeId($visitType->id)->create();
-        Review::factory()->visitId($this->visit->id)->studyName($study->name)->create();
+        Review::factory()->visitId($this->visit->id)->sentFiles(['41'=>'path'])->studyName($study->name)->create();
     }
 
 

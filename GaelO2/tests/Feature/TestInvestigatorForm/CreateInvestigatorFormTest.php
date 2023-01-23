@@ -42,7 +42,7 @@ class CreateInvestigatorFormTest extends TestCase
         'infectionLocation' => 5,
     ];
 
-    public function testCreateInvestigatorForm()
+    public function testCreateInvestigatorFormShouldFailBeacauseMissingAssociatedFile()
     {
         $currentUserId = AuthorizationTools::actAsAdmin(false);
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_INVESTIGATOR, $this->studyName);
@@ -53,7 +53,8 @@ class CreateInvestigatorFormTest extends TestCase
             'validated' => true
         ];
 
-        $this->post('api/visits/' . $this->visit->id . '/investigator-form', $payload)->assertStatus(201);
+
+        $this->post('api/visits/' . $this->visit->id . '/investigator-form', $payload)->assertStatus(400);
     }
 
 
