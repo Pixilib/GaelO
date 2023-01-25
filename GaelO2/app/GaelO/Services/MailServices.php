@@ -527,12 +527,13 @@ class MailServices
             'content' => $content
         ];
 
-        $this->mailInterface->setTo(
-            array_map(function ($userId) {
-                return $this->getUserEmail($userId);
-            }, $userIds)
-        );
-        $this->mailInterface->setReplyTo($this->getUserEmail($senderId));
+        $destinatorsEmails = array_map(function ($userId) {
+            return $this->getUserEmail($userId);
+        }, $userIds);
+        $senderEmail = $this->getUserEmail($senderId);
+
+        $this->mailInterface->setTo([...$destinatorsEmails, $senderEmail]);
+        $this->mailInterface->setReplyTo($senderEmail);
         $this->mailInterface->setParameters($parameters);
         $this->mailInterface->setBody(MailConstants::EMAIL_REMINDER);
         $this->mailInterface->send();
