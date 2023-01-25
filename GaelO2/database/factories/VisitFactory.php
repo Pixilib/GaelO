@@ -44,8 +44,7 @@ class VisitFactory extends Factory
             'corrective_action_new_upload' => $this->faker->randomElement([true, false]),
             'corrective_action_investigator_form' => $this->faker->randomElement([true, false]),
             'corrective_action_comment' => $this->faker->word,
-            'corrective_action_applied' => $this->faker->randomElement([true, false]),
-            'last_reminder_upload' => Util::now()
+            'corrective_action_applied' => $this->faker->randomElement([true, false])
         ];
     }
 

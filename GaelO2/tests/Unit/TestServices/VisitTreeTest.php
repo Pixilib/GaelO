@@ -49,7 +49,6 @@ class VisitTreeTest extends TestCase
             "corrective_action_investigator_form" => 1,
             "corrective_action_comment" => "molestias",
             "corrective_action_applied" => 0,
-            "last_reminder_upload" => "2021-01-26 23:23:36",
             "deleted_at" => null,
             "created_at" => "2021-01-26T23:23:36.000000Z",
             "updated_at" => "2021-01-26T23:23:36.000000Z",
