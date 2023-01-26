@@ -25,6 +25,7 @@ class CreateUser
     private AuthorizationUserService $authorizationUserService;
     private TrackerRepositoryInterface $trackerRepositoryInterface;
     private UserRepositoryInterface $userRepositoryInterface;
+    private FrameworkInterface $frameworkInterface;
     private MailServices $mailService;
 
     public function __construct(AuthorizationUserService $authorizationUserService, UserRepositoryInterface $userRepositoryInterface, TrackerRepositoryInterface $trackerRepositoryInterface, FrameworkInterface $frameworkInterface, MailServices $mailService)
@@ -65,7 +66,7 @@ class CreateUser
                 $createUserRequest->job,
                 $createUserRequest->orthancAddress,
                 $createUserRequest->orthancLogin,
-                $createUserRequest->orthancPassword
+                $createUserRequest->orthancPassword != null ? $this->frameworkInterface->encrypt($createUserRequest->orthancPassword) : null,
             );
 
             //Send reset password link.

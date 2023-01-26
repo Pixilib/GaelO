@@ -9,7 +9,7 @@ use App\Models\User;
 use App\Models\Role;
 
 use App\GaelO\Constants\Constants;
-use App\GaelO\Interfaces\Adapters\HashInterface;
+use App\GaelO\Interfaces\Adapters\FrameworkInterface;
 use App\GaelO\Util;
 use App\Models\Study;
 
@@ -20,15 +20,15 @@ class UserRepository implements UserRepositoryInterface
     private Role $rolesModel;
     private CenterUser $centerUserModel;
     private Study $studyModel;
-    private HashInterface $hashInterface;
+    private FrameworkInterface $frameworkInterface;
 
-    public function __construct(User $user, Role $roles, CenterUser $centerUser, Study $study, HashInterface $hashInterface)
+    public function __construct(User $user, Role $roles, CenterUser $centerUser, Study $study, FrameworkInterface $frameworkInterface)
     {
         $this->userModel = $user;
         $this->rolesModel = $roles;
         $this->centerUserModel = $centerUser;
         $this->studyModel = $study;
-        $this->hashInterface = $hashInterface;
+        $this->frameworkInterface = $frameworkInterface;
     }
 
     public function find($id): array
@@ -113,7 +113,7 @@ class UserRepository implements UserRepositoryInterface
     public function updateUserPassword(int $userId, ?string $passwordCurrent): void
     {
         $user = $this->userModel->findOrFail($userId);
-        $user->password = $this->hashInterface->hash($passwordCurrent);
+        $user->password = $this->frameworkInterface->hash($passwordCurrent);
         $user->save();
     }
 

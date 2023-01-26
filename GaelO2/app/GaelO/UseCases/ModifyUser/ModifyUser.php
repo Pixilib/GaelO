@@ -68,7 +68,7 @@ class ModifyUser
                 $modifyUserRequest->job,
                 $modifyUserRequest->orthancAddress,
                 $modifyUserRequest->orthancLogin,
-                $modifyUserRequest->orthancPassword,
+                $modifyUserRequest->orthancPassword != null ? $this->frameworkInterface->encrypt($modifyUserRequest->orthancPassword) : $user['orthanc_password'],
                 $user['onboarding_version'],
                 $resetEmailValidation
             );

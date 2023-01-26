@@ -4,7 +4,6 @@ namespace App\Providers;
 
 use App\GaelO\Adapters\DatabaseDumperAdapter;
 use App\GaelO\Adapters\FrameworkAdapter;
-use App\GaelO\Adapters\HashAdapter;
 use App\GaelO\Adapters\HttpClientAdapter;
 use App\GaelO\Adapters\JobAdapter;
 use App\GaelO\Adapters\MimeAdapter;
@@ -29,7 +28,6 @@ class AdapterProvider extends ServiceProvider
     {
         $this->app->bind(DatabaseDumperInterface::class, DatabaseDumperAdapter::class);
         $this->app->bind(HttpClientInterface::class, HttpClientAdapter::class);
-        $this->app->bind(HashInterface::class, HashAdapter::class);
         $this->app->bind(FrameworkInterface::class, FrameworkAdapter::class);
         $this->app->bind(MimeInterface::class, MimeAdapter::class);
         $this->app->bind(PhoneNumberInterface::class, PhoneNumberAdapter::class);
