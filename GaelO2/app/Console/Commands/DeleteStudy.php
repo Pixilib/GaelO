@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\GaelO\Services\OrthancService;
 use App\Models\DicomSeries;
 use App\Models\DicomStudy;
 use App\Models\Documentation;
@@ -14,11 +15,13 @@ use App\Models\Tracker;
 use App\Models\Visit;
 use App\Models\VisitGroup;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Storage;
 
 class DeleteStudy extends Command
 {
 
     private Study $study;
+    private Patient $patient;
     private Visit $visit;
     private ReviewStatus $reviewStatus;
     private DicomStudy $dicomStudy;
@@ -28,12 +31,13 @@ class DeleteStudy extends Command
     private Role $role;
     private VisitGroup $visitGroup;
     private Review $review;
+    private OrthancService $orthancService;
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'gaelo:delete-study {studyName : the study name to delete}';
+    protected $signature = 'gaelo:delete-study {studyName : the study name to delete} {--deleteDicom : delete dicom in Orthanc} { --deleteAssociatedFile : delete associated files}';
 
     /**
      * The console command description.
@@ -58,7 +62,8 @@ class DeleteStudy extends Command
         Tracker $tracker,
         Documentation $documentation,
         Review $review,
-        ReviewStatus $reviewStatus
+        ReviewStatus $reviewStatus,
+        OrthancService $orthancService
     ) {
         parent::__construct();
         $this->study = $study;
@@ -72,6 +77,8 @@ class DeleteStudy extends Command
         $this->role = $role;
         $this->review = $review;
         $this->reviewStatus = $reviewStatus;
+        $this->orthancService = $orthancService;
+        $this->orthancService->setOrthancServer(true);
     }
 
     /**
@@ -148,7 +155,17 @@ class DeleteStudy extends Command
 
             $studyEntity->forceDelete();
 
-            $this->info('The command was successful, delete Orthanc Series and Associated Form Data !');
+            if($this->option('deleteDicom')){
+                foreach($orthancIdArray as $seriesOrthancId){
+                    $this->orthancService->deleteFromOrthanc('series', $seriesOrthancId);
+                }
+            }
+
+            if($this->option('deleteAssociatedFile')){
+                Storage::deleteDirectory($studyName);
+            }
+
+            $this->info('The command was successful !');
         }
 
         return 0;
