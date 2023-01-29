@@ -22,6 +22,11 @@ return new class extends Migration
             $table->string('gender')->nullable(true)->default(null)->change();
             $table->string('inclusion_status')->default('Included')->nullable(false)->change();
         });
+
+        Schema::table('roles', function (Blueprint $table) {
+            $table->string('name')->nullable(false)->change();
+        });
+        
     }
 
     /**

@@ -273,7 +273,13 @@ class UserRepository implements UserRepositoryInterface
                 $query->where('name', $studyName);
             })
             ->get();
-        return $roles->count() === 0 ? [] : $roles->pluck('name')->toArray();
+
+        $userRoles = [];
+        foreach ($roles as $role) {
+            $userRoles[] = $role['name']->value;
+        }
+        
+        return $userRoles;
     }
 
     public function addUserRoleInStudy(int $userId, String $study, string $role): void
