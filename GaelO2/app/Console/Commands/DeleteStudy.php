@@ -14,7 +14,9 @@ use App\Models\Study;
 use App\Models\Tracker;
 use App\Models\Visit;
 use App\Models\VisitGroup;
+use Exception;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
 class DeleteStudy extends Command
@@ -47,11 +49,11 @@ class DeleteStudy extends Command
     protected $description = 'Delete a Study from GaelO (hard delete)';
 
     /**
-     * Create a new command instance.
+     * Execute the console command.
      *
-     * @return void
+     * @return int
      */
-    public function __construct(
+    public function handle(
         Study $study,
         VisitGroup $visitGroup,
         Visit $visit,
@@ -63,9 +65,8 @@ class DeleteStudy extends Command
         Documentation $documentation,
         Review $review,
         ReviewStatus $reviewStatus,
-        OrthancService $orthancService
-    ) {
-        parent::__construct();
+        OrthancService $orthancService)
+    {
         $this->study = $study;
         $this->visitGroup = $visitGroup;
         $this->visit = $visit;
@@ -79,15 +80,6 @@ class DeleteStudy extends Command
         $this->reviewStatus = $reviewStatus;
         $this->orthancService = $orthancService;
         $this->orthancService->setOrthancServer(true);
-    }
-
-    /**
-     * Execute the console command.
-     *
-     * @return int
-     */
-    public function handle()
-    {
 
         $studyName = $this->argument('studyName');
         $studyNameConfirmation = $this->ask('Warning : Please confirm study Name');
@@ -157,7 +149,11 @@ class DeleteStudy extends Command
 
             if($this->option('deleteDicom')){
                 foreach($orthancIdArray as $seriesOrthancId){
-                    $this->orthancService->deleteFromOrthanc('series', $seriesOrthancId);
+                    try{
+                        $this->orthancService->deleteFromOrthanc('series', $seriesOrthancId);
+                    }catch(Exception $e){
+                        Log::error($e->getMessage());
+                    }
                 }
             }
 
