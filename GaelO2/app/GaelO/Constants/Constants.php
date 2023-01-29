@@ -8,10 +8,6 @@ class Constants {
     const USER_BLOCKED = 'User Blocked';
     const USER_NOT_ONBOARDED = 'User Missing Onboarding';
 
-    const USER_JOB_CRA = 'CRA';
-    const USER_JOB_SUPERVISION = 'Supervision';
-    const USER_JOB_RADIOLOGIST = 'Radiologist';
-
     const PATIENT_INCLUSION_STATUS_INCLUDED = "Included";
     const PATIENT_INCLUSION_STATUS_PRE_INCLUDED = "Pre Included";
     const PATIENT_INCLUSION_STATUS_EXCLUDED = "Excluded";

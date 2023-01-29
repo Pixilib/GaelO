@@ -121,7 +121,7 @@ class DeleteStudy extends Command
            
             $this->deleteReviews($visitIds, $studyName);
             $this->deleteReviewStatus($visitIds, $studyName);
-
+            
             if ($studyEntity['ancillary_of'] === null) {
 
                 $dicomSeries = $this->getDicomSeriesOfVisits($visitIds);
@@ -232,7 +232,7 @@ class DeleteStudy extends Command
 
     private function deleteReviewStatus(array $visitIds, String $studyName)
     {
-        $this->reviewStatus->where('study_name', $studyName)->whereIn('id', $visitIds)->delete();
+        $this->reviewStatus->where('study_name', $studyName)->whereIn('visit_id', $visitIds)->delete();
     }
 
     private function deleteVisits(array $visitIds)
