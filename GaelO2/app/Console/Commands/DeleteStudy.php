@@ -147,7 +147,7 @@ class DeleteStudy extends Command
 
             $studyEntity->forceDelete();
 
-            if($this->option('deleteDicom')){
+            if($this->option('deleteDicom') && $this->confirm('Found '.sizeOf($orthancIdArray).' series to delete, do you want to continue ?')){
                 foreach($orthancIdArray as $seriesOrthancId){
                     try{
                         $this->orthancService->deleteFromOrthanc('series', $seriesOrthancId);
@@ -157,7 +157,7 @@ class DeleteStudy extends Command
                 }
             }
 
-            if($this->option('deleteAssociatedFile')){
+            if($this->option('deleteAssociatedFile')&& $this->confirm('Going to delete associated file, do you want to continue ?')){
                 Storage::deleteDirectory($studyName);
             }
 

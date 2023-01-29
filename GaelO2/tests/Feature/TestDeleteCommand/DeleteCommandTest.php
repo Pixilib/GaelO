@@ -73,6 +73,7 @@ class DeleteCommandTest extends TestCase
         $this->artisan('gaelo:delete-study ' . $studyName.' --deleteDicom')->expectsQuestion('Warning : Please confirm study Name', $studyName)
             ->expectsQuestion('Warning : This CANNOT be undone, do you wish to continue?', "\r\n")
             ->expectsTable(['orthanc_id'], [[$this->dicomSeries->orthanc_id]])
+            ->expectsQuestion('Found 1 series to delete, do you want to continue ?', 'yes')
             ->expectsOutput('The command was successful !');
     }
 
@@ -83,6 +84,8 @@ class DeleteCommandTest extends TestCase
         $this->artisan('gaelo:delete-study ' . $studyName.' --deleteDicom --deleteAssociatedFile')->expectsQuestion('Warning : Please confirm study Name', $studyName)
             ->expectsQuestion('Warning : This CANNOT be undone, do you wish to continue?', "\r\n")
             ->expectsTable(['orthanc_id'], [[$this->dicomSeries->orthanc_id]])
+            ->expectsQuestion('Found 1 series to delete, do you want to continue ?', 'yes')
+            ->expectsQuestion('Going to delete associated file, do you want to continue ?', 'yes')
             ->expectsOutput('The command was successful !');
     }
 
