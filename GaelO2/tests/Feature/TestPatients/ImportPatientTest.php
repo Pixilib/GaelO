@@ -3,6 +3,7 @@
 namespace Tests\Feature\TestPatients;
 
 use App\GaelO\Constants\Constants;
+use App\GaelO\Constants\Enums\InclusionStatusEnum;
 use App\Models\Patient;
 use App\Models\Study;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -28,7 +29,7 @@ class ImportPatientTest extends TestCase
         "registrationDate" => '2011-10-05',
         "investigatorName" => "administrator",
         "centerCode" => 0,
-        "inclusionStatus"  => Constants::PATIENT_INCLUSION_STATUS_INCLUDED
+        "inclusionStatus"  => InclusionStatusEnum::INCLUDED->value
         ]];
 
     }
@@ -50,7 +51,7 @@ class ImportPatientTest extends TestCase
         "registrationDate" => '2011-10-05',
         "investigatorName" => "administrator",
         "centerCode" => 0,
-        "inclusionStatus"  => Constants::PATIENT_INCLUSION_STATUS_INCLUDED],
+        "inclusionStatus"  => InclusionStatusEnum::INCLUDED->value],
         ["code" => '12341231234124',
         "lastname" => "test",
         "firstname" => "test",
@@ -61,7 +62,7 @@ class ImportPatientTest extends TestCase
         "registrationDate" => '2011-10-06',
         "investigatorName" => "administrator",
         "centerCode" => 0,
-        "inclusionStatus"  => Constants::PATIENT_INCLUSION_STATUS_INCLUDED],
+        "inclusionStatus"  => InclusionStatusEnum::INCLUDED->value],
         ["code" => '12341231234125',
         "lastname" => "test",
         "firstname" => "test",
@@ -72,7 +73,7 @@ class ImportPatientTest extends TestCase
         "registrationDate" => '2011-10-07',
         "investigatorName" => "administrator",
         "centerCode" => 0,
-        "inclusionStatus"  => Constants::PATIENT_INCLUSION_STATUS_INCLUDED]
+        "inclusionStatus"  => InclusionStatusEnum::INCLUDED->value]
     ];
         $resp = $this->json('POST', '/api/studies/'.$this->study->name.'/import-patients', $this->validPayload);
         $resp->assertSuccessful();
@@ -203,7 +204,7 @@ class ImportPatientTest extends TestCase
         $currentUserId = AuthorizationTools::actAsAdmin(false);
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $this->study->name);
         $this->validPayload[0]['registrationDate'] = null;
-        $this->validPayload[0]['inclusionStatus'] = Constants::PATIENT_INCLUSION_STATUS_PRE_INCLUDED;
+        $this->validPayload[0]['inclusionStatus'] = InclusionStatusEnum::PRE_INCLUDED->value;
         $resp = $this->json('POST', '/api/studies/'.$this->study->name.'/import-patients', $this->validPayload);
         $this->assertEquals(1, count($resp['success']));
     }

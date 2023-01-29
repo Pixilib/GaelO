@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\GaelO\Constants\JobEnum;
+use App\GaelO\Constants\Enums\JobEnum;
 use App\Notifications\ResetPasswordNotification;
 use App\Notifications\VerifyEmailNotification;
 use Illuminate\Auth\Passwords\CanResetPassword as PasswordsCanResetPassword;

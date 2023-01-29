@@ -44,7 +44,7 @@ class PatientRepositoryTest extends TestCase
             $patient->id,
             $patient->lastname,
             $patient->firstname,
-            $patient->gender,
+            $patient->gender->value,
             $patient->birth_day,
             $patient->birth_month,
             $patient->birth_year,
@@ -52,7 +52,7 @@ class PatientRepositoryTest extends TestCase
             $patient->registration_date,
             'New Investigator',
             $patient->center_code,
-            $patient->inclusion_status,
+            $patient->inclusion_status->value,
             $patient->withdraw_reason,
             $patient->withdraw_date
         );
@@ -126,7 +126,7 @@ class PatientRepositoryTest extends TestCase
         );
 
         $updatedPatient = Patient::find($patient->id);
-        $this->assertEquals('Excluded', $updatedPatient->inclusion_status);
+        $this->assertEquals('Excluded', $updatedPatient->inclusion_status->value);
         $this->assertEquals($patient->firstname, $updatedPatient->firstname);
     }
 }

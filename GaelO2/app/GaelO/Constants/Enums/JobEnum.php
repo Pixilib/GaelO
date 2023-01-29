@@ -1,6 +1,6 @@
 <?php
 
-namespace App\GaelO\Constants;
+namespace App\GaelO\Constants\Enums;
 
 enum JobEnum :string
 {

@@ -3,7 +3,7 @@
 namespace Tests\Unit\TestRepositories;
 
 use App\GaelO\Constants\Constants;
-use App\GaelO\Constants\JobEnum;
+use App\GaelO\Constants\Enums\JobEnum;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -53,6 +53,25 @@ class UserRepositoryTest extends TestCase
         $this->assertIsArray($createdEntity);
 
         return $createdEntity;
+    }
+
+    public function testCreateUserShouldFailUnallowedJob()
+    {
+
+        $this->expectError();
+        $this->userRepository->createUser(
+            'Kanoun',
+            'Salim',
+            'salim.kanoun@gmail.com',
+            '0600000000',
+            false,
+            0,
+            'notAValidJob',
+            null,
+            null,
+            null
+        );
+
     }
 
     /**

@@ -2,7 +2,7 @@
 
 namespace App\GaelO\Services\GaelOStudiesService;
 
-use App\GaelO\Constants\Constants;
+use App\GaelO\Constants\Enums\InclusionStatusEnum;
 use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\VisitTypeRepositoryInterface;
 
@@ -22,7 +22,7 @@ class DefaultCreatableVisitCalculator
     {
 
         //If status other than Included or Preincluded (ie : excluded or withdrawn) no visit is expected to be created
-        if (!in_array($patientEntity['inclusion_status'], [Constants::PATIENT_INCLUSION_STATUS_INCLUDED, Constants::PATIENT_INCLUSION_STATUS_PRE_INCLUDED])) {
+        if (!in_array($patientEntity['inclusion_status'], [InclusionStatusEnum::INCLUDED->value, InclusionStatusEnum::PRE_INCLUDED->value])) {
             return [];
         }
 

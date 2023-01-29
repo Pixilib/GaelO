@@ -1,17 +1,14 @@
 <?php
 
 namespace App\GaelO\Constants;
-class Constants {
+
+class Constants
+{
 
     const USER_EMAIL_NOT_VERIFIED = 'Email Not Verified';
     const USER_DELETED = 'User Deleted';
     const USER_BLOCKED = 'User Blocked';
     const USER_NOT_ONBOARDED = 'User Missing Onboarding';
-
-    const PATIENT_INCLUSION_STATUS_INCLUDED = "Included";
-    const PATIENT_INCLUSION_STATUS_PRE_INCLUDED = "Pre Included";
-    const PATIENT_INCLUSION_STATUS_EXCLUDED = "Excluded";
-    const PATIENT_INCLUSION_STATUS_WITHDRAWN = "Withdrawn";
 
     const ROLE_INVESTIGATOR = "Investigator";
     const ROLE_MONITOR = "Monitor";
@@ -93,7 +90,7 @@ class Constants {
 
     const ORTHANC_ANON_PROFILE_DEFAULT = "Default";
     const ORTHANC_ANON_PROFILE_FULL = "Full";
-    const ORTHANC_PATIENTS_LEVEL="patients";
-    const ORTHANC_STUDIES_LEVEL="studies";
-    const ORTHANC_SERIES_LEVEL="series";
+    const ORTHANC_PATIENTS_LEVEL = "patients";
+    const ORTHANC_STUDIES_LEVEL = "studies";
+    const ORTHANC_SERIES_LEVEL = "series";
 }

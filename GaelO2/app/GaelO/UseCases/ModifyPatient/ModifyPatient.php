@@ -3,6 +3,7 @@
 namespace App\GaelO\UseCases\ModifyPatient;
 
 use App\GaelO\Constants\Constants;
+use App\GaelO\Constants\Enums\InclusionStatusEnum;
 use App\GaelO\Exceptions\GaelOBadRequestException;
 use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
@@ -59,8 +60,8 @@ class ModifyPatient
             }
 
             if (
-                $modifyPatientRequest->inclusionStatus === Constants::PATIENT_INCLUSION_STATUS_WITHDRAWN
-                || $modifyPatientRequest->inclusionStatus === Constants::PATIENT_INCLUSION_STATUS_EXCLUDED
+                $modifyPatientRequest->inclusionStatus === InclusionStatusEnum::WITHDRAWN->value
+                || $modifyPatientRequest->inclusionStatus === InclusionStatusEnum::EXCLUDED->value
             ) {
                 if (
                     empty($modifyPatientRequest->withdrawDate) ||

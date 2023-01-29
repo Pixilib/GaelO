@@ -3,6 +3,7 @@
 namespace Tests\Feature\TestVisits;
 
 use App\GaelO\Constants\Constants;
+use App\GaelO\Constants\Enums\InclusionStatusEnum;
 use App\Models\Patient;
 use App\Models\User;
 use App\Models\VisitGroup;
@@ -19,7 +20,7 @@ class CreatableVisitTest extends TestCase
     {
         parent::setUp();
         $this->artisan('db:seed');
-        $this->patient = Patient::factory()->inclusionStatus(Constants::PATIENT_INCLUSION_STATUS_INCLUDED)->create();
+        $this->patient = Patient::factory()->inclusionStatus(InclusionStatusEnum::INCLUDED->value)->create();
         $this->studyName = $this->patient->study_name;
         $this->patientId = $this->patient->id;
         //Create a Visit Type to have one creatable visit

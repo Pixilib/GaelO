@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\GaelO\Constants\Enums\GenderEnum;
+use App\GaelO\Constants\Enums\InclusionStatusEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -18,7 +20,7 @@ class Patient extends Model
         'code' => 'string',
         'firstname' => 'string',
         'lastname' => 'string',
-        'gender' => 'string',
+        'gender' => GenderEnum::class,
         'birth_day' => 'integer',
         'birth_month' => 'integer',
         'birth_year' => 'integer',
@@ -26,7 +28,7 @@ class Patient extends Model
         'investigator_name' => 'string',
         'center_code' => 'integer',
         'study_name' => 'string',
-        'inclusion_status' => 'string',
+        'inclusion_status' => InclusionStatusEnum::class,
         'withdraw_reason' => 'string',
         'withdraw_date' => 'date'
     ];

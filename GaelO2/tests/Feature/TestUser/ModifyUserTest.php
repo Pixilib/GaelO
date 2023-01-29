@@ -2,8 +2,7 @@
 
 namespace Tests\Feature\TestUser;
 
-use App\GaelO\Constants\Constants;
-use App\GaelO\Constants\JobEnum;
+use App\GaelO\Constants\Enums\JobEnum;
 use Tests\TestCase;
 use App\Models\User;
 use App\Models\Center;

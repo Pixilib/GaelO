@@ -67,7 +67,7 @@ class DeleteCommandTest extends TestCase
             ->expectsOutput('The command was successful !');
     }
 
-    public function testDeleteCommandwithDeleteDicom()
+    public function testDeleteCommandWithDeleteDicom()
     {
         $studyName = $this->study->name;
         $this->artisan('gaelo:delete-study ' . $studyName.' --deleteDicom')->expectsQuestion('Warning : Please confirm study Name', $studyName)

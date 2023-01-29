@@ -3,6 +3,7 @@
 namespace App\GaelO\UseCases\CreateVisit;
 
 use App\GaelO\Constants\Constants;
+use App\GaelO\Constants\Enums\InclusionStatusEnum;
 use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOBadRequestException;
 use App\GaelO\Exceptions\GaelOConflictException;
@@ -53,7 +54,7 @@ class CreateVisit
             $patientEntity = $this->patientRepositoryInterface->find($patientId);
             $patientCode = $patientEntity['code'];
 
-            if (!in_array($patientEntity['inclusion_status'], [Constants::PATIENT_INCLUSION_STATUS_INCLUDED, Constants::PATIENT_INCLUSION_STATUS_PRE_INCLUDED])) {
+            if (!in_array($patientEntity['inclusion_status'], [InclusionStatusEnum::INCLUDED->value, InclusionStatusEnum::PRE_INCLUDED->value])) {
                 throw new GaelOForbiddenException("Visit Creation only allowed for preincluded or included patient");
             }
 
