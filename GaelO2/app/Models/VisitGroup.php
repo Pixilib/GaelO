@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\GaelO\Constants\Enums\ModalityEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -13,7 +14,7 @@ class VisitGroup extends Model
         'id' => 'integer',
         'study_name' => 'string',
         'name' => 'string',
-        'modality' => 'string'
+        'modality' => ModalityEnum::class
     ];
 
     public function study()

@@ -26,7 +26,11 @@ return new class extends Migration
         Schema::table('roles', function (Blueprint $table) {
             $table->string('name')->nullable(false)->change();
         });
-        
+
+        Schema::table('visit_groups', function (Blueprint $table) {
+            $table->string('modality')->nullable(false)->change();
+        });
+
     }
 
     /**
