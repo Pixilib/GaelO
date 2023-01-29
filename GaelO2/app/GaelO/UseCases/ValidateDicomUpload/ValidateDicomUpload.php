@@ -63,7 +63,6 @@ class ValidateDicomUpload
             $studyName = $visitContext['patient']['study_name'];
             $visitType = $visitContext['visit_type']['name'];
             $anonProfile = $visitContext['visit_type']['anon_profile'];
-            
 
             $currentUserId = $validateDicomUploadRequest->currentUserId;
             $visitId  = $validateDicomUploadRequest->visitId;

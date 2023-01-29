@@ -88,8 +88,6 @@ class Constants
     const REVIEW_STATUS_WAIT_ADJUDICATION = 'Wait Adjudication';
     const REVIEW_STATUS_DONE = "Done";
 
-    const ORTHANC_ANON_PROFILE_DEFAULT = "Default";
-    const ORTHANC_ANON_PROFILE_FULL = "Full";
     const ORTHANC_PATIENTS_LEVEL = "patients";
     const ORTHANC_STUDIES_LEVEL = "studies";
     const ORTHANC_SERIES_LEVEL = "series";

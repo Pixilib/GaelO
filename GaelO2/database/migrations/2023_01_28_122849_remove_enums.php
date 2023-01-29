@@ -31,6 +31,10 @@ return new class extends Migration
             $table->string('modality')->nullable(false)->change();
         });
 
+        Schema::table('visit_types', function (Blueprint $table) {
+            $table->string('anon_profile')->default('Default')->nullable(false)->change();
+        });
+
     }
 
     /**
