@@ -3,6 +3,7 @@
 namespace App\GaelO\UseCases\UnlockInvestigatorForm;
 
 use App\GaelO\Constants\Constants;
+use App\GaelO\Constants\Enums\QualityControlStateEnum;
 use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOBadRequestException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
@@ -117,7 +118,7 @@ class UnlockInvestigatorForm
         $this->authorizationVisitService->setVisitId($visitId);
         $this->authorizationVisitService->setVisitContext($visitContext);
 
-        if (!$this->authorizationVisitService->isVisitAllowed(Constants::ROLE_SUPERVISOR) || in_array($visitQcStatus, [Constants::QUALITY_CONTROL_ACCEPTED, Constants::QUALITY_CONTROL_REFUSED])) {
+        if (!$this->authorizationVisitService->isVisitAllowed(Constants::ROLE_SUPERVISOR) || in_array($visitQcStatus, [QualityControlStateEnum::ACCEPTED->value, QualityControlStateEnum::REFUSED->value])) {
             throw new GaelOForbiddenException();
         }
     }

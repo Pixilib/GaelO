@@ -2,7 +2,7 @@
 
 namespace App\GaelO\Services\SpecificStudiesRules\TEST;
 
-use App\GaelO\Constants\Constants;
+use App\GaelO\Constants\Enums\ReviewStatusEnum;
 use App\GaelO\Interfaces\Repositories\ReviewRepositoryInterface;
 use App\GaelO\Services\GaelOStudiesService\AbstractVisitDecisions;
 
@@ -24,9 +24,9 @@ class TEST_FDG_PET0_DECISION extends AbstractVisitDecisions
         $reviews = $this->reviewRepositoryInterface->getReviewsForStudyVisit($this->studyName, $this->visitContext['id'], true);
         if (sizeof($reviews) > 0) {
             $this->reviewConclusion = "Done";
-            return Constants::REVIEW_STATUS_DONE;
+            return ReviewStatusEnum::DONE->value;
         } else {
-            return Constants::REVIEW_STATUS_NOT_DONE;
+            return ReviewStatusEnum::NOT_DONE->value;
         }
     }
 

@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\GaelO\Constants\Constants;
+use App\GaelO\Constants\Enums\InvestigatorFormStateEnum;
 use App\GaelO\Interfaces\Adapters\FrameworkInterface;
 use App\GaelO\Interfaces\Repositories\DicomStudyRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\ReviewRepositoryInterface;
@@ -142,7 +143,7 @@ class JobQcReport implements ShouldQueue
         $reportData['studyDetails']['Number Of Series'] = count($dicomStudyEntity[0]['dicom_series']);
         $reportData['studyDetails']['Number Of Instances'] = 0;
 
-        if ($stateInvestigatorForm != Constants::INVESTIGATOR_FORM_NOT_NEEDED) {
+        if ($stateInvestigatorForm != InvestigatorFormStateEnum::NOT_NEEDED->value) {
             $reviewEntity = $reviewRepositoryInterface->getInvestigatorForm($this->visitId, false);
             $reportData['investigatorForm'] = $reviewEntity['review_data'];
         } else {

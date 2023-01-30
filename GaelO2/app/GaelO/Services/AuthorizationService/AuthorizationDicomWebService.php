@@ -16,6 +16,8 @@ class AuthorizationDicomWebService
 
     private string $originalStudyName;
     private string $level;
+    private int $userId;
+    private array $seriesEntity;
     private DicomSeriesRepositoryInterface $dicomSeriesRepositoryInterface;
     private DicomStudyRepositoryInterface $dicomStudyRepositoryInterface;
     private VisitRepositoryInterface $visitRepositoryInterface;
@@ -58,7 +60,6 @@ class AuthorizationDicomWebService
         } else {
 
             if ($this->level === "studies") {
-
                 $requestedStudyInstanceUID = $this->getStudyInstanceUID($url);
                 $studyEntity = $this->dicomStudyRepositoryInterface->getDicomStudy($requestedStudyInstanceUID, false);
                 $visitId = $studyEntity['visit_id'];

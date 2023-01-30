@@ -3,6 +3,8 @@
 namespace App\GaelO\UseCases\ModifyQualityControl;
 
 use App\GaelO\Constants\Constants;
+use App\GaelO\Constants\Enums\InvestigatorFormStateEnum;
+use App\GaelO\Constants\Enums\QualityControlStateEnum;
 use App\GaelO\Exceptions\GaelOBadRequestException;
 use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
@@ -47,7 +49,7 @@ class ModifyQualityControl
             $visitModality = $visitContext['visit_type']['visit_group']['modality'];
             $centerCode = $visitContext['patient']['center_code'];
             $creatorId = $visitContext['creator_user_id'];
-            $localFormNeeded = $visitContext['state_investigator_form'] !== Constants::INVESTIGATOR_FORM_NOT_NEEDED;
+            $localFormNeeded = $visitContext['state_investigator_form'] !== InvestigatorFormStateEnum::NOT_NEEDED->value;
 
             if($modifyQualityControlRequest->studyName !== $studyName){
                 throw new GaelOForbiddenException("Should be called from original study");
@@ -55,7 +57,7 @@ class ModifyQualityControl
 
             $this->checkAuthorization($currentUserId, $visitId, $studyName, $visitContext);
 
-            if ($modifyQualityControlRequest->stateQc === Constants::QUALITY_CONTROL_ACCEPTED) {
+            if ($modifyQualityControlRequest->stateQc === QualityControlStateEnum::ACCEPTED->value) {
                 if ($localFormNeeded && !$modifyQualityControlRequest->formQc) {
                     throw new GaelOBadRequestException('Form should be accepted to Accept QC');
                 }

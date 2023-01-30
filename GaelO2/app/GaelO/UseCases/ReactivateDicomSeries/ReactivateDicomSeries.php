@@ -3,6 +3,7 @@
 namespace App\GaelO\UseCases\ReactivateDicomSeries;
 
 use App\GaelO\Constants\Constants;
+use App\GaelO\Constants\Enums\QualityControlStateEnum;
 use App\GaelO\Exceptions\GaelOBadRequestException;
 use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
@@ -91,7 +92,7 @@ class ReactivateDicomSeries
         $qcStatus = $visitContext['state_quality_control'];
 
         //If QC is done, can't reactivate series
-        if (in_array($qcStatus, [Constants::QUALITY_CONTROL_ACCEPTED, Constants::QUALITY_CONTROL_REFUSED, Constants::QUALITY_CONTROL_NOT_NEEDED])) {
+        if (in_array($qcStatus, [QualityControlStateEnum::ACCEPTED->value, QualityControlStateEnum::REFUSED->value, QualityControlStateEnum::NOT_NEEDED->value])) {
             throw new GaelOForbiddenException();
         }
 

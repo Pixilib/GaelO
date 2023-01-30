@@ -3,6 +3,11 @@
 namespace Tests\Unit\TestRepositories;
 
 use App\GaelO\Constants\Constants;
+use App\GaelO\Constants\Enums\InvestigatorFormStateEnum;
+use App\GaelO\Constants\Enums\QualityControlStateEnum;
+use App\GaelO\Constants\Enums\ReviewStatusEnum;
+use App\GaelO\Constants\Enums\UploadStatusEnum;
+use App\GaelO\Constants\Enums\VisitStatusDoneEnum;
 use App\GaelO\Repositories\VisitRepository;
 use App\Models\Patient;
 use App\Models\Review;
@@ -42,11 +47,11 @@ class VisitRepositoryTest extends TestCase
             $patient->id,
             null,
             $visitType->id,
-            Constants::VISIT_STATUS_DONE,
+            VisitStatusDoneEnum::DONE->value,
             null,
-            Constants::INVESTIGATOR_FORM_DONE,
-            Constants::QUALITY_CONTROL_NOT_DONE,
-            Constants::REVIEW_STATUS_NOT_DONE
+            InvestigatorFormStateEnum::DONE->value,
+            QualityControlStateEnum::NOT_DONE->value,
+            ReviewStatusEnum::NOT_DONE->value
         );
 
         $visits = Visit::findOrFail($visitId);
@@ -66,9 +71,9 @@ class VisitRepositoryTest extends TestCase
     public function testUpdateUploadStatus()
     {
         $visit = Visit::factory()->create();
-        $this->visitRepository->updateUploadStatus($visit->id, Constants::UPLOAD_STATUS_DONE);
+        $this->visitRepository->updateUploadStatus($visit->id, UploadStatusEnum::DONE->value);
         $updatedVisit = Visit::find($visit->id);
-        $this->assertEquals(Constants::UPLOAD_STATUS_DONE, $updatedVisit->upload_status);
+        $this->assertEquals(UploadStatusEnum::DONE->value, $updatedVisit->upload_status->value);
     }
 
     public function testGetVisitContext()
@@ -109,7 +114,7 @@ class VisitRepositoryTest extends TestCase
             $visitTypes->each(function ($item, $key) use ($patient, $patient2) {
                 $visit = Visit::factory()->visitTypeId($item->id)->patientId($patient->id)->create();
                 ReviewStatus::factory()->visitId($visit->id)->reviewAvailable()->studyName($patient->study_name)->create();
-                $visit2 = Visit::factory()->visitTypeId($item->id)->uploadDone()->stateInvestigatorForm(Constants::INVESTIGATOR_FORM_DONE)->stateQualityControl(Constants::QUALITY_CONTROL_NOT_NEEDED)->patientId($patient2->id)->create();
+                $visit2 = Visit::factory()->visitTypeId($item->id)->uploadDone()->stateInvestigatorForm(InvestigatorFormStateEnum::DONE->value)->stateQualityControl(QualityControlStateEnum::NOT_NEEDED->value)->patientId($patient2->id)->create();
                 ReviewStatus::factory()->visitId($visit2->id)->studyName($patient->study_name)->create();
             });
         });
@@ -247,16 +252,16 @@ class VisitRepositoryTest extends TestCase
         $visits = $patient->visits;
         //Set one of these 12 visits as QC Done
         $visitEntity = $visits->get(0);
-        $visitEntity->state_quality_control = Constants::QUALITY_CONTROL_REFUSED;
+        $visitEntity->state_quality_control = QualityControlStateEnum::REFUSED->value;
         $visitEntity->save();
         //Set one of these 12 visits as Awaiting Definitive conclusion (still access for controller)
         $visitEntity = $visits->get(1);
-        $visitEntity->state_quality_control = Constants::QUALITY_CONTROL_WAIT_DEFINITIVE_CONCLUSION;
+        $visitEntity->state_quality_control = QualityControlStateEnum::WAIT_DEFINITIVE_CONCLUSION->value;
         $visitEntity->save();
 
         $visits->each(function ($item, $key) {
-            $item->state_investigator_form = Constants::INVESTIGATOR_FORM_DONE;
-            $item->upload_status = Constants::UPLOAD_STATUS_DONE;
+            $item->state_investigator_form = InvestigatorFormStateEnum::DONE->value;
+            $item->upload_status = UploadStatusEnum::DONE->value;
             $item->save();
         });
 
@@ -321,21 +326,21 @@ class VisitRepositoryTest extends TestCase
     public function testEditQC()
     {
         $visit = Visit::factory()->create();
-        $this->visitRepository->editQc($visit->id, Constants::QUALITY_CONTROL_ACCEPTED, 1, true, true, 'OK', 'OK');
+        $this->visitRepository->editQc($visit->id, QualityControlStateEnum::ACCEPTED->value, 1, true, true, 'OK', 'OK');
         $updatedVisit = Visit::find($visit->id);
 
-        $this->assertEquals(Constants::QUALITY_CONTROL_ACCEPTED, $updatedVisit->state_quality_control);
+        $this->assertEquals(QualityControlStateEnum::ACCEPTED->value, $updatedVisit->state_quality_control->value);
         $this->assertEquals('OK', $updatedVisit->image_quality_comment);
         $this->assertEquals('OK', $updatedVisit->form_quality_comment);
     }
 
     public function testResetQC()
     {
-        $visit = Visit::factory()->stateQualityControl(Constants::QUALITY_CONTROL_ACCEPTED)->create();
+        $visit = Visit::factory()->stateQualityControl(QualityControlStateEnum::ACCEPTED->value)->create();
         $this->visitRepository->resetQc($visit->id);
 
         $updatedVisit = Visit::find($visit->id);
-        $this->assertEquals(Constants::QUALITY_CONTROL_NOT_DONE, $updatedVisit->state_quality_control);
+        $this->assertEquals(QualityControlStateEnum::NOT_DONE->value, $updatedVisit->state_quality_control->value);
         $this->assertNull($updatedVisit->controller_user_id);
         $this->assertNull($updatedVisit->control_date);
         $this->assertNull($updatedVisit->image_quality_control);
@@ -363,7 +368,7 @@ class VisitRepositoryTest extends TestCase
         );
 
         $updatedVisit = Visit::find($visit->id);
-        $this->assertEquals(Constants::QUALITY_CONTROL_WAIT_DEFINITIVE_CONCLUSION, $updatedVisit->state_quality_control);
+        $this->assertEquals(QualityControlStateEnum::WAIT_DEFINITIVE_CONCLUSION->value, $updatedVisit->state_quality_control->value);
         $this->assertTrue(boolval($updatedVisit->corrective_action_new_upload));
         $this->assertTrue(boolval($updatedVisit->corrective_action_investigator_form));
         $this->assertEquals('updated', $updatedVisit->corrective_action_comment);
@@ -372,9 +377,9 @@ class VisitRepositoryTest extends TestCase
     public function testUpdateInvestigatorFormStatus()
     {
         $visit = Visit::factory()->create();
-        $this->visitRepository->updateInvestigatorFormStatus($visit->id, Constants::INVESTIGATOR_FORM_DRAFT);
+        $this->visitRepository->updateInvestigatorFormStatus($visit->id, InvestigatorFormStateEnum::DRAFT->value);
         $updatedVisit = Visit::find($visit->id);
-        $this->assertEquals(Constants::INVESTIGATOR_FORM_DRAFT, $updatedVisit->state_investigator_form);
+        $this->assertEquals(InvestigatorFormStateEnum::DRAFT->value, $updatedVisit->state_investigator_form->value);
     }
 
     public function testImagingVisitAwaitingUpload()
@@ -429,11 +434,11 @@ class VisitRepositoryTest extends TestCase
     public function testGetVisitsInStudyNeedingQualityControl()
     {
         $patient = Patient::factory()->create();
-        Visit::factory()->patientId($patient->id)->stateInvestigatorForm(Constants::INVESTIGATOR_FORM_DONE)->uploadDone()->count(5)->create();
+        Visit::factory()->patientId($patient->id)->stateInvestigatorForm(InvestigatorFormStateEnum::DONE->value)->uploadDone()->count(5)->create();
         //Create Visit with requested status but not same study
-        Visit::factory()->stateInvestigatorForm(Constants::INVESTIGATOR_FORM_DONE)->uploadDone()->count(3)->create();
+        Visit::factory()->stateInvestigatorForm(InvestigatorFormStateEnum::DONE->value)->uploadDone()->count(3)->create();
         //Create Visit from same study but uncorrect status
-        Visit::factory()->patientId($patient->id)->stateInvestigatorForm(Constants::INVESTIGATOR_FORM_DONE)->count(5)->create();
+        Visit::factory()->patientId($patient->id)->stateInvestigatorForm(InvestigatorFormStateEnum::DONE->value)->count(5)->create();
         Visit::factory()->patientId($patient->id)->uploadDone()->count(5)->create();
         $answers = $this->visitRepository->getVisitsInStudyNeedingQualityControl($patient->study_name);
         $this->assertEquals(5, sizeof($answers));

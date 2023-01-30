@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\GaelO\Constants\Enums\ReviewStatusEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -18,7 +19,7 @@ class ReviewStatus extends Model
         'study_name' => 'string',
         'review_available' => 'boolean',
         'target_lesions' => 'array',
-        'review_status' => 'string',
+        'review_status' => ReviewStatusEnum::class,
         'review_conclusion_value' => 'string',
         'review_conclusion_date' => 'datetime'
     ];

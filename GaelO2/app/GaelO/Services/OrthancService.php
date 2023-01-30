@@ -3,7 +3,7 @@
 namespace App\GaelO\Services;
 
 use App\GaelO\Adapters\Psr7ResponseAdapter;
-use App\GaelO\Constants\Constants;
+use App\GaelO\Constants\Enums\AnonProfileEnum;
 use App\GaelO\Constants\SettingsConstants;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Interfaces\Adapters\FrameworkInterface;
@@ -238,11 +238,11 @@ class OrthancService
 
         $tagsObjects = [];
 
-        if ($profile === Constants::ORTHANC_ANON_PROFILE_DEFAULT) {
+        if ($profile === AnonProfileEnum::DEFAULT->value) {
             $date = TagAnon::KEEP;
             $body = TagAnon::KEEP;
             $RTStruct = TagAnon::KEEP;
-        } else if ($profile === Constants::ORTHANC_ANON_PROFILE_FULL) {
+        } else if ($profile === AnonProfileEnum::FULL->value) {
             $date = TagAnon::CLEAR;
             $body = TagAnon::CLEAR;
             $RTStruct = TagAnon::CLEAR;

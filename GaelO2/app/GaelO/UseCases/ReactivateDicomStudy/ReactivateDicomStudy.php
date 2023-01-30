@@ -3,6 +3,7 @@
 namespace App\GaelO\UseCases\ReactivateDicomStudy;
 
 use App\GaelO\Constants\Constants;
+use App\GaelO\Constants\Enums\QualityControlStateEnum;
 use App\GaelO\Exceptions\GaelOBadRequestException;
 use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
@@ -86,7 +87,7 @@ class ReactivateDicomStudy
     {
         $qcStatus = $visitContext['state_quality_control'];
         //If QC is done, can't reactivate Study
-        if (in_array($qcStatus, [Constants::QUALITY_CONTROL_ACCEPTED, Constants::QUALITY_CONTROL_REFUSED])) {
+        if (in_array($qcStatus, [QualityControlStateEnum::ACCEPTED->value, QualityControlStateEnum::REFUSED->value])) {
             throw new GaelOForbiddenException();
         }
 

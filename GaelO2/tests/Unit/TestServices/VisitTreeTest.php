@@ -2,7 +2,7 @@
 
 namespace Tests\Unit\TestServices;
 
-use App\GaelO\Constants\Constants;
+use App\GaelO\Constants\Enums\ReviewStatusEnum;
 use App\GaelO\Entities\StudyEntity;
 use App\GaelO\Repositories\CenterRepository;
 use App\GaelO\Repositories\PatientRepository;
@@ -90,7 +90,7 @@ class VisitTreeTest extends TestCase
             ->andReturn($visitArrayMock);
 
         $arrayMockWithReviewStatus = array_map(function ($visit) {
-            $visit['review_status']['review_status'] = Constants::REVIEW_STATUS_DONE;
+            $visit['review_status']['review_status'] = ReviewStatusEnum::DONE->value;
             return $visit;
         }, $visitArrayMock);
 

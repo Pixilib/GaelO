@@ -3,6 +3,7 @@
 namespace App\GaelO\UseCases\GetDicoms;
 
 use App\GaelO\Constants\Constants;
+use App\GaelO\Constants\Enums\QualityControlStateEnum;
 use App\GaelO\Entities\DicomSeriesEntity;
 use App\GaelO\Entities\DicomStudyEntity;
 use App\GaelO\Entities\UserEntity;
@@ -43,7 +44,7 @@ class GetDicoms
             $includeTrashedStudies = $role === Constants::ROLE_SUPERVISOR;
             //Include Trashed Series if Supervisor OR (Investigator and QC pending)
             $includedTrashedSeries = ($role === Constants::ROLE_INVESTIGATOR
-                && in_array($visitContext['state_quality_control'], [Constants::QUALITY_CONTROL_CORRECTIVE_ACTION_ASKED, Constants::QUALITY_CONTROL_NOT_DONE]))
+                && in_array($visitContext['state_quality_control'], [QualityControlStateEnum::CORRECTIVE_ACTION_ASKED->value, QualityControlStateEnum::NOT_DONE->value]))
                 || (in_array($role, [Constants::ROLE_SUPERVISOR, Constants::ROLE_CONTROLLER]));
 
             $data = $this->dicomStudyRepositoryInterface->getDicomsDataFromVisit($visitId, $includeTrashedStudies, $includedTrashedSeries);

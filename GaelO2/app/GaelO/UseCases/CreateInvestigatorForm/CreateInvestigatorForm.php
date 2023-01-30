@@ -3,6 +3,7 @@
 namespace App\GaelO\UseCases\CreateInvestigatorForm;
 
 use App\GaelO\Constants\Constants;
+use App\GaelO\Constants\Enums\InvestigatorFormStateEnum;
 use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOBadRequestException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
@@ -80,11 +81,11 @@ class CreateInvestigatorForm
     private function checkAuthorization(int $currentUserId, int $visitId, string $visitInvestigatorFormStatus, string $studyName, array $visitContext)
     {
 
-        if (in_array($visitInvestigatorFormStatus, [Constants::INVESTIGATOR_FORM_DRAFT, Constants::INVESTIGATOR_FORM_DONE])) {
+        if (in_array($visitInvestigatorFormStatus, [InvestigatorFormStateEnum::DRAFT->value, InvestigatorFormStateEnum::DONE->value])) {
             throw new GaelOForbiddenException();
         }
 
-        if ($visitInvestigatorFormStatus === Constants::INVESTIGATOR_FORM_NOT_NEEDED) {
+        if ($visitInvestigatorFormStatus === InvestigatorFormStateEnum::NOT_NEEDED->value) {
             //No investigator form creation if not expected to have one
             throw new GaelOForbiddenException();
         }

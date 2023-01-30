@@ -3,6 +3,7 @@
 namespace App\GaelO\Entities;
 
 use App\GaelO\Constants\Constants;
+use App\GaelO\Constants\Enums\ReviewStatusEnum;
 
 class VisitEntity
 {
@@ -98,7 +99,7 @@ class VisitEntity
 
     public function setReviewVisitStatus(?string $reviewStatus, ?string $reviewConclusionValue, ?string $reviewConclusionDate, ?array $targetLesions, ?bool $reviewAvailable): void
     {
-        $this->reviewStatus = $reviewStatus === null ? Constants::REVIEW_STATUS_NOT_DONE : $reviewStatus;
+        $this->reviewStatus = $reviewStatus === null ? ReviewStatusEnum::NOT_DONE->value : $reviewStatus;
         $this->reviewConclusionValue = $reviewConclusionValue;
         $this->reviewConclusionDate = $reviewConclusionDate;
         $this->targetLesions  = $targetLesions;

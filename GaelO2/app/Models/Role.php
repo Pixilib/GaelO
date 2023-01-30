@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Builder;
+use App\GaelO\Constants\Enums\RoleEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -16,7 +16,7 @@ class Role extends Model
     public $incrementing = false;
 
     protected $casts = [
-        'name' => 'string',
+        'name' => RoleEnum::class,
         'user_id' => 'integer',
         'study_name' => 'string',
         'validated_documentation_version' => 'string'

@@ -26,11 +26,11 @@ class CreateUsersTable extends Migration
             $table->integer('attempts')->default(0)->nullable(false);
             $table->boolean('administrator')->default(false)->nullable(false);
             $table->unsignedInteger('center_code')->nullable(false);
-            $table->enum('job', ['CRA', 'Monitor', 'Nuclearist','PI', 'Radiologist', 'Study nurse', 'Supervision' ])->nullable(false);
+            $table->string('job')->nullable(false);
             $table->string('orthanc_address')->nullable(true);
             $table->string('orthanc_login')->nullable(true);
             $table->string('orthanc_password')->nullable(true);
-            $table->string('api_token', 80) ->unique()->nullable()->default(null);
+            $table->string('api_token', 80)->unique()->nullable()->default(null);
             $table->dateTimeTz('email_verified_at')->nullable()->default(null);
             $table->string('onboarding_version')->nullable(false)->default('0.0.0');
             $table->softDeletes();
@@ -38,7 +38,6 @@ class CreateUsersTable extends Migration
             $table->timestamps();
 
             $table->foreign('center_code')->references('code')->on('centers');
-
         });
     }
 

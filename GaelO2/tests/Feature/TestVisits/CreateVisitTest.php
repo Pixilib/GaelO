@@ -3,6 +3,8 @@
 namespace Tests\Feature\TestVisits;
 
 use App\GaelO\Constants\Constants;
+use App\GaelO\Constants\Enums\InclusionStatusEnum;
+use App\GaelO\Constants\Enums\VisitStatusDoneEnum;
 use Tests\TestCase;
 use App\Models\User;
 use App\Models\Visit;
@@ -27,7 +29,7 @@ class CreateVisitTest extends TestCase
         $this->visitGroupId = $visitType->visitGroup->id;
         $this->studyName = $visitType->visitGroup->study_name;
 
-        $this->patient = Patient::factory()->inclusionStatus(Constants::PATIENT_INCLUSION_STATUS_INCLUDED)->studyName($this->studyName)->create();
+        $this->patient = Patient::factory()->inclusionStatus(InclusionStatusEnum::INCLUDED->value)->studyName($this->studyName)->create();
         $centerCode = $this->patient->center_code;
 
         $currentUserId = AuthorizationTools::actAsAdmin(false);
@@ -88,7 +90,7 @@ class CreateVisitTest extends TestCase
 
         $validPayload = [
             'patientId' => $this->patient->id,
-            'statusDone' => Constants::VISIT_STATUS_NOT_DONE,
+            'statusDone' => VisitStatusDoneEnum::NOT_DONE->value,
             'reasonForNotDone' => 'unavailable'
         ];
 
@@ -157,7 +159,7 @@ class CreateVisitTest extends TestCase
         $validPayload = [
             'patientId' => $this->patient->id,
             'visitDate' => '2020-01-01',
-            'statusDone' => Constants::VISIT_STATUS_NOT_DONE,
+            'statusDone' => VisitStatusDoneEnum::NOT_DONE->value,
         ];
 
         $this->json('POST', 'api/visit-types/' . $this->visitTypeId . '/visits?role=Investigator&studyName=' . $this->studyName, $validPayload)->assertStatus(400);
@@ -171,7 +173,7 @@ class CreateVisitTest extends TestCase
             'statusDone' => 'Done',
         ];
 
-        $this->patient->inclusion_status = Constants::PATIENT_INCLUSION_STATUS_EXCLUDED;
+        $this->patient->inclusion_status = InclusionStatusEnum::EXCLUDED->value;
         $this->patient->save();
         $this->json('POST', 'api/visit-types/' . $this->visitTypeId . '/visits?role=Investigator&studyName=' . $this->studyName, $validPayload)->assertStatus(403);
     }
@@ -180,7 +182,7 @@ class CreateVisitTest extends TestCase
     public function testCreateAlreadyCreatedVisit()
     {
 
-        $patient = Patient::factory()->inclusionStatus(Constants::PATIENT_INCLUSION_STATUS_INCLUDED)->create();
+        $patient = Patient::factory()->inclusionStatus(InclusionStatusEnum::INCLUDED->value)->create();
         $visit = Visit::factory()->patientId($patient->id)->create();
 
         $studyName = $patient->study->name;
@@ -194,7 +196,7 @@ class CreateVisitTest extends TestCase
         $validPayload = [
             'patientId' => $patient->id,
             'visitDate' => '2020-01-01',
-            'statusDone' => Constants::VISIT_STATUS_DONE,
+            'statusDone' => VisitStatusDoneEnum::DONE->value,
         ];
 
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_INVESTIGATOR, $studyName);

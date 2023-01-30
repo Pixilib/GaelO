@@ -2,7 +2,7 @@
 
 namespace App\GaelO\Services;
 
-use App\GaelO\Constants\Constants;
+use App\GaelO\Constants\Enums\InclusionStatusEnum;
 use App\GaelO\Entities\StudyEntity;
 use App\GaelO\Exceptions\GaelOBadRequestException;
 use App\GaelO\Interfaces\Repositories\CenterRepositoryInterface;
@@ -14,8 +14,11 @@ use Throwable;
 class ImportPatientService
 {
 
+    private string $studyName;
     private int $patientCodeLength;
     private array $existingPatientCodes;
+    private array $existingCenter;
+    private array $patientEntities;
     private StudyEntity $studyEntity;
     private PatientRepositoryInterface $patientRepository;
     private CenterRepositoryInterface $centerRepository;
@@ -66,7 +69,7 @@ class ImportPatientService
                 //Check condition before import
                 self::checkPatientGender($patientEntity['gender']);
                 self::checkCorrectBirthDate($patientEntity['birthDay'], $patientEntity['birthMonth'], $patientEntity['birthYear']);
-                if ($patientEntity['inclusionStatus']  === Constants::PATIENT_INCLUSION_STATUS_INCLUDED && $patientEntity['registrationDate'] == null) {
+                if ($patientEntity['inclusionStatus']  === InclusionStatusEnum::INCLUDED->value && $patientEntity['registrationDate'] == null) {
                     throw new GaelOBadRequestException('Registration Date Missing or Invalid');
                 }
                 if ($patientEntity['inclusionStatus']  !== null) {

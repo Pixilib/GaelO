@@ -3,9 +3,11 @@
 namespace Database\Factories;
 
 use App\GaelO\Constants\Constants;
+use App\GaelO\Constants\Enums\InvestigatorFormStateEnum;
+use App\GaelO\Constants\Enums\QualityControlStateEnum;
+use App\GaelO\Constants\Enums\UploadStatusEnum;
 use App\GaelO\Util;
 use App\Models\Patient;
-use App\Models\ReviewStatus;
 use App\Models\User;
 use App\Models\Visit;
 use App\Models\VisitType;
@@ -30,9 +32,9 @@ class VisitFactory extends Factory
             },
             'status_done' => 'Done',
             'reason_for_not_done' => $this->faker->word,
-            'upload_status' => Constants::UPLOAD_STATUS_NOT_DONE,
-            'state_investigator_form' => Constants::INVESTIGATOR_FORM_NOT_DONE,
-            'state_quality_control' => Constants::QUALITY_CONTROL_NOT_DONE,
+            'upload_status' => UploadStatusEnum::NOT_DONE->value,
+            'state_investigator_form' => InvestigatorFormStateEnum::NOT_DONE->value,
+            'state_quality_control' => QualityControlStateEnum::NOT_DONE->value,
             'controller_user_id' => null,
             'control_date' => Util::now(),
             'image_quality_control' => $this->faker->randomElement([true, false]),

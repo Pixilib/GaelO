@@ -2,7 +2,7 @@
 
 namespace App\GaelO\Services\GaelOStudiesService;
 
-use App\GaelO\Constants\Constants;
+use App\GaelO\Constants\Enums\ReviewStatusEnum;
 
 abstract class AbstractVisitDecisions
 {
@@ -76,7 +76,7 @@ abstract class AbstractVisitDecisions
 
     public function getReviewAvailability(string $reviewStatus): bool
     {
-        if ($reviewStatus === Constants::REVIEW_STATUS_DONE) {
+        if ($reviewStatus === ReviewStatusEnum::DONE->value) {
             //If Done reached make the review unavailable for review
             return false;
         } else {

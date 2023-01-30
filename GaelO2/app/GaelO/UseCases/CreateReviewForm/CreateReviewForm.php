@@ -3,6 +3,7 @@
 namespace App\GaelO\UseCases\CreateReviewForm;
 
 use App\GaelO\Constants\Constants;
+use App\GaelO\Constants\Enums\ReviewStatusEnum;
 use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOBadRequestException;
 use App\GaelO\Exceptions\GaelOConflictException;
@@ -62,7 +63,7 @@ class CreateReviewForm
             $reviewStatus = $visitContext['review_status']['review_status'];
             $reviewAvailable = $visitContext['review_status']['review_available'];
 
-            if ($adjudication &&  $reviewStatus !== Constants::REVIEW_STATUS_WAIT_ADJUDICATION) {
+            if ($adjudication &&  $reviewStatus !== ReviewStatusEnum::WAIT_ADJUDICATION->value) {
                 throw new GaelOBadRequestException('Review Not Awaiting Adjudication');
             }
 
