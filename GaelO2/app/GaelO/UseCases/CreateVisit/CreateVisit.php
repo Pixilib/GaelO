@@ -4,6 +4,7 @@ namespace App\GaelO\UseCases\CreateVisit;
 
 use App\GaelO\Constants\Constants;
 use App\GaelO\Constants\Enums\InclusionStatusEnum;
+use App\GaelO\Constants\Enums\VisitStatusDoneEnum;
 use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOBadRequestException;
 use App\GaelO\Exceptions\GaelOConflictException;
@@ -65,11 +66,11 @@ class CreateVisit
             $this->checkAuthorization($currentUserId, $patientId, $studyName, $role);
 
             //If visit was not done, force visitDate to null
-            if ($statusDone === Constants::VISIT_STATUS_NOT_DONE && !empty($visitDate)) {
+            if ($statusDone === VisitStatusDoneEnum::NOT_DONE->value && !empty($visitDate)) {
                 throw new GaelOBadRequestException('Visit Date should not be specified for visit status done');
             }
 
-            if ($statusDone === Constants::VISIT_STATUS_NOT_DONE && empty($reasonForNotDone)) {
+            if ($statusDone === VisitStatusDoneEnum::NOT_DONE->value && empty($reasonForNotDone)) {
                 throw new GaelOBadRequestException('Reason must be specified is visit not done');
             }
 
@@ -111,7 +112,7 @@ class CreateVisit
                 $reasonForNotDone
             );
 
-            if ($createVisitRequest->statusDone === Constants::VISIT_STATUS_NOT_DONE) {
+            if ($createVisitRequest->statusDone === VisitStatusDoneEnum::NOT_DONE->value) {
                 $visitContext = $this->visitRepositoryInterface->getVisitContext($visitId);
 
                 $visitType = $visitContext['visit_type']['name'];

@@ -3,6 +3,8 @@
 namespace App\GaelO\Repositories;
 
 use App\GaelO\Constants\Constants;
+use App\GaelO\Constants\Enums\UploadStatusEnum;
+use App\GaelO\Constants\Enums\VisitStatusDoneEnum;
 use App\GaelO\Exceptions\GaelOException;
 use App\Models\Visit;
 use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
@@ -180,7 +182,7 @@ class VisitRepository implements VisitRepositoryInterface
             ->with(['reviewStatus' => function ($query) use ($studyName) {
                 $query->where('study_name', $studyName);
             }])
-            ->where('upload_status', Constants::UPLOAD_STATUS_DONE)
+            ->where('upload_status', UploadStatusEnum::DONE->value)
             ->whereIn('state_investigator_form', [Constants::INVESTIGATOR_FORM_NOT_NEEDED, Constants::INVESTIGATOR_FORM_DONE])
             ->whereIn('state_quality_control', [Constants::QUALITY_CONTROL_NOT_NEEDED, CONSTANTS::QUALITY_CONTROL_ACCEPTED])
             ->whereIn('patient_id', $patientIdArray)
@@ -279,8 +281,8 @@ class VisitRepository implements VisitRepositoryInterface
             ->whereHas('patient', function ($query) use ($studyName) {
                 $query->where('study_name', $studyName);
             })
-            ->where('status_done', Constants::VISIT_STATUS_DONE)
-            ->where('upload_status', Constants::UPLOAD_STATUS_DONE)
+            ->where('status_done', VisitStatusDoneEnum::DONE->value)
+            ->where('upload_status', UploadStatusEnum::DONE->value)
             ->whereIn('state_investigator_form', [Constants::INVESTIGATOR_FORM_NOT_NEEDED, Constants::INVESTIGATOR_FORM_DONE])
             ->whereIn('state_quality_control', $controllerActionStatusArray)
             ->get();
@@ -295,8 +297,8 @@ class VisitRepository implements VisitRepositoryInterface
             ->whereHas('patient', function ($query) use ($studyName) {
                 $query->where('study_name', $studyName);
             })
-            ->where('status_done', Constants::VISIT_STATUS_DONE)
-            ->where('upload_status', Constants::UPLOAD_STATUS_DONE)
+            ->where('status_done', VisitStatusDoneEnum::DONE->value)
+            ->where('upload_status', UploadStatusEnum::DONE->value)
             ->whereIn('state_investigator_form', [Constants::INVESTIGATOR_FORM_NOT_NEEDED, Constants::INVESTIGATOR_FORM_DONE])
             ->where('state_quality_control', '!=',  Constants::QUALITY_CONTROL_NOT_NEEDED)
             ->get();
@@ -444,8 +446,8 @@ class VisitRepository implements VisitRepositoryInterface
                     $query->whereIn('modality', ['PT', 'MR', 'CT', 'US', 'NM', 'RTSTRUCT']);
                 });
             })
-            ->where('status_done', Constants::VISIT_STATUS_DONE)
-            ->where('upload_status', Constants::UPLOAD_STATUS_NOT_DONE)
+            ->where('status_done', VisitStatusDoneEnum::DONE->value)
+            ->where('upload_status', UploadStatusEnum::NOT_DONE->value)
             ->get();
 
         return $answer->count() === 0 ? []  : $answer->toArray();

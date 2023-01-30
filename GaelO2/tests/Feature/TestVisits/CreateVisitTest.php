@@ -4,6 +4,7 @@ namespace Tests\Feature\TestVisits;
 
 use App\GaelO\Constants\Constants;
 use App\GaelO\Constants\Enums\InclusionStatusEnum;
+use App\GaelO\Constants\Enums\VisitStatusDoneEnum;
 use Tests\TestCase;
 use App\Models\User;
 use App\Models\Visit;
@@ -89,7 +90,7 @@ class CreateVisitTest extends TestCase
 
         $validPayload = [
             'patientId' => $this->patient->id,
-            'statusDone' => Constants::VISIT_STATUS_NOT_DONE,
+            'statusDone' => VisitStatusDoneEnum::NOT_DONE->value,
             'reasonForNotDone' => 'unavailable'
         ];
 
@@ -158,7 +159,7 @@ class CreateVisitTest extends TestCase
         $validPayload = [
             'patientId' => $this->patient->id,
             'visitDate' => '2020-01-01',
-            'statusDone' => Constants::VISIT_STATUS_NOT_DONE,
+            'statusDone' => VisitStatusDoneEnum::NOT_DONE->value,
         ];
 
         $this->json('POST', 'api/visit-types/' . $this->visitTypeId . '/visits?role=Investigator&studyName=' . $this->studyName, $validPayload)->assertStatus(400);
@@ -195,7 +196,7 @@ class CreateVisitTest extends TestCase
         $validPayload = [
             'patientId' => $patient->id,
             'visitDate' => '2020-01-01',
-            'statusDone' => Constants::VISIT_STATUS_DONE,
+            'statusDone' => VisitStatusDoneEnum::DONE->value,
         ];
 
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_INVESTIGATOR, $studyName);

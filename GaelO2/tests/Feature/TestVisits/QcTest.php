@@ -3,6 +3,7 @@
 namespace Tests\Feature\TestVisits;
 
 use App\GaelO\Constants\Constants;
+use App\GaelO\Constants\Enums\UploadStatusEnum;
 use App\Models\Patient;
 use Tests\TestCase;
 use App\Models\Visit;
@@ -82,7 +83,7 @@ class QcTest extends TestCase
         $currentUserId = AuthorizationTools::actAsAdmin(false);
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_CONTROLLER, $this->studyName);
 
-        $this->visit->upload_status = Constants::UPLOAD_STATUS_NOT_DONE;
+        $this->visit->upload_status = UploadStatusEnum::NOT_DONE->value;
         $this->visit->save();
 
         $payload = [

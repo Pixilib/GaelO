@@ -3,6 +3,7 @@
 namespace App\GaelO\UseCases\ModifyCorrectiveAction;
 
 use App\GaelO\Constants\Constants;
+use App\GaelO\Constants\Enums\UploadStatusEnum;
 use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
@@ -50,7 +51,7 @@ class ModifyCorrectiveAction
                 }
 
                 //If no images were uploaded, can't perform Corrective action
-                if ($uploadStatus !== Constants::UPLOAD_STATUS_DONE) {
+                if ($uploadStatus !== UploadStatusEnum::DONE->value) {
                     throw new GaelOForbiddenException('You need to upload DICOMs first!');
                 }
             }

@@ -3,6 +3,7 @@
 namespace Tests\Feature\TestDicoms;
 
 use App\GaelO\Constants\Constants;
+use App\GaelO\Constants\Enums\UploadStatusEnum;
 use App\Models\DicomSeries;
 use App\Models\DicomStudy;
 use App\Models\Review;
@@ -60,7 +61,7 @@ class DeleteDicomSeriesTest extends TestCase
         //Expect study to be deleted
         $this->assertNotNull($dicomStudyEntity['deleted_at']);
         $this->assertEquals(Constants::INVESTIGATOR_FORM_DRAFT, $visitEntity['state_investigator_form']);
-        $this->assertEquals(Constants::UPLOAD_STATUS_NOT_DONE, $visitEntity['upload_status']);
+        $this->assertEquals(UploadStatusEnum::NOT_DONE->value, $visitEntity['upload_status']);
 
         //Check Investigator form has been unlocked
         $localForm = Review::where('study_name', $this->studyName)->where('visit_id', $this->dicomSeries->dicomStudy->visit->id)->where('local', true)->sole();

@@ -68,19 +68,12 @@ class Constants
     const INVESTIGATOR_FORM_NOT_NEEDED = "Not Needed";
     const INVESTIGATOR_FORM_DRAFT = "Draft";
 
-    const VISIT_STATUS_DONE = "Done";
-    const VISIT_STATUS_NOT_DONE = "Not Done";
-
     const QUALITY_CONTROL_NOT_DONE = "Not Done";
     const QUALITY_CONTROL_NOT_NEEDED = "Not Needed";
     const QUALITY_CONTROL_WAIT_DEFINITIVE_CONCLUSION = "Wait Definitive Conclusion";
     const QUALITY_CONTROL_CORRECTIVE_ACTION_ASKED = "Corrective Action Asked";
     const QUALITY_CONTROL_REFUSED = "Refused";
     const QUALITY_CONTROL_ACCEPTED = "Accepted";
-
-    const UPLOAD_STATUS_DONE = "Done";
-    const UPLOAD_STATUS_NOT_DONE = "Not Done";
-    const UPLOAD_STATUS_PROCESSING = "Processing";
 
     const REVIEW_STATUS_NOT_DONE = "Not Done";
     const REVIEW_STATUS_NOT_NEEDED = "Not Needed";

@@ -3,6 +3,8 @@
 namespace Tests\Unit\TestRepositories;
 
 use App\GaelO\Constants\Constants;
+use App\GaelO\Constants\Enums\UploadStatusEnum;
+use App\GaelO\Constants\Enums\VisitStatusDoneEnum;
 use App\GaelO\Repositories\VisitRepository;
 use App\Models\Patient;
 use App\Models\Review;
@@ -42,7 +44,7 @@ class VisitRepositoryTest extends TestCase
             $patient->id,
             null,
             $visitType->id,
-            Constants::VISIT_STATUS_DONE,
+            VisitStatusDoneEnum::DONE->value,
             null,
             Constants::INVESTIGATOR_FORM_DONE,
             Constants::QUALITY_CONTROL_NOT_DONE,
@@ -66,9 +68,9 @@ class VisitRepositoryTest extends TestCase
     public function testUpdateUploadStatus()
     {
         $visit = Visit::factory()->create();
-        $this->visitRepository->updateUploadStatus($visit->id, Constants::UPLOAD_STATUS_DONE);
+        $this->visitRepository->updateUploadStatus($visit->id, UploadStatusEnum::DONE->value);
         $updatedVisit = Visit::find($visit->id);
-        $this->assertEquals(Constants::UPLOAD_STATUS_DONE, $updatedVisit->upload_status);
+        $this->assertEquals(UploadStatusEnum::DONE->value, $updatedVisit->upload_status);
     }
 
     public function testGetVisitContext()
@@ -256,7 +258,7 @@ class VisitRepositoryTest extends TestCase
 
         $visits->each(function ($item, $key) {
             $item->state_investigator_form = Constants::INVESTIGATOR_FORM_DONE;
-            $item->upload_status = Constants::UPLOAD_STATUS_DONE;
+            $item->upload_status = UploadStatusEnum::DONE->value;
             $item->save();
         });
 

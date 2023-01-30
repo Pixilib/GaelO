@@ -35,6 +35,13 @@ return new class extends Migration
             $table->string('anon_profile')->default('Default')->nullable(false)->change();
         });
 
+        Schema::table('visits', function (Blueprint $table) {
+            $table->string('status_done')->nullable(false)->default('Not Done')->change();
+            $table->string('upload_status')->nullable(false)->default('Not Done')->change();
+            $table->string('state_investigator_form', ['Not Done', 'Not Needed', 'Draft', 'Done'])->nullable(false)->default('Not Done')->change();
+            $table->string('state_quality_control', ['Not Done', 'Not Needed', 'Wait Definitive Conclusion','Corrective Action Asked','Refused','Accepted'])->nullable(false)->default('Not Done')->change();
+        });
+
     }
 
     /**

@@ -3,6 +3,7 @@
 namespace App\GaelO\Services;
 
 use App\GaelO\Constants\Constants;
+use App\GaelO\Constants\Enums\UploadStatusEnum;
 use App\GaelO\Interfaces\Adapters\JobInterface;
 use App\GaelO\Repositories\ReviewRepository;
 use App\GaelO\Repositories\ReviewStatusRepository;
@@ -45,7 +46,7 @@ class VisitService
     public function updateUploadStatus(string $uploadStatus)
     {
 
-        if($uploadStatus === Constants::UPLOAD_STATUS_NOT_DONE){
+        if($uploadStatus === UploadStatusEnum::NOT_DONE->value){
             $visitContext = $this->visitRepository->getVisitContext($this->visitId);
             if($visitContext['state_investigator_form'] === Constants::INVESTIGATOR_FORM_DONE) {
                 $this->reviewRepository->unlockInvestigatorForm($this->visitId);
@@ -57,7 +58,7 @@ class VisitService
         $updatedEntity = $this->visitRepository->updateUploadStatus($this->visitId, $uploadStatus);
 
         if (
-            $updatedEntity['upload_status'] === Constants::UPLOAD_STATUS_DONE
+            $updatedEntity['upload_status'] === UploadStatusEnum::DONE->value
             && ($updatedEntity['state_investigator_form'] === Constants::INVESTIGATOR_FORM_NOT_NEEDED || $updatedEntity['state_investigator_form'] === Constants::INVESTIGATOR_FORM_DONE)
         ) {
             $this->sendUploadEmailAndSkipQcIfNeeded($this->visitId);
@@ -68,7 +69,7 @@ class VisitService
     {
         $updatedEntity = $this->visitRepository->updateInvestigatorFormStatus($this->visitId, $stateInvestigatorForm);
         if (
-            $updatedEntity['upload_status'] === Constants::UPLOAD_STATUS_DONE
+            $updatedEntity['upload_status'] === UploadStatusEnum::DONE->value
             && ($updatedEntity['state_investigator_form'] === Constants::INVESTIGATOR_FORM_DONE)
         ) {
             $this->sendUploadEmailAndSkipQcIfNeeded($this->visitId);

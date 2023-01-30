@@ -3,6 +3,8 @@
 namespace App\GaelO\UseCases\ValidateDicomUpload;
 
 use App\GaelO\Constants\Constants;
+use App\GaelO\Constants\Enums\UploadStatusEnum;
+use App\GaelO\Constants\Enums\VisitStatusDoneEnum;
 use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Exceptions\GaelOValidateDicomException;
@@ -70,7 +72,7 @@ class ValidateDicomUpload
             $this->checkAuthorization($currentUserId, $visitId, $studyName, $visitContext);
 
             //Make Visit as being upload processing
-            $this->visitService->updateUploadStatus(Constants::UPLOAD_STATUS_PROCESSING);
+            $this->visitService->updateUploadStatus(UploadStatusEnum::PROCESSING->value);
 
             //Create Temporary folder to work
             $unzipedPath = Util::getUploadTemporaryFolder();
@@ -144,7 +146,7 @@ class ValidateDicomUpload
             $studyInstanceUID = $this->registerDicomStudyService->execute();
 
             //Change Visit status
-            $this->visitService->updateUploadStatus(Constants::UPLOAD_STATUS_DONE);
+            $this->visitService->updateUploadStatus(UploadStatusEnum::DONE->value);
 
             //Write success in Tracker
             $actionDetails = [
@@ -200,7 +202,7 @@ class ValidateDicomUpload
         $this->authorizationService->setStudyName($studyName);
         $this->authorizationService->setVisitId($visitId);
         $this->authorizationService->setVisitContext($visitContext);
-        if (!$this->authorizationService->isVisitAllowed(Constants::ROLE_INVESTIGATOR) || $uploadStatus !== Constants::UPLOAD_STATUS_NOT_DONE || $visitStatus !== Constants::VISIT_STATUS_DONE) {
+        if (!$this->authorizationService->isVisitAllowed(Constants::ROLE_INVESTIGATOR) || $uploadStatus !== UploadStatusEnum::NOT_DONE->value || $visitStatus !== VisitStatusDoneEnum::DONE->value) {
             throw new GaelOForbiddenException();
         }
     }
@@ -214,7 +216,7 @@ class ValidateDicomUpload
     private function handleImportException(string $errorMessage, int $visitId, string $patientId, string $visitType,  string $unzipedPath, string $studyName, int $userId)
     {
 
-        $this->visitService->updateUploadStatus(Constants::UPLOAD_STATUS_NOT_DONE);
+        $this->visitService->updateUploadStatus(UploadStatusEnum::NOT_DONE->value);
 
         $actionDetails = [
             'reason' => $errorMessage

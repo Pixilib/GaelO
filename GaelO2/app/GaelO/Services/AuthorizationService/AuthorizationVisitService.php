@@ -3,6 +3,7 @@
 namespace App\GaelO\Services\AuthorizationService;
 
 use App\GaelO\Constants\Constants;
+use App\GaelO\Constants\Enums\UploadStatusEnum;
 use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
 use App\GaelO\Services\AuthorizationService\AuthorizationPatientService;
 
@@ -68,7 +69,7 @@ class AuthorizationVisitService
     private function isControllerAllowed(): bool
     {
         //For controller visit QC status be not done or awaiting definitive conclusion, Investigator Form should be Done or Not Needed and Upload status should be done
-        return ($this->isAllowedStatusQC() && $this->isAllowedInvestigatorFormStatus() && $this->visitUploadStatus === Constants::UPLOAD_STATUS_DONE);
+        return ($this->isAllowedStatusQC() && $this->isAllowedInvestigatorFormStatus() && $this->visitUploadStatus === UploadStatusEnum::DONE->value);
     }
 
 

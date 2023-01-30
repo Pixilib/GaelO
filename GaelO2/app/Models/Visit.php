@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\GaelO\Constants\Enums\UploadStatusEnum;
+use App\GaelO\Constants\Enums\VisitStatusDoneEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -19,9 +21,9 @@ class Visit extends Model
         'patient_id' => 'string',
         'visit_date'=>'date',
         'visit_type_id' => 'integer',
-        'status_done' => 'string',
+        'status_done' => VisitStatusDoneEnum::class,
         'reason_for_not_done'=> 'string',
-        'upload_status' => 'string',
+        'upload_status' => UploadStatusEnum::class,
         'state_investigator_form' => 'string',
         'state_quality_control'=>'string',
         'controller_user_id' => 'integer',
