@@ -5,6 +5,7 @@ namespace Tests\Unit\TestRepositories;
 use App\GaelO\Constants\Constants;
 use App\GaelO\Constants\Enums\InvestigatorFormStateEnum;
 use App\GaelO\Constants\Enums\QualityControlStateEnum;
+use App\GaelO\Constants\Enums\ReviewStatusEnum;
 use App\GaelO\Repositories\VisitRepository;
 use App\Models\Patient;
 use App\Models\Review;
@@ -49,7 +50,7 @@ class VisitRepositoryAncillaryTest extends TestCase
             $visitTypes = VisitType::factory()->visitGroupId($item->id)->count(3)->create();
             $visitTypes->each(function ($item, $key) use ($patient, $patient2) {
                 $visit = Visit::factory()->visitTypeId($item->id)->patientId($patient->id)->create();
-                ReviewStatus::factory()->visitId($visit->id)->reviewAvailable()->reviewStatus(Constants::REVIEW_STATUS_NOT_NEEDED)->studyName($patient->study_name)->create();
+                ReviewStatus::factory()->visitId($visit->id)->reviewAvailable()->reviewStatus(ReviewStatusEnum::NOT_NEEDED->value)->studyName($patient->study_name)->create();
                 $visit2 = Visit::factory()->visitTypeId($item->id)->uploadDone()->stateInvestigatorForm(InvestigatorFormStateEnum::DONE->value)->stateQualityControl(QualityControlStateEnum::NOT_NEEDED->value)->patientId($patient2->id)->create();
                 ReviewStatus::factory()->visitId($visit2->id)->studyName($patient->study_name)->create();
             });

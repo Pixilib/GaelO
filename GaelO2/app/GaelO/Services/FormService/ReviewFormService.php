@@ -3,6 +3,7 @@
 namespace App\GaelO\Services\FormService;
 
 use App\GaelO\Constants\Constants;
+use App\GaelO\Constants\Enums\ReviewStatusEnum;
 use App\GaelO\Exceptions\GaelOBadRequestException;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Interfaces\Adapters\FrameworkInterface;
@@ -90,20 +91,20 @@ class ReviewFormService extends FormService
         $conclusion = $visitDecision->getReviewConclusion();
         $targetLesions = null;
 
-        if ($reviewStatus === Constants::REVIEW_STATUS_DONE) {
+        if ($reviewStatus === ReviewStatusEnum::DONE->value) {
             $targetLesions = $visitDecision->getTargetLesion();
         }
 
-        if ($reviewStatus === Constants::REVIEW_STATUS_NOT_DONE && $conclusion !== null) {
+        if ($reviewStatus === ReviewStatusEnum::NOT_DONE->value && $conclusion !== null) {
             throw new GaelOException("Review Status Not Done needs to be associated with null conclusion value");
         }
         //Update review status
         $this->reviewStatusRepositoryInterface->updateReviewAvailabilityStatusAndConclusion($this->visitId, $this->studyName, $availability, $reviewStatus, $conclusion, $targetLesions);
 
         //Send Notification emails
-        if ($reviewStatus === Constants::REVIEW_STATUS_WAIT_ADJUDICATION) {
+        if ($reviewStatus === ReviewStatusEnum::WAIT_ADJUDICATION->value) {
             $this->mailServices->sendAwaitingAdjudicationMessage($this->studyName, $this->patientId, $this->patientCode,  $this->visitType, $this->visitId);
-        } else if ($reviewStatus === Constants::REVIEW_STATUS_DONE  ) {
+        } else if ($reviewStatus === ReviewStatusEnum::DONE->value  ) {
             //In case of conclusion reached send conclusion (but not to uploader if ancillary study)
             $this->mailServices->sendVisitConcludedMessage(
                 $this->visitId,

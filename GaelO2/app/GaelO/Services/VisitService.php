@@ -5,6 +5,7 @@ namespace App\GaelO\Services;
 use App\GaelO\Constants\Constants;
 use App\GaelO\Constants\Enums\InvestigatorFormStateEnum;
 use App\GaelO\Constants\Enums\QualityControlStateEnum;
+use App\GaelO\Constants\Enums\ReviewStatusEnum;
 use App\GaelO\Constants\Enums\UploadStatusEnum;
 use App\GaelO\Interfaces\Adapters\JobInterface;
 use App\GaelO\Repositories\ReviewRepository;
@@ -91,7 +92,7 @@ class VisitService
         $reviewStatus = $this->getReviewStatus($studyName);
 
         $qcNeeded = $visitEntity['state_quality_control'] !== QualityControlStateEnum::NOT_NEEDED->value;
-        $reviewNeeded = $reviewStatus['review_status'] !== Constants::REVIEW_STATUS_NOT_NEEDED;
+        $reviewNeeded = $reviewStatus['review_status'] !== ReviewStatusEnum::NOT_NEEDED->value;
 
         $this->mailServices->sendUploadedVisitMessage($this->visitId, $visitEntity['creator_user_id'], $studyName, $patientId, $patientCode, $visitType, $qcNeeded);
         // Send auto qc job
@@ -113,7 +114,7 @@ class VisitService
 
         $reviewStatus = $this->getReviewStatus($studyName);
 
-        $reviewNeeded = $reviewStatus['review_status'] !== Constants::REVIEW_STATUS_NOT_NEEDED;
+        $reviewNeeded = $reviewStatus['review_status'] !== ReviewStatusEnum::NOT_NEEDED->value;
         $localFormNeeded = $visitEntity['state_investigator_form'] !== InvestigatorFormStateEnum::NOT_NEEDED->value;
 
         $this->visitRepository->editQc($this->visitId, $stateQc, $controllerId, $imageQc, $formQc, $imageQcComment, $formQcComment);

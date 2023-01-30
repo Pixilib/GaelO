@@ -5,6 +5,7 @@ namespace Tests\Feature\TestVisits;
 use App\GaelO\Constants\Constants;
 use App\GaelO\Constants\Enums\InvestigatorFormStateEnum;
 use App\GaelO\Constants\Enums\QualityControlStateEnum;
+use App\GaelO\Constants\Enums\ReviewStatusEnum;
 use App\Models\Patient;
 use Tests\TestCase;
 use App\Models\Visit;
@@ -101,7 +102,7 @@ class ResetQcTest extends TestCase
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $this->studyName);
 
 
-        $this->reviewStatus->review_status = Constants::REVIEW_STATUS_ONGOING;
+        $this->reviewStatus->review_status = ReviewStatusEnum::ONGOING->value;
         $this->reviewStatus->save();
 
         $payload = [

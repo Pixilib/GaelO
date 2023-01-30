@@ -2,9 +2,9 @@
 
 namespace App\GaelO\Services;
 
-use App\GaelO\Constants\Constants;
 use App\GaelO\Constants\Enums\InvestigatorFormStateEnum;
 use App\GaelO\Constants\Enums\QualityControlStateEnum;
+use App\GaelO\Constants\Enums\ReviewStatusEnum;
 use App\GaelO\Entities\VisitTypeEntity;
 use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\VisitTypeRepositoryInterface;
@@ -36,11 +36,11 @@ class CreateVisitService
 
         $stateInvestigatorForm = InvestigatorFormStateEnum::NOT_DONE->value;
         $stateQualityControl = QualityControlStateEnum::NOT_DONE->value;
-        $stateReview = Constants::REVIEW_STATUS_NOT_DONE;
+        $stateReview = ReviewStatusEnum::NOT_DONE->value;
 
         if (!$visitTypeEntity->localFormNeeded) $stateInvestigatorForm = InvestigatorFormStateEnum::NOT_NEEDED->value;
         if (!$this->calculateIsNeeded($visitTypeEntity->qcProbability)) $stateQualityControl = QualityControlStateEnum::NOT_NEEDED->value;
-        if (!$this->calculateIsNeeded($visitTypeEntity->reviewProbability)) $stateReview = Constants::REVIEW_STATUS_NOT_NEEDED;
+        if (!$this->calculateIsNeeded($visitTypeEntity->reviewProbability)) $stateReview = ReviewStatusEnum::NOT_NEEDED->value;
 
         $visitId = $this->visitRepositoryInterface->createVisit(
             $studyName,

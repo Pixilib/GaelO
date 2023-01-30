@@ -5,6 +5,7 @@ namespace Tests\Unit\TestRepositories;
 use App\GaelO\Constants\Constants;
 use App\GaelO\Constants\Enums\InvestigatorFormStateEnum;
 use App\GaelO\Constants\Enums\QualityControlStateEnum;
+use App\GaelO\Constants\Enums\ReviewStatusEnum;
 use App\GaelO\Constants\Enums\UploadStatusEnum;
 use App\GaelO\Constants\Enums\VisitStatusDoneEnum;
 use App\GaelO\Repositories\VisitRepository;
@@ -50,7 +51,7 @@ class VisitRepositoryTest extends TestCase
             null,
             InvestigatorFormStateEnum::DONE->value,
             QualityControlStateEnum::NOT_DONE->value,
-            Constants::REVIEW_STATUS_NOT_DONE
+            ReviewStatusEnum::NOT_DONE->value
         );
 
         $visits = Visit::findOrFail($visitId);

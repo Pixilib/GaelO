@@ -63,12 +63,6 @@ class Constants
     const TRACKER_ROLE_ADMINISTRATOR = "Administrator";
     const TRACKER_VALIDATED_DOCUMENTATION = "Validated Documentation";
 
-    const REVIEW_STATUS_NOT_DONE = "Not Done";
-    const REVIEW_STATUS_NOT_NEEDED = "Not Needed";
-    const REVIEW_STATUS_ONGOING = "Ongoing";
-    const REVIEW_STATUS_WAIT_ADJUDICATION = 'Wait Adjudication';
-    const REVIEW_STATUS_DONE = "Done";
-
     const ORTHANC_PATIENTS_LEVEL = "patients";
     const ORTHANC_STUDIES_LEVEL = "studies";
     const ORTHANC_SERIES_LEVEL = "series";

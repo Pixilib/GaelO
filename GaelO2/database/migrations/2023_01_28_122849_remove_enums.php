@@ -42,6 +42,9 @@ return new class extends Migration
             $table->string('state_quality_control')->nullable(false)->default('Not Done')->change();
         });
 
+        Schema::table('reviews_status', function (Blueprint $table) {
+            $table->string('review_status')->nullable(false)->default('Not Done')->change();
+        });
     }
 
     /**
@@ -51,6 +54,5 @@ return new class extends Migration
      */
     public function down()
     {
-
     }
 };
