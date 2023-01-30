@@ -92,28 +92,29 @@ class UserRepositoryTest extends TestCase
         $this->assertEquals($updatedEntity['password'], $userToModify['password']);
     }
 
-    public function testUpdateUserPassword(){
+    public function testUpdateUserPassword()
+    {
 
         $user = User::factory()->create();
         $this->userRepository->updateUserPassword($user['id'], 'newPassword');
 
         $updatedUser = User::find($user->id);
         $this->assertNotEquals($user->password, $updatedUser->password);
-
     }
 
 
-    public function testUpdateUserAttempts(){
+    public function testUpdateUserAttempts()
+    {
 
         $user = User::factory()->create();
         $this->userRepository->updateUserAttempts($user['id'], 99);
 
         $updatedUser = User::find($user->id);
         $this->assertEquals(99, $updatedUser->attempts);
-
     }
 
-    public function testResetAttemptsAndUpdateLastConnexion(){
+    public function testResetAttemptsAndUpdateLastConnexion()
+    {
 
         $user = User::factory()->attempts(5)->create();
         $this->userRepository->resetAttemptsAndUpdateLastConnexion($user['id']);
@@ -121,8 +122,6 @@ class UserRepositoryTest extends TestCase
         $updatedUser = User::find($user->id);
         $this->assertEquals(0, $updatedUser->attempts);
         $this->assertNotEquals($user->last_connection, $updatedUser->last_connection);
-
-
     }
 
     public function testGetUserByUsername()
@@ -154,7 +153,7 @@ class UserRepositoryTest extends TestCase
         $this->assertFalse($testNotExisting);
     }
 
-    public function testGetAdministratorsEmails()
+    public function testGetAdministrators()
     {
 
         $userAdmin = User::factory()->administrator()->count(4)->create();
@@ -163,10 +162,10 @@ class UserRepositoryTest extends TestCase
         //Deleted user should not outputed
         $userAdmin->first()->delete();
 
-        $adminEmails = $this->userRepository->getAdministratorsEmails();
+        $administrators = $this->userRepository->getAdministrators();
         //Assert 4 because of the default admin account
 
-        $this->assertEquals(4, sizeof($adminEmails));
+        $this->assertEquals(4, sizeof($administrators));
     }
 
     /**
@@ -196,43 +195,32 @@ class UserRepositoryTest extends TestCase
         });
 
         //Querying investigator from first study and center 3 with CRA role should return 10 results
-        $investigatorsEmails = $this->userRepository->getInvestigatorsEmailsFromStudyFromCenter($study1->name, 3, Constants::USER_JOB_CRA);
+        $investigatorsEmails = $this->userRepository->getInvestigatorsOfStudyFromCenter($study1->name, 3, Constants::USER_JOB_CRA);
         $this->assertEquals(10, sizeof($investigatorsEmails));
 
         //Querying investigator from last study and center 3 with CRA role should return 0 results
-        $investigatorsEmails2 = $this->userRepository->getInvestigatorsEmailsFromStudyFromCenter($study2->name, 3, Constants::USER_JOB_CRA);
+        $investigatorsEmails2 = $this->userRepository->getInvestigatorsOfStudyFromCenter($study2->name, 3, Constants::USER_JOB_CRA);
         $this->assertEquals(0, sizeof($investigatorsEmails2));
 
         //Querying investigator from last study and center 5 with Supervision role should return 15 results
-        $investigatorsEmails3 = $this->userRepository->getInvestigatorsEmailsFromStudyFromCenter($study2->name, 5, Constants::USER_JOB_SUPERVISION);
+        $investigatorsEmails3 = $this->userRepository->getInvestigatorsOfStudyFromCenter($study2->name, 5, Constants::USER_JOB_SUPERVISION);
         $this->assertEquals(15, sizeof($investigatorsEmails3));
 
         //Querying investigator from first study and center 3 with Radiologist role should return 0 results
-        $investigatorsEmails4 = $this->userRepository->getInvestigatorsEmailsFromStudyFromCenter($study2->name, 3, Constants::USER_JOB_RADIOLOGIST);
+        $investigatorsEmails4 = $this->userRepository->getInvestigatorsOfStudyFromCenter($study2->name, 3, Constants::USER_JOB_RADIOLOGIST);
         $this->assertEquals(0, sizeof($investigatorsEmails4));
 
         //Results of user query should be different
-        $commonEmails = array_intersect($investigatorsEmails, $investigatorsEmails2);
-        $this->assertEquals(0, sizeof($commonEmails));
-    }
-
-    public function testGetUserByRoleStudy(){
-
-        $users = User::factory()->count(10)->create();
-
-        $study1 = $this->studies->first();
-        $users->each(function ($user) use ($study1) {
-            Role::factory()->userId($user->id)->studyName($study1->name)->roleName(Constants::ROLE_INVESTIGATOR)->create();
+        $commonEmails = array_uintersect_assoc($investigatorsEmails, $investigatorsEmails2, function ($a, $b) {
+            return $a['email'] === $b['email'] ? 0 : -1;
         });
-
-        $users = $this->userRepository->getUsersByRolesInStudy($study1->name, Constants::ROLE_INVESTIGATOR);
-        $this->assertEquals(10, sizeof($users));
+        $this->assertEquals(0, sizeof($commonEmails));
     }
 
     /**
      * Test mail selection acccording to Role in study
      */
-    public function testGetMailsByRoleStudy()
+    public function testGetUserByRoleStudy()
     {
         $users = User::factory()->count(10)->create();
         $users2 = User::factory()->count(20)->create();
@@ -248,23 +236,26 @@ class UserRepositoryTest extends TestCase
         });
 
         //We should have 10 investigators, 20 supervisors, 0 monitor in this study
-        $investigatorsEmails = $this->userRepository->getUsersEmailsByRolesInStudy($study1->name, Constants::ROLE_INVESTIGATOR);
+        $investigatorsEmails = $this->userRepository->getUsersByRolesInStudy($study1->name, Constants::ROLE_INVESTIGATOR);
         $this->assertEquals(10, sizeof($investigatorsEmails));
-        $investigatorsEmails2 = $this->userRepository->getUsersEmailsByRolesInStudy($study1->name, Constants::ROLE_SUPERVISOR);
+        $investigatorsEmails2 = $this->userRepository->getUsersByRolesInStudy($study1->name, Constants::ROLE_SUPERVISOR);
         $this->assertEquals(20, sizeof($investigatorsEmails2));
-        $investigatorsEmails3 = $this->userRepository->getUsersEmailsByRolesInStudy($study1->name, Constants::ROLE_MONITOR);
+        $investigatorsEmails3 = $this->userRepository->getUsersByRolesInStudy($study1->name, Constants::ROLE_MONITOR);
         $this->assertEquals(0, sizeof($investigatorsEmails3));
 
         //We should have 0 investigators, in the other study
-        $investigatorsEmails4 = $this->userRepository->getUsersEmailsByRolesInStudy($study2->name, Constants::ROLE_INVESTIGATOR);
+        $investigatorsEmails4 = $this->userRepository->getUsersByRolesInStudy($study2->name, Constants::ROLE_INVESTIGATOR);
         $this->assertEquals(0, sizeof($investigatorsEmails4));
 
         //Results of user query role should be different
-        $commonEmails = array_intersect($investigatorsEmails, $investigatorsEmails2);
+        $commonEmails = array_uintersect_assoc($investigatorsEmails, $investigatorsEmails2, function ($a, $b) {
+            return $a['email'] === $b['email'] ? 0 : -1;
+        });
         $this->assertEquals(0, sizeof($commonEmails));
     }
 
-    public function testGetStudiesWithRoleForUser(){
+    public function testGetStudiesWithRoleForUser()
+    {
 
         $user = User::factory()->create();
 
@@ -284,7 +275,8 @@ class UserRepositoryTest extends TestCase
         $this->assertEquals(1, sizeof($studies));
     }
 
-    public function testGetUserRoles(){
+    public function testGetUserRoles()
+    {
 
         $user = User::factory()->create();
 
@@ -302,10 +294,10 @@ class UserRepositoryTest extends TestCase
         //Test using a filter for a specific role
         $rolesAnswer = $this->userRepository->getUsersRoles($user->id, [Constants::ROLE_SUPERVISOR]);
         $this->assertFalse(array_key_exists($study2Name, $rolesAnswer));
-
     }
 
-    public function testGetUserRolesInStudy(){
+    public function testGetUserRolesInStudy()
+    {
 
         $user = User::factory()->create();
 
@@ -320,24 +312,26 @@ class UserRepositoryTest extends TestCase
 
         $this->assertTrue(in_array(Constants::ROLE_INVESTIGATOR, $roles));
         $this->assertTrue(in_array(Constants::ROLE_SUPERVISOR, $roles));
-
     }
 
-    public function testGetUseRoleInStudy(){
+    public function testGetUseRoleInStudy()
+    {
         $role = Role::factory()->roleName(Constants::ROLE_INVESTIGATOR)->create();
-        $entity = $this->userRepository->getUserRoleInStudy($role->user_id, $role->study_name, $role->name );
+        $entity = $this->userRepository->getUserRoleInStudy($role->user_id, $role->study_name, $role->name);
         $this->assertArrayHasKey('validated_documentation_version', $entity);
         $this->assertArrayHasKey('study', $entity);
     }
 
-    public function testUpdateValidatedDocumentationVersion(){
+    public function testUpdateValidatedDocumentationVersion()
+    {
         $role = Role::factory()->roleName(Constants::ROLE_INVESTIGATOR)->create();
-        $this->userRepository->updateValidatedDocumentationVersion($role->user_id, $role->study_name, $role->name, '3.0.0' );
+        $this->userRepository->updateValidatedDocumentationVersion($role->user_id, $role->study_name, $role->name, '3.0.0');
         $updatedRole = Role::where('user_id',  $role->user_id)->where('study_name', $role->study_name)->where('name', $role->name)->sole();
         $this->assertEquals('3.0.0', $updatedRole->validated_documentation_version);
     }
 
-    public function testAddUserRoleInStudy(){
+    public function testAddUserRoleInStudy()
+    {
 
         $user = User::factory()->create();
         $this->userRepository->addUserRoleInStudy($user->id, $this->studies->first()->name, Constants::ROLE_INVESTIGATOR);
@@ -347,7 +341,8 @@ class UserRepositoryTest extends TestCase
         return $user;
     }
 
-    public function testDeleteRoleForUser(){
+    public function testDeleteRoleForUser()
+    {
 
         $user = User::factory()->create();
         Role::factory()->userId($user->id)->roleName(Constants::ROLE_INVESTIGATOR)->studyName($this->studies->first()->name)->create();
@@ -357,7 +352,8 @@ class UserRepositoryTest extends TestCase
         $this->assertEquals(0, sizeof($newRolesRecords));
     }
 
-    public function testAddAffiliatedCenter(){
+    public function testAddAffiliatedCenter()
+    {
 
         $user = User::factory()->create();
         $this->userRepository->addAffiliatedCenter($user->id, $this->center3->code);
@@ -366,7 +362,8 @@ class UserRepositoryTest extends TestCase
         $this->assertEquals(3, $affiliatedCenters[0]['code']);
     }
 
-    public function testDeleteAffiliatedCenter(){
+    public function testDeleteAffiliatedCenter()
+    {
         $user = User::factory()->create();
         CenterUser::factory()->centerCode($this->center3->code)->userId($user->id)->create();
 
@@ -374,17 +371,18 @@ class UserRepositoryTest extends TestCase
 
         $affiliatedCenters = User::find($user->id)->affiliatedCenters()->get()->toArray();
         $this->assertEquals(0, sizeof($affiliatedCenters));
-
     }
 
-    public function testGetUserMainCenter(){
+    public function testGetUserMainCenter()
+    {
         $user = User::factory()->create();
         $center = $this->userRepository->getUserMainCenter($user->id);
         $this->assertArrayHasKey('code', $center);
         $this->assertArrayHasKey('name', $center);
     }
 
-    public function testGetAffiliatedCenters(){
+    public function testGetAffiliatedCenters()
+    {
 
         $user = User::factory()->create();
         CenterUser::factory()->centerCode($this->center3->code)->userId($user->id)->create();
@@ -394,10 +392,10 @@ class UserRepositoryTest extends TestCase
 
         $this->assertEquals(2, sizeof($affiliatedCenters));
         $this->assertNotNull(2, $affiliatedCenters[0]['country_code']);
-
     }
 
-    public function testGetAllUsersCenters(){
+    public function testGetAllUsersCenters()
+    {
 
         $user = User::factory()->create();
         CenterUser::factory()->centerCode($this->center3->code)->userId($user->id)->create();
@@ -406,10 +404,10 @@ class UserRepositoryTest extends TestCase
 
         $this->assertTrue(in_array(0, $centers));
         $this->assertTrue(in_array(3, $centers));
-
     }
 
-    public function testGetUsersFromStudy(){
+    public function testGetUsersFromStudy()
+    {
 
         $userStudy1 = User::factory()->count(5)->create();
         $userStudy2 = User::factory()->count(5)->create();
@@ -417,18 +415,18 @@ class UserRepositoryTest extends TestCase
 
         $study1Name = $this->studies->first()->name;
         $study2Name = $this->studies->last()->name;
-        $userStudy1->each(function ($user) use($study1Name) {
+        $userStudy1->each(function ($user) use ($study1Name) {
             Role::factory()->userId($user->id)->roleName(Constants::ROLE_INVESTIGATOR)->studyName($study1Name)->create();
             Role::factory()->userId($user->id)->roleName(Constants::ROLE_SUPERVISOR)->studyName($study1Name)->create();
         });
 
         //Add role in another study, that should not be selected
-        $userStudy1->each(function ($user) use($study2Name) {
+        $userStudy1->each(function ($user) use ($study2Name) {
             Role::factory()->userId($user->id)->roleName(Constants::ROLE_INVESTIGATOR)->studyName($study2Name)->create();
             Role::factory()->userId($user->id)->roleName(Constants::ROLE_SUPERVISOR)->studyName($study2Name)->create();
         });
 
-        $userStudy2->each(function ($user) use($study2Name) {
+        $userStudy2->each(function ($user) use ($study2Name) {
             Role::factory()->userId($user->id)->roleName(Constants::ROLE_INVESTIGATOR)->studyName($study2Name)->create();
         });
 
@@ -440,7 +438,8 @@ class UserRepositoryTest extends TestCase
         $this->assertEquals(2, sizeof($users[0]['roles']));
     }
 
-    public function testGetAllUser(){
+    public function testGetAllUser()
+    {
         $users = User::factory()->count(5)->create();
         $users->first()->delete();
         $withDeletedUsers = $this->userRepository->getAll(true);
@@ -450,5 +449,4 @@ class UserRepositoryTest extends TestCase
         $this->assertEquals(6, sizeof($withDeletedUsers));
         $this->assertEquals(5, sizeof($nonDeletedUsers));
     }
-
 }

@@ -5,6 +5,7 @@ namespace App\GaelO\Services\GaelOStudiesService;
 use App\GaelO\Adapters\FrameworkAdapter;
 use App\GaelO\Adapters\ValidatorAdapter;
 use App\GaelO\Exceptions\GaelOException;
+use App\GaelO\Services\GaelOStudiesService\AssociatedFiles\AssociatedFile;
 
 abstract class AbstractVisitRules
 {
@@ -17,6 +18,7 @@ abstract class AbstractVisitRules
     const RULE_DATE = "date";
 
     protected array $data = [];
+    protected array $uploadedFileKeys = [];
     protected bool $isLocal;
     protected bool $adjudication;
     protected string $studyName;
@@ -28,11 +30,20 @@ abstract class AbstractVisitRules
 
     abstract public static function getReviewerAdjudicationValidationRules(): array;
 
-    abstract public static function getAllowedKeyAndMimeTypeInvestigator(): array;
+    /**
+     * @return AssociatedFile[]
+     */
+    abstract public static function getAssociatedFilesInvestigator(): array;
 
-    abstract public static function getAllowedKeyAndMimeTypeReviewer(): array;
+    /**
+     * @return AssociatedFile[]
+     */
+    abstract public static function getAssociatedFilesReview(): array;
 
-    abstract public static function getAllowedKeyAndMimeTypeAdjudication(): array;
+    /**
+     * @return AssociatedFile[]
+     */
+    abstract public static function getAssociatedFilesAdjudication(): array;
 
     public function getInvestigatorInputNames(): array
     {
@@ -58,6 +69,11 @@ abstract class AbstractVisitRules
         $this->data = $data;
     }
 
+    public function setUploadedFileKeys(array $uploadedFileKeys)
+    {
+        $this->uploadedFileKeys = $uploadedFileKeys;
+    }
+
     public function setLocalForm(bool $isLocal)
     {
         $this->isLocal = $isLocal;
@@ -68,28 +84,64 @@ abstract class AbstractVisitRules
         $this->adjudication = $adjudication;
     }
 
+    /**
+     *  @param AssociatedFile[]
+     */
+    protected function areAllAssociatedFilesUploaded(array $associatedFiles): bool
+    {
+        $mandatoryKeys = array_map(function (AssociatedFile $associatedFile) {
+            if ($associatedFile->mandatory) return $associatedFile->key;
+            else return null;
+        }, $associatedFiles);
+        $mandatoryKeys = array_filter($mandatoryKeys);
+        $associatedFileCompleted = sizeof(array_intersect($this->uploadedFileKeys, $mandatoryKeys)) === sizeof($mandatoryKeys);
+        return $associatedFileCompleted;
+    }
+
+    protected function areAssociatedFilesInvestigatorComplete(): bool
+    {
+        $investigatorAssociatedFiles = $this->getAssociatedFilesInvestigator();
+        return $this->areAllAssociatedFilesUploaded($investigatorAssociatedFiles);
+    }
+
+    protected function areAssociatedFilesReviewerComplete(): bool
+    {
+        $reviewerAssociatedFiles = $this->getAssociatedFilesReview();
+        return $this->areAllAssociatedFilesUploaded($reviewerAssociatedFiles);
+    }
+
+    protected function areAssociatedFilesAdjudicationComplete(): bool
+    {
+        $adjudicationAssociatedFiles = $this->getAssociatedFilesAdjudication();
+        return $this->areAllAssociatedFilesUploaded($adjudicationAssociatedFiles);
+    }
+
     public function checkInvestigatorFormValidity(bool $validated): bool
     {
 
         $validatorAdapter = new ValidatorAdapter($validated);
         $investigatorsRules = $this::getInvestigatorValidationRules();
         $this->fillValidator($investigatorsRules, $validatorAdapter);
-        return $validatorAdapter->validate($this->data);
+        $fileCheck = $validated ? $this->areAssociatedFilesInvestigatorComplete() : true;
+        return $validatorAdapter->validate($this->data) && $fileCheck;
     }
 
     public function checkReviewFormValidity(bool $validated): bool
     {
         $validatorAdapter = new ValidatorAdapter($validated);
         $reviewerRules = [];
+        $associatedFileCheck = false;
 
         if ($this->adjudication) {
-            $reviewerRules = $this::getReviewerAdjudicationValidationRules();
+            $reviewerRules = $this->getReviewerAdjudicationValidationRules();
+            $associatedFileCheck = $validated ? $this->getAssociatedFilesAdjudication() : true;
         } else {
-            $reviewerRules = $this::getReviewerValidationRules();
+            $reviewerRules = $this->getReviewerValidationRules();
+            $associatedFileCheck = $validated ? $this->areAssociatedFilesReviewerComplete() : true;
         }
 
         $this->fillValidator($reviewerRules, $validatorAdapter);
-        return $validatorAdapter->validate($this->data);
+        return $validatorAdapter->validate($this->data) && $associatedFileCheck;
     }
 
     protected function fillValidator(array $rules, ValidatorAdapter $validatorAdapter)

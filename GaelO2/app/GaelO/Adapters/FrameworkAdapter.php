@@ -7,6 +7,8 @@ use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
@@ -80,5 +82,25 @@ class FrameworkAdapter implements FrameworkInterface
                 'query_params' => $queryParams
             ]
         );
+    }
+
+    public static function hash(string $password): string
+    {
+        return Hash::make($password);
+    }
+
+    public static function checkHash(string $plainValue, string $hash): bool
+    {
+        return Hash::check($plainValue, $hash);
+    }
+
+    public static function encrypt(string $value): string
+    {
+        return Crypt::encryptString($value);
+    }
+
+    public static function decrypt(string $encryptedValue): string
+    {
+        return Crypt::decryptString($encryptedValue);
     }
 }

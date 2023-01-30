@@ -52,13 +52,11 @@ interface UserRepositoryInterface
 
     public function reactivateUser(int $id): void;
 
-    public function getAdministratorsEmails(): array;
+    public function getAdministrators(): array;
 
-    public function getInvestigatorsEmailsFromStudyFromCenter(string $study, int $centerCode, ?string $job): array;
+    public function getInvestigatorsOfStudyFromCenter(string $study, int $centerCode, ?string $job): array;
 
     public function getUsersByRolesInStudy(string $study, string $role): array;
-
-    public function getUsersEmailsByRolesInStudy(string $study, string $role): array;
 
     public function getStudiesOfUser(int $userId): array;
 

@@ -6,7 +6,7 @@ use App\GaelO\Adapters\FrameworkAdapter;
 use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOUnauthorizedException;
-use App\GaelO\Interfaces\Adapters\HashInterface;
+use App\GaelO\Interfaces\Adapters\FrameworkInterface;
 use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\UserRepositoryInterface;
 use App\GaelO\Services\MailServices;
@@ -18,14 +18,14 @@ class Login
     private UserRepositoryInterface $userRepositoryInterface;
     private MailServices $mailService;
     private TrackerRepositoryInterface $trackerRepositoryInterface;
-    private HashInterface $hashInterface;
+    private FrameworkInterface $frameworkInterface;
 
-    public function __construct(UserRepositoryInterface $userRepositoryInterface, MailServices $mailService, TrackerRepositoryInterface $trackerRepositoryInterface, HashInterface $hashInterface)
+    public function __construct(UserRepositoryInterface $userRepositoryInterface, MailServices $mailService, TrackerRepositoryInterface $trackerRepositoryInterface, FrameworkInterface $frameworkInterface)
     {
         $this->userRepositoryInterface = $userRepositoryInterface;
         $this->trackerRepositoryInterface = $trackerRepositoryInterface;
         $this->mailService = $mailService;
-        $this->hashInterface = $hashInterface;
+        $this->frameworkInterface = $frameworkInterface;
     }
 
     public function execute(LoginRequest $loginRequest, LoginResponse $loginResponse)
@@ -35,7 +35,7 @@ class Login
             $user = $this->userRepositoryInterface->getUserByEmail($loginRequest->email);
 
             $passwordCheck = false;
-            if ($user['password'] !== null) $passwordCheck = $this->hashInterface->checkHash($loginRequest->password, $user['password']);
+            if ($user['password'] !== null) $passwordCheck = $this->frameworkInterface->checkHash($loginRequest->password, $user['password']);
 
             $attempts = $user['attempts'];
 

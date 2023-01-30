@@ -356,13 +356,13 @@ class OrthancService
 
     public function getOrthancZipStream(array $seriesOrthancIDs)
     {
-        $payload = array('Transcode' => '1.2.840.10008.1.2.1', 'Resources' => $seriesOrthancIDs);
+        $payload = array('Transcode' => '1.2.840.10008.1.2', 'Resources' => $seriesOrthancIDs);
         $this->httpClientInterface->streamResponse('POST', '/tools/create-archive', $payload);
     }
 
     public function getOrthancZipStreamAsString(array $seriesOrthancIDs): Psr7ResponseAdapter
     {
-        $payload = array('Transcode' => '1.2.840.10008.1.2.1', 'Resources' => $seriesOrthancIDs);
+        $payload = array('Transcode' => '1.2.840.10008.1.2', 'Resources' => $seriesOrthancIDs);
         return $this->httpClientInterface->requestJson('POST', '/tools/create-archive', $payload);
     }
 
@@ -375,13 +375,13 @@ class OrthancService
     {
 
         $body = json_encode([
-            'Transcode' => '1.2.840.10008.1.2.1',
+            'Transcode' => '1.2.840.10008.1.2',
             'Resources' => $orthancIDs
         ]);
 
         $headers = ['content-type' => 'application/json', 'Accept' => 'application/zip'];
 
-        $this->httpClientInterface->rowRequest('POST', '/tools/create-archive', $body, $headers, $ressource);
+        $this->httpClientInterface->requestStreamResponseToFile('POST', '/tools/create-archive', $ressource, $headers);
     }
 
     /**
@@ -421,28 +421,25 @@ class OrthancService
 
     public function getSeriesMIP(string $seriesOrthancID) : string
     {
-        $downloadedFilePath = tempnam(sys_get_temp_dir(), 'mipDICOM');
-        $resource  = fopen( $downloadedFilePath, 'r+');
+        $downloadedFilePath  = tempnam(ini_get('upload_tmp_dir'), 'TMP_QC_');
 
-        $this->httpClientInterface->requestStreamResponseToFile('GET', '/series/'.$seriesOrthancID.'/mip',  $resource, []);
+        $this->httpClientInterface->requestStreamResponseToFile('GET', '/series/'.$seriesOrthancID.'/mip',  $downloadedFilePath, []);
         return $downloadedFilePath;
     }
 
     public function getSeriesMosaic(string $seriesOrthancID) : string
     {
-        $downloadedFilePath = tempnam(sys_get_temp_dir(), 'mozaicDICOM');
-        $resource  = fopen( $downloadedFilePath, 'r+');
+        $downloadedFilePath  = tempnam(ini_get('upload_tmp_dir'), 'TMP_QC_');
 
-        $this->httpClientInterface->requestStreamResponseToFile('GET', '/series/'.$seriesOrthancID.'/mosaic',  $resource, []);
+        $this->httpClientInterface->requestStreamResponseToFile('GET', '/series/'.$seriesOrthancID.'/mosaic',  $downloadedFilePath, []);
         return $downloadedFilePath;
     }
 
     public function getInstancePreview(string $instanceOrthancID) : string
     {
-        $downloadedFilePath = tempnam(sys_get_temp_dir(), 'previewDICOM');
-        $resource  = fopen( $downloadedFilePath, 'r+');
+        $downloadedFilePath  = tempnam(ini_get('upload_tmp_dir'), 'TMP_QC_');
 
-        $this->httpClientInterface->requestStreamResponseToFile('GET', '/instances/'.$instanceOrthancID.'/preview?returnUnsupportedImage',  $resource, []);
+        $this->httpClientInterface->requestStreamResponseToFile('GET', '/instances/'.$instanceOrthancID.'/preview?returnUnsupportedImage',  $downloadedFilePath, []);
         return $downloadedFilePath;
     }
 

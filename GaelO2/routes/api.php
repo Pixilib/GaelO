@@ -196,12 +196,17 @@ Route::middleware(['auth:sanctum', 'verified', 'activated', 'onboarded'])->group
 |--------------------------------------------------------------------------
 |
 */
-//Request Route
-Route::post('request', [RequestController::class, 'sendRequest']);
 
-//Login Route
-Route::post('login', [AuthController::class, 'login'])->name('login');
-Route::post('tools/forgot-password', [UserController::class, 'forgotPassword'])->name('password.email');
+Route::middleware(['throttle:public-apis'])->group(function () {
+
+    //Request Route
+    Route::post('request', [RequestController::class, 'sendRequest']);
+
+    //Login Route
+    Route::post('login', [AuthController::class, 'login'])->name('login');
+    Route::post('tools/forgot-password', [UserController::class, 'forgotPassword'])->name('password.email');
+});
+
 
 //Forgot password routes
 Route::get('tools/reset-password/{token}', function ($token) {

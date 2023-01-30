@@ -4,6 +4,7 @@ namespace App\GaelO\Services\SpecificStudiesRules\TEST;
 
 use App\GaelO\Adapters\MimeAdapter;
 use App\GaelO\Services\GaelOStudiesService\AbstractVisitRules;
+use App\GaelO\Services\GaelOStudiesService\AssociatedFiles\AssociatedFile;
 
 class TEST_FDG_PET0 extends AbstractVisitRules
 {
@@ -79,17 +80,20 @@ class TEST_FDG_PET0 extends AbstractVisitRules
         return [];
     }
 
-    public static function getAllowedKeyAndMimeTypeInvestigator(): array
+    public static function getAssociatedFilesInvestigator(): array
     {
-        return ['41' => MimeAdapter::getMimeFromExtension('csv'), '25' => MimeAdapter::getMimeFromExtension('zip')];
+        return [
+            '41' => new AssociatedFile('41', MimeAdapter::getMimesFromExtension('csv'), true),
+            '25' => new AssociatedFile('25', MimeAdapter::getMimesFromExtension('zip'), false)
+        ];
     }
 
-    public static function getAllowedKeyAndMimeTypeReviewer(): array
+    public static function getAssociatedFilesReview(): array
     {
         return [];
     }
 
-    public static function getAllowedKeyAndMimeTypeAdjudication(): array
+    public static function getAssociatedFilesAdjudication(): array
     {
         return [];
     }
@@ -98,5 +102,4 @@ class TEST_FDG_PET0 extends AbstractVisitRules
     {
         return TEST_FDG_PET0_DECISION::class;
     }
-
 }

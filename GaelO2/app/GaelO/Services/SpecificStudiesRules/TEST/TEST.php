@@ -3,6 +3,7 @@
 namespace App\GaelO\Services\SpecificStudiesRules\TEST;
 
 use App\GaelO\Services\GaelOStudiesService\AbstractGaelOStudy;
+use App\GaelO\Services\GaelOStudiesService\DefaultVisitRules;
 
 class TEST extends AbstractGaelOStudy {
 
@@ -74,7 +75,7 @@ class TEST extends AbstractGaelOStudy {
         $key = $visitGroupName.'_'.$visitTypeName;
         if($key === TEST_VISITS::PET0->value) return TEST_FDG_PET0::class;
         else if ($key === TEST_VISITS::CT0->value) return TEST_WB_CT0::class;
-        else return null;
+        else return DefaultVisitRules::class;
 
     }
 

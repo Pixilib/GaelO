@@ -29,10 +29,7 @@ class SpreadsheetAdapterTest extends TestCase
         ];
 
         $this->spreadsheetAdapter->fillData('TestSalim', $data);
-        //Create Temp file to be automatically collected
-        $tempFile = tmpfile();
-        $tempFileMetadata = stream_get_meta_data($tempFile);
-        $filename = $tempFileMetadata["uri"];
-        $this->spreadsheetAdapter->writeToExcel($filename);
+        $filename = $this->spreadsheetAdapter->writeToExcel();
+        unlink($filename);
     }
 }

@@ -35,8 +35,7 @@ class Visit extends Model
         'corrective_action_new_upload' => 'boolean',
         'corrective_action_investigator_form'=>'boolean',
         'corrective_action_comment' => 'string',
-        'corrective_action_applied' => 'boolean',
-        'last_reminder_upload' => 'datetime'
+        'corrective_action_applied' => 'boolean'
     ];
 
     public function reviews()

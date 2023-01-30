@@ -6,6 +6,7 @@ use App\GaelO\Constants\Constants;
 
 class VisitEntity
 {
+    public int $id;
     public ?int $creatorUserId;
     public ?string $creationDate;
     public string $patientId;
@@ -28,7 +29,6 @@ class VisitEntity
     public ?bool $correctiveActionInvestigatorForm;
     public ?string $correctiveActionOther;
     public ?bool $correctiveActionDecision;
-    public ?string $lastReminderUpload;
     public ?string $deletedAt;
 
     public VisitGroupEntity $visitGroup;
@@ -69,7 +69,6 @@ class VisitEntity
         $visitEntity->correctiveActionInvestigatorForm = $array['corrective_action_investigator_form'];
         $visitEntity->correctiveActionOther = $array['corrective_action_comment'];
         $visitEntity->correctiveActionDecision = $array['corrective_action_applied'];
-        $visitEntity->lastReminderUpload = $array['last_reminder_upload'];
         $visitEntity->deletedAt = $array['deleted_at'];
         return $visitEntity;
     }

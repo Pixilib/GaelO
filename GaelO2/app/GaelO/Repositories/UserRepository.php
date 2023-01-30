@@ -9,7 +9,7 @@ use App\Models\User;
 use App\Models\Role;
 
 use App\GaelO\Constants\Constants;
-use App\GaelO\Interfaces\Adapters\HashInterface;
+use App\GaelO\Interfaces\Adapters\FrameworkInterface;
 use App\GaelO\Util;
 use App\Models\Study;
 
@@ -20,15 +20,15 @@ class UserRepository implements UserRepositoryInterface
     private Role $rolesModel;
     private CenterUser $centerUserModel;
     private Study $studyModel;
-    private HashInterface $hashInterface;
+    private FrameworkInterface $frameworkInterface;
 
-    public function __construct(User $user, Role $roles, CenterUser $centerUser, Study $study, HashInterface $hashInterface)
+    public function __construct(User $user, Role $roles, CenterUser $centerUser, Study $study, FrameworkInterface $frameworkInterface)
     {
         $this->userModel = $user;
         $this->rolesModel = $roles;
         $this->centerUserModel = $centerUser;
         $this->studyModel = $study;
-        $this->hashInterface = $hashInterface;
+        $this->frameworkInterface = $frameworkInterface;
     }
 
     public function find($id): array
@@ -113,7 +113,7 @@ class UserRepository implements UserRepositoryInterface
     public function updateUserPassword(int $userId, ?string $passwordCurrent): void
     {
         $user = $this->userModel->findOrFail($userId);
-        $user->password = $this->hashInterface->hash($passwordCurrent);
+        $user->password = $this->frameworkInterface->hash($passwordCurrent);
         $user->save();
     }
 
@@ -154,17 +154,17 @@ class UserRepository implements UserRepositoryInterface
         $this->userModel->withTrashed()->find($id)->restore();
     }
 
-    public function getAdministratorsEmails(): array
+    public function getAdministrators(): array
     {
         $emails = $this->userModel->where('administrator', true)->get();
-        return empty($emails) ? [] : $emails->pluck('email')->toArray();
+        return empty($emails) ? [] : $emails->toArray();
     }
 
     /**
      * Get Emails array of user having an Investigator roles, affiliated (main or affiliated) in centercode
      * and having a particular job
      */
-    public function getInvestigatorsEmailsFromStudyFromCenter(string $study, int $centerCode, ?string $job): array
+    public function getInvestigatorsOfStudyFromCenter(string $study, int $centerCode, ?string $job): array
     {
 
         $emails = $this->userModel
@@ -187,7 +187,7 @@ class UserRepository implements UserRepositoryInterface
             })
             ->get();
 
-        return empty($emails) ? [] : $emails->pluck('email')->toArray();
+        return empty($emails) ? [] : $emails->toArray();
     }
 
     public function getUsersByRolesInStudy(string $study, string $role): array
@@ -201,17 +201,6 @@ class UserRepository implements UserRepositoryInterface
             ->get();
 
         return empty($users) ? [] : $users->toArray();
-    }
-
-    public function getUsersEmailsByRolesInStudy(string $study, string $role): array
-    {
-
-        $users = $this->getUsersByRolesInStudy($study, $role);
-        $emails = array_map(function ($user) {
-            return $user['email'];
-        }, $users);
-
-        return $emails;
     }
 
     public function getStudiesOfUser(int $userId): array

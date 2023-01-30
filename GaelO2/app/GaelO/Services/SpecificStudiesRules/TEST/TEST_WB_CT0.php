@@ -29,22 +29,22 @@ class TEST_WB_CT0 extends AbstractVisitRules
         ];
     }
 
+    public static function getAssociatedFilesInvestigator(): array
+    {
+        return [];
+    }
+
+    public static function getAssociatedFilesReview(): array
+    {
+        return [];
+    }
+
+    public static function getAssociatedFilesAdjudication(): array
+    {
+        return [];
+    }
+
     public static function getReviewerAdjudicationValidationRules(): array
-    {
-        return [];
-    }
-
-    public static function getAllowedKeyAndMimeTypeInvestigator(): array
-    {
-        return [];
-    }
-
-    public static function getAllowedKeyAndMimeTypeReviewer(): array
-    {
-        return [];
-    }
-
-    public static function getAllowedKeyAndMimeTypeAdjudication(): array
     {
         return [];
     }

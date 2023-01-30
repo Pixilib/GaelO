@@ -10,7 +10,7 @@ class InvestigatorFormService extends FormService
 {
     protected bool $local = true;
 
-    public function saveForm(array $data, bool $validated, ?bool $adjudication = null): int
+    public function createForm(array $data, bool $validated, ?bool $adjudication = null): int
     {
         $this->abstractVisitRules->setFormData($data);
         if (!$this->abstractVisitRules->checkInvestigatorFormValidity($validated)) throw new GaelOBadRequestException('Form Constraints Failed');
@@ -19,9 +19,10 @@ class InvestigatorFormService extends FormService
         return $localReviewId;
     }
 
-    public function updateForm(int $reviewId, array $data, bool $validated)
+    public function updateForm(int $reviewId, array $uploadedFileKeys, array $data, bool $validated)
     {
         $this->abstractVisitRules->setFormData($data);
+        $this->abstractVisitRules->setUploadedFileKeys($uploadedFileKeys);
         if (!$this->abstractVisitRules->checkInvestigatorFormValidity($validated)) throw new GaelOBadRequestException('Form Constraints Failed');
         $this->reviewRepositoryInterface->updateReview($reviewId, $this->currentUserId, $data, $validated);
         $this->updateVisitInvestigatorFormStatus($validated);

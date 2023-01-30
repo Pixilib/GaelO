@@ -68,6 +68,7 @@ class Constants {
     const TRACKER_CHANGE_PASSWORD = "Password Changed";
     const TRACKER_ROLE_USER = "User";
     const TRACKER_ROLE_ADMINISTRATOR = "Administrator";
+    const TRACKER_VALIDATED_DOCUMENTATION = "Validated Documentation";
 
     const INVESTIGATOR_FORM_NOT_DONE = "Not Done";
     const INVESTIGATOR_FORM_DONE = "Done";

@@ -19,6 +19,10 @@ class ExportDbTest extends TestCase
     {
         AuthorizationTools::actAsAdmin(true);
         $response = $this->get('/api/export-db', []);
+        //This is to force outputed zip deletion https://github.com/laravel/framework/issues/36286
+        ob_start();
+        $response->sendContent();
+        ob_end_clean();
         $response->assertStatus(200);
         $response->assertHeader('content-type', 'application/zip');
     }

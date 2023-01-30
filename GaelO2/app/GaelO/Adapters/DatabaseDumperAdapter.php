@@ -13,21 +13,17 @@ class DatabaseDumperAdapter implements DatabaseDumperInterface
     const DB_MYSQL = "mysql";
     const DB_PGSQL = "pgsql";
 
-    public function getDatabaseDumpFile(): string
+    public function createDatabaseDumpFile(string $filePath): void
     {
-
-        $fileSql = tempnam(ini_get('upload_tmp_dir'), 'TMPDB_');
-
         $databaseType = Config::get('database.default');
-
         if ($databaseType === self::DB_MYSQL) {
-            $this->getMysqlDump($fileSql);
+            $this->getMysqlDump($filePath);
         } else if ($databaseType === self::DB_PGSQL) {
-            $this->getPosgresDump($fileSql);
+            $this->getPosgresDump($filePath);
+        } else {
+            //Failover (also for testing purposes)
+            file_put_contents($filePath, 'Database not Exportable');
         }
-
-
-        return $fileSql;
     }
 
     private function getMysqlDump(String $file)

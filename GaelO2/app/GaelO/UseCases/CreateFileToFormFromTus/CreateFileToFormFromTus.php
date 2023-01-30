@@ -134,7 +134,7 @@ class CreateFileToFormFromTus
             if (!is_null($createFileToFormFromTusRequest->extension)) {
                 $extension = $createFileToFormFromTusRequest->extension;
             } else {
-                $extension = $this->mimeInterface::getExtensionFromMime($mime);
+                $extension = $this->mimeInterface::getExtensionsFromMime($mime)[0];
             }
 
             $fileName = 'review_' . $reviewId . '_' . $key . '.' . $extension;
@@ -150,8 +150,9 @@ class CreateFileToFormFromTus
             }
 
             $formService->setVisitContextAndStudy($visitContext, $studyName);
-            $formService->attachFile($reviewEntity, $key, $fileName, $mime, $file);
-
+            $formService->attachFile($reviewEntity, $key, $fileName, $mime, fopen($file, 'r'));
+            //Remove temporary file
+            unlink($file);
             $actionDetails = [
                 'uploaded_file' => $key,
                 'filename' => $fileName,

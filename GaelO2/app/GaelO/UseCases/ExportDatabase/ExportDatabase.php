@@ -5,7 +5,6 @@ namespace App\GaelO\UseCases\ExportDatabase;
 use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Adapters\DatabaseDumperInterface;
-use App\GaelO\Interfaces\Adapters\FrameworkInterface;
 use App\GaelO\Services\AuthorizationService\AuthorizationUserService;
 use App\GaelO\Util;
 use Exception;
@@ -17,11 +16,10 @@ class ExportDatabase
     private DatabaseDumperInterface $databaseDumperInterface;
     private AuthorizationUserService $authorizationUserService;
 
-    public function __construct(DatabaseDumperInterface $databaseDumperInterface, AuthorizationUserService $authorizationUserService, FrameworkInterface $frameworkInterface)
+    public function __construct(DatabaseDumperInterface $databaseDumperInterface, AuthorizationUserService $authorizationUserService)
     {
         $this->databaseDumperInterface = $databaseDumperInterface;
         $this->authorizationUserService = $authorizationUserService;
-        $this->frameworkInterface = $frameworkInterface;
     }
 
     public function execute(ExportDatabaseRequest $exportDatabaseRequest, ExportDatabaseResponse $exportDatabaseResponse)
@@ -34,14 +32,17 @@ class ExportDatabase
             $tempZip = tempnam(ini_get('upload_tmp_dir'), 'TMPZIPDB_');
             $zip->open($tempZip, ZipArchive::OVERWRITE);
 
-            $databaseDumpedFile = $this->databaseDumperInterface->getDatabaseDumpFile();
+            $filePathSql = tempnam(ini_get('upload_tmp_dir'), 'TMPDB_');
+            $this->databaseDumperInterface->createDatabaseDumpFile($filePathSql);
 
             $date = Date('Ymd_His');
-            $zip->addFile($databaseDumpedFile, "export_database_$date.sql");
-
+            $zip->addFile($filePathSql, "export_database_$date.sql");
+            
             Util::addStoredFilesInZip($zip, null);
-
             $zip->close();
+            
+            //Unlick after lock released by zip close
+            unlink($filePathSql);
 
             $exportDatabaseResponse->status = 200;
             $exportDatabaseResponse->statusText = 'OK';
