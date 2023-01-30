@@ -3,6 +3,8 @@
 namespace Tests\Feature\TestDicoms;
 
 use App\GaelO\Constants\Constants;
+use App\GaelO\Constants\Enums\InvestigatorFormStateEnum;
+use App\GaelO\Constants\Enums\QualityControlStateEnum;
 use App\GaelO\Constants\Enums\UploadStatusEnum;
 use App\Models\DicomSeries;
 use App\Models\DicomStudy;
@@ -30,11 +32,11 @@ class DeleteDicomSeriesTest extends TestCase
 
         //Fill investigator Form
         $this->investigatorForm = Review::factory()->studyName($this->studyName)->visitId($visit->id)->validated()->create();
-        $visit->state_investigator_form = Constants::INVESTIGATOR_FORM_DONE;
+        $visit->state_investigator_form = InvestigatorFormStateEnum::DONE->value;
         $visit->save();
 
         //Set visit QC at Not Done
-        $this->dicomSeries->dicomStudy->visit->state_quality_control = Constants::QUALITY_CONTROL_NOT_DONE;
+        $this->dicomSeries->dicomStudy->visit->state_quality_control = QualityControlStateEnum::NOT_DONE->value;
         $this->dicomSeries->dicomStudy->visit->save();
     }
 
@@ -60,8 +62,8 @@ class DeleteDicomSeriesTest extends TestCase
 
         //Expect study to be deleted
         $this->assertNotNull($dicomStudyEntity['deleted_at']);
-        $this->assertEquals(Constants::INVESTIGATOR_FORM_DRAFT, $visitEntity['state_investigator_form']);
-        $this->assertEquals(UploadStatusEnum::NOT_DONE->value, $visitEntity['upload_status']);
+        $this->assertEquals(InvestigatorFormStateEnum::DRAFT->value, $visitEntity['state_investigator_form']->value);
+        $this->assertEquals(UploadStatusEnum::NOT_DONE->value, $visitEntity['upload_status']->value);
 
         //Check Investigator form has been unlocked
         $localForm = Review::where('study_name', $this->studyName)->where('visit_id', $this->dicomSeries->dicomStudy->visit->id)->where('local', true)->sole();
@@ -112,7 +114,7 @@ class DeleteDicomSeriesTest extends TestCase
         AuthorizationTools::addRoleToUser($userId, Constants::ROLE_SUPERVISOR, $this->studyName);
 
         //Set visit QC at Accepted
-        $this->dicomSeries->dicomStudy->visit->state_quality_control = Constants::QUALITY_CONTROL_ACCEPTED;
+        $this->dicomSeries->dicomStudy->visit->state_quality_control = QualityControlStateEnum::ACCEPTED->value;
         $this->dicomSeries->dicomStudy->visit->save();
 
         $payload = ['reason' => 'wrong series'];

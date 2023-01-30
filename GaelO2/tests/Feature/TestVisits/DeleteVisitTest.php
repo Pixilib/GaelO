@@ -3,6 +3,7 @@
 namespace Tests\Feature\TestVisits;
 
 use App\GaelO\Constants\Constants;
+use App\GaelO\Constants\Enums\QualityControlStateEnum;
 use Tests\TestCase;
 use App\Models\Visit;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -74,7 +75,7 @@ class DeleteVisitTest extends TestCase
     public function testDeleteVistByInvestigatorFailQcDone()
     {
 
-        $visit = Visit::factory()->stateQualityControl(Constants::QUALITY_CONTROL_ACCEPTED)->create();
+        $visit = Visit::factory()->stateQualityControl(QualityControlStateEnum::ACCEPTED->value)->create();
 
         $currentUserId = AuthorizationTools::actAsAdmin(false);
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_INVESTIGATOR, $visit->patient->study->name);

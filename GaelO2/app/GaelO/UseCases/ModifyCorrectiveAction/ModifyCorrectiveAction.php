@@ -3,6 +3,8 @@
 namespace App\GaelO\UseCases\ModifyCorrectiveAction;
 
 use App\GaelO\Constants\Constants;
+use App\GaelO\Constants\Enums\InvestigatorFormStateEnum;
+use App\GaelO\Constants\Enums\QualityControlStateEnum;
 use App\GaelO\Constants\Enums\UploadStatusEnum;
 use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
@@ -46,7 +48,7 @@ class ModifyCorrectiveAction
             //If a corrective action was done, check that relevant pieces were sent
             if ($modifyCorrectiveActionRequest->correctiveActionDone) {
                 //If form Needed, form need to be sent before making corrective action
-                if ($stateInvestigatorForm !== Constants::INVESTIGATOR_FORM_NOT_NEEDED  && $stateInvestigatorForm !== Constants::INVESTIGATOR_FORM_DONE) {
+                if ($stateInvestigatorForm !== InvestigatorFormStateEnum::NOT_NEEDED->value  && $stateInvestigatorForm !== InvestigatorFormStateEnum::DONE->value) {
                     throw new GaelOForbiddenException('You need to send the Investigator Form first!');
                 }
 
@@ -116,7 +118,7 @@ class ModifyCorrectiveAction
     private function checkAuthorization(int $userId, int $visitId, string $studyName, array $visitContext): void
     {
         $currentQcStatus = $visitContext['state_quality_control'];
-        if ($currentQcStatus !== Constants::QUALITY_CONTROL_CORRECTIVE_ACTION_ASKED) {
+        if ($currentQcStatus !== QualityControlStateEnum::CORRECTIVE_ACTION_ASKED->value) {
             throw new GaelOForbiddenException('Visit Not Awaiting Corrective Action');
         }
 

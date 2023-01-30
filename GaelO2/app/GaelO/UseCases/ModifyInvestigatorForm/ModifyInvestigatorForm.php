@@ -3,6 +3,7 @@
 namespace App\GaelO\UseCases\ModifyInvestigatorForm;
 
 use App\GaelO\Constants\Constants;
+use App\GaelO\Constants\Enums\InvestigatorFormStateEnum;
 use App\GaelO\Exceptions\GaelOBadRequestException;
 use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
@@ -88,11 +89,11 @@ class ModifyInvestigatorForm
     {
         $visitInvestigatorFormStatus = $visitContext['state_investigator_form'];
 
-        if (in_array($visitInvestigatorFormStatus, [Constants::INVESTIGATOR_FORM_DONE])) {
+        if (in_array($visitInvestigatorFormStatus, [InvestigatorFormStateEnum::DONE->value])) {
             throw new GaelOForbiddenException();
         }
 
-        if ($visitInvestigatorFormStatus === Constants::INVESTIGATOR_FORM_NOT_NEEDED) {
+        if ($visitInvestigatorFormStatus === InvestigatorFormStateEnum::NOT_NEEDED->value) {
             //Can't modify an investigator form if not expected to have
             throw new GaelOForbiddenException();
         }

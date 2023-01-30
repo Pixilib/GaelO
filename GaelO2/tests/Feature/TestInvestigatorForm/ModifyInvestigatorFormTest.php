@@ -3,6 +3,7 @@
 namespace Tests\Feature\TestInvestigatorForm;
 
 use App\GaelO\Constants\Constants;
+use App\GaelO\Constants\Enums\InvestigatorFormStateEnum;
 use App\Models\Patient;
 use App\Models\Review;
 use App\Models\Study;
@@ -95,7 +96,7 @@ class ModifyInvestigatorFormTest extends TestCase
 
     public function testModifyInvestigatorFormShouldFailAlreadyValidated()
     {
-        $this->visit->state_investigator_form = Constants::INVESTIGATOR_FORM_DONE;
+        $this->visit->state_investigator_form = InvestigatorFormStateEnum::DONE->value;
         $this->visit->save();
 
         $currentUserId = AuthorizationTools::actAsAdmin(false);
@@ -112,7 +113,7 @@ class ModifyInvestigatorFormTest extends TestCase
 
     public function testModifyInvestigatorFormShouldFailInvestigatorFormNotNeeded()
     {
-        $this->visit->state_investigator_form = Constants::INVESTIGATOR_FORM_NOT_NEEDED;
+        $this->visit->state_investigator_form = InvestigatorFormStateEnum::NOT_NEEDED->value;
         $this->visit->save();
 
         $currentUserId = AuthorizationTools::actAsAdmin(false);

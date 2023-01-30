@@ -63,18 +63,6 @@ class Constants
     const TRACKER_ROLE_ADMINISTRATOR = "Administrator";
     const TRACKER_VALIDATED_DOCUMENTATION = "Validated Documentation";
 
-    const INVESTIGATOR_FORM_NOT_DONE = "Not Done";
-    const INVESTIGATOR_FORM_DONE = "Done";
-    const INVESTIGATOR_FORM_NOT_NEEDED = "Not Needed";
-    const INVESTIGATOR_FORM_DRAFT = "Draft";
-
-    const QUALITY_CONTROL_NOT_DONE = "Not Done";
-    const QUALITY_CONTROL_NOT_NEEDED = "Not Needed";
-    const QUALITY_CONTROL_WAIT_DEFINITIVE_CONCLUSION = "Wait Definitive Conclusion";
-    const QUALITY_CONTROL_CORRECTIVE_ACTION_ASKED = "Corrective Action Asked";
-    const QUALITY_CONTROL_REFUSED = "Refused";
-    const QUALITY_CONTROL_ACCEPTED = "Accepted";
-
     const REVIEW_STATUS_NOT_DONE = "Not Done";
     const REVIEW_STATUS_NOT_NEEDED = "Not Needed";
     const REVIEW_STATUS_ONGOING = "Ongoing";

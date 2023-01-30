@@ -3,6 +3,8 @@
 namespace App\GaelO\Repositories;
 
 use App\GaelO\Constants\Constants;
+use App\GaelO\Constants\Enums\InvestigatorFormStateEnum;
+use App\GaelO\Constants\Enums\QualityControlStateEnum;
 use App\GaelO\Constants\Enums\UploadStatusEnum;
 use App\GaelO\Constants\Enums\VisitStatusDoneEnum;
 use App\GaelO\Exceptions\GaelOException;
@@ -11,6 +13,7 @@ use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
 use App\GaelO\Util;
 use App\Models\ReviewStatus;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class VisitRepository implements VisitRepositoryInterface
 {
@@ -183,8 +186,8 @@ class VisitRepository implements VisitRepositoryInterface
                 $query->where('study_name', $studyName);
             }])
             ->where('upload_status', UploadStatusEnum::DONE->value)
-            ->whereIn('state_investigator_form', [Constants::INVESTIGATOR_FORM_NOT_NEEDED, Constants::INVESTIGATOR_FORM_DONE])
-            ->whereIn('state_quality_control', [Constants::QUALITY_CONTROL_NOT_NEEDED, CONSTANTS::QUALITY_CONTROL_ACCEPTED])
+            ->whereIn('state_investigator_form', [InvestigatorFormStateEnum::NOT_NEEDED->value, InvestigatorFormStateEnum::DONE->value])
+            ->whereIn('state_quality_control', [QualityControlStateEnum::NOT_NEEDED->value, QualityControlStateEnum::ACCEPTED->value])
             ->whereIn('patient_id', $patientIdArray)
             ->get();
 
@@ -275,7 +278,7 @@ class VisitRepository implements VisitRepositoryInterface
 
     public function getVisitsInStudyAwaitingControllerAction(string $studyName): array
     {
-        $controllerActionStatusArray = array(Constants::QUALITY_CONTROL_NOT_DONE, Constants::QUALITY_CONTROL_WAIT_DEFINITIVE_CONCLUSION);
+        $controllerActionStatusArray = array(QualityControlStateEnum::NOT_DONE->value, QualityControlStateEnum::WAIT_DEFINITIVE_CONCLUSION->value);
 
         $answer = $this->visitModel->with('visitType', 'visitType.visitGroup')
             ->whereHas('patient', function ($query) use ($studyName) {
@@ -283,7 +286,7 @@ class VisitRepository implements VisitRepositoryInterface
             })
             ->where('status_done', VisitStatusDoneEnum::DONE->value)
             ->where('upload_status', UploadStatusEnum::DONE->value)
-            ->whereIn('state_investigator_form', [Constants::INVESTIGATOR_FORM_NOT_NEEDED, Constants::INVESTIGATOR_FORM_DONE])
+            ->whereIn('state_investigator_form', [InvestigatorFormStateEnum::NOT_NEEDED->value, InvestigatorFormStateEnum::DONE->value])
             ->whereIn('state_quality_control', $controllerActionStatusArray)
             ->get();
 
@@ -299,8 +302,8 @@ class VisitRepository implements VisitRepositoryInterface
             })
             ->where('status_done', VisitStatusDoneEnum::DONE->value)
             ->where('upload_status', UploadStatusEnum::DONE->value)
-            ->whereIn('state_investigator_form', [Constants::INVESTIGATOR_FORM_NOT_NEEDED, Constants::INVESTIGATOR_FORM_DONE])
-            ->where('state_quality_control', '!=',  Constants::QUALITY_CONTROL_NOT_NEEDED)
+            ->whereIn('state_investigator_form', [InvestigatorFormStateEnum::NOT_NEEDED->value, InvestigatorFormStateEnum::DONE->value])
+            ->where('state_quality_control', '!=',  QualityControlStateEnum::NOT_NEEDED->value)
             ->get();
 
         return $answer->count() === 0 ? []  : $answer->toArray();
@@ -388,7 +391,7 @@ class VisitRepository implements VisitRepositoryInterface
 
         $visitEntity = $this->visitModel->findOrFail($visitId);
 
-        $visitEntity['state_quality_control'] = Constants::QUALITY_CONTROL_NOT_DONE;
+        $visitEntity['state_quality_control'] = QualityControlStateEnum::NOT_DONE->value;
         $visitEntity['controller_user_id'] = null;
         $visitEntity['control_date'] = null;
         $visitEntity['image_quality_control'] = null;
@@ -410,7 +413,7 @@ class VisitRepository implements VisitRepositoryInterface
 
         $visitEntity = $this->visitModel->findOrFail($visitId);
 
-        $visitEntity['state_quality_control'] = Constants::QUALITY_CONTROL_WAIT_DEFINITIVE_CONCLUSION;
+        $visitEntity['state_quality_control'] = QualityControlStateEnum::WAIT_DEFINITIVE_CONCLUSION->value;
         $visitEntity['corrective_action_user_id'] = $investigatorId;
         $visitEntity['corrective_action_date'] = Util::now();
         $visitEntity['corrective_action_new_upload'] = $newUpload;

@@ -3,6 +3,7 @@
 namespace Tests\Feature\TestInvestigatorForm;
 
 use App\GaelO\Constants\Constants;
+use App\GaelO\Constants\Enums\InvestigatorFormStateEnum;
 use App\Models\Patient;
 use App\Models\Study;
 use App\Models\Visit;
@@ -113,7 +114,7 @@ class CreateInvestigatorFormTest extends TestCase
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_INVESTIGATOR, $this->studyName);
         AuthorizationTools::addAffiliatedCenter($currentUserId, $this->centerCode);
 
-        $this->visit->state_investigator_form = Constants::INVESTIGATOR_FORM_NOT_NEEDED;
+        $this->visit->state_investigator_form = InvestigatorFormStateEnum::NOT_NEEDED->value;
         $this->visit->save();
 
         $payload = [
@@ -132,7 +133,7 @@ class CreateInvestigatorFormTest extends TestCase
         AuthorizationTools::addAffiliatedCenter($currentUserId, $this->centerCode);
 
         //Set investigator form status to draft to simulate an existing form
-        $this->visit->state_investigator_form = Constants::INVESTIGATOR_FORM_DRAFT;
+        $this->visit->state_investigator_form = InvestigatorFormStateEnum::DRAFT->value;
         $this->visit->save();
 
         $payload = [

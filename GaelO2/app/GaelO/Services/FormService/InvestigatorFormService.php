@@ -3,6 +3,8 @@
 namespace App\GaelO\Services\FormService;
 
 use App\GaelO\Constants\Constants;
+use App\GaelO\Constants\Enums\InvestigatorFormStateEnum;
+use App\GaelO\Constants\Enums\QualityControlStateEnum;
 use App\GaelO\Exceptions\GaelOBadRequestException;
 use App\GaelO\Services\FormService\FormService;
 
@@ -30,14 +32,14 @@ class InvestigatorFormService extends FormService
 
     private function unlockQcIfNeeded()
     {
-        if ($this->visitContext['state_quality_control'] !== Constants::QUALITY_CONTROL_NOT_NEEDED) $this->visitService->resetQc($this->visitId);
+        if ($this->visitContext['state_quality_control'] !== QualityControlStateEnum::NOT_NEEDED->value) $this->visitService->resetQc($this->visitId);
     }
 
     public function deleteForm(int $reviewId)
     {
         $this->reviewRepositoryInterface->delete($reviewId);
         //Make investigator form not done
-        $this->visitService->updateInvestigatorFormStatus(Constants::INVESTIGATOR_FORM_NOT_DONE);
+        $this->visitService->updateInvestigatorFormStatus(InvestigatorFormStateEnum::NOT_DONE->value);
         $this->unlockQcIfNeeded();
     }
 
@@ -52,9 +54,9 @@ class InvestigatorFormService extends FormService
     private function updateVisitInvestigatorFormStatus(bool $validated): void
     {
         if ($validated) {
-            $this->visitService->updateInvestigatorFormStatus(Constants::INVESTIGATOR_FORM_DONE);
+            $this->visitService->updateInvestigatorFormStatus(InvestigatorFormStateEnum::DONE->value);
         } else {
-            $this->visitService->updateInvestigatorFormStatus(Constants::INVESTIGATOR_FORM_DRAFT);
+            $this->visitService->updateInvestigatorFormStatus(InvestigatorFormStateEnum::DRAFT->value);
         }
     }
 }

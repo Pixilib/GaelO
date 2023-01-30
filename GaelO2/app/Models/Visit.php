@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\GaelO\Constants\Enums\InvestigatorFormStateEnum;
+use App\GaelO\Constants\Enums\QualityControlStateEnum;
 use App\GaelO\Constants\Enums\UploadStatusEnum;
 use App\GaelO\Constants\Enums\VisitStatusDoneEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -16,16 +18,16 @@ class Visit extends Model
 
     protected $casts = [
         'id' => 'integer',
-        'creator_user_id'=> 'integer',
+        'creator_user_id' => 'integer',
         'creation_date' => 'datetime',
         'patient_id' => 'string',
-        'visit_date'=>'date',
+        'visit_date' => 'date',
         'visit_type_id' => 'integer',
         'status_done' => VisitStatusDoneEnum::class,
-        'reason_for_not_done'=> 'string',
+        'reason_for_not_done' => 'string',
         'upload_status' => UploadStatusEnum::class,
-        'state_investigator_form' => 'string',
-        'state_quality_control'=>'string',
+        'state_investigator_form' => InvestigatorFormStateEnum::class,
+        'state_quality_control' => QualityControlStateEnum::class,
         'controller_user_id' => 'integer',
         'control_date' => 'datetime',
         'image_quality_control' => 'boolean',
@@ -35,7 +37,7 @@ class Visit extends Model
         'corrective_action_user_id' => 'integer',
         'corrective_action_date' => 'datetime',
         'corrective_action_new_upload' => 'boolean',
-        'corrective_action_investigator_form'=>'boolean',
+        'corrective_action_investigator_form' => 'boolean',
         'corrective_action_comment' => 'string',
         'corrective_action_applied' => 'boolean'
     ];
@@ -52,7 +54,7 @@ class Visit extends Model
     public function reviewStatus()
     {
         return $this->hasOne(ReviewStatus::class, 'visit_id', 'id')->withDefault(function ($reviewStatus, $visit) {
-            $reviewStatus->review_available = in_array($visit->state_quality_control, ['Accepted', 'Not Needed']);
+            $reviewStatus->review_available = in_array($visit->state_quality_control->value, ['Accepted', 'Not Needed']);
             $reviewStatus->target_lesions = null;
             $reviewStatus->review_status = 'Not Done';
             $reviewStatus->review_conclusion_value = null;

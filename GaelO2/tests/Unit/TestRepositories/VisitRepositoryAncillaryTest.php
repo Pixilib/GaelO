@@ -3,6 +3,8 @@
 namespace Tests\Unit\TestRepositories;
 
 use App\GaelO\Constants\Constants;
+use App\GaelO\Constants\Enums\InvestigatorFormStateEnum;
+use App\GaelO\Constants\Enums\QualityControlStateEnum;
 use App\GaelO\Repositories\VisitRepository;
 use App\Models\Patient;
 use App\Models\Review;
@@ -48,7 +50,7 @@ class VisitRepositoryAncillaryTest extends TestCase
             $visitTypes->each(function ($item, $key) use ($patient, $patient2) {
                 $visit = Visit::factory()->visitTypeId($item->id)->patientId($patient->id)->create();
                 ReviewStatus::factory()->visitId($visit->id)->reviewAvailable()->reviewStatus(Constants::REVIEW_STATUS_NOT_NEEDED)->studyName($patient->study_name)->create();
-                $visit2 = Visit::factory()->visitTypeId($item->id)->uploadDone()->stateInvestigatorForm(Constants::INVESTIGATOR_FORM_DONE)->stateQualityControl(Constants::QUALITY_CONTROL_NOT_NEEDED)->patientId($patient2->id)->create();
+                $visit2 = Visit::factory()->visitTypeId($item->id)->uploadDone()->stateInvestigatorForm(InvestigatorFormStateEnum::DONE->value)->stateQualityControl(QualityControlStateEnum::NOT_NEEDED->value)->patientId($patient2->id)->create();
                 ReviewStatus::factory()->visitId($visit2->id)->studyName($patient->study_name)->create();
             });
         });
@@ -86,7 +88,11 @@ class VisitRepositoryAncillaryTest extends TestCase
     public function testGetPatientHavingOneAwaitingReviewForUser()
     {
         $patient = $this->populateVisits()[0];
-        $answer = $this->visitRepository->getPatientsHavingAtLeastOneAwaitingReviewForUser($patient->study_name, 1, $this->ancillaryStudyName);
+        $studyName = $patient->study_name;
+        $ancillaryStudyName = $this->ancillaryStudyName;
+        $userId = 1;
+        $answer = $this->visitRepository->getPatientsHavingAtLeastOneAwaitingReviewForUser($studyName, 1, $ancillaryStudyName);
+
         $this->assertEquals(1, sizeof($answer));
     }
 

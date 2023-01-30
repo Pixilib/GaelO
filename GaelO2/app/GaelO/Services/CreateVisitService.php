@@ -3,6 +3,8 @@
 namespace App\GaelO\Services;
 
 use App\GaelO\Constants\Constants;
+use App\GaelO\Constants\Enums\InvestigatorFormStateEnum;
+use App\GaelO\Constants\Enums\QualityControlStateEnum;
 use App\GaelO\Entities\VisitTypeEntity;
 use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\VisitTypeRepositoryInterface;
@@ -32,12 +34,12 @@ class CreateVisitService
         $visitTypeData = $this->visitTypeRepositoryInterface->find($visitTypeId, false);
         $visitTypeEntity = VisitTypeEntity::fillFromDBReponseArray($visitTypeData);
 
-        $stateInvestigatorForm = Constants::INVESTIGATOR_FORM_NOT_DONE;
-        $stateQualityControl = Constants::QUALITY_CONTROL_NOT_DONE;
+        $stateInvestigatorForm = InvestigatorFormStateEnum::NOT_DONE->value;
+        $stateQualityControl = QualityControlStateEnum::NOT_DONE->value;
         $stateReview = Constants::REVIEW_STATUS_NOT_DONE;
 
-        if (!$visitTypeEntity->localFormNeeded) $stateInvestigatorForm = Constants::INVESTIGATOR_FORM_NOT_NEEDED;
-        if (!$this->calculateIsNeeded($visitTypeEntity->qcProbability)) $stateQualityControl = Constants::QUALITY_CONTROL_NOT_NEEDED;
+        if (!$visitTypeEntity->localFormNeeded) $stateInvestigatorForm = InvestigatorFormStateEnum::NOT_NEEDED->value;
+        if (!$this->calculateIsNeeded($visitTypeEntity->qcProbability)) $stateQualityControl = QualityControlStateEnum::NOT_NEEDED->value;
         if (!$this->calculateIsNeeded($visitTypeEntity->reviewProbability)) $stateReview = Constants::REVIEW_STATUS_NOT_NEEDED;
 
         $visitId = $this->visitRepositoryInterface->createVisit(

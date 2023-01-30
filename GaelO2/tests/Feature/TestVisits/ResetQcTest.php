@@ -3,6 +3,8 @@
 namespace Tests\Feature\TestVisits;
 
 use App\GaelO\Constants\Constants;
+use App\GaelO\Constants\Enums\InvestigatorFormStateEnum;
+use App\GaelO\Constants\Enums\QualityControlStateEnum;
 use App\Models\Patient;
 use Tests\TestCase;
 use App\Models\Visit;
@@ -29,8 +31,8 @@ class ResetQcTest extends TestCase
         ])
         ->patientId($this->patient->id)
         ->uploadDone()
-        ->stateQualityControl(Constants::QUALITY_CONTROL_NOT_DONE)
-        ->stateInvestigatorForm(Constants::INVESTIGATOR_FORM_DONE)
+        ->stateQualityControl(QualityControlStateEnum::NOT_DONE->value)
+        ->stateInvestigatorForm(InvestigatorFormStateEnum::DONE->value)
         ->create();
 
         $this->studyName = $this->visit->patient->study_name;

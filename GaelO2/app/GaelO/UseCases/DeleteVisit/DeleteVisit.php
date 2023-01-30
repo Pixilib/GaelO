@@ -3,6 +3,7 @@
 namespace App\GaelO\UseCases\DeleteVisit;
 
 use App\GaelO\Constants\Constants;
+use App\GaelO\Constants\Enums\QualityControlStateEnum;
 use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOBadRequestException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
@@ -98,7 +99,7 @@ class DeleteVisit
         }
 
         //If Investigator, only possible to delete Visits with Non finished QC
-        if ($role === Constants::ROLE_INVESTIGATOR && in_array($qcStatus, [Constants::QUALITY_CONTROL_REFUSED, Constants::QUALITY_CONTROL_ACCEPTED])) {
+        if ($role === Constants::ROLE_INVESTIGATOR && in_array($qcStatus, [QualityControlStateEnum::REFUSED->value, QualityControlStateEnum::ACCEPTED->value])) {
             throw new GaelOForbiddenException();
         }
 

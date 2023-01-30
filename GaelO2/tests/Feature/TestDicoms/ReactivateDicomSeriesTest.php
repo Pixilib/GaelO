@@ -3,6 +3,8 @@
 namespace Tests\Feature\TestDicoms;
 
 use App\GaelO\Constants\Constants;
+use App\GaelO\Constants\Enums\InvestigatorFormStateEnum;
+use App\GaelO\Constants\Enums\QualityControlStateEnum;
 use App\Models\DicomSeries;
 use App\Models\Review;
 use App\Models\ReviewStatus;
@@ -27,11 +29,11 @@ class ReactivateDicomSeriesTest extends TestCase
 
         //Fill investigator Form
         $this->investigatorForm = Review::factory()->studyName($this->studyName)->visitId($visit->id)->validated()->create();
-        $visit->state_investigator_form = Constants::INVESTIGATOR_FORM_DONE;
+        $visit->state_investigator_form = InvestigatorFormStateEnum::DONE->value;
         $visit->save();
 
         //Set visit QC at Not Done
-        $this->dicomSeries->dicomStudy->visit->state_quality_control = Constants::QUALITY_CONTROL_NOT_DONE;
+        $this->dicomSeries->dicomStudy->visit->state_quality_control = QualityControlStateEnum::NOT_DONE->value;
         $this->dicomSeries->dicomStudy->visit->save();
     }
 
