@@ -31,7 +31,7 @@ class GetStudy {
 
             $this->checkAuthorization($curentUserId);
 
-            $studyDetail = $this->studyRepositoryInterface->getstudyWithDetails($studyName);
+            $studyDetail = $this->studyRepositoryInterface->getStudyWithDetails($studyName);
 
             $studyDetailResponse = [];
 

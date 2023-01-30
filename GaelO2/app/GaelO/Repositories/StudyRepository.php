@@ -69,7 +69,7 @@ class StudyRepository implements StudyRepositoryInterface
         return $ancilariesStudies->count() == 0 ? [] : $ancilariesStudies->pluck('name')->toArray();
     }
 
-    public function getstudyWithDetails(string $name): array
+    public function getStudyWithDetails(string $name): array
     {
         $studiesDetails = $this->studyModel->with('visitGroups', 'visitGroups.visitTypes')->findOrFail($name);
         return $studiesDetails->toArray();

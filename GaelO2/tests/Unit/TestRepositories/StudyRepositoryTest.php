@@ -67,7 +67,7 @@ class StudyRepositoryTest extends TestCase
 
         $studyName = $visitType->visitGroup->study_name;
 
-        $answer = $this->studyRepository->getstudyWithDetails($studyName);
+        $answer = $this->studyRepository->getStudyWithDetails($studyName);
 
         $this->assertArrayHasKey('visit_groups', $answer);
         $this->assertArrayHasKey('visit_types', $answer['visit_groups'][0]);

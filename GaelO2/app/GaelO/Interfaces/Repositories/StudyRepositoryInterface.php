@@ -19,7 +19,7 @@ interface StudyRepositoryInterface
 
     public function getStudies(bool $withTrashed = false): array;
 
-    public function getstudyWithDetails(string $name): array;
+    public function getStudyWithDetails(string $name): array;
 
     public function getAllStudiesWithDetails(): array;
 
