@@ -26,7 +26,7 @@ class CreateUsersTable extends Migration
             $table->integer('attempts')->default(0)->nullable(false);
             $table->boolean('administrator')->default(false)->nullable(false);
             $table->unsignedInteger('center_code')->nullable(false);
-            $table->enum('job', ['CRA', 'Monitor', 'Nuclearist', 'PI', 'Radiologist', 'Study nurse', 'Supervision'])->nullable(false);
+            $table->string('job', ['CRA', 'Monitor', 'Nuclearist', 'PI', 'Radiologist', 'Study nurse', 'Supervision'])->nullable(false);
             $table->string('orthanc_address')->nullable(true);
             $table->string('orthanc_login')->nullable(true);
             $table->string('orthanc_password')->nullable(true);

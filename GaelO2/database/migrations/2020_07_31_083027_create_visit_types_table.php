@@ -24,7 +24,7 @@ class CreateVisitTypesTable extends Migration
             $table->boolean('optional')->default(false)->nullable(false);
             $table->integer('limit_low_days')->nullable(false);
             $table->integer('limit_up_days')->nullable(false);
-            $table->enum('anon_profile', ['Default', 'Full'])->default('Default')->nullable(false);
+            $table->string('anon_profile', ['Default', 'Full'])->default('Default')->nullable(false);
             $table->json('dicom_constraints')->nullable(false);
             $table->timestamps();
 
