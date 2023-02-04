@@ -115,9 +115,12 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.1.0/papaparse.min.js" crossorigin ></script>
 
+<!-- bowser -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bowser/2.11.0/bundled.js" crossorigin></script>
+
 <!-- GaelO Uploader -->
-<script src="https://unpkg.com/gaelo-uploader@3.4.8/dist/bundle.js" crossorigin ></script>
-<link rel="stylesheet" href="https://unpkg.com/gaelo-uploader@3.4.8/dist/main.css" crossorigin >
+<script src="https://unpkg.com/gaelo-uploader@3.4.11/dist/bundle.js" crossorigin ></script>
+<link rel="stylesheet" href="https://unpkg.com/gaelo-uploader@3.4.11/dist/main.css" crossorigin >
 
 <!-- GaelO CSS -->
 <?php $uploaderVersion="3.7"?>
