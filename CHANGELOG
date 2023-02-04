@@ -1,5 +1,10 @@
 GaelO
 
+-- GaelO 1.11.6 04/02/23 --
+Better detection of uncompatible browser
+Uploader sort visit by visit type order
+Remove robot in favor of no index
+
 -- GaelO 1.11.5 05/01/23 --
 Download dicom now implicit VR LI (for RT compatibility)
 
