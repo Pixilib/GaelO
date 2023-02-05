@@ -1,5 +1,8 @@
 GaelO
 
+-- GaelO 1.11.7 5/02/23 --
+fix typo for browser detection
+
 -- GaelO 1.11.6 04/02/23 --
 Better detection of uncompatible browser
 Uploader sort visit by visit type order
