@@ -19,7 +19,7 @@
  * @package     GaelO
  * @author      Salim Kanoun <Salim.Kanoun@gmail.com>
  */
-define('GAELO_VERSION', '1.11.6');
+define('GAELO_VERSION', '1.11.7');
 header('content-type: text/html; charset=utf-8');
 header("X-Robots-Tag: noindex, nofollow");
 require_once('vendor/autoload.php');
