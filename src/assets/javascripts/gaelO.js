@@ -107,7 +107,7 @@ function µ(str) {
 	return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
 
-function checkBrowserSupportDicomUpload(selectorDom) {
+function isBrowserSupportDicomUpload() {
 
 	const browser = bowser.getParser(window.navigator.userAgent);
 	let isValidBrowser = browser.satisfies({
@@ -120,14 +120,7 @@ function checkBrowserSupportDicomUpload(selectorDom) {
 		safari: ">=15"
 	});
 
-	if (!isValidBrowser) {
-		$(selectorDom).append('\
-			<div class="alert alert-danger" role="alert">\
-				Sorry, your browser does not support the DICOM Uploader. Please use Firefox, Chrome, Edge 90+, Opera 80+, Safari 15+.\
-			</div>\
-		');
-		throw 'ECMAScript6 not supported.';
-	}
+	return isValidBrowser
 }
 
 const preventDefault = function (event) {
@@ -157,6 +150,14 @@ function preventAjaxDivLoading() {
 function allowAjaxDivLoading() {
 	window.removeEventListener('beforeunload', preventDefault);
 	$(document).off('ajaxSend');
+}
+
+function addUnsupportedBrowserMessage(idSelector) {
+	$(idSelector).append('\
+	<div class="alert alert-danger" role="alert">\
+		Sorry, your browser does not support the DICOM Uploader. Please use Firefox, Chrome, Edge 90+, Opera 80+, Safari 15+.\
+	</div>\
+	');
 }
 
 
