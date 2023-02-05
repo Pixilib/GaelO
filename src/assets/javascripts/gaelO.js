@@ -109,7 +109,7 @@ function µ(str) {
 
 function checkBrowserSupportDicomUpload(selectorDom) {
 
-	const browser = Bowser.getParser(window.navigator.userAgent);
+	const browser = bowser.getParser(window.navigator.userAgent);
 	let isValidBrowser = browser.satisfies({
 		// in general
 		chrome: ">=90",
