@@ -1,4 +1,5 @@
 <?php
+
 /**
  Copyright (C) 2018-2020 KANOUN Salim
  This program is free software; you can redistribute it and/or modify
@@ -17,7 +18,7 @@
 <script type="text/javascript">
 	$(document).ready(function() {
 
-		window.refreshInvestigatorDiv = function(){
+		window.refreshInvestigatorDiv = function() {
 			$('#role').val('Investigator');
 			$('#confirmStudyRole').click();
 		}
@@ -31,102 +32,109 @@
 
 		<?php
 		if ($_SESSION['role'] == User::INVESTIGATOR) {
-			?>
+		?>
 
-		$("#uploadApp").on("click", function() {
+			$("#uploadApp").on("click", function() {
 
-			if($("#uploadApp").text()=="Multi Uploader"){
+				if ($("#uploadApp").text() == "Multi Uploader") {
 
-				$("#tree").html('<div id="dicomMutiUploader" style="width:100%"></div>');
+					$("#tree").html('<div id="dicomMutiUploader" style="width:100%"></div>');
 
-				$("#dicomMutiUploader").on("remove", function () {
-					let results = window.gaelo_uploader_instance.closeUploader()
-					console.log('Uploader Removed '+results)
-				})	
+					$("#dicomMutiUploader").on("remove", function() {
+						let results = window.gaelo_uploader_instance.closeUploader()
+						console.log('Uploader Removed ' + results)
+					})
 
-				$.ajax({
-					type: "GET",
-					url: '/scripts/get_possible_import.php',
-					dataType: 'json',
-					success: function(visits) {
-						window.gaelo_uploader_instance = new window.Gaelo_Uploader.GaelOUploader()
-						window.gaelo_uploader_instance.installUploader({
-							minNbOfInstances: 30,
-							availableVisits : visits,
-							tusEndpoint : '/tus',
-							isNewStudy : async (originalOrthancID) => {
-								return new Promise( (resolve, reject) => {
+					let check = isBrowserSupportDicomUpload();
+					if (!check) {
+						addUnsupportedBrowserMessage('#dicomMutiUploader')
+					} else {
+						$.ajax({
+							type: "GET",
+							url: '/scripts/get_possible_import.php',
+							dataType: 'json',
+							success: function(visits) {
+								window.gaelo_uploader_instance = new window.Gaelo_Uploader.GaelOUploader()
+								window.gaelo_uploader_instance.installUploader({
+									minNbOfInstances: 30,
+									availableVisits: visits,
+									tusEndpoint: '/tus',
+									isNewStudy: async (originalOrthancID) => {
+										return new Promise((resolve, reject) => {
+											$.ajax({
+												type: "POST",
+												url: '/scripts/is_new_study.php',
+												//Do not trigger event to avoid conflit with dicomupload listener in parallel
+												global: false,
+												data: {
+													originalOrthancID: originalOrthancID
+												},
+												success: function(data) {
+													resolve((data === 'true'))
+												},
+												error: function() {
+													resolve(false)
+												}
+											});
+										})
+									},
+									onStartUsing: () => {
+										preventAjaxDivLoading()
+									},
+									onStudyUploaded: function validateUpload(visitID, sucessIDsUploaded, numberOfFiles, originalStudyOrthancID) {
 										$.ajax({
-										type: "POST",
-										url: '/scripts/is_new_study.php',
-										//Do not trigger event to avoid conflit with dicomupload listener in parallel
-										global: false,
-										data: {
-											originalOrthancID : originalOrthancID
-										},										
-										success: function(data) {
-											resolve( (data === 'true') )
-										},
-										error : function(){
-											resolve(false)
-										}
-									});
-								})	
-							},
-							onStartUsing: ()=>{
-								preventAjaxDivLoading()
-							},
-							onStudyUploaded : function validateUpload(visitID, sucessIDsUploaded, numberOfFiles, originalStudyOrthancID) {
-								$.ajax({
-									type: "POST",
-									url: '/scripts/validate_dicom_upload_tus.php',
-									//Do not trigger event to avoid conflit with dicomupload listener in parallel
-									global: false,
-									data: {
-										id_visit : visitID,
-										totalDicomFiles : numberOfFiles,
-										sucessIDsUploaded : sucessIDsUploaded,
-										originalOrthancStudyID : originalStudyOrthancID
+											type: "POST",
+											url: '/scripts/validate_dicom_upload_tus.php',
+											//Do not trigger event to avoid conflit with dicomupload listener in parallel
+											global: false,
+											data: {
+												id_visit: visitID,
+												totalDicomFiles: numberOfFiles,
+												sucessIDsUploaded: sucessIDsUploaded,
+												originalOrthancStudyID: originalStudyOrthancID
+											},
+											success: function() {
+												let uploadedVisit = visits.filter((visit) => {
+													return visit.visitID == visitID
+												})[0]
+
+												alertifySuccess('Upload Validation Success Patient : ' + uploadedVisit['patientCode'] + ' Visit : ' + uploadedVisit['visitType'])
+
+											},
+											error: function() {
+												alertifyError('Upload Validation Visit ' + visitID + ' Error, please contact administrator')
+											}
+										});
+
 									},
-									success: function() {
-										let uploadedVisit = visits.filter((visit)=>{
-											return visit.visitID == visitID
-										})[0]
-										
-										alertifySuccess('Upload Validation Success Patient : '+uploadedVisit['patientCode']+' Visit : '+uploadedVisit['visitType'])
-									
-									},
-									error : function(){
-											alertifyError('Upload Validation Visit '+visitID+' Error, please contact administrator')
+									onUploadComplete: () => {
+										alertifySuccess('Upload Finished')
+										allowAjaxDivLoading()
 									}
-								});		
+								}, 'dicomMutiUploader')
+
 
 							},
-							onUploadComplete: ()=>{
-								alertifySuccess('Upload Finished')
-								allowAjaxDivLoading()
+							error: function() {
+								console.log('error');
 							}
-						}, 'dicomMutiUploader')
+						});
 
-						checkBrowserSupportDicomUpload('#dicomMutiUploader');
-					
-					},
-					error : function(){
-						console.log('error');
 					}
-				});		
 
-				$("#uploadApp").html("Exit Uploader");
-				$("#uploadApp").removeClass("btn-dark").addClass("btn-warning");
 
-			}else{
 
-				$("#uploadApp").html("Multi Uploader");
-				$("#uploadApp").removeClass("btn-warning").addClass("btn-dark");
-				refreshInvestigatorDiv();
-			}
-			
-		});
+					$("#uploadApp").html("Exit Uploader");
+					$("#uploadApp").removeClass("btn-dark").addClass("btn-warning");
+
+				} else {
+
+					$("#uploadApp").html("Multi Uploader");
+					$("#uploadApp").removeClass("btn-warning").addClass("btn-dark");
+					refreshInvestigatorDiv();
+				}
+
+			});
 		<?php
 		}
 		?>
@@ -135,7 +143,7 @@
 		$('#containerTree').jstree({
 			"core": {
 				'data': {
-					'global' : false,
+					'global': false,
 					'url': 'scripts/getTree.php',
 					'dataType': 'json',
 					"type": "GET"
@@ -147,120 +155,118 @@
 			"search": {
 				"case_sensitive": false,
 				"show_only_matches": true,
-				"show_only_matches_children" : true
+				"show_only_matches_children": true
 			},
 			//Context menu for filtering actions
 			"contextmenu": {
-				"items": <?php 
-				if ($_SESSION['role'] == User::INVESTIGATOR) {
-					echo('investigatorContextMenu()');
-				} else if ($_SESSION['role'] == User::CONTROLLER) {
-					echo('controllerContextMenu()');
-				} else if ($_SESSION['role'] == User::REVIEWER) {
-					echo('reviewerContextMenu()');
-				} else {
-					echo('{}');
-				} ?>
+				"items": <?php
+							if ($_SESSION['role'] == User::INVESTIGATOR) {
+								echo ('investigatorContextMenu()');
+							} else if ($_SESSION['role'] == User::CONTROLLER) {
+								echo ('controllerContextMenu()');
+							} else if ($_SESSION['role'] == User::REVIEWER) {
+								echo ('reviewerContextMenu()');
+							} else {
+								echo ('{}');
+							} ?>
 
 			}
 		});
 
-		function reviewerContextMenu(){
+		function reviewerContextMenu() {
 
-			return (
-				{
-					"Only Ongoing" : {
-						"label" : "Only Ongoing",
-						"action" : function (object) {
-							filterVisitByClassName("Ongoing")
-						}
-					},
-					"Only Adjucation" : {
-						"label" : "Only Adjudication",
-						"action" : function (object){
-							filterVisitByClassName("WaitAdjudication")
-						}
+			return ({
+				"Only Ongoing": {
+					"label": "Only Ongoing",
+					"action": function(object) {
+						filterVisitByClassName("Ongoing")
+					}
+				},
+				"Only Adjucation": {
+					"label": "Only Adjudication",
+					"action": function(object) {
+						filterVisitByClassName("WaitAdjudication")
+					}
 
-					},
-					"Only PT" : {
-						"label" : "Only PT",
-						"action" : function(object){
-							filterVisitByModality("PT")
-						}
-					},
-					"Only CT" : {
-						"label" : "Only CT",
-						"action" : function(object){
-							filterVisitByModality("CT")
-						}
+				},
+				"Only PT": {
+					"label": "Only PT",
+					"action": function(object) {
+						filterVisitByModality("PT")
+					}
+				},
+				"Only CT": {
+					"label": "Only CT",
+					"action": function(object) {
+						filterVisitByModality("CT")
 					}
 				}
-			)
+			})
 
 		}
 
-		function investigatorContextMenu(){
+		function investigatorContextMenu() {
 
-			return (
-				{
-					"Missing Images" : {
-						"label" : "Missing Images",
-						"action" : function (object) {
-							filterVisitByClassName("NotUpload")
-						}
-					},
-					"Missing Form" : {
-						"label" : "Missing Form",
-						"action" : function (object){
-							filterVisitByClassName("NotForm")
-						}
-					},
-					"Missing Both" : {
-						"label" : "Missing Both",
-						"action" : function (object){
-							filterVisitByClassName("NotBoth")
-						}
+			return ({
+				"Missing Images": {
+					"label": "Missing Images",
+					"action": function(object) {
+						filterVisitByClassName("NotUpload")
+					}
+				},
+				"Missing Form": {
+					"label": "Missing Form",
+					"action": function(object) {
+						filterVisitByClassName("NotForm")
+					}
+				},
+				"Missing Both": {
+					"label": "Missing Both",
+					"action": function(object) {
+						filterVisitByClassName("NotBoth")
 					}
 				}
-			)
+			})
 
 		}
 
-		function controllerContextMenu(){
+		function controllerContextMenu() {
 
-			return (
-				{
-					"Awaiting QC" : {
-						"label" : "Awaiting QC",
-						"action" : function (object) {
-							filterVisitByClassName("NotBoth")
-						}
+			return ({
+				"Awaiting QC": {
+					"label": "Awaiting QC",
+					"action": function(object) {
+						filterVisitByClassName("NotBoth")
 					}
 				}
-			)
+			})
 
 		}
 
 		function filterVisitByModality(modality) {
-			let treeJson = $('#containerTree').jstree(true).get_json('#', {'flat': true})
-			let nodeToRemove = treeJson.filter (function(item) {
-				if( item.icon == "/assets/images/report-icon.png" && item.data.modality != modality ){
+			let treeJson = $('#containerTree').jstree(true).get_json('#', {
+				'flat': true
+			})
+			let nodeToRemove = treeJson.filter(function(item) {
+				if (item.icon == "/assets/images/report-icon.png" && item.data.modality != modality) {
 					return true
 				}
 			})
-			
+
 			$('#containerTree').jstree(true).delete_node(nodeToRemove)
 			removeParentsIfNoChild()
 		}
 
 		function filterVisitByClassName(className) {
-			let treeJson = $('#containerTree').jstree(true).get_json('#', {'flat': true})
-			let ongoingItems = treeJson.filter (function(item) {
-				if( item.icon == "/assets/images/report-icon.png" && item.li_attr.class !== className){
+			let treeJson = $('#containerTree').jstree(true).get_json('#', {
+				'flat': true
+			})
+			let ongoingItems = treeJson.filter(function(item) {
+				if (item.icon == "/assets/images/report-icon.png" && item.li_attr.class !== className) {
 					return true
 				}
 
-			}) 
+			})
 
 			$('#containerTree').jstree(true).delete_node(ongoingItems)
 			removeParentsIfNoChild()
@@ -270,24 +276,26 @@
 		 * Remove parents modality and patient with no childs
 		 * SK : ALGO BOF BOF
 		 */
-		function removeParentsIfNoChild(){
+		function removeParentsIfNoChild() {
 
-			let treeJson = $('#containerTree').jstree(true).get_json('#', {'flat': true})
+			let treeJson = $('#containerTree').jstree(true).get_json('#', {
+				'flat': true
+			})
 
-			let ongoingItems = treeJson.filter (function(item) {
+			let ongoingItems = treeJson.filter(function(item) {
 				//Look at child only for modality level (has _ )
-				if( item.id.includes("_") ) {
+				if (item.id.includes("_")) {
 
 					let child = $('#containerTree').jstree(true).get_children_dom(item.id)
 					//If no child remove the modality level
-					if(child.length == 0){
+					if (child.length == 0) {
 						$('#containerTree').jstree(true).delete_node(item.id)
 					}
 					//Look if parrent still have other modalities
 					let parentChildItems = $('#containerTree').jstree(true).get_children_dom(item.parent)
-					if(parentChildItems.length == 0 ){
+					if (parentChildItems.length == 0) {
 						$('#containerTree').jstree(true).delete_node(item.parent)
-					} 
+					}
 
 				}
 
@@ -307,7 +315,7 @@
 				//Open the selected node
 				$('#containerTree').jstree(true).open_node(selectedPatientNumber);
 
-			} else if ( selectedNode.children.length==0 ) {
+			} else if (selectedNode.children.length == 0) {
 				let selectedPatientNumber = selectedNode.parents[1];
 				let selectedIdVisit = selectedNode.id;
 				//Load visit interface
@@ -349,8 +357,8 @@
 			<button id="documentationButton" class="btn btn-dark">Documentation</button>
 			<?php
 			if ($_SESSION['role'] == User::INVESTIGATOR) {
-				?>
-			<button id="uploadApp" class="btn btn-dark">Multi Uploader</button>
+			?>
+				<button id="uploadApp" class="btn btn-dark">Multi Uploader</button>
 			<?php
 			}
 			?>

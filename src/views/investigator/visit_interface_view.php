@@ -1,4 +1,5 @@
 <?php
+
 /**
  Copyright (C) 2018-2020 KANOUN Salim
  This program is free software; you can redistribute it and/or modify
@@ -20,18 +21,23 @@ if ($visitObject->statusDone == Visit::NOT_DONE) {
 } ?>
 
 <script type="text/javascript">
-    
-	$(document).ready(function(){
-    		$("#formInvestigator").load('/specific_form', {
-    			id_visit : <?=$id_visit?>,
-    			type_visit : '<?=$type_visit?>',
-    			patient_num : <?=$patient_num?>
-            });
-            
-        	//If upload validated display the detailed tables
-            <?php
-			if ($visitObject->uploadStatus == Visit::NOT_DONE && $role === User::INVESTIGATOR) {
-			?>
+	$(document).ready(function() {
+		$("#formInvestigator").load('/specific_form', {
+			id_visit: <?= $id_visit ?>,
+			type_visit: '<?= $type_visit ?>',
+			patient_num: <?= $patient_num ?>
+		});
+
+		//If upload validated display the detailed tables
+		<?php
+		if ($visitObject->uploadStatus == Visit::NOT_DONE && $role === User::INVESTIGATOR) {
+		?>
+
+
+			let check = isBrowserSupportDicomUpload();
+			if (!check) {
+				addUnsupportedBrowserMessage('#dicomUploaderv2')
+			} else {
 
 				$.ajax({
 					type: "GET",
@@ -39,307 +45,304 @@ if ($visitObject->statusDone == Visit::NOT_DONE) {
 					dataType: 'json',
 					success: function(data) {
 
-						let targetVisit = data.filter((visit)=>{
+						let targetVisit = data.filter((visit) => {
 							return visit.visitID === <?= $id_visit ?>
 						})
 
 						window.gaelo_uploader_instance = new window.Gaelo_Uploader.GaelOUploader()
 						window.gaelo_uploader_instance.installUploader({
 							minNbOfInstances: 30,
-							availableVisits : targetVisit,
-							tusEndpoint : '/tus',
-							isNewStudy : async (originalOrthancID) => {
-								return new Promise( (resolve, reject) => {
-										$.ajax({
+							availableVisits: targetVisit,
+							tusEndpoint: '/tus',
+							isNewStudy: async (originalOrthancID) => {
+								return new Promise((resolve, reject) => {
+									$.ajax({
 										type: "POST",
 										url: '/scripts/is_new_study.php',
 										//Do not trigger event to avoid conflit with dicomupload listener in parallel
 										global: false,
 										data: {
-											originalOrthancID : originalOrthancID
+											originalOrthancID: originalOrthancID
 										},
 										success: function(data) {
-											resolve( (data === 'true') )
+											resolve((data === 'true'))
 										},
-										error : function(){
+										error: function() {
 											resolve(false)
 										}
 									});
-								})	
+								})
 							},
-							onStartUsing: ()=>{
+							onStartUsing: () => {
 								preventAjaxDivLoading()
 							},
-							onStudyUploaded : function validateUpload(visitID, sucessIDsUploaded, numberOfFiles, originalStudyOrthancID) {
+							onStudyUploaded: function validateUpload(visitID, sucessIDsUploaded, numberOfFiles, originalStudyOrthancID) {
 								$.ajax({
 									type: "POST",
 									url: '/scripts/validate_dicom_upload_tus.php',
 									//Do not trigger event to avoid conflit with dicomupload listener in parallel
 									global: false,
 									data: {
-										id_visit : visitID,
-										totalDicomFiles : numberOfFiles,
-										sucessIDsUploaded : sucessIDsUploaded,
-										originalOrthancStudyID : originalStudyOrthancID
+										id_visit: visitID,
+										totalDicomFiles: numberOfFiles,
+										sucessIDsUploaded: sucessIDsUploaded,
+										originalOrthancStudyID: originalStudyOrthancID
 									},
 									success: function() {
-										let uploadedVisit = targetVisit.filter((visit)=>{
+										let uploadedVisit = targetVisit.filter((visit) => {
 											return visit.visitID == visitID
 										})[0]
-										
-										alertifySuccess('Upload Validation Success Patient : '+uploadedVisit['patientCode']+' Visit : '+uploadedVisit['visitType'])
-									
-								},
-								error : function(){
-										alertifyError('Upload Validation Visit '+visitID+' Error, please contact administrator')
-								}
-								});		
+
+										alertifySuccess('Upload Validation Success Patient : ' + uploadedVisit['patientCode'] + ' Visit : ' + uploadedVisit['visitType'])
+
+									},
+									error: function() {
+										alertifyError('Upload Validation Visit ' + visitID + ' Error, please contact administrator')
+									}
+								});
 
 							},
-							onUploadComplete: ()=>{
+							onUploadComplete: () => {
 								alertifySuccess('Upload Finished')
 								allowAjaxDivLoading()
 								refreshDivContenu()
 							}
 						}, 'dicomUploaderv2')
-						checkBrowserSupportDicomUpload('#dicomUploaderv2');
-					
+
 					},
-					error : function(){
+					error: function() {
 						console.log('error');
 					}
-				});	
+				});
 
-				$("#dicomUploaderv2").on("remove", function () {
-					let results = window.gaelo_uploader_instance.closeUploader()
-					console.log('Uploader Removed '+results)
-				})	
-               
-           <?php
 			}
+
+
+			$("#dicomUploaderv2").on("remove", function() {
+				let results = window.gaelo_uploader_instance.closeUploader()
+				console.log('Uploader Removed ' + results)
+			})
+
+		<?php
+		}
+		?>
+
+		//If current user is controller diplay the quality controle form, the included QC form is disabled according to QC status
+		<?php
+		if ($role == User::CONTROLLER && ($visitObject->stateQualityControl == Visit::QC_NOT_DONE || $visitObject->stateQualityControl == Visit::QC_WAIT_DEFINITVE_CONCLUSION)) {
+		?>
+			$("#controlerForm").load('/controller_form', {
+				id_visit: <?= $id_visit ?>,
+				type_visit: '<?= $type_visit ?>',
+				patient_num: <?= $patient_num ?>
+			});
+
+			<?php
+			// If investigator has reponded to the quality control, display the corrective action form
+			if ($visitObject->stateQualityControl == Visit::QC_WAIT_DEFINITVE_CONCLUSION) {
 			?>
-          
-			//If current user is controller diplay the quality controle form, the included QC form is disabled according to QC status
-	       <?php
-			if ($role == User::CONTROLLER && ($visitObject->stateQualityControl == Visit::QC_NOT_DONE || $visitObject->stateQualityControl == Visit::QC_WAIT_DEFINITVE_CONCLUSION)) {
-				?>  
-                $("#controlerForm").load('/controller_form', {
-                    id_visit : <?= $id_visit ?>,
-                    type_visit : '<?= $type_visit ?>',
-                    patient_num : <?= $patient_num ?>
-                });
-    
-    	       <?php
-				// If investigator has reponded to the quality control, display the corrective action form
-				if ($visitObject->stateQualityControl == Visit::QC_WAIT_DEFINITVE_CONCLUSION) {
-				?>
-            		$("#correctiveAction").load('/corrective_action', {
-            			id_visit : <?= $id_visit ?>,
-            			type_visit : '<?= $type_visit ?>',
-            			patient_num : <?= $patient_num ?>
-            		});
-    	       <?php
+				$("#correctiveAction").load('/corrective_action', {
+					id_visit: <?= $id_visit ?>,
+					type_visit: '<?= $type_visit ?>',
+					patient_num: <?= $patient_num ?>
+				});
+			<?php
+			}
+		}
+
+		// If corrective action is asked, display the corrective action form for investigator (or monitor)
+		if ($visitObject->stateQualityControl == Visit::QC_CORRECTIVE_ACTION_ASKED && ($role == User::INVESTIGATOR || $role == User::MONITOR)) {
+			?>
+			$("#correctiveAction").load('/corrective_action', {
+				id_visit: <?= $id_visit ?>,
+				type_visit: '<?= $type_visit ?>',
+				patient_num: <?= $patient_num ?>
+			});
+
+			$("#controlerForm").load('/controller_form', {
+				id_visit: <?= $id_visit ?>,
+				type_visit: '<?= $type_visit ?>',
+				patient_num: <?= $patient_num ?>
+			});
+
+		<?php
+		}
+		if ($role == User::REVIEWER || ($role == User::INVESTIGATOR && $visitObject->uploadStatus == Visit::DONE) || ($role == User::CONTROLLER && ($visitObject->stateQualityControl == Visit::QC_NOT_DONE || $visitObject->stateQualityControl == Visit::QC_WAIT_DEFINITVE_CONCLUSION))) {
+		?>
+			$("#reviewerDownloadDicomBtn").on('click', function() {
+				$("#downloadForm").submit();
+			});
+
+			$("#OHIFViewer").on('click', function() {
+				var win = null
+				if ("<?= $visitObject->getVisitGroup()->groupModality ?>" === 'PT') {
+					//win = window.open('/viewer-ohif/tmtv?StudyInstanceUIDs=<?= $visitObject->getStudyDicomDetails()->studyUID ?>', '_blank');
+					//Until debuging TMTV with NAC
+					win = window.open('/viewer-ohif/viewer?StudyInstanceUIDs=<?= $visitObject->getStudyDicomDetails()->studyUID ?>', '_blank');
+				} else {
+					win = window.open('/viewer-ohif/viewer?StudyInstanceUIDs=<?= $visitObject->getStudyDicomDetails()->studyUID ?>', '_blank');
 				}
-			}
-    
-			// If corrective action is asked, display the corrective action form for investigator (or monitor)
-			if ($visitObject->stateQualityControl == Visit::QC_CORRECTIVE_ACTION_ASKED && ($role == User::INVESTIGATOR || $role == User::MONITOR)) {
-				?>
-            		$("#correctiveAction").load('/corrective_action', {
-            			id_visit : <?=$id_visit?>,
-            			type_visit : '<?=$type_visit?>',
-            			patient_num : <?=$patient_num?>
-            		});
-            	
-            		$("#controlerForm").load('/controller_form', {
-            			id_visit : <?=$id_visit?>,
-            			type_visit : '<?=$type_visit?>',
-            			patient_num : <?=$patient_num?>
-            		});
-        
-            	<?php
-			}
-			if ($role == User::REVIEWER || ($role == User::INVESTIGATOR && $visitObject->uploadStatus == Visit::DONE) || ($role == User::CONTROLLER && ($visitObject->stateQualityControl == Visit::QC_NOT_DONE || $visitObject->stateQualityControl == Visit::QC_WAIT_DEFINITVE_CONCLUSION))) {
-				?>
-            		$("#reviewerDownloadDicomBtn").on('click', function() {
-            			$("#downloadForm").submit();
-            		});
-            		
-            		$("#OHIFViewer").on('click', function() {
-						var win = null
-						if( "<?= $visitObject->getVisitGroup()->groupModality ?>"  === 'PT' ) {
-							//win = window.open('/viewer-ohif/tmtv?StudyInstanceUIDs=<?=$visitObject->getStudyDicomDetails()->studyUID ?>', '_blank');
-							//Until debuging TMTV with NAC
-							win = window.open('/viewer-ohif/viewer?StudyInstanceUIDs=<?=$visitObject->getStudyDicomDetails()->studyUID ?>', '_blank');
-						}else {
-							win = window.open('/viewer-ohif/viewer?StudyInstanceUIDs=<?=$visitObject->getStudyDicomDetails()->studyUID ?>', '_blank');
-						}
 
-            			if (win) {
-                            //Browser has allowed it to be opened
-                            win.focus();
-                        } else {
-                            //Browser has blocked it
-                            alert('Please allow popups for this website');
-                        }
-            		});
+				if (win) {
+					//Browser has allowed it to be opened
+					win.focus();
+				} else {
+					//Browser has blocked it
+					alert('Please allow popups for this website');
+				}
+			});
 
-					$("#OHIFViewerGaelO").on('click', function() {
-						var win = window.open('/viewer-ohif/gaelo?StudyInstanceUIDs=<?=$visitObject->getStudyDicomDetails()->studyUID ?>', '_blank');
-						
-            			if (win) {
-                            //Browser has allowed it to be opened
-                            win.focus();
-                        } else {
-                            //Browser has blocked it
-                            alert('Please allow popups for this website');
-                        }
-            		});
+			$("#OHIFViewerGaelO").on('click', function() {
+				var win = window.open('/viewer-ohif/gaelo?StudyInstanceUIDs=<?= $visitObject->getStudyDicomDetails()->studyUID ?>', '_blank');
 
-					$("#StoneViewerStudy").on('click', function() {
-            			var win = window.open('/stone/index.html?study=<?=$visitObject->getStudyDicomDetails()->studyUID ?>', '_blank');
-                        if (win) {
-                            //Browser has allowed it to be opened
-                            win.focus();
-                        } else {
-                            //Browser has blocked it
-                            alert('Please allow popups for this website');
-                        }
-            		});
+				if (win) {
+					//Browser has allowed it to be opened
+					win.focus();
+				} else {
+					//Browser has blocked it
+					alert('Please allow popups for this website');
+				}
+			});
 
-					$("#StoneViewerPatient").on('click', function() {
-            			var win = window.open('/stone/index.html?patient=<?=$visitObject->patientCode ?>', '_blank');
-                        if (win) {
-                            //Browser has allowed it to be opened
-                            win.focus();
-                        } else {
-                            //Browser has blocked it
-                            alert('Please allow popups for this website');
-                        }
-            		});
-        	    <?php
-			}
-			?>
+			$("#StoneViewerStudy").on('click', function() {
+				var win = window.open('/stone/index.html?study=<?= $visitObject->getStudyDicomDetails()->studyUID ?>', '_blank');
+				if (win) {
+					//Browser has allowed it to be opened
+					win.focus();
+				} else {
+					//Browser has blocked it
+					alert('Please allow popups for this website');
+				}
+			});
+
+			$("#StoneViewerPatient").on('click', function() {
+				var win = window.open('/stone/index.html?patient=<?= $visitObject->patientCode ?>', '_blank');
+				if (win) {
+					//Browser has allowed it to be opened
+					win.focus();
+				} else {
+					//Browser has blocked it
+					alert('Please allow popups for this website');
+				}
+			});
+		<?php
+		}
+		?>
 
 	});
-	
-	function refreshDivContenu(){
+
+	function refreshDivContenu() {
 		$('#contenu').load('/visit_interface', {
-				id_visit : <?=$id_visit?>,
-				type_visit : '<?=$type_visit?>',
-				patient_num : <?=$patient_num?>
+			id_visit: <?= $id_visit ?>,
+			type_visit: '<?= $type_visit ?>',
+			patient_num: <?= $patient_num ?>
 		});
 		$('#containerTree').jstree(true).refresh();
 	};
 
 	<?php if ($visitObject->uploadStatus == Visit::UPLOAD_PROCESSING) {
-		
-		?>
-	    function refreshUploadStatus(){
-	        $.ajax({
-	            type: "POST",
-	            url: '/scripts/get_upload_status.php',
+
+	?>
+
+		function refreshUploadStatus() {
+			$.ajax({
+				type: "POST",
+				url: '/scripts/get_upload_status.php',
 				dataType: 'json',
 				//Do not trigger event to avoid conflit with dicomupload listener in parallel
 				global: false,
-	            data: {id_visit:<?=$id_visit?>},
+				data: {
+					id_visit: <?= $id_visit ?>
+				},
 				success: function(data) {
-		           //Update the span of the upload status
-					var spinner=$('#spinnerUploadDiv<?=$visitObject->id_visit?>');
-					var uploadStatusLabel=$('#uploadStatusLabel<?=$visitObject->id_visit?>');
-					var checkIcon=$('#checkIconDiv<?=$visitObject->id_visit?>');
-					
+					//Update the span of the upload status
+					var spinner = $('#spinnerUploadDiv<?= $visitObject->id_visit ?>');
+					var uploadStatusLabel = $('#uploadStatusLabel<?= $visitObject->id_visit ?>');
+					var checkIcon = $('#checkIconDiv<?= $visitObject->id_visit ?>');
+
 					uploadStatusLabel.html(data);
-					
-		        	if(data == "<?=Visit::UPLOAD_PROCESSING?>"){
-		        		spinner.show();
-		        		setTimeout(refreshUploadStatus, 5000);
-		        	}else if(data=="<?= Visit::DONE ?>"){
-		        		checkIcon.show();
-		        		uploadStatusLabel.css("color", "green");
-		        		spinner.hide();
-		        		<?php if ($visitObject->stateInvestigatorForm == Visit::DONE) {
-							?>
-		        			refreshDivContenu();
-		        			<?php
-						}?>
-		        	}else{
-		        		spinner.hide();
-		        		uploadStatusLabel.css("color", "red");
-		        		checkIcon.hide();
-		        	}
-	           },
-	           error : function(){
-		           console.log('error');
-	           }
-			});		
+
+					if (data == "<?= Visit::UPLOAD_PROCESSING ?>") {
+						spinner.show();
+						setTimeout(refreshUploadStatus, 5000);
+					} else if (data == "<?= Visit::DONE ?>") {
+						checkIcon.show();
+						uploadStatusLabel.css("color", "green");
+						spinner.hide();
+						<?php if ($visitObject->stateInvestigatorForm == Visit::DONE) {
+						?>
+							refreshDivContenu();
+						<?php
+						} ?>
+					} else {
+						spinner.hide();
+						uploadStatusLabel.css("color", "red");
+						checkIcon.hide();
+					}
+				},
+				error: function() {
+					console.log('error');
+				}
+			});
 
 		}
 
-	    $( document ).ready(function() {
-	    	refreshUploadStatus();
-	    });
-	
+		$(document).ready(function() {
+			refreshUploadStatus();
+		});
 
-	<?php 
-	    
-	}?>
 
-    	
-    </script>
+	<?php
+
+	} ?>
+</script>
 
 <?php
 // Status reminder
 if ($role != User::REVIEWER) {
-	?>
-    <div class="bloc_bordures text-center mt-3 mb-3">
-		<label><b>Upload Status:</b> <span id="uploadStatusLabel<?=$visitObject->id_visit?>"><?=$visitObject->uploadStatus?> </span> </label>
-    	<span id="spinnerUploadDiv<?=$visitObject->id_visit?>" class="spinner-border text-primary" role="status" style="display: none;">
+?>
+	<div class="bloc_bordures text-center mt-3 mb-3">
+		<label><b>Upload Status:</b> <span id="uploadStatusLabel<?= $visitObject->id_visit ?>"><?= $visitObject->uploadStatus ?> </span> </label>
+		<span id="spinnerUploadDiv<?= $visitObject->id_visit ?>" class="spinner-border text-primary" role="status" style="display: none;">
 			<span class="sr-only">Loading...</span>
 		</span>
-		<span id="checkIconDiv<?=$visitObject->id_visit?>" style="display: none;">
+		<span id="checkIconDiv<?= $visitObject->id_visit ?>" style="display: none;">
 			<svg xmlns="http://www.w3.org/2000/svg" width="12" height="16" viewBox="0 0 12 16">
-				<path fill-rule="evenodd" d="M12 5l-8 8-4-4 1.5-1.5L4 10l6.5-6.5L12 5z"/>
+				<path fill-rule="evenodd" d="M12 5l-8 8-4-4 1.5-1.5L4 10l6.5-6.5L12 5z" />
 			</svg>
 		</span>
 		<br>
-		<label><b>Quality Control Status:</b> <?=$visitObject->stateQualityControl?></label>
-    </div>
-    <?php
+		<label><b>Quality Control Status:</b> <?= $visitObject->stateQualityControl ?></label>
+	</div>
+<?php
 }
 // If reviewer or controler with awaiting QC action add an invisible form and a button to make dicom zip dowload
 if ($role == User::REVIEWER || ($role == User::INVESTIGATOR && $visitObject->uploadStatus == Visit::DONE) || ($role == User::CONTROLLER && ($visitObject->stateQualityControl == Visit::QC_WAIT_DEFINITVE_CONCLUSION || $visitObject->stateQualityControl == Visit::QC_NOT_DONE))) {
-	?>
-    <div class="text-center mt-3 mb-3">
-    	<input class="btn btn-primary" type="button"
-    		id="reviewerDownloadDicomBtn" value="Download DICOM">
+?>
+	<div class="text-center mt-3 mb-3">
+		<input class="btn btn-primary" type="button" id="reviewerDownloadDicomBtn" value="Download DICOM">
 
 		<div id="dropdown_ohif" style="display: inline-block">
-			<input id="btn_ohif"  class="btn btn-primary dropdown-toggle" type="button" value="OHIF Viewer" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+			<input id="btn_ohif" class="btn btn-primary dropdown-toggle" type="button" value="OHIF Viewer" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 			<div class="dropdown-menu">
-				<a class="dropdown-item" href="#" 
-				id="OHIFViewer">Default Viewer</a>
-				<a class="dropdown-item" href="#" 
-				id="OHIFViewerGaelO">GaelO Mode (experimental)</a>
+				<a class="dropdown-item" href="#" id="OHIFViewer">Default Viewer</a>
+				<a class="dropdown-item" href="#" id="OHIFViewerGaelO">GaelO Mode (experimental)</a>
 			</div>
 		</div>
 
 		<div id="dropdown_stone" style="display: inline-block">
-			<input id="btn_stone"  class="btn btn-primary dropdown-toggle" type="button" value="Stone Viewer" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+			<input id="btn_stone" class="btn btn-primary dropdown-toggle" type="button" value="Stone Viewer" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 			<div class="dropdown-menu" aria-labelledby="btn_statistics">
-				<a class="dropdown-item" href="#" 
-				id="StoneViewerPatient" value="Patient">Patient Level</a>
-				<a class="dropdown-item" href="#" 
-				id="StoneViewerStudy" value="Study">Study Level</a>
+				<a class="dropdown-item" href="#" id="StoneViewerPatient" value="Patient">Patient Level</a>
+				<a class="dropdown-item" href="#" id="StoneViewerStudy" value="Study">Study Level</a>
 			</div>
 		</div>
 
-    </div>
-    <form id="downloadForm" method="post"
-    	action="scripts/download_dicom.php">
-    	<input type="hidden" name="id_visit" value="<?=$id_visit?>">
-    
-    </form>
+	</div>
+	<form id="downloadForm" method="post" action="scripts/download_dicom.php">
+		<input type="hidden" name="id_visit" value="<?= $id_visit ?>">
+
+	</form>
 
 <?php
 }
@@ -357,10 +360,11 @@ if ($visitObject->uploadStatus == Visit::DONE && $role != User::REVIEWER) {
 <div id="formInvestigator"></div>
 
 <?php
-function replaceEmpty($data) {
+function replaceEmpty($data)
+{
 	if (empty($data)) {
 		return ('/');
-	}else {
+	} else {
 		return (htmlspecialchars($data));
 	}
 }
@@ -370,16 +374,16 @@ function replaceEmpty($data) {
 function build_table_series($role, $visitObject)
 {
 	// Get Series Object Array with details
-	$data_series=$visitObject->getSeriesDetails();
-    
-	$series_number=count($data_series);
-    
+	$data_series = $visitObject->getSeriesDetails();
+
+	$series_number = count($data_series);
+
 	if ($series_number == 0) return;
-    
-	$colspan=$series_number+1;
-	?>
+
+	$colspan = $series_number + 1;
+?>
 	<div class="accordion mt-3" id="accordionExample">
-		<div >
+		<div>
 			<div id="headingOne">
 				<h2 class="mb-0">
 					<button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#seriesDetails" aria-expanded="true" aria-controls="collapseOne">
@@ -389,207 +393,207 @@ function build_table_series($role, $visitObject)
 			</div>
 
 			<div id="seriesDetails" class="show mt-3" aria-labelledby="headingOne" data-parent="#accordionExample">
-			<div>
-				<div style="overflow-x:auto;"> 
-					<table id="tab_series" class="table table-borderless table-striped">
-						<tr>
-							<th colspan=<?=$colspan ?>>Series information</th>
-						</tr>
-						<tr>
-							<td>Series Number</td>
-							<?php 
-							for ($i=0; $i < $series_number; $i++) {
-								if (empty($data_series[$i]->seriesNumber))
-									?>
-									<td> 
-										<?=replaceEmpty($data_series[$i]->seriesNumber)?>
+				<div>
+					<div style="overflow-x:auto;">
+						<table id="tab_series" class="table table-borderless table-striped">
+							<tr>
+								<th colspan=<?= $colspan ?>>Series information</th>
+							</tr>
+							<tr>
+								<td>Series Number</td>
+								<?php
+								for ($i = 0; $i < $series_number; $i++) {
+									if (empty($data_series[$i]->seriesNumber))
+								?>
+									<td>
+										<?= replaceEmpty($data_series[$i]->seriesNumber) ?>
 									</td>
-							<?php 
-							}?>
-						</tr>
-						<tr>
-							<td>Manufacturer</td>
-							<?php 
-							for ($i=0; $i < $series_number; $i++) {
+								<?php
+								} ?>
+							</tr>
+							<tr>
+								<td>Manufacturer</td>
+								<?php
+								for ($i = 0; $i < $series_number; $i++) {
 								?>
-								<td>
-									<?=replaceEmpty($data_series[$i]->manufacturer)?>
-								</td>
-						<?php 
-							}?>
-						</tr>
-						<tr>
-							<td>Series Description</td>
-							<?php 
-							for ($i=0; $i < $series_number; $i++) {
+									<td>
+										<?= replaceEmpty($data_series[$i]->manufacturer) ?>
+									</td>
+								<?php
+								} ?>
+							</tr>
+							<tr>
+								<td>Series Description</td>
+								<?php
+								for ($i = 0; $i < $series_number; $i++) {
 								?>
-								<td>
-									<?=replaceEmpty($data_series[$i]->seriesDescription)?>
-								</td>
-						<?php 
-							}
-							?>
-						</tr>
-						<tr>
-							<td>Modality</td>
-							<?php 
-							for ($i=0; $i < $series_number; $i++) {
-								?>
-								<td>
-									<?=replaceEmpty($data_series[$i]->modality)?>
-								</td>
-						<?php 
-							}
-							?>
-						</tr>
-						<tr>
-							<td>Acquisition Date Time</td>
-							<?php 
-							for ($i=0; $i < $series_number; $i++) {
-								?>
-								<td>
-									<?=replaceEmpty($data_series[$i]->acquisitionDateTime)?>
-								</td>
-						<?php 
-							}
-							?>
-						</tr>
-						<tr>
-							<td>Total Dose (MBq)</td>
-							<?php 
-							for ($i=0; $i < $series_number; $i++) {
-								?>
-								<td>
-								<?php if (empty($data_series[$i]->injectedDose)) {
-									echo('/');
-								}else {
-									echo(htmlspecialchars($data_series[$i]->injectedDose/10 ** 6));
+									<td>
+										<?= replaceEmpty($data_series[$i]->seriesDescription) ?>
+									</td>
+								<?php
 								}
 								?>
-								</td>
-							<?php
-							}
-							?>
-						</tr>
-						<tr>
-							<td>Radiopharmaceutical</td>
-							<?php 
-							for ($i=0; $i < $series_number; $i++) {
+							</tr>
+							<tr>
+								<td>Modality</td>
+								<?php
+								for ($i = 0; $i < $series_number; $i++) {
 								?>
-								<td>
-									<?=replaceEmpty($data_series[$i]->radiopharmaceutical)?>
-								</td>
-						<?php 
-							}
-							?>
-						</tr>
-						<tr>
-							<td>Injection Date Time</td>
-							<?php 
-							for ($i=0; $i < $series_number; $i++) {
-								?>
-								<td>
-									<?=replaceEmpty($data_series[$i]->injectedDateTime)?>
-								</td>
-						<?php 
-							}
-							?>
-						</tr>
-						<tr>
-							<td>Radiopharm. Specific Activity (MBq)</td>
-							<?php 
-							for ($i=0; $i < $series_number; $i++) {
-								?>
-								<td>
-								<?php if (empty($data_series[$i]->injectedActivity)) {
-									echo('/');
-								}else {
-									echo(htmlspecialchars($data_series[$i]->injectedActivity/10 ** 6));
+									<td>
+										<?= replaceEmpty($data_series[$i]->modality) ?>
+									</td>
+								<?php
 								}
 								?>
-								</td>
+							</tr>
+							<tr>
+								<td>Acquisition Date Time</td>
+								<?php
+								for ($i = 0; $i < $series_number; $i++) {
+								?>
+									<td>
+										<?= replaceEmpty($data_series[$i]->acquisitionDateTime) ?>
+									</td>
+								<?php
+								}
+								?>
+							</tr>
+							<tr>
+								<td>Total Dose (MBq)</td>
+								<?php
+								for ($i = 0; $i < $series_number; $i++) {
+								?>
+									<td>
+										<?php if (empty($data_series[$i]->injectedDose)) {
+											echo ('/');
+										} else {
+											echo (htmlspecialchars($data_series[$i]->injectedDose / 10 ** 6));
+										}
+										?>
+									</td>
+								<?php
+								}
+								?>
+							</tr>
+							<tr>
+								<td>Radiopharmaceutical</td>
+								<?php
+								for ($i = 0; $i < $series_number; $i++) {
+								?>
+									<td>
+										<?= replaceEmpty($data_series[$i]->radiopharmaceutical) ?>
+									</td>
+								<?php
+								}
+								?>
+							</tr>
+							<tr>
+								<td>Injection Date Time</td>
+								<?php
+								for ($i = 0; $i < $series_number; $i++) {
+								?>
+									<td>
+										<?= replaceEmpty($data_series[$i]->injectedDateTime) ?>
+									</td>
+								<?php
+								}
+								?>
+							</tr>
+							<tr>
+								<td>Radiopharm. Specific Activity (MBq)</td>
+								<?php
+								for ($i = 0; $i < $series_number; $i++) {
+								?>
+									<td>
+										<?php if (empty($data_series[$i]->injectedActivity)) {
+											echo ('/');
+										} else {
+											echo (htmlspecialchars($data_series[$i]->injectedActivity / 10 ** 6));
+										}
+										?>
+									</td>
+								<?php
+								}
+								?>
+							</tr>
+							<tr>
+								<td>Half Life (s)</td>
+								<?php
+								for ($i = 0; $i < $series_number; $i++) {
+								?>
+									<td>
+										<?= replaceEmpty($data_series[$i]->halfLife) ?>
+									</td>
+								<?php
+								}
+								?>
+							</tr>
+							<tr>
+								<td>Patient's Weight (kg)</td>
+								<?php
+								for ($i = 0; $i < $series_number; $i++) {
+								?>
+									<td>
+										<?= replaceEmpty($data_series[$i]->patientWeight) ?>
+									</td>
+								<?php
+								}
+								?>
+							</tr>
+							<tr>
+								<td>Slice Count</td>
+								<?php
+								for ($i = 0; $i < $series_number; $i++) {
+								?>
+									<td>
+										<?= replaceEmpty($data_series[$i]->numberInstances) ?>
+									</td>
+								<?php
+								}
+								?>
+							</tr>
+							<tr>
+								<td>Upload Date</td>
+								<?php
+								for ($i = 0; $i < $series_number; $i++) {
+								?>
+									<td>
+										<?= replaceEmpty($data_series[$i]->studyDetailsObject->uploadDate) ?>
+									</td>
+								<?php
+								}
+								?>
+							</tr>
 							<?php
-							}
-							?>
-						</tr>
-						<tr>
-							<td>Half Life (s)</td>
-							<?php 
-							for ($i=0; $i < $series_number; $i++) {
-								?>
-								<td>
-									<?=replaceEmpty($data_series[$i]->halfLife)?>
-								</td>
-							<?php 
-							}
-							?>
-						</tr>
-						<tr>
-							<td>Patient's Weight (kg)</td>
-							<?php 
-							for ($i=0; $i < $series_number; $i++) {
-								?>
-								<td>
-									<?=replaceEmpty($data_series[$i]->patientWeight)?>
-								</td>
-							<?php 
-							}
-							?>
-						</tr>
-						<tr>
-							<td>Slice Count</td>
-							<?php 
-							for ($i=0; $i < $series_number; $i++) {
-								?>
-								<td>
-									<?=replaceEmpty($data_series[$i]->numberInstances)?>
-								</td>
-							<?php 
-							}
-							?>
-						</tr>
-						<tr>
-							<td>Upload Date</td>
-							<?php 
-							for ($i=0; $i < $series_number; $i++) {
-								?>
-								<td>
-									<?=replaceEmpty($data_series[$i]->studyDetailsObject->uploadDate)?>
-								</td>
-							<?php 
-							}
-							?>
-						</tr>
-						<?php 
-						if (($role == User::INVESTIGATOR || $role == User::CONTROLLER) && ($visitObject->stateQualityControl != Visit::QC_ACCEPTED && $visitObject->stateQualityControl != Visit::QC_REFUSED)) {
-						?><tr>
-							<td>Delete</td>
-						<?php 
-						for ($i=0; $i < $series_number; $i++) {
-							?>
-							<td>
-								<a href=scripts/change_series_deletion.php?action=delete&Series_Orthanc_Id=<?=htmlspecialchars($data_series[$i]->seriesOrthancID)?> class="ajaxLinkConfirm" ><input class="btn btn-danger" type="button" value="Delete Series"></a>
-							</td>
-						<?php 
-						}
-						?>
-						</tr>
-						<tr>
-							<td colspan="<?=$colspan?>">
-								<a href=scripts/change_series_deletion.php?action=delete&Series_Orthanc_Id=allVisit<?=$visitObject->id_visit?> class="ajaxLinkConfirm" ><input class="btn btn-danger" type="button" value="Delete All (Reset Upload)"></a>
-							</td>
-						</tr>
-					<?php 
-					}?>
-					</table> 
+							if (($role == User::INVESTIGATOR || $role == User::CONTROLLER) && ($visitObject->stateQualityControl != Visit::QC_ACCEPTED && $visitObject->stateQualityControl != Visit::QC_REFUSED)) {
+							?><tr>
+									<td>Delete</td>
+									<?php
+									for ($i = 0; $i < $series_number; $i++) {
+									?>
+										<td>
+											<a href=scripts/change_series_deletion.php?action=delete&Series_Orthanc_Id=<?= htmlspecialchars($data_series[$i]->seriesOrthancID) ?> class="ajaxLinkConfirm"><input class="btn btn-danger" type="button" value="Delete Series"></a>
+										</td>
+									<?php
+									}
+									?>
+								</tr>
+								<tr>
+									<td colspan="<?= $colspan ?>">
+										<a href=scripts/change_series_deletion.php?action=delete&Series_Orthanc_Id=allVisit<?= $visitObject->id_visit ?> class="ajaxLinkConfirm"><input class="btn btn-danger" type="button" value="Delete All (Reset Upload)"></a>
+									</td>
+								</tr>
+							<?php
+							} ?>
+						</table>
+					</div>
 				</div>
-			</div>
 			</div>
 		</div>
 	</div>
-	
-	
-	
-<?php 
+
+
+
+<?php
 }
 ?>
