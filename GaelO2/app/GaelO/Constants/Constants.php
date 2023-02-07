@@ -1,21 +1,14 @@
 <?php
 
 namespace App\GaelO\Constants;
-class Constants {
+
+class Constants
+{
 
     const USER_EMAIL_NOT_VERIFIED = 'Email Not Verified';
     const USER_DELETED = 'User Deleted';
     const USER_BLOCKED = 'User Blocked';
     const USER_NOT_ONBOARDED = 'User Missing Onboarding';
-
-    const USER_JOB_CRA = 'CRA';
-    const USER_JOB_SUPERVISION = 'Supervision';
-    const USER_JOB_RADIOLOGIST = 'Radiologist';
-
-    const PATIENT_INCLUSION_STATUS_INCLUDED = "Included";
-    const PATIENT_INCLUSION_STATUS_PRE_INCLUDED = "Pre Included";
-    const PATIENT_INCLUSION_STATUS_EXCLUDED = "Excluded";
-    const PATIENT_INCLUSION_STATUS_WITHDRAWN = "Withdrawn";
 
     const ROLE_INVESTIGATOR = "Investigator";
     const ROLE_MONITOR = "Monitor";
@@ -70,34 +63,7 @@ class Constants {
     const TRACKER_ROLE_ADMINISTRATOR = "Administrator";
     const TRACKER_VALIDATED_DOCUMENTATION = "Validated Documentation";
 
-    const INVESTIGATOR_FORM_NOT_DONE = "Not Done";
-    const INVESTIGATOR_FORM_DONE = "Done";
-    const INVESTIGATOR_FORM_NOT_NEEDED = "Not Needed";
-    const INVESTIGATOR_FORM_DRAFT = "Draft";
-
-    const VISIT_STATUS_DONE = "Done";
-    const VISIT_STATUS_NOT_DONE = "Not Done";
-
-    const QUALITY_CONTROL_NOT_DONE = "Not Done";
-    const QUALITY_CONTROL_NOT_NEEDED = "Not Needed";
-    const QUALITY_CONTROL_WAIT_DEFINITIVE_CONCLUSION = "Wait Definitive Conclusion";
-    const QUALITY_CONTROL_CORRECTIVE_ACTION_ASKED = "Corrective Action Asked";
-    const QUALITY_CONTROL_REFUSED = "Refused";
-    const QUALITY_CONTROL_ACCEPTED = "Accepted";
-
-    const UPLOAD_STATUS_DONE = "Done";
-    const UPLOAD_STATUS_NOT_DONE = "Not Done";
-    const UPLOAD_STATUS_PROCESSING = "Processing";
-
-    const REVIEW_STATUS_NOT_DONE = "Not Done";
-    const REVIEW_STATUS_NOT_NEEDED = "Not Needed";
-    const REVIEW_STATUS_ONGOING = "Ongoing";
-    const REVIEW_STATUS_WAIT_ADJUDICATION = 'Wait Adjudication';
-    const REVIEW_STATUS_DONE = "Done";
-
-    const ORTHANC_ANON_PROFILE_DEFAULT = "Default";
-    const ORTHANC_ANON_PROFILE_FULL = "Full";
-    const ORTHANC_PATIENTS_LEVEL="patients";
-    const ORTHANC_STUDIES_LEVEL="studies";
-    const ORTHANC_SERIES_LEVEL="series";
+    const ORTHANC_PATIENTS_LEVEL = "patients";
+    const ORTHANC_STUDIES_LEVEL = "studies";
+    const ORTHANC_SERIES_LEVEL = "series";
 }

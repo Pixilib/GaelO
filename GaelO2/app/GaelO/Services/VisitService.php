@@ -3,6 +3,10 @@
 namespace App\GaelO\Services;
 
 use App\GaelO\Constants\Constants;
+use App\GaelO\Constants\Enums\InvestigatorFormStateEnum;
+use App\GaelO\Constants\Enums\QualityControlStateEnum;
+use App\GaelO\Constants\Enums\ReviewStatusEnum;
+use App\GaelO\Constants\Enums\UploadStatusEnum;
 use App\GaelO\Interfaces\Adapters\JobInterface;
 use App\GaelO\Repositories\ReviewRepository;
 use App\GaelO\Repositories\ReviewStatusRepository;
@@ -45,11 +49,11 @@ class VisitService
     public function updateUploadStatus(string $uploadStatus)
     {
 
-        if($uploadStatus === Constants::UPLOAD_STATUS_NOT_DONE){
+        if($uploadStatus === UploadStatusEnum::NOT_DONE->value){
             $visitContext = $this->visitRepository->getVisitContext($this->visitId);
-            if($visitContext['state_investigator_form'] === Constants::INVESTIGATOR_FORM_DONE) {
+            if($visitContext['state_investigator_form'] === InvestigatorFormStateEnum::DONE->value) {
                 $this->reviewRepository->unlockInvestigatorForm($this->visitId);
-                $this->updateInvestigatorFormStatus(Constants::INVESTIGATOR_FORM_DRAFT);
+                $this->updateInvestigatorFormStatus(InvestigatorFormStateEnum::DRAFT->value);
             }
 
         }
@@ -57,8 +61,8 @@ class VisitService
         $updatedEntity = $this->visitRepository->updateUploadStatus($this->visitId, $uploadStatus);
 
         if (
-            $updatedEntity['upload_status'] === Constants::UPLOAD_STATUS_DONE
-            && ($updatedEntity['state_investigator_form'] === Constants::INVESTIGATOR_FORM_NOT_NEEDED || $updatedEntity['state_investigator_form'] === Constants::INVESTIGATOR_FORM_DONE)
+            $updatedEntity['upload_status'] === UploadStatusEnum::DONE->value
+            && ($updatedEntity['state_investigator_form'] === InvestigatorFormStateEnum::NOT_NEEDED->value || $updatedEntity['state_investigator_form'] === InvestigatorFormStateEnum::DONE->value)
         ) {
             $this->sendUploadEmailAndSkipQcIfNeeded($this->visitId);
         }
@@ -68,8 +72,8 @@ class VisitService
     {
         $updatedEntity = $this->visitRepository->updateInvestigatorFormStatus($this->visitId, $stateInvestigatorForm);
         if (
-            $updatedEntity['upload_status'] === Constants::UPLOAD_STATUS_DONE
-            && ($updatedEntity['state_investigator_form'] === Constants::INVESTIGATOR_FORM_DONE)
+            $updatedEntity['upload_status'] === UploadStatusEnum::DONE->value
+            && ($updatedEntity['state_investigator_form'] === InvestigatorFormStateEnum::DONE->value)
         ) {
             $this->sendUploadEmailAndSkipQcIfNeeded($this->visitId);
         }
@@ -87,8 +91,8 @@ class VisitService
 
         $reviewStatus = $this->getReviewStatus($studyName);
 
-        $qcNeeded = $visitEntity['state_quality_control'] !== Constants::QUALITY_CONTROL_NOT_NEEDED;
-        $reviewNeeded = $reviewStatus['review_status'] !== Constants::REVIEW_STATUS_NOT_NEEDED;
+        $qcNeeded = $visitEntity['state_quality_control'] !== QualityControlStateEnum::NOT_NEEDED->value;
+        $reviewNeeded = $reviewStatus['review_status'] !== ReviewStatusEnum::NOT_NEEDED->value;
 
         $this->mailServices->sendUploadedVisitMessage($this->visitId, $visitEntity['creator_user_id'], $studyName, $patientId, $patientCode, $visitType, $qcNeeded);
         // Send auto qc job
@@ -110,18 +114,18 @@ class VisitService
 
         $reviewStatus = $this->getReviewStatus($studyName);
 
-        $reviewNeeded = $reviewStatus['review_status'] !== Constants::REVIEW_STATUS_NOT_NEEDED;
-        $localFormNeeded = $visitEntity['state_investigator_form'] !== Constants::INVESTIGATOR_FORM_NOT_NEEDED;
+        $reviewNeeded = $reviewStatus['review_status'] !== ReviewStatusEnum::NOT_NEEDED->value;
+        $localFormNeeded = $visitEntity['state_investigator_form'] !== InvestigatorFormStateEnum::NOT_NEEDED->value;
 
         $this->visitRepository->editQc($this->visitId, $stateQc, $controllerId, $imageQc, $formQc, $imageQcComment, $formQcComment);
 
-        if ($stateQc === Constants::QUALITY_CONTROL_CORRECTIVE_ACTION_ASKED && $localFormNeeded) {
+        if ($stateQc === QualityControlStateEnum::CORRECTIVE_ACTION_ASKED->value && $localFormNeeded) {
             //Invalidate invistagator form and set it status as draft in the visit
             $this->reviewRepository->unlockInvestigatorForm($this->visitId);
-            $this->visitRepository->updateInvestigatorFormStatus($this->visitId, Constants::INVESTIGATOR_FORM_DRAFT);
+            $this->visitRepository->updateInvestigatorFormStatus($this->visitId, InvestigatorFormStateEnum::DRAFT->value);
         }
 
-        if ($stateQc === Constants::QUALITY_CONTROL_ACCEPTED && $reviewNeeded) {
+        if ($stateQc === QualityControlStateEnum::ACCEPTED->value && $reviewNeeded) {
             //Invalidate invistagator form and set it status as draft in the visit
             $this->reviewStatusRepository->updateReviewAvailability($this->visitId, $studyName , true);
         }

@@ -3,6 +3,7 @@
 namespace App\GaelO\UseCases\ModifyReviewForm;
 
 use App\GaelO\Constants\Constants;
+use App\GaelO\Constants\Enums\ReviewStatusEnum;
 use App\GaelO\Exceptions\GaelOBadRequestException;
 use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
@@ -66,7 +67,7 @@ class ModifyReviewForm
             //Write in Tracker
             $actionDetails = [
                 'review_id' => $reviewId,
-                'adjudication' => $reviewStatus === Constants::REVIEW_STATUS_WAIT_ADJUDICATION,
+                'adjudication' => $reviewStatus === ReviewStatusEnum::WAIT_ADJUDICATION->value,
                 'raw_data' => $modifyReviewFormRequest->data,
                 'validated' => $modifyReviewFormRequest->validated
             ];

@@ -2,7 +2,7 @@
 
 namespace Tests\Unit\TestRepositories;
 
-use App\GaelO\Constants\Constants;
+use App\GaelO\Constants\Enums\ReviewStatusEnum;
 use App\GaelO\Repositories\ReviewStatusRepository;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -40,7 +40,7 @@ class ReviewStatusRepositoryTest extends TestCase
             $reviewStatus->visit_id,
             $reviewStatus->study_name,
             false,
-            Constants::REVIEW_STATUS_DONE,
+            ReviewStatusEnum::DONE->value,
             'Progression',
             ['liver'=> 3.54]
         );
@@ -48,7 +48,7 @@ class ReviewStatusRepositoryTest extends TestCase
         $review = ReviewStatus::get()->first();
 
         $this->assertEquals('Progression', $review['review_conclusion_value']);
-        $this->assertEquals(Constants::REVIEW_STATUS_DONE, $review['review_status']);
+        $this->assertEquals(ReviewStatusEnum::DONE->value, $review['review_status']->value);
         $this->assertIsArray($review['target_lesions']);
 
     }

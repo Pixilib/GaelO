@@ -21,11 +21,11 @@ class CreateVisitsTable extends Migration
             $table->string('patient_id')->nullable(false);
             $table->date('visit_date')->nullable(true)->default(null);
             $table->unsignedBigInteger('visit_type_id')->nullable(false);
-            $table->enum('status_done', ['Not Done','Done'])->nullable(false)->default('Not Done');
+            $table->string('status_done')->nullable(false)->default('Not Done');
             $table->string('reason_for_not_done', 256)->nullable(true)->default(null);
-            $table->enum('upload_status', ['Not Done','Processing','Done'])->nullable(false)->default('Not Done');
-            $table->enum('state_investigator_form', ['Not Done', 'Not Needed', 'Draft', 'Done'])->nullable(false)->default('Not Done');
-            $table->enum('state_quality_control', ['Not Done', 'Not Needed', 'Wait Definitive Conclusion','Corrective Action Asked','Refused','Accepted'])->nullable(false)->default('Not Done');
+            $table->string('upload_status')->nullable(false)->default('Not Done');
+            $table->string('state_investigator_form')->nullable(false)->default('Not Done');
+            $table->string('state_quality_control')->nullable(false)->default('Not Done');
             $table->unsignedBigInteger('controller_user_id')->nullable(true)->default(null);
             $table->dateTimeTz('control_date', 6)->nullable(true)->default(null);
             $table->boolean('image_quality_control')->nullable(false)->default(false);

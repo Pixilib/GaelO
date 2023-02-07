@@ -2,7 +2,7 @@
 
 namespace Tests\Unit;
 
-use App\GaelO\Constants\Constants;
+use App\GaelO\Constants\Enums\AnonProfileEnum;
 use App\GaelO\Services\OrthancService;
 use Illuminate\Support\Facades\App;
 use Tests\TestCase;
@@ -95,7 +95,7 @@ class OrthancServiceTest extends TestCase
     {
         $anonymized = $this->orthancService->anonymize(
             $testingOrthancStudyID,
-            Constants::ORTHANC_ANON_PROFILE_DEFAULT,
+            AnonProfileEnum::DEFAULT->value,
             "code",
             "id",
             "visit",

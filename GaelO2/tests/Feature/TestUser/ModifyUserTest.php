@@ -2,7 +2,7 @@
 
 namespace Tests\Feature\TestUser;
 
-use App\GaelO\Constants\Constants;
+use App\GaelO\Constants\Enums\JobEnum;
 use Tests\TestCase;
 use App\Models\User;
 use App\Models\Center;
@@ -19,7 +19,7 @@ class ModifyUserTest extends TestCase
         parent::setUp();
         $this->artisan('db:seed');
         $center = Center::factory()->create();
-        $this->user = User::factory()->job(Constants::USER_JOB_SUPERVISION)->create();
+        $this->user = User::factory()->job(JobEnum::SUPERVISION->value)->create();
 
         $this->validPayload = [
             'lastname' => 'lastname',

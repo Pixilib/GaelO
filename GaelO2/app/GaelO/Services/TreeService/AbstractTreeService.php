@@ -3,6 +3,7 @@
 namespace App\GaelO\Services\TreeService;
 
 use App\GaelO\Constants\Constants;
+use App\GaelO\Constants\Enums\ReviewStatusEnum;
 use App\GaelO\Entities\CenterEntity;
 use App\GaelO\Entities\PatientEntity;
 use App\GaelO\Entities\StudyEntity;
@@ -61,7 +62,7 @@ abstract class AbstractTreeService
             $visit = new VisitEntity();
             $visit->fillForTree($visitEntity);
             $visit->setVisitContext($visitEntity['visit_type']['visit_group'], $visitEntity['visit_type']);
-            $visit->reviewStatus = key_exists('review_status', $visitEntity) ? $visitEntity['review_status']['review_status'] : Constants::REVIEW_STATUS_NOT_DONE;
+            $visit->reviewStatus = key_exists('review_status', $visitEntity) ? $visitEntity['review_status']['review_status'] : ReviewStatusEnum::NOT_DONE->value;
             $visitArray[] = (array) $visit;
         }
 

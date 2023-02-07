@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\GaelO\Services\OrthancService;
 use App\Models\DicomSeries;
 use App\Models\DicomStudy;
 use App\Models\Documentation;
@@ -13,12 +14,16 @@ use App\Models\Study;
 use App\Models\Tracker;
 use App\Models\Visit;
 use App\Models\VisitGroup;
+use Exception;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 
 class DeleteStudy extends Command
 {
 
     private Study $study;
+    private Patient $patient;
     private Visit $visit;
     private ReviewStatus $reviewStatus;
     private DicomStudy $dicomStudy;
@@ -28,12 +33,13 @@ class DeleteStudy extends Command
     private Role $role;
     private VisitGroup $visitGroup;
     private Review $review;
+    private OrthancService $orthancService;
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'gaelo:delete-study {studyName : the study name to delete}';
+    protected $signature = 'gaelo:delete-study {studyName : the study name to delete} {--deleteDicom : delete dicom in Orthanc} { --deleteAssociatedFile : delete associated files}';
 
     /**
      * The console command description.
@@ -43,11 +49,11 @@ class DeleteStudy extends Command
     protected $description = 'Delete a Study from GaelO (hard delete)';
 
     /**
-     * Create a new command instance.
+     * Execute the console command.
      *
-     * @return void
+     * @return int
      */
-    public function __construct(
+    public function handle(
         Study $study,
         VisitGroup $visitGroup,
         Visit $visit,
@@ -58,9 +64,9 @@ class DeleteStudy extends Command
         Tracker $tracker,
         Documentation $documentation,
         Review $review,
-        ReviewStatus $reviewStatus
-    ) {
-        parent::__construct();
+        ReviewStatus $reviewStatus,
+        OrthancService $orthancService)
+    {
         $this->study = $study;
         $this->visitGroup = $visitGroup;
         $this->visit = $visit;
@@ -72,15 +78,8 @@ class DeleteStudy extends Command
         $this->role = $role;
         $this->review = $review;
         $this->reviewStatus = $reviewStatus;
-    }
-
-    /**
-     * Execute the console command.
-     *
-     * @return int
-     */
-    public function handle()
-    {
+        $this->orthancService = $orthancService;
+        $this->orthancService->setOrthancServer(true);
 
         $studyName = $this->argument('studyName');
         $studyNameConfirmation = $this->ask('Warning : Please confirm study Name');
@@ -122,7 +121,7 @@ class DeleteStudy extends Command
            
             $this->deleteReviews($visitIds, $studyName);
             $this->deleteReviewStatus($visitIds, $studyName);
-
+            
             if ($studyEntity['ancillary_of'] === null) {
 
                 $dicomSeries = $this->getDicomSeriesOfVisits($visitIds);
@@ -148,7 +147,21 @@ class DeleteStudy extends Command
 
             $studyEntity->forceDelete();
 
-            $this->info('The command was successful, delete Orthanc Series and Associated Form Data !');
+            if($this->option('deleteDicom') && $this->confirm('Found '.sizeOf($orthancIdArray).' series to delete, do you want to continue ?')){
+                foreach($orthancIdArray as $seriesOrthancId){
+                    try{
+                        $this->orthancService->deleteFromOrthanc('series', $seriesOrthancId);
+                    }catch(Exception $e){
+                        Log::error($e->getMessage());
+                    }
+                }
+            }
+
+            if($this->option('deleteAssociatedFile')&& $this->confirm('Going to delete associated file, do you want to continue ?')){
+                Storage::deleteDirectory($studyName);
+            }
+
+            $this->info('The command was successful !');
         }
 
         return 0;
@@ -219,7 +232,7 @@ class DeleteStudy extends Command
 
     private function deleteReviewStatus(array $visitIds, String $studyName)
     {
-        $this->reviewStatus->where('study_name', $studyName)->whereIn('id', $visitIds)->delete();
+        $this->reviewStatus->where('study_name', $studyName)->whereIn('visit_id', $visitIds)->delete();
     }
 
     private function deleteVisits(array $visitIds)

@@ -3,6 +3,8 @@
 namespace Tests\Feature\TestVisits;
 
 use App\GaelO\Constants\Constants;
+use App\GaelO\Constants\Enums\InvestigatorFormStateEnum;
+use App\GaelO\Constants\Enums\QualityControlStateEnum;
 use App\Models\User;
 use App\Models\Visit;
 use App\Models\VisitType;
@@ -24,8 +26,8 @@ class CorrectiveActionTest extends TestCase
         $this->visit = Visit::factory()
             ->visitTypeId($visitType->id)
             ->uploadDone()
-            ->stateQualityControl(Constants::QUALITY_CONTROL_CORRECTIVE_ACTION_ASKED)
-            ->stateInvestigatorForm(Constants::INVESTIGATOR_FORM_DONE)->create();
+            ->stateQualityControl(QualityControlStateEnum::CORRECTIVE_ACTION_ASKED->value)
+            ->stateInvestigatorForm(InvestigatorFormStateEnum::DONE->value)->create();
 
         $this->studyName = $this->visit->patient->study_name;
         $centerCode = $this->visit->patient->center_code;
@@ -81,7 +83,7 @@ class CorrectiveActionTest extends TestCase
     public function testCorrectiveActionShouldFailCorrectiveActionNotAsked()
     {
         AuthorizationTools::addRoleToUser($this->currentUserId, Constants::ROLE_INVESTIGATOR, $this->studyName);
-        $this->visit->state_quality_control = Constants::QUALITY_CONTROL_NOT_DONE;
+        $this->visit->state_quality_control = QualityControlStateEnum::NOT_DONE->value;
         $this->visit->save();
         $payload = [
             'newSeriesUploaded' => true,
@@ -97,7 +99,7 @@ class CorrectiveActionTest extends TestCase
     public function testCorrectiveActionShouldFailFormMissing()
     {
         AuthorizationTools::addRoleToUser($this->currentUserId, Constants::ROLE_INVESTIGATOR, $this->studyName);
-        $this->visit->state_investigator_form = Constants::INVESTIGATOR_FORM_NOT_DONE;
+        $this->visit->state_investigator_form = InvestigatorFormStateEnum::NOT_DONE->value;
         $this->visit->save();
         $payload = [
             'newSeriesUploaded' => true,

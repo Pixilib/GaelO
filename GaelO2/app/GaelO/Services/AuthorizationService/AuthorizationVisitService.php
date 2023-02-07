@@ -3,6 +3,9 @@
 namespace App\GaelO\Services\AuthorizationService;
 
 use App\GaelO\Constants\Constants;
+use App\GaelO\Constants\Enums\InvestigatorFormStateEnum;
+use App\GaelO\Constants\Enums\QualityControlStateEnum;
+use App\GaelO\Constants\Enums\UploadStatusEnum;
 use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
 use App\GaelO\Services\AuthorizationService\AuthorizationPatientService;
 
@@ -57,18 +60,18 @@ class AuthorizationVisitService
 
     private function isAllowedStatusQC()
     {
-        return in_array($this->stateQualityControl, [Constants::QUALITY_CONTROL_NOT_DONE, Constants::QUALITY_CONTROL_WAIT_DEFINITIVE_CONCLUSION]);
+        return in_array($this->stateQualityControl, [QualityControlStateEnum::NOT_DONE->value, QualityControlStateEnum::WAIT_DEFINITIVE_CONCLUSION->value]);
     }
 
     private function isAllowedInvestigatorFormStatus()
     {
-        return in_array($this->stateInvestigatorForm, [Constants::INVESTIGATOR_FORM_DONE, Constants::INVESTIGATOR_FORM_NOT_NEEDED]);
+        return in_array($this->stateInvestigatorForm, [InvestigatorFormStateEnum::DONE->value, InvestigatorFormStateEnum::NOT_NEEDED->value]);
     }
 
     private function isControllerAllowed(): bool
     {
         //For controller visit QC status be not done or awaiting definitive conclusion, Investigator Form should be Done or Not Needed and Upload status should be done
-        return ($this->isAllowedStatusQC() && $this->isAllowedInvestigatorFormStatus() && $this->visitUploadStatus === Constants::UPLOAD_STATUS_DONE);
+        return ($this->isAllowedStatusQC() && $this->isAllowedInvestigatorFormStatus() && $this->visitUploadStatus === UploadStatusEnum::DONE->value);
     }
 
 

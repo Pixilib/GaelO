@@ -3,6 +3,7 @@
 namespace App\GaelO\UseCases\ModifyQualityControlReset;
 
 use App\GaelO\Constants\Constants;
+use App\GaelO\Constants\Enums\ReviewStatusEnum;
 use App\GaelO\Exceptions\GaelOBadRequestException;
 use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
@@ -50,7 +51,7 @@ class ModifyQualityControlReset
 
             $reviewStatusEntity = $this->visitService->getReviewStatus($studyName);
 
-            if (!in_array($reviewStatusEntity['review_status'], array(Constants::REVIEW_STATUS_NOT_DONE, Constants::REVIEW_STATUS_NOT_NEEDED))) {
+            if (!in_array($reviewStatusEntity['review_status'], array(ReviewStatusEnum::NOT_DONE->value, ReviewStatusEnum::NOT_NEEDED->value))) {
                 throw new GaelOBadRequestException("Can't reset QC with review started");
             }
 

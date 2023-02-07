@@ -2,7 +2,7 @@
 
 namespace Tests\Unit\TestRepositories;
 
-use App\GaelO\Constants\Constants;
+use App\GaelO\Constants\Enums\AnonProfileEnum;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -25,7 +25,7 @@ class VisitTypeRepositoryTest extends TestCase
 
     public function testCreateVisitType(){
         $visitGroup = VisitGroup::factory()->create();
-        $this->visitTypeRepository->createVisitType($visitGroup->id, 'PET_0', 0, true, 100, 100, false, 0, 100, Constants::ORTHANC_ANON_PROFILE_DEFAULT, []);
+        $this->visitTypeRepository->createVisitType($visitGroup->id, 'PET_0', 0, true, 100, 100, false, 0, 100, AnonProfileEnum::DEFAULT->value, []);
 
         $visitType = VisitType::get()->first();
 

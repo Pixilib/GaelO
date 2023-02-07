@@ -3,6 +3,7 @@
 namespace Tests\Unit\TestRepositories;
 
 use App\GaelO\Constants\Constants;
+use App\GaelO\Constants\Enums\JobEnum;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -43,7 +44,7 @@ class UserRepositoryTest extends TestCase
             '0600000000',
             false,
             0,
-            Constants::USER_JOB_SUPERVISION,
+            JobEnum::SUPERVISION->value,
             null,
             null,
             null
@@ -54,13 +55,32 @@ class UserRepositoryTest extends TestCase
         return $createdEntity;
     }
 
+    public function testCreateUserShouldFailUnallowedJob()
+    {
+
+        $this->expectError();
+        $this->userRepository->createUser(
+            'Kanoun',
+            'Salim',
+            'salim.kanoun@gmail.com',
+            '0600000000',
+            false,
+            0,
+            'notAValidJob',
+            null,
+            null,
+            null
+        );
+
+    }
+
     /**
      * @depends testCreateUser
      */
     public function testUpdateUser(array $existingEntity)
     {
 
-        $userToModify = User::factory()->job(Constants::USER_JOB_SUPERVISION)->create();
+        $userToModify = User::factory()->job(JobEnum::SUPERVISION->value)->create();
 
         $this->userRepository->updateUser(
             $userToModify->id,
@@ -70,7 +90,7 @@ class UserRepositoryTest extends TestCase
             null,
             !$userToModify->administrator,
             $this->center3->code,
-            Constants::USER_JOB_CRA,
+            JobEnum::CRA->value,
             'a',
             'b',
             'c',
@@ -127,7 +147,7 @@ class UserRepositoryTest extends TestCase
     public function testGetUserByUsername()
     {
         //Test if user is not deleted
-        $user = User::factory()->job(Constants::USER_JOB_SUPERVISION)->create();
+        $user = User::factory()->job(JobEnum::SUPERVISION->value)->create();
         $userEntity = $this->userRepository->getUserByEmail($user->email, false);
         $this->assertIsArray($userEntity);
         $this->assertNull($userEntity['deleted_at']);
@@ -173,9 +193,9 @@ class UserRepositoryTest extends TestCase
      */
     public function testGetInvestigatorStudyEmails()
     {
-        $usersCRA = User::factory()->job(Constants::USER_JOB_CRA)->count(10)->create();
+        $usersCRA = User::factory()->job(JobEnum::CRA->value)->count(10)->create();
 
-        $userSupervision = User::factory()->job(Constants::USER_JOB_SUPERVISION)->count(15)->create();
+        $userSupervision = User::factory()->job(JobEnum::SUPERVISION->value)->count(15)->create();
 
         $study1 = $this->studies->first();
         $center3 = $this->center3;
@@ -195,19 +215,19 @@ class UserRepositoryTest extends TestCase
         });
 
         //Querying investigator from first study and center 3 with CRA role should return 10 results
-        $investigatorsEmails = $this->userRepository->getInvestigatorsOfStudyFromCenter($study1->name, 3, Constants::USER_JOB_CRA);
+        $investigatorsEmails = $this->userRepository->getInvestigatorsOfStudyFromCenter($study1->name, 3, JobEnum::CRA->value);
         $this->assertEquals(10, sizeof($investigatorsEmails));
 
         //Querying investigator from last study and center 3 with CRA role should return 0 results
-        $investigatorsEmails2 = $this->userRepository->getInvestigatorsOfStudyFromCenter($study2->name, 3, Constants::USER_JOB_CRA);
+        $investigatorsEmails2 = $this->userRepository->getInvestigatorsOfStudyFromCenter($study2->name, 3, JobEnum::CRA->value);
         $this->assertEquals(0, sizeof($investigatorsEmails2));
 
         //Querying investigator from last study and center 5 with Supervision role should return 15 results
-        $investigatorsEmails3 = $this->userRepository->getInvestigatorsOfStudyFromCenter($study2->name, 5, Constants::USER_JOB_SUPERVISION);
+        $investigatorsEmails3 = $this->userRepository->getInvestigatorsOfStudyFromCenter($study2->name, 5, JobEnum::SUPERVISION->value);
         $this->assertEquals(15, sizeof($investigatorsEmails3));
 
         //Querying investigator from first study and center 3 with Radiologist role should return 0 results
-        $investigatorsEmails4 = $this->userRepository->getInvestigatorsOfStudyFromCenter($study2->name, 3, Constants::USER_JOB_RADIOLOGIST);
+        $investigatorsEmails4 = $this->userRepository->getInvestigatorsOfStudyFromCenter($study2->name, 3, JobEnum::RADIOLOGIST->value);
         $this->assertEquals(0, sizeof($investigatorsEmails4));
 
         //Results of user query should be different
@@ -317,7 +337,7 @@ class UserRepositoryTest extends TestCase
     public function testGetUseRoleInStudy()
     {
         $role = Role::factory()->roleName(Constants::ROLE_INVESTIGATOR)->create();
-        $entity = $this->userRepository->getUserRoleInStudy($role->user_id, $role->study_name, $role->name);
+        $entity = $this->userRepository->getUserRoleInStudy($role->user_id, $role->study_name, $role->name->value);
         $this->assertArrayHasKey('validated_documentation_version', $entity);
         $this->assertArrayHasKey('study', $entity);
     }
@@ -325,7 +345,7 @@ class UserRepositoryTest extends TestCase
     public function testUpdateValidatedDocumentationVersion()
     {
         $role = Role::factory()->roleName(Constants::ROLE_INVESTIGATOR)->create();
-        $this->userRepository->updateValidatedDocumentationVersion($role->user_id, $role->study_name, $role->name, '3.0.0');
+        $this->userRepository->updateValidatedDocumentationVersion($role->user_id, $role->study_name, $role->name->value, '3.0.0');
         $updatedRole = Role::where('user_id',  $role->user_id)->where('study_name', $role->study_name)->where('name', $role->name)->sole();
         $this->assertEquals('3.0.0', $updatedRole->validated_documentation_version);
     }

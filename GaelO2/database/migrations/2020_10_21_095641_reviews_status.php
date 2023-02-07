@@ -20,7 +20,7 @@ class ReviewsStatus extends Migration
             $table->string('study_name')->nullable(false);
             $table->boolean('review_available')->nullable(false)->default(false);
             $table->json('target_lesions')->nullable(true);
-            $table->enum('review_status', ['Not Done', 'Not Needed', 'Ongoing','Wait Adjudication','Done'])->nullable(false)->default('Not Done');
+            $table->string('review_status')->nullable(false)->default('Not Done');
             $table->text('review_conclusion_value')->nullable(true)->default(null);
             $table->dateTimeTz('review_conclusion_date', 6)->nullable(true)->default(null);
             $table->timestamps();

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\GaelO\Constants\Enums\JobEnum;
 use App\Notifications\ResetPasswordNotification;
 use App\Notifications\VerifyEmailNotification;
 use Illuminate\Auth\Passwords\CanResetPassword as PasswordsCanResetPassword;
@@ -51,7 +52,7 @@ class User extends Authenticatable implements CanResetPassword, MustVerifyEmail
         'attempts' => 'integer',
         'administrator' => 'boolean',
         'center_code' => 'integer',
-        'job' => 'string',
+        'job' => JobEnum::class,
         'orthanc_address' => 'string',
         'orthanc_login' => 'string',
         'orthanc_password' => 'string',

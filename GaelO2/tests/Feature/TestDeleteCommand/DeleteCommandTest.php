@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\TestDeleteCommand;
 
+use App\GaelO\Services\OrthancService;
 use App\Models\DicomSeries;
 use App\Models\DicomStudy;
 use App\Models\Patient;
@@ -12,6 +13,7 @@ use App\Models\Visit;
 use App\Models\VisitGroup;
 use App\Models\VisitType;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Mockery\MockInterface;
 use Tests\TestCase;
 
 class DeleteCommandTest extends TestCase
@@ -34,6 +36,11 @@ class DeleteCommandTest extends TestCase
         $this->review = Review::factory()->visitId($this->visit->id)->studyName($this->study->name)->create();
         $this->reviewStatus = ReviewStatus::factory()->visitId($this->visit->id)->studyName($this->study->name)->create();
 
+        $mockOrthancService = $this->partialMock(OrthancService::class, function (MockInterface $mock) {
+            $mock->shouldReceive('setOrthancServer')->andReturn(null);
+            $mock->shouldReceive('deleteFromOrthanc')->andReturn(true);
+        });
+        app()->instance(OrthancService::class, $mockOrthancService);
         $this->study->delete();
     }
 
@@ -58,7 +65,29 @@ class DeleteCommandTest extends TestCase
         $this->artisan('gaelo:delete-study ' . $studyName)->expectsQuestion('Warning : Please confirm study Name', $studyName)
             ->expectsQuestion('Warning : This CANNOT be undone, do you wish to continue?', "\r\n")
             ->expectsTable(['orthanc_id'], [[$this->dicomSeries->orthanc_id]])
-            ->expectsOutput('The command was successful, delete Orthanc Series and Associated Form Data !');
+            ->expectsOutput('The command was successful !');
+    }
+
+    public function testDeleteCommandWithDeleteDicom()
+    {
+        $studyName = $this->study->name;
+        $this->artisan('gaelo:delete-study ' . $studyName.' --deleteDicom')->expectsQuestion('Warning : Please confirm study Name', $studyName)
+            ->expectsQuestion('Warning : This CANNOT be undone, do you wish to continue?', "\r\n")
+            ->expectsTable(['orthanc_id'], [[$this->dicomSeries->orthanc_id]])
+            ->expectsQuestion('Found 1 series to delete, do you want to continue ?', 'yes')
+            ->expectsOutput('The command was successful !');
+    }
+
+
+    public function testDeleteCommandWithDeleteDicomAndAssociatedFiles()
+    {
+        $studyName = $this->study->name;
+        $this->artisan('gaelo:delete-study ' . $studyName.' --deleteDicom --deleteAssociatedFile')->expectsQuestion('Warning : Please confirm study Name', $studyName)
+            ->expectsQuestion('Warning : This CANNOT be undone, do you wish to continue?', "\r\n")
+            ->expectsTable(['orthanc_id'], [[$this->dicomSeries->orthanc_id]])
+            ->expectsQuestion('Found 1 series to delete, do you want to continue ?', 'yes')
+            ->expectsQuestion('Going to delete associated file, do you want to continue ?', 'yes')
+            ->expectsOutput('The command was successful !');
     }
 
     public function testDeleteCommandShouldFailBecauseExistingAncillary()
@@ -66,6 +95,6 @@ class DeleteCommandTest extends TestCase
         $studyName = $this->study->name;
         Study::factory()->ancillaryOf($studyName)->create();
         $this->artisan('gaelo:delete-study ' . $studyName)->expectsQuestion('Warning : Please confirm study Name', $studyName)
-        ->expectsOutput('Delete all ancilaries studies first');
+            ->expectsOutput('Delete all ancilaries studies first');
     }
 }

@@ -17,7 +17,7 @@ class CreateVisitGroupsTable extends Migration
             $table->id();
             $table->string('study_name')->nullable(false);
             $table->string('name')->nullable(false);
-            $table->enum('modality', ['PT', 'MR', 'CT', 'US', 'NM', 'RT'])->nullable(false);
+            $table->string('modality')->nullable(false);
             $table->timestamps();
 
             $table->unique(['study_name', 'name']);

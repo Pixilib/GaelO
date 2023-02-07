@@ -3,6 +3,7 @@
 namespace Tests\Feature\TestPatients;
 
 use App\GaelO\Constants\Constants;
+use App\GaelO\Constants\Enums\InclusionStatusEnum;
 use App\Models\Patient;
 use App\Models\Study;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -118,14 +119,14 @@ class ModifyPatientTest extends TestCase
 
         $payload = $this->validPayload;
         $payload = array_merge($payload, [
-            'inclusionStatus' => Constants::PATIENT_INCLUSION_STATUS_WITHDRAWN,
+            'inclusionStatus' => InclusionStatusEnum::WITHDRAWN->value,
             'withdrawDate' => '2011-10-05',
             'withdrawReason' => 'fed-up',
             'reason' => 'inclusion status changed'
         ]);
         $this->json('PATCH', '/api/patients/' . $this->patient->id . '?studyName=' . $this->studyName, $payload)->assertStatus(200);
         $updatedPatientEntity = Patient::find($this->patient->id)->toArray();
-        $this->assertEquals(Constants::PATIENT_INCLUSION_STATUS_WITHDRAWN, $updatedPatientEntity['inclusion_status']);
+        $this->assertEquals(InclusionStatusEnum::WITHDRAWN->value, $updatedPatientEntity['inclusion_status']);
         $this->assertEquals('2011-10-05T00:00:00.000000Z', $updatedPatientEntity['withdraw_date']);
         $this->assertEquals($payload['withdrawReason'], $updatedPatientEntity['withdraw_reason']);
     }
@@ -136,7 +137,7 @@ class ModifyPatientTest extends TestCase
 
         $payload = $this->validPayload;
         $payload = array_merge($payload, [
-            'inclusionStatus' => Constants::PATIENT_INCLUSION_STATUS_INCLUDED,
+            'inclusionStatus' => InclusionStatusEnum::INCLUDED->value,
             'withdrawDate' => '2011-10-05',
             'withdrawReason' => 'fed-up',
             'reason' => 'inclusion status changed'
@@ -149,18 +150,18 @@ class ModifyPatientTest extends TestCase
     {
         $currentUserId = AuthorizationTools::actAsAdmin(false);
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $this->study->name);
-        $this->patient->inclusion_status = Constants::PATIENT_INCLUSION_STATUS_WITHDRAWN;
+        $this->patient->inclusion_status = InclusionStatusEnum::WITHDRAWN->value;
         $this->patient->withdraw_reason = 'personal';
         $this->patient->withdraw_date = now();
         $this->patient->save();
 
         $payload = $this->validPayload;
-        $payload['inclusionStatus'] = Constants::PATIENT_INCLUSION_STATUS_INCLUDED;
+        $payload['inclusionStatus'] = InclusionStatusEnum::INCLUDED->value;
         $payload['reason'] = 'inclusion status changed';
 
         $this->json('PATCH', '/api/patients/' . $this->patient->id . '?studyName=' . $this->studyName, $payload)->assertStatus(200);
         $updatedPatientEntity = Patient::find($this->patient->id)->toArray();
-        $this->assertEquals(Constants::PATIENT_INCLUSION_STATUS_INCLUDED, $updatedPatientEntity['inclusion_status']);
+        $this->assertEquals(InclusionStatusEnum::INCLUDED->value, $updatedPatientEntity['inclusion_status']);
         $this->assertNull($updatedPatientEntity['withdraw_date']);
         $this->assertNull($updatedPatientEntity['withdraw_reason']);
     }
