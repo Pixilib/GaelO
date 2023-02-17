@@ -5,6 +5,6 @@
     Name : {{$name}}<br>
     E-mail : {{$email}}<br>
     Investigational center : {{$center}}<br>
-    Request : {{$request}}<br>
+    Request : <br>{!!$request!!}<br>
 @endsection
 
