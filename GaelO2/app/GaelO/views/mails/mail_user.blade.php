@@ -8,15 +8,15 @@ You have received the following message :
 @if(!empty($patientId) && empty($visitId) && !empty($study))
 <em>This e-mail is related to
     <a href="{{$webAddress}}/study/{{$study}}/role/Supervisor/patient/{{$patientId}}">
-        patient {{$patientId}}
+        patient {{$patientCode}}
     </a>
 </em>
 @endif
 @if(!empty($patientId) && !empty($visitId) && !empty($study))
 <em>This e-mail is related to
     <a href="{{$webAddress}}/study/{{$study}}/role/Supervisor/visit/{{$visitId}}">
-        visit {{$visitId}}
-        of patient {{$patientId}}
+        visit {{$visitType}}
+        of patient {{$patientCode}}
     </a>
 </em>
 @endif

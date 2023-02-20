@@ -116,6 +116,18 @@ class ValidatorAdapter implements ValidatorInterface
     public function validate(array $data): bool
     {
         $validator = Validator::make($data, $this->validationRules);
+
+        //refuse to validate if submitted data contains a key that is not expected
+        $expectedKeys = array_keys($this->validationRules);
+        $actualKeys = array_keys($data);
+
+        foreach ($actualKeys as $actualKey) {
+            if (!in_array($actualKey, $expectedKeys)) {
+                throw new GaelOBadRequestException($actualKey . ' is not expected');
+            }
+        }
+
+        //Check that expected keys match contraints
         if ($validator->fails()) {
             throw new GaelOBadRequestException($validator->errors()->first());
         } else {

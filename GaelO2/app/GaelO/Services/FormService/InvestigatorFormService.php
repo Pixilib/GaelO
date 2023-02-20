@@ -2,7 +2,6 @@
 
 namespace App\GaelO\Services\FormService;
 
-use App\GaelO\Constants\Constants;
 use App\GaelO\Constants\Enums\InvestigatorFormStateEnum;
 use App\GaelO\Constants\Enums\QualityControlStateEnum;
 use App\GaelO\Exceptions\GaelOBadRequestException;

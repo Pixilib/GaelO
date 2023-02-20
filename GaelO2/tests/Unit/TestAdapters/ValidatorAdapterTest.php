@@ -147,4 +147,11 @@ class ValidatorAdapterTest extends TestCase
         $this->expectException(GaelOBadRequestException::class);
         $this->validatorAdapter->validate(['infectionDate' => 'here']);
     }
+
+    public function testUnexpectedDataValidation()
+    {
+        $this->validatorAdapter->addDateValidator('infectionDate', true);
+        $this->expectException(GaelOBadRequestException::class);
+        $this->validatorAdapter->validate(['infectionDate' => '2022-12-30', 'additionalKey'=> true]);
+    }
 }

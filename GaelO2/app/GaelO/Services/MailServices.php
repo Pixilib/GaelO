@@ -556,7 +556,7 @@ class MailServices
         $this->mailInterface->send();
     }
 
-    public function sendMailToSupervisors(int $senderId, string $studyName, string $subject, string $content, ?string $patientId, ?int $visitId)
+    public function sendMailToSupervisors(int $senderId, string $studyName, string $subject, string $content, ?string $patientId, ?int $visitId, ?string $patientCode, ?string $visitType)
     {
 
         $parameters = [
@@ -565,6 +565,8 @@ class MailServices
             'content' => $content,
             'patientId' => $patientId,
             'visitId' => $visitId,
+            'patientCode' => $patientCode,
+            'visitType' => $visitType,
             'canReply' => true
         ];
 

@@ -6,7 +6,9 @@ use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\GaelOBadRequestException;
 use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
+use App\GaelO\Interfaces\Repositories\PatientRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
+use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
 use App\GaelO\Services\AuthorizationService\AuthorizationStudyService;
 use App\GaelO\Services\AuthorizationService\AuthorizationUserService;
 use App\GaelO\Services\MailServices;
@@ -16,17 +18,24 @@ class SendMail
     private MailServices $mailService;
     private AuthorizationStudyService $authorizationStudyService;
     private AuthorizationUserService $authorizationUserService;
+    private TrackerRepositoryInterface $trackerRepositoryInterface;
+    private VisitRepositoryInterface $visitRepositoryInterface;
+    private PatientRepositoryInterface $patientRepositoryInterface;
 
     public function __construct(
         MailServices $mailService,
         AuthorizationStudyService $authorizationStudyService,
         AuthorizationUserService $authorizationUserService,
-        TrackerRepositoryInterface $trackerRepositoryInterface
+        TrackerRepositoryInterface $trackerRepositoryInterface,
+        VisitRepositoryInterface $visitRepositoryInterface,
+        PatientRepositoryInterface $patientRepositoryInterface
     ) {
         $this->mailService = $mailService;
         $this->authorizationStudyService = $authorizationStudyService;
         $this->authorizationUserService = $authorizationUserService;
         $this->trackerRepositoryInterface = $trackerRepositoryInterface;
+        $this->visitRepositoryInterface = $visitRepositoryInterface;
+        $this->patientRepositoryInterface = $patientRepositoryInterface;
     }
 
     public function execute(SendMailRequest $sendMailRequest, SendMailResponse $sendMailResponse)
@@ -66,13 +75,31 @@ class SendMail
                 );
             } else if ($role === Constants::ROLE_INVESTIGATOR || $role === Constants::ROLE_CONTROLLER || $role === Constants::ROLE_REVIEWER || $role === Constants::ROLE_MONITOR) {
                 if (isset($userIds)) throw new GaelOForbiddenException();
+
+                $patientId = $sendMailRequest->patientId;
+                $visitId = $sendMailRequest->visitId;
+                $patientCode = null;
+                $visitType = null;
+
+                if ($patientId) {
+                    $patientEntity = $this->patientRepositoryInterface->find($patientId);
+                    $patientCode = $patientEntity['code'];
+                }
+                if ($visitId) {
+                    $visitEntity = $this->visitRepositoryInterface->getVisitContext($visitId);
+                    $patientCode = $visitEntity['patient']['code'];
+                    $visitType = $visitEntity['visit_type']['name'];
+                }
+                
                 $this->mailService->sendMailToSupervisors(
                     $currentUserId,
                     $studyName,
                     $subject,
                     $content,
                     $sendMailRequest->patientId,
-                    $sendMailRequest->visitId
+                    $sendMailRequest->visitId,
+                    $patientCode,
+                    $visitType
                 );
             }
 
