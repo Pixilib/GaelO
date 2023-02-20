@@ -13,7 +13,9 @@ use App\Models\Center;
 use App\Models\Role;
 use App\Models\CenterUser;
 use App\GaelO\Repositories\UserRepository;
+use Exception;
 use Illuminate\Support\Facades\App;
+use ValueError;
 
 class UserRepositoryTest extends TestCase
 {
@@ -58,7 +60,7 @@ class UserRepositoryTest extends TestCase
     public function testCreateUserShouldFailUnallowedJob()
     {
 
-        $this->expectError();
+        $this->expectException(ValueError::class);
         $this->userRepository->createUser(
             'Kanoun',
             'Salim',

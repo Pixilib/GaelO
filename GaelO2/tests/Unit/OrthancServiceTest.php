@@ -51,6 +51,15 @@ class OrthancServiceTest extends TestCase
         $this->orthancService->getJobDetails('id');
     }
 
+    public function testSendDicomFile()
+    {
+        $array = [
+            "/home/salim/11009101406003/VR/1.2.840.113704.1.111.2496.1287397130.8/CT_001_0ac8ec19aadc48f698ec8b1eadeecf04.dcm"
+        ];
+        $answer = $this->orthancService->importFiles($array);
+        return $answer[0]['ParentStudy'];
+    }
+
     public function testSendDicomFileArray()
     {
         $array = [
