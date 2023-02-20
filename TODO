@@ -1,11 +1,6 @@
 Salim TODO :
 - Verifier qu'une PJ d'un investigateur et telechargeable par un reviewer (et chemin pour le faire)=> devrait etre ok en backend voir comment faire en frontend
 
---- Etudes ancillaires ---
-Api Reminder à voir avec Emilie (pas de relance d'envoi d'imagerie depuis une étude ancillaire, probablement à occulter en front seulement)
-Ne doit pas pouvoir faire les relance d'upload => Voir avec Emilie (probablement passer les info de study dans un contexte)
---- /Etudes ancillaires ---
-
 **** Tests ***
 Test feature : visit et autres (dicom...)
 Tests Services à faire
@@ -19,7 +14,7 @@ Test par etude specifique
 **Release procedure **
 - Update version parameter in config app
 - Update onboarding version si besoin
-- Documentation : sheetname limité a 31 caractère $sheetName =  substr($role, 0, 3)  . '_' . $visitGroupName . '_' . $visitTypeName; donc groupname et typename ensemble doivent etre < 25 caractères
+- Documentation : sheetname limité a 31 caractère $sheetName =  substr($role, 0, 3)  . '_' . $visitGroupName . '_' . $visitTypeName; donc groupname et typename ensemble doivent etre < 25 caractères. Studyname a limiter a 10 caractères
 
 **Code centres **
 Indicatif international et code postal
