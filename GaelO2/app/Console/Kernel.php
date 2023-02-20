@@ -25,6 +25,7 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         $schedule->command('auth:clear-resets')->hourly();
+        $schedule->command('cache:prune-stale-tags')->hourly();
     }
 
     /**
