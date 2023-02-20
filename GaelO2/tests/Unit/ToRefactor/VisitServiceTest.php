@@ -1,5 +1,5 @@
 <?php
-/*
+
 namespace Tests\Unit;
 
 use App\GaelO\Constants\Constants;
@@ -21,6 +21,7 @@ class VisitServiceTest extends TestCase
 {
     use RefreshDatabase;
 
+    /*
     protected function setUp(): void
     {
         parent::setUp();
@@ -100,6 +101,7 @@ class VisitServiceTest extends TestCase
 
         $this->visitService->updateUploadStatus($this->visit['id'], 'Done');
     }
+    */
 
 }
-*/
+
