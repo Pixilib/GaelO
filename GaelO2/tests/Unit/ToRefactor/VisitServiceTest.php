@@ -40,6 +40,13 @@ class VisitServiceTest extends TestCase
         $this->visitService  = App::Make(\App\GaelO\Services\VisitService::class);
         */
     }
+
+    public function testdummy()
+    {
+        $this->assertTrue(true);
+    }
+
+
     /*
     private function createVisit(string $stateInvestigatorForm, int $qcProbability, bool $localFormNeeded, int $reviewProbability)
     {
