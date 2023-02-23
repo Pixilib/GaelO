@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Notifications\ResetPasswordNotification;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Password;
 
 class ForgotPasswordTest extends TestCase
@@ -22,10 +23,15 @@ class ForgotPasswordTest extends TestCase
     public function testValidResetPassword()
     {
         $user = User::factory()->create();
-        $this->expectsNotification($user, ResetPasswordNotification::class);
+        Notification::fake();
 
         $response = $this->post('api/tools/forgot-password', ['email' => $user->email]);
         $response->assertStatus(200);
+        
+        Notification::assertSentTo(
+            [$user], ResetPasswordNotification::class
+        );
+        
     }
 
     public function testWrongEmailResetPassword()

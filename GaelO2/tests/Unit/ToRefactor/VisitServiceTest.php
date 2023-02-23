@@ -1,5 +1,5 @@
 <?php
-/*
+
 namespace Tests\Unit;
 
 use App\GaelO\Constants\Constants;
@@ -21,9 +21,12 @@ class VisitServiceTest extends TestCase
 {
     use RefreshDatabase;
 
+    
     protected function setUp(): void
     {
         parent::setUp();
+        $this->markTestSkipped();
+        /*
         $this->artisan('db:seed');
         Passport::actingAs(
             User::where('id', 1)->first()
@@ -35,8 +38,16 @@ class VisitServiceTest extends TestCase
 
         $this->mailServiceSpy = $this->spy(MailServices::class);
         $this->visitService  = App::Make(\App\GaelO\Services\VisitService::class);
+        */
     }
 
+    public function testdummy()
+    {
+        $this->assertTrue(true);
+    }
+
+
+    /*
     private function createVisit(string $stateInvestigatorForm, int $qcProbability, bool $localFormNeeded, int $reviewProbability)
     {
 
@@ -100,6 +111,7 @@ class VisitServiceTest extends TestCase
 
         $this->visitService->updateUploadStatus($this->visit['id'], 'Done');
     }
+    */
 
 }
-*/
+

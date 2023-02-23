@@ -19,6 +19,7 @@ class GetStudyReviewProgression
 {
 
     private AuthorizationStudyService $authorizationStudyService;
+    private StudyRepositoryInterface $studyRepositoryInterface;
     private VisitRepositoryInterface $visitRepositoryInterface;
     private UserRepositoryInterface $userRepositoryInterface;
     private ReviewRepositoryInterface $reviewRepositoryInterface;
@@ -88,6 +89,7 @@ class GetStudyReviewProgression
                 $answer[] = [
                     'visitId' => $visitId,
                     'patientId' => $visit['patient_id'],
+                    'stateQualityControl' => $visit['state_quality_control'],
                     'reviewStatus' => $visit['review_status']['review_status'],
                     'visitDate' => $visit['visit_date'],
                     'reviewDoneBy' => $userDetailsHavingReviewed,
