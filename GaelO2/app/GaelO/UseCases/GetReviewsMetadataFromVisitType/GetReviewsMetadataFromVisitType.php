@@ -37,7 +37,8 @@ class GetReviewsMetadataFromVisitType
 
             $visitGroupEntity = $this->visitGroupRepository->find($visitTypeEntity['visit_group_id']);
 
-            $abstractStudyRules = AbstractGaelOStudy::getSpecificStudiesRules($studyName, $visitGroupEntity['name'], $visitTypeEntity['name']);
+            $studyRule = AbstractGaelOStudy::getSpecificStudyObject($studyName);
+            $abstractStudyRules = $studyRule->getSpecificVisitRules($visitGroupEntity['name'], $visitTypeEntity['name']);
 
             $answer = [];
             $answer['default'] = $abstractStudyRules::getReviewerValidationRules();

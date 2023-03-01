@@ -20,7 +20,8 @@ class ExportReviewData
         $this->visitGroupName = $visitGroupName;
         $this->visitTypeName = $visitTypeName;
         $this->role = $role;
-        $studyRules = AbstractGaelOStudy::getSpecificStudiesRules($studyName, $visitGroupName, $visitTypeName);
+        $studyRule = AbstractGaelOStudy::getSpecificStudyObject($this->studyName);
+        $studyRules = $studyRule->getSpecificVisitRules($visitGroupName, $visitTypeName);
         if ($role === Constants::ROLE_INVESTIGATOR) $this->specificColumnNames = $studyRules->getInvestigatorInputNames();
         if ($role === Constants::ROLE_REVIEWER) $this->specificColumnNames= $studyRules->getReviewerInputNames();
     }
