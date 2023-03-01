@@ -50,6 +50,8 @@ class Visit extends Model
 
     /**
      * Add default relation as record not always existing in ancillary studies
+     * all values are null (not allowed in original db records) to differentiate default response
+     * from real db record and allow post query customization
      */
     public function reviewStatus()
     {

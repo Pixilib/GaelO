@@ -13,7 +13,6 @@ use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
 use App\GaelO\Util;
 use App\Models\ReviewStatus;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 
 class VisitRepository implements VisitRepositoryInterface
 {
