@@ -13,6 +13,7 @@ use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
 use App\GaelO\Util;
 use App\Models\ReviewStatus;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class VisitRepository implements VisitRepositoryInterface
 {
@@ -113,32 +114,36 @@ class VisitRepository implements VisitRepositoryInterface
         return $dataArray;
     }
 
-    public function computeMissiveReviewStatusForVisitArray(array $visits, array $reviewableVisitTypeIds = null): void
+    private function computeMissiveReviewStatusForVisitArray(array $visits, array $reviewableVisitTypeIds = null): array
     {
-        foreach ($visits as $visit) {
-            $this->computeMissingReviewStatusForVisit($visit, $reviewableVisitTypeIds);
-        }
+        $newVisits = array_map(function ($visit) use ($reviewableVisitTypeIds) {
+            return $this->computeMissingReviewStatusForVisit($visit, $reviewableVisitTypeIds);
+        }, $visits);
+        return $newVisits;
     }
 
-    public function computeMissingReviewStatusForVisit(array $visit, array $reviewableVisitTypeIds = null): void
+    private function computeMissingReviewStatusForVisit(array $visit, array $reviewableVisitTypeIds = null): array
     {
+
         //In case of a default value indicating default data has been injected in relationship
-        if ($visit['review_status']['review_status'] === null && $visit['state_quality_control'] === null) {
+        if ($visit['review_status']['review_status'] === null && $visit['review_status']['review_available'] === null) {
 
             //Review avalability depends on QC status of princeps visit
-            if (in_array('state_quality_control', [QualityControlStateEnum::ACCEPTED->value, QualityControlStateEnum::NOT_NEEDED->value])) {
-                $visit['review_available'] = true;
+            if (in_array($visit['state_quality_control'], [QualityControlStateEnum::ACCEPTED->value, QualityControlStateEnum::NOT_NEEDED->value])) {
+                $visit['review_status']['review_available'] = true;
             } else {
-                $visit['review_available'] = false;
+                $visit['review_status']['review_available'] = false;
             }
 
             //Review requirement depends if visit id is expected to be reviewed in ancillary study
-            if (in_array($visit['visit_type_id'], $reviewableVisitTypeIds)) {
-                $visit['review_status']['review_status'] = ReviewStatusEnum::NOT_DONE->value;
-            } else {
+            if ($reviewableVisitTypeIds && !in_array($visit['visit_type_id'], $reviewableVisitTypeIds)) {
                 $visit['review_status']['review_status'] = ReviewStatusEnum::NOT_NEEDED->value;
+            } else {
+                $visit['review_status']['review_status'] = ReviewStatusEnum::NOT_DONE->value;
             }
         }
+
+        return $visit;
     }
 
     public function getVisitWithContextAndReviewStatus(int $visitId, string $studyName): array
@@ -150,7 +155,7 @@ class VisitRepository implements VisitRepositoryInterface
         }]);
 
         $dataArray = $builder->findOrFail($visitId)->toArray();
-        $this->computeMissingReviewStatusForVisit($dataArray);
+        $dataArray = $this->computeMissingReviewStatusForVisit($dataArray);
         return $dataArray;
     }
 
@@ -186,7 +191,7 @@ class VisitRepository implements VisitRepositoryInterface
             return [];
         } else {
             $visits = $visits->toArray();
-            $this->computeMissiveReviewStatusForVisitArray($visits);
+            $visits = $this->computeMissiveReviewStatusForVisitArray($visits);
             return $visits;
         }
     }
@@ -213,7 +218,7 @@ class VisitRepository implements VisitRepositoryInterface
             return [];
         } else {
             $visits = $answer->toArray();
-            $this->computeMissiveReviewStatusForVisitArray($visits);
+            $visits = $this->computeMissiveReviewStatusForVisitArray($visits);
             return $visits;
         }
     }
@@ -236,7 +241,7 @@ class VisitRepository implements VisitRepositoryInterface
             return [];
         } else {
             $visits  = $answer->toArray();
-            $this->computeMissiveReviewStatusForVisitArray($visits);
+            $visits  = $this->computeMissiveReviewStatusForVisitArray($visits);
             return $visits;
         }
     }
@@ -267,8 +272,8 @@ class VisitRepository implements VisitRepositoryInterface
         if ($answer->count() === 0) {
             return [];
         } else {
-            $visits  = $answer->toArray();
-            $this->computeMissiveReviewStatusForVisitArray($visits);
+            $visits = $answer->toArray();
+            if ($withReviewStatus) $visits = $this->computeMissiveReviewStatusForVisitArray($visits);
             return $visits;
         }
     }
@@ -303,7 +308,7 @@ class VisitRepository implements VisitRepositoryInterface
         }
 
         $visit = $visits->sole()->toArray();
-        $this->computeMissingReviewStatusForVisit($visit);
+        if ($withReviewStatus) $visit = $this->computeMissingReviewStatusForVisit($visit);
         return $visit;
     }
 
@@ -332,8 +337,8 @@ class VisitRepository implements VisitRepositoryInterface
         if ($answers->count() === 0) {
             return [];
         } else {
-            $visits  = $answers->toArray();
-            $this->computeMissiveReviewStatusForVisitArray($visits);
+            $visits = $answers->toArray();
+            if ($withReviewStatus) $visits = $this->computeMissiveReviewStatusForVisitArray($visits);
             return $visits;
         }
     }
@@ -394,7 +399,7 @@ class VisitRepository implements VisitRepositoryInterface
         //Filtered outside the query because confusing laravel to do default value (which is dynamic in our case) + condition after the default value
         $reviewAvailable = $collection->filter(function ($visit, $key) {
             $visitArray = $visit->toArray();
-            $this->computeMissingReviewStatusForVisit($visitArray);
+            $visitArray = $this->computeMissingReviewStatusForVisit($visitArray);
             return $visitArray['review_status']['review_available'] === true;
         });
 
@@ -428,7 +433,7 @@ class VisitRepository implements VisitRepositoryInterface
 
         $patientVisitAvailableForReview = $patientVisitAvailableForReview->filter(function ($visit, $key) {
             $visitArray = $visit->toArray();
-            $this->computeMissingReviewStatusForVisit($visitArray);
+            $visitArray = $this->computeMissingReviewStatusForVisit($visitArray);
             return $visitArray['review_status']['review_available'] === true;
         });
 
