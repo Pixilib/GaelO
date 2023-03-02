@@ -142,7 +142,7 @@ class VisitRepository implements VisitRepositoryInterface
             }
 
             //Review requirement depends if visit id is expected to be reviewed in ancillary study
-            if ($reviewableVisitTypeIds && !in_array($visit['visit_type_id'], $reviewableVisitTypeIds)) {
+            if ($reviewableVisitTypeIds !== null && !in_array($visit['visit_type_id'], $reviewableVisitTypeIds)) {
                 $visit['review_status']['review_status'] = ReviewStatusEnum::NOT_NEEDED->value;
             } else {
                 $visit['review_status']['review_status'] = ReviewStatusEnum::NOT_DONE->value;
