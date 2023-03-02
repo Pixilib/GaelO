@@ -91,7 +91,6 @@ class VisitRepositoryAncillaryTest extends TestCase
         $patient = $this->populateVisits()[0];
         $studyName = $patient->study_name;
         $ancillaryStudyName = $this->ancillaryStudyName;
-        $userId = 1;
         $answer = $this->visitRepository->getPatientsHavingAtLeastOneAwaitingReviewForUser($studyName, 1, $ancillaryStudyName);
 
         $this->assertEquals(1, sizeof($answer));

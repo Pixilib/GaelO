@@ -50,13 +50,15 @@ class Visit extends Model
 
     /**
      * Add default relation as record not always existing in ancillary studies
+     * all values are null (not allowed in original db records) to differentiate default response
+     * from real db record and allow post query customization
      */
     public function reviewStatus()
     {
         return $this->hasOne(ReviewStatus::class, 'visit_id', 'id')->withDefault(function ($reviewStatus, $visit) {
-            $reviewStatus->review_available = in_array($visit->state_quality_control->value, ['Accepted', 'Not Needed']);
+            $reviewStatus->review_available = null;
             $reviewStatus->target_lesions = null;
-            $reviewStatus->review_status = 'Not Done';
+            $reviewStatus->review_status = null;
             $reviewStatus->review_conclusion_value = null;
             $reviewStatus->review_conclusion_date = null;
         });
