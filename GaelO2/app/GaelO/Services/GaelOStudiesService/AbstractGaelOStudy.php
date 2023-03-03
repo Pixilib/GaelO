@@ -10,23 +10,33 @@ abstract class AbstractGaelOStudy
 
     public abstract function getVisitRulesClass(string $visitGroupName, string $visitTypeName): String;
 
-    public function getCreatableVisitCalculator() : DefaultCreatableVisitCalculator {
+    public function getSpecificVisitRules(string $visitGroup, string $visitName): AbstractVisitRules
+    {
+        $specificObjectClass = $this->getVisitRulesClass($visitGroup, $visitName);
+        return FrameworkAdapter::make($specificObjectClass);
+    }
+
+    public function getCreatableVisitCalculator(): DefaultCreatableVisitCalculator
+    {
         return FrameworkAdapter::make(DefaultCreatableVisitCalculator::class);
+    }
+
+    /**
+     * For ancillaries studies, shall return the visitType ID array for which a review is expected
+     */
+    public function getReviewableVisitTypeIds(): null|array
+    {
+        return null;
     }
 
     /**
      * Facade to instanciate specific study object, if does not exist, return the DefaultGaelOStudy Object
      */
-    public static function getSpecificStudyObject(string $studyName) : AbstractGaelOStudy {
-        $class = '\App\GaelO\Services\SpecificStudiesRules\\'. $studyName .'\\' .  $studyName;
-        if(class_exists($class)) return FrameworkAdapter::make($class);
+    public static function getSpecificStudyObject(string $studyName): AbstractGaelOStudy
+    {
+        $class = '\App\GaelO\Services\SpecificStudiesRules\\' . $studyName . '\\' .  $studyName;
+        if (class_exists($class)) return FrameworkAdapter::make($class);
         else return FrameworkAdapter::make(DefaultGaelOStudy::class);
     }
 
-    public static function getSpecificStudiesRules(string $studyName, string $visitGroup, string $visitName): AbstractVisitRules
-    {
-        $studyObject = AbstractGaelOStudy::getSpecificStudyObject($studyName);
-        $specificObjectClass = $studyObject->getVisitRulesClass($visitGroup, $visitName);
-        return FrameworkAdapter::make($specificObjectClass);
-    }
 }

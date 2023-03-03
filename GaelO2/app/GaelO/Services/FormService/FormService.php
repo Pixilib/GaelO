@@ -67,7 +67,8 @@ abstract class FormService
         $this->uploaderId = $this->visitContext['creator_user_id'];
         $this->studyName = $studyName;
         $visitGroup = $this->visitContext['visit_type']['visit_group']['name'];
-        $this->abstractVisitRules = AbstractGaelOStudy::getSpecificStudiesRules($this->studyName, $visitGroup, $this->visitType);
+        $studyRule = AbstractGaelOStudy::getSpecificStudyObject($this->studyName);
+        $this->abstractVisitRules = $studyRule->getSpecificVisitRules($visitGroup, $this->visitType);
         //SK a revoir si c'est une bonne idée, le visit context sert a avoir la decision etc (objet a part?)
         $this->abstractVisitRules->setVisitContext($this->visitContext);
         $this->abstractVisitRules->setLocalForm($this->local);
