@@ -2,14 +2,15 @@
 
 namespace App\Mail;
 
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
-use Illuminate\Queue\SerializesModels;
+use Illuminate\Mail\Mailables\Content;
+use Illuminate\Mail\Mailables\Envelope;
 
-class QcReport extends Mailable //implements ShouldQueue
+/**
+ * this email is dispatch syncronously as already triggered by a queuded job
+ */
+class QcReport extends Mailable
 {
-    //use Queueable, SerializesModels;
 
     protected array $parameters;
 
@@ -23,15 +24,18 @@ class QcReport extends Mailable //implements ShouldQueue
         $this->parameters = $parameters;
     }
 
-    /**
-     * Build the message.
-     *
-     * @return $this
-     */
-    public function build()
+    public function envelope(): Envelope
     {
-        return $this->view('mails.mail_qc_report')
-        ->subject($this->parameters['study']." - Qc Report Patient - ".$this->parameters['patientCode']." - Visit - ".$this->parameters['visitType'])
-        ->with($this->parameters);
+        return new Envelope(
+            subject: $this->parameters['study'] . " - Qc Report Patient - " . $this->parameters['patientCode'] . " - Visit - " . $this->parameters['visitType']
+        );
+    }
+
+    public function content(): Content
+    {
+        return new Content(
+            view: 'mails.mail_qc_report',
+            with: $this->parameters
+        );
     }
 }

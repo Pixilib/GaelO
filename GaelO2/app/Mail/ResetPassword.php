@@ -3,6 +3,8 @@
 namespace App\Mail;
 
 use Illuminate\Mail\Mailable;
+use Illuminate\Mail\Mailables\Content;
+use Illuminate\Mail\Mailables\Envelope;
 
 class ResetPassword extends Mailable
 {
@@ -19,15 +21,19 @@ class ResetPassword extends Mailable
         $this->parameters = $parameters;
     }
 
-    /**
-     * Build the message.
-     *
-     * @return $this
-     */
-    public function build()
+    public function envelope(): Envelope
     {
-        return $this->subject('GaelO - Reset Password')
-            ->view('mails.mail_reset_password')
-            ->with($this->parameters);
+        return new Envelope(
+            subject: "GaelO - Reset Password"
+        );
     }
+
+    public function content(): Content
+    {
+        return new Content(
+            view: 'mails.mail_reset_password',
+            with: $this->parameters
+        );
+    }
+
 }
