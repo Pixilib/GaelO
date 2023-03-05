@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Jobs;
+namespace App\Jobs\QcReport;
 
 use App\GaelO\Constants\Constants;
 use App\GaelO\Constants\Enums\InvestigatorFormStateEnum;
@@ -17,7 +17,6 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use App\GaelO\Services\StoreObjects\OrthancMetaData;
-use App\Jobs\QcReport\ImageType;
 use Illuminate\Support\Facades\Log;
 use Throwable;
 
@@ -78,18 +77,6 @@ class JobQcReport implements ShouldQueue
                 break;
         }
         return $imagePath;
-    }
-
-    private function getRadioPharmaceutical(array $radioPharmaceuticalTags): ?array
-    {
-        $radioPharmaceuticalArray = [];
-
-        if ($radioPharmaceuticalTags != null) {
-            for ($j = 0; $j < count($radioPharmaceuticalTags); $j++) {
-                $radioPharmaceuticalArray[$radioPharmaceuticalTags[$j]['Name']] = $radioPharmaceuticalTags[$j]['Value'];
-            }
-        }
-        return $radioPharmaceuticalArray;
     }
 
     private function convertDate(string $visitDate): \DateTime
@@ -190,7 +177,7 @@ class JobQcReport implements ShouldQueue
             if ($seriesData['infos']['Modality'] == 'MR') {
                 $seriesData['infos']['Scanning sequence'] = $seriesSharedTags->getScanningSequence();
                 $seriesData['infos']['Sequence variant'] = $seriesSharedTags->getSequenceVariant();
-                $seriesData['infos']['Echo_ ime'] = $seriesSharedTags->getEchoTime();
+                $seriesData['infos']['Echo_time'] = $seriesSharedTags->getEchoTime();
                 $seriesData['infos']['Inversion_time'] = $seriesSharedTags->getInversionTime();
                 $seriesData['infos']['Echo train length'] = $seriesSharedTags->getEchoTrainLength();
                 $seriesData['infos']['Spacing between slices'] = $seriesSharedTags->getSpacingBetweenSlices();
@@ -202,7 +189,6 @@ class JobQcReport implements ShouldQueue
                 $seriesData['infos']['Injected Time'] = $instanceTags->getInjectedTime();
                 $seriesData['infos']['Injected DateTime'] = $instanceTags->getInjectedDateTime();
                 $seriesData['infos']['Injected Activity'] = $instanceTags->getInjectedActivity();
-                $seriesData['infos']['Radiopharmaceutical'] = $instanceTags->getRadiopharmaceutical();
                 $seriesData['infos']['Half Life'] = $instanceTags->getHalfLife();
             }
             $seriesInfo[] = $seriesData;
@@ -229,6 +215,8 @@ class JobQcReport implements ShouldQueue
             $magicLinkRefused = $frameworkInterface->createMagicLink($user['id'], $redirectLink, $queryParams);
             $mailServices->sendQcReport($studyName, $visitType, $patientCode, $reportData, $seriesInfo, $magicLinkAccepted, $magicLinkRefused, $user['email']);
         }
+
+        //Comme l'envoi des mail est synchrone, suppression fichier image devrait etre OK
     }
 
     public function failed(Throwable $exception)

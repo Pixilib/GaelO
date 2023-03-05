@@ -247,6 +247,16 @@ class OrthancMetaData
 
     public function getAcquisitonDateTime() : ?string
     {
+        return $this->getMetaDataValueFromCode('0008,002a');
+    }
+
+    public function getAcquisitonDate() : ?string
+    {
         return $this->getMetaDataValueFromCode('0008,0022');
+    }
+
+    public function getAcquisitonTime() : ?string
+    {
+        return $this->getMetaDataValueFromCode('0008,0032');
     }
 }
