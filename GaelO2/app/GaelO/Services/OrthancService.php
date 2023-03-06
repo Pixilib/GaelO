@@ -413,7 +413,7 @@ class OrthancService
         }
     }
 
-    public function getMetaData(string $seriesOrthancID) : OrthancMetaData
+    public function getSharedTags(string $seriesOrthancID) : OrthancMetaData
     {
         $response = $this->httpClientInterface->requestJson('GET', '/series/' . $seriesOrthancID . '/shared-tags');
         return new OrthancMetaData($response->getJsonBody());

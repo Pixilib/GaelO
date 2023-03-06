@@ -10,7 +10,7 @@
       <mj-column width="100%">
         <mj-text mj-class="text-blue">
           <h3 align="center">
-            {{$series['series_description']}}
+            {{$series['infos']['series_description']}}
           </h3>
         </mj-text>
       </mj-column width="100%">

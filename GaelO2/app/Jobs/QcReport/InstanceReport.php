@@ -6,12 +6,18 @@ use App\GaelO\Services\StoreObjects\OrthancMetaData;
 
 class InstanceReport
 {
-    private string $injectedDose;
-    private string $injectedTime;
-    private string $injectedDateTime;
-    private string $injectedActivity;
-    private string $radiopharmaceutical;
-    private string $halfLife;
+    public string $injectedDose;
+    public string $injectedTime;
+    public string $injectedDateTime;
+    public string $injectedActivity;
+    public string $radiopharmaceutical;
+    public string $halfLife;
+
+    private string $orthancId;
+
+    public function setOrthancId(string $orthancId){
+        $this->orthancId = $orthancId;
+    }
 
     public function fillData(OrthancMetaData $sharedTags)
     {

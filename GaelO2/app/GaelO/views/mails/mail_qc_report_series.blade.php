@@ -137,7 +137,7 @@
                       <td align="left" style="font-size:0px;padding:10px 25px;word-break:break-word;">
                         <div style="font-family:Ubuntu, Helvetica, Arial, sans-serif;font-size:13px;line-height:1;text-align:left;color:#0495A0;">
                           <h3 align="center">
-                            {{$series['series_description']}}
+                            {{$series['infos']['series_description']}}
                           </h3>
                         </div>
                       </td>

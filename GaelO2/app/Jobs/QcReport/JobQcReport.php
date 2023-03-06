@@ -62,21 +62,25 @@ class JobQcReport implements ShouldQueue
 
     private function getSeriesPreview(OrthancMetaData $sharedTags, string $seriesID, string $firstInstanceID): ?string
     {
-        $imageType = $this->getImageType($sharedTags);
-        $imagePath = null;
-        switch ($imageType) {
-            case ImageType::MIP:
-                //$imagePath = $this->orthancService->getSeriesMIP($seriesID);
-                $imagePath = $this->orthancService->getSeriesMosaic($seriesID);
-                break;
-            case ImageType::MOSAIC:
-                $imagePath = $this->orthancService->getSeriesMosaic($seriesID);
-                break;
-            case ImageType::DEFAULT:
-                $imagePath = $this->orthancService->getInstancePreview($firstInstanceID);
-                break;
+        try {
+            $imageType = $this->getImageType($sharedTags);
+            $imagePath = null;
+            switch ($imageType) {
+                case ImageType::MIP:
+                    //$imagePath = $this->orthancService->getSeriesMIP($seriesID);
+                    $imagePath = $this->orthancService->getSeriesMosaic($seriesID);
+                    break;
+                case ImageType::MOSAIC:
+                    $imagePath = $this->orthancService->getSeriesMosaic($seriesID);
+                    break;
+                case ImageType::DEFAULT:
+                    $imagePath = $this->orthancService->getInstancePreview($firstInstanceID);
+                    break;
+            }
+            return $imagePath;
+        } catch (Throwable $t) {
+            return public_path('static/media/ban-image-photo-icon.png');
         }
-        return $imagePath;
     }
 
     private function convertDate(string $visitDate): \DateTime
@@ -101,106 +105,70 @@ class JobQcReport implements ShouldQueue
         $this->orthancService = $orthancService;
         $this->orthancService->setOrthancServer(true);
 
+        $visitReport = new VisitReport();
+
         $visitEntity = $visitRepositoryInterface->getVisitContext($this->visitId);
-        $dicomStudyEntity = $dicomStudyRepositoryInterface->getDicomsDataFromVisit($this->visitId, false, false);
-        $stateInvestigatorForm = $visitEntity['state_investigator_form'];
-
-        $reportData = [];
-        $reportData['visitDate'] = $this->convertDate($visitEntity['visit_date'])->format('m/d/Y');
-        $minDayToInclusion = $visitEntity['visit_type']['limit_low_days'];
-        $maxDayToInclusion = $visitEntity['visit_type']['limit_up_days'];
-        //Determine min and max visit date compared to registration date
-        $reportData['minVisitDate'] = null;
-        $reportData['maxVisitDate'] = null;
-        $reportData['registrationDate'] = null;
-
-        if ($visitEntity['patient']['registration_date'] !== null) {
-            $registrationDate = $visitEntity['patient']['registration_date'];
-            $reportData['registrationDate'] = $this->convertDate($registrationDate)->format('m/d/Y');
-            $reportData['minVisitDate'] = $this->convertDate($registrationDate)->modify($minDayToInclusion . ' day')->format('m/d/Y');
-            $reportData['maxVisitDate'] = $this->convertDate($registrationDate)->modify($maxDayToInclusion . ' day')->format('m/d/Y');
-        }
-        $reportData['visitName'] = $visitEntity['visit_type']['name'];
-        $reportData['patientCode'] = $visitEntity['patient']['code'];
-        $reportData['studyName'] = $visitEntity['patient']['study_name'];
-        $reportData['studyDetails']['Acquisition Date'] = null;
-        if($dicomStudyEntity[0]['acquisition_date'] !==null) {
-            $reportData['studyDetails']['Acquisition Date'] = $dicomStudyEntity[0]['acquisition_date'];
-        }
-        $reportData['studyDetails']['Number Of Series'] = count($dicomStudyEntity[0]['dicom_series']);
-        $reportData['studyDetails']['Number Of Instances'] = 0;
-
-        if ($stateInvestigatorForm != InvestigatorFormStateEnum::NOT_NEEDED->value) {
-            $reviewEntity = $reviewRepositoryInterface->getInvestigatorForm($this->visitId, false);
-            $reportData['investigatorForm'] = $reviewEntity['review_data'];
-        } else {
-            $reportData['investigatorForm'] = [];
-        }
-
-        $seriesInfo = [];
-        $index = 0;
-        $modalities = [];
-        foreach ($dicomStudyEntity[0]['dicom_series'] as $series) {
-            $seriesData = [];
-            $seriesData['infos'] = [];
-            $seriesData['image_path'] = public_path('static/media/ban-image-photo-icon.png');
-            try {
-                $seriesSharedTags = $this->orthancService->getMetaData($series['orthanc_id']);
-                $seriesDetails = $this->orthancService->getOrthancRessourcesDetails(Constants::ORTHANC_SERIES_LEVEL, $series['orthanc_id']);
-                $seriesData['image_path'] = $this->getSeriesPreview($seriesSharedTags, $series['orthanc_id'], $seriesDetails['Instances'][0]);
-                //Needed for radiopharmaceutical data (need first instance metadata to access it)
-                $instanceTags = $this->orthancService->getInstanceTags($seriesDetails['Instances'][0]);
-            } catch (Throwable $t) {
-                Log::info($t);
-            }
-
-            if ($index == 0) {
-                $reportData['studyDetails']['Study Description'] = $seriesSharedTags->getStudyDescription();
-                $reportData['studyDetails']['Manufacturer'] = $seriesSharedTags->getStudyManufacturer();
-                $reportData['studyDetails']['Acquisition Date'] = $seriesSharedTags->getAcquisitonDateTime();
-            }
-            $reportData['studyDetails']['Number Of Instances'] += $series['number_of_instances'];
-            $modalities[] = $seriesSharedTags->getSeriesModality();
-
-            //SK devrait etre dans series info je pense
-            $seriesData['series_description'] = $seriesSharedTags->getSeriesDescription();
-            $seriesData['infos']['Modality'] = $seriesSharedTags->getSeriesModality();
-            $seriesData['infos']['Series date'] =  $seriesSharedTags->getSeriesDate();
-            $seriesData['infos']['Series time'] = $series['acquisition_time'];
-            $seriesData['infos']['Slice thickness'] = $seriesSharedTags->getSliceThickness();
-            $seriesData['infos']['Pixel spacing'] = $seriesSharedTags->getPixelSpacing();
-            $seriesData['infos']['FOV'] = $seriesSharedTags->getFieldOfView();
-            $seriesData['infos']['Matrix size'] = $seriesSharedTags->getMatrixSize();
-            $seriesData['infos']['Patient position'] = $seriesSharedTags->getPatientPosition();
-            $seriesData['infos']['Patient orientation'] = $seriesSharedTags->getImageOrientation();
-            $seriesData['infos']['Number of instances'] = $series['number_of_instances'];
-            if ($seriesData['infos']['Modality'] == 'MR') {
-                $seriesData['infos']['Scanning sequence'] = $seriesSharedTags->getScanningSequence();
-                $seriesData['infos']['Sequence variant'] = $seriesSharedTags->getSequenceVariant();
-                $seriesData['infos']['Echo_time'] = $seriesSharedTags->getEchoTime();
-                $seriesData['infos']['Inversion_time'] = $seriesSharedTags->getInversionTime();
-                $seriesData['infos']['Echo train length'] = $seriesSharedTags->getEchoTrainLength();
-                $seriesData['infos']['Spacing between slices'] = $seriesSharedTags->getSpacingBetweenSlices();
-                $seriesData['infos']['Protocol name'] = $seriesSharedTags->getProtocolName();
-            } else if ($seriesData['infos']['Modality'] == 'PT') {
-                $seriesData['infos']['Patient weight'] = $seriesSharedTags->getPatientWeight();
-                $seriesData['infos']['Patient height'] = $seriesSharedTags->getPatientHeight();
-                $seriesData['infos']['Injected Dose'] = $instanceTags->getInjectedDose();
-                $seriesData['infos']['Injected Time'] = $instanceTags->getInjectedTime();
-                $seriesData['infos']['Injected DateTime'] = $instanceTags->getInjectedDateTime();
-                $seriesData['infos']['Injected Activity'] = $instanceTags->getInjectedActivity();
-                $seriesData['infos']['Half Life'] = $instanceTags->getHalfLife();
-            }
-            $seriesInfo[] = $seriesData;
-        }
-        $modalities = array_unique($modalities);
-        $reportData['studyDetails']['Modalities'] = implode(' - ', $modalities);
 
         $studyName = $visitEntity['patient']['study_name'];
         $visitId = $visitEntity['id'];
         $visitType = $visitEntity['visit_type']['name'];
         $patientCode = $visitEntity['patient']['code'];
 
+        $visitReport->setStudyName($studyName);
+        $visitReport->setVisitName($visitType);
+        $visitReport->setPatientCode($patientCode);
+
+        $dicomStudyEntity = $dicomStudyRepositoryInterface->getDicomsDataFromVisit($this->visitId, false, false);
+        $stateInvestigatorForm = $visitEntity['state_investigator_form'];
+
+        $visitDate = $this->convertDate($visitEntity['visit_date'])->format('m/d/Y');
+        $visitReport->setVisitDate($visitDate);
+
+        if ($visitEntity['patient']['registration_date'] !== null) {
+            $registrationDate = $visitEntity['patient']['registration_date'];
+            //Determine min and max visit date compared to registration date
+            $minDayToInclusion = $visitEntity['visit_type']['limit_low_days'];
+            $maxDayToInclusion = $visitEntity['visit_type']['limit_up_days'];
+            $registrationDate = $this->convertDate($registrationDate)->format('m/d/Y');
+            $minVisitDate = $this->convertDate($registrationDate)->modify($minDayToInclusion . ' day')->format('m/d/Y');
+            $maxVisitDate = $this->convertDate($registrationDate)->modify($maxDayToInclusion . ' day')->format('m/d/Y');
+            $visitReport->setRegistrationDate($registrationDate);
+            $visitReport->setMinMaxVisitDate($minVisitDate, $maxVisitDate);
+        }
+
+        if ($stateInvestigatorForm != InvestigatorFormStateEnum::NOT_NEEDED->value) {
+            $reviewEntity = $reviewRepositoryInterface->getInvestigatorForm($this->visitId, false);
+            $visitReport->setInvestigatorForm($reviewEntity['review_data']);
+        }
+
+        $seriesReports = [];
+
+        foreach ($dicomStudyEntity[0]['dicom_series'] as $series) {
+
+            try {
+                $seriesSharedTags = $this->orthancService->getSharedTags($series['orthanc_id']);
+                $seriesDetails = $this->orthancService->getOrthancRessourcesDetails(Constants::ORTHANC_SERIES_LEVEL, $series['orthanc_id']);
+                //Needed for radiopharmaceutical data (need first instance metadata to access it)
+                $instanceTags = $this->orthancService->getInstanceTags($seriesDetails['Instances'][0]);
+
+                $instanceReport = new InstanceReport();
+                $instanceReport->fillData($instanceTags);
+                $seriesReport = new SeriesReport();
+                $seriesReport->fillData($seriesSharedTags);
+                $seriesReport->setInstanceReport($instanceReport);
+
+                $imagePreviewPath = $this->getSeriesPreview($seriesSharedTags, $series['orthanc_id'], $seriesDetails['Instances'][0]);
+                $seriesReport->setPreviewImagePath($imagePreviewPath);
+
+                $seriesReports[] = $seriesReport;
+            } catch (Throwable $t) {
+                Log::info($t);
+            }
+        }
+
+        $visitReport->setSeriesReports($seriesReports);
+
+        $formattedData = $this->formatData($visitReport);
         $controllerUsers = $userRepositoryInterface->getUsersByRolesInStudy($studyName, Constants::ROLE_CONTROLLER);
 
         foreach ($controllerUsers as $user) {
@@ -213,14 +181,26 @@ class JobQcReport implements ShouldQueue
             $magicLinkAccepted = $frameworkInterface->createMagicLink($user['id'], $redirectLink, $queryParams);
             $queryParams['accepted'] = 'false';
             $magicLinkRefused = $frameworkInterface->createMagicLink($user['id'], $redirectLink, $queryParams);
-            $mailServices->sendQcReport($studyName, $visitType, $patientCode, $reportData, $seriesInfo, $magicLinkAccepted, $magicLinkRefused, $user['email']);
+            $mailServices->sendQcReport($studyName, $visitType, $patientCode, $formattedData[0], $formattedData[1], $magicLinkAccepted, $magicLinkRefused, $user['email']);
         }
 
-        //Comme l'envoi des mail est synchrone, suppression fichier image devrait etre OK
+        //TODO Comme l'envoi des mail est synchrone, suppression fichier image devrait etre OK
+    }
+
+    private function formatData(VisitReport $visitReport)
+    {
+
+        $seriesReports = $visitReport->getSeriesReports();
+        $seriesInfos = array_map(function (SeriesReport $seriesReport) {
+            return ['infos' => $seriesReport];
+        }, $seriesReports);
+
+        $studyInfo = ['studyDetails' => $visitReport->toArray()];
+        return [$studyInfo, $seriesInfos];
     }
 
     public function failed(Throwable $exception)
     {
-       Log::info($exception);
+        Log::info($exception);
     }
 }
