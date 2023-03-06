@@ -176,7 +176,7 @@ class JobQcReport implements ShouldQueue
             $modalities[] = $seriesSharedTags->getSeriesModality();
 
             //SK devrait etre dans series info je pense
-            $seriesData['series_description'] = $seriesSharedTags->getSeriesDescription();
+            $seriesData['Series Description'] = $seriesSharedTags->getSeriesDescription();
             $seriesData['infos']['Modality'] = $seriesSharedTags->getSeriesModality();
             $seriesData['infos']['Series date'] =  $seriesSharedTags->getSeriesDate();
             $seriesData['infos']['Series time'] = $series['acquisition_time'];

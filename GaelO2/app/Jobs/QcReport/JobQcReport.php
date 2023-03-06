@@ -156,6 +156,7 @@ class JobQcReport implements ShouldQueue
                 $seriesReport = new SeriesReport();
                 $seriesReport->fillData($seriesSharedTags);
                 $seriesReport->setInstanceReport($instanceReport);
+                $seriesReport->setNumberOfInstances(sizeof($seriesDetails['Instances']));
 
                 $imagePreviewPath = $this->getSeriesPreview($seriesSharedTags, $series['orthanc_id'], $seriesDetails['Instances'][0]);
                 $seriesReport->setPreviewImagePath($imagePreviewPath);
@@ -189,13 +190,12 @@ class JobQcReport implements ShouldQueue
 
     private function formatData(VisitReport $visitReport)
     {
-
         $seriesReports = $visitReport->getSeriesReports();
         $seriesInfos = array_map(function (SeriesReport $seriesReport) {
-            return ['infos' => $seriesReport];
+            return ['infos' => $seriesReport->toArray()];
         }, $seriesReports);
 
-        $studyInfo = ['studyDetails' => $visitReport->toArray()];
+        $studyInfo = $visitReport->toArray();
         return [$studyInfo, $seriesInfos];
     }
 

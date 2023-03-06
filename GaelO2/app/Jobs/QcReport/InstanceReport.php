@@ -6,12 +6,12 @@ use App\GaelO\Services\StoreObjects\OrthancMetaData;
 
 class InstanceReport
 {
-    public string $injectedDose;
-    public string $injectedTime;
-    public string $injectedDateTime;
-    public string $injectedActivity;
-    public string $radiopharmaceutical;
-    public string $halfLife;
+    public $injectedDose;
+    public $injectedTime;
+    public $injectedDateTime;
+    public $injectedActivity;
+    public $radiopharmaceutical;
+    public $halfLife;
 
     private string $orthancId;
 

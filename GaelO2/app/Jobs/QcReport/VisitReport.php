@@ -65,6 +65,7 @@ class VisitReport
     public function toArray()
     {
         return [
+            'studyDetails' => $this->seriesReports[0]->getStudyDetails(),
             'Number Of Instances' => array_sum(array_map(function (SeriesReport $series) {
                 return $series->getNumberOfInstances();
             }, $this->seriesReports)),

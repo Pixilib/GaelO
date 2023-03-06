@@ -6,7 +6,7 @@ use App\GaelO\Constants\Constants;
 use App\GaelO\Repositories\DicomSeriesRepository;
 use App\GaelO\Services\OrthancService;
 use App\GaelO\Services\StoreObjects\OrthancMetaData;
-use App\Jobs\JobQcReport;
+use App\Jobs\QcReport\JobQcReport;
 use App\Models\DicomSeries;
 use App\Models\DicomStudy;
 use App\Models\Review;
@@ -45,12 +45,12 @@ class JobQcReportTest extends TestCase
         $decoded = json_decode($strJsonFileContentsData, true);
 
         $mockOrthancService = $this->partialMock(OrthancService::class, function (MockInterface $mock) use ($tags, $decoded){
-            $mock->shouldReceive('getMetaData')->andReturn($tags);
+            $mock->shouldReceive('getSharedTags')->andReturn($tags);
             $mock->shouldReceive('setOrthancServer')->andReturn(null);
             $mock->shouldReceive('getOrthancRessourcesDetails')->andReturn($decoded);
             $mock->shouldReceive('getInstanceTags')->andReturn($tags);
             $mock->shouldReceive('getSeriesMIP')->andReturn((getcwd()."/tests/Unit/TestJobs/testGif.gif"));
-            $mock->shouldReceive('getSeriesMosaic')->andReturn((getcwd()."/tests/Unit/TestJobs/testMosaic.gif"));
+            $mock->shouldReceive('getSeriesMosaic')->andReturn((getcwd()."/tests/Unit/TestJobs/testMosaic.png"));
         });
 
         $investigatorInfos = [

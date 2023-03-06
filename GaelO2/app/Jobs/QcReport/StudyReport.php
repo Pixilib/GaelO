@@ -7,10 +7,10 @@ use App\GaelO\Services\StoreObjects\OrthancMetaData;
 class StudyReport
 {
 
-    private string $studyDescription;
-    private string $manufacturer;
-    private string $studyDate;
-    private string $studyTime;
+    private $studyDescription;
+    private $manufacturer;
+    private $studyDate;
+    private $studyTime;
 
     private string $orthancId;
 

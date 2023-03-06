@@ -137,7 +137,7 @@
                       <td align="left" style="font-size:0px;padding:10px 25px;word-break:break-word;">
                         <div style="font-family:Ubuntu, Helvetica, Arial, sans-serif;font-size:13px;line-height:1;text-align:left;color:#0495A0;">
                           <h3 align="center">
-                            {{$series['infos']['series_description']}}
+                            {{$series['infos']['Series Description']}}
                           </h3>
                         </div>
                       </td>
@@ -155,7 +155,7 @@
                           <tbody>
                             <tr>
                               <td style="width:370px;">
-                                <img alt="series preview" height="auto" src="{{$message->embed($series['image_path'])}}" style="border:0;display:block;outline:none;text-decoration:none;height:auto;width:100%;font-size:13px;" width="370" />
+                                <img alt="series preview" height="auto" src="{{$message->embed($series['infos']['image_path'])}}" style="border:0;display:block;outline:none;text-decoration:none;height:auto;width:100%;font-size:13px;" width="370" />
                               </td>
                             </tr>
                           </tbody>

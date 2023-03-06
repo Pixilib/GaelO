@@ -6,33 +6,30 @@ use App\GaelO\Services\StoreObjects\OrthancMetaData;
 
 class SeriesReport
 {
-    private string $seriesDescription;
-    private string $modality;
-    private string $seriesDate;
-    private string $seriesTime;
-    private string $acquisitionDate;
-    private string $acquisitionTime;
-    private string $sliceThickness;
-    private string $pixelSpacing;
-    private string $fov;
-    private string $matrixSize;
-    private string $patientPosition;
-    private string $patientOrientation;
-    private string $numberOfInstances;
-
-    private string $scanningSequence;
-    private string $sequenceVariant;
-    private string $echoTime;
-    private string $inversionTime;
-    private string $echoTrainLength;
-    private string $spacingBetweenSlices;
-    private string $protocolName;
-
-    private string $patientWeight;
-    private string $patientHeight;
-    private string $previewImagePath;
-
-    private string $orthancId;
+    private  $seriesDescription;
+    private  $modality;
+    private  $seriesDate;
+    private  $seriesTime;
+    private  $acquisitionDate;
+    private  $acquisitionTime;
+    private  $sliceThickness;
+    private  $pixelSpacing;
+    private  $fov;
+    private  $matrixSize;
+    private  $patientPosition;
+    private  $patientOrientation;
+    private  $numberOfInstances;
+    private  $scanningSequence;
+    private  $sequenceVariant;
+    private  $echoTime;
+    private  $inversionTime;
+    private  $echoTrainLength;
+    private  $spacingBetweenSlices;
+    private  $protocolName;
+    private  $patientWeight;
+    private  $patientHeight;
+    private  $previewImagePath;
+    private  $orthancId;
     private InstanceReport $instanceReport;
     private StudyReport $studyReport;
 
@@ -95,6 +92,11 @@ class SeriesReport
         }
     }
 
+    public function getStudyDetails(): array
+    {
+        return $this->studyReport->toArray();
+    }
+
     public function toArray()
     {
 
@@ -125,7 +127,8 @@ class SeriesReport
             'Injected Time' => $this->instanceReport->injectedTime ?? null,
             'Injected DateTime' => $this->instanceReport->injectedDateTime ?? null,
             'Injected Activity' => $this->instanceReport->injectedActivity ?? null,
-            'Half Life' => $this->instanceReport->halfLife  ?? null
+            'Half Life' => $this->instanceReport->halfLife  ?? null,
+            'image_path' => $this->previewImagePath ?? null
         ];
     }
 }

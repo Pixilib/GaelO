@@ -10,12 +10,12 @@
       <mj-column width="100%">
         <mj-text mj-class="text-blue">
           <h3 align="center">
-            {{$series['infos']['series_description']}}
+            {{$series['infos']['Series Description']}}
           </h3>
         </mj-text>
       </mj-column width="100%">
       <mj-column width="70%">
-        <mj-image alt="series preview" width="512px" src="{{$message->embed($series['image_path'])}}" align="center"></mj-image>
+        <mj-image alt="series preview" width="512px" src="{{$message->embed($series['infos']['image_path'])}}" align="center"></mj-image>
       </mj-column>
     </mj-section>
     <mj-section>

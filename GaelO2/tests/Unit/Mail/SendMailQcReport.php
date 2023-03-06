@@ -36,8 +36,8 @@ class SendMailQcReport
             $studyInfo['numberOfInstances'] += $nbInstances;
             $seriesData = [];
             $seriesData['infos'] = [];
-            $seriesData['image_path'] = (getcwd()."/tests/Unit/TestJobs/testGif.gif");
-            $seriesData['series_description'] = 'HEAD/NECK  2.0  B30s';
+            $seriesData['infos']['image_path'] = (getcwd()."/tests/Unit/TestJobs/testGif.gif");
+            $seriesData['infos']['Series Description'] = 'HEAD/NECK  2.0  B30s';
             $seriesData['infos']['Modality'] = 'CT';
             $seriesData['infos']['Series date'] =  '20091022';
             $seriesData['infos']['Series time'] = '173151.203000';
