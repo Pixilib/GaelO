@@ -68,7 +68,7 @@
                                               style="font-size:0px;padding:10px 25px;word-break:break-word;">
                                               <div
                                                   style="font-family:Ubuntu, Helvetica, Arial, sans-serif;font-size:13px;line-height:1;text-align:left;color:#0495A0;">
-                                                  <h3 align="center">Study infos</h3>
+                                                  <h3 align="center">Study info</h3>
                                               </div>
                                           </td>
                                       </tr>

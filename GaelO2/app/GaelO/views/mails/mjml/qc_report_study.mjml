@@ -21,7 +21,7 @@
     <mj-column width="100%">
       <mj-divider border-width="1px" border-color="#616161"></mj-divider>
         <mj-text mj-class="text-blue">
-          <h3 align="center">Study infos</h3>
+          <h3 align="center">Study info</h3>
         </mj-text>
       </mj-column width="100%">
       <mj-column width="100%">
