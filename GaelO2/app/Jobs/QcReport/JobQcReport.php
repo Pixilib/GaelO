@@ -153,8 +153,7 @@ class JobQcReport implements ShouldQueue
             $imagePath = null;
             switch ($imageType) {
                 case ImageType::MIP:
-                    //$imagePath = $this->orthancService->getSeriesMIP($seriesID);
-                    $imagePath = $this->orthancService->getSeriesMosaic($seriesID);
+                    $imagePath = $this->orthancService->getSeriesMIP($seriesID);
                     break;
                 case ImageType::MOSAIC:
                     $imagePath = $this->orthancService->getSeriesMosaic($seriesID);
