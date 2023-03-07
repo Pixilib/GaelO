@@ -9,7 +9,6 @@ class JobAdapter implements JobInterface
 {
     public function sendQcReportJob(int $visitId): void
     {
-        //TODO Disabled for now
-        //JobQcReport::dispatch($visitId);
+        JobQcReport::dispatch($visitId);
     }
 }
