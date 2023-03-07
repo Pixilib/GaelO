@@ -10,7 +10,7 @@
       <mj-column width="100%">
         <mj-text mj-class="text-blue">
           <h3 align="center">
-            {{$series['series_description']}}
+            {{$series['Series Description']}}
           </h3>
         </mj-text>
       </mj-column width="100%">
@@ -21,8 +21,8 @@
     <mj-section>
       <mj-column width="100%">
         <mj-table css-class="table-striped" role="presentation">
-          @foreach($series['infos'] as $key => $value)
-          @if ($value != null)
+          @foreach($series as $key => $value)
+          @if ($value != null && $key !== 'image_path')
           <tr>
             <td style="padding: 0 15px 0 0;font-weight: bold;" align="left">{{ $key }}</td>
             <td style="padding: 0 15px;" align="right">{{ $value }}</td>

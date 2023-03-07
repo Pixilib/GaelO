@@ -5,6 +5,9 @@ namespace App\Mail;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
+use Illuminate\Mail\Mailables\Attachment;
+use Illuminate\Mail\Mailables\Content;
+use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
 class RequestPatientCreation extends Mailable implements ShouldQueue
@@ -23,25 +26,26 @@ class RequestPatientCreation extends Mailable implements ShouldQueue
         $this->parameters = $parameters;
     }
 
-    /**
-     * Build the message.
-     *
-     * @return $this
-     */
-    public function build()
+    public function envelope(): Envelope
     {
-        //If mail is from admin, there is no study context
         $subject = $this->parameters['study'] . " - Patient Creation Request";
 
-        $mail = $this->view('mails.mail_request_patient_creation')
-            ->subject($subject)
-            ->with($this->parameters);
+        return new Envelope(
+            subject: $subject
+        );
+    }
 
-        //Attach JSON of Patient request creation
-        $mail->attachData(json_encode($this->parameters['patients'], JSON_PRETTY_PRINT), 'patients.json', [
-            'mime' => 'application/json',
-        ]);
-
-        return $mail;
+    public function content(): Content
+    {
+        return new Content(
+            view: 'mails.mail_request_patient_creation',
+            with: $this->parameters
+        );
+    }
+    public function attachments(): array
+    {
+        return [
+            Attachment::fromData(fn () => json_encode($this->parameters['patients'], JSON_PRETTY_PRINT), 'patients.json')->withMime('application/json')
+        ];
     }
 }

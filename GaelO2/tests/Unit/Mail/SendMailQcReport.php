@@ -35,15 +35,14 @@ class SendMailQcReport
             $nbInstances = rand(0, 500);
             $studyInfo['numberOfInstances'] += $nbInstances;
             $seriesData = [];
-            $seriesData['infos'] = [];
             $seriesData['image_path'] = (getcwd()."/tests/Unit/TestJobs/testGif.gif");
-            $seriesData['series_description'] = 'HEAD/NECK  2.0  B30s';
-            $seriesData['infos']['Modality'] = 'CT';
-            $seriesData['infos']['Series date'] =  '20091022';
-            $seriesData['infos']['Series time'] = '173151.203000';
-            $seriesData['infos']['Slice thickness'] = '2';
-            $seriesData['infos']['Pixel spacing'] = '9.765625e-1\\9.765625e-1';
-            $seriesData['infos']['Number of instances'] = $nbInstances;
+            $seriesData['Series Description'] = 'HEAD/NECK  2.0  B30s';
+            $seriesData['Modality'] = 'CT';
+            $seriesData['Series date'] =  '20091022';
+            $seriesData['Series time'] = '173151.203000';
+            $seriesData['Slice thickness'] = '2';
+            $seriesData['Pixel spacing'] = '9.765625e-1\\9.765625e-1';
+            $seriesData['Number of instances'] = $nbInstances;
             $seriesInfo[] = $seriesData;
         }
         $visitType = 'visitType';

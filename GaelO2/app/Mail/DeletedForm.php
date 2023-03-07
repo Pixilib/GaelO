@@ -5,6 +5,8 @@ namespace App\Mail;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
+use Illuminate\Mail\Mailables\Content;
+use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
 class DeletedForm extends Mailable implements ShouldQueue
@@ -31,15 +33,19 @@ class DeletedForm extends Mailable implements ShouldQueue
         */
     }
 
-    /**
-     * Build the message.
-     *
-     * @return $this
-     */
-    public function build()
+    public function envelope(): Envelope
     {
-        return $this->view('mails.mail_deleted_form')
-        ->subject($this->parameters['study']." - Form Deleted Patient - ".$this->parameters['patientCode']." - Visit - ".$this->parameters['visitType'])
-        ->with($this->parameters);
+        return new Envelope(
+            subject: $this->parameters['study']." - Form Deleted Patient - ".$this->parameters['patientCode']." - Visit - ".$this->parameters['visitType']
+        );
     }
+
+    public function content(): Content
+    {
+        return new Content(
+            view: 'mails.mail_deleted_form',
+            with: $this->parameters
+        );
+    }
+
 }

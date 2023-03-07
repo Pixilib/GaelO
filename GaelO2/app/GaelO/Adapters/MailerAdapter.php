@@ -32,7 +32,7 @@ use App\Mail\ImportPatient;
 use App\Mail\MagicLink;
 use App\Mail\RequestPatientCreation;
 use App\Mail\UserCreated;
-use Illuminate\Contracts\Mail\Mailable;
+use Illuminate\Mail\Mailable;
 
 class MailerAdapter implements MailerInterface
 {
@@ -40,6 +40,8 @@ class MailerAdapter implements MailerInterface
     private FrameworkInterface $frameworkInterface;
     private array $to;
     private string $replyTo;
+    private array $parameters;
+    private int $modelType;
 
     public function __construct(FrameworkInterface $frameworkInterface)
     {
@@ -69,7 +71,7 @@ class MailerAdapter implements MailerInterface
         $this->parameters['mailReplyTo'] = $this->frameworkInterface::getConfig(SettingsConstants::MAIL_REPLY_TO_DEFAULT);
     }
 
-    public function setBody($modelType)
+    public function setBody(int $modelType)
     {
         $this->modelType = $modelType;
     }

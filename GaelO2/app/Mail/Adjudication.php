@@ -5,6 +5,8 @@ namespace App\Mail;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
+use Illuminate\Mail\Mailables\Content;
+use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
 class Adjudication extends Mailable implements ShouldQueue
@@ -31,15 +33,19 @@ class Adjudication extends Mailable implements ShouldQueue
         */
     }
 
-    /**
-     * Build the message.
-     *
-     * @return $this
-     */
-    public function build()
-    {
-        return $this->view('mails.mail_adjudication')
-        ->subject($this->parameters['study']." - Awaiting Adjudication Patient - ".$this->parameters['patientCode']." - Visit - ".$this->parameters['visitType'] )
-        ->with($this->parameters);
+    public function envelope(): Envelope{
+        return new Envelope(
+            subject: $this->parameters['study']." - Awaiting Adjudication Patient - ".$this->parameters['patientCode']." - Visit - ".$this->parameters['visitType']
+        );
+
     }
+
+    public function content(): Content
+    {
+        return new Content(
+            view: 'mails.mail_adjudication',
+            with: $this->parameters
+        );
+    }
+
 }
