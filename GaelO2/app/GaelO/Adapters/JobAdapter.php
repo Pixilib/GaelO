@@ -3,7 +3,7 @@
 namespace App\GaelO\Adapters;
 
 use App\GaelO\Interfaces\Adapters\JobInterface;
-use App\Jobs\JobQcReport;
+use App\Jobs\QcReport\JobQcReport;
 
 class JobAdapter implements JobInterface
 {

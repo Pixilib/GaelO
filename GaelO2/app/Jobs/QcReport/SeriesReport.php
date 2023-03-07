@@ -6,6 +6,7 @@ use App\GaelO\Services\StoreObjects\OrthancMetaData;
 
 class SeriesReport
 {
+    private  $SOPClassUID;
     private  $seriesDescription;
     private  $modality;
     private  $seriesDate;
@@ -64,7 +65,7 @@ class SeriesReport
 
         $this->studyReport = new StudyReport();
         $this->studyReport->fillData($sharedTags);
-
+        $this->SOPClassUID = $sharedTags->getSOPClassUID();
         $this->seriesDescription = $sharedTags->getSeriesDescription();
         $this->modality = $sharedTags->getSeriesModality();
         $this->seriesDate =  $sharedTags->getSeriesDate();
@@ -95,6 +96,23 @@ class SeriesReport
     public function getStudyDetails(): array
     {
         return $this->studyReport->toArray();
+    }
+
+    public function getPreviewType(): ImageType
+    {
+        $mosaicIDs = ['1.2.840.10008.5.1.4.1.1.4', '1.2.840.10008.5.1.4.1.1.4.1'];
+        $gifIDs = [
+            '1.2.840.10008.5.1.4.1.1.2', '1.2.840.10008.5.1.4.1.1.2.1', '1.2.840.10008.5.1.4.1.1.20',
+            '1.2.840.10008.5.1.4.1.1.128', '1.2.840.10008.5.1.4.1.1.130', '1.2.840.10008.5.1.4.1.1.128.1'
+        ];
+
+        if (in_array($this->SOPClassUID, $mosaicIDs)) {
+            return ImageType::MOSAIC;
+        } elseif (in_array($this->SOPClassUID, $gifIDs)) {
+            return ImageType::MIP;
+        } else {
+            return ImageType::DEFAULT;
+        }
     }
 
     public function toArray()

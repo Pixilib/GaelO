@@ -19,7 +19,7 @@
     <mj-column width="100%">
         <mj-table css-class="table-striped" role="presentation">
           @foreach($studyInfo['investigatorForm'] as $key => $value)
-            @if ($value != null)
+            @if ($value !== null)
           <tr>
             <td style="padding: 0 15px 0 0;font-weight: bold;" align="left">{{ $key }}</td>
             <td style="padding: 0 15px;" align="right">{{ $value }}</td>

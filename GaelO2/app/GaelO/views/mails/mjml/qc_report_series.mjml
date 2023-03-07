@@ -10,19 +10,19 @@
       <mj-column width="100%">
         <mj-text mj-class="text-blue">
           <h3 align="center">
-            {{$series['infos']['Series Description']}}
+            {{$series['Series Description']}}
           </h3>
         </mj-text>
       </mj-column width="100%">
       <mj-column width="70%">
-        <mj-image alt="series preview" width="512px" src="{{$message->embed($series['infos']['image_path'])}}" align="center"></mj-image>
+        <mj-image alt="series preview" width="512px" src="{{$message->embed($series['image_path'])}}" align="center"></mj-image>
       </mj-column>
     </mj-section>
     <mj-section>
       <mj-column width="100%">
         <mj-table css-class="table-striped" role="presentation">
-          @foreach($series['infos'] as $key => $value)
-          @if ($value != null)
+          @foreach($series as $key => $value)
+          @if ($value != null && $key !== 'image_path')
           <tr>
             <td style="padding: 0 15px 0 0;font-weight: bold;" align="left">{{ $key }}</td>
             <td style="padding: 0 15px;" align="right">{{ $value }}</td>

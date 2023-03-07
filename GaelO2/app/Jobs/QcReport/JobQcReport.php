@@ -16,7 +16,6 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use App\GaelO\Services\StoreObjects\OrthancMetaData;
 use Illuminate\Support\Facades\Log;
 use Throwable;
 
@@ -40,52 +39,6 @@ class JobQcReport implements ShouldQueue
     {
         $this->onQueue('auto-qc');
         $this->visitId = $visitId;
-    }
-
-    private function getImageType(OrthancMetaData $sharedTags): ImageType
-    {
-        $mosaicIDs = ['1.2.840.10008.5.1.4.1.1.4', '1.2.840.10008.5.1.4.1.1.4.1'];
-        $gifIDs = [
-            '1.2.840.10008.5.1.4.1.1.2', '1.2.840.10008.5.1.4.1.1.2.1', '1.2.840.10008.5.1.4.1.1.20',
-            '1.2.840.10008.5.1.4.1.1.128', '1.2.840.10008.5.1.4.1.1.130', '1.2.840.10008.5.1.4.1.1.128.1'
-        ];
-
-        $SOPClassUID = $sharedTags->getSOPClassUID();
-        if (in_array($SOPClassUID, $mosaicIDs)) {
-            return ImageType::MOSAIC;
-        } elseif (in_array($SOPClassUID, $gifIDs)) {
-            return ImageType::MIP;
-        } else {
-            return ImageType::DEFAULT;
-        }
-    }
-
-    private function getSeriesPreview(OrthancMetaData $sharedTags, string $seriesID, string $firstInstanceID): ?string
-    {
-        try {
-            $imageType = $this->getImageType($sharedTags);
-            $imagePath = null;
-            switch ($imageType) {
-                case ImageType::MIP:
-                    //$imagePath = $this->orthancService->getSeriesMIP($seriesID);
-                    $imagePath = $this->orthancService->getSeriesMosaic($seriesID);
-                    break;
-                case ImageType::MOSAIC:
-                    $imagePath = $this->orthancService->getSeriesMosaic($seriesID);
-                    break;
-                case ImageType::DEFAULT:
-                    $imagePath = $this->orthancService->getInstancePreview($firstInstanceID);
-                    break;
-            }
-            return $imagePath;
-        } catch (Throwable $t) {
-            return public_path('static/media/ban-image-photo-icon.png');
-        }
-    }
-
-    private function convertDate(string $visitDate): \DateTime
-    {
-        return new \DateTime($visitDate);
     }
 
     /**
@@ -113,30 +66,30 @@ class JobQcReport implements ShouldQueue
         $visitId = $visitEntity['id'];
         $visitType = $visitEntity['visit_type']['name'];
         $patientCode = $visitEntity['patient']['code'];
+        $stateInvestigatorForm = $visitEntity['state_investigator_form'];
+        $visitDate = $visitEntity['visit_date'];
+        $registrationDate = $visitEntity['patient']['registration_date'];
 
         $visitReport->setStudyName($studyName);
         $visitReport->setVisitName($visitType);
         $visitReport->setPatientCode($patientCode);
+        $formattedVisitDate = $this->convertDate($visitDate)->format('m/d/Y');
+        $visitReport->setVisitDate($formattedVisitDate);
 
         $dicomStudyEntity = $dicomStudyRepositoryInterface->getDicomsDataFromVisit($this->visitId, false, false);
-        $stateInvestigatorForm = $visitEntity['state_investigator_form'];
-
-        $visitDate = $this->convertDate($visitEntity['visit_date'])->format('m/d/Y');
-        $visitReport->setVisitDate($visitDate);
-
-        if ($visitEntity['patient']['registration_date'] !== null) {
-            $registrationDate = $visitEntity['patient']['registration_date'];
+        
+        if ($registrationDate !== null) {
             //Determine min and max visit date compared to registration date
             $minDayToInclusion = $visitEntity['visit_type']['limit_low_days'];
             $maxDayToInclusion = $visitEntity['visit_type']['limit_up_days'];
-            $registrationDate = $this->convertDate($registrationDate)->format('m/d/Y');
-            $minVisitDate = $this->convertDate($registrationDate)->modify($minDayToInclusion . ' day')->format('m/d/Y');
-            $maxVisitDate = $this->convertDate($registrationDate)->modify($maxDayToInclusion . ' day')->format('m/d/Y');
-            $visitReport->setRegistrationDate($registrationDate);
-            $visitReport->setMinMaxVisitDate($minVisitDate, $maxVisitDate);
+            $formattedRegistrationDate = $this->convertDate($registrationDate)->format('m/d/Y');
+            $formattedMinVisitDate = $this->convertDate($registrationDate)->modify($minDayToInclusion . ' day')->format('m/d/Y');
+            $formattedMaxVisitDate = $this->convertDate($registrationDate)->modify($maxDayToInclusion . ' day')->format('m/d/Y');
+            $visitReport->setRegistrationDate($formattedRegistrationDate);
+            $visitReport->setMinMaxVisitDate($formattedMinVisitDate, $formattedMaxVisitDate);
         }
 
-        if ($stateInvestigatorForm != InvestigatorFormStateEnum::NOT_NEEDED->value) {
+        if ($stateInvestigatorForm !== InvestigatorFormStateEnum::NOT_NEEDED->value) {
             $reviewEntity = $reviewRepositoryInterface->getInvestigatorForm($this->visitId, false);
             $visitReport->setInvestigatorForm($reviewEntity['review_data']);
         }
@@ -158,7 +111,7 @@ class JobQcReport implements ShouldQueue
                 $seriesReport->setInstanceReport($instanceReport);
                 $seriesReport->setNumberOfInstances(sizeof($seriesDetails['Instances']));
 
-                $imagePreviewPath = $this->getSeriesPreview($seriesSharedTags, $series['orthanc_id'], $seriesDetails['Instances'][0]);
+                $imagePreviewPath = $this->getSeriesPreview($seriesReport->getPreviewType(), $series['orthanc_id'], $seriesDetails['Instances'][0]);
                 $seriesReport->setPreviewImagePath($imagePreviewPath);
 
                 $seriesReports[] = $seriesReport;
@@ -169,7 +122,13 @@ class JobQcReport implements ShouldQueue
 
         $visitReport->setSeriesReports($seriesReports);
 
-        $formattedData = $this->formatData($visitReport);
+        $seriesReports = $visitReport->getSeriesReports();
+        $seriesInfo = array_map(function (SeriesReport $seriesReport) {
+            return $seriesReport->toArray();
+        }, $seriesReports);
+
+        $studyInfo = $visitReport->toArray();
+
         $controllerUsers = $userRepositoryInterface->getUsersByRolesInStudy($studyName, Constants::ROLE_CONTROLLER);
 
         foreach ($controllerUsers as $user) {
@@ -182,21 +141,37 @@ class JobQcReport implements ShouldQueue
             $magicLinkAccepted = $frameworkInterface->createMagicLink($user['id'], $redirectLink, $queryParams);
             $queryParams['accepted'] = 'false';
             $magicLinkRefused = $frameworkInterface->createMagicLink($user['id'], $redirectLink, $queryParams);
-            $mailServices->sendQcReport($studyName, $visitType, $patientCode, $formattedData[0], $formattedData[1], $magicLinkAccepted, $magicLinkRefused, $user['email']);
+            $mailServices->sendQcReport($studyName, $visitType, $patientCode, $studyInfo, $seriesInfo, $magicLinkAccepted, $magicLinkRefused, $user['email']);
         }
 
         //TODO Comme l'envoi des mail est synchrone, suppression fichier image devrait etre OK
     }
 
-    private function formatData(VisitReport $visitReport)
+    private function getSeriesPreview(ImageType $imageType, string $seriesID, string $firstInstanceID): ?string
     {
-        $seriesReports = $visitReport->getSeriesReports();
-        $seriesInfos = array_map(function (SeriesReport $seriesReport) {
-            return ['infos' => $seriesReport->toArray()];
-        }, $seriesReports);
+        try {
+            $imagePath = null;
+            switch ($imageType) {
+                case ImageType::MIP:
+                    //$imagePath = $this->orthancService->getSeriesMIP($seriesID);
+                    $imagePath = $this->orthancService->getSeriesMosaic($seriesID);
+                    break;
+                case ImageType::MOSAIC:
+                    $imagePath = $this->orthancService->getSeriesMosaic($seriesID);
+                    break;
+                case ImageType::DEFAULT:
+                    $imagePath = $this->orthancService->getInstancePreview($firstInstanceID);
+                    break;
+            }
+            return $imagePath;
+        } catch (Throwable $t) {
+            return public_path('static/media/ban-image-photo-icon.png');
+        }
+    }
 
-        $studyInfo = $visitReport->toArray();
-        return [$studyInfo, $seriesInfos];
+    private function convertDate(string $visitDate): \DateTime
+    {
+        return new \DateTime($visitDate);
     }
 
     public function failed(Throwable $exception)
