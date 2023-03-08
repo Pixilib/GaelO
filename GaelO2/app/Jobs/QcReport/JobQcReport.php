@@ -27,7 +27,6 @@ class JobQcReport implements ShouldQueue
 
     public $failOnTimeout = true;
     public $timeout = 600;
-    public $backoff = 60;
     public $tries = 1;
 
     /**
