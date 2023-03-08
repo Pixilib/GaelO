@@ -49,8 +49,8 @@ class JobQcReportTest extends TestCase
             $mock->shouldReceive('setOrthancServer')->andReturn(null);
             $mock->shouldReceive('getOrthancRessourcesDetails')->andReturn($decoded);
             $mock->shouldReceive('getInstanceTags')->andReturn($tags);
-            $mock->shouldReceive('getSeriesMIP')->andReturn((getcwd()."/tests/Unit/TestJobs/testGif.gif"));
-            $mock->shouldReceive('getSeriesMosaic')->andReturn((getcwd()."/tests/Unit/TestJobs/testMosaic.png"));
+            $mock->shouldReceive('getSeriesMIP')->andReturn(null);
+            $mock->shouldReceive('getSeriesMosaic')->andReturn(null);
         });
 
         $investigatorInfos = [
