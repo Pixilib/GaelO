@@ -2,6 +2,7 @@
 
 namespace App\Jobs\QcReport;
 
+use App\GaelO\DicomUtils;
 use App\GaelO\Services\StoreObjects\OrthancMetaData;
 
 class SeriesReport
@@ -30,14 +31,8 @@ class SeriesReport
     private  $patientWeight;
     private  $patientHeight;
     private  $previewImagePath;
-    private  $orthancId;
     private InstanceReport $instanceReport;
     private StudyReport $studyReport;
-
-    public function setOrthancId(string $orthancId)
-    {
-        $this->orthancId = $orthancId;
-    }
 
     public function setNumberOfInstances(int|string $numberOfInstances)
     {
@@ -54,7 +49,8 @@ class SeriesReport
         $this->previewImagePath = $path;
     }
 
-    public function deletePreviewImages(){
+    public function deletePreviewImages()
+    {
         if ($this->previewImagePath) unlink($this->previewImagePath);
     }
 
@@ -122,35 +118,33 @@ class SeriesReport
     public function toArray()
     {
 
+        $instanceData = $this->instanceReport ? $this->instanceReport->toArray() : [];
+
         return [
             'Series Description' => $this->seriesDescription ?? null,
             'Modality' => $this->modality ?? null,
-            'Series Date' => $this->seriesDate ?? null,
-            'Series Time' => $this->seriesTime ?? null,
-            'Acquisition Date' => $this->acquisitionDate ?? null,
-            'Acquisition Time' => $this->acquisitionTime ?? null,
-            'Slice Thickness' => $this->sliceThickness ?? null,
-            'Pixel Spacing' => $this->pixelSpacing ?? null,
-            'FOV' => $this->fov ?? null,
+            'Series Date' => $this->seriesDate ? DicomUtils::parseDicomDate($this->seriesDate, 'm/d/Y') : null,
+            'Series Time' => $this->seriesTime ? DicomUtils::parseDicomTime($this->seriesTime) : null,
+            'Acquisition Date' => $this->acquisitionDate ? DicomUtils::parseDicomDate($this->acquisitionDate, 'm/d/Y') :  null,
+            'Acquisition Time' => $this->acquisitionTime ? DicomUtils::parseDicomTime($this->acquisitionTime) : null,
+            'Slice Thickness (mm)' => $this->sliceThickness ?? null,
+            'Pixel Spacing (mm)' => $this->pixelSpacing ?? null,
+            'FOV (mm)' => $this->fov ?? null,
             'Matrix Size' => $this->matrixSize ?? null,
             'Patient position' => $this->patientPosition ?? null,
             'Patient orientation' => $this->patientOrientation ?? null,
             'Number of instances' => $this->numberOfInstances ?? null,
             'Scanning sequence' => $this->scanningSequence ?? null,
             'Sequence variant' => $this->sequenceVariant ?? null,
-            'Echo Time' => $this->echoTime ?? null,
-            'Inversion Time' => $this->inversionTime ?? null,
+            'Echo Time (ms)' => $this->echoTime ?? null,
+            'Inversion Time (ms)' => $this->inversionTime ?? null,
             'Echo Train Length' => $this->echoTrainLength ?? null,
-            'Spacing Between Slices' => $this->spacingBetweenSlices ?? null,
+            'Spacing Between Slices (mm)' => $this->spacingBetweenSlices ?? null,
             'Protocol Name' => $this->protocolName ?? null,
-            'Patient weight' => $this->patientWeight ?? null,
-            'Patient height' => $this->patientHeight ?? null,
-            'Injected Dose' => $this->instanceReport->injectedDose ?? null,
-            'Injected Time' => $this->instanceReport->injectedTime ?? null,
-            'Injected DateTime' => $this->instanceReport->injectedDateTime ?? null,
-            'Injected Activity' => $this->instanceReport->injectedActivity ?? null,
-            'Half Life' => $this->instanceReport->halfLife  ?? null,
-            'image_path' => $this->previewImagePath ?? null
+            'Patient weight (kg)' => $this->patientWeight ?? null,
+            'Patient height (m)' => $this->patientHeight ?? null,
+            'image_path' => $this->previewImagePath ?? null,
+            ...$instanceData
         ];
     }
 }

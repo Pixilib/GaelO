@@ -16,6 +16,7 @@
 
 namespace App\GaelO\Services;
 
+use App\GaelO\DicomUtils;
 use App\GaelO\Exceptions\GaelOBadRequestException;
 use App\GaelO\Interfaces\Repositories\DicomSeriesRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\DicomStudyRepositoryInterface;
@@ -23,7 +24,6 @@ use App\GaelO\Services\OrthancService;
 use App\GaelO\Services\StoreObjects\OrthancSeries;
 use App\GaelO\Services\StoreObjects\OrthancStudy;
 use App\GaelO\Util;
-use DateTime;
 
 /**
  * Fill Orthanc_Studies and Orthanc_Series table to link DICOM Orthanc storage with the web plateform
@@ -94,8 +94,8 @@ class RegisterDicomStudyService
      */
     private function addToDbStudy(OrthancStudy $studyOrthancObject)
     {
-        $studyAcquisitionDate = $this->parseDicomDate($studyOrthancObject->studyDate);
-        $studyAcquisitionTime = $this->parseDicomTime($studyOrthancObject->studyTime);
+        $studyAcquisitionDate = DicomUtils::parseDicomDate($studyOrthancObject->studyDate);
+        $studyAcquisitionTime = DicomUtils::parseDicomTime($studyOrthancObject->studyTime);
 
         $this->dicomStudyRepositoryInterface->addStudy(
             $studyOrthancObject->studyOrthancID,
@@ -124,9 +124,9 @@ class RegisterDicomStudyService
     private function addtoDbSerie(OrthancSeries $series, string $studyInstanceUID)
     {
 
-        $serieAcquisitionDate = $this->parseDicomDate($series->seriesDate);
-        $serieAcquisitionTime = $this->parseDicomTime($series->seriesTime);
-        $injectedDateTime = $this->parseDicomDateTime($series->injectedDateTime);
+        $serieAcquisitionDate = DicomUtils::parseDicomDate($series->seriesDate);
+        $serieAcquisitionTime = DicomUtils::parseDicomTime($series->seriesTime);
+        $injectedDateTime = DicomUtils::parseDicomDateTime($series->injectedDateTime);
 
         $this->dicomSeriesRepositoryInterface->addSeries(
             $series->serieOrthancID,
@@ -140,7 +140,7 @@ class RegisterDicomStudyService
             $series->halfLife,
             $series->injectedTime,
             $injectedDateTime,
-            $series->injectedActivity,
+            $series->specificActivity,
             $series->patientWeight,
             $series->numberOfInstanceInOrthanc,
             $series->seriesInstanceUID,
@@ -152,54 +152,4 @@ class RegisterDicomStudyService
         );
     }
 
-    private function filterMicrosecInDicomTime(?string $string): ?string
-    {
-
-        if (strpos($string, ".")) {
-            $timeWithoutms = explode(".", $string);
-            $string = $timeWithoutms[0];
-        }
-
-        return $string;
-    }
-
-    private function parseDicomDateTime(?string $string) : ?string
-    {
-        $parsedDateTime = null;
-
-        $string = $this->filterMicrosecInDicomTime($string);
-
-        $dateObject = DateTime::createFromFormat('YmdHis', $string);
-        if ($dateObject !== false) {
-            $parsedDateTime = $dateObject->format('Y-m-d H:i:s');
-        }
-
-        return $parsedDateTime;
-    }
-
-    private function parseDicomTime(?string $string) : ?string
-    {
-        $parsedDateTime = null;
-
-        $string = $this->filterMicrosecInDicomTime($string);
-
-        $dateObject = DateTime::createFromFormat('His', $string);
-        if ($dateObject !== false) {
-            $parsedDateTime = $dateObject->format('H:i:s');
-        }
-
-        return $parsedDateTime;
-    }
-
-    private function parseDicomDate(?string $string) : ?string
-    {
-        $parsedDateTime = null;
-
-        $dateObject = DateTime::createFromFormat('Ymd', $string);
-        if ($dateObject !== false) {
-            $parsedDateTime = $dateObject->format('Y-m-d');
-        }
-
-        return $parsedDateTime;
-    }
 }

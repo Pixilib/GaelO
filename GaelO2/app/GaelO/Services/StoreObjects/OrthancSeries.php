@@ -43,7 +43,7 @@ Class OrthancSeries {
     public $injectedDose;
     public $injectedTime;
 	public $injectedDateTime;
-	public $injectedActivity;
+	public $specificActivity;
 	public $radiopharmaceutical;
 	public $halfLife;
 	public string $sopClassUid;
@@ -104,7 +104,7 @@ Class OrthancSeries {
 		$this->injectedDose = is_numeric($instanceTags->getInjectedDose()) ? $instanceTags->getInjectedDose() : null;
         $this->injectedTime = $instanceTags->getInjectedTime();
         $this->injectedDateTime = $instanceTags->getInjectedDateTime();
-		$this->injectedActivity = is_numeric($instanceTags->getInjectedActivity())? $instanceTags->getInjectedActivity() : null;
+		$this->specificActivity = is_numeric($instanceTags->getSpecificActivity())? $instanceTags->getSpecificActivity() : null;
 		$this->radiopharmaceutical = $instanceTags->getRadiopharmaceutical();
 		$this->halfLife=is_numeric($instanceTags->getHalfLife())? $instanceTags->getHalfLife() : null;
 		$this->sopClassUid= $instanceTags->getSOPClassUID();

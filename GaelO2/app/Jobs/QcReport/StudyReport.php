@@ -2,6 +2,7 @@
 
 namespace App\Jobs\QcReport;
 
+use App\GaelO\DicomUtils;
 use App\GaelO\Services\StoreObjects\OrthancMetaData;
 
 class StudyReport
@@ -11,13 +12,6 @@ class StudyReport
     private $manufacturer;
     private $studyDate;
     private $studyTime;
-
-    private string $orthancId;
-
-    public function setOrthancId(string $orthancId)
-    {
-        $this->orthancId = $orthancId;
-    }
 
     public function fillData(OrthancMetaData $sharedTags)
     {
@@ -33,7 +27,8 @@ class StudyReport
         return [
             'Study Description' => $this->studyDescription ?? null,
             'Manufacturer' => $this->manufacturer ?? null,
-            'Study Date' => $this->studyDate ?? null,
+            'Study Date' => $this->studyDate ? DicomUtils::parseDicomDate($this->studyDate, 'm/d/Y') :  null,
+            'Study Time' => $this->studyTime ? DicomUtils::parseDicomTime('H:i:s') : null,
         ];
     }
 }

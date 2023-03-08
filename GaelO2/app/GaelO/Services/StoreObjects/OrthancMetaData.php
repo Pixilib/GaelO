@@ -218,7 +218,7 @@ class OrthancMetaData
         return null;
     }
 
-    public function getInjectedActivity() : ?string
+    public function getSpecificActivity() : ?string
     {
         $radioPharmaceuticalGroup = $this->getRadioPharmaceuticalGroup();
         if (array_key_exists('0018,1077', $radioPharmaceuticalGroup)) {
