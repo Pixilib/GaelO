@@ -143,13 +143,17 @@ class JobQcReport implements ShouldQueue
             $mailServices->sendQcReport($studyName, $visitType, $patientCode, $studyInfo, $seriesInfo, $magicLinkAccepted, $magicLinkRefused, $user['email']);
         }
 
-        //TODO Comme l'envoi des mail est synchrone, suppression fichier image devrait etre OK
+        //Once all email emited remove preview file to avoid dangling temporary files
+        foreach($seriesReports as $seriesReport){
+            $seriesReport->deletePreviewImages();
+        }
     }
 
     private function getSeriesPreview(ImageType $imageType, string $seriesID, string $firstInstanceID): ?string
     {
+        $imagePath = null;
+
         try {
-            $imagePath = null;
             switch ($imageType) {
                 case ImageType::MIP:
                     $imagePath = $this->orthancService->getSeriesMIP($seriesID);
@@ -161,10 +165,9 @@ class JobQcReport implements ShouldQueue
                     $imagePath = $this->orthancService->getInstancePreview($firstInstanceID);
                     break;
             }
-            return $imagePath;
-        } catch (Throwable $t) {
-            return public_path('static/media/ban-image-photo-icon.png');
-        }
+        } catch (Throwable $t) { }
+        
+        return $imagePath;
     }
 
     private function convertDate(string $visitDate): \DateTime

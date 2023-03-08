@@ -49,9 +49,13 @@ class SeriesReport
         return $this->numberOfInstances;
     }
 
-    public function setPreviewImagePath(string $path)
+    public function setPreviewImagePath(?string $path)
     {
         $this->previewImagePath = $path;
+    }
+
+    public function deletePreviewImages(){
+        if ($this->previewImagePath) unlink($this->previewImagePath);
     }
 
     public function setInstanceReport(InstanceReport $instanceReport)

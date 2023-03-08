@@ -40,7 +40,7 @@
                                                       <tr>
                                                           <td style="width:370px;">
                                                               <img alt="series preview" height="auto"
-                                                                  src="{{ $message->embed($series['image_path']) }}"
+                                                                  src="{{ $message->embed($series['image_path'] ?? public_path('static/media/ban-image-photo-icon.png')) }}"
                                                                   style="border:0;display:block;outline:none;text-decoration:none;height:auto;width:100%;font-size:13px;"
                                                                   width="370" />
                                                           </td>
