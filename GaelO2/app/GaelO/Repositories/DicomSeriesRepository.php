@@ -36,7 +36,6 @@ class DicomSeriesRepository implements DicomSeriesRepositoryInterface
         ?int $halfLife,
         ?string $injectedTime,
         ?string $injectedDateTime,
-        ?int $injectedActivity,
         ?int $patientWeight,
         int $numberOfInstances,
         string $seriesUID,
@@ -59,7 +58,6 @@ class DicomSeriesRepository implements DicomSeriesRepositoryInterface
         $dicomSeries->half_life = $halfLife;
         $dicomSeries->injected_time = $injectedTime;
         $dicomSeries->injected_datetime = $injectedDateTime;
-        $dicomSeries->injected_activity = $injectedActivity;
         $dicomSeries->patient_weight = $patientWeight;
         $dicomSeries->number_of_instances = $numberOfInstances;
         $dicomSeries->series_uid = $seriesUID;

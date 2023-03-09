@@ -26,7 +26,6 @@ class DicomSeriesFactory extends Factory
             'radiopharmaceutical' => $this->faker->word,
             'half_life' => $this->faker->randomNumber,
             'injected_datetime' => $this->faker->dateTime(),
-            'injected_activity' => $this->faker->randomNumber,
             'patient_weight' => $this->faker->randomNumber,
             'number_of_instances' => $this->faker->randomNumber,
             'series_uid' => $this->faker->unique()->word,

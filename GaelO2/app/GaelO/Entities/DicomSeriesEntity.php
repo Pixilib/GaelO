@@ -15,7 +15,6 @@ class DicomSeriesEntity
     public ?int $halfLife;
     public ?string $injectedTime;
     public ?string $injectedDateTime;
-    public ?int $injectedActivity;
     public ?int $patientWeight;
     public ?int $numberOfInstances;
     public ?string $seriesNumber;
@@ -38,7 +37,6 @@ class DicomSeriesEntity
         $orthancSeries->halfLife = $array['half_life'];
         $orthancSeries->injectedTime = $array['injected_time'];
         $orthancSeries->injectedDateTime = $array['injected_datetime'];
-        $orthancSeries->injectedActivity = $array['injected_activity'];
         $orthancSeries->patientWeight = $array['patient_weight'];
         $orthancSeries->numberOfInstances = $array['number_of_instances'];
         $orthancSeries->seriesNumber = $array['series_number'];
