@@ -219,7 +219,7 @@ Route::post('tools/reset-password', [UserController::class, 'updatePassword'])->
 //Route to validate email
 Route::get('email/verify/{id}/{hash}', function (SignedEmailVerificationRequest $request) {
     $request->fulfill();
-    return redirect('/');
+    return redirect('/email-verified');
 })->middleware(['signed'])->name('verification.verify');
 
 //Magic link route

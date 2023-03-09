@@ -62,6 +62,7 @@ use App\GaelO\UseCases\ModifyValidatedDocumentationForRole\ModifyValidatedDocume
 use App\GaelO\Util;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
+use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Auth\Events\Verified;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Date;
@@ -113,10 +114,12 @@ class UserController extends Controller
                 //Reset number of attempts (unblock if blocked)
                 $user->attempts = 0;
                 $user->save();
+
+                event(new PasswordReset($user));
             }
         );
 
-        if ($status === FacadePassword::PASSWORD_RESET) return redirect('/');
+        if ($status === FacadePassword::PASSWORD_RESET) response();
         else return response()->noContent(400);
     }
 
