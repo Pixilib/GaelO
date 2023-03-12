@@ -13,15 +13,19 @@ class InstanceReport
     public $specificActivity;
     public $radiopharmaceutical;
     public $halfLife;
+    public $numberOfFrames;
+    public $imageID;
 
-    public function fillData(OrthancMetaData $sharedTags)
+    public function fillData(OrthancMetaData $dicomTags)
     {
-        $this->injectedDose = $sharedTags->getInjectedDose();
-        $this->injectedTime = $sharedTags->getInjectedTime();
-        $this->injectedDateTime = $sharedTags->getInjectedDateTime();
-        $this->specificActivity = $sharedTags->getSpecificActivity();
-        $this->radiopharmaceutical = $sharedTags->getRadiopharmaceutical();
-        $this->halfLife = $sharedTags->getHalfLife();
+        $this->injectedDose = $dicomTags->getInjectedDose();
+        $this->injectedTime = $dicomTags->getInjectedTime();
+        $this->injectedDateTime = $dicomTags->getInjectedDateTime();
+        $this->specificActivity = $dicomTags->getSpecificActivity();
+        $this->radiopharmaceutical = $dicomTags->getRadiopharmaceutical();
+        $this->halfLife = $dicomTags->getHalfLife();
+        $this->numberOfFrames = $dicomTags->getNumberOfFrames();
+        $this->imageID = $dicomTags->getImageID();
     }
 
     public function toArray()

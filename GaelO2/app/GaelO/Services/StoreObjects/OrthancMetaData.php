@@ -259,4 +259,14 @@ class OrthancMetaData
     {
         return $this->getMetaDataValueFromCode('0008,0032');
     }
+
+    public function getNumberOfFrames() : int
+    {
+        return $this->getMetaDataValueFromCode('0028,0008') ?? 1;
+    }
+
+    public function getImageID() : ?string
+    {
+        return $this->getMetaDataValueFromCode('0054,0400')
+    }
 }
