@@ -214,12 +214,12 @@ class Export_Study_Data
 		$localReviews = [];
 		try {
 
-			$localReviews = $visitObject->getReviewsObject(true);
+			$locals = $visitObject->getReviewsObject(true);
 
-			if (is_array($localReviews)) {
-				$localReviews = [...$localReviews];
+			if (is_array($locals)) {
+				$localReviews = [...$locals];
 			} else {
-				$localReviews[] = $localReviews;
+				$localReviews[] = $locals;
 			}
 		} catch (Exception $e) { }
 
