@@ -27,19 +27,20 @@ class Export_Study_Data
 	public function __construct(Study $studyObject)
 	{
 
-		$this->studyObject=$studyObject;
+		$this->studyObject = $studyObject;
 
-		$this->allcreatedVisits=[];
+		$this->allcreatedVisits = [];
 
-		$visitGroupArray=$this->studyObject->getAllPossibleVisitGroups();
+		$visitGroupArray = $this->studyObject->getAllPossibleVisitGroups();
 
 		foreach ($visitGroupArray as $visitGroup) {
 
 			try {
-				$modalityCreatedVisits=$this->studyObject->getStudySpecificGroupManager($visitGroup->groupModality)->getCreatedVisits();
-				$modalityDeletedVisits=$this->studyObject->getStudySpecificGroupManager($visitGroup->groupModality)->getCreatedVisits(true);
+				$modalityCreatedVisits = $this->studyObject->getStudySpecificGroupManager($visitGroup->groupModality)->getCreatedVisits();
+				$modalityDeletedVisits = $this->studyObject->getStudySpecificGroupManager($visitGroup->groupModality)->getCreatedVisits(true);
 				array_push($this->allcreatedVisits, ...$modalityCreatedVisits, ...$modalityDeletedVisits);
-			}catch (Exception $e) { }
+			} catch (Exception $e) {
+			}
 		}
 	}
 
@@ -49,19 +50,19 @@ class Export_Study_Data
 	public function exportPatientTable(): String
 	{
 
-		$patientCsv[]=array('Patient Code', 'Initials', 'Gender', 'Birthdate', 'Registration Date', 'Investigator Name', 'Center Code', 'Center Name', 'Country', 'Withdraw', 'Withdraw Reason', 'Withdraw Date');
+		$patientCsv[] = array('Patient Code', 'Initials', 'Gender', 'Birthdate', 'Registration Date', 'Investigator Name', 'Center Code', 'Center Name', 'Country', 'Withdraw', 'Withdraw Reason', 'Withdraw Date');
 
-		$patientsInStudy=$this->studyObject->getAllPatientsInStudy();
+		$patientsInStudy = $this->studyObject->getAllPatientsInStudy();
 		foreach ($patientsInStudy as $patient) {
-			$patientCenter=$patient->getPatientCenter();
-			$patientCsv[]=array(
-				$patient->patientCode, $patient->patientLastName.$patient->patientFirstName, $patient->patientGender,
+			$patientCenter = $patient->getPatientCenter();
+			$patientCsv[] = array(
+				$patient->patientCode, $patient->patientLastName . $patient->patientFirstName, $patient->patientGender,
 				$patient->patientBirthDate, $patient->patientRegistrationDate, $patient->patientInvestigatorName, $patientCenter->code, $patientCenter->name, $patientCenter->countryName,
 				$patient->patientWithdraw, $patient->patientWithdrawReason, $patient->patientWithdrawDateString
 			);
 		}
 
-		$patientCsvString=$this->writeCsv($patientCsv);
+		$patientCsvString = $this->writeCsv($patientCsv);
 
 		return $patientCsvString;
 	}
@@ -73,30 +74,26 @@ class Export_Study_Data
 	public function exportAssociatedFiles()
 	{
 
-		$zip=new ZipArchive;
-		$tempZip=tempnam(ini_get('upload_tmp_dir'), 'TMPZIPAF_');
+		$zip = new ZipArchive;
+		$tempZip = tempnam(ini_get('upload_tmp_dir'), 'TMPZIPAF_');
 		$zip->open($tempZip, ZipArchive::CREATE);
-        
+
 
 		foreach ($this->allcreatedVisits as $visitObject) {
-			$reviewsObjects=$this->getAllreviewObjects($visitObject);
+			$reviewsObjects = $this->getAllreviewObjects($visitObject);
 
 			foreach ($reviewsObjects as $reviewObject) {
 
 				foreach ($reviewObject->associatedFiles as $associatedFileKey => $associatedFilePath) {
 					$associatedFileLocation = $reviewObject->getAssociatedFilePath($associatedFileKey);
 					$zip->addFile($associatedFileLocation);
-
 				};
-
 			}
-
 		}
 
 		$zip->close();
 
 		return $tempZip;
-
 	}
 
 	/**
@@ -105,18 +102,18 @@ class Export_Study_Data
 	public function exportVisitTable(): String
 	{
 
-		$visitCSV=[];
+		$visitCSV = [];
 
 		//Prepare visit CSV
-		$visitCSV[]=array(
+		$visitCSV[] = array(
 			'Patient Code', 'Visit Group', 'ID Visit', 'Code Status', 'Creator Name', 'Creator Date',
 			'Type', 'Status', 'Reason For Not Done', 'Acquisition Date', 'Upload Status', 'Uploader',
 			'Upload Date', 'State Investigator Form', 'State QC', 'QC done by', 'QC date', 'Review Status', 'Review Date', 'Review Target Lesions', 'Review Conclusion', 'visit deleted'
 		);
 
 		foreach ($this->allcreatedVisits as $visit) {
-			$codeStatus=$this->dertermineVisitStatusCode($visit);
-			$visitCSV[]=array(
+			$codeStatus = $this->dertermineVisitStatusCode($visit);
+			$visitCSV[] = array(
 				$visit->patientCode, $visit->visitGroupObject->groupModality, $visit->id_visit, $codeStatus, $visit->creatorName, $visit->creationDate,
 				$visit->visitType, $visit->statusDone, $visit->reasonForNotDone, $visit->acquisitionDate, $visit->uploadStatus, $visit->uploaderUsername,
 				$visit->uploadDate, $visit->stateInvestigatorForm, $visit->stateQualityControl, $visit->controllerUsername, $visit->controlDate,
@@ -124,7 +121,7 @@ class Export_Study_Data
 			);
 		}
 
-		$visitCsvString=$this->writeCsv($visitCSV);
+		$visitCsvString = $this->writeCsv($visitCSV);
 
 		return $visitCsvString;
 	}
@@ -136,14 +133,14 @@ class Export_Study_Data
 	{
 
 		//Prepare Orthanc Series data CSV
-		$orthancCSV[]=array(
+		$orthancCSV[] = array(
 			'ID Visit', 'Study Orthanc ID',
 			'Study UID', 'Study Description', 'Dicom Patient Name', 'Dicom Patient ID', 'Serie Description', 'modality', 'Acquisition Date Time',
 			'Serie Orthanc ID', 'Serie UID', 'Instance Number', 'Manufacturer', 'Disk Size', 'Serie Number', 'Patient Weight', 'Injected_Activity', 'Injected_Dose', 'Radiopharmaceutical', 'Half Life', 'Injected Time', 'Deleted'
 		);
 
-		$imagingVisit=array_filter($this->allcreatedVisits, function(Visit $visitObject) {
-			$inArrayBool=in_array(
+		$imagingVisit = array_filter($this->allcreatedVisits, function (Visit $visitObject) {
+			$inArrayBool = in_array(
 				$visitObject->visitGroupObject->groupModality,
 				array(Visit_Group::GROUP_MODALITY_CT, Visit_Group::GROUP_MODALITY_PET, Visit_Group::GROUP_MODALITY_MR, Visit_Group::GROUP_MODALITY_RTSTRUCT, Visit_Group::GROUP_MODALITY_NM)
 			);
@@ -152,11 +149,11 @@ class Export_Study_Data
 
 		foreach ($imagingVisit as $visit) {
 
-			$allSeries=$visit->getSeriesDetails();
+			$allSeries = $visit->getSeriesDetails();
 
 			foreach ($allSeries as $serieObject) {
-				$studyDetailsObject=$serieObject->studyDetailsObject;
-				$orthancCSV[]=array(
+				$studyDetailsObject = $serieObject->studyDetailsObject;
+				$orthancCSV[] = array(
 					$studyDetailsObject->idVisit, $studyDetailsObject->studyOrthancId, $studyDetailsObject->studyUID,
 					$studyDetailsObject->studyDescription, $studyDetailsObject->patientName, $studyDetailsObject->patientId, $serieObject->seriesDescription, $serieObject->modality, $serieObject->acquisitionDateTime, $serieObject->seriesOrthancID,
 					$serieObject->serieUID, $serieObject->numberInstances, $serieObject->manufacturer, $serieObject->serieUncompressedDiskSize, $serieObject->seriesNumber, $serieObject->patientWeight, $serieObject->injectedActivity, $serieObject->injectedDose, $serieObject->radiopharmaceutical, $serieObject->halfLife, $serieObject->injectedDateTime, $serieObject->deleted
@@ -164,7 +161,7 @@ class Export_Study_Data
 			}
 		}
 
-		$orthancCsvFile=$this->writeCsv($orthancCSV);
+		$orthancCsvFile = $this->writeCsv($orthancCSV);
 
 		return $orthancCsvFile;
 	}
@@ -175,59 +172,67 @@ class Export_Study_Data
 	public function getReviewData()
 	{
 
-		$mappedVisitByGroup=[];
+		$mappedVisitByGroup = [];
 
 		foreach ($this->allcreatedVisits as $visitObject) {
-			$modality=$visitObject->visitGroupObject->groupModality;
-			$visitName=$visitObject->visitType;
-			$mappedVisitByGroup[$modality][$visitName][]=$visitObject;
+			$modality = $visitObject->visitGroupObject->groupModality;
+			$visitName = $visitObject->visitType;
+			$mappedVisitByGroup[$modality][$visitName][] = $visitObject;
 		};
 
 		foreach ($mappedVisitByGroup as $modality => $visitTypes) {
 
-			$groupObject=$this->studyObject->getSpecificGroup($modality);
+			$groupObject = $this->studyObject->getSpecificGroup($modality);
 
 			foreach ($visitTypes as $visitType => $visitArray) {
-				$csv=[];
+				$csv = [];
 
 				//Export Reviews
-				$genericHeader=array('Patient Code', 'Visit Type', 'ID Visit', 'ID review', 'Reviewer', 'Review Date', 'Validated', 'Local Form', 'Adjudication form', 'Review Deleted');
+				$genericHeader = array('Patient Code', 'Visit Type', 'ID Visit', 'ID review', 'Reviewer', 'Review Date', 'Validated', 'Local Form', 'Adjudication form', 'Review Deleted');
 
-				$visitTypeObject=$groupObject->getVisitType($visitType);
-				$specificFormTable=$visitTypeObject->getSpecificFormColumn();
+				$visitTypeObject = $groupObject->getVisitType($visitType);
+				$specificFormTable = $visitTypeObject->getSpecificFormColumn();
 				unset($specificFormTable[0]);
 
-				$csv[]=array_merge($genericHeader, $specificFormTable);
+				$csv[] = array_merge($genericHeader, $specificFormTable);
 
 				foreach ($visitArray as $visitObject) {
 
 					array_push($csv, ...$this->getReviews($visitObject));
 				}
 
-				$reviewCsvFiles[$modality.'_'.$visitType]=$this->writeCsv($csv);
+				$reviewCsvFiles[$modality . '_' . $visitType] = $this->writeCsv($csv);
 			}
 		}
 
 		return $reviewCsvFiles;
 	}
 
-	private function getAllreviewObjects(Visit $visitObject) : array {
+	private function getAllreviewObjects(Visit $visitObject): array
+	{
 
-		$localReviews=[];
+		$localReviews = [];
 		try {
-			$localReviews[]=$visitObject->getReviewsObject(true);
-		}catch (Exception $e) { }
 
-		$expertReviews=[];
+			$localReviews = $visitObject->getReviewsObject(true);
+
+			if (is_array($localReviews)) {
+				$localReviews = [...$localReviews];
+			} else {
+				$localReviews[] = $localReviews;
+			}
+		} catch (Exception $e) { }
+
+		$expertReviews = [];
 		try {
-			$expertReviews=$visitObject->getReviewsObject(false, true);
-		}catch (Exception $e) { }
+			$expertReviews = $visitObject->getReviewsObject(false, true);
+		} catch (Exception $e) {
+		}
 
 		//Merge all reviews in an array
-		$reviewObjects=array_merge($localReviews, $expertReviews);
+		$reviewObjects = array_merge($localReviews, $expertReviews);
 
 		return $reviewObjects;
-
 	}
 
 	/**
@@ -236,14 +241,14 @@ class Export_Study_Data
 	private function getReviews(Visit $visitObject): array
 	{
 
-		$reviewObjects=$this->getAllreviewObjects($visitObject);
+		$reviewObjects = $this->getAllreviewObjects($visitObject);
 
-		$csv=[];
+		$csv = [];
 		foreach ($reviewObjects as $reviewObject) {
-			$patientCode=$visitObject->patientCode;
-			$visitType=$visitObject->visitType;
-			$reviewData=$this->getReviewDatas($reviewObject);
-			$csv[]=[$patientCode, $visitType, ...$reviewData];
+			$patientCode = $visitObject->patientCode;
+			$visitType = $visitObject->visitType;
+			$reviewData = $this->getReviewDatas($reviewObject);
+			$csv[] = [$patientCode, $visitType, ...$reviewData];
 		}
 
 		return $csv;
@@ -255,14 +260,14 @@ class Export_Study_Data
 	private function getReviewDatas(Review $review): array
 	{
 		//Add to final map
-		$reviewDatas=$this->getGenericData($review);
-		$specificData=$review->getSpecificData();
+		$reviewDatas = $this->getGenericData($review);
+		$specificData = $review->getSpecificData();
 		unset($specificData["id_review"]);
 		$specificDataArray = [];
-		if( !empty($specificData) ){
+		if (!empty($specificData)) {
 			$specificDataArray = array_values($specificData);
 		}
-		$reviewLine=[...$reviewDatas, ...$specificDataArray];
+		$reviewLine = [...$reviewDatas, ...$specificDataArray];
 
 		return $reviewLine;
 	}
@@ -270,10 +275,10 @@ class Export_Study_Data
 	/**
 	 * Build the generic part of the review array
 	 */
-	private function getGenericData(Review $review) : array
+	private function getGenericData(Review $review): array
 	{
 		//Add to final map
-		$reviewDatas=array(
+		$reviewDatas = array(
 			$review->id_visit, $review->id_review,
 			$review->username, $review->reviewDate, $review->validated, $review->isLocal, $review->isAdjudication, $review->deleted
 		);
@@ -284,11 +289,11 @@ class Export_Study_Data
 	/**
 	 * Write CSV Array to a temporary file
 	 */
-	private function writeCsv($csvArray) : String
+	private function writeCsv($csvArray): String
 	{
 
-		$tempCsv=tempnam(ini_get('upload_tmp_dir'), 'TMPCSV_');
-		$fichier_csv=fopen($tempCsv, 'w');
+		$tempCsv = tempnam(ini_get('upload_tmp_dir'), 'TMPCSV_');
+		$fichier_csv = fopen($tempCsv, 'w');
 		foreach ($csvArray as $fields) {
 			fputcsv($fichier_csv, $fields);
 		}
@@ -315,37 +320,36 @@ class Export_Study_Data
 	 * @param Visit $visitObject
 	 * @return number
 	 */
-	private function dertermineVisitStatusCode(Visit $visitObject) : int
+	private function dertermineVisitStatusCode(Visit $visitObject): int
 	{
 
 		if ($visitObject->statusDone == Visit::NOT_DONE) {
 			return 0;
-		}else if ($visitObject->uploadStatus == Visit::NOT_DONE || $visitObject->stateInvestigatorForm == Visit::NOT_DONE) {
+		} else if ($visitObject->uploadStatus == Visit::NOT_DONE || $visitObject->stateInvestigatorForm == Visit::NOT_DONE) {
 			if ($visitObject->uploadStatus == Visit::NOT_DONE && $visitObject->stateInvestigatorForm == Visit::NOT_DONE) {
 				return 1;
-			}else if ($visitObject->stateInvestigatorForm == Visit::NOT_DONE) {
+			} else if ($visitObject->stateInvestigatorForm == Visit::NOT_DONE) {
 				return 3;
-			}else if ($visitObject->uploadStatus == Visit::NOT_DONE) {
+			} else if ($visitObject->uploadStatus == Visit::NOT_DONE) {
 				return 2;
 			}
-		}else if ($visitObject->qcStatus == Visit::QC_NOT_DONE) {
+		} else if ($visitObject->qcStatus == Visit::QC_NOT_DONE) {
 			return 4;
-		}else if ($visitObject->qcStatus == Visit::QC_CORRECTIVE_ACTION_ASKED) {
+		} else if ($visitObject->qcStatus == Visit::QC_CORRECTIVE_ACTION_ASKED) {
 			return 5;
-		}else if ($visitObject->qcStatus == Visit::QC_REFUSED) {
+		} else if ($visitObject->qcStatus == Visit::QC_REFUSED) {
 			return 6;
-		}else if ($visitObject->reviewStatus == Visit::NOT_DONE) {
+		} else if ($visitObject->reviewStatus == Visit::NOT_DONE) {
 			return 7;
-		}else if ($visitObject->reviewStatus == Visit::REVIEW_ONGOING) {
+		} else if ($visitObject->reviewStatus == Visit::REVIEW_ONGOING) {
 			return 8;
-		}else if ($visitObject->reviewStatus == Visit::REVIEW_WAIT_ADJUDICATION) {
+		} else if ($visitObject->reviewStatus == Visit::REVIEW_WAIT_ADJUDICATION) {
 			return 9;
-		}else if ($visitObject->reviewStatus == Visit::REVIEW_DONE) {
+		} else if ($visitObject->reviewStatus == Visit::REVIEW_DONE) {
 			return 10;
-		}else {
+		} else {
 			//If none of these case return -1, should not happen
 			return -1;
 		}
 	}
-
 }
