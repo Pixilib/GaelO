@@ -218,15 +218,6 @@ class OrthancMetaData
         return null;
     }
 
-    public function getSpecificActivity() : ?string
-    {
-        $radioPharmaceuticalGroup = $this->getRadioPharmaceuticalGroup();
-        if (array_key_exists('0018,1077', $radioPharmaceuticalGroup)) {
-            return $radioPharmaceuticalGroup['0018,1077']['Value'];
-        }
-        return null;
-    }
-
     public function getRadiopharmaceutical() : ?string
     {
         $radioPharmaceuticalGroup = $this->getRadioPharmaceuticalGroup();

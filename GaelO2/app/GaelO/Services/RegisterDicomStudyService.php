@@ -39,6 +39,7 @@ class RegisterDicomStudyService
 
     private int $visitId;
     private int $userId;
+    private string $studyOrthancId;
     private string $originalStudyOrthancId;
     private string $studyName;
 
@@ -129,7 +130,7 @@ class RegisterDicomStudyService
         $injectedDateTime = DicomUtils::parseDicomDateTime($series->injectedDateTime);
 
         $this->dicomSeriesRepositoryInterface->addSeries(
-            $series->serieOrthancID,
+            $series->seriesOrthancID,
             $studyInstanceUID,
             $serieAcquisitionDate,
             $serieAcquisitionTime,
@@ -140,7 +141,6 @@ class RegisterDicomStudyService
             $series->halfLife,
             $series->injectedTime,
             $injectedDateTime,
-            $series->specificActivity,
             $series->patientWeight,
             $series->numberOfInstanceInOrthanc,
             $series->seriesInstanceUID,
