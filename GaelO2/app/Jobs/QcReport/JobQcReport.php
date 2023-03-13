@@ -76,7 +76,7 @@ class JobQcReport implements ShouldQueue
         $visitReport->setVisitDate($formattedVisitDate);
 
         $dicomStudyEntity = $dicomStudyRepositoryInterface->getDicomsDataFromVisit($this->visitId, false, false);
-        
+
         if ($registrationDate !== null) {
             //Determine min and max visit date compared to registration date
             $minDayToInclusion = $visitEntity['visit_type']['limit_low_days'];
@@ -144,7 +144,7 @@ class JobQcReport implements ShouldQueue
         }
 
         //Once all email emited remove preview file to avoid dangling temporary files
-        foreach($seriesReports as $seriesReport){
+        foreach ($seriesReports as $seriesReport) {
             $seriesReport->deletePreviewImages();
         }
     }
@@ -156,17 +156,18 @@ class JobQcReport implements ShouldQueue
         try {
             switch ($imageType) {
                 case ImageType::MIP:
-                    $imagePath = $this->orthancService->getSeriesMIP($seriesID);
+                    $imagePath = $this->orthancService->getMIP('series', $seriesID);
                     break;
                 case ImageType::MOSAIC:
-                    $imagePath = $this->orthancService->getSeriesMosaic($seriesID);
+                    $imagePath = $this->orthancService->getMosaic('series', $seriesID);
                     break;
                 case ImageType::DEFAULT:
                     $imagePath = $this->orthancService->getInstancePreview($firstInstanceID);
                     break;
             }
-        } catch (Throwable $t) { }
-        
+        } catch (Throwable $t) {
+        }
+
         return $imagePath;
     }
 
