@@ -119,7 +119,7 @@ class JobQcReport implements ShouldQueue
 
                 $seriesReports[] = $seriesReport;
             } catch (Throwable $t) {
-                Log::info($t);
+                Log::error($t);
             }
         }
 
@@ -182,6 +182,6 @@ class JobQcReport implements ShouldQueue
 
     public function failed(Throwable $exception)
     {
-        Log::info($exception);
+        Log::error($exception);
     }
 }
