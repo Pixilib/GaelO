@@ -160,7 +160,8 @@ class JobQcReport implements ShouldQueue
         try {
             switch ($imageType) {
                 case ImageType::MIP:
-                    $imagePath = $this->orthancService->getMIP('series', $seriesID);
+                    //Mosaic for now
+                    $imagePath = $this->orthancService->getMosaic('series', $seriesID);
                     break;
                 case ImageType::MOSAIC:
                     $imagePath = $this->orthancService->getMosaic('series', $seriesID);
@@ -169,8 +170,7 @@ class JobQcReport implements ShouldQueue
                     $imagePath = $this->orthancService->getInstancePreview($firstInstanceID);
                     break;
             }
-        } catch (Throwable $t) {
-        }
+        } catch (Throwable $t) { }
 
         return $imagePath;
     }
