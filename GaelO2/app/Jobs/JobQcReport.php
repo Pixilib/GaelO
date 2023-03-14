@@ -115,7 +115,7 @@ class JobQcReport implements ShouldQueue
                 $seriesReport->setNumberOfInstances(sizeof($seriesDetails['Instances']));
 
                 $imagePreviewPath = $this->getSeriesPreview($seriesReport->getPreviewType(), $series['orthanc_id'], $seriesDetails['Instances'][0]);
-                $seriesReport->setPreviewImagePath($imagePreviewPath);
+                $seriesReport->addPreviewImagePath($imagePreviewPath);
 
                 $seriesReports[] = $seriesReport;
             } catch (Throwable $t) {

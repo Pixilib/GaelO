@@ -25,34 +25,51 @@
                                   </tbody>
                               </table>
                           </div>
-                          <!--[if mso | IE]></td><td class="" style="vertical-align:top;width:420px;" ><![endif]-->
-                          <div class="mj-column-per-70 mj-outlook-group-fix"
-                              style="font-size:0px;text-align:left;direction:ltr;display:inline-block;vertical-align:top;width:100%;">
-                              <table border="0" cellpadding="0" cellspacing="0" role="presentation"
-                                  style="vertical-align:top;" width="100%">
-                                  <tbody>
-                                      <tr>
-                                          <td align="center"
-                                              style="font-size:0px;padding:10px 25px;word-break:break-word;">
-                                              <table border="0" cellpadding="0" cellspacing="0" role="presentation"
-                                                  style="border-collapse:collapse;border-spacing:0px;">
-                                                  <tbody>
-                                                      <tr>
-                                                          <td style="width:370px;">
-                                                              <img alt="series preview" height="auto"
-                                                                  src="{{ $message->embed($series['image_path'] ?? public_path('static/media/ban-image-photo-icon.png')) }}"
-                                                                  style="border:0;display:block;outline:none;text-decoration:none;height:auto;width:100%;font-size:13px;"
-                                                                  width="370" />
-                                                          </td>
-                                                      </tr>
-                                                  </tbody>
-                                              </table>
-                                          </td>
-                                      </tr>
-                                  </tbody>
-                              </table>
-                          </div>
                           <!--[if mso | IE]></td></tr></table><![endif]-->
+                      </td>
+                  </tr>
+              </tbody>
+          </table>
+      </div>
+      <!--[if mso | IE]></td></tr></table><table align="center" border="0" cellpadding="0" cellspacing="0" class="" role="presentation" style="width:600px;" width="600" ><tr><td style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;"><![endif]-->
+      <div style="margin:0px auto;max-width:600px;">
+          <table align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="width:100%;">
+              <tbody>
+                  <tr>
+                      <td style="direction:ltr;font-size:0px;padding:20px 0;text-align:center;">
+                          <!--[if mso | IE]><table role="presentation" border="0" cellpadding="0" cellspacing="0"><tr><![endif]-->
+                          @foreach ($series['image_path'] as $path)
+                              <!--[if mso | IE]><td class="" style="vertical-align:top;width:600px;" ><![endif]-->
+                              <div class="mj-column-per-100 mj-outlook-group-fix"
+                                  style="font-size:0px;text-align:left;direction:ltr;display:inline-block;vertical-align:top;width:100%;">
+                                  <table border="0" cellpadding="0" cellspacing="0" role="presentation"
+                                      style="vertical-align:top;" width="100%">
+                                      <tbody>
+                                          <tr>
+                                              <td align="center"
+                                                  style="font-size:0px;padding:10px 25px;word-break:break-word;">
+                                                  <table border="0" cellpadding="0" cellspacing="0"
+                                                      role="presentation"
+                                                      style="border-collapse:collapse;border-spacing:0px;">
+                                                      <tbody>
+                                                          <tr>
+                                                              <td style="width:550px;">
+                                                                  <img alt="series preview" height="auto"
+                                                                      src="{{ $message->embed($path ?? public_path('static/media/ban-image-photo-icon.png')) }}"
+                                                                      style="border:0;display:block;outline:none;text-decoration:none;height:auto;width:100%;font-size:13px;"
+                                                                      width="550" />
+                                                              </td>
+                                                          </tr>
+                                                      </tbody>
+                                                  </table>
+                                              </td>
+                                          </tr>
+                                      </tbody>
+                                  </table>
+                              </div>
+                              <!--[if mso | IE]></td><![endif]-->
+                          @endforeach
+                          <!--[if mso | IE]></tr></table><![endif]-->
                       </td>
                   </tr>
               </tbody>
@@ -73,8 +90,8 @@
                                       <tr>
                                           <td align="left" class="table-striped"
                                               style="font-size:0px;padding:10px 25px;word-break:break-word;">
-                                              <table cellpadding="0" cellspacing="0" role="presentation" width="100%"
-                                                  border="0"
+                                              <table cellpadding="0" cellspacing="0" role="presentation"
+                                                  width="100%" border="0"
                                                   style="color:#000000;font-family:Ubuntu, Helvetica, Arial, sans-serif;font-size:13px;line-height:22px;table-layout:auto;width:100%;border:none;">
                                                   @foreach ($series as $key => $value)
                                                       @if ($value != null && $key !== 'image_path')

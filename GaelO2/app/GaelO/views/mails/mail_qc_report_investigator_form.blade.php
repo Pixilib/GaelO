@@ -48,12 +48,12 @@
                                                   border="0"
                                                   style="color:#000000;font-family:Ubuntu, Helvetica, Arial, sans-serif;font-size:13px;line-height:22px;table-layout:auto;width:100%;border:none;">
                                                   @foreach ($studyInfo['investigatorForm'] as $key => $value)
-                                                          <tr>
-                                                              <td style="padding: 0 15px 0 0;font-weight: bold;"
-                                                                  align="left">{{ $key }}</td>
-                                                              <td style="padding: 0 15px;" align="right">
-                                                                  {{ var_export($value) }}</td>
-                                                          </tr>
+                                                      <tr>
+                                                          <td style="padding: 0 15px 0 0;font-weight: bold;"
+                                                              align="left">{{ $key }}</td>
+                                                          <td style="padding: 0 15px;" align="right">
+                                                              {{ var_export($value) }}</td>
+                                                      </tr>
                                                   @endforeach
                                               </table>
                                           </td>

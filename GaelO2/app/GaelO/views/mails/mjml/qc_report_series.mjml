@@ -13,10 +13,18 @@
             {{$series['Series Description']}}
           </h3>
         </mj-text>
-      </mj-column width="100%">
-      <mj-column width="70%">
-        <mj-image alt="series preview" width="512px" src="{{$message->embed($series['image_path'] ?? public_path('static/media/ban-image-photo-icon.png'))}}" align="center"></mj-image>
       </mj-column>
+    </mj-section>
+    <mj-section>
+      <mj-raw>
+        @foreach($series['image_path'] as $path)
+      </mj-raw>
+      <mj-column width="100%">
+        <mj-image alt="series preview" src="{{$message->embed($path ?? public_path('static/media/ban-image-photo-icon.png'))}}" align="center"></mj-image>
+      </mj-column>
+      <mj-raw>
+      @endforeach
+      </mj-raw>
     </mj-section>
     <mj-section>
       <mj-column width="100%">

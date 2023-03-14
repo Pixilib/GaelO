@@ -30,7 +30,7 @@ class SeriesReport
     private  $protocolName;
     private  $patientWeight;
     private  $patientHeight;
-    private  $previewImagePath;
+    private  array $previewImagePath;
     private InstanceReport $instanceReport;
     private StudyReport $studyReport;
 
@@ -44,14 +44,16 @@ class SeriesReport
         return $this->numberOfInstances;
     }
 
-    public function setPreviewImagePath(?string $path)
+    public function addPreviewImagePath(?string $path)
     {
-        $this->previewImagePath = $path;
+        $this->previewImagePath[] = $path;
     }
 
     public function deletePreviewImages()
     {
-        if ($this->previewImagePath) unlink($this->previewImagePath);
+        foreach ($this->previewImagePath as $imagePath) {
+            unlink($imagePath);
+        }
     }
 
     public function setInstanceReport(InstanceReport $instanceReport)
@@ -143,7 +145,7 @@ class SeriesReport
             'Protocol Name' => $this->protocolName ?? null,
             'Patient weight (kg)' => $this->patientWeight ?? null,
             'Patient height (m)' => $this->patientHeight ?? null,
-            'image_path' => $this->previewImagePath ?? null,
+            'image_path' => $this->previewImagePath,
             ...$instanceData
         ];
     }
