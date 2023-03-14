@@ -23,7 +23,7 @@
         <mj-image alt="series preview" src="{{$message->embed($path ?? public_path('static/media/ban-image-photo-icon.png'))}}" align="center"></mj-image>
       </mj-column>
       <mj-raw>
-      @endforeach
+        @endforeach
       </mj-raw>
     </mj-section>
     <mj-section>
