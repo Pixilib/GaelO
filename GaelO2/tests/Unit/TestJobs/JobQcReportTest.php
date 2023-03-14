@@ -6,7 +6,7 @@ use App\GaelO\Constants\Constants;
 use App\GaelO\Repositories\DicomSeriesRepository;
 use App\GaelO\Services\OrthancService;
 use App\GaelO\Services\StoreObjects\OrthancMetaData;
-use App\Jobs\QcReport\JobQcReport;
+use App\Jobs\JobQcReport;
 use App\Models\DicomSeries;
 use App\Models\DicomStudy;
 use App\Models\Review;
