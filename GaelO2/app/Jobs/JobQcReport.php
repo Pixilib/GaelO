@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Jobs\QcReport;
+namespace App\Jobs;
 
 use App\GaelO\Constants\Constants;
 use App\GaelO\Constants\Enums\InvestigatorFormStateEnum;
@@ -11,6 +11,10 @@ use App\GaelO\Interfaces\Repositories\UserRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
 use App\GaelO\Services\MailServices;
 use App\GaelO\Services\OrthancService;
+use App\Jobs\QcReport\ImageType;
+use App\Jobs\QcReport\InstanceReport;
+use App\Jobs\QcReport\SeriesReport;
+use App\Jobs\QcReport\VisitReport;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -26,7 +30,7 @@ class JobQcReport implements ShouldQueue
     private OrthancService $orthancService;
 
     public $failOnTimeout = true;
-    public $timeout = 600;
+    public $timeout = 300;
     public $tries = 1;
 
     /**
