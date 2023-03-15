@@ -32,7 +32,7 @@ class SeriesReport
     private $protocolName;
     private $patientWeight;
     private $patientHeight;
-    private array $previewImagePath;
+    private array $previewImagePath = [];
     private array $orthancInstanceIds;
     private string $seriesOrthancId;
     private InstanceReport $instanceReport;
@@ -130,16 +130,16 @@ class SeriesReport
     {
         $imageType = $this->getPreviewType();
 
-        $imagePath = null;
+        $imagePath = [];
 
         try {
             switch ($imageType) {
                 case ImageType::MIP:
                     //Mosaic for now
-                    $imagePath = [$orthancService->getMosaic('series', $this->seriesOrthancId)];
+                    $imagePath[] = $orthancService->getMosaic('series', $this->seriesOrthancId);
                     break;
                 case ImageType::MOSAIC:
-                    $imagePath = [$orthancService->getMosaic('series', $this->seriesOrthancId)];
+                    $imagePath[] = $orthancService->getMosaic('series', $this->seriesOrthancId);
                     break;
                 case ImageType::MULTIFRAME:
                     $imagePath = array_map(function ($instanceOrthancId) use ($orthancService) {
@@ -147,7 +147,7 @@ class SeriesReport
                     }, $this->orthancInstanceIds);
                     break;
                 case ImageType::DEFAULT:
-                    $imagePath = [$orthancService->getInstancePreview($this->orthancInstanceIds[0])];
+                    $imagePath[] = $orthancService->getInstancePreview($this->orthancInstanceIds[0]);
                     break;
             }
         } catch (Throwable $t) { }
