@@ -258,6 +258,6 @@ class OrthancMetaData
 
     public function getImageID() : ?string
     {
-        return $this->getMetaDataValueFromCode('0054,0400')
+        return $this->getMetaDataValueFromCode('0054,0400');
     }
 }
