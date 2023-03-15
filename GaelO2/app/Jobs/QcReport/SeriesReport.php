@@ -3,45 +3,54 @@
 namespace App\Jobs\QcReport;
 
 use App\GaelO\DicomUtils;
+use App\GaelO\Services\OrthancService;
 use App\GaelO\Services\StoreObjects\OrthancMetaData;
+use Throwable;
 
 class SeriesReport
 {
-    private  $SOPClassUID;
-    private  $seriesDescription;
-    private  $modality;
-    private  $seriesDate;
-    private  $seriesTime;
-    private  $acquisitionDate;
-    private  $acquisitionTime;
-    private  $sliceThickness;
-    private  $pixelSpacing;
-    private  $fov;
-    private  $matrixSize;
-    private  $patientPosition;
-    private  $patientOrientation;
-    private  $numberOfInstances;
-    private  $scanningSequence;
-    private  $sequenceVariant;
-    private  $echoTime;
-    private  $inversionTime;
-    private  $echoTrainLength;
-    private  $spacingBetweenSlices;
-    private  $protocolName;
-    private  $patientWeight;
-    private  $patientHeight;
-    private  array $previewImagePath;
+    private $SOPClassUID;
+    private $seriesDescription;
+    private $modality;
+    private $seriesDate;
+    private $seriesTime;
+    private $acquisitionDate;
+    private $acquisitionTime;
+    private $sliceThickness;
+    private $pixelSpacing;
+    private $fov;
+    private $matrixSize;
+    private $patientPosition;
+    private $patientOrientation;
+    private $numberOfInstances;
+    private $scanningSequence;
+    private $sequenceVariant;
+    private $echoTime;
+    private $inversionTime;
+    private $echoTrainLength;
+    private $spacingBetweenSlices;
+    private $protocolName;
+    private $patientWeight;
+    private $patientHeight;
+    private array $previewImagePath;
+    private array $orthancInstanceIds;
+    private string $seriesOrthancId;
     private InstanceReport $instanceReport;
     private StudyReport $studyReport;
 
-    public function setNumberOfInstances(int|string $numberOfInstances)
+    public function __construct(string $seriesOrthancId)
     {
-        $this->numberOfInstances = $numberOfInstances;
+        $this->seriesOrthancId = $seriesOrthancId;
+    }
+
+    public function setInstancesOrthancIds(array $orthancInstancesIds)
+    {
+        $this->orthancInstanceIds = $orthancInstancesIds;
     }
 
     public function getNumberOfInstances(): int
     {
-        return $this->numberOfInstances;
+        return sizeof($this->orthancInstanceIds);
     }
 
     public function addPreviewImagePath(?string $path)
@@ -63,8 +72,6 @@ class SeriesReport
 
     public function fillData(OrthancMetaData $sharedTags)
     {
-
-
         $this->studyReport = new StudyReport();
         $this->studyReport->fillData($sharedTags);
         $this->SOPClassUID = $sharedTags->getSOPClassUID();
@@ -100,7 +107,7 @@ class SeriesReport
         return $this->studyReport->toArray();
     }
 
-    public function getPreviewType(): ImageType
+    private function getPreviewType(): ImageType
     {
         $mosaicIDs = ['1.2.840.10008.5.1.4.1.1.4', '1.2.840.10008.5.1.4.1.1.4.1'];
         $gifIDs = [
@@ -109,8 +116,7 @@ class SeriesReport
         ];
 
         if ($this->instanceReport != null && $this->instanceReport->numberOfFrames > 1) {
-            //TODO preview should be done at instance level
-            return ImageType::DEFAULT;
+            return ImageType::MULTIFRAME;
         } else if (in_array($this->SOPClassUID, $mosaicIDs)) {
             return ImageType::MOSAIC;
         } else if (in_array($this->SOPClassUID, $gifIDs)) {
@@ -118,6 +124,35 @@ class SeriesReport
         } else {
             return ImageType::DEFAULT;
         }
+    }
+
+    public function loadSeriesPreview(OrthancService $orthancService): void
+    {
+        $imageType = $this->getPreviewType();
+
+        $imagePath = null;
+
+        try {
+            switch ($imageType) {
+                case ImageType::MIP:
+                    //Mosaic for now
+                    $imagePath = [$orthancService->getMosaic('series', $this->seriesOrthancId)];
+                    break;
+                case ImageType::MOSAIC:
+                    $imagePath = [$orthancService->getMosaic('series', $this->seriesOrthancId)];
+                    break;
+                case ImageType::MULTIFRAME:
+                    $imagePath = array_map(function ($instanceOrthancId) use ($orthancService) {
+                        return $orthancService->getMosaic('instances', $instanceOrthancId);
+                    }, $this->orthancInstanceIds);
+                    break;
+                case ImageType::DEFAULT:
+                    $imagePath = [$orthancService->getInstancePreview($this->orthancInstanceIds[0])];
+                    break;
+            }
+        } catch (Throwable $t) { }
+
+        $this->previewImagePath = $imagePath;
     }
 
     public function toArray()

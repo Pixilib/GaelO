@@ -11,7 +11,6 @@ use App\GaelO\Interfaces\Repositories\UserRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
 use App\GaelO\Services\MailServices;
 use App\GaelO\Services\OrthancService;
-use App\Jobs\QcReport\ImageType;
 use App\Jobs\QcReport\InstanceReport;
 use App\Jobs\QcReport\SeriesReport;
 use App\Jobs\QcReport\VisitReport;
@@ -109,13 +108,12 @@ class JobQcReport implements ShouldQueue
 
                 $instanceReport = new InstanceReport();
                 $instanceReport->fillData($instanceTags);
-                $seriesReport = new SeriesReport();
+                $seriesReport = new SeriesReport($series['orthanc_id']);
+                $seriesReport->setInstancesOrthancIds($seriesDetails['Instances']);
                 $seriesReport->fillData($seriesSharedTags);
                 $seriesReport->setInstanceReport($instanceReport);
-                $seriesReport->setNumberOfInstances(sizeof($seriesDetails['Instances']));
 
-                $imagePreviewPath = $this->getSeriesPreview($seriesReport->getPreviewType(), $series['orthanc_id'], $seriesDetails['Instances'][0]);
-                $seriesReport->addPreviewImagePath($imagePreviewPath);
+                $seriesReport->loadSeriesPreview($this->orthancService);
 
                 $seriesReports[] = $seriesReport;
             } catch (Throwable $t) {
@@ -151,28 +149,6 @@ class JobQcReport implements ShouldQueue
         foreach ($seriesReports as $seriesReport) {
             $seriesReport->deletePreviewImages();
         }
-    }
-
-    private function getSeriesPreview(ImageType $imageType, string $seriesID, string $firstInstanceID): ?string
-    {
-        $imagePath = null;
-
-        try {
-            switch ($imageType) {
-                case ImageType::MIP:
-                    //Mosaic for now
-                    $imagePath = $this->orthancService->getMosaic('series', $seriesID);
-                    break;
-                case ImageType::MOSAIC:
-                    $imagePath = $this->orthancService->getMosaic('series', $seriesID);
-                    break;
-                case ImageType::DEFAULT:
-                    $imagePath = $this->orthancService->getInstancePreview($firstInstanceID);
-                    break;
-            }
-        } catch (Throwable $t) { }
-
-        return $imagePath;
     }
 
     private function convertDate(string $visitDate): \DateTime
