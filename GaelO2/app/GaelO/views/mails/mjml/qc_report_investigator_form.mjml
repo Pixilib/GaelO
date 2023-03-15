@@ -16,7 +16,7 @@
       </mj-column>
     </mj-section>
     <mj-section>
-    <mj-column width="100%">
+      <mj-column>
         <mj-table css-class="table-striped" role="presentation">
           @foreach($studyInfo['investigatorForm'] as $key => $value)
           <tr>

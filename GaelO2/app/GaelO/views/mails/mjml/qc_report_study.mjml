@@ -6,10 +6,10 @@
     </mj-attributes>
   </mj-head>
   <mj-body>
-    <mj-section padding-bottom="0px">
-      <mj-column width="100%">
+    <mj-section>
+      <mj-column>
         <mj-text align="center" css-class="text-color"> The visit {{$studyInfo['visitName']}} of the patient {{$studyInfo['patientCode']}} from the study {{$studyInfo['studyName']}} has been uploaded.</mj-text>
-        <mj-text font-size="11px" align="center" line-height="16px">
+        <mj-text align="center" line-height="16px">
           Registation Date : {{$studyInfo['registrationDate']}}<br>
           Visit Date Expected After : {{$studyInfo['minVisitDate']}}<br>
           Visit Date Expected Before : {{$studyInfo['maxVisitDate']}}<br>
@@ -18,25 +18,46 @@
       </mj-column>
     </mj-section>
     <mj-section>
-    <mj-column width="100%">
-      <mj-divider border-width="1px" border-color="#616161"></mj-divider>
+      <mj-column>
+        <mj-divider border-width="1px" border-color="#616161"></mj-divider>
+      </mj-column>
+    </mj-section>
+    <mj-section>
+      <mj-column>
         <mj-text mj-class="text-blue">
           <h3 align="center">Study info</h3>
         </mj-text>
-      </mj-column width="100%">
-      <mj-column width="100%">
+      </mj-column>
+    </mj-section>
+    <mj-section>
+      <mj-column>
         <mj-table css-class="table-striped" role="presentation">
           @foreach($studyInfo['studyDetails'] as $key => $value)
-            @if ($value != null)
+          @if ($value != null)
           <tr>
             <td style="padding: 0 15px 0 0;font-weight: bold;" align="left">{{ $key }}</td>
             <td style="padding: 0 15px;" align="right">{{ $value }}</td>
           </tr>
-            @endif
+          @endif
           @endforeach
         </mj-table>
       </mj-column>
-      <mj-column width="100%">
+    </mj-section>
+    <mj-raw>
+      @if($warningVisitDate)
+    </mj-raw>
+    <mj-section>
+      <mj-column>
+        <mj-text color="red" font-weight="700" align="center">
+          Warning : DICOM Study Date and GaelO Visit Date are differents
+        </mj-text>
+      </mj-column>
+    </mj-section>
+    <mj-raw>
+      @endif
+    </mj-raw>
+    <mj-section>
+      <mj-column>
         <mj-divider border-width="1px" border-color="#616161"></mj-divider>
       </mj-column>
     </mj-section>
