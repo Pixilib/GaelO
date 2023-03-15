@@ -108,9 +108,12 @@ class SeriesReport
             '1.2.840.10008.5.1.4.1.1.128', '1.2.840.10008.5.1.4.1.1.130', '1.2.840.10008.5.1.4.1.1.128.1'
         ];
 
-        if (in_array($this->SOPClassUID, $mosaicIDs)) {
+        if ($this->instanceReport != null && $this->instanceReport->numberOfFrames > 1) {
+            //TODO preview should be done at instance level
+            return ImageType::DEFAULT;
+        } else if (in_array($this->SOPClassUID, $mosaicIDs)) {
             return ImageType::MOSAIC;
-        } elseif (in_array($this->SOPClassUID, $gifIDs)) {
+        } else if (in_array($this->SOPClassUID, $gifIDs)) {
             return ImageType::MIP;
         } else {
             return ImageType::DEFAULT;
