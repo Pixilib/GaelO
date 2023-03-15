@@ -52,7 +52,7 @@ class SeriesReport
     public function deletePreviewImages()
     {
         foreach ($this->previewImagePath as $imagePath) {
-            unlink($imagePath);
+            if ($imagePath != null) unlink($imagePath);
         }
     }
 
