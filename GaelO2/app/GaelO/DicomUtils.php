@@ -7,7 +7,7 @@ use DateTime;
 class DicomUtils
 {
 
-    static function filterMicrosecInDicomTime(?string $string): ?string
+    public static function filterMicrosecInDicomTime(?string $string): ?string
     {
 
         if (strpos($string, ".")) {
@@ -18,7 +18,7 @@ class DicomUtils
         return $string;
     }
 
-    static function parseDicomDateTime(?string $string, string $outputFormat = 'Y-m-d H:i:s') : ?string
+    public static function parseDicomDateTime(?string $string, string $outputFormat = 'Y-m-d H:i:s') : ?string
     {
         $parsedDateTime = null;
 
@@ -32,7 +32,7 @@ class DicomUtils
         return $parsedDateTime;
     }
 
-    static function parseDicomTime(?string $string, string $outputFormat = 'H:i:s') : ?string
+    public static function parseDicomTime(?string $string, string $outputFormat = 'H:i:s') : ?string
     {
         $parsedDateTime = null;
 
@@ -46,7 +46,7 @@ class DicomUtils
         return $parsedDateTime;
     }
 
-    static function parseDicomDate(?string $string, string $outputFormat = 'Y-m-d') : ?string
+    public static function parseDicomDate(?string $string, string $outputFormat = 'Y-m-d') : ?string
     {
         $parsedDateTime = null;
 
