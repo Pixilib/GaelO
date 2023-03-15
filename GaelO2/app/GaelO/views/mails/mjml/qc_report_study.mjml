@@ -8,7 +8,7 @@
   <mj-body>
     <mj-section>
       <mj-column>
-        <mj-text align="center" css-class="text-color"> The visit {{$studyInfo['visitName']}} of the patient {{$studyInfo['patientCode']}} from the study {{$studyInfo['studyName']}} has been uploaded.</mj-text>
+        <mj-text align="center" css-class="text-color"> Visit {{$studyInfo['visitName']}} of the patient {{$studyInfo['patientCode']}} from the {{$studyInfo['studyName']}} study has been uploaded.</mj-text>
         <mj-text align="center" line-height="16px">
           Registation Date : {{$studyInfo['registrationDate']}}<br>
           Visit Date Expected After : {{$studyInfo['minVisitDate']}}<br>
@@ -49,7 +49,7 @@
     <mj-section>
       <mj-column>
         <mj-text color="red" font-weight="700" align="center">
-          Warning : DICOM Study Date and GaelO Visit Date are differents
+          Warning : DICOM Study Date and GaelO Visit Date are different
         </mj-text>
       </mj-column>
     </mj-section>

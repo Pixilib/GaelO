@@ -16,9 +16,9 @@
                                               style="font-size:0px;padding:10px 25px;word-break:break-word;">
                                               <div
                                                   style="font-family:Ubuntu, Helvetica, Arial, sans-serif;font-size:13px;line-height:1;text-align:center;color:#000000;">
-                                                  The visit {{ $studyInfo['visitName'] }} of the patient
-                                                  {{ $studyInfo['patientCode'] }} from the study
-                                                  {{ $studyInfo['studyName'] }} has been uploaded.</div>
+                                                  Visit {{ $studyInfo['visitName'] }} of the patient
+                                                  {{ $studyInfo['patientCode'] }} from the {{ $studyInfo['studyName'] }}
+                                                  study has been uploaded.</div>
                                           </td>
                                       </tr>
                                       <tr>
@@ -163,7 +163,7 @@
                                                   style="font-size:0px;padding:10px 25px;word-break:break-word;">
                                                   <div
                                                       style="font-family:Ubuntu, Helvetica, Arial, sans-serif;font-size:13px;font-weight:700;line-height:1;text-align:center;color:red;">
-                                                      Warning : DICOM Study Date and GaelO Visit Date are differents
+                                                      Warning : DICOM Study Date and GaelO Visit Date are different
                                                   </div>
                                               </td>
                                           </tr>
