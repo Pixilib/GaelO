@@ -20,21 +20,21 @@ class ImportPatients
 {
     private TrackerRepositoryInterface $trackerRepositoryInterface;
     private StudyRepositoryInterface $studyRepositoryInterface;
-    private MailServices $mailService;
+    private MailServices $mailServices;
     private ImportPatientService $importPatient;
     private AuthorizationStudyService $authorizationStudyService;
 
     public function __construct(
         TrackerRepositoryInterface $trackerRepositoryInterface,
         StudyRepositoryInterface $studyRepositoryInterface,
-        MailServices $mailService,
+        MailServices $mailServices,
         ImportPatientService $importPatient,
         AuthorizationStudyService $authorizationStudyService
     ) {
         $this->importPatient = $importPatient;
         $this->trackerRepositoryInterface = $trackerRepositoryInterface;
         $this->studyRepositoryInterface = $studyRepositoryInterface;
-        $this->mailService = $mailService;
+        $this->mailServices = $mailServices;
         $this->authorizationStudyService = $authorizationStudyService;
     }
 
@@ -59,7 +59,6 @@ class ImportPatients
 
             $this->importPatient->setStudyEntity($studyEntity);
             $this->importPatient->setPatientEntities($arrayPatients);
-            $this->importPatient->setStudyName($studyName);
 
             //Import Patient with service
             $this->importPatient->import();
@@ -74,7 +73,7 @@ class ImportPatients
 
             $this->trackerRepositoryInterface->writeAction($currentUserId, Constants::ROLE_SUPERVISOR, $studyName, null, Constants::TRACKER_IMPORT_PATIENT, $actionDetails);
 
-            $this->mailService->sendImportPatientMessage($studyName, $studyEntity->contactEmail, $this->importPatient->successList, $this->importPatient->failList);
+            $this->mailServices->sendImportPatientMessage($studyName, $studyEntity->contactEmail, $this->importPatient->successList, $this->importPatient->failList);
         } catch (AbstractGaelOException $e) {
             $importPatientsResponse->body = $e->getErrorBody();
             $importPatientsResponse->status = $e->statusCode;

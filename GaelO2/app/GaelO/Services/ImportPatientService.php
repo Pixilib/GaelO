@@ -5,6 +5,7 @@ namespace App\GaelO\Services;
 use App\GaelO\Constants\Enums\InclusionStatusEnum;
 use App\GaelO\Entities\StudyEntity;
 use App\GaelO\Exceptions\GaelOBadRequestException;
+use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\CenterRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\PatientRepositoryInterface;
 use DateTime;
@@ -13,8 +14,6 @@ use Throwable;
 
 class ImportPatientService
 {
-
-    private string $studyName;
     private int $patientCodeLength;
     private array $existingPatientCodes;
     private array $existingCenter;
@@ -41,13 +40,11 @@ class ImportPatientService
         $this->patientEntities = $patientEntities;
     }
 
-    public function setStudyName(String $studyName): void
-    {
-        $this->studyName = $studyName;
-    }
-
     public function setStudyEntity(StudyEntity $studyEntity): void
     {
+        if ($studyEntity->isAncillaryStudy()) {
+            throw new GaelOForbiddenException("Import Patient not allowed for ancillaries studies");
+        }
         $this->studyEntity = $studyEntity;
     }
 
@@ -78,7 +75,7 @@ class ImportPatientService
                 $this->checkNewPatient($patientEntity['code']);
                 $this->isCorrectPatientCode($patientEntity['code']);
                 $this->isExistingCenter($patientEntity['centerCode']);
-                $this->checkCurrentStudy($patientEntity['studyName'], $this->studyName);
+                $this->checkCurrentStudy($patientEntity['studyName'], $this->studyEntity->name);
 
                 //Store the patient result import process in this object
                 $this->patientRepository->addPatientInStudy(
@@ -94,7 +91,7 @@ class ImportPatientService
                     $patientEntity['investigatorName'],
                     $patientEntity['centerCode'],
                     $patientEntity['inclusionStatus'],
-                    $this->studyName
+                    $this->studyEntity->name
                 );
 
                 $this->successList[] = $patientEntity['code'];
