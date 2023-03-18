@@ -24,7 +24,7 @@ class CreatePatientsTable extends Migration
             $table->integer('birth_year')->nullable(true)->default(null);
             $table->date('registration_date')->nullable(true);
             $table->string('investigator_name')->nullable(true)->default(null);
-            $table->unsignedInteger('center_code')->default(null);
+            $table->unsignedBigInteger('center_code')->default(null);
             $table->string('study_name')->default(null);
             $table->string('inclusion_status')->default('Included')->nullable(false);
             $table->string('withdraw_reason')->nullable(true)->default(null);

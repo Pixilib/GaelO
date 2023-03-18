@@ -16,7 +16,7 @@ class CreateCenterUserTable extends Migration
         Schema::create('center_user', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id')->nullable(false);
-            $table->unsignedInteger('center_code')->nullable(false);
+            $table->unsignedBigInteger('center_code')->nullable(false);
             $table->timestamps();
             //Dependencies
             $table->foreign('center_code')->references('code')->on('centers');
