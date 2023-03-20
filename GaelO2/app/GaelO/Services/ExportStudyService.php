@@ -212,6 +212,18 @@ class ExportStudyService
         $this->groupReviewPerVisitType($investigatorForms, Constants::ROLE_INVESTIGATOR);
     }
 
+    public function exportAll() :void
+    {
+        $this->exportPatientTable();
+        $this->exportVisitTable();
+        $this->exportDicomsTable();
+        $this->exportInvestigatorForms();
+        $this->exportReviewerForms();
+        $this->exportTrackerTable();
+        $this->exportUsersOfStudy();
+        $this->exportAssociatedFiles();
+    }
+
     private function groupReviewPerVisitType(array $reviewEntities, string $role): void
     {
 
