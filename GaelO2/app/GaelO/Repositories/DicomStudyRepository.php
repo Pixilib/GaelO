@@ -147,7 +147,7 @@ class DicomStudyRepository implements DicomStudyRepositoryInterface
 
         $queryBuilder = $this->dicomStudyModel
             ->with(['visit' => function ($query) {
-                $query->with(['visitType', 'visitType.visitGroup', 'patient']);
+                $query->with(['visitType', 'visitType.visitGroup', 'patient', 'patient.center']);
             }])
             ->with(['dicomSeries' => function ($query) use ($withTrashed) {
                 if ($withTrashed) $query->withTrashed();
