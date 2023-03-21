@@ -78,8 +78,9 @@ class PatientRepositoryTest extends TestCase
         Patient::factory()->studyName($study->first()->name)->count(6)->create();
         Patient::factory()->studyName($study->last()->name)->count(8)->create();
 
-        $patients = $this->patientRepository->getPatientsInStudy($study->first()->name);
+        $patients = $this->patientRepository->getPatientsInStudy($study->first()->name, true);
         $this->assertEquals(6, sizeof($patients));
+        $this->assertArrayHasKey('center', $patients[0]);
     }
 
     public function testGetAllPatientCodesOfStudy()

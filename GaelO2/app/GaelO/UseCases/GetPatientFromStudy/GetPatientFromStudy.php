@@ -3,6 +3,7 @@
 namespace App\GaelO\UseCases\GetPatientFromStudy;
 
 use App\GaelO\Constants\Constants;
+use App\GaelO\Entities\CenterEntity;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\PatientRepositoryInterface;
 use App\GaelO\UseCases\GetPatientFromStudy\GetPatientFromStudyRequest;
@@ -41,10 +42,13 @@ class GetPatientFromStudy
             $studyEntity = $this->studyRepositoryInterface->find($studyName);
             $originalStudyName = $studyEntity->getOriginalStudyName();
 
-            $patientsDbEntities = $this->patientRepositoryInterface->getPatientsInStudy($originalStudyName);
+            $patientsDbEntities = $this->patientRepositoryInterface->getPatientsInStudy($originalStudyName, true);
             $responseArray = [];
             foreach ($patientsDbEntities as $patientEntity) {
-                $responseArray[] = PatientEntity::fillFromDBReponseArray($patientEntity);
+                $patient = PatientEntity::fillFromDBReponseArray($patientEntity);
+                $centerEntity = CenterEntity::fillFromDBReponseArray($patientEntity['center']);
+                $patient->fillCenterDetails($centerEntity);
+                $responseArray[] = $patient;
             }
 
             $patientResponse->body = $responseArray;

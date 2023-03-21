@@ -111,7 +111,7 @@ class ExportStudyService
 
     public function exportPatientTable(): void
     {
-        $patientData = $this->patientRepositoryInterface->getPatientsInStudy($this->originalStudyName);
+        $patientData = $this->patientRepositoryInterface->getPatientsInStudy($this->originalStudyName, false);
         $spreadsheetAdapter = new SpreadsheetAdapter();
         $spreadsheetAdapter->addSheet('Patients');
         $spreadsheetAdapter->fillData('Patients', $patientData);

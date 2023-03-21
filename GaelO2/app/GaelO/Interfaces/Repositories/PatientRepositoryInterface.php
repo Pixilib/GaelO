@@ -11,7 +11,7 @@ interface PatientRepositoryInterface
 
     public function getPatientWithCenterDetails(string $code): array;
 
-    public function getPatientsInStudy(string $studyName): array;
+    public function getPatientsInStudy(string $studyName, bool $withCenters): array;
 
     public function getPatientsInStudyInCenters(string $studyName, array $centerCodes, bool $withCenters): array;
 

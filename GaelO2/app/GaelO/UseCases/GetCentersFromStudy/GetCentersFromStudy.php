@@ -44,7 +44,7 @@ class GetCentersFromStudy
             $studyEntity = $this->studyRepositoryInterface->find($studyName);
             $originalStudyName = $studyEntity->getOriginalStudyName();
 
-            $patients = $this->patientRepositoryInterface->getPatientsInStudy($originalStudyName);
+            $patients = $this->patientRepositoryInterface->getPatientsInStudy($originalStudyName, false);
             $centerCodes = array_column($patients, 'center_code');
 
             $centers = $this->centerRepositoryInterface->getCentersFromCodeArray($centerCodes);
