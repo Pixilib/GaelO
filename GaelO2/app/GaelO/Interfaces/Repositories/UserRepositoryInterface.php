@@ -82,5 +82,5 @@ interface UserRepositoryInterface
 
     public function getAllUsersCenters(int $userId): array;
 
-    public function getUsersFromStudy(string $studyName): array;
+    public function getUsersFromStudy(string $studyName, bool $withCenter): array;
 }

@@ -80,7 +80,7 @@ class ExportStudyService
 
     public function exportUsersOfStudy(): void
     {
-        $users = $this->userRepositoryInterface->getUsersFromStudy($this->studyName);
+        $users = $this->userRepositoryInterface->getUsersFromStudy($this->studyName, false);
 
         $usersData = [];
         //Select only needed info and concatenate roles in a string

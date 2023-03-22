@@ -346,16 +346,21 @@ class UserRepository implements UserRepositoryInterface
         }
     }
 
-    public function getUsersFromStudy(string $studyName): array
+    public function getUsersFromStudy(string $studyName, bool $withCenter): array
     {
-        $users = $this->userModel
+        $userQuery = $this->userModel
             ->whereHas('roles', function ($query) use ($studyName) {
                 $query->where('study_name', '=', $studyName);
             })
             ->with(['roles' => function ($query) use ($studyName) {
                 $query->where('study_name', '=', $studyName);
-            }])
-            ->get();
+            }]);
+
+        if($withCenter){
+            $userQuery->with(['mainCenter', 'affiliatedCenters']);
+        }
+        
+        $users = $userQuery->get();
         return empty($users) ? [] : $users->unique('id')->toArray();
     }
 }

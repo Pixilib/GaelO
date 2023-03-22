@@ -20,6 +20,9 @@ class UserEntity
     public ?String $onboardingVersion;
     public ?string $emailVerifiedAt;
     public ?string $lastConnection;
+    
+    public CenterEntity $mainCenter;
+    public array $affiliatedCenters;
 
     public ?array $roles;
 
@@ -69,5 +72,15 @@ class UserEntity
     public function addRoles(array $roles): void
     {
         $this->roles = $roles;
+    }
+
+    public function setMainCenter(CenterEntity $mainCenter) :void 
+    {
+        $this->mainCenter = $mainCenter;
+    }
+
+    public function setAffiliatedCenters(array $affiliatedCenters) :void
+    {
+        $this->affiliatedCenters = $affiliatedCenters;
     }
 }

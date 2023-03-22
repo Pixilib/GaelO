@@ -452,12 +452,14 @@ class UserRepositoryTest extends TestCase
             Role::factory()->userId($user->id)->roleName(Constants::ROLE_INVESTIGATOR)->studyName($study2Name)->create();
         });
 
-        $users = $this->userRepository->getUsersFromStudy($study1Name);
+        $users = $this->userRepository->getUsersFromStudy($study1Name, true);
 
         //Should have 5 users in this study
         $this->assertEquals(5, sizeof($users));
         //Each user should have 2 roles
         $this->assertEquals(2, sizeof($users[0]['roles']));
+        $this->assertArrayHasKey('main_center', $users[0]);
+        $this->assertArrayHasKey('affiliated_centers', $users[0]);
     }
 
     public function testGetAllUser()
