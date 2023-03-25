@@ -43,8 +43,9 @@ class UserRepository implements UserRepositoryInterface
 
     public function getAll($withTrashed): array
     {
-        if ($withTrashed) $users = $this->userModel->withTrashed()->get();
-        else $users = $this->userModel->get();
+        $userQuery = $this->userModel->with('mainCenter');
+        if ($withTrashed) $userQuery->withTrashed();
+        $users = $userQuery->get();
         return empty($users) ? [] : $users->toArray();
     }
 
@@ -278,7 +279,7 @@ class UserRepository implements UserRepositoryInterface
         foreach ($roles as $role) {
             $userRoles[] = $role['name']->value;
         }
-        
+
         return $userRoles;
     }
 
@@ -356,10 +357,10 @@ class UserRepository implements UserRepositoryInterface
                 $query->where('study_name', '=', $studyName);
             }]);
 
-        if($withCenter){
+        if ($withCenter) {
             $userQuery->with(['mainCenter', 'affiliatedCenters']);
         }
-        
+
         $users = $userQuery->get();
         return empty($users) ? [] : $users->unique('id')->toArray();
     }

@@ -2,6 +2,7 @@
 
 namespace App\GaelO\UseCases\GetUser;
 
+use App\GaelO\Entities\CenterEntity;
 use App\GaelO\Entities\UserEntity;
 use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
@@ -36,7 +37,9 @@ class GetUser
                 $dbData = $this->userRepositoryInterface->getAll($getUserRequest->withTrashed);
                 $responseArray = [];
                 foreach ($dbData as $data) {
-                    $responseArray[] = UserEntity::fillFromDBReponseArray($data);
+                    $userEntity = UserEntity::fillFromDBReponseArray($data);
+                    $userEntity->setMainCenter(CenterEntity::fillFromDBReponseArray($data['main_center']));
+                    $responseArray[] = $userEntity;
                 }
                 $getUserResponse->body = $responseArray;
             } else {
