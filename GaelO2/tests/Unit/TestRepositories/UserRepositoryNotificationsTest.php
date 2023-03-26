@@ -25,10 +25,10 @@ class UserRepositoryNotificationsTest extends TestCase
         $this->artisan('db:seed');
         $this->userRepository = App::make(UserRepository::class);
         $users = User::factory()->count(5)->create();
-        $users->first()->notify(new AutoImportPatients("patientCreated"));
-        $users->first()->notify(new AutoImportPatients("patientCreated2"));
-        $users->first()->notify(new AutoImportPatients("patientCreated3"));
-        $users->first()->notify(new AutoImportPatients("patientCreated4"));
+        $users->first()->notify(new AutoImportPatients("AutoImportReport","patientCreated"));
+        $users->first()->notify(new AutoImportPatients("AutoImportReport","patientCreated2"));
+        $users->first()->notify(new AutoImportPatients("AutoImportReport","patientCreated3"));
+        $users->first()->notify(new AutoImportPatients("AutoImportReport","patientCreated4"));
         $this->userId = $users->first()->id;
     }
 
