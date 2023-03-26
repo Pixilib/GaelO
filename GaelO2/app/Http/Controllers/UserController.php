@@ -334,12 +334,13 @@ class UserController extends Controller
         return $this->getJsonResponse($modifyUserOnboardingResponse->body, $modifyUserOnboardingResponse->status, $modifyUserOnboardingResponse->statusText);
     }
 
-    public function getUserNotifications(Request $request, GetUserNotifications $getUserNotifications, GetUserNotificationsRequest $getUserNotificationsRequest, GetUserNotificationsResponse $getUserNotificationsResponse)
+    public function getUserNotifications(Request $request, GetUserNotifications $getUserNotifications, GetUserNotificationsRequest $getUserNotificationsRequest, GetUserNotificationsResponse $getUserNotificationsResponse, int $userId)
     {
         $currentUser = Auth::user();
         $queryParam = $request->query();
         $getUserNotificationsRequest->currentUserId = $currentUser['id'];
-        if ($queryParam['unread'] != null) {
+        $getUserNotificationsRequest->userId = $userId;
+        if (key_exists('unread', $queryParam) ) {
             $getUserNotificationsRequest->onlyUnread = true;
         } else {
             $getUserNotificationsRequest->onlyUnread = false;

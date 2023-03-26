@@ -30,4 +30,10 @@ class AuthorizationTools {
     public static function addAffiliatedCenter(int $userId, int $centerCode){
         CenterUser::factory()->userId($userId)->centerCode($centerCode)->create();
     }
+
+    public static function logAsUser(int $userId){
+        Sanctum::actingAs(
+            User::find($userId)
+        );
+    }
 }
