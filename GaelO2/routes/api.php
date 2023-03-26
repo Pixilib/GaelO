@@ -54,6 +54,7 @@ Route::middleware(['auth:sanctum', 'verified', 'activated', 'onboarded'])->group
     Route::delete('users/{id}', [UserController::class, 'deleteUser']);
     Route::post('users/{id}/activate', [UserController::class, 'reactivateUser']);
     Route::get('users/{id}/centers', [UserController::class, 'getUserCenters']);
+    Route::get('users/{id}/notifications', [UserController::class, 'getUserNotifications']);
     Route::get('users/{id}/affiliated-centers', [UserController::class, 'getAffiliatedCenter']);
     Route::post('users/{id}/affiliated-centers', [UserController::class, 'addAffiliatedCenter']);
     Route::delete('users/{id}/affiliated-centers/{centerCode}', [UserController::class, 'deleteAffiliatedCenter']);

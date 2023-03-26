@@ -41,6 +41,9 @@ use App\GaelO\UseCases\GetStudiesFromUser\GetStudiesFromUserResponse;
 use App\GaelO\UseCases\GetUserCenters\GetUserCenters;
 use App\GaelO\UseCases\GetUserCenters\GetUserCentersRequest;
 use App\GaelO\UseCases\GetUserCenters\GetUserCentersResponse;
+use App\GaelO\UseCases\GetUserNotifications\GetUserNotifications;
+use App\GaelO\UseCases\GetUserNotifications\GetUserNotificationsRequest;
+use App\GaelO\UseCases\GetUserNotifications\GetUserNotificationsResponse;
 use App\GaelO\UseCases\GetUserRoleByName\GetUserRoleByName;
 use App\GaelO\UseCases\GetUserRoleByName\GetUserRoleByNameRequest;
 use App\GaelO\UseCases\GetUserRoleByName\GetUserRoleByNameResponse;
@@ -232,7 +235,8 @@ class UserController extends Controller
         return $this->getJsonResponse($deleteUserRoleResponse->body, $deleteUserRoleResponse->status, $deleteUserRoleResponse->statusText);
     }
 
-    public function getUserRoleByName( GetUserRoleByName $getUserRoleByName, GetUserRoleByNameRequest $getUserRoleByNameRequest, GetUserRoleByNameResponse $getUserRoleByNameResponse, int $userId, string $studyName, String $roleName){
+    public function getUserRoleByName(GetUserRoleByName $getUserRoleByName, GetUserRoleByNameRequest $getUserRoleByNameRequest, GetUserRoleByNameResponse $getUserRoleByNameResponse, int $userId, string $studyName, String $roleName)
+    {
 
         $currentUser = Auth::user();
         $getUserRoleByNameRequest->currentUserId = $currentUser['id'];
@@ -241,10 +245,10 @@ class UserController extends Controller
         $getUserRoleByNameRequest->role = $roleName;
         $getUserRoleByName->execute($getUserRoleByNameRequest, $getUserRoleByNameResponse);
         return $this->getJsonResponse($getUserRoleByNameResponse->body, $getUserRoleByNameResponse->status, $getUserRoleByNameResponse->statusText);
-
     }
 
-    public function modifyValidatedDocumentationForRole( Request $request, ModifyValidatedDocumentationForRole $modifyValidatedDocumentationForRole, ModifyValidatedDocumentationForRoleRequest $modifyValidatedDocumentationForRoleRequest, ModifyValidatedDocumentationForRoleResponse $modifyValidatedDocumentationForRoleResponse, int $userId, string $studyName, String $roleName){
+    public function modifyValidatedDocumentationForRole(Request $request, ModifyValidatedDocumentationForRole $modifyValidatedDocumentationForRole, ModifyValidatedDocumentationForRoleRequest $modifyValidatedDocumentationForRoleRequest, ModifyValidatedDocumentationForRoleResponse $modifyValidatedDocumentationForRoleResponse, int $userId, string $studyName, String $roleName)
+    {
         $currentUser = Auth::user();
         $requestData = $request->all();
         $modifyValidatedDocumentationForRoleRequest = Util::fillObject($requestData, $modifyValidatedDocumentationForRoleRequest);
@@ -254,7 +258,6 @@ class UserController extends Controller
         $modifyValidatedDocumentationForRoleRequest->role = $roleName;
         $modifyValidatedDocumentationForRole->execute($modifyValidatedDocumentationForRoleRequest, $modifyValidatedDocumentationForRoleResponse);
         return $this->getJsonResponse($modifyValidatedDocumentationForRoleResponse->body, $modifyValidatedDocumentationForRoleResponse->status, $modifyValidatedDocumentationForRoleResponse->statusText);
-
     }
 
     public function addAffiliatedCenter(Request $request, AddAffiliatedCenter $addAffiliatedCenter, AddAffiliatedCenterRequest $addAffiliatedCenterRequest, AddAffiliatedCenterResponse $addAffiliatedCenterResponse, int $userId)
@@ -320,7 +323,8 @@ class UserController extends Controller
         return $this->getJsonResponse($getUsersFromStudyResponse->body, $getUsersFromStudyResponse->status, $getUsersFromStudyResponse->statusText);
     }
 
-    public function modifyUserOnboarding(Request $request, ModifyUserOnboarding $modifyUserOnboarding, ModifyUserOnboardingRequest $modifyUserOnboardingRequest, ModifyUserOnboardingResponse $modifyUserOnboardingResponse, int $id){
+    public function modifyUserOnboarding(Request $request, ModifyUserOnboarding $modifyUserOnboarding, ModifyUserOnboardingRequest $modifyUserOnboardingRequest, ModifyUserOnboardingResponse $modifyUserOnboardingResponse, int $id)
+    {
         $currentUser = Auth::user();
         $requestData = $request->all();
         $modifyUserOnboardingRequest = Util::fillObject($requestData, $modifyUserOnboardingRequest);
@@ -328,6 +332,19 @@ class UserController extends Controller
         $modifyUserOnboardingRequest->userId = $id;
         $modifyUserOnboarding->execute($modifyUserOnboardingRequest, $modifyUserOnboardingResponse);
         return $this->getJsonResponse($modifyUserOnboardingResponse->body, $modifyUserOnboardingResponse->status, $modifyUserOnboardingResponse->statusText);
+    }
 
+    public function getUserNotifications(Request $request, GetUserNotifications $getUserNotifications, GetUserNotificationsRequest $getUserNotificationsRequest, GetUserNotificationsResponse $getUserNotificationsResponse)
+    {
+        $currentUser = Auth::user();
+        $queryParam = $request->query();
+        $getUserNotificationsRequest->currentUserId = $currentUser['id'];
+        if ($queryParam['unread'] != null) {
+            $getUserNotificationsRequest->onlyUnread = true;
+        } else {
+            $getUserNotificationsRequest->onlyUnread = false;
+        }
+        $getUserNotifications->execute($getUserNotificationsRequest, $getUserNotificationsResponse);
+        return $this->getJsonResponse($getUserNotificationsResponse->body, $getUserNotificationsResponse->status, $getUserNotificationsResponse->statusText);
     }
 }
