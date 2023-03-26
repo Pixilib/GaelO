@@ -46,7 +46,7 @@ class UserNotificationsTest extends TestCase
         $this->json('GET', '/api/users/' . 2 . '/notifications')->assertForbidden();
     }
 
-    public function testMarkAsReadNotification()
+    public function testMarkAsReadNotifications()
     {
         AuthorizationTools::logAsUser(1);
         $notificationsIds = User::find($this->userId)->notifications->pluck('id');
@@ -56,6 +56,21 @@ class UserNotificationsTest extends TestCase
     }
 
     public function testMarkAsReadNotificationShouldFailWrongUser()
+    {
+        AuthorizationTools::logAsUser(1);
+        $this->json('PUT', '/api/users/' . 2 . '/notifications')->assertForbidden();
+    }
+
+    public function testDeleteUserNotifications()
+    {
+        AuthorizationTools::logAsUser(1);
+        $notificationsIds = User::find($this->userId)->notifications->pluck('id');
+        $this->json('DELETE', '/api/users/' . $this->userId . '/notifications', ['notificationsIds' => $notificationsIds])->assertSuccessful();
+        $remainingNotification = User::find($this->userId)->notifications()->count();
+        $this->assertEquals(0, $remainingNotification);
+    }
+
+    public function testDeleteUserNotificationsShouldFailWrongUser()
     {
         AuthorizationTools::logAsUser(1);
         $this->json('PUT', '/api/users/' . 2 . '/notifications')->assertForbidden();
