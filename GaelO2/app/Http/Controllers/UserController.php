@@ -56,6 +56,9 @@ use App\GaelO\UseCases\ReactivateUser\ReactivateUserResponse;
 use App\GaelO\UseCases\ModifyUserIdentification\ModifyUserIdentification;
 use App\GaelO\UseCases\ModifyUserIdentification\ModifyUserIdentificationRequest;
 use App\GaelO\UseCases\ModifyUserIdentification\ModifyUserIdentificationResponse;
+use App\GaelO\UseCases\ModifyUserNotifications\ModifyUserNotifications;
+use App\GaelO\UseCases\ModifyUserNotifications\ModifyUserNotificationsRequest;
+use App\GaelO\UseCases\ModifyUserNotifications\ModifyUserNotificationsResponse;
 use App\GaelO\UseCases\ModifyUserOnboarding\ModifyUserOnboarding;
 use App\GaelO\UseCases\ModifyUserOnboarding\ModifyUserOnboardingRequest;
 use App\GaelO\UseCases\ModifyUserOnboarding\ModifyUserOnboardingResponse;
@@ -347,5 +350,16 @@ class UserController extends Controller
         }
         $getUserNotifications->execute($getUserNotificationsRequest, $getUserNotificationsResponse);
         return $this->getJsonResponse($getUserNotificationsResponse->body, $getUserNotificationsResponse->status, $getUserNotificationsResponse->statusText);
+    }
+
+    public function modifyUserNotifications(Request $request, ModifyUserNotifications $modifyUserNotifications, ModifyUserNotificationsRequest $modifyUserNotificationsRequest, ModifyUserNotificationsResponse $modifyUserNotificationsResponse, int $userId)
+    {
+        $currentUser = Auth::user();
+        $requestData = $request->all();
+        $modifyUserOnboardingRequest = Util::fillObject($requestData, $modifyUserNotificationsRequest);
+        $modifyUserOnboardingRequest->currentUserId = $currentUser['id'];
+        $modifyUserOnboardingRequest->userId = $userId;
+        $modifyUserNotifications->execute($modifyUserOnboardingRequest, $modifyUserNotificationsResponse);
+        return $this->getJsonResponse($modifyUserNotificationsResponse->body, $modifyUserNotificationsResponse->status, $modifyUserNotificationsResponse->statusText);
     }
 }
