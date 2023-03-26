@@ -1,8 +1,8 @@
 <?php
 
-namespace App\GaelO\UseCases\GetUserNotifications;
+namespace App\GaelO\UseCases\DeleteUserNotifications;
 
-class GetUserNotificationsResponse
+class DeleteUserNotificationsResponse
 {
     public $body = null;
     public int $status;

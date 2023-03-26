@@ -23,6 +23,9 @@ use App\GaelO\UseCases\DeleteAffiliatedCenter\DeleteAffiliatedCenterResponse;
 use App\GaelO\UseCases\DeleteUser\DeleteUser;
 use App\GaelO\UseCases\DeleteUser\DeleteUserRequest;
 use App\GaelO\UseCases\DeleteUser\DeleteUserResponse;
+use App\GaelO\UseCases\DeleteUserNotifications\DeleteUserNotifications;
+use App\GaelO\UseCases\DeleteUserNotifications\DeleteUserNotificationsRequest;
+use App\GaelO\UseCases\DeleteUserNotifications\DeleteUserNotificationsResponse;
 use App\GaelO\UseCases\DeleteUserRole\DeleteUserRole;
 use App\GaelO\UseCases\DeleteUserRole\DeleteUserRoleRequest;
 use App\GaelO\UseCases\DeleteUserRole\DeleteUserRoleResponse;
@@ -356,10 +359,21 @@ class UserController extends Controller
     {
         $currentUser = Auth::user();
         $requestData = $request->all();
-        $modifyUserOnboardingRequest = Util::fillObject($requestData, $modifyUserNotificationsRequest);
-        $modifyUserOnboardingRequest->currentUserId = $currentUser['id'];
-        $modifyUserOnboardingRequest->userId = $userId;
-        $modifyUserNotifications->execute($modifyUserOnboardingRequest, $modifyUserNotificationsResponse);
+        $modifyUserNotificationsRequest = Util::fillObject($requestData, $modifyUserNotificationsRequest);
+        $modifyUserNotificationsRequest->currentUserId = $currentUser['id'];
+        $modifyUserNotificationsRequest->userId = $userId;
+        $modifyUserNotifications->execute($modifyUserNotificationsRequest, $modifyUserNotificationsResponse);
         return $this->getJsonResponse($modifyUserNotificationsResponse->body, $modifyUserNotificationsResponse->status, $modifyUserNotificationsResponse->statusText);
+    }
+
+    public function deleteUserNotifications(Request $request, DeleteUserNotifications $deleteUserNotifications, DeleteUserNotificationsRequest $deleteUserNotificationsRequest, DeleteUserNotificationsResponse $deleteUserNotificationsResponse, int $userId)
+    {
+        $currentUser = Auth::user();
+        $requestData = $request->all();
+        $deleteUserNotificationsRequest = Util::fillObject($requestData, $deleteUserNotificationsRequest);
+        $deleteUserNotificationsRequest->currentUserId = $currentUser['id'];
+        $deleteUserNotificationsRequest->userId = $userId;
+        $deleteUserNotifications->execute($deleteUserNotificationsRequest, $deleteUserNotificationsResponse);
+        return $this->getJsonResponse($deleteUserNotificationsResponse->body, $deleteUserNotificationsResponse->status, $deleteUserNotificationsResponse->statusText);
     }
 }
