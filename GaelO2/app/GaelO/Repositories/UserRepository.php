@@ -364,4 +364,24 @@ class UserRepository implements UserRepositoryInterface
         $users = $userQuery->get();
         return empty($users) ? [] : $users->unique('id')->toArray();
     }
+
+    public function getUserNotifications(int $userId, bool $onlyUnread): array
+    {
+        $user  = $this->userModel->findOrFail($userId);
+        if ($onlyUnread) {
+            return $user->unreadNotifications->toArray();
+        } else {
+            return $user->notifications->toArray();
+        }
+    }
+
+    public function markUserNotificationsRead(int $userId, array $notificationsIds): void
+    {
+        $this->userModel->findOrFail($userId)->notifications->whereIn('id', $notificationsIds)->markAsRead();
+    }
+
+    public function deleteUserNotifications(int $userId, array $notificationsIds): void
+    {
+        $this->userModel->findOrFail($userId)->notifications()->whereIn('id', $notificationsIds)->delete();
+    }
 }

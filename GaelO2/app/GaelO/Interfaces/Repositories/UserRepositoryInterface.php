@@ -83,4 +83,10 @@ interface UserRepositoryInterface
     public function getAllUsersCenters(int $userId): array;
 
     public function getUsersFromStudy(string $studyName, bool $withCenter): array;
+
+    public function getUserNotifications(int $userId, bool $onlyUnread): array;
+
+    public function markUserNotificationsRead(int $userId, array $notificationsIds): void;
+
+    public function deleteUserNotifications(int $userId, array $notificationsIds): void;
 }
