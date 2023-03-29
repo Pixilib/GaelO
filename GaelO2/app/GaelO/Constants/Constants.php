@@ -56,6 +56,7 @@ class Constants
     const TRACKER_CREATE_USER = "Create User";
     const TRACKER_EDIT_USER = "Edit User";
     const TRACKER_CREATE_CENTER = "Create Center";
+    const TRACKER_DELETE_CENTER = "Delete Center";
     const TRACKER_EDIT_CENTER = "Edit Center";
     const TRACKER_RESET_PASSWORD = "Ask New Password";
     const TRACKER_CHANGE_PASSWORD = "Password Changed";

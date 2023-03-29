@@ -97,6 +97,7 @@ Route::middleware(['auth:sanctum', 'verified', 'activated', 'onboarded'])->group
     Route::post('centers', [CenterController::class, 'createCenter']);
     Route::get('centers/{code?}', [CenterController::class, 'getCenter']);
     Route::patch('centers/{code}', [CenterController::class, 'modifyCenter']);
+    Route::delete('centers/{code}', [CenterController::class, 'deleteCenter']);
     Route::get('studies/{studyName}/centers', [CenterController::class, 'getCentersFromStudy']);
 
     //Countries Routes

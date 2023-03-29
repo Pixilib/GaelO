@@ -6,6 +6,7 @@ use App\GaelO\Constants\Constants;
 use App\Models\Center;
 use App\Models\Patient;
 use App\Models\Study;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 use Tests\AuthorizationTools;
@@ -201,5 +202,31 @@ class CenterTest extends TestCase
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_INVESTIGATOR, $study->name);
 
         $this->get('api/studies/'.$study->name.'/centers')->assertStatus(403);
+    }
+
+    public function testDeleteCenter(){
+        AuthorizationTools::actAsAdmin(true);
+        $center = Center::factory()->code(1)->create();
+        $this->delete('api/centers/'.$center->code)->assertSuccessful();
+    }
+
+    public function testDeleteCenterShouldFailNotAdmin(){
+        AuthorizationTools::actAsAdmin(false);
+        $center = Center::factory()->code(1)->create();
+        $this->delete('api/centers/'.$center->code)->assertStatus(403);
+    }
+
+    public function testDeleteCenterShoulFailHasPatients(){
+        AuthorizationTools::actAsAdmin(true);
+        $center = Center::factory()->code(1)->create();
+        Patient::factory()->centerCode($center->code)->create();
+        $this->delete('api/centers/'.$center->code)->assertStatus(403);
+    }
+
+    public function testDeleteCenterShoulFailHasUsers(){
+        AuthorizationTools::actAsAdmin(true);
+        $center = Center::factory()->code(1)->create();
+        User::factory()->centerCode($center->code)->create();
+        $this->delete('api/centers/'.$center->code)->assertStatus(403);
     }
 }

@@ -59,4 +59,16 @@ class CenterRepository implements CenterRepositoryInterface
         $center->country_code = $countryCode;
         $center->save();
     }
+
+    public function getUsersOfCenter(int $code)
+    {
+        $users = $this->centerModel->findOrFail($code)->users;
+        return $users->toArray();
+    }
+
+    public function getPatientsOfCenter(int $code)
+    {
+        $patients = $this->centerModel->findOrFail($code)->patients;
+        return $patients->toArray();
+    }
 }
