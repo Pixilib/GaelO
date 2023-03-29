@@ -71,4 +71,9 @@ class CenterRepository implements CenterRepositoryInterface
         $patients = $this->centerModel->findOrFail($code)->patients;
         return $patients->toArray();
     }
+
+    public function deleteCenter(int $code)
+    {
+        $this->centerModel->findOrFail($code)->delete();
+    }
 }

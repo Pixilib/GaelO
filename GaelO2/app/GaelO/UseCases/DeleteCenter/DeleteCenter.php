@@ -44,6 +44,8 @@ class DeleteCenter
                 throw new GaelOForbiddenException("Cannot Delete Center with attached users or patients");
             }
 
+            $this->centerRepositoryInterface->deleteCenter($centerCode);
+
             $actionDetails = [
                 'center_code' => $centerCode,
             ];

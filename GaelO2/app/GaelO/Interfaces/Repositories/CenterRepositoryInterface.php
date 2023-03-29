@@ -21,4 +21,6 @@ interface CenterRepositoryInterface {
     public function getUsersOfCenter(int $code);
 
     public function getPatientsOfCenter(int $code);
+
+    public function deleteCenter(int $code);
 }
