@@ -71,13 +71,16 @@ use App\GaelO\UseCases\ModifyValidatedDocumentationForRole\ModifyValidatedDocume
 use App\GaelO\Util;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Auth\Events\Verified;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Password as FacadePassword;
 use Illuminate\Validation\Rules\Password as RulesPassword;
+use Laravel\Fortify\Actions\EnableTwoFactorAuthentication;
 
 class UserController extends Controller
 {
@@ -375,5 +378,25 @@ class UserController extends Controller
         $deleteUserNotificationsRequest->userId = $userId;
         $deleteUserNotifications->execute($deleteUserNotificationsRequest, $deleteUserNotificationsResponse);
         return $this->getJsonResponse($deleteUserNotificationsResponse->body, $deleteUserNotificationsResponse->status, $deleteUserNotificationsResponse->statusText);
+    }
+
+    public function enable2FA(EnableTwoFactorAuthentication $enable, int $userId)
+    {
+        $currentUser = Auth::user();
+        $user = User::findOrFail($currentUser['id']);
+        $enable($user);
+        return response('2FA Enabled');
+    }
+
+    public function getUserTwoFactorRecoveryCodes(int $userId){
+        $currentUser = Auth::user();
+        $user = User::findOrFail($userId);
+        return (array) $user->recoveryCodes();
+    }
+
+    public function getUserTwoFactorQr(int $userId){
+        $currentUser = Auth::user();
+        $user = User::findOrFail($userId);
+        return $user->twoFactorQrCodeSvg();
     }
 }

@@ -41,7 +41,14 @@ Route::middleware(['auth:sanctum', 'verified', 'activated', 'onboarded'])->group
 
     //System Route
     Route::get('system', [AuthController::class, 'getSystem']);
-
+    
+    //Enable 2FA
+    Route::get('users/{id?}/enable-2fa', [UserController::class, 'enable2FA']);
+    //get QR code for 2FA
+    Route::get('users/{id?}/two-factor-qr', [UserController::class, 'getUserTwoFactorQr']);
+    //Get Recovery code for 2FA
+    Route::get('users/{id?}/two-factor-recovery-codes', [UserController::class, 'getUserTwoFactorRecoveryCodes']);
+    
     //Logout Route
     Route::delete('login', [AuthController::class, 'logout']);
 
