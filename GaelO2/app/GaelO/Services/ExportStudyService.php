@@ -112,6 +112,10 @@ class ExportStudyService
     public function exportPatientTable(): void
     {
         $patientData = $this->patientRepositoryInterface->getPatientsInStudy($this->originalStudyName, false);
+        foreach($patientData as $patient){
+            //Metadata is an array which need to be serialized back to a string
+            $patient['metadata'] = json_encode($patient['metadata']);
+        }
         $spreadsheetAdapter = new SpreadsheetAdapter();
         $spreadsheetAdapter->addSheet('Patients');
         $spreadsheetAdapter->fillData('Patients', $patientData);
