@@ -20,6 +20,7 @@ class PatientEntity
     public string $inclusionStatus;
     public ?string $withdrawReason;
     public ?string $withdrawDate;
+    public array $metadata;
     public CenterEntity $center;
     public array $visits = [];
 
@@ -41,6 +42,7 @@ class PatientEntity
         $patientEntity->inclusionStatus = $array['inclusion_status'];
         $patientEntity->withdrawReason = $array['withdraw_reason'];
         $patientEntity->withdrawDate = $array['withdraw_date'];
+        $patientEntity->metadata = $array['metadata'];
         return $patientEntity;
     }
 
