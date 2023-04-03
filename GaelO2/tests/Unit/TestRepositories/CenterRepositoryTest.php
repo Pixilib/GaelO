@@ -7,6 +7,8 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 use App\Models\Center;
+use App\Models\Patient;
+use App\Models\User;
 
 class CenterRepositoryTest extends TestCase
 {
@@ -64,5 +66,19 @@ class CenterRepositoryTest extends TestCase
         $centerEntitiesArray = $this->centerRepository->getCentersFromCodeArray($centerCodesArray);
         $fetchedCentersCodes = array_column($centerEntitiesArray, 'code');
         $this->assertTrue(!array_diff($fetchedCentersCodes, $centerCodesArray));
+    }
+
+    public function testGetPatientsFromCenter(){
+        $centerCode = $this->center3->code;
+        Patient::factory()->centerCode($centerCode)->count(3)->create();
+        $patients = $this->centerRepository->getPatientsOfCenter($centerCode);
+        $this->assertEquals(3, sizeof($patients));
+    }
+
+    public function testGetUsersFromCenter(){
+        $centerCode = $this->center3->code;
+        User::factory()->centerCode($centerCode)->count(5)->create();
+        $patients = $this->centerRepository->getUsersOfCenter($centerCode);
+        $this->assertEquals(5, sizeof($patients));
     }
 }

@@ -413,34 +413,33 @@ class OrthancService
         }
     }
 
-    public function getMetaData(string $seriesOrthancID) : OrthancMetaData
+    public function getSharedTags(string $seriesOrthancID): OrthancMetaData
     {
         $response = $this->httpClientInterface->requestJson('GET', '/series/' . $seriesOrthancID . '/shared-tags');
         return new OrthancMetaData($response->getJsonBody());
     }
 
-    public function getSeriesMIP(string $seriesOrthancID) : string
+    public function getMIP(string $level, string $seriesOrthancID, int $frames = 30, int $delay = 200): string
     {
         $downloadedFilePath  = tempnam(ini_get('upload_tmp_dir'), 'TMP_QC_');
 
-        $this->httpClientInterface->requestStreamResponseToFile('GET', '/series/'.$seriesOrthancID.'/mip',  $downloadedFilePath, []);
+        $this->httpClientInterface->requestStreamResponseToFile('GET', '/' . $level . '/' . $seriesOrthancID . '/mip?frames=' . $frames . '&delay=' . $delay,  $downloadedFilePath, []);
         return $downloadedFilePath;
     }
 
-    public function getSeriesMosaic(string $seriesOrthancID) : string
+    public function getMosaic(string $level, string $seriesOrthancID, int $numImages = 20, int $width = 512, int $height = 512): string
     {
         $downloadedFilePath  = tempnam(ini_get('upload_tmp_dir'), 'TMP_QC_');
 
-        $this->httpClientInterface->requestStreamResponseToFile('GET', '/series/'.$seriesOrthancID.'/mosaic',  $downloadedFilePath, []);
+        $this->httpClientInterface->requestStreamResponseToFile('GET', '/' . $level . '/' . $seriesOrthancID . '/mosaic?images=' . $numImages . '&width=' . $width . '&height=' . $height,  $downloadedFilePath, []);
         return $downloadedFilePath;
     }
 
-    public function getInstancePreview(string $instanceOrthancID) : string
+    public function getInstancePreview(string $instanceOrthancID): string
     {
         $downloadedFilePath  = tempnam(ini_get('upload_tmp_dir'), 'TMP_QC_');
 
-        $this->httpClientInterface->requestStreamResponseToFile('GET', '/instances/'.$instanceOrthancID.'/preview?returnUnsupportedImage',  $downloadedFilePath, []);
+        $this->httpClientInterface->requestStreamResponseToFile('GET', '/instances/' . $instanceOrthancID . '/preview?returnUnsupportedImage',  $downloadedFilePath, []);
         return $downloadedFilePath;
     }
-
 }

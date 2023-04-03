@@ -22,4 +22,14 @@ class Center extends Model
     {
         return $this->belongsTo(Country::class, 'country_code', 'code');
     }
+
+    public function patients()
+    {
+        return $this->hasMany(Patient::class, 'center_code', 'code');
+    }
+
+    public function users()
+    {
+        return $this->hasMany(User::class, 'center_code', 'code');
+    }
 }

@@ -18,4 +18,9 @@ interface CenterRepositoryInterface {
 
     public function updateCenter(int $code, String $name, String $countryCode) : void ;
 
+    public function getUsersOfCenter(int $code);
+
+    public function getPatientsOfCenter(int $code);
+
+    public function deleteCenter(int $code);
 }

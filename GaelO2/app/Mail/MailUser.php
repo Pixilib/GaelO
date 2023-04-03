@@ -5,6 +5,8 @@ namespace App\Mail;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
+use Illuminate\Mail\Mailables\Content;
+use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
 class MailUser extends Mailable implements ShouldQueue
@@ -23,22 +25,22 @@ class MailUser extends Mailable implements ShouldQueue
         $this->parameters = $parameters;
     }
 
-    /**
-     * Build the message.
-     *
-     * @return $this
-     */
-    public function build()
+    public function envelope(): Envelope
     {
-        //If mail is from admin, there is no study context
         $subject = $this->parameters['study'] ?
             $this->parameters['study'] . " - " . $this->parameters['subject'] :
             $this->parameters['subject'];
 
-        $mail = $this->view('mails.mail_user')
-            ->subject($subject)
-            ->with($this->parameters);
+        return new Envelope(
+            subject: $subject
+        );
+    }
 
-        return $mail;
+    public function content(): Content
+    {
+        return new Content(
+            view: 'mails.mail_user',
+            with: $this->parameters
+        );
     }
 }

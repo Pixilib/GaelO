@@ -5,6 +5,8 @@ namespace App\Mail;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
+use Illuminate\Mail\Mailables\Content;
+use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
 class AdminLoged extends Mailable implements ShouldQueue
@@ -23,15 +25,18 @@ class AdminLoged extends Mailable implements ShouldQueue
         $this->parameters = $parameters;
     }
 
-    /**
-     * Build the message.
-     *
-     * @return $this
-     */
-    public function build()
-    {
-        return $this->view('mails.mail_admin_logged')
-        ->subject("GaelO - Admin Logged In")
-        ->with($this->parameters);
+    public function envelope(): Envelope{
+        return new Envelope(
+            subject: "GaelO - Admin Logged In"
+        );
     }
+
+    public function content(): Content
+    {
+        return new Content(
+            view: 'mails.mail_admin_logged',
+            with: $this->parameters
+        );
+    }
+
 }

@@ -5,6 +5,8 @@ namespace App\Mail;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
+use Illuminate\Mail\Mailables\Content;
+use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
 class ImportPatient extends Mailable implements ShouldQueue
@@ -23,15 +25,19 @@ class ImportPatient extends Mailable implements ShouldQueue
         $this->parameters = $parameters;
     }
 
-    /**
-     * Build the message.
-     *
-     * @return $this
-     */
-    public function build()
+    public function envelope(): Envelope
     {
-        return $this->view('mails.mail_import_patient')
-        ->subject($this->parameters['study']." - Import Patient")
-        ->with($this->parameters);
+        return new Envelope(
+            subject: $this->parameters['study']." - Import Patient"
+        );
     }
+
+    public function content(): Content
+    {
+        return new Content(
+            view: 'mails.mail_import_patient',
+            with: $this->parameters
+        );
+    }
+
 }

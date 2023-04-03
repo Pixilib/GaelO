@@ -5,6 +5,8 @@ namespace App\Mail;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
+use Illuminate\Mail\Mailables\Content;
+use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
 class ChangePasswordDeactivated extends Mailable implements ShouldQueue
@@ -23,16 +25,19 @@ class ChangePasswordDeactivated extends Mailable implements ShouldQueue
         $this->parameters = $parameters;
     }
 
-    /**
-     * Build the message.
-     *
-     * @return $this
-     */
-    public function build()
+    public function envelope(): Envelope
     {
-
-        return $this->view('mails.mail_change_password_deactivated')
-        ->subject("GaelO - Blocked Account")
-        ->with($this->parameters);
+        return new Envelope(
+            subject: "GaelO - Blocked Account"
+        );
     }
+
+    public function content(): Content
+    {
+        return new Content(
+            view: 'mails.mail_change_password_deactivated',
+            with: $this->parameters
+        );
+    }
+    
 }

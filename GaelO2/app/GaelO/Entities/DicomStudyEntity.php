@@ -53,6 +53,7 @@ class DicomStudyEntity
         $this->patient->code = $patientData['code'];
         $this->patient->centerCode = $patientData['center_code'];
         $this->patient->inclusionStatus = $patientData['inclusion_status'];
+        $this->patient->fillCenterDetails(CenterEntity::fillFromDBReponseArray($patientData['center']));
     }
 
     public function addVisitDetails(array $visitDetails): void

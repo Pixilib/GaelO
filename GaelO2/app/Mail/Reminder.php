@@ -5,6 +5,8 @@ namespace App\Mail;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
+use Illuminate\Mail\Mailables\Content;
+use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
 class Reminder extends Mailable implements ShouldQueue
@@ -23,15 +25,18 @@ class Reminder extends Mailable implements ShouldQueue
         $this->parameters = $parameters;
     }
 
-    /**
-     * Build the message.
-     *
-     * @return $this
-     */
-    public function build()
+    public function envelope(): Envelope
     {
-        return $this->view('mails.mail_reminder')
-        ->subject($this->parameters['study']." - Reminder ".$this->parameters['subject'])
-        ->with($this->parameters);
+        return new Envelope(
+            subject: $this->parameters['study'] . " - Reminder " . $this->parameters['subject']
+        );
+    }
+
+    public function content(): Content
+    {
+        return new Content(
+            view: 'mails.mail_reminder',
+            with: $this->parameters
+        );
     }
 }

@@ -218,15 +218,6 @@ class OrthancMetaData
         return null;
     }
 
-    public function getInjectedActivity() : ?string
-    {
-        $radioPharmaceuticalGroup = $this->getRadioPharmaceuticalGroup();
-        if (array_key_exists('0018,1077', $radioPharmaceuticalGroup)) {
-            return $radioPharmaceuticalGroup['0018,1077']['Value'];
-        }
-        return null;
-    }
-
     public function getRadiopharmaceutical() : ?string
     {
         $radioPharmaceuticalGroup = $this->getRadioPharmaceuticalGroup();
@@ -247,6 +238,26 @@ class OrthancMetaData
 
     public function getAcquisitonDateTime() : ?string
     {
+        return $this->getMetaDataValueFromCode('0008,002a');
+    }
+
+    public function getAcquisitonDate() : ?string
+    {
         return $this->getMetaDataValueFromCode('0008,0022');
+    }
+
+    public function getAcquisitonTime() : ?string
+    {
+        return $this->getMetaDataValueFromCode('0008,0032');
+    }
+
+    public function getNumberOfFrames() : int
+    {
+        return $this->getMetaDataValueFromCode('0028,0008') ?? 1;
+    }
+
+    public function getImageID() : ?string
+    {
+        return $this->getMetaDataValueFromCode('0054,0400');
     }
 }

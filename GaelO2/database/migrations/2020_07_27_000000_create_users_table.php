@@ -25,7 +25,7 @@ class CreateUsersTable extends Migration
             $table->dateTimeTz('last_connection', 6)->nullable(true);
             $table->integer('attempts')->default(0)->nullable(false);
             $table->boolean('administrator')->default(false)->nullable(false);
-            $table->unsignedInteger('center_code')->nullable(false);
+            $table->unsignedBigInteger('center_code')->nullable(false);
             $table->string('job')->nullable(false);
             $table->string('orthanc_address')->nullable(true);
             $table->string('orthanc_login')->nullable(true);

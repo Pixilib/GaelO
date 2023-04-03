@@ -28,7 +28,6 @@ class DicomSeries extends Model
         'half_life' => 'integer',
         'injected_time' => 'datetime:H:i:s',
         'injected_datetime' => 'datetime',
-        'injected_activity' => 'integer',
         'patient_weight' => 'integer',
         'number_of_instances' => 'integer',
         'series_number' => 'string',

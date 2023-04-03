@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 class DicomSeriesRepositoryTest extends TestCase
 {
     private DicomSeriesRepository $orthancSeriesRepository;
+    private DicomStudy $orthancStudy;
 
     use RefreshDatabase;
 
@@ -31,7 +32,7 @@ class DicomSeriesRepositoryTest extends TestCase
                 $this->orthancStudy->study_uid, null,
                 null, null, null,
                 null, null, null,
-                null, null, null, null,
+                null, null, null,
                 50, '123456789', null,
                 30, 30, null,
                 null

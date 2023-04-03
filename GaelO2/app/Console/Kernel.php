@@ -2,6 +2,7 @@
 
 namespace App\Console;
 
+use App\GaelO\CronJobs\GaelOScheduler;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -26,6 +27,8 @@ class Kernel extends ConsoleKernel
     {
         $schedule->command('auth:clear-resets')->hourly();
         $schedule->command('cache:prune-stale-tags')->hourly();
+        //Register custom jobs
+        GaelOScheduler::registerScheduledJobs($schedule);
     }
 
     /**

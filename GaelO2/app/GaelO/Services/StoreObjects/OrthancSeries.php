@@ -22,7 +22,7 @@ Class OrthancSeries {
 
     private OrthancService $orthancService;
 
-    public string $serieOrthancID;
+    public string $seriesOrthancID;
 
 	public string $parentStudyOrthancID;
 	public ?string $manufacturer;
@@ -43,7 +43,6 @@ Class OrthancSeries {
     public $injectedDose;
     public $injectedTime;
 	public $injectedDateTime;
-	public $injectedActivity;
 	public $radiopharmaceutical;
 	public $halfLife;
 	public string $sopClassUid;
@@ -53,14 +52,14 @@ Class OrthancSeries {
     }
 
     public function setSeriesOrthancID(string $seriesOrthancID){
-        $this->serieOrthancID=$seriesOrthancID;
+        $this->seriesOrthancID=$seriesOrthancID;
     }
 
 	/**
 	 *Get Series related data and store them in this object
 	 */
 	public function retrieveSeriesData() {
-		$seriesDetails=$this->orthancService->getOrthancRessourcesDetails(Constants::ORTHANC_SERIES_LEVEL, $this->serieOrthancID);
+		$seriesDetails=$this->orthancService->getOrthancRessourcesDetails(Constants::ORTHANC_SERIES_LEVEL, $this->seriesOrthancID);
 
 		//add needed informations in the current object
 		$this->manufacturer=$seriesDetails['MainDicomTags']['Manufacturer'] ?? null;
@@ -88,7 +87,7 @@ Class OrthancSeries {
 	 * Get statistics of the series (size in MB)
 	 */
 	private function retrieveSeriesStatistics() {
-        $statistics=$this->orthancService->getOrthancRessourcesStatistics(Constants::ORTHANC_SERIES_LEVEL, $this->serieOrthancID);
+        $statistics=$this->orthancService->getOrthancRessourcesStatistics(Constants::ORTHANC_SERIES_LEVEL, $this->seriesOrthancID);
 		$this->diskSizeMb=$statistics['DiskSizeMB'];
 		$this->uncompressedSizeMb=$statistics['UncompressedSizeMB'];
 	}
@@ -104,7 +103,6 @@ Class OrthancSeries {
 		$this->injectedDose = is_numeric($instanceTags->getInjectedDose()) ? $instanceTags->getInjectedDose() : null;
         $this->injectedTime = $instanceTags->getInjectedTime();
         $this->injectedDateTime = $instanceTags->getInjectedDateTime();
-		$this->injectedActivity = is_numeric($instanceTags->getInjectedActivity())? $instanceTags->getInjectedActivity() : null;
 		$this->radiopharmaceutical = $instanceTags->getRadiopharmaceutical();
 		$this->halfLife=is_numeric($instanceTags->getHalfLife())? $instanceTags->getHalfLife() : null;
 		$this->sopClassUid= $instanceTags->getSOPClassUID();

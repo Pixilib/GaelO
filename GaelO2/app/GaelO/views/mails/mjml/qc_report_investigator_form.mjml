@@ -16,15 +16,13 @@
       </mj-column>
     </mj-section>
     <mj-section>
-    <mj-column width="100%">
+      <mj-column>
         <mj-table css-class="table-striped" role="presentation">
           @foreach($studyInfo['investigatorForm'] as $key => $value)
-            @if ($value != null)
           <tr>
             <td style="padding: 0 15px 0 0;font-weight: bold;" align="left">{{ $key }}</td>
-            <td style="padding: 0 15px;" align="right">{{ $value }}</td>
+            <td style="padding: 0 15px;" align="right">{{ var_export($value) }}</td>
           </tr>
-            @endif
           @endforeach
         </mj-table>
       </mj-column>

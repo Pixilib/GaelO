@@ -5,6 +5,8 @@ namespace App\Mail;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
+use Illuminate\Mail\Mailables\Content;
+use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
 class VisitNotDone extends Mailable implements ShouldQueue
@@ -30,15 +32,18 @@ class VisitNotDone extends Mailable implements ShouldQueue
         */
     }
 
-    /**
-     * Build the message.
-     *
-     * @return $this
-     */
-    public function build()
+    public function envelope(): Envelope
     {
-        return $this->view('mails.mail_visit_not_done')
-            ->subject($this->parameters['study']." - Visit Not Done - Patient - ".$this->parameters['patientCode']." - Visit - ".$this->parameters['visitType'])
-            ->with($this->parameters);
+        return new Envelope(
+            subject: $this->parameters['study'] . " - Visit Not Done - Patient - " . $this->parameters['patientCode'] . " - Visit - " . $this->parameters['visitType']
+        );
+    }
+
+    public function content(): Content
+    {
+        return new Content(
+            view: 'mails.mail_visit_not_done',
+            with: $this->parameters
+        );
     }
 }

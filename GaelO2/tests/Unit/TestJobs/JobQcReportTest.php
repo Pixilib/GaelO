@@ -45,12 +45,12 @@ class JobQcReportTest extends TestCase
         $decoded = json_decode($strJsonFileContentsData, true);
 
         $mockOrthancService = $this->partialMock(OrthancService::class, function (MockInterface $mock) use ($tags, $decoded){
-            $mock->shouldReceive('getMetaData')->andReturn($tags);
+            $mock->shouldReceive('getSharedTags')->andReturn($tags);
             $mock->shouldReceive('setOrthancServer')->andReturn(null);
             $mock->shouldReceive('getOrthancRessourcesDetails')->andReturn($decoded);
             $mock->shouldReceive('getInstanceTags')->andReturn($tags);
-            $mock->shouldReceive('getSeriesMIP')->andReturn((getcwd()."/tests/Unit/TestJobs/testGif.gif"));
-            $mock->shouldReceive('getSeriesMosaic')->andReturn((getcwd()."/tests/Unit/TestJobs/testMosaic.gif"));
+            $mock->shouldReceive('getMIP')->andReturn(null);
+            $mock->shouldReceive('getMosaic')->andReturn(null);
         });
 
         $investigatorInfos = [

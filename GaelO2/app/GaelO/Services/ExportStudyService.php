@@ -80,7 +80,7 @@ class ExportStudyService
 
     public function exportUsersOfStudy(): void
     {
-        $users = $this->userRepositoryInterface->getUsersFromStudy($this->studyName);
+        $users = $this->userRepositoryInterface->getUsersFromStudy($this->studyName, false);
 
         $usersData = [];
         //Select only needed info and concatenate roles in a string
@@ -111,7 +111,7 @@ class ExportStudyService
 
     public function exportPatientTable(): void
     {
-        $patientData = $this->patientRepositoryInterface->getPatientsInStudy($this->originalStudyName);
+        $patientData = $this->patientRepositoryInterface->getPatientsInStudy($this->originalStudyName, false);
         $spreadsheetAdapter = new SpreadsheetAdapter();
         $spreadsheetAdapter->addSheet('Patients');
         $spreadsheetAdapter->fillData('Patients', $patientData);
@@ -210,6 +210,18 @@ class ExportStudyService
         //Get investigator forms of the visits of this study
         $investigatorForms = $this->reviewRepositoryInterface->getInvestigatorsFormsFromVisitIdArrayStudyName($this->visitIdArray, $this->originalStudyName, false);
         $this->groupReviewPerVisitType($investigatorForms, Constants::ROLE_INVESTIGATOR);
+    }
+
+    public function exportAll() :void
+    {
+        $this->exportPatientTable();
+        $this->exportVisitTable();
+        $this->exportDicomsTable();
+        $this->exportInvestigatorForms();
+        $this->exportReviewerForms();
+        $this->exportTrackerTable();
+        $this->exportUsersOfStudy();
+        $this->exportAssociatedFiles();
     }
 
     private function groupReviewPerVisitType(array $reviewEntities, string $role): void

@@ -32,14 +32,7 @@ class ExportStudyData
 
             $this->exportStudyService->setStudyName($studyName);
 
-            $this->exportStudyService->exportPatientTable();
-            $this->exportStudyService->exportVisitTable();
-            $this->exportStudyService->exportDicomsTable();
-            $this->exportStudyService->exportInvestigatorForms();
-            $this->exportStudyService->exportReviewerForms();
-            $this->exportStudyService->exportTrackerTable();
-            $this->exportStudyService->exportUsersOfStudy();
-            $this->exportStudyService->exportAssociatedFiles();
+            $this->exportStudyService->exportAll();
 
             $exportResults = $this->exportStudyService->getExportStudyResult();
 

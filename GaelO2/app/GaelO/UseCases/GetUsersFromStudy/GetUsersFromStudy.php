@@ -3,6 +3,7 @@
 namespace App\GaelO\UseCases\GetUsersFromStudy;
 
 use App\GaelO\Constants\Constants;
+use App\GaelO\Entities\CenterEntity;
 use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\UserRepositoryInterface;
@@ -32,13 +33,17 @@ class GetUsersFromStudy
 
             $this->checkAuthorization($currentUserId, $role, $studyName);
 
-            $dbData = $this->userRepositoryInterface->getUsersFromStudy($studyName);
+            $dbData = $this->userRepositoryInterface->getUsersFromStudy($studyName, true);
 
             $responseArray = [];
             foreach ($dbData as $data) {
                 $userEntity = [];
                 if ($role === Constants::ROLE_SUPERVISOR) {
                     $userEntity = UserEntity::fillMinimalFromDBReponseArray($data);
+                    $userEntity->setMainCenter(CenterEntity::fillFromDBReponseArray($data['main_center']));
+                    $affiliatedCenters = array_map(function($center){return CenterEntity::fillFromDBReponseArray($center);}, $data['affiliated_centers']);
+                    $userEntity->setAffiliatedCenters($affiliatedCenters);
+
                 } else if ($role === Constants::ROLE_ADMINISTRATOR) {
                     $userEntity = UserEntity::fillFromDBReponseArray($data);
                 }
