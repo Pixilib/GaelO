@@ -120,16 +120,25 @@ class VisitRepository implements VisitRepositoryInterface
         return $studyRule->getReviewableVisitTypeIds();
     }
 
-    private function computeMissiveReviewStatusForVisitArray(array $visits, array $reviewableVisitTypeIds = null): array
+    private function getReviwablePatientTags(string $studyName) : array|null
     {
-        $newVisits = array_map(function ($visit) use ($reviewableVisitTypeIds) {
-            return $this->computeMissingReviewStatusForVisit($visit, $reviewableVisitTypeIds);
+        $studyRule = AbstractGaelOStudy::getSpecificStudyObject($studyName);
+        return $studyRule->getReviewablePatientsTags();
+    }
+
+    private function computeMissiveReviewStatusForVisitArray(array $visits, string $studyName): array
+    {
+        $newVisits = array_map(function ($visit) use ($studyName) {
+            return $this->computeMissingReviewStatusForVisit($visit, $studyName);
         }, $visits);
         return $newVisits;
     }
 
-    private function computeMissingReviewStatusForVisit(array $visit, array $reviewableVisitTypeIds = null): array
+    private function computeMissingReviewStatusForVisit(array $visit, string $studyName): array
     {
+
+        $reviewableVisitTypeIds = $this->getReviewableVisitTypeIds($studyName);
+        $reviewablePatientTags = $this->getReviwablePatientTags($studyName);
 
         //In case of a default value indicating default data has been injected in relationship
         if ($visit['review_status']['review_status'] === null && $visit['review_status']['review_available'] === null) {
@@ -141,9 +150,20 @@ class VisitRepository implements VisitRepositoryInterface
                 $visit['review_status']['review_available'] = false;
             }
 
-            //Review requirement depends if visit id is expected to be reviewed in ancillary study
-            if ($reviewableVisitTypeIds !== null && !in_array($visit['visit_type_id'], $reviewableVisitTypeIds)) {
-                $visit['review_status']['review_status'] = ReviewStatusEnum::NOT_NEEDED->value;
+            if ($reviewableVisitTypeIds !== null || $reviewablePatientTags != null) {
+
+
+                //Review requirement depends if visit id is expected to be reviewed in ancillary study
+                if ($reviewableVisitTypeIds !== null && !in_array($visit['visit_type_id'], $reviewableVisitTypeIds)) {
+                    $visit['review_status']['review_status'] = ReviewStatusEnum::NOT_NEEDED->value;
+                }
+
+                if (
+                    $reviewablePatientTags != null &&
+                    sizeof(array_intersect($visit['patient']['metadata']['tags'], $reviewablePatientTags)) === 0
+                ) {
+                    $visit['review_status']['review_status'] = ReviewStatusEnum::NOT_NEEDED->value;
+                }
             } else {
                 $visit['review_status']['review_status'] = ReviewStatusEnum::NOT_DONE->value;
             }
@@ -161,7 +181,7 @@ class VisitRepository implements VisitRepositoryInterface
         }]);
 
         $dataArray = $builder->findOrFail($visitId)->toArray();
-        $dataArray = $this->computeMissingReviewStatusForVisit($dataArray, $this->getReviewableVisitTypeIds($studyName));
+        $dataArray = $this->computeMissingReviewStatusForVisit($dataArray, $studyName);
         return $dataArray;
     }
 
@@ -186,7 +206,7 @@ class VisitRepository implements VisitRepositoryInterface
         if ($withTrashed) {
             $builder = $builder->withTrashed();
         }
-        $visits = $builder->with('visitType', 'visitType.visitGroup')->where('patient_id', $patientId)
+        $visits = $builder->with('patient', 'visitType', 'visitType.visitGroup')->where('patient_id', $patientId)
             ->with(['reviewStatus' => function ($query) use ($studyName) {
                 $query->where('study_name', $studyName);
             }])
@@ -197,7 +217,7 @@ class VisitRepository implements VisitRepositoryInterface
             return [];
         } else {
             $visits = $visits->toArray();
-            $visits = $this->computeMissiveReviewStatusForVisitArray($visits, $this->getReviewableVisitTypeIds($studyName));
+            $visits = $this->computeMissiveReviewStatusForVisitArray($visits, $studyName);
             return $visits;
         }
     }
@@ -213,7 +233,7 @@ class VisitRepository implements VisitRepositoryInterface
     {
 
         $answer = $this->visitModel
-            ->with('visitType', 'visitType.visitGroup')
+            ->with('patient', 'visitType', 'visitType.visitGroup')
             ->with(['reviewStatus' => function ($query) use ($studyName) {
                 $query->where('study_name', $studyName);
             }])
@@ -224,7 +244,7 @@ class VisitRepository implements VisitRepositoryInterface
             return [];
         } else {
             $visits = $answer->toArray();
-            $visits = $this->computeMissiveReviewStatusForVisitArray($visits,  $this->getReviewableVisitTypeIds($studyName));
+            $visits = $this->computeMissiveReviewStatusForVisitArray($visits,  $studyName);
             return $visits;
         }
     }
@@ -233,7 +253,7 @@ class VisitRepository implements VisitRepositoryInterface
     {
 
         $answer = $this->visitModel
-            ->with('visitType', 'visitType.visitGroup')
+            ->with('patient', 'visitType', 'visitType.visitGroup')
             ->with(['reviewStatus' => function ($query) use ($studyName) {
                 $query->where('study_name', $studyName);
             }])
@@ -247,7 +267,7 @@ class VisitRepository implements VisitRepositoryInterface
             return [];
         } else {
             $visits  = $answer->toArray();
-            $visits  = $this->computeMissiveReviewStatusForVisitArray($visits,  $this->getReviewableVisitTypeIds($studyName));
+            $visits  = $this->computeMissiveReviewStatusForVisitArray($visits, $studyName);
             return $visits;
         }
     }
@@ -280,7 +300,7 @@ class VisitRepository implements VisitRepositoryInterface
             return [];
         } else {
             $visits = $answer->toArray();
-            if ($withReviewStatus) $visits = $this->computeMissiveReviewStatusForVisitArray($visits,  $this->getReviewableVisitTypeIds($studyName));
+            if ($withReviewStatus) $visits = $this->computeMissiveReviewStatusForVisitArray($visits,  $studyName);
             return $visits;
         }
     }
@@ -315,7 +335,7 @@ class VisitRepository implements VisitRepositoryInterface
         }
 
         $visit = $visits->sole()->toArray();
-        if ($withReviewStatus) $visit = $this->computeMissingReviewStatusForVisit($visit, $this->getReviewableVisitTypeIds($studyName));
+        if ($withReviewStatus) $visit = $this->computeMissingReviewStatusForVisit($visit, $studyName);
         return $visit;
     }
 
@@ -324,7 +344,7 @@ class VisitRepository implements VisitRepositoryInterface
 
         $visitQuery = $this->visitModel->whereHas('visitType', function ($query) use ($visitTypeId) {
             $query->where('id', $visitTypeId);
-        })->with('visitType', 'visitType.visitGroup');
+        })->with('patient', 'visitType', 'visitType.visitGroup');
 
         if ($withReviewStatus) {
             $visitQuery->with(['reviewStatus' => function ($query) use ($studyName) {
@@ -345,7 +365,7 @@ class VisitRepository implements VisitRepositoryInterface
             return [];
         } else {
             $visits = $answers->toArray();
-            if ($withReviewStatus && $studyName) $visits = $this->computeMissiveReviewStatusForVisitArray($visits, $this->getReviewableVisitTypeIds($studyName));
+            if ($withReviewStatus && $studyName) $visits = $this->computeMissiveReviewStatusForVisitArray($visits, $studyName);
             return $visits;
         }
     }
@@ -387,7 +407,7 @@ class VisitRepository implements VisitRepositoryInterface
     {
         $studyName = ($ancillaryStudyName ?? $originalStudyName);
         $collection = $this->visitModel
-            ->with(['reviewStatus' => function ($query) use ($studyName) {
+            ->with(['patient', 'reviewStatus' => function ($query) use ($studyName) {
                 $query->where('study_name', ($studyName));
             }])
             ->whereHas('patient', function ($query) use ($originalStudyName) {
@@ -407,7 +427,7 @@ class VisitRepository implements VisitRepositoryInterface
         //Filtered outside the query because confusing laravel to do default value (which is dynamic in our case) + condition after the default value
         $reviewAvailable = $collection->filter(function ($visit, $key) use ($studyName) {
             $visitArray = $visit->toArray();
-            $visitArray = $this->computeMissingReviewStatusForVisit($visitArray, $this->getReviewableVisitTypeIds($studyName));
+            $visitArray = $this->computeMissingReviewStatusForVisit($visitArray, $studyName);
             return $visitArray['review_status']['review_available'] === true;
         });
 
@@ -424,7 +444,7 @@ class VisitRepository implements VisitRepositoryInterface
         //Select visits available for review in this patient
         $patientVisitAvailableForReview = $this->visitModel
             ->where('patient_id', $patient->id)
-            ->with(['reviewStatus' => function ($query) use ($studyName) {
+            ->with(['patient', 'reviewStatus' => function ($query) use ($studyName) {
                 $query->where('study_name', $studyName);
             }])
             ->where(function ($query) use ($studyName, $userId) {
@@ -441,7 +461,7 @@ class VisitRepository implements VisitRepositoryInterface
 
         $patientVisitAvailableForReview = $patientVisitAvailableForReview->filter(function ($visit, $key) use ($studyName) {
             $visitArray = $visit->toArray();
-            $visitArray = $this->computeMissingReviewStatusForVisit($visitArray, $this->getReviewableVisitTypeIds($studyName));
+            $visitArray = $this->computeMissingReviewStatusForVisit($visitArray, $studyName);
             return $visitArray['review_status']['review_available'] === true;
         });
 
