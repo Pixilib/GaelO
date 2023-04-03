@@ -34,7 +34,8 @@ class PatientFactory extends Factory
             },
             'inclusion_status' => $this->faker->randomElement(['Included', 'Withdrawn']),
             'withdraw_reason' => $this->faker->word,
-            'withdraw_date' => Util::now()
+            'withdraw_date' => Util::now(),
+            'metadata' => ['tags' => []]
         ];
     }
 
@@ -97,6 +98,15 @@ class PatientFactory extends Factory
         return $this->state(function (array $attributes) use ($registrationDate) {
             return [
                 'registration_date' => $registrationDate,
+            ];
+        });
+    }
+
+    public function metadata(array $metadata)
+    {
+        return $this->state(function (array $attributes) use ($metadata) {
+            return [
+                'metadata' => $metadata,
             ];
         });
     }

@@ -72,6 +72,13 @@ class ImportPatientService
                 if ($patientEntity['inclusionStatus']  !== null) {
                     $this->isRegistrationDateValid($patientEntity['registrationDate']);
                 }
+                if (!array_key_exists('metadata', $patientEntity)) {
+                    $patientEntity['metadata'] = null;
+                }else{
+                    if(!array_key_exists('tags', $patientEntity) || !is_array($patientEntity['metadata']['tags'])){
+                        throw new GaelOBadRequestException('Tags key mandatory for metadata with array structure');
+                    };
+                }
                 $this->checkNewPatient($patientEntity['code']);
                 $this->isCorrectPatientCode($patientEntity['code']);
                 $this->isExistingCenter($patientEntity['centerCode']);
@@ -91,7 +98,8 @@ class ImportPatientService
                     $patientEntity['investigatorName'],
                     $patientEntity['centerCode'],
                     $patientEntity['inclusionStatus'],
-                    $this->studyEntity->name
+                    $this->studyEntity->name,
+                    $patientEntity['metadata']
                 );
 
                 $this->successList[] = $patientEntity['code'];

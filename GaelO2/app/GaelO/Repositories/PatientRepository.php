@@ -75,7 +75,8 @@ class PatientRepository implements PatientRepositoryInterface
         ?string $investigatorName,
         int $centerCode,
         string $inclusionStatus,
-        String $studyName
+        string $studyName,
+        ?array $metadata = null
     ): void {
 
         $patient = new Patient();
@@ -92,6 +93,9 @@ class PatientRepository implements PatientRepositoryInterface
         $patient->investigator_name = $investigatorName;
         $patient->center_code = $centerCode;
         $patient->inclusion_status = $inclusionStatus;
+        if($metadata) {
+            $patient->metadata = $metadata;
+        }
         $patient->save();
     }
 
@@ -109,7 +113,8 @@ class PatientRepository implements PatientRepositoryInterface
         int $centerCode,
         string $inclusionStatus,
         ?string $withdrawReason,
-        ?string $withdrawDate
+        ?string $withdrawDate,
+        array $metadata
     ): void {
 
         $patient = $this->patientModel->findOrFail($id);
@@ -127,6 +132,7 @@ class PatientRepository implements PatientRepositoryInterface
         $patient->inclusion_status = $inclusionStatus;
         $patient->withdraw_reason = $withdrawReason;
         $patient->withdraw_date = $withdrawDate;
+        $patient->metadata = $metadata;
 
         $patient->save();
     }

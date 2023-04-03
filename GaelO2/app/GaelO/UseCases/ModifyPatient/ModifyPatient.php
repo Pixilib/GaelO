@@ -44,18 +44,24 @@ class ModifyPatient
             $patientEntity = $this->patientRepositoryInterface->find($patientId);
             $studyName = $patientEntity['study_name'];
 
-            if($modifyPatientRequest->studyName !== $studyName){
+            if ($modifyPatientRequest->studyName !== $studyName) {
                 throw new GaelOForbiddenException('Should be called from the original study');
             }
             $this->checkAuthorization($currentUserId, $patientId, $studyName);
 
             $updatableData = [
                 'firstname', 'lastname', 'gender', 'birthDay', 'birthMonth', 'birthYear',
-                'registrationDate', 'investigatorName', 'centerCode', 'inclusionStatus', 'withdrawReason', 'withdrawDate'
+                'registrationDate', 'investigatorName', 'centerCode', 'inclusionStatus', 'withdrawReason', 'withdrawDate',
+                'metadata'
             ];
 
             //Update each updatable data
             foreach ($updatableData as $data) {
+                if ($data === 'metadata' && $modifyPatientRequest->metadata != null) {
+                    if (!array_key_exists('tags', $modifyPatientRequest->metadata) || !is_array($modifyPatientRequest->metadata['tags'])) {
+                        throw new GaelOBadRequestException('Metadata shall contains tags key with an array structure');
+                    }
+                }
                 $patientEntity[Util::camelCaseToSnakeCase($data)] = $modifyPatientRequest->$data;
             }
 
@@ -96,7 +102,8 @@ class ModifyPatient
                 $patientEntity['center_code'],
                 $patientEntity['inclusion_status'],
                 $patientEntity['withdraw_reason'],
-                $patientEntity['withdraw_date']
+                $patientEntity['withdraw_date'],
+                $patientEntity['metadata']
             );
 
             $actionDetails = [

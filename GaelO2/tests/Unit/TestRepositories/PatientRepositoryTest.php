@@ -33,6 +33,8 @@ class PatientRepositoryTest extends TestCase
         $patientRecord = Patient::findOrFail('123456789123456');
 
         $this->assertEquals(1900, $patientRecord->birth_year);
+        //Default metadata should includes tags with an empty array
+        $this->assertEquals(['tags'=>[]], $patientRecord->metadata);
     }
 
     public function testUpdatePatient()
@@ -54,12 +56,14 @@ class PatientRepositoryTest extends TestCase
             $patient->center_code,
             $patient->inclusion_status->value,
             $patient->withdraw_reason,
-            $patient->withdraw_date
+            $patient->withdraw_date,
+            ['tags' => ['salim'], 'stage'=>'IV']
         );
 
         $updatedPatient = Patient::find($patient->id);
         $this->assertEquals('New Investigator', $updatedPatient->investigator_name);
         $this->assertEquals($patient->birth_year, $updatedPatient->birth_year);
+        $this->assertEquals(['tags' => ['salim'], 'stage'=>'IV'], $updatedPatient->metadata);
     }
 
     public function testGetPatientWithCenterDetails()
