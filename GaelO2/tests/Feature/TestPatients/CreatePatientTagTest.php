@@ -31,6 +31,8 @@ class CreatePatientTagTest extends TestCase
         $payload =['tag'=>'DLBCL'];
 
         $this->json('POST', '/api/patients/' . $this->patient->id . '/metadata/tags?studyName=' . $this->studyName, $payload)->assertStatus(201);
+        $patient = Patient::find($this->patient->id);
+        $this->assertContains('DLBCL', $patient['metadata']['tags']);
     }
 
     public function testCreatePatientTagShouldBeRefusedExisting()
