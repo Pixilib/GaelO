@@ -7,6 +7,7 @@ use App\GaelO\Constants\Enums\InvestigatorFormStateEnum;
 use App\GaelO\Constants\Enums\QualityControlStateEnum;
 use App\GaelO\Constants\Enums\ReviewStatusEnum;
 use App\GaelO\Repositories\VisitRepository;
+use App\GaelO\Services\GaelOStudiesService\DefaultGaelOStudy;
 use App\Models\Patient;
 use App\Models\Review;
 use App\Models\ReviewStatus;
@@ -16,6 +17,7 @@ use App\Models\Visit;
 use App\Models\VisitGroup;
 use App\Models\VisitType;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Mockery;
 
 class VisitRepositoryAncillaryTest extends TestCase
 {
@@ -78,6 +80,27 @@ class VisitRepositoryAncillaryTest extends TestCase
         $this->assertNotEquals($ancillaryvisits[0]['review_status']['review_status'], $originalvisits[0]['review_status']['review_status']);
     }
 
+    public function testGetPatientsVisitWithDefaultReviewStatusWithPatientTagFiltering()
+    {
+        $patient = $this->populateVisits()[0];
+        $visits = $patient->visits[0];
+        $visits->state_quality_control = QualityControlStateEnum::ACCEPTED->value;
+        $visits->image_quality_control = QualityControlStateEnum::ACCEPTED->value;
+        $visits->form_quality_comment = QualityControlStateEnum::ACCEPTED->value;
+        $visits->save();
+        //Mock default study model to return a filter tag
+        $defaultGaelOStudyMock = Mockery::mock(DefaultGaelOStudy::class)->makePartial();
+        $defaultGaelOStudyMock->shouldReceive('getReviewablePatientsTags')->andReturn(['Salim']);
+        app()->instance(DefaultGaelOStudy::class, $defaultGaelOStudyMock);
+
+        $originalvisits = $this->visitRepository->getAllPatientsVisitsWithReviewStatus($patient->id, $this->ancillaryStudyName, false);
+        $visitStatus = array_map(function ($visit) {
+            return $visit['review_status']['review_status'];
+        }, $originalvisits);
+        $this->assertEquals(1, sizeof(array_unique($visitStatus)) );
+        $this->assertEquals(ReviewStatusEnum::NOT_NEEDED->value, $visitStatus[0]);
+    }
+
     public function testGetReviewAvailableVisitFromPatientIdsWithContextAndReviewStatus()
     {
         $patient = $this->populateVisits();
@@ -109,7 +132,6 @@ class VisitRepositoryAncillaryTest extends TestCase
             ReviewStatus::factory()->visitId($visit->id)->reviewAvailable()->studyName($ancillaryStudyName)->create();
         });
 
-        
         //create one form for user for one visit (patient still has one visit awaiting review for user)
         Review::factory()->visitId($visits->first()->id)->reviewForm()->userId(1)->validated()->studyName($ancillaryStudyName)->create();
         $answer1 = $this->visitRepository->isParentPatientHavingOneVisitAwaitingReview($visits->first()->id, $ancillaryStudyName, 1);
@@ -127,5 +149,4 @@ class VisitRepositoryAncillaryTest extends TestCase
         $answer3 = $this->visitRepository->isParentPatientHavingOneVisitAwaitingReview($visits->first()->id, $ancillaryStudyName, 1);
         $this->assertFalse($answer3);
     }
-    
 }

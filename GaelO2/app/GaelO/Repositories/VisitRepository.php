@@ -14,6 +14,7 @@ use App\GaelO\Services\GaelOStudiesService\AbstractGaelOStudy;
 use App\GaelO\Util;
 use App\Models\ReviewStatus;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class VisitRepository implements VisitRepositoryInterface
 {
@@ -120,7 +121,7 @@ class VisitRepository implements VisitRepositoryInterface
         return $studyRule->getReviewableVisitTypeIds();
     }
 
-    private function getReviwablePatientTags(string $studyName) : array|null
+    private function getReviwablePatientTags(string $studyName): array|null
     {
         $studyRule = AbstractGaelOStudy::getSpecificStudyObject($studyName);
         return $studyRule->getReviewablePatientsTags();
@@ -139,19 +140,10 @@ class VisitRepository implements VisitRepositoryInterface
 
         $reviewableVisitTypeIds = $this->getReviewableVisitTypeIds($studyName);
         $reviewablePatientTags = $this->getReviwablePatientTags($studyName);
-
         //In case of a default value indicating default data has been injected in relationship
         if ($visit['review_status']['review_status'] === null && $visit['review_status']['review_available'] === null) {
 
-            //Review avalability depends on QC status of princeps visit
-            if (in_array($visit['state_quality_control'], [QualityControlStateEnum::ACCEPTED->value, QualityControlStateEnum::NOT_NEEDED->value])) {
-                $visit['review_status']['review_available'] = true;
-            } else {
-                $visit['review_status']['review_available'] = false;
-            }
-
             if ($reviewableVisitTypeIds !== null || $reviewablePatientTags != null) {
-
 
                 //Review requirement depends if visit id is expected to be reviewed in ancillary study
                 if ($reviewableVisitTypeIds !== null && !in_array($visit['visit_type_id'], $reviewableVisitTypeIds)) {
@@ -166,6 +158,17 @@ class VisitRepository implements VisitRepositoryInterface
                 }
             } else {
                 $visit['review_status']['review_status'] = ReviewStatusEnum::NOT_DONE->value;
+            }
+
+            if ($visit['review_status']['review_status'] === ReviewStatusEnum::NOT_DONE->value) {
+                //Review avalability depends on QC status of princeps visit
+                if (in_array($visit['state_quality_control'], [QualityControlStateEnum::ACCEPTED->value, QualityControlStateEnum::NOT_NEEDED->value])) {
+                    $visit['review_status']['review_available'] = true;
+                } else {
+                    $visit['review_status']['review_available'] = false;
+                }
+            } else {
+                $visit['review_status']['review_available'] = false;
             }
         }
 
