@@ -116,6 +116,7 @@ Route::middleware(['auth:sanctum', 'verified', 'activated', 'onboarded'])->group
     //Patients Routes
     Route::patch('patients/{code}', [PatientController::class, 'modifyPatient']);
     Route::get('patients/{code}', [PatientController::class, 'getPatient']);
+    Route::post('patients/{code}/metadata/tags', [PatientController::class, 'addPatientTags']);
     Route::get('patients/{patientId}/visits', [PatientController::class, 'getPatientVisit']);
     Route::get('patients/{patientId}/creatable-visits', [PatientController::class, 'getCreatableVisits']);
 
