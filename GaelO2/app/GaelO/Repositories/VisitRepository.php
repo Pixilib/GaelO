@@ -142,20 +142,18 @@ class VisitRepository implements VisitRepositoryInterface
         $reviewablePatientTags = $this->getReviwablePatientTags($studyName);
         //In case of a default value indicating default data has been injected in relationship
         if ($visit['review_status']['review_status'] === null && $visit['review_status']['review_available'] === null) {
-
-            if ($reviewableVisitTypeIds !== null || $reviewablePatientTags != null) {
-
-                //Review requirement depends if visit id is expected to be reviewed in ancillary study
-                if ($reviewableVisitTypeIds !== null && !in_array($visit['visit_type_id'], $reviewableVisitTypeIds)) {
-                    $visit['review_status']['review_status'] = ReviewStatusEnum::NOT_NEEDED->value;
-                }
-
-                if (
-                    $reviewablePatientTags != null &&
-                    sizeof(array_intersect($visit['patient']['metadata']['tags'], $reviewablePatientTags)) === 0
-                ) {
-                    $visit['review_status']['review_status'] = ReviewStatusEnum::NOT_NEEDED->value;
-                }
+            if (
+                $reviewablePatientTags != null &&
+                sizeof(array_intersect($visit['patient']['metadata']['tags'], $reviewablePatientTags)) === 0
+            ) {
+                $visit['review_status']['review_status'] = ReviewStatusEnum::NOT_NEEDED->value;
+            }
+            //Review requirement depends if visit id is expected to be reviewed in ancillary study
+            else if (
+                $reviewableVisitTypeIds !== null &&
+                !in_array($visit['visit_type_id'], $reviewableVisitTypeIds)
+            ) {
+                $visit['review_status']['review_status'] = ReviewStatusEnum::NOT_NEEDED->value;
             } else {
                 $visit['review_status']['review_status'] = ReviewStatusEnum::NOT_DONE->value;
             }

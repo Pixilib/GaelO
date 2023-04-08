@@ -80,25 +80,51 @@ class VisitRepositoryAncillaryTest extends TestCase
         $this->assertNotEquals($ancillaryvisits[0]['review_status']['review_status'], $originalvisits[0]['review_status']['review_status']);
     }
 
-    public function testGetPatientsVisitWithDefaultReviewStatusWithPatientTagFiltering()
+    public function testGetPatientsVisitWithDefaultReviewStatusWithPatientTagFilteringShouldBeNotNeeded()
     {
         $patient = $this->populateVisits()[0];
-        $visits = $patient->visits[0];
-        $visits->state_quality_control = QualityControlStateEnum::ACCEPTED->value;
-        $visits->image_quality_control = QualityControlStateEnum::ACCEPTED->value;
-        $visits->form_quality_comment = QualityControlStateEnum::ACCEPTED->value;
-        $visits->save();
+        //dd($patient->visits->toArray());
         //Mock default study model to return a filter tag
         $defaultGaelOStudyMock = Mockery::mock(DefaultGaelOStudy::class)->makePartial();
         $defaultGaelOStudyMock->shouldReceive('getReviewablePatientsTags')->andReturn(['Salim']);
         app()->instance(DefaultGaelOStudy::class, $defaultGaelOStudyMock);
 
-        $originalvisits = $this->visitRepository->getAllPatientsVisitsWithReviewStatus($patient->id, $this->ancillaryStudyName, false);
+        $visits = $this->visitRepository->getAllPatientsVisitsWithReviewStatus($patient->id, $this->ancillaryStudyName, false);
         $visitStatus = array_map(function ($visit) {
             return $visit['review_status']['review_status'];
-        }, $originalvisits);
+        }, $visits);
         $this->assertEquals(1, sizeof(array_unique($visitStatus)) );
         $this->assertEquals(ReviewStatusEnum::NOT_NEEDED->value, $visitStatus[0]);
+    }
+
+    public function testGetPatientsVisitWithDefaultReviewStatusWithPatientTagFilteringShouldBeNeeded()
+    {
+        $patient = $this->populateVisits()[0];
+        $patient->metadata = ['tags'=>['Salim']];
+        $patient->save();
+
+        $firstVisit = $patient->visits[0];
+        $firstVisit->state_quality_control = QualityControlStateEnum::ACCEPTED->value;
+        $firstVisit->image_quality_control = true;
+        $firstVisit->form_quality_comment = true;
+        $firstVisit->save();
+
+        //dd($patient->visits->toArray());
+        //Mock default study model to return a filter tag
+        $defaultGaelOStudyMock = Mockery::mock(DefaultGaelOStudy::class)->makePartial();
+        $defaultGaelOStudyMock->shouldReceive('getReviewablePatientsTags')->andReturn(['Salim']);
+        app()->instance(DefaultGaelOStudy::class, $defaultGaelOStudyMock);
+
+        $visits = $this->visitRepository->getAllPatientsVisitsWithReviewStatus($patient->id, $this->ancillaryStudyName, false);
+        $visitStatus = array_map(function ($visit) {
+            return $visit['review_status']['review_status'];
+        }, $visits);
+        $this->assertEquals(1, sizeof(array_unique($visitStatus)) );
+        $this->assertEquals(ReviewStatusEnum::NOT_DONE->value, $visitStatus[0]);
+        //First visit should be available because QC done
+        $this->assertEquals(true, $visits[0]['review_status']['review_available']);
+        //Other visit should not be available because QC not done
+        $this->assertEquals(false, $visits[1]['review_status']['review_available']);
     }
 
     public function testGetReviewAvailableVisitFromPatientIdsWithContextAndReviewStatus()
