@@ -83,7 +83,6 @@ class VisitRepositoryAncillaryTest extends TestCase
     public function testGetPatientsVisitWithDefaultReviewStatusWithPatientTagFilteringShouldBeNotNeeded()
     {
         $patient = $this->populateVisits()[0];
-        //dd($patient->visits->toArray());
         //Mock default study model to return a filter tag
         $defaultGaelOStudyMock = Mockery::mock(DefaultGaelOStudy::class)->makePartial();
         $defaultGaelOStudyMock->shouldReceive('getReviewablePatientsTags')->andReturn(['Salim']);
