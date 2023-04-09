@@ -1,45 +1,38 @@
 <?php
 
-namespace App\GaelO\UseCases\CreatePatientTags;
+namespace App\GaelO\UseCases\DeletePatientTags;
 
 use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\AbstractGaelOException;
-use App\GaelO\Exceptions\GaelOBadRequestException;
-use App\GaelO\Exceptions\GaelOConflictException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
+use App\GaelO\Exceptions\GaelONotFoundException;
 use App\GaelO\Interfaces\Repositories\PatientRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
 use App\GaelO\Services\AuthorizationService\AuthorizationUserService;
 use Exception;
 
-class CreatePatientTags
+class DeletePatientTags
 {
     private AuthorizationUserService $authorizationUserService;
     private PatientRepositoryInterface $patientRepositoryInterface;
     private TrackerRepositoryInterface $trackerRepositoryInterface;
 
-    public function __construct(
-        AuthorizationUserService $authorizationUserService,
-        PatientRepositoryInterface $patientRepositoryInterface,
-        TrackerRepositoryInterface $trackerRepositoryInterface
-    ) {
+    public function __construct(AuthorizationUserService $authorizationUserService, PatientRepositoryInterface $patientRepositoryInterface, TrackerRepositoryInterface $trackerRepositoryInterface)
+    {
         $this->authorizationUserService = $authorizationUserService;
         $this->patientRepositoryInterface = $patientRepositoryInterface;
         $this->trackerRepositoryInterface = $trackerRepositoryInterface;
     }
 
-    public function execute(CreatePatientTagsRequest $createPatientTagsRequest, CreatePatientTagsResponse $createPatientTagsResponse)
+    public function execute(DeletePatientTagsRequest $deletePatientTagsRequest, DeletePatientTagsResponse $deletePatientTagsResponse)
     {
 
         try {
-            $currentUserId = $createPatientTagsRequest->currentUserId;
-            $patientId = $createPatientTagsRequest->patientId;
-            $tag = $createPatientTagsRequest->tag;
-            $studyName = $createPatientTagsRequest->studyName;
+            $currentUserId = $deletePatientTagsRequest->currentUserId;
+            $patientId = $deletePatientTagsRequest->patientId;
+            $tag = $deletePatientTagsRequest->tag;
+            $studyName = $deletePatientTagsRequest->studyName;
 
-            if (str_contains($tag, ' ')) {
-                throw new GaelOBadRequestException('Tag shall not contain spaces');
-            }
 
             $patientEntity = $this->patientRepositoryInterface->find($patientId);
 
@@ -49,12 +42,12 @@ class CreatePatientTags
 
             $this->checkAuthorization($currentUserId, $studyName);
 
-            if (in_array($tag, $patientEntity['metadata']['tags'])) {
-                throw new GaelOConflictException('Existing Tag in patient');
-            }
-
             //Add tag in tags of this patient
-            $patientEntity['metadata']['tags'][] = $tag;
+            if (($key = array_search($tag, $patientEntity['metadata']['tags'])) !== false) {
+                unset($patientEntity['metadata']['tags'][$key]);
+            }else{
+                throw new GaelONotFoundException('Not Existing Tag in patient');
+            }
 
             $this->patientRepositoryInterface->updatePatient(
                 $patientId,
@@ -77,20 +70,21 @@ class CreatePatientTags
             $actionDetails = [
                 'id' => $patientEntity['id'],
                 'code' => $patientEntity['code'],
-                'add_tag' => $tag
+                'delete_tag' => $tag
             ];
 
             $this->trackerRepositoryInterface->writeAction($currentUserId, Constants::ROLE_SUPERVISOR, $patientEntity['study_name'], null, Constants::TRACKER_EDIT_PATIENT, (array) $actionDetails);
 
-            $createPatientTagsResponse->status = 201;
-            $createPatientTagsResponse->statusText =  'Created';
+            $deletePatientTagsResponse->status = 200;
+            $deletePatientTagsResponse->statusText = 'OK';
         } catch (AbstractGaelOException $e) {
-            $createPatientTagsResponse->body = $e->getErrorBody();
-            $createPatientTagsResponse->status = $e->statusCode;
-            $createPatientTagsResponse->statusText =  $e->statusText;
+            $deletePatientTagsResponse->body = $e->getErrorBody();
+            $deletePatientTagsResponse->status = $e->statusCode;
+            $deletePatientTagsResponse->statusText =  $e->statusText;
         } catch (Exception $e) {
             throw $e;
         }
+
     }
 
     private function checkAuthorization(int $userId, string $studyName)

@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\GaelO\UseCases\CreatePatientTags\CreatePatientTags;
 use App\GaelO\UseCases\CreatePatientTags\CreatePatientTagsRequest;
 use App\GaelO\UseCases\CreatePatientTags\CreatePatientTagsResponse;
+use App\GaelO\UseCases\DeletePatientTags\DeletePatientTags;
+use App\GaelO\UseCases\DeletePatientTags\DeletePatientTagsRequest;
+use App\GaelO\UseCases\DeletePatientTags\DeletePatientTagsResponse;
 use App\GaelO\UseCases\GetCreatableVisits\GetCreatableVisits;
 use App\GaelO\UseCases\GetCreatableVisits\GetCreatableVisitsRequest;
 use App\GaelO\UseCases\GetCreatableVisits\GetCreatableVisitsResponse;
@@ -94,6 +97,22 @@ class PatientController extends Controller
         $createPatientTags->execute($createPatientTagsRequest, $createPatientTagsResponse);
 
         return $this->getJsonResponse($createPatientTagsResponse->body, $createPatientTagsResponse->status, $createPatientTagsResponse->statusText);
+
+    }
+
+    public function deletePatientTags(Request $request, DeletePatientTags $deletePatientTags, DeletePatientTagsRequest $deletePatientTagsRequest, DeletePatientTagsResponse $deletePatientTagsResponse, string $patientId, string $tagName)
+    {
+        $currentUser = Auth::user();
+        $queryParam = $request->query();
+
+        $deletePatientTagsRequest->tag = $tagName;
+        $deletePatientTagsRequest->studyName = $queryParam['studyName'];
+        $deletePatientTagsRequest->patientId = $patientId;
+        $deletePatientTagsRequest->currentUserId = $currentUser['id'];
+
+        $deletePatientTags->execute($deletePatientTagsRequest, $deletePatientTagsResponse);
+
+        return $this->getJsonResponse($deletePatientTagsResponse->body, $deletePatientTagsResponse->status, $deletePatientTagsResponse->statusText);
 
     }
 }

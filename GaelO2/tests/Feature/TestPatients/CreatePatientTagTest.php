@@ -35,6 +35,16 @@ class CreatePatientTagTest extends TestCase
         $this->assertContains('DLBCL', $patient['metadata']['tags']);
     }
 
+    public function testCreatePatientTagShouldNotAcceptSpaces()
+    {
+        $currentUserId = AuthorizationTools::actAsAdmin(false);
+        AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $this->study->name);
+
+        $payload =['tag'=>'DLBC L'];
+
+        $this->json('POST', '/api/patients/' . $this->patient->id . '/metadata/tags?studyName=' . $this->studyName, $payload)->assertStatus(400);
+    }
+
     public function testCreatePatientTagShouldBeRefusedExisting()
     {
         $currentUserId = AuthorizationTools::actAsAdmin(false);
@@ -42,7 +52,7 @@ class CreatePatientTagTest extends TestCase
 
         $payload =['tag'=>'Salim'];
 
-        $this->json('POST', '/api/patients/' . $this->patient->id . '/metadata/tags?studyName=' . $this->studyName, $payload)->assertStatus(400);
+        $this->json('POST', '/api/patients/' . $this->patient->id . '/metadata/tags?studyName=' . $this->studyName, $payload)->assertStatus(409);
     }
 
     public function testCreatePatientTagShouldBeRefusedNotSupervisor()
