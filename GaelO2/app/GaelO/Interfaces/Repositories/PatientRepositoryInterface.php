@@ -30,7 +30,8 @@ interface PatientRepositoryInterface
         string $investigatorName,
         int $centerCode,
         string $inclusionStatus,
-        String $studyName
+        string $studyName,
+        ?array $metadata = null
     ): void;
 
     public function updatePatient(
@@ -47,7 +48,8 @@ interface PatientRepositoryInterface
         int $centerCode,
         string $inclusionStatus,
         ?string $withdrawReason,
-        ?string $withdrawDate
+        ?string $withdrawDate,
+        array $metadata
     ): void;
 
 

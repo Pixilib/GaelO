@@ -39,7 +39,8 @@ class ModifyPatientTest extends TestCase
             "inclusionStatus" => "Included",
             "birthDay" => 5,
             "birthMonth" => 12,
-            "birthYear" => 1955
+            "birthYear" => 1955,
+            "metadata" => ['tags'=>['Salim']]
         ];
     }
 
@@ -130,6 +131,33 @@ class ModifyPatientTest extends TestCase
         $this->assertEquals('2011-10-05T00:00:00.000000Z', $updatedPatientEntity['withdraw_date']);
         $this->assertEquals($payload['withdrawReason'], $updatedPatientEntity['withdraw_reason']);
     }
+
+    public function testModifyPatientMetadataShouldFailMissingTagsKey()
+    {
+        $currentUserId = AuthorizationTools::actAsAdmin(false);
+        AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $this->study->name);
+
+        $payload = $this->validPayload;
+        $payload = array_merge($payload, [
+            'metadata' => [],
+        ]);
+        $this->json('PATCH', '/api/patients/' . $this->patient->id . '?studyName=' . $this->studyName, $payload)->assertStatus(400);
+
+    }
+
+    public function testModifyPatientMetadataShouldFailTagsKeyNotArray()
+    {
+        $currentUserId = AuthorizationTools::actAsAdmin(false);
+        AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $this->study->name);
+
+        $payload = $this->validPayload;
+        $payload = array_merge($payload, [
+            'metadata' => ['tags' => 'salim'],
+        ]);
+        $this->json('PATCH', '/api/patients/' . $this->patient->id . '?studyName=' . $this->studyName, $payload)->assertStatus(400);
+
+    }
+
 
     public function testModifyPatientWithdrawForbiddenNoRole()
     {

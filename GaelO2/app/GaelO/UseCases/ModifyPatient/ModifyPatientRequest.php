@@ -20,4 +20,5 @@ class ModifyPatientRequest
     public string $inclusionStatus;
     public ?string $withdrawReason = null;
     public ?string $withdrawDate = null;
+    public ?array $metadata = null;
 }
