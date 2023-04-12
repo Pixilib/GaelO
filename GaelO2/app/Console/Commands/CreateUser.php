@@ -29,9 +29,7 @@ class CreateUser extends Command
      *
      * @return int
      */
-    public function handle(
-        User $user
-    ) {
+    public function handle() {
 
         $email = $this->ask('email');
         $lastname = $this->ask('lastname');

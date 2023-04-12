@@ -30,6 +30,14 @@ abstract class AbstractGaelOStudy
     }
 
     /**
+     * For ancillaries studies, shall return the patients metadata tags for which a review is expected
+     */
+    public function getReviewablePatientsTags() : null|array
+    {
+        return null;
+    }
+
+    /**
      * Facade to instanciate specific study object, if does not exist, return the DefaultGaelOStudy Object
      */
     public static function getSpecificStudyObject(string $studyName): AbstractGaelOStudy

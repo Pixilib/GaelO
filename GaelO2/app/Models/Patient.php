@@ -30,7 +30,8 @@ class Patient extends Model
         'study_name' => 'string',
         'inclusion_status' => InclusionStatusEnum::class,
         'withdraw_reason' => 'string',
-        'withdraw_date' => 'date'
+        'withdraw_date' => 'date',
+        'metadata' => 'array',
     ];
 
 

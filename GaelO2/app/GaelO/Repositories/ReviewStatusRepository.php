@@ -2,7 +2,6 @@
 
 namespace App\GaelO\Repositories;
 
-use App\GaelO\Constants\Constants;
 use App\GaelO\Constants\Enums\ReviewStatusEnum;
 use App\GaelO\Interfaces\Repositories\ReviewStatusRepositoryInterface;
 use App\GaelO\Util;

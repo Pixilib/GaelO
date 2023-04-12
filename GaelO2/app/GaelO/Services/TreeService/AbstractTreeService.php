@@ -46,6 +46,7 @@ abstract class AbstractTreeService
         $patientArray = [];
         foreach ($patientsEntities as $patientEntity) {
             $patient = new PatientEntity();
+            $patient->metadata = $patientEntity['metadata'];
             $patient->code = $patientEntity['code'];
             $patient->id = $patientEntity['id'];
             $patient->fillCenterDetails(CenterEntity::fillFromDBReponseArray($patientEntity['center']));

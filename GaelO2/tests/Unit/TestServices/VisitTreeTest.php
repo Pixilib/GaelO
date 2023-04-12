@@ -111,17 +111,23 @@ class VisitTreeTest extends TestCase
                 'center' => [
                     'code' => 54,
                     'name' => "azc",
-                    'country_code'=> 'FR'
+                    'country_code' => 'FR'
+                ],
+                'metadata' => [
+                    'tags' => []
                 ]
             ],
             [
                 'id' => 33,
-                'code'=> 12333,
+                'code' => 12333,
                 'center_code' => 55,
                 'center' => [
                     'code' => 55,
                     'name' => "aze",
-                    'country_code'=> 'IT'
+                    'country_code' => 'IT'
+                ],
+                'metadata' => [
+                    'tags' => []
                 ]
             ],
         ];

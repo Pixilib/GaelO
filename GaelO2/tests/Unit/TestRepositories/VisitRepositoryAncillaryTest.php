@@ -7,6 +7,7 @@ use App\GaelO\Constants\Enums\InvestigatorFormStateEnum;
 use App\GaelO\Constants\Enums\QualityControlStateEnum;
 use App\GaelO\Constants\Enums\ReviewStatusEnum;
 use App\GaelO\Repositories\VisitRepository;
+use App\GaelO\Services\GaelOStudiesService\DefaultGaelOStudy;
 use App\Models\Patient;
 use App\Models\Review;
 use App\Models\ReviewStatus;
@@ -16,6 +17,7 @@ use App\Models\Visit;
 use App\Models\VisitGroup;
 use App\Models\VisitType;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Mockery;
 
 class VisitRepositoryAncillaryTest extends TestCase
 {
@@ -78,6 +80,52 @@ class VisitRepositoryAncillaryTest extends TestCase
         $this->assertNotEquals($ancillaryvisits[0]['review_status']['review_status'], $originalvisits[0]['review_status']['review_status']);
     }
 
+    public function testGetPatientsVisitWithDefaultReviewStatusWithPatientTagFilteringShouldBeNotNeeded()
+    {
+        $patient = $this->populateVisits()[0];
+        //Mock default study model to return a filter tag
+        $defaultGaelOStudyMock = Mockery::mock(DefaultGaelOStudy::class)->makePartial();
+        $defaultGaelOStudyMock->shouldReceive('getReviewablePatientsTags')->andReturn(['Salim']);
+        app()->instance(DefaultGaelOStudy::class, $defaultGaelOStudyMock);
+
+        $visits = $this->visitRepository->getAllPatientsVisitsWithReviewStatus($patient->id, $this->ancillaryStudyName, false);
+        $visitStatus = array_map(function ($visit) {
+            return $visit['review_status']['review_status'];
+        }, $visits);
+        $this->assertEquals(1, sizeof(array_unique($visitStatus)) );
+        $this->assertEquals(ReviewStatusEnum::NOT_NEEDED->value, $visitStatus[0]);
+    }
+
+    public function testGetPatientsVisitWithDefaultReviewStatusWithPatientTagFilteringShouldBeNeeded()
+    {
+        $patient = $this->populateVisits()[0];
+        $patient->metadata = ['tags'=>['Salim']];
+        $patient->save();
+
+        $firstVisit = $patient->visits[0];
+        $firstVisit->state_quality_control = QualityControlStateEnum::ACCEPTED->value;
+        $firstVisit->image_quality_control = true;
+        $firstVisit->form_quality_comment = true;
+        $firstVisit->save();
+
+        //dd($patient->visits->toArray());
+        //Mock default study model to return a filter tag
+        $defaultGaelOStudyMock = Mockery::mock(DefaultGaelOStudy::class)->makePartial();
+        $defaultGaelOStudyMock->shouldReceive('getReviewablePatientsTags')->andReturn(['Salim']);
+        app()->instance(DefaultGaelOStudy::class, $defaultGaelOStudyMock);
+
+        $visits = $this->visitRepository->getAllPatientsVisitsWithReviewStatus($patient->id, $this->ancillaryStudyName, false);
+        $visitStatus = array_map(function ($visit) {
+            return $visit['review_status']['review_status'];
+        }, $visits);
+        $this->assertEquals(1, sizeof(array_unique($visitStatus)) );
+        $this->assertEquals(ReviewStatusEnum::NOT_DONE->value, $visitStatus[0]);
+        //First visit should be available because QC done
+        $this->assertEquals(true, $visits[0]['review_status']['review_available']);
+        //Other visit should not be available because QC not done
+        $this->assertEquals(false, $visits[1]['review_status']['review_available']);
+    }
+
     public function testGetReviewAvailableVisitFromPatientIdsWithContextAndReviewStatus()
     {
         $patient = $this->populateVisits();
@@ -109,7 +157,6 @@ class VisitRepositoryAncillaryTest extends TestCase
             ReviewStatus::factory()->visitId($visit->id)->reviewAvailable()->studyName($ancillaryStudyName)->create();
         });
 
-        
         //create one form for user for one visit (patient still has one visit awaiting review for user)
         Review::factory()->visitId($visits->first()->id)->reviewForm()->userId(1)->validated()->studyName($ancillaryStudyName)->create();
         $answer1 = $this->visitRepository->isParentPatientHavingOneVisitAwaitingReview($visits->first()->id, $ancillaryStudyName, 1);
@@ -127,5 +174,4 @@ class VisitRepositoryAncillaryTest extends TestCase
         $answer3 = $this->visitRepository->isParentPatientHavingOneVisitAwaitingReview($visits->first()->id, $ancillaryStudyName, 1);
         $this->assertFalse($answer3);
     }
-    
 }
