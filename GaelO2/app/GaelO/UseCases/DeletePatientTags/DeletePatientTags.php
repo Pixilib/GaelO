@@ -44,8 +44,8 @@ class DeletePatientTags
 
             //Add tag in tags of this patient
             if (($key = array_search($tag, $patientEntity['metadata']['tags'])) !== false) {
-                unset($patientEntity['metadata']['tags'][$key]);
-            }else{
+                array_splice($patientEntity['metadata']['tags'], $key, 1);
+            } else {
                 throw new GaelONotFoundException('Not Existing Tag in patient');
             }
 
@@ -84,7 +84,6 @@ class DeletePatientTags
         } catch (Exception $e) {
             throw $e;
         }
-
     }
 
     private function checkAuthorization(int $userId, string $studyName)
