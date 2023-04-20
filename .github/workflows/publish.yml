@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - Gaelo2
+      - Gaelo2-dev
+    tags:
+      - '*'
 
 jobs:
   build:
