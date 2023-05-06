@@ -4,10 +4,16 @@ set -e
 role=${CONTAINER_ROLE:-app}
 env=${APP_ENV:-production}
 migrate=${MIGRATE:-false}
+seed=${SEED:-false}
 
 if [ "$migrate" = "true" ]; then
     echo "Migration..."
     (cd /var/www/html && php artisan migrate --force)
+fi
+
+if [ "$seed" = "true" ]; then
+    echo "Seeding..."
+    (cd /var/www/html && php artisan db:seed)
 fi
 
 #only the app container with production settings will set the cache (ideally in redis)
