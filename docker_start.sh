@@ -13,7 +13,7 @@ fi
 
 if [ "$seed" = "true" ]; then
     echo "Seeding..."
-    (cd /var/www/html && php artisan db:seed)
+    (cd /var/www/html && php artisan db:seed && php artisan db:seed --class=Database\\Seeders\\Studies\\TestSeeder )
 fi
 
 #only the app container with production settings will set the cache (ideally in redis)
