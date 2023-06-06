@@ -21,7 +21,7 @@ class TusService{
 
     public function getFile(string $tusFileId) : string {
 
-        $downloadedFileName = tempnam(sys_get_temp_dir(), 'TusDicom');
+        $downloadedFileName = tempnam(sys_get_temp_dir(), 'TusDicom_');
 
         $resource  = fopen( $downloadedFileName, 'r+');
 

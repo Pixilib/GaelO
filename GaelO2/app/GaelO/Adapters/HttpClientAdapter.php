@@ -123,7 +123,7 @@ class HttpClientAdapter implements HttpClientInterface
         return new Psr7ResponseAdapter($response);
     }
 
-    public function rowRequest(string $method, string $uri, $body, ?array $headers, $ressourceDestination = null): Psr7ResponseInterface
+    public function rowRequest(string $method, string $uri, $body, ?array $headers, $ressourceDestination = null, $httpErrors = true): Psr7ResponseInterface
     {
         $options = [];
 
@@ -145,6 +145,10 @@ class HttpClientAdapter implements HttpClientInterface
 
         if ($ressourceDestination) {
             $options['sink'] = $ressourceDestination;
+        }
+
+        if(!$httpErrors){
+            $options['http_errors'] = false;
         }
 
         $response = $this->client->request($method, $this->address . $uri, $options);

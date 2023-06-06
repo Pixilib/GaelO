@@ -69,11 +69,16 @@ class ValidateDicomUpload
             $currentUserId = $validateDicomUploadRequest->currentUserId;
             $visitId  = $validateDicomUploadRequest->visitId;
 
+            $expectedNumberOfInstances = $validateDicomUploadRequest->numberOfInstances;
+            $originalOrthancId = $validateDicomUploadRequest->originalOrthancId;
+
             $this->checkAuthorization($currentUserId, $visitId, $studyName, $visitContext);
 
             //Make Visit as being upload processing
             $this->visitService->updateUploadStatus(UploadStatusEnum::PROCESSING->value);
 
+            //Set Time Limit at 30min as operation could be really long
+            set_time_limit(1800);
             //Create Temporary folder to work
             $unzipedPath = Util::getUploadTemporaryFolder();
 
@@ -98,14 +103,14 @@ class ValidateDicomUpload
             }
             $this->orthancService->setOrthancServer(false);
 
-            $expectedNumberOfInstances = $validateDicomUploadRequest->numberOfInstances;
-
             $orthancStudyImport = $this->orthancService->importDicomFolder($unzipedPath);
-            if ($expectedNumberOfInstances !== $orthancStudyImport->getNumberOfInstances()) {
-                throw new GaelOValidateDicomException("Imported DICOM not matching announced number of Instances");
-            }
+            $importedNumberOfInstances = $orthancStudyImport->getNumberOfInstances();
             $importedOrthancStudyID = $orthancStudyImport->getStudyOrthancId();
 
+            if ($expectedNumberOfInstances !== $importedNumberOfInstances) {
+                $this->orthancService->deleteFromOrthanc("studies", $importedOrthancStudyID);
+                throw new GaelOValidateDicomException("Imported DICOM not matching announced number of Instances");
+            }
 
             //Anonymize and store new anonymized study Orthanc ID
             $anonymizedOrthancStudyID = $this->orthancService->anonymize(
@@ -130,7 +135,7 @@ class ValidateDicomUpload
             $this->orthancService->setOrthancServer(true);
 
             $statistics = $this->orthancService->getOrthancRessourcesStatistics('studies', $anonymizedOrthancStudyID);
-            if ($statistics['CountInstances'] !== $validateDicomUploadRequest->numberOfInstances) {
+            if ($statistics['CountInstances'] !== $expectedNumberOfInstances) {
                 throw new GaelOValidateDicomException("Error during Peer transfers");
             }
 
@@ -140,7 +145,7 @@ class ValidateDicomUpload
                 $studyName,
                 $currentUserId,
                 $anonymizedOrthancStudyID,
-                $validateDicomUploadRequest->originalOrthancId
+                $originalOrthancId
             );
 
             $studyInstanceUID = $this->registerDicomStudyService->execute();

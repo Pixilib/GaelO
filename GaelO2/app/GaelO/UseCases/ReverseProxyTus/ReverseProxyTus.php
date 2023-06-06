@@ -35,7 +35,7 @@ class ReverseProxyTus
 
         //Make query of TUS
         $this->httpClientInterface->setUrl($this->frameworkInterface::getConfig(SettingsConstants::TUS_URL));
-        $response = $this->httpClientInterface->rowRequest($reverseProxyTusRequest->method, $reverseProxyTusRequest->url, $reverseProxyTusRequest->body, $headers);
+        $response = $this->httpClientInterface->rowRequest($reverseProxyTusRequest->method, $reverseProxyTusRequest->url, $reverseProxyTusRequest->body, $headers, null, false);
 
         //Output response
         $reverseProxyTusResponse->status = $response->getStatusCode();

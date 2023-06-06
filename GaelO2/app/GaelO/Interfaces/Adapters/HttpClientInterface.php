@@ -13,7 +13,7 @@ interface HttpClientInterface
 
     public function setBasicAuthentication(string $login, string $password): void;
 
-    public function rowRequest(string $method, string $uri, $body, ?array $headers): Psr7ResponseInterface;
+    public function rowRequest(string $method, string $uri, $body, ?array $headers, $ressourceDestination = null, $httpErrors = true): Psr7ResponseInterface;
 
     /**
      * Return array of PSR7 response adapter of multiple request, used to sent multiple files to an endpoint
