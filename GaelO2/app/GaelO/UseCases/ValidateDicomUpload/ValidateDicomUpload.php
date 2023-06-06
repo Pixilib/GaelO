@@ -56,10 +56,6 @@ class ValidateDicomUpload
     {
 
         try {
-
-            //Set Time Limit at 30min as operation could be really long
-            set_time_limit(1800);
-
             //Retrieve Visit Context
             $this->visitService->setVisitId($validateDicomUploadRequest->visitId);
             $visitContext = $this->visitService->getVisitContext();
@@ -81,6 +77,8 @@ class ValidateDicomUpload
             //Make Visit as being upload processing
             $this->visitService->updateUploadStatus(UploadStatusEnum::PROCESSING->value);
 
+            //Set Time Limit at 30min as operation could be really long
+            set_time_limit(1800);
             //Create Temporary folder to work
             $unzipedPath = Util::getUploadTemporaryFolder();
 
@@ -106,11 +104,13 @@ class ValidateDicomUpload
             $this->orthancService->setOrthancServer(false);
 
             $orthancStudyImport = $this->orthancService->importDicomFolder($unzipedPath);
-            if ($expectedNumberOfInstances !== $orthancStudyImport->getNumberOfInstances()) {
-                throw new GaelOValidateDicomException("Imported DICOM not matching announced number of Instances");
-            }
+            $importedNumberOfInstances = $orthancStudyImport->getNumberOfInstances();
             $importedOrthancStudyID = $orthancStudyImport->getStudyOrthancId();
 
+            if ($expectedNumberOfInstances !== $importedNumberOfInstances) {
+                $this->orthancService->deleteFromOrthanc("studies", $importedOrthancStudyID);
+                throw new GaelOValidateDicomException("Imported DICOM not matching announced number of Instances");
+            }
 
             //Anonymize and store new anonymized study Orthanc ID
             $anonymizedOrthancStudyID = $this->orthancService->anonymize(

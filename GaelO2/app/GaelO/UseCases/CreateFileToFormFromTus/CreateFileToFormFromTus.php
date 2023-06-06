@@ -79,6 +79,9 @@ class CreateFileToFormFromTus
 
             $this->checkAuthorization($local, $validated, $reviewId, $visitId, $currentUserId, $studyName);
 
+            //Set Time Limit at 30min as operation could be really long
+            set_time_limit(1800);
+
             $file = null;
 
             //Several file, expected ziped dicom upload, unzip and merge in a single zipe
@@ -110,11 +113,13 @@ class CreateFileToFormFromTus
 
                 $this->orthancService->setOrthancServer(false);
                 $orthancStudyImport = $this->orthancService->importDicomFolder($unzipedPath);
-                if ($expectedNumberOfInstances !== $orthancStudyImport->getNumberOfInstances()) {
+                $importedNumberOfInstances = $orthancStudyImport->getNumberOfInstances();
+                $importedOrthancStudyID = $orthancStudyImport->getStudyOrthancId();
+
+                if ($expectedNumberOfInstances !== $importedNumberOfInstances) {
+                    $this->orthancService->deleteFromOrthanc("studies", $importedOrthancStudyID);
                     throw new GaelOValidateDicomException("Imported DICOM not matching announced number of Instances");
                 }
-
-                $importedOrthancStudyID = $orthancStudyImport->getStudyOrthancId();
 
                 $tempFileLocation = tempnam(ini_get('upload_tmp_dir'), 'TMPZIP_');
                 $this->orthancService->getZipStreamToFile([$importedOrthancStudyID], $tempFileLocation);
@@ -124,8 +129,7 @@ class CreateFileToFormFromTus
                 if (sizeof($tusIds) === 1) {
                     $file = $this->tusService->getFile($tusIds[0]);
                     $this->tusService->deleteFile($tusIds[0]);
-                }
-                else throw new GaelOBadRequestException("A single TUS Id is expected for non-DICOM upload");
+                } else throw new GaelOBadRequestException("A single TUS Id is expected for non-DICOM upload");
             }
 
             //Send file to associated file
