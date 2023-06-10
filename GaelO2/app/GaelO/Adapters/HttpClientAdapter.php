@@ -5,9 +5,11 @@ namespace App\GaelO\Adapters;
 use App\GaelO\Interfaces\Adapters\HttpClientInterface;
 use App\GaelO\Interfaces\Adapters\Psr7ResponseInterface;
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Pool;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
+use Illuminate\Support\Facades\Log;
 
 class HttpClientAdapter implements HttpClientInterface
 {
@@ -67,8 +69,15 @@ class HttpClientAdapter implements HttpClientInterface
             'fulfilled' => function (Response $response, $index) use (&$responseArray) {
                 $responseArray[] = new Psr7ResponseAdapter($response);
             },
-            'rejected' => function ($reason, $index) {
+            'rejected' => function (RequestException $exception, $index) {
+                $reason = "Error sending dicom to orthanc";
+                if ($exception->hasResponse()) {
+                    $reason = $exception->getResponse()->getReasonPhrase();
+                } else {
+                    $reason = $exception->getMessage();
+                }
                 // this is delivered each failed request
+                Log::error('DICOM Import Failed in Orthanc Temporary ' + $reason);
             },
         ]);
 
@@ -147,7 +156,7 @@ class HttpClientAdapter implements HttpClientInterface
             $options['sink'] = $ressourceDestination;
         }
 
-        if(!$httpErrors){
+        if (!$httpErrors) {
             $options['http_errors'] = false;
         }
 
