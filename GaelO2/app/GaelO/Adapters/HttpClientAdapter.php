@@ -77,7 +77,7 @@ class HttpClientAdapter implements HttpClientInterface
                     $reason = $exception->getMessage();
                 }
                 // this is delivered each failed request
-                Log::error('DICOM Import Failed in Orthanc Temporary: ' + $reason);
+                Log::error('DICOM Import Failed in Orthanc Temporary: '.$reason. ' index: '.$index);
             },
         ]);
 
