@@ -3,6 +3,8 @@
 namespace App\GaelO\UseCases\GetPossibleUpload;
 
 use App\GaelO\Constants\Constants;
+use App\GaelO\Entities\PatientEntity;
+use App\GaelO\Entities\VisitEntity;
 use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\UserRepositoryInterface;
@@ -36,20 +38,11 @@ class GetPossibleUpload
             $answerArray = [];
 
             foreach ($visitsEntities as $visit) {
-                $item['patientId'] = $visit['patient_id'];
-                $item['patientCode'] = $visit['patient']['code'];
-                $item['patientFirstname'] = $visit['patient']['firstname'];
-                $item['patientLastname'] = $visit['patient']['lastname'];
-                $item['patientSex'] = $visit['patient']['gender'];
-                $item['patientDOB'] = $this->formatBirthDateUS($visit['patient']['birth_month'], $visit['patient']['birth_day'], $visit['patient']['birth_year']);
-                $item['visitDate'] = date('m-d-Y', strtotime($visit['visit_date']));
-                $item['visitModality'] = $visit['visit_type']['visit_group']['modality'];
-                $item['visitType'] = $visit['visit_type']['name'];
-                $item['visitTypeOrder'] = $visit['visit_type']['order'];
-                $item['visitTypeID'] = $visit['visit_type']['id'];
-                $item['visitID'] = $visit['id'];
-                $item['dicomConstraints'] = $visit['visit_type']['dicom_constraints'];
-                $answerArray[] = $item;
+                $visitEntity = VisitEntity::fillFromDBReponseArray($visit);
+                $visitEntity->setVisitContext($visit['visit_type']['visit_group'], $visit['visit_type']);
+                $patientEntity = PatientEntity::fillFromDBReponseArray($visit['patient']);
+                $visitEntity->setPatientEntity($patientEntity);
+                $answerArray[] = $visitEntity;
             }
 
             $getPossibleUploadResponse->body = $answerArray;
@@ -75,18 +68,5 @@ class GetPossibleUpload
         }
     }
 
-    private function formatBirthDateUS(?int $month, ?int $day, ?int $year): string
-    {
-        if (empty($month)) {
-            $month = 0;
-        }
-        if (empty($day)) {
-            $day = 0;
-        }
-        if (empty($year)) {
-            $year = 0;
-        }
 
-        return sprintf("%02d", $month) . '-' . sprintf("%02d", $day) . '-' . $year;
-    }
 }
