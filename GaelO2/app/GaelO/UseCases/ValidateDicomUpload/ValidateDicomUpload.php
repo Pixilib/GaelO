@@ -238,6 +238,7 @@ class ValidateDicomUpload
             $errorMessage
         );
 
-        if (is_dir($unzipedPath)) Util::recursiveDirectoryDelete($unzipedPath);
+        //TODO temporary disable remove of unzip path
+        //if (is_dir($unzipedPath)) Util::recursiveDirectoryDelete($unzipedPath);
     }
 }
