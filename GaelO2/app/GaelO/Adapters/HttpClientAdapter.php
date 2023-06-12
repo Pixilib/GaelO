@@ -67,7 +67,7 @@ class HttpClientAdapter implements HttpClientInterface
         $pool = new Pool($this->client, $requests($files), [
             'concurrency' => 5,
             'fulfilled' => function (Response $response, $index) use (&$responseArray) {
-                $responseArray[] = new Psr7ResponseAdapter($response);
+                $responseArray[$index] = new Psr7ResponseAdapter($response);
             },
             'rejected' => function (RequestException $exception, $index) {
                 $reason = "Error sending dicom to orthanc";
@@ -86,7 +86,8 @@ class HttpClientAdapter implements HttpClientInterface
 
         // Force the pool of requests to complete.
         $promise->wait();
-
+        //Remove empty places of the response array (in case of failed request)
+        $responseArray = array_filter($responseArray);
         return $responseArray;
     }
 
