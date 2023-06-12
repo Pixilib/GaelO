@@ -71,8 +71,10 @@ class HttpClientAdapter implements HttpClientInterface
             },
             'rejected' => function (RequestException $exception, $index) {
                 $reason = "Error sending dicom to orthanc";
+                
                 if ($exception->hasResponse()) {
                     $reason = $exception->getResponse()->getStatusCode();
+                    Log::error($exception->getResponse()->getBody()->getContents());
                 } else {
                     $reason = $exception->getMessage();
                 }
