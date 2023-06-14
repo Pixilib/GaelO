@@ -131,4 +131,9 @@ class Util
     {
         return preg_match('/^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)?$/', $version);
     }
+
+    public static function isUrlSafeString(string $value) :bool
+    {
+        return preg_match('/^[a-zA-Z0-9_-]*$/', $value);
+    }
 }
