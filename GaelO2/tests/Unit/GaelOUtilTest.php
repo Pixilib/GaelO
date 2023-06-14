@@ -23,4 +23,11 @@ class GaelOUtilTest extends TestCase
         $shouldFalse = Util::isSemanticVersioning('1.2');
         $this->assertFalse($shouldFalse);
     }
+
+    public function testUrlSafeString(){
+        $shouldTrue = Util::isUrlSafeString('12AGgfg_-');
+        $this->assertTrue($shouldTrue);
+        $shouldFalse = Util::isUrlSafeString("#'()");
+        $this->assertFalse($shouldFalse);
+    }
 }

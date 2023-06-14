@@ -5,9 +5,11 @@ namespace App\GaelO\Adapters;
 use App\GaelO\Interfaces\Adapters\HttpClientInterface;
 use App\GaelO\Interfaces\Adapters\Psr7ResponseInterface;
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Pool;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
+use Illuminate\Support\Facades\Log;
 
 class HttpClientAdapter implements HttpClientInterface
 {
@@ -65,10 +67,19 @@ class HttpClientAdapter implements HttpClientInterface
         $pool = new Pool($this->client, $requests($files), [
             'concurrency' => 5,
             'fulfilled' => function (Response $response, $index) use (&$responseArray) {
-                $responseArray[] = new Psr7ResponseAdapter($response);
+                $responseArray[$index] = new Psr7ResponseAdapter($response);
             },
-            'rejected' => function ($reason, $index) {
+            'rejected' => function (RequestException $exception, $index) {
+                $reason = "Error sending dicom to orthanc";
+                
+                if ($exception->hasResponse()) {
+                    $reason = $exception->getResponse()->getStatusCode();
+                    Log::error($exception->getResponse()->getBody()->getContents());
+                } else {
+                    $reason = $exception->getMessage();
+                }
                 // this is delivered each failed request
+                Log::error('DICOM Import Failed in Orthanc Temporary: '.$reason. ' index: '.$index);
             },
         ]);
 
@@ -77,7 +88,8 @@ class HttpClientAdapter implements HttpClientInterface
 
         // Force the pool of requests to complete.
         $promise->wait();
-
+        //Remove empty places of the response array (in case of failed request)
+        $responseArray = array_filter($responseArray);
         return $responseArray;
     }
 
@@ -147,7 +159,7 @@ class HttpClientAdapter implements HttpClientInterface
             $options['sink'] = $ressourceDestination;
         }
 
-        if(!$httpErrors){
+        if (!$httpErrors) {
             $options['http_errors'] = false;
         }
 

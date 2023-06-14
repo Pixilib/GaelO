@@ -109,7 +109,7 @@ class ValidateDicomUpload
 
             if ($expectedNumberOfInstances !== $importedNumberOfInstances) {
                 $this->orthancService->deleteFromOrthanc("studies", $importedOrthancStudyID);
-                throw new GaelOValidateDicomException("Imported DICOM not matching announced number of Instances");
+                throw new GaelOValidateDicomException("Imported DICOM (".$importedNumberOfInstances.") not matching announced number of Instances (".$expectedNumberOfInstances.")");
             }
 
             //Anonymize and store new anonymized study Orthanc ID
@@ -238,6 +238,7 @@ class ValidateDicomUpload
             $errorMessage
         );
 
-        if (is_dir($unzipedPath)) Util::recursiveDirectoryDelete($unzipedPath);
+        //TODO temporary disable remove of unzip path
+        //if (is_dir($unzipedPath)) Util::recursiveDirectoryDelete($unzipedPath);
     }
 }
