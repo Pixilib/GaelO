@@ -122,7 +122,7 @@ class CreateFileToFormFromTus
                 }
 
                 $tempFileLocation = tempnam(ini_get('upload_tmp_dir'), 'TMPZIP_');
-                $this->orthancService->getZipStreamToFile([$importedOrthancStudyID], $tempFileLocation);
+                $this->orthancService->getZipStreamToFile([$importedOrthancStudyID], $tempFileLocation, Constants::IMPLICIT_VR_TSUID);
                 $file = $tempFileLocation;
             } else {
                 //Only one file

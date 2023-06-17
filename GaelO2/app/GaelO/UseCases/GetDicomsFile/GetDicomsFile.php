@@ -91,6 +91,6 @@ class GetDicomsFile
 
     public function outputStream()
     {
-        $this->orthancService->getOrthancZipStream($this->orthancSeriesIDs);
+        $this->orthancService->getOrthancZipStream($this->orthancSeriesIDs, Constants::IMPLICIT_VR_TSUID);
     }
 }

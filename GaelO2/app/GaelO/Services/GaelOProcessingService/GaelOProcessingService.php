@@ -53,10 +53,10 @@ class GaelOProcessingService
     /**
      * Fetch zipped dicom and transmit it to GaelO Processing
      */
-    public function sendDicom(array $orthancID): Psr7ResponseInterface
+    public function sendDicom(array $orthancID, ?string $transferSyntaxUID): Psr7ResponseInterface
     {
         // Fetch dicom from Orthanc
-        $psr7Response = $this->orthancService->getOrthancZipStreamAsString($orthancID);
+        $psr7Response = $this->orthancService->getOrthancZipStreamAsString($orthancID, $transferSyntaxUID);
         // Send Dicom to GaelO Processing
         $response = $this->httpClientInterface->rowRequest('POST', "/app/dicom", $psr7Response->getBody(), ['content-type' => 'application/zip', 'Accept' => 'application/json']);
 
