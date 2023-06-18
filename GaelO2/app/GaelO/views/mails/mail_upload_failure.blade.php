@@ -8,5 +8,6 @@
     Study : {{$study}}<br>
     zipPath : {{$zipPath}}<br>
     userId: {{$userId}}<br>
+    userEmail: {{$userEmail}}<br>
     error  : {{$errorMessage}}<br>
 @endsection
