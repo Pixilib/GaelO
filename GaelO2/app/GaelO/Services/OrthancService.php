@@ -399,6 +399,13 @@ class OrthancService
         $this->httpClientInterface->requestStreamResponseToFile('POST', '/tools/create-archive', $ressource, $headers, $body);
     }
 
+    public function getOrthancNiftiStream(string $seriesOrthancID, bool $compressed)
+    {
+        $uri = '/series/' . $seriesOrthancID . '/nifti';
+        if ($compressed) $uri = $uri . '?compress';
+        $this->httpClientInterface->streamResponse('GET', $uri);
+    }
+
     /**
      * Send folder content to orthanc, and treat responses to output the uploaded studyOrthancId
      */
