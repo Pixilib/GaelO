@@ -21,7 +21,7 @@ class VisitReport
         $this->seriesReports = $seriesReports;
     }
 
-    public function getSeriesReports() :array
+    public function getSeriesReports(): array
     {
         return $this->seriesReports;
     }
@@ -65,11 +65,13 @@ class VisitReport
     public function toArray()
     {
         return [
-            'studyDetails' => $this->seriesReports[0]->getStudyDetails(),
-            'Number Of Instances' => array_sum(array_map(function (SeriesReport $series) {
-                return $series->getNumberOfInstances();
-            }, $this->seriesReports)),
-            'Number Of Series' => sizeof($this->seriesReports),
+            'studyDetails' => [
+                ...$this->seriesReports[0]->getStudyDetails(),
+                'Number Of Instances' => array_sum(array_map(function (SeriesReport $series) {
+                    return $series->getNumberOfInstances();
+                }, $this->seriesReports)),
+                'Number Of Series' => sizeof($this->seriesReports)
+            ],
             'investigatorForm' => $this->investigatorForm,
             'studyName' => $this->studyName,
             'visitName' => $this->visitName,
