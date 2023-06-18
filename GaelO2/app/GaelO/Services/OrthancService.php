@@ -354,15 +354,27 @@ class OrthancService
         return $studyOrthanc;
     }
 
-    public function getOrthancZipStream(array $seriesOrthancIDs)
+    public function getOrthancZipStream(array $seriesOrthancIDs, ?string $transfertSyntaxUID = null)
     {
-        $payload = array('Transcode' => '1.2.840.10008.1.2', 'Resources' => $seriesOrthancIDs);
+        $payload = [
+            'Resources' => $seriesOrthancIDs
+        ];
+
+        if ($transfertSyntaxUID) {
+            $payload['Transcode'] = $transfertSyntaxUID;
+        }
+
         $this->httpClientInterface->streamResponse('POST', '/tools/create-archive', $payload);
     }
 
-    public function getOrthancZipStreamAsString(array $seriesOrthancIDs): Psr7ResponseAdapter
+    public function getOrthancZipStreamAsString(array $seriesOrthancIDs, ?string $transfertSyntaxUID = null): Psr7ResponseAdapter
     {
-        $payload = array('Transcode' => '1.2.840.10008.1.2', 'Resources' => $seriesOrthancIDs);
+        $payload = [
+            'Resources' => $seriesOrthancIDs
+        ];
+        if ($transfertSyntaxUID) {
+            $payload['Transcode'] = $transfertSyntaxUID;
+        }
         return $this->httpClientInterface->requestJson('POST', '/tools/create-archive', $payload);
     }
 
@@ -371,17 +383,27 @@ class OrthancService
      * @param array $uidList
      * @return resource temporary file path
      */
-    public function getZipStreamToFile(array $orthancIDs, $ressource)
+    public function getZipStreamToFile(array $orthancIDs, $ressource, ?string $transfertSyntaxUID = null)
     {
 
-        $body = json_encode([
-            'Transcode' => '1.2.840.10008.1.2',
+        $body = [
             'Resources' => $orthancIDs
-        ]);
+        ];
+
+        if ($transfertSyntaxUID) {
+            $body['Transcode'] = $transfertSyntaxUID;
+        }
 
         $headers = ['content-type' => 'application/json', 'Accept' => 'application/zip'];
 
-        $this->httpClientInterface->requestStreamResponseToFile('POST', '/tools/create-archive', $ressource, $headers);
+        $this->httpClientInterface->requestStreamResponseToFile('POST', '/tools/create-archive', $ressource, $headers, $body);
+    }
+
+    public function getOrthancNiftiStream(string $seriesOrthancID, bool $compressed)
+    {
+        $uri = '/series/' . $seriesOrthancID . '/nifti';
+        if ($compressed) $uri = $uri . '?compress';
+        $this->httpClientInterface->streamResponse('GET', $uri);
     }
 
     /**

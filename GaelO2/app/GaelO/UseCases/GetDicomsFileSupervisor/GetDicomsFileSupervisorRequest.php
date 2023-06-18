@@ -7,4 +7,5 @@ class GetDicomsFileSupervisorRequest
     public string $studyName;
     public int $currentUserId;
     public array $seriesInstanceUID = [];
+    public ?string $transferSyntaxUID = null;
 }

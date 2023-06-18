@@ -129,9 +129,9 @@ class HttpClientAdapter implements HttpClientInterface
         }
     }
 
-    public function requestStreamResponseToFile(string $method, string $uri, $ressource, array $headers): Psr7ResponseInterface
+    public function requestStreamResponseToFile(string $method, string $uri, $ressource, array $headers, array $body = []): Psr7ResponseInterface
     {
-        $response = $this->client->request($method, $this->address . $uri, ['sink' => $ressource, 'auth' => [$this->login, $this->password], 'headers' => $headers]);
+        $response = $this->client->request($method, $this->address . $uri, ['sink' => $ressource, 'auth' => [$this->login, $this->password], 'headers' => $headers, 'json' => $body]);
         return new Psr7ResponseAdapter($response);
     }
 
