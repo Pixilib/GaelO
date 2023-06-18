@@ -158,6 +158,7 @@ Route::middleware(['auth:sanctum', 'verified', 'activated', 'onboarded'])->group
     Route::post('dicom-study/{studyInstanceUID}/activate', [DicomController::class, 'reactivateStudy']);
     Route::get('visits/{id}/dicoms', [DicomController::class, 'getVisitDicoms']);
 
+
     //Ask Unlock route
     Route::post('visits/{id}/ask-unlock', [AskUnlockController::class, 'askUnlock']);
 
@@ -193,6 +194,7 @@ Route::middleware(['auth:sanctum', 'verified', 'activated', 'onboarded'])->group
     Route::get('studies/{studyName}/export', [StudyController::class, 'exportStudyData']);
     Route::post('studies/{studyName}/dicom-series/file', [DicomController::class, 'getSupervisorDicomsFile']);
     Route::get('reviews/{id}/file/{key}', [ReviewController::class, 'getReviewFile']);
+    Route::get('dicom-series/{seriesInstanceUID}/nifti', [DicomController::class, 'getNiftiSeries']);
 });
 
 

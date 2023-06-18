@@ -14,6 +14,9 @@ use App\GaelO\UseCases\GetDicomsFile\GetDicomsFileResponse;
 use App\GaelO\UseCases\GetDicomsFileSupervisor\GetDicomsFileSupervisor;
 use App\GaelO\UseCases\GetDicomsFileSupervisor\GetDicomsFileSupervisorRequest;
 use App\GaelO\UseCases\GetDicomsFileSupervisor\GetDicomsFileSupervisorResponse;
+use App\GaelO\UseCases\GetNiftiFileSupervisor\GetNiftiFileSupervisor;
+use App\GaelO\UseCases\GetNiftiFileSupervisor\GetNiftiFileSupervisorRequest;
+use App\GaelO\UseCases\GetNiftiFileSupervisor\GetNiftiFileSupervisorResponse;
 use App\GaelO\UseCases\ReactivateDicomSeries\ReactivateDicomSeries;
 use App\GaelO\UseCases\ReactivateDicomSeries\ReactivateDicomSeriesRequest;
 use App\GaelO\UseCases\ReactivateDicomSeries\ReactivateDicomSeriesResponse;
@@ -133,4 +136,25 @@ class DicomController extends Controller
         }
     }
 
+    public function getNiftiSeries(Request $request, GetNiftiFileSupervisor $getNiftiFileSupervisor, GetNiftiFileSupervisorRequest $getNiftiFileSupervisorRequest, GetNiftiFileSupervisorResponse $getNiftiFileSupervisorResponse, string $seriesInstanceUID)
+    {
+
+        $currentUser = Auth::user();
+        $queryParam = $request->query();
+
+        $getNiftiFileSupervisorRequest->currentUserId = $currentUser['id'];
+        $getNiftiFileSupervisorRequest->studyName = $queryParam['studyName'];
+        $getNiftiFileSupervisorRequest->seriesInstanceUID = $seriesInstanceUID;
+        $getNiftiFileSupervisorRequest->compress = array_key_exists('compress', $queryParam);
+        $getNiftiFileSupervisor->execute($getNiftiFileSupervisorRequest, $getNiftiFileSupervisorResponse);
+
+        if ($getNiftiFileSupervisorResponse->status === 200) {
+            return response()->streamDownload(function () use (&$getNiftiFileSupervisor) {
+                $getNiftiFileSupervisor->outputStream();
+            }, $getNiftiFileSupervisorResponse->filename);
+        } else {
+            return response()->json($getNiftiFileSupervisorResponse->body)
+                ->setStatusCode($getNiftiFileSupervisorResponse->status, $getNiftiFileSupervisorResponse->statusText);
+        }
+    }
 }

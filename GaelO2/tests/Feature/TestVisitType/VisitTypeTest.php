@@ -75,12 +75,11 @@ class VisitTypeTest extends TestCase
         $study = Study::factory()->create();
         $patient = Patient::factory()->studyName($study->name)->create();
         $visitGroup = VisitGroup::factory()->studyName($study->name)->create();
-        $visitType = VisitType::factory()->visitGroupId($visitGroup->id)->create();
+        $visitType = VisitType::factory()->name('Baseline')->order(0)->visitGroupId($visitGroup->id)->create();
         $visit = Visit::factory()->patientId($patient->id)->visitTypeId($visitType->id)->create();
 
         $payload = $this->payload;
-        //Sk ici a eu un random fail sur un conflict, a surveiller
-        $this->json('POST', 'api/visit-groups/'.$visit->visitType->visitGroup->id.'/visit-types', $payload)->assertStatus(403);
+        $this->json('POST', 'api/visit-groups/'.$visit->visitType->visitGroup->id.'/visit-types', $payload)->assertStatus(409);
     }
 
     public function testCreateVisitTypeForbiddenNotAdmin()

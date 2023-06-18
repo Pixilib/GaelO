@@ -39,7 +39,7 @@ class CreatePatientTags
             $studyName = $createPatientTagsRequest->studyName;
 
             if (!Util::isUrlSafeString($tag)) {
-                throw new GaelOBadRequestException('Tag shall contain only alfa numerical or _/- characters');
+                throw new GaelOBadRequestException('Tag shall contain only alphanumeric or _/- characters');
             }
 
             $patientEntity = $this->patientRepositoryInterface->find($patientId);

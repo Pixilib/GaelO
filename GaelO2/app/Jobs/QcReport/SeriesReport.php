@@ -22,7 +22,6 @@ class SeriesReport
     private $matrixSize;
     private $patientPosition;
     private $patientOrientation;
-    private $numberOfInstances;
     private $scanningSequence;
     private $sequenceVariant;
     private $echoTime;
@@ -159,6 +158,7 @@ class SeriesReport
     {
 
         $instanceData = $this->instanceReport ? $this->instanceReport->toArray() : [];
+        $numberOfInstances = $this->getNumberOfInstances();
 
         return [
             'Series Description' => $this->seriesDescription ?? null,
@@ -173,7 +173,7 @@ class SeriesReport
             'Matrix Size' => $this->matrixSize ?? null,
             'Patient position' => $this->patientPosition ?? null,
             'Patient orientation' => $this->patientOrientation ?? null,
-            'Number of instances' => $this->numberOfInstances ?? null,
+            'Number of instances' => $numberOfInstances,
             'Scanning sequence' => $this->scanningSequence ?? null,
             'Sequence variant' => $this->sequenceVariant ?? null,
             'Echo Time (ms)' => $this->echoTime ?? null,
