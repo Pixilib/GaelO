@@ -19,6 +19,8 @@ use App\Http\Controllers\VisitController;
 use App\Http\Controllers\VisitGroupController;
 use App\Http\Controllers\VisitTypeController;
 use App\Http\Requests\SignedEmailVerificationRequest;
+use App\Models\Country;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 /*
 |--------------------------------------------------------------------------
@@ -232,3 +234,16 @@ Route::get('email/verify/{id}/{hash}', function (SignedEmailVerificationRequest 
 
 //Magic link route
 Route::get('magic-link/{id}', [AuthController::class, 'getMagicLink'])->name('magic-link');
+
+//Public probs
+Route::get('liveness', function () {
+    return 'ok';
+});
+
+Route::get('readiness', function () {
+    $check = Country::count();
+    if ($check > 0) {
+        return 'ok';
+    }
+    return response('', 500);
+});
