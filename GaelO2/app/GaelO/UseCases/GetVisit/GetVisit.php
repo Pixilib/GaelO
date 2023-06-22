@@ -54,7 +54,7 @@ class GetVisit
             
             //Add Patient details for supervisor
             if($role === Constants::ROLE_SUPERVISOR){
-                $patientEntity = PatientEntity::fillMinimalFromDBReponseArray($visitContext['patient']);
+                $patientEntity = PatientEntity::fillFromDBReponseArray($visitContext['patient']);
                 $responseEntity->setPatientEntity($patientEntity);
             }
 
