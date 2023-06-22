@@ -19,6 +19,7 @@ use App\Http\Controllers\VisitController;
 use App\Http\Controllers\VisitGroupController;
 use App\Http\Controllers\VisitTypeController;
 use App\Http\Requests\SignedEmailVerificationRequest;
+use App\Models\Country;
 use Illuminate\Support\Facades\Route;
 /*
 |--------------------------------------------------------------------------
@@ -213,6 +214,19 @@ Route::middleware(['throttle:public-apis'])->group(function () {
     //Login Route
     Route::post('login', [AuthController::class, 'login'])->name('login');
     Route::post('tools/forgot-password', [UserController::class, 'forgotPassword'])->name('password.email');
+
+    //Livness (check alive)
+    Route::get('liveness', function () {
+        return 'ok';
+    });
+    //Readiness (check database)
+    Route::get('readiness', function () {
+        $check = Country::count();
+        if ($check > 0) {
+            return 'ok';
+        }
+        return response('', 500);
+    });
 });
 
 
