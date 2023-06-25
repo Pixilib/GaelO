@@ -56,6 +56,8 @@ class ValidateDicomUpload
     {
 
         try {
+            //Initialize unzipPath to avoid null pointer in catch
+            $unzipedPath = null;
             //Retrieve Visit Context
             $this->visitService->setVisitId($validateDicomUploadRequest->visitId);
             $visitContext = $this->visitService->getVisitContext();
@@ -218,7 +220,7 @@ class ValidateDicomUpload
      * Write Failure in Tracker
      * Send warning emails to administrators
      */
-    private function handleImportException(string $errorMessage, int $visitId, string $patientId, string $visitType,  string $unzipedPath, string $studyName, int $userId)
+    private function handleImportException(string $errorMessage, int $visitId, string $patientId, string $visitType,  ?string $unzipedPath, string $studyName, int $userId)
     {
 
         $this->visitService->updateUploadStatus(UploadStatusEnum::NOT_DONE->value);
