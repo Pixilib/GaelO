@@ -224,7 +224,7 @@ class MailServices
         string $patientId,
         string $visitType,
         string $studyName,
-        string $zipPath,
+        ?string $zipPath,
         int $userId,
         string $errorMessage
     ) {
@@ -235,7 +235,7 @@ class MailServices
             'patientId' => $patientId,
             'visitType' => $visitType,
             'study' => $studyName,
-            'zipPath' => $zipPath,
+            'zipPath' => $zipPath ?? "None",
             'userId' => $userId,
             'userEmail' => $this->getUserEmail($userId),
             'errorMessage' => $errorMessage
