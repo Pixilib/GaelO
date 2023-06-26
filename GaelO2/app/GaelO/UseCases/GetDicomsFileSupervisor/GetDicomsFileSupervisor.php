@@ -21,6 +21,8 @@ class GetDicomsFileSupervisor
     private OrthancService $orthancService;
     private VisitRepositoryInterface $visitRepositoryInterface;
     private StudyRepositoryInterface $studyRepositoryInterface;
+    private array $orthancSeriesIDs;
+    private ?string $transferSyntaxUID;
 
     public function __construct(
         OrthancService $orthancService,
@@ -45,6 +47,9 @@ class GetDicomsFileSupervisor
             if (empty($getDicomsFileSupervisorRequest->seriesInstanceUID)) {
                 throw new GaelOBadRequestException('Missing Series Instance UID');
             }
+
+            //store requested TransferSyntaxUID
+            $this->transferSyntaxUID = $getDicomsFileSupervisorRequest->transferSyntaxUID;
 
             //Get Related visit ID of requested seriesInstanceUID
             $visitIds = $this->dicomSeriesRepositoryInterface->getRelatedVisitIdFromSeriesInstanceUID($getDicomsFileSupervisorRequest->seriesInstanceUID, true);
@@ -105,6 +110,6 @@ class GetDicomsFileSupervisor
 
     public function outputStream()
     {
-        $this->orthancService->getOrthancZipStream($this->orthancSeriesIDs);
+        $this->orthancService->getOrthancZipStream($this->orthancSeriesIDs, $this->transferSyntaxUID);
     }
 }

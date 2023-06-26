@@ -10,6 +10,7 @@ use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\PatientRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
 use App\GaelO\Services\AuthorizationService\AuthorizationUserService;
+use App\GaelO\Util;
 use Exception;
 
 class CreatePatientTags
@@ -37,8 +38,8 @@ class CreatePatientTags
             $tag = $createPatientTagsRequest->tag;
             $studyName = $createPatientTagsRequest->studyName;
 
-            if (str_contains($tag, ' ')) {
-                throw new GaelOBadRequestException('Tag shall not contain spaces');
+            if (!Util::isUrlSafeString($tag)) {
+                throw new GaelOBadRequestException('Tag shall contain only alphanumeric or _/- characters');
             }
 
             $patientEntity = $this->patientRepositoryInterface->find($patientId);

@@ -75,7 +75,7 @@ class ValidateDicomUpload
             $originalOrthancId = $validateDicomUploadRequest->originalOrthancId;
 
             $this->checkAuthorization($currentUserId, $visitId, $studyName, $visitContext);
-
+            
             //Make Visit as being upload processing
             $this->visitService->updateUploadStatus(UploadStatusEnum::PROCESSING->value);
 
@@ -83,7 +83,7 @@ class ValidateDicomUpload
             set_time_limit(1800);
             //Create Temporary folder to work
             $unzipedPath = Util::getUploadTemporaryFolder();
-
+            
             //Get uploaded Zips from TUS and upzip it in a temporary folder
             foreach ($validateDicomUploadRequest->uploadedFileTusId as $tusFileId) {
                 $tusTempZip = $this->tusService->getFile($tusFileId);

@@ -67,4 +67,5 @@ class Constants
     const ORTHANC_PATIENTS_LEVEL = "patients";
     const ORTHANC_STUDIES_LEVEL = "studies";
     const ORTHANC_SERIES_LEVEL = "series";
+    const IMPLICIT_VR_TSUID = '1.2.840.10008.1.2';
 }

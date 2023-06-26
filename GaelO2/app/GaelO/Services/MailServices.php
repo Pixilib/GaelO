@@ -237,6 +237,7 @@ class MailServices
             'study' => $studyName,
             'zipPath' => $zipPath ?? "None",
             'userId' => $userId,
+            'userEmail' => $this->getUserEmail($userId),
             'errorMessage' => $errorMessage
         ];
 

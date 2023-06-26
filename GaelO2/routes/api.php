@@ -19,6 +19,7 @@ use App\Http\Controllers\VisitController;
 use App\Http\Controllers\VisitGroupController;
 use App\Http\Controllers\VisitTypeController;
 use App\Http\Requests\SignedEmailVerificationRequest;
+use App\Models\Country;
 use Illuminate\Support\Facades\Route;
 /*
 |--------------------------------------------------------------------------
@@ -158,6 +159,7 @@ Route::middleware(['auth:sanctum', 'verified', 'activated', 'onboarded'])->group
     Route::post('dicom-study/{studyInstanceUID}/activate', [DicomController::class, 'reactivateStudy']);
     Route::get('visits/{id}/dicoms', [DicomController::class, 'getVisitDicoms']);
 
+
     //Ask Unlock route
     Route::post('visits/{id}/ask-unlock', [AskUnlockController::class, 'askUnlock']);
 
@@ -193,6 +195,7 @@ Route::middleware(['auth:sanctum', 'verified', 'activated', 'onboarded'])->group
     Route::get('studies/{studyName}/export', [StudyController::class, 'exportStudyData']);
     Route::post('studies/{studyName}/dicom-series/file', [DicomController::class, 'getSupervisorDicomsFile']);
     Route::get('reviews/{id}/file/{key}', [ReviewController::class, 'getReviewFile']);
+    Route::get('dicom-series/{seriesInstanceUID}/nifti', [DicomController::class, 'getNiftiSeries']);
 });
 
 
@@ -211,6 +214,19 @@ Route::middleware(['throttle:public-apis'])->group(function () {
     //Login Route
     Route::post('login', [AuthController::class, 'login'])->name('login');
     Route::post('tools/forgot-password', [UserController::class, 'forgotPassword'])->name('password.email');
+
+    //Livness (check alive)
+    Route::get('liveness', function () {
+        return 'ok';
+    });
+    //Readiness (check database)
+    Route::get('readiness', function () {
+        $check = Country::count();
+        if ($check > 0) {
+            return 'ok';
+        }
+        return response('', 500);
+    });
 });
 
 
