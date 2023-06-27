@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature\TestDicoms;
+namespace Tests\Feature\TestNiftis;
 
 use App\GaelO\Constants\Constants;
 use App\Models\DicomSeries;
