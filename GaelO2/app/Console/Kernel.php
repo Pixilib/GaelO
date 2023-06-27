@@ -34,8 +34,8 @@ class Kernel extends ConsoleKernel
         $schedule->call(function () {
             Log::info("Scheduler Probe");
         })
-        ->everyHour()
-        ->sentryMonitor('GaelO-Scheduler'); 
+        ->hourly()
+        ->sentryMonitor('gaelo-scheduler'); 
     }
 
     /**
