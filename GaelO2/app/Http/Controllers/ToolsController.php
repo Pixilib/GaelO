@@ -11,6 +11,9 @@ use App\GaelO\UseCases\GetPatientsVisitsInStudy\GetPatientsVisitsInStudyResponse
 use App\GaelO\UseCases\FindUser\FindUser;
 use App\GaelO\UseCases\FindUser\FindUserRequest;
 use App\GaelO\UseCases\FindUser\FindUserResponse;
+use App\GaelO\UseCases\GetReadiness\GetReadiness;
+use App\GaelO\UseCases\GetReadiness\GetReadinessRequest;
+use App\GaelO\UseCases\GetReadiness\GetReadinessResponse;
 use App\GaelO\Util;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -63,5 +66,11 @@ class ToolsController extends Controller
         $findUser->execute($findUserRequest, $findUserResponse);
         return $this->getJsonResponse($findUserResponse->body, $findUserResponse->status, $findUserResponse->statusText);
 
+    }
+
+    public function readiness(GetReadiness $getReadiness, GetReadinessRequest $getReadinessRequest, GetReadinessResponse $getReadinessResponse)
+    {
+        $getReadiness->execute($getReadinessRequest, $getReadinessResponse);
+        return $this->getJsonResponse($getReadinessResponse->body, $getReadinessResponse->status, $getReadinessResponse->statusText);
     }
 }

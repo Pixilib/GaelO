@@ -219,14 +219,9 @@ Route::middleware(['throttle:public-apis'])->group(function () {
     Route::get('liveness', function () {
         return 'ok';
     });
+
     //Readiness (check database)
-    Route::get('readiness', function () {
-        $check = Country::count();
-        if ($check > 0) {
-            return 'ok';
-        }
-        return response('', 500);
-    });
+    Route::get('readiness', [ToolsController::class, 'readiness']);
 });
 
 
