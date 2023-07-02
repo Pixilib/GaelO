@@ -5,6 +5,7 @@ namespace Tests\Feature\TestDicoms;
 use App\GaelO\Constants\Constants;
 use App\GaelO\Constants\Enums\InvestigatorFormStateEnum;
 use App\GaelO\Constants\Enums\QualityControlStateEnum;
+use App\GaelO\Constants\Enums\ReviewStatusEnum;
 use App\GaelO\Constants\Enums\UploadStatusEnum;
 use App\Models\DicomSeries;
 use App\Models\DicomStudy;
@@ -116,6 +117,25 @@ class DeleteDicomSeriesTest extends TestCase
         //Set visit QC at Accepted
         $this->dicomSeries->dicomStudy->visit->state_quality_control = QualityControlStateEnum::ACCEPTED->value;
         $this->dicomSeries->dicomStudy->visit->save();
+
+        $payload = ['reason' => 'wrong series'];
+        $response = $this->delete('api/dicom-series/' . $this->dicomSeries->series_uid . '?role=Supervisor&studyName=' . $this->studyName, $payload);
+        $response->assertStatus(403);
+    }
+
+    public function testDeleteSeriesShouldFailReviewStarted()
+    {
+        $userId = AuthorizationTools::actAsAdmin(false);
+        AuthorizationTools::addRoleToUser($userId, Constants::ROLE_SUPERVISOR, $this->studyName);
+        $visit = $this->dicomSeries->dicomStudy->visit;
+        //Set visit QC at Accepted
+        $visit->state_quality_control = QualityControlStateEnum::NOT_NEEDED->value;
+        
+        $visit->save();
+        
+        $reviewStatus = ReviewStatus::where('visit_id', $visit->id)->where("study_name", $this->studyName)->sole();
+        $reviewStatus->review_status = ReviewStatusEnum::ONGOING->value;
+        $reviewStatus->save();
 
         $payload = ['reason' => 'wrong series'];
         $response = $this->delete('api/dicom-series/' . $this->dicomSeries->series_uid . '?role=Supervisor&studyName=' . $this->studyName, $payload);
