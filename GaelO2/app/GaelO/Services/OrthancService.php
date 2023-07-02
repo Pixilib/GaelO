@@ -346,6 +346,14 @@ class OrthancService
         return $this->httpClientInterface->requestJson('GET', '/jobs/' . $jobId)->getJsonBody();
     }
 
+    /**
+     * Get System api (check liviness)
+     */
+    public function getSystem()
+    {
+        return $this->httpClientInterface->requestJson('GET', '/system')->getJsonBody();
+    }
+
     public function getStudyOrthancDetails(string $orthancStudyID)
     {
         $studyOrthanc = new OrthancStudy($this);

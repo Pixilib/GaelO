@@ -4,15 +4,16 @@ namespace App\GaelO\UseCases\DeleteSeries;
 
 use App\GaelO\Constants\Constants;
 use App\GaelO\Constants\Enums\QualityControlStateEnum;
+use App\GaelO\Constants\Enums\ReviewStatusEnum;
 use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOBadRequestException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\DicomSeriesRepositoryInterface;
+use App\GaelO\Interfaces\Repositories\ReviewStatusRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
 use App\GaelO\Services\AuthorizationService\AuthorizationVisitService;
 use App\GaelO\Services\DicomService;
-use Exception;
 
 class DeleteSeries
 {
@@ -22,11 +23,13 @@ class DeleteSeries
     private TrackerRepositoryInterface $trackerRepositoryInterface;
     private AuthorizationVisitService $authorizationVisitService;
     private DicomSeriesRepositoryInterface $dicomSeriesRepositoryInterface;
+    private ReviewStatusRepositoryInterface $reviewStatusRepositoryInterface;
 
 
     public function __construct(
         VisitRepositoryInterface $visitRepositoryInterface,
         DicomSeriesRepositoryInterface $dicomSeriesRepositoryInterface,
+        ReviewStatusRepositoryInterface $reviewStatusRepositoryInterface,
         DicomService $dicomService,
         AuthorizationVisitService $authorizationVisitService,
         TrackerRepositoryInterface $trackerRepositoryInterface
@@ -36,6 +39,7 @@ class DeleteSeries
         $this->dicomService = $dicomService;
         $this->trackerRepositoryInterface = $trackerRepositoryInterface;
         $this->visitRepositoryInterface = $visitRepositoryInterface;
+        $this->reviewStatusRepositoryInterface = $reviewStatusRepositoryInterface;
     }
 
     public function execute(DeleteSeriesRequest $deleteSeriesRequest, DeleteSeriesResponse $deleteSeriesResponse)
@@ -109,6 +113,12 @@ class DeleteSeries
         //If QC is done, can't remove series
         if (in_array($qcStatus, [QualityControlStateEnum::ACCEPTED->value, QualityControlStateEnum::REFUSED->value])) {
             throw new GaelOForbiddenException();
+        }
+
+        //If review started can't remove series
+        $reviewStatusEntity = $this->reviewStatusRepositoryInterface->getReviewStatus($visitId, $studyName);
+        if (!in_array($reviewStatusEntity['review_status'], array(ReviewStatusEnum::NOT_DONE->value, ReviewStatusEnum::NOT_NEEDED->value))) {
+            throw new GaelOForbiddenException("Delete Review first to remove series");
         }
 
         $this->authorizationVisitService->setUserId($userId);

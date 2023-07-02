@@ -3,8 +3,8 @@ name: 'publish'
 on:
   push:
     branches:
-      - Gaelo2
-      - Gaelo2-dev
+      - GaelO2
+      - GaelO2-dev
     tags:
       - '*'
 

@@ -5,6 +5,7 @@ namespace App\Console;
 use App\GaelO\CronJobs\GaelOScheduler;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
+use Illuminate\Support\Facades\Log;
 
 class Kernel extends ConsoleKernel
 {
@@ -29,6 +30,12 @@ class Kernel extends ConsoleKernel
         $schedule->command('cache:prune-stale-tags')->hourly();
         //Register custom jobs
         GaelOScheduler::registerScheduledJobs($schedule);
+        //Scheduler Probe for monitoring
+        $schedule->call(function () {
+            Log::info("Scheduler Probe");
+        })
+        ->hourly()
+        ->sentryMonitor('gaelo-scheduler'); 
     }
 
     /**
