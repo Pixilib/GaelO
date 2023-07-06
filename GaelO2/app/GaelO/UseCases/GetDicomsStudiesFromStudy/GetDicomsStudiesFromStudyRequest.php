@@ -6,5 +6,6 @@ class GetDicomsStudiesFromStudyRequest
 {
     public int $currentUserId;
     public string $studyName;
-    public bool $withTrashed = false;
+    public bool $withTrashedStudies = false;
+    public bool $withTrashedSeries = false;
 }

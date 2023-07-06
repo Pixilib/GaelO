@@ -74,6 +74,7 @@ use App\GaelO\UseCases\SendMail\SendMailResponse;
 use App\GaelO\Util;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class StudyController extends Controller
 {
@@ -294,7 +295,8 @@ class StudyController extends Controller
         $queryParam = $request->query();
         $getDicomsStudiesFromStudyRequest->currentUserId = $currentUser['id'];
         $getDicomsStudiesFromStudyRequest->studyName = $studyName;
-        $getDicomsStudiesFromStudyRequest->withTrashed = key_exists('withTrashed', $queryParam);
+        $getDicomsStudiesFromStudyRequest->withTrashedStudies = key_exists('withTrashedStudies', $queryParam);
+        $getDicomsStudiesFromStudyRequest->withTrashedSeries = key_exists('withTrashedSeries', $queryParam);
 
         $getDicomsStudiesFromStudy->execute($getDicomsStudiesFromStudyRequest, $getDicomsStudiesFromStudyResponse);
 

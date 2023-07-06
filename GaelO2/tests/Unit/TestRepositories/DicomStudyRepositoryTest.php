@@ -215,15 +215,15 @@ class DicomStudyRepositoryTest extends TestCase
         $dicomStudy1 = DicomStudy::factory()->visitId($visit->first()->id)->create();
         $dicomStudy2 = DicomStudy::factory()->visitId($visit->last()->id)->create();
 
-        $answer = $this->dicomStudyRepository->getDicomStudyFromVisitIdArrayWithSeries([$visit->first()->id, $visit->last()->id], false);
+        $answer = $this->dicomStudyRepository->getDicomStudyFromVisitIdArrayWithSeries([$visit->first()->id, $visit->last()->id], false, false);
         $this->assertEquals(2, sizeof($answer));
 
         $dicomStudy1->delete();
-        $answer = $this->dicomStudyRepository->getDicomStudyFromVisitIdArrayWithSeries([$visit->first()->id, $visit->last()->id], false);
+        $answer = $this->dicomStudyRepository->getDicomStudyFromVisitIdArrayWithSeries([$visit->first()->id, $visit->last()->id], false, false);
         $this->assertEquals(1, sizeof($answer));
 
         //Should Include the deleted one
-        $answer = $this->dicomStudyRepository->getDicomStudyFromVisitIdArrayWithSeries([$visit->first()->id, $visit->last()->id], true);
+        $answer = $this->dicomStudyRepository->getDicomStudyFromVisitIdArrayWithSeries([$visit->first()->id, $visit->last()->id], true, true);
         $this->assertEquals(2, sizeof($answer));
     }
 
