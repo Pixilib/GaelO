@@ -39,6 +39,8 @@ class GetDicomsStudiesFromStudy
 
             $studyName = $getDicomsStudiesFromStudyRequest->studyName;
             $this->checkAuthorization($getDicomsStudiesFromStudyRequest->currentUserId, $studyName);
+            $withTrashedStudies = $getDicomsStudiesFromStudyRequest->withTrashedStudies;
+            $withTrashedSeries = $getDicomsStudiesFromStudyRequest->withTrashedSeries;
 
             //Retrieve study information, in case being an ancillary study we need to retrieve original study dicom
             $studyEntity = $this->studyRepositoryInterface->find($studyName);
@@ -52,7 +54,7 @@ class GetDicomsStudiesFromStudy
             }, $visits);
 
             //Get Validated review for these visits
-            $dicomStudies = $this->dicomStudyRepositoryInterface->getDicomStudyFromVisitIdArrayWithSeries($visitsIds, $getDicomsStudiesFromStudyRequest->withTrashed);
+            $dicomStudies = $this->dicomStudyRepositoryInterface->getDicomStudyFromVisitIdArrayWithSeries($visitsIds, $withTrashedStudies, $withTrashedSeries);
 
             $answer = [];
 

@@ -142,19 +142,19 @@ class DicomStudyRepository implements DicomStudyRepositoryInterface
         return $answer->count() === 0 ? []  : $answer->toArray();
     }
 
-    public function getDicomStudyFromVisitIdArrayWithSeries(array $visitId, bool $withTrashed): array
+    public function getDicomStudyFromVisitIdArrayWithSeries(array $visitId, bool $withTrashedStudies, bool $withTrashedSeries): array
     {
 
         $queryBuilder = $this->dicomStudyModel
             ->with(['visit' => function ($query) {
                 $query->with(['visitType', 'visitType.visitGroup', 'patient', 'patient.center']);
             }])
-            ->with(['dicomSeries' => function ($query) use ($withTrashed) {
-                if ($withTrashed) $query->withTrashed();
+            ->with(['dicomSeries' => function ($query) use ($withTrashedSeries) {
+                if ($withTrashedSeries) $query->withTrashed();
             }])
             ->whereIn('visit_id', $visitId);
 
-        if ($withTrashed) $queryBuilder->withTrashed();
+        if ($withTrashedStudies) $queryBuilder->withTrashed();
 
         $answer = $queryBuilder->get();
 

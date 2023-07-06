@@ -64,7 +64,7 @@ class GetDicomsStudiesFromStudyTest extends TestCase
     {
         $userId = AuthorizationTools::actAsAdmin(false);
         AuthorizationTools::addRoleToUser($userId, Constants::ROLE_SUPERVISOR, $this->studyName);
-        $answer = $this->json('GET', 'api/studies/' . $this->studyName . '/dicom-studies?withTrashed')->assertStatus(200);
+        $answer = $this->json('GET', 'api/studies/' . $this->studyName . '/dicom-studies?withTrashedStudies&withTrashedSeries')->assertStatus(200);
         //Should be 4 studies as it include deleted
         $results = json_decode($answer->content(), true);
         $this->assertEquals(4, sizeof($results));
