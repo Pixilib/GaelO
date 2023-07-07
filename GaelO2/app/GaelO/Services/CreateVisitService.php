@@ -64,6 +64,6 @@ class CreateVisitService
     private function calculateIsNeeded(int $probability): bool
     {
         $randomValue = random_int(1, 100);
-        return ($randomValue <= $probability);
+        return $randomValue <= $probability;
     }
 }

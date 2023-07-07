@@ -90,7 +90,7 @@ class Login
 
     private function getRemainingAttempts($attemptCount): int
     {
-        if ($attemptCount < 3) return (3 - $attemptCount);
+        if ($attemptCount < 3) return 3 - $attemptCount;
         else return 0;
     }
 

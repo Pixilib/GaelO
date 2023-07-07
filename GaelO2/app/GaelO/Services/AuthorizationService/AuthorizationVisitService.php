@@ -71,7 +71,7 @@ class AuthorizationVisitService
     private function isControllerAllowed(): bool
     {
         //For controller visit QC status be not done or awaiting definitive conclusion, Investigator Form should be Done or Not Needed and Upload status should be done
-        return ($this->isAllowedStatusQC() && $this->isAllowedInvestigatorFormStatus() && $this->visitUploadStatus === UploadStatusEnum::DONE->value);
+        return $this->isAllowedStatusQC() && $this->isAllowedInvestigatorFormStatus() && $this->visitUploadStatus === UploadStatusEnum::DONE->value;
     }
 
 

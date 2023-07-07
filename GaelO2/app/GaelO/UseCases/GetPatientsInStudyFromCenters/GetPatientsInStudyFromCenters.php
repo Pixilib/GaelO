@@ -41,7 +41,7 @@ class GetPatientsInStudyFromCenters
             $studyEntity = $this->studyRepositoryInterface->find($studyName);
             $originalStudyName = $studyEntity->getOriginalStudyName();
 
-            if (!AuthorizationStudyService::isOrginalOrAncillaryStudyOf($studyName, $originalStudyName)) throw new GaelOForbiddenException('Access not granted');
+            if (!AuthorizationStudyService::isOriginalOrAncillaryStudyOf($studyName, $originalStudyName)) throw new GaelOForbiddenException('Access not granted');
 
             $this->checkAuthorization($getPatientsInStudyFromCentersRequest->currentUserId, $studyName);
 

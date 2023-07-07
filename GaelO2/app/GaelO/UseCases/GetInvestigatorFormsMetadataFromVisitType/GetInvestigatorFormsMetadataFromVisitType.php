@@ -34,7 +34,7 @@ class GetInvestigatorFormsMetadataFromVisitType
             $visitGroupEntity = $visitTypeEntity['visit_group'];
 
             //Check that the requested study name is an original or ancillary study of this visit type
-            if (!AuthorizationStudyService::isOrginalOrAncillaryStudyOf($studyName, $originalStudyName)) {
+            if (!AuthorizationStudyService::isOriginalOrAncillaryStudyOf($studyName, $originalStudyName)) {
                 throw new GaelOForbiddenException('Forbidden acces to this Visit Type');
             }
             $studyRule = AbstractGaelOStudy::getSpecificStudyObject($studyName);

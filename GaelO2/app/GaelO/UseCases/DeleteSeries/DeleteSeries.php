@@ -14,6 +14,7 @@ use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
 use App\GaelO\Services\AuthorizationService\AuthorizationVisitService;
 use App\GaelO\Services\DicomService;
+use Exception;
 
 class DeleteSeries
 {
