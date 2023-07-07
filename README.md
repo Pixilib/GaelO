@@ -17,6 +17,8 @@ Contributors : Bastien Proudhom, Ludwig Chieng, Emilie Olivié
 - To know backend version
 php artisan --version 
 
+sheetname limité a 31 caractère $sheetName =  substr($role, 0, 3)  . '_' . $visitGroupName . '_' . $visitTypeName; donc groupname et typename ensemble doivent etre < 25 caractères. Studyname a limiter a 10 caractères
+
 # Release Cyles ; Upgrade version in composer.json
 
 # Regenerate views email using mjml template
