@@ -53,9 +53,9 @@ class AuthorizationStudyService
         return $this->authorizationUserService;
     }
 
-    public static function isOrginalOrAncillaryStudyOf($requestedStudy, $originalStudyName)
+    public static function isOriginalOrAncillaryStudyOf($requestedStudy, $originalStudyName)
     {
         $studyEntity = FrameworkAdapter::make(StudyRepositoryInterface::class)->find($requestedStudy);
-        return (($originalStudyName === $requestedStudy) || $studyEntity->isAncillaryStudyOf($originalStudyName));
+        return ($originalStudyName === $requestedStudy) || $studyEntity->isAncillaryStudyOf($originalStudyName);
     }
 }
