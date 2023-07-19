@@ -303,6 +303,7 @@ class OrthancService
         $jsonArrayAnon = [];
         $jsonArrayAnon['KeepPrivateTags'] = false;
         $jsonArrayAnon['Force'] = true;
+        $jsonArrayAnon['DicomVersion'] = "2021b";
 
         foreach ($tagsObjects as $tag) {
 
