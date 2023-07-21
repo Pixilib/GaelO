@@ -28,4 +28,4 @@ jobs:
       - name: PHPStan Static Analysis
         uses: php-actions/phpstan@v3
         with:
-            command: vendor/bin/phpstan analyse app
+            path: GaelO2/app/
