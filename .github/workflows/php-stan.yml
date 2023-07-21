@@ -22,7 +22,7 @@ jobs:
 
       - uses: php-actions/composer@v6
         with:
-         command: composer install --working-dir GaelO2
+         command: install --working-dir GaelO2
 
       - name: PHPStan Static Analysis
         uses: php-actions/phpstan@v3
