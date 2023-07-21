@@ -69,10 +69,11 @@ jobs:
           # reuqirements are not satisfied.
           fail: false
           # Publish the rendered output as a PR comment
-          publish: false
+          publish: true
           # Create a coverage diff report.
           diff: true
           # Branch to diff against.
           # Compare the current coverage to the coverage
           # determined on this branch.
           diff-branch: GaelO2
+          diff-storage: GaelO2_code_coverage
