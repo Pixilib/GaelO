@@ -24,7 +24,6 @@ class CreateCenter
         $this->authorizationUserService = $authorizationUserService;
         $this->centerRepositoryInterface = $centerRepositoryInterface;
         $this->trackerRepositoryInterface = $trackerRepositoryInterface;
-        $this->authorizationService = $authorizationUserService;
     }
 
     public function execute(CreateCenterRequest $createCenterRequest, CreateCenterResponse $createCenterResponse)

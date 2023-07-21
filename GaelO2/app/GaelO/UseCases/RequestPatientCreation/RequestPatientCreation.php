@@ -14,6 +14,7 @@ class RequestPatientCreation
 {
     private MailServices $mailService;
     private AuthorizationStudyService $authorizationStudyService;
+    private TrackerRepositoryInterface $trackerRepositoryInterface;
 
     public function __construct(
         MailServices $mailService,

@@ -5,7 +5,6 @@ namespace App\GaelO\UseCases\GetDocumentationFile;
 use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
-use App\GaelO\Interfaces\Adapters\FrameworkInterface;
 use App\GaelO\Interfaces\Repositories\DocumentationRepositoryInterface;
 use App\GaelO\Services\AuthorizationService\AuthorizationUserService;
 use Exception;
@@ -16,11 +15,10 @@ class GetDocumentationFile
     private DocumentationRepositoryInterface $documentationRepositoryInterface;
     private AuthorizationUserService $authorizationUserService;
 
-    public function __construct(DocumentationRepositoryInterface $documentationRepositoryInterface, AuthorizationUserService $authorizationUserService, FrameworkInterface $frameworkInterface)
+    public function __construct(DocumentationRepositoryInterface $documentationRepositoryInterface, AuthorizationUserService $authorizationUserService)
     {
         $this->documentationRepositoryInterface = $documentationRepositoryInterface;
         $this->authorizationUserService = $authorizationUserService;
-        $this->frameworkInterface = $frameworkInterface;
     }
 
     public function execute(GetDocumentationFileRequest $getDocumentationFileRequest, GetDocumentationFileResponse $getdocumentationFileReponse)
