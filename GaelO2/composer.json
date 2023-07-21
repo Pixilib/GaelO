@@ -28,6 +28,7 @@
         "laravel/telescope": "^4.13",
         "mockery/mockery": "^1.5",
         "nunomaduro/collision": "^7.0",
+        "phpstan/phpstan": "^1.10",
         "phpunit/phpunit": "^10.0",
         "spatie/laravel-ignition": "^2.0"
     },
