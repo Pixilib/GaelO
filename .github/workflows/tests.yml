@@ -61,6 +61,7 @@ jobs:
 
       - name: Produce the coverage report
         uses: insightsengineering/coverage-action@v2
+        working-directory: ./GaelO2
         with:
           # Path to the Cobertura XML report.
           path: ./coverage.xml
