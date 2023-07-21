@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE coverage SYSTEM "http://cobertura.sourceforge.net/xml/coverage-04.dtd">
-<coverage line-rate="0.68620178041543" branch-rate="0" lines-covered="7400" lines-valid="10784" branches-covered="0" branches-valid="0" complexity="2633" version="0.4" timestamp="1689974027">
+<coverage line-rate="0.68620178041543" branch-rate="0" lines-covered="7400" lines-valid="10784" branches-covered="0" branches-valid="0" complexity="2636" version="0.4" timestamp="1689974607">
   <sources>
     <source>/github/workspace//GaelO2/app</source>
   </sources>
@@ -8669,9 +8669,9 @@
         </class>
       </classes>
     </package>
-    <package name="GaelO/Services/OrthancService.php" line-rate="0.061855670103093" branch-rate="0" complexity="49">
+    <package name="GaelO/Services/OrthancService.php" line-rate="0.061855670103093" branch-rate="0" complexity="52">
       <classes>
-        <class name="App\GaelO\Services\OrthancService" filename="GaelO/Services/OrthancService.php" line-rate="0.061855670103093" branch-rate="0" complexity="49">
+        <class name="App\GaelO\Services\OrthancService" filename="GaelO/Services/OrthancService.php" line-rate="0.061855670103093" branch-rate="0" complexity="52">
           <methods>
             <method name="__construct" signature="App\GaelO\Interfaces\Adapters\HttpClientInterface $httpClientInterface, App\GaelO\Interfaces\Adapters\FrameworkInterface $frameworkInterface" line-rate="1" branch-rate="0" complexity="1">
               <lines>
@@ -8679,7 +8679,7 @@
                 <line number="25" hits="568"/>
               </lines>
             </method>
-            <method name="setOrthancServer" signature="bool $storage" line-rate="0.76923076923077" branch-rate="0" complexity="2">
+            <method name="setOrthancServer" signature="bool $storage" line-rate="0.76923076923077" branch-rate="0" complexity="5">
               <lines>
                 <line number="31" hits="568"/>
                 <line number="33" hits="568"/>
