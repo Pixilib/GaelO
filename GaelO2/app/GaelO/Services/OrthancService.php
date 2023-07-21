@@ -390,7 +390,6 @@ class OrthancService
     /**
      * fill ressource with dicom zip containing the Orthanc ID ressources dicoms
      * @param array $uidList
-     * @return resource temporary file path
      */
     public function getZipStreamToFile(array $orthancIDs, $ressource, ?string $transfertSyntaxUID = null)
     {

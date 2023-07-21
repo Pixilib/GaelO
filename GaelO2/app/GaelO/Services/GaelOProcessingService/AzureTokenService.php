@@ -13,6 +13,8 @@ class AzureTokenService
     private string $tenantID;
     private string $clientId;
     private string $clientSecret;
+    private HttpClientInterface $httpClientInterface;
+    private FrameworkInterface $frameworkInterface;
 
     /**
      * Request for authorization token from Azure

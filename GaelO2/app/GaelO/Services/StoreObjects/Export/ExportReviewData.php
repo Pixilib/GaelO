@@ -13,6 +13,7 @@ class ExportReviewData
     private string $visitTypeName;
     private array $specificColumnNames;
     private array $data = [];
+    private string $role;
 
     public function setContext(string $studyName, string $visitGroupName, string $visitTypeName, string $role)
     {
@@ -34,11 +35,6 @@ class ExportReviewData
     public function getVisitTypeName(): string
     {
         return $this->visitTypeName;
-    }
-
-    public function getColumns()
-    {
-        return [...array_keys($this->data[0]), ...$this->specificColumns];
     }
 
     public function addData(array $data): void
