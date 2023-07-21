@@ -20,9 +20,9 @@ jobs:
         working-directory: ./GaelO2
         run: php -r "file_exists('.env') || copy('.env.example', '.env');"
 
-      - name: 'Install Dependencies'
-        working-directory: ./GaelO2
-        run: composer install --optimize-autoloader --no-interaction
+      - uses: php-actions/composer@v6
+        with:
+         command: composer install --working-dir GaelO2
 
       - name: PHPStan Static Analysis
         uses: php-actions/phpstan@v3
