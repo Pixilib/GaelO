@@ -10,9 +10,6 @@ on:
       - '*'
 
 jobs:
-
-
-
   tests:
     name: 'Tests Gaelo'
     runs-on: ubuntu-latest
@@ -61,10 +58,9 @@ jobs:
 
       - name: Produce the coverage report
         uses: insightsengineering/coverage-action@v2
-        working-directory: ./GaelO2
         with:
           # Path to the Cobertura XML report.
-          path: ./coverage.xml
+          path: ./GaelO2/coverage.xml
           # Minimum total coverage, if you want to the
           # workflow to enforce it as a standard.
           # This has no effect if the `fail` arg is set to `false`.
