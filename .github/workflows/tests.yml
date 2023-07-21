@@ -10,9 +10,6 @@ on:
       - '*'
 
 jobs:
-
-
-
   tests:
     name: 'Tests Gaelo'
     runs-on: ubuntu-latest
@@ -58,3 +55,25 @@ jobs:
       - name: Fix code coverage paths
         working-directory: ./GaelO2
         run: sed -i 's@'$GITHUB_WORKSPACE'@/github/workspace/@g' coverage.xml
+
+      - name: Produce the coverage report
+        uses: insightsengineering/coverage-action@v2
+        with:
+          # Path to the Cobertura XML report.
+          path: ./GaelO2/coverage.xml
+          # Minimum total coverage, if you want to the
+          # workflow to enforce it as a standard.
+          # This has no effect if the `fail` arg is set to `false`.
+          threshold: 70
+          # Fail the workflow if the minimum code coverage
+          # reuqirements are not satisfied.
+          fail: false
+          # Publish the rendered output as a PR comment
+          publish: true
+          # Create a coverage diff report.
+          diff: true
+          # Branch to diff against.
+          # Compare the current coverage to the coverage
+          # determined on this branch.
+          diff-branch: GaelO2
+          diff-storage: GaelO2_code_coverage
