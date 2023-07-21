@@ -23,6 +23,8 @@ jobs:
       - uses: php-actions/composer@v6
         with:
          command: install --working-dir GaelO2
+         php_version: "8.1"
+         php_extensions: gd zip pdo pdo_mysql pdo_pgsql mbstring bcmath ctype fileinfo xml bz2 pcntl
 
       - name: PHPStan Static Analysis
         uses: php-actions/phpstan@v3
