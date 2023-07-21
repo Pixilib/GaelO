@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE coverage SYSTEM "http://cobertura.sourceforge.net/xml/coverage-04.dtd">
-<coverage line-rate="0.68620178041543" branch-rate="0" lines-covered="7400" lines-valid="10784" branches-covered="0" branches-valid="0" complexity="2636" version="0.4" timestamp="1689974607">
+<coverage line-rate="0.68620178041543" branch-rate="0" lines-covered="7400" lines-valid="10784" branches-covered="0" branches-valid="0" complexity="2636" version="0.4" timestamp="1689975009">
   <sources>
     <source>/github/workspace//GaelO2/app</source>
   </sources>
@@ -5563,76 +5563,76 @@
           <methods>
             <method name="__construct" signature="App\GaelO\Interfaces\Repositories\PatientRepositoryInterface $patientRepositoryInterface, App\GaelO\Services\AuthorizationService\AuthorizationStudyService $authorizationStudyService, App\GaelO\Services\AuthorizationService\AuthorizationUserService $authorizationUserService" line-rate="1" branch-rate="0" complexity="1">
               <lines>
-                <line number="18" hits="152"/>
-                <line number="19" hits="152"/>
+                <line number="20" hits="152"/>
+                <line number="21" hits="152"/>
               </lines>
             </method>
             <method name="fillPatientData" signature="" line-rate="1" branch-rate="0" complexity="2">
               <lines>
-                <line number="24" hits="102"/>
-                <line number="25" hits="102"/>
                 <line number="26" hits="102"/>
+                <line number="27" hits="102"/>
+                <line number="28" hits="102"/>
               </lines>
             </method>
             <method name="setPatientId" signature="string $patientId" line-rate="1" branch-rate="0" complexity="1">
               <lines>
-                <line number="31" hits="23"/>
+                <line number="33" hits="23"/>
               </lines>
             </method>
             <method name="setUserId" signature="int $userId" line-rate="1" branch-rate="0" complexity="1">
               <lines>
-                <line number="36" hits="106"/>
+                <line number="38" hits="106"/>
               </lines>
             </method>
             <method name="setStudyName" signature="string $studyName" line-rate="1" branch-rate="0" complexity="1">
               <lines>
-                <line number="41" hits="106"/>
+                <line number="43" hits="106"/>
               </lines>
             </method>
             <method name="setPatientEntity" signature="array $patientEntity" line-rate="1" branch-rate="0" complexity="1">
               <lines>
-                <line number="46" hits="83"/>
+                <line number="48" hits="83"/>
               </lines>
             </method>
             <method name="getAuthorizationStudyService" signature="" line-rate="1" branch-rate="0" complexity="1">
               <lines>
-                <line number="51" hits="20"/>
+                <line number="53" hits="20"/>
               </lines>
             </method>
             <method name="isPatientAllowed" signature="string $requestedRole" line-rate="0.77777777777778" branch-rate="0" complexity="8">
               <lines>
-                <line number="56" hits="102"/>
                 <line number="58" hits="102"/>
-                <line number="60" hits="1"/>
-                <line number="63" hits="102"/>
-                <line number="65" hits="35"/>
-                <line number="68" hits="94"/>
-                <line number="70" hits="0"/>
-                <line number="71" hits="0"/>
-                <line number="76" hits="94"/>
+                <line number="60" hits="102"/>
+                <line number="62" hits="1"/>
+                <line number="65" hits="102"/>
+                <line number="67" hits="35"/>
+                <line number="70" hits="94"/>
+                <line number="72" hits="0"/>
+                <line number="73" hits="0"/>
+                <line number="78" hits="94"/>
               </lines>
             </method>
           </methods>
           <lines>
-            <line number="18" hits="152"/>
-            <line number="19" hits="152"/>
-            <line number="24" hits="102"/>
-            <line number="25" hits="102"/>
+            <line number="20" hits="152"/>
+            <line number="21" hits="152"/>
             <line number="26" hits="102"/>
-            <line number="31" hits="23"/>
-            <line number="36" hits="106"/>
-            <line number="41" hits="106"/>
-            <line number="46" hits="83"/>
-            <line number="51" hits="20"/>
-            <line number="56" hits="102"/>
+            <line number="27" hits="102"/>
+            <line number="28" hits="102"/>
+            <line number="33" hits="23"/>
+            <line number="38" hits="106"/>
+            <line number="43" hits="106"/>
+            <line number="48" hits="83"/>
+            <line number="53" hits="20"/>
             <line number="58" hits="102"/>
-            <line number="60" hits="1"/>
-            <line number="63" hits="102"/>
-            <line number="65" hits="35"/>
-            <line number="68" hits="94"/>
-            <line number="70" hits="0"/>
-            <line number="71" hits="0"/>
-            <line number="76" hits="94"/>
+            <line number="60" hits="102"/>
+            <line number="62" hits="1"/>
+            <line number="65" hits="102"/>
+            <line number="67" hits="35"/>
+            <line number="70" hits="94"/>
+            <line number="72" hits="0"/>
+            <line number="73" hits="0"/>
+            <line number="78" hits="94"/>
           </lines>
         </class>
       </classes>
