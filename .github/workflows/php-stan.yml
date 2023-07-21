@@ -23,7 +23,7 @@ jobs:
 
       - name: 'Install Dependencies'
         working-directory: ./GaelO2
-        run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+        run: composer install
 
       - name: PHPStan Static Analysis
         uses: php-actions/phpstan@v3
