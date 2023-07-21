@@ -16,10 +16,9 @@ jobs:
       - name: 'Build checkout'
         uses: actions/checkout@v3
 
-      - name: 'Setup PHP'
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '8.1'
+      - name: 'Copy .env'
+        working-directory: ./GaelO2
+        run: php -r "file_exists('.env') || copy('.env.example', '.env');"
 
       - name: 'Install Dependencies'
         working-directory: ./GaelO2
