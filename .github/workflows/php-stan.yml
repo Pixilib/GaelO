@@ -22,11 +22,10 @@ jobs:
 
       - name: 'Install Dependencies'
         working-directory: ./GaelO2
-        run: composer install
+        run: composer install --optimize-autoloader --no-interaction
 
       - name: PHPStan Static Analysis
         uses: php-actions/phpstan@v3
         with:
             path: GaelO2/app/
-            php_version : 8.1.2
-            php_extensions: gd zip pdo pdo_mysql pdo_pgsql mbstring bcmath ctype fileinfo xml bz2 pcntl
+            php_version : 8.1
