@@ -1,4 +1,4 @@
-name: 'PHP-Stan Static Analysis'
+name: 'PHP-Stan'
 
 on:
   push:
@@ -10,24 +10,29 @@ on:
 
 jobs:
   tests:
-    name: 'PHP Stan Analysis'
+    name: 'PHP Stan'
     runs-on: ubuntu-latest
     steps:
       - name: 'Build checkout'
         uses: actions/checkout@v3
 
+      - name: 'Setup PHP'
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+
       - name: 'Copy .env'
         working-directory: ./GaelO2
         run: php -r "file_exists('.env') || copy('.env.example', '.env');"
 
-      - uses: php-actions/composer@v6
-        with:
-         command: install --working-dir GaelO2
-         php_version: "8.1"
-         php_extensions: gd zip pdo pdo_mysql pdo_pgsql mbstring bcmath ctype fileinfo xml bz2 pcntl
+      - name: 'Install Dependencies'
+        working-directory: ./GaelO2
+        run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
 
-      - name: PHPStan Static Analysis
-        uses: php-actions/phpstan@v3
-        with:
-            path: GaelO2/app/
-            php_version : 8.1
+      - name: 'Generate key'
+        working-directory: ./GaelO2
+        run: php artisan key:generate
+
+      - name: 'Execute PHP Stan'
+        working-directory: ./GaelO2
+        run: vendor/bin/phpstan analyse app/
