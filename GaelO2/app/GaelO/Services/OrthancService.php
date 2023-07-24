@@ -43,8 +43,8 @@ class OrthancService
             $password = $this->frameworkInterface::getConfig(SettingsConstants::ORTHANC_TEMPORARY_PASSWORD);
         }
 
-        $this->httpClientInterface->setUrl($url);
-        $this->httpClientInterface->setBasicAuthentication($login, $password);
+        if($url) $this->httpClientInterface->setUrl($url);
+        if($login && $password) $this->httpClientInterface->setBasicAuthentication($login, $password);
     }
 
     public function getOrthancRessourcesDetails(string $level, string $orthancID): array
@@ -390,7 +390,6 @@ class OrthancService
     /**
      * fill ressource with dicom zip containing the Orthanc ID ressources dicoms
      * @param array $uidList
-     * @return resource temporary file path
      */
     public function getZipStreamToFile(array $orthancIDs, $ressource, ?string $transfertSyntaxUID = null)
     {

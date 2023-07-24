@@ -6,14 +6,15 @@ class TrackerEntity
 {
     public int $id;
     public ?string $study_name;
-    public int $user_id;
+    public int $userId;
     public string $date;
     public string $role;
-    public ?int $visit_id;
-    public string $action_type;
-    public array $action_details;
+    public ?int $visitId;
+    public string $actionType;
+    public array $actionDetails;
 
     public UserEntity $user;
+    public VisitEntity $visit;
 
     public static function fillFromDBReponseArray(array $array) : TrackerEntity
     {

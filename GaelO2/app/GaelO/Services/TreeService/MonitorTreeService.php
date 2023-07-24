@@ -16,7 +16,7 @@ class MonitorTreeService extends InvestigatorTreeService{
             return $this->formatResponse($visitsArray);
         }else{
             //Return only visits belonging to user's centers as done for investigator roles
-            return Parent::buildTree();
+            return parent::buildTree();
         }
 
     }

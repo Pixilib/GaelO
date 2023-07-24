@@ -16,6 +16,7 @@
         "laravel/framework": "^10.0",
         "laravel/sanctum": "^3.2",
         "laravel/tinker": "^2.8",
+        "league/flysystem-ftp": "^3.0",
         "league/flysystem-sftp-v3": "^3.0",
         "phpoffice/phpspreadsheet": "^1.27",
         "ralouphie/mimey": "^1.0",
@@ -28,6 +29,7 @@
         "laravel/telescope": "^4.13",
         "mockery/mockery": "^1.5",
         "nunomaduro/collision": "^7.0",
+        "phpstan/phpstan": "^1.10",
         "phpunit/phpunit": "^10.0",
         "spatie/laravel-ignition": "^2.0"
     },

@@ -12,6 +12,8 @@ class AuthorizationPatientService
     private AuthorizationStudyService $authorizationStudyService;
     private string $patientId;
     private array $patientData;
+    private string $patientStudy;
+    private int $patientCenter;
 
     public function __construct(PatientRepositoryInterface $patientRepositoryInterface, AuthorizationStudyService $authorizationStudyService, AuthorizationUserService $authorizationUserService)
     {

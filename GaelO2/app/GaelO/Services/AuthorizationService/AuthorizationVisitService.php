@@ -18,6 +18,11 @@ class AuthorizationVisitService
     private int $userId;
     private string $studyName;
     private array $visitContext;
+    private string $stateQualityControl;
+    private int $patientCenter;
+    private string $patientId;
+    private string $visitUploadStatus;
+    private string $stateInvestigatorForm;
 
     public function __construct(VisitRepositoryInterface $visitRepositoryInterface, AuthorizationPatientService $authorizationPatientService)
     {

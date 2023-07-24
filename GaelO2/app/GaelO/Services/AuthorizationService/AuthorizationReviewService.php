@@ -15,6 +15,7 @@ class AuthorizationReviewService
     private int $reviewId;
     private int $reviewOwnerId;
     private array $reviewData;
+    private string $reviewStudyName;
 
     public function __construct(ReviewRepositoryInterface $reviewRepositoryInterface, AuthorizationVisitService $authorizationVisitService)
     {

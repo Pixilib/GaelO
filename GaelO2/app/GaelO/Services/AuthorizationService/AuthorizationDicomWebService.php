@@ -3,6 +3,7 @@
 namespace App\GaelO\Services\AuthorizationService;
 
 use App\GaelO\Constants\Constants;
+use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Interfaces\Repositories\DicomSeriesRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\DicomStudyRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\PatientRepositoryInterface;
@@ -120,7 +121,10 @@ class AuthorizationDicomWebService
         $params = [];
         parse_str($url['query'], $params);
         // Filter wild card beacause OHIF add wildcard
-        if (key_exists('00100020',  $params)) return str_replace("*", "", $params['00100020']);;
+        if (key_exists('00100020',  $params)) return str_replace("*", "", $params['00100020']);
+        else{
+            throw new GaelOException("No Patient ID Found");
+        }
     }
 
     /**

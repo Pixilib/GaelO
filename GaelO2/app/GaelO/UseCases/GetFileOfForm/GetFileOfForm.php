@@ -4,7 +4,6 @@ namespace App\GaelO\UseCases\GetFileOfForm;
 
 use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
-use App\GaelO\Interfaces\Adapters\FrameworkInterface;
 use App\GaelO\Interfaces\Repositories\ReviewRepositoryInterface;
 use App\GaelO\Services\AuthorizationService\AuthorizationVisitService;
 use Exception;
@@ -15,11 +14,10 @@ class GetFileOfForm
     private AuthorizationVisitService $authorizationVisitService;
     private ReviewRepositoryInterface $reviewRepositoryInterface;
 
-    public function __construct(AuthorizationVisitService $authorizationVisitService, ReviewRepositoryInterface $reviewRepositoryInterface, FrameworkInterface $frameworkInterface)
+    public function __construct(AuthorizationVisitService $authorizationVisitService, ReviewRepositoryInterface $reviewRepositoryInterface)
     {
         $this->authorizationVisitService = $authorizationVisitService;
         $this->reviewRepositoryInterface = $reviewRepositoryInterface;
-        $this->frameworkInterface = $frameworkInterface;
     }
 
     public function execute(GetFileOfFormRequest $getFileOfFormRequest, GetFileOfFormResponse $getFileOfFormResponse)
