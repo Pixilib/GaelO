@@ -1,4 +1,6 @@
-![Tests](https://github.com/salimkanoun/GaelO/actions/workflows/tests/badge.svg?branch=Gaelo2)
+![Tests](https://github.com/salimkanoun/GaelO/actions/workflows/tests.yml/badge.svg?branch=Gaelo2)
+![Publish](https://github.com/salimkanoun/GaelO/actions/workflows/publish.yml/badge.svg?branch=Gaelo2)
+![Php-Stan](https://github.com/salimkanoun/GaelO/actions/workflows/php-stan.yml/badge.svg?branch=Gaelo2)
 ![Coverage](https://github.com/Pixilib/GaelO/blob/GaelO2_code_coverage/data/GaelO2/badge.svg)
 
 # GaelO v2
