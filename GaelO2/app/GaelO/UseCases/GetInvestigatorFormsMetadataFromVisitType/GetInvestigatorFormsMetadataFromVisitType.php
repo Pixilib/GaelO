@@ -4,6 +4,7 @@ namespace App\GaelO\UseCases\GetInvestigatorFormsMetadataFromVisitType;
 
 use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\AbstractGaelOException;
+use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Repositories\VisitTypeRepository;
 use App\GaelO\Services\AuthorizationService\AuthorizationStudyService;
@@ -37,9 +38,15 @@ class GetInvestigatorFormsMetadataFromVisitType
             if (!AuthorizationStudyService::isOriginalOrAncillaryStudyOf($studyName, $originalStudyName)) {
                 throw new GaelOForbiddenException('Forbidden acces to this Visit Type');
             }
-            $studyRule = AbstractGaelOStudy::getSpecificStudyObject($studyName);
-            $abstractStudyRules = $studyRule->getSpecificVisitRules($visitGroupEntity['name'], $visitTypeEntity['name']);
-            $investigatorRules = $abstractStudyRules::getInvestigatorValidationRules();
+
+            $investigatorRules = [];
+
+            try {
+                $studyRule = AbstractGaelOStudy::getSpecificStudyObject($studyName);
+                $abstractStudyRules = $studyRule->getSpecificVisitRules($visitGroupEntity['name'], $visitTypeEntity['name']);
+                $investigatorRules = $abstractStudyRules::getInvestigatorValidationRules();
+            } catch (GaelOException $e) {
+            }
 
             $getInvestigatorFormsMetadataFromVisitTypeResponse->body = $investigatorRules;
             $getInvestigatorFormsMetadataFromVisitTypeResponse->status = 200;
