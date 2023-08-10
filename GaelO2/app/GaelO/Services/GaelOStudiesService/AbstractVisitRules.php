@@ -134,7 +134,7 @@ abstract class AbstractVisitRules
 
         if ($this->adjudication) {
             $reviewerRules = $this->getReviewerAdjudicationValidationRules();
-            $associatedFileCheck = $validated ? $this->getAssociatedFilesAdjudication() : true;
+            $associatedFileCheck = $validated ? $this->areAssociatedFilesAdjudicationComplete() : true;
         } else {
             $reviewerRules = $this->getReviewerValidationRules();
             $associatedFileCheck = $validated ? $this->areAssociatedFilesReviewerComplete() : true;

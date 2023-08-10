@@ -4,12 +4,14 @@ namespace App\GaelO\UseCases\GetReviewsMetadataFromVisitType;
 
 use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\AbstractGaelOException;
+use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Repositories\VisitGroupRepository;
 use App\GaelO\Repositories\VisitTypeRepository;
 use App\GaelO\Services\AuthorizationService\AuthorizationStudyService;
 use App\GaelO\Services\GaelOStudiesService\AbstractGaelOStudy;
 use Exception;
+use Illuminate\Support\Facades\Log;
 
 class GetReviewsMetadataFromVisitType
 {
@@ -38,12 +40,15 @@ class GetReviewsMetadataFromVisitType
             $visitGroupEntity = $this->visitGroupRepository->find($visitTypeEntity['visit_group_id']);
 
             $studyRule = AbstractGaelOStudy::getSpecificStudyObject($studyName);
-            $abstractStudyRules = $studyRule->getSpecificVisitRules($visitGroupEntity['name'], $visitTypeEntity['name']);
 
             $answer = [];
-            $answer['default'] = $abstractStudyRules::getReviewerValidationRules();
-            $answer['adjudication'] = $abstractStudyRules::getReviewerAdjudicationValidationRules();
 
+            try {
+                $abstractStudyRules = $studyRule->getSpecificVisitRules($visitGroupEntity['name'], $visitTypeEntity['name']);
+                $answer['default'] = $abstractStudyRules::getReviewerValidationRules();
+                $answer['adjudication'] = $abstractStudyRules::getReviewerAdjudicationValidationRules();
+            } catch (GaelOException $e) {
+            }
 
             $getReviewsMetadataFromVisitTypeResponse->body = $answer;
             $getReviewsMetadataFromVisitTypeResponse->status = 200;
