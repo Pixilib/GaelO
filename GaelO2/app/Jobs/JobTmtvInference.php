@@ -39,10 +39,15 @@ class JobTmtvInference implements ShouldQueue
             'idPT' => $idPT,
             'idCT' => $idCT
         ];
-        $inferenceResponse = $gaelOProcessingService->executeInference('vnet_model', $inferencePayload);
-        $idMask = $inferenceResponse['id_mask'];
-        $mipMask = $gaelOProcessingService->createMIPForSeries($idPT, $idMask);
-        $frameworkInterface->storeFile('InferenceTest', fopen($mipMask, 'r'));
+        $inferenceResponse = $gaelOProcessingService->executeInference('unet_model', $inferencePayload);
+        $maskId = $inferenceResponse['id_mask'];
+        $mipPayload = ['maskId' => $maskId, 'min' => 0, 'max' => 30];
+        $mipMask = $gaelOProcessingService->createMIPForSeries($idPT, $mipPayload);
+        $frameworkInterface->storeFile('InferenceTest.gif', fopen($mipMask, 'r'));
+        $niftiMask = $gaelOProcessingService->getNiftiMask($maskId);
+        $frameworkInterface->storeFile('mask.nii.gz', fopen($niftiMask, 'r'));
+        $imageMask = $gaelOProcessingService->getNiftiSeries($idPT);
+        $frameworkInterface->storeFile('pet.nii.gz', fopen($imageMask, 'r'));
         Log::alert($inferenceResponse);
     }
 }

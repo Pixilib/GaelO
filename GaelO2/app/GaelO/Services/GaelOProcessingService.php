@@ -29,7 +29,7 @@ class GaelOProcessingService
 
     public function createSeriesFromOrthanc(string $orthancSeriesId, bool $pet = false, bool $convertToSuv = false)
     {
-        $request = $this->httpClientInterface->requestJson('POST', "/tools/create-series-from-orthanc", ['seriesId' => $orthancSeriesId, 'PET'=> $pet, 'convertToSuv'=>$convertToSuv]);
+        $request = $this->httpClientInterface->requestJson('POST', "/tools/create-series-from-orthanc", ['seriesId' => $orthancSeriesId, 'PET' => $pet, 'convertToSuv' => $convertToSuv]);
         return $request->getBody();
     }
 
@@ -39,11 +39,27 @@ class GaelOProcessingService
         return $request->getJsonBody();
     }
 
-    public function createMIPForSeries(string $seriesId, ?string $maskId = null): string
+    public function createMIPForSeries(string $seriesId, array $payload = []): string
     {
         $downloadedFilePath  = tempnam(ini_get('upload_tmp_dir'), 'TMP_Inference_');
 
-        $this->httpClientInterface->requestStreamResponseToFile('POST', "/series/" . $seriesId . "/mip", $downloadedFilePath, ['content-Type' => 'application/json'], ['maskId' => $maskId]);
+        $this->httpClientInterface->requestStreamResponseToFile('POST', "/series/" . $seriesId . "/mip", $downloadedFilePath, ['content-Type' => 'application/json'], $payload);
+        return $downloadedFilePath;
+    }
+
+    public function getNiftiMask(string $maskId): string
+    {
+        $downloadedFilePath  = tempnam(ini_get('upload_tmp_dir'), 'TMP_Inference_');
+
+        $this->httpClientInterface->requestStreamResponseToFile('GET', "/masks/" . $maskId . "/file", $downloadedFilePath, ['content-Type' => 'application/json'], []);
+        return $downloadedFilePath;
+    }
+
+    public function getNiftiSeries(string $imageId): string
+    {
+        $downloadedFilePath  = tempnam(ini_get('upload_tmp_dir'), 'TMP_Inference_');
+
+        $this->httpClientInterface->requestStreamResponseToFile('GET', "/series/" . $imageId . "/file", $downloadedFilePath, ['content-Type' => 'application/json'], []);
         return $downloadedFilePath;
     }
 }
