@@ -13,6 +13,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\AuthorizationTools;
 use Tests\TestCase;
 use Illuminate\Support\Facades\Storage;
+use Mockery\MockInterface;
 
 class CreateFileFromTusTest extends TestCase
 {
@@ -25,16 +26,17 @@ class CreateFileFromTusTest extends TestCase
         $this->artisan('db:seed');
         Storage::fake();
 
-        $mockTusService = Mockery::mock(TusService::class)->makePartial();
-
-        $mockTusService->shouldReceive('getFile')
-        ->andReturnUsing(function () {
-            copy((getcwd() . "/tests/data/MR.zip"), (getcwd() . "/tests/data/MR2.zip"));
-            chmod((getcwd() . "/tests/data/MR2.zip"),0777); 
-            return (getcwd() . "/tests/data/MR2.zip");
-        });
-        $mockTusService->shouldReceive('deleteFile')
+        $mockTusService = $this->partialMock(TusService::class, function (MockInterface $mock) {
+            $mock->shouldReceive('getFile')
+            ->andReturnUsing(function () {
+                copy((getcwd() . "/tests/data/MR.zip"), (getcwd() . "/tests/data/MR2.zip"));
+                chmod((getcwd() . "/tests/data/MR2.zip"),0777); 
+                return (getcwd() . "/tests/data/MR2.zip");
+            });
+            $mock->shouldReceive('deleteFile')
             ->andReturn(null);
+        });
+
         app()->instance(TusService::class, $mockTusService);
     }
 
@@ -67,7 +69,7 @@ class CreateFileFromTusTest extends TestCase
             'tusIds' => ['fakeId']
         ];
 
-        $response = $this->post('api/tools/review-file-from-tus', $payload);
+        $response = $this->post('api/tools/attach-form-file-from-tus', $payload);
         $response->assertSuccessful();
     }
 
@@ -83,10 +85,11 @@ class CreateFileFromTusTest extends TestCase
             'id' => $review->id,
             'key' => '25',
             'tusIds' => ['fakeId', 'fakeId2'],
+            'isDicom' => true,
             'numberOfInstances' => 22
         ];
 
-        $response = $this->post('api/tools/review-file-from-tus', $payload);
+        $response = $this->post('api/tools/attach-form-file-from-tus', $payload);
         $response->assertSuccessful();
     }
 
@@ -105,7 +108,7 @@ class CreateFileFromTusTest extends TestCase
             'numberOfInstances' => 21
         ];
 
-        $response = $this->post('api/tools/review-file-from-tus', $payload);
+        $response = $this->post('api/tools/attach-form-file-from-tus', $payload);
         $response->assertStatus(400);
     }
 }

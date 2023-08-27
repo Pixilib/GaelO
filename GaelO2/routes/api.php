@@ -186,7 +186,7 @@ Route::middleware(['auth:sanctum', 'verified', 'activated', 'onboarded'])->group
     Route::post('tools/centers/patients-from-centers', [ToolsController::class, 'getPatientsInStudyFromCenters']);
     Route::post('tools/patients/visits-from-patients', [ToolsController::class, 'getPatientsVisitsInStudy']);
     Route::post('tools/find-user', [ToolsController::class, 'findUser']);
-    Route::post('tools/review-file-from-tus', [ReviewController::class, 'createReviewFileFromTus']);
+    Route::post('tools/attach-form-file-from-tus', [ToolsController::class, 'createFormFileFromTus']);
 
     // Binary routes
     Route::get('export-db', [ExportDBController::class, 'exportDB']);
