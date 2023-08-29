@@ -78,7 +78,7 @@ class GaelOProcessingService
     {
         $downloadedFilePath  = tempnam(ini_get('upload_tmp_dir'), 'TMP_Inference_');
 
-        $this->httpClientInterface->requestStreamResponseToFile('GET', "/rtss/" . $rtssId + "/file", $downloadedFilePath, []);
+        $this->httpClientInterface->requestStreamResponseToFile('GET', "/rtss/" . $rtssId . "/file", $downloadedFilePath, []);
         return $downloadedFilePath;
     }
 
@@ -93,15 +93,15 @@ class GaelOProcessingService
         return $request->getBody();
     }
 
-    public function getSeg(string $rtssId): string
+    public function getSeg(string $segId): string
     {
         $downloadedFilePath  = tempnam(ini_get('upload_tmp_dir'), 'TMP_Inference_');
 
-        $this->httpClientInterface->requestStreamResponseToFile('GET', "/seg/" . $rtssId + "/file", $downloadedFilePath, []);
+        $this->httpClientInterface->requestStreamResponseToFile('GET', "/seg/" . $segId . "/file", $downloadedFilePath, []);
         return $downloadedFilePath;
     }
 
-    public function fragmentMask(string $seriesId, string $maskId) :string
+    public function fragmentMask(string $seriesId, string $maskId): string
     {
         $payload = [
             'maskId' => $maskId,

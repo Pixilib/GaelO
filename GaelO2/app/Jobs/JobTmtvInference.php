@@ -42,7 +42,7 @@ class JobTmtvInference implements ShouldQueue
         ];
         $inferenceResponse = $gaelOProcessingService->executeInference('unet_model', $inferencePayload);
         $maskId = $inferenceResponse['id_mask'];
-        $mipPayload = ['maskId' => $maskId, 'min' => 0, 'max' => 30];
+        $mipPayload = ['maskId' => $maskId, 'min' => 0, 'max' => 20];
         $mipMask = $gaelOProcessingService->createMIPForSeries($idPT, $mipPayload);
         $frameworkInterface->storeFile('InferenceTest.gif', fopen($mipMask, 'r'));
         $niftiMask = $gaelOProcessingService->getNiftiMask($maskId);
@@ -55,6 +55,11 @@ class JobTmtvInference implements ShouldQueue
         $fragmentedNiftiMask = $gaelOProcessingService->getNiftiMask($fragmentedMaskId);
         $frameworkInterface->storeFile('mask_fragmented.nii.gz', fopen($fragmentedNiftiMask, 'r'));
 
+        #Fragmented Mip
+        $mipFragmentedPayload = ['maskId' => $fragmentedMaskId, 'min' => 0, 'max' => 20];
+        $mipMask = $gaelOProcessingService->createMIPForSeries($idPT, $mipFragmentedPayload);
+        $frameworkInterface->storeFile('fragmentedInferenceTest.gif', fopen($mipMask, 'r'));
+
         #get Rtss
         $rtssId = $gaelOProcessingService->createRtssFromMask($orthancSeriesIdPt, $fragmentedMaskId);
         $rtssFile = $gaelOProcessingService->getRtss($rtssId);
@@ -62,7 +67,7 @@ class JobTmtvInference implements ShouldQueue
 
         #get Seg
         $segId = $gaelOProcessingService->createSegFromMask($orthancSeriesIdPt, $fragmentedMaskId);
-        $segFile = $gaelOProcessingService->getRtss($segId);
+        $segFile = $gaelOProcessingService->getSeg($segId);
         $frameworkInterface->storeFile('seg.dcm', fopen($segFile, 'r'));
     }
 
