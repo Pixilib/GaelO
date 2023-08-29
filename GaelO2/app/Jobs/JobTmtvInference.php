@@ -41,8 +41,13 @@ class JobTmtvInference implements ShouldQueue
             'idCT' => $idCT
         ];
         $inferenceResponse = $gaelOProcessingService->executeInference('unet_model', $inferencePayload);
+
+        $mipPayload = ['min' => 0, 'max' => 5, 'inverted' => true];
+        $mipPT = $gaelOProcessingService->createMIPForSeries($idPT, $mipPayload);
+        $frameworkInterface->storeFile('PETMipTest.gif', fopen($mipPT, 'r'));
+
         $maskId = $inferenceResponse['id_mask'];
-        $mipPayload = ['maskId' => $maskId, 'min' => 0, 'max' => 20];
+        $mipPayload = ['maskId' => $maskId, 'min' => 0, 'max' => 5, 'inverted' => true];
         $mipMask = $gaelOProcessingService->createMIPForSeries($idPT, $mipPayload);
         $frameworkInterface->storeFile('InferenceTest.gif', fopen($mipMask, 'r'));
         $niftiMask = $gaelOProcessingService->getNiftiMask($maskId);
@@ -56,7 +61,7 @@ class JobTmtvInference implements ShouldQueue
         $frameworkInterface->storeFile('mask_fragmented.nii.gz', fopen($fragmentedNiftiMask, 'r'));
 
         #Fragmented Mip
-        $mipFragmentedPayload = ['maskId' => $fragmentedMaskId, 'min' => 0, 'max' => 20];
+        $mipFragmentedPayload = ['maskId' => $fragmentedMaskId, 'min' => 0, 'max' => 5, 'inverted' => true];
         $mipMask = $gaelOProcessingService->createMIPForSeries($idPT, $mipFragmentedPayload);
         $frameworkInterface->storeFile('fragmentedInferenceTest.gif', fopen($mipMask, 'r'));
 
