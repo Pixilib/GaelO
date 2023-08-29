@@ -62,4 +62,53 @@ class GaelOProcessingService
         $this->httpClientInterface->requestStreamResponseToFile('GET', "/series/" . $imageId . "/file", $downloadedFilePath, ['content-Type' => 'application/json'], []);
         return $downloadedFilePath;
     }
+
+    public function createRtssFromMask(string $orthancSeriesId, string $maskId): string
+    {
+        $payload = [
+            'maskId' => $maskId,
+            'orthancSeriesId' => $orthancSeriesId
+        ];
+
+        $request = $this->httpClientInterface->requestJson('POST', "/tools/mask-to-rtss", $payload);
+        return $request->getBody();
+    }
+
+    public function getRtss(string $rtssId): string
+    {
+        $downloadedFilePath  = tempnam(ini_get('upload_tmp_dir'), 'TMP_Inference_');
+
+        $this->httpClientInterface->requestStreamResponseToFile('GET', "/rtss/" . $rtssId + "/file", $downloadedFilePath, []);
+        return $downloadedFilePath;
+    }
+
+    public function createSegFromMask(string $orthancSeriesId, string $maskId): string
+    {
+        $payload = [
+            'maskId' => $maskId,
+            'orthancSeriesId' => $orthancSeriesId
+        ];
+
+        $request = $this->httpClientInterface->requestJson('POST', "/tools/mask-to-seg", $payload);
+        return $request->getBody();
+    }
+
+    public function getSeg(string $rtssId): string
+    {
+        $downloadedFilePath  = tempnam(ini_get('upload_tmp_dir'), 'TMP_Inference_');
+
+        $this->httpClientInterface->requestStreamResponseToFile('GET', "/seg/" . $rtssId + "/file", $downloadedFilePath, []);
+        return $downloadedFilePath;
+    }
+
+    public function fragmentMask(string $seriesId, string $maskId) :string
+    {
+        $payload = [
+            'maskId' => $maskId,
+            'seriesId' => $seriesId
+        ];
+
+        $request = $this->httpClientInterface->requestJson('POST', "/tools/mask-fragmentation", $payload);
+        return $request->getBody();
+    }
 }
