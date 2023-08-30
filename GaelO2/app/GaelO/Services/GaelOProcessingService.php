@@ -111,4 +111,18 @@ class GaelOProcessingService
         $request = $this->httpClientInterface->requestJson('POST', "/tools/mask-fragmentation", $payload);
         return $request->getBody();
     }
+
+    public function getMaskDicomOrientation(string $maskId, string $orientation,  bool $compress): string
+    {
+        $downloadedFilePath  = tempnam(ini_get('upload_tmp_dir'), 'TMP_Inference_');
+
+        $payload = [
+            'maskId' => $maskId,
+            'orientation' => $orientation,
+            'compress' => $compress
+        ];
+
+        $this->httpClientInterface->requestStreamResponseToFile('POST', "/tools/mask-dicom", $downloadedFilePath, [], $payload);
+        return $downloadedFilePath;
+    }
 }

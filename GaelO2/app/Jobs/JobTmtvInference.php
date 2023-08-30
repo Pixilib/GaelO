@@ -33,21 +33,21 @@ class JobTmtvInference implements ShouldQueue
      */
     public function handle(GaelOProcessingService $gaelOProcessingService, FrameworkInterface $frameworkInterface): void
     {
-        $orthancSeriesIdPt ='5c20b778-711476a9-a29d98c1-8ddf2357-65f3f13f';
+        $orthancSeriesIdPt ='40f008c4-18e01723-3bf8793d-5e1d2cfb-af1b3802';
         $idPT = $gaelOProcessingService->createSeriesFromOrthanc($orthancSeriesIdPt, true, true);
-        $idCT = $gaelOProcessingService->createSeriesFromOrthanc('dd05d0fa-c9984728-eaf4bd15-8420aef2-55257408');
+        $idCT = $gaelOProcessingService->createSeriesFromOrthanc('8460a711-e055e4b2-1747def1-0db79fdf-f33d2944');
         $inferencePayload = [
             'idPT' => $idPT,
             'idCT' => $idCT
         ];
         $inferenceResponse = $gaelOProcessingService->executeInference('unet_model', $inferencePayload);
 
-        $mipPayload = ['min' => 0, 'max' => 5, 'inverted' => true];
+        $mipPayload = ['min' => 0, 'max' => 10, 'inverted' => true, 'orientation' => 'LPI'];
         $mipPT = $gaelOProcessingService->createMIPForSeries($idPT, $mipPayload);
         $frameworkInterface->storeFile('PETMipTest.gif', fopen($mipPT, 'r'));
 
         $maskId = $inferenceResponse['id_mask'];
-        $mipPayload = ['maskId' => $maskId, 'min' => 0, 'max' => 5, 'inverted' => true];
+        $mipPayload = ['maskId' => $maskId, 'min' => 0, 'max' => 5, 'inverted' => true, 'orientation' => 'LPI'];
         $mipMask = $gaelOProcessingService->createMIPForSeries($idPT, $mipPayload);
         $frameworkInterface->storeFile('InferenceTest.gif', fopen($mipMask, 'r'));
         $niftiMask = $gaelOProcessingService->getNiftiMask($maskId);
@@ -61,7 +61,7 @@ class JobTmtvInference implements ShouldQueue
         $frameworkInterface->storeFile('mask_fragmented.nii.gz', fopen($fragmentedNiftiMask, 'r'));
 
         #Fragmented Mip
-        $mipFragmentedPayload = ['maskId' => $fragmentedMaskId, 'min' => 0, 'max' => 5, 'inverted' => true];
+        $mipFragmentedPayload = ['maskId' => $fragmentedMaskId, 'min' => 0, 'max' => 5, 'inverted' => true, 'orientation' => 'LPI'];
         $mipMask = $gaelOProcessingService->createMIPForSeries($idPT, $mipFragmentedPayload);
         $frameworkInterface->storeFile('fragmentedInferenceTest.gif', fopen($mipMask, 'r'));
 
@@ -74,6 +74,10 @@ class JobTmtvInference implements ShouldQueue
         $segId = $gaelOProcessingService->createSegFromMask($orthancSeriesIdPt, $fragmentedMaskId);
         $segFile = $gaelOProcessingService->getSeg($segId);
         $frameworkInterface->storeFile('seg.dcm', fopen($segFile, 'r'));
+
+        #get Nifti Dicom
+        $maskdicom = $gaelOProcessingService->getMaskDicomOrientation($fragmentedMaskId, 'LPI', false);
+        $frameworkInterface->storeFile('mask_dicom.nii', fopen($maskdicom, 'r'));
     }
 
     private function deleteRessources(){
