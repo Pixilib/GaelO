@@ -78,6 +78,10 @@ class JobTmtvInference implements ShouldQueue
         #get Nifti Dicom
         $maskdicom = $gaelOProcessingService->getMaskDicomOrientation($fragmentedMaskId, 'LPI', false);
         $frameworkInterface->storeFile('mask_dicom.nii', fopen($maskdicom, 'r'));
+
+        #get Stats
+        $stats = $gaelOProcessingService->getStatsMask($maskId);
+        Log::info($stats);
     }
 
     private function deleteRessources(){

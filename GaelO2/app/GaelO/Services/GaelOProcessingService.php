@@ -125,4 +125,10 @@ class GaelOProcessingService
         $this->httpClientInterface->requestStreamResponseToFile('POST', "/tools/mask-dicom", $downloadedFilePath, [], $payload);
         return $downloadedFilePath;
     }
+
+    public function getStatsMask(string $maskId) : array
+    {
+        $request = $this->httpClientInterface->requestJson('GET', "/masks/" . $maskId . "/stats");
+        return $request->getJsonBody();
+    }
 }
