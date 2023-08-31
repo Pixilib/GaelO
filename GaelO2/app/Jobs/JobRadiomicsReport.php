@@ -4,6 +4,7 @@ namespace App\Jobs;
 
 use App\GaelO\Interfaces\Adapters\FrameworkInterface;
 use App\GaelO\Services\GaelOProcessingService;
+use App\GaelO\Services\MailServices;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -12,7 +13,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 
-class JobTmtvInference implements ShouldQueue
+class JobRadiomicsReport implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
@@ -31,9 +32,9 @@ class JobTmtvInference implements ShouldQueue
     /**
      * Execute the job.
      */
-    public function handle(GaelOProcessingService $gaelOProcessingService, FrameworkInterface $frameworkInterface): void
+    public function handle(GaelOProcessingService $gaelOProcessingService, FrameworkInterface $frameworkInterface, MailServices $mailServices): void
     {
-        $orthancSeriesIdPt ='40f008c4-18e01723-3bf8793d-5e1d2cfb-af1b3802';
+        $orthancSeriesIdPt = '40f008c4-18e01723-3bf8793d-5e1d2cfb-af1b3802';
         $idPT = $gaelOProcessingService->createSeriesFromOrthanc($orthancSeriesIdPt, true, true);
         $idCT = $gaelOProcessingService->createSeriesFromOrthanc('8460a711-e055e4b2-1747def1-0db79fdf-f33d2944');
         $inferencePayload = [
@@ -82,9 +83,15 @@ class JobTmtvInference implements ShouldQueue
         #get Stats
         $stats = $gaelOProcessingService->getStatsMask($maskId);
         Log::info($stats);
+        $mailServices->sendRadiomicsReport("TEST", $mipMask, [
+            'tmtv' => $stats['volume'],
+            'dmax' => $stats['dMax']
+        ]);
     }
 
-    private function deleteRessources(){
+    private function deleteRessources()
+    {
         //Todo supprimer la series, le mask, le mask fragmente, le rtss, le seg et le dicom cache
+        //supression dans processing et en local à faire
     }
 }

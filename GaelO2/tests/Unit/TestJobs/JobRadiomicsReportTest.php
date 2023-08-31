@@ -2,21 +2,26 @@
 
 namespace Tests\Unit\TestJobs;
 
-use App\Jobs\JobTmtvInference;
+use App\Jobs\JobRadiomicsReport;
+use App\Models\Study;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
-class JobTmtvInferenceTest extends TestCase
+class JobRadiomicsReportTest extends TestCase
 {
     use RefreshDatabase;
+    
+    private Study $study;
 
     protected function setUp(): void
     {
         parent::setUp();
         $this->artisan('db:seed');
+        $this->study = Study::factory()->name("TEST")->create();
+        
     }
 
     public function testTmtvInference() {
-        JobTmtvInference::dispatchSync();
+        JobRadiomicsReport::dispatchSync();
     }
 }
