@@ -3,15 +3,13 @@
 namespace App\Jobs;
 
 use App\GaelO\Interfaces\Adapters\FrameworkInterface;
-use App\GaelO\Services\GaelOProcessingService;
+use App\GaelO\Services\GaelOProcessingService\GaelOProcessingService;
 use App\GaelO\Services\MailServices;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\Log;
 
 class JobRadiomicsReport implements ShouldQueue
 {
@@ -20,78 +18,67 @@ class JobRadiomicsReport implements ShouldQueue
     public $failOnTimeout = true;
     public $timeout = 300;
     public $tries = 1;
+    private int $visitId;
 
-    /**
-     * Create a new job instance.
-     */
-    public function __construct()
+    public function __construct(int $visitId)
     {
-        //
+        $this->visitId = $visitId;
     }
 
-    /**
-     * Execute the job.
-     */
     public function handle(GaelOProcessingService $gaelOProcessingService, FrameworkInterface $frameworkInterface, MailServices $mailServices): void
     {
         $orthancSeriesIdPt = '40f008c4-18e01723-3bf8793d-5e1d2cfb-af1b3802';
+        $orthancSeriesIdCt = '8460a711-e055e4b2-1747def1-0db79fdf-f33d2944';
+
         $idPT = $gaelOProcessingService->createSeriesFromOrthanc($orthancSeriesIdPt, true, true);
-        $idCT = $gaelOProcessingService->createSeriesFromOrthanc('8460a711-e055e4b2-1747def1-0db79fdf-f33d2944');
+        $idCT = $gaelOProcessingService->createSeriesFromOrthanc($orthancSeriesIdCt);
+
         $inferencePayload = [
             'idPT' => $idPT,
             'idCT' => $idCT
         ];
         $inferenceResponse = $gaelOProcessingService->executeInference('unet_model', $inferencePayload);
-
-        $mipPayload = ['min' => 0, 'max' => 10, 'inverted' => true, 'orientation' => 'LPI'];
-        $mipPT = $gaelOProcessingService->createMIPForSeries($idPT, $mipPayload);
-        $frameworkInterface->storeFile('PETMipTest.gif', fopen($mipPT, 'r'));
-
         $maskId = $inferenceResponse['id_mask'];
-        $mipPayload = ['maskId' => $maskId, 'min' => 0, 'max' => 5, 'inverted' => true, 'orientation' => 'LPI'];
-        $mipMask = $gaelOProcessingService->createMIPForSeries($idPT, $mipPayload);
-        $frameworkInterface->storeFile('InferenceTest.gif', fopen($mipMask, 'r'));
-        $niftiMask = $gaelOProcessingService->getNiftiMask($maskId);
-        $frameworkInterface->storeFile('mask.nii.gz', fopen($niftiMask, 'r'));
-        $imageMask = $gaelOProcessingService->getNiftiSeries($idPT);
-        $frameworkInterface->storeFile('pet.nii.gz', fopen($imageMask, 'r'));
-        Log::alert($inferenceResponse);
-        #Do Mask Fragmentation
+
+        #Do Mask Fragmentation and threshold
         $fragmentedMaskId = $gaelOProcessingService->fragmentMask($idPT, $maskId);
-        $fragmentedNiftiMask = $gaelOProcessingService->getNiftiMask($fragmentedMaskId);
-        $frameworkInterface->storeFile('mask_fragmented.nii.gz', fopen($fragmentedNiftiMask, 'r'));
+        $threshold41MaskId = $gaelOProcessingService->thresholdMask($fragmentedMaskId, $idPT, "41%");
 
         #Fragmented Mip
-        $mipFragmentedPayload = ['maskId' => $fragmentedMaskId, 'min' => 0, 'max' => 5, 'inverted' => true, 'orientation' => 'LPI'];
+        $mipFragmentedPayload = ['maskId' => $threshold41MaskId, 'min' => 0, 'max' => 5, 'inverted' => true, 'orientation' => 'LPI'];
         $mipMask = $gaelOProcessingService->createMIPForSeries($idPT, $mipFragmentedPayload);
         $frameworkInterface->storeFile('fragmentedInferenceTest.gif', fopen($mipMask, 'r'));
 
         #get Rtss
-        $rtssId = $gaelOProcessingService->createRtssFromMask($orthancSeriesIdPt, $fragmentedMaskId);
+        $rtssId = $gaelOProcessingService->createRtssFromMask($orthancSeriesIdPt, $threshold41MaskId);
         $rtssFile = $gaelOProcessingService->getRtss($rtssId);
-        $frameworkInterface->storeFile('rtss.dcm', fopen($rtssFile, 'r'));
+        $frameworkInterface->storeFile('rtss_41.dcm', fopen($rtssFile, 'r'));
 
         #get Seg
-        $segId = $gaelOProcessingService->createSegFromMask($orthancSeriesIdPt, $fragmentedMaskId);
+        $segId = $gaelOProcessingService->createSegFromMask($orthancSeriesIdPt, $threshold41MaskId);
         $segFile = $gaelOProcessingService->getSeg($segId);
-        $frameworkInterface->storeFile('seg.dcm', fopen($segFile, 'r'));
+        $frameworkInterface->storeFile('seg_41.dcm', fopen($segFile, 'r'));
 
         #get Nifti Dicom
-        $maskdicom = $gaelOProcessingService->getMaskDicomOrientation($fragmentedMaskId, 'LPI', false);
-        $frameworkInterface->storeFile('mask_dicom.nii', fopen($maskdicom, 'r'));
+        $maskdicom = $gaelOProcessingService->getMaskDicomOrientation($threshold41MaskId, 'LPI', false);
+        $frameworkInterface->storeFile('mask_41_dicom.nii', fopen($maskdicom, 'r'));
 
         #get Stats
-        $stats = $gaelOProcessingService->getStatsMask($maskId);
-        Log::info($stats);
+        $stats = $gaelOProcessingService->getStatsMask($threshold41MaskId);
         $mailServices->sendRadiomicsReport("TEST", $mipMask, [
             'tmtv' => $stats['volume'],
             'dmax' => $stats['dMax']
         ]);
+
+        $gaelOProcessingService->deleteRessource('dicoms', $orthancSeriesIdPt);
+        $gaelOProcessingService->deleteRessource('dicoms', $orthancSeriesIdCt);
+        $gaelOProcessingService->deleteRessource('series', $idPT);
+        $gaelOProcessingService->deleteRessource('series', $idPT);
+        $gaelOProcessingService->deleteRessource('mask', $maskId);
+        $gaelOProcessingService->deleteRessource('mask', $fragmentedMaskId);
+        $gaelOProcessingService->deleteRessource('mask', $threshold41MaskId);
+        $gaelOProcessingService->deleteRessource('rtss', $rtssId);
+        $gaelOProcessingService->deleteRessource('seg', $segId);
     }
 
-    private function deleteRessources()
-    {
-        //Todo supprimer la series, le mask, le mask fragmente, le rtss, le seg et le dicom cache
-        //supression dans processing et en local à faire
-    }
 }

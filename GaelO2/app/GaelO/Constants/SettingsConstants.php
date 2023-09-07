@@ -20,9 +20,7 @@ class SettingsConstants {
     const ORTHANC_STORAGE_LOGIN = 'orthanc_storage_login';
     const ORTHANC_STORAGE_PASSWORD = 'orthanc_storage_password';
 
-    const GAELO_PROCESSING_PROTOCOL='gaelo_processing_protocol';
-    const GAELO_PROCESSING_HOST = 'gaelo_processing_host';
-    const GAELO_PROCESSING_PORT= 'gaelo_processing_port';
+    const GAELO_PROCESSING_URL='gaelo_processing_url';
 
     const AZURE_CLIENT_ID ='azure_client_id';
     const AZURE_DIRECTORY_ID ='azure_directory_id';

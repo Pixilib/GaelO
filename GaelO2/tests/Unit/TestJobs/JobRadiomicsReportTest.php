@@ -22,6 +22,6 @@ class JobRadiomicsReportTest extends TestCase
     }
 
     public function testTmtvInference() {
-        JobRadiomicsReport::dispatchSync();
+        JobRadiomicsReport::dispatchSync(5);
     }
 }
