@@ -73,10 +73,10 @@ class JobRadiomicsReport implements ShouldQueue
         $gaelOProcessingService->deleteRessource('dicoms', $orthancSeriesIdPt);
         $gaelOProcessingService->deleteRessource('dicoms', $orthancSeriesIdCt);
         $gaelOProcessingService->deleteRessource('series', $idPT);
-        $gaelOProcessingService->deleteRessource('series', $idPT);
-        $gaelOProcessingService->deleteRessource('mask', $maskId);
-        $gaelOProcessingService->deleteRessource('mask', $fragmentedMaskId);
-        $gaelOProcessingService->deleteRessource('mask', $threshold41MaskId);
+        $gaelOProcessingService->deleteRessource('series', $idCT);
+        $gaelOProcessingService->deleteRessource('masks', $maskId);
+        $gaelOProcessingService->deleteRessource('masks', $fragmentedMaskId);
+        $gaelOProcessingService->deleteRessource('masks', $threshold41MaskId);
         $gaelOProcessingService->deleteRessource('rtss', $rtssId);
         $gaelOProcessingService->deleteRessource('seg', $segId);
     }
