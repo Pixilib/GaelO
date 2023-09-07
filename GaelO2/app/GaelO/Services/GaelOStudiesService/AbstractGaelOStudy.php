@@ -3,6 +3,7 @@
 namespace App\GaelO\Services\GaelOStudiesService;
 
 use App\GaelO\Adapters\FrameworkAdapter;
+use App\GaelO\Services\GaelOStudiesService\Events\AbstractGaelOStudyEvent;
 
 abstract class AbstractGaelOStudy
 {
@@ -32,9 +33,17 @@ abstract class AbstractGaelOStudy
     /**
      * For ancillaries studies, shall return the patients metadata tags for which a review is expected
      */
-    public function getReviewablePatientsTags() : null|array
+    public function getReviewablePatientsTags(): null|array
     {
         return null;
+    }
+
+    /**
+     * To make specific study action on study event
+     */
+    public function onEventStudy(AbstractGaelOStudyEvent $studyEvent): void
+    {
+        return;
     }
 
     /**
@@ -46,5 +55,4 @@ abstract class AbstractGaelOStudy
         if (class_exists($class)) return FrameworkAdapter::make($class);
         else return FrameworkAdapter::make(DefaultGaelOStudy::class);
     }
-
 }
