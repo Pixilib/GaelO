@@ -31,6 +31,7 @@ class JobRadiomicsReport implements ShouldQueue
 
     public function handle(DicomStudyRepositoryInterface $dicomStudyRepositoryInterface, OrthancService $orthancService, GaelOProcessingService $gaelOProcessingService, FrameworkInterface $frameworkInterface, MailServices $mailServices): void
     {
+        $orthancService->setOrthancServer(true);
         $dicomStudyEntity = $dicomStudyRepositoryInterface->getDicomsDataFromVisit($this->visitId, false, false);
 
         $orthancIds = $this->getSeriesOrthancIds($dicomStudyEntity);
@@ -40,10 +41,10 @@ class JobRadiomicsReport implements ShouldQueue
         //$idCT = $gaelOProcessingService->createSeriesFromOrthanc($orthancIds['orthancSeriesIdCt']);
 
         $downloadedFilePathPT  = tempnam(ini_get('upload_tmp_dir'), 'TMP_Inference_');
-        $orthancService->getZipStreamToFile([$orthancSeriesIdPt], fopen($downloadedFilePathPT, 'r'));
+        $orthancService->getZipStreamToFile([$orthancSeriesIdPt], fopen($downloadedFilePathPT, 'r+'));
 
         $downloadedFilePathCT  = tempnam(ini_get('upload_tmp_dir'), 'TMP_Inference_');
-        $orthancService->getZipStreamToFile([$orthancSeriesIdCt], fopen($downloadedFilePathCT, 'r'));
+        $orthancService->getZipStreamToFile([$orthancSeriesIdCt], fopen($downloadedFilePathCT, 'r+'));
 
         $idPT =  $gaelOProcessingService->createDicom($downloadedFilePathPT);
         $idCT =  $gaelOProcessingService->createDicom($downloadedFilePathCT);
