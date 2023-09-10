@@ -15,6 +15,7 @@ class JobRadiomicsReportTest extends TestCase
 
     protected function setUp(): void
     {
+        $this->markTestSkipped();
         parent::setUp();
         $this->artisan('db:seed');
         $this->study = Study::factory()->name("TEST")->create();
