@@ -4,6 +4,7 @@ namespace App\GaelO\Adapters;
 
 use App\GaelO\Interfaces\Adapters\Psr7ResponseInterface;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\StreamInterface;
 
 class Psr7ResponseAdapter implements Psr7ResponseInterface
 {
@@ -18,6 +19,11 @@ class Psr7ResponseAdapter implements Psr7ResponseInterface
     public function getStatusCode(): int
     {
         return $this->response->getStatusCode();
+    }
+
+    public function getStream(): StreamInterface
+    {
+        return $this->response->getBody();
     }
 
     public function getBody(): string

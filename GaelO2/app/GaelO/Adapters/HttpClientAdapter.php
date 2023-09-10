@@ -7,8 +7,8 @@ use App\GaelO\Interfaces\Adapters\Psr7ResponseInterface;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Pool;
-use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
+use GuzzleHttp\Psr7\Utils;
 use Illuminate\Support\Facades\Log;
 
 class HttpClientAdapter implements HttpClientInterface
@@ -46,6 +46,20 @@ class HttpClientAdapter implements HttpClientInterface
         $this->password = $password;
     }
 
+    public function uploadFile(string $method, string $uri, string $filename) : Psr7ResponseInterface
+    {
+        $body = Utils::tryFopen($filename, 'r');
+
+        $headers = [
+            'Authorization' => "Basic " . base64_encode($this->login . ':' . $this->password),
+            'body' => $body
+        ];
+
+        $response = $this->client->request($method, $this->address . $uri, $headers);
+        return new Psr7ResponseAdapter($response);
+
+    }
+
     public function requestUploadArrayDicom(string $method, string $uri, array $files): array
     {
 
@@ -58,7 +72,7 @@ class HttpClientAdapter implements HttpClientInterface
                     'headers'  => ['content-type' => 'application/dicom', 'Accept' => 'application/json']
                 ];
 
-                yield new Request($method, $this->address . $uri, $headers, $body);
+                $this->client->request($method, $this->address . $uri, $headers, $body);
             }
         };
 

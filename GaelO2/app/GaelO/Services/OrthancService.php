@@ -376,7 +376,7 @@ class OrthancService
         $this->httpClientInterface->streamResponse('POST', '/tools/create-archive', $payload);
     }
 
-    public function getOrthancZipStreamAsString(array $seriesOrthancIDs, ?string $transfertSyntaxUID = null): Psr7ResponseAdapter
+    public function getOrthancZipAsStream(array $seriesOrthancIDs, ?string $transfertSyntaxUID = null): Psr7ResponseAdapter
     {
         $payload = [
             'Resources' => $seriesOrthancIDs

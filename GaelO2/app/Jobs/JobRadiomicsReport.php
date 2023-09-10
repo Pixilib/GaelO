@@ -5,6 +5,7 @@ namespace App\Jobs;
 use App\GaelO\Interfaces\Adapters\FrameworkInterface;
 use App\GaelO\Services\GaelOProcessingService\GaelOProcessingService;
 use App\GaelO\Services\MailServices;
+use App\GaelO\Services\OrthancService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -26,7 +27,7 @@ class JobRadiomicsReport implements ShouldQueue
         $this->visitId = $visitId;
     }
 
-    public function handle(GaelOProcessingService $gaelOProcessingService, FrameworkInterface $frameworkInterface, MailServices $mailServices): void
+    public function handle(OrthancService $orthancService, GaelOProcessingService $gaelOProcessingService, FrameworkInterface $frameworkInterface, MailServices $mailServices): void
     {
         $orthancSeriesIdPt = '40f008c4-18e01723-3bf8793d-5e1d2cfb-af1b3802';
         $orthancSeriesIdCt = '8460a711-e055e4b2-1747def1-0db79fdf-f33d2944';
@@ -34,6 +35,9 @@ class JobRadiomicsReport implements ShouldQueue
         $idPT = $gaelOProcessingService->createSeriesFromOrthanc($orthancSeriesIdPt, true, true);
         $idCT = $gaelOProcessingService->createSeriesFromOrthanc($orthancSeriesIdCt);
 
+        $downloadedFilePath  = tempnam(ini_get('upload_tmp_dir'), 'TMP_Inference_');
+        $orthancResponse = $orthancService->getZipStreamToFile([$orthancSeriesIdPt, $orthancSeriesIdCt], fopen($downloadedFilePath, 'r'));
+        $gaelOProcessingService->createDicom($$downloadedFilePath);
         $inferencePayload = [
             'idPT' => $idPT,
             'idCT' => $idCT

@@ -37,6 +37,11 @@ class GaelOProcessingService
         return $request->getBody();
     }
 
+    public function createDicom(string $filename){
+        $request = $this->httpClientInterface->uploadFile('POST', "/dicoms", $filename);
+        return $request->getBody();
+    }
+
     public function executeInference(string $modelName, array $payload)
     {
         $request = $this->httpClientInterface->requestJson('POST', "/models/" . $modelName . "/inference", $payload);
