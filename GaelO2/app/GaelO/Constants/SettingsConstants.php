@@ -21,6 +21,8 @@ class SettingsConstants {
     const ORTHANC_STORAGE_PASSWORD = 'orthanc_storage_password';
 
     const GAELO_PROCESSING_URL='gaelo_processing_url';
+    const GAELO_PROCESSING_LOGIN='gaelo_processing_login';
+    const GAELO_PROCESSING_PASSWORD='gaelo_processing_password';
 
     const AZURE_CLIENT_ID ='azure_client_id';
     const AZURE_DIRECTORY_ID ='azure_directory_id';

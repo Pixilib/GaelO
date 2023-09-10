@@ -25,7 +25,10 @@ class GaelOProcessingService
         set_time_limit(3600);
         //Set address of Processing Server
         $url = $this->frameworkInterface->getConfig(SettingsConstants::GAELO_PROCESSING_URL);
+        $login = $this->frameworkInterface->getConfig(SettingsConstants::GAELO_PROCESSING_LOGIN);
+        $password = $this->frameworkInterface->getConfig(SettingsConstants::GAELO_PROCESSING_PASSWORD);
         $this->httpClientInterface->setUrl($url);
+        $this->httpClientInterface->setBasicAuthentication($login, $password);
     }
 
     public function createSeriesFromOrthanc(string $orthancSeriesId, bool $pet = false, bool $convertToSuv = false)
