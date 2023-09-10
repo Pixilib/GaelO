@@ -2,7 +2,9 @@
 
 namespace App\Jobs;
 
+use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Interfaces\Adapters\FrameworkInterface;
+use App\GaelO\Interfaces\Repositories\DicomStudyRepositoryInterface;
 use App\GaelO\Services\GaelOProcessingService\GaelOProcessingService;
 use App\GaelO\Services\MailServices;
 use App\GaelO\Services\OrthancService;
@@ -27,17 +29,25 @@ class JobRadiomicsReport implements ShouldQueue
         $this->visitId = $visitId;
     }
 
-    public function handle(OrthancService $orthancService, GaelOProcessingService $gaelOProcessingService, FrameworkInterface $frameworkInterface, MailServices $mailServices): void
+    public function handle(DicomStudyRepositoryInterface $dicomStudyRepositoryInterface, OrthancService $orthancService, GaelOProcessingService $gaelOProcessingService, FrameworkInterface $frameworkInterface, MailServices $mailServices): void
     {
-        $orthancSeriesIdPt = '40f008c4-18e01723-3bf8793d-5e1d2cfb-af1b3802';
-        $orthancSeriesIdCt = '8460a711-e055e4b2-1747def1-0db79fdf-f33d2944';
+        $dicomStudyEntity = $dicomStudyRepositoryInterface->getDicomsDataFromVisit($this->visitId, false, false);
 
-        $idPT = $gaelOProcessingService->createSeriesFromOrthanc($orthancSeriesIdPt, true, true);
-        $idCT = $gaelOProcessingService->createSeriesFromOrthanc($orthancSeriesIdCt);
+        $orthancIds = $this->getSeriesOrthancIds($dicomStudyEntity);
+        $orthancSeriesIdPt = $orthancIds['orthancSeriesIdPt'];
+        $orthancSeriesIdCt = $orthancIds['orthancSeriesIdCt'];
+        //$idPT = $gaelOProcessingService->createSeriesFromOrthanc($orthancIds['orthancSeriesIdPt'], true, true);
+        //$idCT = $gaelOProcessingService->createSeriesFromOrthanc($orthancIds['orthancSeriesIdCt']);
 
-        $downloadedFilePath  = tempnam(ini_get('upload_tmp_dir'), 'TMP_Inference_');
-        $orthancResponse = $orthancService->getZipStreamToFile([$orthancSeriesIdPt, $orthancSeriesIdCt], fopen($downloadedFilePath, 'r'));
-        $gaelOProcessingService->createDicom($$downloadedFilePath);
+        $downloadedFilePathPT  = tempnam(ini_get('upload_tmp_dir'), 'TMP_Inference_');
+        $orthancService->getZipStreamToFile([$orthancSeriesIdPt], fopen($downloadedFilePathPT, 'r'));
+
+        $downloadedFilePathCT  = tempnam(ini_get('upload_tmp_dir'), 'TMP_Inference_');
+        $orthancService->getZipStreamToFile([$orthancSeriesIdCt], fopen($downloadedFilePathCT, 'r'));
+
+        $idPT =  $gaelOProcessingService->createDicom($downloadedFilePathPT);
+        $idCT =  $gaelOProcessingService->createDicom($downloadedFilePathCT);
+
         $inferencePayload = [
             'idPT' => $idPT,
             'idCT' => $idCT
@@ -86,4 +96,29 @@ class JobRadiomicsReport implements ShouldQueue
         $gaelOProcessingService->deleteRessource('seg', $segId);
     }
 
+    private function getSeriesOrthancIds(array $dicomStudyEntity)
+    {
+        $idPT = null;
+        $idCT = null;
+        foreach ($dicomStudyEntity[0]['dicom_series'] as $series) {
+            if ($series['modality'] == 'PT') {
+                if ($idPT) throw new GaelOException('Multiple PET Series, unable to perform segmentation');
+                $idPT = $series['orthanc_id'];
+            }
+            if ($series['modality'] == 'CT') {
+                if ($idCT) throw new GaelOException('Multiple CT Series, unable to perform segmentation');
+                $idCT = $series['orthanc_id'];
+            }
+        }
+
+        return [
+            'orthancSeriesIdPt' => '40f008c4-18e01723-3bf8793d-5e1d2cfb-af1b3802',
+            'orthancSeriesIdCt' => '8460a711-e055e4b2-1747def1-0db79fdf-f33d2944'
+        ];
+
+        return [
+            'orthancSeriesIdPt' => $idPT,
+            'orthancSeriesIdCt' => $idCT
+        ];
+    }
 }
