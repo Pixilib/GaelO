@@ -10,6 +10,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
 
 class JobRadiomicsReport implements ShouldQueue
 {
@@ -37,7 +38,7 @@ class JobRadiomicsReport implements ShouldQueue
             'idPT' => $idPT,
             'idCT' => $idCT
         ];
-        $inferenceResponse = $gaelOProcessingService->executeInference('unet_model', $inferencePayload);
+        $inferenceResponse = $gaelOProcessingService->executeInference('attentionunet_model', $inferencePayload);
         $maskId = $inferenceResponse['id_mask'];
 
         #Do Mask Fragmentation and threshold
