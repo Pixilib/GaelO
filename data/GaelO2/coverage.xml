@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE coverage SYSTEM "http://cobertura.sourceforge.net/xml/coverage-04.dtd">
-<coverage line-rate="0.6851903306474" branch-rate="0" lines-covered="7398" lines-valid="10797" branches-covered="0" branches-valid="0" complexity="2637" version="0.4" timestamp="1691702537">
+<coverage line-rate="0.6851903306474" branch-rate="0" lines-covered="7398" lines-valid="10797" branches-covered="0" branches-valid="0" complexity="2637" version="0.4" timestamp="1694468374">
   <sources>
     <source>/github/workspace//GaelO2/app</source>
   </sources>
@@ -25948,336 +25948,320 @@
         </class>
       </classes>
     </package>
-    <package name="Http/Controllers/ReviewController.php" line-rate="0.953125" branch-rate="0" complexity="19">
+    <package name="Http/Controllers/ReviewController.php" line-rate="1" branch-rate="0" complexity="18">
       <classes>
-        <class name="App\Http\Controllers\ReviewController" filename="Http/Controllers/ReviewController.php" line-rate="0.953125" branch-rate="0" complexity="19">
+        <class name="App\Http\Controllers\ReviewController" filename="Http/Controllers/ReviewController.php" line-rate="1" branch-rate="0" complexity="18">
           <methods>
             <method name="getInvestigatorForm" signature="Illuminate\Http\Request $request, App\GaelO\UseCases\GetInvestigatorForm\GetInvestigatorForm $getInvestigatorForm, App\GaelO\UseCases\GetInvestigatorForm\GetInvestigatorFormRequest $getInvestigatorFormRequest, App\GaelO\UseCases\GetInvestigatorForm\GetInvestigatorFormResponse $getInvestigatorFormResponse, int $visitId" line-rate="1" branch-rate="0" complexity="1">
               <lines>
-                <line number="67" hits="1"/>
+                <line number="64" hits="1"/>
+                <line number="65" hits="1"/>
+                <line number="66" hits="1"/>
                 <line number="68" hits="1"/>
                 <line number="69" hits="1"/>
-                <line number="71" hits="1"/>
+                <line number="70" hits="1"/>
                 <line number="72" hits="1"/>
-                <line number="73" hits="1"/>
-                <line number="75" hits="1"/>
-                <line number="77" hits="1"/>
+                <line number="74" hits="1"/>
               </lines>
             </method>
             <method name="deleteInvestigatorForm" signature="Illuminate\Http\Request $request, App\GaelO\UseCases\DeleteInvestigatorForm\DeleteInvestigatorForm $deleteInvestigatorForm, App\GaelO\UseCases\DeleteInvestigatorForm\DeleteInvestigatorFormRequest $deleteInvestigatorFormRequest, App\GaelO\UseCases\DeleteInvestigatorForm\DeleteInvestigatorFormResponse $deleteInvestigatorFormResponse, int $visitId" line-rate="1" branch-rate="0" complexity="1">
               <lines>
+                <line number="79" hits="4"/>
+                <line number="80" hits="4"/>
                 <line number="82" hits="4"/>
                 <line number="83" hits="4"/>
-                <line number="85" hits="4"/>
+                <line number="84" hits="4"/>
                 <line number="86" hits="4"/>
                 <line number="87" hits="4"/>
                 <line number="89" hits="4"/>
-                <line number="90" hits="4"/>
-                <line number="92" hits="4"/>
-                <line number="94" hits="4"/>
+                <line number="91" hits="4"/>
               </lines>
             </method>
             <method name="unlockInvestigatorForm" signature="Illuminate\Http\Request $request, App\GaelO\UseCases\UnlockInvestigatorForm\UnlockInvestigatorForm $unlockInvestigatorForm, App\GaelO\UseCases\UnlockInvestigatorForm\UnlockInvestigatorFormRequest $unlockInvestigatorFormRequest, App\GaelO\UseCases\UnlockInvestigatorForm\UnlockInvestigatorFormResponse $unlockInvestigatorFormResponse, int $visitId" line-rate="1" branch-rate="0" complexity="1">
               <lines>
+                <line number="96" hits="5"/>
+                <line number="97" hits="5"/>
                 <line number="99" hits="5"/>
                 <line number="100" hits="5"/>
-                <line number="102" hits="5"/>
+                <line number="101" hits="5"/>
                 <line number="103" hits="5"/>
                 <line number="104" hits="5"/>
                 <line number="106" hits="5"/>
-                <line number="107" hits="5"/>
-                <line number="109" hits="5"/>
-                <line number="111" hits="5"/>
+                <line number="108" hits="5"/>
               </lines>
             </method>
             <method name="createInvestigatorForm" signature="Illuminate\Http\Request $request, App\GaelO\UseCases\CreateInvestigatorForm\CreateInvestigatorForm $createInvestigatorForm, App\GaelO\UseCases\CreateInvestigatorForm\CreateInvestigatorFormRequest $createInvestigatorFormRequest, App\GaelO\UseCases\CreateInvestigatorForm\CreateInvestigatorFormResponse $createInvestigatorFormResponse, int $visitId" line-rate="1" branch-rate="0" complexity="1">
               <lines>
+                <line number="114" hits="6"/>
+                <line number="116" hits="6"/>
                 <line number="117" hits="6"/>
                 <line number="119" hits="6"/>
                 <line number="120" hits="6"/>
                 <line number="122" hits="6"/>
-                <line number="123" hits="6"/>
-                <line number="125" hits="6"/>
-                <line number="127" hits="6"/>
+                <line number="124" hits="6"/>
               </lines>
             </method>
             <method name="modifyInvestigatorForm" signature="Illuminate\Http\Request $request, App\GaelO\UseCases\ModifyInvestigatorForm\ModifyInvestigatorForm $modifyInvestigatorForm, App\GaelO\UseCases\ModifyInvestigatorForm\ModifyInvestigatorFormRequest $modifyInvestigatorFormRequest, App\GaelO\UseCases\ModifyInvestigatorForm\ModifyInvestigatorFormResponse $modifyInvestigatorFormResponse, int $visitId" line-rate="1" branch-rate="0" complexity="1">
               <lines>
+                <line number="130" hits="6"/>
+                <line number="132" hits="6"/>
                 <line number="133" hits="6"/>
                 <line number="135" hits="6"/>
                 <line number="136" hits="6"/>
                 <line number="138" hits="6"/>
-                <line number="139" hits="6"/>
-                <line number="141" hits="6"/>
-                <line number="143" hits="5"/>
+                <line number="140" hits="5"/>
               </lines>
             </method>
             <method name="createReviewForm" signature="Illuminate\Http\Request $request, App\GaelO\UseCases\CreateReviewForm\CreateReviewForm $createReviewForm, App\GaelO\UseCases\CreateReviewForm\CreateReviewFormRequest $createReviewFormRequest, App\GaelO\UseCases\CreateReviewForm\CreateReviewFormResponse $createReviewFormResponse, int $visitId" line-rate="1" branch-rate="0" complexity="1">
               <lines>
+                <line number="145" hits="6"/>
+                <line number="146" hits="6"/>
+                <line number="147" hits="6"/>
                 <line number="148" hits="6"/>
-                <line number="149" hits="6"/>
                 <line number="150" hits="6"/>
                 <line number="151" hits="6"/>
                 <line number="153" hits="6"/>
-                <line number="154" hits="6"/>
-                <line number="156" hits="6"/>
-                <line number="158" hits="6"/>
-                <line number="160" hits="6"/>
+                <line number="155" hits="6"/>
+                <line number="157" hits="6"/>
               </lines>
             </method>
             <method name="modifyReviewForm" signature="Illuminate\Http\Request $request, App\GaelO\UseCases\ModifyReviewForm\ModifyReviewForm $modifyReviewForm, App\GaelO\UseCases\ModifyReviewForm\ModifyReviewFormRequest $modifyReviewFormRequest, App\GaelO\UseCases\ModifyReviewForm\ModifyReviewFormResponse $modifyReviewFormResponse, int $reviewId" line-rate="1" branch-rate="0" complexity="1">
               <lines>
+                <line number="163" hits="6"/>
+                <line number="164" hits="6"/>
                 <line number="166" hits="6"/>
                 <line number="167" hits="6"/>
-                <line number="169" hits="6"/>
+                <line number="168" hits="6"/>
                 <line number="170" hits="6"/>
-                <line number="171" hits="6"/>
-                <line number="173" hits="6"/>
-                <line number="175" hits="6"/>
+                <line number="172" hits="6"/>
               </lines>
             </method>
             <method name="getReviewForm" signature="App\GaelO\UseCases\GetReviewForm\GetReviewForm $getReviewForm, App\GaelO\UseCases\GetReviewForm\GetReviewFormRequest $getReviewFormRequest, App\GaelO\UseCases\GetReviewForm\GetReviewFormResponse $getReviewFormResponse, int $reviewId" line-rate="1" branch-rate="0" complexity="1">
               <lines>
-                <line number="180" hits="3"/>
+                <line number="177" hits="3"/>
+                <line number="178" hits="3"/>
+                <line number="179" hits="3"/>
                 <line number="181" hits="3"/>
-                <line number="182" hits="3"/>
-                <line number="184" hits="3"/>
-                <line number="186" hits="3"/>
+                <line number="183" hits="3"/>
               </lines>
             </method>
             <method name="getReviewsFromVisit" signature="Illuminate\Http\Request $request, App\GaelO\UseCases\GetReviewFormFromVisit\GetReviewFormFromVisit $getReviewFormFromVisit, App\GaelO\UseCases\GetReviewFormFromVisit\GetReviewFormFromVisitRequest $getReviewFormFromVisitRequest, App\GaelO\UseCases\GetReviewFormFromVisit\GetReviewFormFromVisitResponse $getReviewFormFromVisitResponse, int $visitId" line-rate="1" branch-rate="0" complexity="2">
               <lines>
+                <line number="188" hits="4"/>
+                <line number="190" hits="4"/>
                 <line number="191" hits="4"/>
                 <line number="193" hits="4"/>
                 <line number="194" hits="4"/>
                 <line number="196" hits="4"/>
-                <line number="197" hits="4"/>
-                <line number="199" hits="4"/>
-                <line number="201" hits="4"/>
-                <line number="203" hits="4"/>
+                <line number="198" hits="4"/>
+                <line number="200" hits="4"/>
               </lines>
             </method>
             <method name="deleteReviewForm" signature="Illuminate\Http\Request $request, App\GaelO\UseCases\DeleteReviewForm\DeleteReviewForm $deleteReviewForm, App\GaelO\UseCases\DeleteReviewForm\DeleteReviewFormRequest $deleteReviewFormRequest, App\GaelO\UseCases\DeleteReviewForm\DeleteReviewFormResponse $deleteReviewFormResponse, int $reviewId" line-rate="1" branch-rate="0" complexity="1">
               <lines>
+                <line number="205" hits="5"/>
+                <line number="206" hits="5"/>
                 <line number="208" hits="5"/>
                 <line number="209" hits="5"/>
                 <line number="211" hits="5"/>
-                <line number="212" hits="5"/>
-                <line number="214" hits="5"/>
-                <line number="216" hits="5"/>
-                <line number="218" hits="5"/>
+                <line number="213" hits="5"/>
+                <line number="215" hits="5"/>
               </lines>
             </method>
             <method name="unlockReviewForm" signature="Illuminate\Http\Request $request, App\GaelO\UseCases\UnlockReviewForm\UnlockReviewForm $unlockReviewForm, App\GaelO\UseCases\UnlockReviewForm\UnlockReviewFormRequest $unlockReviewFormRequest, App\GaelO\UseCases\UnlockReviewForm\UnlockReviewFormResponse $unlockReviewFormResponse, int $reviewId" line-rate="1" branch-rate="0" complexity="1">
               <lines>
+                <line number="220" hits="5"/>
+                <line number="221" hits="5"/>
                 <line number="223" hits="5"/>
                 <line number="224" hits="5"/>
                 <line number="226" hits="5"/>
-                <line number="227" hits="5"/>
-                <line number="229" hits="5"/>
-                <line number="231" hits="5"/>
-                <line number="233" hits="5"/>
+                <line number="228" hits="5"/>
+                <line number="230" hits="5"/>
               </lines>
             </method>
             <method name="createReviewFile" signature="Illuminate\Http\Request $request, App\GaelO\UseCases\CreateFileToForm\CreateFileToForm $createFileToForm, App\GaelO\UseCases\CreateFileToForm\CreateFileToFormRequest $createFileToFormRequest, App\GaelO\UseCases\CreateFileToForm\CreateFileToFormResponse $createFileToFormResponse, int $reviewId, string $key" line-rate="1" branch-rate="0" complexity="1">
               <lines>
+                <line number="236" hits="3"/>
+                <line number="237" hits="3"/>
                 <line number="239" hits="3"/>
                 <line number="240" hits="3"/>
+                <line number="241" hits="3"/>
                 <line number="242" hits="3"/>
                 <line number="243" hits="3"/>
-                <line number="244" hits="3"/>
                 <line number="245" hits="3"/>
-                <line number="246" hits="3"/>
-                <line number="248" hits="3"/>
-                <line number="250" hits="3"/>
-              </lines>
-            </method>
-            <method name="createReviewFileFromTus" signature="Illuminate\Http\Request $request, App\GaelO\UseCases\CreateFileToFormFromTus\CreateFileToFormFromTus $createFileToFormFromTus, App\GaelO\UseCases\CreateFileToFormFromTus\CreateFileToFormFromTusRequest $createFileToFormFromTusRequest, App\GaelO\UseCases\CreateFileToFormFromTus\CreateFileToFormFromTusResponse $createFileToFormFromTusResponse" line-rate="0" branch-rate="0" complexity="1">
-              <lines>
-                <line number="255" hits="0"/>
-                <line number="256" hits="0"/>
-                <line number="258" hits="0"/>
-                <line number="259" hits="0"/>
-                <line number="260" hits="0"/>
-                <line number="262" hits="0"/>
+                <line number="247" hits="3"/>
               </lines>
             </method>
             <method name="deleteReviewFile" signature="App\GaelO\UseCases\DeleteFileOfForm\DeleteFileOfForm $deleteFileOfForm, App\GaelO\UseCases\DeleteFileOfForm\DeleteFileOfFormRequest $deleteFileOfFormRequest, App\GaelO\UseCases\DeleteFileOfForm\DeleteFileOfFormResponse $deleteFileOfFormResponse, int $reviewId, string $key" line-rate="1" branch-rate="0" complexity="1">
               <lines>
-                <line number="268" hits="2"/>
-                <line number="270" hits="2"/>
-                <line number="271" hits="2"/>
-                <line number="272" hits="2"/>
-                <line number="274" hits="2"/>
-                <line number="276" hits="2"/>
+                <line number="253" hits="2"/>
+                <line number="255" hits="2"/>
+                <line number="256" hits="2"/>
+                <line number="257" hits="2"/>
+                <line number="259" hits="2"/>
+                <line number="261" hits="2"/>
               </lines>
             </method>
             <method name="getReviewFile" signature="Illuminate\Http\Request $request, App\GaelO\UseCases\GetFileOfForm\GetFileOfForm $getFileOfForm, App\GaelO\UseCases\GetFileOfForm\GetFileOfFormRequest $getFileOfFormRequest, App\GaelO\UseCases\GetFileOfForm\GetFileOfFormResponse $getFileOfFormResponse, int $reviewId, string $key" line-rate="1" branch-rate="0" complexity="2">
               <lines>
-                <line number="282" hits="2"/>
-                <line number="283" hits="2"/>
-                <line number="284" hits="2"/>
-                <line number="285" hits="2"/>
-                <line number="286" hits="2"/>
-                <line number="287" hits="2"/>
-                <line number="289" hits="2"/>
-                <line number="292" hits="2"/>
-                <line number="293" hits="1"/>
-                <line number="295" hits="1"/>
-                <line number="296" hits="1"/>
+                <line number="267" hits="2"/>
+                <line number="268" hits="2"/>
+                <line number="269" hits="2"/>
+                <line number="270" hits="2"/>
+                <line number="271" hits="2"/>
+                <line number="272" hits="2"/>
+                <line number="274" hits="2"/>
+                <line number="277" hits="2"/>
+                <line number="278" hits="1"/>
+                <line number="280" hits="1"/>
+                <line number="281" hits="1"/>
               </lines>
             </method>
             <method name="getAssociatedDataOfVisitForReviewer" signature="App\GaelO\UseCases\GetAssociatedDataForReview\GetAssociatedDataForReview $getAssociatedDataForReview, App\GaelO\UseCases\GetAssociatedDataForReview\GetAssociatedDataForReviewRequest $getAssociatedDataForReviewRequest, App\GaelO\UseCases\GetAssociatedDataForReview\GetAssociatedDataForReviewResponse $getAssociatedDataForReviewResponse, string $studyName, int $visitId" line-rate="1" branch-rate="0" complexity="1">
               <lines>
-                <line number="302" hits="2"/>
-                <line number="303" hits="2"/>
-                <line number="304" hits="2"/>
-                <line number="305" hits="2"/>
-                <line number="307" hits="2"/>
-                <line number="309" hits="2"/>
+                <line number="287" hits="2"/>
+                <line number="288" hits="2"/>
+                <line number="289" hits="2"/>
+                <line number="290" hits="2"/>
+                <line number="292" hits="2"/>
+                <line number="294" hits="2"/>
               </lines>
             </method>
             <method name="getAssociatedDataOfVisitForInvestigator" signature="Illuminate\Http\Request $request, App\GaelO\UseCases\GetAssociatedDataForInvestigator\GetAssociatedDataForInvestigator $getAssociatedDataForInvestigator, App\GaelO\UseCases\GetAssociatedDataForInvestigator\GetAssociatedDataForInvestigatorRequest $getAssociatedDataForInvestigatorRequest, App\GaelO\UseCases\GetAssociatedDataForInvestigator\GetAssociatedDataForInvestigatorResponse $getAssociatedDataForInvestigatorResponse, int $visitId" line-rate="1" branch-rate="0" complexity="1">
               <lines>
-                <line number="314" hits="1"/>
-                <line number="315" hits="1"/>
-                <line number="317" hits="1"/>
-                <line number="318" hits="1"/>
-                <line number="319" hits="1"/>
-                <line number="321" hits="1"/>
-                <line number="323" hits="1"/>
+                <line number="299" hits="1"/>
+                <line number="300" hits="1"/>
+                <line number="302" hits="1"/>
+                <line number="303" hits="1"/>
+                <line number="304" hits="1"/>
+                <line number="306" hits="1"/>
+                <line number="308" hits="1"/>
               </lines>
             </method>
           </methods>
           <lines>
-            <line number="67" hits="1"/>
+            <line number="64" hits="1"/>
+            <line number="65" hits="1"/>
+            <line number="66" hits="1"/>
             <line number="68" hits="1"/>
             <line number="69" hits="1"/>
-            <line number="71" hits="1"/>
+            <line number="70" hits="1"/>
             <line number="72" hits="1"/>
-            <line number="73" hits="1"/>
-            <line number="75" hits="1"/>
-            <line number="77" hits="1"/>
+            <line number="74" hits="1"/>
+            <line number="79" hits="4"/>
+            <line number="80" hits="4"/>
             <line number="82" hits="4"/>
             <line number="83" hits="4"/>
-            <line number="85" hits="4"/>
+            <line number="84" hits="4"/>
             <line number="86" hits="4"/>
             <line number="87" hits="4"/>
             <line number="89" hits="4"/>
-            <line number="90" hits="4"/>
-            <line number="92" hits="4"/>
-            <line number="94" hits="4"/>
+            <line number="91" hits="4"/>
+            <line number="96" hits="5"/>
+            <line number="97" hits="5"/>
             <line number="99" hits="5"/>
             <line number="100" hits="5"/>
-            <line number="102" hits="5"/>
+            <line number="101" hits="5"/>
             <line number="103" hits="5"/>
             <line number="104" hits="5"/>
             <line number="106" hits="5"/>
-            <line number="107" hits="5"/>
-            <line number="109" hits="5"/>
-            <line number="111" hits="5"/>
+            <line number="108" hits="5"/>
+            <line number="114" hits="6"/>
+            <line number="116" hits="6"/>
             <line number="117" hits="6"/>
             <line number="119" hits="6"/>
             <line number="120" hits="6"/>
             <line number="122" hits="6"/>
-            <line number="123" hits="6"/>
-            <line number="125" hits="6"/>
-            <line number="127" hits="6"/>
+            <line number="124" hits="6"/>
+            <line number="130" hits="6"/>
+            <line number="132" hits="6"/>
             <line number="133" hits="6"/>
             <line number="135" hits="6"/>
             <line number="136" hits="6"/>
             <line number="138" hits="6"/>
-            <line number="139" hits="6"/>
-            <line number="141" hits="6"/>
-            <line number="143" hits="5"/>
+            <line number="140" hits="5"/>
+            <line number="145" hits="6"/>
+            <line number="146" hits="6"/>
+            <line number="147" hits="6"/>
             <line number="148" hits="6"/>
-            <line number="149" hits="6"/>
             <line number="150" hits="6"/>
             <line number="151" hits="6"/>
             <line number="153" hits="6"/>
-            <line number="154" hits="6"/>
-            <line number="156" hits="6"/>
-            <line number="158" hits="6"/>
-            <line number="160" hits="6"/>
+            <line number="155" hits="6"/>
+            <line number="157" hits="6"/>
+            <line number="163" hits="6"/>
+            <line number="164" hits="6"/>
             <line number="166" hits="6"/>
             <line number="167" hits="6"/>
-            <line number="169" hits="6"/>
+            <line number="168" hits="6"/>
             <line number="170" hits="6"/>
-            <line number="171" hits="6"/>
-            <line number="173" hits="6"/>
-            <line number="175" hits="6"/>
-            <line number="180" hits="3"/>
+            <line number="172" hits="6"/>
+            <line number="177" hits="3"/>
+            <line number="178" hits="3"/>
+            <line number="179" hits="3"/>
             <line number="181" hits="3"/>
-            <line number="182" hits="3"/>
-            <line number="184" hits="3"/>
-            <line number="186" hits="3"/>
+            <line number="183" hits="3"/>
+            <line number="188" hits="4"/>
+            <line number="190" hits="4"/>
             <line number="191" hits="4"/>
             <line number="193" hits="4"/>
             <line number="194" hits="4"/>
             <line number="196" hits="4"/>
-            <line number="197" hits="4"/>
-            <line number="199" hits="4"/>
-            <line number="201" hits="4"/>
-            <line number="203" hits="4"/>
+            <line number="198" hits="4"/>
+            <line number="200" hits="4"/>
+            <line number="205" hits="5"/>
+            <line number="206" hits="5"/>
             <line number="208" hits="5"/>
             <line number="209" hits="5"/>
             <line number="211" hits="5"/>
-            <line number="212" hits="5"/>
-            <line number="214" hits="5"/>
-            <line number="216" hits="5"/>
-            <line number="218" hits="5"/>
+            <line number="213" hits="5"/>
+            <line number="215" hits="5"/>
+            <line number="220" hits="5"/>
+            <line number="221" hits="5"/>
             <line number="223" hits="5"/>
             <line number="224" hits="5"/>
             <line number="226" hits="5"/>
-            <line number="227" hits="5"/>
-            <line number="229" hits="5"/>
-            <line number="231" hits="5"/>
-            <line number="233" hits="5"/>
+            <line number="228" hits="5"/>
+            <line number="230" hits="5"/>
+            <line number="236" hits="3"/>
+            <line number="237" hits="3"/>
             <line number="239" hits="3"/>
             <line number="240" hits="3"/>
+            <line number="241" hits="3"/>
             <line number="242" hits="3"/>
             <line number="243" hits="3"/>
-            <line number="244" hits="3"/>
             <line number="245" hits="3"/>
-            <line number="246" hits="3"/>
-            <line number="248" hits="3"/>
-            <line number="250" hits="3"/>
-            <line number="255" hits="0"/>
-            <line number="256" hits="0"/>
-            <line number="258" hits="0"/>
-            <line number="259" hits="0"/>
-            <line number="260" hits="0"/>
-            <line number="262" hits="0"/>
+            <line number="247" hits="3"/>
+            <line number="253" hits="2"/>
+            <line number="255" hits="2"/>
+            <line number="256" hits="2"/>
+            <line number="257" hits="2"/>
+            <line number="259" hits="2"/>
+            <line number="261" hits="2"/>
+            <line number="267" hits="2"/>
             <line number="268" hits="2"/>
+            <line number="269" hits="2"/>
             <line number="270" hits="2"/>
             <line number="271" hits="2"/>
             <line number="272" hits="2"/>
             <line number="274" hits="2"/>
-            <line number="276" hits="2"/>
-            <line number="282" hits="2"/>
-            <line number="283" hits="2"/>
-            <line number="284" hits="2"/>
-            <line number="285" hits="2"/>
-            <line number="286" hits="2"/>
+            <line number="277" hits="2"/>
+            <line number="278" hits="1"/>
+            <line number="280" hits="1"/>
+            <line number="281" hits="1"/>
             <line number="287" hits="2"/>
+            <line number="288" hits="2"/>
             <line number="289" hits="2"/>
+            <line number="290" hits="2"/>
             <line number="292" hits="2"/>
-            <line number="293" hits="1"/>
-            <line number="295" hits="1"/>
-            <line number="296" hits="1"/>
-            <line number="302" hits="2"/>
-            <line number="303" hits="2"/>
-            <line number="304" hits="2"/>
-            <line number="305" hits="2"/>
-            <line number="307" hits="2"/>
-            <line number="309" hits="2"/>
-            <line number="314" hits="1"/>
-            <line number="315" hits="1"/>
-            <line number="317" hits="1"/>
-            <line number="318" hits="1"/>
-            <line number="319" hits="1"/>
-            <line number="321" hits="1"/>
-            <line number="323" hits="1"/>
+            <line number="294" hits="2"/>
+            <line number="299" hits="1"/>
+            <line number="300" hits="1"/>
+            <line number="302" hits="1"/>
+            <line number="303" hits="1"/>
+            <line number="304" hits="1"/>
+            <line number="306" hits="1"/>
+            <line number="308" hits="1"/>
           </lines>
         </class>
       </classes>
@@ -26688,76 +26672,92 @@
         </class>
       </classes>
     </package>
-    <package name="Http/Controllers/ToolsController.php" line-rate="1" branch-rate="0" complexity="4">
+    <package name="Http/Controllers/ToolsController.php" line-rate="0.8" branch-rate="0" complexity="5">
       <classes>
-        <class name="App\Http\Controllers\ToolsController" filename="Http/Controllers/ToolsController.php" line-rate="1" branch-rate="0" complexity="4">
+        <class name="App\Http\Controllers\ToolsController" filename="Http/Controllers/ToolsController.php" line-rate="0.8" branch-rate="0" complexity="5">
           <methods>
             <method name="getPatientsInStudyFromCenters" signature="Illuminate\Http\Request $request, App\GaelO\UseCases\GetPatientsInStudyFromCenters\GetPatientsInStudyFromCenters $getPatientsInStudyFromCenters, App\GaelO\UseCases\GetPatientsInStudyFromCenters\GetPatientsInStudyFromCentersRequest $getPatientsInStudyFromCentersRequest, App\GaelO\UseCases\GetPatientsInStudyFromCenters\GetPatientsInStudyFromCentersResponse $getPatientsInStudyFromCentersResponse" line-rate="1" branch-rate="0" complexity="1">
               <lines>
-                <line number="29" hits="2"/>
-                <line number="30" hits="2"/>
-                <line number="31" hits="2"/>
                 <line number="32" hits="2"/>
+                <line number="33" hits="2"/>
                 <line number="34" hits="2"/>
                 <line number="35" hits="2"/>
+                <line number="37" hits="2"/>
+                <line number="38" hits="2"/>
               </lines>
             </method>
             <method name="getPatientsVisitsInStudy" signature="Illuminate\Http\Request $request, App\GaelO\UseCases\GetPatientsVisitsInStudy\GetPatientsVisitsInStudy $getPatientsVisitsInStudy, App\GaelO\UseCases\GetPatientsVisitsInStudy\GetPatientsVisitsInStudyRequest $getPatientsVisitsInStudyRequest, App\GaelO\UseCases\GetPatientsVisitsInStudy\GetPatientsVisitsInStudyResponse $getPatientsVisitsInStudyResponse" line-rate="1" branch-rate="0" complexity="1">
               <lines>
-                <line number="43" hits="2"/>
-                <line number="45" hits="2"/>
                 <line number="46" hits="2"/>
-                <line number="47" hits="2"/>
                 <line number="48" hits="2"/>
                 <line number="49" hits="2"/>
                 <line number="50" hits="2"/>
                 <line number="51" hits="2"/>
+                <line number="52" hits="2"/>
+                <line number="53" hits="2"/>
+                <line number="54" hits="2"/>
               </lines>
             </method>
             <method name="findUser" signature="Illuminate\Http\Request $request, App\GaelO\UseCases\FindUser\FindUser $findUser, App\GaelO\UseCases\FindUser\FindUserRequest $findUserRequest, App\GaelO\UseCases\FindUser\FindUserResponse $findUserResponse" line-rate="1" branch-rate="0" complexity="1">
               <lines>
-                <line number="59" hits="3"/>
-                <line number="61" hits="3"/>
                 <line number="62" hits="3"/>
-                <line number="63" hits="3"/>
                 <line number="64" hits="3"/>
                 <line number="65" hits="3"/>
                 <line number="66" hits="3"/>
-                <line number="67" hits="2"/>
+                <line number="67" hits="3"/>
+                <line number="68" hits="3"/>
+                <line number="69" hits="3"/>
+                <line number="70" hits="2"/>
               </lines>
             </method>
             <method name="readiness" signature="App\GaelO\UseCases\GetReadiness\GetReadiness $getReadiness, App\GaelO\UseCases\GetReadiness\GetReadinessRequest $getReadinessRequest, App\GaelO\UseCases\GetReadiness\GetReadinessResponse $getReadinessResponse" line-rate="1" branch-rate="0" complexity="1">
               <lines>
-                <line number="73" hits="1"/>
-                <line number="74" hits="1"/>
+                <line number="76" hits="1"/>
+                <line number="77" hits="1"/>
+              </lines>
+            </method>
+            <method name="createFormFileFromTus" signature="Illuminate\Http\Request $request, App\GaelO\UseCases\CreateFileToFormFromTus\CreateFileToFormFromTus $createFileToFormFromTus, App\GaelO\UseCases\CreateFileToFormFromTus\CreateFileToFormFromTusRequest $createFileToFormFromTusRequest, App\GaelO\UseCases\CreateFileToFormFromTus\CreateFileToFormFromTusResponse $createFileToFormFromTusResponse" line-rate="0" branch-rate="0" complexity="1">
+              <lines>
+                <line number="82" hits="0"/>
+                <line number="83" hits="0"/>
+                <line number="85" hits="0"/>
+                <line number="86" hits="0"/>
+                <line number="87" hits="0"/>
+                <line number="89" hits="0"/>
               </lines>
             </method>
           </methods>
           <lines>
-            <line number="29" hits="2"/>
-            <line number="30" hits="2"/>
-            <line number="31" hits="2"/>
             <line number="32" hits="2"/>
+            <line number="33" hits="2"/>
             <line number="34" hits="2"/>
             <line number="35" hits="2"/>
-            <line number="43" hits="2"/>
-            <line number="45" hits="2"/>
+            <line number="37" hits="2"/>
+            <line number="38" hits="2"/>
             <line number="46" hits="2"/>
-            <line number="47" hits="2"/>
             <line number="48" hits="2"/>
             <line number="49" hits="2"/>
             <line number="50" hits="2"/>
             <line number="51" hits="2"/>
-            <line number="59" hits="3"/>
-            <line number="61" hits="3"/>
+            <line number="52" hits="2"/>
+            <line number="53" hits="2"/>
+            <line number="54" hits="2"/>
             <line number="62" hits="3"/>
-            <line number="63" hits="3"/>
             <line number="64" hits="3"/>
             <line number="65" hits="3"/>
             <line number="66" hits="3"/>
-            <line number="67" hits="2"/>
-            <line number="73" hits="1"/>
-            <line number="74" hits="1"/>
+            <line number="67" hits="3"/>
+            <line number="68" hits="3"/>
+            <line number="69" hits="3"/>
+            <line number="70" hits="2"/>
+            <line number="76" hits="1"/>
+            <line number="77" hits="1"/>
+            <line number="82" hits="0"/>
+            <line number="83" hits="0"/>
+            <line number="85" hits="0"/>
+            <line number="86" hits="0"/>
+            <line number="87" hits="0"/>
+            <line number="89" hits="0"/>
           </lines>
         </class>
       </classes>
