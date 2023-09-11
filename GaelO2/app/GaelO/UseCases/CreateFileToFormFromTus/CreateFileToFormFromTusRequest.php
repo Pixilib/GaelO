@@ -9,6 +9,6 @@ class CreateFileToFormFromTusRequest
     public string $key;
     public ?string $extension = null;
     public array $tusIds;
-    public ?int $numberOfInstances;
     public ?bool $isDicom = false;
+    public ?int $numberOfInstances;
 }
