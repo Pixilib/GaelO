@@ -19,6 +19,7 @@ class GaelOProcessingServiceTest extends TestCase
 
     public function testSendDicom()
     {
-        $resultat=$this->gaeloProcessingService->sendDicom(["a97f5e66-bbff00d4-1639c63f-a3e1e53a-d4b5e553"]);
+        $path = getcwd() . "/tests/data/MR.zip";
+        $resultat=$this->gaeloProcessingService->createDicom($path);
     }
 }
