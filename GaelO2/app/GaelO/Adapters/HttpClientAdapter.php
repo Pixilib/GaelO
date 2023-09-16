@@ -52,7 +52,7 @@ class HttpClientAdapter implements HttpClientInterface
         $body = Utils::tryFopen($filename, 'r');
 
         $headers = [
-            'Authorization' => "Basic " . base64_encode($this->login . ':' . $this->password),
+            'auth' => [$this->login, $this->password],
             'body' => $body
         ];
 
