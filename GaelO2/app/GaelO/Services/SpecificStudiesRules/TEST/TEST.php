@@ -4,6 +4,8 @@ namespace App\GaelO\Services\SpecificStudiesRules\TEST;
 
 use App\GaelO\Services\GaelOStudiesService\AbstractGaelOStudy;
 use App\GaelO\Services\GaelOStudiesService\DefaultVisitRules;
+use App\GaelO\Services\GaelOStudiesService\Events\AbstractGaelOStudyEvent;
+use App\GaelO\Services\GaelOStudiesService\Events\VisitUploadedEvent;
 
 class TEST extends AbstractGaelOStudy {
 
@@ -77,6 +79,14 @@ class TEST extends AbstractGaelOStudy {
         else if ($key === TEST_VISITS::CT0->value) return TEST_WB_CT0::class;
         else return DefaultVisitRules::class;
 
+    }
+
+    public function onEventStudy(AbstractGaelOStudyEvent $studyEvent): void
+    {
+        parent::onEventStudy($studyEvent);
+        if ($studyEvent instanceof VisitUploadedEvent) {
+           $this->jobInterface->sendRadiomicsReport($studyEvent->getVisitId());
+        }
     }
 
 }

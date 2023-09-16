@@ -7,6 +7,7 @@ use App\GaelO\Interfaces\Adapters\Psr7ResponseInterface;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Pool;
+use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\Psr7\Utils;
 use Illuminate\Support\Facades\Log;
@@ -72,7 +73,7 @@ class HttpClientAdapter implements HttpClientInterface
                     'headers'  => ['content-type' => 'application/dicom', 'Accept' => 'application/json']
                 ];
 
-                $this->client->request($method, $this->address . $uri, $headers, $body);
+                yield new Request($method, $this->address . $uri, $headers, $body);
             }
         };
 

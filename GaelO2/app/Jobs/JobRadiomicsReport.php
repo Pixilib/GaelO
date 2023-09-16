@@ -37,8 +37,6 @@ class JobRadiomicsReport implements ShouldQueue
         $orthancIds = $this->getSeriesOrthancIds($dicomStudyEntity);
         $orthancSeriesIdPt = $orthancIds['orthancSeriesIdPt'];
         $orthancSeriesIdCt = $orthancIds['orthancSeriesIdCt'];
-        //$idPT = $gaelOProcessingService->createSeriesFromOrthanc($orthancIds['orthancSeriesIdPt'], true, true);
-        //$idCT = $gaelOProcessingService->createSeriesFromOrthanc($orthancIds['orthancSeriesIdCt']);
 
         $downloadedFilePathPT  = tempnam(ini_get('upload_tmp_dir'), 'TMP_Inference_');
         $orthancService->getZipStreamToFile([$orthancSeriesIdPt], fopen($downloadedFilePathPT, 'r+'));
@@ -111,11 +109,6 @@ class JobRadiomicsReport implements ShouldQueue
                 $idCT = $series['orthanc_id'];
             }
         }
-
-        return [
-            'orthancSeriesIdPt' => '40f008c4-18e01723-3bf8793d-5e1d2cfb-af1b3802',
-            'orthancSeriesIdCt' => '8460a711-e055e4b2-1747def1-0db79fdf-f33d2944'
-        ];
 
         return [
             'orthancSeriesIdPt' => $idPT,

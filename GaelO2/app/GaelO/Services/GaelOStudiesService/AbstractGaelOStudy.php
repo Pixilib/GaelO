@@ -10,8 +10,8 @@ use App\GaelO\Services\MailServices;
 
 abstract class AbstractGaelOStudy
 {
-    private MailServices $mailServices;
-    private JobInterface $jobInterface;
+    protected MailServices $mailServices;
+    protected JobInterface $jobInterface;
     protected string $studyName;
 
     public function __construct(MailServices $mailServices, JobInterface $jobInterface)
