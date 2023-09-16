@@ -44,8 +44,11 @@ class JobRadiomicsReport implements ShouldQueue
         $downloadedFilePathCT  = tempnam(ini_get('upload_tmp_dir'), 'TMP_Inference_');
         $orthancService->getZipStreamToFile([$orthancSeriesIdCt], fopen($downloadedFilePathCT, 'r+'));
 
-        $idPT =  $gaelOProcessingService->createDicom($downloadedFilePathPT);
-        $idCT =  $gaelOProcessingService->createDicom($downloadedFilePathCT);
+        $gaelOProcessingService->createDicom($downloadedFilePathPT);
+        $gaelOProcessingService->createDicom($downloadedFilePathCT);
+
+        $idPT =  $gaelOProcessingService->createSeriesFromOrthanc($orthancSeriesIdPt);
+        $idCT =  $gaelOProcessingService->createSeriesFromOrthanc($orthancSeriesIdCt);
 
         $inferencePayload = [
             'idPT' => $idPT,

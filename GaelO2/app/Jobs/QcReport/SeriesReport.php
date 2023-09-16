@@ -113,7 +113,7 @@ class SeriesReport
             '1.2.840.10008.5.1.4.1.1.2', '1.2.840.10008.5.1.4.1.1.2.1', '1.2.840.10008.5.1.4.1.1.20',
             '1.2.840.10008.5.1.4.1.1.128', '1.2.840.10008.5.1.4.1.1.130', '1.2.840.10008.5.1.4.1.1.128.1'
         ];
-
+        #TODO : Si une seule instance faire l'api d'orthanc
         if ($this->instanceReport != null && $this->instanceReport->numberOfFrames > 1) {
             return ImageType::MULTIFRAME;
         } else if (in_array($this->SOPClassUID, $mosaicIDs)) {
