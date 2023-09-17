@@ -47,7 +47,7 @@ class JobRadiomicsReport implements ShouldQueue
         $gaelOProcessingService->createDicom($downloadedFilePathPT);
         $gaelOProcessingService->createDicom($downloadedFilePathCT);
 
-        $idPT =  $gaelOProcessingService->createSeriesFromOrthanc($orthancSeriesIdPt);
+        $idPT =  $gaelOProcessingService->createSeriesFromOrthanc($orthancSeriesIdPt, true, true);
         $idCT =  $gaelOProcessingService->createSeriesFromOrthanc($orthancSeriesIdCt);
 
         $inferencePayload = [
