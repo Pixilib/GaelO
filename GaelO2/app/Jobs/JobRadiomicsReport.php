@@ -21,7 +21,7 @@ class JobRadiomicsReport implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     public $failOnTimeout = true;
-    public $timeout = 600;
+    public $timeout = 900;
     public $tries = 1;
     private int $visitId;
 
