@@ -5,6 +5,7 @@ namespace App\Jobs;
 use App\GaelO\Exceptions\GaelOException;
 use App\GaelO\Interfaces\Adapters\FrameworkInterface;
 use App\GaelO\Interfaces\Repositories\DicomStudyRepositoryInterface;
+use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
 use App\GaelO\Services\GaelOProcessingService\GaelOProcessingService;
 use App\GaelO\Services\MailServices;
 use App\GaelO\Services\OrthancService;
@@ -31,9 +32,15 @@ class JobRadiomicsReport implements ShouldQueue
         $this->visitId = $visitId;
     }
 
-    public function handle(DicomStudyRepositoryInterface $dicomStudyRepositoryInterface, OrthancService $orthancService, GaelOProcessingService $gaelOProcessingService, FrameworkInterface $frameworkInterface, MailServices $mailServices): void
+    public function handle(VisitRepositoryInterface $visitRepositoryInterface, DicomStudyRepositoryInterface $dicomStudyRepositoryInterface, OrthancService $orthancService, GaelOProcessingService $gaelOProcessingService, FrameworkInterface $frameworkInterface, MailServices $mailServices): void
     {
         $orthancService->setOrthancServer(true);
+        $visitEntity = $visitRepositoryInterface->getVisitContext($this->visitId);
+        $studyName = $visitEntity['patient']['study_name'];
+        $visitType = $visitEntity['visit_type']['name'];
+        $patientCode = $visitEntity['patient']['code'];
+        $creatorUserId = $visitEntity['creator_user_id'];
+
         $dicomStudyEntity = $dicomStudyRepositoryInterface->getDicomsDataFromVisit($this->visitId, false, false);
 
         $orthancIds = $this->getSeriesOrthancIds($dicomStudyEntity);
@@ -84,10 +91,15 @@ class JobRadiomicsReport implements ShouldQueue
 
         #get Stats
         $stats = $gaelOProcessingService->getStatsMask($threshold41MaskId);
-        $mailServices->sendRadiomicsReport("TEST", $mipMask, [
-            'tmtv 41%' => $stats['volume'],
-            'dmax' => $stats['dMax']
-        ]);
+        $statValue = ['tmtv 41%' => $stats['volume'], 'dmax' => $stats['dMax']];
+        $mailServices->sendRadiomicsReport(
+            $studyName,
+            $patientCode,
+            $visitType,
+            $mipMask,
+            $statValue,
+            $creatorUserId
+        );
 
         $gaelOProcessingService->deleteRessource('dicoms', $orthancSeriesIdPt);
         $gaelOProcessingService->deleteRessource('dicoms', $orthancSeriesIdCt);
