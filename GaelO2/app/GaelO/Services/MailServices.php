@@ -299,8 +299,6 @@ class MailServices
 
     public function sendCorrectiveActionMessage(int $visitId, int $currentUserId, string $studyName, bool $correctionApplied, string $patientId, string $patientCode, string $visitModality, string $visitType)
     {
-
-
         $parameters = [
             'name' => 'User',
             'correctionApplied' => $correctionApplied,
@@ -365,7 +363,8 @@ class MailServices
         ];
 
         $this->mailInterface->setTo([
-            ...$this->getUsersEmailsByRolesInStudy($studyName, Constants::ROLE_SUPERVISOR)
+            ...$this->getUsersEmailsByRolesInStudy($studyName, Constants::ROLE_SUPERVISOR),
+            $this->getUserEmail($currentUserId)
         ]);
 
         $this->mailInterface->setReplyTo($this->getStudyContactEmail($studyName));

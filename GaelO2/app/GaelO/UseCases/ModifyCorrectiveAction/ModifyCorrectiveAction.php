@@ -11,6 +11,8 @@ use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
 use App\GaelO\Services\AuthorizationService\AuthorizationVisitService;
+use App\GaelO\Services\GaelOStudiesService\AbstractGaelOStudy;
+use App\GaelO\Services\GaelOStudiesService\Events\CorrectiveActionEvent;
 use App\GaelO\Services\MailServices;
 use Exception;
 
@@ -38,7 +40,6 @@ class ModifyCorrectiveAction
 
             $studyName = $visitContext['patient']['study_name'];
             $patientId = $visitContext['patient']['id'];
-            $patientCode = $visitContext['patient']['code'];
             $visitType = $visitContext['visit_type']['name'];
             $visitGroupName = $visitContext['visit_type']['visit_group']['name'];
             $visitModality = $visitContext['visit_type']['visit_group']['modality'];
@@ -92,17 +93,12 @@ class ModifyCorrectiveAction
                 $actionDetails
             );
 
-            //Send Email
-            $this->mailServices->sendCorrectiveActionMessage(
-                $modifyCorrectiveActionRequest->visitId,
-                $modifyCorrectiveActionRequest->currentUserId,
-                $studyName,
-                $modifyCorrectiveActionRequest->correctiveActionDone,
-                $patientId,
-                $patientCode,
-                $visitModality,
-                $visitType
-            );
+            $qcModifiedEvent = new CorrectiveActionEvent($visitContext);
+            $qcModifiedEvent->setCurrentUserId($modifyCorrectiveActionRequest->currentUserId);
+            $qcModifiedEvent->setCorrrectiveActionDone($modifyCorrectiveActionRequest->correctiveActionDone);
+    
+            $studyObject = AbstractGaelOStudy::getSpecificStudyObject($studyName);
+            $studyObject->onEventStudy($qcModifiedEvent);
 
             $modifyCorrectiveActionResponse->status = 200;
             $modifyCorrectiveActionResponse->statusText = 'OK';

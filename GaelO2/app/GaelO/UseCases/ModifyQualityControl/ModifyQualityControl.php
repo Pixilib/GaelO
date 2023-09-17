@@ -10,7 +10,6 @@ use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
 use App\GaelO\Services\AuthorizationService\AuthorizationVisitService;
-use App\GaelO\Services\MailServices;
 use App\GaelO\Services\VisitService;
 use Exception;
 
@@ -20,14 +19,12 @@ class ModifyQualityControl
     private AuthorizationVisitService $authorizationVisitService;
     private VisitService $visitService;
     private TrackerRepositoryInterface $trackerRepositoryInterface;
-    private MailServices $mailServices;
 
-    public function __construct(AuthorizationVisitService $authorizationVisitService, VisitService $visitService, TrackerRepositoryInterface $trackerRepositoryInterface, MailServices $mailServices)
+    public function __construct(AuthorizationVisitService $authorizationVisitService, VisitService $visitService, TrackerRepositoryInterface $trackerRepositoryInterface)
     {
         $this->authorizationVisitService = $authorizationVisitService;
         $this->visitService = $visitService;
         $this->trackerRepositoryInterface = $trackerRepositoryInterface;
-        $this->mailServices = $mailServices;
     }
 
     public function execute(ModifyQualityControlRequest $modifyQualityControlRequest, ModifyQualityControlResponse $modifyQualityControlResponse)
@@ -43,15 +40,12 @@ class ModifyQualityControl
 
             $studyName = $visitContext['patient']['study_name'];
             $patientId = $visitContext['patient']['id'];
-            $patientCode = $visitContext['patient']['code'];
             $visitType = $visitContext['visit_type']['name'];
             $visitGroupName = $visitContext['visit_type']['visit_group']['name'];
             $visitModality = $visitContext['visit_type']['visit_group']['modality'];
-            $centerCode = $visitContext['patient']['center_code'];
-            $creatorId = $visitContext['creator_user_id'];
             $localFormNeeded = $visitContext['state_investigator_form'] !== InvestigatorFormStateEnum::NOT_NEEDED->value;
 
-            if($modifyQualityControlRequest->studyName !== $studyName){
+            if ($modifyQualityControlRequest->studyName !== $studyName) {
                 throw new GaelOForbiddenException("Should be called from original study");
             }
 
@@ -103,23 +97,6 @@ class ModifyQualityControl
                 $visitId,
                 Constants::TRACKER_QUALITY_CONTROL,
                 $actionDetails
-            );
-
-            $this->mailServices->sendQcDecisionMessage(
-                $visitId,
-                $creatorId,
-                $currentUserId,
-                $studyName,
-                $centerCode,
-                $modifyQualityControlRequest->stateQc,
-                $patientId,
-                $patientCode,
-                $visitModality,
-                $visitType,
-                $modifyQualityControlRequest->formQc ? 'Accepted ' : 'Refused',
-                $modifyQualityControlRequest->imageQc ? 'Accepted ' : 'Refused',
-                $modifyQualityControlRequest->formQcComment ?? 'None',
-                $modifyQualityControlRequest->imageQcComment ?? 'None'
             );
 
             $modifyQualityControlResponse->status = 200;

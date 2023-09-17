@@ -10,6 +10,7 @@ use App\GaelO\Repositories\ReviewRepository;
 use App\GaelO\Repositories\ReviewStatusRepository;
 use App\GaelO\Repositories\VisitRepository;
 use App\GaelO\Services\GaelOStudiesService\AbstractGaelOStudy;
+use App\GaelO\Services\GaelOStudiesService\Events\QCModifiedEvent;
 use App\GaelO\Services\GaelOStudiesService\Events\VisitUploadedEvent;
 
 class VisitService
@@ -119,6 +120,17 @@ class VisitService
             //Invalidate invistagator form and set it status as draft in the visit
             $this->reviewStatusRepository->updateReviewAvailability($this->visitId, $studyName, true);
         }
+
+        $qcModifiedEvent = new QCModifiedEvent($visitEntity);
+        $qcModifiedEvent->setCurrentUserId($controllerId);
+        $qcModifiedEvent->setQcStatus($stateQc);
+        $qcModifiedEvent->setFormQcStatus($formQc ? 'Accepted ' : 'Refused');
+        $qcModifiedEvent->setImageQcStatus($imageQc ? 'Accepted ' : 'Refused');
+        $qcModifiedEvent->setFormQcComment($formQcComment ?? 'None');
+        $qcModifiedEvent->setImageQcComment($imageQcComment ?? 'None');
+
+        $studyObject = AbstractGaelOStudy::getSpecificStudyObject($studyName);
+        $studyObject->onEventStudy($qcModifiedEvent);
     }
 
     public function resetQc(): void

@@ -4,7 +4,9 @@ namespace App\GaelO\Services\GaelOStudiesService;
 
 use App\GaelO\Adapters\FrameworkAdapter;
 use App\GaelO\Interfaces\Adapters\JobInterface;
-use App\GaelO\Services\GaelOStudiesService\Events\AbstractGaelOStudyEvent;
+use App\GaelO\Services\GaelOStudiesService\Events\BaseStudyEvent;
+use App\GaelO\Services\GaelOStudiesService\Events\CorrectiveActionEvent;
+use App\GaelO\Services\GaelOStudiesService\Events\QCModifiedEvent;
 use App\GaelO\Services\GaelOStudiesService\Events\VisitUploadedEvent;
 use App\GaelO\Services\MailServices;
 
@@ -52,28 +54,88 @@ abstract class AbstractGaelOStudy
     /**
      * To make specific study action on study event, can be overriden to avoid some automatic mails
      */
-    public function onEventStudy(AbstractGaelOStudyEvent $studyEvent): void
+    public function onEventStudy(BaseStudyEvent $studyEvent): void
     {
         if ($studyEvent instanceof VisitUploadedEvent) {
-            $studyName = $studyEvent->getStudyName();
-            $patientId = $studyEvent->getPatientId();
-            $patientCode = $studyEvent->getPatientCode();
-            $visitId = $studyEvent->getVisitId();
-            $qcNeeded = $studyEvent->isQcNeeded();
-            $visitType = $studyEvent->getVisitTypeName();
-            $creatorUserId = $studyEvent->getCreatorUserId();
-            $reviewNeeded = $studyEvent->isReviewNeeded();
-
-            $this->mailServices->sendUploadedVisitMessage($visitId, $creatorUserId, $studyName, $patientId, $patientCode, $visitType, $qcNeeded);
-
-            if ($qcNeeded) {
-                $this->jobInterface->sendQcReportJob($visitId);
-            }
-
-            if (!$qcNeeded && $reviewNeeded) {
-                $this->mailServices->sendReviewReadyMessage($visitId, $studyName, $patientId, $patientCode, $visitType);
-            }
+            $this->onVisitUploaded($studyEvent);
+        } else if ($studyEvent instanceof QCModifiedEvent) {
+            $this->onQcModified($studyEvent);
+        } else if($studyEvent instanceof CorrectiveActionEvent){
+            $this->onCorrectiveAction($studyEvent);
         }
+    }
+
+    protected function onVisitUploaded(VisitUploadedEvent $visitUploadedEvent): void
+    {
+        $studyName = $visitUploadedEvent->getStudyName();
+        $patientId = $visitUploadedEvent->getPatientId();
+        $patientCode = $visitUploadedEvent->getPatientCode();
+        $visitId = $visitUploadedEvent->getVisitId();
+        $qcNeeded = $visitUploadedEvent->isQcNeeded();
+        $visitType = $visitUploadedEvent->getVisitTypeName();
+        $creatorUserId = $visitUploadedEvent->getCreatorUserId();
+        $reviewNeeded = $visitUploadedEvent->isReviewNeeded();
+
+        $this->mailServices->sendUploadedVisitMessage($visitId, $creatorUserId, $studyName, $patientId, $patientCode, $visitType, $qcNeeded);
+
+        if ($qcNeeded) {
+            $this->jobInterface->sendQcReportJob($visitId);
+        }
+
+        if (!$qcNeeded && $reviewNeeded) {
+            $this->mailServices->sendReviewReadyMessage($visitId, $studyName, $patientId, $patientCode, $visitType);
+        }
+    }
+
+    protected function onQcModified(QCModifiedEvent $qcModifiedEvent)
+    {
+        $studyName = $qcModifiedEvent->getStudyName();
+        $creatorId = $qcModifiedEvent->getCreatorUserId();
+        $patientId = $qcModifiedEvent->getPatientId();
+        $patientCode = $qcModifiedEvent->getPatientCode();
+        $patientCenterCode = $qcModifiedEvent->getPatientCenterCode();
+        $visitId = $qcModifiedEvent->getVisitId();
+        $visitType = $qcModifiedEvent->getVisitTypeName();
+        $currentUserId = $qcModifiedEvent->getCurrentUserId();
+        $visitModality = $qcModifiedEvent->getVisitModality();
+        $qcStatus = $qcModifiedEvent->getQcStatus();
+        $this->mailServices->sendQcDecisionMessage(
+            $visitId,
+            $creatorId,
+            $currentUserId,
+            $studyName,
+            $patientCenterCode,
+            $qcStatus,
+            $patientId,
+            $patientCode,
+            $visitModality,
+            $visitType,
+            $qcModifiedEvent->getFormQcStatus(),
+            $qcModifiedEvent->getImageQcStatus(),
+            $qcModifiedEvent->getFormQcComment(),
+            $qcModifiedEvent->getImageQcComment()
+        );
+    }
+
+    protected function onCorrectiveAction(CorrectiveActionEvent $correctiveActionEvent){
+        $studyName = $correctiveActionEvent->getStudyName();
+        $patientId = $correctiveActionEvent->getPatientId();
+        $patientCode = $correctiveActionEvent->getPatientCode();
+        $visitId = $correctiveActionEvent->getVisitId();
+        $visitType = $correctiveActionEvent->getVisitTypeName();
+        $currentUserId = $correctiveActionEvent->getCurrentUserId();
+        $visitModality = $correctiveActionEvent->getVisitModality();
+        $correctiveActionDone = $correctiveActionEvent->getCorrectiveActionDone();
+        $this->mailServices->sendCorrectiveActionMessage(
+            $visitId,
+            $currentUserId,
+            $studyName,
+            $correctiveActionDone,
+            $patientId,
+            $patientCode,
+            $visitModality,
+            $visitType
+        );
     }
 
     /**
