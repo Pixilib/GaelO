@@ -4,7 +4,7 @@ namespace App\GaelO\Services\SpecificStudiesRules\TEST;
 
 use App\GaelO\Services\GaelOStudiesService\AbstractGaelOStudy;
 use App\GaelO\Services\GaelOStudiesService\DefaultVisitRules;
-use App\GaelO\Services\GaelOStudiesService\Events\AbstractGaelOStudyEvent;
+use App\GaelO\Services\GaelOStudiesService\Events\BaseStudyEvent;
 use App\GaelO\Services\GaelOStudiesService\Events\VisitUploadedEvent;
 
 class TEST extends AbstractGaelOStudy {
@@ -81,7 +81,7 @@ class TEST extends AbstractGaelOStudy {
 
     }
 
-    public function onEventStudy(AbstractGaelOStudyEvent $studyEvent): void
+    public function onEventStudy(BaseStudyEvent $studyEvent): void
     {
         parent::onEventStudy($studyEvent);
         if ($studyEvent instanceof VisitUploadedEvent) {
