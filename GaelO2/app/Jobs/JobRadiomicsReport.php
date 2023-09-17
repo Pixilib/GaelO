@@ -14,18 +14,20 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
+use Throwable;
 
 class JobRadiomicsReport implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     public $failOnTimeout = true;
-    public $timeout = 300;
+    public $timeout = 600;
     public $tries = 1;
     private int $visitId;
 
     public function __construct(int $visitId)
     {
+        $this->onQueue('processing');
         $this->visitId = $visitId;
     }
 
@@ -83,7 +85,7 @@ class JobRadiomicsReport implements ShouldQueue
         #get Stats
         $stats = $gaelOProcessingService->getStatsMask($threshold41MaskId);
         $mailServices->sendRadiomicsReport("TEST", $mipMask, [
-            'tmtv' => $stats['volume'],
+            'tmtv 41%' => $stats['volume'],
             'dmax' => $stats['dMax']
         ]);
 
@@ -117,5 +119,10 @@ class JobRadiomicsReport implements ShouldQueue
             'orthancSeriesIdPt' => $idPT,
             'orthancSeriesIdCt' => $idCT
         ];
+    }
+
+    public function failed(Throwable $exception)
+    {
+        Log::error($exception);
     }
 }
