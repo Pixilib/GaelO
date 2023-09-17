@@ -4,9 +4,11 @@ namespace App\GaelO\Services\GaelOStudiesService;
 
 use App\GaelO\Adapters\FrameworkAdapter;
 use App\GaelO\Interfaces\Adapters\JobInterface;
+use App\GaelO\Services\GaelOStudiesService\Events\AwaitingAdjudicationEvent;
 use App\GaelO\Services\GaelOStudiesService\Events\BaseStudyEvent;
 use App\GaelO\Services\GaelOStudiesService\Events\CorrectiveActionEvent;
 use App\GaelO\Services\GaelOStudiesService\Events\QCModifiedEvent;
+use App\GaelO\Services\GaelOStudiesService\Events\VisitConcludedEvent;
 use App\GaelO\Services\GaelOStudiesService\Events\VisitUploadedEvent;
 use App\GaelO\Services\MailServices;
 
@@ -60,8 +62,12 @@ abstract class AbstractGaelOStudy
             $this->onVisitUploaded($studyEvent);
         } else if ($studyEvent instanceof QCModifiedEvent) {
             $this->onQcModified($studyEvent);
-        } else if($studyEvent instanceof CorrectiveActionEvent){
+        } else if ($studyEvent instanceof CorrectiveActionEvent) {
             $this->onCorrectiveAction($studyEvent);
+        } else if ($studyEvent instanceof AwaitingAdjudicationEvent) {
+            $this->onAwaitingAdjudication($studyEvent);
+        } else if ($studyEvent instanceof VisitConcludedEvent) {
+            $this->onVisitConcluded($studyEvent);
         }
     }
 
@@ -117,7 +123,8 @@ abstract class AbstractGaelOStudy
         );
     }
 
-    protected function onCorrectiveAction(CorrectiveActionEvent $correctiveActionEvent){
+    protected function onCorrectiveAction(CorrectiveActionEvent $correctiveActionEvent)
+    {
         $studyName = $correctiveActionEvent->getStudyName();
         $patientId = $correctiveActionEvent->getPatientId();
         $patientCode = $correctiveActionEvent->getPatientCode();
@@ -135,6 +142,36 @@ abstract class AbstractGaelOStudy
             $patientCode,
             $visitModality,
             $visitType
+        );
+    }
+
+    protected function onAwaitingAdjudication(AwaitingAdjudicationEvent $event)
+    {
+        $studyName = $event->getStudyName();
+        $patientId = $event->getPatientId();
+        $patientCode = $event->getPatientCode();
+        $visitId = $event->getVisitId();
+        $visitType = $event->getVisitTypeName();
+        $this->mailServices->sendAwaitingAdjudicationMessage($studyName, $patientId, $patientCode, $visitType, $visitId);
+    }
+
+    protected function onVisitConcluded(VisitConcludedEvent $event)
+    {
+        $studyName = $event->getStudyName();
+        $patientId = $event->getPatientId();
+        $patientCode = $event->getPatientCode();
+        $visitId = $event->getVisitId();
+        $visitType = $event->getVisitTypeName();
+        $conclusion = $event->getConclusion();
+        $uploaderUserId = $event->getUploaderUserId();
+        $this->mailServices->sendVisitConcludedMessage(
+            $visitId,
+            $uploaderUserId,
+            $studyName,
+            $patientId,
+            $patientCode,
+            $visitType,
+            $conclusion,
         );
     }
 

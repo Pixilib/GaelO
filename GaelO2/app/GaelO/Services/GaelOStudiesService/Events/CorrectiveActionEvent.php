@@ -9,7 +9,7 @@ class CorrectiveActionEvent extends BaseVisitEvent
 
     public function __construct(array $visitEntity)
     {
-        parent::__construct(GaelOStudyEventEnum::QC_MODIFIED_EVENT, $visitEntity);
+        parent::__construct(GaelOStudyEventEnum::CORRECTIVE_ACTION_EVENT, $visitEntity);
     }
 
     public function setCurrentUserId(int $userId): void
