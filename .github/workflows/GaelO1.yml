@@ -2,9 +2,6 @@ name: 'Gaelo1-publish'
 
 on:
   push:
-    branches:
-      - dev
-      - master
     tags:
       - '*'
 
