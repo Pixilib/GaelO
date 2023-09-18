@@ -3,24 +3,32 @@
 namespace App\GaelO\Services\GaelOStudiesService;
 
 use App\GaelO\Adapters\FrameworkAdapter;
+use App\GaelO\Constants\Constants;
 use App\GaelO\Interfaces\Adapters\JobInterface;
+use App\GaelO\Interfaces\Repositories\ReviewRepositoryInterface;
+use App\GaelO\Interfaces\Repositories\UserRepositoryInterface;
 use App\GaelO\Services\GaelOStudiesService\Events\AwaitingAdjudicationEvent;
 use App\GaelO\Services\GaelOStudiesService\Events\BaseStudyEvent;
 use App\GaelO\Services\GaelOStudiesService\Events\CorrectiveActionEvent;
 use App\GaelO\Services\GaelOStudiesService\Events\QCModifiedEvent;
 use App\GaelO\Services\GaelOStudiesService\Events\VisitConcludedEvent;
 use App\GaelO\Services\GaelOStudiesService\Events\VisitUploadedEvent;
+use App\GaelO\Services\MailService\MailListBuilder;
 use App\GaelO\Services\MailServices;
 
 abstract class AbstractGaelOStudy
 {
     protected MailServices $mailServices;
+    protected UserRepositoryInterface $userRepositoryInterface;
+    protected ReviewRepositoryInterface $reviewRepositoryInterface;
     protected JobInterface $jobInterface;
     protected string $studyName;
 
-    public function __construct(MailServices $mailServices, JobInterface $jobInterface)
+    public function __construct(MailServices $mailServices, UserRepositoryInterface $userRepositoryInterface, ReviewRepositoryInterface $reviewRepositoryInterface, JobInterface $jobInterface)
     {
         $this->mailServices = $mailServices;
+        $this->userRepositoryInterface = $userRepositoryInterface;
+        $this->reviewRepositoryInterface = $reviewRepositoryInterface;
         $this->jobInterface = $jobInterface;
     }
 
@@ -82,14 +90,27 @@ abstract class AbstractGaelOStudy
         $creatorUserId = $visitUploadedEvent->getCreatorUserId();
         $reviewNeeded = $visitUploadedEvent->isReviewNeeded();
 
-        $this->mailServices->sendUploadedVisitMessage($visitId, $creatorUserId, $studyName, $patientId, $patientCode, $visitType, $qcNeeded);
+        //Send to supervisors and monitors of the study
+        $mailListBuilder = new MailListBuilder($this->userRepositoryInterface);
+        $mailListBuilder->withUsersEmailsByRolesInStudy($studyName, Constants::ROLE_SUPERVISOR)
+            ->withUsersEmailsByRolesInStudy($studyName, Constants::ROLE_MONITOR)
+            ->withUserEmail($creatorUserId);
+
+        //If QC is awaiting add controllers
+        if ($qcNeeded) {
+            $mailListBuilder->withUsersEmailsByRolesInStudy($studyName, Constants::ROLE_CONTROLLER);
+        }
+
+        $this->mailServices->sendUploadedVisitMessage($mailListBuilder->get(), $visitId, $studyName, $patientId, $patientCode, $visitType);
 
         if ($qcNeeded) {
             $this->jobInterface->sendQcReportJob($visitId);
         }
 
         if (!$qcNeeded && $reviewNeeded) {
-            $this->mailServices->sendReviewReadyMessage($visitId, $studyName, $patientId, $patientCode, $visitType);
+            $mailListBuilder = new MailListBuilder($this->userRepositoryInterface);
+            $mailListBuilder->withUsersEmailsByRolesInStudy($studyName, Constants::ROLE_REVIEWER);
+            $this->mailServices->sendReviewReadyMessage($mailListBuilder->get(), $visitId, $studyName, $patientId, $patientCode, $visitType);
         }
     }
 
@@ -105,12 +126,18 @@ abstract class AbstractGaelOStudy
         $currentUserId = $qcModifiedEvent->getCurrentUserId();
         $visitModality = $qcModifiedEvent->getVisitModality();
         $qcStatus = $qcModifiedEvent->getQcStatus();
+
+        $mailListBuilder = new MailListBuilder($this->userRepositoryInterface);
+        $mailListBuilder->withUsersEmailsByRolesInStudy($studyName, Constants::ROLE_SUPERVISOR)
+            ->withUsersEmailsByRolesInStudy($studyName, Constants::ROLE_MONITOR)
+            ->withUserEmail($creatorId)
+            ->withUserEmail($currentUserId)
+            ->withInvestigatorOfCenterInStudy($studyName, $patientCenterCode);
+
         $this->mailServices->sendQcDecisionMessage(
+            $mailListBuilder->get(),
             $visitId,
-            $creatorId,
-            $currentUserId,
             $studyName,
-            $patientCenterCode,
             $qcStatus,
             $patientId,
             $patientCode,
@@ -133,9 +160,15 @@ abstract class AbstractGaelOStudy
         $currentUserId = $correctiveActionEvent->getCurrentUserId();
         $visitModality = $correctiveActionEvent->getVisitModality();
         $correctiveActionDone = $correctiveActionEvent->getCorrectiveActionDone();
+
+        $mailListBuilder = new MailListBuilder($this->userRepositoryInterface);
+        $mailListBuilder->withUsersEmailsByRolesInStudy($studyName, Constants::ROLE_SUPERVISOR)
+            ->withUsersEmailsByRolesInStudy($studyName, Constants::ROLE_CONTROLLER)
+            ->withUserEmail($currentUserId);
+
         $this->mailServices->sendCorrectiveActionMessage(
+            $mailListBuilder->get(),
             $visitId,
-            $currentUserId,
             $studyName,
             $correctiveActionDone,
             $patientId,
@@ -152,7 +185,36 @@ abstract class AbstractGaelOStudy
         $patientCode = $event->getPatientCode();
         $visitId = $event->getVisitId();
         $visitType = $event->getVisitTypeName();
-        $this->mailServices->sendAwaitingAdjudicationMessage($studyName, $patientId, $patientCode, $visitType, $visitId);
+
+        //Get All Users with Reviwers in this study
+        $reviewersUsers = $this->userRepositoryInterface->getUsersByRolesInStudy($studyName, Constants::ROLE_REVIEWER);
+
+        //Get All Reviews of this visit
+        $reviews = $this->reviewRepositoryInterface->getReviewsForStudyVisit($studyName, $visitId, true);
+        $reviewerDoneUserIdArray = array_map(function ($user) {
+            return $user['user_id'];
+        }, $reviews);
+
+        //Select users who didn't validate review form of this visit
+        $availableReviewers = array_filter($reviewersUsers, function ($user) use ($reviewerDoneUserIdArray) {
+            return !in_array($user['id'], $reviewerDoneUserIdArray);
+        });
+
+        //Build email list
+        $availableReviewersEmails = array_map(function ($user) {
+            return $user['email'];
+        }, $availableReviewers);
+
+        $mailListBuilder = new MailListBuilder($this->userRepositoryInterface);
+        $mailListBuilder->withUsersEmailsByRolesInStudy($studyName, Constants::ROLE_SUPERVISOR);
+        $supervisorEmails = $mailListBuilder->get();
+
+        $emails = [
+            ...$availableReviewersEmails,
+            ...$supervisorEmails
+        ];
+
+        $this->mailServices->sendAwaitingAdjudicationMessage($emails, $studyName, $patientId, $patientCode, $visitType, $visitId);
     }
 
     protected function onVisitConcluded(VisitConcludedEvent $event)
@@ -164,9 +226,19 @@ abstract class AbstractGaelOStudy
         $visitType = $event->getVisitTypeName();
         $conclusion = $event->getConclusion();
         $uploaderUserId = $event->getUploaderUserId();
+
+        $mailListBuilder = new MailListBuilder($this->userRepositoryInterface);
+        $mailListBuilder->withUsersEmailsByRolesInStudy($studyName, Constants::ROLE_SUPERVISOR)
+            ->withUsersEmailsByRolesInStudy($studyName, Constants::ROLE_MONITOR);
+
+        //If uplaoder need to be included
+        if ($uploaderUserId) {
+            $mailListBuilder->withUserEmail($uploaderUserId);
+        }
+
         $this->mailServices->sendVisitConcludedMessage(
+            $mailListBuilder->get(),
             $visitId,
-            $uploaderUserId,
             $studyName,
             $patientId,
             $patientCode,
