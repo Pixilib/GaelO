@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE coverage SYSTEM "http://cobertura.sourceforge.net/xml/coverage-04.dtd">
-<coverage line-rate="0.66324180690877" branch-rate="0" lines-covered="7488" lines-valid="11290" branches-covered="0" branches-valid="0" complexity="2728" version="0.4" timestamp="1695138284">
+<coverage line-rate="0.66324180690877" branch-rate="0" lines-covered="7488" lines-valid="11290" branches-covered="0" branches-valid="0" complexity="2728" version="0.4" timestamp="1695138342">
   <sources>
     <source>/github/workspace//GaelO2/app</source>
   </sources>
@@ -12161,7 +12161,7 @@
                 <line number="151" hits="4"/>
               </lines>
             </method>
-            <method name="attachFile" signature="string $key, int $visitId, string $mimeType, string $extension, $binaryData" line-rate="0" branch-rate="0" complexity="2">
+            <method name="attachFile" signature="string $key, string $mimeType, string $extension, $binaryData" line-rate="0" branch-rate="0" complexity="2">
               <lines>
                 <line number="156" hits="0"/>
                 <line number="157" hits="0"/>
