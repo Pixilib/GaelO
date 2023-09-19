@@ -6,6 +6,8 @@ use App\GaelO\Constants\Enums\InvestigatorFormStateEnum;
 use App\GaelO\Constants\Enums\QualityControlStateEnum;
 use App\GaelO\Constants\Enums\ReviewStatusEnum;
 use App\GaelO\Constants\Enums\UploadStatusEnum;
+use App\GaelO\Exceptions\GaelOBadRequestException;
+use App\GaelO\Interfaces\Adapters\FrameworkInterface;
 use App\GaelO\Repositories\ReviewRepository;
 use App\GaelO\Repositories\ReviewStatusRepository;
 use App\GaelO\Repositories\VisitRepository;
@@ -18,14 +20,17 @@ class VisitService
     private VisitRepository $visitRepository;
     private ReviewRepository $reviewRepository;
     private ReviewStatusRepository $reviewStatusRepository;
+    private FrameworkInterface $frameworkInterface;
 
     private int $visitId;
 
     public function __construct(
+        FrameworkInterface $frameworkInterface,
         VisitRepository $visitRepository,
         ReviewRepository $reviewRepository,
         ReviewStatusRepository $reviewStatusRepository
     ) {
+        $this->frameworkInterface = $frameworkInterface;
         $this->visitRepository = $visitRepository;
         $this->reviewStatusRepository = $reviewStatusRepository;
         $this->reviewRepository = $reviewRepository;
@@ -144,5 +149,42 @@ class VisitService
     public function getReviewStatus(string $studyName)
     {
         return $this->reviewStatusRepository->getReviewStatus($this->visitId, $studyName);
+    }
+
+    public function attachFile(string $key, int $visitId, string $mimeType, string $extension, $binaryData): void
+    {
+        $visitEntity = $this->getVisitContext($this->visitId);
+        $studyName = $visitEntity['patient']['study_name'];
+
+        // TODO Preciser quelle clé et quelle mime type sont stockage au niveau visit (comme pour review) et leur mime type
+        // Exposer cette possibilité par API ?
+
+        if (!empty($visitEntity['sent_files'][$key])) {
+            throw new GaelOBadRequestException("Already Existing File for this visit");
+        }
+
+        $destinationPath = $studyName . '/' . 'attached_visit_file';
+
+        $filename = 'review_' . $visitId . '_' . $key . '.' . $extension;
+        $destinationFileName = $destinationPath . '/' . $filename;
+
+        $this->frameworkInterface->storeFile($destinationFileName, $binaryData);
+
+        $visitEntity['sent_files'][$key] = $destinationFileName;
+
+        //$this->visitRepository->updateVisitFile($visitEntity['id'], $visitEntity['sent_files']);
+    }
+
+    public function removeFile(string $key): void
+    {
+        if (empty($reviewEntity['sent_files'][$key])) {
+            throw new GaelOBadRequestException('Non exisiting key file in review');
+        }
+
+        $targetedFile = $reviewEntity['sent_files'][$key];
+        $this->frameworkInterface->deleteFile($targetedFile);
+
+        unset($reviewEntity['sent_files'][$key]);
+        //$this->visitRepository->updateVisitFile($reviewEntity['id'], $reviewEntity['sent_files']);
     }
 }

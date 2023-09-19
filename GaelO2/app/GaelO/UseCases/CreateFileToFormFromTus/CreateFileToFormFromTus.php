@@ -14,6 +14,7 @@ use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
 use App\GaelO\Services\AuthorizationService\AuthorizationReviewService;
 use App\GaelO\Services\AuthorizationService\AuthorizationVisitService;
+use App\GaelO\Services\FormService\FormService;
 use App\GaelO\Services\FormService\InvestigatorFormService;
 use App\GaelO\Services\FormService\ReviewFormService;
 use App\GaelO\Services\OrthancService;
@@ -141,8 +142,6 @@ class CreateFileToFormFromTus
                 $extension = $this->mimeInterface::getExtensionsFromMime($mime)[0];
             }
 
-            $fileName = 'review_' . $reviewId . '_' . $key . '.' . $extension;
-
             $visitContext = $this->visitRepositoryInterface->getVisitWithContextAndReviewStatus($visitId, $studyName);
 
             $formService = null;
@@ -154,12 +153,13 @@ class CreateFileToFormFromTus
             }
 
             $formService->setVisitContextAndStudy($visitContext, $studyName);
-            $formService->attachFile($reviewEntity, $key, $fileName, $mime, fopen($file, 'r'));
+            $filename = $formService->attachFile($reviewEntity, $key, $mime, $extension, fopen($file, 'r'));
+
             //Remove temporary file
             unlink($file);
             $actionDetails = [
                 'uploaded_file' => $key,
-                'filename' => $fileName,
+                'filename' => $filename,
                 'review_id' => $reviewId
             ];
 

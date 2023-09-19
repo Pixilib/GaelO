@@ -79,7 +79,7 @@ abstract class FormService
     public abstract function unlockForm(int $reviewId);
     public abstract function deleteForm(int $reviewId);
 
-    public function attachFile(array $reviewEntity, string $key, string $filename, string $mimeType, $binaryData): void
+    public function attachFile(array $reviewEntity, string $key, string $mimeType, string $extension, $binaryData): string
     {
 
         $associatedFiles = [];
@@ -107,12 +107,16 @@ abstract class FormService
 
         $destinationPath = $this->studyName . '/' . 'attached_review_file';
 
+        $filename = 'review_' . $reviewEntity['id'] . '_' . $key . '.' . $extension;
         $destinationFileName = $destinationPath . '/' . $filename;
+
         $this->frameworkInterface->storeFile($destinationFileName, $binaryData);
 
         $reviewEntity['sent_files'][$key] = $destinationFileName;
 
         $this->reviewRepositoryInterface->updateReviewFile($reviewEntity['id'], $reviewEntity['sent_files']);
+
+        return $filename;
     }
 
     public function removeFile(array $reviewEntity, string $key): void
