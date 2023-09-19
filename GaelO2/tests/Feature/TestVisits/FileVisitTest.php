@@ -60,11 +60,25 @@ class FileVisitTest extends TestCase
 
     public function testDeleteFileOfVisit()
     {
+        $currentVisit = $this->createVisit();
+        $currentUserId = AuthorizationTools::actAsAdmin(false);
+        AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $currentVisit['studyName'] );
+        $visit = Visit::find($currentVisit['visitId']);
+        $visit->sent_files = ['41' => $currentVisit['studyName'].'/'.'attached_review_file'.'/'.'review_1_41.csv'];
+        $visit->save();
+        $response = $this->delete('api/visits/' . $visit->id . '/files/41?studyName=TEST&role=Supervisor');
+        $response->assertSuccessful();
 
     }
 
     public function testDeleteFileOfVisitShouldFailNoRole()
     {
-
+        $currentVisit = $this->createVisit();
+        AuthorizationTools::actAsAdmin(false);
+        $visit = Visit::find($currentVisit['visitId']);
+        $visit->sent_files = ['41' => $currentVisit['studyName'].'/'.'attached_review_file'.'/'.'review_1_41.csv'];
+        $visit->save();
+        $response = $this->delete('api/visits/' . $visit->id . '/files/41?studyName=TEST&role=Supervisor');
+        $response->assertStatus(403);
     }
 }

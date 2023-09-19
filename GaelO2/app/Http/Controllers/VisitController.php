@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\GaelO\UseCases\CreateVisit\CreateVisit;
 use App\GaelO\UseCases\CreateVisit\CreateVisitRequest;
 use App\GaelO\UseCases\CreateVisit\CreateVisitResponse;
+use App\GaelO\UseCases\DeleteFileOfVisit\DeleteFileOfVisit;
+use App\GaelO\UseCases\DeleteFileOfVisit\DeleteFileOfVisitRequest;
+use App\GaelO\UseCases\DeleteFileOfVisit\DeleteFileOfVisitResponse;
 use App\GaelO\UseCases\DeleteVisit\DeleteVisit;
 use App\GaelO\UseCases\DeleteVisit\DeleteVisitRequest;
 use App\GaelO\UseCases\DeleteVisit\DeleteVisitResponse;
@@ -110,7 +113,7 @@ class VisitController extends Controller
         $currentUser = Auth::user();
         $requestData = $request->all();
         $queryParam = $request->query();
-        
+
         Util::fillObject($requestData, $deleteVisitRequest);
         $deleteVisitRequest->currentUserId = $currentUser['id'];
         $deleteVisitRequest->visitId = $visitId;
@@ -234,5 +237,23 @@ class VisitController extends Controller
             return response()->json($getFileOfVisitResponse->body)
                 ->setStatusCode($getFileOfVisitResponse->status, $getFileOfVisitResponse->statusText);
         }
+    }
+
+    public function deleteFileOfVisit(Request $request, DeleteFileOfVisitRequest $deleteFileOfVisitRequest, DeleteFileOfVisitResponse $deleteFileOfVisitResponse, DeleteFileOfVisit $deleteFileOfVisit, int $visitId, string $key)
+    {
+        $currentUser = Auth::user();
+        $requestData = $request->all();
+        $queryParam = $request->query();
+
+        Util::fillObject($requestData, $deleteFileOfVisitRequest);
+        $deleteFileOfVisitRequest->currentUserId = $currentUser['id'];
+        $deleteFileOfVisitRequest->key = $key;
+        $deleteFileOfVisitRequest->visitId = $visitId;
+        $deleteFileOfVisitRequest->role = $queryParam['role'];
+        $deleteFileOfVisitRequest->studyName = $queryParam['studyName'];
+
+        $deleteFileOfVisit->execute($deleteFileOfVisitRequest, $deleteFileOfVisitResponse);
+
+        return $this->getJsonResponse($deleteFileOfVisitResponse->body, $deleteFileOfVisitResponse->status, $deleteFileOfVisitResponse->statusText);
     }
 }
