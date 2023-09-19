@@ -85,9 +85,9 @@ class JobRadiomicsReport implements ShouldQueue
         $segFile = $gaelOProcessingService->getSeg($segId);
         $frameworkInterface->storeFile('seg_41.dcm', fopen($segFile, 'r'));
 
-        #get Nifti Dicom
-        $maskdicom = $gaelOProcessingService->getMaskDicomOrientation($threshold41MaskId, 'LPI', false);
-        $frameworkInterface->storeFile('mask_41_dicom.nii', fopen($maskdicom, 'r'));
+        #get .nii.gz Mask Dicom (not thrsholded)
+        $maskdicom = $gaelOProcessingService->getMaskDicomOrientation($fragmentedMaskId, 'LPI', true);
+        $frameworkInterface->storeFile('mask_inference_dicom.nii.gz', fopen($maskdicom, 'r'));
 
         #get Stats
         $stats = $gaelOProcessingService->getStatsMask($threshold41MaskId);
