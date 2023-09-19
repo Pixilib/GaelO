@@ -8,6 +8,9 @@ use App\GaelO\UseCases\CreateVisit\CreateVisitResponse;
 use App\GaelO\UseCases\DeleteVisit\DeleteVisit;
 use App\GaelO\UseCases\DeleteVisit\DeleteVisitRequest;
 use App\GaelO\UseCases\DeleteVisit\DeleteVisitResponse;
+use App\GaelO\UseCases\GetFileOfVisit\GetFileOfVisit;
+use App\GaelO\UseCases\GetFileOfVisit\GetFileOfVisitRequest;
+use App\GaelO\UseCases\GetFileOfVisit\GetFileOfVisitResponse;
 use App\GaelO\UseCases\GetVisit\GetVisit;
 use App\GaelO\UseCases\GetVisit\GetVisitRequest;
 use App\GaelO\UseCases\GetVisit\GetVisitResponse;
@@ -38,6 +41,7 @@ use App\GaelO\UseCases\ValidateDicomUpload\ValidateDicomUploadResponse;
 use App\GaelO\Util;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class VisitController extends Controller
 {
@@ -80,7 +84,7 @@ class VisitController extends Controller
         $queryParam = $request->query();
         $getVisitsFromStudyRequest->currentUserId = $currentUser['id'];
         $getVisitsFromStudyRequest->studyName = $studyName;
-        if(isset($queryParam['visitType'])) $getVisitsFromStudyRequest->visitTypeId = $queryParam['visitType'];
+        if (isset($queryParam['visitType'])) $getVisitsFromStudyRequest->visitTypeId = $queryParam['visitType'];
         $getVisitsFromStudy->execute($getVisitsFromStudyRequest, $getVisitsFromStudyResponse);
 
         return $this->getJsonResponse($getVisitsFromStudyResponse->body, $getVisitsFromStudyResponse->status, $getVisitsFromStudyResponse->statusText);
@@ -163,7 +167,8 @@ class VisitController extends Controller
         return $this->getJsonResponse($modifyCorrectiveActionResponse->body, $modifyCorrectiveActionResponse->status, $modifyCorrectiveActionResponse->statusText);
     }
 
-    public function modifyVisitDate(Request $request, ModifyVisitDate $modifyVisitDate, ModifyVisitDateRequest $modifyVisitDateRequest, ModifyVisitDateResponse $modifyVisitDateResponse, int $visitId){
+    public function modifyVisitDate(Request $request, ModifyVisitDate $modifyVisitDate, ModifyVisitDateRequest $modifyVisitDateRequest, ModifyVisitDateResponse $modifyVisitDateResponse, int $visitId)
+    {
         $currentUser = Auth::user();
         $requestData = $request->all();
         $queryParam = $request->query();
@@ -190,7 +195,8 @@ class VisitController extends Controller
         return $this->getJsonResponse($reactivateVisitResponse->body, $reactivateVisitResponse->status, $reactivateVisitResponse->statusText);
     }
 
-    public function unlockQc(Request $request, RequestUnlockQC $requestUnlockQC, RequestUnlockQCRequest $requestUnlockQCRequest, RequestUnlockQCResponse $requestUnlockQCResponse, int $visitId){
+    public function unlockQc(Request $request, RequestUnlockQC $requestUnlockQC, RequestUnlockQCRequest $requestUnlockQCRequest, RequestUnlockQCResponse $requestUnlockQCResponse, int $visitId)
+    {
 
         $currentUser = Auth::user();
         $requestData = $request->all();
@@ -202,6 +208,28 @@ class VisitController extends Controller
         $requestUnlockQC->execute($requestUnlockRequest, $requestUnlockQCResponse);
 
         return $this->getJsonResponse($requestUnlockQCResponse->body, $requestUnlockQCResponse->status, $requestUnlockQCResponse->statusText);
+    }
 
+    public function getFileOfVisit(Request $request, GetFileOfVisitRequest $getFileOfVisitRequest, GetFileOfVisitResponse $getFileOfVisitResponse, GetFileOfVisit $getFileOfVisit, int $visitId, string $key)
+    {
+        $currentUser = Auth::user();
+        $requestData = $request->all();
+        $queryParam = $request->query();
+
+        $getFileOfVisitRequest = Util::fillObject($requestData, $getFileOfVisitRequest);
+        $getFileOfVisitRequest->visitId = $visitId;
+        $getFileOfVisitRequest->key = $key;
+        $getFileOfVisitRequest->currentUserId = $currentUser['id'];
+        $getFileOfVisitRequest->role = $queryParam['role'];
+        $getFileOfVisitRequest->studyName = $queryParam['studyName'];
+
+        $getFileOfVisit->execute($getFileOfVisitRequest, $getFileOfVisitResponse);
+
+        if ($getFileOfVisitResponse->status === 200) {
+            return Storage::download($getFileOfVisitResponse->filePath, $getFileOfVisitResponse->filename);
+        } else {
+            return response()->json($getFileOfVisitResponse->body)
+                ->setStatusCode($getFileOfVisitResponse->status, $getFileOfVisitResponse->statusText);
+        }
     }
 }

@@ -133,6 +133,7 @@ Route::middleware(['auth:sanctum', 'verified', 'activated', 'onboarded'])->group
     Route::post('visits/{id}/activate', [VisitController::class, 'reactivateVisit']);
     Route::post('visit-types/{visitTypeId}/visits', [VisitController::class, 'createVisit']);
     Route::get('visits/{id}', [VisitController::class, 'getVisit']);
+    Route::get('visits/{id}/files/{key}', [VisitController::class, 'getFileOfVisit']);
 
     //Local Form Routes
     Route::get('visits/{id}/investigator-form', [ReviewController::class, 'getInvestigatorForm']);
