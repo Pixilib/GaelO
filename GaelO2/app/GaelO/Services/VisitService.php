@@ -151,7 +151,7 @@ class VisitService
         return $this->reviewStatusRepository->getReviewStatus($this->visitId, $studyName);
     }
 
-    public function attachFile(string $key, int $visitId, string $mimeType, string $extension, $binaryData): void
+    public function attachFile(string $key, string $mimeType, string $extension, $binaryData): void
     {
         $visitEntity = $this->getVisitContext($this->visitId);
         $studyName = $visitEntity['patient']['study_name'];
@@ -165,13 +165,13 @@ class VisitService
 
         $destinationPath = $studyName . '/' . 'attached_visit_file';
 
-        $filename = 'review_' . $visitId . '_' . $key . '.' . $extension;
+        $filename = 'review_' . $this->visitId . '_' . $key . '.' . $extension;
         $destinationFileName = $destinationPath . '/' . $filename;
 
         $this->frameworkInterface->storeFile($destinationFileName, $binaryData);
 
         $visitEntity['sent_files'][$key] = $destinationFileName;
-
+        //TODO
         //$this->visitRepository->updateVisitFile($visitEntity['id'], $visitEntity['sent_files']);
     }
 
@@ -185,6 +185,7 @@ class VisitService
         $this->frameworkInterface->deleteFile($targetedFile);
 
         unset($reviewEntity['sent_files'][$key]);
+        //TODO
         //$this->visitRepository->updateVisitFile($reviewEntity['id'], $reviewEntity['sent_files']);
     }
 }
