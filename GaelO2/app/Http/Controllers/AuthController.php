@@ -23,7 +23,7 @@ class AuthController extends Controller
     {
 
         $requestData = $request->all();
-        $loginRequest = Util::fillObject($requestData, $loginRequest);
+        Util::fillObject($requestData, $loginRequest);
         $loginRequest->ip = $request->ip();
 
         $login->execute($loginRequest, $loginResponse);
@@ -73,10 +73,9 @@ class AuthController extends Controller
         $currentUser = $request->user();
         $requestData = $request->all();
 
+        Util::fillObject($requestData, $createMagicLinkRequest);
         $createMagicLinkRequest->targetUser = $userId;
         $createMagicLinkRequest->currentUserId = $currentUser['id'];
-
-        $createMagicLinkRequest = Util::fillObject($requestData, $createMagicLinkRequest);
 
         $createMagicLink->execute($createMagicLinkRequest, $createMagicLinkResponse);
 

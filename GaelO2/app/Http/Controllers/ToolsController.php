@@ -27,9 +27,10 @@ class ToolsController extends Controller
         GetPatientsInStudyFromCentersResponse $getPatientsInStudyFromCentersResponse) {
 
         $currentUser = Auth::user();
-        $getPatientsInStudyFromCentersRequest->currentUserId = $currentUser['id'];
         $requestData = $request->all();
-        $getPatientsInStudyFromCentersRequest = Util::fillObject($requestData, $getPatientsInStudyFromCentersRequest);
+        
+        Util::fillObject($requestData, $getPatientsInStudyFromCentersRequest);
+        $getPatientsInStudyFromCentersRequest->currentUserId = $currentUser['id'];
 
         $getPatientsInStudyFromCenters->execute($getPatientsInStudyFromCentersRequest, $getPatientsInStudyFromCentersResponse);
         return $this->getJsonResponse($getPatientsInStudyFromCentersResponse->body, $getPatientsInStudyFromCentersResponse->status, $getPatientsInStudyFromCentersResponse->statusText);
@@ -40,13 +41,14 @@ class ToolsController extends Controller
         GetPatientsVisitsInStudyRequest $getPatientsVisitsInStudyRequest,
         GetPatientsVisitsInStudyResponse $getPatientsVisitsInStudyResponse) {
 
-        $currentUser = Auth::user();
-
-        $getPatientsVisitsInStudyRequest->currentUserId = $currentUser['id'];
+        $currentUser = Auth::user();     
         $requestData = $request->all();
-        $getPatientsVisitsInStudyRequest = Util::fillObject($requestData, $getPatientsVisitsInStudyRequest);
         $queryParam = $request->query();
+
+        Util::fillObject($requestData, $getPatientsVisitsInStudyRequest);
+        $getPatientsVisitsInStudyRequest->currentUserId = $currentUser['id'];
         $getPatientsVisitsInStudyRequest->studyName = $queryParam['studyName'];
+
         $getPatientsVisitsInStudy->execute($getPatientsVisitsInStudyRequest, $getPatientsVisitsInStudyResponse);
         return $this->getJsonResponse($getPatientsVisitsInStudyResponse->body, $getPatientsVisitsInStudyResponse->status, $getPatientsVisitsInStudyResponse->statusText);
     }
@@ -57,12 +59,13 @@ class ToolsController extends Controller
         FindUserResponse $findUserResponse) {
             
         $currentUser = Auth::user();
-
-        $findUserRequest->currentUserId = $currentUser['id'];
         $requestData = $request->all();
-        $findUserRequest = Util::fillObject($requestData, $findUserRequest);
         $queryParam = $request->query();
+
+        Util::fillObject($requestData, $findUserRequest);
+        $findUserRequest->currentUserId = $currentUser['id'];
         $findUserRequest->studyName = $queryParam['studyName'];
+
         $findUser->execute($findUserRequest, $findUserResponse);
         return $this->getJsonResponse($findUserResponse->body, $findUserResponse->status, $findUserResponse->statusText);
 

@@ -19,10 +19,12 @@ class VisitGroupController extends Controller
 {
     public function createVisitGroup(Request $request, CreateVisitGroup $createVisitGroup, CreateVisitGroupRequest $createVisitGroupRequest, CreateVisitGroupResponse $createVisitGroupResponse, String $studyName) {
         $currentUser = Auth::user();
+        $requestData = $request->all();
+        
+        Util::fillObject($requestData, $createVisitGroupRequest);
         $createVisitGroupRequest->currentUserId = $currentUser['id'];
         $createVisitGroupRequest->studyName = $studyName;
-        $requestData = $request->all();
-        $createVisitGroupRequest = Util::fillObject($requestData, $createVisitGroupRequest);
+
         $createVisitGroup->execute($createVisitGroupRequest, $createVisitGroupResponse);
 
         return $this->getJsonResponse($createVisitGroupResponse->body, $createVisitGroupResponse->status, $createVisitGroupResponse->statusText);

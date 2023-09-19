@@ -36,10 +36,12 @@ class DocumentationController extends Controller
     {
         $currentUser = Auth::user();
         $requestData = $request->all();
-        $createDocumentationRequest = Util::fillObject($requestData, $createDocumentationRequest);
+        
+        Util::fillObject($requestData, $createDocumentationRequest);
         $createDocumentationRequest->currentUserId = $currentUser['id'];
         $createDocumentationRequest->studyName = $studyName;
         $createDocumentation->execute($createDocumentationRequest, $createDocumentationResponse);
+        
         return $this->getJsonResponse($createDocumentationResponse->body, $createDocumentationResponse->status, $createDocumentationResponse->statusText);
     }
 
@@ -95,10 +97,12 @@ class DocumentationController extends Controller
     {
         $currentUser = Auth::user();
         $requestData = $request->all();
-        $modifyDocumentationRequest = Util::fillObject($requestData, $modifyDocumentationRequest);
+        
+        Util::fillObject($requestData, $modifyDocumentationRequest);
         $modifyDocumentationRequest->id = $documentationId;
         $modifyDocumentationRequest->currentUserId = $currentUser['id'];
         $modifyDocumentation->execute($modifyDocumentationRequest, $modifyDocumentationResponse);
+        
         return $this->getJsonResponse($modifyDocumentationResponse->body, $modifyDocumentationResponse->status, $modifyDocumentationResponse->statusText);
     }
 

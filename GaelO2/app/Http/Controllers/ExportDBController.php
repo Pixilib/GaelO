@@ -13,9 +13,11 @@ class ExportDBController extends Controller
 {
     public function exportDB(Request $request, ExportDatabase $exportDatabase, ExportDatabaseRequest $exportDatabaseRequest, ExportDatabaseResponse $exportDatabaseResponse) {
         $currentUser = Auth::user();
-        $exportDatabaseRequest->currentUserId = $currentUser['id'];
         $requestData = $request->all();
-        $exportDatabaseRequest = Util::fillObject($requestData, $exportDatabaseRequest);
+        
+        Util::fillObject($requestData, $exportDatabaseRequest);
+        $exportDatabaseRequest->currentUserId = $currentUser['id'];
+        
         $exportDatabase->execute($exportDatabaseRequest, $exportDatabaseResponse);
         if($exportDatabaseResponse->status === 200){
             return response()->download($exportDatabaseResponse->zipFile, $exportDatabaseResponse->fileName,

@@ -13,7 +13,7 @@ use ZipArchive;
 class Util
 {
 
-    public static function fillObject(array $dataToExtract, object $dataToFill)
+    public static function fillObject(array $dataToExtract, object $dataToFill) :void
     {
         //Get Expected properties awaited in DTO Request
         $reflect = new ReflectionClass($dataToFill);
@@ -24,7 +24,6 @@ class Util
             $propertyName = $property->getName();
             if (array_key_exists($propertyName, $dataToExtract)) $dataToFill->$propertyName = $dataToExtract[$propertyName];
         }
-        return $dataToFill;
     }
 
     public static function endsWith(string $haystack, string $needle): bool

@@ -61,10 +61,11 @@ class PatientController extends Controller
         $requestData = $request->all();
         $queryParam = $request->query();
 
-        $modifyPatientRequest = Util::fillObject($requestData, $modifyPatientRequest);
+        Util::fillObject($requestData, $modifyPatientRequest);
         $modifyPatientRequest->studyName = $queryParam['studyName'];
         $modifyPatientRequest->patientId = $patientId;
         $modifyPatientRequest->currentUserId = $currentUser['id'];
+
         $modifyPatient->execute($modifyPatientRequest, $modifyPatientResponse);
 
         return $this->getJsonResponse($modifyPatientResponse->body, $modifyPatientResponse->status, $modifyPatientResponse->statusText);
@@ -89,7 +90,8 @@ class PatientController extends Controller
         $currentUser = Auth::user();
         $requestData = $request->all();
         $queryParam = $request->query();
-        $createPatientTagsRequest = Util::fillObject($requestData, $createPatientTagsRequest);
+        
+        Util::fillObject($requestData, $createPatientTagsRequest);
         $createPatientTagsRequest->studyName = $queryParam['studyName'];
         $createPatientTagsRequest->patientId = $patientId;
         $createPatientTagsRequest->currentUserId = $currentUser['id'];
