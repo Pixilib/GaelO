@@ -51,7 +51,7 @@ class GetFileFormTest extends TestCase
         $review->sent_files = ['41' => $currentVisit['studyName'].'/'.'attached_review_file'.'/'.'review_1_41.csv'];
         $review->save();
         AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $currentVisit['studyName'] );
-        $response = $this->get('api/reviews/' . $review->id . '/file/41?role=Supervisor');
+        $response = $this->get('api/reviews/' . $review->id . '/files/41?role=Supervisor');
         $response->assertSuccessful();
     }
 
@@ -63,7 +63,7 @@ class GetFileFormTest extends TestCase
         $review = Review::factory()->userId($currentUserId)->visitId($currentVisit['visitId'])->studyName($currentVisit['studyName'])->create();
         $review->sent_files = ['41' => $currentVisit['studyName'].'/'.'attached_review_file'.'/'.'review_1_41.csv'];
         $review->save();
-        $response = $this->get('api/reviews/' . $review->id . '/file/41?role=Supervisor');
+        $response = $this->get('api/reviews/' . $review->id . '/files/41?role=Supervisor');
         $response->assertStatus(403);
     }
 
@@ -75,7 +75,7 @@ class GetFileFormTest extends TestCase
         $review = Review::factory()->userId($currentUserId)->visitId($currentVisit['visitId'])->studyName($currentVisit['studyName'])->create();
         $review->sent_files = ['41' => $currentVisit['studyName'].'/'.'attached_review_file'.'/'.'review_1_41.csv'];
         $review->save();
-        $response = $this->delete('api/reviews/' . $review->id . '/file/41');
+        $response = $this->delete('api/reviews/' . $review->id . '/files/41');
         $response->assertSuccessful();
     }
 
@@ -85,7 +85,7 @@ class GetFileFormTest extends TestCase
         $review = Review::factory()->userId($currentUserId)->visitId($currentVisit['visitId'])->studyName($currentVisit['studyName'])->create();
         $review->sent_files = ['41' => $currentVisit['studyName'].'/'.'attached_review_file'.'/'.'review_1_41.csv'];
         $review->save();
-        $response = $this->delete('api/reviews/' . $review->id . '/file/41');
+        $response = $this->delete('api/reviews/' . $review->id . '/files/41');
         $response->assertStatus(403);
     }
 

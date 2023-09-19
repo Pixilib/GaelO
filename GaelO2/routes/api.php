@@ -149,8 +149,8 @@ Route::middleware(['auth:sanctum', 'verified', 'activated', 'onboarded'])->group
     Route::get('reviews/{id}', [ReviewController::class, 'getReviewForm']);
     Route::delete('reviews/{id}', [ReviewController::class, 'deleteReviewForm']);
     Route::patch('reviews/{id}/unlock', [ReviewController::class, 'unlockReviewForm']);
-    Route::post('reviews/{id}/file/{key}', [ReviewController::class, 'createReviewFile']);
-    Route::delete('reviews/{id}/file/{key}', [ReviewController::class, 'deleteReviewFile']);
+    Route::post('reviews/{id}/files/{key}', [ReviewController::class, 'createReviewFile']);
+    Route::delete('reviews/{id}/files/{key}', [ReviewController::class, 'deleteReviewFile']);
     Route::get('visits/{visitId}/reviews', [ReviewController::class, 'getReviewsFromVisit']);
     Route::get('studies/{studyName}/visits/{visitId}/reviewer-associated-data', [ReviewController::class, 'getAssociatedDataOfVisitForReviewer']);
 
@@ -195,7 +195,7 @@ Route::middleware(['auth:sanctum', 'verified', 'activated', 'onboarded'])->group
     Route::get('visits/{id}/dicoms/file', [DicomController::class, 'getVisitDicomsFile']);
     Route::get('studies/{studyName}/export', [StudyController::class, 'exportStudyData']);
     Route::post('studies/{studyName}/dicom-series/file', [DicomController::class, 'getSupervisorDicomsFile']);
-    Route::get('reviews/{id}/file/{key}', [ReviewController::class, 'getReviewFile']);
+    Route::get('reviews/{id}/files/{key}', [ReviewController::class, 'getReviewFile']);
     Route::get('dicom-series/{seriesInstanceUID}/nifti', [DicomController::class, 'getNiftiSeries']);
 });
 
