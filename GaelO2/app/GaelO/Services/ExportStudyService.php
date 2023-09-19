@@ -146,7 +146,7 @@ class ExportStudyService
             unset($visit['patient']);
             //transform target_lesions as json string
             $visit['review_status']['target_lesions'] = json_encode($visit['review_status']['target_lesions']);
-
+            $visit['sent_files'] = json_encode($visit['sent_files']);
             $resultsData[$sheetName][] = array_merge(['visit_group' => $visitGroupName, 'visit_type' => $visitTypeName], $visit, $visit['review_status']);
         }
 

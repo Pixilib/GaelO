@@ -21,7 +21,7 @@ class ReviewEntity
         $reviewEntity  = new ReviewEntity();
         $reviewEntity->local = $array['local'];
         $reviewEntity->id = $array['id'];
-        $reviewEntity->study_name = $array['study_name'];
+        $reviewEntity->studyName = $array['study_name'];
         $reviewEntity->userId = $array['user_id'];
         $reviewEntity->date = $array['review_date'];
         $reviewEntity->visitId = $array['visit_id'];

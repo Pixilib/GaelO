@@ -558,4 +558,12 @@ class VisitRepository implements VisitRepositoryInterface
     {
         $this->visitModel->withTrashed()->findOrFail($visitId)->restore();
     }
+
+    public function updateVisitFile(int $visitId, array $associatedFile): void
+    {
+
+        $review = $this->visitModel->findOrFail($visitId);
+        $review->sent_files = $associatedFile;
+        $review->save();
+    }
 }

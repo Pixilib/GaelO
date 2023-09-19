@@ -70,4 +70,6 @@ interface VisitRepositoryInterface
 
     public function getVisitContextByVisitIdArray(array $visitIdArray): array;
 
+    public function updateVisitFile(int $visitId, array $associatedFile): void;
+
 }

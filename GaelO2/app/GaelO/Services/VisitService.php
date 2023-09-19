@@ -157,7 +157,8 @@ class VisitService
         $studyName = $visitEntity['patient']['study_name'];
 
         // TODO Preciser quelle clé et quelle mime type sont stockage au niveau visit (comme pour review) et leur mime type
-        // Exposer cette possibilité par API ?
+        // API de telechargement => getFileOfVisit
+        // API d'upload et delete (+action tracker) ?
 
         if (!empty($visitEntity['sent_files'][$key])) {
             throw new GaelOBadRequestException("Already Existing File for this visit");
@@ -165,27 +166,27 @@ class VisitService
 
         $destinationPath = $studyName . '/' . 'attached_visit_file';
 
-        $filename = 'review_' . $this->visitId . '_' . $key . '.' . $extension;
+        $filename = 'visit_' . $this->visitId . '_' . $key . '.' . $extension;
         $destinationFileName = $destinationPath . '/' . $filename;
 
         $this->frameworkInterface->storeFile($destinationFileName, $binaryData);
 
         $visitEntity['sent_files'][$key] = $destinationFileName;
-        //TODO
-        //$this->visitRepository->updateVisitFile($visitEntity['id'], $visitEntity['sent_files']);
+        $this->visitRepository->updateVisitFile($visitEntity['id'], $visitEntity['sent_files']);
     }
 
     public function removeFile(string $key): void
     {
-        if (empty($reviewEntity['sent_files'][$key])) {
+        $visitEntity = $this->getVisitContext($this->visitId);
+
+        if (empty($visitEntity['sent_files'][$key])) {
             throw new GaelOBadRequestException('Non exisiting key file in review');
         }
 
-        $targetedFile = $reviewEntity['sent_files'][$key];
+        $targetedFile = $visitEntity['sent_files'][$key];
         $this->frameworkInterface->deleteFile($targetedFile);
 
-        unset($reviewEntity['sent_files'][$key]);
-        //TODO
-        //$this->visitRepository->updateVisitFile($reviewEntity['id'], $reviewEntity['sent_files']);
+        unset($visitEntity['sent_files'][$key]);
+        $this->visitRepository->updateVisitFile($visitEntity['id'], $visitEntity['sent_files']);
     }
 }
