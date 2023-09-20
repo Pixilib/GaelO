@@ -155,13 +155,21 @@ class VisitService
     {
         $visitEntity = $this->getVisitContext($this->visitId);
         $studyName = $visitEntity['patient']['study_name'];
+        $visitGroupName = $visitEntity['visit_type']['visit_group']['name'];
+        $visitTypeName = $visitEntity['visit_type']['name'];
 
-        // TODO Preciser quelle clé et quelle mime type sont stockage au niveau visit (comme pour review) et leur mime type
-        // API de telechargement => getFileOfVisit
-        // API d'upload et delete (+action tracker) ?
+        $studyRule = AbstractGaelOStudy::getSpecificStudyObject($studyName);
+        $abstractVisitRules = $studyRule->getSpecificVisitRules($visitGroupName, $visitTypeName);
+        $associatedFilesVisit = $abstractVisitRules->getAssociatedFilesVisit();
 
         if (!empty($visitEntity['sent_files'][$key])) {
             throw new GaelOBadRequestException("Already Existing File for this visit");
+        }
+
+        $associatiedFile = $associatedFilesVisit[$key];
+
+        if ( !in_array($mimeType, $associatiedFile->mimes) ) {
+            throw new GaelOBadRequestException("File Key or Mime Not Allowed");
         }
 
         $destinationPath = $studyName . '/' . 'attached_visit_file';

@@ -30,6 +30,15 @@ abstract class AbstractVisitRules
 
     abstract public static function getReviewerAdjudicationValidationRules(): array;
 
+    //TODO : A passer en abstract pour explicitement specifier (necessite d'updater tous les etudes en cours)
+    /**
+     * @return AssociatedFile[]
+     */
+    public static function getAssociatedFilesVisit() : array
+    {
+        return [];
+    }
+
     /**
      * @return AssociatedFile[]
      */
