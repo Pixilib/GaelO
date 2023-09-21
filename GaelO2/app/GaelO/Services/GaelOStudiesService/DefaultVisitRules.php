@@ -10,12 +10,17 @@ class DefaultVisitRules extends AbstractVisitRules
         return [];
     }
 
-    public static function getReviewerValidationRules(): array    
+    public static function getReviewerValidationRules(): array
     {
         return [];
     }
 
     public static function getReviewerAdjudicationValidationRules(): array
+    {
+        return [];
+    }
+
+    public static function getAssociatedFilesVisit(): array
     {
         return [];
     }
@@ -39,6 +44,4 @@ class DefaultVisitRules extends AbstractVisitRules
     {
         return DefaultVisitDecisions::class;
     }
-
-
 }
