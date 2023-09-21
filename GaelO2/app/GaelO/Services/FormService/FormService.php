@@ -5,6 +5,7 @@ namespace App\GaelO\Services\FormService;
 use App\GaelO\Entities\StudyEntity;
 use App\GaelO\Exceptions\GaelOBadRequestException;
 use App\GaelO\Exceptions\GaelOException;
+use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Adapters\FrameworkInterface;
 use App\GaelO\Interfaces\Repositories\ReviewRepositoryInterface;
 use App\GaelO\Interfaces\Repositories\StudyRepositoryInterface;
@@ -93,6 +94,10 @@ abstract class FormService
             $isAdjudication = $reviewEntity['adjudication'];
             if ($isAdjudication) $associatedFiles = $this->abstractVisitRules->getAssociatedFilesAdjudication();
             else $associatedFiles = $this->abstractVisitRules->getAssociatedFilesReview();
+        }
+
+        if (!array_key_exists($key, $associatedFiles)) {
+            throw new GaelOForbiddenException("Unexpected file key");
         }
 
         $associatiedFile = $associatedFiles[$key];

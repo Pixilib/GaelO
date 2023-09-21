@@ -80,6 +80,11 @@ class TEST_FDG_PET0 extends AbstractVisitRules
         return [];
     }
 
+    public static function getAssociatedFilesVisit() : array
+    {
+        return ['prediction' => new AssociatedFile('prediction', MimeAdapter::getMimesFromExtension('csv'), false)];
+    }
+
     public static function getAssociatedFilesInvestigator(): array
     {
         return [

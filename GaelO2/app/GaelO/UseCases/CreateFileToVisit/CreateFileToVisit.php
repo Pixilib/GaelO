@@ -2,13 +2,14 @@
 
 namespace App\GaelO\UseCases\CreateFileToVisit;
 
+use App\GaelO\Constants\Constants;
 use App\GaelO\Exceptions\AbstractGaelOException;
 use App\GaelO\Exceptions\GaelOBadRequestException;
-use App\GaelO\Interfaces\Adapters\FrameworkInterface;
+use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Adapters\MimeInterface;
 use App\GaelO\Interfaces\Repositories\TrackerRepositoryInterface;
-use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
 use App\GaelO\Services\AuthorizationService\AuthorizationVisitService;
+use App\GaelO\Services\VisitService;
 use App\GaelO\Util;
 use Exception;
 
@@ -17,20 +18,17 @@ class CreateFileToVisit
 
     private AuthorizationVisitService $authorizationVisitService;
     private TrackerRepositoryInterface $trackerRepositoryInterface;
-    private VisitRepositoryInterface $visitRepositoryInterface;
-    private FrameworkInterface $frameworkInterface;
+    private VisitService $visitService;
     private MimeInterface $mimeInterface;
 
     public function __construct(
         AuthorizationVisitService $authorizationVisitService,
-        VisitRepositoryInterface $visitRepositoryInterface,
-        FrameworkInterface $frameworkInterface,
+        VisitService $visitService,
         TrackerRepositoryInterface $trackerRepositoryInterface,
         MimeInterface $mimeInterface
     ) {
         $this->authorizationVisitService = $authorizationVisitService;
-        $this->visitRepositoryInterface = $visitRepositoryInterface;
-        $this->frameworkInterface = $frameworkInterface;
+        $this->visitService = $visitService;
         $this->trackerRepositoryInterface = $trackerRepositoryInterface;
         $this->mimeInterface = $mimeInterface;
     }
@@ -41,16 +39,18 @@ class CreateFileToVisit
         try {
 
             $visitId = $createFileToVisitRequest->visitId;
-
-            $reviewEntity = $this->reviewRepositoryInterface->find($visitId);
-
-            $studyName = $reviewEntity['study_name'];
-            $local = $reviewEntity['local'];
-            $reviewId = $reviewEntity['id'];
-
             $key = $createFileToVisitRequest->key;
             $binaryData = $createFileToVisitRequest->binaryData;
             $currentUserId = $createFileToVisitRequest->currentUserId;
+            $contentType = $createFileToVisitRequest->contentType;
+
+            $this->visitService->setVisitId($visitId);
+            $visitContext = $this->visitService->getVisitContext();
+            $studyName = $visitContext['patient']['study_name'];
+
+            if ($createFileToVisitRequest->studyName !== $studyName) {
+                throw new GaelOForbiddenException('Should be called from original study');
+            }
 
             if (!Util::isBase64Encoded($binaryData)) {
                 throw new GaelOBadRequestException("Payload should be base64 encoded");
@@ -59,27 +59,19 @@ class CreateFileToVisit
             $this->checkAuthorization($visitId, $currentUserId, $studyName);
 
             $extension = $this->mimeInterface::getExtensionsFromMime($createFileToVisitRequest->contentType)[0];
-
-            $visitContext = $this->visitRepositoryInterface->getVisitWithContextAndReviewStatus($visitId, $studyName);
-
-            $formService =  $this->frameworkInterface->make(ReviewFormService::class);
-
-            $formService->setVisitContextAndStudy($visitContext, $studyName);
-
-            $filename = $formService->attachFile($reviewEntity, $key, $createFileToReviewRequest->contentType, $extension, base64_decode($binaryData));
+            $filename = $this->visitService->attachFile($key, $contentType, $extension, base64_decode($binaryData));
 
             $actionDetails = [
                 'uploaded_file' => $key,
-                'filename' => $filename,
-                'review_id' => $reviewId
+                'filename' => $filename
             ];
 
             $this->trackerRepositoryInterface->writeAction(
-                $createFileToReviewRequest->currentUserId,
-                $local ? Constants::ROLE_INVESTIGATOR : Constants::ROLE_SUPERVISOR,
+                $currentUserId,
+                Constants::ROLE_SUPERVISOR,
                 $studyName,
                 $visitId,
-                $local ? Constants::TRACKER_SAVE_INVESTIGATOR_FORM : Constants::TRACKER_SAVE_REVIEWER_FORM,
+                Constants::TRACKER_UPDATE_VISIT_FILE,
                 $actionDetails
             );
 
@@ -96,10 +88,9 @@ class CreateFileToVisit
 
     private function checkAuthorization(int $visitId, int $currentUserId, string $studyName): void
     {
-
         $this->authorizationVisitService->setVisitId($visitId);
         $this->authorizationVisitService->setUserId($currentUserId);
         $this->authorizationVisitService->setStudyName($studyName);
-        if (!$this->authorizationVisitService->isVisitAllowed(Constants::ROLE_INVESTIGATOR)) throw new GaelOForbiddenException();
+        if (!$this->authorizationVisitService->isVisitAllowed(Constants::ROLE_SUPERVISOR)) throw new GaelOForbiddenException();
     }
 }

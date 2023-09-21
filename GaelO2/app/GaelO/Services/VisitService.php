@@ -7,6 +7,7 @@ use App\GaelO\Constants\Enums\QualityControlStateEnum;
 use App\GaelO\Constants\Enums\ReviewStatusEnum;
 use App\GaelO\Constants\Enums\UploadStatusEnum;
 use App\GaelO\Exceptions\GaelOBadRequestException;
+use App\GaelO\Exceptions\GaelOForbiddenException;
 use App\GaelO\Interfaces\Adapters\FrameworkInterface;
 use App\GaelO\Repositories\ReviewRepository;
 use App\GaelO\Repositories\ReviewStatusRepository;
@@ -151,7 +152,7 @@ class VisitService
         return $this->reviewStatusRepository->getReviewStatus($this->visitId, $studyName);
     }
 
-    public function attachFile(string $key, string $mimeType, string $extension, $binaryData): void
+    public function attachFile(string $key, string $mimeType, string $extension, $binaryData): string
     {
         $visitEntity = $this->getVisitContext($this->visitId);
         $studyName = $visitEntity['patient']['study_name'];
@@ -166,9 +167,13 @@ class VisitService
             throw new GaelOBadRequestException("Already Existing File for this visit");
         }
 
+        if (!array_key_exists($key, $associatedFilesVisit)) {
+            throw new GaelOForbiddenException("Unexpected file key");
+        }
+        
         $associatiedFile = $associatedFilesVisit[$key];
 
-        if ( !in_array($mimeType, $associatiedFile->mimes) ) {
+        if (!in_array($mimeType, $associatiedFile->mimes)) {
             throw new GaelOBadRequestException("File Key or Mime Not Allowed");
         }
 
@@ -181,6 +186,7 @@ class VisitService
 
         $visitEntity['sent_files'][$key] = $destinationFileName;
         $this->visitRepository->updateVisitFile($visitEntity['id'], $visitEntity['sent_files']);
+        return $filename;
     }
 
     public function removeFile(string $key): void

@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\GaelO\UseCases\CreateFileToVisit\CreateFileToVisit;
+use App\GaelO\UseCases\CreateFileToVisit\CreateFileToVisitRequest;
+use App\GaelO\UseCases\CreateFileToVisit\CreateFileToVisitResponse;
 use App\GaelO\UseCases\CreateVisit\CreateVisit;
 use App\GaelO\UseCases\CreateVisit\CreateVisitRequest;
 use App\GaelO\UseCases\CreateVisit\CreateVisitResponse;
@@ -216,6 +219,27 @@ class VisitController extends Controller
         return $this->getJsonResponse($requestUnlockQCResponse->body, $requestUnlockQCResponse->status, $requestUnlockQCResponse->statusText);
     }
 
+    public function createFileOfVisit(Request $request, CreateFileToVisit $createFileToVisit, CreateFileToVisitRequest $createFileToVisitRequest, CreateFileToVisitResponse $createFileToVisitResponse, int $visitId, string $key)
+    {
+        $currentUser = Auth::user();
+        $requestData = $request->all();
+        $queryParam = $request->query();
+        $payload = $request->getContent();
+
+        Util::fillObject($requestData, $createFileToVisitRequest);
+        $createFileToVisitRequest->currentUserId = $currentUser['id'];
+        $createFileToVisitRequest->studyName = $queryParam['studyName'];
+        $createFileToVisitRequest->visitId = $visitId;
+        $createFileToVisitRequest->key = $key;
+        $createFileToVisitRequest->contentType = $request->headers->get('Content-Type');
+        $createFileToVisitRequest->binaryData = $payload;
+
+        $createFileToVisit->execute($createFileToVisitRequest, $createFileToVisitResponse);
+
+        return response()->json($createFileToVisitResponse->body)
+            ->setStatusCode($createFileToVisitResponse->status, $createFileToVisitResponse->statusText);
+    }
+
     public function getFileOfVisit(Request $request, GetFileOfVisitRequest $getFileOfVisitRequest, GetFileOfVisitResponse $getFileOfVisitResponse, GetFileOfVisit $getFileOfVisit, int $visitId, string $key)
     {
         $currentUser = Auth::user();
@@ -256,4 +280,5 @@ class VisitController extends Controller
 
         return $this->getJsonResponse($deleteFileOfVisitResponse->body, $deleteFileOfVisitResponse->status, $deleteFileOfVisitResponse->statusText);
     }
+    
 }

@@ -62,13 +62,12 @@ class FileVisitTest extends TestCase
     {
         $currentVisit = $this->createVisit();
         $currentUserId = AuthorizationTools::actAsAdmin(false);
-        AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $currentVisit['studyName'] );
+        AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $currentVisit['studyName']);
         $visit = Visit::find($currentVisit['visitId']);
-        $visit->sent_files = ['41' => $currentVisit['studyName'].'/'.'attached_review_file'.'/'.'review_1_41.csv'];
+        $visit->sent_files = ['41' => $currentVisit['studyName'] . '/' . 'attached_review_file' . '/' . 'review_1_41.csv'];
         $visit->save();
         $response = $this->delete('api/visits/' . $visit->id . '/files/41?studyName=TEST&role=Supervisor');
         $response->assertSuccessful();
-
     }
 
     public function testDeleteFileOfVisitShouldFailNoRole()
@@ -76,9 +75,38 @@ class FileVisitTest extends TestCase
         $currentVisit = $this->createVisit();
         AuthorizationTools::actAsAdmin(false);
         $visit = Visit::find($currentVisit['visitId']);
-        $visit->sent_files = ['41' => $currentVisit['studyName'].'/'.'attached_review_file'.'/'.'review_1_41.csv'];
+        $visit->sent_files = ['41' => $currentVisit['studyName'] . '/' . 'attached_review_file' . '/' . 'review_1_41.csv'];
         $visit->save();
         $response = $this->delete('api/visits/' . $visit->id . '/files/41?studyName=TEST&role=Supervisor');
+        $response->assertStatus(403);
+    }
+
+    public function testCreateFileOfVisit()
+    {
+
+        $currentVisit = $this->createVisit();
+        $currentUserId = AuthorizationTools::actAsAdmin(false);
+        AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $currentVisit['studyName']);
+        $response = $this->post('api/visits/' . $currentVisit['visitId'] . '/files/prediction?studyName=TEST&role=Supervisor', [base64_encode("testFileContent")], ['CONTENT_TYPE' => 'text/csv']);
+        $response->assertStatus(201);
+    }
+
+    public function testCreateFileOfVisitShouldFailWrongKey()
+    {
+
+        $currentVisit = $this->createVisit();
+        $currentUserId = AuthorizationTools::actAsAdmin(false);
+        AuthorizationTools::addRoleToUser($currentUserId, Constants::ROLE_SUPERVISOR, $currentVisit['studyName']);
+        $response = $this->post('api/visits/' . $currentVisit['visitId'] . '/files/wrong?studyName=TEST&role=Supervisor', [base64_encode("testFileContent")], ['CONTENT_TYPE' => 'text/csv']);
+        $response->assertStatus(403);
+    }
+
+    public function testCreateFileOfVisitShouldFileNoRole()
+    {
+
+        $currentVisit = $this->createVisit();
+        AuthorizationTools::actAsAdmin(false);
+        $response = $this->post('api/visits/' . $currentVisit['visitId'] . '/files/prediction?studyName=TEST&role=Supervisor', [base64_encode("testFileContent")], ['CONTENT_TYPE' => 'text/csv']);
         $response->assertStatus(403);
     }
 }

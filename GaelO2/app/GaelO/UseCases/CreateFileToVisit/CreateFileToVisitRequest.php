@@ -6,6 +6,7 @@ class CreateFileToVisitRequest
 {
     public int $currentUserId;
     public int $visitId;
+    public string $studyName;
     public string $key;
     public string $contentType;
     public string $binaryData;
