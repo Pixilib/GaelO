@@ -103,7 +103,9 @@ class JobRadiomicsReport implements ShouldQueue
         );
 
         $visitService->setVisitId($this->visitId);
-        $visitService->attachFile('tmtv41', 'application/gzip', 'nii.gz', fopen($maskdicom, 'r'));
+        rewind($maskdicom);
+        //TODO ecrasement à verifier
+        $visitService->attachFile('tmtv41', 'application/gzip', 'nii.gz', fopen($maskdicom, 'rb'));
 
         $gaelOProcessingService->deleteRessource('dicoms', $orthancSeriesIdPt);
         $gaelOProcessingService->deleteRessource('dicoms', $orthancSeriesIdCt);
