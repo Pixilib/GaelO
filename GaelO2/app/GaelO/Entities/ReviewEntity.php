@@ -27,7 +27,7 @@ class ReviewEntity
         $reviewEntity->visitId = $array['visit_id'];
         $reviewEntity->validated = $array['validated'];
         $reviewEntity->data = $array['review_data'];
-        $reviewEntity->files = $array['sent_files'];
+        $reviewEntity->files = $array['sent_files'] ?? [];
         $reviewEntity->adjudication = $array['adjudication'];
         return $reviewEntity;
     }
