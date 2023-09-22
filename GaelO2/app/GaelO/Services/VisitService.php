@@ -174,7 +174,7 @@ class VisitService
         $associatiedFile = $associatedFilesVisit[$key];
 
         if (!in_array($mimeType, $associatiedFile->mimes)) {
-            throw new GaelOBadRequestException("File Key or Mime Not Allowed");
+            throw new GaelOBadRequestException("Mime Not Allowed");
         }
 
         $destinationPath = $studyName . '/' . 'attached_visit_file';

@@ -9,6 +9,7 @@ use App\GaelO\Interfaces\Repositories\VisitRepositoryInterface;
 use App\GaelO\Services\GaelOProcessingService\GaelOProcessingService;
 use App\GaelO\Services\MailServices;
 use App\GaelO\Services\OrthancService;
+use App\GaelO\Services\VisitService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -32,7 +33,7 @@ class JobRadiomicsReport implements ShouldQueue
         $this->visitId = $visitId;
     }
 
-    public function handle(VisitRepositoryInterface $visitRepositoryInterface, DicomStudyRepositoryInterface $dicomStudyRepositoryInterface, OrthancService $orthancService, GaelOProcessingService $gaelOProcessingService, FrameworkInterface $frameworkInterface, MailServices $mailServices): void
+    public function handle(VisitRepositoryInterface $visitRepositoryInterface, DicomStudyRepositoryInterface $dicomStudyRepositoryInterface, OrthancService $orthancService, GaelOProcessingService $gaelOProcessingService, FrameworkInterface $frameworkInterface, MailServices $mailServices, VisitService $visitService): void
     {
         $orthancService->setOrthancServer(true);
         $visitEntity = $visitRepositoryInterface->getVisitContext($this->visitId);
@@ -100,6 +101,9 @@ class JobRadiomicsReport implements ShouldQueue
             $statValue,
             $creatorUserId
         );
+
+        $visitService->setVisitId($this->visitId);
+        $visitService->attachFile('tmtv41', 'application/gzip', 'nii.gz', fopen($maskdicom, 'r'));
 
         $gaelOProcessingService->deleteRessource('dicoms', $orthancSeriesIdPt);
         $gaelOProcessingService->deleteRessource('dicoms', $orthancSeriesIdCt);
