@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE coverage SYSTEM "http://cobertura.sourceforge.net/xml/coverage-04.dtd">
-<coverage line-rate="0.66782972784368" branch-rate="0" lines-covered="7656" lines-valid="11464" branches-covered="0" branches-valid="0" complexity="2761" version="0.4" timestamp="1695421954">
+<coverage line-rate="0.66777147841256" branch-rate="0" lines-covered="7656" lines-valid="11465" branches-covered="0" branches-valid="0" complexity="2761" version="0.4" timestamp="1695422315">
   <sources>
     <source>/github/workspace//GaelO2/app</source>
   </sources>
@@ -29293,7 +29293,7 @@
                 <line number="87" hits="0"/>
                 <line number="90" hits="0"/>
                 <line number="91" hits="0"/>
-                <line number="94" hits="0"/>
+                <line number="92" hits="0"/>
                 <line number="95" hits="0"/>
                 <line number="96" hits="0"/>
                 <line number="97" hits="0"/>
@@ -29303,10 +29303,10 @@
                 <line number="101" hits="0"/>
                 <line number="102" hits="0"/>
                 <line number="103" hits="0"/>
-                <line number="105" hits="0"/>
+                <line number="104" hits="0"/>
                 <line number="106" hits="0"/>
-                <line number="108" hits="0"/>
-                <line number="110" hits="0"/>
+                <line number="107" hits="0"/>
+                <line number="109" hits="0"/>
                 <line number="111" hits="0"/>
                 <line number="112" hits="0"/>
                 <line number="113" hits="0"/>
@@ -29315,28 +29315,29 @@
                 <line number="116" hits="0"/>
                 <line number="117" hits="0"/>
                 <line number="118" hits="0"/>
+                <line number="119" hits="0"/>
               </lines>
             </method>
             <method name="getSeriesOrthancIds" signature="array $dicomStudyEntity" line-rate="0" branch-rate="0" complexity="6">
               <lines>
-                <line number="123" hits="0"/>
                 <line number="124" hits="0"/>
                 <line number="125" hits="0"/>
                 <line number="126" hits="0"/>
                 <line number="127" hits="0"/>
                 <line number="128" hits="0"/>
-                <line number="130" hits="0"/>
+                <line number="129" hits="0"/>
                 <line number="131" hits="0"/>
                 <line number="132" hits="0"/>
-                <line number="136" hits="0"/>
+                <line number="133" hits="0"/>
                 <line number="137" hits="0"/>
                 <line number="138" hits="0"/>
                 <line number="139" hits="0"/>
+                <line number="140" hits="0"/>
               </lines>
             </method>
             <method name="failed" signature="Throwable $exception" line-rate="0" branch-rate="0" complexity="1">
               <lines>
-                <line number="144" hits="0"/>
+                <line number="145" hits="0"/>
               </lines>
             </method>
           </methods>
@@ -29380,7 +29381,7 @@
             <line number="87" hits="0"/>
             <line number="90" hits="0"/>
             <line number="91" hits="0"/>
-            <line number="94" hits="0"/>
+            <line number="92" hits="0"/>
             <line number="95" hits="0"/>
             <line number="96" hits="0"/>
             <line number="97" hits="0"/>
@@ -29390,10 +29391,10 @@
             <line number="101" hits="0"/>
             <line number="102" hits="0"/>
             <line number="103" hits="0"/>
-            <line number="105" hits="0"/>
+            <line number="104" hits="0"/>
             <line number="106" hits="0"/>
-            <line number="108" hits="0"/>
-            <line number="110" hits="0"/>
+            <line number="107" hits="0"/>
+            <line number="109" hits="0"/>
             <line number="111" hits="0"/>
             <line number="112" hits="0"/>
             <line number="113" hits="0"/>
@@ -29402,20 +29403,21 @@
             <line number="116" hits="0"/>
             <line number="117" hits="0"/>
             <line number="118" hits="0"/>
-            <line number="123" hits="0"/>
+            <line number="119" hits="0"/>
             <line number="124" hits="0"/>
             <line number="125" hits="0"/>
             <line number="126" hits="0"/>
             <line number="127" hits="0"/>
             <line number="128" hits="0"/>
-            <line number="130" hits="0"/>
+            <line number="129" hits="0"/>
             <line number="131" hits="0"/>
             <line number="132" hits="0"/>
-            <line number="136" hits="0"/>
+            <line number="133" hits="0"/>
             <line number="137" hits="0"/>
             <line number="138" hits="0"/>
             <line number="139" hits="0"/>
-            <line number="144" hits="0"/>
+            <line number="140" hits="0"/>
+            <line number="145" hits="0"/>
           </lines>
         </class>
       </classes>
