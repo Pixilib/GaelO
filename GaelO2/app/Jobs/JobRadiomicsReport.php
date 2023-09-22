@@ -88,7 +88,8 @@ class JobRadiomicsReport implements ShouldQueue
 
         #get .nii.gz Mask Dicom (not thrsholded)
         $maskdicom = $gaelOProcessingService->getMaskDicomOrientation($fragmentedMaskId, 'LPI', true);
-        $frameworkInterface->storeFile('mask_inference_dicom.nii.gz', fopen($maskdicom, 'r'));
+        $maskDicomRessource= fopen($maskdicom, 'rb');
+        $frameworkInterface->storeFile('mask_inference_dicom.nii.gz', $maskDicomRessource);
 
         #get Stats
         $stats = $gaelOProcessingService->getStatsMask($threshold41MaskId);
@@ -103,9 +104,9 @@ class JobRadiomicsReport implements ShouldQueue
         );
 
         $visitService->setVisitId($this->visitId);
-        rewind($maskdicom);
+        rewind($maskDicomRessource);
         //TODO ecrasement à verifier
-        $visitService->attachFile('tmtv41', 'application/gzip', 'nii.gz', fopen($maskdicom, 'rb'));
+        $visitService->attachFile('tmtv41', 'application/gzip', 'nii.gz', $maskDicomRessource);
 
         $gaelOProcessingService->deleteRessource('dicoms', $orthancSeriesIdPt);
         $gaelOProcessingService->deleteRessource('dicoms', $orthancSeriesIdCt);
