@@ -170,10 +170,10 @@ class VisitService
         if (!array_key_exists($key, $associatedFilesVisit)) {
             throw new GaelOForbiddenException("Unexpected file key");
         }
-        
+
         $associatiedFile = $associatedFilesVisit[$key];
 
-        if (!in_array($mimeType, $associatiedFile->mimes)) {
+        if ($mimeType !== $associatiedFile->mimes) {
             throw new GaelOBadRequestException("Mime Not Allowed");
         }
 

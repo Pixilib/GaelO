@@ -86,7 +86,7 @@ abstract class FormService
         $associatedFiles = [];
 
         //Safty check
-        if($reviewEntity['local']!== $this->local) throw new GaelOException("Form Service Unconsitancy");
+        if ($reviewEntity['local'] !== $this->local) throw new GaelOException("Form Service Unconsitancy");
 
         if ($reviewEntity['local']) {
             $associatedFiles = $this->abstractVisitRules->getAssociatedFilesInvestigator();
@@ -106,7 +106,7 @@ abstract class FormService
             throw new GaelOBadRequestException("Already Existing File for this review");
         }
 
-        if ( !in_array($mimeType, $associatiedFile->mimes) ) {
+        if ($mimeType !== $associatiedFile->mimes) {
             throw new GaelOBadRequestException("File Key or Mime Not Allowed");
         }
 
@@ -142,7 +142,7 @@ abstract class FormService
         return $this->abstractVisitRules;
     }
 
-    public function getVisitDecisionObject() : AbstractVisitDecisions
+    public function getVisitDecisionObject(): AbstractVisitDecisions
     {
         return $this->abstractVisitRules->getVisitDecisionObject();
     }
