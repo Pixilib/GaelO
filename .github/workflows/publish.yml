@@ -5,6 +5,7 @@ on:
     branches:
       - GaelO2
       - GaelO2-dev
+      - tmtv-inference
     tags:
       - '*'
 
