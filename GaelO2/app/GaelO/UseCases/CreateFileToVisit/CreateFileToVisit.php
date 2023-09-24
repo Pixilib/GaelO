@@ -62,6 +62,7 @@ class CreateFileToVisit
                 $extension = $this->mimeInterface::getExtensionsFromMime($createFileToVisitRequest->contentType)[0];
             } else {
                 $extension = $createFileToVisitRequest->extension;
+                $contentType = $this->mimeInterface::getMimesFromExtension($extension)[0];
             }
 
             $filename = $this->visitService->attachFile($key, $contentType, $extension, base64_decode($content));
