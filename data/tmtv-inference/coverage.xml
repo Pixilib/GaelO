@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE coverage SYSTEM "http://cobertura.sourceforge.net/xml/coverage-04.dtd">
-<coverage line-rate="0.66599982604158" branch-rate="0" lines-covered="7657" lines-valid="11497" branches-covered="0" branches-valid="0" complexity="2777" version="0.4" timestamp="1695594515">
+<coverage line-rate="0.66599982604158" branch-rate="0" lines-covered="7657" lines-valid="11497" branches-covered="0" branches-valid="0" complexity="2777" version="0.4" timestamp="1695596374">
   <sources>
     <source>/github/workspace//GaelO2/app</source>
   </sources>
@@ -1275,22 +1275,22 @@
           <methods>
             <method name="getExtensionsFromMime" signature="string $mime" line-rate="1" branch-rate="0" complexity="1">
               <lines>
-                <line number="13" hits="3"/>
                 <line number="14" hits="3"/>
+                <line number="15" hits="3"/>
               </lines>
             </method>
             <method name="getMimesFromExtension" signature="string $extension" line-rate="1" branch-rate="0" complexity="1">
               <lines>
-                <line number="19" hits="8"/>
                 <line number="20" hits="8"/>
+                <line number="21" hits="8"/>
               </lines>
             </method>
           </methods>
           <lines>
-            <line number="13" hits="3"/>
             <line number="14" hits="3"/>
-            <line number="19" hits="8"/>
+            <line number="15" hits="3"/>
             <line number="20" hits="8"/>
+            <line number="21" hits="8"/>
           </lines>
         </class>
       </classes>
@@ -7939,7 +7939,7 @@
       <classes>
         <class name="App\GaelO\Services\GaelOStudiesService\AssociatedFiles\AssociatedFile" filename="GaelO/Services/GaelOStudiesService/AssociatedFiles/AssociatedFile.php" line-rate="1" branch-rate="0" complexity="1">
           <methods>
-            <method name="__construct" signature="string $key, array $mimes, bool $mandatory" line-rate="1" branch-rate="0" complexity="1">
+            <method name="__construct" signature="string $key, string $mimes, bool $mandatory" line-rate="1" branch-rate="0" complexity="1">
               <lines>
                 <line number="13" hits="8"/>
                 <line number="14" hits="8"/>
